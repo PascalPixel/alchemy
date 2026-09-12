@@ -3325,9 +3325,18 @@
       "name": "SpawnConfiguredEffect",
       "source": "overlays/scene/actor/depth.c"
     },
-    "resource_389:02000030": "overlays/shared/measure_fixed_point_position_distance.c",
-    "resource_389:0200006c": "overlays/shared/find_actor_at_fixed_point_position.c",
-    "resource_389:02000244": "overlays/shared/fill_grid_attribute_rectangle.c",
+    "resource_389:02000030": {
+      "name": "measure_fixed_point_position_distance",
+      "source": "overlays/shared/field_probe.c"
+    },
+    "resource_389:0200006c": {
+      "name": "find_actor_at_fixed_point_position",
+      "source": "overlays/shared/field_probe.c"
+    },
+    "resource_389:02000244": {
+      "name": "fill_grid_attribute_rectangle",
+      "source": "overlays/shared/field_probe.c"
+    },
     "resource_38a:02000030": {
       "name": "Effect_SetRecordMode",
       "source": "overlays/scene/actor/burst.c"
@@ -3459,13 +3468,22 @@
       "name": "SpawnConfiguredEffect",
       "source": "overlays/scene/actor/staged_effect.c"
     },
-    "resource_39b:02000314": "overlays/shared/calculate_position_distance.c",
-    "resource_39b:02000350": "overlays/shared/find_scene_actor_at_fixed_point_position.c",
+    "resource_39b:02000314": {
+      "name": "calculate_position_distance",
+      "source": "overlays/shared/shared_2.c"
+    },
+    "resource_39b:02000350": {
+      "name": "find_scene_actor_at_fixed_point_position",
+      "source": "overlays/shared/shared_2.c"
+    },
     "resource_39b:020003a8": {
       "name": "AdvanceStagedActorPair",
       "source": "overlays/scene/actor/staged_effect.c"
     },
-    "resource_39b:02000528": "overlays/shared/fill_scene_grid_attribute_rectangle.c",
+    "resource_39b:02000528": {
+      "name": "fill_scene_grid_attribute_rectangle",
+      "source": "overlays/shared/shared_2.c"
+    },
     "resource_39b:0200058c": {
       "name": "stop_blocked_actor_motion",
       "source": "overlays/scene/actor/staged_effect.c"
@@ -3487,9 +3505,18 @@
       "name": "BattleFx_SpawnConfigured",
       "source": "overlays/scene/story/selector_effect.c"
     },
-    "resource_39c:02000314": "overlays/shared/calculate_fixed_point_position_distance.c",
-    "resource_39c:02000350": "overlays/shared/find_scene_actor_at_fixed_point_position.c",
-    "resource_39c:02000528": "overlays/shared/fill_scene_grid_attribute_rectangle.c",
+    "resource_39c:02000314": {
+      "name": "calculate_fixed_point_position_distance",
+      "source": "overlays/shared/field_probe_scene.c"
+    },
+    "resource_39c:02000350": {
+      "name": "find_scene_actor_at_fixed_point_position",
+      "source": "overlays/shared/field_probe_scene.c"
+    },
+    "resource_39c:02000528": {
+      "name": "fill_scene_grid_attribute_rectangle",
+      "source": "overlays/shared/field_probe_scene.c"
+    },
     "resource_39c:0200058c": {
       "name": "stop_blocked_actor_motion",
       "source": "overlays/scene/story/selector_effect.c"
@@ -3542,9 +3569,18 @@
       "name": "GetXianMessageData",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
-    "resource_39f:02000030": "overlays/shared/measure_fixed_point_position_distance.c",
-    "resource_39f:0200006c": "overlays/shared/find_actor_at_fixed_point_position.c",
-    "resource_39f:02000244": "overlays/shared/fill_grid_attribute_rectangle.c",
+    "resource_39f:02000030": {
+      "name": "measure_fixed_point_position_distance",
+      "source": "overlays/shared/field_probe.c"
+    },
+    "resource_39f:0200006c": {
+      "name": "find_actor_at_fixed_point_position",
+      "source": "overlays/shared/field_probe.c"
+    },
+    "resource_39f:02000244": {
+      "name": "fill_grid_attribute_rectangle",
+      "source": "overlays/shared/field_probe.c"
+    },
     "resource_39f:02002ba4": {
       "name": "update_orbiting_effect",
       "source": "overlays/scene/actor/waypoint.c"
@@ -3631,13 +3667,22 @@
       "name": "SpawnConfiguredEffect",
       "source": "overlays/scene/actor/staged_pair_region.c"
     },
-    "resource_3a6:02000314": "overlays/shared/calculate_position_distance.c",
-    "resource_3a6:02000350": "overlays/shared/find_scene_actor_at_fixed_point_position.c",
+    "resource_3a6:02000314": {
+      "name": "calculate_position_distance",
+      "source": "overlays/shared/shared_2.c"
+    },
+    "resource_3a6:02000350": {
+      "name": "find_scene_actor_at_fixed_point_position",
+      "source": "overlays/shared/shared_2.c"
+    },
     "resource_3a6:020003a8": {
       "name": "AdvanceStagedActorPair",
       "source": "overlays/scene/actor/staged_pair_region.c"
     },
-    "resource_3a6:02000528": "overlays/shared/fill_scene_grid_attribute_rectangle.c",
+    "resource_3a6:02000528": {
+      "name": "fill_scene_grid_attribute_rectangle",
+      "source": "overlays/shared/shared_2.c"
+    },
     "resource_3a6:0200058c": {
       "name": "stop_blocked_actor_motion",
       "source": "overlays/scene/actor/staged_pair_region.c"
@@ -3689,13 +3734,22 @@
       "name": "InitializeSpawnedOrbitingEffect",
       "source": "overlays/scene/story/actor_sequence.c"
     },
-    "resource_3b2:02000030": "overlays/shared/measure_fixed_point_position_distance.c",
-    "resource_3b2:0200006c": "overlays/shared/find_actor_at_fixed_point_position.c",
+    "resource_3b2:02000030": {
+      "name": "measure_fixed_point_position_distance",
+      "source": "overlays/shared/field_probe.c"
+    },
+    "resource_3b2:0200006c": {
+      "name": "find_actor_at_fixed_point_position",
+      "source": "overlays/shared/field_probe.c"
+    },
     "resource_3b2:020000c4": {
       "name": "AdvanceStagedActorPair",
       "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
-    "resource_3b2:02000244": "overlays/shared/fill_grid_attribute_rectangle.c",
+    "resource_3b2:02000244": {
+      "name": "fill_grid_attribute_rectangle",
+      "source": "overlays/shared/field_probe.c"
+    },
     "resource_3b2:020002a8": {
       "name": "StopBlockedActorMotion",
       "source": "map/locations/heidia/prologue/prologue_route_scene.c"
@@ -3985,13 +4039,22 @@
       "name": "SpawnConfiguredEffect",
       "source": "overlays/scene/actor/staged_nav.c"
     },
-    "resource_3b3:02000314": "overlays/shared/calculate_position_distance.c",
-    "resource_3b3:02000350": "overlays/shared/find_scene_actor_at_fixed_point_position.c",
+    "resource_3b3:02000314": {
+      "name": "calculate_position_distance",
+      "source": "overlays/shared/shared_2.c"
+    },
+    "resource_3b3:02000350": {
+      "name": "find_scene_actor_at_fixed_point_position",
+      "source": "overlays/shared/shared_2.c"
+    },
     "resource_3b3:020003a8": {
       "name": "AdvanceStagedActorPair",
       "source": "overlays/scene/actor/staged_nav.c"
     },
-    "resource_3b3:02000528": "overlays/shared/fill_scene_grid_attribute_rectangle.c",
+    "resource_3b3:02000528": {
+      "name": "fill_scene_grid_attribute_rectangle",
+      "source": "overlays/shared/shared_2.c"
+    },
     "resource_3b3:0200058c": {
       "name": "stop_blocked_actor_motion",
       "source": "overlays/scene/actor/staged_nav.c"
@@ -4000,9 +4063,18 @@
       "name": "find_clear_actor_position",
       "source": "overlays/scene/actor/staged_nav.c"
     },
-    "resource_3b4:02000030": "overlays/shared/measure_fixed_point_position_distance.c",
-    "resource_3b4:0200006c": "overlays/shared/find_actor_at_fixed_point_position.c",
-    "resource_3b4:02000244": "overlays/shared/fill_grid_attribute_rectangle.c",
+    "resource_3b4:02000030": {
+      "name": "measure_fixed_point_position_distance",
+      "source": "overlays/shared/field_probe.c"
+    },
+    "resource_3b4:0200006c": {
+      "name": "find_actor_at_fixed_point_position",
+      "source": "overlays/shared/field_probe.c"
+    },
+    "resource_3b4:02000244": {
+      "name": "fill_grid_attribute_rectangle",
+      "source": "overlays/shared/field_probe.c"
+    },
     "resource_3bb:02001b30": {
       "name": "initialize_scene_actor_positions",
       "source": "overlays/scene/state/task.c"
@@ -4287,9 +4359,18 @@
       "name": "Colosso_FindActorAhead",
       "source": "map/locations/colosso/log_rolling_stage/script.c"
     },
-    "resource_3bd:02000030": "overlays/shared/measure_fixed_point_position_distance.c",
-    "resource_3bd:0200006c": "overlays/shared/find_actor_at_fixed_point_position.c",
-    "resource_3bd:02000244": "overlays/shared/fill_grid_attribute_rectangle.c",
+    "resource_3bd:02000030": {
+      "name": "measure_fixed_point_position_distance",
+      "source": "overlays/shared/field_probe.c"
+    },
+    "resource_3bd:0200006c": {
+      "name": "find_actor_at_fixed_point_position",
+      "source": "overlays/shared/field_probe.c"
+    },
+    "resource_3bd:02000244": {
+      "name": "fill_grid_attribute_rectangle",
+      "source": "overlays/shared/field_probe.c"
+    },
     "resource_3be:02000030": "overlays/shared/set_effect_record_mode.c",
     "resource_3be:02000048": {
       "name": "StagedActorPairScene_SpawnPrimaryEffect",
@@ -4315,7 +4396,10 @@
       "name": "StagedActorPairScene_AdvancePair",
       "source": "overlays/scene/actor/staged_pair.c"
     },
-    "resource_3be:02000528": "overlays/shared/fill_scene_grid_attribute_rectangle.c",
+    "resource_3be:02000528": {
+      "name": "fill_scene_grid_attribute_rectangle",
+      "source": "overlays/shared/shared_2.c"
+    },
     "resource_3be:0200058c": {
       "name": "StagedActorPairScene_StopBlockedMotion",
       "source": "overlays/scene/actor/staged_pair.c"
@@ -4372,14 +4456,20 @@
     },
     "resource_3bf:02000030": {
       "name": "CalculateFixedPointPositionDistance",
-      "source": "overlays/shared/measure_fixed_point_position_distance.c"
+      "source": "overlays/shared/field_probe.c"
     },
-    "resource_3bf:0200006c": "overlays/shared/find_actor_at_fixed_point_position.c",
+    "resource_3bf:0200006c": {
+      "name": "find_actor_at_fixed_point_position",
+      "source": "overlays/shared/field_probe.c"
+    },
     "resource_3bf:020000c4": {
       "name": "AdvanceStagedActorPair",
       "source": "map/locations/heidia/village/village_scene.c"
     },
-    "resource_3bf:02000244": "overlays/shared/fill_grid_attribute_rectangle.c",
+    "resource_3bf:02000244": {
+      "name": "fill_grid_attribute_rectangle",
+      "source": "overlays/shared/field_probe.c"
+    },
     "resource_3bf:020002a8": {
       "name": "StopBlockedActorMotion",
       "source": "map/locations/heidia/village/village_scene.c"
@@ -4757,16 +4847,34 @@
       "name": "sync_selected_actor_progress",
       "source": "overlays/scene/actor/selected_presentation.c"
     },
-    "resource_3c4:02000030": "overlays/shared/measure_fixed_point_position_distance.c",
-    "resource_3c4:0200006c": "overlays/shared/find_actor_at_fixed_point_position.c",
-    "resource_3c4:02000244": "overlays/shared/fill_grid_attribute_rectangle.c",
+    "resource_3c4:02000030": {
+      "name": "measure_fixed_point_position_distance",
+      "source": "overlays/shared/field_probe.c"
+    },
+    "resource_3c4:0200006c": {
+      "name": "find_actor_at_fixed_point_position",
+      "source": "overlays/shared/field_probe.c"
+    },
+    "resource_3c4:02000244": {
+      "name": "fill_grid_attribute_rectangle",
+      "source": "overlays/shared/field_probe.c"
+    },
     "resource_3c4:02001068": {
       "name": "advance_effect_motion",
       "source": "overlays/scene/actor/map_init.c"
     },
-    "resource_3c5:02000030": "overlays/shared/measure_fixed_point_position_distance.c",
-    "resource_3c5:0200006c": "overlays/shared/find_actor_at_fixed_point_position.c",
-    "resource_3c5:02000244": "overlays/shared/fill_grid_attribute_rectangle.c",
+    "resource_3c5:02000030": {
+      "name": "measure_fixed_point_position_distance",
+      "source": "overlays/shared/field_probe.c"
+    },
+    "resource_3c5:0200006c": {
+      "name": "find_actor_at_fixed_point_position",
+      "source": "overlays/shared/field_probe.c"
+    },
+    "resource_3c5:02000244": {
+      "name": "fill_grid_attribute_rectangle",
+      "source": "overlays/shared/field_probe.c"
+    },
     "resource_3c5:02000cf0": {
       "name": "advance_effect_motion",
       "source": "overlays/scene/story/branching_event.c"

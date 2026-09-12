@@ -43,7 +43,6 @@ struct Effect_080942e0 {
 
 extern u32 gCell[];
 
-struct Entity_080942e0 *ObjectTable_Get(u32);
 /* Object table: 192 pointers at gWork + 0x14 (object/table/get.c). */
 struct Effect_080942e0 *Obj_Run(struct Entity_080942e0 *, s32);
 void Object_SetMode(struct Entity_080942e0 *, s32);
@@ -118,8 +117,6 @@ typedef struct {
     u8 unknown38[24];
     Context08094380 *ctx;
 } Object08094380;
-
-Effect08094380 *Obj_Run(Context08094380 *, s32);
 
 void Object_SetPosition(Object08094380 *, s32, s32, s32);
 void Object_CommitPosition(Object08094380 *);

@@ -70,37 +70,3 @@ void BattlePresentation_PrepareScene(s32 kind)
     FunctionHead_080041d8((s32)Battle_unk3_4, 0xC80);
     FunctionHead_080041d8((s32)BattlePres_ProcessPendingGraphicsTransfer, 0x480);
 }
-
-/* battle/effects/runtime/misc/schedule_callbacks_and_release_blocks.c */
-extern void ScheduleCallback(void (*)(void));
-
-typedef void (*Transfer)(void *, s32);
-extern u8 gRom;
-extern u8 gRom2;
-extern u8 gRom3;
-
-void BattleFx_ScheduleCallbacksAndReleaseBlocks(void)
-{
-    ScheduleCallback((void (*)(void))&gRom);
-    ScheduleCallback((void (*)(void))&gRom2);
-    {
-        Transfer transfer = (Transfer)0x03000164;
-
-        transfer((void *)0x06004000, 0x4000);
-    }
-    ScheduleCallback((void (*)(void))&gRom3);
-    FunctionHead_08002dd8(40);
-    FunctionHead_08002dd8(39);
-}
-
-/* battle/effects/two_resource/run_mode0.c */
-void BattleFx_RunTwoResourceMode0(s32 arg0)
-{
-    FunctionHead_080ccc38(arg0, 0);
-}
-
-/* battle/effects/two_resource/run_mode1.c */
-void BattleFx_RunTwoResourceMode1(s32 arg0)
-{
-    FunctionHead_080ccc38(arg0, 1);
-}

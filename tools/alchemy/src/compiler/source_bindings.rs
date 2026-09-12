@@ -123,7 +123,8 @@ pub fn production_bindings(
 }
 
 /// Prototypes in the manifest mention `u8` / structs before `types.h` is
-/// visible to `-include`. Keep preprocessor names and comments only.
+/// visible to `-include`. Keep preprocessor names, comments, and `extern`
+/// data objects (rewritten to C89 builtins so `ADDR_*` macros still resolve).
 fn define_only_bindings(text: &str) -> String {
     let mut out = String::with_capacity(text.len());
     let mut in_block_comment = false;
@@ -148,9 +149,23 @@ fn define_only_bindings(text: &str) -> String {
         if trimmed.is_empty() || trimmed.starts_with('#') || trimmed.starts_with("//") {
             out.push_str(line);
             out.push('\n');
+            continue;
+        }
+        if trimmed.starts_with("extern ") && !trimmed.contains('(') {
+            out.push_str(&rewrite_extern_data_types(line));
+            out.push('\n');
         }
     }
     out
+}
+
+fn rewrite_extern_data_types(line: &str) -> String {
+    line.replace("u16", "unsigned short")
+        .replace("s16", "short")
+        .replace("u32", "unsigned int")
+        .replace("s32", "int")
+        .replace("u8", "unsigned char")
+        .replace("s8", "signed char")
 }
 
 #[cfg(test)]
@@ -171,6 +186,15 @@ mod tests {
         assert_eq!(
             define_only_bindings(text),
             "/* Shared names:\n   callers use these aliases. */\n#define PackedTable_AdjustMarkedOffsets Func_08002f4c\n"
+        );
+    }
+
+    #[test]
+    fn keeps_extern_data_and_drops_typed_prototypes() {
+        let text = "extern u8 Data_03001e70_a[];\nextern s32 Func_080072f0(s32 mode, u8 *destination);\n#define ADDR_03001E70 ((u32)Data_03001e70_a)\n";
+        assert_eq!(
+            define_only_bindings(text),
+            "extern unsigned char Data_03001e70_a[];\n#define ADDR_03001E70 ((u32)Data_03001e70_a)\n"
         );
     }
 }

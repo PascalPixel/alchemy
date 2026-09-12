@@ -39,11 +39,3 @@ void UiWork_SetMenuBusy(void)
     u8 flag = 1;
     *p = flag;
 }
-
-void Ui_Run(void)
-{
-    u8 *base = gIw;
-    u8 *p = base + RENDER_MENU_BUSY_OFS;
-    u8 flag = 0;
-    *p = flag;
-}

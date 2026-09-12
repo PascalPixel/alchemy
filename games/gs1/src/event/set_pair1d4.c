@@ -23,19 +23,19 @@ struct EventCellPairs {
     u16 second_1d6;
 };
 
-extern struct EventCellPairs gCell;
+extern s32 gCell[];
 
 void Event_SetPair1d4(u16 first, u16 second)
 {
-    gCell.first_1d4 = first;
-    gCell.second_1d6 = second;
+    ((struct EventCellPairs *)gCell)->first_1d4 = first;
+    ((struct EventCellPairs *)gCell)->second_1d6 = second;
 }
 
 void Sys_Run(u16 first, u16 second)
 {
     struct State_08091fa8 *state = (struct State_08091fa8 *)gWork;
-    gCell.first_1c0 = first;
-    gCell.second_1c2 = second;
+    ((struct EventCellPairs *)gCell)->first_1c0 = first;
+    ((struct EventCellPairs *)gCell)->second_1c2 = second;
     state->value = 999;
 }
 
@@ -294,12 +294,8 @@ void Motion_CommitPositionAndActivate(u32 object_id, s32 x_offset, s32 z_offset)
 }
 
 /* object/motion/act/launch_from_focused_object.c */
-void Motion_SetSpeed(s32, s32, s32);
 void Motion_SetHPosTerrain(u32, s32, s32);
-void Motion_OffsetPositionAndResetMotion(s32, s32, s32);
 extern void Object_SetCallback(struct Object_08092624 *, const void *);
-
-extern u8 gRomGetById;
 
 void Motion_LaunchFromFocusedObject(u32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {

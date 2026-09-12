@@ -110722,6 +110722,66 @@
           "address": "0x080fa6a0",
           "extent": 248,
           "state": "exact-c"
+        },
+        {
+          "address": "0x080fa798",
+          "extent": 164,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080fa83c",
+          "extent": 152,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080fa8d4",
+          "extent": 84,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080fa928",
+          "extent": 124,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080fa9a4",
+          "extent": 60,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080fa9e0",
+          "extent": 120,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080faa58",
+          "extent": 228,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080fab3c",
+          "extent": 64,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080fab7c",
+          "extent": 200,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080fac44",
+          "extent": 180,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080facf8",
+          "extent": 168,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080fada0",
+          "extent": 80,
+          "state": "exact-c"
         }
       ],
       "overlay": null

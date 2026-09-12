@@ -122,12 +122,12 @@ s32 CharacterSelector_MoveEntry(s32 selected_index, s32 direction)
     }
 
     for (index = 0; index < state->character_count; index++) {
-        Menu_Check(state->character_ids[index]);
+        Party_RemoveActiveOwner(state->character_ids[index]);
     }
     for (index = 0; index < state->character_count; index++) {
-        Menu_unk2(reordered[index]);
+        Party_AddActiveOwner(reordered[index]);
     }
-    *(u8 *)&state->character_count = Menu_unk3(state->character_ids);
+    *(u8 *)&state->character_count = Party_ListActiveOwners(state->character_ids);
     return 1;
 }
 

@@ -5,8 +5,6 @@
 #include "battle_summon.h"
 #include "battle_formation.h"
 
-extern u8 RomBytes_080c5c38[];
-
 /* battle/formation/select_level_matched_candidate.c */
 u32 Random16(void);
 
@@ -26,7 +24,7 @@ s16 *Runtime_BumpAllocateAlternatePool(s32 size);
 s32 Party_ComputeEligibleMemberAverage(s32 record_id);
 struct BattleActorDefinition *FunctionHead_08077198(s32 actor_id);
 
-extern struct Entry RomBytes_080c73f8[];
+extern s16 RomBytes_080c73f8[];
 
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin)
 {
@@ -132,7 +130,7 @@ extern struct SummonChargeState *gBattleWork;
 
 s32 Modulo(s32, s32);
 
-s32 Summon_TakeCharge(s32 no)
+s32 Summon_TakeCharge(s32 no, s32 n)
 {
     struct Snd_080c1df4 *w;
     s32 num;
@@ -297,13 +295,20 @@ s32 BattleFormation_SelectRandomAvailableMember(s32 record_id)
 }
 
 /* battle/summon/get_entry_byte3_kind.c */
-extern const u8 RomBytes_080c7420[];
+struct Entry {
+    u16 value;
+    u8 flags0;
+    u8 flags1;
+    u8 rest[4];
+};
+
+extern struct Entry RomBytes_080c7420[];
 
 u32 Summon_GetEntryByte3Kind(s32 arg0)
 {
   u32 kind;
   u8 *p;
-  p = (u8 *)((arg0 * 8) + (s32)RomBytes_080c7420);
+  p = (u8 *)((arg0 * 8) + (s32)(u8 *)RomBytes_080c7420);
   kind = ((u8)(*((u8 *)(p + 3)))) >> 5;
   if (((s32)kind) > 4)
   {
@@ -313,12 +318,6 @@ u32 Summon_GetEntryByte3Kind(s32 arg0)
 }
 
 /* battle/summon/get_entry_value.c */
-struct Entry {
-    u16 value;
-    u8 rest[6];
-};
-
-
 s32 Summon_GetEntryValue(s32 index)
 {
     if ((u32)index > 171)
@@ -327,14 +326,6 @@ s32 Summon_GetEntryValue(s32 index)
 }
 
 /* battle/summon/get_entry_flag1_field.c */
-struct Entry {
-    u16 value;
-    u8 flags0;
-    u8 flags1;
-    u8 rest[4];
-};
-
-
 s32 Summon_GetEntryFlag1Field(s32 index)
 {
     if ((u32)index > 171)
@@ -343,14 +334,6 @@ s32 Summon_GetEntryFlag1Field(s32 index)
 }
 
 /* battle/summon/is_entry_flagged.c */
-struct Entry {
-    u16 value;
-    u8 flags0;
-    u8 flags1;
-    u8 rest[4];
-};
-
-
 s32 Summon_IsEntryFlagged(s32 index)
 {
     s32 result;
@@ -375,7 +358,7 @@ u32 Battle_GetEntryField2LowBits(u32 no)
     if (no > 0xABU) {
         return 1U;
     }
-    tbl = RomBytes_080c7420;
+    tbl = (u8 *)RomBytes_080c7420;
     p = tbl + (no * 8);
     bits = (u32)p[2] << 0x1B;
     val = bits >> 0x1C;
@@ -401,7 +384,7 @@ u32 Battle_GetEntryField2HighBits(u32 no)
     if (no > 0xABU) {
         return 0U;
     }
-    tbl = RomBytes_080c7420;
+    tbl = (u8 *)RomBytes_080c7420;
     bits = tbl[(no * 8) + 2] >> 5;
     if (bits != 0) {
         ret = bits;
@@ -412,14 +395,6 @@ u32 Battle_GetEntryField2HighBits(u32 no)
 }
 
 /* battle/summon/is_entry_secondary_flagged.c */
-struct Entry {
-    u16 value;
-    u8 flags0;
-    u8 flags1;
-    u8 rest[4];
-};
-
-
 s32 Summon_IsEntrySecondaryFlagged(s32 index)
 {
     if ((u32)index > 171)
@@ -433,5 +408,5 @@ s32 Summon_GetEntryByte4(s32 index)
 {
     if ((u32)index > 171)
         return 0;
-    return RomBytes_080c7420[index * 8 + 4];
+    return ((u8 *)RomBytes_080c7420)[index * 8 + 4];
 }

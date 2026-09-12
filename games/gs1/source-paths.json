@@ -13017,171 +13017,171 @@
     },
     "resource_3a8:02000590": {
       "name": "FieldScene_RunStagedGroupSequence",
-      "source": "overlays/scene/actor/staged_group/run_staged_group_sequence.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:020026c0": {
       "name": "FieldScene_RunSecondaryGroupSequence",
-      "source": "overlays/scene/actor/staged_group/scene_script.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:02003a3c": {
       "name": "InitializeOrbitingRenderEffect",
-      "source": "overlays/scene/actor/staged_group/orbiting_effect.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:020017e8": {
       "name": "SceneState_CheckFlags941And940",
-      "source": "overlays/scene/actor/staged_group/state_update.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:0200390c": {
       "name": "SceneEffect_UpdateLobeOrbitEffect26",
-      "source": "overlays/scene/actor/staged_group/orbiting_effect.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:020002e8": {
       "name": "FieldScene_RunSlotZeroFacingSequence",
-      "source": "overlays/scene/actor/staged_group/scene_setup.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:02001858": {
       "name": "SceneState_ApplyFlagGatedActorEightSetup",
-      "source": "overlays/scene/actor/staged_group/state_update.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:020036f8": {
       "name": "SceneEffect_UpdateMotionWithDamping",
-      "source": "overlays/scene/actor/staged_group/scene_motion.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:0200020c": {
       "name": "FieldScene_RunStepWithValueFd6",
-      "source": "overlays/scene/actor/staged_group/scene_setup.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:020003d8": {
       "name": "SceneDialogue_RunActorTwentyThreeByLeaderHeading",
-      "source": "overlays/scene/actor/staged_group/actor_presentation.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:02003184": {
       "name": "SceneActor_FindAtTileXZ",
-      "source": "overlays/scene/actor/staged_group/actor_search.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:02000178": {
       "name": "SceneData_GetTablec6b8",
-      "source": "overlays/scene/actor/staged_group/scene_data.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:0200164c": {
       "name": "FieldScene_DispatchBySceneId",
-      "source": "overlays/scene/actor/staged_group/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:02000240": {
       "name": "SceneData_SelectTableBySelector224",
-      "source": "overlays/scene/actor/staged_group/scene_data.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:02000040": {
       "name": "SceneEffect_UpdateRandomAction",
-      "source": "overlays/scene/actor/staged_group/effect.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:020018a4": {
       "name": "SceneState_SetWork448AndRunFlag915Step",
-      "source": "overlays/scene/actor/staged_group/state_update.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:02001610": {
       "name": "SceneDialogue_RunActor181Line916",
-      "source": "overlays/scene/actor/staged_group/scene_dialogue.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:02003970": {
       "name": "FieldScene_DrawTilesAndRaiseActor11",
-      "source": "overlays/scene/actor/staged_group/scene_setup.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:020039d4": {
       "name": "SceneEffect_UpdateOrbitingEffect",
-      "source": "overlays/scene/actor/staged_group/orbiting_effect.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:020001e4": {
       "name": "FieldScene_RunStepWithValue29df",
-      "source": "overlays/scene/actor/staged_group/scene_setup.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:020015e0": {
       "name": "SceneActor_SetActorZeroByte35Bit0",
-      "source": "overlays/scene/actor/staged_group/actor_presentation.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:02000174": {
       "name": "SceneData_ReturnZero",
-      "source": "overlays/scene/actor/staged_group/scene_data.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:02000030": {
       "name": "SceneState_ApplyValues12And2And3",
-      "source": "overlays/scene/actor/staged_group/state_update.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:02000420": {
       "name": "FieldScene_RunActorTwentyFourAngleDialogue",
-      "source": "overlays/scene/actor/staged_group/facing_target_scene.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:02001ea4": {
       "name": "SceneEffect_SetSlotVariantAndDescriptor",
-      "source": "overlays/scene/actor/staged_group/effect.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:02000374": {
       "name": "SceneDialogue_RunActorTenDialogue",
-      "source": "overlays/scene/actor/staged_group/scene_dialogue.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:020002c8": {
       "name": "SceneDialogue_RunActorNineteenDialogue",
-      "source": "overlays/scene/actor/staged_group/scene_dialogue.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:02000180": {
       "name": "SceneData_SelectTableByWord224B",
-      "source": "overlays/scene/actor/staged_group/scene_data.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:02001e6c": {
       "name": "SceneState_SetValues27Through34",
-      "source": "overlays/scene/actor/staged_group/state_update.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:020000ec": {
       "name": "SceneData_SelectTableByWord224",
-      "source": "overlays/scene/actor/staged_group/scene_data.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:02000394": {
       "name": "SceneState_BranchOnSlotZeroFacing",
-      "source": "overlays/scene/actor/staged_group/facing_target_scene.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:020000ac": {
       "name": "OverlayObject_AdvanceXWhenCounterExpires",
-      "source": "overlays/scene/actor/staged_group/overlay_object.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:020015f8": {
       "name": "SceneState_ClearRecordZeroBit0At35",
-      "source": "overlays/scene/actor/staged_group/state_update.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:02000504": {
       "name": "RunSceneArrivalSetup",
-      "source": "overlays/scene/actor/staged_group/scene_setup.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:02002008": {
       "name": "FieldScene_RunTwoActorCutsceneSequence",
-      "source": "overlays/scene/actor/staged_group/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:020031b8": {
       "name": "FieldScene_RunLateSequence",
-      "source": "overlays/scene/actor/staged_group/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:02001930": {
       "name": "FieldScene_RunMiddleSequence",
-      "source": "overlays/scene/actor/staged_group/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:020015b4": {
       "name": "SceneState_LinkRecordZeroWhenFlag200Clear",
-      "source": "overlays/scene/actor/staged_group/scene_state_interaction.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:0200158c": {
       "name": "SceneState_ClearWord24WhenFlag200",
-      "source": "overlays/scene/actor/staged_group/state_update.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:02003864": {
       "name": "FieldScene_RunScene3a8SequenceA",
-      "source": "overlays/scene/actor/staged_group/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:020032a4": {
       "name": "FieldScene_RunScene3a8SequenceB",
-      "source": "overlays/scene/actor/staged_group/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3a8:02003768": {
       "name": "FieldScene_RunSupplementalSequenceOne",
-      "source": "overlays/scene/actor/staged_group/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_group.c"
     },
     "resource_3ae:02000958": {
       "name": "FieldScene_ConfigureFlaggedActors"

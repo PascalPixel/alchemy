@@ -66,7 +66,7 @@ struct Runtime_080bb928 {
     s32 flags;
 };
 
-void Battle_SetRuntimeFlagBit0(struct Runtime_080bb928 *runtime)
+void Battle_SetRuntimeFlagBit0(struct Runtime_080bb928 *runtime, s32 unused)
 {
     runtime->flags |= 1;
 }
@@ -82,7 +82,6 @@ struct BattleEventRuntime {
 };
 
 extern u8 *gIw;
-void Battle_Apply();
 
 extern s32 HitFalloff[];
 extern s32 PpLossFalloff[];

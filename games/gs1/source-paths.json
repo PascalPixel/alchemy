@@ -17134,181 +17134,181 @@
       "name": "FieldScene_RunScene39aSequenceA",
       "source": "overlays/scene/actor/transition.c"
     },
-    "resource_39f:02000030": "overlays/scene/actor/waypoint/measure_fixed_point_position_distance.c",
-    "resource_39f:0200006c": "overlays/scene/actor/waypoint/find_actor_at_fixed_point_position.c",
-    "resource_39f:02000244": "overlays/scene/actor/waypoint/fill_grid_attribute_rectangle.c",
+    "resource_39f:02000030": "overlays/scene/actor/waypoint.c",
+    "resource_39f:0200006c": "overlays/scene/actor/waypoint.c",
+    "resource_39f:02000244": "overlays/scene/actor/waypoint.c",
     "resource_39f:02002ba4": {
       "name": "update_orbiting_effect",
-      "source": "overlays/scene/actor/waypoint/orbiting_effect.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:02002c0c": {
       "name": "InitializeOrbitingEffect",
-      "source": "overlays/scene/actor/waypoint/orbiting_effect.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:0200112c": {
       "name": "FieldScene_RunScriptedSteps0And17E6",
-      "source": "overlays/scene/actor/waypoint/scene_primary_script.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:02001ac8": {
       "name": "SceneActor_BobActorZeroWhenTargetClear",
-      "source": "overlays/scene/actor/waypoint/actor_motion.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:02000d80": {
       "name": "OverlayObject_ApplyZero",
-      "source": "overlays/scene/actor/waypoint/overlay_object.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:02001b84": {
       "name": "SceneActor_MarkActorThirteenTileAndPark",
-      "source": "overlays/scene/actor/waypoint/actor_position.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:02002078": {
       "name": "FieldScene_RunActorEighteenEffectSequence",
-      "source": "overlays/scene/actor/waypoint/scene_primary_script.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:02000d6c": {
       "name": "OverlayObject_ApplyField100",
-      "source": "overlays/scene/actor/waypoint/overlay_object.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:0200103c": {
       "name": "SceneActor_PassOffsetPointOfActorZero",
-      "source": "overlays/scene/actor/waypoint/actor_position.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:02001420": {
       "name": "FieldScene_RunStepFD4WithActor181",
-      "source": "overlays/scene/actor/waypoint/scene_primary_script.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:02000474": {
       "name": "StagedActor_FindClearPosition",
-      "source": "overlays/scene/actor/waypoint/staged_actor.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:02001520": {
       "name": "SceneState_ApplyCrossRectsAroundActor11",
-      "source": "overlays/scene/actor/waypoint/state_update.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:02000cd0": {
       "name": "SceneActor_TryRunSlotZeroMoveStep",
-      "source": "overlays/scene/actor/waypoint/actor_motion.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:02000ee0": {
       "name": "SceneData_SelectByRuntimeSelector",
-      "source": "overlays/scene/actor/waypoint/scene_data_head.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:02000f34": {
       "name": "SceneData_ReturnZero",
-      "source": "overlays/scene/actor/waypoint/scene_data_head.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:02001de0": {
       "name": "FieldScene_RunSlot16WaypointSequence",
-      "source": "overlays/scene/actor/waypoint/scene_primary_script.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:020009f4": {
       "name": "OverlayObject_PrepareSpawnedObject",
-      "source": "overlays/scene/actor/waypoint/overlay_object.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:02001ef0": {
       "name": "FieldScene_RunActor17CameraSequence",
-      "source": "overlays/scene/actor/waypoint/scene_primary_script.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:02001150": {
       "name": "FieldScene_RunActor10WaypointSequence",
-      "source": "overlays/scene/actor/waypoint/scene_primary_script.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:02000f40": {
       "name": "SceneData_SelectDataByRuntimeSelector",
-      "source": "overlays/scene/actor/waypoint/select_data_by_runtime_selector.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:020000c4": {
       "name": "StagedActor_AdvanceActorPair",
-      "source": "overlays/scene/actor/waypoint/staged_actor_pair.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:02001454": {
       "name": "FieldScene_RunProbedActorEightOrTenScene",
-      "source": "overlays/scene/actor/waypoint/scene_primary_script.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:020016f0": {
       "name": "FieldScene_RunActorThirteenPresentationBeat",
-      "source": "overlays/scene/actor/waypoint/scene_primary_script.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:02001244": {
       "name": "FieldScene_RunActorElevenPresentationBeat",
-      "source": "overlays/scene/actor/waypoint/scene_primary_script.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:02000cc0": {
       "name": "SceneState_SetValue18Mode2",
-      "source": "overlays/scene/actor/waypoint/state_update.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:02000ea8": {
       "name": "FieldScene_RunSixCallSetupSequence",
-      "source": "overlays/scene/actor/waypoint/scene_setup.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:020002a8": {
       "name": "StagedActor_ResetMotionIfBlockedAhead",
-      "source": "overlays/scene/actor/waypoint/reset_motion_if_blocked_ahead.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
-    "resource_39f:020009dc": "overlays/scene/actor/waypoint/copy_mode_to_owner.c",
+    "resource_39f:020009dc": "overlays/scene/actor/waypoint.c",
     "resource_39f:02001078": {
       "name": "SceneActor_BobActorZeroWhenAheadClear",
-      "source": "overlays/scene/actor/waypoint/actor_motion.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:02000a4c": {
       "name": "OverlayObject_SpawnConfiguredWithMode15",
-      "source": "overlays/scene/actor/waypoint/overlay_object.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:020024ac": {
       "name": "SceneData_SelectTableBa48ByRuntimeSelector",
-      "source": "overlays/scene/actor/waypoint/select_table_ba48_by_runtime_selector.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:02001328": {
       "name": "SceneActor_RunActorTwelveThreeWaypointMotion",
-      "source": "overlays/scene/actor/waypoint/actor_motion.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:02000ae8": {
       "name": "SceneEffect_SpawnConfigured",
-      "source": "overlays/scene/actor/waypoint/configurable_effect_spawn.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:02001880": {
       "name": "SceneActor_RunActorFourteenFourWaypointMotion",
-      "source": "overlays/scene/actor/waypoint/actor_motion.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:02000f38": {
       "name": "SceneData_GetTableB5bc",
-      "source": "overlays/scene/actor/waypoint/scene_data_head.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:02002500": {
       "name": "RunEventScript01"
     },
     "resource_39f:02001c34": {
       "name": "FieldScene_RunSupplementalSequenceOne",
-      "source": "overlays/scene/actor/waypoint/scene_primary_script.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:02001818": {
       "name": "FieldScene_RunScene39f_02001818",
-      "source": "overlays/scene/actor/waypoint/scene_primary_script.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:02002004": {
       "name": "FieldScene_RunScene39f_02002004",
-      "source": "overlays/scene/actor/waypoint/scene_primary_script.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:02000d90": {
       "name": "FieldScene_RunScene39f_02000d90",
-      "source": "overlays/scene/actor/waypoint/scene_primary_script.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:020021b0": {
       "name": "FieldScene_RunScene39f_020021b0",
-      "source": "overlays/scene/actor/waypoint/scene_primary_script.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:02000ab0": {
       "name": "OverlayObject_IntegrateVelocities",
-      "source": "overlays/scene/actor/waypoint/overlay_object.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:02001d04": {
       "name": "FieldScene_RunScene39fSequenceA",
-      "source": "overlays/scene/actor/waypoint/scene_primary_script.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_39f:02000608": {
       "name": "SceneActor_MoveAndRedraw",
       "call_via": "0200363e",
-      "source": "overlays/scene/actor/waypoint/move_and_redraw.c"
+      "source": "overlays/scene/actor/waypoint.c"
     },
     "resource_3b4:02000030": "overlays/scene/actor/staged_step.c",
     "resource_3b4:0200006c": "overlays/scene/actor/staged_step.c",

@@ -426,7 +426,7 @@ void Scene_RunSupplementalSequenceTwo(void)
 void Scene_RunSupplementalSequenceThree(void)
 {
     Audio_PlayCue_1(158);
-    Field_unk_02002e38((s32)&Value, 43, 15); /* main:08009178 */
+    Motion_SetPosReset_3((s32)&Value, 43, 15); /* main:08009178 */
     ObjectMotion_ResetAndSetPositionInMode2_1(0, 230, 0x197);
     Field_unk_02000f20(3);
 }
@@ -437,7 +437,7 @@ void Scene_RunSupplementalSequenceThree(void)
 void Scene_RunSupplementalSequenceFour(void)
 {
     Audio_PlayCue_1(158);
-    Field_unk_02002e68((s32)&Value, 52, 18); /* main:08009178 */
+    Motion_SetPosReset_4((s32)&Value, 52, 18); /* main:08009178 */
     ObjectMotion_ResetAndSetPositionInMode2_1(0, 374, 0x1a3); /* object_id 0, x 374, z 0x1a3 */
     Field_unk_02000f52(4);
 }
@@ -448,7 +448,7 @@ void Scene_RunSupplementalSequenceFour(void)
 void Scene_RunSupplementalSequenceFive(void)
 {
     Audio_PlayCue_1(158);
-    Field_unk_02002e98((s32)&Value, 41, 32); /* main:08009178 */
+    Motion_SetPosReset_5((s32)&Value, 41, 32); /* main:08009178 */
     ObjectMotion_ResetAndSetPositionInMode2_1(0, 200, 0x222);
     Field_unk_02000f80(5);
 }
@@ -470,7 +470,7 @@ void Scene_RunSupplementalSequenceSix(void)
 void Scene_RunSupplementalSequenceSeven(void)
 {
     Audio_PlayCue_1(158);
-    Field_unk_02002ef8((s32)&Value, 51, 39); /* main:08009178 */
+    Motion_SetPosReset_6((s32)&Value, 51, 39); /* main:08009178 */
     ObjectMotion_ResetAndSetPositionInMode2_1(0, 358, 0x29e);
     Field_unk_02000fe2(7);
 }

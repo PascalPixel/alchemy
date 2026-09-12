@@ -126,14 +126,26 @@ pub fn production_bindings(
 /// visible to `-include`. Keep preprocessor names and comments only.
 fn define_only_bindings(text: &str) -> String {
     let mut out = String::with_capacity(text.len());
+    let mut in_block_comment = false;
     for line in text.lines() {
         let trimmed = line.trim_start();
-        if trimmed.is_empty()
-            || trimmed.starts_with('#')
-            || trimmed.starts_with("/*")
-            || trimmed.starts_with('*')
-            || trimmed.starts_with("//")
-        {
+        if in_block_comment {
+            out.push_str(line);
+            out.push('\n');
+            if trimmed.contains("*/") {
+                in_block_comment = false;
+            }
+            continue;
+        }
+        if trimmed.starts_with("/*") {
+            out.push_str(line);
+            out.push('\n');
+            if !trimmed.contains("*/") {
+                in_block_comment = true;
+            }
+            continue;
+        }
+        if trimmed.is_empty() || trimmed.starts_with('#') || trimmed.starts_with("//") {
             out.push_str(line);
             out.push('\n');
         }
@@ -143,13 +155,22 @@ fn define_only_bindings(text: &str) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::expand_binding_text;
+    use super::{define_only_bindings, expand_binding_text};
 
     #[test]
     fn expands_compact_func_and_data_tokens() {
         assert_eq!(
             expand_binding_text("#define Field_unk17 @F020038b0_a\n#define gWork @D03001ebc\n"),
             "#define Field_unk17 Func_020038b0_a\n#define gWork Data_03001ebc\n"
+        );
+    }
+
+    #[test]
+    fn keeps_multiline_comments_with_defines() {
+        let text = "/* Shared names:\n   callers use these aliases. */\nextern s32 Func_08002f4c(u8 *p);\n#define PackedTable_AdjustMarkedOffsets Func_08002f4c\n";
+        assert_eq!(
+            define_only_bindings(text),
+            "/* Shared names:\n   callers use these aliases. */\n#define PackedTable_AdjustMarkedOffsets Func_08002f4c\n"
         );
     }
 }

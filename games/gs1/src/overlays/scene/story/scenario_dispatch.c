@@ -307,7 +307,7 @@ extern s32 Story_unk10_4();       /* GameFlag_IsSet veneer, first site. */
 extern void Story_unk11_4();      /* UiText_DrawMessage veneer, first site. */
 extern void Story_unk12_4();      /* UiText_DrawMessage veneer, second site. */
 extern s32 Story_unk13_4();       /* GameFlag_IsSet veneer, second site. */
-extern void Story_unk14_4(void);  /* Story_unk15_4 veneer. */
+extern void Story_unk14_4(void);  /* BattleFx_FinishAction veneer. */
 
 /*
  * Loader-relocated overlay calls: each symbol names the pre-relocation call

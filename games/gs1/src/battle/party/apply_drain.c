@@ -413,7 +413,7 @@ run_descriptor:
         }
     }
     if (descriptor->result < 0x10000) {
-        Battle_unk2_2(used_fallback);
+        UiWork_SetBusyFlags(used_fallback);
         Battle_Reset();
         Battle_Do(descriptor->result);
         Battle_ApplyFindWithOverride(id, 0);

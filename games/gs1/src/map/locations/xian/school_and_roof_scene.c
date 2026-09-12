@@ -195,15 +195,15 @@ u8 *Battle_WaitMode0_88();
  *     record and runs stage 2: its ==0 arm joins with id 18 and also sets
  *     0x898, its else arm bumps that counter again and sets flag 0x899.
  *
- * Both join arms share the tail at 0x02001cb4: Map_unk31_4(id, 0, 20) with
+ * Both join arms share the tail at 0x02001cb4: BattlePres_RunActionThenWaitIfModeZero(id, 0, 20) with
  * the id carried in r0, then GameFlag_Set(0x898).
  *
  * Midway the beat clears then sets bit 0 of byte +90 of record 16 around a
  * Map_unk33_4 reposition, plays sounds 158/159 with Map_unk34_4 text
- * calls, runs the slot-19/20 sequence (Map_unk35_4(19/20, 232 << 16,
+ * calls, runs the slot-19/20 sequence (Motion_SetHPosTerrain(19/20, 232 << 16,
  * 168 << 16), record +12 = 0xc0000, +60 = 0x80000000, +24 = 0xcccc, +30 of
  * the +80 sub-object = 0x8000, sound 124) that also closes the owners at
- * 0x02001160 and 0x02001dbc, and ends with Map_unk36_4(12, 0x0200c638) as
+ * 0x02001160 and 0x02001dbc, and ends with Motion_EnableActCb(12, 0x0200c638) as
  * 0x02001dbc does.
  *
  * Complete owner: `push {r5, lr}` at 0x02001494 through `pop {r5} / pop {r0} /
@@ -1027,7 +1027,7 @@ finish:
     Map_unk6_3(11, 128 << 8, 20);
     Map_unk9_4(10, 5);
     Map_unk9_4(11, 5);
-    Map_unk36_4(12, 0x0200c638);
+    Motion_EnableActCb(12, 0x0200c638);
 }
 
 void Scene_RunSkippableStoryBeat(void)

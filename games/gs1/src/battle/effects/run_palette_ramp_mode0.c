@@ -159,7 +159,7 @@ void BattleFx_RunPuffArc(Efx *efx)
     frame = 0;
     do {
         if (frame == 24) {
-            Battle_unk3_2(0x85);
+            BattleEventRuntime_BeginPhase(0x85);
         }
         i = 0;
         cur = (Puff *)(work + 0x7080);

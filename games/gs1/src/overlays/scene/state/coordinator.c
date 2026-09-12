@@ -370,7 +370,7 @@ void State_unk70();          /* veneer to UiText_DrawQuantity, site B */
 
 void State_unk71();          /* shared veneer, selector refresh + 0x96a */
 
-void State_unk50_3();          /* veneer to State_unk72 */
+void State_unk50_3();          /* veneer to ObjectDispatch_WaitForValue16 */
 
 SceneRecord *State_unk73();   /* scene record for a subject handle */
 

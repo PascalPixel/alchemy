@@ -112500,6 +112500,11 @@
       "local_symbols": [],
       "owners": [
         {
+          "address": "0x08096b28",
+          "extent": 96,
+          "state": "exact-c"
+        },
+        {
           "address": "0x08096b88",
           "extent": 100,
           "state": "exact-c"

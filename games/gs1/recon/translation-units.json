@@ -128862,98 +128862,8 @@
       "local_symbols": [],
       "owners": [
         {
-          "address": "0x080cdd14",
-          "extent": 2888,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080ce85c",
-          "extent": 724,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080ceb30",
-          "extent": 12,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080ceb3c",
-          "extent": 12,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080ceb48",
-          "extent": 1052,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080cef64",
-          "extent": 112,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080cefd4",
-          "extent": 12,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080cefe0",
-          "extent": 12,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080cefec",
-          "extent": 692,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080cf2a0",
-          "extent": 12,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080cf2ac",
-          "extent": 1504,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080cf88c",
-          "extent": 12,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080cf898",
-          "extent": 12,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080cf8a4",
-          "extent": 12,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080cf8b0",
-          "extent": 12,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080cf8bc",
-          "extent": 12,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080cf8c8",
-          "extent": 12,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080cf8d4",
-          "extent": 1568,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080cfef4",
-          "extent": 4076,
+          "address": "0x080cd52c",
+          "extent": 104,
           "state": "exact-c"
         }
       ],
@@ -157804,29 +157714,7 @@
         }
       ],
       "overlay": null
-    },
-    {
-      "id": "menu-selection-run-top-selection-0801c458",
-      "game": "gs1",
-      "source": "games/gs1/src/menu/selection/run_top_selection.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x0801c458",
-          "extent": 20,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0801c46c",
-          "extent": 912,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
+    },    {
       "id": "ui-window-copy-tilemap-region",
       "game": "gs1",
       "source": "games/gs1/src/ui/window/copy_tilemap_region.c",
@@ -157866,39 +157754,7 @@
         }
       ],
       "overlay": null
-    },
-    {
-      "id": "graphics-tile-merge-shifted-tile-rows-08021b80",
-      "game": "gs1",
-      "source": "games/gs1/src/graphics/tile/merge_shifted_tile_rows.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x08021b80",
-          "extent": 72,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08021bc8",
-          "extent": 108,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08021c34",
-          "extent": 48,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08021c64",
-          "extent": 292,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
+    },    {
       "id": "graphics-registers-set-bg1-priority3",
       "game": "gs1",
       "source": "games/gs1/src/graphics/registers/set_bg1_priority3.c",

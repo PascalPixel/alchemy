@@ -28,8 +28,8 @@ s32 AbilityMenu_BuildAvailableList(void)
             output++;
         }
         index++;
-    } while (index <= 0x1f);
-    offset = count * 2;
+    } while (index <= 0x1ff);
+    offset = count << 1;
     offset += 0x26c;
     *(u16 *)(state + offset) = 0;
     *(u8 *)(state + 0x3a6) = count;

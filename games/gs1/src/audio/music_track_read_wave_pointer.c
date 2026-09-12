@@ -3,15 +3,6 @@
 #include "audio_engine.h"
 
 /* audio/music/track/read_wave_pointer.c */
-struct MusicPlayerState;
-
-struct MusicTrackState {
-    u8 unknown_00[0x28];
-    u32 wave_pointer;
-    u8 unknown_2c[0x14];
-    u8 *command;
-};
-
 union Value_080fb6a4 {
     u32 word;
     struct {

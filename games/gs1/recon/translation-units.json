@@ -157472,62 +157472,7 @@
       "owners": [
         {
           "address": "0x08097608",
-          "extent": 700,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080978c4",
-          "extent": 132,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08097948",
-          "extent": 268,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08097a54",
-          "extent": 40,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08097a7c",
-          "extent": 96,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08097adc",
-          "extent": 120,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08097b54",
-          "extent": 28,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08097b70",
-          "extent": 1040,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08097f80",
-          "extent": 172,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0809802c",
-          "extent": 68,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08098070",
-          "extent": 276,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08098184",
-          "extent": 272,
+          "extent": 60,
           "state": "exact-c"
         }
       ],

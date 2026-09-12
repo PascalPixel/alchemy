@@ -41,14 +41,13 @@ void Shop_ResetEffects(void)
 
 /* inn/room_price.c */
 /* inn/room_price.c */
-extern u8 *gIw;
 extern s8 gRom[];
 
 struct FieldObject *Runtime_GetObject(s32);
 
 s32 Inn_RoomPrice(s32 mode)
 {
-    u8 *global = gIw;
+    u8 *global = (u8 *)gIw;
     u8 *base;
     s32 active = 0;
     s32 factor = gRom[mode];
@@ -59,7 +58,7 @@ s32 Inn_RoomPrice(s32 mode)
         base = global + 2;
         offset = 0x36C;
         do {
-            if (*(s16 *)(Runtime_GetObject(
+            if (*(s16 *)((u8 *)Runtime_GetObject(
                     *(s16 *)(base + offset)) + 56) != 0)
                 active++;
             index++;
@@ -477,11 +476,9 @@ extern u8 Value_00000c94;
 extern u8 Value_00000c95;
 extern u8 Value_00000c8d;
 
-void *FunctionHead_08077008(s32);
-
 void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
 {
-    u8 *unit = FunctionHead_08077008(unit_id);
+    u8 *unit = (u8 *)Runtime_GetObject(unit_id);
     s32 slot_offset = item_id * 2 + 216;
     s32 masked = *(volatile u16 *)(unit + slot_offset) & 0x1ff;
     s32 mult = (*(volatile u16 *)(unit + slot_offset) >> 11) + 1;

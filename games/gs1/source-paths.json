@@ -15802,265 +15802,265 @@
       "call_via": "02003622",
       "source": "overlays/scene/actor/staged_nav/move_and_redraw.c"
     },
-    "resource_3c4:02000030": "overlays/scene/actor/map_init/measure_fixed_point_position_distance.c",
-    "resource_3c4:0200006c": "overlays/scene/actor/map_init/find_actor_at_fixed_point_position.c",
-    "resource_3c4:02000244": "overlays/scene/actor/map_init/fill_grid_attribute_rectangle.c",
+    "resource_3c4:02000030": "overlays/scene/actor/map_init.c",
+    "resource_3c4:0200006c": "overlays/scene/actor/map_init.c",
+    "resource_3c4:02000244": "overlays/scene/actor/map_init.c",
     "resource_3c4:02001068": {
       "name": "advance_effect_motion",
-      "source": "overlays/scene/actor/map_init/effect_motion_variant_a.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02001f70": {
       "name": "SceneState_SetSlot17And18Selectors",
-      "source": "overlays/scene/actor/map_init/state_update.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02001424": {
       "name": "SceneActor_CheckTwoUnitsAboveActorZero",
-      "source": "overlays/scene/actor/map_init/actor_search.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02001910": {
       "name": "FieldScene_SetActor19TableB3B8",
-      "source": "overlays/scene/actor/map_init/scene_primary_script.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02001374": {
       "name": "FieldScene_RunLayoutAt93By30",
-      "source": "overlays/scene/actor/map_init/dialogue_layout.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02002410": {
       "name": "FieldScene_PlaceAndPinSlots10And11",
-      "source": "overlays/scene/actor/map_init/dialogue_layout.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02002300": {
       "name": "FieldScene_RunLayoutAt83By45",
-      "source": "overlays/scene/actor/map_init/dialogue_layout.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02000cd0": {
       "name": "SceneActor_MoveActorZeroToTarget",
-      "source": "overlays/scene/actor/map_init/move_actor_zero_to_target.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02000474": {
       "name": "StagedActor_FindClearPosition",
-      "source": "overlays/scene/actor/map_init/staged_actor.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02001270": {
       "name": "SceneData_SelectDataByRuntimeSelector",
-      "source": "overlays/scene/actor/map_init/scene_data.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02001530": {
       "name": "SceneState_RunUnlessActorZeroAt30_52",
-      "source": "overlays/scene/actor/map_init/state_update.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:020011e0": {
       "name": "SceneEffect_SpawnNineRadialEffects",
-      "source": "overlays/scene/actor/map_init/effect.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:020009f4": {
       "name": "OverlayObject_CreateAndInitialize",
-      "source": "overlays/scene/actor/map_init/effect.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02002354": {
       "name": "FieldScene_RunScriptedStep953",
-      "source": "overlays/scene/actor/map_init/scene_primary_script.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:020013a4": {
       "name": "FieldScene_RunStepWith6",
-      "source": "overlays/scene/actor/map_init/scene_primary_script.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:020012e0": {
       "name": "SceneData_SelectAndApplyTableBySceneId",
-      "source": "overlays/scene/actor/map_init/scene_data.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:020013e0": {
       "name": "SceneState_ApplyTwoRectsAndRunThree",
-      "source": "overlays/scene/actor/map_init/state_update.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02000dc8": {
       "name": "SceneActor_PassRaisedPointOfActorZero",
-      "source": "overlays/scene/actor/map_init/actor_position.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02000ec8": {
       "name": "SceneActor_SetFlagBitByRelativeDepth",
-      "source": "overlays/scene/actor/map_init/actor_depth_effect.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02001938": {
       "name": "SceneActor_ConfigureSlot21AndSetFlag201",
-      "source": "overlays/scene/actor/map_init/state_update.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02001318": {
       "name": "SceneState_RunRect73x38Step",
-      "source": "overlays/scene/actor/map_init/state_update.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:020019cc": {
       "name": "FieldScene_RunFourStepSequenceB",
-      "source": "overlays/scene/actor/map_init/scene_setup.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02001c2c": {
       "name": "SceneActor_LandOnHighestPlatform",
-      "source": "overlays/scene/actor/map_init/actor_position.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02001458": {
       "name": "SceneActor_MirrorFlag201IntoSlot14",
-      "source": "overlays/scene/actor/map_init/state_update.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:020019bc": {
       "name": "FieldScene_RunTwoStepSequence",
-      "source": "overlays/scene/actor/map_init/scene_setup.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:020014ac": {
       "name": "SceneActor_SetActor14Field98ByFlag200",
-      "source": "overlays/scene/actor/map_init/actor_presentation.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02001348": {
       "name": "SceneActor_ApplyPointLeftOfActorZero",
-      "source": "overlays/scene/actor/map_init/actor_position.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02000a4c": {
       "name": "OverlayObject_PrepareSpawnedObjectMode4",
-      "source": "overlays/scene/actor/map_init/overlay_object.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:020012d8": {
       "name": "SceneData_GetTableB85c",
-      "source": "overlays/scene/actor/map_init/scene_data.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:020018f8": {
       "name": "FieldScene_RunFourStepSequenceA",
-      "source": "overlays/scene/actor/map_init/scene_setup.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:020002a8": {
       "name": "SceneActor_CheckAheadTileAndStop",
-      "source": "overlays/scene/actor/map_init/staged_actor_navigation.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
-    "resource_3c4:020009dc": "overlays/scene/actor/map_init/copy_mode_to_owner.c",
+    "resource_3c4:020009dc": "overlays/scene/actor/map_init.c",
     "resource_3c4:02001038": {
       "name": "SceneActor_WaitValueBelowLimit",
-      "source": "overlays/scene/actor/map_init/wait_value_below_limit.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02000fe8": {
       "name": "SceneActor_CopyActor8PositionWhenAtRow10",
-      "source": "overlays/scene/actor/map_init/actor_position.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02001f5c": {
       "name": "FieldScene_RunThreeStepSequence",
-      "source": "overlays/scene/actor/map_init/scene_setup.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:0200170c": {
       "name": "ActorPresentation_ConfigureActorTwentyAndFlag200",
-      "source": "overlays/scene/actor/map_init/actor_presentation.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02000ae8": {
       "name": "SceneEffect_SpawnConfiguredEffect",
-      "source": "overlays/scene/actor/map_init/configurable_effect_spawn.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02001970": {
       "name": "SceneDialogue_RunFlag982Or983Dialogue",
-      "source": "overlays/scene/actor/map_init/scene_dialogue.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02001500": {
       "name": "SceneState_ApplyFlag970",
-      "source": "overlays/scene/actor/map_init/state_update.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:020012b0": {
       "name": "SceneData_SelectTableB81cByWord224",
-      "source": "overlays/scene/actor/map_init/scene_data.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:020000c4": {
       "name": "StagedActor_AdvanceActorPair",
-      "source": "overlays/scene/actor/map_init/staged_actor_pair.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:020013b4": {
       "name": "SceneActor_PassPointTwoRightOfActorZero",
-      "source": "overlays/scene/actor/map_init/actor_position.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:020023a0": {
       "name": "FieldScene_PlaceAndPinSlots8And9",
-      "source": "overlays/scene/actor/map_init/scene_setup.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02002370": {
       "name": "SceneData_SelectTableByWord224",
-      "source": "overlays/scene/actor/map_init/scene_data.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02000cc0": {
       "name": "SceneState_ApplyArgMode0AndReturnZero",
-      "source": "overlays/scene/actor/map_init/state_update.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02001a10": {
       "name": "SceneActor_SetupSlotNineAndInstallHandler",
-      "source": "overlays/scene/actor/map_init/scene_setup.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02001a98": {
       "name": "OverlayObject_SetYAboveLinkedActor",
-      "source": "overlays/scene/actor/map_init/overlay_object.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02001510": {
       "name": "SceneState_RunUnlessActorZeroAtTile32x50",
-      "source": "overlays/scene/actor/map_init/conditional_scene_setup.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02002330": {
       "name": "SceneState_SetValue268bInScene",
-      "source": "overlays/scene/actor/map_init/state_update.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02001fc4": {
       "name": "FieldScene_RunFourCallSequence",
-      "source": "overlays/scene/actor/map_init/scene_setup.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02000df4": {
       "name": "SceneActor_PassActorZeroOffsetPoint",
-      "source": "overlays/scene/actor/map_init/actor_position.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:020016f4": {
       "name": "FieldScene_RunFourCallSequenceB",
-      "source": "overlays/scene/actor/map_init/scene_setup.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:020019e4": {
       "name": "SceneActor_InstallSlotNineHandler",
-      "source": "overlays/scene/actor/map_init/scene_setup.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02000f10": {
       "name": "SceneState_SwapSlotPairByRank",
-      "source": "overlays/scene/actor/map_init/state_update.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02001924": {
       "name": "SceneState_SetValue202ThenCall",
-      "source": "overlays/scene/actor/map_init/state_update.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02001fda": {
       "name": "FieldScene_RunLateSequence"
     },
     "resource_3c4:02001d04": {
       "name": "FieldScene_RunMiddleSequence",
-      "source": "overlays/scene/actor/map_init/scene_primary_script.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02001550": {
       "name": "FieldScene_RunSupplementalSequenceTwo",
-      "source": "overlays/scene/actor/map_init/scene_primary_script.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02001fdc": {
       "name": "FieldScene_RunLateSequenceHead",
-      "source": "overlays/scene/actor/map_init/scene_primary_script.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02002040": {
       "name": "FieldScene_RunLateSequenceSecond",
-      "source": "overlays/scene/actor/map_init/scene_primary_script.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02002480": {
       "name": "FieldScene_RunScene3c4_02002480",
-      "source": "overlays/scene/actor/map_init/scene_primary_script.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02000ab0": {
       "name": "OverlayObject_IntegrateVelocities",
-      "source": "overlays/scene/actor/map_init/overlay_object.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02001744": {
       "name": "FieldScene_RunSupplementalSequenceOne",
-      "source": "overlays/scene/actor/map_init/scene_primary_script.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:020020a4": {
       "name": "FieldScene_RunScene3c4SequenceA",
-      "source": "overlays/scene/actor/map_init/scene_primary_script.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:02000608": {
       "name": "SceneActor_MoveAndRedraw",
       "call_via": "02003936",
-      "source": "overlays/scene/actor/map_init/move_and_redraw.c"
+      "source": "overlays/scene/actor/map_init.c"
     },
     "resource_3c4:0200259c": {
       "name": "FieldScene_InitializeActorGroups"

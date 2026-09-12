@@ -128636,57 +128636,7 @@
       "owners": [
         {
           "address": "0x0808c2dc",
-          "extent": 200,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0808c3a4",
-          "extent": 168,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0808c44c",
-          "extent": 116,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0808c4c0",
-          "extent": 2484,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0808d458",
-          "extent": 52,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0808d48c",
-          "extent": 260,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0808d5a4",
-          "extent": 56,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0808d5dc",
-          "extent": 508,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0808d7d8",
-          "extent": 78,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0808d828",
-          "extent": 200,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0808d8f0",
-          "extent": 180,
+          "extent": 48,
           "state": "exact-c"
         }
       ],

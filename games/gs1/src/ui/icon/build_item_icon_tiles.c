@@ -50,28 +50,3 @@ void UiIcon_BuildItemIconTiles(u32 glyph, s32 with_base, s32 *src,
     *dst = Resource_CopyData(*src, 0x80, &work->f400);
     FunctionHead_08002dd8(0x11);
 }
-
-/* ui/icon/copy_resource_to_slot.c */
-s32 UiIcon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2)
-{
-    s32 work;
-
-    work = Runtime_AllocateHeapBlock(0x11, 0x608);
-    FunctionHead_0801a088(arg0, arg1);
-    Resource_CopyData(arg2, 0x80, work + 0x400);
-    FunctionHead_08002dd8(0x11);
-    return 1;
-}
-
-/* ui/render/build_pattern_to_slot.c */
-
-s32 Ui_BuildPatternToSlot(s32 no, s32 arg1, s32 slot)
-{
-    s32 work;
-
-    work = Runtime_AllocateHeapBlock(0x11, 0x608);
-    FunctionHead_0801a4c0(no);
-    Resource_CopyData(slot, 0x80, work + 0x400);
-    FunctionHead_08002dd8(0x11);
-    return 1;
-}

@@ -41,13 +41,3 @@ void Menu_SetNodeCoordinates(u32 first, u32 second)
         first += 16;
     }
 }
-
-/* menu/selection/setup_both_sides.c */
-void Menu_SetupSelectionBothSides(void)
-{
-    s32 state;
-
-    state = *(s32 *)ADDR_03001E98;
-    Menu_Apply(state, 0);
-    Menu_Apply(state, 1);
-}

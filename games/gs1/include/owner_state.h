@@ -91,4 +91,6 @@ LAYOUT_OFFSET_GUARD(
  * so those compiler-shaped calls remain representable.
  */
 
+void *OwnerState_Get();
+
 #endif

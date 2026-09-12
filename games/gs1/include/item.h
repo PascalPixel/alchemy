@@ -100,7 +100,17 @@ LAYOUT_OFFSET_GUARD(
     action_id,
     0x28);
 
+struct ItemDefinition *Item_Get(s32 item);
+struct ItemDefinition *Item_GetDirect(s32 item);
 s32 Equipment_GetUnleashRateBonus(s32 owner);
 u16 RollWeaponUnleash(void *owner);
+
+s32 Item_CanOwnerEquip(s32 owner, s32 item);
+s32 Item_CanOwnerEquipDirect(s32 owner, s32 item);
+s32 Item_IsCompatibleWithOwner(s32 owner, s32 item);
+s32 Item_GetEquipmentGroup(s32 item);
+u8 Item_GetTargetMode(s32 item);
+s32 ItemCounter_Adjust(s32 counter, s32 delta);
+s32 Item_AdjustCounter(s32 item, s32 delta);
 
 #endif

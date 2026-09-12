@@ -33,7 +33,7 @@ s32 Menu_RunActionFlow(void)
         switch (step) {
         case 0:
             state->selection = finished;
-            if (Menu_Check(0) == -1) {
+            if (CharacterMenu_SelectOwner(0) == -1) {
                 result = -1;
                 finished = 1;
             }

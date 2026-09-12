@@ -157715,41 +157715,6 @@
           "address": "0x080f6008",
           "extent": 48,
           "state": "exact-c"
-        },
-        {
-          "address": "0x080f6038",
-          "extent": 7548,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080f7db4",
-          "extent": 60,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080f7df0",
-          "extent": 68,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080f7e34",
-          "extent": 44,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080f7e60",
-          "extent": 208,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080f7f30",
-          "extent": 4792,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080f91e8",
-          "extent": 276,
-          "state": "exact-c"
         }
       ],
       "overlay": null

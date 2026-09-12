@@ -127077,6 +127077,11 @@
           "address": "0x0801c244",
           "extent": 140,
           "state": "exact-c"
+        },
+        {
+          "address": "0x0801c2d0",
+          "extent": 18,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -127208,6 +127213,11 @@
         {
           "address": "0x0808f140",
           "extent": 128,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0808f1c0",
+          "extent": 204,
           "state": "exact-c"
         }
       ],
@@ -127353,6 +127363,11 @@
         {
           "address": "0x08093710",
           "extent": 92,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0809376c",
+          "extent": 76,
           "state": "exact-c"
         }
       ],

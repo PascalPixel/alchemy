@@ -122,7 +122,7 @@ loop_body:
                   pos[1] * 8 + 20);
 loop_test:
     WaitFrames(1);
-    ev = Menu_unk2_3(win, &sel, pos);
+    ev = Menu_PollFlagGrid(win, &sel, pos);
     if (ev != -1)
         goto loop_body;
     TextResource_Release(res);

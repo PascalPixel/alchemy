@@ -27,7 +27,7 @@ retry:
         Menu_Apply((s32)&Value_00000c2a, 1);
         *(u8 *)RESULT_CELL_ADDR = result;
     } else if (result == 2) {
-        if (Menu_unk3() == -1) {
+        if (Menu_RunWorkspaceOptions() == -1) {
             goto retry;
         }
     }

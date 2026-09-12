@@ -257,7 +257,7 @@ s32 Menu_SelectTopEntry(s32 sel)
     Menu_AppendResourceEntry(2);
     Menu_AppendResourceEntry(7);
     Menu_Place(17, SELECT_MENU_WIDTH, 0);
-    ret = Menu_unk2(sel);
+    ret = Menu_SelectListedEntry(sel);
     Menu_EndResourceSelection();
 
     if (ret >= 0) {
@@ -337,7 +337,7 @@ s32 Menu_SelectSaveSlotAction(void)
         Menu_AppendResourceEntry(0x1E);
     }
     Menu_Place(0x11, TYPE_MENU_WIDTH, 0);
-    ret = Menu_unk2(initial);
+    ret = Menu_SelectListedEntry(initial);
     Menu_EndResourceSelection();
     if (ret >= 0) {
         ret = gRom[ret + (group * 6)];

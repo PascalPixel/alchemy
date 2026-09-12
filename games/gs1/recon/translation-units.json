@@ -157763,66 +157763,6 @@
           "address": "0x080a5fe0",
           "extent": 76,
           "state": "exact-c"
-        },
-        {
-          "address": "0x080a602c",
-          "extent": 856,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a6384",
-          "extent": 88,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a63dc",
-          "extent": 520,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a65e4",
-          "extent": 432,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a6794",
-          "extent": 224,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a6874",
-          "extent": 52,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a68a8",
-          "extent": 68,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a68ec",
-          "extent": 276,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a6a00",
-          "extent": 356,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a6b64",
-          "extent": 2040,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a735c",
-          "extent": 36,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a7380",
-          "extent": 192,
-          "state": "exact-c"
         }
       ],
       "overlay": null

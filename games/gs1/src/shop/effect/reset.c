@@ -215,12 +215,12 @@ void Inn_PlaySleep(s32 room_price)
     state->delay = 60;
     WaitFrames(20);
     Sys_RunRoomPrice();
-    Sys_unk2_4RoomPrice();
+    Event_WaitValue1c8Frames();
     Audio_PlayCue(86);
     AudioCommand_WaitForStateByteClear();
     WaitFrames(10);
-    Sys_unk3_4RoomPrice();
-    Sys_unk2_4RoomPrice();
+    Event_SetStatus1c6();
+    Event_WaitValue1c8Frames();
     WaitFrames(30);
     gWork->delay = 16;
 }
@@ -640,7 +640,7 @@ void BattleIntro_AnnounceEncounter(s32 enemy_count)
         } while (announced != enemy_count);
     }
 
-    Battle_unk3_4();
+    UiWork_FinalizeSharedSlot();
     if (battle_state[69] == BATTLE_ENCOUNTER_PARTY_FIRST) {
         Battle_Run();
         UiText_DrawQuantity(0, 1);

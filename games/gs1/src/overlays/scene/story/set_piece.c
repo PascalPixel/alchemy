@@ -32,27 +32,27 @@ s32 OvObj_UpdateFacingTowardTarget(struct FacingObject *object)
 }
 
 /* overlays/scene/story/set_piece/actor_motion.c */
-void Story_unk26_4();          /* site veneer -> Story_unk27_4 */
+void Story_unk26_4();          /* site veneer -> Battle_ApplyPackedAbilityEffect */
 
-void Story_unk28_4();          /* site veneer -> Story_unk29_4 */
+void Story_unk28_4();          /* site veneer -> BattleFx_SetupObjectPair */
 
-void Story_unk30_4();          /* site veneer -> Story_unk31_4 */
+void Story_unk30_4();          /* site veneer -> InitializeEventObject */
 
-void Story_unk32_4();          /* site veneer -> Story_unk33_4 (1st) */
+void Story_unk32_4();          /* site veneer -> ObjectGroup_ConfigureChildValue (1st) */
 
-void Story_unk34_4();          /* site veneer -> Story_unk35_4 */
+void Story_unk34_4();          /* site veneer -> Field_DispatchTypeHandler */
 
-void Story_unk36_4();          /* site veneer -> Story_unk33_4 (2nd) */
+void Story_unk36_4();          /* site veneer -> ObjectGroup_ConfigureChildValue (2nd) */
 
-void Story_unk37_4();          /* site veneer -> Story_unk38_4 */
+void Story_unk37_4();          /* site veneer -> EffectRuntime_StopCurrentObject */
 
-void Story_unk39_4();          /* site veneer -> Story_unk33_4 (3rd) */
+void Story_unk39_4();          /* site veneer -> ObjectGroup_ConfigureChildValue (3rd) */
 
 void Story_unk40_4();          /* site veneer -> Story_unk41_4 */
 
 void Story_unk42_4();          /* site veneer -> Audio_PlayCue */
 
-void Story_unk43_4();          /* site veneer -> Story_unk33_4 (4th) */
+void Story_unk43_4();          /* site veneer -> ObjectGroup_ConfigureChildValue (4th) */
 
 void Scene_RunActorTenFourStepSequence(void)
 {
@@ -1614,7 +1614,7 @@ void RunEventScript01(void)
 extern s32 gOv2[3];
 extern s32 gOv31;
 
-s32 Story_unk255_2();           /* per-site veneer -> Story_unk256_2 */
+s32 Story_unk255_2();           /* per-site veneer -> BattleFx_SetQueuedSoundAndPlay */
 
 s32 Story_unk257_2();           /* per-site veneer -> Story_unk258_2 */
 

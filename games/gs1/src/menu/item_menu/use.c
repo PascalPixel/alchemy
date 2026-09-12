@@ -579,7 +579,7 @@ void ItemMenu_DrawCmd(void *command_states, s32 window)
 /* item/classify_use_mode.c */
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
-struct ItemDefinition *Sys_RunClassifyUseMode(s32);
+struct ItemDefinition *Item_GetData(s32);
 
 void *Ability_GetData(s32);
 
@@ -590,7 +590,7 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId)
     s32 result = -1;
 
     masked &= 0x1ff;
-    itemData = Sys_RunClassifyUseMode(masked);
+    itemData = Item_GetData(masked);
 
     if (Sys_CheckClassifyUseMode(masked)!= 0) {
         return 0;
@@ -665,7 +665,7 @@ s32 ItemMenu_OpenDetail(s32 item_index)
     struct ItemMenuDetailsState *menu =
         (struct ItemMenuDetailsState *)gIw;
 
-    Sys_SetRect(&menu->details_window, 0, 0, 13, 10, 2);
+    UiWindow_UpdateOrCreate(&menu->details_window, 0, 0, 13, 10, 2);
     Sys_RunTryBreak();
 
     if (menu->item_ids[item_index] != 0)
@@ -692,7 +692,7 @@ s32 Menu_RunTryBreak(s32 value)
     s32 quantity = 0;
 
     confirmState[5] = 13;
-    window = Menu_SetRange(0, 0, 30, 10, 2);
+    window = UiWindow_CreateFar(0, 0, 30, 10, 2);
     ScheduleCallback(Menu_UpdateEntryObjectTransforms);
 
     {
@@ -873,7 +873,7 @@ void ItemMenu_DrawItemHead(void)
     menu->selected_item_icon->state = 1;
     menu->selected_item_icon->x = 112;
     menu->selected_item_icon->y = 8;
-    Sys_DoTryBreak(menu->selected_item_icon);
+    UiIcon_PrepareObject(menu->selected_item_icon);
     Sys_SetMode(
         Runtime_GetObject(menu->item_owner),
         (void *)menu->message_window,

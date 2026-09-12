@@ -320,7 +320,7 @@ s32 Shop_DrawItemPage(s32 a0, s32 a1, s32 a2)
     s32 base5_af7;
 
     p9 = *(s32 *)gIw;
-    rec5 = Sys_CheckItemPage(*(u8 *)((0x21a + p9)));
+    rec5 = Runtime_GetObject(*(u8 *)((0x21a + p9)));
     Sys_unk3_4(a0, 128, 8, 224, 96);
     p8 = ((*(s32 *)(a2 + 8) << 2) + *(s32 *)(a2 + 8));
     p10 = ((u32)(s32)((s32)(*(s32 *)(a2 + 20) - (s32)p8) << 24) >> 24);
@@ -456,7 +456,7 @@ void ItemMenu_DrawCategory(s32 window, s32 owner_id, s32 mode)
     u8 *items;
 
     OwnerState_GetFar(owner_id);
-    Sys_RunCategory();
+    ItemMenu_PosCategory();
     ItemMenu_HideAllIcons();
     UiText_DrawAt(&Value_00000b24, window, 0, 0);
     UiText_DrawAt(&Value_00000b24 + 1, window, 0, 32);

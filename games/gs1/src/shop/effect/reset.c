@@ -287,7 +287,7 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
 
         WaitFrames(1);
         if ((INPUT_NEW_KEYS & 1) != 0) {
-            if (Sys_CheckPickUnitItem(unit_id) == 0) {
+            if (Ability_GetAvailability(unit_id) == 0) {
                 Audio_PlayCue(0x71);
                 continue;
             }

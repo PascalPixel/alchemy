@@ -102022,8 +102022,23 @@
           "state": "exact-c"
         },
         {
+          "address": "0x02000314",
+          "extent": 60,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000350",
+          "extent": 88,
+          "state": "exact-c"
+        },
+        {
           "address": "0x020003a8",
           "extent": 384,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000528",
+          "extent": 100,
           "state": "exact-c"
         },
         {
@@ -138117,8 +138132,23 @@
           "state": "exact-c"
         },
         {
+          "address": "0x02000314",
+          "extent": 60,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000350",
+          "extent": 88,
+          "state": "exact-c"
+        },
+        {
           "address": "0x020003a8",
           "extent": 384,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000528",
+          "extent": 100,
           "state": "exact-c"
         },
         {
@@ -141274,8 +141304,23 @@
           "state": "exact-c"
         },
         {
+          "address": "0x02000314",
+          "extent": 60,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000350",
+          "extent": 88,
+          "state": "exact-c"
+        },
+        {
           "address": "0x020003a8",
           "extent": 384,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000528",
+          "extent": 100,
           "state": "exact-c"
         },
         {

@@ -31,6 +31,7 @@ void BattleFx_ApplyColorToSourceBuffer(u32 battle_value, s32 enabled);
 void BattleFx_StartBufferInterpolation(s32 battle_value);
 
 void Audio_PlayCue(s32 no);
+void Battle_unk2_4(void);
 
 extern SceneTransitionContext *gIw;
 extern s32 gCell[];
@@ -107,8 +108,6 @@ struct BurstParticleVector {
     s32 values[3];
 };
 
-extern u8 *gIw;
-
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
@@ -119,7 +118,7 @@ extern const u8 gRom[];
 
 void BattleFx_RunBurstParticles(void)
 {
-    u8 *state = gIw;
+    u8 *state = (u8 *)gIw;
     struct BurstParticleVector position;
     struct BurstParticleVector *p;
     s32 entry_count;

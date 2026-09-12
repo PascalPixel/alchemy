@@ -128474,28 +128474,8 @@
       "local_symbols": [],
       "owners": [
         {
-          "address": "0x0801c2d0",
-          "extent": 20,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0801c2e4",
-          "extent": 12,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0801c2f0",
-          "extent": 20,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0801c3e8",
-          "extent": 64,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0801c428",
-          "extent": 48,
+          "address": "0x0801c244",
+          "extent": 140,
           "state": "exact-c"
         }
       ],

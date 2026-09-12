@@ -27878,564 +27878,516 @@
 </g>
 <g aria-label="select_by_runtime_selector.c: 2,544 bytes · 33 items" data-node="container" data-kind="file" data-bytes="2544" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>select_by_runtime_selector.c: 2,544 bytes · 33 items</title>
-<rect class="container-frame" x="440.02538897169546" y="248.4733850597751" width="9.262391039577507" height="10.03879785893472" fill="#1f7f93"/>
-<path class="bevel-light" d="M440.02538897169546 258.5121829187098 V248.4733850597751 H449.28778001127296" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M440.02538897169546 258.5121829187098 H449.28778001127296 V248.4733850597751" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<rect class="container-frame" x="440.02538897169546" y="248.4733850597751" width="5.560784493923566" height="16.721250650574998" fill="#1f7f93"/>
+<path class="bevel-light" d="M440.02538897169546 265.1946357103501 V248.4733850597751 H445.586173465619" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M440.02538897169546 265.1946357103501 H445.586173465619 V248.4733850597751" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="3a7 · SceneData_SelectByRuntimeSelector · C: 84 bytes" data-node="leaf" data-kind="file" data-bytes="84" data-address="0x02000030" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · SceneData_SelectByRuntimeSelector · C: 84 bytes</title>
-<rect x="442.23237189198704" y="250.68036798006668" width="0.4139658405831664" height="0.8533979262760232" style="fill:#326b7d"/>
+<rect x="441.66154287086914" y="250.10953895894878" width="0.49191555138554627" height="0.8089643857850876" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · SceneData_GetTable9C5C · C: 8 bytes" data-node="leaf" data-kind="file" data-bytes="8" data-address="0x02000084" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · SceneData_GetTable9C5C · C: 8 bytes</title>
-<rect x="442.05556429947785" y="251.77092415441663" width="0.7675810256016095" height="0.0603506555647233" style="fill:#326b7d"/>
+<rect x="441.44655842701377" y="251.19543445226404" width="0.9218844390963004" height="0.06194666367479218" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · SceneData_SelectSecondaryByRuntimeSelector · C: 84 bytes" data-node="leaf" data-kind="file" data-bytes="84" data-address="0x0200008c" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · SceneData_SelectSecondaryByRuntimeSelector · C: 84 bytes</title>
-<rect x="443.0423050583454" y="250.6623694652587" width="0.3779688109672389" height="1.0100962670213973" style="fill:#326b7d"/>
+<rect x="442.62398634097127" y="250.08815132627984" width="0.44914028604767264" height="0.9756329784725456" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · SceneData_SelectOverlayDataBySelector · C: 84 bytes" data-node="leaf" data-kind="file" data-bytes="84" data-address="0x020000e0" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · SceneData_SelectOverlayDataBySelector · C: 84 bytes</title>
-<rect x="443.7982426802799" y="250.6623694652587" width="0.3779688109672389" height="1.0100962670213973" style="fill:#326b7d"/>
+<rect x="443.52226691306663" y="250.08815132627984" width="0.44914028604767264" height="0.9756329784725456" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · SceneData_FindActiveSlotAtCell · C: 60 bytes" data-node="leaf" data-kind="file" data-bytes="60" data-address="0x02000134" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · SceneData_FindActiveSlotAtCell · C: 60 bytes</title>
-<rect x="442.223178406006" y="252.0592395720743" width="0.3955788686210739" height="0.5517585086641328" style="fill:#326b7d"/>
+<rect x="441.6506182527433" y="251.52338760534312" width="0.47006631513382663" height="0.5023239488676972" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · SceneState_ApplyFlag300 · C: 14 bytes" data-node="leaf" data-kind="file" data-bytes="14" data-address="0x020002bc" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · SceneState_ApplyFlag300 · C: 14 bytes</title>
-<rect x="442.10683167994097" y="252.89023022329445" width="0.16288541649103042" height="0.37393909730391994" style="fill:#326b7d"/>
+<rect x="441.51236345417453" y="252.35752307077587" width="0.19355671799628155" height="0.3574644316045819" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · SceneState_SetFlag953 · C: 20 bytes" data-node="leaf" data-kind="file" data-bytes="20" data-address="0x020002cc" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · SceneState_SetFlag953 · C: 20 bytes</title>
-<rect x="442.4675065307426" y="252.92513424111397" width="0.23269345213004347" height="0.3041310616649069" style="fill:#326b7d"/>
+<rect x="441.94045381856915" y="252.39849999917794" width="0.27750861947465844" height="0.27551057480043173" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · SceneData_SelectDataByRuntimeSelector · C: 84 bytes" data-node="leaf" data-kind="file" data-bytes="84" data-address="0x020002e0" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · SceneData_SelectDataByRuntimeSelector · C: 84 bytes</title>
-<rect x="442.99329471406617" y="252.0381981428923" width="0.35349601025712984" height="1.1306658808230272" style="fill:#326b7d"/>
+<rect x="442.5657473556102" y="251.4983840779424" width="0.42005926033235563" height="1.1033521532700317" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · IsActor9AtTile15x54 · C: 52 bytes" data-node="leaf" data-kind="file" data-bytes="52" data-address="0x02000334" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · IsActor9AtTile15x54 · C: 52 bytes</title>
-<rect x="443.71647977529227" y="252.05439118360417" width="0.45577507559803976" height="0.38588209168084087" style="fill:#326b7d"/>
+<rect x="443.393879729877" y="251.48639793154453" width="0.6040541284927976" height="0.3960869675366207" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · FieldScene_RunFlag9a9GuardedScene · C: 48 bytes" data-node="leaf" data-kind="file" data-bytes="48" data-address="0x02000368" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · FieldScene_RunFlag9a9GuardedScene · C: 48 bytes</title>
-<rect x="443.7016381563815" y="252.81131374805503" width="0.48545831341964296" height="0.3561988538592377" style="fill:#326b7d"/>
+<rect x="443.37864561574105" y="252.26333775248173" width="0.6345223567648455" height="0.36561873926457295" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · SceneState_ApplyThreeRects · C: 70 bytes" data-node="leaf" data-kind="file" data-bytes="70" data-address="0x02000398" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · SceneState_ApplyThreeRects · C: 70 bytes</title>
-<rect x="444.5646538643181" y="250.67284302736238" width="0.39891593517458446" height="0.6970654082858762" style="fill:#326b7d"/>
+<rect x="441.6669045171673" y="253.06308528336956" width="0.5583003028850624" height="0.5026388439819338" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · FieldScene_RunScene3a7SequenceA · C: 44 bytes" data-node="leaf" data-kind="file" data-bytes="44" data-address="0x020003e0" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · FieldScene_RunScene3a7SequenceA · C: 44 bytes</title>
-<rect x="445.29410014578013" y="250.60445743847532" width="0.2621447574004412" height="0.786185223300869" style="fill:#326b7d"/>
+<rect x="441.58073785819903" y="253.9821963123651" width="0.6845058318275083" height="0.33030552604527075" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · FieldScene_NoOp · C: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0200040c" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · FieldScene_NoOp · C: 2 bytes</title>
-<rect x="445.1749406077697" y="251.53362788116618" width="0.5004638334213072" height="0.023825681379575192" style="fill:#326b7d"/>
+<rect x="442.4419284002977" y="253.82857549659101" width="0.02306389449710855" height="0.637547157593433" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · SceneState_ApplyThreeRectsRows9And10 · C: 70 bytes" data-node="leaf" data-kind="file" data-bytes="70" data-address="0x02000410" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · SceneState_ApplyThreeRectsRows9And10 · C: 70 bytes</title>
-<rect x="444.5305379097528" y="251.7347084162576" width="0.9914373591059469" height="0.33068402604410446" style="fill:#326b7d"/>
+<rect x="442.63657971678623" y="252.97182133612148" width="0.32011094948573154" height="1.3457777905686776" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · SceneActor_IsActor10AtTile16x12 · C: 52 bytes" data-node="leaf" data-kind="file" data-bytes="52" data-address="0x02000458" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · SceneActor_IsActor10AtTile16x12 · C: 52 bytes</title>
-<rect x="444.51085333746767" y="252.37639189606065" width="0.29131488147374013" height="0.8235626920463837" style="fill:#326b7d"/>
+<rect x="443.30027625644453" y="252.99529597680834" width="0.7121709702638778" height="0.36706023085944606" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · FieldScene_RunGuardedStep9AAAfterSetup · C: 64 bytes" data-node="leaf" data-kind="file" data-bytes="64" data-address="0x0200048c" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · FieldScene_RunGuardedStep9AAAfterSetup · C: 64 bytes</title>
-<rect x="445.1326985652289" y="252.41560736087442" width="0.3697458111012855" height="0.711347593524289" style="fill:#326b7d"/>
+<rect x="443.3496882105987" y="253.7788283926814" width="0.5806430861639494" height="0.4658841391677585" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · Resource3a7_NoOpCallback · C: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x020004cc" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · Resource3a7_NoOpCallback · C: 2 bytes</title>
-<rect x="444.95627170190187" y="253.32027390217297" width="0.7225995377552964" height="0.016892084447274636" style="fill:#326b7d"/>
+<rect x="444.17144936029445" y="253.5540623170454" width="0.01635198789580794" height="0.9154162904397091" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · FieldScene_RunGuardedStep9AA · C: 60 bytes" data-node="leaf" data-kind="file" data-bytes="60" data-address="0x020004d0" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · FieldScene_RunGuardedStep9AA · C: 60 bytes</title>
-<rect x="445.8691880465845" y="250.65525582447876" width="0.3637415294073107" height="0.6665137964543215" style="fill:#326b7d"/>
+<rect x="441.64474443142785" y="254.70681393768453" width="0.5389959378202409" height="0.4583186725030073" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · SceneState_ApplyRectAndMarkActor16 · C: 72 bytes" data-node="leaf" data-kind="file" data-bytes="72" data-address="0x0200050c" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · SceneState_ApplyRectAndMarkActor16 · C: 72 bytes</title>
-<rect x="446.63304525833985" y="250.6916299774195" width="0.4364898352887729" height="0.5937654905728593" style="fill:#326b7d"/>
+<rect x="441.66491374775717" y="255.64362059901987" width="0.4986573051616241" height="0.6013075088455935" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · SceneState_ConfigureRegion26_30AndMarkActor17 · C: 76 bytes" data-node="leaf" data-kind="file" data-bytes="76" data-address="0x02000554" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · SceneState_ConfigureRegion26_30AndMarkActor17 · C: 76 bytes</title>
-<rect x="445.8356116090882" y="251.6519347128441" width="1.3038740749774549" height="0.2965886544147123" style="fill:#326b7d"/>
+<rect x="442.575253269149" y="254.64000816508238" width="1.458370509339794" height="0.32470712729874074" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · SceneState_ConfigureRegion26_30AndClearActor18Mode · C: 76 bytes" data-node="leaf" data-kind="file" data-bytes="76" data-address="0x020005a0" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · SceneState_ConfigureRegion26_30AndClearActor18Mode · C: 76 bytes</title>
-<rect x="445.8773722309962" y="252.28687264358146" width="0.3801098982306397" height="0.8686844361470967" style="fill:#326b7d"/>
+<rect x="442.62464017485047" y="255.33880932538133" width="0.423480938701652" height="0.9437069657140986" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · SceneState_ApplyRectAndSetupActor19 · C: 84 bytes" data-node="leaf" data-kind="file" data-bytes="84" data-address="0x020005ec" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · SceneState_ApplyRectAndSetupActor19 · C: 84 bytes</title>
-<rect x="446.6575978115748" y="252.30687842769888" width="0.4201214664654439" height="0.8286728679122926" style="fill:#326b7d"/>
+<rect x="443.49389052271175" y="255.36109779583933" width="0.4680578796176154" height="0.8991300247981352" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · SceneActor_SetupSlotTwenty · C: 80 bytes" data-node="leaf" data-kind="file" data-bytes="80" data-address="0x02000640" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · SceneActor_SetupSlotTwenty · C: 80 bytes</title>
-<rect x="442.2219379413212" y="253.54216099846963" width="0.39309793925143" height="0.8779903756947519" style="fill:#326b7d"/>
+<rect x="441.6594791519274" y="256.7381508171973" width="0.4877881135020672" height="0.76162844153874" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · SceneActor_MarkSlot21AndSetFlag205 · C: 84 bytes" data-node="leaf" data-kind="file" data-bytes="84" data-address="0x02000690" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · SceneActor_MarkSlot21AndSetFlag205 · C: 84 bytes</title>
-<rect x="443.0179612683053" y="253.5519884469509" width="0.41275283621400155" height="0.8583354787321802" style="fill:#326b7d"/>
+<rect x="442.6472500817691" y="256.75034552003484" width="0.5121775191771706" height="0.7372390358636366" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · SceneState_DispatchByActorZeroDepth · C: 32 bytes" data-node="leaf" data-kind="file" data-bytes="32" data-address="0x020006e4" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · SceneState_DispatchByActorZeroDepth · C: 32 bytes</title>
-<rect x="443.79432969832686" y="253.50285120454447" width="0.31447835140114405" height="0.32106580607194685" style="fill:#326b7d"/>
+<rect x="443.5716934299149" y="256.65043382982634" width="0.46810684284310566" height="0.3123541387602018" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · SceneState_SetEntries16To21Byte35 · C: 32 bytes" data-node="leaf" data-kind="file" data-bytes="32" data-address="0x02000734" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · SceneState_SetEntries16To21Byte35 · C: 32 bytes</title>
-<rect x="443.79432969832686" y="254.13839536201755" width="0.31447835140114405" height="0.32106580607194685" style="fill:#326b7d"/>
+<rect x="443.5716934299149" y="257.27514210734677" width="0.46810684284310566" height="0.3123541387602018" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · FieldScene_RunSupplementalSequenceOne · C: 340 bytes" data-node="leaf" data-kind="file" data-bytes="340" data-address="0x02000754" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · FieldScene_RunSupplementalSequenceOne · C: 340 bytes</title>
-<rect x="442.4992596154254" y="255.09057098752" width="1.292916966273279" height="0.9477412874598723" style="fill:#326b7d"/>
+<rect x="441.88137635473106" y="258.20946457504175" width="1.8488097278524094" height="0.9315825191093736" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · FieldScene_RunScene3a7SequenceB · C: 156 bytes" data-node="leaf" data-kind="file" data-bytes="156" data-address="0x020008a8" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · FieldScene_RunScene3a7SequenceB · C: 156 bytes</title>
-<rect x="444.57617243239685" y="253.65573723581213" width="0.620250413936473" height="0.950633317328608" style="fill:#326b7d"/>
+<rect x="441.7009411415751" y="259.89219440010453" width="0.5707120927974186" height="1.511648832270593" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · FieldScene_RunOpeningAuxiliarySequence · C: 224 bytes" data-node="leaf" data-kind="file" data-bytes="224" data-address="0x020009c0" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · FieldScene_RunOpeningAuxiliarySequence · C: 224 bytes</title>
-<rect x="445.8992689861178" y="253.73833296166018" width="0.9957900923388691" height="0.7854418656325405" style="fill:#326b7d"/>
+<rect x="442.96675129611293" y="260.0165803690476" width="0.8194840306834729" height="1.2628768943845388" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · FieldScene_RunScene3a7SequenceD · C: 180 bytes" data-node="leaf" data-kind="file" data-bytes="180" data-address="0x02000aa0" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · FieldScene_RunScene3a7SequenceD · C: 180 bytes</title>
-<rect x="444.6183217730011" y="255.2687703076815" width="0.7045490951450569" height="0.8911380634557885" style="fill:#326b7d"/>
+<rect x="441.7397240876978" y="262.0133382712953" width="0.6482779850429028" height="1.4669623230524984" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · SceneActor_TransformAndApplyRecordPosition · C: 54 bytes" data-node="leaf" data-kind="file" data-bytes="54" data-address="0x02000b54" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · SceneActor_TransformAndApplyRecordPosition · C: 54 bytes</title>
-<rect x="445.78082777999055" y="255.02217812438076" width="0.2113647285435171" height="1.3843224300573282" style="fill:#326b7d"/>
+<rect x="442.8507611825403" y="261.82781939605195" width="1.2065960423197841" height="0.27724023455619334" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · SceneActor_InitSlots10To15AndStartTask · C: 72 bytes" data-node="leaf" data-kind="file" data-bytes="72" data-address="0x02000c08" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · SceneActor_InitSlots10To15AndStartTask · C: 72 bytes</title>
-<rect x="446.286837825798" y="255.10545871310117" width="0.8119792324827968" height="0.3779259059844107" style="fill:#326b7d"/>
+<rect x="442.8969678882996" y="262.4285065709237" width="1.114182630801053" height="0.3696536460749245" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · SceneActor_SetupActors11To14AndInstallTask · C: 80 bytes" data-node="leaf" data-kind="file" data-bytes="80" data-address="0x02000c50" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector.c">
 <title>3a7 · SceneActor_SetupActors11To14AndInstallTask · C: 80 bytes</title>
-<rect x="446.3078337094638" y="255.88230640873584" width="0.7699874651511955" height="0.419917673316012" style="fill:#326b7d"/>
+<rect x="442.9175042019705" y="263.1883501767444" width="1.0731100034593946" height="0.4107262734165828" style="fill:#326b7d"/>
 </g>
 </g>
 <g aria-label="table_update.c: 112 bytes · 6 items" data-node="container" data-kind="file" data-bytes="112" data-source="games/gs1/src/overlays/scene/state/table_update.c">
 <title>table_update.c: 112 bytes · 6 items</title>
-<rect class="container-frame" x="440.02538897169546" y="258.5121829187098" width="0.5518020193790856" height="7.418608480659303" fill="#1f7f93"/>
-<path class="bevel-light" d="M440.02538897169546 265.9307913993691 V258.5121829187098 H440.57719099107453" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M440.02538897169546 265.9307913993691 H440.57719099107453 V258.5121829187098" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<rect class="container-frame" x="440.02538897169546" y="265.1946357103501" width="5.560784493923566" height="0.7361556890190251" fill="#1f7f93"/>
+<path class="bevel-light" d="M440.02538897169546 265.9307913993691 V265.1946357103501 H445.586173465619" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M440.02538897169546 265.9307913993691 H445.586173465619 V265.1946357103501" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="37c · leaf_0824 · C: 8 bytes" data-node="leaf" data-kind="file" data-bytes="8" data-address="0x02000030" data-source="games/gs1/src/overlays/scene/state/table_update.c">
 <title>37c · leaf_0824 · C: 8 bytes</title>
-<rect x="440.2323147289626" y="258.71910867597694" width="0.1379505048447714" height="0.3722428859387829" style="fill:#326b7d"/>
+<rect x="440.3014473550776" y="265.4706940937322" width="0.18686869556053326" height="0.18403892225475627" style="fill:#326b7d"/>
 </g>
 <g aria-label="37c · state_update_0432 · C: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x02000038" data-source="games/gs1/src/overlays/scene/state/table_update.c">
 <title>37c · state_update_0432 · C: 4 bytes</title>
-<rect x="440.22711365038816" y="259.2241009881861" width="0.14835266199365416" height="0.12754834769588863" style="fill:#326b7d"/>
+<rect x="440.6266989639924" y="265.4250380848317" width="0.0927269044538224" height="0.27535094005569016" style="fill:#326b7d"/>
 </g>
 <g aria-label="37c · SceneData_GetPrimaryTable37c · C: 8 bytes" data-node="leaf" data-kind="file" data-bytes="8" data-address="0x0200003c" data-source="games/gs1/src/overlays/scene/state/table_update.c">
 <title>37c · SceneData_GetPrimaryTable37c · C: 8 bytes</title>
-<rect x="440.2323147289626" y="259.4843987621523" width="0.1379505048447714" height="0.3722428859387829" style="fill:#326b7d"/>
+<rect x="440.85780878180054" y="265.4706940937322" width="0.18686869556053332" height="0.18403892225475627" style="fill:#326b7d"/>
 </g>
 <g aria-label="37c · SceneData_GetSecondaryTable37c · C: 8 bytes" data-node="leaf" data-kind="file" data-bytes="8" data-address="0x02000044" data-source="games/gs1/src/overlays/scene/state/table_update.c">
 <title>37c · SceneData_GetSecondaryTable37c · C: 8 bytes</title>
-<rect x="440.2323147289626" y="259.99459215293587" width="0.1379505048447714" height="0.372242885938783" style="fill:#326b7d"/>
+<rect x="441.22871639961585" y="265.4706940937322" width="0.18686869556053337" height="0.18403892225475627" style="fill:#326b7d"/>
 </g>
 <g aria-label="37c · SceneData_GetTertiaryTable37c · C: 8 bytes" data-node="leaf" data-kind="file" data-bytes="8" data-address="0x0200004c" data-source="games/gs1/src/overlays/scene/state/table_update.c">
 <title>37c · SceneData_GetTertiaryTable37c · C: 8 bytes</title>
-<rect x="440.2323147289626" y="260.50478554371944" width="0.1379505048447714" height="0.372242885938783" style="fill:#326b7d"/>
+<rect x="441.59962401743115" y="265.4706940937322" width="0.18686869556053337" height="0.18403892225475627" style="fill:#326b7d"/>
 </g>
 <g aria-label="37c · Resource37c_Run · C: 76 bytes" data-node="leaf" data-kind="file" data-bytes="76" data-address="0x02000054" data-source="games/gs1/src/overlays/scene/state/table_update.c">
 <title>37c · Resource37c_Run · C: 76 bytes</title>
-<rect x="440.2323147289626" y="261.01497893450295" width="0.1379505048447714" height="4.708886707598995" style="fill:#326b7d"/>
+<rect x="441.9705316352464" y="265.4706940937322" width="3.339583446990494" height="0.18403892225475627" style="fill:#326b7d"/>
+</g>
+</g>
+<g aria-label="task.c: 6,848 bytes · 64 items" data-node="container" data-kind="file" data-bytes="6848" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>task.c: 6,848 bytes · 64 items</title>
+<rect class="container-frame" x="445.586173465619" y="248.4733850597751" width="14.337444357827026" height="17.457406339594023" fill="#1f7f93"/>
+<path class="bevel-light" d="M445.586173465619 265.9307913993691 V248.4733850597751 H459.9236178234461" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M445.586173465619 265.9307913993691 H459.9236178234461 V248.4733850597751" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="3bb · SceneData_GetTableC414 · C: 8 bytes" data-node="leaf" data-kind="file" data-bytes="8" data-address="0x02000030" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · SceneData_GetTableC414 · C: 8 bytes</title>
+<rect x="447.65720675167887" y="250.54441834583497" width="0.14206657211973447" height="0.4299108537094317" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · task · C: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x02000038" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · task · C: 4 bytes</title>
+<rect x="447.9179713953443" y="250.52104984526085" width="0.3308701453876758" height="0.0953295709715277" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · SceneData_GetTableC474 · C: 8 bytes" data-node="leaf" data-kind="file" data-bytes="8" data-address="0x0200003c" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · SceneData_GetTableC474 · C: 8 bytes</title>
+<rect x="447.96563618083" y="250.75937377268968" width="0.23554057441614804" height="0.19065914194305542" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · SceneData_GetTableC48c · C: 8 bytes" data-node="leaf" data-kind="file" data-bytes="8" data-address="0x02000044" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · SceneData_GetTableC48c · C: 8 bytes</title>
+<rect x="447.67496507319385" y="251.13415409317912" width="0.1775832151496681" height="0.2799987255136649" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · Resource3bb_NoOpHandler · C: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0200004c" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · Resource3bb_NoOpHandler · C: 2 bytes</title>
+<rect x="447.6147723369105" y="251.53154329755907" width="0.2979686877164196" height="0.0571977425829166" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · FieldScene_RunSingleStep · C: 10 bytes" data-node="leaf" data-kind="file" data-bytes="10" data-address="0x02000050" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · FieldScene_RunSingleStep · C: 10 bytes</title>
+<rect x="448.0301315034932" y="251.13415409317912" width="0.1775832151496681" height="0.3943942106794981" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · SceneState_ConfigureRegionByActorElevenColumn · C: 84 bytes" data-node="leaf" data-kind="file" data-bytes="84" data-address="0x0200005c" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · SceneState_ConfigureRegionByActorElevenColumn · C: 84 bytes</title>
+<rect x="448.58249503913225" y="250.75937377268968" width="0.9197215814280456" height="0.5719774258291662" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · FieldScene_RunTwoStepSequence · C: 14 bytes" data-node="leaf" data-kind="file" data-bytes="14" data-address="0x020000b0" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · FieldScene_RunTwoStepSequence · C: 14 bytes</title>
+<rect x="449.8503594587773" y="250.53553918507748" width="0.12430825060476769" height="1.0196466010535647" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · SceneState_StoreSlotTileXToWork832To848 · C: 142 bytes" data-node="leaf" data-kind="file" data-bytes="142" data-address="0x020000c0" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · SceneState_StoreSlotTileXToWork832To848 · C: 142 bytes</title>
+<rect x="448.00044973753245" y="252.03161618334687" width="0.82855254382688" height="0.9122483173923215" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · SceneState_SetWorkByte35 · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x02000150" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · SceneState_SetWorkByte35 · C: 16 bytes</title>
+<rect x="449.34567860393275" y="251.71973996209337" width="0.5887431800917535" height="0.20480010131990606" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · SceneState_SetFlag331AndConfigureRegion46_17 · C: 52 bytes" data-node="leaf" data-kind="file" data-bytes="52" data-address="0x02000258" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · SceneState_SetFlag331AndConfigureRegion46_17 · C: 52 bytes</title>
+<rect x="449.4416643736257" y="252.22532593442614" width="0.3967716407058298" height="0.9344290178735599" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · FieldScene_SetFlag332AndDrawTiles · C: 52 bytes" data-node="leaf" data-kind="file" data-bytes="52" data-address="0x0200028c" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · FieldScene_SetFlag332AndDrawTiles · C: 52 bytes</title>
+<rect x="450.290212539194" y="250.7267757642846" width="0.5354483571352325" height="0.5067814090190262" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · FieldScene_SetFlag333AndDrawTiles · C: 40 bytes" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x020002c0" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · FieldScene_SetFlag333AndDrawTiles · C: 40 bytes</title>
+<rect x="451.2794804020223" y="250.6738138609586" width="0.4008576023670226" height="0.6127052156710299" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · SceneState_SendWord250With6 · C: 28 bytes" data-node="leaf" data-kind="file" data-bytes="28" data-address="0x020002e8" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · SceneState_SendWord250With6 · C: 28 bytes</title>
+<rect x="452.0674757457377" y="250.66009399994" width="0.3882115641675343" height="0.37341788032980877" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · FieldScene_Forward4358 · C: 10 bytes" data-node="leaf" data-kind="file" data-bytes="10" data-address="0x02000304" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · FieldScene_Forward4358 · C: 10 bytes</title>
+<rect x="451.94744856991736" y="251.28690258477934" width="0.6282659158081256" height="0.13336352868921747" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · SceneActor_MovePairByTileOffset · C: 240 bytes" data-node="leaf" data-kind="file" data-bytes="240" data-address="0x02000310" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · SceneActor_MovePairByTileOffset · C: 240 bytes</title>
+<rect x="450.5046200583943" y="251.95474610152303" width="1.6699779679659064" height="0.9355964474197408" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · SceneState_ApplyRectsForActors15To17 · C: 112 bytes" data-node="leaf" data-kind="file" data-bytes="112" data-address="0x0200062c" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · SceneState_ApplyRectsForActors15To17 · C: 112 bytes</title>
+<rect x="447.9120189339503" y="253.68398624098393" width="0.6516909366625819" height="1.093958952025197" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · FieldScene_RunStep15At29By26 · C: 20 bytes" data-node="leaf" data-kind="file" data-bytes="20" data-address="0x0200069c" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · FieldScene_RunStep15At29By26 · C: 20 bytes</title>
+<rect x="447.69478862172946" y="255.21240581745084" width="0.21723031222086064" height="0.7179392710047352" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · FieldScene_RunStep15At33By26 · C: 20 bytes" data-node="leaf" data-kind="file" data-bytes="20" data-address="0x020006b0" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · FieldScene_RunStep15At33By26 · C: 20 bytes</title>
+<rect x="448.13753028796395" y="255.2206868592436" width="0.6351288530770436" height="0.23379239580639893" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · FieldScene_RunStep16At45By26 · C: 20 bytes" data-node="leaf" data-kind="file" data-bytes="20" data-address="0x020006c4" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · FieldScene_RunStep16At45By26 · C: 20 bytes</title>
+<rect x="448.13753028796395" y="255.68827165085642" width="0.6351288530770436" height="0.23379239580639893" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · FieldScene_RunStep16At49By26 · C: 20 bytes" data-node="leaf" data-kind="file" data-bytes="20" data-address="0x020006d8" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · FieldScene_RunStep16At49By26 · C: 20 bytes</title>
+<rect x="447.69478862172946" y="256.14757540067643" width="0.21723031222086064" height="0.7179392710047352" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · FieldScene_RunStep17At40By23 · C: 20 bytes" data-node="leaf" data-kind="file" data-bytes="20" data-address="0x020006ec" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · FieldScene_RunStep17At40By23 · C: 20 bytes</title>
+<rect x="448.13753028796395" y="256.1558564424692" width="0.6351288530770436" height="0.23379239580639893" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · FieldScene_RunStep17At40By25 · C: 20 bytes" data-node="leaf" data-kind="file" data-bytes="20" data-address="0x02000700" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · FieldScene_RunStep17At40By25 · C: 20 bytes</title>
+<rect x="448.13753028796395" y="256.623441234082" width="0.6351288530770436" height="0.23379239580639893" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · FieldScene_RunSupplementalSequenceOne · C: 472 bytes" data-node="leaf" data-kind="file" data-bytes="472" data-address="0x02000714" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · FieldScene_RunSupplementalSequenceOne · C: 472 bytes</title>
+<rect x="449.3895553389442" y="253.85814077265263" width="1.6517079491787814" height="2.6159890551389706" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · FieldScene_RunScene3bbSequenceA · C: 100 bytes" data-node="leaf" data-kind="file" data-bytes="100" data-address="0x020008ec" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · FieldScene_RunScene3bbSequenceA · C: 100 bytes</title>
+<rect x="451.81654652860976" y="253.6334240131394" width="0.5505664809735606" height="1.2943258940973428" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · SceneState_ApplyTable8715AndValue104 · C: 32 bytes" data-node="leaf" data-kind="file" data-bytes="32" data-address="0x02000950" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · SceneState_ApplyTable8715AndValue104 · C: 32 bytes</title>
+<rect x="451.6888546781287" y="255.3506245377292" width="0.8059501819357768" height="0.2951827800113445" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · SceneState_WaitForStatusWords · C: 64 bytes" data-node="leaf" data-kind="file" data-bytes="64" data-address="0x02000970" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · SceneState_WaitForStatusWords · C: 64 bytes</title>
+<rect x="451.81654652860976" y="256.068681948233" width="0.5505664809735606" height="0.6301646390718176" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · SceneState_InstallTask8714AndApplyTwoRects · C: 108 bytes" data-node="leaf" data-kind="file" data-bytes="108" data-address="0x020009b0" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · SceneState_InstallTask8714AndApplyTwoRects · C: 108 bytes</title>
+<rect x="452.922900692612" y="250.75388950231704" width="0.5610088850838931" height="1.394387551767756" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · SceneData_GetTableC83c · C: 8 bytes" data-node="leaf" data-kind="file" data-bytes="8" data-address="0x02000b30" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · SceneData_GetTableC83c · C: 8 bytes</title>
+<rect x="452.67860729519697" y="252.46499254175365" width="1.0495956799140216" height="0.07242209025376478" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · FieldScene_RunScene3bb_02000b38 · C: 154 bytes" data-node="leaf" data-kind="file" data-bytes="154" data-address="0x02000b38" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · FieldScene_RunScene3bb_02000b38 · C: 154 bytes</title>
+<rect x="454.13680784912975" y="250.84577888866698" width="0.7447876577837892" height="1.3554529595753895" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · FieldScene_RunSecondActorInteraction · C: 276 bytes" data-node="leaf" data-kind="file" data-bytes="276" data-address="0x02001424" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · FieldScene_RunSecondActorInteraction · C: 276 bytes</title>
+<rect x="455.75398933580544" y="250.9733850597751" width="1.669628487640595" height="1.1002406173591788" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · FieldScene_RunSceneThreeCoordinator · C: 412 bytes" data-node="leaf" data-kind="file" data-bytes="412" data-address="0x02001538" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · FieldScene_RunSceneThreeCoordinator · C: 412 bytes</title>
+<rect x="453.1423962500701" y="253.0736256771343" width="1.4559526897167925" height="2.407909229456426" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · initialize_scene_actor_positions · C: 120 bytes" data-node="leaf" data-kind="file" data-bytes="120" data-address="0x02001b30" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · initialize_scene_actor_positions · C: 120 bytes</title>
+<rect x="452.8905449803703" y="256.22968363689097" width="1.9596552291163423" height="0.4962974606004502" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · mark_scene_progress · C: 72 bytes" data-node="leaf" data-kind="file" data-bytes="72" data-address="0x02001c78" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · mark_scene_progress · C: 72 bytes</title>
+<rect x="455.2277755324533" y="252.70305226980068" width="2.566415698326383" height="0.2588531853327839" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · select_nearest_scene_actor · C: 308 bytes" data-node="leaf" data-kind="file" data-bytes="308" data-address="0x02001cc0" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · select_nearest_scene_actor · C: 308 bytes</title>
+<rect x="455.5983489397869" y="253.59133204779985" width="1.825268883659167" height="1.2146328078471513" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · RunPartyCountInteractionCopyA · C: 164 bytes" data-node="leaf" data-kind="file" data-bytes="164" data-address="0x02001f14" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · RunPartyCountInteractionCopyA · C: 164 bytes</title>
+<rect x="455.515390182823" y="255.72300609868313" width="1.1630903454798662" height="0.8340824860723036" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · FieldScene_RunSixSteps896To936 · C: 68 bytes" data-node="leaf" data-kind="file" data-bytes="68" data-address="0x02001fb8" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · FieldScene_RunSixSteps896To936 · C: 68 bytes</title>
+<rect x="457.3025457843658" y="255.51298886867377" width="0.41404802605349866" height="1.2541169460911084" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · run_state_interaction · C: 188 bytes" data-node="leaf" data-kind="file" data-bytes="188" data-address="0x02001ffc" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · run_state_interaction · C: 188 bytes</title>
+<rect x="447.8663612159127" y="257.2543175780853" width="2.8473100515250507" height="0.5603755005873721" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · task · C: 92 bytes" data-node="leaf" data-kind="file" data-bytes="92" data-address="0x020020b8" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · task · C: 92 bytes</title>
+<rect x="451.27404676802513" y="257.2543175780853" width="1.1072153015101969" height="0.5603755005873721" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · FieldScene_RunMiddleSequence · C: 620 bytes" data-node="leaf" data-kind="file" data-bytes="620" data-address="0x02002114" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · FieldScene_RunMiddleSequence · C: 620 bytes</title>
+<rect x="448.086173465619" y="258.5948808289664" width="3.6274578523679333" height="1.7218238599958064" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · OverlayObject_NotifyMatchingEntries · C: 60 bytes" data-node="leaf" data-kind="file" data-bytes="60" data-address="0x02002380" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · OverlayObject_NotifyMatchingEntries · C: 60 bytes</title>
+<rect x="452.32558594344744" y="258.2068354544269" width="0.2239092509210292" height="2.4979146090747775" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · task · C: 142 bytes" data-node="leaf" data-kind="file" data-bytes="142" data-address="0x02002940" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · task · C: 142 bytes</title>
+<rect x="447.8177574123728" y="261.048288635716" width="0.46316789350759563" height="2.6509188168993716" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · task · C: 268 bytes" data-node="leaf" data-kind="file" data-bytes="268" data-address="0x020029d0" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · task · C: 268 bytes</title>
+<rect x="448.9495831803104" y="261.2537786166384" width="0.8741478553523636" height="2.2399388550546036" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · FieldScene_RunLateSequence · C: 204 bytes" data-node="leaf" data-kind="file" data-bytes="204" data-address="0x02002adc" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · FieldScene_RunLateSequence · C: 204 bytes</title>
+<rect x="450.69237676287906" y="261.2482764885023" width="1.5375012574098808" height="0.8631435990801921" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · StagedActor_ResetMotionAfterRefresh · C: 32 bytes" data-node="leaf" data-kind="file" data-bytes="32" data-address="0x02002e44" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · StagedActor_ResetMotionAfterRefresh · C: 32 bytes</title>
+<rect x="450.4342799023698" y="262.7164668261534" width="0.589887139105212" height="0.3469498780616458" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · SceneState_InitCursorWhenUnset · C: 32 bytes" data-node="leaf" data-kind="file" data-bytes="32" data-address="0x02002e64" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · SceneState_InitCursorWhenUnset · C: 32 bytes</title>
+<rect x="450.4342799023698" y="263.4103665822767" width="0.589887139105212" height="0.3469498780616458" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · SceneEffect_SeedMarkerAndInstallTask · C: 100 bytes" data-node="leaf" data-kind="file" data-bytes="100" data-address="0x02002fc0" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · SceneEffect_SeedMarkerAndInstallTask · C: 100 bytes</title>
+<rect x="451.54459185856746" y="262.88994176518423" width="0.7699080831999234" height="0.6938997561232916" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · SceneState_StartMarkerMove · C: 92 bytes" data-node="leaf" data-kind="file" data-bytes="92" data-address="0x02003024" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · SceneState_StartMarkerMove · C: 92 bytes</title>
+<rect x="452.9637600342678" y="257.2764400422304" width="0.9409393733859575" height="0.6046204288774846" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · SceneEffect_RemoveMarkerTask · C: 40 bytes" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x02003080" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · SceneEffect_RemoveMarkerTask · C: 40 bytes</title>
+<rect x="454.3750052527733" y="257.14212545847244" width="0.3359912613616177" height="0.8732495963933514" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · SceneActor_PlaceWithScale20000 · C: 64 bytes" data-node="leaf" data-kind="file" data-bytes="64" data-address="0x020030a8" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · SceneActor_PlaceWithScale20000 · C: 64 bytes</title>
+<rect x="452.8105282954584" y="258.332449161176" width="0.29815695125871294" height="1.8821409589358524" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · SceneActor_PlaceWithScale14000 · C: 78 bytes" data-node="leaf" data-kind="file" data-bytes="78" data-address="0x020030e8" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · SceneActor_PlaceWithScale14000 · C: 78 bytes</title>
+<rect x="453.5021074536614" y="258.42771441686153" width="1.1325409598394351" height="0.4886874626298163" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · Text_WriteU32AsHex · C: 44 bytes" data-node="leaf" data-kind="file" data-bytes="44" data-address="0x020031fc" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · Text_WriteU32AsHex · C: 44 bytes</title>
+<rect x="453.4604172751551" y="259.36339916361493" width="0.40530710561731287" height="0.6973722972397088" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · Resource3bb_EmptyHook · C: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x02003228" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · Resource3bb_EmptyHook · C: 4 bytes</title>
+<rect x="453.2828246178659" y="260.2884859091827" width="0.7604924201956702" height="0.05012179103895553" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · SceneState_SetHalfword1000To9 · C: 12 bytes" data-node="leaf" data-kind="file" data-bytes="12" data-address="0x0200322c" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · SceneState_SetHalfword1000To9 · C: 12 bytes</title>
+<rect x="454.1435606201395" y="259.2359282973647" width="0.6602488381177591" height="0.1503653731168666" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · SceneState_WaitUntilStatusNine · C: 36 bytes" data-node="leaf" data-kind="file" data-bytes="36" data-address="0x02003238" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · SceneState_WaitUntilStatusNine · C: 36 bytes</title>
+<rect x="454.27103148638975" y="259.66412990984867" width="0.40530710561731287" height="0.4968851330838867" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · task · C: 148 bytes" data-node="leaf" data-kind="file" data-bytes="148" data-address="0x0200325c" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · task · C: 148 bytes</title>
+<rect x="455.26598672855795" y="257.36112441153386" width="1.1682720412968954" height="0.7739891674845394" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · task · C: 84 bytes" data-node="leaf" data-kind="file" data-bytes="84" data-address="0x020032f0" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · task · C: 84 bytes</title>
+<rect x="457.09684447105934" y="257.24972094525384" width="0.5511822349244612" height="0.9967961000446176" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · task · C: 276 bytes" data-node="leaf" data-kind="file" data-bytes="276" data-address="0x02003344" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · task · C: 276 bytes</title>
+<rect x="455.3393822530608" y="258.9824982710058" width="2.123845462140129" height="0.9207802164902279" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · FieldScene_BuildDescriptorAndInstallTask · C: 232 bytes" data-node="leaf" data-kind="file" data-bytes="232" data-address="0x020039fc" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · FieldScene_BuildDescriptorAndInstallTask · C: 232 bytes</title>
+<rect x="453.16144981982904" y="260.86366859574116" width="1.3007747548282271" height="1.0484467585190398" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · SceneState_InitControlRecordAndStartTask · C: 84 bytes" data-node="leaf" data-kind="file" data-bytes="84" data-address="0x02003ae4" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · SceneState_InitControlRecordAndStartTask · C: 84 bytes</title>
+<rect x="452.94235836547665" y="262.69302389990776" width="0.5618170912952647" height="0.9568589538136791" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · SceneState_SetWorkHalfwordDc · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x02003b38" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · SceneState_SetWorkHalfwordDc · C: 16 bytes</title>
+<rect x="453.8541147317427" y="262.4811460835833" width="1.0390791135914301" height="0.13806145864626762" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · SceneData_FindSlotAtPosition · C: 72 bytes" data-node="leaf" data-kind="file" data-bytes="72" data-address="0x02003b48" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · SceneData_FindSlotAtPosition · C: 72 bytes</title>
+<rect x="454.079369145479" y="262.98252341461216" width="0.5885702861188489" height="0.6539828416975597" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · StagedActor_PushActorAhead · C: 360 bytes" data-node="leaf" data-kind="file" data-bytes="360" data-address="0x02003b90" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · StagedActor_PushActorAhead · C: 360 bytes</title>
+<rect x="455.4622245746573" y="260.86366859574116" width="1.9613932487888075" height="1.4695465563578347" style="fill:#326b7d"/>
+</g>
+<g aria-label="3bb · SceneActor_FindOccupantAheadOfSubject · C: 160 bytes" data-node="leaf" data-kind="file" data-bytes="160" data-address="0x02003cf8" data-source="games/gs1/src/overlays/scene/state/task.c">
+<title>3bb · SceneActor_FindOccupantAheadOfSubject · C: 160 bytes</title>
+<rect x="455.2366186364748" y="263.10760921391653" width="2.412605125153733" height="0.5487881236350745" style="fill:#326b7d"/>
 </g>
 </g>
 <g aria-label="select_by_runtime_selector: 1,768 bytes · 17 items" data-node="container" data-kind="folder" data-bytes="1768" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector/">
 <title>select_by_runtime_selector: 1,768 bytes · 17 items</title>
-<rect class="container-frame" x="440.57719099107453" y="258.5121829187098" width="8.710589020198421" height="7.418608480659303" fill="#1f7f93"/>
-<path class="bevel-light" d="M440.57719099107453 265.9307913993691 V258.5121829187098 H449.28778001127296" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M440.57719099107453 265.9307913993691 H449.28778001127296 V258.5121829187098" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<rect class="container-frame" x="459.9236178234461" y="248.4733850597751" width="3.7016065456539398" height="17.457406339594023" fill="#1f7f93"/>
+<path class="bevel-light" d="M459.9236178234461 265.9307913993691 V248.4733850597751 H463.6252243691" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M459.9236178234461 265.9307913993691 H463.6252243691 V248.4733850597751" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="3a7 · AddSoftFloatParts · C: 596 bytes" data-node="leaf" data-kind="file" data-bytes="596" data-address="0x02001158" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector/add_parts.c">
 <title>3a7 · AddSoftFloatParts · C: 596 bytes</title>
-<rect x="442.93184311123935" y="260.8668350388746" width="1.3139428449845325" height="1.7026226494333403" style="fill:#326b7d"/>
+<rect x="461.31172027806633" y="249.86148751439532" width="0.9254016364134849" height="4.335647813695772" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · AddSoftDouble · C: 54 bytes" data-node="leaf" data-kind="file" data-bytes="54" data-address="0x020013ac" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector/add_soft_double.c">
 <title>3a7 · AddSoftDouble · C: 54 bytes</title>
-<rect x="442.57255585181275" y="263.2101704288814" width="0.28142548114676746" height="0.7252561097495439" style="fill:#326b7d"/>
+<rect x="461.07616349788833" y="254.8869801843266" width="0.45428807605752897" height="0.516710983526394" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · SceneData_GetTable9888 · C: 8 bytes" data-node="leaf" data-kind="file" data-bytes="8" data-address="0x02001424" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector/get_table_9888.c">
 <title>3a7 · SceneData_GetTable9888 · C: 8 bytes</title>
-<rect x="443.0433355147187" y="263.1180991294938" width="0.09728288237172207" height="0.3341520851552685" style="fill:#326b7d"/>
+<rect x="461.83611453870066" y="254.73835507302383" width="0.15703785345198532" height="0.2591046006554102" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · SceneState_IsState4 · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x0200143c" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector/is_state_4.c">
 <title>3a7 · SceneState_IsState4 · C: 16 bytes</title>
-<rect x="443.286542720648" y="263.1667405706797" width="0.19456576474344417" height="0.2368692027835464" style="fill:#326b7d"/>
+<rect x="462.17570693240543" y="254.7638717598247" width="0.42008018675424363" height="0.20807122705369777" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · SceneState_IsStateAtMostOne · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x0200142c" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector/is_state_at_most_one.c">
 <title>3a7 · SceneState_IsStateAtMostOne · C: 16 bytes</title>
-<rect x="443.06765623531163" y="263.5738548176137" width="0.1459243235575831" height="0.42932229981173764" style="fill:#326b7d"/>
+<rect x="461.8753740020636" y="255.19375699049422" width="0.235556780177978" height="0.3192998252985494" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · SceneState_IsStateFour · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x02001554" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector/is_state_four.c">
 <title>3a7 · SceneState_IsStateFour · C: 16 bytes</title>
-<rect x="443.3595048824268" y="263.5738548176137" width="0.1459243235575831" height="0.42932229981173764" style="fill:#326b7d"/>
+<rect x="462.34648756241955" y="255.19375699049422" width="0.235556780177978" height="0.3192998252985494" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · SceneState_IsStateFourDirect · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x02001750" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector/is_state_four_direct.c">
 <title>3a7 · SceneState_IsStateFourDirect · C: 16 bytes</title>
-<rect x="443.66228150033794" y="263.1533478208827" width="0.3325317013337569" height="0.1677802651493852" style="fill:#326b7d"/>
+<rect x="460.93140725885456" y="255.71322300487677" width="0.6284258046501309" height="0.16477559798999905" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · SceneState_IsStateTwo · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x02001564" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector/is_state_two.c">
 <title>3a7 · SceneState_IsStateTwo · C: 16 bytes</title>
-<rect x="443.66228150033794" y="263.48890835118146" width="0.33253170133375687" height="0.16778026514938524" style="fill:#326b7d"/>
+<rect x="460.9481696351896" y="256.0595365771918" width="0.1983003506600325" height="0.4608020412999638" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · SceneState_IsStateTwoB · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x02001760" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector/is_state_two_b.c">
 <title>3a7 · SceneState_IsStateTwoB · C: 16 bytes</title>
-<rect x="443.66228150033794" y="263.82446888148024" width="0.33253170133375687" height="0.16778026514938524" style="fill:#326b7d"/>
+<rect x="461.3447703365096" y="256.0595365771918" width="0.1983003506600325" height="0.4608020412999638" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · SceneState_IsStateTwoC · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x0200144c" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector/is_state_two_c.c">
 <title>3a7 · SceneState_IsStateTwoC · C: 16 bytes</title>
-<rect x="444.1416209336774" y="263.132375287739" width="0.541247423115484" height="0.12583519886203892" style="fill:#326b7d"/>
+<rect x="461.7083209793864" y="255.69693532276844" width="0.132200233773355" height="0.8564533541666394" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · Runtime_LogicalShiftRight64 · C: 48 bytes" data-node="leaf" data-kind="file" data-bytes="48" data-address="0x02001574" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector/logical_shift_right_64.c">
 <title>3a7 · Runtime_LogicalShiftRight64 · C: 48 bytes</title>
-<rect x="444.24547398974073" y="263.4878987415264" width="0.3335413109887615" height="0.421469882183472" style="fill:#326b7d"/>
+<rect x="462.1049216807064" y="255.8291355565418" width="0.396600701320065" height="0.5920528866199294" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · Runtime_PackSoftDouble · C: 412 bytes" data-node="leaf" data-kind="file" data-bytes="412" data-address="0x020015a4" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector/pack_soft_double.c">
 <title>3a7 · Runtime_PackSoftDouble · C: 412 bytes</title>
-<rect x="445.17918887272555" y="260.8002379553763" width="1.6268538002676087" height="0.8668058330033502" style="fill:#326b7d"/>
+<rect x="461.31172027806633" y="257.0821896120285" width="0.9254016364134849" height="2.7114312049372082" style="fill:#326b7d"/>
 </g>
 <g aria-label="scene_state_interaction_tail.c: 32 bytes · 2 items" data-node="container" data-kind="file" data-bytes="32" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector/scene_state_interaction_tail.c">
 <title>scene_state_interaction_tail.c: 32 bytes · 2 items</title>
-<rect class="container-frame" x="447.23944558949484" y="260.3668350388746" width="0.19368230161327826" height="1.7336116660067005" fill="#1f7f93"/>
-<path class="bevel-light" d="M447.23944558949484 262.10044670488134 V260.3668350388746 H447.4331278911081" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M447.23944558949484 262.10044670488134 H447.4331278911081 V260.3668350388746" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<rect class="container-frame" x="460.84901945985956" y="260.2563216351724" width="1.8508032728269699" height="0.28247245369714147" fill="#1f7f93"/>
+<path class="bevel-light" d="M460.84901945985956 260.53879408886957 V260.2563216351724 H462.6998227326865" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M460.84901945985956 260.53879408886957 H462.6998227326865 V260.2563216351724" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="3a7 · SceneState_IsStateAtMostOneB · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x02001544" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector/scene_state_interaction_tail.c">
 <title>3a7 · SceneState_IsStateAtMostOneB · C: 16 bytes</title>
-<rect x="447.3120764525998" y="260.4394659019796" width="0.048420575403319566" height="0.7699646821967111" style="fill:#326b7d"/>
+<rect x="460.954946629996" y="260.36224880530887" width="0.7841654095649142" height="0.07061811342428537" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · SceneState_IsStateAtMostOneBB · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x02001740" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector/scene_state_interaction_tail.c">
 <title>3a7 · SceneState_IsStateAtMostOneBB · C: 16 bytes</title>
-<rect x="447.3120764525998" y="261.2578511595796" width="0.048420575403319566" height="0.7699646821967111" style="fill:#326b7d"/>
+<rect x="461.8097301529852" y="260.36224880530887" width="0.7841654095649142" height="0.07061811342428537" style="fill:#326b7d"/>
 </g>
 </g>
 <g aria-label="3a7 · SignedIntToSoftDouble · C: 124 bytes" data-node="leaf" data-kind="file" data-bytes="124" data-address="0x0200145c" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector/signed_int_to_soft_double.c">
 <title>3a7 · SignedIntToSoftDouble · C: 124 bytes</title>
-<rect x="445.00977936055153" y="262.364440109209" width="0.7041541575367108" height="0.5279868086552714" style="fill:#326b7d"/>
+<rect x="461.1226646493787" y="260.8124392783887" width="1.3035128937887588" height="0.5472903790382111" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · Runtime_SoftDoubleToSignedInt · C: 108 bytes" data-node="leaf" data-kind="file" data-bytes="108" data-address="0x020014d8" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector/soft_double_to_signed_int.c">
 <title>3a7 · Runtime_SoftDoubleToSignedInt · C: 108 bytes</title>
-<rect x="444.975715695477" y="263.386350061445" width="0.772281487685778" height="0.4598594785062043" style="fill:#326b7d"/>
+<rect x="461.08735559266654" y="261.87171097975295" width="1.374131007213044" height="0.47667226561392595" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · SubtractSoftDouble · C: 62 bytes" data-node="leaf" data-kind="file" data-bytes="62" data-address="0x020013e4" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector/subtract_soft_double.c">
 <title>3a7 · SubtractSoftDouble · C: 62 bytes</title>
-<rect x="446.08969055344505" y="262.2122103359105" width="1.2316737066338188" height="0.2235272620584361" style="fill:#326b7d"/>
+<rect x="460.9858420546191" y="262.7235419729334" width="1.5771580833078644" height="0.27364518951910555" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a7 · Runtime_UnpackSoftDouble · C: 212 bytes" data-node="leaf" data-kind="file" data-bytes="212" data-address="0x02001770" data-source="games/gs1/src/overlays/scene/state/select_by_runtime_selector/unpack_soft_double.c">
 <title>3a7 · Runtime_UnpackSoftDouble · C: 212 bytes</title>
-<rect x="446.3417271645889" y="262.91130147117127" width="0.7276004843461275" height="0.8010375658599516" style="fill:#326b7d"/>
-</g>
-</g>
-<g aria-label="task: 6,848 bytes · 29 items" data-node="container" data-kind="folder" data-bytes="6848" data-source="games/gs1/src/overlays/scene/state/task/">
-<title>task: 6,848 bytes · 29 items</title>
-<rect class="container-frame" x="449.28778001127296" y="248.4733850597751" width="14.337444357827026" height="17.457406339594023" fill="#1f7f93"/>
-<path class="bevel-light" d="M449.28778001127296 265.9307913993691 V248.4733850597751 H463.6252243691" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M449.28778001127296 265.9307913993691 H463.6252243691 V248.4733850597751" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="3bb · SceneActor_MovePairByTileOffset · C: 240 bytes" data-node="leaf" data-kind="file" data-bytes="240" data-address="0x02000310" data-source="games/gs1/src/overlays/scene/state/task/actor_motion.c">
-<title>3bb · SceneActor_MovePairByTileOffset · C: 240 bytes</title>
-<rect x="451.7342520449126" y="250.91985709341475" width="0.8929440672792952" height="1.8370882559659807" style="fill:#326b7d"/>
-</g>
-<g aria-label="actor_position.c: 142 bytes · 2 items" data-node="container" data-kind="file" data-bytes="142" data-source="games/gs1/src/overlays/scene/state/task/actor_position.c">
-<title>actor_position.c: 142 bytes · 2 items</title>
-<rect class="container-frame" x="453.07366814583156" y="250.4733850597751" width="1.0566504796138325" height="2.730032323245276" fill="#1f7f93"/>
-<path class="bevel-light" d="M453.07366814583156 253.20341738302037 V250.4733850597751 H454.1303186254454" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M453.07366814583156 253.20341738302037 H454.1303186254454 V250.4733850597751" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="3bb · SceneActor_PlaceWithScale20000 · C: 64 bytes" data-node="leaf" data-kind="file" data-bytes="64" data-address="0x020030a8" data-source="games/gs1/src/overlays/scene/state/task/actor_position.c">
-<title>3bb · SceneActor_PlaceWithScale20000 · C: 64 bytes</title>
-<rect x="453.46991207568675" y="250.86962898963029" width="0.26416261990345813" height="0.7281560655898871" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · SceneActor_PlaceWithScale14000 · C: 78 bytes" data-node="leaf" data-kind="file" data-bytes="78" data-address="0x020030e8" data-source="games/gs1/src/overlays/scene/state/task/actor_position.c">
-<title>3bb · SceneActor_PlaceWithScale14000 · C: 78 bytes</title>
-<rect x="453.46991207568675" y="251.86194767512364" width="0.26416261990345813" height="0.9452257780415564" style="fill:#326b7d"/>
-</g>
-</g>
-<g aria-label="actor_search.c: 232 bytes · 2 items" data-node="container" data-kind="file" data-bytes="232" data-source="games/gs1/src/overlays/scene/state/task/actor_search.c">
-<title>actor_search.c: 232 bytes · 2 items</title>
-<rect class="container-frame" x="454.1303186254454" y="250.4733850597751" width="2.0835361569850224" height="2.2620267821175144" fill="#1f7f93"/>
-<path class="bevel-light" d="M454.1303186254454 252.7354118418926 V250.4733850597751 H456.2138547824304" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M454.1303186254454 252.7354118418926 H456.2138547824304 V250.4733850597751" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="3bb · SceneData_FindSlotAtPosition · C: 72 bytes" data-node="leaf" data-kind="file" data-bytes="72" data-address="0x02003b48" data-source="games/gs1/src/overlays/scene/state/task/actor_search.c">
-<title>3bb · SceneData_FindSlotAtPosition · C: 72 bytes</title>
-<rect x="454.74587790893844" y="251.0889443432681" width="0.8524175899989762" height="0.18935048849353497" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · SceneActor_FindOccupantAheadOfSubject · C: 160 bytes" data-node="leaf" data-kind="file" data-bytes="160" data-address="0x02003cf8" data-source="games/gs1/src/overlays/scene/state/task/actor_search.c">
-<title>3bb · SceneActor_FindOccupantAheadOfSubject · C: 160 bytes</title>
-<rect x="454.86159209635116" y="251.5833595076679" width="0.6209892151735446" height="0.4207788633189667" style="fill:#326b7d"/>
-</g>
-</g>
-<g aria-label="3bb · SceneEffect_RemoveMarkerTask · C: 40 bytes" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x02003080" data-source="games/gs1/src/overlays/scene/state/task/effect.c">
-<title>3bb · SceneEffect_RemoveMarkerTask · C: 40 bytes</title>
-<rect x="454.2473200107273" y="252.85241322717457" width="1.5022773602569712" height="0.23400277056388075" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · empty_hook_d · C: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x02003228" data-source="games/gs1/src/overlays/scene/state/task/empty_hook_d.c">
-<title>3bb · empty_hook_d · C: 4 bytes</title>
-<rect x="455.9250994489072" y="252.79391253453358" width="0.23025464088223002" height="0.11700138528194037" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · get_default_result · C: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x02000038" data-source="games/gs1/src/overlays/scene/state/task/get_default_result.c">
-<title>3bb · get_default_result · C: 4 bytes</title>
-<rect x="455.9250994489072" y="253.02791530509745" width="0.23025464088223002" height="0.11700138528194037" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · initialize_mode_task · C: 142 bytes" data-node="leaf" data-kind="file" data-bytes="142" data-address="0x02002940" data-source="games/gs1/src/overlays/scene/state/task/initialize_mode_task.c">
-<title>3bb · initialize_mode_task · C: 142 bytes</title>
-<rect x="451.69334484822116" y="253.60898221996854" width="0.9670631703263254" height="0.8111296738963621" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · initialize_state_interaction · C: 92 bytes" data-node="leaf" data-kind="file" data-bytes="92" data-address="0x020020b8" data-source="games/gs1/src/overlays/scene/state/task/initialize_state_interaction.c">
-<title>3bb · initialize_state_interaction · C: 92 bytes</title>
-<rect x="451.5533542672283" y="255.09125098676844" width="0.5311485119106729" height="1.2282031751321407" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · no_op_handler · C: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0200004c" data-source="games/gs1/src/overlays/scene/state/task/no_op_handler.c">
-<title>3bb · no_op_handler · C: 2 bytes</title>
-<rect x="452.36426535515113" y="254.8398650508699" width="0.6875191802877479" height="0.028376640113593768" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · OverlayObject_NotifyMatchingEntries · C: 60 bytes" data-node="leaf" data-kind="file" data-bytes="60" data-address="0x02002380" data-source="games/gs1/src/overlays/scene/state/task/overlay_object.c">
-<title>3bb · OverlayObject_NotifyMatchingEntries · C: 60 bytes</title>
-<rect x="452.52905099019466" y="255.0614039661406" width="0.35794791020067085" height="1.3446504966149553" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · RunPartyCountInteractionCopyA · C: 164 bytes" data-node="leaf" data-kind="file" data-bytes="164" data-address="0x02001f14" data-source="games/gs1/src/overlays/scene/state/task/party.c">
-<title>3bb · RunPartyCountInteractionCopyA · C: 164 bytes</title>
-<rect x="453.33056455860304" y="253.46800908612772" width="2.618698520720036" height="0.5291834062147216" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · position_active_actor · C: 276 bytes" data-node="leaf" data-kind="file" data-bytes="276" data-address="0x02003344" data-source="games/gs1/src/overlays/scene/state/task/position_active_actor.c">
-<title>3bb · position_active_actor · C: 276 bytes</title>
-<rect x="453.56597285549566" y="254.76178419544985" width="1.4133761439833146" height="1.3232442224060947" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · raise_linked_scene_effect · C: 84 bytes" data-node="leaf" data-kind="file" data-bytes="84" data-address="0x020032f0" data-source="games/gs1/src/overlays/scene/state/task/raise_linked_scene_effect.c">
-<title>3bb · raise_linked_scene_effect · C: 84 bytes</title>
-<rect x="455.66297544521683" y="254.44541064118766" width="0.3672528914757216" height="1.9559913309303731" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · FieldScene_RunLateSequence · C: 204 bytes" data-node="leaf" data-kind="file" data-bytes="204" data-address="0x02002adc" data-source="games/gs1/src/overlays/scene/state/task/run_scene_late_sequence.c">
-<title>3bb · FieldScene_RunLateSequence · C: 204 bytes</title>
-<rect x="456.40531289745627" y="250.66484317480098" width="5.028453356617835" height="0.3829162300517463" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · FieldScene_RunMiddleSequence · C: 620 bytes" data-node="leaf" data-kind="file" data-bytes="620" data-address="0x02002114" data-source="games/gs1/src/overlays/scene/state/task/run_scene_middle_sequence.c">
-<title>3bb · FieldScene_RunMiddleSequence · C: 620 bytes</title>
-<rect x="456.7138547824304" y="251.73921751987862" width="1.3560738368926546" height="4.345810897977321" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · FieldScene_RunSceneThreeCoordinator · C: 412 bytes" data-node="leaf" data-kind="file" data-bytes="412" data-address="0x02001538" data-source="games/gs1/src/overlays/scene/state/task/run_scene_scene_three_coordinator.c">
-<title>3bb · FieldScene_RunSceneThreeCoordinator · C: 412 bytes</title>
-<rect x="459.0699286193231" y="251.7392175198786" width="2.0552957497769264" height="1.7393956342868861" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · run_scripted_transition · C: 268 bytes" data-node="leaf" data-kind="file" data-bytes="268" data-address="0x020029d0" data-source="games/gs1/src/overlays/scene/state/task/run_scripted_transition.c">
-<title>3bb · run_scripted_transition · C: 268 bytes</title>
-<rect x="459.0699286193231" y="254.47861315416552" width="1.0888246452556536" height="1.606415263690435" style="fill:#326b7d"/>
-</g>
-<g aria-label="scene_data.c: 32 bytes · 4 items" data-node="container" data-kind="file" data-bytes="32" data-source="games/gs1/src/overlays/scene/state/task/scene_data.c">
-<title>scene_data.c: 32 bytes · 4 items</title>
-<rect class="container-frame" x="460.65875326457876" y="253.9786131541655" width="0.9664711045212728" height="0.672623293855596" fill="#1f7f93"/>
-<path class="bevel-light" d="M460.65875326457876 254.65123644802108 V253.9786131541655 H461.6252243691" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M460.65875326457876 254.65123644802108 H461.6252243691 V253.9786131541655" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="3bb · SceneData_GetTableC414 · C: 8 bytes" data-node="leaf" data-kind="file" data-bytes="8" data-address="0x02000030" data-source="games/gs1/src/overlays/scene/state/task/scene_data.c">
-<title>3bb · SceneData_GetTableC414 · C: 8 bytes</title>
-<rect x="460.86894804390863" y="254.18880793349535" width="0.2310018170647879" height="0.0840779117319495" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · SceneData_GetTableC474 · C: 8 bytes" data-node="leaf" data-kind="file" data-bytes="8" data-address="0x0200003c" data-source="games/gs1/src/overlays/scene/state/task/scene_data.c">
-<title>3bb · SceneData_GetTableC474 · C: 8 bytes</title>
-<rect x="460.86894804390863" y="254.35696375695926" width="0.2310018170647879" height="0.0840779117319495" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · SceneData_GetTableC48c · C: 8 bytes" data-node="leaf" data-kind="file" data-bytes="8" data-address="0x02000044" data-source="games/gs1/src/overlays/scene/state/task/scene_data.c">
-<title>3bb · SceneData_GetTableC48c · C: 8 bytes</title>
-<rect x="461.18402777270535" y="254.18880793349535" width="0.2310018170647879" height="0.0840779117319495" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · SceneData_GetTableC83c · C: 8 bytes" data-node="leaf" data-kind="file" data-bytes="8" data-address="0x02000b30" data-source="games/gs1/src/overlays/scene/state/task/scene_data.c">
-<title>3bb · SceneData_GetTableC83c · C: 8 bytes</title>
-<rect x="461.18402777270535" y="254.35696375695926" width="0.2310018170647879" height="0.0840779117319495" style="fill:#326b7d"/>
-</g>
-</g>
-<g aria-label="3bb · SceneState_StartMarkerMove · C: 92 bytes" data-node="leaf" data-kind="file" data-bytes="92" data-address="0x02003024" data-source="games/gs1/src/overlays/scene/state/task/scene_motion.c">
-<title>3bb · SceneState_StartMarkerMove · C: 92 bytes</title>
-<rect x="460.9003710407091" y="254.8928542241514" width="0.4832355522606364" height="1.4505564175742023" style="fill:#326b7d"/>
-</g>
-<g aria-label="scene_primary_script_head.c: 1,002 bytes · 4 items" data-node="container" data-kind="file" data-bytes="1002" data-source="games/gs1/src/overlays/scene/state/task/scene_primary_script_head.c">
-<title>scene_primary_script_head.c: 1,002 bytes · 4 items</title>
-<rect class="container-frame" x="451.28778001127296" y="256.58502841785594" width="4.745600459612407" height="4.2893091535409305" fill="#1f7f93"/>
-<path class="bevel-light" d="M451.28778001127296 260.8743375713969 V256.58502841785594 H456.0333804708854" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M451.28778001127296 260.8743375713969 H456.0333804708854 V256.58502841785594" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="3bb · FieldScene_RunSupplementalSequenceOne · C: 472 bytes" data-node="leaf" data-kind="file" data-bytes="472" data-address="0x02000714" data-source="games/gs1/src/overlays/scene/state/task/scene_primary_script_head.c">
-<title>3bb · FieldScene_RunSupplementalSequenceOne · C: 472 bytes</title>
-<rect x="452.6664063158012" y="257.9636547223842" width="0.6125980322861261" height="1.5320565444843393" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · FieldScene_RunScene3bbSequenceA · C: 100 bytes" data-node="leaf" data-kind="file" data-bytes="100" data-address="0x020008ec" data-source="games/gs1/src/overlays/scene/state/task/scene_primary_script_head.c">
-<title>3bb · FieldScene_RunScene3bbSequenceA · C: 100 bytes</title>
-<rect x="453.7207118109105" y="257.7927641529212" width="0.27081689336017517" height="0.7569986962618969" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · FieldScene_RunScene3bb_02000b38 · C: 154 bytes" data-node="leaf" data-kind="file" data-bytes="154" data-address="0x02000b38" data-source="games/gs1/src/overlays/scene/state/task/scene_primary_script_head.c">
-<title>3bb · FieldScene_RunScene3bb_02000b38 · C: 154 bytes</title>
-<rect x="454.3354661588381" y="257.86588471412847" width="0.4170580157746698" height="0.6107575738474023" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · FieldScene_RunSecondActorInteraction · C: 276 bytes" data-node="leaf" data-kind="file" data-bytes="276" data-address="0x02001424" data-source="games/gs1/src/overlays/scene/state/task/scene_primary_script_head.c">
-<title>3bb · FieldScene_RunSecondActorInteraction · C: 276 bytes</title>
-<rect x="453.8645131110175" y="258.96438104265036" width="0.8173303246954933" height="0.5584194935741966" style="fill:#326b7d"/>
-</g>
-</g>
-<g aria-label="scene_setup.c: 714 bytes · 12 items" data-node="container" data-kind="file" data-bytes="714" data-source="games/gs1/src/overlays/scene/state/task/scene_setup.c">
-<title>scene_setup.c: 714 bytes · 12 items</title>
-<rect class="container-frame" x="451.28778001127296" y="260.8743375713969" width="4.745600459612407" height="3.0564538279722786" fill="#1f7f93"/>
-<path class="bevel-light" d="M451.28778001127296 263.9307913993692 V260.8743375713969 H456.0333804708854" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M451.28778001127296 263.9307913993692 H456.0333804708854 V260.8743375713969" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="3bb · SceneState_ConfigureRegionByActorElevenColumn · C: 84 bytes" data-node="leaf" data-kind="file" data-bytes="84" data-address="0x0200005c" data-source="games/gs1/src/overlays/scene/state/task/scene_setup.c">
-<title>3bb · SceneState_ConfigureRegionByActorElevenColumn · C: 84 bytes</title>
-<rect x="452.16535273915287" y="261.7519102992768" width="1.0476712181982915" height="0.2269185417736995" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · FieldScene_RunTwoStepSequence · C: 14 bytes" data-node="leaf" data-kind="file" data-bytes="14" data-address="0x020000b0" data-source="games/gs1/src/overlays/scene/state/task/scene_setup.c">
-<title>3bb · FieldScene_RunTwoStepSequence · C: 14 bytes</title>
-<rect x="453.37959113490354" y="261.69155893505547" width="0.10621581333099928" height="0.3476212702163997" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · SceneState_ApplyRectsForActors15To17 · C: 112 bytes" data-node="leaf" data-kind="file" data-bytes="112" data-address="0x0200062c" data-source="games/gs1/src/overlays/scene/state/task/scene_setup.c">
-<title>3bb · SceneState_ApplyRectsForActors15To17 · C: 112 bytes</title>
-<rect x="452.2313615666529" y="262.2717562103242" width="0.35893619677372157" height="0.7154536336650187" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · FieldScene_RunStep15At29By26 · C: 20 bytes" data-node="leaf" data-kind="file" data-bytes="20" data-address="0x0200069c" data-source="games/gs1/src/overlays/scene/state/task/scene_setup.c">
-<title>3bb · FieldScene_RunStep15At29By26 · C: 20 bytes</title>
-<rect x="452.83386161123735" y="262.15638386136123" width="0.1281914988477577" height="0.4090034163716124" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · FieldScene_RunStep15At33By26 · C: 20 bytes" data-node="leaf" data-kind="file" data-bytes="20" data-address="0x020006b0" data-source="games/gs1/src/overlays/scene/state/task/scene_setup.c">
-<title>3bb · FieldScene_RunStep15At33By26 · C: 20 bytes</title>
-<rect x="453.09329822391146" y="262.1594374763398" width="0.37846726658618834" height="0.13429872880484253" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · FieldScene_RunStep16At45By26 · C: 20 bytes" data-node="leaf" data-kind="file" data-bytes="20" data-address="0x020006c4" data-source="games/gs1/src/overlays/scene/state/task/scene_setup.c">
-<title>3bb · FieldScene_RunStep16At45By26 · C: 20 bytes</title>
-<rect x="453.09329822391146" y="262.4280349339495" width="0.37846726658618834" height="0.13429872880484253" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · FieldScene_RunStep16At49By26 · C: 20 bytes" data-node="leaf" data-kind="file" data-bytes="20" data-address="0x020006d8" data-source="games/gs1/src/overlays/scene/state/task/scene_setup.c">
-<title>3bb · FieldScene_RunStep16At49By26 · C: 20 bytes</title>
-<rect x="452.83386161123735" y="262.6935787765806" width="0.1281914988477577" height="0.4090034163716124" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · FieldScene_RunStep17At40By23 · C: 20 bytes" data-node="leaf" data-kind="file" data-bytes="20" data-address="0x020006ec" data-source="games/gs1/src/overlays/scene/state/task/scene_setup.c">
-<title>3bb · FieldScene_RunStep17At40By23 · C: 20 bytes</title>
-<rect x="453.09329822391146" y="262.69663239155915" width="0.37846726658618834" height="0.13429872880484253" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · FieldScene_RunStep17At40By25 · C: 20 bytes" data-node="leaf" data-kind="file" data-bytes="20" data-address="0x02000700" data-source="games/gs1/src/overlays/scene/state/task/scene_setup.c">
-<title>3bb · FieldScene_RunStep17At40By25 · C: 20 bytes</title>
-<rect x="453.09329822391146" y="262.96522984916885" width="0.37846726658618834" height="0.13429872880484253" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · FieldScene_RunSixSteps896To936 · C: 68 bytes" data-node="leaf" data-kind="file" data-bytes="68" data-address="0x02001fb8" data-source="games/gs1/src/overlays/scene/state/task/scene_setup.c">
-<title>3bb · FieldScene_RunSixSteps896To936 · C: 68 bytes</title>
-<rect x="453.61551898693875" y="261.7150551604287" width="0.15320826407744134" height="1.375018649908698" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · FieldScene_BuildDescriptorAndInstallTask · C: 232 bytes" data-node="leaf" data-kind="file" data-bytes="232" data-address="0x020039fc" data-source="games/gs1/src/overlays/scene/state/task/scene_setup.c">
-<title>3bb · FieldScene_BuildDescriptorAndInstallTask · C: 232 bytes</title>
-<rect x="454.1258287280271" y="261.9189483733621" width="0.8629409408931168" height="0.560994689944279" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · SceneState_InitControlRecordAndStartTask · C: 84 bytes" data-node="leaf" data-kind="file" data-bytes="84" data-address="0x02003ae4" data-source="games/gs1/src/overlays/scene/state/task/scene_setup.c">
-<title>3bb · SceneState_InitControlRecordAndStartTask · C: 84 bytes</title>
-<rect x="453.9468907665793" y="262.8619997918029" width="1.2208168637886052" height="0.20311876704879062" style="fill:#326b7d"/>
-</g>
-</g>
-<g aria-label="scene_state_interaction_head.c: 832 bytes · 7 items" data-node="container" data-kind="file" data-bytes="832" data-source="games/gs1/src/overlays/scene/state/task/scene_state_interaction_head.c">
-<title>scene_state_interaction_head.c: 832 bytes · 7 items</title>
-<rect class="container-frame" x="456.0333804708854" y="256.58502841785594" width="4.907609834720003" height="3.444007569967617" fill="#1f7f93"/>
-<path class="bevel-light" d="M456.0333804708854 260.02903598782353 V256.58502841785594 H460.9409903056054" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M456.0333804708854 260.02903598782353 H460.9409903056054 V256.58502841785594" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="3bb · SceneState_SetFlag331AndConfigureRegion46_17 · C: 52 bytes" data-node="leaf" data-kind="file" data-bytes="52" data-address="0x02000258" data-source="games/gs1/src/overlays/scene/state/task/scene_state_interaction_head.c">
-<title>3bb · SceneState_SetFlag331AndConfigureRegion46_17 · C: 52 bytes</title>
-<rect x="457.01052425060726" y="257.5621721975778" width="0.23228377445993087" height="0.505717847675987" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · FieldScene_SetFlag332AndDrawTiles · C: 52 bytes" data-node="leaf" data-kind="file" data-bytes="52" data-address="0x0200028c" data-source="games/gs1/src/overlays/scene/state/task/scene_state_interaction_head.c">
-<title>3bb · FieldScene_SetFlag332AndDrawTiles · C: 52 bytes</title>
-<rect x="457.47509179952715" y="257.5621721975778" width="0.23228377445993087" height="0.505717847675987" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · FieldScene_SetFlag333AndDrawTiles · C: 40 bytes" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x020002c0" data-source="games/gs1/src/overlays/scene/state/task/scene_state_interaction_head.c">
-<title>3bb · FieldScene_SetFlag333AndDrawTiles · C: 40 bytes</title>
-<rect x="457.9128573744709" y="257.53537022360166" width="0.17867982650763914" height="0.5593217956282788" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · initialize_scene_actor_positions · C: 120 bytes" data-node="leaf" data-kind="file" data-bytes="120" data-address="0x02001b30" data-source="games/gs1/src/overlays/scene/state/task/scene_state_interaction_head.c">
-<title>3bb · initialize_scene_actor_positions · C: 120 bytes</title>
-<rect x="457.0953971681984" y="258.3850467373049" width="0.40202960964218803" height="0.5819725532057026" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · mark_scene_progress · C: 72 bytes" data-node="leaf" data-kind="file" data-bytes="72" data-address="0x02001c78" data-source="games/gs1/src/overlays/scene/state/task/scene_state_interaction_head.c">
-<title>3bb · mark_scene_progress · C: 72 bytes</title>
-<rect x="457.81905046555437" y="258.30464081537644" width="0.24121776578531284" height="0.7427843970625778" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · select_nearest_scene_actor · C: 308 bytes" data-node="leaf" data-kind="file" data-bytes="308" data-address="0x02001cc0" data-source="games/gs1/src/overlays/scene/state/task/scene_state_interaction_head.c">
-<title>3bb · select_nearest_scene_actor · C: 308 bytes</title>
-<rect x="458.4756988279699" y="257.7408520240854" width="0.589643427475209" height="1.1323603575085994" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · run_state_interaction · C: 188 bytes" data-node="leaf" data-kind="file" data-bytes="188" data-address="0x02001ffc" data-source="games/gs1/src/overlays/scene/state/task/scene_state_interaction_head.c">
-<title>3bb · run_state_interaction · C: 188 bytes</title>
-<rect x="459.5401200801654" y="257.62598642133054" width="0.3599122219653874" height="1.3620915630184212" style="fill:#326b7d"/>
-</g>
-</g>
-<g aria-label="3bb · SceneEffect_SeedMarkerAndInstallTask · C: 100 bytes" data-node="leaf" data-kind="file" data-bytes="100" data-address="0x02002fc0" data-source="games/gs1/src/overlays/scene/state/task/seed_marker_and_install_task.c">
-<title>3bb · SceneEffect_SeedMarkerAndInstallTask · C: 100 bytes</title>
-<rect x="461.11204882147905" y="256.7560869337296" width="0.3421170317473079" height="2.626855011328224" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · SceneState_SetWorkHalfwordDc · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x02003b38" data-source="games/gs1/src/overlays/scene/state/task/set_work_halfword_dc.c">
-<title>3bb · SceneState_SetWorkHalfwordDc · C: 16 bytes</title>
-<rect x="461.0597491873284" y="259.6727593426545" width="0.4467163000485732" height="0.23751776344604258" style="fill:#326b7d"/>
-</g>
-<g aria-label="shared.c: 64 bytes · 3 items" data-node="container" data-kind="file" data-bytes="64" data-source="games/gs1/src/overlays/scene/state/task/shared.c">
-<title>shared.c: 64 bytes · 3 items</title>
-<rect class="container-frame" x="456.0333804708854" y="260.02903598782353" width="1.2704002897247366" height="1.0234112554873684" fill="#1f7f93"/>
-<path class="bevel-light" d="M456.0333804708854 261.0524472433109 V260.02903598782353 H457.30378076061015" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M456.0333804708854 261.0524472433109 H457.30378076061015 V260.02903598782353" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="3bb · FieldScene_RunSingleStep · C: 10 bytes" data-node="leaf" data-kind="file" data-bytes="10" data-address="0x02000050" data-source="games/gs1/src/overlays/scene/state/task/shared.c">
-<title>3bb · FieldScene_RunSingleStep · C: 10 bytes</title>
-<rect x="456.34850630522453" y="260.3441618221627" width="0.11854604093453944" height="0.13730677293730267" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · FieldScene_Forward4358 · C: 10 bytes" data-node="leaf" data-kind="file" data-bytes="10" data-address="0x02000304" data-source="games/gs1/src/overlays/scene/state/task/shared.c">
-<title>3bb · FieldScene_Forward4358 · C: 10 bytes</title>
-<rect x="456.34850630522453" y="260.60001463603453" width="0.11854604093453944" height="0.13730677293730267" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · Text_WriteU32AsHex · C: 44 bytes" data-node="leaf" data-kind="file" data-bytes="44" data-address="0x020031fc" data-source="games/gs1/src/overlays/scene/state/task/shared.c">
-<title>3bb · Text_WriteU32AsHex · C: 44 bytes</title>
-<rect x="456.65425177356224" y="260.4128152086313" width="0.26574976624013136" height="0.2558528138718421" style="fill:#326b7d"/>
-</g>
-</g>
-<g aria-label="3bb · spawn_random_scene_effect · C: 148 bytes" data-node="leaf" data-kind="file" data-bytes="148" data-address="0x0200325c" data-source="games/gs1/src/overlays/scene/state/task/spawn_random_scene_effect.c">
-<title>3bb · spawn_random_scene_effect · C: 148 bytes</title>
-<rect x="456.35098054331655" y="261.37004731574206" width="0.6352001448623683" height="1.731438383452171" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · StagedActor_ResetMotionAfterRefresh · C: 32 bytes" data-node="leaf" data-kind="file" data-bytes="32" data-address="0x02002e44" data-source="games/gs1/src/overlays/scene/state/task/staged_actor.c">
-<title>3bb · StagedActor_ResetMotionAfterRefresh · C: 32 bytes</title>
-<rect x="456.1613068778213" y="263.5470121785613" width="1.0145474758528945" height="0.2558528138718421" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · StagedActor_PushActorAhead · C: 360 bytes" data-node="leaf" data-kind="file" data-bytes="360" data-address="0x02003b90" data-source="games/gs1/src/overlays/scene/state/task/staged_actor_movement.c">
-<title>3bb · StagedActor_PushActorAhead · C: 360 bytes</title>
-<rect x="457.7723710314103" y="260.49762625862365" width="0.9371805416002156" height="2.9645748699453764" style="fill:#326b7d"/>
-</g>
-<g aria-label="state_update.c: 470 bytes · 9 items" data-node="container" data-kind="file" data-bytes="470" data-source="games/gs1/src/overlays/scene/state/task/state_update.c">
-<title>state_update.c: 470 bytes · 9 items</title>
-<rect class="container-frame" x="459.1781418438106" y="260.02903598782353" width="2.447082525289452" height="3.901755411545592" fill="#1f7f93"/>
-<path class="bevel-light" d="M459.1781418438106 263.9307913993691 V260.02903598782353 H461.6252243691" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M459.1781418438106 263.9307913993691 H461.6252243691 V260.02903598782353" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="3bb · SceneState_StoreSlotTileXToWork832To848 · C: 142 bytes" data-node="leaf" data-kind="file" data-bytes="142" data-address="0x020000c0" data-source="games/gs1/src/overlays/scene/state/task/state_update.c">
-<title>3bb · SceneState_StoreSlotTileXToWork832To848 · C: 142 bytes</title>
-<rect x="459.99220311829464" y="260.8430972623076" width="0.8189599763214037" height="0.4045812863233223" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · SceneState_SetWorkByte35 · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x02000150" data-source="games/gs1/src/overlays/scene/state/task/state_update.c">
-<title>3bb · SceneState_SetWorkByte35 · C: 16 bytes</title>
-<rect x="459.8543093836932" y="261.5143661003528" width="0.12879381712049745" height="0.3042791090847491" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · SceneState_SendWord250With6 · C: 28 bytes" data-node="leaf" data-kind="file" data-bytes="28" data-address="0x020002e8" data-source="games/gs1/src/overlays/scene/state/task/state_update.c">
-<title>3bb · SceneState_SendWord250With6 · C: 28 bytes</title>
-<rect x="460.1557683409253" y="261.5582374233439" width="0.23424189681911795" height="0.21653646310262326" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · SceneState_ApplyTable8715AndValue104 · C: 32 bytes" data-node="leaf" data-kind="file" data-bytes="32" data-address="0x02000950" data-source="games/gs1/src/overlays/scene/state/task/state_update.c">
-<title>3bb · SceneState_ApplyTable8715AndValue104 · C: 32 bytes</title>
-<rect x="460.60654670084705" y="261.5582374233439" width="0.29863880537936666" height="0.21653646310262326" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · SceneState_WaitForStatusWords · C: 64 bytes" data-node="leaf" data-kind="file" data-bytes="64" data-address="0x02000970" data-source="games/gs1/src/overlays/scene/state/task/state_update.c">
-<title>3bb · SceneState_WaitForStatusWords · C: 64 bytes</title>
-<rect x="459.88108572275513" y="261.97421536561995" width="1.0411947674004116" height="0.18234649524431426" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · SceneState_InstallTask8714AndApplyTwoRects · C: 108 bytes" data-node="leaf" data-kind="file" data-bytes="108" data-address="0x020009b0" data-source="games/gs1/src/overlays/scene/state/task/state_update.c">
-<title>3bb · SceneState_InstallTask8714AndApplyTwoRects · C: 108 bytes</title>
-<rect x="459.965633826683" y="262.42345646003645" width="0.3514427031000809" height="0.7198429564602655" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · SceneState_InitCursorWhenUnset · C: 32 bytes" data-node="leaf" data-kind="file" data-bytes="32" data-address="0x02002e64" data-source="games/gs1/src/overlays/scene/state/task/state_update.c">
-<title>3bb · SceneState_InitCursorWhenUnset · C: 32 bytes</title>
-<rect x="460.59992644728914" y="262.3548636744424" width="0.30639872453249484" height="0.2142571319120693" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · SceneState_SetHalfword1000To9 · C: 12 bytes" data-node="leaf" data-kind="file" data-bytes="12" data-address="0x0200322c" data-source="games/gs1/src/overlays/scene/state/task/state_update.c">
-<title>3bb · SceneState_SetHalfword1000To9 · C: 12 bytes</title>
-<rect x="460.53297109356663" y="262.71642258454403" width="0.44030943197753813" height="0.08034642446702597" style="fill:#326b7d"/>
-</g>
-<g aria-label="3bb · SceneState_WaitUntilStatusNine · C: 36 bytes" data-node="leaf" data-kind="file" data-bytes="36" data-address="0x02003238" data-source="games/gs1/src/overlays/scene/state/task/state_update.c">
-<title>3bb · SceneState_WaitUntilStatusNine · C: 36 bytes</title>
-<rect x="460.6133175180336" y="262.9574618579451" width="0.27961658304348624" height="0.2410392734010779" style="fill:#326b7d"/>
-</g>
+<rect x="461.31172027806633" y="263.5967105754188" width="0.9254016364134849" height="0.9459783693300754" style="fill:#326b7d"/>
 </g>
 </g>
 </g>

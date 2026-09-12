@@ -44,7 +44,7 @@ s32 Menu_RunWorkspaceSelectionLoop(void)
     var_fp_21 = 3;
     temp_r0_22 = GameFlag_IsSet(0x17E);
     sp4 = 0;
-    Menu_unk3_3();
+    Menu_PrepareWorkspacePage();
     temp_sl_29 = gIw;
     sp10 = Menu_Run();
     var_r4_35 = -0x18;

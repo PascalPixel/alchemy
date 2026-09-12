@@ -975,7 +975,7 @@ s32 UiText_GetWideStringWidth(u16 *text)
             } else if (c <= 0xFFU) {
                 idx = c - 0xDE;
                 if (idx > 1U) {
-                    width += FIELD_AT_OFFSET(((idx + 0xBE) << 5), u16, 0x08032224);
+                    width += *(u16 *)((u8 *)((idx + 0xBE) << 5) + 0x08032224);
                 }
             } else {
                 width += 0xA;

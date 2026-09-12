@@ -5,6 +5,8 @@
 #include "battle_summon.h"
 #include "battle_formation.h"
 
+extern u8 RomBytes_080c5c38[];
+
 /* battle/formation/select_level_matched_candidate.c */
 u32 Random16(void);
 

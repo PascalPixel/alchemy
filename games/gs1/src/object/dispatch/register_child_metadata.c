@@ -2,6 +2,14 @@
 #include "object_dispatch.h"
 #include "types.h"
 
+extern u8 RomBytes_08013590[];
+extern u8 RomBytes_080135a8[];
+extern u8 RomBytes_080135c0[];
+extern u8 RomBytes_080135d8[];
+extern u8 RomBytes_080135f0[];
+extern u8 RomBytes_08013608[];
+extern u8 RomBytes_08013620[];
+
 /* object/dispatch/dispatch_register_child_metadata.c */
 /* object/dispatch/register_child_metadata.c */
 void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *object, s32 value)

@@ -6,6 +6,9 @@
 #include "curve.h"
 #include "map.h"
 
+extern u8 RomBytes_080132fc[];
+extern u8 RomBytes_080133fc[];
+
 /* map/shared/load_default_cells_and_update_block.c */
 /* map/shared/load_default_cells_and_update_block.c */
 extern u8 gVal[];

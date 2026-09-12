@@ -2,6 +2,9 @@
 #include "scene.h"
 #include "four_object_motion.h"
 
+extern u8 RomBytes_080ad35d[];
+extern u8 RomBytes_080ad40d[];
+
 /* object/motion/four_object/initialize_top_row.c */
 extern s32 RomBytes_080af304[];
 

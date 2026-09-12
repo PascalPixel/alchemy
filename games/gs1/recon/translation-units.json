@@ -112380,7 +112380,7 @@
     {
       "id": "owner-get-state",
       "game": "gs1",
-      "source": "games/gs1/recon/en/main/08077394.c",
+      "source": "games/gs1/recon/en/units/unit-08077394.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],

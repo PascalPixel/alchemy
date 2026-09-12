@@ -361,47 +361,37 @@
     },
     "main:0807a0cc": {
       "name": "Djinn_GetDefinition",
-      "source": "djinn/get_definition.c"
+      "source": "djinn/management.c"
     },
     "main:0807a0f4": {
-      "name": "Djinn_AddToLeastLoadedOwner",
-      "source": "djinn/add_to_least_loaded_owner.c"
+      "name": "Djinn_AddToLeastLoadedOwner"
     },
     "main:0807a1b4": {
-      "name": "Djinn_AddToOwner",
-      "source": "djinn/add_to_owner.c"
+      "name": "Djinn_AddToOwner"
     },
     "main:0807a1f8": {
-      "name": "Trade_CanOfferDjinn",
-      "source": "trade/can_offer_djinn.c"
+      "name": "Trade_CanOfferDjinn"
     },
     "main:0807a2bc": {
-      "name": "Djinn_IsActive",
-      "source": "djinn/is_active.c"
+      "name": "Djinn_IsActive"
     },
     "main:0807a2e4": {
-      "name": "Djinn_Activate",
-      "source": "djinn/activate.c"
+      "name": "Djinn_Activate"
     },
     "main:0807a350": {
-      "name": "Djinn_Deactivate",
-      "source": "djinn/deactivate.c"
+      "name": "Djinn_Deactivate"
     },
     "main:0807a3a8": {
-      "name": "Trade_RemoveOffer",
-      "source": "trade/remove_offer.c"
+      "name": "Trade_RemoveOffer"
     },
     "main:0807a458": {
-      "name": "Trade_AddOffer",
-      "source": "trade/add_offer.c"
+      "name": "Trade_AddOffer"
     },
     "main:0807a498": {
-      "name": "Djinn_Transfer",
-      "source": "djinn/transfer.c"
+      "name": "Djinn_Transfer"
     },
     "main:0807a550": {
-      "name": "Trade_CountPendingOffers",
-      "source": "trade/count_pending_offers.c"
+      "name": "Trade_CountPendingOffers"
     },
     "main:0807a5bc": {
       "name": "Party_SumDjinnCounts"
@@ -4640,8 +4630,7 @@
       "name": "Owner_ScaleValueByOffsetCurve"
     },
     "main:0807a5b0": {
-      "name": "Djinn_GetDefinitionHeader",
-      "source": "djinn/party.c"
+      "name": "Djinn_GetDefinitionHeader"
     },
     "main:0808acc4": {
       "name": "Audio_PlayCueFromEventWork",
@@ -18216,15 +18205,15 @@
     },
     "resource_3bf:02005ac0": {
       "name": "SoftFloatRecordAIsNaN",
-      "source": "map/locations/heidia/village/village_scene/record_a_is_nan.c"
+      "source": "map/locations/heidia/village/float_status.c"
     },
     "resource_3bf:02005ad0": {
       "name": "SoftFloatRecordAIsInfinity",
-      "source": "map/locations/heidia/village/village_scene/record_a_is_infinity.c"
+      "source": "map/locations/heidia/village/float_status.c"
     },
     "resource_3bf:02005ae0": {
       "name": "SoftFloatRecordAIsZero",
-      "source": "map/locations/heidia/village/village_scene/record_a_is_zero.c"
+      "source": "map/locations/heidia/village/float_status.c"
     },
     "resource_3bf:02005af0": {
       "name": "SignedIntToSoftDouble",
@@ -18236,15 +18225,15 @@
     },
     "resource_3bf:02005bd8": {
       "name": "SoftFloatRecordBIsNaN",
-      "source": "map/locations/heidia/village/village_scene/record_b_is_nan.c"
+      "source": "map/locations/heidia/village/float_status.c"
     },
     "resource_3bf:02005be8": {
       "name": "SoftFloatRecordBIsInfinity",
-      "source": "map/locations/heidia/village/village_scene/record_b_is_infinity.c"
+      "source": "map/locations/heidia/village/float_status.c"
     },
     "resource_3bf:02005bf8": {
       "name": "SoftFloatRecordBIsZero",
-      "source": "map/locations/heidia/village/village_scene/record_b_is_zero.c"
+      "source": "map/locations/heidia/village/float_status.c"
     },
     "resource_3bf:02005c08": {
       "name": "LogicalShiftRight64",
@@ -18256,15 +18245,15 @@
     },
     "resource_3bf:02005dd4": {
       "name": "SoftFloatRecordCIsNaN",
-      "source": "map/locations/heidia/village/village_scene/record_c_is_nan.c"
+      "source": "map/locations/heidia/village/float_status.c"
     },
     "resource_3bf:02005de4": {
       "name": "SoftFloatRecordCIsInfinity",
-      "source": "map/locations/heidia/village/village_scene/record_c_is_infinity.c"
+      "source": "map/locations/heidia/village/float_status.c"
     },
     "resource_3bf:02005df4": {
       "name": "SoftFloatRecordCIsZero",
-      "source": "map/locations/heidia/village/village_scene/record_c_is_zero.c"
+      "source": "map/locations/heidia/village/float_status.c"
     },
     "resource_3bf:02005e04": {
       "name": "UnpackSoftDouble",

@@ -157779,21 +157779,6 @@
           "address": "0x080a5578",
           "extent": 156,
           "state": "exact-c"
-        },
-        {
-          "address": "0x080a5614",
-          "extent": 180,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a56c8",
-          "extent": 1228,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080a5b94",
-          "extent": 300,
-          "state": "exact-c"
         }
       ],
       "overlay": null

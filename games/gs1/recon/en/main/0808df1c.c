@@ -1,4 +1,5 @@
 #include "types.h"
+#include "object_lookup.h"
 
 struct BattleTargetObject {
     u8 reserved_00[6];
@@ -11,7 +12,6 @@ struct BattleTargetObject {
 };
 
 s32 Func_0808ddb8(s32 battleMode);
-struct BattleTargetObject *Func_0808ba1c(s32 objectId);
 s32 Func_080072f0(s32 value, s32 unused1, s32 unused2, s32 iwramRoutine);
 s32 Func_080022ec(s32 numerator, s32 denominator);
 s32 Func_080044d0(s32 deltaZ, s32 deltaX);
@@ -39,7 +39,7 @@ s32 BattleFx_SelectNearbyTargetObject(s32 sourceId, s32 battleMode)
 
     bestId = -1;
     bestDistance = Func_0808ddb8(battleMode);
-    source = Func_0808ba1c(sourceId);
+    source = (struct BattleTargetObject *)ObjectTable_Get(sourceId);
     if (source == 0)
         return bestId;
 
@@ -48,7 +48,7 @@ s32 BattleFx_SelectNearbyTargetObject(s32 sourceId, s32 battleMode)
         if (candidateId == sourceId)
             continue;
 
-        candidate = Func_0808ba1c(candidateId);
+        candidate = (struct BattleTargetObject *)ObjectTable_Get(candidateId);
         if (candidate == 0 || (candidate->flags & 8) != 0)
             continue;
 

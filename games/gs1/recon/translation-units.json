@@ -118432,33 +118432,8 @@
       "local_symbols": [],
       "owners": [
         {
-          "address": "0x080f3804",
-          "extent": 32,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080f3824",
-          "extent": 32,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080f3844",
-          "extent": 20,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080f3858",
-          "extent": 64,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080f3898",
-          "extent": 20,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080f38ac",
-          "extent": 1884,
+          "address": "0x080f37ec",
+          "extent": 24,
           "state": "exact-c"
         }
       ],

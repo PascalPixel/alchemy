@@ -29,6 +29,8 @@ extern u8 Value_000000cb;
 extern u8 Value_000000be;
 
 void *Battle_Run(s32 id);
+void Battle_unk3_4(void);
+void BattlePres_ProcessPendingGraphicsTransfer(void);
 
 void BattlePresentation_PrepareScene(s32 kind)
 {

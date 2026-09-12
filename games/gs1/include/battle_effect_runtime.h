@@ -76,4 +76,6 @@ struct BattleEffectEntry {
     u8 flags;
 };
 
+void BattleEffect_SpawnLinkedResourceObject(s32 resource_id, s32 flags, s32 state);
+
 #endif

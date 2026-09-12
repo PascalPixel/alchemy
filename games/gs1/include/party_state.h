@@ -35,4 +35,7 @@ LAYOUT_SIZE_GUARD(PartyState_Size, struct PartyState, 0x200);
  * the old-style call form for byte-exact register allocation.
  */
 
+s32 Party_CountActiveOwners();
+s32 Party_ListActiveOwners(s16 *owners);
+
 #endif

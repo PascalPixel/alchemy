@@ -97,4 +97,6 @@ LAYOUT_OFFSET_GUARD(
     struct BattleCommandRequest *request,
     struct BattlePlan *plan);
 
+s32 BattleCommand_BuildPlan( struct BattleCommandRequest *request, struct BattlePlan *plan);
+
 #endif

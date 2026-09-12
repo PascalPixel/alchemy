@@ -110594,31 +110594,6 @@
           "address": "0x0800488c",
           "extent": 20,
           "state": "exact-c"
-        },
-        {
-          "address": "0x080048a0",
-          "extent": 16,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080048b0",
-          "extent": 68,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080048f4",
-          "extent": 68,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08004938",
-          "extent": 56,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08004970",
-          "extent": 60,
-          "state": "exact-c"
         }
       ],
       "overlay": null

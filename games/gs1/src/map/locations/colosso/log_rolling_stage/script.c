@@ -483,13 +483,13 @@ void Map_unk144_3();          /* sibling item-28 owner, via per-site veneer */
 
 void Map_unk145_3();          /* advance the task scheduler, established (veneer to Map_unk81_4) */
 
-s32 Map_unk146_3();           /* veneer to GameFlag_IsSet */
+s32 GameFlag_IsSet();           /* veneer to GameFlag_IsSet */
 
 u8 *Map_unk147_3();         /* veneer to Scene_GetRecord */
 
-void Map_unk148_3();          /* veneer to Object_SetPosition */
+void Object_SetPosition();          /* veneer to Object_SetPosition */
 
-void Map_unk149_3();          /* veneer to Object_SetCallback */
+void Object_SetCallback();          /* veneer to Object_SetCallback */
 
 void Map_unk150_3();          /* veneer to Map_unk81_4 */
 
@@ -1072,7 +1072,7 @@ s32 Colosso_PositionActiveActor(s32 first_handle, s32 second_handle)
     u16 *cuep;
     s16 *waitp;
 
-    flag = Map_unk146_3(0x211);
+    flag = GameFlag_IsSet(0x211);
 
     shared = gCell;
     record = Map_unk147_3(*(s32 *)(shared + 500));
@@ -1096,9 +1096,9 @@ s32 Colosso_PositionActiveActor(s32 first_handle, s32 second_handle)
     *(s32 *)(record + 52) = 0x4000;
     *(s32 *)(record + 48) = 0x10000;
 
-    Map_unk148_3(record, x, 0, z);
+    Object_SetPosition(record, x, 0, z);
     Map_unk109_3(0x211);
-    Map_unk149_3(record, (void *)0x0200db24);
+    Object_SetCallback(record, (void *)0x0200db24);
 
     while (*waitp != 0) {
         Map_unk150_3(1);

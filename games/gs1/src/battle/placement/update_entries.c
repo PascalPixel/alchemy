@@ -18,13 +18,14 @@ struct PlacementList {
 };
 
 struct PlacementTable {
-    u8 padding[8];
+    u32 available_mask;
+    u8 padding[4];
     struct PlacementList list;
 };
 
 struct BattleObjectSlot;
 
-struct BattleSummonState *Battle_Run(s32 side);
+struct PlacementTable *Battle_Run(s32 side);
 
 struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id);
 
@@ -148,9 +149,9 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void)
     } while (element <= 31);
 
     {
-        struct BattleSummonState *state = Battle_Run(0);
+        struct PlacementTable *state = Battle_Run(0);
         state->available_mask = available_mask;
-        return state;
+        return (struct BattleSummonState *)state;
     }
 }
 

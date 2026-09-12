@@ -348,15 +348,15 @@ void State_unk59();           /* install a per-frame task (callback, rate) */
 
 void State_unk60();           /* release a graphics handle */
 
-s32 State_unk61();           /* veneer to GameFlag_IsSet */
+s32 GameFlag_IsSet();           /* veneer to GameFlag_IsSet */
 
-u8 *State_unk62();           /* veneer to Scene_GetRecord */
+u8 *Scene_GetRecord();           /* veneer to Scene_GetRecord */
 
-void State_unk63();          /* veneer to Object_SetPosition */
+void Object_SetPosition();          /* veneer to Object_SetPosition */
 
-void State_unk64();          /* veneer to GameFlag_Set */
+void GameFlag_Set();          /* veneer to GameFlag_Set */
 
-void State_unk65();          /* veneer to Object_SetCallback */
+void Object_SetCallback();          /* veneer to Object_SetCallback */
 
 void State_unk49_3();          /* veneer to State_unk66 */
 
@@ -1729,10 +1729,10 @@ s32 Scene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
     u16 *cuep;
     s16 *waitp;
 
-    flag = State_unk61(0x211);
+    flag = GameFlag_IsSet(0x211);
 
     shared = gCell;
-    rec = State_unk62(*(s32 *)(shared + 500));
+    rec = Scene_GetRecord(*(s32 *)(shared + 500));
 
     if (*(s32 *)(work + 232) < *(s32 *)(rec + 8)) {
         x = *(s32 *)(work + 232) + 0xc0000;
@@ -1753,9 +1753,9 @@ s32 Scene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
     *(s32 *)(rec + 52) = 0x4000;
     *(s32 *)(rec + 48) = 0x10000;
 
-    State_unk63(rec, x, 0, z);
-    State_unk64(0x211);
-    State_unk65(rec, (void *)0x0200c6fc);
+    Object_SetPosition(rec, x, 0, z);
+    GameFlag_Set(0x211);
+    Object_SetCallback(rec, (void *)0x0200c6fc);
 
     while (*waitp != 0) {
         State_unk49_3(1);

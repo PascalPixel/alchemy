@@ -339,7 +339,7 @@ fn compile_overlay_unit(
     let binding_text = crate::compiler::source_bindings::production_bindings(
         &root(),
         &names.symbol_bindings(Some(overlay)),
-        Some(source),
+        Some(source.as_path()),
     )?;
     let bindings = write_overlay_bindings(overlay, &binding_text)?;
     options

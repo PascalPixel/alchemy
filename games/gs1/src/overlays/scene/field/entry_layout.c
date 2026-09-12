@@ -30,6 +30,7 @@ struct Approach390Subject *Field_unk_02000462(s32);
 
 void *Field_GetRecord();
 void Field_SetRecordPhase(void *record, s32 phase);
+void Field_SetRect(s32, s32, s32, s32, s32, s32);
 
 /* Fill the fifteen record-table entries with their default field values. */
 void SceneData_InitRecordTable(struct Resource390TableEntry *entry)
@@ -224,7 +225,7 @@ s32 Scene_SetupEntryLayoutsBySelector(void)
         s32 arg4;
         arg4 = 13;
         arg5 = 8;
-        Field_unk_020004d0(34, 34, 18, 16, arg4, arg5);
+        Field_SetRect(34, 34, 18, 16, arg4, arg5);
         Field_unk_020004e0(34, 94, 18, 76, arg4, arg5);
         Field_unk_020004f0(94, 34, 78, 16, arg4, arg5);
     } else if ((u32)((sel - 8) << 16) <= (128 << 9)) {

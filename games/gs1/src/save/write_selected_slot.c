@@ -51,8 +51,8 @@ s32 Save_WriteSelectedSlot(void)
             while (UiWork_IsComplete() == 0) {
                 WaitFrames(1);
             }
-            Sys_unk3_4();
-            Sys_unk4();
+            Save_CapturePartySnapshot();
+            Save_CaptureObjectTable();
             flag = Sys_Apply3(slot, gOv2);
             flag |= Sys_Apply3(slot + 3, gOv2 + 0x1000);
             UiWork_FinalizePendingCore();

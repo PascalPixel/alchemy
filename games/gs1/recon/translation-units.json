@@ -112568,13 +112568,29 @@
       "local_symbols": [],
       "owners": [
         {
+          "address": "0x080e6948",
+          "extent": 68,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "battle-effects-runtime-initialize-default-mode",
+      "game": "gs1",
+      "source": "games/gs1/src/battle/effects/runtime/initialize_default_mode.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
           "address": "0x080e7320",
           "extent": 12,
           "state": "exact-c"
         },
         {
           "address": "0x080e732c",
-          "extent": 19892,
+          "extent": 12,
           "state": "exact-c"
         }
       ],
@@ -160346,27 +160362,6 @@
         {
           "address": "0x080e3a3c",
           "extent": 3452,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "object-group-store-object-and-run-step7-080ec0e0",
-      "game": "gs1",
-      "source": "games/gs1/src/object/group/store_object_and_run_step7.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080ec0e0",
-          "extent": 16,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080ec0f0",
-          "extent": 16,
           "state": "exact-c"
         }
       ],

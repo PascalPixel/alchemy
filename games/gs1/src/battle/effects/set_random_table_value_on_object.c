@@ -54,9 +54,9 @@ void BattleFx_PauseObject(s32 arg0)
 /* battle/effects/object_control/resume_object.c */
 
 
-void BattleFx_ResumeObject(void)
+void BattleFx_ResumeObject(s32 arg0)
 {
-    u8 *object = ObjectTable_Get();
+    u8 *object = ObjectTable_Get(arg0);
     if (object != 0) {
         if (*(void (**)(void))(object + 0x6C) == Battle_Run) {
             *(s32 *)(object + 0x6C) = gCell.saved_callback;

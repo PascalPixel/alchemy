@@ -124494,51 +124494,6 @@
           "state": "exact-c"
         },
         {
-          "address": "0x08079358",
-          "extent": 28,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08079374",
-          "extent": 28,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08079390",
-          "extent": 40,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080793b8",
-          "extent": 16,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080793c8",
-          "extent": 16,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080793d8",
-          "extent": 32,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080793f8",
-          "extent": 32,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08079418",
-          "extent": 28,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08079434",
-          "extent": 44,
-          "state": "exact-c"
-        },
-        {
           "address": "0x080795fc",
           "extent": 32,
           "state": "exact-c"

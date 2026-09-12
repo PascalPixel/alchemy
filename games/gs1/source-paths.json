@@ -3453,7 +3453,7 @@
       "name": "PaletteScene_AdjustColor",
       "source": "overlays/scene/effect/palette.c"
     },
-    "resource_396:02000030": "overlays/shared/set_effect_record_mode.c",
+    "resource_396:02000030": "overlays/scene/actor/four_encounter.c",
     "resource_396:0200013c": {
       "name": "SpawnConfiguredEffect"
     },
@@ -3462,7 +3462,7 @@
     },
     "resource_39b:02000030": {
       "name": "SetEffectRecordMode",
-      "source": "overlays/shared/set_effect_record_mode.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:0200013c": {
       "name": "SpawnConfiguredEffect",
@@ -3500,7 +3500,7 @@
       "name": "clear_linked_scene_record",
       "source": "overlays/scene/actor/staged_effect.c"
     },
-    "resource_39c:02000030": "overlays/shared/set_effect_record_mode.c",
+    "resource_39c:02000030": "overlays/scene/story/selector_effect.c",
     "resource_39c:0200013c": {
       "name": "BattleFx_SpawnConfigured",
       "source": "overlays/scene/story/selector_effect.c"
@@ -3657,12 +3657,12 @@
       "name": "Effect_GetTertiaryData",
       "source": "overlays/scene/effect/spawn_sequence.c"
     },
-    "resource_3a5:02000030": "overlays/shared/set_effect_record_mode.c",
+    "resource_3a5:02000030": "overlays/scene/story/selected_actor.c",
     "resource_3a5:02000e00": {
       "name": "CalculatePlanarDistance",
       "source": "overlays/scene/story/selected_actor.c"
     },
-    "resource_3a6:02000030": "overlays/shared/set_effect_record_mode.c",
+    "resource_3a6:02000030": "overlays/scene/actor/staged_pair_region.c",
     "resource_3a6:0200013c": {
       "name": "SpawnConfiguredEffect",
       "source": "overlays/scene/actor/staged_pair_region.c"
@@ -3721,7 +3721,7 @@
     "resource_3af:02002b7c": {
       "name": "Scene_ConfigureThreeActors"
     },
-    "resource_3ab:02000030": "overlays/shared/set_effect_record_mode.c",
+    "resource_3ab:02000030": "overlays/scene/story/actor_sequence.c",
     "resource_3ab:0200013c": {
       "name": "SpawnConfiguredEffect",
       "source": "overlays/scene/story/actor_sequence.c"
@@ -4034,7 +4034,7 @@
       "name": "InitializeSwayingSceneObject",
       "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
-    "resource_3b3:02000030": "overlays/shared/set_effect_record_mode.c",
+    "resource_3b3:02000030": "overlays/scene/actor/staged_nav.c",
     "resource_3b3:0200013c": {
       "name": "SpawnConfiguredEffect",
       "source": "overlays/scene/actor/staged_nav.c"
@@ -4371,7 +4371,7 @@
       "name": "fill_grid_attribute_rectangle",
       "source": "overlays/shared/fill_grid_attribute_rectangle.c"
     },
-    "resource_3be:02000030": "overlays/shared/set_effect_record_mode.c",
+    "resource_3be:02000030": "overlays/scene/actor/staged_pair.c",
     "resource_3be:02000048": {
       "name": "StagedActorPairScene_SpawnPrimaryEffect",
       "source": "overlays/scene/actor/staged_pair.c"
@@ -4834,7 +4834,7 @@
       "name": "UnpackSoftDouble",
       "source": "map/locations/heidia/village/village_scene.c"
     },
-    "resource_3c0:02000030": "overlays/shared/set_effect_record_mode.c",
+    "resource_3c0:02000030": "overlays/scene/actor/selected_presentation.c",
     "resource_3c0:02000ce4": {
       "name": "EncounterPalette_Pulse",
       "source": "overlays/scene/actor/selected_presentation.c"

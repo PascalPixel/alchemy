@@ -157317,77 +157317,7 @@
       "owners": [
         {
           "address": "0x0800c430",
-          "extent": 36,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c454",
-          "extent": 24,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c46c",
-          "extent": 16,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c47c",
-          "extent": 16,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c48c",
-          "extent": 16,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c49c",
-          "extent": 16,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c4ac",
-          "extent": 16,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c4bc",
-          "extent": 48,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c4ec",
-          "extent": 60,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c528",
-          "extent": 32,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c548",
-          "extent": 40,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c570",
-          "extent": 40,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c598",
-          "extent": 28,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c5b4",
-          "extent": 72,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c5fc",
-          "extent": 44,
+          "extent": 34,
           "state": "exact-c"
         }
       ],

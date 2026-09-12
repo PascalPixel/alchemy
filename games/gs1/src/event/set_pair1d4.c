@@ -1162,7 +1162,7 @@ void BattleEv_RunWait(s32 action)
             resolved_action = masked_action;
         }
     }
-    Battle_unk5_2(resolved_action);
+    UiWork_FinalizeEntityMatchingLocalizedId(resolved_action);
 
     if (*(s32 *)(runtime + 0x1cc) == 0) {
         while (Battle_unk6_2(wait_token) == 0) {

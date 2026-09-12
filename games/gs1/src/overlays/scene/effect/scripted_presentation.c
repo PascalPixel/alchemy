@@ -167,13 +167,13 @@ void Effect_unk39_2();  /* Scene_RunScene3c9, this overlay's own */
 
 void Effect_unk40_2();  /* GameFlag_Set */
 
-void Effect_unk41_2();  /* Effect_unk42 */
+void Effect_unk41_2();  /* Event_ClearStatus1c6 */
 
-void Effect_unk43();  /* Effect_unk44 */
+void Effect_unk43();  /* Event_WaitValue1c8Frames */
 
 void Effect_unk45();  /* Effect_unk46 */
 
-void Effect_unk47();  /* Effect_unk48 */
+void Effect_unk47();  /* BattleFx_FinishAction */
 
 u8 *Effect_unk49(s32 index);   /* scene-record accessor (Scene_GetRecord) */
 

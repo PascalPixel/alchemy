@@ -93,7 +93,7 @@ s32 BattlePres_RunAction(s16 *action)
         break;
     }
 
-    Battle_unk2_4();
+    UiWork_ResetFreeChannel();
     return 0;
 }
 

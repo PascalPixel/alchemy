@@ -58,7 +58,7 @@ struct StagedActor *FindElevatedBlockingStagedActor(s32 *arg0, struct StagedActo
 
 struct StagedActor *FindStagedActorAtProbe(struct StagedActorProbePoint *, struct StagedActor *);
 
-void Actor_unk2_4(void); void Actor_unk3_4(void);
+void Actor_unk2_4(void); void BattleFx_FinishAction(void);
 
 void Actor_unk4_4(s32, s32); void Actor_unk5_4(s32, s32, s32);
 void Actor_unk6_4(s32); u8 *Actor_unk7_4();

@@ -112542,6 +112542,11 @@
       "local_symbols": [],
       "owners": [
         {
+          "address": "0x080ae8dc",
+          "extent": 44,
+          "state": "exact-c"
+        },
+        {
           "address": "0x080ae908",
           "extent": 80,
           "state": "exact-c"

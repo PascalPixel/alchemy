@@ -99,6 +99,11 @@ pub fn production_bindings(
     source: Option<&Path>,
 ) -> Result<String, String> {
     let mut reserved = define_names(register_text);
+    if let Some(source) = source {
+        if let Ok(source_text) = std::fs::read_to_string(source) {
+            reserved.extend(type_tags(&source_text));
+        }
+    }
     let mut text = String::new();
     let manifest = load_gs1()?;
     if !manifest.common.is_empty() {
@@ -135,6 +140,41 @@ pub fn with_register(register: &str, recovered: &str) -> String {
     }
     out.push_str(recovered);
     out
+}
+
+/// Struct/union/enum/typedef tags in the C file must not be `#define`d away.
+fn type_tags(text: &str) -> HashSet<String> {
+    let mut names = HashSet::new();
+    for raw in text.lines() {
+        let line = raw.trim_start();
+        if line.starts_with('#') || line.starts_with("//") || line.starts_with("/*") {
+            continue;
+        }
+        for prefix in ["struct ", "union ", "enum "] {
+            if let Some(rest) = line.strip_prefix(prefix) {
+                if let Some(name) = rest.split(|c: char| !c.is_ascii_alphanumeric() && c != '_')
+                    .next()
+                {
+                    if !name.is_empty() {
+                        names.insert(name.to_string());
+                    }
+                }
+            }
+        }
+        if line.starts_with("typedef ") {
+            if let Some(name) = line
+                .trim_end_matches(';')
+                .split_whitespace()
+                .last()
+            {
+                let name = name.trim_start_matches('*').trim_end_matches(';');
+                if !name.is_empty() && name != "{" && name != "}" {
+                    names.insert(name.to_string());
+                }
+            }
+        }
+    }
+    names
 }
 
 fn define_names(text: &str) -> HashSet<String> {
@@ -216,7 +256,9 @@ fn rewrite_extern_data_types(line: &str) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::{define_only_bindings, expand_binding_text, filter_reserved_defines};
+    use super::{
+        define_only_bindings, expand_binding_text, filter_reserved_defines, type_tags,
+    };
     use std::collections::HashSet;
 
     #[test]
@@ -253,5 +295,12 @@ mod tests {
             filter_reserved_defines(text, &mut reserved),
             "#define gRom Data_08028195\n#define gVal Data_0000001f\n"
         );
+    }
+
+    #[test]
+    fn reserves_struct_and_typedef_tags() {
+        let tags = type_tags("struct gRom {\n    u8 x;\n};\ntypedef struct { u8 bytes[4]; } gVal;\n");
+        assert!(tags.contains("gRom"));
+        assert!(tags.contains("gVal"));
     }
 }

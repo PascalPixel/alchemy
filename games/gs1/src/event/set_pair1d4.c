@@ -14,7 +14,7 @@ struct State_08091fa8 {
     u16 value;
 };
 
-struct gRom {
+struct EventCellPairs {
     u8 filler0[0x1C0];
     u16 first_1c0;
     u16 second_1c2;
@@ -23,8 +23,7 @@ struct gRom {
     u16 second_1d6;
 };
 
-extern struct State_08091fa8 *volatile gWork;
-extern s32 gCell[];
+extern struct EventCellPairs gCell;
 
 void Event_SetPair1d4(u16 first, u16 second)
 {
@@ -34,7 +33,7 @@ void Event_SetPair1d4(u16 first, u16 second)
 
 void Sys_Run(u16 first, u16 second)
 {
-    struct State_08091fa8 *state = gWork;
+    struct State_08091fa8 *state = (struct State_08091fa8 *)gWork;
     gCell.first_1c0 = first;
     gCell.second_1c2 = second;
     state->value = 999;
@@ -47,12 +46,11 @@ struct BattleEventState {
     s16 queued_sound;
 };
 
-extern struct BattleEventState *gWork;
 void Audio_PlayCue(s32 arg0);
 
 void BattleFx_SetQueuedSoundAndPlay(s32 sound_id)
 {
-    gWork->queued_sound = sound_id;
+    ((struct BattleEventState *)gWork)->queued_sound = sound_id;
     if ((s16)sound_id == -1) {
         sound_id = 0x121;
     }
@@ -61,15 +59,9 @@ void BattleFx_SetQueuedSoundAndPlay(s32 sound_id)
 }
 
 /* battle/effects/audio/play_queued_sound.c */
-struct BattleEventState {
-    u8 padding[0xcc8];
-    s16 queued_sound;
-};
-
-
 void BattleFx_PlayQueuedSound(void)
 {
-    s16 sound_id = gWork->queued_sound;
+    s16 sound_id = ((struct BattleEventState *)gWork)->queued_sound;
 
     if (sound_id != -1)
         Audio_PlayCue(sound_id);
@@ -118,12 +110,12 @@ void Motion_EnableReset(void)
 {
   void *object;
   unsigned char action_enabled;
-  object = ObjectTable_Get();
+  object = ObjectTable_Get(0);
   if (object != ((void *) 0))
   {
     action_enabled = 1;
     *((u8 *)(((u8 *)object) + 0x5A)) = (u8)(action_enabled | (*((u8 *)(((u8 *)object) + 0x5A))));
-    Object_ResetMotion();
+    Object_ResetMotion(object);
   }
 }
 
@@ -751,7 +743,7 @@ void Object_Destroy(void *);
 void ObjectTable_DestroyById(s32 index)
 {
     void *object = (void *)ObjectTable_Get(index);
-    u8 *base = gWork;
+    u8 *base = (u8 *)gWork;
     s32 offset;
 
     if (object != 0) {
@@ -776,7 +768,7 @@ void ObjectGroup_ConfigureChildValue(s32 arg0, s32 arg1)
     s32 mode_flags;
     void *object;
 
-    object = ObjectTable_Get();
+    object = ObjectTable_Get(0);
     if (object != NULL) {
         mode_flags = 0x100 & arg1;
         if (mode_flags != 0) {
@@ -906,12 +898,12 @@ void Object_ResetTargetAndSetMode1(void)
 {
     void *temp_r0;
 
-    temp_r0 = ObjectTable_Get();
+    temp_r0 = ObjectTable_Get(0);
     if (temp_r0 != NULL) {
         FIELD_AT_OFFSET(temp_r0, s32 *, 0x38) = 0x80000000;
         FIELD_AT_OFFSET(temp_r0, s32 *, 0x3C) = 0x80000000;
         FIELD_AT_OFFSET(temp_r0, s32 *, 0x40) = 0x80000000;
-        Object_ResetMotion();
+        Object_ResetMotion(temp_r0);
         Object_SetMode(temp_r0, 1);
     }
 }
@@ -1030,7 +1022,7 @@ s32 ObjectTable_ReadActiveValue(s32 key)
 {
     s32 result = -1;
     struct ObjectTableEntry *entry =
-        gWork->objects[(u32)key & 0x0fff];
+        ((struct ObjectTableState *)gWork)->objects[(u32)key & 0x0fff];
 
     if (entry != 0 && entry->active == 1) {
         result = *entry->value_source->value;
@@ -1064,7 +1056,7 @@ struct Work_08092be0 {
 
 s32 ObjectTable_FindActiveByValue(s32 value)
 {
-    struct Work_08092be0 *state = gWork;
+    struct Work_08092be0 *state = (struct Work_08092be0 *)gWork;
     s32 result = -1;
     s32 index = 8;
     struct Object_08092be0 *object = state->objects[index];
@@ -1178,7 +1170,7 @@ extern s32 UiWork_Create(s32, s32, s32, s32);
 void Event_ShowValue1d8AtPosition(s32 unused0, s32 unused1, s32 x, s32 y)
 {
     s32 x0 = x;
-    struct State_08093168 *state = gWork;
+    struct State_08093168 *state = (struct State_08093168 *)gWork;
     s32 py = y;
     s32 px = x0;
     s32 min_x = 8;
@@ -1210,7 +1202,7 @@ s32 ObjectTable_ReadActiveValue(s32);
 
 void ObjectTable_RunIfActive(void)
 {
-    if (ObjectTable_ReadActiveValue() != -1) {
+    if (ObjectTable_ReadActiveValue(0) != -1) {
         Obj_CheckIfActive();
     }
 }
@@ -1234,7 +1226,7 @@ void Battle_ShowPairedUnitWorkAndWait(
     s32 first_extra, s32 second, s32 second_x, s32 second_y,
     s32 second_arg, s32 second_extra)
 {
-    struct Runtime_080931ec *rt = gWork;
+    struct Runtime_080931ec *rt = (struct Runtime_080931ec *)gWork;
     s32 id0 = ObjectTable_ReadActiveValue(first);
     s32 id1 = ObjectTable_ReadActiveValue(second);
     s32 h0;

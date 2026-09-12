@@ -8,10 +8,3 @@ void BattleFx_RenderAnimationMode1(s32 effect)
 {
     BattleFx_RenderAnimation(effect, 1);
 }
-
-/* battle/effects/runtime/draw/render_animation_mode_0.c */
-
-void BattleFx_RenderAnimationMode0(s32 effect)
-{
-    BattleFx_RenderAnimation(effect, 0);
-}

@@ -5,7 +5,7 @@
 /* menu/draw/draw_selection_row.c */
 struct Work;
 
-void RenderOutput_PrepareForRedraw(void *);
+void RenderOutput_PrepareForRedraw();
 void UiText_DrawNumber(s32 n, s32 digits, s32 work, s32 x, s32 y);
 void UiText_DrawString(u8 *str, s32 work, s32 x, s32 y);
 void UiText_DrawResource(s32 no, s32 work, s32 x, s32 y);

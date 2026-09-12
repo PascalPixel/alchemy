@@ -13409,124 +13409,124 @@
     "resource_3bd:020013f8": {
       "name": "FieldScene_RunExtendedActorPresentation"
     },
-    "resource_3bd:02000030": "overlays/scene/field/extended_presentation/measure_fixed_point_position_distance.c",
-    "resource_3bd:0200006c": "overlays/scene/field/extended_presentation/find_actor_at_fixed_point_position.c",
-    "resource_3bd:02000244": "overlays/scene/field/extended_presentation/fill_grid_attribute_rectangle.c",
+    "resource_3bd:02000030": "overlays/scene/field/extended_presentation.c",
+    "resource_3bd:0200006c": "overlays/scene/field/extended_presentation.c",
+    "resource_3bd:02000244": "overlays/scene/field/extended_presentation.c",
     "resource_3bd:020009dc": {
       "name": "FieldScene_SetActor13Value41",
-      "source": "overlays/scene/field/extended_presentation/scene_primary_script.c"
+      "source": "overlays/scene/field/extended_presentation.c"
     },
     "resource_3bd:020002a8": {
       "name": "SceneActor_ResetMotionIfBlockedAhead",
-      "source": "overlays/scene/field/extended_presentation/actor_movement_effect.c"
+      "source": "overlays/scene/field/extended_presentation.c"
     },
     "resource_3bd:02000b0c": {
       "name": "FieldScene_RunIndexedStep3",
-      "source": "overlays/scene/field/extended_presentation/scene_setup.c"
+      "source": "overlays/scene/field/extended_presentation.c"
     },
     "resource_3bd:02003518": {
       "name": "FieldScene_RunFlagGatedActorEightDialogue",
-      "source": "overlays/scene/field/extended_presentation/scene_primary_script.c"
+      "source": "overlays/scene/field/extended_presentation.c"
     },
     "resource_3bd:02000ae8": {
       "name": "FieldScene_RunIndexedStep0",
-      "source": "overlays/scene/field/extended_presentation/scene_setup.c"
+      "source": "overlays/scene/field/extended_presentation.c"
     },
     "resource_3bd:020009f8": {
       "name": "SceneData_GetTablec138",
-      "source": "overlays/scene/field/extended_presentation/scene_data.c"
+      "source": "overlays/scene/field/extended_presentation.c"
     },
     "resource_3bd:02000abc": {
       "name": "SceneState_SetByte1004AndRunWhenIdle",
-      "source": "overlays/scene/field/extended_presentation/state_update.c"
+      "source": "overlays/scene/field/extended_presentation.c"
     },
     "resource_3bd:020009ec": {
       "name": "SceneData_GetTablebf70",
-      "source": "overlays/scene/field/extended_presentation/scene_data.c"
+      "source": "overlays/scene/field/extended_presentation.c"
     },
     "resource_3bd:02000af4": {
       "name": "FieldScene_RunIndexedStep1",
-      "source": "overlays/scene/field/extended_presentation/scene_setup.c"
+      "source": "overlays/scene/field/extended_presentation.c"
     },
     "resource_3bd:020000c4": {
       "name": "StagedActor_AdvancePair",
-      "source": "overlays/scene/field/extended_presentation/staged_actor_pair.c"
+      "source": "overlays/scene/field/extended_presentation.c"
     },
     "resource_3bd:02003a30": {
       "name": "OverlayObject_UpdateThreeStateMotion",
-      "source": "overlays/scene/field/extended_presentation/effect.c"
+      "source": "overlays/scene/field/extended_presentation.c"
     },
     "resource_3bd:02000b00": {
       "name": "FieldScene_RunIndexedStep2",
-      "source": "overlays/scene/field/extended_presentation/scene_setup.c"
+      "source": "overlays/scene/field/extended_presentation.c"
     },
     "resource_3bd:02000f10": {
       "name": "SceneActor_SetPositionFromTransformedBase",
-      "source": "overlays/scene/field/extended_presentation/actor_position.c"
+      "source": "overlays/scene/field/extended_presentation.c"
     },
     "resource_3bd:02000a00": {
       "name": "SceneData_SelectDataByRuntimeSelector",
-      "source": "overlays/scene/field/extended_presentation/scene_data.c"
+      "source": "overlays/scene/field/extended_presentation.c"
     },
     "resource_3bd:02000b30": {
       "name": "SceneEffect_SetupBlendByFlag201",
-      "source": "overlays/scene/field/extended_presentation/display.c"
+      "source": "overlays/scene/field/extended_presentation.c"
     },
     "resource_3bd:02000474": {
       "name": "SceneActor_FindClearActorPosition",
-      "source": "overlays/scene/field/extended_presentation/actor_search.c"
+      "source": "overlays/scene/field/extended_presentation.c"
     },
     "resource_3bd:02000b24": {
       "name": "FieldScene_RunIndexedStep5",
-      "source": "overlays/scene/field/extended_presentation/scene_setup.c"
+      "source": "overlays/scene/field/extended_presentation.c"
     },
     "resource_3bd:02003598": {
       "name": "SceneData_SelectTableBySceneId",
-      "source": "overlays/scene/field/extended_presentation/scene_data.c"
+      "source": "overlays/scene/field/extended_presentation.c"
     },
     "resource_3bd:020009f4": {
       "name": "SceneData_ReturnZero",
-      "source": "overlays/scene/field/extended_presentation/scene_data.c"
+      "source": "overlays/scene/field/extended_presentation.c"
     },
     "resource_3bd:02000c2c": {
       "name": "SceneState_RunFlag200SetupAndPlaceActors16To20",
-      "source": "overlays/scene/field/extended_presentation/scene_state_interaction.c"
+      "source": "overlays/scene/field/extended_presentation.c"
     },
     "resource_3bd:020034bc": {
       "name": "FieldScene_RunTwoArmSequenceWithValue217f",
-      "source": "overlays/scene/field/extended_presentation/scene_setup.c"
+      "source": "overlays/scene/field/extended_presentation.c"
     },
     "resource_3bd:02000b18": {
       "name": "FieldScene_RunIndexedStep4",
-      "source": "overlays/scene/field/extended_presentation/scene_setup.c"
+      "source": "overlays/scene/field/extended_presentation.c"
     },
     "resource_3bd:02000d48": {
       "name": "FieldScene_RunTwoCallSequence",
-      "source": "overlays/scene/field/extended_presentation/scene_setup.c"
+      "source": "overlays/scene/field/extended_presentation.c"
     },
     "resource_3bd:02000f94": {
       "name": "SceneEffect_UpdateStateMachine",
-      "source": "overlays/scene/field/extended_presentation/effect.c"
+      "source": "overlays/scene/field/extended_presentation.c"
     },
     "resource_3bd:02000d90": {
       "name": "FieldScene_RunActorElevenCellSetup",
-      "source": "overlays/scene/field/extended_presentation/staged_actor.c"
+      "source": "overlays/scene/field/extended_presentation.c"
     },
     "resource_3bd:02000f6c": {
       "name": "SceneActor_PlaceFiveActorsInRow",
-      "source": "overlays/scene/field/extended_presentation/effect.c"
+      "source": "overlays/scene/field/extended_presentation.c"
     },
     "resource_3bd:02000d58": {
       "name": "SceneState_MarkObjectWhenActorElevenAhead",
-      "source": "overlays/scene/field/extended_presentation/staged_actor.c"
+      "source": "overlays/scene/field/extended_presentation.c"
     },
     "resource_3bd:02000eac": {
       "name": "FieldScene_RunGuardedSixWordStep",
-      "source": "overlays/scene/field/extended_presentation/scene_setup.c"
+      "source": "overlays/scene/field/extended_presentation.c"
     },
     "resource_3bd:02002c44": {
       "name": "FieldScene_RunBranchingCutsceneSequence",
-      "source": "overlays/scene/field/extended_presentation/scene_primary_script.c"
+      "source": "overlays/scene/field/extended_presentation.c"
     },
     "resource_3bd:0200109c": {
       "name": "FieldScene_RunStatefulSequence"
@@ -13534,7 +13534,7 @@
     "resource_3bd:02000608": {
       "name": "SceneActor_MoveAndRedraw",
       "call_via": "020045fa",
-      "source": "overlays/scene/field/extended_presentation/move_and_redraw.c"
+      "source": "overlays/scene/field/extended_presentation.c"
     },
     "resource_3bd:02003644": {
       "name": "FieldScene_RunScene3bdSequenceA"

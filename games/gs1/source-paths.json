@@ -266,14 +266,14 @@
       "name": "UiWork_ReservedNoOp"
     },
     "main:0801c9bc": {
-      "name": "reserved_no_op_a",
+      "name": "GraphicsPalette_ReservedNoOpC9BC",
       "source": "graphics/palette/reserved_no_op_a.c"
     },
     "main:0801c9c0": {
-      "name": "reserved_no_op_b"
+      "name": "GraphicsPalette_ReservedNoOpC9C0"
     },
     "main:0801c9c4": {
-      "name": "reserved_no_op_c"
+      "name": "GraphicsPalette_ReservedNoOpC9C4"
     },
     "main:0801cee0": {
       "name": "adjust_selection_counter"
@@ -297,10 +297,10 @@
       "name": "Menu_ReservedNoOp"
     },
     "main:08078228": {
-      "name": "reserved_no_op_a"
+      "name": "Owner_ReservedNoOp78228"
     },
     "main:08079004": {
-      "name": "reserved_no_op_b"
+      "name": "Owner_ReservedNoOp79004"
     },
     "main:080941dc": {
       "name": "reserved_no_op",
@@ -397,13 +397,13 @@
       "source": "overlays/scene/story/command_list_scene.c"
     },
     "main:08002ef8": {
-      "name": "reserved_no_op_a"
+      "name": "RuntimeDispatch_ReservedNoOpA"
     },
     "main:08002efc": {
-      "name": "reserved_no_op_b"
+      "name": "RuntimeDispatch_ReservedNoOpB"
     },
     "main:08002f00": {
-      "name": "reserved_no_op_c"
+      "name": "RuntimeDispatch_ReservedNoOpC"
     },
     "main:08002f04": {
       "name": "reserved_no_op_d"
@@ -633,7 +633,7 @@
       "name": "activate_entry"
     },
     "main:0800403c": {
-      "name": "initialize",
+      "name": "Resource_InitializeTable",
       "source": "resource/initialize.c"
     },
     "main:08004080": {
@@ -819,7 +819,7 @@
       "name": "apply_argument_to_children"
     },
     "main:0800c2d8": {
-      "name": "initialize"
+      "name": "ObjectDispatch_Initialize"
     },
     "main:0800c344": {
       "name": "apply_value_to_children"

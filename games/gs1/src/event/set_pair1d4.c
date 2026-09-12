@@ -655,9 +655,9 @@ void BattleFx_SpawnBurstParticle(struct Object_08092624 *source, s32 optional)
             ObjectGroup_SetChildValue(object);
 
         object->mode_55 = 0;
-        value = Battle_ApplyParticleLinearMotion(Rand(), 10) + 5;
+        value = UnsignedModulo(Rand(), 10) + 5;
         object->field_34 = -0x1999 * value;
-        value = Battle_ApplyParticleLinearMotion(Rand(), 15) - 7;
+        value = UnsignedModulo(Rand(), 15) - 7;
         value <<= 1;
         object->field_30 = 0x1999 * value;
         object->field_64 = 0;
@@ -1306,12 +1306,12 @@ void Battle_ShowPairedUnitWorkAndWait(
 
     h0 = UiWork_Create(
         rt->effect_count++, first_x, first_y,
-        Battle_CheckCallRefreshHook(id0) << 16);
+        BattleFx_GetResourceId(id0) << 16);
     Battle_SetMode(id0, 0, first_arg, first_extra);
 
     h1 = UiWork_Create(
         rt->effect_count++, second_x, second_y,
-        Battle_CheckCallRefreshHook(id1) << 16);
+        BattleFx_GetResourceId(id1) << 16);
     Battle_SetMode(id1, 0, second_arg, second_extra);
 
     while (UiWork_IsCompleteFar() == 0)

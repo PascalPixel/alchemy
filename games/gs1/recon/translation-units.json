@@ -157934,31 +157934,6 @@
           "address": "0x0808b248",
           "extent": 20,
           "state": "exact-c"
-        },
-        {
-          "address": "0x0808b25c",
-          "extent": 84,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0808b2b0",
-          "extent": 232,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0808b398",
-          "extent": 56,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0808b3d0",
-          "extent": 636,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0808b64c",
-          "extent": 40,
-          "state": "exact-c"
         }
       ],
       "overlay": null

@@ -51,7 +51,7 @@ struct PresentationObjectSlot *GetBattleObjectSlot(s32 id);
 s32 ArcTan2(s32 first, s32 second);
 void WaitFrames(s32);
 
-void *Runtime_GetObject(s32 id);
+struct BattleUnit *Runtime_GetObject(s32 id);
 struct MotionRecord *GetMotionRecord(
     struct PresentationObject *object, s32 entry_index);
 
@@ -178,7 +178,6 @@ void BattleMotion_RunValueSequence(s32 id)
 }
 
 /* battle/motion/initialize_actor_records.c */
-u8 *GetMotionRecord(s32, s32);
 void Object_InitializeMode(void *, s32);
 
 void ActivateBattleObjectSlot(s32);
@@ -191,9 +190,9 @@ void BattleMotion_InitializeActorRecords(s32 id)
     u8 *child;
     s32 index;
 
-    state = Runtime_GetObject(id);
+    state = (u8 *)Runtime_GetObject(id);
     index = 0;
-    while ((item = GetMotionRecord(*GetBattleObjectSlot(id), index)) != 0) {
+    while ((item = (u8 *)GetMotionRecord(GetBattleObjectSlot(id)->object, index)) != 0) {
         if (state[0x12a] != 1)
             Object_InitializeMode(item, 4);
         else
@@ -203,7 +202,7 @@ void BattleMotion_InitializeActorRecords(s32 id)
 
     if (state[0x12a] == 1) {
         index = 0;
-        while ((item = GetMotionRecord(*GetBattleObjectSlot(id), index)) != 0) {
+        while ((item = (u8 *)GetMotionRecord(GetBattleObjectSlot(id)->object, index)) != 0) {
             child = *(u8 **)(item + 40);
             items[index] = item;
             child[5] = 6;

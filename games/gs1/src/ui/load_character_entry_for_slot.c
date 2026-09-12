@@ -246,7 +246,7 @@ void *Text_FormatPlayTime(s32 value, u8 *out)
         time = 0xea5f;
 
     minutes = Ui_Apply(time, 60);
-    seconds = Ui_Apply2(time, 60);
+    seconds = UnsignedModulo(time, 60);
 
     s = Text_FormatNumber(buf, minutes, 3);
     *out = *s;

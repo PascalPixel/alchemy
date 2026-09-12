@@ -1293,7 +1293,7 @@ void Scene_RunActorEightResetSequence(void)
 
 extern u8 *gWork;
 
-u8 *Actor_unk86_4();
+u8 *Scene_GetRecord();
 
 /* The sibling actor-update script passes repeated large constants through
  * these inline call forms, keeping each call's argument evaluation local. */
@@ -1303,7 +1303,7 @@ void Scene_RunScriptedSceneSequence(void)
     u32 i;
 
     Actor_unk87_4();
-    if (Actor_unk27(0x201) != 0) {
+    if (GameFlag_IsSet(0x201) != 0) {
         Actor_unk88_4(0, 8, 0);
         Actor_unk89_4(1, 0, 0);
         Actor_unk89_4(0xb, 0, 0);
@@ -1511,7 +1511,7 @@ void Scene_RunScriptedSceneSequence(void)
     Actor_unk97_4(8, 0);
     Actor_unk105_4(8, 0x100);
     Actor_unk106_4();
-    Actor_unk107_4(0xc4);
+    Audio_PlayCue(0xc4);
     Actor_unk108_4(8, 0x1200);
     Actor_unk94_4(0x20);
     Actor_unk108_4(8, 0x1200);
@@ -1577,7 +1577,7 @@ void Scene_RunScriptedSceneSequence(void)
     Actor_unk97_4(8, 0);
     Actor_unk105_4(8, 0x100);
     Actor_unk106_4();
-    Actor_unk107_4(0xc4);
+    Audio_PlayCue(0xc4);
     Actor_unk108_4(8, 0x1200);
     Actor_unk94_4(0x20);
     Actor_unk108_4(8, 0x1200);
@@ -1798,9 +1798,9 @@ dialogue:
         Actor_unk95_4(0, 0);
         Actor_unk96_4(0x78);
         Actor_unk94_4(0x78);
-        Actor_unk107_4(0x56);
+        Audio_PlayCue(0x56);
         Actor_unk110_4();
-        Actor_unk111_4(0x9f0);
+        GameFlag_Set(0x9f0);
         Actor_unk112_4(0x1e);
     } else {
         u8 *actor;
@@ -1812,12 +1812,12 @@ dialogue:
         Actor_unk94_4(0x14);
         Actor_unk101_4(0xc, 0);
         Actor_unk94_4(0x14);
-        actor = Actor_unk86_4(0xa);
+        actor = Scene_GetRecord(0xa);
         actor += 0x23;
         flags = 254;
         flags &= *actor;
         *actor = flags;
-        actor = Actor_unk86_4(0xa);
+        actor = Scene_GetRecord(0xa);
         *(u32 *)(actor + 0x6c) = 0x02008849;
     }
     Actor_unk113_4();

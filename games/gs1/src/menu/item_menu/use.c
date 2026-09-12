@@ -231,7 +231,7 @@ void ItemMenu_OpenCategory(s32 owner_id)
     struct ItemMenuState *menu;
 
     menu = gIw;
-    Sys_Run();
+    ItemMenu_PosCategory();
     UiWindow_Commit(menu->item_window);
     ItemMenu_DrawCategory(menu->item_window, owner_id, 0);
 }
@@ -581,7 +581,7 @@ void ItemMenu_DrawCmd(void *command_states, s32 window)
 
 struct ItemDefinition *Sys_RunClassifyUseMode(s32);
 
-void *Sys_unk2_4(s32);
+void *Ability_GetData(s32);
 
 s32 Item_ClassifyUseMode(s32 owner, s32 itemId)
 {
@@ -597,7 +597,7 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId)
     }
 
     {
-        void *abilityData = Sys_unk2_4(FIELD_AT_OFFSET(itemData, u16, 40) & 0x3fff);
+        void *abilityData = Ability_GetData(FIELD_AT_OFFSET(itemData, u16, 40) & 0x3fff);
 
         if (FIELD_AT_OFFSET(itemData, u16, 40) != 0) {
             if (FIELD_AT_OFFSET(itemData, u8, 2) != 0) {
@@ -693,14 +693,14 @@ s32 Menu_RunTryBreak(s32 value)
 
     confirmState[5] = 13;
     window = Menu_SetRange(0, 0, 30, 10, 2);
-    Menu_Do(Menu_UpdateEntryObjectTransforms);
+    ScheduleCallback(Menu_UpdateEntryObjectTransforms);
 
     {
         u8 *iconState = MENU_SUBOBJECT(menu, 380);
         iconState[5] = 13;
     }
     Menu_unk3_3();
-    Menu_unk2_2(1);
+    WaitFrames(1);
 
     goto check_exit;
 
@@ -717,15 +717,15 @@ adjust:
             changed = 1;
         }
     }
-    Menu_unk2_2(1);
+    WaitFrames(1);
 
 check_exit:
-    if (Menu_Check(336) != 0)
+    if (GameFlag_IsSet(336) != 0)
         goto done;
 
     if (changed != 0) {
         changed = 0;
-        quantity = Menu_Apply(quantity + 5, 5);
+        quantity = Modulo(quantity + 5, 5);
         Menu_Apply2(window, value);
     }
 
@@ -742,15 +742,15 @@ check_exit:
     goto adjust;
 
 done:
-    Menu_unk2(window);
-    Menu_unk2_2(1);
-    Menu_Apply3(window, 1);
-    Menu_unk2(*(s32 *)(menu + 16));
+    UiWindow_Commit(window);
+    WaitFrames(1);
+    UiWindow_Close(window, 1);
+    UiWindow_Commit(*(s32 *)(menu + 16));
     Menu_unk3_2(14);
     {
         s32 delay = 0xc80;
 
-        Menu_Apply4((const void *)Menu_UpdateEntryObjectTransforms, delay);
+        ScheduleCallbackAfterFrames((const void *)Menu_UpdateEntryObjectTransforms, delay);
     }
 
     {

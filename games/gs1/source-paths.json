@@ -493,7 +493,7 @@
       "name": "Inventory_AddAndEquip"
     },
     "main:08077348": {
-      "name": "get_average_level"
+      "name": "Party_GetAverageLevel"
     },
     "main:080773d8": "owner/get_record.c",
     "main:08077f70": {

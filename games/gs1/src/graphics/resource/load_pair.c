@@ -36,9 +36,9 @@ void *RenderResource_CreatePair(
         return NULL;
 
     RenderResource_LoadPair(arg0, index);
-    first = Sys_Run(index, 0x80004000, arg1, arg2, arg3);
+    first = RenderOutput_Create(index, 0x80004000, arg1, arg2, arg3);
     first->sentinel = 0xFD;
-    second = Sys_Run(index, 0x80004000, arg1, arg2 + 32, arg3);
+    second = RenderOutput_Create(index, 0x80004000, arg1, arg2 + 32, arg3);
     second->sentinel = 0xFD;
     second->table.bits.index += 8;
     return first;

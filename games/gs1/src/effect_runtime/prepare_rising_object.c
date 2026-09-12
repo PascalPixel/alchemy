@@ -161,7 +161,7 @@ void BattleFx_StartEffectObject22(s32 value, s32 flags)
         visual->flags_b = mask;
 
         Battle_Do(value);
-        Battle_Place(visual->value_1c, 128, (u8 *)handle + 0x400);
+        Resource_CopyData(visual->value_1c, 128, (u8 *)handle + 0x400);
         Runtime_ReleaseHeapBlock(17);
 
         if (flags & 1)
@@ -169,9 +169,9 @@ void BattleFx_StartEffectObject22(s32 value, s32 flags)
         if (flags & 2)
             prepare_rising_object(object);
 
-        Battle_unk4_2(80);
-        Battle_Apply((struct EffectObject_0808f1c0 *)resource, 1);
-        Battle_unk5(object);
+        WaitFrames(80);
+        Object_SetMode((struct EffectObject_0808f1c0 *)resource, 1);
+        Object_Destroy(object);
     }
 }
 

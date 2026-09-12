@@ -137,7 +137,7 @@ void BlendTransition_Update(void)
             level = gIw2UpdateTransition;
             delta = gIw3UpdateTransition - gIw2UpdateTransition;
             step = *remaining;
-            level += Sys_Apply(delta *step, gIw4UpdateTransition);
+            level += FixedPoint_Ratio(delta *step, gIw4UpdateTransition);
             *(volatile u16 *)0x04000054 = level;
             if (*remaining == 0)
                 gIw4UpdateTransition = 0;

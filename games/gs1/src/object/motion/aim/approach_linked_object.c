@@ -53,10 +53,10 @@ s32 Object_ApproachLinkedObject(void *arg0)
     mx = FixedPoint_Ratio(dx2 *n, len);
     mz = FixedPoint_Ratio(dz *n, len);
     Obj_SetMode2(arg0, (*((s32 *)(p + 8))) + mx, *((s32 *)(p + 0xC)), (*((s32 *)(p + 0x10))) + mz);
-    Obj_Apply(arg0, 2);
+    ObjectDispatch_ApplyArgumentToChildren(arg0, 2);
     *((u16 *)(p + 4)) = (u16)((*((u16 *)(p + 4))) + 1);
     return 1;
   }
-  Obj_Apply(arg0, 1);
+  ObjectDispatch_ApplyArgumentToChildren(arg0, 1);
   return 0;
 }

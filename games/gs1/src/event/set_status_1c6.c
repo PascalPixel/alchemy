@@ -31,3 +31,13 @@ void Event_WaitValue1c8Frames(void)
 {
     WaitFrames(gWork->value_1c8);
 }
+
+/* event/set_pair_work_1c0.c */
+extern struct EventPairWork1c0 gCell;
+
+void Event_SetPairWork1c0(u16 first, u16 second)
+{
+    gWork->value_170 = 999;
+    gCell.first = first;
+    gCell.second = second;
+}

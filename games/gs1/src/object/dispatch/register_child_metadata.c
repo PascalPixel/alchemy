@@ -146,3 +146,11 @@ void Graphics_EnableObjLayerAndCallbacks(void)
     WaitFrames(1);
     *(u16 *)0x04000000 = (0xF1FF & *(u16 *)0x04000000) | 0x1000;
 }
+
+/* object/dispatch/stop_callbacks_and_hide_layers.c */
+void ObjectDispatch_StopCallbacksAndHideLayers(void)
+{
+    Obj_Check((u32)Obj_Run);
+    Obj_Check((u32)Obj_unk2_2);
+    *(u16 *)0x04000000 &= 0xE1FF;
+}

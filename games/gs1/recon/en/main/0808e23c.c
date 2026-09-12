@@ -81,14 +81,16 @@ void Func_08096810(void); /* RunBattleEffect (battle/effects/run/run_effect.c) *
 void Func_08097194(void); /* named BattleFx_CleanupSceneObjects in source-paths.json */
 #define BattleFx_CleanupSceneObjects Func_08097194
 u8 Func_08077058(s32 actor, s32 slot);
+struct ItemDefinition *Item_GetData(s32 item);
 
 /*
  * __call_via_r3 veneer at 0x080072e4+4*3: an indirect call through whatever
  * pointer is in r3 at the call site (here, event->effect once proven
  * >= 0x10000), modeled per project convention as a direct call with the
- * target as a trailing argument.
+ * target as a trailing argument. Keep the first-view s32 signature from
+ * 0808df1c.c when both retained parents share a TU.
  */
-void Func_080072f0(s32 item_id, s32 actor, s32 slot, u32 target);
+s32 Func_080072f0(s32 value, s32 unused1, s32 unused2, s32 iwramRoutine);
 
 /*
  * Evidence-backed but unproven name (see the evidence summary above),

@@ -6,6 +6,8 @@
 #include "party_state.h"
 
 extern struct PartyState gCell;
+void Func_08079374(s32 flag);
+s32 Func_08079358(s32 flag);
 
 /* game_flags/refresh_lure_cap.c */
 void GameFlag_RefreshLureCap(void)
@@ -13,7 +15,7 @@ void GameFlag_RefreshLureCap(void)
     s32 count;
     s32 n;
 
-    GameFlag_Clear(0x167);
+    Func_08079374(0x167);
     count = Party_CountActiveOwners();
     for (n = 0; n < count; n++) {
         struct OwnerInventoryState *owner;
@@ -32,7 +34,7 @@ void GameFlag_RefreshLureCap(void)
                     kind = *record;
                     record += 4;
                     if (kind == 27) {
-                        GameFlag_Set(0x167);
+                        Func_08079358(0x167);
                     }
                 }
             }

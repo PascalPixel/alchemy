@@ -14,17 +14,17 @@ LAYOUT_SIZE_GUARD(State_080a5534_size, struct State_080a5534, 0x398);
 extern struct State_080a5534 *gIw;
 extern u8 gRom[];
 extern u8 gRom2[];
-s32 Resource_FindFreeSlot(void);
+s32 find_free_slot(void);
 void Resource_CopyData(s32, s32, const u8 *);
 
 void Resource_LoadPairedBlocks(void)
 {
     struct State_080a5534 *state = gIw;
-    s32 value = Resource_FindFreeSlot();
+    s32 value = find_free_slot();
 
     state->values[0] = value;
     Resource_CopyData(value, 128, gRom);
-    value = Resource_FindFreeSlot();
+    value = find_free_slot();
     state->values[1] = value;
     Resource_CopyData(value, 128, gRom2);
 }

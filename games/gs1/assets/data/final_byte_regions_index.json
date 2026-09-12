@@ -81,12 +81,6 @@
       "values": [4, 0, 0, 1, 1, 10, 1, 3, 10, 0]
     },
     {
-      "name": "residual_014",
-      "address": "0x0808ec4c",
-      "representation": "byte_values",
-      "values": [112, 71, 0, 0]
-    },
-    {
       "name": "residual_015",
       "address": "0x08091778",
       "representation": "byte_values",
@@ -103,12 +97,6 @@
       "address": "0x08091c3e",
       "representation": "byte_values",
       "values": [0, 0, 112, 71, 0, 0]
-    },
-    {
-      "name": "residual_018",
-      "address": "0x0809255c",
-      "representation": "byte_values",
-      "values": [112, 71, 0, 0]
     },
     {
       "name": "residual_019",

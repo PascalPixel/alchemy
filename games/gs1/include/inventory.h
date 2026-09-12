@@ -12,13 +12,16 @@ s32 PartyInventory_CountFreeSlots(void);
 s32 Inventory_Add(s32 owner, s32 item);
 s32 PartyInventory_Add(s32 item);
 s32 Inventory_Find(s32 owner, s32 item);
-s32 PartyInventory_FindOwner(void);
+s32 PartyInventory_FindOwner(s32 item_id);
 s32 Inventory_Equip(s32 owner, s32 slot);
 s32 Inventory_FindEquipped(s32 owner, s32 type);
 struct ItemDefinition *Inventory_GetEquippedDefinition(
     struct OwnerInventoryState *owner,
     s32 type);
 s32 Inventory_GetEquippedItem(struct OwnerInventoryState *owner, s32 type);
+#define Inventory_Remove Func_080788c4
+#define Inventory_BreakFar Func_08077060
+
 s32 Inventory_Remove(s32 owner, s32 slot);
 s32 Inventory_Discard(s32 owner, s32 slot);
 s32 Inventory_CheckDiscard(s32 owner, s32 slot);

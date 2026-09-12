@@ -1,60 +1,12 @@
-#include "types.h"
-#include "scene.h"
-
-/* overlays/scene/actor/proximity/actor_proximity.c */
-struct SceneActor {
-    u8 unk_00[6];
-    u16 facing;
-    s32 x, y, z;
-    u8 unk_14[71];
-    u8 active;
-};
-
-s32 Actor_GetPositionDistance(s32 *, s32 *);
-u32 Actor_GetAngle(s32, s32);
-void Actor_SetMode(struct SceneActor *, s32);
-struct SceneActor *Actor_Find(s32);
-
-s32 Actor_UpdatePlayerProximity(struct SceneActor *actor,
-                                    struct SceneActor *target,
-                                    s32 range, s32 force)
-{
-    s32 result = 0;
-    s32 *targetPos = &target->x;
-    s32 *actorPos = &actor->x;
-
-    if (Actor_GetPositionDistance(targetPos, actorPos) < range || force != 0) {
-        u32 angle = (u16)Actor_GetAngle(target->z - actor->z,
-                                            *targetPos - *actorPos);
-        u32 farLeft = (angle - 0x2000) & 0xf000;
-        u32 farRight = (angle + 0x2000) & 0xf000;
-        u32 left = (angle - 0x1000) & 0xf000;
-        u32 right = (angle + 0x1000) & 0xf000;
-        u32 forward = angle & 0xf000;
-        u32 facing = actor->facing & 0xf000;
-
-        if (forward == facing || right == facing || left == facing || force != 0) {
-            actor->active = 1;
-            Actor_SetMode(actor, 1);
-            result = 1;
-        }
-        if (target == Actor_Find(0) && (farRight == facing || farLeft == facing)) {
-            actor->active = 1;
-            Actor_SetMode(actor, 1);
-            result = 1;
-        }
-    } else {
-        actor->active = 0;
-        Actor_SetMode(actor, 2);
-    }
-    return result;
-}
-
-/* overlays/scene/actor/proximity/actor_setup_and_events.c */
 /*
  * Overlay resource_3b5: shared scene work plus the actor setup, dialogue and
  * event sequences that drive this scene, in address order.
  */
+
+#include "types.h"
+
+#define NULL ((void *)0)
+#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 /*
  * Each macro below stands for one per-site call word held in the overlay
@@ -63,11 +15,122 @@ s32 Actor_UpdatePlayerProximity(struct SceneActor *actor,
  * different targets, so the bindings are per call and not per name. Names
  * that have no binding in this tree are provisional.
  */
+#define BattleRuntime_Reset_1(args...) Func_020016e0(args)
+#define ObjectMotion_PlaceWithinCameraBounds_1(a0, a1, a2, a3) Call4(Func_020017c2, a0, a1, a2, a3)
+#define ObjectMotion_SetSpeedParameters_1(a0, a1, a2) Call3(Func_02001728, a0, a1, a2)
+#define ObjectMotion_SetSpeedParameters_2(a0, a1, a2) Call3(Func_02001736, a0, a1, a2)
+#define SceneWork_SetStepValue_1(args...) Func_020017ae(args)
+#define ObjectMotion_SetHorizontalPositionWithTerrain_1(a0, a1, a2) Call3(Func_0200177c, a0, a1, a2)
+#define ObjectMotion_SetHorizontalPositionWithTerrain_2(a0, a1, a2) Call3(Func_0200178a, a0, a1, a2)
+#define ObjectGroup_ConfigureChildValue_1(args...) Func_020017ca(args)
+#define Scene_GetRecord_1(args...) Func_02001760(args)
+#define ObjectMotion_SetHorizontalPositionWithTerrain_3(a0, a1, a2) Call3(Func_020017ac, a0, a1, a2)
+#define ObjectMotion_ResetAndSetPositionInMode2_1(args...) Func_02001796(args)
+#define ObjectMotion_ResetAndSetPositionInMode2_2(args...) Func_020017a0(args)
+#define ObjectMotion_SetPositionAndReset_1(a0, a1, a2) Call3(Func_020017b4, a0, a1, a2)
+#define ObjectMotion_ArmCallback_1(a0, a1, a2) Call3(Func_02001840_a, a0, a1, a2)
+#define ObjectMotion_CommitCurrentPositionAndActivate_1(args...) Func_020017d6(args)
+#define Object_SetModeById_1(args...) Func_020017ee(args)
+#define Object_SetModeById_2(args...) Func_020017f6(args)
+#define Object_SetModeById_3(args...) Func_020017fe(args)
+#define ObjectMotion_SetAngleToward_1(args...) Func_02001828(args)
+#define ObjectMotion_SetAngleToward_2(args...) Func_02001832(args)
+#define BattleRuntime_WaitIfModeZero_1(args...) Func_020017b0(args)
+#define BattleRuntime_WaitIfModeZero_2(a0, a1) Call2(Func_0200188a_a, a0, a1)
+#define BattleRuntime_WaitIfModeZero_3(a0, a1) Call2(Func_02001894, a0, a1)
+#define ObjectMotion_SetVariantCallback_1(args...) Func_02001844(args)
+#define ObjectMotion_SetVariantCallbackAndInvokeObject_1(args...) Func_02001854_a(args)
+#define BattleRuntime_WaitIfModeZero_4(args...) Func_020017da(args)
+#define ObjectMotion_SetSpeedParameters_3(args...) Func_0200188a_b(args)
+#define BattleRuntime_WaitIfModeZero_5(args...) Func_020017e8(args)
+#define UiWork_Create_1(args...) Func_020017e2(args)
+#define UiWork_WaitThenFinalizeCapacity_1(a0, a1) Value2(Func_02001838, a0, a1)
+#define BattleRuntime_WaitIfModeZero_6(args...) Func_02001822(args)
+#define ObjectMotion_SetVariantCallbackAndInvokeObject_2(args...) Func_020018aa(args)
+#define BattleRuntime_WaitIfModeZero_7(args...) Func_02001830(args)
+#define ObjectMotion_ArmCallback_2(args...) Func_02001902(args)
+#define BattleRuntime_WaitIfModeZero_8(args...) Func_02001840_b(args)
+#define BattleRuntime_WaitIfModeZero_9(args...) Func_02001846(args)
+#define ObjectMotion_CallThenWaitForAnimationChange_1(args...) Func_020018be(args)
+#define BattleRuntime_WaitIfModeZero_10(args...) Func_02001854_b(args)
+#define ObjectMotion_ArmCallback_3(args...) Func_02001926(args)
+#define BattleRuntime_WaitIfModeZero_11(args...) Func_02001864(args)
+#define BattleEvent_RunActionAndWait_1(args...) Func_0200191c(args)
+#define BattleRuntime_WaitIfModeZero_12(args...) Func_02001872(args)
+#define ObjectMotion_ArmCallback_4(a0, a1, a2) Call3(Func_02001946, a0, a1, a2)
+#define ObjectMotion_ArmCallback_5(a0, a1, a2) Call3(Func_02001952, a0, a1, a2)
+#define BattleRuntime_WaitIfModeZero_13(args...) Func_02001890(args)
+#define Object_SetModeById_4(args...) Func_02001900(args)
+#define ObjectMotion_CallThenWaitForAnimationChange_2(args...) Func_02001910(args)
+#define BattleRuntime_WaitIfModeZero_14(args...) Func_020018a6(args)
+#define ObjectMotion_SetSpeedParameters_4(a0, a1, a2) Call3(Func_020018e0, a0, a1, a2)
+#define ObjectMotion_SetSpeedParameters_5(a0, a1, a2) Call3(Func_020018ea, a0, a1, a2)
+#define ObjectMotion_ResetAndSetPositionInMode2_3(args...) Func_02001904_a(args)
+#define BattleRuntime_WaitIfModeZero_15(args...) Func_020018ca(args)
+#define ObjectMotion_ResetAndSetPositionInMode2_4(args...) Func_02001914_a(args)
+#define ObjectMotion_CommitCurrentPositionAndActivate_2(args...) Func_02001932(args)
+#define ObjectMotion_ResetAndSetPositionInMode2_5(args...) Func_02001924(args)
+#define ObjectMotion_SetPositionAndReset_2(args...) Func_02001936(args)
+#define BattleRuntime_WaitIfModeZero_16(args...) Func_020018f6(args)
+#define ObjectMotion_SetVariantCallbackAndInvokeObject_3(args...) Func_0200197e(args)
+#define BattleRuntime_WaitIfModeZero_17(args...) Func_02001904_b(args)
+#define ObjectMotion_ArmCallback_6(args...) Func_020019d6(args)
+#define BattleRuntime_WaitIfModeZero_18(args...) Func_02001914_b(args)
+#define BattleRuntime_WaitIfModeZero_19(args...) Func_0200191a(args)
+#define ObjectMotion_CallThenWaitForAnimationChange_3(args...) Func_02001992(args)
+#define BattleRuntime_WaitIfModeZero_20(args...) Func_02001928(args)
+#define ObjectMotion_ArmCallback_7(args...) Func_020019fa(args)
+#define BattleRuntime_WaitIfModeZero_21(args...) Func_02001938(args)
+#define BattleEvent_RunActionAndWait_2(args...) Func_020019fe(args)
+#define BattleRuntime_WaitIfModeZero_22(args...) Func_02001954(args)
+#define ObjectMotion_ArmCallback_8(a0, a1, a2) Call3(Func_02001a28, a0, a1, a2)
+#define ObjectMotion_ArmCallback_9(a0, a1, a2) Call3(Func_02001a34, a0, a1, a2)
+#define BattleRuntime_WaitIfModeZero_23(args...) Func_02001972(args)
+#define Object_SetModeById_5(args...) Func_020019e2(args)
+#define ObjectMotion_CallThenWaitForAnimationChange_4(args...) Func_020019f2(args)
+#define BattleRuntime_WaitIfModeZero_24(args...) Func_02001988(args)
+#define ObjectMotion_SetSpeedParameters_6(a0, a1, a2) Call3(Func_020019c2, a0, a1, a2)
+#define ObjectMotion_SetSpeedParameters_7(a0, a1, a2) Call3(Func_020019cc, a0, a1, a2)
+#define ObjectMotion_ResetAndSetPositionInMode2_6(args...) Func_020019e6(args)
+#define ObjectMotion_SetPositionAndReset_3(args...) Func_020019f8(args)
+#define ObjectMotion_SetHorizontalPositionWithTerrain_4(args...) Func_02001a1a(args)
+#define ObjectMotion_SetHorizontalPositionWithTerrain_5(args...) Func_02001a24(args)
+#define ObjectMotion_SetHorizontalPositionWithTerrain_6(args...) Func_02001a2e(args)
+#define GameFlag_Set_1(a0) Call1(Func_020019ce, a0)
+#define BattleRuntime_ScheduleShoulderButtonModeUpdate_1(args...) Func_020019ea(args)
 
 /*
  * Object-id slot at 0x1f4 of the shared scene work record, set once below to
  * the id of the object created earlier in the same function.
  */
+#define SCENE_OBJECT_ID (*(s32 *)(*(u8 *volatile *)Data_03001ebc + 0x1f4))
+#define SceneState_SetValues31_2_4 Func_02000030
+#define SceneActor_GetPositionDistance Func_02000040
+#define SceneActor_UpdatePartnerProximity Func_02000170
+#define SceneData_GetTable9060 Func_02000208
+#define SceneData_ReturnZero Func_02000210
+#define SceneData_GetTable91f8 Func_02000214
+#define SceneData_GetTable9238 Func_0200021c
+#define FieldScene_RunScene3b5_02000224 Func_02000224
+#define ConfigureAndPlaceActorOneHundredTwo Func_02000260
+#define SceneDialogue_RunMessage0e36 Func_020002b8
+#define SceneDialogue_RunMessage0e37 Func_020002d4
+#define FieldScene_RunSupplementalSequenceTwo Func_020002f0
+#define SceneData_SelectTable94a8ByFlags Func_020004b0
+#define SceneDialogue_RunActor15Message1f92 Func_020004e8
+#define SceneDialogue_RunActor24Message1f9d Func_02000508
+#define FieldScene_RunScene3b5_02000528 Func_02000528
+#define FieldScene_RunScene3b5_02000568 Func_02000568
+#define SceneDialogue_RunActor27Message1fa3 Func_0200059c
+#define SceneDialogue_RunActor24Message235f Func_020005bc
+#define FieldScene_RunScene3b5_020005dc Func_020005dc
+#define SceneScript_SetupActors Func_02000644
+#define SceneActor_CopyPlayerModeToActor Func_020006e8
+#define FieldScene_RunScene3b5SequenceA Func_02000894
+#define SceneState_SetValue30ThenCall Func_02000954
+#define SceneState_PassWorkHalfword16C Func_02000964
+#define FieldScene_RunPrimarySequence Func_02000980
+#define FieldScene_ResetActor9AndDrawTiles Func_02000ca8
 
 struct SceneSetup {
     u16 *commands;
@@ -100,38 +163,256 @@ struct Actor {
     u8 field55;
 };
 
-extern u8 gVal[];
-extern u8 gVal2[];
-extern u8 gVal3[];
-extern u8 gVal4[];
-extern u8 gVal5[];
-extern u8 gVal6[];
-extern u8 gVal7[];
-extern u8 gVal8[];
-extern u8 gVal9[];
-extern u8 gVal10[];
-extern u8 gVal11[];
-extern u8 gVal12[];
-extern u8 gOv[];
-extern u8 gOv2[];
-extern u8 gOv3[];
-extern u8 gVal13[];
-extern struct SceneSetup gOv4[];
-extern u8 gVal14[];
+extern u8 Data_00001f95[];
+extern u8 Data_00001f96[];
+extern u8 Data_00001faa[];
+extern u8 Data_00001fab[];
+extern u8 Data_000021e2[];
+extern u8 Data_000021e3[];
+extern u8 Data_000021f5[];
+extern u8 Data_000021f6[];
+extern u8 Data_00002365[];
+extern u8 Data_00002366[];
+extern u8 Data_00002371[];
+extern u8 Data_00002372[];
+extern u8 Data_02009a9c[];
+extern u8 Data_020097a8[];
+extern u8 Data_020094a8[];
+extern u8 Data_00001fa0[];
+extern struct SceneSetup Data_02009d00[];
+extern u8 Data_00001fb6[];
 
+void Func_02000e96(s32, s32, s32);
 typedef s32(*IwramSqrt02000040)(s32);
-u8 *Actor_unk2_4();
-
-u8 *Actor_unk3_4();
-
-u8 *Actor_unk4_4();
-
-s32 Dialogue_ShowMessage();
+u8 *Func_02000f1e();
+s32 Func_0200022a();
+u8 *Func_02000f34();
+void Func_0200026a();
+void Func_02000f66();
+void Func_02000f7e();
+s32 Func_02000fa6_a();
+s32 Func_02000fa6_b();
+u8 *Func_02000fb8();
+s32 Func_0200132a();
+void Func_0200133c_a();
+void Func_0200133c_b();
+void Func_0200138a();
+void Func_02001396();
+void Func_020013ea();
+void Func_02001402();
+void Func_02001412();
+void Func_02001432();
+void Func_02001452();
+void Func_020015f4();
+void Func_02001618();
+void Func_02001642();
+s32 Func_0200164e();
+void Func_0200167e();
+void Func_02001688();
+void Func_020016a4();
+void Func_020016ae();
+void Func_020016bc();
+void Func_020016be();
+s32 Func_020016ce_a();
+s32 Func_020016ce_b();
+void Func_020016da();
+void Func_020016fa();
+void Func_02001740();
+void Func_02001748();
+void Func_02000f92();
+void Func_020010d8(s32, s32, s32);
+void Func_02000fbe();
+void Func_02001104(s32, s32, s32);
+void Func_020010b2(s32);
+void Func_020010cc(s32, s32);
+void Func_020010ce(s32);
+void Func_020010e8(s32, s32);
+void Func_0200106a();
+s32 Func_02001070();
+s32 Func_0200107a();
+s32 Func_0200108c();
+void Func_0200109a();
+s32 Func_020010a0();
+s32 Func_020010ae();
+void Func_0200110e();
+void Func_0200113c();
+void Func_0200114a();
+s32 Func_02001150();
+s32 Func_0200115a();
+s32 SceneDialogue_ShowMessage();
 s32 SceneFlag_Test();
-
-struct Work_3b5 *Actor_unk5_4();
-
-struct Actor *Actor_unk6_4(s32);
+void Func_0200116e();
+void Func_0200117a();
+s32 Func_02001180();
+s32 Func_0200118e();
+void Func_020011a0();
+void Func_020011ee();
+void Func_0200121c();
+void Func_0200124c();
+void Func_0200124e();
+void Func_02001280();
+s32 Func_020011fc(s32);
+s32 Func_0200120a(s32);
+void Func_02001248(void);
+void Func_020012e6(s32);
+s32 Func_0200130e(s32, s32);
+void Func_02001262(void);
+void Func_02001268(void);
+void Func_02001306(s32);
+s32 Func_0200132e(s32, s32);
+void Func_02001282(void);
+void Func_02001288();
+void Func_020012c2();
+void Func_02001326();
+void Func_0200134a();
+void Func_0200135a();
+void Func_0200135e();
+void Func_0200136e();
+void Func_020012c8();
+void Func_020012f6();
+void Func_0200134c();
+void Func_0200137a();
+void Func_02001392();
+void Func_02001394();
+void Func_020012fc(void);
+void Func_0200139a(s32);
+void Func_020013b2(s32, s32);
+void Func_02001316(void);
+void Func_0200131c(void);
+void Func_020013ba(s32);
+s32 Func_020013e2(s32, s32);
+void Func_02001336(void);
+void Func_020013a8(void);
+void Func_020014dc(s32);
+void Func_0200139e();
+void Func_0200141c(s32, s32, s32);
+void Func_02001468(s32, s32);
+void Func_02001460(s32, s32, s32);
+void Func_02001416(s32);
+void Func_020014fe(s32);
+void Func_0200150a(void);
+void Func_02001516(void);
+void Func_0200143a(void);
+struct Work_3b5 *Func_02001470();
+void Func_020009e8();
+void Func_0200145c();
+s32 Func_020014ce();
+s32 Func_020014d8_a();
+s32 Func_020014d8_b();
+s32 Func_020014f0();
+s32 Func_020014f6();
+void Func_020014f8();
+s32 Func_02001500_a();
+s32 Func_02001500_b();
+s32 Func_02001506();
+s32 Func_02001518();
+s32 Func_02001520();
+void Func_0200155a();
+s32 Func_02001586();
+void Func_02001588();
+void Func_0200159a();
+void Func_020015a8();
+void Func_020015b6();
+void Func_020015c4();
+void Func_020015d2();
+void Func_020015e0();
+void Func_020015ee();
+void Func_02001608();
+void Func_02001624();
+void Func_0200167c();
+void Func_0200178e(s32);
+void Func_020016c2(void);
+void Func_020017aa(s32);
+void Func_020016e0();
+void Func_0200170e();
+void Func_02001728();
+void Func_02001736();
+s32 Func_02001760();
+void Func_0200177c();
+void Func_0200178a();
+void Func_02001796();
+void Func_020017a0();
+void Func_020017ac();
+void Func_020017ae();
+void Func_020017b0();
+void Func_020017b4();
+void Func_020017c2();
+void Func_020017ca();
+void Func_020017d6();
+void Func_020017da();
+s32 Func_020017de();
+void Func_020017e2();
+void Func_020017e8();
+void Func_020017ee();
+void Func_020017f6();
+void Func_020017fe();
+void Func_02001822();
+void Func_02001828();
+void Func_02001830();
+void Func_02001832();
+s32 Func_02001838();
+void Func_02001840_a();
+void Func_02001840_b();
+void Func_02001844();
+void Func_02001846();
+void Func_02001854_a();
+void Func_02001854_b();
+void Func_02001864();
+void Func_02001872();
+void Func_0200188a_a();
+void Func_0200188a_b();
+void Func_02001890();
+void Func_02001894();
+void Func_020018a6();
+void Func_020018aa();
+void Func_020018be();
+void Func_020018ca();
+void Func_020018e0();
+void Func_020018ea();
+void Func_020018f6();
+void Func_02001900();
+void Func_02001902();
+void Func_02001904_a();
+void Func_02001904_b();
+void Func_02001910();
+void Func_02001914_a();
+void Func_02001914_b();
+void Func_0200191a();
+void Func_0200191c();
+void Func_02001924();
+void Func_02001926();
+void Func_02001928();
+void Func_02001932();
+void Func_02001936();
+void Func_02001938();
+void Func_02001946();
+void Func_02001952();
+void Func_02001954();
+void Func_02001972();
+void Func_0200197e();
+void Func_02001988();
+void Func_02001992();
+void Func_020019c2();
+void Func_020019cc();
+void Func_020019ce();
+void Func_020019d6();
+void Func_020019e2();
+void Func_020019e6();
+void Func_020019ea();
+void Func_020019f2();
+void Func_020019f8();
+void Func_020019fa();
+void Func_020019fe();
+void Func_02001a1a();
+void Func_02001a24();
+void Func_02001a28();
+void Func_02001a2e();
+void Func_02001a34();
+struct Actor *Func_02001a2c(s32);
+void Func_020019e0(struct Actor *, s32);
+void Func_02001a90(s32, s32);
+void Func_02001a04(s32, s32, s32, s32, s32, s32);
+void Func_02001a3a(s32);
 
 /*
  * These declarations are deliberately old-style: overlay import arities are
@@ -139,64 +420,168 @@ struct Actor *Actor_unk6_4(s32);
  * than the import behind it, so one import reached from several sites carries
  * several names.
  *
- * Actor_unk7_4 is void because its result is discarded.
+ * Func_0200026a is void because its result is discarded.
  *
- * Actor_unk15 returns s32 because callers test the result whole and never
+ * Func_0200022a returns s32 because callers test the result whole and never
  * truncate it; a u8 return would add a widening shift that is not wanted.
  */
 
-static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
+/*
+ * Each Func_ name is a loader-relocated call word, not a runtime address.
+ *
+ * Call sites spelled through the wrappers below pass their constants straight
+ * into the argument registers. A direct call instead precomputes a costly
+ * constant into a temporary that is then shared with later uses in the same
+ * block. A value-returning call sets r0 last of its arguments.
+ */
+static __inline__ void Call1(void (*f)(), s32 a0)
 {
-    Actor_unk26_3(actor, x, y);
+    extern u8 Data_03001ebc[];
+    void Func_020013d2();
+    void Func_0200141a();
+
+    f(a0);
 }
 
-static __inline__ void PlaceActor2(s32 actor, s32 x, s32 y)
+static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
-    Actor_unk27_3(actor, x, y);
+    extern u8 Data_03001ebc[];
+    void Func_020013d2();
+    void Func_0200141a();
+
+    return f(a0);
+}
+
+static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
+{
+    extern u8 Data_03001ebc[];
+    void Func_020013d2();
+    void Func_0200141a();
+
+    f(a0, a1, a2, a3);
 }
 
 static __inline__ void bump_step(s32 amount)
 {
-    extern u8 gWork[];
+    extern u8 Data_03001ebc[];
+    void Func_020013d2();
+    void Func_0200141a();
 
-    u8 *work = *(u8 **)gWork;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
-}
-
-static __inline__ void bump_step2(s32 amount)
-{
-    extern u8 gWork[];
-
-    u8 *work = *(u8 **)gWork;
+    /* The scene step counter is at 0x1d8 of the shared scene work record. */
+    u8 *work = *(u8 **)Data_03001ebc;
 
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
-static __inline__ void bump_step3(s32 amount)
+static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {
-    extern u8 gWork[];
+    extern u8 Data_03001ebc[];
+    void Func_020013d2();
+    void Func_0200141a();
 
-    u8 *work = *(u8 **)gWork;
+    return f(a0, a1);
+}
+
+static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    extern u8 Data_03001ebc[];
+    void Func_020013d2();
+    void Func_0200141a();
+
+    f(a0, a1, a2);
+}
+
+static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
+{
+    Func_020010d8(actor, x, y);
+}
+
+static __inline__ void PlaceActor_02001104(s32 actor, s32 x, s32 y)
+{
+    Func_02001104(actor, x, y);
+}
+
+static __inline__ void bump_step_02000528(s32 amount)
+{
+    extern u8 Data_03001ebc[];
+
+    u8 *work = *(u8 **)Data_03001ebc;
 
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
-static __inline__ void bump_step4(s32 amount)
+static __inline__ void bump_step_02000568(s32 amount)
 {
-    extern u8 gWork[];
+    extern u8 Data_03001ebc[];
 
-    u8 *work = *(u8 **)gWork;
+    u8 *work = *(u8 **)Data_03001ebc;
 
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
-void State_SetValues31_2_4(void)
+static __inline__ void Call1_02000644(void (*f)(), s32 a)
 {
-    Actor_unk28_3(0x1F, 2, 4);
+    extern u8 *Data_03001ebc;
+    u8 *Func_020013d2(s32);
+    u8 *Func_0200141a(s32);
+
+    f(a);
 }
 
-s32 Actor_GetPositionDistance(s32 *a, s32 *b)
+static __inline__ void Call3_02000644(void (*f)(), s32 a, s32 b, s32 c)
+{
+    extern u8 *Data_03001ebc;
+    u8 *Func_020013d2(s32);
+    u8 *Func_0200141a(s32);
+
+    f(a, b, c);
+}
+
+static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
+{
+    extern u8 Data_03001ebc[];
+
+    f(a0, a1);
+}
+
+static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    extern u8 Data_03001ebc[];
+
+    return f(a0, a1, a2);
+}
+
+static __inline__ void bump_step_02000728(s32 amount)
+{
+    extern u8 Data_03001ebc[];
+
+    u8 *work = *(u8 **)Data_03001ebc;
+
+    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+}
+
+static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
+{
+    extern u8 Data_03001ebc[];
+
+    return f(a0, a1, a2, a3);
+}
+
+static __inline__ void bump_step_02000980(s32 amount)
+{
+    extern u8 Data_03001ebc[];
+
+    u8 *work = *(u8 **)Data_03001ebc;
+
+    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+}
+
+void SceneState_SetValues31_2_4(void)
+{
+    Func_02000e96(0x1F, 2, 4);
+}
+
+s32 SceneActor_GetPositionDistance(s32 *a, s32 *b)
 {
     s32 dx = (*a++ - *b++) >> 16;
     s32 dy = (*a++ - *b++) >> 16;
@@ -217,7 +602,58 @@ s32 Actor_GetPositionDistance(s32 *a, s32 *b)
  * 0x03001e8c is a table of pointers whose entry 12 is 0x03001ebc, the overlay
  * work pointer the rest of this overlay loads directly.
  */
-s32 Actor_UpdatePartnerProximity(u8 *self)
+#include "types.h"
+
+#define SceneActor_UpdatePlayerProximity Func_0200007c
+struct SceneActor {
+    u8 unk_00[6];
+    u16 facing;
+    s32 x, y, z;
+    u8 unk_14[71];
+    u8 active;
+};
+
+s32 SceneActor_GetPositionDistance(s32 *, s32 *);
+u32 SceneActor_GetAngle(s32, s32);
+void SceneActor_SetMode(struct SceneActor *, s32);
+u8 *SceneActor_Find(s32);
+
+s32 SceneActor_UpdatePlayerProximity(struct SceneActor *actor,
+                                    struct SceneActor *target,
+                                    s32 range, s32 force)
+{
+    s32 result = 0;
+    s32 *targetPos = &target->x;
+    s32 *actorPos = &actor->x;
+
+    if (SceneActor_GetPositionDistance(targetPos, actorPos) < range || force != 0) {
+        u32 angle = (u16)SceneActor_GetAngle(target->z - actor->z,
+                                            *targetPos - *actorPos);
+        u32 farLeft = (angle - 0x2000) & 0xf000;
+        u32 farRight = (angle + 0x2000) & 0xf000;
+        u32 left = (angle - 0x1000) & 0xf000;
+        u32 right = (angle + 0x1000) & 0xf000;
+        u32 forward = angle & 0xf000;
+        u32 facing = actor->facing & 0xf000;
+
+        if (forward == facing || right == facing || left == facing || force != 0) {
+            actor->active = 1;
+            SceneActor_SetMode(actor, 1);
+            result = 1;
+        }
+        if ((u8 *)target == SceneActor_Find(0) && (farRight == facing || farLeft == facing)) {
+            actor->active = 1;
+            SceneActor_SetMode(actor, 1);
+            result = 1;
+        }
+    } else {
+        actor->active = 0;
+        SceneActor_SetMode(actor, 2);
+    }
+    return result;
+}
+
+s32 SceneActor_UpdatePartnerProximity(u8 *self)
 {
     u8 **globals = (u8 **)0x03001e8c;
     u8 *scene = globals[0];
@@ -234,15 +670,15 @@ s32 Actor_UpdatePartnerProximity(u8 *self)
      * selector folds into arithmetic on the bit instead.
      */
     if ((*flags & 1) != 0) {
-        partner = Actor_unk2_4(17);
+        partner = Func_02000f1e(17);
     } else {
-        partner = Actor_unk2_4(16);
+        partner = Func_02000f1e(16);
     }
-    if (Actor_unk15(self, partner, 32, 0) != 0) {
+    if (Func_0200022a(self, partner, 32, 0) != 0) {
         return 0;
     }
 
-    player = Actor_unk3_4(0);
+    player = Func_02000f34(0);
 
     /*
      * Widen the test when the scene counter at work + 376 is already
@@ -255,7 +691,7 @@ s32 Actor_UpdatePartnerProximity(u8 *self)
         }
     }
 
-    Actor_unk7_4(self, player, range, force);
+    Func_0200026a(self, player, range, force);
     return 0;
 }
 
@@ -286,64 +722,64 @@ u8 *SceneData_GetTable9238(void)
     return (u8 *)0x02009238;
 }
 
-void Scene_RunScene3b5(void)
+void FieldScene_RunScene3b5_02000224(void)
 {
-    extern u8 gWork[];
-    void Actor_unk8_4();
-    void Actor_unk9_4();
+    extern u8 Data_03001ebc[];
+    void Func_020013d2();
+    void Func_0200141a();
 
     u32 i;
     u8 *record;
 
-    record = Actor_Check(8);
+    record = Value1(Func_02000fa6_a, 8);
     if ((s32)record != 0) {
         record[89] = 0;
     }
-    record = Actor_unk4_4(8);
-    Actor_unk10_4((s32)record, 0);
-    Actor_Run(0, 0x2200000, 0x1200000, 253);
-    Actor_Do(0x200);
+    record = Func_02000fb8(8);
+    Func_02000f66((s32)record, 0);
+    Call4(Func_02000f7e, 0, 0x2200000, 0x1200000, 253);
+    Call1(Func_02000fa6_b, 0x200);
 }
 
 void ConfigureAndPlaceActorOneHundredTwo(void)
 {
     s32 a = 3, b = 26;
-    Actor_unk11_4(3, 32, 1, 1, a, b);
+    Func_02000f92(3, 32, 1, 1, a, b);
     PlaceActor(102, 0x00380000, 0x01a80000);
 }
 
-void ConfigureAndHideActorOneHundredTwo(void)
+void Func_0200028c(void)
 {
     s32 a = 3, b = 26;
-    Actor_unk13_4(2, 25, 1, 1, a, b);
-    PlaceActor2(102, -1, -1);
+    Func_02000fbe(2, 25, 1, 1, a, b);
+    PlaceActor_02001104(102, -1, -1);
 }
 
-void Dialogue_RunMessage0e36(void)
+void SceneDialogue_RunMessage0e36(void)
 {
-    Actor_unk9_2(0x0E36);
-    Actor_Apply(-1, 0);
+    Func_020010b2(0x0E36);
+    Func_020010cc(-1, 0);
 }
 
-void Dialogue_RunMessage0e37(void)
+void SceneDialogue_RunMessage0e37(void)
 {
-    Actor_unk10_2(0x0E37);
-    Actor_Apply2(-1, 0);
+    Func_020010ce(0x0E37);
+    Func_020010e8(-1, 0);
 }
 
-void Scene_RunSupplementalSequenceTwo(void)
+void FieldScene_RunSupplementalSequenceTwo(void)
 {
-    extern u8 gWork[];
+    extern u8 Data_03001ebc[];
 
     u8 *__restrict p5;
     s32 rec;
     s32 p8;
     s32 msg;
 
-    p5 = *(u8 **)gWork;
-    rec = Actor_unk16(16);
+    p5 = *(u8 **)Data_03001ebc;
+    rec = Func_0200107a(16);
     p8 = *(s16 *)(rec + 6);
-    Actor_unk14_4();
+    Func_0200106a();
     {
         volatile u16 *flags = (volatile u16 *)(rec + 100);
         u16 value = *flags;
@@ -351,45 +787,45 @@ void Scene_RunSupplementalSequenceTwo(void)
         *flags = (u16)(value | 2);
     }
     if (*(s16 *)(p5 + 0x17e) == 0) {
-        if (Actor_unk17(0x950) != 0) {
-            msg = (s32)gVal9;
-        } else if (Actor_unk18(0x962) != 0) {
-            msg = (s32)gVal5;
+        if (Func_02001070(0x950) != 0) {
+            msg = (s32)Data_00002365;
+        } else if (Func_0200108c(0x962) != 0) {
+            msg = (s32)Data_000021e2;
         } else {
-            msg = (s32)gVal;
+            msg = (s32)Data_00001f95;
         }
     } else {
-        if (Actor_unk19(0x950) != 0) {
-            msg = (s32)gVal11;
-        } else if (Actor_unk20(0x962) != 0) {
-            msg = (s32)gVal7;
+        if (Func_020010a0(0x950) != 0) {
+            msg = (s32)Data_00002371;
+        } else if (Func_020010ae(0x962) != 0) {
+            msg = (s32)Data_000021f5;
         } else {
-            msg = (s32)gVal3;
+            msg = (s32)Data_00001faa;
         }
     }
-    Dialogue_ShowMessage(msg);
-    Actor_unk15_4(16, 0);
-    Actor_unk16_4(16, 0, 2);
-    Actor_unk17_4(16, 0, 10);
+    SceneDialogue_ShowMessage(msg);
+    Func_0200113c(16, 0);
+    Func_0200116e(16, 0, 2);
+    Func_020011a0(16, 0, 10);
     *(volatile u16 *)(rec + 6) = p8;
-    Actor_unk18_4(1);
+    Func_0200109a(1);
     *(volatile u16 *)(rec + 100) &= 1;
-    Actor_unk19_4();
+    Func_0200110e();
 }
 
-void Scene_RunScene3b5SequenceB(void)
+void Func_020003d0(void)
 {
-    extern u8 gWork[];
+    extern u8 Data_03001ebc[];
 
     u8 *__restrict p5;
     s32 rec;
     s32 p8;
     s32 msg;
 
-    p5 = *(u8 **)gWork;
-    rec = Actor_unk21(17);
+    p5 = *(u8 **)Data_03001ebc;
+    rec = Func_0200115a(17);
     p8 = *(s16 *)(rec + 6);
-    Actor_unk21_4();
+    Func_0200114a();
     {
         volatile u16 *flags = (volatile u16 *)(rec + 100);
         u16 value = *flags;
@@ -397,161 +833,162 @@ void Scene_RunScene3b5SequenceB(void)
         *flags = (u16)(value | 2);
     }
     if (*(s16 *)(p5 + 0x17e) == 0) {
-        if (Actor_unk22(0x950) != 0) {
-            msg = (s32)gVal10;
+        if (Func_02001150(0x950) != 0) {
+            msg = (s32)Data_00002366;
         } else if (SceneFlag_Test(0x962) != 0) {
-            msg = (s32)gVal6;
+            msg = (s32)Data_000021e3;
         } else {
-            msg = (s32)gVal2;
+            msg = (s32)Data_00001f96;
         }
     } else {
-        if (Actor_unk23(0x950) != 0) {
-            msg = (s32)gVal12;
-        } else if (Actor_unk24(0x962) != 0) {
-            msg = (s32)gVal8;
+        if (Func_02001180(0x950) != 0) {
+            msg = (s32)Data_00002372;
+        } else if (Func_0200118e(0x962) != 0) {
+            msg = (s32)Data_000021f6;
         } else {
-            msg = (s32)gVal4;
+            msg = (s32)Data_00001fab;
         }
     }
-    Actor_unk22_4(msg);
-    Actor_unk23_4(17, 0);
-    Actor_unk24_4(17, 0, 2);
-    Actor_unk25_4(17, 0, 10);
+    Func_0200124c(msg);
+    Func_0200121c(17, 0);
+    Func_0200124e(17, 0, 2);
+    Func_02001280(17, 0, 10);
     *(volatile u16 *)(rec + 6) = p8;
-    Actor_unk26_4(1);
+    Func_0200117a(1);
     *(volatile u16 *)(rec + 100) &= 1;
-    Actor_unk27_4();
+    Func_020011ee();
 }
 
 u8 *SceneData_SelectTable94a8ByFlags(void)
 {
-    if (Actor_unk25(0x950) != 0) {
-        return gOv;
+    if (Func_020011fc(0x950) != 0) {
+        return Data_02009a9c;
     }
-    if (Actor_unk26(0x962) != 0) {
-        return gOv2;
+    if (Func_0200120a(0x962) != 0) {
+        return Data_020097a8;
     }
-    return gOv3;
+    return Data_020094a8;
 }
 
-void Dialogue_RunActor15Message1f92(void)
+void SceneDialogue_RunActor15Message1f92(void)
 {
-    Actor_unk28_4();
-    Actor_unk11_2(0x1F92);
-    Actor_Apply3(15, 0);
-    Actor_unk29_4();
+    Func_02001248();
+    Func_020012e6(0x1F92);
+    Func_0200130e(15, 0);
+    Func_02001262();
 }
 
-void Dialogue_RunActor24Message1f9d(void)
+void SceneDialogue_RunActor24Message1f9d(void)
 {
-    Actor_unk30_4();
-    Actor_unk12_2(0x1F9D);
-    Actor_Apply4(24, 0);
-    Actor_unk31_4();
+    Func_02001268();
+    Func_02001306(0x1F9D);
+    Func_0200132e(24, 0);
+    Func_02001282();
 }
 
-void Scene_RunScene3b5(void)
+void FieldScene_RunScene3b5_02000528(void)
 {
-    extern u8 gWork[];
+    extern u8 Data_03001ebc[];
 
     u32 i;
     s32 record;
 
-    Actor_unk32_4();
-    Actor_unk33_4((s32)gVal13);
-    Actor_Place(25, 0xc000, 0);
-    Actor_unk34_4(25, 0);
-    Actor_unk2_3(25, 0x8000, 0);
-    Actor_unk35_4(25, 0);
-    Actor_unk36_4();
+    Func_02001288();
+    Func_02001326((s32)Data_00001fa0);
+    Call3(Func_0200135a, 25, 0xc000, 0);
+    Func_0200134a(25, 0);
+    Call3(Func_0200136e, 25, 0x8000, 0);
+    Func_0200135e(25, 0);
+    Func_020012c2();
 }
 
-void Scene_RunScene3b5(void)
+void FieldScene_RunScene3b5_02000568(void)
 {
-    extern u8 gWork[];
+    extern u8 Data_03001ebc[];
 
     u32 i;
     s32 record;
 
-    Actor_unk37_4();
-    Actor_unk3_3(26, 0x4000, 0);
-    Actor_unk38_4(26, 2);
-    Actor_unk2_2(0x1fa2);
-    Actor_unk39_4(26, 0);
-    Actor_unk40_4();
+    Func_020012c8();
+    Call3(Func_02001394, 26, 0x4000, 0);
+    Func_0200134c(26, 2);
+    Call1(Func_0200137a, 0x1fa2);
+    Func_02001392(26, 0);
+    Func_020012f6();
 }
 
-void Dialogue_RunActor27Message1fa3(void)
+void SceneDialogue_RunActor27Message1fa3(void)
 {
-    Actor_unk41_4();
-    Actor_unk13_2(0x1FA3);
-    Actor_Apply5(0x1B, 0);
-    Actor_unk42_4();
+    Func_020012fc();
+    Func_0200139a(0x1FA3);
+    Func_020013b2(0x1B, 0);
+    Func_02001316();
 }
 
-void Dialogue_RunActor24Message235f(void)
+void SceneDialogue_RunActor24Message235f(void)
 {
-    Actor_unk43_4();
-    Actor_unk14_2(0x235F);
-    Actor_Apply6(24, 0);
-    Actor_unk44_4();
+    Func_0200131c();
+    Func_020013ba(0x235F);
+    Func_020013e2(24, 0);
+    Func_02001336();
 }
 
-void Scene_RunScene3b5(void)
+void FieldScene_RunScene3b5_020005dc(void)
 {
-    extern u8 gWork[];
-    void Actor_unk8_4();
-    void Actor_unk9_4();
+    extern u8 Data_03001ebc[];
+    void Func_020013d2();
+    void Func_0200141a();
 
     u32 i;
     s32 record;
 
-    Actor_unk45_4();
-    if (Actor_unk2(0x8bf) == 0) {
-        Actor_unk3_2(0x8bf);
-        Actor_unk4_2(0x2368);
-        Actor_unk46_4(19, 0);
-        Actor_unk47_4(233, 3);
-        Actor_unk48_4(19, 0);
-        Actor_unk8_4(0, 1);
-        Actor_unk49_4(233, 0);
+    Func_0200133c_a();
+    if (Value1(Func_0200132a, 0x8bf) == 0) {
+        Call1(Func_0200133c_b, 0x8bf);
+        Call1(Func_020013ea, 0x2368);
+        Func_02001402(19, 0);
+        Func_02001452(233, 3);
+        Func_02001412(19, 0);
+        Func_020013d2(0, 1);
+        Func_0200138a(233, 0);
     } else {
-        Actor_unk5_2(0x236a);
-        Actor_unk50_4(19, 0);
+        Call1(Func_0200141a, 0x236a);
+        Func_02001432(19, 0);
     }
-    Actor_unk51_4();
+    Func_02001396();
 }
 
 void SceneScript_SetupActors(void)
 {
-    extern u8 *gWork;
-    u8 *Actor_Find(s32);
+    extern u8 *Data_03001ebc;
 
-    u8 *work = gWork;
+    u8 *work = Data_03001ebc;
     u32 no;
     s32 index;
 
-    Actor_unk52_4();
+    Func_020013a8();
     for (no = 8; no <= 65; no++) {
-        u8 *actor = Actor_Find(no);
+        u8 *actor = SceneActor_Find(no);
         if (actor != NULL) {
             actor[85] = 0;
         }
     }
     index = *(s16 *)(work + 0x16c) - 1;
-    Actor_unk6_2(158);
-    Actor_unk4_3((s32)gOv4[index].commands, gOv4[index].first, gOv4[index].second);
-    Actor_unk5_3(0, 0x8000, 0x4000);
-    Actor_Find(0)[85] = 0;
-    Actor_Apply7(0, 2);
+    Call1_02000644(Func_020014dc, 158);
+    Call3_02000644(Func_0200139e, (s32)Data_02009d00[index].commands,
+                 Data_02009d00[index].first,
+                 Data_02009d00[index].second);
+    Call3_02000644(Func_0200141c, 0, 0x8000, 0x4000);
+    SceneActor_Find(0)[85] = 0;
+    Func_02001468(0, 2);
     if (index != 6) {
-        Actor_unk6_3(0, 2, -8);
-        Actor_unk15_2(10);
+        Call3_02000644(Func_02001460, 0, 2, -8);
+        Func_02001416(10);
     }
-    Actor_unk16_2(*(s16 *)(work + 0x16c));
-    Actor_unk53_4();
-    Actor_unk54_4();
-    Actor_unk55_4();
+    Func_020014fe(*(s16 *)(work + 0x16c));
+    Func_0200150a();
+    Func_02001516();
+    Func_0200143a();
 }
 
 /*
@@ -563,31 +1000,31 @@ void SceneScript_SetupActors(void)
  * two mode writes must stay bitfields so they share one 32-bit mask, which
  * explicit mask-and-or arithmetic does not produce.
  */
-void Actor_CopyPlayerModeToActor(struct Work_3b5 *work)
+void SceneActor_CopyPlayerModeToActor(struct Work_3b5 *work)
 {
     s32 bits;
 
     if (work != 0) {
-        bits = Actor_unk5_4(0)->f80->mode9;
+        bits = Func_02001470(0)->f80->mode9;
         work->f35 = 0;
         work->f80->mode9 = bits;
         work->f80->mode15 = bits;
     }
 }
 
-s32 Scene_RunSupplementalSequenceOne(s32 a0)
+s32 Func_02000728(s32 a0)
 {
-    extern u8 gWork[];
+    extern u8 Data_03001ebc[];
 
     u32 i;
     s32 record;
     s32 handler;
     s32 hidden;
 
-    *(s32 *)((*(u8 *volatile *)gWork + 0x1c0)) = 0x100;
-    Actor_unk7_3(16, 0x1600000, 0x1600000);
-    Actor_unk3(16, 0x2008ec0);
-    record = Actor_unk4(16);
+    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c0)) = 0x100;
+    Call3(Func_020014f8, 16, 0x1600000, 0x1600000);
+    Call2(Func_020014d8_a, 16, 0x2008ec0);
+    record = Value1(Func_020014ce, 16);
     handler = 0x2008171;
     {
         volatile u16 *target = (volatile u16 *)(record + 100);
@@ -597,84 +1034,84 @@ s32 Scene_RunSupplementalSequenceOne(s32 a0)
     }
     *(volatile s32 *)(record + 108) = handler;
     hidden = 0;
-    Actor_unk8_3(17, 0x1700000, 0x1400000);
-    Actor_unk5(17, 0x2008f90);
-    record = Actor_unk6(17);
+    Value3(Func_02001520, 17, 0x1700000, 0x1400000);
+    Call2(Func_02001500_a, 17, 0x2008f90);
+    record = Value1(Func_020014f6, 17);
     *(volatile u16 *)(record + 100) = hidden;
     *(volatile s32 *)(record + 108) = handler;
-    record = Actor_unk27(14);
+    record = Func_02001506(14);
     *(volatile s32 *)(record + 108) = 0x20086e9;
-    if (Actor_unk7(0x8c1) != 0) {
-        Actor_unk9_3(28, 0x13c0000, 0x1480000);
+    if (Value1(Func_020014d8_b, 0x8c1) != 0) {
+        Call3(Func_0200155a, 28, 0x13c0000, 0x1480000);
     }
-    if (Actor_unk8(0x201) != 0) {
-        Actor_unk57_4();
+    if (Value1(Func_020014f0, 0x201) != 0) {
+        Func_0200145c();
     }
-    if (Actor_unk9(0x200) != 0) {
-        Actor_unk58_4();
-        Actor_unk59_4(8, 4);
+    if (Value1(Func_02001500_b, 0x200) != 0) {
+        Func_020009e8();
+        Func_02001588(8, 4);
     }
-    if (Actor_unk10(0x950) != 0) {
-        Actor_unk10_3(20, 0x2080000, 0x2300000);
-        Actor_unk11_3(21, 0x2080000, 0x2300000);
-        Actor_unk12_3(22, 0x2080000, 0x2300000);
-        Actor_unk13_3(24, 0x2080000, 0x2300000);
-        Actor_unk14_3(25, 0x2080000, 0x2300000);
-        Actor_unk15_3(26, 0x2080000, 0x2300000);
-        Actor_unk16_3(27, 0x2080000, 0x2300000);
+    if (Value1(Func_02001518, 0x950) != 0) {
+        Call3(Func_0200159a, 20, 0x2080000, 0x2300000);
+        Call3(Func_020015a8, 21, 0x2080000, 0x2300000);
+        Call3(Func_020015b6, 22, 0x2080000, 0x2300000);
+        Call3(Func_020015c4, 24, 0x2080000, 0x2300000);
+        Call3(Func_020015d2, 25, 0x2080000, 0x2300000);
+        Call3(Func_020015e0, 26, 0x2080000, 0x2300000);
+        Call3(Func_020015ee, 27, 0x2080000, 0x2300000);
     } else {
-        if (Actor_unk11(0x962) != 0) {
-            Actor_unk17_3(27, 0x1180000, 0x500000);
-            Actor_unk18_3(27, 0x2000, 0);
-            Actor_unk60_4(27, 1);
+        if (Value1(Func_02001586, 0x962) != 0) {
+            Call3(Func_02001608, 27, 0x1180000, 0x500000);
+            Call3(Func_0200167c, 27, 0x2000, 0);
+            Func_02001624(27, 1);
         }
     }
     return 0;
 }
 
-void Scene_RunScene3b5SequenceA(void)
+void FieldScene_RunScene3b5SequenceA(void)
 {
-    extern u8 gWork[];
-    void Actor_unk8_4();
-    void Actor_unk9_4();
+    extern u8 Data_03001ebc[];
+    void Func_020013d2();
+    void Func_0200141a();
 
     u32 i;
     s32 record;
 
-    Actor_unk61_4();
-    Actor_unk19_3(0, 0x130, 0x138);
-    Actor_unk20_3(0, 0xc000, 0);
-    Actor_unk21_3(28, 0x4000, 0);
-    Actor_unk62_4(20);
-    Actor_unk7_2(0xe3d);
-    Actor_unk12(28, 0);
-    if (Actor_unk13(0, 0) == 0) {
+    Func_020015f4();
+    Call3(Func_02001642, 0, 0x130, 0x138);
+    Call3(Func_020016ce_a, 0, 0xc000, 0);
+    Call3(Func_020016da, 28, 0x4000, 0);
+    Func_02001618(20);
+    Call1(Func_020016be, 0xe3d);
+    Value2(Func_020016ce_b, 28, 0);
+    if (Value2(Func_0200164e, 0, 0) == 0) {
         bump_step(1);
-        Actor_unk63_4(28, 0);
-        Actor_unk22_3(28, 0x10000, 0x8000);
-        Actor_unk23_3(28, 0x140, 0x130);
-        Actor_unk24_3(28, 0x13c, 0x148);
-        Actor_unk25_3(28, 0xa000, 0);
-        Actor_unk8_2(0x8c1);
+        Func_020016fa(28, 0);
+        Call3(Func_02001688, 28, 0x10000, 0x8000);
+        Call3(Func_020016ae, 28, 0x140, 0x130);
+        Call3(Func_020016bc, 28, 0x13c, 0x148);
+        Call3(Func_02001748, 28, 0xa000, 0);
+        Call1(Func_0200167e, 0x8c1);
     } else {
-        Actor_unk64_4(28, 0);
+        Func_02001740(28, 0);
     }
-    Actor_unk65_4();
+    Func_020016a4();
 }
 
-void State_SetValue30ThenCall(void)
+void SceneState_SetValue30ThenCall(void)
 {
-    Actor_unk17_2(30);
-    Actor_unk66_4();
+    Func_0200178e(30);
+    Func_020016c2();
 }
 
-void State_PassWorkHalfword16C(void)
+void SceneState_PassWorkHalfword16C(void)
 {
-    extern u8 *gWork;
+    extern u8 *Data_03001ebc;
 
-    s16 *cnt = (s16 *)(gWork + 0x16C);
+    s16 *cnt = (s16 *)(Data_03001ebc + 0x16C);
 
-    Actor_unk18_2(*cnt);
+    Func_020017aa(*cnt);
 }
 
 /*
@@ -682,119 +1119,119 @@ void State_PassWorkHalfword16C(void)
  * near-identical sequences for objects 29, 30 and 20 with different
  * positions, sizes and speeds, then finish with shared placement calls.
  */
-void Scene_RunPrimarySequence(void)
+void FieldScene_RunPrimarySequence(void)
 {
-    extern u8 gWork[];
+    extern u8 Data_03001ebc[];
 
     u32 i;
     s32 object32_id;
     s32 list_00001fb6;
 
-    Battle_Reset_1();
-    Motion_CamBounds_1(-1, -1, -1, 0);
-    Motion_SetSpeed_1(29, 0x10000, 0x8000);
-    Motion_SetSpeed_2(30, 0x10000, 0x8000);
-    list_00001fb6 = (s32)gVal14;
+    BattleRuntime_Reset_1();
+    ObjectMotion_PlaceWithinCameraBounds_1(-1, -1, -1, 0);
+    ObjectMotion_SetSpeedParameters_1(29, 0x10000, 0x8000);
+    ObjectMotion_SetSpeedParameters_2(30, 0x10000, 0x8000);
+    list_00001fb6 = (s32)Data_00001fb6;
     SceneWork_SetStepValue_1(list_00001fb6);
-    Motion_SetHPosTerrain_1(29, 0x480000, 0xd00000);
-    Motion_SetHPosTerrain_2(30, 0x380000, 0xd00000);
+    ObjectMotion_SetHorizontalPositionWithTerrain_1(29, 0x480000, 0xd00000);
+    ObjectMotion_SetHorizontalPositionWithTerrain_2(30, 0x380000, 0xd00000);
     ObjectGroup_ConfigureChildValue_1(32, 15);
     object32_id = Scene_GetRecord_1(32);
-    Actor_unk67_4(object32_id, 0); /* main:080091e0 */
-    Motion_SetHPosTerrain_3(32, 0x5f0000, 0x280000);
-    Motion_ResetPosMode2_1(29, 72, 248);
-    Motion_ResetPosMode2_2(30, 56, 248);
-    Motion_SetPosReset_1(0, 64, 0x108);
-    Motion_ArmCb_1(0, 0xc000, 0);
-    Motion_CommitPos_1(29);
+    Func_0200170e(object32_id, 0); /* main:080091e0 */
+    ObjectMotion_SetHorizontalPositionWithTerrain_3(32, 0x5f0000, 0x280000);
+    ObjectMotion_ResetAndSetPositionInMode2_1(29, 72, 248);
+    ObjectMotion_ResetAndSetPositionInMode2_2(30, 56, 248);
+    ObjectMotion_SetPositionAndReset_1(0, 64, 0x108);
+    ObjectMotion_ArmCallback_1(0, 0xc000, 0);
+    ObjectMotion_CommitCurrentPositionAndActivate_1(29);
     Object_SetModeById_1(29, 1);
     Object_SetModeById_2(30, 1);
     Object_SetModeById_3(0, 1);
-    Motion_SetAngleToward_1(29, 0, 0);
-    Motion_SetAngleToward_2(30, 0, 0);
-    Battle_WaitMode0_1(20);
-    Battle_WaitMode0_2(29, 0x102); /* main:0808a1f0 */
-    Battle_WaitMode0_3(30, 0x102); /* main:0808a1f0 */
-    Motion_SetVarCb_1(29, 2);
-    Motion_SetVarCbObj_1(30, 2);
-    Battle_WaitMode0_4(20);
-    Motion_SetSpeed_3(29, 0); /* main:0808a178 */
-    Battle_WaitMode0_5(25);
-    Actor_unk14(52, 0, 12, 7); /* main:080150f8 */
+    ObjectMotion_SetAngleToward_1(29, 0, 0);
+    ObjectMotion_SetAngleToward_2(30, 0, 0);
+    BattleRuntime_WaitIfModeZero_1(20);
+    BattleRuntime_WaitIfModeZero_2(29, 0x102); /* main:0808a1f0 */
+    BattleRuntime_WaitIfModeZero_3(30, 0x102); /* main:0808a1f0 */
+    ObjectMotion_SetVariantCallback_1(29, 2);
+    ObjectMotion_SetVariantCallbackAndInvokeObject_1(30, 2);
+    BattleRuntime_WaitIfModeZero_4(20);
+    ObjectMotion_SetSpeedParameters_3(29, 0); /* main:0808a178 */
+    BattleRuntime_WaitIfModeZero_5(25);
+    Value4(Func_020017de, 52, 0, 12, 7); /* main:080150f8 */
     UiWork_Create_1((list_00001fb6 + 3), 11, 12, 2);
     SCENE_OBJECT_ID = 32;
     if (UiWork_WaitThenFinalizeCapacity_1(0, 0) == 0) { /* object_id 0, force 0 */
-        Battle_WaitMode0_6(20);
-        Motion_SetVarCbObj_2(30, 2);
-        Battle_WaitMode0_7(30);
-        Motion_ArmCb_2(30, 0, 0);
-        Battle_WaitMode0_8(30);
-        Battle_WaitMode0_9(10);
-        Motion_CallWaitAnim_1(29, 3);
-        Battle_WaitMode0_10(20);
-        Motion_ArmCb_3(29, 0, 0);
-        Battle_WaitMode0_11(30);
-        BattleEv_RunWait_1(29, 0);
-        Battle_WaitMode0_12(20);
-        Motion_ArmCb_4(29, 0x4000, 0);
-        Motion_ArmCb_5(30, 0x4000, 0);
-        Battle_WaitMode0_13(30);
+        BattleRuntime_WaitIfModeZero_6(20);
+        ObjectMotion_SetVariantCallbackAndInvokeObject_2(30, 2);
+        BattleRuntime_WaitIfModeZero_7(30);
+        ObjectMotion_ArmCallback_2(30, 0, 0);
+        BattleRuntime_WaitIfModeZero_8(30);
+        BattleRuntime_WaitIfModeZero_9(10);
+        ObjectMotion_CallThenWaitForAnimationChange_1(29, 3);
+        BattleRuntime_WaitIfModeZero_10(20);
+        ObjectMotion_ArmCallback_3(29, 0, 0);
+        BattleRuntime_WaitIfModeZero_11(30);
+        BattleEvent_RunActionAndWait_1(29, 0);
+        BattleRuntime_WaitIfModeZero_12(20);
+        ObjectMotion_ArmCallback_4(29, 0x4000, 0);
+        ObjectMotion_ArmCallback_5(30, 0x4000, 0);
+        BattleRuntime_WaitIfModeZero_13(30);
         Object_SetModeById_4(29, 3);
-        Motion_CallWaitAnim_2(30, 3);
-        Battle_WaitMode0_14(20);
-        Motion_SetSpeed_4(29, 0x1cccc, 0xe666);
-        Motion_SetSpeed_5(30, 0x1cccc, 0xe666);
-        Motion_ResetPosMode2_3(29, 232, 248);
-        Battle_WaitMode0_15(2);
-        Motion_ResetPosMode2_4(30, 232, 248);
-        Motion_CommitPos_2(29);
-        Motion_ResetPosMode2_5(29, 248, 248);
-        Motion_SetPosReset_2(30, 248, 248);
+        ObjectMotion_CallThenWaitForAnimationChange_2(30, 3);
+        BattleRuntime_WaitIfModeZero_14(20);
+        ObjectMotion_SetSpeedParameters_4(29, 0x1cccc, 0xe666);
+        ObjectMotion_SetSpeedParameters_5(30, 0x1cccc, 0xe666);
+        ObjectMotion_ResetAndSetPositionInMode2_3(29, 232, 248);
+        BattleRuntime_WaitIfModeZero_15(2);
+        ObjectMotion_ResetAndSetPositionInMode2_4(30, 232, 248);
+        ObjectMotion_CommitCurrentPositionAndActivate_2(29);
+        ObjectMotion_ResetAndSetPositionInMode2_5(29, 248, 248);
+        ObjectMotion_SetPositionAndReset_2(30, 248, 248);
     } else {
-        Battle_WaitMode0_16(20);
-        Motion_SetVarCbObj_3(30, 2);
-        Battle_WaitMode0_17(30);
-        Motion_ArmCb_6(30, 0, 0);
-        Battle_WaitMode0_18(30);
-        Battle_WaitMode0_19(10);
-        Motion_CallWaitAnim_3(29, 4);
-        Battle_WaitMode0_20(20);
-        Motion_ArmCb_7(29, 0, 0);
-        Battle_WaitMode0_21(30);
-        bump_step4(1);
-        BattleEv_RunWait_2(29, 0);
-        Battle_WaitMode0_22(20);
-        Motion_ArmCb_8(29, 0x4000, 0);
-        Motion_ArmCb_9(30, 0x4000, 0);
-        Battle_WaitMode0_23(30);
+        BattleRuntime_WaitIfModeZero_16(20);
+        ObjectMotion_SetVariantCallbackAndInvokeObject_3(30, 2);
+        BattleRuntime_WaitIfModeZero_17(30);
+        ObjectMotion_ArmCallback_6(30, 0, 0);
+        BattleRuntime_WaitIfModeZero_18(30);
+        BattleRuntime_WaitIfModeZero_19(10);
+        ObjectMotion_CallThenWaitForAnimationChange_3(29, 4);
+        BattleRuntime_WaitIfModeZero_20(20);
+        ObjectMotion_ArmCallback_7(29, 0, 0);
+        BattleRuntime_WaitIfModeZero_21(30);
+        bump_step_02000980(1);
+        BattleEvent_RunActionAndWait_2(29, 0);
+        BattleRuntime_WaitIfModeZero_22(20);
+        ObjectMotion_ArmCallback_8(29, 0x4000, 0);
+        ObjectMotion_ArmCallback_9(30, 0x4000, 0);
+        BattleRuntime_WaitIfModeZero_23(30);
         Object_SetModeById_5(29, 3);
-        Motion_CallWaitAnim_4(30, 3);
-        Battle_WaitMode0_24(20);
-        Motion_SetSpeed_6(29, 0x19999, 0xcccc);
-        Motion_SetSpeed_7(30, 0x19999, 0xcccc);
-        Motion_ResetPosMode2_6(29, 72, 184);
-        Motion_SetPosReset_3(30, 56, 184);
+        ObjectMotion_CallThenWaitForAnimationChange_4(30, 3);
+        BattleRuntime_WaitIfModeZero_24(20);
+        ObjectMotion_SetSpeedParameters_6(29, 0x19999, 0xcccc);
+        ObjectMotion_SetSpeedParameters_7(30, 0x19999, 0xcccc);
+        ObjectMotion_ResetAndSetPositionInMode2_6(29, 72, 184);
+        ObjectMotion_SetPositionAndReset_3(30, 56, 184);
     }
-    Motion_SetHPosTerrain_4(29, 0, 0);
-    Motion_SetHPosTerrain_5(30, 0, 0);
-    Motion_SetHPosTerrain_6(32, 0, 0);
+    ObjectMotion_SetHorizontalPositionWithTerrain_4(29, 0, 0);
+    ObjectMotion_SetHorizontalPositionWithTerrain_5(30, 0, 0);
+    ObjectMotion_SetHorizontalPositionWithTerrain_6(32, 0, 0);
     GameFlag_Set_1(0x8c0);
-    Battle_SchedShoulder_1();
+    BattleRuntime_ScheduleShoulderButtonModeUpdate_1();
 }
 
-void Scene_ResetActor9AndDrawTiles(void)
+void FieldScene_ResetActor9AndDrawTiles(void)
 {
-    struct Actor *actor = Actor_unk6_4(9);
+    struct Actor *actor = Func_02001a2c(9);
     if (actor != 0) {
-        Actor_Apply8(actor, 0);
+        Func_020019e0(actor, 0);
         actor->field23 = 2;
         actor->field55 = 0;
     }
-    Actor_Apply9(9, 5);
+    Func_02001a90(9, 5);
     {
         s32 v5 = 34;
         s32 v6 = 16;
-        Actor_SetRect(36, 16, 1, 1, v5, v6);
+        Func_02001a04(36, 16, 1, 1, v5, v6);
     }
-    Actor_unk19_2(0x201);
+    Func_02001a3a(0x201);
 }

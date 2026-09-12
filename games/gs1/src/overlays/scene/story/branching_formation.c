@@ -1,12 +1,61 @@
 #include "types.h"
-#include "scene.h"
+
+#define StagedActorStepTable Data_0200ad68
+#define GetStagedActor Func_02002cf8
+#define FindNextStagedActor Func_02000176
+#define FindBlockingStagedActor Func_020001a2
+#define FindElevatedBlockingStagedActor Func_020001ce
+#define CanStartStagedActorMove Func_02002d84
+#define SetStagedActorMode Func_02002d5c
+#define SelectStagedActorSlot Func_02002d44
+#define StartStagedActorEffect Func_02002eea
+#define StartNextStagedActorMove Func_02002da2
+#define StartLeadStagedActorMove Func_02002db2
+#define FinishStagedActorMove Func_02002dc0
+#define FinishStagedActorEffect Func_02002f0c
+#define SetStagedActorTransition Func_02002dc8
+#define GetStagedActorEffect Func_0200374e
+#define CanStartStagedActorEffect Func_0200371e
+#define BeginStagedActorEffect Func_02003750
+#define SetStagedActorEffectMode Func_020036f0
+#define SelectStagedActorEffectSlot Func_020036d6
+#define StartStagedActorEffectSound Func_0200387c
+#define SetStagedActorMotionMode Func_02003704
+#define PrepareStagedActorEffect Func_0200376e
+#define TestStagedActorEffectCell Func_020037ec
+#define StartStagedActorEffectMove Func_0200373c
+#define SetStagedActorEffectTransition Func_0200378c
+#define WaitStagedActorEffect Func_02003830
+#define AdvanceStagedActorEffect Func_02003744
+#define WaitSceneFrames Func_02003756
+#define RestoreStagedActorEffect Func_0200376c
+#define FinishStagedActorEffect_02000b1c Func_02003810
+#define SceneTransition_Phase Data_02000240[225]
+#define StagedActor_PushActorAhead Func_020000c4
+#define SceneActor_ResetMotionWhenAheadBlocked Func_020002a8
+#define FindStagedActorProbePosition Func_02000474
+#define OverlayObject_ClearPendingAndRestoreMode Func_020009dc
+#define SceneActor_UpdateRandomCounterMode Func_020009fc
+#define SceneData_GetTableb06c Func_02000a4c
+#define SceneData_ReturnZero Func_02000a54
+#define SceneData_GetTableb0cc Func_02000a58
+#define SceneData_GetTableb0e4 Func_02000a60
+#define FieldScene_RunTile10x20Transition Func_02000a68
+#define StagedActor_RunStepEffect Func_02000b1c
+#define SceneActor_PassSubjectOffsetPosition Func_02000c14
+#define SceneData_GetTableB294 Func_02000c60
+#define FieldScene_RunScene391_02000c68 Func_02000c68
+#define FieldScene_RunSplitPairSteps Func_02002768
+#define SceneActor_SetPairZeroAndValue Func_02002780
+#define SceneEffect_AdvanceAngleAndFinishWhenParked Func_02002798
+#define SceneEffect_SpawnObject26EveryEightFrames Func_020027c8
+#define OverlayObject_SelectValueByFrameBit1 Func_02002864
+#define SceneActor_CheckRegionTrigger Func_0200288c
+#define SceneActor_AlternateSlots13To16Field0c Func_02002ad8
+
 #include "staged_actor.h"
 #include "staged_actor_probe.h"
 #include "staged_actor_effect.h"
-#include "staged_actor_movement.h"
-
-/* overlays/scene/story/branching_formation/branching_formation.c */
-/* overlays/scene/story/branching_formation/calculate_fixed.c */
 
 typedef struct { s32 unk0; s32 unk4; s32 unk8; } Desc;
 
@@ -19,7 +68,7 @@ typedef struct {
     u8 filler44[0xC]; Sub *unk50;
 } Ent;
 
-struct PlacementResult {
+struct PlacementResult_02000a68 {
     s32 words[6];
 };
 
@@ -69,38 +118,103 @@ struct Struct5702 {
     u8 field55;
 };
 
-extern u8 *gWork;
-extern u8 *gCam;
-extern u8 gUnk[];
-extern s32 gOv[];
-extern s32 gOv2;
-extern u8 gOv3[];
-extern s32 gOv4;
-extern s32 gOv5;
-extern u8 gOv6[];
+extern u8 *Data_03001ebc;
+extern u8 *Data_03001e70;
+extern u8 Data_02010000[];
+extern s32 Data_0200ada8[];
+extern s32 Data_0200b398;
+extern u8 Data_0200b2d0[];
+extern s32 Data_0200b394;
+extern s32 Data_0200b390;
+extern u8 Data_0200b2e4[];
 
 typedef s32(*IwramIntegerSquareRoot)(s32);
-struct StagedActor *GetStagedActor(s32 actor_index);
-struct StagedActor *FindNextStagedActor(s32 *position, struct StagedActor *actor);
-struct StagedActor *FindBlockingStagedActor(s32 *position, struct StagedActor *actor);
-struct StagedActor *FindElevatedBlockingStagedActor(s32 *position, struct StagedActor *actor);
-
-Ent *Story_unk7_4(Desc *, Ent *);
-
-u8 *Story_unk8_4(s32);
-
-u8 *Story_unk9_4(s32);
-
-struct StagedActorEffect *GetStagedActorEffect(s32 actor_index);
-
-struct Struct3848 *Story_unk10_4(s32 arg0);
-
-struct Obj *Story_unk11_4(s32, s32, s32, s32);
-
-struct Struct5702 *Story_unk12_4(s32 arg0);
-struct Struct5702 *Story_unk13_4(s32 arg0);
-struct Struct5702 *Story_unk14_4(s32 arg0);
-struct Struct5702 *Story_unk15_4(s32 arg0);
+struct StagedActor *Func_02002cf8(s32 actor_index);
+struct StagedActor *Func_02000176(s32 *position, struct StagedActor *actor);
+struct StagedActor *Func_020001a2(s32 *position, struct StagedActor *actor);
+struct StagedActor *Func_020001ce(s32 *position, struct StagedActor *actor);
+s32 Func_02002d84(struct StagedActor *actor, s32 *position);
+void Func_02002d5c(struct StagedActor *actor, s32 mode);
+void Func_02002d44(s32 actor_index);
+void Func_02002eea(s32 effect_id);
+void Func_02002da2(struct StagedActor *actor, s32 x, s32 y, s32 z);
+void Func_02002db2(struct StagedActor *actor, s32 x, s32 y, s32 z);
+void Func_02002dc0(struct StagedActor *actor);
+void Func_02002f0c(void);
+void Func_02002dc8(struct StagedActor *actor, s32 mode);
+Ent *Func_02000342(Desc *, Ent *);
+s32 Func_02002f06(Ent *, Desc *);
+void Func_0200358e(u8 *object, s32 mode);
+u32 Func_0200359e(void);
+void Func_020036d2(u8 *object, s32 mode);
+void Func_020036dc(u8 *object, s32 mode);
+void Func_0200367a(void);
+void Func_02003724(void);
+s32 Func_02000eea(struct PlacementResult_02000a68 *res);
+void Func_02001096(struct PlacementResult_02000a68 res);
+void Func_02003728(s32, s32);
+void Func_0200371c(s32, s32, s32);
+void Func_020036ba(s32);
+void Func_020037e0(s32);
+void Func_02003748(s32, s32);
+u8 *Func_020036ee(s32);
+void Func_020036c0(s32, s32, s32, s32, s32, s32);
+s32 Func_02000d3c_grid(s32, s32, s32, s32, s32, s32);
+void Func_020036fc(s32);
+u8 *Func_0200372a(s32);
+void Func_020036f8(u8 *, s32);
+struct StagedActorEffect *Func_0200374e(s32 actor_index);
+void Func_02003750(void);
+void Func_020036f0(struct StagedActorEffect *actor, s32 mode);
+void Func_020036d6(s32 actor_index);
+void Func_0200387c(s32 effect_id);
+void Func_02003704(struct StagedActorEffect *actor, s32 mode);
+void Func_0200376e(struct StagedActorEffect *actor, s32 mode);
+s32 Func_020037ec(s32 layer, s32 cell_x, s32 cell_z);
+void Func_0200373c(struct StagedActorEffect *actor, s32 mode);
+void Func_0200378c(struct StagedActorEffect *actor, s32 mode);
+void Func_02003830(s32 frames, s32 mode);
+void Func_02003744(s32 mode);
+void Func_02003756(s32 frames);
+void Func_0200376c(s32 mode);
+void Func_02003810(void);
+struct Struct3848 *Func_02003848(s32 arg0);
+void Func_0200176a(u32 *arg0);
+s32 Func_02000ef4();
+void Func_02001530();
+void Func_02001582();
+void Func_02001588();
+void Func_02001a22();
+s32 Func_0200386c();
+void Func_02003878();
+s32 Func_020038a6();
+void Func_020038a8();
+s32 Func_020038d2();
+s32 Func_020038da();
+s32 Func_020038e0();
+void Func_02003976();
+void Func_02003980();
+void Func_0200398a();
+void Func_02003994();
+void Func_0200399e();
+void Func_02005434(s32 arg0, s32 arg1);
+s32 Func_0200537a(s32 arg0);
+void Func_02005454(s32 a, s32 b, s32 c);
+s32 Func_02005392(s32 a);
+void Func_02005376(struct Struct2798 *p);
+void Func_02005506(s32);
+struct Obj *Func_020053a6(s32, s32, s32, s32);
+void Func_020053d6(struct Obj *, s32);
+void Func_0200540e(struct Obj *, s32, s32, s32);
+void Func_020053f6(struct Obj *, u8 *);
+void Func_02005524(s32 arg0, s32 arg1);
+void Func_0200552c(s32 arg0, s32 arg1);
+void Func_0200563a(s32 arg0);
+s32 Func_020054ca(struct Struct288c *arg0, u8 *arg1);
+struct Struct5702 *Func_02005702(s32 arg0);
+struct Struct5702 *Func_0200572a(s32 arg0);
+struct Struct5702 *Func_02005752(s32 arg0);
+struct Struct5702 *Func_0200577a(s32 arg0);
 
 /*
  * Distance between two three-component 16.16 fixed-point positions.  Each
@@ -136,13 +250,30 @@ struct Struct5702 *Story_unk15_4(s32 arg0);
  */
 
 /* The scene-transition phase flag in the field-scene table. */
-static __inline__ void DrawPlacement(
+static __inline__ void DrawPlacement_02000a68(
     s32 left, s32 top, s32 width, s32 height, s32 tile, s32 palette)
 {
-    Story_unk2_5(left, top, width, height, tile, palette);
+    Func_020036c0(left, top, width, height, tile, palette);
 }
 
-s32 Story_unk16_4(s32 *first_position, s32 *second_position)
+static __inline__ s32 Value1(s32 (*f)(), s32 a0)
+{
+    extern s16 Data_02000240[];
+
+    return f(a0);
+}
+
+static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
+{
+    extern s16 Data_02000240[];
+
+    f(a0, a1, a2, a3, a4, a5);
+}
+
+s32 Func_0200371e(struct StagedActorEffect *actor,
+                         struct StagedActorEffectRequest *request);
+
+s32 Func_02000030(s32 *first_position, s32 *second_position)
 {
     s32 delta_x = (*first_position++ - *second_position++) >> 16;
     s32 delta_y = (*first_position++ - *second_position++) >> 16;
@@ -154,9 +285,9 @@ s32 Story_unk16_4(s32 *first_position, s32 *second_position)
     return ((IwramIntegerSquareRoot) 0x030001D8)(delta_x_squared + delta_y_squared + delta_z_squared);
 }
 
-s32 *Story_unk17_4(s32 *arg0)
+s32 *Func_0200006c(s32 *arg0)
 {
-    s32 **slots = (s32 **)(gWork + 0x14);
+    s32 **slots = (s32 **)(Data_03001ebc + 0x14);
     u32 i;
 
     for (i = 8; i <= 65; i++) {
@@ -173,7 +304,7 @@ s32 *Story_unk17_4(s32 *arg0)
 
 void StagedActor_PushActorAhead(void)
 {
-    extern u32 StagedActorStepTable[];
+    extern u32 Data_0200ad68[];
 
     s32 dest[3];
     struct StagedActor *lead;
@@ -244,9 +375,9 @@ void StagedActor_PushActorAhead(void)
     SetStagedActorTransition(lead, 1);
 }
 
-s32 Story_unk18_4(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
+s32 Func_02000244(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
 {
-    u8 *g = gCam;
+    u8 *g = Data_03001e70;
     u8 *base;
     u32 i;
     u32 j;
@@ -257,7 +388,7 @@ s32 Story_unk18_4(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
 
             base = *(u8 **)(g + off);
         } else {
-            base = gUnk;
+            base = Data_02010000;
         }
         base += (arg1 + (arg2 << 7)) * 4;
         for (i = 0; i < arg4; i++) {
@@ -272,7 +403,7 @@ s32 Story_unk18_4(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
     return 0;
 }
 
-s32 Actor_ResetMotionWhenAheadBlocked(Ent *a)
+s32 SceneActor_ResetMotionWhenAheadBlocked(Ent *a)
 {
     Desc d;
     u32 idx;
@@ -280,16 +411,16 @@ s32 Actor_ResetMotionWhenAheadBlocked(Ent *a)
     Ent *r;
 
     idx = a->unk6 >> 12;
-    m = StagedActorStepTable[idx];
+    m = Data_0200ad68[idx];
     d.unk0 = a->unk8 + (m & 0xffff0000);
     d.unk4 = a->unkC;
     m = m << 16;
     d.unk8 = a->unk10 + m;
-    r = Story_unk7_4(&d, a);
+    r = Func_02000342(&d, a);
     if (r != 0) {
         u32 i = 0;
         s32 v = *r->unk50->unk28;
-        s32 *p = gOv;
+        s32 *p = Data_0200ada8;
 
         do {
             if (v == *p++) goto done;
@@ -300,12 +431,12 @@ s32 Actor_ResetMotionWhenAheadBlocked(Ent *a)
         a->unk38 = 0x80000000;
         a->unk40 = 0x80000000;
     }
-    m = StagedActorStepTable[idx];
+    m = Data_0200ad68[idx];
     d.unk0 = a->unk8 + (m & 0xffff0000);
     d.unk4 = a->unkC;
     m = m << 16;
     d.unk8 = a->unk10 + m;
-    if (Story_EntOp(a, &d) > 0) {
+    if (Func_02002f06(a, &d) > 0) {
         a->unk24 = 0;
         a->unk2C = 0;
         a->unk38 = 0x80000000;
@@ -388,22 +519,22 @@ hit:
     return 1;
 }
 
-s32 OvObj_ClearPendingAndRestoreMode(u8 *object)
+s32 OverlayObject_ClearPendingAndRestoreMode(u8 *object)
 {
     u8 **pending = (u8 **)0x0200b390;
     if (*pending) {
-        Story_Apply(object, 2);
+        Func_0200358e(object, 2);
         *pending = 0;
     }
     return 1;
 }
 
-s32 Actor_UpdateRandomCounterMode(u8 *object)
+s32 SceneActor_UpdateRandomCounterMode(u8 *object)
 {
     u16 *counter = (u16 *)(object + 100);
-    *counter = (u16)(*counter + ((Story_unk19_4() * 100) >> 16));
-    if ((s16)*counter > 1000) Story_Apply2(object, 7);
-    else Story_Apply3(object, 10);
+    *counter = (u16)(*counter + ((Func_0200359e() * 100) >> 16));
+    if ((s16)*counter > 1000) Func_020036d2(object, 7);
+    else Func_020036dc(object, 10);
     if (*(s16 *)counter > 1200) { u16 z = 0; *counter = z; }
     return 1;
 }
@@ -416,33 +547,33 @@ u8 *SceneData_GetTableb0cc(void) { return (u8 *)0x0200b0cc; }
 
 u8 *SceneData_GetTableb0e4(void) { return (u8 *)0x0200b0e4; }
 
-void Scene_RunTile10x20Transition(void)
+void FieldScene_RunTile10x20Transition(void)
 {
-    struct PlacementResult res;
-    Story_unk20_4();
+    struct PlacementResult_02000a68 res;
+    Func_0200367a();
 
-    if (Story_unk10(&res)) {
-        Story_unk4_2(res);
+    if (Func_02000eea(&res)) {
+        Func_02001096(res);
         if (res.words[1] == 10 && (res.words[2] >> 20) == 20) {
             u8 *actor;
             s32 zero;
 
-            Story_Apply4(10, 3);
-            Story_unk8_3(10, -18, 6);
-            Story_unk5_2(30);
-            Story_unk6_2(240);
-            Story_Apply5(10, 8);
-            Story_unk8_4(10)[35] = 2;
+            Func_02003728(10, 3);
+            Func_0200371c(10, -18, 6);
+            Func_020036ba(30);
+            Func_020037e0(240);
+            Func_02003748(10, 8);
+            Func_020036ee(10)[35] = 2;
             zero = 0;
-            DrawPlacement(0, 17, 2, 4, 19, 17);
-            Scene_RunBranchingFormationPresentation(2, 20, 17, 1, 4, zero);
-            Story_unk7_2(0x200);
-            actor = Story_unk9_4(10);
-            Story_Apply6(actor, 0);
+            DrawPlacement_02000a68(0, 17, 2, 4, 19, 17);
+            Func_02000d3c_grid(2, 20, 17, 1, 4, zero);
+            Func_020036fc(0x200);
+            actor = Func_0200372a(10);
+            Func_020036f8(actor, 0);
         }
     }
 
-    Story_unk21_4();
+    Func_02003724();
 }
 
 s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
@@ -480,89 +611,1038 @@ s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request)
         actor->position_x += 0x10000;
         actor->position_z += 0x10000;
         *flags = saved;
-        FinishStagedActorEffect();
+        FinishStagedActorEffect_02000b1c();
         return 1;
     }
     return 0;
 }
 
-void Actor_PassSubjectOffsetPosition(void)
+void SceneActor_PassSubjectOffsetPosition(void)
 {
-    extern u8 gCell[];
+    extern u8 Data_02000240[];
 
     u32 buf[3];
     s32 off = 500;
-    struct Struct3848 *p = Story_unk10_4(*(s32 *)(gCell + off));
+    struct Struct3848 *p = Func_02003848(*(s32 *)(Data_02000240 + off));
     u32 base = p->field08 & 0xfff00000;
 
     buf[0] = base + 0x80000;
     buf[1] = p->field0c;
     buf[2] = (p->field10 & 0xfff00000) + 0x80000;
     buf[0] = base + 0x280000;
-    Story_unk8_2(buf);
+    Func_0200176a(buf);
 }
 
 u8 *SceneData_GetTableB294(void) { return (u8 *)0x0200b294; }
 
-s32 Scene_RunScene391(void)
+s32 FieldScene_RunScene391_02000c68(void)
 {
-    extern s16 gCell[];
+    extern s16 Data_02000240[];
 
     s32 record;
     s32 zero;
 
-    Story_unk22_4(10);
-    if (Story_Check(0x200) != 0) {
+    Func_02001530(10);
+    if (Value1(Func_0200386c, 0x200) != 0) {
         zero = 0;
-        *(u8 *)(Story_unk11(10) + 35) = 2;
-        Story_SetRect(0, 17, 2, 4, 19, 17);
-        record = Story_unk12(2, 20, 17, 1, 4, zero);
-        record = Story_unk13(10);
-        Story_unk23_4(record, 0);
+        *(u8 *)(Func_020038a6(10) + 35) = 2;
+        Call6(Func_02003878, 0, 17, 2, 4, 19, 17);
+        record = Func_02000ef4(2, 20, 17, 1, 4, zero);
+        record = Func_020038da(10);
+        Func_020038a8(record, 0);
     }
-    Story_unk24_4(8);
-    Story_unk25_4(9);
+    Func_02001582(8);
+    Func_02001588(9);
     if (SceneTransition_Phase == 4) {
-        if (Story_unk2(0x843) == 0) {
-            Story_unk26_4();
+        if (Value1(Func_020038d2, 0x843) == 0) {
+            Func_02001a22();
         }
     }
-    if (Story_unk3(0x845) != 0) {
-        Story_unk27_4(17, 0, 0);
-        Story_unk28_4(18, 0, 0);
-        Story_unk29_4(19, 0, 0);
-        Story_unk30_4(20, 0, 0);
-        Story_unk31_4(21, 0, 0);
+    if (Value1(Func_020038e0, 0x845) != 0) {
+        Func_02003976(17, 0, 0);
+        Func_02003980(18, 0, 0);
+        Func_0200398a(19, 0, 0);
+        Func_02003994(20, 0, 0);
+        Func_0200399e(21, 0, 0);
     }
     return 0;
 }
 
-void Scene_RunSplitPairSteps(s32 a, s32 b)
+#include "types.h"
+
+#define FieldScene_RunBranchingFormationPresentation Func_02000d3c
+
+void Func_02002c0c();
+void Func_02002cec();
+void Func_02002b84();
+s32 Func_02002bf4();
+u8 * Func_02002c24();
+void Func_02002bec();
+void Func_02002c34();
+void Func_02002c7c();
+void Func_02002bc4();
+void Func_02002d04();
+void Func_02002d0c();
+void Func_02002c2c();
+void Func_02002c64();
+void Func_02002c3c();
+void Func_02002780();
+void Func_02002cdc();
+void Func_02002c04();
+void Func_02002ccc();
+void Func_02002ca4();
+void Func_02002cb4();
+void Func_02002768();
+void Func_02002c8c();
+void Func_02002d24();
+void Func_02002cf4();
+void Func_02002cfc();
+s32 Func_02002b8c();
+void Func_02002c6c();
+void Func_02002c84();
+s32 Func_02002b94();
+void Func_02002c9c();
+void Func_02002cd4();
+void Func_02002c44();
+void Func_02002c4c();
+s32 Func_02002cbc();
+s32 Func_02002c1c();
+void Func_02002c94();
+void Func_02002cc4();
+void Func_02002ce4();
+void Func_02002c54();
+void Func_02002c74();
+s32 Func_02002bfc();
+void Func_02002d14();
+void Func_02002c14();
+
+static __inline__ void Call1(void (*f)(), s32 a0)
 {
-    Story_Apply7(a, 0);
-    Story_unk14(b);
+    f(a0);
 }
 
-void Actor_SetPairZeroAndValue(s32 a, s32 b, s32 c)
+static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
-    Story_unk9_3(a, b, 0);
-    Story_unk15(c);
+    f(a0, a1);
 }
 
-s32 Effect_AdvanceAngleAndFinishWhenParked(struct Struct2798 *p)
+static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    f(a0, a1, a2);
+}
+
+static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
+{
+    f(a0, a1, a2, a3);
+}
+
+static __inline__ u8 * Record1(u8 * (*f)(), s32 a0)
+{
+    return f(a0);
+}
+
+
+
+static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
+{
+    return f(a0, a1);
+}
+
+extern s32 Data_0200b384;
+extern s32 Data_0200b388;
+extern s32 Data_0200b38c;
+extern s32 Data_0200b390;
+extern s32 Data_0200b394;
+extern s32 Data_0200b398;
+extern u8 Data_0200a7c9[];
+extern u8 Data_0200a975[];
+extern u8 Data_0200aad9[];
+extern u8 Data_0200ae20[];
+extern u8 Data_0200ae54[];
+extern u8 Data_0200ae88[];
+extern u8 Data_0200aebc[];
+extern u8 Data_0200af48[];
+extern u8 Data_0200af6c[];
+extern u8 Data_0200afc8[];
+extern u8 Data_0200b024[];
+
+void FieldScene_RunBranchingFormationPresentation(void)
+{
+    u8 *record;
+    s32 *flag_work;
+    s32 entry_action;
+    s32 value;
+    s32 flag;
+    s32 motion_action;
+    s32 *party_flag;
+    s32 *formation_flag;
+    s32 *sequence_flag;
+    s32 *finish_flag;
+    s32 reset_action;
+    s32 *effect_phase;
+    s32 *formation_phase;
+    s32 formation_action;
+    s32 finish_action;
+    s32 *sequence_phase;
+
+    Func_02002c0c();
+    Call4(Func_02002cec, -1, -1, -1, 0);
+    Func_02002b84(1);
+    Call4(Func_02002cec, 0xf60000, -1, 0x25c0000, 0);
+    flag_work = &Data_0200b394;
+    flag = Value1(Func_02002bf4, 3);
+    *flag_work = flag;
+    record = Func_02002c24(13);
+    Func_02002bec((s32)record, 0);
+    record = Func_02002c24(14);
+    Func_02002bec((s32)record, 0);
+    record = Func_02002c24(15);
+    Func_02002bec((s32)record, 0);
+    record = Func_02002c24(16);
+    Func_02002bec((s32)record, 0);
+    record = Func_02002c24(17);
+    Func_02002bec((s32)record, 0);
+    record = Func_02002c24(18);
+    Func_02002bec((s32)record, 0);
+    record = Func_02002c24(19);
+    Func_02002bec((s32)record, 0);
+    record = Func_02002c24(20);
+    Func_02002bec((s32)record, 0);
+    record = Func_02002c24(21);
+    Func_02002bec((s32)record, 0);
+    entry_action = (s32)Data_0200b024;
+    Func_02002c34(17, entry_action);
+    Func_02002c34(18, entry_action);
+    Func_02002c34(19, entry_action);
+    Func_02002c34(20, entry_action);
+    Func_02002c34(21, entry_action);
+    Call3(Func_02002c7c, 0, 0x740000, 0x25a0000);
+    Func_02002b84(1);
+    Func_02002bc4();
+    Call1(Func_02002b84, 1);
+    Func_02002d04();
+    Func_02002d0c();
+    Call3(Func_02002c2c, 0, 0xcccc, 0x6666);
+    Call3(Func_02002c64, 0, 254, 0x251);
+    Call3(Func_02002c2c, 1, 0x9999, 0x4ccc);
+    Call3(Func_02002c2c, 2, 0x9999, 0x4ccc);
+    {
+        u8 *record = Record1(Func_02002c24, 0);
+
+        if (record != 0) {
+            Func_02002c7c(1, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
+        }
+    }
+    {
+        u8 *record = Record1(Func_02002c24, 0);
+
+        if (record != 0) {
+            Func_02002c7c(2, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
+        }
+    }
+    Call2(Func_02002c34, 1, (s32)Data_0200ae20);
+    Func_02002c34(2, (s32)Data_0200ae54);
+    if (*flag_work != 0) {
+        Call3(Func_02002c2c, 3, 0x9999, 0x4ccc);
+        {
+            u8 *record = Record1(Func_02002c24, 0);
+
+            if (record != 0) {
+                Func_02002c7c(3, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
+            }
+        }
+        Func_02002c34(3, (s32)Data_0200ae88);
+    }
+    Func_02002c3c(2);
+    Func_02002780(2, 0x2000, 40);
+    Func_02002780(2, 0x8000, 20);
+    Func_02002780(2, 0x4000, 40);
+    Call3(Func_02002cdc, 2, 0x101, 0);
+    Func_02002c04(60);
+    Func_02002ccc(1, 0x4000, 0);
+    Func_02002780(0, 0x6000, 60);
+    value = 160;
+    Func_02002780(3, 0x2000, 10);
+    Func_02002ccc(1, 0x2000, 0);
+    Func_02002780(0, (value << 8), 10);
+    Call3(Func_02002cdc, 1, 0x101, 0);
+    Call3(Func_02002cdc, 0, 0x101, 0);
+    Func_02002c04(40);
+    Func_02002ccc(1, 0x4000, 0);
+    Func_02002780(0, 0x6000, 10);
+    Func_02002ca4(1, 2);
+    Call1(Func_02002cb4, 0x1474);
+    Func_02002768(1, 10);
+    Call1(Func_02002cb4, 0x147c);
+    Func_02002780(2, 0xc000, 20);
+    Func_02002c8c(2, 3);
+    Func_02002768(2, 20);
+    Func_02002780(1, 0, 20);
+    Func_02002780(0, (value << 8), 40);
+    Func_02002780(1, 0x4000, 20);
+    Func_02002780(0, 0x6000, 30);
+    Func_02002780(1, 0x6000, 20);
+    Func_02002780(0, 0xe000, 30);
+    Func_02002ca4(2, 2);
+    Call3(Func_02002cdc, 2, 0x100, 0);
+    Func_02002c04(40);
+    Func_02002ccc(1, 0x4000, 0);
+    Func_02002780(0, 0x6000, 20);
+    Func_02002780(2, 0xc000, 10);
+    Func_02002d24(17);
+    Func_02002d24(206);
+    Call2(Func_02002cf4, 0x7fff, 0);
+    Func_02002cfc(1);
+    Func_02002b84(1);
+    Data_0200b398 = 1;
+    Value2(Func_02002b8c, (s32)Data_0200a7c9, 0xc80);
+    Func_02002b84(20);
+    Call2(Func_02002cf4, 0x405210, 1);
+    Call2(Func_02002cf4, 0x10000, 2);
+    Func_02002cfc(120);
+    Func_02002b84(60);
+    motion_action = (s32)Data_0200aebc;
+    Func_02002c34(0, motion_action);
+    Func_02002c34(1, motion_action);
+    Func_02002c34(2, motion_action);
+    Func_02002c34(3, motion_action);
+    Func_02002c04(100);
+    Func_02002768(1, 20);
+    Func_02002768(2, 40);
+    if (Data_0200b394 != 0) {
+        Func_02002c04(40);
+        Call3(Func_02002cdc, 3, 0x102, 0);
+        Func_02002c04(40);
+        Func_02002768(3, 40);
+    } else {
+        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+    }
+    Func_02002c04(20);
+    party_flag = &Data_0200b394;
+    if (*party_flag != 0) {
+        value = 128;
+        record = Func_02002c24(3);
+        *(s32 *)((s32)record + 40) = (value << 10);
+        Func_02002c04(10);
+        Func_02002c2c(3, (value << 10), (value << 10));
+        Call3(Func_02002c6c, 3, -2, 0);
+        Call2(Func_02002c34, 3, (s32)Data_0200af48);
+        record = Func_02002c24(3);
+        Func_02002bec((s32)record, 0);
+        Func_02002c84(3, 19);
+        Func_02002c04(10);
+    }
+    value = 128;
+    record = Func_02002c24(0);
+    *(s32 *)((s32)record + 40) = (value << 10);
+    Func_02002c04(10);
+    Call3(Func_02002c2c, 0, (value << 10), (value << 10));
+    reset_action = (s32)Data_0200af48;
+    Func_02002c34(0, reset_action);
+    record = Func_02002c24(0);
+    Func_02002bec((s32)record, 0);
+    Func_02002c84(0, 19);
+    Func_02002c04(20);
+    record = Record1(Func_02002c24, 1);
+    *(s32 *)((s32)record + 40) = (value << 10);
+    Func_02002c04(10);
+    Call3(Func_02002c2c, 1, (value << 10), (value << 10));
+    Func_02002c34(1, reset_action);
+    record = Func_02002c24(1);
+    Func_02002bec((s32)record, 0);
+    Func_02002c84(1, 19);
+    Func_02002c04(40);
+    record = Record1(Func_02002c24, 2);
+    *(s32 *)((s32)record + 40) = (value << 10);
+    Func_02002c04(10);
+    Func_02002c34(2, reset_action);
+    record = Func_02002c24(2);
+    Func_02002bec((s32)record, 0);
+    Func_02002c84(2, 19);
+    Data_0200b398 = 0;
+    Func_02002c04(160);
+    Value1(Func_02002b94, (s32)Data_0200a7c9);
+    Func_02002c04(120);
+    Call2(Func_02002cf4, 0x406218, 1);
+    Func_02002cfc(60);
+    Func_02002b84(60);
+    Data_0200b388 = 0;
+    effect_phase = &Data_0200b38c;
+    Data_0200b384 = 0x800000;
+    *effect_phase = 1;
+    Value2(Func_02002b8c, (s32)Data_0200a975, 0xc80);
+    Func_02002c04(180);
+    Func_02002d24(21);
+    Func_02002768(1, 80);
+    Func_02002768(2, 40);
+    Call3(Func_02002cdc, 0, 0x102, 0);
+    Call3(Func_02002cdc, 1, 0x102, 0);
+    Call3(Func_02002cdc, 2, 0x102, 0);
+    Call3(Func_02002cdc, 3, 0x102, 0);
+    Func_02002c04(60);
+    Func_02002768(2, 20);
+    *effect_phase = 2;
+    Func_02002c9c(2, 2);
+    Func_02002c04(20);
+    Func_02002c9c(1, 1);
+    Func_02002c04(40);
+    Func_02002c9c(0, 2);
+    Func_02002c9c(3, 1);
+    Func_02002c04(20);
+    Func_02002c9c(2, 3);
+    Func_02002c04(40);
+    Func_02002c9c(0, 1);
+    Func_02002c04(20);
+    Func_02002c9c(1, 2);
+    Func_02002c04(20);
+    Func_02002c9c(3, 2);
+    Call3(Func_02002cdc, 1, 0x102, 0);
+    Func_02002768(1, 20);
+    if (*party_flag != 0) {
+        Call3(Func_02002cdc, 3, 0x102, 0);
+        Func_02002768(3, 10);
+    } else {
+        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+    }
+    formation_phase = &Data_0200b38c;
+    *formation_phase = 3;
+    *(u8 *)(Func_02002c24(0) + 35) &= 254;
+    *(u8 *)(Func_02002c24(1) + 35) &= 254;
+    *(u8 *)(Func_02002c24(2) + 35) &= 254;
+    *(u8 *)(Func_02002c24(3) + 35) &= 254;
+    Func_02002cd4(0, 3);
+    Func_02002cd4(1, 3);
+    Func_02002cd4(2, 3);
+    value = 0;
+    Func_02002cd4(3, 3);
+    Data_0200b390 = value;
+    Value2(Func_02002b8c, (s32)Data_0200aad9, 0xc80);
+    Func_02002d24(220);
+    *(u8 *)(Func_02002c24(13) + 35) &= 254;
+    Func_02002cd4(13, 2);
+    Call3(Func_02002c7c, 13, 0xfd0000, 0x25b0000);
+    formation_action = (s32)Data_0200af6c;
+    Func_02002c34(13, formation_action);
+    *(u8 *)(Func_02002c24(14) + 35) &= 254;
+    Func_02002cd4(14, 2);
+    Call3(Func_02002c7c, 14, 0xe90000, 0x2750000);
+    Func_02002c34(14, formation_action);
+    if (Data_0200b394 != 0) {
+        *(u8 *)(Func_02002c24(15) + 35) &= 254;
+        Func_02002cd4(15, 2);
+        Call3(Func_02002c7c, 15, 0xcf0000, 0x2610000);
+        Func_02002c34(15, formation_action);
+    }
+    *(u8 *)(Func_02002c24(16) + 35) &= 254;
+    Func_02002cd4(16, 2);
+    Call3(Func_02002c7c, 16, 0xe30000, 0x2440000);
+    Func_02002c34(16, formation_action);
+    if (*formation_phase != 0) {
+        do {
+            Func_02002b84(1);
+        } while (Data_0200b38c != 0);
+    }
+    Call1(Func_02002c04, 0x12c);
+    Value1(Func_02002b94, (s32)Data_0200a975);
+    Func_02002c04(120);
+    Func_02002d24(17);
+    Call2(Func_02002cf4, 0x10000, 1);
+    Func_02002cfc(60);
+    Func_02002b84(60);
+    Func_02002c44(13);
+    Func_02002c44(14);
+    formation_flag = &Data_0200b394;
+    if (*formation_flag != 0) {
+        Func_02002c44(15);
+    }
+    Func_02002c44(16);
+    Func_02002b84(1);
+    finish_action = (s32)Data_0200afc8;
+    Func_02002c34(13, finish_action);
+    Func_02002c34(14, finish_action);
+    if (*formation_flag != 0) {
+        Func_02002c34(15, finish_action);
+    }
+    Func_02002c4c(16, finish_action);
+    Func_02002c04(80);
+    Func_02002ca4(1, 2);
+    Func_02002c04(40);
+    Value2(Func_02002cbc, 1, 0);
+    Call3(Func_02002c7c, 11, 0xdc0000, 0x1ee0000);
+    Call3(Func_02002c7c, 12, 0xdc0000, 0x1ee0000);
+    Func_02002b84(1);
+    if (Value2(Func_02002c1c, 11, 0) == 1) {
+        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+    }
+    Func_02002ca4(0, 1);
+    Func_02002c04(20);
+    Func_02002ca4(2, 2);
+    Func_02002768(2, 20);
+    if (*formation_flag != 0) {
+        Func_02002ca4(3, 2);
+        Func_02002c04(10);
+        Call1(Func_02002cb4, 0x1488);
+        Func_02002768(3, 40);
+    }
+    Func_02002c9c(1, 1);
+    Call3(Func_02002cdc, 1, 0x101, 0);
+    Func_02002c04(80);
+    Func_02002ca4(2, 2);
+    Call1(Func_02002cb4, 0x1489);
+    Func_02002768(2, 40);
+    Func_02002ca4(1, 3);
+    Func_02002c04(40);
+    Func_02002cd4(1, 2);
+    *(u8 *)(Func_02002c24(1) + 35) |= 1;
+    record = Func_02002c24(1);
+    Func_02002bec((s32)record, 1);
+    Func_02002c94(1, 6, 0);
+    Call3(Func_02002c6c, 1, -3, 0);
+    Func_02002c84(1, 1);
+    Func_02002780(1, 0x4000, 60);
+    Func_02002768(1, 20);
+    Func_02002c9c(1, 2);
+    Func_02002768(1, 10);
+    Func_02002ca4(0, 3);
+    Func_02002780(1, 0x2000, 20);
+    Call3(Func_02002cdc, 1, 0x101, 0);
+    Func_02002c04(40);
+    Func_02002780(1, 0x6000, 40);
+    Func_02002780(1, 0x2000, 20);
+    Func_02002780(1, 0x6000, 20);
+    Func_02002780(1, 0x2000, 10);
+    Func_02002c94(1, 2, 0);
+    Func_02002c04(40);
+    Func_02002c94(1, 2, 0);
+    Func_02002c04(10);
+    Func_02002c94(1, 4, 0);
+    Func_02002c04(20);
+    Func_02002768(1, 20);
+    if (*formation_flag != 0) {
+        Call3(Func_02002cdc, 3, 0x100, 0);
+        Func_02002c04(60);
+        Func_02002ca4(3, 2);
+        Func_02002c04(80);
+        Func_02002cd4(3, 2);
+        *(u8 *)(Func_02002c24(3) + 35) |= 1;
+        record = Func_02002c24(3);
+        Func_02002bec((s32)record, 1);
+        Func_02002c94(3, 4, 0);
+        Call3(Func_02002c6c, 3, -2, 0);
+        Func_02002c84(3, 1);
+        Func_02002780(3, 0xe000, 60);
+        Func_02002ca4(3, 2);
+        Func_02002c04(20);
+        Func_02002768(3, 20);
+    } else {
+        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+    }
+    Call3(Func_02002c94, 1, 2, 0);
+    Func_02002780(1, 0x4000, 20);
+    Func_02002c8c(1, 3);
+    Func_02002780(1, 0x2000, 10);
+    Func_02002768(1, 20);
+    Func_02002c8c(1, 3);
+    Func_02002c04(10);
+    Call2(Func_02002ca4, 2, 1);
+    Func_02002c04(40);
+    Func_02002ca4(2, 2);
+    Func_02002c04(20);
+    value = 1;
+    Func_02002cd4(2, 2);
+    *(u8 *)(Func_02002c24(2) + 35) |= value;
+    record = Func_02002c24(2);
+    Func_02002bec((s32)record, 1);
+    Func_02002c94(2, 4, 0);
+    Func_02002c84(2, 1);
+    Call3(Func_02002ccc, 2, 0xc000, 0);
+    Func_02002ca4(0, 2);
+    Func_02002c04(10);
+    Func_02002cd4(0, 2);
+    {
+        u8 *record = Func_02002c24(0);
+        u8 flags = (u8)(value | record[35]);
+
+        record[35] = flags;
+    }
+    record = Func_02002c24(0);
+    Func_02002bec((s32)record, 1);
+    Func_02002c94(0, 4, 0);
+    Func_02002c84(0, 1);
+    Func_02002780(0, 0x6000, 60);
+    Call3(Func_02002cdc, 0, 0x105, 0);
+    Call3(Func_02002cdc, 2, 0x105, 0);
+    Func_02002c04(60);
+    Func_02002780(0, 0xa000, 20);
+    Func_02002c8c(1, 3);
+    Func_02002c8c(0, 3);
+    Func_02002780(0, 0x6000, 10);
+    Func_02002780(1, 0x4000, 10);
+    Call3(Func_02002ccc, 2, 0xc000, 0);
+    Func_02002c8c(2, 3);
+    Func_02002768(2, 20);
+    Func_02002c84(0, 3);
+    Func_02002c84(3, 3);
+    Func_02002c8c(1, 3);
+    Func_02002c04(20);
+    Func_02002ca4(2, 1);
+    Func_02002c04(20);
+    Value2(Func_02002cbc, 2, 0);
+    Func_02002c84(2, 3);
+    Call3(Func_02002ccc, 2, 0xe000, 0);
+    Func_02002ccc(1, 0x2000, 0);
+    if (Value2(Func_02002c1c, 0, 0) == 0) {
+        Func_02002c84(2, 3);
+        Func_02002c8c(1, 3);
+        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+    } else {
+        Func_02002ca4(1, 2);
+        Func_02002780(1, 0x2000, 10);
+        Func_02002c9c(1, 2);
+        Func_02002cc4(1, 0);
+    }
+    Func_02002780(1, 0x4000, 10);
+    Func_02002c8c(1, 4);
+    Func_02002768(1, 20);
+    Func_02002780(2, 0xc000, 10);
+    Func_02002c8c(2, 3);
+    Func_02002768(2, 10);
+    if (Data_0200b394 != 0) {
+        Func_02002ca4(3, 2);
+        Func_02002780(3, 0, 20);
+        Func_02002780(3, 0x2000, 10);
+        Func_02002c84(3, 4);
+        Func_02002768(3, 10);
+    } else {
+        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+    }
+    Call3(Func_02002ccc, 1, 0x2000, 0);
+    Func_02002780(0, 0xa000, 10);
+    Func_02002c84(0, 3);
+    Func_02002c8c(1, 3);
+    value = 128;
+    Func_02002c04(20);
+    Call3(Func_02002ccc, 0, 0x6000, 0);
+    Func_02002780(1, (value << 7), 10);
+    Func_02002c8c(2, 4);
+    Func_02002c04(20);
+    Call3(Func_02002cdc, 0, 0x102, 0);
+    Call3(Func_02002cdc, 1, 0x102, 0);
+    Func_02002c04(80);
+    Func_02002780(2, 0xe000, 10);
+    Func_02002c9c(2, 2);
+    Func_02002768(2, 20);
+    Call3(Func_02002ccc, 1, 0x2000, 0);
+    Func_02002780(0, 0xa000, 40);
+    Func_02002ccc(1, (value << 7), 0);
+    Func_02002780(0, 0x6000, 10);
+    Func_02002780(2, 0xc000, 10);
+    Func_02002c8c(2, 3);
+    Func_02002768(2, 10);
+    Call2(Func_02002ce4, 1, 0x102);
+    Func_02002c04(40);
+    Func_02002768(1, 20);
+    Func_02002c8c(2, 3);
+    Func_02002c04(20);
+    Call3(Func_02002cdc, 1, 0x102, 0);
+    Func_02002c04(40);
+    Func_02002768(1, 20);
+    Func_02002c84(2, 3);
+    Func_02002768(2, 10);
+    Func_02002ca4(1, 2);
+    Func_02002780(1, 0x2000, 10);
+    Value2(Func_02002cbc, 1, 0);
+    Func_02002ccc(0, 0xa000, 0);
+    if (Value2(Func_02002c1c, 0, 0) == 0) {
+        Func_02002c8c(1, 3);
+    } else {
+        Func_02002c04(20);
+        Func_02002ca4(1, 2);
+        Func_02002c04(40);
+        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+    }
+    Func_02002cc4(1, 0);
+    Func_02002d24(21);
+    Call2(Func_02002cf4, 0x406218, 1);
+    Func_02002cfc(60);
+    Func_02002b84(60);
+    Data_0200b388 = 0;
+    Data_0200b384 = 0x800000;
+    sequence_phase = &Data_0200b38c;
+    *sequence_phase = 1;
+    Value2(Func_02002b8c, (s32)Data_0200a975, 0xc80);
+    Func_02002c04(80);
+    Call2(Func_02002c9c, 0, 2);
+    Func_02002c9c(1, 2);
+    Call2(Func_02002c9c, 3, 2);
+    Func_02002ca4(2, 2);
+    Func_02002c04(60);
+    Func_02002780(2, 0xc000, 10);
+    Call1(Func_02002cb4, 0x149d);
+    Func_02002768(2, 10);
+    Func_02002780(1, 0xc000, 10);
+    Func_02002780(0, 0xc000, 10);
+    sequence_flag = &Data_0200b394;
+    if (*sequence_flag != 0) {
+        Func_02002780(3, 0xc000, 10);
+    }
+    *(u8 *)(Func_02002c24(0) + 35) &= 254;
+    *(u8 *)(Func_02002c24(1) + 35) &= 254;
+    *(u8 *)(Func_02002c24(2) + 35) &= 254;
+    *(u8 *)(Func_02002c24(3) + 35) &= 254;
+    Func_02002cd4(0, 3);
+    Func_02002cd4(1, 3);
+    Func_02002cd4(2, 3);
+    Func_02002cd4(3, 3);
+    *sequence_phase = 2;
+    Func_02002d24(220);
+    Call3(Func_02002c7c, 13, 0xfd0000, 0x25b0000);
+    formation_action = (s32)Data_0200af6c;
+    Func_02002c34(13, formation_action);
+    Call3(Func_02002c7c, 14, 0xe90000, 0x2750000);
+    Func_02002c34(14, formation_action);
+    if (*sequence_flag != 0) {
+        Call3(Func_02002c7c, 15, 0xcf0000, 0x2610000);
+        Func_02002c34(15, formation_action);
+    }
+    Call3(Func_02002c7c, 16, 0xe30000, 0x2440000);
+    Call2(Func_02002c34, 16, formation_action);
+    Func_02002c04(120);
+    *sequence_phase = 3;
+    do {
+        Func_02002b84(1);
+    } while (Data_0200b38c != 0);
+    Func_02002768(11, 80);
+    Func_02002768(12, 20);
+    Call3(Func_02002cdc, 0, 0x101, 0);
+    Call3(Func_02002cdc, 1, 0x101, 0);
+    Call3(Func_02002cdc, 2, 0x101, 0);
+    Call3(Func_02002cdc, 3, 0x101, 0);
+    Func_02002c04(60);
+    Func_02002768(12, 20);
+    Func_02002c84(0, 3);
+    Func_02002c84(1, 3);
+    Func_02002c84(3, 3);
+    Func_02002c8c(2, 3);
+    Func_02002768(12, 10);
+    Func_02002c84(0, 3);
+    Func_02002c84(1, 3);
+    Func_02002c84(3, 3);
+    Func_02002c8c(2, 3);
+    Func_02002768(12, 10);
+    Call3(Func_02002cdc, 0, 0x100, 0);
+    Call3(Func_02002cdc, 1, 0x100, 0);
+    Call3(Func_02002cdc, 2, 0x100, 0);
+    Call3(Func_02002cdc, 3, 0x100, 0);
+    Func_02002c04(40);
+    Func_02002768(11, 10);
+    Call3(Func_02002ccc, 0, 0x8000, 0);
+    Call3(Func_02002ccc, 1, 0x4000, 0);
+    Func_02002ccc(3, 0, 0);
+    Func_02002780(2, 0xc000, 40);
+    Func_02002768(12, 10);
+    Call3(Func_02002cdc, 0, 0x102, 0);
+    Call3(Func_02002cdc, 1, 0x102, 0);
+    Call3(Func_02002cdc, 2, 0x102, 0);
+    Call3(Func_02002cdc, 3, 0x102, 0);
+    Func_02002ccc(0, 0xc000, 0);
+    Func_02002ccc(1, 0xc000, 0);
+    Func_02002ccc(2, 0xc000, 0);
+    Func_02002780(3, 0xc000, 80);
+    Func_02002768(12, 10);
+    Call3(Func_02002ccc, 0, 0x8000, 0);
+    Call3(Func_02002ccc, 1, 0x4000, 0);
+    Func_02002ccc(2, 0xc000, 0);
+    Func_02002780(3, 0, 40);
+    Func_02002768(11, 10);
+    Func_02002ccc(0, 0xc000, 0);
+    Func_02002ccc(1, 0xc000, 0);
+    Func_02002ccc(2, 0xc000, 0);
+    Func_02002780(3, 0xc000, 10);
+    Func_02002c84(0, 4);
+    Func_02002c84(1, 4);
+    Func_02002c84(3, 4);
+    Func_02002c8c(2, 4);
+    Func_02002c04(60);
+    Func_02002768(12, 10);
+    Func_02002c84(0, 3);
+    Func_02002c84(1, 3);
+    Func_02002c84(3, 3);
+    Func_02002c8c(2, 3);
+    Func_02002768(12, 20);
+    Call3(Func_02002ccc, 0, 0x8000, 0);
+    Call3(Func_02002ccc, 1, 0x4000, 0);
+    Func_02002ccc(2, 0xc000, 0);
+    Func_02002780(3, 0, 20);
+    Func_02002768(12, 10);
+    Func_02002c9c(0, 2);
+    Func_02002c9c(1, 2);
+    Func_02002c9c(3, 2);
+    Func_02002ca4(2, 2);
+    Func_02002ccc(0, 0xc000, 0);
+    Func_02002ccc(1, 0xc000, 0);
+    Func_02002ccc(2, 0xc000, 0);
+    Func_02002ccc(3, 0xc000, 0);
+    Func_02002768(12, 20);
+    Call3(Func_02002ccc, 0, 0x8000, 0);
+    Call3(Func_02002ccc, 1, 0x4000, 0);
+    Func_02002ccc(2, 0xc000, 0);
+    Func_02002780(3, 0, 20);
+    Func_02002768(11, 20);
+    Call3(Func_02002cdc, 0, 0x102, 0);
+    Call3(Func_02002cdc, 1, 0x102, 0);
+    Call3(Func_02002cdc, 3, 0x102, 0);
+    Call3(Func_02002cdc, 2, 0x102, 0);
+    Func_02002c04(40);
+    Func_02002768(12, 10);
+    Func_02002ccc(0, 0xc000, 0);
+    Func_02002ccc(1, 0xc000, 0);
+    Func_02002ccc(2, 0xc000, 0);
+    Func_02002780(3, 0xc000, 10);
+    Func_02002768(12, 10);
+    Func_02002c84(0, 3);
+    Func_02002c84(1, 3);
+    Func_02002c84(3, 3);
+    Func_02002c8c(2, 3);
+    Func_02002c04(60);
+    Func_02002cc4(12, 0);
+    Func_02002cc4(11, 0);
+    Value1(Func_02002b94, (s32)Data_0200a975);
+    Func_02002c04(80);
+    Call2(Func_02002cf4, 0x10000, 1);
+    Func_02002cfc(60);
+    Func_02002b84(80);
+    Func_02002c44(13);
+    Func_02002c44(14);
+    finish_flag = &Data_0200b394;
+    Func_02002c44(15);
+    Func_02002c44(16);
+    Func_02002b84(1);
+    finish_action = (s32)Data_0200afc8;
+    Func_02002c34(13, finish_action);
+    Func_02002c34(14, finish_action);
+    if (*finish_flag != 0) {
+        Func_02002c34(15, finish_action);
+    }
+    Func_02002c4c(16, finish_action);
+    Func_02002c04(20);
+    Func_02002cd4(0, 2);
+    Func_02002cd4(1, 2);
+    Func_02002cd4(2, 2);
+    value = 1;
+    Func_02002cd4(3, 2);
+    *(u8 *)(Func_02002c24(0) + 35) |= value;
+    *(u8 *)(Func_02002c24(1) + 35) |= value;
+    *(u8 *)(Func_02002c24(2) + 35) |= value;
+    {
+        u8 *record = Func_02002c24(3);
+        u8 flags = (u8)(value | record[35]);
+
+        record[35] = flags;
+    }
+    Func_02002ca4(2, 2);
+    Func_02002780(2, 0xe000, 10);
+    Value2(Func_02002cbc, 2, 0);
+    Call3(Func_02002ccc, 1, 0x2000, 0);
+    Func_02002ccc(3, 0, 0);
+    if (Value2(Func_02002c1c, 0, 0) != 0) {
+    } else {
+        Func_02002ca4(1, 2);
+        Func_02002c04(10);
+        Value2(Func_02002cbc, 1, 0);
+        if (Value2(Func_02002c1c, 0, 0) == 0) {
+            Func_02002780(3, 0, 20);
+            Call3(Func_02002cdc, 1, 0x101, 0);
+            Call3(Func_02002cdc, 2, 0x101, 0);
+            Call3(Func_02002cdc, 3, 0x101, 0);
+            Func_02002c04(40);
+            Func_02002780(1, 0x4000, 20);
+            Func_02002768(1, 10);
+            Func_02002780(2, 0xc000, 20);
+            Func_02002780(2, 0xe000, 20);
+            Func_02002c8c(2, 3);
+            Func_02002768(2, 20);
+            Func_02002780(1, 0x2000, 20);
+        } else {
+            Func_02002780(3, 0, 20);
+            Call3(Func_02002cdc, 1, 0x102, 0);
+            Call3(Func_02002cdc, 2, 0x102, 0);
+            Call3(Func_02002cdc, 3, 0x102, 0);
+            Func_02002c04(40);
+            Func_02002780(1, 0x4000, 20);
+            Call1(Func_02002cb4, 0x14b4);
+            Func_02002768(1, 20);
+            Func_02002c8c(2, 3);
+            Func_02002768(2, 20);
+        }
+        Func_02002c84(3, 3);
+        Func_02002c8c(1, 3);
+        goto L_02002528;
+    }
+    Func_02002c04(20);
+    Func_02002c8c(1, 3);
+    Func_02002c04(10);
+    Call1(Func_02002cb4, 0x14b6);
+    Func_02002768(1, 10);
+    Call3(Func_02002ccc, 1, 0x4000, 0);
+    Func_02002780(0, 0x6000, 20);
+    Func_02002c84(1, 3);
+    Func_02002c8c(0, 3);
+    Func_02002c04(10);
+    Func_02002c8c(2, 4);
+    Value2(Func_02002cbc, 2, 0);
+    if (Value2(Func_02002c1c, 0, 0) != 0) {
+    } else {
+        Func_02002c04(20);
+        Call3(Func_02002cdc, 2, 0x103, 0);
+        Func_02002c04(40);
+        Func_02002780(2, 0xe000, 10);
+        Func_02002768(2, 10);
+        if (*finish_flag != 0) {
+            Func_02002780(3, 0, 10);
+            Func_02002c9c(3, 3);
+            Func_02002768(3, 20);
+        } else {
+            *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+        }
+        Call3(Func_02002cdc, 0, 0x102, 0);
+        Call3(Func_02002cdc, 1, 0x102, 0);
+        Func_02002c04(40);
+        Func_02002ca4(1, 2);
+        Func_02002768(1, 20);
+        Call3(Func_02002cdc, 1, 0x105, 0);
+        Func_02002c04(120);
+        Func_02002768(2, 40);
+        if (Data_0200b394 != 0) {
+            Func_02002780(3, 0x2000, 10);
+            Func_02002c8c(3, 4);
+            Func_02002768(3, 10);
+        } else {
+            *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+        }
+        Func_02002c04(60);
+        Func_02002ca4(2, 2);
+        if (Data_0200b394 != 0) {
+            Func_02002780(2, 0xa000, 40);
+            Func_02002780(2, 0xe000, 20);
+        }
+        Func_02002768(2, 10);
+        Func_02002c9c(0, 2);
+        Func_02002ca4(1, 2);
+        Func_02002c04(40);
+        Func_02002768(2, 20);
+        Func_02002c8c(0, 3);
+        Func_02002c8c(1, 3);
+        Func_02002c04(20);
+        Func_02002c84(3, 3);
+        L_02002528:;
+        Func_02002c8c(2, 3);
+        goto L_02002660;
+    }
+    Call3(Func_02002cdc, 2, 0x105, 0);
+    Func_02002c04(40);
+    Func_02002c8c(2, 3);
+    Call1(Func_02002cb4, 0x14bf);
+    Func_02002768(2, 20);
+    if (*finish_flag != 0) {
+        Func_02002780(3, 0, 10);
+        Func_02002c9c(3, 1);
+        Func_02002768(3, 20);
+    } else {
+        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+    }
+    Call3(Func_02002cdc, 1, 0x102, 0);
+    Call3(Func_02002cdc, 0, 0x102, 0);
+    Func_02002c04(40);
+    Func_02002ca4(1, 2);
+    Func_02002768(1, 20);
+    Call3(Func_02002cdc, 2, 0x105, 0);
+    Func_02002c04(80);
+    Func_02002768(2, 40);
+    if (Data_0200b394 != 0) {
+        Func_02002780(3, 0x2000, 20);
+        Func_02002c84(3, 4);
+        Func_02002768(3, 40);
+    } else {
+        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+    }
+    Func_02002ca4(2, 2);
+    Func_02002c04(20);
+    Func_02002768(2, 20);
+    Func_02002c9c(1, 2);
+    Func_02002ca4(0, 2);
+    Func_02002c04(40);
+    Func_02002768(2, 20);
+    L_02002660:;
+    Func_02002d24(17);
+    Call3(Func_02002c2c, 1, 0x13333, 0x9999);
+    Call3(Func_02002c2c, 2, 0x13333, 0x9999);
+    Call3(Func_02002c2c, 3, 0x13333, 0x9999);
+    Func_02002c84(1, 2);
+    {
+        u8 *record = Record1(Func_02002c24, 0);
+
+        if (record != 0) {
+            Func_02002c54(1, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
+        }
+    }
+    Func_02002c74(1);
+    Func_02002c7c(1, 0, 0);
+    Func_02002c84(2, 2);
+    {
+        u8 *record = Record1(Func_02002c24, 0);
+
+        if (record != 0) {
+            Func_02002c54(2, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
+        }
+    }
+    Func_02002c74(2);
+    Func_02002c7c(2, 0, 0);
+    if (Data_0200b394 != 0) {
+        Func_02002c84(3, 2);
+        {
+            u8 *record = Record1(Func_02002c24, 0);
+
+            if (record != 0) {
+                Func_02002c54(3, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
+            }
+        }
+        Func_02002c74(3);
+        Func_02002c7c(3, 0, 0);
+    }
+    Value1(Func_02002bfc, 0x843);
+    Func_02002c7c(11, 0, 0);
+    Func_02002c7c(12, 0, 0);
+    Func_02002d14();
+    Func_02002c14();
+}
+
+void FieldScene_RunSplitPairSteps(s32 a, s32 b)
+{
+    Func_02005434(a, 0);
+    Func_0200537a(b);
+}
+
+void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c)
+{
+    Func_02005454(a, b, 0);
+    Func_02005392(c);
+}
+
+s32 SceneEffect_AdvanceAngleAndFinishWhenParked(struct Struct2798 *p)
 {
     p->field18 += 0x1eb8;
     if (p->field38 == (s32)0x80000000
         && p->field3c == (s32)0x80000000
         && p->field40 == (s32)0x80000000) {
-        Story_unk9_2(p);
+        Func_02005376(p);
     }
     return 1;
 }
 
-void Effect_SpawnObject26EveryEightFrames(void)
+void SceneEffect_SpawnObject26EveryEightFrames(void)
 {
-    extern s32 gIw;
+    extern s32 Data_03001e40;
 
     struct Obj *obj;
     struct Sub *sprite;
@@ -574,10 +1654,10 @@ void Effect_SpawnObject26EveryEightFrames(void)
     s32 c3 = 0x00e70000;
     s32 c4 = 0x02700000;
 
-    phase = gIw & 7;
+    phase = Data_03001e40 & 7;
     if (phase != 0) return;
-    if (gOv2 != 0) Story_unk10_2(200);
-    obj = Story_unk11_4(26, c1, 0, c2);
+    if (Data_0200b398 != 0) Func_02005506(200);
+    obj = Func_020053a6(26, c1, 0, c2);
     if (obj == 0) return;
     sprite = obj->f50;
     sprite->f26 = phase;
@@ -592,28 +1672,28 @@ void Effect_SpawnObject26EveryEightFrames(void)
     obj->f30 = 0x80000;
     obj->f34 = 0x80000;
     obj->f55 = phase;
-    Story_Apply8(obj, 2);
-    Story_SetMode(obj, c3, 0, c4);
-    Story_Apply9(obj, gOv3);
+    Func_020053d6(obj, 2);
+    Func_0200540e(obj, c3, 0, c4);
+    Func_020053f6(obj, Data_0200b2d0);
 }
 
-s32 OvObj_SelectValueByFrameBit1(s32 obj)
+s32 OverlayObject_SelectValueByFrameBit1(s32 obj)
 {
-    extern u32 gIw;
+    extern u32 Data_03001e40;
 
-    if (((gIw >> 1) & 1) != 0) {
-        Story_Apply10(obj, 10);
+    if (((Data_03001e40 >> 1) & 1) != 0) {
+        Func_02005524(obj, 10);
     } else {
-        Story_Apply11(obj, 7);
+        Func_0200552c(obj, 7);
     }
     return 0;
 }
 
-s32 Actor_CheckRegionTrigger(struct Struct288c *arg0)
+s32 SceneActor_CheckRegionTrigger(struct Struct288c *arg0)
 {
     s32 x;
 
-    if (gOv4 != 0) {
+    if (Data_0200b394 != 0) {
         x = arg0->field08;
         if (x > 0xc00000 && x < 0x1120000
             && arg0->field10 > 0x2360000 && arg0->field10 < 0x2640000) {
@@ -640,931 +1720,52 @@ s32 Actor_CheckRegionTrigger(struct Struct288c *arg0)
     }
     return 0;
 hit:
-    Story_unk11_2(106);
-    Story_Apply12(arg0, gOv6);
-    gOv5 = 1;
+    Func_0200563a(106);
+    Func_020054ca(arg0, Data_0200b2e4);
+    Data_0200b390 = 1;
     return 0;
 }
 
-void Actor_AlternateSlots13To16Field0c(void)
+void SceneActor_AlternateSlots13To16Field0c(void)
 {
-    extern u32 gIw;
+    extern u32 Data_03001e40;
 
     struct Struct5702 *p;
 
-    p = Story_unk12_4(13);
+    p = Func_02005702(13);
     if (p != 0) {
         p->field55 = 0;
-        if ((gIw & 1) == 0) {
+        if ((Data_03001e40 & 1) == 0) {
             p->field0c = 0;
         } else {
             p->field0c = 0x1f40000;
         }
     }
-    p = Story_unk13_4(14);
+    p = Func_0200572a(14);
     if (p != 0) {
         p->field55 = 0;
-        if ((gIw & 1) != 0) {
+        if ((Data_03001e40 & 1) != 0) {
             p->field0c = 0;
         } else {
             p->field0c = 0x1f40000;
         }
     }
-    p = Story_unk14_4(15);
+    p = Func_02005752(15);
     if (p != 0) {
         p->field55 = 0;
-        if ((gIw & 1) == 0) {
+        if ((Data_03001e40 & 1) == 0) {
             p->field0c = 0;
         } else {
             p->field0c = 0x1f40000;
         }
     }
-    p = Story_unk15_4(16);
+    p = Func_0200577a(16);
     if (p != 0) {
         p->field55 = 0;
-        if ((gIw & 1) != 0) {
+        if ((Data_03001e40 & 1) != 0) {
             p->field0c = 0;
         } else {
             p->field0c = 0x1f40000;
         }
     }
-}
-
-/* overlays/scene/story/branching_formation/run_branching_formation_presentation.c */
-
-static __inline__ u8 * Record1(u8 * (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-extern s32 gOv7;
-extern s32 gOv8;
-extern s32 gOv9;
-extern u8 gOv10[];
-extern u8 gOv11[];
-extern u8 gOv12[];
-extern u8 gOv13[];
-extern u8 gOv14[];
-extern u8 gOv15[];
-extern u8 gOv16[];
-extern u8 gOv17[];
-extern u8 gOv18[];
-extern u8 gOv19[];
-extern u8 gOv20[];
-
-void Scene_RunBranchingFormationPresentation(void)
-{
-    u8 *record;
-    s32 *flag_work;
-    s32 entry_action;
-    s32 value;
-    s32 flag;
-    s32 motion_action;
-    s32 *party_flag;
-    s32 *formation_flag;
-    s32 *sequence_flag;
-    s32 *finish_flag;
-    s32 reset_action;
-    s32 *effect_phase;
-    s32 *formation_phase;
-    s32 formation_action;
-    s32 finish_action;
-    s32 *sequence_phase;
-
-    Story_unk32_4();
-    Story_Run(-1, -1, -1, 0);
-    Story_unk33_4(1);
-    Story_Run(0xf60000, -1, 0x25c0000, 0);
-    flag_work = &gOv4;
-    flag = Story_unk4(3);
-    *flag_work = flag;
-    record = Story_BytePtr(13);
-    Story_unk34_4((s32)record, 0);
-    record = Story_BytePtr(14);
-    Story_unk34_4((s32)record, 0);
-    record = Story_BytePtr(15);
-    Story_unk34_4((s32)record, 0);
-    record = Story_BytePtr(16);
-    Story_unk34_4((s32)record, 0);
-    record = Story_BytePtr(17);
-    Story_unk34_4((s32)record, 0);
-    record = Story_BytePtr(18);
-    Story_unk34_4((s32)record, 0);
-    record = Story_BytePtr(19);
-    Story_unk34_4((s32)record, 0);
-    record = Story_BytePtr(20);
-    Story_unk34_4((s32)record, 0);
-    record = Story_BytePtr(21);
-    Story_unk34_4((s32)record, 0);
-    entry_action = (s32)gOv20;
-    Story_unk35_4(17, entry_action);
-    Story_unk35_4(18, entry_action);
-    Story_unk35_4(19, entry_action);
-    Story_unk35_4(20, entry_action);
-    Story_unk35_4(21, entry_action);
-    Story_Place(0, 0x740000, 0x25a0000);
-    Story_unk33_4(1);
-    Story_unk36_4();
-    Story_Do(1);
-    Story_unk37_4();
-    Story_unk38_4();
-    Story_unk2_3(0, 0xcccc, 0x6666);
-    Story_unk3_3(0, 254, 0x251);
-    Story_unk2_3(1, 0x9999, 0x4ccc);
-    Story_unk2_3(2, 0x9999, 0x4ccc);
-    {
-        u8 *record = Record1(Story_BytePtr, 0);
-
-        if (record != 0) {
-            Story_unk39_4(1, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
-        }
-    }
-    {
-        u8 *record = Record1(Story_BytePtr, 0);
-
-        if (record != 0) {
-            Story_unk39_4(2, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
-        }
-    }
-    Story_unk2_4(1, (s32)gOv13);
-    Story_unk35_4(2, (s32)gOv14);
-    if (*flag_work != 0) {
-        Story_unk2_3(3, 0x9999, 0x4ccc);
-        {
-            u8 *record = Record1(Story_BytePtr, 0);
-
-            if (record != 0) {
-                Story_unk39_4(3, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
-            }
-        }
-        Story_unk35_4(3, (s32)gOv15);
-    }
-    Story_unk40_4(2);
-    Actor_SetPairZeroAndValue(2, 0x2000, 40);
-    Actor_SetPairZeroAndValue(2, 0x8000, 20);
-    Actor_SetPairZeroAndValue(2, 0x4000, 40);
-    Story_unk4_3(2, 0x101, 0);
-    Story_unk41_4(60);
-    Story_unk42_4(1, 0x4000, 0);
-    Actor_SetPairZeroAndValue(0, 0x6000, 60);
-    value = 160;
-    Actor_SetPairZeroAndValue(3, 0x2000, 10);
-    Story_unk42_4(1, 0x2000, 0);
-    Actor_SetPairZeroAndValue(0, (value << 8), 10);
-    Story_unk4_3(1, 0x101, 0);
-    Story_unk4_3(0, 0x101, 0);
-    Story_unk41_4(40);
-    Story_unk42_4(1, 0x4000, 0);
-    Actor_SetPairZeroAndValue(0, 0x6000, 10);
-    Story_unk43_4(1, 2);
-    Story_unk2_2(0x1474);
-    Scene_RunSplitPairSteps(1, 10);
-    Story_unk2_2(0x147c);
-    Actor_SetPairZeroAndValue(2, 0xc000, 20);
-    Story_unk44_4(2, 3);
-    Scene_RunSplitPairSteps(2, 20);
-    Actor_SetPairZeroAndValue(1, 0, 20);
-    Actor_SetPairZeroAndValue(0, (value << 8), 40);
-    Actor_SetPairZeroAndValue(1, 0x4000, 20);
-    Actor_SetPairZeroAndValue(0, 0x6000, 30);
-    Actor_SetPairZeroAndValue(1, 0x6000, 20);
-    Actor_SetPairZeroAndValue(0, 0xe000, 30);
-    Story_unk43_4(2, 2);
-    Story_unk4_3(2, 0x100, 0);
-    Story_unk41_4(40);
-    Story_unk42_4(1, 0x4000, 0);
-    Actor_SetPairZeroAndValue(0, 0x6000, 20);
-    Actor_SetPairZeroAndValue(2, 0xc000, 10);
-    Story_unk45_4(17);
-    Story_unk45_4(206);
-    Story_unk3_4(0x7fff, 0);
-    Story_unk46_4(1);
-    Story_unk33_4(1);
-    gOv2 = 1;
-    Story_unk5((s32)gOv10, 0xc80);
-    Story_unk33_4(20);
-    Story_unk3_4(0x405210, 1);
-    Story_unk3_4(0x10000, 2);
-    Story_unk46_4(120);
-    Story_unk33_4(60);
-    motion_action = (s32)gOv16;
-    Story_unk35_4(0, motion_action);
-    Story_unk35_4(1, motion_action);
-    Story_unk35_4(2, motion_action);
-    Story_unk35_4(3, motion_action);
-    Story_unk41_4(100);
-    Scene_RunSplitPairSteps(1, 20);
-    Scene_RunSplitPairSteps(2, 40);
-    if (gOv4 != 0) {
-        Story_unk41_4(40);
-        Story_unk4_3(3, 0x102, 0);
-        Story_unk41_4(40);
-        Scene_RunSplitPairSteps(3, 40);
-    } else {
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
-    }
-    Story_unk41_4(20);
-    party_flag = &gOv4;
-    if (*party_flag != 0) {
-        value = 128;
-        record = Story_BytePtr(3);
-        *(s32 *)((s32)record + 40) = (value << 10);
-        Story_unk41_4(10);
-        Story_unk47_4(3, (value << 10), (value << 10));
-        Story_unk5_3(3, -2, 0);
-        Story_unk2_4(3, (s32)gOv17);
-        record = Story_BytePtr(3);
-        Story_unk34_4((s32)record, 0);
-        Story_unk48_4(3, 19);
-        Story_unk41_4(10);
-    }
-    value = 128;
-    record = Story_BytePtr(0);
-    *(s32 *)((s32)record + 40) = (value << 10);
-    Story_unk41_4(10);
-    Story_unk2_3(0, (value << 10), (value << 10));
-    reset_action = (s32)gOv17;
-    Story_unk35_4(0, reset_action);
-    record = Story_BytePtr(0);
-    Story_unk34_4((s32)record, 0);
-    Story_unk48_4(0, 19);
-    Story_unk41_4(20);
-    record = Record1(Story_BytePtr, 1);
-    *(s32 *)((s32)record + 40) = (value << 10);
-    Story_unk41_4(10);
-    Story_unk2_3(1, (value << 10), (value << 10));
-    Story_unk35_4(1, reset_action);
-    record = Story_BytePtr(1);
-    Story_unk34_4((s32)record, 0);
-    Story_unk48_4(1, 19);
-    Story_unk41_4(40);
-    record = Record1(Story_BytePtr, 2);
-    *(s32 *)((s32)record + 40) = (value << 10);
-    Story_unk41_4(10);
-    Story_unk35_4(2, reset_action);
-    record = Story_BytePtr(2);
-    Story_unk34_4((s32)record, 0);
-    Story_unk48_4(2, 19);
-    gOv2 = 0;
-    Story_unk41_4(160);
-    Story_unk6((s32)gOv10);
-    Story_unk41_4(120);
-    Story_unk3_4(0x406218, 1);
-    Story_unk46_4(60);
-    Story_unk33_4(60);
-    gOv8 = 0;
-    effect_phase = &gOv9;
-    gOv7 = 0x800000;
-    *effect_phase = 1;
-    Story_unk5((s32)gOv11, 0xc80);
-    Story_unk41_4(180);
-    Story_unk45_4(21);
-    Scene_RunSplitPairSteps(1, 80);
-    Scene_RunSplitPairSteps(2, 40);
-    Story_unk4_3(0, 0x102, 0);
-    Story_unk4_3(1, 0x102, 0);
-    Story_unk4_3(2, 0x102, 0);
-    Story_unk4_3(3, 0x102, 0);
-    Story_unk41_4(60);
-    Scene_RunSplitPairSteps(2, 20);
-    *effect_phase = 2;
-    Story_unk49_4(2, 2);
-    Story_unk41_4(20);
-    Story_unk49_4(1, 1);
-    Story_unk41_4(40);
-    Story_unk49_4(0, 2);
-    Story_unk49_4(3, 1);
-    Story_unk41_4(20);
-    Story_unk49_4(2, 3);
-    Story_unk41_4(40);
-    Story_unk49_4(0, 1);
-    Story_unk41_4(20);
-    Story_unk49_4(1, 2);
-    Story_unk41_4(20);
-    Story_unk49_4(3, 2);
-    Story_unk4_3(1, 0x102, 0);
-    Scene_RunSplitPairSteps(1, 20);
-    if (*party_flag != 0) {
-        Story_unk4_3(3, 0x102, 0);
-        Scene_RunSplitPairSteps(3, 10);
-    } else {
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
-    }
-    formation_phase = &gOv9;
-    *formation_phase = 3;
-    *(u8 *)(Story_BytePtr(0) + 35) &= 254;
-    *(u8 *)(Story_BytePtr(1) + 35) &= 254;
-    *(u8 *)(Story_BytePtr(2) + 35) &= 254;
-    *(u8 *)(Story_BytePtr(3) + 35) &= 254;
-    Story_unk50_4(0, 3);
-    Story_unk50_4(1, 3);
-    Story_unk50_4(2, 3);
-    value = 0;
-    Story_unk50_4(3, 3);
-    gOv5 = value;
-    Story_unk5((s32)gOv12, 0xc80);
-    Story_unk45_4(220);
-    *(u8 *)(Story_BytePtr(13) + 35) &= 254;
-    Story_unk50_4(13, 2);
-    Story_Place(13, 0xfd0000, 0x25b0000);
-    formation_action = (s32)gOv18;
-    Story_unk35_4(13, formation_action);
-    *(u8 *)(Story_BytePtr(14) + 35) &= 254;
-    Story_unk50_4(14, 2);
-    Story_Place(14, 0xe90000, 0x2750000);
-    Story_unk35_4(14, formation_action);
-    if (gOv4 != 0) {
-        *(u8 *)(Story_BytePtr(15) + 35) &= 254;
-        Story_unk50_4(15, 2);
-        Story_Place(15, 0xcf0000, 0x2610000);
-        Story_unk35_4(15, formation_action);
-    }
-    *(u8 *)(Story_BytePtr(16) + 35) &= 254;
-    Story_unk50_4(16, 2);
-    Story_Place(16, 0xe30000, 0x2440000);
-    Story_unk35_4(16, formation_action);
-    if (*formation_phase != 0) {
-        do {
-            Story_unk33_4(1);
-        } while (gOv9 != 0);
-    }
-    Story_unk3_2(0x12c);
-    Story_unk6((s32)gOv11);
-    Story_unk41_4(120);
-    Story_unk45_4(17);
-    Story_unk3_4(0x10000, 1);
-    Story_unk46_4(60);
-    Story_unk33_4(60);
-    Story_unk51_4(13);
-    Story_unk51_4(14);
-    formation_flag = &gOv4;
-    if (*formation_flag != 0) {
-        Story_unk51_4(15);
-    }
-    Story_unk51_4(16);
-    Story_unk33_4(1);
-    finish_action = (s32)gOv19;
-    Story_unk35_4(13, finish_action);
-    Story_unk35_4(14, finish_action);
-    if (*formation_flag != 0) {
-        Story_unk35_4(15, finish_action);
-    }
-    Story_unk52_3(16, finish_action);
-    Story_unk41_4(80);
-    Story_unk43_4(1, 2);
-    Story_unk41_4(40);
-    Story_unk7(1, 0);
-    Story_Place(11, 0xdc0000, 0x1ee0000);
-    Story_Place(12, 0xdc0000, 0x1ee0000);
-    Story_unk33_4(1);
-    if (Story_unk8(11, 0) == 1) {
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
-    }
-    Story_unk43_4(0, 1);
-    Story_unk41_4(20);
-    Story_unk43_4(2, 2);
-    Scene_RunSplitPairSteps(2, 20);
-    if (*formation_flag != 0) {
-        Story_unk43_4(3, 2);
-        Story_unk41_4(10);
-        Story_unk2_2(0x1488);
-        Scene_RunSplitPairSteps(3, 40);
-    }
-    Story_unk49_4(1, 1);
-    Story_unk4_3(1, 0x101, 0);
-    Story_unk41_4(80);
-    Story_unk43_4(2, 2);
-    Story_unk2_2(0x1489);
-    Scene_RunSplitPairSteps(2, 40);
-    Story_unk43_4(1, 3);
-    Story_unk41_4(40);
-    Story_unk50_4(1, 2);
-    *(u8 *)(Story_BytePtr(1) + 35) |= 1;
-    record = Story_BytePtr(1);
-    Story_unk34_4((s32)record, 1);
-    Story_unk53_3(1, 6, 0);
-    Story_unk5_3(1, -3, 0);
-    Story_unk48_4(1, 1);
-    Actor_SetPairZeroAndValue(1, 0x4000, 60);
-    Scene_RunSplitPairSteps(1, 20);
-    Story_unk49_4(1, 2);
-    Scene_RunSplitPairSteps(1, 10);
-    Story_unk43_4(0, 3);
-    Actor_SetPairZeroAndValue(1, 0x2000, 20);
-    Story_unk4_3(1, 0x101, 0);
-    Story_unk41_4(40);
-    Actor_SetPairZeroAndValue(1, 0x6000, 40);
-    Actor_SetPairZeroAndValue(1, 0x2000, 20);
-    Actor_SetPairZeroAndValue(1, 0x6000, 20);
-    Actor_SetPairZeroAndValue(1, 0x2000, 10);
-    Story_unk53_3(1, 2, 0);
-    Story_unk41_4(40);
-    Story_unk53_3(1, 2, 0);
-    Story_unk41_4(10);
-    Story_unk53_3(1, 4, 0);
-    Story_unk41_4(20);
-    Scene_RunSplitPairSteps(1, 20);
-    if (*formation_flag != 0) {
-        Story_unk4_3(3, 0x100, 0);
-        Story_unk41_4(60);
-        Story_unk43_4(3, 2);
-        Story_unk41_4(80);
-        Story_unk50_4(3, 2);
-        *(u8 *)(Story_BytePtr(3) + 35) |= 1;
-        record = Story_BytePtr(3);
-        Story_unk34_4((s32)record, 1);
-        Story_unk53_3(3, 4, 0);
-        Story_unk5_3(3, -2, 0);
-        Story_unk48_4(3, 1);
-        Actor_SetPairZeroAndValue(3, 0xe000, 60);
-        Story_unk43_4(3, 2);
-        Story_unk41_4(20);
-        Scene_RunSplitPairSteps(3, 20);
-    } else {
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
-    }
-    Story_unk6_3(1, 2, 0);
-    Actor_SetPairZeroAndValue(1, 0x4000, 20);
-    Story_unk44_4(1, 3);
-    Actor_SetPairZeroAndValue(1, 0x2000, 10);
-    Scene_RunSplitPairSteps(1, 20);
-    Story_unk44_4(1, 3);
-    Story_unk41_4(10);
-    Story_unk4_4(2, 1);
-    Story_unk41_4(40);
-    Story_unk43_4(2, 2);
-    Story_unk41_4(20);
-    value = 1;
-    Story_unk50_4(2, 2);
-    *(u8 *)(Story_BytePtr(2) + 35) |= value;
-    record = Story_BytePtr(2);
-    Story_unk34_4((s32)record, 1);
-    Story_unk53_3(2, 4, 0);
-    Story_unk48_4(2, 1);
-    Story_unk7_3(2, 0xc000, 0);
-    Story_unk43_4(0, 2);
-    Story_unk41_4(10);
-    Story_unk50_4(0, 2);
-    {
-        u8 *record = Story_BytePtr(0);
-        u8 flags = (u8)(value | record[35]);
-
-        record[35] = flags;
-    }
-    record = Story_BytePtr(0);
-    Story_unk34_4((s32)record, 1);
-    Story_unk53_3(0, 4, 0);
-    Story_unk48_4(0, 1);
-    Actor_SetPairZeroAndValue(0, 0x6000, 60);
-    Story_unk4_3(0, 0x105, 0);
-    Story_unk4_3(2, 0x105, 0);
-    Story_unk41_4(60);
-    Actor_SetPairZeroAndValue(0, 0xa000, 20);
-    Story_unk44_4(1, 3);
-    Story_unk44_4(0, 3);
-    Actor_SetPairZeroAndValue(0, 0x6000, 10);
-    Actor_SetPairZeroAndValue(1, 0x4000, 10);
-    Story_unk7_3(2, 0xc000, 0);
-    Story_unk44_4(2, 3);
-    Scene_RunSplitPairSteps(2, 20);
-    Story_unk48_4(0, 3);
-    Story_unk48_4(3, 3);
-    Story_unk44_4(1, 3);
-    Story_unk41_4(20);
-    Story_unk43_4(2, 1);
-    Story_unk41_4(20);
-    Story_unk7(2, 0);
-    Story_unk48_4(2, 3);
-    Story_unk7_3(2, 0xe000, 0);
-    Story_unk42_4(1, 0x2000, 0);
-    if (Story_unk8(0, 0) == 0) {
-        Story_unk48_4(2, 3);
-        Story_unk44_4(1, 3);
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
-    } else {
-        Story_unk43_4(1, 2);
-        Actor_SetPairZeroAndValue(1, 0x2000, 10);
-        Story_unk49_4(1, 2);
-        Story_unk54_3(1, 0);
-    }
-    Actor_SetPairZeroAndValue(1, 0x4000, 10);
-    Story_unk44_4(1, 4);
-    Scene_RunSplitPairSteps(1, 20);
-    Actor_SetPairZeroAndValue(2, 0xc000, 10);
-    Story_unk44_4(2, 3);
-    Scene_RunSplitPairSteps(2, 10);
-    if (gOv4 != 0) {
-        Story_unk43_4(3, 2);
-        Actor_SetPairZeroAndValue(3, 0, 20);
-        Actor_SetPairZeroAndValue(3, 0x2000, 10);
-        Story_unk48_4(3, 4);
-        Scene_RunSplitPairSteps(3, 10);
-    } else {
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
-    }
-    Story_unk7_3(1, 0x2000, 0);
-    Actor_SetPairZeroAndValue(0, 0xa000, 10);
-    Story_unk48_4(0, 3);
-    Story_unk44_4(1, 3);
-    value = 128;
-    Story_unk41_4(20);
-    Story_unk7_3(0, 0x6000, 0);
-    Actor_SetPairZeroAndValue(1, (value << 7), 10);
-    Story_unk44_4(2, 4);
-    Story_unk41_4(20);
-    Story_unk4_3(0, 0x102, 0);
-    Story_unk4_3(1, 0x102, 0);
-    Story_unk41_4(80);
-    Actor_SetPairZeroAndValue(2, 0xe000, 10);
-    Story_unk49_4(2, 2);
-    Scene_RunSplitPairSteps(2, 20);
-    Story_unk7_3(1, 0x2000, 0);
-    Actor_SetPairZeroAndValue(0, 0xa000, 40);
-    Story_unk42_4(1, (value << 7), 0);
-    Actor_SetPairZeroAndValue(0, 0x6000, 10);
-    Actor_SetPairZeroAndValue(2, 0xc000, 10);
-    Story_unk44_4(2, 3);
-    Scene_RunSplitPairSteps(2, 10);
-    Story_unk5_4(1, 0x102);
-    Story_unk41_4(40);
-    Scene_RunSplitPairSteps(1, 20);
-    Story_unk44_4(2, 3);
-    Story_unk41_4(20);
-    Story_unk4_3(1, 0x102, 0);
-    Story_unk41_4(40);
-    Scene_RunSplitPairSteps(1, 20);
-    Story_unk48_4(2, 3);
-    Scene_RunSplitPairSteps(2, 10);
-    Story_unk43_4(1, 2);
-    Actor_SetPairZeroAndValue(1, 0x2000, 10);
-    Story_unk7(1, 0);
-    Story_unk42_4(0, 0xa000, 0);
-    if (Story_unk8(0, 0) == 0) {
-        Story_unk44_4(1, 3);
-    } else {
-        Story_unk41_4(20);
-        Story_unk43_4(1, 2);
-        Story_unk41_4(40);
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
-    }
-    Story_unk54_3(1, 0);
-    Story_unk45_4(21);
-    Story_unk3_4(0x406218, 1);
-    Story_unk46_4(60);
-    Story_unk33_4(60);
-    gOv8 = 0;
-    gOv7 = 0x800000;
-    sequence_phase = &gOv9;
-    *sequence_phase = 1;
-    Story_unk5((s32)gOv11, 0xc80);
-    Story_unk41_4(80);
-    Story_unk6_4(0, 2);
-    Story_unk49_4(1, 2);
-    Story_unk6_4(3, 2);
-    Story_unk43_4(2, 2);
-    Story_unk41_4(60);
-    Actor_SetPairZeroAndValue(2, 0xc000, 10);
-    Story_unk2_2(0x149d);
-    Scene_RunSplitPairSteps(2, 10);
-    Actor_SetPairZeroAndValue(1, 0xc000, 10);
-    Actor_SetPairZeroAndValue(0, 0xc000, 10);
-    sequence_flag = &gOv4;
-    if (*sequence_flag != 0) {
-        Actor_SetPairZeroAndValue(3, 0xc000, 10);
-    }
-    *(u8 *)(Story_BytePtr(0) + 35) &= 254;
-    *(u8 *)(Story_BytePtr(1) + 35) &= 254;
-    *(u8 *)(Story_BytePtr(2) + 35) &= 254;
-    *(u8 *)(Story_BytePtr(3) + 35) &= 254;
-    Story_unk50_4(0, 3);
-    Story_unk50_4(1, 3);
-    Story_unk50_4(2, 3);
-    Story_unk50_4(3, 3);
-    *sequence_phase = 2;
-    Story_unk45_4(220);
-    Story_Place(13, 0xfd0000, 0x25b0000);
-    formation_action = (s32)gOv18;
-    Story_unk35_4(13, formation_action);
-    Story_Place(14, 0xe90000, 0x2750000);
-    Story_unk35_4(14, formation_action);
-    if (*sequence_flag != 0) {
-        Story_Place(15, 0xcf0000, 0x2610000);
-        Story_unk35_4(15, formation_action);
-    }
-    Story_Place(16, 0xe30000, 0x2440000);
-    Story_unk2_4(16, formation_action);
-    Story_unk41_4(120);
-    *sequence_phase = 3;
-    do {
-        Story_unk33_4(1);
-    } while (gOv9 != 0);
-    Scene_RunSplitPairSteps(11, 80);
-    Scene_RunSplitPairSteps(12, 20);
-    Story_unk4_3(0, 0x101, 0);
-    Story_unk4_3(1, 0x101, 0);
-    Story_unk4_3(2, 0x101, 0);
-    Story_unk4_3(3, 0x101, 0);
-    Story_unk41_4(60);
-    Scene_RunSplitPairSteps(12, 20);
-    Story_unk48_4(0, 3);
-    Story_unk48_4(1, 3);
-    Story_unk48_4(3, 3);
-    Story_unk44_4(2, 3);
-    Scene_RunSplitPairSteps(12, 10);
-    Story_unk48_4(0, 3);
-    Story_unk48_4(1, 3);
-    Story_unk48_4(3, 3);
-    Story_unk44_4(2, 3);
-    Scene_RunSplitPairSteps(12, 10);
-    Story_unk4_3(0, 0x100, 0);
-    Story_unk4_3(1, 0x100, 0);
-    Story_unk4_3(2, 0x100, 0);
-    Story_unk4_3(3, 0x100, 0);
-    Story_unk41_4(40);
-    Scene_RunSplitPairSteps(11, 10);
-    Story_unk7_3(0, 0x8000, 0);
-    Story_unk7_3(1, 0x4000, 0);
-    Story_unk42_4(3, 0, 0);
-    Actor_SetPairZeroAndValue(2, 0xc000, 40);
-    Scene_RunSplitPairSteps(12, 10);
-    Story_unk4_3(0, 0x102, 0);
-    Story_unk4_3(1, 0x102, 0);
-    Story_unk4_3(2, 0x102, 0);
-    Story_unk4_3(3, 0x102, 0);
-    Story_unk42_4(0, 0xc000, 0);
-    Story_unk42_4(1, 0xc000, 0);
-    Story_unk42_4(2, 0xc000, 0);
-    Actor_SetPairZeroAndValue(3, 0xc000, 80);
-    Scene_RunSplitPairSteps(12, 10);
-    Story_unk7_3(0, 0x8000, 0);
-    Story_unk7_3(1, 0x4000, 0);
-    Story_unk42_4(2, 0xc000, 0);
-    Actor_SetPairZeroAndValue(3, 0, 40);
-    Scene_RunSplitPairSteps(11, 10);
-    Story_unk42_4(0, 0xc000, 0);
-    Story_unk42_4(1, 0xc000, 0);
-    Story_unk42_4(2, 0xc000, 0);
-    Actor_SetPairZeroAndValue(3, 0xc000, 10);
-    Story_unk48_4(0, 4);
-    Story_unk48_4(1, 4);
-    Story_unk48_4(3, 4);
-    Story_unk44_4(2, 4);
-    Story_unk41_4(60);
-    Scene_RunSplitPairSteps(12, 10);
-    Story_unk48_4(0, 3);
-    Story_unk48_4(1, 3);
-    Story_unk48_4(3, 3);
-    Story_unk44_4(2, 3);
-    Scene_RunSplitPairSteps(12, 20);
-    Story_unk7_3(0, 0x8000, 0);
-    Story_unk7_3(1, 0x4000, 0);
-    Story_unk42_4(2, 0xc000, 0);
-    Actor_SetPairZeroAndValue(3, 0, 20);
-    Scene_RunSplitPairSteps(12, 10);
-    Story_unk49_4(0, 2);
-    Story_unk49_4(1, 2);
-    Story_unk49_4(3, 2);
-    Story_unk43_4(2, 2);
-    Story_unk42_4(0, 0xc000, 0);
-    Story_unk42_4(1, 0xc000, 0);
-    Story_unk42_4(2, 0xc000, 0);
-    Story_unk42_4(3, 0xc000, 0);
-    Scene_RunSplitPairSteps(12, 20);
-    Story_unk7_3(0, 0x8000, 0);
-    Story_unk7_3(1, 0x4000, 0);
-    Story_unk42_4(2, 0xc000, 0);
-    Actor_SetPairZeroAndValue(3, 0, 20);
-    Scene_RunSplitPairSteps(11, 20);
-    Story_unk4_3(0, 0x102, 0);
-    Story_unk4_3(1, 0x102, 0);
-    Story_unk4_3(3, 0x102, 0);
-    Story_unk4_3(2, 0x102, 0);
-    Story_unk41_4(40);
-    Scene_RunSplitPairSteps(12, 10);
-    Story_unk42_4(0, 0xc000, 0);
-    Story_unk42_4(1, 0xc000, 0);
-    Story_unk42_4(2, 0xc000, 0);
-    Actor_SetPairZeroAndValue(3, 0xc000, 10);
-    Scene_RunSplitPairSteps(12, 10);
-    Story_unk48_4(0, 3);
-    Story_unk48_4(1, 3);
-    Story_unk48_4(3, 3);
-    Story_unk44_4(2, 3);
-    Story_unk41_4(60);
-    Story_unk54_3(12, 0);
-    Story_unk54_3(11, 0);
-    Story_unk6((s32)gOv11);
-    Story_unk41_4(80);
-    Story_unk3_4(0x10000, 1);
-    Story_unk46_4(60);
-    Story_unk33_4(80);
-    Story_unk51_4(13);
-    Story_unk51_4(14);
-    finish_flag = &gOv4;
-    Story_unk51_4(15);
-    Story_unk51_4(16);
-    Story_unk33_4(1);
-    finish_action = (s32)gOv19;
-    Story_unk35_4(13, finish_action);
-    Story_unk35_4(14, finish_action);
-    if (*finish_flag != 0) {
-        Story_unk35_4(15, finish_action);
-    }
-    Story_unk52_3(16, finish_action);
-    Story_unk41_4(20);
-    Story_unk50_4(0, 2);
-    Story_unk50_4(1, 2);
-    Story_unk50_4(2, 2);
-    value = 1;
-    Story_unk50_4(3, 2);
-    *(u8 *)(Story_BytePtr(0) + 35) |= value;
-    *(u8 *)(Story_BytePtr(1) + 35) |= value;
-    *(u8 *)(Story_BytePtr(2) + 35) |= value;
-    {
-        u8 *record = Story_BytePtr(3);
-        u8 flags = (u8)(value | record[35]);
-
-        record[35] = flags;
-    }
-    Story_unk43_4(2, 2);
-    Actor_SetPairZeroAndValue(2, 0xe000, 10);
-    Story_unk7(2, 0);
-    Story_unk7_3(1, 0x2000, 0);
-    Story_unk42_4(3, 0, 0);
-    if (Story_unk8(0, 0) != 0) {
-    } else {
-        Story_unk43_4(1, 2);
-        Story_unk41_4(10);
-        Story_unk7(1, 0);
-        if (Story_unk8(0, 0) == 0) {
-            Actor_SetPairZeroAndValue(3, 0, 20);
-            Story_unk4_3(1, 0x101, 0);
-            Story_unk4_3(2, 0x101, 0);
-            Story_unk4_3(3, 0x101, 0);
-            Story_unk41_4(40);
-            Actor_SetPairZeroAndValue(1, 0x4000, 20);
-            Scene_RunSplitPairSteps(1, 10);
-            Actor_SetPairZeroAndValue(2, 0xc000, 20);
-            Actor_SetPairZeroAndValue(2, 0xe000, 20);
-            Story_unk44_4(2, 3);
-            Scene_RunSplitPairSteps(2, 20);
-            Actor_SetPairZeroAndValue(1, 0x2000, 20);
-        } else {
-            Actor_SetPairZeroAndValue(3, 0, 20);
-            Story_unk4_3(1, 0x102, 0);
-            Story_unk4_3(2, 0x102, 0);
-            Story_unk4_3(3, 0x102, 0);
-            Story_unk41_4(40);
-            Actor_SetPairZeroAndValue(1, 0x4000, 20);
-            Story_unk2_2(0x14b4);
-            Scene_RunSplitPairSteps(1, 20);
-            Story_unk44_4(2, 3);
-            Scene_RunSplitPairSteps(2, 20);
-        }
-        Story_unk48_4(3, 3);
-        Story_unk44_4(1, 3);
-        goto L_02002528;
-    }
-    Story_unk41_4(20);
-    Story_unk44_4(1, 3);
-    Story_unk41_4(10);
-    Story_unk2_2(0x14b6);
-    Scene_RunSplitPairSteps(1, 10);
-    Story_unk7_3(1, 0x4000, 0);
-    Actor_SetPairZeroAndValue(0, 0x6000, 20);
-    Story_unk48_4(1, 3);
-    Story_unk44_4(0, 3);
-    Story_unk41_4(10);
-    Story_unk44_4(2, 4);
-    Story_unk7(2, 0);
-    if (Story_unk8(0, 0) != 0) {
-    } else {
-        Story_unk41_4(20);
-        Story_unk4_3(2, 0x103, 0);
-        Story_unk41_4(40);
-        Actor_SetPairZeroAndValue(2, 0xe000, 10);
-        Scene_RunSplitPairSteps(2, 10);
-        if (*finish_flag != 0) {
-            Actor_SetPairZeroAndValue(3, 0, 10);
-            Story_unk49_4(3, 3);
-            Scene_RunSplitPairSteps(3, 20);
-        } else {
-            *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
-        }
-        Story_unk4_3(0, 0x102, 0);
-        Story_unk4_3(1, 0x102, 0);
-        Story_unk41_4(40);
-        Story_unk43_4(1, 2);
-        Scene_RunSplitPairSteps(1, 20);
-        Story_unk4_3(1, 0x105, 0);
-        Story_unk41_4(120);
-        Scene_RunSplitPairSteps(2, 40);
-        if (gOv4 != 0) {
-            Actor_SetPairZeroAndValue(3, 0x2000, 10);
-            Story_unk44_4(3, 4);
-            Scene_RunSplitPairSteps(3, 10);
-        } else {
-            *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
-        }
-        Story_unk41_4(60);
-        Story_unk43_4(2, 2);
-        if (gOv4 != 0) {
-            Actor_SetPairZeroAndValue(2, 0xa000, 40);
-            Actor_SetPairZeroAndValue(2, 0xe000, 20);
-        }
-        Scene_RunSplitPairSteps(2, 10);
-        Story_unk49_4(0, 2);
-        Story_unk43_4(1, 2);
-        Story_unk41_4(40);
-        Scene_RunSplitPairSteps(2, 20);
-        Story_unk44_4(0, 3);
-        Story_unk44_4(1, 3);
-        Story_unk41_4(20);
-        Story_unk48_4(3, 3);
-        L_02002528:;
-        Story_unk44_4(2, 3);
-        goto L_02002660;
-    }
-    Story_unk4_3(2, 0x105, 0);
-    Story_unk41_4(40);
-    Story_unk44_4(2, 3);
-    Story_unk2_2(0x14bf);
-    Scene_RunSplitPairSteps(2, 20);
-    if (*finish_flag != 0) {
-        Actor_SetPairZeroAndValue(3, 0, 10);
-        Story_unk49_4(3, 1);
-        Scene_RunSplitPairSteps(3, 20);
-    } else {
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
-    }
-    Story_unk4_3(1, 0x102, 0);
-    Story_unk4_3(0, 0x102, 0);
-    Story_unk41_4(40);
-    Story_unk43_4(1, 2);
-    Scene_RunSplitPairSteps(1, 20);
-    Story_unk4_3(2, 0x105, 0);
-    Story_unk41_4(80);
-    Scene_RunSplitPairSteps(2, 40);
-    if (gOv4 != 0) {
-        Actor_SetPairZeroAndValue(3, 0x2000, 20);
-        Story_unk48_4(3, 4);
-        Scene_RunSplitPairSteps(3, 40);
-    } else {
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
-    }
-    Story_unk43_4(2, 2);
-    Story_unk41_4(20);
-    Scene_RunSplitPairSteps(2, 20);
-    Story_unk49_4(1, 2);
-    Story_unk43_4(0, 2);
-    Story_unk41_4(40);
-    Scene_RunSplitPairSteps(2, 20);
-    L_02002660:;
-    Story_unk45_4(17);
-    Story_unk2_3(1, 0x13333, 0x9999);
-    Story_unk2_3(2, 0x13333, 0x9999);
-    Story_unk2_3(3, 0x13333, 0x9999);
-    Story_unk48_4(1, 2);
-    {
-        u8 *record = Record1(Story_BytePtr, 0);
-
-        if (record != 0) {
-            Story_unk55_3(1, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
-        }
-    }
-    Story_unk56_3(1);
-    Story_unk39_4(1, 0, 0);
-    Story_unk48_4(2, 2);
-    {
-        u8 *record = Record1(Story_BytePtr, 0);
-
-        if (record != 0) {
-            Story_unk55_3(2, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
-        }
-    }
-    Story_unk56_3(2);
-    Story_unk39_4(2, 0, 0);
-    if (gOv4 != 0) {
-        Story_unk48_4(3, 2);
-        {
-            u8 *record = Record1(Story_BytePtr, 0);
-
-            if (record != 0) {
-                Story_unk55_3(3, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
-            }
-        }
-        Story_unk56_3(3);
-        Story_unk39_4(3, 0, 0);
-    }
-    Story_unk9(0x843);
-    Story_unk39_4(11, 0, 0);
-    Story_unk39_4(12, 0, 0);
-    Story_unk57_3();
-    Story_unk58_3();
-}
-
-/* overlays/scene/story/branching_formation/move_and_redraw.c */
-void Story_Run(StagedActorMovementRequest request)
-{
-#include "run_staged_actor_movement_and_redraw_body.inc"
 }

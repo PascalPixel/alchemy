@@ -22,6 +22,7 @@ LAYOUT_OFFSET_GUARD(
 LAYOUT_OFFSET_GUARD(
     NodeChainState_CountOffset, struct NodeChainState, count, 0x39e);
 
+struct NodeChainNode *Func_0801b36c(struct NodeChainState *);
 struct NodeChainNode *NodeChain_GetNodeAtIndex(struct NodeChainState *);
 
 #endif

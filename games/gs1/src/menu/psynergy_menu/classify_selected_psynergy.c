@@ -33,7 +33,7 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void)
 struct Rec5 { u8 pad[5]; unsigned int flag : 8; };
 struct Cur { unsigned short mark : 8; };
 
-extern void *gIw;
+extern struct PsynergyMenuState *gIw;
 void *Runtime_GetObject(s32);
 s32 FunctionHead_080a1ac0(s32, s32);
 s32 FunctionHead_080a60d4(void *, void *);

@@ -1,5 +1,4 @@
 #include "types.h"
-#include "scene.h"
 #include "global_cells.h"
 #include "metadata_lookup.h"
 

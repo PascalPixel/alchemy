@@ -11,4 +11,6 @@ struct MapRenderWork {
     s16 second;
 };
 
+extern struct MapRenderWork *Data_03001e70;
+
 #endif

@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define Scene_RunScene37aSequenceG Func_02002108
+#define FieldScene_RunScene37aSequenceG Func_02002108
 
 extern u8 Data_02000240[];
 extern s16 Data_02000240_t[][1];

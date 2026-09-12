@@ -1,12 +1,13 @@
 #include "types.h"
 #include "scene.h"
 #include "global_cells.h"
+void Sys_Place(void *src, void *dst, void *work);
 
 /* graphics/prepare_transfer_in_iwram_work.c */
 /* graphics/prepare_transfer_in_iwram_work.c */
 void Graphics_PrepareTransferInIwramWork(s32 src, s32 dst)
 {
-    Sys_Place(src, dst, 0x03000350);
+    Sys_Place((void *)src, (void *)dst, (void *)0x03000350);
 }
 
 /* graphics/prepare_transfer_and_run.c */

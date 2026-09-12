@@ -76,6 +76,11 @@ struct BattleEffectEntry {
     u8 flags;
 };
 
-void BattleEffect_SpawnLinkedResourceObject(s32 resource_id, s32 flags, s32 state);
+extern struct BattleRuntime *Data_03001ebc;
+extern struct BattleEffectBuffers *Data_03001ed0;
+extern struct BattleWork Data_02000240;
+
+void Func_080937b8(s32 resource_id, s32 flags, s32 state);
+#define BattleEffect_SpawnLinkedResourceObject Func_080937b8
 
 #endif

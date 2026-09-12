@@ -43,13 +43,13 @@
         "two_byte_zero_alignment",
         "refused_assembler_padding"
       ],
-      "expected_files": 331,
-      "expected_bytes": 662,
+      "expected_files": 236,
+      "expected_bytes": 472,
       "provenance": {
         "scanned": "2026-09-10",
         "verdict": "assembler_padding",
         "credit": "none",
-        "reason": "331 two-byte zero alignment halfwords, 662 bytes, byte-identical everywhere trivially"
+        "reason": "Two-byte zero alignment halfwords between separately compiled regions; padding inside verified complete C translation units is owned by those objects instead."
       }
     }
   ],
@@ -1045,11 +1045,9 @@
         "byte_exact_directive_data",
         "refused_assembler_padding"
       ],
-      "expected_files": 6,
-      "expected_bytes": 12,
+      "expected_files": 4,
+      "expected_bytes": 8,
       "files": [
-        "0801c9be",
-        "0801c9c2",
         "0801c9c6",
         "0801ca16",
         "08021dfa",
@@ -1059,7 +1057,7 @@
         "scanned": "2026-09-10",
         "verdict": "assembler_padding",
         "credit": "none",
-        "reason": "12 bytes of registered alignment padding"
+        "reason": "8 bytes of registered alignment padding outside complete C translation units"
       }
     },
     {

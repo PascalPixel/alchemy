@@ -58,6 +58,8 @@ struct MotionRecord *GetMotionRecord(
 void Object_SetAction(struct PresentationObject *object, s32 action);
 
 void Actor_ResetMotionAtAnchor(s32 id);
+void Battle_Apply2(void *input, struct BattlePresentationWork *work);
+void Func_080c9008(struct BattlePresentationWork *work);
 
 s32 BattlePres_RunSimple(struct SimplePresentationInput *input, s32 flags)
 {
@@ -123,7 +125,7 @@ s32 BattlePres_RunSimple(struct SimplePresentationInput *input, s32 flags)
         WaitFrames(10);
         Actor_ResetMotionAtAnchor(saved_input->secondary_id);
     } else {
-        BattleFx_DispatchByIdRange(&work);
+        Func_080c9008(&work);
         Battle_Run();
         Actor_ResetMotionAtAnchor(saved_input->secondary_id);
     }

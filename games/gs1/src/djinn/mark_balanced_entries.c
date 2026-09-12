@@ -45,7 +45,7 @@ s32 Djinn_CheckTurnBalance(s32 from, s32 to)
     s32 balanced;
 
     work = gIw;
-    Djinn_CountTurns(counts);
+    Djinn_CountTurns((u8 *)counts);
     counts[from] -= 1;
     counts[to] += 1;
     balanced = 1;

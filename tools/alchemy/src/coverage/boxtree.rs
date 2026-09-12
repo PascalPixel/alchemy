@@ -426,8 +426,10 @@ pub fn svg(tree: &str, map: &CoverageMap, width: f64) -> String {
     let done_bytes: i64 = tiles
         .iter()
         .map(|tile| {
-            tile.categories[Category::ProvenC as usize]
-                + tile.categories[Category::ProvenAsm as usize]
+            crate::coverage::jsnum::done_bytes(
+                tile.categories[Category::ProvenC as usize],
+                tile.categories[Category::ProvenAsm as usize],
+            )
         })
         .sum();
     let corner = if tree == "code" {
@@ -729,7 +731,7 @@ mod tests {
     }
 
     #[test]
-    fn code_tree_combines_asm_without_changing_done() {
+    fn code_tree_credits_retained_but_not_draft_assembly() {
         let mut categories = [0; 6];
         categories[Category::Unknown as usize] = 25;
         categories[Category::DraftAsm as usize] = 15;

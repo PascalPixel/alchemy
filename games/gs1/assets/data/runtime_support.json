@@ -110,7 +110,7 @@
           "end": "0x08007acc",
           "element": "thumb-pointer",
           "stride": 4,
-          "values": [134245924, 134245596, 134245712, "wait_for_flash_write"]
+          "values": [134245924, 134245596, 134245712, "WaitForFlashWrite"]
         },
         {
           "name": "generic",
@@ -190,7 +190,7 @@
           "end": "0x08007af8",
           "element": "thumb-pointer",
           "stride": 4,
-          "values": [134245924, 134245596, 134245712, "wait_for_flash_write"]
+          "values": [134245924, 134245596, 134245712, "WaitForFlashWrite"]
         },
         {
           "name": "bf_d4",
@@ -305,7 +305,7 @@
           "end": "0x08007b7c",
           "element": "thumb-pointer",
           "stride": 4,
-          "values": [134246276, 134245596, 134245712, "wait_for_flash_write"]
+          "values": [134246276, 134245596, 134245712, "WaitForFlashWrite"]
         },
         {
           "name": "c2_1c",
@@ -385,7 +385,7 @@
           "end": "0x08007ba8",
           "element": "thumb-pointer",
           "stride": 4,
-          "values": [134246276, 134245596, 134245712, "wait_for_flash_write"]
+          "values": [134246276, 134245596, 134245712, "WaitForFlashWrite"]
         },
         {
           "name": "32_1b",
@@ -487,7 +487,7 @@
           "end": "0x08007bf4",
           "element": "thumb-pointer",
           "stride": 4,
-          "values": [134246944, 134246440, 134246684, "wait_for_flash_write"]
+          "values": [134246944, 134246440, 134246684, "WaitForFlashWrite"]
         },
         {
           "name": "1f_3d_4k",
@@ -567,7 +567,7 @@
           "end": "0x08007c20",
           "element": "thumb-pointer",
           "stride": 4,
-          "values": [134246824, 134246440, 134246552, "wait_for_flash_write"]
+          "values": [134246824, 134246440, 134246552, "WaitForFlashWrite"]
         },
         {
           "name": "1f_3d_128",

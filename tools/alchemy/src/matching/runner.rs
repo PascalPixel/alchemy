@@ -56,11 +56,13 @@ fn allocator_options(path: &Path, work: &Path) -> Result<Box<crate::score::cli::
 
 #[test]
 fn allocator_preflight_preserves_overlay_identity() {
-    let source = root().join("games/gs1/src/overlays/scene/actor/transition/transition.c");
+    let source = root().join(
+        "games/gs1/src/overlays/scene/story/scenario_dispatch/get_secondary_default_result.c",
+    );
     let work = tempfile::tempdir().unwrap();
     let options = allocator_options(&source, work.path()).unwrap();
-    assert_eq!(options.owner, Some(0x02001e08));
-    assert_eq!(options.overlay.as_deref(), Some("resource_39a"));
+    assert_eq!(options.owner, Some(0x02000070));
+    assert_eq!(options.overlay.as_deref(), Some("resource_37f"));
     assert!(options.allocator_order);
 }
 

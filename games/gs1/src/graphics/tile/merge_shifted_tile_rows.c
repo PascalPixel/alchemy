@@ -49,7 +49,6 @@ void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output, s32 shi
 
 /* link/draw_shifted_tile_pair.c */
 extern u8 gRomShiftedTilePair[];
-void Sys_SetMode(void *, u8 *, s32, s32);
 
 void Link_DrawShiftedTilePair(s32 offset)
 {
@@ -62,8 +61,10 @@ void Link_DrawShiftedTilePair(s32 offset)
         phase = 1;
     }
     phase = phase + 1;
-    Sys_SetMode((void *)0x06000220, gRomShiftedTilePair, offset, -phase);
-    Sys_SetMode((void *)0x06000240, gRomShiftedTilePair + 32, offset + 32, phase);
+    Graphics_MergeShiftedTileRows((u32 *)0x06000220,
+        (u32 *)gRomShiftedTilePair, (u32 *)offset, -phase);
+    Graphics_MergeShiftedTileRows((u32 *)0x06000240,
+        (u32 *)(gRomShiftedTilePair + 32), (u32 *)(offset + 32), phase);
 }
 
 /* graphics/tile/expand_vram_tiles_by_color_table.c */

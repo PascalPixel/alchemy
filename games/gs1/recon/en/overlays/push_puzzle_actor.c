@@ -1,7 +1,7 @@
 #include "types.h"
 #include "staged_actor.h"
 
-#define Actor_PushPuzzleActor Func_02000db4
+#define SceneActor_PushPuzzleActor Func_02000db4
 
 extern u32 Data_02009d3c[];
 extern s16 Data_02000240[];
@@ -19,7 +19,7 @@ void Func_02001b44(void);
 void Func_02001868(void);
 void Func_02001e48(void);
 
-void Actor_PushPuzzleActor(void)
+void SceneActor_PushPuzzleActor(void)
 {
     s32 pos[3];
     struct StagedActor *player;

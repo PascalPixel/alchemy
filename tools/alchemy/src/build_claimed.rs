@@ -526,9 +526,14 @@ pub fn compile_source_for_owner(
         options.preprocessor_flags.push("-include".to_string());
         options.preprocessor_flags.push(bindings.to_string());
     }
+    let register_text = bindings
+        .map(std::fs::read_to_string)
+        .transpose()
+        .map_err(|error| error.to_string())?
+        .unwrap_or_default();
     let binding_text = crate::compiler::source_bindings::production_bindings(
         Path::new(root),
-        "",
+        &register_text,
         Some(Path::new(source)),
     )?;
     let generated = Path::new(object_dir).join(format!("{name}.bindings.h"));

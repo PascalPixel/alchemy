@@ -145,11 +145,14 @@ pub fn production_symbol_bindings(
     compiler: CompilerTarget,
 ) -> Result<String, String> {
     let register = source_symbol_bindings(repository, routing_source, compiler)?;
-    crate::compiler::source_bindings::production_bindings(
-        repository,
+    Ok(crate::compiler::source_bindings::with_register(
         &register,
-        Some(Path::new(production_source)),
-    )
+        &crate::compiler::source_bindings::production_bindings(
+            repository,
+            &register,
+            Some(Path::new(production_source)),
+        )?,
+    ))
 }
 fn resolve_against_cwd(path: &str, cwd: &Path) -> PathBuf {
     let path = Path::new(path);

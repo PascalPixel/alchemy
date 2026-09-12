@@ -5,6 +5,10 @@
 #include "resource.h"
 #include "gs1_edition.h"
 
+extern u8 RomBytes_080373ef[];
+extern u8 RomBytes_08037403[];
+extern u8 RomBytes_0803740f[];
+
 /* ui/text/draw/draw_localized_resource_80d.c */
 /*
  * The r9 static chain and matching save identify this as a GNU C nested

@@ -1,6 +1,13 @@
 #include "types.h"
 #include "scene.h"
 
+extern u8 RomBytes_02002090[];
+extern u8 RomBytes_0200c0f6[];
+extern u8 RomBytes_0200cac8[];
+extern u8 RomBytes_0200cbfc[];
+extern u8 RomBytes_0200cc28[];
+extern u8 RomBytes_0200cca4[];
+
 /* overlays/scene/state/task/task.c */
 /* overlays/scene/state/task/task.c */
 /* overlays/scene/state/task/actor_motion.c */

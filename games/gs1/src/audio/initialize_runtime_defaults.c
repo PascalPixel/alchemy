@@ -3,6 +3,12 @@
 #include "scene.h"
 #include "audio_engine.h"
 
+extern u8 RomBytes_0200300c[];
+extern u8 RomBytes_02003010[];
+extern u8 RomBytes_02003030[];
+extern u8 RomBytes_02003034[];
+extern u8 RomBytes_02003040[];
+
 /* audio/init/initialize_runtime_defaults.c */
 void Audio_Initialize(void);
 extern u8 RomBytes_02003000[];

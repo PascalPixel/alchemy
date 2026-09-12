@@ -1097,7 +1097,7 @@ u8 *Text_FormatNumber(u8 *buffer, s32 input, s32 width)
 
 /* ui/window/fit_on_screen.c */
 
-void Ui_Run(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, u32 flags)
+void UiWindow_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph, s32 mode, u32 flags)
 {
     u8 *base;
     s32 x;

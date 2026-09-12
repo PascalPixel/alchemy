@@ -3,7 +3,7 @@
 #include "four_object_motion.h"
 
 /* object/motion/four_object/initialize_top_row.c */
-extern s32 gRom[];
+extern s32 RomBytes_080af304[];
 
 void *Obj_Run(s32);
 void Object_InitializeMode(void *, s32);
@@ -25,7 +25,7 @@ void FourObjectMotion_InitializeTopRow(void)
     }
 
     for (index = 0; index < 4; index++) {
-        void *object = Obj_Run(gRom[index]);
+        void *object = Obj_Run(RomBytes_080af304[index]);
 
         if (object != NULL) {
             Object_InitializeMode(object, 2);
@@ -34,7 +34,7 @@ void FourObjectMotion_InitializeTopRow(void)
         state->positions_x[index] = 0x10;
         state->positions_y[index] = 0x20;
     }
-    ScheduleCallbackAfterFrames(update_all_positions, 0xc80);
+    ScheduleCallbackAfterFrames(FunctionHead_080ad35c, 0xc80);
 }
 
 /* object/motion/four_object/clear_slots_and_schedule.c */
@@ -54,7 +54,7 @@ void FourObjectMotion_ClearSlotsAndSchedule(void)
         }
         index++;
     } while (index < 4);
-    ScheduleCallback((s32)&gRom);
+    ScheduleCallback((s32)&RomBytes_080ad35d);
 }
 
 /* object/motion/four_object/update_all_positions.c */
@@ -112,7 +112,7 @@ void FourObjectMotion_InitializeBottomRow(void)
     }
 
     for (index = 0; index < 4; index++) {
-        void *object = Obj_Run(gRom[index]);
+        void *object = Obj_Run(RomBytes_080ad40d[index]);
 
         if (object != NULL) {
             Object_InitializeMode(object, 2);
@@ -122,7 +122,7 @@ void FourObjectMotion_InitializeBottomRow(void)
         state->positions_x[index] = 0x10;
         state->positions_y[index] = 0xc8;
     }
-    ScheduleCallbackAfterFrames(update_all_positions, 0xc80);
+    ScheduleCallbackAfterFrames(FunctionHead_080ad40c, 0xc80);
 }
 
 /* object/motion/four_object/set_slot_position.c */
@@ -160,7 +160,7 @@ s32 FourObjectMotion_ReplaceSlot(s32 index, s32 kind, s32 value)
         state->objects[index] = 0;
     }
     {
-        void *object = Obj_Run(gRom[kind]);
+        void *object = Obj_Run(RomBytes_080ad40d[kind]);
 
         if (object != 0) {
             Object_InitializeMode(object, value);
@@ -186,5 +186,5 @@ void FourObjectMotion_ClearSlotsAndScheduleAlt(void)
         }
         index++;
     } while (index < 4);
-    ScheduleCallback((s32)&gRom);
+    ScheduleCallback((s32)&RomBytes_080ad40d);
 }

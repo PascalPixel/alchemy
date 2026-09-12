@@ -38,7 +38,7 @@ s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *values)
 loop_1:
     if (entry->data != NULL && (1 & *flags) && entry != object) {
         tmp = index;
-        if (Script_SetMode(entry->values_08, entry->value_20 - 2,
+        if (FunctionHead_0800eba0(entry->values_08, entry->value_20 - 2,
                           values, object->value_20 - 2) >= 0) {
             return -1;
         }
@@ -67,7 +67,7 @@ struct ScriptObjectEntry *ScriptObject_FindOverlappingEntry(
 loop_1:
     if (entry->data != NULL && (1 & *flags) && entry != object) {
         tmp = index;
-        if (Script_SetMode(entry->values_08, entry->value_20 - 2,
+        if (FunctionHead_0800d130(entry->values_08, entry->value_20 - 2,
                           values, object->value_20 - 2) >= 0) {
             return entry;
         }
@@ -96,7 +96,7 @@ s32 Script_SetPositionAndResetMotion(struct ScriptInterpreter *interpreter)
     second = *argument;
     argument++;
     third = *argument;
-    Script_SetMode(interpreter, first, second, third);
+    FunctionHead_0800d130(interpreter, first, second, third);
     interpreter->cursor = (u16)interpreter->cursor + 4;
     return 1;
 }

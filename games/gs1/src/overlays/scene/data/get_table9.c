@@ -94,15 +94,15 @@ extern u8 Value_00000e39;
 void Scene_RunActorCueBranch(s32 object)
 {
     s32 cue = (s32)&Value_00000e39;
-    Talk_DoActorCueBranch(cue);
-    Talk_ApplyActorCueBranch(object, 0);
-    if (Talk_Apply2ActorCueBranch(0, 0) == 0) {
-        Talk_unk2_2ActorCueBranch(10);
-        Talk_unk3_2ActorCueBranch(cue + 1);
+    FunctionHead_020019e2(cue);
+    FunctionHead_020019f2(object, 0);
+    if (FunctionHead_020019c2(0, 0) == 0) {
+        FunctionHead_020019ac(10);
+        FunctionHead_02001a02(cue + 1);
     } else {
-        Talk_unk4_2(cue + 2);
+        FunctionHead_02001a0a(cue + 2);
     }
-    Talk_Apply3(object, 0);
+    FunctionHead_02001a22(object, 0);
 }
 
 /* overlays/scene/dialogue/topic/run_prompt_dialogue.c */
@@ -111,13 +111,13 @@ extern u8 Value_00000e19;
 void Scene_RunPromptDialogueE19(s32 object)
 {
     s32 cue = (s32)&Value_00000e19;
-    Talk_DoActorCueBranch(cue);
-    Talk_ApplyActorCueBranch(object, 0);
-    if (Talk_Apply2ActorCueBranch(0, 0) == 0) {
-        Talk_unk2_2ActorCueBranch(10);
-        Talk_unk3_2ActorCueBranch(cue + 1);
+    FunctionHead_02001a2a(cue);
+    FunctionHead_02001a3a(object, 0);
+    if (FunctionHead_02001a0a(0, 0) == 0) {
+        FunctionHead_020019f4(10);
+        FunctionHead_02001a4a(cue + 1);
     } else {
-        Talk_unk4_2(cue + 2);
+        FunctionHead_02001a52(cue + 2);
     }
-    Talk_Apply3(object, 0);
+    FunctionHead_02001a6a(object, 0);
 }

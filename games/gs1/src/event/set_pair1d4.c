@@ -121,7 +121,7 @@ void Motion_EnableReset(void)
 
 /* object/link/link_object_and_set_callback.c */
 struct ObjectRuntime *Object_GetById(u32);
-extern const u8 gRomGetById[];
+extern const u8 RomBytes_0809ff40[];
 
 void Object_LinkObjectAndSetCallback(u32 object_id, u32 linked_object_id)
 {
@@ -129,7 +129,7 @@ void Object_LinkObjectAndSetCallback(u32 object_id, u32 linked_object_id)
 
     if (object != NULL) {
         object->linked_object = Object_GetById(linked_object_id);
-        Motion_SetActionCallback(object, (s32)gRomGetById);
+        Motion_SetActionCallback(object, (s32)RomBytes_0809ff40);
     }
 }
 
@@ -218,7 +218,7 @@ void Motion_SetPosReset(u32 object_id, s32 x, s32 z)
 }
 
 /* object/motion/pos/snap_heading_and_offset.c */
-void Motion_SetActionVariant(u32 object_id, s32 action);
+void Motion_SetActionVariant(s32 object_id, s32 action);
 
 void Motion_SnapHeadingAndOffset(u32 object_id, s32 action, s32 z_offset)
 {
@@ -311,7 +311,7 @@ void Motion_LaunchFromFocusedObject(u32 arg0, s32 arg1, s32 arg2, s32 arg3)
         object->movement_state = 0;
         Object_SetMode(object, 2);
         Motion_OffsetPositionAndResetMotion(arg0, arg1, arg2);
-        Object_SetCallback(object, &gRomGetById);
+        Object_SetCallback(object, &RomBytes_0809fbcc);
         object->action = arg3;
     }
 }
@@ -408,7 +408,9 @@ void Motion_SetPositionWithTerrain(u32 object_id, s32 x, s32 y, s32 z)
 
 /* object/set_mode_by_id.c */
 
-void Object_SetModeById(u32 object_id, s32 action)
+void Object_SetModeById(object_id, action)
+u32 object_id;
+s32 action;
 {
     struct ObjectRuntime *object = ObjectTable_Get(object_id);
 
@@ -451,11 +453,9 @@ void Motion_WaitForAnimationChange(u32 object_id)
 }
 
 /* object/motion/act/set_mode_and_wait_animation.c */
-void Motion_WaitForAnimationChange(s32);
-
 void Motion_SetModeAndWaitAnimation(s32 arg0)
 {
-    Obj_Check();
+    FunctionHead_080924d4();
     Motion_WaitForAnimationChange(arg0);
 }
 
@@ -486,9 +486,11 @@ void Motion_Launch(u32 object_id, s32 speed, s32 event_id)
 }
 
 /* object/motion/act/set_variant_callback.c */
-extern const u8 gRomGetById[];
+extern const u8 RomBytes_0809ebfc[];
 
-void Motion_SetVarCb(u32 object_id, s32 variant)
+void Motion_SetVarCb(object_id, variant)
+u32 object_id;
+s32 variant;
 {
     struct ObjectRuntime *object;
 
@@ -498,17 +500,15 @@ void Motion_SetVarCb(u32 object_id, s32 variant)
             variant = 3;
         }
         Object_SetCallback(object,
-            gRomGetById + ((3 - variant) << 7));
+            RomBytes_0809ebfc + ((3 - variant) << 7));
     }
 }
 
 /* object/motion/act/set_variant_callback_and_refresh.c */
-void Motion_SetVarCb();
-
 void Motion_SetVarCbAndRefresh(s32 arg0)
 {
     Motion_SetVarCb();
-    Obj_Check(arg0);
+    FunctionHead_080920e8(arg0);
 }
 
 /* battle/effects/fx_update_particle_linear_motion.c */
@@ -577,7 +577,6 @@ extern struct Object_08092624 *Battle_RunParticleLinearMotion(s32, s32, s32, s32
 extern s32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
-void ObjectGroup_SetChildValue(void *, s32);
 
 extern const u8 gRomParticleLinearMotion[];
 extern const u8 gRom2[];
@@ -629,7 +628,6 @@ void BattleFx_SpawnBurstParticle(struct Object_08092624 *source, s32 optional)
 #define OBJECT_MIRRORED_Y(object) FIELD_S32(object, 0x3C)
 
 void Motion_ArmCb(s32 arg0, s32 arg1, s32 arg2);
-void BattleFx_SpawnBurstParticle(void *, s32);
 void BattleFx_PlayQueuedSound(void);
 
 void BattleFx_RunRisingObjectSequence(s32 sequence_arg, s32 mode_or_frame, s32 optional_action)
@@ -731,8 +729,6 @@ void Object_LinkPair(s32 arg0, s32 arg1, s32 arg2)
 }
 
 /* object/table/destroy_by_id.c */
-/* 生成順維持のため戻り値を整数で受け、直後にオブジェクト番地として扱う。 */
-s32 ObjectTable_Get(u32 object_id);
 /* Object table: 192 pointers at gWork + 0x14 (object/table/get.c). */
 void Object_Destroy(void *);
 
@@ -757,7 +753,7 @@ void ObjectTable_ReservedNoOp294C(void)
 /* object/group/configure_child_value.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-extern u8 gRomSetAngleToward[];
+extern u8 RomBytes_08092981[];
 
 void ObjectGroup_ConfigureChildValue(s32 arg0, s32 arg1)
 {
@@ -768,7 +764,7 @@ void ObjectGroup_ConfigureChildValue(s32 arg0, s32 arg1)
     if (object != NULL) {
         mode_flags = 0x100 & arg1;
         if (mode_flags != 0) {
-            FIELD_AT_OFFSET(object, s32 *, 0x6C) = (s32)&gRomSetAngleToward;
+            FIELD_AT_OFFSET(object, s32 *, 0x6C) = (s32)&RomBytes_08092981;
             return;
         }
         FIELD_AT_OFFSET(object, s32 *, 0x6C) = mode_flags;
@@ -786,7 +782,7 @@ void ObjectGroup_ApplyIndexedChildValue(struct DispatchObject *object)
         u8 *container;
         u8 child_count;
 
-        child_value = gRomSetAngleToward[(gIwSetAngleToward >> 1) & 3];
+        child_value = RomBytes_0809ed80[(gIwSetAngleToward >> 1) & 3];
         container = object->target.child;
         child_count = *(container + 0x27);
         if (child_count != 0) {
@@ -805,7 +801,9 @@ void ObjectGroup_ApplyIndexedChildValue(struct DispatchObject *object)
 }
 
 /* object/group/set_child_value.c */
-void ObjectGroup_SetChildValue(struct DispatchObject *object, s32 value)
+void ObjectGroup_SetChildValue(object, value)
+struct DispatchObject *object;
+s32 value;
 {
     if ((object->kind & 0xf) == 1) {
         u8 *container = object->target.child;
@@ -911,7 +909,7 @@ void Motion_ArmCb(s32 arg0, s32 arg1, s32 arg2)
     u8 *object = ObjectTable_Get(arg0);
     if (object != NULL) {
         *(s16 *)(object + 0x64) = arg1;
-        Object_SetCallback(object, gRomSetAngleToward);
+        Object_SetCallback(object, RomBytes_0809fc1c);
         Battle_WaitMode0(arg2);
     }
 }
@@ -1078,7 +1076,8 @@ s32 ObjectTable_FindActiveByValue(s32 value)
 /* battle/presentation/act/run_wait.c */
 extern volatile u32 gIwEvWait;
 
-void BattleEv_RunWait(s32 action)
+void BattleEv_RunWait(action)
+s32 action;
 {
     u8 *runtime = *(u8 **)0x03001ebc;
     s32 wait_token = Battle_RunEvWait();
@@ -1116,7 +1115,7 @@ void BattleEv_RunWait(s32 action)
 
 void BattlePres_RunActionThenWaitIfModeZero(s32 first, s32 second, s32 value)
 {
-    Battle_Check();
+    FunctionHead_08092f84();
     Battle_WaitMode0(value);
 }
 
@@ -1128,17 +1127,17 @@ s32 BattleEventRuntime_ProcessAction(s32 object_id, s32 action_id)
     u8 *runtime;
     u8 *global_table;
 
-    Battle_Check(object_id);
+    FunctionHead_08092c40(object_id);
     global_table = &gCell;
     result = Battle_ApplyEvWait(*(void **)(global_table + 500), 0);
     if (result == 0) {
-        Battle_Apply2(object_id, action_id);
+        FunctionHead_08092f84(object_id, action_id);
         runtime = *(u8 **)ADDR_03001EBC;
         *(u16 *)(runtime + 472) += 1;
     } else {
         runtime = *(u8 **)ADDR_03001EBC;
         *(u16 *)(runtime + 472) += 1;
-        Battle_Apply2(object_id, action_id);
+        FunctionHead_08092f84(object_id, action_id);
     }
     return result;
 }

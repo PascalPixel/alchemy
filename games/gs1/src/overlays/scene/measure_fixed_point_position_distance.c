@@ -34,7 +34,7 @@ s32 CalculateFixedPointPositionDistance(s32 *first_position, s32 *second_positio
 /* overlays/shared/find_actor_at_fixed_point_position.c */
 extern u8 gWork[];
 
-s32 *Sys_Run(s32 *arg0)
+s32 *FunctionHead_0200006c(s32 *arg0)
 {
     s32 **slots = (s32 **)(gWork + 0x14);
     u32 i;
@@ -134,7 +134,7 @@ void MapStagedActor_AdvancePair(void)
 extern u8 *gCam;
 extern u8 gUnk[];
 
-s32 Sys_Run(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
+s32 FunctionHead_02000244(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
 {
     u8 *g = gCam;
     u8 *base;
@@ -183,8 +183,8 @@ typedef struct StagedActor {
     StagedActorRecord *unk50;
 } StagedActor;
 
-extern s32 gOv[];
-extern s32 gOv2[];
+extern s32 RomBytes_0200e190[];
+extern s32 RomBytes_0200e1d0[];
 extern StagedActor *Actor_Run(StagedMoveTarget *, StagedActor *);
 
 s32 MapStagedActor_StopBlockedMotion(StagedActor *actor)
@@ -195,7 +195,7 @@ s32 MapStagedActor_StopBlockedMotion(StagedActor *actor)
     StagedActor *blocking_actor;
 
     direction_index = actor->unk6 >> 12;
-    direction_step = gOv[direction_index];
+    direction_step = RomBytes_0200e190[direction_index];
     target.unk0 = actor->unk8 + (direction_step & 0xffff0000);
     target.unk4 = actor->unkC;
     direction_step = direction_step << 16;
@@ -204,7 +204,7 @@ s32 MapStagedActor_StopBlockedMotion(StagedActor *actor)
     if (blocking_actor != 0) {
         u32 kind_index = 0;
         s32 blocking_kind = *blocking_actor->unk50->unk28;
-        s32 *p = gOv2;
+        s32 *p = RomBytes_0200e1d0;
 
         do {
             if (blocking_kind == *p++) goto done;
@@ -215,12 +215,12 @@ s32 MapStagedActor_StopBlockedMotion(StagedActor *actor)
         actor->unk38 = 0x80000000;
         actor->unk40 = 0x80000000;
     }
-    direction_step = gOv[direction_index];
+    direction_step = RomBytes_0200e190[direction_index];
     target.unk0 = actor->unk8 + (direction_step & 0xffff0000);
     target.unk4 = actor->unkC;
     direction_step = direction_step << 16;
     target.unk8 = actor->unk10 + direction_step;
-    if (Actor_Apply(actor, &target) > 0) {
+    if (FunctionHead_02006266(actor, &target) > 0) {
         actor->unk24 = 0;
         actor->unk2C = 0;
         actor->unk38 = 0x80000000;
@@ -252,7 +252,7 @@ s32 MapStagedActor_FindClearPosition(s32 *request)
     active_flag = actor + 0x22;
     *active_flag = 2;
     step_count = 0;
-    footprint_table = (u8 *)gOv;
+    footprint_table = (u8 *)RomBytes_0200e1e8;
     footprint_offset = request[0] << 4;
     {
         s32 table_offset = footprint_offset + 4;
@@ -280,18 +280,18 @@ s32 MapStagedActor_FindClearPosition(s32 *request)
         s32 actor_y;
         s32 direction_x;
         candidate = origin;
-        direction_x = gOv2[direction_index] & 0xffff0000;
+        direction_x = RomBytes_0200e190[direction_index] & 0xffff0000;
         actor_bytes = actor;
         candidate[0] = *(s32 *)(actor_bytes + 8) + direction_x;
         actor_y = *(s32 *)(actor_bytes + 12);
         candidate[1] = actor_y;
-        candidate[2] = *(s32 *)(actor_bytes + 16) + (gOv2[direction_index] << 16);
+        candidate[2] = *(s32 *)(actor_bytes + 16) + (RomBytes_0200e190[direction_index] << 16);
         request[3] = actor_y;
     }
     for (;;) {
         s32 row, column;
         {
-            u8 *table = (u8 *)gOv;
+            u8 *table = (u8 *)RomBytes_0200e1e8;
             s32 table_offset = request[0] << 4;
             table_offset += 4;
             request[4] = origin[2] + (*(s32 *)(table + table_offset) << 16);
@@ -299,13 +299,13 @@ s32 MapStagedActor_FindClearPosition(s32 *request)
         row = 0;
         while (row < tiles_y) {
             {
-                u8 *table = (u8 *)gOv;
+                u8 *table = (u8 *)RomBytes_0200e1e8;
                 request[2] = origin[0] + (*(s32 *)(table + (request[0] << 4)) << 16);
             }
             column = 0;
             while (column < tiles_x) {
                 s32 *probe = request + 2;
-                if (Actor_Apply(actor, probe) == 2)
+                if (FunctionHead_020064a0(actor, probe) == 2)
                     goto found;
                 probe[0] = probe[0] + 0x100000;
                 column++;
@@ -314,14 +314,14 @@ s32 MapStagedActor_FindClearPosition(s32 *request)
             row++;
         }
         step_count++;
-        origin[0] = origin[0] + (gOv2[direction_index] & 0xffff0000);
-        origin[2] = origin[2] + (gOv2[direction_index] << 16);
+        origin[0] = origin[0] + (RomBytes_0200e190[direction_index] & 0xffff0000);
+        origin[2] = origin[2] + (RomBytes_0200e190[direction_index] << 16);
     }
 found:
     *active_flag = 0;
     found = 0;
     if (step_count != 0) {
-        s32 direction = gOv2[direction_index];
+        s32 direction = RomBytes_0200e190[direction_index];
         s32 direction_x = direction & 0xffff0000;
         s32 offset_x = direction_x *step_count;
         s32 offset_z = (direction << 16) * step_count;
@@ -2629,10 +2629,10 @@ void State_ApplyRectAndRunTwo(void)
 
 /* overlays/scene/actor/staged_motion/map_staged_scene_select_primary_data.c */
 /* overlays/scene/actor/staged_motion/select_primary_scene_data.c */
-extern s32 gOvSelectPrimaryData[];
+extern s32 RomBytes_0200e708[];
 s32 MapStagedScene_SelectPrimaryData(void)
 {
-    return (s32)gOvSelectPrimaryData;
+    return (s32)RomBytes_0200e708;
 }
 
 /* overlays/scene/actor/staged_motion/get_empty_scene_data.c */
@@ -2644,7 +2644,7 @@ s32 MapStagedScene_GetEmptyData(void)
 /* overlays/scene/actor/staged_motion/select_secondary_scene_data.c */
 s32 MapStagedScene_SelectSecondaryData(void)
 {
-    return (s32)gOvSelectPrimaryData;
+    return (s32)RomBytes_0200e870;
 }
 
 /* overlays/scene/actor/staged_motion/select_tertiary_scene_data.c */
@@ -2657,7 +2657,7 @@ s32 MapStagedScene_SelectTertiaryData(void)
 {
     u8 *scene_state = gCell;
     if (*(s16 *)(scene_state + 0x1c2) == 16)
-        return (s32)gOvSelectPrimaryData;
+        return (s32)RomBytes_0200ee48;
     if (Actor_CheckSelectPrimaryData(0x87a) != 0)
         return (s32)gOv2SelectPrimaryData;
     if (Actor_unk2SelectPrimaryData(0x815) != 0)

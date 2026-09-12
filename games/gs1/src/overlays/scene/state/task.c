@@ -350,7 +350,7 @@ void Scene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
                     State_unk32_4((s32)(s8)buf[i]);
                 }
             }
-            obj = State_unk2_4();
+            obj = FunctionHead_02002e54();
             for (i = 0; i < count; i++) {
                 State_unk33_4((s32)(s8)buf[i]);
             }
@@ -556,9 +556,9 @@ void Scene_RunSupplementalSequenceOne(void)
             record = State_unk15(22);
             State_unk3_4(record, 0x3a80000, 0, 0xb80000);
             record = State_unk16(23);
-            State_unk4_4(record, 0x3c80000, 0, 0xf80000);
+            FunctionHead_0808a018(record, 0x3c80000, 0, 0xf80000);
             record = State_unk17(24);
-            State_unk5_4(record, 0x3e80000, 0, 0xb80000);
+            FunctionHead_02006912(record, 0x3e80000, 0, 0xb80000);
             record = State_unk18(25);
             State_unk6_4(record, 0x4080000, 0, 0xf80000);
             State_unk50_3(31, 11);
@@ -1485,11 +1485,11 @@ void Scene_RunSceneThreeCoordinator(s32 a0)
         } else {
             State_Do(0x20a6);
             State_Run(0x30000, 0x6000);
-            State_unk2_4(0x2f00000, -1, 0xc00000, 1);
+            FunctionHead_02006b14(0x2f00000, -1, 0xc00000, 1);
             State_unk8_4ThreeCoordinator();
             State_unk9_4ThreeCoordinator(60);
             State_unk3_4(0x10000, 0x2000);
-            State_unk4_4(0x2f00000, -1, 0xe00000, 1);
+            FunctionHead_02006b94(0x2f00000, -1, 0xe00000, 1);
             State_unk10_4ThreeCoordinator();
             State_unk11_4ThreeCoordinator(a0, 0);
             State_unk12_4ThreeCoordinator(0, 0x358, 0x108);
@@ -1501,7 +1501,7 @@ void Scene_RunSceneThreeCoordinator(s32 a0)
             State_unk4_3(0, 0x348, 232);
             State_unk15_4ThreeCoordinator(10);
             State_unk5_3(33, -64, 0);
-            State_unk5_4(0x2f00000, -1, 0xd80000, 1);
+            FunctionHead_02006b48(0x2f00000, -1, 0xd80000, 1);
             State_unk16_4ThreeCoordinator(0, 1);
             State_unk17_4ThreeCoordinator(10);
             State_unk6_3(0, 0x10000, 0x8000);
@@ -1553,12 +1553,12 @@ void State_RunInitializeStateInteraction(s32 a, s32 b)
  * 144-byte owner includes its 15-word literal pool.
  */
 
-extern struct ModeRecord gOvInitializeModeTask;
-extern struct ModeRecord gOv2InitializeModeTask;
-extern u8 gOv3InitializeModeTask[];
-extern u8 gOv4InitializeModeTask[];
-extern u8 gOv5InitializeModeTask[];
-extern u8 gOv6InitializeModeTask[];
+extern struct ModeRecord RomBytes_0200cc30;
+extern struct ModeRecord RomBytes_0200cc04;
+extern u8 RomBytes_0200cc3c[];
+extern u8 RomBytes_0200cc40[];
+extern u8 RomBytes_0200cc98[];
+extern u8 RomBytes_0200cc0c[];
 extern s32 gOv7InitializeModeTask;
 
 extern s32 gOv8InitializeModeTask;   /* Default handler. */
@@ -1574,12 +1574,12 @@ extern s32 gOv12InitializeModeTask;   /* Handler for mode 3 with param zero. */
  * are typed as plain addresses.  The four stores that follow reset the rest of
  * the task's state block, three as halfwords and one as a word.
  */
-void State_RunInitializeModeTask(u32 mode, u32 param)
+void FunctionHead_02002940(u32 mode, u32 param)
 {
     s32 handler;
 
-    gOvInitializeModeTask = (u16)mode;
-    gOv2InitializeModeTask = (u16)(param << 4);
+    RomBytes_0200cc30 = (u16)mode;
+    RomBytes_0200cc04 = (u16)(param << 4);
 
     {
         s32 budget = 0xc80;
@@ -1602,10 +1602,10 @@ void State_RunInitializeModeTask(u32 mode, u32 param)
         }
     }
 
-    gOv3InitializeModeTask = 0;
-    gOv4InitializeModeTask = handler;
-    gOv5InitializeModeTask = 0;
-    gOv6InitializeModeTask = 0;
+    RomBytes_0200cc3c = 0;
+    RomBytes_0200cc40 = handler;
+    RomBytes_0200cc98 = 0;
+    RomBytes_0200cc0c = 0;
     gOv7InitializeModeTask = 0;
 }
 
@@ -1623,39 +1623,39 @@ void State_RunInitializeModeTask(u32 mode, u32 param)
  * ultimate-destination symbol.
  */
 
-extern void State_unk5_4(void);              /* State_unk4_4 veneer #1 (mode==0 arm) */
-extern void State_unk6_4InitializeModeTask(void);              /* State_unk7_4InitializeModeTask veneer #1 */
-extern void State_unk8_4InitializeModeTask(void);              /* State_unk9_4InitializeModeTask veneer #1 */
-extern void State_unk10_4InitializeModeTask(s32 frames);        /* State_RunInitializeModeTask veneer #1 */
-extern void State_unk11_4InitializeModeTask(s32 cue);           /* Audio_PlayCue veneer #1 */
-extern void State_unk12_4InitializeModeTask(s32 mode);          /* State_unk2_4 veneer #1 */
-extern void State_unk13_4InitializeModeTask(s32 style, s32 variant); /* State_unk3_4InitializeModeTask veneer #1 */
-extern void State_unk14_4InitializeModeTask(s32 frames);        /* State_RunInitializeModeTask veneer #2 */
-extern void State_unk15_4InitializeModeTask(void);              /* State_unk16_4InitializeModeTask veneer #1 */
+extern void FunctionHead_02006b48(void);              /* State_unk4_4 veneer #1 (mode==0 arm) */
+extern void FunctionHead_02006a3e(void);              /* State_unk7_4InitializeModeTask veneer #1 */
+extern void FunctionHead_02006a52(void);              /* State_unk9_4InitializeModeTask veneer #1 */
+extern void FunctionHead_02006918(s32 frames);        /* State_RunInitializeModeTask veneer #1 */
+extern void FunctionHead_02006a9e(s32 cue);           /* Audio_PlayCue veneer #1 */
+extern void FunctionHead_02004db0(s32 mode);          /* State_unk2_4 veneer #1 */
+extern void FunctionHead_0200533c(s32 style, s32 variant); /* State_unk3_4InitializeModeTask veneer #1 */
+extern void FunctionHead_02006932(s32 frames);        /* State_RunInitializeModeTask veneer #2 */
+extern void FunctionHead_02006946(void);              /* State_unk16_4InitializeModeTask veneer #1 */
 
-extern void State_unk17_4InitializeModeTask(s32 cue);           /* Audio_PlayCue veneer #2 (main arm) */
-extern void State_unk18_4InitializeModeTask(void);              /* State_unk4_4 veneer #2 */
-extern void State_unk19_4InitializeModeTask(void);              /* State_unk7_4InitializeModeTask veneer #2 */
-extern void State_unk20_4InitializeModeTask(void);              /* State_unk9_4InitializeModeTask veneer #2 */
-extern void State_unk21_4InitializeModeTask(s32 frames);        /* State_RunInitializeModeTask veneer #3 */
-extern void State_unk22_4InitializeModeTask(s32 cue);           /* Audio_PlayCue veneer #3 */
-extern void State_unk23_4InitializeModeTask(s32 mode);          /* State_unk2_4 veneer #2 */
-extern void State_unk24_4InitializeModeTask(s32 style, s32 variant); /* State_unk3_4InitializeModeTask veneer #2 */
-extern void State_unk25_4InitializeModeTask(s32 frames);        /* State_RunInitializeModeTask veneer #4 */
+extern void FunctionHead_02006abe(s32 cue);           /* Audio_PlayCue veneer #2 (main arm) */
+extern void FunctionHead_0200694a(void);              /* State_unk4_4 veneer #2 */
+extern void FunctionHead_02006a76(void);              /* State_unk7_4InitializeModeTask veneer #2 */
+extern void FunctionHead_02006a8a(void);              /* State_unk9_4InitializeModeTask veneer #2 */
+extern void FunctionHead_0200695a(s32 frames);        /* State_RunInitializeModeTask veneer #3 */
+extern void FunctionHead_02006ae2(s32 cue);           /* Audio_PlayCue veneer #3 */
+extern void FunctionHead_02004df4(s32 mode);          /* State_unk2_4 veneer #2 */
+extern void FunctionHead_02005380(s32 style, s32 variant); /* State_unk3_4InitializeModeTask veneer #2 */
+extern void FunctionHead_02006976(s32 frames);        /* State_RunInitializeModeTask veneer #4 */
 
-extern void State_unk26_4InitializeModeTask(s32 frames);        /* State_unk27_4InitializeModeTask veneer (loop body) */
-extern s32 State_unk28_4InitializeModeTask(void);               /* State_unk29_4InitializeModeTask veneer (loop check) */
+extern void FunctionHead_020067ee(s32 frames);        /* State_unk27_4InitializeModeTask veneer (loop body) */
+extern s32 FunctionHead_02006b0a(void);               /* State_unk29_4InitializeModeTask veneer (loop check) */
 
-extern void State_unk30_4InitializeModeTask(s32 cue);           /* Audio_PlayCue veneer #4 */
-extern void State_unk31_4InitializeModeTask(s32 mode);          /* State_unk2_4 veneer #3 */
-extern void State_unk32_4InitializeModeTask(s32 style, s32 variant); /* State_unk3_4InitializeModeTask veneer #3 */
-extern void State_unk33_4InitializeModeTask(s32 cue);           /* Audio_PlayCue veneer #5 */
-extern void State_unk34_4InitializeModeTask(s32 frames);        /* State_RunInitializeModeTask veneer #5 */
-extern void State_unk35_4InitializeModeTask(s32 style, s32 variant); /* State_unk3_4InitializeModeTask veneer #4 */
-extern void State_unk36_4InitializeModeTask(s32 cue);           /* Audio_PlayCue veneer #6 */
-extern void State_unk37_4InitializeModeTask(s32 frames);        /* State_RunInitializeModeTask veneer #6 */
-extern void State_unk38_4InitializeModeTask(s32 mode);          /* State_unk2_4 veneer #4 */
-extern void State_unk39_4InitializeModeTask(s32 style, s32 variant); /* State_unk3_4InitializeModeTask veneer #5 */
+extern void FunctionHead_02006b0c(s32 cue);           /* Audio_PlayCue veneer #4 */
+extern void FunctionHead_02004e1e(s32 mode);          /* State_unk2_4 veneer #3 */
+extern void FunctionHead_020053aa(s32 style, s32 variant); /* State_unk3_4InitializeModeTask veneer #3 */
+extern void FunctionHead_02006b20(s32 cue);           /* Audio_PlayCue veneer #5 */
+extern void FunctionHead_020069a6(s32 frames);        /* State_RunInitializeModeTask veneer #5 */
+extern void FunctionHead_020053be(s32 style, s32 variant); /* State_unk3_4InitializeModeTask veneer #4 */
+extern void FunctionHead_02006b34(s32 cue);           /* Audio_PlayCue veneer #6 */
+extern void FunctionHead_020069ba(s32 frames);        /* State_RunInitializeModeTask veneer #6 */
+extern void FunctionHead_02004e4c(s32 mode);          /* State_unk2_4 veneer #4 */
+extern void FunctionHead_020053d8(s32 style, s32 variant); /* State_unk3_4InitializeModeTask veneer #5 */
 extern void State_unk40_4InitializeModeTask(s32 cue);           /* Audio_PlayCue veneer #7 */
 extern void State_unk41_3InitializeModeTask(s32 frames);        /* State_RunInitializeModeTask veneer #7 */
 extern void State_unk42_3InitializeModeTask(s32 mode);          /* State_unk2_4 veneer #5 */
@@ -1665,48 +1665,48 @@ extern void State_unk45_3InitializeModeTask(void);              /* Audio_PlayCue
 extern void State_unk47_3InitializeModeTask(void);              /* State_unk16_4InitializeModeTask veneer #2 */
 extern void State_unk48_3InitializeModeTask(s32 flag);          /* GameFlag_Set veneer */
 
-        State_unk6_4InitializeModeTask();
-        State_unk8_4InitializeModeTask();
-        State_unk10_4InitializeModeTask(30);
-        State_unk11_4InitializeModeTask(0x59);
-        State_unk12_4InitializeModeTask(0);
-        State_unk13_4InitializeModeTask(1, 0);
-        State_unk14_4InitializeModeTask(120);
-        State_unk15_4InitializeModeTask();
+        FunctionHead_02006b5c();
+        FunctionHead_02006bc8();
+        FunctionHead_02006918(30);
+        FunctionHead_02006a9e(0x59);
+        FunctionHead_02004db0(0);
+        FunctionHead_0200533c(1, 0);
+        FunctionHead_02006932(120);
+        FunctionHead_0200690c();
         return;
     }
 
-    State_unk17_4InitializeModeTask(0xf7);
-    State_unk18_4InitializeModeTask();
-    State_unk19_4InitializeModeTask();
-    State_unk20_4InitializeModeTask();
+    FunctionHead_02006abe(0xf7);
+    FunctionHead_02006bf2();
+    FunctionHead_02006a76();
+    FunctionHead_02006a8a();
     {
         s16 *base = (s16 *)0x0200ca1e;
         *(s16 *)((u8 *)base + 30) = (s16)(mode * 60);
     }
-    State_unk21_4InitializeModeTask(30);
-    State_unk22_4InitializeModeTask(mode + 0x5a);
-    State_unk23_4InitializeModeTask(mode);
-    State_unk24_4InitializeModeTask(1, 0);
-    State_unk25_4InitializeModeTask(120);
+    FunctionHead_0200695a(30);
+    FunctionHead_02006ae2(mode + 0x5a);
+    FunctionHead_02004df4(mode);
+    FunctionHead_02005380(1, 0);
+    FunctionHead_02006976(120);
 
     goto check_transition;
 wait_transition:
-    State_unk26_4InitializeModeTask(1);
+    FunctionHead_020067ee(1);
 check_transition:
-    if (State_unk28_4InitializeModeTask() != 0)
+    if (FunctionHead_02006a76() != 0)
         goto wait_transition;
 
-    State_unk30_4InitializeModeTask(0x121);
-    State_unk31_4InitializeModeTask(5);
-    State_unk32_4InitializeModeTask(2, 0);
-    State_unk33_4InitializeModeTask(0xec);
-    State_unk34_4InitializeModeTask(60);
-    State_unk35_4InitializeModeTask(2, 1);
-    State_unk36_4InitializeModeTask(0xec);
-    State_unk37_4InitializeModeTask(60);
-    State_unk38_4InitializeModeTask(6);
-    State_unk39_4InitializeModeTask(2, 0);
+    FunctionHead_02006b0c(0x121);
+    FunctionHead_02004e1e(5);
+    FunctionHead_020053aa(2, 0);
+    FunctionHead_02006b20(0xec);
+    FunctionHead_020069a6(60);
+    FunctionHead_020053be(2, 1);
+    FunctionHead_02006b34(0xec);
+    FunctionHead_020069ba(60);
+    FunctionHead_02004e4c(6);
+    FunctionHead_020053d8(2, 0);
     State_unk40_4InitializeModeTask(0xec);
     State_unk41_3InitializeModeTask(60);
     State_unk42_3InitializeModeTask(7);
@@ -1728,46 +1728,46 @@ struct ModeRecord {
 };
 extern u8 gCell2[][2];
 
-u8 *State_unk2_4();
+u8 *FunctionHead_02006b14();
 
-u8 *State_unk3_4InitializeModeTask();
+u8 *FunctionHead_020033d8();
 
 void Scene_RunLateSequence(s32 a0)
 {
     s32 kind;
 
-    State_unk4_4(247);
-    State_unk5_4();
-    State_unk6_4InitializeModeTask();
-    gOvInitializeModeTask.span = a0 * 60;
-    gOv2InitializeModeTask.span = (a0 < 0 ? -a0 : a0) * 60;
+    FunctionHead_02006b94(247);
+    FunctionHead_02006b48();
+    FunctionHead_02006b5c();
+    RomBytes_0200cac8.span = a0 * 60;
+    RomBytes_0200c0f6.span = (a0 < 0 ? -a0 : a0) * 60;
     if (a0 < 0) {
-        State_unk7_4InitializeModeTask(30);
-        State_unk8_4InitializeModeTask(86);
-        State_unk9_4InitializeModeTask(8);
+        FunctionHead_0808a360(30);
+        FunctionHead_02006bc8(86);
+        FunctionHead_0808a370(8);
         State_Check(3, 1);
-        State_unk10_4InitializeModeTask(-a0 * 60 + 60);
+        FunctionHead_02006a62(-a0 * 60 + 60);
         kind = 0;
     } else {
-        State_unk11_4InitializeModeTask(30);
-        State_unk12_4InitializeModeTask(a0 + 90);
-        State_unk13_4InitializeModeTask(4);
+        FunctionHead_02006a6c(30);
+        FunctionHead_02006bf4(a0 + 90);
+        FunctionHead_02004f06(4);
         State_unk2(3, 0);
-        State_unk14_4InitializeModeTask(a0 * 60 + 60);
+        FunctionHead_02006a8a(a0 * 60 + 60);
         kind = 8;
     }
     State_Place(kind, 0x105, 0);
-    while (State_RunInitializeModeTask()!= 0) {
-        State_unk15_4InitializeModeTask(1);
+    while (FunctionHead_0808a010()!= 0) {
+        FunctionHead_0200690c(1);
     }
-    State_unk16_4InitializeModeTask(19);
-    State_unk17_4InitializeModeTask(30);
+    FunctionHead_0808a020(19);
+    FunctionHead_02006ab0(30);
     State_Do(0x121);
-    State_unk18_4InitializeModeTask();
-    State_unk19_4InitializeModeTask();
+    FunctionHead_02006bf2();
+    FunctionHead_02006bfe();
 }
 
-void State_unk20_4InitializeModeTask(s32 a0, s32 a1, s32 a2)
+void FunctionHead_02002ba8(s32 a0, s32 a1, s32 a2)
 {
     u32 i;
     s32 p10;
@@ -1792,15 +1792,15 @@ void State_unk20_4InitializeModeTask(s32 a0, s32 a1, s32 a2)
     p11 = a0;
     p8 = a1;
     p10 = a2;
-    rec = State_unk2_4();
+    rec = FunctionHead_02006b14();
     p6[6] = 1;
     p6[7] = 4;
-    *(volatile s32 *)gOv6InitializeModeTask = *(volatile s32 *)((s32)rec + 8);
-    *(volatile s32 *)gOv4InitializeModeTask = *(volatile s32 *)((s32)rec + 16);
+    *(volatile s32 *)RomBytes_0200cca4 = *(volatile s32 *)((s32)rec + 8);
+    *(volatile s32 *)RomBytes_0200cbfc = *(volatile s32 *)((s32)rec + 16);
     p9 = *(volatile s32 *)((s32)rec + 80);
-    *(volatile s32 *)gOv5InitializeModeTask = *(volatile u16 *)((s32)rec + 6);
+    *(volatile s32 *)RomBytes_0200cc28 = *(volatile u16 *)((s32)rec + 6);
     v5 = 1;
-    State_unk21_4InitializeModeTask(p11, 2);
+    FunctionHead_02006be4(p11, 2);
     {
         u8 value = *(volatile u8 *)&rec[35];
 
@@ -1811,15 +1811,15 @@ void State_unk20_4InitializeModeTask(s32 a0, s32 a1, s32 a2)
 
         *(volatile u16 *)((s32)rec + 6) = shown;
     }
-    State_unk22_4InitializeModeTask((s32)rec, 3);
-    State_unk23_4InitializeModeTask((s32)rec, 0);
-    State_unk24_4InitializeModeTask((s32)rec, 1);
+    FunctionHead_02006aa6((s32)rec, 3);
+    FunctionHead_02006a56((s32)rec, 0);
+    FunctionHead_02006a5e((s32)rec, 1);
     p10b = ((s32)p10 << 16);
     p8b = ((s32)p8 << 16);
-    State_unk25_4InitializeModeTask(p11, p8b, p10b);
-    State_unk26_4InitializeModeTask(0, 0x4000, 0);
+    FunctionHead_02006bba(p11, p8b, p10b);
+    FunctionHead_02006bec(0, 0x4000, 0);
     base6_4000208 = 0x4000208;
-    base4_2002090 = (s32)gOv3InitializeModeTask;
+    base4_2002090 = (s32)RomBytes_02002090;
     v1 = *(volatile u16 *)base6_4000208;
     *(volatile u16 *)base6_4000208 = base6_4000208;
     if (*(volatile u16 *)base4_2002090 <= 31) {
@@ -1833,7 +1833,7 @@ void State_unk20_4InitializeModeTask(s32 a0, s32 a1, s32 a2)
     p9[17] = ((s32)(-13 & p9[17]) | 4);
     slot0 = base4_2002090;
     v5 = 0;
-    State_unk27_4InitializeModeTask(252);
+    FunctionHead_080000c0(252);
     v4 = slot0;
     do {
         *(volatile s32 *)((s32)rec + 24) = ((v5 << 12) + 0x1000);
@@ -1848,33 +1848,33 @@ void State_unk20_4InitializeModeTask(s32 a0, s32 a1, s32 a2)
         }
         *(volatile u16 *)base6_4000208 = v0;
         slot0 = v4;
-        State_unk28_4InitializeModeTask(1);
+        FunctionHead_02006a76(1);
         v5 = (v5 + 2);
         v4 = slot0;
     } while (v5 <= 15);
     v4 = *(volatile u16 *)0x04000208;
     *(volatile u16 *)0x04000208 = 0x4000208;
-    if (*(volatile u16 *)gOv3InitializeModeTask <= 31) {
-        *(volatile u16 *)gOv3InitializeModeTask += 1;
-        *(volatile s32 *)((((((*(volatile u16 *)gOv3InitializeModeTask << 1) + *(volatile u16 *)gOv3InitializeModeTask) << 2) + 0x2002090) + 4)) = 16;
-        *(volatile s32 *)(((((((*(volatile u16 *)gOv3InitializeModeTask << 1) + *(volatile u16 *)gOv3InitializeModeTask) << 2) + 0x2002090) + 4) + 4)) = 0x4000052;
-        *(volatile s32 *)(((((((*(volatile u16 *)gOv3InitializeModeTask << 1) + *(volatile u16 *)gOv3InitializeModeTask) << 2) + 0x2002090) + 4) + 4) + 4) = 0x20000;
+    if (*(volatile u16 *)RomBytes_02002090 <= 31) {
+        *(volatile u16 *)RomBytes_02002090 += 1;
+        *(volatile s32 *)((((((*(volatile u16 *)RomBytes_02002090 << 1) + *(volatile u16 *)RomBytes_02002090) << 2) + 0x2002090) + 4)) = 16;
+        *(volatile s32 *)(((((((*(volatile u16 *)RomBytes_02002090 << 1) + *(volatile u16 *)RomBytes_02002090) << 2) + 0x2002090) + 4) + 4)) = 0x4000052;
+        *(volatile s32 *)(((((((*(volatile u16 *)RomBytes_02002090 << 1) + *(volatile u16 *)RomBytes_02002090) << 2) + 0x2002090) + 4) + 4) + 4) = 0x20000;
     }
     *(volatile u16 *)0x04000208 = v4;
     *(volatile s32 *)((s32)rec + 24) = 0x11000;
     *(volatile s32 *)((s32)rec + 28) = 0xf000;
-    State_unk29_4InitializeModeTask(1);
+    FunctionHead_080f9048(1);
     *(volatile s32 *)((s32)rec + 24) = 0x10000;
     *(volatile s32 *)((s32)rec + 28) = 0x10000;
-    State_unk30_4InitializeModeTask(13);
+    FunctionHead_02006c5c(13);
     p9[5] &= -13;
     p9[17] &= -13;
-    State_unk31_4InitializeModeTask(p11, 3);
-    State_unk32_4InitializeModeTask(20);
+    FunctionHead_02006cea(p11, 3);
+    FunctionHead_02006c80(20);
     p9b = v5;
 }
 
-void State_unk33_4InitializeModeTask(s32 a0)
+void FunctionHead_02002d84(s32 a0)
 {
     u32 i;
     u8 *rec7;
@@ -1882,20 +1882,20 @@ void State_unk33_4InitializeModeTask(s32 a0)
     u8 *p7;
 
     p7 = *(volatile s32 *)0x03001e68;
-    rec7 = State_unk3_4InitializeModeTask();
+    rec7 = FunctionHead_020033d8();
     if (gCell2[249][0] == 1) {
         gCell2[249][0] = 0;
-        State_unk34_4InitializeModeTask(a0, 1);
+        FunctionHead_02006d42(a0, 1);
     } else {
         State_unk2_3(a0, 0x4000, 30);
-        State_unk35_4InitializeModeTask(a0, 3);
-        State_unk36_4InitializeModeTask(30);
+        FunctionHead_02006d62(a0, 3);
+        FunctionHead_02006d00(30);
     }
     p7[7] = 0;
     p7[6] = 15;
-    *(volatile s32 *)((s32)rec7 + 8) = *(volatile s32 *)gOv6InitializeModeTask;
-    *(volatile s32 *)((s32)rec7 + 16) = *(volatile s32 *)gOv4InitializeModeTask;
-    *(volatile u16 *)((s32)rec7 + 6) = *(volatile s32 *)gOv5InitializeModeTask;
+    *(volatile s32 *)((s32)rec7 + 8) = *(volatile s32 *)RomBytes_0200cca4;
+    *(volatile s32 *)((s32)rec7 + 16) = *(volatile s32 *)RomBytes_0200cbfc;
+    *(volatile u16 *)((s32)rec7 + 6) = *(volatile s32 *)RomBytes_0200cc28;
     *(volatile s32 *)((s32)rec7 + 56) = -0x80000000;
     *(volatile s32 *)((s32)rec7 + 64) = -0x80000000;
     *(volatile s32 *)((s32)rec7 + 36) = 0;
@@ -1904,10 +1904,10 @@ void State_unk33_4InitializeModeTask(s32 a0)
     rec7[34] = (s32)gVal;
     *(volatile s32 *)((s32)rec7 + 12) = 0;
     *(volatile s32 *)((s32)rec7 + 20) = 0;
-    State_unk37_4InitializeModeTask((s32)rec7, 1);
-    State_unk38_4InitializeModeTask((s32)rec7, 0);
-    State_unk39_4InitializeModeTask((s32)rec7, 1);
-    State_unk8_4InitializeModeTask(1);
+    FunctionHead_02006cb2((s32)rec7, 1);
+    FunctionHead_02006c62((s32)rec7, 0);
+    FunctionHead_02006c6a((s32)rec7, 1);
+    FunctionHead_02006bc8(1);
 }
 
 /* overlays/scene/state/task/seed_marker_and_install_task.c */

@@ -113,7 +113,7 @@ void BattleFx_UpdateRadialLaunch(struct EffectSlot *effect)
             effect->state--;
     } else if (state == 2) {
         if (EffectSlot_HasReachedTarget(effect) == 0)
-            Battle_Run(effect);
+            FunctionHead_0809bb34(effect);
     }
 }
 
@@ -139,7 +139,7 @@ void BattleFx_RunEffect15(void)
     u8 stopped;
     u32 index;
 
-    Battle_Run();
+    FunctionHead_080916b0();
     Motion_CamBounds(-1, -1, -1, 0);
     BattleFx_InitializeSharedScene();
     WaitFrames(10);

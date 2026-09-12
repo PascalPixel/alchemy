@@ -379,20 +379,20 @@ void UiWork_FinalizeEntityMatchingLocalizedId(void)
 }
 
 /* ui/icon/count_table_entries.c */
-extern s32 gRom[];
-extern s32 gRom2[];
+extern s32 RomBytes_0802a2e0[];
+extern s32 RomBytes_08029ee4[];
 
 /* 2つの境界アドレス間を4バイト単位で数える。 */
 s32 Ui_CountIconTableEntries(void)
 {
-    return (s32)((u32)gRom - (u32)gRom2) >> 2;
+    return (s32)((u32)RomBytes_0802a2e0 - (u32)RomBytes_08029ee4) >> 2;
 }
 
 /* ui/count_second_table_entries.c */
 
 s32 Ui_CountSecondTableEntries(void)
 {
-    return (gRom - gRom2) >> 2;
+    return (RomBytes_0802e108 - RomBytes_0802de88) >> 2;
 }
 
 /* ui/render/build_paired_patterns_to_slot.c */
@@ -418,11 +418,11 @@ void Ui_BuildPairedPatternsToSlot(s32 no0, s32 no1, s32 *slot, s32 *ret, s32 fla
     T *work;
 
     work = Runtime_AllocateHeapBlock(0x11, 0x608);
-    work->f604 = gRom[no1];
+    work->f604 = RomBytes_08029a10[no1];
     work->f600 = 2;
     work->f602 = 2;
     Ui_Apply(work, 0);
-    work->f604 = gRom2[no0];
+    work->f604 = RomBytes_08029e00[no0];
     work->f600 = 2;
     work->f602 = 2;
     Ui_Apply(work, 1);

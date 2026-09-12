@@ -157,8 +157,8 @@ s32 GameFlag_Clear(s32 flag_no);
 
 s32 Scheduler_DisableOverlayCallbacksWithFlags(void)
 {
-    Sys_Check();
-    Scheduler_EnableUnmaskedOverlayCallbacks();
+    FunctionHead_080043e0();
+    FunctionHead_08009298();
     GameFlag_Clear(0x166);
     return GameFlag_Clear(0x152);
 }
@@ -170,8 +170,8 @@ s32 Scheduler_EnableOverlayCallbacksWithFlags(void)
 {
     GameFlag_Set(0x152);
     GameFlag_Set(0x166);
-    Sys_Check();
-    return Scheduler_EnableUnmaskedOverlayCallbacks();
+    FunctionHead_08009290();
+    return FunctionHead_0800430c();
 }
 
 /* ui/window_update_or_create.c */

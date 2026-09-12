@@ -74,7 +74,7 @@ s32 BattlePres_RunAction(s16 *action)
         break;
     case 3:
         WaitFrames(45);
-        Battle_Check(action);
+        FunctionHead_080b8888(action);
         break;
     case 2:
         WaitFrames(45);
@@ -158,7 +158,7 @@ s32 BattlePres_ShowMessageWhenField38Positive(s16 *script)
 
     object_id = *script;
     object = Runtime_GetObject(object_id);
-    if (Battle_Check(object_id) < 0) {
+    if (FunctionHead_080b8808(object_id) < 0) {
         return -1;
     }
     result = 0;

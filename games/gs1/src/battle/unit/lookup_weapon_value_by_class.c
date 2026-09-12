@@ -9,7 +9,7 @@
 /* battle/unit/lookup_weapon_value_by_class.c */
 struct BattleActorDefinition *Runtime_GetObject(s32 actor_id);
 
-extern u16 gRom[];
+extern u16 RomBytes_080c2a1c[];
 extern u16 gRom2[];
 extern u16 gRom3[];
 extern u16 gRom4[];
@@ -32,7 +32,7 @@ s32 BattleUnit_LookupWeaponValueByClass(s32 id)
         sel = Battle_Do(*(u16 *)(state + ofs) & 0x1FF);
         switch (state[296]) {
         case 0:
-            result = gRom[sel];
+            result = RomBytes_080c2a1c[sel];
             break;
         case 1:
             result = gRom2[sel];
@@ -93,7 +93,7 @@ Object *Actor_Run(s32, s32, s32);
 
 Unit *Runtime_GetObject(s32);
 
-extern const u8 gRom[];
+extern const u8 RomBytes_080c5938[];
 
 void BattlePresentation_SpawnActorObject(Actor *actor, s32 unit, s32 x, s32 y)
 {
@@ -224,12 +224,12 @@ void BattlePresentation_SpawnActorObject(Actor *actor, s32 unit, s32 x, s32 y)
         object->field_18 = 0x10000;
         object->field_1c = 0x10000;
     }
-    ObjectDispatch_InitializeFar(object, gRom);
+    ObjectDispatch_InitializeFar(object, RomBytes_080c5938);
 }
 
 /* battle/placement/get_step_pair.c */
 /* Step table for battle placement: signed bytes in (x, y) pairs. */
-extern const s8 gRom[];
+extern const s8 RomBytes_080c2a62[];
 
 /*
  * Read one (x, y) pair from the step table.  Entries are pairs, so the index
@@ -241,8 +241,8 @@ extern const s8 gRom[];
 void BattlePlacement_GetStepPair(s32 index, s32 *x, s32 *y)
 {
     index *= 2;
-    *x = gRom[index];
-    *y = gRom[index + 1];
+    *x = RomBytes_080c2a62[index];
+    *y = RomBytes_080c2a62[index + 1];
 }
 
 /* battle/summon/layout_positions.c */

@@ -689,7 +689,7 @@ s32 Inventory_Equip(s32 owner, s32 slot)
     }
 
     inv->inventory[slot] |= 0x200;
-    Sys_Do(owner);
+    FunctionHead_08078bf0(owner);
     Owner_RecalculateStats(owner);
     return 0;
 }
@@ -759,7 +759,7 @@ s32 Inventory_Discard(s32 owner, s32 slot)
     s32 removed_slot = Inventory_Remove(owner, slot);
 
     if (removed_slot != -1) {
-        Sys_Do(Item_AdjustCounter(item, 1));
+        FunctionHead_0808a548(Item_AdjustCounter(item, 1));
     }
     return removed_slot;
 }

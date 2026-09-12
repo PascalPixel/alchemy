@@ -17,7 +17,7 @@ s32 Menu_SelectionLoop(s32 mode)
 {
     u8 *state = gIw;
 
-    Menu_Apply(state, 0);
+    FunctionHead_0801b9ec(state, 0);
     for (;;) {
         WaitFrames(1);
         if (*(u16 *)(state + 0x3a0) != 0) {
@@ -98,7 +98,7 @@ void Menu_MoveSelectionForward(u8 *state)
 
     count = (u16 *)(state + 0x394);
     if (end != *count) {
-        Menu_Apply(state, *index);
+        FunctionHead_0801b9a8(state, *index);
         {
             u16 *status = (u16 *)(state + 0x3a2);
             u32 value = 33;
@@ -149,7 +149,7 @@ void Menu_MoveSelectionBackward(u8 *state)
     if (*selection != 0) {
         u32 no;
 
-        Menu_Apply(state, *(u16 *)(state + 0x39e));
+        FunctionHead_080b50e0(state, *(u16 *)(state + 0x39e));
         {
             u16 *status = (u16 *)(state + 0x3a2);
             u32 value = 33;
@@ -272,7 +272,7 @@ void Menu_SendNodeCountList(u8 *arg0)
         count++;
     }
     data[count] = 0xff;
-    Menu_Apply(data, 0);
+    FunctionHead_080b50e0(data, 0);
 }
 
 /* resource/load_by_mode.c */
@@ -299,7 +299,7 @@ s32 Resource_LoadByMode(s32 mode, s32 value)
         result = Resource_FindFreeSlot();
         if (result == 0x60)
             return -1;
-        Ui_BuildPatternToSlot(value, 0, result);
+        FunctionHead_0801a32c(value, 0, result);
         break;
     case 4:
         Ability_LoadGlyph(value, 1, &result, &output, 0);
@@ -336,7 +336,7 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option)
         Ability_LoadGlyph(value, option, (s32)&result, (s32)&output, 1);
         break;
     case 8:
-        Ui_BuildPatternToSlot(value, 0, result);
+        FunctionHead_0801a2ec(value, 0, result);
         break;
     case 9:
         load_table_entry(value, 0, (void *)result);

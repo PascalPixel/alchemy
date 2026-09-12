@@ -25,11 +25,11 @@ s32 Menu_SelectionLoop(s32 mode)
         }
         if (mode != 0x3e7) {
             if (gIw3 & 0x10) {
-                Menu_Do(state);
+                Menu_StepRight(state);
             } else if (gIw3 & 0x20) {
-                Menu_unk2_2(state);
+                Menu_StepLeft(state);
             } else if (gIw2 & 1) {
-                return Menu_unk3_2(state);
+                return Menu_ConfirmSelection(state);
             }
         }
         if (mode != 0 && (gIw2 & 2)) {
@@ -57,10 +57,10 @@ again:
         input = (u32 *)ADDR_03001B04;
         if (*input & 0x10) {
             Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
-            Menu_Do(state);
+            Menu_StepRight(state);
         } else if (*input & 0x20) {
             Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
-            Menu_unk2_2(state);
+            Menu_StepLeft(state);
         }
 
         if (*(u32 *)ADDR_03001C94 & 1) {

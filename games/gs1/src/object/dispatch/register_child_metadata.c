@@ -9,7 +9,7 @@ void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *object, s32 val
     if (object != 0 && (object->kind & 0xf) == 1) {
         void *child = object->target.child;
         if (value >= 0)
-            Obj_Check((s32)child);
+            ResourceMetadata_Register((s32)child);
     }
 }
 

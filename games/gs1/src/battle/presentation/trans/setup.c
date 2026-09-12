@@ -8,7 +8,7 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 mode)
     u8 *scene = *(u8 **)0x03001e80;
     s32 *position = (s32 *)(scene + 12);
     s32 *hud = (s32 *)0x03001ce0;
-    s32 scale = Battle_Run(mode << 16, 100);
+    s32 scale = FixedPoint_Ratio(mode << 16, 100);
     s32 render_bounds[3];
     s32 measured_bounds[3];
     s32 source_bounds[3];

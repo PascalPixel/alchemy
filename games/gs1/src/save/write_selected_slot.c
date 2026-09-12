@@ -46,7 +46,7 @@ s32 Save_WriteSelectedSlot(void)
                 UiWork_FinalizePendingCore();
             }
             gOv = slot;
-            Sys_Do(85);
+            Audio_PlayCue(85);
             Sys_Apply((s32)Value_0000001a, 13);
             while (UiWork_IsComplete() == 0) {
                 WaitFrames(1);

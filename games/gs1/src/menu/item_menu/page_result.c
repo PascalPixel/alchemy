@@ -71,14 +71,14 @@ s32 ItemMenu_DrawItemDetailPage(s32 arg0, s32 arg1, void *state)
     combined += *(s32 *)(state + 16);
     *(s32 *)(state + 24) = combined;
 
-    Sys_Do(*(s32 *)(menu + 44));
-    Sys_unk2_2(1);
+    UiWindow_Commit(*(s32 *)(menu + 44));
+    WaitFrames(1);
 
     combined = *(s32 *)(state + 24);
     off = combined * 2 + 456;
     if (*(u16 *)((char *)menu + off) != 0) {
         s32 masked = (*(u16 *)((char *)menu + off) & 0x1ff) + (s32)&Value_00000075;
-        Sys_SetMode(masked, *(s32 *)(menu + 44), 0, 0);
+        UiText_DrawAt(masked, *(s32 *)(menu + 44), 0, 0);
     }
 
     row = 0;
@@ -91,7 +91,7 @@ s32 ItemMenu_DrawItemDetailPage(s32 arg0, s32 arg1, void *state)
         row++;
     } while (row <= 4);
 
-    Sys_unk2_2(1);
+    WaitFrames(1);
     return 1;
 }
 

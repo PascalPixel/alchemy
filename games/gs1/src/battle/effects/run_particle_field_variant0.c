@@ -94,7 +94,7 @@ void Resource_LoadAndDecompress(void *resource_id, void *destination, s32 destin
  * 080ce85c) and games/gs1/src/battle/effects/puff_arc/run.c (owner
  * 080d9fc8): same heap_cache=(void**)0x03001EEC / cursor / work / canvas
  * prologue, same the +0x7828 field=object republish, same
- * Battle_Do(0)/Battle_Apply(0x080CD261,0x480)/Scheduler_RemoveCallback(0x080CD261)/
+ * Battle_Do(0)/ScheduleCallbackAfterFrames(0x080CD261,0x480)/Scheduler_RemoveCallback(0x080CD261)/
  * Runtime_ReleaseHeapBlock(id)/Battle_Run() bracket, and the same
  * Battle_Apply2(flag, DrawRectangleFn callbacks[2]) two-word blit-routine
  * resolver already established in games/gs1/recon/en/main/080e01e4.c.
@@ -113,7 +113,7 @@ void Resource_LoadAndDecompress(void *resource_id, void *destination, s32 destin
  * +0x10, ip/r12 slot at +0x30). All such call sites here go through
  * `routine[]`, a two-entry DrawRectangleFn array Battle_Apply2 fills.
  *
- * All three Battle_SetMode id arguments are loaded from the reference's
+ * All three Resource_LoadAndDecompress id arguments are loaded from the reference's
  * literal pool rather than built with a `movs` immediate, matching the
  * already-adopted Value_ idiom (puff_arc/run.c's Value_000000b4,
  * 080e01e4.c's Value_00000073/00000090/00000089): `(s32)&Value_XXXXXXXX`
@@ -171,7 +171,7 @@ void BattleFx_RunParticleReveal(void *object)
         &screen_x, &screen_y);
     Battle_Apply2(
         (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4))), routine);
-    Battle_SetMode((s32)&Value_0000006e, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_0000006e, work, 1, 1);
     (*(s32 *)((u8 *)(work) + (0x7780))) = 2;
     (*(s32 *)((u8 *)(work) + (0x7784))) = 75;
     {
@@ -180,9 +180,9 @@ void BattleFx_RunParticleReveal(void *object)
 
         interval = 0x480;
         callback = (void *)0x080CD261;
-        Battle_Apply(callback, interval);
+        ScheduleCallbackAfterFrames(callback, interval);
     }
-    Battle_Apply3(
+    EffectPosition_ApplyAlternateStepAndYOffset(
         (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))), spawn);
 
     for (i = 0; i != PARTICLE_COUNT; i++) {
@@ -206,8 +206,8 @@ void BattleFx_RunParticleReveal(void *object)
             (*(s16 *)((u8 *)((void *)0x04000052) + (0))) = (64 - frame) | 0x1000;
         }
         if (frame == 1) {
-            Battle_SetMode((s32)&Value_000000b8, (u8 *)work + 0x400, 1, 1);
-            Battle_SetMode((s32)&Value_00000092, (u8 *)work + 0x65C0, 1, 0);
+            Resource_LoadAndDecompress((s32)&Value_000000b8, (u8 *)work + 0x400, 1, 1);
+            Resource_LoadAndDecompress((s32)&Value_00000092, (u8 *)work + 0x65C0, 1, 0);
         }
 
         if ((*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x1C))) == 1) {
@@ -240,7 +240,7 @@ void BattleFx_RunParticleReveal(void *object)
                     (*(s16 *)((u8 *)(p) + (2))) - (w = gRom[index]) / 2,
                     (*(s16 *)((u8 *)(p) + (6))) - (h = gRom2[index]) / 2,
                     w, h);
-                Battle_Place(p, 0x3F, 0x1000);
+                EffectStep_AdvanceWithGravity3D(p, 0x3F, 0x1000);
             }
         }
 
@@ -270,10 +270,10 @@ void BattleFx_RunParticleReveal(void *object)
             }
         }
 
-        Battle_Apply5(4, 8);
+        Camera_ApplyShake(4, 8);
         ObjectGroup_TickMemberTimers();
         (*(s32 *)((u8 *)(work) + (0x7824))) = 1;
-        Battle_unk5(1);
+        WaitFrames(1);
     }
 
     Scheduler_RemoveCallback((void *)0x080CD261);

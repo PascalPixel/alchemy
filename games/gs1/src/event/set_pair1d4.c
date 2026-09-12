@@ -1153,7 +1153,7 @@ void BattleEv_RunWait(s32 action)
     s32 resolved_action;
     u32 frames = 0;
 
-    Battle_unk2_4(1);
+    WaitFrames(1);
     resolved_action = read_active_value(action);
     if (action <= 7) {
         s32 masked_action = action & 0x0fff;
@@ -1166,17 +1166,17 @@ void BattleEv_RunWait(s32 action)
 
     if (*(s32 *)(runtime + 0x1cc) == 0) {
         while (Battle_unk6_2(wait_token) == 0) {
-            Battle_unk2_4(1);
+            WaitFrames(1);
             frames++;
             if (frames > 600 ||
                 ((gIwEvWait & 4) && (gIwEvWait & 0x100) &&
                  (gIwEvWait & 0x200) && (gIwEvWait & 1))) {
-                Battle_unk7_2();
+                UiWork_FinalizePending();
             }
         }
     }
 
-    Battle_unk2_4(1);
+    WaitFrames(1);
 }
 
 /* battle/presentation/act/run_wait_mode0.c */

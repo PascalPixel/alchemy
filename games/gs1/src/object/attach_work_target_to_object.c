@@ -30,7 +30,7 @@ void Object_AttachWorkTargetToObject(s32 id, s32 flag)
             FIELD_AT_OFFSET(target, s32 *, 0x10) = (s32)FIELD_AT_OFFSET(obj, s32 *, 0x10);
             WaitFrames(1);
             if (FIELD_AT_OFFSET(work, s16 *, 0x19E) != 3) {
-                Obj_unk2_2();
+                Map_ApplyWorkOriginAndSpan();
             }
         }
     }

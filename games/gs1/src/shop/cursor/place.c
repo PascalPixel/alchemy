@@ -320,7 +320,7 @@ void Shop_BuyDone(s32 unit_id, s32 item_id, s32 quantity)
             added_slot = Sys_Apply2(unit_id, item_id);
             Sys_Check(0 - item->price);
             remaining -= 1;
-            Sys_unk2(item->price);
+            Party_AdjustSixDigitCounterB(item->price);
             Shop_DrawMoney();
         } while (remaining != 0);
     }
@@ -385,7 +385,7 @@ s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
         Shop_SelRepair(103);
         UiWork_FinalizePending();
         UiWork_Create((s32)Value_00000ad0, 8, 4, 2);
-        while (Sys_unk2() == 0) {
+        while (UiWork_IsCompleteFar() == 0) {
             WaitFrames(1);
         }
     }

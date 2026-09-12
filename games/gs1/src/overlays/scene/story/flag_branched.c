@@ -652,7 +652,6 @@ s32 SceneData_SelectRecordByScene21(void)
 
 /* overlays/scene/story/flag_branched/scene_primary_script_head.c */
 
-extern u8 gWork[];
 
 void Story_unk185_3();           /* scripted-scene bracket: open */
 
@@ -743,7 +742,6 @@ void Scene_RunCue(void)
 
 /* overlays/scene/story/flag_branched/scene_setup.c */
 extern s16 gCell[];
-extern u8 Value_00000021;
 extern u8 gOv4[];
 extern u8 gOv5[];
 extern u8 Value_00001420;
@@ -847,7 +845,6 @@ void Dialogue_RunActor16Message1769(void)
 }
 
 /* overlays/scene/story/flag_branched/run_actor_15_flag_scene.c */
-extern u8 gWork[];
 
 void Dialogue_RunActor15Flag303Scene(void)
 {
@@ -865,7 +862,6 @@ void Dialogue_RunActor15Flag303Scene(void)
 }
 
 /* overlays/scene/script/cue_open_step.c */
-extern u8 gWork[];
 
 void Scene_RunCueCueOpenStep(void)
 {
@@ -897,7 +893,6 @@ void Scene_RunCueCueOpenStep(void)
 }
 
 /* overlays/scene/script/cue_close_step.c */
-extern u8 gWork[];
 
 void Scene_RunCueCueCloseStep(void)
 {
@@ -983,8 +978,6 @@ void Scene_RunCueCueCloseStep(void)
  * rebuilt at the store; the fourth argument zero of the following call is an
  * unrelated constant. */
 
-extern u8 gWork[];
-extern u8 gOv[];
 extern u8 gOv2EventScript02[];
 
 void *Story_unk7_4();

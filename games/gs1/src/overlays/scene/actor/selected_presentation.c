@@ -141,7 +141,6 @@ s32 SceneData_SelectTable99C4Or97B4ByStateA6(void)
 /* overlays/scene/actor/selected_presentation/scene_primary_script.c */
 #define ACTOR_ID 13
 
-extern u8 RuntimeSelectorTable[];
 extern u8 gWork[];
 extern u8 gVal[];
 extern u8 gOv3[];
@@ -329,8 +328,6 @@ struct SceneWork {
     u16 state_one_marker;
 };
 
-extern struct Selection RuntimeSelectorTable;
-extern struct SceneWork *gWork;
 extern volatile s32 gIw;
 
 struct Actor *Actor_unk19_4(s32 actor);

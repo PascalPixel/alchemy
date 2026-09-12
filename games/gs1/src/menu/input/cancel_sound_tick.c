@@ -30,9 +30,7 @@ void Menu_CancelSoundReset(void)
 }
 
 /* menu/input/ensure_cancel_sound.c */
-s32 ScheduleCallback(s32);
 s32 GameFlag_IsSet(s32);
-void Menu_CancelSoundTick(void);
 
 void Menu_EnsureCancelSound(void)
 {
@@ -51,7 +49,6 @@ void UiPalette_SetColor15(void)
 }
 
 /* ui/render/set_palette_color_2.c */
-s32 UiPalette_SetColor(s32);
 
 void UiPalette_SetColor2(void)
 {
@@ -59,7 +56,6 @@ void UiPalette_SetColor2(void)
 }
 
 /* ui/render/set_palette_color_4.c */
-s32 UiPalette_SetColor(s32);
 
 void UiPalette_SetColor4(void)
 {

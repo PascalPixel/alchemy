@@ -33,7 +33,6 @@ void Shop_FillSelector(s32 count, s32 selector, u8 *base)
 }
 
 /* shop/draw/glyphs.c */
-extern u16 gRom[];
 extern u8 gRom2[];
 
 /* 4行分の非0バイトを指定配置へ順にコピーする。 */

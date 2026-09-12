@@ -239,7 +239,7 @@ void Blend_ConfigureTransition(s8 mode, s32 coefficient, u32 start, s32 target, 
 }
 
 /* display/blend/wait_for_transition.c */
-s32 WaitFrames(s32);
+void WaitFrames(s32);
 
 void Blend_WaitForTransition(void)
 {
@@ -389,7 +389,6 @@ s32 ResourceTable_GetLongestFreeBlockRun(void)
 /* resource/table/clear_entry_references.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-extern u8 ResourceBlockOwners[];
 
 s32 Resource_ClearSlotReferences(s32 resource_id)
 {
@@ -442,8 +441,6 @@ s32 Resource_ResetEntry(u32 resource_index)
 }
 
 /* resource/table/activate_entry.c */
-extern u8 ResourceTableEntries[];
-s32 Resource_ClearSlotReferences(s32 resource_id);
 
 s32 Resource_ActivateEntry(u32 resource_index)
 {

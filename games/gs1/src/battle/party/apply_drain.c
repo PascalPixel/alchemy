@@ -8,7 +8,7 @@ struct BattlePartyTargetState {
     u8 target_ids[1];
 };
 
-extern struct BattlePartyTargetState gCell;
+extern s32 gCell[];
 
 void BattleParty_ApplyDrain(s32 amount)
 {
@@ -28,7 +28,6 @@ void BattleParty_ApplyDrain(s32 amount)
 }
 
 /* battle/party/apply_status_damage.c */
-extern u8 gCell[];
 
 u8 *Runtime_GetObject(s32);
 s32 FixedPoint_Ratio(s32, s32);
@@ -113,7 +112,6 @@ void Battle_SetObjectFlag5bWhenMode3(void)
 }
 
 /* battle/clear_object_flag5b_when_mode3.c */
-void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 
 void Battle_ClearObjectFlag5bWhenMode3(void)
 {
@@ -141,9 +139,8 @@ struct Object {
     u8 kind;
 };
 
-extern s32 gCell[];
 
-struct Object *ObjectTable_Get(s32);
+extern struct EffectObject *ObjectTable_Get(s32 object);
 
 s32 Object_GetTriggerTileAheadOfCurrent(void)
 {
@@ -228,8 +225,6 @@ struct EffectObject {
     u16 reference;
 };
 
-extern struct EffectObject *ObjectTable_Get(s32 object);
-extern u8 gCell;
 extern void *gWork;
 
 struct EffectDescriptor *BattleFx_FindDescriptor(s32 kind, s32 value)
@@ -296,7 +291,6 @@ struct State_0808d5a4 {
     s16 value;
 };
 
-extern u8 gCell;
 struct EffectDescriptor *Battle_RunFindWithOverride(s32, s32);
 
 s32 BattleFx_FindDescriptorWithOverride(s32 arg0)
@@ -345,7 +339,6 @@ extern struct ActionDescriptor *Battle_RunAction(s32);
 extern struct EffectDescriptor *BattleFx_FindDescriptor(s32, s32);
 extern struct BattleActionObject *get_by_id(s32);
 
-extern u8 gCell;
 
 s32 BattleFx_RunDescriptorAction(s32 id)
 {
@@ -456,7 +449,6 @@ finish:
 /* battle/effects/descriptors/run_kind6_action.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-struct EffectDescriptor *Battle_RunFindWithOverride(s32, s32);
 void Battle_Reset(void);
 
 s32 BattleFx_RunKind6DescriptorAction(s32 arg0)
@@ -496,10 +488,7 @@ typedef struct {
     s16 h19c;
 } Obj;
 
-struct EffectDescriptor *Battle_RunFindWithOverride(s32, s32);
-void Battle_Reset(void);
 
-void Audio_PlayCue(s32);
 
 s32 BattleAction_RunDescriptor(s32 arg0)
 {
@@ -554,8 +543,6 @@ struct GlobalData_0808d8f0 {
     s32 selected_object;
 };
 
-extern void *gWork;
-extern u8 gCell;
 extern volatile u32 gIw;
 
 void BattleFx_RunRisingObjectSequence(s32, s32, s32);

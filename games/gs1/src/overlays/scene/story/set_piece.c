@@ -320,7 +320,7 @@ void Actor_SetActor12ModeByActorZeroHeight(void)
 }
 
 /* overlays/scene/story/set_piece/display.c */
-extern u16 gOv;
+extern u8 gOv[];
 
 void State_SetDispcntBit9ByThreshold(void)
 {
@@ -340,7 +340,6 @@ void State_SetDispcntBit9ByThreshold(void)
 }
 
 /* overlays/scene/story/set_piece/effect.c */
-extern s32 gIw;
 extern s32 gOv2[3];   /* image offset 0x5240 */
 extern u8 *Story_unk61_3(s32 arg0, s32 arg1, s32 arg2, s32 arg3);  /* site veneer -> Object_CreateFar */
 extern void Story_unk63_3(u8 *obj);                             /* site veneer -> Actor_SetMode3AndRate4ccc */
@@ -376,7 +375,6 @@ void Effect_SpawnObject222(void)
 /* overlays/scene/story/set_piece/field_scene.c */
 
 extern u8 gVal[];
-extern u8 gOv[];
 extern u8 gWork[];
 extern u8 gVal2[];
 extern s16 gCell[][1];
@@ -1342,7 +1340,6 @@ extern u8 Value_00000052;
 extern u8 Value_00000053;
 extern u8 Value_00000054;
 extern u8 Value_00000055;
-extern u8 Value_00000056;
 extern u8 Value_00000057;
 extern u8 gOv4[];
 extern u8 gOv5[];
@@ -1477,7 +1474,6 @@ s32 SceneData_SelectDataByRuntimeSelector(void)
 
 extern u8 gOv29[];
 extern u8 gOv30[];
-extern u8 gWork[];
 
 /* Phase/status word at 0x1c0, and a companion word at 0x1c8, of the shared
  * scene work record. */
@@ -1641,8 +1637,6 @@ void State_StoreParamsAndInstallTask(s32 v0, s32 v1, s32 v2, s32 v3)
 }
 
 /* overlays/scene/story/set_piece/scene_state_interaction.c */
-extern u8 gCell2[];
-extern u8 Value_00000051;
 
 void State_SetByte22bTo3AndSend51(void)
 {
@@ -1653,10 +1647,6 @@ void State_SetByte22bTo3AndSend51(void)
 
 /* overlays/scene/story/set_piece/state_update.c */
 
-extern u8 gCell2[];
-extern u8 Value_0000004d;
-extern u8 Value_0000004f;
-extern s32 gIw;
 extern u8 *gWork;   /* The scene workspace pointer. */
 extern u8 Value_00001018;   /* The pooled constant 0x1018. */
 

@@ -7,7 +7,7 @@
 /* object/table/clear_battle_slots.c */
 /* object/table/clear_battle_slots.c */
 /* object/table/clear_battle_slots.c */
-extern u8 *gWork;
+extern struct Runtime_0808bd24 *gWork;
 
 void ObjectTable_ClearBattleSlots(void)
 {
@@ -27,7 +27,6 @@ void ObjectTable_ClearBattleSlots(void)
 }
 
 /* object/table/get.c */
-extern u8 *gWork;
 
 void *ObjectTable_Get(u32 arg0)
 {
@@ -106,7 +105,6 @@ struct Position_0808bd24 {
 void RotateVectorByMagnitude(s32, u32, struct Position_0808bd24 *);
 
 extern struct Global_0808bd24 gCell;
-extern struct Runtime_0808bd24 *gWork;
 
 u8 GetFocusedObjectCollision(void)
 {
@@ -197,7 +195,6 @@ struct RuntimeServices_0808bde0 {
 };
 
 extern struct RuntimeServices_0808bde0 gOv;
-extern struct Runtime_0808bde0 *gWork;
 
 s32 GameFlag_IsConditionActive(s32 condition);
 void Audio_PlayCue(s32 sound_id);

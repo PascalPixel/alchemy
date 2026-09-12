@@ -32,7 +32,7 @@ s32 CalculateFixedPointPositionDistance(s32 *first_position, s32 *second_positio
 }
 
 /* overlays/shared/find_actor_at_fixed_point_position.c */
-extern u8 *gWork;
+extern u8 gWork[];
 
 s32 *Sys_Run(s32 *arg0)
 {
@@ -231,8 +231,6 @@ done:
 }
 
 /* overlays/scene/actor/staged_motion/find_clear_actor_position.c */
-extern s32 gOv[];
-extern s32 gOv2[];
 
 s32 MapStagedActor_FindClearPosition(s32 *request)
 {
@@ -354,7 +352,7 @@ extern u8 Value_0000087a;
 s32 *Actor_unk43_4(s32);
 
 u8 *Actor_unk44_4(s32);
-u8 *AllocateEffectTransfer(s32);
+u8 *AllocateEffectTransfer(s32, s32);
 
 void Actor_SetFlagByteBySlotZeroPosition(void)
 {
@@ -422,7 +420,6 @@ void Effect_UpdateObjectOnOddFramesOnly(s32 p)
 #define ACTOR_D 11
 /* Shared data used for actors A, B, C. */
 
-extern u8 gWork[];
 extern u8 Value;
 extern u8 Value4;
 extern u8 gVal[];
@@ -1342,7 +1339,6 @@ extern u8 Value5;
 
 OrbitingSceneObject *GetOrbitingSceneObject();
 
-u8 *AllocateEffectTransfer(s32, s32);
 
 s32 Effect_UpdateOrbitPosition(s32 *p)
 {
@@ -2511,9 +2507,6 @@ void Effect_AnimateVerticalNegative(struct StagedVerticalEffect *effect)
 
 /* overlays/scene/actor/staged_motion/state_update.c */
 extern s32 gOv8[];
-extern s32 gOv5[];
-extern s32 gOv4StagedMotion[];
-extern s32 gOv6[];
 
 u8 *Actor_unk641(s32);
 
@@ -2649,7 +2642,6 @@ s32 MapStagedScene_GetEmptyData(void)
 }
 
 /* overlays/scene/actor/staged_motion/select_secondary_scene_data.c */
-extern s32 gOvSelectPrimaryData[];
 s32 MapStagedScene_SelectSecondaryData(void)
 {
     return (s32)gOvSelectPrimaryData;
@@ -2657,7 +2649,6 @@ s32 MapStagedScene_SelectSecondaryData(void)
 
 /* overlays/scene/actor/staged_motion/select_tertiary_scene_data.c */
 extern u8 gCell[];
-extern s32 gOvSelectPrimaryData[];
 extern s32 gOv2SelectPrimaryData[];
 extern s32 gOv3SelectPrimaryData[];
 extern s32 gOv4SelectPrimaryData[];

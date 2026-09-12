@@ -10,7 +10,6 @@ void BattleFx_RunSeriesBMode0(s32 effect)
 }
 
 /* battle/effects/series_b/mode_1.c */
-s32 BattleEffectB(s32, s32);
 
 void BattleFx_RunSeriesBMode1(s32 effect)
 {
@@ -18,7 +17,6 @@ void BattleFx_RunSeriesBMode1(s32 effect)
 }
 
 /* battle/effects/series_b/mode_2.c */
-s32 BattleEffectB(s32, s32);
 
 void BattleFx_RunSeriesBMode2(s32 effect)
 {
@@ -26,7 +24,6 @@ void BattleFx_RunSeriesBMode2(s32 effect)
 }
 
 /* battle/effects/series_b/mode_3.c */
-s32 BattleEffectB(s32, s32);
 
 void BattleFx_RunSeriesBMode3(s32 effect)
 {
@@ -34,7 +31,6 @@ void BattleFx_RunSeriesBMode3(s32 effect)
 }
 
 /* battle/effects/series_b/mode_5.c */
-s32 BattleEffectB(s32, s32);
 
 void BattleFx_RunSeriesBMode5(s32 effect)
 {
@@ -42,7 +38,6 @@ void BattleFx_RunSeriesBMode5(s32 effect)
 }
 
 /* battle/effects/series_b/mode_4.c */
-s32 BattleEffectB(s32, s32);
 
 void BattleFx_RunSeriesBMode4(s32 effect)
 {

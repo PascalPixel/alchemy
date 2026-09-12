@@ -422,7 +422,6 @@ void Scene_PlaceActorTenByFlags(void)
 }
 
 /* overlays/scene/actor/transition/dialogue_layout.c */
-extern u16 gCell[];
 
 /* Imports; the three queried ones are typed for their return value. */
 
@@ -1033,7 +1032,6 @@ void Scene_RunFourPassCallbackSequence(void)
 }
 
 /* overlays/scene/actor/transition/scene_data.c */
-extern s16 gCell[];
 extern u8 Value_00000034;
 extern u8 Value_0000003e;
 extern u8 Value_0000003f;
@@ -1223,7 +1221,6 @@ struct Subject {
 };
 
 extern s16 gOv27[];
-extern struct SharedData gCell;
 extern u32 gIw;
 
 struct Subject *Actor_unk220_2();
@@ -1375,7 +1372,7 @@ struct SceneService {
 
 extern u8 *gIw2;
 extern u8 *gOv28;
-extern u8 *gWork;
+extern u8 gWork[];
 
 struct SceneService *Actor_unk236_2(s32 index);
 
@@ -1576,8 +1573,6 @@ void Scene_SetActor9Values1And2(void)
 
 /* overlays/scene/actor/transition/run_scene_primary_sequence.c */
 extern u8 gVal[];
-extern u8 gCell[];
-extern u8 gWork[];
 extern s16 gCell2[][1];
 
 s32 Actor_RunPrimarySequence(void)
@@ -1600,7 +1595,6 @@ s32 Actor_RunPrimarySequence(void)
 }
 
 /* overlays/scene/actor/transition/run_scene_sequence_a.c */
-extern u8 gWork[];
 
 void Scene_RunScene39aSequenceA(void)
 {
@@ -1618,7 +1612,6 @@ void Scene_RunScene39aSequenceA(void)
 
 /* overlays/scene/script/talk_pair_step.c */
 /* overlays/scene/script/talk_pair_step.c */
-extern u8 gWork[];
 
 void Scene_RunTalk(s32 a0, s32 a1)
 {

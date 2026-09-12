@@ -44,7 +44,7 @@ void Shop_ResetEffects(void)
 extern u8 *gIw;
 extern s8 gRom[];
 
-u8 *Runtime_GetObject(s32);
+struct FieldObject *Runtime_GetObject(s32);
 
 s32 Inn_RoomPrice(s32 mode)
 {
@@ -107,8 +107,8 @@ void Inn_Cleanup(void);
 
 s32 Inn_RoomPrice(s32);
 void Inn_PlaySleep(s32);
-s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
-void UiWindow_Close(s32, s32);
+s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
+void UiWindow_Close(s32 window, s32 style);
 
 void UiText_DrawQuantity(s32, s32);
 struct InnObject *Scene_GetRecord(s32);
@@ -183,11 +183,10 @@ struct FieldObject {
 
 extern struct FieldEffectState *gWork;
 
-struct FieldObject *Runtime_GetObject(s32);
 
 void WaitFrames(s32);
 
-void Audio_PlayCue(s32);
+void Audio_PlayCue(s32 cue);
 void AudioCommand_WaitForStateByteClear(void);
 
 void Inn_PlaySleep(s32 room_price)
@@ -231,9 +230,6 @@ void Inn_PlaySleep(s32 room_price)
 #define INPUT_REPEAT_KEYS (*(volatile u32 *)ADDR_03001B04)
 
 s32 Modulo(s32 value, s32 divisor);
-void WaitFrames(s32 frames);
-s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
-void UiWindow_Close(s32 window, s32 style);
 struct ShopCursorAnchor *Sys_RunPickUnitItem(
     u32 resource,
     u32 flags,
@@ -241,7 +237,6 @@ struct ShopCursorAnchor *Sys_RunPickUnitItem(
     s32 x,
     s32 y);
 
-void Audio_PlayCue(s32 cue);
 
 /* Select a party member and then an item owned by that member. */
 s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
@@ -612,7 +607,6 @@ void Battle_Run(void)
 /* battle/intro/announce_encounter.c */
 extern u8 *gBattleWork;
 
-void UiText_DrawQuantity(s32, s32);
 void UiText_ShowMessageAndWait(s32);
 
 void BattleIntro_AnnounceEncounter(s32 enemy_count)
@@ -655,7 +649,6 @@ void BattleIntro_AnnounceEncounter(s32 enemy_count)
 }
 
 /* battle/party/collect_unit_list.c */
-extern u8 *gBattleWork;
 extern s8 gRomPresentationUpdateCamera[];
 
 void BattleParty_CollectUnitList(void)

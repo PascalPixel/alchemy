@@ -288,7 +288,6 @@ void Dialogue_RunActorNineFlaggedDialogue(void)
 extern u8 Value4;
 extern u8 gVal2[];
 extern u8 gVal3[];
-extern u8 gCell[];
 extern u8 gVal4[];
 extern u8 gOv7[];
 extern u8 gVal5[];
@@ -834,9 +833,6 @@ void Scene_RunScene3abSequenceG(void)
 
 /* overlays/scene/story/actor_sequence/scene_setup.c */
 extern u8 gWork[];
-extern u8 gVal2[];
-extern u8 gVal3[];
-extern u8 gCell[];
 extern s16 gCell2[][1];
 
 u8 *Story_unk87_3(s32);

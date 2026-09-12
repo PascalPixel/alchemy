@@ -233,7 +233,6 @@ static __inline__ __attribute__((always_inline)) void bump_step(s32 amount)
 #define SCENE_STEP_VALUE 0x2138
 #endif
 
-extern u8 gOv10[];
 
 /*
  * resource_3b9 owner at 0x02000074: a leaf that loads its literal pool word

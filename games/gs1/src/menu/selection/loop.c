@@ -11,7 +11,7 @@ extern u8 *gIw;
 extern u32 gIw2;
 extern volatile u32 gIw3;
 
-void WaitFrames(u32 value);
+void WaitFrames(s32);
 
 s32 Menu_SelectionLoop(s32 mode)
 {
@@ -39,7 +39,6 @@ s32 Menu_SelectionLoop(s32 mode)
 }
 
 /* menu/selection/wait_for_input.c */
-extern void WaitFrames(u32);
 extern void Audio_PlayCue(u32);
 
 u32 Menu_WaitForSelectionInput(u32 value)
@@ -89,7 +88,6 @@ again:
 struct State_0801b9a8;
 struct State_0801b9ec;
 
-void WaitFrames(u32 value);
 
 void Menu_MoveSelectionForward(u8 *state)
 {
@@ -143,7 +141,6 @@ void Menu_MoveSelectionForward(u8 *state)
 }
 
 /* menu/selection/move_backward.c */
-void WaitFrames(u32 value);
 
 void Menu_MoveSelectionBackward(u8 *state)
 {
@@ -241,7 +238,6 @@ struct State_0801b9ec {
     struct Node_0801b9ec *head;
 };
 
-extern u8 gVal;
 
 void Menu_LoadSelectedResource(void);
 
@@ -313,7 +309,6 @@ s32 Resource_LoadByMode(s32 mode, s32 value)
 }
 
 /* resource/load_by_mode_into_slot.c */
-extern s32 Resource_FindFreeSlot(void);
 
 s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option)
 {
@@ -497,8 +492,7 @@ struct Object_0801c0dc {
     u16 field_8c : 4;
 };
 
-s32 Resource_FindFreeSlot(void);
-s32 Resource_CopyData(s32, s32, const void *);
+s32 Resource_CopyData(s32 handle, s32 size, void *buffer);
 extern const u8 gRom[];
 
 void TextResource_Initialize(struct Object_0801c0dc *object, s32 *slot)
@@ -568,14 +562,11 @@ struct ResourceBuffer_0801c188 {
     void *resource;
 };
 
-extern u8 *gIw;
 extern u8 Value_000000f1;
 
 struct SelectionNode_0801c188 *Menu_RunLoadSelected(void *state);
 struct ResourceBuffer_0801c188 *Runtime_AllocateHeapBlock(s32 owner, s32 size);
 
-s32 Resource_FindFreeSlot(void);
-s32 Resource_CopyData(s32 handle, s32 size, void *buffer);
 
 void Menu_LoadSelectedResource(void)
 {

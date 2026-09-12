@@ -126,8 +126,7 @@ struct EffectObject {
     void (*callback)(void);
 };
 
-extern u8 *gIw;
-extern u8 gCell[];
+extern s16 gCell[];
 
 void BattleFx_RunEffect15(void)
 {
@@ -198,7 +197,6 @@ void BattleFx_RunEffect15(void)
 }
 
 /* battle/effects/particles/update_descending_positive_arc.c */
-extern s16 gCell[];
 extern u8 Value_00000001;
 
 void Object_Destroy(void);
@@ -235,10 +233,7 @@ void BattleFx_UpdateDescendingParticlePositiveArc(void *arg0)
 }
 
 /* battle/effects/particles/update_descending_negative_arc.c */
-extern s16 gCell[];
-extern u8 Value_00000001;
 
-void Object_Destroy(void);
 
 void BattleFx_UpdateDescendingParticleNegativeArc(void *arg0)
 {
@@ -277,8 +272,6 @@ struct BattleEffect16GlobalState {
     u32 active_object_id;
 };
 
-extern struct BattleEffect16GlobalState gCell;
-extern u32 gIw;
 s32 UnsignedModulo(u32, s32);
 
 void BattleFx_UpdateEffect16State(void)
@@ -311,8 +304,6 @@ write_value:
 }
 
 /* battle/effects/particles/update_paired_arc_spawner.c */
-extern s16 gCell[];
-extern u8 Value_00000001;
 
 s32 Modulo(s32, s32);
 void BattleFx_SpawnPairedArcObjects(void *);

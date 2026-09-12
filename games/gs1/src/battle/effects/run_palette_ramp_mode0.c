@@ -140,8 +140,8 @@ void BattleFx_RunPuffArc(Efx *efx)
     tick = 0;
     puff = (Puff *)(work + 0x7080);
     do {
-        puff->x = ((sign *((Battle_Check(ang) << 5) >> 16)) + org) + 20;
-        puff->y = ((Battle_unk2(ang) << 4) >> 16) + 40;
+        puff->x = ((sign *((FixedSin(ang) << 5) >> 16)) + org) + 20;
+        puff->y = ((FixedCos(ang) << 4) >> 16) + 40;
         puff->tick = tick;
         ang += 0x1000;
         tick -= 4;

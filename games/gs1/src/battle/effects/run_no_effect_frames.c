@@ -39,7 +39,7 @@ void BattleFx_InitializeMode(s32 *arg0)
             Battle_unk2_2(arg0);
             break;
         case 2:
-            Battle_unk3_2(arg0);
+            BattleFx_RunEmberShower(arg0);
             break;
         case 3:
             Battle_unk4_2(arg0);

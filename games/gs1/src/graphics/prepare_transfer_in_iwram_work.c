@@ -37,10 +37,10 @@ void Camera_SetAngleParameters(u32 value, s32 param1, s32 param2)
     s32 result;
 
     half = (s32)(value + (value >> 31)) >> 1;
-    first = Sys_Check(half);
+    first = FixedSin(half);
     result = ((CameraWorkFn)0x0300013C)(
         first,
-        Sys_unk2(half)* 0x50
+        FixedCos(half)* 0x50
     );
     ((struct CameraWork *)ADDR_03001CE0)->param1 = param1;
     ((struct CameraWork *)ADDR_03001CE0)->result = result;

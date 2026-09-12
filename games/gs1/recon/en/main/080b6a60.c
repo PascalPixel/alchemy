@@ -5,6 +5,8 @@
 
 #define BattleParty_PrepareActiveOwners Func_080b6a60
 
+extern struct PartyState Data_02000240;
+
 s32 Func_08077148(void);
 
 s32 BattleParty_PrepareActiveOwners(u16 *owners)

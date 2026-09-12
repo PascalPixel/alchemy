@@ -255,7 +255,7 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
     s32 item_slot;
     s32 result = 0;
 
-    Sys_unk2_4PickUnitItem();
+    Sys_RunRoomPrice();
     shop = SHOP_RUNTIME;
     shop->item_window = UiWindow_CreateFar(16, 12, 14, 8, 2);
     list_window = UiWindow_CreateFar(0, 14, 13, 3, 2);

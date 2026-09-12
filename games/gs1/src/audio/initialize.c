@@ -71,11 +71,3 @@ void Audio_Initialize(void)
         } while (remaining != 0);
     }
 }
-
-/* audio/mix/run_mixer.c */
-s32 AudioEngine_RunMixerTick(void);
-
-void AudioEngine_RunMixer(void)
-{
-    AudioEngine_RunMixerTick();
-}

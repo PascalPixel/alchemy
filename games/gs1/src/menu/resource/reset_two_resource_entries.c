@@ -15,5 +15,3 @@ void Menu_ResetTwoResourceEntries(void)
     Resource_ResetEntry(FIELD_AT_OFFSET(state, u16 *, 0x392));
     Resource_ResetEntry(FIELD_AT_OFFSET(state, u16 *, 0x394));
 }
-
-/* ui/icon/icon_load_resource_into_slot.c */

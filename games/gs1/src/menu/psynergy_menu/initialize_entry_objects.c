@@ -18,7 +18,7 @@ s32 UiMenu_CreateCursor(void *work)
     void *object;
 
     FIELD_AT_OFFSET(work, s32 *, 0x10) = zero;
-    Menu_SetRect((s32 *)((u8 *)work + 0x10), zero, zero, 13, 5, 2);
+    UiWindow_UpdateOrCreate((s32 *)((u8 *)work + 0x10), zero, zero, 13, 5, 2);
     handle = FIELD_AT_OFFSET(work, s32 *, 0x10);
     object = (void *)UiIcon_CreateWithResourceVariant(handle, -8, 11);
     FIELD_AT_OFFSET(object, u8 *, 5) = 13;

@@ -28,14 +28,3 @@ void WindowBounds_Set(struct WindowBounds *bounds, s32 right, s32 bottom,
         bounds->bottom = bottom;
     }
 }
-
-/* ui/runtime/set/set_menu_busy.c */
-extern u8 *volatile gIw;
-
-void UiWork_SetMenuBusy(void)
-{
-    u8 *base = gIw;
-    u8 *p = base + RENDER_MENU_BUSY_OFS;
-    u8 flag = 1;
-    *p = flag;
-}

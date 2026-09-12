@@ -119,7 +119,26 @@ pub fn production_bindings(
             }
         }
     }
-    Ok(text)
+    Ok(define_only_bindings(&text))
+}
+
+/// Prototypes in the manifest mention `u8` / structs before `types.h` is
+/// visible to `-include`. Keep preprocessor names and comments only.
+fn define_only_bindings(text: &str) -> String {
+    let mut out = String::with_capacity(text.len());
+    for line in text.lines() {
+        let trimmed = line.trim_start();
+        if trimmed.is_empty()
+            || trimmed.starts_with('#')
+            || trimmed.starts_with("/*")
+            || trimmed.starts_with('*')
+            || trimmed.starts_with("//")
+        {
+            out.push_str(line);
+            out.push('\n');
+        }
+    }
+    out
 }
 
 #[cfg(test)]

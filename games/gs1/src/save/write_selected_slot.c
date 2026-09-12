@@ -77,9 +77,7 @@ struct State_080208e4 {
     u8 flag;
 };
 
-extern char Value_0000000a;
 extern char Value_0000000c;
-extern char RomBytes_02000000;
 extern volatile struct State_080208e4 gCell;
 extern volatile u8 gIw2;
 extern s16 gIw3;
@@ -90,7 +88,7 @@ s32 SaveState_LoadRecordIntoWork(s32 arg)
     s32 err = State_Check();
 
     if (err != 0) {
-        State_Apply((s32)&Value_0000000a, 1);
+        State_Apply((s32)Value_0000000a, 1);
         ret = -9;
     } else {
         s32 value;
@@ -100,7 +98,7 @@ s32 SaveState_LoadRecordIntoWork(s32 arg)
         if (value == -1) {
             ret = value;
         } else {
-            void *base = &RomBytes_02000000;
+            void *base = RomBytes_02000000;
 
             err = State_Apply3(value, base);
             base = (char *)base + 0x1000;

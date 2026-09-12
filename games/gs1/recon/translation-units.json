@@ -109315,6 +109315,31 @@
           "address": "0x08099018",
           "extent": 40,
           "state": "exact-c"
+        },
+        {
+          "address": "0x08099040",
+          "extent": 48,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08099070",
+          "extent": 92,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080990cc",
+          "extent": 92,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08099128",
+          "extent": 56,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08099160",
+          "extent": 400,
+          "state": "exact-c"
         }
       ],
       "overlay": null
@@ -110055,6 +110080,11 @@
         {
           "address": "0x08028ef0",
           "extent": 168,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08028f98",
+          "extent": 252,
           "state": "exact-c"
         }
       ],
@@ -111074,6 +111104,11 @@
         {
           "address": "0x080ae8dc",
           "extent": 44,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080ae908",
+          "extent": 78,
           "state": "exact-c"
         }
       ],

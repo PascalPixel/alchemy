@@ -17602,166 +17602,166 @@
       "call_via": "02002d8a",
       "source": "overlays/scene/actor/staged_step.c"
     },
-    "resource_3c5:02000030": "overlays/scene/story/branching_event/measure_fixed_point_position_distance.c",
-    "resource_3c5:0200006c": "overlays/scene/story/branching_event/find_actor_at_fixed_point_position.c",
-    "resource_3c5:02000244": "overlays/scene/story/branching_event/fill_grid_attribute_rectangle.c",
+    "resource_3c5:02000030": "overlays/scene/story/branching_event.c",
+    "resource_3c5:0200006c": "overlays/scene/story/branching_event.c",
+    "resource_3c5:02000244": "overlays/scene/story/branching_event.c",
     "resource_3c5:02000cf0": {
       "name": "advance_effect_motion",
-      "source": "overlays/scene/story/branching_event/effect_motion_variant_b.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:0200119c": {
       "name": "FieldScene_RunStep12WithPosition",
-      "source": "overlays/scene/story/branching_event/scene_primary_script.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:020009f4": {
       "name": "OverlayObject_SpawnConfiguredObject",
-      "source": "overlays/scene/story/branching_event/overlay_object.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:02000fd4": {
       "name": "SceneData_GetTableb5f8",
-      "source": "overlays/scene/story/branching_event/scene_data_head.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:020027f4": {
       "name": "SceneState_ConfigureRegion82_7AndApply768",
-      "source": "overlays/scene/story/branching_event/scene_setup.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:02000474": {
       "name": "StagedActor_FindClearPosition",
-      "source": "overlays/scene/story/branching_event/staged_actor.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:02002820": {
       "name": "SceneState_ApplyRectsAtActors8And9",
-      "source": "overlays/scene/story/branching_event/state_update.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:020024b0": {
       "name": "SceneState_ApplyRectAt32x78",
-      "source": "overlays/scene/story/branching_event/state_update.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:02000cd0": {
       "name": "OverlayObject_WaitUntilIdle",
-      "source": "overlays/scene/story/branching_event/overlay_object.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:020026fc": {
       "name": "SceneActor_PushObjectAheadIfLevel",
-      "source": "overlays/scene/story/branching_event/actor_motion.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:020026a8": {
       "name": "SceneState_SetRuntimeByte34",
-      "source": "overlays/scene/story/branching_event/state_update.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:02000f58": {
       "name": "SceneData_SelectByRuntimeSelector",
-      "source": "overlays/scene/story/branching_event/scene_data_head.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:02001184": {
       "name": "FieldScene_RunStep11",
-      "source": "overlays/scene/story/branching_event/scene_primary_script.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:02000fac": {
       "name": "SceneData_SelectTableB5b8ByState",
-      "source": "overlays/scene/story/branching_event/scene_data_head.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:02002738": {
       "name": "SceneActor_RunSlotZeroFacingCheck",
-      "source": "overlays/scene/story/branching_event/actor_facing.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:02000fdc": {
       "name": "SceneData_SelectDataByRuntimeSelector",
-      "source": "overlays/scene/story/branching_event/select_data_by_runtime_selector.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:020025c8": {
       "name": "FieldScene_RunFlag985DialogueBranch",
-      "source": "overlays/scene/story/branching_event/scene_primary_script.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:02000ae8": {
       "name": "SceneEffect_SpawnConfiguredEffect",
-      "source": "overlays/scene/story/branching_event/configurable_effect_spawn.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:020011fc": {
       "name": "FieldScene_RunStep15",
-      "source": "overlays/scene/story/branching_event/scene_primary_script.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:0200110c": {
       "name": "SceneState_BranchOnActorEightOrNineTile",
-      "source": "overlays/scene/story/branching_event/conditional_scene_setup.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:0200246c": {
       "name": "ActorPresentation_SetSceneCellByFlag985",
-      "source": "overlays/scene/story/branching_event/actor_presentation.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:02000a4c": {
       "name": "OverlayObject_PrepareObjectWithCommand15",
-      "source": "overlays/scene/story/branching_event/overlay_object.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:020026b8": {
       "name": "ActorPresentation_PlaceActorTwelveAtTile20And12",
-      "source": "overlays/scene/story/branching_event/actor_presentation.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:020002a8": {
       "name": "SceneActor_ResetMotionWhenAheadBlocked",
-      "source": "overlays/scene/story/branching_event/actor_motion.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
-    "resource_3c5:020009dc": "overlays/scene/story/branching_event/copy_mode_to_owner.c",
+    "resource_3c5:020009dc": "overlays/scene/story/branching_event.c",
     "resource_3c5:020027a0": {
       "name": "SceneData_SelectTableB91cByRuntimeSelector",
-      "source": "overlays/scene/story/branching_event/select_table_b91c_by_runtime_selector.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:02000cc0": {
       "name": "SceneState_SetValue8Mode66",
-      "source": "overlays/scene/story/branching_event/state_update.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:020011c4": {
       "name": "FieldScene_RunStep13WithTwoPositions",
-      "source": "overlays/scene/story/branching_event/scene_primary_script.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:020000c4": {
       "name": "StagedActor_PushActorAhead",
-      "source": "overlays/scene/story/branching_event/push_actor_ahead.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:02001214": {
       "name": "FieldScene_RunStepWithValue2693",
-      "source": "overlays/scene/story/branching_event/scene_primary_script.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:020010f4": {
       "name": "FieldScene_RunFourCallSequence",
-      "source": "overlays/scene/story/branching_event/scene_setup.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:02001238": {
       "name": "FieldScene_RunBranchingActorSequence",
-      "source": "overlays/scene/story/branching_event/event_script.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:02001b10": {
       "name": "FieldScene_RunActorEventSequence",
-      "source": "overlays/scene/story/branching_event/event_script.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:02001158": {
       "name": "ResetSceneParametersAndFinishSetup",
-      "source": "overlays/scene/story/branching_event/scene_setup.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:02002548": {
       "name": "FieldScene_RunScene3c5_02002548",
-      "source": "overlays/scene/story/branching_event/scene_primary_script.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:020024d0": {
       "name": "FieldScene_RunScene3c5_020024d0",
-      "source": "overlays/scene/story/branching_event/scene_primary_script.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:02000ab0": {
       "name": "OverlayObject_IntegrateVelocities",
-      "source": "overlays/scene/story/branching_event/overlay_object.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:02000eac": {
       "name": "FieldScene_RunScene3c5SequenceA",
-      "source": "overlays/scene/story/branching_event/scene_primary_script.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:02000d4c": {
       "name": "FieldScene_RunSupplementalSequenceOne",
-      "source": "overlays/scene/story/branching_event/scene_primary_script.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3c5:02000608": {
       "name": "SceneActor_MoveAndRedraw",
       "call_via": "0200371a",
-      "source": "overlays/scene/story/branching_event/move_and_redraw.c"
+      "source": "overlays/scene/story/branching_event.c"
     },
     "resource_3a5:02000030": "overlays/scene/story/selected_actor/set_effect_record_mode.c",
     "resource_3a5:02000e00": {

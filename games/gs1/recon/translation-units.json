@@ -128879,22 +128879,7 @@
       "owners": [
         {
           "address": "0x080d655c",
-          "extent": 28,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080d6578",
-          "extent": 232,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080d6660",
-          "extent": 240,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080d6750",
-          "extent": 312,
+          "extent": 26,
           "state": "exact-c"
         }
       ],

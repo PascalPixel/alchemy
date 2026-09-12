@@ -137,7 +137,3 @@ s16 *Runtime_BumpAllocateAlternatePool(s32 arg0)
 done:
     return (s16 *)allocation_address;
 }
-
-void RuntimeMemory_ReservedNoOp049A8(void)
-{
-}

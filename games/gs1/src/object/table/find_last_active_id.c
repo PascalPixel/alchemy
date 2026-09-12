@@ -31,3 +31,9 @@ s32 ObjectTable_FindLastActiveId(void)
     }
     return result;
 }
+
+/* object/table/get_slot_address.c */
+void *ObjectTable_GetSlotAddress(u32 index)
+{
+    return *(u8 **)ADDR_03001EBC + index * 4 + 20;
+}

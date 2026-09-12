@@ -62,3 +62,27 @@ void BattlePres_SetActorRecordMode(s32 actor_id, s32 mode)
     }
     }
 }
+
+/* battle/presentation/actor/set_other_modes.c */
+void BattlePres_SetOtherActorRecordModes(s32 excluded)
+{
+    s16 values[14];
+    s32 count = Actor_Apply(3, values);
+    s32 index;
+
+    for (index = 0; index < count; index++) {
+        if (values[index] != excluded)
+            Actor_Apply2(values[index], 1);
+    }
+}
+
+/* battle/presentation/actor/clear_modes.c */
+void BattlePres_ClearAllActorRecordModes(void)
+{
+    s16 values[14];
+    s32 count = Actor_Apply(3, values);
+    s32 index;
+
+    for (index = 0; index < count; index++)
+        Actor_Apply2(values[index], 0);
+}

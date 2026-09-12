@@ -3327,15 +3327,15 @@
     },
     "resource_389:02000030": {
       "name": "measure_fixed_point_position_distance",
-      "source": "overlays/shared/field_probe.c"
+      "source": "overlays/shared/measure_fixed_point_position_distance.c"
     },
     "resource_389:0200006c": {
       "name": "find_actor_at_fixed_point_position",
-      "source": "overlays/shared/field_probe.c"
+      "source": "overlays/shared/find_actor_at_fixed_point_position.c"
     },
     "resource_389:02000244": {
       "name": "fill_grid_attribute_rectangle",
-      "source": "overlays/shared/field_probe.c"
+      "source": "overlays/shared/fill_grid_attribute_rectangle.c"
     },
     "resource_38a:02000030": {
       "name": "Effect_SetRecordMode",
@@ -3470,11 +3470,11 @@
     },
     "resource_39b:02000314": {
       "name": "calculate_position_distance",
-      "source": "overlays/shared/shared_2.c"
+      "source": "overlays/shared/calculate_position_distance.c"
     },
     "resource_39b:02000350": {
       "name": "find_scene_actor_at_fixed_point_position",
-      "source": "overlays/shared/shared_2.c"
+      "source": "overlays/shared/find_scene_actor_at_fixed_point_position.c"
     },
     "resource_39b:020003a8": {
       "name": "AdvanceStagedActorPair",
@@ -3482,7 +3482,7 @@
     },
     "resource_39b:02000528": {
       "name": "fill_scene_grid_attribute_rectangle",
-      "source": "overlays/shared/shared_2.c"
+      "source": "overlays/shared/fill_scene_grid_attribute_rectangle.c"
     },
     "resource_39b:0200058c": {
       "name": "stop_blocked_actor_motion",
@@ -3571,15 +3571,15 @@
     },
     "resource_39f:02000030": {
       "name": "measure_fixed_point_position_distance",
-      "source": "overlays/shared/field_probe.c"
+      "source": "overlays/shared/measure_fixed_point_position_distance.c"
     },
     "resource_39f:0200006c": {
       "name": "find_actor_at_fixed_point_position",
-      "source": "overlays/shared/field_probe.c"
+      "source": "overlays/shared/find_actor_at_fixed_point_position.c"
     },
     "resource_39f:02000244": {
       "name": "fill_grid_attribute_rectangle",
-      "source": "overlays/shared/field_probe.c"
+      "source": "overlays/shared/fill_grid_attribute_rectangle.c"
     },
     "resource_39f:02002ba4": {
       "name": "update_orbiting_effect",
@@ -3669,11 +3669,11 @@
     },
     "resource_3a6:02000314": {
       "name": "calculate_position_distance",
-      "source": "overlays/shared/shared_2.c"
+      "source": "overlays/shared/calculate_position_distance.c"
     },
     "resource_3a6:02000350": {
       "name": "find_scene_actor_at_fixed_point_position",
-      "source": "overlays/shared/shared_2.c"
+      "source": "overlays/shared/find_scene_actor_at_fixed_point_position.c"
     },
     "resource_3a6:020003a8": {
       "name": "AdvanceStagedActorPair",
@@ -3681,7 +3681,7 @@
     },
     "resource_3a6:02000528": {
       "name": "fill_scene_grid_attribute_rectangle",
-      "source": "overlays/shared/shared_2.c"
+      "source": "overlays/shared/fill_scene_grid_attribute_rectangle.c"
     },
     "resource_3a6:0200058c": {
       "name": "stop_blocked_actor_motion",
@@ -3736,11 +3736,11 @@
     },
     "resource_3b2:02000030": {
       "name": "measure_fixed_point_position_distance",
-      "source": "overlays/shared/field_probe.c"
+      "source": "overlays/shared/measure_fixed_point_position_distance.c"
     },
     "resource_3b2:0200006c": {
       "name": "find_actor_at_fixed_point_position",
-      "source": "overlays/shared/field_probe.c"
+      "source": "overlays/shared/find_actor_at_fixed_point_position.c"
     },
     "resource_3b2:020000c4": {
       "name": "AdvanceStagedActorPair",
@@ -3748,7 +3748,7 @@
     },
     "resource_3b2:02000244": {
       "name": "fill_grid_attribute_rectangle",
-      "source": "overlays/shared/field_probe.c"
+      "source": "overlays/shared/fill_grid_attribute_rectangle.c"
     },
     "resource_3b2:020002a8": {
       "name": "StopBlockedActorMotion",
@@ -4041,11 +4041,11 @@
     },
     "resource_3b3:02000314": {
       "name": "calculate_position_distance",
-      "source": "overlays/shared/shared_2.c"
+      "source": "overlays/shared/calculate_position_distance.c"
     },
     "resource_3b3:02000350": {
       "name": "find_scene_actor_at_fixed_point_position",
-      "source": "overlays/shared/shared_2.c"
+      "source": "overlays/shared/find_scene_actor_at_fixed_point_position.c"
     },
     "resource_3b3:020003a8": {
       "name": "AdvanceStagedActorPair",
@@ -4053,7 +4053,7 @@
     },
     "resource_3b3:02000528": {
       "name": "fill_scene_grid_attribute_rectangle",
-      "source": "overlays/shared/shared_2.c"
+      "source": "overlays/shared/fill_scene_grid_attribute_rectangle.c"
     },
     "resource_3b3:0200058c": {
       "name": "stop_blocked_actor_motion",
@@ -4065,15 +4065,15 @@
     },
     "resource_3b4:02000030": {
       "name": "measure_fixed_point_position_distance",
-      "source": "overlays/shared/field_probe.c"
+      "source": "overlays/shared/measure_fixed_point_position_distance.c"
     },
     "resource_3b4:0200006c": {
       "name": "find_actor_at_fixed_point_position",
-      "source": "overlays/shared/field_probe.c"
+      "source": "overlays/shared/find_actor_at_fixed_point_position.c"
     },
     "resource_3b4:02000244": {
       "name": "fill_grid_attribute_rectangle",
-      "source": "overlays/shared/field_probe.c"
+      "source": "overlays/shared/fill_grid_attribute_rectangle.c"
     },
     "resource_3bb:02001b30": {
       "name": "initialize_scene_actor_positions",
@@ -4361,15 +4361,15 @@
     },
     "resource_3bd:02000030": {
       "name": "measure_fixed_point_position_distance",
-      "source": "overlays/shared/field_probe.c"
+      "source": "overlays/shared/measure_fixed_point_position_distance.c"
     },
     "resource_3bd:0200006c": {
       "name": "find_actor_at_fixed_point_position",
-      "source": "overlays/shared/field_probe.c"
+      "source": "overlays/shared/find_actor_at_fixed_point_position.c"
     },
     "resource_3bd:02000244": {
       "name": "fill_grid_attribute_rectangle",
-      "source": "overlays/shared/field_probe.c"
+      "source": "overlays/shared/fill_grid_attribute_rectangle.c"
     },
     "resource_3be:02000030": "overlays/shared/set_effect_record_mode.c",
     "resource_3be:02000048": {
@@ -4456,11 +4456,11 @@
     },
     "resource_3bf:02000030": {
       "name": "CalculateFixedPointPositionDistance",
-      "source": "overlays/shared/field_probe.c"
+      "source": "overlays/shared/measure_fixed_point_position_distance.c"
     },
     "resource_3bf:0200006c": {
       "name": "find_actor_at_fixed_point_position",
-      "source": "overlays/shared/field_probe.c"
+      "source": "overlays/shared/find_actor_at_fixed_point_position.c"
     },
     "resource_3bf:020000c4": {
       "name": "AdvanceStagedActorPair",
@@ -4468,7 +4468,7 @@
     },
     "resource_3bf:02000244": {
       "name": "fill_grid_attribute_rectangle",
-      "source": "overlays/shared/field_probe.c"
+      "source": "overlays/shared/fill_grid_attribute_rectangle.c"
     },
     "resource_3bf:020002a8": {
       "name": "StopBlockedActorMotion",
@@ -4849,15 +4849,15 @@
     },
     "resource_3c4:02000030": {
       "name": "measure_fixed_point_position_distance",
-      "source": "overlays/shared/field_probe.c"
+      "source": "overlays/shared/measure_fixed_point_position_distance.c"
     },
     "resource_3c4:0200006c": {
       "name": "find_actor_at_fixed_point_position",
-      "source": "overlays/shared/field_probe.c"
+      "source": "overlays/shared/find_actor_at_fixed_point_position.c"
     },
     "resource_3c4:02000244": {
       "name": "fill_grid_attribute_rectangle",
-      "source": "overlays/shared/field_probe.c"
+      "source": "overlays/shared/fill_grid_attribute_rectangle.c"
     },
     "resource_3c4:02001068": {
       "name": "advance_effect_motion",
@@ -4865,15 +4865,15 @@
     },
     "resource_3c5:02000030": {
       "name": "measure_fixed_point_position_distance",
-      "source": "overlays/shared/field_probe.c"
+      "source": "overlays/shared/measure_fixed_point_position_distance.c"
     },
     "resource_3c5:0200006c": {
       "name": "find_actor_at_fixed_point_position",
-      "source": "overlays/shared/field_probe.c"
+      "source": "overlays/shared/find_actor_at_fixed_point_position.c"
     },
     "resource_3c5:02000244": {
       "name": "fill_grid_attribute_rectangle",
-      "source": "overlays/shared/field_probe.c"
+      "source": "overlays/shared/fill_grid_attribute_rectangle.c"
     },
     "resource_3c5:02000cf0": {
       "name": "advance_effect_motion",

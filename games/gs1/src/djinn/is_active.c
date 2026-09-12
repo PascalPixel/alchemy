@@ -1,0 +1,11 @@
+#include "types.h"
+#include "owner_state.h"
+
+u32 Djinn_IsActive(s32 owner, s32 index, s32 bit)
+{
+    s32 value =
+        ((struct OwnerLearnedState *)Owner_GetState(owner))->learned[index] &
+        (1 << bit);
+
+    return (u32)(-value | value) >> 31;
+}

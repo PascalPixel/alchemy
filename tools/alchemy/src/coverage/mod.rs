@@ -141,7 +141,7 @@ fn summary(doc: &Value) -> Result<String, String> {
     ))
 }
 fn readme_metrics(proven_c: f64, proven_asm: f64, executable: f64) -> String {
-    let done = proven_c + proven_asm;
+    let done = crate::coverage::jsnum::done_bytes(proven_c as i64, proven_asm as i64) as f64;
     let share = |bytes: f64| {
         if executable == 0.0 {
             0.0
@@ -202,7 +202,7 @@ fn update_readme(
     if let Some(start) = out.find("**Proven C stands at ") {
         let value_start = start + "**Proven C stands at ".len();
         if let Some(end) = out[value_start..].find("%**") {
-            let c_able = executable - proven_asm;
+            let c_able = executable;
             let c_share = if c_able == 0.0 {
                 0.0
             } else {
@@ -242,7 +242,7 @@ mod tests {
     }
 
     #[test]
-    fn readme_status_uses_proven_c_plus_proven_assembly_bytes() {
+    fn readme_status_includes_exact_c_and_retained_assembly() {
         let map = CoverageMap {
             document: json!({
                 "executable_bytes": 1000,

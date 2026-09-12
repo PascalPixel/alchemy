@@ -34,7 +34,7 @@ struct FadeGlobals {
 };
 
 extern struct FadeGlobals gBattleWork;
-void Sys_SetMode(void *, void *, s32, s32);
+void Func_080b50f0(void *, void *, s32, s32);
 
 void Palette_StepFadeTransfer(void)
 {
@@ -46,7 +46,7 @@ void Palette_StepFadeTransfer(void)
         s32 *counter = (s32 *)(base + 0x77B8);
         s32 value = ++*counter;
 
-        Sys_SetMode(
+        Func_080b50f0(
             (u8 *)target + 0x544,
             (void *)0x050000C0,
             0x10000 - value * 1092,

@@ -27,6 +27,14 @@ struct StagedActorFootprint {
     s32 z1;
 };
 
+extern struct StagedActorFootprint Data_0200adc0[];
+extern u32 Data_0200ad68[];
+
+#define StagedActorFootprints Data_0200adc0
+#define StagedActorDirectionSteps Data_0200ad68
+#define FindStagedActorProbeTarget Func_020007de
+#define ClassifyStagedActorProbePosition Func_02003140
+
 extern struct StagedActor *FindStagedActorProbeTarget(
     s32 *direction_out, s32 *actor_slot_out, struct StagedActorProbe *probe);
 

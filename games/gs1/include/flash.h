@@ -3,6 +3,32 @@
 
 #include "types.h"
 
+#define EraseFlashSector                 Func_08006d50
+#define ProgramFlashByte                 Func_08006dec
+#define ProgramFlashSectorWithEraseRetry Func_08006e24
+#define ProgramFlashSector               Func_08006f84
+#define CountRemainingErasedFlashBytes   Func_08006f48
+#define RunFlashEraseVerifier            Func_08006f6c
+#define StopFlashTimer                   Func_08006a78
+#define ReadFlashByte                    Func_08006abc
+#define CopyFlashReadRoutineToRam        Func_08006ac0
+#define ReadFlashId                      Func_08006878
+#define IdentifyFlash                    Func_08006910
+#define EraseFlashChip                   Func_08006cdc
+#define StartFlashTimer                  Func_08006a00
+#define WaitForFlashWrite                Func_08006af8
+#define EraseAtmelFlashChip              Func_08007028
+#define EraseAtmelFlashSector            Func_08007098
+#define EraseAtmelFlashBlock             Func_0800711c
+#define ProgramAtmelFlashSector          Func_080071a8
+#define ProgramAtmelFlashBlock           Func_08007220
+#define FlashTimerIntr                   Func_080069a4
+#define SetFlashTimerIntr                Func_080069c8
+#define ReadFlashCore                    Func_08006b84
+#define ReadFlash                        Func_08006ba8
+#define VerifyFlashCore                  Func_08006c24
+#define VerifyFlashSector                Func_08006c68
+
 u16 EraseFlashSector(u16 sector);
 u16 ProgramFlashByte(u8 *source, u8 *destination);
 u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source);

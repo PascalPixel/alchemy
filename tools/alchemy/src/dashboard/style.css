@@ -26,7 +26,7 @@ body {
 .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; width: min(1600px, 100%); margin: 0 auto; padding: 28px; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .panel { min-width: 0; overflow: hidden; background: var(--raised); align-self: start; }
-.chart { min-height: 180px; }
+.chart { min-height: 180px; overflow-x: auto; }
 .tree-image { display: block; }
 .tree-image g[data-address] { cursor: copy; }
 .tree-image g[data-address]:focus-visible { outline: 2px solid #fff; }

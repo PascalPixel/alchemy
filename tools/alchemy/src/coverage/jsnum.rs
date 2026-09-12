@@ -29,7 +29,7 @@ pub fn round_half_up(n: i64, d: i64) -> f64 {
         ((n as f64 * 10_000.0 / d as f64) + 0.5).floor() / 100.0
     }
 }
-/// DONE is one metric: proven C plus proven assembly over executable bytes.
+/// DONE counts exact C plus retained assembly over executable bytes.
 /// Every reader of the figure - the coverage summary, the README, the commit
 /// gate and the dashboard - takes it from here.
 pub fn done_bytes(proven_c: i64, proven_asm: i64) -> i64 {
@@ -51,7 +51,7 @@ pub fn done_percent_whole(proven_c: i64, proven_asm: i64, executable: i64) -> i6
 mod done_tests {
     use super::*;
     #[test]
-    fn done_is_c_plus_assembly_over_executable() {
+    fn done_is_exact_c_plus_retained_assembly() {
         assert_eq!(done_bytes(400, 100), 500);
         assert_eq!(done_percent(400, 100, 1000), 50.0);
         assert_eq!(done_percent(631_946, 60, 1_354_302), 46.67);

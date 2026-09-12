@@ -5,12 +5,41 @@
  */
 
 #include "types.h"
-#include "scene.h"
+
+#define NULL ((void *)0)
 
 /*
  * Each Func_ symbol names the pre-relocation call word the image holds,
  * not a runtime address.
  */
+#define CalculateFacingAngle Func_020011b6
+#define Scene_UpdateTimedActor Func_020010c0
+#define OverlayObject_UpdateFacingTowardTarget Func_02000030
+#define AdvancePositionScaleAndVelocity Func_02000088
+#define SceneData_GetTable9478 Func_020000cc
+#define SceneData_ReturnZero Func_020000d4
+#define SceneData_SelectTable9568ByFlag Func_020000d8
+#define SceneData_SelectFlaggedTable Func_020000fc
+#define SceneData_SelectTable9c00ByFlags Func_02000140
+#define SceneDialogue_RunActor15Message0f6d Func_02000190
+#define SceneDialogue_RunActor19Message0f73 Func_020001bc
+#define FieldScene_RunScene376_020001e8 Func_020001e8
+#define SceneDialogue_RunActor16Message11be Func_02000258
+#define SceneDialogue_RunActor10Message1c3d Func_02000278
+#define FieldScene_RunScene376_02000298 Func_02000298
+#define SceneState_SetRuntimeWord448To521AndRun Func_020002bc
+#define FieldScene_RunIndexedStep1 Func_02000308
+#define FieldScene_RunIndexedStep2 Func_02000314
+#define FieldScene_RunIndexedStep3 Func_02000320
+#define FieldScene_RunIndexedStep4 Func_0200032c
+#define FieldScene_RunIndexedStep5 Func_02000338
+#define FieldScene_RunIndexedStep6 Func_02000344
+#define FieldScene_RunIndexedStep7 Func_02000350
+#define FieldScene_RunIndexedStep8 Func_0200035c
+#define FieldScene_RunByActorDirectionAndFlags Func_020004dc
+#define FieldScene_RunScene376_0200055c Func_0200055c
+#define FieldScene_RunScene376_020005d4 Func_020005d4
+#define FieldScene_RunLongPresentationSequence Func_02000658
 
 #include "facing_object.h"
 
@@ -40,27 +69,456 @@ union SceneField {
     u8 bytes[2];
 } __attribute__((packed, aligned(2)));
 
-extern u8 gOv[];
-extern u8 gOv2[];
-extern u8 gOv3[];
-extern u8 gVal[];
-extern u8 gVal2[];
-extern u8 gCell[];
-extern s16 gCell2[][1];
-extern u8 gOv4[];
-extern u8 gOv5[];
-extern u32 gIw;
-extern u8 gOv6[];
+extern u8 Data_020098b8[];
+extern u8 Data_02009738[];
+extern u8 Data_020095b8[];
+extern u8 Data_000011a4[];
+extern u8 Data_00001c40[];
+extern u8 Data_02000240[];
+extern s16 Data_02000240_t[][1];
+extern u8 Data_020092fc[];
+extern u8 Data_02009400[];
+extern u32 Data_03001e40;
+extern u8 Data_02009440[];
 
-u8 *Actor_unk16_4();
-u8 *Actor_unk17_4();
+s32 Func_020011b6(s32, s32);
+s32 Func_02001262(s32 flag);
+s32 Func_02001286(s32);
+s32 Func_02001294(s32);
+void Func_020012cc(void *);
+s32 Func_020012e6(s32 flag);
+void Func_02001330(void);
+void Func_020013de(s32 msg);
+void Func_020013d8(s32 actor, s32 target, s32 frames);
+s32 Func_02001410(s32 actor, s32 mode);
+void Func_02001354(void);
+void Func_0200135c(void);
+void Func_0200140a(s32 msg);
+void Func_02001404(s32 actor, s32 target, s32 frames);
+s32 Func_0200143c(s32 actor, s32 mode);
+void Func_02001380(void);
+s32 Func_02001376();
+void Func_02001388();
+void Func_020013aa();
+void Func_020013c8();
+void Func_020013e4();
+void Func_020013ea();
+void Func_02001440();
+void Func_0200144c();
+void Func_02001458();
+void Func_0200145e();
+void Func_02001482();
+void Func_020013f8(void);
+void Func_020014a6(s32 msg);
+s32 Func_020014ce(s32 actor, s32 mode);
+void Func_02001412(void);
+void Func_02001418(void);
+void Func_020014c6(s32 msg);
+s32 Func_020014ee(s32 actor, s32 mode);
+void Func_02001432(void);
+void Func_02001438();
+void Func_02001452();
+void Func_020014e6();
+void Func_020014fe();
+s32 Func_02001448(s32 flagId);
+void Func_02001588(void);
+void Func_020015c6(s32 soundId);
+void Func_020015c8(void);
+void Func_020005ca(int value);
+void Func_020005d6(int value);
+void Func_020005e2(int value);
+void Func_020005ee(int value);
+void Func_020005fa(int value);
+void Func_02000606(int value);
+void Func_02000612(int value);
+void Func_0200061e(int value);
+void Func_02000aba();
+s32 Func_02001500();
+void Func_0200157a();
+void Func_0200158e();
+void Func_02001598();
+void Func_020015ac();
+void Func_020015b6();
+void Func_020015c0();
+s32 Func_020015c4();
+void Func_020015ca();
+s32 Func_020015de_a();
+s32 Func_020015de_b();
+void Func_020015e8();
+void Func_020015f2();
+void Func_020015fc();
+void Func_02001606();
+s32 Func_0200160c();
+void Func_02001610();
+void Func_0200161a_a();
+void Func_0200161a_b();
+void Func_02001620();
+u8 *Func_0200162c();
+u8 *Func_02001664();
+void Func_0200169e();
+void Func_020016ba();
+void Func_020016ce();
+void Func_020016ec();
+void Func_02001706_a();
+void Func_02001706_b();
+void Func_0200171a();
+u8 *Func_020016a6(s32 actor_id);
+void Func_02001698(void);
+s32 Func_020016a0(s32 flag_id);
+void Func_02001772(s32 dialogue_id);
+void Func_02001778(s32 actor_id, s32 mode);
+void Func_0200178a(s32 actor_id, s32 mode);
+void Func_020016de(void);
+s32 Func_02001706();
+s32 Func_02001718_a();
+s32 Func_02001718_b();
+s32 Func_02001726();
+void Func_02001756();
+void Func_020017d0();
+void Func_020017ea();
+void Func_02001802();
+void Func_02001862();
+void Func_02000808();
+s32 Func_0200177a();
+void Func_0200179a();
+s32 Func_0200179c();
+s32 Func_0200179e();
+void Func_020017b4();
+void Func_020017c2();
+void Func_020017dc();
+void Func_02001848();
+void Func_02001860();
+void Func_02001870();
+void Func_02001888();
+void Func_020018da();
+void Func_020017c6();
+void Func_020017fe();
+void Func_02001840();
+void Func_0200184c();
+void Func_02001858_a();
+void Func_02001858_b();
+void Func_02001862_a();
+void Func_02001862_b();
+void Func_02001864();
+void Func_0200186c();
+void Func_02001876();
+s32 Func_0200188a();
+s32 Func_02001896();
+s32 Func_020018a2();
+void Func_020018ac();
+s32 Func_020018ae();
+s32 Func_020018ba();
+void Func_020018be();
+s32 Func_020018c4();
+void Func_020018fe();
+s32 Func_02001906();
+void Func_02001908();
+s32 Func_0200191a();
+s32 Func_0200192e();
+void Func_02001930();
+void Func_02001948();
+void Func_0200194a();
+void Func_02001954();
+void Func_02001968();
+void Func_02001972();
+void Func_0200197c_a();
+void Func_0200197c_b();
+void Func_02001980();
+void Func_02001994();
+void Func_020019a0();
+void Func_020019b4();
+void Func_020019bc();
+void Func_020019c2();
+void Func_020019d0();
+void Func_020019ee();
+void Func_020019fe_a();
+void Func_020019fe_b();
+void Func_02001a08();
+void Func_02001a12_a();
+void Func_02001a12_b();
+void Func_02001a1c_a();
+void Func_02001a1c_b();
+void Func_02001a28();
+void Func_02001a3a();
+void Func_02001a40();
+void Func_02001a46();
+void Func_02001a4a();
+void Func_02001a4c();
+void Func_02001a56();
+void Func_02001a84();
+s32 Func_02001a90();
+void Func_02001a92();
+void Func_02001a9a();
+void Func_02001aa2();
+void Func_02001ab4_a();
+void Func_02001ab4_b();
+void Func_02001aba();
+void Func_02001abe();
+void Func_02001ae2();
+void Func_02001ae8();
+void Func_02001afa();
+void Func_02001b00();
+void Func_02001b06();
+void Func_02001b10();
+void Func_02001b16_a();
+void Func_02001b16_b();
+void Func_02001b1a();
+void Func_02001b20();
+void Func_02001b28();
+void Func_02001b2e();
+void Func_02001b38();
+void Func_02001b40();
+void Func_02001b4a();
+void Func_02001b4e();
+void Func_02001b56();
+void Func_02001b5c();
+void Func_02001b5e();
+void Func_02001b66();
+void Func_02001b68();
+void Func_02001b6e();
+void Func_02001b70();
+void Func_02001b76();
+void Func_02001b86();
+void Func_02001b98();
+void Func_02001bb2();
+void Func_02001bb8();
+void Func_02001bc0();
+void Func_02001bda();
+void Func_02001be0();
+void Func_02001be8();
+void Func_02001bea();
+void Func_02001bfa();
+void Func_02001c00();
+void Func_02001c0c();
+void Func_02001c1a();
+void Func_02001c1e();
+void Func_02001c34_a();
+void Func_02001c34_b();
+void Func_02001c3c();
+void Func_02001c5c();
+void Func_02001c5e();
+void Func_02001c68();
+void Func_02001c72();
+void Func_02001c7a();
+void Func_02001c82();
+void Func_02001c8a();
+void Func_02001c8e();
+void Func_02001c92_a();
+void Func_02001c92_b();
+void Func_02001cb8();
+void Func_02001cbe();
+void Func_02001cc0();
+void Func_02001cc6();
+void Func_02001cca_a();
+void Func_02001cca_b();
+void Func_02001ce2();
+void Func_02001d1a();
+void Func_02001d40();
+void Func_02001d44_a();
+void Func_02001d44_b();
+void Func_02001d4c();
+void Func_02001d6c();
+void Func_02001d72();
+void Func_02001d88();
+void Func_02001d94();
+void Func_02001d98();
+void Func_02001d9a();
+void Func_02001dbe();
+void Func_02001dc6();
+void Func_02001dcc();
+void Func_02001dd2();
+void Func_02001dd6();
+void Func_02001ddc();
+void Func_02001dde();
+void Func_02001df6();
+void Func_02001e00();
+void Func_02001e02_a();
+void Func_02001e02_b();
+void Func_02001e0e();
+s32 Func_02001e12_a();
+s32 Func_02001e12_b();
+void Func_02001e1e();
+void Func_02001e20();
+void Func_02001e30();
+void Func_02001e50();
+void Func_02001e52_a();
+void Func_02001e52_b();
+s32 Func_02001e5e();
+void Func_02001e6c();
+void Func_02001e6e();
+void Func_02001e8a();
+void Func_02001e96();
+void Func_02001ea2();
+void Func_02001eaa();
+void Func_02001eae();
+void Func_02001eb2();
+void Func_02001eba();
+void Func_02001ede();
+void Func_02001ee2();
+void Func_02001ee6_a();
+void Func_02001ee6_b();
+void Func_02001ef4();
+void Func_02001efe();
+void Func_02001f0c();
+void Func_02001f10();
+void Func_02001f2c();
+void Func_02001f36();
+void Func_02001f38_a();
+void Func_02001f38_b();
+void Func_02001f40();
+void Func_02001f48_a();
+void Func_02001f48_b();
+void Func_02001f4c();
+void Func_02001f52();
+void Func_02001f58_a();
+void Func_02001f58_b();
+void Func_02001f58_c();
+void Func_02001f7c();
+void Func_02001f90();
+void Func_02001fa2();
+void Func_02001fb0();
+void Func_02001fb2();
+void Func_02001fc2();
+void Func_02001fcc();
+void Func_02001fd4();
+void Func_02001fda();
+void Func_02001fe2();
+void Func_02001fe6();
+void Func_02001ff0();
+void Func_02001ffa();
+s32 Func_02001ffe();
+void Func_0200201c();
+void Func_02002026();
+void Func_02002028_a();
+void Func_02002028_b();
+void Func_0200202e();
+void Func_02002030();
+void Func_02002036();
+void Func_02002038();
+void Func_02002042();
+void Func_02002048();
+void Func_0200205a();
+s32 Func_02002062();
+void Func_02002066();
+void Func_02002068();
+void Func_02002080();
+void Func_020020b4();
+void Func_020020c6();
+void Func_020020c8_a();
+void Func_020020c8_b();
+void Func_020020ce();
+void Func_020020d6();
+void Func_020020de();
+void Func_020020ea();
+void Func_02002104();
+void Func_0200210a();
+void Func_0200210e();
+void Func_02002114();
+void Func_0200212e();
+void Func_0200213e();
+void Func_0200215a();
+void Func_02002168();
+void Func_020021c2_a();
+void Func_020021c2_b();
+void Func_020021c4();
+void Func_020021c8();
+void Func_020021d0();
+void Func_020021d4();
+void Func_020021e6();
+void Func_020021e8();
+void Func_020021f8();
+void Func_020021fa();
+void Func_02002204();
+void Func_02002210();
+void Func_02002216_a();
+void Func_02002216_b();
+void Func_0200221c();
+void Func_02002228();
+void Func_0200222a();
+s32 Func_02002230();
+void Func_02002232_a();
+void Func_02002232_b();
+void Func_0200223a();
+s32 Func_02002240();
+void Func_02002242();
+s32 Func_02002248();
+void Func_0200224a();
+void Func_0200225e();
+void Func_0200226a();
+void Func_0200226c();
+void Func_02002276();
+void Func_02002282();
+void Func_020022f0();
+void Func_020090c1();
+union SceneActor *Func_020022b0(s32);
+s32 *Func_020022bc(s32);
+void Func_0200230a(s32, s32, s32);
+void Func_02002302(s32, void *);
 
-u8 *Actor_unk18_4(s32 actor_id);
+/*
+ * Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers; a direct call precomputes a costly constant
+ * into a pseudo that the compiler then shares with later uses in the
+ * block. A value-returning call sets r0 last of its arguments, so a callee
+ * is declared to return a value here even where the result is unused.
+ */
+static __inline__ void Call1(void (*f)(), s32 a0)
+{
+    f(a0);
+}
 
-union SceneActor *Actor_unk19_4(s32);
-s32 *Actor_unk20_4(s32);
+static __inline__ s32 Value1(s32 (*f)(), s32 a0)
+{
+    return f(a0);
+}
 
-s32 OvObj_UpdateFacingTowardTarget(struct FacingObject *obj)
+static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    f(a0, a1, a2);
+}
+
+static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
+{
+    extern u8 Data_03001ebc[];
+
+    f(a0, a1);
+}
+
+/* Advance the scene step counter at 0x1d8 of the shared scene work record. */
+static __inline__ void bump_step(s32 amount)
+{
+    extern u8 Data_03001ebc[];
+
+    u8 *work = *(u8 **)Data_03001ebc;
+
+    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+}
+
+static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
+{
+    extern u8 Data_03001ebc[];
+    void Func_0200220e();
+
+    return f(a0, a1);
+}
+
+static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
+{
+    extern u8 Data_03001ebc[];
+    void Func_0200220e();
+
+    f(a0, a1, a2, a3);
+}
+
+static __inline__ void Call11(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7, s32 a8, s32 a9, s32 a10)
+{
+    extern u8 Data_03001ebc[];
+    void Func_0200220e();
+
+    f(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
+}
+
+s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
 {
     s32 delta;
     u16 old;
@@ -113,7 +571,7 @@ int SceneData_ReturnZero(void)
 /* The 36-byte owner includes its three pool words. */
 void *SceneData_SelectTable9568ByFlag(void)
 {
-    if (Actor_unk18(0x834) != 0)
+    if (Func_02001262(0x834) != 0)
         return (void *)0x02009590;
     return (void *)0x02009568;
 }
@@ -122,220 +580,220 @@ void *SceneData_SelectFlaggedTable(void)
 {
     void *tbl;
 
-    if (Actor_unk19(0x87a)) {
-        tbl = gOv;
-    } else if (Actor_unk20(0x815)) {
-        tbl = gOv2;
+    if (Func_02001286(0x87a)) {
+        tbl = Data_020098b8;
+    } else if (Func_02001294(0x815)) {
+        tbl = Data_02009738;
     } else {
-        tbl = gOv3;
+        tbl = Data_020095b8;
     }
-    Actor_unk12_2(tbl);
+    Func_020012cc(tbl);
     return tbl;
 }
 
 /* The 80-byte owner includes its seven pool words. */
 void *SceneData_SelectTable9c00ByFlags(void)
 {
-    if (Actor_unk21_4(0x834) != 0)
+    if (Func_020012ca(0x834) != 0)
         return (void *)0x02009ac8;
-    if (Actor_unk22_4(0x87a) != 0)
+    if (Func_020012d8(0x87a) != 0)
         return (void *)0x02009ffc;
-    if (Actor_unk21(0x815) != 0)
+    if (Func_020012e6(0x815) != 0)
         return (void *)0x02009da4;
     return (void *)0x02009c00;
 }
 
 /* The 44-byte actor-15 scene owner includes its one pool word. */
-void Dialogue_RunActor15Message0f6d(void)
+void SceneDialogue_RunActor15Message0f6d(void)
 {
-    Actor_unk23_4();
-    Actor_unk13_2(0xf6d);
-    Actor_unk101_3(0, 15, 6);
-    Actor_Apply(15, 0);
-    Actor_unk24_4();
+    Func_02001330();
+    Func_020013de(0xf6d);
+    Func_020013d8(0, 15, 6);
+    Func_02001410(15, 0);
+    Func_02001354();
 }
 
 /* The 44-byte actor-19 scene owner includes its one pool word. */
-void Dialogue_RunActor19Message0f73(void)
+void SceneDialogue_RunActor19Message0f73(void)
 {
-    Actor_unk25_4();
-    Actor_unk14_2(0xf73);
-    Actor_unk102_3(0, 19, 6);
-    Actor_Apply2(19, 0);
-    Actor_unk26_4();
+    Func_0200135c();
+    Func_0200140a(0xf73);
+    Func_02001404(0, 19, 6);
+    Func_0200143c(19, 0);
+    Func_02001380();
 }
 
-void Scene_RunScene376(void)
+void FieldScene_RunScene376_020001e8(void)
 {
     s32 callback;
     s32 base5_11a4;
 
-    Actor_unk27_4();
-    if (Actor_Check(0x81b) != 0) {
-        Actor_Do(0x11a6);
-        Actor_unk28_4(20, 0);
+    Func_02001388();
+    if (Value1(Func_02001376, 0x81b) != 0) {
+        Call1(Func_02001440, 0x11a6);
+        Func_02001458(20, 0);
         callback = 0x20092fc;
-        Actor_Place(20, 0x10000, callback);
+        Call3(Func_0200144c, 20, 0x10000, callback);
     } else {
-        base5_11a4 = (s32)gVal;
-        Actor_unk29_4(base5_11a4);
-        Actor_unk30_4(20, 0, 20);
-        Actor_unk31_4((base5_11a4 + 1), 1);
-        Actor_unk32_4(180, 0);
-        Actor_unk2_2(0x81b);
+        base5_11a4 = (s32)Data_000011a4;
+        Func_0200145e(base5_11a4);
+        Func_02001482(20, 0, 20);
+        Func_020013aa((base5_11a4 + 1), 1);
+        Func_020013ea(180, 0);
+        Call1(Func_020013c8, 0x81b);
     }
-    Actor_unk33_4();
+    Func_020013e4();
 }
 
 /* The 32-byte actor-16 dialogue owner includes its one pool word. */
-void Dialogue_RunActor16Message11be(void)
+void SceneDialogue_RunActor16Message11be(void)
 {
-    Actor_unk34_4();
-    Actor_unk15_2(0x11be);
-    Actor_Apply3(16, 0);
-    Actor_unk35_4();
+    Func_020013f8();
+    Func_020014a6(0x11be);
+    Func_020014ce(16, 0);
+    Func_02001412();
 }
 
 /* The 32-byte actor-10 dialogue owner includes its one pool word. */
-void Dialogue_RunActor10Message1c3d(void)
+void SceneDialogue_RunActor10Message1c3d(void)
 {
-    Actor_unk36_4();
-    Actor_unk16_2(0x1c3d);
-    Actor_Apply4(10, 0);
-    Actor_unk37_4();
+    Func_02001418();
+    Func_020014c6(0x1c3d);
+    Func_020014ee(10, 0);
+    Func_02001432();
 }
 
-void Scene_RunScene376(void)
+void FieldScene_RunScene376_02000298(void)
 {
-    extern u8 gWork[];
+    extern u8 Data_03001ebc[];
 
     u32 i;
     s32 record;
 
-    Actor_unk38_4();
-    Actor_unk39_4((s32)gVal2);
-    Actor_Run(0x800b, 0);
-    Actor_unk40_4();
+    Func_02001438();
+    Func_020014e6((s32)Data_00001c40);
+    Call2(Func_020014fe, 0x800b, 0);
+    Func_02001452();
 }
 
 /* The 76-byte shared numbered-scene owner includes its two pool words. */
-void State_SetRuntimeWord448To521AndRun(s32 value)
+void SceneState_SetRuntimeWord448To521AndRun(s32 value)
 {
-    extern u8 *gWork;
-    void Actor_unk41_4(s32 value);
-    void Actor_unk42_4(void);
+    extern u8 *Data_03001ebc;
+    void Func_020015a2_a(s32 value);
+    void Func_020015d4_a(void);
 
-    if (Actor_unk22(0x834) != 0)
-        Actor_unk43_4();
-    Actor_unk17_2(123);
-    *(s32 *)(gWork + 448) = 521;
-    *(s32 *)(gWork + 456) = 16;
-    Actor_unk44_4();
-    Actor_unk42_4();
-    Actor_unk41_4(value);
+    if (Func_02001448(0x834) != 0)
+        Func_02001588();
+    Func_020015c6(123);
+    *(s32 *)(Data_03001ebc + 448) = 521;
+    *(s32 *)(Data_03001ebc + 456) = 16;
+    Func_020015c8();
+    Func_020015d4_a();
+    Func_020015a2_a(value);
 }
 
 /* Eight numbered-scene wrappers follow, each a twelve-byte owner. */
-void Scene_RunIndexedStep1(void)
+void FieldScene_RunIndexedStep1(void)
 {
-    Actor_unk18_2(1);
+    Func_020005ca(1);
 }
 
-void Scene_RunIndexedStep2(void)
+void FieldScene_RunIndexedStep2(void)
 {
-    Actor_unk19_2(2);
+    Func_020005d6(2);
 }
 
-void Scene_RunIndexedStep3(void)
+void FieldScene_RunIndexedStep3(void)
 {
-    Actor_unk20_2(3);
+    Func_020005e2(3);
 }
 
-void Scene_RunIndexedStep4(void)
+void FieldScene_RunIndexedStep4(void)
 {
-    Actor_unk21_2(4);
+    Func_020005ee(4);
 }
 
-void Scene_RunIndexedStep5(void)
+void FieldScene_RunIndexedStep5(void)
 {
-    Actor_unk22_2(5);
+    Func_020005fa(5);
 }
 
-void Scene_RunIndexedStep6(void)
+void FieldScene_RunIndexedStep6(void)
 {
-    Actor_unk23_2(6);
+    Func_02000606(6);
 }
 
-void Scene_RunIndexedStep7(void)
+void FieldScene_RunIndexedStep7(void)
 {
-    Actor_unk24_2(7);
+    Func_02000612(7);
 }
 
-void Scene_RunIndexedStep8(void)
+void FieldScene_RunIndexedStep8(void)
 {
-    Actor_unk25_2(8);
+    Func_0200061e(8);
 }
 
-s32 Scene_RunSupplementalSequenceOne(void)
+s32 Func_02000368(void)
 {
-    extern u8 gWork[];
-    void Actor_unk46_4();
-    void Actor_unk47_4();
+    extern u8 Data_03001ebc[];
+    void Func_020015a2();
+    void Func_020015d4();
 
     u32 i;
     u8 *record;
-    u8 *volatile *scene = (u8 *volatile *)gWork;
+    u8 *volatile *scene = (u8 *volatile *)Data_03001ebc;
 
     *(s32 *)(scene[0] + 0x1c0) = 0x209;
-    if (Actor_unk2(0x834) != 0) {
-        Actor_unk48_4(8, 0, 0);
-        Actor_unk49_4(9, 0, 0);
-        Actor_unk46_4(10, 0, 0);
-        Actor_unk50_4(11, 0, 0);
-        Actor_unk51_4(12, 0, 0);
-        Actor_unk52_4(13, 0, 0);
-        Actor_unk53_4(14, 0, 0);
-        Actor_unk47_4(15, 0, 0);
-        ((void (*)())Actor_unk23)(16, 0, 0);
-        Actor_unk54_4(17, 0, 0);
-        Actor_unk55_4(18, 0, 0);
-        Actor_unk56_4(19, 0, 0);
-        Actor_unk57_4(20, 0, 0);
-        Actor_unk58_4(21, 0, 0);
-        Actor_unk59_4(22, 0, 0);
-        Actor_unk60_4();
+    if (Value1(Func_02001500, 0x834) != 0) {
+        Func_0200158e(8, 0, 0);
+        Func_02001598(9, 0, 0);
+        Func_020015a2(10, 0, 0);
+        Func_020015ac(11, 0, 0);
+        Func_020015b6(12, 0, 0);
+        Func_020015c0(13, 0, 0);
+        Func_020015ca(14, 0, 0);
+        Func_020015d4(15, 0, 0);
+        ((void (*)())Func_020015de_a)(16, 0, 0);
+        Func_020015e8(17, 0, 0);
+        Func_020015f2(18, 0, 0);
+        Func_020015fc(19, 0, 0);
+        Func_02001606(20, 0, 0);
+        Func_02001610(21, 0, 0);
+        Func_0200161a_a(22, 0, 0);
+        Func_020016ce();
         {
             u16 *target = (u16 *)(scene[3] + 0x1f84);
             s32 shown = 1;
 
             *target = shown;
         }
-        Actor_unk61_4();
-        Actor_unk62_4(30);
-        Actor_unk63_4();
-        Actor_unk64_4();
-        Actor_unk65_4();
+        Func_020016ec();
+        Func_0200157a(30);
+        Func_02001706_a();
+        Func_0200171a();
+        Func_02001706_b();
     }
-    if (Actor_unk3(0x87a) != 0) {
-        if (gCell2[225][0] == 6) {
-            if (Actor_unk4(0x81d) == 0) {
-                Actor_unk66_4();
+    if (Value1(Func_020015c4, 0x87a) != 0) {
+        if (Data_02000240_t[225][0] == 6) {
+            if (Value1(Func_020015de_b, 0x81d) == 0) {
+                Func_02000aba();
             }
         }
         {
-            u8 *record = Actor_unk16_4(10);
+            u8 *record = Func_0200162c(10);
             u8 value = *(volatile u8 *)&record[89];
 
             record[89] = (u8)(value | 128);
         }
     }
-    if (gCell2[225][0] == 2) {
-        if (Actor_unk5(0x815) != 0) {
-            Actor_unk2_3(13, 0x1c60000, 0x960000);
-            record = Actor_unk17_4(13);
-            Actor_unk67_4((s32)record, 0);
-            Actor_unk68_4(13, 5);
-            Actor_unk69_4(4);
+    if (Data_02000240_t[225][0] == 2) {
+        if (Value1(Func_0200160c, 0x815) != 0) {
+            Call3(Func_0200169e, 13, 0x1c60000, 0x960000);
+            record = Func_02001664(13);
+            Func_0200161a_b((s32)record, 0);
+            Func_020016ba(13, 5);
+            Func_02001620(4);
         }
     }
     return 0;
@@ -348,97 +806,97 @@ s32 Scene_RunSupplementalSequenceOne(void)
  * range means is not established. The record is fetched before either path
  * is chosen. The 128-byte owner includes its seven pool words.
  */
-void Scene_RunByActorDirectionAndFlags(void)
+void FieldScene_RunByActorDirectionAndFlags(void)
 {
-    void Actor_unk70_4(s32 arg0, s32 actor_id);
+    void Func_020017e2(s32 arg0, s32 actor_id);
 
     u8 *p;
     u32 dir;
 
-    p = Actor_unk18_4(0);
+    p = Func_020016a6(0);
     dir = *(u16 *)(p + 6);
     dir += 0xffff5fff;
 
     if (dir <= 0x3ffe) {
-        Actor_unk70_4(1, 21);
+        Func_020017e2(1, 21);
         return;
     }
 
-    Actor_unk71_4();
-    if (Actor_unk72_4(0x87a) != 0) {
-        Actor_unk73_4(0x1c06);
-        Actor_Apply5(21, 0);
+    Func_02001698();
+    if (Func_02001686(0x87a) != 0) {
+        Func_02001750(0x1c06);
+        Func_02001778(21, 0);
     } else {
-        if (Actor_unk24(0x815) != 0) {
-            Actor_unk74_4(0x11a2);
+        if (Func_020016a0(0x815) != 0) {
+            Func_0200176a(0x11a2);
         } else {
-            Actor_unk26_2(0x0f53);
+            Func_02001772(0x0f53);
         }
-        Actor_Apply6(21, 0);
+        Func_0200178a(21, 0);
     }
-    Actor_unk75_4();
+    Func_020016de();
 }
 
-void Scene_RunScene376(void)
+void FieldScene_RunScene376_0200055c(void)
 {
-    extern u8 gWork[];
-    void Actor_unk76_4();
+    extern u8 Data_03001ebc[];
+    void Func_020017e2_a();
 
     u32 i;
     s32 record;
 
-    record = Actor_unk25(0);
+    record = Func_02001726(0);
     if ((u32)(*(volatile u16 *)(record + 6) + -0xa001) <= 0x3ffe) {
-        Actor_unk77_4(2, 22);
+        Func_02001862(2, 22);
     } else {
-        ((void (*)())Actor_unk26)();
-        if (Actor_unk6(0x87a) != 0) {
-            Actor_unk3_2(0x1c09);
+        ((void (*)())Func_02001718_a)();
+        if (Value1(Func_02001706, 0x87a) != 0) {
+            Call1(Func_020017d0, 0x1c09);
         } else {
-            if (Actor_unk7(0x815) != 0) {
-                Actor_unk4_2(0x11a3);
+            if (Value1(Func_02001718_b, 0x815) != 0) {
+                Call1(Func_020017e2_a, 0x11a3);
             } else {
-                Actor_unk5_2(0xf54);
+                Call1(Func_020017ea, 0xf54);
             }
         }
-        Actor_unk78_4(22, 0);
-        Actor_unk79_4();
+        Func_02001802(22, 0);
+        Func_02001756();
     }
 }
 
-void Scene_RunScene376(void)
+void FieldScene_RunScene376_020005d4(void)
 {
-    extern u8 gWork[];
+    extern u8 Data_03001ebc[];
 
     u32 i;
     s32 record;
 
-    record = Actor_unk27(0);
+    record = Func_0200179e(0);
     if ((u32)(*(volatile u16 *)(record + 6) + -0xa001) <= 0x3ffe) {
-        Actor_unk80_4(3, 20);
+        Func_020018da(3, 20);
     } else {
-        if (Actor_unk8(0x87a) != 0) {
-            Actor_unk81_4();
-            Actor_unk6_2(0x1c0a);
-            Actor_unk82_4(20, 0);
-            Actor_unk83_4();
+        if (Value1(Func_0200177a, 0x87a) != 0) {
+            Func_0200179a();
+            Call1(Func_02001848, 0x1c0a);
+            Func_02001860(20, 0);
+            Func_020017b4();
         } else {
-            if (Actor_unk9(0x815) != 0) {
-                Actor_unk84_4();
+            if (Value1(Func_0200179c, 0x815) != 0) {
+                Func_02000808();
             } else {
-                Actor_unk85_4();
-                Actor_unk7_2(0xf55);
-                Actor_unk86_4(20, 0);
-                Actor_unk87_4();
+                Func_020017c2();
+                Call1(Func_02001870, 0xf55);
+                Func_02001888(20, 0);
+                Func_020017dc();
             }
         }
     }
 }
 
-void Scene_RunLongPresentationSequence(void)
+void FieldScene_RunLongPresentationSequence(void)
 {
-    extern u8 gWork[];
-    void Actor_unk88_4();
+    extern u8 Data_03001ebc[];
+    void Func_0200220e();
 
     u32 i;
     s32 record;
@@ -447,290 +905,290 @@ void Scene_RunLongPresentationSequence(void)
     s32 base5_20092fc;
     s32 base5_2009400;
 
-    Actor_unk89_4();
-    Actor_unk2_4(-1, -1, -1, 0);
-    Actor_unk90_4(1);
-    Actor_unk91_4(3, 1);
-    Actor_unk3_3(0, 0x6666, 0x3333);
-    Actor_unk4_3(1, 0x6666, 0x3333);
-    Actor_unk5_3(2, 0x6666, 0x3333);
-    Actor_unk6_3(3, 0x6666, 0x3333);
-    Actor_unk92_4(8, 5);
-    Actor_unk7_3(0, 0x328, 0x1fc);
-    record = Actor_unk28(23);
-    Actor_unk93_4(record, 0);
-    record = Actor_unk29(24);
-    Actor_unk94_4(record, 0);
-    record = Actor_unk30(25);
-    Actor_unk95_4(record, 0);
+    Func_020017fe();
+    Call4(Func_02001908, -1, -1, -1, 0);
+    Func_020017c6(1);
+    Func_020018fe(3, 1);
+    Call3(Func_02001858_a, 0, 0x6666, 0x3333);
+    Call3(Func_02001862_a, 1, 0x6666, 0x3333);
+    Call3(Func_0200186c, 2, 0x6666, 0x3333);
+    Call3(Func_02001876, 3, 0x6666, 0x3333);
+    Func_020018be(8, 5);
+    Call3(Func_020018ac, 0, 0x328, 0x1fc);
+    record = Func_0200188a(23);
+    Func_02001840(record, 0);
+    record = Func_02001896(24);
+    Func_0200184c(record, 0);
+    record = Func_020018a2(25);
+    Func_02001858_b(record, 0);
     v6 = 0;
-    *(u8 *)(Actor_unk31(23) + 85) = v6;
-    *(u8 *)(Actor_unk32(24) + 85) = v6;
-    *(u8 *)(Actor_unk33(25) + 85) = v6;
-    base7_20090c1 = (s32)Actor_unk96_4;
-    Actor_unk3_4(base7_20090c1, 0xc80);
-    Actor_unk97_4(1);
-    *(s32 *)((*(u8 *volatile *)gWork + 0x1c8)) = 32;
-    Actor_unk98_4();
-    Actor_unk99_4();
-    Actor_unk100_4(0);
-    Actor_unk101_4(0, 1);
-    record = Actor_unk10(0);
+    *(u8 *)(Func_020018ae(23) + 85) = v6;
+    *(u8 *)(Func_020018ba(24) + 85) = v6;
+    *(u8 *)(Func_020018c4(25) + 85) = v6;
+    base7_20090c1 = (s32)Func_020090c1;
+    Call2(Func_02001864, base7_20090c1, 0xc80);
+    Func_02001862_b(1);
+    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c8)) = 32;
+    Func_020019fe_a();
+    Func_02001a12_a();
+    Func_02001930(0);
+    Func_02001948(0, 1);
+    record = Value1(Func_02001906, 0);
     if (record != 0) {
-        Actor_unk102_4(1, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+        Func_02001954(1, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
     }
-    record = Actor_unk11(0);
+    record = Value1(Func_0200191a, 0);
     if (record != 0) {
-        Actor_unk103_4(2, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+        Func_02001968(2, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
     }
-    record = Actor_unk12(0);
+    record = Value1(Func_0200192e, 0);
     if (record != 0) {
-        Actor_unk104_4(3, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+        Func_0200197c_a(3, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
     }
-    Actor_unk8_3(1, 0x318, 0x200);
-    Actor_unk9_3(2, 0x338, 0x1f8);
-    Actor_unk10_3(3, 0x332, 0x20c);
-    Actor_unk105_4(1, 1);
-    Actor_unk106_4(2, 1);
-    Actor_unk107_4(10);
-    base5_20092fc = (s32)gOv4;
-    Actor_unk11_3(0, 0x1000a, base5_20092fc);
-    Actor_unk12_3(1, 0x1000a, base5_20092fc);
-    Actor_unk13_3(2, 0x1000a, base5_20092fc);
-    Actor_unk14_3(3, 0x1000a, base5_20092fc);
-    Actor_unk8_2(0x12c);
-    *(u8 *)(Actor_unk34() + 85) = v6;
-    Actor_unk4_4(0x1999, 0x333);
-    Actor_unk5_4(0x3120000, 0, 0x1ae0000, 1);
-    Actor_unk108_4(240);
-    Actor_unk109_4(10);
-    Actor_unk15_3(10, 0x102, 80);
-    Actor_unk16_3(10, 0x333, 0x195);
-    Actor_unk110_4(40);
-    Actor_unk111_4(10, 4);
-    Actor_unk112_4(40);
-    Actor_unk17_3(10, 0xd000, 20);
-    Actor_unk9_2(0x1c1e);
-    Actor_unk18_3(0x900a, 0, 20);
-    Actor_unk113_4(0);
-    Actor_unk114_4(1);
-    Actor_unk115_4(2);
-    Actor_unk116_4(3);
-    Actor_unk19_3(11, 0x100, 40);
-    Actor_unk20_3(0x200b, 0, 20);
-    Actor_unk117_4(10, 2);
-    Actor_unk118_4(40);
-    Actor_unk21_3(0x900a, 0, 10);
-    Actor_unk22_3(11, 0x5000, 10);
-    Actor_unk23_3(0x200b, 0, 40);
-    Actor_unk119_4(10, 2);
-    Actor_unk120_4(20);
-    Actor_unk24_3(0x900a, 0, 20);
-    Actor_unk25_3(0, 0x102, 80);
-    Actor_unk26_3(11, 0x106, 40);
-    Actor_unk27_3(0x200b, 0, 40);
-    Actor_unk121_4(10, 2);
-    Actor_unk28_3(10, 0x102, 20);
-    Actor_unk122_4(10, 4);
-    Actor_unk29_3(0x900a, 0, 10);
-    Actor_unk123_4(11, 1);
-    Actor_unk124_4(11, 3);
-    Actor_unk125_4(20);
-    Actor_unk126_4(10, 1);
-    Actor_unk127_4(10, 4);
-    Actor_unk128_4(11, 1);
-    Actor_unk129_4(11, 3);
-    Actor_unk130_4(10, 1);
-    Actor_unk131_3(10, 4);
-    Actor_unk30_3(9, 0x105, 0);
-    Actor_unk132_3(9, 1);
-    Actor_unk133_3(20);
-    Actor_unk31_3(9, 0x1000, 40);
-    Actor_unk134_3(9, 2);
-    Actor_unk135_3(60);
-    Actor_unk136_3(9, 3);
-    Actor_unk137_3(40);
-    Actor_unk32_3(0x4009, 0, 40);
-    Actor_unk138_3(11, 0);
-    Actor_unk139_3(11, 2);
-    Actor_unk33_3(0x200b, 0, 10);
-    Actor_unk140_3(9, 4);
-    Actor_unk141_3(9, 2);
-    Actor_unk34_3(0x4009, 0, 10);
-    Actor_unk35_3(10, 0x100, 20);
-    Actor_unk36_3(10, 0x5000, 40);
-    Actor_unk142_3(10, 3);
-    Actor_unk37_3(0x400a, 0, 10);
-    Actor_unk143_3(9, 4);
-    Actor_unk38_3(9, 0xd000, 10);
-    Actor_unk144_3(9, 2, 0);
-    Actor_unk145_3(9, 4);
-    Actor_unk39_3(0x4009, 0, 10);
-    Actor_unk40_3(11, 0x101, 0);
-    Actor_unk41_3(10, 0x101, 40);
-    Actor_unk42_3(10, 0xd000, 80);
-    Actor_unk43_3(10, 0x5000, 60);
-    Actor_unk146_3(10, 2);
-    Actor_unk147_3(11, 2);
-    Actor_SetRect(10, 11, 6, 6, 6, 11, 12, 1, 7, 1, v6);
-    Actor_unk148_3(20);
-    Actor_unk6_4(0x19999, 0x3333);
-    Actor_unk7_4(0x3090000, 0, 0x1d40000, 1);
-    Actor_unk149_3();
-    Actor_unk150_3(40);
-    Actor_unk151_3(1, 3);
-    Actor_unk44_3(0x1001, 0, 20);
-    Actor_unk152_3(8, 2);
-    Actor_unk153_3(base7_20090c1);
-    Actor_unk154_3(40);
-    Actor_unk155_2(8, 6);
-    Actor_unk156_2(20);
-    Actor_unk45_3(0x4008, 0, 20);
-    Actor_unk8_4(0x2ee0000, 0, 0x1c30000, 1);
-    Actor_unk157_2(20);
-    Actor_unk46_3(11, 0x5000, 0);
-    Actor_unk47_3(10, 0x5000, 10);
-    Actor_unk48_3(8, 0x1000, 40);
-    Actor_unk49_3(8, 0x100, 40);
-    Actor_unk50_3(8, 0x3000, 20);
-    Actor_unk51_3(8, 0x1000, 20);
-    Actor_unk52_3(8, 0x3000, 40);
-    Actor_unk158_2(8, 6);
-    Actor_unk159_2(60);
-    Actor_unk160_2(8, 6, 0);
-    Actor_unk53_3(0x4008, 0, 20);
-    Actor_unk54_3(1, 0x19999, 0xcccc);
-    Actor_unk55_3(1, 0x315, 0x1d9);
-    Actor_unk56_3(1, 0x7000, 20);
-    Actor_unk161_2(1, 3);
-    Actor_unk57_3(0x4001, 0, 10);
-    Actor_unk58_3(8, 0x1000, 20);
-    Actor_unk162_2(8, 3);
-    Actor_unk13(0x4008, 0);
-    Actor_unk59_3(10, 0x5000, 0);
-    Actor_unk60_3(9, 0x1000, 0);
-    Actor_unk61_3(1, 0x3000, 0);
-    Actor_unk62_3(2, 0x7000, 0);
-    Actor_unk63_3(3, 0xb000, 0);
-    if (Actor_unk14(0, 0) == 1) {
+    Call3(Func_02001972, 1, 0x318, 0x200);
+    Call3(Func_02001980, 2, 0x338, 0x1f8);
+    Call3(Func_02001994, 3, 0x332, 0x20c);
+    Func_020019b4(1, 1);
+    Func_020019bc(2, 1);
+    Func_0200194a(10);
+    base5_20092fc = (s32)Data_020092fc;
+    Call3(Func_020019fe_b, 0, 0x1000a, base5_20092fc);
+    Call3(Func_02001a08, 1, 0x1000a, base5_20092fc);
+    Call3(Func_02001a12_b, 2, 0x1000a, base5_20092fc);
+    Call3(Func_02001a1c_a, 3, 0x1000a, base5_20092fc);
+    Call1(Func_0200197c_b, 0x12c);
+    *(u8 *)(Func_02001a90() + 85) = v6;
+    Call2(Func_02001a84, 0x1999, 0x333);
+    Call4(Func_02001a9a, 0x3120000, 0, 0x1ae0000, 1);
+    Func_020019a0(240);
+    Func_020019ee(10);
+    Call3(Func_02001aa2, 10, 0x102, 80);
+    Call3(Func_02001a1c_b, 10, 0x333, 0x195);
+    Func_020019c2(40);
+    Func_02001a4a(10, 4);
+    Func_020019d0(40);
+    Call3(Func_02001ab4_a, 10, 0xd000, 20);
+    Call1(Func_02001a92, 0x1c1e);
+    Call3(Func_02001ab4_b, 0x900a, 0, 20);
+    Func_02001a3a(0);
+    Func_02001a40(1);
+    Func_02001a46(2);
+    Func_02001a4c(3);
+    Call3(Func_02001b00, 11, 0x100, 40);
+    Call3(Func_02001ae2, 0x200b, 0, 20);
+    Func_02001aba(10, 2);
+    Func_02001a28(40);
+    Call3(Func_02001afa, 0x900a, 0, 10);
+    Call3(Func_02001b16_a, 11, 0x5000, 10);
+    Call3(Func_02001b10, 0x200b, 0, 40);
+    Func_02001ae8(10, 2);
+    Func_02001a56(20);
+    Call3(Func_02001b28, 0x900a, 0, 20);
+    Call3(Func_02001b5c, 0, 0x102, 80);
+    Call3(Func_02001b68, 11, 0x106, 40);
+    Call3(Func_02001b4a, 0x200b, 0, 40);
+    Func_02001b1a(10, 2);
+    Call3(Func_02001b86, 10, 0x102, 20);
+    Func_02001b16_b(10, 4);
+    Call3(Func_02001b70, 0x900a, 0, 10);
+    Func_02001b40(11, 1);
+    Func_02001b38(11, 3);
+    Func_02001abe(20);
+    Func_02001b56(10, 1);
+    Func_02001b4e(10, 4);
+    Func_02001b66(11, 1);
+    Func_02001b5e(11, 3);
+    Func_02001b76(10, 1);
+    Func_02001b6e(10, 4);
+    Call3(Func_02001be8, 9, 0x105, 0);
+    Func_02001b98(9, 1);
+    Func_02001b06(20);
+    Call3(Func_02001bea, 9, 0x1000, 40);
+    Func_02001bb2(9, 2);
+    Func_02001b20(60);
+    Func_02001bc0(9, 3);
+    Func_02001b2e(40);
+    Call3(Func_02001c00, 0x4009, 0, 40);
+    Func_02001bb8(11, 0);
+    Func_02001be0(11, 2);
+    Call3(Func_02001c1a, 0x200b, 0, 10);
+    Func_02001bda(9, 4);
+    Func_02001bfa(9, 2);
+    Call3(Func_02001c34_a, 0x4009, 0, 10);
+    Call3(Func_02001c68, 10, 0x100, 20);
+    Call3(Func_02001c5c, 10, 0x5000, 40);
+    Func_02001c0c(10, 3);
+    Call3(Func_02001c5e, 0x400a, 0, 10);
+    Func_02001c1e(9, 4);
+    Call3(Func_02001c82, 9, 0xd000, 10);
+    Func_02001c3c(9, 2, 0);
+    Func_02001c34_b(9, 4);
+    Call3(Func_02001c8e, 0x4009, 0, 10);
+    Call3(Func_02001cc0, 11, 0x101, 0);
+    Call3(Func_02001cca_a, 10, 0x101, 40);
+    Call3(Func_02001cbe, 10, 0xd000, 80);
+    Call3(Func_02001cca_b, 10, 0x5000, 60);
+    Func_02001c8a(10, 2);
+    Func_02001c92_a(11, 2);
+    Call11(Func_02001d4c, 10, 11, 6, 6, 6, 11, 12, 1, 7, 1, v6);
+    Func_02001c72(20);
+    Call2(Func_02001d72, 0x19999, 0x3333);
+    Call4(Func_02001d88, 0x3090000, 0, 0x1d40000, 1);
+    Func_02001d94();
+    Func_02001c92_b(40);
+    Func_02001d1a(1, 3);
+    Call3(Func_02001d6c, 0x1001, 0, 20);
+    Func_02001d44_a(8, 2);
+    Func_02001c7a(base7_20090c1);
+    Func_02001cb8(40);
+    Func_02001d40(8, 6);
+    Func_02001cc6(20);
+    Call3(Func_02001d98, 0x4008, 0, 20);
+    Call4(Func_02001ddc, 0x2ee0000, 0, 0x1c30000, 1);
+    Func_02001ce2(20);
+    Call3(Func_02001dc6, 11, 0x5000, 0);
+    Call3(Func_02001dd2, 10, 0x5000, 10);
+    Call3(Func_02001dde, 8, 0x1000, 40);
+    Call3(Func_02001e02_a, 8, 0x100, 40);
+    Call3(Func_02001df6, 8, 0x3000, 20);
+    Call3(Func_02001e02_b, 8, 0x1000, 20);
+    Call3(Func_02001e0e, 8, 0x3000, 40);
+    Func_02001dbe(8, 6);
+    Func_02001d44_b(60);
+    Func_02001dd6(8, 6, 0);
+    Call3(Func_02001e20, 0x4008, 0, 20);
+    Call3(Func_02001d9a, 1, 0x19999, 0xcccc);
+    Call3(Func_02001dcc, 1, 0x315, 0x1d9);
+    Call3(Func_02001e50, 1, 0x7000, 20);
+    Func_02001e00(1, 3);
+    Call3(Func_02001e52_a, 0x4001, 0, 10);
+    Call3(Func_02001e6e, 8, 0x1000, 20);
+    Func_02001e1e(8, 3);
+    Value2(Func_02001e5e, 0x4008, 0);
+    Call3(Func_02001e8a, 10, 0x5000, 0);
+    Call3(Func_02001e96, 9, 0x1000, 0);
+    Call3(Func_02001ea2, 1, 0x3000, 0);
+    Call3(Func_02001eae, 2, 0x7000, 0);
+    Call3(Func_02001eba, 3, 0xb000, 0);
+    if (Value2(Func_02001e12_a, 0, 0) == 1) {
         bump_step(1);
     }
-    Actor_unk9_4(0x3090000, 0, 0x1ac0000, 1);
-    ((void (*)())Actor_unk35)(20);
-    Actor_unk163_2(10, 2);
-    Actor_unk164_2(10, 0);
-    Actor_unk165_2(11, 4);
-    Actor_unk166_2(20);
-    Actor_unk10_2(0x1c33);
-    Actor_unk10_4(0x200b, 0);
-    Actor_unk11_4(0x3090000, 0, 0x1d40000, 1);
-    Actor_unk167_2(20);
-    Actor_unk64_3(1, 0xd000, 20);
-    Actor_unk168_2(1, 3);
-    Actor_unk169_2(20);
-    Actor_unk170_2(9, 4);
-    Actor_unk65_3(9, 0xd000, 10);
-    Actor_unk12_4(0x4009, 0);
-    Actor_unk171_2(8, 3);
-    Actor_unk13_4(0x4008, 0);
-    Actor_unk66_3(1, 0x7000, 10);
-    Actor_unk172_2(1, 3);
-    Actor_unk67_3(9, 0x1000, 10);
-    Actor_unk173_2(11, 3);
-    Actor_unk174_2(10, 3);
-    Actor_unk175_2(9, 3);
-    Actor_unk176_2(8, 3);
-    Actor_unk177_2(20);
-    Actor_unk68_3(1, 0x3000, 20);
-    Actor_unk69_3(1, 0x102, 80);
-    Actor_unk70_3(1, 0x7000, 20);
-    Actor_unk71_3(0x4001, 0, 20);
-    Actor_unk72_3(1, 0x3000, 10);
-    Actor_unk178_2(0, 0, 40);
-    Actor_unk179_2(0, 3);
-    Actor_unk180_2(1, 3);
-    Actor_unk181_2(20);
-    Actor_unk73_3(0, 0x4000, 20);
-    Actor_unk182_2(3, 3);
-    Actor_unk183_2(20);
-    Actor_unk74_3(1, 0x1000, 0);
-    Actor_unk75_3(0, 0xe000, 0);
-    Actor_unk76_3(2, 0x10000, 0x8000);
-    Actor_unk77_3(2, 0x333, 0x1e9);
-    Actor_unk78_3(2, 0xb000, 40);
-    Actor_unk184_2(2, 2);
-    Actor_unk185_2(2, 0, 20);
-    Actor_unk186_2(2, 3);
-    Actor_unk187_2(8, 3);
-    Actor_unk188_2(9, 3);
-    Actor_unk189_2(10, 3);
-    Actor_unk190_2(9, 3);
-    *(u8 *)(Actor_unk36(3) + 35) &= 254;
-    Actor_unk191_2(3, 1);
-    Actor_unk79_3(3, 0x10000, 0x8000);
-    Actor_unk80_3(3, 0x31a, 0x208);
-    Actor_unk81_3(1, 0x5000, 0);
-    Actor_unk82_3(0, 0xa000, 0);
-    Actor_unk83_3(3, 0x310, 0x1f0);
-    Actor_unk84_3(3, 0x9000, 10);
-    *(u8 *)(Actor_unk37(3) + 35) |= 1;
-    Actor_unk192_2(3, 0, 20);
-    Actor_unk193_2(8, 3);
-    Actor_unk194_2(9, 3);
-    Actor_unk195_2(10, 3);
-    Actor_unk196_2(9, 3);
-    Actor_unk197_2(20);
-    Actor_unk14_4(0x3090000, 0, 0x1ac0000, 1);
-    Actor_unk198_2(20);
-    Actor_unk85_3(11, 0x6666, 0x3333);
-    Actor_unk86_3(11, 0x343, 0x184);
-    Actor_unk87_3(11, 0x5000, 0);
-    Actor_unk88_3(11, 0x108, 40);
-    Actor_unk89_3(0x200b, 0, 20);
-    Actor_unk15_4(0x3090000, 0, 0x1d40000, 1);
-    Actor_unk199_2(40);
-    Actor_unk90_3(2, 0x7000, 0);
-    Actor_unk91_3(3, 0xf000, 40);
-    Actor_unk92_3(2, 0x9000, 0);
-    Actor_unk93_3(3, 0xd000, 20);
-    Actor_unk200_2(2, 3);
-    Actor_unk201_2(3, 3);
-    Actor_unk202_2(20);
-    Actor_unk203_2(10, 1);
-    Actor_unk204_2(20);
-    Actor_unk205_2(10, 3);
-    Actor_unk206_2(10, 0, 20);
-    Actor_unk94_3(0, 0xc000, 0);
-    Actor_unk95_3(1, 0xd000, 0);
-    Actor_unk96_3(2, 0xb000, 0);
-    Actor_unk97_3(3, 0xd000, 40);
-    Actor_unk207_2(0, 3);
-    Actor_unk208_2(1, 3);
-    Actor_unk209_2(2, 3);
-    Actor_unk210_2(3, 3);
-    Actor_unk211_2(20);
-    Actor_unk98_3(2, 0x10000, 0x8000);
-    base5_2009400 = (s32)gOv5;
-    Actor_unk212_2(1, base5_2009400);
-    Actor_unk15(2, base5_2009400);
-    Actor_unk16(3, base5_2009400);
-    Actor_unk17(10, 0x2009310);
-    Actor_unk99_3(11, 0x345, 0x178);
-    Actor_unk100_3(11, 0xd000, 20);
-    Actor_unk11_2(0x81d);
-    Actor_unk213_2();
+    Call4(Func_02001f0c, 0x3090000, 0, 0x1ac0000, 1);
+    ((void (*)())Func_02001e12_b)(20);
+    Func_02001eb2(10, 2);
+    Func_02001ee2(10, 0);
+    Func_02001eaa(11, 4);
+    Func_02001e30(20);
+    Call1(Func_02001ee6_a, 0x1c33);
+    Call2(Func_02001efe, 0x200b, 0);
+    Call4(Func_02001f4c, 0x3090000, 0, 0x1d40000, 1);
+    Func_02001e52_b(20);
+    Call3(Func_02001f36, 1, 0xd000, 20);
+    Func_02001ee6_b(1, 3);
+    Func_02001e6c(20);
+    Func_02001ef4(9, 4);
+    Call3(Func_02001f58_a, 9, 0xd000, 10);
+    Call2(Func_02001f48_a, 0x4009, 0);
+    Func_02001f10(8, 3);
+    Call2(Func_02001f58_b, 0x4008, 0);
+    Call3(Func_02001f7c, 1, 0x7000, 10);
+    Func_02001f2c(1, 3);
+    Call3(Func_02001f90, 9, 0x1000, 10);
+    Func_02001f38_a(11, 3);
+    Func_02001f40(10, 3);
+    Func_02001f48_b(9, 3);
+    Func_02001f58_c(8, 3);
+    Func_02001ede(20);
+    Call3(Func_02001fc2, 1, 0x3000, 20);
+    Call3(Func_02001fe6, 1, 0x102, 80);
+    Call3(Func_02001fda, 1, 0x7000, 20);
+    Call3(Func_02001fd4, 0x4001, 0, 20);
+    Call3(Func_02001ff0, 1, 0x3000, 10);
+    Func_02001ffa(0, 0, 40);
+    Func_02001fa2(0, 3);
+    Func_02001fb2(1, 3);
+    Func_02001f38_b(20);
+    Call3(Func_0200201c, 0, 0x4000, 20);
+    Func_02001fcc(3, 3);
+    Func_02001f52(20);
+    Call3(Func_02002036, 1, 0x1000, 0);
+    Call3(Func_02002042, 0, 0xe000, 0);
+    Call3(Func_02001fb0, 2, 0x10000, 0x8000);
+    Call3(Func_02001fe2, 2, 0x333, 0x1e9);
+    Call3(Func_02002066, 2, 0xb000, 40);
+    Func_0200202e(2, 2);
+    Func_02002068(2, 0, 20);
+    Func_02002028_a(2, 3);
+    Func_02002028_b(8, 3);
+    Func_02002030(9, 3);
+    Func_02002038(10, 3);
+    Func_02002048(9, 3);
+    *(u8 *)(Func_02001ffe(3) + 35) &= 254;
+    Func_020020c8_a(3, 1);
+    Call3(Func_02002026, 3, 0x10000, 0x8000);
+    Call3(Func_0200205a, 3, 0x31a, 0x208);
+    Call3(Func_020020de, 1, 0x5000, 0);
+    Call3(Func_020020ea, 0, 0xa000, 0);
+    Call3(Func_02002080, 3, 0x310, 0x1f0);
+    Call3(Func_02002104, 3, 0x9000, 10);
+    *(u8 *)(Func_02002062(3) + 35) |= 1;
+    Func_0200210e(3, 0, 20);
+    Func_020020c6(8, 3);
+    Func_020020ce(9, 3);
+    Func_020020d6(10, 3);
+    Func_0200212e(9, 3);
+    Func_020020b4(20);
+    Call4(Func_020021c2_a, 0x3090000, 0, 0x1ac0000, 1);
+    Func_020020c8_b(20);
+    Call3(Func_0200210a, 11, 0x6666, 0x3333);
+    Call3(Func_0200213e, 11, 0x343, 0x184);
+    Call3(Func_020021c2_b, 11, 0x5000, 0);
+    Call3(Func_020021e6, 11, 0x108, 40);
+    Call3(Func_020021c8, 0x200b, 0, 20);
+    Call4(Func_0200220e, 0x3090000, 0, 0x1d40000, 1);
+    Func_02002114(40);
+    Call3(Func_020021f8, 2, 0x7000, 0);
+    Call3(Func_02002204, 3, 0xf000, 40);
+    Call3(Func_02002210, 2, 0x9000, 0);
+    Call3(Func_0200221c, 3, 0xd000, 20);
+    Func_020021c4(2, 3);
+    Func_020021d4(3, 3);
+    Func_0200215a(20);
+    Func_020021fa(10, 1);
+    Func_02002168(20);
+    Func_020021e8(10, 3);
+    Func_02002242(10, 0, 20);
+    Call3(Func_0200225e, 0, 0xc000, 0);
+    Call3(Func_0200226a, 1, 0xd000, 0);
+    Call3(Func_02002276, 2, 0xb000, 0);
+    Call3(Func_02002282, 3, 0xd000, 40);
+    Func_0200222a(0, 3);
+    Func_02002232_a(1, 3);
+    Func_0200223a(2, 3);
+    Func_0200224a(3, 3);
+    Func_020021d0(20);
+    Call3(Func_02002216_a, 2, 0x10000, 0x8000);
+    base5_2009400 = (s32)Data_02009400;
+    Func_02002228(1, base5_2009400);
+    Value2(Func_02002230, 2, base5_2009400);
+    Value2(Func_02002248, 3, base5_2009400);
+    Value2(Func_02002240, 10, 0x2009310);
+    Call3(Func_0200226c, 11, 0x345, 0x178);
+    Call3(Func_020022f0, 11, 0xd000, 20);
+    Call1(Func_02002216_b, 0x81d);
+    Func_02002232_b();
 }
 
 void Scene_UpdateTimedActor(void)
 {
-    u32 Actor_unk214_2(u32, u32);
+    u32 Func_0200220e_a(u32, u32);
 
     s32 no;
     u32 phase;
     union SceneActor *actor;
     s32 *other;
 
-    phase = Actor_unk214_2(gIw, 180);
+    phase = Func_0200220e_a(Data_03001e40, 180);
     no = 23;
     switch (phase) {
     case 10:
@@ -744,13 +1202,13 @@ void Scene_UpdateTimedActor(void)
     default:
         return;
     }
-    actor = Actor_unk19_4(no);
+    actor = Func_020022b0(no);
     if (actor == NULL) {
         return;
     }
-    other = Actor_unk20_4(8);
+    other = Func_020022bc(8);
     if (other != NULL) {
-        Actor_unk103_3(no, other[2], other[4]);
+        Func_0200230a(no, other[2], other[4]);
     }
     actor->words[6] = 0x6666;
     actor->words[7] = 0x6666;
@@ -766,5 +1224,5 @@ void Scene_UpdateTimedActor(void)
         value = 128;
         dst->value = value;
     }
-    Actor_Apply7(no, gOv6);
+    Func_02002302(no, Data_02009440);
 }

@@ -36,6 +36,10 @@ struct TextObject {
     u8 storage[12];
 };
 
+void FunctionHead_0801c0dc(struct TextObject *object, s32 *resource);
+void FunctionHead_0801c154(struct TextObject *object, s32 x, s32 y);
+s16 FunctionHead_08029094(
+    struct Work *work, s16 primary, s16 *secondary, s16 *mode);
 
 extern struct MenuDefaults gCell;
 extern volatile u32 gIw;

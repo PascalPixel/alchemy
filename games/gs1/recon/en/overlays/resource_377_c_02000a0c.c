@@ -1,9 +1,9 @@
 #include "types.h"
 
-/* AUDITED GENERATED CALL SCRIPT for Scene_RunPaletteRampSequence:
+/* AUDITED GENERATED CALL SCRIPT for FieldScene_RunPaletteRampSequence:
  * 86 calls, actor flags, two display-register ramps, and workspace state. */
 
-#define Scene_RunPaletteRampSequence Func_02000a0c
+#define FieldScene_RunPaletteRampSequence Func_02000a0c
 
 void Func_02002324();
 void Func_0200232e();

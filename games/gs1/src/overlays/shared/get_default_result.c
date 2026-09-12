@@ -1,7 +1,6 @@
 #include "types.h"
-#include "scene.h"
 
-s32 Sys_Run(void)
+s32 Func_02000038(void)
 {
     return 0;
 }

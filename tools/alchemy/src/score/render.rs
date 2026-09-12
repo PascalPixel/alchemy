@@ -1,6 +1,6 @@
 use crate::candidate::{
-    compile_to_assembly, source_symbol_bindings, verify_candidate_owned_routed_with_object,
-    CandidateCompilerConfiguration, ROM_BASE,
+    compile_to_assembly, verify_candidate_owned_routed_with_object, CandidateCompilerConfiguration,
+    ROM_BASE,
 };
 use crate::compiler::bundle::compiler_bundle_signature_checked;
 use crate::compiler::routing::CompilerTarget;
@@ -112,10 +112,10 @@ struct RenderedScore {
 }
 pub fn region_size(root: &Path, address: u32) -> Option<usize> {
     for manifest in [
-        "out/gs1-en/full/claimed/manifest.json",
         "out/gs1-en/claimed/manifest.json",
-        "out/gs1-en/full/asm/manifest.json",
+        "out/gs1-en/full/claimed/manifest.json",
         "out/gs1-en/asm/manifest.json",
+        "out/gs1-en/full/asm/manifest.json",
     ] {
         let Ok(document) = crate::compiler::build_io::read_json::<Value>(root.join(manifest))
         else {
@@ -124,6 +124,41 @@ pub fn region_size(root: &Path, address: u32) -> Option<usize> {
         let Some(regions) = document["regions"].as_array() else {
             continue;
         };
+        let symbol = format!("Func_{address:08x}");
+        if let Some(function) = document["functions"].as_array().and_then(|functions| {
+            functions
+                .iter()
+                .find(|function| function["symbol"] == symbol)
+        }) {
+            let start = function["address"].as_u64()?;
+            let size = function["size"].as_u64()?;
+            let end = start.checked_add(size)?;
+            let covered = regions.iter().any(|region| {
+                region["byte_verification"] == "rom"
+                    && region["address"].as_u64().is_some_and(|base| base <= start)
+                    && region["end"].as_u64().is_some_and(|limit| end <= limit)
+                    && region["symbols"]
+                        .as_array()
+                        .is_some_and(|symbols| symbols.iter().any(|name| name == &symbol))
+            });
+            return (start == u64::from(address)
+                && size > 0
+                && function["extent_evidence"] == "linked-elf-symbol"
+                && covered)
+                .then(|| usize::try_from(size).ok())
+                .flatten();
+        }
+        if regions.iter().any(|region| {
+            region["composition"] == "complete-tu-object"
+                && region["address"]
+                    .as_u64()
+                    .is_some_and(|base| base <= u64::from(address))
+                && region["end"]
+                    .as_u64()
+                    .is_some_and(|end| u64::from(address) < end)
+        }) {
+            return None;
+        }
         let size = regions.iter().find_map(|region| {
             (region["address"].as_u64() == Some(u64::from(address)))
                 .then(|| usize::try_from(region["size"].as_u64()?).ok())
@@ -184,6 +219,9 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         OVERLAY_BASE as u32
     };
     let stem = identity.stem();
+    let size = options.size.or_else(|| region_size(root, identity.owner.address())).ok_or_else(|| {
+        format!("no owner-size entry for {stem} in the claimed or asm build manifests -- pass `--size BYTES` for an independently established owner boundary, or rebuild production manifests. Candidate length is not evidence of the reference extent.")
+    })?;
     let key = source_cache_key(
         &options.source,
         &identity.routing.to_string_lossy(),
@@ -192,7 +230,7 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         &options.configuration,
         rom_path,
         &rom,
-        options.size,
+        Some(size),
         patch_text.as_deref(),
     )?;
     let cache = psynergy::cache::SqliteCache::open(&work.join("cache.sqlite3"))?;
@@ -219,11 +257,6 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
             &options.configuration,
             options.precompiled_object.as_deref(),
         )?;
-        let size = options.size.or_else(|| region_size(root, identity.owner.address())).ok_or_else(|| {
-                format!(
-                    "no owner-size entry for {stem} in the claimed or asm build manifests -- pass `--size BYTES` for an independently established owner boundary, or run `make build-claimed` (or `make build-full`) before scoring against the ROM. Falling back to the candidate's own linked length would compare the source against itself."
-                )
-            })?;
         let offset = identity
             .owner
             .address()
@@ -872,6 +905,37 @@ mod region_size_tests {
         )
         .unwrap();
         assert_eq!(region_size(root, 0x080b_0fa4), Some(296));
+    }
+
+    #[test]
+    fn merged_owner_size_uses_verified_function_extent_not_object_extent() {
+        let directory = scratch_root();
+        let root = directory.path();
+        fs::create_dir_all(root.join("out/gs1-en/claimed")).unwrap();
+        let path = root.join("out/gs1-en/claimed/manifest.json");
+        let mut document = serde_json::json!({
+            "regions": [{
+                "address": 0x08001000u32, "end": 0x08001030u32, "size": 48,
+                "composition": "complete-tu-object", "byte_verification": "rom",
+                "symbols": ["Func_08001000", "Func_08001010"]
+            }],
+            "functions": [
+                {"symbol": "Func_08001000", "address": 0x08001000u32, "size": 16,
+                 "extent_evidence": "linked-elf-symbol"},
+                {"symbol": "Func_08001010", "address": 0x08001010u32, "size": 32,
+                 "extent_evidence": "linked-elf-symbol"}
+            ]
+        });
+        fs::write(&path, document.to_string()).unwrap();
+        assert_eq!(region_size(root, 0x08001000), Some(16));
+        assert_eq!(region_size(root, 0x08001010), Some(32));
+        assert_eq!(region_size(root, 0x08001012), None);
+        document["functions"][1]["size"] = 34.into();
+        fs::write(&path, document.to_string()).unwrap();
+        assert_eq!(region_size(root, 0x08001010), None);
+        document["functions"] = serde_json::json!([]);
+        fs::write(&path, document.to_string()).unwrap();
+        assert_eq!(region_size(root, 0x08001000), None);
     }
 }
 

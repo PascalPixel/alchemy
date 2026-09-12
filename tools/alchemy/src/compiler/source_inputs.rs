@@ -90,7 +90,44 @@ pub fn compiler_source_tree_signature(
     } else {
         root.join(source)
     };
-    source_tree_signature(&source, &include_dirs(root, commands))
+    let dirs = include_dirs(root, commands);
+    let mut hash = Sha256::new();
+    let mut seen = BTreeSet::new();
+    let mut active = BTreeSet::new();
+    visit(&source, &dirs, &mut seen, &mut active, &mut hash)?;
+    // Generated address bindings are compiler inputs even though the C file
+    // does not include them. Their stable filenames are not a cache identity.
+    for command in commands {
+        for pair in command.windows(2) {
+            if pair[0] == "-include" {
+                let path = Path::new(&pair[1]);
+                let path = if path.is_absolute() {
+                    path.to_path_buf()
+                } else {
+                    root.join(path)
+                };
+                visit(&path, &dirs, &mut seen, &mut active, &mut hash)?;
+            }
+        }
+    }
+    Ok(hash.finalize().to_vec())
+}
+
+#[cfg(test)]
+#[test]
+fn forced_binding_mutation_changes_compiler_input_identity() {
+    let root = tempfile::tempdir().unwrap();
+    let source = root.path().join("owner.c");
+    let bindings = root.path().join("bindings.h");
+    std::fs::write(&source, "void Owner(void) { Target(); }\n").unwrap();
+    std::fs::write(&bindings, "#define Target Func_08001000\n").unwrap();
+    let commands = vec![vec!["cpp0".into(), "-include".into(), "bindings.h".into()]];
+    let first = compiler_source_tree_signature(root.path(), &source, &commands).unwrap();
+    std::fs::write(&bindings, "#define Target Func_08002000\n").unwrap();
+    let second = compiler_source_tree_signature(root.path(), &source, &commands).unwrap();
+    assert_ne!(first, second);
+    std::fs::remove_file(&bindings).unwrap();
+    assert!(compiler_source_tree_signature(root.path(), &source, &commands).is_err());
 }
 
 #[cfg(test)]

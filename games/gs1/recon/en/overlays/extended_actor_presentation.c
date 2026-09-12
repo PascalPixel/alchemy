@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define Scene_RunExtendedActorPresentation Func_020013f8
+#define FieldScene_RunExtendedActorPresentation Func_020013f8
 
 extern const s32 Data_0200c478[];
 extern const s32 Data_0200c4c8[];
@@ -87,7 +87,7 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-void Scene_RunExtendedActorPresentation(void)
+void FieldScene_RunExtendedActorPresentation(void)
 {
     s32 render_work;
     u8 *actor;

@@ -1,12 +1,4 @@
-#include "scene.h"
 #include "inventory.h"
-#include "types.h"
-#include "owner_state.h"
-#include "game_flags.h"
-#include "party_state.h"
-#include "global_progress.h"
-#include "battle_summon.h"
-#include "runtime_interfaces.h"
 
 /* inventory/has_equipment_value.c */
 s32 Equipment_HasValue(s32 owner, s32 value)

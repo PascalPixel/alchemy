@@ -100,6 +100,13 @@ LAYOUT_OFFSET_GUARD(
     action_id,
     0x28);
 
+#define Item_Get Func_08077018
+#define Item_GetDirect Func_08078414
+#define Item_CanOwnerEquip Func_08077218
+#define Item_CanOwnerEquipDirect Func_0807842c
+#define Item_IsCompatibleWithOwner Func_0807845c
+#define RollWeaponUnleash Func_08079d1c
+
 struct ItemDefinition *Item_Get(s32 item);
 struct ItemDefinition *Item_GetDirect(s32 item);
 s32 Equipment_GetUnleashRateBonus(s32 owner);

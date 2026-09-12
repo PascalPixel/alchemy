@@ -24,6 +24,7 @@ extern volatile s32 gIw;
 s16 *Sys_Run(s32);
 void WaitFrames(s32);
 s32 UiWork_IsCompleteFar(void);
+s32 Inventory_RequestMode(s32, s32, s32, s32);
 
 void UiWork_FinalizePending(void);
 
@@ -57,7 +58,7 @@ s32 Inventory_PromptAndSetObjectMode(s32 id, s32 force)
             flag = 0;
     }
 
-    ret = Sys_SetMode(flag, rt->value_cc2, rt->value_cc4, 0);
+    ret = Inventory_RequestMode(flag, rt->value_cc2, rt->value_cc4, 0);
     if (ret != 0) {
         Object_SetModeById(id, 4);
         Sys_Do(v);

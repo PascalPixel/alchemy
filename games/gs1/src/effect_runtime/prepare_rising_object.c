@@ -4,6 +4,15 @@
 #include "fixed_math.h"
 #include "global_cells.h"
 
+struct EffectObject_0808f1c0;
+void Object_Destroy(struct EffectObject_0808f1c0 *);
+
+void Object_DestroyIfPresent(void *object)
+{
+    if (object != 0)
+        Object_Destroy(object);
+}
+
 /* effect_runtime/prepare_rising_object.c */
 struct State_0808f0d8 {
     u8 pad0[0x1f4];
@@ -112,9 +121,8 @@ struct EffectObject_0808f1c0 {
 struct EffectObject_0808f1c0 *Battle_Run(s32 kind, s32 x, s32 y, s32 z);
 void *Battle_Run2(s32 asset_id, s32 size);
 void Battle_Do(s32);
-void Battle_Place(s32, s32, u8 *);
+s32 Battle_Place(u32 slot, u32 size, const void *source);
 void Battle_Do2(s32);
-void Battle_Do5(struct EffectObject_0808f1c0 *);
 void EmitRandomParticleEffect(void);
 
 void BattleFx_StartEffectObject22(s32 value, s32 flags)
@@ -155,6 +163,6 @@ void BattleFx_StartEffectObject22(s32 value, s32 flags)
 
         WaitFrames(80);
         Object_SetMode(resource, 1);
-        Battle_Do5(object);
+        Object_Destroy(object);
     }
 }

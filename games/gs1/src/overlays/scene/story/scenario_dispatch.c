@@ -1,313 +1,90 @@
 #include "types.h"
-#include "scene.h"
 
-/* overlays/scene/story/scenario_dispatch/scenario_dispatch.c */
-/* overlays/scene/story/scenario_dispatch/run_scene_early_sequence.c */
-/* Runs a linear setup sequence once two prior gate checks both pass;
- * either gate failing skips the whole sequence. Every step below is an
- * opaque call into other overlay code, so only the gate values and the
- * shared byte pair are named from what this function itself shows. */
-
-/* Gate id checked before the sequence, and passed again to the call that
- * closes it out. */
-#define GATE_ID 2081
-
-extern u8 Value_00001032;
-
-void Scene_RunSupplementalSequenceTwo(void)
-{
-    s32 byte_pair_addr;
-
-    if (GameFlag_IsSet_1(3842) == 0) {
-    } else {
-        if (GameFlag_IsSet_2(GATE_ID)!= 0) {
-        } else {
-            Battle_Reset_1();
-            FunctionHead_02001236();
-            Audio_PlayCue_1(182);
-            Story_SetRect(0, 71, 100, 71, 1, 1);
-            FunctionHead_0200133a();
-            Battle_WaitMode0_1(40);
-            /* Address of the byte pair starting at Value_00001032. */
-            byte_pair_addr = (s32)&Value_00001032;
-            UiText_DrawMessage_1(byte_pair_addr, 1);
-            Battle_WaitMode0_2(20);
-            Audio_PlayCue_2(183);
-            Story_unk6_4(122, 20, 120, 30, 1, 2);
-            Story_unk2_5(122, 20, 1, 2, 120, 30);
-            Story_unk3_4();
-            Story_Place(65536, 65536, 65536);
-            Battle_WaitMode0_3(20);
-            BattleFx_SpawnLinked_1(0, 256, 0);
-            Story_unk2_3(131072, 131072, 65536);
-            Battle_WaitMode0_4(20);
-            Motion_ArmCb_1(0, 16384, 40);
-            Motion_ArmCb_2(0, 32768, 20);
-            Motion_ArmCb_3(0, 0, 20);
-            Motion_ArmCb_4(0, 16384, 10);
-            Motion_Launch_1(0, 4, 20);
-            Motion_Launch_2(0, 6, 40);
-            Story_unk3_3(-1, -1, 58982);
-            Battle_WaitMode0_5(40);
-            UiText_DrawMessage_2(byte_pair_addr + 1, 1);
-            GameFlag_Set_1(0x143);
-            GameFlag_Set_2(GATE_ID);
-            Battle_SchedShoulder_1();
-        }
-    }
-}
-
-/* overlays/scene/story/scenario_dispatch/run_scene_late_sequence.c */
-extern u8 Value_00000fe0;
-
-u8 *Scene_GetRecord();
-
-/*
- * resource_37f owner at 0x02000f8c, 1,680 bytes: full scene sequence
- * for entities 0, 1, 5 and 8.
- *
- * Complete owner: saved-link prologue at 0x02000f8c through the sole
- * interworking return at 0x02001600, alignment and six-word trailing pool
- * through 0x0200161b.  A branch at 0x020013d0 skips an eleven-word interior
- * constant pool and resumes at 0x02001400.  All 174 BL sites resolve to 30
- * import veneers and are represented below in machine order.
- */
-/* Loader-relocated ROM calls: each site names the pre-relocation call word the image holds. */
-
-/* Additional resolved engine calls: named directly from each target's own
- * reconstructed C source (see the trailing "provisional" comment on each). */
-
-/* Two-field record read used when copying a found record's s32 pair into a
- * setter call alongside an entity id. */
-#define RECORD_A32(rec) (*(s32 *)((rec) + 8))
-#define RECORD_B32(rec) (*(s32 *)((rec) + 16))
-
-/* Two-field record read used when copying a found record's s16 pair into a
- * setter call alongside an entity id. */
-#define RECORD_A16(rec) (*(s16 *)((rec) + 10))
-#define RECORD_B16(rec) (*(s16 *)((rec) + 18))
-
-/* Runs the full scene sequence for entities 0, 1, 5 and 8: per-entity setup,
- * a shared movement/pose pass, a branch on one entity's saved state, and a
- * closing pass over the same four entities. */
-void Scene_RunFourEntitySequence(void)
-{
-    u8 *record;
-
-    Battle_Reset_1();
-    Battle_WaitMode0_1(); /* main:0808a360 */
-    Motion_SetSpeed_1(); /* main:0808a370 */
-
-    record = Scene_GetRecord_1(0);
-    if (record != 0)
-        Motion_SetHPosTerrain_1(8, RECORD_A32(record), RECORD_B32(record));
-    record = Scene_GetRecord_2(0);
-    if (record != 0)
-        Motion_SetHPosTerrain_2(5, RECORD_A32(record), RECORD_B32(record));
-    record = Scene_GetRecord_3(0);
-    if (record != 0)
-        Motion_SetHPosTerrain_3(1, RECORD_A32(record), RECORD_B32(record));
-
-    Motion_SetSpeed_2(8, 0x9999, 0x4ccc);
-    Motion_SetSpeed_3(5, 0x9999, 0x4ccc);
-    Motion_SetSpeed_4(1, 0x9999, 0x4ccc);
-    Object_SetModeById_1(1, 2);
-    Object_SetModeById_2(5, 2);
-    Object_SetModeById_3(8, 2);
-    Motion_OffsetPositionAndResetMotion_1(1, -16, 0);
-    Motion_OffsetPositionAndResetMotion_2(5, 16, 0);
-    Motion_OffsetPositionAndResetMotion_3(8, 0, -16);
-    Motion_CommitPos_1(8);
-    Object_SetModeById_4(8, 1);
-    Object_SetModeById_5(0, 0);
-    Object_SetModeById_6(1, 0);
-    Object_SetModeById_7(5, 0);
-    Motion_ArmCb_1(1, 0xe000, 0);
-    Motion_ArmCb_2(5, 0xa000, 0);
-    Motion_ArmCb_3(8, 0xc000, 30);
-    Motion_ArmCb_4(1, 0x8000, 0);
-    Motion_ArmCb_5(5, 0, 0);
-    Motion_ArmCb_6(0, 0x4000, 0);
-    Motion_ArmCb_7(8, 0x8000, 30);
-    Motion_ArmCb_8(1, 0x4000, 0);
-    Motion_ArmCb_9(5, 0x8000, 0);
-    Motion_ArmCb_10(0, 0, 0);
-    Motion_ArmCb_11(8, 0x4000, 30);
-    Motion_ArmCb_12(1, 0xe000, 0);
-    Motion_ArmCb_13(5, 0xa000, 0);
-    Motion_ArmCb_14(0, 0xc000, 0);
-    Motion_ArmCb_15(8, 0xc000, 40);
-    Motion_SetVarCbObj_1(8, 2);
-    Battle_WaitMode0_2(10);
-    Object_SetModeById_8(8, 2);
-    Motion_OffsetPositionAndResetMotion_4(8, 0, -16);
-    Motion_CommitPos_2(8);
-    Object_SetModeById_9(8, 1);
-    Battle_WaitMode0_3(6);
-    Motion_ArmCb_16(8, 0x8000, 20);
-    Motion_ArmCb_17(8, 0, 20);
-    Motion_ArmCb_18(8, 0xc000, 40);
-    Motion_SetVarCbObj_2(8, 2);
-    Battle_WaitMode0_4(20);
-    Object_SetModeById_10(8, 2);
-    Motion_OffsetPositionAndResetMotion_5(8, 0, -32);
-    Motion_CommitPos_3(8);
-    Object_SetModeById_11(8, 1);
-
-    Motion_SetSpeedLim_1(0x20000, 0x4000);
-    Motion_CamBounds_1(0x06310000, -1, 0x00960000, 1);
-    Object_CommitPositionThenWaitIfModeZero_1();
-    Battle_WaitMode0_5(10);
-    Motion_SetSpeedLim_2(0x13333, 0x2666);
-    Motion_CamBounds_2(0x06550000, -1, 0x00640000, 1);
-    Object_CommitPositionThenWaitIfModeZero_2();
-    Motion_CamBounds_3(0x06b60000, -1, 0x00640000, 1);
-    Object_CommitPositionThenWaitIfModeZero_3();
-    Object_SetModeById_12(8, 1);
-    Motion_CamBounds_4(0x06d80000, -1, 0x00960000, 1);
-    Object_CommitPositionThenWaitIfModeZero_4();
-    Battle_WaitMode0_6(40);
-    Motion_SetSpeedLim_3(0x26666, 0x4ccc);
-    Motion_CamBounds_5(0x06840000, -1, 0x01000000, 1);
-    Object_CommitPositionThenWaitIfModeZero_5();
-    Motion_CallWaitAnim_1(8, 3);
-    Battle_WaitMode0_7(10);
-
-    Motion_ArmCb_19(1, 0xe000, 0);
-    Motion_ArmCb_20(5, 0xa000, 10);
-    BattleFx_SpawnLinked_1(1, 0x101, 20);
-    SceneWork_SetStepValue_1(0xfd6);
-    Battle_RunThenWaitIfModeZero_1(1, 0, 10);
-    BattleFx_SpawnLinked_2(8, 0x102, 60);
-    Motion_SetVarCb_1(8, 2);
-    Battle_RunThenWaitIfModeZero_2(8, 0, 10);
-    Motion_SetVarCb_2(0, 2);
-    Motion_SetVarCb_3(1, 2);
-    Motion_SetVarCb_4(5, 2);
-    Battle_WaitMode0_8(0, 0x102);
-    Battle_WaitMode0_9(1, 0x102); /* main:0808a1f0 */
-    Battle_WaitMode0_10(5, 0x102); /* main:0808a1f0 */
-    Battle_WaitMode0_11(40);
-    Motion_SetVarCbObj_3(8, 2);
-    Battle_WaitMode0_12(20);
-    BattleEv_RunWait_1(8, 0);
-    Motion_CallWaitAnim_2(8, 4);
-    Battle_RunThenWaitIfModeZero_3(8, 0, 10);
-    Object_LinkPair_1(0, 5, 0);
-    Battle_WaitMode0_13(40);
-    Motion_SetVarCb_5(0, 1);
-    Motion_SetVarCbObj_4(5, 1);
-    Battle_WaitMode0_14(10);
-    Motion_ArmCb_21(0, 0xc000, 0);
-    Motion_ArmCb_22(5, 0xa000, 20);
-    Motion_SetVarCbObj_5(5, 2);
-    Battle_RunThenWaitIfModeZero_4(5, 0, 10);
-    Motion_CallWaitAnim_3(8, 4);
-    Battle_RunThenWaitIfModeZero_5(8, 0, 10);
-    Motion_ArmCb_23(8, 0x3000, 10);
-    Battle_RunThenWaitIfModeZero_6(8, 0, 40);
-    Motion_ArmCb_24(8, 0xc000, 20);
-    Motion_SetVarCbObj_6(8, 1);
-    Battle_WaitMode0_15(10);
-    Battle_WaitMode0_16(8, 0x102); /* main:0808a1f0 */
-    Motion_ArmCb_25(8, 0x8000, 20);
-    Motion_ArmCb_26(8, 0, 20);
-    Motion_ArmCb_27(8, 0xc000, 60);
-    Motion_SetVarCbObj_7(8, 2);
-    Battle_WaitMode0_17(10);
-    Battle_RunThenWaitIfModeZero_7(8, 0, 10);
-    Motion_ArmCb_28(8, 0x4000, 20);
-    Motion_Launch_1(8, 2, 20);
-
-    Battle_RunThenWaitIfModeZero_8(8, 0, 40);
-    Motion_ArmCb_29(1, 0, 20);
-    Motion_SetSpeed_5(1, 0); /* main:0808a178 */
-    if (UiWork_WaitThenFinalizeCapacity_1(0, 0) == 0) {
-        /* Passes the address of Value_00000fe0 in place of a record pointer. */
-        SceneWork_SetStepValue_2((s32)&Value_00000fe0);
-        Motion_SetVarCbObj_8(1, 1);
-        Battle_RunThenWaitIfModeZero_9(1, 0, 10);
-    } else {
-        SceneWork_SetStepValue_3(0xfe1);
-        Motion_ArmCb_30(5, 0x8000, 20);
-        Battle_RunThenWaitIfModeZero_10(5, 0, 10);
-        Motion_ArmCb_31(0, 0xc000, 0);
-        Motion_ArmCb_32(1, 0xe000, 0);
-        Motion_ArmCb_33(5, 0xa000, 60);
-        BattleFx_SpawnLinked_3(0, 0x102, 40);
-        Motion_SetVarCbObj_9(1, 1);
-        Battle_WaitMode0_18(10);
-        Motion_CallWaitAnim_4(1, 3);
-        Battle_WaitMode0_19(10);
-        Motion_ArmCb_34(1, 0, 0);
-        Motion_ArmCb_35(5, 0x8000, 30);
-        Motion_SetVarCbObj_10(1, 1);
-        Battle_WaitMode0_20(10);
-        Battle_RunThenWaitIfModeZero_11(1, 0, 10);
-    }
-
-    Motion_SetSpeed_6(8, 0x9999, 0x4ccc);
-    Object_SetModeById_13(8, 2);
-    Motion_OffsetPositionAndResetMotion_6(8, 0, 48);
-    Motion_CommitPos_4(8);
-    Object_SetModeById_14(8, 1);
-    Battle_WaitMode0_21(6);
-    Motion_ArmCb_36(1, 0xe000, 0);
-    Motion_ArmCb_37(5, 0xa000, 0);
-    Motion_CommitPos_5(8);
-    Object_SetModeById_15(8, 1);
-    Battle_WaitMode0_22(20);
-    Object_SetModeById_16(1, 3);
-    Object_SetModeById_17(5, 3);
-    Motion_CallWaitAnim_5(0, 3);
-    Battle_WaitMode0_23(6);
-    Object_SetModeById_18(1, 2);
-
-    record = Scene_GetRecord_4(0);
-    if (record != 0)
-        Motion_ResetAndSetPosition_1(1, RECORD_A16(record), RECORD_B16(record));
-    Object_SetModeById_19(5, 2);
-    record = Scene_GetRecord_5(0);
-    if (record != 0)
-        Motion_ResetAndSetPosition_2(5, RECORD_A16(record), RECORD_B16(record));
-    Object_SetModeById_20(8, 2);
-    record = Scene_GetRecord_6(0);
-    if (record != 0)
-        Motion_ResetAndSetPosition_3(8, RECORD_A16(record), RECORD_B16(record));
-
-    Motion_CommitPos_6(8);
-    Motion_SetHPosTerrain_4(1, 0, 0);
-    Motion_SetHPosTerrain_5(5, 0, 0);
-    Motion_SetHPosTerrain_6(8, 0, 0);
-    Object_SetModeById_21(8, 1);
-    Object_SetModeById_22(1, 1);
-    Object_SetModeById_23(5, 1);
-    GameFlag_Set_1(0x804);
-    GameFlag_Clear_1(0x12f);
-    Battle_SchedShoulder_1();
-}
-
-/* overlays/scene/story/scenario_dispatch/scenario_dispatch_scene_head.c */
+#define SceneData_SelectOverlayDataBySelector Func_02000030
+#define SceneData_GetTable9F14 Func_02000074
+#define FieldScene_RunScene37fSequenceA Func_02000154
+#define SceneDialogue_RunFlag81aMessageBranch Func_02000200
+#define FieldScene_RunOpeningAuxiliarySequence Func_02000258
+#define FieldScene_RunFlag821Dialogue Func_020003bc
 
 extern u8 Value_00000013;
 extern u8 Value_00000010;
-extern u8 gOv[];
-extern u8 gOv2[];
-extern u8 gOv3[];
-extern u8 gVal[];
-extern u8 gVal2[];
-extern u8 gOv4[];
-extern u8 gOv5[];
-extern u8 gOv6[];
-extern u8 gOv7[];
-extern u8 gOv8[];
-extern s16 gCell[][1];
-extern void Story_unk8_4(void);  /* Story_unk9_4 veneer. */
-extern s32 Story_unk10_4();       /* GameFlag_IsSet veneer, first site. */
-extern void Story_unk11_4();      /* UiText_DrawMessage veneer, first site. */
-extern void Story_unk12_4();      /* UiText_DrawMessage veneer, second site. */
-extern s32 Story_unk13_4();       /* GameFlag_IsSet veneer, second site. */
-extern void Story_unk14_4(void);  /* BattleFx_FinishAction veneer. */
+extern u8 Data_02009d04[];
+extern u8 Data_02009d64[];
+extern u8 Data_02009cd4[];
+extern u8 Data_00000010[];
+extern u8 Data_00000013[];
+extern u8 Data_02009fc0[];
+extern u8 Data_02009fd8[];
+extern u8 Data_0200a050[];
+extern u8 Data_0200a1b8[];
+extern u8 Data_0200a2a8[];
+extern s16 Data_02000240_t[][1];
+extern void Func_02001db0(void);  /* Func_0808a018 veneer. */
+extern s32 Func_02001d96();       /* GameFlag_IsSet veneer, first site. */
+extern void Func_02001d9a();      /* UiText_DrawMessage veneer, first site. */
+extern void Func_02001da4();      /* UiText_DrawMessage veneer, second site. */
+extern s32 Func_02001db2();       /* GameFlag_IsSet veneer, second site. */
+extern void Func_02001df0(void);  /* Func_0808a020 veneer. */
+
+void Func_02001c70();
+void Func_02001c9e();
+void Func_02001cb4();
+void Func_02001cca();
+void Func_02001cd0();
+void Func_02001ce6();
+void Func_02001cfc();
+void Func_02001d06();
+void Func_02001d80();
+void Func_02001d8c();
+void Func_02001da2();
+void Func_02001da6();
+void Func_02001dc2();
+void Func_02001dce();
+void Func_02001e12();
+void Func_02001e2c();
+void Func_02001e7e();
+void Func_02001e8c();
+void Func_02001e98();
+void Func_02001dde();
+s32 Func_02001df0_a();
+void Func_02001df2();
+s32 Func_02001dfc();
+void Func_02001e26();
+void Func_02001e28();
+void Func_02001e30();
+void Func_02001e34();
+void Func_02001e40();
+void Func_02001e44();
+void Func_02001e48();
+void Func_02001e56();
+void Func_02001e7c();
+void Func_02001e9e();
+void Func_02001eaa();
+void Func_02001ecc();
+void Func_02001ef4();
+void Func_02001f0e();
+void Func_02001f22();
+void Func_02001f24();
+void Func_02001f2a();
+void Func_02001f3a();
+void Func_02001f4e();
+void Func_02001f50();
+void Func_02001f74();
+void Func_02001f7e();
+void Func_02001f7e_a();
+void Func_02001f84();
+void Func_02001f90();
+void Func_02001f9c();
+void Func_02001fa6();
+void Func_02001fb2();
+void Func_02001f6c();
+s32 Func_02001f52();
+void Func_02001f56();
+s32 Func_02001f66();
+void Func_02001f6e();
+void Func_02001f82();
+void Func_02001fb6();
 
 /*
  * Loader-relocated overlay calls: each symbol names the pre-relocation call
@@ -329,6 +106,29 @@ extern void Story_unk14_4(void);  /* BattleFx_FinishAction veneer. */
  * shared with later uses in the block.  A value-returning call also sets r0
  * last of its arguments.
  */
+static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    extern u8 Data_03001ebc[];
+
+    f(a0, a1, a2);
+}
+
+static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
+{
+    extern u8 Data_03001ebc[];
+
+    f(a0, a1, a2, a3, a4, a5);
+}
+
+/* The scene step counter at 0x1d8 of the shared scene work record. */
+static __inline__ void bump_step(s32 amount)
+{
+    extern u8 Data_03001ebc[];
+
+    u8 *work = *(u8 **)Data_03001ebc;
+
+    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+}
 
 /*
  * These wrappers pass their constants straight into the argument registers.
@@ -336,174 +136,996 @@ extern void Story_unk14_4(void);  /* BattleFx_FinishAction veneer. */
  * shared with later uses in the block.  A value-returning call also sets r0
  * last of its arguments.
  */
-
-s32 SceneData_SelectOverlayDataBySelector(void)
+static __inline__ void Call1(void (*f)(), s32 a0)
 {
-    extern s16 gCell2[];
+    extern u8 Data_03001ebc[];
 
-    s16 v = gCell2[224];
-
-    if (v == (s32)&Value_00000013) {
-        return (s32)gOv;
-    }
-    if (v == (s32)&Value_00000010) {
-        return (s32)gOv2;
-    }
-    return (s32)gOv3;
+    f(a0);
 }
+
+static __inline__ s32 Value1(s32 (*f)(), s32 a0)
+{
+    extern u8 Data_03001ebc[];
+
+    return f(a0);
+}
+
+static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
+{
+    extern u8 Data_03001ebc[];
+
+    f(a0, a1);
+}
+
+static __inline__ void Call3_02000258(void (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    extern u8 Data_03001ebc[];
+
+    f(a0, a1, a2);
+}
+
+
 
 /*
  * Return the table at 0x02009f14.  The eight-byte owner includes its one
  * pool word.
  */
+
+
+
+
+
+
+
+
+
+
+
+
+#include "types.h"
+
+/* Runs a linear setup sequence once two prior gate checks both pass;
+ * either gate failing skips the whole sequence. Every step below is an
+ * opaque call into other overlay code, so only the gate values and the
+ * shared byte pair are named from what this function itself shows. */
+
+/* Gate id checked before the sequence, and passed again to the call that
+ * closes it out. */
+#define GATE_ID 2081
+
+extern u8 Value_00001032;
+void Func_02001fa2();
+s32 Func_02001fb4();
+void Func_02001fb6();
+s32 Func_02001fc0();
+void Func_02001fe8();
+void Func_02001fe8_a();
+void Func_02001fea();
+void Func_02001ff2();
+void Func_02002004();
+void Func_02002008();
+void Func_02002018();
+void Func_02002030();
+void Func_02002052();
+void Func_0200205e();
+void Func_02002080();
+void Func_020020a8();
+void Func_020020c0();
+void Func_020020d6();
+void Func_020020d8();
+void Func_020020dc();
+void Func_020020fe();
+void Func_02002100();
+void Func_02002114();
+void Func_02002128();
+void Func_02002132();
+void Func_02002132_a();
+void Func_02002144();
+void Func_02002146();
+void Func_02002150();
+void Func_0200215a();
+void Func_02002166();
+
+/* Resolved engine calls: each pseudo symbol is the per-site call word the
+ * overlay image holds (a word can serve two sites with different targets),
+ * and the macro names the engine function the site reaches through the
+ * overlay veneer and the main-image veneer island, keeping the site's own
+ * calling form. Names without a repository binding are provisional.
+ */
+#define GameFlag_IsSet_1(a0) Value1(Func_02001fb4, a0)
+#define GameFlag_IsSet_2(a0) Value1(Func_02001fc0, a0)
+#define BattleRuntime_Reset_1() Call0(Func_02001fea)
+#define Audio_PlayCue_1(a0) Value1(Func_02002114, a0)
+#define BattleRuntime_WaitIfModeZero_1(a0) Value1(Func_02002008, a0)
+#define UiText_DrawMessage_1(a0, a1) Value2(Func_02001ff2, a0, a1)
+#define BattleRuntime_WaitIfModeZero_2(a0) Call1(Func_02002018, a0)
+#define Audio_PlayCue_2(a0) Value1(Func_02002146, a0)
+#define BattleRuntime_WaitIfModeZero_3(a0) Value1(Func_0200205e, a0)
+#define BattleEffect_SpawnLinkedResourceObject_1(a0, a1, a2) Call3(Func_02002132, a0, a1, a2)
+#define BattleRuntime_WaitIfModeZero_4(a0) Value1(Func_02002080, a0)
+#define ObjectMotion_ArmCallback_1(a0, a1, a2) Call3(Func_02002144, a0, a1, a2)
+#define ObjectMotion_ArmCallback_2(a0, a1, a2) Call3(Func_02002150, a0, a1, a2)
+#define ObjectMotion_ArmCallback_3(a0, a1, a2) Call3(Func_0200215a, a0, a1, a2)
+#define ObjectMotion_ArmCallback_4(a0, a1, a2) Call3(Func_02002166, a0, a1, a2)
+#define ObjectMotion_Launch_1(a0, a1, a2) Call3(Func_02002128, a0, a1, a2)
+#define ObjectMotion_Launch_2(a0, a1, a2) Call3(Func_02002132_a, a0, a1, a2)
+#define BattleRuntime_WaitIfModeZero_5(a0) Value1(Func_020020d8, a0)
+#define UiText_DrawMessage_2(a0, a1) Value2(Func_020020c0, a0, a1)
+#define GameFlag_Set_1(a0) Value1(Func_020020d6, a0)
+#define GameFlag_Set_2(a0) Call1(Func_020020dc, a0)
+#define BattleRuntime_ScheduleShoulderButtonModeUpdate_1() Call0(Func_02002100)
+
+/* Loader-relocated ROM calls: each site names the pre-relocation call word the image holds. */
+
+static __inline__ void Call0(void (*f)())
+{
+    f();
+}
+
+
+
+
+
+
+
+
+
+static __inline__ s32 Value0(s32 (*f)())
+{
+    return f();
+}
+
+
+
+static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
+{
+    return f(a0, a1);
+}
+
+static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    return f(a0, a1, a2);
+}
+
+static __inline__ s32 Value6(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
+{
+    return f(a0, a1, a2, a3, a4, a5);
+}
+
+
+
+/* Contiguous unnamed state-owner run for resource_37f. */
+
+#include "types.h"
+
+extern s32 *Func_0200213e(s32);
+extern void Func_0200211c(s32);
+extern void Func_02002122(s32);
+extern void Func_02002124(s32);
+extern void Func_02002130(s32);
+
+
+
+#include "types.h"
+
+extern s32 *Func_0200217e(s32);
+extern void Func_0200215e(s32);
+extern void Func_02002164(s32);
+extern void Func_02002168(s32);
+extern void Func_02002174(s32);
+
+
+
+#include "types.h"
+
+extern s32 *Func_020021be(s32);
+extern void Func_0200219e(s32);
+extern void Func_020021a4(s32);
+extern void Func_020021a6(s32);
+extern void Func_020021b4(s32);
+extern void Func_02001de6(s32);
+
+
+
+#include "types.h"
+
+extern s32 *Func_02002206(s32);
+extern void Func_020021e4(s32);
+extern void Func_020021ea(s32);
+extern void Func_020021ec(s32);
+extern void Func_020021f8(s32);
+extern void Func_02001e2a(s32);
+
+
+
+#include "types.h"
+
+extern s32 *Func_0200224e(s32);
+extern void Func_0200222e(s32);
+extern void Func_02002234(s32);
+extern void Func_02002236(s32);
+extern void Func_02002244(s32);
+extern void Func_02001e76(s32);
+
+
+
+#include "types.h"
+
+extern s32 *Func_02002296(s32);
+extern void Func_02002274(s32);
+extern void Func_0200227a(s32);
+extern void Func_0200227c(s32);
+extern void Func_02002288(s32);
+extern void Func_02001eba(s32);
+
+
+
+#include "types.h"
+
+extern s32 *Func_020022de(s32);
+extern void Func_020022be(s32);
+extern void Func_020022c4(s32);
+extern void Func_020022c6(s32);
+extern void Func_020022d4(s32);
+extern void Func_02001f06(s32);
+
+
+
+#include "types.h"
+
+extern s32 *Func_02002326(s32);
+extern void Func_02002304(s32);
+extern void Func_0200230a(s32);
+extern void Func_0200230c(s32);
+extern void Func_02002318(s32);
+extern void Func_02001f4a(s32);
+
+
+
+#include "types.h"
+
+
+
+
+#include "types.h"
+
+extern u8 Value_00000013;
+extern u8 Value_00000010;
+
+extern void Func_02001236(void);
+extern void Func_0200133a(void);
+
+
+
+#include "types.h"
+
+/* Loader-relocated overlay calls: each symbol names the pre-relocation call
+ * word the image holds. */
+extern u8 Data_0200a69c[];
+void Func_0200248a();
+void Func_020024ca();
+s32 Func_020024d6();
+void Func_020024de();
+s32 Func_020024f0();
+s32 Func_020024f0_a();
+void Func_02002502();
+void Func_02002514();
+void Func_02002540();
+s32 Func_02002542();
+void Func_02002552();
+void Func_02002564();
+void Func_020025c4();
+
+/* Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers; a direct call precomputes a costly constant
+ * into a pseudo that the compiler then shares with later uses in the block.
+ * A value-returning call also sets r0 last of its arguments. */
+
+
+
+
+
+
+
+
+
+
+
+
+
+#include "types.h"
+
+/* Loader-relocated overlay calls: each symbol names the pre-relocation call
+ * word the image holds. */
+void Func_020028cc();
+void Func_020028e4();
+s32 Func_0200293e();
+s32 Func_0200293e_a();
+s32 Func_02002952();
+s32 Func_02002966();
+void Func_0200297c();
+void Func_02002986();
+void Func_02002990();
+void Func_02002990_a();
+void Func_0200299a();
+void Func_020029a4();
+void Func_020029d2();
+void Func_020029d6();
+void Func_020029d6_a();
+void Func_020029d6_b();
+void Func_020029d6_c();
+void Func_020029da();
+void Func_020029e0();
+void Func_020029e2();
+void Func_020029e6();
+void Func_020029ec();
+void Func_020029f0();
+void Func_020029f4();
+void Func_020029fa();
+void Func_02002a12();
+void Func_02002a1a();
+void Func_02002a28();
+void Func_02002a36();
+void Func_02002a40();
+void Func_02002a6e();
+s32 Func_02002a7e();
+s32 Func_02002a7e_a();
+void Func_02002a8a();
+void Func_02002a92();
+s32 Func_02002a9e();
+void Func_02002aa0();
+void Func_02002ab0();
+void Func_02002ab8();
+void Func_02002ab8_a();
+s32 Func_02002abe();
+void Func_02002ac0();
+void Func_02002ac4();
+void Func_02002ad0();
+void Func_02002ad0_a();
+void Func_02002ae0();
+void Func_02002ae0_a();
+void Func_02002ae0_b();
+void Func_02002af0();
+void Func_02002afa();
+void Func_02002afe();
+void Func_02002b10();
+void Func_02002b16();
+void Func_02002b18();
+void Func_02002b1a();
+void Func_02002b28();
+void Func_02002b2a();
+void Func_02002b3a();
+void Func_02002b42();
+void Func_02002b4a();
+
+/* Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers; a direct call precomputes a costly constant
+ * into a pseudo that the compiler then shares with later uses in the block.
+ * A value-returning call also sets r0 last of its arguments. */
+
+
+
+
+
+
+
+
+
+static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
+{
+    f(a0, a1, a2, a3);
+}
+
+/* The scene step counter at 0x1d8 of the shared scene work record. */
+
+
+
+
+#include "types.h"
+
+extern u8 Value_00000fe0;
+void Func_080770c8();
+void Func_080770d0();
+void Func_0808a010();
+void Func_0808a018();
+void Func_0808a020();
+int Func_0808a070();
+u8 *Func_0808a080();
+void Func_0808a090();
+void Func_0808a0b8();
+void Func_0808a0e0();
+void Func_0808a0e8();
+s32 Func_0808a0f0();
+s32 Func_0808a100();
+void Func_0808a110();
+void Func_0808a128();
+void Func_0808a130();
+s32 Func_0808a138();
+void Func_0808a150();
+void Func_0808a170();
+void Func_0808a178();
+void Func_0808a180();
+void Func_0808a188();
+s32 Func_0808a1b8();
+s32 Func_0808a1e8();
+void Func_0808a1f0();
+void Func_0808a208();
+void Func_0808a210();
+void Func_0808a218();
+void Func_0808a360();
+void Func_0808a370();
+
+/*
+ * resource_37f owner at 0x02000f8c, 1,680 bytes: full scene sequence
+ * for entities 0, 1, 5 and 8.
+ *
+ * Complete owner: saved-link prologue at 0x02000f8c through the sole
+ * interworking return at 0x02001600, alignment and six-word trailing pool
+ * through 0x0200161b.  A branch at 0x020013d0 skips an eleven-word interior
+ * constant pool and resumes at 0x02001400.  All 174 BL sites resolve to 30
+ * import veneers and are represented below in machine order.
+ */
+/* Loader-relocated ROM calls: each site names the pre-relocation call word the image holds. */
+s32 Func_02002b3c();
+s32 Func_02002b6a();
+s32 Func_02002b7e();
+s32 Func_02002b92();
+s32 Func_02002ba8();
+s32 Func_02002bb2();
+s32 Func_02002bbc();
+s32 Func_02002bbc_a();
+s32 Func_02002bc6();
+s32 Func_02002bd0();
+s32 Func_02002bfe();
+s32 Func_02002c02();
+s32 Func_02002c06();
+s32 Func_02002c0c();
+s32 Func_02002c0e();
+s32 Func_02002c18();
+s32 Func_02002c26();
+s32 Func_02002c38();
+s32 Func_02002c3e();
+s32 Func_02002c46();
+s32 Func_02002c4c();
+s32 Func_02002c4e();
+s32 Func_02002c56();
+s32 Func_02002cb4();
+s32 Func_02002cba();
+s32 Func_02002cc6();
+s32 Func_02002cd2();
+s32 Func_02002cdc();
+s32 Func_02002cde();
+s32 Func_02002ce8();
+s32 Func_02002cf4();
+s32 Func_02002d00();
+s32 Func_02002d0c();
+s32 Func_02002d0c_a();
+s32 Func_02002d10();
+s32 Func_02002d18();
+s32 Func_02002d1c();
+s32 Func_02002d1e();
+s32 Func_02002d22();
+s32 Func_02002d2e();
+s32 Func_02002d2e_a();
+s32 Func_02002d36();
+s32 Func_02002d3a();
+s32 Func_02002d46();
+s32 Func_02002d52();
+s32 Func_02002d54();
+s32 Func_02002d5e();
+s32 Func_02002d68();
+s32 Func_02002d74();
+s32 Func_02002d76();
+s32 Func_02002d86();
+s32 Func_02002d8e();
+s32 Func_02002da0();
+s32 Func_02002da8();
+s32 Func_02002daa();
+s32 Func_02002db6();
+s32 Func_02002dd2();
+s32 Func_02002dec();
+s32 Func_02002e12();
+s32 Func_02002e2a();
+s32 Func_02002e34();
+s32 Func_02002e34_a();
+s32 Func_02002e36();
+s32 Func_02002e4c();
+s32 Func_02002e58();
+s32 Func_02002e5e();
+s32 Func_02002e60();
+s32 Func_02002e6c();
+s32 Func_02002e6c_a();
+s32 Func_02002e7e();
+s32 Func_02002e88();
+s32 Func_02002e8a();
+s32 Func_02002e8a_a();
+s32 Func_02002e90();
+s32 Func_02002e96();
+s32 Func_02002e96_a();
+s32 Func_02002ea0();
+s32 Func_02002ea2();
+s32 Func_02002ea2_a();
+s32 Func_02002eaa();
+s32 Func_02002eac();
+s32 Func_02002eac_a();
+s32 Func_02002eac_b();
+s32 Func_02002eb2();
+s32 Func_02002ebc();
+s32 Func_02002eca();
+s32 Func_02002ed8();
+s32 Func_02002ee4();
+s32 Func_02002ee6();
+s32 Func_02002f14();
+s32 Func_02002f14_a();
+s32 Func_02002f16();
+s32 Func_02002f18();
+s32 Func_02002f18_a();
+s32 Func_02002f1e();
+s32 Func_02002f26();
+s32 Func_02002f28();
+s32 Func_02002f2e();
+s32 Func_02002f46();
+s32 Func_02002f4c();
+s32 Func_02002f52();
+s32 Func_02002f70();
+s32 Func_02002f7c();
+s32 Func_02002f7e();
+s32 Func_02002f90();
+s32 Func_02002f92();
+s32 Func_02002fa6();
+s32 Func_02002fac();
+s32 Func_02002fc2();
+s32 Func_02002fcc();
+s32 Func_02002fe2();
+s32 Func_02002fe6();
+s32 Func_02002fe6_a();
+s32 Func_02002ff0();
+s32 Func_02002ff2();
+s32 Func_02002ffc();
+s32 Func_02003004();
+s32 Func_02003020();
+s32 Func_0200303e();
+s32 Func_0200304c();
+s32 Func_02003054();
+s32 Func_02003056();
+s32 Func_02003058();
+s32 Func_02003060();
+s32 Func_0200306e();
+s32 Func_02003070();
+s32 Func_0200307a();
+s32 Func_0200308a();
+s32 Func_020030a8();
+s32 Func_020030aa();
+s32 Func_020030ae();
+s32 Func_020030ae_a();
+s32 Func_020030b4();
+s32 Func_020030b8();
+s32 Func_020030c4();
+s32 Func_020030d0();
+s32 Func_020030d6();
+s32 Func_020030dc();
+s32 Func_020030de();
+s32 Func_020030ea();
+s32 Func_020030ec();
+s32 Func_020030ec_a();
+s32 Func_020030f4();
+s32 Func_020030f8();
+s32 Func_02003104();
+s32 Func_0200310e();
+s32 Func_02003118();
+s32 Func_0200311a();
+s32 Func_02003122();
+s32 Func_0200312a();
+s32 Func_02003130();
+s32 Func_0200313e();
+s32 Func_02003146();
+s32 Func_0200314a();
+s32 Func_0200314c();
+s32 Func_02003156();
+s32 Func_0200315c();
+s32 Func_0200316a();
+s32 Func_0200316c();
+s32 Func_0200316e();
+s32 Func_0200317a();
+s32 Func_0200317c();
+s32 Func_02003186();
+s32 Func_0200318c();
+s32 Func_02003194();
+s32 Func_0200319c();
+s32 Func_020031aa();
+s32 Func_020031b0();
+s32 Func_020031bc();
+s32 Func_020031c6();
+s32 Func_020031d0();
+s32 Func_020031e0();
+s32 Func_020031e8();
+s32 Func_020031f0();
+
+/* Resolved engine calls: each pseudo symbol is the per-site call word the
+ * overlay image holds (a word can serve two sites with different targets),
+ * and the macro names the engine function the site reaches through the
+ * overlay veneer and the main-image veneer island, keeping the site's own
+ * calling form. Names without a repository binding are provisional.
+ */
+#define BattleRuntime_Reset_1_late() Value0(Func_02002b3c)
+#define BattleRuntime_WaitIfModeZero_1_late() Value0(Func_02002c38)
+#define ObjectMotion_SetSpeedParameters_1() Value0(Func_02002c4c)
+#define Scene_GetRecord_1(a0) Value1(Func_02002b6a, a0)
+#define ObjectMotion_SetHorizontalPositionWithTerrain_1(a0, a1, a2) Value3(Func_02002ba8, a0, a1, a2)
+#define Scene_GetRecord_2(a0) Value1(Func_02002b7e, a0)
+#define ObjectMotion_SetHorizontalPositionWithTerrain_2(a0, a1, a2) Value3(Func_02002bbc, a0, a1, a2)
+#define Scene_GetRecord_3(a0) Value1(Func_02002b92, a0)
+#define ObjectMotion_SetHorizontalPositionWithTerrain_3(a0, a1, a2) Value3(Func_02002bd0, a0, a1, a2)
+#define ObjectMotion_SetSpeedParameters_2(a0, a1, a2) Call3(Func_02002bb2, a0, a1, a2)
+#define ObjectMotion_SetSpeedParameters_3(a0, a1, a2) Call3(Func_02002bbc_a, a0, a1, a2)
+#define ObjectMotion_SetSpeedParameters_4(a0, a1, a2) Call3(Func_02002bc6, a0, a1, a2)
+#define Object_SetModeById_1(a0, a1) Call2(Func_02002bfe, a0, a1)
+#define Object_SetModeById_2(a0, a1) Call2(Func_02002c06, a0, a1)
+#define Object_SetModeById_3(a0, a1) Call2(Func_02002c0e, a0, a1)
+#define ObjectMotion_OffsetPositionAndResetMotion_1(a0, a1, a2) Call3(Func_02002c02, a0, a1, a2)
+#define ObjectMotion_OffsetPositionAndResetMotion_2(a0, a1, a2) Call3(Func_02002c0c, a0, a1, a2)
+#define ObjectMotion_OffsetPositionAndResetMotion_3(a0, a1, a2) Value3(Func_02002c18, a0, a1, a2)
+#define ObjectMotion_CommitCurrentPositionAndActivate_1(a0) Value1(Func_02002c26, a0)
+#define Object_SetModeById_4(a0, a1) Call2(Func_02002c3e, a0, a1)
+#define Object_SetModeById_5(a0, a1) Call2(Func_02002c46, a0, a1)
+#define Object_SetModeById_6(a0, a1) Call2(Func_02002c4e, a0, a1)
+#define Object_SetModeById_7(a0, a1) Call2(Func_02002c56, a0, a1)
+#define ObjectMotion_ArmCallback_1_late(a0, a1, a2) Call3(Func_02002cba, a0, a1, a2)
+#define ObjectMotion_ArmCallback_2_late(a0, a1, a2) Call3(Func_02002cc6, a0, a1, a2)
+#define ObjectMotion_ArmCallback_3_late(a0, a1, a2) Call3(Func_02002cd2, a0, a1, a2)
+#define ObjectMotion_ArmCallback_4_late(a0, a1, a2) Call3(Func_02002cde, a0, a1, a2)
+#define ObjectMotion_ArmCallback_5(a0, a1, a2) Call3(Func_02002ce8, a0, a1, a2)
+#define ObjectMotion_ArmCallback_6(a0, a1, a2) Call3(Func_02002cf4, a0, a1, a2)
+#define ObjectMotion_ArmCallback_7(a0, a1, a2) Call3(Func_02002d00, a0, a1, a2)
+#define ObjectMotion_ArmCallback_8(a0, a1, a2) Call3(Func_02002d0c, a0, a1, a2)
+#define ObjectMotion_ArmCallback_9(a0, a1, a2) Call3(Func_02002d18, a0, a1, a2)
+#define ObjectMotion_ArmCallback_10(a0, a1, a2) Call3(Func_02002d22, a0, a1, a2)
+#define ObjectMotion_ArmCallback_11(a0, a1, a2) Call3(Func_02002d2e, a0, a1, a2)
+#define ObjectMotion_ArmCallback_12(a0, a1, a2) Call3(Func_02002d3a, a0, a1, a2)
+#define ObjectMotion_ArmCallback_13(a0, a1, a2) Call3(Func_02002d46, a0, a1, a2)
+#define ObjectMotion_ArmCallback_14(a0, a1, a2) Call3(Func_02002d52, a0, a1, a2)
+#define ObjectMotion_ArmCallback_15(a0, a1, a2) Call3(Func_02002d5e, a0, a1, a2)
+#define ObjectMotion_SetVariantCallbackAndInvokeObject_1(a0, a1) Value2(Func_02002d2e_a, a0, a1)
+#define BattleRuntime_WaitIfModeZero_2_late(a0) Value1(Func_02002cb4, a0)
+#define Object_SetModeById_8(a0, a1) Call2(Func_02002d1c, a0, a1)
+#define ObjectMotion_OffsetPositionAndResetMotion_4(a0, a1, a2) Value3(Func_02002d10, a0, a1, a2)
+#define ObjectMotion_CommitCurrentPositionAndActivate_2(a0) Value1(Func_02002d1e, a0)
+#define Object_SetModeById_9(a0, a1) Value2(Func_02002d36, a0, a1)
+#define BattleRuntime_WaitIfModeZero_3_late(a0) Value1(Func_02002cdc, a0)
+#define ObjectMotion_ArmCallback_16(a0, a1, a2) Call3(Func_02002da0, a0, a1, a2)
+#define ObjectMotion_ArmCallback_17(a0, a1, a2) Call3(Func_02002daa, a0, a1, a2)
+#define ObjectMotion_ArmCallback_18(a0, a1, a2) Call3(Func_02002db6, a0, a1, a2)
+#define ObjectMotion_SetVariantCallbackAndInvokeObject_2(a0, a1) Value2(Func_02002d86, a0, a1)
+#define BattleRuntime_WaitIfModeZero_4_late(a0) Value1(Func_02002d0c_a, a0)
+#define Object_SetModeById_10(a0, a1) Call2(Func_02002d74, a0, a1)
+#define ObjectMotion_OffsetPositionAndResetMotion_5(a0, a1, a2) Value3(Func_02002d68, a0, a1, a2)
+#define ObjectMotion_CommitCurrentPositionAndActivate_3(a0) Value1(Func_02002d76, a0)
+#define Object_SetModeById_11(a0, a1) Call2(Func_02002d8e, a0, a1)
+#define ObjectMotion_SetSpeedLimitAndAcceleration_1(a0, a1) Call2(Func_02002e12, a0, a1)
+#define ObjectMotion_PlaceWithinCameraBounds_1(a0, a1, a2, a3) Call4(Func_02002e2a, a0, a1, a2, a3)
+#define Object_CommitPositionThenWaitIfModeZero_1() Value0(Func_02002e36)
+#define BattleRuntime_WaitIfModeZero_5_late(a0) Value1(Func_02002d54, a0)
+#define ObjectMotion_SetSpeedLimitAndAcceleration_2(a0, a1) Call2(Func_02002e34, a0, a1)
+#define ObjectMotion_PlaceWithinCameraBounds_2(a0, a1, a2, a3) Call4(Func_02002e4c, a0, a1, a2, a3)
+#define Object_CommitPositionThenWaitIfModeZero_2() Call0(Func_02002e58)
+#define ObjectMotion_PlaceWithinCameraBounds_3(a0, a1, a2, a3) Call4(Func_02002e60, a0, a1, a2, a3)
+#define Object_CommitPositionThenWaitIfModeZero_3() Call0(Func_02002e6c)
+#define Object_SetModeById_12(a0, a1) Call2(Func_02002dec, a0, a1)
+#define ObjectMotion_PlaceWithinCameraBounds_4(a0, a1, a2, a3) Value4(Func_02002e7e, a0, a1, a2, a3)
+#define Object_CommitPositionThenWaitIfModeZero_4() Value0(Func_02002e8a)
+#define BattleRuntime_WaitIfModeZero_6(a0) Value1(Func_02002da8, a0)
+#define ObjectMotion_SetSpeedLimitAndAcceleration_3(a0, a1) Call2(Func_02002e88, a0, a1)
+#define ObjectMotion_PlaceWithinCameraBounds_5(a0, a1, a2, a3) Call4(Func_02002ea0, a0, a1, a2, a3)
+#define Object_CommitPositionThenWaitIfModeZero_5() Call0(Func_02002eac)
+#define ObjectMotion_CallThenWaitForAnimationChange_1(a0, a1) Value2(Func_02002e34_a, a0, a1)
+#define BattleRuntime_WaitIfModeZero_7(a0) Value1(Func_02002dd2, a0)
+#define ObjectMotion_ArmCallback_19(a0, a1, a2) Call3(Func_02002e96, a0, a1, a2)
+#define ObjectMotion_ArmCallback_20(a0, a1, a2) Call3(Func_02002ea2, a0, a1, a2)
+#define BattleEffect_SpawnLinkedResourceObject_1_late(a0, a1, a2) Call3(Func_02002ebc, a0, a1, a2)
+#define SceneWork_SetStepValue_1(a0) Call1(Func_02002e8a_a, a0)
+#define BattleRuntime_RunThenWaitIfModeZero_1(a0, a1, a2) Call3(Func_02002eac_a, a0, a1, a2)
+#define BattleEffect_SpawnLinkedResourceObject_2(a0, a1, a2) Call3(Func_02002ed8, a0, a1, a2)
+#define ObjectMotion_SetVariantCallback_1(a0, a1) Call2(Func_02002e90, a0, a1)
+#define BattleRuntime_RunThenWaitIfModeZero_2(a0, a1, a2) Call3(Func_02002eca, a0, a1, a2)
+#define ObjectMotion_SetVariantCallback_2(a0, a1) Call2(Func_02002ea2_a, a0, a1)
+#define ObjectMotion_SetVariantCallback_3(a0, a1) Call2(Func_02002eaa, a0, a1)
+#define ObjectMotion_SetVariantCallback_4(a0, a1) Call2(Func_02002eb2, a0, a1)
+#define BattleRuntime_WaitIfModeZero_8(a0, a1) Call2(Func_02002f14, a0, a1)
+#define BattleRuntime_WaitIfModeZero_9(a0, a1) Call2(Func_02002f1e, a0, a1)
+#define BattleRuntime_WaitIfModeZero_10(a0, a1) Value2(Func_02002f28, a0, a1)
+#define BattleRuntime_WaitIfModeZero_11(a0) Value1(Func_02002e5e, a0)
+#define ObjectMotion_SetVariantCallbackAndInvokeObject_3(a0, a1) Value2(Func_02002ee6, a0, a1)
+#define BattleRuntime_WaitIfModeZero_12(a0) Value1(Func_02002e6c_a, a0)
+#define BattleEvent_RunActionAndWait_1(a0, a1) Call2(Func_02002f14_a, a0, a1)
+#define ObjectMotion_CallThenWaitForAnimationChange_2(a0, a1) Call2(Func_02002ee4, a0, a1)
+#define BattleRuntime_RunThenWaitIfModeZero_3(a0, a1, a2) Call3(Func_02002f2e, a0, a1, a2)
+#define Object_LinkPair_1(a0, a1, a2) Value3(Func_02002f18, a0, a1, a2)
+#define BattleRuntime_WaitIfModeZero_13(a0) Value1(Func_02002e96_a, a0)
+#define ObjectMotion_SetVariantCallback_5(a0, a1) Call2(Func_02002f16, a0, a1)
+#define ObjectMotion_SetVariantCallbackAndInvokeObject_4(a0, a1) Value2(Func_02002f26, a0, a1)
+#define BattleRuntime_WaitIfModeZero_14(a0) Value1(Func_02002eac_b, a0)
+#define ObjectMotion_ArmCallback_21(a0, a1, a2) Call3(Func_02002f70, a0, a1, a2)
+#define ObjectMotion_ArmCallback_22(a0, a1, a2) Call3(Func_02002f7c, a0, a1, a2)
+#define ObjectMotion_SetVariantCallbackAndInvokeObject_5(a0, a1) Call2(Func_02002f4c, a0, a1)
+#define BattleRuntime_RunThenWaitIfModeZero_4(a0, a1, a2) Call3(Func_02002f7e, a0, a1, a2)
+#define ObjectMotion_CallThenWaitForAnimationChange_3(a0, a1) Call2(Func_02002f46, a0, a1)
+#define BattleRuntime_RunThenWaitIfModeZero_5(a0, a1, a2) Call3(Func_02002f90, a0, a1, a2)
+#define ObjectMotion_ArmCallback_23(a0, a1, a2) Call3(Func_02002fac, a0, a1, a2)
+#define BattleRuntime_RunThenWaitIfModeZero_6(a0, a1, a2) Call3(Func_02002fa6, a0, a1, a2)
+#define ObjectMotion_ArmCallback_24(a0, a1, a2) Call3(Func_02002fc2, a0, a1, a2)
+#define ObjectMotion_SetVariantCallbackAndInvokeObject_6(a0, a1) Value2(Func_02002f92, a0, a1)
+#define BattleRuntime_WaitIfModeZero_15(a0) Value1(Func_02002f18_a, a0)
+#define BattleRuntime_WaitIfModeZero_16(a0, a1) Call2(Func_02002ff2, a0, a1)
+#define ObjectMotion_ArmCallback_25(a0, a1, a2) Call3(Func_02002fe6, a0, a1, a2)
+#define ObjectMotion_ArmCallback_26(a0, a1, a2) Call3(Func_02002ff0, a0, a1, a2)
+#define ObjectMotion_ArmCallback_27(a0, a1, a2) Call3(Func_02002ffc, a0, a1, a2)
+#define ObjectMotion_SetVariantCallbackAndInvokeObject_7(a0, a1) Value2(Func_02002fcc, a0, a1)
+#define BattleRuntime_WaitIfModeZero_17(a0) Value1(Func_02002f52, a0)
+#define BattleRuntime_RunThenWaitIfModeZero_7(a0, a1, a2) Call3(Func_02003004, a0, a1, a2)
+#define ObjectMotion_ArmCallback_28(a0, a1, a2) Call3(Func_02003020, a0, a1, a2)
+#define ObjectMotion_Launch_1_late(a0, a1, a2) Call3(Func_02002fe2, a0, a1, a2)
+#define BattleRuntime_RunThenWaitIfModeZero_8(a0, a1, a2) Call3(Func_02003054, a0, a1, a2)
+#define ObjectMotion_ArmCallback_29(a0, a1, a2) Call3(Func_0200306e, a0, a1, a2)
+#define ObjectMotion_SetSpeedParameters_5(a0, a1) Value2(Func_02003056, a0, a1)
+#define UiWork_WaitThenFinalizeCapacity_1(a0, a1) Value2(Func_02002fe6_a, a0, a1)
+#define SceneWork_SetStepValue_2(a0) Value1(Func_02003060, a0)
+#define ObjectMotion_SetVariantCallbackAndInvokeObject_8(a0, a1) Call2(Func_02003058, a0, a1)
+#define BattleRuntime_RunThenWaitIfModeZero_9(a0, a1, a2) Value3(Func_0200308a, a0, a1, a2)
+#define SceneWork_SetStepValue_3(a0) Value1(Func_0200307a, a0)
+#define ObjectMotion_ArmCallback_30(a0, a1, a2) Call3(Func_020030ae, a0, a1, a2)
+#define BattleRuntime_RunThenWaitIfModeZero_10(a0, a1, a2) Call3(Func_020030a8, a0, a1, a2)
+#define ObjectMotion_ArmCallback_31(a0, a1, a2) Call3(Func_020030c4, a0, a1, a2)
+#define ObjectMotion_ArmCallback_32(a0, a1, a2) Call3(Func_020030d0, a0, a1, a2)
+#define ObjectMotion_ArmCallback_33(a0, a1, a2) Call3(Func_020030dc, a0, a1, a2)
+#define BattleEffect_SpawnLinkedResourceObject_3(a0, a1, a2) Call3(Func_020030f8, a0, a1, a2)
+#define ObjectMotion_SetVariantCallbackAndInvokeObject_9(a0, a1) Value2(Func_020030b8, a0, a1)
+#define BattleRuntime_WaitIfModeZero_18(a0) Value1(Func_0200303e, a0)
+#define ObjectMotion_CallThenWaitForAnimationChange_4(a0, a1) Value2(Func_020030ae_a, a0, a1)
+#define BattleRuntime_WaitIfModeZero_19(a0) Value1(Func_0200304c, a0)
+#define ObjectMotion_ArmCallback_34(a0, a1, a2) Call3(Func_0200310e, a0, a1, a2)
+#define ObjectMotion_ArmCallback_35(a0, a1, a2) Call3(Func_0200311a, a0, a1, a2)
+#define ObjectMotion_SetVariantCallbackAndInvokeObject_10(a0, a1) Value2(Func_020030ea, a0, a1)
+#define BattleRuntime_WaitIfModeZero_20(a0) Value1(Func_02003070, a0)
+#define BattleRuntime_RunThenWaitIfModeZero_11(a0, a1, a2) Value3(Func_02003122, a0, a1, a2)
+#define ObjectMotion_SetSpeedParameters_6(a0, a1, a2) Call3(Func_020030b4, a0, a1, a2)
+#define Object_SetModeById_13(a0, a1) Call2(Func_020030ec, a0, a1)
+#define ObjectMotion_OffsetPositionAndResetMotion_6(a0, a1, a2) Value3(Func_020030de, a0, a1, a2)
+#define ObjectMotion_CommitCurrentPositionAndActivate_4(a0) Value1(Func_020030ec_a, a0)
+#define Object_SetModeById_14(a0, a1) Value2(Func_02003104, a0, a1)
+#define BattleRuntime_WaitIfModeZero_21(a0) Value1(Func_020030aa, a0)
+#define ObjectMotion_ArmCallback_36(a0, a1, a2) Call3(Func_0200316e, a0, a1, a2)
+#define ObjectMotion_ArmCallback_37(a0, a1, a2) Value3(Func_0200317a, a0, a1, a2)
+#define ObjectMotion_CommitCurrentPositionAndActivate_5(a0) Value1(Func_02003118, a0)
+#define Object_SetModeById_15(a0, a1) Value2(Func_02003130, a0, a1)
+#define BattleRuntime_WaitIfModeZero_22(a0) Value1(Func_020030d6, a0)
+#define Object_SetModeById_16(a0, a1) Call2(Func_0200313e, a0, a1)
+#define Object_SetModeById_17(a0, a1) Call2(Func_02003146, a0, a1)
+#define ObjectMotion_CallThenWaitForAnimationChange_5(a0, a1) Value2(Func_02003156, a0, a1)
+#define BattleRuntime_WaitIfModeZero_23(a0) Value1(Func_020030f4, a0)
+#define Object_SetModeById_18(a0, a1) Value2(Func_0200315c, a0, a1)
+#define Scene_GetRecord_4(a0) Value1(Func_0200312a, a0)
+#define ObjectMotion_ResetAndSetPosition_1(a0, a1, a2) Value3(Func_0200314c, a0, a1, a2)
+#define Object_SetModeById_19(a0, a1) Value2(Func_0200317c, a0, a1)
+#define Scene_GetRecord_5(a0) Value1(Func_0200314a, a0)
+#define ObjectMotion_ResetAndSetPosition_2(a0, a1, a2) Value3(Func_0200316c, a0, a1, a2)
+#define Object_SetModeById_20(a0, a1) Value2(Func_0200319c, a0, a1)
+#define Scene_GetRecord_6(a0) Value1(Func_0200316a, a0)
+#define ObjectMotion_ResetAndSetPosition_3(a0, a1, a2) Value3(Func_0200318c, a0, a1, a2)
+#define ObjectMotion_CommitCurrentPositionAndActivate_6(a0) Value1(Func_020031aa, a0)
+#define ObjectMotion_SetHorizontalPositionWithTerrain_4(a0, a1, a2) Call3(Func_020031bc, a0, a1, a2)
+#define ObjectMotion_SetHorizontalPositionWithTerrain_5(a0, a1, a2) Call3(Func_020031c6, a0, a1, a2)
+#define ObjectMotion_SetHorizontalPositionWithTerrain_6(a0, a1, a2) Call3(Func_020031d0, a0, a1, a2)
+#define Object_SetModeById_21(a0, a1) Call2(Func_020031e0, a0, a1)
+#define Object_SetModeById_22(a0, a1) Call2(Func_020031e8, a0, a1)
+#define Object_SetModeById_23(a0, a1) Value2(Func_020031f0, a0, a1)
+#define GameFlag_Set_1_late(a0) Value1(Func_02003186, a0)
+#define GameFlag_Clear_1(a0) Value1(Func_02003194, a0)
+#define BattleRuntime_ScheduleShoulderButtonModeUpdate_1_late() Value0(Func_020031b0)
+
+/* Additional resolved engine calls: named directly from each target's own
+ * reconstructed C source (see the trailing "provisional" comment on each). */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
+{
+    return f(a0, a1, a2, a3);
+}
+
+/* Two-field record read used when copying a found record's s32 pair into a
+ * setter call alongside an entity id. */
+#define RECORD_A32(rec) (*(s32 *)((rec) + 8))
+#define RECORD_B32(rec) (*(s32 *)((rec) + 16))
+
+/* Two-field record read used when copying a found record's s16 pair into a
+ * setter call alongside an entity id. */
+#define RECORD_A16(rec) (*(s16 *)((rec) + 10))
+#define RECORD_B16(rec) (*(s16 *)((rec) + 18))
+
+/* Runs the full scene sequence for entities 0, 1, 5 and 8: per-entity setup,
+ * a shared movement/pose pass, a branch on one entity's saved state, and a
+ * closing pass over the same four entities. */
+
+
+s32 SceneData_SelectOverlayDataBySelector(void)
+{
+    extern s16 Data_02000240[];
+
+    s16 v = Data_02000240[224];
+
+    if (v == (s32)&Value_00000013) {
+        return (s32)Data_02009d04;
+    }
+    if (v == (s32)&Value_00000010) {
+        return (s32)Data_02009d64;
+    }
+    return (s32)Data_02009cd4;
+}
+
 u8 *SceneData_GetTable9F14(void)
 {
     return (u8 *)0x02009f14;
 }
 
-s32 Scene_RunSupplementalSequenceOne(void)
+s32 Func_0200007c(void)
 {
-    extern u8 gCell2[];
-    extern u8 gWork[];
+    extern u8 Data_02000240[];
+    extern u8 Data_03001ebc[];
 
     s32 base5_2009fd8;
     s32 lo = 11;
 
-    if (gCell[224][0] == (s32)gVal) {
-        if (gCell[225][0] >= lo) {
-            if (gCell[225][0] > 13) {
-                if (gCell[225][0] > 16) {
+    if (Data_02000240_t[224][0] == (s32)Data_00000010) {
+        if (Data_02000240_t[225][0] >= lo) {
+            if (Data_02000240_t[225][0] > 13) {
+                if (Data_02000240_t[225][0] > 16) {
                     goto L_020000ae;
                 }
-                return (s32)gOv7;
+                return (s32)Data_0200a1b8;
             }
-            return (s32)gOv6;
+            return (s32)Data_0200a050;
         }
         L_020000ae:;
-        base5_2009fd8 = (s32)gOv5;
-        Story_unk17_4(base5_2009fd8);
+        base5_2009fd8 = (s32)Data_02009fd8;
+        Func_02001c70(base5_2009fd8);
         return base5_2009fd8;
     } else {
-        if (gCell[224][0] == (s32)gVal2) {
-            return (s32)gOv8;
+        if (Data_02000240_t[224][0] == (s32)Data_00000013) {
+            return (s32)Data_0200a2a8;
         }
     }
-    return (s32)gOv4;
+    return (s32)Data_02009fc0;
 }
 
-void Scene_RunGateSequenceA(void)
+void FieldScene_RunScene37fSequenceA(void)
 {
-    extern u8 gWork[];
+    extern u8 Data_03001ebc[];
 
     u32 i;
     s32 record;
     s32 v5;
     s32 v6;
 
-    Story_unk18_4();
+    Func_02001d06();
     v5 = 3;
     v6 = 2;
-    Story_unk19_4(181);
-    Story_unk3_5(16, 28, 21, 3, v5, v6);
-    Story_unk20_4(10);
-    Story_unk4_5(16, 30, 21, 3, v5, v6);
-    Story_unk21_4(10);
-    Story_unk5_5(16, 32, 21, 3, v5, v6);
-    Story_unk22_4(10);
-    Story_unk23_4(0, 2);
-    Story_unk4_3(0, 0x9999, 0x4ccc);
-    Story_unk24_4(0, 120, 98);
-    Story_unk25_4(0, 2);
-    Story_unk5_3(0, 0, -8);
-    Story_unk26_4(10);
-    Story_unk27_4();
-    Story_unk28_4();
-    Story_unk29_4(2);
-    Story_unk30_4();
+    Func_02001e2c(181);
+    Call6(Func_02001cd0, 16, 28, 21, 3, v5, v6);
+    Func_02001c9e(10);
+    Call6(Func_02001ce6, 16, 30, 21, 3, v5, v6);
+    Func_02001cb4(10);
+    Call6(Func_02001cfc, 16, 32, 21, 3, v5, v6);
+    Func_02001cca(10);
+    Func_02001e12(0, 2);
+    Call3(Func_02001d8c, 0, 0x9999, 0x4ccc);
+    Func_02001da6(0, 120, 98);
+    Func_02001dce(0, 2);
+    Call3(Func_02001dc2, 0, 0, -8);
+    Func_02001d80(10);
+    Func_02001e8c();
+    Func_02001e98();
+    Func_02001e7e(2);
+    Func_02001da2();
 }
 
-void Dialogue_RunFlag81aMessageBranch(void)
+void SceneDialogue_RunFlag81aMessageBranch(void)
 {
-    extern u8 *gWork;
+    extern u8 *Data_03001ebc;
 
-    Story_unk8_4();
+    Func_02001db0();
 
-    if (Story_unk10_4(0x81a) != 0) {
-        Story_unk11_4(0x1034, 1);
+    if (Func_02001d96(0x81a) != 0) {
+        Func_02001d9a(0x1034, 1);
     } else {
-        Story_unk12_4(0x1031, 1);
-        if (Story_unk13_4(0xf01) != 0) {
-            u16 *p = (u16 *)(gWork + 370);
+        Func_02001da4(0x1031, 1);
+        if (Func_02001db2(0xf01) != 0) {
+            u16 *p = (u16 *)(Data_03001ebc + 370);
             u16 val = 1;
             *p = val;
         }
     }
 
-    Story_unk14_4();
+    Func_02001df0();
 }
 
-void Scene_RunOpeningAuxiliarySequence(void)
+void FieldScene_RunOpeningAuxiliarySequence(void)
 {
-    extern u8 gWork[];
+    extern u8 Data_03001ebc[];
 
     s32 id;
     s32 v5;
     s32 v6;
 
-    if (Story_Check(0xf01) == 0) {
+    if (Value1(Func_02001df0_a, 0xf01) == 0) {
     } else {
-        if (Story_unk2(0x81a) != 0) {
+        if (Value1(Func_02001dfc, 0x81a) != 0) {
         } else {
-            Story_unk31_4();
-            Story_unk32_4();
+            Func_02001e26();
+            Func_02001f3a();
             v5 = 1;
-            Story_unk33_4(182);
-            Story_unk6_5(0, 70, 30, 42, v5, v5);
-            Story_unk34_4();
-            Story_unk35_4(40);
+            Func_02001f50(182);
+            Call6(Func_02001df2, 0, 70, 30, 42, v5, v5);
+            Func_02001dde();
+            Func_02001e44(40);
             id = 0x1032;
-            Story_unk4_4(id, 1);
-            Story_unk36_4(20);
+            Call2(Func_02001e30, id, 1);
+            Func_02001e56(20);
             v6 = 3;
-            Story_unk37_4(183);
-            Story_unk7_5(0, 29, 3, 1, v6, 2);
-            Story_unk8_5(0, 29, 3, 2, v6, v5);
-            Story_unk9_5(1, 109, 4, 81, v5, v5);
-            Story_unk38_4();
-            Story_unk6_3(0x10000, 0x10000, 0x10000);
-            Story_unk39_4(20);
-            Story_unk7_3(0, 0x100, 0);
-            Story_unk8_3(0x20000, 0x20000, 0x10000);
-            Story_unk40_4(20);
-            Story_unk9_3(0, 0x4000, 40);
-            Story_unk10_3(0, 0x8000, 20);
-            Story_unk41_4(0, 0, 20);
-            Story_unk11_3(0, 0x4000, 10);
-            Story_unk42_4(0, 4, 20);
-            Story_unk43_4(0, 6, 40);
-            Story_unk12_3(-1, -1, 0xe666);
-            Story_unk44_4(40);
-            Story_unk5_4(id + 1, 1);
-            Story_Do(0x143);
-            Story_unk2_2(0x81a);
-            Story_unk45_4();
+            Func_02001f84(183);
+            Call6(Func_02001e28, 0, 29, 3, 1, v6, 2);
+            Call6(Func_02001e40, 0, 29, 3, 2, v6, v5);
+            Call6(Func_02001e48, 1, 109, 4, 81, v5, v5);
+            Func_02001e34();
+            Call3_02000258(Func_02001e7c, 0x10000, 0x10000, 0x10000);
+            Func_02001eaa(20);
+            Call3_02000258(Func_02001f7e, 0, 0x100, 0);
+            Call3_02000258(Func_02001e9e, 0x20000, 0x20000, 0x10000);
+            Func_02001ecc(20);
+            Call3_02000258(Func_02001f90, 0, 0x4000, 40);
+            Call3_02000258(Func_02001f9c, 0, 0x8000, 20);
+            Func_02001fa6(0, 0, 20);
+            Call3_02000258(Func_02001fb2, 0, 0x4000, 10);
+            Func_02001f74(0, 4, 20);
+            Func_02001f7e_a(0, 6, 40);
+            Call3_02000258(Func_02001ef4, -1, -1, 0xe666);
+            Func_02001f22(40);
+            Call2(Func_02001f0e, id + 1, 1);
+            Call1(Func_02001f24, 0x143);
+            Call1(Func_02001f2a, 0x81a);
+            Func_02001f4e();
         }
     }
 }
 
-void Scene_RunFlag821Dialogue(void)
+void FieldScene_RunFlag821Dialogue(void)
 {
-    extern u8 *gWork;
+    extern u8 *Data_03001ebc;
 
     u8 *work;
 
-    Story_unk46_4();
+    Func_02001f6c();
 
-    if (Story_unk3(0x821) != 0) {
-        Story_unk47_4(0x1034, 1);
-    } else if (Story_unk4(0xf02) != 0) {
-        work = gWork;
-        Story_unk48_4(0x1031, 1);
+    if (Func_02001f52(0x821) != 0) {
+        Func_02001f56(0x1034, 1);
+    } else if (Func_02001f66(0xf02) != 0) {
+        work = Data_03001ebc;
+        Func_02001f6e(0x1031, 1);
         {
             /*
              * The halfword store goes through a pointer local and then an
@@ -517,170 +1139,70 @@ void Scene_RunFlag821Dialogue(void)
             *frame = (u16)one;
         }
     } else {
-        Story_unk49_4(0x1031, 1);
+        Func_02001f82(0x1031, 1);
     }
 
-    Story_unk50_4();
+    Func_02001fb6();
 }
 
-/* overlays/scene/story/scenario_dispatch/actor_find_slot_by_tile_position.c */
-/* overlays/scene/story/scenario_dispatch/find_slot_by_tile_position.c */
-/* Contiguous unnamed state-owner run for resource_37f. */
-
-
-extern s32 *FunctionHead_02001236(s32);
-
-    s32 dir;
-
-    if (rec == 0) {
-        return;
-    }
-    dir = rec[2] >> 20;
-    Story_Do(0x302);
-    Story_unk2_2(0x303);
-    if (dir == 93) {
-        Story_unk3_2(0x303);
-    } else if (dir == 95) {
-        Story_unk4_2(0x302);
-    }
-}
-
-
-extern s32 *FunctionHead_0200133a(s32);
-
-    s32 dir;
-
-    if (rec == 0) {
-        return;
-    }
-    dir = rec[2] >> 20;
-    Story_unk5_2(0x300);
-    Story_unk6_2(0x301);
-    if (dir == 115) {
-        Story_unk7_2(0x300);
-    } else if (dir == 113) {
-        Story_unk8_2(0x301);
-    }
-}
-
-
-extern s32 *Story_unk3_4(s32);
-
-    s32 dir;
-
-    if (rec == 0) {
-        return;
-    }
-    dir = rec[2] >> 20;
-    Story_unk9_2(0x310);
-    Story_unk10_2(0x311);
-    if (dir == 99) {
-        Story_unk11_2(0x311);
-    } else if (dir == 101) {
-        Story_unk12_2(0x310);
-    }
-    Story_unk13_2(0);
-}
-
-
-extern s32 *Story_unk4_4(s32);
-
-    s32 dir;
-
-    if (rec == 0) {
-        return;
-    }
-    dir = rec[2] >> 20;
-    Story_unk14_2(0x312);
-    Story_unk15_2(0x313);
-    if (dir == 103) {
-        Story_unk16_2(0x313);
-    } else if (dir == 105) {
-        Story_unk17_2(0x312);
-    }
-    Story_unk18_2(0);
-}
-
-
-extern s32 *Story_unk5_4(s32);
-
-    s32 dir;
-
-    if (rec == 0) {
-        return;
-    }
-    dir = rec[2] >> 20;
-    Story_unk19_2(0x314);
-    Story_unk20_2(0x315);
-    if (dir == 107) {
-        Story_unk21_2(0x315);
-    } else if (dir == 109) {
-        Story_unk22_2(0x314);
-    }
-    Story_unk23_2(0);
-}
-
-
-extern s32 *Story_unk6_4ByTilePosition(s32);
-
-    s32 dir;
-
-    if (rec == 0) {
-        return;
-    }
-    dir = rec[2] >> 20;
-    Story_unk24_2(0x316);
-    Story_unk25_2(0x317);
-    if (dir == 111) {
-        Story_unk26_2(0x317);
-    } else if (dir == 113) {
-        Story_unk27_2(0x316);
-    }
-    Story_unk28_2(0);
-}
-
-
-extern s32 *Story_unk7_4ByTilePosition(s32);
-
-    s32 dir;
-
-    if (rec == 0) {
-        return;
-    }
-    dir = rec[2] >> 20;
-    Story_unk29_2(0x318);
-    Story_unk30_2(0x319);
-    if (dir == 115) {
-        Story_unk31_2(0x319);
-    } else if (dir == 117) {
-        Story_unk32_2(0x318);
-    }
-    Story_unk33_2(0);
-}
-
-
-extern s32 *Story_unk8_4ByTilePosition(s32);
-
-    s32 dir;
-
-    if (rec == 0) return;
-    dir = rec[2] >> 20;
-    Story_unk34_2(0x31a);
-    Story_unk35_2(0x31b);
-    if (dir == 119) {
-        Story_unk36_2(0x31b);
-    } else if (dir == 121) {
-        Story_unk37_2(0x31a);
-    }
-    Story_unk38_2(0);
-}
-
-
-extern u8 gWork[];
-
-s32 *Actor_FindSlotByTilePosition(s32 x, s32 z)
+void FieldScene_RunSupplementalSequenceTwo(void)
 {
-    s32 **slots = (s32 **)(gWork + 0x14);
+    void Func_02001fb6_early();
+
+    s32 byte_pair_addr;
+
+    if (GameFlag_IsSet_1(3842) == 0) {
+    } else {
+        if (GameFlag_IsSet_2(GATE_ID)!= 0) {
+        } else {
+            BattleRuntime_Reset_1();
+            Value0(Func_020020fe);
+            Audio_PlayCue_1(182);
+            Value6(Func_02001fb6_early, 0, 71, 100, 71, 1, 1);
+            Value0(Func_02001fa2);
+            BattleRuntime_WaitIfModeZero_1(40);
+            /* Address of the byte pair starting at Value_00001032. */
+            byte_pair_addr = (s32)&Value_00001032;
+            UiText_DrawMessage_1(byte_pair_addr, 1);
+            BattleRuntime_WaitIfModeZero_2(20);
+            Audio_PlayCue_2(183);
+            Func_02001fe8(122, 20, 120, 30, 1, 2);
+            Call6(Func_02002004, 122, 20, 1, 2, 120, 30);
+            Call0(Func_02001fe8_a);
+            Value3(Func_02002030, 65536, 65536, 65536);
+            BattleRuntime_WaitIfModeZero_3(20);
+            BattleEffect_SpawnLinkedResourceObject_1(0, 256, 0);
+            Value3(Func_02002052, 131072, 131072, 65536);
+            BattleRuntime_WaitIfModeZero_4(20);
+            ObjectMotion_ArmCallback_1(0, 16384, 40);
+            ObjectMotion_ArmCallback_2(0, 32768, 20);
+            ObjectMotion_ArmCallback_3(0, 0, 20);
+            ObjectMotion_ArmCallback_4(0, 16384, 10);
+            ObjectMotion_Launch_1(0, 4, 20);
+            ObjectMotion_Launch_2(0, 6, 40);
+            Value3(Func_020020a8, -1, -1, 58982);
+            BattleRuntime_WaitIfModeZero_5(40);
+            UiText_DrawMessage_2(byte_pair_addr + 1, 1);
+            GameFlag_Set_1(0x143);
+            GameFlag_Set_2(GATE_ID);
+            BattleRuntime_ScheduleShoulderButtonModeUpdate_1();
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+s32 *SceneActor_FindSlotByTilePosition(s32 x, s32 z)
+{
+    extern u8 *Data_03001ebc;
+
+    s32 **slots = (s32 **)(Data_03001ebc + 0x14);
     u32 i;
 
     for (i = 8; i <= 65; i++) {
@@ -693,126 +1215,321 @@ s32 *Actor_FindSlotByTilePosition(s32 x, s32 z)
     return 0;
 }
 
-/* overlays/scene/story/scenario_dispatch/dispatch_by_scenario_id.c */
-extern s16 gCellByTilePosition[];
-
-s32 Scene_DispatchByScenarioId(void)
+s32 FieldScene_DispatchByScenarioId(void)
 {
-    s32 scenario = gCellByTilePosition[224];
+    extern s16 Data_02000240[];
+
+    s32 scenario = Data_02000240[224];
 
     if (scenario == (s32)&Value_00000013) {
-        FunctionHead_02001236();
+        Func_02001236();
     } else if (scenario == (s32)&Value_00000010) {
-        FunctionHead_0200133a();
+        Func_0200133a();
     }
     return 0;
 }
 
-/* overlays/scene/script/gate_open_step.c */
-extern u8 gOvGateOpenStep[];
-
-void Scene_RunGateGateOpenStep(void)
+void FieldScene_RunScene37f_0200092c(void)
 {
-    Script_Do(0x144);
-    *(s32 *)((*(u8 *volatile *)gWork + 0x1c0)) = 0x100;
-    if (Script_Check(0x814) != 0) {
+    extern u8 Data_03001ebc[];
+
+    Call1(Func_020024ca, 0x144);
+    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c0)) = 0x100;
+    if (Value1(Func_020024d6, 0x814) != 0) {
         s32 zero = 0;
-        *(volatile s32 *)gOvGateOpenStep = zero;
-        Script_Run(0x2009ac9, 0xc80);
+        *(volatile s32 *)Data_0200a69c = zero;
+        Call2(Func_0200248a, 0x2009ac9, 0xc80);
     }
-    if (Script_unk2(0x879) != 0) {
-        Script_SetRect(5, 6, 1, 1, 6, 6);
-        Script_unk2_5(5, 6, 1, 1, 7, 6);
-        Script_unk3_5(5, 6, 1, 1, 8, 6);
-        Script_unk4_5(0, 1, 3, 1, 6, 5);
+    if (Value1(Func_020024f0, 0x879) != 0) {
+        Call6(Func_020024de, 5, 6, 1, 1, 6, 6);
+        Call6(Func_020024f0_a, 5, 6, 1, 1, 7, 6);
+        Call6(Func_02002502, 5, 6, 1, 1, 8, 6);
+        Call6(Func_02002514, 0, 1, 3, 1, 6, 5);
     }
-    if (Script_unk3(0x815) != 0) {
-        Script_Place(8, 0x780000, 0xe80000);
-        Script_unk5_4(2, 10, 1, 1, 6, 14);
-        Script_unk6_4(2, 10, 1, 1, 7, 14);
-        Script_unk7_4(2, 10, 1, 1, 8, 14);
+    if (Value1(Func_02002542, 0x815) != 0) {
+        Call3(Func_020025c4, 8, 0x780000, 0xe80000);
+        Call6(Func_02002540, 2, 10, 1, 1, 6, 14);
+        Call6(Func_02002552, 2, 10, 1, 1, 7, 14);
+        Call6(Func_02002564, 2, 10, 1, 1, 8, 14);
     }
 }
 
-/* overlays/scene/script/gate_close_step.c */
-
-void Scene_RunGateGateCloseStep(void)
+void FieldScene_RunScene37f_02000d1c(void)
 {
+    extern u8 Data_03001ebc[];
+
     u32 i;
     s32 record;
 
-    Script_unk6_3();
-    *(s32 *)((*(u8 *volatile *)gWork + 0x1c0)) = 0x100;
-    Script_unk7_3();
-    ((void (*)())Script_unk7)(0, 0);
-    Script_unk8_2(4);
-    Script_Run(-1, -1, -1, 0);
-    Script_unk2_4(0x9999, 0x1333);
-    Script_unk3_4(0x4c80000, -1, 0x880000, 1);
-    record = Script_Check(0);
+    Func_020028cc();
+    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c0)) = 0x100;
+    Func_020029d6();
+    ((void (*)())Func_0200293e)(0, 0);
+    Func_020028e4(4);
+    Call4(Func_020029d6_a, -1, -1, -1, 0);
+    Call2(Func_020029d6_b, 0x9999, 0x1333);
+    Call4(Func_020029f0, 0x4c80000, -1, 0x880000, 1);
+    record = Value1(Func_0200293e_a, 0);
     if (record != 0) {
-        Script_unk9_2(8, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+        Func_0200297c(8, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
     }
-    record = Script_unk2(0);
+    record = Value1(Func_02002952, 0);
     if (record != 0) {
-        Script_unk10_2(5, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+        Func_02002990(5, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
     }
-    record = Script_unk3(0);
+    record = Value1(Func_02002966, 0);
     if (record != 0) {
-        Script_unk11_2(1, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+        Func_020029a4(1, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
     }
-    Script_Place(8, 0x9999, 0x4ccc);
-    Script_unk2_3(5, 0x9999, 0x4ccc);
-    Script_unk3_3(1, 0x9999, 0x4ccc);
-    Script_unk12_2(1, 2);
-    Script_unk13_2(5, 2);
-    Script_unk14_2(8, 2);
-    Script_unk4_3(1, -16, 0);
-    Script_unk15(5, 16, 0);
-    Script_unk5_2(8, 0, -32);
-    Script_unk16(1);
-    Script_unk17(1, 0);
-    Script_unk18(5, 0);
-    Script_unk6_2(1, 0xc000, 0);
-    Script_unk7_2(5, 0xc000, 0);
-    Script_unk19(8);
-    Script_unk20(8, 1);
-    Script_unk21(40);
-    Script_unk22(8, 2);
-    Script_unk23(20);
-    Script_unk8(8, 0x3000, 40);
-    Script_unk9(8, 0x5000, 40);
-    Script_unk10(8, 0x3000, 20);
-    Script_unk24(8, 4, 20);
-    Script_Do(0xfd3);
-    Script_unk4_4(0x4008, 0);
-    Script_unk25(20);
-    Script_unk5_3(0x4c80000, -1, 0x940000, 1);
-    Script_unk26(1, 2);
-    record = Script_unk4(0);
+    Call3(Func_02002986, 8, 0x9999, 0x4ccc);
+    Call3(Func_02002990_a, 5, 0x9999, 0x4ccc);
+    Call3(Func_0200299a, 1, 0x9999, 0x4ccc);
+    Func_020029d2(1, 2);
+    Func_020029da(5, 2);
+    Func_020029e2(8, 2);
+    Call3(Func_020029d6_c, 1, -16, 0);
+    Func_020029e0(5, 16, 0);
+    Call3(Func_020029ec, 8, 0, -32);
+    Func_020029fa(1);
+    Func_02002a12(1, 0);
+    Func_02002a1a(5, 0);
+    Call3(Func_02002a7e, 1, 0xc000, 0);
+    Call3(Func_02002a8a, 5, 0xc000, 0);
+    Func_02002a28(8);
+    Func_02002a40(8, 1);
+    Func_020029e6(40);
+    Func_02002a6e(8, 2);
+    Func_020029f4(20);
+    Call3(Func_02002ab8, 8, 0x3000, 40);
+    Call3(Func_02002ac4, 8, 0x5000, 40);
+    Call3(Func_02002ad0, 8, 0x3000, 20);
+    Func_02002a92(8, 4, 20);
+    Call1(Func_02002ab8_a, 0xfd3);
+    Call2(Func_02002ae0, 0x4008, 0);
+    Func_02002a36(20);
+    Call4(Func_02002b28, 0x4c80000, -1, 0x940000, 1);
+    Func_02002ab0(1, 2);
+    record = Value1(Func_02002a7e_a, 0);
     if (record != 0) {
-        Script_unk27(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Func_02002aa0(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Script_unk28(5, 2);
-    record = Script_unk5(0);
+    Func_02002ad0_a(5, 2);
+    record = Value1(Func_02002a9e, 0);
     if (record != 0) {
-        Script_unk29(5, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Func_02002ac0(5, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Script_unk30(8, 2);
-    record = Script_unk6(0);
+    Func_02002af0(8, 2);
+    record = Value1(Func_02002abe, 0);
     if (record != 0) {
-        Script_unk31(8, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Func_02002ae0_a(8, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Script_unk32(1);
-    Script_unk33(1, 0, 0);
-    Script_unk34(5, 0, 0);
-    Script_unk35(8);
-    Script_unk36(8, 0, 0);
-    Script_unk37(1, 1);
-    Script_unk38(5, 1);
-    Script_unk39(8, 1);
-    Script_unk2_2(0x802);
-    *(s32 *)((*(u8 *volatile *)gWork + 0x1c0)) = 0x204;
-    Script_unk3_2(0x12f);
-    Script_unk40();
+    Func_02002afe(1);
+    Func_02002b10(1, 0, 0);
+    Func_02002b1a(5, 0, 0);
+    Func_02002b18(8);
+    Func_02002b2a(8, 0, 0);
+    Func_02002b3a(1, 1);
+    Func_02002b42(5, 1);
+    Func_02002b4a(8, 1);
+    Call1(Func_02002ae0_b, 0x802);
+    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c0)) = 0x204;
+    Call1(Func_02002afa, 0x12f);
+    Func_02002b16();
+}
+
+void FieldScene_RunFourEntitySequence(void)
+{
+    u8 *record;
+
+    BattleRuntime_Reset_1_late();
+    BattleRuntime_WaitIfModeZero_1_late(); /* main:0808a360 */
+    ObjectMotion_SetSpeedParameters_1(); /* main:0808a370 */
+
+    record = Scene_GetRecord_1(0);
+    if (record != 0)
+        ObjectMotion_SetHorizontalPositionWithTerrain_1(8, RECORD_A32(record), RECORD_B32(record));
+    record = Scene_GetRecord_2(0);
+    if (record != 0)
+        ObjectMotion_SetHorizontalPositionWithTerrain_2(5, RECORD_A32(record), RECORD_B32(record));
+    record = Scene_GetRecord_3(0);
+    if (record != 0)
+        ObjectMotion_SetHorizontalPositionWithTerrain_3(1, RECORD_A32(record), RECORD_B32(record));
+
+    ObjectMotion_SetSpeedParameters_2(8, 0x9999, 0x4ccc);
+    ObjectMotion_SetSpeedParameters_3(5, 0x9999, 0x4ccc);
+    ObjectMotion_SetSpeedParameters_4(1, 0x9999, 0x4ccc);
+    Object_SetModeById_1(1, 2);
+    Object_SetModeById_2(5, 2);
+    Object_SetModeById_3(8, 2);
+    ObjectMotion_OffsetPositionAndResetMotion_1(1, -16, 0);
+    ObjectMotion_OffsetPositionAndResetMotion_2(5, 16, 0);
+    ObjectMotion_OffsetPositionAndResetMotion_3(8, 0, -16);
+    ObjectMotion_CommitCurrentPositionAndActivate_1(8);
+    Object_SetModeById_4(8, 1);
+    Object_SetModeById_5(0, 0);
+    Object_SetModeById_6(1, 0);
+    Object_SetModeById_7(5, 0);
+    ObjectMotion_ArmCallback_1_late(1, 0xe000, 0);
+    ObjectMotion_ArmCallback_2_late(5, 0xa000, 0);
+    ObjectMotion_ArmCallback_3_late(8, 0xc000, 30);
+    ObjectMotion_ArmCallback_4_late(1, 0x8000, 0);
+    ObjectMotion_ArmCallback_5(5, 0, 0);
+    ObjectMotion_ArmCallback_6(0, 0x4000, 0);
+    ObjectMotion_ArmCallback_7(8, 0x8000, 30);
+    ObjectMotion_ArmCallback_8(1, 0x4000, 0);
+    ObjectMotion_ArmCallback_9(5, 0x8000, 0);
+    ObjectMotion_ArmCallback_10(0, 0, 0);
+    ObjectMotion_ArmCallback_11(8, 0x4000, 30);
+    ObjectMotion_ArmCallback_12(1, 0xe000, 0);
+    ObjectMotion_ArmCallback_13(5, 0xa000, 0);
+    ObjectMotion_ArmCallback_14(0, 0xc000, 0);
+    ObjectMotion_ArmCallback_15(8, 0xc000, 40);
+    ObjectMotion_SetVariantCallbackAndInvokeObject_1(8, 2);
+    BattleRuntime_WaitIfModeZero_2_late(10);
+    Object_SetModeById_8(8, 2);
+    ObjectMotion_OffsetPositionAndResetMotion_4(8, 0, -16);
+    ObjectMotion_CommitCurrentPositionAndActivate_2(8);
+    Object_SetModeById_9(8, 1);
+    BattleRuntime_WaitIfModeZero_3_late(6);
+    ObjectMotion_ArmCallback_16(8, 0x8000, 20);
+    ObjectMotion_ArmCallback_17(8, 0, 20);
+    ObjectMotion_ArmCallback_18(8, 0xc000, 40);
+    ObjectMotion_SetVariantCallbackAndInvokeObject_2(8, 2);
+    BattleRuntime_WaitIfModeZero_4_late(20);
+    Object_SetModeById_10(8, 2);
+    ObjectMotion_OffsetPositionAndResetMotion_5(8, 0, -32);
+    ObjectMotion_CommitCurrentPositionAndActivate_3(8);
+    Object_SetModeById_11(8, 1);
+
+    ObjectMotion_SetSpeedLimitAndAcceleration_1(0x20000, 0x4000);
+    ObjectMotion_PlaceWithinCameraBounds_1(0x06310000, -1, 0x00960000, 1);
+    Object_CommitPositionThenWaitIfModeZero_1();
+    BattleRuntime_WaitIfModeZero_5_late(10);
+    ObjectMotion_SetSpeedLimitAndAcceleration_2(0x13333, 0x2666);
+    ObjectMotion_PlaceWithinCameraBounds_2(0x06550000, -1, 0x00640000, 1);
+    Object_CommitPositionThenWaitIfModeZero_2();
+    ObjectMotion_PlaceWithinCameraBounds_3(0x06b60000, -1, 0x00640000, 1);
+    Object_CommitPositionThenWaitIfModeZero_3();
+    Object_SetModeById_12(8, 1);
+    ObjectMotion_PlaceWithinCameraBounds_4(0x06d80000, -1, 0x00960000, 1);
+    Object_CommitPositionThenWaitIfModeZero_4();
+    BattleRuntime_WaitIfModeZero_6(40);
+    ObjectMotion_SetSpeedLimitAndAcceleration_3(0x26666, 0x4ccc);
+    ObjectMotion_PlaceWithinCameraBounds_5(0x06840000, -1, 0x01000000, 1);
+    Object_CommitPositionThenWaitIfModeZero_5();
+    ObjectMotion_CallThenWaitForAnimationChange_1(8, 3);
+    BattleRuntime_WaitIfModeZero_7(10);
+
+    ObjectMotion_ArmCallback_19(1, 0xe000, 0);
+    ObjectMotion_ArmCallback_20(5, 0xa000, 10);
+    BattleEffect_SpawnLinkedResourceObject_1_late(1, 0x101, 20);
+    SceneWork_SetStepValue_1(0xfd6);
+    BattleRuntime_RunThenWaitIfModeZero_1(1, 0, 10);
+    BattleEffect_SpawnLinkedResourceObject_2(8, 0x102, 60);
+    ObjectMotion_SetVariantCallback_1(8, 2);
+    BattleRuntime_RunThenWaitIfModeZero_2(8, 0, 10);
+    ObjectMotion_SetVariantCallback_2(0, 2);
+    ObjectMotion_SetVariantCallback_3(1, 2);
+    ObjectMotion_SetVariantCallback_4(5, 2);
+    BattleRuntime_WaitIfModeZero_8(0, 0x102);
+    BattleRuntime_WaitIfModeZero_9(1, 0x102); /* main:0808a1f0 */
+    BattleRuntime_WaitIfModeZero_10(5, 0x102); /* main:0808a1f0 */
+    BattleRuntime_WaitIfModeZero_11(40);
+    ObjectMotion_SetVariantCallbackAndInvokeObject_3(8, 2);
+    BattleRuntime_WaitIfModeZero_12(20);
+    BattleEvent_RunActionAndWait_1(8, 0);
+    ObjectMotion_CallThenWaitForAnimationChange_2(8, 4);
+    BattleRuntime_RunThenWaitIfModeZero_3(8, 0, 10);
+    Object_LinkPair_1(0, 5, 0);
+    BattleRuntime_WaitIfModeZero_13(40);
+    ObjectMotion_SetVariantCallback_5(0, 1);
+    ObjectMotion_SetVariantCallbackAndInvokeObject_4(5, 1);
+    BattleRuntime_WaitIfModeZero_14(10);
+    ObjectMotion_ArmCallback_21(0, 0xc000, 0);
+    ObjectMotion_ArmCallback_22(5, 0xa000, 20);
+    ObjectMotion_SetVariantCallbackAndInvokeObject_5(5, 2);
+    BattleRuntime_RunThenWaitIfModeZero_4(5, 0, 10);
+    ObjectMotion_CallThenWaitForAnimationChange_3(8, 4);
+    BattleRuntime_RunThenWaitIfModeZero_5(8, 0, 10);
+    ObjectMotion_ArmCallback_23(8, 0x3000, 10);
+    BattleRuntime_RunThenWaitIfModeZero_6(8, 0, 40);
+    ObjectMotion_ArmCallback_24(8, 0xc000, 20);
+    ObjectMotion_SetVariantCallbackAndInvokeObject_6(8, 1);
+    BattleRuntime_WaitIfModeZero_15(10);
+    BattleRuntime_WaitIfModeZero_16(8, 0x102); /* main:0808a1f0 */
+    ObjectMotion_ArmCallback_25(8, 0x8000, 20);
+    ObjectMotion_ArmCallback_26(8, 0, 20);
+    ObjectMotion_ArmCallback_27(8, 0xc000, 60);
+    ObjectMotion_SetVariantCallbackAndInvokeObject_7(8, 2);
+    BattleRuntime_WaitIfModeZero_17(10);
+    BattleRuntime_RunThenWaitIfModeZero_7(8, 0, 10);
+    ObjectMotion_ArmCallback_28(8, 0x4000, 20);
+    ObjectMotion_Launch_1_late(8, 2, 20);
+
+    BattleRuntime_RunThenWaitIfModeZero_8(8, 0, 40);
+    ObjectMotion_ArmCallback_29(1, 0, 20);
+    ObjectMotion_SetSpeedParameters_5(1, 0); /* main:0808a178 */
+    if (UiWork_WaitThenFinalizeCapacity_1(0, 0) == 0) {
+        /* Passes the address of Value_00000fe0 in place of a record pointer. */
+        SceneWork_SetStepValue_2((s32)&Value_00000fe0);
+        ObjectMotion_SetVariantCallbackAndInvokeObject_8(1, 1);
+        BattleRuntime_RunThenWaitIfModeZero_9(1, 0, 10);
+    } else {
+        SceneWork_SetStepValue_3(0xfe1);
+        ObjectMotion_ArmCallback_30(5, 0x8000, 20);
+        BattleRuntime_RunThenWaitIfModeZero_10(5, 0, 10);
+        ObjectMotion_ArmCallback_31(0, 0xc000, 0);
+        ObjectMotion_ArmCallback_32(1, 0xe000, 0);
+        ObjectMotion_ArmCallback_33(5, 0xa000, 60);
+        BattleEffect_SpawnLinkedResourceObject_3(0, 0x102, 40);
+        ObjectMotion_SetVariantCallbackAndInvokeObject_9(1, 1);
+        BattleRuntime_WaitIfModeZero_18(10);
+        ObjectMotion_CallThenWaitForAnimationChange_4(1, 3);
+        BattleRuntime_WaitIfModeZero_19(10);
+        ObjectMotion_ArmCallback_34(1, 0, 0);
+        ObjectMotion_ArmCallback_35(5, 0x8000, 30);
+        ObjectMotion_SetVariantCallbackAndInvokeObject_10(1, 1);
+        BattleRuntime_WaitIfModeZero_20(10);
+        BattleRuntime_RunThenWaitIfModeZero_11(1, 0, 10);
+    }
+
+    ObjectMotion_SetSpeedParameters_6(8, 0x9999, 0x4ccc);
+    Object_SetModeById_13(8, 2);
+    ObjectMotion_OffsetPositionAndResetMotion_6(8, 0, 48);
+    ObjectMotion_CommitCurrentPositionAndActivate_4(8);
+    Object_SetModeById_14(8, 1);
+    BattleRuntime_WaitIfModeZero_21(6);
+    ObjectMotion_ArmCallback_36(1, 0xe000, 0);
+    ObjectMotion_ArmCallback_37(5, 0xa000, 0);
+    ObjectMotion_CommitCurrentPositionAndActivate_5(8);
+    Object_SetModeById_15(8, 1);
+    BattleRuntime_WaitIfModeZero_22(20);
+    Object_SetModeById_16(1, 3);
+    Object_SetModeById_17(5, 3);
+    ObjectMotion_CallThenWaitForAnimationChange_5(0, 3);
+    BattleRuntime_WaitIfModeZero_23(6);
+    Object_SetModeById_18(1, 2);
+
+    record = Scene_GetRecord_4(0);
+    if (record != 0)
+        ObjectMotion_ResetAndSetPosition_1(1, RECORD_A16(record), RECORD_B16(record));
+    Object_SetModeById_19(5, 2);
+    record = Scene_GetRecord_5(0);
+    if (record != 0)
+        ObjectMotion_ResetAndSetPosition_2(5, RECORD_A16(record), RECORD_B16(record));
+    Object_SetModeById_20(8, 2);
+    record = Scene_GetRecord_6(0);
+    if (record != 0)
+        ObjectMotion_ResetAndSetPosition_3(8, RECORD_A16(record), RECORD_B16(record));
+
+    ObjectMotion_CommitCurrentPositionAndActivate_6(8);
+    ObjectMotion_SetHorizontalPositionWithTerrain_4(1, 0, 0);
+    ObjectMotion_SetHorizontalPositionWithTerrain_5(5, 0, 0);
+    ObjectMotion_SetHorizontalPositionWithTerrain_6(8, 0, 0);
+    Object_SetModeById_21(8, 1);
+    Object_SetModeById_22(1, 1);
+    Object_SetModeById_23(5, 1);
+    GameFlag_Set_1_late(0x804);
+    GameFlag_Clear_1(0x12f);
+    BattleRuntime_ScheduleShoulderButtonModeUpdate_1_late();
 }

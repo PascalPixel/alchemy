@@ -1,10 +1,10 @@
 #include "types.h"
 
-/* AUDITED GENERATED CALL SCRIPT for Scene_RunMultiPhasePresentation:
+/* AUDITED GENERATED CALL SCRIPT for FieldScene_RunMultiPhasePresentation:
  * 68 calls, bounded completion polling, repeated actor-state phases, and
  * terminal coordinate forwarding across the complete decoded owner. */
 
-#define Scene_RunMultiPhasePresentation Func_02001d14
+#define FieldScene_RunMultiPhasePresentation Func_02001d14
 
 void Func_02004b58();
 void *Func_02005894();

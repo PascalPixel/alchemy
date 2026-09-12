@@ -6,6 +6,7 @@
 
 /* battle/effects/orbiting_particles/update_main.c */
 struct OrbitingParticle;
+void Battle_Apply(struct OrbitingParticle *particle, s32 battle_mode);
 
 void BattleFx_UpdateOrbitingParticleMain(struct OrbitingParticle *particle)
 {

@@ -2099,7 +2099,7 @@
     },
     "main:08017394": {
       "name": "UiWork_IsIdle",
-      "source": "ui/runtime/is_idle.c"
+      "source": "ui/runtime/counters.c"
     },
     "main:080187ac": {
       "name": "UiText_GetResourceDimensions",
@@ -4093,20 +4093,16 @@
       "source": "ui/runtime/copy_params_to_render_work.c"
     },
     "main:080173ac": {
-      "name": "UiWork_ResetCounters",
-      "source": "ui/runtime/reset_counters.c"
+      "name": "UiWork_ResetCounters"
     },
     "main:080173f4": {
-      "name": "UiWork_InitCountersWithResourceAndScheduleRefresh",
-      "source": "ui/runtime/init_counters_with_resource_and_schedule_refresh.c"
+      "name": "UiWork_InitCountersWithResourceAndScheduleRefresh"
     },
     "main:08017464": {
-      "name": "UiWork_InitCountersAndScheduleRefresh",
-      "source": "ui/runtime/init_counters_and_schedule_refresh.c"
+      "name": "UiWork_InitCountersAndScheduleRefresh"
     },
     "main:080174d8": {
-      "name": "UiWork_FinalizeSharedSlot",
-      "source": "ui/runtime/finalize_shared_slot.c"
+      "name": "UiWork_FinalizeSharedSlot"
     },
     "main:08017620": {
       "name": "UiWork_SetBusyFlags",

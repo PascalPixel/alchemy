@@ -1,12 +1,15 @@
 #include "types.h"
 #include "scene.h"
+#include "inn.h"
 
 /* menu/entry/clear_first_object_row_and_schedule_update.c */
 void ScheduleCallback(s32);
+void FunctionHead_0801ff58(void);
+void Menu_Do(void *);
 
 void Menu_ClearFirstObjectRowAndScheduleUpdate(void)
 {
-    u8 *base = gIw;
+    u8 *base = (u8 *)gIw;
     s32 offset = 138;
     s32 zero;
     s32 count;

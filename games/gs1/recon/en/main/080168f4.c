@@ -3,6 +3,8 @@
 #include "global_progress.h"
 #include "gs1_edition.h"
 
+extern u8 Data_02000240_asBytes[];
+
 /*
  * Message-script step for one render channel.
  *

@@ -807,7 +807,7 @@ void Scene_RunSecondEnsembleBeat(void)
         rec[90] = merged;
     }
     BattlePres_RunActionThenWaitIfModeZero(16, 0, 50);
-    Map_unk8_3(17, 152 << 17, 216 << 16);
+    Motion_SetHPosTerrain(17, 152 << 17, 216 << 16);
     Map_unk5_3(17, 152 << 1, 248);
     Map_Place(9, 17, 0);
     Map_Place(10, 17, 0);
@@ -828,7 +828,7 @@ void Scene_RunSecondEnsembleBeat(void)
     Map_unk4_4(15, 2);
     Map_Run(16, 2);
     Map_unk2_3(17, 0x103, 60);
-    Map_unk8_3(18, 152 << 17, 216 << 16);
+    Motion_SetHPosTerrain(18, 152 << 17, 216 << 16);
     Map_unk9_3(18, 152 << 1, 248);
     Map_unk9_3(17, 140 << 1, 132 << 1);
     Map_unk7_2(18);
@@ -919,7 +919,7 @@ void Scene_RunSecondEnsembleBeat(void)
     Map_unk4_2(10);
     Map_unk5_3(17, 128 << 1, 140 << 1);
     Map_unk6_3(17, 128 << 7, 20);
-    Map_unk8_3(17, 0, 0);
+    Motion_SetHPosTerrain(17, 0, 0);
     Map_unk8_2(17);
     Map_unk4_2(30);
     Map_Run(9, 2);
@@ -950,8 +950,8 @@ void Scene_RunSecondEnsembleBeat(void)
     Map_unk5_3(18, 240, 184);
     Map_Run(18, 2);
     Map_unk4_2(20);
-    Map_unk8_3(19, 232 << 16, 168 << 16);
-    Map_unk8_3(20, 232 << 16, 168 << 16);
+    Motion_SetHPosTerrain(19, 232 << 16, 168 << 16);
+    Motion_SetHPosTerrain(20, 232 << 16, 168 << 16);
     rec = Record1(Scene_GetRecord, 19);
     *(s32 *)(rec + 12) = 0xc0000;
     rec = Record1(Scene_GetRecord, 19);

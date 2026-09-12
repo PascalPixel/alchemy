@@ -135,7 +135,7 @@ void Animation_ApplyChildValues(void *obj)
 }
 
 /* graphics/registers/enable_obj_layer_and_callbacks.c */
-s32 WaitFrames(s32);
+void WaitFrames(s32);
 
 void Graphics_EnableObjLayerAndCallbacks(void)
 {

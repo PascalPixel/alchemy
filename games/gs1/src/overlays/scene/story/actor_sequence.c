@@ -964,3 +964,21 @@ void State_SetThreeCellsAt7x12(void)
     Story_unk2_5ThreeCellsAt7x12(7, 12, 1, 1, 8, 11);
     Story_unk3_5ThreeCellsAt7x12(7, 12, 1, 1, 9, 11);
 }
+
+/* overlays/shared/set_effect_record_mode.c */
+struct EffectRecord {
+    u8 pad[9];
+    u8 flags_lo : 2;
+    u8 mode : 2;
+    u8 flags_hi : 4;
+};
+
+struct EffectWork {
+    u8 pad[80];
+    struct EffectRecord *record;
+};
+
+void SetEffectRecordMode(struct EffectWork *work, s32 mode)
+{
+    work->record->mode = mode;
+}

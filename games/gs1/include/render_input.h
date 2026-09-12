@@ -37,6 +37,7 @@ struct RenderOutput {
     union RenderTableValue table;
 };
 
+struct RenderOutput *RenderOutput_Create(
     s32 no,
     s32 flags,
     struct RenderInput *input,

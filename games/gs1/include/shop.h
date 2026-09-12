@@ -150,13 +150,32 @@ LAYOUT_SIZE_GUARD(
 #define SHOP_RUNTIME (*(struct ShopRuntime **)ADDR_03001F2C)
 #define SHOP_PARTY_STATE (*(struct ShopPartyState *)0x02000240)
 
+void Shop_SetCursorPosition(
     struct ShopCursor *cursor,
     s32 target_x,
     s32 target_y,
     s8 kind);
+void Shop_PlaceCursor(void *window, s32 x, s32 y);
+void Shop_DrawStockPage(s32 window, s32 selected);
+void Shop_DrawMoney(void);
+void Shop_DrawItemPrice(
     s32 window,
     s32 item_name_message,
     s32 price,
     s32 price_mode);
+void Shop_DrawMessage(s32 window, s32 message);
+void Shop_UpdatePartyMemberList(s32 window, s32 selected, s32 requirement);
+void Shop_DrawPartyMemberItems(s32 window, s32 unit_id, s32 item_id);
+s32 Shop_SelectPurchaseQuantity(s32 unit_id, s32 item_id);
+void Shop_CompletePurchase(s32 unit_id, s32 item_id, s32 quantity);
+s32 Shop_ConfirmEquipItem(s32 unit_id, s32 slot);
+s32 Shop_SellReplacedItem(s32 unit_id, s32 slot);
+s32 Shop_ComputeSalePrice(s32 item_id);
+s32 Shop_SelectPartyMember(void);
+void Shop_DrawPartyMemberItemGrid(s32 window, s32 unit_id);
+s32 Shop_SelectSaleQuantity(s32 unit_id, s32 slot);
+s32 Shop_ComputeRepairPrice(s32 item_id);
+s32 Shop_RunPartyMemberSelection(void);
+void Shop_DrawUseItemDetails(s32 window, s32 unit_id, s32 item_slot);
 
 #endif

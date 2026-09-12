@@ -128830,33 +128830,8 @@
       "local_symbols": [],
       "owners": [
         {
-          "address": "0x080b3210",
-          "extent": 116,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b3284",
-          "extent": 276,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b3398",
-          "extent": 172,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b3444",
-          "extent": 488,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b362c",
-          "extent": 576,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b386c",
-          "extent": 8184,
+          "address": "0x080b2ffc",
+          "extent": 84,
           "state": "exact-c"
         }
       ],
@@ -158585,34 +158560,7 @@
         }
       ],
       "overlay": null
-    },
-    {
-      "id": "shop-effect-reset-080b5864",
-      "game": "gs1",
-      "source": "games/gs1/src/shop/effect/reset.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080b5864",
-          "extent": 248,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b595c",
-          "extent": 176,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080b5a0c",
-          "extent": 200,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
+    },    {
       "id": "battle-presentation-trans-setup",
       "game": "gs1",
       "source": "games/gs1/src/battle/presentation/trans/setup.c",

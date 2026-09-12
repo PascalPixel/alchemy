@@ -149,7 +149,7 @@ s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut)
 /* psynergy_menu/create_entry_grid.c */
 s32 InitializeEntryObjects(s32, s32, s32, s32, s32);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
-void *FunctionHead_080a735c(s32, s32, s32, s32, s32, s32);
+void *PsynergyMenu_IsActionRestricted(s32, s32, s32, s32, s32, s32);
 struct PsynergyMenuIcon *RenderOutput_CreateFromResource(s32, s32, s32, s32, s32);
 
 void PsynergyMenu_CreateEntryGrid(void)
@@ -176,7 +176,7 @@ void PsynergyMenu_CreateEntryGrid(void)
     cursor = FunctionHead_080a1778(window, 0, 4);
     cursor->state = 13;
     menu->entry_grid_cursor = cursor;
-    FunctionHead_080a735c(0, 0, 0, window, 0, 0);
+    PsynergyMenu_IsActionRestricted(0, 0, 0, window, 0, 0);
 
     y = 8;
     index = 0;
@@ -386,7 +386,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
 
             if (ability->pp_cost > owner->pp) {
                 UiPalette_SetColor(2);
-            } else if (FunctionHead_080a735c(0x3fff & *(const u16 *)(cursor + (s32)menu)) != 0) {
+            } else if (PsynergyMenu_IsActionRestricted(0x3fff & *(const u16 *)(cursor + (s32)menu)) != 0) {
                 UiPalette_SetColor(4);
             } else {
                 UiPalette_SetColor(15);
@@ -408,7 +408,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
 
 /* psynergy_menu/is_action_restricted.c */
 
-s32 FunctionHead_080a735c(s32 no)
+s32 PsynergyMenu_IsActionRestricted(s32 no)
 {
     u8 *action = Ability_GetData((u32)(no << 18) >> 18);
     u32 flags;

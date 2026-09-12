@@ -1,7 +1,7 @@
 #include "types.h"
 #include "scene.h"
 
-u8 *Sys_Run(const u8 *source, u8 *destination)
+u8 *Resource_DecompressLz(const u8 *source, u8 *destination)
 {
     s32 token;
     u32 length;

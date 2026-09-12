@@ -36,8 +36,8 @@ void BattlePresentation_PrepareScene(s32 kind)
     void *palette;
     s32 id;
 
-    work = (u8 *)Battle_Apply2(39, 0x782c);
-    Battle_Apply2(40, 0x4000);
+    work = (u8 *)Runtime_AllocateHeapBlock(39, 0x782c);
+    Runtime_AllocateHeapBlock(40, 0x4000);
     Battle_Do(0);
     *(s32 *)(work + 0x77b4) = 24;
     *(s16 *)0x04000020 = 0x100;

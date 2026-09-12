@@ -60,7 +60,7 @@ void Scene_RunSupplementalSequenceTwo(void)
 /* overlays/scene/story/scenario_dispatch/run_scene_late_sequence.c */
 extern u8 Value_00000fe0;
 
-u8 *Story_unk7_4();
+u8 *Scene_GetRecord();
 
 /*
  * resource_37f owner at 0x02000f8c, 1,680 bytes: full scene sequence

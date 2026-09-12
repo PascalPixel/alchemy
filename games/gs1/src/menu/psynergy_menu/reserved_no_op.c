@@ -14,7 +14,7 @@ void PsynergyMenu_RefreshOwnerEntriesDefault(void)
 {
   int val;
   val = 0x28;
-  Sys_Place(0x6C, val, 8);
+  PsynergyMenu_RefreshOwnerEntries(0x6C, val, 8);
 }
 
 /* psynergy_menu/refresh_owner_entries.c */
@@ -64,7 +64,7 @@ void PsynergyMenu_PositionOwnerEntry(struct Object080a1c **slot, s32 index,
     object->y = (s16)((wave * 0x10) + origin_y);
     object->x =
         (s16)((Modulo(wrapped_index, phase) * 0x10) + origin_x);
-    Sys_Run(object);
+    UiIcon_PrepareObject(object);
 }
 
 /* item_menu/item_menu_pos_owner.c */
@@ -90,7 +90,7 @@ void ItemMenu_PosOwner(struct Object080a1c **slot, s32 index,
     object->y = (s16)((wave * 0x10) + origin_y);
     object->x =
         (s16)((Modulo(wrapped_index, phase) * 0x18) + origin_x);
-    Sys_Run(object);
+    UiIcon_PrepareObject(object);
 }
 
 /* item_menu/refresh_entry.c */

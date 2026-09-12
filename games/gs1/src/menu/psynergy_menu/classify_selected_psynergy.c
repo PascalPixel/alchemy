@@ -94,7 +94,7 @@ s32 PsynergyMenu_SelectPartySlot(s32 party_slot)
 
     cursor_offset2 = party_slot * 4 + 20;
     icon = *(void **)(menu + cursor_offset2);
-    Sys_Do(icon);
+    UiIcon_PrepareObject(icon);
     WaitFrames(1);
     return result;
 }

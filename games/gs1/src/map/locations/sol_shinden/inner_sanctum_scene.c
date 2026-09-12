@@ -1010,7 +1010,7 @@ extern u8 gVal6[];
  * Uncertain: none of the main-image services is established beyond its
  * argument count and access widths, so all are declared old-style and their
  * constants are transcribed rather than interpreted.  The record returned by
- * the Map_unk235_2 service is read at +8/+16 as words early in the scene and
+ * the Scene_GetRecord service is read at +8/+16 as words early in the scene and
  * at +10/+18 as signed halfwords at the end, so both stay raw offsets; no
  * shared type in games/gs1/include covers it.
  */
@@ -1022,8 +1022,8 @@ extern u8 gVal6[];
 
 /* Ordinary C field access retained from the reviewed disassembly dataflow. */
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
-s32  Map_unk236_2();  /* Map_unk237_2 */
-s32  Map_unk238_2();  /* Map_unk235_2 */
+s32  Map_unk236_2();  /* GameFlag_IsSet */
+s32  Map_unk238_2();  /* Scene_GetRecord */
 s32  Map_unk239_2();  /* Map_unk240_2 */
 s32  Map_unk241_2();  /* Map_unk242_2 */
 void Map_unk243_2();  /* Scene_RunScene37aSequenceA (0x02000054) */
@@ -1039,7 +1039,7 @@ void Map_unk258_2();  /* Map_unk259_2 */
 void Map_unk260_2();  /* Map_unk261_2 */
 void Map_unk262_2();  /* Map_unk263_2 */
 void Map_unk264_2();  /* Map_unk265_2 */
-void Map_unk266_2();  /* Map_unk267_2 */
+void Map_unk266_2();  /* Audio_PlayCue */
 void Map_unk268_2();  /* Map_unk269_2 */
 void Map_unk270_2();  /* Map_unk271_2 */
 void Map_unk272_2();  /* Map_unk273_2 */
@@ -1048,7 +1048,7 @@ void Map_unk275_2();  /* Map_unk276_2 */
 void Map_unk277_2();  /* Map_unk278_2 */
 void Map_unk231_2();  /* main-image name; collision fallback, see the RESIDUAL note */
 void Map_unk279_2();  /* Map_unk280_2 */
-void Map_unk281_2();  /* Map_unk282_2 */
+void Map_unk281_2();  /* GameFlag_Set */
 void Map_unk283_2();  /* Map_unk284_2 */
 
 void Scene_RunScene37aSequenceF(void)

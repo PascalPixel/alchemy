@@ -33,7 +33,7 @@ u32 SaveState_SelectWriteSlot(s32 mode)
                 index = 0x10;
             }
         } else {
-            index = State_Apply(Random16(), count);
+            index = UnsignedModulo(Random16(), count);
             index = empty[index];
         }
     }

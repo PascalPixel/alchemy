@@ -73,13 +73,13 @@ s16 Menu_RunSelection(void)
     for (;;) {
         result = Menu_SetMode(work, primary, &secondary, &mode);
         if (result == -1) {
-            Menu_Do(resource);
+            TextResource_Release(resource);
             UiWork_Finalize(work, 2);
             Menu_Apply2(primary, secondary);
             return result;
         }
         if (result == -2) {
-            Menu_Do(resource);
+            TextResource_Release(resource);
             UiWork_Finalize(work, 2);
             return result;
         }
@@ -125,7 +125,7 @@ loop_test:
     ev = Menu_unk2_3(win, &sel, pos);
     if (ev != -1)
         goto loop_body;
-    Menu_Do(res);
+    TextResource_Release(res);
     UiWork_Finalize(win, 2);
     return 0;
 }
@@ -139,7 +139,7 @@ void Menu_DrawFlagBitTable(s32 window, s32 start_flag)
     char label[5];
     char bits[17];
 
-    Menu_Run();
+    RenderOutput_PrepareForRedraw();
     Menu_SetMode(0x0803742c, window, 48, 0);
 
     flag = start_flag << 8;
@@ -156,7 +156,7 @@ void Menu_DrawFlagBitTable(s32 window, s32 start_flag)
         Menu_SetMode(0x08037428, window, 32, y);
 
         for (i = 0; i < 16; i++) {
-            s32 val = Menu_Check(flag);
+            s32 val = GameFlag_IsSet(flag);
             bits[i] = (val != 0) + 48;
             flag++;
         }

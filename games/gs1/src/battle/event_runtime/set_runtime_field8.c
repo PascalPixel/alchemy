@@ -95,25 +95,25 @@ u32 BattleEv_DispatchQueued(void)
         u8 opcode = queue->opcodes[i];
         if (opcode <= 13) switch (opcode) {
         case 13: Battle_Apply(queue, queue->operands[i]); break;
-        case 12: Battle_Do(queue->operands[i]); break;
-        case 0: Battle_Apply2(queue->operands[i], 1); break;
-        case 1: Battle_Apply2(queue->operands[i], 5); break;
-        case 2: Battle_Apply2(queue->operands[i] & 0x1ff, 2); break;
-        case 3: Battle_Apply2(queue->operands[i] & 0x3fff, 4); break;
+        case 12: BattleActor_DestroyTemporaryObject(queue->operands[i]); break;
+        case 0: UiText_DrawQuantity(queue->operands[i], 1); break;
+        case 1: UiText_DrawQuantity(queue->operands[i], 5); break;
+        case 2: UiText_DrawQuantity(queue->operands[i] & 0x1ff, 2); break;
+        case 3: UiText_DrawQuantity(queue->operands[i] & 0x3fff, 4); break;
         case 6: FIELD(gIw, s32, 8) = 1; break;
         case 7: Battle_Run(); break;
         case 4:
-            if ((s32)queue->operands[i] >= 0) Battle_unk2_2(queue->operands[i]);
+            if ((s32)queue->operands[i] >= 0) UiText_ShowMessageAndWait(queue->operands[i]);
             BattlePres_WaitForAdvance();
             Battle_Run();
             break;
         case 5:
-            if ((s32)queue->operands[i] >= 0) Battle_unk2_2(queue->operands[i]);
+            if ((s32)queue->operands[i] >= 0) UiText_ShowMessageAndWait(queue->operands[i]);
             Battle_Run();
             break;
         case 8:
-            if (runtime->pending_sound_id > 0) Battle_unk3_2(runtime->pending_sound_id);
-            Battle_Place(queue->operands[i], 0, 0);
+            if (runtime->pending_sound_id > 0) Audio_PlayCue(runtime->pending_sound_id);
+            BattleMotion_RunValueSequence(queue->operands[i], 0, 0);
             break;
         case 9:
         {
@@ -124,7 +124,7 @@ u32 BattleEv_DispatchQueued(void)
             BattleMotion_InitializeActorRecords(FIELD(queue, u32, operand_offset));
             break;
         }
-        case 10: Battle_unk6(gBattleWork[65]); break;
+        case 10: Sys_SetMode(gBattleWork[65]); break;
         case 11:
             Battle_Apply4(queue->operands[i], GetBattleObjectSlot(queue->operands[i]));
             BattlePres_SetActorModeAndAction(queue->operands[i]);

@@ -342,7 +342,7 @@ s32 Shop_DrawItemPage(s32 a0, s32 a1, s32 a2)
         if ((u32)v10 > base6_0) {
             v5 = ((s32)(((s32)p8 << 1) + p9) + 0x1c8);
             do {
-                Sys_unk6(((0x1ff & *(u16 *)(v5)) + (s32)gVal), a0, 128, ((base6_0 << 4) + 8));
+                UiText_DrawAt(((0x1ff & *(u16 *)(v5)) + (s32)gVal), a0, 128, ((base6_0 << 4) + 8));
                 base6_0 = ((u32)((base6_0 + 1) << 24) >> 24);
                 v5 = (v5 + 2);
             } while ((u32)v10 > base6_0);
@@ -351,10 +351,10 @@ s32 Shop_DrawItemPage(s32 a0, s32 a1, s32 a2)
     }
     UiText_DrawStringAtOffsetFar(rec5, a0, 40, 0);
     base5_af7 = (s32)gVal2;
-    Sys_unk6(base5_af7, a0, 32, 16);
-    Sys_unk6((base5_af7 + 1), a0, 32, 24);
-    Sys_unk8(*(u16 *)(rec5 + 60), 3, a0, 80, 16);
-    Sys_unk8(*(u16 *)(rec5 + 62), 3, a0, 80, 24);
+    UiText_DrawAt(base5_af7, a0, 32, 16);
+    UiText_DrawAt((base5_af7 + 1), a0, 32, 24);
+    UiNumber_DrawAt(*(u16 *)(rec5 + 60), 3, a0, 80, 16);
+    UiNumber_DrawAt(*(u16 *)(rec5 + 62), 3, a0, 80, 24);
     p9b = base5_af7 + 1;
     p10b = v6;
     p11 = a0;
@@ -509,7 +509,7 @@ void Menu_PlaceEntryObjectInGrid(struct Object080a9bd8 *obj, s32 index,
         (s16)((FixedPoint_Ratio(no, phase) * 0x10) + origin_y);
     obj->x =
         (s16)((Modulo(no, phase) * 0x10) + origin_x);
-    Menu_Do(obj);
+    UiIcon_PrepareObject(obj);
 }
 
 /* menu/item_menu/pos_category.c */
@@ -546,7 +546,7 @@ void ItemMenu_PosCategory(void)
         if (object != 0) {
             object->value1 = value1;
             object->value2 = value2;
-            Sys_Do(object);
+            UiIcon_PrepareObject(object);
         }
         remaining--;
     } while (remaining >= 0);
@@ -610,7 +610,7 @@ void ItemMenu_ResetCategory(void)
             object->value1 = 248;
             object->value2 = 168;
             object->flag = 240;
-            Sys_Do(object);
+            UiIcon_PrepareObject(object);
         }
     }
 }

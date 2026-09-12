@@ -7,6 +7,10 @@
 #include "event_runtime.h"
 #include "global_cells.h"
 
+extern u8 RomBytes_0809ed80[];
+extern u8 RomBytes_0809fbcc[];
+extern u8 RomBytes_0809fc1c[];
+
 /* event/set_pair1d4.c */
 /* event/set_pair1d4.c */
 struct State_08091fa8 {

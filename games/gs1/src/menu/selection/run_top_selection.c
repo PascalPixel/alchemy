@@ -37,13 +37,13 @@ loop:
 
     switch (sel) {
     case 0:
-        ret = Menu_unk3();
+        ret = Object_GetTriggerTileAheadOfCurrent();
         if (ret == 0)
             ret = 0xff;
         *(u16 *)(state + 0x17a) = ret;
         break;
     case 1:
-        ret = Menu_unk4();
+        ret = Menu_OpenConfirmPrompt();
         if (ret == -1)
             goto loop;
         break;
@@ -53,7 +53,7 @@ loop:
             goto loop;
         break;
     case 3:
-        ret = Menu_unk6();
+        ret = RunAssetSelectionScreen();
         if (ret == -1)
             goto loop;
         break;

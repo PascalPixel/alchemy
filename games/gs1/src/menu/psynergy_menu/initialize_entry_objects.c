@@ -79,7 +79,7 @@ void InitializeEntryObjects(void *source, s32 origin_x, s32 origin_y, s32 spacin
 
     entry_state[0x1e] = entry_count;
     for (i = 0; i < entry_count; i++) {
-        void *entry_object = Sys_Run(Sys_unk2(entry_ids[i]));
+        void *entry_object = Sys_Run(Party_RemapCharacterIdByFlags(entry_ids[i]));
         if (entry_object != 0) {
             s32 entry_x;
             s32 source_x;

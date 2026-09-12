@@ -151,7 +151,7 @@ s32 InitializeEntryObjects(s32, s32, s32, s32, s32);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 struct PsynergyMenuIcon *Sys_Run(s32, s32, s32);
 void *PsynergyMenu_IsActionRestricted(s32, s32, s32, s32, s32, s32);
-struct PsynergyMenuIcon *Sys_unk3_4(s32, s32, s32, s32, s32);
+struct PsynergyMenuIcon *RenderOutput_CreateFromResource(s32, s32, s32, s32, s32);
 
 void PsynergyMenu_CreateEntryGrid(void)
 {
@@ -184,7 +184,7 @@ void PsynergyMenu_CreateEntryGrid(void)
     output = &menu->entry_icons[0];
     x = 96;
     do {
-        *output++ = Sys_unk3_4(4, index, window, x, y);
+        *output++ = RenderOutput_CreateFromResource(4, index, window, x, y);
         index++;
         x += 16;
     } while (index <= 7);
@@ -194,7 +194,7 @@ void PsynergyMenu_CreateEntryGrid(void)
     output = &menu->entry_icons[8];
     x = 96;
     do {
-        *output++ = Sys_unk3_4(4, index, window, x, y);
+        *output++ = RenderOutput_CreateFromResource(4, index, window, x, y);
         index++;
         x += 16;
     } while (index <= 15);
@@ -519,7 +519,7 @@ s32 OpenCharacterSelector(void)
 
     result = CharacterSelector_Run();
 
-    Menu_unk2_2(state->screen_handle);
+    RenderOutput_ClearList(state->screen_handle);
     ItemMenu_Close();
     gIwOpenCharacterSelector->suspended = 0;
     WaitFrames(1);

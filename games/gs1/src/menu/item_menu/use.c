@@ -746,7 +746,7 @@ done:
     WaitFrames(1);
     UiWindow_Close(window, 1);
     UiWindow_Commit(*(s32 *)(menu + 16));
-    Menu_unk3_2(14);
+    Item_Do(14);
     {
         s32 delay = 0xc80;
 

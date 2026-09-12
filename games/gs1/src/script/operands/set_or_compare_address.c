@@ -732,9 +732,6 @@ s32 Script_ApplyOperandSet(struct ScriptOperands *work)
 }
 
 /* script/operands/apply/apply_operand_add.c */
-typedef void (*OperandFunc)(struct ScriptOperands *, s32, s32);
-extern OperandFunc gRom[];
-
 s32 Script_ApplyOperandAdd(struct ScriptOperands *work)
 {
     s16 index = (s16)work->cursor;
@@ -748,9 +745,6 @@ s32 Script_ApplyOperandAdd(struct ScriptOperands *work)
 }
 
 /* script/operands/apply/apply_operand_compare.c */
-typedef void (*OperandFunc)(struct ScriptOperands *, s32, s32);
-extern OperandFunc gRom[];
-
 s32 Script_ApplyOperandCompare(struct ScriptOperands *work)
 {
     s16 index = (s16)work->cursor;

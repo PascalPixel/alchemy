@@ -35,24 +35,3 @@ void BattleFx_RunSeriesAMode3Or4(void *effect)
     }
     BattleEffectA(effect, 4);
 }
-
-/* battle/effects/series_a/mode_4.c */
-
-void BattleFx_RunSeriesAMode4(s32 effect)
-{
-    BattleEffectA(effect, 4);
-}
-
-/* battle/effects/series_a/mode_5.c */
-
-void BattleFx_RunSeriesAMode5(s32 effect)
-{
-    BattleEffectA(effect, 5);
-}
-
-/* battle/effects/series_a/mode_6.c */
-
-void BattleFx_RunSeriesAMode6(s32 effect)
-{
-    BattleEffectA(effect, 6);
-}

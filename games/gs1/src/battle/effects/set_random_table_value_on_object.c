@@ -78,9 +78,3 @@ s32 BattleFx_FilterObjectIdByFlags(s32 arg0)
     }
     return arg0;
 }
-
-/* battle/effects/run/run_effect13_hook.c */
-void BattleFx_RunEffect13Hook(void)
-{
-    Battle_Check();
-}

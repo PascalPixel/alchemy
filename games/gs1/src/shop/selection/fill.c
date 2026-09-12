@@ -60,10 +60,3 @@ void Shop_CopyGlyphs(s32 arg0, s32 arg1, u32 arg2)
         count--;
     } while (count >= 0);
 }
-
-/* shop/effect/init.c */
-void Shop_InitEffect(void)
-{
-    Effect_Apply(*(s32 *)ADDR_03001EBC + 0x236, 1);
-    Effect_Check(0x10);
-}

@@ -451,7 +451,7 @@ void Scene_RunScene3ae(void)
     Talk_unk85_3();
 }
 
-s32 Scene_RunScene3ae(void)
+void Scene_RunScene3ae(void)
 {
     u32 i;
     s32 record;

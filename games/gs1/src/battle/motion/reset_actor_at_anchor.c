@@ -33,9 +33,9 @@ void Actor_ResetMotionAtAnchor(s32 slot_id)
 }
 
 /* battle/motion/setup_escape_object.c */
-s32 Object_SetMode(void *, s32);
-s32 Object_ResetMotion(void *);
-s32 Object_SetPosition(void *, s32, s32, s32);
+void Object_SetMode(void *, s32);
+void Object_ResetMotion(void *);
+void Object_SetPosition(void *, s32, s32, s32);
 struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id);
 
 void BattleMotion_SetupEscapeObject(s32 object_id)
@@ -127,8 +127,8 @@ void BattleMotion_SetObjectPosition(struct Wrapper_080b8144 *slot)
 }
 
 /* battle/motion/reset_object_at_scaled_anchor.c */
-s32 Object_ResetMotion(void *);
-s32 Object_SetPosition(void *, s32, s32, s32);
+void Object_ResetMotion(void *);
+void Object_SetPosition(void *, s32, s32, s32);
 struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id);
 
 void BattleMotion_ResetObjectAtScaledAnchor(s32 object_id)

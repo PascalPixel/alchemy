@@ -252,7 +252,7 @@ void Audio_StopAllPlayers(void)
 }
 
 /* audio/ctrl/resume_music_player.c */
-s32 Audio_ResumePlayer(void);
+void Audio_ResumePlayer(void);
 
 void MusicPlayer_Resume(void)
 {

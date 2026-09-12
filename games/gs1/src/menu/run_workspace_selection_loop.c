@@ -203,7 +203,7 @@ void UiWork_SetRenderWord(u16 value)
 }
 
 /* ui/text/draw/draw_resource.c */
-void UiText_BuildRenderEntries(s32, s32);
+s32 UiText_BuildRenderEntries(s32, s32);
 
 void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
@@ -229,8 +229,6 @@ struct TextPosition_0801e7c0 {
 };
 
 extern u8 *gIwSetParamNibble;
-
-s32 UiText_BuildRenderEntries(s32 character, s32 count);
 
 void UiText_DrawCharacter(
     s32 character,

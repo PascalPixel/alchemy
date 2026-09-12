@@ -11,7 +11,7 @@
 /* battle/effects/scene_transition/finish_and_release_heap_block.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-s32 ScheduleCallback(s32);
+void ScheduleCallback(s32);
 
 struct Outer0808e0b0 *Object_GetById(u32);
 void BattleFx_PrepareBufferInterpolation(void);
@@ -78,7 +78,7 @@ void BattleFx_ComputeHueChannels(s32 value, s32 *maximum, s32 *center, s32 *mini
 /* battle/effects/object_control/set_callback_when_target_unset.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-s32 Object_SetCallback(void *, s32);
+void Object_SetCallback(void *, s32);
 extern const u8 gRom[];
 
 struct Target_08097a54 {

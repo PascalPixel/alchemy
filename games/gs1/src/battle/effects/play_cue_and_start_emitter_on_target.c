@@ -8,8 +8,8 @@
 #include "object_effect.h"
 
 /* battle/effects/random_particle/play_cue_and_start_emitter_on_target.c */
-s32 WaitFrames(s32);
-s32 Object_SetMode(s32, s32);
+void WaitFrames(s32);
+void Object_SetMode(s32, s32);
 
 s32 Object_GetById(u32);
 s32 Audio_PlayCue(s32);
@@ -351,8 +351,8 @@ loop_2:
 #define FIELD_AT_OFFSET(base, type, offset) \
     (*(type)((u8 *)(base) + (offset)))
 
-s32 WaitFrames(s32);
-s32 Object_SetMode(s32, s32);
+void WaitFrames(s32);
+void Object_SetMode(s32, s32);
 s32 EffectRuntime_FindSlotByObject();
 s32 Audio_PlayCue(s32);
 
@@ -376,8 +376,8 @@ void EffectRuntime_SetMode5AndPlayCue(void)
 #define FIELD_AT_OFFSET(base, type, offset) \
     (*(type)((u8 *)(base) + (offset)))
 
-s32 WaitFrames(s32);
-s32 Object_SetMode(void *, s32);
+void WaitFrames(s32);
+void Object_SetMode(void *, s32);
 
 s32 EffectRuntime_FindSlotByObject();
 s32 Audio_PlayCue(s32);
@@ -406,8 +406,8 @@ void EffectRuntime_SetMode7AndLaunch(void)
 #define FIELD_AT_OFFSET(base, type, offset) \
     (*(type)((u8 *)(base) + (offset)))
 
-s32 WaitFrames(s32);
-s32 Object_SetMode(s32, s32);
+void WaitFrames(s32);
+void Object_SetMode(s32, s32);
 s32 EffectRuntime_FindSlotByObject();
 s32 Audio_PlayCue(s32);
 
@@ -431,7 +431,7 @@ void EffectRuntime_SetMode4AndPlayCue(void)
 #define FIELD_AT_OFFSET(base, type, offset) \
     (*(type)((u8 *)(base) + (offset)))
 
-s32 Object_SetMode(s32, s32);
+void Object_SetMode(s32, s32);
 s32 EffectRuntime_FindSlotByObject();
 
 void EffectRuntime_SetMode2(void)
@@ -818,7 +818,7 @@ struct EfxObj *BattleFx_StartRandomParticleEmitter(s32 obj_id, s32 item)
 }
 
 /* object/destroy_if_present.c */
-s32 Object_Destroy();
+void Object_Destroy();
 
 void Object_DestroyIfPresent(s32 arg0)
 {

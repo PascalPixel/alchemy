@@ -116975,46 +116975,6 @@
           "address": "0x08005e70",
           "extent": 24,
           "state": "exact-c"
-        },
-        {
-          "address": "0x08005e88",
-          "extent": 86,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08006240",
-          "extent": 280,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08006358",
-          "extent": 44,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08006384",
-          "extent": 56,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08006458",
-          "extent": 48,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08006488",
-          "extent": 48,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080064b8",
-          "extent": 60,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080064f4",
-          "extent": 40,
-          "state": "exact-c"
         }
       ],
       "overlay": null

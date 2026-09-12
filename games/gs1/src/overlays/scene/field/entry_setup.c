@@ -1380,7 +1380,7 @@ void Scene_SetFlag987AtActorTwelveTile(void)
     Struct_0ff0 *s;
 
     s = Field_unk_02005ea2(12);
-    Field_unk_02005e90_a();
+    Field_TestFlag266d();
     if (s->unk8 >> 20 == 54 || s->unk10 >> 20 == 6) {
         Field_TestFlag987(0x987);
     }

@@ -354,7 +354,7 @@ extern u8 Value_0000087a;
 s32 *Actor_unk43_4(s32);
 
 u8 *Actor_unk44_4(s32);
-u8 *Actor_unk45_4(s32);
+u8 *AllocateEffectTransfer(s32);
 
 void Actor_SetFlagByteBySlotZeroPosition(void)
 {
@@ -363,7 +363,7 @@ void Actor_SetFlagByteBySlotZeroPosition(void)
     if (Actor_unk23((s32)&Value_0000087a) != 0)
         q = Actor_unk44_4(21);
     else
-        q = Actor_unk45_4(20);
+        q = AllocateEffectTransfer(20);
     if (q != 0) {
         if (g[3] > 0xc80000)
             q[0x23] = 3;

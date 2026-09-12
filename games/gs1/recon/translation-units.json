@@ -15546,7 +15546,7 @@
       ]
     },
     {
-      "id": "overlays-scene-actor-event_setup_scene",
+      "id": "overlays-scene-actor-event-setup-scene",
       "game": "gs1",
       "source": "games/gs1/src/overlays/scene/actor/event_setup_scene.c",
       "compiler_route": "canonical-gcc296",
@@ -29887,7 +29887,7 @@
       ]
     },
     {
-      "id": "overlays-scene-story-command_list_scene",
+      "id": "overlays-scene-story-command-list-scene",
       "game": "gs1",
       "source": "games/gs1/src/overlays/scene/story/command_list_scene.c",
       "compiler_route": "canonical-gcc296",
@@ -88033,7 +88033,7 @@
       ]
     },
     {
-      "id": "overlays-scene-dialogue-facing_target",
+      "id": "overlays-scene-dialogue-facing-target",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_377",
@@ -88849,7 +88849,7 @@
       ]
     },
     {
-      "id": "overlays-scene-actor-facing_gated",
+      "id": "overlays-scene-actor-facing-gated",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_378",
@@ -92217,7 +92217,7 @@
       ]
     },
     {
-      "id": "map-locations-sol_shinden-inner_sanctum_scene",
+      "id": "map-locations-sol-shinden-inner-sanctum-scene",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37a",
@@ -94327,7 +94327,7 @@
       ]
     },
     {
-      "id": "overlays-scene-dialogue-actor_presentation",
+      "id": "overlays-scene-dialogue-actor-presentation",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_382",
@@ -96021,7 +96021,7 @@
       ]
     },
     {
-      "id": "overlays-scene-field-extended_sequence",
+      "id": "overlays-scene-field-extended-sequence",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38f",
@@ -96753,7 +96753,7 @@
       ]
     },
     {
-      "id": "overlays-scene-actor-staged_particle",
+      "id": "overlays-scene-actor-staged-particle",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_392",
@@ -97088,7 +97088,7 @@
       ]
     },
     {
-      "id": "overlays-scene-actor-staged_palette",
+      "id": "overlays-scene-actor-staged-palette",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_393",
@@ -97234,7 +97234,7 @@
       ]
     },
     {
-      "id": "map-locations-heidia-village_story-village_story_scene",
+      "id": "map-locations-heidia-village-story-village-story-scene",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39d",
@@ -98583,7 +98583,7 @@
       ]
     },
     {
-      "id": "overlays-scene-story-set_piece",
+      "id": "overlays-scene-story-set-piece",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a4",
@@ -101321,7 +101321,7 @@
       ]
     },
     {
-      "id": "overlays-scene-actor-staged_pair_region",
+      "id": "overlays-scene-actor-staged-pair-region",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a6",
@@ -102164,7 +102164,7 @@
       ]
     },
     {
-      "id": "overlays-scene-actor-staged_group",
+      "id": "overlays-scene-actor-staged-group",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a8",
@@ -105482,7 +105482,7 @@
       ]
     },
     {
-      "id": "overlays-scene-dialogue-flagged_message",
+      "id": "overlays-scene-dialogue-flagged-message",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ae",
@@ -107665,7 +107665,7 @@
       ]
     },
     {
-      "id": "overlays-scene-field-extended_presentation",
+      "id": "overlays-scene-field-extended-presentation",
       "game": "gs1",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bd",
@@ -109179,7 +109179,7 @@
       ]
     },
     {
-      "id": "battle-classify_entry_kind",
+      "id": "battle-classify-entry-kind",
       "game": "gs1",
       "source": "games/gs1/src/battle/classify_entry_kind.c",
       "compiler_route": "canonical-gcc296",
@@ -109200,7 +109200,7 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-data-get_resource_group",
+      "id": "battle-effects-data-get-resource-group",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/data/get_resource_group.c",
       "compiler_route": "canonical-gcc296",
@@ -109221,7 +109221,7 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-run_effect",
+      "id": "battle-effects-run-effect",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/run_effect.c",
       "compiler_route": "canonical-gcc296",
@@ -109247,7 +109247,7 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-reset_scene_transition_effect",
+      "id": "battle-effects-reset-scene-transition-effect",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/reset_scene_transition_effect.c",
       "compiler_route": "canonical-gcc296",
@@ -109273,7 +109273,7 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-spawn_item_break_mode3",
+      "id": "battle-effects-spawn-item-break-mode3",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/spawn_item_break_mode3.c",
       "compiler_route": "canonical-gcc296",
@@ -109299,7 +109299,7 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-update_orbiting_particle_main",
+      "id": "battle-effects-update-orbiting-particle-main",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/update_orbiting_particle_main.c",
       "compiler_route": "canonical-gcc296",
@@ -109350,7 +109350,7 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-spawn_random_angle_triplet",
+      "id": "battle-effects-spawn-random-angle-triplet",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/spawn_random_angle_triplet.c",
       "compiler_route": "canonical-gcc296",
@@ -109376,7 +109376,7 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-spawn_item_break_mode1",
+      "id": "battle-effects-spawn-item-break-mode1",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/spawn_item_break_mode1.c",
       "compiler_route": "canonical-gcc296",
@@ -109397,7 +109397,7 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-update_particle_motion_and_scale",
+      "id": "battle-effects-update-particle-motion-and-scale",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/update_particle_motion_and_scale.c",
       "compiler_route": "canonical-gcc296",
@@ -109428,7 +109428,7 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-update_radial_camera",
+      "id": "battle-effects-update-radial-camera",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/update_radial_camera.c",
       "compiler_route": "canonical-gcc296",
@@ -109449,7 +109449,7 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-set_random_table_value_on_object",
+      "id": "battle-effects-set-random-table-value-on-object",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/set_random_table_value_on_object.c",
       "compiler_route": "canonical-gcc296",
@@ -109485,7 +109485,7 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-update_spin_angle",
+      "id": "battle-effects-update-spin-angle",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/update_spin_angle.c",
       "compiler_route": "canonical-gcc296",
@@ -109536,7 +109536,7 @@
       "overlay": null
     },
     {
-      "id": "battle-placement-update_entries",
+      "id": "battle-placement-update-entries",
       "game": "gs1",
       "source": "games/gs1/src/battle/placement/update_entries.c",
       "compiler_route": "canonical-gcc296",
@@ -109557,7 +109557,7 @@
       "overlay": null
     },
     {
-      "id": "battle-motion-reset_actor_at_anchor",
+      "id": "battle-motion-reset-actor-at-anchor",
       "game": "gs1",
       "source": "games/gs1/src/battle/motion/reset_actor_at_anchor.c",
       "compiler_route": "canonical-gcc296",
@@ -109593,7 +109593,7 @@
       "overlay": null
     },
     {
-      "id": "battle-motion-apply_variant_motion",
+      "id": "battle-motion-apply-variant-motion",
       "game": "gs1",
       "source": "games/gs1/src/battle/motion/apply_variant_motion.c",
       "compiler_route": "canonical-gcc296",
@@ -109634,7 +109634,7 @@
       "overlay": null
     },
     {
-      "id": "battle-presentation-adjust_camera_by_shoulder_keys",
+      "id": "battle-presentation-adjust-camera-by-shoulder-keys",
       "game": "gs1",
       "source": "games/gs1/src/battle/presentation/adjust_camera_by_shoulder_keys.c",
       "compiler_route": "canonical-gcc296",
@@ -109670,7 +109670,7 @@
       "overlay": null
     },
     {
-      "id": "battle-motion-set_mode5_and_activate_slot",
+      "id": "battle-motion-set-mode5-and-activate-slot",
       "game": "gs1",
       "source": "games/gs1/src/battle/motion/set_mode5_and_activate_slot.c",
       "compiler_route": "canonical-gcc296",
@@ -109691,7 +109691,7 @@
       "overlay": null
     },
     {
-      "id": "battle-actor-clear_field_12b_for_group",
+      "id": "battle-actor-clear-field-12b-for-group",
       "game": "gs1",
       "source": "games/gs1/src/battle/actor/clear_field_12b_for_group.c",
       "compiler_route": "canonical-gcc296",
@@ -109722,7 +109722,7 @@
       "overlay": null
     },
     {
-      "id": "battle-get_tagged_slot_value",
+      "id": "battle-get-tagged-slot-value",
       "game": "gs1",
       "source": "games/gs1/src/battle/get_tagged_slot_value.c",
       "compiler_route": "canonical-gcc296",
@@ -109753,7 +109753,7 @@
       "overlay": null
     },
     {
-      "id": "battle-presentation-run_simple",
+      "id": "battle-presentation-run-simple",
       "game": "gs1",
       "source": "games/gs1/src/battle/presentation/run_simple.c",
       "compiler_route": "canonical-gcc296",
@@ -109784,7 +109784,7 @@
       "overlay": null
     },
     {
-      "id": "battle-select_weighted_index",
+      "id": "battle-select-weighted-index",
       "game": "gs1",
       "source": "games/gs1/src/battle/select_weighted_index.c",
       "compiler_route": "canonical-gcc296",
@@ -109851,7 +109851,7 @@
       "overlay": null
     },
     {
-      "id": "battle-presentation-actor-set_record_mode",
+      "id": "battle-presentation-actor-set-record-mode",
       "game": "gs1",
       "source": "games/gs1/src/battle/presentation/actor/set_record_mode.c",
       "compiler_route": "canonical-gcc296",
@@ -109877,7 +109877,7 @@
       "overlay": null
     },
     {
-      "id": "battle-formation-select_level_matched_candidate",
+      "id": "battle-formation-select-level-matched-candidate",
       "game": "gs1",
       "source": "games/gs1/src/battle/formation/select_level_matched_candidate.c",
       "compiler_route": "canonical-gcc296",
@@ -109953,7 +109953,7 @@
       "overlay": null
     },
     {
-      "id": "battle-summon-clear_work_fields",
+      "id": "battle-summon-clear-work-fields",
       "game": "gs1",
       "source": "games/gs1/src/battle/summon/clear_work_fields.c",
       "compiler_route": "canonical-gcc296",
@@ -109979,7 +109979,7 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-run_five_mode_mode0",
+      "id": "battle-effects-run-five-mode-mode0",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/run_five_mode_mode0.c",
       "compiler_route": "canonical-gcc296",
@@ -110090,7 +110090,7 @@
       "overlay": null
     },
     {
-      "id": "battle-presentation-prepare_scene",
+      "id": "battle-presentation-prepare-scene",
       "game": "gs1",
       "source": "games/gs1/src/battle/presentation/prepare_scene.c",
       "compiler_route": "canonical-gcc296",
@@ -110121,7 +110121,7 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-runtime-draw-render_animation_mode1",
+      "id": "battle-effects-runtime-draw-render-animation-mode1",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/runtime/draw/render_animation_mode1.c",
       "compiler_route": "canonical-gcc296",
@@ -110142,7 +110142,7 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-run_two_mode_b_mode0",
+      "id": "battle-effects-run-two-mode-b-mode0",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/run_two_mode_b_mode0.c",
       "compiler_route": "canonical-gcc296",
@@ -110163,7 +110163,7 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-runtime-draw-render_mode0_or1",
+      "id": "battle-effects-runtime-draw-render-mode0-or1",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/runtime/draw/render_mode0_or1.c",
       "compiler_route": "canonical-gcc296",
@@ -110214,7 +110214,7 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-run_series_a_mode0",
+      "id": "battle-effects-run-series-a-mode0",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/run_series_a_mode0.c",
       "compiler_route": "canonical-gcc296",
@@ -110260,7 +110260,7 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-run_series_b_mode0",
+      "id": "battle-effects-run-series-b-mode0",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/run_series_b_mode0.c",
       "compiler_route": "canonical-gcc296",
@@ -110301,7 +110301,7 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-spawn_objects",
+      "id": "battle-effects-spawn-objects",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/spawn_objects.c",
       "compiler_route": "canonical-gcc296",
@@ -110357,7 +110357,7 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-run_dual_table_mode0",
+      "id": "battle-effects-run-dual-table-mode0",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/run_dual_table_mode0.c",
       "compiler_route": "canonical-gcc296",
@@ -110378,7 +110378,7 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-run_mode0",
+      "id": "battle-effects-run-mode0",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/run_mode0.c",
       "compiler_route": "canonical-gcc296",
@@ -110454,7 +110454,7 @@
       "overlay": null
     },
     {
-      "id": "menu-selection-set_node_coordinates",
+      "id": "menu-selection-set-node-coordinates",
       "game": "gs1",
       "source": "games/gs1/src/menu/selection/set_node_coordinates.c",
       "compiler_route": "canonical-gcc296",
@@ -110475,7 +110475,7 @@
       "overlay": null
     },
     {
-      "id": "menu-draw-draw_selection_row",
+      "id": "menu-draw-draw-selection-row",
       "game": "gs1",
       "source": "games/gs1/src/menu/draw/draw_selection_row.c",
       "compiler_route": "canonical-gcc296",
@@ -110558,7 +110558,7 @@
       "overlay": null
     },
     {
-      "id": "runtime-memory-get_remaining_iwram",
+      "id": "runtime-memory-get-remaining-iwram",
       "game": "gs1",
       "source": "games/gs1/src/runtime/memory/get_remaining_iwram.c",
       "compiler_route": "canonical-gcc296",
@@ -110599,7 +110599,7 @@
       "overlay": null
     },
     {
-      "id": "resource-find_free_transfer_entry",
+      "id": "resource-find-free-transfer-entry",
       "game": "gs1",
       "source": "games/gs1/src/resource/find_free_transfer_entry.c",
       "compiler_route": "canonical-gcc296",
@@ -110625,7 +110625,7 @@
       "overlay": null
     },
     {
-      "id": "ui-icon-find_next_number_with_metadata",
+      "id": "ui-icon-find-next-number-with-metadata",
       "game": "gs1",
       "source": "games/gs1/src/ui/icon/find_next_number_with_metadata.c",
       "compiler_route": "canonical-gcc296",
@@ -110661,7 +110661,7 @@
       "overlay": null
     },
     {
-      "id": "ui-render-output_acquire_free",
+      "id": "ui-render-output-acquire-free",
       "game": "gs1",
       "source": "games/gs1/src/ui/render/output_acquire_free.c",
       "compiler_route": "canonical-gcc296",
@@ -110867,7 +110867,7 @@
       "overlay": null
     },
     {
-      "id": "ui-icon-build_item_icon_tiles",
+      "id": "ui-icon-build-item-icon-tiles",
       "game": "gs1",
       "source": "games/gs1/src/ui/icon/build_item_icon_tiles.c",
       "compiler_route": "canonical-gcc296",
@@ -110893,7 +110893,7 @@
       "overlay": null
     },
     {
-      "id": "ui-text-draw-draw_work_value_with_label",
+      "id": "ui-text-draw-draw-work-value-with-label",
       "game": "gs1",
       "source": "games/gs1/src/ui/text/draw/draw_work_value_with_label.c",
       "compiler_route": "canonical-gcc296",
@@ -110919,7 +110919,7 @@
       "overlay": null
     },
     {
-      "id": "ui-message-show_and_wait",
+      "id": "ui-message-show-and-wait",
       "game": "gs1",
       "source": "games/gs1/src/ui/message/show_and_wait.c",
       "compiler_route": "canonical-gcc296",
@@ -110950,7 +110950,7 @@
       "overlay": null
     },
     {
-      "id": "graphics-palette-reserved_no_op_a",
+      "id": "graphics-palette-reserved-no-op-a",
       "game": "gs1",
       "source": "games/gs1/src/graphics/palette/reserved_no_op_a.c",
       "compiler_route": "canonical-gcc296",
@@ -110991,7 +110991,7 @@
       "overlay": null
     },
     {
-      "id": "graphics-resource-load_pair",
+      "id": "graphics-resource-load-pair",
       "game": "gs1",
       "source": "games/gs1/src/graphics/resource/load_pair.c",
       "compiler_route": "canonical-gcc296",
@@ -111012,7 +111012,7 @@
       "overlay": null
     },
     {
-      "id": "graphics-resource-load_frame",
+      "id": "graphics-resource-load-frame",
       "game": "gs1",
       "source": "games/gs1/src/graphics/resource/load_frame.c",
       "compiler_route": "canonical-gcc296",
@@ -111033,7 +111033,7 @@
       "overlay": null
     },
     {
-      "id": "graphics-vram-upload_block",
+      "id": "graphics-vram-upload-block",
       "game": "gs1",
       "source": "games/gs1/src/graphics/vram/upload_block.c",
       "compiler_route": "canonical-gcc296",
@@ -111059,7 +111059,7 @@
       "overlay": null
     },
     {
-      "id": "object-dispatch-find_free_object",
+      "id": "object-dispatch-find-free-object",
       "game": "gs1",
       "source": "games/gs1/src/object/dispatch/find_free_object.c",
       "compiler_route": "canonical-gcc296",
@@ -111100,7 +111100,7 @@
       "overlay": null
     },
     {
-      "id": "object-table-find_last_active_id",
+      "id": "object-table-find-last-active-id",
       "game": "gs1",
       "source": "games/gs1/src/object/table/find_last_active_id.c",
       "compiler_route": "canonical-gcc296",
@@ -111121,7 +111121,7 @@
       "overlay": null
     },
     {
-      "id": "object-effects-reserved_no_op",
+      "id": "object-effects-reserved-no-op",
       "game": "gs1",
       "source": "games/gs1/src/object/effects/reserved_no_op.c",
       "compiler_route": "canonical-gcc296",
@@ -111162,7 +111162,7 @@
       "overlay": null
     },
     {
-      "id": "object-motion-four_object-initialize_top_row",
+      "id": "object-motion-four-object-initialize-top-row",
       "game": "gs1",
       "source": "games/gs1/src/object/motion/four_object/initialize_top_row.c",
       "compiler_route": "canonical-gcc296",
@@ -111234,7 +111234,7 @@
       "overlay": "resource_3be"
     },
     {
-      "id": "djinn-mark_balanced_entries",
+      "id": "djinn-mark-balanced-entries",
       "game": "gs1",
       "source": "games/gs1/src/djinn/mark_balanced_entries.c",
       "compiler_route": "canonical-gcc296",
@@ -111260,7 +111260,7 @@
       "overlay": null
     },
     {
-      "id": "map-shared-render_animated_tile_frame",
+      "id": "map-shared-render-animated-tile-frame",
       "game": "gs1",
       "source": "games/gs1/src/map/shared/render_animated_tile_frame.c",
       "compiler_route": "canonical-gcc296",
@@ -111291,7 +111291,7 @@
       "overlay": null
     },
     {
-      "id": "map-shared-events-check_object_tile",
+      "id": "map-shared-events-check-object-tile",
       "game": "gs1",
       "source": "games/gs1/src/map/shared/events/check_object_tile.c",
       "compiler_route": "canonical-gcc296",
@@ -111312,7 +111312,7 @@
       "overlay": null
     },
     {
-      "id": "display-state_clear_flags",
+      "id": "display-state-clear-flags",
       "game": "gs1",
       "source": "games/gs1/src/display/state_clear_flags.c",
       "compiler_route": "canonical-gcc296",
@@ -111399,7 +111399,7 @@
       "overlay": null
     },
     {
-      "id": "script-operands-set_or_compare_address",
+      "id": "script-operands-set-or-compare-address",
       "game": "gs1",
       "source": "games/gs1/src/script/operands/set_or_compare_address.c",
       "compiler_route": "canonical-gcc296",
@@ -111615,7 +111615,7 @@
       "overlay": null
     },
     {
-      "id": "save-write_selected_slot",
+      "id": "save-write-selected-slot",
       "game": "gs1",
       "source": "games/gs1/src/save/write_selected_slot.c",
       "compiler_route": "canonical-gcc296",
@@ -111636,7 +111636,7 @@
       "overlay": null
     },
     {
-      "id": "field-store_assigned_key_value",
+      "id": "field-store-assigned-key-value",
       "game": "gs1",
       "source": "games/gs1/src/field/store_assigned_key_value.c",
       "compiler_route": "canonical-gcc296",
@@ -111657,7 +111657,7 @@
       "overlay": null
     },
     {
-      "id": "audio-initialize_runtime_defaults",
+      "id": "audio-initialize-runtime-defaults",
       "game": "gs1",
       "source": "games/gs1/src/audio/initialize_runtime_defaults.c",
       "compiler_route": "canonical-gcc296",
@@ -111738,7 +111738,7 @@
       "overlay": null
     },
     {
-      "id": "audio-music_track_read_command_byte",
+      "id": "audio-music-track-read-command-byte",
       "game": "gs1",
       "source": "games/gs1/src/audio/music_track_read_command_byte.c",
       "compiler_route": "canonical-gcc296",
@@ -111830,7 +111830,7 @@
       "overlay": null
     },
     {
-      "id": "audio-engine_initialize",
+      "id": "audio-engine-initialize",
       "game": "gs1",
       "source": "games/gs1/src/audio/engine_initialize.c",
       "compiler_route": "canonical-gcc296",
@@ -111911,7 +111911,7 @@
       "overlay": null
     },
     {
-      "id": "audio-music_track_clear_modulation",
+      "id": "audio-music-track-clear-modulation",
       "game": "gs1",
       "source": "games/gs1/src/audio/music_track_clear_modulation.c",
       "compiler_route": "canonical-gcc296",
@@ -111947,7 +111947,7 @@
       "overlay": null
     },
     {
-      "id": "audio-music_track_read_wave_pointer",
+      "id": "audio-music-track-read-wave-pointer",
       "game": "gs1",
       "source": "games/gs1/src/audio/music_track_read_wave_pointer.c",
       "compiler_route": "canonical-gcc296",
@@ -111993,7 +111993,7 @@
       "overlay": null
     },
     {
-      "id": "overlays-scene-dialogue-topic-pick_topic_variant_id",
+      "id": "overlays-scene-dialogue-topic-pick-topic-variant-id",
       "game": "gs1",
       "source": "games/gs1/src/overlays/scene/dialogue/topic/pick_topic_variant_id.c",
       "compiler_route": "canonical-gcc296",
@@ -112014,7 +112014,7 @@
       "overlay": "resource_3b7"
     },
     {
-      "id": "menu-input-cancel_sound_tick",
+      "id": "menu-input-cancel-sound-tick",
       "game": "gs1",
       "source": "games/gs1/src/menu/input/cancel_sound_tick.c",
       "compiler_route": "canonical-gcc296",
@@ -112055,7 +112055,7 @@
       "overlay": null
     },
     {
-      "id": "battle-event_runtime-set_runtime_field8",
+      "id": "battle-event-runtime-set-runtime-field8",
       "game": "gs1",
       "source": "games/gs1/src/battle/event_runtime/set_runtime_field8.c",
       "compiler_route": "canonical-gcc296",
@@ -112101,7 +112101,7 @@
       "overlay": null
     },
     {
-      "id": "script-advance_past_cursor",
+      "id": "script-advance-past-cursor",
       "game": "gs1",
       "source": "games/gs1/src/script/advance_past_cursor.c",
       "compiler_route": "canonical-gcc296",
@@ -112212,7 +112212,7 @@
       "overlay": null
     },
     {
-      "id": "runtime-idle_forever",
+      "id": "runtime-idle-forever",
       "game": "gs1",
       "source": "games/gs1/src/runtime/idle_forever.c",
       "compiler_route": "canonical-gcc296",
@@ -112263,7 +112263,7 @@
       "overlay": null
     },
     {
-      "id": "menu-run_selection_hook",
+      "id": "menu-run-selection-hook",
       "game": "gs1",
       "source": "games/gs1/src/menu/run_selection_hook.c",
       "compiler_route": "canonical-gcc296",
@@ -112284,7 +112284,7 @@
       "overlay": null
     },
     {
-      "id": "graphics-palette-decrement_selected_counter",
+      "id": "graphics-palette-decrement-selected-counter",
       "game": "gs1",
       "source": "games/gs1/src/graphics/palette/decrement_selected_counter.c",
       "compiler_route": "canonical-gcc296",
@@ -112310,7 +112310,7 @@
       "overlay": null
     },
     {
-      "id": "ui-apply_table_scale_to_object",
+      "id": "ui-apply-table-scale-to-object",
       "game": "gs1",
       "source": "games/gs1/src/ui/apply_table_scale_to_object.c",
       "compiler_route": "canonical-gcc296",
@@ -112331,9 +112331,30 @@
       "overlay": null
     },
     {
-      "id": "game_flags-refresh_lure_cap",
+      "id": "game-flags-refresh-lure-cap",
       "game": "gs1",
       "source": "games/gs1/src/game_flags/refresh_lure_cap.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x08077c10",
+          "extent": 168,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08077cb8",
+          "extent": 128,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "owner-refresh-and-reset-zero",
+      "game": "gs1",
+      "source": "games/gs1/src/owner/refresh_and_reset_zero.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -112352,37 +112373,60 @@
           "address": "0x08077348",
           "extent": 76,
           "state": "exact-c"
-        },
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "owner-get-state",
+      "game": "gs1",
+      "source": "games/gs1/recon/en/main/08077394.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
         {
           "address": "0x08077394",
           "extent": 68,
           "state": "retained-assembly"
-        },
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "owner-get-record",
+      "game": "gs1",
+      "source": "games/gs1/src/owner/get_record.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
         {
           "address": "0x080773d8",
           "extent": 28,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080773f4",
-          "extent": 52,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08077c10",
-          "extent": 168,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08077cb8",
-          "extent": 128,
           "state": "exact-c"
         }
       ],
       "overlay": null
     },
     {
-      "id": "battle-effects-run_event_action",
+      "id": "runtime-copy-bytes-directional",
+      "game": "gs1",
+      "source": "games/gs1/src/runtime/memory/copy_bytes_directional.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080773f4",
+          "extent": 52,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "battle-effects-run-event-action",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/run_event_action.c",
       "compiler_route": "canonical-gcc296",
@@ -112403,7 +112447,7 @@
       "overlay": null
     },
     {
-      "id": "menu-core-compute_entry_values",
+      "id": "menu-core-compute-entry-values",
       "game": "gs1",
       "source": "games/gs1/src/menu/core/compute_entry_values.c",
       "compiler_route": "canonical-gcc296",
@@ -112424,7 +112468,7 @@
       "overlay": null
     },
     {
-      "id": "menu-resource-reset_two_resource_entries",
+      "id": "menu-resource-reset-two-resource-entries",
       "game": "gs1",
       "source": "games/gs1/src/menu/resource/reset_two_resource_entries.c",
       "compiler_route": "canonical-gcc296",
@@ -112445,7 +112489,7 @@
       "overlay": null
     },
     {
-      "id": "object-group-store_object_and_run_step7",
+      "id": "object-group-store-object-and-run-step7",
       "game": "gs1",
       "source": "games/gs1/src/object/group/store_object_and_run_step7.c",
       "compiler_route": "canonical-gcc296",
@@ -112466,7 +112510,7 @@
       "overlay": null
     },
     {
-      "id": "math-multiply_fixed_8",
+      "id": "math-multiply-fixed-8",
       "game": "gs1",
       "source": "games/gs1/src/math/multiply_fixed_8.c",
       "compiler_route": "canonical-gcc296",
@@ -112492,7 +112536,7 @@
       "overlay": null
     },
     {
-      "id": "overlays-scene-actor-four_encounter",
+      "id": "overlays-scene-actor-four-encounter",
       "game": "gs1",
       "source": "games/gs1/src/overlays/scene/actor/four_encounter.c",
       "compiler_route": "canonical-gcc296",
@@ -113464,7 +113508,7 @@
       "overlay": "resource_396"
     },
     {
-      "id": "overlays-scene-actor-selected_presentation",
+      "id": "overlays-scene-actor-selected-presentation",
       "game": "gs1",
       "source": "games/gs1/src/overlays/scene/actor/selected_presentation.c",
       "compiler_route": "canonical-gcc296",
@@ -116781,7 +116825,7 @@
       "overlay": "resource_3b8"
     },
     {
-      "id": "link-serial-enable_transfer_timer",
+      "id": "link-serial-enable-transfer-timer",
       "game": "gs1",
       "source": "games/gs1/src/link/serial/enable_transfer_timer.c",
       "compiler_route": "canonical-gcc296",
@@ -116918,7 +116962,7 @@
       "overlay": null
     },
     {
-      "id": "battle-presentation-wait_sync",
+      "id": "battle-presentation-wait-sync",
       "game": "gs1",
       "source": "games/gs1/src/battle/presentation/wait_sync.c",
       "compiler_route": "canonical-gcc296",
@@ -116979,7 +117023,7 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-run_palette_ramp_mode0",
+      "id": "battle-effects-run-palette-ramp-mode0",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/run_palette_ramp_mode0.c",
       "compiler_route": "canonical-gcc296",
@@ -117035,7 +117079,7 @@
       "overlay": null
     },
     {
-      "id": "overlays-scene-actor-push_puzzle",
+      "id": "overlays-scene-actor-push-puzzle",
       "game": "gs1",
       "source": "games/gs1/src/overlays/scene/actor/push_puzzle.c",
       "compiler_route": "canonical-gcc296",
@@ -118342,7 +118386,7 @@
       "overlay": null
     },
     {
-      "id": "save-state-select_write_slot",
+      "id": "save-state-select-write-slot",
       "game": "gs1",
       "source": "games/gs1/src/save/state/select_write_slot.c",
       "compiler_route": "canonical-gcc296",
@@ -118432,7 +118476,7 @@
       "overlay": null
     },
     {
-      "id": "save-flash_timer_interrupt",
+      "id": "save-flash-timer-interrupt",
       "game": "gs1",
       "source": "games/gs1/src/save/flash_timer_interrupt.c",
       "compiler_route": "canonical-gcc296",
@@ -118483,7 +118527,7 @@
       "overlay": null
     },
     {
-      "id": "animation-lookup_value_by_key",
+      "id": "animation-lookup-value-by-key",
       "game": "gs1",
       "source": "games/gs1/src/animation/lookup_value_by_key.c",
       "compiler_route": "canonical-gcc296",
@@ -118544,7 +118588,7 @@
       "overlay": null
     },
     {
-      "id": "graphics-tile-merge_shifted_tile_rows",
+      "id": "graphics-tile-merge-shifted-tile-rows",
       "game": "gs1",
       "source": "games/gs1/src/graphics/tile/merge_shifted_tile_rows.c",
       "compiler_route": "canonical-gcc296",
@@ -118570,7 +118614,7 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-data-lookup_result",
+      "id": "battle-effects-data-lookup-result",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/data/lookup_result.c",
       "compiler_route": "canonical-gcc296",
@@ -118606,7 +118650,7 @@
       "overlay": null
     },
     {
-      "id": "menu-ability_menu-build_available_list",
+      "id": "menu-ability-menu-build-available-list",
       "game": "gs1",
       "source": "games/gs1/src/menu/ability_menu/build_available_list.c",
       "compiler_route": "canonical-gcc296",
@@ -118632,7 +118676,7 @@
       "overlay": null
     },
     {
-      "id": "graphics-registers-apply_window_blend",
+      "id": "graphics-registers-apply-window-blend",
       "game": "gs1",
       "source": "games/gs1/src/graphics/registers/apply_window_blend.c",
       "compiler_route": "canonical-gcc296",
@@ -118658,7 +118702,7 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-wait_then_set_field",
+      "id": "battle-effects-wait-then-set-field",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/wait_then_set_field.c",
       "compiler_route": "canonical-gcc296",
@@ -118679,7 +118723,7 @@
       "overlay": null
     },
     {
-      "id": "runtime-memory-schedule_callback_and_release_block_32_a",
+      "id": "runtime-memory-schedule-callback-and-release-block-32-a",
       "game": "gs1",
       "source": "games/gs1/src/runtime/memory/schedule_callback_and_release_block_32_a.c",
       "compiler_route": "canonical-gcc296",
@@ -118720,7 +118764,7 @@
       "overlay": null
     },
     {
-      "id": "overlays-scene-story-progress_actor",
+      "id": "overlays-scene-story-progress-actor",
       "game": "gs1",
       "source": "games/gs1/src/overlays/scene/story/progress_actor.c",
       "compiler_route": "canonical-gcc296",
@@ -119915,7 +119959,7 @@
       "overlay": "resource_375"
     },
     {
-      "id": "overlays-scene-actor-multi_encounter",
+      "id": "overlays-scene-actor-multi-encounter",
       "game": "gs1",
       "source": "games/gs1/src/overlays/scene/actor/multi_encounter.c",
       "compiler_route": "canonical-gcc296",
@@ -121903,7 +121947,7 @@
       "overlay": "resource_3af"
     },
     {
-      "id": "overlays-scene-story-actor_sequence",
+      "id": "overlays-scene-story-actor-sequence",
       "game": "gs1",
       "source": "games/gs1/src/overlays/scene/story/actor_sequence.c",
       "compiler_route": "canonical-gcc296",
@@ -123616,7 +123660,7 @@
       "overlay": "resource_3ab"
     },
     {
-      "id": "overlays-scene-story-flag_branched",
+      "id": "overlays-scene-story-flag-branched",
       "game": "gs1",
       "source": "games/gs1/src/overlays/scene/story/flag_branched.c",
       "compiler_route": "canonical-gcc296",
@@ -124323,7 +124367,7 @@
       "overlay": "resource_38d"
     },
     {
-      "id": "runtime-reserved_no_op_f",
+      "id": "runtime-reserved-no-op-f",
       "game": "gs1",
       "source": "games/gs1/src/runtime/reserved_no_op_f.c",
       "compiler_route": "canonical-gcc296",
@@ -124552,7 +124596,7 @@
       "overlay": null
     },
     {
-      "id": "inventory-has_equipment_value",
+      "id": "inventory-has-equipment-value",
       "game": "gs1",
       "source": "games/gs1/src/inventory/has_equipment_value.c",
       "compiler_route": "canonical-gcc296",
@@ -124738,7 +124782,7 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-play_cue_and_start_emitter_on_target",
+      "id": "battle-effects-play-cue-and-start-emitter-on-target",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/play_cue_and_start_emitter_on_target.c",
       "compiler_route": "canonical-gcc296",
@@ -124859,7 +124903,7 @@
       "overlay": null
     },
     {
-      "id": "overlays-scene-story-branching_formation",
+      "id": "overlays-scene-story-branching-formation",
       "game": "gs1",
       "source": "games/gs1/src/overlays/scene/story/branching_formation.c",
       "compiler_route": "canonical-gcc296",
@@ -125596,7 +125640,7 @@
       "overlay": "resource_391"
     },
     {
-      "id": "map-locations-heidia-village-village_scene",
+      "id": "map-locations-heidia-village-village-scene",
       "game": "gs1",
       "source": "games/gs1/src/map/locations/heidia/village/village_scene.c",
       "compiler_route": "canonical-gcc296",
@@ -129156,7 +129200,7 @@
       "overlay": "resource_3bf"
     },
     {
-      "id": "menu-selection-run_top_selection",
+      "id": "menu-selection-run-top-selection",
       "game": "gs1",
       "source": "games/gs1/src/menu/selection/run_top_selection.c",
       "compiler_route": "canonical-gcc296",
@@ -129192,7 +129236,7 @@
       "overlay": null
     },
     {
-      "id": "menu-run_workspace_selection_loop",
+      "id": "menu-run-workspace-selection-loop",
       "game": "gs1",
       "source": "games/gs1/src/menu/run_workspace_selection_loop.c",
       "compiler_route": "canonical-gcc296",
@@ -129303,7 +129347,7 @@
       "overlay": null
     },
     {
-      "id": "ui-load_character_entry_for_slot",
+      "id": "ui-load-character-entry-for-slot",
       "game": "gs1",
       "source": "games/gs1/src/ui/load_character_entry_for_slot.c",
       "compiler_route": "canonical-gcc296",
@@ -129384,7 +129428,7 @@
       "overlay": null
     },
     {
-      "id": "menu-entry-clear_first_object_row_and_schedule_update",
+      "id": "menu-entry-clear-first-object-row-and-schedule-update",
       "game": "gs1",
       "source": "games/gs1/src/menu/entry/clear_first_object_row_and_schedule_update.c",
       "compiler_route": "canonical-gcc296",
@@ -129420,7 +129464,7 @@
       "overlay": null
     },
     {
-      "id": "ui-text-draw-draw_localized_resource",
+      "id": "ui-text-draw-draw-localized-resource",
       "game": "gs1",
       "source": "games/gs1/src/ui/text/draw/draw_localized_resource.c",
       "compiler_route": "canonical-gcc296",
@@ -129506,7 +129550,7 @@
       "overlay": null
     },
     {
-      "id": "party-set_flag32_and_refresh_members",
+      "id": "party-set-flag32-and-refresh-members",
       "game": "gs1",
       "source": "games/gs1/src/party/set_flag32_and_refresh_members.c",
       "compiler_route": "canonical-gcc296",
@@ -129697,7 +129741,7 @@
       "overlay": null
     },
     {
-      "id": "battle-party-apply_drain",
+      "id": "battle-party-apply-drain",
       "game": "gs1",
       "source": "games/gs1/src/battle/party/apply_drain.c",
       "compiler_route": "canonical-gcc296",
@@ -129778,7 +129822,7 @@
       "overlay": null
     },
     {
-      "id": "effect_runtime-prepare_rising_object",
+      "id": "effect-runtime-prepare-rising-object",
       "game": "gs1",
       "source": "games/gs1/src/effect_runtime/prepare_rising_object.c",
       "compiler_route": "canonical-gcc296",
@@ -129809,7 +129853,7 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-apply_color_to_target_buffer",
+      "id": "battle-effects-apply-color-to-target-buffer",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/apply_color_to_target_buffer.c",
       "compiler_route": "canonical-gcc296",
@@ -129940,7 +129984,7 @@
       "overlay": null
     },
     {
-      "id": "event-set_status_1c6",
+      "id": "event-set-status-1c6",
       "game": "gs1",
       "source": "games/gs1/src/event/set_status_1c6.c",
       "compiler_route": "canonical-gcc296",
@@ -129986,7 +130030,7 @@
       "overlay": null
     },
     {
-      "id": "event-set_pair1d4",
+      "id": "event-set-pair1d4",
       "game": "gs1",
       "source": "games/gs1/src/event/set_pair1d4.c",
       "compiler_route": "canonical-gcc296",
@@ -130237,7 +130281,7 @@
       "overlay": null
     },
     {
-      "id": "object-attach_work_target_to_object",
+      "id": "object-attach-work-target-to-object",
       "game": "gs1",
       "source": "games/gs1/src/object/attach_work_target_to_object.c",
       "compiler_route": "canonical-gcc296",
@@ -130283,7 +130327,7 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-schedule_ratio_transition",
+      "id": "battle-effects-schedule-ratio-transition",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/schedule_ratio_transition.c",
       "compiler_route": "canonical-gcc296",
@@ -130329,7 +130373,7 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-set_block30_values_max_zero",
+      "id": "battle-effects-set-block30-values-max-zero",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/set_block30_values_max_zero.c",
       "compiler_route": "canonical-gcc296",
@@ -130430,7 +130474,7 @@
       "overlay": null
     },
     {
-      "id": "object-replace_resource_entry",
+      "id": "object-replace-resource-entry",
       "game": "gs1",
       "source": "games/gs1/src/object/replace_resource_entry.c",
       "compiler_route": "canonical-gcc296",
@@ -130486,7 +130530,7 @@
       "overlay": null
     },
     {
-      "id": "menu-run_action_flow",
+      "id": "menu-run-action-flow",
       "game": "gs1",
       "source": "games/gs1/src/menu/run_action_flow.c",
       "compiler_route": "canonical-gcc296",
@@ -130573,7 +130617,7 @@
       "overlay": null
     },
     {
-      "id": "battle-unit-roll_counter_early_end",
+      "id": "battle-unit-roll-counter-early-end",
       "game": "gs1",
       "source": "games/gs1/src/battle/unit/roll_counter_early_end.c",
       "compiler_route": "canonical-gcc296",
@@ -130679,7 +130723,7 @@
       "overlay": null
     },
     {
-      "id": "object-group-tick_member_timers",
+      "id": "object-group-tick-member-timers",
       "game": "gs1",
       "source": "games/gs1/src/object/group/tick_member_timers.c",
       "compiler_route": "canonical-gcc296",
@@ -130785,7 +130829,7 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-run_no_effect_frames",
+      "id": "battle-effects-run-no-effect-frames",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/run_no_effect_frames.c",
       "compiler_route": "canonical-gcc296",
@@ -130816,7 +130860,7 @@
       "overlay": null
     },
     {
-      "id": "overlays-scene-actor-staged_pair",
+      "id": "overlays-scene-actor-staged-pair",
       "game": "gs1",
       "source": "games/gs1/src/overlays/scene/actor/staged_pair.c",
       "compiler_route": "canonical-gcc296",
@@ -131519,7 +131563,7 @@
       "overlay": "resource_3be"
     },
     {
-      "id": "overlays-scene-measure_fixed_point_position_distance",
+      "id": "overlays-scene-measure-fixed-point-position-distance",
       "game": "gs1",
       "source": "games/gs1/src/overlays/scene/measure_fixed_point_position_distance.c",
       "compiler_route": "canonical-gcc296",
@@ -136904,7 +136948,7 @@
       "overlay": "resource_373"
     },
     {
-      "id": "overlays-scene-actor-staged_placement",
+      "id": "overlays-scene-actor-staged-placement",
       "game": "gs1",
       "source": "games/gs1/src/overlays/scene/actor/staged_placement.c",
       "compiler_route": "canonical-gcc296",
@@ -137663,7 +137707,7 @@
       "overlay": "resource_389"
     },
     {
-      "id": "overlays-scene-actor-staged_effect",
+      "id": "overlays-scene-actor-staged-effect",
       "game": "gs1",
       "source": "games/gs1/src/overlays/scene/actor/staged_effect.c",
       "compiler_route": "canonical-gcc296",
@@ -138475,7 +138519,7 @@
       "overlay": "resource_39b"
     },
     {
-      "id": "map-locations-heidia-prologue-prologue_route_scene",
+      "id": "map-locations-heidia-prologue-prologue-route-scene",
       "game": "gs1",
       "source": "games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c",
       "compiler_route": "canonical-gcc296",
@@ -140644,7 +140688,7 @@
       "overlay": "resource_3b2"
     },
     {
-      "id": "overlays-scene-actor-staged_nav",
+      "id": "overlays-scene-actor-staged-nav",
       "game": "gs1",
       "source": "games/gs1/src/overlays/scene/actor/staged_nav.c",
       "compiler_route": "canonical-gcc296",
@@ -141632,7 +141676,7 @@
       "overlay": "resource_3b3"
     },
     {
-      "id": "overlays-scene-actor-map_init",
+      "id": "overlays-scene-actor-map-init",
       "game": "gs1",
       "source": "games/gs1/src/overlays/scene/actor/map_init.c",
       "compiler_route": "canonical-gcc296",
@@ -143527,7 +143571,7 @@
       "overlay": "resource_3c4"
     },
     {
-      "id": "overlays-scene-data-get_table9",
+      "id": "overlays-scene-data-get-table9",
       "game": "gs1",
       "source": "games/gs1/src/overlays/scene/data/get_table9.c",
       "compiler_route": "canonical-gcc296",
@@ -143588,7 +143632,7 @@
       "overlay": "resource_3b7"
     },
     {
-      "id": "overlays-scene-story-scenario_dispatch",
+      "id": "overlays-scene-story-scenario-dispatch",
       "game": "gs1",
       "source": "games/gs1/src/overlays/scene/story/scenario_dispatch.c",
       "compiler_route": "canonical-gcc296",
@@ -144129,7 +144173,7 @@
       "overlay": "resource_37f"
     },
     {
-      "id": "overlays-scene-story-selector_effect",
+      "id": "overlays-scene-story-selector-effect",
       "game": "gs1",
       "source": "games/gs1/src/overlays/scene/story/selector_effect.c",
       "compiler_route": "canonical-gcc296",
@@ -145572,7 +145616,7 @@
       "overlay": "resource_39c"
     },
     {
-      "id": "ui-render-drain_pending",
+      "id": "ui-render-drain-pending",
       "game": "gs1",
       "source": "games/gs1/src/ui/render/drain_pending.c",
       "compiler_route": "canonical-gcc296",
@@ -145663,7 +145707,7 @@
       "overlay": null
     },
     {
-      "id": "event-set_pair1d4",
+      "id": "event-set-pair1d4-0809315c",
       "game": "gs1",
       "source": "games/gs1/src/event/set_pair1d4.c",
       "compiler_route": "canonical-gcc296",
@@ -145694,7 +145738,7 @@
       "overlay": null
     },
     {
-      "id": "battle-unit-lookup_weapon_value_by_class",
+      "id": "battle-unit-lookup-weapon-value-by-class",
       "game": "gs1",
       "source": "games/gs1/src/battle/unit/lookup_weapon_value_by_class.c",
       "compiler_route": "canonical-gcc296",
@@ -145795,7 +145839,7 @@
       "overlay": null
     },
     {
-      "id": "overlays-scene-state-select_by_runtime_selector",
+      "id": "overlays-scene-state-select-by-runtime-selector",
       "game": "gs1",
       "source": "games/gs1/src/overlays/scene/state/select_by_runtime_selector.c",
       "compiler_route": "canonical-gcc296",
@@ -147904,7 +147948,7 @@
       "overlay": "resource_3bb"
     },
     {
-      "id": "map-locations-colosso-log_rolling_stage-script",
+      "id": "map-locations-colosso-log-rolling-stage-script",
       "game": "gs1",
       "source": "games/gs1/src/map/locations/colosso/log_rolling_stage/script.c",
       "compiler_route": "canonical-gcc296",
@@ -154286,7 +154330,7 @@
       "overlay": "resource_39f"
     },
     {
-      "id": "overlays-scene-actor-staged_step",
+      "id": "overlays-scene-actor-staged-step",
       "game": "gs1",
       "source": "games/gs1/src/overlays/scene/actor/staged_step.c",
       "compiler_route": "canonical-gcc296",
@@ -156307,7 +156351,7 @@
       "overlay": "resource_3b4"
     },
     {
-      "id": "overlays-scene-story-branching_event",
+      "id": "overlays-scene-story-branching-event",
       "game": "gs1",
       "source": "games/gs1/src/overlays/scene/story/branching_event.c",
       "compiler_route": "canonical-gcc296",
@@ -159243,7 +159287,7 @@
       "overlay": "resource_3c5"
     },
     {
-      "id": "ui-text-fmt-format_hex_to_work",
+      "id": "ui-text-fmt-format-hex-to-work",
       "game": "gs1",
       "source": "games/gs1/src/ui/text/fmt/format_hex_to_work.c",
       "compiler_route": "canonical-gcc296",
@@ -159284,7 +159328,7 @@
       "overlay": null
     },
     {
-      "id": "graphics-prepare_transfer_in_iwram_work",
+      "id": "graphics-prepare-transfer-in-iwram-work",
       "game": "gs1",
       "source": "games/gs1/src/graphics/prepare_transfer_in_iwram_work.c",
       "compiler_route": "canonical-gcc296",
@@ -159315,7 +159359,7 @@
       "overlay": null
     },
     {
-      "id": "object-dispatch-register_child_metadata",
+      "id": "object-dispatch-register-child-metadata",
       "game": "gs1",
       "source": "games/gs1/src/object/dispatch/register_child_metadata.c",
       "compiler_route": "canonical-gcc296",
@@ -159391,12 +159435,17 @@
           "address": "0x0800c5b4",
           "extent": 72,
           "state": "exact-c"
+        },
+        {
+          "address": "0x0800c5fc",
+          "extent": 44,
+          "state": "exact-c"
         }
       ],
       "overlay": null
     },
     {
-      "id": "runtime-remap_bytes_by_table",
+      "id": "runtime-remap-bytes-by-table",
       "game": "gs1",
       "source": "games/gs1/src/runtime/remap_bytes_by_table.c",
       "compiler_route": "canonical-gcc296",
@@ -159447,7 +159496,7 @@
       "overlay": null
     },
     {
-      "id": "map-shared-load_default_cells_and_update_block",
+      "id": "map-shared-load-default-cells-and-update-block",
       "game": "gs1",
       "source": "games/gs1/src/map/shared/load_default_cells_and_update_block.c",
       "compiler_route": "canonical-gcc296",
@@ -159628,7 +159677,7 @@
       "overlay": null
     },
     {
-      "id": "menu-selection-run_top_selection",
+      "id": "menu-selection-run-top-selection-0801c458",
       "game": "gs1",
       "source": "games/gs1/src/menu/selection/run_top_selection.c",
       "compiler_route": "canonical-gcc296",
@@ -159649,7 +159698,7 @@
       "overlay": null
     },
     {
-      "id": "ui-window-copy_tilemap_region",
+      "id": "ui-window-copy-tilemap-region",
       "game": "gs1",
       "source": "games/gs1/src/ui/window/copy_tilemap_region.c",
       "compiler_route": "canonical-gcc296",
@@ -159690,7 +159739,7 @@
       "overlay": null
     },
     {
-      "id": "graphics-tile-merge_shifted_tile_rows",
+      "id": "graphics-tile-merge-shifted-tile-rows-08021b80",
       "game": "gs1",
       "source": "games/gs1/src/graphics/tile/merge_shifted_tile_rows.c",
       "compiler_route": "canonical-gcc296",
@@ -159721,7 +159770,7 @@
       "overlay": null
     },
     {
-      "id": "graphics-registers-set_bg1_priority3",
+      "id": "graphics-registers-set-bg1-priority3",
       "game": "gs1",
       "source": "games/gs1/src/graphics/registers/set_bg1_priority3.c",
       "compiler_route": "canonical-gcc296",
@@ -159868,7 +159917,7 @@
       "overlay": null
     },
     {
-      "id": "object-table-clear_battle_slots",
+      "id": "object-table-clear-battle-slots",
       "game": "gs1",
       "source": "games/gs1/src/object/table/clear_battle_slots.c",
       "compiler_route": "canonical-gcc296",
@@ -159909,7 +159958,7 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-finish_scene_and_release_heap_block",
+      "id": "battle-effects-finish-scene-and-release-heap-block",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/finish_scene_and_release_heap_block.c",
       "compiler_route": "canonical-gcc296",
@@ -159980,7 +160029,7 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-effect_slot_update",
+      "id": "battle-effects-effect-slot-update",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/effect_slot_update.c",
       "compiler_route": "canonical-gcc296",
@@ -160081,7 +160130,7 @@
       "overlay": null
     },
     {
-      "id": "menu-psynergy_menu-reserved_no_op",
+      "id": "menu-psynergy-menu-reserved-no-op",
       "game": "gs1",
       "source": "games/gs1/src/menu/psynergy_menu/reserved_no_op.c",
       "compiler_route": "canonical-gcc296",
@@ -160122,7 +160171,7 @@
       "overlay": null
     },
     {
-      "id": "item-play_use_animation",
+      "id": "item-play-use-animation",
       "game": "gs1",
       "source": "games/gs1/src/item/play_use_animation.c",
       "compiler_route": "canonical-gcc296",
@@ -160304,7 +160353,7 @@
       "overlay": null
     },
     {
-      "id": "shop-effect-reset",
+      "id": "shop-effect-reset-080b5864",
       "game": "gs1",
       "source": "games/gs1/src/shop/effect/reset.c",
       "compiler_route": "canonical-gcc296",
@@ -160366,7 +160415,7 @@
       "overlay": null
     },
     {
-      "id": "effect_runtime-run_animation_mode_6_or_7_or",
+      "id": "effect-runtime-run-animation-mode-6-or-7-or",
       "game": "gs1",
       "source": "games/gs1/src/effect_runtime/run_animation_mode_6_or_7_or.c",
       "compiler_route": "canonical-gcc296",
@@ -160447,7 +160496,7 @@
       "overlay": null
     },
     {
-      "id": "object-group-store_object_and_run_step7",
+      "id": "object-group-store-object-and-run-step7-080ec0e0",
       "game": "gs1",
       "source": "games/gs1/src/object/group/store_object_and_run_step7.c",
       "compiler_route": "canonical-gcc296",
@@ -160468,7 +160517,7 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-wait_then_set_field",
+      "id": "battle-effects-wait-then-set-field-080f037c",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/wait_then_set_field.c",
       "compiler_route": "canonical-gcc296",
@@ -160499,7 +160548,7 @@
       "overlay": null
     },
     {
-      "id": "runtime-blank_display_load_value_and_run",
+      "id": "runtime-blank-display-load-value-and-run",
       "game": "gs1",
       "source": "games/gs1/src/runtime/blank_display_load_value_and_run.c",
       "compiler_route": "canonical-gcc296",
@@ -160550,7 +160599,7 @@
       "overlay": null
     },
     {
-      "id": "menu-item_menu-use",
+      "id": "menu-item-menu-use",
       "game": "gs1",
       "source": "games/gs1/src/menu/item_menu/use.c",
       "compiler_route": "canonical-gcc296",
@@ -160726,7 +160775,7 @@
       "overlay": null
     },
     {
-      "id": "menu-psynergy_menu-initialize_entry_objects",
+      "id": "menu-psynergy-menu-initialize-entry-objects",
       "game": "gs1",
       "source": "games/gs1/src/menu/psynergy_menu/initialize_entry_objects.c",
       "compiler_route": "canonical-gcc296",
@@ -160762,7 +160811,7 @@
       "overlay": null
     },
     {
-      "id": "menu-psynergy_menu-classify_selected_psynergy",
+      "id": "menu-psynergy-menu-classify-selected-psynergy",
       "game": "gs1",
       "source": "games/gs1/src/menu/psynergy_menu/classify_selected_psynergy.c",
       "compiler_route": "canonical-gcc296",
@@ -160838,7 +160887,7 @@
       "overlay": null
     },
     {
-      "id": "menu-item_menu-page_result",
+      "id": "menu-item-menu-page-result",
       "game": "gs1",
       "source": "games/gs1/src/menu/item_menu/page_result.c",
       "compiler_route": "canonical-gcc296",
@@ -160869,7 +160918,7 @@
       "overlay": null
     },
     {
-      "id": "menu-character_menu-build_availability",
+      "id": "menu-character-menu-build-availability",
       "game": "gs1",
       "source": "games/gs1/src/menu/character_menu/build_availability.c",
       "compiler_route": "canonical-gcc296",
@@ -160970,7 +161019,7 @@
       "overlay": null
     },
     {
-      "id": "ui-icon-build_ability_icon_tiles",
+      "id": "ui-icon-build-ability-icon-tiles",
       "game": "gs1",
       "source": "games/gs1/src/ui/icon/build_ability_icon_tiles.c",
       "compiler_route": "canonical-gcc296",
@@ -161006,7 +161055,7 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-run_particle_field_variant0",
+      "id": "battle-effects-run-particle-field-variant0",
       "game": "gs1",
       "source": "games/gs1/src/battle/effects/run_particle_field_variant0.c",
       "compiler_route": "canonical-gcc296",
@@ -161052,7 +161101,7 @@
       "overlay": null
     },
     {
-      "id": "save-state-confirm_and_process_selected_slot",
+      "id": "save-state-confirm-and-process-selected-slot",
       "game": "gs1",
       "source": "games/gs1/src/save/state/confirm_and_process_selected_slot.c",
       "compiler_route": "canonical-gcc296",
@@ -161093,7 +161142,7 @@
       "overlay": null
     },
     {
-      "id": "event-get_special_value",
+      "id": "event-get-special-value",
       "game": "gs1",
       "source": "games/gs1/src/event/get_special_value.c",
       "compiler_route": "canonical-gcc296",
@@ -161225,7 +161274,7 @@
       "overlay": null
     },
     {
-      "id": "game_flags-test",
+      "id": "game-flags-test",
       "game": "gs1",
       "source": "games/gs1/src/game_flags/test.c",
       "compiler_route": "canonical-gcc296",

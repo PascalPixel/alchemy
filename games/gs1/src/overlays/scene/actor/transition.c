@@ -344,7 +344,7 @@ void ActorDraw_SetupActorNineForFlag314(void)
     Actor_unk62_2(0xF1);
     Actor_unk19_3(9, 0x80, 0);
     Actor_unk63_2(0x121);
-    Actor_unk64_2(0x314);
+    Actor_RunActor11Transition(0x314);
     Actor_unk65_2(2);
     Actor_unk25_4();
 }

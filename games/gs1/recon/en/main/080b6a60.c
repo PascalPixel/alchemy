@@ -8,6 +8,7 @@
 extern struct PartyState Data_02000240;
 
 s32 Func_08077148(void);
+struct BattleUnit *Runtime_GetObject(s32 unit_id);
 
 s32 BattleParty_PrepareActiveOwners(u16 *owners)
 {
@@ -32,7 +33,7 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners)
 
             if (owners != 0)
                 *owners++ = owner;
-            BattleUnit_Get(owner)->status_12a = 2;
+            Runtime_GetObject(owner)->status_12a = 2;
             left--;
         } while (left != 0);
     }

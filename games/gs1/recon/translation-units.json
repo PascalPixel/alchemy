@@ -128654,21 +128654,6 @@
           "address": "0x0808f0d8",
           "extent": 104,
           "state": "exact-c"
-        },
-        {
-          "address": "0x0808f140",
-          "extent": 128,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0808f1c0",
-          "extent": 204,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0808f28c",
-          "extent": 120,
-          "state": "exact-c"
         }
       ],
       "overlay": null

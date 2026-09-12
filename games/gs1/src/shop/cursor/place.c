@@ -371,7 +371,7 @@ s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
             return 0;
     }
 
-    Sys_Apply3(unit_id, 1);
+    UiText_DrawQuantity(unit_id, 1);
     Sys_Do((s32)&Value_00000ca2);
     if (Sys_Check(0) != 0)
         return 0;
@@ -383,8 +383,8 @@ s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
 
     if (info->flags & 1) {
         Shop_SelRepair(103);
-        Sys_unk2_4();
-        Sys_SetMode((s32)Value_00000ad0, 8, 4, 2);
+        UiWork_FinalizePending();
+        UiWork_Create((s32)Value_00000ad0, 8, 4, 2);
         while (Sys_unk2() == 0) {
             WaitFrames(1);
         }
@@ -896,7 +896,6 @@ done:
 
 /* field/event_table/get_row_limit.c */
 /* field/event_table/get_row_limit.c */
-/* types.h maps this semantic owner name back to Field_Run. */
 
 int EventTable_GetRowLimit(void)
 {

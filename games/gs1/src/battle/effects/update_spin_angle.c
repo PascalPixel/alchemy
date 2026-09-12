@@ -141,21 +141,21 @@ void BattleFx_RunEffect15(void)
     u32 index;
 
     Battle_Run();
-    Battle_SetMode(-1, -1, -1, 0);
+    Motion_CamBounds(-1, -1, -1, 0);
     BattleFx_InitializeSharedScene();
-    Battle_Do(10);
-    Battle_Place(*(s16 *)(scene + 24), 0x4000, 0);
-    Battle_Do(30);
+    WaitFrames(10);
+    Motion_ArmCb(*(s16 *)(scene + 24), 0x4000, 0);
+    WaitFrames(30);
     *(void (**)(void))(main_object + 108) = apply_random_child_values;
-    Battle_unk2_2(0x83);
-    Battle_Apply(main_object, 28);
-    Battle_Do(40);
-    Battle_unk2_2(0xdc);
+    Audio_PlayCue(0x83);
+    Object_SetMode(main_object, 28);
+    WaitFrames(40);
+    Audio_PlayCue(0xdc);
     Battle_Apply2(main_object, 0);
-    Battle_Apply(main_object, 3);
+    Object_SetMode(main_object, 3);
     *(void (**)(void))(main_object + 108) = BattleFx_UpdateSpinAngle;
     effect->timer = 0;
-    Battle_Do(70);
+    WaitFrames(70);
     Battle_Apply3(main_object, 0);
     *(u8 *)(main_object + 85) = 0;
     *(void (**)(void))(main_object + 108) = BattleFx_UpdateDescendingObject;
@@ -163,24 +163,24 @@ void BattleFx_RunEffect15(void)
     position.x = *(s32 *)(main_object + 8);
     position.y = *(s32 *)(main_object + 12);
     position.z = *(s32 *)(main_object + 16);
-    Battle_unk3_2(&position);
+    NormalizeVector(&position);
     index = 0;
     particle = scene;
     particle += 88;
     do {
         s32 speed;
         Battle_SetMode2(particle, 0x11c, position.x, position.z);
-        Battle_Apply4(particle, BattleFx_UpdateRadialLaunch);
-        Battle_Apply5(particle, 7);
+        EffectSlot_SetCallback(particle, BattleFx_UpdateRadialLaunch);
+        EffectSlot_SetObjectMode(particle, 7);
         Battle_Apply6(*(void **)particle, (random_16() * 7) >> 16);
         speed = (random_16() >> 1) + 0x13333;
         *(s32 *)(particle + 44) = speed;
         *(s32 *)(particle + 40) = speed;
         index++;
-        Battle_Do(1);
+        WaitFrames(1);
         particle += 72;
     } while (index <= 23);
-    Battle_Do(70);
+    WaitFrames(70);
     index = 0;
     entry = scene;
     stopped = 2;
@@ -192,9 +192,9 @@ void BattleFx_RunEffect15(void)
         index++;
         entry += 72;
     } while (index <= 23);
-    Battle_Do(40);
+    WaitFrames(40);
     BattleFx_PrepareBufferInterpolation();
-    Battle_Do(10);
+    WaitFrames(10);
 }
 
 /* battle/effects/particles/update_descending_positive_arc.c */

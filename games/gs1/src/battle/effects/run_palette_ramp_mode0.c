@@ -125,7 +125,7 @@ void BattleFx_RunPuffArc(Efx *efx)
     Battle_Do(0);
     *(s16 *)0x04000050 = 0x3F46;
     *(s16 *)0x04000052 = 0x100E;
-    Battle_SetMode((s32)&Value_000000b4, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_000000b4, work, 1, 1);
     Battle_SetRange(46, 7, 7, 3, 3);
     draw = (DrawRectangle)cache[46 - 39];
     if (WORK_EFX->actors[0] > 127) {
@@ -154,8 +154,8 @@ void BattleFx_RunPuffArc(Efx *efx)
     } else {
         *(s32 *)(work + 0x7784) = 50;
     }
-    Battle_Apply(0x080CD261, 0x480);
-    Battle_unk2_2(0x88);
+    ScheduleCallbackAfterFrames(0x080CD261, 0x480);
+    Audio_PlayCue(0x88);
     frame = 0;
     do {
         if (frame == 24) {
@@ -201,7 +201,7 @@ void BattleFx_RunPuffArc(Efx *efx)
         }
         Battle_Run();
         *(s32 *)(work + 0x7824) = 1;
-        Battle_unk4_2(1);
+        WaitFrames(1);
         frame += 1;
     } while (frame != 80);
     Runtime_ReleaseHeapBlock(46);

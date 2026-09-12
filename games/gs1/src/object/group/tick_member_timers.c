@@ -122,10 +122,10 @@ void BattleFx_RunMemberOrbit(void *object)
     rect2 = heap_cache[8];
     rectangle_slot = rectangle;
     rectangle_slot[1] = rect2;
-    Battle_Apply2((void *)0x080DBB9D, 0x480);
+    ScheduleCallbackAfterFrames((void *)0x080DBB9D, 0x480);
     FIELD_AT_OFFSET(work, s32 *, 0x7780) = 2;
     FIELD_AT_OFFSET(work, s32 *, 0x7784) = 50;
-    Battle_Apply2((void *)0x080CD261, 0x480);
+    ScheduleCallbackAfterFrames((void *)0x080CD261, 0x480);
     if (FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828), s32 *, 4) == 1) {
         FIELD_AT_OFFSET((void *)0x04000028, s32 *, 0) = -0x6800;
         y_offset = -112;
@@ -185,7 +185,7 @@ void BattleFx_RunMemberOrbit(void *object)
                     record_slot[0] = FIELD_AT_OFFSET(member_object, s32 *, 8);
                     record_slot[1] = 0x280000;
                     record_slot[2] = FIELD_AT_OFFSET(member_object, s32 *, 16);
-                    Battle_Apply4(record_slot, screen);
+                    EffectPosition_ApplyBaseAndYOffset(record_slot, screen);
                     for (i = 0; i != 4; i++) {
                         s32 x;
                         s32 y;
@@ -207,7 +207,7 @@ void BattleFx_RunMemberOrbit(void *object)
             }
         }
         FIELD_AT_OFFSET(work, s32 *, 0x7824) = 1;
-        Battle_unk2_2(1);
+        WaitFrames(1);
     }
     Scheduler_RemoveCallback((void *)0x080CD261);
     Scheduler_RemoveCallback((void *)0x080DBB9D);
@@ -422,10 +422,10 @@ void BattleFx_RunCounterReveal(void *object)
     status = Battle_SetRange(47, 7, 7, 7, 1);
     second_rectangle = heap_cache[8];
     rectangle[1] = second_rectangle;
-    Battle_Apply2(0x080DBB9D, 0x480);
+    ScheduleCallbackAfterFrames(0x080DBB9D, 0x480);
     (*(s32 *)((u8 *)(work) + (0x7780))) = 1;
     (*(s32 *)((u8 *)(work) + (0x7784))) = zero_val;
-    Battle_Apply2(0x080CD261, 0x480);
+    ScheduleCallbackAfterFrames(0x080CD261, 0x480);
     draw_enabled = 1;
     if ((*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4))) == 1) {
         curve[0] = -0x500000;
@@ -571,7 +571,7 @@ void BattleFx_RunCounterReveal(void *object)
             (*(s32 *)((u8 *)(member_object) + (0x48))) = 0;
             (*(s8 *)((u8 *)(member_object) + (0x5A))) = 0;
             (*(s8 *)((u8 *)(member_object) + (0x58))) = 0;
-            Battle_SetMode(member_object,
+            Object_SetPosition(member_object,
                 (*(s32 *)((u8 *)(member_object) + (8))) << 1, 0,
                 (*(s32 *)((u8 *)(member_object) + (16))));
             update_members(
@@ -582,7 +582,7 @@ void BattleFx_RunCounterReveal(void *object)
             (*(s32 *)((u8 *)(*Battle_unk4_4((*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))))) + (0x48))) = 0xAB85;
         }
         (*(s32 *)((u8 *)(work) + (0x7824))) = 1;
-        Battle_unk2_2(1);
+        WaitFrames(1);
     }
     Scheduler_RemoveCallback((void *)0x080CD261);
     Scheduler_RemoveCallback((void *)0x080DBB9D);

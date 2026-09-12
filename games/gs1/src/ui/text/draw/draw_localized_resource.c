@@ -528,7 +528,7 @@ s32 Menu_RunConfirmSelectionAt(s32 arg0, s32 arg1, s32 arg2)
     Menu_Run();
     Menu_AppendResourceEntry(5);
     Menu_AppendResourceEntry(6);
-    Menu_SetMode(arg0, arg1, 3, p);
+    Menu_LayoutResourceEntries(arg0, arg1, 3, p);
     ret = Menu_Check(ret);
     Menu_EndResourceSelection();
     if (ret == -1) {

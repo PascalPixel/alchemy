@@ -34,7 +34,7 @@ extern struct SideObjectRegistry *gIw;
 extern s32 GameFlag_IsSet(s32);
 extern s32 Localization_LookupEntryId(s32);
 
-extern struct SideObject *Obj_Run(
+extern struct SideObject *RenderOutput_Create(
     s32, s32, s32, s32, s32);
 
 struct SideObject *CreateSideObject(
@@ -69,7 +69,7 @@ struct SideObject *CreateSideObject(
 
     slot = 14 + side;
     Obj_SetRect(id, position, &first, &second, slot, 0);
-    object = Obj_Run(first, 0x80000000, arg3, arg4, arg5);
+    object = RenderOutput_Create(first, 0x80000000, arg3, arg4, arg5);
     if (object != 0) {
         s32 slotBits = slot << 4;
 

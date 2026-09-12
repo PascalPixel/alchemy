@@ -91,7 +91,7 @@ typedef struct {
 
 Object *Actor_Run(s32, s32, s32);
 
-Unit *Actor_unk2_4(s32);
+Unit *Runtime_GetObject(s32);
 
 extern const u8 gRom[];
 
@@ -112,7 +112,7 @@ void BattlePresentation_SpawnActorObject(Actor *actor, s32 unit, s32 x, s32 y)
     fixed_x = x << 16;
     fixed_y = y << 16;
     object = Actor_Run(0xf000, fixed_x, 0);
-    unit_record = Actor_unk2_4(unit);
+    unit_record = Runtime_GetObject(unit);
     actor_flag = 0;
     existing_sprite = Actor_Check(unit);
 
@@ -224,7 +224,7 @@ void BattlePresentation_SpawnActorObject(Actor *actor, s32 unit, s32 x, s32 y)
         object->field_18 = 0x10000;
         object->field_1c = 0x10000;
     }
-    Actor_Apply3(object, gRom);
+    ObjectDispatch_InitializeFar(object, gRom);
 }
 
 /* battle/placement/get_step_pair.c */
@@ -251,7 +251,7 @@ struct BattleActorDefinition {
     u8 class_id;
 };
 
-struct BattleActorDefinition *Battle_Run(s32 actor_id);
+struct BattleActorDefinition *Runtime_GetObject(s32 actor_id);
 
 void Summon_LayoutPositions(u16 *actor_ids, s32 count, s32 *x_positions, s32 *z_positions)
 {
@@ -268,7 +268,7 @@ void Summon_LayoutPositions(u16 *actor_ids, s32 count, s32 *x_positions, s32 *z_
 
             spacing = 25;
             if ((u16)(actor_ids[index] - 254) > 1) {
-                actor = Battle_Run(actor_ids[index]);
+                actor = Runtime_GetObject(actor_ids[index]);
                 spacing = Battle_Check(actor->class_id) ? 27 : 38;
                 if (actor->class_id == 148 || actor->class_id == 121) {
                     x_positions[index] = -50;
@@ -279,7 +279,7 @@ void Summon_LayoutPositions(u16 *actor_ids, s32 count, s32 *x_positions, s32 *z_
         z_positions[index] = z;
         spacing = 25;
         if ((u16)(actor_ids[index] - 254) > 1) {
-            struct BattleActorDefinition *actor = Battle_Run(actor_ids[index]);
+            struct BattleActorDefinition *actor = Runtime_GetObject(actor_ids[index]);
 
             spacing = Battle_Check(actor->class_id) ? 27 : 38;
         }

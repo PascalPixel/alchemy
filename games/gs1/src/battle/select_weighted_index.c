@@ -73,7 +73,7 @@ s32 BattleEventRuntime_SchedulePhase(s32 parameter)
 }
 
 /* battle/event_runtime/reset.c */
-void BattleEventRuntime_Reset(void)
+s32 BattleEventRuntime_Reset(void)
 {
     struct Runtime1e74 *runtime;
 

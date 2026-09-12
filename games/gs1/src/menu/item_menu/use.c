@@ -21,7 +21,7 @@
 extern char Value_00000bef;
 extern s32 Audio_PlayCue(s32);
 
-extern s32 UiWindow_Commit(s32);
+extern void UiWindow_Commit(s32);
 
 s32 ItemMenu_Use(void)
 {
@@ -313,7 +313,7 @@ L0:
 }
 
 /* item_menu/draw/msg.c */
-s32 UiText_DrawAt(s32, s32, s32, s32);
+void UiText_DrawAt(s32, s32, s32, s32);
 
 void ItemMenu_DrawMsg(s32 unused, s32 message)
 {

@@ -100,7 +100,7 @@ extern u8 Value_00000016;
 extern u8 Value_00000018;
 
 s32 UiWork_IsComplete(void);
-s32 WaitFrames(s32);
+void WaitFrames(s32);
 
 void UiWork_FinalizePendingCore(void);
 

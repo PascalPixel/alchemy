@@ -123,69 +123,7 @@ pub fn production_bindings(
             }
         }
     }
-    let header = define_only_bindings(&text);
-    let declared = source
-        .and_then(|path| std::fs::read_to_string(path).ok())
-        .map(|src| declared_function_names(&src))
-        .unwrap_or_default();
-    Ok(with_missing_forwards(&header, &declared))
-}
-
-/// Function-pointer casts of recovered aliases need a declaration. Skip
-/// names the translation unit already prototypes so `void Name();` cannot
-/// fight `s32 Name(...)`.
-fn with_missing_forwards(header: &str, declared: &HashSet<String>) -> String {
-    let mut forwards = String::new();
-    let mut seen = HashSet::new();
-    for line in header.lines() {
-        let trimmed = line.trim_start();
-        let Some(rest) = trimmed.strip_prefix("#define ") else {
-            continue;
-        };
-        let Some(name) = rest.split_whitespace().next() else {
-            continue;
-        };
-        let name = name.split('(').next().unwrap_or(name);
-        if declared.contains(name) || !seen.insert(name.to_string()) {
-            continue;
-        }
-        if rest.contains("Func_") || rest.contains("Call") || rest.contains("Value") {
-            forwards.push_str("void ");
-            forwards.push_str(name);
-            forwards.push_str("();\n");
-        }
-    }
-    if forwards.is_empty() {
-        return header.to_string();
-    }
-    let mut out = String::with_capacity(header.len() + forwards.len() + 1);
-    out.push_str(header);
-    if !header.ends_with('\n') {
-        out.push('\n');
-    }
-    out.push_str(&forwards);
-    out
-}
-
-fn declared_function_names(src: &str) -> HashSet<String> {
-    let mut names = HashSet::new();
-    for line in src.lines() {
-        let trimmed = line.trim_start();
-        if trimmed.starts_with("#") || trimmed.starts_with("/*") || trimmed.starts_with("//") {
-            continue;
-        }
-        if let Some(paren) = trimmed.find('(') {
-            let prefix = &trimmed[..paren];
-            if let Some(name) = prefix.split_whitespace().last() {
-                if name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_')
-                    && name.starts_with(|c: char| c.is_ascii_alphabetic() || c == '_')
-                {
-                    names.insert(name.to_string());
-                }
-            }
-        }
-    }
-    names
+    Ok(define_only_bindings(&text))
 }
 
 /// Overlay compile has one `-include` header: register names first, then

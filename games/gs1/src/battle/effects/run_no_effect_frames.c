@@ -51,7 +51,7 @@ void BattleFx_InitializeMode(s32 *arg0)
             BattleFx_RunDitherScene(arg0);
             break;
         case 6:
-            FunctionHead(arg0);
+            FunctionHead_080ec100(arg0);
             break;
         case 7:
             BattleFx_RenderAnimationMode0(arg0);
@@ -63,13 +63,13 @@ void BattleFx_InitializeMode(s32 *arg0)
             BattleFx_RunConcentricRings(arg0);
             break;
         case 10:
-            FunctionHead(arg0);
+            FunctionHead_080d765c(arg0);
             break;
         case 11:
             Battle_Do(arg0);
             break;
         case 12:
-            FunctionHead(arg0);
+            FunctionHead_080e15e8(arg0);
             break;
         }
     }

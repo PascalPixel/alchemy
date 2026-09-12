@@ -9,6 +9,7 @@ struct GridTileCell_08093fa0 {
 
 extern struct GridTileCell_08093fa0 Data_0200fe00[];
 extern struct GridTileCell_08093fa0 Data_02010000[];
+extern struct BattleWork Data_02000240;
 extern u8 Value_00000001;
 
 struct ObjectRuntime *Object_GetById(u32 object_id);

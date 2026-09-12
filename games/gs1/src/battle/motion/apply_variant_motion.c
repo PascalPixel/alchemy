@@ -4,7 +4,7 @@
 #include "battle_motion.h"
 
 /* battle/motion/apply_variant_motion.c */
-void **GetBattleObjectSlot();
+struct BattleObjectSlot *GetBattleObjectSlot();
 u8 *Runtime_GetObject(s32);
 void Object_ResetMotion(struct MotionObject *);
 void Object_SetPosition(struct MotionObject *, s32, s32, s32);
@@ -97,18 +97,17 @@ void BattleMotion_ResetSlotObjectMode2(void)
 {
     s32 object;
 
-    object = *GetBattleObjectSlot();
+    object = (s32)GetBattleObjectSlot()->object;
     Object_ResetMotion(object);
     Object_SetMode(object, 2);
 }
 
 /* battle/motion/reserved_no_op.c */
-void BattleMotion_ReservedNoOp83B0(void)
+void BattleMotion_ReservedNoOp83B0()
 {
 }
 
 /* battle/motion/apply_pair_midpoint.c */
-void BattleMotion_ReservedNoOp83B0(void *, s32);
 
 void BattleMotion_ApplyPairMidpoint(s32 arg0, s32 arg1)
 {
@@ -163,7 +162,7 @@ void BattleMotion_SpawnSlotEffectAndWait(void)
     void *object;
     void *effect;
 
-    object = *GetBattleObjectSlot();
+    object = GetBattleObjectSlot()->object;
     if ((object != NULL) && ((0xF & FIELD_AT_OFFSET(object, u8 *, 0x54)) == 1)) {
         effect = Battle_Run(FIELD_AT_OFFSET(object, s32 *, 0x50), 0x11B);
         if (effect != NULL) {

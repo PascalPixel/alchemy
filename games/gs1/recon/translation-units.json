@@ -175928,6 +175928,136 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "menu-object-row",
+      "game": "gs1",
+      "source": "games/gs1/src/menu/object_row.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0801ffd8",
+          "extent": 176,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08020088",
+          "extent": 68,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080200cc",
+          "extent": 132,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "battle-member-burst-entries",
+      "game": "gs1",
+      "source": "games/gs1/src/battle/effects/member_burst/entry.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080ceb30",
+          "extent": 12,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080ceb3c",
+          "extent": 12,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080ceb48",
+          "extent": 12,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "battle-forty-eight-frame-entries",
+      "game": "gs1",
+      "source": "games/gs1/src/battle/effects/forty_eight_frame/entry.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080cefd4",
+          "extent": 12,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080cefe0",
+          "extent": 12,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080cefec",
+          "extent": 12,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "battle-palette-ramp-entries",
+      "game": "gs1",
+      "source": "games/gs1/src/battle/effects/palette_ramp/entry.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080d9ac4",
+          "extent": 12,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080d9ad0",
+          "extent": 12,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080d9adc",
+          "extent": 12,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "battle-particle-field-entries",
+      "game": "gs1",
+      "source": "games/gs1/src/battle/effects/particle_field/entry.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080dfa24",
+          "extent": 12,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080dfa30",
+          "extent": 12,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080dfa3c",
+          "extent": 12,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

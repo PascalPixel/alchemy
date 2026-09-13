@@ -2337,15 +2337,13 @@
     },
     "main:080dfa24": {
       "name": "BattleFx_RunParticleFieldVariant1",
-      "source": "battle/effects/particle_field/variant_1.c"
+      "source": "battle/effects/particle_field/entry.c"
     },
     "main:080dfa30": {
-      "name": "BattleFx_RunParticleFieldVariant2",
-      "source": "battle/effects/particle_field/variant_2.c"
+      "name": "BattleFx_RunParticleFieldVariant2"
     },
     "main:080dfa3c": {
-      "name": "BattleFx_RunParticleFieldVariant3",
-      "source": "battle/effects/particle_field/variant_3.c"
+      "name": "BattleFx_RunParticleFieldVariant3"
     },
     "main:0808ec14": {
       "name": "EffectRuntime_FindSlotByObject",
@@ -2587,15 +2585,13 @@
     },
     "main:080d9ac4": {
       "name": "BattleFx_RunPaletteRampMode1",
-      "source": "battle/effects/palette_ramp/mode_1.c"
+      "source": "battle/effects/palette_ramp/entry.c"
     },
     "main:080d9ad0": {
-      "name": "BattleFx_RunPaletteRampMode2",
-      "source": "battle/effects/palette_ramp/mode_2.c"
+      "name": "BattleFx_RunPaletteRampMode2"
     },
     "main:080d9adc": {
-      "name": "BattleFx_RunPaletteRampMode3",
-      "source": "battle/effects/palette_ramp/mode_3.c"
+      "name": "BattleFx_RunPaletteRampMode3"
     },
     "main:080da24c": {
       "name": "BattleFx_BuildCenteredIndexList",
@@ -4324,15 +4320,13 @@
     },
     "main:0801ffd8": {
       "name": "Menu_SpawnFourObjectsAtOrigin",
-      "source": "menu/spawn_four_objects_at_origin.c"
+      "source": "menu/object_row.c"
     },
     "main:08020088": {
-      "name": "Menu_ClearSecondObjectRowAndScheduleUpdate",
-      "source": "menu/clear_second_object_row_and_schedule_update.c"
+      "name": "Menu_ClearSecondObjectRowAndScheduleUpdate"
     },
     "main:080200cc": {
-      "name": "Menu_UpdateSecondObjectRowPositions",
-      "source": "menu/update_second_object_row_positions.c"
+      "name": "Menu_UpdateSecondObjectRowPositions"
     },
     "main:08020150": {
       "name": "UiText_DrawFourNumbersInRow",
@@ -5526,15 +5520,13 @@
     },
     "main:080ceb30": {
       "name": "BattleFx_RunMemberBurstMode0",
-      "source": "battle/effects/member_burst/run_mode0.c"
+      "source": "battle/effects/member_burst/entry.c"
     },
     "main:080ceb3c": {
-      "name": "BattleFx_RunMemberBurstMode1",
-      "source": "battle/effects/member_burst/run_mode1.c"
+      "name": "BattleFx_RunMemberBurstMode1"
     },
     "main:080ceb48": {
-      "name": "BattleFx_RunMemberBurstMode2",
-      "source": "battle/effects/member_burst/run_mode2.c"
+      "name": "BattleFx_RunMemberBurstMode2"
     },
     "main:080cef64": {
       "name": "BattleFx_FetchRectangleBlitters",
@@ -5542,15 +5534,13 @@
     },
     "main:080cefd4": {
       "name": "BattleFx_RunFortyEightFrameMode1",
-      "source": "battle/effects/forty_eight_frame/run_mode1.c"
+      "source": "battle/effects/forty_eight_frame/entry.c"
     },
     "main:080cefe0": {
-      "name": "BattleFx_RunFortyEightFrameMode0",
-      "source": "battle/effects/forty_eight_frame/run_mode0.c"
+      "name": "BattleFx_RunFortyEightFrameMode0"
     },
     "main:080cefec": {
-      "name": "BattleFx_RunFortyEightFrameMode2",
-      "source": "battle/effects/forty_eight_frame/run_mode2.c"
+      "name": "BattleFx_RunFortyEightFrameMode2"
     },
     "main:080cf2a0": {
       "name": "BattleFx_RunTwoModeAMode0",

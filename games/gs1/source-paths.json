@@ -2073,11 +2073,10 @@
     },
     "main:08016670": {
       "name": "UiWork_ActivateChannel",
-      "source": "ui/render/activate_channel.c"
+      "source": "ui/render/channel.c"
     },
     "main:080167d8": {
-      "name": "UiWork_ResetChannelTransition",
-      "source": "ui/render/reset_channel_transition.c"
+      "name": "UiWork_ResetChannelTransition"
     },
     "main:08017394": {
       "name": "UiWork_IsIdle",
@@ -4031,20 +4030,16 @@
       "source": "ui/runtime/update_list_tail.c"
     },
     "main:0801671c": {
-      "name": "Ui_ClearVramBlock",
-      "source": "ui/render/clear_vram_block.c"
+      "name": "Ui_ClearVramBlock"
     },
     "main:08016738": {
-      "name": "Ui_FillVramBlockPattern",
-      "source": "ui/render/fill_vram_block_pattern.c"
+      "name": "Ui_FillVramBlockPattern"
     },
     "main:08016758": {
-      "name": "UiWork_ResetFreeChannel",
-      "source": "ui/runtime/reset_free_channel.c"
+      "name": "UiWork_ResetFreeChannel"
     },
     "main:080167ac": {
-      "name": "UiWork_CopyParamsToRenderWork",
-      "source": "ui/runtime/copy_params_to_render_work.c"
+      "name": "UiWork_CopyParamsToRenderWork"
     },
     "main:080173ac": {
       "name": "UiWork_ResetCounters"

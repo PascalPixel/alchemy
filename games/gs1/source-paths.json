@@ -4852,14 +4852,13 @@
     },
     "main:08095214": {
       "name": "BattleFx_SetBlock30ValuesMaxZero",
-      "source": "battle/effects/set_block30_values_max_zero.c"
+      "source": "battle/effects/block_state.c"
     },
     "main:08095240": {
       "name": "BattleFx_SetBlock30Values12Zero"
     },
     "main:08095268": {
-      "name": "BattleFx_SetBlock30Values128One",
-      "source": "battle/effects/set_block30_values_128_one.c"
+      "name": "BattleFx_SetBlock30Values128One"
     },
     "main:080955b0": {
       "name": "BattleFx_RunPageEffectForSlot",

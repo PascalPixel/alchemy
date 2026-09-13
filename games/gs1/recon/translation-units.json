@@ -76463,9 +76463,9 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-set-block30-values-max-zero",
+      "id": "battle-effect-block-state",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/set_block30_values_max_zero.c",
+      "source": "games/gs1/src/battle/effects/block_state.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76477,6 +76477,11 @@
         },
         {
           "address": "0x08095240",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08095268",
           "extent": 40,
           "state": "exact-c"
         }

@@ -1,10 +1,7 @@
 /*
  * Runtime call bindings measured on 2026-09-10 (alchemy inspect, site order),
- * for a translation unit that cannot yet be declared: the reviewed complete
- * extent in semantic/regions.json (596) and the evidence row in
- * semantic/overlay-assembly.json (544) disagree, and the unit
- * register must satisfy both. Declare these as absolute_symbols once the
- * two registers agree on this owner.
+ * registered in the scene-progress-actor-setup-375 translation unit.
+ * The complete 596-byte owner includes its trailing literal pool.
  *   Func_02003058_a      0x02009ae4
  *   Func_02003058_b      0x02009a9c
  *   Func_02003062_a      0x02009ae4
@@ -16,7 +13,7 @@
  */
 #include "types.h"
 
-/* AUDITED GENERATED CALL SCRIPT for Scene_ConfigureProgressDependentActors:
+/* Draft scene setup for Scene_ConfigureProgressDependentActors:
  * 46 calls, progress-gated actor setup, and three actor-state writes across
  * the complete callable owner. */
 
@@ -63,7 +60,7 @@ void Func_02003224();
 
 extern s16 Data_02000240[];
 
-void Func_0200150c(void)
+s32 Func_0200150c(void)
 {
     void *p13;
     void *p17;
@@ -73,7 +70,7 @@ void Func_0200150c(void)
         Func_02002fa2(0x12f);
     }
     if (Func_02002f98(0x109) != 0) {
-        Func_02002fa8(0x242);
+        Func_02002fb2(0x242);
     }
     if (Func_02002fa8(0x834) == 0) {
     } else {
@@ -103,6 +100,7 @@ void Func_0200150c(void)
         Func_0200308a(9, 24, 1, 1, 24, 19);
         Func_0200309e(9, 24, 1, 1, 23, 20);
         Func_020030ae(9, 24, 1, 1, 24, 20);
+        return 0;
     }
     Func_02003142(9, 0, 0);
     Func_0200314c(10, 0, 0);
@@ -120,12 +118,13 @@ void Func_0200150c(void)
         if (Func_0200312a(0x808) != 0) {
             Func_020031bc(14, 25690112, 24641536);
             Func_020031ca(15, 24641536, 24641536);
-            Func_02003218(14, 65536);
-            Func_02003224(15, 65536);
+            Func_02003218(14, 65536, 0x02009ce0);
+            Func_02003224(15, 65536, 0x02009ce0);
         }
     }
     if (Func_0200316a(0x87a) != 0) {
         Func_020031fc(16, 8650752, 17301504);
     }
     Func_020031a8();
+    return 0;
 }

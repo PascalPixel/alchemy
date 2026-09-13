@@ -1,6 +1,8 @@
 #include "far_runtime.h"
 #include "types.h"
 
+s32 UiWindow_Close(void *handle);
+
 s32 UiWindow_CreateFar(s32 first, s32 second, s32 third, s32 fourth, s32 flags);
 
 s32 UiWindow_UpdateOrCreate(s32 *handle, s32 first, s32 second, s32 third, s32 fourth, s32 flags)
@@ -19,4 +21,12 @@ s32 UiWindow_UpdateOrCreate(s32 *handle, s32 first, s32 second, s32 third, s32 f
     masked = flags & 0xff;
     *handle = UiWindow_CreateFar(first, second, third, fourth, masked);
     return 1;
+}
+
+void UiWindow_CloseIfOpen(void **handle)
+{
+    if (*handle != NULL) {
+        UiWindow_Close(*handle);
+        *handle = NULL;
+    }
 }

@@ -175503,6 +175503,37 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "battle-effect-object-control",
+      "game": "gs1",
+      "source": "games/gs1/src/battle/effects/runtime/control.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0809ba34",
+          "extent": 38,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0809ba5c",
+          "extent": 18,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0809ba70",
+          "extent": 12,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0809ba7c",
+          "extent": 20,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

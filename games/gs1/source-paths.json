@@ -1057,19 +1057,16 @@
     },
     "main:0809ba34": {
       "name": "BattleFx_HasReachedTarget",
-      "source": "battle/effects/runtime/has_reached_target.c"
+      "source": "battle/effects/runtime/control.c"
     },
     "main:0809ba5c": {
-      "name": "EffectSlot_SetPosition",
-      "source": "battle/effects/runtime/set_position.c"
+      "name": "EffectSlot_SetPosition"
     },
     "main:0809ba70": {
-      "name": "EffectSlot_SetObjectMode",
-      "source": "battle/effects/runtime/set_object_mode.c"
+      "name": "EffectSlot_SetObjectMode"
     },
     "main:0809ba7c": {
-      "name": "EffectSlot_SetCallback",
-      "source": "battle/effects/runtime/set_callback.c"
+      "name": "EffectSlot_SetCallback"
     },
     "main:0809b804": {
       "name": "EffectSlot_Update",

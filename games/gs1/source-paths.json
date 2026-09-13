@@ -1823,8 +1823,7 @@
       "name": "EffectPosition_ApplyAlternateStepAndYOffset"
     },
     "main:080f954c": {
-      "name": "AudioCommand_GetStateByte",
-      "source": "audio/command/control.c"
+      "name": "AudioCommand_GetStateByte"
     },
     "main:080f9594": {
       "name": "AudioCommand_GetSecondaryStateByte"
@@ -1950,19 +1949,16 @@
     },
     "main:080f9438": {
       "name": "Audio_InitializeRuntimeDefaults",
-      "source": "audio/initialize_runtime_defaults.c"
+      "source": "audio/command.c"
     },
     "main:080f94e0": {
-      "name": "MusicCommand_SetPitch",
-      "source": "audio/command/set_pitch.c"
+      "name": "MusicCommand_SetPitch"
     },
     "main:080f94c8": {
-      "name": "MusicCommand_SetPitchAndUpdateFrequency",
-      "source": "audio/command/set_pitch_and_update_frequency.c"
+      "name": "MusicCommand_SetPitchAndUpdateFrequency"
     },
     "main:080f950c": {
-      "name": "MusicCommand_SetVolume",
-      "source": "audio/command/set_volume.c"
+      "name": "MusicCommand_SetVolume"
     },
     "main:080f9570": {
       "name": "AudioCommand_UpdateToggleMask"
@@ -5736,12 +5732,10 @@
       "source": "runtime/blank_display_load_value_and_run.c"
     },
     "main:080f94f8": {
-      "name": "Audio_SetWorkPairB",
-      "source": "audio/set_work_pair_b.c"
+      "name": "Audio_SetWorkPairB"
     },
     "main:080f9538": {
-      "name": "Audio_SetWorkPairA",
-      "source": "audio/set_work_pair_a.c"
+      "name": "Audio_SetWorkPairA"
     },
     "main:080fb690": {
       "name": "Runtime_CallWorkEntryWithArgs",

@@ -174077,6 +174077,53 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "ui-named-values",
+      "game": "gs1",
+      "source": "games/gs1/src/ui/runtime/named_value.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080198dc",
+          "extent": 44,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08019908",
+          "extent": 60,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08019944",
+          "extent": 88,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "ui-cancel-input",
+      "game": "gs1",
+      "source": "games/gs1/src/ui/runtime/cancel_input.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0801999c",
+          "extent": 80,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080199ec",
+          "extent": 104,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

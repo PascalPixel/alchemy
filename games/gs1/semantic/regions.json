@@ -1966,8 +1966,8 @@
     {
       "overlay": "resource_37f",
       "entry": "0x02000a24",
-      "span_bytes": 720,
-      "evidence": "complete strict-inventory owner; audited inside the assembled overlay image with a positive span and no overlap"
+      "span_bytes": 760,
+      "evidence": "Complete scene dispatcher through return at 0x02000ce0, alignment and trailing literal pool ending at 0x02000d1c. Loads at 0x02000ab8, 0x02000b20, 0x02000b28, 0x02000b30, 0x02000bc6, 0x02000bd4, 0x02000bee, 0x02000c06, 0x02000c78 and 0x02000c94 reference the final 40 bytes omitted by the historical 720-byte span. The next independent owner starts at 0x02000d1c; its existing audit independently assigns these 40 bytes to this pool."
     },
     {
       "overlay": "resource_37f",

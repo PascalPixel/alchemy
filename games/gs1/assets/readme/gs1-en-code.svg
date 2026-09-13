@@ -15655,50 +15655,38 @@
 <title>0x08026e80–0x08026fa8: 296 bytes</title>
 <rect x="347.43263366470165" y="169.20014653403945" width="1.7502298941304968" height="2.0608564559215083" style="fill:#326b7d"/>
 </g>
-<g aria-label="serial: 688 bytes · 10 items" data-node="container" data-kind="folder" data-bytes="688" data-source="games/gs1/src/link/serial/">
-<title>serial: 688 bytes · 10 items</title>
+<g aria-label="serial: 688 bytes · 7 items" data-node="container" data-kind="folder" data-bytes="688" data-source="games/gs1/src/link/serial/">
+<title>serial: 688 bytes · 7 items</title>
 <rect class="container-frame" x="346.93263366470165" y="171.76100298996096" width="2.750229894130497" height="7.114423113763507" fill="#1f7f93"/>
 <path class="bevel-light" d="M346.93263366470165 178.87542610372446 V171.76100298996096 H349.68286355883214" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <path class="bevel-dark" d="M346.93263366470165 178.87542610372446 H349.68286355883214 V171.76100298996096" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="0x08005e88–0x08005ede: 86 bytes" data-node="leaf" data-kind="file" data-bytes="86" data-address="0x08005e88" data-source="games/gs1/src/link/serial/disable_serial_transfer.c">
 <title>0x08005e88–0x08005ede: 86 bytes</title>
-<rect x="347.81729094731367" y="172.64566027257294" width="0.3941996181587046" height="0.8571030344644621" style="fill:#326b7d"/>
+<rect x="347.84959662454855" y="172.67796594980783" width="0.6162788950770632" height="0.4588109726284946" style="fill:#326b7d"/>
 </g>
 <g aria-label="0x08005e70–0x08005e88: 24 bytes" data-node="leaf" data-kind="file" data-bytes="24" data-address="0x08005e70" data-source="games/gs1/src/link/serial/enable_transfer_timer.c">
 <title>0x08005e70–0x08005e88: 24 bytes</title>
-<rect x="348.5258999982351" y="172.565870087177" width="0.3520964633809955" height="0.23461924736684373" style="fill:#326b7d"/>
-</g>
-<g aria-label="0x080064f4–0x0800651c: 40 bytes" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x080064f4" data-source="games/gs1/src/link/serial/get_active_transfers.c">
-<title>0x080064f4–0x0800651c: 40 bytes</title>
-<rect x="348.5552693022386" y="173.06447788591421" width="0.2933578553739196" height="0.48870630251555963" style="fill:#326b7d"/>
+<rect x="348.7702872757798" y="172.5235667333335" width="0.1500125396798453" height="0.7676094055771437" style="fill:#326b7d"/>
 </g>
 <g aria-label="0x08006240–0x08006358: 280 bytes" data-node="leaf" data-kind="file" data-bytes="280" data-address="0x08006240" data-source="games/gs1/src/link/serial/handle_transfer_interrupt.c">
 <title>0x08006240–0x08006358: 280 bytes</title>
-<rect x="347.9639698750006" y="174.04364185288307" width="0.6875574735326242" height="1.6482074780306202" style="fill:#326b7d"/>
+<rect x="347.9639698750006" y="173.7099611455169" width="0.6875574735326242" height="1.6482074780306206" style="fill:#326b7d"/>
 </g>
 <g aria-label="0x08006358–0x08006384: 44 bytes" data-node="leaf" data-kind="file" data-bytes="44" data-address="0x08006358" data-source="games/gs1/src/link/serial/remove_serial_irq_handlers.c">
 <title>0x08006358–0x08006384: 44 bytes</title>
-<rect x="347.7752286077564" y="176.19066553720205" width="0.31007493904412464" height="0.503815829792509" style="fill:#326b7d"/>
+<rect x="347.7161243416021" y="175.7978805636816" width="1.123460933935555" height="0.19186640673555225" style="fill:#326b7d"/>
 </g>
 <g aria-label="0x08006798–0x0800679a: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08006798" data-source="games/gs1/src/link/serial/test.c">
 <title>0x08006798–0x0800679a: 2 bytes</title>
-<rect x="347.62943989697106" y="176.85876759525343" width="0.6016523606146895" height="0.01849751747355982" style="fill:#326b7d"/>
+<rect x="348.95046538050394" y="175.71689426191236" width="0.02989380319707058" height="0.3538390102740339" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08006458–0x0800651c: 196 bytes" data-node="leaf" data-kind="file" data-bytes="196" data-address="0x08006458" data-source="games/gs1/src/link/serial/transfer_wait.c">
+<title>0x08006458–0x0800651c: 196 bytes</title>
+<rect x="347.9639698750006" y="176.42945891055126" width="0.6875574735326242" height="0.947477992561647" style="fill:#326b7d"/>
 </g>
 <g aria-label="0x08006384–0x080063bc: 56 bytes" data-node="leaf" data-kind="file" data-bytes="56" data-address="0x08006384" data-source="games/gs1/src/link/serial/wait_for_status_mask.c">
 <title>0x08006384–0x080063bc: 56 bytes</title>
-<rect x="348.4290822835668" y="176.22436933492423" width="0.37748253448849955" height="0.4734032692952538" style="fill:#326b7d"/>
-</g>
-<g aria-label="0x08006458–0x08006488: 48 bytes" data-node="leaf" data-kind="file" data-bytes="48" data-address="0x08006458" data-source="games/gs1/src/link/serial/wait_for_transfer_a.c">
-<title>0x08006458–0x08006488: 48 bytes</title>
-<rect x="347.7259692110855" y="176.9922919443149" width="0.21155614570234593" height="1.0897986130257475" style="fill:#326b7d"/>
-</g>
-<g aria-label="0x08006488–0x080064b8: 48 bytes" data-node="leaf" data-kind="file" data-bytes="48" data-address="0x08006488" data-source="games/gs1/src/link/serial/wait_for_transfer_b.c">
-<title>0x08006488–0x080064b8: 48 bytes</title>
-<rect x="348.18789840283097" y="177.03110884465573" width="0.6628127092765357" height="0.2891899463840208" style="fill:#326b7d"/>
-</g>
-<g aria-label="0x080064b8–0x080064f4: 60 bytes" data-node="leaf" data-kind="file" data-bytes="60" data-address="0x080064b8" data-source="games/gs1/src/link/serial/wait_for_transfers.c">
-<title>0x080064b8–0x080064f4: 60 bytes</title>
-<rect x="348.22404714612895" y="177.6456374807218" width="0.5905152226805306" height="0.361487432980026" style="fill:#326b7d"/>
+<rect x="347.73697938581245" y="177.8375038874574" width="1.1415384519089238" height="0.23357649515632448" style="fill:#326b7d"/>
 </g>
 </g>
 </g>

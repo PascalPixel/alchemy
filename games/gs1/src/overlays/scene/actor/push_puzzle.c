@@ -1,5 +1,24 @@
 #include "types.h"
 
+#define NULL ((void *)0)
+#define CalculateFacingAngle Func_0200107a
+#define SceneActor_UpdateFacingTowardTarget Func_02000030
+#define RuntimeSelectorTable Data_02000240
+#define PrimaryRuntimeSelector Value_0000001e
+#define SecondaryRuntimeSelector Value_00000023
+#define TertiaryRuntimeSelector Value_00000020
+#define PrimaryOverlayData Data_020091ec
+#define SecondaryOverlayData Data_0200930c
+#define TertiaryOverlayData Data_0200936c
+#define DefaultOverlayData Data_020091d4
+#define SceneData_SelectOverlayDataByRuntimeSelector Func_02000088
+#define SceneData_GetTable93FCWhenState20 Func_020000dc
+#define SceneData_GetTable942c Func_02000104
+#define SceneState_SetValues9_3_0 Func_0200010c
+#define PrimaryOverlayData_0200011c Data_02009498
+#define SecondaryOverlayData_0200011c Data_02009600
+#define TertiaryOverlayData_0200011c Data_020096f0
+#define DefaultOverlayData_0200011c Data_02009480
 #define FieldScene_RunScriptedSteps947And29DD Func_02000170
 #define FieldScene_RunEarlySequence Func_02000328
 #define FieldScene_RunScene38bSequenceC Func_02000404
@@ -7,10 +26,43 @@
 #define FieldScene_RunScene38b_020008f0 Func_020008f0
 #define FieldScene_RunScene38bSequenceA Func_02000ae0
 #define FieldScene_RunScene38b_02000d10 Func_02000d10
+#define PrimaryOverlayData_02000198 Data_02009744
+#define SecondaryOverlayData_02000198 Data_02009a2c
+#define TertiaryOverlayData_02000198 Data_02009bc4
+#define DefaultOverlayData_02000198 Data_02009738
+#define FieldScene_RunScriptedStep1472 Func_020001ec
+#define FieldScene_RunScriptedStep146E Func_02000208
+#define SceneDialogue_RunLine1470 Func_02000224
+#define FieldScene_RunScene38b_02000240 Func_02000240
+#define SceneDialogue_RunActorTwelveDialogue Func_02000288
+#define SceneDialogue_RunActorFourteenDialogue Func_020002a8
+#define SceneDialogue_ShowLine16BF Func_020002c8
+#define SceneDialogue_RunActorSixteenDialogue Func_020002e8
+#define SceneDialogue_ShowLine16CC Func_02000308
+#define FieldScene_CallHelper170c Func_02000578
+#define Scene_DispatchPuzzleEvent Func_02000890
+#define Scene_UpdatePuzzleActors Func_020009cc
+#define ActorPresentation_RepaintTenCellsAndActorEightCell Func_02000cb4
+#define SceneActor_FindAtTileXZ Func_02000d80
+#define OverlayObject_SpawnKind24AtActor Func_02000f3c
+#define FieldScene_DrawTilesByActor8Row Func_02000fa0
+#define SceneData_SelectDataByRuntimeSelector Func_0200011c
+#define SceneData_SelectDataByRuntimeSelectorB Func_02000198
 
-extern u8 Data_03001ebc[];
+#include "facing_object.h"
+#include "select_overlay_data_by_runtime_selector.h"
+
+extern s16 Data_02000240[];
+extern u8 Value_00000020;
+extern u8 Data_020093fc[];
 extern u8 Data_020091c0[];
+extern u8 Value_0000001e;
+extern u8 Value_00000023;
+extern u8 Data_02009d28[];
+extern u8 Data_02009d7c[];
 
+s32 Func_0200107a(s32, s32);
+void Func_020012c6(s32, s32, s32);
 void Func_0200122c(void);
 void Func_0200120c(s32, s32);
 void Func_02001214(s32, s32);
@@ -197,6 +249,58 @@ void Func_02001e06();
 s32 Func_02001e18();
 void Func_02001e26();
 void Func_02001ed6();
+void Func_020090b8(void);
+void Func_02009090(s32, s32);
+void Func_020090c0(void);
+s32 Func_02009098();
+void Func_020090b8_unprototyped();
+void Func_020090a0();
+void Func_020090c0_unprototyped();
+void Func_02009130();
+void Func_02009138();
+void Func_02009130_args1(s32);
+s32 Func_02009148(s32, s32);
+void Func_0200170c(void);
+void Func_0200119c();
+void Func_02001398();
+void Func_020015de();
+void Func_020018e2();
+void Func_02001a82();
+void Func_02001a96();
+void Func_02001aa8();
+s32 Func_02001aac();
+s32 Func_02001ab4();
+void Func_02001aba();
+void Func_02001ad6();
+void Func_02001b26();
+void Func_02001b60();
+void Func_02001b82();
+void Func_02001b8c();
+void Func_02001b9c_a();
+void Func_02001baa();
+void Func_02001bda();
+void Func_02001bfe();
+void Func_02001c18();
+u8 *Func_02001d90();
+void Func_02001d5c(s32, s32, s32, s32, s32, s32);
+void Func_02001d74(s32, s32, s32, s32, s32, s32);
+u8 *Func_02001f90();
+void Func_02001f96();
+void Func_02001fa8();
+u8 *Func_02002078();
+void Func_02002040(s32, s32, s32, s32, s32, s32);
+void Func_02002056(s32, s32, s32, s32, s32, s32);
+void Func_02002070(s32, s32, s32, s32, s32, s32);
+void Func_02002086(s32, s32, s32, s32, s32, s32);
+
+/* Loader-relocated overlay calls: each symbol names the pre-relocation call
+ * word the image holds. */
+
+/* Per-site raw names preserve the stock relocated branch operands; they
+ * resolve to Func_080090c8, Object_SetCallback and Object_InitializeMode respectively. */
+
+/* Per-site raw names: the first resolves to Scene_GetRecord and the four
+ * renderer sites resolve to Func_080091c0. */
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
@@ -207,32 +311,44 @@ void Func_02001ed6();
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
+    extern u8 Data_03001ebc[];
+
     f(a0);
 }
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
+    extern u8 Data_03001ebc[];
+
     return f(a0);
 }
 
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
+    extern u8 Data_03001ebc[];
+
     f(a0, a1);
 }
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
+    extern u8 Data_03001ebc[];
+
     f(a0, a1, a2);
 }
 
 static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
 {
+    extern u8 Data_03001ebc[];
+
     return f(a0, a1, a2);
 }
 
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step(s32 amount)
 {
+    extern u8 Data_03001ebc[];
+
     u8 *work = *(u8 **)Data_03001ebc;
 
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
@@ -240,11 +356,15 @@ static __inline__ void bump_step(s32 amount)
 
 static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {
+    extern u8 Data_03001ebc[];
+
     return f(a0, a1);
 }
 
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
+    extern u8 Data_03001ebc[];
+
     f(a0, a1, a2, a3);
 }
 
@@ -259,21 +379,24 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1_020008f0(void (*f)(), s32 a0)
 {
-    extern u8 Data_02000240[];
+    extern u8 Data_03001ebc[];
+
 
     f(a0);
 }
 
 static __inline__ s32 Value1_020008f0(s32 (*f)(), s32 a0)
 {
-    extern u8 Data_02000240[];
+    extern u8 Data_03001ebc[];
+
 
     return f(a0);
 }
 
 static __inline__ void Call3_020008f0(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    extern u8 Data_02000240[];
+    extern u8 Data_03001ebc[];
+
 
     f(a0, a1, a2);
 }
@@ -284,11 +407,15 @@ static __inline__ void Call3_020008f0(void (*f)(), s32 a0, s32 a1, s32 a2)
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ s32 Value1_02000ae0(s32 (*f)(), s32 a0)
 {
+    extern u8 Data_03001ebc[];
+
     return f(a0);
 }
 
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
+    extern u8 Data_03001ebc[];
+
     f(a0, a1, a2, a3, a4, a5);
 }
 
@@ -298,35 +425,279 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
  * A value-returning call also sets r0 last of its arguments. */
 static __inline__ s32 Value1_02000d10(s32 (*f)(), s32 a0)
 {
-    extern u16 Data_02000240[];
+    extern u8 Data_03001ebc[];
+
 
     return f(a0);
 }
 
 static __inline__ u16 ReadU16Elem(u16 *base, s32 idx)
 {
-    extern u16 Data_02000240[];
+    extern u8 Data_03001ebc[];
+
 
     return *(u16 *)(base + idx);
 }
 
 static __inline__ void Call4_020008f0(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
-    extern u16 Data_02000240[];
+    extern u8 Data_03001ebc[];
+
 
     f(a0, a1, a2, a3);
 }
 
+static __inline__ void Call1_020001ec(void (*f)(), s32 a0)
+{
+    extern u8 Data_03001ebc[];
+
+    f(a0);
+}
+
+static __inline__ void bump_step_020001ec(s32 amount)
+{
+    extern u8 Data_03001ebc[];
+
+    u8 *work = *(u8 **)Data_03001ebc;
+
+    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+}
+
+/* Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers; a direct call precomputes a costly constant
+ * into a pseudo that the compiler then shares with later uses in the block.
+ * A value-returning call also sets r0 last of its arguments. */
+static __inline__ void Call2_02000890(void (*f)(), s32 a0, s32 a1)
+{
+    extern u8 Data_03001ebc[];
+
+    f(a0, a1);
+}
+
+/* Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers; a direct call precomputes a costly constant
+ * into a pseudo that the compiler then shares with later uses in the block.
+ * A value-returning call also sets r0 last of its arguments. */
+static __inline__ s32 Value1_02000890(s32 (*f)(), s32 a0)
+{
+    extern u8 Data_03001ebc[];
+
+    return f(a0);
+}
+
+s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object)
+{
+    s32 delta;
+    u16 old;
+    s32 tgt;
+    struct FacingObject *target;
+
+    target = object->facing_target;
+    if (target != NULL) {
+        object->facing_flags = (u8)(0xFE & object->facing_flags);
+        tgt = (u16)CalculateFacingAngle(target->position_z - object->position_z, target->position_x - object->position_x);
+        old = object->facing;
+        delta = (s16)(tgt - old);
+        if (delta != 0) {
+            if (delta > 0x1000) {
+                delta = 0x1000;
+            }
+            /* The loader relocates the stored pool word to -0x1000. */
+            if (delta < -0x1000) {
+                delta = -0x1000;
+            }
+            object->facing = (u16)(old + delta);
+        }
+    }
+    return 1;
+}
+
+s32 SceneData_SelectOverlayDataByRuntimeSelector(void)
+{
+    s16 selector = RuntimeSelectorTable[224];
+
+    if (selector == (s32)&PrimaryRuntimeSelector) {
+        return (s32)PrimaryOverlayData;
+    }
+    if (selector == (s32)&SecondaryRuntimeSelector) {
+        return (s32)SecondaryOverlayData;
+    }
+    if (selector == (s32)&TertiaryRuntimeSelector) {
+        return (s32)TertiaryOverlayData;
+    }
+    return (s32)DefaultOverlayData;
+}
+
+s32 SceneData_GetTable93FCWhenState20(void)
+{
+    if (Data_02000240[224] == (s32)&Value_00000020) {
+        return (s32)Data_020093fc;
+    }
+    return 0;
+}
+
+/*
+ * Table getter for resource_38b. The owner at 0x02000104 is eight bytes and
+ * includes its one pool word at 0x02000108: the pc-relative load reads that
+ * word, so the word belongs to this owner. The word is an address returned
+ * without being dereferenced. Many getters share this body, but each returns
+ * a different address.
+ */
+u8 *SceneData_GetTable942c(void)
+{
+    return (u8 *)0x0200942c;
+}
+
+void SceneState_SetValues9_3_0(void)
+{
+    Func_020012c6(9, 3, 0);
+}
+
+s32 SceneData_SelectDataByRuntimeSelector(void)
+{
+    extern u8 PrimaryOverlayData_0200011c[];
+    extern u8 SecondaryOverlayData_0200011c[];
+    extern u8 TertiaryOverlayData_0200011c[];
+    extern u8 DefaultOverlayData_0200011c[];
+    s16 selector = RuntimeSelectorTable[224];
+
+    if (selector == (s32)&PrimaryRuntimeSelector) {
+        return (s32)PrimaryOverlayData_0200011c;
+    }
+    if (selector == (s32)&SecondaryRuntimeSelector) {
+        return (s32)SecondaryOverlayData_0200011c;
+    }
+    if (selector == (s32)&TertiaryRuntimeSelector) {
+        return (s32)TertiaryOverlayData_0200011c;
+    }
+    return (s32)DefaultOverlayData_0200011c;
+}
+
 void FieldScene_RunScriptedSteps947And29DD(void)
 {
+    extern u8 Data_03001ebc[];
+
     Func_0200122c();
     Func_0200120c(0x947, 1);
     Func_02001214(0x29DD, 1);
     Func_02001248();
 }
 
+s32 SceneData_SelectDataByRuntimeSelectorB(void)
+{
+    extern u8 PrimaryOverlayData_02000198[];
+    extern u8 SecondaryOverlayData_02000198[];
+    extern u8 TertiaryOverlayData_02000198[];
+    extern u8 DefaultOverlayData_02000198[];
+    s16 selector = RuntimeSelectorTable[224];
+
+    if (selector == (s32)&PrimaryRuntimeSelector) {
+        return (s32)PrimaryOverlayData_02000198;
+    }
+    if (selector == (s32)&SecondaryRuntimeSelector) {
+        return (s32)SecondaryOverlayData_02000198;
+    }
+    if (selector == (s32)&TertiaryRuntimeSelector) {
+        return (s32)TertiaryOverlayData_02000198;
+    }
+    return (s32)DefaultOverlayData_02000198;
+}
+
+void FieldScene_RunScriptedStep1472(void)
+{
+    extern u8 Data_03001ebc[];
+
+    Func_020090b8();
+    Func_02009090(0x1472, 1);
+    Func_020090c0();
+}
+
+void FieldScene_RunScriptedStep146E(void)
+{
+    extern u8 Data_03001ebc[];
+
+    Func_020090b8();
+    Func_02009090(0x146E, 1);
+    Func_020090c0();
+}
+
+void SceneDialogue_RunLine1470(void)
+{
+    extern u8 Data_03001ebc[];
+
+    Func_020090b8();
+    Func_02009090(0x1470, 1);
+    Func_020090c0();
+}
+
+void FieldScene_RunScene38b_02000240(void)
+{
+    extern u8 Data_03001ebc[];
+
+    Func_020090b8_unprototyped();
+    Call1_020001ec(Func_02009130, 0x13ae);
+    if (Value1(Func_02009098, 0x301) != 0) {
+        bump_step_020001ec(1);
+    }
+    Func_02009138(9, 0);
+    Call1_020001ec(Func_020090a0, 0x301);
+    Func_020090c0_unprototyped();
+}
+
+void SceneDialogue_RunActorTwelveDialogue(void)
+{
+    extern u8 Data_03001ebc[];
+
+    Func_020090b8();
+    Func_02009130_args1(0x13B3);
+    Func_02009148(12, 0);
+    Func_020090c0();
+}
+
+void SceneDialogue_RunActorFourteenDialogue(void)
+{
+    extern u8 Data_03001ebc[];
+
+    Func_020090b8();
+    Func_02009130_args1(0x13B7);
+    Func_02009148(14, 0);
+    Func_020090c0();
+}
+
+void SceneDialogue_ShowLine16BF(void)
+{
+    extern u8 Data_03001ebc[];
+
+    Func_020090b8();
+    Func_02009130_args1(0x16BF);
+    Func_02009148(21, 0);
+    Func_020090c0();
+}
+
+void SceneDialogue_RunActorSixteenDialogue(void)
+{
+    extern u8 Data_03001ebc[];
+
+    Func_020090b8();
+    Func_02009130_args1(0x16C8);
+    Func_02009148(16, 0);
+    Func_020090c0();
+}
+
+void SceneDialogue_ShowLine16CC(void)
+{
+    extern u8 Data_03001ebc[];
+
+    Func_020090b8();
+    Func_02009130_args1(0x16CC);
+    Func_02009148(18, 0);
+    Func_020090c0();
+}
+
 void FieldScene_RunEarlySequence(void)
 {
+    extern u8 Data_03001ebc[];
+
     u32 i;
     u8 *record;
     s32 v5;
@@ -380,6 +751,8 @@ void FieldScene_RunEarlySequence(void)
 
 void FieldScene_RunScene38bSequenceC(void)
 {
+    extern u8 Data_03001ebc[];
+
     u32 i;
     s32 rec;
     u8 *rec7;
@@ -442,8 +815,15 @@ void FieldScene_RunScene38bSequenceC(void)
     }
 }
 
+void FieldScene_CallHelper170c(void)
+{
+    Func_0200170c();
+}
+
 void FieldScene_RunScene38b_02000584(void)
 {
+    extern u8 Data_03001ebc[];
+
     u32 i;
     s32 rec7;
     u8 *record;
@@ -536,9 +916,30 @@ void FieldScene_RunScene38b_02000584(void)
     }
 }
 
+s32 Scene_DispatchPuzzleEvent(void)
+{
+    extern u8 Data_03001ebc[];
+
+    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x100;
+    if (Data_02000240[224] == (s32)&Value_0000001e) {
+        Func_0200119c();
+    } else {
+        if (Data_02000240[224] == (s32)&Value_00000023) {
+            Func_02001398();
+            Call2_02000890(Func_020018e2, 0x2008ed9, 0xc80);
+        } else {
+            if (Data_02000240[224] == (s32)&Value_00000020) {
+                Func_020015de();
+            }
+        }
+    }
+    return 0;
+}
+
 void FieldScene_RunScene38b_020008f0(void)
 {
-    extern u8 Data_02000240[];
+    extern u8 Data_03001ebc[];
+
 
     s32 record;
     s16 sub_state;
@@ -556,7 +957,7 @@ void FieldScene_RunScene38b_020008f0(void)
     *(volatile s32 *)(record + 28) = 0x18000;
     {
         s32 off = 450;
-        sub_state = *(s16 *)(Data_02000240 + off);
+        sub_state = *(s16 *)((u8 *)Data_02000240 + off);
     }
     if (sub_state == 10) {
         Func_02001a5a(8, 0, 0);
@@ -568,7 +969,7 @@ void FieldScene_RunScene38b_020008f0(void)
     if (Value1_020008f0(Func_02001a04_a, 0x109) == 0) {
         {
             s32 off = 450;
-            sub_state = *(s16 *)(Data_02000240 + off);
+            sub_state = *(s16 *)((u8 *)Data_02000240 + off);
         }
         if (sub_state == 11) {
             Call3_020008f0(Func_02001a8e, 20, 0xf80000, 0xd80000);
@@ -582,8 +983,56 @@ void FieldScene_RunScene38b_020008f0(void)
     }
 }
 
+void Scene_UpdatePuzzleActors(void)
+{
+    extern u8 Data_03001ebc[];
+
+    s32 p10;
+    s32 p9;
+    s32 rec7;
+    s32 record;
+    s32 p6;
+    s32 row;
+
+    rec7 = Value1_02000890(Func_02001aac, 0);
+    record = Value1_02000890(Func_02001ab4, 20);
+    row = *(s32 *)(record + 16) >> 20;
+    p9 = (*(s32 *)(rec7 + 8) >> 20);
+    p10 = (*(s32 *)(rec7 + 16) >> 20);
+    p6 = *(s32 *)(record + 8);
+    Call6(Func_02001a82, 15, 11, 3, 1, 15, 12);
+    Call6(Func_02001a96, 15, 11, 3, 1, 15, 13);
+    Call6(Func_02001aa8, 15, 11, 3, 1, 15, 14);
+    Call6(Func_02001aba, 1, 0, 1, 1, (p6 >> 20), row);
+    if (((s32)p6 >> 20) == 16) {
+        if (row == 13) {
+            goto L_02000a60;
+        }
+    }
+    Call6(Func_02001ad6, 0, 0, 1, 1, 16, 13);
+    L_02000a60:;
+    if (p9 == 16) {
+        if (p10 == 13) {
+            Func_02001b26();
+            Call3(Func_02001bda, 0, 0x100, 20);
+            Call3(Func_02001b60, 0, 0x20000, 0x10000);
+            Func_02001baa(0, 6, 0);
+            if (row == 13) {
+                Call3(Func_02001b82, 0, 0x106, 196);
+                Call3(Func_02001bfe, 0, 0x4000, 20);
+            } else {
+                Call3(Func_02001b9c_a, 0, 0x11e, 218);
+                Call3(Func_02001c18, 0, 0x8000, 20);
+            }
+            Func_02001b8c();
+        }
+    }
+}
+
 void FieldScene_RunScene38bSequenceA(void)
 {
+    extern u8 Data_03001ebc[];
+
     u32 i;
     u8 *rec;
     s32 rec7;
@@ -656,9 +1105,69 @@ void FieldScene_RunScene38bSequenceA(void)
     Func_02001948();
 }
 
+/*
+ * Ten (x, z) tile pairs, held in the overlay's own writable image.  Overlay
+ * data lives in EWRAM and is deliberately not const.
+ */
+
+/*
+ * Slot accessor: Func_02001d90(slot) returns the actor record, or NULL.
+ * Typed as a byte pointer so the +0x08 and +0x10 field reads are explicit.
+ */
+
+/*
+ * The six-argument renderer ABI: four register arguments plus two stack
+ * words, here the tile x and tile z of the cell being repainted.  The two
+ * names are separate per-site call words that reach the same renderer.
+ */
+
+/*
+ * Repaint ten fixed collision cells and then actor 8's own cell.  The
+ * 92-byte owner includes the alignment halfword and the single pool word
+ * that follows the code; that word holds the address of Data_02009d28, which
+ * is in-image data rather than a RAM global.  The two renderer calls must
+ * keep their separate call words -- naming one renderer for both changes the
+ * displacement emitted at each site.
+ */
+void ActorPresentation_RepaintTenCellsAndActorEightCell(void)
+{
+    u8 *actor;
+    s32 tx;
+    s32 tz;
+    u32 i;
+
+    /*
+     * Slot 8 is the scene's own actor; the accessor result is not
+     * null-checked here.  The 20-bit shift is one signed arithmetic shift:
+     * 16 takes the fixed-point coordinate to pixels, the further 4 take it
+     * to the 16-pixel tile grid.
+     */
+    actor = Func_02001d90(8);
+    tx = *(s32 *)(actor + 0x08) >> 20;
+    tz = *(s32 *)(actor + 0x10) >> 20;
+
+    /*
+     * Ten fixed cells from the table, then the actor's own cell.  The table
+     * is walked by the byte index itself rather than by a 0..9 counter
+     * scaled by two, so the loop steps the byte offset directly.
+     */
+    for (i = 0; i < 20; i += 2) {
+        s32 x = (s32)Data_02009d28[i];
+        s32 z = (s32)Data_02009d28[i + 1];
+        Func_02001d5c(1, 0, 1, 1, x, z);
+    }
+
+    /*
+     * The same repaint with 0 rather than 1 in the first argument.  What
+     * that selector chooses is not established.
+     */
+    Func_02001d74(0, 0, 1, 1, tx, tz);
+}
+
 void FieldScene_RunScene38b_02000d10(void)
 {
-    extern u16 Data_02000240[];
+    extern u8 Data_03001ebc[];
+
 
     s32 arg0;
     s32 rec7;
@@ -666,7 +1175,7 @@ void FieldScene_RunScene38b_02000d10(void)
 
     *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c0)) = 0x204;
     Func_02001cc2_a();
-    record = ReadU16Elem(Data_02000240, 225);
+    record = ReadU16Elem((u16 *)Data_02000240, 225);
     if ((u32)((record - 3) << 16) <= 0x10000) {
         if (Value1_02000d10(Func_02001dd6, 0x109) == 0) {
             rec7 = Value1_02000d10(Func_02001e18, 0);
@@ -677,6 +1186,82 @@ void FieldScene_RunScene38b_02000d10(void)
             Func_02001db2();
             Func_02001e26();
             Func_02001d84(1);
+        }
+    }
+}
+
+s32 *SceneActor_FindAtTileXZ(s32 x, s32 z)
+{
+    extern u8 *Data_03001ebc;
+
+    s32 **tbl = (s32 **)(Data_03001ebc + 0x14);
+    u32 i;
+
+    for (i = 8; i <= 65; i++) {
+        s32 *p = tbl[i];
+
+        if (x == (p[2] >> 20) && z == (p[4] >> 20)) {
+            return p;
+        }
+    }
+    return 0;
+}
+
+void OverlayObject_SpawnKind24AtActor(u8 *actor)
+{
+    u8 *obj;
+    u8 *child;
+    s32 mask;
+
+    obj = Func_02001f90(24,
+                            *(s32 *)(actor + 0x08),
+                            *(s32 *)(actor + 0x0c),
+                            *(s32 *)(actor + 0x10));
+    if (obj == 0)
+        return;
+
+    child = *(u8 **)(obj + 0x50);
+    Func_02001f96(obj, Data_02009d7c);
+    *(u8 *)(obj + 0x55) = 0;
+    *(u8 *)(obj + 0x22) = 1;
+    *(u8 *)(obj + 0x23) = 2;
+    if (child == 0)
+        return;
+
+    Func_02001fa8(child, 2);
+    *(u8 *)(child + 0x26) = 0;
+    mask = 13;
+    mask = -mask;
+    *(u8 *)(child + 5) = (u8)((*(u8 *)(child + 5) & mask) | 4);
+    *(u8 *)(child + 9) |= 12;
+}
+
+void FieldScene_DrawTilesByActor8Row(void)
+{
+    u8 *actor;
+    actor = Func_02002078(8);
+    if (actor == 0)
+        return;
+
+    {
+        s32 tile_z = *(s32 *)(actor + 0x10) >> 20;
+        if (tile_z == 6)
+            Func_02002040(2, 0, 1, 1, 14, 6);
+        else {
+            s32 x = 14;
+            s32 z = 6;
+            Func_02002056(0, 0, 1, 1, x, z);
+        }
+    }
+
+    {
+        s32 tile_z = *(s32 *)(actor + 0x10) >> 20;
+        if (tile_z == 9)
+            Func_02002070(2, 0, 1, 1, 14, 9);
+        else {
+            s32 x = 14;
+            s32 z = 9;
+            Func_02002086(1, 0, 1, 1, x, z);
         }
     }
 }

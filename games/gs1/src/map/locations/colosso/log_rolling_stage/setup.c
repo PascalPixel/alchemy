@@ -261,11 +261,12 @@ s32 StageSetup_BuildAndDispatch(void)
         s32 mode;
         s32 row;
 
+        i = 18;
         state = 0;
         mode = 2;
-        row = 11;
         val = 33;
-        for (i = 18; i <= 22; i++) {
+        row = 11;
+        for (; i <= 22; i++) {
             rec = Func_02005800(i);
             rec[35] = mode;
             Func_020058dc(rec, 2);
@@ -283,9 +284,10 @@ s32 StageSetup_BuildAndDispatch(void)
         s32 state;
         s32 mode;
 
+        i = 18;
         state = 0;
         mode = 2;
-        for (i = 18; i <= 22; i++) {
+        for (; i <= 22; i++) {
             rec = Func_02005800(i);
             rec[35] = mode;
             rec = Func_02005800(i + 5);

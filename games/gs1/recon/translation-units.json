@@ -175824,6 +175824,84 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "item-definition-access",
+      "game": "gs1",
+      "source": "games/gs1/src/item/definition.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x08078414",
+          "extent": 24,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0807842c",
+          "extent": 48,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0807845c",
+          "extent": 34,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "ui-icon-resource",
+      "game": "gs1",
+      "source": "games/gs1/src/ui/icon/resource.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080a172c",
+          "extent": 76,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a1778",
+          "extent": 76,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a17c4",
+          "extent": 64,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "psynergy-owner-entries",
+      "game": "gs1",
+      "source": "games/gs1/src/psynergy_menu/owner_entries.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080a1bcc",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a1bdc",
+          "extent": 80,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a1c2c",
+          "extent": 64,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

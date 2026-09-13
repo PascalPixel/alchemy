@@ -87,6 +87,7 @@ void Func_08015130(s32 mode);
 void Func_080151d0(void);
 void Func_080152b8(u16 *selection);
 void Func_080b78e4(s32 actor_id, void *slot);
+struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id);
 s32 Func_080b6cd0(s32 actor_id);
 void Func_080b7aac(s32 actor_id);
 s32 Func_080b7e60(s32 actor_id);
@@ -213,7 +214,7 @@ void BATTLE_PLAYBACK_OWNER(void)
                         if (state->animation_timer > 0)
                             Func_080f9010(state->animation_timer);
                         state->actor_id = state->events.operands[event_index];
-                        slot = Func_080b7dd0(
+                        slot = GetBattleObjectSlot(
                             state->events.operands[event_index]);
                         Func_08009080(slot->object, 5);
                         state->phase = 10;
@@ -233,8 +234,8 @@ void BATTLE_PLAYBACK_OWNER(void)
                         Func_080bb588(state->actor_id);
                         unit = BattleUnit_Get(state->actor_id);
                         record_index = 0;
-                        while ((record = Func_080b7f70(
-                                    Func_080b7dd0(state->actor_id)->object,
+                        while ((record = GetMotionRecord(
+                                    GetBattleObjectSlot(state->actor_id)->object,
                                     record_index)) != NULL) {
                             if (unit->status_12a != 1)
                                 Func_08009020(record, 4);
@@ -258,9 +259,9 @@ void BATTLE_PLAYBACK_OWNER(void)
 
                         Func_080b78e4(
                             state->events.operands[event_index],
-                            Func_080b7dd0(
+                            GetBattleObjectSlot(
                                 state->events.operands[event_index]));
-                        slot = Func_080b7dd0(
+                        slot = GetBattleObjectSlot(
                             state->events.operands[event_index]);
                         Func_080ba918(
                             slot->object,
@@ -353,7 +354,7 @@ void BATTLE_PLAYBACK_OWNER(void)
                     struct BattleObjectSlot *slot;
 
                     phase_locals.selection[0] = 0xff;
-                    slot = Func_080b7dd0(state->actor_id);
+                    slot = GetBattleObjectSlot(state->actor_id);
                     Func_080ba918(
                         slot->object,
                         Func_080b6cd0(state->actor_id));
@@ -362,7 +363,7 @@ void BATTLE_PLAYBACK_OWNER(void)
 
                     phase_locals.selection[0] = state->actor_id;
                     phase_locals.selection[1] = 0xff;
-                    slot = Func_080b7dd0(state->actor_id);
+                    slot = GetBattleObjectSlot(state->actor_id);
                     Func_080ba918(slot->object, 7);
                 }
                 Func_080152b8(phase_locals.selection);
@@ -426,8 +427,8 @@ void BATTLE_PLAYBACK_OWNER(void)
                     part_flags = 0xff;
                     record_index = 0;
                     record_cursor = phase_locals.records;
-                    while ((record = Func_080b7f70(
-                                Func_080b7dd0(state->actor_id)->object,
+                    while ((record = GetMotionRecord(
+                                GetBattleObjectSlot(state->actor_id)->object,
                                 record_index)) != NULL) {
                         *record_cursor++ = record;
                         record->part->frame = frame;
@@ -445,15 +446,15 @@ void BATTLE_PLAYBACK_OWNER(void)
                 s32 scaled_timer;
                 void *record;
 
-                slot = Func_080b7dd0(state->actor_id);
+                slot = GetBattleObjectSlot(state->actor_id);
                 *(s16 *)((u8 *)slot + 0x2a) = 1;
                 count = 0;
                 record_cursor = phase_locals.records;
-                record = Func_080b7f70(slot->object, count);
+                record = GetMotionRecord(slot->object, count);
                 while (record != NULL) {
                     *record_cursor++ = record;
                     count++;
-                    record = Func_080b7f70(slot->object, count);
+                    record = GetMotionRecord(slot->object, count);
                 }
 
                 scaled_timer = state->timer * 4;

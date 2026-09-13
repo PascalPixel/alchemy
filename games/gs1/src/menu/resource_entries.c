@@ -1,5 +1,7 @@
 #include "types.h"
 #include "sound_ids.h"
+#include "resource.h"
+#include "global_cells.h"
 
 struct MenuSelectionState {
     u8 padding000[0x78];
@@ -77,4 +79,53 @@ s32 Menu_SelectResource(s32 start, s32 goal)
     WaitFrames(48);
     Audio_PlayCue(SOUND_MENU_CONFIRM);
     return goal;
+}
+
+
+extern u8 Data_000000f1[];
+
+u32 Runtime_BumpAllocate(s32 size);
+u32 Func_080053e8(const void *, void *);
+void Resource_CopyData(s32, s32, void *);
+void Func_08002df0(void *);
+
+void Menu_LoadResourceSlot(s32 slot, s32 index)
+{
+    s32 size = 1024;
+    void *buffer = (void *)Runtime_BumpAllocate(size);
+    u16 *base = GetResource((s32)Data_000000f1);
+
+    /* 表内の相対位置から転送元を求める。 */
+    Func_080053e8((void *)((u32)base + base[index]), buffer);
+    Resource_CopyData(slot, size, buffer);
+    Func_08002df0(buffer);
+}
+
+
+extern s32 Func_08004080(void);
+
+void Menu_AppendResourceEntry(s32 no)
+{
+    u8 *base;
+    u8 *entry;
+    s16 index;
+    s32 slot;
+    s32 off;
+    s32 flags;
+
+    base = *(u8 **)ADDR_03001F38;
+    index = *(s16 *)(base + 142);
+    if (index <= 5)
+    {
+        *(u16 *)(base + 142) = *(u16 *)(base + 142) + 1;
+        entry = base + index * 20;
+        slot = Func_08004080();
+        Menu_LoadResourceSlot(slot, no);
+        *(u16 *)(entry + 12) = index * 24 + 32;
+        flags = 136;
+        *(u16 *)(entry + 14) = flags;
+        off = index + 132;
+        *(u16 *)(entry + 18) = slot;
+        base[off] = (u8)no;
+    }
 }

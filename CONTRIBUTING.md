@@ -189,7 +189,11 @@ completion. Keep genuine assembly and data separate. Do not trade byte equality
 for tidiness or delay productive recovery for unrelated folder cleanup.
 
 Run the integration gate once per finished coherent batch, repair failures,
-then commit before starting another wave. At a timed deadline, stop launching
+then commit before starting another wave. Commits do not require a DONE increase:
+verified cleanup, consolidation, corrections and recorded negative results may
+be committed on their own. The 0.1-point preference guides recovery selection;
+it is not a commit gate and must not block the long-term goal.
+At a timed deadline, stop launching
 searches, finish or revert experiments, verify accepted work and report the
 actual result. Never lower the acceptance bar to hit a percentage.
 

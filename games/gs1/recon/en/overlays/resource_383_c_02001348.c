@@ -202,8 +202,6 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 }
 
 extern u16 Data_02000240[];
-extern u8 Value_00000015;
-extern u8 Value_0000022b;
 
 void Func_02001348(void)
 {
@@ -381,10 +379,10 @@ void Func_02001348(void)
     Func_02006754(10, 0);
     Call1(Func_02006652, 2132);
     *(s32 *)(*(u8 **)0x03001ebc + 448) = 512;
-    base = (s32)&Value_00000015;
+    base = 21;
     Func_020067ca(base, 17);
     Func_020067da(base, 16);
-    ((u8 *)Data_02000240)[(s32)&Value_0000022b] = 3;
+    ((u8 *)Data_02000240)[555] = 3;
     Func_020067dc(12, 5, 3);
     Func_020066b8();
 }

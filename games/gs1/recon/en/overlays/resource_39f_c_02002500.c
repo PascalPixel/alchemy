@@ -162,8 +162,8 @@ void Func_020057be(); /* main:0808a158 */
 void Func_0200568c(); /* main:080000c0 */
 u8 *Func_02005762(); /* main:0808a080  Scene_GetRecord */
 void Func_02003276(); /* overlay 0x020008c0 */
-void Func_02003414(); /* OvObj_SpawnConfiguredWithMode15 */
-void Func_02003420(); /* OvObj_SpawnConfiguredWithMode15 */
+u8 *Func_02003414(s32, s32, s32, s32);
+u8 *Func_02003420(s32, s32, s32, s32);
 void Func_0200329a(); /* overlay 0x020008c0 */
 void Func_020032a0(); /* overlay 0x020008c0 */
 s32 Func_02005772(); /* main:080770c0  GameFlag_IsSet */
@@ -376,7 +376,12 @@ s32 RunEventScript01(void)
             Func_020054e0(1);
             Func_02005620(11, 6);
             /* image word Func_020055be at 0x02002800 */
-            *(u8 *)(Func_0200558a(8) + 89) |= 8;
+            {
+                u8 *obj = Func_0200558a(8);
+                u32 mask = 8;
+                mask = mask | obj[89];
+                obj[89] = mask;
+            }
             if (Func_0200559e(0x306) != 0) {
                 break;
             }
@@ -427,7 +432,12 @@ s32 RunEventScript01(void)
             Func_02002bd6(2, pos, tmp >> 20, 1, 1, 255);
             Call2(Func_020057be, 13, 6);
             Func_0200568c(1);
-            *(u8 *)(Func_02005762(8) + 89) |= 8;
+            {
+                u8 *obj = Func_02005762(8);
+                u32 mask = 8;
+                mask = mask | obj[89];
+                obj[89] = mask;
+            }
             Func_02003276(8);
             break;
 
@@ -445,7 +455,12 @@ s32 RunEventScript01(void)
                 Func_020056e4(1);
                 Func_020057fc(9, 4);
                 Call3(Func_02005800, 9, 0x2ba0000, 0x18e0000);
-                *(u8 *)(Func_020057ce(9) + 35) |= 2;
+                {
+                    u8 *obj = Func_020057ce(9);
+                    u32 mask = 2;
+                    mask = mask | obj[35];
+                    obj[35] = mask;
+                }
                 Call6(Func_0200577c, 26, 20, 2, 4, 42, 23);
                 Func_020057cc(532);
                 Call3(Func_0200583a, 14, 0x2780000, 0x1b80000);
@@ -466,7 +481,12 @@ s32 RunEventScript01(void)
             Func_02002d06(2, pos, tmp >> 20, 1, 1, 255);
             Call2(Func_020058ee, 14, 6);
             Func_020057bc(1);
-            *(u8 *)(Func_02005892(9) + 89) |= 8;
+            {
+                u8 *obj = Func_02005892(9);
+                u32 mask = 8;
+                mask = mask | obj[89];
+                obj[89] = mask;
+            }
             if (Func_02005872(0x30b) == 0) {
                 Call2(Func_02005916, 18, 15);
                 Func_0200585a(Func_020058b4(18), 0);

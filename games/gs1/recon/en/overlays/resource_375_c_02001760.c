@@ -1,25 +1,6 @@
-/*
- * Runtime call bindings measured on 2026-09-10 (alchemy inspect, site order),
- * for a translation unit that cannot yet be declared: the reviewed complete
- * extent in semantic/regions.json (580) and the evidence row in
- * semantic/overlay-assembly.json (530) disagree, and the unit
- * register must satisfy both. Declare these as absolute_symbols once the
- * two registers agree on this owner.
- *   Func_0200328e_a      0x02009b0c
- *   Func_0200328e_b      0x02009a9c
- *   Func_020032b4_a      0x02009b2c
- *   Func_020032b4_b      0x02009b0c
- *   Func_020032b4_c      0x02009ad4
- *   Func_02003378_a      0x02009b2c
- *   Func_02003378_b      0x02009aec
- *   Func_020033f6_a      0x02009b44
- *   Func_020033f6_b      0x02009a8c
- */
 #include "types.h"
 
-/* AUDITED GENERATED CALL SCRIPT for Scene_RunProgressDependentActorSequence:
- * 60 calls, nested resource predicates, and terminal actor-coordinate
- * forwarding across the complete callable owner. */
+/* Runtime call aliases belong to scene-progress-actor-sequence-375. */
 
 #define Scene_RunProgressDependentActorSequence Func_02001760
 
@@ -28,8 +9,13 @@ s32 Func_020031d6();
 void Func_020031fe();
 void Func_0200321e();
 void Func_02003220();
-void Func_02003254();s32 Func_0200328e_a(); s32 Func_0200328e_b();
-void Func_020032a0();void Func_020032b4_a(); void Func_020032b4_b(); void Func_020032b4_c();
+void Func_02003254();
+s32 Func_0200328e_a();
+void *Func_0200328e_b();
+void Func_020032a0();
+void Func_020032b4_a();
+void Func_020032b4_b();
+void Func_020032b4_c();
 void Func_020032c2();
 void Func_020032c6();
 s32 Func_020032c8();
@@ -47,7 +33,9 @@ void Func_0200334c();
 void Func_02003352();
 void Func_02003360();
 void Func_0200336a();
-void Func_02003370();void Func_02003378_a(); void Func_02003378_b();
+void Func_02003370();
+void Func_02003378_a();
+void Func_02003378_b();
 void Func_0200338a();
 void Func_02003390();
 void Func_02003392();
@@ -61,7 +49,9 @@ void Func_020033b8();
 void Func_020033bc();
 void Func_020033be();
 void Func_020033ce();
-void *Func_020033e0();void Func_020033f6_a(); void Func_020033f6_b();
+void *Func_020033e0();
+void Func_020033f6_a();
+void Func_020033f6_b();
 void Func_02003404();
 void Func_0200340a();
 void Func_02003414();
@@ -75,7 +65,7 @@ void Func_02003470();
 void Func_02003482();
 void Func_0200348c();
 
-void Func_02001760(void)
+void Scene_RunProgressDependentActorSequence(void)
 {
     void *actor;
 
@@ -97,8 +87,10 @@ void Func_02001760(void)
             Func_02003352(6422528, -1, 0x011b0000, 1);
             Func_020032b4_c(0, 94, 0x125);
             Func_02003340(0, 40960, 0);
-            if (Func_0200328e_b(0) != 0) {
-                Func_020032e4(1);
+            actor = Func_0200328e_b(0);
+            if (actor != 0) {
+                Func_020032e4(1, *(s32 *)((u8 *)actor + 8),
+                             *(s32 *)((u8 *)actor + 16));
             }
             Func_020032de(1, 110, 0x117);
             Func_0200336a(1, 40960, 40);
@@ -141,7 +133,8 @@ void Func_02001760(void)
             Func_0200342a(1, 2);
             actor = Func_020033e0(0);
             if (actor != 0) {
-                Func_0200341a(1, *(s32 *)(actor + 8), *(s32 *)(actor + 16));
+                Func_0200341a(1, *(s16 *)((u8 *)actor + 10),
+                             *(s16 *)((u8 *)actor + 18));
             }
             Func_02003438(1);
             Func_0200344a(1, 0, 0);

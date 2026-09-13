@@ -1281,24 +1281,20 @@
       "source": "ui/render/finalize_pending.c"
     },
     "main:0801c0dc": {
-      "name": "UiTextResource_Initialize",
-      "source": "ui/text/resource/initialize.c"
+      "name": "UiTextResource_Initialize"
     },
     "main:0801c154": {
-      "name": "UiTextResource_SetPosition",
-      "source": "ui/text/resource/set_position.c"
+      "name": "UiTextResource_SetPosition"
     },
     "main:0801c17c": {
-      "name": "UiTextResource_Release",
-      "source": "ui/text/resource/release.c"
+      "name": "UiTextResource_Release"
     },
     "main:0801c0c4": {
       "name": "UiTextResource_NoOpCallback",
-      "source": "ui/text/resource/no_op_callback.c"
+      "source": "ui/text/resource.c"
     },
     "main:0801c0c8": {
-      "name": "UiTextResource_NoOpCallbackBank",
-      "source": "ui/text/resource/no_op_callback_bank.c"
+      "name": "UiTextResource_NoOpCallbackBank"
     },
     "main:08016478": {
       "name": "RenderOutput_PrepareForRedraw",
@@ -18421,6 +18417,18 @@
     },
     "main:0808ec4c": {
       "name": "EffectRuntime_ReservedNoOp"
+    },
+    "main:0801c0cc": {
+      "name": "UiTextResource_NoOpCallback1"
+    },
+    "main:0801c0d0": {
+      "name": "UiTextResource_NoOpCallback2"
+    },
+    "main:0801c0d4": {
+      "name": "UiTextResource_NoOpCallback3"
+    },
+    "main:0801c0d8": {
+      "name": "UiTextResource_NoOpCallback4"
     }
   }
 }

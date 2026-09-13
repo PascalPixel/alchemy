@@ -174036,6 +174036,47 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "ui-render-channel",
+      "game": "gs1",
+      "source": "games/gs1/src/ui/render/channel.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x08016670",
+          "extent": 172,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801671c",
+          "extent": 28,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08016738",
+          "extent": 32,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08016758",
+          "extent": 84,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080167ac",
+          "extent": 44,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080167d8",
+          "extent": 6,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

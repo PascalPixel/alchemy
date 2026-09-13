@@ -171002,6 +171002,62 @@
       ]
     },
     {
+      "id": "scene-formation-dispatch-37f",
+      "game": "gs1",
+      "source": "games/gs1/recon/en/overlays/resource_37f_c_02000a24.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_37f",
+      "absolute_symbols": {
+        "Func_020026c0_a": {
+          "address": "0x02009b8c",
+          "kind": "thumb"
+        },
+        "Func_020026c0_b": {
+          "address": "0x02009b74",
+          "kind": "thumb"
+        },
+        "Func_0200277e": {
+          "address": "0x02009bcc",
+          "kind": "thumb"
+        },
+        "Func_0200277e_a": {
+          "address": "0x02009b8c",
+          "kind": "thumb"
+        },
+        "Func_02002800": {
+          "address": "0x02009bcc",
+          "kind": "thumb"
+        },
+        "Func_02002800_a": {
+          "address": "0x02009bfc",
+          "kind": "thumb"
+        },
+        "Func_02002824": {
+          "address": "0x02009bcc",
+          "kind": "thumb"
+        },
+        "Func_02002824_a": {
+          "address": "0x02009b8c",
+          "kind": "thumb"
+        },
+        "Func_0200281c": {
+          "address": "0x02009b5c",
+          "kind": "thumb"
+        },
+        "Func_0200281c_a": {
+          "address": "0x02009b44",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000a24",
+          "extent": 760,
+          "state": "retained-assembly"
+        }
+      ]
+    },
+    {
       "id": "scenario-dispatch-37f",
       "game": "gs1",
       "source": "games/gs1/src/overlays/scene/story/scenario_dispatch.c",
@@ -172949,6 +173005,11 @@
         {
           "address": "0x0200007c",
           "extent": 112,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020000ec",
+          "extent": 104,
           "state": "exact-c"
         },
         {

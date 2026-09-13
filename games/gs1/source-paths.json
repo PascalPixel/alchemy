@@ -18454,6 +18454,13 @@
     "resource_37f:02000754": {
       "name": "Scene_UpdateFormationActor14Flags",
       "source": "overlays/scene/story/scenario_dispatch.c"
+    },
+    "resource_37f:020000ec": {
+      "name": "SceneData_SelectFormationTable",
+      "source": "overlays/scene/story/scenario_dispatch.c"
+    },
+    "resource_37f:02000a24": {
+      "name": "Scene_RunFormationEntry"
     }
   }
 }

@@ -4,7 +4,7 @@
   "target": "gs1-en",
   "derivation": "full-c-progress-v1",
   "audit": "complete",
-  "total_union_bytes": 1354306,
+  "total_union_bytes": 1354956,
   "main": {
     "id": "main",
     "executable_bytes": 548368,
@@ -10539,8 +10539,8 @@
     {
       "id": "resource_37f",
       "decoded_bytes": 9884,
-      "executable_bytes": 6730,
-      "excluded_bytes": 3154,
+      "executable_bytes": 7380,
+      "excluded_bytes": 2504,
       "audit": "complete",
       "intervals": [
         {
@@ -10658,6 +10658,18 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33557112,
+          "end": 33557176,
+          "kind": "literal_pool",
+          "evidence": "Owner 0x02000a24 switch target table: 16 in-owner branch destinations loaded at 0x02000a70-0x02000a76; states 1-2, 3, 8, 11-13, 14-16 and default. Loader-runtime table words reviewed independently."
+        },
+        {
+          "start": 33557176,
+          "end": 33557722,
+          "kind": "thumb",
+          "evidence": "Reachable switch bodies of owner 0x02000a24, reconstructed from the 16-entry table and decoded through branches to its shared epilogue. Earlier assembly-listing audit mistook encoded instructions for data."
+        },
+        {
           "start": 33557722,
           "end": 33557730,
           "kind": "thumb",
@@ -10674,6 +10686,12 @@
           "end": 33557748,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+        },
+        {
+          "start": 33557748,
+          "end": 33557788,
+          "kind": "literal_pool",
+          "evidence": "Ten referenced trailing pool words of owner 0x02000a24, addressed by PC-relative loads at 0x02000ab8, 0x02000b20, 0x02000b28, 0x02000b30, 0x02000bc6, 0x02000bd4, 0x02000bee, 0x02000c06, 0x02000c78 and 0x02000c94."
         },
         {
           "start": 33557788,

@@ -11405,28 +11405,30 @@
     },
     "resource_377:02000088": {
       "name": "FacingTargetScene_GetScriptData",
-      "source": "overlays/scene/dialogue/facing_target/facing_target_scene.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:02000118": {
       "name": "FieldScene_RunActorCueBranch",
-      "source": "overlays/scene/dialogue/facing_target/scene_setup.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:020017b8": {
       "name": "FieldScene_RunSingleStep",
-      "source": "overlays/scene/dialogue/facing_target/shared.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:02000358": {
       "name": "FieldScene_RunStep7BThen4",
-      "source": "overlays/scene/dialogue/facing_target/scene_primary_script.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:02000094": {
       "name": "SceneData_SelectTableA1DCOrA198",
-      "source": "overlays/scene/dialogue/facing_target/scene_data.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
-    "resource_377:02000090": "overlays/scene/dialogue/facing_target/get_tertiary_default_result.c",
+    "resource_377:02000090": {
+      "source": "overlays/scene/dialogue/facing_target.c"
+    },
     "resource_377:02000ef8": {
       "name": "SceneDialogue_ShowLine1C13WithActor16Steps",
-      "source": "overlays/scene/dialogue/facing_target/scene_dialogue.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:02000578": {
       "name": "FieldScene_RunComplexActorSequence"
@@ -11436,126 +11438,126 @@
     },
     "resource_377:0200036c": {
       "name": "FieldScene_RunStep80Then5",
-      "source": "overlays/scene/dialogue/facing_target/scene_primary_script.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:020000b8": {
       "name": "SceneData_SelectTableByStoryFlags",
-      "source": "overlays/scene/dialogue/facing_target/scene_data.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:02000394": {
       "name": "FieldScene_RunStep80Then7",
-      "source": "overlays/scene/dialogue/facing_target/scene_primary_script.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:02000284": {
       "name": "SceneDialogue_RunActorFourteenDialogue11AA",
-      "source": "overlays/scene/dialogue/facing_target/actor_presentation.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:02001580": {
       "name": "OverlayObject_UpdateOnFrameParity",
-      "source": "overlays/scene/dialogue/facing_target/overlay_object.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:02000380": {
       "name": "FieldScene_RunStep7BThen6",
-      "source": "overlays/scene/dialogue/facing_target/scene_primary_script.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:02000330": {
       "name": "FieldScene_RunStep7BThen2",
-      "source": "overlays/scene/dialogue/facing_target/scene_primary_script.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:020003d0": {
       "name": "FieldScene_RunStep7BThen10",
-      "source": "overlays/scene/dialogue/facing_target/scene_primary_script.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:020017d4": {
       "name": "FieldScene_RunStep17",
-      "source": "overlays/scene/dialogue/facing_target/scene_primary_script.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:02000030": {
       "name": "SceneActor_UpdateFacingTowardTarget",
-      "source": "overlays/scene/dialogue/facing_target/actor_facing.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:020003e4": {
       "name": "SceneState_ApplyValues123And11",
-      "source": "overlays/scene/dialogue/facing_target/state_update.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:020017e4": {
       "name": "FieldScene_RunSixStepSequence17e4",
-      "source": "overlays/scene/dialogue/facing_target/scene_setup.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:02000f64": {
       "name": "SceneDialogue_RunActor16LineAndFlag81c",
-      "source": "overlays/scene/dialogue/facing_target/scene_dialogue.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:020002e0": {
       "name": "SceneState_SetWork448To521AndRun",
-      "source": "overlays/scene/dialogue/facing_target/state_update.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:02000160": {
       "name": "SceneData_SelectTableByStoryFlagsB",
-      "source": "overlays/scene/dialogue/facing_target/scene_data.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:020017c4": {
       "name": "FieldScene_RunActor8TwoStep",
-      "source": "overlays/scene/dialogue/facing_target/scene_setup.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:02000344": {
       "name": "SceneState_SetValue123Mode3",
-      "source": "overlays/scene/dialogue/facing_target/state_update.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:020013b4": {
       "name": "ActorPresentation_SetTwoSceneCells",
-      "source": "overlays/scene/dialogue/facing_target/actor_presentation.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:02001544": {
       "name": "SceneEffect_UpdateObjectByFrameParity",
-      "source": "overlays/scene/dialogue/facing_target/effect.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:02001638": {
       "name": "OverlayObject_UpdateArcFromAnchor",
-      "source": "overlays/scene/dialogue/facing_target/actor_effect_motion.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:02000f38": {
       "name": "SceneDialogue_RunActorThirteenDialogue",
-      "source": "overlays/scene/dialogue/facing_target/scene_dialogue.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:020015bc": {
       "name": "OverlayObject_ApplyRandomSlotOnOddFrames",
-      "source": "overlays/scene/dialogue/facing_target/overlay_object.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:0200031c": {
       "name": "SceneState_SetValue123Mode1",
-      "source": "overlays/scene/dialogue/facing_target/state_update.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:020003a8": {
       "name": "SceneState_SetValue129Mode8",
-      "source": "overlays/scene/dialogue/facing_target/state_update.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:020017a8": {
       "name": "SceneState_SetValue140Mode0",
-      "source": "overlays/scene/dialogue/facing_target/state_update.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:020015e8": {
       "name": "SceneEffect_UpdateAnchoredRiseFrame",
-      "source": "overlays/scene/dialogue/facing_target/effect.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:020003bc": {
       "name": "SceneState_SetValue129Mode9",
-      "source": "overlays/scene/dialogue/facing_target/state_update.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:02000f90": {
       "name": "RunEventScript01"
     },
     "resource_377:020001e0": {
       "name": "FieldScene_RunScene377_020001e0",
-      "source": "overlays/scene/dialogue/facing_target/scene_primary_script.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:02000e34": {
       "name": "FieldScene_RunScene377_02000e34",
-      "source": "overlays/scene/dialogue/facing_target/scene_primary_script.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_377:020013e4": {
       "name": "FieldScene_RunSupplementalSequenceOne",
-      "source": "overlays/scene/dialogue/facing_target/scene_primary_script.c"
+      "source": "overlays/scene/dialogue/facing_target.c"
     },
     "resource_378:020032a8": {
       "name": "IsActorFacingInward",

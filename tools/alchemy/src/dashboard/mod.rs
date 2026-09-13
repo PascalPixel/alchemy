@@ -16,7 +16,8 @@ use walkdir::WalkDir;
 const CLIENT: &str = include_str!("client.js");
 const STYLES: &str = include_str!("style.css");
 const TREES: [(&str, &str); 1] = [("rom", "ROM contents")];
-const COVERAGE_DIRS: [&str; 15] = [
+const COVERAGE_DIRS: [&str; 16] = [
+    "games/gs1/locations.tsv",
     "games/gs1/asm",
     "games/gs1/assets",
     "games/gs1/GRAPHICS",

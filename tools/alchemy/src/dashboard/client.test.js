@@ -1,5 +1,35 @@
 import { test, expect } from "bun:test";
 
+test("shared map files open their real folder and highlight without copying", async () => {
+  const source = await Bun.file(new URL("./client.js", import.meta.url)).text();
+  const path = "games/gs1/GRAPHICS/TILE/SHARED.PNG";
+  const selected = [], loads = [], classes = [];
+  const file = { getAttribute: () => path, classList: { add: name => classes.push(name) } };
+  const selection = { hidden: true, replaceChildren(...children) { this.children = children; } };
+  const chart = { dataset: { tree: "rom", folder: "games/gs1/SRC/FIELD/XIAN/" }, clientWidth: 540,
+    querySelector: () => ({ getAttribute: () => JSON.stringify([path]) }), querySelectorAll: () => [file] };
+  const panel = { querySelector: name => name === ".chart" ? chart : name === ".viewer-selection" ? selection : {} };
+  class Element {
+    constructor(action) { this.action = action; }
+    closest(name) { return name === ".panel" ? panel : name === "[data-action]" ? this : null; }
+    getAttribute(name) { return name === "data-action" ? this.action : path; }
+  }
+  const activate = new Function("Element", "h", "showSelection", "loadTree", "hideTooltip", "showError",
+    source.slice(source.indexOf("async function activateTile"), source.indexOf("function showSelection")) + ";return activateTile;")(
+      Element, (...args) => args, (_, tile) => selected.push(tile), async (...args) => loads.push(args), () => {}, error => { throw error; });
+  await activate({ type: "keydown", key: "Enter", target: new Element("shared"), preventDefault() {} });
+  expect(selection.hidden).toBe(false);
+  expect(JSON.stringify(selection.children)).toContain(path);
+  expect(loads).toHaveLength(0);
+  await activate({ type: "keydown", key: "Enter", target: new Element("open-shared"), preventDefault() {} });
+  expect(loads).toHaveLength(0);
+  await activate({ type: "click", target: new Element("open-shared"), preventDefault() {} });
+  expect(chart.dataset.folder).toBe("games/gs1/GRAPHICS/TILE/");
+  expect(loads).toHaveLength(1);
+  expect(selected).toEqual([file]);
+  expect(classes).toEqual(["shared-highlight"]);
+});
+
 async function coverageClient() {
   const source = await Bun.file(new URL("./client.js", import.meta.url)).text();
   class Element {

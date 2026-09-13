@@ -16100,7 +16100,8 @@
       "source": "overlays/scene/story/scenario_dispatch.c"
     },
     "resource_37f:0200161c": {
-      "name": "RunEventScript02"
+      "name": "Scene_RunTransitionCue",
+      "source": "overlays/scene/story/scenario_dispatch/transition_cue.c"
     },
     "resource_37f:02000d1c": {
       "name": "FieldScene_RunScene37f_02000d1c",

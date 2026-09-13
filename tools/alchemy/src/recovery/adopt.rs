@@ -425,10 +425,9 @@ fn register_adoption(
         }
     }
 
-    // A draft the adoption supersedes leaves the tree, and with it any
-    // retained translation unit whose source it was: a unit pointing at a
-    // deleted file fails every later register check. A unit that also owns
-    // bytes outside the span is not this adoption's to retire.
+    // Move a superseded draft's unit with its source: its absolute bindings
+    // are still required by the installed C. A unit owning bytes outside
+    // this adoption must be split before it can move.
     let mut removed_drafts = Vec::new();
     for (stem, draft) in stems.iter().zip(drafts) {
         if draft.exists() {
@@ -441,7 +440,7 @@ fn register_adoption(
         let (mut document, _) = read_json(units)?;
         if let Some(list) = document.get_mut("units").and_then(Value::as_array_mut) {
             let mut kept = Vec::new();
-            for unit in list.drain(..) {
+            for mut unit in list.drain(..) {
                 let source = unit["source"].as_str().unwrap_or("");
                 if !removed_drafts.iter().any(|d| d == source) {
                     kept.push(unit);
@@ -462,10 +461,12 @@ fn register_adoption(
                         unit["id"], request.owner, end
                     ));
                 }
+                adopt_unit_source(&mut unit, root, destination)?;
                 report.push(format!(
-                    "translation unit retired: {}",
+                    "translation unit adopted: {}",
                     unit["id"].as_str().unwrap_or("?")
                 ));
+                kept.push(unit);
             }
             *list = kept;
         }
@@ -594,9 +595,45 @@ pub fn repeatable(root: &Path, source: &Path, owner: &str, span: u32) -> Result<
     ))
 }
 
+fn adopt_unit_source(unit: &mut Value, root: &Path, destination: &Path) -> Result<(), String> {
+    unit["source"] = Value::String(
+        destination
+            .strip_prefix(root)
+            .map_err(|e| e.to_string())?
+            .to_string_lossy()
+            .into_owned(),
+    );
+    if let Some(owners) = unit["owners"].as_array_mut() {
+        for owner in owners {
+            owner["state"] = Value::String("exact-c".into());
+        }
+    }
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn adopted_unit_keeps_absolute_bindings() {
+        let mut unit = serde_json::json!({
+            "source": "draft.c",
+            "absolute_symbols": {"CallAlias": {"address": "0x02009c84", "kind": "thumb"}},
+            "owners": [{"address": "0x0200161c", "extent": 420, "state": "retained-assembly"}]
+        });
+        let bindings = unit["absolute_symbols"].clone();
+        adopt_unit_source(
+            &mut unit,
+            Path::new("/repo"),
+            Path::new("/repo/src/scene.c"),
+        )
+        .unwrap();
+        assert_eq!(unit["source"], "src/scene.c");
+        assert_eq!(unit["absolute_symbols"], bindings);
+        assert_eq!(unit["owners"][0]["state"], "exact-c");
+        assert_eq!(unit["owners"][0]["extent"], 420);
+    }
 
     #[test]
     fn source_registration_preserves_call_via() {

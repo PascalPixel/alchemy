@@ -1299,54 +1299,50 @@
 <rect data-content-type="Sprite sheets" x="109.32322714123677" y="157.39551537629777" width="6.65691231194128" height="10.442695014436085" style="fill:#b5a0de"/>
 </g>
 </g>
-<g aria-label="characters_chr_081e_index.json · components · 0x081e120c: 85,692 bytes · 11 items" data-node="container" data-kind="file" data-bytes="85692" data-address="0x081e120c" data-source="games/gs1/assets/graphics/characters_chr_081e_index.json">
-<title>characters_chr_081e_index.json · components · 0x081e120c: 85,692 bytes · 11 items</title>
+<g aria-label="characters_chr_081e_index.json · components · 0x081e120c: 85,692 bytes · 10 items" data-node="container" data-kind="file" data-bytes="85692" data-address="0x081e120c" data-source="games/gs1/assets/graphics/characters_chr_081e_index.json">
+<title>characters_chr_081e_index.json · components · 0x081e120c: 85,692 bytes · 10 items</title>
 <rect class="container-frame" x="63.90475860993026" y="170.33821039073385" width="54.57538084324778" height="18.119725803590548" fill="#1f7f93"/>
 <path class="bevel-light" d="M63.90475860993026 188.4579361943244 V170.33821039073385 H118.48013945317804" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <path class="bevel-dark" d="M63.90475860993026 188.4579361943244 H118.48013945317804 V170.33821039073385" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="Container data · 0x081f60c4: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x081f60c4">
-<title>Container data · 0x081f60c4: 4 bytes</title>
-<rect data-content-type="Other data" x="65.90626070842" y="172.3397124892236" width="5.544871683225539" height="0.0030041969794873504" style="fill:#bda995"/>
+<g aria-label="Container data · 0x081f4968: 5,984 bytes" data-node="leaf" data-kind="file" data-bytes="5984" data-address="0x081f4968">
+<title>Container data · 0x081f4968: 5,984 bytes</title>
+<rect data-content-type="Other data" x="66.40475860993027" y="172.83821039073385" width="8.077269259314182" height="4.4936566455582465" style="fill:#bda995"/>
 </g>
 <g aria-label="battle_characters_chr_02e_koma.8bpp.png · 0x081e120c: 9,396 bytes" data-node="leaf" data-kind="file" data-bytes="9396" data-address="0x081e120c" data-source="games/gs1/assets/graphics/battle_characters_chr_02e_koma.8bpp.png">
 <title>battle_characters_chr_02e_koma.8bpp.png · 0x081e120c: 9,396 bytes</title>
-<rect data-content-type="Sprite sheets" x="66.40475860993027" y="172.84421878469283" width="4.5478758802050265" height="13.113717409631573" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="66.40475860993027" y="178.3318670362921" width="8.077269259314182" height="7.626069158032301" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_02f_koma.8bpp.png · 0x081e36c0: 7,948 bytes" data-node="leaf" data-kind="file" data-bytes="7948" data-address="0x081e36c0" data-source="games/gs1/assets/graphics/battle_characters_chr_02f_koma.8bpp.png">
 <title>battle_characters_chr_02f_koma.8bpp.png · 0x081e36c0: 7,948 bytes</title>
-<rect data-content-type="Sprite sheets" x="71.9526344901353" y="172.83821039073385" width="3.690906116581867" height="13.119725803590548" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="75.48202786924445" y="172.83821039073385" width="3.690906116581867" height="13.119725803590548" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_030_koma.8bpp.png · 0x081e55cc: 7,268 bytes" data-node="leaf" data-kind="file" data-bytes="7268" data-address="0x081e55cc" data-source="games/gs1/assets/graphics/battle_characters_chr_030_koma.8bpp.png">
 <title>battle_characters_chr_030_koma.8bpp.png · 0x081e55cc: 7,268 bytes</title>
-<rect data-content-type="Sprite sheets" x="76.64354060671717" y="172.83821039073385" width="8.825642303580135" height="5.164233970476699" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="80.17293398582632" y="172.83821039073385" width="8.825642303580135" height="5.164233970476699" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_032_koma.8bpp.png · 0x081e9880: 9,380 bytes" data-node="leaf" data-kind="file" data-bytes="9380" data-address="0x081e9880" data-source="games/gs1/assets/graphics/battle_characters_chr_032_koma.8bpp.png">
 <title>battle_characters_chr_032_koma.8bpp.png · 0x081e9880: 9,380 bytes</title>
-<rect data-content-type="Sprite sheets" x="76.64354060671717" y="179.00244436121054" width="8.825642303580135" height="6.955491833113848" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="80.17293398582632" y="179.00244436121054" width="8.825642303580135" height="6.955491833113848" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_033_koma.8bpp.png · 0x081ebd24: 10,208 bytes" data-node="leaf" data-kind="file" data-bytes="10208" data-address="0x081ebd24" data-source="games/gs1/assets/graphics/battle_characters_chr_033_koma.8bpp.png">
 <title>battle_characters_chr_033_koma.8bpp.png · 0x081ebd24: 10,208 bytes</title>
-<rect data-content-type="Sprite sheets" x="86.46918291029729" y="172.83821039073385" width="10.371965155296856" height="6.480494135512368" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="89.99857628940646" y="172.83821039073385" width="10.371965155296856" height="6.480494135512368" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_034_koma.8bpp.png · 0x081ee504: 9,060 bytes" data-node="leaf" data-kind="file" data-bytes="9060" data-address="0x081ee504" data-source="games/gs1/assets/graphics/battle_characters_chr_034_koma.8bpp.png">
 <title>battle_characters_chr_034_koma.8bpp.png · 0x081ee504: 9,060 bytes</title>
-<rect data-content-type="Sprite sheets" x="86.46918291029729" y="180.31870452624622" width="10.371965155296856" height="5.63923166807818" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="89.99857628940646" y="180.31870452624622" width="10.371965155296856" height="5.63923166807818" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_035_koma.8bpp.png · 0x081f0868: 9,092 bytes" data-node="leaf" data-kind="file" data-bytes="9092" data-address="0x081f0868" data-source="games/gs1/assets/graphics/battle_characters_chr_035_koma.8bpp.png">
 <title>battle_characters_chr_035_koma.8bpp.png · 0x081f0868: 9,092 bytes</title>
-<rect data-content-type="Sprite sheets" x="97.84114806559415" y="172.83821039073385" width="4.366094415194054" height="13.119725803590548" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="101.37054144470332" y="172.83821039073385" width="4.366094415194053" height="13.119725803590548" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_036_koma.8bpp.png · 0x081f2bec: 7,548 bytes" data-node="leaf" data-kind="file" data-bytes="7548" data-address="0x081f2bec" data-source="games/gs1/assets/graphics/battle_characters_chr_036_koma.8bpp.png">
 <title>battle_characters_chr_036_koma.8bpp.png · 0x081f2bec: 7,548 bytes</title>
-<rect data-content-type="Sprite sheets" x="103.20724248078821" y="172.83821039073385" width="12.77289697238984" height="3.567007643362249" style="fill:#b5a0de"/>
-</g>
-<g aria-label="battle_characters_chr_037_koma.8bpp.png · 0x081f4968: 5,980 bytes" data-node="leaf" data-kind="file" data-bytes="5980" data-address="0x081f4968" data-source="games/gs1/assets/graphics/battle_characters_chr_037_koma.8bpp.png">
-<title>battle_characters_chr_037_koma.8bpp.png · 0x081f4968: 5,980 bytes</title>
-<rect data-content-type="Sprite sheets" x="103.20724248078821" y="177.4052180340961" width="4.216742075936867" height="8.552718160228299" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="106.73663585989738" y="172.83821039073385" width="9.243503593280685" height="5.140567548139056" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_thunder-lizard_koma.8bpp.png · 0x081e7230: 9,808 bytes" data-node="leaf" data-kind="file" data-bytes="9808" data-address="0x081e7230" data-source="games/gs1/assets/graphics/battle_characters_thunder-lizard_koma.8bpp.png">
 <title>battle_characters_thunder-lizard_koma.8bpp.png · 0x081e7230: 9,808 bytes</title>
-<rect data-content-type="Sprite sheets" x="108.42398455672507" y="177.4052180340961" width="7.5561548964529734" height="8.552718160228299" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="106.73663585989738" y="178.9787779388729" width="9.243503593280685" height="6.979158255451492" style="fill:#b5a0de"/>
 </g>
 </g>
 <g aria-label="characters_chr_081f_index.json · components · 0x081f60c8: 172,184 bytes · 17 items" data-node="container" data-kind="file" data-bytes="172184" data-address="0x081f60c8" data-source="games/gs1/assets/graphics/characters_chr_081f_index.json">
@@ -1354,9 +1350,9 @@
 <rect class="container-frame" x="40.30558257039854" y="188.45793619432442" width="78.1745568827795" height="25.417655069862562" fill="#1f7f93"/>
 <path class="bevel-light" d="M40.30558257039854 213.875591264187 V188.45793619432442 H118.48013945317804" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <path class="bevel-dark" d="M40.30558257039854 213.875591264187 H118.48013945317804 V188.45793619432442" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="battle_characters_chr_038_koma.8bpp.png · 0x081f60c8: 1,820 bytes" data-node="leaf" data-kind="file" data-bytes="1820" data-address="0x081f60c8" data-source="games/gs1/assets/graphics/battle_characters_chr_038_koma.8bpp.png">
-<title>battle_characters_chr_038_koma.8bpp.png · 0x081f60c8: 1,820 bytes</title>
-<rect data-content-type="Sprite sheets" x="42.80558257039854" y="190.95793619432442" width="1.6550944225039737" height="5.324489930193252" style="fill:#b5a0de"/>
+<g aria-label="Container data · 0x081f60c8: 1,820 bytes" data-node="leaf" data-kind="file" data-bytes="1820" data-address="0x081f60c8">
+<title>Container data · 0x081f60c8: 1,820 bytes</title>
+<rect data-content-type="Other data" x="42.80558257039854" y="190.95793619432442" width="1.6550944225039737" height="5.324489930193252" style="fill:#bda995"/>
 </g>
 <g aria-label="battle_characters_chr_039_koma.8bpp.png · 0x081f67e4: 10,000 bytes" data-node="leaf" data-kind="file" data-bytes="10000" data-address="0x081f67e4" data-source="games/gs1/assets/graphics/battle_characters_chr_039_koma.8bpp.png">
 <title>battle_characters_chr_039_koma.8bpp.png · 0x081f67e4: 10,000 bytes</title>
@@ -1428,575 +1424,519 @@
 <rect class="container-frame" x="40.30558257039854" y="213.875591264187" width="26.98479934028295" height="70.12440873581303" fill="#1f7f93"/>
 <path class="bevel-light" d="M40.30558257039854 284 V213.875591264187 H67.29038191068149" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <path class="bevel-dark" d="M40.30558257039854 284 H67.29038191068149 V213.875591264187" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="Container data · 0x082a75d4: 8,752 bytes" data-node="leaf" data-kind="file" data-bytes="8752" data-address="0x082a75d4">
+<title>Container data · 0x082a75d4: 8,752 bytes</title>
+<rect data-content-type="Other data" x="42.80558257039854" y="216.375591264187" width="7.1660752708899" height="8.933817122780782" style="fill:#bda995"/>
+</g>
+<g aria-label="Container data · 0x082b4440: 1,496 bytes" data-node="leaf" data-kind="file" data-bytes="1496" data-address="0x082b4440">
+<title>Container data · 0x082b4440: 1,496 bytes</title>
+<rect data-content-type="Other data" x="42.80558257039854" y="226.3094083869678" width="4.031486245984881" height="1.7558624284862603" style="fill:#bda995"/>
+</g>
 <g aria-label="battle_characters_bandit_koma.8bpp.png · 0x082b4b8c: 560 bytes" data-node="leaf" data-kind="file" data-bytes="560" data-address="0x082b4b8c" data-source="games/gs1/assets/graphics/battle_characters_bandit_koma.8bpp.png">
 <title>battle_characters_bandit_koma.8bpp.png · 0x082b4b8c: 560 bytes</title>
-<rect data-content-type="Sprite sheets" x="42.592115695301324" y="216.16212438908977" width="0.5730662498055645" height="3.9556533296328045" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="47.80792982870821" y="226.28026939929256" width="0.9417220246495768" height="1.8141404038366835" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_017_koma.8bpp.png · 0x082b4a18: 372 bytes" data-node="leaf" data-kind="file" data-bytes="372" data-address="0x082b4a18" data-source="games/gs1/assets/graphics/battle_characters_chr_017_koma.8bpp.png">
 <title>battle_characters_chr_017_koma.8bpp.png · 0x082b4a18: 372 bytes</title>
-<rect data-content-type="Sprite sheets" x="42.592115695301324" y="220.69084396852813" width="0.5730662498055645" height="2.435297470821352" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="49.533299109584036" y="226.12219463086925" width="0.625572487802933" height="2.130289940683327" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_05a_koma.8bpp.png · 0x08299f7c: 6,016 bytes" data-node="leaf" data-kind="file" data-bytes="6016" data-address="0x08299f7c" data-source="games/gs1/assets/graphics/battle_characters_chr_05a_koma.8bpp.png">
 <title>battle_characters_chr_05a_koma.8bpp.png · 0x08299f7c: 6,016 bytes</title>
-<rect data-content-type="Sprite sheets" x="43.95171507000967" y="216.375591264187" width="6.398211499635785" height="6.5370833000652855" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="50.97165784128844" y="216.375591264187" width="3.3941957808294854" height="11.689679551267043" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_05b_koma.8bpp.png · 0x0829d354: 7,016 bytes" data-node="leaf" data-kind="file" data-bytes="7016" data-address="0x0829d354" data-source="games/gs1/assets/graphics/battle_characters_chr_05b_koma.8bpp.png">
 <title>battle_characters_chr_05b_koma.8bpp.png · 0x0829d354: 7,016 bytes</title>
-<rect data-content-type="Sprite sheets" x="42.80558257039854" y="223.91267456425228" width="7.544343999246914" height="6.610848651879396" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="55.365853622117925" y="216.375591264187" width="9.424528288563565" height="5.238144039496186" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_05c_koma.8bpp.png · 0x0829b6fc: 7,256 bytes" data-node="leaf" data-kind="file" data-bytes="7256" data-address="0x0829b6fc" data-source="games/gs1/assets/graphics/battle_characters_chr_05c_koma.8bpp.png">
 <title>battle_characters_chr_05c_koma.8bpp.png · 0x0829b6fc: 7,256 bytes</title>
-<rect data-content-type="Sprite sheets" x="51.349926569645454" y="216.375591264187" width="13.440455341036037" height="3.6573472136996017" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="55.365853622117925" y="222.61373530368317" width="9.424528288563565" height="5.451535511770857" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_05d_koma.8bpp.png · 0x08298758: 6,180 bytes" data-node="leaf" data-kind="file" data-bytes="6180" data-address="0x08298758" data-source="games/gs1/assets/graphics/battle_characters_chr_05d_koma.8bpp.png">
 <title>battle_characters_chr_05d_koma.8bpp.png · 0x08298758: 6,180 bytes</title>
-<rect data-content-type="Sprite sheets" x="51.349926569645454" y="221.0329384778866" width="4.4602309108910125" height="9.49058473824508" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="42.80558257039854" y="229.06527081545403" width="8.502771436243664" height="5.027822035434518" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0a7_koma.8bpp.png · 0x0828cfd8: 10,164 bytes" data-node="leaf" data-kind="file" data-bytes="10164" data-address="0x0828cfd8" data-source="games/gs1/assets/graphics/battle_characters_chr_0a7_koma.8bpp.png">
 <title>battle_characters_chr_0a7_koma.8bpp.png · 0x0828cfd8: 10,164 bytes</title>
-<rect data-content-type="Sprite sheets" x="56.81015748053647" y="221.0329384778866" width="7.980224430145025" height="9.49058473824508" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="42.80558257039854" y="235.09309285088855" width="8.502771436243664" height="8.913718959248614" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0a8_koma.8bpp.png · 0x0828f78c: 6,876 bytes" data-node="leaf" data-kind="file" data-bytes="6876" data-address="0x0828f78c" data-source="games/gs1/assets/graphics/battle_characters_chr_0a8_koma.8bpp.png">
 <title>battle_characters_chr_0a8_koma.8bpp.png · 0x0828f78c: 6,876 bytes</title>
-<rect data-content-type="Sprite sheets" x="42.80558257039854" y="231.52352321613168" width="6.762208855139804" height="7.210559909471726" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="52.308354006642205" y="229.06527081545403" width="12.482027904039287" height="3.7271880230913066" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0a9_koma.8bpp.png · 0x08291268: 7,320 bytes" data-node="leaf" data-kind="file" data-bytes="7320" data-address="0x08291268" data-source="games/gs1/assets/graphics/battle_characters_chr_0a9_koma.8bpp.png">
 <title>battle_characters_chr_0a9_koma.8bpp.png · 0x08291268: 7,320 bytes</title>
-<rect data-content-type="Sprite sheets" x="42.80558257039854" y="239.7340831256034" width="6.762208855139804" height="7.740735680240409" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="52.308354006642205" y="233.79245883854534" width="5.0500517568396015" height="10.214352971591826" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0aa_koma.8bpp.png · 0x08292f00: 8,992 bytes" data-node="leaf" data-kind="file" data-bytes="8992" data-address="0x08292f00" data-source="games/gs1/assets/graphics/battle_characters_chr_0aa_koma.8bpp.png">
 <title>battle_characters_chr_0aa_koma.8bpp.png · 0x08292f00: 8,992 bytes</title>
-<rect data-content-type="Sprite sheets" x="50.567791425538346" y="231.52352321613168" width="14.222590485143147" height="4.475073632998977" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="58.358405763481805" y="233.79245883854534" width="6.431976147199685" height="10.214352971591826" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0ab_koma.8bpp.png · 0x08295220: 13,624 bytes" data-node="leaf" data-kind="file" data-bytes="13624" data-address="0x08295220" data-source="games/gs1/assets/graphics/battle_characters_chr_0ab_koma.8bpp.png">
 <title>battle_characters_chr_0ab_koma.8bpp.png · 0x08295220: 13,624 bytes</title>
-<rect data-content-type="Sprite sheets" x="50.567791425538346" y="236.99859684913065" width="10.003425974617478" height="10.476221956713157" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="42.80558257039854" y="245.00681181013718" width="10.324337457469904" height="10.151006338624784" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0bb_koma.8bpp.png · 0x082aa540: 5,224 bytes" data-node="leaf" data-kind="file" data-bytes="5224" data-address="0x082aa540" data-source="games/gs1/assets/graphics/battle_characters_chr_0bb_koma.8bpp.png">
 <title>battle_characters_chr_0bb_koma.8bpp.png · 0x082aa540: 5,224 bytes</title>
-<rect data-content-type="Sprite sheets" x="61.571217400155824" y="236.99859684913065" width="3.219164510525669" height="10.476221956713157" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="42.80558257039854" y="256.157818148762" width="5.869291555715603" height="6.048771769541739" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0bd_koma.8bpp.png · 0x082a9804: 3,388 bytes" data-node="leaf" data-kind="file" data-bytes="3388" data-address="0x082a9804" data-source="games/gs1/assets/graphics/battle_characters_chr_0bd_koma.8bpp.png">
 <title>battle_characters_chr_0bd_koma.8bpp.png · 0x082a9804: 3,388 bytes</title>
-<rect data-content-type="Sprite sheets" x="42.80558257039854" y="248.47481880584382" width="9.721235803094164" height="1.9290095247448513" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="49.67487412611415" y="256.157818148762" width="3.4550459017543007" height="6.048771769541739" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0be_koma.8bpp.png · 0x0829eebc: 7,284 bytes" data-node="leaf" data-kind="file" data-bytes="7284" data-address="0x0829eebc" data-source="games/gs1/assets/graphics/battle_characters_chr_0be_koma.8bpp.png">
 <title>battle_characters_chr_0be_koma.8bpp.png · 0x0829eebc: 7,284 bytes</title>
-<rect data-content-type="Sprite sheets" x="42.80558257039854" y="251.40382833058868" width="9.721235803094164" height="5.297197573270809" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="54.129920027868444" y="245.00681181013718" width="6.724154633904168" height="7.740599234687242" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0bf_koma.8bpp.png · 0x082a0b30: 3,712 bytes" data-node="leaf" data-kind="file" data-bytes="3712" data-address="0x082a0b30" data-source="games/gs1/assets/graphics/battle_characters_chr_0bf_koma.8bpp.png">
 <title>battle_characters_chr_0bf_koma.8bpp.png · 0x082a0b30: 3,712 bytes</title>
-<rect data-content-type="Sprite sheets" x="42.80558257039854" y="257.7010259038595" width="4.653015241631468" height="5.086253557911379" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="61.854074661772614" y="245.00681181013718" width="2.9363072489088795" height="7.740599234687242" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0c0_koma.8bpp.png · 0x082a19b0: 3,328 bytes" data-node="leaf" data-kind="file" data-bytes="3328" data-address="0x082a19b0" data-source="games/gs1/assets/graphics/battle_characters_chr_0c0_koma.8bpp.png">
 <title>battle_characters_chr_0c0_koma.8bpp.png · 0x082a19b0: 3,328 bytes</title>
-<rect data-content-type="Sprite sheets" x="48.45859781203001" y="257.7010259038595" width="4.068220561462696" height="5.086253557911379" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="54.129920027868444" y="253.74741104482442" width="4.636216533608458" height="4.472904605517916" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0c1_koma.8bpp.png · 0x082a26b0: 2,424 bytes" data-node="leaf" data-kind="file" data-bytes="2424" data-address="0x082a26b0" data-source="games/gs1/assets/graphics/battle_characters_chr_0c1_koma.8bpp.png">
 <title>battle_characters_chr_0c1_koma.8bpp.png · 0x082a26b0: 2,424 bytes</title>
-<rect data-content-type="Sprite sheets" x="53.5268183734927" y="248.47481880584382" width="2.467904574678677" height="5.478697568736751" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="54.129920027868444" y="259.22031565034234" width="4.636216533608458" height="2.986274267961366" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0c2_koma.8bpp.png · 0x082a3028: 6,148 bytes" data-node="leaf" data-kind="file" data-bytes="6148" data-address="0x082a3028" data-source="games/gs1/assets/graphics/battle_characters_chr_0c2_koma.8bpp.png">
 <title>battle_characters_chr_0c2_koma.8bpp.png · 0x082a3028: 6,148 bytes</title>
-<rect data-content-type="Sprite sheets" x="56.99472294817138" y="248.47481880584382" width="7.79565896251011" height="5.478697568736751" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="59.7661365614769" y="253.74741104482442" width="5.024245349204589" height="8.459178873479281" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0c3_koma.8bpp.png · 0x082a482c: 4,196 bytes" data-node="leaf" data-kind="file" data-bytes="4196" data-address="0x082a482c" data-source="games/gs1/assets/graphics/battle_characters_chr_0c3_koma.8bpp.png">
 <title>battle_characters_chr_0c3_koma.8bpp.png · 0x082a482c: 4,196 bytes</title>
-<rect data-content-type="Sprite sheets" x="53.5268183734927" y="254.95351637458057" width="4.55679607229225" height="5.998955799443061" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="42.80558257039854" y="263.2065899183037" width="4.8231069877934045" height="5.6788692321845575" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0c4_koma.8bpp.png · 0x082a5890: 1,100 bytes" data-node="leaf" data-kind="file" data-bytes="1100" data-address="0x082a5890" data-source="games/gs1/assets/graphics/battle_characters_chr_0c4_koma.8bpp.png">
 <title>battle_characters_chr_0c4_koma.8bpp.png · 0x082a5890: 1,100 bytes</title>
-<rect data-content-type="Sprite sheets" x="53.48552019542951" y="261.91117399596044" width="4.6393924284186365" height="0.9174036438736137" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="48.600603494176205" y="263.17850385428795" width="4.457395292114394" height="0.9438278719685268" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0c5_koma.8bpp.png · 0x082a5cdc: 2,792 bytes" data-node="leaf" data-kind="file" data-bytes="2792" data-address="0x082a5cdc" data-source="games/gs1/assets/graphics/battle_characters_chr_0c5_koma.8bpp.png">
 <title>battle_characters_chr_0c5_koma.8bpp.png · 0x082a5cdc: 2,792 bytes</title>
-<rect data-content-type="Sprite sheets" x="59.08361444578495" y="254.95351637458057" width="5.706767464896537" height="2.8585523372082733" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="48.628689558191944" y="265.0942456622407" width="4.4012231640829205" height="3.7912134882475037" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0c6_koma.8bpp.png · 0x082a67c4: 3,600 bytes" data-node="leaf" data-kind="file" data-bytes="3600" data-address="0x082a67c4" data-source="games/gs1/assets/graphics/battle_characters_chr_0c6_koma.8bpp.png">
 <title>battle_characters_chr_0c6_koma.8bpp.png · 0x082a67c4: 3,600 bytes</title>
-<rect data-content-type="Sprite sheets" x="59.08361444578495" y="258.81206871178887" width="5.706767464896537" height="3.975210749982015" style="fill:#b5a0de"/>
-</g>
-<g aria-label="battle_characters_chr_0c7_koma.8bpp.png · 0x082a75d4: 8,752 bytes" data-node="leaf" data-kind="file" data-bytes="8752" data-address="0x082a75d4" data-source="games/gs1/assets/graphics/battle_characters_chr_0c7_koma.8bpp.png">
-<title>battle_characters_chr_0c7_koma.8bpp.png · 0x082a75d4: 8,752 bytes</title>
-<rect data-content-type="Sprite sheets" x="42.80558257039854" y="263.7872794617709" width="9.760317663742498" height="6.53883861860531" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="42.80558257039854" y="269.88545915048826" width="10.224330151876325" height="1.9727904594293286" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0c8_koma.8bpp.png · 0x082ac654: 10,560 bytes" data-node="leaf" data-kind="file" data-bytes="10560" data-address="0x082ac654" data-source="games/gs1/assets/graphics/battle_characters_chr_0c8_koma.8bpp.png">
 <title>battle_characters_chr_0c8_koma.8bpp.png · 0x082ac654: 10,560 bytes</title>
-<rect data-content-type="Sprite sheets" x="42.80558257039854" y="271.3261180803762" width="9.760317663742498" height="8.09622209923127" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="42.80558257039854" y="272.8582496099176" width="9.151501062334189" height="8.641750390082455" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0ca_koma.8bpp.png · 0x082abeb0: 1,116 bytes" data-node="leaf" data-kind="file" data-bytes="1116" data-address="0x082abeb0" data-source="games/gs1/assets/graphics/battle_characters_chr_0ca_koma.8bpp.png">
 <title>battle_characters_chr_0ca_koma.8bpp.png · 0x082abeb0: 1,116 bytes</title>
-<rect data-content-type="Sprite sheets" x="42.80558257039854" y="280.4223401796075" width="3.978654441433096" height="1.0776598203925971" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="52.725290905118264" y="272.62645688230316" width="0.536414544771068" height="9.105335845311387" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0cb_koma.8bpp.png · 0x082ac30c: 840 bytes" data-node="leaf" data-kind="file" data-bytes="840" data-address="0x082ac30c" data-source="games/gs1/assets/graphics/battle_characters_chr_0cb_koma.8bpp.png">
 <title>battle_characters_chr_0cb_koma.8bpp.png · 0x082ac30c: 840 bytes</title>
-<rect data-content-type="Sprite sheets" x="47.784237011831635" y="280.4223401796075" width="2.747374310756094" height="1.0776598203925971" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="53.7852666792385" y="262.9619438752673" width="7.1118184118918535" height="0.510707913927256" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0cc_koma.8bpp.png · 0x082aef94: 456 bytes" data-node="leaf" data-kind="file" data-bytes="456" data-address="0x082aef94" data-source="games/gs1/assets/graphics/battle_characters_chr_0cc_koma.8bpp.png">
 <title>battle_characters_chr_0cc_koma.8bpp.png · 0x082aef94: 456 bytes</title>
-<rect data-content-type="Sprite sheets" x="51.53161132258773" y="280.4223401796075" width="1.034288911553308" height="1.0776598203925971" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="61.407793005057606" y="262.9619438752673" width="3.6272349486602606" height="0.510707913927256" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0cd_koma.8bpp.png · 0x082b0fb8: 11,972 bytes" data-node="leaf" data-kind="file" data-bytes="11972" data-address="0x082b0fb8" data-source="games/gs1/assets/graphics/battle_characters_chr_0cd_koma.8bpp.png">
 <title>battle_characters_chr_0cd_koma.8bpp.png · 0x082b0fb8: 11,972 bytes</title>
-<rect data-content-type="Sprite sheets" x="53.56590023414104" y="263.7872794617709" width="11.224481676540453" height="8.077337531753635" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="54.029912722274865" y="264.2280057461582" width="10.760469188406626" height="8.435486335705416" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0cf_koma.8bpp.png · 0x082af1d4: 7,652 bytes" data-node="leaf" data-kind="file" data-bytes="7652" data-address="0x082af1d4" data-source="games/gs1/assets/graphics/battle_characters_chr_0cf_koma.8bpp.png">
 <title>battle_characters_chr_0cf_koma.8bpp.png · 0x082af1d4: 7,652 bytes</title>
-<rect data-content-type="Sprite sheets" x="53.56590023414104" y="272.8646169935245" width="6.360854091036162" height="8.635383006475543" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="54.029912722274865" y="273.66349208186364" width="7.026320926657821" height="7.836507918136412" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0d1_koma.8bpp.png · 0x082b3f84: 244 bytes" data-node="leaf" data-kind="file" data-bytes="244" data-address="0x082b3f84" data-source="games/gs1/assets/graphics/battle_characters_chr_0d1_koma.8bpp.png">
 <title>battle_characters_chr_0d1_koma.8bpp.png · 0x082b3f84: 244 bytes</title>
-<rect data-content-type="Sprite sheets" x="60.66654326144864" y="272.604405929796" width="1.8783087809096073" height="0.4795778725428731" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="61.74417345418572" y="273.3514318871167" width="0.37587961050606783" height="2.632504545893183" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0d2_koma.8bpp.png · 0x082b4078: 968 bytes" data-node="leaf" data-kind="file" data-bytes="968" data-address="0x082b4078" data-source="games/gs1/assets/graphics/battle_characters_chr_0d2_koma.8bpp.png">
 <title>battle_characters_chr_0d2_koma.8bpp.png · 0x082b4078: 968 bytes</title>
-<rect data-content-type="Sprite sheets" x="60.9267543251772" y="273.8237727386103" width="1.3578866534524803" height="2.8051752509959114" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="62.807992869944826" y="273.66349208186364" width="1.9823890407366695" height="2.008384156399251" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_killer-ape_koma.8bpp.png · 0x082ab9a8: 1,288 bytes" data-node="leaf" data-kind="file" data-bytes="1288" data-address="0x082ab9a8" data-source="games/gs1/assets/graphics/battle_characters_killer-ape_koma.8bpp.png">
 <title>battle_characters_killer-ape_koma.8bpp.png · 0x082ab9a8: 1,288 bytes</title>
-<rect data-content-type="Sprite sheets" x="63.28464097862968" y="272.8646169935245" width="1.5057409320518103" height="3.7643309960816573" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="62.05623364893269" y="276.6718762382629" width="2.734148261748805" height="2.1970287074605896" style="fill:#b5a0de"/>
 </g>
 <g aria-label="field_characters_chr_018_koma.8bpp.png · 0x082b4dbc: 676 bytes" data-node="leaf" data-kind="file" data-bytes="676" data-address="0x082b4dbc" data-source="games/gs1/assets/graphics/field_characters_chr_018_koma.8bpp.png">
 <title>field_characters_chr_018_koma.8bpp.png · 0x082b4dbc: 676 bytes</title>
-<rect data-content-type="Sprite sheets" x="60.74882310051232" y="277.4510167649413" width="4.219490034834051" height="0.6441375506702399" style="fill:#b5a0de"/>
-</g>
-<g aria-label="field_characters_chr_01c_koma.8bpp.png · 0x082b4440: 1,496 bytes" data-node="leaf" data-kind="file" data-bytes="1496" data-address="0x082b4440" data-source="games/gs1/assets/graphics/field_characters_chr_01c_koma.8bpp.png">
-<title>field_characters_chr_01c_koma.8bpp.png · 0x082b4440: 1,496 bytes</title>
-<rect data-content-type="Sprite sheets" x="60.9267543251772" y="278.91722309094666" width="2.870205780805542" height="2.582776909053406" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="62.05623364893269" y="279.8689049457235" width="1.3814002122096154" height="1.6310950542765723" style="fill:#b5a0de"/>
 </g>
 <g aria-label="field_characters_chr_0ce_koma.8bpp.png · 0x082af15c: 120 bytes" data-node="leaf" data-kind="file" data-bytes="120" data-address="0x082af15c" data-source="games/gs1/assets/graphics/field_characters_chr_0ce_koma.8bpp.png">
 <title>field_characters_chr_0ce_koma.8bpp.png · 0x082af15c: 120 bytes</title>
-<rect data-content-type="Sprite sheets" x="64.54531555715744" y="278.66557854212135" width="0.4967109023493743" height="0.6229068817298151" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="64.14318816225766" y="279.57445924683884" width="0.9416394473084753" height="0.41110860223071444" style="fill:#b5a0de"/>
 </g>
 <g aria-label="field_characters_chr_0d0_koma.8bpp.png · 0x082b3e7c: 264 bytes" data-node="leaf" data-kind="file" data-bytes="264" data-address="0x082b3e7c" data-source="games/gs1/assets/graphics/field_characters_chr_0d0_koma.8bpp.png">
 <title>field_characters_chr_0d0_koma.8bpp.png · 0x082b3e7c: 264 bytes</title>
-<rect data-content-type="Sprite sheets" x="64.54531555715744" y="279.78519632620055" width="0.4967109023493743" height="1.966448222624842" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="64.2758208735271" y="280.52930916256975" width="0.6763740247695949" height="1.1325038250455486" style="fill:#b5a0de"/>
 </g>
 </g>
-<g aria-label="characters_chr_082b_index.json · components · 0x082b5060: 311,060 bytes · 105 items" data-node="container" data-kind="file" data-bytes="311060" data-address="0x082b5060" data-source="games/gs1/assets/graphics/characters_chr_082b_index.json">
-<title>characters_chr_082b_index.json · components · 0x082b5060: 311,060 bytes · 105 items</title>
+<g aria-label="characters_chr_082b_index.json · components · 0x082b5060: 311,060 bytes · 91 items" data-node="container" data-kind="file" data-bytes="311060" data-address="0x082b5060" data-source="games/gs1/assets/graphics/characters_chr_082b_index.json">
+<title>characters_chr_082b_index.json · components · 0x082b5060: 311,060 bytes · 91 items</title>
 <rect class="container-frame" x="67.29038191068149" y="213.875591264187" width="51.18975754249655" height="70.12440873581303" fill="#1f7f93"/>
 <path class="bevel-light" d="M67.29038191068149 284 V213.875591264187 H118.48013945317804" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <path class="bevel-dark" d="M67.29038191068149 284 H118.48013945317804 V213.875591264187" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="Container data · 0x082c16b4: 9,132 bytes" data-node="leaf" data-kind="file" data-bytes="9132" data-address="0x082c16b4">
+<title>Container data · 0x082c16b4: 9,132 bytes</title>
+<rect data-content-type="Other data" x="69.79038191068149" y="216.375591264187" width="7.432901305370322" height="9.863112202428583" style="fill:#bda995"/>
+</g>
+<g aria-label="Container data · 0x082c78f0: 836 bytes" data-node="leaf" data-kind="file" data-bytes="836" data-address="0x082c78f0">
+<title>Container data · 0x082c78f0: 836 bytes</title>
+<rect data-content-type="Other data" x="69.53900110147295" y="226.98732265740705" width="7.935662923787411" height="0.49723838158291134" style="fill:#bda995"/>
+</g>
+<g aria-label="Container data · 0x082cb73c: 8,924 bytes" data-node="leaf" data-kind="file" data-bytes="8924" data-address="0x082cb73c">
+<title>Container data · 0x082cb73c: 8,924 bytes</title>
+<rect data-content-type="Other data" x="78.22328321605181" y="216.375591264187" width="6.549680101236433" height="10.857588965594406" style="fill:#bda995"/>
+</g>
+<g aria-label="Container data · 0x082cfdc0: 5,052 bytes" data-node="leaf" data-kind="file" data-bytes="5052" data-address="0x082cfdc0">
+<title>Container data · 0x082cfdc0: 5,052 bytes</title>
+<rect data-content-type="Other data" x="85.77296331728824" y="216.375591264187" width="4.803541628695868" height="7.732440153670982" style="fill:#bda995"/>
+</g>
+<g aria-label="Container data · 0x082d7658: 1,808 bytes" data-node="leaf" data-kind="file" data-bytes="1808" data-address="0x082d7658">
+<title>Container data · 0x082d7658: 1,808 bytes</title>
+<rect data-content-type="Other data" x="85.77296331728824" y="225.10803141785797" width="4.803541628695868" height="2.125148811923424" style="fill:#bda995"/>
+</g>
+<g aria-label="Container data · 0x082d8c80: 20,552 bytes" data-node="leaf" data-kind="file" data-bytes="20552" data-address="0x082d8c80">
+<title>Container data · 0x082d8c80: 20,552 bytes</title>
+<rect data-content-type="Other data" x="69.79038191068149" y="228.2331802297814" width="9.145663025050744" height="19.320717467754438" style="fill:#bda995"/>
+</g>
+<g aria-label="Container data · 0x082e1e54: 23,580 bytes" data-node="leaf" data-kind="file" data-bytes="23580" data-address="0x082e1e54">
+<title>Container data · 0x082e1e54: 23,580 bytes</title>
+<rect data-content-type="Other data" x="79.93604493573224" y="228.2331802297814" width="10.640460010251878" height="19.320717467754438" style="fill:#bda995"/>
+</g>
+<g aria-label="Container data · 0x082eca2c: 21,092 bytes" data-node="leaf" data-kind="file" data-bytes="21092" data-address="0x082eca2c">
+<title>Container data · 0x082eca2c: 21,092 bytes</title>
+<rect data-content-type="Other data" x="91.57650494598411" y="216.375591264187" width="24.403634507193928" height="7.328893079866898" style="fill:#bda995"/>
+</g>
+<g aria-label="Container data · 0x082f32dc: 20,148 bytes" data-node="leaf" data-kind="file" data-bytes="20148" data-address="0x082f32dc">
+<title>Container data · 0x082f32dc: 20,148 bytes</title>
+<rect data-content-type="Other data" x="91.57650494598411" y="224.7044843440539" width="7.474608054356965" height="22.849413353481946" style="fill:#bda995"/>
+</g>
+<g aria-label="Container data · 0x082faacc: 22,084 bytes" data-node="leaf" data-kind="file" data-bytes="22084" data-address="0x082faacc">
+<title>Container data · 0x082faacc: 22,084 bytes</title>
+<rect data-content-type="Other data" x="100.05111300034108" y="224.7044843440539" width="15.929026452836965" height="12.086127124286802" style="fill:#bda995"/>
+</g>
 <g aria-label="battle_characters_chr_014_koma.8bpp.png · 0x082d7d68: 2,616 bytes" data-node="leaf" data-kind="file" data-bytes="2616" data-address="0x082d7d68" data-source="games/gs1/assets/graphics/battle_characters_chr_014_koma.8bpp.png">
 <title>battle_characters_chr_014_koma.8bpp.png · 0x082d7d68: 2,616 bytes</title>
-<rect data-content-type="Sprite sheets" x="69.79038191068149" y="216.375591264187" width="3.5116570575606536" height="4.816571075116352" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="100.05111300034108" y="237.7906114683407" width="5.222097588589495" height="3.217608863926677" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_01a_koma.8bpp.png · 0x082b51b0: 1,476 bytes" data-node="leaf" data-kind="file" data-bytes="1476" data-address="0x082b51b0" data-source="games/gs1/assets/graphics/battle_characters_chr_01a_koma.8bpp.png">
 <title>battle_characters_chr_01a_koma.8bpp.png · 0x082b51b0: 1,476 bytes</title>
-<rect data-content-type="Sprite sheets" x="74.30203896824214" y="216.375591264187" width="1.5455679728438545" height="4.816571075116352" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="100.05111300034108" y="242.00822033226737" width="5.222097588589495" height="1.3796600470778957" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_09a_koma.8bpp.png · 0x082d117c: 2,584 bytes" data-node="leaf" data-kind="file" data-bytes="2584" data-address="0x082d117c" data-source="games/gs1/assets/graphics/battle_characters_chr_09a_koma.8bpp.png">
 <title>battle_characters_chr_09a_koma.8bpp.png · 0x082d117c: 2,584 bytes</title>
-<rect data-content-type="Sprite sheets" x="76.847606941086" y="216.375591264187" width="3.456468592024743" height="4.816571075116352" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="100.05111300034108" y="244.38788037934526" width="5.222097588589495" height="3.166017318190571" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_09d_koma.8bpp.png · 0x082d1b94: 11,488 bytes" data-node="leaf" data-kind="file" data-bytes="11488" data-address="0x082d1b94" data-source="games/gs1/assets/graphics/battle_characters_chr_09d_koma.8bpp.png">
 <title>battle_characters_chr_09d_koma.8bpp.png · 0x082d1b94: 11,488 bytes</title>
-<rect data-content-type="Sprite sheets" x="69.79038191068149" y="222.19216233930334" width="10.513693622429251" height="9.009102533094165" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="106.27321058893057" y="237.7906114683407" width="9.70692886424747" height="9.763286229195144" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0a1_koma.8bpp.png · 0x082d4874: 10,028 bytes" data-node="leaf" data-kind="file" data-bytes="10028" data-address="0x082d4874" data-source="games/gs1/assets/graphics/battle_characters_chr_0a1_koma.8bpp.png">
 <title>battle_characters_chr_0a1_koma.8bpp.png · 0x082d4874: 10,028 bytes</title>
-<rect data-content-type="Sprite sheets" x="81.30407553311073" y="216.375591264187" width="10.881340743163062" height="7.466701608148478" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="69.79038191068149" y="248.55389769753583" width="8.337120269595916" height="9.773746494908567" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0d3_koma.8bpp.png · 0x082b5774: 652 bytes" data-node="leaf" data-kind="file" data-bytes="652" data-address="0x082b5774" data-source="games/gs1/assets/graphics/battle_characters_chr_0d3_koma.8bpp.png">
 <title>battle_characters_chr_0d3_koma.8bpp.png · 0x082b5774: 652 bytes</title>
-<rect data-content-type="Sprite sheets" x="81.1733835491237" y="224.71160088834844" width="3.688941876853557" height="0.7386160320259313" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="69.58172008142118" y="259.11898236318405" width="0.5826763414793776" height="5.029813854910964" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0d4_koma.8bpp.png · 0x082b5a00: 2,596 bytes" data-node="leaf" data-kind="file" data-bytes="2596" data-address="0x082b5a00" data-source="games/gs1/assets/graphics/battle_characters_chr_0d4_koma.8bpp.png">
 <title>battle_characters_chr_0d4_koma.8bpp.png · 0x082b5a00: 2,596 bytes</title>
-<rect data-content-type="Sprite sheets" x="81.30407553311073" y="226.31952493638732" width="3.4275579088794883" height="4.8817399360101765" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="70.95573459364024" y="259.3276441924444" width="3.6399625229462096" height="4.6124901963903415" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0d5_koma.8bpp.png · 0x082b6424: 1,976 bytes" data-node="leaf" data-kind="file" data-bytes="1976" data-address="0x082b6424" data-source="games/gs1/assets/graphics/battle_characters_chr_0d5_koma.8bpp.png">
 <title>battle_characters_chr_0d5_koma.8bpp.png · 0x082b6424: 1,976 bytes</title>
-<rect data-content-type="Sprite sheets" x="85.73163344199023" y="224.84229287233546" width="1.6936128164857975" height="6.358972000062039" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="75.59569711658645" y="259.3276441924444" width="2.5318050636909515" height="4.6124901963903415" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0d6_koma.8bpp.png · 0x082b6bdc: 3,492 bytes" data-node="leaf" data-kind="file" data-bytes="3492" data-address="0x082b6bdc" data-source="games/gs1/assets/graphics/battle_characters_chr_0d6_koma.8bpp.png">
 <title>battle_characters_chr_0d6_koma.8bpp.png · 0x082b6bdc: 3,492 bytes</title>
-<rect data-content-type="Sprite sheets" x="88.42524625847602" y="224.84229287233546" width="3.760170017797776" height="6.358972000062039" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="79.1275021802774" y="248.55389769753583" width="3.417464327705284" height="6.929879061345011" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0d7_koma.8bpp.png · 0x082b7980: 3,364 bytes" data-node="leaf" data-kind="file" data-bytes="3364" data-address="0x082b7980" data-source="games/gs1/assets/graphics/battle_characters_chr_0d7_koma.8bpp.png">
 <title>battle_characters_chr_0d7_koma.8bpp.png · 0x082b7980: 3,364 bytes</title>
-<rect data-content-type="Sprite sheets" x="69.79038191068149" y="232.2012648723975" width="4.074169394506675" height="5.650532278992747" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="83.54496650798269" y="248.55389769753583" width="6.853269915920507" height="3.2970543109479085" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0d8_koma.8bpp.png · 0x082b86a4: 608 bytes" data-node="leaf" data-kind="file" data-bytes="608" data-address="0x082b86a4" data-source="games/gs1/assets/graphics/battle_characters_chr_0d8_koma.8bpp.png">
 <title>battle_characters_chr_0d8_koma.8bpp.png · 0x082b86a4: 608 bytes</title>
-<rect data-content-type="Sprite sheets" x="69.59088158559436" y="238.65229682630314" width="4.473170044680932" height="0.600999349825742" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="83.46469120109799" y="252.77067670159906" width="0.8394493862306027" height="2.7933753641665002" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0d9_koma.8bpp.png · 0x082b8d50: 1,136 bytes" data-node="leaf" data-kind="file" data-bytes="1136" data-address="0x082b8d50" data-source="games/gs1/assets/graphics/battle_characters_chr_0d9_koma.8bpp.png">
 <title>battle_characters_chr_0d9_koma.8bpp.png · 0x082b8d50: 1,136 bytes</title>
-<rect data-content-type="Sprite sheets" x="74.86455130518816" y="232.2012648723975" width="4.304116648034168" height="1.1484766839450495" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="85.2238652804439" y="252.85095200848374" width="2.136889811703831" height="2.632824750397103" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0da_koma.8bpp.png · 0x082b8904: 1,100 bytes" data-node="leaf" data-kind="file" data-bytes="1100" data-address="0x082b8904" data-source="games/gs1/assets/graphics/battle_characters_chr_0da_koma.8bpp.png">
 <title>battle_characters_chr_0da_koma.8bpp.png · 0x082b8904: 1,100 bytes</title>
-<rect data-content-type="Sprite sheets" x="74.86455130518816" y="234.34974155634256" width="4.304116648034168" height="1.0803911552284813" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="88.36075509214773" y="252.85095200848374" width="2.0374813317554703" height="2.632824750397103" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0db_koma.8bpp.png · 0x082b91c0: 788 bytes" data-node="leaf" data-kind="file" data-bytes="788" data-address="0x082b91c0" data-source="games/gs1/assets/graphics/battle_characters_chr_0db_koma.8bpp.png">
 <title>battle_characters_chr_0db_koma.8bpp.png · 0x082b91c0: 788 bytes</title>
-<rect data-content-type="Sprite sheets" x="74.86455130518816" y="236.43013271157105" width="1.18144254626875" height="2.6236631394707004" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="79.07436442628087" y="256.4306390048843" width="3.5286747017514752" height="0.8937244920069299" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0dc_koma.8bpp.png · 0x082b94d4: 1,128 bytes" data-node="leaf" data-kind="file" data-bytes="1128" data-address="0x082b94d4" data-source="games/gs1/assets/graphics/battle_characters_chr_0dc_koma.8bpp.png">
 <title>battle_characters_chr_0dc_koma.8bpp.png · 0x082b94d4: 1,128 bytes</title>
-<rect data-content-type="Sprite sheets" x="77.04599385145691" y="236.43013271157105" width="2.1226741017654183" height="2.6236631394707004" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="79.1275021802774" y="258.2712257428947" width="3.4223991937584053" height="1.5586833172178096" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0df_koma.8bpp.png · 0x082b9cc4: 1,144 bytes" data-node="leaf" data-kind="file" data-bytes="1144" data-address="0x082b9cc4" data-source="games/gs1/assets/graphics/battle_characters_chr_0df_koma.8bpp.png">
 <title>battle_characters_chr_0df_koma.8bpp.png · 0x082b9cc4: 1,144 bytes</title>
-<rect data-content-type="Sprite sheets" x="69.79038191068149" y="240.05379585104174" width="1.2313068710351218" height="4.143184473761521" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="79.1275021802774" y="260.8299090601125" width="1.7920665991498983" height="3.110225328722226" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0e0_koma.8bpp.png · 0x082ba13c: 668 bytes" data-node="leaf" data-kind="file" data-bytes="668" data-address="0x082ba13c" data-source="games/gs1/assets/graphics/battle_characters_chr_0e0_koma.8bpp.png">
 <title>battle_characters_chr_0e0_koma.8bpp.png · 0x082ba13c: 668 bytes</title>
-<rect data-content-type="Sprite sheets" x="69.79038191068149" y="245.19698032480326" width="1.2313068710351218" height="2.0031881367768323" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="81.82715192807943" y="260.73749220876465" width="0.8151662973042535" height="3.2950590314179724" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0e2_koma.8bpp.png · 0x082bab88: 2,512 bytes" data-node="leaf" data-kind="file" data-bytes="2512" data-address="0x082bab88" data-source="games/gs1/assets/graphics/battle_characters_chr_0e2_koma.8bpp.png">
 <title>battle_characters_chr_0e2_koma.8bpp.png · 0x082bab88: 2,512 bytes</title>
-<rect data-content-type="Sprite sheets" x="72.0216887817166" y="240.05379585104174" width="2.093290761611604" height="7.146372610538354" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="83.54990137403581" y="256.4837767588808" width="6.848335049867385" height="2.2107573105266307" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0e3_koma.8bpp.png · 0x082ba3d8: 1,968 bytes" data-node="leaf" data-kind="file" data-bytes="1968" data-address="0x082ba3d8" data-source="games/gs1/assets/graphics/battle_characters_chr_0e3_koma.8bpp.png">
 <title>battle_characters_chr_0e3_koma.8bpp.png · 0x082ba3d8: 1,968 bytes</title>
-<rect data-content-type="Sprite sheets" x="75.1149795433282" y="240.05379585104174" width="4.053688409894118" height="2.906447684585643" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="83.54990137403581" y="259.6945340694075" width="2.7635290882405004" height="4.245600319427265" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0e5_koma.8bpp.png · 0x082bbcf4: 1,924 bytes" data-node="leaf" data-kind="file" data-bytes="1924" data-address="0x082bbcf4" data-source="games/gs1/assets/graphics/battle_characters_chr_0e5_koma.8bpp.png">
 <title>battle_characters_chr_0e5_koma.8bpp.png · 0x082bbcf4: 1,924 bytes</title>
-<rect data-content-type="Sprite sheets" x="75.1149795433282" y="243.96024353562737" width="3.5521051032941395" height="3.2399249259527103" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="87.31343046227632" y="259.6945340694075" width="3.084805961626885" height="3.724969576113322" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0e6_koma.8bpp.png · 0x082bc478: 212 bytes" data-node="leaf" data-kind="file" data-bytes="212" data-address="0x082bc478" data-source="games/gs1/assets/graphics/battle_characters_chr_0e6_koma.8bpp.png">
 <title>battle_characters_chr_0e6_koma.8bpp.png · 0x082bc478: 212 bytes</title>
-<rect data-content-type="Sprite sheets" x="79.29248047327233" y="243.58563936227736" width="0.2507916532999892" height="3.989133272652721" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="86.9435881481048" y="264.0496613313493" width="3.8244905899699138" height="0.2603153716569713" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0e7_koma.8bpp.png · 0x082bc54c: 6,072 bytes" data-node="leaf" data-kind="file" data-bytes="6072" data-address="0x082bc54c" data-source="games/gs1/assets/graphics/battle_characters_chr_0e7_koma.8bpp.png">
 <title>battle_characters_chr_0e7_koma.8bpp.png · 0x082bc54c: 6,072 bytes</title>
-<rect data-content-type="Sprite sheets" x="80.16866795322233" y="232.2012648723975" width="6.6735627007348075" height="6.9377989869258485" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="69.79038191068149" y="264.94013438883474" width="9.591413459050614" height="4.750998057766752" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0e9_koma.8bpp.png · 0x082bdd04: 3,892 bytes" data-node="leaf" data-kind="file" data-bytes="3892" data-address="0x082bdd04" data-source="games/gs1/assets/graphics/battle_characters_chr_0e9_koma.8bpp.png">
 <title>battle_characters_chr_0e9_koma.8bpp.png · 0x082bdd04: 3,892 bytes</title>
-<rect data-content-type="Sprite sheets" x="87.84223065395713" y="232.2012648723975" width="4.343185622316662" height="6.306980524388695" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="69.79038191068149" y="270.6911324466015" width="8.749711727205533" height="3.004482837325071" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0ea_koma.8bpp.png · 0x082bec38: 336 bytes" data-node="leaf" data-kind="file" data-bytes="336" data-address="0x082bec38" data-source="games/gs1/assets/graphics/battle_characters_chr_0ea_koma.8bpp.png">
 <title>battle_characters_chr_0ea_koma.8bpp.png · 0x082bec38: 336 bytes</title>
-<rect data-content-type="Sprite sheets" x="87.49993526959142" y="239.1659500124205" width="5.027776391048086" height="0.31540923126857656" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="79.2505190708483" y="270.40155787956274" width="0.4208508659225405" height="3.5836319714025304" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0ec_koma.8bpp.png · 0x082bed88: 2,184 bytes" data-node="leaf" data-kind="file" data-bytes="2184" data-address="0x082bed88" data-source="games/gs1/assets/graphics/battle_characters_chr_0ec_koma.8bpp.png">
 <title>battle_characters_chr_0ec_koma.8bpp.png · 0x082bed88: 2,184 bytes</title>
-<rect data-content-type="Sprite sheets" x="80.16866795322233" y="240.13906385932336" width="1.7178373171648578" height="7.061104602256735" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="69.79038191068149" y="274.6956152839266" width="1.8072387129328327" height="6.804384716073459" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0ed_koma.8bpp.png · 0x082bf610: 3,780 bytes" data-node="leaf" data-kind="file" data-bytes="3780" data-address="0x082bf610" data-source="games/gs1/assets/graphics/battle_characters_chr_0ed_koma.8bpp.png">
 <title>battle_characters_chr_0ed_koma.8bpp.png · 0x082bf610: 3,780 bytes</title>
-<rect data-content-type="Sprite sheets" x="82.88650527038719" y="240.13906385932336" width="3.7039492027853305" height="7.061104602256735" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="72.59762062361432" y="274.6956152839266" width="6.784174746117781" height="3.8712969330841602" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0ee_koma.8bpp.png · 0x082c04d4: 1,372 bytes" data-node="leaf" data-kind="file" data-bytes="1372" data-address="0x082c04d4" data-source="games/gs1/assets/graphics/battle_characters_chr_0ee_koma.8bpp.png">
 <title>battle_characters_chr_0ee_koma.8bpp.png · 0x082c04d4: 1,372 bytes</title>
-<rect data-content-type="Sprite sheets" x="87.59045447317251" y="240.13906385932336" width="4.594961803101282" height="1.459927827912865" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="72.59762062361432" y="279.5669122170108" width="3.692393564004216" height="1.9330877829892987" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0ef_koma.8bpp.png · 0x082c0a30: 904 bytes" data-node="leaf" data-kind="file" data-bytes="904" data-address="0x082c0a30" data-source="games/gs1/assets/graphics/battle_characters_chr_0ef_koma.8bpp.png">
 <title>battle_characters_chr_0ef_koma.8bpp.png · 0x082c0a30: 904 bytes</title>
-<rect data-content-type="Sprite sheets" x="87.49566124365961" y="242.50419845772333" width="4.784548262127073" height="0.8104135409742093" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="77.29001418761854" y="279.5669122170108" width="2.0917811821135652" height="1.9330877829892987" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0f1_koma.8bpp.png · 0x082c0e08: 972 bytes" data-node="leaf" data-kind="file" data-bytes="972" data-address="0x082c0e08" data-source="games/gs1/assets/graphics/battle_characters_chr_0f1_koma.8bpp.png">
 <title>battle_characters_chr_0f1_koma.8bpp.png · 0x082c0e08: 972 bytes</title>
-<rect data-content-type="Sprite sheets" x="87.59045447317251" y="244.21981876918466" width="1.4496859786551561" height="2.980349692395452" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="80.3817953697321" y="264.94013438883474" width="2.468023133899578" height="1.8115749102981167" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0f2_koma.8bpp.png · 0x082c11d4: 252 bytes" data-node="leaf" data-kind="file" data-bytes="252" data-address="0x082c11d4" data-source="games/gs1/assets/graphics/battle_characters_chr_0f2_koma.8bpp.png">
 <title>battle_characters_chr_0f2_koma.8bpp.png · 0x082c11d4: 252 bytes</title>
-<rect data-content-type="Sprite sheets" x="89.74107156610725" y="243.92074988346423" width="2.7434135958869694" height="0.4018622285591562" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="80.06402707688106" y="267.4339410062818" width="3.103559719601674" height="0.36446341429790396" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0f3_koma.8bpp.png · 0x082c12d0: 996 bytes" data-node="leaf" data-kind="file" data-bytes="996" data-address="0x082c12d0" data-source="games/gs1/assets/graphics/battle_characters_chr_0f3_koma.8bpp.png">
 <title>battle_characters_chr_0f3_koma.8bpp.png · 0x082c12d0: 996 bytes</title>
-<rect data-content-type="Sprite sheets" x="90.04014045182767" y="245.02354322630296" width="2.145275824446126" height="2.1766252352771396" style="fill:#b5a0de"/>
-</g>
-<g aria-label="battle_characters_chr_0f4_koma.8bpp.png · 0x082c16b4: 9,132 bytes" data-node="leaf" data-kind="file" data-bytes="9132" data-address="0x082c16b4" data-source="games/gs1/assets/graphics/battle_characters_chr_0f4_koma.8bpp.png">
-<title>battle_characters_chr_0f4_koma.8bpp.png · 0x082c16b4: 9,132 bytes</title>
-<rect data-content-type="Sprite sheets" x="93.1854162762738" y="216.375591264187" width="8.646658763276355" height="8.49629869991701" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="80.3817953697321" y="268.4806361277287" width="2.468023133899578" height="1.8809965130215263" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0f6_koma.8bpp.png · 0x082c3a60: 3,948 bytes" data-node="leaf" data-kind="file" data-bytes="3948" data-address="0x082c3a60" data-source="games/gs1/assets/graphics/battle_characters_chr_0f6_koma.8bpp.png">
 <title>battle_characters_chr_0f6_koma.8bpp.png · 0x082c3a60: 3,948 bytes</title>
-<rect data-content-type="Sprite sheets" x="93.1854162762738" y="225.871889964104" width="6.881831290855763" height="4.02476076631614" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="83.84981850363168" y="264.94013438883474" width="5.167457357043034" height="5.421498251915451" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0f8_koma.8bpp.png · 0x082c4c14: 444 bytes" data-node="leaf" data-kind="file" data-bytes="444" data-address="0x082c4c14" data-source="games/gs1/assets/graphics/battle_characters_chr_0f8_koma.8bpp.png">
 <title>battle_characters_chr_0f8_koma.8bpp.png · 0x082c4c14: 444 bytes</title>
-<rect data-content-type="Sprite sheets" x="101.00845443523471" y="225.81309683220917" width="0.882413736210296" height="1.6413348839756385" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="89.86251600148184" y="264.78537452964184" width="0.6904802816142404" height="2.534797120931529" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0fa_koma.8bpp.png · 0x082c4ea8: 440 bytes" data-node="leaf" data-kind="file" data-bytes="440" data-address="0x082c4ea8" data-source="games/gs1/assets/graphics/battle_characters_chr_0fa_koma.8bpp.png">
 <title>battle_characters_chr_0fa_koma.8bpp.png · 0x082c4ea8: 440 bytes</title>
-<rect data-content-type="Sprite sheets" x="101.00845443523471" y="228.3368454523951" width="0.882413736210296" height="1.6185984099199096" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="89.86251600148184" y="268.0106519321876" width="0.6904802816142404" height="2.505740567755441" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_0fc_koma.8bpp.png · 0x082c50cc: 10,276 bytes" data-node="leaf" data-kind="file" data-bytes="10276" data-address="0x082c50cc" data-source="games/gs1/assets/graphics/battle_characters_chr_0fc_koma.8bpp.png">
 <title>battle_characters_chr_0fc_koma.8bpp.png · 0x082c50cc: 10,276 bytes</title>
-<rect data-content-type="Sprite sheets" x="102.83207503955015" y="216.375591264187" width="13.148064413627884" height="6.2860550329595615" style="fill:#b5a0de"/>
-</g>
-<g aria-label="battle_characters_chr_0fd_koma.8bpp.png · 0x082c78f0: 836 bytes" data-node="leaf" data-kind="file" data-bytes="836" data-address="0x082c78f0" data-source="games/gs1/assets/graphics/battle_characters_chr_0fd_koma.8bpp.png">
-<title>battle_characters_chr_0fd_koma.8bpp.png · 0x082c78f0: 836 bytes</title>
-<rect data-content-type="Sprite sheets" x="102.83207503955015" y="223.66164629714655" width="2.818137867166008" height="1.1964435769539734" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="80.3817953697321" y="271.3616326407502" width="10.016441054171093" height="8.357248445360632" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_102_koma.8bpp.png · 0x082c860c: 688 bytes" data-node="leaf" data-kind="file" data-bytes="688" data-address="0x082c860c" data-source="games/gs1/assets/graphics/battle_characters_chr_102_koma.8bpp.png">
 <title>battle_characters_chr_102_koma.8bpp.png · 0x082c860c: 688 bytes</title>
-<rect data-content-type="Sprite sheets" x="106.65021290671615" y="223.66164629714655" width="2.1421995844619786" height="1.1964435769539734" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="80.3270750982044" y="280.66416081458317" width="2.9843441449315313" height="0.8905594569445991" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_103_koma.8bpp.png · 0x082c947c: 1,268 bytes" data-node="leaf" data-kind="file" data-bytes="1268" data-address="0x082c947c" data-source="games/gs1/assets/graphics/battle_characters_chr_103_koma.8bpp.png">
 <title>battle_characters_chr_103_koma.8bpp.png · 0x082c947c: 1,268 bytes</title>
-<rect data-content-type="Sprite sheets" x="102.83207503955015" y="225.85808987410053" width="1.5245159864600364" height="4.038560856319615" style="fill:#b5a0de"/>
-</g>
-<g aria-label="battle_characters_chr_105_koma.8bpp.png · 0x082cb73c: 700 bytes" data-node="leaf" data-kind="file" data-bytes="700" data-address="0x082cb73c" data-source="games/gs1/assets/graphics/battle_characters_chr_105_koma.8bpp.png">
-<title>battle_characters_chr_105_koma.8bpp.png · 0x082cb73c: 700 bytes</title>
-<rect data-content-type="Sprite sheets" x="105.25234872343205" y="225.7538475715224" width="3.6443060703242045" height="0.7915153948437456" style="fill:#b5a0de"/>
-</g>
-<g aria-label="battle_characters_chr_107_koma.8bpp.png · 0x082cb9f8: 868 bytes" data-node="leaf" data-kind="file" data-bytes="868" data-address="0x082cb9f8" data-source="games/gs1/assets/graphics/battle_characters_chr_107_koma.8bpp.png">
-<title>battle_characters_chr_107_koma.8bpp.png · 0x082cb9f8: 868 bytes</title>
-<rect data-content-type="Sprite sheets" x="105.35659102601018" y="227.441120663788" width="1.5198252825692284" height="2.4555300666321234" style="fill:#b5a0de"/>
-</g>
-<g aria-label="battle_characters_chr_108_koma.8bpp.png · 0x082cbd5c: 660 bytes" data-node="leaf" data-kind="file" data-bytes="660" data-address="0x082cbd5c" data-source="games/gs1/assets/graphics/battle_characters_chr_108_koma.8bpp.png">
-<title>battle_characters_chr_108_koma.8bpp.png · 0x082cbd5c: 660 bytes</title>
-<rect data-content-type="Sprite sheets" x="107.8554153542291" y="227.4201197094377" width="0.9579980912993609" height="2.4975319753327625" style="fill:#b5a0de"/>
-</g>
-<g aria-label="battle_characters_chr_10b_koma.8bpp.png · 0x082cc5d8: 764 bytes" data-node="leaf" data-kind="file" data-bytes="764" data-address="0x082cc5d8" data-source="games/gs1/assets/graphics/battle_characters_chr_10b_koma.8bpp.png">
-<title>battle_characters_chr_10b_koma.8bpp.png · 0x082cc5d8: 764 bytes</title>
-<rect data-content-type="Sprite sheets" x="109.79241249117814" y="223.66164629714655" width="2.547431136284187" height="1.1604527127136408" style="fill:#b5a0de"/>
-</g>
-<g aria-label="battle_characters_chr_10c_koma.8bpp.png · 0x082cc8d4: 784 bytes" data-node="leaf" data-kind="file" data-bytes="784" data-address="0x082cc8d4" data-source="games/gs1/assets/graphics/battle_characters_chr_10c_koma.8bpp.png">
-<title>battle_characters_chr_10c_koma.8bpp.png · 0x082cc8d4: 784 bytes</title>
-<rect data-content-type="Sprite sheets" x="113.33984362746233" y="223.66164629714655" width="2.64029582571571" height="1.1604527127136408" style="fill:#b5a0de"/>
-</g>
-<g aria-label="battle_characters_chr_10d_koma.8bpp.png · 0x082ccbe4: 1,260 bytes" data-node="leaf" data-kind="file" data-bytes="1260" data-address="0x082ccbe4" data-source="games/gs1/assets/graphics/battle_characters_chr_10d_koma.8bpp.png">
-<title>battle_characters_chr_10d_koma.8bpp.png · 0x082ccbe4: 1,260 bytes</title>
-<rect data-content-type="Sprite sheets" x="109.79241249117814" y="225.82209900986018" width="1.490796471980162" height="4.074551720559947" style="fill:#b5a0de"/>
-</g>
-<g aria-label="battle_characters_chr_10e_koma.8bpp.png · 0x082cd0d0: 952 bytes" data-node="leaf" data-kind="file" data-bytes="952" data-address="0x082cd0d0" data-source="games/gs1/assets/graphics/battle_characters_chr_10e_koma.8bpp.png">
-<title>battle_characters_chr_10e_koma.8bpp.png · 0x082cd0d0: 952 bytes</title>
-<rect data-content-type="Sprite sheets" x="112.2832089631583" y="225.82209900986018" width="3.696930490019735" height="1.0332378947698104" style="fill:#b5a0de"/>
-</g>
-<g aria-label="battle_characters_chr_10f_koma.8bpp.png · 0x082cd488: 656 bytes" data-node="leaf" data-kind="file" data-bytes="656" data-address="0x082cd488" data-source="games/gs1/assets/graphics/battle_characters_chr_10f_koma.8bpp.png">
-<title>battle_characters_chr_10f_koma.8bpp.png · 0x082cd488: 656 bytes</title>
-<rect data-content-type="Sprite sheets" x="112.2832089631583" y="227.85533690462998" width="1.1637544954023498" height="2.041313825790137" style="fill:#b5a0de"/>
-</g>
-<g aria-label="battle_characters_chr_110_koma.8bpp.png · 0x082cd718: 768 bytes" data-node="leaf" data-kind="file" data-bytes="768" data-address="0x082cd718" data-source="games/gs1/assets/graphics/battle_characters_chr_110_koma.8bpp.png">
-<title>battle_characters_chr_110_koma.8bpp.png · 0x082cd718: 768 bytes</title>
-<rect data-content-type="Sprite sheets" x="114.44696345856065" y="227.85533690462998" width="1.5331759946173853" height="2.041313825790137" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="84.20197870008053" y="280.66416081458317" width="6.250977995350363" height="0.8905594569445991" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_111_koma.8bpp.png · 0x082cda18: 8,736 bytes" data-node="leaf" data-kind="file" data-bytes="8736" data-address="0x082cda18" data-source="games/gs1/assets/graphics/battle_characters_chr_111_koma.8bpp.png">
 <title>battle_characters_chr_111_koma.8bpp.png · 0x082cda18: 8,736 bytes</title>
-<rect data-content-type="Sprite sheets" x="93.1854162762738" y="230.89665073042013" width="9.449397239038637" height="7.386616148051953" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="91.3982364239032" y="248.55389769753583" width="9.927335880749583" height="7.019803232800365" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_112_koma.8bpp.png · 0x082cfc38: 392 bytes" data-node="leaf" data-kind="file" data-bytes="392" data-address="0x082cfc38" data-source="games/gs1/assets/graphics/battle_characters_chr_112_koma.8bpp.png">
 <title>battle_characters_chr_112_koma.8bpp.png · 0x082cfc38: 392 bytes</title>
-<rect data-content-type="Sprite sheets" x="103.49245657557715" y="230.75429379068484" width="0.7152861205294299" height="2.033504456424053" style="fill:#b5a0de"/>
-</g>
-<g aria-label="battle_characters_chr_113_koma.8bpp.png · 0x082cfdc0: 804 bytes" data-node="leaf" data-kind="file" data-bytes="804" data-address="0x082cfdc0" data-source="games/gs1/assets/graphics/battle_characters_chr_113_koma.8bpp.png">
-<title>battle_characters_chr_113_koma.8bpp.png · 0x082cfdc0: 804 bytes</title>
-<rect data-content-type="Sprite sheets" x="103.49245657557715" y="233.50308436763834" width="0.7152861205294299" height="4.92253945056904" style="fill:#b5a0de"/>
-</g>
-<g aria-label="battle_characters_chr_114_koma.8bpp.png · 0x082d00e4: 1,260 bytes" data-node="leaf" data-kind="file" data-bytes="1260" data-address="0x082d00e4" data-source="games/gs1/assets/graphics/battle_characters_chr_114_koma.8bpp.png">
-<title>battle_characters_chr_114_koma.8bpp.png · 0x082d00e4: 1,260 bytes</title>
-<rect data-content-type="Sprite sheets" x="93.1854162762738" y="239.2832668784721" width="2.2725676796582808" height="2.8623114201786053" style="fill:#b5a0de"/>
-</g>
-<g aria-label="battle_characters_chr_115_koma.8bpp.png · 0x082d05d0: 580 bytes" data-node="leaf" data-kind="file" data-bytes="580" data-address="0x082d05d0" data-source="games/gs1/assets/graphics/battle_characters_chr_115_koma.8bpp.png">
-<title>battle_characters_chr_115_koma.8bpp.png · 0x082d05d0: 580 bytes</title>
-<rect data-content-type="Sprite sheets" x="96.33458896668641" y="239.15987188922642" width="0.7532100215086517" height="3.109101398669954" style="fill:#b5a0de"/>
-</g>
-<g aria-label="battle_characters_chr_116_koma.8bpp.png · 0x082d0814: 1,624 bytes" data-node="leaf" data-kind="file" data-bytes="1624" data-address="0x082d0814" data-source="games/gs1/assets/graphics/battle_characters_chr_116_koma.8bpp.png">
-<title>battle_characters_chr_116_koma.8bpp.png · 0x082d0814: 1,624 bytes</title>
-<rect data-content-type="Sprite sheets" x="93.1854162762738" y="243.1455782986507" width="3.778987722675584" height="2.408909644766334" style="fill:#b5a0de"/>
-</g>
-<g aria-label="battle_characters_chr_117_koma.8bpp.png · 0x082d0e6c: 784 bytes" data-node="leaf" data-kind="file" data-bytes="784" data-address="0x082d0e6c" data-source="games/gs1/assets/graphics/battle_characters_chr_117_koma.8bpp.png">
-<title>battle_characters_chr_117_koma.8bpp.png · 0x082d0e6c: 784 bytes</title>
-<rect data-content-type="Sprite sheets" x="93.09683640581456" y="246.4659080729578" width="3.9561474635940552" height="0.8228402590815289" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="102.28963384446025" y="248.5179592373433" width="0.9281230796149478" height="1.190315510181375" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_126_koma.8bpp.png · 0x082c9970: 1,092 bytes" data-node="leaf" data-kind="file" data-bytes="1092" data-address="0x082c9970" data-source="games/gs1/assets/graphics/battle_characters_chr_126_koma.8bpp.png">
 <title>battle_characters_chr_126_koma.8bpp.png · 0x082c9970: 1,092 bytes</title>
-<rect data-content-type="Sprite sheets" x="97.96440399894938" y="239.2832668784721" width="2.9084032656777867" height="1.8027776839173422" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="102.28963384446025" y="250.6363978271396" width="0.9281230796149478" height="4.973241563389094" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_127_koma.8bpp.png · 0x082c9db4: 492 bytes" data-node="leaf" data-kind="file" data-bytes="492" data-address="0x082c9db4" data-source="games/gs1/assets/graphics/battle_characters_chr_127_koma.8bpp.png">
 <title>battle_characters_chr_127_koma.8bpp.png · 0x082c9db4: 492 bytes</title>
-<rect data-content-type="Sprite sheets" x="101.81303950059637" y="239.2234991144413" width="0.8804644719384025" height="1.9223132119789397" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="91.3982364239032" y="256.5737009303362" width="1.2910021925628175" height="1.1542940303086224" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_128_koma.8bpp.png · 0x082c9fa0: 400 bytes" data-node="leaf" data-kind="file" data-bytes="400" data-address="0x082c9fa0" data-source="games/gs1/assets/graphics/battle_characters_chr_128_koma.8bpp.png">
 <title>battle_characters_chr_128_koma.8bpp.png · 0x082c9fa0: 400 bytes</title>
-<rect data-content-type="Sprite sheets" x="103.4916485954708" y="239.14117926543892" width="0.7158247739336605" height="2.0869529099836814" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="91.33610106420983" y="258.6658596009515" width="1.4152729119495564" height="0.875729280613261" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_129_koma.8bpp.png · 0x082ca130: 1,560 bytes" data-node="leaf" data-kind="file" data-bytes="1560" data-address="0x082ca130" data-source="games/gs1/assets/graphics/battle_characters_chr_129_koma.8bpp.png">
 <title>battle_characters_chr_129_koma.8bpp.png · 0x082ca130: 1,560 bytes</title>
-<rect data-content-type="Sprite sheets" x="97.96440399894938" y="242.08604456238945" width="1.5595035909376582" height="5.114123899190655" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="93.68923861646601" y="256.5737009303362" width="3.0066854488766754" height="2.9057525915351445" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_12a_koma.8bpp.png · 0x082ca748: 1,464 bytes" data-node="leaf" data-kind="file" data-bytes="1464" data-address="0x082ca748" data-source="games/gs1/assets/graphics/battle_characters_chr_12a_koma.8bpp.png">
 <title>battle_characters_chr_12a_koma.8bpp.png · 0x082ca748: 1,464 bytes</title>
-<rect data-content-type="Sprite sheets" x="100.52390758988703" y="242.08604456238945" width="3.5414781664842545" height="2.2337707328089302" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="91.3982364239032" y="260.47945352187133" width="2.3308579144029693" height="3.4091040674426107" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_12b_koma.8bpp.png · 0x082cad00: 1,304 bytes" data-node="leaf" data-kind="file" data-bytes="1304" data-address="0x082cad00" data-source="games/gs1/assets/graphics/battle_characters_chr_12b_koma.8bpp.png">
 <title>battle_characters_chr_12b_koma.8bpp.png · 0x082cad00: 1,304 bytes</title>
-<rect data-content-type="Sprite sheets" x="100.52390758988703" y="245.31981529519837" width="3.5414781664842545" height="1.8803531663817243" style="fill:#b5a0de"/>
-</g>
-<g aria-label="battle_characters_chr_12c_koma.8bpp.png · 0x082d8c80: 20,552 bytes" data-node="leaf" data-kind="file" data-bytes="20552" data-address="0x082d8c80" data-source="games/gs1/assets/graphics/battle_characters_chr_12c_koma.8bpp.png">
-<title>battle_characters_chr_12c_koma.8bpp.png · 0x082d8c80: 20,552 bytes</title>
-<rect data-content-type="Sprite sheets" x="105.0653857563713" y="230.89665073042013" width="10.914753696806741" height="16.30351773115995" style="fill:#b5a0de"/>
-</g>
-<g aria-label="battle_characters_chr_12d_koma.8bpp.png · 0x082e1e54: 23,580 bytes" data-node="leaf" data-kind="file" data-bytes="23580" data-address="0x082e1e54" data-source="games/gs1/assets/graphics/battle_characters_chr_12d_koma.8bpp.png">
-<title>battle_characters_chr_12d_koma.8bpp.png · 0x082e1e54: 23,580 bytes</title>
-<rect data-content-type="Sprite sheets" x="69.79038191068149" y="248.2001684615801" width="18.24768409060181" height="11.289400529932871" style="fill:#b5a0de"/>
-</g>
-<g aria-label="battle_characters_chr_12e_koma.8bpp.png · 0x082f32dc: 20,148 bytes" data-node="leaf" data-kind="file" data-bytes="20148" data-address="0x082f32dc" data-source="games/gs1/assets/graphics/battle_characters_chr_12e_koma.8bpp.png">
-<title>battle_characters_chr_12e_koma.8bpp.png · 0x082f32dc: 20,148 bytes</title>
-<rect data-content-type="Sprite sheets" x="69.79038191068149" y="260.48956899151295" width="18.24768409060181" height="9.500714244151293" style="fill:#b5a0de"/>
-</g>
-<g aria-label="battle_characters_chr_12f_koma.8bpp.png · 0x082faacc: 22,084 bytes" data-node="leaf" data-kind="file" data-bytes="22084" data-address="0x082faacc" data-source="games/gs1/assets/graphics/battle_characters_chr_12f_koma.8bpp.png">
-<title>battle_characters_chr_12f_koma.8bpp.png · 0x082faacc: 22,084 bytes</title>
-<rect data-content-type="Sprite sheets" x="69.79038191068149" y="270.99028323566426" width="18.24768409060181" height="10.509716764335774" style="fill:#b5a0de"/>
-</g>
-<g aria-label="battle_characters_chr_131_koma.8bpp.png · 0x082eca2c: 21,092 bytes" data-node="leaf" data-kind="file" data-bytes="21092" data-address="0x082eca2c" data-source="games/gs1/assets/graphics/battle_characters_chr_131_koma.8bpp.png">
-<title>battle_characters_chr_131_koma.8bpp.png · 0x082eca2c: 21,092 bytes</title>
-<rect data-content-type="Sprite sheets" x="89.0380660012833" y="248.2001684615801" width="11.457812912136719" height="15.984053071169882" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="94.72909433830617" y="260.47945352187133" width="1.966829727036524" height="3.4091040674426107" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_146_koma.8bpp.png · 0x082df76c: 5,376 bytes" data-node="leaf" data-kind="file" data-bytes="5376" data-address="0x082df76c" data-source="games/gs1/assets/graphics/battle_characters_chr_146_koma.8bpp.png">
 <title>battle_characters_chr_146_koma.8bpp.png · 0x082df76c: 5,376 bytes</title>
-<rect data-content-type="Sprite sheets" x="101.49587891342001" y="248.2001684615801" width="7.357769544351319" height="5.452592637658378" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="97.6959240653427" y="256.5737009303362" width="5.485894398539985" height="7.314856658977755" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_147_koma.8bpp.png · 0x082e0c6c: 4,584 bytes" data-node="leaf" data-kind="file" data-bytes="4584" data-address="0x082e0c6c" data-source="games/gs1/assets/graphics/battle_characters_chr_147_koma.8bpp.png">
 <title>battle_characters_chr_147_koma.8bpp.png · 0x082e0c6c: 4,584 bytes</title>
-<rect data-content-type="Sprite sheets" x="109.85364845777133" y="248.2001684615801" width="6.126490995406705" height="5.452592637658378" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="104.18181846388268" y="248.55389769753583" width="11.798320989295366" height="2.592998125907433" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_148_koma.8bpp.png · 0x082e8ab4: 6,444 bytes" data-node="leaf" data-kind="file" data-bytes="6444" data-address="0x082e8ab4" data-source="games/gs1/assets/graphics/battle_characters_chr_148_koma.8bpp.png">
 <title>battle_characters_chr_148_koma.8bpp.png · 0x082e8ab4: 6,444 bytes</title>
-<rect data-content-type="Sprite sheets" x="101.49587891342001" y="254.65276109923846" width="5.138076705105851" height="9.531460433511505" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="104.18181846388268" y="252.14689582344326" width="4.073350175628651" height="11.741661765870687" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_149_koma.8bpp.png · 0x082ea3e0: 5,212 bytes" data-node="leaf" data-kind="file" data-bytes="5212" data-address="0x082ea3e0" data-source="games/gs1/assets/graphics/battle_characters_chr_149_koma.8bpp.png">
 <title>battle_characters_chr_149_koma.8bpp.png · 0x082ea3e0: 5,212 bytes</title>
-<rect data-content-type="Sprite sheets" x="107.63395561852586" y="254.65276109923846" width="8.346183834652173" height="4.594167527462491" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="109.25516863951133" y="252.14689582344326" width="6.724970813666715" height="5.768196200949656" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_14a_koma.8bpp.png · 0x082f8dc4: 4,600 bytes" data-node="leaf" data-kind="file" data-bytes="4600" data-address="0x082f8dc4" data-source="games/gs1/assets/graphics/battle_characters_chr_14a_koma.8bpp.png">
 <title>battle_characters_chr_14a_koma.8bpp.png · 0x082f8dc4: 4,600 bytes</title>
-<rect data-content-type="Sprite sheets" x="107.63395561852586" y="260.24692862670094" width="8.346183834652173" height="3.937292906049014" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="109.25516863951133" y="258.9150920243929" width="6.724970813666715" height="4.973465564921031" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_14b_koma.8bpp.png · 0x082f9fbc: 2,832 bytes" data-node="leaf" data-kind="file" data-bytes="2832" data-address="0x082f9fbc" data-source="games/gs1/assets/graphics/battle_characters_chr_14b_koma.8bpp.png">
 <title>battle_characters_chr_14b_koma.8bpp.png · 0x082f9fbc: 2,832 bytes</title>
-<rect data-content-type="Sprite sheets" x="89.0380660012833" y="265.18422153275" width="4.618223795970994" height="4.056611571856485" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="91.3982364239032" y="264.88855758931396" width="4.038144423850331" height="4.63881720529859" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_14e_koma.8bpp.png · 0x082deb08: 3,172 bytes" data-node="leaf" data-kind="file" data-bytes="3172" data-address="0x082deb08" data-source="games/gs1/assets/graphics/battle_characters_chr_14e_koma.8bpp.png">
 <title>battle_characters_chr_14e_koma.8bpp.png · 0x082deb08: 3,172 bytes</title>
-<rect data-content-type="Sprite sheets" x="94.65628979725429" y="265.18422153275" width="5.292728065261297" height="4.056611571856485" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="96.43638084775353" y="264.88855758931396" width="4.643006395640271" height="4.63881720529859" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_14f_koma.8bpp.png · 0x082eb83c: 4,592 bytes" data-node="leaf" data-kind="file" data-bytes="4592" data-address="0x082eb83c" data-source="games/gs1/assets/graphics/battle_characters_chr_14f_koma.8bpp.png">
 <title>battle_characters_chr_14f_koma.8bpp.png · 0x082eb83c: 4,592 bytes</title>
-<rect data-content-type="Sprite sheets" x="89.0380660012833" y="270.24083310460645" width="7.282115527979814" height="4.5619358461925765" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="91.3982364239032" y="270.52737479461257" width="9.681150819490602" height="3.3126996346987223" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_150_koma.8bpp.png · 0x082f2b00: 2,012 bytes" data-node="leaf" data-kind="file" data-bytes="2012" data-address="0x082f2b00" data-source="games/gs1/assets/graphics/battle_characters_chr_150_koma.8bpp.png">
 <title>battle_characters_chr_150_koma.8bpp.png · 0x082f2b00: 2,012 bytes</title>
-<rect data-content-type="Sprite sheets" x="97.32018152926311" y="270.24083310460645" width="2.628836333252478" height="4.5619358461925765" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="91.3982364239032" y="274.8400744293113" width="3.3583705158490345" height="3.6309405793947658" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_1f4_koma.8bpp.png · 0x082cb218: 1,316 bytes" data-node="leaf" data-kind="file" data-bytes="1316" data-address="0x082cb218" data-source="games/gs1/assets/graphics/battle_characters_chr_1f4_koma.8bpp.png">
 <title>battle_characters_chr_1f4_koma.8bpp.png · 0x082cb218: 1,316 bytes</title>
-<rect data-content-type="Sprite sheets" x="89.0380660012833" y="275.802768950799" width="2.6667517802183918" height="2.6003088483449783" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="91.3982364239032" y="279.47101500870605" width="3.3583705158490345" height="2.028984991293992" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_1f5_koma.8bpp.png · 0x082d6fa0: 812 bytes" data-node="leaf" data-kind="file" data-bytes="812" data-address="0x082d6fa0" data-source="games/gs1/assets/graphics/battle_characters_chr_1f5_koma.8bpp.png">
 <title>battle_characters_chr_1f5_koma.8bpp.png · 0x082d6fa0: 812 bytes</title>
-<rect data-content-type="Sprite sheets" x="89.0380660012833" y="279.403077799144" width="1.6302141745029455" height="2.0969222008560147" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="95.70560423397446" y="274.78907172353354" width="3.6374273254751133" height="0.8979945884444567" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_chr_1f6_koma.8bpp.png · 0x082d72cc: 320 bytes" data-node="leaf" data-kind="file" data-bytes="320" data-address="0x082d72cc" data-source="games/gs1/assets/graphics/battle_characters_chr_1f6_koma.8bpp.png">
 <title>battle_characters_chr_1f6_koma.8bpp.png · 0x082d72cc: 320 bytes</title>
-<rect data-content-type="Sprite sheets" x="91.4274145772151" y="279.16221220057287" width="0.5182688028577231" height="2.5786533979982913" style="fill:#b5a0de"/>
-</g>
-<g aria-label="battle_characters_chr_1f8_koma.8bpp.png · 0x082d7658: 1,808 bytes" data-node="leaf" data-kind="file" data-bytes="1808" data-address="0x082d7658" data-source="games/gs1/assets/graphics/battle_characters_chr_1f8_koma.8bpp.png">
-<title>battle_characters_chr_1f8_koma.8bpp.png · 0x082d7658: 1,808 bytes</title>
-<rect data-content-type="Sprite sheets" x="92.70481778150169" y="275.802768950799" width="1.7081238638214264" height="5.697231049200993" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="100.23886845110229" y="274.7869140267418" width="0.893679194860999" height="0.9023099820279143" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_felix_koma.8bpp.png · 0x082f1c90: 3,696 bytes" data-node="leaf" data-kind="file" data-bytes="3696" data-address="0x082f1c90" data-source="games/gs1/assets/graphics/battle_characters_felix_koma.8bpp.png">
 <title>battle_characters_felix_koma.8bpp.png · 0x082f1c90: 3,696 bytes</title>
-<rect data-content-type="Sprite sheets" x="95.41294164532312" y="275.802768950799" width="4.536076217192474" height="5.697231049200993" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="95.75660693975223" y="276.6360636062002" width="5.322780303641568" height="4.863936393799845" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_garet_koma.8bpp.png · 0x082e7a70: 4,164 bytes" data-node="leaf" data-kind="file" data-bytes="4164" data-address="0x082e7a70" data-source="games/gs1/assets/graphics/battle_characters_garet_koma.8bpp.png">
 <title>battle_characters_garet_koma.8bpp.png · 0x082e7a70: 4,164 bytes</title>
-<rect data-content-type="Sprite sheets" x="100.94901786251559" y="265.18422153275" width="5.104022522267597" height="5.843211669479857" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="102.0793872433938" y="264.88855758931396" width="4.673622183754716" height="6.362336934375492" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_isaac_koma.8bpp.png · 0x082ddcc8: 3,648 bytes" data-node="leaf" data-kind="file" data-bytes="3648" data-address="0x082ddcc8" data-source="games/gs1/assets/graphics/battle_characters_isaac_koma.8bpp.png">
 <title>battle_characters_isaac_koma.8bpp.png · 0x082ddcc8: 3,648 bytes</title>
-<rect data-content-type="Sprite sheets" x="107.05304038478319" y="265.18422153275" width="4.347616273110519" height="5.843211669479857" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="107.75300942714851" y="264.88855758931396" width="3.9705508468629223" height="6.362336934375492" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_ivan_koma.8bpp.png · 0x082f8190: 3,124 bytes" data-node="leaf" data-kind="file" data-bytes="3124" data-address="0x082f8190" data-source="games/gs1/assets/graphics/battle_characters_ivan_koma.8bpp.png">
 <title>battle_characters_ivan_koma.8bpp.png · 0x082f8190: 3,124 bytes</title>
-<rect data-content-type="Sprite sheets" x="112.4006566578937" y="265.18422153275" width="3.5794827952843358" height="5.843211669479857" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="112.72356027401143" y="264.88855758931396" width="3.2565791791666037" height="6.362336934375492" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_mia_koma.8bpp.png · 0x08300110: 3,684 bytes" data-node="leaf" data-kind="file" data-bytes="3684" data-address="0x08300110" data-source="games/gs1/assets/graphics/battle_characters_mia_koma.8bpp.png">
 <title>battle_characters_mia_koma.8bpp.png · 0x08300110: 3,684 bytes</title>
-<rect data-content-type="Sprite sheets" x="100.94901786251559" y="272.0274332022298" width="5.843112610163273" height="4.400466976901654" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="102.0793872433938" y="272.25089452368945" width="5.823965081884901" height="4.4156202774997375" style="fill:#b5a0de"/>
 </g>
 <g aria-label="battle_characters_mimic_koma.8bpp.png · 0x082bb558: 1,948 bytes" data-node="leaf" data-kind="file" data-bytes="1948" data-address="0x082bb558" data-source="games/gs1/assets/graphics/battle_characters_mimic_koma.8bpp.png">
 <title>battle_characters_mimic_koma.8bpp.png · 0x082bb558: 1,948 bytes</title>
-<rect data-content-type="Sprite sheets" x="100.94901786251559" y="277.4279001791315" width="2.8527119550861433" height="4.072099820868545" style="fill:#b5a0de"/>
-</g>
-<g aria-label="battle_characters_nightmare_koma.8bpp.png · 0x082cbff0: 808 bytes" data-node="leaf" data-kind="file" data-bytes="808" data-address="0x082cbff0" data-source="games/gs1/assets/graphics/battle_characters_nightmare_koma.8bpp.png">
-<title>battle_characters_nightmare_koma.8bpp.png · 0x082cbff0: 808 bytes</title>
-<rect data-content-type="Sprite sheets" x="104.80172981760174" y="277.4279001791315" width="1.99040065507713" height="1.7104872058609688" style="fill:#b5a0de"/>
-</g>
-<g aria-label="battle_characters_recluse_koma.8bpp.png · 0x082cc318: 704 bytes" data-node="leaf" data-kind="file" data-bytes="704" data-address="0x082cc318" data-source="games/gs1/assets/graphics/battle_characters_recluse_koma.8bpp.png">
-<title>battle_characters_recluse_koma.8bpp.png · 0x082cc318: 704 bytes</title>
-<rect data-content-type="Sprite sheets" x="104.80172981760174" y="280.1383873849924" width="1.99040065507713" height="1.3616126150075765" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="102.0793872433938" y="277.6665148011892" width="3.0429087528928793" height="3.833485198810841" style="fill:#b5a0de"/>
 </g>
 <g aria-label="field_characters_chr_015_koma.8bpp.png · 0x082d87a0: 1,228 bytes" data-node="leaf" data-kind="file" data-bytes="1228" data-address="0x082d87a0" data-source="games/gs1/assets/graphics/field_characters_chr_015_koma.8bpp.png">
 <title>field_characters_chr_015_koma.8bpp.png · 0x082d87a0: 1,228 bytes</title>
-<rect data-content-type="Sprite sheets" x="107.79213047267886" y="272.0274332022298" width="2.2162831854411955" height="2.830094298256117" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="106.12229599628668" y="277.6665148011892" width="1.7810563289920216" height="3.429492406074413" style="fill:#b5a0de"/>
 </g>
 <g aria-label="field_characters_chr_016_koma.8bpp.png · 0x082d8c6c: 20 bytes" data-node="leaf" data-kind="file" data-bytes="20" data-address="0x082d8c6c" data-source="games/gs1/assets/graphics/field_characters_chr_016_koma.8bpp.png">
 <title>field_characters_chr_016_koma.8bpp.png · 0x082d8c6c: 20 bytes</title>
-<rect data-content-type="Sprite sheets" x="107.37946161302997" y="275.4448586408371" width="0.3996740024122659" height="0.17466228070223333" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="105.72329419447078" y="281.6970054054477" width="0.29462080523750406" height="0.2019963963682141" style="fill:#b5a0de"/>
 </g>
 <g aria-label="field_characters_chr_0dd_koma.8bpp.png · 0x082b993c: 92 bytes" data-node="leaf" data-kind="file" data-bytes="92" data-address="0x082b993c" data-source="games/gs1/assets/graphics/field_characters_chr_0dd_koma.8bpp.png">
 <title>field_characters_chr_0dd_koma.8bpp.png · 0x082b993c: 92 bytes</title>
-<rect data-content-type="Sprite sheets" x="107.95379789614448" y="275.4448586408371" width="2.4672846216244633" height="0.17466228070223333" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="106.2199113960765" y="281.6970054054477" width="2.0824427310180895" height="0.2019963963682141" style="fill:#b5a0de"/>
 </g>
 <g aria-label="field_characters_chr_0de_koma.8bpp.png · 0x082b9998: 812 bytes" data-node="leaf" data-kind="file" data-bytes="812" data-address="0x082b9998" data-source="games/gs1/assets/graphics/field_characters_chr_0de_koma.8bpp.png">
 <title>field_characters_chr_0de_koma.8bpp.png · 0x082b9998: 812 bytes</title>
-<rect data-content-type="Sprite sheets" x="111.00841365812006" y="272.0274332022298" width="1.1409885085175722" height="2.804583087493715" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="108.9033523252787" y="272.25089452368945" width="1.8956969927999245" height="1.8129906859309148" style="fill:#b5a0de"/>
 </g>
 <g aria-label="field_characters_chr_0f0_koma.8bpp.png · 0x082c0db8: 80 bytes" data-node="leaf" data-kind="file" data-bytes="80" data-address="0x082c0db8" data-source="games/gs1/assets/graphics/field_characters_chr_0f0_koma.8bpp.png">
 <title>field_characters_chr_0f0_koma.8bpp.png · 0x082c0db8: 80 bytes</title>
-<rect data-content-type="Sprite sheets" x="110.60212260116178" y="275.4257252327652" width="1.9535706224341378" height="0.18741788608343435" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="108.47263781015386" y="274.6331706944955" width="2.757126023049633" height="0.13857096975029148" style="fill:#b5a0de"/>
 </g>
 <g aria-label="field_characters_chr_0f7_koma.8bpp.png · 0x082c49cc: 584 bytes" data-node="leaf" data-kind="file" data-bytes="584" data-address="0x082c49cc" data-source="games/gs1/assets/graphics/field_characters_chr_0f7_koma.8bpp.png">
 <title>field_characters_chr_0f7_koma.8bpp.png · 0x082c49cc: 584 bytes</title>
-<rect data-content-type="Sprite sheets" x="113.0317299570577" y="271.9097609926499" width="3.0660817057002525" height="0.7646555808401568" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="111.7730086913396" y="272.22485389695044" width="0.9479187465219481" height="2.1422138789095495" style="fill:#b5a0de"/>
 </g>
 <g aria-label="field_characters_chr_0f9_koma.8bpp.png · 0x082c4dd0: 216 bytes" data-node="leaf" data-kind="file" data-bytes="216" data-address="0x082c4dd0" data-source="games/gs1/assets/graphics/field_characters_chr_0f9_koma.8bpp.png">
 <title>field_characters_chr_0f9_koma.8bpp.png · 0x082c4dd0: 216 bytes</title>
-<rect data-content-type="Sprite sheets" x="112.94026764568424" y="273.34760984295673" width="1.280643295837483" height="0.58173095809323" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="113.53404770903575" y="272.09005542160264" width="0.918856366121514" height="0.6783217958264264" style="fill:#b5a0de"/>
 </g>
 <g aria-label="field_characters_chr_0fb_koma.8bpp.png · 0x082c5060: 108 bytes" data-node="leaf" data-kind="file" data-bytes="108" data-address="0x082c5060" data-source="games/gs1/assets/graphics/field_characters_chr_0fb_koma.8bpp.png">
 <title>field_characters_chr_0fb_koma.8bpp.png · 0x082c5060: 108 bytes</title>
-<rect data-content-type="Sprite sheets" x="112.83159095234824" y="274.4023950658072" width="0.36437757142122645" height="1.1222682103725836" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="113.36446726007914" y="273.2771185642989" width="1.2580172640347271" height="0.3391608979132132" style="fill:#b5a0de"/>
 </g>
 <g aria-label="field_characters_chr_0fe_koma.8bpp.png · 0x082c7c34: 168 bytes" data-node="leaf" data-kind="file" data-bytes="168" data-address="0x082c7c34" data-source="games/gs1/assets/graphics/field_characters_chr_0fe_koma.8bpp.png">
 <title>field_characters_chr_0fe_koma.8bpp.png · 0x082c7c34: 168 bytes</title>
-<rect data-content-type="Sprite sheets" x="113.66156208725215" y="274.5036110578687" width="0.5668095555441299" height="0.9198362262496802" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="113.45867862061058" y="274.0496517206568" width="1.069594542971831" height="0.5275836189761094" style="fill:#b5a0de"/>
 </g>
 <g aria-label="field_characters_chr_0ff_koma.8bpp.png · 0x082c7cdc: 520 bytes" data-node="leaf" data-kind="file" data-bytes="520" data-address="0x082c7cdc" data-source="games/gs1/assets/graphics/field_characters_chr_0ff_koma.8bpp.png">
 <title>field_characters_chr_0ff_koma.8bpp.png · 0x082c7cdc: 520 bytes</title>
-<rect data-content-type="Sprite sheets" x="115.00386717872077" y="273.54883512206254" width="0.9841815163048482" height="1.665926181675422" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="115.21408359309736" y="272.17291314371636" width="0.8440372400537894" height="2.2460953853777084" style="fill:#b5a0de"/>
 </g>
 <g aria-label="field_characters_chr_100_koma.8bpp.png · 0x082c7ee4: 1,660 bytes" data-node="leaf" data-kind="file" data-bytes="1660" data-address="0x082c7ee4" data-source="games/gs1/assets/graphics/field_characters_chr_100_koma.8bpp.png">
 <title>field_characters_chr_100_koma.8bpp.png · 0x082c7ee4: 1,660 bytes</title>
-<rect data-content-type="Sprite sheets" x="107.79213047267886" y="276.2068520618904" width="3.087101843511431" height="3.074346949010125" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="108.9033523252787" y="275.341027149121" width="2.5927970499538358" height="3.6349044198359106" style="fill:#b5a0de"/>
 </g>
 <g aria-label="field_characters_chr_101_koma.8bpp.png · 0x082c8560: 172 bytes" data-node="leaf" data-kind="file" data-bytes="172" data-address="0x082c8560" data-source="games/gs1/assets/graphics/field_characters_chr_101_koma.8bpp.png">
 <title>field_characters_chr_101_koma.8bpp.png · 0x082c8560: 172 bytes</title>
-<rect data-content-type="Sprite sheets" x="107.48653907806712" y="279.9756076162888" width="0.3888172107765299" height="1.8299837783229602" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="108.5742486451327" y="279.6468278888109" width="0.3417926397079976" height="2.182275791335173" style="fill:#b5a0de"/>
 </g>
 <g aria-label="field_characters_chr_122_koma.8bpp.png · 0x082c88bc: 732 bytes" data-node="leaf" data-kind="file" data-bytes="732" data-address="0x082c88bc" data-source="games/gs1/assets/graphics/field_characters_chr_122_koma.8bpp.png">
 <title>field_characters_chr_122_koma.8bpp.png · 0x082c88bc: 732 bytes</title>
-<rect data-content-type="Sprite sheets" x="108.56976489423192" y="280.28119901090054" width="2.309467421958371" height="1.2188009890994902" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="109.5869376046947" y="279.97593156895687" width="1.9092117705378406" height="1.5240684310431707" style="fill:#b5a0de"/>
 </g>
 <g aria-label="field_characters_chr_123_koma.8bpp.png · 0x082c8b98: 1,236 bytes" data-node="leaf" data-kind="file" data-bytes="1236" data-address="0x082c8b98" data-source="games/gs1/assets/graphics/field_characters_chr_123_koma.8bpp.png">
 <title>field_characters_chr_123_koma.8bpp.png · 0x082c8b98: 1,236 bytes</title>
-<rect data-content-type="Sprite sheets" x="111.8792323161903" y="276.2068520618904" width="4.100907136987746" height="1.430728391094839" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="112.49614937523253" y="275.341027149121" width="3.4839900779455046" height="1.7651532636520448" style="fill:#b5a0de"/>
 </g>
 <g aria-label="field_characters_chr_124_koma.8bpp.png · 0x082c906c: 600 bytes" data-node="leaf" data-kind="file" data-bytes="600" data-address="0x082c906c" data-source="games/gs1/assets/graphics/field_characters_chr_124_koma.8bpp.png">
 <title>field_characters_chr_124_koma.8bpp.png · 0x082c906c: 600 bytes</title>
-<rect data-content-type="Sprite sheets" x="111.76881280017612" y="278.52716093697103" width="0.7791609679716517" height="3.0832585790431244" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="112.33861297589029" y="277.9486440134308" width="0.6849272013155048" height="3.7088923859115317" style="fill:#b5a0de"/>
 </g>
 <g aria-label="field_characters_chr_125_koma.8bpp.png · 0x082c92c4: 440 bytes" data-node="leaf" data-kind="file" data-bytes="440" data-address="0x082c92c4" data-source="games/gs1/assets/graphics/field_characters_chr_125_koma.8bpp.png">
 <title>field_characters_chr_125_koma.8bpp.png · 0x082c92c4: 440 bytes</title>
-<rect data-content-type="Sprite sheets" x="113.2490396994735" y="278.44906590032514" width="2.9196143063646396" height="0.6229708946798026" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="113.72034406715605" y="277.96052070206554" width="2.405455096729489" height="0.7086805785850059" style="fill:#b5a0de"/>
 </g>
 <g aria-label="field_characters_chr_1f7_koma.8bpp.png · 0x082d740c: 588 bytes" data-node="leaf" data-kind="file" data-bytes="588" data-address="0x082d740c" data-source="games/gs1/assets/graphics/field_characters_chr_1f7_koma.8bpp.png">
 <title>field_characters_chr_1f7_koma.8bpp.png · 0x082d740c: 588 bytes</title>
-<rect data-content-type="Sprite sheets" x="113.4375542521336" y="279.88352224234484" width="1.254372400664645" height="1.6164777576551712" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="113.86143445348175" y="279.51897224556126" width="0.9908613512364303" height="1.9855970788205943" style="fill:#b5a0de"/>
 </g>
 <g aria-label="field_characters_fenrir_koma.8bpp.png · 0x082b5060: 336 bytes" data-node="leaf" data-kind="file" data-bytes="336" data-address="0x082b5060" data-source="games/gs1/assets/graphics/field_characters_fenrir_koma.8bpp.png">
 <title>field_characters_fenrir_koma.8bpp.png · 0x082b5060: 336 bytes</title>
-<rect data-content-type="Sprite sheets" x="115.5139798528932" y="279.7055754424398" width="0.6441064001898986" height="1.9723713574652726" style="fill:#b5a0de"/>
+<rect data-content-type="Sprite sheets" x="115.63082972354681" y="279.30664481315347" width="0.5662064864208173" height="2.4102519436362075" style="fill:#b5a0de"/>
 </g>
 </g>
 <g aria-label="characters_chr_0830_index.json · components · 0x08300f74: 127,116 bytes · 65 items" data-node="container" data-kind="file" data-bytes="127116" data-address="0x08300f74" data-source="games/gs1/assets/graphics/characters_chr_0830_index.json">
@@ -12471,7 +12411,7 @@
 <rect x="376" y="304" width="16" height="16" style="fill:#b5cc82"/>
 <text class="weyard legend-label" x="396" y="312" dominant-baseline="middle">Maps 40.5%</text>
 <rect x="8" y="328" width="16" height="16" style="fill:#bda995"/>
-<text class="weyard legend-label" x="28" y="336" dominant-baseline="middle">Other data 10.5%</text>
+<text class="weyard legend-label" x="28" y="336" dominant-baseline="middle">Other data 12.6%</text>
 <rect x="160" y="328" width="16" height="16" style="fill:#efbb82"/>
 <text class="weyard legend-label" x="180" y="336" dominant-baseline="middle">PCM samples 5.5%</text>
 <rect x="312" y="328" width="16" height="16" style="fill:#e8a6d3"/>
@@ -12479,7 +12419,7 @@
 <rect x="440" y="328" width="16" height="16" style="fill:#f29b91"/>
 <text class="weyard legend-label" x="460" y="336" dominant-baseline="middle">SFX 0.2%</text>
 <rect x="8" y="352" width="16" height="16" style="fill:#b5a0de"/>
-<text class="weyard legend-label" x="28" y="360" dominant-baseline="middle">Sprite sheets 22.5%</text>
+<text class="weyard legend-label" x="28" y="360" dominant-baseline="middle">Sprite sheets 20.5%</text>
 <rect x="184" y="352" width="16" height="16" style="fill:#9aa4c2"/>
 <text class="weyard legend-label" x="204" y="360" dominant-baseline="middle">Tables 0.1%</text>
 <rect x="296" y="352" width="16" height="16" style="fill:#85cbd2"/>

@@ -1,5 +1,6 @@
 #include "types.h"
 
+#define SetEffectRecordMode Func_02000030
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #define AcquireOverlayObject      Func_02001aca
@@ -11,39 +12,11 @@
 #define SetOverlayObjectSlot Func_02001c2c
 #define OverlayObject_PrepareSpawnedObject Func_02000048
 #define OverlayObject_CreateConfigured Func_020000a0
-
-#include "create_configured_overlay_object.h"
-
-void *Func_02001aca(s32, s32, s32, s32);
-void Func_02001b20(void *, s32);
-void Func_02001b38(void *, s32);
-void Func_02001bd0(void *, s32);
-
-#include "types.h"
-
 #define SceneData_GetTablea5cc Func_02000314
 #define SceneData_GetTablea9d4 Func_0200031c
 #define SceneData_GetTableaa14 Func_02000324
 #define SceneData_GetTableaa58 Func_0200032c
 #define SceneData_GetTableAae8 Func_02000694
-/* Contiguous unnamed leaf-owner run for resource_396. */
-
-/* Return the overlay's first persistent workspace block. */
-
-
-/* Return the overlay's second persistent workspace block. */
-
-
-/* Return the overlay's third persistent workspace block. */
-
-
-/* Return the overlay's fourth persistent workspace block. */
-
-
-/* Return the overlay's presentation workspace block. */
-
-#include "types.h"
-
 #define FieldScene_RunStep200 Func_02000494
 #define FieldScene_RunStep201 Func_020004a8
 #define FieldScene_RunStep202 Func_020004c0
@@ -65,6 +38,57 @@ void Func_02001bd0(void *, s32);
 #define FieldScene_RunStep212 Func_02000630
 #define FieldScene_RunStep213 Func_02000648
 #define FieldScene_RunStep214 Func_02000660
+#define SceneState_ClearStoryVariantWhenIdle Func_02000674
+#define SceneState_ApplyRectsByFlag844 Func_02000f58
+#define FieldScene_RunFourActorEncounter Func_02000918
+#define SceneEffect_RegisterPaletteFadeCallback Func_0200184c
+#define EffectDescriptorTable Data_02009da8
+#define GetPartyEffect Func_02001c56
+#define SpawnEffect Func_02001bf4
+#define SetEffectVariant Func_02001bfe
+#define SetEffectDescriptor Func_02001c18
+#define SetEffectMode Func_02001d62
+#define ScaleEffectDeltaFromAccumulated Func_02001c8c
+#define ScaleEffectDeltaFromOrigin Func_02001ca4
+#define ScaleEffectVerticalDelta Func_02001cb2
+#define SetEffectCallbackMode Func_02001d18
+#define SetEffectCallbackArgument Func_02001d28
+#define SpawnConfiguredEffect Func_0200013c
+
+#include "create_configured_overlay_object.h"
+#include "configured_effect_spawn.h"
+
+/* Shared 22-byte head leaf proved identical for this overlay family. */
+struct EffectRecord {
+    u8 pad[9];
+    u8 flags_lo : 2;
+    u8 mode : 2;
+    u8 flags_hi : 4;
+};
+
+struct EffectWork {
+    u8 pad[80];
+    struct EffectRecord *record;
+};
+
+/*
+ * Per-frame integrator for an effect record -- resource_396. It adds the
+ * velocity at +68/+72/+76 into the position at +8/+12/+16, decays two of the
+ * three velocities, accumulates the rates at +48/+52, and turns the sprite.
+ */
+
+extern s16 *Data_0200add0;
+extern u8 Data_02009ec8[];
+extern u8 Data_0200adc0[];
+extern u8 Data_0200adc4[];
+extern u8 Data_0200adc8[];
+extern u8 Data_0200adcc[];
+extern u8 Data_03001ebc[];
+
+void *Func_02001aca(s32, s32, s32, s32);
+void Func_02001b20(void *, s32);
+void Func_02001b38(void *, s32);
+void Func_02001bd0(void *, s32);
 void Func_020007d6(int, int, int, int);
 void Func_020007e8(int, int, int, int);
 void Func_02000800(int, int, int, int);
@@ -86,15 +110,6 @@ void Func_02000958(int, int, int, int);
 void Func_02000970(int, int, int, int);
 void Func_02000988(int, int, int, int);
 void Func_020009a2(int, int, int, int);
-
-/* Contiguous unnamed leaf-owner run for resource_396. */
-
-#include "types.h"
-
-#define SceneState_ClearStoryVariantWhenIdle Func_02000674
-#define SceneState_ApplyRectsByFlag844 Func_02000f58
-extern s16 *Data_0200add0;
-
 s32 Func_02002238(void);
 s32 Func_02002a2c(s32 flag);
 void Func_02001884(void);
@@ -106,19 +121,6 @@ void Func_02002a4e(s32, s32, s32, s32, s32, s32);
 void Func_02002a60(s32, s32, s32, s32, s32, s32);
 void Func_02002a6a(s32, s32, s32, s32, s32, s32);
 void Func_02002a88(s32, s32, s32, s32, s32, s32);
-
-/* Clear the active story variant once the scene controller is idle. */
-
-#include "types.h"
-
-#define FieldScene_RunFourActorEncounter Func_02000918
-extern u8 Data_02009ec8[];
-extern u8 Data_0200adc0[];
-extern u8 Data_0200adc4[];
-extern u8 Data_0200adc8[];
-extern u8 Data_0200adcc[];
-extern u8 Data_03001ebc[];
-
 void Func_02001e14();
 void Func_02001f34();
 void Func_02001f46();
@@ -281,6 +283,29 @@ void Func_02002a08();
 void Func_02002a0a();
 void Func_02002a20_scene_primary_script();
 void Func_0200962d();
+void Func_02003282(void (*callback)(void));
+void Func_02009244(void);
+s32 Func_0200328e();
+
+/* Contiguous unnamed leaf-owner run for resource_396. */
+
+/* Return the overlay's first persistent workspace block. */
+
+/* Return the overlay's second persistent workspace block. */
+
+/* Return the overlay's third persistent workspace block. */
+
+/* Return the overlay's fourth persistent workspace block. */
+
+/* Return the overlay's presentation workspace block. */
+
+/* Clear the active story variant once the scene controller is idle. */
+
+/*
+ * A loader-relocated call word rather than a runtime address; it turns a value
+ * and a duration into a per-frame step. Declared without a prototype, and the
+ * call site passes two arguments.
+ */
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
@@ -332,11 +357,10 @@ static __inline__ void bump_step(s32 amount)
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
-#include "types.h"
-
-#define SceneEffect_RegisterPaletteFadeCallback Func_0200184c
-void Func_02003282(void (*callback)(void));
-void Func_02009244(void);
+void SetEffectRecordMode(struct EffectWork *work, s32 mode)
+{
+    work->record->mode = mode;
+}
 
 /*
  * Register this overlay's palette-fade callback.
@@ -347,7 +371,6 @@ void Func_02009244(void);
  * callback lives at 0x02009244 in a later-loaded RAM segment, not at this
  * stream's own same-shaped 0x02001244.
  */
-
 void *OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 kind)
 {
     void *obj;
@@ -372,6 +395,12 @@ void *OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 kind)
 void *OverlayObject_CreateConfigured(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
 #include "create_configured_overlay_object_body.inc"
+}
+
+void SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
+                           u32 flags, const struct ConfiguredEffectOptions *options)
+{
+#include "configured_effect_spawn_body.inc"
 }
 
 void *SceneData_GetTablea5cc(void)
@@ -672,4 +701,33 @@ void SceneState_ApplyRectsByFlag844(s32 flag)
 void SceneEffect_RegisterPaletteFadeCallback(void)
 {
     Func_02003282(Func_02009244);
+}
+
+/*
+ * The decay of the Z velocity stays a signed divide by sixteen: that shape is
+ * what reproduces the negative bias and arithmetic shift in the reference.
+ */
+void Func_0200185c(struct Effect *effect)
+{
+    s32 velocity_z;
+    struct Sprite *sprite;
+    s32 velocity_x;
+
+    /* This block orders the Z load after the Y store; do not flatten it. */
+    do {
+        velocity_x = effect->velocity_x;
+        effect->position[0] += velocity_x;
+        effect->position[1] += effect->velocity_y;
+    } while (0);
+    velocity_z = effect->velocity_z;
+    effect->position[2] += velocity_z;
+
+    effect->velocity_x = velocity_x - Func_0200328e(velocity_x, 18);
+    effect->velocity_z = velocity_z - velocity_z / 16;
+
+    effect->accum18 += effect->rate30;
+    effect->accum1c += effect->rate34;
+
+    sprite = effect->sprite;
+    sprite->angle += effect->step64;
 }

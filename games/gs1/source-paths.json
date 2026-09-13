@@ -13974,12 +13974,18 @@
     "resource_3b7:02000e5c": {
       "name": "FieldScene_RunSecondaryScript"
     },
-    "resource_396:02000030": "overlays/scene/actor/four_encounter/set_effect_record_mode.c",
+    "resource_396:02000030": {
+      "name": "SetEffectRecordMode",
+      "source": "overlays/scene/actor/four_encounter.c"
+    },
     "resource_396:0200013c": {
       "name": "SpawnConfiguredEffect",
-      "source": "overlays/scene/actor/four_encounter/spawn_configured_effect.c"
+      "source": "overlays/scene/actor/four_encounter.c"
     },
-    "resource_396:0200185c": "overlays/scene/actor/four_encounter/advance_effect_motion.c",
+    "resource_396:0200185c": {
+      "name": "advance_effect_motion",
+      "source": "overlays/scene/actor/four_encounter.c"
+    },
     "resource_396:02000660": {
       "name": "FieldScene_RunStep214",
       "source": "overlays/scene/actor/four_encounter.c"

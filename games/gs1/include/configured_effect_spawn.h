@@ -13,7 +13,9 @@ struct Sprite {
 };
 
 struct Effect {
-    u8 pad00[24];
+    u8 pad00[8];
+    s32 position[3];
+    u8 pad14[4];
     s32 accum18;
     s32 accum1c;
     u8 pad20[3];

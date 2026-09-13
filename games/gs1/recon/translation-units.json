@@ -175902,6 +175902,32 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "menu-resource-entries",
+      "game": "gs1",
+      "source": "games/gs1/src/menu/resource_entries.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080286a0",
+          "extent": 188,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0802875c",
+          "extent": 76,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080287a8",
+          "extent": 96,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

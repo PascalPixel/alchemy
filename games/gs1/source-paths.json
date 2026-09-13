@@ -15169,162 +15169,168 @@
     },
     "resource_39b:02000030": {
       "name": "SetEffectRecordMode",
-      "source": "overlays/scene/actor/staged_effect/set_effect_record_mode.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:0200013c": {
       "name": "SpawnConfiguredEffect",
-      "source": "overlays/scene/actor/staged_effect/staged_actor_effect_sequence.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
-    "resource_39b:02000314": "overlays/scene/actor/staged_effect/calculate_position_distance.c",
-    "resource_39b:02000350": "overlays/scene/actor/staged_effect/find_scene_actor_at_fixed_point_position.c",
+    "resource_39b:02000314": {
+      "source": "overlays/scene/actor/staged_effect.c"
+    },
+    "resource_39b:02000350": {
+      "source": "overlays/scene/actor/staged_effect.c"
+    },
     "resource_39b:020003a8": {
       "name": "AdvanceStagedActorPair",
-      "source": "overlays/scene/actor/staged_effect/staged_actor_effect_sequence.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
-    "resource_39b:02000528": "overlays/scene/actor/staged_effect/fill_scene_grid_attribute_rectangle.c",
+    "resource_39b:02000528": {
+      "source": "overlays/scene/actor/staged_effect.c"
+    },
     "resource_39b:0200058c": {
       "name": "stop_blocked_actor_motion",
-      "source": "overlays/scene/actor/staged_effect/staged_actor_effect_sequence.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:02000758": {
       "name": "find_clear_actor_position",
-      "source": "overlays/scene/actor/staged_effect/staged_actor_effect_sequence.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:02000ed0": {
       "name": "run_scene_effect_sequence",
-      "source": "overlays/scene/actor/staged_effect/staged_actor_effect_sequence.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:02001fe8": {
       "name": "clear_linked_scene_record",
-      "source": "overlays/scene/actor/staged_effect/staged_actor_effect_sequence.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:020023b8": {
       "name": "OverlayObject_ReleasePublishedAttachment",
-      "source": "overlays/scene/actor/staged_effect/overlay_object.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:02000e78": {
       "name": "FieldScene_RunSingleStep",
-      "source": "overlays/scene/actor/staged_effect/shared.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:02001c88": {
       "name": "OverlayObject_AdvanceScaleCounter",
-      "source": "overlays/scene/actor/staged_effect/overlay_object.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:02001150": {
       "name": "FieldScene_RunActor8StepWithTableA820",
-      "source": "overlays/scene/actor/staged_effect/scene_setup.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:02000fc4": {
       "name": "FieldScene_RunIndexedStep19",
-      "source": "overlays/scene/actor/staged_effect/scene_setup.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:02001144": {
       "name": "FieldScene_RunIndexedStep63",
-      "source": "overlays/scene/actor/staged_effect/scene_setup.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:02000e98": {
       "name": "SceneData_ReturnZero",
-      "source": "overlays/scene/actor/staged_effect/scene_data.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:02000e60": {
       "name": "FieldScene_Forward31d4",
-      "source": "overlays/scene/actor/staged_effect/shared.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:020000a0": {
       "name": "OverlayObject_CreateConfiguredObject",
-      "source": "overlays/scene/actor/staged_effect/overlay_object.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:02001c60": {
       "name": "OverlayObject_RampWords24And28Over16Frames",
-      "source": "overlays/scene/actor/staged_effect/overlay_object.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:02000ea4": {
       "name": "SceneData_GetTableac58",
-      "source": "overlays/scene/actor/staged_effect/scene_data.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:02000e9c": {
       "name": "SceneData_GetTableabf8",
-      "source": "overlays/scene/actor/staged_effect/scene_data.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:02000fd0": {
       "name": "SceneData_GetTablead60",
-      "source": "overlays/scene/actor/staged_effect/scene_setup.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:02000048": {
       "name": "OverlayObject_CreateConfigured",
-      "source": "overlays/scene/actor/staged_effect/overlay_object.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:02000e84": {
       "name": "FieldScene_CallHelper2d50",
-      "source": "overlays/scene/actor/staged_effect/scene_wrapper.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:02001bc8": {
       "name": "OverlayObject_SpawnKind24AtActor",
-      "source": "overlays/scene/actor/staged_effect/overlay_object.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:02000d48": {
       "name": "SceneAudio_PlayCue118AndReturnZero",
-      "source": "overlays/scene/actor/staged_effect/scene_audio.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:02000fac": {
       "name": "FieldScene_RunIndexedStep17",
-      "source": "overlays/scene/actor/staged_effect/scene_setup.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:02000e90": {
       "name": "SceneData_GetTablea928",
-      "source": "overlays/scene/actor/staged_effect/scene_data.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:02000d58": {
       "name": "SceneActor_FaceLeaderWhileGrounded",
-      "source": "overlays/scene/actor/staged_effect/actor_facing.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:02000eac": {
       "name": "FieldScene_RunStepWithValue1632",
-      "source": "overlays/scene/actor/staged_effect/scene_data.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:02000e6c": {
       "name": "FieldScene_CallHelper2e58",
-      "source": "overlays/scene/actor/staged_effect/scene_wrapper.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:02000fb8": {
       "name": "FieldScene_RunIndexedStep18",
-      "source": "overlays/scene/actor/staged_effect/scene_setup.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:02001730": {
       "name": "FieldScene_RunActorExchangeChoreography"
     },
     "resource_39b:02000fd8": {
       "name": "FieldScene_RunSupplementalSequenceTwo",
-      "source": "overlays/scene/actor/staged_effect/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:02000f48": {
       "name": "FieldScene_RunScene39b_02000f48",
-      "source": "overlays/scene/actor/staged_effect/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:0200196c": {
       "name": "FieldScene_RunScene39b_0200196c",
-      "source": "overlays/scene/actor/staged_effect/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:02001208": {
       "name": "FieldScene_RunScene39b_02001208",
-      "source": "overlays/scene/actor/staged_effect/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:0200116c": {
       "name": "FieldScene_RunScene39b_0200116c",
-      "source": "overlays/scene/actor/staged_effect/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:02000cc0": {
       "name": "FieldScene_RunScene39b_02000cc0",
-      "source": "overlays/scene/actor/staged_effect/scene_primary_script.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:02001c20": {
       "name": "SceneEffect_AdvanceAnchoredRiseFrame",
-      "source": "overlays/scene/actor/staged_effect/effect.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:020008ec": {
       "name": "SceneActor_MoveAndRedraw",
       "call_via": "02003082",
-      "source": "overlays/scene/actor/staged_effect/move_and_redraw.c"
+      "source": "overlays/scene/actor/staged_effect.c"
     },
     "resource_39b:02002030": {
       "name": "FieldScene_RunScene39bSequenceA"

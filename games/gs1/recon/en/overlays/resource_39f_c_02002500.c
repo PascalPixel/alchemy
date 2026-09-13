@@ -3,7 +3,7 @@
 #define RunEventScript01 Func_02002500
 
 /*
- * resource_39f owner at 0x02002500, 1640 reviewed bytes: the overlay's primary
+ * resource_39f owner at 0x02002500, 1700 reviewed bytes: the overlay's primary
  * event script.  It publishes the scene phase, then dispatches on two signed
  * halfwords of the shared scene-record block: the scene id at +448 selects one
  * of three arms (0x44, 0x45, 0x46) and the scene sub-state at +450 selects the
@@ -13,12 +13,9 @@
  * image offset 0x020028b0 - the table is inside this owner).  Every arm falls
  * into one shared epilogue that returns 0.
  *
- * Extent note for the integrator: the reviewed extent stops at 0x02002b67, but
- * the tail literal pool this body needs runs on to 0x02002ba3 (15 words,
- * 0x02002b68-0x02002ba3), immediately before the next owner at 0x02002ba4.
- * Those words are read back from games/gs1/asm/overlays/resource_39f_overlay.s
- * and are spelled here as ordinary constants; they land past the compared
- * window, so the candidate is 60 bytes longer than the reviewed extent.
+ * The trailing literal pool ends at 0x02002ba4, immediately before the next
+ * owner. Reference PC-relative loads through 0x02002b48 reach its last word
+ * at 0x02002ba0. The reviewed extent includes this complete pool.
  *
  * Loader relocation.  The image holds BL-shaped word pairs that the resource
  * loader rewrites per site, so one pre-relocation call word can serve two sites
@@ -40,14 +37,7 @@
  * absolute_symbols block in a translation unit; the exact JSON is in this
  * worker's integrator notes.
  *
- * Residual at the time of writing: candidate 1700 bytes, reference 1640,
- * differing_halfwords 63.  Thirty of those are the 60 tail-pool bytes that lie
- * past the reviewed extent and have no reference halfword to match.  The rest
- * are register-allocation and scheduling differences that do not change what
- * the code does: the shared table pointer lands in r0 rather than r1 and its
- * pool load is hoisted two instructions, the read-modify-write of the flag
- * bytes at +35/+89 puts the constant in the other operand register, and two of
- * the three six-argument grid calls set r0 before r1 instead of after.
+ * Current scores and unresolved differences belong in the owner dossier.
  *
  * Uncertainties.  The engine roles below are named only where this repository
  * already binds the main-image address (GameFlag_IsSet 0x080770c0, GameFlag_Set

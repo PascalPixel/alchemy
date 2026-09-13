@@ -515,6 +515,7 @@ Character banks and their component indexes live together in `GRAPHICS/CHARACTER
 Their battle/field filename prefixes do not establish exclusive ownership:
 the common descriptor catalog feeds animation and UI consumers. Preserve shared
 palettes once; do not split banks by an export label alone.
+Battle-effect tables now accompany their consumers in `SRC/BATTLE/DATA`.
 Remaining graphics placement is a separate stage. Preserve separate compilation and
 load boundaries. The remaining source groups are `SYSTEM`, `LIB`, `GRAPHICS`,
 `SOUND`, `GAME`, `BATTLE`, `MENU` and `DEBUG`; shared headers belong in `INCLUDE`.
@@ -589,8 +590,8 @@ because they share a location. Shared field engine code belongs in `FIELD/COMMON
 Keep classification metadata outside source folders; provisional-source records live
 in `games/gs1/semantic/provisional-source.json`. Code stays out of assets: overlay assembly
 and compression recipes belong in `asm/overlays/`, battle assembly in
-`asm/battle/`. GS1 non-executable battle tables still in `assets/data/battle/`
-are awaiting migration to `SRC/BATTLE/DATA/`; GS1 sound inputs are already in
+`asm/battle/`. GS1 non-executable battle-effect tables are in `SRC/BATTLE/DATA/`;
+GS1 sound inputs are already in
 the game-root `SOUND/`, separate from player code in `SRC/SOUND/`.
 GS2 retains its existing layout until independently mapped. Update paths,
 caches and coverage together. Music titles require actual identification,

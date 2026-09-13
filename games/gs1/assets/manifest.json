@@ -1342,7 +1342,7 @@
       "address": "0x080eda78",
       "size": "0x78",
       "kind": "typed-table",
-      "source": "games/gs1/assets/data/battle/sentou_kouka_keisu.json"
+      "source": "games/gs1/SRC/BATTLE/DATA/SENTOU_KOUKA_KEISU.json"
     },
     {
       "address": "0x080edaf0",
@@ -1355,19 +1355,19 @@
       "address": "0x080ede48",
       "size": "0x46c",
       "kind": "typed-table",
-      "source": "games/gs1/assets/data/battle/sentou_kouka_hyou_a.json"
+      "source": "games/gs1/SRC/BATTLE/DATA/SENTOU_KOUKA_HYOU_A.json"
     },
     {
       "address": "0x080ee2b4",
       "size": "0x65c",
       "kind": "typed-table",
-      "source": "games/gs1/assets/data/battle/sentou_kouka_kansuu_hyou.json"
+      "source": "games/gs1/SRC/BATTLE/DATA/SENTOU_KOUKA_KANSUU_HYOU.json"
     },
     {
       "address": "0x080ee910",
       "size": "0x694",
       "kind": "typed-table",
-      "source": "games/gs1/assets/data/battle/sentou_kouka_hyou_b.json"
+      "source": "games/gs1/SRC/BATTLE/DATA/SENTOU_KOUKA_HYOU_B.json"
     },
     {
       "address": "0x080eefa4",
@@ -1380,7 +1380,7 @@
       "address": "0x080ef014",
       "size": "0x40",
       "kind": "typed-table",
-      "source": "games/gs1/assets/data/battle/sentou_kouka_bit_mask.json"
+      "source": "games/gs1/SRC/BATTLE/DATA/SENTOU_KOUKA_BIT_MASK.json"
     },
     {
       "address": "0x080ef054",

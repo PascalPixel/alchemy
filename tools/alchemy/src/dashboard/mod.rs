@@ -58,11 +58,9 @@ fn state<R>(f: impl FnOnce(&mut State) -> R) -> R {
         .get_or_insert_with(State::default))
 }
 fn document_number(document: &Value, path: &[&str]) -> Option<f64> {
-    let mut v = document;
-    for key in path {
-        v = v.get(key)?;
-    }
-    v.as_f64()
+    path.iter()
+        .try_fold(document, |v, key| v.get(key))?
+        .as_f64()
 }
 fn compute() -> Result<Live, String> {
     let tree = work_tree_at(root());
@@ -99,10 +97,6 @@ fn cached() -> Result<Live, String> {
 }
 
 impl Live {
-    #[cfg(test)]
-    fn chart(&self, id: &str, width: Option<u16>) -> Option<String> {
-        self.chart_at(id, width, "")
-    }
     fn chart_at(&self, id: &str, width: Option<u16>, folder: &str) -> Option<String> {
         if let (Some(map), Some(width)) = (&self.map, width) {
             return Some(crate::coverage::boxtree::svg_at(
@@ -440,7 +434,10 @@ mod tests {
     #[test]
     fn published_charts_survive_missing_reports_without_claiming_live_progress() {
         let live = live_from(Value::Null, vec![("code", "<svg/>".into())]).unwrap();
-        assert_eq!(live.chart("code", Some(800)).as_deref(), Some("<svg/>"));
+        assert_eq!(
+            live.chart_at("code", Some(800), "").as_deref(),
+            Some("<svg/>")
+        );
         let snapshot = snapshot_from(&State {
             coverage: Some(live),
             error: Some("missing build manifest".into()),

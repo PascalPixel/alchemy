@@ -174124,6 +174124,42 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "battle-event-queue",
+      "game": "gs1",
+      "source": "games/gs1/src/battle/event/queue.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080bb8d8",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080bb8e8",
+          "extent": 64,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080bb928",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080bb938",
+          "extent": 388,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080bbabc",
+          "extent": 44,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

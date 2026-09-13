@@ -11316,13 +11316,17 @@
       "name": "SceneData_GetTable9db4",
       "source": "overlays/scene/story/progress_actor.c"
     },
-    "resource_375:02000090": "overlays/scene/story/progress_actor/get_default_result.c",
+    "resource_375:02000090": {
+      "name": "get_default_result",
+      "source": "overlays/scene/story/progress_actor.c"
+    },
     "resource_375:020019e8": {
       "name": "SceneState_SetWorkAndFlag87e",
       "source": "overlays/scene/story/progress_actor.c"
     },
     "resource_375:020000dc": {
-      "name": "RunEventScript01"
+      "name": "Scene_RunActorTwelveDialogue",
+      "source": "overlays/scene/story/progress_actor.c"
     },
     "resource_375:0200150c": {
       "name": "FieldScene_ConfigureProgressDependentActors"
@@ -11335,8 +11339,8 @@
       "source": "overlays/scene/story/progress_actor.c"
     },
     "resource_375:02000be0": {
-      "name": "FieldScene_RunScene375SequenceA",
-      "source": "overlays/scene/story/progress_actor/sequence.c"
+      "name": "FieldScene_RunGatedActorSequence",
+      "source": "overlays/scene/story/progress_actor.c"
     },
     "resource_377:02000088": {
       "name": "FacingTargetScene_GetScriptData",

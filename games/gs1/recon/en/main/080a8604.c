@@ -1,5 +1,6 @@
 #include "types.h"
 #include "item_menu.h"
+#include "global_cells.h"
 
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
@@ -28,7 +29,7 @@ extern u8 Data_080af230;
 
 void Func_080a8604(s32 window, s32 owner, s32 mode)
 {
-    struct ItemMenuState *menu = Data_03001f2c;
+    struct ItemMenuState *menu = *(struct ItemMenuState **)ADDR_03001F2C;
     u8 *object;
     s32 compare_mode;
     s32 row_y;

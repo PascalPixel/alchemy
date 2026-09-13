@@ -22,7 +22,7 @@ extern u8 Value_00000075;
  */
 s32 Func_080a414c(void)
 {
-    struct ItemMenuState *menu = Data_03001f2c;
+    struct ItemMenuState *menu = *(struct ItemMenuState **)ADDR_03001F2C;
     s8 command_states[8];
     u16 *redraw_flag;
     s32 saved;

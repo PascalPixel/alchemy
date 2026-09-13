@@ -2,6 +2,7 @@
 #include "item_menu.h"
 #include "item.h"
 #include "owner_state.h"
+#include "global_cells.h"
 
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 
@@ -32,6 +33,7 @@ void Func_08015068(s32 window, s32 unused, s32 x, s32 y, s32 height);
 void Func_08015080(s32 message, s32 window, s32 x, s32 y);
 void Func_08015270(s32 window);
 void Func_08015278(s32 window);
+void Func_08015298(s32 kind, s32 item, s32 target, s32 flags);
 void Func_080f9010(s32 cue);
 void Func_08077010(s32 owner);
 s32 Func_08077028(s32 owner, s32 item);
@@ -46,6 +48,7 @@ void Func_080a112c(s32 window, s32 owner, s32 unused, s32 style);
 void Func_080a1d08(s32 message, s32 acknowledgement_mode, s32 window_mode);
 void Func_080a23c0(s32 window);
 s32 Func_080a38d0(s32 mode);
+s32 Func_080a3d9c(s32 owner, s32 item);
 void Func_080a3ef0(s32 owner, s32 slot, s32 unused);
 s32 Func_080a414c(void);
 s32 Func_080a46b4(s32 owner, s32 item);
@@ -56,6 +59,7 @@ s32 Func_080a5388(s32 mode);
 s32 Func_080a5788(s32 mode);
 
 #define ItemMenu_GetCommandChoice  Func_080a414c
+#define ItemMenu_ShowModalMessage  Func_080a1d08
 #define ItemMenu_SelectPartyMember Func_080a5788
 #define Item_ClassifyUseMode            Func_080a46b4
 #define UiText_DrawWorkValueWithLabel   Func_080a23c0
@@ -106,7 +110,7 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
     sel = 0;
     ret = 0;
     state = 0;
-    menu = Data_03001f2c;
+    menu = *(struct ItemMenuState **)ADDR_03001F2C;
 
     while (done == 0 && Func_080770c0(0x150) == 0) {
         switch (state) {
@@ -271,7 +275,7 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
                 break;
             }
             menu->target_owner = 0;
-            ItemMenu_DrawIcon(
+            Func_08015298(
                 2,
                 (menu->selected_item & 0x1ff) | (cnt << 11),
                 menu->selected_item_icon->render_target,
@@ -311,7 +315,7 @@ s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
             aborted = 0;
             item = Item_Get(menu->selected_item & 0x1ff);
             if ((item->flags & 16) != 0) {
-                qty = ItemMenu_GetQty(
+                qty = Func_080a3d9c(
                     menu->target_owner, menu->selected_item & 0x1ff);
                 if (qty == 30) {
                     aborted = 1;

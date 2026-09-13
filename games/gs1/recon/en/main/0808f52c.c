@@ -58,7 +58,7 @@ struct BattleSelectionWork {
     s32 object_id;
 };
 extern struct BattleSelectionWork Data_02000240;
-extern u8 *Data_03001e70_a[]; /* IWRAM cell table; [0] and [23] are used here */
+extern u8 Data_03001e70_a[]; /* IWRAM cell table; [0] and [23] are used here */
 extern u8 Data_0809e8ac[];  /* 33 unsigned radii, indexed by the phase step */
 extern s8 Data_0809e8ce[];  /* 32 signed widths, indexed by a running counter */
 extern u8 Data_0809f840[];  /* 32 records of 28 bytes, see TransitionSpan */
@@ -138,8 +138,8 @@ void DisplayTransition_UpdateScanlineTable(void)
     s32 y0;
     u32 t;
 
-    sys = Data_03001e70_a[0];
-    p = (struct DisplayTransitionWork *)Data_03001e70_a[23];
+    sys = ((u8 **)Data_03001e70_a)[0];
+    p = (struct DisplayTransitionWork *)((u8 **)Data_03001e70_a)[23];
 
     if (p->field_53c != 0) {
         if (p->field_53d >= p->field_53c) {

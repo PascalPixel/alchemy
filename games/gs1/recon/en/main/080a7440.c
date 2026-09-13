@@ -1,5 +1,6 @@
 #include "types.h"
 #include "item_menu.h"
+#include "global_cells.h"
 
 #define CharacterSelector_Run Func_080a7440
 
@@ -10,7 +11,7 @@ s32 CharacterSelector_Run(void)
     struct ItemMenuState *menu;
     s32 result;
 
-    menu = Data_03001f2c;
+    menu = *(struct ItemMenuState **)ADDR_03001F2C;
     menu->selected_slot = 0;
     result = Func_080a77a4(0);
     if (result != -1) {

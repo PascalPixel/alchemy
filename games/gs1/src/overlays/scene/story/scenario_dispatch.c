@@ -225,6 +225,7 @@
 #define FieldScene_RunScene37f_0200092c Func_0200092c
 #define FieldScene_RunScene37f_02000d1c Func_02000d1c
 #define FieldScene_RunFourEntitySequence Func_02000f8c
+#define SceneData_SelectFormationTable Func_020000ec
 
 extern u8 Value_00000013;
 extern u8 Value_00000010;
@@ -248,6 +249,11 @@ extern void Func_02001df0(void);  /* Func_0808a020 veneer. */
 extern u8 Value_00001032;
 extern u8 Data_0200a69c[];
 extern u8 Value_00000fe0;
+extern u8 Data_0200a2e4[];
+extern u8 Data_0200a524[];
+extern u8 Data_0200a41c[];
+extern u8 Data_0200a32c[];
+extern u8 Data_0200a2d8[];
 
 void Func_02001c70();
 void Func_02001c9e();
@@ -1010,6 +1016,36 @@ s32 Func_0200007c(void)
         }
     }
     return (s32)Data_02009fc0;
+}
+
+/* Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers; a direct call precomputes a costly constant
+ * into a pseudo that the compiler then shares with later uses in the block.
+ * A value-returning call also sets r0 last of its arguments. */
+s32 SceneData_SelectFormationTable(void)
+{
+    s32 lo = 11;
+
+    if (Data_02000240_t[224][0] == (s32)Data_00000013) {
+        return (s32)Data_0200a2e4;
+    } else {
+        if (Data_02000240_t[224][0] == (s32)Data_00000010) {
+            if (Data_02000240_t[225][0] >= lo) {
+                if (Data_02000240_t[225][0] > 13) {
+                    if (Data_02000240_t[225][0] > 16) {
+                        goto L_02000128;
+                    }
+                    return (s32)Data_0200a524;
+                }
+                return (s32)Data_0200a41c;
+            }
+            L_02000128:;
+            return (s32)Data_0200a32c;
+        } else {
+        }
+    }
+    L_0200012e:;
+    return (s32)Data_0200a2d8;
 }
 
 void FieldScene_RunScene37fSequenceA(void)

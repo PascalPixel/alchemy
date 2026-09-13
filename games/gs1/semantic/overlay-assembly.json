@@ -2133,14 +2133,15 @@
     {
       "overlay": "resource_375",
       "start": "0x0200150c",
-      "end": "0x0200172c",
+      "end": "0x02001760",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
         "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
         "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
-        "games/gs1/recon/en/dossiers.json#resource_375:0200150c"
+        "games/gs1/recon/en/dossiers.json#resource_375:0200150c",
+        "Complete owner includes its 52-byte literal pool at 0x0200172c–0x02001760, already present in the executable audit; instruction-only extent 544 omitted that pool. Runtime call aliases are resolved from reference BL sites in scene-progress-actor-setup-375."
       ]
     },
     {

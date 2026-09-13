@@ -46,3 +46,29 @@ set_error:
     }
     return value;
 }
+
+
+
+s32 SaveState_WriteSlotPair(s32 arg0)
+{
+    s32 found;
+    s16 result = 0;
+
+    found = Func_080056cc();
+    if (found != 0) {
+        Func_0801776c((s32)&Value_0000000a, 1);
+        result = -9;
+    } else {
+        void *base = &Data_02000000;
+
+        found = Func_08005920(arg0, base);
+        base = (char *)base + 0x1000;
+        found |= Func_08005920(arg0 + 3, base);
+        if (found != 0) {
+            Func_0801776c((s32)&Value_0000000b, 1);
+            result = -3;
+        }
+    }
+    Func_08005cf8();
+    return result;
+}

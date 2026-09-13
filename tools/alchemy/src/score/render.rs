@@ -234,7 +234,7 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
         patch_text.as_deref(),
     )?;
     let cache = psynergy::cache::SqliteCache::open(&work.join("cache.sqlite3"))?;
-    let cached = (!options.allocator_order)
+    let cached = byte_cache_allowed(options)
         .then(|| cached_bins(&cache, &key))
         .flatten();
     let source = if options.allocator_order || cached.is_none() {
@@ -274,7 +274,7 @@ pub fn render(root: &Path, options: &Options) -> Result<RenderOutput, String> {
             (verification.actual, rom[offset.min(end)..end].to_vec())
         };
         let candidate_gas = read_candidate_gas(&work, &stem, options.precompiled_object.as_deref());
-        if !options.allocator_order {
+        if byte_cache_allowed(options) {
             let mut entries = vec![
                 ("candidate", actual.as_slice()),
                 ("reference", expected.as_slice()),
@@ -744,9 +744,27 @@ fn source_input_signature(
     );
     Ok(signature)
 }
+fn byte_cache_allowed(options: &crate::score::cli::Options) -> bool {
+    // Unit layout and sibling checks consume the current object, not just bytes.
+    !options.allocator_order && options.unit.is_none() && options.precompiled_object.is_none()
+}
+
 #[cfg(test)]
 mod cache_key_tests {
     use super::*;
+    #[test]
+    fn object_consumers_cannot_reuse_a_byte_only_cache_after_source_revert() {
+        let mut options = crate::score::cli::Options::gs1("summary.c".into());
+        assert!(byte_cache_allowed(&options));
+        options.unit = Some("summary".into());
+        assert!(!byte_cache_allowed(&options));
+        options.unit = None;
+        options.precompiled_object = Some("previous.o".into());
+        assert!(!byte_cache_allowed(&options));
+        options.precompiled_object = None;
+        options.allocator_order = true;
+        assert!(!byte_cache_allowed(&options));
+    }
     #[test]
     fn compiler_route_bindings_host_and_bundle_are_cache_identity() {
         let directory = tempfile::tempdir().unwrap();

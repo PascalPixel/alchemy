@@ -122,12 +122,12 @@ void Func_02005574(); /* main:0808a0f0 */
 void Func_02005584(); /* main:0808a100 */
 u8 *Func_0200554a(); /* main:0808a080  Scene_GetRecord */
 void Func_020054f4(); /* main:080091c0 */
-void Func_02002a00(); /* fill_grid_attribute_rectangle */
+s32 Func_02002a00(u32, s32, s32, u32, u32, s32);
 void Func_02003082(); /* overlay 0x020008c0 */
 void Func_02003088(); /* overlay 0x020008c0 */
 u8 *Func_0200558a(); /* main:0808a080  Scene_GetRecord */
 u8 *Func_02005592(); /* main:0808a080  Scene_GetRecord */
-void Func_02002a32(); /* fill_grid_attribute_rectangle */
+s32 Func_02002a32(u32, s32, s32, u32, u32, s32);
 void Func_020054e0(); /* main:080000c0 */
 void Func_02005620(); /* main:0808a158 */
 s32 Func_0200559e(); /* main:080770c0  GameFlag_IsSet */
@@ -157,7 +157,7 @@ u8 *Func_02005720(); /* main:0808a080  Scene_GetRecord */
 void Func_020056c6(); /* main:080091e0 */
 u8 *Func_0200572e(); /* main:0808a080  Scene_GetRecord */
 u8 *Func_02005736(); /* main:0808a080  Scene_GetRecord */
-void Func_02002bd6(); /* fill_grid_attribute_rectangle */
+s32 Func_02002bd6(u32, s32, s32, u32, u32, s32);
 void Func_020057be(); /* main:0808a158 */
 void Func_0200568c(); /* main:080000c0 */
 u8 *Func_02005762(); /* main:0808a080  Scene_GetRecord */
@@ -186,7 +186,7 @@ u8 *Func_0200583e(); /* main:0808a080  Scene_GetRecord */
 void Func_020057e8(); /* main:080091c0 */
 u8 *Func_0200585e(); /* main:0808a080  Scene_GetRecord */
 u8 *Func_02005866(); /* main:0808a080  Scene_GetRecord */
-void Func_02002d06(); /* fill_grid_attribute_rectangle */
+s32 Func_02002d06(u32, s32, s32, u32, u32, s32);
 void Func_020058ee(); /* main:0808a158 */
 void Func_020057bc(); /* main:080000c0 */
 u8 *Func_02005892(); /* main:0808a080  Scene_GetRecord */
@@ -365,7 +365,7 @@ s32 RunEventScript01(void)
                 Call2(Func_02005584, 10, 4);
                 *(u8 *)(Func_0200554a(10) + 35) = 2;
                 Call6(Func_020054f4, 44, 30, 2, 4, 34, 30);
-                Call6(Func_02002a00, 0, 35, 29, 1, 4, 0);
+                Func_02002a00(0, 35, 29, 1, 4, 0);
             }
             Func_02003082(8);
             Func_02003088(9);

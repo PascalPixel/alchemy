@@ -176152,6 +176152,99 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "battle-motion-slots",
+      "game": "gs1",
+      "source": "games/gs1/src/battle/motion/slots.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080b7dd0",
+          "extent": 52,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b7e04",
+          "extent": 30,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b7e24",
+          "extent": 60,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b7e60",
+          "extent": 26,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b7e7c",
+          "extent": 56,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "animation-selection",
+      "game": "gs1",
+      "source": "games/gs1/src/animation/selection.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0800b9f4",
+          "extent": 60,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800ba30",
+          "extent": 154,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800bacc",
+          "extent": 44,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800baf8",
+          "extent": 40,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "inn-rest",
+      "game": "gs1",
+      "source": "games/gs1/src/inn/stay.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080b3210",
+          "extent": 116,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b3284",
+          "extent": 276,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b3398",
+          "extent": 172,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

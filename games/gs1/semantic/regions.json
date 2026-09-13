@@ -6670,14 +6670,14 @@
     {
       "overlay": "resource_39f",
       "entry": "0x02002500",
-      "span_bytes": 1640,
-      "evidence": "complete strict-inventory owner; audited inside the assembled overlay image with a positive span and no overlap"
+      "span_bytes": 1700,
+      "evidence": "Complete scene owner through return at 0x02002b5e and trailing literal pool ending at 0x02002ba4, where the next function starts. Reference PC-relative loads at 0x02002b2e, 0x02002b34, 0x02002b3e and 0x02002b48 read words at 0x02002b94, 0x02002b98, 0x02002b9c and 0x02002ba0. The former 1640-byte extent orphaned the last 60 pool bytes; this boundary follows reference loads, not candidate size."
     },
     {
       "overlay": "resource_39f",
       "entry": "0x02002ba4",
       "span_bytes": 104,
-      "evidence": "complete trig/random motion owner; prologue at 0x02002ba4 through the sole interworking return at 0x02002c02-0x02002c08 with no trailing pool, all five calls across three targets matching independently in multiset and source/machine order; the preceding 60 bytes in the ranked gap are data belonging to the prior unknown owner and remain unclaimed"
+      "evidence": "complete trig/random motion owner; prologue at 0x02002ba4 through the sole interworking return at 0x02002c02-0x02002c08 with no trailing pool, all five calls across three targets matching independently in multiset and source/machine order; the preceding 60 bytes belong to the literal pool of the reviewed owner at 0x02002500"
     },
     {
       "overlay": "resource_39f",

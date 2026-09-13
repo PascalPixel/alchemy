@@ -1,4 +1,4 @@
-#include "flash.h"
+#include "FLASH.H"
 
 /* 0x02004c08 が指すフラッシュ機種表。 */
 struct FlashChipInfo {

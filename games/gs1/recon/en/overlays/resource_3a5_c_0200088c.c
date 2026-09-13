@@ -10,7 +10,7 @@
  *   Func_0200285e_a      0x02009da4
  *   Func_0200285e_b      0x02009d14
  */
-#include "types.h"
+#include "TYPES.H"
 
 /* AUDITED ACTOR-LAYOUT SCRIPT for Scene_ConfigureAlternateActorLayout:
  * scene-state dispatch, shared actor initialization, and terminal transition. */

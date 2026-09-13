@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 typedef void *(*WordCopy)(void *destination, const void *source, s32 size);
 

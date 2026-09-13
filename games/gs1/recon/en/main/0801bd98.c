@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * Sprite record setup for the menu selection list (0x0801bd98).

@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 struct EffectSpawnOptions {
     s32 mode_bits;

@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 extern const s16 Data_080367e4[];
 extern const s16 Data_0803680c[];

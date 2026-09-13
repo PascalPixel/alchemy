@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define BattleEffect_InitializeTilemap Func_080cdb24
 

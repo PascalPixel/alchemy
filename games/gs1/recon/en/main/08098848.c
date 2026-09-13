@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define BattleFx_RunTargetedItemBreak Func_08098848
 

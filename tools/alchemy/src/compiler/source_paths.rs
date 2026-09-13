@@ -576,7 +576,10 @@ fn game_paths(game: &str) -> Result<(PathBuf, PathBuf), String> {
         return Err(format!("invalid game id {game:?}"));
     }
     let root = Path::new("games").join(game);
-    Ok((root.join("src"), root.join("source-paths.json")))
+    Ok((
+        root.join(if game == "gs1" { "SRC" } else { "src" }),
+        root.join("source-paths.json"),
+    ))
 }
 fn validate_source_path(source: &str) -> Result<PathBuf, String> {
     let path = Path::new(source);
@@ -587,20 +590,26 @@ fn validate_source_path(source: &str) -> Result<PathBuf, String> {
         .is_some();
     if path.is_absolute()
         || path.components().count() < 2
-        || path.extension().and_then(|value| value.to_str()) != Some("c")
+        || !is_c_source_path(path)
         || address_named
         || path
             .components()
             .any(|component| !matches!(component, Component::Normal(_)))
     {
         return Err(format!(
-            "source path {source:?} must be a nested, relative .c path"
+            "source path {source:?} must be a nested, relative .c or .C path"
         ));
     }
     Ok(path.to_path_buf())
 }
 fn source_stem(path: &Path) -> Option<String> {
     path.file_stem()?.to_str().map(str::to_owned)
+}
+fn is_c_source_path(path: &Path) -> bool {
+    matches!(
+        path.extension().and_then(|value| value.to_str()),
+        Some("c" | "C")
+    )
 }
 fn visit_c_files(directory: &Path, visit: &mut impl FnMut(&Path)) -> Result<(), String> {
     if !directory.exists() {
@@ -613,7 +622,7 @@ fn visit_c_files(directory: &Path, visit: &mut impl FnMut(&Path)) -> Result<(), 
         let path = entry.path();
         if path.is_dir() {
             visit_c_files(&path, visit)?;
-        } else if path.extension().and_then(|value| value.to_str()) == Some("c") {
+        } else if is_c_source_path(&path) {
             visit(&path);
         }
     }
@@ -661,18 +670,36 @@ mod tests {
         let root = tempdir().unwrap();
         let paths = SourcePaths::parse(root.path(), manifest()).unwrap();
         assert!(paths.main_sources().unwrap_err().contains("missing source"));
-        let main = root.path().join("games/gs1/src/battle/resolve_action.c");
+        let main = root.path().join("games/gs1/SRC/battle/resolve_action.c");
         fs::create_dir_all(main.parent().unwrap()).unwrap();
         fs::write(&main, "void resolve_action(void) {}\n").unwrap();
         assert_eq!(paths.main_sources().unwrap().len(), 1);
         assert!(paths.all_sources().unwrap_err().contains("missing source"));
         let overlay = root
             .path()
-            .join("games/gs1/src/battle/effects/spawn_configured_effect.c");
+            .join("games/gs1/SRC/battle/effects/spawn_configured_effect.c");
         fs::create_dir_all(overlay.parent().unwrap()).unwrap();
         fs::write(&overlay, "void spawn_configured_effect(void) {}\n").unwrap();
         assert_eq!(paths.all_sources().unwrap().len(), 2);
         assert_eq!(paths.main_sources().unwrap().len(), 1);
+    }
+    #[test]
+    fn uppercase_c_sources_are_validated_and_discovered_without_relaxing_names() {
+        let root = tempdir().unwrap();
+        let text = r#"{"format":3,"owners":{"main:080bbb0c":"battle/resolve_action.C"}}"#;
+        let paths = SourcePaths::parse(root.path(), text).unwrap();
+        let source = root.path().join("games/gs1/SRC/battle/resolve_action.C");
+        fs::create_dir_all(source.parent().unwrap()).unwrap();
+        fs::write(&source, "void resolve_action(void) {}\n").unwrap();
+        assert_eq!(paths.main_sources().unwrap().len(), 1);
+        paths.validate_tree().unwrap();
+
+        for invalid in ["battle/080bbb0c.C", "../outside.C", "battle/readme.H"] {
+            let text = format!(
+                "{{\"format\":3,\"owners\":{{\"main:080bbb0c\":{{\"name\":\"resolve_action\",\"source\":{invalid:?}}}}}}}"
+            );
+            assert!(SourcePaths::parse(root.path(), &text).is_err(), "{invalid}");
+        }
     }
     #[test]
     fn parses_main_and_overlay_owner_ids() {
@@ -725,7 +752,7 @@ mod tests {
                 .registered_source_path(SourceOwner::Main(0x080b_bb0c))
                 .unwrap(),
             root.path()
-                .join("games/gs1/src")
+                .join("games/gs1/SRC")
                 .join("battle/resolve_action.c")
         );
     }
@@ -742,13 +769,13 @@ mod tests {
         let paths = SourcePaths::parse(root.path(), manifest()).unwrap();
         assert_eq!(
             paths
-                .owner_for_path(Path::new("games/gs1/src/battle/resolve_action.c"))
+                .owner_for_path(Path::new("games/gs1/SRC/battle/resolve_action.c"))
                 .unwrap(),
             Some(SourceOwner::Main(0x080b_bb0c))
         );
         assert_eq!(
             paths
-                .owner_for_path(Path::new("games/gs1/src/resource_382_c_0200013c.c"))
+                .owner_for_path(Path::new("games/gs1/SRC/resource_382_c_0200013c.c"))
                 .unwrap(),
             Some(SourceOwner::Overlay {
                 resource: 0x382,
@@ -795,7 +822,7 @@ mod tests {
             paths
                 .overlay_owner_for_path(
                     "resource_39b",
-                    Path::new("games/gs1/src/battle/effects/spawn_configured_effect.c")
+                    Path::new("games/gs1/SRC/battle/effects/spawn_configured_effect.c")
                 )
                 .unwrap(),
             Some(SourceOwner::Overlay {
@@ -839,7 +866,7 @@ mod tests {
         );
         assert_eq!(
             reloaded.owners_for_path(Path::new(
-                "games/gs1/src/overlays/shared/integrate_effect_motion.c"
+                "games/gs1/SRC/overlays/shared/integrate_effect_motion.c"
             )),
             vec![SourceOwner::Overlay {
                 resource: 0x39c,

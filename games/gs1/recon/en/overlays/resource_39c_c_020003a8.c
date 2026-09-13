@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 #define F(base, type, off) (*(type *)((u8 *)(base) + (off)))
 
 extern u8 *Func_02005e8c(s32);

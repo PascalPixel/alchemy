@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* AUDITED GENERATED PRESENTATION FINALE for Scene_ClosePresentationSequence:
  * 35 calls, palette ramps, blend-register setup, and runtime handoff. */

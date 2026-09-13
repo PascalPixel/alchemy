@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 extern s32 Func_02003726(void);
 extern void Func_020038ca(s32);

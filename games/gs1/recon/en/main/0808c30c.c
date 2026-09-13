@@ -1,5 +1,5 @@
-#include "types.h"
-#include "sound_ids.h"
+#include "TYPES.H"
+#include "SOUND_IDS.H"
 
 extern u8 Data_02000240[];
 

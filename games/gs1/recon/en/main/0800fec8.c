@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 void Func_0800fec8(u32 a0, s32 a1, s32 a2)
 {

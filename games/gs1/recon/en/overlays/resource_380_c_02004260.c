@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 u8 *Func_02008b38(s32);
 s32 Func_0200c95c(s32);

@@ -1,5 +1,5 @@
-#include "types.h"
-#include "object_lookup.h"
+#include "TYPES.H"
+#include "OBJECT_LOOKUP.H"
 
 struct BattleTargetObject {
     u8 reserved_00[6];

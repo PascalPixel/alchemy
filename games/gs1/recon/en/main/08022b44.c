@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * Ability change preview panel (owner main:08022b44, 1588 bytes).

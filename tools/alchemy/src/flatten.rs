@@ -89,7 +89,10 @@ fn run(args: &[String]) -> Result<(), String> {
         return Err(USAGE.into());
     };
     let root = std::env::current_dir().map_err(|e| e.to_string())?;
-    let source_root = root.join("games").join(&game).join("src");
+    let source_root =
+        root.join("games")
+            .join(&game)
+            .join(if game == "gs1" { "SRC" } else { "src" });
     let inventory: Value =
         read_json(&root.join(format!("out/{game}-en/full/rebuilt.owner-inventory.json")))?;
     let register_path = root.join(format!("games/{game}/source-paths.json"));
@@ -601,10 +604,17 @@ fn run(args: &[String]) -> Result<(), String> {
     // games/<game>/include), so a function defined under such a name still
     // links by its address.
     let mut header_aliases: BTreeMap<String, Vec<String>> = BTreeMap::new();
-    if let Ok(entries) = fs::read_dir(root.join("games").join(&game).join("include")) {
+    if let Ok(entries) = fs::read_dir(root.join("games").join(&game).join(if game == "gs1" {
+        "INCLUDE"
+    } else {
+        "include"
+    })) {
         for entry in entries.flatten() {
             let path = entry.path();
-            if path.extension().is_some_and(|x| x == "h") {
+            if path
+                .extension()
+                .is_some_and(|x| x.eq_ignore_ascii_case("h"))
+            {
                 if let Ok(text) = fs::read_to_string(&path) {
                     for line in text.lines() {
                         let words: Vec<&str> = line.split_whitespace().collect();
@@ -680,7 +690,7 @@ fn run(args: &[String]) -> Result<(), String> {
     // Order: the shared types, then every alias define (an included header
     // may declare through an alias, as the owners' files did), then the
     // other includes, layouts, declarations, wrappers, and the functions.
-    let mut out: Vec<String> = vec!["#include \"types.h\"".into()];
+    let mut out: Vec<String> = vec!["#include \"TYPES.H\"".into()];
     out.push(String::new());
     for name in &define_order {
         out.push(defines[name].text.clone());
@@ -691,10 +701,10 @@ fn run(args: &[String]) -> Result<(), String> {
     if !define_order.is_empty() {
         out.push(String::new());
     }
-    for include in includes.iter().filter(|i| !i.contains("\"types.h\"")) {
+    for include in includes.iter().filter(|i| !i.contains("\"TYPES.H\"")) {
         out.push(include.clone());
     }
-    if includes.iter().any(|i| !i.contains("\"types.h\"")) {
+    if includes.iter().any(|i| !i.contains("\"TYPES.H\"")) {
         out.push(String::new());
     }
     for it in &typedefs {
@@ -804,7 +814,7 @@ fn run(args: &[String]) -> Result<(), String> {
     let entry = json!({
         "id": unit_id,
         "game": game,
-        "source": format!("games/{game}/src/{unit_path}"),
+        "source": source_root.join(&unit_path).strip_prefix(&root).map_err(|e| e.to_string())?,
         "compiler_route": "canonical-gcc296",
         "overlay": overlay,
         "absolute_symbols": split
@@ -1598,9 +1608,11 @@ fn header_still_used(source_root: &Path, header: &Path) -> Result<bool, String> 
         let path = entry.path();
         if !entry.file_type().is_dir()
             && path != header
-            && path
-                .extension()
-                .is_some_and(|x| x == "c" || x == "h" || x == "inc")
+            && path.extension().is_some_and(|x| {
+                x.eq_ignore_ascii_case("c")
+                    || x.eq_ignore_ascii_case("h")
+                    || x.eq_ignore_ascii_case("inc")
+            })
             && fs::read_to_string(path)
                 .map_err(|e| format!("{}: {e}", path.display()))?
                 .contains(&needle)

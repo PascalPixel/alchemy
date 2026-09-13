@@ -65,7 +65,7 @@ const PRODUCTS: [(CompilerTarget, u64, &str, &str, &str); 2] = [
     (
         CompilerTarget::Gs1,
         0x0080_0000,
-        "games/gs1/src",
+        "games/gs1/SRC",
         "games/gs1/asm",
         "games/gs1/assets/manifest.json",
     ),

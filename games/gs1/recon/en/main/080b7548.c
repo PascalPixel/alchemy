@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 struct BattleMotionObject {
     u8 reserved_00[12];
@@ -16,7 +16,7 @@ struct BattlePlacementState {
     struct BattlePlacementPayload placement;
 } __attribute__((packed));
 
-#include "battle_work.h"
+#include "BATTLE_WORK.H"
 #define BattlePlacement ((struct BattlePlacementState *)BattleWorkPtr)
 
 void Func_080b7424(u16 *actor_ids, s32 count, s32 *x_positions, s32 *z_positions);

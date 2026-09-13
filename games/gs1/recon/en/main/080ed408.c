@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define Blit_BuildRoutine Func_080ed408
 

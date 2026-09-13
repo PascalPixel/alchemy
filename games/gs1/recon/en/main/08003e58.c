@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define ResourceTable_AllocateBlocks Func_08003e58
 

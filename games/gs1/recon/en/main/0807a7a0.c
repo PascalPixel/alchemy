@@ -1,6 +1,6 @@
-#include "game_flags.h"
-#include "owner_state.h"
-#include "psynergy_menu.h"
+#include "GAME_FLAGS.H"
+#include "OWNER_STATE.H"
+#include "PSYNERGY_MENU.H"
 
 extern u16 Data_02001078[];
 extern struct PsynergyMenuGlobalState Data_02000240;

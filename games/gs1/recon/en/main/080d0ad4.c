@@ -1,5 +1,5 @@
-#include "types.h"
-#include "effect_step.h"
+#include "TYPES.H"
+#include "EFFECT_STEP.H"
 
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 

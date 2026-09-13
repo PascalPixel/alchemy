@@ -1,7 +1,7 @@
 #ifndef GUARD_VIDEO_DMA_FAMILY_H
 #define GUARD_VIDEO_DMA_FAMILY_H
 
-#include "types.h"
+#include "TYPES.H"
 
 struct DmaChannel {
     const void *source;

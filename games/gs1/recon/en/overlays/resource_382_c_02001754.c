@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 /*
  * resource_382 owner at 0x02001754, 88 bytes.
  * Per-frame step for a projectile: advances x by its rate and mirrors it into

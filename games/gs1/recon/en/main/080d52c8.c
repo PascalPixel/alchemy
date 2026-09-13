@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * Battle-presentation scene at main:080d52c8 (1768 bytes), a member of the

@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 struct Other {
     u8 filler00[30];

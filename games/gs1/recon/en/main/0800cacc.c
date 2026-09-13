@@ -65,10 +65,10 @@
  * is reachable from ordinary C under the approved route.
  */
 
-#include "types.h"
-#include "global_cells.h"
-#include "fixed_math.h"
-#include "script_object_runtime.h"
+#include "TYPES.H"
+#include "GLOBAL_CELLS.H"
+#include "FIXED_MATH.H"
+#include "SCRIPT_OBJECT_RUNTIME.H"
 
 #define ScriptObject_UpdateAll Func_0800cacc
 

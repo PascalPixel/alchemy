@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 struct OwnerProgressState {
     u8 unknown_000[0x0f];

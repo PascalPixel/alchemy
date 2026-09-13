@@ -1,6 +1,6 @@
 /* The wait callback is read from the flash runtime cell at 0x02004c00. */
-#include "flash.h"
-#include "flash_data.h"
+#include "FLASH.H"
+#include "FLASH_DATA.H"
 
 /* 0x08007c10 のフラッシュ設定表。wait は WAITCNT の SRAM 待ち値。 */
 struct FlashConfig08007028 {

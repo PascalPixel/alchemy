@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* AUDITED GENERATED CALL SCRIPT for FieldScene_RunActorDialogueMovementSequence:
  * all 70 calls, two completion waits, and fifteen actor/effect memory

@@ -839,7 +839,7 @@ void FieldScene_RunActorPositionTransition(void)
             ).unwrap();
         }
         assert_eq!(
-            source_symbol_bindings(&root, "games/gs1/src/08001234.c", CompilerTarget::Gs1).unwrap(),
+            source_symbol_bindings(&root, "games/gs1/SRC/08001234.c", CompilerTarget::Gs1).unwrap(),
             "#define gs1_Main Func_08001234\n"
         );
         assert_eq!(
@@ -849,7 +849,7 @@ void FieldScene_RunActorPositionTransition(void)
         assert_eq!(
             source_symbol_bindings(
                 &root,
-                "games/gs1/src/resource_380_c_02000100.c",
+                "games/gs1/SRC/resource_380_c_02000100.c",
                 CompilerTarget::Gs1
             )
             .unwrap(),

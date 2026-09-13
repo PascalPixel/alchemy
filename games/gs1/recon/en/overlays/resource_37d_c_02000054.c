@@ -1,7 +1,7 @@
-#include "types.h"
+#include "TYPES.H"
 
-#include "resource_37d.h"
-#include "resource_37de_scene.h"
+#include "RESOURCE_37D.H"
+#include "RESOURCE_37DE_SCENE.H"
 
 /*
  * resource_37d owner at 0x02000030, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the

@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* AUDITED GENERATED CALL SCRIPT for FieldScene_RunActorCoordinateDialogueSequence:
  * 66 calls, one bounded dialogue loop, the actor-coordinate gate, and the

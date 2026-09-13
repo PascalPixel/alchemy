@@ -1,7 +1,7 @@
-#include "battle_runtime.h"
-#include "battle_types.h"
-#include "battle_work.h"
-#include "party_state.h"
+#include "BATTLE_RUNTIME.H"
+#include "BATTLE_TYPES.H"
+#include "BATTLE_WORK.H"
+#include "PARTY_STATE.H"
 
 #define BattleParty_PrepareActiveOwners Func_080b6a60
 

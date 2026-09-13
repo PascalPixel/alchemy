@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 /* resource_382 owner at 0x02000938, 68 bytes.
  * Raises a busy flag at +91 for the duration of the sequence and clears it
  * afterwards; the clearing zero is held in a high register across the calls. */

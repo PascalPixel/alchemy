@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 struct BattleEffectDmaTransfer {
     u32 source;

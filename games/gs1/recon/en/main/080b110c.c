@@ -1,5 +1,5 @@
-#include "far_runtime.h"
-#include "shop.h"
+#include "FAR_RUNTIME.H"
+#include "SHOP.H"
 
 void UiText_DrawAt(s32, s32, s32, s32);
 void UiNumber_DrawAt(s32, s32, s32, s32, s32);

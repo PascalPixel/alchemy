@@ -1,8 +1,8 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * Sibling of the 0x03001eec "battle work" family (see
- * games/gs1/src/battle/effects/member_orbit.c, the adopted owner at
+ * games/gs1/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C, the adopted owner at
  * 0x080ce85c, family score 7889/10000, and the m2c-assisted dump at
  * out/family-transplants/main-080e6eac/m2c/080e6eac.c derived directly
  * from this owner's own retained bytes). Unlike the template, this owner
@@ -20,7 +20,7 @@
  * DrawRectangleFn cast; the tail VRAM-clear call goes through
  * _call_via_r3 (0x080072f0) via a raw ClearFn pointer cast, matching the
  * "reached with two arguments" case the veneer-audit note on
- * games/gs1/src/graphics/reset_frame_state.c records for the same
+ * games/gs1/SRC/GRAPHICS/RESET_FRAME_STATE.C records for the same
  * 0x03000164 callee (r2 is not part of this call; it is dead/stale at
  * the call site in the retained bytes).
  *

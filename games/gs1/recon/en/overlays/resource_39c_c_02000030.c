@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * resource_39c owner at 0x02000030, 22 bytes. Leaf, no frame.

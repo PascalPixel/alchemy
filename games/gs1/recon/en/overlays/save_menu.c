@@ -1,5 +1,5 @@
 /* Save selection, link transfer and password display. */
-#include "types.h"
+#include "TYPES.H"
 
 #define SaveMenu_Run Func_020003cc
 

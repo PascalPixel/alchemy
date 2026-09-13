@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 void *Func_08077008(s32);
 extern u8 Value_00008000;

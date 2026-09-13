@@ -1,6 +1,6 @@
 //! Per-source address bindings recovered from the owner register's companion
 //! manifest. Production C spells semantic names; this file is never included
-//! from `games/gs1/src` or `games/gs1/include`. The compile plan expands it
+//! from `games/gs1/SRC` or `games/gs1/INCLUDE`. The compile plan expands it
 //! into a generated header under `out/`.
 use serde::Deserialize;
 use std::collections::{BTreeMap, HashSet};
@@ -78,18 +78,25 @@ pub fn expand_binding_text(text: &str) -> String {
 }
 
 fn source_key(root: &Path, source: &Path) -> Option<String> {
-    let src_root = root.join("games/gs1/src");
+    let src_root = root.join("games/gs1/SRC");
     let relative = source
         .strip_prefix(&src_root)
         .ok()
-        .or_else(|| source.strip_prefix("games/gs1/src").ok())
+        .or_else(|| source.strip_prefix("games/gs1/SRC").ok())
         .or_else(|| {
-            let nested = source.extension().and_then(|ext| ext.to_str()) == Some("c")
+            let nested = is_c_source_path(source)
                 && source.components().count() >= 2
                 && !source.is_absolute();
             nested.then_some(source)
         })?;
     Some(relative.to_string_lossy().replace('\\', "/"))
+}
+
+fn is_c_source_path(path: &Path) -> bool {
+    matches!(
+        path.extension().and_then(|value| value.to_str()),
+        Some("c" | "C")
+    )
 }
 
 fn quoted_c_includes(text: &str) -> Vec<String> {
@@ -129,8 +136,8 @@ fn lexical_join(base: &Path, rel: &str) -> PathBuf {
     out
 }
 
-/// Production src keys for this TU: the file itself, plus `#include`d `.c`
-/// files under `games/gs1/src`. Mixed leftover wrappers compile those src
+/// Production src keys for this TU: the file itself, plus `#include`d `.c`/`.C`
+/// files under `games/gs1/SRC`. Mixed leftover wrappers compile those src
 /// files through a recon unit path that has no bindings key of its own.
 fn included_source_keys(root: &Path, source: &Path) -> Vec<String> {
     let mut keys = Vec::new();
@@ -146,7 +153,7 @@ fn included_source_keys(root: &Path, source: &Path) -> Vec<String> {
         return keys;
     };
     for include in quoted_c_includes(&text) {
-        if !include.ends_with(".c") {
+        if !is_c_source_path(Path::new(&include)) {
             continue;
         }
         let resolved = lexical_join(parent, &include);
@@ -184,7 +191,7 @@ pub fn production_bindings(
     }
     if let Some(source) = source {
         for key in included_source_keys(root, source) {
-            let src_path = root.join("games/gs1/src").join(&key);
+            let src_path = root.join("games/gs1/SRC").join(&key);
             if let Ok(src_text) = std::fs::read_to_string(&src_path) {
                 reserved.extend(type_tags(&src_text));
             }
@@ -279,7 +286,7 @@ fn filter_reserved_defines(text: &str, reserved: &mut HashSet<String>) -> String
 /// Preserve recovered declarations as well as aliases. Dropping prototypes
 /// loses callback declarations and changes C89 argument/return conversions.
 fn define_only_bindings(text: &str) -> String {
-    let mut out = String::from("#include \"types.h\"\n");
+    let mut out = String::from("#include \"TYPES.H\"\n");
     let mut in_block_comment = false;
     for line in text.lines() {
         let trimmed = line.trim_start();
@@ -327,11 +334,12 @@ fn rewrite_extern_data_types(line: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::{
-        define_only_bindings, expand_binding_text, filter_reserved_defines, lexical_join,
-        quoted_c_includes, source_key, type_tags,
+        define_only_bindings, expand_binding_text, filter_reserved_defines, included_source_keys,
+        lexical_join, quoted_c_includes, source_key, type_tags,
     };
     use std::collections::HashSet;
     use std::path::Path;
+    use tempfile::tempdir;
 
     #[test]
     fn expands_compact_func_and_data_tokens() {
@@ -346,7 +354,7 @@ mod tests {
         let text = "/* Shared names:\n   callers use these aliases. */\nextern s32 Func_08002f4c(u8 *p);\n#define PackedTable_AdjustMarkedOffsets Func_08002f4c\n";
         assert_eq!(
             define_only_bindings(text),
-            "#include \"types.h\"\n/* Shared names:\n   callers use these aliases. */\nextern s32 Func_08002f4c(u8 *p);\n#define PackedTable_AdjustMarkedOffsets Func_08002f4c\n"
+            "#include \"TYPES.H\"\n/* Shared names:\n   callers use these aliases. */\nextern s32 Func_08002f4c(u8 *p);\n#define PackedTable_AdjustMarkedOffsets Func_08002f4c\n"
         );
     }
 
@@ -355,7 +363,7 @@ mod tests {
         let text = "extern u8 Data_03001e70_a[];\nextern s32 Func_080072f0(s32 mode, u8 *destination);\n#define ADDR_03001E70 ((u32)Data_03001e70_a)\n";
         assert_eq!(
             define_only_bindings(text),
-            "#include \"types.h\"\nextern unsigned char Data_03001e70_a[];\nextern s32 Func_080072f0(s32 mode, u8 *destination);\n#define ADDR_03001E70 ((u32)Data_03001e70_a)\n"
+            "#include \"TYPES.H\"\nextern unsigned char Data_03001e70_a[];\nextern s32 Func_080072f0(s32 mode, u8 *destination);\n#define ADDR_03001E70 ((u32)Data_03001e70_a)\n"
         );
     }
 
@@ -380,12 +388,12 @@ mod tests {
     #[test]
     fn mixed_unit_includes_resolve_to_src_keys() {
         let includes = quoted_c_includes(
-            "#include \"../main/0808fe38.c\"\n#include \"../../../src/battle/effects/runtime/enable_two_callbacks.c\"\n",
+            "#include \"../main/0808fe38.C\"\n#include \"../../../src/battle/effects/runtime/enable_two_callbacks.c\"\n",
         );
         assert_eq!(
             includes,
             [
-                "../main/0808fe38.c",
+                "../main/0808fe38.C",
                 "../../../src/battle/effects/runtime/enable_two_callbacks.c"
             ]
         );
@@ -396,5 +404,25 @@ mod tests {
             Some("battle/effects/runtime/enable_two_callbacks.c")
         );
         assert_eq!(source_key(Path::new("/workspace"), unit), None);
+    }
+
+    #[test]
+    fn uppercase_c_sources_and_includes_resolve_to_src_keys() {
+        let root = tempdir().unwrap();
+        let source_root = root.path().join("games/gs1/SRC");
+        let source = source_root.join("battle/main.C");
+        let included = source_root.join("battle/helper.C");
+        std::fs::create_dir_all(source.parent().unwrap()).unwrap();
+        std::fs::write(&source, "#include \"helper.C\"\n").unwrap();
+        std::fs::write(&included, "void helper(void) {}\n").unwrap();
+
+        assert_eq!(
+            source_key(root.path(), &source).as_deref(),
+            Some("battle/main.C")
+        );
+        assert_eq!(
+            included_source_keys(root.path(), &source),
+            ["battle/main.C", "battle/helper.C"]
+        );
     }
 }

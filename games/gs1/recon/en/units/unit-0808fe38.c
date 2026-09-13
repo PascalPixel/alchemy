@@ -4,5 +4,5 @@
  * hand: resolve declaration collisions here or in shared headers. */
 
 #include "../main/0808fe38.c"
-#include "../../../src/battle/effects/runtime_enable_two_callbacks.c"
+#include "../../../SRC/BATTLE/EFFECT/RUNTIME_ENABLE_TWO_CALLBACKS.C"
 #include "../main/0808fecc.c"

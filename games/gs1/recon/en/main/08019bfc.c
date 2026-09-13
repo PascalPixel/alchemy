@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* Table at a fixed ROM address, indexed by an 8-byte stride: word 0 of each
    row is a data pointer, word 1 is a halfword adjustment array pointer.

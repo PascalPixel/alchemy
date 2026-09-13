@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 

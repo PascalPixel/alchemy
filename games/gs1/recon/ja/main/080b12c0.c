@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 struct Input_080b12c0 {
     u8 primary_id;

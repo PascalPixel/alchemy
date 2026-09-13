@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 void Audio_ClearChannelChain(void *);
 

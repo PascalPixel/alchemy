@@ -1,5 +1,5 @@
-#include "battle_effect_runtime.h"
-#include "types.h"
+#include "BATTLE_EFFECT_RUNTIME.H"
+#include "TYPES.H"
 
 void Func_080090d0(void *object);
 s32 ObjectTable_FindLastActiveId(void);

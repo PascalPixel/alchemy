@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * Resource 3cb idle-timeout poll at 0x020002d8 (104 bytes,

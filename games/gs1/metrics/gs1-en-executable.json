@@ -3908,7 +3908,7 @@
         "start": 134971248,
         "end": 134971290,
         "kind": "thumb",
-        "evidence": "games/gs1/src/battle/motion/get_motion_record.c:byte-identical-claimed-C"
+        "evidence": "games/gs1/SRC/BATTLE/MOTION/GET_MOTION_RECORD.C:byte-identical-claimed-C"
       },
       {
         "start": 134971290,
@@ -5108,7 +5108,7 @@
         "start": 135247636,
         "end": 135247654,
         "kind": "thumb",
-        "evidence": "games/gs1/src/sound/music_track_set_tone_decay.c:byte-identical-claimed-C"
+        "evidence": "games/gs1/SRC/SOUND/MUSIC_TRACK_SET_TONE_DECAY.C:byte-identical-claimed-C"
       },
       {
         "start": 135247654,
@@ -5120,7 +5120,7 @@
         "start": 135247656,
         "end": 135247674,
         "kind": "thumb",
-        "evidence": "games/gs1/src/sound/music_track_set_tone_sustain.c:byte-identical-claimed-C"
+        "evidence": "games/gs1/SRC/SOUND/MUSIC_TRACK_SET_TONE_SUSTAIN.C:byte-identical-claimed-C"
       },
       {
         "start": 135247674,
@@ -5132,7 +5132,7 @@
         "start": 135247676,
         "end": 135247694,
         "kind": "thumb",
-        "evidence": "games/gs1/src/sound/music_track_set_tone_release.c:byte-identical-claimed-C"
+        "evidence": "games/gs1/SRC/SOUND/MUSIC_TRACK_SET_TONE_RELEASE.C:byte-identical-claimed-C"
       },
       {
         "start": 135247694,

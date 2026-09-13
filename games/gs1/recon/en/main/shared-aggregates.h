@@ -1,7 +1,7 @@
 /* Generated evidence context; not semantic source authority. */
 #ifndef ALCHEMY_M2C_SHARED_AGGREGATES_H
 #define ALCHEMY_M2C_SHARED_AGGREGATES_H
-#include "types.h"
+#include "TYPES.H"
 
 struct M2cAggregate_absolute_02000240;
 struct M2cAggregate_absolute_02001078;

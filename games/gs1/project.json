@@ -5,11 +5,11 @@
   "default_target": "gs1-en",
   "build_model": "shared-source-edition-defines",
   "layout": {
-    "source": "games/gs1/src",
+    "source": "games/gs1/SRC",
     "source_paths": "games/gs1/source-paths.json",
     "assembly": "games/gs1/asm",
     "assets": "games/gs1/assets",
-    "include": "games/gs1/include",
+    "include": "games/gs1/INCLUDE",
     "metrics": "games/gs1/metrics",
     "reconstruction": "games/gs1/recon",
     "semantic": "games/gs1/semantic"

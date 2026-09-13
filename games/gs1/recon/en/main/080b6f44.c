@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define BYTE(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define HALF(base, offset) (*(u16 *)((u8 *)(base) + (offset)))

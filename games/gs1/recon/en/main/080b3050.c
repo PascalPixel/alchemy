@@ -1,7 +1,7 @@
-#include "types.h"
-#include "fixed_math.h"
-#include "global_cells.h"
-#include "shop.h"
+#include "TYPES.H"
+#include "FIXED_MATH.H"
+#include "GLOBAL_CELLS.H"
+#include "SHOP.H"
 
 struct Position { s32 x, y, z; };
 struct Effect_080b2f4c { u8 filler[0x48]; };

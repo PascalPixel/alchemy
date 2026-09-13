@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 struct AssetSelectionGlobals {
     void *display_state;

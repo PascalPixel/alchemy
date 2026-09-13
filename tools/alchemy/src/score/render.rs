@@ -734,7 +734,11 @@ fn source_input_signature(
     let include_dirs = routing_source
         .strip_prefix("games/")
         .and_then(|path| path.split('/').next())
-        .map(|game| root.join("games").join(game).join("include"))
+        .map(|game| {
+            root.join("games")
+                .join(game)
+                .join(if game == "gs1" { "INCLUDE" } else { "include" })
+        })
         .into_iter()
         .collect::<Vec<_>>();
     let mut signature = source_tree_signature(&path, &include_dirs)?;
@@ -792,7 +796,7 @@ mod cache_key_tests {
             )
             .unwrap()
         };
-        let route = "games/gs1/src/08000000.c";
+        let route = "games/gs1/SRC/08000000.c";
         let base = key(route, "08000000", &routed, b"host-a", b"bundle-a");
         for changed in [
             key(
@@ -830,7 +834,7 @@ mod cache_key_tests {
         let key = |contents: &[u8]| {
             source_cache_key_with_environment(
                 source,
-                "games/gs1/src/08000000.c",
+                "games/gs1/SRC/08000000.c",
                 CompilerTarget::Gs1,
                 "08000000",
                 &configuration,
@@ -979,14 +983,14 @@ mod source_identity_tests {
         .unwrap();
         let identity = SourceIdentity::resolve(
             root,
-            "games/gs1/src/battle/inventory/draw_paged_item_list.c",
+            "games/gs1/SRC/battle/inventory/draw_paged_item_list.c",
             CompilerTarget::Gs1,
             None,
             None,
         )
         .unwrap();
         assert_eq!(identity.owner, SourceOwner::Main(0x080b0fa4));
-        assert_eq!(identity.routing, PathBuf::from("games/gs1/src/080b0fa4.c"));
+        assert_eq!(identity.routing, PathBuf::from("games/gs1/SRC/080b0fa4.c"));
         let source = "games/gs1/recon/en/main/080ab5e4.c";
         let identity =
             SourceIdentity::resolve(root, source, CompilerTarget::Gs1, None, None).unwrap();
@@ -1000,7 +1004,7 @@ mod source_identity_tests {
             None,
         )
         .unwrap();
-        assert_eq!(identity.routing, PathBuf::from("games/gs1/src/080a8904.c"));
+        assert_eq!(identity.routing, PathBuf::from("games/gs1/SRC/080a8904.c"));
     }
     #[test]
     fn register_binding_changes_invalidate_candidate_source_identity() {
@@ -1012,14 +1016,14 @@ mod source_identity_tests {
         };
         let register = root.join("games/gs1/source-paths.json");
         fs::write(&register, r#"{"format":3,"owners":{"main:08001234":{"name":"Scene_Run"},"resource_380:02000100":{"name":"Scene_Run"}}}"#).unwrap();
-        let main = signature("games/gs1/src/08001234.c");
-        let overlay = signature("games/gs1/src/resource_380_c_02000100.c");
+        let main = signature("games/gs1/SRC/08001234.c");
+        let overlay = signature("games/gs1/SRC/resource_380_c_02000100.c");
         assert_ne!(main, overlay);
         fs::write(&register, r#"{"format":3,"owners":{"main:08001234":{"name":"Scene_Start"},"resource_380:02000100":{"name":"Scene_Run"}}}"#).unwrap();
-        assert_ne!(main, signature("games/gs1/src/08001234.c"));
+        assert_ne!(main, signature("games/gs1/SRC/08001234.c"));
         assert_eq!(
             overlay,
-            signature("games/gs1/src/resource_380_c_02000100.c")
+            signature("games/gs1/SRC/resource_380_c_02000100.c")
         );
     }
 }

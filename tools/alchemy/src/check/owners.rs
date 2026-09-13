@@ -23,7 +23,7 @@ fn exact(root: &Path) -> Result<HashSet<String>, String> {
         .map(|source| source.owner.legacy_stem())
         .collect::<HashSet<_>>();
     if stems.is_empty() {
-        return Err("games/gs1/src/ contains no C owners".into());
+        return Err("games/gs1/SRC/ contains no C owners".into());
     }
     Ok(stems)
 }
@@ -154,7 +154,7 @@ fn validate_provisional(root: &Path, exact: &HashSet<String>) -> Result<usize, S
             .and_then(Value::as_str)
             .ok_or("provisional owner missing")?;
         if !exact.contains(owner) {
-            return Err(format!("{owner} is provisional but not in games/gs1/src/"));
+            return Err(format!("{owner} is provisional but not in games/gs1/SRC/"));
         }
         if row
             .get("reason")

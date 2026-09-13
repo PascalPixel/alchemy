@@ -1,9 +1,9 @@
-#include "types.h"
-#include "item.h"
-#include "owner_state.h"
-#include "runtime_mem.h"
-#include "game_flags.h"
-#include "battle_calc.h"
+#include "TYPES.H"
+#include "ITEM.H"
+#include "OWNER_STATE.H"
+#include "RUNTIME_MEM.H"
+#include "GAME_FLAGS.H"
+#include "BATTLE_CALC.H"
 
 struct OwnerCombatState {
     u8 unknown_000[0x10];   /* 0x00 */

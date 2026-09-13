@@ -1,5 +1,5 @@
-#include "battle_types.h"
-#include "types.h"
+#include "BATTLE_TYPES.H"
+#include "TYPES.H"
 
 typedef void (*DrawRectangle)(
     void *destination,

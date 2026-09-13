@@ -1,5 +1,5 @@
-#include "types.h"
-#include "battle_work.h"
+#include "TYPES.H"
+#include "BATTLE_WORK.H"
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 

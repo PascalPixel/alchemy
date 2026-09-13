@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* Only the m2c spellings this draft actually uses. */
 typedef s32 M2C_UNK;

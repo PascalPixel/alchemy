@@ -1,4 +1,4 @@
-#include "object_runtime.h"
+#include "OBJECT_RUNTIME.H"
 
 struct ActorVisualFlags {
     u8 unknown_00[9];

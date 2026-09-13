@@ -1,6 +1,6 @@
-#include "types.h"
-#include "global_cells.h"
-#include "gs1_edition.h"
+#include "TYPES.H"
+#include "GLOBAL_CELLS.H"
+#include "GS1_EDITION.H"
 
 /*
  * UiText_BuildRenderEntries (Func_08018038)

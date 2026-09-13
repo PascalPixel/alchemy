@@ -1,9 +1,9 @@
-#include "types.h"
-#include "battle_command.h"
-#include "battle_event.h"
-#include "battle_runtime.h"
-#include "battle_types.h"
-#include "motion_object.h"
+#include "TYPES.H"
+#include "BATTLE_COMMAND.H"
+#include "BATTLE_EVENT.H"
+#include "BATTLE_RUNTIME.H"
+#include "BATTLE_TYPES.H"
+#include "MOTION_OBJECT.H"
 
 /*
  * Battle-event playback.  The resolver immediately before this owner fills

@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 void Text_FormatHex(u32 value, u32 count, u8 *output) {
     u8 digits[8];

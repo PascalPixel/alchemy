@@ -1,4 +1,4 @@
-#include "inventory.h"
+#include "INVENTORY.H"
 #undef Inventory_Add
 #define Inventory_Add Func_080b5a0c
 

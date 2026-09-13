@@ -1,8 +1,8 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * Battle-presentation sub-effect at 0x03001eec "battle work" subsystem
- * (family of games/gs1/src/battle/effects/member_orbit.c, owner
+ * (family of games/gs1/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C, owner
  * 0x080ce85c, already adopted).  Field offsets and calling shapes follow
  * that owner's documented layout (work + 0x7780/0x7784/0x7824/0x7828, the
  * M2C_FIELD(expr,type_ptr,offset) macro, the DrawRectangleFn typedef, the

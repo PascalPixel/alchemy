@@ -21,8 +21,7 @@ const USAGE: &str =
 type Job = (String, Vec<String>);
 
 fn sibling(root: &Path, source: &str) -> Option<std::path::PathBuf> {
-    source
-        .ends_with(".c")
+    (source.ends_with(".c") || source.ends_with(".C"))
         .then(|| root.join(source).with_extension("s"))
 }
 
@@ -34,12 +33,21 @@ fn prefix(target: DecompTarget, source: &str) -> Result<Vec<String>, String> {
         flags.extend([
             "-nostdinc".into(),
             "-mthumb".into(),
-            format!("-I{}", include.with_file_name("include").display()),
+            format!(
+                "-I{}",
+                include
+                    .with_file_name(if compiler == CompilerTarget::Gs1 {
+                        "INCLUDE"
+                    } else {
+                        "include"
+                    })
+                    .display()
+            ),
             "-D__GNUC_MINOR__=9".into(),
         ]);
     }
     flags.push(format!("-D{}=1", target.edition_define));
-    flags.extend(["-w".into(), "-E".into()]);
+    flags.extend(["-w".into(), "-E".into(), "-x".into(), "c".into()]);
     crate::compiler::bundle::compiler_command_for_target(compiler, &flags)
 }
 

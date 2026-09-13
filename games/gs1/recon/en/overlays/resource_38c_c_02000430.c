@@ -1,6 +1,6 @@
-#include "resource_38c.h"
+#include "RESOURCE_38C.H"
 
-#include "types.h"
+#include "TYPES.H"
 
 extern void Func_0200094c(void);
 extern void Func_0200098a(s32);

@@ -1,10 +1,10 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * Battle-presentation sub-effect at 0x080d2d98 (1576 bytes).  It belongs to
  * the same 0x03001eec "battle work" family as the exact
- * games/gs1/src/battle/effects/member_orbit.c (main:080ce85c) and
- * games/gs1/src/battle/presentation/prepare_scene.c (main:080ccaec), and to
+ * games/gs1/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C (main:080ce85c) and
+ * games/gs1/SRC/BATTLE/PRESENTATION/PREPARE_SCENE.C (main:080ccaec), and to
  * the measured draft games/gs1/recon/en/main/080dab74.c.  The kind-39 work
  * block (0x782c bytes: sixty-four twenty-eight byte particle records at
  * 0x7080, display mode/value at 0x7780/0x7784, the twelve spawned-object

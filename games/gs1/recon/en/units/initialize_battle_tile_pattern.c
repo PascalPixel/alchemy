@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 s32 Func_080072f0(void *, u32, u32, void *);
 

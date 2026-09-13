@@ -17,7 +17,7 @@
  *   Func_020078c0_b      0x0200c7b4
  *   Func_020078c0_c      0x0200c794
  */
-#include "types.h"
+#include "TYPES.H"
 
 #define RunEventScript02 Func_02002dec
 

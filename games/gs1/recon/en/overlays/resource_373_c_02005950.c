@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 extern void Func_0200b8a2(s32, s32, s32, s32, s32, s32);
 extern s32 Func_0200b908(s32);

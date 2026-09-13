@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * resource_398 owner at 0x020004b4, 52 bytes.

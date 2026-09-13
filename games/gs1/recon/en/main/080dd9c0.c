@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * Split function: head 080dd9c0, continuation 080dda3c, terminal region
@@ -8,7 +8,7 @@
  *
  * Family: the 0x03001eec "battle work" / heap_cache subsystem documented in
  * games/gs1/recon/en/main/080d82b0.c, 080d85d0.c and
- * games/gs1/src/battle/effects/member_orbit.c (080ce85c). This owner is
+ * games/gs1/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C (080ce85c). This owner is
  * a fuller sibling of 080d82b0.c: it adds a BG2 affine/blend setup in its
  * head region, allocates TWO heap-cached rectangle-blit routines (kinds 46
  * and 47, not just 46), gates both the per-member setup loop and the whole

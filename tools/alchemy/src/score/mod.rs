@@ -306,7 +306,7 @@ mod tests {
         let _ = std::fs::remove_dir_all(&work);
         std::fs::create_dir_all(&work).unwrap();
         let patch = work.join("unit-relative-include.patch");
-        std::fs::write(&patch, "diff --git a/motion_particle.c b/motion_particle.c\n--- a/motion_particle.c\n+++ b/motion_particle.c\n@@ -1 +1 @@\n-#include \"types.h\"\n+#include \"../../../include/types.h\"\n").unwrap();
+        std::fs::write(&patch, "diff --git a/motion_particle.c b/motion_particle.c\n--- a/motion_particle.c\n+++ b/motion_particle.c\n@@ -1 +1 @@\n-#include \"TYPES.H\"\n+#include \"../../../include/types.h\"\n").unwrap();
         let arguments = [
             "--unit",
             "actor-motion-particle-scene",
@@ -327,7 +327,7 @@ mod tests {
         let output = run(*options).unwrap();
         let staged = root()
             .join(&work)
-            .join("try/games/gs1/src/overlays/unidentified/motion_particle.c");
+            .join("try/games/gs1/SRC/FIELD/ALTIN/MOTION_PARTICLE.C");
         assert!(std::fs::read_to_string(staged)
             .unwrap()
             .contains("../../../include/types.h"));

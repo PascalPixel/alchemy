@@ -21,7 +21,7 @@ const COVERAGE_DIRS: [&str; 12] = [
     "games/gs1/assets",
     "games/gs1/metrics",
     "games/gs1/semantic",
-    "games/gs1/src",
+    "games/gs1/SRC",
     "games/gs1/source-paths.json",
     "games/gs1/recon",
     "games/gs1/project.json",

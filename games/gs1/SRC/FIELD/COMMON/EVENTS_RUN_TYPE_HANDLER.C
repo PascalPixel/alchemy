@@ -1,0 +1,24 @@
+#include "TYPES.H"
+#include "SCENE.H"
+#include "GLOBAL_CELLS.H"
+
+void MapEvent_RunTileTriggerSequence(void);
+void FieldEvent_ShowStatusMessage(void);
+
+void FieldEvent_RunTypeHandler(void)
+{
+    u32 type;
+
+    type = (s16)FIELD_AT_OFFSET(*(void **)ADDR_03001F30, s16 *, 0x1E);
+    switch (type) {
+    case 8:
+        Field_Run();
+        return;
+    case 10:
+        MapEvent_RunTileTriggerSequence();
+        return;
+    case 16:
+        FieldEvent_ShowStatusMessage();
+        return;
+    }
+}

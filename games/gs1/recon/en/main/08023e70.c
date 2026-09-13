@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * Battle ability picker (owner main:08023e70, 2756 bytes).

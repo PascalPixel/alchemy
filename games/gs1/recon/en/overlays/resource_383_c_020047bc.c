@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 /*
  * resource_383 owner at 0x020047bc, 64 bytes.
  * Tests whether a record is within eight units of the given point. Each axis

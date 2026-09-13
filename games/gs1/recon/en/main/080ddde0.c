@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * Split function: head 080ddde0 (call-graph-reconstructed prologue, no

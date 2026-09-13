@@ -1,6 +1,6 @@
-#include "resource_397.h"
+#include "RESOURCE_397.H"
 
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * resource_397 owner at 0x020002a0, 64 bytes: recompute the three alpha-blend

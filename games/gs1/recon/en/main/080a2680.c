@@ -1,8 +1,8 @@
-#include "types.h"
-#include "item_menu.h"
-#include "item.h"
-#include "owner_state.h"
-#include "global_cells.h"
+#include "TYPES.H"
+#include "ITEM_MENU.H"
+#include "ITEM.H"
+#include "OWNER_STATE.H"
+#include "GLOBAL_CELLS.H"
 
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 

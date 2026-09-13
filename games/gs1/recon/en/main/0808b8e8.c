@@ -1,5 +1,5 @@
-#include "battle_effect_runtime.h"
-#include "types.h"
+#include "BATTLE_EFFECT_RUNTIME.H"
+#include "TYPES.H"
 
 /*
  * Sibling of Func_0808b98c: that owner unconditionally clears every slot in

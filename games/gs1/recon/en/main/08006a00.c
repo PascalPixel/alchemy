@@ -1,4 +1,4 @@
-#include "flash.h"
+#include "FLASH.H"
 
 extern s32 Data_02004c18;
 extern volatile u16 Data_04000200;

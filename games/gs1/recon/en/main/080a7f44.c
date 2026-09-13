@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 struct CharacterSelectorOrderState {
     u8 unknown_000[0x208];

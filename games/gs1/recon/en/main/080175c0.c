@@ -1,5 +1,5 @@
-#include "global_cells.h"
-#include "types.h"
+#include "GLOBAL_CELLS.H"
+#include "TYPES.H"
 
 s32 Func_08018038(s32 value, s32 mode);
 s32 Func_080165d8(s32 no, s32 entry, s32, s32, s32, s32);

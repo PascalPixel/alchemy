@@ -1,6 +1,6 @@
 /* The wait callback is read from the flash runtime cell at 0x02004c00. */
-#include "flash.h"
-#include "flash_data.h"
+#include "FLASH.H"
+#include "FLASH_DATA.H"
 
 
 u16 EraseAtmelFlashSector(u16 sector)

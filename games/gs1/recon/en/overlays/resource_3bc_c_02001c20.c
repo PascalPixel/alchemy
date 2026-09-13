@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* AUDITED GENERATED CALL SCRIPT for Scene_RunDualArrivalSequence:
  * state-routed scene setup, four actor field groups, and all 44 calls. */

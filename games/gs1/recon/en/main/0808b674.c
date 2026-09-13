@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * games/gs1/asm/0808b674.s: "複数領域に分割された呼出し可能関数の先頭部。

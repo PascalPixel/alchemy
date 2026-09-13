@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 struct BattleUnitDefinition {
     u8 reserved_00[15]; u8 level; u16 hp; u16 pp; u16 attack; u16 defense;

@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 struct Vec3 { s32 x, y, z; };
 struct EffectTarget { u8 reserved_00[8]; struct Vec3 position; };

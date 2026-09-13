@@ -1051,7 +1051,7 @@ mod source_activation_tests {
         let mut unit = TranslationUnit {
             id: "shared".into(),
             game: "gs1".into(),
-            source: "games/gs1/src/overlays/shared.c".into(),
+            source: "games/gs1/SRC/overlays/shared.c".into(),
             compiler_route: "canonical-gcc296".into(),
             overlay: Some("resource_382".into()),
             absolute_symbols: BTreeMap::new(),

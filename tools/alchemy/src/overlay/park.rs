@@ -815,9 +815,9 @@ mod tests {
         let root = tempdir().unwrap();
         let units = root.path().join("translation-units.json");
         fs::write(&units, r#"{"units":[
-{"id":"overlay-37a-actor","overlay":"resource_37a","source":"games/gs1/src/a.c","absolute_symbols":{"Func_02004698_a":{"address":"0x0200aa54","kind":"thumb"}},"owners":[{"address":"0x02001be8","extent":192,"state":"exact-c"}]},
-{"id":"shared-37a","overlay":"resource_37a","source":"games/gs1/src/b.c","absolute_symbols":{},"owners":[{"address":"0x02001be8","extent":192,"state":"exact-c"},{"address":"0x02002000","extent":8,"state":"exact-c"}]},
-{"id":"other-37b","overlay":"resource_37b","source":"games/gs1/src/c.c","absolute_symbols":{},"owners":[{"address":"0x02001be8","extent":4,"state":"exact-c"}]}
+{"id":"overlay-37a-actor","overlay":"resource_37a","source":"games/gs1/SRC/a.c","absolute_symbols":{"Func_02004698_a":{"address":"0x0200aa54","kind":"thumb"}},"owners":[{"address":"0x02001be8","extent":192,"state":"exact-c"}]},
+{"id":"shared-37a","overlay":"resource_37a","source":"games/gs1/SRC/b.c","absolute_symbols":{},"owners":[{"address":"0x02001be8","extent":192,"state":"exact-c"},{"address":"0x02002000","extent":8,"state":"exact-c"}]},
+{"id":"other-37b","overlay":"resource_37b","source":"games/gs1/SRC/c.c","absolute_symbols":{},"owners":[{"address":"0x02001be8","extent":4,"state":"exact-c"}]}
 ]}"#).unwrap();
         super::retire_owner_in_units(
             &units,
@@ -838,7 +838,7 @@ mod tests {
         );
         let shared = &after["units"][1];
         assert_eq!(shared["id"], "shared-37a");
-        assert_eq!(shared["source"], "games/gs1/src/b.c");
+        assert_eq!(shared["source"], "games/gs1/SRC/b.c");
         assert_eq!(shared["owners"][0]["state"], "retained-assembly");
         assert_eq!(shared["owners"][1]["state"], "exact-c");
         assert_eq!(after["units"][2]["owners"][0]["state"], "exact-c");

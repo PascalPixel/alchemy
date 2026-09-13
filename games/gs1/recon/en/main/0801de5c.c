@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define RenderScriptGlyphTiles Func_0801de5c
 

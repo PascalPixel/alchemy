@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* AUDITED GENERATED CALL SCRIPT for Scene_RunFourActorStagingSequence:
  * 52 ordered calls, actor 9/10/11/12 staging, placement publication,

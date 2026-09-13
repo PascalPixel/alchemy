@@ -1,6 +1,6 @@
 /* Contiguous unnamed state-owner run for resource_37f. */
 
-#include "types.h"
+#include "TYPES.H"
 
 extern s32 *Func_0200213e(s32);
 extern void Func_0200211c(s32);
@@ -26,7 +26,7 @@ void Func_0200056c(void)
     }
 }
 
-#include "types.h"
+#include "TYPES.H"
 
 extern s32 *Func_0200217e(s32);
 extern void Func_0200215e(s32);
@@ -52,7 +52,7 @@ void Func_020005ac(void)
     }
 }
 
-#include "types.h"
+#include "TYPES.H"
 
 extern s32 *Func_020021be(s32);
 extern void Func_0200219e(s32);
@@ -80,7 +80,7 @@ void Func_020005ec(void)
     Func_02001de6(0);
 }
 
-#include "types.h"
+#include "TYPES.H"
 
 extern s32 *Func_02002206(s32);
 extern void Func_020021e4(s32);
@@ -108,7 +108,7 @@ void Func_02000634(void)
     Func_02001e2a(0);
 }
 
-#include "types.h"
+#include "TYPES.H"
 
 extern s32 *Func_0200224e(s32);
 extern void Func_0200222e(s32);
@@ -136,7 +136,7 @@ void Func_0200067c(void)
     Func_02001e76(0);
 }
 
-#include "types.h"
+#include "TYPES.H"
 
 extern s32 *Func_02002296(s32);
 extern void Func_02002274(s32);
@@ -164,7 +164,7 @@ void Func_020006c4(void)
     Func_02001eba(0);
 }
 
-#include "types.h"
+#include "TYPES.H"
 
 extern s32 *Func_020022de(s32);
 extern void Func_020022be(s32);
@@ -192,7 +192,7 @@ void Func_0200070c(void)
     Func_02001f06(0);
 }
 
-#include "types.h"
+#include "TYPES.H"
 
 extern s32 *Func_02002326(s32);
 extern void Func_02002304(s32);
@@ -218,6 +218,6 @@ void Func_02000754(void)
     Func_02001f4a(0);
 }
 
-#include "types.h"
+#include "TYPES.H"
 
 extern u8 *Data_03001ebc;

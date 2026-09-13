@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 struct MapPosition_080114a0 {
     s32 x;

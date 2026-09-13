@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 struct ActorFacing { u8 unknown_00[6]; u16 angle; };
 struct ActorFacing *Func_020012e4(s32);

@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 struct Rec {
     u8 pad0[20];

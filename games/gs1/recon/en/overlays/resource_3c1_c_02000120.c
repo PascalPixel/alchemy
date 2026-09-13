@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* Old-style declarations: overlay import arities are not fixed per name, and
  * each site names the veneer it reaches. */

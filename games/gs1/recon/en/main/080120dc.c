@@ -1,6 +1,6 @@
-#include "types.h"
-#include "map.h"
-#include "global_cells.h"
+#include "TYPES.H"
+#include "MAP.H"
+#include "GLOBAL_CELLS.H"
 
 /* Same object-field shape check_object_tile.c already established (x@8,
    y@16, map_layer@34); this owner additionally reads a u32 "height" field

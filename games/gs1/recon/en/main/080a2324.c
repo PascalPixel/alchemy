@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 struct PsynergyPageIcon {
     u8 reserved_00[5];

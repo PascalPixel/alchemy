@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 struct MusicTrackState {
     u8 flags;

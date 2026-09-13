@@ -1,6 +1,6 @@
-#include "b5_context.h"
-#include "battle_types.h"
-#include "types.h"
+#include "B5_CONTEXT.H"
+#include "BATTLE_TYPES.H"
+#include "TYPES.H"
 
 /*
  * Battle-presentation scene at 0x080d1714, a 400-frame sequence driven from

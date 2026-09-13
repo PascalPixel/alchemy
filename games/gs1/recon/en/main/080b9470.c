@@ -1,6 +1,6 @@
-#include "battle_runtime.h"
-#include "battle_types.h"
-#include "types.h"
+#include "BATTLE_RUNTIME.H"
+#include "BATTLE_TYPES.H"
+#include "TYPES.H"
 
 struct BattleQueueEntry {
     s16 owner_id;

@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* AUDITED GENERATED CALL SCRIPT for FieldScene_RunComplexActorSequence:
  * 111 calls, actor and motion state, event flags, and workspace resets. */

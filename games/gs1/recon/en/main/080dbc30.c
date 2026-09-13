@@ -56,7 +56,7 @@
  *     plain `default:` alone would narrow the range test to 3.
  *
  * Residual: the instruction multiset is identical to the reference
- * (wrong_instructions=0) and the extent matches exactly at 1468 bytes; seven
+ * (wrong_instructions=0) and the extent matches exactly at 1468 bytes; four
  * halfwords differ, from two remaining interleaves where the reference issues
  * an independent instruction between the two halves of a constant
  * materialisation instead of after it (the 0x05000000 at the palette copy,
@@ -72,22 +72,19 @@
  * bypassing it: without sched2 the counter assignment sits before the pointer
  * constant, and sched2 is what lifts `mov r0, #160` over it.
  *
- * What remains is a tie in sched2's ready list that source order cannot
- * reach.  At the palette copy the ready set is {ldr r3, lsl r0, mov r2}, all
+ * At the palette copy the ready set is {ldr r3, lsl r0, mov r2}, all
  * of equal priority, and the tie is broken by original instruction order; the
  * reference picks the pool load, which would need the callee address to be
  * emitted before the destination constant.  calls.c forbids that: the arm
  * port has SMALL_REGISTER_CLASSES, so a register argument whose rtx_cost
  * exceeds two -- which 0x05000000 does -- is copied into a pseudo in the
  * argument loop, and prepare_call_address only forces the callee address
- * afterwards.  Hoisting the callee into a local (constant-propagated back)
- * and hoisting the source pointer out of the argument list so no argument
- * contains a call were both measured and left the residual at seven.  The
- * particle-loop interleave is the same tie one block later, and there the
- * reference also issues `add r5, r9` after the hoisted 32 and 64, which asks
- * for the work-relative base to be emitted after the loop-invariant hoists
- * rather than with the assignment.  Swapping `i = 0` and `spark = SPARKS`
- * regressed to eight; the comma-and-for spelling measured seven.
+ * afterwards.  Hoisting the callee or source pointer did not close that
+ * residual.  In the particle loop, deriving the record from its array index
+ * lets the compiler place the 32-pixel width ahead of the base calculation,
+ * closing three halfwords.  The remaining base add precedes the 64-pixel
+ * height load instead of following it.  A block-local record pointer keeps
+ * the same output.  These measured misses do not prove C is impossible.
  *
  * Callee spellings follow the exact sibling: plain Func_<address> for every
  * target the owner register has no distinct name for.  `alchemy inspect`
@@ -182,7 +179,6 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
     s32 pos[3];
     s32 seat[8][3];
     s32 aim[3];
-    Spark *spark;
     u16 *pal;
     s32 frame;
     s32 i;
@@ -332,8 +328,8 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
         }
 
         i = 0;
-        spark = SPARKS;
         do {
+            Spark *spark = &SPARKS[i];
             if (spark->tick >= 0) {
                 if (mode == 7) {
                     if (spark->tick > 5) {
@@ -364,7 +360,6 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
                 }
             }
             i += 1;
-            spark++;
         } while (i != 64);
 
         if (mode == 5) {

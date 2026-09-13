@@ -79322,22 +79322,6 @@
       "overlay": null
     },
     {
-      "id": "battle-effects-update-spin-angle",
-      "game": "gs1",
-      "source": "games/gs1/src/battle/effects/update_spin_angle.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x0809b0b0",
-          "extent": 42,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "battle-placement-update-entries",
       "game": "gs1",
       "source": "games/gs1/src/battle/placement/update_entries.c",
@@ -174157,6 +174141,58 @@
         {
           "address": "0x080bbabc",
           "extent": 44,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "battle-radial-launch",
+      "game": "gs1",
+      "source": "games/gs1/src/battle/effects/run_effect15.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0809b0b0",
+          "extent": 42,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0809b0dc",
+          "extent": 64,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0809b11c",
+          "extent": 236,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0809b208",
+          "extent": 348,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "battle-descending-arcs",
+      "game": "gs1",
+      "source": "games/gs1/src/battle/effects/particles/descending_arc.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0809b364",
+          "extent": 116,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0809b3d8",
+          "extent": 120,
           "state": "exact-c"
         }
       ]

@@ -43,8 +43,8 @@
         "two_byte_zero_alignment",
         "refused_assembler_padding"
       ],
-      "expected_files": 220,
-      "expected_bytes": 440,
+      "expected_files": 219,
+      "expected_bytes": 438,
       "provenance": {
         "scanned": "2026-09-10",
         "verdict": "assembler_padding",

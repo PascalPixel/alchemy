@@ -244,9 +244,10 @@ s32 RunEventScript01(void)
     s32 tmp;
 
     {
+        u8 *work = *(u8 **)Data_03001ebc;
         s32 off = 448;
 
-        *(s32 *)(*(u8 **)Data_03001ebc + off) = 0x204;
+        *(s32 *)(work + off) = 0x204;
         mode = *(s16 *)(Data_02000240 + off);
     }
     if (mode == (s32)&Value_00000044) {

@@ -16131,24 +16131,24 @@
       "source": "overlays/scene/state/select_by_runtime_selector.c"
     },
     "resource_3a7:020015a4": {
-      "name": "Runtime_PackSoftDouble",
-      "source": "overlays/scene/state/select_by_runtime_selector/pack_soft_double.c"
+      "name": "SoftFloat_Pack",
+      "source": "lib/soft_float.c"
     },
     "resource_3a7:02001564": {
-      "name": "SceneState_IsStateTwo",
-      "source": "overlays/scene/state/select_by_runtime_selector/is_state_two.c"
+      "name": "SoftFloat_IsZeroForConvert",
+      "source": "lib/soft_float.c"
     },
     "resource_3a7:02001760": {
-      "name": "SceneState_IsStateTwoB",
-      "source": "overlays/scene/state/select_by_runtime_selector/is_state_two_b.c"
+      "name": "SoftFloat_IsZeroForPack",
+      "source": "lib/soft_float.c"
     },
     "resource_3a7:02000734": {
       "name": "SceneState_SetEntries16To21Byte35",
       "source": "overlays/scene/state/select_by_runtime_selector.c"
     },
     "resource_3a7:02001424": {
-      "name": "SceneData_GetTable9888",
-      "source": "overlays/scene/state/select_by_runtime_selector/get_table_9888.c"
+      "name": "SoftFloat_GetNaNRecord",
+      "source": "lib/soft_float.c"
     },
     "resource_3a7:020002e0": {
       "name": "SceneData_SelectDataByRuntimeSelector",
@@ -16163,8 +16163,8 @@
       "source": "overlays/scene/state/select_by_runtime_selector.c"
     },
     "resource_3a7:020013e4": {
-      "name": "SubtractSoftDouble",
-      "source": "overlays/scene/state/select_by_runtime_selector/subtract_soft_double.c"
+      "name": "SoftFloat_Subtract",
+      "source": "lib/soft_float.c"
     },
     "resource_3a7:020006e4": {
       "name": "SceneState_DispatchByActorZeroDepth",
@@ -16179,28 +16179,28 @@
       "source": "overlays/scene/state/select_by_runtime_selector.c"
     },
     "resource_3a7:02001574": {
-      "name": "Runtime_LogicalShiftRight64",
-      "source": "overlays/scene/state/select_by_runtime_selector/logical_shift_right_64.c"
+      "name": "SoftFloat_ShiftRight",
+      "source": "lib/soft_float.c"
     },
     "resource_3a7:02001770": {
-      "name": "Runtime_UnpackSoftDouble",
-      "source": "overlays/scene/state/select_by_runtime_selector/unpack_soft_double.c"
+      "name": "SoftFloat_Unpack",
+      "source": "lib/soft_float.c"
     },
     "resource_3a7:020005ec": {
       "name": "SceneState_ApplyRectAndSetupActor19",
       "source": "overlays/scene/state/select_by_runtime_selector.c"
     },
     "resource_3a7:020013ac": {
-      "name": "AddSoftDouble",
-      "source": "overlays/scene/state/select_by_runtime_selector/add_soft_double.c"
+      "name": "SoftFloat_Add",
+      "source": "lib/soft_float.c"
     },
     "resource_3a7:02000458": {
       "name": "SceneActor_IsActor10AtTile16x12",
       "source": "overlays/scene/state/select_by_runtime_selector.c"
     },
     "resource_3a7:0200143c": {
-      "name": "SceneState_IsState4",
-      "source": "overlays/scene/state/select_by_runtime_selector/is_state_4.c"
+      "name": "SoftFloat_IsInfinityForAdd",
+      "source": "lib/soft_float.c"
     },
     "resource_3a7:02000084": {
       "name": "SceneData_GetTable9C5C",
@@ -16215,12 +16215,12 @@
       "source": "overlays/scene/state/select_by_runtime_selector.c"
     },
     "resource_3a7:0200142c": {
-      "name": "SceneState_IsStateAtMostOne",
-      "source": "overlays/scene/state/select_by_runtime_selector/is_state_at_most_one.c"
+      "name": "SoftFloat_IsNaNForAdd",
+      "source": "lib/soft_float.c"
     },
     "resource_3a7:0200145c": {
-      "name": "SignedIntToSoftDouble",
-      "source": "overlays/scene/state/select_by_runtime_selector/signed_int_to_soft_double.c"
+      "name": "SoftFloat_FromInt",
+      "source": "lib/soft_float.c"
     },
     "resource_3a7:0200040c": {
       "name": "FieldScene_NoOp",
@@ -16239,12 +16239,12 @@
       "source": "overlays/scene/state/select_by_runtime_selector.c"
     },
     "resource_3a7:0200144c": {
-      "name": "SceneState_IsStateTwoC",
-      "source": "overlays/scene/state/select_by_runtime_selector/is_state_two_c.c"
+      "name": "SoftFloat_IsZeroForAdd",
+      "source": "lib/soft_float.c"
     },
     "resource_3a7:020014d8": {
-      "name": "Runtime_SoftDoubleToSignedInt",
-      "source": "overlays/scene/state/select_by_runtime_selector/soft_double_to_signed_int.c"
+      "name": "SoftFloat_ToInt",
+      "source": "lib/soft_float.c"
     },
     "resource_3a7:02000c50": {
       "name": "SceneActor_SetupActors11To14AndInstallTask",
@@ -16263,32 +16263,32 @@
       "source": "overlays/scene/state/select_by_runtime_selector.c"
     },
     "resource_3a7:02001544": {
-      "name": "SceneState_IsStateAtMostOneB",
-      "source": "overlays/scene/state/select_by_runtime_selector/scene_state_interaction_tail.c"
+      "name": "SoftFloat_IsNaNForConvert",
+      "source": "lib/soft_float.c"
     },
     "resource_3a7:02001740": {
-      "name": "SceneState_IsStateAtMostOneBB",
-      "source": "overlays/scene/state/select_by_runtime_selector/scene_state_interaction_tail.c"
+      "name": "SoftFloat_IsNaNForPack",
+      "source": "lib/soft_float.c"
     },
     "resource_3a7:02000398": {
       "name": "SceneState_ApplyThreeRects",
       "source": "overlays/scene/state/select_by_runtime_selector.c"
     },
     "resource_3a7:02001554": {
-      "name": "SceneState_IsStateFour",
-      "source": "overlays/scene/state/select_by_runtime_selector/is_state_four.c"
+      "name": "SoftFloat_IsInfinityForConvert",
+      "source": "lib/soft_float.c"
     },
     "resource_3a7:02000640": {
       "name": "SceneActor_SetupSlotTwenty",
       "source": "overlays/scene/state/select_by_runtime_selector.c"
     },
     "resource_3a7:02001750": {
-      "name": "SceneState_IsStateFourDirect",
-      "source": "overlays/scene/state/select_by_runtime_selector/is_state_four_direct.c"
+      "name": "SoftFloat_IsInfinityForPack",
+      "source": "lib/soft_float.c"
     },
     "resource_3a7:02001158": {
-      "name": "AddSoftFloatParts",
-      "source": "overlays/scene/state/select_by_runtime_selector/add_parts.c"
+      "name": "SoftFloat_AddParts",
+      "source": "lib/soft_float.c"
     },
     "resource_3a7:020009c0": {
       "name": "FieldScene_RunOpeningAuxiliarySequence",

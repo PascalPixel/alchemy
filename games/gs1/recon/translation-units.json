@@ -91070,27 +91070,6 @@
       ]
     },
     {
-      "id": "scene-state-interaction-scene-scene-state-interaction-tail",
-      "game": "gs1",
-      "source": "games/gs1/src/overlays/scene/state/select_by_runtime_selector/scene_state_interaction_tail.c",
-      "compiler_route": "canonical-gcc296",
-      "overlay": "resource_3a7",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x02001544",
-          "extent": 16,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x02001740",
-          "extent": 16,
-          "state": "exact-c"
-        }
-      ]
-    },
-    {
       "id": "retained-overlay-3bb-02000a1c",
       "game": "gs1",
       "source": "games/gs1/recon/en/overlays/resource_3bb_c_02000a1c.c",
@@ -173120,6 +173099,216 @@
         {
           "address": "0x02001ac8",
           "extent": 92,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "overlay-soft-float",
+      "game": "gs1",
+      "source": "games/gs1/src/lib/soft_float.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a7",
+      "absolute_symbols": {
+        "Func_02002530": {
+          "address": "0x02009158",
+          "kind": "thumb"
+        },
+        "Func_02002570": {
+          "address": "0x02009158",
+          "kind": "thumb"
+        },
+        "Func_0200259a": {
+          "address": "0x0200942c",
+          "kind": "thumb"
+        },
+        "Func_020025a8": {
+          "address": "0x0200942c",
+          "kind": "thumb"
+        },
+        "Func_020025c2": {
+          "address": "0x0200943c",
+          "kind": "thumb"
+        },
+        "Func_020025c8": {
+          "address": "0x02009424",
+          "kind": "thumb"
+        },
+        "Func_020025cc": {
+          "address": "0x0200943c",
+          "kind": "thumb"
+        },
+        "Func_020025e8": {
+          "address": "0x0200943c",
+          "kind": "thumb"
+        },
+        "Func_02002602": {
+          "address": "0x0200944c",
+          "kind": "thumb"
+        },
+        "Func_0200260c": {
+          "address": "0x0200944c",
+          "kind": "thumb"
+        },
+        "Func_02002632": {
+          "address": "0x0200944c",
+          "kind": "thumb"
+        },
+        "Func_02002980": {
+          "address": "0x020095a4",
+          "kind": "thumb"
+        },
+        "Func_020029c0": {
+          "address": "0x020095a4",
+          "kind": "thumb"
+        },
+        "Func_02002a3e": {
+          "address": "0x02009544",
+          "kind": "thumb"
+        },
+        "Func_02002a54": {
+          "address": "0x02009564",
+          "kind": "thumb"
+        },
+        "Func_02002a5c": {
+          "address": "0x02009554",
+          "kind": "thumb"
+        },
+        "Func_02002a6a": {
+          "address": "0x020095a4",
+          "kind": "thumb"
+        },
+        "Func_02002aa6": {
+          "address": "0x02009574",
+          "kind": "thumb"
+        },
+        "Func_02002b34": {
+          "address": "0x02009770",
+          "kind": "thumb"
+        },
+        "Func_02002b3e": {
+          "address": "0x02009770",
+          "kind": "thumb"
+        },
+        "Func_02002b6c": {
+          "address": "0x02009770",
+          "kind": "thumb"
+        },
+        "Func_02002b76": {
+          "address": "0x02009770",
+          "kind": "thumb"
+        },
+        "Func_02002b9a": {
+          "address": "0x02009574",
+          "kind": "thumb"
+        },
+        "Func_02002c5a": {
+          "address": "0x02009770",
+          "kind": "thumb"
+        },
+        "Func_02002cfc": {
+          "address": "0x02009740",
+          "kind": "thumb"
+        },
+        "Func_02002d24": {
+          "address": "0x02009750",
+          "kind": "thumb"
+        },
+        "Func_02002d3e": {
+          "address": "0x02009760",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x02001158",
+          "extent": 596,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020013ac",
+          "extent": 54,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020013e4",
+          "extent": 62,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02001424",
+          "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0200142c",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0200143c",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0200144c",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0200145c",
+          "extent": 124,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020014d8",
+          "extent": 108,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02001544",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02001554",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02001564",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02001574",
+          "extent": 48,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020015a4",
+          "extent": 412,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02001740",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02001750",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02001760",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02001770",
+          "extent": 212,
           "state": "exact-c"
         }
       ]

@@ -18,7 +18,7 @@ first edition rebuilt in full.
 
 ## Status: 50.97% DONE
 
-![ROM contents](games/gs1/assets/readme/gs1-en-rom.svg?v=77e8154aed0fc29e)
+![ROM contents](games/gs1/assets/readme/gs1-en-rom.svg?v=89afa6c32ebcec60)
 
 ## What this is
 

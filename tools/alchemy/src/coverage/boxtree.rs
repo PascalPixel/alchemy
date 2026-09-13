@@ -150,6 +150,7 @@ fn draw_tiles(
     frame: Rect,
     parent_source: Option<&str>,
     reserved: &[Rect],
+    asset_verification: Option<&str>,
 ) {
     let assets = tree == "data";
     for placed in treemap(tiles, |tile| tile.bytes, frame) {
@@ -170,18 +171,22 @@ fn draw_tiles(
             .map(|s| format!(" data-source=\"{}\"", esc(s)))
             .unwrap_or_default();
         let kind = if container { "container" } else { "leaf" };
-        let status = DISPLAY_CATEGORIES
+        let mut status = DISPLAY_CATEGORIES
             .iter()
             .filter(|(category, _)| display_bytes(&tile.categories, *category) > 0)
-            .map(|(category, name)| {
-                if *category == Category::AssetData && !folder {
-                    content_style(tile).0
-                } else {
-                    *name
-                }
+            .map(|(category, name)| match category {
+                Category::AssetData if !folder => content_style(tile).0,
+                _ => *name,
             })
             .collect::<Vec<_>>()
             .join(", ");
+        if !folder && tile.categories[Category::AssetData as usize] == tile.bytes {
+            status.push_str(match asset_verification {
+                Some("rom") => " · Last asset build: ROM bytes matched; appearance not verified",
+                Some("source_only") => " · Last asset build: not compared with ROM",
+                _ => " · Asset verification unavailable",
+            });
+        }
         let label = format!(
             "{}: {} bytes · {}{}{}",
             tile.label,
@@ -279,6 +284,7 @@ fn draw_tiles(
                 body,
                 tile.source.as_deref(),
                 &reserved,
+                asset_verification,
             );
         }
         if let Some((text, _)) = caption.filter(|_| !folder) {
@@ -380,13 +386,6 @@ fn base64(data: &[u8]) -> String {
     out
 }
 
-fn titles(tree: &str) -> (&'static str, &'static str) {
-    match tree {
-        "code" => ("Code", "Code"),
-        "data" => ("Data", "Data"),
-        _ => ("ROM contents", "ROM contents"),
-    }
-}
 fn esc(value: &str) -> String {
     value
         .replace('&', "&amp;")
@@ -443,22 +442,25 @@ pub fn svg_at(tree: &str, map: &CoverageMap, width: f64, folder: &str) -> String
                     .is_some_and(|source| source.starts_with(folder))
         })
         .collect();
-    let (description, title) = titles(tree);
+    let description = match tree {
+        "code" => "Code",
+        "data" => "Data",
+        _ => "ROM contents",
+    };
     let identity = map.document["target"]
         .as_str()
         .filter(|_| tree == "rom")
         .map(|target| target.replace('-', " ").to_uppercase());
     let title = if folder.is_empty() {
-        identity.unwrap_or_else(|| title.into())
+        identity.unwrap_or_else(|| description.into())
     } else {
         let location = folder
             .trim_end_matches('/')
             .rsplit('/')
             .next()
-            .unwrap_or(title);
+            .unwrap_or(description);
         identity.map_or_else(|| location.into(), |id| format!("{id} · {location}"))
     };
-    let edge = CHART_BACKGROUND;
     let mut legend = Vec::new();
     if tree != "data" {
         for (category, name) in DISPLAY_CATEGORIES {
@@ -564,6 +566,9 @@ pub fn svg_at(tree: &str, map: &CoverageMap, width: f64, folder: &str) -> String
         frame,
         None,
         &[],
+        map.document
+            .get("asset_verification")
+            .and_then(serde_json::Value::as_str),
     );
     let mut legend_x = 8.0;
     let mut legend_y = frame.y + frame.height + 12.0;
@@ -594,7 +599,7 @@ pub fn svg_at(tree: &str, map: &CoverageMap, width: f64, folder: &str) -> String
     } else {
         (legend_y + 24.0).ceil()
     };
-    let mut rendered = vec![format!("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {width} {height}\" width=\"{width}\" height=\"{height}\" shape-rendering=\"crispEdges\" role=\"img\" aria-label=\"{description} box tree\">"), format!("<rect x=\"0\" y=\"0\" width=\"{width}\" height=\"{height}\" fill=\"{edge}\"/>")];
+    let mut rendered = vec![format!("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {width} {height}\" width=\"{width}\" height=\"{height}\" shape-rendering=\"crispEdges\" role=\"img\" aria-label=\"{description} box tree\">"), format!("<rect x=\"0\" y=\"0\" width=\"{width}\" height=\"{height}\" fill=\"{CHART_BACKGROUND}\"/>")];
     rendered.extend(out);
     rendered.insert(
         1,
@@ -768,9 +773,14 @@ mod tests {
                 },
                 None,
                 &[],
+                Some("rom"),
             );
             let svg = out.join("\n");
             assert_eq!(svg.matches("data-kind=\"folder\"").count(), 1);
+            assert_eq!(
+                svg.matches("Last asset build: ROM bytes matched").count(),
+                2
+            );
             assert!(svg.contains("class=\"bevel-light\""));
             assert!(svg.contains("class=\"bevel-dark\""));
             assert_eq!(

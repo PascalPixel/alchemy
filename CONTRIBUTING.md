@@ -545,6 +545,9 @@ denominator. An area's Shared files control links map resources to their existin
 source folders without adding tiles or bytes. These links are derived from the
 scene selector, map-load table, resource directory and Atlas destinations; they
 do not claim to inventory every non-map asset an area uses.
+Data-file details report the target's last asset-build comparison separately
+from its content type. A ROM-byte match does not verify picture layout or colors;
+missing comparison evidence is never displayed as a match.
 Keep the optional music debugger separate. Migrate source, assets
 and viewer in verified stages; completion requires the full GS1 English ROM to
 remain byte-identical and the migration to be committed. Do not claim GS2 or

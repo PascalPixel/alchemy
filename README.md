@@ -18,7 +18,7 @@ first edition rebuilt in full.
 
 ## Status: 50.96% DONE
 
-![Code](games/gs1/assets/readme/gs1-en-code.svg?v=1767222ef99bec0b)
+![Code](games/gs1/assets/readme/gs1-en-code.svg?v=c492631b91fdf826)
 
 ![Data](games/gs1/assets/readme/gs1-en-data.svg?v=49c95f9d5cd40c91)
 

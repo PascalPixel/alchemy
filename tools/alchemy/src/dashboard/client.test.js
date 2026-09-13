@@ -1,6 +1,6 @@
 import { test, expect } from "bun:test";
 
-async function coverageClient(writeText = async () => {}) {
+async function coverageClient() {
   const source = await Bun.file(new URL("./client.js", import.meta.url)).text();
   class Element {
     constructor(attributes = {}, parent = null) { this.attributes = attributes; this.parent = parent; }
@@ -20,10 +20,10 @@ async function coverageClient(writeText = async () => {}) {
   svg.querySelectorAll = (selector) => selector === "title" ? titles : [tile];
   const tooltip = { hidden: true, style: {}, getBoundingClientRect: () => ({ width: 160, height: 30 }) };
   const requests = [];
-  const functions = new Function("Element", "tooltip", "window", "navigator", "fetch", "DOMParser",
-    source.slice(source.indexOf("function hideTooltip"), source.indexOf("function panel")) + ";return { showTooltip, copyTileAddress, loadTree };");
+  const functions = new Function("Element", "tooltip", "window", "fetch", "DOMParser",
+    source.slice(source.indexOf("function hideTooltip"), source.indexOf("function panel")) + ";return { showTooltip, loadTree };");
   return {
-    ...functions(Element, tooltip, { innerWidth: 800, innerHeight: 600 }, { clipboard: { writeText } },
+    ...functions(Element, tooltip, { innerWidth: 800, innerHeight: 600 },
       async url => { requests.push(url); return { ok: true, text: async () => "fixture" }; }, class { parseFromString() { return { documentElement: svg }; } }),
     tile, titles, svg, tooltip, requests, child: new Element({}, tile), background: new Element(),
   };
@@ -44,6 +44,22 @@ test("coverage hover uses JS labels and removes every native SVG title", async (
   ui.showTooltip({ target: ui.background });
   expect(ui.tooltip.hidden).toBe(true);
 });
+
+test("folder requests preserve the selected folder and discard stale responses", async () => {
+  const ui = await coverageClient();
+  let installed;
+  const chart = {
+    dataset: { folder: "games/gs1/SRC/FIELD/XIAN/", width: "540" },
+    replaceChildren(svg) { installed = svg; },
+  };
+  const section = { querySelector: () => chart };
+  await ui.loadTree(section, "rom", "ROM contents", "1", 540, chart.dataset.folder);
+  expect(installed).toBe(ui.svg);
+  expect(ui.requests.at(-1)).toBe("/svg/rom/540/games/gs1/SRC/FIELD/XIAN/?v=1");
+  installed = undefined;
+  await ui.loadTree(section, "rom", "ROM contents", "1", 540, "games/gs1/");
+  expect(installed).toBeUndefined();
+});
 test("resized charts request native pixel dimensions and reject stale-size responses", async () => {
   const ui = await coverageClient();
   let installed;
@@ -55,28 +71,87 @@ test("resized charts request native pixel dimensions and reject stale-size respo
   expect(installed).toBe(ui.svg);
   expect(ui.requests).toEqual(['/svg/core/800?v=2', '/svg/core/366?v=2']);
 });
-test("coverage click and keyboard activation copy only the explicit start address", async () => {
-  const copied = [];
-  const ui = await coverageClient(async address => { copied.push(address); });
-  for (const [type, key] of [["click"], ["keydown", "Enter"], ["keydown", " "]]) {
-    let prevented = false;
-    await ui.copyTileAddress({ type, key, target: ui.child, preventDefault() { prevented = true; } });
-    expect(prevented).toBe(true);
-    expect(ui.tooltip.textContent).toBe("Copied 0x080bbb0c");
-    expect(ui.tooltip.style.left).not.toContain("NaN");
+
+test("file activation does not navigate its ancestor folder", async () => {
+  const source = await Bun.file(new URL("./client.js", import.meta.url)).text();
+  const chart = { dataset: { folder: "games/gs1/", tree: "rom", title: "ROM", revision: "1" }, clientWidth: 540 };
+  const back = { hidden: true };
+  const selection = { hidden: true };
+  const panel = { querySelector: selector => selector === ".chart" ? chart : selector === ".viewer-selection" ? selection : back };
+  class Element {
+    constructor(kind, parent = null) { this.kind = kind; this.parent = parent; }
+    getAttribute(name) { return name === "data-kind" ? this.kind : "games/gs1/SRC/"; }
+    closest(selector) {
+      if (selector === ".panel") return panel;
+      if (selector === "[data-action]") return null;
+      if (selector === "[data-action='back']") return null;
+      if (selector === "g[data-node]") return this.kind ? this : this.parent?.closest(selector);
+      if (selector === "g[data-kind='folder'][data-source]") return this.kind === "folder" ? this : this.parent?.closest(selector);
+      throw Error(selector);
+    }
   }
-  await ui.copyTileAddress({ type: "click", target: ui.background });
-  await ui.copyTileAddress({ type: "keydown", key: "Tab", target: ui.child });
-  expect(copied).toEqual(["0x080bbb0c", "0x080bbb0c", "0x080bbb0c"]);
+  let selections = 0, loads = 0;
+  const activate = new Function("Element", "showSelection", "loadTree", "hideTooltip", "showError",
+    source.slice(source.indexOf("async function activateTile"), source.indexOf('function showSelection')) + ";return activateTile;")(
+      Element, () => { selections++; selection.hidden = false; }, async () => loads++, () => {}, error => { throw Error(error); });
+  const folder = new Element("folder"), file = new Element("gba-4bpp-tiles", folder);
+  for (const [type, key] of [["click"], ["keydown", "Enter"], ["keydown", " "]]) {
+    await activate({ type, key, target: new Element(null, file), preventDefault() {} });
+  }
+  expect(selections).toBe(3);
+  expect(selection.hidden).toBe(false);
+  expect(loads).toBe(0);
+  expect(chart.dataset.folder).toBe("games/gs1/");
+  await activate({ type: "click", target: new Element(null, folder), preventDefault() {} });
+  expect(loads).toBe(1);
+  expect(chart.dataset.folder).toBe("games/gs1/SRC/");
+  expect(back.hidden).toBe(false);
+  expect(selection.hidden).toBe(true);
 });
-test("coverage clipboard rejection never reports a successful copy", async () => {
-  const ui = await coverageClient(async () => { throw new Error("denied"); });
-  await ui.copyTileAddress({ type: "click", target: ui.child, preventDefault() {} });
-  expect(ui.tooltip.textContent).toBe("Could not copy 0x080bbb0c");
+
+test("selection shows source details without copying and tolerates missing addresses", async () => {
+  const source = await Bun.file(new URL("./client.js", import.meta.url)).text();
+  const show = new Function("h", source.slice(source.indexOf("function showSelection"), source.indexOf('root.addEventListener("click"')) + ";return showSelection;")(
+    (tag, attributes, ...children) => ({ tag, attributes, children }));
+  const selection = { dataset: {}, hidden: true, replaceChildren(...children) { this.children = children; } };
+  const attributes = { "data-source": "games/gs1/SRC/BATTLE/MAIN.C", "data-address": "0x080bbb0c", "aria-label": "Battle action: 6,332 bytes" };
+  show(selection, { getAttribute: name => attributes[name] ?? null });
+  expect(selection.hidden).toBe(false);
+  expect(selection.dataset.address).toBe("0x080bbb0c");
+  expect(selection.children[0].children[0]).toBe(attributes["data-source"]);
+  expect(selection.children[2].children[0].attributes["data-action"]).toBe("copy-selection");
+  show(selection, { getAttribute: () => null });
+  expect(selection.dataset.address).toBe("");
+  expect(selection.children[0].children[0]).toBe("Unresolved source");
+  expect(selection.children[2].children[0]).toBeNull();
 });
-test("nested coverage leaves copy their own address, not their container", async () => {
-  const copied = [], ui = await coverageClient(async address => copied.push(address));
-  ui.tile.parent = new ui.tile.constructor({ "aria-label": "Container", "data-address": "0x081a7020", "data-node": "container" });
-  await ui.copyTileAddress({ type: "click", target: ui.child, preventDefault() {} });
+
+test("selection controls copy once, report rejection, and close without navigating", async () => {
+  const source = await Bun.file(new URL("./client.js", import.meta.url)).text();
+  const feedback = { textContent: "" };
+  const selection = { hidden: false, dataset: { address: "0x080bbb0c" }, querySelector: () => feedback };
+  const panel = { querySelector: name => name === ".viewer-selection" ? selection : {} };
+  class Element {
+    constructor(action) { this.action = action; }
+    closest(selector) { return selector === ".panel" ? panel : selector === "[data-action]" ? this : null; }
+    getAttribute() { return this.action; }
+  }
+  const copied = [];
+  let reject = false;
+  const activate = new Function("Element", "navigator",
+    source.slice(source.indexOf("async function activateTile"), source.indexOf("function showSelection")) + ";return activateTile;")(
+      Element, { clipboard: { async writeText(value) { if (reject) throw Error("denied"); copied.push(value); } } });
+  const event = { type: "keydown", key: "Enter", target: new Element("copy-selection"), preventDefault() {} };
+  await activate(event);
+  expect(copied).toEqual([]);
+  event.type = "click";
+  await activate(event);
   expect(copied).toEqual(["0x080bbb0c"]);
+  expect(feedback.textContent).toBe("Address copied");
+  reject = true;
+  await activate(event);
+  expect(feedback.textContent).toBe("Could not copy address");
+  event.target = new Element("close-selection");
+  await activate(event);
+  expect(selection.hidden).toBe(true);
 });

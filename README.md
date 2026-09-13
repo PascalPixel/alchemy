@@ -16,12 +16,6 @@ each game as they shipped on the cartridge. The Japanese release is treated as
 the original and the others as its translations; English _Golden Sun_ is the
 first edition rebuilt in full.
 
-## Status: 50.97% DONE
-
-![Code](games/gs1/assets/readme/gs1-en-code.svg?v=f0b1b4744d024cc2)
-
-![Data](games/gs1/assets/readme/gs1-en-data.svg?v=49c95f9d5cd40c91)
-
 ## What this is
 
 Alchemy is rebuilding both games from scratch, the way their makers would have

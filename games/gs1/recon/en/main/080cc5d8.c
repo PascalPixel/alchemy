@@ -2,7 +2,7 @@
 
 /*
  * Battle-presentation sub-effect at 0x080cc5d8.  Family-matched to
- * games/gs1/src/battle/effects/member_orbit/run.c (owner 080ce85c) at
+ * games/gs1/src/battle/effects/member_orbit.c (owner 080ce85c) at
  * structural score 8031/10000, but this owner allocates its own kind-39
  * (work), kind-40 (canvas) and kind-41 (trail_source) heap blocks up front
  * via Func_080048b0 instead of reading pre-existing ones out of the shared
@@ -20,7 +20,7 @@
  * Func_080e0524/Func_080041d8/Func_08004278/Func_080ed408/Func_08002dd8/
  * Func_080cdbc0/Func_080d6888 calling shapes follow the 0x03001eec "battle
  * work" subsystem already recovered in
- * games/gs1/src/battle/effects/member_orbit/run.c and
+ * games/gs1/src/battle/effects/member_orbit.c and
  * games/gs1/recon/en/main/080d59b0.c.  The fixed 0x02010000 "star" array and
  * its 28-byte, {f0,f4,f8,f24}-field record shape is the same one used by
  * games/gs1/recon/en/main/080d59b0.c; this owner also keeps a second,
@@ -31,7 +31,7 @@
  *
  * Value_00000045/00000046/00000047/00000048/00000057/00000076 are the
  * established spelling for small absolute link-time constants (see
- * games/gs1/src/battle/effects/member_orbit/run.c's Value_000000af comment):
+ * games/gs1/src/battle/effects/member_orbit.c's Value_000000af comment):
  * every one of these is loaded from a literal pool rather than an
  * immediate, which an ordinary integer literal cannot produce.
  *

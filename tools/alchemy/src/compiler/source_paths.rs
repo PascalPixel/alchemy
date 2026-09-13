@@ -807,11 +807,11 @@ mod tests {
     #[test]
     fn one_overlay_translation_unit_can_map_multiple_owners() {
         let root = tempdir().unwrap();
-        let text = r#"{"format":3,"owners":{"resource_37b:02000030":"overlays/scene/accessors.c","resource_37b:02000038":"overlays/scene/accessors.c"}}"#;
+        let text = r#"{"format":3,"owners":{"resource_37b:02000030":"overlays/unidentified/accessors.c","resource_37b:02000038":"overlays/unidentified/accessors.c"}}"#;
         let paths = SourcePaths::parse(root.path(), text).unwrap();
         assert_eq!(
             paths
-                .owners_for_path(Path::new("overlays/scene/accessors.c"))
+                .owners_for_path(Path::new("overlays/unidentified/accessors.c"))
                 .len(),
             2
         );
@@ -854,13 +854,13 @@ mod tests {
         fs::create_dir_all(manifest_path.parent().unwrap()).unwrap();
         fs::write(
             &manifest_path,
-            r#"{"format":3,"owners":{"main:080132cc":"runtime/constant_zero_result.c"}}"#,
+            r#"{"format":3,"owners":{"main:080132cc":"system/constant_zero_result.c"}}"#,
         )
         .unwrap();
         let paths = SourcePaths::load_for_game(root.path(), "gs2").unwrap();
         assert_eq!(
             paths.repository_relative_path(SourceOwner::Main(0x0801_32cc)),
-            PathBuf::from("games/gs2/src/runtime/constant_zero_result.c")
+            PathBuf::from("games/gs2/src/system/constant_zero_result.c")
         );
         assert_eq!(
             SourceOwner::Main(0x0801_32cc).routing_path_for_game("gs2"),

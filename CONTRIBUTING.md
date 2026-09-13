@@ -490,9 +490,36 @@ Shared interfaces and evidenced types belong in headers; local constraints
 belong beside the relevant expression. Keep source ordinary C89 and preserve
 observable behavior, including bugs.
 
-Map code goes under `map/locations/<location>/` only with resource or verified
-call-site evidence; `games/gs1/locations.tsv` owns reviewed mappings. Shared
-map code belongs in `map/shared/`. Code stays out of assets: overlay assembly
+Organize `games/<game>/src/` by the following responsibilities. These are our
+reconstruction choices, not recovered Camelot directory names. Keep a shallow
+module tree; do not create a folder for each function or sort whole scenes into
+actor/dialogue/story categories. A scene's actors, dialogue and events belong
+with its area or loadable module. Moving a file does not change its translation
+unit, overlay identity, compiler route or completion credit.
+
+| Folder | Responsibility |
+| --- | --- |
+| `system/` | Startup, scheduling, memory, input, save, link and resource loading. |
+| `lib/` | Library support and shared math routines; retain compiler provenance. |
+| `graphics/` | Display, palette, animation, tile, text, window and icon rendering. |
+| `sound/` | Sound and music player code, not the sound assets. |
+| `game/` | Shared character, party, inventory, item, ability, Djinn and flag rules. |
+| `field/` | Shared map, camera, object, event and script runtime. |
+| `battle/` | Battle rules, presentation, motion and effect modules. |
+| `menu/` | Menu interaction, shops, inns and selection screens. |
+| `overlays/` | Loadable area/scene modules and genuinely shared overlay helpers. |
+
+Area-specific code belongs in `overlays/<location>/`; one location may have
+several separately compiled overlays. `games/gs1/locations.tsv` retains the
+current reviewed assignments. Existing filenames and function names alone do
+not independently prove an assignment: establish new locations through resource,
+map or call-site evidence. Unidentified modules stay in `overlays/unidentified/`
+under descriptive filenames until their location is established. Never invent a
+place to fill a folder, and never merge distinct overlay address spaces simply
+because they share a location. Shared map code belongs in `field/map/`.
+
+Keep classification metadata outside `src/`; provisional-source records live
+in `games/gs1/semantic/provisional-source.json`. Code stays out of assets: overlay assembly
 and compression recipes belong in `asm/overlays/`, battle assembly in
 `asm/battle/`, non-executable battle tables in `assets/data/battle/`, and
 both games' sound in `assets/sound/`. Update paths, caches and coverage

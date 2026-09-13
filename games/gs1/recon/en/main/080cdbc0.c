@@ -39,7 +39,7 @@ void Func_080b5038(s32, u16, s32);
 void Func_080b5048(u16, s32);
 
 /* IME-disable idiom `*ime = (u16)(u32)ime;` is proven exact in
-   games/gs1/src/runtime/scheduler/callback_scheduler.c
+   games/gs1/src/system/scheduler/callback_scheduler.c
    (`Data_04000208 = (u16)&Data_04000208;`, adopted, asm deleted). The
    surrounding bounded-queue-insert-under-guard shape parallels the
    still-unadopted draft QueueObjectUpdate in

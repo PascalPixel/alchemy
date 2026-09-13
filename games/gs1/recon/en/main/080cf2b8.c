@@ -5,7 +5,7 @@
 /*
  * Battle-presentation sub-effect at 0x080cf2b8, a two-argument entry
  * (effect object, variant) in the same family as the adopted
- * games/gs1/src/battle/effects/member_orbit/run.c (0x080ce85c) and
+ * games/gs1/src/battle/effects/member_orbit.c (0x080ce85c) and
  * games/gs1/src/battle/presentation/prepare_scene.c (0x080ccaec).
  *
  * The owner republishes the effect object at work + 0x7828, asks

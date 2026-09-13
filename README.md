@@ -20,7 +20,7 @@ first edition rebuilt in full.
 
 ![Code](games/gs1/assets/readme/gs1-en-code.svg?v=1767222ef99bec0b)
 
-![Data](games/gs1/assets/readme/gs1-en-data.svg?v=b2a5c2b675e2befd)
+![Data](games/gs1/assets/readme/gs1-en-data.svg?v=49c95f9d5cd40c91)
 
 ## What this is
 

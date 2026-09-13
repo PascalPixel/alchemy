@@ -7,17 +7,7 @@
   "descriptor_table": "0x08185024",
   "descriptor_count": 512,
   "components": [
-    {
-      "kind": "components",
-      "id": "038",
-      "address": "0x081f60c8",
-      "size": "0x0000071c",
-      "directory": "0x081f67cc",
-      "source": "games/gs1/assets/graphics/battle_characters_chr_038_bank.json",
-      "image": "battle_characters_chr_038_koma.8bpp.png",
-      "aliases": [],
-      "mode": 0
-    },
+    {"kind":"zero-skip-bank","id":"038","address":"0x081f60c8","size":"0x0000071c","directory":"0x081f67cc","source":"games/gs1/assets/graphics/battle_characters_chr_038_koma.8bpp.png","image":"battle_characters_chr_038_koma.8bpp.png","aliases":[],"mode":0,"frame_width":32,"frame_height":32,"columns":5,"palette":{"source":"games/gs1/assets/graphics/0800777c.gbapal.png","offset":16,"entries":224},"frames":5},
     {"kind": "components", "id": "039", "address": "0x081f67e4", "size": "0x00002710", "directory": "0x081f8e6c", "source": "games/gs1/assets/graphics/battle_characters_chr_039_bank.json", "image": "battle_characters_chr_039_koma.8bpp.png", "aliases": []},
     {"kind": "components", "id": "03a", "address": "0x081f8ef4", "size": "0x000026dc", "directory": "0x081fb548", "source": "games/gs1/assets/graphics/battle_characters_chr_03a_bank.json", "image": "battle_characters_chr_03a_koma.8bpp.png", "aliases": []},
     {"kind": "components", "id": "03b", "address": "0x081fb5d0", "size": "0x000021e0", "directory": "0x081fd720", "source": "games/gs1/assets/graphics/battle_characters_chr_03b_bank.json", "image": "battle_characters_chr_03b_koma.8bpp.png", "aliases": []},

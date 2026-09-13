@@ -444,6 +444,12 @@ composition, pixel, text, sample and compression codecs. Preserve validation
 of ranges, extents, ordering, padding and reference round trips. A layout is
 data; renaming hard-coded game logic does not make a portable codec.
 
+Do not maintain metadata that a shared encoder can derive. Zero-skip sprite
+banks use PNG frames plus geometry and palette settings in the existing series
+index; the encoder generates alignment and the frame pointer directory. They
+do not need individual bank JSON files. Keep compression recipes only where
+the encoder cannot yet reproduce the original stream without them.
+
 `psynergy convert FORMAT INPUT OUTPUT [options]` supports `words2bin`,
 `pairs2bin`, `tilemap2bin`, `png2bpp4`, `bpp42png`, `png2bpp8`,
 `bpp82png`, `png2bgr555`, `wav2pcm8`, and `pcm82wav`.

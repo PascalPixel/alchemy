@@ -747,7 +747,7 @@
     },
     "main:0800c2d8": {
       "name": "ObjectDispatch_Initialize",
-      "source": "object/dispatch/children.c"
+      "source": "object/dispatch.c"
     },
     "main:0800c344": {
       "name": "ObjectDispatch_ApplyValueToChildren"
@@ -3767,16 +3767,13 @@
       "name": "ObjectDispatch_SetChildField1e"
     },
     "main:0800c408": {
-      "name": "Animation_SetIndexAndInitObjects",
-      "source": "animation/set_index_and_init_objects.c"
+      "name": "Animation_SetIndexAndInitObjects"
     },
     "main:0800c430": {
-      "name": "ObjectDispatch_RegisterChildMetadata",
-      "source": "object/dispatch/register_child_metadata.c"
+      "name": "ObjectDispatch_RegisterChildMetadata"
     },
     "main:0800c454": {
-      "name": "ObjectDispatch_InitFromTable5WithArgument",
-      "source": "object/dispatch/table.c"
+      "name": "ObjectDispatch_InitFromTable5WithArgument"
     },
     "main:0800c46c": {
       "name": "ObjectDispatch_InitFromTable0"
@@ -3797,32 +3794,25 @@
       "name": "ObjectDispatch_InitFromTable4WithArgument"
     },
     "main:0800c4ec": {
-      "name": "ObjectDispatch_WaitForValue16",
-      "source": "object/dispatch/wait_for_value_16.c"
+      "name": "ObjectDispatch_WaitForValue16"
     },
     "main:0800c528": {
-      "name": "ObjectDispatch_SetSingleChildField26",
-      "source": "object/dispatch/set_single_child_field26.c"
+      "name": "ObjectDispatch_SetSingleChildField26"
     },
     "main:0800c548": {
-      "name": "Animation_SetStateField5Bits2To3",
-      "source": "animation/set_state_field5_bits2_3.c"
+      "name": "Animation_SetStateField5Bits2To3"
     },
     "main:0800c570": {
-      "name": "Animation_SetStateField1dBit1",
-      "source": "animation/set_state_field1d_bit1.c"
+      "name": "Animation_SetStateField1dBit1"
     },
     "main:0800c598": {
-      "name": "Animation_ApplyChildValues",
-      "source": "animation/apply_child_values.c"
+      "name": "Animation_ApplyChildValues"
     },
     "main:0800c5b4": {
-      "name": "Graphics_EnableObjLayerAndCallbacks",
-      "source": "graphics/registers/enable_obj_layer_and_callbacks.c"
+      "name": "Graphics_EnableObjLayerAndCallbacks"
     },
     "main:0800c5fc": {
-      "name": "ObjectDispatch_StopCallbacksAndHideLayers",
-      "source": "object/dispatch/stop_callbacks_and_hide_layers.c"
+      "name": "ObjectDispatch_StopCallbacksAndHideLayers"
     },
     "main:0800ca2c": {
       "name": "Script_AdvancePastCursor",

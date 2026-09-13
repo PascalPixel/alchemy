@@ -13,7 +13,7 @@ void Func_02005462();
 void Scene_RunPrimarySequence(void)
 {
     void *scene;
-    s32 actor;
+    u32 actor;
     s32 base;
     s32 slot;
 

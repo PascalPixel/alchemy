@@ -1258,8 +1258,7 @@
       "source": "graphics/color/scale_rgb555_buffer.c"
     },
     "main:08016418": {
-      "name": "UiWork_Finalize",
-      "source": "ui/render/finalize.c"
+      "name": "UiWork_Finalize"
     },
     "main:08017364": {
       "name": "UiWork_IsComplete",
@@ -1294,12 +1293,10 @@
       "name": "UiTextResource_NoOpCallbackBank"
     },
     "main:08016478": {
-      "name": "RenderOutput_PrepareForRedraw",
-      "source": "ui/render/output_list/prepare_for_redraw.c"
+      "name": "RenderOutput_PrepareForRedraw"
     },
     "main:08016498": {
-      "name": "RenderOutput_RedrawSavedRect",
-      "source": "ui/render/output_list/redraw_saved_rect.c"
+      "name": "RenderOutput_RedrawSavedRect"
     },
     "main:08015e8c": {
       "name": "RenderOutput_AcquireFree",
@@ -1338,8 +1335,7 @@
       "source": "ui/window/set_tile_attribute_bit_rect.c"
     },
     "main:080164ac": {
-      "name": "RenderOutput_ClearList",
-      "source": "ui/render/output_list/clear.c"
+      "name": "RenderOutput_ClearList"
     },
     "main:08016584": {
       "name": "RenderOutput_AppendToList"
@@ -4016,7 +4012,7 @@
     },
     "main:080163ec": {
       "name": "UiWork_WaitUntilField1aClear",
-      "source": "ui/runtime/wait_until_field1a_clear.c"
+      "source": "ui/window/finalize.c"
     },
     "main:0801656c": {
       "name": "UiWork_UpdateListTail",

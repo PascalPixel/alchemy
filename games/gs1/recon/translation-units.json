@@ -175648,6 +175648,42 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "object-context-effect",
+      "game": "gs1",
+      "source": "games/gs1/src/object/effects/context_effect.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080942e0",
+          "extent": 116,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08094354",
+          "extent": 20,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08094368",
+          "extent": 24,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08094380",
+          "extent": 168,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08094428",
+          "extent": 196,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

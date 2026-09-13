@@ -509,6 +509,9 @@ include files have moved; maps now accompany their evidenced areas, messages
 and credits live in `TEXT`. The glyph sheet is in `GRAPHICS/FONT`; mixed item,
 status, window and menu-image banks are in `GRAPHICS/TILE`, not classified as
 fonts merely because their former package was called localization.
+The localization glyph table lives beside its sheet in `GRAPHICS/FONT`:
+each of its 224 records combines a two-byte advance with 15 two-byte bitmap rows.
+Keep that interleaved layout intact; its 7,168 bytes are not all image pixels.
 Sound inputs are under `SOUND/SEQUENCE`, `SOUND/SAMPLE` and
 `SOUND/INSTRUMENT`; mixed residual sound definitions remain at the sound root.
 Character banks and their component indexes live together in `GRAPHICS/CHARACTER`.

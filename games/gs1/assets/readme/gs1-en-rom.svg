@@ -30,8 +30,8 @@
 <path class="bevel-light" d="M6 826 V54.001328468322754 H534" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <path class="bevel-dark" d="M6 826 H534 V54.001328468322754" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <text class="weyard rectangle-label folder-label" x="10" y="72.00132846832275" pointer-events="none">gs1</text>
-<g aria-label="GRAPHICS: 2,493,496 bytes · Data · 3 items" data-node="container" data-kind="folder" data-bytes="2493496" data-source="games/gs1/GRAPHICS/">
-<title>GRAPHICS: 2,493,496 bytes · Data · 3 items</title>
+<g aria-label="GRAPHICS: 2,493,496 bytes · Data · 4 items" data-node="container" data-kind="folder" data-bytes="2493496" data-source="games/gs1/GRAPHICS/">
+<title>GRAPHICS: 2,493,496 bytes · Data · 4 items</title>
 <rect class="container-frame" x="8" y="76.00132846832275" width="427.4526347746945" height="272.56093825483134" fill="#1f7f93"/>
 <path class="bevel-light" d="M8 348.5622667231541 V76.00132846832275 H435.4526347746945" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <path class="bevel-dark" d="M8 348.5622667231541 H435.4526347746945 V76.00132846832275" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
@@ -1247,719 +1247,725 @@
 <rect data-content-type="Sprite sheets" x="286.20831207434" y="339.7655772235378" width="1.3846150437056393" height="4.296689499616303" style="fill:#b5a0de"/>
 </g>
 </g>
+<g aria-label="FONT: 7,168 bytes · Data · 1 items" data-node="container" data-kind="folder" data-bytes="7168" data-source="games/gs1/GRAPHICS/FONT/">
+<title>FONT: 7,168 bytes · Data · 1 items</title>
+<rect class="container-frame" x="290.0929271180456" y="98.00132846832275" width="133.2471971580471" height="2.2707480890402185" fill="#1f7f93"/>
+<path class="bevel-light" d="M290.0929271180456 100.27207655736298 V98.00132846832275 H423.34012427609275" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M290.0929271180456 100.27207655736298 H423.34012427609275 V98.00132846832275" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="typed-table: 7,168 bytes · Fonts · Last asset build: ROM bytes matched; appearance not verified · 0x08032224" data-node="leaf" data-kind="file" data-bytes="7168" data-address="0x08032224" data-source="games/gs1/GRAPHICS/FONT/LOCALIZATION_GLYPHS.json">
+<title>typed-table: 7,168 bytes · Fonts · Last asset build: ROM bytes matched; appearance not verified · 0x08032224</title>
+<rect data-content-type="Fonts" x="290.9444576514357" y="98.85285900171284" width="131.54413609126692" height="0.5676870222600546" style="fill:#eadb83"/>
+</g>
+</g>
 <g aria-label="PALETTE: 544 bytes · Data · 2 items" data-node="container" data-kind="folder" data-bytes="544" data-source="games/gs1/GRAPHICS/PALETTE/">
 <title>PALETTE: 544 bytes · Data · 2 items</title>
-<rect class="container-frame" x="290.0929271180456" y="98.00132846832275" width="143.35970765664888" height="0.1601772510941233" fill="#1f7f93"/>
-<path class="bevel-light" d="M290.0929271180456 98.16150571941688 V98.00132846832275 H433.4526347746945" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M290.0929271180456 98.16150571941688 H433.4526347746945 V98.00132846832275" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<rect class="container-frame" x="423.34012427609275" y="98.00132846832275" width="10.112510498601779" height="2.2707480890402185" fill="#1f7f93"/>
+<path class="bevel-light" d="M423.34012427609275 100.27207655736298 V98.00132846832275 H433.4526347746945" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M423.34012427609275 100.27207655736298 H433.4526347746945 V98.00132846832275" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="0800777c.gbapal.png · gba-palette · 0x0800777c: 480 bytes · Palettes · Last asset build: ROM bytes matched; appearance not verified · 0x0800777c" data-node="leaf" data-kind="file" data-bytes="480" data-address="0x0800777c" data-source="games/gs1/GRAPHICS/PALETTE/0800777c.gbapal.png">
 <title>0800777c.gbapal.png · gba-palette · 0x0800777c: 480 bytes · Palettes · Last asset build: ROM bytes matched; appearance not verified · 0x0800777c</title>
-<rect data-content-type="Palettes" x="290.1529935872059" y="98.06139493748304" width="126.38314894996336" height="0.04004431277353083" style="fill:#e8a6d3"/>
+<rect data-content-type="Palettes" x="424.1916548094828" y="98.85285900171284" width="7.353315731341419" height="0.5676870222600546" style="fill:#e8a6d3"/>
 </g>
 <g aria-label="08073812.gbapal.png · gba-palette · 0x08073812: 64 bytes · Palettes · Last asset build: ROM bytes matched; appearance not verified · 0x08073812" data-node="leaf" data-kind="file" data-bytes="64" data-address="0x08073812" data-source="games/gs1/GRAPHICS/PALETTE/08073812.gbapal.png">
 <title>08073812.gbapal.png · gba-palette · 0x08073812: 64 bytes · Palettes · Last asset build: ROM bytes matched; appearance not verified · 0x08073812</title>
-<rect data-content-type="Palettes" x="416.5761868499428" y="98.06139493748304" width="16.816381455591397" height="0.04004431277353083" style="fill:#e8a6d3"/>
+<rect data-content-type="Palettes" x="432.0928474770743" y="98.83304891570286" width="0.5280668502400983" height="0.607307194280011" style="fill:#e8a6d3"/>
 </g>
 </g>
-<g aria-label="TILE: 843,628 bytes · Data · 155 items" data-node="container" data-kind="folder" data-bytes="843628" data-source="games/gs1/GRAPHICS/TILE/">
-<title>TILE: 843,628 bytes · Data · 155 items</title>
-<rect class="container-frame" x="290.0929271180456" y="98.16150571941688" width="143.35970765664888" height="248.40076100373722" fill="#1f7f93"/>
-<path class="bevel-light" d="M290.0929271180456 346.5622667231541 V98.16150571941688 H433.4526347746945" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M290.0929271180456 346.5622667231541 H433.4526347746945 V98.16150571941688" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<text class="weyard rectangle-label folder-label" x="294.0929271180456" y="116.16150571941688" pointer-events="none">TILE</text>
+<g aria-label="TILE: 836,460 bytes · Data · 155 items" data-node="container" data-kind="folder" data-bytes="836460" data-source="games/gs1/GRAPHICS/TILE/">
+<title>TILE: 836,460 bytes · Data · 155 items</title>
+<rect class="container-frame" x="290.0929271180456" y="100.27207655736298" width="143.35970765664888" height="246.29019016579113" fill="#1f7f93"/>
+<path class="bevel-light" d="M290.0929271180456 346.5622667231541 V100.27207655736298 H433.4526347746945" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M290.0929271180456 346.5622667231541 H433.4526347746945 V100.27207655736298" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<text class="weyard rectangle-label folder-label" x="294.0929271180456" y="118.27207655736298" pointer-events="none">TILE</text>
 <g aria-label="MAP_GFX_128_animation_source.4bpp.png · golden-sun-kind2-lz · 0x084bae80: 320 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084bae80" data-node="leaf" data-kind="file" data-bytes="320" data-address="0x084bae80" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_128_animation_source.4bpp.png">
 <title>MAP_GFX_128_animation_source.4bpp.png · golden-sun-kind2-lz · 0x084bae80: 320 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084bae80</title>
-<rect data-content-type="Images" x="292.5929271180456" y="120.66150571941688" width="2.2883812622211313" height="2.607267757136987" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="292.5929271180456" y="122.77207655736298" width="2.319811391862348" height="2.5698413346097553" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_128_charblock1.4bpp.png · golden-sun-kind2-lz · 0x084baab0: 336 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084baab0" data-node="leaf" data-kind="file" data-bytes="336" data-address="0x084baab0" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_128_charblock1.4bpp.png">
 <title>MAP_GFX_128_charblock1.4bpp.png · golden-sun-kind2-lz · 0x084baab0: 336 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084baab0</title>
-<rect data-content-type="Images" x="295.8813083802668" y="120.66150571941688" width="2.4528003253321877" height="2.607267757136987" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="295.91273850990797" y="122.77207655736298" width="2.4858019614554654" height="2.5698413346097553" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_128_charblock2.4bpp.png · golden-sun-kind2-lz · 0x084bac00: 320 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084bac00" data-node="leaf" data-kind="file" data-bytes="320" data-address="0x084bac00" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_128_charblock2.4bpp.png">
 <title>MAP_GFX_128_charblock2.4bpp.png · golden-sun-kind2-lz · 0x084bac00: 320 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084bac00</title>
-<rect data-content-type="Images" x="299.33410870559896" y="120.66150571941688" width="2.2883812622211313" height="2.607267757136987" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="299.39854047136345" y="122.77207655736298" width="2.3198113918623484" height="2.5698413346097553" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_128_charblock3.4bpp.png · golden-sun-kind2-lz · 0x084bad40: 320 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084bad40" data-node="leaf" data-kind="file" data-bytes="320" data-address="0x084bad40" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_128_charblock3.4bpp.png">
 <title>MAP_GFX_128_charblock3.4bpp.png · golden-sun-kind2-lz · 0x084bad40: 320 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084bad40</title>
-<rect data-content-type="Images" x="302.6224899678201" y="120.66150571941688" width="2.411695559554424" height="2.4768845851922765" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="302.7183518632258" y="122.77207655736298" width="2.4443043190571867" height="2.4408109249250654" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_128_palette.224.png · golden-sun-general-lz · 0x084baaa4: 12 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084baaa4" data-node="leaf" data-kind="file" data-bytes="12" data-address="0x084baaa4" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_128_palette.224.png">
 <title>MAP_GFX_128_palette.224.png · golden-sun-general-lz · 0x084baaa4: 12 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084baaa4</title>
-<rect data-content-type="Images" x="302.1550857608063" y="123.67098609759533" width="3.3465039735820685" height="0.0651915859723553" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="302.25060946564696" y="125.74514508470921" width="3.3797891142148417" height="0.06451520484234496" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_134_animation_source.4bpp.png · golden-sun-kind2-lz · 0x084d68c4: 7,884 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084d68c4" data-node="leaf" data-kind="file" data-bytes="7884" data-address="0x084d68c4" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_134_animation_source.4bpp.png">
 <title>MAP_GFX_134_animation_source.4bpp.png · golden-sun-kind2-lz · 0x084d68c4: 7,884 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084d68c4</title>
-<rect data-content-type="Images" x="292.5929271180456" y="124.26877347655386" width="12.441258409328874" height="20.74288914164221" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="292.5929271180456" y="126.34191789197274" width="12.569729064237348" height="20.517300521455134" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_134_charblock1.4bpp.png · golden-sun-kind2-lz · 0x084cee88: 11,348 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084cee88" data-node="leaf" data-kind="file" data-bytes="11348" data-address="0x084cee88" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_134_charblock1.4bpp.png">
 <title>MAP_GFX_134_charblock1.4bpp.png · golden-sun-kind2-lz · 0x084cee88: 11,348 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084cee88</title>
-<rect data-content-type="Images" x="306.0341855273745" y="120.66150571941688" width="15.593929550594435" height="24.350156898779197" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="306.16265618228294" y="122.77207655736298" width="15.752533226823914" height="24.08714185606489" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_134_charblock2.4bpp.png · golden-sun-kind2-lz · 0x084d1adc: 9,736 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084d1adc" data-node="leaf" data-kind="file" data-bytes="9736" data-address="0x084d1adc" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_134_charblock2.4bpp.png">
 <title>MAP_GFX_134_charblock2.4bpp.png · golden-sun-kind2-lz · 0x084d1adc: 9,736 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084d1adc</title>
-<rect data-content-type="Images" x="292.5929271180456" y="146.01166261819608" width="29.03518795992331" height="11.016023737415493" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="292.5929271180456" y="147.85921841342787" width="11.020258374013537" height="28.997088801604363" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_134_charblock3.4bpp.png · golden-sun-kind2-lz · 0x084d40e4: 10,208 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084d40e4" data-node="leaf" data-kind="file" data-bytes="10208" data-address="0x084d40e4" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_134_charblock3.4bpp.png">
 <title>MAP_GFX_134_charblock3.4bpp.png · golden-sun-kind2-lz · 0x084d40e4: 10,208 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084d40e4</title>
-<rect data-content-type="Images" x="292.5929271180456" y="158.02768635561156" width="19.682622685840336" height="17.295556273977738" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="304.6131854920592" y="147.85921841342787" width="17.302003917047728" height="19.656387107850605" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_134_palette.224.png · golden-sun-general-lz · 0x084cecf4: 404 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084cecf4" data-node="leaf" data-kind="file" data-bytes="404" data-address="0x084cecf4" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_134_palette.224.png">
 <title>MAP_GFX_134_palette.224.png · golden-sun-general-lz · 0x084cecf4: 404 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084cecf4</title>
-<rect data-content-type="Images" x="313.17586418509734" y="157.92800073682295" width="8.551936511660204" height="0.8006287624227693" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="304.5136409503828" y="168.4160609796021" width="0.8009109166472359" height="8.539790777106521" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_13a_animation_source.4bpp.png · golden-sun-kind2-lz · 0x084e2f34: 4,212 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084e2f34" data-node="leaf" data-kind="file" data-bytes="4212" data-address="0x084e2f34" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_13a_animation_source.4bpp.png">
 <title>MAP_GFX_13a_animation_source.4bpp.png · golden-sun-kind2-lz · 0x084e2f34: 4,212 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084e2f34</title>
-<rect data-content-type="Images" x="313.27554980388595" y="159.62894388045711" width="8.352565274082973" height="15.694298749132198" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="306.21500732535367" y="168.51560552127847" width="15.700182083753255" height="8.340701693753758" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_13a_charblock1.4bpp.png · golden-sun-kind2-lz · 0x084dba4c: 10,172 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084dba4c" data-node="leaf" data-kind="file" data-bytes="10172" data-address="0x084dba4c" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_13a_charblock1.4bpp.png">
 <title>MAP_GFX_13a_charblock1.4bpp.png · golden-sun-kind2-lz · 0x084dba4c: 10,172 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084dba4c</title>
-<rect data-content-type="Images" x="322.6281150779689" y="120.66150571941688" width="18.60905209715019" height="18.22916020151463" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="322.9151894091069" y="122.77207655736298" width="18.796474114370454" height="18.029652229553907" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_13a_charblock2.4bpp.png · golden-sun-kind2-lz · 0x084de208: 9,800 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084de208" data-node="leaf" data-kind="file" data-bytes="9800" data-address="0x084de208" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_13a_charblock2.4bpp.png">
 <title>MAP_GFX_13a_charblock2.4bpp.png · golden-sun-kind2-lz · 0x084de208: 9,800 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084de208</title>
-<rect data-content-type="Images" x="342.2371671751191" y="120.66150571941688" width="17.891929861587876" height="18.22916020151463" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="342.71166352347734" y="122.77207655736298" width="18.072497672122537" height="18.029652229553907" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_13a_charblock3.4bpp.png · golden-sun-kind2-lz · 0x084e0850: 9,956 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084e0850" data-node="leaf" data-kind="file" data-bytes="9956" data-address="0x084e0850" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_13a_charblock3.4bpp.png">
 <title>MAP_GFX_13a_charblock3.4bpp.png · golden-sun-kind2-lz · 0x084e0850: 9,956 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084e0850</title>
-<rect data-content-type="Images" x="322.6281150779689" y="139.8906659209315" width="14.412602397224214" height="22.945255724280237" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="322.9151894091069" y="141.8017287869169" width="14.559915027003061" height="22.696816928328257" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_13a_palette.224.png · golden-sun-general-lz · 0x084db8cc: 384 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084db8cc" data-node="leaf" data-kind="file" data-bytes="384" data-address="0x084db8cc" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_13a_palette.224.png">
 <title>MAP_GFX_13a_palette.224.png · golden-sun-general-lz · 0x084db8cc: 384 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084db8cc</title>
-<rect data-content-type="Images" x="322.4130938588113" y="163.62090042605408" width="0.5699575616847168" height="11.917363422692844" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="322.70289199820405" y="165.28624830434228" width="0.5754051781942581" height="11.782356321592834" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_146_animation_source.4bpp.png · golden-sun-kind2-lz · 0x084f6988: 4,808 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084f6988" data-node="leaf" data-kind="file" data-bytes="4808" data-address="0x084f6988" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_146_animation_source.4bpp.png">
 <title>MAP_GFX_146_animation_source.4bpp.png · golden-sun-kind2-lz · 0x084f6988: 4,808 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084f6988</title>
-<rect data-content-type="Images" x="323.7680302013383" y="163.83592164521173" width="13.27268727385478" height="11.487320984377561" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="324.0659997654954" y="165.49854571524514" width="13.409104670614544" height="11.357761499787092" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_146_charblock1.4bpp.png · golden-sun-kind2-lz · 0x084f13d0: 6,780 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084f13d0" data-node="leaf" data-kind="file" data-bytes="6780" data-address="0x084f13d0" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_146_charblock1.4bpp.png">
 <title>MAP_GFX_146_charblock1.4bpp.png · golden-sun-kind2-lz · 0x084f13d0: 6,780 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084f13d0</title>
-<rect data-content-type="Images" x="338.0407174751931" y="139.8906659209315" width="22.088379561513854" height="9.885460518451431" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="338.47510443611" y="141.8017287869169" width="22.30905675948993" height="9.772520788939806" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_146_charblock2.4bpp.png · golden-sun-kind2-lz · 0x084f2e4c: 9,536 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084f2e4c" data-node="leaf" data-kind="file" data-bytes="9536" data-address="0x084f2e4c" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_146_charblock2.4bpp.png">
 <title>MAP_GFX_146_charblock2.4bpp.png · golden-sun-kind2-lz · 0x084f2e4c: 9,536 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084f2e4c</title>
-<rect data-content-type="Images" x="338.0407174751931" y="150.77612643938292" width="22.088379561513854" height="14.310287832441421" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="338.47510443611" y="152.5742495758567" width="22.30905675948993" height="14.151439268927724" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_146_charblock3.4bpp.png · golden-sun-kind2-lz · 0x084f538c: 5,628 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084f538c" data-node="leaf" data-kind="file" data-bytes="5628" data-address="0x084f538c" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_146_charblock3.4bpp.png">
 <title>MAP_GFX_146_charblock3.4bpp.png · golden-sun-kind2-lz · 0x084f538c: 5,628 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084f538c</title>
-<rect data-content-type="Images" x="338.0407174751931" y="166.08641427182434" width="19.37976790655583" height="9.236828357764946" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="338.47510443611" y="167.72568884478443" width="19.574556374280007" height="9.130618370247817" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_146_palette.224.png · golden-sun-general-lz · 0x084f1224: 428 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084f1224" data-node="leaf" data-kind="file" data-bytes="428" data-address="0x084f1224" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_146_palette.224.png">
 <title>MAP_GFX_146_palette.224.png · golden-sun-general-lz · 0x084f1224: 428 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x084f1224</title>
-<rect data-content-type="Images" x="358.42048538174896" y="166.08641427182434" width="1.7086116549580233" height="4.8574365469564125" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="359.04966081039" y="167.72568884478443" width="1.7345003852099232" height="4.796663987254098" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_158_animation_source.4bpp.png · golden-sun-kind2-lz · 0x0850bcd0: 320 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0850bcd0" data-node="leaf" data-kind="file" data-bytes="320" data-address="0x0850bcd0" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_158_animation_source.4bpp.png">
 <title>MAP_GFX_158_animation_source.4bpp.png · golden-sun-kind2-lz · 0x0850bcd0: 320 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0850bcd0</title>
-<rect data-content-type="Images" x="358.42048538174896" y="171.94385081878076" width="1.7086116549580233" height="3.3793918108085332" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="359.04966081039" y="173.52235283203854" width="1.7345003852099232" height="3.333954382993719" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_158_charblock1.objects.json · golden-sun-kind2-lz · 0x08508950: 4,588 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08508950" data-node="leaf" data-kind="file" data-bytes="4588" data-address="0x08508950" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_158_charblock1.objects.json">
 <title>MAP_GFX_158_charblock1.objects.json · golden-sun-kind2-lz · 0x08508950: 4,588 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08508950</title>
-<rect data-content-type="Other data" x="292.5929271180456" y="176.32324262958932" width="8.582885457691148" height="16.74752017595626" style="fill:#bda995"/>
+<rect data-content-type="Other data" x="292.5929271180456" y="177.85630721503225" width="8.67447804025827" height="16.563384638026832" style="fill:#bda995"/>
 </g>
 <g aria-label="MAP_GFX_158_charblock2.4bpp.png · golden-sun-kind2-lz · 0x08509b3c: 7,304 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08509b3c" data-node="leaf" data-kind="file" data-bytes="7304" data-address="0x08509b3c" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_158_charblock2.4bpp.png">
 <title>MAP_GFX_158_charblock2.4bpp.png · golden-sun-kind2-lz · 0x08509b3c: 7,304 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08509b3c</title>
-<rect data-content-type="Images" x="302.17581257573676" y="176.32324262958932" width="14.255753134911975" height="16.74752017595626" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="302.2674051583039" y="177.85630721503225" width="14.401566609861899" height="16.563384638026832" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_158_charblock3.4bpp.png · golden-sun-kind2-lz · 0x0850b7c4: 1,292 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0850b7c4" data-node="leaf" data-kind="file" data-bytes="1292" data-address="0x0850b7c4" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_158_charblock3.4bpp.png">
 <title>MAP_GFX_158_charblock3.4bpp.png · golden-sun-kind2-lz · 0x0850b7c4: 1,292 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0850b7c4</title>
-<rect data-content-type="Images" x="317.4315657106487" y="176.32324262958932" width="5.45528897025725" height="6.4192053540851255" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="317.6689717681658" y="177.85630721503225" width="5.516988193378859" height="6.342229001595375" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_158_palette.224.png · golden-sun-general-lz · 0x0850886c: 228 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0850886c" data-node="leaf" data-kind="file" data-bytes="228" data-address="0x0850886c" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_158_palette.224.png">
 <title>MAP_GFX_158_palette.224.png · golden-sun-general-lz · 0x0850886c: 228 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0850886c</title>
-<rect data-content-type="Images" x="323.6716468413585" y="176.10803479004184" width="0.5695843209050517" height="6.849621033180074" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="323.97347414654666" y="177.64382140003426" width="0.5750283700040173" height="6.767200631591358" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_15e_animation_source.4bpp.png · golden-sun-kind2-lz · 0x08512a98: 2,116 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08512a98" data-node="leaf" data-kind="file" data-bytes="2116" data-address="0x08512a98" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_15e_animation_source.4bpp.png">
 <title>MAP_GFX_15e_animation_source.4bpp.png · golden-sun-kind2-lz · 0x08512a98: 2,116 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08512a98</title>
-<rect data-content-type="Images" x="317.4315657106487" y="183.74244798367445" width="6.5944576120673535" height="9.328314821871135" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="317.6689717681658" y="185.19853621662762" width="6.667044933386894" height="9.221155636431458" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_15e_charblock1.4bpp.png · golden-sun-kind2-lz · 0x0850d188: 10,712 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0850d188" data-node="leaf" data-kind="file" data-bytes="10712" data-address="0x0850d188" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_15e_charblock1.4bpp.png">
 <title>MAP_GFX_15e_charblock1.4bpp.png · golden-sun-kind2-lz · 0x0850d188: 10,712 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0850d188</title>
-<rect data-content-type="Images" x="292.5929271180456" y="194.07076280554557" width="31.433096204670477" height="11.243137308400534" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="292.5929271180456" y="195.41969185305908" width="31.743089583507064" height="11.116111298463643" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_15e_charblock2.4bpp.png · golden-sun-kind2-lz · 0x0850fb60: 6,732 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0850fb60" data-node="leaf" data-kind="file" data-bytes="6732" data-address="0x0850fb60" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_15e_charblock2.4bpp.png">
 <title>MAP_GFX_15e_charblock2.4bpp.png · golden-sun-kind2-lz · 0x0850fb60: 6,732 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0850fb60</title>
-<rect data-content-type="Images" x="292.5929271180456" y="206.3139001139461" width="8.536146211121665" height="25.1686773537284" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="292.5929271180456" y="207.5358031515227" width="8.62729206307519" height="24.897169929949918" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_15e_charblock3.4bpp.png · golden-sun-kind2-lz · 0x085115ac: 5,356 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085115ac" data-node="leaf" data-kind="file" data-bytes="5356" data-address="0x085115ac" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_15e_charblock3.4bpp.png">
 <title>MAP_GFX_15e_charblock3.4bpp.png · golden-sun-kind2-lz · 0x085115ac: 5,356 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085115ac</title>
-<rect data-content-type="Images" x="302.1290733291673" y="206.3139001139461" width="20.500011249201865" height="8.234480056029868" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="302.2202191811208" y="207.5358031515227" width="20.705506928371868" height="8.138669715443847" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_15e_palette.224.png · golden-sun-general-lz · 0x0850d02c: 348 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0850d02c" data-node="leaf" data-kind="file" data-bytes="348" data-address="0x0850d02c" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_15e_palette.224.png">
 <title>MAP_GFX_15e_palette.224.png · golden-sun-general-lz · 0x0850d02c: 348 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0850d02c</title>
-<rect data-content-type="Images" x="323.4783192644559" y="206.16313480003282" width="0.6984693721734736" height="8.536010683856395" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="323.7782987575076" y="207.38837579953773" width="0.705145296030004" height="8.433524419413843" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_18a_animation_source.4bpp.png · golden-sun-kind2-lz · 0x08540fb4: 3,248 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08540fb4" data-node="leaf" data-kind="file" data-bytes="3248" data-address="0x08540fb4" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_18a_animation_source.4bpp.png">
 <title>MAP_GFX_18a_animation_source.4bpp.png · golden-sun-kind2-lz · 0x08540fb4: 3,248 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08540fb4</title>
-<rect data-content-type="Images" x="302.1290733291673" y="215.54838016997596" width="6.109875103159325" height="15.934197297698532" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="302.2202191811208" y="216.67447286696657" width="6.177830817051887" height="15.758500214506071" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_18a_charblock1.4bpp.png · golden-sun-kind2-lz · 0x0853bb74: 7,212 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0853bb74" data-node="leaf" data-kind="file" data-bytes="7212" data-address="0x0853bb74" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_18a_charblock1.4bpp.png">
 <title>MAP_GFX_18a_charblock1.4bpp.png · golden-sun-kind2-lz · 0x0853bb74: 7,212 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0853bb74</title>
-<rect data-content-type="Images" x="309.2389484323266" y="215.54838016997596" width="14.787074890389487" height="15.934197297698532" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="309.39804999817267" y="216.67447286696657" width="14.937966703379988" height="15.758500214506071" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_18a_charblock2.4bpp.png · golden-sun-kind2-lz · 0x0853d7a0: 9,544 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0853d7a0" data-node="leaf" data-kind="file" data-bytes="9544" data-address="0x0853d7a0" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_18a_charblock2.4bpp.png">
 <title>MAP_GFX_18a_charblock2.4bpp.png · golden-sun-kind2-lz · 0x0853d7a0: 9,544 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0853d7a0</title>
-<rect data-content-type="Images" x="325.0260233227161" y="176.32324262958932" width="15.370568962672422" height="20.611117443177147" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="325.3360167015527" y="177.85630721503225" width="15.527037773241467" height="20.38689599160519" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_18a_charblock3.4bpp.png · golden-sun-kind2-lz · 0x0853fce8: 4,812 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0853fce8" data-node="leaf" data-kind="file" data-bytes="4812" data-address="0x0853fce8" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_18a_charblock3.4bpp.png">
 <title>MAP_GFX_18a_charblock3.4bpp.png · golden-sun-kind2-lz · 0x0853fce8: 4,812 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0853fce8</title>
-<rect data-content-type="Images" x="341.3965922853886" y="176.32324262958932" width="17.16235900216995" height="8.821185847785998" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="341.8630544747942" y="177.85630721503225" width="17.335953622899225" height="8.719288268785808" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_18a_palette.224.png · golden-sun-general-lz · 0x0853b9d4: 416 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0853b9d4" data-node="leaf" data-kind="file" data-bytes="416" data-address="0x0853b9d4" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_18a_palette.224.png">
 <title>MAP_GFX_18a_palette.224.png · golden-sun-general-lz · 0x0853b9d4: 416 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0853b9d4</title>
-<rect data-content-type="Images" x="359.45148772484566" y="176.21577906687645" width="0.7850728745742614" height="9.036112973211736" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="360.09529637217" y="177.75259548950888" width="0.7925765489532495" height="8.926711719832559" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_196_animation_source.4bpp.png · golden-sun-kind2-lz · 0x0854e85c: 6,276 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0854e85c" data-node="leaf" data-kind="file" data-bytes="6276" data-address="0x0854e85c" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_196_animation_source.4bpp.png">
 <title>MAP_GFX_196_animation_source.4bpp.png · golden-sun-kind2-lz · 0x0854e85c: 6,276 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0854e85c</title>
-<rect data-content-type="Images" x="341.3965922853886" y="186.1444284773753" width="18.732504751318473" height="10.789931595391149" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="341.8630544747942" y="187.57559548381806" width="18.921106720805724" height="10.667607722819382" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_196_charblock1.4bpp.png · golden-sun-kind2-lz · 0x08546c9c: 11,604 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08546c9c" data-node="leaf" data-kind="file" data-bytes="11604" data-address="0x08546c9c" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_196_charblock1.4bpp.png">
 <title>MAP_GFX_196_charblock1.4bpp.png · golden-sun-kind2-lz · 0x08546c9c: 11,604 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08546c9c</title>
-<rect data-content-type="Images" x="325.0260233227161" y="197.93436007276645" width="11.450667718056062" height="33.54821739490805" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="325.3360167015527" y="199.24320320663745" width="11.569670372947089" height="33.18976987483521" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_196_charblock2.4bpp.png · golden-sun-kind2-lz · 0x085499f0: 9,868 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085499f0" data-node="leaf" data-kind="file" data-bytes="9868" data-address="0x085499f0" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_196_charblock2.4bpp.png">
 <title>MAP_GFX_196_charblock2.4bpp.png · golden-sun-kind2-lz · 0x085499f0: 9,868 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085499f0</title>
-<rect data-content-type="Images" x="337.4766910407722" y="197.93436007276645" width="22.652405995934835" height="14.465514845443323" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="337.9056870744998" y="199.24320320663745" width="22.878474121100105" height="14.305055757796852" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_196_charblock3.4bpp.png · golden-sun-kind2-lz · 0x0854c07c: 10,208 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0854c07c" data-node="leaf" data-kind="file" data-bytes="10208" data-address="0x0854c07c" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_196_charblock3.4bpp.png">
 <title>MAP_GFX_196_charblock3.4bpp.png · golden-sun-kind2-lz · 0x0854c07c: 10,208 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0854c07c</title>
-<rect data-content-type="Images" x="337.4766910407722" y="213.39987491820978" width="18.8294809795091" height="18.082702549464727" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="337.9056870744998" y="214.5482589644343" width="19.019009841342797" height="17.884714117038357" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_196_palette.224.png · golden-sun-general-lz · 0x08546b00: 412 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08546b00" data-node="leaf" data-kind="file" data-bytes="412" data-address="0x08546b00" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_196_palette.224.png">
 <title>MAP_GFX_196_palette.224.png · golden-sun-general-lz · 0x08546b00: 412 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08546b00</title>
-<rect data-content-type="Images" x="357.30617202028134" y="213.39987491820978" width="2.822925016425735" height="2.9949560215342825" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="357.92469691584256" y="214.5482589644343" width="2.859464279757308" height="2.9535072236889244" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1a2_animation_source.4bpp.png · golden-sun-kind2-lz · 0x0855ec98: 1,556 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0855ec98" data-node="leaf" data-kind="file" data-bytes="1556" data-address="0x0855ec98" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1a2_animation_source.4bpp.png">
 <title>MAP_GFX_1a2_animation_source.4bpp.png · golden-sun-kind2-lz · 0x0855ec98: 1,556 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0855ec98</title>
-<rect data-content-type="Images" x="357.30617202028134" y="217.39483093974405" width="2.822925016425735" height="14.087746527930445" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="357.92469691584256" y="218.5017661881232" width="2.859464279757308" height="13.931206893349433" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1a2_charblock1.objects.json · golden-sun-kind2-lz · 0x085581e0: 11,288 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x085581e0" data-node="leaf" data-kind="file" data-bytes="11288" data-address="0x085581e0" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1a2_charblock1.objects.json">
 <title>MAP_GFX_1a2_charblock1.objects.json · golden-sun-kind2-lz · 0x085581e0: 11,288 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x085581e0</title>
-<rect data-content-type="Other data" x="361.129097036707" y="120.66150571941688" width="16.180176119313792" height="23.355662964399727" style="fill:#bda995"/>
+<rect data-content-type="Other data" x="361.7841611955999" y="122.77207655736298" width="16.021272483902855" height="23.560506737571632" style="fill:#bda995"/>
 </g>
 <g aria-label="MAP_GFX_1a2_charblock2.4bpp.png · golden-sun-kind2-lz · 0x0855adf8: 8,444 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0855adf8" data-node="leaf" data-kind="file" data-bytes="8444" data-address="0x0855adf8" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1a2_charblock2.4bpp.png">
 <title>MAP_GFX_1a2_charblock2.4bpp.png · golden-sun-kind2-lz · 0x0855adf8: 8,444 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0855adf8</title>
-<rect data-content-type="Images" x="378.30927315602077" y="120.66150571941688" width="11.85164840108838" height="23.355662964399727" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="378.80543367950276" y="122.77207655736298" width="11.7327803733235" height="23.560506737571632" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1a2_charblock3.4bpp.png · golden-sun-kind2-lz · 0x0855cef4: 7,588 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0855cef4" data-node="leaf" data-kind="file" data-bytes="7588" data-address="0x0855cef4" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1a2_charblock3.4bpp.png">
 <title>MAP_GFX_1a2_charblock3.4bpp.png · golden-sun-kind2-lz · 0x0855cef4: 7,588 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0855cef4</title>
-<rect data-content-type="Images" x="361.129097036707" y="145.0171686838166" width="8.911659290533134" height="27.378636406923874" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="361.7841611955999" y="147.3325832949346" width="8.819983938471422" height="27.61731547583548" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1a2_palette.224.png · golden-sun-general-lz · 0x085580bc: 292 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085580bc" data-node="leaf" data-kind="file" data-bytes="292" data-address="0x085580bc" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1a2_palette.224.png">
 <title>MAP_GFX_1a2_palette.224.png · golden-sun-general-lz · 0x085580bc: 292 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085580bc</title>
-<rect data-content-type="Images" x="360.9021123843224" y="173.16882043835585" width="9.36562859530239" height="0.5460306952307441" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="361.5594727440627" y="175.72521031923293" width="9.269360841545753" height="0.5506230969256691" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1aa_animation_source.4bpp.png · golden-sun-kind2-lz · 0x08569dfc: 6,712 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08569dfc" data-node="leaf" data-kind="file" data-bytes="6712" data-address="0x08569dfc" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1aa_animation_source.4bpp.png">
 <title>MAP_GFX_1aa_animation_source.4bpp.png · golden-sun-kind2-lz · 0x08569dfc: 6,712 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08569dfc</title>
-<rect data-content-type="Images" x="371.0407563272401" y="145.0171686838166" width="19.120165229869038" height="11.366049238312737" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="371.6041451340713" y="147.3325832949346" width="18.93406891875493" height="11.47005413396711" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1aa_charblock1.4bpp.png · golden-sun-kind2-lz · 0x08564a98: 9,284 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08564a98" data-node="leaf" data-kind="file" data-bytes="9284" data-address="0x08564a98" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1aa_charblock1.4bpp.png">
 <title>MAP_GFX_1aa_charblock1.4bpp.png · golden-sun-kind2-lz · 0x08564a98: 9,284 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08564a98</title>
-<rect data-content-type="Images" x="371.0407563272401" y="157.38321792212935" width="19.120165229869038" height="16.104648559072626" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="371.6041451340713" y="159.80263742890173" width="18.93406891875493" height="16.248507535719707" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1aa_charblock2.4bpp.png · golden-sun-kind2-lz · 0x08566edc: 9,304 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08566edc" data-node="leaf" data-kind="file" data-bytes="9304" data-address="0x08566edc" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1aa_charblock2.4bpp.png">
 <title>MAP_GFX_1aa_charblock2.4bpp.png · golden-sun-kind2-lz · 0x08566edc: 9,304 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08566edc</title>
-<rect data-content-type="Images" x="391.16092155710913" y="120.66150571941688" width="18.09085008935684" height="17.06570860251701" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="391.5382140528262" y="122.77207655736298" width="17.914274164801927" height="17.2176505931979" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1aa_charblock3.4bpp.png · golden-sun-kind2-lz · 0x08569334: 2,760 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08569334" data-node="leaf" data-kind="file" data-bytes="2760" data-address="0x08569334" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1aa_charblock3.4bpp.png">
 <title>MAP_GFX_1aa_charblock3.4bpp.png · golden-sun-kind2-lz · 0x08569334: 2,760 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08569334</title>
-<rect data-content-type="Images" x="410.25177164646595" y="120.66150571941688" width="5.508617420834039" height="14.71921681681808" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="410.4524882176282" y="122.77207655736298" width="5.448417632282" height="14.851423593072573" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1aa_palette.224.png · golden-sun-general-lz · 0x085648fc: 412 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085648fc" data-node="leaf" data-kind="file" data-bytes="412" data-address="0x085648fc" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1aa_palette.224.png">
 <title>MAP_GFX_1aa_palette.224.png · golden-sun-general-lz · 0x085648fc: 412 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085648fc</title>
-<rect data-content-type="Images" x="410.25177164646595" y="136.38072253623497" width="5.508617420834039" height="1.3464917856989302" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="410.4524882176282" y="138.62350015043555" width="5.448417632282" height="1.3662270001253258" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1b2_animation_source.4bpp.png · golden-sun-kind2-lz · 0x0857a09c: 7,404 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0857a09c" data-node="leaf" data-kind="file" data-bytes="7404" data-address="0x0857a09c" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1b2_animation_source.4bpp.png">
 <title>MAP_GFX_1b2_animation_source.4bpp.png · golden-sun-kind2-lz · 0x0857a09c: 7,404 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0857a09c</title>
-<rect data-content-type="Images" x="416.76038906729997" y="120.66150571941688" width="14.19224570739446" height="17.06570860251701" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="416.90090584991015" y="122.77207655736298" width="14.05172892478434" height="17.2176505931979" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1b2_charblock1.4bpp.png · golden-sun-kind2-lz · 0x085733c0: 11,184 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085733c0" data-node="leaf" data-kind="file" data-bytes="11184" data-address="0x085733c0" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1b2_charblock1.4bpp.png">
 <title>MAP_GFX_1b2_charblock1.4bpp.png · golden-sun-kind2-lz · 0x085733c0: 11,184 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085733c0</title>
-<rect data-content-type="Images" x="391.16092155710913" y="138.7272143219339" width="19.304637083402664" height="19.417966803617226" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="391.5382140528262" y="140.98972715056087" width="19.11683454716293" height="19.589692507272474" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1b2_charblock2.4bpp.png · golden-sun-kind2-lz · 0x08575f70: 8,404 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08575f70" data-node="leaf" data-kind="file" data-bytes="8404" data-address="0x08575f70" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1b2_charblock2.4bpp.png">
 <title>MAP_GFX_1b2_charblock2.4bpp.png · golden-sun-kind2-lz · 0x08575f70: 8,404 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08575f70</title>
-<rect data-content-type="Images" x="391.16092155710913" y="159.14518112555112" width="19.304637083402664" height="14.34268535565085" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="391.5382140528262" y="161.57941965783334" width="19.11683454716293" height="14.471725306788073" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1b2_charblock3.4bpp.png · golden-sun-kind2-lz · 0x08578044: 8,280 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08578044" data-node="leaf" data-kind="file" data-bytes="8280" data-address="0x08578044" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1b2_charblock3.4bpp.png">
 <title>MAP_GFX_1b2_charblock3.4bpp.png · golden-sun-kind2-lz · 0x08578044: 8,280 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08578044</title>
-<rect data-content-type="Images" x="411.4655586405118" y="138.7272143219339" width="18.515990611025376" height="14.727159915419861" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="411.65504859998913" y="140.98972715056087" width="18.33548245818686" height="14.859433497258363" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1b2_palette.224.png · golden-sun-general-lz · 0x08573224: 412 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08573224" data-node="leaf" data-kind="file" data-bytes="412" data-address="0x08573224" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1b2_palette.224.png">
 <title>MAP_GFX_1b2_palette.224.png · golden-sun-general-lz · 0x08573224: 412 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08573224</title>
-<rect data-content-type="Images" x="430.7243206323265" y="138.46998570272322" width="0.4855427615786496" height="15.241617153841212" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="430.7310569873056" y="140.7302530796905" width="0.4810518582592387" height="15.378381638999125" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1b8_charblock1.4bpp.png · golden-sun-kind2-lz · 0x0857d6d0: 11,072 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0857d6d0" data-node="leaf" data-kind="file" data-bytes="11072" data-address="0x0857d6d0" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1b8_charblock1.4bpp.png">
 <title>MAP_GFX_1b8_charblock1.4bpp.png · golden-sun-kind2-lz · 0x0857d6d0: 11,072 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0857d6d0</title>
-<rect data-content-type="Images" x="411.4655586405118" y="154.45437423735376" width="19.487076134182676" height="19.033492243848215" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="411.65504859998913" y="156.84916064781922" width="19.297586174705337" height="19.201984316802182" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1b8_charblock2.4bpp.png · golden-sun-kind2-lz · 0x08580210: 7,632 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08580210" data-node="leaf" data-kind="file" data-bytes="7632" data-address="0x08580210" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1b8_charblock2.4bpp.png">
 <title>MAP_GFX_1b8_charblock2.4bpp.png · golden-sun-kind2-lz · 0x08580210: 7,632 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08580210</title>
-<rect data-content-type="Images" x="361.129097036707" y="174.48786648120196" width="9.71262237054472" height="25.409071492339564" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="361.7841611955999" y="177.05114496462141" width="14.795937761454958" height="16.89391187745372" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1b8_charblock3.4bpp.png · golden-sun-kind2-lz · 0x08581fe0: 320 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08581fe0" data-node="leaf" data-kind="file" data-bytes="320" data-address="0x08581fe0" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1b8_charblock3.4bpp.png">
 <title>MAP_GFX_1b8_charblock3.4bpp.png · golden-sun-kind2-lz · 0x08581fe0: 320 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08581fe0</title>
-<rect data-content-type="Images" x="361.129097036707" y="200.89693797354153" width="3.683113604609713" height="1.5329455362149567" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="377.50013306089966" y="176.9711790684662" width="6.21364470591564" height="0.8400682076895924" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1b8_palette.224.png · golden-sun-general-lz · 0x0857d534: 412 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0857d534" data-node="leaf" data-kind="file" data-bytes="412" data-address="0x0857d534" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1b8_palette.224.png">
 <title>MAP_GFX_1b8_palette.224.png · golden-sun-general-lz · 0x0857d534: 412 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0857d534</title>
-<rect data-content-type="Images" x="365.8122106413167" y="200.89693797354153" width="5.029508765935007" height="1.5329455362149567" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="384.5538459745049" y="176.9711790684662" width="8.241587168577146" height="0.8400682076895924" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1be_animation_source.4bpp.png · golden-sun-kind2-lz · 0x0858d31c: 7,064 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0858d31c" data-node="leaf" data-kind="file" data-bytes="7064" data-address="0x0858d31c" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1be_animation_source.4bpp.png">
 <title>MAP_GFX_1be_animation_source.4bpp.png · golden-sun-kind2-lz · 0x0858d31c: 7,064 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0858d31c</title>
-<rect data-content-type="Images" x="371.8417194072517" y="174.48786648120196" width="23.120050751087774" height="9.856330091849465" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="377.5800989570549" y="178.7312813800006" width="15.13536828987197" height="15.213775462074537" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1be_charblock1.4bpp.png · golden-sun-kind2-lz · 0x08585300: 11,768 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08585300" data-node="leaf" data-kind="file" data-bytes="11768" data-address="0x08585300" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1be_charblock1.4bpp.png">
 <title>MAP_GFX_1be_charblock1.4bpp.png · golden-sun-kind2-lz · 0x08585300: 11,768 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08585300</title>
-<rect data-content-type="Images" x="371.8417194072517" y="185.34419657305142" width="23.120050751087774" height="17.085686936705056" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="361.7841611955999" y="194.94505684207513" width="30.931306051326928" height="12.648921115755469" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1be_charblock2.4bpp.png · golden-sun-kind2-lz · 0x085880f8: 10,440 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085880f8" data-node="leaf" data-kind="file" data-bytes="10440" data-address="0x085880f8" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1be_charblock2.4bpp.png">
 <title>MAP_GFX_1be_charblock2.4bpp.png · golden-sun-kind2-lz · 0x085880f8: 10,440 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085880f8</title>
-<rect data-content-type="Images" x="361.129097036707" y="203.42988350975648" width="12.320626644316603" height="28.052693957918013" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="361.7841611955999" y="208.5939779578306" width="14.566064399320748" height="23.838995123642007" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1be_charblock3.4bpp.png · golden-sun-kind2-lz · 0x0858a9c0: 10,588 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0858a9c0" data-node="leaf" data-kind="file" data-bytes="10588" data-address="0x0858a9c0" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1be_charblock3.4bpp.png">
 <title>MAP_GFX_1be_charblock3.4bpp.png · golden-sun-kind2-lz · 0x0858a9c0: 10,588 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0858a9c0</title>
-<rect data-content-type="Images" x="374.44972368102356" y="203.42988350975648" width="20.51204647731589" height="17.244953951745906" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="377.35022559492063" y="208.5939779578306" width="15.36524165200618" height="22.960940266866032" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1be_palette.224.png · golden-sun-general-lz · 0x0858517c: 388 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0858517c" data-node="leaf" data-kind="file" data-bytes="388" data-address="0x0858517c" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1be_palette.224.png">
 <title>MAP_GFX_1be_palette.224.png · golden-sun-general-lz · 0x0858517c: 388 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0858517c</title>
-<rect data-content-type="Images" x="374.2824195528826" y="221.50753333336138" width="0.6653917437179979" height="10.14234826245411" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="377.06973930911465" y="232.27443193889061" width="15.926214223618192" height="0.4390274283879876" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1c4_charblock1.4bpp.png · golden-sun-kind2-lz · 0x08591ad0: 5,884 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08591ad0" data-node="leaf" data-kind="file" data-bytes="5884" data-address="0x08591ad0" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1c4_charblock1.4bpp.png">
 <title>MAP_GFX_1c4_charblock1.4bpp.png · golden-sun-kind2-lz · 0x08591ad0: 5,884 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08591ad0</title>
-<rect data-content-type="Images" x="375.78050716845956" y="221.6748374615024" width="19.181262989879897" height="9.807740006172107" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="393.71546724692683" y="177.05114496462141" width="10.673939547260897" height="17.666700973274555" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1c4_charblock2.4bpp.png · golden-sun-kind2-lz · 0x085931cc: 2,304 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085931cc" data-node="leaf" data-kind="file" data-bytes="2304" data-address="0x085931cc" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1c4_charblock2.4bpp.png">
 <title>MAP_GFX_1c4_charblock2.4bpp.png · golden-sun-kind2-lz · 0x085931cc: 2,304 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085931cc</title>
-<rect data-content-type="Images" x="395.9617701583395" y="174.48786648120196" width="13.509504672238542" height="4.8862737338080375" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="393.71546724692683" y="195.71784593789596" width="8.859514925545861" height="7.654445998486228" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1c4_palette.224.png · golden-sun-general-lz · 0x08591928: 424 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08591928" data-node="leaf" data-kind="file" data-bytes="424" data-address="0x08591928" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1c4_palette.224.png">
 <title>MAP_GFX_1c4_palette.224.png · golden-sun-general-lz · 0x08591928: 424 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08591928</title>
-<rect data-content-type="Images" x="410.47127483057807" y="174.48786648120196" width="1.6701519014883424" height="4.8862737338080375" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="403.52858832790145" y="195.67145209332472" width="0.9072123108575179" height="7.74723368762871" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1c8_charblock1.4bpp.png · golden-sun-kind2-lz · 0x085949a4: 7,256 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085949a4" data-node="leaf" data-kind="file" data-bytes="7256" data-address="0x085949a4" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1c8_charblock1.4bpp.png">
 <title>MAP_GFX_1c8_charblock1.4bpp.png · golden-sun-kind2-lz · 0x085949a4: 7,256 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085949a4</title>
-<rect data-content-type="Images" x="395.9617701583395" y="180.37414021501" width="14.723459649213202" height="16.106443607635676" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="405.3894067941877" y="177.05114496462141" width="23.31165265218937" height="10.05338095489485" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1c8_palette.224.png · golden-sun-general-lz · 0x08594844: 352 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08594844" data-node="leaf" data-kind="file" data-bytes="352" data-address="0x08594844" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1c8_palette.224.png">
 <title>MAP_GFX_1c8_palette.224.png · golden-sun-general-lz · 0x08594844: 352 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08594844</title>
-<rect data-content-type="Images" x="411.54927903868116" y="180.23818944613842" width="0.7280984622568409" height="8.232419617933274" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="429.7010594463771" y="177.05114496462141" width="1.2515753283174291" height="4.789866214468732" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1d0_animation_source.4bpp.png · golden-sun-kind2-lz · 0x085a6960: 320 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085a6960" data-node="leaf" data-kind="file" data-bytes="320" data-address="0x085a6960" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1d0_animation_source.4bpp.png">
 <title>MAP_GFX_1d0_animation_source.4bpp.png · golden-sun-kind2-lz · 0x085a6960: 320 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085a6960</title>
-<rect data-content-type="Images" x="411.54927903868116" y="189.19870752632855" width="0.7280984622568409" height="7.417827065188718" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="429.7010594463771" y="182.84101117909015" width="1.2515753283174291" height="4.263514740426118" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1d0_charblock1.4bpp.png · golden-sun-kind2-lz · 0x0859fb38: 11,668 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0859fb38" data-node="leaf" data-kind="file" data-bytes="11668" data-address="0x0859fb38" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1d0_charblock1.4bpp.png">
 <title>MAP_GFX_1d0_charblock1.4bpp.png · golden-sun-kind2-lz · 0x0859fb38: 11,668 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0859fb38</title>
-<rect data-content-type="Images" x="413.1414267320664" y="174.48786648120196" width="17.811208042628127" height="21.992717341443715" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="405.3894067941877" y="188.10452591951628" width="25.5632279805068" height="15.267766016865934" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1d0_charblock2.4bpp.png · golden-sun-kind2-lz · 0x085a28cc: 10,008 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085a28cc" data-node="leaf" data-kind="file" data-bytes="10008" data-address="0x085a28cc" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1d0_charblock2.4bpp.png">
 <title>MAP_GFX_1d0_charblock2.4bpp.png · golden-sun-kind2-lz · 0x085a28cc: 10,008 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085a28cc</title>
-<rect data-content-type="Images" x="395.9617701583395" y="197.48058382264568" width="16.96154260514892" height="19.654478325439175" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="393.71546724692683" y="204.3722919363822" width="11.754218524793332" height="28.060681145090413" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1d0_charblock3.4bpp.png · golden-sun-kind2-lz · 0x085a4fe4: 6,524 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085a4fe4" data-node="leaf" data-kind="file" data-bytes="6524" data-address="0x085a4fe4" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1d0_charblock3.4bpp.png">
 <title>MAP_GFX_1d0_charblock3.4bpp.png · golden-sun-kind2-lz · 0x085a4fe4: 6,524 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085a4fe4</title>
-<rect data-content-type="Images" x="395.9617701583395" y="218.13506214808487" width="15.855739924624793" height="13.347515319589643" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="406.46968577172015" y="204.3722919363822" width="22.914090807739466" height="9.103513468727172" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1d0_palette.224.png · golden-sun-general-lz · 0x0859f98c: 428 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0859f98c" data-node="leaf" data-kind="file" data-bytes="428" data-address="0x0859f98c" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1d0_palette.224.png">
 <title>MAP_GFX_1d0_palette.224.png · golden-sun-general-lz · 0x0859f98c: 428 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0859f98c</title>
-<rect data-content-type="Images" x="412.59396075309536" y="217.9115128182159" width="0.5529013402620642" height="13.794613979327579" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="430.27599112826834" y="204.26450648519094" width="0.7844290976174495" height="9.319084371109723" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1d6_animation_source.4bpp.png · golden-sun-kind2-lz · 0x085ade10: 4,692 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085ade10" data-node="leaf" data-kind="file" data-bytes="4692" data-address="0x085ade10" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1d6_animation_source.4bpp.png">
 <title>MAP_GFX_1d6_animation_source.4bpp.png · golden-sun-kind2-lz · 0x085ade10: 4,692 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085ade10</title>
-<rect data-content-type="Images" x="413.9233127634884" y="197.48058382264568" width="17.02932201120609" height="8.646931049252538" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="406.46968577172015" y="214.47580540510938" width="8.1663597609595" height="17.95716767636324" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1d6_charblock1.4bpp.png · golden-sun-kind2-lz · 0x085a8b0c: 8,352 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085a8b0c" data-node="leaf" data-kind="file" data-bytes="8352" data-address="0x085a8b0c" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1d6_charblock1.4bpp.png">
 <title>MAP_GFX_1d6_charblock1.4bpp.png · golden-sun-kind2-lz · 0x085a8b0c: 8,352 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085a8b0c</title>
-<rect data-content-type="Images" x="413.9233127634884" y="207.12751487189823" width="17.02932201120609" height="16.17203071682805" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="415.63604553267965" y="214.47580540510938" width="15.316589242014864" height="17.95716767636324" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1d6_charblock2.4bpp.png · golden-sun-kind2-lz · 0x085aabac: 3,980 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085aabac" data-node="leaf" data-kind="file" data-bytes="3980" data-address="0x085aabac" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1d6_charblock2.4bpp.png">
 <title>MAP_GFX_1d6_charblock2.4bpp.png · golden-sun-kind2-lz · 0x085aabac: 3,980 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085aabac</title>
-<rect data-content-type="Images" x="413.9233127634884" y="224.2995455887263" width="17.02932201120609" height="7.183031878948231" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="292.5929271180456" y="233.43297308147262" width="5.6291985535958675" height="21.234859604056844" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1d6_charblock3.4bpp.png · golden-sun-kind2-lz · 0x085abb38: 8,920 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085abb38" data-node="leaf" data-kind="file" data-bytes="8920" data-address="0x085abb38" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1d6_charblock3.4bpp.png">
 <title>MAP_GFX_1d6_charblock3.4bpp.png · golden-sun-kind2-lz · 0x085abb38: 8,920 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085abb38</title>
-<rect data-content-type="Images" x="292.5929271180456" y="232.4825774676745" width="14.986841371805216" height="19.682963004270984" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="299.2221256716415" y="233.43297308147262" width="13.857399773385714" height="21.234859604056844" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1d6_palette.224.png · golden-sun-general-lz · 0x085a8968: 420 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085a8968" data-node="leaf" data-kind="file" data-bytes="420" data-address="0x085a8968" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1d6_palette.224.png">
 <title>MAP_GFX_1d6_palette.224.png · golden-sun-general-lz · 0x085a8968: 420 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085a8968</title>
-<rect data-content-type="Images" x="308.3813950336631" y="232.2842040114868" width="12.300923804415513" height="0.6032530876245704" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="313.9037838142531" y="233.25723145069844" width="11.344003258003179" height="0.6485167384516579" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1f8_animation_source.4bpp.png · golden-sun-kind2-lz · 0x085dadec: 6,780 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085dadec" data-node="leaf" data-kind="file" data-bytes="6780" data-address="0x085dadec" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1f8_animation_source.4bpp.png">
 <title>MAP_GFX_1f8_animation_source.4bpp.png · golden-sun-kind2-lz · 0x085dadec: 6,780 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085dadec</title>
-<rect data-content-type="Images" x="308.57976848985084" y="233.68908364292363" width="11.904176892040084" height="18.476456829021842" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="314.07952544502723" y="234.73000655837595" width="10.992519996454837" height="19.937826127153528" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1f8_charblock1.4bpp.png · golden-sun-kind2-lz · 0x085d4a10: 11,324 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085d4a10" data-node="leaf" data-kind="file" data-bytes="11324" data-address="0x085d4a10" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1f8_charblock1.4bpp.png">
 <title>MAP_GFX_1f8_charblock1.4bpp.png · golden-sun-kind2-lz · 0x085d4a10: 11,324 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085d4a10</title>
-<rect data-content-type="Images" x="292.5929271180456" y="253.1655404719455" width="27.8910182638453" height="13.52939659183403" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="292.5929271180456" y="255.66783268552948" width="13.65358441151028" height="27.619914809759138" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1f8_charblock2.4bpp.png · golden-sun-kind2-lz · 0x085d764c: 8,156 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085d764c" data-node="leaf" data-kind="file" data-bytes="8156" data-address="0x085d764c" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1f8_charblock2.4bpp.png">
 <title>MAP_GFX_1f8_charblock2.4bpp.png · golden-sun-kind2-lz · 0x085d764c: 8,156 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085d764c</title>
-<rect data-content-type="Images" x="292.5929271180456" y="267.69493706377955" width="15.197081726692485" height="17.66598919268823" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="307.2465115295559" y="255.66783268552948" width="17.825533911926136" height="15.045093840280146" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1f8_charblock3.4bpp.png · golden-sun-kind2-lz · 0x085d9628: 6,084 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085d9628" data-node="leaf" data-kind="file" data-bytes="6084" data-address="0x085d9628" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1f8_charblock3.4bpp.png">
 <title>MAP_GFX_1f8_charblock3.4bpp.png · golden-sun-kind2-lz · 0x085d9628: 6,084 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085d9628</title>
-<rect data-content-type="Images" x="308.7900088447381" y="267.69493706377955" width="11.693936537152815" height="16.766564181526157" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="307.2465115295559" y="271.7129265258096" width="16.91842120152669" height="11.574820969478992" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_1f8_palette.224.png · golden-sun-general-lz · 0x085d48dc: 308 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085d48dc" data-node="leaf" data-kind="file" data-bytes="308" data-address="0x085d48dc" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_1f8_palette.224.png">
 <title>MAP_GFX_1f8_palette.224.png · golden-sun-general-lz · 0x085d48dc: 308 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085d48dc</title>
-<rect data-content-type="Images" x="308.5148650975286" y="285.18635749809624" width="12.244224031571779" height="0.4497125055810365" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="324.89171090868246" y="271.43970470340946" width="0.4535563551997228" height="12.12126461427927" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_213_charblock1.4bpp.png · golden-sun-kind2-lz · 0x085f8d40: 8,888 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085f8d40" data-node="leaf" data-kind="file" data-bytes="8888" data-address="0x085f8d40" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_213_charblock1.4bpp.png">
 <title>MAP_GFX_213_charblock1.4bpp.png · golden-sun-kind2-lz · 0x085f8d40: 8,888 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085f8d40</title>
-<rect data-content-type="Images" x="321.4839453818909" y="232.4825774676745" width="13.598795123641121" height="21.568235165148618" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="326.07204544148203" y="233.43297308147262" width="19.725216927051722" height="14.88244307445352" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_213_palette.224.png · golden-sun-general-lz · 0x085f8bb0: 400 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085f8bb0" data-node="leaf" data-kind="file" data-bytes="400" data-address="0x085f8bb0" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_213_palette.224.png">
 <title>MAP_GFX_213_palette.224.png · golden-sun-general-lz · 0x085f8bb0: 400 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x085f8bb0</title>
-<rect data-content-type="Images" x="321.2378634193026" y="254.8047306702348" width="14.090959048817794" height="0.5078360748233273" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="346.5670049479233" y="233.2027156608621" width="13.190271509366879" height="0.5394851587789918" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_21f_animation_source.4bpp.png · golden-sun-kind2-lz · 0x0860f92c: 5,488 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0860f92c" data-node="leaf" data-kind="file" data-bytes="5488" data-address="0x0860f92c" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_21f_animation_source.4bpp.png">
 <title>MAP_GFX_21f_animation_source.4bpp.png · golden-sun-kind2-lz · 0x0860f92c: 5,488 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0860f92c</title>
-<rect data-content-type="Images" x="336.08274050553206" y="232.4825774676745" width="7.62598919450285" height="22.583907314795272" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="346.7972623685338" y="234.5119433990306" width="12.729756668145871" height="13.803472756895536" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_21f_charblock1.4bpp.png · golden-sun-kind2-lz · 0x08609520: 10,500 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08609520" data-node="leaf" data-kind="file" data-bytes="10500" data-address="0x08609520" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_21f_charblock1.4bpp.png">
 <title>MAP_GFX_21f_charblock1.4bpp.png · golden-sun-kind2-lz · 0x08609520: 10,500 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08609520</title>
-<rect data-content-type="Images" x="344.7087297000349" y="232.4825774676745" width="15.503805856829434" height="22.583907314795272" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="326.07204544148203" y="249.31541615592613" width="33.45497359519759" height="10.286251507969812" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_21f_charblock2.4bpp.png · golden-sun-kind2-lz · 0x0860be24: 7,852 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0860be24" data-node="leaf" data-kind="file" data-bytes="7852" data-address="0x0860be24" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_21f_charblock2.4bpp.png">
 <title>MAP_GFX_21f_charblock2.4bpp.png · golden-sun-kind2-lz · 0x0860be24: 7,852 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0860be24</title>
-<rect data-content-type="Images" x="321.4839453818909" y="256.0664847824698" width="18.049362197979118" height="14.279544864711722" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="326.07204544148203" y="260.60166766389597" width="11.277203334066595" height="22.68607983139265" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_21f_charblock3.4bpp.png · golden-sun-kind2-lz · 0x0860dcd0: 7,260 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0860dcd0" data-node="leaf" data-kind="file" data-bytes="7260" data-address="0x0860dcd0" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_21f_charblock3.4bpp.png">
 <title>MAP_GFX_21f_charblock3.4bpp.png · golden-sun-kind2-lz · 0x0860dcd0: 7,260 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0860dcd0</title>
-<rect data-content-type="Images" x="321.4839453818909" y="271.3460296471815" width="16.923583405563555" height="14.014896609286252" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="338.34924877554863" y="260.60166766389597" width="21.177770261131" height="11.123585700501314" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_21f_palette.224.png · golden-sun-general-lz · 0x08609358: 456 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08609358" data-node="leaf" data-kind="file" data-bytes="456" data-address="0x08609358" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_21f_palette.224.png">
 <title>MAP_GFX_21f_palette.224.png · golden-sun-general-lz · 0x08609358: 456 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08609358</title>
-<rect data-content-type="Images" x="339.18897348555834" y="271.1274743452854" width="0.5628893962077814" height="14.45200721307847" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="338.2143940398133" y="272.590398628662" width="0.7302905285294436" height="10.832203602361892" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_226_animation_source.4bpp.png · golden-sun-kind2-lz · 0x08619bb8: 6,468 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08619bb8" data-node="leaf" data-kind="file" data-bytes="6468" data-address="0x08619bb8" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_226_animation_source.4bpp.png">
 <title>MAP_GFX_226_animation_source.4bpp.png · golden-sun-kind2-lz · 0x08619bb8: 6,468 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08619bb8</title>
-<rect data-content-type="Images" x="340.53330757987004" y="256.0664847824698" width="19.679227976994287" height="10.594346003184551" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="339.80982983260753" y="272.7252533643973" width="19.71718920407211" height="10.562494130891336" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_226_charblock1.4bpp.png · golden-sun-kind2-lz · 0x08613834: 10,432 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08613834" data-node="leaf" data-kind="file" data-bytes="10432" data-address="0x08613834" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_226_charblock1.4bpp.png">
 <title>MAP_GFX_226_charblock1.4bpp.png · golden-sun-kind2-lz · 0x08613834: 10,432 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08613834</title>
-<rect data-content-type="Images" x="340.53330757987004" y="267.66083078565435" width="19.679227976994287" height="17.700095470813423" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="292.5929271180456" y="284.2877474952886" width="11.811588788370793" height="29.156222158915522" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_226_charblock2.4bpp.png · golden-sun-kind2-lz · 0x086160f4: 10,184 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086160f4" data-node="leaf" data-kind="file" data-bytes="10184" data-address="0x086160f4" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_226_charblock2.4bpp.png">
 <title>MAP_GFX_226_charblock2.4bpp.png · golden-sun-kind2-lz · 0x086160f4: 10,184 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086160f4</title>
-<rect data-content-type="Images" x="292.5929271180456" y="286.36092625646774" width="13.18125879948917" height="25.620375327915898" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="305.4045159064164" y="284.2877474952886" width="17.927550460733386" height="18.926743217388765" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_226_charblock3.4bpp.png · golden-sun-kind2-lz · 0x086188bc: 4,860 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086188bc" data-node="leaf" data-kind="file" data-bytes="4860" data-address="0x086188bc" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_226_charblock3.4bpp.png">
 <title>MAP_GFX_226_charblock3.4bpp.png · golden-sun-kind2-lz · 0x086188bc: 4,860 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086188bc</title>
-<rect data-content-type="Images" x="306.7741859175348" y="286.36092625646774" width="17.521493941263127" height="8.726818717804328" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="305.4045159064164" y="304.2144907126774" width="16.595236273749858" height="9.229478941526757" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_226_palette.224.png · golden-sun-general-lz · 0x086136c4: 368 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086136c4" data-node="leaf" data-kind="file" data-bytes="368" data-address="0x086136c4" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_226_palette.224.png">
 <title>MAP_GFX_226_palette.224.png · golden-sun-general-lz · 0x086136c4: 368 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086136c4</title>
-<rect data-content-type="Images" x="325.14629250130747" y="286.21153889897727" width="0.7012252850190155" height="9.025593432785312" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="322.8328307269121" y="304.04756925942326" width="0.6661570934917638" height="9.563321848034994" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_231_charblock1.4bpp.png · golden-sun-kind2-lz · 0x08626b50: 8,632 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08626b50" data-node="leaf" data-kind="file" data-bytes="8632" data-address="0x08626b50" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_231_charblock1.4bpp.png">
 <title>MAP_GFX_231_charblock1.4bpp.png · golden-sun-kind2-lz · 0x08626b50: 8,632 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08626b50</title>
-<rect data-content-type="Images" x="306.7741859175348" y="296.0877449742721" width="17.940912887836078" height="15.89355661011157" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="292.5929271180456" y="314.4439696542041" width="9.982903368211355" height="28.10761457039386" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_231_palette.224.png · golden-sun-general-lz · 0x08626990: 448 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08626990" data-node="leaf" data-kind="file" data-bytes="448" data-address="0x08626990" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_231_palette.224.png">
 <title>MAP_GFX_231_palette.224.png · golden-sun-general-lz · 0x08626990: 448 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08626990</title>
-<rect data-content-type="Images" x="325.46085671123717" y="295.8335028801383" width="0.49151581173254044" height="16.40204079837903" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="292.4705977426847" y="343.42925484923705" width="10.227562118933294" height="0.7553412492780609" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_26c_animation_source.4bpp.png · golden-sun-kind2-lz · 0x08686890: 6,680 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08686890" data-node="leaf" data-kind="file" data-bytes="6680" data-address="0x08686890" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_26c_animation_source.4bpp.png">
 <title>MAP_GFX_26c_animation_source.4bpp.png · golden-sun-kind2-lz · 0x08686890: 6,680 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08686890</title>
-<rect data-content-type="Images" x="292.5929271180456" y="312.98130158438363" width="6.71861899024527" height="31.080965138770452" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="303.57583048625696" y="314.4439696542041" width="19.756235880892824" height="10.919010747120389" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_26c_charblock1.4bpp.png · golden-sun-kind2-lz · 0x08681c54: 10,480 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08681c54" data-node="leaf" data-kind="file" data-bytes="10480" data-address="0x08681c54" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_26c_charblock1.4bpp.png">
 <title>MAP_GFX_26c_charblock1.4bpp.png · golden-sun-kind2-lz · 0x08681c54: 10,480 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08681c54</title>
-<rect data-content-type="Images" x="300.3115461082909" y="312.98130158438363" width="25.38658432054506" height="13.72274105159898" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="303.57583048625696" y="326.36298040132453" width="19.756235880892824" height="17.699286321829593" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_26c_charblock2.4bpp.png · golden-sun-kind2-lz · 0x08684544: 8,716 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08684544" data-node="leaf" data-kind="file" data-bytes="8716" data-address="0x08684544" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_26c_charblock2.4bpp.png">
 <title>MAP_GFX_26c_charblock2.4bpp.png · golden-sun-kind2-lz · 0x08684544: 8,716 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08684544</title>
-<rect data-content-type="Images" x="300.3115461082909" y="327.7040426359826" width="17.613262296687502" height="16.35822408717147" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="324.3320663671498" y="284.2877474952886" width="15.413661101115949" height="18.666365480483616" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_26c_charblock3.4bpp.png · golden-sun-kind2-lz · 0x08686750: 320 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08686750" data-node="leaf" data-kind="file" data-bytes="320" data-address="0x08686750" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_26c_charblock3.4bpp.png">
 <title>MAP_GFX_26c_charblock3.4bpp.png · golden-sun-kind2-lz · 0x08686750: 320 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08686750</title>
-<rect data-content-type="Images" x="318.92480840497836" y="327.7040426359826" width="3.4103954745291123" height="1.6895709849353602" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="324.15021202258214" y="303.7722586312045" width="8.676424207499" height="0.6362913108646602" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_26c_palette.224.png · golden-sun-general-lz · 0x08681b60: 244 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08681b60" data-node="leaf" data-kind="file" data-bytes="244" data-address="0x08681b60" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_26c_palette.224.png">
 <title>MAP_GFX_26c_palette.224.png · golden-sun-general-lz · 0x08681b60: 244 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08681b60</title>
-<rect data-content-type="Images" x="323.3352038795075" y="327.7040426359826" width="2.3629265493284475" height="1.6895709849353602" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="333.46292754094577" y="303.7722586312045" width="6.464654271887628" height="0.6362913108646602" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_274_animation_source.4bpp.png · golden-sun-kind2-lz · 0x08695118: 3,076 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08695118" data-node="leaf" data-kind="file" data-bytes="3076" data-address="0x08695118" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_274_animation_source.4bpp.png">
 <title>MAP_GFX_274_animation_source.4bpp.png · golden-sun-kind2-lz · 0x08695118: 3,076 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08695118</title>
-<rect data-content-type="Images" x="318.92480840497836" y="330.39361362091796" width="6.77332202385756" height="13.668653102236112" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="340.7457274682658" y="284.2877474952886" width="18.781291568413877" height="4.758959617525661" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_274_charblock1.4bpp.png · golden-sun-kind2-lz · 0x0868f18c: 8,108 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0868f18c" data-node="leaf" data-kind="file" data-bytes="8108" data-address="0x0868f18c" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_274_charblock1.4bpp.png">
 <title>MAP_GFX_274_charblock1.4bpp.png · golden-sun-kind2-lz · 0x0868f18c: 8,108 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0868f18c</title>
-<rect data-content-type="Images" x="326.69813042883595" y="286.36092625646774" width="10.265813074800889" height="25.67852197732159" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="340.7457274682658" y="290.04670711281426" width="18.781291568413877" height="14.179988484687275" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_274_charblock2.4bpp.png · golden-sun-kind2-lz · 0x08691138: 10,104 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08691138" data-node="leaf" data-kind="file" data-bytes="10104" data-address="0x08691138" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_274_charblock2.4bpp.png">
 <title>MAP_GFX_274_charblock2.4bpp.png · golden-sun-kind2-lz · 0x08691138: 10,104 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08691138</title>
-<rect data-content-type="Images" x="337.96394350363687" y="286.36092625646774" width="22.248592053227483" height="15.110434261227429" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="324.3320663671498" y="305.22669559750153" width="20.857148085879114" height="16.120332273564642" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_274_charblock3.4bpp.png · golden-sun-kind2-lz · 0x086938b0: 6,248 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086938b0" data-node="leaf" data-kind="file" data-bytes="6248" data-address="0x086938b0" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_274_charblock3.4bpp.png">
 <title>MAP_GFX_274_charblock3.4bpp.png · golden-sun-kind2-lz · 0x086938b0: 6,248 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086938b0</title>
-<rect data-content-type="Images" x="337.96394350363687" y="302.4713605176952" width="20.91569148288553" height="9.568087716094162" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="346.1892144530289" y="305.22669559750153" width="13.337804583650712" height="15.138780332714525" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_274_palette.224.png · golden-sun-general-lz · 0x0868f010: 380 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0868f010" data-node="leaf" data-kind="file" data-bytes="380" data-address="0x0868f010" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_274_palette.224.png">
 <title>MAP_GFX_274_palette.224.png · golden-sun-general-lz · 0x0868f010: 380 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0868f010</title>
-<rect data-content-type="Images" x="359.71286012910787" y="302.3045856602807" width="0.6664502851709759" height="9.901637430923186" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="345.9346024382414" y="321.1108639154286" width="13.847028613225653" height="0.4907759704250587" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_27a_animation_source.4bpp.png · golden-sun-kind2-lz · 0x0869ecdc: 4,820 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0869ecdc" data-node="leaf" data-kind="file" data-bytes="4820" data-address="0x0869ecdc" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_27a_animation_source.4bpp.png">
 <title>MAP_GFX_27a_animation_source.4bpp.png · golden-sun-kind2-lz · 0x0869ecdc: 4,820 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0869ecdc</title>
-<rect data-content-type="Images" x="326.69813042883595" y="313.0394482337893" width="15.090361929151946" height="10.104315476168209" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="324.3320663671498" y="322.3470278710662" width="6.858543777798818" height="21.71523885208792" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_27a_charblock1.4bpp.png · golden-sun-kind2-lz · 0x08698d00: 9,080 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08698d00" data-node="leaf" data-kind="file" data-bytes="9080" data-address="0x08698d00" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_27a_charblock1.4bpp.png">
 <title>MAP_GFX_27a_charblock1.4bpp.png · golden-sun-kind2-lz · 0x08698d00: 9,080 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08698d00</title>
-<rect data-content-type="Images" x="326.69813042883595" y="324.1437637099575" width="15.090361929151946" height="19.918503013196542" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="332.19061014494866" y="322.3470278710662" width="13.804061722492381" height="21.71523885208792" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_27a_charblock2.4bpp.png · golden-sun-kind2-lz · 0x0869b078: 8,300 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0869b078" data-node="leaf" data-kind="file" data-bytes="8300" data-address="0x0869b078" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_27a_charblock2.4bpp.png">
 <title>MAP_GFX_27a_charblock2.4bpp.png · golden-sun-kind2-lz · 0x0869b078: 8,300 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0869b078</title>
-<rect data-content-type="Images" x="342.7884923579879" y="313.0394482337893" width="17.424043198876426" height="15.699509516318635" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="346.99467186744107" y="322.3470278710662" width="12.532347169238626" height="21.71523885208792" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_27a_charblock3.4bpp.png · golden-sun-kind2-lz · 0x0869d0e4: 7,160 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0869d0e4" data-node="leaf" data-kind="file" data-bytes="7160" data-address="0x0869d0e4" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_27a_charblock3.4bpp.png">
 <title>MAP_GFX_27a_charblock3.4bpp.png · golden-sun-kind2-lz · 0x0869d0e4: 7,160 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0869d0e4</title>
-<rect data-content-type="Images" x="342.7884923579879" y="329.73895775010794" width="16.320922965330254" height="14.323308973046117" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="360.52701903667963" y="233.43297308147262" width="11.536568581039637" height="20.151768660990726" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_27a_palette.224.png · golden-sun-general-lz · 0x08698b38: 456 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08698b38" data-node="leaf" data-kind="file" data-bytes="456" data-address="0x08698b38" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_27a_palette.224.png">
 <title>MAP_GFX_27a_palette.224.png · golden-sun-general-lz · 0x08698b38: 456 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08698b38</title>
-<rect data-content-type="Images" x="359.88519538170465" y="329.5147378084945" width="0.5515601167730857" height="14.771748856273032" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="360.3637930069803" y="254.42151571276403" width="11.863020640438256" height="0.6735479406013809" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_28e_tiles.4bpp.png · golden-sun-kind2-lz · 0x086addd0: 11,332 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086addd0" data-node="leaf" data-kind="file" data-bytes="11332" data-address="0x086addd0" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_28e_tiles.4bpp.png">
 <title>MAP_GFX_28e_tiles.4bpp.png · golden-sun-kind2-lz · 0x086addd0: 11,332 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086addd0</title>
-<rect data-content-type="Images" x="361.21253555686434" y="232.4825774676745" width="17.61595130266953" height="21.56482127935094" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="373.0635876177193" y="233.43297308147262" width="17.653413230086812" height="21.498864542193488" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_28f_tiles.4bpp.png · golden-sun-kind2-lz · 0x086b0a14: 9,188 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086b0a14" data-node="leaf" data-kind="file" data-bytes="9188" data-address="0x086b0a14" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_28f_tiles.4bpp.png">
 <title>MAP_GFX_28f_tiles.4bpp.png · golden-sun-kind2-lz · 0x086b0a14: 9,188 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086b0a14</title>
-<rect data-content-type="Images" x="379.8284868595339" y="232.4825774676745" width="14.093836972196229" height="21.56482127935094" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="360.52701903667963" y="255.93183762366613" width="30.18998181112645" height="9.909835730086224" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_290_tiles.4bpp.png · golden-sun-kind2-lz · 0x086b2df8: 8,072 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086b2df8" data-node="leaf" data-kind="file" data-bytes="8072" data-address="0x086b2df8" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_290_tiles.4bpp.png">
 <title>MAP_GFX_290_tiles.4bpp.png · golden-sun-kind2-lz · 0x086b2df8: 8,072 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086b2df8</title>
-<rect data-content-type="Images" x="361.21253555686434" y="255.04739874702545" width="11.997199081523142" height="22.02194163260547" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="360.52701903667963" y="266.84167335375236" width="12.343519884429337" height="21.40387250274999" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_294_animation_source.4bpp.png · golden-sun-kind2-lz · 0x086be7b8: 2,460 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086be7b8" data-node="leaf" data-kind="file" data-bytes="2460" data-address="0x086be7b8" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_294_animation_source.4bpp.png">
 <title>MAP_GFX_294_animation_source.4bpp.png · golden-sun-kind2-lz · 0x086be7b8: 2,460 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086be7b8</title>
-<rect data-content-type="Images" x="361.21253555686434" y="278.06934037963094" width="11.997199081523142" height="6.0161021328307065" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="373.87053892110896" y="266.84167335375236" width="16.846461926697113" height="4.1049950311934955" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_294_charblock1.4bpp.png · golden-sun-kind2-lz · 0x086b8410: 8,336 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086b8410" data-node="leaf" data-kind="file" data-bytes="8336" data-address="0x086b8410" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_294_charblock1.4bpp.png">
 <title>MAP_GFX_294_charblock1.4bpp.png · golden-sun-kind2-lz · 0x086b8410: 8,336 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086b8410</title>
-<rect data-content-type="Images" x="374.2097346383875" y="255.04739874702545" width="19.712589193342616" height="13.91879962039299" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="373.87053892110896" y="271.94666838494584" width="16.846461926697113" height="16.298877471556494" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_294_charblock2.4bpp.png · golden-sun-kind2-lz · 0x086ba4a0: 8,448 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086ba4a0" data-node="leaf" data-kind="file" data-bytes="8448" data-address="0x086ba4a0" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_294_charblock2.4bpp.png">
 <title>MAP_GFX_294_charblock2.4bpp.png · golden-sun-kind2-lz · 0x086ba4a0: 8,448 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086ba4a0</title>
-<rect data-content-type="Images" x="374.2097346383875" y="269.96619836741843" width="19.712589193342616" height="14.119244145043185" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="391.7170008478061" y="233.43297308147262" width="12.144262777043828" height="22.802908040805267" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_294_charblock3.4bpp.png · golden-sun-kind2-lz · 0x086bc5a0: 8,728 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086bc5a0" data-node="leaf" data-kind="file" data-bytes="8728" data-address="0x086bc5a0" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_294_charblock3.4bpp.png">
 <title>MAP_GFX_294_charblock3.4bpp.png · golden-sun-kind2-lz · 0x086bc5a0: 8,728 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086bc5a0</title>
-<rect data-content-type="Images" x="394.92232383173007" y="232.4825774676745" width="17.561943137502496" height="16.43017976249968" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="404.8612636248499" y="233.43297308147262" width="12.57991542590418" height="22.802908040805267" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_294_palette.224.png · golden-sun-general-lz · 0x086b823c: 468 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086b823c" data-node="leaf" data-kind="file" data-bytes="468" data-address="0x086b823c" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_294_palette.224.png">
 <title>MAP_GFX_294_palette.224.png · golden-sun-general-lz · 0x086b823c: 468 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086b823c</title>
-<rect data-content-type="Images" x="413.4032292513233" y="232.40153974976525" width="0.837924564181483" height="9.51400960948584" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="418.4411790507541" y="233.43297308147262" width="7.024570150766641" height="1.159913811164734" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_2a6_animation_source.4bpp.png · golden-sun-kind2-lz · 0x086cf33c: 320 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086cf33c" data-node="leaf" data-kind="file" data-bytes="320" data-address="0x086cf33c" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_2a6_animation_source.4bpp.png">
 <title>MAP_GFX_2a6_animation_source.4bpp.png · golden-sun-kind2-lz · 0x086cf33c: 320 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086cf33c</title>
-<rect data-content-type="Images" x="413.4032292513233" y="242.75347392343258" width="0.837924564181483" height="6.240321024650875" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="426.46574920152074" y="233.43297308147262" width="4.486885573173771" height="1.159913811164734" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_2a6_charblock1.4bpp.png · golden-sun-kind2-lz · 0x086cac9c: 7,896 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086cac9c" data-node="leaf" data-kind="file" data-bytes="7896" data-address="0x086cac9c" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_2a6_charblock1.4bpp.png">
 <title>MAP_GFX_2a6_charblock1.4bpp.png · golden-sun-kind2-lz · 0x086cac9c: 7,896 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086cac9c</title>
-<rect data-content-type="Images" x="415.16011609759556" y="232.4825774676745" width="15.792518677098958" height="16.43017976249968" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="418.4411790507541" y="235.59288689263735" width="12.511455723940411" height="20.642994229640532" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_2a6_charblock2.4bpp.png · golden-sun-kind2-lz · 0x086ccb74: 9,844 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086ccb74" data-node="leaf" data-kind="file" data-bytes="9844" data-address="0x086ccb74" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_2a6_charblock2.4bpp.png">
 <title>MAP_GFX_2a6_charblock2.4bpp.png · golden-sun-kind2-lz · 0x086ccb74: 9,844 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086ccb74</title>
-<rect data-content-type="Images" x="394.92232383173007" y="249.91275723017418" width="15.398896808758149" height="21.251922488357167" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="391.7170008478061" y="257.2358811222779" width="17.002831375154813" height="19.250844450109597" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_2a6_charblock3.4bpp.png · golden-sun-kind2-lz · 0x086cf1e8: 340 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086cf1e8" data-node="leaf" data-kind="file" data-bytes="340" data-address="0x086cf1e8" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_2a6_charblock3.4bpp.png">
 <title>MAP_GFX_2a6_charblock3.4bpp.png · golden-sun-kind2-lz · 0x086cf1e8: 340 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086cf1e8</title>
-<rect data-content-type="Images" x="394.92232383173007" y="272.1646797185314" width="1.1000686606037378" height="5.001447199366517" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="391.7170008478061" y="277.48672557238746" width="1.3054710578399797" height="4.461747126501425" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_2a6_palette.224.png · golden-sun-general-lz · 0x086cab14: 392 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086cab14" data-node="leaf" data-kind="file" data-bytes="392" data-address="0x086cab14" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_2a6_palette.224.png">
 <title>MAP_GFX_2a6_palette.224.png · golden-sun-general-lz · 0x086cab14: 392 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086cab14</title>
-<rect data-content-type="Images" x="394.92232383173007" y="278.1661269178979" width="1.1000686606037378" height="5.919315594563749" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="391.7170008478061" y="282.9484726988889" width="1.3054710578399797" height="5.297073157613408" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_2ca_animation_source.4bpp.png · golden-sun-kind2-lz · 0x086f0e34: 4,984 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086f0e34" data-node="leaf" data-kind="file" data-bytes="4984" data-address="0x086f0e34" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_2ca_animation_source.4bpp.png">
 <title>MAP_GFX_2ca_animation_source.4bpp.png · golden-sun-kind2-lz · 0x086f0e34: 4,984 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086f0e34</title>
-<rect data-content-type="Images" x="397.0223924923338" y="272.1646797185314" width="13.298828148154412" height="11.920762793930265" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="394.02247190564606" y="277.48672557238746" width="14.697360317314832" height="10.758820284114833" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_2ca_charblock1.4bpp.png · golden-sun-kind2-lz · 0x086ec324: 10,772 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086ec324" data-node="leaf" data-kind="file" data-bytes="10772" data-address="0x086ec324" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_2ca_charblock1.4bpp.png">
 <title>MAP_GFX_2ca_charblock1.4bpp.png · golden-sun-kind2-lz · 0x086ec324: 10,772 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086ec324</title>
-<rect data-content-type="Images" x="411.3212206404882" y="249.91275723017418" width="19.63141413420627" height="18.3543198743768" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="409.7198322229609" y="257.2358811222779" width="21.232802551733606" height="16.943802483194503" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_2ca_charblock2.4bpp.png · golden-sun-kind2-lz · 0x086eed38: 7,232 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086eed38" data-node="leaf" data-kind="file" data-bytes="7232" data-address="0x086eed38" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_2ca_charblock2.4bpp.png">
 <title>MAP_GFX_2ca_charblock2.4bpp.png · golden-sun-kind2-lz · 0x086eed38: 7,232 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086eed38</title>
-<rect data-content-type="Images" x="411.3212206404882" y="269.267077104551" width="15.947567812196702" height="14.818365407910633" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="409.7198322229609" y="275.1796836054724" width="18.041642356008698" height="13.065862251029927" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_2ca_charblock3.4bpp.png · golden-sun-kind2-lz · 0x086f0978: 1,212 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086f0978" data-node="leaf" data-kind="file" data-bytes="1212" data-address="0x086f0978" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_2ca_charblock3.4bpp.png">
 <title>MAP_GFX_2ca_charblock3.4bpp.png · golden-sun-kind2-lz · 0x086f0978: 1,212 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086f0978</title>
-<rect data-content-type="Images" x="428.26878845268493" y="269.267077104551" width="2.6838463220095683" height="11.195838978618122" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="428.7614745789696" y="275.1796836054724" width="2.1911601957249083" height="13.065862251029927" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_2ca_palette.224.png · golden-sun-general-lz · 0x086ec1bc: 360 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086ec1bc" data-node="leaf" data-kind="file" data-bytes="360" data-address="0x086ec1bc" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_2ca_palette.224.png">
 <title>MAP_GFX_2ca_palette.224.png · golden-sun-general-lz · 0x086ec1bc: 360 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x086ec1bc</title>
-<rect data-content-type="Images" x="428.26878845268493" y="281.4629160831691" width="2.6838463220095683" height="2.6225264292925115" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="360.2586432721584" y="288.97717009198107" width="13.927084964403795" height="0.4632484709575493" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_309_tiles.4bpp.png · golden-sun-kind2-lz · 0x08737ad0: 9,752 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08737ad0" data-node="leaf" data-kind="file" data-bytes="9752" data-address="0x08737ad0" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_309_tiles.4bpp.png">
 <title>MAP_GFX_309_tiles.4bpp.png · golden-sun-kind2-lz · 0x08737ad0: 9,752 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08737ad0</title>
-<rect data-content-type="Images" x="361.21253555686434" y="285.0854425124616" width="12.03026433092708" height="26.74284741186627" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="360.52701903667963" y="290.1720427984174" width="13.390333435361343" height="24.097772715433447" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_30a_tiles.4bpp.png · golden-sun-kind2-lz · 0x0873a0e8: 10,160 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0873a0e8" data-node="leaf" data-kind="file" data-bytes="10160" data-address="0x0873a0e8" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_30a_tiles.4bpp.png">
 <title>MAP_GFX_30a_tiles.4bpp.png · golden-sun-kind2-lz · 0x0873a0e8: 10,160 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0873a0e8</title>
-<rect data-content-type="Images" x="374.2427998877914" y="285.0854425124616" width="18.192649389810967" height="18.62317806353114" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="374.917352472041" y="289.2455458565023" width="19.441332027841213" height="17.407587003526956" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_30b_tiles.4bpp.png · golden-sun-kind2-lz · 0x0873c898: 4,204 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0873c898" data-node="leaf" data-kind="file" data-bytes="4204" data-address="0x0873c898" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_30b_tiles.4bpp.png">
 <title>MAP_GFX_30b_tiles.4bpp.png · golden-sun-kind2-lz · 0x0873c898: 4,204 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0873c898</title>
-<rect data-content-type="Images" x="374.2427998877914" y="304.70862057599277" width="18.192649389810967" height="7.11966934833513" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="374.917352472041" y="307.65313286002925" width="19.441332027841213" height="6.616682653821588" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_30c_tiles.4bpp.png · golden-sun-kind2-lz · 0x0873d904: 6,696 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0873d904" data-node="leaf" data-kind="file" data-bytes="6696" data-address="0x0873d904" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_30c_tiles.4bpp.png">
 <title>MAP_GFX_30c_tiles.4bpp.png · golden-sun-kind2-lz · 0x0873d904: 6,696 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0873d904</title>
-<rect data-content-type="Images" x="361.21253555686434" y="312.82828992432786" width="16.47931223866348" height="13.200435746063906" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="360.52701903667963" y="315.26981551385086" width="14.344827925687806" height="15.160908400639542" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_30d_animation_source.4bpp.png · golden-sun-kind2-lz · 0x08747534: 5,648 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08747534" data-node="leaf" data-kind="file" data-bytes="5648" data-address="0x08747534" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_30d_animation_source.4bpp.png">
 <title>MAP_GFX_30d_animation_source.4bpp.png · golden-sun-kind2-lz · 0x08747534: 5,648 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08747534</title>
-<rect data-content-type="Images" x="378.6918477955278" y="312.82828992432786" width="13.74360148207457" height="13.200435746063906" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="360.52701903667963" y="331.4307239144904" width="14.344827925687806" height="12.6315428086637" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_30d_charblock1.4bpp.png · golden-sun-kind2-lz · 0x08741bbc: 7,808 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08741bbc" data-node="leaf" data-kind="file" data-bytes="7808" data-address="0x08741bbc" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_30d_charblock1.4bpp.png">
 <title>MAP_GFX_30d_charblock1.4bpp.png · golden-sun-kind2-lz · 0x08741bbc: 7,808 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08741bbc</title>
-<rect data-content-type="Images" x="361.21253555686434" y="327.0287256703918" width="15.049790146180317" height="17.0335410527623" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="375.87184696236744" y="315.26981551385086" width="18.48683753751475" height="13.839210196621568" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_30d_charblock2.4bpp.png · golden-sun-kind2-lz · 0x08743a3c: 7,868 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08743a3c" data-node="leaf" data-kind="file" data-bytes="7868" data-address="0x08743a3c" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_30d_charblock2.4bpp.png">
 <title>MAP_GFX_30d_charblock2.4bpp.png · golden-sun-kind2-lz · 0x08743a3c: 7,868 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08743a3c</title>
-<rect data-content-type="Images" x="377.26232570304467" y="327.0287256703918" width="15.173123574557732" height="17.0335410527623" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="375.87184696236744" y="330.10902571047245" width="18.48683753751475" height="13.953241012681673" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_30d_charblock3.4bpp.png · golden-sun-kind2-lz · 0x087458f8: 7,228 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x087458f8" data-node="leaf" data-kind="file" data-bytes="7228" data-address="0x087458f8" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_30d_charblock3.4bpp.png">
 <title>MAP_GFX_30d_charblock3.4bpp.png · golden-sun-kind2-lz · 0x087458f8: 7,228 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x087458f8</title>
-<rect data-content-type="Images" x="393.4354492776024" y="285.0854425124616" width="13.504127663748756" height="17.472985810934762" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="395.3586844998822" y="289.2455458565023" width="18.869371438277" height="12.47244321469518" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="MAP_GFX_30d_palette.224.png · golden-sun-general-lz · 0x087419d8: 484 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x087419d8" data-node="leaf" data-kind="file" data-bytes="484" data-address="0x087419d8" data-source="games/gs1/GRAPHICS/TILE/MAP_GFX_30d_palette.224.png">
 <title>MAP_GFX_30d_palette.224.png · golden-sun-general-lz · 0x087419d8: 484 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x087419d8</title>
-<rect data-content-type="Images" x="393.2446954429487" y="303.36767448874264" width="13.885635333056142" height="0.6184923306926144" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="415.2280559381592" y="289.2455458565023" width="6.284703142146381" height="1.4606273644952705" style="fill:#8fb7ec"/>
 </g>
-<g aria-label="UI_GRAPHICS.json: 9,334 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 18 items" data-node="container" data-kind="file" data-bytes="9334" data-source="games/gs1/GRAPHICS/TILE/UI_GRAPHICS.json">
-<title>UI_GRAPHICS.json: 9,334 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 18 items</title>
-<rect class="container-frame" x="407.43957694135116" y="284.5854425124616" width="17.554658663567285" height="19.70997047231999" fill="#1f7f93"/>
-<path class="bevel-light" d="M407.43957694135116 304.2954129847816 V284.5854425124616 H424.99423560491846" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M407.43957694135116 304.2954129847816 H424.99423560491846 V284.5854425124616" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="UI_GRAPHICS.json: 2,166 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 17 items" data-node="container" data-kind="file" data-bytes="2166" data-source="games/gs1/GRAPHICS/TILE/UI_GRAPHICS.json">
+<title>UI_GRAPHICS.json: 2,166 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 17 items</title>
+<rect class="container-frame" x="414.7280559381592" y="291.2061732209976" width="7.284703142146381" height="11.011815850199909" fill="#1f7f93"/>
+<path class="bevel-light" d="M414.7280559381592 302.2179890711975 V291.2061732209976 H422.01275908030556" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M414.7280559381592 302.2179890711975 H422.01275908030556 V291.2061732209976" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="pointer-table: 16 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08029a10" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x08029a10" data-source="games/gs1/GRAPHICS/TILE/UI_GRAPHICS.json">
 <title>pointer-table: 16 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08029a10</title>
-<rect data-content-type="Other data" x="409.58120315641173" y="286.7270687275222" width="0.3610837235072848" height="0.2832524301211906" style="fill:#bda995"/>
+<rect data-content-type="Other data" x="416.6553046167471" y="293.1334218995855" width="0.25517479282742617" height="0.21214578610271909" style="fill:#bda995"/>
 </g>
 <g aria-label="byte-fill: 3 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08029ac9" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x08029ac9" data-source="games/gs1/GRAPHICS/TILE/UI_GRAPHICS.json">
 <title>byte-fill: 3 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08029ac9</title>
-<rect data-content-type="Other data" x="409.46642428108566" y="287.1787947124385" width="0.053694679469039615" height="0.5836232883036392" style="fill:#bda995"/>
+<rect data-content-type="Other data" x="416.56912039114286" y="293.4715292461867" width="0.4275432440358854" height="0.03977733489425982" style="fill:#bda995"/>
 </g>
 <g aria-label="pointer-table: 12 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08029acc" data-node="leaf" data-kind="file" data-bytes="12" data-address="0x08029acc" data-source="games/gs1/GRAPHICS/TILE/UI_GRAPHICS.json">
 <title>pointer-table: 12 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08029acc</title>
-<rect data-content-type="Other data" x="409.67442989384375" y="287.2794109662585" width="0.28201960758132466" height="0.25492718710907153" style="fill:#bda995"/>
+<rect data-content-type="Other data" x="416.6426958394818" y="293.6246593643142" width="0.1869282315720581" height="0.21084511737054015" style="fill:#bda995"/>
 </g>
 <g aria-label="byte-fill: 3 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08029b65" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x08029b65" data-source="games/gs1/GRAPHICS/TILE/UI_GRAPHICS.json">
 <title>byte-fill: 3 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08029b65</title>
-<rect data-content-type="Other data" x="409.57883219867784" y="287.69366764531077" width="0.4732149979131283" height="0.06373179677726787" style="fill:#bda995"/>
+<rect data-content-type="Other data" x="416.9464542157864" y="293.55456127747465" width="0.04673205789301452" height="0.3510412910495837" style="fill:#bda995"/>
 </g>
 <g aria-label="pointer-table: 56 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08029b68" data-node="leaf" data-kind="file" data-bytes="56" data-address="0x08029b68" data-source="games/gs1/GRAPHICS/TILE/UI_GRAPHICS.json">
 <title>pointer-table: 56 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08029b68</title>
-<rect data-content-type="Other data" x="410.34922798176785" y="286.8507573992498" width="0.5306297735763914" height="0.6731930544386686" style="fill:#bda995"/>
+<rect data-content-type="Other data" x="417.2089784233618" y="293.2197751272701" width="0.3848522414718843" height="0.5167673494646718" style="fill:#bda995"/>
 </g>
 <g aria-label="pointer-table: 172 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08029e00" data-node="leaf" data-kind="file" data-bytes="172" data-address="0x08029e00" data-source="games/gs1/GRAPHICS/TILE/UI_GRAPHICS.json">
 <title>pointer-table: 172 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08029e00</title>
-<rect data-content-type="Other data" x="409.8659758665465" y="288.215664265672" width="0.8527978503906292" height="1.447841332038152" style="fill:#bda995"/>
+<rect data-content-type="Other data" x="418.0116616833038" y="293.25275390426833" width="1.9132825450018687" height="0.45080979546827804" style="fill:#bda995"/>
 </g>
 <g aria-label="byte-fill: 3 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08029ee1" data-node="leaf" data-kind="file" data-bytes="3" data-address="0x08029ee1" data-source="games/gs1/GRAPHICS/TILE/UI_GRAPHICS.json">
 <title>byte-fill: 3 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08029ee1</title>
-<rect data-content-type="Other data" x="409.4496087982513" y="290.09993637980557" width="1.6855319869810073" height="0.02006371380025107" style="fill:#bda995"/>
+<rect data-content-type="Other data" x="420.1606576682221" y="293.0376575487164" width="0.02061708436456522" height="0.8810025065719909" style="fill:#bda995"/>
 </g>
 <g aria-label="pointer-table: 1,024 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08029ee4" data-node="leaf" data-kind="file" data-bytes="1024" data-address="0x08029ee4" data-source="games/gs1/GRAPHICS/TILE/UI_GRAPHICS.json">
 <title>pointer-table: 1,024 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08029ee4</title>
-<rect data-content-type="Other data" x="411.6451726421324" y="287.0854425124616" width="5.590679236226448" height="2.5445894380443437" style="fill:#bda995"/>
+<rect data-content-type="Other data" x="417.04923172369575" y="294.4289685974707" width="2.6423515710731906" height="2.483994192902013" style="fill:#bda995"/>
 </g>
 <g aria-label="byte-fill: 2 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x0802de86" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0802de86" data-source="games/gs1/GRAPHICS/TILE/UI_GRAPHICS.json">
 <title>byte-fill: 2 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x0802de86</title>
-<rect data-content-type="Other data" x="417.73906998345467" y="286.5886606175574" width="0.006436210191627391" height="3.538153227852716" style="fill:#bda995"/>
+<rect data-content-type="Other data" x="416.55130832094267" y="297.41503938761963" width="0.004153194493812076" height="2.9796973007943377" style="fill:#bda995"/>
 </g>
 <g aria-label="pointer-table: 644 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x0802de88" data-node="leaf" data-kind="file" data-bytes="644" data-address="0x0802de88" data-source="games/gs1/GRAPHICS/TILE/UI_GRAPHICS.json">
 <title>pointer-table: 644 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x0802de88</title>
-<rect data-content-type="Other data" x="418.2487242987421" y="287.0854425124616" width="3.1449193634080403" height="2.5445894380443437" style="fill:#bda995"/>
+<rect data-content-type="Other data" x="417.0575381126834" y="297.9129627903727" width="1.674657254014977" height="1.98385049528815" style="fill:#bda995"/>
 </g>
 <g aria-label="byte-fill: 1 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x0803089f" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x0803089f" data-source="games/gs1/GRAPHICS/TILE/UI_GRAPHICS.json">
 <title>byte-fill: 1 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x0803089f</title>
-<rect data-content-type="Other data" x="421.8988258104514" y="286.59062466076284" width="1.0902276461658147" height="0.01036429660246884" style="fill:#bda995"/>
+<rect data-content-type="Other data" x="419.2354246421262" y="297.41619206580054" width="0.9529293772149876" height="0.006458550855602056" style="fill:#bda995"/>
 </g>
 <g aria-label="pointer-table: 132 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x080308a0" data-node="leaf" data-kind="file" data-bytes="132" data-address="0x080308a0" data-source="games/gs1/GRAPHICS/TILE/UI_GRAPHICS.json">
 <title>pointer-table: 132 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x080308a0</title>
-<rect data-content-type="Other data" x="422.1687916478422" y="286.8813190913586" width="0.5502959713841418" height="2.1858783316676322" style="fill:#bda995"/>
+<rect data-content-type="Other data" x="419.472042348716" y="297.66572687410155" width="0.47969396403529485" height="1.225363461843648" style="fill:#bda995"/>
 </g>
 <g aria-label="byte-fill: 5 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x0803109f" data-node="leaf" data-kind="file" data-bytes="5" data-address="0x0803109f" data-source="games/gs1/GRAPHICS/TILE/UI_GRAPHICS.json">
 <title>byte-fill: 5 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x0803109f</title>
-<rect data-content-type="Other data" x="421.92984734447805" y="289.3785490910462" width="0.07240736465580812" height="0.7152791771318239" style="fill:#bda995"/>
+<rect data-content-type="Other data" x="419.26375418012174" y="299.1624961313862" width="0.06311762684674932" height="0.4277322381790069" style="fill:#bda995"/>
 </g>
 <g aria-label="pointer-table: 32 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08031864" data-node="leaf" data-kind="file" data-bytes="32" data-address="0x08031864" data-source="games/gs1/GRAPHICS/TILE/UI_GRAPHICS.json">
 <title>pointer-table: 32 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08031864</title>
-<rect data-content-type="Other data" x="422.23538002690873" y="289.53926704416523" width="0.5329709967005282" height="0.393843270893816" style="fill:#bda995"/>
+<rect data-content-type="Other data" x="419.4811430866483" y="299.25364978421925" width="0.5624806911255132" height="0.2454249325128781" style="fill:#bda995"/>
 </g>
 <g aria-label="byte-fill: 1 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08032223" data-node="leaf" data-kind="file" data-bytes="1" data-address="0x08032223" data-source="games/gs1/GRAPHICS/TILE/UI_GRAPHICS.json">
 <title>byte-fill: 1 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08032223</title>
-<rect data-content-type="Other data" x="422.97251339552173" y="289.3495861451839" width="0.014481472931161588" height="0.7732050688564704" style="fill:#bda995"/>
-</g>
-<g aria-label="typed-table: 7,168 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08032224" data-node="leaf" data-kind="file" data-bytes="7168" data-address="0x08032224" data-source="games/gs1/GRAPHICS/TILE/UI_GRAPHICS.json">
-<title>typed-table: 7,168 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08032224</title>
-<rect data-content-type="Other data" x="409.93957694135116" y="290.63003195050595" width="12.442140744389913" height="11.165381034275647" style="fill:#bda995"/>
+<rect data-content-type="Other data" x="420.17264800671495" y="299.1372490806475" width="0.012623525369349853" height="0.4782263396564064" style="fill:#bda995"/>
 </g>
 <g aria-label="typed-table: 28 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08033e24" data-node="leaf" data-kind="file" data-bytes="28" data-address="0x08033e24" data-source="games/gs1/GRAPHICS/TILE/UI_GRAPHICS.json">
 <title>typed-table: 28 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08033e24</title>
-<rect data-content-type="Other data" x="422.90984716553544" y="290.1581614303003" width="0.05625895958868554" height="5.620918856406616" style="fill:#bda995"/>
+<rect data-content-type="Other data" x="419.3441239583066" y="299.7337157745969" width="0.22385718321647094" height="0.5511689194557757" style="fill:#bda995"/>
 </g>
 <g aria-label="pointer-table: 32 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08033e40" data-node="leaf" data-kind="file" data-bytes="32" data-address="0x08033e40" data-source="games/gs1/GRAPHICS/TILE/UI_GRAPHICS.json">
 <title>pointer-table: 32 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08033e40</title>
-<rect data-content-type="Other data" x="422.90984716553544" y="295.83533924629563" width="0.05625895958868554" height="6.43194425869166" style="fill:#bda995"/>
+<rect data-content-type="Other data" x="419.80782812354073" y="299.74970557339805" width="0.2558367808188239" height="0.5191893218534228" style="fill:#bda995"/>
 </g>
 </g>
 <g aria-label="golden-sun-general-lz: 2,463 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08031884" data-node="leaf" data-kind="file" data-bytes="2463" data-address="0x08031884" data-source="games/gs1/GRAPHICS/TILE/UI_MENU_LABELS.indexed.png">
 <title>golden-sun-general-lz: 2,463 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08031884</title>
-<rect data-content-type="Images" x="425.49423560491846" y="285.0854425124616" width="5.45839916977609" height="13.136766823915009" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="422.51275908030556" y="289.2455458565023" width="8.439875694388935" height="8.662966697086263" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="mtf4-bytes: 169 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08029a20" data-node="leaf" data-kind="file" data-bytes="169" data-address="0x08029a20" data-source="games/gs1/GRAPHICS/TILE/UI_MTF_00.indexed.png">
 <title>mtf4-bytes: 169 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08029a20</title>
-<rect data-content-type="Images" x="425.49423560491846" y="299.22220933637664" width="1.0618988080644574" height="2.0382948921949744" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="422.51275908030556" y="298.9085125535886" width="2.013760520350741" height="1.0767791337932477" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="mtf4-bytes: 141 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08029ad8" data-node="leaf" data-kind="file" data-bytes="141" data-address="0x08029ad8" data-source="games/gs1/GRAPHICS/TILE/UI_MTF_01.indexed.png">
 <title>mtf4-bytes: 141 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08029ad8</title>
-<rect data-content-type="Images" x="425.49423560491846" y="302.2605042285716" width="1.0618988080644574" height="1.534908756210008" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="422.4459334262595" y="300.9184660333358" width="2.147411828442907" height="0.866348691907834" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="mtf4-bytes: 608 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08029ba0" data-node="leaf" data-kind="file" data-bytes="608" data-address="0x08029ba0" data-source="games/gs1/GRAPHICS/TILE/UI_MTF_02.indexed.png">
 <title>mtf4-bytes: 608 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08029ba0</title>
-<rect data-content-type="Images" x="427.55613441298294" y="299.22220933637664" width="3.3965003617116327" height="4.126335579773418" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="425.5265196006563" y="298.9085125535886" width="4.910859343139518" height="2.809476517608916" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="mtf4-bytes: 53 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08029eac" data-node="leaf" data-kind="file" data-bytes="53" data-address="0x08029eac" data-source="games/gs1/GRAPHICS/TILE/UI_MTF_03.indexed.png">
 <title>mtf4-bytes: 53 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08029eac</title>
-<rect data-content-type="Images" x="427.16785143014084" y="303.96026193330795" width="4.17306632739585" height="0.22343403431578235" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="431.0661929015205" y="298.53732651131327" width="0.2576279154493375" height="3.5518486021595783" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="mtf4-bytes: 15,266 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0802a2e4" data-node="leaf" data-kind="file" data-bytes="15266" data-address="0x0802a2e4" data-source="games/gs1/GRAPHICS/TILE/UI_MTF_04.indexed.png">
 <title>mtf4-bytes: 15,266 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0802a2e4</title>
-<rect data-content-type="Images" x="393.4354492776024" y="304.7954129847816" width="37.51718549709213" height="13.692012169454934" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="395.3586844998822" y="302.7179890711975" width="35.593950274812315" height="14.449993848823363" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="mtf4-bytes: 10,131 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0802e10c" data-node="leaf" data-kind="file" data-bytes="10131" data-address="0x0802e10c" data-source="games/gs1/GRAPHICS/TILE/UI_MTF_05.indexed.png">
 <title>mtf4-bytes: 10,131 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x0802e10c</title>
-<rect data-content-type="Images" x="393.4354492776024" y="319.4874251542365" width="16.830902987326986" height="20.061511943968764" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="395.3586844998822" y="318.16798292002085" width="15.940572600313882" height="21.148105121894233" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="mtf4-bytes: 1,915 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08030924" data-node="leaf" data-kind="file" data-bytes="1915" data-address="0x08030924" data-source="games/gs1/GRAPHICS/TILE/UI_MTF_06.indexed.png">
 <title>mtf4-bytes: 1,915 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08030924</title>
-<rect data-content-type="Images" x="393.4354492776024" y="340.5489370982053" width="14.7283183881765" height="3.513329624948792" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="395.3586844998822" y="340.31608804191507" width="13.94297398876144" height="3.7461786812390088" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="gba-4bpp-tiles: 256 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08029910" data-node="leaf" data-kind="file" data-bytes="256" data-address="0x08029910" data-source="games/gs1/GRAPHICS/TILE/UI_TILE_08029910.4bpp.png">
 <title>gba-4bpp-tiles: 256 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08029910</title>
-<rect data-content-type="Images" x="409.1637676657789" y="340.5489370982053" width="1.102584599150486" height="3.513329624948792" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="410.3010581415317" y="340.31548769480315" width="0.9987993057762212" height="3.7473793754627875" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="gba-4bpp-tiles: 1,984 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x080310a4" data-node="leaf" data-kind="file" data-bytes="1984" data-address="0x080310a4" data-source="games/gs1/GRAPHICS/TILE/UI_TILE_080310A4.4bpp.png">
 <title>gba-4bpp-tiles: 1,984 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x080310a4</title>
-<rect data-content-type="Images" x="411.26635226492937" y="319.4874251542365" width="9.178964409566975" height="6.2251794566897125" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="412.2992571001961" y="318.16798292002085" width="8.670709649356372" height="6.597936679808942" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="UI_TILE_08033EF8.4bpp.png · gba-4bpp-tiles · 0x08033ef8: 1,024 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08033ef8" data-node="leaf" data-kind="file" data-bytes="1024" data-address="0x08033ef8" data-source="games/gs1/GRAPHICS/TILE/UI_TILE_08033EF8.4bpp.png">
 <title>UI_TILE_08033EF8.4bpp.png · gba-4bpp-tiles · 0x08033ef8: 1,024 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x08033ef8</title>
-<rect data-content-type="Images" x="421.4453166744963" y="319.4874251542365" width="4.253659050099084" height="6.2251794566897125" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="421.96996674955244" y="318.16798292002085" width="3.9913340125710306" height="6.597936679808942" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="UI_TILE_080342F8.4bpp.png · gba-4bpp-tiles · 0x080342f8: 1,024 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x080342f8" data-node="leaf" data-kind="file" data-bytes="1024" data-address="0x080342f8" data-source="games/gs1/GRAPHICS/TILE/UI_TILE_080342F8.4bpp.png">
 <title>UI_TILE_080342F8.4bpp.png · gba-4bpp-tiles · 0x080342f8: 1,024 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x080342f8</title>
-<rect data-content-type="Images" x="426.6989757245954" y="319.4874251542365" width="4.253659050099084" height="6.2251794566897125" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="426.96130076212347" y="318.16798292002085" width="3.9913340125710306" height="6.597936679808942" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="UI_TILE_080346F8.4bpp.png · gba-4bpp-tiles · 0x080346f8: 8,192 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x080346f8" data-node="leaf" data-kind="file" data-bytes="8192" data-address="0x080346f8" data-source="games/gs1/GRAPHICS/TILE/UI_TILE_080346F8.4bpp.png">
 <title>UI_TILE_080346F8.4bpp.png · gba-4bpp-tiles · 0x080346f8: 8,192 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x080346f8</title>
-<rect data-content-type="Images" x="411.26635226492937" y="326.71260461092623" width="15.549026007812113" height="17.349662112227843" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="412.2992571001961" y="325.7659195998298" width="14.722702139598747" height="18.2963471233243" style="fill:#8fb7ec"/>
 </g>
 <g aria-label="UI_TILE_080368D4.4bpp.png · gba-4bpp-tiles · 0x080368d4: 2,048 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x080368d4" data-node="leaf" data-kind="file" data-bytes="2048" data-address="0x080368d4" data-source="games/gs1/GRAPHICS/TILE/UI_TILE_080368D4.4bpp.png">
 <title>UI_TILE_080368D4.4bpp.png · gba-4bpp-tiles · 0x080368d4: 2,048 bytes · Images · Last asset build: ROM bytes matched; appearance not verified · 0x080368d4</title>
-<rect data-content-type="Images" x="427.8153782727415" y="326.71260461092623" width="3.137256501953029" height="17.349662112227843" style="fill:#8fb7ec"/>
+<rect data-content-type="Images" x="428.02195923979485" y="325.7659195998298" width="2.9306755348996862" height="18.2963471233243" style="fill:#8fb7ec"/>
 </g>
 </g>
 </g>
@@ -25801,7 +25807,7 @@
 <rect x="376" y="840" width="16" height="16" style="fill:#326b7d"/>
 <text class="weyard legend-label" x="396" y="848" dominant-baseline="middle">C 5.6%</text>
 <rect x="8" y="864" width="16" height="16" style="fill:#eadb83"/>
-<text class="weyard legend-label" x="28" y="872" dominant-baseline="middle">Fonts 0.2%</text>
+<text class="weyard legend-label" x="28" y="872" dominant-baseline="middle">Fonts 0.3%</text>
 <rect x="112" y="864" width="16" height="16" style="fill:#8fb7ec"/>
 <text class="weyard legend-label" x="132" y="872" dominant-baseline="middle">Images 40.0%</text>
 <rect x="232" y="864" width="16" height="16" style="fill:#81d6b2"/>
@@ -25809,7 +25815,7 @@
 <rect x="376" y="864" width="16" height="16" style="fill:#b5cc82"/>
 <text class="weyard legend-label" x="396" y="872" dominant-baseline="middle">Maps 1.0%</text>
 <rect x="8" y="888" width="16" height="16" style="fill:#bda995"/>
-<text class="weyard legend-label" x="28" y="896" dominant-baseline="middle">Other data 18.2%</text>
+<text class="weyard legend-label" x="28" y="896" dominant-baseline="middle">Other data 18.1%</text>
 <rect x="160" y="888" width="16" height="16" style="fill:#efbb82"/>
 <text class="weyard legend-label" x="180" y="896" dominant-baseline="middle">PCM samples 4.8%</text>
 <rect x="312" y="888" width="16" height="16" style="fill:#e8a6d3"/>

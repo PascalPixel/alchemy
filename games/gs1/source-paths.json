@@ -10955,7 +10955,8 @@
       "name": "Scene_RunScene3baSequenceA"
     },
     "resource_39e:0200071c": {
-      "name": "Scene_RunScene39eSequenceB"
+      "name": "Scene_RunScene39eSequenceB",
+      "source": "map/locations/xian/actor_choice_sequence.c"
     },
     "resource_380:02000390": {
       "name": "Scene_RunScene380SequenceA"

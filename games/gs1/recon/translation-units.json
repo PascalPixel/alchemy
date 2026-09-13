@@ -175570,6 +175570,27 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "inventory-menu-commands",
+      "game": "gs1",
+      "source": "games/gs1/src/inventory_menu/commands.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080a448c",
+          "extent": 320,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a45cc",
+          "extent": 232,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

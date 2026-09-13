@@ -2893,11 +2893,10 @@
     },
     "main:080a448c": {
       "name": "ItemMenu_BuildCmd",
-      "source": "inventory_menu/build_command_states.c"
+      "source": "inventory_menu/commands.c"
     },
     "main:080a45cc": {
-      "name": "ItemMenu_DrawCmd",
-      "source": "inventory_menu/draw_command_labels.c"
+      "name": "ItemMenu_DrawCmd"
     },
     "main:080a4754": {
       "name": "ItemMenu_TryBreak",

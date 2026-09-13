@@ -7,6 +7,9 @@
 
 #define BattleTarget_SelectForAction Func_080bae40
 
+s32 Func_080772b8(s32 effect);
+#define BattleFx_Classify Func_080772b8
+
 struct BattleAiProfile {
     u8 unknown_00[0x35];
     s8 target_strategy;

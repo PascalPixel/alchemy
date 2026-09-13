@@ -36,6 +36,7 @@ void *RenderResource_CreatePair(
         return NULL;
 
     RenderResource_LoadPair(arg0, index);
+    /* Two 32x16 OBJ sprites; the right half starts eight tiles later. */
     first = RenderOutput_Create(index, 0x80004000, arg1, arg2, arg3);
     first->sentinel = 0xFD;
     second = RenderOutput_Create(index, 0x80004000, arg1, arg2 + 32, arg3);

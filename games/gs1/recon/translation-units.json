@@ -175534,6 +175534,37 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "inventory-owner-items",
+      "game": "gs1",
+      "source": "games/gs1/src/inventory_menu/owner_items.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080a3ddc",
+          "extent": 76,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a3e28",
+          "extent": 96,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a3e88",
+          "extent": 100,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080a3eec",
+          "extent": 2,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

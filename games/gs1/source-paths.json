@@ -335,7 +335,7 @@
     },
     "main:080a3ddc": {
       "name": "ItemMenu_Collect",
-      "source": "inventory_menu/collect_items.c"
+      "source": "inventory_menu/owner_items.c"
     },
     "main:080a7440": {
       "name": "CharacterSelector_Run"
@@ -2878,12 +2878,10 @@
       "name": "ItemMenu_Count"
     },
     "main:080a3e28": {
-      "name": "ItemMenu_DrawIcons",
-      "source": "inventory_menu/draw_item_icons.c"
+      "name": "ItemMenu_DrawIcons"
     },
     "main:080a3e88": {
-      "name": "ItemMenu_RefreshOwner",
-      "source": "inventory_menu/refresh_owner_items.c"
+      "name": "ItemMenu_RefreshOwner"
     },
     "main:080a4110": {
       "name": "ItemMenu_CmdCursorX",
@@ -18434,6 +18432,9 @@
     "resource_39e:02000658": {
       "name": "Scene_RunActorNineTransition",
       "source": "map/locations/xian/school_and_roof_scene.c"
+    },
+    "main:080a3eec": {
+      "name": "InventoryMenu_NoOp"
     }
   }
 }

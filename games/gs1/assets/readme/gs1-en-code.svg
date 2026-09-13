@@ -6121,30 +6121,26 @@
 <rect x="168.04823007978885" y="187.1024570617183" width="3.9496455107841726" height="3.7100795653596808" style="fill:#d9d9d4"/>
 </g>
 </g>
-<g aria-label="resource_375_overlay.s: 2,244 bytes · 5 items" data-node="container" data-kind="file" data-bytes="2244" data-source="games/gs1/asm/overlays/resource_375_overlay.s">
-<title>resource_375_overlay.s: 2,244 bytes · 5 items</title>
+<g aria-label="resource_375_overlay.s: 2,244 bytes · 4 items" data-node="container" data-kind="file" data-bytes="2244" data-source="games/gs1/asm/overlays/resource_375_overlay.s">
+<title>resource_375_overlay.s: 2,244 bytes · 4 items</title>
 <rect class="container-frame" x="147.6885757900324" y="193.31253662707795" width="7.308700225847949" height="18.044223672540898" fill="#1f7f93"/>
 <path class="bevel-light" d="M147.6885757900324 211.35676029961886 V193.31253662707795 H154.99727601588035" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <path class="bevel-dark" d="M147.6885757900324 211.35676029961886 H154.99727601588035 V193.31253662707795" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="375 · Drafted 0x0200150c–0x02001972: 1,126 bytes" data-node="leaf" data-kind="file" data-bytes="1126" data-address="0x0200150c" data-source="games/gs1/asm/overlays/resource_375_overlay.s">
-<title>375 · Drafted 0x0200150c–0x02001972: 1,126 bytes</title>
-<rect x="150.01575084649437" y="195.63971168353993" width="2.6543501129239746" height="6.220587178310454" style="fill:#96c8c9"/>
+<g aria-label="375 · Drafted 0x0200150c–0x020019a4: 1,176 bytes" data-node="leaf" data-kind="file" data-bytes="1176" data-address="0x0200150c" data-source="games/gs1/asm/overlays/resource_375_overlay.s">
+<title>375 · Drafted 0x0200150c–0x020019a4: 1,176 bytes</title>
+<rect x="150.01575084649437" y="195.63971168353993" width="2.6543501129239746" height="6.541217159585339" style="fill:#96c8c9"/>
 </g>
 <g aria-label="375 · Unknown 0x02000000–0x02000030: 48 bytes" data-node="leaf" data-kind="file" data-bytes="48" data-address="0x02000000" data-source="games/gs1/asm/overlays/resource_375_overlay.s">
 <title>375 · Unknown 0x02000000–0x02000030: 48 bytes</title>
-<rect x="149.59270204200035" y="202.43725005735638" width="3.500447721912029" height="0.15390239101194567" style="fill:#d9d9d4"/>
+<rect x="149.59270204200035" y="202.75788003863124" width="3.500447721912029" height="0.1539023910119457" style="fill:#d9d9d4"/>
 </g>
 <g aria-label="375 · Unknown 0x020012a0–0x0200150c: 620 bytes" data-node="leaf" data-kind="file" data-bytes="620" data-address="0x020012a0" data-source="games/gs1/asm/overlays/resource_375_overlay.s">
 <title>375 · Unknown 0x020012a0–0x0200150c: 620 bytes</title>
-<rect x="150.01575084649437" y="203.16810364387428" width="2.6543501129239746" height="2.9758117678085965" style="fill:#d9d9d4"/>
-</g>
-<g aria-label="375 · Unknown 0x02001972–0x020019a4: 50 bytes" data-node="leaf" data-kind="file" data-bytes="50" data-address="0x02001972" data-source="games/gs1/asm/overlays/resource_375_overlay.s">
-<title>375 · Unknown 0x02001972–0x020019a4: 50 bytes</title>
-<rect x="149.61726057185336" y="206.74542513704188" width="0.20301945071799857" height="2.6826503807559834" style="fill:#d9d9d4"/>
+<rect x="150.01575084649437" y="203.48873362514914" width="2.6543501129239746" height="2.9758117678085974" style="fill:#d9d9d4"/>
 </g>
 <g aria-label="375 · Unknown 0x02001a4c–0x02001bdc: 400 bytes" data-node="leaf" data-kind="file" data-bytes="400" data-address="0x02001a4c" data-source="games/gs1/asm/overlays/resource_375_overlay.s">
 <title>375 · Unknown 0x02001a4c–0x02001bdc: 400 bytes</title>
-<rect x="150.42178974793038" y="207.14391541168288" width="2.2483112114879775" height="1.8856698314739821" style="fill:#d9d9d4"/>
+<rect x="150.01575084649437" y="207.46454539295775" width="2.6543501129239746" height="1.5650398501990959" style="fill:#d9d9d4"/>
 </g>
 </g>
 <g aria-label="resource_376_overlay.s: 480 bytes · 2 items" data-node="container" data-kind="file" data-bytes="480" data-source="games/gs1/asm/overlays/resource_376_overlay.s">

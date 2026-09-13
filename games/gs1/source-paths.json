@@ -1406,16 +1406,14 @@
       "source": "ui/timed_notice/close_if_active.c"
     },
     "main:0802875c": {
-      "name": "Menu_LoadResourceSlot",
-      "source": "menu/load_resource_slot.c"
+      "name": "Menu_LoadResourceSlot"
     },
     "main:0802851c": {
       "name": "Menu_EndResourceSelection",
       "source": "menu/end_resource_selection.c"
     },
     "main:080287a8": {
-      "name": "Menu_AppendResourceEntry",
-      "source": "menu/append_resource_entry.c"
+      "name": "Menu_AppendResourceEntry"
     },
     "main:080288a8": {
       "name": "Menu_LayoutResourceEntries",
@@ -2085,7 +2083,7 @@
     },
     "main:080286a0": {
       "name": "Menu_SelectResource",
-      "source": "menu/select_resource.c"
+      "source": "menu/resource_entries.c"
     },
     "main:0801c188": {
       "name": "Menu_LoadSelectedResource",

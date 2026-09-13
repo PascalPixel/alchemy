@@ -2868,20 +2868,17 @@
       "source": "menu/item_menu/use.c"
     },
     "main:080a345c": {
-      "name": "ItemMenu_HideAllIcons",
-      "source": "inventory_menu/hide_all_item_icons.c"
+      "name": "ItemMenu_HideAllIcons"
     },
     "main:080a3480": {
-      "name": "ItemMenu_HidePageIcons",
-      "source": "inventory_menu/hide_page_start_icons.c"
+      "name": "ItemMenu_HidePageIcons"
     },
     "main:080a3354": {
       "name": "ItemMenu_Init",
-      "source": "inventory_menu/initialize_interface.c"
+      "source": "inventory_menu/interface.c"
     },
     "main:080a34c0": {
-      "name": "ItemMenu_Close",
-      "source": "inventory_menu/close_windows.c"
+      "name": "ItemMenu_Close"
     },
     "main:080a355c": {
       "name": "ItemMenu_PrepOwner",
@@ -5125,8 +5122,7 @@
       "name": "UiPalette_SetColor4"
     },
     "main:080a33d4": {
-      "name": "Menu_SpawnIconEntries",
-      "source": "menu/spawn_icon_entries.c"
+      "name": "Menu_SpawnIconEntries"
     },
     "main:080a8034": {
       "name": "Menu_InitSelectorCursorAndEntries",

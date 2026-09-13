@@ -2901,19 +2901,16 @@
     },
     "main:080a3ce4": {
       "name": "ItemMenu_IsSpecial",
-      "source": "inventory_menu/is_special_item_range.c"
+      "source": "inventory_menu/item_list.c"
     },
     "main:080a3cf8": {
-      "name": "ItemMenu_DrawMsg",
-      "source": "inventory_menu/draw_message.c"
+      "name": "ItemMenu_DrawMsg"
     },
     "main:080a3d24": {
-      "name": "Menu_HideEmptyEntryIcons",
-      "source": "inventory_menu/hide_empty_entry_icons.c"
+      "name": "Menu_HideEmptyEntryIcons"
     },
     "main:080a3d6c": {
-      "name": "ItemMenu_Count",
-      "source": "inventory_menu/count_items.c"
+      "name": "ItemMenu_Count"
     },
     "main:080a3e28": {
       "name": "ItemMenu_DrawIcons",

@@ -535,6 +535,9 @@ the runtime consumers before rearranging images. A grayscale index palette is
 not evidence of monochrome artwork, and a narrow animation strip is not by
 itself a bad export. Existing extraction metadata is a hypothesis to check,
 not independent proof of Camelot's authoring format.
+The menu-label sheet follows `RenderResource_CreatePair`: two 32×16 OBJ parts
+per image, with the second part at X+32 and tile+8. `frames_per_image` groups
+adjacent atlas parts for a single compressed image; it does not change ROM data.
 
 The dashboard and README share one 9:16 ROM viewer hierarchy and layout,
 counting represented ROM bytes once while preserving the executable-only DONE

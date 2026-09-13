@@ -562,10 +562,15 @@ fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String
                 }
                 if let Some(frame) = entry.get("frame") {
                     let frame = number(frame, "frame")?;
-                    let bytes = w * h * tile_bytes;
-                    if frame >= frames {
+                    let parts = entry
+                        .get("frames_per_image")
+                        .map(|value| number(value, "frames per image"))
+                        .transpose()?
+                        .unwrap_or(1);
+                    if parts == 0 || frames % parts != 0 || frame >= frames / parts {
                         return Err("frame lies outside its atlas".into());
                     }
+                    let bytes = w * h * tile_bytes * parts;
                     ordered = ordered[frame * bytes..(frame + 1) * bytes].to_vec();
                 }
                 built = ordered;
@@ -1758,6 +1763,20 @@ fn tiled_atlas_serializes_frames_before_tile_rows() {
     let entry = serde_json::json!({"kind":"gba-4bpp-tiles","source":"atlas.png","size":128,"frames":2,"columns":2,"frame_tiles_wide":1,"frame_tiles_high":2,"symbolic_palette":true});
     let result = build_component(root.path(), &entry).unwrap();
     assert_eq!(result.data, [vec![0x11; 64], vec![0x22; 64]].concat());
+    let mut paired = entry.clone();
+    paired["frame"] = 0.into();
+    paired["frames_per_image"] = 2.into();
+    assert_eq!(
+        build_component(root.path(), &paired).unwrap().data,
+        result.data
+    );
+    paired["frame"] = 1.into();
+    assert!(build_component(root.path(), &paired).is_err());
+    paired["frame"] = 0.into();
+    for parts in [0, 3] {
+        paired["frames_per_image"] = parts.into();
+        assert!(build_component(root.path(), &paired).is_err());
+    }
     assert_eq!(
         result.details,
         serde_json::json!({

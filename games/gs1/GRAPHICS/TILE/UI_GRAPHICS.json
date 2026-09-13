@@ -91,11 +91,12 @@
       "components": [
         {
           "kind": "gba-4bpp-tiles",
-          "source": "games/gs1/GRAPHICS/TILE/UI_PACKED_32X32.indexed.png",
-          "frames": 8,
-          "columns": 4,
+          "source": "games/gs1/GRAPHICS/TILE/UI_MENU_LABELS.indexed.png",
+          "frames": 16,
+          "frames_per_image": 2,
+          "columns": 16,
           "frame_tiles_wide": 4,
-          "frame_tiles_high": 4,
+          "frame_tiles_high": 2,
           "size": 512
         }
       ]
@@ -209,7 +210,7 @@
     "address": "0x08031864",
     "end": "0x08032224",
     "images": 8,
-    "source": "games/gs1/GRAPHICS/TILE/UI_PACKED_32X32.indexed.png",
+    "source": "games/gs1/GRAPHICS/TILE/UI_MENU_LABELS.indexed.png",
     "header": {
       "format": 1,
       "kind": "pointer-table",

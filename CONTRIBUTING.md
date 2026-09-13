@@ -537,7 +537,11 @@ not independent proof of Camelot's authoring format.
 
 The dashboard and README share one 9:16 ROM viewer hierarchy and layout,
 counting represented ROM bytes once while preserving the executable-only DONE
-denominator. Keep the optional music debugger separate. Migrate source, assets
+denominator. An area's Shared files control links map resources to their existing
+source folders without adding tiles or bytes. These links are derived from the
+scene selector, map-load table, resource directory and Atlas destinations; they
+do not claim to inventory every non-map asset an area uses.
+Keep the optional music debugger separate. Migrate source, assets
 and viewer in verified stages; completion requires the full GS1 English ROM to
 remain byte-identical and the migration to be committed. Do not claim GS2 or
 other editions verified from GS1 evidence.

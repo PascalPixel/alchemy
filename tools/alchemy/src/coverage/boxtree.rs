@@ -429,6 +429,10 @@ pub fn svg(tree: &str, map: &CoverageMap, width: f64) -> String {
 }
 
 pub fn svg_at(tree: &str, map: &CoverageMap, width: f64, folder: &str) -> String {
+    let shared = map.document["shared_map_assets"][folder]
+        .as_array()
+        .cloned()
+        .unwrap_or_default();
     let tiles: Vec<_> = tree_tiles(map, tree)
         .into_iter()
         .filter(|tile| {
@@ -506,7 +510,10 @@ pub fn svg_at(tree: &str, map: &CoverageMap, width: f64, folder: &str) -> String
         y: 32.0,
         width: width - 8.0,
         height: if tree == "rom" {
-            width * 16.0 / 9.0 - 44.0 - rows as f64 * 24.0
+            width * 16.0 / 9.0
+                - 44.0
+                - rows as f64 * 24.0
+                - if shared.is_empty() { 0.0 } else { 24.0 }
         } else {
             (width * 258.0 / 540.0).max(260.0)
         },
@@ -560,6 +567,10 @@ pub fn svg_at(tree: &str, map: &CoverageMap, width: f64, folder: &str) -> String
     );
     let mut legend_x = 8.0;
     let mut legend_y = frame.y + frame.height + 12.0;
+    if !shared.is_empty() {
+        out.push(format!("<g data-action=\"shared\" role=\"button\" tabindex=\"0\" aria-label=\"Show shared map files\"><text class=\"weyard\" x=\"8\" y=\"{}\">Shared files ({})</text></g>", legend_y + 12.0, shared.len()));
+        legend_y += 24.0;
+    }
     for (display, color) in labels {
         let label_width = 24.0 + display.chars().count() as f64 * 8.0;
         if legend_x > 8.0 && legend_x + label_width > width - 8.0 {
@@ -585,6 +596,14 @@ pub fn svg_at(tree: &str, map: &CoverageMap, width: f64, folder: &str) -> String
     };
     let mut rendered = vec![format!("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {width} {height}\" width=\"{width}\" height=\"{height}\" shape-rendering=\"crispEdges\" role=\"img\" aria-label=\"{description} box tree\">"), format!("<rect x=\"0\" y=\"0\" width=\"{width}\" height=\"{height}\" fill=\"{edge}\"/>")];
     rendered.extend(out);
+    rendered.insert(
+        1,
+        format!(
+            "<metadata data-shared=\"{}\" data-usage-revision=\"{}\"/>",
+            esc(&serde_json::to_string(&shared).unwrap()),
+            svg_cache_version(&map.document["shared_map_assets"].to_string())
+        ),
+    );
     rendered.push("<g class=\"chart-frame\" pointer-events=\"none\">".into());
     bevel(
         &mut rendered,
@@ -654,7 +673,9 @@ mod tests {
     #[test]
     fn folder_view_uses_only_its_files_without_scaling_the_font() {
         let map = CoverageMap {
-            document: serde_json::json!({"target":"gs1-en"}),
+            document: serde_json::json!({"target":"gs1-en", "shared_map_assets": {
+                "FIELD/XIAN/": ["GRAPHICS/TILE/SHARED.PNG"]
+            }}),
             executable_areas: vec![],
             rom_areas: vec![Area {
                 tiles: ["FIELD/XIAN/ROOMS.C", "FIELD/HEIDIA/ROOMS.C"]
@@ -675,6 +696,10 @@ mod tests {
         assert!(rendered.contains("font-size:16px"));
         assert!(rendered.contains("viewBox=\"0 0 540 960\""));
         assert!(rendered.contains("GS1 EN · XIAN"));
+        assert!(rendered.contains("Shared files (1)"));
+        assert!(rendered.contains("GRAPHICS/TILE/SHARED.PNG"));
+        assert!(rendered.contains("data-usage-revision="));
+        assert!(!super::svg_at("rom", &map, 540.0, "FIELD/HEIDIA/").contains("Shared files"));
         assert!(super::svg_at("rom", &map, 320.0, "").contains("<title>GS1 EN</title>"));
     }
 

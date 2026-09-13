@@ -910,6 +910,69 @@ fn streams(tree: &SourceTree) -> Vec<Stream> {
     }
     out
 }
+fn shared_map_assets(tree: &SourceTree, areas: &[Area]) -> Result<Value, String> {
+    let read = |path| json(tree, path).ok_or_else(|| format!("missing Atlas input: {path}"));
+    let scenes = read("games/gs1/assets/data/battle_effect_tail.json")?;
+    let maps = read("games/gs1/assets/maps/map_load_table.json")?;
+    let directory = read("games/gs1/assets/data/resource_directory.json")?;
+    let locations = tree
+        .read("games/gs1/locations.tsv")
+        .ok_or("missing Atlas locations")?;
+    let scenes = array(&scenes, "segments")
+        .iter()
+        .find(|row| text(row, "address") == "0x0809f1a8")
+        .ok_or("missing Atlas scene table")?;
+    let mut users: BTreeMap<i64, BTreeSet<String>> = BTreeMap::new();
+    // The loader indexes 201 scene records; the historical field name is effect_id.
+    for scene in array(scenes, "records").iter().take(201) {
+        let resource = integer(scene, "resource_id").ok_or("invalid scene resource")?;
+        let Some(area) = atlas_source(&locations, &format!("{resource:x}")) else {
+            continue;
+        };
+        let map = array(&maps, "records")
+            .iter()
+            .find(|row| integer(row, "map_index") == integer(scene, "effect_id"))
+            .ok_or("scene has no map loading record")?;
+        for field in array(&maps, "fields") {
+            let index = field
+                .as_str()
+                .and_then(|field| get(map, field))
+                .and_then(Value::as_str)
+                .and_then(hex)
+                .ok_or("invalid map resource")?;
+            let address = array(&directory, "slots")
+                .get(index as usize)
+                .and_then(Value::as_str)
+                .and_then(hex)
+                .ok_or("unresolved map resource pointer")?;
+            users.entry(address).or_default().insert(area.clone());
+        }
+    }
+    let mut links: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
+    fn visit(
+        tiles: &[Tile],
+        users: &BTreeMap<i64, BTreeSet<String>>,
+        links: &mut BTreeMap<String, BTreeSet<String>>,
+    ) {
+        for tile in tiles {
+            if let (Some(address), Some(source)) = (tile.address, &tile.source) {
+                for area in users.get(&address).into_iter().flatten() {
+                    if !source.starts_with(area) {
+                        links
+                            .entry(area.clone())
+                            .or_default()
+                            .insert(source.clone());
+                    }
+                }
+            }
+            visit(&tile.children, users, links);
+        }
+    }
+    for area in areas.iter().filter(|area| area.id == "rom-data") {
+        visit(&area.tiles, &users, &mut links);
+    }
+    Ok(json!(links))
+}
 fn scaled_bytes(rom: i64, decoded: i64, spans: &[Span]) -> i64 {
     if decoded == 0 {
         0
@@ -1432,6 +1495,9 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
         "target": options.target,
         "derivation": "tracked-evidence-v1",
         "rom_bytes": rom,
+        "shared_map_assets": if options.target == "gs1-en" {
+            shared_map_assets(options.exact, &rom_areas)?
+        } else { json!({}) },
         "executable_bytes": executable,
         "categories": {
             "proven_c": entry(exact_bytes, executable),
@@ -1479,6 +1545,65 @@ mod tests {
     use super::*;
     use serde_json::json;
     use std::collections::BTreeMap;
+
+    #[test]
+    fn shared_map_links_follow_load_tables_without_adding_tiles() {
+        let root = tempfile::tempdir().unwrap();
+        let write = |path: &str, source: String| {
+            let path = root.path().join(path);
+            std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+            std::fs::write(path, source).unwrap();
+        };
+        write(
+            "games/gs1/locations.tsv",
+            "resource_3a0\tXian\t\t\t\t\tSRC/FIELD/XIAN\n".into(),
+        );
+        write(
+            "games/gs1/assets/data/battle_effect_tail.json",
+            json!({"segments":[{
+                "address":"0x0809f1a8", "records":[{"resource_id":928,"effect_id":7},
+                    {"resource_id":928,"effect_id":7}, {"resource_id":999,"effect_id":99}]
+            }]})
+            .to_string(),
+        );
+        write(
+            "games/gs1/assets/maps/map_load_table.json",
+            json!({"fields":["palette","tiles"],
+            "records":[{"map_index":7,"palette":"0","tiles":"1"}]})
+            .to_string(),
+        );
+        write(
+            "games/gs1/assets/data/resource_directory.json",
+            json!({"slots":["0x08001000","0x08002000"]}).to_string(),
+        );
+        let tiles = [
+            (0x08001000, "games/gs1/GRAPHICS/TILE/SHARED.PNG"),
+            (0x08002000, "games/gs1/SRC/FIELD/XIAN/MAP.PNG"),
+        ]
+        .map(|(address, source)| Tile {
+            address: Some(address),
+            source: Some(source.into()),
+            bytes: 32,
+            ..Tile::default()
+        });
+        let areas = vec![area("rom-data", "Data", tiles.into())];
+        let tree = SourceTree::Work {
+            id: "fixture".into(),
+            root: root.path().into(),
+        };
+        assert_eq!(
+            shared_map_assets(&tree, &areas).unwrap(),
+            json!({
+                "games/gs1/SRC/FIELD/XIAN/": ["games/gs1/GRAPHICS/TILE/SHARED.PNG"]
+            })
+        );
+        assert_eq!(areas[0].bytes, 64);
+        write(
+            "games/gs1/assets/data/resource_directory.json",
+            json!({"slots":[]}).to_string(),
+        );
+        assert!(shared_map_assets(&tree, &areas).is_err());
+    }
 
     fn classification(regions: Value) -> Value {
         json!({"format": 1, "regions": regions})

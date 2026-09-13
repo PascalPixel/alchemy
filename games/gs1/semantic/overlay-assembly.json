@@ -1529,19 +1529,6 @@
       ]
     },
     {
-      "overlay": "resource_375",
-      "start": "0x20000dc",
-      "end": "0x2000170",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "This segment preserves retained assembly from the historical 0x020000dc–0x02000736 range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",
-        "The historical merged-body draft and unsuccessful flag probes do not establish compiler impossibility. Owner-bounded candidates and dated measurements are retained in the reconstruction corpus.",
-        "games/gs1/recon/en/dossiers.json#resource_375:020000dc"
-      ]
-    },
-    {
       "overlay": "resource_399",
       "start": "0x02000f84",
       "end": "0x02000f90",

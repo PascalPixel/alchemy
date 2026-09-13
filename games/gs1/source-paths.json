@@ -4416,19 +4416,16 @@
     },
     "main:08021ab0": {
       "name": "Resource_LoadTableEntryToBuffer",
-      "source": "resource/load_table_entry_to_buffer.c"
+      "source": "resource/buffer.c"
     },
     "main:08021af0": {
-      "name": "Resource_LoadKind26EntryToBuffer",
-      "source": "resource/load_kind26_entry_to_buffer.c"
+      "name": "Resource_LoadKind26EntryToBuffer"
     },
     "main:08021b30": {
-      "name": "Resource_LoadIndexedEntryToBuffer",
-      "source": "resource/load_indexed_entry_to_buffer.c"
+      "name": "Resource_LoadIndexedEntryToBuffer"
     },
     "main:08021b80": {
-      "name": "Ui_LoadEntryForKind",
-      "source": "ui/load_entry_for_kind.c"
+      "name": "Ui_LoadEntryForKind"
     },
     "main:08021bc8": {
       "name": "Ui_GetTableWordZero",

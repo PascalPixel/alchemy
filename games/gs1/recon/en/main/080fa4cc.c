@@ -1,6 +1,8 @@
 #include "audio_engine_symbols.h"
 #include "types.h"
 
+#define MusicPlayer_FadeOutPause Func_080fa4cc
+
 #define AUDIO_ENGINE_IDENT 0x68736D53
 
 struct MusicPlayerFadeView {

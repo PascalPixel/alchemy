@@ -15,10 +15,13 @@ use std::{
 use walkdir::WalkDir;
 const CLIENT: &str = include_str!("client.js");
 const STYLES: &str = include_str!("style.css");
-const TREES: [(&str, &str); 2] = [("code", "Code"), ("data", "Data")];
-const COVERAGE_DIRS: [&str; 12] = [
+const TREES: [(&str, &str); 1] = [("rom", "ROM contents")];
+const COVERAGE_DIRS: [&str; 15] = [
     "games/gs1/asm",
     "games/gs1/assets",
+    "games/gs1/GRAPHICS",
+    "games/gs1/SOUND",
+    "games/gs1/TEXT",
     "games/gs1/metrics",
     "games/gs1/semantic",
     "games/gs1/SRC",
@@ -95,9 +98,21 @@ fn cached() -> Result<Live, String> {
 }
 
 impl Live {
+    #[cfg(test)]
     fn chart(&self, id: &str, width: Option<u16>) -> Option<String> {
+        self.chart_at(id, width, "")
+    }
+    fn chart_at(&self, id: &str, width: Option<u16>, folder: &str) -> Option<String> {
         if let (Some(map), Some(width)) = (&self.map, width) {
-            return Some(crate::coverage::boxtree::svg(id, map, f64::from(width)));
+            return Some(crate::coverage::boxtree::svg_at(
+                id,
+                map,
+                f64::from(width),
+                folder,
+            ));
+        }
+        if !folder.is_empty() {
+            return None;
         }
         self.trees
             .iter()
@@ -267,7 +282,11 @@ fn response(path: &str) -> Response {
                     }
                 },
             };
-            if parts.next().is_some() || !TREES.iter().any(|(key, _)| *key == id) {
+            let folder = parts.collect::<Vec<_>>().join("/");
+            if (!folder.is_empty()
+                && (!folder.ends_with('/') || folder.split('/').any(|part| part == "..")))
+                || !TREES.iter().any(|(key, _)| *key == id)
+            {
                 return Response::new(
                     404,
                     "Not Found",
@@ -279,7 +298,7 @@ fn response(path: &str) -> Response {
             state(|s| {
                 s.coverage
                     .as_ref()
-                    .and_then(|c| c.chart(id, width))
+                    .and_then(|c| c.chart_at(id, width, &folder))
                     .ok_or_else(|| {
                         s.error
                             .clone()

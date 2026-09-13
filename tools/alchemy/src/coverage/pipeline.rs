@@ -864,12 +864,25 @@ struct Stream {
     id: String,
     start: i64,
     rom: i64,
+    source: Option<String>,
+}
+fn atlas_source(locations: &str, id: &str) -> Option<String> {
+    let resource_id = format!("resource_{id}");
+    locations.lines().find_map(|line| {
+        let fields: Vec<_> = line.split('\t').collect();
+        (fields.first().copied() == Some(resource_id.as_str()))
+            .then(|| fields.get(6).copied())
+            .flatten()
+            .filter(|path| !path.is_empty())
+            .map(|path| format!("games/gs1/{path}/"))
+    })
 }
 fn streams(tree: &SourceTree) -> Vec<Stream> {
     let Some(manifest) = json(tree, "games/gs1/assets/manifest.json") else {
         return Vec::new();
     };
     let mut out = Vec::new();
+    let locations = tree.read("games/gs1/locations.tsv").unwrap_or_default();
     for series in array(&manifest, "series") {
         if text(series, "kind") != "golden-sun-thumb-overlay-series" {
             continue;
@@ -885,10 +898,12 @@ fn streams(tree: &SourceTree) -> Vec<Stream> {
             let start = items[1].as_str().and_then(hex).unwrap_or(0);
             let rom = items[2].as_str().and_then(hex).unwrap_or(0);
             if rom > 0 {
+                let source = atlas_source(&locations, &id);
                 out.push(Stream {
                     id: format!("resource_{id}"),
                     start,
                     rom,
+                    source,
                 });
             }
         }
@@ -901,6 +916,59 @@ fn scaled_bytes(rom: i64, decoded: i64, spans: &[Span]) -> i64 {
     } else {
         (rom as f64 * bytes(spans) as f64 / decoded as f64).round() as i64
     }
+}
+
+fn validate_streams(streams: &[Stream], rom_span: Span, main_exec: &[Span]) -> Result<(), String> {
+    let mut seen = Vec::new();
+    for stream in streams {
+        let end = stream
+            .start
+            .checked_add(stream.rom)
+            .ok_or_else(|| format!("compressed stream {} overflows", stream.id))?;
+        let span = Span::new(stream.start, end);
+        if span.start < rom_span.start || span.end > rom_span.end {
+            return Err(format!("compressed stream {} lies outside ROM", stream.id));
+        }
+        if bytes(&intersect(&[span], main_exec)) != 0 {
+            return Err(format!(
+                "compressed stream {} overlaps main executable",
+                stream.id
+            ));
+        }
+        if bytes(&intersect(&[span], &seen)) != 0 {
+            return Err(format!(
+                "compressed stream {} overlaps another stream",
+                stream.id
+            ));
+        }
+        seen.push(span);
+    }
+    Ok(())
+}
+
+fn stream_categories(
+    rom: i64,
+    decoded: i64,
+    exact: &[Span],
+    semantic: &[Span],
+    draft: &[Span],
+    retained: &[Span],
+) -> [i64; 5] {
+    let raw = [
+        scaled_bytes(rom, decoded, exact),
+        scaled_bytes(rom, decoded, semantic),
+        scaled_bytes(rom, decoded, draft),
+        scaled_bytes(rom, decoded, retained),
+    ];
+    let mut remaining = rom.max(0);
+    let mut out = [0; 5];
+    for (index, value) in [0usize, 1, 3, 4].into_iter().zip(raw) {
+        let value = value.clamp(0, remaining);
+        out[index] = value;
+        remaining -= value;
+    }
+    out[2] = remaining;
+    out
 }
 fn sound_sequence_classes(source: &str) -> BTreeMap<i64, String> {
     source
@@ -1017,18 +1085,19 @@ fn sprite_children(tree: &SourceTree, source: &str, span: Span, data: &[Span]) -
 fn asset_tiles(tree: &SourceTree, data: &[Span], rom: i64) -> Vec<Tile> {
     let Some(manifest) = json(tree, "out/gs1-en/full/assets/manifest.json") else {
         return vec![Tile {
-            label: "Assets & data".into(),
+            label: "Unclassified ROM data".into(),
             bytes: bytes(data),
-            categories: [0, 0, 0, 0, 0, bytes(data)],
+            categories: [0, 0, bytes(data), 0, 0, 0],
             ..Tile::default()
         }];
     };
     let sequence_classes = sound_sequence_classes(
         &tree
-            .read("games/gs1/assets/sound/sequences.tsv")
+            .read("games/gs1/SOUND/SEQUENCE/SEQUENCES.tsv")
             .unwrap_or_default(),
     );
     let mut groups: BTreeMap<String, Vec<Tile>> = BTreeMap::new();
+    let mut covered = Vec::new();
     for region in array(&manifest, "regions") {
         let Some(start) = integer(region, "address") else {
             continue;
@@ -1037,10 +1106,12 @@ fn asset_tiles(tree: &SourceTree, data: &[Span], rom: i64) -> Vec<Tile> {
             continue;
         };
         let span = Span::new(start, start + size);
-        let actual = bytes(&intersect(&[span], data));
+        let actual_spans = subtract(&intersect(&[span], data), &covered);
+        let actual = bytes(&actual_spans);
         if actual == 0 {
             continue;
         }
+        covered.extend(actual_spans);
         let kind = text(region, "kind");
         let sources = array(region, "sources");
         let source = sources
@@ -1050,7 +1121,7 @@ fn asset_tiles(tree: &SourceTree, data: &[Span], rom: i64) -> Vec<Tile> {
             .or_else(|| sources.first().and_then(Value::as_str))
             .unwrap_or(&kind);
         let owner = if kind == "golden-sun-sound-sequence" {
-            "games/gs1/assets/sound/sequences.tsv"
+            "games/gs1/SOUND/SEQUENCE/SEQUENCES.tsv"
         } else {
             sources.first().and_then(Value::as_str).unwrap_or(source)
         };
@@ -1081,12 +1152,13 @@ fn asset_tiles(tree: &SourceTree, data: &[Span], rom: i64) -> Vec<Tile> {
     }
     if groups.is_empty() {
         return vec![Tile {
-            label: format!("ROM data · {rom} bytes"),
+            label: format!("Unclassified ROM data · {rom} bytes"),
             bytes: bytes(data),
+            categories: [0, 0, bytes(data), 0, 0, 0],
             ..Tile::default()
         }];
     }
-    groups
+    let mut result: Vec<Tile> = groups
         .into_iter()
         .map(|(source, mut children)| {
             if children.len() == 1 {
@@ -1095,7 +1167,18 @@ fn asset_tiles(tree: &SourceTree, data: &[Span], rom: i64) -> Vec<Tile> {
                 source_container(source, children)
             }
         })
-        .collect()
+        .collect();
+    for gap in subtract(data, &covered) {
+        result.push(Tile {
+            label: format!("Unclassified ROM data · 0x{:08x}", gap.start),
+            bytes: gap.bytes(),
+            categories: [0, 0, gap.bytes(), 0, 0, 0],
+            group: Some("unclassified".into()),
+            address: Some(gap.start),
+            ..Tile::default()
+        });
+    }
+    result
 }
 fn categories_json(values: &[i64; 6]) -> Value {
     Value::Object(
@@ -1261,33 +1344,34 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
     executable_areas.push(area("overlays", "Decoded code overlays", overlay_tiles_all));
     let mut code = main_exec.clone();
     let ss = streams(options.exact);
+    let rom_span = Span::new(ROM_BASE, ROM_BASE + rom);
+    validate_streams(&ss, rom_span, &main_exec)?;
     for stream in &ss {
         code.push(Span::new(stream.start, stream.start + stream.rom));
     }
     let data = subtract(&[Span::new(ROM_BASE, ROM_BASE + rom)], &code);
-    let mut rom_areas = vec![area(
-        "rom-main-code",
-        "Main image code",
-        bands(
-            &main_exec,
-            &exact_main,
-            &semantic_main,
-            &draft_main,
-            &retained_main,
-            65536,
-        ),
-    )];
+    let main_tiles = executable_areas
+        .first()
+        .map(|area| area.tiles.clone())
+        .unwrap_or_else(|| {
+            bands(
+                &main_exec,
+                &exact_main,
+                &semantic_main,
+                &draft_main,
+                &retained_main,
+                65536,
+            )
+        });
+    let mut rom_areas = vec![area("rom-main-code", "Main image code", main_tiles)];
     let mut stream_tiles = Vec::new();
     for stream in &ss {
         let decoded = bytes(mapped(&overlay_exec, &stream.id));
-        let exact_part = scaled_bytes(stream.rom, decoded, mapped(&exact_overlay, &stream.id));
-        let semantic_part =
-            scaled_bytes(stream.rom, decoded, mapped(&semantic_overlay, &stream.id));
-        let retained_part =
-            scaled_bytes(stream.rom, decoded, mapped(&retained_overlay, &stream.id));
-        let draft_part = scaled_bytes(
+        let categories = stream_categories(
             stream.rom,
             decoded,
+            mapped(&exact_overlay, &stream.id),
+            mapped(&semantic_overlay, &stream.id),
             &subtract(
                 mapped(&draft_overlay, &stream.id),
                 &[
@@ -1297,66 +1381,41 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
                 ]
                 .concat(),
             ),
+            mapped(&retained_overlay, &stream.id),
         );
         stream_tiles.push(Tile {
             label: overlay_short(&stream.id).into(),
             bytes: stream.rom,
             categories: [
-                exact_part,
-                semantic_part,
-                stream.rom - exact_part - semantic_part - draft_part - retained_part,
-                draft_part,
-                retained_part,
+                categories[0],
+                categories[1],
+                categories[2],
+                categories[3],
+                categories[4],
                 0,
             ],
+            group: Some("compressed-overlay".into()),
+            address: Some(stream.start),
+            source: stream.source.clone(),
             ..Tile::default()
         });
-    }
-    let mut grouped = Vec::new();
-    let mut current: Option<Tile> = None;
-    let mut first = String::new();
-    let mut last = String::new();
-    for tile in stream_tiles {
-        if current.is_none() {
-            first = tile.label.clone();
-            current = Some(Tile {
-                label: first.clone(),
-                ..Tile::default()
-            });
-        }
-        let item = current.as_mut().unwrap();
-        item.bytes += tile.bytes;
-        for (a, b) in item.categories.iter_mut().zip(tile.categories) {
-            *a += b;
-        }
-        last = tile.label;
-        if item.bytes >= 49152 {
-            item.label = if first == last {
-                first.clone()
-            } else {
-                format!("{first}–{last}")
-            };
-            grouped.push(current.take().unwrap());
-        }
-    }
-    if let Some(mut tile) = current {
-        tile.label = if first == last {
-            first
-        } else {
-            format!("{first}–{last}")
-        };
-        grouped.push(tile);
     }
     rom_areas.push(area(
         "rom-overlay-streams",
         "Compressed code overlays",
-        grouped,
+        stream_tiles,
     ));
     rom_areas.push(area(
         "rom-data",
         "Assets & data",
         asset_tiles(options.exact, &data, rom),
     ));
+    let physical_total = rom_areas.iter().map(|area| area.bytes).sum::<i64>();
+    if physical_total != rom {
+        return Err(format!(
+            "ROM treemap covers {physical_total} bytes, expected {rom}"
+        ));
+    }
     let executable = bytes(&main_exec) + mapped_bytes(&overlay_exec);
     let retained = executable_areas
         .iter()
@@ -1578,7 +1637,7 @@ mod tests {
         let span = Span::new(0x081a7020, 0x081e120c);
         let children = sprite_children(
             &tree,
-            "games/gs1/assets/graphics/characters_chr_081a_index.json",
+            "games/gs1/GRAPHICS/CHARACTER/characters_chr_081a_index.json",
             span,
             &[span],
         );
@@ -1595,7 +1654,7 @@ mod tests {
         assert_eq!(tile_json(&parent)["children"].as_array().unwrap().len(), 22);
         assert!(sprite_children(
             &tree,
-            "games/gs1/assets/graphics/characters_chr_081a_index.json",
+            "games/gs1/GRAPHICS/CHARACTER/characters_chr_081a_index.json",
             Span::new(span.start, span.end - 1),
             &[span]
         )
@@ -1621,6 +1680,75 @@ mod tests {
                 .join(format!("alchemy-coverage-missing-{}", std::process::id())),
         };
         assert!(exact_main(&missing, "gs1-en", &executable).is_err());
+    }
+    #[test]
+    fn physical_stream_validation_rejects_bad_ranges_and_overlap() {
+        let main = [Span::new(0x0800_1000, 0x0800_1100)];
+        let rom = Span::new(0x0800_0000, 0x0800_2000);
+        assert!(validate_streams(
+            &[Stream {
+                id: "outside".into(),
+                start: 0x0800_1f00,
+                rom: 0x200,
+                source: None
+            }],
+            rom,
+            &main
+        )
+        .is_err());
+        assert!(validate_streams(
+            &[Stream {
+                id: "main".into(),
+                start: 0x0800_1080,
+                rom: 0x20,
+                source: None
+            }],
+            rom,
+            &main
+        )
+        .is_err());
+        assert!(validate_streams(
+            &[
+                Stream {
+                    id: "a".into(),
+                    start: 0x0800_0000,
+                    rom: 0x100,
+                    source: None
+                },
+                Stream {
+                    id: "b".into(),
+                    start: 0x0800_0080,
+                    rom: 0x100,
+                    source: None
+                },
+            ],
+            rom,
+            &main
+        )
+        .is_err());
+    }
+
+    #[test]
+    fn stream_ids_resolve_locations_resource_keys() {
+        let locations = "resource_36f\tTitle\ttitle\t0\t0x99b\tevidence\tSRC/MENU/TITLE\n";
+        assert_eq!(
+            atlas_source(locations, "36f").as_deref(),
+            Some("games/gs1/SRC/MENU/TITLE/")
+        );
+    }
+
+    #[test]
+    fn stream_category_partition_preserves_physical_bytes() {
+        let categories = stream_categories(
+            10,
+            100,
+            &[Span::new(0, 31)],
+            &[Span::new(31, 62)],
+            &[Span::new(62, 93)],
+            &[Span::new(93, 100)],
+        );
+        assert_eq!(categories.iter().sum::<i64>(), 10);
+        assert!(categories[2] >= 0);
     }
     #[test]
     fn evidence_backed_proven_assembly_is_counted() {

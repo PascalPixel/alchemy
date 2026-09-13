@@ -306,7 +306,7 @@ mod tests {
         let _ = std::fs::remove_dir_all(&work);
         std::fs::create_dir_all(&work).unwrap();
         let patch = work.join("unit-relative-include.patch");
-        std::fs::write(&patch, "diff --git a/motion_particle.c b/motion_particle.c\n--- a/motion_particle.c\n+++ b/motion_particle.c\n@@ -1 +1 @@\n-#include \"TYPES.H\"\n+#include \"../../../include/types.h\"\n").unwrap();
+        std::fs::write(&patch, "diff --git a/MOTION_PARTICLE.C b/MOTION_PARTICLE.C\n--- a/MOTION_PARTICLE.C\n+++ b/MOTION_PARTICLE.C\n@@ -1 +1 @@\n-#include \"TYPES.H\"\n+#include \"../../../INCLUDE/TYPES.H\"\n").unwrap();
         let arguments = [
             "--unit",
             "actor-motion-particle-scene",
@@ -330,7 +330,7 @@ mod tests {
             .join("try/games/gs1/SRC/FIELD/ALTIN/MOTION_PARTICLE.C");
         assert!(std::fs::read_to_string(staged)
             .unwrap()
-            .contains("../../../include/types.h"));
+            .contains("../../../INCLUDE/TYPES.H"));
         assert_eq!(output.matches("scope=translation-unit").count(), 1);
         assert_eq!(output.matches("owner=0x02000074").count(), 1);
         assert_eq!(output.matches("differing_halfwords=0").count(), 1);

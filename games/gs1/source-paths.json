@@ -14363,123 +14363,123 @@
     },
     "resource_38b:020001ec": {
       "name": "FieldScene_RunScriptedStep1472",
-      "source": "overlays/scene/actor/push_puzzle/scene_dialogue.c"
+      "source": "overlays/scene/actor/push_puzzle.c"
     },
     "resource_38b:02000208": {
       "name": "FieldScene_RunScriptedStep146E",
-      "source": "overlays/scene/actor/push_puzzle/scene_dialogue.c"
+      "source": "overlays/scene/actor/push_puzzle.c"
     },
     "resource_38b:02000f3c": {
       "name": "OverlayObject_SpawnKind24AtActor",
-      "source": "overlays/scene/actor/push_puzzle/overlay_object.c"
+      "source": "overlays/scene/actor/push_puzzle.c"
     },
     "resource_38b:02000308": {
       "name": "SceneDialogue_ShowLine16CC",
-      "source": "overlays/scene/actor/push_puzzle/scene_dialogue.c"
+      "source": "overlays/scene/actor/push_puzzle.c"
     },
     "resource_38b:020000dc": {
       "name": "SceneData_GetTable93FCWhenState20",
-      "source": "overlays/scene/actor/push_puzzle/scene_data_head.c"
+      "source": "overlays/scene/actor/push_puzzle.c"
     },
     "resource_38b:020002c8": {
       "name": "SceneDialogue_ShowLine16BF",
-      "source": "overlays/scene/actor/push_puzzle/scene_dialogue.c"
+      "source": "overlays/scene/actor/push_puzzle.c"
     },
     "resource_38b:02000d80": {
       "name": "SceneActor_FindAtTileXZ",
-      "source": "overlays/scene/actor/push_puzzle/actor_search.c"
+      "source": "overlays/scene/actor/push_puzzle.c"
     },
     "resource_38b:02000170": {
       "name": "FieldScene_RunScriptedSteps947And29DD",
-      "source": "overlays/scene/actor/push_puzzle/scene_primary_script.c"
+      "source": "overlays/scene/actor/push_puzzle.c"
     },
     "resource_38b:02000030": {
       "name": "SceneActor_UpdateFacingTowardTarget",
-      "source": "overlays/scene/actor/push_puzzle/actor_facing.c"
+      "source": "overlays/scene/actor/push_puzzle.c"
     },
     "resource_38b:02000224": {
       "name": "SceneDialogue_RunLine1470",
-      "source": "overlays/scene/actor/push_puzzle/scene_dialogue.c"
+      "source": "overlays/scene/actor/push_puzzle.c"
     },
     "resource_38b:02000fa0": {
       "name": "FieldScene_DrawTilesByActor8Row",
-      "source": "overlays/scene/actor/push_puzzle/scene_setup.c"
+      "source": "overlays/scene/actor/push_puzzle.c"
     },
     "resource_38b:02000198": {
       "name": "SceneData_SelectDataByRuntimeSelectorB",
-      "source": "overlays/scene/actor/push_puzzle/select_data_by_runtime_selector_b.c"
+      "source": "overlays/scene/actor/push_puzzle.c"
     },
     "resource_38b:02000104": {
       "name": "SceneData_GetTable942c",
-      "source": "overlays/scene/actor/push_puzzle/scene_data_head.c"
+      "source": "overlays/scene/actor/push_puzzle.c"
     },
     "resource_38b:02000088": {
       "name": "SceneData_SelectOverlayDataByRuntimeSelector",
-      "source": "overlays/scene/actor/push_puzzle/scene_data_head.c"
+      "source": "overlays/scene/actor/push_puzzle.c"
     },
     "resource_38b:02000cb4": {
       "name": "ActorPresentation_RepaintTenCellsAndActorEightCell",
-      "source": "overlays/scene/actor/push_puzzle/actor_presentation.c"
+      "source": "overlays/scene/actor/push_puzzle.c"
     },
     "resource_38b:02000288": {
       "name": "SceneDialogue_RunActorTwelveDialogue",
-      "source": "overlays/scene/actor/push_puzzle/scene_dialogue.c"
+      "source": "overlays/scene/actor/push_puzzle.c"
     },
     "resource_38b:0200010c": {
       "name": "SceneState_SetValues9_3_0",
-      "source": "overlays/scene/actor/push_puzzle/state_update.c"
+      "source": "overlays/scene/actor/push_puzzle.c"
     },
     "resource_38b:020002a8": {
       "name": "SceneDialogue_RunActorFourteenDialogue",
-      "source": "overlays/scene/actor/push_puzzle/scene_dialogue.c"
+      "source": "overlays/scene/actor/push_puzzle.c"
     },
     "resource_38b:020002e8": {
       "name": "SceneDialogue_RunActorSixteenDialogue",
-      "source": "overlays/scene/actor/push_puzzle/scene_dialogue.c"
+      "source": "overlays/scene/actor/push_puzzle.c"
     },
     "resource_38b:0200011c": {
       "name": "SceneData_SelectDataByRuntimeSelector",
-      "source": "overlays/scene/actor/push_puzzle/select_data_by_runtime_selector.c"
+      "source": "overlays/scene/actor/push_puzzle.c"
     },
     "resource_38b:02000578": {
       "name": "FieldScene_CallHelper170c",
-      "source": "overlays/scene/actor/push_puzzle/scene_wrapper.c"
+      "source": "overlays/scene/actor/push_puzzle.c"
     },
     "resource_38b:02000328": {
       "name": "FieldScene_RunEarlySequence",
-      "source": "overlays/scene/actor/push_puzzle/scene_primary_script.c"
+      "source": "overlays/scene/actor/push_puzzle.c"
     },
     "resource_38b:02000240": {
       "name": "FieldScene_RunScene38b_02000240",
-      "source": "overlays/scene/actor/push_puzzle/scene_dialogue.c"
+      "source": "overlays/scene/actor/push_puzzle.c"
     },
     "resource_38b:02000584": {
       "name": "FieldScene_RunScene38b_02000584",
-      "source": "overlays/scene/actor/push_puzzle/scene_primary_script.c"
+      "source": "overlays/scene/actor/push_puzzle.c"
     },
     "resource_38b:020008f0": {
       "name": "FieldScene_RunScene38b_020008f0",
-      "source": "overlays/scene/actor/push_puzzle/scene_primary_script.c"
+      "source": "overlays/scene/actor/push_puzzle.c"
     },
     "resource_38b:02000d10": {
       "name": "FieldScene_RunScene38b_02000d10",
-      "source": "overlays/scene/actor/push_puzzle/scene_primary_script.c"
+      "source": "overlays/scene/actor/push_puzzle.c"
     },
     "resource_38b:02000404": {
       "name": "FieldScene_RunScene38bSequenceC",
-      "source": "overlays/scene/actor/push_puzzle/scene_primary_script.c"
+      "source": "overlays/scene/actor/push_puzzle.c"
     },
     "resource_38b:02000ae0": {
       "name": "FieldScene_RunScene38bSequenceA",
-      "source": "overlays/scene/actor/push_puzzle/scene_primary_script.c"
+      "source": "overlays/scene/actor/push_puzzle.c"
     },
     "resource_38b:020009cc": {
       "name": "Scene_UpdatePuzzleActors",
-      "source": "overlays/scene/actor/push_puzzle/scene_script.c"
+      "source": "overlays/scene/actor/push_puzzle.c"
     },
     "resource_38b:02000890": {
       "name": "Scene_DispatchPuzzleEvent",
-      "source": "overlays/scene/actor/push_puzzle/scene_script.c"
+      "source": "overlays/scene/actor/push_puzzle.c"
     },
     "resource_3af:02002618": {
       "name": "FieldScene_ConfigureActorGroup"

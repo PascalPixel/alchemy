@@ -4,7 +4,6 @@
 #include "battle_motion.h"
 
 /* battle/motion/apply_variant_motion.c */
-struct BattleObjectSlot *GetBattleObjectSlot();
 u8 *Runtime_GetObject(s32);
 void Object_ResetMotion(struct MotionObject *);
 void Object_SetPosition(struct MotionObject *, s32, s32, s32);
@@ -93,11 +92,11 @@ void BattleMotion_ApproachTarget(
 
 /* battle/motion/reset_slot_object_mode2.c */
 
-void BattleMotion_ResetSlotObjectMode2(void)
+void BattleMotion_ResetSlotObjectMode2(s32 id)
 {
-    s32 object;
+    struct MotionObject *object;
 
-    object = (s32)GetBattleObjectSlot()->object;
+    object = GetBattleObjectSlot(id)->object;
     Object_ResetMotion(object);
     Object_SetMode(object, 2);
 }

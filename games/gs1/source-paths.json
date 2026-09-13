@@ -2070,8 +2070,7 @@
       "source": "ui/runtime/counters.c"
     },
     "main:080187ac": {
-      "name": "UiText_GetResourceDimensions",
-      "source": "ui/text/get_resource_dimensions.c"
+      "name": "UiText_GetResourceDimensions"
     },
     "main:0801a32c": "graphics/resource/load_table_entry.c",
     "main:0801e74c": {
@@ -4051,11 +4050,10 @@
     },
     "main:08018790": {
       "name": "UiText_MeasureResourceEntries",
-      "source": "ui/text/measure_resource_entries.c"
+      "source": "ui/text/resource_measure.c"
     },
     "main:080187fc": {
-      "name": "UiText_GetResourceDimensionsAlt",
-      "source": "ui/text/get_resource_dimensions_alt.c"
+      "name": "UiText_GetResourceDimensionsAlt"
     },
     "main:0801964c": {
       "name": "Ui_AdjustValueWithoutLimit",

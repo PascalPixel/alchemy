@@ -2120,14 +2120,15 @@
     {
       "overlay": "resource_375",
       "start": "0x02001760",
-      "end": "0x02001972",
+      "end": "0x020019a4",
       "kind": "structured_scene_module",
       "retention": "keep_structured_asm",
       "confidence": "strong",
       "evidence": [
         "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
         "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
-        "games/gs1/recon/en/dossiers.json#resource_375:02001760"
+        "games/gs1/recon/en/dossiers.json#resource_375:02001760",
+        "Complete audited 580-byte owner includes return alignment and the literal pool at 0x02001974–0x020019a4; prior instruction-only end 0x02001972 omitted those bytes. Pool loads and next owner at 0x020019a4 establish the boundary."
       ]
     },
     {

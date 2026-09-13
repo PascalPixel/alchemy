@@ -174848,6 +174848,59 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "scene-progress-actor-sequence-375",
+      "game": "gs1",
+      "source": "games/gs1/recon/en/overlays/resource_375_c_02001760.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_375",
+      "absolute_symbols": {
+        "Func_0200328e_a": {
+          "address": "0x02009b0c",
+          "kind": "thumb"
+        },
+        "Func_0200328e_b": {
+          "address": "0x02009a9c",
+          "kind": "thumb"
+        },
+        "Func_020032b4_a": {
+          "address": "0x02009b2c",
+          "kind": "thumb"
+        },
+        "Func_020032b4_b": {
+          "address": "0x02009b0c",
+          "kind": "thumb"
+        },
+        "Func_020032b4_c": {
+          "address": "0x02009ad4",
+          "kind": "thumb"
+        },
+        "Func_02003378_a": {
+          "address": "0x02009b2c",
+          "kind": "thumb"
+        },
+        "Func_02003378_b": {
+          "address": "0x02009aec",
+          "kind": "thumb"
+        },
+        "Func_020033f6_a": {
+          "address": "0x02009b44",
+          "kind": "thumb"
+        },
+        "Func_020033f6_b": {
+          "address": "0x02009a8c",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x02001760",
+          "extent": 580,
+          "state": "retained-assembly"
+        }
+      ]
     }
   ]
 }

@@ -97,12 +97,17 @@ fn cached() -> Result<Live, String> {
 }
 
 impl Live {
-    fn chart_at(&self, id: &str, width: Option<u16>, folder: &str) -> Option<String> {
-        if let (Some(map), Some(width)) = (&self.map, width) {
-            return Some(crate::coverage::boxtree::svg_at(
+    fn chart_at(&self, id: &str, size: Option<(u16, u16)>, folder: &str) -> Option<String> {
+        if let (Some(map), Some((width, height))) = (&self.map, size) {
+            return Some(crate::coverage::boxtree::svg_sized(
                 id,
                 map,
                 f64::from(width),
+                if height == 0 {
+                    f64::from(width) * 16.0 / 9.0
+                } else {
+                    f64::from(height)
+                },
                 folder,
             ));
         }
@@ -264,8 +269,14 @@ fn response(path: &str) -> Response {
             let id = parts.next().unwrap_or("");
             let width = match parts.next() {
                 None => None,
-                Some(value) => match value.parse::<u16>() {
-                    Ok(width @ 240..=2000) => Some(width),
+                Some(value) => match value.split_once('x').map_or_else(
+                    || value.parse::<u16>().map(|w| (w, 0)),
+                    |(w, h)| {
+                        w.parse::<u16>()
+                            .and_then(|w| h.parse::<u16>().map(|h| (w, h)))
+                    },
+                ) {
+                    Ok((width @ 240..=10000, height @ 0..=10000)) => Some((width, height)),
                     _ => {
                         return Response::new(
                             400,
@@ -435,7 +446,7 @@ mod tests {
     fn published_charts_survive_missing_reports_without_claiming_live_progress() {
         let live = live_from(Value::Null, vec![("code", "<svg/>".into())]).unwrap();
         assert_eq!(
-            live.chart_at("code", Some(800), "").as_deref(),
+            live.chart_at("code", Some((800, 0)), "").as_deref(),
             Some("<svg/>")
         );
         let snapshot = snapshot_from(&State {

@@ -88,6 +88,7 @@ typedef char BattleObjectSlot_active_offset[
 #undef MOTION_OBJECT_OFFSET
 
 s32 ActivateBattleObjectSlot(s32 object_id);
+struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id);
 void *GetMotionRecord(struct MotionObject *object, s32 record_index);
 
 #endif

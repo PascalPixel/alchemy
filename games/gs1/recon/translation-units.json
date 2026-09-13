@@ -176105,6 +176105,53 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "event-object-hooks",
+      "game": "gs1",
+      "source": "games/gs1/src/event/object_hooks.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0809177c",
+          "extent": 2,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08091780",
+          "extent": 44,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080917ac",
+          "extent": 22,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "event-prepare-objects",
+      "game": "gs1",
+      "source": "games/gs1/src/event/prepare_objects.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080917d0",
+          "extent": 34,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080917f4",
+          "extent": 30,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

@@ -171484,6 +171484,67 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "battle-effect-setup",
+      "game": "gs1",
+      "source": "games/gs1/src/battle/effects/setup.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x08091540",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08091550",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08091560",
+          "extent": 36,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08091584",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080915ac",
+          "extent": 48,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080915dc",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080915ec",
+          "extent": 80,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0809163c",
+          "extent": 36,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08091660",
+          "extent": 80,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080916b0",
+          "extent": 160,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

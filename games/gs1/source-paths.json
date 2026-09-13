@@ -15329,321 +15329,327 @@
     "resource_39b:02002030": {
       "name": "FieldScene_RunScene39bSequenceA"
     },
-    "resource_3b2:02000030": "map/locations/heidia/prologue/prologue_route_scene/measure_fixed_point_position_distance.c",
-    "resource_3b2:0200006c": "map/locations/heidia/prologue/prologue_route_scene/find_actor_at_fixed_point_position.c",
+    "resource_3b2:02000030": {
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
+    },
+    "resource_3b2:0200006c": {
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
+    },
     "resource_3b2:020000c4": {
       "name": "AdvanceStagedActorPair",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_motion.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
-    "resource_3b2:02000244": "map/locations/heidia/prologue/prologue_route_scene/fill_grid_attribute_rectangle.c",
+    "resource_3b2:02000244": {
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
+    },
     "resource_3b2:020002a8": {
       "name": "StopBlockedActorMotion",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_activation.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02000474": {
       "name": "FindClearActorPosition",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/prologue.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:020009dc": {
       "name": "SetEffectOwnerMode",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/scene_state.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:020009f4": {
       "name": "SpawnMode14Effect",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/effect_spawn.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02000a4c": {
       "name": "SpawnMode15Effect",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/effect_spawn.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02000ae8": {
       "name": "SpawnConfiguredSceneEffect",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/effect_spawn.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02000cc0": {
       "name": "NoOpEffectCallback",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/prologue.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02000cc4": {
       "name": "SelectPrimarySceneData",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/scene_data.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02000d3c": {
       "name": "GetEmptySceneData",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/scene_data.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02000d40": {
       "name": "GetDefaultSceneData",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/scene_data.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02000d48": {
       "name": "SelectSecondarySceneData",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/scene_data.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02000da4": {
       "name": "AdvanceEffectMotion",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_motion.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02000e00": {
       "name": "SpawnRadialEffectBurst",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/effect_spawn.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02000e88": {
       "name": "InitializePrologueSceneState",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/scene_state.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02000ec4": {
       "name": "SelectTertiarySceneData",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/scene_data.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02000f3c": {
       "name": "StartScriptedSceneMessage",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/messages.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02001374": {
       "name": "RunPrologueSceneSetup",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/prologue.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:0200138c": {
       "name": "StartSceneScript37",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/prologue.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02001508": {
       "name": "ConfigureSceneActor11",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_setup.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02001548": {
       "name": "ConfigureSceneActor12",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_setup.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:0200158c": {
       "name": "ConfigureSceneActor13",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_setup.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:020015d0": {
       "name": "ConfigureSceneActor14",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_setup.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02001624": {
       "name": "ShowForgetEverythingMessage",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/messages.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:0200164c": {
       "name": "ShowHelpYouForgetMessage",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/messages.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:0200165c": {
       "name": "ShowDamagedDoorMessage",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/messages.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:0200166c": {
       "name": "ShowSaveMyLifeMessage",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/messages.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02001740": {
       "name": "RunSceneVectorTransition",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/prologue.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02001774": {
       "name": "PositionSceneActorPair",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_activation.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:0200185c": {
       "name": "MarkGridLeftOfSceneActor",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/scene_state.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:020018b0": {
       "name": "MarkGridAboveSceneActor",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/scene_state.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02001904": {
       "name": "SetSceneActorModes",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/scene_state.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:0200191c": {
       "name": "InitializeEscapeSceneActors",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/scene_state.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:020019b4": {
       "name": "ActivateSceneActor8",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_activation.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:020019c0": {
       "name": "ActivateSceneActor10",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_activation.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:020019cc": {
       "name": "ActivateSceneActor11",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_activation.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:020019d8": {
       "name": "ActivateSceneActor12",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_activation.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:020019e4": {
       "name": "ActivateSceneActor13",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_activation.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:020019f0": {
       "name": "ActivateSceneActor15",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_activation.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:020019fc": {
       "name": "ActivateSceneActor17",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_activation.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02001a08": {
       "name": "ActivateSceneActor18",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_activation.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02001a14": {
       "name": "ActivateSceneActor9",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_activation.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02001a20": {
       "name": "ActivateSceneActor19",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_activation.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02001a2c": {
       "name": "ActivateSceneActor14",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_activation.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02001a38": {
       "name": "ActivateSceneActor16",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_activation.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02001a44": {
       "name": "TryPushBlockingSceneActor",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/prologue.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02001b14": {
       "name": "CheckActorPathSouth",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_routes.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02001b40": {
       "name": "CheckActorPathNorth",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_routes.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02001b68": {
       "name": "CheckActorPathWest",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_routes.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02001b94": {
       "name": "CheckActorPathEast",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_routes.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02001bbc": {
       "name": "UpdateEscapeRouteForActorPositions",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_routes.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02001c84": {
       "name": "UpdateActor8ReturnRoute",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_routes.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02001d2c": {
       "name": "UpdateActor10RetreatRoute",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_routes.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02001de0": {
       "name": "UpdateActor10AdvanceRoute",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_routes.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02001e5c": {
       "name": "UpdateActor11WestRoute",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_routes.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02001ef4": {
       "name": "UpdateActor11EastRoute",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_routes.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02001f78": {
       "name": "UpdateActor12WestRoute",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_routes.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02002004": {
       "name": "UpdateActor12EastRoute",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_routes.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02002080": {
       "name": "UpdateActor13WestRoute",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_routes.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:0200216c": {
       "name": "UpdateActor13EastRoute",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_routes.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02002200": {
       "name": "UpdateActor15WestRoute",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_routes.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:020022c8": {
       "name": "UpdateActor15EastRoute",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_routes.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:020023c4": {
       "name": "UpdateActor17SouthRoute",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_routes.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02002450": {
       "name": "UpdateActor17NorthRoute",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_routes.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:020025f0": {
       "name": "AdvanceActor18AlongEscapeRoute",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_routes.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02002848": {
       "name": "AdvanceActor9AlongEscapeRoute",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_routes.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02002b80": {
       "name": "RetreatActor14AlongEscapeRoute",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_routes.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02002c4c": {
       "name": "AdvanceActor14AlongEscapeRoute",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_routes.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02002d0c": {
       "name": "RetreatActor16AlongEscapeRoute",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_routes.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02002dd0": {
       "name": "AdvanceActor16AlongEscapeRoute",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_routes.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02002e70": {
       "name": "UpdateSwayingSceneObject",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/actor_motion.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02002ed8": {
       "name": "InitializeSwayingSceneObject",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/orbiting_effect.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02000f70": {
       "name": "FieldScene_RunPrimarySequence",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/scene_primary_script.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:0200167c": {
       "name": "FieldScene_RunScene3b2_0200167c",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/scene_primary_script.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02001494": {
       "name": "FieldScene_RunScene3b2_02001494",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/scene_primary_script.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02000ab0": {
       "name": "OverlayObject_IntegrateVelocities",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/overlay_object.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02001214": {
       "name": "FieldScene_RunScene3b2SequenceA",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/scene_primary_script.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b2:02000608": {
       "name": "SceneActor_MoveAndRedraw",
       "call_via": "020038a2",
-      "source": "map/locations/heidia/prologue/prologue_route_scene/move_and_redraw.c"
+      "source": "map/locations/heidia/prologue/prologue_route_scene.c"
     },
     "resource_3b3:02000030": "overlays/scene/actor/staged_nav.c",
     "resource_3b3:0200013c": {

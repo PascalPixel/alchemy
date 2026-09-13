@@ -11,7 +11,7 @@
  * the DrawRectangleFn calling convention (an indirect call through the r4
  * slot of the _call_via_rN trampoline at games/gs1/asm/080072e4.s) are taken
  * from those owners.  The blitter pair comes from the exact
- * games/gs1/src/battle/effects/fetch_rectangle_blitters.c.
+ * games/gs1/src/battle/effects/work/fetch_rectangle_blitters.c.
  *
  * Behaviour: sixty-four Mote records in the work block are seeded with a
  * random ring angle, radius and (negative) height.  Each animation frame the

@@ -1,5 +1,5 @@
 #include "types.h"
-#include "inventory_menu.h"
+#include "item_menu.h"
 
 #define CharacterSelector_Run Func_080a7440
 
@@ -7,7 +7,7 @@ extern s32 Func_080a77a4(s32 mode);
 
 s32 CharacterSelector_Run(void)
 {
-    struct InventoryMenuState *menu;
+    struct ItemMenuState *menu;
     s32 result;
 
     menu = Data_03001f2c;

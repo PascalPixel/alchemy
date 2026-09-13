@@ -8,7 +8,7 @@ struct OwnerActionState;
 
 /*
  * Data_03001f2c is a polymorphic menu-runtime cell.  This view belongs to the
- * Psynergy menu; keep it separate from InventoryMenuState even where the two
+ * Psynergy menu; keep it separate from ItemMenuState even where the two
  * modes deliberately share field offsets.
  */
 struct PsynergyMenuIcon {

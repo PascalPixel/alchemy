@@ -16,7 +16,7 @@
  * prefers when moving horizontally) lives in the shared menu-navigation cell
  * at 0x03001f34 so that reopening the menu resumes where it left off.  The
  * same cell's +0x4c flag ends the loop from outside; UiText_ShowLocalizedMessage
- * AndWait (games/gs1/src/ui/text/show_localized_message_and_wait.c) polls the
+ * AndWait (games/gs1/src/ui/text/msg/show_localized_message_and_wait.c) polls the
  * identical pair of "0x03001c94 & 3" and "+0x4c" conditions.
  *
  * Uncertain, and left as read from the reference:

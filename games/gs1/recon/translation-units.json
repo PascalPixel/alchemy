@@ -174802,6 +174802,52 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "battle-effect-descriptors",
+      "game": "gs1",
+      "source": "games/gs1/src/battle/effects/descriptors.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0808d458",
+          "extent": 52,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0808d48c",
+          "extent": 260,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0808d590",
+          "extent": 20,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0808d5a4",
+          "extent": 56,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0808d5dc",
+          "extent": 508,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0808d7d8",
+          "extent": 78,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0808d828",
+          "extent": 200,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

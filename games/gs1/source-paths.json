@@ -1755,7 +1755,7 @@
     },
     "main:080942e0": {
       "name": "ObjectEffect_PrepareContextEffect",
-      "source": "object/effects/prepare_context_effect.c"
+      "source": "object/effects/context_effect.c"
     },
     "main:080cd52c": {
       "name": "ObjectGroup_TickMemberTimers",
@@ -4829,20 +4829,16 @@
       "source": "object/reset_and_clear_field59.c"
     },
     "main:08094354": {
-      "name": "ObjectEffect_BeginContextEffect26",
-      "source": "object/effects/begin_context_effect_26.c"
+      "name": "ObjectEffect_BeginContextEffect26"
     },
     "main:08094368": {
-      "name": "ObjectEffect_BeginContextEffect25",
-      "source": "object/effects/begin_context_effect_25.c"
+      "name": "ObjectEffect_BeginContextEffect25"
     },
     "main:08094380": {
-      "name": "ObjectEffect_EndContextEffect",
-      "source": "object/effects/end_context_effect.c"
+      "name": "ObjectEffect_EndContextEffect"
     },
     "main:08094428": {
-      "name": "ObjectEffect_RunPendingFlagEvent",
-      "source": "object/effects/run_pending_flag_event.c"
+      "name": "ObjectEffect_RunPendingFlagEvent"
     },
     "main:08095214": {
       "name": "BattleFx_SetBlock30ValuesMaxZero",

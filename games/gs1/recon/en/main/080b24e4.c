@@ -51,7 +51,7 @@ void Shop_ConfirmItemPurchase(s32 list_window, s32 item_window)
             unit_id = shop->party_member_ids[selection];
             Shop_PlaceCursor((void *)list_window, selection * 24 - 12, 0);
             shop->mode = 3;
-            Shop_UpdatePartyMemberList(
+            Shop_DrawParty(
                 list_window, selection, *(u16 *)((u8 *)shop + 0xca6));
             Func_080b1470(
                 item_window, unit_id, *(u16 *)((u8 *)shop + 0xca6));

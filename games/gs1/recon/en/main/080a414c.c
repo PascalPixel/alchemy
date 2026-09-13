@@ -1,5 +1,5 @@
 #include "types.h"
-#include "inventory_menu.h"
+#include "item_menu.h"
 #include "equipment_menu.h"
 #include "global_cells.h"
 
@@ -22,7 +22,7 @@ extern u8 Value_00000075;
  */
 s32 Func_080a414c(void)
 {
-    struct InventoryMenuState *menu = Data_03001f2c;
+    struct ItemMenuState *menu = Data_03001f2c;
     s8 command_states[8];
     u16 *redraw_flag;
     s32 saved;
@@ -37,21 +37,21 @@ s32 Func_080a414c(void)
     row = 0;
     need_redraw = 1;
 
-    InventoryMenu_BuildCommandStates(command_states);
+    ItemMenu_BuildCmd(command_states);
     redraw_flag = (u16 *)((u8 *)menu + 0x220);
     col = 0;
 
     if (*redraw_flag != 1) {
         s32 message_window;
 
-        InventoryMenu_HideAllItemIcons();
+        ItemMenu_HideAllIcons();
         UiWindow_Commit(FIELD(menu, s32 *, 0x34));
         message_window = menu->message_window;
-        InventoryMenu_SetMessageWindowRow7Bounds();
+        ItemMenu_SetMsgWin7();
         UiWindow_Commit(message_window);
         Func_08015070(message_window, 0, 3, 0x10, 3);
-        InventoryMenu_DrawSelectedItemHeader();
-        InventoryMenu_DrawCommandLabels(command_states, message_window);
+        ItemMenu_DrawItemHead();
+        ItemMenu_DrawCmd(command_states, message_window);
         UiWindow_Commit(menu->info_window);
         UiText_DrawAt(
             (menu->selected_item & 0x1ff) + (s32)&Value_00000075,
@@ -89,8 +89,8 @@ s32 Func_080a414c(void)
         index = row * 3 + col;
     }
 
-    x = InventoryMenu_GetCommandCursorX(col, row);
-    y = InventoryMenu_GetCommandCursorY(col, row);
+    x = ItemMenu_CmdCursorX(col, row);
+    y = ItemMenu_CmdCursorY(col, row);
     Func_080a1ac0(x, y);
 
     for (;;) {
@@ -119,8 +119,8 @@ s32 Func_080a414c(void)
             }
         }
 
-        x = InventoryMenu_GetCommandCursorX(col, row);
-        y = InventoryMenu_GetCommandCursorY(col, row);
+        x = ItemMenu_CmdCursorX(col, row);
+        y = ItemMenu_CmdCursorY(col, row);
         Func_080a1a40(x, y);
         WaitFrames(1);
 

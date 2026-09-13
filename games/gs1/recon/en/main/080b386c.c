@@ -13,7 +13,7 @@ s32 Func_080772a8(s32, s32);
 s32 Func_080b19cc(s32);
 void Func_080150b0(s32, s32, s32, s32, s32);
 
-void Shop_DrawUseItemDetails(s32 window, s32 unit_id, s32 item_id)
+void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
 {
     u8 *unit = Func_08077008(unit_id);
     s32 slot_offset = item_id * 2 + 216;
@@ -35,7 +35,7 @@ void Shop_DrawUseItemDetails(s32 window, s32 unit_id, s32 item_id)
             s32 qty;
             s32 total;
 
-            qty = Shop_ComputeSalePrice(*(u16 *)(unit + slot_offset));
+            qty = Shop_SalePrice(*(u16 *)(unit + slot_offset));
             total = mult * qty;
 
             UiText_DrawAt((s32)&Value_00000c8d, window, 8, 8);

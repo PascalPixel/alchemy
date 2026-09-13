@@ -26,7 +26,7 @@ extern char Value_00000ca2;
 extern char Value_00000ca3;
 extern u8 Value_00000ad0[];
 
-s32 Shop_ConfirmEquipItem(s32 unit_id, s32 slot)
+s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
 {
     struct ShopMenuState_080b1868 *menu = Data_03001f2c;
     u8 *unit = (u8 *)Func_08077008(unit_id);

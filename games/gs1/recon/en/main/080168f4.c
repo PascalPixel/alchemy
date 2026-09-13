@@ -54,7 +54,7 @@
  * The short-lived zero temporaries below are not decoration: writing the
  * literal directly makes GCC narrow the store to HImode and load the
  * constant from the pool, where the reference emits movs. The same idiom is
- * already used in games/gs1/src/ui/text/draw_resource.c.
+ * already used in games/gs1/src/ui/text/draw/draw_resource.c.
  */
 
 /* Not yet in gs1_edition.h; English offsets only. */

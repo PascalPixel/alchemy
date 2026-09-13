@@ -4,9 +4,9 @@
  * hand: resolve declaration collisions here or in shared headers. */
 
 #include "../main/0808e23c.c"
-#include "../../../src/battle/effects/find_matching_event.c"
-#include "../../../src/battle/effects/execute_packed_ability_effect.c"
+#include "../../../src/battle/effects/work/find_matching_event.c"
+#include "../../../src/battle/effects/work/execute_packed_ability_effect.c"
 #include "../../../src/battle/command/execute_selected_action.c"
-#include "../../../src/battle/effects/has_matching_event5.c"
-#include "../../../src/battle/effects/has_trigger.c"
-#include "../../../src/object/motion/snap_to_terrain.c"
+#include "../../../src/battle/effects/work/has_matching_event5.c"
+#include "../../../src/battle/effects/work/has_trigger.c"
+#include "../../../src/object/motion/pos/snap_to_terrain.c"

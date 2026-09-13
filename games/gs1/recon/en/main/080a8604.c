@@ -1,5 +1,5 @@
 #include "types.h"
-#include "inventory_menu.h"
+#include "item_menu.h"
 
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
@@ -7,7 +7,7 @@ extern u8 *Runtime_GetObject(s32 owner);
 extern s32 Func_08077290(s32);
 extern s32 CharacterMenu_BuildAvailability(u8 *output, s32 requested, s32 id);
 extern s32 CharacterMenu_UpdateSelectionIcons(const u8 *enabled);
-extern void InventoryMenu_ApplyCategoryItemFlags(u8 *entries);
+extern void ItemMenu_ApplyFlags(u8 *entries);
 extern void Func_080a8914(s32 window, s32 owner, s32 mode);
 extern void Func_08015068(s32 window, s32 a, s32 b, s32 c, s32 d);
 extern void Func_08015090(s32 image, s32 window, s32 x, s32 y);
@@ -28,7 +28,7 @@ extern u8 Data_080af230;
 
 void Func_080a8604(s32 window, s32 owner, s32 mode)
 {
-    struct InventoryMenuState *menu = Data_03001f2c;
+    struct ItemMenuState *menu = Data_03001f2c;
     u8 *object;
     s32 compare_mode;
     s32 row_y;
@@ -93,7 +93,7 @@ void Func_080a8604(s32 window, s32 owner, s32 mode)
         UiText_DrawAt((s32)&Value_00000bd4, window, 0, 40);
 
     CharacterMenu_UpdateSelectionIcons(entries);
-    InventoryMenu_ApplyCategoryItemFlags(entries);
+    ItemMenu_ApplyFlags(entries);
 
     category = M2C_FIELD(menu, u16 *, 0x220);
     if (category == 3)

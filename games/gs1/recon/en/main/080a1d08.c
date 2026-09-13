@@ -1,4 +1,4 @@
-#include "inventory_menu.h"
+#include "item_menu.h"
 
 #define INPUT_NEW_KEYS (*(volatile u32 *)0x03001c94)
 
@@ -13,10 +13,10 @@ void WaitFrames(s32 frames);
 void Func_080770c8(s32 flag);
 void UiWindow_CloseIfOpen(s32 *, s32);
 
-#define InventoryMenu_ShowModalMessage Func_080a1d08
+#define ItemMenu_ShowModalMessage Func_080a1d08
 
 /* Show an inventory message and optionally wait for an acknowledgement. */
-void InventoryMenu_ShowModalMessage(
+void ItemMenu_ShowModalMessage(
     s32 message,
     s32 acknowledgement_mode,
     s32 window_mode)
@@ -28,7 +28,7 @@ void InventoryMenu_ShowModalMessage(
     s32 width;
     s32 height;
 
-    (*(struct InventoryMenuIcon **)(menu + 0x14))->state = 13;
+    (*(struct ItemMenuIcon **)(menu + 0x14))->state = 13;
     if (window_mode != -1) {
         Func_08015108(message, &left, &top, &width, &height);
         if (UiWindow_UpdateOrCreate(
@@ -71,7 +71,7 @@ void InventoryMenu_ShowModalMessage(
     }
 
     *(s16 *)(menu + 0x222) = 1;
-    (*(struct InventoryMenuIcon **)(menu + 0x14))->state = 1;
+    (*(struct ItemMenuIcon **)(menu + 0x14))->state = 1;
     if (window_mode != -1)
         UiWindow_CloseIfOpen((s32 *)(menu + 0x3c), 1);
 }

@@ -18,7 +18,7 @@
  *    games/gs1/include/four_object_motion.h; the fields this owner touches
  *    (0x134, 0x178, 0x184, 0x21a, 0x254..0x258) extend past that struct, so
  *    the file uses the FIELD_AT_OFFSET idiom of its exact sibling
- *    games/gs1/src/menu/run_paired_entry_action.c instead of inventing a type.
+ *    games/gs1/src/menu/sel/run_paired_entry_action.c instead of inventing a type.
  *  - the reference reaches the fixed IWRAM entry at 0x03000118 with the
  *    "mov ip, pc / bx rN" inline-call idiom, which the approved GCC 2.96 route
  *    has no way to emit. It is modelled here as an ordinary typed indirect

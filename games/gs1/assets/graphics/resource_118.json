@@ -28332,7 +28332,7 @@
         10
       ],
       "palette": {
-        "source": "games/gs1/assets/graphics/0800777c.gbapal.png",
+        "source": "games/gs1/GRAPHICS/PALETTE/0800777c.gbapal.png",
         "offset": 16,
         "entries": 224
       },

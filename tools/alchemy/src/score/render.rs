@@ -990,7 +990,7 @@ mod source_identity_tests {
         )
         .unwrap();
         assert_eq!(identity.owner, SourceOwner::Main(0x080b0fa4));
-        assert_eq!(identity.routing, PathBuf::from("games/gs1/SRC/080b0fa4.c"));
+        assert_eq!(identity.routing, PathBuf::from("games/gs1/src/080b0fa4.c"));
         let source = "games/gs1/recon/en/main/080ab5e4.c";
         let identity =
             SourceIdentity::resolve(root, source, CompilerTarget::Gs1, None, None).unwrap();
@@ -1004,7 +1004,7 @@ mod source_identity_tests {
             None,
         )
         .unwrap();
-        assert_eq!(identity.routing, PathBuf::from("games/gs1/SRC/080a8904.c"));
+        assert_eq!(identity.routing, PathBuf::from("games/gs1/src/080a8904.c"));
     }
     #[test]
     fn register_binding_changes_invalidate_candidate_source_identity() {

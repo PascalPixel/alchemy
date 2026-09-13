@@ -388,20 +388,20 @@ mod tests {
     #[test]
     fn mixed_unit_includes_resolve_to_src_keys() {
         let includes = quoted_c_includes(
-            "#include \"../main/0808fe38.C\"\n#include \"../../../src/battle/effects/runtime/enable_two_callbacks.c\"\n",
+            "#include \"../main/0808fe38.C\"\n#include \"../../../SRC/BATTLE/EFFECT/ENABLE_TWO_CALLBACKS.C\"\n",
         );
         assert_eq!(
             includes,
             [
                 "../main/0808fe38.C",
-                "../../../src/battle/effects/runtime/enable_two_callbacks.c"
+                "../../../SRC/BATTLE/EFFECT/ENABLE_TWO_CALLBACKS.C"
             ]
         );
         let unit = Path::new("/workspace/games/gs1/recon/en/units/unit-0808fe38.c");
         let resolved = lexical_join(unit.parent().unwrap(), &includes[1]);
         assert_eq!(
             source_key(Path::new("/workspace"), &resolved).as_deref(),
-            Some("battle/effects/runtime/enable_two_callbacks.c")
+            Some("BATTLE/EFFECT/ENABLE_TWO_CALLBACKS.C")
         );
         assert_eq!(source_key(Path::new("/workspace"), unit), None);
     }

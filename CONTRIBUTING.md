@@ -471,8 +471,11 @@ and overwriting an existing output are refused, not silently discarded.
 Engine headers and loop metadata stay in asset manifests. Thumb is code, not
 a music format. Keep format names portable and directional.
 
-The dashboard at `http://127.0.0.1:4650/` combines main/overlay Code and
-graphics/sound Data; it has no music player. `make dashboard-service-install`
+The dashboard at `http://127.0.0.1:4650/` shows one portrait ROM tree of files
+and folders, shared with the README snapshot; it has no music player. Click a
+folder to open it and use Back to return. Addresses belong in hover details,
+not tile captions. The pixel font stays 16px when the layout changes.
+`make dashboard-service-install`
 installs its macOS login service; `make dashboard-restart` restarts it. Coverage
 inputs are watched, but the service keeps the binary it started with, so restart
 it after any tooling merge or it computes DONE under the old rules. Its client is the JavaScript exception to Rust tooling,
@@ -502,7 +505,17 @@ Atlas replaces the current layout below with area workspaces under
 `games/gs1/SRC/FIELD/`, shared field engine code in `FIELD/COMMON/`, and
 cross-location modules in `FIELD/SHARED/`. The `atlas_destination` column in
 `games/gs1/locations.tsv` records the destination for each overlay. Source and
-include files have moved; asset placement remains a separate stage. Preserve separate compilation and
+include files have moved; maps now accompany their evidenced areas, messages
+and credits live in `TEXT`. The glyph sheet is in `GRAPHICS/FONT`; mixed item,
+status, window and menu-image banks are in `GRAPHICS/TILE`, not classified as
+fonts merely because their former package was called localization.
+Sound inputs are under `SOUND/SEQUENCE`, `SOUND/SAMPLE` and
+`SOUND/INSTRUMENT`; mixed residual sound definitions remain at the sound root.
+Character banks and their component indexes live together in `GRAPHICS/CHARACTER`.
+Their battle/field filename prefixes do not establish exclusive ownership:
+the common descriptor catalog feeds animation and UI consumers. Preserve shared
+palettes once; do not split banks by an export label alone.
+Remaining graphics placement is a separate stage. Preserve separate compilation and
 load boundaries. The remaining source groups are `SYSTEM`, `LIB`, `GRAPHICS`,
 `SOUND`, `GAME`, `BATTLE`, `MENU` and `DEBUG`; shared headers belong in `INCLUDE`.
 Uppercase is a project convention, not recovered historical spelling. Ensure
@@ -515,14 +528,21 @@ samples and instrument definitions in `SOUND`, and localized messages in `TEXT`.
 Do not duplicate shared resources, invent asset associations, or publish
 protected extracted inputs. Use `.gitkeep` only for necessary empty destinations.
 
-The dashboard and README will share one 9:16 ROM viewer hierarchy and layout,
+Image round-trip equality proves storage bytes, not the intended picture layout
+or colors. Establish frame boundaries, tile ordering and palette selection from
+the runtime consumers before rearranging images. A grayscale index palette is
+not evidence of monochrome artwork, and a narrow animation strip is not by
+itself a bad export. Existing extraction metadata is a hypothesis to check,
+not independent proof of Camelot's authoring format.
+
+The dashboard and README share one 9:16 ROM viewer hierarchy and layout,
 counting represented ROM bytes once while preserving the executable-only DONE
 denominator. Keep the optional music debugger separate. Migrate source, assets
 and viewer in verified stages; completion requires the full GS1 English ROM to
 remain byte-identical and the migration to be committed. Do not claim GS2 or
 other editions verified from GS1 evidence.
 
-Until migrated, `games/<game>/src/` uses the following responsibilities. These are our
+GS1 `SRC/` uses the following responsibilities. These are our
 reconstruction choices, not recovered Camelot directory names. Keep a shallow
 module tree; do not create a folder for each function or sort whole scenes into
 actor/dialogue/story categories. A scene's actors, dialogue and events belong
@@ -531,17 +551,19 @@ unit, overlay identity, compiler route or completion credit.
 
 | Folder | Responsibility |
 | --- | --- |
-| `system/` | Startup, scheduling, memory, input, save, link and resource loading. |
-| `lib/` | Library support and shared math routines; retain compiler provenance. |
-| `graphics/` | Display, palette, animation, tile, text, window and icon rendering. |
-| `sound/` | Sound and music player code, not the sound assets. |
-| `game/` | Shared character, party, inventory, item, ability, Djinn and flag rules. |
-| `field/` | Shared map, camera, object, event and script runtime. |
-| `battle/` | Battle rules, presentation, motion and effect modules. |
-| `menu/` | Menu interaction, shops, inns and selection screens. |
-| `overlays/` | Loadable area/scene modules and genuinely shared overlay helpers. |
+| `SYSTEM/` | Startup, scheduling, memory, input, save, link and resource loading. |
+| `LIB/` | Library support and shared math routines; retain compiler provenance. |
+| `GRAPHICS/` | Display, palette, animation, tile, text, window and icon rendering. |
+| `SOUND/` | Sound and music player code, not the sound assets. |
+| `GAME/` | Shared character, party, inventory, item, ability, Djinn and flag rules. |
+| `FIELD/COMMON/` | Shared map, camera, object, event and script runtime. |
+| `FIELD/<area>/` | Area modules and their exclusive assets. |
+| `FIELD/SHARED/` | Loadable modules serving multiple areas. |
+| `BATTLE/` | Battle rules, presentation, motion and effect modules. |
+| `MENU/` | Menu interaction, shops, inns and selection screens. |
+| `DEBUG/` | Debug facilities. |
 
-Area-specific code belongs in `overlays/<location>/`; one location may have
+Area-specific code belongs in `SRC/FIELD/<area>/`; one location may have
 several separately compiled overlays. `games/gs1/locations.tsv` retains the
 ROM-backed GS1 English location assignments for all 96 overlays. The scene
 selector is bounded to 0–200 by `08029094`; `0808ab48` loads the resource from
@@ -555,14 +577,17 @@ display labels, not recovered Japanese folder names. The historical
 `battle_effect_tail.json` and `battle_effect_rules.json` filenames do not make
 these tables battle effects. Existing filenames and function names alone do
 not independently prove an assignment: establish new locations through resource,
-map or call-site evidence. Unidentified modules stay in `overlays/unidentified/`
-under descriptive filenames until their location is established. Never invent a
+map or call-site evidence. Unidentified ownership remains unresolved until
+its location is established. Never invent a
 place to fill a folder, and never merge distinct overlay address spaces simply
-because they share a location. Shared map code belongs in `field/map/`.
+because they share a location. Shared field engine code belongs in `FIELD/COMMON/`.
 
-Keep classification metadata outside `src/`; provisional-source records live
+Keep classification metadata outside source folders; provisional-source records live
 in `games/gs1/semantic/provisional-source.json`. Code stays out of assets: overlay assembly
 and compression recipes belong in `asm/overlays/`, battle assembly in
-`asm/battle/`, non-executable battle tables in `assets/data/battle/`, and
-both games' sound in `assets/sound/`. Update paths, caches and coverage
-together. Music titles require actual identification, not guessed numbering.
+`asm/battle/`. GS1 non-executable battle tables still in `assets/data/battle/`
+are awaiting migration to `SRC/BATTLE/DATA/`; GS1 sound inputs are already in
+the game-root `SOUND/`, separate from player code in `SRC/SOUND/`.
+GS2 retains its existing layout until independently mapped. Update paths,
+caches and coverage together. Music titles require actual identification,
+not guessed numbering.

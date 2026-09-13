@@ -2085,7 +2085,7 @@ fn closure_self_test() -> Result<String, String> {
     if missing.exists() {
         return Err("closure package self-test path exists".to_string());
     }
-    let index = root.join("games/gs1/assets/sound/samples.tsv");
+    let index = root.join("games/gs1/SOUND/SAMPLE/SAMPLES.tsv");
     let text =
         fs::read_to_string(index).map_err(|error| format!("PCM self-test index: {error}"))?;
     let mut rows = text.lines().filter(|line| !line.starts_with('#'));
@@ -2330,7 +2330,10 @@ fn expand_series(
                 for family in series_values(series, "families")? {
                     let tuple = family.as_array().ok_or("map family malformed")?;
                     let name = json_string(&tuple[0], "map family id")?.to_ascii_lowercase();
-                    let directory = format!("games/gs1/assets/maps/map_{name}");
+                    let directory = format!(
+                        "{}{name}",
+                        json_string(&series["source_prefix"], "map series source prefix")?
+                    );
                     let source = format!("{directory}.json");
                     let document = json(&ctx.source(&source)?)?;
                     let container = number(&tuple[1], "map container")?;
@@ -4377,6 +4380,10 @@ fn stage_stamp_with_signature(
     let mut files = BTreeMap::new();
     for directory in [
         "games/gs1/assets",
+        "games/gs1/SRC",
+        "games/gs1/GRAPHICS",
+        "games/gs1/SOUND",
+        "games/gs1/TEXT",
         "games/gs1/asm/overlays",
         "games/gs1/asm/battle",
     ] {
@@ -4463,16 +4470,17 @@ fn asset_stamp_tracks_sound_and_included_overlay_sources() {
     let directory = tempfile::tempdir().unwrap();
     let root = directory.path();
     for name in [
-        "assets/sound/out",
+        "assets",
+        "SOUND/SEQUENCE/out",
         "asm/overlays",
         "asm/battle",
-        "src",
+        "SRC",
         "recon",
     ] {
         fs::create_dir_all(root.join("games/gs1").join(name)).unwrap();
     }
     let manifest = root.join("games/gs1/assets/manifest.json");
-    let sound = root.join("games/gs1/assets/sound/sequences.tsv");
+    let sound = root.join("games/gs1/SOUND/SEQUENCE/SEQUENCES.tsv");
     let header = root.join("games/gs1/SRC/shared.h");
     let unit = root.join("games/gs1/recon/translation-units.json");
     let overlay = root.join("games/gs1/asm/overlays/fixture.s");
@@ -4499,6 +4507,18 @@ fn asset_stamp_tracks_sound_and_included_overlay_sources() {
         )
     };
     let mut previous = stamp().unwrap();
+    for name in [
+        "SRC/FIELD/XIAN/MAP.json",
+        "GRAPHICS/FONT/FONT.png",
+        "TEXT/MESSAGES.json",
+    ] {
+        let path = root.join("games/gs1").join(name);
+        fs::create_dir_all(path.parent().unwrap()).unwrap();
+        fs::write(&path, "asset input").unwrap();
+        let next = stamp().unwrap();
+        assert_ne!(previous, next, "{}", path.display());
+        previous = next;
+    }
     for path in [&sound, &header, &unit, &overlay, &battle] {
         fs::write(path, "after").unwrap();
         let next = stamp().unwrap();
@@ -4506,7 +4526,7 @@ fn asset_stamp_tracks_sound_and_included_overlay_sources() {
         previous = next;
     }
     fs::write(
-        root.join("games/gs1/assets/sound/out/fixture.bin"),
+        root.join("games/gs1/SOUND/SEQUENCE/out/fixture.bin"),
         "ignored",
     )
     .unwrap();

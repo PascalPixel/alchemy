@@ -837,6 +837,10 @@ fn component_regions_concatenate_parts_at_running_addresses() {
     assert_eq!(built, [1, 1, 7, 7, 9]);
     assert_eq!(sources, ["parts.json"]);
     assert_eq!(details["components"].as_array().unwrap().len(), 2);
+    assert_eq!(
+        details["components"][1]["sources"],
+        serde_json::json!(["parts.json"])
+    );
     let mut bad = entry.clone();
     bad["components"][0]["address"] = Value::from("0x08000011");
     assert!(build_entry(&mut ctx, &bad).is_err());
@@ -2780,8 +2784,8 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
                     ));
                 }
                 built.extend(data);
+                reports.push(serde_json::json!({"kind": part.get("kind"), "address": hex_address(offset), "size": size, "sources": part_sources}));
                 sources.extend(part_sources);
-                reports.push(serde_json::json!({"kind": part.get("kind"), "address": hex_address(offset), "size": size}));
             }
             Ok((
                 built,

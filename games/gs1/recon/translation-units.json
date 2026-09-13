@@ -80449,22 +80449,6 @@
       "overlay": null
     },
     {
-      "id": "audio-initialize-runtime-defaults",
-      "game": "gs1",
-      "source": "games/gs1/src/audio/initialize_runtime_defaults.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080f9438",
-          "extent": 142,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "audio-music-track-read-command-byte",
       "game": "gs1",
       "source": "games/gs1/src/audio/music_track_read_command_byte.c",
@@ -119570,52 +119554,6 @@
         {
           "address": "0x08028b80",
           "extent": 132,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "audio-command-control",
-      "game": "gs1",
-      "source": "games/gs1/src/audio/command/control.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080f954c",
-          "extent": 12,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080f9558",
-          "extent": 10,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080f9564",
-          "extent": 10,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080f9570",
-          "extent": 36,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080f9594",
-          "extent": 12,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080f95a0",
-          "extent": 40,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x080f95c8",
-          "extent": 24,
           "state": "exact-c"
         }
       ],
@@ -174019,6 +173957,82 @@
         {
           "address": "0x08079754",
           "extent": 40,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "audio-command",
+      "game": "gs1",
+      "source": "games/gs1/src/audio/command.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080f9438",
+          "extent": 142,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080f94c8",
+          "extent": 24,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080f94e0",
+          "extent": 24,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080f94f8",
+          "extent": 20,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080f950c",
+          "extent": 44,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080f9538",
+          "extent": 20,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080f954c",
+          "extent": 12,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080f9558",
+          "extent": 10,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080f9564",
+          "extent": 10,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080f9570",
+          "extent": 36,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080f9594",
+          "extent": 12,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080f95a0",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080f95c8",
+          "extent": 24,
           "state": "exact-c"
         }
       ]

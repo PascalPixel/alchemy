@@ -3675,19 +3675,16 @@
     },
     "main:08006458": {
       "name": "SerialRuntime_WaitForTransferA",
-      "source": "link/serial/wait_for_transfer_a.c"
+      "source": "link/serial/transfer_wait.c"
     },
     "main:08006488": {
-      "name": "SerialRuntime_WaitForTransferB",
-      "source": "link/serial/wait_for_transfer_b.c"
+      "name": "SerialRuntime_WaitForTransferB"
     },
     "main:080064b8": {
-      "name": "SerialRuntime_WaitForTransfers",
-      "source": "link/serial/wait_for_transfers.c"
+      "name": "SerialRuntime_WaitForTransfers"
     },
     "main:080064f4": {
-      "name": "SerialRuntime_GetActiveTransfers",
-      "source": "link/serial/get_active_transfers.c"
+      "name": "SerialRuntime_GetActiveTransfers"
     },
     "main:0800b684": {
       "name": "ObjectGroup_SetChildValueUnlessFifteen",

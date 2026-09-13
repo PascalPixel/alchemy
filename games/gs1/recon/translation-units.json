@@ -175591,6 +175591,37 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "serial-transfer-wait",
+      "game": "gs1",
+      "source": "games/gs1/src/link/serial/transfer_wait.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x08006458",
+          "extent": 48,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08006488",
+          "extent": 48,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080064b8",
+          "extent": 60,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080064f4",
+          "extent": 40,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

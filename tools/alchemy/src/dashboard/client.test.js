@@ -93,13 +93,13 @@ test("folder requests preserve the selected folder and discard stale responses",
 test("resized charts request native pixel dimensions and reject stale-size responses", async () => {
   const ui = await coverageClient();
   let installed;
-  const chart = { dataset: { width: '366' }, replaceChildren(svg) { installed = svg; } };
+  const chart = { dataset: { width: '366' }, clientHeight: 600, replaceChildren(svg) { installed = svg; } };
   const section = { querySelector: () => chart };
   await ui.loadTree(section, 'core', 'Main game', '2', 800);
   expect(installed).toBeUndefined();
   await ui.loadTree(section, 'core', 'Main game', '2', 366);
   expect(installed).toBe(ui.svg);
-  expect(ui.requests).toEqual(['/svg/core/800?v=2', '/svg/core/366?v=2']);
+  expect(ui.requests).toEqual(['/svg/core/800x600?v=2', '/svg/core/366x600?v=2']);
 });
 
 test("file activation does not navigate its ancestor folder", async () => {

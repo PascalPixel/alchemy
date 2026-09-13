@@ -52,7 +52,8 @@ function showTooltip(event, message) {
   tooltip.style.top = `${Math.max(edge, top)}px`;
 }
 async function loadTree(section, tree, title, revision, width = 540, folder = "") {
-  const response = await fetch(`/svg/${tree}/${width}${folder ? `/${folder}` : ""}?v=${encodeURIComponent(revision)}`);
+  const height = section.querySelector(".chart")?.clientHeight ?? 0;
+  const response = await fetch(`/svg/${tree}/${width}${height ? `x${height}` : ""}${folder ? `/${folder}` : ""}?v=${encodeURIComponent(revision)}`);
   if (!response.ok) throw new Error(`/svg/${tree} returned ${response.status}`);
   const parsed = new DOMParser().parseFromString(await response.text(), "image/svg+xml");
   const svg = parsed.documentElement;
@@ -68,6 +69,7 @@ async function loadTree(section, tree, title, revision, width = 540, folder = ""
   svg.setAttribute("aria-label", `${title} coverage graph`);
   const chart = section.querySelector(".chart");
   if (chart?.dataset?.width && chart.dataset.width !== String(width)) return;
+  if (height && chart.clientHeight !== height) return;
   if ((chart?.dataset?.folder ?? "") !== folder) return;
   chart?.replaceChildren(svg);
 }
@@ -85,8 +87,9 @@ function panel(tree, title, revision) {
 const treeObserver = new ResizeObserver(entries => {
   for (const { target: chart } of entries) {
     const width = chart.clientWidth;
-    if (!width || width === Number(chart.dataset.width)) continue;
+    if (!width || (width === Number(chart.dataset.width) && chart.clientHeight === Number(chart.dataset.height))) continue;
     chart.dataset.width = String(width);
+    chart.dataset.height = String(chart.clientHeight);
     loadTree(chart.parentElement, chart.dataset.tree, chart.dataset.title, chart.dataset.revision, width, chart.dataset.folder ?? "")
       .catch(error => showError(error instanceof Error ? error.message : String(error)));
   }

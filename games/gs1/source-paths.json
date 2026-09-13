@@ -5172,23 +5172,19 @@
     },
     "main:080b2778": {
       "name": "Shop_ServicePrice",
-      "source": "shop/get_service_price.c"
+      "source": "shop/service.c"
     },
     "main:080b280c": {
-      "name": "Shop_CountUnits",
-      "source": "shop/count_eligible_units.c"
+      "name": "Shop_CountUnits"
     },
     "main:080b2884": {
-      "name": "Shop_MsgByMode",
-      "source": "shop/offset_message_by_mode.c"
+      "name": "Shop_MsgByMode"
     },
     "main:080b28d4": {
-      "name": "UiMessage_ShowResolvedAndWait",
-      "source": "ui/message/show_resolved_and_wait.c"
+      "name": "UiMessage_ShowResolvedAndWait"
     },
     "main:080b2928": {
-      "name": "UiMessage_ShowResolvedAndRestoreState",
-      "source": "ui/message/show_resolved_and_restore_state.c"
+      "name": "UiMessage_ShowResolvedAndRestoreState"
     },
     "main:080b2da8": {
       "name": "BattleUnit_ResetStateByMode",
@@ -5728,8 +5724,7 @@
       "source": "battle/unit/roll_counter_early_end.c"
     },
     "main:080b27b0": {
-      "name": "Shop_CanServe",
-      "source": "shop/is_unit_eligible_for_service.c"
+      "name": "Shop_CanServe"
     },
     "main:080b2ed8": {
       "name": "Shop_DrawSelMsg"

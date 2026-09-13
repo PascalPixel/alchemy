@@ -172,12 +172,10 @@
       "source": "shop/select_repair_item.c"
     },
     "main:080b362c": {
-      "name": "Shop_SelUse",
-      "source": "shop/select_use_item.c"
+      "name": "Shop_SelUse"
     },
     "main:080b386c": {
-      "name": "Shop_DrawUseItem",
-      "source": "shop/draw_use_item_details.c"
+      "name": "Shop_DrawUseItem"
     },
     "main:08003008": {
       "name": "reserved_no_op_f",
@@ -9751,7 +9749,7 @@
     },
     "main:080b3444": {
       "name": "Shop_PickUnitItem",
-      "source": "shop/select_party_member_item.c"
+      "source": "shop/item_selection.c"
     },
     "main:08004838": {
       "name": "PaletteDma_LoadBlock"

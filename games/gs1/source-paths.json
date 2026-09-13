@@ -13914,7 +13914,7 @@
     },
     "resource_3b7:02000d70": {
       "name": "SceneDialogue_PickTopicVariantId",
-      "source": "overlays/scene/dialogue/topic/pick_topic_variant_id/pick_topic_variant_id.c"
+      "source": "overlays/scene/dialogue/topic.c"
     },
     "resource_3b7:02000030": {
       "name": "SceneData_GetTable9A08",
@@ -13942,7 +13942,7 @@
     },
     "resource_3b7:020016a8": {
       "name": "SceneState_InitFourActorRecordsAndInstallTask",
-      "source": "overlays/scene/dialogue/topic/pick_topic_variant_id/init_four_actor_records_and_install_task.c"
+      "source": "overlays/scene/dialogue/topic.c"
     },
     "resource_3b7:020000bc": {
       "name": "FieldScene_RunPromptDialogueE19",
@@ -13958,7 +13958,7 @@
     },
     "resource_3b7:02000e44": {
       "name": "OverlayObject_SetField54",
-      "source": "overlays/scene/dialogue/topic/pick_topic_variant_id/set_field_54.c"
+      "source": "overlays/scene/dialogue/topic.c"
     },
     "resource_3b7:020001d8": {
       "name": "FieldScene_RunPrimaryScript"

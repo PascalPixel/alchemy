@@ -1,5 +1,11 @@
 #include "shared-aggregates.h"
 
+extern u8 BattlePieceStartX[];
+extern u8 BattlePieceStartY[];
+extern u8 BattlePieceWidth[];
+extern u8 BattlePieceHeight[];
+extern u16 BattlePieceOffset[];
+
 #define BattleFx_RunTileAndPaletteAnimation Func_080cbc0c
 
 /*
@@ -18,9 +24,9 @@
  * work+0x7080 (only offsets 0, 4, 0xc, 0x10 and 0x18 are touched here), the
  * exact roles of the scene flags at work+0x7780/0x7784/0x7824, and the source
  * tables at 0x080ee016 / 0x080ee037 / 0x080edf90 / 0x080edfb1 / 0x080edfd2.
- * Those five tables are spelled as integer addresses because the unit declares
- * no data symbols for them; that costs the reference's reload-and-index form
- * in the sprite loop.  This is a measured draft, not an exact match.
+ * The unit binds those five tables at their reference addresses, with byte
+ * coordinates/dimensions and halfword offsets. This is a measured draft,
+ * not an exact match; named tables alone do not restore its compiler shape.
  */
 
 /* Fixed IWRAM helpers reached through a register; the ROM calls them through
@@ -213,9 +219,9 @@ void BattleFx_RunTileAndPaletteAnimation(void *arg0) {
 
     /* Seed the 0x21 pieces from the two byte tables of start coordinates. */
     rad = 0;
-    tbly = (u8 *)0x080EE037;
+    tbly = BattlePieceStartY;
     ent = (void *)((u8 *)work + 0x7080);
-    tblx = (u8 *)0x080EE016;
+    tblx = BattlePieceStartX;
     cnt = 0;
     do {
         sx = *tblx << 0x10;
@@ -435,10 +441,10 @@ void BattleFx_RunTileAndPaletteAnimation(void *arg0) {
             ent = (void *)((u8 *)work + 0x7080);
             do {
                 draw0(canvas,
-                      &work->unknown_0000[*(u16 *)(0x080EDFD2 + (cnt * 2))],
+                      &work->unknown_0000[BattlePieceOffset[cnt]],
                       M2C_FIELD(ent, s16 *, 2), M2C_FIELD(ent, s16 *, 6),
-                      (s32) *(u8 *)(0x080EDF90 + cnt),
-                      (s32) *(u8 *)(0x080EDFB1 + cnt));
+                      (s32) BattlePieceWidth[cnt],
+                      (s32) BattlePieceHeight[cnt]);
                 if (frame > 3) {
                     Func_080e3908(ent, 0x40, 0x4000);
                 }

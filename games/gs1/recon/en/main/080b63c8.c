@@ -185,9 +185,9 @@ void Func_08015130(s32 mode);
 void Func_08003f3c(s32 entry);
 void Runtime_GetRemainingIwram(void);
 void Runtime_GetRemainingEwram(void);
-s32 BattlePres_BuildActions(struct BattleActionSlot *slots);
-s32 BattlePres_BuildSortedUnitEntries(struct BattleActionSlot *slots);
-s32 BattlePres_DispatchAction(struct BattleActionSlot *slot, s32 delay);
+s32 BattlePresentation_BuildActions(struct BattleActionSlot *slots);
+s32 BattlePresentation_BuildSortedUnitEntries(struct BattleActionSlot *slots);
+s32 BattlePresentation_DispatchAction(struct BattleActionSlot *slot, s32 delay);
 s32 BattlePres_RunAction(struct BattleActionSlot *slot);
 s32 BattleParty_ListLivingUnits(s32 side, s32 mode);
 s32 Func_080b6148(void);
@@ -203,7 +203,7 @@ void Func_08077140(s32 a, s32 b, s32 c);
 void Func_08015118(void);
 void Func_08015120(s32 a, s32 b);
 void Func_080151c8(s32 id);
-void BattlePres_WaitForAdvance(void);
+void BattlePresentation_WaitForAdvance(void);
 void Func_080c2724(void);
 void Blend_SetDarkenTarget16(s32 value);
 void Blend_WaitForTransition(void);
@@ -380,11 +380,11 @@ s32 Battle_RunEncounter(s32 arg)
         if (Func_080770c0(0x16a) == 0) {
             Runtime_GetRemainingIwram();
             Runtime_GetRemainingEwram();
-            cnt = BattlePres_BuildActions(work->actions);
+            cnt = BattlePresentation_BuildActions(work->actions);
             Runtime_GetRemainingIwram();
             Runtime_GetRemainingEwram();
         } else {
-            cnt = BattlePres_BuildSortedUnitEntries(work->actions);
+            cnt = BattlePresentation_BuildSortedUnitEntries(work->actions);
         }
         work->field_54 = Resource_LoadIntoFreeSlot(128);
         Func_08015130(work->field_41);
@@ -399,7 +399,7 @@ s32 Battle_RunEncounter(s32 arg)
                 delay = 10;
                 if (i != 0)
                     delay = 0;
-                if (BattlePres_DispatchAction(&work->actions[i], delay) == 1)
+                if (BattlePresentation_DispatchAction(&work->actions[i], delay) == 1)
                     goto interrupted;
             } else {
                 if (BattlePres_RunAction(&work->actions[i]) == 1)
@@ -454,7 +454,7 @@ resolved:
                 Func_08015118();
                 Func_08015120(128, 1);
                 Func_080151c8(work->field_3e + 0x838);
-                BattlePres_WaitForAdvance();
+                BattlePresentation_WaitForAdvance();
             }
         }
         Func_080c2724();
@@ -484,7 +484,7 @@ party_lost:
         Func_080151c8(0x83d);
     else
         Func_080151c8(0x837);
-    BattlePres_WaitForAdvance();
+    BattlePresentation_WaitForAdvance();
     Func_080f9010(17);
     Blend_SetDarkenTarget16(30);
     ret = -1;

@@ -142,7 +142,17 @@ async function activateTile(event) {
   const selection = panel?.querySelector(".viewer-selection");
   const action = target?.closest("[data-action]")?.getAttribute("data-action");
   // Native buttons synthesize click for keyboard activation.
-  if (action && event.type === "keydown") return;
+  if (action && action !== "shared" && event.type === "keydown") return;
+  if (action === "shared") {
+    event.preventDefault();
+    const files = JSON.parse(chart.querySelector("metadata[data-shared]").getAttribute("data-shared"));
+    selection.replaceChildren(h("div", {}, "Shared map files — stored once"),
+      h("div", { className: "selection-controls" }, files.map(source =>
+        h("button", { "data-action": "open-shared", "data-source": source }, source)),
+        h("button", { "data-action": "close-selection" }, "Close")));
+    selection.hidden = false;
+    return;
+  }
   if (action === "close-selection") {
     event.preventDefault();
     selection.hidden = true;
@@ -162,7 +172,8 @@ async function activateTile(event) {
   const folder = tile?.getAttribute("data-kind") === "folder" ? tile : null;
   const back = target?.closest("[data-action='back']");
   if (!chart) return;
-  if (!folder && !back) {
+  const sharedSource = action === "open-shared" ? target.closest("[data-action]").getAttribute("data-source") : null;
+  if (!folder && !back && !sharedSource) {
     if (!tile || !selection) return;
     event.preventDefault();
     showSelection(selection, tile);
@@ -170,14 +181,23 @@ async function activateTile(event) {
     return;
   }
   event.preventDefault();
-  const path = back
+  const path = sharedSource ? sharedSource.replace(/[^/]+$/, "") : back
     ? (chart.dataset.folder ?? "").replace(/[^/]+\/$/, "")
     : folder.getAttribute("data-source");
   chart.dataset.folder = path;
   if (selection) selection.hidden = true;
   panel.querySelector(".viewer-back").hidden = !path;
   hideTooltip();
-  try { await loadTree(panel, chart.dataset.tree, chart.dataset.title, chart.dataset.revision, chart.clientWidth, path); }
+  try {
+    await loadTree(panel, chart.dataset.tree, chart.dataset.title, chart.dataset.revision, chart.clientWidth, path);
+    if (sharedSource && chart.dataset.folder === path) {
+      for (const file of chart.querySelectorAll("g[data-source]")) {
+        if (file.getAttribute("data-source") !== sharedSource) continue;
+        file.classList.add("shared-highlight");
+        showSelection(selection, file);
+      }
+    }
+  }
   catch (error) { showError(String(error)); }
 }
 function showSelection(selection, tile) {

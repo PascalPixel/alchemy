@@ -28,6 +28,8 @@ body {
 .panel { position: relative; min-width: 0; overflow: hidden; background: var(--raised); align-self: start; }
 .viewer-back { position: absolute; z-index: 1; top: 3px; left: 4px; width: 28px; height: 26px; border: 0; color: var(--ink); background: var(--raised); font: var(--weyard-font); cursor: pointer; }
 .tree-image g[data-kind='folder'] { cursor: pointer; }
+.tree-image g[data-action='shared'] { cursor: pointer; }
+.tree-image .shared-highlight > rect { stroke: #fff3ac; stroke-width: 3px; }
 .chart { min-height: 180px; overflow-x: auto; }
 .tree-image { display: block; }
 .tree-image g[data-address] { cursor: pointer; }

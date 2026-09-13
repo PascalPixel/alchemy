@@ -1781,21 +1781,6 @@
       ]
     },
     {
-      "overlay": "resource_39e",
-      "start": "0x02000658",
-      "end": "0x0200071c",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
-        "0200064c is a literal loaded by02000532; preceding owner returns02000648. Claim concatenates complete196-byte owner02000658 with882bytes of928-byte owner0200071c; return02000712 and new prologue0200071c prove distinct functions. Final46bytes are omitted.",
-        "Candidate puts both returning functions into one C body and shares unresolved call labels; e.g.Func_02004b58 at02000692 targets0808a1b8 and at0200069a targets0808a190, yet has one declaration. Its failed compile cannot establish an allocator limitation for either true owner.",
-        "games/gs1/recon/en/dossiers.json#resource_39e:0200064c",
-        "2026-09-13: Corrected the explicitly documented conflated classification to the complete preceding 196-byte owner only. The independent 0200071c owner verifies exact over all 928 bytes through 02000abc; the earlier 0200064c literal remains owned by its enclosing reference region, not claimed as a function."
-      ]
-    },
-    {
       "overlay": "resource_377",
       "start": "0x2000f90",
       "end": "0x200133c",

@@ -4625,23 +4625,19 @@
     },
     "main:0808d458": {
       "name": "BattleFx_CheckDescriptorKind3Result",
-      "source": "battle/effects/descriptors/check_kind3_result.c"
+      "source": "battle/effects/descriptors.c"
     },
     "main:0808d590": {
-      "name": "Runtime_CallWorkBlockEntry",
-      "source": "runtime/dispatch/call_work_block_entry.c"
+      "name": "Runtime_CallWorkBlockEntry"
     },
     "main:0808d5a4": {
-      "name": "BattleFx_FindDescriptorWithOverride",
-      "source": "battle/effects/descriptors/find_with_override.c"
+      "name": "BattleFx_FindDescriptorWithOverride"
     },
     "main:0808d7d8": {
-      "name": "BattleFx_RunKind6DescriptorAction",
-      "source": "battle/effects/descriptors/run_kind6_action.c"
+      "name": "BattleFx_RunKind6DescriptorAction"
     },
     "main:0808d828": {
-      "name": "BattleAction_RunDescriptor",
-      "source": "battle/runtime/run_descriptor.c"
+      "name": "BattleAction_RunDescriptor"
     },
     "main:0808d8f0": {
       "name": "Battle_DispatchInputEvent",
@@ -9475,12 +9471,10 @@
       "name": "BattleAction_FindDescriptor"
     },
     "main:0808d48c": {
-      "name": "BattleFx_FindDescriptor",
-      "source": "battle/effects/descriptors/find_matching.c"
+      "name": "BattleFx_FindDescriptor"
     },
     "main:0808d5dc": {
-      "name": "BattleFx_RunDescriptorAction",
-      "source": "battle/effects/descriptors/run_action.c"
+      "name": "BattleFx_RunDescriptorAction"
     },
     "main:08004bd4": {
       "name": "SceneTransform_ApplyPitch"

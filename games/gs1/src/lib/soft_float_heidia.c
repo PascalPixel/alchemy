@@ -1,23 +1,23 @@
 #include "types.h"
 
-#define SoftFloat_AddParts Func_02001158
-#define SoftFloat_Add Func_020013ac
-#define SoftFloat_Subtract Func_020013e4
-#define SoftFloat_GetNaNRecord Func_02001424
-#define SoftFloat_IsNaNForAdd Func_0200142c
-#define SoftFloat_IsInfinityForAdd Func_0200143c
-#define SoftFloat_IsZeroForAdd Func_0200144c
-#define SoftFloat_FromInt Func_0200145c
-#define SoftFloat_ToInt Func_020014d8
-#define SoftFloat_IsNaNForConvert Func_02001544
-#define SoftFloat_IsInfinityForConvert Func_02001554
-#define SoftFloat_IsZeroForConvert Func_02001564
-#define SoftFloat_ShiftRight Func_02001574
-#define SoftFloat_Pack Func_020015a4
-#define SoftFloat_IsNaNForPack Func_02001740
-#define SoftFloat_IsInfinityForPack Func_02001750
-#define SoftFloat_IsZeroForPack Func_02001760
-#define SoftFloat_Unpack Func_02001770
+#define SoftFloat_AddParts Func_020057ec
+#define SoftFloat_Add Func_02005a40
+#define SoftFloat_Subtract Func_02005a78
+#define SoftFloat_GetNaNRecord Func_02005ab8
+#define SoftFloat_IsNaNForAdd Func_02005ac0
+#define SoftFloat_IsInfinityForAdd Func_02005ad0
+#define SoftFloat_IsZeroForAdd Func_02005ae0
+#define SoftFloat_FromInt Func_02005af0
+#define SoftFloat_ToInt Func_02005b6c
+#define SoftFloat_IsNaNForConvert Func_02005bd8
+#define SoftFloat_IsInfinityForConvert Func_02005be8
+#define SoftFloat_IsZeroForConvert Func_02005bf8
+#define SoftFloat_ShiftRight Func_02005c08
+#define SoftFloat_Pack Func_02005c38
+#define SoftFloat_IsNaNForPack Func_02005dd4
+#define SoftFloat_IsInfinityForPack Func_02005de4
+#define SoftFloat_IsZeroForPack Func_02005df4
+#define SoftFloat_Unpack Func_02005e04
 
 #define SoftFloatLeftIsNaN Func_0200259a
 #define SoftFloatRightIsNaN Func_020025a8

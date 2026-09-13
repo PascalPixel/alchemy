@@ -510,11 +510,20 @@ fn register_adoption(
     .iter()
     .map(|path| path.to_string_lossy().into_owned())
     .collect();
-    staged.extend(
-        drafts
-            .iter()
-            .map(|path| path.to_string_lossy().into_owned()),
-    );
+    for path in drafts {
+        let path = path.to_string_lossy().into_owned();
+        let tracked = Command::new("git")
+            .current_dir(root)
+            .args(["ls-files", "--", &path])
+            .output()
+            .map_err(|e| e.to_string())?;
+        if !tracked.status.success() {
+            return Err("cannot inspect tracked draft paths".into());
+        }
+        if !tracked.stdout.is_empty() {
+            staged.push(path);
+        }
+    }
     let mut args = vec!["add".to_string(), "-A".to_string(), "--".to_string()];
     args.append(&mut staged);
     let args: Vec<&str> = args.iter().map(String::as_str).collect();

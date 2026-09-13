@@ -3,7 +3,7 @@
 /*
  * Draft for the battle-presentation sub-effect at 0x080e698c.
  *
- * Assigned family template: games/gs1/src/battle/effects/member_orbit/run.c
+ * Assigned family template: games/gs1/src/battle/effects/member_orbit.c
  * (main:080ce85c, template-main-080ce85c, family score 8067/10000).  Like
  * the measured siblings 080d59b0/080d82b0/080dc1ec/080e01e4/080e7404 in
  * this same 0x03001eec "battle work" subsystem, this owner's callee set,

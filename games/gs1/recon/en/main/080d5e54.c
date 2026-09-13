@@ -7,7 +7,7 @@
  * Battle-presentation sub-effect at 0x080d5e54, from the same 0x03001eec
  * "battle work" subsystem family already recovered in
  * games/gs1/recon/en/main/080d85d0.c, 080d5c48.c, 080d82b0.c and
- * games/gs1/src/battle/effects/member_orbit/run.c.  The heap-cache triple
+ * games/gs1/src/battle/effects/member_orbit.c.  The heap-cache triple
  * (kind 39 work block, kind 40 draw destination, kind 41 graphics block),
  * the work + 0x7828 state republication, the Value_ absolute-literal
  * spelling, the 0x02010000 particle pool and the 0x03001E80 render-context

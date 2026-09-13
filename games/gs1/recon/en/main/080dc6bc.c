@@ -3,7 +3,7 @@
 /*
  * Battle-presentation sub-effect at 0x080dc6bc, transplant-assigned from the
  * member_orbit compiler family (template-main-080ce85c, score 8895/10000,
- * games/gs1/src/battle/effects/member_orbit/run.c).  The prologue (cursor-
+ * games/gs1/src/battle/effects/member_orbit.c).  The prologue (cursor-
  * advance work/draw_destination read, work + 0x7828 state publish,
  * Func_080cd594(0)) and epilogue (Func_08004278/Func_08002dd8 x2/
  * Func_080cdbc0) match that template's shape, but the body is a different

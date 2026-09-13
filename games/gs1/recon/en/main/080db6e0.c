@@ -7,7 +7,7 @@
  * here is Func_080db6e0 so the family-transplant/candidate-show tooling can
  * find it by address like every other in-progress owner.
  *
- * Structural template: games/gs1/src/battle/effects/member_orbit/run.c
+ * Structural template: games/gs1/src/battle/effects/member_orbit.c
  * (owner 080ce85c, already exact) establishes the 0x03001eec heap_cache /
  * work-pointer prologue, the M2C_FIELD(work, 0x7828) object-pointer field,
  * the Value_ pool-symbol convention for small link-time byte constants, and

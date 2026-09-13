@@ -238,7 +238,7 @@
       "gs2_every_edition": 1,
       "gs2_owner_offset": "009c",
       "gs2_register": "r3",
-      "gs1_corresponding_site": "GS1 owner 080bbb0c expresses the same source construct at owner offset 0082: BATTLE_COPY_UNIT calls through a constant IWRAM address, ((BattleUnitCopyFn)0x03001388)(copy, target, size) in games/gs1/src/battle/action/resolve_target_action.c:154-155, and GS2 spells the identical shape as ((void (*)(void *, const void *, s32))0x03000730)(...) in games/gs2/recon/ja/main/battle_delta.h:433-435. GS1 +0x7a..+0x86 is 4baf 1c2a 9804 1c39 f74b fbaf, whose BL targets 080072f0 = bank + 3*4 = _call_via_r3; GS2 +0x94..+0xa0 is 4bb4 0052 9805 4641 469e f800. Same four bytes, same slot, same surrounding shape. One source construct, two lowerings."
+      "gs1_corresponding_site": "GS1 owner 080bbb0c expresses the same source construct at owner offset 0082: BATTLE_COPY_UNIT calls through a constant IWRAM address, ((BattleUnitCopyFn)0x03001388)(copy, target, size) in games/gs1/src/battle/action_resolve_target_action.c:154-155, and GS2 spells the identical shape as ((void (*)(void *, const void *, s32))0x03000730)(...) in games/gs2/recon/ja/main/battle_delta.h:433-435. GS1 +0x7a..+0x86 is 4baf 1c2a 9804 1c39 f74b fbaf, whose BL targets 080072f0 = bank + 3*4 = _call_via_r3; GS2 +0x94..+0xa0 is 4bb4 0052 9805 4641 469e f800. Same four bytes, same slot, same surrounding shape. One source construct, two lowerings."
     },
     "gs2_veneer_sites": [
       "08016e4e",

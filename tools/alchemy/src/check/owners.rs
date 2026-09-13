@@ -143,11 +143,11 @@ fn validate_unmatchable(
 }
 
 fn validate_provisional(root: &Path, exact: &HashSet<String>) -> Result<usize, String> {
-    let document = json(&root.join("games/gs1/src/provisional.json"))?;
+    let document = json(&root.join("games/gs1/semantic/provisional-source.json"))?;
     let rows = document
         .get("provisional")
         .and_then(Value::as_array)
-        .ok_or("games/gs1/src/provisional.json has no provisional array")?;
+        .ok_or("games/gs1/semantic/provisional-source.json has no provisional array")?;
     for row in rows {
         let owner = row
             .get("owner")

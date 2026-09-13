@@ -208,7 +208,7 @@ pub fn self_test() -> Result<(), String> {
         return Err("preprocessed findings lost source identity".into());
     }
     let source = "/* M2C_FIELD */\n#define M2C_FIELD(x) (x)\n";
-    let found = find_named_source_tool_leaks("games/gs1/src/ui/example.c", source);
+    let found = find_named_source_tool_leaks("games/gs1/src/graphics/window/example.c", source);
     if found.len() != 1 || found[0].line != 2 || !found[0].token.contains("M2C_FIELD") {
         return Err("named-source gate missed a tool-branded identifier".into());
     }

@@ -55,7 +55,7 @@
       "core_identical": true,
       "linked_exactness": {
         "measured": "2026-09-09",
-        "method": "Compile games/gs1/src/battle/action/resolve_target_action.c once through canonical-gcc296, relink that one object at each edition's owner start, and byte-compare the result against that edition's ROM. Commands: alchemy score --unit battle-action-resolution --first, and alchemy cross-edition 080bbb0c --edition-build FILE. The six per-edition compiles produce one identical object.",
+        "method": "Compile games/gs1/src/battle/action_resolve_target_action.c once through canonical-gcc296, relink that one object at each edition's owner start, and byte-compare the result against that edition's ROM. Commands: alchemy score --unit battle-action-resolution --first, and alchemy cross-edition 080bbb0c --edition-build FILE. The six per-edition compiles produce one identical object.",
         "object_text_bytes": 6332,
         "relocation_sites": 430,
         "self_relocation_sites": 115,

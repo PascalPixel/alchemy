@@ -2,7 +2,7 @@
 
 /*
  * Battle-presentation sub-effect at 0x080dd2c4, a sibling of
- * games/gs1/src/battle/effects/member_orbit/run.c (0x080ce85c) in the
+ * games/gs1/src/battle/effects/member_orbit.c (0x080ce85c) in the
  * 0x03001eec "battle work" subsystem family: same heap_cache(0x03001EEC)
  * cursor, the same M2C_FIELD(expr,type_ptr,offset) struct-field convention,
  * the same "object" argument struct (field 4 a mode flag, field 0x14 the

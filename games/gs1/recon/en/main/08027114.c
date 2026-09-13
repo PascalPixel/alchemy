@@ -15,7 +15,7 @@
  *     same 24-byte record, the same side/paused bytes at 0x50/0x52 of the
  *     0x03001e74 cell and the same 0x03001f64 status mask appear in
  *     games/gs1/src/battle/presentation/wait_sync.c and
- *     games/gs1/src/link/update_session_countdown.c.
+ *     games/gs1/src/system/link/update_session_countdown.c.
  *   - The 260-byte block taken from pool 57 is published at 0x03001f34 and
  *     is the countdown/panel state whose entries[3], entryActive[3],
  *     targetOffset, currentOffset, displayHandle, secondaryHandle, timer and

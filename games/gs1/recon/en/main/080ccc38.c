@@ -5,8 +5,8 @@
 /*
  * Battle-presentation sub-effect at 0x080ccc38.
  *
- * Structurally related to games/gs1/src/battle/effects/puff_arc/run.c
- * (main:080d9fc8) and games/gs1/src/battle/effects/member_orbit/run.c
+ * Structurally related to games/gs1/src/battle/effects/puff_arc.c
+ * (main:080d9fc8) and games/gs1/src/battle/effects/member_orbit.c
  * (main:080ce85c): the same kind-39 "battle work" heap cache read directly
  * from 0x03001eec, the same caller-state pointer republished at
  * work + 0x7828, the same 0x04000020 BG2PA identity write, the same

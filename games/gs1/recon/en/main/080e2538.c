@@ -5,9 +5,9 @@
  * effect state pointer, stored at work + 0x7828 like every other member of
  * the 0x03001eec "battle work" subsystem family -- see
  * games/gs1/recon/en/main/080e7404.c, 080e01e4.c and
- * games/gs1/src/battle/effects/member_orbit/run.c for the shared field and
+ * games/gs1/src/battle/effects/member_orbit.c for the shared field and
  * callee evidence this owner reuses.  The family-matcher's assigned template
- * (main:080ce85c, games/gs1/src/battle/effects/member_orbit/run.c) shares no
+ * (main:080ce85c, games/gs1/src/battle/effects/member_orbit.c) shares no
  * callees and a materially different control-flow shape (22 branch labels
  * against the template's half a dozen); only its prologue idiom (heap_cache
  * cursor pair, work+0x7828 state pointer) transfers.
@@ -34,7 +34,7 @@
  * function pointer the compiler kept in r4 -- here the single blit routine
  * populated by `Func_080ed408(46, ...)` into heap_cache[7], already
  * established as `DrawRectangleFn` by games/gs1/recon/en/main/080e01e4.c and
- * games/gs1/src/battle/effects/member_orbit/run.c.
+ * games/gs1/src/battle/effects/member_orbit.c.
  * games/gs1/recon/en/dossiers.json#main:080dc1ec's score.note has the full
  * derivation of the trampoline read.
  *

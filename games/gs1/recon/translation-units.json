@@ -175020,6 +175020,32 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "ui-output-list",
+      "game": "gs1",
+      "source": "games/gs1/src/ui/render/output_list.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0801656c",
+          "extent": 24,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08016584",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08016594",
+          "extent": 68,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

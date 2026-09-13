@@ -43,14 +43,14 @@ void Func_080165d8(s32 owner, s32 arg1, s32 x, s32 y, u16 *copy_source, s32 arg5
     entry = base;
     found = 0;
     i = 0;
-    while (entry->owner != 0) {
+    while (i != 3) {
+        if (entry->owner == 0) {
+            found = entry;
+            break;
+        }
         i++;
         entry = (struct Entry *)((u8 *)entry + 40);
-        if (i == 3)
-            break;
     }
-    if (entry->owner == 0)
-        found = entry;
 
     if (found != 0) {
         found->field1e = (s16)(x << 8);

@@ -5772,7 +5772,7 @@
       "source": "overlays/scene/field/entry_cue.c"
     },
     "resource_39e:020025b8": {
-      "name": "Scene_SpawnRandomizedParticle",
+      "name": "FieldScene_SpawnRandomizedParticle",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_384:02000030": {
@@ -5784,7 +5784,7 @@
       "source": "overlays/scene/dialogue/status_dispatch.c"
     },
     "resource_39e:0200266c": {
-      "name": "Scene_ApplyOffset0Pos32",
+      "name": "FieldScene_ApplyOffset0Pos32",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_385:020000a0": {
@@ -6441,7 +6441,7 @@
       "source": "overlays/scene/dialogue/prompt.c"
     },
     "resource_39e:02000abc": {
-      "name": "Scene_ShowDialogue17B1",
+      "name": "FieldScene_ShowDialogue17B1",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_3c6:020000c4": {
@@ -6497,7 +6497,7 @@
       "source": "overlays/scene/dialogue/prompt.c"
     },
     "resource_39e:02002508": {
-      "name": "Scene_DispatchByRange",
+      "name": "FieldScene_DispatchByRange",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_3ba:0200003c": {
@@ -6557,7 +6557,7 @@
       "source": "overlays/scene/data/empty.c"
     },
     "resource_39e:0200267c": {
-      "name": "Scene_ApplyOffsetNeg32_0",
+      "name": "FieldScene_ApplyOffsetNeg32_0",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_394:02000054": {
@@ -6718,7 +6718,7 @@
       "source": "overlays/scene/state/coordinator.c"
     },
     "resource_39e:02000afc": {
-      "name": "Scene_RunRoofSceneExit",
+      "name": "FieldScene_RunRoofSceneExit",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_372:02004560": {
@@ -6774,7 +6774,7 @@
       "source": "overlays/scene/state/coordinator.c"
     },
     "resource_39e:02000bf4": {
-      "name": "Scene_RunForwardArcBurst",
+      "name": "FieldScene_RunForwardArcBurst",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_372:02000104": {
@@ -6906,7 +6906,7 @@
       "source": "overlays/scene/actor/group_departure.c"
     },
     "resource_39e:02002574": {
-      "name": "Scene_SelectData",
+      "name": "FieldScene_SelectData",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_398:02000040": {
@@ -7098,7 +7098,7 @@
       "source": "overlays/scene/field/entry_setup.c"
     },
     "resource_39e:02001d50": {
-      "name": "Scene_RunSkippableStoryBeat",
+      "name": "FieldScene_RunSkippableStoryBeat",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_3c3:020007ac": {
@@ -7186,7 +7186,7 @@
       "source": "overlays/scene/actor/group_departure.c"
     },
     "resource_39e:020040dc": {
-      "name": "Scene_SetFlag140AndFinishSequence",
+      "name": "FieldScene_SetFlag140AndFinishSequence",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_3c1:02000068": {
@@ -7194,7 +7194,7 @@
       "source": "overlays/scene/field/entry_cue.c"
     },
     "resource_39e:020041ec": {
-      "name": "Scene_RunParticleRain",
+      "name": "FieldScene_RunParticleRain",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_383:020048a4": {
@@ -7282,7 +7282,7 @@
       "source": "overlays/scene/effect/scripted_presentation.c"
     },
     "resource_39e:02002764": {
-      "name": "Scene_PlaySound123AndEnable",
+      "name": "FieldScene_PlaySound123AndEnable",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_37b:02001f0c": {
@@ -7466,7 +7466,7 @@
       "source": "overlays/scene/actor/group_departure.c"
     },
     "resource_39e:02000db4": {
-      "name": "Scene_RunDescentBurst",
+      "name": "FieldScene_RunDescentBurst",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_374:020001c4": {
@@ -7518,7 +7518,7 @@
       "source": "overlays/scene/field/background_scroll.c"
     },
     "resource_39e:02002464": {
-      "name": "Scene_ShowDialogue1A58",
+      "name": "FieldScene_ShowDialogue1A58",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_383:0200052c": {
@@ -7770,7 +7770,7 @@
       "source": "overlays/scene/dialogue/facing.c"
     },
     "resource_39e:02001334": {
-      "name": "Scene_DispatchByFacing",
+      "name": "FieldScene_DispatchByFacing",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_371:020006b4": {
@@ -7938,7 +7938,7 @@
       "source": "overlays/scene/effect/scripted_presentation.c"
     },
     "resource_39e:02004128": {
-      "name": "Scene_FinishSequence",
+      "name": "FieldScene_FinishSequence",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_372:02000434": {
@@ -7946,7 +7946,7 @@
       "source": "overlays/scene/actor/group_departure.c"
     },
     "resource_39e:02000bd4": {
-      "name": "Scene_ShowDialogue182D",
+      "name": "FieldScene_ShowDialogue182D",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_3b1:02001378": {
@@ -8186,7 +8186,7 @@
       "source": "overlays/scene/dialogue/flagged_choreography.c"
     },
     "resource_39e:020012e0": {
-      "name": "Scene_DispatchApproachByFacing",
+      "name": "FieldScene_DispatchApproachByFacing",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_380:020027cc": {
@@ -8634,7 +8634,7 @@
       "source": "overlays/scene/actor/depth.c"
     },
     "resource_39e:0200254c": {
-      "name": "Scene_ShowDialogue17DF",
+      "name": "FieldScene_ShowDialogue17DF",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_394:02000e64": {
@@ -8726,7 +8726,7 @@
       "source": "overlays/scene/dialogue/status_dispatch.c"
     },
     "resource_39e:020041c4": {
-      "name": "Scene_SelectActorModeFromInputBit",
+      "name": "FieldScene_SelectActorModeFromInputBit",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_399:0200016c": {
@@ -8826,7 +8826,7 @@
       "source": "overlays/scene/field/extended_choreography.c"
     },
     "resource_39e:020013b8": {
-      "name": "Scene_DispatchByFacingAndFlags",
+      "name": "FieldScene_DispatchByFacingAndFlags",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_399:020016ac": {
@@ -8906,7 +8906,7 @@
       "source": "overlays/scene/dialogue/prompt.c"
     },
     "resource_39e:02004140": {
-      "name": "Scene_SpawnEightShots",
+      "name": "FieldScene_SpawnEightShots",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_399:02000608": {
@@ -9074,7 +9074,7 @@
       "source": "overlays/scene/dialogue/status_dispatch.c"
     },
     "resource_39e:0200265c": {
-      "name": "Scene_ApplyOffset0Neg32",
+      "name": "FieldScene_ApplyOffset0Neg32",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_383:02000a14": {
@@ -9150,7 +9150,7 @@
       "source": "overlays/scene/field/extended_choreography.c"
     },
     "resource_39e:02000484": {
-      "name": "Scene_RunFlag88FBranch",
+      "name": "FieldScene_RunFlag88FBranch",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_3b1:020000b0": {
@@ -9166,7 +9166,7 @@
       "source": "overlays/scene/actor/group_departure.c"
     },
     "resource_39e:02000adc": {
-      "name": "Scene_ShowDialogue1825",
+      "name": "FieldScene_ShowDialogue1825",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_3c8:020008b8": {
@@ -9994,15 +9994,15 @@
       "name": "CommandInterpolationRenderer_Update"
     },
     "resource_39e:02002ad0": {
-      "name": "Scene_RunRoofEnsembleSequence",
+      "name": "FieldScene_RunRoofEnsembleSequence",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_39e:02001494": {
-      "name": "Scene_RunSecondEnsembleBeat",
+      "name": "FieldScene_RunSecondEnsembleBeat",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_39e:02001dbc": {
-      "name": "Scene_RunEnsembleStoryBeat",
+      "name": "FieldScene_RunEnsembleStoryBeat",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_383:020036f8": {
@@ -10138,7 +10138,7 @@
       "source": "overlays/scene/story/actor_transfer.c"
     },
     "resource_39e:0200268c": {
-      "name": "Scene_RunOpeningAuxiliarySequence",
+      "name": "FieldScene_RunOpeningAuxiliarySequence",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_3c8:020007d8": {
@@ -10372,15 +10372,15 @@
       "source": "overlays/scene/dialogue/flagged_choreography.c"
     },
     "resource_39e:02000414": {
-      "name": "Scene_RunScene39e",
+      "name": "FieldScene_RunScene39e_02000414",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_39e:02002778": {
-      "name": "Scene_RunScene39e",
+      "name": "FieldScene_RunScene39e_02002778",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_39e:020027ec": {
-      "name": "Scene_RunScene39e",
+      "name": "FieldScene_RunScene39e_020027ec",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_3a0:02000de8": {
@@ -10788,7 +10788,7 @@
       "source": "overlays/scene/story/region.c"
     },
     "resource_39e:020026d8": {
-      "name": "Scene_RunScene39eSequenceA",
+      "name": "FieldScene_RunScene39eSequenceA",
       "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_3b1:02001894": {
@@ -10956,7 +10956,7 @@
     },
     "resource_39e:0200071c": {
       "name": "Scene_RunScene39eSequenceB",
-      "source": "map/locations/xian/actor_choice_sequence.c"
+      "source": "map/locations/xian/school_and_roof_scene.c"
     },
     "resource_380:02000390": {
       "name": "Scene_RunScene380SequenceA"

@@ -10038,7 +10038,8 @@
       "source": "overlays/scene/story/actor_transfer.c"
     },
     "resource_39e:02000e94": {
-      "name": "Scene_RunPrimarySequence"
+      "name": "Scene_RunPrimarySequence",
+      "source": "map/locations/xian/school_and_roof/actor_transition.c"
     },
     "resource_3c3:02000334": {
       "name": "Scene_RunPrimarySequence",
@@ -18434,6 +18435,10 @@
     },
     "main:080a3eec": {
       "name": "InventoryMenu_NoOp"
+    },
+    "resource_3bc:02000da4": {
+      "name": "Scene_SetupLogRollingStage",
+      "source": "map/locations/colosso/log_rolling_stage/setup.c"
     }
   }
 }

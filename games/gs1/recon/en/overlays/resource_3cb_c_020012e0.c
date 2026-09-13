@@ -136,6 +136,7 @@ s32 Func_020012e0(s32 a0, s32 a1)
     u32 i;
     s32 record;
     s32 value;
+    s32 mode;
     s32 base6_0;
     s32 base2_2000240;
     s32 v5;
@@ -179,6 +180,7 @@ s32 Func_020012e0(s32 a0, s32 a1)
         base2_2000240 = (s32)Data_02000240;
         *(u16 *)((base2_2000240 + 0x2aa)) += 1;
         value = Value1(Func_02002bf6, 0x3f8);
+        v6 = (s8)value;
         v5 = ((((value << 24) >> 24) << 1) + 2);
         if (((((value << 24) >> 24) << 1) + 2) > 14) {
             v5 = 14;
@@ -190,7 +192,6 @@ s32 Func_020012e0(s32 a0, s32 a1)
             v6 = (v6 + 1);
         } else {
             Call2(Func_02002c32, 0x3e8, (record + 1));
-            v6 = ((value << 24) >> 24);
         }
         Func_02002c94(8, *(s32 *)0x02000434, 0);
         Func_02002ca4((v5 + 0x293e));
@@ -245,8 +246,9 @@ s32 Func_020012e0(s32 a0, s32 a1)
         }
         Call1(Func_02002d38, 0x173);
         Call2(Func_02002d54, 0x3f8, -1);
+        mode = 0;
         L_0200152c:;
-        Func_02001656(0);
+        Func_02001656(mode);
         L_02001530:;
         Func_02002d7e();
     } else {
@@ -268,6 +270,7 @@ s32 Func_020012e0(s32 a0, s32 a1)
                 Func_02002c94_a(20);
                 Func_020015c0();
                 Func_020016b2(0);
+                mode = 4;
                 goto L_0200152c;
             }
             *(u16 *)((v6 + 0x2ac)) += 1;

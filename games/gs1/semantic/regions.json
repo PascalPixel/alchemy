@@ -11422,8 +11422,8 @@
     {
       "overlay": "resource_3bc",
       "entry": "0x02000da4",
-      "span_bytes": 1480,
-      "evidence": "complete strict-inventory owner; audited inside the assembled overlay image with a positive span and no overlap"
+      "span_bytes": 1496,
+      "evidence": "Complete stage-dispatch owner through four trailing literal words at 0200136c, 02001370, 02001374 and 02001378. Reference loads at 0200128e, 020012ce, 020012da and 02001332 reach these words; next registered exact owner begins at 0200137c. Supersedes truncated 1480-byte span."
     },
     {
       "overlay": "resource_3bc",

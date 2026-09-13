@@ -1342,12 +1342,10 @@
       "source": "ui/render/output_list/clear.c"
     },
     "main:08016584": {
-      "name": "RenderOutput_AppendToList",
-      "source": "ui/render/output_list/append.c"
+      "name": "RenderOutput_AppendToList"
     },
     "main:08016594": {
-      "name": "RenderOutput_Release",
-      "source": "ui/render/output_list/release.c"
+      "name": "RenderOutput_Release"
     },
     "main:0801b398": {
       "name": "Menu_SelectionLoop",
@@ -4022,7 +4020,7 @@
     },
     "main:0801656c": {
       "name": "UiWork_UpdateListTail",
-      "source": "ui/runtime/update_list_tail.c"
+      "source": "ui/render/output_list.c"
     },
     "main:0801671c": {
       "name": "Ui_ClearVramBlock"

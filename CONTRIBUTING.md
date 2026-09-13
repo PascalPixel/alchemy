@@ -259,13 +259,19 @@ do not replace linked byte comparison.
 
 ## Compiler invariants
 
+GCC source and compiler modifications belong in the licensed `agscc` submodule,
+never as source patches in this repository. Pascal approved moving the existing
+GS2 lowering into `agscc` behind `-mgs2` on 2026-09-13. Both games use the same
+compiler bundle; only GS2 game code enables that option. The GS2 lowering is a
+reconstruction, not a claim to recovered historical compiler source.
+
 Use the approved `agbcc` and `agscc` submodules and bundle. Game code uses
 canonical GCC 2.96; recorded prebuilt-library families have their own fixed
 routes established by provenance, not score. Commands live in
 `tools/alchemy/src/compiler/routing.rs`.
 
-**Do not modify agscc unless restoring historical stock GCC 2.96 shipped by
-Red Hat.** Every change, including diagnostic or host-port changes, requires
+**Apart from the approved GS2 option above, do not modify agscc unless
+restoring historical stock GCC 2.96 shipped by Red Hat.** Every change, including diagnostic or host-port changes, requires
 Pascal's approval, a specific historical release and source/vendor-patch
 evidence, and proof of restored fidelity. Better matching, determinism, version
 strings or an approved pin are not historical provenance or authorization.

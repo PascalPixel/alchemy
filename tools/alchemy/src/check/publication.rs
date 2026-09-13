@@ -5,7 +5,7 @@ use std::process::{Command, ExitCode};
 const BLOCKED_EXTENSIONS: &[&str] = &[
     "a", "bin", "bps", "bsdiff", "d", "diff", "dis", "dll", "dmp", "dump", "dylib", "elf", "exe",
     "gba", "gz", "ips", "lst", "log", "map", "o", "patch", "raw", "rom", "sav", "so", "sym", "tar",
-    "tgz", "ups", "xdelta", "xdelta3", "zip", "7z",
+    "tgz", "unidiff", "ups", "xdelta", "xdelta3", "zip", "7z",
 ];
 const BLOCKED_DIRECTORIES: &[&str] = &[
     ".cache",
@@ -508,6 +508,8 @@ fn self_test() -> Result<(), String> {
     }
     for path in [
         "baserom",
+        "agscc-gs2.unidiff",
+        "compiler.UNIDIFF",
         "private-diff.json",
         "gs1-en.gba.lz",
         ".cmatch-fresh/result.s",

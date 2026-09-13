@@ -48,6 +48,7 @@ roms/
 *.ups
 *.bsdiff
 *.diff
+*.unidiff
 *.patch
 *.xdelta
 *.xdelta3

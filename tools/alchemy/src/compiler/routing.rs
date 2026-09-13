@@ -22,24 +22,24 @@ pub fn root() -> &'static Path {
 pub fn bundle() -> PathBuf {
     root().join("out/compilers/dist")
 }
-/// Each game has its own compiler: GS2's is staged by `make compilers-gs2`.
-pub fn bundle_for(target: CompilerTarget) -> PathBuf {
-    match target {
-        CompilerTarget::Gs1 => bundle(),
-        CompilerTarget::Gs2 => root().join("out/compilers/gs2/dist"),
-    }
+/// Both games use the licensed agscc source and the same executable bundle.
+/// GS2 selects its reconstructed lowering with the explicit -mgs2 option.
+pub fn bundle_for(_target: CompilerTarget) -> PathBuf {
+    bundle()
 }
 pub fn agbcc_driver() -> PathBuf {
     bundle().join("agbcc").join("old_agbcc")
 }
 /// Modern syntax support with the historical integer/soft-float object ABI.
+// GAS marks softfpa objects as VFP; explicit FPA with soft-float retains
+// the historical integer/soft-float ABI used by the compiler objects.
 pub fn assembly_command(source: &str, object: &str) -> Vec<String> {
     [
         "arm-none-eabi-as",
         "-mcpu=arm7tdmi",
         "-mthumb-interwork",
         "-meabi=gnu",
-        "-mfpu=softfpa",
+        "-mfpu=fpa",
         "-mfloat-abi=soft",
         "-o",
         object,
@@ -125,6 +125,9 @@ fn base_cflags(target: CompilerTarget) -> Vec<String> {
     if interworks(target) {
         flags.push("-mthumb-interwork".to_string());
     }
+    if target == CompilerTarget::Gs2 {
+        flags.push("-mgs2".to_string());
+    }
     for flag in [
         "-mcpu=arm7tdmi",
         "-fno-builtin",
@@ -205,7 +208,7 @@ mod target_tests {
     #[test]
     fn assembly_uses_historical_soft_float_abi() {
         let command = assembly_command("input.s", "output.o");
-        for flag in ["-meabi=gnu", "-mfpu=softfpa", "-mfloat-abi=soft"] {
+        for flag in ["-meabi=gnu", "-mfpu=fpa", "-mfloat-abi=soft"] {
             assert!(command.iter().any(|arg| arg == flag));
         }
         assert_eq!(&command[command.len() - 3..], ["-o", "output.o", "input.s"]);
@@ -221,7 +224,10 @@ mod target_tests {
             .iter()
             .filter(|flag| *flag != "-mthumb-interwork" && !flag.starts_with("-I"))
             .collect();
-        let derived: Vec<&String> = gs2.iter().filter(|flag| !flag.starts_with("-I")).collect();
+        let derived: Vec<&String> = gs2
+            .iter()
+            .filter(|flag| *flag != "-mgs2" && !flag.starts_with("-I"))
+            .collect();
         assert_eq!(shared, derived);
         for flags in [&gs1, &gs2] {
             assert!(!flags
@@ -238,6 +244,15 @@ mod target_tests {
         let gs2 = cflags_for_target_source(CompilerTarget::Gs2, "08120454.c");
         assert!(gs1.iter().any(|flag| flag == "-mthumb-interwork"));
         assert!(!gs2.iter().any(|flag| flag == "-mthumb-interwork"));
+        assert!(gs2.iter().any(|flag| flag == "-mgs2"));
+        assert!(!gs1.iter().any(|flag| flag == "-mgs2"));
+        assert_eq!(
+            bundle_for(CompilerTarget::Gs1),
+            bundle_for(CompilerTarget::Gs2)
+        );
+        assert!(!cflags_for_target_source(CompilerTarget::Gs2, "081c2168.c")
+            .iter()
+            .any(|flag| flag == "-mgs2"));
         for flags in [&gs1, &gs2] {
             assert!(flags.iter().any(|flag| flag == "-fcall-used-r4"));
             assert!(flags.iter().any(|flag| flag == "-mthumb"));

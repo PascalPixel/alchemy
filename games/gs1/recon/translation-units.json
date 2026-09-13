@@ -174901,6 +174901,53 @@
           "state": "retained-assembly"
         }
       ]
+    },
+    {
+      "id": "save-record-summary",
+      "game": "gs1",
+      "source": "games/gs1/src/save/summary.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0801f704",
+          "extent": 44,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801f730",
+          "extent": 76,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801f77c",
+          "extent": 156,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "save-paired-write",
+      "game": "gs1",
+      "source": "games/gs1/src/save/write_pair.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0801f9b4",
+          "extent": 136,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0801fa3c",
+          "extent": 108,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

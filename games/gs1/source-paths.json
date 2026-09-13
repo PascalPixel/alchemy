@@ -4319,23 +4319,20 @@
     },
     "main:0801f704": {
       "name": "SaveState_FindFreeSummarySlot",
-      "source": "save/state/find_free_summary_slot.c"
+      "source": "save/summary.c"
     },
     "main:0801f730": {
-      "name": "SaveState_CountRecordsExcludingFlagged",
-      "source": "save/state/count_records_excluding_flagged.c"
+      "name": "SaveState_CountRecordsExcludingFlagged"
     },
     "main:0801f77c": {
-      "name": "SaveState_ScanRecordFlags",
-      "source": "save/state/scan_record_flags.c"
+      "name": "SaveState_ScanRecordFlags"
     },
     "main:0801f9b4": {
       "name": "SaveState_WriteCurrentSlotPair",
-      "source": "save/state/write_current_slot_pair.c"
+      "source": "save/write_pair.c"
     },
     "main:0801fa3c": {
-      "name": "SaveState_WriteSlotPair",
-      "source": "save/state/write_slot_pair.c"
+      "name": "SaveState_WriteSlotPair"
     },
     "main:0801fb48": {
       "name": "SaveState_ConfirmAndProcessSelectedSlot",

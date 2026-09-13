@@ -1349,11 +1349,10 @@
     },
     "main:080a10d0": {
       "name": "UiWindow_UpdateOrCreate",
-      "source": "ui/window/update_or_create.c"
+      "source": "ui/window/lifecycle.c"
     },
     "main:080a1114": {
-      "name": "UiWindow_CloseIfOpen",
-      "source": "ui/window/close_if_open.c"
+      "name": "UiWindow_CloseIfOpen"
     },
     "main:080a2444": {
       "name": "Menu_CancelSoundTick",

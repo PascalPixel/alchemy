@@ -1452,23 +1452,19 @@
     },
     "main:080f7db4": {
       "name": "AudioTrack_ResetSlotBuckets",
-      "source": "audio/track/reset_slot_buckets.c"
+      "source": "audio/track/slot_buffer.c"
     },
     "main:080f7df0": {
-      "name": "AudioTrack_InsertSlotNode",
-      "source": "audio/track/insert_slot_node.c"
+      "name": "AudioTrack_InsertSlotNode"
     },
     "main:080f7e34": {
-      "name": "AudioTrack_RemoveSlotNode",
-      "source": "audio/track/remove_slot_node.c"
+      "name": "AudioTrack_RemoveSlotNode"
     },
     "main:080f7e60": {
-      "name": "AudioTrack_ConsumeSlotBytes",
-      "source": "audio/track/consume_slot_bytes.c"
+      "name": "AudioTrack_ConsumeSlotBytes"
     },
     "main:080f7f30": {
-      "name": "AudioTrack_CopyBufferedBytes",
-      "source": "audio/track/copy_buffered_bytes.c"
+      "name": "AudioTrack_CopyBufferedBytes"
     },
     "main:080f2ebc": {
       "name": "Graphics_InterpolatePaletteBuffers",

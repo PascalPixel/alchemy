@@ -175684,6 +175684,42 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "audio-track-slot-buffer",
+      "game": "gs1",
+      "source": "games/gs1/src/audio/track/slot_buffer.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080f7db4",
+          "extent": 60,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080f7df0",
+          "extent": 68,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080f7e34",
+          "extent": 44,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080f7e60",
+          "extent": 208,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080f7f30",
+          "extent": 72,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

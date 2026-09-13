@@ -476,8 +476,7 @@
       "name": "UiText_DrawPaddedLabel"
     },
     "main:08019944": {
-      "name": "UiRender_LookupNamedValue",
-      "source": "ui/render/lookup_named_value.c"
+      "name": "UiRender_LookupNamedValue"
     },
     "main:0801c21c": "resource/transfer/reset_pending.c",
     "main:0800be70": {
@@ -4090,19 +4089,17 @@
     },
     "main:080198dc": {
       "name": "UiWork_ClearValueNameTables",
-      "source": "ui/runtime/clear_value_name_tables.c"
+      "source": "ui/runtime/named_value.c"
     },
     "main:08019908": {
-      "name": "UiWork_PushValueSlot",
-      "source": "ui/runtime/push_value_slot.c"
+      "name": "UiWork_PushValueSlot"
     },
     "main:0801999c": {
       "name": "UiWork_CheckCancelByInput",
-      "source": "ui/runtime/check_cancel_by_input.c"
+      "source": "ui/runtime/cancel_input.c"
     },
     "main:080199ec": {
-      "name": "UiWork_CheckCancelByModeInput",
-      "source": "ui/runtime/check_cancel_by_mode_input.c"
+      "name": "UiWork_CheckCancelByModeInput"
     },
     "main:08019ba0": {
       "name": "UiText_BuildRenderEntriesMode1",

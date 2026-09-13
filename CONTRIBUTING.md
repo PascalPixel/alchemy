@@ -548,6 +548,11 @@ do not claim to inventory every non-map asset an area uses.
 Data-file details report the target's last asset-build comparison separately
 from its content type. A ROM-byte match does not verify picture layout or colors;
 missing comparison evidence is never displayed as a match.
+The viewer follows leaf files across package boundaries. Component packages
+use the build's recorded physical extents and primary inputs; headers and
+padding remain with their index file. Compression is counted at stored size,
+not decoded size. Missing or inconsistent component extents keep the package
+unsplit rather than assigning guessed byte ranges to files.
 Keep the optional music debugger separate. Migrate source, assets
 and viewer in verified stages; completion requires the full GS1 English ROM to
 remain byte-identical and the migration to be committed. Do not claim GS2 or

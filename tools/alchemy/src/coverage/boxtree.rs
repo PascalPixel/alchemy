@@ -145,14 +145,12 @@ fn directories(tiles: Vec<Tile>, base: &str) -> Vec<Tile> {
 }
 fn draw_tiles(
     out: &mut Vec<String>,
-    tree: &str,
     tiles: &[&Tile],
     frame: Rect,
     parent_source: Option<&str>,
     reserved: &[Rect],
     asset_verification: Option<&str>,
 ) {
-    let assets = tree == "data";
     for placed in treemap(tiles, |tile| tile.bytes, frame) {
         let tile = tiles[placed.index];
         let rect = placed.rect;
@@ -220,9 +218,7 @@ fn draw_tiles(
         if container {
             out.push(format!("<rect class=\"container-frame\" x=\"{}\" y=\"{}\" width=\"{}\" height=\"{}\" fill=\"{CHART_BACKGROUND}\"/>", rect.x, rect.y, rect.width, rect.height));
             bevel(out, rect);
-        } else if assets
-            || (tree == "rom" && tile.categories[Category::AssetData as usize] == tile.bytes)
-        {
+        } else if tile.categories[Category::AssetData as usize] == tile.bytes {
             let (name, color) = content_style(tile);
             out.push(format!("<rect data-content-type=\"{name}\" x=\"{}\" y=\"{}\" width=\"{}\" height=\"{}\" style=\"fill:{color}\"/>", body.x, body.y, body.width, body.height));
         } else {
@@ -279,7 +275,6 @@ fn draw_tiles(
         if container {
             draw_tiles(
                 out,
-                tree,
                 &tile.children.iter().collect::<Vec<_>>(),
                 body,
                 tile.source.as_deref(),
@@ -404,35 +399,23 @@ fn fill(category: Category) -> String {
     };
     format!("fill:{color}")
 }
-fn tree_tiles<'a>(map: &'a CoverageMap, tree: &str) -> Vec<&'a Tile> {
-    if tree == "rom" {
-        map.rom_areas
-            .iter()
-            .flat_map(|area| area.tiles.iter())
-            .collect()
-    } else if tree == "code" {
-        map.executable_areas
-            .iter()
-            .flat_map(|area| area.tiles.iter())
-            .collect()
-    } else {
-        map.rom_areas
-            .iter()
-            .filter(|area| area.id == "rom-data")
-            .flat_map(|area| area.tiles.iter())
-            .collect()
-    }
+fn tree_tiles(map: &CoverageMap) -> Vec<&Tile> {
+    map.rom_areas
+        .iter()
+        .flat_map(|area| area.tiles.iter())
+        .collect()
 }
 pub fn svg(tree: &str, map: &CoverageMap, width: f64) -> String {
     svg_at(tree, map, width, "")
 }
 
 pub fn svg_at(tree: &str, map: &CoverageMap, width: f64, folder: &str) -> String {
+    assert_eq!(tree, "rom", "only the unified ROM viewer is supported");
     let shared = map.document["shared_map_assets"][folder]
         .as_array()
         .cloned()
         .unwrap_or_default();
-    let tiles: Vec<_> = tree_tiles(map, tree)
+    let tiles: Vec<_> = leaves(&tree_tiles(map))
         .into_iter()
         .filter(|tile| {
             folder.is_empty()
@@ -442,14 +425,9 @@ pub fn svg_at(tree: &str, map: &CoverageMap, width: f64, folder: &str) -> String
                     .is_some_and(|source| source.starts_with(folder))
         })
         .collect();
-    let description = match tree {
-        "code" => "Code",
-        "data" => "Data",
-        _ => "ROM contents",
-    };
+    let description = "ROM contents";
     let identity = map.document["target"]
         .as_str()
-        .filter(|_| tree == "rom")
         .map(|target| target.replace('-', " ").to_uppercase());
     let title = if folder.is_empty() {
         identity.unwrap_or_else(|| description.into())
@@ -462,33 +440,29 @@ pub fn svg_at(tree: &str, map: &CoverageMap, width: f64, folder: &str) -> String
         identity.map_or_else(|| location.into(), |id| format!("{id} · {location}"))
     };
     let mut legend = Vec::new();
-    if tree != "data" {
-        for (category, name) in DISPLAY_CATEGORIES {
-            if tree == "rom" && category == Category::AssetData {
-                continue;
-            }
-            let bytes: i64 = tiles
-                .iter()
-                .map(|tile| display_bytes(&tile.categories, category))
-                .sum();
-            if bytes > 0 {
-                legend.push((name, fill(category), bytes));
-            }
+    for (category, name) in DISPLAY_CATEGORIES {
+        if category == Category::AssetData {
+            continue;
+        }
+        let bytes: i64 = tiles
+            .iter()
+            .map(|tile| display_bytes(&tile.categories, category))
+            .sum();
+        if bytes > 0 {
+            legend.push((name, fill(category), bytes));
         }
     }
-    if tree != "code" {
-        let mut totals = std::collections::BTreeMap::new();
-        for tile in leaves(&tiles) {
-            if tile.categories[Category::AssetData as usize] == tile.bytes {
-                *totals.entry(content_style(tile)).or_insert(0_i64) += tile.bytes;
-            }
+    let mut totals = std::collections::BTreeMap::new();
+    for tile in leaves(&tiles) {
+        if tile.categories[Category::AssetData as usize] == tile.bytes {
+            *totals.entry(content_style(tile)).or_insert(0_i64) += tile.bytes;
         }
-        legend.extend(
-            totals
-                .into_iter()
-                .map(|((name, color), bytes)| (name, format!("fill:{color}"), bytes)),
-        );
     }
+    legend.extend(
+        totals
+            .into_iter()
+            .map(|((name, color), bytes)| (name, format!("fill:{color}"), bytes)),
+    );
     let displayed_bytes: i64 = tiles.iter().map(|tile| tile.bytes).sum();
     let labels: Vec<_> = legend
         .into_iter()
@@ -511,14 +485,10 @@ pub fn svg_at(tree: &str, map: &CoverageMap, width: f64, folder: &str) -> String
         x: 4.0,
         y: 32.0,
         width: width - 8.0,
-        height: if tree == "rom" {
-            width * 16.0 / 9.0
-                - 44.0
-                - rows as f64 * 24.0
-                - if shared.is_empty() { 0.0 } else { 24.0 }
-        } else {
-            (width * 258.0 / 540.0).max(260.0)
-        },
+        height: width * 16.0 / 9.0
+            - 44.0
+            - rows as f64 * 24.0
+            - if shared.is_empty() { 0.0 } else { 24.0 },
     };
     let mut out = vec![format!("<title>{}</title>", esc(&title))];
     if let Ok(bytes) = std::fs::read(root().join("games/gs1/assets/fonts/weyard.otf")) {
@@ -532,23 +502,7 @@ pub fn svg_at(tree: &str, map: &CoverageMap, width: f64, folder: &str) -> String
         (width - if folder.is_empty() { 112.0 } else { 140.0 }).max(0.0),
         esc(&title)
     ));
-    let done_bytes: i64 = tiles
-        .iter()
-        .map(|tile| {
-            crate::coverage::jsnum::done_bytes(
-                tile.categories[Category::ProvenC as usize],
-                tile.categories[Category::ProvenAsm as usize],
-            )
-        })
-        .sum();
-    let corner = if tree == "code" {
-        format!(
-            "{:.2}% DONE",
-            100.0 * done_bytes as f64 / displayed_bytes.max(1) as f64
-        )
-    } else {
-        commas(displayed_bytes)
-    };
+    let corner = commas(displayed_bytes);
     out.push(format!(
         "<text class=\"weyard\" x=\"{}\" y=\"22\" text-anchor=\"end\">{}</text>",
         width - 8.0,
@@ -561,7 +515,6 @@ pub fn svg_at(tree: &str, map: &CoverageMap, width: f64, folder: &str) -> String
     let nested = directories(tiles.iter().map(|tile| (*tile).clone()).collect(), folder);
     draw_tiles(
         &mut out,
-        tree,
         &nested.iter().collect::<Vec<_>>(),
         frame,
         None,
@@ -594,11 +547,7 @@ pub fn svg_at(tree: &str, map: &CoverageMap, width: f64, folder: &str) -> String
         ));
         legend_x += label_width;
     }
-    let height = if tree == "rom" {
-        width * 16.0 / 9.0
-    } else {
-        (legend_y + 24.0).ceil()
-    };
+    let height = width * 16.0 / 9.0;
     let mut rendered = vec![format!("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {width} {height}\" width=\"{width}\" height=\"{height}\" shape-rendering=\"crispEdges\" role=\"img\" aria-label=\"{description} box tree\">"), format!("<rect x=\"0\" y=\"0\" width=\"{width}\" height=\"{height}\" fill=\"{CHART_BACKGROUND}\"/>")];
     rendered.extend(out);
     rendered.insert(
@@ -683,15 +632,18 @@ mod tests {
             }}),
             executable_areas: vec![],
             rom_areas: vec![Area {
-                tiles: ["FIELD/XIAN/ROOMS.C", "FIELD/HEIDIA/ROOMS.C"]
-                    .iter()
-                    .map(|path| Tile {
-                        source: Some((*path).into()),
-                        bytes: 100,
-                        categories: [100, 0, 0, 0, 0, 0],
-                        ..Tile::default()
-                    })
-                    .collect(),
+                tiles: vec![super::source_container(
+                    "PACK.json".into(),
+                    ["FIELD/XIAN/ROOMS.C", "FIELD/HEIDIA/ROOMS.C"]
+                        .iter()
+                        .map(|path| Tile {
+                            source: Some((*path).into()),
+                            bytes: 100,
+                            categories: [100, 0, 0, 0, 0, 0],
+                            ..Tile::default()
+                        })
+                        .collect(),
+                )],
                 ..Area::default()
             }],
         };
@@ -763,7 +715,6 @@ mod tests {
             let mut out = Vec::new();
             draw_tiles(
                 &mut out,
-                "data",
                 &grouped.iter().collect::<Vec<_>>(),
                 Rect {
                     x: 0.0,
@@ -867,10 +818,7 @@ mod tests {
         };
         assert_eq!(BOX_TREES, ["rom"]);
         // Physical streams, not decoded executable owners, determine ROM area.
-        assert_eq!(
-            tree_tiles(&map, "rom").iter().map(|t| t.bytes).sum::<i64>(),
-            600
-        );
+        assert_eq!(tree_tiles(&map).iter().map(|t| t.bytes).sum::<i64>(), 600);
         for width in [320.0, 540.0] {
             let rendered = svg("rom", &map, width);
             assert!(rendered.contains(&format!("viewBox=\"0 0 {width} {}\"", width * 16.0 / 9.0)));
@@ -878,31 +826,10 @@ mod tests {
             assert!(!rendered.contains("DONE"));
             assert!(rendered.contains("PCM samples"));
         }
-        assert_eq!(
-            tree_tiles(&map, "code")
-                .iter()
-                .map(|t| t.bytes)
-                .sum::<i64>(),
-            400
-        );
-        assert_eq!(
-            tree_tiles(&map, "data")
-                .iter()
-                .map(|t| t.bytes)
-                .sum::<i64>(),
-            100
-        );
-        let code = svg("code", &map, 540.0);
-        assert!(code.contains("<title>Code</title>"));
-        assert!(code.contains("25.00% DONE"));
-        let data = svg("data", &map, 540.0);
-        assert!(data.contains("<title>Data</title>"));
-        assert!(data.contains("PCM samples 40.0%"));
-        assert!(data.contains("Images 60.0%"));
     }
 
     #[test]
-    fn code_tree_credits_retained_but_not_draft_assembly() {
+    fn rom_tree_displays_code_status_without_redefining_done() {
         let mut categories = [0; 6];
         categories[Category::Unknown as usize] = 25;
         categories[Category::DraftAsm as usize] = 15;
@@ -924,11 +851,11 @@ mod tests {
         };
         let map = CoverageMap {
             document: Value::Null,
-            rom_areas: Vec::new(),
-            executable_areas: vec![area.clone(), area],
+            rom_areas: vec![area],
+            executable_areas: Vec::new(),
         };
-        let rendered = svg("code", &map, 540.0);
-        for tree in ["code"] {
+        let rendered = svg("rom", &map, 540.0);
+        for tree in ["rom"] {
             let chart = svg(tree, &map, 540.0);
             assert!(chart.contains("fill=\"#1f7f93\""));
             assert!(chart.contains("class=\"chart-frame\""));
@@ -937,7 +864,7 @@ mod tests {
             assert!(!chart.contains("font-size:12px"));
             assert!(chart.contains("fill:#fff;text-shadow:1px 1px 0 #000;"));
         }
-        assert!(rendered.contains("50.00% DONE"));
+        assert!(!rendered.contains("DONE"));
         let unknown = rendered.find("Unknown 25.0%").unwrap();
         let draft_c = rendered.find("Drafted 10.0%").unwrap();
         let proven_asm = rendered.find("Assembly 40.0%").unwrap();

@@ -12982,30 +12982,14 @@
 <rect x="344.32634762957207" y="101.75188615800423" width="0.10844577675447399" height="0.7617471522750355" style="fill:#326b7d"/>
 </g>
 </g>
-<g aria-label="track: 452 bytes · 5 items" data-node="container" data-kind="folder" data-bytes="452" data-source="games/gs1/src/audio/track/">
-<title>track: 452 bytes · 5 items</title>
+<g aria-label="track: 452 bytes · 1 items" data-node="container" data-kind="folder" data-bytes="452" data-source="games/gs1/src/audio/track/">
+<title>track: 452 bytes · 1 items</title>
 <rect class="container-frame" x="344.59746207145827" y="99.55876732513698" width="4.901749109302225" height="3.117534650273979" fill="#1f7f93"/>
 <path class="bevel-light" d="M344.59746207145827 102.67630197541096 V99.55876732513698 H349.4992111807605" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <path class="bevel-dark" d="M344.59746207145827 102.67630197541096 H349.4992111807605 V99.55876732513698" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="0x080f7e60–0x080f7f30: 208 bytes" data-node="leaf" data-kind="file" data-bytes="208" data-address="0x080f7e60" data-source="games/gs1/src/audio/track/consume_slot_bytes.c">
-<title>0x080f7e60–0x080f7f30: 208 bytes</title>
-<rect x="345.7614365587537" y="100.72274181243245" width="0.7691816494539478" height="0.7895856756830418" style="fill:#326b7d"/>
-</g>
-<g aria-label="0x080f7f30–0x080f7f78: 72 bytes" data-node="leaf" data-kind="file" data-bytes="72" data-address="0x080f7f30" data-source="games/gs1/src/audio/track/copy_buffered_bytes.c">
-<title>0x080f7f30–0x080f7f78: 72 bytes</title>
-<rect x="347.04833662610935" y="100.4712785808802" width="0.2662551863494435" height="1.292512138787546" style="fill:#326b7d"/>
-</g>
-<g aria-label="0x080f7df0–0x080f7e34: 68 bytes" data-node="leaf" data-kind="file" data-bytes="68" data-address="0x080f7df0" data-source="games/gs1/src/audio/track/insert_slot_node.c">
-<title>0x080f7df0–0x080f7e34: 68 bytes</title>
-<rect x="347.6017836180017" y="100.49221520007367" width="0.9639796878220706" height="0.30812842473638163" style="fill:#326b7d"/>
-</g>
-<g aria-label="0x080f7e34–0x080f7e60: 44 bytes" data-node="leaf" data-kind="file" data-bytes="44" data-address="0x080f7e34" data-source="games/gs1/src/audio/track/remove_slot_node.c">
-<title>0x080f7e34–0x080f7e60: 44 bytes</title>
-<rect x="347.5822693021541" y="101.08895773369885" width="0.269099793041211" height="0.6734106826230153" style="fill:#326b7d"/>
-</g>
-<g aria-label="0x080f7db4–0x080f7df0: 60 bytes" data-node="leaf" data-kind="file" data-bytes="60" data-address="0x080f7db4" data-source="games/gs1/src/audio/track/reset_slot_buckets.c">
-<title>0x080f7db4–0x080f7df0: 60 bytes</title>
-<rect x="348.16939612333493" y="101.13788496879725" width="0.36695426323801505" height="0.5755562124262112" style="fill:#326b7d"/>
+<g aria-label="0x080f7db4–0x080f7f78: 452 bytes" data-node="leaf" data-kind="file" data-bytes="452" data-address="0x080f7db4" data-source="games/gs1/src/audio/track/slot_buffer.c">
+<title>0x080f7db4–0x080f7f78: 452 bytes</title>
+<rect x="345.766537565311" y="100.72784281898973" width="2.56359812159674" height="0.7793836625684948" style="fill:#326b7d"/>
 </g>
 </g>
 </g>

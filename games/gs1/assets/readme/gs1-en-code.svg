@@ -30073,78 +30073,70 @@
 <rect x="364.8977835548133" y="280.02654840955773" width="0.8015281574911777" height="3.572687511696623" style="fill:#326b7d"/>
 </g>
 </g>
-<g aria-label="psynergy_menu: 2,238 bytes · 17 items" data-node="container" data-kind="folder" data-bytes="2238" data-source="games/gs1/src/psynergy_menu/">
-<title>psynergy_menu: 2,238 bytes · 17 items</title>
+<g aria-label="psynergy_menu: 2,238 bytes · 15 items" data-node="container" data-kind="folder" data-bytes="2238" data-source="games/gs1/src/psynergy_menu/">
+<title>psynergy_menu: 2,238 bytes · 15 items</title>
 <rect class="container-frame" x="368.1000757910501" y="271.94617445668354" width="11.391939583085895" height="14.053825543316464" fill="#1f7f93"/>
 <path class="bevel-light" d="M368.1000757910501 286 V271.94617445668354 H379.492015374136" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <path class="bevel-dark" d="M368.1000757910501 286 H379.492015374136 V271.94617445668354" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="0x080a6a00–0x080a6a98: 152 bytes" data-node="leaf" data-kind="file" data-bytes="152" data-address="0x080a6a00" data-source="games/gs1/src/psynergy_menu/build_page_result.c">
 <title>0x080a6a00–0x080a6a98: 152 bytes</title>
-<rect x="370.6000757910501" y="274.44617445668354" width="1.4789924778843506" height="1.0360950605072006" style="fill:#326b7d"/>
-</g>
-<g aria-label="0x080a6874–0x080a68a8: 52 bytes" data-node="leaf" data-kind="file" data-bytes="52" data-address="0x080a6874" data-source="games/gs1/src/psynergy_menu/close_windows.c">
-<title>0x080a6874–0x080a68a8: 52 bytes</title>
-<rect x="372.7910873624377" y="274.1581935501868" width="0.4240381870065335" height="1.6120568735006668" style="fill:#326b7d"/>
+<rect x="370.4574469159321" y="274.3035455815656" width="0.7147422497640306" height="2.816225970542824" style="fill:#326b7d"/>
 </g>
 <g aria-label="0x080a68ec–0x080a69fe: 274 bytes" data-node="leaf" data-kind="file" data-bytes="274" data-address="0x080a68ec" data-source="games/gs1/src/psynergy_menu/collect_actions.c">
 <title>0x080a68ec–0x080a69fe: 274 bytes</title>
-<rect x="370.6000757910501" y="276.48226951719073" width="2.3270688518974176" height="1.7347551302890833" style="fill:#326b7d"/>
-</g>
-<g aria-label="0x080a6794–0x080a6874: 224 bytes" data-node="leaf" data-kind="file" data-bytes="224" data-address="0x080a6794" data-source="games/gs1/src/psynergy_menu/create_entry_grid.c">
-<title>0x080a6794–0x080a6874: 224 bytes</title>
-<rect x="373.8846234283663" y="274.40365324210234" width="3.1499131603508346" height="0.9149575708376434" style="fill:#326b7d"/>
+<rect x="372.02956029057816" y="274.44617445668354" width="1.5768339004650573" height="2.5309682203068546" style="fill:#326b7d"/>
 </g>
 <g aria-label="0x080a6b64–0x080a6ccc: 360 bytes" data-node="leaf" data-kind="file" data-bytes="360" data-address="0x080a6b64" data-source="games/gs1/src/psynergy_menu/draw_action_page.c">
 <title>0x080a6b64–0x080a6ccc: 360 bytes</title>
-<rect x="373.9271446429475" y="276.27608959835885" width="3.0648707311884777" height="1.9409350491209971" style="fill:#326b7d"/>
+<rect x="374.6063941910432" y="274.44617445668354" width="2.3856211830927765" height="2.5309682203068546" style="fill:#326b7d"/>
 </g>
 <g aria-label="0x080a8f40–0x080a90bc: 380 bytes" data-node="leaf" data-kind="file" data-bytes="380" data-address="0x080a8f40" data-source="games/gs1/src/psynergy_menu/draw_list_page.c">
 <title>0x080a8f40–0x080a90bc: 380 bytes</title>
-<rect x="370.6000757910501" y="279.21702464747983" width="2.0799748262857896" height="3.09700129379116" style="fill:#326b7d"/>
+<rect x="370.6000757910501" y="277.9771426769904" width="1.738886705027694" height="3.607222644504929" style="fill:#326b7d"/>
 </g>
 <g aria-label="0x080a9374–0x080a939e: 42 bytes" data-node="leaf" data-kind="file" data-bytes="42" data-address="0x080a9374" data-source="games/gs1/src/psynergy_menu/draw_prepared_psynergy_icons.c">
 <title>0x080a9374–0x080a939e: 42 bytes</title>
-<rect x="370.39407338810463" y="283.10802353832554" width="0.5879951941091053" height="0.5979788646199145" style="fill:#326b7d"/>
-</g>
-<g aria-label="0x080a68a8–0x080a68ec: 68 bytes" data-node="leaf" data-kind="file" data-bytes="68" data-address="0x080a68a8" data-source="games/gs1/src/psynergy_menu/draw_psynergy_icons.c">
-<title>0x080a68a8–0x080a68ec: 68 bytes</title>
-<rect x="371.57255969395055" y="283.11051945595324" width="1.3109974087030691" height="0.5929870293645099" style="fill:#326b7d"/>
+<rect x="370.28209041385253" y="282.2663799442978" width="0.36402924560494665" height="1.551605432899733" style="fill:#326b7d"/>
 </g>
 <g aria-label="0x080a8cc0–0x080a8d34: 116 bytes" data-node="leaf" data-kind="file" data-bytes="116" data-address="0x080a8cc0" data-source="games/gs1/src/psynergy_menu/draw_range.c">
 <title>0x080a8cc0–0x080a8d34: 116 bytes</title>
-<rect x="373.403383394629" y="278.94035742477297" width="3.865299202213851" height="0.44666555458625423" style="fill:#326b7d"/>
+<rect x="371.3070429518861" y="282.5632739911215" width="1.053010874565461" height="0.9578173392523399" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x080a6794–0x080a68ec: 344 bytes" data-node="leaf" data-kind="file" data-bytes="344" data-address="0x080a6794" data-source="games/gs1/src/psynergy_menu/entry_grid.c">
+<title>0x080a6794–0x080a68ec: 344 bytes</title>
+<rect x="373.3389624960778" y="277.9771426769904" width="3.653052878058201" height="1.4549922528613841" style="fill:#326b7d"/>
 </g>
 <g aria-label="0x080a1870–0x080a195c: 236 bytes" data-node="leaf" data-kind="file" data-bytes="236" data-address="0x080a1870" data-source="games/gs1/src/psynergy_menu/initialize_entry_objects.c">
 <title>0x080a1870–0x080a195c: 236 bytes</title>
-<rect x="373.68005061733584" y="280.1103557566523" width="2.768976602240092" height="1.0793051679015284" style="fill:#326b7d"/>
+<rect x="373.3389624960778" y="280.43213492985177" width="1.2040776790802004" height="2.5556153946480777" style="fill:#326b7d"/>
 </g>
 <g aria-label="0x080a735c–0x080a737e: 34 bytes" data-node="leaf" data-kind="file" data-bytes="34" data-address="0x080a735c" data-source="games/gs1/src/psynergy_menu/is_action_restricted.c">
 <title>0x080a735c–0x080a737e: 34 bytes</title>
-<rect x="377.08477425821593" y="279.7461027952923" width="0.2714940772800065" height="1.807811090621522" style="fill:#326b7d"/>
+<rect x="372.96702491495284" y="283.61581274337493" width="1.947952841330127" height="0.25612483775007333" style="fill:#326b7d"/>
 </g>
 <g aria-label="0x080a1c2c–0x080a1c6c: 64 bytes" data-node="leaf" data-kind="file" data-bytes="64" data-address="0x080a1c2c" data-source="games/gs1/src/psynergy_menu/position_owner_entry.c">
 <title>0x080a1c2c–0x080a1c6c: 64 bytes</title>
-<rect x="373.43675495905205" y="281.94636526627005" width="1.556334399831574" height="0.5134086834324763" style="fill:#326b7d"/>
+<rect x="375.3151485306" y="280.2042432852938" width="0.5442167108840001" height="1.4083585227871476" style="fill:#326b7d"/>
 </g>
 <g aria-label="0x080a1bdc–0x080a1c2c: 80 bytes" data-node="leaf" data-kind="file" data-bytes="80" data-address="0x080a1bdc" data-source="games/gs1/src/psynergy_menu/refresh_owner_entries.c">
 <title>0x080a1bdc–0x080a1c2c: 80 bytes</title>
-<rect x="373.50093104448115" y="283.03735871856406" width="1.427982228973455" height="0.6417608542905953" style="fill:#326b7d"/>
+<rect x="376.47160904122853" y="280.2722703741543" width="0.6802708886050002" height="1.2723043450661475" style="fill:#326b7d"/>
 </g>
 <g aria-label="0x080a1bcc–0x080a1bdc: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x080a1bcc" data-source="games/gs1/src/psynergy_menu/refresh_owner_entries_default.c">
 <title>0x080a1bcc–0x080a1bdc: 16 bytes</title>
-<rect x="375.30903316407284" y="281.7489003880268" width="2.1237427465900987" height="0.11847892694595605" style="fill:#326b7d"/>
+<rect x="375.10583441102926" y="281.9475043993942" width="0.12558847174246157" height="1.9897013647346151" style="fill:#326b7d"/>
 </g>
 <g aria-label="0x080a6384–0x080a63dc: 88 bytes" data-node="leaf" data-kind="file" data-bytes="88" data-address="0x080a6384" data-source="games/gs1/src/psynergy_menu/refresh_owner_psynergy.c">
 <title>0x080a6384–0x080a63dc: 88 bytes</title>
-<rect x="375.60214282072695" y="282.27896789857283" width="0.7046982402541886" height="1.3686829813000423" style="fill:#326b7d"/>
+<rect x="375.63958541593473" y="282.2300784608147" width="0.6907365945835386" height="1.424553241893538" style="fill:#326b7d"/>
 </g>
 <g aria-label="0x080a63dc–0x080a63e0: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x080a63dc" data-source="games/gs1/src/psynergy_menu/return_true.c">
 <title>0x080a63dc–0x080a63e0: 4 bytes</title>
-<rect x="376.6990628969073" y="281.96649149424485" width="0.7530797614294379" height="0.07974543159823966" style="fill:#326b7d"/>
+<rect x="376.7163689585115" y="281.9253888142244" width="0.7349677649230357" height="0.08135730140296449" style="fill:#326b7d"/>
 </g>
 <g aria-label="0x080a65e4–0x080a6614: 48 bytes" data-node="leaf" data-kind="file" data-bytes="48" data-address="0x080a65e4" data-source="games/gs1/src/psynergy_menu/set_shortcut.c">
 <title>0x080a65e4–0x080a6614: 48 bytes</title>
-<rect x="376.86739647936514" y="282.29431593989915" width="0.4164125965138388" height="1.497477761843913" style="fill:#326b7d"/>
+<rect x="376.87977157439155" y="282.25150603291036" width="0.4081625331630001" height="1.5444127005081476" style="fill:#326b7d"/>
 </g>
 </g>
 <g aria-label="resource: 2,474 bytes · 19 items" data-node="container" data-kind="folder" data-bytes="2474" data-source="games/gs1/src/resource/">

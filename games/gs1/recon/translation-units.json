@@ -173944,6 +173944,37 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "ui-grid-columns",
+      "game": "gs1",
+      "source": "games/gs1/src/ui/icon/grid_column.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x08012d20",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08012d48",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08012d70",
+          "extent": 120,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08012de8",
+          "extent": 64,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

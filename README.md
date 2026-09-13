@@ -16,9 +16,9 @@ each game as they shipped on the cartridge. The Japanese release is treated as
 the original and the others as its translations; English _Golden Sun_ is the
 first edition rebuilt in full.
 
-## Status: 50.78% DONE
+## Status: 50.85% DONE
 
-![Code](games/gs1/assets/readme/gs1-en-code.svg?v=703d52eec3d5102d)
+![Code](games/gs1/assets/readme/gs1-en-code.svg?v=bc42a094daeccd4d)
 
 ![Data](games/gs1/assets/readme/gs1-en-data.svg?v=b2a5c2b675e2befd)
 

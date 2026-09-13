@@ -420,7 +420,7 @@ compiler-source-check:
 	@set -e; for repo in agbcc agscc; do \
 		case "$$repo" in \
 		  agbcc) approved=da598c1d918402c42c0c0d7128ba14567f3175e9;; \
-		  agscc) approved=70b81d084a50db8ef3db3a90e07fda33e7ba8c84;; \
+		  agscc) approved=f2095030ce7fa3b8991a5b5bdbe32a1860c6fa34;; \
 		esac; \
 		test "$$(git rev-parse :$$repo)" = "$$approved" || { printf '%s gitlink is not approved\n' "$$repo"; exit 1; }; \
 		test "$$(git -C "$$repo" rev-parse HEAD)" = "$$approved" || { printf '%s checkout is not approved\n' "$$repo"; exit 1; }; \
@@ -445,13 +445,6 @@ clean:
 	@find $(TOOLS) -type d -name target -prune -exec rm -rf -- {} +
 	@printf 'generated trees removed; roms/ untouched\n'
 
-# GS2's compiler: the pinned agscc source with agscc-gs2.unidiff applied, built
-# under out/ and staged beside the GS1 bundle. One compiler per game.
+# Both games build the licensed agscc submodule; GS2 selects -mgs2 at compile time.
 .PHONY: compilers-gs2
-compilers-gs2:
-	rm -rf out/compilers/gs2-source && mkdir -p out/compilers/gs2-source out/compilers/gs2/dist
-	cp -R agscc/. out/compilers/gs2-source/ && rm -rf out/compilers/gs2-source/build
-	cd out/compilers/gs2-source && patch -p1 < "$(CURDIR)/agscc-gs2.unidiff"
-	sh out/compilers/gs2-source/build.sh
-	cp out/compilers/dist/cpp0 out/compilers/dist/tradcpp0 out/compilers/dist/as out/compilers/gs2/dist/
-	cp out/compilers/gs2-source/build/gcc/cc1 out/compilers/gs2-source/build/gcc/xgcc out/compilers/gs2/dist/
+compilers-gs2: compilers

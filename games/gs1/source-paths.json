@@ -16073,7 +16073,7 @@
     },
     "resource_37f:02001aac": {
       "name": "FieldScene_RunScriptedStep953",
-      "source": "overlays/scene/story/scenario_dispatch/run_scripted_step_953.c"
+      "source": "overlays/scene/story/scenario_dispatch/transition.c"
     },
     "resource_37f:020003bc": {
       "name": "FieldScene_RunFlag821Dialogue",
@@ -16101,7 +16101,7 @@
     },
     "resource_37f:0200161c": {
       "name": "Scene_RunTransitionCue",
-      "source": "overlays/scene/story/scenario_dispatch/transition_cue.c"
+      "source": "overlays/scene/story/scenario_dispatch/transition.c"
     },
     "resource_37f:02000d1c": {
       "name": "FieldScene_RunScene37f_02000d1c",
@@ -18411,6 +18411,14 @@
     },
     "main:0801c0d8": {
       "name": "UiTextResource_NoOpCallback4"
+    },
+    "resource_37f:020017c0": {
+      "name": "Scene_RunActorFormation",
+      "source": "overlays/scene/story/scenario_dispatch/transition.c"
+    },
+    "resource_37f:02001ac8": {
+      "name": "Scene_UpdateCueTimer",
+      "source": "overlays/scene/story/scenario_dispatch/transition.c"
     }
   }
 }

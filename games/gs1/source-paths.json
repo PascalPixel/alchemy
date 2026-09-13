@@ -18433,6 +18433,10 @@
     "resource_3c8:02001780": {
       "name": "FieldScene_SetupActorTenCamera",
       "source": "overlays/scene/field/entry_setup.c"
+    },
+    "resource_39e:02000658": {
+      "name": "Scene_RunActorNineTransition",
+      "source": "map/locations/xian/actor_nine_transition.c"
     }
   }
 }

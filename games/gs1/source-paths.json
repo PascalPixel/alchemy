@@ -2953,15 +2953,13 @@
     },
     "main:080a6794": {
       "name": "PsynergyMenu_CreateEntryGrid",
-      "source": "psynergy_menu/create_entry_grid.c"
+      "source": "psynergy_menu/entry_grid.c"
     },
     "main:080a6874": {
-      "name": "PsynergyMenu_CloseWindows",
-      "source": "psynergy_menu/close_windows.c"
+      "name": "PsynergyMenu_CloseWindows"
     },
     "main:080a68a8": {
-      "name": "PsynergyMenu_DrawPsynergyIcons",
-      "source": "psynergy_menu/draw_psynergy_icons.c"
+      "name": "PsynergyMenu_DrawPsynergyIcons"
     },
     "main:080a68ec": {
       "name": "PsynergyMenu_CollectActions",

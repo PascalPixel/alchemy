@@ -54,3 +54,42 @@ void PsynergyMenu_CreateEntryGrid(void)
         x += 16;
     } while (index <= 15);
 }
+
+s32 UiWindow_Close(s32 window, s32 mode);
+void Menu_ReleaseEntryObjects(void);
+
+void PsynergyMenu_CloseWindows(void)
+{
+    struct PsynergyMenuState *menu;
+
+    menu = *(struct PsynergyMenuState **)ADDR_03001F2C;
+    Menu_ReleaseEntryObjects();
+    UiWindow_Close(menu->auxiliary_window, 1);
+    UiWindow_Close(menu->psynergy_window, 1);
+    UiWindow_Close(menu->message_window, 1);
+}
+
+void Func_08015298(s32 style, u16 action, u8 target, s32 flags);
+
+void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies)
+{
+    s32 remaining;
+    struct PsynergyMenuIcon **icons;
+    u16 *p;
+    s32 psynergy_id;
+
+    icons =
+        (*(struct PsynergyMenuState **)ADDR_03001F2C)->entry_icons;
+    p = psynergies;
+    remaining = 31;
+    do {
+        psynergy_id = *p++;
+        if (psynergy_id != 0) {
+            Func_08015298(
+                4, psynergy_id, (*icons)->render_target, 0);
+        }
+        icons++;
+        remaining--;
+    } while (remaining >= 0);
+    Menu_HideEmptyEntryIcons(psynergies);
+}

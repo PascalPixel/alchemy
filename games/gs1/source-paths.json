@@ -2518,8 +2518,7 @@
       "source": "battle/actor/reset_runtime_fields.c"
     },
     "main:080bb8e8": {
-      "name": "BattleActor_DestroyTemporaryObject",
-      "source": "battle/actor/destroy_temporary_object.c"
+      "name": "BattleActor_DestroyTemporaryObject"
     },
     "main:080b7994": {
       "name": "BattleStatusIcon_Cycle",
@@ -5337,19 +5336,16 @@
     },
     "main:080bb8d8": {
       "name": "BattleEv_SetRuntimeField8",
-      "source": "battle/event_runtime/set_runtime_field8.c"
+      "source": "battle/event/queue.c"
     },
     "main:080bb928": {
-      "name": "Battle_SetRuntimeFlagBit0",
-      "source": "battle/event_runtime/set_runtime_flag_bit0.c"
+      "name": "Battle_SetRuntimeFlagBit0"
     },
     "main:080bb938": {
-      "name": "BattleEv_DispatchQueued",
-      "source": "battle/event_runtime/dispatch_queued_events.c"
+      "name": "BattleEv_DispatchQueued"
     },
     "main:080bbabc": {
-      "name": "BattleEv_Push",
-      "source": "battle/event/push.c"
+      "name": "BattleEv_Push"
     },
     "main:080bbae8": {
       "name": "BattleFx_CanAffectDefeatedUnit",

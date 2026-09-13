@@ -1140,11 +1140,48 @@ fn sprite_children(tree: &SourceTree, source: &str, span: Span, data: &[Span]) -
             bytes: gap.bytes(),
             categories: [0, 0, 0, 0, 0, gap.bytes()],
             group: Some("asset-padding".into()),
+            source: Some(source.into()),
             address: Some(gap.start),
             ..Tile::default()
         });
     }
     children
+}
+fn component_children(region: &Value, data: &[Span]) -> Vec<Tile> {
+    let mut cursor = integer(region, "address").unwrap_or(0);
+    let Some(end) = cursor.checked_add(integer(region, "size").unwrap_or(0)) else {
+        return vec![];
+    };
+    let mut children = Vec::new();
+    for part in array(&region["details"], "components") {
+        let Some(size) = integer(part, "size").filter(|size| *size > 0) else {
+            return vec![];
+        };
+        if asset_number(part, "address") != Some(cursor) || size > end - cursor {
+            return vec![];
+        }
+        let bytes = bytes(&intersect(&[Span::new(cursor, cursor + size)], data));
+        let source = array(part, "sources")
+            .first()
+            .or_else(|| array(region, "sources").first());
+        if bytes > 0 {
+            children.push(Tile {
+                label: text(part, "kind"),
+                bytes,
+                categories: [0, 0, 0, 0, 0, bytes],
+                group: Some(text(part, "kind")),
+                source: source.and_then(Value::as_str).map(String::from),
+                address: Some(cursor),
+                ..Tile::default()
+            });
+        }
+        cursor += size;
+    }
+    if cursor == end {
+        children
+    } else {
+        vec![]
+    }
 }
 fn asset_tiles(tree: &SourceTree, data: &[Span], rom: i64) -> Vec<Tile> {
     let Some(manifest) = json(tree, "out/gs1-en/full/assets/manifest.json") else {
@@ -1175,7 +1212,7 @@ fn asset_tiles(tree: &SourceTree, data: &[Span], rom: i64) -> Vec<Tile> {
         if actual == 0 {
             continue;
         }
-        covered.extend(actual_spans);
+        covered.extend_from_slice(&actual_spans);
         let kind = text(region, "kind");
         let sources = array(region, "sources");
         let source = sources
@@ -1183,17 +1220,20 @@ fn asset_tiles(tree: &SourceTree, data: &[Span], rom: i64) -> Vec<Tile> {
             .filter_map(Value::as_str)
             .find(|source| kind == "golden-sun-pcm-wave" && source.ends_with(".wav"))
             .or_else(|| sources.first().and_then(Value::as_str))
-            .unwrap_or(&kind);
+            .unwrap_or("games/gs1/assets/manifest.json");
         let owner = if kind == "golden-sun-sound-sequence" {
             "games/gs1/SOUND/SEQUENCE/SEQUENCES.tsv"
         } else {
             sources.first().and_then(Value::as_str).unwrap_or(source)
         };
-        let children = if kind == "components" {
-            sprite_children(tree, owner, span, data)
+        let mut children = if kind == "components" {
+            sprite_children(tree, owner, span, &actual_spans)
         } else {
             Vec::new()
         };
+        if kind == "components" && children.is_empty() {
+            children = component_children(region, &actual_spans);
+        }
         let group = match children.first().and_then(|child| child.group.clone()) {
             Some(group) => group,
             None => kind.clone(),
@@ -1548,6 +1588,28 @@ mod tests {
     use super::*;
     use serde_json::json;
     use std::collections::BTreeMap;
+
+    #[test]
+    fn component_files_use_physical_build_extents_and_preserve_clipping() {
+        let mut region = json!({"address":100,"size":10,"sources":["INDEX.json"],"details":{"components":[
+            {"address":100,"size":4,"kind":"gba-4bpp-tiles","sources":["IMAGE.png"]},
+            {"address":104,"size":6,"kind":"byte-fill","sources":[]}
+        ]}});
+        let children = component_children(&region, &[Span::new(102, 109)]);
+        assert_eq!(children.iter().map(|child| child.bytes).sum::<i64>(), 7);
+        assert_eq!(children[0].source.as_deref(), Some("IMAGE.png"));
+        assert_eq!(children[1].source.as_deref(), Some("INDEX.json"));
+        assert_eq!(children[0].bytes, 2);
+        for address in [103, 105] {
+            region["details"]["components"][1]["address"] = json!(address);
+            assert!(component_children(&region, &[Span::new(100, 110)]).is_empty());
+        }
+        region["details"]["components"][1]["address"] = json!(104);
+        for size in [0, 5, 7] {
+            region["details"]["components"][1]["size"] = json!(size);
+            assert!(component_children(&region, &[Span::new(100, 110)]).is_empty());
+        }
+    }
 
     #[test]
     fn shared_map_links_follow_load_tables_without_adding_tiles() {

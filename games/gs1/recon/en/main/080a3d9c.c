@@ -1,5 +1,5 @@
-#include "inventory_menu.h"
-#include "owner_state.h"
+#include "INVENTORY_MENU.H"
+#include "OWNER_STATE.H"
 
 s32 InventoryMenu_GetItemQuantity(s32 owner_id, s32 item_id) {
     s32 slot_index;

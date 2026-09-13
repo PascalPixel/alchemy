@@ -24,7 +24,7 @@
  *   Func_020028fc_a      0x0200a4f4
  *   Func_020028fc_b      0x0200a4d4
  */
-#include "types.h"
+#include "TYPES.H"
 
 #define RunEventScript01 Func_02000150
 

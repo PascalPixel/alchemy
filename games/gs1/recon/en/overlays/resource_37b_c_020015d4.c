@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 /* resource_37b owner at 0x020015d4, 40 bytes. Setup, then a guarded call. */
 void Func_02003a08();
 s32 Func_020031d6();

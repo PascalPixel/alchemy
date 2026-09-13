@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * Battle-presentation sub-effect at 0x080da6cc.  The family matcher's

@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* resource_3c7 owner at 0x02000030, 18 bytes. One call, constant return. */
 

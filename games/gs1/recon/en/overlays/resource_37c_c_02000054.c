@@ -1,7 +1,7 @@
-#include "types.h"
+#include "TYPES.H"
 
-#include "resource_37c.h"
-#include "resource_37c_runtime.h"
+#include "RESOURCE_37C.H"
+#include "RESOURCE_37C_RUNTIME.H"
 
 /*
  * resource_37c owner at 0x02000030, 8 bytes: `ldr r0, [pc, #0] / bx lr` plus the

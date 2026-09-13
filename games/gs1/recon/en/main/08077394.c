@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define OWNER_STATE_SIZE 0x14c
 #define MAIN_OWNER_COUNT 8

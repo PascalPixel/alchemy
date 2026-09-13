@@ -1,5 +1,5 @@
-#include "types.h"
-#include "item.h"
+#include "TYPES.H"
+#include "ITEM.H"
 
 /*
  * Data_03001f2c is the polymorphic menu-runtime cell shared across many

@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 extern u8 *Data_03001f2c;
 

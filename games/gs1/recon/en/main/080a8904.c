@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define Runtime_RunBusyWaitDelay Func_080a8904
 

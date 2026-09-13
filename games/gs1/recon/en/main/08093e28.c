@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define TILE_HI(ptr, offset) (*(s16 *)((u8 *)(ptr) + (offset) + 2))
 

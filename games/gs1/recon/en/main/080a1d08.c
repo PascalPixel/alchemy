@@ -1,4 +1,4 @@
-#include "item_menu.h"
+#include "ITEM_MENU.H"
 
 #define INPUT_NEW_KEYS (*(volatile u32 *)0x03001c94)
 

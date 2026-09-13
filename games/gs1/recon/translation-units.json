@@ -5690,7 +5690,7 @@
     {
       "id": "overlay-37d-unit",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/scene_37d.c",
+      "source": "games/gs1/SRC/FIELD/SOL_SHINDEN/SCENE_37D.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37d",
       "absolute_symbols": {},
@@ -5731,7 +5731,7 @@
     {
       "id": "overlay-37e-unit",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/scene_37e.c",
+      "source": "games/gs1/SRC/FIELD/SOL_SHINDEN/SCENE_37E.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37e",
       "absolute_symbols": {},
@@ -6394,7 +6394,7 @@
     {
       "id": "minimal-scene-entry",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/minimal.c",
+      "source": "games/gs1/SRC/MENU/TITLE/MINIMAL.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_36f",
       "absolute_symbols": {
@@ -6580,7 +6580,7 @@
     {
       "id": "save-menu",
       "game": "gs1",
-      "source": "games/gs1/src/menu/save_menu.c",
+      "source": "games/gs1/SRC/MENU/SAVE/SAVE_MENU.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_370",
       "absolute_symbols": {},
@@ -6621,7 +6621,7 @@
     {
       "id": "timed-actor-events",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/timed_events.c",
+      "source": "games/gs1/SRC/FIELD/HEIDIA/TIMED_EVENTS.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_376",
       "absolute_symbols": {
@@ -8313,7 +8313,7 @@
     {
       "id": "conditional-scene-setup",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/conditional_setup.c",
+      "source": "games/gs1/SRC/FIELD/HEIDIA/CONDITIONAL_SETUP.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_379",
       "absolute_symbols": {
@@ -9512,7 +9512,7 @@
     {
       "id": "scene-table-state-update",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/table_update.c",
+      "source": "games/gs1/SRC/FIELD/SOL_SHINDEN/TABLE_UPDATE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37c",
       "absolute_symbols": {
@@ -9574,7 +9574,7 @@
     {
       "id": "story-beat-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/beat.c",
+      "source": "games/gs1/SRC/FIELD/SHARED/BEAT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_384",
       "absolute_symbols": {
@@ -9839,7 +9839,7 @@
     {
       "id": "actor-placement-dialogue-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/placement.c",
+      "source": "games/gs1/SRC/FIELD/VAULT/PLACEMENT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_386",
       "absolute_symbols": {
@@ -10462,7 +10462,7 @@
     {
       "id": "gate-actor-placement-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/gate_placement.c",
+      "source": "games/gs1/SRC/FIELD/GOMA/GATE_PLACEMENT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_388",
       "absolute_symbols": {
@@ -10536,7 +10536,7 @@
     {
       "id": "actor-message-branch-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/message_branch.c",
+      "source": "games/gs1/SRC/FIELD/BILIBIN/MESSAGE_BRANCH.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38c",
       "absolute_symbols": {
@@ -11100,7 +11100,7 @@
     {
       "id": "entry-layout-selector-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/entry_layout.c",
+      "source": "games/gs1/SRC/FIELD/KOLIMA/ENTRY_LAYOUT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_390",
       "absolute_symbols": {
@@ -11323,7 +11323,7 @@
     {
       "id": "preset-layout-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/preset_layout.c",
+      "source": "games/gs1/SRC/FIELD/KOLIMA/PRESET_LAYOUT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_394",
       "absolute_symbols": {
@@ -11631,7 +11631,7 @@
     {
       "id": "orbiting-entity-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/orbiting.c",
+      "source": "games/gs1/SRC/FIELD/BILIBIN/ORBITING.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38e",
       "absolute_symbols": {
@@ -11922,7 +11922,7 @@
     {
       "id": "background-scroll-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/background_scroll.c",
+      "source": "games/gs1/SRC/FIELD/KOLIMA/BACKGROUND_SCROLL.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_397",
       "absolute_symbols": {
@@ -12124,7 +12124,7 @@
     {
       "id": "scenario-region-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/region.c",
+      "source": "games/gs1/SRC/FIELD/BILIBIN/REGION.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_398",
       "absolute_symbols": {
@@ -12918,7 +12918,7 @@
     {
       "id": "flagged-dialogue-object-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/flagged_object.c",
+      "source": "games/gs1/SRC/FIELD/XIAN/FLAGGED_OBJECT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a1",
       "absolute_symbols": {
@@ -13308,7 +13308,7 @@
     {
       "id": "actor-motion-particle-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/motion_particle.c",
+      "source": "games/gs1/SRC/FIELD/ALTIN/MOTION_PARTICLE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a3",
       "absolute_symbols": {
@@ -14526,7 +14526,7 @@
     {
       "id": "party-events",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/party_events.c",
+      "source": "games/gs1/SRC/FIELD/KALAY/PARTY_EVENTS.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3aa",
       "absolute_symbols": {
@@ -17113,7 +17113,7 @@
     {
       "id": "facing-dialogue-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/facing.c",
+      "source": "games/gs1/SRC/FIELD/SHARED/FACING.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ac",
       "absolute_symbols": {
@@ -17595,7 +17595,7 @@
     {
       "id": "facing-events",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/facing_events.c",
+      "source": "games/gs1/SRC/FIELD/TOLBI/FACING_EVENTS.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b6",
       "absolute_symbols": {
@@ -18564,7 +18564,7 @@
     {
       "id": "entry-cue-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/entry_cue.c",
+      "source": "games/gs1/SRC/FIELD/SUHALLA/ENTRY_CUE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c1",
       "absolute_symbols": {
@@ -18751,7 +18751,7 @@
     {
       "id": "actor-record-setup-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/record_setup.c",
+      "source": "games/gs1/SRC/FIELD/SUHALLA/RECORD_SETUP.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c2",
       "absolute_symbols": {
@@ -20003,7 +20003,7 @@
     {
       "id": "actor-prompt-dialogue",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/actor_prompt.c",
+      "source": "games/gs1/SRC/FIELD/SUHALLA/ACTOR_PROMPT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c3",
       "absolute_symbols": {
@@ -20712,7 +20712,7 @@
     {
       "id": "flagged-cue-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/flagged_cue.c",
+      "source": "games/gs1/SRC/FIELD/LALIVERO/FLAGGED_CUE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c6",
       "absolute_symbols": {
@@ -22807,7 +22807,7 @@
     {
       "id": "actor-pose-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/pose.c",
+      "source": "games/gs1/SRC/FIELD/LALIVERO/POSE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c7",
       "absolute_symbols": {
@@ -24378,7 +24378,7 @@
     {
       "id": "table-load-audio-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/table_audio.c",
+      "source": "games/gs1/SRC/FIELD/LEMURIAN_SHIP/TABLE_AUDIO.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ca",
       "absolute_symbols": {
@@ -24491,7 +24491,7 @@
     {
       "id": "digit-value-dialogue-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/digit_value.c",
+      "source": "games/gs1/SRC/MENU/LINK/DIGIT_VALUE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3cb",
       "absolute_symbols": {
@@ -24728,7 +24728,7 @@
     {
       "id": "empty-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/empty.c",
+      "source": "games/gs1/SRC/DEBUG/EMPTY.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3cc",
       "absolute_symbols": {
@@ -24822,7 +24822,7 @@
     {
       "id": "record-count-panel-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/record_count.c",
+      "source": "games/gs1/SRC/DEBUG/RECORD_COUNT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3cd",
       "absolute_symbols": {
@@ -25425,7 +25425,7 @@
     {
       "id": "actor-motion-event-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/motion_event.c",
+      "source": "games/gs1/SRC/FIELD/VAULT/MOTION_EVENT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_385",
       "absolute_symbols": {
@@ -26757,7 +26757,7 @@
     {
       "id": "extended-effect-presentation-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/extended_effect.c",
+      "source": "games/gs1/SRC/FIELD/SOL_SHINDEN/EXTENDED_EFFECT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_381",
       "absolute_symbols": {
@@ -28607,7 +28607,7 @@
     {
       "id": "party-introduction-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/party_intro.c",
+      "source": "games/gs1/SRC/FIELD/SOL_SHINDEN/PARTY_INTRO.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_380",
       "absolute_symbols": {
@@ -33873,7 +33873,7 @@
     {
       "id": "scene-state-coordinator-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/coordinator.c",
+      "source": "games/gs1/SRC/FIELD/COLOSSO/COORDINATOR.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ba",
       "absolute_symbols": {
@@ -36188,7 +36188,7 @@
     {
       "id": "status-dispatch-message-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/status_dispatch.c",
+      "source": "games/gs1/SRC/FIELD/COLOSSO/STATUS_DISPATCH.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b9",
       "absolute_symbols": {
@@ -39414,7 +39414,7 @@
     {
       "id": "object-scale-update-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/object_scale.c",
+      "source": "games/gs1/SRC/FIELD/PASSENGER_SHIP/OBJECT_SCALE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b0",
       "absolute_symbols": {
@@ -40621,7 +40621,7 @@
     {
       "id": "story-actor-transfer-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/actor_transfer.c",
+      "source": "games/gs1/SRC/FIELD/WORLD/ACTOR_TRANSFER.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_371",
       "absolute_symbols": {
@@ -44150,7 +44150,7 @@
     {
       "id": "actor-group-departure-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/group_departure.c",
+      "source": "games/gs1/SRC/FIELD/HEIDIA/GROUP_DEPARTURE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_372",
       "absolute_symbols": {
@@ -48908,7 +48908,7 @@
     {
       "id": "extended-field-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/extended.c",
+      "source": "games/gs1/SRC/FIELD/HEIDIA/EXTENDED.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_374",
       "absolute_symbols": {
@@ -50031,7 +50031,7 @@
     {
       "id": "guarded-step-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/guarded_step.c",
+      "source": "games/gs1/SRC/FIELD/SOL_SHINDEN/GUARDED_STEP.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37b",
       "absolute_symbols": {
@@ -51058,7 +51058,7 @@
     {
       "id": "dialogue-prompt-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/prompt.c",
+      "source": "games/gs1/SRC/FIELD/VAULT/PROMPT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_383",
       "absolute_symbols": {
@@ -55905,7 +55905,7 @@
     {
       "id": "actor-depth-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/depth.c",
+      "source": "games/gs1/SRC/FIELD/GOMA/DEPTH.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_387",
       "absolute_symbols": {
@@ -57026,7 +57026,7 @@
     {
       "id": "palette-transition-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/palette.c",
+      "source": "games/gs1/SRC/FIELD/KOLIMA/PALETTE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_395",
       "absolute_symbols": {
@@ -58821,7 +58821,7 @@
     {
       "id": "flagged-dialogue-choreography-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/flagged_choreography.c",
+      "source": "games/gs1/SRC/FIELD/IMIL/FLAGGED_CHOREOGRAPHY.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_399",
       "absolute_symbols": {
@@ -60975,7 +60975,7 @@
     {
       "id": "effect-spawn-sequence-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/spawn_sequence.c",
+      "source": "games/gs1/SRC/FIELD/XIAN/SPAWN_SEQUENCE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a0",
       "absolute_symbols": {
@@ -61732,7 +61732,7 @@
     {
       "id": "party-departure-prompt-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/party_departure.c",
+      "source": "games/gs1/SRC/FIELD/LUNPA/PARTY_DEPARTURE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ad",
       "absolute_symbols": {
@@ -64633,7 +64633,7 @@
     {
       "id": "extended-actor-choreography-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/extended_choreography.c",
+      "source": "games/gs1/SRC/FIELD/PASSENGER_SHIP/EXTENDED_CHOREOGRAPHY.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b1",
       "absolute_symbols": {
@@ -72419,7 +72419,7 @@
     {
       "id": "scripted-actor-presentation-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/scripted_presentation.c",
+      "source": "games/gs1/SRC/FIELD/VENUS/SCRIPTED_PRESENTATION.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c9",
       "absolute_symbols": {
@@ -73881,7 +73881,7 @@
     {
       "id": "battle-classify-entry-kind",
       "game": "gs1",
-      "source": "games/gs1/src/battle/classify_entry_kind.c",
+      "source": "games/gs1/SRC/BATTLE/CLASSIFY_ENTRY_KIND.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -73897,7 +73897,7 @@
     {
       "id": "battle-effects-data-get-resource-group",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/data_get_resource_group.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/DATA_GET_RESOURCE_GROUP.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -73913,7 +73913,7 @@
     {
       "id": "battle-effects-run-effect",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/run_effect.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/RUN_EFFECT.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -73939,7 +73939,7 @@
     {
       "id": "battle-effects-reset-scene-transition-effect",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/reset_scene_transition_effect.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/RESET_SCENE_TRANSITION_EFFECT.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -73965,7 +73965,7 @@
     {
       "id": "battle-effects-spawn-item-break-mode3",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/spawn_item_break_mode3.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/SPAWN_ITEM_BREAK_MODE3.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -73981,7 +73981,7 @@
     {
       "id": "battle-effects-update-orbiting-particle-main",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/update_orbiting_particle_main.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/UPDATE_ORBITING_PARTICLE_MAIN.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74022,7 +74022,7 @@
     {
       "id": "battle-effects-spawn-random-angle-triplet",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/spawn_random_angle_triplet.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/SPAWN_RANDOM_ANGLE_TRIPLET.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74043,7 +74043,7 @@
     {
       "id": "battle-effects-spawn-item-break-mode1",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/spawn_item_break_mode1.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/SPAWN_ITEM_BREAK_MODE1.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74059,7 +74059,7 @@
     {
       "id": "battle-effects-update-particle-motion-and-scale",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/update_particle_motion_and_scale.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/UPDATE_PARTICLE_MOTION_AND_SCALE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74075,7 +74075,7 @@
     {
       "id": "battle-effects-update-radial-camera",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/update_radial_camera.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/UPDATE_RADIAL_CAMERA.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74096,7 +74096,7 @@
     {
       "id": "battle-placement-update-entries",
       "game": "gs1",
-      "source": "games/gs1/src/battle/placement/update_entries.c",
+      "source": "games/gs1/SRC/BATTLE/PLACEMENT/UPDATE_ENTRIES.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74112,7 +74112,7 @@
     {
       "id": "battle-motion-reset-actor-at-anchor",
       "game": "gs1",
-      "source": "games/gs1/src/battle/motion/reset_actor_at_anchor.c",
+      "source": "games/gs1/SRC/BATTLE/MOTION/RESET_ACTOR_AT_ANCHOR.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74148,7 +74148,7 @@
     {
       "id": "battle-motion-apply-variant-motion",
       "game": "gs1",
-      "source": "games/gs1/src/battle/motion/apply_variant_motion.c",
+      "source": "games/gs1/SRC/BATTLE/MOTION/APPLY_VARIANT_MOTION.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74179,7 +74179,7 @@
     {
       "id": "battle-presentation-adjust-camera-by-shoulder-keys",
       "game": "gs1",
-      "source": "games/gs1/src/battle/presentation/adjust_camera_by_shoulder_keys.c",
+      "source": "games/gs1/SRC/BATTLE/PRESENTATION/ADJUST_CAMERA_BY_SHOULDER_KEYS.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74215,7 +74215,7 @@
     {
       "id": "battle-actor-clear-field-12b-for-group",
       "game": "gs1",
-      "source": "games/gs1/src/battle/actor_clear_field_12b_for_group.c",
+      "source": "games/gs1/SRC/BATTLE/ACTOR_CLEAR_FIELD_12B_FOR_GROUP.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74241,7 +74241,7 @@
     {
       "id": "battle-get-tagged-slot-value",
       "game": "gs1",
-      "source": "games/gs1/src/battle/get_tagged_slot_value.c",
+      "source": "games/gs1/SRC/BATTLE/GET_TAGGED_SLOT_VALUE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74272,7 +74272,7 @@
     {
       "id": "battle-presentation-run-simple",
       "game": "gs1",
-      "source": "games/gs1/src/battle/presentation/run_simple.c",
+      "source": "games/gs1/SRC/BATTLE/PRESENTATION/RUN_SIMPLE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74288,7 +74288,7 @@
     {
       "id": "battle-select-weighted-index",
       "game": "gs1",
-      "source": "games/gs1/src/battle/select_weighted_index.c",
+      "source": "games/gs1/SRC/BATTLE/SELECT_WEIGHTED_INDEX.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74304,7 +74304,7 @@
     {
       "id": "battle-presentation-trans-timer",
       "game": "gs1",
-      "source": "games/gs1/src/battle/presentation/trans_timer.c",
+      "source": "games/gs1/SRC/BATTLE/PRESENTATION/TRANS_TIMER.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74325,7 +74325,7 @@
     {
       "id": "battle-presentation-actor-set-record-mode",
       "game": "gs1",
-      "source": "games/gs1/src/battle/presentation/actor_set_record_mode.c",
+      "source": "games/gs1/SRC/BATTLE/PRESENTATION/ACTOR_SET_RECORD_MODE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74341,7 +74341,7 @@
     {
       "id": "battle-formation-select-level-matched-candidate",
       "game": "gs1",
-      "source": "games/gs1/src/battle/formation_select_level_matched_candidate.c",
+      "source": "games/gs1/SRC/BATTLE/FORMATION_SELECT_LEVEL_MATCHED_CANDIDATE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74357,7 +74357,7 @@
     {
       "id": "battle-summon-clear-work-fields",
       "game": "gs1",
-      "source": "games/gs1/src/battle/summon/clear_work_fields.c",
+      "source": "games/gs1/SRC/BATTLE/SUMMON/CLEAR_WORK_FIELDS.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74373,7 +74373,7 @@
     {
       "id": "battle-effects-run-five-mode-mode0",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/run_five_mode_mode0.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/RUN_FIVE_MODE_MODE0.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74414,7 +74414,7 @@
     {
       "id": "battle-presentation-prepare-scene",
       "game": "gs1",
-      "source": "games/gs1/src/battle/presentation/prepare_scene.c",
+      "source": "games/gs1/SRC/BATTLE/PRESENTATION/PREPARE_SCENE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74445,7 +74445,7 @@
     {
       "id": "battle-effects-runtime-draw-render-animation-mode1",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/runtime_draw_render_animation_mode1.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/RUNTIME_DRAW_RENDER_ANIMATION_MODE1.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74466,7 +74466,7 @@
     {
       "id": "battle-effects-run-two-mode-b-mode0",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/run_two_mode_b_mode0.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/RUN_TWO_MODE_B_MODE0.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74487,7 +74487,7 @@
     {
       "id": "battle-effects-runtime-draw-render-mode0-or1",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/runtime_draw_render_mode0_or1.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/RUNTIME_DRAW_RENDER_MODE0_OR1.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74503,7 +74503,7 @@
     {
       "id": "battle-effects-run-series-a-mode0",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/run_series_a_mode0.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/RUN_SERIES_A_MODE0.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74534,7 +74534,7 @@
     {
       "id": "battle-effects-run-series-b-mode0",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/run_series_b_mode0.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/RUN_SERIES_B_MODE0.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74575,7 +74575,7 @@
     {
       "id": "battle-effects-spawn-objects",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/spawn_objects.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/SPAWN_OBJECTS.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74596,7 +74596,7 @@
     {
       "id": "battle-effects-run-dual-table-mode0",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/run_dual_table_mode0.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/RUN_DUAL_TABLE_MODE0.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74617,7 +74617,7 @@
     {
       "id": "battle-effects-run-mode0",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/run_mode0.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/RUN_MODE0.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74658,7 +74658,7 @@
     {
       "id": "menu-selection-set-node-coordinates",
       "game": "gs1",
-      "source": "games/gs1/src/menu/selection_set_node_coordinates.c",
+      "source": "games/gs1/SRC/MENU/SELECTION_SET_NODE_COORDINATES.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74679,7 +74679,7 @@
     {
       "id": "menu-draw-draw-selection-row",
       "game": "gs1",
-      "source": "games/gs1/src/menu/draw_draw_selection_row.c",
+      "source": "games/gs1/SRC/MENU/DRAW_DRAW_SELECTION_ROW.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74700,7 +74700,7 @@
     {
       "id": "shop-selection-fill",
       "game": "gs1",
-      "source": "games/gs1/src/menu/shop/selection_fill.c",
+      "source": "games/gs1/SRC/MENU/SHOP/SELECTION_FILL.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74721,7 +74721,7 @@
     {
       "id": "shop-unit-hilite",
       "game": "gs1",
-      "source": "games/gs1/src/menu/shop/unit_hilite.c",
+      "source": "games/gs1/SRC/MENU/SHOP/UNIT_HILITE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74742,7 +74742,7 @@
     {
       "id": "runtime-memory-heap",
       "game": "gs1",
-      "source": "games/gs1/src/system/memory/heap.c",
+      "source": "games/gs1/SRC/SYSTEM/MEMORY/HEAP.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74788,7 +74788,7 @@
     {
       "id": "resource-find-free-transfer-entry",
       "game": "gs1",
-      "source": "games/gs1/src/system/resource/find_free_transfer_entry.c",
+      "source": "games/gs1/SRC/SYSTEM/RESOURCE/FIND_FREE_TRANSFER_ENTRY.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74814,7 +74814,7 @@
     {
       "id": "ui-icon-find-next-number-with-metadata",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/icon/find_next_number_with_metadata.c",
+      "source": "games/gs1/SRC/GRAPHICS/ICON/FIND_NEXT_NUMBER_WITH_METADATA.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74830,7 +74830,7 @@
     {
       "id": "ui-render-output-acquire-free",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/render/output_acquire_free.c",
+      "source": "games/gs1/SRC/GRAPHICS/RENDER/OUTPUT_ACQUIRE_FREE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74856,7 +74856,7 @@
     {
       "id": "ui-icon-build-item-icon-tiles",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/icon/build_item_icon_tiles.c",
+      "source": "games/gs1/SRC/GRAPHICS/ICON/BUILD_ITEM_ICON_TILES.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74872,7 +74872,7 @@
     {
       "id": "ui-text-draw-draw-work-value-with-label",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/text/draw_draw_work_value_with_label.c",
+      "source": "games/gs1/SRC/GRAPHICS/TEXT/DRAW_DRAW_WORK_VALUE_WITH_LABEL.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74893,7 +74893,7 @@
     {
       "id": "ui-message-show-and-wait",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/window/message_show_and_wait.c",
+      "source": "games/gs1/SRC/GRAPHICS/WINDOW/MESSAGE_SHOW_AND_WAIT.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74924,7 +74924,7 @@
     {
       "id": "graphics-palette-reserved",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/palette/reserved.c",
+      "source": "games/gs1/SRC/GRAPHICS/PALETTE/RESERVED.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74950,7 +74950,7 @@
     {
       "id": "graphics-resource-load-pair",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/resource/load_pair.c",
+      "source": "games/gs1/SRC/GRAPHICS/RESOURCE/LOAD_PAIR.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74971,7 +74971,7 @@
     {
       "id": "graphics-resource-load-frame",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/resource/load_frame.c",
+      "source": "games/gs1/SRC/GRAPHICS/RESOURCE/LOAD_FRAME.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74992,7 +74992,7 @@
     {
       "id": "graphics-vram-upload-block",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/vram/upload_block.c",
+      "source": "games/gs1/SRC/GRAPHICS/VRAM/UPLOAD_BLOCK.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75008,7 +75008,7 @@
     {
       "id": "object-dispatch-find-free-object",
       "game": "gs1",
-      "source": "games/gs1/src/field/object/dispatch_find_free_object.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/OBJECT/DISPATCH_FIND_FREE_OBJECT.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75024,7 +75024,7 @@
     {
       "id": "object-table-find-last-active-id",
       "game": "gs1",
-      "source": "games/gs1/src/field/object/table_find_last_active_id.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/OBJECT/TABLE_FIND_LAST_ACTIVE_ID.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75045,7 +75045,7 @@
     {
       "id": "object-effects-reserved-no-op",
       "game": "gs1",
-      "source": "games/gs1/src/field/object/effects_reserved_no_op.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/OBJECT/EFFECTS_RESERVED_NO_OP.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75061,7 +75061,7 @@
     {
       "id": "object-motion-four-object-initialize-top-row",
       "game": "gs1",
-      "source": "games/gs1/src/field/object/motion_four_object_initialize_top_row.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/OBJECT/MOTION_FOUR_OBJECT_INITIALIZE_TOP_ROW.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75087,7 +75087,7 @@
     {
       "id": "djinn-mark-balanced-entries",
       "game": "gs1",
-      "source": "games/gs1/src/game/djinn/mark_balanced_entries.c",
+      "source": "games/gs1/SRC/GAME/DJINN/MARK_BALANCED_ENTRIES.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75113,7 +75113,7 @@
     {
       "id": "map-shared-render-animated-tile-frame",
       "game": "gs1",
-      "source": "games/gs1/src/field/map/render_animated_tile_frame.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/MAP/RENDER_ANIMATED_TILE_FRAME.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75144,7 +75144,7 @@
     {
       "id": "map-shared-events-check-object-tile",
       "game": "gs1",
-      "source": "games/gs1/src/field/map/events_check_object_tile.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/MAP/EVENTS_CHECK_OBJECT_TILE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75165,7 +75165,7 @@
     {
       "id": "display-state-clear-flags",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/display/state_clear_flags.c",
+      "source": "games/gs1/SRC/GRAPHICS/DISPLAY/STATE_CLEAR_FLAGS.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75186,7 +75186,7 @@
     {
       "id": "field-store-assigned-key-value",
       "game": "gs1",
-      "source": "games/gs1/src/field/store_assigned_key_value.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/STORE_ASSIGNED_KEY_VALUE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75207,7 +75207,7 @@
     {
       "id": "audio-music-track-read-command-byte",
       "game": "gs1",
-      "source": "games/gs1/src/sound/music_track_read_command_byte.c",
+      "source": "games/gs1/SRC/SOUND/MUSIC_TRACK_READ_COMMAND_BYTE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75223,7 +75223,7 @@
     {
       "id": "audio-engine-initialize",
       "game": "gs1",
-      "source": "games/gs1/src/sound/engine_initialize.c",
+      "source": "games/gs1/SRC/SOUND/ENGINE_INITIALIZE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75299,7 +75299,7 @@
     {
       "id": "audio-music-track-clear-modulation",
       "game": "gs1",
-      "source": "games/gs1/src/sound/music_track_clear_modulation.c",
+      "source": "games/gs1/SRC/SOUND/MUSIC_TRACK_CLEAR_MODULATION.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75315,7 +75315,7 @@
     {
       "id": "audio-music-track-read-wave-pointer",
       "game": "gs1",
-      "source": "games/gs1/src/sound/music_track_read_wave_pointer.c",
+      "source": "games/gs1/SRC/SOUND/MUSIC_TRACK_READ_WAVE_POINTER.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75331,7 +75331,7 @@
     {
       "id": "menu-input-cancel-sound-tick",
       "game": "gs1",
-      "source": "games/gs1/src/menu/input_cancel_sound_tick.c",
+      "source": "games/gs1/SRC/MENU/INPUT_CANCEL_SOUND_TICK.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75372,7 +75372,7 @@
     {
       "id": "script-advance-past-cursor",
       "game": "gs1",
-      "source": "games/gs1/src/field/script/advance_past_cursor.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/SCRIPT/ADVANCE_PAST_CURSOR.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75388,7 +75388,7 @@
     {
       "id": "runtime-idle-forever",
       "game": "gs1",
-      "source": "games/gs1/src/system/idle_forever.c",
+      "source": "games/gs1/SRC/SYSTEM/IDLE_FOREVER.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75434,7 +75434,7 @@
     {
       "id": "menu-run-selection-hook",
       "game": "gs1",
-      "source": "games/gs1/src/menu/run_selection_hook.c",
+      "source": "games/gs1/SRC/MENU/RUN_SELECTION_HOOK.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75450,7 +75450,7 @@
     {
       "id": "ui-apply-table-scale-to-object",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/window/apply_table_scale_to_object.c",
+      "source": "games/gs1/SRC/GRAPHICS/WINDOW/APPLY_TABLE_SCALE_TO_OBJECT.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
         "Data_08037250": {
@@ -75481,7 +75481,7 @@
     {
       "id": "game-flags-refresh-lure-cap",
       "game": "gs1",
-      "source": "games/gs1/src/game/flags/refresh_lure_cap.c",
+      "source": "games/gs1/SRC/GAME/FLAGS/REFRESH_LURE_CAP.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75502,7 +75502,7 @@
     {
       "id": "owner-refresh-and-reset-zero",
       "game": "gs1",
-      "source": "games/gs1/src/game/character/refresh_and_reset_zero.c",
+      "source": "games/gs1/SRC/GAME/CHARACTER/REFRESH_AND_RESET_ZERO.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75544,7 +75544,7 @@
     {
       "id": "owner-get-record",
       "game": "gs1",
-      "source": "games/gs1/src/game/character/get_record.c",
+      "source": "games/gs1/SRC/GAME/CHARACTER/GET_RECORD.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75560,7 +75560,7 @@
     {
       "id": "runtime-copy-bytes-directional",
       "game": "gs1",
-      "source": "games/gs1/src/system/memory/copy_bytes_directional.c",
+      "source": "games/gs1/SRC/SYSTEM/MEMORY/COPY_BYTES_DIRECTIONAL.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75576,7 +75576,7 @@
     {
       "id": "battle-effects-run-event-action",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/run_event_action.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/RUN_EVENT_ACTION.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75602,7 +75602,7 @@
     {
       "id": "menu-core-compute-entry-values",
       "game": "gs1",
-      "source": "games/gs1/src/menu/core_compute_entry_values.c",
+      "source": "games/gs1/SRC/MENU/CORE_COMPUTE_ENTRY_VALUES.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75618,7 +75618,7 @@
     {
       "id": "menu-resource-reset-two-resource-entries",
       "game": "gs1",
-      "source": "games/gs1/src/menu/resource_reset_two_resource_entries.c",
+      "source": "games/gs1/SRC/MENU/RESOURCE_RESET_TWO_RESOURCE_ENTRIES.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75639,7 +75639,7 @@
     {
       "id": "object-group-store-object-and-run-step7",
       "game": "gs1",
-      "source": "games/gs1/src/field/object/group_store_object_and_run_step7.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/OBJECT/GROUP_STORE_OBJECT_AND_RUN_STEP7.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75655,7 +75655,7 @@
     {
       "id": "battle-effects-runtime-initialize-default-mode",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/runtime_initialize_default_mode.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/RUNTIME_INITIALIZE_DEFAULT_MODE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75671,7 +75671,7 @@
     {
       "id": "battle-effects-runtime-initialize-mode-1",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/runtime_initialize_mode_1.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/RUNTIME_INITIALIZE_MODE_1.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75687,7 +75687,7 @@
     {
       "id": "math-fixed-8",
       "game": "gs1",
-      "source": "games/gs1/src/lib/fixed_8.c",
+      "source": "games/gs1/SRC/LIB/FIXED_8.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75713,7 +75713,7 @@
     {
       "id": "link-serial-enable-transfer-timer",
       "game": "gs1",
-      "source": "games/gs1/src/system/link/serial_enable_transfer_timer.c",
+      "source": "games/gs1/SRC/SYSTEM/LINK/SERIAL_ENABLE_TRANSFER_TIMER.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
         "Data_00000000": {
@@ -75770,7 +75770,7 @@
     {
       "id": "battle-presentation-wait-sync",
       "game": "gs1",
-      "source": "games/gs1/src/battle/presentation/wait_sync.c",
+      "source": "games/gs1/SRC/BATTLE/PRESENTATION/WAIT_SYNC.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75786,7 +75786,7 @@
     {
       "id": "battle-effects-run-palette-ramp-mode0",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/run_palette_ramp_mode0.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/RUN_PALETTE_RAMP_MODE0.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75802,7 +75802,7 @@
     {
       "id": "resource-initialize",
       "game": "gs1",
-      "source": "games/gs1/src/system/resource/initialize.c",
+      "source": "games/gs1/SRC/SYSTEM/RESOURCE/INITIALIZE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75833,7 +75833,7 @@
     {
       "id": "save-state-select-write-slot",
       "game": "gs1",
-      "source": "games/gs1/src/system/save/state_select_write_slot.c",
+      "source": "games/gs1/SRC/SYSTEM/SAVE/STATE_SELECT_WRITE_SLOT.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
         "Data_02004c14": {
@@ -75863,7 +75863,7 @@
     {
       "id": "save-flash-timer-interrupt",
       "game": "gs1",
-      "source": "games/gs1/src/system/save/flash_timer_interrupt.c",
+      "source": "games/gs1/SRC/SYSTEM/SAVE/FLASH_TIMER_INTERRUPT.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75884,7 +75884,7 @@
     {
       "id": "animation-lookup-value-by-key",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/animation/lookup_value_by_key.c",
+      "source": "games/gs1/SRC/GRAPHICS/ANIMATION/LOOKUP_VALUE_BY_KEY.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75910,7 +75910,7 @@
     {
       "id": "graphics-tile-merge-shifted-tile-rows",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/tile/merge_shifted_tile_rows.c",
+      "source": "games/gs1/SRC/GRAPHICS/TILE/MERGE_SHIFTED_TILE_ROWS.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75936,7 +75936,7 @@
     {
       "id": "battle-effects-data-lookup-result",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/data_lookup_result.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/DATA_LOOKUP_RESULT.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75952,7 +75952,7 @@
     {
       "id": "menu-ability-menu-build-available-list",
       "game": "gs1",
-      "source": "games/gs1/src/menu/ability/build_available_list.c",
+      "source": "games/gs1/SRC/MENU/ABILITY/BUILD_AVAILABLE_LIST.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75968,7 +75968,7 @@
     {
       "id": "graphics-registers-apply-window-blend",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/registers/apply_window_blend.c",
+      "source": "games/gs1/SRC/GRAPHICS/REGISTERS/APPLY_WINDOW_BLEND.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75994,7 +75994,7 @@
     {
       "id": "battle-effects-wait-then-set-field",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/wait_then_set_field.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/WAIT_THEN_SET_FIELD.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76010,7 +76010,7 @@
     {
       "id": "runtime-memory-schedule-callback-and-release-block-32-a",
       "game": "gs1",
-      "source": "games/gs1/src/system/memory/schedule_callback_and_release_block_32_a.c",
+      "source": "games/gs1/SRC/SYSTEM/MEMORY/SCHEDULE_CALLBACK_AND_RELEASE_BLOCK_32_A.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76026,7 +76026,7 @@
     {
       "id": "runtime-reserved-no-op-f",
       "game": "gs1",
-      "source": "games/gs1/src/system/reserved_no_op_f.c",
+      "source": "games/gs1/SRC/SYSTEM/RESERVED_NO_OP_F.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
         "TransferCommandExecutor_Size": {
@@ -76115,7 +76115,7 @@
     {
       "id": "inventory-has-equipment-value",
       "game": "gs1",
-      "source": "games/gs1/src/game/inventory/has_equipment_value.c",
+      "source": "games/gs1/SRC/GAME/INVENTORY/HAS_EQUIPMENT_VALUE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76131,7 +76131,7 @@
     {
       "id": "battle-effects-play-cue-and-start-emitter-on-target",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/play_cue_and_start_emitter_on_target.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/PLAY_CUE_AND_START_EMITTER_ON_TARGET.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76147,7 +76147,7 @@
     {
       "id": "menu-selection-run-top-selection",
       "game": "gs1",
-      "source": "games/gs1/src/menu/selection_run_top_selection.c",
+      "source": "games/gs1/SRC/MENU/SELECTION_RUN_TOP_SELECTION.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76168,7 +76168,7 @@
     {
       "id": "menu-run-workspace-selection-loop",
       "game": "gs1",
-      "source": "games/gs1/src/menu/run_workspace_selection_loop.c",
+      "source": "games/gs1/SRC/MENU/RUN_WORKSPACE_SELECTION_LOOP.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76184,7 +76184,7 @@
     {
       "id": "ui-load-character-entry-for-slot",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/window/load_character_entry_for_slot.c",
+      "source": "games/gs1/SRC/GRAPHICS/WINDOW/LOAD_CHARACTER_ENTRY_FOR_SLOT.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76200,7 +76200,7 @@
     {
       "id": "menu-entry-clear-first-object-row-and-schedule-update",
       "game": "gs1",
-      "source": "games/gs1/src/menu/entry_clear_first_object_row_and_schedule_update.c",
+      "source": "games/gs1/SRC/MENU/ENTRY_CLEAR_FIRST_OBJECT_ROW_AND_SCHEDULE_UPDATE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76221,7 +76221,7 @@
     {
       "id": "ui-text-draw-draw-localized-resource",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/text/draw_draw_localized_resource.c",
+      "source": "games/gs1/SRC/GRAPHICS/TEXT/DRAW_DRAW_LOCALIZED_RESOURCE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76237,7 +76237,7 @@
     {
       "id": "party-set-flag32-and-refresh-members",
       "game": "gs1",
-      "source": "games/gs1/src/game/party/set_flag32_and_refresh_members.c",
+      "source": "games/gs1/SRC/GAME/PARTY/SET_FLAG32_AND_REFRESH_MEMBERS.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76263,7 +76263,7 @@
     {
       "id": "battle-party-apply-drain",
       "game": "gs1",
-      "source": "games/gs1/src/battle/party/apply_drain.c",
+      "source": "games/gs1/SRC/BATTLE/PARTY/APPLY_DRAIN.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76279,7 +76279,7 @@
     {
       "id": "effect-runtime-prepare-rising-object",
       "game": "gs1",
-      "source": "games/gs1/src/field/effect/prepare_rising_object.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/EFFECT/PREPARE_RISING_OBJECT.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76310,7 +76310,7 @@
     {
       "id": "battle-effects-apply-color-to-target-buffer",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/apply_color_to_target_buffer.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/APPLY_COLOR_TO_TARGET_BUFFER.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76341,7 +76341,7 @@
     {
       "id": "event-set-status-1c6",
       "game": "gs1",
-      "source": "games/gs1/src/field/event/set_status_1c6.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/EVENT/SET_STATUS_1C6.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76372,7 +76372,7 @@
     {
       "id": "event-cell-pairs",
       "game": "gs1",
-      "source": "games/gs1/src/field/event/cell_pairs.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/EVENT/CELL_PAIRS.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76393,7 +76393,7 @@
     {
       "id": "object-attach-work-target-to-object",
       "game": "gs1",
-      "source": "games/gs1/src/field/object/attach_work_target_to_object.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/OBJECT/ATTACH_WORK_TARGET_TO_OBJECT.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76439,7 +76439,7 @@
     {
       "id": "battle-effects-schedule-ratio-transition",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/schedule_ratio_transition.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/SCHEDULE_RATIO_TRANSITION.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76465,7 +76465,7 @@
     {
       "id": "battle-effect-block-state",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/block_state.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/BLOCK_STATE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76491,7 +76491,7 @@
     {
       "id": "object-replace-resource-entry",
       "game": "gs1",
-      "source": "games/gs1/src/field/object/replace_resource_entry.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/OBJECT/REPLACE_RESOURCE_ENTRY.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76507,7 +76507,7 @@
     {
       "id": "menu-run-action-flow",
       "game": "gs1",
-      "source": "games/gs1/src/menu/run_action_flow.c",
+      "source": "games/gs1/SRC/MENU/RUN_ACTION_FLOW.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76523,7 +76523,7 @@
     {
       "id": "shop-effect-reset",
       "game": "gs1",
-      "source": "games/gs1/src/menu/shop/effect_reset.c",
+      "source": "games/gs1/SRC/MENU/SHOP/EFFECT_RESET.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76539,7 +76539,7 @@
     {
       "id": "battle-unit-roll-counter-early-end",
       "game": "gs1",
-      "source": "games/gs1/src/battle/unit/roll_counter_early_end.c",
+      "source": "games/gs1/SRC/BATTLE/UNIT/ROLL_COUNTER_EARLY_END.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76605,7 +76605,7 @@
     {
       "id": "object-group-tick-member-timers",
       "game": "gs1",
-      "source": "games/gs1/src/field/object/group_tick_member_timers.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/OBJECT/GROUP_TICK_MEMBER_TIMERS.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76621,7 +76621,7 @@
     {
       "id": "battle-effects-run-no-effect-frames",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/run_no_effect_frames.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/RUN_NO_EFFECT_FRAMES.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76637,7 +76637,7 @@
     {
       "id": "ui-render-drain-pending",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/render/drain_pending.c",
+      "source": "games/gs1/SRC/GRAPHICS/RENDER/DRAIN_PENDING.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76653,7 +76653,7 @@
     {
       "id": "battle-unit-lookup-weapon-value-by-class",
       "game": "gs1",
-      "source": "games/gs1/src/battle/unit/lookup_weapon_value_by_class.c",
+      "source": "games/gs1/SRC/BATTLE/UNIT/LOOKUP_WEAPON_VALUE_BY_CLASS.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76669,7 +76669,7 @@
     {
       "id": "ui-text-fmt-format-hex-to-work",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/text/fmt_format_hex_to_work.c",
+      "source": "games/gs1/SRC/GRAPHICS/TEXT/FMT_FORMAT_HEX_TO_WORK.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76695,7 +76695,7 @@
     {
       "id": "graphics-prepare-transfer-in-iwram-work",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/prepare_transfer_in_iwram_work.c",
+      "source": "games/gs1/SRC/GRAPHICS/PREPARE_TRANSFER_IN_IWRAM_WORK.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76726,7 +76726,7 @@
     {
       "id": "runtime-remap-bytes-by-table",
       "game": "gs1",
-      "source": "games/gs1/src/system/remap_bytes_by_table.c",
+      "source": "games/gs1/SRC/SYSTEM/REMAP_BYTES_BY_TABLE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76742,7 +76742,7 @@
     {
       "id": "map-shared-load-default-cells-and-update-block",
       "game": "gs1",
-      "source": "games/gs1/src/field/map/load_default_cells_and_update_block.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/MAP/LOAD_DEFAULT_CELLS_AND_UPDATE_BLOCK.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76758,7 +76758,7 @@
     {
       "id": "ui-window-copy-tilemap-region",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/window/copy_tilemap_region.c",
+      "source": "games/gs1/SRC/GRAPHICS/WINDOW/COPY_TILEMAP_REGION.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76799,7 +76799,7 @@
     {
       "id": "graphics-registers-set-bg1-priority3",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/registers/set_bg1_priority3.c",
+      "source": "games/gs1/SRC/GRAPHICS/REGISTERS/SET_BG1_PRIORITY3.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76820,7 +76820,7 @@
     {
       "id": "battle-random16",
       "game": "gs1",
-      "source": "games/gs1/src/battle/random16.c",
+      "source": "games/gs1/SRC/BATTLE/RANDOM16.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76866,7 +76866,7 @@
     {
       "id": "object-table-clear-battle-slots",
       "game": "gs1",
-      "source": "games/gs1/src/field/object/table_clear_battle_slots.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/OBJECT/TABLE_CLEAR_BATTLE_SLOTS.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76887,7 +76887,7 @@
     {
       "id": "battle-effects-finish-scene-and-release-heap-block",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/finish_scene_and_release_heap_block.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/FINISH_SCENE_AND_RELEASE_HEAP_BLOCK.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76903,7 +76903,7 @@
     {
       "id": "battle-effects-effect-slot-update",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/effect_slot_update.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/EFFECT_SLOT_UPDATE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76919,7 +76919,7 @@
     {
       "id": "menu-psynergy-menu-reserved-no-op",
       "game": "gs1",
-      "source": "games/gs1/src/menu/ability/reserved_no_op.c",
+      "source": "games/gs1/SRC/MENU/ABILITY/RESERVED_NO_OP.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76935,7 +76935,7 @@
     {
       "id": "item-play-use-animation",
       "game": "gs1",
-      "source": "games/gs1/src/game/item/play_use_animation.c",
+      "source": "games/gs1/SRC/GAME/ITEM/PLAY_USE_ANIMATION.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76966,7 +76966,7 @@
     {
       "id": "shop-cursor-place",
       "game": "gs1",
-      "source": "games/gs1/src/menu/shop/cursor_place.c",
+      "source": "games/gs1/SRC/MENU/SHOP/CURSOR_PLACE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76982,7 +76982,7 @@
     {
       "id": "battle-presentation-trans-setup",
       "game": "gs1",
-      "source": "games/gs1/src/battle/presentation/trans_setup.c",
+      "source": "games/gs1/SRC/BATTLE/PRESENTATION/TRANS_SETUP.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76998,7 +76998,7 @@
     {
       "id": "effect-runtime-animation-modes",
       "game": "gs1",
-      "source": "games/gs1/src/field/effect/animation_modes.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/EFFECT/ANIMATION_MODES.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -77039,7 +77039,7 @@
     {
       "id": "runtime-blank-display-load-value-and-run",
       "game": "gs1",
-      "source": "games/gs1/src/system/blank_display_load_value_and_run.c",
+      "source": "games/gs1/SRC/SYSTEM/BLANK_DISPLAY_LOAD_VALUE_AND_RUN.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -77060,7 +77060,7 @@
     {
       "id": "menu-item-menu-use",
       "game": "gs1",
-      "source": "games/gs1/src/menu/item/use.c",
+      "source": "games/gs1/SRC/MENU/ITEM/USE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -77076,7 +77076,7 @@
     {
       "id": "menu-psynergy-menu-initialize-entry-objects",
       "game": "gs1",
-      "source": "games/gs1/src/menu/ability/call_icon_routine_with_value.c",
+      "source": "games/gs1/SRC/MENU/ABILITY/CALL_ICON_ROUTINE_WITH_VALUE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -77092,7 +77092,7 @@
     {
       "id": "menu-psynergy-menu-classify-selected-psynergy",
       "game": "gs1",
-      "source": "games/gs1/src/menu/ability/classify_selected_psynergy.c",
+      "source": "games/gs1/SRC/MENU/ABILITY/CLASSIFY_SELECTED_PSYNERGY.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -77113,7 +77113,7 @@
     {
       "id": "menu-item-menu-page-result",
       "game": "gs1",
-      "source": "games/gs1/src/menu/item/page_result.c",
+      "source": "games/gs1/SRC/MENU/ITEM/PAGE_RESULT.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -77129,7 +77129,7 @@
     {
       "id": "menu-character-menu-build-availability",
       "game": "gs1",
-      "source": "games/gs1/src/menu/character/build_availability.c",
+      "source": "games/gs1/SRC/MENU/CHARACTER/BUILD_AVAILABILITY.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -77155,7 +77155,7 @@
     {
       "id": "ui-icon-build-ability-icon-tiles",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/icon/build_ability_icon_tiles.c",
+      "source": "games/gs1/SRC/GRAPHICS/ICON/BUILD_ABILITY_ICON_TILES.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -77171,7 +77171,7 @@
     {
       "id": "battle-effects-run-particle-field-variant0",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/run_particle_field_variant0.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/RUN_PARTICLE_FIELD_VARIANT0.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -77187,7 +77187,7 @@
     {
       "id": "save-state-confirm-and-process-selected-slot",
       "game": "gs1",
-      "source": "games/gs1/src/system/save/state_confirm_and_process_selected_slot.c",
+      "source": "games/gs1/SRC/SYSTEM/SAVE/STATE_CONFIRM_AND_PROCESS_SELECTED_SLOT.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -77213,7 +77213,7 @@
     {
       "id": "event-get-special-value",
       "game": "gs1",
-      "source": "games/gs1/src/field/event/get_special_value.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/EVENT/GET_SPECIAL_VALUE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -77234,7 +77234,7 @@
     {
       "id": "menu-selection-loop",
       "game": "gs1",
-      "source": "games/gs1/src/menu/selection_loop.c",
+      "source": "games/gs1/SRC/MENU/SELECTION_LOOP.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -77265,7 +77265,7 @@
     {
       "id": "game-flags-test",
       "game": "gs1",
-      "source": "games/gs1/src/game/flags/test.c",
+      "source": "games/gs1/SRC/GAME/FLAGS/TEST.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -78254,7 +78254,7 @@
     {
       "id": "overlay-38a-unit",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/burst.c",
+      "source": "games/gs1/SRC/FIELD/GOMA/BURST.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38a",
       "absolute_symbols": {
@@ -78593,7 +78593,7 @@
     {
       "id": "actor-event-setup-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/event_setup_scene.c",
+      "source": "games/gs1/SRC/FIELD/SHARED/EVENT_SETUP_SCENE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a2",
       "absolute_symbols": {
@@ -80468,7 +80468,7 @@
     {
       "id": "command-list-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/command_list_scene.c",
+      "source": "games/gs1/SRC/DEBUG/COMMAND_LIST_SCENE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ce",
       "absolute_symbols": {
@@ -83895,7 +83895,7 @@
     {
       "id": "colosso-log-rolling-stage-script",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/colosso/log_rolling.c",
+      "source": "games/gs1/SRC/FIELD/COLOSSO/LOG_ROLLING.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bc",
       "absolute_symbols": {
@@ -87148,7 +87148,7 @@
     {
       "id": "scene-id-selected-actor-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/selected_actor_scene_id_selected_actor_scene.c",
+      "source": "games/gs1/SRC/FIELD/LAMAKAN/SELECTED_ACTOR_SCENE_ID_SELECTED_ACTOR_SCENE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a5",
       "absolute_symbols": {
@@ -87556,7 +87556,7 @@
     {
       "id": "actor-arrival-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/arrival.c",
+      "source": "games/gs1/SRC/FIELD/KALAY/ARRIVAL.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a9",
       "absolute_symbols": {
@@ -87848,7 +87848,7 @@
     {
       "id": "battle-action-resolution",
       "game": "gs1",
-      "source": "games/gs1/src/battle/action_resolve_target_action.c",
+      "source": "games/gs1/SRC/BATTLE/ACTION_RESOLVE_TARGET_ACTION.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -87864,7 +87864,7 @@
     {
       "id": "scheduler",
       "game": "gs1",
-      "source": "games/gs1/src/system/scheduler/callback_scheduler.c",
+      "source": "games/gs1/SRC/SYSTEM/SCHEDULER/CALLBACK_SCHEDULER.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {
@@ -87956,7 +87956,7 @@
     {
       "id": "save-flash-read-routines",
       "game": "gs1",
-      "source": "games/gs1/src/system/save/flash_read_routines.c",
+      "source": "games/gs1/SRC/SYSTEM/SAVE/FLASH_READ_ROUTINES.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -87987,7 +87987,7 @@
     {
       "id": "unit-0808b02c",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/data_lookup_routines.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/DATA_LOOKUP_ROUTINES.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -88023,7 +88023,7 @@
     {
       "id": "overlays-scene-actor-staged-palette",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/staged_palette.c",
+      "source": "games/gs1/SRC/FIELD/KOLIMA/STAGED_PALETTE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_393",
       "absolute_symbols": {
@@ -88169,7 +88169,7 @@
     {
       "id": "overlays-scene-actor-staged-particle",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/staged_particle.c",
+      "source": "games/gs1/SRC/FIELD/KOLIMA/STAGED_PARTICLE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_392",
       "absolute_symbols": {
@@ -88504,7 +88504,7 @@
     {
       "id": "overlays-scene-dialogue-actor-presentation",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/actor_presentation.c",
+      "source": "games/gs1/SRC/FIELD/VAULT/ACTOR_PRESENTATION.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_382",
       "absolute_symbols": {
@@ -90198,7 +90198,7 @@
     {
       "id": "overlays-scene-actor-proximity",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/proximity.c",
+      "source": "games/gs1/SRC/FIELD/TOLBI/PROXIMITY.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b5",
       "absolute_symbols": {
@@ -90501,7 +90501,7 @@
     {
       "id": "overlays-scene-field-extended-sequence",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/extended_sequence.c",
+      "source": "games/gs1/SRC/FIELD/KOLIMA/EXTENDED_SEQUENCE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38f",
       "absolute_symbols": {
@@ -91233,7 +91233,7 @@
     {
       "id": "overlays-scene-story-branching-formation",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/branching_formation.c",
+      "source": "games/gs1/SRC/FIELD/KOLIMA/BRANCHING_FORMATION.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_391",
       "absolute_symbols": {
@@ -91970,7 +91970,7 @@
     {
       "id": "overlays-scene-actor-staged-placement",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/staged_placement.c",
+      "source": "games/gs1/SRC/FIELD/GOMA/STAGED_PLACEMENT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_389",
       "absolute_symbols": {
@@ -92754,7 +92754,7 @@
     {
       "id": "map-locations-heidia-village-story-village-story-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/heidia/village_story.c",
+      "source": "games/gs1/SRC/FIELD/MERCURY/AERIE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39d",
       "absolute_symbols": {
@@ -94111,7 +94111,7 @@
     {
       "id": "map-locations-sol-shinden-inner-sanctum-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/sol_shinden/inner_sanctum.c",
+      "source": "games/gs1/SRC/FIELD/SOL_SHINDEN/INNER_SANCTUM.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37a",
       "absolute_symbols": {
@@ -96229,7 +96229,7 @@
     {
       "id": "overlays-scene-dialogue-flagged-message",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/flagged_message.c",
+      "source": "games/gs1/SRC/FIELD/SHARED/FLAGGED_MESSAGE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ae",
       "absolute_symbols": {
@@ -98109,7 +98109,7 @@
     {
       "id": "overlays-scene-actor-selected-presentation",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/selected_presentation.c",
+      "source": "games/gs1/SRC/FIELD/SUHALLA/SELECTED_PRESENTATION.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c0",
       "absolute_symbols": {
@@ -98703,7 +98703,7 @@
     {
       "id": "overlays-scene-state-select-by-runtime-selector",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/select_by_runtime_selector.c",
+      "source": "games/gs1/SRC/FIELD/VAULT/SELECT_BY_RUNTIME_SELECTOR.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a7",
       "absolute_symbols": {
@@ -99404,7 +99404,7 @@
     {
       "id": "overlays-scene-story-flag-branched",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/flag_branched.c",
+      "source": "games/gs1/SRC/FIELD/BILIBIN/FLAG_BRANCHED.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38d",
       "absolute_symbols": {
@@ -100956,7 +100956,7 @@
     {
       "id": "overlays-scene-actor-facing-gated",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/facing_gated.c",
+      "source": "games/gs1/SRC/FIELD/SHARED/FACING_GATED.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_378",
       "absolute_symbols": {
@@ -104324,7 +104324,7 @@
     {
       "id": "overlays-scene-story-actor-sequence",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/actor_sequence.c",
+      "source": "games/gs1/SRC/FIELD/LUNPA/ACTOR_SEQUENCE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ab",
       "absolute_symbols": {
@@ -106092,7 +106092,7 @@
     {
       "id": "overlays-scene-dialogue-choice",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/choice.c",
+      "source": "games/gs1/SRC/FIELD/TOLBI/CHOICE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b8",
       "absolute_symbols": {
@@ -108881,7 +108881,7 @@
     {
       "id": "field-probe-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/shared/field_probe_scene.c",
+      "source": "games/gs1/SRC/FIELD/MERCURY/FIELD_PROBE_SCENE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39c",
       "absolute_symbols": {
@@ -111004,7 +111004,7 @@
     {
       "id": "resource-table-entry",
       "game": "gs1",
-      "source": "games/gs1/src/system/resource/table_entry.c",
+      "source": "games/gs1/SRC/SYSTEM/RESOURCE/TABLE_ENTRY.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -111025,7 +111025,7 @@
     {
       "id": "script-interpreter-control",
       "game": "gs1",
-      "source": "games/gs1/src/field/script/interpreter_control.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/SCRIPT/INTERPRETER_CONTROL.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
         "GameFlag_IsSet": {
@@ -111138,7 +111138,7 @@
     {
       "id": "script-operands",
       "game": "gs1",
-      "source": "games/gs1/src/field/script/operands.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -111354,7 +111354,7 @@
     {
       "id": "map-world-collision",
       "game": "gs1",
-      "source": "games/gs1/src/field/map/world_collision.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/MAP/WORLD_COLLISION.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -111385,7 +111385,7 @@
     {
       "id": "graphics-palette-selection",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/palette/selection.c",
+      "source": "games/gs1/SRC/GRAPHICS/PALETTE/SELECTION.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -111421,7 +111421,7 @@
     {
       "id": "owner-ratios",
       "game": "gs1",
-      "source": "games/gs1/src/game/character/ratios.c",
+      "source": "games/gs1/SRC/GAME/CHARACTER/RATIOS.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -111447,7 +111447,7 @@
     {
       "id": "owner-values",
       "game": "gs1",
-      "source": "games/gs1/src/game/character/values.c",
+      "source": "games/gs1/SRC/GAME/CHARACTER/VALUES.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -111468,7 +111468,7 @@
     {
       "id": "owner-level",
       "game": "gs1",
-      "source": "games/gs1/src/game/character/level.c",
+      "source": "games/gs1/SRC/GAME/CHARACTER/LEVEL.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -111489,7 +111489,7 @@
     {
       "id": "owner-elements",
       "game": "gs1",
-      "source": "games/gs1/src/game/character/elements.c",
+      "source": "games/gs1/SRC/GAME/CHARACTER/ELEMENTS.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -111515,7 +111515,7 @@
     {
       "id": "battle-effects-object-state",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/object_state.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/OBJECT_STATE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -111541,7 +111541,7 @@
     {
       "id": "object-by-id",
       "game": "gs1",
-      "source": "games/gs1/src/field/object/by_id.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/OBJECT/BY_ID.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -111687,7 +111687,7 @@
     {
       "id": "object-link-pair",
       "game": "gs1",
-      "source": "games/gs1/src/field/object/link_pair.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/OBJECT/LINK_PAIR.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -111708,7 +111708,7 @@
     {
       "id": "object-group-children",
       "game": "gs1",
-      "source": "games/gs1/src/field/object/group_children.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/OBJECT/GROUP_CHILDREN.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -111744,7 +111744,7 @@
     {
       "id": "object-motion-target",
       "game": "gs1",
-      "source": "games/gs1/src/field/object/motion_target.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/OBJECT/MOTION_TARGET.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -111780,7 +111780,7 @@
     {
       "id": "object-table-values",
       "game": "gs1",
-      "source": "games/gs1/src/field/object/table_values.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/OBJECT/TABLE_VALUES.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -111801,7 +111801,7 @@
     {
       "id": "object-visual-attributes",
       "game": "gs1",
-      "source": "games/gs1/src/field/object/visual_attributes.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/OBJECT/VISUAL_ATTRIBUTES.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -111822,7 +111822,7 @@
     {
       "id": "object-group-actors",
       "game": "gs1",
-      "source": "games/gs1/src/field/object/group_actors.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/OBJECT/GROUP_ACTORS.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -111843,7 +111843,7 @@
     {
       "id": "effect-runtime-motion",
       "game": "gs1",
-      "source": "games/gs1/src/field/effect/motion.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/EFFECT/MOTION.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -111884,7 +111884,7 @@
     {
       "id": "graphics-palette-transform",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/color/palette_transform.c",
+      "source": "games/gs1/SRC/GRAPHICS/COLOR/PALETTE_TRANSFORM.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -111915,7 +111915,7 @@
     {
       "id": "resource-table-entries",
       "game": "gs1",
-      "source": "games/gs1/src/system/resource/table_entries.c",
+      "source": "games/gs1/SRC/SYSTEM/RESOURCE/TABLE_ENTRIES.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -111941,7 +111941,7 @@
     {
       "id": "resource-metadata-slots",
       "game": "gs1",
-      "source": "games/gs1/src/system/resource/metadata_slots.c",
+      "source": "games/gs1/SRC/SYSTEM/RESOURCE/METADATA_SLOTS.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -111967,7 +111967,7 @@
     {
       "id": "party-active-owners",
       "game": "gs1",
-      "source": "games/gs1/src/game/party/active_owners.c",
+      "source": "games/gs1/SRC/GAME/PARTY/ACTIVE_OWNERS.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -111988,7 +111988,7 @@
     {
       "id": "map-cell-collision",
       "game": "gs1",
-      "source": "games/gs1/src/field/map/cell_collision.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/MAP/CELL_COLLISION.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -112014,7 +112014,7 @@
     {
       "id": "effect-runtime-slots",
       "game": "gs1",
-      "source": "games/gs1/src/field/effect/slots.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/EFFECT/SLOTS.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -112070,7 +112070,7 @@
     {
       "id": "four-object-bottom-row",
       "game": "gs1",
-      "source": "games/gs1/src/field/object/motion_four_object_bottom_row.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/OBJECT/MOTION_FOUR_OBJECT_BOTTOM_ROW.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -112106,7 +112106,7 @@
     {
       "id": "map-palette-render",
       "game": "gs1",
-      "source": "games/gs1/src/field/map/palette_render.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/MAP/PALETTE_RENDER.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -112127,7 +112127,7 @@
     {
       "id": "object-motion-action",
       "game": "gs1",
-      "source": "games/gs1/src/field/object/motion_action.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/OBJECT/MOTION_ACTION.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -112153,7 +112153,7 @@
     {
       "id": "math-geometry",
       "game": "gs1",
-      "source": "games/gs1/src/lib/geometry.c",
+      "source": "games/gs1/SRC/LIB/GEOMETRY.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -112179,7 +112179,7 @@
     {
       "id": "map-region-collision",
       "game": "gs1",
-      "source": "games/gs1/src/field/map/region_collision.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/MAP/REGION_COLLISION.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -112200,7 +112200,7 @@
     {
       "id": "owner-action-list",
       "game": "gs1",
-      "source": "games/gs1/src/game/character/action_list.c",
+      "source": "games/gs1/SRC/GAME/CHARACTER/ACTION_LIST.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -112221,7 +112221,7 @@
     {
       "id": "field-event-abilities",
       "game": "gs1",
-      "source": "games/gs1/src/field/event_table_abilities.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/EVENT_TABLE_ABILITIES.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -112242,7 +112242,7 @@
     {
       "id": "battle-effect-success",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/success.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/SUCCESS.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -112273,7 +112273,7 @@
     {
       "id": "menu-confirm-selection",
       "game": "gs1",
-      "source": "games/gs1/src/menu/confirm_selection.c",
+      "source": "games/gs1/SRC/MENU/CONFIRM_SELECTION.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -112309,7 +112309,7 @@
     {
       "id": "script-position",
       "game": "gs1",
-      "source": "games/gs1/src/field/script/interpreter_position.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/SCRIPT/INTERPRETER_POSITION.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -112345,7 +112345,7 @@
     {
       "id": "math-curve",
       "game": "gs1",
-      "source": "games/gs1/src/lib/curve.c",
+      "source": "games/gs1/SRC/LIB/CURVE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -112436,7 +112436,7 @@
     {
       "id": "battle-effects-twelve-mode",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/twelve_mode.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/TWELVE_MODE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -112507,7 +112507,7 @@
     {
       "id": "inventory-items",
       "game": "gs1",
-      "source": "games/gs1/src/game/inventory/items.c",
+      "source": "games/gs1/SRC/GAME/INVENTORY/ITEMS.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -112578,7 +112578,7 @@
     {
       "id": "ui-text-render",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/text/render.c",
+      "source": "games/gs1/SRC/GRAPHICS/TEXT/RENDER.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -112634,7 +112634,7 @@
     {
       "id": "shop-trade",
       "game": "gs1",
-      "source": "games/gs1/src/menu/shop/trade.c",
+      "source": "games/gs1/SRC/MENU/SHOP/TRADE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -112685,7 +112685,7 @@
     {
       "id": "display-blend",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/display/blend.c",
+      "source": "games/gs1/SRC/GRAPHICS/DISPLAY/BLEND.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -112731,7 +112731,7 @@
     {
       "id": "audio-sound",
       "game": "gs1",
-      "source": "games/gs1/src/sound/sound.c",
+      "source": "games/gs1/SRC/SOUND/SOUND.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -112797,7 +112797,7 @@
     {
       "id": "inventory-menu-window",
       "game": "gs1",
-      "source": "games/gs1/src/menu/item/window.c",
+      "source": "games/gs1/SRC/MENU/ITEM/WINDOW.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -112843,7 +112843,7 @@
     {
       "id": "battle-seven-mode-dispatch",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/seven_mode_dispatch.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/SEVEN_MODE_DISPATCH.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -112889,7 +112889,7 @@
     {
       "id": "battle-effect-render-modes",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/runtime_modes.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/RUNTIME_MODES.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -112935,7 +112935,7 @@
     {
       "id": "battle-effect-series-i-dispatch",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/series_i_dispatch.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/SERIES_I_DISPATCH.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -112981,7 +112981,7 @@
     {
       "id": "inventory-mutation",
       "game": "gs1",
-      "source": "games/gs1/src/game/inventory/mutation.c",
+      "source": "games/gs1/SRC/GAME/INVENTORY/MUTATION.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -113022,7 +113022,7 @@
     {
       "id": "ui-render-output",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/render/output.c",
+      "source": "games/gs1/SRC/GRAPHICS/RENDER/OUTPUT.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -113058,7 +113058,7 @@
     {
       "id": "menu-selection",
       "game": "gs1",
-      "source": "games/gs1/src/menu/selection.c",
+      "source": "games/gs1/SRC/MENU/SELECTION.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -113099,7 +113099,7 @@
     {
       "id": "ui-runtime-counters",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/window/runtime_counters.c",
+      "source": "games/gs1/SRC/GRAPHICS/WINDOW/RUNTIME_COUNTERS.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -113135,7 +113135,7 @@
     {
       "id": "djinn-management",
       "game": "gs1",
-      "source": "games/gs1/src/game/djinn/management.c",
+      "source": "games/gs1/SRC/GAME/DJINN/MANAGEMENT.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -113211,7 +113211,7 @@
     {
       "id": "heidia-village-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/heidia/village.c",
+      "source": "games/gs1/SRC/FIELD/LUNPA/FORTRESS.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bf",
       "absolute_symbols": {
@@ -120478,7 +120478,7 @@
     {
       "id": "actor-transition-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/transition.c",
+      "source": "games/gs1/SRC/FIELD/SHARED/TRANSITION.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39a",
       "absolute_symbols": {
@@ -123206,7 +123206,7 @@
     {
       "id": "multi-encounter-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/multi_encounter.c",
+      "source": "games/gs1/SRC/FIELD/PASSENGER_SHIP/MULTI_ENCOUNTER.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3af",
       "absolute_symbols": {
@@ -126525,7 +126525,7 @@
     {
       "id": "map-init-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/map_init.c",
+      "source": "games/gs1/SRC/FIELD/BABI_LIGHTHOUSE/MAP_INIT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c4",
       "absolute_symbols": {
@@ -128628,7 +128628,7 @@
     {
       "id": "task-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/task.c",
+      "source": "games/gs1/SRC/FIELD/COLOSSO/TASK.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bb",
       "absolute_symbols": {
@@ -130672,7 +130672,7 @@
     {
       "id": "staged-step-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/staged_step.c",
+      "source": "games/gs1/SRC/FIELD/CROSSBONE/STAGED_STEP.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b4",
       "absolute_symbols": {
@@ -132847,7 +132847,7 @@
     {
       "id": "staged-motion-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/staged_motion.c",
+      "source": "games/gs1/SRC/FIELD/HEIDIA/STAGED_MOTION.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_373",
       "absolute_symbols": {
@@ -138449,7 +138449,7 @@
     {
       "id": "staged-navigation-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/staged_nav.c",
+      "source": "games/gs1/SRC/FIELD/CROSSBONE/STAGED_NAV.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b3",
       "absolute_symbols": {
@@ -139642,7 +139642,7 @@
     {
       "id": "branching-event-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/branching_event.c",
+      "source": "games/gs1/SRC/FIELD/BABI_LIGHTHOUSE/BRANCHING_EVENT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c5",
       "absolute_symbols": {
@@ -142793,7 +142793,7 @@
     {
       "id": "staged-group-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/staged_group.c",
+      "source": "games/gs1/SRC/FIELD/KALAY/STAGED_GROUP.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a8",
       "absolute_symbols": {
@@ -147459,7 +147459,7 @@
     {
       "id": "waypoint-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/waypoint.c",
+      "source": "games/gs1/SRC/FIELD/MOGALL/WAYPOINT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39f",
       "absolute_symbols": {
@@ -149549,7 +149549,7 @@
     {
       "id": "set-piece-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/set_piece.c",
+      "source": "games/gs1/SRC/FIELD/ALTIN/SET_PIECE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a4",
       "absolute_symbols": {
@@ -152295,7 +152295,7 @@
     {
       "id": "staged-pair-region-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/staged_pair_region.c",
+      "source": "games/gs1/SRC/FIELD/HEIDIA/STAGED_PAIR_REGION.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a6",
       "absolute_symbols": {
@@ -153290,7 +153290,7 @@
     {
       "id": "extended-presentation-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/extended_presentation.c",
+      "source": "games/gs1/SRC/FIELD/ALTMILLER/EXTENDED_PRESENTATION.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bd",
       "absolute_symbols": {
@@ -154943,7 +154943,7 @@
     {
       "id": "prologue-route-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/heidia/prologue.c",
+      "source": "games/gs1/SRC/FIELD/CROSSBONE/ISLAND_AND_CAVES.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b2",
       "absolute_symbols": {
@@ -157260,7 +157260,7 @@
     {
       "id": "staged-effect-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/staged_effect.c",
+      "source": "games/gs1/SRC/FIELD/MERCURY/STAGED_EFFECT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39b",
       "absolute_symbols": {
@@ -158233,7 +158233,7 @@
     {
       "id": "push-puzzle-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/push_puzzle.c",
+      "source": "games/gs1/SRC/FIELD/BILIBIN/PUSH_PUZZLE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38b",
       "absolute_symbols": {
@@ -159439,7 +159439,7 @@
     {
       "id": "facing-target-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/facing_target.c",
+      "source": "games/gs1/SRC/FIELD/SHARED/FACING_TARGET.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_377",
       "absolute_symbols": {
@@ -160268,7 +160268,7 @@
     {
       "id": "inventory-item-list",
       "game": "gs1",
-      "source": "games/gs1/src/menu/item/item_list.c",
+      "source": "games/gs1/SRC/MENU/ITEM/ITEM_LIST.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -160299,7 +160299,7 @@
     {
       "id": "inventory-interface",
       "game": "gs1",
-      "source": "games/gs1/src/menu/item/interface.c",
+      "source": "games/gs1/SRC/MENU/ITEM/INTERFACE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -160335,7 +160335,7 @@
     {
       "id": "summon-definition-access",
       "game": "gs1",
-      "source": "games/gs1/src/battle/summon/definition.c",
+      "source": "games/gs1/SRC/BATTLE/SUMMON/DEFINITION.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -160386,7 +160386,7 @@
     {
       "id": "text-resource",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/text/resource.c",
+      "source": "games/gs1/SRC/GRAPHICS/TEXT/RESOURCE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -160442,7 +160442,7 @@
     {
       "id": "object-dispatch",
       "game": "gs1",
-      "source": "games/gs1/src/field/object/dispatch.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/OBJECT/DISPATCH.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -160558,7 +160558,7 @@
     {
       "id": "battle-effect-setup",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/setup.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/SETUP.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -160675,7 +160675,7 @@
     {
       "id": "scenario-dispatch-37f",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/scenario_dispatch.c",
+      "source": "games/gs1/SRC/FIELD/SOL_SHINDEN/SCENARIO_DISPATCH.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37f",
       "absolute_symbols": {
@@ -162742,7 +162742,7 @@
     {
       "id": "overlay-soft-float",
       "game": "gs1",
-      "source": "games/gs1/src/lib/soft_float.c",
+      "source": "games/gs1/SRC/LIB/SOFT_FLOAT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a7",
       "absolute_symbols": {
@@ -162956,7 +162956,7 @@
     {
       "id": "heidia-soft-float",
       "game": "gs1",
-      "source": "games/gs1/src/lib/soft_float_heidia.c",
+      "source": "games/gs1/SRC/LIB/SOFT_FLOAT_LUNPA.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bf",
       "absolute_symbols": {
@@ -163218,7 +163218,7 @@
     {
       "id": "scene-topic",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/topic.c",
+      "source": "games/gs1/SRC/FIELD/TOLBI/TOPIC.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b7",
       "absolute_symbols": {
@@ -163431,7 +163431,7 @@
     {
       "id": "staged-pair-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/staged_pair.c",
+      "source": "games/gs1/SRC/FIELD/GONDOWAN/STAGED_PAIR.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3be",
       "absolute_symbols": {
@@ -164302,7 +164302,7 @@
     {
       "id": "field-entry-setup",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/entry_setup.c",
+      "source": "games/gs1/SRC/FIELD/VENUS/ENTRY_SETUP.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c8",
       "absolute_symbols": {
@@ -166388,7 +166388,7 @@
     {
       "id": "four-actor-encounter",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/four_encounter.c",
+      "source": "games/gs1/SRC/FIELD/KOLIMA/FOUR_ENCOUNTER.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_396",
       "absolute_symbols": {
@@ -167423,7 +167423,7 @@
     {
       "id": "ui-grid-columns",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/icon/grid_column.c",
+      "source": "games/gs1/SRC/GRAPHICS/ICON/GRID_COLUMN.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -167454,7 +167454,7 @@
     {
       "id": "inventory-count",
       "game": "gs1",
-      "source": "games/gs1/src/game/inventory/count.c",
+      "source": "games/gs1/SRC/GAME/INVENTORY/COUNT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -167475,7 +167475,7 @@
     {
       "id": "party-counters",
       "game": "gs1",
-      "source": "games/gs1/src/game/party/counters.c",
+      "source": "games/gs1/SRC/GAME/PARTY/COUNTERS.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -167501,7 +167501,7 @@
     {
       "id": "audio-command",
       "game": "gs1",
-      "source": "games/gs1/src/sound/command.c",
+      "source": "games/gs1/SRC/SOUND/COMMAND.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -167577,7 +167577,7 @@
     {
       "id": "ui-render-channel",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/render/channel.c",
+      "source": "games/gs1/SRC/GRAPHICS/RENDER/CHANNEL.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -167618,7 +167618,7 @@
     {
       "id": "ui-named-values",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/window/runtime_named_value.c",
+      "source": "games/gs1/SRC/GRAPHICS/WINDOW/RUNTIME_NAMED_VALUE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -167644,7 +167644,7 @@
     {
       "id": "ui-cancel-input",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/window/runtime_cancel_input.c",
+      "source": "games/gs1/SRC/GRAPHICS/WINDOW/RUNTIME_CANCEL_INPUT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -167665,7 +167665,7 @@
     {
       "id": "battle-event-queue",
       "game": "gs1",
-      "source": "games/gs1/src/battle/event_queue.c",
+      "source": "games/gs1/SRC/BATTLE/EVENT_QUEUE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -167701,7 +167701,7 @@
     {
       "id": "battle-radial-launch",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/run_effect15.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/RUN_EFFECT15.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -167732,7 +167732,7 @@
     {
       "id": "battle-descending-arcs",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/particles_descending_arc.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/PARTICLES_DESCENDING_ARC.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -167753,7 +167753,7 @@
     {
       "id": "overlays-scene-story-progress-actor",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/unidentified/progress_actor.c",
+      "source": "games/gs1/SRC/FIELD/HEIDIA/PROGRESS_ACTOR.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_375",
       "absolute_symbols": {
@@ -169583,7 +169583,7 @@
     {
       "id": "battle-effect-descriptors",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/descriptors.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/DESCRIPTORS.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -169682,7 +169682,7 @@
     {
       "id": "save-record-summary",
       "game": "gs1",
-      "source": "games/gs1/src/system/save/summary.c",
+      "source": "games/gs1/SRC/SYSTEM/SAVE/SUMMARY.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -169708,7 +169708,7 @@
     {
       "id": "save-paired-write",
       "game": "gs1",
-      "source": "games/gs1/src/system/save/write_pair.c",
+      "source": "games/gs1/SRC/SYSTEM/SAVE/WRITE_PAIR.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -169729,7 +169729,7 @@
     {
       "id": "shop-services",
       "game": "gs1",
-      "source": "games/gs1/src/menu/shop/service.c",
+      "source": "games/gs1/SRC/MENU/SHOP/SERVICE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -169770,7 +169770,7 @@
     {
       "id": "resource-buffer-loading",
       "game": "gs1",
-      "source": "games/gs1/src/system/resource/buffer.c",
+      "source": "games/gs1/SRC/SYSTEM/RESOURCE/BUFFER.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -169801,7 +169801,7 @@
     {
       "id": "ui-output-list",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/render/output_list.c",
+      "source": "games/gs1/SRC/GRAPHICS/RENDER/OUTPUT_LIST.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -169827,7 +169827,7 @@
     {
       "id": "ui-window-finalize",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/window/finalize.c",
+      "source": "games/gs1/SRC/GRAPHICS/WINDOW/FINALIZE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -169863,7 +169863,7 @@
     {
       "id": "school-and-roof-scene",
       "game": "gs1",
-      "source": "games/gs1/src/overlays/xian/school_and_roof.c",
+      "source": "games/gs1/SRC/FIELD/SHARED/TEMPLE_ROOMS.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39e",
       "absolute_symbols": {
@@ -175512,7 +175512,7 @@
     {
       "id": "battle-effect-object-control",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/runtime_control.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/RUNTIME_CONTROL.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -175543,7 +175543,7 @@
     {
       "id": "inventory-owner-items",
       "game": "gs1",
-      "source": "games/gs1/src/menu/item/owner_items.c",
+      "source": "games/gs1/SRC/MENU/ITEM/OWNER_ITEMS.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -175574,7 +175574,7 @@
     {
       "id": "inventory-menu-commands",
       "game": "gs1",
-      "source": "games/gs1/src/menu/item/commands.c",
+      "source": "games/gs1/SRC/MENU/ITEM/COMMANDS.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -175595,7 +175595,7 @@
     {
       "id": "serial-transfer-wait",
       "game": "gs1",
-      "source": "games/gs1/src/system/link/serial_transfer_wait.c",
+      "source": "games/gs1/SRC/SYSTEM/LINK/SERIAL_TRANSFER_WAIT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -175626,7 +175626,7 @@
     {
       "id": "text-resource-measure",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/text/resource_measure.c",
+      "source": "games/gs1/SRC/GRAPHICS/TEXT/RESOURCE_MEASURE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -175652,7 +175652,7 @@
     {
       "id": "object-context-effect",
       "game": "gs1",
-      "source": "games/gs1/src/field/object/effects_context_effect.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/OBJECT/EFFECTS_CONTEXT_EFFECT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -175688,7 +175688,7 @@
     {
       "id": "audio-track-slot-buffer",
       "game": "gs1",
-      "source": "games/gs1/src/sound/track_slot_buffer.c",
+      "source": "games/gs1/SRC/SOUND/TRACK_SLOT_BUFFER.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -175724,7 +175724,7 @@
     {
       "id": "psynergy-menu-entry-grid",
       "game": "gs1",
-      "source": "games/gs1/src/menu/ability/entry_grid.c",
+      "source": "games/gs1/SRC/MENU/ABILITY/ENTRY_GRID.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -175750,7 +175750,7 @@
     {
       "id": "menu-selection-resource",
       "game": "gs1",
-      "source": "games/gs1/src/menu/selection_resource.c",
+      "source": "games/gs1/SRC/MENU/SELECTION_RESOURCE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -175776,7 +175776,7 @@
     {
       "id": "serial-transfer-interrupt",
       "game": "gs1",
-      "source": "games/gs1/src/system/link/serial_transfer_interrupt.c",
+      "source": "games/gs1/SRC/SYSTEM/LINK/SERIAL_TRANSFER_INTERRUPT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -175802,7 +175802,7 @@
     {
       "id": "ui-window-layout",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/window/layout.c",
+      "source": "games/gs1/SRC/GRAPHICS/WINDOW/LAYOUT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -175828,7 +175828,7 @@
     {
       "id": "item-definition-access",
       "game": "gs1",
-      "source": "games/gs1/src/game/item/definition.c",
+      "source": "games/gs1/SRC/GAME/ITEM/DEFINITION.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -175854,7 +175854,7 @@
     {
       "id": "ui-icon-resource",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/icon/resource.c",
+      "source": "games/gs1/SRC/GRAPHICS/ICON/RESOURCE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -175880,7 +175880,7 @@
     {
       "id": "psynergy-owner-entries",
       "game": "gs1",
-      "source": "games/gs1/src/menu/ability/owner_entries.c",
+      "source": "games/gs1/SRC/MENU/ABILITY/OWNER_ENTRIES.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -175906,7 +175906,7 @@
     {
       "id": "menu-resource-entries",
       "game": "gs1",
-      "source": "games/gs1/src/menu/resource_entries.c",
+      "source": "games/gs1/SRC/MENU/RESOURCE_ENTRIES.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -175932,7 +175932,7 @@
     {
       "id": "menu-object-row",
       "game": "gs1",
-      "source": "games/gs1/src/menu/object_row.c",
+      "source": "games/gs1/SRC/MENU/OBJECT_ROW.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -175958,7 +175958,7 @@
     {
       "id": "battle-member-burst-entries",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/member_burst_entry.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/MEMBER_BURST_ENTRY.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -175984,7 +175984,7 @@
     {
       "id": "battle-forty-eight-frame-entries",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/forty_eight_frame_entry.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/FORTY_EIGHT_FRAME_ENTRY.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -176010,7 +176010,7 @@
     {
       "id": "battle-palette-ramp-entries",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/palette_ramp_entry.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/PALETTE_RAMP_ENTRY.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -176036,7 +176036,7 @@
     {
       "id": "battle-particle-field-entries",
       "game": "gs1",
-      "source": "games/gs1/src/battle/effects/particle_field_entry.c",
+      "source": "games/gs1/SRC/BATTLE/EFFECT/PARTICLE_FIELD_ENTRY.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -176062,7 +176062,7 @@
     {
       "id": "shop-item-selection",
       "game": "gs1",
-      "source": "games/gs1/src/menu/shop/item_selection.c",
+      "source": "games/gs1/SRC/MENU/SHOP/ITEM_SELECTION.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -176088,7 +176088,7 @@
     {
       "id": "ui-window-lifecycle",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/window/lifecycle.c",
+      "source": "games/gs1/SRC/GRAPHICS/WINDOW/LIFECYCLE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -176109,7 +176109,7 @@
     {
       "id": "event-object-hooks",
       "game": "gs1",
-      "source": "games/gs1/src/field/event/object_hooks.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/EVENT/OBJECT_HOOKS.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -176135,7 +176135,7 @@
     {
       "id": "event-prepare-objects",
       "game": "gs1",
-      "source": "games/gs1/src/field/event/prepare_objects.c",
+      "source": "games/gs1/SRC/FIELD/COMMON/EVENT/PREPARE_OBJECTS.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -176156,7 +176156,7 @@
     {
       "id": "battle-motion-slots",
       "game": "gs1",
-      "source": "games/gs1/src/battle/motion/slots.c",
+      "source": "games/gs1/SRC/BATTLE/MOTION/SLOTS.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -176192,7 +176192,7 @@
     {
       "id": "animation-selection",
       "game": "gs1",
-      "source": "games/gs1/src/graphics/animation/selection.c",
+      "source": "games/gs1/SRC/GRAPHICS/ANIMATION/SELECTION.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -176223,7 +176223,7 @@
     {
       "id": "inn-rest",
       "game": "gs1",
-      "source": "games/gs1/src/menu/inn/stay.c",
+      "source": "games/gs1/SRC/MENU/INN/STAY.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},

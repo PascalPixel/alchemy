@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define BattleEffect_RunSparkGroups Func_080d4604
 
@@ -6,7 +6,7 @@
  * Draft for the battle-presentation sub-effect at 0x080d4604 (1764 bytes).
  *
  * Same 0x03001eec "battle work" subsystem family as
- * games/gs1/src/battle/effects/member_orbit.c (Func_080ce85c, exact) and
+ * games/gs1/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C (Func_080ce85c, exact) and
  * the measured drafts games/gs1/recon/en/main/080dfe2c.c and 080d4ce8.c: the
  * heap_cache/cursor prologue, the M2C_FIELD field-offset idiom, the
  * DrawRectangleFn typedef, the work+0x7828 effect-state republication, the

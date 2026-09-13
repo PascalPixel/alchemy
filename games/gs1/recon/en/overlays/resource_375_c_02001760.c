@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* Runtime call aliases belong to scene-progress-actor-sequence-375. */
 

@@ -1,10 +1,10 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * Battle-presentation sub-effect at 0x080c972c, part of the 0x03001eec
  * "battle work" family whose field-offset layout and calling shapes are
- * established by games/gs1/src/battle/effects/member_orbit.c
- * (main:080ce85c) and games/gs1/src/battle/effects/puff_arc.c
+ * established by games/gs1/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C
+ * (main:080ce85c) and games/gs1/SRC/BATTLE/EFFECT/PUFF_ARC.C
  * (main:080d9fc8).  The family-matcher's closest template is member_orbit
  * (score 7767/10000), but this owner is 1332 bytes against the template's
  * 724 and is NOT the same effect: it draws a ring of 64 randomly-placed
@@ -73,7 +73,7 @@ s32 Func_080cdbc0(void);
 
 /* Value_ symbols carry a literal the reference loads from its pool rather
    than materializing with a mov; the family already uses this spelling in
-   games/gs1/src/battle/effects/puff_arc.c. */
+   games/gs1/SRC/BATTLE/EFFECT/PUFF_ARC.C. */
 extern u8 Value_00000076;
 extern u8 Value_000000cc;
 extern u8 Value_0000027f;

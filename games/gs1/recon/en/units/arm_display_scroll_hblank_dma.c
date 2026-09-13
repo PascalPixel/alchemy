@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 struct DisplayScrollState {
     u8 padding000[0xf00];

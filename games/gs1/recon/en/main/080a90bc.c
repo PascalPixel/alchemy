@@ -1,4 +1,4 @@
-#include "shop.h"
+#include "SHOP.H"
 
 void Func_080a8c2c(void);
 s32 Func_08015270(s32 window);

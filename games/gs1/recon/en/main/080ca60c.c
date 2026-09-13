@@ -1,10 +1,10 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * Battle-presentation sub-effect at 0x080ca60c, part of the 0x03001eec
  * "battle work" subsystem already partly recovered in
  * games/gs1/recon/en/main/080ca1fc.c, 080cb1a4.c, 080e01e4.c and
- * games/gs1/src/battle/effects/member_orbit.c.
+ * games/gs1/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C.
  *
  * The owner is one function: the two `bl` sites at 0x080ca956 and
  * 0x080cb176 target addresses inside this same extent (0x080cb17a and

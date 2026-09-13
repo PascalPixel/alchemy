@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * Draft for the battle-presentation sub-effect at 0x080d9ae8, named
@@ -9,7 +9,7 @@
  * Real callee set and constants match the 0x03001eec "battle work"
  * subsystem already partly recovered in games/gs1/recon/en/main/080e7404.c,
  * games/gs1/recon/en/main/080d82b0.c and games/gs1/recon/en/main/080dc1ec.c,
- * and the already-adopted games/gs1/src/battle/effects/member_orbit.c.
+ * and the already-adopted games/gs1/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C.
  * Field offsets (work+0x7780/0x7784/0x7824/0x7828, member+8/+16,
  * member-id halfword at effect+36+2*member) and the M2C_FIELD/WordCopyFn/
  * DrawRectangleFn conventions come from that evidence.

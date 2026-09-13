@@ -1,6 +1,6 @@
-#include "types.h"
-#include "resource.h"
-#include "runtime_mem.h"
+#include "TYPES.H"
+#include "RESOURCE.H"
+#include "RUNTIME_MEM.H"
 
 extern u8 Data_03001388[];
 

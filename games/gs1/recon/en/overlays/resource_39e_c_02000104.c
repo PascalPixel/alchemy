@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 struct EffectSprite {
     u8 pad[0x1e];

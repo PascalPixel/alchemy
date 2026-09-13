@@ -1,5 +1,5 @@
-#include "types.h"
-#include "global_cells.h"
+#include "TYPES.H"
+#include "GLOBAL_CELLS.H"
 
 /*
  * Modal owner-action comparison loop for the shared 0x03001f2c scene work.
@@ -15,7 +15,7 @@
  *
  * Uncertain, and left as evidenced offsets rather than invented names:
  *  - the shared work at 0x03001f2c is only partially described by
- *    games/gs1/include/four_object_motion.h; the fields this owner touches
+ *    games/gs1/INCLUDE/FOUR_OBJECT_MOTION.H; the fields this owner touches
  *    (0x134, 0x178, 0x184, 0x21a, 0x254..0x258) extend past that struct, so
  *    the file uses the FIELD_AT_OFFSET idiom of its exact sibling
  *    games/gs1/src/menu/sel/run_paired_entry_action.c instead of inventing a type.

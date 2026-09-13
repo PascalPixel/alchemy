@@ -1,7 +1,7 @@
-#include "types.h"
-#include "item_menu.h"
-#include "equipment_menu.h"
-#include "global_cells.h"
+#include "TYPES.H"
+#include "ITEM_MENU.H"
+#include "EQUIPMENT_MENU.H"
+#include "GLOBAL_CELLS.H"
 
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 

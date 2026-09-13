@@ -1,5 +1,5 @@
-#include "types.h"
-#include "configured_effect_spawn.h"
+#include "TYPES.H"
+#include "CONFIGURED_EFFECT_SPAWN.H"
 
 /* Resource-local call aliases are bound to loader runtime destinations by
  * this owner's translation unit.  The five selectors are signed halfwords

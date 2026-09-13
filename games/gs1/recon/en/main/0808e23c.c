@@ -1,6 +1,6 @@
-#include "types.h"
-#include "item.h"
-#include "battle_effect_runtime.h"
+#include "TYPES.H"
+#include "ITEM.H"
+#include "BATTLE_EFFECT_RUNTIME.H"
 
 /*
  * Evidence summary (see games/gs1/recon/en/dossiers.json#main:0808e23c for the full

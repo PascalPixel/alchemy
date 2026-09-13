@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define ObjectTable_Get Func_0808ba1c
 /* Object table: 192 pointers at Data_03001ebc + 0x14 (object/table/get.c). */

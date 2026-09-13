@@ -1,5 +1,5 @@
-#include "types.h"
-#include "global_cells.h"
+#include "TYPES.H"
+#include "GLOBAL_CELLS.H"
 #undef Resource_FindFreeSlot
 #define Resource_FindFreeSlot Func_080b6e7c
 

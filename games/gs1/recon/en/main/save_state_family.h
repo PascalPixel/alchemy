@@ -1,10 +1,10 @@
 #ifndef GUARD_SAVE_STATE_FAMILY_H
 #define GUARD_SAVE_STATE_FAMILY_H
 
-#include "types.h"
-#include "fixed_math.h"
-#include "flash.h"
-#include "global_cells.h"
+#include "TYPES.H"
+#include "FIXED_MATH.H"
+#include "FLASH.H"
+#include "GLOBAL_CELLS.H"
 
 /* Ordered save-state translation unit: 080056cc through 08005c68. */
 

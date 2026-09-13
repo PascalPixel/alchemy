@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define Scene_RunOpeningAuxiliarySequence Func_02000108
 

@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 extern s16 Data_02001078[];
 extern u8 Data_02000240[];

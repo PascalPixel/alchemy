@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 struct Child_080ba918 {
     u8 filler_00[5];

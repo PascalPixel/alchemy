@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * resource_3b7 owner at 0x02000e5c, 2124 bytes (0x02000e5c-0x020016a7).

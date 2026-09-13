@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 /* resource_3aa owner at 0x0200140c, 68 bytes. Four channel setups, then an
  * optional handoff when the caller passed a non-null argument. */
 void Func_02002f4e();

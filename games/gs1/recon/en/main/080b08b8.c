@@ -1,4 +1,4 @@
-#include "shop.h"
+#include "SHOP.H"
 
 #define M2C_FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 

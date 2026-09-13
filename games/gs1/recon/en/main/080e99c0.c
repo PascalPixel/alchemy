@@ -1,4 +1,4 @@
-#include "effect_step.h"
+#include "EFFECT_STEP.H"
 
 /*
  * Battle-presentation scene at main:080e99c0 (1816 bytes), another member of

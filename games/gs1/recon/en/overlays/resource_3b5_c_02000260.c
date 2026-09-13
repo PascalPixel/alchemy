@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 /* resource_3b5 owner at 0x02000260, 44 bytes. */
 void Func_02000f92();
 void Func_020010d8();

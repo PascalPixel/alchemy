@@ -1,5 +1,5 @@
-#include "flash.h"
-#include "flash_data.h"
+#include "FLASH.H"
+#include "FLASH_DATA.H"
 
 struct FlashInfo_0800711c {
     u8 filler0[36];

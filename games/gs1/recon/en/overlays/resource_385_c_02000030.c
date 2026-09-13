@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* Shared 22-byte head leaf proved identical for this overlay family. */
 struct Rec_02000030 {

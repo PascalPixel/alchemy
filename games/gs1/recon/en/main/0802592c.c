@@ -1,6 +1,6 @@
-#include "types.h"
-#include "battle_types.h"
-#include "gs1_edition.h"
+#include "TYPES.H"
+#include "BATTLE_TYPES.H"
+#include "GS1_EDITION.H"
 
 /*
  * Battle action (Psynergy) selection loop.
@@ -16,7 +16,7 @@
  * prefers when moving horizontally) lives in the shared menu-navigation cell
  * at 0x03001f34 so that reopening the menu resumes where it left off.  The
  * same cell's +0x4c flag ends the loop from outside; UiText_ShowLocalizedMessage
- * AndWait (games/gs1/src/graphics/text/msg_show_localized_message_and_wait.c) polls the
+ * AndWait (games/gs1/SRC/GRAPHICS/TEXT/MSG_SHOW_LOCALIZED_MESSAGE_AND_WAIT.C) polls the
  * identical pair of "0x03001c94 & 3" and "+0x4c" conditions.
  *
  * Uncertain, and left as read from the reference:

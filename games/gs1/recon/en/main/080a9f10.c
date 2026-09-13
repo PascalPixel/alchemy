@@ -1,6 +1,6 @@
-#include "types.h"
-#include "battle_efx.h"
-#include "battle_types.h"
+#include "TYPES.H"
+#include "BATTLE_EFX.H"
+#include "BATTLE_TYPES.H"
 
 struct Object_080a9f10 {
     u8 padding_000[0x10];

@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define BattleFx_SpawnBurstParticleField Func_08098698
 

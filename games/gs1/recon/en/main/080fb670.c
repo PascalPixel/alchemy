@@ -25,7 +25,7 @@
  *     stack slot. Must be read with the surrounding code; must NOT be
  *     pattern-matched against other files.
  */
-#include "types.h"
+#include "TYPES.H"
 
 struct MusicPlayerState;
 

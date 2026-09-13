@@ -274,7 +274,7 @@ mod owner_tests {
             }
         )
         .is_err());
-        assert!(!root.path().join("games/gs1/src").exists());
+        assert!(!root.path().join("games/gs1/SRC").exists());
     }
 }
 

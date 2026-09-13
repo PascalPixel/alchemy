@@ -10,7 +10,7 @@
  *   Func_020039ec        0x0200b9ec
  *   Func_02003a00        0x0200ba00
  */
-#include "types.h"
+#include "TYPES.H"
 
 #define Scene_RunPartyRosterScene Func_02002c84
 

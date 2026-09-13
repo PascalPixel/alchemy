@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* AUDITED GENERATED CALL SCRIPT for Scene_RunMapEntranceCoordinator:
  * A phase-two fast path, full-presentation and short-revisit branches, and

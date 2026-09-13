@@ -1,4 +1,4 @@
-#include "flash.h"
+#include "FLASH.H"
 
 struct FlashChipInfo {
     u8 unknown_00[4];

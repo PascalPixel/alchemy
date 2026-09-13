@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define BattleFx_InitializeSharedScene Func_08097384
 

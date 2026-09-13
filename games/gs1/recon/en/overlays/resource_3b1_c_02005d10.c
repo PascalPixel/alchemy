@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define FieldScene_RunFlagDependentFormationPresentation Func_02005d10
 

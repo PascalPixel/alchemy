@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define BattleEffect_RunSparkDescent Func_080de2f8
 

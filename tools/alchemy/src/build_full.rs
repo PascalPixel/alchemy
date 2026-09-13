@@ -218,7 +218,12 @@ fn has_assembly_sources(directory: &Path) -> Result<bool, String> {
         let kind = entry
             .file_type()
             .map_err(|error| format!("{}: {error}", entry.path().display()))?;
-        if kind.is_file() && entry.path().extension().is_some_and(|ext| ext == "s") {
+        if kind.is_file()
+            && entry
+                .path()
+                .extension()
+                .is_some_and(|ext| ext.eq_ignore_ascii_case("s"))
+        {
             return Ok(true);
         }
         if kind.is_dir() && has_assembly_sources(&entry.path())? {
@@ -578,7 +583,7 @@ fn inventory_members(
 }
 fn source_group(source: &str) -> Option<String> {
     Path::new(source)
-        .strip_prefix("games/gs1/src")
+        .strip_prefix("games/gs1/SRC")
         .ok()?
         .parent()?
         .to_str()
@@ -588,7 +593,7 @@ fn source_group(source: &str) -> Option<String> {
 fn source_path(paths: &SourcePaths, owner: SourceOwner) -> Option<String> {
     paths
         .mapped_relative_path(owner)
-        .map(|path| text(Path::new("games/gs1/src").join(path)))
+        .map(|path| text(Path::new("games/gs1/SRC").join(path)))
 }
 fn hex(value: u64) -> String {
     format!("0x{value:08x}")

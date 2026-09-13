@@ -1,11 +1,11 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define BattleEffect_RunBurstShower Func_080dbc30
 
 /*
  * Battle-presentation effect sequence at 0x080dbc30 (1468 bytes), in the
  * same kind-39 "battle work block" family as the exact
- * games/gs1/src/battle/effects/puff_arc.c (owner 080d9fc8) and
+ * games/gs1/SRC/BATTLE/EFFECT/PUFF_ARC.C (owner 080d9fc8) and
  * games/gs1/src/battle/effects/work/fetch_rectangle_blitters.c (owner 080cef64).
  * The heap-allocation cache Data_03001e50[kind], the republished effect
  * argument at work + 0x7828, the sixty-four twenty-eight byte particle

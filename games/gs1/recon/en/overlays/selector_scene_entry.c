@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define Scene_RunSelectorEntry Func_02003d20
 #define SCENE Data_02000240

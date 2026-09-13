@@ -1,6 +1,6 @@
-#include "types.h"
-#include "owner_state.h"
-#include "inventory.h"
+#include "TYPES.H"
+#include "OWNER_STATE.H"
+#include "INVENTORY.H"
 
 /*
  * Field names/offsets for name/name_flags/hp_ratio/pp_ratio come from the

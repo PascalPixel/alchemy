@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* AUDITED GENERATED CALL SCRIPT for Scene_RunExtendedPresentationSequence:
  * 188 calls, six conditional event advances, and terminal runtime state. */

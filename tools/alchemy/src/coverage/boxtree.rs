@@ -557,7 +557,7 @@ mod tests {
     #[test]
     fn all_directories_wrap_files_without_duplicating_bytes() {
         let tile = Tile {
-            source: Some("games/gs1/src/battle/effects/fire.c".into()),
+            source: Some("games/gs1/SRC/battle/effects/fire.c".into()),
             address: Some(0x080bbb0c),
             bytes: 100,
             categories: [100, 0, 0, 0, 0, 0],
@@ -570,9 +570,9 @@ mod tests {
         for path in [
             "games/",
             "games/gs1/",
-            "games/gs1/src/",
-            "games/gs1/src/battle/",
-            "games/gs1/src/battle/effects/",
+            "games/gs1/SRC/",
+            "games/gs1/SRC/battle/",
+            "games/gs1/SRC/battle/effects/",
         ] {
             assert_eq!(node.source.as_deref(), Some(path));
             assert_eq!(node.children.len(), 1);

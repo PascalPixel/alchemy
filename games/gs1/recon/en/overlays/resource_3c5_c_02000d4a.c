@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define Scene_RunSupplementalSequenceOne Func_02000d4a
 

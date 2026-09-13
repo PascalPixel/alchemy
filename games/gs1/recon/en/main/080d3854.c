@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * Battle-presentation sub-effect keyed off the shared 0x03001eec "battle

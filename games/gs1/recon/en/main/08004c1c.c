@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define SceneTransform_ApplyYaw Func_08004c1c
 

@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 void Func_08016478(void);
 void Func_0801e41c(s32, s32, s32, s32, s32);

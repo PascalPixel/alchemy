@@ -496,7 +496,33 @@ Shared interfaces and evidenced types belong in headers; local constraints
 belong beside the relevant expression. Keep source ordinary C89 and preserve
 observable behavior, including bugs.
 
-Organize `games/<game>/src/` by the following responsibilities. These are our
+### Project Atlas
+
+Atlas replaces the current layout below with area workspaces under
+`games/gs1/SRC/FIELD/`, shared field engine code in `FIELD/COMMON/`, and
+cross-location modules in `FIELD/SHARED/`. The `atlas_destination` column in
+`games/gs1/locations.tsv` records the destination for each overlay. Source and
+include files have moved; asset placement remains a separate stage. Preserve separate compilation and
+load boundaries. The remaining source groups are `SYSTEM`, `LIB`, `GRAPHICS`,
+`SOUND`, `GAME`, `BATTLE`, `MENU` and `DEBUG`; shared headers belong in `INCLUDE`.
+Uppercase is a project convention, not recovered historical spelling. Ensure
+uppercase `.C` is compiled as C, never inferred as C++, without changing the
+approved compiler route or optimization flags.
+
+Move area-exclusive maps and graphics beside their code only after their
+consumers establish ownership. Shared graphics remain in `GRAPHICS`, sequences,
+samples and instrument definitions in `SOUND`, and localized messages in `TEXT`.
+Do not duplicate shared resources, invent asset associations, or publish
+protected extracted inputs. Use `.gitkeep` only for necessary empty destinations.
+
+The dashboard and README will share one 9:16 ROM viewer hierarchy and layout,
+counting represented ROM bytes once while preserving the executable-only DONE
+denominator. Keep the optional music debugger separate. Migrate source, assets
+and viewer in verified stages; completion requires the full GS1 English ROM to
+remain byte-identical and the migration to be committed. Do not claim GS2 or
+other editions verified from GS1 evidence.
+
+Until migrated, `games/<game>/src/` uses the following responsibilities. These are our
 reconstruction choices, not recovered Camelot directory names. Keep a shallow
 module tree; do not create a folder for each function or sort whole scenes into
 actor/dialogue/story categories. A scene's actors, dialogue and events belong
@@ -517,7 +543,17 @@ unit, overlay identity, compiler route or completion credit.
 
 Area-specific code belongs in `overlays/<location>/`; one location may have
 several separately compiled overlays. `games/gs1/locations.tsv` retains the
-current reviewed assignments. Existing filenames and function names alone do
+ROM-backed GS1 English location assignments for all 96 overlays. The scene
+selector is bounded to 0–200 by `08029094`; `0808ab48` loads the resource from
+the eight-byte scene table at `0809f1a8`. The location resolver `0808b158`
+(through veneer `0808a5d0`) scans ordered rules at `0809ddd8`, matching either
+scene or group and an entry selector. `Menu_DrawSelectionRow` adds `0x99b` to
+the result to select the location message, and separately displays the debug
+scene label at `0xa07 + scene`. Preserve entry-specific and shared-location
+assignments; a default title-screen fallback is not a place. These are English
+display labels, not recovered Japanese folder names. The historical
+`battle_effect_tail.json` and `battle_effect_rules.json` filenames do not make
+these tables battle effects. Existing filenames and function names alone do
 not independently prove an assignment: establish new locations through resource,
 map or call-site evidence. Unidentified modules stay in `overlays/unidentified/`
 under descriptive filenames until their location is established. Never invent a

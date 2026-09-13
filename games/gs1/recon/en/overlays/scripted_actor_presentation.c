@@ -1,4 +1,4 @@
-#include "object_runtime.h"
+#include "OBJECT_RUNTIME.H"
 
 #define Scene_RunScriptedActorPresentation Func_020008b4
 

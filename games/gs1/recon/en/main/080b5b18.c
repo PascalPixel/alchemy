@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 s32 Func_080b6a60(u16 *owners);
 u8 *Func_08077008(s32 owner);

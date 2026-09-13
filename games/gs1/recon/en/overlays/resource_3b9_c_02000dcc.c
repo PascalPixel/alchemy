@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* AUDITED GENERATED CALL SCRIPT for Scene_RunLargeActorPresentationSetup:
  * 101 calls, no loops, two actor-flag updates, and a complete nine-field

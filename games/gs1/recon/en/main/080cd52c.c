@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 #undef Inn_RoomPrice
 #define Inn_RoomPrice Func_080cd52c
 

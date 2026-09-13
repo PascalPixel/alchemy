@@ -1,5 +1,5 @@
-#include "types.h"
-#include "effect_step.h"
+#include "TYPES.H"
+#include "EFFECT_STEP.H"
 
 /*
  * Battle-presentation sub-effect at 0x080cb4ec, part of the same

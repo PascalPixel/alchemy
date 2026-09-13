@@ -1,6 +1,6 @@
-#include "types.h"
-#include "item.h"
-#include "party_state.h"
+#include "TYPES.H"
+#include "ITEM.H"
+#include "PARTY_STATE.H"
 
 extern void *Data_03001ebc;
 extern struct PartyState Data_02000240;

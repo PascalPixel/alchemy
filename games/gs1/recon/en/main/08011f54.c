@@ -1,5 +1,5 @@
-#include "types.h"
-#include "global_cells.h"
+#include "TYPES.H"
+#include "GLOBAL_CELLS.H"
 
 extern u8 Data_0202c001[];
 extern s32 Data_080134fc[];

@@ -1,12 +1,12 @@
-#include "types.h"
-#include "b5_context.h"
-#include "motion_object.h"
+#include "TYPES.H"
+#include "B5_CONTEXT.H"
+#include "MOTION_OBJECT.H"
 
 /*
  * Draft for the battle-presentation sub-effect at 0x080cb1a4.
  *
  * Assigned from the member_orbit/run.c compiler-family cluster
- * (template-main-080ce85c, games/gs1/src/battle/effects/member_orbit.c),
+ * (template-main-080ce85c, games/gs1/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C),
  * but the real callee set and constants match the 0x03001eec "battle work"
  * subsystem documented there and in games/gs1/src/battle/effects/puff_arc/
  * run.c and games/gs1/recon/en/main/080e01e4.c: same Func_080cd594(mode) /

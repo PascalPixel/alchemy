@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 extern s32 Func_02004e78();
 extern void Func_02004e8c(s32 flagId);

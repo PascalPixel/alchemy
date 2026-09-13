@@ -1,6 +1,6 @@
-#include "battle_party.h"
-#include "battle_types.h"
-#include "types.h"
+#include "BATTLE_PARTY.H"
+#include "BATTLE_TYPES.H"
+#include "TYPES.H"
 
 #define BattlePres_RunEncounterOrUnitTrigger Func_080b9dc4
 

@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* AUDITED GENERATED CALL SCRIPT for FieldScene_ConfigureActorGroup:
  * 86 calls, 0 loops, and all explicit object, workspace, and scene-data effects.

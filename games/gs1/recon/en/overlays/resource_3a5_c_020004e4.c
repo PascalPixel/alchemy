@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* AUDITED ACTOR-LAYOUT SCRIPT for Scene_ConfigureActorLayout:
  * scene-state dispatch, shared actor initialization, and terminal transition. */

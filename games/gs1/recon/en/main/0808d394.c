@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define BattleAction_FindDescriptor Func_0808d394
 

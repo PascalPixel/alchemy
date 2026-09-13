@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * Draft for the battle-presentation sub-effect at 0x080d3c80.

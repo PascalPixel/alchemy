@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 /*
  * resource_3c9 owner at 0x020003a0, 94 bytes.
  * The per-frame integrator: adds the +68/+72/+76 velocity into the +8/+12/+16

@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 void Func_08010704(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX, s32 dstY)
 {

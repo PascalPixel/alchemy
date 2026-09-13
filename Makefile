@@ -4,7 +4,7 @@
 
 GCC296_CFLAGS := -O2 -mthumb -mthumb-interwork -mcpu=arm7tdmi \
                  -fno-builtin -nostdinc -ffreestanding \
-                 -fcall-used-r4 -Igames/gs1/include
+                 -fcall-used-r4 -Igames/gs1/INCLUDE
 
 TOOLS := tools
 CARGO ?= cargo
@@ -258,7 +258,7 @@ source-tracking-check:
 	@set -e; paths=$$(mktemp /tmp/alchemy-game-inputs.XXXXXX); \
 	ignored=$$(mktemp /tmp/alchemy-ignored-inputs.XXXXXX); \
 	trap 'rm -f "$$paths" "$$ignored"' EXIT; \
-	find games -type f -print0 > "$$paths"; \
+	find games -type f ! -name '.DS_Store' -print0 > "$$paths"; \
 	test -s "$$paths"; \
 	xargs -0 git ls-files --error-unmatch -- \
 		< "$$paths" > /dev/null; \

@@ -1,8 +1,8 @@
 #ifndef GUARD_SERIAL_RUNTIME_FAMILY_H
 #define GUARD_SERIAL_RUNTIME_FAMILY_H
 
-#include "types.h"
-#include "global_cells.h"
+#include "TYPES.H"
+#include "GLOBAL_CELLS.H"
 
 /* Ordered serial/runtime translation unit: 08005d10 through 0800651c. */
 

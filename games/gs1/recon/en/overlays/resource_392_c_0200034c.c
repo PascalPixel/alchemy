@@ -1,6 +1,6 @@
-#include "types.h"
-#include "staged_actor.h"
-#include "staged_actor_probe_state.h"
+#include "TYPES.H"
+#include "STAGED_ACTOR.H"
+#include "STAGED_ACTOR_PROBE_STATE.H"
 
 extern u8 *Data_03001ebc;
 extern s32 Data_02008ec8[];

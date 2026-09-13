@@ -25,7 +25,7 @@
  *     stack slot. Must be read with the surrounding code; must NOT be
  *     pattern-matched against other files.
  */
-#include "flash.h"
+#include "FLASH.H"
 
 /* 0x02004c08 が指すフラッシュ管理ブロック。control は待ち時間設定値。 */
 struct FlashChipInfo {

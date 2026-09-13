@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* Runs a linear setup sequence once two prior gate checks both pass;
  * either gate failing skips the whole sequence. Every step below is an

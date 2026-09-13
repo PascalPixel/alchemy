@@ -1,9 +1,9 @@
-#include "types.h"
-#include "effect_step.h"
+#include "TYPES.H"
+#include "EFFECT_STEP.H"
 
 /*
  * Battle-presentation sub-effect in the same 0x03001eec "battle work"
- * family as games/gs1/src/battle/effects/member_orbit.c (owner
+ * family as games/gs1/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C (owner
  * 0x080ce85c, family-matcher template).  Unlike that sibling, this owner
  * takes a second argument (`mode`, tested against 0/1/2 throughout) and
  * runs a fixed 48-frame loop rather than one sized from a party-member

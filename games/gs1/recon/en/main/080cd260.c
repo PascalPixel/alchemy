@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define BattlePres_ProcessPendingGraphicsTransfer Func_080cd260
 

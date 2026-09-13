@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 struct MapActor {
     u8 reserved_00[6];

@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define BattlePres_ApplyUnitDamage Func_080b8db8
 #define Character_GetRuntimeRecord Func_08077008

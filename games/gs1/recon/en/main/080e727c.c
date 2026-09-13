@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 void Func_080e727c(s32 blue_delta, s32 green_delta, s32 red_delta)
 {

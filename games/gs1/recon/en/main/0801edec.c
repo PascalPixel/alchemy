@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 #include "video_dma_family.h"
 
 extern u8 *Data_03001e8c;

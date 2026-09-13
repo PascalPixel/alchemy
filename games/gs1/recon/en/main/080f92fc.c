@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define AudioTest_RunParameterController Func_080f92fc
 

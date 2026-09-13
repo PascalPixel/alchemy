@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 /* resource_3b3 owner at 0x02002040, 64 bytes.
  * Copies a record's three coordinates into a stack triple, lifting the third
  * by 0x100000, and offers it; on refusal it falls back once. */

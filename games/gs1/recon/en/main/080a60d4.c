@@ -1,6 +1,6 @@
-#include "types.h"
-#include "global_cells.h"
-#include "runtime_mem.h"
+#include "TYPES.H"
+#include "GLOBAL_CELLS.H"
+#include "RUNTIME_MEM.H"
 
 extern u8 *Data_03001f2c;
 s32 Runtime_GetObject(s32);

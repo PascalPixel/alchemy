@@ -1,7 +1,7 @@
-#include "types.h"
-#include "shop.h"
-#include "global_cells.h"
-#include "sound_ids.h"
+#include "TYPES.H"
+#include "SHOP.H"
+#include "GLOBAL_CELLS.H"
+#include "SOUND_IDS.H"
 
 s32 Func_080b27b0(s32 unit_id, s32 kind);
 s32 Func_080b2778(s32 unit_id, s32 kind);

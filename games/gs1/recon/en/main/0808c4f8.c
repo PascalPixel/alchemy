@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * Battle mode entry.  Allocates the 0xCCC-byte battle work block, brings the

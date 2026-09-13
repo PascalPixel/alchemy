@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* AUDITED GENERATED CALL SCRIPT for FieldScene_RunPaletteRampSequence:
  * 86 calls, actor flags, two display-register ramps, and workspace state. */

@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 struct AnimationMetadata {
     u8 width;

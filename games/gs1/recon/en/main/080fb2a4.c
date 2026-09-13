@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 struct MusicPlayerPitchState {
     u8 unknown_00[0x1c];

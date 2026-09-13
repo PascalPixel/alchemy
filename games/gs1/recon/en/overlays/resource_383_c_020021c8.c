@@ -14,7 +14,7 @@
  *   Func_02007226_a      0x0200ce3c
  *   Func_02007226_b      0x0200ce1c
  */
-#include "types.h"
+#include "TYPES.H"
 
 /* AUDITED GENERATED CALL SCRIPT for Scene_RunConditionalActorSequence:
  * 91 calls, three nested conditionals, fallback routing, actor flags, and

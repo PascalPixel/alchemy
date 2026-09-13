@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* 選択メニューの毎フレーム描画更新。
  *

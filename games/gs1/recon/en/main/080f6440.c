@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* Per-frame driver for the five-reel symbol minigame.
  *

@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */

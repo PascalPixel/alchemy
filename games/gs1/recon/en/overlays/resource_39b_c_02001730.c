@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* AUDITED GENERATED CALL SCRIPT for FieldScene_RunActorExchangeChoreography:
  * all 53 calls, the two-pass exchange, and fourteen actor/effect memory

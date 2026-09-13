@@ -1,7 +1,7 @@
-#include "types.h"
-#include "battle_command.h"
-#include "battle_runtime.h"
-#include "battle_types.h"
+#include "TYPES.H"
+#include "BATTLE_COMMAND.H"
+#include "BATTLE_RUNTIME.H"
+#include "BATTLE_TYPES.H"
 
 void *Func_08077198(s32 class_id);
 u32 Func_080bd3c8(s32 action_id);

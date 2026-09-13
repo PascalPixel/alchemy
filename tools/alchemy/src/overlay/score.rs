@@ -169,7 +169,11 @@ pub fn audit_corpus(root: &Path) -> Result<i32, String> {
         .map_err(|error| format!("{}: {error}", directory.display()))?
         .filter_map(Result::ok)
         .map(|entry| entry.path())
-        .filter(|path| path.extension().and_then(|value| value.to_str()) == Some("c"))
+        .filter(|path| {
+            path.extension()
+                .and_then(|value| value.to_str())
+                .is_some_and(|extension| extension.eq_ignore_ascii_case("c"))
+        })
         .collect::<Vec<_>>();
     sources.sort();
     if sources.is_empty() {

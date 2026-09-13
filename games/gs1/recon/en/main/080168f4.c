@@ -1,7 +1,7 @@
-#include "types.h"
-#include "global_cells.h"
-#include "global_progress.h"
-#include "gs1_edition.h"
+#include "TYPES.H"
+#include "GLOBAL_CELLS.H"
+#include "GLOBAL_PROGRESS.H"
+#include "GS1_EDITION.H"
 
 /*
  * Message-script step for one render channel.

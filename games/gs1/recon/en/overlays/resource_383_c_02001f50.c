@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* AUDITED GENERATED CALL SCRIPT for Scene_SelectAndConfigureActorPair:
  * 61 calls, a signed scene-selector branch, shared-object state, and both

@@ -1,5 +1,5 @@
-#include "types.h"
-#include "motion_object.h"
+#include "TYPES.H"
+#include "MOTION_OBJECT.H"
 
 typedef s32 (*BattleFixedMultiply)(s32, s32);
 

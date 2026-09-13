@@ -11,7 +11,7 @@
  *   Func_020030ea_a      0x02009b9c
  *   Func_020030ea_b      0x02009a64
  */
-#include "types.h"
+#include "TYPES.H"
 
 /* Draft scene setup for Scene_ConfigureProgressDependentActors:
  * 46 calls, progress-gated actor setup, and three actor-state writes across

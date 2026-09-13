@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define FieldScene_RunOpeningAuxiliarySequence Func_02000a1c
 

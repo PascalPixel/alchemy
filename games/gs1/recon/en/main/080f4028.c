@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 struct SceneCameraState {
     u8 filler0[12];

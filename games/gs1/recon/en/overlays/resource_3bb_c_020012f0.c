@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* AUDITED GENERATED CALL SCRIPT for Scene_RunFirstActorInteraction:
  * 29 calls, a progress gate, result-dependent presentation, and common

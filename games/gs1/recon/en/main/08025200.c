@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* Item-list selection loop for a five-row page window.
  *

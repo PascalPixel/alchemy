@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * Startup interrupt/DMA init routine. Ordering and register-window

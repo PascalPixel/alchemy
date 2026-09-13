@@ -1,6 +1,6 @@
 #include "video_dma_family.h"
 
-/* games/gs1/include/types.h already aliases this owner; the identical
+/* games/gs1/INCLUDE/TYPES.H already aliases this owner; the identical
    definition is repeated here so the entry symbol is visible in this file. */
 #define Graphics_TransformPaletteBuffer Func_080f3078
 

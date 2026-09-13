@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define BattleFx_RunFallbackObjectTransition Func_0809abb4
 

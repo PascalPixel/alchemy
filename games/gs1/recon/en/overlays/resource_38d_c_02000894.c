@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* AUDITED GENERATED CALL SCRIPT for FieldScene_RunMultiStageActorSequence:
  * 232 calls, one polling loop, and all explicit actor and workspace effects.

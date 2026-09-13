@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 extern volatile s32 Data_03001b04;
 extern volatile s32 Data_03001c94;

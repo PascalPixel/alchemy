@@ -1,5 +1,5 @@
-#include "types.h"
-#include "battle_effect_runtime.h"
+#include "TYPES.H"
+#include "BATTLE_EFFECT_RUNTIME.H"
 
 /*
  * Split function reconstructed as one whole owner per CONTRIBUTING.md's

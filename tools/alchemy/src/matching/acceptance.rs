@@ -103,7 +103,7 @@ fn cases() -> [Case<'static>; 5] {
     [
         Case {
             owner: 0x080b362c,
-            source: "games/gs1/src/menu/shop/item_selection.c",
+            source: "games/gs1/SRC/MENU/SHOP/ITEM_SELECTION.C",
             edits: &[(
                 "    s32 win2;\n    s32 win1;\n    u8 *object;\n",
                 "    u8 *object;\n    s32 win1;\n    s32 win2;\n",
@@ -113,7 +113,7 @@ fn cases() -> [Case<'static>; 5] {
         },
         Case {
             owner: 0x0807a550,
-            source: "games/gs1/src/game/djinn/management.c",
+            source: "games/gs1/SRC/GAME/DJINN/MANAGEMENT.C",
             edits: &[
                 (
                     "    u8 *entry = base + 8;\n    s32 index;\n",
@@ -135,7 +135,7 @@ fn cases() -> [Case<'static>; 5] {
         },
         Case {
             owner: 0x0808f1c0,
-            source: "games/gs1/src/field/effect/prepare_rising_object.c",
+            source: "games/gs1/SRC/FIELD/COMMON/EFFECT/PREPARE_RISING_OBJECT.C",
             edits: &[(
                 "        s32 zero = 0;\n        visual->value_26 = zero;\n        visual->value_27 = zero;\n\n        visual->flags_a &= zero - 33;\n",
                 "        visual->value_26 = 0;\n        visual->value_27 = 0;\n\n        visual->flags_a &= ~0x20;\n",
@@ -145,7 +145,7 @@ fn cases() -> [Case<'static>; 5] {
         },
         Case {
             owner: 0x0808ef70,
-            source: "games/gs1/src/battle/effects/random_particle_start_emitter.c",
+            source: "games/gs1/SRC/BATTLE/EFFECT/RANDOM_PARTICLE_START_EMITTER.C",
             edits: &[
                 (
                     "    /* GCC shape: work holds the state base, then the pool count. */\n    s32 work = (s32)EfxWork;\n    u32 off = (obj_id * 4) + 0x14;\n    /* GCC shape: src_z holds the source pointer, then the spawn Z. */\n    s32 src_z = (s32)*(struct EfxSrc **)(work + off);\n    struct EfxPos pos;\n    s32 x;\n",
@@ -168,7 +168,7 @@ fn cases() -> [Case<'static>; 5] {
         },
         Case {
             owner: 0x0808c3a4,
-            source: "games/gs1/src/battle/party/apply_status_damage.c",
+            source: "games/gs1/SRC/BATTLE/PARTY/APPLY_STATUS_DAMAGE.C",
             edits: &[("if (result < count)", "if (count > result)", 1)],
             expected: "mirror_relational_guards",
         },

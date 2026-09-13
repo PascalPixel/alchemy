@@ -16136,394 +16136,334 @@
 <rect class="container-frame" x="300.5070364558964" y="204.45441987319504" width="10.176231166403959" height="34.1683542100351" fill="#1f7f93"/>
 <path class="bevel-light" d="M300.5070364558964 238.62277408323013 V204.45441987319504 H310.6832676223004" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <path class="bevel-dark" d="M300.5070364558964 238.62277408323013 H310.6832676223004 V204.45441987319504" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="prologue_route_scene: 9,986 bytes · 16 items" data-node="container" data-kind="folder" data-bytes="9986" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/">
-<title>prologue_route_scene: 9,986 bytes · 16 items</title>
+<g aria-label="prologue_route_scene.c: 9,986 bytes · 81 items" data-node="container" data-kind="file" data-bytes="9986" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>prologue_route_scene.c: 9,986 bytes · 81 items</title>
 <rect class="container-frame" x="302.5070364558964" y="206.45441987319504" width="6.176231166403959" height="30.168354210035098" fill="#1f7f93"/>
 <path class="bevel-light" d="M302.5070364558964 236.62277408323013 V206.45441987319504 H308.6832676223004" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <path class="bevel-dark" d="M302.5070364558964 236.62277408323013 H308.6832676223004 V206.45441987319504" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="actor_activation.c: 540 bytes · 14 items" data-node="container" data-kind="file" data-bytes="540" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_activation.c">
-<title>actor_activation.c: 540 bytes · 14 items</title>
-<rect class="container-frame" x="304.0510942474974" y="207.998477664796" width="1.4942494757428932" height="3.0263915789651272" fill="#1f7f93"/>
-<path class="bevel-light" d="M304.0510942474974 211.02486924376115 V207.998477664796 H305.5453437232403" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M304.0510942474974 211.02486924376115 H305.5453437232403 V207.998477664796" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="3b2 · StopBlockedActorMotion · C: 164 bytes" data-node="leaf" data-kind="file" data-bytes="164" data-address="0x020002a8" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_activation.c">
-<title>3b2 · StopBlockedActorMotion · C: 164 bytes</title>
-<rect x="304.59771206177544" y="208.54509547907404" width="0.4010138471868507" height="0.34611089068459594" style="fill:#326b7d"/>
+<g aria-label="3b2 · prologue_route_scene · C: 60 bytes" data-node="leaf" data-kind="file" data-bytes="60" data-address="0x02000030" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · prologue_route_scene · C: 60 bytes</title>
+<rect x="304.19463730852567" y="208.14202072582424" width="0.2870861220564654" height="0.5880256539011928" style="fill:#326b7d"/>
 </g>
-<g aria-label="3b2 · PositionSceneActorPair · C: 232 bytes" data-node="leaf" data-kind="file" data-bytes="232" data-address="0x02001774" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_activation.c">
-<title>3b2 · PositionSceneActorPair · C: 232 bytes</title>
-<rect x="304.611437800901" y="209.2510429995688" width="0.3735623689357233" height="0.6056781998304506" style="fill:#326b7d"/>
+<g aria-label="3b2 · prologue_route_scene · C: 88 bytes" data-node="leaf" data-kind="file" data-bytes="88" data-address="0x0200006c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · prologue_route_scene · C: 88 bytes</title>
+<rect x="304.19463730852567" y="209.0171325017819" width="0.2870861220564654" height="0.9964111493480998" style="fill:#326b7d"/>
 </g>
-<g aria-label="3b2 · ActivateSceneActor8 · C: 12 bytes" data-node="leaf" data-kind="file" data-bytes="12" data-address="0x020019b4" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_activation.c">
-<title>3b2 · ActivateSceneActor8 · C: 12 bytes</title>
-<rect x="304.45578681384444" y="210.07463258127842" width="0.06226039482262055" height="0.24164185065653684" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · ActivateSceneActor10 · C: 12 bytes" data-node="leaf" data-kind="file" data-bytes="12" data-address="0x020019c0" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_activation.c">
-<title>3b2 · ActivateSceneActor10 · C: 12 bytes</title>
-<rect x="304.5871651867633" y="210.081490164552" width="0.17306601792069287" height="0.07597556136978935" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · ActivateSceneActor11 · C: 12 bytes" data-node="leaf" data-kind="file" data-bytes="12" data-address="0x020019cc" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_activation.c">
-<title>3b2 · ActivateSceneActor11 · C: 12 bytes</title>
-<rect x="304.5871651867633" y="210.23344128729158" width="0.17306601792069287" height="0.07597556136978935" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · ActivateSceneActor12 · C: 12 bytes" data-node="leaf" data-kind="file" data-bytes="12" data-address="0x020019d8" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_activation.c">
-<title>3b2 · ActivateSceneActor12 · C: 12 bytes</title>
-<rect x="304.45578681384444" y="210.37853482675757" width="0.06226039482262055" height="0.24164185065653684" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · ActivateSceneActor13 · C: 12 bytes" data-node="leaf" data-kind="file" data-bytes="12" data-address="0x020019e4" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_activation.c">
-<title>3b2 · ActivateSceneActor13 · C: 12 bytes</title>
-<rect x="304.5871651867633" y="210.38539241003116" width="0.17306601792069287" height="0.07597556136978935" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · ActivateSceneActor15 · C: 12 bytes" data-node="leaf" data-kind="file" data-bytes="12" data-address="0x020019f0" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_activation.c">
-<title>3b2 · ActivateSceneActor15 · C: 12 bytes</title>
-<rect x="304.5871651867633" y="210.53734353277073" width="0.17306601792069287" height="0.07597556136978935" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · ActivateSceneActor17 · C: 12 bytes" data-node="leaf" data-kind="file" data-bytes="12" data-address="0x020019fc" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_activation.c">
-<title>3b2 · ActivateSceneActor17 · C: 12 bytes</title>
-<rect x="304.82934918278016" y="210.07463258127842" width="0.06226039482262055" height="0.24164185065653684" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · ActivateSceneActor18 · C: 12 bytes" data-node="leaf" data-kind="file" data-bytes="12" data-address="0x02001a08" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_activation.c">
-<title>3b2 · ActivateSceneActor18 · C: 12 bytes</title>
-<rect x="304.960727555699" y="210.081490164552" width="0.17306601792069287" height="0.07597556136978935" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · ActivateSceneActor9 · C: 12 bytes" data-node="leaf" data-kind="file" data-bytes="12" data-address="0x02001a14" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_activation.c">
-<title>3b2 · ActivateSceneActor9 · C: 12 bytes</title>
-<rect x="304.960727555699" y="210.23344128729158" width="0.17306601792069287" height="0.07597556136978935" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · ActivateSceneActor19 · C: 12 bytes" data-node="leaf" data-kind="file" data-bytes="12" data-address="0x02001a20" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_activation.c">
-<title>3b2 · ActivateSceneActor19 · C: 12 bytes</title>
-<rect x="304.82934918278016" y="210.37853482675757" width="0.06226039482262055" height="0.24164185065653684" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · ActivateSceneActor14 · C: 12 bytes" data-node="leaf" data-kind="file" data-bytes="12" data-address="0x02001a2c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_activation.c">
-<title>3b2 · ActivateSceneActor14 · C: 12 bytes</title>
-<rect x="304.960727555699" y="210.38539241003116" width="0.17306601792069287" height="0.07597556136978935" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · ActivateSceneActor16 · C: 12 bytes" data-node="leaf" data-kind="file" data-bytes="12" data-address="0x02001a38" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_activation.c">
-<title>3b2 · ActivateSceneActor16 · C: 12 bytes</title>
-<rect x="304.960727555699" y="210.53734353277073" width="0.17306601792069287" height="0.07597556136978935" style="fill:#326b7d"/>
-</g>
-</g>
-<g aria-label="actor_motion.c: 576 bytes · 3 items" data-node="container" data-kind="file" data-bytes="576" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_motion.c">
-<title>actor_motion.c: 576 bytes · 3 items</title>
-<rect class="container-frame" x="305.5453437232403" y="207.998477664796" width="1.593866107459086" height="3.0263915789651272" fill="#1f7f93"/>
-<path class="bevel-light" d="M305.5453437232403 211.02486924376115 V207.998477664796 H307.1392098306994" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M305.5453437232403 211.02486924376115 H307.1392098306994 V207.998477664796" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="3b2 · AdvanceStagedActorPair · C: 384 bytes" data-node="leaf" data-kind="file" data-bytes="384" data-address="0x020000c4" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_motion.c">
+<g aria-label="3b2 · AdvanceStagedActorPair · C: 384 bytes" data-node="leaf" data-kind="file" data-bytes="384" data-address="0x020000c4" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
 <title>3b2 · AdvanceStagedActorPair · C: 384 bytes</title>
-<rect x="306.14304351353746" y="208.59617745509317" width="0.3984665268647715" height="1.0878391566256178" style="fill:#326b7d"/>
+<rect x="304.9977025418458" y="208.37091371503143" width="0.7448721004708292" height="1.413736946891394" style="fill:#326b7d"/>
 </g>
-<g aria-label="3b2 · AdvanceEffectMotion · C: 90 bytes" data-node="leaf" data-kind="file" data-bytes="90" data-address="0x02000da4" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_motion.c">
-<title>3b2 · AdvanceEffectMotion · C: 90 bytes</title>
-<rect x="306.037200842339" y="209.97664046738512" width="0.18678118446786166" height="0.5563716572773331" style="fill:#326b7d"/>
+<g aria-label="3b2 · prologue_route_scene · C: 100 bytes" data-node="leaf" data-kind="file" data-bytes="100" data-address="0x02000244" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · prologue_route_scene · C: 100 bytes</title>
+<rect x="306.3194244280977" y="208.20289140034168" width="0.6153716670560601" height="0.40882747109133016" style="fill:#326b7d"/>
 </g>
-<g aria-label="3b2 · UpdateSwayingSceneObject · C: 102 bytes" data-node="leaf" data-kind="file" data-bytes="102" data-address="0x02002e70" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_motion.c">
-<title>3b2 · UpdateSwayingSceneObject · C: 102 bytes</title>
-<rect x="306.4232152902392" y="209.98909254634964" width="0.21168534239690986" height="0.5314674993482849" style="fill:#326b7d"/>
+<g aria-label="3b2 · StopBlockedActorMotion · C: 164 bytes" data-node="leaf" data-kind="file" data-bytes="164" data-address="0x020002a8" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · StopBlockedActorMotion · C: 164 bytes</title>
+<rect x="306.3710604770889" y="209.07218239151553" width="0.5120995690736951" height="0.8288545361058677" style="fill:#326b7d"/>
 </g>
-</g>
-<g aria-label="actor_routes.c: 3,808 bytes · 24 items" data-node="container" data-kind="file" data-bytes="3808" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_routes.c">
-<title>actor_routes.c: 3,808 bytes · 24 items</title>
-<rect class="container-frame" x="304.0510942474974" y="211.02486924376115" width="3.0881155832019793" height="10.326612126074556" fill="#1f7f93"/>
-<path class="bevel-light" d="M304.0510942474974 221.3514813698357 V211.02486924376115 H307.1392098306994" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M304.0510942474974 221.3514813698357 H307.1392098306994 V211.02486924376115" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="3b2 · CheckActorPathSouth · C: 44 bytes" data-node="leaf" data-kind="file" data-bytes="44" data-address="0x02001b14" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_routes.c">
-<title>3b2 · CheckActorPathSouth · C: 44 bytes</title>
-<rect x="304.9159353602794" y="211.88971035654313" width="0.18562443396296052" height="0.23643634419057477" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · CheckActorPathNorth · C: 40 bytes" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x02001b40" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_routes.c">
-<title>3b2 · CheckActorPathNorth · C: 40 bytes</title>
-<rect x="305.2787467539343" y="211.88127288227207" width="0.1687494854208732" height="0.2533112927326621" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · CheckActorPathWest · C: 44 bytes" data-node="leaf" data-kind="file" data-bytes="44" data-address="0x02001b68" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_routes.c">
-<title>3b2 · CheckActorPathWest · C: 44 bytes</title>
-<rect x="304.9159353602794" y="212.31177113469667" width="0.18562443396296052" height="0.23643634419057477" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · CheckActorPathEast · C: 40 bytes" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x02001b94" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_routes.c">
-<title>3b2 · CheckActorPathEast · C: 40 bytes</title>
-<rect x="305.2787467539343" y="212.3033336604256" width="0.1687494854208732" height="0.2533112927326621" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · UpdateEscapeRouteForActorPositions · C: 198 bytes" data-node="leaf" data-kind="file" data-bytes="198" data-address="0x02001bbc" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_routes.c">
-<title>3b2 · UpdateEscapeRouteForActorPositions · C: 198 bytes</title>
-<rect x="305.7406984702739" y="212.00572562776998" width="0.4176549764166611" height="0.42646657989040954" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · UpdateActor8ReturnRoute · C: 168 bytes" data-node="leaf" data-kind="file" data-bytes="168" data-address="0x02001c84" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_routes.c">
-<title>3b2 · UpdateActor8ReturnRoute · C: 168 bytes</title>
-<rect x="304.9611027757388" y="212.77899932830965" width="0.275959264881879" height="0.8080219686272008" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · UpdateActor10RetreatRoute · C: 180 bytes" data-node="leaf" data-kind="file" data-bytes="180" data-address="0x02001d2c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_routes.c">
-<title>3b2 · UpdateActor10RetreatRoute · C: 180 bytes</title>
-<rect x="305.5365620555382" y="212.80254007834523" width="0.6690984968841946" height="0.323040764953037" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · UpdateActor10AdvanceRoute · C: 122 bytes" data-node="leaf" data-kind="file" data-bytes="122" data-address="0x02001de0" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_routes.c">
-<title>3b2 · UpdateActor10AdvanceRoute · C: 122 bytes</title>
-<rect x="305.48451659896244" y="213.39657615167553" width="0.7731894100357288" height="0.21894985180150284" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · UpdateActor11WestRoute · C: 152 bytes" data-node="leaf" data-kind="file" data-bytes="152" data-address="0x02001e5c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_routes.c">
-<title>3b2 · UpdateActor11WestRoute · C: 152 bytes</title>
-<rect x="304.9621615226364" y="213.86403930871626" width="0.27807675867695547" height="0.6952000084311971" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · UpdateActor11EastRoute · C: 130 bytes" data-node="leaf" data-kind="file" data-bytes="130" data-address="0x02001ef4" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_routes.c">
-<title>3b2 · UpdateActor11EastRoute · C: 130 bytes</title>
-<rect x="305.4981910640334" y="213.84391533275937" width="0.2378288067631856" height="0.735447960344967" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · UpdateActor12WestRoute · C: 140 bytes" data-node="leaf" data-kind="file" data-bytes="140" data-address="0x02001f78" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_routes.c">
-<title>3b2 · UpdateActor12WestRoute · C: 140 bytes</title>
-<rect x="305.9829959393583" y="213.85306259455797" width="0.25612333036035373" height="0.7171534367477989" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · UpdateActor12EastRoute · C: 122 bytes" data-node="leaf" data-kind="file" data-bytes="122" data-address="0x02002004" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_routes.c">
-<title>3b2 · UpdateActor12EastRoute · C: 122 bytes</title>
-<rect x="304.9161938204596" y="214.79134837364768" width="0.18614135432343945" height="0.9808682289863361" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · UpdateActor13WestRoute · C: 236 bytes" data-node="leaf" data-kind="file" data-bytes="236" data-address="0x02002080" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_routes.c">
-<title>3b2 · UpdateActor13WestRoute · C: 236 bytes</title>
-<rect x="305.3754442110445" y="214.87831605558566" width="0.3600767181994403" height="0.8069328651103352" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · UpdateActor13EastRoute · C: 148 bytes" data-node="leaf" data-kind="file" data-bytes="148" data-address="0x0200216c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_routes.c">
-<title>3b2 · UpdateActor13EastRoute · C: 148 bytes</title>
-<rect x="306.02846469998246" y="214.81118310812477" width="0.22581082327761504" height="0.9411987600321605" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · UpdateActor15WestRoute · C: 200 bytes" data-node="leaf" data-kind="file" data-bytes="200" data-address="0x02002200" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_routes.c">
-<title>3b2 · UpdateActor15WestRoute · C: 200 bytes</title>
-<rect x="304.9939259963511" y="216.03609013284893" width="0.34160570610641366" height="0.7008613525023182" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · UpdateActor15EastRoute · C: 252 bytes" data-node="leaf" data-kind="file" data-bytes="252" data-address="0x020022c8" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_routes.c">
-<title>3b2 · UpdateActor15EastRoute · C: 252 bytes</title>
-<rect x="305.72154615035777" y="216.08049887464276" width="0.43042318969408117" height="0.6120438689146508" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · UpdateActor17SouthRoute · C: 138 bytes" data-node="leaf" data-kind="file" data-bytes="138" data-address="0x020023c4" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_routes.c">
-<title>3b2 · UpdateActor17SouthRoute · C: 138 bytes</title>
-<rect x="304.9872338659508" y="217.0718650610574" width="0.42041263547036306" height="0.3282214453058743" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · UpdateActor17NorthRoute · C: 118 bytes" data-node="leaf" data-kind="file" data-bytes="118" data-address="0x02002450" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_routes.c">
-<title>3b2 · UpdateActor17NorthRoute · C: 118 bytes</title>
-<rect x="304.9634497032475" y="217.70452378896582" width="0.4679809608770115" height="0.28065311989922587" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · AdvanceActor18AlongEscapeRoute · C: 272 bytes" data-node="leaf" data-kind="file" data-bytes="272" data-address="0x020025f0" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_routes.c">
-<title>3b2 · AdvanceActor18AlongEscapeRoute · C: 272 bytes</title>
-<rect x="305.7706131517803" y="217.10661026611064" width="0.39771185541237614" height="0.8200372749978242" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · AdvanceActor9AlongEscapeRoute · C: 314 bytes" data-node="leaf" data-kind="file" data-bytes="314" data-address="0x02002848" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_routes.c">
-<title>3b2 · AdvanceActor9AlongEscapeRoute · C: 314 bytes</title>
-<rect x="305.05711645727604" y="218.3594967827928" width="0.46798662795628454" height="0.726699071953723" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · RetreatActor14AlongEscapeRoute · C: 204 bytes" data-node="leaf" data-kind="file" data-bytes="204" data-address="0x02002b80" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_routes.c">
-<title>3b2 · RetreatActor14AlongEscapeRoute · C: 204 bytes</title>
-<rect x="305.9111175331326" y="218.27752460273678" width="0.3040422678442103" height="0.8906434320657971" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · AdvanceActor14AlongEscapeRoute · C: 190 bytes" data-node="leaf" data-kind="file" data-bytes="190" data-address="0x02002c4c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_routes.c">
-<title>3b2 · AdvanceActor14AlongEscapeRoute · C: 190 bytes</title>
-<rect x="304.95745051527786" y="219.45451654070462" width="0.26865474395987915" height="0.990608561350669" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · RetreatActor16AlongEscapeRoute · C: 196 bytes" data-node="leaf" data-kind="file" data-bytes="196" data-address="0x02002d0c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_routes.c">
-<title>3b2 · RetreatActor16AlongEscapeRoute · C: 196 bytes</title>
-<rect x="305.53375819852164" y="219.49351473602863" width="0.6600971690732713" height="0.34665113460795993" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · AdvanceActor16AlongEscapeRoute · C: 160 bytes" data-node="leaf" data-kind="file" data-bytes="160" data-address="0x02002dd0" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_routes.c">
-<title>3b2 · AdvanceActor16AlongEscapeRoute · C: 160 bytes</title>
-<rect x="305.5019228902413" y="220.15498169696423" width="0.7237677856339171" height="0.28298051804731417" style="fill:#326b7d"/>
-</g>
-</g>
-<g aria-label="actor_setup.c: 284 bytes · 4 items" data-node="container" data-kind="file" data-bytes="284" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_setup.c">
-<title>actor_setup.c: 284 bytes · 4 items</title>
-<rect class="container-frame" x="304.0510942474974" y="221.3514813698357" width="3.0881155832019793" height="0.7701569967975771" fill="#1f7f93"/>
-<path class="bevel-light" d="M304.0510942474974 222.12163836663328 V221.3514813698357 H307.1392098306994" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M304.0510942474974 222.12163836663328 H307.1392098306994 V221.3514813698357" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="3b2 · ConfigureSceneActor11 · C: 64 bytes" data-node="leaf" data-kind="file" data-bytes="64" data-address="0x02001508" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_setup.c">
-<title>3b2 · ConfigureSceneActor11 · C: 64 bytes</title>
-<rect x="304.3399031212965" y="221.6402902436348" width="0.4165958685027332" height="0.19253924919939427" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · ConfigureSceneActor12 · C: 68 bytes" data-node="leaf" data-kind="file" data-bytes="68" data-address="0x02001548" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_setup.c">
-<title>3b2 · ConfigureSceneActor12 · C: 68 bytes</title>
-<rect x="304.94903823899864" y="221.6402902436348" width="0.4546668133591162" height="0.19253924919939427" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · ConfigureSceneActor13 · C: 68 bytes" data-node="leaf" data-kind="file" data-bytes="68" data-address="0x0200158c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_setup.c">
-<title>3b2 · ConfigureSceneActor13 · C: 68 bytes</title>
-<rect x="305.59624430155714" y="221.6402902436348" width="0.4546668133591163" height="0.19253924919939427" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · ConfigureSceneActor14 · C: 84 bytes" data-node="leaf" data-kind="file" data-bytes="84" data-address="0x020015d0" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/actor_setup.c">
-<title>3b2 · ConfigureSceneActor14 · C: 84 bytes</title>
-<rect x="306.24345036411563" y="221.6402902436348" width="0.6069505927846481" height="0.19253924919939425" style="fill:#326b7d"/>
-</g>
-</g>
-<g aria-label="effect_spawn.c: 792 bytes · 4 items" data-node="container" data-kind="file" data-bytes="792" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/effect_spawn.c">
-<title>effect_spawn.c: 792 bytes · 4 items</title>
-<rect class="container-frame" x="304.0510942474974" y="222.12163836663328" width="2.741914284636735" height="2.4189438068430946" fill="#1f7f93"/>
-<path class="bevel-light" d="M304.0510942474974 224.54058217347637 V222.12163836663328 H306.79300853213414" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M304.0510942474974 224.54058217347637 H306.79300853213414 V222.12163836663328" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="3b2 · SpawnMode14Effect · C: 86 bytes" data-node="leaf" data-kind="file" data-bytes="86" data-address="0x020009f4" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/effect_spawn.c">
-<title>3b2 · SpawnMode14Effect · C: 86 bytes</title>
-<rect x="304.74483569104643" y="222.81537981018232" width="0.1780109836765117" height="0.3872856668357333" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · SpawnMode15Effect · C: 98 bytes" data-node="leaf" data-kind="file" data-bytes="98" data-address="0x02000a4c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/effect_spawn.c">
-<title>3b2 · SpawnMode15Effect · C: 98 bytes</title>
-<rect x="304.74483569104643" y="223.38067646069456" width="0.1780109836765117" height="0.46616426923279064" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · SpawnConfiguredSceneEffect · C: 472 bytes" data-node="leaf" data-kind="file" data-bytes="472" data-address="0x02000ae8" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/effect_spawn.c">
-<title>3b2 · SpawnConfiguredSceneEffect · C: 472 bytes</title>
-<rect x="305.2465852004489" y="222.96110735223178" width="0.7069543460866954" height="0.469466067775469" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · SpawnRadialEffectBurst · C: 136 bytes" data-node="leaf" data-kind="file" data-bytes="136" data-address="0x02000e00" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/effect_spawn.c">
-<title>3b2 · SpawnRadialEffectBurst · C: 136 bytes</title>
-<rect x="305.07948710852884" y="223.73294139586264" width="1.0411505299268597" height="0.13526988393530465" style="fill:#326b7d"/>
-</g>
-</g>
-<g aria-label="3b2 · fill_grid_attribute_rectangle · C: 100 bytes" data-node="leaf" data-kind="file" data-bytes="100" data-address="0x02000244" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/fill_grid_attribute_rectangle.c">
-<title>3b2 · fill_grid_attribute_rectangle · C: 100 bytes</title>
-<rect x="306.8795588567755" y="222.2081886912746" width="0.17310064928262214" height="2.2458431575604725" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · find_actor_at_fixed_point_position · C: 88 bytes" data-node="leaf" data-kind="file" data-bytes="88" data-address="0x0200006c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/find_actor_at_fixed_point_position.c">
-<title>3b2 · find_actor_at_fixed_point_position · C: 88 bytes</title>
-<rect x="304.2463453171081" y="224.73583324308706" width="0.5530887334237427" height="0.39050213922130667" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · measure_fixed_point_position_distance · C: 60 bytes" data-node="leaf" data-kind="file" data-bytes="60" data-address="0x02000030" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/measure_fixed_point_position_distance.c">
-<title>3b2 · measure_fixed_point_position_distance · C: 60 bytes</title>
-<rect x="305.15552447343424" y="224.70142152676817" width="0.32167870658353953" height="0.4593255718590738" style="fill:#326b7d"/>
-</g>
-<g aria-label="messages.c: 140 bytes · 5 items" data-node="container" data-kind="file" data-bytes="140" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/messages.c">
-<title>messages.c: 140 bytes · 5 items</title>
-<rect class="container-frame" x="305.63804253330954" y="224.5405821734764" width="1.501167297389851" height="0.7810042784426133" fill="#1f7f93"/>
-<path class="bevel-light" d="M305.63804253330954 225.32158645191902 V224.5405821734764 H307.1392098306994" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M305.63804253330954 225.32158645191902 H307.1392098306994 V224.5405821734764" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="3b2 · StartScriptedSceneMessage · C: 52 bytes" data-node="leaf" data-kind="file" data-bytes="52" data-address="0x02000f3c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/messages.c">
-<title>3b2 · StartScriptedSceneMessage · C: 52 bytes</title>
-<rect x="305.93091913772554" y="224.8334587778924" width="0.21728170342337752" height="0.19525106961065333" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · ShowForgetEverythingMessage · C: 40 bytes" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x02001624" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/messages.c">
-<title>3b2 · ShowForgetEverythingMessage · C: 40 bytes</title>
-<rect x="306.32515960153773" y="224.81516646867053" width="0.1586664511669349" height="0.23183568805437177" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · ShowHelpYouForgetMessage · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x0200164c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/messages.c">
-<title>3b2 · ShowHelpYouForgetMessage · C: 16 bytes</title>
-<rect x="306.59570112322325" y="224.76837508802217" width="0.315715792930426" height="0.06508368987021777" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · ShowDamagedDoorMessage · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x0200165c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/messages.c">
-<title>3b2 · ShowDamagedDoorMessage · C: 16 bytes</title>
-<rect x="306.61075921363823" y="224.9136005581776" width="0.09519987070016095" height="0.1651348887807102" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · ShowSaveMyLifeMessage · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x0200166c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/messages.c">
-<title>3b2 · ShowSaveMyLifeMessage · C: 16 bytes</title>
-<rect x="306.80115895503855" y="224.9136005581776" width="0.09519987070016095" height="0.1651348887807102" style="fill:#326b7d"/>
-</g>
-</g>
-<g aria-label="3b2 · SceneActor_MoveAndRedraw · C: 696 bytes" data-node="leaf" data-kind="file" data-bytes="696" data-address="0x02000608" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/move_and_redraw.c">
-<title>3b2 · SceneActor_MoveAndRedraw · C: 696 bytes</title>
-<rect x="304.5510942474974" y="225.82158645191902" width="1.2249776872759601" height="1.6196185172762658" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · InitializeSwayingSceneObject · C: 216 bytes" data-node="leaf" data-kind="file" data-bytes="216" data-address="0x02002ed8" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/orbiting_effect.c">
-<title>3b2 · InitializeSwayingSceneObject · C: 216 bytes</title>
-<rect x="306.49185640875487" y="225.53737092590052" width="0.4315689479630096" height="1.6641258658580032" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · OverlayObject_IntegrateVelocities · C: 54 bytes" data-node="leaf" data-kind="file" data-bytes="54" data-address="0x02000ab0" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/overlay_object.c">
-<title>3b2 · OverlayObject_IntegrateVelocities · C: 54 bytes</title>
-<rect x="306.4070528606372" y="227.54826219160384" width="0.6011760441983927" height="0.26196185172762654" style="fill:#326b7d"/>
-</g>
-<g aria-label="prologue.c: 720 bytes · 6 items" data-node="container" data-kind="file" data-bytes="720" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/prologue.c">
-<title>prologue.c: 720 bytes · 6 items</title>
-<rect class="container-frame" x="304.0510942474974" y="227.94120496919527" width="2.089702274347204" height="2.8853769175796553" fill="#1f7f93"/>
-<path class="bevel-light" d="M304.0510942474974 230.82658188677493 V227.94120496919527 H306.1407965218446" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M304.0510942474974 230.82658188677493 H306.1407965218446 V227.94120496919527" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="3b2 · FindClearActorPosition · C: 404 bytes" data-node="leaf" data-kind="file" data-bytes="404" data-address="0x02000474" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/prologue.c">
+<g aria-label="3b2 · FindClearActorPosition · C: 404 bytes" data-node="leaf" data-kind="file" data-bytes="404" data-address="0x02000474" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
 <title>3b2 · FindClearActorPosition · C: 404 bytes</title>
-<rect x="304.8317046825023" y="228.72181540420016" width="0.5284814043374593" height="0.5163697328361427" style="fill:#326b7d"/>
+<rect x="304.32498810903456" y="210.43098057369542" width="2.5403278601276464" height="0.547787723074333" style="fill:#326b7d"/>
 </g>
-<g aria-label="3b2 · NoOpEffectCallback · C: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x02000cc0" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/prologue.c">
-<title>3b2 · NoOpEffectCallback · C: 2 bytes</title>
-<rect x="304.5809594207002" y="229.5038096080703" width="0.014879209231902559" height="0.16462886070893473" style="fill:#326b7d"/>
+<g aria-label="3b2 · SceneActor_MoveAndRedraw · C: 696 bytes" data-node="leaf" data-kind="file" data-bytes="696" data-address="0x02000608" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · SceneActor_MoveAndRedraw · C: 696 bytes</title>
+<rect x="304.5510942474974" y="211.75266215830692" width="1.248251512456671" height="1.5925003131636748" style="fill:#326b7d"/>
 </g>
-<g aria-label="3b2 · RunPrologueSceneSetup · C: 22 bytes" data-node="leaf" data-kind="file" data-bytes="22" data-address="0x02001374" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/prologue.c">
-<title>3b2 · RunPrologueSceneSetup · C: 22 bytes</title>
-<rect x="304.64815525203323" y="229.54124702093958" width="0.23758856813143767" height="0.08975403497041864" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · StartSceneScript37 · C: 32 bytes" data-node="leaf" data-kind="file" data-bytes="32" data-address="0x0200138c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/prologue.c">
-<title>3b2 · StartSceneScript37 · C: 32 bytes</title>
-<rect x="304.63335583939784" y="229.7357140967088" width="0.23742897493843657" height="0.11967204662722485" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · RunSceneVectorTransition · C: 52 bytes" data-node="leaf" data-kind="file" data-bytes="52" data-address="0x02001740" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/prologue.c">
-<title>3b2 · RunSceneVectorTransition · C: 52 bytes</title>
-<rect x="304.66279507147567" y="230.00449742204106" width="0.1785505107828307" height="0.21038364075565005" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · TryPushBlockingSceneActor · C: 208 bytes" data-node="leaf" data-kind="file" data-bytes="208" data-address="0x02001a44" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/prologue.c">
-<title>3b2 · TryPushBlockingSceneActor · C: 208 bytes</title>
-<rect x="305.1025583665519" y="229.66830753235635" width="0.3438750578039703" height="0.4639112569297975" style="fill:#326b7d"/>
-</g>
-</g>
-<g aria-label="scene_data.c: 344 bytes · 5 items" data-node="container" data-kind="file" data-bytes="344" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/scene_data.c">
-<title>scene_data.c: 344 bytes · 5 items</title>
-<rect class="container-frame" x="306.1407965218446" y="227.94120496919527" width="0.9984133088547753" height="2.8853769175796553" fill="#1f7f93"/>
-<path class="bevel-light" d="M306.1407965218446 230.82658188677493 V227.94120496919527 H307.1392098306994" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M306.1407965218446 230.82658188677493 H307.1392098306994 V227.94120496919527" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="3b2 · SelectPrimarySceneData · C: 120 bytes" data-node="leaf" data-kind="file" data-bytes="120" data-address="0x02000cc4" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/scene_data.c">
-<title>3b2 · SelectPrimarySceneData · C: 120 bytes</title>
-<rect x="306.51520151266516" y="228.31560996001582" width="0.24960332721369383" height="0.5827816483045392" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · GetEmptySceneData · C: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x02000d3c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/scene_data.c">
-<title>3b2 · GetEmptySceneData · C: 4 bytes</title>
-<rect x="306.41120947344626" y="229.04400289631516" width="0.12478296936655087" height="0.041619248775911666" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · GetDefaultSceneData · C: 8 bytes" data-node="leaf" data-kind="file" data-bytes="8" data-address="0x02000d40" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/scene_data.c">
-<title>3b2 · GetDefaultSceneData · C: 8 bytes</title>
-<rect x="306.57761169158874" y="229.04400289631516" width="0.29118518750901345" height="0.041619248775911666" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · SelectSecondarySceneData · C: 92 bytes" data-node="leaf" data-kind="file" data-bytes="92" data-address="0x02000d48" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/scene_data.c">
-<title>3b2 · SelectSecondarySceneData · C: 92 bytes</title>
-<rect x="306.51520151266516" y="229.2312334330859" width="0.24960332721369383" height="0.38855848735028475" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · SelectTertiarySceneData · C: 120 bytes" data-node="leaf" data-kind="file" data-bytes="120" data-address="0x02000ec4" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/scene_data.c">
-<title>3b2 · SelectTertiarySceneData · C: 120 bytes</title>
-<rect x="306.51520151266516" y="229.86939524764986" width="0.24960332721369383" height="0.5827816483045392" style="fill:#326b7d"/>
-</g>
-</g>
-<g aria-label="scene_primary_script.c: 1,148 bytes · 4 items" data-node="container" data-kind="file" data-bytes="1148" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/scene_primary_script.c">
-<title>scene_primary_script.c: 1,148 bytes · 4 items</title>
-<rect class="container-frame" x="304.0510942474974" y="230.82658188677493" width="3.0881155832019793" height="3.113169832125418" fill="#1f7f93"/>
-<path class="bevel-light" d="M304.0510942474974 233.93975171890034 V230.82658188677493 H307.1392098306994" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M304.0510942474974 233.93975171890034 H307.1392098306994 V230.82658188677493" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="3b2 · FieldScene_RunPrimarySequence · C: 676 bytes" data-node="leaf" data-kind="file" data-bytes="676" data-address="0x02000f70" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/scene_primary_script.c">
-<title>3b2 · FieldScene_RunPrimarySequence · C: 676 bytes</title>
-<rect x="305.0541161179047" y="231.82960375718224" width="1.0820718423873514" height="0.4619859492136383" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · FieldScene_RunScene3b2SequenceA · C: 160 bytes" data-node="leaf" data-kind="file" data-bytes="160" data-address="0x02001214" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/scene_primary_script.c">
-<title>3b2 · FieldScene_RunScene3b2SequenceA · C: 160 bytes</title>
-<rect x="304.95397549851833" y="232.65343503622313" width="0.2617047104408457" height="0.38343543165630595" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · FieldScene_RunScene3b2_02001494 · C: 116 bytes" data-node="leaf" data-kind="file" data-bytes="116" data-address="0x02001494" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/scene_primary_script.c">
-<title>3b2 · FieldScene_RunScene3b2_02001494 · C: 116 bytes</title>
-<rect x="305.4414005217144" y="232.61745063853752" width="0.18973591506961315" height="0.45540422702753847" style="fill:#326b7d"/>
-</g>
-<g aria-label="3b2 · FieldScene_RunScene3b2_0200167c · C: 196 bytes" data-node="leaf" data-kind="file" data-bytes="196" data-address="0x0200167c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/scene_primary_script.c">
-<title>3b2 · FieldScene_RunScene3b2_0200167c · C: 196 bytes</title>
-<rect x="305.88629852946383" y="232.68287681614774" width="0.320588270290036" height="0.32455187180711564" style="fill:#326b7d"/>
-</g>
-</g>
-<g aria-label="scene_state.c: 420 bytes · 6 items" data-node="container" data-kind="file" data-bytes="420" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/scene_state.c">
-<title>scene_state.c: 420 bytes · 6 items</title>
-<rect class="container-frame" x="304.0510942474974" y="233.93975171890034" width="3.0881155832019793" height="1.138964572728812" fill="#1f7f93"/>
-<path class="bevel-light" d="M304.0510942474974 235.07871629162915 V233.93975171890034 H307.1392098306994" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M304.0510942474974 235.07871629162915 H307.1392098306994 V233.93975171890034" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="3b2 · SetEffectOwnerMode · C: 22 bytes" data-node="leaf" data-kind="file" data-bytes="22" data-address="0x020009dc" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/scene_state.c">
+<g aria-label="3b2 · SetEffectOwnerMode · C: 22 bytes" data-node="leaf" data-kind="file" data-bytes="22" data-address="0x020009dc" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
 <title>3b2 · SetEffectOwnerMode · C: 22 bytes</title>
-<rect x="304.37403237330165" y="234.26268984470454" width="0.41533920223380627" height="0.07639396524400568" style="fill:#326b7d"/>
+<rect x="306.3541871127325" y="211.30750351108537" width="0.7301813651883835" height="0.1096827055569247" style="fill:#326b7d"/>
 </g>
-<g aria-label="3b2 · InitializePrologueSceneState · C: 60 bytes" data-node="leaf" data-kind="file" data-bytes="60" data-address="0x02000e88" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/scene_state.c">
+<g aria-label="3b2 · SpawnMode14Effect · C: 86 bytes" data-node="leaf" data-kind="file" data-bytes="86" data-address="0x020009f4" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · SpawnMode14Effect · C: 86 bytes</title>
+<rect x="306.5093117776404" y="211.6819935871071" width="0.4199320353726541" height="0.4375872989814844" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · SpawnMode15Effect · C: 98 bytes" data-node="leaf" data-kind="file" data-bytes="98" data-address="0x02000a4c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · SpawnMode15Effect · C: 98 bytes</title>
+<rect x="306.5093117776404" y="212.53951292146124" width="0.4199320353726541" height="0.5572411595890387" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · OverlayObject_IntegrateVelocities · C: 54 bytes" data-node="leaf" data-kind="file" data-bytes="54" data-address="0x02000ab0" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · OverlayObject_IntegrateVelocities · C: 54 bytes</title>
+<rect x="306.43395635313755" y="213.44133069192011" width="0.5706428843783112" height="0.269221186366997" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · SpawnConfiguredSceneEffect · C: 472 bytes" data-node="leaf" data-kind="file" data-bytes="472" data-address="0x02000ae8" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · SpawnConfiguredSceneEffect · C: 472 bytes</title>
+<rect x="304.3724449662316" y="214.1665131902048" width="2.4323841221757645" height="0.6427014374684007" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · NoOpEffectCallback · C: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x02000cc0" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · NoOpEffectCallback · C: 2 bytes</title>
+<rect x="307.129437313031" y="213.84841997736004" width="0.0065150117789070094" height="1.2788878631578944" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · SelectPrimarySceneData · C: 120 bytes" data-node="leaf" data-kind="file" data-bytes="120" data-address="0x02000cc4" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · SelectPrimarySceneData · C: 120 bytes</title>
+<rect x="304.24546440729296" y="215.32493550620293" width="0.9038060588752422" height="0.38874031959106203" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · GetEmptySceneData · C: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x02000d3c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · GetEmptySceneData · C: 4 bytes</title>
+<rect x="305.37595428542534" y="215.16287900586906" width="0.06462731892331519" height="0.19453289413739283" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · GetDefaultSceneData · C: 8 bytes" data-node="leaf" data-kind="file" data-bytes="8" data-address="0x02000d40" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · GetDefaultSceneData · C: 8 bytes</title>
+<rect x="305.37595428542534" y="215.42203921892977" width="0.06462731892331519" height="0.45369310719810085" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · SelectSecondarySceneData · C: 92 bytes" data-node="leaf" data-kind="file" data-bytes="92" data-address="0x02000d48" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · SelectSecondarySceneData · C: 92 bytes</title>
+<rect x="304.2307723979106" y="216.0877241360027" width="0.3593563008263461" height="0.7126245804702189" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · AdvanceEffectMotion · C: 90 bytes" data-node="leaf" data-kind="file" data-bytes="90" data-address="0x02000da4" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · AdvanceEffectMotion · C: 90 bytes</title>
+<rect x="304.94557895281514" y="216.08381808925458" width="0.3515442073301212" height="0.7204366739664438" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · SpawnRadialEffectBurst · C: 136 bytes" data-node="leaf" data-kind="file" data-bytes="136" data-address="0x02000e00" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · SpawnRadialEffectBurst · C: 136 bytes</title>
+<rect x="305.6437694260285" y="215.30143950862552" width="1.324566242452765" height="0.3417483244362795" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · InitializePrologueSceneState · C: 60 bytes" data-node="leaf" data-kind="file" data-bytes="60" data-address="0x02000e88" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
 <title>3b2 · InitializePrologueSceneState · C: 60 bytes</title>
-<rect x="304.4400089796487" y="234.48145438153966" width="0.2833859895396147" height="0.20834717793819732" style="fill:#326b7d"/>
+<rect x="305.5806311194282" y="215.92179785089778" width="0.21547171123565234" height="0.9504931603704778" style="fill:#326b7d"/>
 </g>
-<g aria-label="3b2 · MarkGridLeftOfSceneActor · C: 82 bytes" data-node="leaf" data-kind="file" data-bytes="82" data-address="0x0200185c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/scene_state.c">
+<g aria-label="3b2 · SelectTertiarySceneData · C: 120 bytes" data-node="leaf" data-kind="file" data-bytes="120" data-address="0x02000ec4" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · SelectTertiarySceneData · C: 120 bytes</title>
+<rect x="306.1193103975173" y="216.02953370651562" width="0.4309434224713047" height="0.7350214491348255" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · StartScriptedSceneMessage · C: 52 bytes" data-node="leaf" data-kind="file" data-bytes="52" data-address="0x02000f3c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · StartScriptedSceneMessage · C: 52 bytes</title>
+<rect x="306.8590966060931" y="215.90743307014873" width="0.1867421497375653" height="0.9792227218685648" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · FieldScene_RunPrimarySequence · C: 676 bytes" data-node="leaf" data-kind="file" data-bytes="676" data-address="0x02000f70" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · FieldScene_RunPrimarySequence · C: 676 bytes</title>
+<rect x="304.5093918970002" y="217.43832451638886" width="2.171520284196412" height="0.9165952990055674" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · FieldScene_RunScene3b2SequenceA · C: 160 bytes" data-node="leaf" data-kind="file" data-bytes="160" data-address="0x02001214" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · FieldScene_RunScene3b2SequenceA · C: 160 bytes</title>
+<rect x="304.3318044097088" y="219.09392762710857" width="0.5614203244227504" height="0.631898051354241" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · RunPrologueSceneSetup · C: 22 bytes" data-node="leaf" data-kind="file" data-bytes="22" data-address="0x02001374" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · RunPrologueSceneSetup · C: 22 bytes</title>
+<rect x="305.26867457608927" y="218.90795714464355" width="0.18947935949267825" height="0.2966873861942442" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · StartSceneScript37 · C: 32 bytes" data-node="leaf" data-kind="file" data-bytes="32" data-address="0x0200138c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · StartSceneScript37 · C: 32 bytes</title>
+<rect x="305.26867457608927" y="219.39412389033046" width="0.18947935949267825" height="0.5176722705973907" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · FieldScene_RunScene3b2_02001494 · C: 116 bytes" data-node="leaf" data-kind="file" data-bytes="116" data-address="0x02001494" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · FieldScene_RunScene3b2_02001494 · C: 116 bytes</title>
+<rect x="304.22670788325183" y="220.1821494764286" width="0.3512272715088295" height="1.0316837434103006" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · ConfigureSceneActor11 · C: 64 bytes" data-node="leaf" data-kind="file" data-bytes="64" data-address="0x02001508" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · ConfigureSceneActor11 · C: 64 bytes</title>
+<rect x="304.92117436808104" y="220.17416141824015" width="0.46409366968128796" height="0.3352511551319103" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · ConfigureSceneActor12 · C: 68 bytes" data-node="leaf" data-kind="file" data-bytes="68" data-address="0x02001548" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · ConfigureSceneActor12 · C: 68 bytes</title>
+<rect x="304.9316509666789" y="220.85514032710185" width="0.44314047248554356" height="0.3562043523276547" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · ConfigureSceneActor13 · C: 68 bytes" data-node="leaf" data-kind="file" data-bytes="68" data-address="0x0200158c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · ConfigureSceneActor13 · C: 68 bytes</title>
+<rect x="305.66525768058375" y="218.92558153015267" width="0.22472813051090895" height="1.0422699304871834" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · ConfigureSceneActor14 · C: 84 bytes" data-node="leaf" data-kind="file" data-bytes="84" data-address="0x020015d0" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · ConfigureSceneActor14 · C: 84 bytes</title>
+<rect x="306.1570415000766" y="218.9679090886237" width="0.8274767068962818" height="0.30938324745302254" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · ShowForgetEverythingMessage · C: 40 bytes" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x02001624" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · ShowForgetEverythingMessage · C: 40 bytes</title>
+<rect x="306.13153850752616" y="219.5611725909793" width="0.2583772623521146" height="0.38985430373993274" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · ShowHelpYouForgetMessage · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x0200164c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · ShowHelpYouForgetMessage · C: 16 bytes</title>
+<rect x="306.5731236982287" y="219.4860032569776" width="0.5120668352964005" height="0.10803859434867455" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · ShowDamagedDoorMessage · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x0200165c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · ShowDamagedDoorMessage · C: 16 bytes</title>
+<rect x="306.59661757976" y="219.72557432720623" width="0.15502635741126877" height="0.2771280199834295" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · ShowSaveMyLifeMessage · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x0200166c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · ShowSaveMyLifeMessage · C: 16 bytes</title>
+<rect x="306.9066702945825" y="219.72557432720623" width="0.15502635741126877" height="0.2771280199834295" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · FieldScene_RunScene3b2_0200167c · C: 196 bytes" data-node="leaf" data-kind="file" data-bytes="196" data-address="0x0200167c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · FieldScene_RunScene3b2_0200167c · C: 196 bytes</title>
+<rect x="305.86631899659113" y="220.39364090715816" width="0.6268507625256853" height="0.6823805671723437" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · RunSceneVectorTransition · C: 52 bytes" data-node="leaf" data-kind="file" data-bytes="52" data-address="0x02001740" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · RunSceneVectorTransition · C: 52 bytes</title>
+<rect x="306.8897488129596" y="220.16336919847524" width="0.16630734515987577" height="1.1429239845381531" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · PositionSceneActorPair · C: 232 bytes" data-node="leaf" data-kind="file" data-bytes="232" data-address="0x02001774" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · PositionSceneActorPair · C: 232 bytes</title>
+<rect x="304.3485732715673" y="221.68692587966325" width="0.5949580481398309" height="1.0378161080487283" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · MarkGridLeftOfSceneActor · C: 82 bytes" data-node="leaf" data-kind="file" data-bytes="82" data-address="0x0200185c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
 <title>3b2 · MarkGridLeftOfSceneActor · C: 82 bytes</title>
-<rect x="304.9505018500269" y="234.347426153952" width="0.245866583738906" height="0.3236157026255" style="fill:#326b7d"/>
+<rect x="304.19536955009164" y="223.16649631437613" width="0.9013654910911665" height="0.2885506051884953" style="fill:#326b7d"/>
 </g>
-<g aria-label="3b2 · MarkGridAboveSceneActor · C: 82 bytes" data-node="leaf" data-kind="file" data-bytes="82" data-address="0x020018b0" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/scene_state.c">
+<g aria-label="3b2 · MarkGridAboveSceneActor · C: 82 bytes" data-node="leaf" data-kind="file" data-bytes="82" data-address="0x020018b0" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
 <title>3b2 · MarkGridAboveSceneActor · C: 82 bytes</title>
-<rect x="305.4422350175047" y="234.347426153952" width="0.245866583738906" height="0.3236157026255" style="fill:#326b7d"/>
+<rect x="304.2375964679241" y="223.78582444258558" width="0.5474966902308459" height="0.37300444085342077" style="fill:#326b7d"/>
 </g>
-<g aria-label="3b2 · SetSceneActorModes · C: 24 bytes" data-node="leaf" data-kind="file" data-bytes="24" data-address="0x02001904" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/scene_state.c">
+<g aria-label="3b2 · SetSceneActorModes · C: 24 bytes" data-node="leaf" data-kind="file" data-bytes="24" data-address="0x02001904" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
 <title>3b2 · SetSceneActorModes · C: 24 bytes</title>
-<rect x="305.8470153687822" y="234.26047333775165" width="0.07196095133821637" height="0.4975213350261896" style="fill:#326b7d"/>
+<rect x="305.03894911988056" y="223.66667596345772" width="0.13470748259769755" height="0.611301399109144" style="fill:#326b7d"/>
 </g>
-<g aria-label="3b2 · InitializeEscapeSceneActors · C: 150 bytes" data-node="leaf" data-kind="file" data-bytes="150" data-address="0x0200191c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene/scene_state.c">
+<g aria-label="3b2 · InitializeEscapeSceneActors · C: 150 bytes" data-node="leaf" data-kind="file" data-bytes="150" data-address="0x0200191c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
 <title>3b2 · InitializeEscapeSceneActors · C: 150 bytes</title>
-<rect x="306.0973273673806" y="234.36686343367364" width="0.6147707485455017" height="0.284741143182203" style="fill:#326b7d"/>
+<rect x="305.4831276252723" y="221.6315641370885" width="0.48423456299038714" height="0.812825092221677" style="fill:#326b7d"/>
 </g>
+<g aria-label="3b2 · ActivateSceneActor8 · C: 12 bytes" data-node="leaf" data-kind="file" data-bytes="12" data-address="0x020019b4" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · ActivateSceneActor8 · C: 12 bytes</title>
+<rect x="306.26352362205836" y="221.4434910078938" width="0.3567768758697663" height="0.10808830460100534" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · ActivateSceneActor10 · C: 12 bytes" data-node="leaf" data-kind="file" data-bytes="12" data-address="0x020019c0" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · ActivateSceneActor10 · C: 12 bytes</title>
+<rect x="306.26758761731674" y="221.66373161235418" width="0.11621629511769291" height="0.3161369232863285" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · ActivateSceneActor11 · C: 12 bytes" data-node="leaf" data-kind="file" data-bytes="12" data-address="0x020019cc" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · ActivateSceneActor11 · C: 12 bytes</title>
+<rect x="306.5000202075521" y="221.66373161235418" width="0.11621629511769291" height="0.3161369232863285" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · ActivateSceneActor12 · C: 12 bytes" data-node="leaf" data-kind="file" data-bytes="12" data-address="0x020019d8" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · ActivateSceneActor12 · C: 12 bytes</title>
+<rect x="306.72838880252914" y="221.4434910078938" width="0.3567768758697663" height="0.10808830460100534" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · ActivateSceneActor13 · C: 12 bytes" data-node="leaf" data-kind="file" data-bytes="12" data-address="0x020019e4" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · ActivateSceneActor13 · C: 12 bytes</title>
+<rect x="306.7324527977875" y="221.66373161235418" width="0.11621629511769291" height="0.3161369232863285" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · ActivateSceneActor15 · C: 12 bytes" data-node="leaf" data-kind="file" data-bytes="12" data-address="0x020019f0" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · ActivateSceneActor15 · C: 12 bytes</title>
+<rect x="306.9648853880229" y="221.66373161235418" width="0.11621629511769291" height="0.3161369232863285" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · ActivateSceneActor17 · C: 12 bytes" data-node="leaf" data-kind="file" data-bytes="12" data-address="0x020019fc" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · ActivateSceneActor17 · C: 12 bytes</title>
+<rect x="306.26352362205836" y="222.09202083549985" width="0.3567768758697663" height="0.10808830460100534" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · ActivateSceneActor18 · C: 12 bytes" data-node="leaf" data-kind="file" data-bytes="12" data-address="0x02001a08" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · ActivateSceneActor18 · C: 12 bytes</title>
+<rect x="306.26758761731674" y="222.31226143996022" width="0.11621629511769291" height="0.3161369232863285" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · ActivateSceneActor9 · C: 12 bytes" data-node="leaf" data-kind="file" data-bytes="12" data-address="0x02001a14" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · ActivateSceneActor9 · C: 12 bytes</title>
+<rect x="306.5000202075521" y="222.31226143996022" width="0.11621629511769291" height="0.3161369232863285" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · ActivateSceneActor19 · C: 12 bytes" data-node="leaf" data-kind="file" data-bytes="12" data-address="0x02001a20" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · ActivateSceneActor19 · C: 12 bytes</title>
+<rect x="306.72838880252914" y="222.09202083549985" width="0.3567768758697663" height="0.10808830460100534" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · ActivateSceneActor14 · C: 12 bytes" data-node="leaf" data-kind="file" data-bytes="12" data-address="0x02001a2c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · ActivateSceneActor14 · C: 12 bytes</title>
+<rect x="306.7324527977875" y="222.31226143996022" width="0.11621629511769291" height="0.3161369232863285" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · ActivateSceneActor16 · C: 12 bytes" data-node="leaf" data-kind="file" data-bytes="12" data-address="0x02001a38" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · ActivateSceneActor16 · C: 12 bytes</title>
+<rect x="306.9648853880229" y="222.31226143996022" width="0.11621629511769291" height="0.3161369232863285" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · TryPushBlockingSceneActor · C: 208 bytes" data-node="leaf" data-kind="file" data-bytes="208" data-address="0x02001a44" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · TryPushBlockingSceneActor · C: 208 bytes</title>
+<rect x="305.5035272940961" y="222.94902346112443" width="0.5250339006380879" height="1.1337906924222394" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · CheckActorPathSouth · C: 44 bytes" data-node="leaf" data-kind="file" data-bytes="44" data-address="0x02001b14" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · CheckActorPathSouth · C: 44 bytes</title>
+<rect x="306.4021430086498" y="222.79757137440188" width="0.22212972719303717" height="0.6072825693371264" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · CheckActorPathNorth · C: 40 bytes" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x02001b40" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · CheckActorPathNorth · C: 40 bytes</title>
+<rect x="306.83630565725434" y="222.78747456862038" width="0.20193611563003375" height="0.6274761809001298" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · CheckActorPathWest · C: 44 bytes" data-node="leaf" data-kind="file" data-bytes="44" data-address="0x02001b68" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · CheckActorPathWest · C: 44 bytes</title>
+<rect x="306.4021430086498" y="223.62698367093205" width="0.22212972719303717" height="0.6072825693371264" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · CheckActorPathEast · C: 40 bytes" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x02001b94" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · CheckActorPathEast · C: 40 bytes</title>
+<rect x="306.83630565725434" y="223.61688686515055" width="0.20193611563003375" height="0.6274761809001298" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · UpdateEscapeRouteForActorPositions · C: 198 bytes" data-node="leaf" data-kind="file" data-bytes="198" data-address="0x02001bbc" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · UpdateEscapeRouteForActorPositions · C: 198 bytes</title>
+<rect x="304.3310607701503" y="224.62529762651863" width="0.5599330453058534" height="0.9207208992416013" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · UpdateActor8ReturnRoute · C: 168 bytes" data-node="leaf" data-kind="file" data-bytes="168" data-address="0x02001c84" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · UpdateActor8ReturnRoute · C: 168 bytes</title>
+<rect x="305.4085076906631" y="224.5828784564197" width="0.47509470510799684" height="1.005559239439458" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · UpdateActor10RetreatRoute · C: 180 bytes" data-node="leaf" data-kind="file" data-bytes="180" data-address="0x02001d2c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · UpdateActor10RetreatRoute · C: 180 bytes</title>
+<rect x="306.3756647689187" y="224.59984612445928" width="0.5090300411871393" height="0.9716239033603153" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · UpdateActor10AdvanceRoute · C: 122 bytes" data-node="leaf" data-kind="file" data-bytes="122" data-address="0x02001de0" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · UpdateActor10AdvanceRoute · C: 122 bytes</title>
+<rect x="304.2521351526577" y="226.02702595357337" width="0.8684041803662215" height="0.4020818103204787" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · UpdateActor11WestRoute · C: 152 bytes" data-node="leaf" data-kind="file" data-bytes="152" data-address="0x02001e5c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · UpdateActor11WestRoute · C: 152 bytes</title>
+<rect x="304.3015714408118" y="226.8806258623685" width="0.769531604057907" height="0.5009543866287931" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · UpdateActor11EastRoute · C: 130 bytes" data-node="leaf" data-kind="file" data-bytes="130" data-address="0x02001ef4" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · UpdateActor11EastRoute · C: 130 bytes</title>
+<rect x="305.47227656919625" y="225.97668137942526" width="0.3013926620242172" height="1.5046797318743264" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · UpdateActor12WestRoute · C: 140 bytes" data-node="leaf" data-kind="file" data-bytes="140" data-address="0x02001f78" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · UpdateActor12WestRoute · C: 140 bytes</title>
+<rect x="306.16563477515797" y="226.06725426133852" width="0.7323058426160889" height="0.48253842585075585" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · UpdateActor12EastRoute · C: 122 bytes" data-node="leaf" data-kind="file" data-bytes="122" data-address="0x02002004" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · UpdateActor12EastRoute · C: 122 bytes</title>
+<rect x="306.13461444778187" y="227.00131078566392" width="0.794346497368329" height="0.4204977710985159" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · UpdateActor13WestRoute · C: 236 bytes" data-node="leaf" data-kind="file" data-bytes="236" data-address="0x02002080" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · UpdateActor13WestRoute · C: 236 bytes</title>
+<rect x="304.3630785273072" y="227.9440417221215" width="0.623968559619578" height="0.9597345605557215" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · UpdateActor13EastRoute · C: 148 bytes" data-node="leaf" data-kind="file" data-bytes="148" data-address="0x0200216c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · UpdateActor13EastRoute · C: 148 bytes</title>
+<rect x="305.4946825252614" y="227.8277086008365" width="0.39130231704956586" height="1.1924008031257336" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · UpdateActor15WestRoute · C: 200 bytes" data-node="leaf" data-kind="file" data-bytes="200" data-address="0x02002200" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · UpdateActor15WestRoute · C: 200 bytes</title>
+<rect x="306.34602945830164" y="227.89645089977765" width="0.5287869149318458" height="1.0549162052434538" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · UpdateActor15EastRoute · C: 252 bytes" data-node="leaf" data-kind="file" data-bytes="252" data-address="0x020022c8" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · UpdateActor15EastRoute · C: 252 bytes</title>
+<rect x="304.39278361931605" y="229.55744993430565" width="0.8606790479637029" height="0.6833787436372868" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · UpdateActor17SouthRoute · C: 138 bytes" data-node="leaf" data-kind="file" data-bytes="138" data-address="0x020023c4" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · UpdateActor17SouthRoute · C: 138 bytes</title>
+<rect x="304.2382098558743" y="230.76963365813847" width="1.1698265748472374" height="0.37423121675375215" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · UpdateActor17NorthRoute · C: 118 bytes" data-node="leaf" data-kind="file" data-bytes="118" data-address="0x02002450" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · UpdateActor17NorthRoute · C: 118 bytes</title>
+<rect x="305.7551494433627" y="229.3757579667513" width="1.224062983072419" height="0.31999480852857076" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · AdvanceActor18AlongEscapeRoute · C: 272 bytes" data-node="leaf" data-kind="file" data-bytes="272" data-address="0x020025f0" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · AdvanceActor18AlongEscapeRoute · C: 272 bytes</title>
+<rect x="305.96395961502964" y="230.22455775547542" width="0.8064426397385215" height="0.7376151518624682" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · AdvanceActor9AlongEscapeRoute · C: 314 bytes" data-node="leaf" data-kind="file" data-bytes="314" data-address="0x02002848" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · AdvanceActor9AlongEscapeRoute · C: 314 bytes</title>
+<rect x="304.4022749907555" y="231.68216122652714" width="1.169585025309038" height="0.7023614865161002" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · RetreatActor14AlongEscapeRoute · C: 204 bytes" data-node="leaf" data-kind="file" data-bytes="204" data-address="0x02002b80" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · RetreatActor14AlongEscapeRoute · C: 204 bytes</title>
+<rect x="306.22708302716677" y="231.6350227511133" width="0.6080845356884206" height="0.7966384373437798" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · AdvanceActor14AlongEscapeRoute · C: 190 bytes" data-node="leaf" data-kind="file" data-bytes="190" data-address="0x02002c4c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · AdvanceActor14AlongEscapeRoute · C: 190 bytes</title>
+<rect x="304.3394183658344" y="233.02402757463827" width="0.8029959937843413" height="0.5766482366739504" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · RetreatActor16AlongEscapeRoute · C: 196 bytes" data-node="leaf" data-kind="file" data-bytes="196" data-address="0x02002d0c" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · RetreatActor16AlongEscapeRoute · C: 196 bytes</title>
+<rect x="304.3485233379924" y="234.18642902014415" width="0.7847860494683218" height="0.5948581809899699" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · AdvanceActor16AlongEscapeRoute · C: 160 bytes" data-node="leaf" data-kind="file" data-bytes="160" data-address="0x02002dd0" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · AdvanceActor16AlongEscapeRoute · C: 160 bytes</title>
+<rect x="305.6268064976484" y="232.931771475994" width="1.316335313358275" height="0.39213603938541264" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · UpdateSwayingSceneObject · C: 102 bytes" data-node="leaf" data-kind="file" data-bytes="102" data-address="0x02002e70" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · UpdateSwayingSceneObject · C: 102 bytes</title>
+<rect x="305.56773853926063" y="233.656975596377" width="0.2740001226098367" height="1.2847406339471785" style="fill:#326b7d"/>
+</g>
+<g aria-label="3b2 · InitializeSwayingSceneObject · C: 216 bytes" data-node="leaf" data-kind="file" data-bytes="216" data-address="0x02002ed8" data-source="games/gs1/src/map/locations/heidia/prologue/prologue_route_scene.c">
+<title>3b2 · InitializeSwayingSceneObject · C: 216 bytes</title>
+<rect x="306.26885650005636" y="233.8100933119531" width="0.5802355537620072" height="0.9785052027950081" style="fill:#326b7d"/>
 </g>
 </g>
 </g>

@@ -4877,7 +4877,28 @@
       "source": "games/gs1/recon/en/units/battle-tile-palette-animation.c",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
-      "absolute_symbols": {},
+      "absolute_symbols": {
+        "BattlePieceStartX": {
+          "address": "0x080ee016",
+          "kind": "data"
+        },
+        "BattlePieceStartY": {
+          "address": "0x080ee037",
+          "kind": "data"
+        },
+        "BattlePieceWidth": {
+          "address": "0x080edf90",
+          "kind": "data"
+        },
+        "BattlePieceHeight": {
+          "address": "0x080edfb1",
+          "kind": "data"
+        },
+        "BattlePieceOffset": {
+          "address": "0x080edfd2",
+          "kind": "data"
+        }
+      },
       "local_symbols": [],
       "owners": [
         {

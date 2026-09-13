@@ -628,14 +628,20 @@ fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String
                 vec![source_name.to_string()],
             )
         }
-        "indexed-bytes" | "raw-lz-bytes" | "zero-skip-bytes" | "mtf4-bytes" => {
+        "indexed-bytes" | "raw-lz-bytes" | "zero-skip-bytes" | "zero-skip-bank" | "mtf4-bytes" => {
             let encoded = fs::read(&source).map_err(|e| e.to_string())?;
             let image = indexed_png(&encoded).map_err(|e| e.to_string())?;
             let mut sources = vec![source_name.to_string()];
             sources.extend(check_shared_palette(root, entry, &image)?);
             let (width, height) = (image.width as usize, image.height as usize);
             let pixels: Vec<u8> = image.pixels.iter().map(|pixel| *pixel as u8).collect();
-            let built = if kind == "raw-lz-bytes" {
+            let built = if kind == "zero-skip-bank" {
+                let frames = component_frames(entry, width, height, &pixels, 1)?;
+                let base = u32::try_from(number(&entry["address"], "bank address")?)
+                    .map_err(|_| "bank address exceeds address space")?;
+                psynergy::assets::compression::encode_zero_skip_bank(&frames, base)
+                    .map_err(|e| e.to_string())?
+            } else if kind == "raw-lz-bytes" {
                 let mut built = pixels;
                 built.truncate(number(&entry["size"], "component size")?);
                 built
@@ -2703,6 +2709,7 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
         | "le-u32-array"
         | "rgba-bytes"
         | "zero-skip-bytes"
+        | "zero-skip-bank"
         | "mtf4-bytes"
         | "golden-sun-thumb-overlay" => {
             let result = build_component(&ctx.root, entry)?;

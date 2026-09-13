@@ -43,25 +43,23 @@ pub fn rom_size(target: &str) -> Result<i64, String> {
         )),
     }
 }
-fn get<'a>(value: &'a Value, key: &str) -> Option<&'a Value> {
-    value.as_object()?.get(key)
-}
 fn text(value: &Value, key: &str) -> String {
-    get(value, key).and_then(Value::as_str).unwrap_or("").into()
+    value.get(key).and_then(Value::as_str).unwrap_or("").into()
 }
 fn integer(value: &Value, key: &str) -> Option<i64> {
-    get(value, key).and_then(Value::as_i64).or_else(|| {
-        get(value, key)
-            .and_then(Value::as_f64)
+    let value = value.get(key)?;
+    value.as_i64().or_else(|| {
+        value
+            .as_f64()
             .filter(|n| n.fract() == 0.0)
             .map(|n| n as i64)
     })
 }
 fn array<'a>(value: &'a Value, key: &str) -> &'a [Value] {
-    get(value, key)
-        .and_then(Value::as_array)
-        .map(Vec::as_slice)
-        .unwrap_or(&[])
+    match value.get(key) {
+        Some(Value::Array(values)) => values,
+        _ => &[],
+    }
 }
 fn json(tree: &SourceTree, path: &str) -> Option<Value> {
     tree.read(path)
@@ -98,7 +96,7 @@ fn hex(value: &str) -> Option<i64> {
     i64::from_str_radix(value.trim().trim_start_matches("0x"), 16).ok()
 }
 fn address(value: &Value, key: &str) -> Option<i64> {
-    integer(value, key).or_else(|| get(value, key).and_then(Value::as_str).and_then(hex))
+    integer(value, key).or_else(|| value.get(key).and_then(Value::as_str).and_then(hex))
 }
 fn space(line: &str) -> Option<i64> {
     let value = line.trim().strip_prefix(".space")?.trim();
@@ -270,7 +268,9 @@ pub fn progress_tally(options: &BuildOptions) -> Result<ProgressTally, String> {
     {
         return Err("unsupported executable inventory format or target".into());
     }
-    let main_node = get(&inventory, "main").ok_or("executable inventory has no main")?;
+    let main_node = inventory
+        .get("main")
+        .ok_or("executable inventory has no main")?;
     if text(&inventory, "audit") != "complete" || text(main_node, "audit") != "complete" {
         return Err(format!(
             "Full-C Byte Share withheld: {} executable audit is incomplete",
@@ -936,7 +936,7 @@ fn shared_map_assets(tree: &SourceTree, areas: &[Area]) -> Result<Value, String>
         for field in array(&maps, "fields") {
             let index = field
                 .as_str()
-                .and_then(|field| get(map, field))
+                .and_then(|field| map.get(field))
                 .and_then(Value::as_str)
                 .and_then(hex)
                 .ok_or("invalid map resource")?;
@@ -1050,7 +1050,8 @@ fn sound_sequence_classes(source: &str) -> BTreeMap<i64, String> {
 }
 fn asset_number(value: &Value, key: &str) -> Option<i64> {
     integer(value, key).or_else(|| {
-        get(value, key)?
+        value
+            .get(key)?
             .as_str()?
             .strip_prefix("0x")
             .and_then(|value| i64::from_str_radix(value, 16).ok())
@@ -1303,7 +1304,7 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
             options.target
         ));
     }
-    let main = regions(&get(&inventory, "main").cloned().unwrap_or(Value::Null));
+    let main = regions(&inventory["main"]);
     let main_exec = normalize(&main.iter().map(|r| r.span).collect::<Vec<_>>());
     let mut overlay_exec = SpanMap::new();
     let mut overlay_regions = BTreeMap::new();
@@ -1373,7 +1374,7 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
                 if let (Some(start), Some(size), Some(source)) = (
                     integer(region, "address"),
                     integer(region, "size"),
-                    get(region, "source").and_then(Value::as_str),
+                    region.get("source").and_then(Value::as_str),
                 ) {
                     main_sources.push((Span::new(start, start + size), source.into()));
                 }
@@ -1495,6 +1496,8 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
         "target": options.target,
         "derivation": "tracked-evidence-v1",
         "rom_bytes": rom,
+        "asset_verification": json(options.exact, &format!("out/{}/full/assets/manifest.json", options.target))
+            .and_then(|manifest| manifest.get("verification").cloned()),
         "shared_map_assets": if options.target == "gs1-en" {
             shared_map_assets(options.exact, &rom_areas)?
         } else { json!({}) },

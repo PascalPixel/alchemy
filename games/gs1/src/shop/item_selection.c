@@ -1,5 +1,120 @@
-#include "types.h"
 #include "shop.h"
+
+#define INPUT_NEW_KEYS (*(volatile u32 *)ADDR_03001C94)
+#define INPUT_REPEAT_KEYS (*(volatile u32 *)ADDR_03001B04)
+
+s32 Modulo(s32 value, s32 divisor);
+void WaitFrames(s32 frames);
+s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
+void UiWindow_Close(s32 window, s32 style);
+struct ShopCursorAnchor *Func_080150c8(
+    u32 resource,
+    u32 flags,
+    s32 window,
+    s32 x,
+    s32 y);
+void Func_080a1028(s32 window, s32 column, s32 row, s32 height, s32 flags);
+void Func_080a1030(void);
+void Func_080b010c(void);
+void Func_080b0204(void);
+void Func_080b0a20(struct ShopCursor *cursor, s32 target_x, s32 target_y);
+s32 Func_080b362c(s32 unit_id);
+s32 Func_08077248(s32 unit_id);
+void Audio_PlayCue(s32 cue);
+
+/* Select a party member and then an item owned by that member. */
+s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
+{
+    struct ShopRuntime *shop;
+    struct ShopCursorAnchor *cursor_anchor;
+    s32 list_window;
+    s32 selected_index = 0;
+    s32 redraw = 1;
+    s32 unit_id = 0;
+    s32 item_slot;
+    s32 result = 0;
+
+    Func_080b010c();
+    shop = SHOP_RUNTIME;
+    shop->item_window = UiWindow_CreateFar(16, 12, 14, 8, 2);
+    list_window = UiWindow_CreateFar(0, 14, 13, 3, 2);
+    cursor_anchor = Func_080150c8(
+        *(u16 *)((u8 *)shop + 0x390),
+        0x40000000,
+        list_window,
+        0,
+        result);
+    cursor_anchor->kind = 4;
+    cursor_anchor->unknown_00[4] = result;
+    Func_080b0a20(&shop->cursor, -32, 112);
+    shop->cursor.anchor = cursor_anchor;
+    shop->mode = 12;
+    Func_080a1028(list_window, 2, 0, 8, result);
+
+    for (;;) {
+        if (redraw != 0) {
+            redraw = 0;
+            selected_index = Modulo(
+                selected_index + shop->party_member_count,
+                shop->party_member_count);
+            unit_id = shop->party_member_ids[selected_index];
+            Shop_PlaceCursor((void *)list_window, selected_index * 24 - 12, 0);
+            shop->mode = 3;
+            Shop_UpdatePartyMemberList(list_window, selected_index, 0);
+            Shop_DrawPartyMemberItemGrid(shop->item_window, unit_id);
+        }
+
+        WaitFrames(1);
+        if ((INPUT_NEW_KEYS & 1) != 0) {
+            if (Func_08077248(unit_id) == 0) {
+                Audio_PlayCue(0x71);
+                continue;
+            }
+
+            Audio_PlayCue(0x70);
+            item_slot = Func_080b362c(unit_id);
+            if (item_slot == -1) {
+                shop->cursor.anchor->kind = 4;
+                shop->mode = 12;
+                redraw = 1;
+                continue;
+            }
+            *selected_unit = unit_id;
+            *selected_item = item_slot;
+            result = 0;
+            goto done;
+        }
+
+        if ((INPUT_NEW_KEYS & 2) != 0) {
+            Audio_PlayCue(0x71);
+            *selected_unit = -1;
+            *selected_item = -1;
+            result = -1;
+            goto done;
+        }
+
+        if ((INPUT_REPEAT_KEYS & 0x20) != 0) {
+            Audio_PlayCue(0x6f);
+            selected_index--;
+            redraw = 1;
+        }
+        if ((INPUT_REPEAT_KEYS & 0x10) != 0) {
+            Audio_PlayCue(0x6f);
+            selected_index++;
+            redraw = 1;
+        }
+    }
+
+done:
+    Func_080a1030();
+    UiWindow_Close(list_window, 2);
+    UiWindow_Close(shop->item_window, 2);
+    WaitFrames(1);
+    Func_080b0204();
+    return result;
+}
+
+#include "types.h"
 #include "global_cells.h"
 #include "battle_calc.h"
 
@@ -143,4 +258,48 @@ exit_loop:
     UiWindow_Close(win1, 2);
     WaitFrames(1);
     return result;
+}
+
+
+extern u8 Value_00000182;
+extern u8 Value_00000c94;
+extern u8 Value_00000c95;
+extern u8 Value_00000c8d;
+
+void *Func_08077008(s32);
+void Func_08015270(s32);
+void Func_08015080(s32, s32, s32, s32);
+s32 Func_080b19cc(s32);
+void Func_080150b0(s32, s32, s32, s32, s32);
+
+void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
+{
+    u8 *unit = Func_08077008(unit_id);
+    s32 slot_offset = item_id * 2 + 216;
+    s32 masked = *(volatile u16 *)(unit + slot_offset) & 0x1ff;
+    s32 mult = (*(volatile u16 *)(unit + slot_offset) >> 11) + 1;
+
+    if (window != 0) {
+        s32 result;
+
+        UiWindow_Commit(window);
+        UiText_DrawAt(masked + (s32)&Value_00000182, window, 0, 0);
+
+        result = Func_080772a8(unit_id, item_id);
+        if (result == -4) {
+            UiText_DrawAt((s32)&Value_00000c94, window, 0, 8);
+        } else if (result == -3) {
+            UiText_DrawAt((s32)&Value_00000c95, window, 0, 8);
+        } else {
+            s32 qty;
+            s32 total;
+
+            qty = Shop_ComputeSalePrice(*(u16 *)(unit + slot_offset));
+            total = mult *qty;
+
+            UiText_DrawAt((s32)&Value_00000c8d, window, 8, 8);
+            UiNumber_DrawAt(total, 5, window, 40, 8);
+            UiText_DrawAt((s32)&Value_00000c8d - 5, window, 80, 8);
+        }
+    }
 }

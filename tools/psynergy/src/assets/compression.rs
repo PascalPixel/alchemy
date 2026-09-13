@@ -91,6 +91,48 @@ pub fn encode_zero_skip(pixels: &[u8]) -> Result<Vec<u8>, AssetError> {
     Ok(output)
 }
 
+/// Pack zero-skip frames followed by an aligned, null-terminated LE pointer table.
+pub fn encode_zero_skip_bank(frames: &[Vec<u8>], base: u32) -> Result<Vec<u8>, AssetError> {
+    if frames.is_empty() || base % 4 != 0 {
+        return Err(AssetError(
+            "sprite bank needs frames and an aligned base".into(),
+        ));
+    }
+    let mut output = Vec::new();
+    let mut pointers = Vec::new();
+    for frame in frames {
+        let offset = u32::try_from(output.len())
+            .map_err(|_| AssetError("sprite bank exceeds address space".into()))?;
+        pointers.push(
+            base.checked_add(offset)
+                .ok_or_else(|| AssetError("sprite bank address overflow".into()))?,
+        );
+        output.extend(encode_zero_skip(frame)?);
+    }
+    output.resize(output.len().next_multiple_of(4), 0);
+    for pointer in pointers.into_iter().chain([0]) {
+        output.extend(pointer.to_le_bytes());
+    }
+    let length = u32::try_from(output.len())
+        .map_err(|_| AssetError("sprite bank exceeds address space".into()))?;
+    base.checked_add(length)
+        .ok_or_else(|| AssetError("sprite bank address overflow".into()))?;
+    Ok(output)
+}
+
+#[test]
+fn zero_skip_bank_derives_directory() {
+    let frames = vec![vec![1, 2], vec![0, 3]];
+    assert_eq!(
+        encode_zero_skip_bank(&frames, 0x1000).unwrap(),
+        [1, 2, 0, 0xe0, 3, 0, 0, 0, 0, 0x10, 0, 0, 3, 0x10, 0, 0, 0, 0, 0, 0]
+    );
+    assert!(encode_zero_skip_bank(&[], 0).is_err());
+    assert!(encode_zero_skip_bank(&frames, 1).is_err());
+    assert!(encode_zero_skip_bank(&frames, 0xffff_fffc).is_err());
+    assert!(encode_zero_skip_bank(&[vec![0xe0]], 0).is_err());
+}
+
 pub fn encode_delta7(pixels: &[u8]) -> Result<Vec<u8>, AssetError> {
     let mut bits = Bits::default();
     let mut previous = 0u8;

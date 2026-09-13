@@ -1189,12 +1189,10 @@
       "source": "battle/party/apply_status_damage.c"
     },
     "main:080a1bdc": {
-      "name": "PsynergyMenu_RefreshOwnerEntries",
-      "source": "psynergy_menu/refresh_owner_entries.c"
+      "name": "PsynergyMenu_RefreshOwnerEntries"
     },
     "main:080a1c2c": {
-      "name": "PsynergyMenu_PositionOwnerEntry",
-      "source": "psynergy_menu/position_owner_entry.c"
+      "name": "PsynergyMenu_PositionOwnerEntry"
     },
     "main:080a1c6c": {
       "name": "ItemMenu_PosOwner",
@@ -1206,15 +1204,13 @@
     },
     "main:080a172c": {
       "name": "UiIcon_CreateWithResource",
-      "source": "ui/icon/create_with_resource.c"
+      "source": "ui/icon/resource.c"
     },
     "main:080a1778": {
-      "name": "UiIcon_CreateWithResourceVariant",
-      "source": "ui/icon/create_with_resource_variant.c"
+      "name": "UiIcon_CreateWithResourceVariant"
     },
     "main:080a17c4": {
-      "name": "UiIcon_PrepareObject",
-      "source": "ui/icon/prepare_object.c"
+      "name": "UiIcon_PrepareObject"
     },
     "main:080a1814": {
       "name": "UiMenu_CreateCursor",
@@ -2646,7 +2642,7 @@
     },
     "main:08078414": {
       "name": "Item_GetDirect",
-      "source": "item/get_definition.c"
+      "source": "item/definition.c"
     },
     "main:08079bc4": {
       "name": "BattleRandom16",
@@ -2690,12 +2686,10 @@
       "name": "UpdateMapRegionAtPosition"
     },
     "main:0807842c": {
-      "name": "Item_CanOwnerEquipDirect",
-      "source": "item/can_owner_equip.c"
+      "name": "Item_CanOwnerEquipDirect"
     },
     "main:0807845c": {
-      "name": "Item_IsCompatibleWithOwner",
-      "source": "item/is_compatible_with_owner.c"
+      "name": "Item_IsCompatibleWithOwner"
     },
     "main:08078480": {
       "name": "Item_GetEquipmentGroup",
@@ -5009,7 +5003,7 @@
     },
     "main:080a1bcc": {
       "name": "PsynergyMenu_RefreshOwnerEntriesDefault",
-      "source": "psynergy_menu/refresh_owner_entries_default.c"
+      "source": "psynergy_menu/owner_entries.c"
     },
     "main:080a23c0": {
       "name": "UiText_DrawWorkValueWithLabel",

@@ -162,7 +162,7 @@ void Scene_RunScene374SequenceA(void)
     u32 i;
     s32 record;
     s32 base5_200aef0;
-    s32 v6;
+    s32 v6 = 0;
     s32 base5_4000;
 
     if (Value1(Func_02003238, 0x834) == 0) {
@@ -228,7 +228,6 @@ void Scene_RunScene374SequenceA(void)
             } else {
                 Func_0200350e(19, 3);
                 *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
-                v6 = 0;
             }
             Call2(Func_0200357e, 0x4013, 0);
             if (v6 != 0) {

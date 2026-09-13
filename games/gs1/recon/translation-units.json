@@ -171359,6 +171359,57 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "summon-definition-access",
+      "game": "gs1",
+      "source": "games/gs1/src/battle/summon/definition.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080c2368",
+          "extent": 28,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080c2384",
+          "extent": 28,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080c23a0",
+          "extent": 32,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080c23c0",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080c23e8",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080c2410",
+          "extent": 36,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080c2434",
+          "extent": 32,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080c2454",
+          "extent": 28,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

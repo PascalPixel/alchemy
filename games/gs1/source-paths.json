@@ -5505,35 +5505,28 @@
     },
     "main:080c2368": {
       "name": "Summon_GetEntryByte3Kind",
-      "source": "battle/summon/get_entry_byte3_kind.c"
+      "source": "battle/summon/definition.c"
     },
     "main:080c2384": {
-      "name": "Summon_GetEntryValue",
-      "source": "battle/summon/get_entry_value.c"
+      "name": "Summon_GetEntryValue"
     },
     "main:080c23a0": {
-      "name": "Summon_GetEntryFlag1Field",
-      "source": "battle/summon/get_entry_flag1_field.c"
+      "name": "Summon_GetEntryFlag1Field"
     },
     "main:080c23c0": {
-      "name": "Summon_IsEntryFlagged",
-      "source": "battle/summon/is_entry_flagged.c"
+      "name": "Summon_IsEntryFlagged"
     },
     "main:080c23e8": {
-      "name": "Battle_GetEntryField2LowBits",
-      "source": "battle/get_entry_field2_low_bits.c"
+      "name": "Battle_GetEntryField2LowBits"
     },
     "main:080c2410": {
-      "name": "Battle_GetEntryField2HighBits",
-      "source": "battle/get_entry_field2_high_bits.c"
+      "name": "Battle_GetEntryField2HighBits"
     },
     "main:080c2434": {
-      "name": "Summon_IsEntrySecondaryFlagged",
-      "source": "battle/summon/is_entry_secondary_flagged.c"
+      "name": "Summon_IsEntrySecondaryFlagged"
     },
     "main:080c2454": {
-      "name": "Summon_GetEntryByte4",
-      "source": "battle/summon/get_entry_byte4.c"
+      "name": "Summon_GetEntryByte4"
     },
     "main:080c2470": {
       "name": "Item_EncodeBankedId",

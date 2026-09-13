@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define RunBattleEffect03 Func_080994d0
 

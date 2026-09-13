@@ -1,12 +1,12 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define BattleEffect_RunMemberBeam Func_080cf2b8
 
 /*
  * Battle-presentation sub-effect at 0x080cf2b8, a two-argument entry
  * (effect object, variant) in the same family as the adopted
- * games/gs1/src/battle/effects/member_orbit.c (0x080ce85c) and
- * games/gs1/src/battle/presentation/prepare_scene.c (0x080ccaec).
+ * games/gs1/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C (0x080ce85c) and
+ * games/gs1/SRC/BATTLE/PRESENTATION/PREPARE_SCENE.C (0x080ccaec).
  *
  * The owner republishes the effect object at work + 0x7828, asks
  * Func_080de2f8 for a pair of screen coordinates when state field 28 is 1,

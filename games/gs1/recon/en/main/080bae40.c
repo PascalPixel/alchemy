@@ -1,9 +1,9 @@
-#include "types.h"
-#include "battle_command.h"
-#include "battle_efx.h"
-#include "battle_runtime.h"
-#include "battle_types.h"
-#include "fixed_math.h"
+#include "TYPES.H"
+#include "BATTLE_COMMAND.H"
+#include "BATTLE_EFX.H"
+#include "BATTLE_RUNTIME.H"
+#include "BATTLE_TYPES.H"
+#include "FIXED_MATH.H"
 
 #define BattleTarget_SelectForAction Func_080bae40
 

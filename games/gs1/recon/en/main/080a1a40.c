@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define BattleFx_PositionSprite Func_080a1a40
 

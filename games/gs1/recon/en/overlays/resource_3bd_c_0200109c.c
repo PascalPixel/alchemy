@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define Scene_RunStatefulSequence Func_0200109c
 

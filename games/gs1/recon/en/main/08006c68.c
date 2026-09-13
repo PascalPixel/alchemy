@@ -22,7 +22,7 @@
  *
  *   0x08006ccc  __call_via_r3  ->  a computed value (see 0x8006cb8). CONTEXT-DEPENDENT.
  */
-#include "flash.h"
+#include "FLASH.H"
 
 s32 Func_080072f0(s32, s32, s32, s32);
 

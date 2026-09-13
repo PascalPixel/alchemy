@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 extern u8 *Data_03001e70;
 extern s32 Data_02008f08[];

@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 /*
  * resource_3a7 owner at 0x02000704, 48 bytes.
  * Sets bit 1 of the byte at +35 on six consecutive records, ids 16..21.

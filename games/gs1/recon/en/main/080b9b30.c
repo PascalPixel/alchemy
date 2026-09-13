@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define BattlePres_DispatchAction Func_080b9b30
 

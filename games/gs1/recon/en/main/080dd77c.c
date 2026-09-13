@@ -1,6 +1,6 @@
-#include "types.h"
-#include "global_cells.h"
-#include "effect_step.h"
+#include "TYPES.H"
+#include "GLOBAL_CELLS.H"
+#include "EFFECT_STEP.H"
 
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 

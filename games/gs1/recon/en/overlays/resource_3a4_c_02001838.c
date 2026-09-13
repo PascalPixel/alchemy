@@ -22,7 +22,7 @@
  *   Func_020058a6_a      0x0200bd20
  *   Func_020058a6_b      0x0200bc50
  */
-#include "types.h"
+#include "TYPES.H"
 
 /* AUDITED GENERATED CALL SCRIPT for Scene_BuildMultiPhasePresentation:
  * 107 calls, repeated actor-state phases, and terminal coordinate forwarding

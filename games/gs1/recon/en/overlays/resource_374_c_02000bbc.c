@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define Scene_RunScene374SequenceA Func_02000bbc
 

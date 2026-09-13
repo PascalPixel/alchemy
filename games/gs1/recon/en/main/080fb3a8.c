@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 void MusicPlayer_SetPan(u8 *object, u32 selected, u32 value)
 {

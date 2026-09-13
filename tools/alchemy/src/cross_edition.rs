@@ -696,7 +696,7 @@ fn edition_build_report(
         .replace('\\', "/");
     let edition_variant = fs::read_to_string(&source_path)
         .map_err(|error| format!("{}: {error}", source_path.display()))?
-        .contains("#include \"gs1_edition.h\"");
+        .contains("#include \"GS1_EDITION.H\"");
     let compile_each_edition = unit.is_some() || edition_variant;
     let literal_sites = literal_sites(object_path, symbol_offset, report.size)?;
     let en_reference =
@@ -2093,7 +2093,7 @@ fn exact_overlay_owners() -> Result<Vec<OverlayOwner>, String> {
     }
     owners.sort_by_key(|owner| (owner.resource, owner.en_offset));
     if owners.is_empty() {
-        return Err("games/gs1/src/ contains no exact overlay C owners".into());
+        return Err("games/gs1/SRC/ contains no exact overlay C owners".into());
     }
     Ok(owners)
 }
@@ -3502,7 +3502,7 @@ mod tests {
             schema_version: 1,
             game: "gs1",
             source_edition: "en",
-            source: "games/gs1/src/example.c".into(),
+            source: "games/gs1/SRC/example.c".into(),
             object: "out/example.o".into(),
             owner_symbol: "Func_08002ee4".into(),
             size: 4,

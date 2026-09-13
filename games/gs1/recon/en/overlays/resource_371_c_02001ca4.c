@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * resource_371 owner at 0x02001ca4, 1,488 bytes.

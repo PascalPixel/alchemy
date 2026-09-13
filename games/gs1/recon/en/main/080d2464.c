@@ -1,5 +1,5 @@
 #include "shared-aggregates.h"
-#include "effect_step.h"
+#include "EFFECT_STEP.H"
 
 /* Only the m2c spellings this draft actually uses. */
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))

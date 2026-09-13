@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define SceneTransform_ApplyPitch Func_08004bd4
 

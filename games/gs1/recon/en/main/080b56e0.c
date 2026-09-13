@@ -1,5 +1,5 @@
-#include "types.h"
-#include "global_cells.h"
+#include "TYPES.H"
+#include "GLOBAL_CELLS.H"
 
 /*
  * Draft reconstruction, not yet verified byte-exact against

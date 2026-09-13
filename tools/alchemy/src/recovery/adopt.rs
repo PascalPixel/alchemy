@@ -1,5 +1,5 @@
 //! Adopt an exact Golden Sun candidate: the owner's source lands under
-//! `games/gs1/src`, the registers learn its name and path, the retained
+//! `games/gs1/SRC`, the registers learn its name and path, the retained
 //! records inside the span retire, and the overlay placeholder is applied
 //! through `overlay adopt`. Every step refuses before it mutates when the
 //! candidate is not exact or the span overlaps another registered region.
@@ -54,7 +54,7 @@ fn derive_name(root: &Path, sources: &SourcePaths, overlay: &str, owner: SourceO
         .find(|candidate| {
             let letter = candidate.chars().last().unwrap_or('a').to_ascii_lowercase();
             let path = root.join(format!(
-                "games/gs1/src/overlays/unidentified/run_scene_{resource}_sequence_{letter}.c"
+                "games/gs1/SRC/overlays/unidentified/run_scene_{resource}_sequence_{letter}.c"
             ));
             !taken.contains(candidate) && !path.exists()
         })
@@ -173,7 +173,7 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
             .replace(&format!("Lifted_{entry:08x}"), &name),
         None => super::lift_owner(root, request.owner, Some(span), Some(&name))?.0,
     };
-    let destination = root.join("games/gs1/src").join(&relative);
+    let destination = root.join("games/gs1/SRC").join(&relative);
     let existed = destination.exists();
     if let Some(parent) = destination.parent() {
         std::fs::create_dir_all(parent).map_err(|e| format!("{}: {e}", parent.display()))?;

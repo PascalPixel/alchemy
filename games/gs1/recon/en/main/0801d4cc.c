@@ -1,6 +1,6 @@
-#include "types.h"
-#include "render_input.h"
-#include "global_cells.h"
+#include "TYPES.H"
+#include "RENDER_INPUT.H"
+#include "GLOBAL_CELLS.H"
 
 /* Owner-local field access until this runtime workspace layout is recovered
  * elsewhere (shared with field_owner_54.c / runtime_owner_123.c / 0801db70.c,

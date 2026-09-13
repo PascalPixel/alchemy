@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 struct ListNode {
     s32 unknown00;

@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 void Func_080040e8(void);
 void Func_080041d8(s32 target, s32 duration);

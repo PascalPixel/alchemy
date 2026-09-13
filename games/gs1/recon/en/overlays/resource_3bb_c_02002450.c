@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define CommandInterpolationRenderer_Update Func_02002450
 

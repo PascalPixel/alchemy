@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define FieldScene_RunExtendedActorPresentation Func_020013f8
 

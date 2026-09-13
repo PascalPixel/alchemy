@@ -1,5 +1,5 @@
-#include "types.h"
-#include "configured_effect_spawn.h"
+#include "TYPES.H"
+#include "CONFIGURED_EFFECT_SPAWN.H"
 
 #define Lifted_02004610 Func_02004610
 

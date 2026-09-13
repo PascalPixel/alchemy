@@ -87,7 +87,7 @@ pub fn find_forbidden(file: &str, text: &str) -> Vec<Finding> {
 
 pub fn find_named_source_tool_leaks(file: &str, text: &str) -> Vec<Finding> {
     static TOOL_NAMES: OnceLock<Regex> = OnceLock::new();
-    let path = file.replace('\\', "/");
+    let path = file.replace('\\', "/").to_ascii_lowercase();
     let is_game_source = path.starts_with("games/")
         && path.ends_with(".c")
         && path.contains("/src/")
@@ -143,7 +143,10 @@ pub fn source_files(directory: &Path) -> io::Result<Vec<PathBuf>> {
         let path = entry?.path();
         if path.is_dir() {
             files.extend(source_files(&path)?);
-        } else if matches!(path.extension().and_then(|v| v.to_str()), Some("c" | "h")) {
+        } else if matches!(
+            path.extension().and_then(|v| v.to_str()),
+            Some("c" | "h" | "C" | "H")
+        ) {
             files.push(path);
         }
     }
@@ -208,11 +211,11 @@ pub fn self_test() -> Result<(), String> {
         return Err("preprocessed findings lost source identity".into());
     }
     let source = "/* M2C_FIELD */\n#define M2C_FIELD(x) (x)\n";
-    let found = find_named_source_tool_leaks("games/gs1/src/graphics/window/example.c", source);
+    let found = find_named_source_tool_leaks("games/gs1/SRC/graphics/window/example.c", source);
     if found.len() != 1 || found[0].line != 2 || !found[0].token.contains("M2C_FIELD") {
         return Err("named-source gate missed a tool-branded identifier".into());
     }
-    if !find_named_source_tool_leaks("games/gs1/src/unidentified/example.c", source).is_empty() {
+    if !find_named_source_tool_leaks("games/gs1/SRC/unidentified/example.c", source).is_empty() {
         return Err("named-source gate crossed its owned boundary".into());
     }
     if !find_named_source_tool_leaks("games/gs1/recon/example.c", source).is_empty() {
@@ -231,6 +234,15 @@ mod tests {
     #[test]
     fn raw_escape_hatches() {
         self_test().unwrap();
+    }
+
+    #[test]
+    fn atlas_source_names_keep_tool_leak_checks() {
+        let source = "void f(void) { M2C_ERROR(); }";
+        let lower = find_named_source_tool_leaks("games/gs1/SRC/field/example.c", source);
+        let upper = find_named_source_tool_leaks("games/gs1/SRC/FIELD/EXAMPLE.C", source);
+        assert!(!lower.is_empty());
+        assert_eq!(lower.len(), upper.len());
     }
 
     #[test]

@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * Full source-shape draft for the effect sequence at 0x080e7404.

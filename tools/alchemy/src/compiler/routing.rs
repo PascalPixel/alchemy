@@ -97,7 +97,11 @@ pub(crate) fn include_flag(target: CompilerTarget) -> String {
         root()
             .join("games")
             .join(target.as_str())
-            .join("include")
+            .join(if target == CompilerTarget::Gs1 {
+                "INCLUDE"
+            } else {
+                "include"
+            })
             .display()
     )
 }
@@ -217,9 +221,9 @@ mod target_tests {
     fn each_game_uses_its_own_include_tree() {
         let gs1 = cflags_for_target(CompilerTarget::Gs1);
         let gs2 = cflags_for_target(CompilerTarget::Gs2);
-        assert!(gs1.iter().any(|flag| flag.ends_with("/games/gs1/include")));
+        assert!(gs1.iter().any(|flag| flag.ends_with("/games/gs1/INCLUDE")));
         assert!(gs2.iter().any(|flag| flag.ends_with("/games/gs2/include")));
-        assert!(!gs2.iter().any(|flag| flag.ends_with("/games/gs1/include")));
+        assert!(!gs2.iter().any(|flag| flag.ends_with("/games/gs1/INCLUDE")));
         let shared: Vec<&String> = gs1
             .iter()
             .filter(|flag| *flag != "-mthumb-interwork" && !flag.starts_with("-I"))

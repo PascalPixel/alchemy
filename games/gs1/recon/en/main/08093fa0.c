@@ -1,5 +1,5 @@
-#include "object_runtime.h"
-#include "battle_effect_runtime.h"
+#include "OBJECT_RUNTIME.H"
+#include "BATTLE_EFFECT_RUNTIME.H"
 
 struct GridTileCell_08093fa0 {
     u8 unknown_00[2];

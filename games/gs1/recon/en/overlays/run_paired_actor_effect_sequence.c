@@ -1,4 +1,4 @@
-#include "configured_effect_spawn.h"
+#include "CONFIGURED_EFFECT_SPAWN.H"
 
 #define Scene_RunPairedActorEffectSequence Func_02002360
 

@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * resource_3bf owner at 0x02000c78, 24 bytes.

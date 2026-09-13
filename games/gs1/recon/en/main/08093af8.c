@@ -1,6 +1,6 @@
-#include "types.h"
-#include "fixed_math.h"
-#include "global_cells.h"
+#include "TYPES.H"
+#include "FIXED_MATH.H"
+#include "GLOBAL_CELLS.H"
 
 struct FacingRecord {
     u8 unknown_00[0x28];

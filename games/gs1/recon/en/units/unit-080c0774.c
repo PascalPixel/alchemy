@@ -4,4 +4,4 @@
  * hand: resolve declaration collisions here or in shared headers. */
 
 #include "../main/080c0774.c"
-#include "../../../src/system/memory/release_heap_block_10.c"
+#include "../../../SRC/SYSTEM/MEMORY/RELEASE_HEAP_BLOCK_10.C"

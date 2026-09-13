@@ -1,5 +1,5 @@
-#include "types.h"
-#include "fixed_math.h"
+#include "TYPES.H"
+#include "FIXED_MATH.H"
 
 #define BattleFx_RunPhasedRadialParticleSequence Func_08095dd0
 

@@ -1,4 +1,4 @@
-#include "inventory.h"
+#include "INVENTORY.H"
 
 void Func_08077428(s32 owner);
 

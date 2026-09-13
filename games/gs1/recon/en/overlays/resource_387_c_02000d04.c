@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 /* resource_387 owner at 0x02000d04, 100 bytes. */
 struct Rec_387 { u8 pad00[8]; s32 f8; };
 struct State_387 { u8 pad00[35]; u8 flags; };

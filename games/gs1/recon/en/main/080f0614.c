@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 s32 Func_080f07f0(void *resource, s32 offset, s32 mode);
 

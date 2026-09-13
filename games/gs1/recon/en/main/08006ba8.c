@@ -22,7 +22,7 @@
  *
  *   0x08006c12  __call_via_r3  ->  a computed value (see 0x8006bfc). CONTEXT-DEPENDENT.
  */
-#include "flash.h"
+#include "FLASH.H"
 
 extern s32 Func_080072f0(u8 *source, u8 *destination, s32 size, void *core);
 extern u8 Data_08007abc[];

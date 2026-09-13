@@ -1,4 +1,4 @@
-#include "psynergy_menu.h"
+#include "PSYNERGY_MENU.H"
 
 extern struct PsynergyMenuGlobalState Data_02000240;
 

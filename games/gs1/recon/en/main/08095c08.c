@@ -1,5 +1,5 @@
-#include "fixed_math.h"
-#include "types.h"
+#include "FIXED_MATH.H"
+#include "TYPES.H"
 
 struct EffectVector {
     s32 x;

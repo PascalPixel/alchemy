@@ -119,9 +119,11 @@ fn local_label(line: &str) -> bool {
     line.trim().starts_with(".L_") && line.trim_end().ends_with(':')
 }
 pub fn overlay_name(name: &str) -> Option<String> {
-    name.strip_prefix("resource_")?
+    let stem = name.strip_prefix("resource_")?;
+    let stem = stem
         .strip_suffix("_overlay.s")
-        .map(|s| format!("resource_{s}"))
+        .or_else(|| stem.strip_suffix("_overlay.S"))?;
+    Some(format!("resource_{stem}"))
 }
 fn overlay_short(id: &str) -> &str {
     id.strip_prefix("resource_").unwrap_or(id)
@@ -304,11 +306,11 @@ fn candidate_main(tree: &SourceTree, executable: &[Span]) -> (Vec<Span>, usize) 
     let mut spans = Vec::new();
     let mut sources = 0;
     for name in tree.list(directory) {
-        let Some(stem) = name.strip_suffix(".c") else {
+        let Some(stem) = name.strip_suffix(".c").or_else(|| name.strip_suffix(".C")) else {
             continue;
         };
         if !tree
-            .read(&format!("{directory}/{stem}.c"))
+            .read(&format!("{directory}/{name}"))
             .is_some_and(|s| canonical(&s))
         {
             continue;
@@ -351,7 +353,7 @@ fn candidate_overlay(tree: &SourceTree, executable: &SpanMap) -> (SpanMap, usize
         if text(unit, "game") != "gs1"
             || !executable.contains_key(&id)
             || !source.starts_with(&format!("{directory}/"))
-            || !source.ends_with(".c")
+            || !(source.ends_with(".c") || source.ends_with(".C"))
             || !tree.read(&source).is_some_and(|code| canonical(&code))
         {
             continue;
@@ -379,7 +381,7 @@ fn candidate_overlay(tree: &SourceTree, executable: &SpanMap) -> (SpanMap, usize
         if registered.contains(&source) {
             continue;
         }
-        let Some(stem) = name.strip_suffix(".c") else {
+        let Some(stem) = name.strip_suffix(".c").or_else(|| name.strip_suffix(".C")) else {
             continue;
         };
         let Some((id, address)) = stem.rsplit_once("_c_") else {

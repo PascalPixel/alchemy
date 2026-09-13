@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define Func_020028b0 Func_020028b0
 

@@ -4473,7 +4473,7 @@ fn asset_stamp_tracks_sound_and_included_overlay_sources() {
     }
     let manifest = root.join("games/gs1/assets/manifest.json");
     let sound = root.join("games/gs1/assets/sound/sequences.tsv");
-    let header = root.join("games/gs1/src/shared.h");
+    let header = root.join("games/gs1/SRC/shared.h");
     let unit = root.join("games/gs1/recon/translation-units.json");
     let overlay = root.join("games/gs1/asm/overlays/fixture.s");
     let battle = root.join("games/gs1/asm/battle/fixture.s");
@@ -4481,7 +4481,7 @@ fn asset_stamp_tracks_sound_and_included_overlay_sources() {
         fs::write(path, "before").unwrap();
     }
     fs::write(
-        root.join("games/gs1/src/resource_373_c_02001000.c"),
+        root.join("games/gs1/SRC/resource_373_c_02001000.c"),
         "#include \"shared.h\"\nvoid Test(void) {}\n",
     )
     .unwrap();

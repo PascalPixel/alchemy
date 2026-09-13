@@ -1,6 +1,6 @@
-#include "battle_effect_runtime.h"
-#include "object_runtime.h"
-#include "types.h"
+#include "BATTLE_EFFECT_RUNTIME.H"
+#include "OBJECT_RUNTIME.H"
+#include "TYPES.H"
 
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 

@@ -1,10 +1,10 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * Battle-presentation sub-effect at 0x080cf8e0 (1556 bytes).  It belongs to
  * the same 0x03001eec "battle work" family as the exact
- * games/gs1/src/battle/effects/member_orbit.c (main:080ce85c) and
- * games/gs1/src/battle/effects/puff_arc.c (main:080d9fc8), and to the
+ * games/gs1/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C (main:080ce85c) and
+ * games/gs1/SRC/BATTLE/EFFECT/PUFF_ARC.C (main:080d9fc8), and to the
  * measured draft games/gs1/recon/en/main/080dab74.c.  The work-block layout
  * (display mode/value at 0x7780/0x7784, frame_ready at 0x7824, the
  * republished effect argument at 0x7828), the effect-argument layout
@@ -411,7 +411,7 @@ void BattleEffect_RunImpactBurst(struct EffectArgument *object, s32 variant)
                         side ^= 1;
                     /* Each table entry is read once and reused for both the
                        centring shift and the size argument, as in the exact
-                       games/gs1/src/battle/effects/puff_arc.c. */
+                       games/gs1/SRC/BATTLE/EFFECT/PUFF_ARC.C. */
                     wide = Data_080ee0c4[index];
                     high = Data_080ee0d6[index];
                     ((DrawRectangleFn)rectangle_slot[side])(

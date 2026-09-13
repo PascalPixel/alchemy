@@ -1,6 +1,6 @@
-#include "fixed_math.h"
-#include "types.h"
-#include "object_efx.h"
+#include "FIXED_MATH.H"
+#include "TYPES.H"
+#include "OBJECT_EFX.H"
 
 struct ParticleBurstEffect {
     u8 padding0[6];

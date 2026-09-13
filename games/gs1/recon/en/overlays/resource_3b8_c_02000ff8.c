@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* DRAFT for Func_02000ff8: 250 calls, 0 loops, 0 memory operations.
  * Written by `overlay reconstruct` from the owner's own disassembly.

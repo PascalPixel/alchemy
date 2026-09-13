@@ -1,5 +1,5 @@
-#include "types.h"
-#include "gs1_edition.h"
+#include "TYPES.H"
+#include "GS1_EDITION.H"
 #undef UiText_DrawCharacter
 #define UiText_DrawCharacter Func_08021d88
 

@@ -1,6 +1,6 @@
-#include "item.h"
-#include "layout_guard.h"
-#include "types.h"
+#include "ITEM.H"
+#include "LAYOUT_GUARD.H"
+#include "TYPES.H"
 
 struct CategoryItemIcon {
     u8 reserved_00[6];

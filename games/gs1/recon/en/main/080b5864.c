@@ -1,5 +1,5 @@
-#include "types.h"
-#include "global_cells.h"
+#include "TYPES.H"
+#include "GLOBAL_CELLS.H"
 
 struct SceneCameraState {
     u8 filler0[12];

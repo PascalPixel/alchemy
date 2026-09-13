@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 typedef struct Obj {
     s32 f00;

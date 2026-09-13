@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define SceneTransform_ApplyPosition Func_08004cb4
 

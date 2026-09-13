@@ -1,5 +1,5 @@
-#include "types.h"
-#include "fixed_math.h"
+#include "TYPES.H"
+#include "FIXED_MATH.H"
 
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 

@@ -1,6 +1,6 @@
-#include "types.h"
-#include "item_menu.h"
-#include "global_cells.h"
+#include "TYPES.H"
+#include "ITEM_MENU.H"
+#include "GLOBAL_CELLS.H"
 
 #define CharacterSelector_Run Func_080a7440
 

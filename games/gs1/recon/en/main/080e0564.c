@@ -1,9 +1,9 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * Draft for the battle-presentation sub-effect at 0x080e0564.
  *
- * Family-matched to games/gs1/src/battle/effects/member_orbit.c
+ * Family-matched to games/gs1/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C
  * (owner 080ce85c, template-main-080ce85c) but this owner's size (860 bytes
  * vs the template's 724) shows it is a genuinely different sub-effect from
  * the same 0x03001eec "battle work" subsystem already partly recovered in

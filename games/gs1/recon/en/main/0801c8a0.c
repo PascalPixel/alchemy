@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define FindEncodedIndexEntries Func_0801c8a0
 

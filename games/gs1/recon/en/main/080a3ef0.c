@@ -1,5 +1,5 @@
-#include "types.h"
-#include "global_cells.h"
+#include "TYPES.H"
+#include "GLOBAL_CELLS.H"
 
 typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 count);
 

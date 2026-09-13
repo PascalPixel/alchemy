@@ -1,6 +1,6 @@
-#include "b5_context.h"
-#include "battle_types.h"
-#include "types.h"
+#include "B5_CONTEXT.H"
+#include "BATTLE_TYPES.H"
+#include "TYPES.H"
 
 typedef void (*WordCopy)(void *destination, const void *source, s32 size);
 typedef void (*DrawRectangle)(

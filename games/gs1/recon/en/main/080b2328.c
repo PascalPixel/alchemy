@@ -1,6 +1,6 @@
-#include "battle_runtime.h"
-#include "item.h"
-#include "shop.h"
+#include "BATTLE_RUNTIME.H"
+#include "ITEM.H"
+#include "SHOP.H"
 
 s32 Func_08077228(s32 unit_id, u8 type);
 s32 Func_08077068(s32 unit_id, s32 slot);

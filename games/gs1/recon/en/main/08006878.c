@@ -19,7 +19,7 @@
 // routine must run from RAM because it reads the flash chip at 0x0e000000
 // while that chip is in ID mode, which is why it is copied to the stack at
 // all.
-#include "flash.h"
+#include "FLASH.H"
 
 /// The routine Func_08006ac0 copies into the stack buffer: reads one byte
 /// from the flash chip. Entered through the veneer with the Thumb bit set.

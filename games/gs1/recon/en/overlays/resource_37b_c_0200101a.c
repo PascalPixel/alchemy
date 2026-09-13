@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define Scene_RunMiddleSequence Func_0200101a
 

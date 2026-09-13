@@ -1,5 +1,5 @@
-#include "types.h"
-#include "global_cells.h"
+#include "TYPES.H"
+#include "GLOBAL_CELLS.H"
 
 void ItemMenu_ResetCategory(void);
 void Func_080a17c4(void *);

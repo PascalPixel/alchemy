@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define BattlePres_RunUnitAction Func_080b8c1c
 #define BattleObject_IsValidId Func_080b8808

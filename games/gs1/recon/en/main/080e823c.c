@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * Battle-presentation scene driver for the 0x03001EEC "battle work" subsystem,

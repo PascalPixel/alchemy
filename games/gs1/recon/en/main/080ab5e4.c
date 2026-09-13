@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* Division/modulo pair used to split packedPos-style base-10 values. */
 s32 Func_08002304(s32 numerator, s32 denominator);

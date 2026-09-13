@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define FieldScene_RunScene399SequenceB Func_02000b70
 

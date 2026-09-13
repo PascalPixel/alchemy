@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define VramBlock_LoadCached Func_08003fa4
 

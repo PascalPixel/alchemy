@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * Battle target-selection cursor - leading region.
@@ -155,7 +155,7 @@ struct ScreenPos {
     s32 z;
 };
 
-/* Same shape as games/gs1/src/graphics/affine/build_matrix.c. */
+/* Same shape as games/gs1/SRC/GRAPHICS/AFFINE/BUILD_MATRIX.C. */
 struct Effect {
     unsigned x : 16;
     unsigned y : 16;

@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define BattlePres_RunBeamScene Func_080e3aa0
 

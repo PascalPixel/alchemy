@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 /*
  * resource_39d owner at 0x020031c0, 68 bytes.
  *

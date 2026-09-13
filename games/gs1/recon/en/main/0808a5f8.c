@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * Walks the word table returned by the 0x02008000 service at +0x14 and

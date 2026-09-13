@@ -1,5 +1,5 @@
-#include "types.h"
-#include "shop.h"
+#include "TYPES.H"
+#include "SHOP.H"
 
 #define ShopCursor_MoveTowardTarget Func_080b0958
 

@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 void MusicPlayer_SetPitch(u8 *player, u32 mask_arg, u32 value_arg)
 {

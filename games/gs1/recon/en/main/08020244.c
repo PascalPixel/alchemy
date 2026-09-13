@@ -1,5 +1,5 @@
-#include "types.h"
-#include "gs1_edition.h"
+#include "TYPES.H"
+#include "GS1_EDITION.H"
 
 /*
  * Menu_RunOwnerSelectionLoop (main:08020244, 1408 bytes).

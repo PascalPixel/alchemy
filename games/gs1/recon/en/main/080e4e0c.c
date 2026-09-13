@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * Region 0x080e4e0c .. 0x080e53f4 (1512 bytes), classified mixed_region.

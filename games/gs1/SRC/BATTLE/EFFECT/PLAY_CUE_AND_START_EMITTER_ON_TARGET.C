@@ -1,0 +1,31 @@
+#include "SCENE.H"
+#include "EFFECT_RUNTIME.H"
+#include "GLOBAL_CELLS.H"
+#include "TYPES.H"
+#include "BATTLE_EFFECT_RUNTIME.H"
+#include "OBJECT_LOOKUP.H"
+#include "FIXED_MATH.H"
+#include "OBJECT_EFFECT.H"
+
+/* battle/effects/play_cue_and_start_emitter_on_target.c */
+void WaitFrames(s32);
+extern void Object_SetMode(struct ParticleEffectObject *, s32);
+
+s32 Object_GetById(u32);
+s32 Audio_PlayCue(s32);
+
+s32 BattleFx_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target, s32 mode)
+{
+    s32 object;
+    s32 result;
+
+    object = Object_GetById(target);
+    result = 0;
+    if (object != 0) {
+        Audio_PlayCue(0x7C);
+        Object_SetMode(object, 4);
+        WaitFrames(0xC);
+        result = Battle_Apply(effect, mode);
+    }
+    return result;
+}

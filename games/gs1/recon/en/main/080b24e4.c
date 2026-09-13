@@ -1,4 +1,4 @@
-#include "shop.h"
+#include "SHOP.H"
 
 s32 Modulo(s32 value, s32 divisor);
 void WaitFrames(s32 frames);

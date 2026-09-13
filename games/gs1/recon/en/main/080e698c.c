@@ -1,9 +1,9 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * Draft for the battle-presentation sub-effect at 0x080e698c.
  *
- * Assigned family template: games/gs1/src/battle/effects/member_orbit.c
+ * Assigned family template: games/gs1/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C
  * (main:080ce85c, template-main-080ce85c, family score 8067/10000).  Like
  * the measured siblings 080d59b0/080d82b0/080dc1ec/080e01e4/080e7404 in
  * this same 0x03001eec "battle work" subsystem, this owner's callee set,
@@ -29,7 +29,7 @@
  * situation.
  *
  * Func_080e3980 is EffectPosition_ApplyAlternateStepAndYOffset
- * (games/gs1/include/types.h), sibling of Func_080e3944
+ * (games/gs1/INCLUDE/TYPES.H), sibling of Func_080e3944
  * (EffectPosition_ApplyBaseAndYOffset, used by the template).  Its first
  * argument here is read from target+8 as a plain s32 -- the same field
  * passed directly to Func_080b5098 earlier in this owner -- so it is

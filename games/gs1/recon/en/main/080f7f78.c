@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * Sliding-window packer that drives the AudioTrack slot machinery at

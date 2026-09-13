@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 struct SceneWork {
     u8 unknown_000[0x1c0];

@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* AUDITED GENERATED CALL SCRIPT for FieldScene_ArrangeFourActors:
  * 47 calls, source-relative actor placement, three coordinate handoffs,

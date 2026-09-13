@@ -1,0 +1,26 @@
+#include "TYPES.H"
+#include "SCENE.H"
+#include "GLOBAL_CELLS.H"
+
+struct Work_08012330 {
+    s32 unknown_00;
+    s32 value_04;
+    s32 value_08;
+    s32 value_0c;
+};
+
+void Runtime_SetWorkTripleIfNonNegative(s32 value0, s32 value1, s32 value2)
+{
+    struct Work_08012330 *work;
+
+    work = *(struct Work_08012330 **)ADDR_03001E70;
+    if (value0 >= 0) {
+        work->value_04 = value0;
+    }
+    if (value1 >= 0) {
+        work->value_08 = value1;
+    }
+    if (value2 >= 0) {
+        work->value_0c = value2;
+    }
+}

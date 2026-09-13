@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define Curve_LookupScaledValue Func_08079b24
 

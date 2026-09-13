@@ -660,7 +660,7 @@ mod tests {
         installed.owners[0].address = 0x0200_0f5c;
         installed.owners[0].extent = 0x30;
         assert!(invalid_state(&installed));
-        invalid.source = PathBuf::from("games/gs1/src/invalid-retained-overlay.c");
+        invalid.source = PathBuf::from("games/gs1/SRC/invalid-retained-overlay.c");
         assert!(invalid_state(&invalid));
         let i = unconditional_quoted_includes;
         assert!(i("#define X \\\n#include \"x\"").is_empty());

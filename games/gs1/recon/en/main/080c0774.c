@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define BattlePres_ConfigurePaletteFade Func_080c0774
 

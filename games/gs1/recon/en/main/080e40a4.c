@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define BattlePres_RunRingAndSparkScene Func_080e40a4
 

@@ -1,5 +1,5 @@
-#include "types.h"
-#include "effect_step.h"
+#include "TYPES.H"
+#include "EFFECT_STEP.H"
 
 /*
  * Effect sequence at 0x080d5c48. Family-matched to puff_arc/run.c (0x080d9fc8,

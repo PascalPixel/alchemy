@@ -1,7 +1,7 @@
-#include "types.h"
-#include "battle_types.h"
-#include "global_cells.h"
-#include "menu_result.h"
+#include "TYPES.H"
+#include "BATTLE_TYPES.H"
+#include "GLOBAL_CELLS.H"
+#include "MENU_RESULT.H"
 
 /*
  * Psynergy / action list selection loop.

@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define DisplayTransition_InitializeState Func_0808fe38
 

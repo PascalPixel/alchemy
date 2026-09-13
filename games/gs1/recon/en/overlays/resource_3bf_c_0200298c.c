@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define RunEventScript01 Func_0200298c
 

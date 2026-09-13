@@ -1,4 +1,4 @@
-#include "flash.h"
+#include "FLASH.H"
 
 void ReadFlashCore(u32 src, u8 *dst, s32 size)
 {

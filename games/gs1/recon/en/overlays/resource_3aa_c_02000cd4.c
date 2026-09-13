@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define RunEventScript03 Func_02000cd4
 

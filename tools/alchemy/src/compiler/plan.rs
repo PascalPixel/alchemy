@@ -137,6 +137,10 @@ pub fn source_to_assembly_plan(options: &SourceToAssemblyPlanOptions) -> Result<
         arguments.push("-S".to_string());
         arguments.push("-o".to_string());
         arguments.push(options.output.clone());
+        // GCC otherwise interprets Atlas's uppercase .C extension as C++.
+        if extname(&options.input) == ".C" {
+            arguments.extend(["-x".to_string(), "c".to_string()]);
+        }
         arguments.push(options.input.clone());
         steps.push(compiler_command_for_target(options.target, &arguments)?);
     }
@@ -192,6 +196,24 @@ fn direct_preprocessor_command_for_target_with_minor_and_flags(
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn uppercase_c_preserves_the_c_route_and_codegen_flags() {
+        let mut options = SourceToAssemblyPlanOptions::new(
+            CompilerTarget::Gs1,
+            "games/gs1/src/080bbb0c.c",
+            "candidate.c",
+            "candidate.s",
+        );
+        let lower = source_to_assembly_plan(&options).unwrap();
+        options.input = "candidate.C".into();
+        let upper = source_to_assembly_plan(&options).unwrap();
+        assert_eq!(lower.len(), 1);
+        assert_eq!(upper.len(), 1);
+        let mut expected = lower[0].clone();
+        expected.pop();
+        expected.extend(["-x".into(), "c".into(), "candidate.C".into()]);
+        assert_eq!(upper[0], expected);
+    }
     #[test]
     fn diagnostics_preserve_canonical_flags_and_reject_codegen_overrides() {
         for source in ["games/gs1/src/080bbb0c.c", "games/gs1/src/08006878.c"] {

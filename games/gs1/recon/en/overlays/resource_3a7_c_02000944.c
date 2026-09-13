@@ -43,7 +43,7 @@
 
 /* Old-style declaration: overlay imports vary their argument count between
  * call sites in this overlay. */
-#include "types.h"
+#include "TYPES.H"
 
 /* The overlay import table has two physical veneer slots for this logical
  * accessor.  Naming the slots separately lets the normal linker encode the

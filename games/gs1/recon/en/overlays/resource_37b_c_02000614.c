@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* Overlay resource_37b, scene script at 02000614 (1656 bytes).
  *

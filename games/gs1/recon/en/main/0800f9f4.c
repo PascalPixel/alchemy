@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 void Map_DecodeTileRows(s32 arg0) {
     u16 *destination;

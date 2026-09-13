@@ -1,12 +1,12 @@
-#include "types.h"
-#include "b5_context.h"
-#include "effect_step.h"
+#include "TYPES.H"
+#include "B5_CONTEXT.H"
+#include "EFFECT_STEP.H"
 
 /*
  * Battle-presentation sub-effect at 0x080ccc38.
  *
- * Structurally related to games/gs1/src/battle/effects/puff_arc.c
- * (main:080d9fc8) and games/gs1/src/battle/effects/member_orbit.c
+ * Structurally related to games/gs1/SRC/BATTLE/EFFECT/PUFF_ARC.C
+ * (main:080d9fc8) and games/gs1/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C
  * (main:080ce85c): the same kind-39 "battle work" heap cache read directly
  * from 0x03001eec, the same caller-state pointer republished at
  * work + 0x7828, the same 0x04000020 BG2PA identity write, the same

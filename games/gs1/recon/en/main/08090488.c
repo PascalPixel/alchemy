@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 struct DisplayTransitionState {
     u8 pad_000[0x52a];

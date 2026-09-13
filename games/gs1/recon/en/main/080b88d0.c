@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 #define BattlePres_RunPairedUnitTransition Func_080b88d0
 

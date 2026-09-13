@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 struct BattleEffectSceneObject {
     u8 reserved_00[0x45];

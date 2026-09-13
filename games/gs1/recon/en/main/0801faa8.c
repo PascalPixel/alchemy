@@ -1,6 +1,6 @@
-#include "types.h"
-#include "runtime_interfaces.h"
-#include "runtime_mem.h"
+#include "TYPES.H"
+#include "RUNTIME_INTERFACES.H"
+#include "RUNTIME_MEM.H"
 
 #define SaveState_ProcessSelectedSlot Func_0801faa8
 

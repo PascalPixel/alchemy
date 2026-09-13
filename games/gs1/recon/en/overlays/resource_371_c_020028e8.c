@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* Absolute dialogue ID shared by the prompt and its completion flag. */
 extern u8 Data_00002644[];

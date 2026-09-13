@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * Battle-presentation scene at main:080ea0d8 (5756 bytes, the largest owner

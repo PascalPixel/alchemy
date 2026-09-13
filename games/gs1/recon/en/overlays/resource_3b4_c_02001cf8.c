@@ -22,7 +22,7 @@
  * Declarations are old-style because imports here are reached with differing
  * argument counts from different call sites.
  */
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * resource_3b4 owner at 0x02001cf8, 108 bytes: code 0x02001cf8-0x02001d5f and

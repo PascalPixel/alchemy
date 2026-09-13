@@ -55,9 +55,9 @@
  *     pool where an ordinary literal here becomes an immediate.
  */
 
-#include "types.h"
-#include "global_cells.h"
-#include "metadata_lookup.h"
+#include "TYPES.H"
+#include "GLOBAL_CELLS.H"
+#include "METADATA_LOOKUP.H"
 
 #define Ui_RunIconMonitor Func_08012518
 

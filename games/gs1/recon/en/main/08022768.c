@@ -1,5 +1,5 @@
-#include "types.h"
-#include "gs1_edition.h"
+#include "TYPES.H"
+#include "GS1_EDITION.H"
 
 extern u8 *Data_03001e8c;
 

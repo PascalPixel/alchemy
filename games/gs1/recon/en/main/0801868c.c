@@ -1,6 +1,6 @@
-#include "types.h"
-#include "runtime_interfaces.h"
-#include "gs1_edition.h"
+#include "TYPES.H"
+#include "RUNTIME_INTERFACES.H"
+#include "GS1_EDITION.H"
 
 s32 Func_08018a50(s32 start, s32 *width, s32 *count, s32 mode);
 

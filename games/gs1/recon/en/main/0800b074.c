@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 struct ZoomLimit {
     s32 field0;

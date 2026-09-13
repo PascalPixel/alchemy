@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* Retained candidate for the complete owner ending at 0x020005dc. */
 s32 Func_02000fc6(s32 flag);

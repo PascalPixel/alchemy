@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /* Modal owner status screen.
  *

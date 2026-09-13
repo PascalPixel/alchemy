@@ -1,7 +1,7 @@
-#include "types.h"
-#include "map.h"
-#include "global_cells.h"
-#include "script_object_entry.h"
+#include "TYPES.H"
+#include "MAP.H"
+#include "GLOBAL_CELLS.H"
+#include "SCRIPT_OBJECT_ENTRY.H"
 
 /* FunctionHead_0800ebec / Region_0800ee14 / Fragment_0800f1fa are one large
    C function split across three retained-assembly labels by literal-pool and

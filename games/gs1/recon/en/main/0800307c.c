@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * Interrupt-slot install/remove routine. index selects one of the 14 IRQ

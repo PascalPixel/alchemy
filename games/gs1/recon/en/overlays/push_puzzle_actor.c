@@ -1,5 +1,5 @@
-#include "types.h"
-#include "staged_actor.h"
+#include "TYPES.H"
+#include "STAGED_ACTOR.H"
 
 #define SceneActor_PushPuzzleActor Func_02000db4
 

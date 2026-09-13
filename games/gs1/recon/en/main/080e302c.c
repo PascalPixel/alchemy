@@ -1,4 +1,4 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * Battle-presentation full-screen weather scene at 0x080e302c.  The single

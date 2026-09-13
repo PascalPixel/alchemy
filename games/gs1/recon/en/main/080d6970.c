@@ -1,10 +1,10 @@
-#include "types.h"
+#include "TYPES.H"
 
 /*
  * Draft for the battle-presentation sub-effect at 0x080d6970.
  *
  * Same 0x03001eec "battle work" subsystem as the recovered sibling
- * games/gs1/src/battle/effects/member_orbit.c and the drafts
+ * games/gs1/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C and the drafts
  * games/gs1/recon/en/main/080e08c0.c, 080d82b0.c, 080e01e4.c and
  * 080e7404.c; the field offsets, the heap_cache/cursor prologue, the
  * Value_XXXXXXXX effect-id idiom and the Func_080072f4/Func_080072f0

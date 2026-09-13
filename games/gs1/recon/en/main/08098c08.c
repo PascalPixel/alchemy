@@ -1,7 +1,7 @@
-#include "fixed_math.h"
-#include "types.h"
-#include "object_efx.h"
-#include "sound_ids.h"
+#include "FIXED_MATH.H"
+#include "TYPES.H"
+#include "OBJECT_EFX.H"
+#include "SOUND_IDS.H"
 
 struct ImpactPosition {
     s32 x;

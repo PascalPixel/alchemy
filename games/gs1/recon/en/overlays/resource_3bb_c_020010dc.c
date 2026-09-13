@@ -18,7 +18,7 @@
  *   Func_02005206_a      0x0200c060
  *   Func_02005206_b      0x0200bf80
  */
-#include "types.h"
+#include "TYPES.H"
 
 /* AUDITED GENERATED CALL SCRIPT for Scene_ConfigureActorFormation:
  * 47 calls, coordinate-relative placement, three actor lookups, and closing

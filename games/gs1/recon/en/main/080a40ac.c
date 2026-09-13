@@ -1,5 +1,5 @@
-#include "item_menu.h"
-#include "owner_state.h"
+#include "ITEM_MENU.H"
+#include "OWNER_STATE.H"
 
 s32 Func_08077058(s32 owner, s32 slot);
 

@@ -15329,8 +15329,8 @@
 <rect x="310.30549543072203" y="179.19318666984955" width="3.0851515429910195" height="0.9025771769881006" style="fill:#326b7d"/>
 </g>
 </g>
-<g aria-label="inventory: 1,938 bytes · 8 items" data-node="container" data-kind="folder" data-bytes="1938" data-source="games/gs1/src/inventory/">
-<title>inventory: 1,938 bytes · 8 items</title>
+<g aria-label="inventory: 1,938 bytes · 7 items" data-node="container" data-kind="folder" data-bytes="1938" data-source="games/gs1/src/inventory/">
+<title>inventory: 1,938 bytes · 7 items</title>
 <rect class="container-frame" x="314.7445127391952" y="170.26212978891175" width="12.391475792050283" height="11.18749982340806" fill="#1f7f93"/>
 <path class="bevel-light" d="M314.7445127391952 181.44962961231982 V170.26212978891175 H327.1359885312455" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <path class="bevel-dark" d="M314.7445127391952 181.44962961231982 H327.1359885312455 V170.26212978891175" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
@@ -15338,17 +15338,13 @@
 <title>0x0807a628–0x0807a664: 60 bytes</title>
 <rect x="317.0389504862847" y="172.55656753600124" width="0.5888754941789672" height="0.996602408043399" style="fill:#326b7d"/>
 </g>
-<g aria-label="0x08078af8–0x08078b60: 104 bytes" data-node="leaf" data-kind="file" data-bytes="104" data-address="0x08078af8" data-source="games/gs1/src/inventory/count_item.c">
-<title>0x08078af8–0x08078b60: 104 bytes</title>
-<rect x="317.0389504862847" y="174.14204543822362" width="0.5888754941789672" height="2.159286203006468" style="fill:#326b7d"/>
-</g>
-<g aria-label="0x08078b60–0x08078b9c: 60 bytes" data-node="leaf" data-kind="file" data-bytes="60" data-address="0x08078b60" data-source="games/gs1/src/inventory/count_party_item.c">
-<title>0x08078b60–0x08078b9c: 60 bytes</title>
-<rect x="317.0389504862847" y="176.89020713540904" width="0.5888754941789672" height="0.9966024080433992" style="fill:#326b7d"/>
+<g aria-label="0x08078af8–0x08078b9c: 164 bytes" data-node="leaf" data-kind="file" data-bytes="164" data-address="0x08078af8" data-source="games/gs1/src/inventory/count.c">
+<title>0x08078af8–0x08078b9c: 164 bytes</title>
+<rect x="317.0389504862847" y="174.14204543822362" width="0.5888754941789672" height="3.7447641052288336" style="fill:#326b7d"/>
 </g>
 <g aria-label="0x08078bc0–0x08078bf0: 48 bytes" data-node="leaf" data-kind="file" data-bytes="48" data-address="0x08078bc0" data-source="games/gs1/src/inventory/has_equipment_value.c">
 <title>0x08078bc0–0x08078bf0: 48 bytes</title>
-<rect x="317.0389504862847" y="178.47568503763142" width="0.5888754941789672" height="0.6795068275989257" style="fill:#326b7d"/>
+<rect x="317.0389504862847" y="178.47568503763142" width="0.5888754941789672" height="0.6795068275989259" style="fill:#326b7d"/>
 </g>
 <g aria-label="items.c: 1,044 bytes · 7 items" data-node="container" data-kind="file" data-bytes="1044" data-source="games/gs1/src/inventory/items.c">
 <title>items.c: 1,044 bytes · 7 items</title>
@@ -30146,62 +30142,54 @@
 </g>
 </g>
 </g>
-<g aria-label="party: 1,756 bytes · 17 items" data-node="container" data-kind="folder" data-bytes="1756" data-source="games/gs1/src/party/">
-<title>party: 1,756 bytes · 17 items</title>
+<g aria-label="party: 1,756 bytes · 15 items" data-node="container" data-kind="folder" data-bytes="1756" data-source="games/gs1/src/party/">
+<title>party: 1,756 bytes · 15 items</title>
 <rect class="container-frame" x="359.2200078552055" y="271.9373101564694" width="8.932199505756216" height="14.062689843530649" fill="#1f7f93"/>
 <path class="bevel-light" d="M359.2200078552055 286 V271.9373101564694 H368.1522073609617" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <path class="bevel-dark" d="M359.2200078552055 286 H368.1522073609617 V271.9373101564694" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="0x080795fc–0x08079664: 104 bytes" data-node="leaf" data-kind="file" data-bytes="104" data-address="0x080795fc" data-source="games/gs1/src/party/active_owners.c">
 <title>0x080795fc–0x08079664: 104 bytes</title>
-<rect x="361.5995826890365" y="274.31688499030037" width="1.1768538766535688" height="0.7591496676619554" style="fill:#326b7d"/>
+<rect x="361.5951171027561" y="274.31241940402" width="1.2088327104561492" height="0.7502184951012265" style="fill:#326b7d"/>
 </g>
 <g aria-label="0x0801c46c–0x0801c49c: 48 bytes" data-node="leaf" data-kind="file" data-bytes="48" data-address="0x0801c46c" data-source="games/gs1/src/party/adjust_byte205_by_direction.c">
 <title>0x0801c46c–0x0801c49c: 48 bytes</title>
-<rect x="361.39519624005055" y="275.6307978766383" width="1.585626774625391" height="0.3503767696901332" style="fill:#326b7d"/>
-</g>
-<g aria-label="0x08079754–0x0807977c: 40 bytes" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x08079754" data-source="games/gs1/src/party/adjust_counter_capped_28.c">
-<title>0x08079754–0x0807977c: 40 bytes</title>
-<rect x="361.46200829824494" y="276.398363474213" width="0.48400088607888103" height="0.6839216795548962" style="fill:#326b7d"/>
-</g>
-<g aria-label="0x08079700–0x08079728: 40 bytes" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x08079700" data-source="games/gs1/src/party/adjust_six_digit_counter_a.c">
-<title>0x08079700–0x08079728: 40 bytes</title>
-<rect x="362.4300100704027" y="276.398363474213" width="0.48400088607888103" height="0.6839216795548962" style="fill:#326b7d"/>
-</g>
-<g aria-label="0x08079728–0x08079754: 44 bytes" data-node="leaf" data-kind="file" data-bytes="44" data-address="0x08079728" data-source="games/gs1/src/party/adjust_six_digit_counter_b.c">
-<title>0x08079728–0x08079754: 44 bytes</title>
-<rect x="361.4247774608543" y="277.5290552024561" width="0.4095392112975147" height="1.1087601240263958" style="fill:#326b7d"/>
+<rect x="361.39313520022887" y="275.6108744916952" width="1.6127965155106558" height="0.3462546900467198" style="fill:#326b7d"/>
 </g>
 <g aria-label="0x080792fc–0x08079338: 60 bytes" data-node="leaf" data-kind="file" data-bytes="60" data-address="0x080792fc" data-source="games/gs1/src/party/advance_owner_count_to_target.c">
 <title>0x080792fc–0x08079338: 60 bytes</title>
-<rect x="362.31831755823066" y="277.60351687723744" width="0.5584625608602474" height="0.959836774463663" style="fill:#326b7d"/>
+<rect x="361.43641703648467" y="276.34666570804444" width="1.5262328429989758" height="0.43281836255839984" style="fill:#326b7d"/>
 </g>
 <g aria-label="0x080919d8–0x08091a58: 128 bytes" data-node="leaf" data-kind="file" data-bytes="128" data-address="0x080919d8" data-source="games/gs1/src/party/check_member_value_total.c">
 <title>0x080919d8–0x08091a58: 128 bytes</title>
-<rect x="363.45787446263864" y="274.23917321958703" width="2.3924698352053855" height="0.6037261262353065" style="fill:#326b7d"/>
+<rect x="361.6816807752678" y="277.4575661719444" width="1.0357053654327895" height="0.9233458401245862" style="fill:#326b7d"/>
 </g>
 <g aria-label="0x080c1a34–0x080c1afc: 200 bytes" data-node="leaf" data-kind="file" data-bytes="200" data-address="0x080c1a34" data-source="games/gs1/src/party/compute_eligible_member_average.c">
 <title>0x080c1a34–0x080c1afc: 200 bytes</title>
-<rect x="363.62767243564235" y="275.61642344506134" width="2.052873889198026" height="0.9433220722426663" style="fill:#326b7d"/>
+<rect x="363.65437638398595" y="274.41262747969245" width="2.0225136537527426" height="0.9506346464460979" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08079700–0x0807977c: 124 bytes" data-node="leaf" data-kind="file" data-bytes="124" data-address="0x08079700" data-source="games/gs1/src/party/counters.c">
+<title>0x08079700–0x0807977c: 124 bytes</title>
+<rect x="363.4737558011612" y="276.1332761897599" width="2.38375481940226" height="0.5893934807965806" style="fill:#326b7d"/>
 </g>
 <g aria-label="0x080796c4–0x08079700: 60 bytes" data-node="leaf" data-kind="file" data-bytes="60" data-address="0x080796c4" data-source="games/gs1/src/party/list_active_owners.c">
 <title>0x080796c4–0x08079700: 60 bytes</title>
-<rect x="363.3900892090085" y="277.26548436291284" width="0.46815561897510816" height="1.3430227597308109" style="fill:#326b7d"/>
+<rect x="363.4113362717159" y="277.2496436219078" width="0.4645544219060688" height="1.360664099270439" style="fill:#326b7d"/>
 </g>
 <g aria-label="0x08021360–0x08021390: 48 bytes" data-node="leaf" data-kind="file" data-bytes="48" data-address="0x08021360" data-source="games/gs1/src/party/lookup_character_value_by_flag32.c">
 <title>0x08021360–0x08021390: 48 bytes</title>
-<rect x="364.2795848850613" y="277.2186688010154" width="0.3745244951800865" height="1.4366538835258325" style="fill:#326b7d"/>
+<rect x="364.2939896733374" y="277.2031881797172" width="0.37164353752485507" height="1.453574983651653" style="fill:#326b7d"/>
 </g>
 <g aria-label="0x0808b398–0x0808b3d0: 56 bytes" data-node="leaf" data-kind="file" data-bytes="56" data-address="0x0808b398" data-source="games/gs1/src/party/remap_character_id_by_flags.c">
 <title>0x0808b398–0x0808b3d0: 56 bytes</title>
-<rect x="365.14323469094904" y="277.33326961654296" width="0.7071096068949964" height="0.6037261262353063" style="fill:#326b7d"/>
+<rect x="365.15565806648743" y="277.3215694978175" width="0.6923462076114902" height="0.6084061737255025" style="fill:#326b7d"/>
 </g>
 <g aria-label="0x0808b3d0–0x0808b3ea: 26 bytes" data-node="leaf" data-kind="file" data-bytes="26" data-address="0x0808b3d0" data-source="games/gs1/src/party/remap_character_id_if_enabled.c">
 <title>0x0808b3d0–0x0808b3ea: 26 bytes</title>
-<rect x="364.99230315939025" y="278.38979033745477" width="0.9153415462176279" height="0.3018630631176532" style="fill:#326b7d"/>
+<rect x="365.0035565230561" y="278.3862803018372" width="0.9036384100930278" height="0.3042030868627513" style="fill:#326b7d"/>
 </g>
 <g aria-label="0x080b5b14–0x080b5b16: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x080b5b14" data-source="games/gs1/src/party/reserved_no_op.c">
 <title>0x080b5b14–0x080b5b16: 2 bytes</title>
-<rect x="366.0819840181154" y="278.26226658684465" width="0.04681556189751079" height="0.5569105643377956" style="fill:#326b7d"/>
+<rect x="366.08252419767575" y="278.25740647950107" width="0.04645544219060682" height="0.5619507315348958" style="fill:#326b7d"/>
 </g>
 <g aria-label="0x0808b1d8–0x0808b248: 112 bytes" data-node="leaf" data-kind="file" data-bytes="112" data-address="0x0808b1d8" data-source="games/gs1/src/party/resolve_table_pair.c">
 <title>0x0808b1d8–0x0808b248: 112 bytes</title>

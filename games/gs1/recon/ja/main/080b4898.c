@@ -87,7 +87,6 @@ void Func_08015130(s32 mode);
 void Func_080151d0(void);
 void Func_080152b8(u16 *selection);
 void Func_080b78e4(s32 actor_id, void *slot);
-struct BattleObjectSlot *GetBattleObjectSlot(s32 object_id);
 s32 Func_080b6cd0(s32 actor_id);
 void Func_080b7aac(s32 actor_id);
 s32 Func_080b7e60(s32 actor_id);

@@ -1794,20 +1794,6 @@
       ]
     },
     {
-      "overlay": "resource_37f",
-      "start": "0x0200161c",
-      "end": "0x02001a86",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
-        "Current head0200161c is valid, but the dossier score remains for02001604/1154bytes including24bytes of preceding owner pool. Current1130-byte region concatenates420-byte owner0200161c and710bytes of748-byte owner020017c0, omitting38 trailingbytes.",
-        "Candidate puts the second function body after the first instead of a separate entry with incomingr0, omitting its argument-dependent guards. Reference has83 calls, not82: site02001940 to080091c0 with six arguments is absent.",
-        "games/gs1/recon/en/dossiers.json#resource_37f:02001604"
-      ]
-    },
-    {
       "overlay": "resource_39e",
       "start": "0x0200064c",
       "end": "0x02000a8e",

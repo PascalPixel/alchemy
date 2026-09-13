@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define RunEventScript02 Func_0200161c
+#define Scene_RunTransitionCue Func_0200161c
 
 void Func_020031cc();
 void Func_020031e0();
@@ -74,7 +74,7 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-void RunEventScript02(void)
+void Scene_RunTransitionCue(void)
 {
     u32 i;
     s32 record;

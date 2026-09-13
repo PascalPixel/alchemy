@@ -76,7 +76,7 @@ s32 UiWork_IsCompleteFar(void);
 
 void Runtime_SetMainState19(void);
 void Menu_RunPairedEntryAction(s32, s32);
-void BattleFx_PositionSprite(s32, s32);
+void BattleEffect_PositionSprite(s32, s32);
 s32 OwnerAction_DiffSlots(void *, void *, void *, s32 *, s32 *);
 void FourObjectMotion_SetSlotPhase(s32, s32);
 s32 FourObjectMotion_SetSlotPosition(s32, s32, s32, s32);
@@ -501,7 +501,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
             dirty = 0;
             anim = Menu_GetModuloOfSum(anim, 2);
         }
-        BattleFx_PositionSprite(anim * 56 + 80, 16);
+        BattleEffect_PositionSprite(anim * 56 + 80, 16);
 
         if ((frame & 3) == 0) {
             if ((frame & 4) != 0) {

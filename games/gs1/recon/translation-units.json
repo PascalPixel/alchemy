@@ -175622,6 +175622,32 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "text-resource-measure",
+      "game": "gs1",
+      "source": "games/gs1/src/ui/text/resource_measure.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x08018790",
+          "extent": 28,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080187ac",
+          "extent": 80,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080187fc",
+          "extent": 84,
+          "state": "exact-c"
+        }
+      ]
     }
   ]
 }

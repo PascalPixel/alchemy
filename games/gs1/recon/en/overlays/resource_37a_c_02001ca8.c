@@ -216,16 +216,16 @@ void FieldScene_RunScene37aSequenceH(void)
         p7[38] = 0;
         do {
             *(s32 *)((s32)rec8 + 12) += 0x3333;
-            base5_0 = (base5_0 + 1);
             Call1((void (*)())Func_02004902_a, 1);
+            base5_0++;
         } while (base5_0 != 120);
         v5 = 0;
         Func_02004a94(190);
         do {
             *(s32 *)((s32)rec8 + 12) += 0x1999;
             *(s32 *)((s32)p7 + 24) += -0x400;
-            v5 = (v5 + 1);
             Func_02004926(1);
+            v5++;
         } while (v5 != 60);
         Func_020049e4(0, 0, 0);
         Func_02004a06(16, 4, 20);
@@ -245,16 +245,16 @@ void FieldScene_RunScene37aSequenceH(void)
         p7[38] = 0;
         do {
             *(s32 *)((s32)rec8 + 12) += 0x3333;
-            base5_0 = (base5_0 + 1);
             Func_020049ba(1);
+            base5_0++;
         } while (base5_0 != 120);
         v5 = 0;
         Func_02004b4c(190);
         do {
             *(s32 *)((s32)rec8 + 12) += 0x1999;
             *(s32 *)((s32)p7 + 24) += -0x400;
-            v5 = (v5 + 1);
             Func_020049de(1);
+            v5++;
         } while (v5 != 60);
         Func_02004a9c(16, 0, 0);
         Func_02004a52(80);

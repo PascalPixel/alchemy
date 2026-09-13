@@ -84012,22 +84012,6 @@
       "overlay": null
     },
     {
-      "id": "object-dispatch-register-child-metadata",
-      "game": "gs1",
-      "source": "games/gs1/src/object/dispatch/register_child_metadata.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x0800c430",
-          "extent": 34,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "runtime-remap-bytes-by-table",
       "game": "gs1",
       "source": "games/gs1/src/runtime/remap_bytes_by_table.c",
@@ -121867,42 +121851,6 @@
       "overlay": null
     },
     {
-      "id": "object-dispatch-children",
-      "game": "gs1",
-      "source": "games/gs1/src/object/dispatch/children.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x0800c2d8",
-          "extent": 40,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c300",
-          "extent": 66,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c344",
-          "extent": 66,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c388",
-          "extent": 100,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c3ec",
-          "extent": 28,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "script-interpreter-control",
       "game": "gs1",
       "source": "games/gs1/src/script/interpreter/control.c",
@@ -123450,52 +123398,6 @@
         {
           "address": "0x08078870",
           "extent": 84,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "object-dispatch-table",
-      "game": "gs1",
-      "source": "games/gs1/src/object/dispatch/table.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x0800c454",
-          "extent": 24,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c46c",
-          "extent": 16,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c47c",
-          "extent": 16,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c48c",
-          "extent": 16,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c49c",
-          "extent": 16,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c4ac",
-          "extent": 16,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0800c4bc",
-          "extent": 48,
           "state": "exact-c"
         }
       ],
@@ -171463,6 +171365,122 @@
         {
           "address": "0x0801c17c",
           "extent": 10,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "object-dispatch",
+      "game": "gs1",
+      "source": "games/gs1/src/object/dispatch.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0800c2d8",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800c300",
+          "extent": 66,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800c344",
+          "extent": 66,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800c388",
+          "extent": 100,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800c3ec",
+          "extent": 28,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800c408",
+          "extent": 38,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800c430",
+          "extent": 34,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800c454",
+          "extent": 24,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800c46c",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800c47c",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800c48c",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800c49c",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800c4ac",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800c4bc",
+          "extent": 48,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800c4ec",
+          "extent": 60,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800c528",
+          "extent": 30,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800c548",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800c570",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800c598",
+          "extent": 26,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800c5b4",
+          "extent": 72,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800c5fc",
+          "extent": 44,
           "state": "exact-c"
         }
       ]

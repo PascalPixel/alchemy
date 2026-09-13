@@ -2798,11 +2798,10 @@
     },
     "main:08078af8": {
       "name": "Inventory_CountItem",
-      "source": "inventory/count_item.c"
+      "source": "inventory/count.c"
     },
     "main:08078b60": {
-      "name": "PartyInventory_CountItem",
-      "source": "inventory/count_party_item.c"
+      "name": "PartyInventory_CountItem"
     },
     "main:08078b9c": {
       "name": "BattleAction_GetDirect",
@@ -4567,15 +4566,13 @@
     },
     "main:08079700": {
       "name": "Party_AdjustSixDigitCounterA",
-      "source": "party/adjust_six_digit_counter_a.c"
+      "source": "party/counters.c"
     },
     "main:08079728": {
-      "name": "Party_AdjustSixDigitCounterB",
-      "source": "party/adjust_six_digit_counter_b.c"
+      "name": "Party_AdjustSixDigitCounterB"
     },
     "main:08079754": {
-      "name": "Party_AdjustCounterCappedAt28",
-      "source": "party/adjust_counter_capped_28.c"
+      "name": "Party_AdjustCounterCappedAt28"
     },
     "main:0807977c": {
       "name": "Trade_ListFlaggedEntries",

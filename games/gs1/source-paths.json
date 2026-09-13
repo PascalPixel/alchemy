@@ -2410,24 +2410,19 @@
       "source": "effect_runtime/is_active.c"
     },
     "main:08091560": {
-      "name": "BattleFx_FindDefinition",
-      "source": "battle/effects/runtime/find_definition.c"
+      "name": "BattleFx_FindDefinition"
     },
     "main:08091584": {
-      "name": "BattleFx_GetAnimationValue",
-      "source": "battle/effects/runtime/get_animation_value.c"
+      "name": "BattleFx_GetAnimationValue"
     },
     "main:080915ac": {
-      "name": "BattleFx_GetResourceId",
-      "source": "battle/effects/runtime/get_resource_id.c"
+      "name": "BattleFx_GetResourceId"
     },
     "main:080915dc": {
-      "name": "BattleFx_GetFlags",
-      "source": "battle/effects/runtime/get_flags.c"
+      "name": "BattleFx_GetFlags"
     },
     "main:080915ec": {
-      "name": "Battle_UpdateModeFromShoulderButtons",
-      "source": "battle/runtime/update_mode_from_shoulder_buttons.c"
+      "name": "Battle_UpdateModeFromShoulderButtons"
     },
     "main:0809ae3c": {
       "name": "BattleFx_FilterObjectIdByFlags",
@@ -2454,16 +2449,13 @@
       "name": "Object_LinkObjectAndSetCallback"
     },
     "main:08091660": {
-      "name": "Battle_InitializeRenderObject",
-      "source": "battle/runtime/initialize_render_object.c"
+      "name": "Battle_InitializeRenderObject"
     },
     "main:080916b0": {
-      "name": "Battle_Reset",
-      "source": "battle/runtime/reset.c"
+      "name": "Battle_Reset"
     },
     "main:0809163c": {
-      "name": "Battle_WaitMode0",
-      "source": "battle/runtime/wait_if_mode_zero.c"
+      "name": "Battle_WaitMode0"
     },
     "main:0808f0d8": {
       "name": "EffectRuntime_PrepareRisingObject"
@@ -4714,11 +4706,10 @@
     },
     "main:08091540": {
       "name": "Object_EnableEffectSpawnCallback",
-      "source": "object/effects/enable_spawn_callback.c"
+      "source": "battle/effects/setup.c"
     },
     "main:08091550": {
-      "name": "Object_DisableEffectSpawnCallback",
-      "source": "object/effects/disable_spawn_callback.c"
+      "name": "Object_DisableEffectSpawnCallback"
     },
     "main:08091750": {
       "name": "BattleFx_FinishAction",

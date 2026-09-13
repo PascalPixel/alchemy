@@ -4005,19 +4005,16 @@
     },
     "main:08012d20": {
       "name": "Ui_SetGridColumnByte5",
-      "source": "ui/icon/set_grid_column_byte5.c"
+      "source": "ui/icon/grid_column.c"
     },
     "main:08012d48": {
-      "name": "Ui_SetGridColumnByte6",
-      "source": "ui/icon/set_grid_column_byte6.c"
+      "name": "Ui_SetGridColumnByte6"
     },
     "main:08012d70": {
-      "name": "Ui_FillGridColumnFromMetadata",
-      "source": "ui/icon/fill_grid_column_from_metadata.c"
+      "name": "Ui_FillGridColumnFromMetadata"
     },
     "main:08012de8": {
-      "name": "Ui_SetGridColumnNumber",
-      "source": "ui/icon/set_grid_column_number.c"
+      "name": "Ui_SetGridColumnNumber"
     },
     "main:08015ef4": {
       "name": "UiWork_InitFreeList"

@@ -4,7 +4,7 @@
 #include "battle_calc.h"
 
 /*
- * Data_03001f2c is the polymorphic menu-runtime cell (see inventory_menu.h /
+ * Data_03001f2c is the polymorphic menu-runtime cell (see item_menu.h /
  * psynergy_menu.h). This owner reads and writes fields shared by both the
  * Inventory and Psynergy menu views (item_owner/target_owner at 0x21a/0x21b,
  * info_window at 0x2c, the selected id at 0x178, entry_count at 0x218), plus
@@ -61,9 +61,9 @@ s32 Func_080a9f10(s32 action, s32 owner, s32 target, s32 flags);
 void Func_080aa460();
 void Func_080f9010(s32 cue);
 
-#define InventoryMenu_DrawMessage Func_080a3cf8
-#define InventoryMenu_PositionCategoryItems Func_080a9cbc
-#define InventoryMenu_ShowModalMessage Func_080a1d08
+#define ItemMenu_DrawMsg Func_080a3cf8
+#define ItemMenu_PosCategory Func_080a9cbc
+#define ItemMenu_ShowModalMessage Func_080a1d08
 #define PsynergyMenu_SetShortcut Func_080a65e4
 #define PsynergyMenu_ClassifySelectedPsynergy Func_080a5fe0
 #define Ability_PlayUseAnimation Func_080aa460
@@ -101,7 +101,7 @@ s32 Func_080a5cc0(s32 *out_owner, s32 unused, s32 *out_action)
         switch (state) {
         case 0:
             work->selected_action = 0;
-            InventoryMenu_DrawMessage(0, (s32)&Value_00000ae9);
+            ItemMenu_DrawMsg(0, (s32)&Value_00000ae9);
             if (Func_080a602c(0) == -1) {
                 done = 1;
                 result = -1;
@@ -117,16 +117,16 @@ s32 Func_080a5cc0(s32 *out_owner, s32 unused, s32 *out_action)
             if (work->entry_count != 0) {
                 switch (work->mode) {
                 case 0:
-                    InventoryMenu_DrawMessage(0, (s32)&Value_00000aea);
+                    ItemMenu_DrawMsg(0, (s32)&Value_00000aea);
                     break;
                 case 1:
-                    InventoryMenu_DrawMessage(0, (s32)&Value_00000af1);
+                    ItemMenu_DrawMsg(0, (s32)&Value_00000af1);
                     break;
                 case 2:
-                    InventoryMenu_DrawMessage(0, (s32)&Value_00000af0);
+                    ItemMenu_DrawMsg(0, (s32)&Value_00000af0);
                     break;
                 }
-                InventoryMenu_PositionCategoryItems();
+                ItemMenu_PosCategory();
                 Func_080a112c(work->field_024, work->item_owner, 0, 0);
                 selection = Func_080a6ccc(0);
                 state = 0;
@@ -137,13 +137,13 @@ s32 Func_080a5cc0(s32 *out_owner, s32 unused, s32 *out_action)
                             PsynergyMenu_SetShortcut(
                                 work->item_owner, selection, 0);
                             Func_08015278(work->info_window);
-                            InventoryMenu_ShowModalMessage(
+                            ItemMenu_ShowModalMessage(
                                 (s32)&Value_00000ae2, -1, -1);
                         } else {
                             PsynergyMenu_SetShortcut(
                                 work->item_owner, selection, 1);
                             Func_08015278(work->info_window);
-                            InventoryMenu_ShowModalMessage(
+                            ItemMenu_ShowModalMessage(
                                 (s32)&Value_00000ae3, -1, -1);
                         }
                         state = 0;
@@ -153,7 +153,7 @@ s32 Func_080a5cc0(s32 *out_owner, s32 unused, s32 *out_action)
             break;
 
         case 3:
-            InventoryMenu_DrawMessage(0, (s32)&Value_00000aeb);
+            ItemMenu_DrawMsg(0, (s32)&Value_00000aeb);
             state = 4;
             if (Func_080a63e4(0) == -1) {
                 work->flags_220 |= 1;
@@ -196,12 +196,12 @@ s32 Func_080a5cc0(s32 *out_owner, s32 unused, s32 *out_action)
                 Func_080a112c(work->field_024, work->target_owner, 0, 0);
                 Ability_PlayUseAnimation(work->selected_action & 0x3fff);
                 Func_08015278(work->info_window);
-                InventoryMenu_ShowModalMessage(
+                ItemMenu_ShowModalMessage(
                     work->message_offset + (s32)&Value_00000bef, 0, -1);
             } else {
                 Audio_PlayCue(114);
                 Func_08015278(work->info_window);
-                InventoryMenu_ShowModalMessage(
+                ItemMenu_ShowModalMessage(
                     work->message_offset + (s32)&Value_00000bef,
                     result,
                     result);

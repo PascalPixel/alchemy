@@ -39,7 +39,7 @@ void Shop_RepairItem(s32 unit_id, s32 slot)
     item = Item_Get(item_id);
     replaced_slot = Func_08077228(unit_id, item->type);
     raw_item = unit->inventory[slot];
-    price = Shop_ComputeRepairPrice(raw_item);
+    price = Shop_RepairPrice(raw_item);
 
     if (item->use_type != 2) {
         UiText_DrawQuantity(item_id, 2);
@@ -73,7 +73,7 @@ void Shop_RepairItem(s32 unit_id, s32 slot)
 
     saved_item = unit->inventory[slot];
     unit->inventory[slot] = confirm;
-    Shop_DrawPartyMemberItemGrid(shop->item_window, unit_id);
+    Shop_DrawUnitGrid(shop->item_window, unit_id);
     UiText_DrawQuantity(item_id, 2);
     UiMessage_ShowAndRestoreState(message + 2);
     UiWork_FinalizePending();
@@ -90,10 +90,10 @@ void Shop_RepairItem(s32 unit_id, s32 slot)
     Func_08077068(unit_id, slot);
     Func_08077230(-price);
     Shop_DrawMoney();
-    Shop_DrawPartyMemberItemGrid(shop->item_window, unit_id);
+    Shop_DrawUnitGrid(shop->item_window, unit_id);
     UiText_DrawQuantity(item_id, 2);
     UiMessage_ShowAndRestoreState(message + 3);
-    if (Shop_ConfirmEquipItem(unit_id, slot) != 0) {
-        Shop_SellReplacedItem(unit_id, replaced_slot);
+    if (Shop_ConfirmEquip(unit_id, slot) != 0) {
+        Shop_SellOld(unit_id, replaced_slot);
     }
 }

@@ -4,4 +4,4 @@
  * hand: resolve declaration collisions here or in shared headers. */
 
 #include "../main/080aae14.c"
-#include "../../../src/menu/compute_entry_values.c"
+#include "../../../src/menu/core/compute_entry_values.c"

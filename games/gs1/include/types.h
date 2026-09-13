@@ -120,7 +120,7 @@ typedef int bool;
 #define Resource_ClearSlotReferences Func_08003f04
 #define Resource_ActivateEntry Func_08003f78
 #define Resource_InitializeTable Func_0800403c
-#define Inn_CleanupResources Func_080b0204
+#define Inn_Cleanup Func_080b0204
 #define Runtime_AllocateHeapBlock Func_080048b0
 #define Resource_GetBuffer Func_080040d0
 #define Runtime_PushSlotEntry Func_08003dec
@@ -292,9 +292,9 @@ typedef int bool;
 #define InitializeEntryObjects Func_080a1870
 #define CreateSideObject Func_0801ec6c
 #define UpdateNameEntries Func_080b5e14
-#define Inn_CalculateRoomPrice Func_080b3210
+#define Inn_RoomPrice Func_080b3210
 #define Inn_CheckIn Func_080b3284
-#define Inn_PlaySleepSequence Func_080b3398
+#define Inn_PlaySleep Func_080b3398
 #define ConfigureSceneCamera Func_080b8fd4
 #define UpdateRadialBurstEffect Func_08098b10
 #define UpdateRadialCameraEffect Func_0809aa98
@@ -472,11 +472,11 @@ typedef int bool;
 #define BattlePlacement_UpdateTimedEntries Func_080bf5a8
 #define PsynergyMenu_RefreshOwnerEntries Func_080a1bdc
 #define PsynergyMenu_PositionOwnerEntry Func_080a1c2c
-#define InventoryMenu_PositionOwnerEntry Func_080a1c6c
-#define InventoryMenu_RefreshOwnerEntries Func_080a1cb0
-#define InventoryMenu_PositionCategoryItems Func_080a9cbc
-#define InventoryMenu_ResetCategoryItemPositions Func_080a9d84
-#define InventoryMenu_ApplyCategoryItemFlags Func_080a9d3c
+#define ItemMenu_PosOwner Func_080a1c6c
+#define ItemMenu_RefreshEntry Func_080a1cb0
+#define ItemMenu_PosCategory Func_080a9cbc
+#define ItemMenu_ResetCategory Func_080a9d84
+#define ItemMenu_ApplyFlags Func_080a9d3c
 #define BattleEffect_CleanupResourcesAndWindow Func_0809bcd4
 #define FieldEvent_ShowStatusMessage Func_0809b648
 #define FixedPoint_Multiply8_8 Func_080f40b4

@@ -8391,7 +8391,7 @@
     {
       "id": "menu-pattern-tiles-en",
       "game": "gs1",
-      "source": "games/gs1/src/menu/build_localized_pattern_tiles.c",
+      "source": "games/gs1/src/menu/core/build_localized_pattern_tiles.c",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {

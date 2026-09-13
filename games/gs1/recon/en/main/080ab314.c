@@ -4,8 +4,8 @@
 
 /*
  * Data_03001f2c and Data_03001e8c are the same polymorphic menu-runtime and
- * UI-text-work cells used by games/gs1/src/menu/select_quantity.c and
- * games/gs1/src/ui/text/prepare_message_work.c: reused per-mode scratch
+ * UI-text-work cells used by games/gs1/src/menu/sel/select_quantity.c and
+ * games/gs1/src/ui/text/work/prepare_message_work.c: reused per-mode scratch
  * pointers rather than a single named struct.  This owner's own field
  * offsets (0x10, 0x30, 0x10C on the first cell) line up with named fields on
  * struct CharacterSelectorState/PsynergyMenuState (selector_window /

@@ -1,11 +1,11 @@
 #include "types.h"
-#include "inventory_menu.h"
+#include "item_menu.h"
 #include "item.h"
 #include "owner_state.h"
 
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 
-#define InventoryMenu_RunItemCommand Func_080a2680
+#define ItemMenu_RunItemCommand Func_080a2680
 
 /* Message-table cells reached through the shared Value_<id> address symbols. */
 extern char Value_00000ad8;
@@ -55,8 +55,8 @@ s32 Func_080a524c(s32 index);
 s32 Func_080a5388(s32 mode);
 s32 Func_080a5788(s32 mode);
 
-#define InventoryMenu_GetCommandChoice  Func_080a414c
-#define InventoryMenu_SelectPartyMember Func_080a5788
+#define ItemMenu_GetCommandChoice  Func_080a414c
+#define ItemMenu_SelectPartyMember Func_080a5788
 #define Item_ClassifyUseMode            Func_080a46b4
 #define UiText_DrawWorkValueWithLabel   Func_080a23c0
 
@@ -75,14 +75,14 @@ s32 Func_080a5788(s32 mode);
  * still spelled as raw offsets. The named state numbers are the reference
  * jump-table order, not recovered constants.
  */
-s32 InventoryMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
+s32 ItemMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
 {
     s32 done;
     s32 sel;
     s32 ret;
     struct OwnerInventoryState *source;
     struct OwnerInventoryState *target;
-    struct InventoryMenuState *menu;
+    struct ItemMenuState *menu;
     struct ItemDefinition *item;
     void *source_copy;
     void *target_copy;
@@ -112,34 +112,34 @@ s32 InventoryMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
         switch (state) {
         case 0:
             menu->selected_slot = 0;
-            InventoryMenu_SetMessageWindowRow3Bounds();
-            InventoryMenu_SetItemWindowThreeRowBounds();
+            ItemMenu_SetMsgWin3();
+            ItemMenu_SetItemWin3();
             menu->selected_item_icon->state = 13;
-            InventoryMenu_DrawMessage(0, (s32)&Value_00000ad8);
+            ItemMenu_DrawMsg(0, (s32)&Value_00000ad8);
             UiWindow_Commit(menu->info_window);
             UiText_DrawWorkValueWithLabel(menu->info_window);
-            command = InventoryMenu_PrepareOwnerItems(0);
+            command = ItemMenu_PrepOwner(0);
             if (command == -1) {
                 ret = -1;
                 sel = 0;
                 done = 1;
             }
             UiWindow_Commit(menu->info_window);
-            InventoryMenu_HideAllItemIcons();
+            ItemMenu_HideAllIcons();
             state = 1;
             break;
 
         case 1:
-            if (InventoryMenu_CountItems(menu->item_owner) == 0) {
+            if (ItemMenu_Count(menu->item_owner) == 0) {
                 state = 0;
                 break;
             }
-            InventoryMenu_SetMessageWindowRow3Bounds();
-            InventoryMenu_SetItemWindowThreeRowBounds();
+            ItemMenu_SetMsgWin3();
+            ItemMenu_SetItemWin3();
             menu->selected_item_icon->state = 13;
-            M2C_FIELD(menu, struct InventoryMenuIcon **, 0x14)->state = 1;
-            InventoryMenu_DrawMessage(0, (s32)&Value_00000ad9);
-            sel = InventoryMenu_SelectPartyMember(0);
+            M2C_FIELD(menu, struct ItemMenuIcon **, 0x14)->state = 1;
+            ItemMenu_DrawMsg(0, (s32)&Value_00000ad9);
+            sel = ItemMenu_SelectPartyMember(0);
             state = 0;
             if (sel == -1) {
                 break;
@@ -149,7 +149,7 @@ s32 InventoryMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
             break;
 
         case 9:
-            command = InventoryMenu_GetCommandChoice();
+            command = ItemMenu_GetCommandChoice();
             if (command == -1) {
                 state = 1;
                 menu->completion_flag = 1;
@@ -169,15 +169,15 @@ s32 InventoryMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
                     state = 2;
                 }
                 if (mode == 2) {
-                    InventoryMenu_UseSelectedItem();
+                    ItemMenu_Use();
                     Func_08015278(menu->info_window);
-                    InventoryMenu_ShowModalMessage(
+                    ItemMenu_ShowModalMessage(
                         menu->message_offset + (s32)&Value_00000bef, 0, -1);
-                    M2C_FIELD(menu, struct InventoryMenuIcon **, 0x14)->state =
+                    M2C_FIELD(menu, struct ItemMenuIcon **, 0x14)->state =
                         13;
-                    menu->item_count = InventoryMenu_CollectItems(
+                    menu->item_count = ItemMenu_Collect(
                         OwnerState_GetFar(menu->item_owner), menu->items, 0);
-                    InventoryMenu_DrawItemIcons(menu->items, 0);
+                    ItemMenu_DrawIcons(menu->items, 0);
                     state = 0;
                 }
                 if (mode == -1 || mode == 0) {
@@ -206,34 +206,34 @@ s32 InventoryMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
             break;
 
         case 2:
-            InventoryMenu_HideAllItemIcons();
-            InventoryMenu_SetMessageWindowRow5Bounds();
-            InventoryMenu_SetItemWindowFiveRowBounds();
+            ItemMenu_HideAllIcons();
+            ItemMenu_SetMsgWin5();
+            ItemMenu_SetItemWin5();
             UiWindow_Commit(menu->message_window);
-            InventoryMenu_DrawSelectedItemHeader();
+            ItemMenu_DrawItemHead();
             UiText_DrawAt(
                 (s32)&Value_00000adb, menu->message_window, 16, 16);
             if (Func_080a38d0(0) != -1) {
                 cnt = 0;
-                if (InventoryMenu_IsSpecialItemRange(
+                if (ItemMenu_IsSpecial(
                         menu->selected_item & 0x1ff) != 0) {
                     cnt = 8;
                 }
-                mode = InventoryMenu_UseSelectedItem();
+                mode = ItemMenu_Use();
                 Func_080a112c(
                     M2C_FIELD(menu, s32 *, 0x24), menu->target_owner, 0, cnt);
                 if (mode != -1) {
                     Func_08015278(menu->info_window);
-                    InventoryMenu_ShowModalMessage(
+                    ItemMenu_ShowModalMessage(
                         menu->message_offset + (s32)&Value_00000bef, 0, -1);
-                    M2C_FIELD(menu, struct InventoryMenuIcon **, 0x14)->state =
+                    M2C_FIELD(menu, struct ItemMenuIcon **, 0x14)->state =
                         13;
-                    InventoryMenu_MaybeBreakSelectedItem();
+                    ItemMenu_TryBreak();
                     state = 1;
                 }
-                menu->item_count = InventoryMenu_CollectItems(
+                menu->item_count = ItemMenu_Collect(
                     OwnerState_GetFar(menu->item_owner), menu->items, 0);
-                InventoryMenu_DrawItemIcons(menu->items, 0);
+                ItemMenu_DrawIcons(menu->items, 0);
                 menu->completion_flag = 1;
             } else {
                 state = 9;
@@ -241,10 +241,10 @@ s32 InventoryMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
             break;
 
         case 6:
-            InventoryMenu_SetMessageWindowRow5Bounds();
-            InventoryMenu_SetItemWindowFiveRowBounds();
+            ItemMenu_SetMsgWin5();
+            ItemMenu_SetItemWin5();
             UiWindow_Commit(menu->message_window);
-            InventoryMenu_DrawSelectedItemHeader();
+            ItemMenu_DrawItemHead();
             UiText_DrawAt(
                 (s32)&Value_00000adc, menu->message_window, 16, 16);
             n = Func_080a38d0(1);
@@ -256,13 +256,13 @@ s32 InventoryMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
             break;
 
         case 5:
-            InventoryMenu_HideAllItemIcons();
+            ItemMenu_HideAllIcons();
             item = Item_Get(menu->selected_item & 0x1ff);
             cnt = 0;
             if ((item->flags & 16) != 0) {
                 n = (menu->selected_item >> 11) + 1;
                 if (n > 1) {
-                    InventoryMenu_DrawSelectedItemHeader();
+                    ItemMenu_DrawItemHead();
                     cnt = Func_080a4f08(0, n, 1);
                 }
             }
@@ -271,7 +271,7 @@ s32 InventoryMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
                 break;
             }
             menu->target_owner = 0;
-            InventoryMenu_DrawItemIcon(
+            ItemMenu_DrawIcon(
                 2,
                 (menu->selected_item & 0x1ff) | (cnt << 11),
                 menu->selected_item_icon->render_target,
@@ -290,13 +290,13 @@ s32 InventoryMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
                     Func_08077240(menu->selected_item & 0x1ff, 1);
                 }
                 Func_08077010(owner);
-                InventoryMenu_SetItemWindowThreeRowBounds();
-                InventoryMenu_RefreshOwnerItems(menu->item_owner, 0);
+                ItemMenu_SetItemWin3();
+                ItemMenu_RefreshOwner(menu->item_owner, 0);
                 menu->selected_item_icon->state = 13;
-                M2C_FIELD(menu, struct InventoryMenuIcon **, 0x14)->state = 13;
+                M2C_FIELD(menu, struct ItemMenuIcon **, 0x14)->state = 13;
                 WaitFrames(1);
                 Func_08015278(menu->info_window);
-                InventoryMenu_ShowModalMessage((s32)&Value_00000b7d, 14, 13);
+                ItemMenu_ShowModalMessage((s32)&Value_00000b7d, 14, 13);
                 menu->completion_flag = 1;
                 state = 1;
             } else {
@@ -311,12 +311,12 @@ s32 InventoryMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
             aborted = 0;
             item = Item_Get(menu->selected_item & 0x1ff);
             if ((item->flags & 16) != 0) {
-                qty = InventoryMenu_GetItemQuantity(
+                qty = ItemMenu_GetQty(
                     menu->target_owner, menu->selected_item & 0x1ff);
                 if (qty == 30) {
                     aborted = 1;
                 }
-                if (InventoryMenu_CountItems(menu->target_owner) == 15 &&
+                if (ItemMenu_Count(menu->target_owner) == 15 &&
                     qty == 0) {
                     state = 7;
                     break;
@@ -369,37 +369,37 @@ s32 InventoryMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
             if (aborted == 0) {
                 menu->item_owner = menu->target_owner;
                 menu->selected_item &= 0x1ff;
-                InventoryMenu_SetMessageWindowRow6Bounds();
+                ItemMenu_SetMsgWin6();
                 UiWindow_Commit(menu->message_window);
-                InventoryMenu_DrawSelectedItemHeader();
+                ItemMenu_DrawItemHead();
                 swapped = Func_080a5388(0);
             }
             if (Func_080770c0(0x150) != 0) {
                 break;
             }
-            InventoryMenu_RefreshOwnerItems(menu->target_owner, 1);
-            M2C_FIELD(menu, struct InventoryMenuIcon **, 0x14)->state = 13;
+            ItemMenu_RefreshOwner(menu->target_owner, 1);
+            M2C_FIELD(menu, struct ItemMenuIcon **, 0x14)->state = 13;
             WaitFrames(1);
             if (aborted == 1) {
                 Func_08015278(menu->info_window);
-                InventoryMenu_ShowModalMessage((s32)&Value_00000b85, 15, 14);
+                ItemMenu_ShowModalMessage((s32)&Value_00000b85, 15, 14);
             } else {
                 Func_08015278(menu->info_window);
                 if (swapped == 1) {
-                    InventoryMenu_ShowModalMessage(
+                    ItemMenu_ShowModalMessage(
                         (s32)&Value_00000b7f, 15, 14);
                 } else {
                     Func_080a3ef0(
                         menu->target_owner,
                         M2C_FIELD(menu, u16 *, 0x176),
                         0);
-                    InventoryMenu_ShowModalMessage(
+                    ItemMenu_ShowModalMessage(
                         (s32)&Value_00000b7c, 15, 14);
                     item = Item_Get(menu->selected_item);
                     if ((item->flags & 1) != 0) {
                         Audio_PlayCue(0x67);
                         Func_08015278(menu->info_window);
-                        InventoryMenu_ShowModalMessage(
+                        ItemMenu_ShowModalMessage(
                             (s32)&Value_00000b7c + 7, 14, 14);
                     }
                 }
@@ -410,10 +410,10 @@ s32 InventoryMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
 
         case 7:
             aborted = 0;
-            InventoryMenu_SetMessageWindowRow3Bounds();
-            InventoryMenu_SetItemWindowThreeRowBounds();
-            InventoryMenu_DrawMessage(0, (s32)&Value_00000add);
-            sel = InventoryMenu_SelectPartyMember(1);
+            ItemMenu_SetMsgWin3();
+            ItemMenu_SetItemWin3();
+            ItemMenu_DrawMsg(0, (s32)&Value_00000add);
+            sel = ItemMenu_SelectPartyMember(1);
             if (sel == -1) {
                 state = 6;
                 break;
@@ -483,40 +483,40 @@ s32 InventoryMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
                 Func_080072f8(source, source_copy, 0x14c);
                 Func_080072f8(target, target_copy, 0x14c);
                 Func_08015278(menu->info_window);
-                InventoryMenu_ShowModalMessage((s32)&Value_00000b84, 15, 14);
+                ItemMenu_ShowModalMessage((s32)&Value_00000b84, 15, 14);
             } else {
                 Func_08077010(menu->item_owner);
                 Func_08077010(menu->target_owner);
                 Func_080772c0(menu->item_owner);
                 Func_080772c0(menu->target_owner);
-                InventoryMenu_SetMessageWindowRow5Bounds();
-                InventoryMenu_SetMessageWindowRow6Bounds();
-                InventoryMenu_HidePageStartIcons();
+                ItemMenu_SetMsgWin5();
+                ItemMenu_SetMsgWin6();
+                ItemMenu_HidePageIcons();
                 UiWindow_Commit(menu->message_window);
                 menu->item_owner = menu->target_owner;
                 menu->selected_item &= 0x1ff;
-                InventoryMenu_DrawSelectedItemHeader();
+                ItemMenu_DrawItemHead();
                 swapped = Func_080a5388(0);
                 if (Func_080770c0(0x150) == 0) {
                     Func_08015278(menu->info_window);
-                    InventoryMenu_SetItemWindowFiveRowBounds();
-                    InventoryMenu_RefreshOwnerItems(menu->target_owner, 1);
+                    ItemMenu_SetItemWin5();
+                    ItemMenu_RefreshOwner(menu->target_owner, 1);
                     if (swapped == 0) {
                         Func_080a3ef0(
                             menu->target_owner,
                             M2C_FIELD(menu, u16 *, 0x176),
                             0);
-                        InventoryMenu_ShowModalMessage(
+                        ItemMenu_ShowModalMessage(
                             (s32)&Value_00000b7c, 15, 14);
                         item = Item_Get(menu->selected_item);
                         if ((item->flags & 1) != 0) {
                             Audio_PlayCue(0x67);
                             Func_08015278(menu->info_window);
-                            InventoryMenu_ShowModalMessage(
+                            ItemMenu_ShowModalMessage(
                                 (s32)&Value_00000b7c + 7, 14, 14);
                         }
                     } else {
-                        InventoryMenu_ShowModalMessage(
+                        ItemMenu_ShowModalMessage(
                             (s32)&Value_00000b81, 15, 14);
                     }
                 }
@@ -535,25 +535,25 @@ s32 InventoryMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
             }
             if (n == -2) {
                 Func_08015278(menu->info_window);
-                InventoryMenu_ShowModalMessage((s32)&Value_00000b82, 0, -1);
+                ItemMenu_ShowModalMessage((s32)&Value_00000b82, 0, -1);
                 state = 1;
                 break;
             }
             Func_08077010(menu->item_owner);
             Func_080772c0(menu->item_owner);
-            M2C_FIELD(menu, struct InventoryMenuIcon **, 0x14)->state = 13;
-            menu->item_count = InventoryMenu_CollectItems(
+            M2C_FIELD(menu, struct ItemMenuIcon **, 0x14)->state = 13;
+            menu->item_count = ItemMenu_Collect(
                 OwnerState_GetFar(menu->item_owner), menu->items, 0);
-            InventoryMenu_DrawItemIcons(menu->items, 0);
+            ItemMenu_DrawIcons(menu->items, 0);
             WaitFrames(1);
             Func_080a3ef0(menu->item_owner, menu->selected_slot, 0);
             Func_08015278(menu->info_window);
-            InventoryMenu_ShowModalMessage((s32)&Value_00000b7c, 15, 8);
+            ItemMenu_ShowModalMessage((s32)&Value_00000b7c, 15, 8);
             item = Item_Get(menu->selected_item);
             if ((item->flags & 1) != 0) {
                 Audio_PlayCue(0x67);
                 Func_08015278(menu->info_window);
-                InventoryMenu_ShowModalMessage(
+                ItemMenu_ShowModalMessage(
                     (s32)&Value_00000b7c + 7, 14, 8);
             }
             state = 1;
@@ -564,26 +564,26 @@ s32 InventoryMenu_RunItemCommand(s32 *owner_out, s32 *target_out, s32 *item_out)
                 &= 0xfdff;
             Func_08077010(menu->item_owner);
             Func_080772c0(menu->item_owner);
-            M2C_FIELD(menu, struct InventoryMenuIcon **, 0x14)->state = 13;
-            menu->item_count = InventoryMenu_CollectItems(
+            M2C_FIELD(menu, struct ItemMenuIcon **, 0x14)->state = 13;
+            menu->item_count = ItemMenu_Collect(
                 OwnerState_GetFar(menu->item_owner), menu->items, 0);
-            InventoryMenu_DrawItemIcons(menu->items, 0);
+            ItemMenu_DrawIcons(menu->items, 0);
             WaitFrames(1);
             M2C_FIELD(menu, u8 *, 0x25c) = 1;
             Func_080a3ef0(menu->item_owner, menu->selected_slot, 0);
             M2C_FIELD(menu, u8 *, 0x25c) = 0;
             Func_08015278(menu->info_window);
-            InventoryMenu_ShowModalMessage((s32)&Value_00000b80, 14, 8);
+            ItemMenu_ShowModalMessage((s32)&Value_00000b80, 14, 8);
             Func_0808a548();
             state = 1;
             break;
 
         case 10:
-            M2C_FIELD(menu, struct InventoryMenuIcon **, 0x14)->state = 13;
+            M2C_FIELD(menu, struct ItemMenuIcon **, 0x14)->state = 13;
             Func_080a4800(menu->selected_item);
             UiWindow_Commit(M2C_FIELD(menu, s32 *, 0x24));
             Func_080a3ef0(menu->item_owner, menu->selected_slot, 0);
-            M2C_FIELD(menu, struct InventoryMenuIcon **, 0x14)->state = 1;
+            M2C_FIELD(menu, struct ItemMenuIcon **, 0x14)->state = 1;
             state = 9;
             break;
 

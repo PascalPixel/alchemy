@@ -1,4 +1,4 @@
-#include "inventory_menu.h"
+#include "item_menu.h"
 #include "owner_state.h"
 
 s32 Func_08077058(s32 owner, s32 slot);

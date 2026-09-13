@@ -35,7 +35,7 @@
  * pointer to its own stack slot.  Both are the signature of GNU C nested
  * functions declared inside this function; the project already owns those two
  * nested bodies as separate sources (battle/draw_party_panels_with_empty_list.c
- * and ui/text/draw_localized_resource_80d.c), so this draft calls them as
+ * and ui/text/draw/draw_localized_resource_80d.c), so this draft calls them as
  * ordinary functions and holds the state pointer directly.  That drops the
  * two static-chain setups and turns roughly thirty double indirections into
  * single loads.

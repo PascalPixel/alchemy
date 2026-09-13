@@ -893,6 +893,19 @@ u8 *Func_02007ebe(s32);
 void Func_02007e72(u8 *, s32);
 void Func_02007e0a(u8 *, s32);
 void Func_02007fa2(s32, s32);
+void Func_0200662c();
+void Func_0200663a();
+void Func_0200668e();
+void Func_020066cc();
+void Func_020066e2();
+void Func_0200670c();
+void Func_02006720();
+void Func_0200673a();
+void Func_0200674c_a();
+void Func_02006766();
+void Func_02006772();
+
+/* Complete scene setup, including the two global halfword state writes. */
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
@@ -996,8 +1009,10 @@ static __inline__ s32 Value1_02004a2c(s32 (*f)(), s32 a0)
     return f(a0);
 }
 
-
-
+static __inline__ void SetActorDirection(s32 actor, s32 direction, s32 duration)
+{
+    Func_02006720(actor, direction, duration);
+}
 
 void ConfigureOverlayObject(struct OverlayObject *object, s32 parameter)
 {
@@ -2233,6 +2248,34 @@ void SceneState_RunActor13AtColumn42Setup(void)
         Func_020064ac_a(44, 117, 41, 117, a, b);
     }
     Func_02006530();
+}
+
+void Func_02001780(void)
+{
+    u8 *state = *(u8 **)0x03001ebc;
+    {
+        u16 *target = (u16 *)(state + 0xcba);
+        s32 shown = 0;
+
+        *target = shown;
+    }
+    {
+        u16 *target = (u16 *)(state + 0xcb6);
+        s32 shown = 1;
+
+        *target = shown;
+    }
+    Func_0200662c();
+    Func_020066e2(0x267d);
+    Func_020066cc(10, 0, 0);
+    Func_0200663a(10);
+    Func_0200670c(10, 0, 20);
+    SetActorDirection(10, 57344, 0);
+    Func_0200674c_a(65536, 8192);
+    Func_02006766(29360128, -1, 28311552, 1);
+    Func_02006772();
+    Func_0200673a(10, 0);
+    Func_0200668e();
 }
 
 void FieldScene_PlaceAndPinSlots8To10(void)

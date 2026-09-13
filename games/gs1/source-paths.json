@@ -18201,76 +18201,76 @@
       "source": "map/locations/heidia/village/village_scene.c"
     },
     "resource_3bf:02005a40": {
-      "name": "AddSoftDouble",
-      "source": "map/locations/heidia/village/village_scene/add_soft_double.c"
+      "name": "SoftFloat_Add",
+      "source": "lib/soft_float_heidia.c"
     },
     "resource_3bf:02005a78": {
-      "name": "SubtractSoftDouble",
-      "source": "map/locations/heidia/village/village_scene/subtract_soft_double.c"
+      "name": "SoftFloat_Subtract",
+      "source": "lib/soft_float_heidia.c"
     },
     "resource_3bf:02005ab8": {
-      "name": "GetSoftFloatStatusStorage",
-      "source": "map/locations/heidia/village/village_scene/get_status_storage.c"
+      "name": "SoftFloat_GetNaNRecord",
+      "source": "lib/soft_float_heidia.c"
     },
     "resource_3bf:02005ac0": {
-      "name": "SoftFloatRecordAIsNaN",
-      "source": "map/locations/heidia/village/float_status.c"
+      "name": "SoftFloat_IsNaNForAdd",
+      "source": "lib/soft_float_heidia.c"
     },
     "resource_3bf:02005ad0": {
-      "name": "SoftFloatRecordAIsInfinity",
-      "source": "map/locations/heidia/village/float_status.c"
+      "name": "SoftFloat_IsInfinityForAdd",
+      "source": "lib/soft_float_heidia.c"
     },
     "resource_3bf:02005ae0": {
-      "name": "SoftFloatRecordAIsZero",
-      "source": "map/locations/heidia/village/float_status.c"
+      "name": "SoftFloat_IsZeroForAdd",
+      "source": "lib/soft_float_heidia.c"
     },
     "resource_3bf:02005af0": {
-      "name": "SignedIntToSoftDouble",
-      "source": "map/locations/heidia/village/village_scene/signed_int_to_soft_double.c"
+      "name": "SoftFloat_FromInt",
+      "source": "lib/soft_float_heidia.c"
     },
     "resource_3bf:02005b6c": {
-      "name": "SoftDoubleToSignedInt",
-      "source": "map/locations/heidia/village/village_scene/soft_double_to_signed_int.c"
+      "name": "SoftFloat_ToInt",
+      "source": "lib/soft_float_heidia.c"
     },
     "resource_3bf:02005bd8": {
-      "name": "SoftFloatRecordBIsNaN",
-      "source": "map/locations/heidia/village/float_status.c"
+      "name": "SoftFloat_IsNaNForConvert",
+      "source": "lib/soft_float_heidia.c"
     },
     "resource_3bf:02005be8": {
-      "name": "SoftFloatRecordBIsInfinity",
-      "source": "map/locations/heidia/village/float_status.c"
+      "name": "SoftFloat_IsInfinityForConvert",
+      "source": "lib/soft_float_heidia.c"
     },
     "resource_3bf:02005bf8": {
-      "name": "SoftFloatRecordBIsZero",
-      "source": "map/locations/heidia/village/float_status.c"
+      "name": "SoftFloat_IsZeroForConvert",
+      "source": "lib/soft_float_heidia.c"
     },
     "resource_3bf:02005c08": {
-      "name": "LogicalShiftRight64",
-      "source": "map/locations/heidia/village/village_scene/logical_shift_right_64.c"
+      "name": "SoftFloat_ShiftRight",
+      "source": "lib/soft_float_heidia.c"
     },
     "resource_3bf:02005c38": {
-      "name": "PackSoftDouble",
-      "source": "map/locations/heidia/village/village_scene/pack_soft_double.c"
+      "name": "SoftFloat_Pack",
+      "source": "lib/soft_float_heidia.c"
     },
     "resource_3bf:02005dd4": {
-      "name": "SoftFloatRecordCIsNaN",
-      "source": "map/locations/heidia/village/float_status.c"
+      "name": "SoftFloat_IsNaNForPack",
+      "source": "lib/soft_float_heidia.c"
     },
     "resource_3bf:02005de4": {
-      "name": "SoftFloatRecordCIsInfinity",
-      "source": "map/locations/heidia/village/float_status.c"
+      "name": "SoftFloat_IsInfinityForPack",
+      "source": "lib/soft_float_heidia.c"
     },
     "resource_3bf:02005df4": {
-      "name": "SoftFloatRecordCIsZero",
-      "source": "map/locations/heidia/village/float_status.c"
+      "name": "SoftFloat_IsZeroForPack",
+      "source": "lib/soft_float_heidia.c"
     },
     "resource_3bf:02005e04": {
-      "name": "UnpackSoftDouble",
-      "source": "map/locations/heidia/village/village_scene/unpack_soft_double.c"
+      "name": "SoftFloat_Unpack",
+      "source": "lib/soft_float_heidia.c"
     },
     "resource_3bf:020057ec": {
-      "name": "AddSoftFloatParts",
-      "source": "map/locations/heidia/village/village_scene/add_parts_copy.c"
+      "name": "SoftFloat_AddParts",
+      "source": "lib/soft_float_heidia.c"
     },
     "resource_3bf:02000c78": {
       "name": "PlaceActorTwelveAndFinishScene",

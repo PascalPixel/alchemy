@@ -17084,195 +17084,195 @@
 </g>
 </g>
 </g>
-<g aria-label="xian: 14,668 bytes · 2 items" data-node="container" data-kind="folder" data-bytes="14668" data-source="games/gs1/src/map/locations/xian/">
-<title>xian: 14,668 bytes · 2 items</title>
+<g aria-label="xian: 14,668 bytes · 1 items" data-node="container" data-kind="folder" data-bytes="14668" data-source="games/gs1/src/map/locations/xian/">
+<title>xian: 14,668 bytes · 1 items</title>
 <rect class="container-frame" x="325.60934796950517" y="229.31576326653695" width="19.001801456642134" height="32.374537449564315" fill="#1f7f93"/>
 <path class="bevel-light" d="M325.60934796950517 261.69030071610126 V229.31576326653695 H344.6111494261473" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <path class="bevel-dark" d="M325.60934796950517 261.69030071610126 H344.6111494261473 V229.31576326653695" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="39e · Scene_RunActorNineTransition · C: 196 bytes" data-node="leaf" data-kind="file" data-bytes="196" data-address="0x02000658" data-source="games/gs1/src/map/locations/xian/actor_nine_transition.c">
-<title>39e · Scene_RunActorNineTransition · C: 196 bytes</title>
-<rect x="327.70413610251774" y="231.41055139954955" width="14.812225190616957" height="0.18957626602517744" style="fill:#326b7d"/>
-</g>
-<g aria-label="school_and_roof_scene.c: 14,472 bytes · 44 items" data-node="container" data-kind="file" data-bytes="14472" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
-<title>school_and_roof_scene.c: 14,472 bytes · 44 items</title>
-<rect class="container-frame" x="327.60934796950517" y="231.6949157985873" width="15.001801456642134" height="27.99538491751396" fill="#1f7f93"/>
-<path class="bevel-light" d="M327.60934796950517 259.69030071610126 V231.6949157985873 H342.6111494261473" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M327.60934796950517 259.69030071610126 H342.6111494261473 V231.6949157985873" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="school_and_roof_scene.c: 14,668 bytes · 45 items" data-node="container" data-kind="file" data-bytes="14668" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
+<title>school_and_roof_scene.c: 14,668 bytes · 45 items</title>
+<rect class="container-frame" x="327.60934796950517" y="231.31576326653695" width="15.001801456642134" height="28.374537449564315" fill="#1f7f93"/>
+<path class="bevel-light" d="M327.60934796950517 259.69030071610126 V231.31576326653695 H342.6111494261473" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M327.60934796950517 259.69030071610126 H342.6111494261473 V231.31576326653695" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="39e · SetEffectMode · C: 22 bytes" data-node="leaf" data-kind="file" data-bytes="22" data-address="0x02000030" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · SetEffectMode · C: 22 bytes</title>
-<rect x="329.7065813517272" y="233.79214918080933" width="0.1944667644440686" height="0.8373682639471093" style="fill:#326b7d"/>
+<rect x="329.72595333427023" y="233.43236863130204" width="0.6291191657685195" height="0.23321072953017596" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · NewEffectObject · C: 86 bytes" data-node="leaf" data-kind="file" data-bytes="86" data-address="0x02000048" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · NewEffectObject · C: 86 bytes</title>
-<rect x="330.2562402554911" y="233.95287455568507" width="1.004459007821675" height="0.515917514195589" style="fill:#326b7d"/>
+<rect x="329.82493044332983" y="233.99776719942196" width="0.4311649476493477" height="1.3921189377683918" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · NewFlippedEffectObject · C: 98 bytes" data-node="leaf" data-kind="file" data-bytes="98" data-address="0x020000a0" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · NewFlippedEffectObject · C: 98 bytes</title>
-<rect x="331.77661677750837" y="233.95287455568507" width="1.216604569033386" height="0.515917514195589" style="fill:#326b7d"/>
+<rect x="329.82493044332983" y="235.8210510848397" width="0.4311649476493477" height="1.6465306427104016" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · SpawnEffect · C: 472 bytes" data-node="leaf" data-kind="file" data-bytes="472" data-address="0x0200013c" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · SpawnEffect · C: 472 bytes</title>
-<rect x="330.10934796950517" y="235.22675082697847" width="2.641832134134376" height="1.3642045310710484" style="fill:#326b7d"/>
+<rect x="330.97167786480384" y="233.81576326653695" width="3.2281003935856774" height="1.0409200522415296" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · StopXianActor · C: 14 bytes" data-node="leaf" data-kind="file" data-bytes="14" data-address="0x02000314" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · StopXianActor · C: 14 bytes</title>
-<rect x="329.6831485379802" y="237.16475592652452" width="0.14760113695002847" height="0.7175088140381367" style="fill:#326b7d"/>
+<rect x="334.73113069774877" y="233.34711570589616" width="0.06270487871843144" height="1.9782151735230982" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FaceXianActorToPlayer · C: 38 bytes" data-node="leaf" data-kind="file" data-bytes="38" data-address="0x02000324" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FaceXianActorToPlayer · C: 38 bytes</title>
-<rect x="330.1048660721231" y="237.2912711867674" width="0.4006316574357916" height="0.4644782935523735" style="fill:#326b7d"/>
+<rect x="330.6316508396674" y="235.51665629364197" width="0.31994594972703044" height="0.7657451288179147" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · GetXianScriptData · C: 48 bytes" data-node="leaf" data-kind="file" data-bytes="48" data-address="0x0200034c" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · GetXianScriptData · C: 48 bytes</title>
-<rect x="329.8286410872595" y="238.175358426792" width="0.43858623550865605" height="0.5596175540930729" style="fill:#326b7d"/>
+<rect x="331.3287079799669" y="235.57382153448745" width="0.5760791992989602" height="0.4342764314179781" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · GetXianInitialState · C: 4 bytes" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x0200037c" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · GetXianInitialState · C: 4 bytes</title>
-<rect x="330.5413437199611" y="238.01088858847626" width="0.10964655887716401" height="0.22308803765674562" style="fill:#326b7d"/>
+<rect x="331.16585431818515" y="236.2795207355417" width="0.22821610238448498" height="0.10856910785449447" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · GetXianMessageData · C: 8 bytes" data-node="leaf" data-kind="file" data-bytes="8" data-address="0x02000380" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · GetXianMessageData · C: 8 bytes</title>
-<rect x="330.5413437199611" y="238.34362318501016" width="0.10964655887716401" height="0.5558226341906554" style="fill:#326b7d"/>
+<rect x="331.50263952842414" y="236.2795207355417" width="0.5650013126234644" height="0.10856910785449447" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_RunScene39e_02000414 · C: 112 bytes" data-node="leaf" data-kind="file" data-bytes="112" data-address="0x02000414" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_RunScene39e_02000414 · C: 112 bytes</title>
-<rect x="330.97992995546974" y="237.3650717552424" width="0.5482327943858201" height="1.315080946204074" style="fill:#326b7d"/>
+<rect x="330.7818753158167" y="236.75257184833626" width="1.0298526281453162" height="0.620394902025683" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_RunFlag88FBranch · C: 148 bytes" data-node="leaf" data-kind="file" data-bytes="148" data-address="0x02000484" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_RunFlag88FBranch · C: 148 bytes</title>
-<rect x="332.16450438619626" y="237.45318059719727" width="0.7244504782955479" height="1.1388632622943462" style="fill:#326b7d"/>
+<rect x="332.41268329314784" y="235.64744121695145" width="0.5815157963459711" height="1.7449650862503403" style="fill:#326b7d"/>
+</g>
+<g aria-label="39e · Scene_RunActorNineTransition · C: 196 bytes" data-node="leaf" data-kind="file" data-bytes="196" data-address="0x02000658" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
+<title>39e · Scene_RunActorNineTransition · C: 196 bytes</title>
+<rect x="333.67001474470663" y="235.74174107581837" width="0.7701155140797996" height="1.5563653685165115" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · Scene_RunScene39eSequenceB · C: 928 bytes" data-node="leaf" data-kind="file" data-bytes="928" data-address="0x0200071c" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · Scene_RunScene39eSequenceB · C: 928 bytes</title>
-<rect x="333.75118010363957" y="234.1949157985873" width="2.440664263867906" height="3.920040183919725" style="fill:#326b7d"/>
+<rect x="330.10934796950517" y="238.18316420137478" width="2.3107384151751758" height="4.1245105672013835" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_ShowDialogue17B1 · C: 32 bytes" data-node="leaf" data-kind="file" data-bytes="32" data-address="0x02000abc" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_ShowDialogue17B1 · C: 32 bytes</title>
-<rect x="333.3360083826727" y="238.69978426154012" width="1.5506755738677556" height="0.1696565580661975" style="fill:#326b7d"/>
+<rect x="333.0736297724617" y="237.8367075891561" width="0.6454640400104003" height="0.30708677556262975" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_ShowDialogue1825 · C: 32 bytes" data-node="leaf" data-kind="file" data-bytes="32" data-address="0x02000adc" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_ShowDialogue1825 · C: 32 bytes</title>
-<rect x="335.05634051460663" y="238.69978426154012" width="1.5506755738677556" height="0.1696565580661975" style="fill:#326b7d"/>
+<rect x="334.0261805880347" y="237.8367075891561" width="0.6454640400104003" height="0.30708677556262975" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_RunRoofSceneExit · C: 214 bytes" data-node="leaf" data-kind="file" data-bytes="214" data-address="0x02000afc" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_RunRoofSceneExit · C: 214 bytes</title>
-<rect x="337.1379780284378" y="234.14104945951757" width="0.8922673218605621" height="1.2952513073646559" style="fill:#326b7d"/>
+<rect x="333.39636179246685" y="238.77361316028654" width="0.95255081557303" height="1.1010919960020562" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_ShowDialogue182D · C: 32 bytes" data-node="leaf" data-kind="file" data-bytes="32" data-address="0x02000bd4" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_ShowDialogue182D · C: 32 bytes</title>
-<rect x="338.5447389683919" y="233.76327575575058" width="1.9980505005921523" height="0.13671991432657613" style="fill:#326b7d"/>
+<rect x="332.996858078571" y="240.42775225796578" width="1.7515582433647452" height="0.15354338778131488" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_RunForwardArcBurst · C: 224 bytes" data-node="leaf" data-kind="file" data-bytes="224" data-address="0x02000bf4" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_RunForwardArcBurst · C: 224 bytes</title>
-<rect x="338.95489871137164" y="234.44687532738345" width="1.1777310146326956" height="0.9570394002860328" style="fill:#326b7d"/>
+<rect x="333.39636179246685" y="241.13434274742426" width="0.95255081557303" height="1.1970566133653784" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_RunDescentBurst · C: 224 bytes" data-node="leaf" data-kind="file" data-bytes="224" data-address="0x02000db4" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_RunDescentBurst · C: 224 bytes</title>
-<rect x="337.14909662434883" y="236.33968668465383" width="0.9145045136826323" height="1.3195570651005692" style="fill:#326b7d"/>
+<rect x="335.31611807488395" y="233.80669332559447" width="0.9818601181150616" height="1.1035798257417588" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_DispatchApproachByFacing · C: 84 bytes" data-node="leaf" data-kind="file" data-bytes="84" data-address="0x020012e0" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_DispatchApproachByFacing · C: 84 bytes</title>
-<rect x="336.90128764051843" y="238.32593927960664" width="1.4101224813434143" height="0.4188865460218502" style="fill:#326b7d"/>
+<rect x="336.9730070242031" y="233.49986203868352" width="0.3681975442931481" height="1.717242399563672" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_DispatchByFacing · C: 132 bytes" data-node="leaf" data-kind="file" data-bytes="132" data-address="0x02001334" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_DispatchByFacing · C: 132 bytes</title>
-<rect x="338.80883789526274" y="236.17041892820254" width="1.5143270304945435" height="0.5759690007800441" style="fill:#326b7d"/>
+<rect x="337.8146014111589" y="233.605061337053" width="0.5785961410320899" height="1.5068438028247304" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_DispatchByFacingAndFlags · C: 220 bytes" data-node="leaf" data-kind="file" data-bytes="220" data-address="0x020013b8" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_DispatchByFacingAndFlags · C: 220 bytes</title>
-<rect x="339.00082756218944" y="237.5143465966893" width="1.1303476966411807" height="0.959948334633407" style="fill:#326b7d"/>
+<rect x="339.16465907356707" y="233.79792671739702" width="0.9643269017201497" height="1.1211130421366706" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_RunSecondEnsembleBeat · C: 2,236 bytes" data-node="leaf" data-kind="file" data-bytes="2236" data-address="0x02001494" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_RunSecondEnsembleBeat · C: 2,236 bytes</title>
-<rect x="330.10934796950517" y="239.4542690986394" width="5.077082029904104" height="5.71181026437925" style="fill:#326b7d"/>
+<rect x="335.3251880158264" y="235.90120321039376" width="4.7859614103208985" height="6.065217749187651" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_RunSkippableStoryBeat · C: 108 bytes" data-node="leaf" data-kind="file" data-bytes="108" data-address="0x02001d50" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_RunSkippableStoryBeat · C: 108 bytes</title>
-<rect x="335.78644041725596" y="239.0542795164861" width="4.724698591044609" height="0.20002083569342133" style="fill:#326b7d"/>
+<rect x="334.9105014680751" y="242.5517344118301" width="5.6153345058235224" height="0.17062690449737647" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_RunEnsembleStoryBeat · C: 1,704 bytes" data-node="leaf" data-kind="file" data-bytes="1704" data-address="0x02001dbc" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_RunEnsembleStoryBeat · C: 1,704 bytes</title>
-<rect x="336.18642999940926" y="239.85431077002625" width="3.9247194267380303" height="5.311768592992406" style="fill:#326b7d"/>
+<rect x="330.10934796950517" y="243.30767476857616" width="4.599483178649402" height="4.563536363590219" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_ShowDialogue1A58 · C: 32 bytes" data-node="leaf" data-kind="file" data-bytes="32" data-address="0x02002464" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_ShowDialogue1A58 · C: 32 bytes</title>
-<rect x="329.7203387859332" y="245.77707017944672" width="0.221981632856111" height="1.0928371856169736" style="fill:#326b7d"/>
+<rect x="335.32253600234037" y="242.92137962276198" width="0.22740970837161434" height="1.05888435800074" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · StartSchoolDoorEvent · C: 132 bytes" data-node="leaf" data-kind="file" data-bytes="132" data-address="0x02002484" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · StartSchoolDoorEvent · C: 132 bytes</title>
-<rect x="330.38201593983564" y="245.99478406763694" width="1.1739390618263732" height="0.6574094092365423" style="fill:#326b7d"/>
+<rect x="335.9852240814909" y="243.12924828516924" width="1.2329830608796413" height="0.6431470331861772" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_DispatchByRange · C: 68 bytes" data-node="leaf" data-kind="file" data-bytes="68" data-address="0x02002508" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_DispatchByRange · C: 68 bytes</title>
-<rect x="329.8291223986255" y="247.20067261061206" width="0.4395488582406516" height="0.9714762152426589" style="fill:#326b7d"/>
+<rect x="335.4339796804486" y="244.31911736724257" width="0.45029706458811136" height="0.9301160798114886" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_ShowDialogue17DF · C: 40 bytes" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x0200254c" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_ShowDialogue17DF · C: 40 bytes</title>
-<rect x="330.6190961557534" y="247.11154865125872" width="1.1349130807598882" height="0.2613009395339464" style="fill:#326b7d"/>
+<rect x="336.24186559044495" y="244.2264091480627" width="0.2648806262283008" height="1.1155325181712992" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_SelectData · C: 68 bytes" data-node="leaf" data-kind="file" data-bytes="68" data-address="0x02002574" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_SelectData · C: 68 bytes</title>
-<rect x="330.7105514845903" y="247.7256058591635" width="0.9520024230861256" height="0.44421159720770886" style="fill:#326b7d"/>
+<rect x="336.8643350620814" y="244.31911736724257" width="0.45029706458811136" height="0.9301160798114886" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_SpawnRandomizedParticle · C: 164 bytes" data-node="leaf" data-kind="file" data-bytes="164" data-address="0x020025b8" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_SpawnRandomizedParticle · C: 164 bytes</title>
-<rect x="332.2393406534835" y="246.02076031022185" width="0.7093618944063663" height="1.3993097955976377" style="fill:#326b7d"/>
+<rect x="337.9031345532956" y="243.17102866290816" width="0.7267077886639969" height="1.3362166574048735" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_ApplyOffset0Neg32 · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x0200265c" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_ApplyOffset0Neg32 · C: 16 bytes</title>
-<rect x="332.0028866886814" y="247.89297803542374" width="0.2364539648021221" height="0.3807182371502692" style="fill:#326b7d"/>
+<rect x="337.66089862374093" y="244.99171717942238" width="0.2422359295546656" height="0.3615468351484182" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_ApplyOffset0Pos32 · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x0200266c" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_ApplyOffset0Pos32 · C: 16 bytes</title>
-<rect x="332.4757946182856" y="247.89297803542374" width="0.2364539648021221" height="0.3807182371502692" style="fill:#326b7d"/>
+<rect x="338.14537048285024" y="244.99171717942238" width="0.24223592955466564" height="0.3615468351484181" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_ApplyOffsetNeg32_0 · C: 16 bytes" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x0200267c" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_ApplyOffsetNeg32_0 · C: 16 bytes</title>
-<rect x="332.9487025478898" y="247.89297803542374" width="0.2364539648021221" height="0.3807182371502692" style="fill:#326b7d"/>
+<rect x="338.62984234195955" y="244.99171717942238" width="0.24223592955466564" height="0.3615468351484181" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_RunOpeningAuxiliarySequence · C: 76 bytes" data-node="leaf" data-kind="file" data-bytes="76" data-address="0x0200268c" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_RunOpeningAuxiliarySequence · C: 76 bytes</title>
-<rect x="333.5228370287675" y="245.88553289669312" width="1.1404269617067726" height="0.438907067348911" style="fill:#326b7d"/>
+<rect x="339.20788876597237" y="243.02236729825697" width="1.1885681304941056" height="0.4293850593615859" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_RunScene39eSequenceA · C: 140 bytes" data-node="leaf" data-kind="file" data-bytes="140" data-address="0x020026d8" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_RunScene39eSequenceA · C: 140 bytes</title>
-<rect x="333.69821700235696" y="246.9387270049804" width="0.7896670145278418" height="0.8273590230734097" style="fill:#326b7d"/>
+<rect x="339.38868247517723" y="244.06193112618502" width="0.8269807120843489" height="0.7909724777713425" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_PlaySound123AndEnable · C: 20 bytes" data-node="leaf" data-kind="file" data-bytes="20" data-address="0x02002764" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_PlaySound123AndEnable · C: 20 bytes</title>
-<rect x="333.3611344250074" y="248.21867046523207" width="1.4638321692270229" height="0.11550185982866079" style="fill:#326b7d"/>
+<rect x="339.0496942704181" y="245.30488787696856" width="1.5049571216026425" height="0.11299606825304886" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_RunScene39e_02002778 · C: 116 bytes" data-node="leaf" data-kind="file" data-bytes="116" data-address="0x02002778" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_RunScene39e_02002778 · C: 116 bytes</title>
-<rect x="335.076788231109" y="245.86015006997889" width="0.38814141392046453" height="2.3377024780359306" style="fill:#326b7d"/>
+<rect x="335.39185361318" y="245.65740444437358" width="0.3660449300509094" height="2.530784222767356" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_RunScene39e_020027ec · C: 740 bytes" data-node="leaf" data-kind="file" data-bytes="740" data-address="0x020027ec" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_RunScene39e_020027ec · C: 740 bytes</title>
-<rect x="336.1590003519897" y="246.16607936301867" width="3.952149074157651" height="1.7258438919563952" style="fill:#326b7d"/>
+<rect x="336.4409210082564" y="245.97438197934812" width="3.6702284178909137" height="1.896829152818265" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_RunRoofEnsembleSequence · C: 5,000 bytes" data-node="leaf" data-kind="file" data-bytes="5000" data-address="0x02002ad0" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_RunRoofEnsembleSequence · C: 5,000 bytes</title>
-<rect x="330.10934796950517" y="248.89192325497507" width="8.8090241232544" height="8.298377461126194" style="fill:#326b7d"/>
+<rect x="330.10934796950517" y="248.8712111321664" width="8.8090241232544" height="8.319089583934872" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_SetFlag140AndFinishSequence · C: 76 bytes" data-node="leaf" data-kind="file" data-bytes="76" data-address="0x020040dc" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_SetFlag140AndFinishSequence · C: 76 bytes</title>
-<rect x="339.70894638841975" y="248.68249755063528" width="0.6116287420673475" height="0.5811485913203872" style="fill:#326b7d"/>
+<rect x="339.7095936422575" y="248.66243268166437" width="0.6103342343918052" height="0.5824430989959295" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_FinishSequence · C: 24 bytes" data-node="leaf" data-kind="file" data-bytes="24" data-address="0x02004128" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_FinishSequence · C: 24 bytes</title>
-<rect x="339.51013239665224" y="249.64598074150854" width="1.0092567256023495" height="0.18352060778538537" style="fill:#326b7d"/>
+<rect x="339.51033679260104" y="249.6280620299997" width="1.0088479337048097" height="0.1839293996829251" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_SpawnEightShots · C: 132 bytes" data-node="leaf" data-kind="file" data-bytes="132" data-address="0x02004140" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_SpawnEightShots · C: 132 bytes</title>
-<rect x="339.7165664261065" y="250.21945598653355" width="0.5963886666938674" height="1.4223380189453723" style="fill:#326b7d"/>
+<rect x="339.7165664261065" y="250.20215046287103" width="0.5963886666938674" height="1.4268347298183084" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_SelectActorModeFromInputBit · C: 40 bytes" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x020041c4" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_SelectActorModeFromInputBit · C: 40 bytes</title>
-<rect x="339.57130593258074" y="252.092922178647" width="0.8869096537454257" height="0.305867679642309" style="fill:#326b7d"/>
+<rect x="339.5716465924953" y="252.08045402577204" width="0.8862283339161929" height="0.3065489994715418" style="fill:#326b7d"/>
 </g>
 <g aria-label="39e · FieldScene_RunParticleRain · C: 336 bytes" data-node="leaf" data-kind="file" data-bytes="336" data-address="0x020041ec" data-source="games/gs1/src/map/locations/xian/school_and_roof_scene.c">
 <title>39e · FieldScene_RunParticleRain · C: 336 bytes</title>
-<rect x="339.7165664261065" y="252.8499180314574" width="0.5963886666938674" height="4.542188351296923" style="fill:#326b7d"/>
+<rect x="339.7165664261065" y="252.83847185832627" width="0.5963886666938674" height="4.553634524428036" style="fill:#326b7d"/>
 </g>
 </g>
 </g>

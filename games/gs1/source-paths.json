@@ -18436,7 +18436,7 @@
     },
     "resource_39e:02000658": {
       "name": "Scene_RunActorNineTransition",
-      "source": "map/locations/xian/actor_nine_transition.c"
+      "source": "map/locations/xian/school_and_roof_scene.c"
     }
   }
 }

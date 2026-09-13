@@ -16066,14 +16066,17 @@
       "name": "FieldScene_DispatchByScenarioId",
       "source": "overlays/scene/story/scenario_dispatch.c"
     },
-    "resource_37f:02000070": "overlays/scene/story/scenario_dispatch/get_secondary_default_result.c",
+    "resource_37f:02000070": {
+      "name": "get_secondary_default_result",
+      "source": "overlays/scene/story/scenario_dispatch.c"
+    },
     "resource_37f:0200079c": {
       "name": "SceneActor_FindSlotByTilePosition",
       "source": "overlays/scene/story/scenario_dispatch.c"
     },
     "resource_37f:02001aac": {
       "name": "FieldScene_RunScriptedStep953",
-      "source": "overlays/scene/story/scenario_dispatch/transition.c"
+      "source": "overlays/scene/story/scenario_dispatch.c"
     },
     "resource_37f:020003bc": {
       "name": "FieldScene_RunFlag821Dialogue",
@@ -16101,7 +16104,7 @@
     },
     "resource_37f:0200161c": {
       "name": "Scene_RunTransitionCue",
-      "source": "overlays/scene/story/scenario_dispatch/transition.c"
+      "source": "overlays/scene/story/scenario_dispatch.c"
     },
     "resource_37f:02000d1c": {
       "name": "FieldScene_RunScene37f_02000d1c",
@@ -18414,11 +18417,43 @@
     },
     "resource_37f:020017c0": {
       "name": "Scene_RunActorFormation",
-      "source": "overlays/scene/story/scenario_dispatch/transition.c"
+      "source": "overlays/scene/story/scenario_dispatch.c"
     },
     "resource_37f:02001ac8": {
       "name": "Scene_UpdateCueTimer",
-      "source": "overlays/scene/story/scenario_dispatch/transition.c"
+      "source": "overlays/scene/story/scenario_dispatch.c"
+    },
+    "resource_37f:0200056c": {
+      "name": "Scene_UpdateOuterActor9Flags",
+      "source": "overlays/scene/story/scenario_dispatch.c"
+    },
+    "resource_37f:020005ac": {
+      "name": "Scene_UpdateOuterActor10Flags",
+      "source": "overlays/scene/story/scenario_dispatch.c"
+    },
+    "resource_37f:020005ec": {
+      "name": "Scene_UpdateFormationActor9Flags",
+      "source": "overlays/scene/story/scenario_dispatch.c"
+    },
+    "resource_37f:02000634": {
+      "name": "Scene_UpdateFormationActor10Flags",
+      "source": "overlays/scene/story/scenario_dispatch.c"
+    },
+    "resource_37f:0200067c": {
+      "name": "Scene_UpdateFormationActor11Flags",
+      "source": "overlays/scene/story/scenario_dispatch.c"
+    },
+    "resource_37f:020006c4": {
+      "name": "Scene_UpdateFormationActor12Flags",
+      "source": "overlays/scene/story/scenario_dispatch.c"
+    },
+    "resource_37f:0200070c": {
+      "name": "Scene_UpdateFormationActor13Flags",
+      "source": "overlays/scene/story/scenario_dispatch.c"
+    },
+    "resource_37f:02000754": {
+      "name": "Scene_UpdateFormationActor14Flags",
+      "source": "overlays/scene/story/scenario_dispatch.c"
     }
   }
 }

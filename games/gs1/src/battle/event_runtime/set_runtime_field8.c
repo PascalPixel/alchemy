@@ -1,9 +1,0 @@
-#include "types.h"
-#include "global_cells.h"
-
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-
-void BattleEv_SetRuntimeField8(void)
-{
-    FIELD_AT_OFFSET(*(void **)ADDR_03001EE4, s32 *, 8) = 1;
-}

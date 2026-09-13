@@ -19,7 +19,7 @@ void Func_080a1030(void);
 extern char Value_00000d27;
 
 /*
- * Reached from Shop_ConfirmPartyAction (main:080b29a8) once the caller's
+ * Reached from Shop_ConfirmAct (main:080b29a8) once the caller's
  * yes/no confirmation succeeds. Lets the player pick a party member from
  * shop->party_member_ids eligible for shop->party_action (checked through
  * Func_080b27b0's per-kind status test), previews the treatment's price via

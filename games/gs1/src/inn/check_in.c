@@ -1,6 +1,6 @@
 #include "types.h"
 #include "gs1_edition.h"
-#include "inn_runtime.h"
+#include "inn.h"
 #include "shop.h"
 
 #if defined(GS1_EDITION_JA)
@@ -36,11 +36,11 @@ extern struct InnGlobalState Data_02000240;
 extern char Value_00000d1c;
 
 void Func_080b010c(void);
-void Inn_CleanupResources(void);
+void Inn_Cleanup(void);
 void Func_080b04dc(s32 message_id);
 s32 Func_080b0634(s32);
-s32 Inn_CalculateRoomPrice(s32);
-void Inn_PlaySleepSequence(s32);
+s32 Inn_RoomPrice(s32);
+void Inn_PlaySleep(s32);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 void UiWindow_Close(s32, s32);
 s32 Func_080150f8(u16, s32, s32, s32);
@@ -49,7 +49,7 @@ struct InnObject *Scene_GetRecord(s32);
 
 s32 Inn_CheckIn(s32 mode, s32 object_id)
 {
-    struct InnRuntimeState *state;
+    struct InnState *state;
     struct InnObject *object;
     s32 win;
     s32 amount;
@@ -65,7 +65,7 @@ s32 Inn_CheckIn(s32 mode, s32 object_id)
     state->resource_id = *object->component->resource_id;
     win = Func_080150f8(state->resource_id, 0, 0, 0);
 
-    amount = Inn_CalculateRoomPrice(mode);
+    amount = Inn_RoomPrice(mode);
     UiText_DrawQuantity(amount, 5);
     message_base = (s32)&Value_00000d1c;
     Func_080b04dc(message_base);
@@ -85,7 +85,7 @@ s32 Inn_CheckIn(s32 mode, s32 object_id)
         Func_080b04dc(message_base
             + (INN_MESSAGE_STAY_COMPLETE - INN_MESSAGE_WELCOME));
         UiWindow_Close(win, 2);
-        Inn_PlaySleepSequence(amount);
+        Inn_PlaySleep(amount);
 
         object = Scene_GetRecord(object_id);
         state->resource_id = *object->component->resource_id;
@@ -95,6 +95,6 @@ s32 Inn_CheckIn(s32 mode, s32 object_id)
     }
 
     UiWindow_Close(win, 2);
-    Inn_CleanupResources();
+    Inn_Cleanup();
     return 0;
 }

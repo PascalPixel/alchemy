@@ -23,19 +23,19 @@ LAYOUT_OFFSET_GUARD(
 
 extern struct CategoryItemIconState *Data_03001f2c;
 
-void InventoryMenu_PositionCategoryItems(void);
+void ItemMenu_PosCategory(void);
 void UiIcon_PrepareObject(void *icon);
 
-#define InventoryMenu_ArrangeCategoryItemIcons Func_080a9c18
+#define ItemMenu_ArrangeCategoryItemIcons Func_080a9c18
 
-void InventoryMenu_ArrangeCategoryItemIcons(const u16 *items)
+void ItemMenu_ArrangeCategoryItemIcons(const u16 *items)
 {
     struct CategoryItemIconState *state = Data_03001f2c;
     struct CategoryItemIcon **icon_entry;
     const u16 *item_entry;
     s32 remaining;
 
-    InventoryMenu_PositionCategoryItems();
+    ItemMenu_PosCategory();
     remaining = 14;
     icon_entry = state->icons;
     item_entry = items;

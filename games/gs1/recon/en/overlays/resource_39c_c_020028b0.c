@@ -175,12 +175,12 @@ void Func_020028b0(void)
 {
     u32 i;
     s32 record;
-    u8 *p5;
+    s32 pos;
 
     record = Value1(Func_0200838c, 10);
-    p5 = *(s32 *)(record + 8);
+    pos = *(s32 *)(record + 8) / 0x100000;
     Func_0200837c();
-    if (((s32)p5 / 0x100000) != 51) {
+    if (pos != 51) {
     } else {
         Call3(Func_020083b4, 3, 0xcccc, 0x6666);
         Func_0200838a(20);

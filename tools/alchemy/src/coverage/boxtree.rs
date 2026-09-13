@@ -410,6 +410,9 @@ pub fn svg(tree: &str, map: &CoverageMap, width: f64) -> String {
 }
 
 pub fn svg_at(tree: &str, map: &CoverageMap, width: f64, folder: &str) -> String {
+    svg_sized(tree, map, width, width * 16.0 / 9.0, folder)
+}
+pub fn svg_sized(tree: &str, map: &CoverageMap, width: f64, height: f64, folder: &str) -> String {
     assert_eq!(tree, "rom", "only the unified ROM viewer is supported");
     let shared = map.document["shared_map_assets"][folder]
         .as_array()
@@ -485,10 +488,7 @@ pub fn svg_at(tree: &str, map: &CoverageMap, width: f64, folder: &str) -> String
         x: 4.0,
         y: 32.0,
         width: width - 8.0,
-        height: width * 16.0 / 9.0
-            - 44.0
-            - rows as f64 * 24.0
-            - if shared.is_empty() { 0.0 } else { 24.0 },
+        height: height - 44.0 - rows as f64 * 24.0 - if shared.is_empty() { 0.0 } else { 24.0 },
     };
     let mut out = vec![format!("<title>{}</title>", esc(&title))];
     if let Ok(bytes) = std::fs::read(root().join("games/gs1/assets/fonts/weyard.otf")) {
@@ -547,7 +547,6 @@ pub fn svg_at(tree: &str, map: &CoverageMap, width: f64, folder: &str) -> String
         ));
         legend_x += label_width;
     }
-    let height = width * 16.0 / 9.0;
     let mut rendered = vec![format!("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {width} {height}\" width=\"{width}\" height=\"{height}\" shape-rendering=\"crispEdges\" role=\"img\" aria-label=\"{description} box tree\">"), format!("<rect x=\"0\" y=\"0\" width=\"{width}\" height=\"{height}\" fill=\"{CHART_BACKGROUND}\"/>")];
     rendered.extend(out);
     rendered.insert(

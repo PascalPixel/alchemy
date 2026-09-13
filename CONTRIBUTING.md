@@ -471,7 +471,7 @@ and overwriting an existing output are refused, not silently discarded.
 Engine headers and loop metadata stay in asset manifests. Thumb is code, not
 a music format. Keep format names portable and directional.
 
-The dashboard at `http://127.0.0.1:4650/` shows one portrait ROM tree of files
+The dashboard at `http://127.0.0.1:4650/` shows one full-window ROM tree of files
 and folders, shared with the README snapshot; it has no music player. Click a
 folder to open it and use Back to return. Addresses belong in hover details,
 not tile captions. The pixel font stays 16px when the layout changes.
@@ -542,7 +542,8 @@ The menu-label sheet follows `RenderResource_CreatePair`: two 32×16 OBJ parts
 per image, with the second part at X+32 and tile+8. `frames_per_image` groups
 adjacent atlas parts for a single compressed image; it does not change ROM data.
 
-The dashboard and README share one 9:16 ROM viewer hierarchy and layout,
+The dashboard and README share one ROM viewer hierarchy and layout; the dashboard
+fills its window, while the README snapshot retains its 9:16 frame,
 counting represented ROM bytes once while preserving the executable-only DONE
 denominator. An area's Shared files control links map resources to their existing
 source folders without adding tiles or bytes. These links are derived from the

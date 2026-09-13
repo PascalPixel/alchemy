@@ -4642,23 +4642,20 @@
     },
     "main:0809177c": {
       "name": "Event_NoOpHook",
-      "source": "event/no_op_hook.c"
+      "source": "event/object_hooks.c"
     },
     "main:08091780": {
-      "name": "Event_RunObjectHookAndWait",
-      "source": "event/run_object_hook_and_wait.c"
+      "name": "Event_RunObjectHookAndWait"
     },
     "main:080917ac": {
-      "name": "Event_CallWithLastActiveObjectId",
-      "source": "event/call_with_last_active_object_id.c"
+      "name": "Event_CallWithLastActiveObjectId"
     },
     "main:080917d0": {
       "name": "Event_PrepareObjectAndApplyValue",
-      "source": "event/prepare_object_and_apply_value.c"
+      "source": "event/prepare_objects.c"
     },
     "main:080917f4": {
-      "name": "Event_PrepareTwoObjectsAndApply",
-      "source": "event/prepare_two_objects_and_apply.c"
+      "name": "Event_PrepareTwoObjectsAndApply"
     },
     "main:080919d8": {
       "name": "Party_CheckMemberValueTotal",

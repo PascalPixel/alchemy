@@ -18026,34 +18026,18 @@
 <rect x="334.72256163428654" y="282.8699185796333" width="0.1340500466176316" height="0.48217286171483614" style="fill:#326b7d"/>
 </g>
 </g>
-<g aria-label="effects: 526 bytes · 6 items" data-node="container" data-kind="folder" data-bytes="526" data-source="games/gs1/src/object/effects/">
-<title>effects: 526 bytes · 6 items</title>
+<g aria-label="effects: 526 bytes · 2 items" data-node="container" data-kind="folder" data-bytes="526" data-source="games/gs1/src/object/effects/">
+<title>effects: 526 bytes · 2 items</title>
 <rect class="container-frame" x="335.50452023955603" y="267.8555969977437" width="5.961710484637925" height="4.350104374367377" fill="#1f7f93"/>
 <path class="bevel-light" d="M335.50452023955603 272.2057013721111 V267.8555969977437 H341.46623072419396" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <path class="bevel-dark" d="M335.50452023955603 272.2057013721111 H341.46623072419396 V267.8555969977437" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="0x08094368–0x08094380: 24 bytes" data-node="leaf" data-kind="file" data-bytes="24" data-address="0x08094368" data-source="games/gs1/src/object/effects/begin_context_effect_25.c">
-<title>0x08094368–0x08094380: 24 bytes</title>
-<rect x="336.70490281455835" y="269.055979572746" width="0.6067497669339403" height="0.2257129628209488" style="fill:#326b7d"/>
-</g>
-<g aria-label="0x08094354–0x08094368: 20 bytes" data-node="leaf" data-kind="file" data-bytes="20" data-address="0x08094354" data-source="games/gs1/src/object/effects/begin_context_effect_26.c">
-<title>0x08094354–0x08094368: 20 bytes</title>
-<rect x="337.5373655443132" y="269.055979572746" width="0.46800597864145904" height="0.22571296282094883" style="fill:#326b7d"/>
-</g>
-<g aria-label="0x08094380–0x08094428: 168 bytes" data-node="leaf" data-kind="file" data-bytes="168" data-address="0x08094380" data-source="games/gs1/src/object/effects/end_context_effect.c">
-<title>0x08094380–0x08094428: 168 bytes</title>
-<rect x="336.9735917509522" y="269.7760944347818" width="0.7630908356086485" height="0.9605354259331422" style="fill:#326b7d"/>
-</g>
-<g aria-label="0x080942e0–0x08094354: 116 bytes" data-node="leaf" data-kind="file" data-bytes="116" data-address="0x080942e0" data-source="games/gs1/src/object/effects/prepare_context_effect.c">
-<title>0x080942e0–0x08094354: 116 bytes</title>
-<rect x="338.3305976237091" y="269.1554927106795" width="0.42473923868783264" height="1.7134476571876578" style="fill:#326b7d"/>
+<g aria-label="0x080942e0–0x080944ec: 524 bytes" data-node="leaf" data-kind="file" data-bytes="524" data-address="0x080942e0" data-source="games/gs1/src/object/effects/context_effect.c">
+<title>0x080942e0–0x080944ec: 524 bytes</title>
+<rect x="337.0920463331479" y="269.44312309133556" width="2.772260357159734" height="1.1750521871836885" style="fill:#326b7d"/>
 </g>
 <g aria-label="0x080941dc–0x080941de: 2 bytes" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x080941dc" data-source="games/gs1/src/object/effects/reserved_no_op.c">
 <title>0x080941dc–0x080941de: 2 bytes</title>
-<rect x="338.1274443271922" y="271.0905263100381" width="0.8310458317215662" height="0.018432645654099078" style="fill:#326b7d"/>
-</g>
-<g aria-label="0x08094428–0x080944ec: 196 bytes" data-node="leaf" data-kind="file" data-bytes="196" data-address="0x08094428" data-source="games/gs1/src/object/effects/run_pending_flag_event.c">
-<title>0x08094428–0x080944ec: 196 bytes</title>
-<rect x="339.3204560189562" y="269.2958726285509" width="0.7054990744306373" height="1.4695531127530512" style="fill:#326b7d"/>
+<rect x="340.3679061753812" y="268.9467225764092" width="0.00719897014725146" height="2.167853217036437" style="fill:#326b7d"/>
 </g>
 </g>
 <g aria-label="facing: 264 bytes · 1 items" data-node="container" data-kind="folder" data-bytes="264" data-source="games/gs1/src/object/facing/">

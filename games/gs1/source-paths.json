@@ -1724,8 +1724,7 @@
       "name": "Animation_InitializeObjects"
     },
     "main:0800ba30": {
-      "name": "AnimationObjects_SelectAnimation",
-      "source": "animation/select_object_animation.c"
+      "name": "AnimationObjects_SelectAnimation"
     },
     "main:080a1870": {
       "name": "PsynergyMenu_InitializeEntryObjects",
@@ -1994,15 +1993,13 @@
     },
     "main:080b3210": {
       "name": "Inn_RoomPrice",
-      "source": "inn/calculate_room_price.c"
+      "source": "inn/stay.c"
     },
     "main:080b3284": {
-      "name": "Inn_CheckIn",
-      "source": "inn/check_in.c"
+      "name": "Inn_CheckIn"
     },
     "main:080b3398": {
-      "name": "Inn_PlaySleep",
-      "source": "inn/play_sleep_sequence.c"
+      "name": "Inn_PlaySleep"
     },
     "main:080b0204": {
       "name": "Inn_Cleanup",
@@ -2132,12 +2129,10 @@
       "source": "battle/motion/initialize_actor_records.c"
     },
     "main:080b7e04": {
-      "name": "ResetMotionRecordGroup",
-      "source": "battle/motion/reset_motion_record_group.c"
+      "name": "ResetMotionRecordGroup"
     },
     "main:080b7e24": {
-      "name": "ResetBattleObjectRecordGroups",
-      "source": "battle/motion/reset_battle_object_record_groups.c"
+      "name": "ResetBattleObjectRecordGroups"
     },
     "main:080b8808": {
       "name": "BattleObject_IsValidId"
@@ -2458,11 +2453,10 @@
     },
     "main:080b7dd0": {
       "name": "GetBattleObjectSlot",
-      "source": "battle/motion/get_battle_object_slot.c"
+      "source": "battle/motion/slots.c"
     },
     "main:080b7e60": {
-      "name": "ActivateBattleObjectSlot",
-      "source": "battle/motion/activate_battle_object_slot.c"
+      "name": "ActivateBattleObjectSlot"
     },
     "main:080b7f70": {
       "name": "GetMotionRecord",
@@ -3678,15 +3672,13 @@
     },
     "main:0800b9f4": {
       "name": "Animation_SetWorkEntry",
-      "source": "animation/set_work_entry.c"
+      "source": "animation/selection.c"
     },
     "main:0800bacc": {
-      "name": "AnimationObjects_SetHalfword02OnActive",
-      "source": "animation/set_halfword02_on_active_objects.c"
+      "name": "AnimationObjects_SetHalfword02OnActive"
     },
     "main:0800baf8": {
-      "name": "AnimationObjects_SetField15OnActive",
-      "source": "animation/set_field15_on_active_objects.c"
+      "name": "AnimationObjects_SetField15OnActive"
     },
     "main:0800be20": {
       "name": "ResourceMetadata_SumCommandLengths",
@@ -5185,8 +5177,7 @@
       "source": "battle/presentation/set_actor_mode_and_action.c"
     },
     "main:080b7e7c": {
-      "name": "BattleMotion_DestroyAllSlotObjects",
-      "source": "battle/motion/destroy_all_slot_objects.c"
+      "name": "BattleMotion_DestroyAllSlotObjects"
     },
     "main:080b7eb4": {
       "name": "Battle_GetWorkEntryPair",

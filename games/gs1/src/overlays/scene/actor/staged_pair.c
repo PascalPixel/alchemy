@@ -1,23 +1,6 @@
 #include "types.h"
 
-struct EffectRecord {
-    u8 pad[9];
-    u8 flags_lo : 2;
-    u8 mode : 2;
-    u8 flags_hi : 4;
-};
-
-struct EffectWork {
-    u8 pad[80];
-    struct EffectRecord *record;
-};
-
 #define SetEffectRecordMode Func_02000030
-void SetEffectRecordMode(struct EffectWork *work, s32 mode)
-{
-    work->record->mode = mode;
-}
-
 #define NULL ((void *)0)
 #define StagedActorStepTable Data_020096c0
 #define GetStagedActor Func_020018ec
@@ -46,9 +29,67 @@ void SetEffectRecordMode(struct EffectWork *work, s32 mode)
 #define StagedActorPairScene_RotateActorPart Func_020011c8
 #define StagedActorPairScene_WaitForHeight Func_020011d8
 #define StagedActorPairScene_RunActorTwelveCommand Func_02001384
+#define FieldScene_RunScene3beSequenceA Func_02000d88
+#define FieldScene_RunScene3beSequenceB Func_02000df0
+#define FieldScene_RunScene3be_02000fd0 Func_02000fd0
+#define FieldScene_RunScene3be_02001080 Func_02001080
+#define FieldScene_RunScene3be_02001394 Func_02001394
+#define ActorPresentation_RunActorElevenRecoveryScene Func_02000f44
+#define ActorPresentation_SelectActorNineScript Func_02001040
+#define ActorPresentation_RunActorEightThresholdScene Func_020010fc
+#define ActorPresentation_RunActorNineThresholdScene Func_02001158
+#define Data_0200e1e8 Data_02009718
+#define Data_0200e190 Data_020096c0
+#define Value_020082a9 Value_0200858d
+#define Func_02000902 Func_02000eca
+#define Func_02000a6e Func_02001036
+#define Func_02000a80 Func_02001048
+#define Func_02000acc Func_02001094
+#define Func_02006610 Func_02001e44
+#define Func_0200661c Func_02001e50
+#define Func_020066b4 Func_02001ee8
+#define Func_02006714 Func_02001f20
+#define Func_0200668a Func_02001ece
+#define Func_0200672c Func_02001f38
+#define Func_020066ea Func_02001f1e
+#define Func_020066c4 Func_02001f08
+#define RefreshStagedActor Func_02001f48
+#define Func_02006614 Func_02001ea8
+#define Func_0200661e Func_02001eb2
+#define Func_0200687c Func_02001fe8
+#define Func_02006658 Func_02001edc
+#define Func_02006776 Func_02001f82
+#define Func_0200678e Func_02001f9a
+#define Func_02006740 Func_02001f74
+#define Func_020067a4 Func_02001fb0
+#define Func_020067bc Func_02001fc8
+#define Func_020067d4 Func_02001fe0
+#define Func_0200677a Func_02001fae
+#define Func_020068f4 Func_02002060
+#define Func_020068fa Func_02002066
+#define Func_020066b8 Func_02001f4c
+#define Func_02006752 Func_02001fc6
+#define Func_020067ae Func_02002022
+#define Func_020069d0 Func_0200213c
+#define StagedActorPairScene_GetMessageData Func_02000d18
+#define StagedActorPairScene_NoopActorCallback Func_020011c4
+#define StagedActorPairScene_NoopSceneCallback Func_02001380
 
 #include "staged_actor_pair_scene.h"
 #include "staged_actor.h"
+#include "staged_actor_movement.h"
+
+struct EffectRecord {
+    u8 pad[9];
+    u8 flags_lo : 2;
+    u8 mode : 2;
+    u8 flags_hi : 4;
+};
+
+struct EffectWork {
+    u8 pad[80];
+    struct EffectRecord *record;
+};
 
 struct EffectSprite {
     u8 pad00[9];
@@ -146,6 +187,23 @@ extern u8 Data_020097b4[];
 extern u8 Data_020097fc[];
 extern u8 Data_02009874[];
 extern u8 Data_02009784[];
+extern u8 Data_00000088[];
+extern u8 Data_00000098[];
+extern u8 Data_0000009d[];
+extern u8 Data_0000009e[];
+extern u8 Data_0200995c[];
+extern u8 Data_02009974[];
+extern u8 Data_020099d4[];
+extern u8 Data_02009a4c[];
+extern u8 Data_02009aac[];
+extern u8 Data_02009b3c[];
+extern u8 Data_02009b48[];
+extern u8 Data_02009bcc[];
+extern u8 Data_02009c80[];
+extern u8 Data_02009ce0[];
+extern s16 Data_02000240_t[][1];
+extern u8 Data_000023cc[];
+extern u8 Data_02010000[];
 
 void *Func_0200150e(s32, s32, s32, s32);
 void Func_0200155c(void *, s32);
@@ -186,58 +244,6 @@ void Func_020014f4(void);
 void Func_020022a8(void);
 void Func_02002674();
 void Func_020028f2(int, int, int);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#include "types.h"
-
-#define FieldScene_RunScene3beSequenceA Func_02000d88
-#define FieldScene_RunScene3beSequenceB Func_02000df0
-#define FieldScene_RunScene3be_02000fd0 Func_02000fd0
-#define FieldScene_RunScene3be_02001080 Func_02001080
-#define FieldScene_RunScene3be_02001394 Func_02001394
-extern u8 Data_00000088[];
-extern u8 Data_00000098[];
-extern u8 Data_0000009d[];
-extern u8 Data_0000009e[];
-extern u8 Data_0200995c[];
-extern u8 Data_02009974[];
-extern u8 Data_020099d4[];
-extern u8 Data_02009a4c[];
-extern u8 Data_02009aac[];
-extern u8 Data_02009b3c[];
-extern u8 Data_02009b48[];
-extern u8 Data_02009bcc[];
-extern u8 Data_02009c80[];
-extern u8 Data_02009ce0[];
-extern u8 Data_03001ebc[];
-extern s16 Data_02000240_t[][1];
-extern u8 Data_000023cc[];
-
 s32 Func_02002234();
 s32 Func_0200229c();
 s32 Func_020022f2();
@@ -304,74 +310,6 @@ s32 Func_02002990();
 void Func_020029a4();
 void Func_020029b2();
 void Func_020029c2();
-
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-static __inline__ void bump_step(s32 amount)
-{
-    u8 *work = *(u8 **)Data_03001ebc;
-
-    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
-}
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-static __inline__ s32 Value1_02000fd0(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-#include "types.h"
-
-#define ActorPresentation_RunActorElevenRecoveryScene Func_02000f44
-#define ActorPresentation_SelectActorNineScript Func_02001040
-#define ActorPresentation_RunActorEightThresholdScene Func_020010fc
-#define ActorPresentation_RunActorNineThresholdScene Func_02001158
 void Func_02002464_presentation();
 void Func_0200247e();
 void *Func_020024c4();
@@ -408,22 +346,89 @@ void Func_020026f4();
 void Func_02002702(s32, s32, s32);
 void Func_02002712();
 void Func_02002780();
+typedef s32(*IwramSqrt02000314)(s32);
+
+/* Loader-relocated overlay calls: each symbol names the pre-relocation call
+ * word the image holds. */
+
+/* Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers; a direct call precomputes a costly constant
+ * into a pseudo that the compiler then shares with later uses in the block.
+ * A value-returning call also sets r0 last of its arguments. */
+static __inline__ void Call1(void (*f)(), s32 a0)
+{
+    extern u8 Data_03001ebc[];
+
+    f(a0);
+}
+
+static __inline__ s32 Value1(s32 (*f)(), s32 a0)
+{
+    extern u8 Data_03001ebc[];
+
+    return f(a0);
+}
+
+static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
+{
+    extern u8 Data_03001ebc[];
+
+    return f(a0, a1);
+}
+
+static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    extern u8 Data_03001ebc[];
+
+    f(a0, a1, a2);
+}
+
+/* The scene step counter at 0x1d8 of the shared scene work record. */
+static __inline__ void bump_step(s32 amount)
+{
+    extern u8 Data_03001ebc[];
+
+    u8 *work = *(u8 **)Data_03001ebc;
+
+    *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
+}
+
+/* Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers; a direct call precomputes a costly constant
+ * into a pseudo that the compiler then shares with later uses in the block.
+ * A value-returning call also sets r0 last of its arguments. */
+static __inline__ s32 Value1_02000fd0(s32 (*f)(), s32 a0)
+{
+    extern u8 Data_03001ebc[];
+
+    return f(a0);
+}
+
+static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
+{
+    extern u8 Data_03001ebc[];
+
+    f(a0, a1, a2, a3, a4, a5);
+}
 
 static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
 {
+    extern u8 Data_03001ebc[];
+
     Func_02002702(actor, x, y);
 }
 
+void SetEffectRecordMode(struct EffectWork *work, s32 mode)
+{
+    extern u8 Data_03001ebc[];
 
-
-
-
-
-
-
+    work->record->mode = mode;
+}
 
 void *StagedActorPairScene_SpawnPrimaryEffect(s32 x, s32 y, s32 z, s32 kind)
 {
+    extern u8 Data_03001ebc[];
+
     u8 *effect = Func_0200150e(kind, x, y, z);
 
     if (effect != NULL) {
@@ -447,6 +452,8 @@ void *StagedActorPairScene_SpawnPrimaryEffect(s32 x, s32 y, s32 z, s32 kind)
 
 void *StagedActorPairScene_SpawnSecondaryEffect(s32 x, s32 y, s32 z, s32 kind)
 {
+    extern u8 Data_03001ebc[];
+
     u8 *effect = Func_02001566(kind, x, y, z);
 
     if (effect != NULL) {
@@ -473,6 +480,8 @@ void StagedActorPairScene_SpawnConfiguredEffect(
     s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz, u32 flags,
     const struct EffectOptions *options)
 {
+    extern u8 Data_03001ebc[];
+
     u32 table_offset;
     struct SceneEffect *source_effect;
     u32 copied_bits;
@@ -584,9 +593,40 @@ void StagedActorPairScene_SpawnConfiguredEffect(
     }
 }
 
+s32 Func_02000314(s32 *a, s32 *b)
+{
+    s32 dx = (*a++ - *b++) >> 16;
+    s32 dy = (*a++ - *b++) >> 16;
+    s32 dz = (*a - *b) >> 16;
+    s32 dxsq = dx *dx;
+    s32 dysq = dy *dy;
+    s32 dzsq = dz *dz;
+
+    return ((IwramSqrt02000314) 0x030001D8)(dxsq + dysq + dzsq);
+}
+
+s32 *Func_02000350(s32 *arg0)
+{
+    extern u8 *Data_03001ebc;
+
+    s32 **slots = (s32 **)(Data_03001ebc + 0x14);
+    u32 i;
+
+    for (i = 8; i <= 65; i++) {
+        s32 *p = slots[i];
+
+        if ((arg0[0] >> 20) == (p[2] >> 20)
+            && (arg0[1] / 0x10000) == (p[3] / 0x10000)
+            && (arg0[2] >> 20) == (p[4] >> 20)) {
+            return p;
+        }
+    }
+    return 0;
+}
+
 void StagedActorPairScene_AdvancePair(void)
 {
-    extern u32 Data_020096c0[];
+    extern u8 Data_03001ebc[];
 
     s32 destination[3];
     struct StagedActor *lead_actor;
@@ -657,8 +697,38 @@ void StagedActorPairScene_AdvancePair(void)
     SetStagedActorTransition(lead_actor, 1);
 }
 
+s32 Func_02000528(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
+{
+    u8 *g = (u8 *)Data_03001e70;
+    u8 *base;
+    u32 i;
+    u32 j;
+
+    if (g != 0) {
+        if (arg0 <= 2) {
+            u32 off = arg0 * 48 + 304;
+
+            base = *(u8 **)(g + off);
+        } else {
+            base = Data_02010000;
+        }
+        base += (arg1 + (arg2 << 7)) * 4;
+        for (i = 0; i < arg4; i++) {
+            u8 *p = base + (i << 9);
+
+            for (j = 0; j < arg3; j++) {
+                p[2] = (u8)arg5;
+                p += 4;
+            }
+        }
+    }
+    return 0;
+}
+
 s32 StagedActorPairScene_StopBlockedMotion(MovingActor *actor)
 {
+    extern u8 Data_03001ebc[];
+
     extern s32 Data_020096c0[];
 
     ScenePosition destination;
@@ -704,6 +774,8 @@ done:
 
 s32 StagedActorPairScene_FindClearPosition(s32 *search)
 {
+    extern u8 Data_03001ebc[];
+
     extern s32 Data_020096c0[];
 
     s32 direction;
@@ -810,8 +882,15 @@ found:
     return moved;
 }
 
+void Func_020008ec(StagedActorMovementRequest request)
+{
+#include "run_staged_actor_movement_and_redraw_body.inc"
+}
+
 s32 StagedActorPairScene_GetVariantData(void)
 {
+    extern u8 Data_03001ebc[];
+
     s16 scene_id = Data_02000240[224];
 
     if (scene_id == (s32)&Value_00000098) {
@@ -828,8 +907,15 @@ s32 StagedActorPairScene_GetVariantData(void)
 
 s32 StagedActorPairScene_GetInitialValue(void) { return 0; }
 
+u8 *StagedActorPairScene_GetMessageData(void)
+{
+    return (u8 *)0x0200991c;
+}
+
 s32 Func_02000d20(void)
 {
+    extern u8 Data_03001ebc[];
+
     if (Data_02000240_t[224][0] == (s32)Data_00000098) {
         if (Value1(Func_02002234, 0x96f) != 0) {
             return (s32)Data_020099d4;
@@ -850,6 +936,8 @@ s32 Func_02000d20(void)
 
 s32 FieldScene_RunScene3beSequenceA(void)
 {
+    extern u8 Data_03001ebc[];
+
     if (Data_02000240_t[224][0] == (s32)Data_00000098) {
         if (Value1(Func_0200229c, 0x96f) != 0) {
             return (s32)Data_02009bcc;
@@ -870,6 +958,8 @@ s32 FieldScene_RunScene3beSequenceA(void)
 
 void FieldScene_RunScene3beSequenceB(void)
 {
+    extern u8 Data_03001ebc[];
+
     s32 record;
 
     if (Value1(Func_020022f2, 0x98a) != 0) {
@@ -920,6 +1010,8 @@ void FieldScene_RunScene3beSequenceB(void)
 
 void ActorPresentation_RunActorElevenRecoveryScene(void)
 {
+    extern u8 Data_03001ebc[];
+
     Func_02002464_presentation();
     Func_020024c6(11, 0, 0);
     Func_020024d0(0, 11, 0);
@@ -944,6 +1036,8 @@ void ActorPresentation_RunActorElevenRecoveryScene(void)
 
 void FieldScene_RunScene3be_02000fd0(void)
 {
+    extern u8 Data_03001ebc[];
+
     u32 i;
     s32 record;
     s32 base5_23cc;
@@ -966,6 +1060,8 @@ void FieldScene_RunScene3be_02000fd0(void)
 
 void ActorPresentation_SelectActorNineScript(void)
 {
+    extern u8 Data_03001ebc[];
+
     if (Func_02002544(2384) != 0 && Func_0200254e(2415) == 0)
         Func_020025e8(9173);
     else
@@ -975,6 +1071,8 @@ void ActorPresentation_SelectActorNineScript(void)
 
 void FieldScene_RunScene3be_02001080(void)
 {
+    extern u8 Data_03001ebc[];
+
     u32 i;
     s32 record;
     u8 *p5;
@@ -997,11 +1095,15 @@ void FieldScene_RunScene3be_02001080(void)
 
 void StagedActorPairScene_RunStep(void)
 {
+    extern u8 Data_03001ebc[];
+
     Func_020026a8();
 }
 
 void ActorPresentation_RunActorEightThresholdScene(void)
 {
+    extern u8 Data_03001ebc[];
+
     Func_02002638(8);
     Func_02002624();
     {
@@ -1023,12 +1125,16 @@ void ActorPresentation_RunActorEightThresholdScene(void)
 
 void StagedActorPairScene_RunUpdate(void)
 {
+    extern u8 Data_03001ebc[];
+
     Func_020014f4();
     Func_020022a8();
 }
 
 void ActorPresentation_RunActorNineThresholdScene(void)
 {
+    extern u8 Data_03001ebc[];
+
     Func_0200267a();
     if ((Func_02002698(9)[2] >> 20) > 42) {
         s32 x = 107;
@@ -1045,8 +1151,12 @@ void ActorPresentation_RunActorNineThresholdScene(void)
     Func_020026da();
 }
 
+void StagedActorPairScene_NoopActorCallback(void){}
+
 void StagedActorPairScene_RotateActorPart(u8 *actor)
 {
+    extern u8 Data_03001ebc[];
+
     u8 *sprite_part = *(u8 **)(actor + 80);
 
     *(u16 *)(sprite_part + 30) -= 0x400;
@@ -1055,6 +1165,8 @@ void StagedActorPairScene_RotateActorPart(u8 *actor)
 void StagedActorPairScene_WaitForHeight(struct HeightTrackedObject *object,
                                        s32 limit)
 {
+    extern u8 Data_03001ebc[];
+
     s32 frames = 40;
 
     while (frames != 0) {
@@ -1066,13 +1178,19 @@ void StagedActorPairScene_WaitForHeight(struct HeightTrackedObject *object,
     }
 }
 
+void StagedActorPairScene_NoopSceneCallback(void){}
+
 void StagedActorPairScene_RunActorTwelveCommand(void)
 {
+    extern u8 Data_03001ebc[];
+
     Func_020028f2(12, 0, 0);
 }
 
 s32 FieldScene_RunScene3be_02001394(void)
 {
+    extern u8 Data_03001ebc[];
+
     u32 i;
     s32 record;
 

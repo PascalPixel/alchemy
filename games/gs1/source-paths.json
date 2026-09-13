@@ -13506,7 +13506,7 @@
     },
     "resource_3be:02000d18": {
       "name": "StagedActorPairScene_GetMessageData",
-      "source": "overlays/shared/shared_2/get_message_data.c"
+      "source": "overlays/scene/actor/staged_pair.c"
     },
     "resource_3be:02000030": {
       "name": "SetEffectRecordMode",
@@ -13524,13 +13524,22 @@
       "name": "StagedActorPairScene_SpawnConfiguredEffect",
       "source": "overlays/scene/actor/staged_pair.c"
     },
-    "resource_3be:02000314": "overlays/shared/shared_2/calculate_position_distance.c",
-    "resource_3be:02000350": "overlays/shared/shared_2/find_scene_actor_at_fixed_point_position.c",
+    "resource_3be:02000314": {
+      "name": "calculate_position_distance",
+      "source": "overlays/scene/actor/staged_pair.c"
+    },
+    "resource_3be:02000350": {
+      "name": "find_scene_actor_at_fixed_point_position",
+      "source": "overlays/scene/actor/staged_pair.c"
+    },
     "resource_3be:020003a8": {
       "name": "StagedActorPairScene_AdvancePair",
       "source": "overlays/scene/actor/staged_pair.c"
     },
-    "resource_3be:02000528": "overlays/shared/shared_2/fill_scene_grid_attribute_rectangle.c",
+    "resource_3be:02000528": {
+      "name": "fill_scene_grid_attribute_rectangle",
+      "source": "overlays/scene/actor/staged_pair.c"
+    },
     "resource_3be:0200058c": {
       "name": "StagedActorPairScene_StopBlockedMotion",
       "source": "overlays/scene/actor/staged_pair.c"
@@ -13569,7 +13578,7 @@
     },
     "resource_3be:020011c4": {
       "name": "StagedActorPairScene_NoopActorCallback",
-      "source": "overlays/shared/shared_2/noop_actor_callback.c"
+      "source": "overlays/scene/actor/staged_pair.c"
     },
     "resource_3be:020011c8": {
       "name": "StagedActorPairScene_RotateActorPart",
@@ -13581,7 +13590,7 @@
     },
     "resource_3be:02001380": {
       "name": "StagedActorPairScene_NoopSceneCallback",
-      "source": "overlays/shared/shared_2/noop_scene_callback.c"
+      "source": "overlays/scene/actor/staged_pair.c"
     },
     "resource_3be:02001384": {
       "name": "StagedActorPairScene_RunActorTwelveCommand",
@@ -13617,8 +13626,7 @@
     },
     "resource_3be:020008ec": {
       "name": "SceneActor_MoveAndRedraw",
-      "call_via": "02002042",
-      "source": "overlays/shared/shared_2/move_and_redraw.c"
+      "source": "overlays/scene/actor/staged_pair.c"
     },
     "resource_39c:02003d20": {
       "name": "Scene_RunSelectorEntry"

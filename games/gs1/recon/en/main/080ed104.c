@@ -3,7 +3,7 @@
 /*
  * Draft for the battle-presentation sub-effect at 0x080ed104.
  *
- * The family matcher assigned games/gs1/src/battle/effects/member_orbit/run.c
+ * The family matcher assigned games/gs1/src/battle/effects/member_orbit.c
  * (owner 0x080ce85c, already adopted) as the closest structural template, but
  * this owner's real callee set and constants instead match the already-drafted
  * 0x03001eec "battle work" subsystem documented in games/gs1/recon/en/main/

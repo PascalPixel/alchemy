@@ -11,13 +11,13 @@
  * palette RAM through the IWRAM word-copy kernel at 0x03001388, seeds three
  * work-block fields, then schedules Func_080cc960 and Func_080cd260 as frame
  * callbacks.  Field offsets follow the kind-39 work block already used by
- * games/gs1/src/battle/effects/puff_arc/run.c and member_orbit/run.c.
+ * games/gs1/src/battle/effects/puff_arc.c and member_orbit/run.c.
  *
  * Value_ symbols are the established spelling for a small resource id the
  * reference loads from its literal pool instead of materializing.
  *
  * Func_080041d8 is declared with its adopted s32 result
- * (games/gs1/src/runtime/scheduler/callback_scheduler.c).  The result is
+ * (games/gs1/src/system/scheduler/callback_scheduler.c).  The result is
  * unused here, but the value-returning call form is load-bearing: it makes
  * the call the last setter of r0, which is what places each callback's pool
  * load after the order argument's shift in the reference.  A void prototype

@@ -54,7 +54,7 @@ fn derive_name(root: &Path, sources: &SourcePaths, overlay: &str, owner: SourceO
         .find(|candidate| {
             let letter = candidate.chars().last().unwrap_or('a').to_ascii_lowercase();
             let path = root.join(format!(
-                "games/gs1/src/overlays/scene_primary_script/run_scene_{resource}_sequence_{letter}.c"
+                "games/gs1/src/overlays/unidentified/run_scene_{resource}_sequence_{letter}.c"
             ));
             !taken.contains(candidate) && !path.exists()
         })
@@ -164,7 +164,7 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
                 .strip_prefix(&format!("scene{resource}_"))
                 .map(str::to_string)
                 .unwrap_or(stem);
-            format!("overlays/scene_primary_script/run_scene_{resource}_{stem}.c")
+            format!("overlays/unidentified/run_scene_{resource}_{stem}.c")
         }
     };
     let unit = match request.source {

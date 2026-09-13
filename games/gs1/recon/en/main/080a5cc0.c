@@ -12,7 +12,7 @@
  * that selects between three confirmation messages, and a u16 flags word at
  * 0x220). A local view is used here instead of extending the shared structs,
  * matching the project's convention for an owner-specific field range
- * (compare games/gs1/src/item/use.c's local ItemUseWork).
+ * (compare games/gs1/src/game/item/use.c's local ItemUseWork).
  */
 struct MenuActionWork {
     u8 unknown_000[0x24];

@@ -3,7 +3,7 @@
 /*
  * Battle-presentation sub-effect at 0x080dc454, in the same 0x03001eec
  * "battle work" compiler-family cluster as the adopted template
- * games/gs1/src/battle/effects/member_orbit/run.c (owner 080ce85c).  This
+ * games/gs1/src/battle/effects/member_orbit.c (owner 080ce85c).  This
  * owner is a smaller, simpler sibling: it registers only one draw routine
  * (heap kind 46, no kind 47) and only one periodic-update callback
  * (0x080CD261, no 0x080DBB9D), and it takes no argument -- unlike
@@ -22,7 +22,7 @@
  * counter, this owner keeps a running per-slot spin.
  *
  * `facing` is read once before the loop (matching the sibling
- * games/gs1/src/battle/effects/member_orbit/run.c 080d82b0.c's
+ * games/gs1/src/battle/effects/member_orbit.c 080d82b0.c's
  * `*(s32 *)((u8 *)heap_cache - 108)` idiom for the same fixed global) and
  * reused every frame, rather than re-read every iteration.
  *

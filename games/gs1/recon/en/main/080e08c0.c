@@ -3,7 +3,7 @@
 /*
  * Draft for the battle-presentation sub-effect at 0x080e08c0.
  *
- * Family-matched to games/gs1/src/battle/effects/member_orbit/run.c
+ * Family-matched to games/gs1/src/battle/effects/member_orbit.c
  * (template-main-080ce85c, score 7947/10000) but the owner's real callee
  * set and field/constant layout match the 0x03001eec "battle work"
  * subsystem cluster already recovered at games/gs1/recon/en/main/
@@ -13,7 +13,7 @@
  * below (heap_cache/cursor prologue, Value_XXXXXXXX effect-id idiom, the
  * Func_080072f4/Func_080072f0 trampoline calls, the shared
  * Data_080ede48/080ede9f/080edea5/080edeab/080edeb2 sprite-cell tables
- * already adopted in games/gs1/src/battle/effects/puff_arc/run.c).
+ * already adopted in games/gs1/src/battle/effects/puff_arc.c).
  *
  * Func_080072f4 and Func_080072f0 are not real callees: they are the r4
  * and r3 entries of the _call_via_rN trampoline bundle at

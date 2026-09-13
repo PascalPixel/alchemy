@@ -3,7 +3,7 @@
 /*
  * Draft for the battle-presentation sub-effect at 0x080e0564.
  *
- * Family-matched to games/gs1/src/battle/effects/member_orbit/run.c
+ * Family-matched to games/gs1/src/battle/effects/member_orbit.c
  * (owner 080ce85c, template-main-080ce85c) but this owner's size (860 bytes
  * vs the template's 724) shows it is a genuinely different sub-effect from
  * the same 0x03001eec "battle work" subsystem already partly recovered in

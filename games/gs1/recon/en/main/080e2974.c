@@ -8,7 +8,7 @@
  * Two arguments: the effect state pointer, which this owner parks at
  * work + 0x7828 exactly like every other member of the 0x03001eec
  * "battle work" family (see games/gs1/recon/en/main/080e302c.c and
- * games/gs1/src/battle/effects/puff_arc/run.c for the shared prologue,
+ * games/gs1/src/battle/effects/puff_arc.c for the shared prologue,
  * the heap-cache cursor pair and the callee evidence reused here), and a
  * scene selector that indexes the seven-byte-per-entry table at 0x080eed3e.
  *

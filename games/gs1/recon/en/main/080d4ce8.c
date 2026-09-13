@@ -23,8 +23,8 @@
  *
  * This is a second instance of the rectangle-blit / orbiting-sprite
  * template also implemented by Func_080ce85c
- * (games/gs1/src/battle/effects/member_orbit/run.c) and by Func_080d9fc8
- * (games/gs1/src/battle/effects/puff_arc/run.c) for the Func_080e0524
+ * (games/gs1/src/battle/effects/member_orbit.c) and by Func_080d9fc8
+ * (games/gs1/src/battle/effects/puff_arc.c) for the Func_080e0524
  * setup-call shape and the 28-byte, work+0x7080-based per-member record.
  * This owner differs from both templates by: a fixed 96-frame run, a
  * kind-gated palette copy, two Func_080e0524 setup calls, a fixed 4-member

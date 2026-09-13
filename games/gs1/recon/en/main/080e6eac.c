@@ -2,7 +2,7 @@
 
 /*
  * Sibling of the 0x03001eec "battle work" family (see
- * games/gs1/src/battle/effects/member_orbit/run.c, the adopted owner at
+ * games/gs1/src/battle/effects/member_orbit.c, the adopted owner at
  * 0x080ce85c, family score 7889/10000, and the m2c-assisted dump at
  * out/family-transplants/main-080e6eac/m2c/080e6eac.c derived directly
  * from this owner's own retained bytes). Unlike the template, this owner

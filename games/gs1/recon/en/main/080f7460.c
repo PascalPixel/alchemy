@@ -5,7 +5,7 @@
 /*
  * Full source-shape draft for the standalone presentation sequence at
  * 0x080f7460.  It is entered from Runtime_BlankDisplayLoadValueAndRun
- * (games/gs1/src/runtime/blank_display_load_value_and_run.c, owner
+ * (games/gs1/src/system/blank_display_load_value_and_run.c, owner
  * 080f6008) immediately after Audio_PlayCue(9), and it owns its whole
  * screen: it allocates its four blocks, builds two tilemaps and a tile
  * bank, seeds five 21-cell record entries, then runs a frame loop until
@@ -14,7 +14,7 @@
  *
  * The owner is a confirmed member of the same "work block" family as
  * games/gs1/recon/en/main/080e0c84.c (BattleFx_RunParticleReveal)
- * and games/gs1/src/battle/effects/member_orbit/run.c: same
+ * and games/gs1/src/battle/effects/member_orbit.c: same
  * Data_03001e50 heap-cache indexed by allocation id, same 0x782c work
  * block with the per-frame `work[0x7824] = 1` republish, the same
  * 28-byte fixed-point particle record based at 0x02010000, and the same

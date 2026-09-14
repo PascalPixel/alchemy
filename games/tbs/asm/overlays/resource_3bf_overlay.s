@@ -1535,17 +1535,23 @@
 	.set sub_0200ba66, 0x0200ba66
 	.global Overlay_02000000
 Overlay_02000000:
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0200cda1
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x020089dd
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x02008a35
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x02008a81
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x02008af9
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.2byte 0x8a31
 	.2byte 0x0200
 AlchemyC_02000030:
@@ -2312,160 +2318,243 @@ AlchemyC_020054dc:
 	.space 0x44
 AlchemyC_02005520:
 	.space 0x68
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x080000c1
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x080000d1
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x080000d9
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x080000f9
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x08009081
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x080090d1
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x08009129
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x08009151
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x08009159
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x080091b9
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x080091c1
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x080091d9
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x080091e1
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x080091f1
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x08009259
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x08015041
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x08077041
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x080770c1
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x080770c9
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x080770d1
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a011
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a019
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a021
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a061
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a071
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a081
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a091
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a099
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a0a1
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a0a9
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a0b9
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a0c9
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a0d1
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a0e1
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a0e9
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a0f1
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a101
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a111
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a129
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a131
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a139
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a149
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a151
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a159
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a171
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a179
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a181
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a191
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a1b9
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a1e1
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a1e9
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a1f1
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a201
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a209
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a211
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a219
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a221
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a229
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a249
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a251
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a261
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a361
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a369
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a389
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a399
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a471
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a4f9
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x0808a5e9
-	.4byte 0x47204c00
+	ldr r4, [pc, #0]
+	bx r4
 	.4byte 0x080f9011
-	.4byte 0x46c04700
-	.4byte 0x46c04708
-	.4byte 0x46c04710
-	.4byte 0x46c04718
-	.4byte 0x46c04720
-	.4byte 0x46c04728
-	.4byte 0x46c04730
-	.4byte 0x46c04738
-	.4byte 0x46c04740
-	.4byte 0x46c04748
-	.4byte 0x46c04750
-	.4byte 0x46c04758
-	.4byte 0x46c04760
-	.4byte 0x46c04768
-	.2byte 0x4770
-	.2byte 0x46c0
+	bx r0
+	nop
+	bx r1
+	nop
+	bx r2
+	nop
+	bx r3
+	nop
+	bx r4
+	nop
+	bx r5
+	nop
+	bx r6
+	nop
+	bx r7
+	nop
+	bx r8
+	nop
+	bx r9
+	nop
+	bx r10
+	nop
+	bx r11
+	nop
+	bx r12
+	nop
+	bx r13
+	nop
+	bx lr
+	nop
 .L_020057ec:
 AlchemyC_020057ec:
 	.space 0x1ce

@@ -9537,8 +9537,8 @@
 <g aria-label="3c7: 3,420 bytes · Unknown, Drafted, C · 0x087f21b8" data-node="leaf" data-kind="folder" data-bytes="3420" data-address="0x087f21b8" data-source="games/tbs/SRC/FIELD/LALIVERO/">
 <title>3c7: 3,420 bytes · Unknown, Drafted, C · 0x087f21b8</title>
 <rect x="123.8011511801753" y="590.0490829405826" width="4.907433362164696" height="1.3566981177414406" style="fill:#d9d9d4"/>
-<rect x="123.8011511801753" y="589.2953617640595" width="4.907433362164696" height="0.7537211765230225" style="fill:#96c8c9"/>
-<rect x="123.8011511801753" y="584.7962261257375" width="4.907433362164696" height="4.499135638322042" style="fill:#326b7d"/>
+<rect x="123.8011511801753" y="589.8538884820472" width="4.907433362164696" height="0.19519445853544942" style="fill:#96c8c9"/>
+<rect x="123.8011511801753" y="584.7962261257376" width="4.907433362164696" height="5.057662356309615" style="fill:#326b7d"/>
 </g>
 </g>
 <g aria-label="MAP_320.json: 3,824 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 5 items" data-node="container" data-kind="file" data-bytes="3824" data-source="games/tbs/SRC/FIELD/LALIVERO/MAP_320.json">
@@ -10547,9 +10547,9 @@
 </g>
 <g aria-label="3b1: 15,020 bytes · Unknown, Drafted, C · 0x087cb2c0" data-node="leaf" data-kind="folder" data-bytes="15020" data-address="0x087cb2c0" data-source="games/tbs/SRC/FIELD/PASSENGER_SHIP/">
 <title>3b1: 15,020 bytes · Unknown, Drafted, C · 0x087cb2c0</title>
-<rect x="105.3735638687707" y="764.6318711463479" width="23.335020673569296" height="1.4500648280767827" style="fill:#d9d9d4"/>
-<rect x="105.3735638687707" y="763.3937464528982" width="23.335020673569296" height="1.2381246934496528" style="fill:#96c8c9"/>
-<rect x="105.3735638687707" y="751.2756995925665" width="23.335020673569296" height="12.118046860331672" style="fill:#326b7d"/>
+<rect x="105.3735638687707" y="764.6910172304298" width="23.335020673569296" height="1.390918743994793" style="fill:#d9d9d4"/>
+<rect x="105.3735638687707" y="763.4528925369801" width="23.335020673569296" height="1.2381246934496528" style="fill:#96c8c9"/>
+<rect x="105.3735638687707" y="751.2756995925665" width="23.335020673569296" height="12.177192944413662" style="fill:#326b7d"/>
 </g>
 </g>
 <g aria-label="MAP_294.json: 2,512 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 5 items" data-node="container" data-kind="file" data-bytes="2512" data-source="games/tbs/SRC/FIELD/PASSENGER_SHIP/MAP_294.json">
@@ -12544,9 +12544,9 @@
 <path class="bevel-dark" d="M187.0116322963266 736.5568016340399 H206.75288717262038 V708.2308490337333" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="382: 4,952 bytes · Unknown, Drafted, C · 0x08793768" data-node="leaf" data-kind="folder" data-bytes="4952" data-address="0x08793768" data-source="games/tbs/SRC/FIELD/VAULT/">
 <title>382: 4,952 bytes · Unknown, Drafted, C · 0x08793768</title>
-<rect x="189.5116322963266" y="713.2578881348711" width="14.741254876293777" height="1.0029743343585056" style="fill:#d9d9d4"/>
-<rect x="189.5116322963266" y="713.2293742945197" width="14.741254876293777" height="0.028513840351343446" style="fill:#96c8c9"/>
-<rect x="189.5116322963266" y="710.7308490337333" width="14.741254876293777" height="2.4985252607864696" style="fill:#326b7d"/>
+<rect x="189.5116322963266" y="713.3484195779866" width="14.741254876293777" height="0.9124428912429903" style="fill:#d9d9d4"/>
+<rect x="189.5116322963266" y="713.3199057376353" width="14.741254876293777" height="0.028513840351343446" style="fill:#96c8c9"/>
+<rect x="189.5116322963266" y="710.7308490337333" width="14.741254876293777" height="2.589056703901985" style="fill:#326b7d"/>
 </g>
 <g aria-label="383: 11,392 bytes · Unknown, Drafted, C · 0x08794ac0" data-node="leaf" data-kind="folder" data-bytes="11392" data-address="0x08794ac0" data-source="games/tbs/SRC/FIELD/VAULT/">
 <title>383: 11,392 bytes · Unknown, Drafted, C · 0x08794ac0</title>
@@ -13045,8 +13045,8 @@
 <g aria-label="3a0: 4,392 bytes · Unknown, Drafted, C · 0x087b6668" data-node="leaf" data-kind="folder" data-bytes="4392" data-address="0x087b6668" data-source="games/tbs/SRC/FIELD/XIAN/">
 <title>3a0: 4,392 bytes · Unknown, Drafted, C · 0x087b6668</title>
 <rect x="241.94085982799862" y="764.6051783190344" width="4.514004000971285" height="4.7071013128393435" style="fill:#d9d9d4"/>
-<rect x="241.94085982799862" y="763.1523030846614" width="4.514004000971285" height="1.4528752343729636" style="fill:#96c8c9"/>
-<rect x="241.94085982799862" y="757.5391651865489" width="4.514004000971285" height="5.61313789811252" style="fill:#326b7d"/>
+<rect x="241.94085982799862" y="763.2675680940305" width="4.514004000971285" height="1.3376102250038908" style="fill:#96c8c9"/>
+<rect x="241.94085982799862" y="757.5391651865489" width="4.514004000971285" height="5.728402907481593" style="fill:#326b7d"/>
 </g>
 <g aria-label="3a1: 1,932 bytes · Unknown, C · 0x087b7790" data-node="leaf" data-kind="folder" data-bytes="1932" data-address="0x087b7790" data-source="games/tbs/SRC/FIELD/XIAN/">
 <title>3a1: 1,932 bytes · Unknown, C · 0x087b7790</title>

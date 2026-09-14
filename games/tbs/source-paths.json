@@ -9661,7 +9661,8 @@
       "source": "FIELD/VAULT/MOTION_EVENT.C"
     },
     "resource_3a0:02000324": {
-      "name": "UpdateActorTwentyPresentationBit"
+      "name": "UpdateActorTwentyPresentationBit",
+      "source": "FIELD/XIAN/PRESENTATION_FLAG.C"
     },
     "resource_3aa:02000360": {
       "name": "RunEventScript01",
@@ -18397,6 +18398,30 @@
     "main:080dd77c": {
       "name": "BattleEffect_RunRisingColumns",
       "source": "BATTLE/EFFECT/RISING_COLUMNS.C"
+    },
+    "resource_3c7:0200015c": {
+      "name": "Dialogue_HandleFacingBranch",
+      "source": "FIELD/LALIVERO/FACING_BRANCH.C"
+    },
+    "resource_3c7:020001c8": {
+      "name": "Dialogue_HandleAlternateFacingBranch",
+      "source": "FIELD/LALIVERO/ALTERNATE_FACING_BRANCH.C"
+    },
+    "resource_3c7:02000234": {
+      "name": "Dialogue_HandleFacingAction",
+      "source": "FIELD/LALIVERO/FACING_ACTION.C"
+    },
+    "resource_3c7:0200029c": {
+      "name": "Dialogue_HandleFacingCueBranch",
+      "source": "FIELD/LALIVERO/FACING_CUE_BRANCH.C"
+    },
+    "resource_3b1:02005c48": {
+      "name": "Scene_UpdateCueTimer",
+      "source": "FIELD/PASSENGER_SHIP/CUE_TIMER.C"
+    },
+    "resource_382:02001674": {
+      "name": "SceneActor_CheckFacingAndRange",
+      "source": "FIELD/VAULT/FACING_RANGE.C"
     }
   }
 }

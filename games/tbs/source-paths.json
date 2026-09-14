@@ -17824,6 +17824,10 @@
       "name": "StopBlockedActorMotion",
       "source": "FIELD/LUNPA/FORTRESS.C"
     },
+    "resource_3bf:02000d54": {
+      "name": "FieldScene_SetPositionPairs",
+      "source": "FIELD/LUNPA/SET_POSITION_PAIRS.C"
+    },
     "resource_3bf:02000474": {
       "name": "FindClearActorPosition",
       "source": "FIELD/LUNPA/FORTRESS.C"

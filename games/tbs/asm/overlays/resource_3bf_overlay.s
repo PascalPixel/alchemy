@@ -1877,10 +1877,10 @@ AlchemyC_02000af8:
 	.space 0x54
 AlchemyC_02000b4c:
 	.space 0x52
-	.2byte 0x0000
+	.balign 4, 0
 AlchemyC_02000ba0:
 	.space 0xa
-	.2byte 0x0000
+	.balign 4, 0
 AlchemyC_02000bac:
 	.space 0x40
 AlchemyC_02000bec:
@@ -1929,7 +1929,7 @@ AlchemyC_020010a0:
 	.space 0x4
 AlchemyC_020010a4:
 	.space 0x2
-	.2byte 0x0000
+	.balign 4, 0
 AlchemyC_020010a8:
 	.space 0x60
 AlchemyC_02001108:
@@ -1938,7 +1938,7 @@ AlchemyC_02001150:
 	.space 0x190
 AlchemyC_020012e0:
 	.space 0x42
-	.2byte 0x0000
+	.balign 4, 0
 AlchemyC_02001324:
 	.space 0x68
 AlchemyC_0200138c:
@@ -1971,7 +1971,7 @@ AlchemyC_02001880:
 	.space 0x64
 AlchemyC_020018e4:
 	.space 0x32
-	.2byte 0x0000
+	.balign 4, 0
 AlchemyC_02001918:
 	.space 0x68
 AlchemyC_02001980:
@@ -2014,13 +2014,13 @@ AlchemyC_020021c4:
 	.space 0xa8
 AlchemyC_0200226c:
 	.space 0x32
-	.2byte 0x0000
+	.balign 4, 0
 AlchemyC_020022a0:
 	.space 0x32
-	.2byte 0x0000
+	.balign 4, 0
 AlchemyC_020022d4:
 	.space 0x32
-	.2byte 0x0000
+	.balign 4, 0
 AlchemyC_02002308:
 	.space 0xc
 .L_02002314:
@@ -2039,7 +2039,7 @@ AlchemyC_02002504:
 	.space 0x24
 AlchemyC_02002528:
 	.space 0x2
-	.2byte 0x0000
+	.balign 4, 0
 AlchemyC_0200252c:
 	.space 0xcc
 AlchemyC_020025f8:
@@ -2050,7 +2050,7 @@ AlchemyC_02002718:
 	.space 0x3e
 .L_02002756:
 	.space 0x58
-	.2byte 0x0000
+	.balign 4, 0
 AlchemyC_020027b0:
 	.space 0x38e
 .L_02002b3e:
@@ -2102,7 +2102,7 @@ AlchemyC_02004d0c:
 	.space 0x22
 AlchemyC_02004d4c:
 	.space 0x2
-	.2byte 0x0000
+	.balign 4, 0
 AlchemyC_02004d50:
 	.space 0x38
 AlchemyC_02004d88:
@@ -2562,10 +2562,10 @@ AlchemyC_020057ec:
 	.space 0x86
 AlchemyC_02005a40:
 	.space 0x36
-	.2byte 0x0000
+	.balign 4, 0
 AlchemyC_02005a78:
 	.space 0x3e
-	.2byte 0x0000
+	.balign 4, 0
 AlchemyC_02005ab8:
 	.space 0x8
 AlchemyC_02005ac0:

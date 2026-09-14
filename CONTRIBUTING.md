@@ -114,7 +114,9 @@ partial witnesses stay under ignored `out/`, earn no whole-owner C credit and
 do not shorten reviewed extents. Retire assembly only after the complete owner
 and its integration pass, not merely because the isolated section matches.
 
-Extraction reports the bounded image's base, entry and span. Keep these local
+Extraction applies overlay loading before slicing and reports the runtime
+base, entry and span; use those printed addresses for Psynergy, not the owner's
+resource address. Keep these local
 reference bytes under ignored `out/`; never commit them. Psynergy works outside
 this repository and knows no default ROM, owner register, scene layout or
 compiler route. Its output is a draft using the caller's `types.h` aliases;

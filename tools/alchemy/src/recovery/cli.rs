@@ -80,15 +80,21 @@ fn extract(root: &Path, options: &Options) -> Result<(), String> {
     if !parent.starts_with(output_root) {
         return Err("extracted reference bytes must stay under ignored out/".into());
     }
-    let (image, base, entry, span) = owners::image_window(root, owner, options.span)?;
+    let (image, base, mut entry, span) = owners::image_window(root, owner, options.span)?;
     let start = (entry - base) as usize;
+    let image = if base == crate::compiler::overlay::RESOURCE_BASE {
+        entry += crate::compiler::overlay::RUNTIME_BASE - base;
+        crate::compiler::overlay::load(&image, 0)?
+    } else {
+        image
+    };
     std::fs::OpenOptions::new()
         .write(true)
         .create_new(true)
         .open(path)
         .and_then(|mut file| file.write_all(&image[start..start + span as usize]))
         .map_err(|error| format!("{}: {error}", path.display()))?;
-    println!("extracted {span} bytes; base=0x{entry:08x} entry=0x{entry:08x}");
+    println!("extracted {span} loaded bytes; base=0x{entry:08x} entry=0x{entry:08x}");
     Ok(())
 }
 

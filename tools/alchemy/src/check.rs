@@ -12,7 +12,7 @@ const USAGE: &str = "usage: alchemy check <publication|commit-progress|owners|re
 fn routes(arguments: &[String]) -> ExitCode {
     if arguments == ["--standard"] {
         for flag in crate::compiler::routing::cflags_for_target(
-            crate::compiler::routing::CompilerTarget::Gs1,
+            crate::compiler::routing::CompilerTarget::Tbs,
         ) {
             println!("{flag}");
         }

@@ -89,10 +89,10 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     if options.unit.is_some() {
         return Err("score complete translation units with alchemy score --unit ID".into());
     }
-    if options.target != crate::compiler::routing::CompilerTarget::Gs1
+    if options.target != crate::compiler::routing::CompilerTarget::Tbs
         || argv.iter().any(|arg| arg == "--rom")
     {
-        return Err("overlay scoring currently requires the canonical GS1 reference".into());
+        return Err("overlay scoring currently requires the canonical TBS reference".into());
     }
     let rendered = render_options(root, options)?;
     println!("reference_from=rom representation=loader-runtime container_roundtrip=required");
@@ -154,7 +154,7 @@ pub(crate) fn render_options(
             .unwrap_or_else(|| overlay_call_via_base(&overlay)),
     );
     options.configuration.overlay_extent = Some(span);
-    if let Some(unit) = units.unit_for_game_owner("gs1", resolved) {
+    if let Some(unit) = units.unit_for_game_owner("tbs", resolved) {
         options.configuration.absolute_symbols = unit.canonical_symbols()?;
     }
     options.rom = Some(reference.to_string_lossy().into_owned());
@@ -164,7 +164,7 @@ pub(crate) fn render_options(
     render(root, &options)
 }
 pub fn audit_corpus(root: &Path) -> Result<i32, String> {
-    let directory = root.join("games/gs1/recon/en/overlays");
+    let directory = root.join("games/tbs/recon/en/overlays");
     let mut sources = std::fs::read_dir(&directory)
         .map_err(|error| format!("{}: {error}", directory.display()))?
         .filter_map(Result::ok)
@@ -182,7 +182,7 @@ pub fn audit_corpus(root: &Path) -> Result<i32, String> {
     let paths = SourcePaths::load(root)?;
     let reviewed = crate::overlay::reviewed_spans(root)?;
     let dossiers: Value = serde_json::from_slice(
-        &std::fs::read(root.join("games/gs1/recon/en/dossiers.json"))
+        &std::fs::read(root.join("games/tbs/recon/en/dossiers.json"))
             .map_err(|error| error.to_string())?,
     )
     .map_err(|error| error.to_string())?;

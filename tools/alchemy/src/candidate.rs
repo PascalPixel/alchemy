@@ -774,7 +774,7 @@ void FieldScene_RunActorPositionTransition(void)
             output,
             &[],
             ROM_BASE,
-            CompilerTarget::Gs1,
+            CompilerTarget::Tbs,
             &config,
             None,
         )
@@ -789,7 +789,7 @@ void FieldScene_RunActorPositionTransition(void)
                 output,
                 &[],
                 ROM_BASE,
-                CompilerTarget::Gs1,
+                CompilerTarget::Tbs,
                 &config,
                 None,
             )
@@ -831,7 +831,7 @@ void FieldScene_RunActorPositionTransition(void)
     #[test]
     fn candidate_bindings_use_the_game_and_overlay_register_namespace() {
         let root = std::env::temp_dir().join(format!("candidate-bindings-{}", std::process::id()));
-        for game in ["gs1", "gs2"] {
+        for game in ["tbs", "tla"] {
             std::fs::create_dir_all(root.join("games").join(game)).unwrap();
             std::fs::write(
                 root.join("games").join(game).join("source-paths.json"),
@@ -839,18 +839,18 @@ void FieldScene_RunActorPositionTransition(void)
             ).unwrap();
         }
         assert_eq!(
-            source_symbol_bindings(&root, "games/gs1/SRC/08001234.c", CompilerTarget::Gs1).unwrap(),
-            "#define gs1_Main Func_08001234\n"
+            source_symbol_bindings(&root, "games/tbs/SRC/08001234.c", CompilerTarget::Tbs).unwrap(),
+            "#define tbs_Main Func_08001234\n"
         );
         assert_eq!(
-            source_symbol_bindings(&root, "games/gs2/src/08001234.c", CompilerTarget::Gs2).unwrap(),
-            "#define gs2_Main Func_08001234\n"
+            source_symbol_bindings(&root, "games/tla/src/08001234.c", CompilerTarget::Tla).unwrap(),
+            "#define tla_Main Func_08001234\n"
         );
         assert_eq!(
             source_symbol_bindings(
                 &root,
-                "games/gs1/SRC/resource_380_c_02000100.c",
-                CompilerTarget::Gs1
+                "games/tbs/SRC/resource_380_c_02000100.c",
+                CompilerTarget::Tbs
             )
             .unwrap(),
             "#define Scene_Run Func_02000100\n"

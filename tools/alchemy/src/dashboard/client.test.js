@@ -2,11 +2,11 @@ import { test, expect } from "bun:test";
 
 test("shared map files open their real folder and highlight without copying", async () => {
   const source = await Bun.file(new URL("./client.js", import.meta.url)).text();
-  const path = "games/gs1/GRAPHICS/TILE/SHARED.PNG";
+  const path = "games/tbs/GRAPHICS/TILE/SHARED.PNG";
   const selected = [], loads = [], classes = [];
   const file = { getAttribute: () => path, classList: { add: name => classes.push(name) } };
   const selection = { hidden: true, replaceChildren(...children) { this.children = children; } };
-  const chart = { dataset: { tree: "rom", folder: "games/gs1/SRC/FIELD/XIAN/" }, clientWidth: 540,
+  const chart = { dataset: { tree: "rom", folder: "games/tbs/SRC/FIELD/XIAN/" }, clientWidth: 540,
     querySelector: () => ({ getAttribute: () => JSON.stringify([path]) }), querySelectorAll: () => [file] };
   const panel = { querySelector: name => name === ".chart" ? chart : name === ".viewer-selection" ? selection : {} };
   class Element {
@@ -24,7 +24,7 @@ test("shared map files open their real folder and highlight without copying", as
   await activate({ type: "keydown", key: "Enter", target: new Element("open-shared"), preventDefault() {} });
   expect(loads).toHaveLength(0);
   await activate({ type: "click", target: new Element("open-shared"), preventDefault() {} });
-  expect(chart.dataset.folder).toBe("games/gs1/GRAPHICS/TILE/");
+  expect(chart.dataset.folder).toBe("games/tbs/GRAPHICS/TILE/");
   expect(loads).toHaveLength(1);
   expect(selected).toEqual([file]);
   expect(classes).toEqual(["shared-highlight"]);
@@ -79,15 +79,15 @@ test("folder requests preserve the selected folder and discard stale responses",
   const ui = await coverageClient();
   let installed;
   const chart = {
-    dataset: { folder: "games/gs1/SRC/FIELD/XIAN/", width: "540" },
+    dataset: { folder: "games/tbs/SRC/FIELD/XIAN/", width: "540" },
     replaceChildren(svg) { installed = svg; },
   };
   const section = { querySelector: () => chart };
   await ui.loadTree(section, "rom", "ROM contents", "1", 540, chart.dataset.folder);
   expect(installed).toBe(ui.svg);
-  expect(ui.requests.at(-1)).toBe("/svg/rom/540/games/gs1/SRC/FIELD/XIAN/?v=1");
+  expect(ui.requests.at(-1)).toBe("/svg/rom/540/games/tbs/SRC/FIELD/XIAN/?v=1");
   installed = undefined;
-  await ui.loadTree(section, "rom", "ROM contents", "1", 540, "games/gs1/");
+  await ui.loadTree(section, "rom", "ROM contents", "1", 540, "games/tbs/");
   expect(installed).toBeUndefined();
 });
 test("resized charts request native pixel dimensions and reject stale-size responses", async () => {
@@ -104,13 +104,13 @@ test("resized charts request native pixel dimensions and reject stale-size respo
 
 test("file activation does not navigate its ancestor folder", async () => {
   const source = await Bun.file(new URL("./client.js", import.meta.url)).text();
-  const chart = { dataset: { folder: "games/gs1/", tree: "rom", title: "ROM", revision: "1" }, clientWidth: 540 };
+  const chart = { dataset: { folder: "games/tbs/", tree: "rom", title: "ROM", revision: "1" }, clientWidth: 540 };
   const back = { hidden: true };
   const selection = { hidden: true };
   const panel = { querySelector: selector => selector === ".chart" ? chart : selector === ".viewer-selection" ? selection : back };
   class Element {
     constructor(kind, parent = null) { this.kind = kind; this.parent = parent; }
-    getAttribute(name) { return name === "data-kind" ? this.kind : "games/gs1/SRC/"; }
+    getAttribute(name) { return name === "data-kind" ? this.kind : "games/tbs/SRC/"; }
     closest(selector) {
       if (selector === ".panel") return panel;
       if (selector === "[data-action]") return null;
@@ -131,10 +131,10 @@ test("file activation does not navigate its ancestor folder", async () => {
   expect(selections).toBe(3);
   expect(selection.hidden).toBe(false);
   expect(loads).toBe(0);
-  expect(chart.dataset.folder).toBe("games/gs1/");
+  expect(chart.dataset.folder).toBe("games/tbs/");
   await activate({ type: "click", target: new Element(null, folder), preventDefault() {} });
   expect(loads).toBe(1);
-  expect(chart.dataset.folder).toBe("games/gs1/SRC/");
+  expect(chart.dataset.folder).toBe("games/tbs/SRC/");
   expect(back.hidden).toBe(false);
   expect(selection.hidden).toBe(true);
 });
@@ -144,7 +144,7 @@ test("selection shows source details without copying and tolerates missing addre
   const show = new Function("h", source.slice(source.indexOf("function showSelection"), source.indexOf('root.addEventListener("click"')) + ";return showSelection;")(
     (tag, attributes, ...children) => ({ tag, attributes, children }));
   const selection = { dataset: {}, hidden: true, replaceChildren(...children) { this.children = children; } };
-  const attributes = { "data-source": "games/gs1/SRC/BATTLE/MAIN.C", "data-address": "0x080bbb0c", "aria-label": "Battle action: 6,332 bytes" };
+  const attributes = { "data-source": "games/tbs/SRC/BATTLE/MAIN.C", "data-address": "0x080bbb0c", "aria-label": "Battle action: 6,332 bytes" };
   show(selection, { getAttribute: name => attributes[name] ?? null });
   expect(selection.hidden).toBe(false);
   expect(selection.dataset.address).toBe("0x080bbb0c");

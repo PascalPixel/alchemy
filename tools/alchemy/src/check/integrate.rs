@@ -155,7 +155,7 @@ fn run_pipeline(directory: &str, apply: bool) -> Result<PipelineReport, String> 
         })
         .collect::<Vec<_>>();
     let candidate_count = candidates.len();
-    let rom_path = repository.join("roms/gs1-en.gba");
+    let rom_path = repository.join("roms/tbs-en.gba");
     let rom = fs::read(&rom_path).map_err(|error| format!("{}: {error}", rom_path.display()))?;
     let mut accepted = Vec::new();
     let mut evidence = Vec::new();
@@ -164,7 +164,7 @@ fn run_pipeline(directory: &str, apply: bool) -> Result<PipelineReport, String> 
     let mut already_installed = 0;
     for (stem, candidate) in candidates {
         let owner = SourceOwner::parse(&format!("main:{stem}"))?;
-        let asm = repository.join("games/gs1/asm").join(format!("{stem}.s"));
+        let asm = repository.join("games/tbs/asm").join(format!("{stem}.s"));
         if source_paths.source_path(owner).exists() {
             if asm.exists() {
                 unscored.push((stem, "installed C still has retained assembly".into()));
@@ -212,7 +212,7 @@ fn run_pipeline(directory: &str, apply: bool) -> Result<PipelineReport, String> 
                 &gate.to_string_lossy(),
                 &[],
                 ROM_BASE,
-                CompilerTarget::Gs1,
+                CompilerTarget::Tbs,
                 &configuration,
             )?;
             let difference = first_difference(&verified.expected, &verified.actual)
@@ -279,7 +279,7 @@ fn run_pipeline(directory: &str, apply: bool) -> Result<PipelineReport, String> 
                     .map_err(|error| format!("{}: {error}", parent.display()))?;
             }
             fs::copy(candidate, &exact).map_err(|error| format!("{}: {error}", exact.display()))?;
-            let asm = repository.join("games/gs1/asm").join(format!("{stem}.s"));
+            let asm = repository.join("games/tbs/asm").join(format!("{stem}.s"));
             if asm.exists() {
                 fs::remove_file(&asm).map_err(|error| format!("{}: {error}", asm.display()))?;
             }

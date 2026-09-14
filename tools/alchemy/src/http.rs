@@ -98,7 +98,7 @@ pub fn shell(title: &str, styles: &str) -> Response {
         format!("<!doctype html><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>{title}</title><style>{styles}</style><script type=\"module\" src=\"/client.js\"></script>"))
 }
 pub fn font() -> Response {
-    match std::fs::read(root().join("games/gs1/assets/fonts/weyard.otf")) {
+    match std::fs::read(root().join("games/tbs/assets/fonts/weyard.otf")) {
         Ok(bytes) => Response::new(200, "OK", Some("font/otf"), "no-store", bytes),
         Err(_) => not_found(),
     }

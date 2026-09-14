@@ -1,13 +1,13 @@
 //! Per-source address bindings recovered from the owner register's companion
 //! manifest. Production C spells semantic names; this file is never included
-//! from `games/gs1/SRC` or `games/gs1/INCLUDE`. The compile plan expands it
+//! from `games/tbs/SRC` or `games/tbs/INCLUDE`. The compile plan expands it
 //! into a generated header under `out/`.
 use serde::Deserialize;
 use std::collections::{BTreeMap, HashSet};
 use std::path::{Component, Path, PathBuf};
 use std::sync::OnceLock;
 
-pub const SOURCE_BINDINGS_MANIFEST: &str = "games/gs1/recon/source-bindings.json";
+pub const SOURCE_BINDINGS_MANIFEST: &str = "games/tbs/recon/source-bindings.json";
 
 #[derive(Debug, Deserialize)]
 struct Manifest {
@@ -19,10 +19,10 @@ struct Manifest {
     files: BTreeMap<String, String>,
 }
 
-static GS1: OnceLock<Result<Manifest, String>> = OnceLock::new();
+static TBS: OnceLock<Result<Manifest, String>> = OnceLock::new();
 
-fn load_gs1() -> Result<&'static Manifest, String> {
-    match GS1.get_or_init(|| read_manifest(&crate::compiler::routing::root())) {
+fn load_tbs() -> Result<&'static Manifest, String> {
+    match TBS.get_or_init(|| read_manifest(&crate::compiler::routing::root())) {
         Ok(manifest) => Ok(manifest),
         Err(error) => Err(error.clone()),
     }
@@ -33,15 +33,15 @@ fn read_manifest(root: &Path) -> Result<Manifest, String> {
     if !path.exists() {
         return Ok(Manifest {
             format: 1,
-            kind: "gs1-source-bindings".into(),
+            kind: "tbs-source-bindings".into(),
             common: String::new(),
             files: BTreeMap::new(),
         });
     }
     let manifest: Manifest = crate::compiler::build_io::read_json(&path)?;
-    if manifest.format != 1 || manifest.kind != "gs1-source-bindings" {
+    if manifest.format != 1 || manifest.kind != "tbs-source-bindings" {
         return Err(format!(
-            "{}: expected gs1-source-bindings format 1",
+            "{}: expected tbs-source-bindings format 1",
             path.display()
         ));
     }
@@ -78,11 +78,11 @@ pub fn expand_binding_text(text: &str) -> String {
 }
 
 fn source_key(root: &Path, source: &Path) -> Option<String> {
-    let src_root = root.join("games/gs1/SRC");
+    let src_root = root.join("games/tbs/SRC");
     let relative = source
         .strip_prefix(&src_root)
         .ok()
-        .or_else(|| source.strip_prefix("games/gs1/SRC").ok())
+        .or_else(|| source.strip_prefix("games/tbs/SRC").ok())
         .or_else(|| {
             let nested = is_c_source_path(source)
                 && source.components().count() >= 2
@@ -137,7 +137,7 @@ fn lexical_join(base: &Path, rel: &str) -> PathBuf {
 }
 
 /// Production src keys for this TU: the file itself, plus `#include`d `.c`/`.C`
-/// files under `games/gs1/SRC`. Mixed leftover wrappers compile those src
+/// files under `games/tbs/SRC`. Mixed leftover wrappers compile those src
 /// files through a recon unit path that has no bindings key of its own.
 fn included_source_keys(root: &Path, source: &Path) -> Vec<String> {
     let mut keys = Vec::new();
@@ -179,7 +179,7 @@ pub fn production_bindings(
         }
     }
     let mut text = String::new();
-    let manifest = load_gs1()?;
+    let manifest = load_tbs()?;
     if !manifest.common.is_empty() {
         text.push_str(&filter_reserved_defines(
             &expand_binding_text(&manifest.common),
@@ -191,7 +191,7 @@ pub fn production_bindings(
     }
     if let Some(source) = source {
         for key in included_source_keys(root, source) {
-            let src_path = root.join("games/gs1/SRC").join(&key);
+            let src_path = root.join("games/tbs/SRC").join(&key);
             if let Ok(src_text) = std::fs::read_to_string(&src_path) {
                 reserved.extend(type_tags(&src_text));
             }
@@ -397,7 +397,7 @@ mod tests {
                 "../../../SRC/BATTLE/EFFECT/ENABLE_TWO_CALLBACKS.C"
             ]
         );
-        let unit = Path::new("/workspace/games/gs1/recon/en/units/unit-0808fe38.c");
+        let unit = Path::new("/workspace/games/tbs/recon/en/units/unit-0808fe38.c");
         let resolved = lexical_join(unit.parent().unwrap(), &includes[1]);
         assert_eq!(
             source_key(Path::new("/workspace"), &resolved).as_deref(),
@@ -409,7 +409,7 @@ mod tests {
     #[test]
     fn uppercase_c_sources_and_includes_resolve_to_src_keys() {
         let root = tempdir().unwrap();
-        let source_root = root.path().join("games/gs1/SRC");
+        let source_root = root.path().join("games/tbs/SRC");
         let source = source_root.join("battle/main.C");
         let included = source_root.join("battle/helper.C");
         std::fs::create_dir_all(source.parent().unwrap()).unwrap();

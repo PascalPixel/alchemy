@@ -1,0 +1,104 @@
+# TBS English overlay identities derived from the ROM location-name resolver, not source filenames.
+# Scene indices 0..200: 08029094 bounds the selector; 0808ab48 loads record[scene].resource_id from 0809f1a8.
+# Name rules: 0808a5d0 -> 0808b158 scans 0809ddd8 in order. Bit 15 selects scene instead of group; low 15 bits select entry or 0x7fff wildcard.
+# Menu_DrawSelectionRow adds 0x99b to the matched result. Message IDs refer to assets/text/message_archive.json.
+# All matching entry-specific titles are included; reachability of every entry was not tested in an emulator. No-match title-screen fallback is excluded.
+# English display names are identification evidence, not proposed Japanese source filenames. Scene indices are not graphics-map indices.
+# Existing source names are not evidence: resource_39d is Mercury Lighthouse, 3b2 Crossbone Isle, and 3bf Lunpa Fortress; 39e is shared Fuchin/Xian/Lama interior code.
+resource_id	locations	role	scene_ids	name_message_ids	evidence	atlas_destination
+resource_36f	Title screen	title	0	0x99b	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/MENU/TITLE
+resource_370	(Clear data)	save_menu	1	0x99c	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/MENU/SAVE
+resource_371	World Map	world_map	2	0x99d	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/WORLD
+resource_372	Vale	area	3	0x9a5	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/HEIDIA
+resource_373	Vale	area	4	0x9a5	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/HEIDIA
+resource_374	Vale	area	5	0x9a5	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/HEIDIA
+resource_375	Vale	area	6	0x9a5	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/HEIDIA
+resource_376	Vale	area	7	0x9a5	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/HEIDIA
+resource_377	Babi's Palace; Vale	area	8	0x9a4,0x9a5	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/SHARED
+resource_378	Vale Sanctum; Vault Sanctum; Bilibin Sanctum; Xian Sanctum; Altin Sanctum; Sanctum	area	9	0x99e,0x99f,0x9a0,0x9a1,0x9a2,0x9a3	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/SHARED
+resource_379	Vale	area	10	0x9a5	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/HEIDIA
+resource_37a	Sol Sanctum	area	11	0x9a8	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/SOL_SHINDEN
+resource_37b	Sol Sanctum	area	12	0x9a8	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/SOL_SHINDEN
+resource_37c	Sol Sanctum	area	13	0x9a8	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/SOL_SHINDEN
+resource_37d	Sol Sanctum	area	14	0x9a8	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/SOL_SHINDEN
+resource_37e	Sol Sanctum	area	15	0x9a8	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/SOL_SHINDEN
+resource_37f	Sol Entrance; Sol Sanctum	area	16,19	0x9a6,0x9a8	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/SOL_SHINDEN
+resource_380	Elemental Star Room	area	17	0x9a7	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/SOL_SHINDEN
+resource_381	Elemental Star Room	area	18	0x9a7	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/SOL_SHINDEN
+resource_382	Vault	area	20	0x9ab	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/VAULT
+resource_383	Vault	area	21	0x9ab	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/VAULT
+resource_384	Lunpa; Vault	area	22	0x9aa,0x9ab	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/SHARED
+resource_385	Vault	area	23	0x9ab	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/VAULT
+resource_386	Vault	area	24	0x9ab	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/VAULT
+resource_387	Goma Cave Entrance	area	25	0x9ac	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/GOMA
+resource_388	Goma Cave	area	26	0x9ad	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/GOMA
+resource_389	Goma Cave	area	27	0x9ad	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/GOMA
+resource_38a	Goma Cave	area	28,29	0x9ad	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/GOMA
+resource_38b	Bilibin Treasury; Bilibin; Bilibin Barricade	area	30,32,35	0x9ae,0x9af,0x9b1	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/BILIBIN
+resource_38c	Bilibin	area	31	0x9af	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/BILIBIN
+resource_38d	McCoy's Palace	area	33	0x9b0	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/BILIBIN
+resource_38e	McCoy's Palace	area	34	0x9b0	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/BILIBIN
+resource_38f	Kolima Tunnel; Kolima; Kolima Bridge	area	36,38,39	0x9b2,0x9b3,0x9b4	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/KOLIMA
+resource_390	Kolima	area	37	0x9b3	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/KOLIMA
+resource_391	Kolima Forest	area	40	0x9b5	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/KOLIMA
+resource_392	Kolima Forest	area	41	0x9b5	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/KOLIMA
+resource_393	Kolima Forest	area	42	0x9b5	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/KOLIMA
+resource_394	Kolima Forest	area	43	0x9b5	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/KOLIMA
+resource_395	Kolima Forest	area	44	0x9b5	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/KOLIMA
+resource_396	Tret Tree	area	45	0x9b6	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/KOLIMA
+resource_397	Tret Tree	area	46	0x9b6	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/KOLIMA
+resource_398	Bilibin Cave Entrance; Bilibin Cave	area	47,48,49	0x9b7,0x9b8	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/BILIBIN
+resource_399	Imil Sanctum; Imil	area	50,51	0x9b9,0x9ba	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/IMIL
+resource_39a	Imil Falls Cave; Fuchin Falls Cave	area	52,62,63,64,65,66,67	0x9bb,0x9c1	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/SHARED
+resource_39b	Mercury Lighthouse	area	53	0x9bd	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/MERCURY
+resource_39c	Mercury Lighthouse	area	54,55,56,57	0x9bd	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/MERCURY
+resource_39d	Lighthouse Aerie; Mercury Lighthouse	area	58,59	0x9bc,0x9bd	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/MERCURY
+resource_39e	Xian; Lama Temple; Fuchin Temple	area	60,61	0x9be,0x9bf,0x9c0	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/SHARED
+resource_39f	Mogall Forest	area	68,69,70,71	0x9c2	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/MOGALL
+resource_3a0	Xian	area	72	0x9c3	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/XIAN
+resource_3a1	Xian	area	73	0x9c3	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/XIAN
+resource_3a2	Alpine Crossing; Lama Temple	area	74,88	0x9c4,0x9c7	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/SHARED
+resource_3a3	Altin	area	75,76	0x9c5	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/ALTIN
+resource_3a4	Alpine Crossing; Altin Peak	area	77,78,79,80,81,82,83,84,85,86,87	0x9c4,0x9c6	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/ALTIN
+resource_3a5	Lamakan Desert	area	89,90,91,92	0x9c8	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/LAMAKAN
+resource_3a6	Vale; Vale Cave	area	93,94,95	0x9c9,0x9ca	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/HEIDIA
+resource_3a7	Vault Cave	area	96,97,98	0x9cb	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/VAULT
+resource_3a8	Kalay; Hammet Palace; Kalay Tunnel Entrance; Kalay Tunnel	area	99,102,153,154,155,156	0x9cd,0x9ce,0x9e5,0x9e6	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/KALAY
+resource_3a9	Kalay Sanctum; Kalay	area	100,101	0x9cc,0x9cd	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/KALAY
+resource_3aa	Hammet Palace	area	103	0x9ce	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/KALAY
+resource_3ab	Lunpa; Lunpa Fortress Gates	area	104,159	0x9d0,0x9e8	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/LUNPA
+resource_3ac	Lunpa Temple; Gate to Suhalla; Lunpa	area	105	0x9a9,0x9cf,0x9d0	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/SHARED
+resource_3ad	West Lunpa Cave	area	106	0x9d1	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/LUNPA
+resource_3ae	Tolbi Docks; Kalay Docks	area	107,108,112	0x9d2,0x9d3,0x9d5	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/SHARED
+resource_3af	Tolbi-bound Ship	area	109	0x9d4	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/PASSENGER_SHIP
+resource_3b0	Tolbi-bound Ship	area	110	0x9d4	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/PASSENGER_SHIP
+resource_3b1	Tolbi-bound Ship	area	111	0x9d4	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/PASSENGER_SHIP
+resource_3b2	Crossbone Isle; Pirate Ship; Crossbone Isle Cave	area	113,114,123,124,125,126,127,128,129,130,131,132,133,134	0x9d6,0x9d7,0x9d8	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/CROSSBONE
+resource_3b3	Crossbone Isle Cave	area	115,116,119,121,122	0x9d8	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/CROSSBONE
+resource_3b4	Crossbone Isle Cave	area	117,118,120	0x9d8	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/CROSSBONE
+resource_3b5	Tolbi	area	135	0x9da	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/TOLBI
+resource_3b6	Tolbi Sanctum; Tolbi	area	136	0x9d9,0x9da	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/TOLBI
+resource_3b7	Tolbi; Tolbi Spring	area	137,189	0x9da,0x9fb	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/TOLBI
+resource_3b8	Babi's Palace	area	138,139	0x9db	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/TOLBI
+resource_3b9	Colosseum Tunnel; Colosseum Entrance; Colosseum	area	140,141,142	0x9dc,0x9dd,0x9de,0x9df	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/COLOSSO
+resource_3ba	Colosseum Final 1	area	143	0x9e0	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/COLOSSO
+resource_3bb	Colosseum Final 2	area	144	0x9e1	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/COLOSSO
+resource_3bc	Colosseum Final 3	area	145	0x9e2	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/COLOSSO
+resource_3bd	Altmiller Cave	area	146,147,148,149,150,151	0x9e3	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/ALTMILLER
+resource_3be	Gondowan Passage; Gondowan Cave	area	152,157,158	0x9e4,0x9e7	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/GONDOWAN
+resource_3bf	Lunpa Fortress	area	160,161,162,163	0x9e9	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/LUNPA
+resource_3c0	Suhalla Desert	area	164,165,166	0x9ea	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/SUHALLA
+resource_3c1	Suhalla	area	167	0x9ec	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/SUHALLA
+resource_3c2	Suhalla Sanctum; Suhalla	area	168	0x9eb,0x9ec	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/SUHALLA
+resource_3c3	Gateway Cave; Suhalla Gate	area	169,170,171	0x9ed,0x9ee	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/SUHALLA
+resource_3c4	Babi Lighthouse; Tunnel Ruins	area	172,173	0x9ef,0x9f0	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/BABI_LIGHTHOUSE
+resource_3c5	Babi Lighthouse Entry; Road to Babi Lighthouse; Babi Lighthouse	area	174,175,176,177	0x9f1,0x9f2,0x9f3	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/BABI_LIGHTHOUSE
+resource_3c6	Lalivero	area	178	0x9f5	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/LALIVERO
+resource_3c7	Lalivero Sanctum; Lalivero	area	179,180	0x9f4,0x9f5	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/LALIVERO
+resource_3c8	Venus Lighthouse; Venus Lighthouse Entry	area	181,182,183,184,185,186	0x9f6,0x9f7,0x9f9	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/VENUS
+resource_3c9	Lighthouse Aerie	area	187	0x9f8	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/VENUS
+resource_3ca	Lemurian ship	area	188	0x9fa	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/LEMURIAN_SHIP
+resource_3cb	Lobby	link_lobby	190	0x9fc	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/MENU/LINK
+resource_3cc	Test 0; Test 1; Test 2; Test 3; Test 4; Test 5; Test 6; Test 7	test_maps	191,192,193,194,195,196,197,198	0x9fd,0x9fe,0x9ff,0xa00,0xa01,0xa02,0xa03,0xa04	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/DEBUG
+resource_3cd	Increase item and level	debug_items	199	0xa05	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/DEBUG
+resource_3ce	Menu test	debug_menu	200	0xa06	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/DEBUG

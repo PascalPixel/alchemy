@@ -54,7 +54,7 @@ fn extension(path: &str) -> &str {
 }
 fn canonical_binary_source(path: &str) -> bool {
     let normalized = path.replace('\\', "/").to_ascii_lowercase();
-    normalized.starts_with("games/gs1/assets/maps/")
+    normalized.starts_with("games/tbs/assets/maps/")
         && matches!(
             normalized.rsplit('/').next(),
             Some("metatiles.bin" | "metatile_attributes.bin")
@@ -508,10 +508,10 @@ fn self_test() -> Result<(), String> {
     }
     for path in [
         "baserom",
-        "agscc-gs2.unidiff",
+        "agscc-tla.unidiff",
         "compiler.UNIDIFF",
         "private-diff.json",
-        "gs1-en.gba.lz",
+        "tbs-en.gba.lz",
         ".cmatch-fresh/result.s",
     ] {
         if publication_path_reason(path).is_none() {
@@ -520,16 +520,16 @@ fn self_test() -> Result<(), String> {
     }
     for path in [
         "src/main.c",
-        "games/gs1/asm/080000c0.s",
-        "games/gs1/assets/graphics/title.png",
-        "games/gs1/SOUND/SEQUENCE/THEME.mid",
-        "games/gs1/SOUND/SAMPLE/WAVE.wav",
-        "games/gs1/assets/data/layout.json",
+        "games/tbs/asm/080000c0.s",
+        "games/tbs/assets/graphics/title.png",
+        "games/tbs/SOUND/SEQUENCE/THEME.mid",
+        "games/tbs/SOUND/SAMPLE/WAVE.wav",
+        "games/tbs/assets/data/layout.json",
         "tools/compare-roms/src/main.rs",
         "tools/alchemy/src/build_full.rs",
-        "games/gs1/assets/data/resource_2_build_stamp.stamp",
-        "games/gs1/assets/maps/town/metatiles.bin",
-        "games/gs1/assets/maps/town/metatile_attributes.bin",
+        "games/tbs/assets/data/resource_2_build_stamp.stamp",
+        "games/tbs/assets/maps/town/metatiles.bin",
+        "games/tbs/assets/maps/town/metatile_attributes.bin",
         "rom.sha1",
     ] {
         if let Some(reason) = publication_path_reason(path) {
@@ -550,7 +550,7 @@ fn self_test() -> Result<(), String> {
         return Err("content-signature self-test failed".to_string());
     }
     let hygiene_holds =
-        publication_data_reason("games/gs1/asm/08000000.s", b".incbin \"rom.gba\"\n")
+        publication_data_reason("games/tbs/asm/08000000.s", b".incbin \"rom.gba\"\n")
             == Some("committed incbin payload")
             && conflict_marker_reason("CONTRIBUTING.md", b"a\n<<<<<<< HEAD\nb\n").is_some()
             && conflict_marker_reason("CONTRIBUTING.md", b"a\n>>>>>>> topic\n").is_some()
@@ -558,7 +558,7 @@ fn self_test() -> Result<(), String> {
             && conflict_marker_reason("CONTRIBUTING.md", b"Title\n=======\n\nbody\n").is_none()
             && conflict_marker_reason("CONTRIBUTING.md", b"see <<<<<<<HEAD in the output\n")
                 .is_none()
-            && conflict_marker_reason("games/gs1/assets/readme/x.png", b"<<<<<<< HEAD\n").is_none();
+            && conflict_marker_reason("games/tbs/assets/readme/x.png", b"<<<<<<< HEAD\n").is_none();
     if !hygiene_holds {
         return Err("source-hygiene self-test failed".to_string());
     }

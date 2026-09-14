@@ -1,5 +1,5 @@
 //! Adopt an exact Golden Sun candidate: the owner's source lands under
-//! `games/gs1/SRC`, the registers learn its name and path, the retained
+//! `games/tbs/SRC`, the registers learn its name and path, the retained
 //! records inside the span retire, and the overlay placeholder is applied
 //! through `overlay adopt`. Every step refuses before it mutates when the
 //! candidate is not exact or the span overlaps another registered region.
@@ -54,7 +54,7 @@ fn derive_name(root: &Path, sources: &SourcePaths, overlay: &str, owner: SourceO
         .find(|candidate| {
             let letter = candidate.chars().last().unwrap_or('a').to_ascii_lowercase();
             let path = root.join(format!(
-                "games/gs1/SRC/overlays/unidentified/run_scene_{resource}_sequence_{letter}.c"
+                "games/tbs/SRC/overlays/unidentified/run_scene_{resource}_sequence_{letter}.c"
             ));
             !taken.contains(candidate) && !path.exists()
         })
@@ -173,7 +173,7 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
             .replace(&format!("Lifted_{entry:08x}"), &name),
         None => super::lift_owner(root, request.owner, Some(span), Some(&name))?.0,
     };
-    let destination = root.join("games/gs1/SRC").join(&relative);
+    let destination = root.join("games/tbs/SRC").join(&relative);
     let existed = destination.exists();
     if let Some(parent) = destination.parent() {
         std::fs::create_dir_all(parent).map_err(|e| format!("{}: {e}", parent.display()))?;
@@ -208,12 +208,12 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
     // anywhere after this point restores all of them and removes the unit,
     // so an adoption either completes or leaves nothing behind for a re-run
     // to trip over.
-    let manifest = root.join("games/gs1/source-paths.json");
-    let assembly = root.join("games/gs1/semantic/overlay-assembly.json");
-    let dossiers = root.join("games/gs1/recon/en/dossiers.json");
-    let unmatchable = root.join("games/gs1/semantic/unmatchable.json");
-    let units = root.join("games/gs1/recon/translation-units.json");
-    let overlay_source: PathBuf = root.join(format!("games/gs1/asm/overlays/{overlay}_overlay.s"));
+    let manifest = root.join("games/tbs/source-paths.json");
+    let assembly = root.join("games/tbs/semantic/overlay-assembly.json");
+    let dossiers = root.join("games/tbs/recon/en/dossiers.json");
+    let unmatchable = root.join("games/tbs/semantic/unmatchable.json");
+    let units = root.join("games/tbs/recon/translation-units.json");
+    let overlay_source: PathBuf = root.join(format!("games/tbs/asm/overlays/{overlay}_overlay.s"));
     let stems: Vec<String> = {
         let mut retired = vec![owner];
         for m in modules(root)? {
@@ -229,7 +229,7 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
     };
     let drafts: Vec<PathBuf> = stems
         .iter()
-        .map(|stem| root.join(format!("games/gs1/recon/en/overlays/{stem}.c")))
+        .map(|stem| root.join(format!("games/tbs/recon/en/overlays/{stem}.c")))
         .collect();
     let mut watched = vec![
         manifest.clone(),
@@ -432,7 +432,7 @@ fn register_adoption(
     for (stem, draft) in stems.iter().zip(drafts) {
         if draft.exists() {
             std::fs::remove_file(draft).map_err(|e| format!("{}: {e}", draft.display()))?;
-            removed_drafts.push(format!("games/gs1/recon/en/overlays/{stem}.c"));
+            removed_drafts.push(format!("games/tbs/recon/en/overlays/{stem}.c"));
             report.push(format!("draft removed: {stem}"));
         }
     }

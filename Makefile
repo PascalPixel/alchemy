@@ -4,7 +4,7 @@
 
 GCC296_CFLAGS := -O2 -mthumb -mthumb-interwork -mcpu=arm7tdmi \
                  -fno-builtin -nostdinc -ffreestanding \
-                 -fcall-used-r4 -Igames/gs1/INCLUDE
+                 -fcall-used-r4 -Igames/tbs/INCLUDE
 
 TOOLS := tools
 CARGO ?= cargo
@@ -26,7 +26,7 @@ PORTABLE_TOOLS := alchemy psynergy
 # decision is invalid regardless of how good the new machinery is.
 # 50,000 set by Pascal's decision, 2026-08-30.
 TOOLING_LINE_LIMIT := 50000
-TARGET ?= gs1-en
+TARGET ?= tbs-en
 TARGET_GAME := $(firstword $(subst -, ,$(TARGET)))
 FULL_REPORT = out/$(TARGET)/full/rebuilt.json
 FULL_ROM = out/$(TARGET)/full/rebuilt.gba
@@ -37,8 +37,8 @@ MAIN_CORRESPONDENCE_MATCHED_MIN := 1393
 MAIN_CORRESPONDENCE_UNRESOLVED_MAX := 44
 OVERLAY_CORRESPONDENCE_MATCHED_MIN := 2562
 OVERLAY_CORRESPONDENCE_UNRESOLVED_MAX := 38
-HISTORICAL_TARGETS := gs1-ja gs1-en gs1-de gs1-es gs1-fr gs1-it \
-	gs2-ja gs2-en gs2-de gs2-es gs2-fr gs2-it
+HISTORICAL_TARGETS := tbs-ja tbs-en tbs-de tbs-es tbs-fr tbs-it \
+	tla-ja tla-en tla-de tla-es tla-fr tla-it
 CANDIDATE_SINGLE_OWNERS := \
 	08090824=initialize_display_transition_state.c \
 	08091174=initialize_battle_effect_buffers.c \
@@ -67,10 +67,10 @@ help:
 		'make audit            exhaustive editions, candidates, and reports audit' \
 		'make reports          refresh analysis reports and coverage figures' \
 		'make targets          compile shared source for all 12 historical targets' \
-		'make gs1-ja           compile one edition-qualified source target' \
+		'make tbs-ja           compile one edition-qualified source target' \
 		'make build-rom        rebuild the ROM' \
 		'make build-full       rebuild and compare every owned byte' \
-		'make full-rom-check   prove the complete gs1-en ROM byte-exact' \
+		'make full-rom-check   prove the complete tbs-en ROM byte-exact' \
 		'make overlay-check    audit every exact overlay owner' \
 		'make declared-tu-check prove declared production translation-unit contracts' \
 		'make owner-inventory-check prove registered owner production coverage' \
@@ -84,8 +84,8 @@ help:
 		'make tooling-index-check prove every tool is indexed exactly once' \
 		'make progress         print byte-exact progress' \
 		'make progress-subject print the required commit prefix' \
-		'make correspondence   match exact EN owners across GS1 editions' \
-		'make edition-builds   relink exact EN C across GS1 editions' \
+		'make correspondence   match exact EN owners across TBS editions' \
+		'make edition-builds   relink exact EN C across TBS editions' \
 		'make coverage         refresh coverage data and figures'
 
 build-claimed:
@@ -166,7 +166,7 @@ $(REPORT_DIR):
 	@mkdir -p $@
 
 correspondence: build-full | $(REPORT_DIR)
-	$(COMPILER) cross-edition --all --object-dir out/gs1-en/full/claimed/obj \
+	$(COMPILER) cross-edition --all --object-dir out/tbs-en/full/claimed/obj \
 		--write $(REPORT_DIR)/exact-correspondence.json \
 		--edition-build $(REPORT_DIR)/exact-main-builds.json
 	$(COMPILER) cross-edition --all-overlays \
@@ -194,11 +194,11 @@ classification-check: core-retained-check
 	@printf 'classification contracts ok\n'
 
 candidate-corpus-check:
-	$(CHECK) integrate --check games/gs1/recon/en/main
-	@actual=$$(find games/gs1/recon/en/units -maxdepth 1 -type f -name '*.c' -exec basename {} \; | LC_ALL=C sort); \
+	$(CHECK) integrate --check games/tbs/recon/en/main
+	@actual=$$(find games/tbs/recon/en/units -maxdepth 1 -type f -name '*.c' -exec basename {} \; | LC_ALL=C sort); \
 	covered=$$({ for route in $(CANDIDATE_SINGLE_OWNERS); do printf '%s\n' "$${route#*=}"; done; \
-		awk -F '"' '/"source": "games\/gs1\/recon\/en\/units\//{n=split($$4,part,"/"); print part[n]}' \
-			games/gs1/recon/translation-units.json; } | LC_ALL=C sort -u); \
+		awk -F '"' '/"source": "games\/tbs\/recon\/en\/units\//{n=split($$4,part,"/"); print part[n]}' \
+			games/tbs/recon/translation-units.json; } | LC_ALL=C sort -u); \
 	if test "$$actual" != "$$covered"; then \
 		printf 'unit corpus routes are incomplete\nactual:\n%s\ncovered:\n%s\n' "$$actual" "$$covered"; \
 		exit 1; \
@@ -206,7 +206,7 @@ candidate-corpus-check:
 	@set -e; total=0; \
 	for route in $(CANDIDATE_SINGLE_OWNERS); do \
 		owner=$${route%%=*}; source=$${route#*=}; \
-		result=$$($(COMPILER) score games/gs1/recon/en/units/$$source \
+		result=$$($(COMPILER) score games/tbs/recon/en/units/$$source \
 			--owner $$owner --first); \
 		diff=$$(printf '%s\n' "$$result" | sed -n 's/.*differing_halfwords=\([0-9][0-9]*\).*/\1/p' | head -n 1); \
 		if test -z "$$diff" || test "$$diff" -eq 0; then \
@@ -217,15 +217,15 @@ candidate-corpus-check:
 	done; \
 	printf 'single-owner corpus scanned=%s exact_retained=0\n' "$$total"
 	@set -e; total=0; \
-	units=$$(awk -F '"' '/"id":/{id=$$4} /"source": "games\/gs1\/recon\/en\/units\//{print id}' \
-		games/gs1/recon/translation-units.json); \
+	units=$$(awk -F '"' '/"id":/{id=$$4} /"source": "games\/tbs\/recon\/en\/units\//{print id}' \
+		games/tbs/recon/translation-units.json); \
 	for unit in $$units; do \
 		report=$$(mktemp /tmp/alchemy-tu-corpus.XXXXXX); \
 		$(COMPILER) score --unit $$unit | \
 			awk -F= '/^owner=/{owner=$$2} /^candidate=/{split($$0,a,"differing_halfwords="); print owner "\t" a[2]+0}' \
 			> "$$report"; \
 		for owner in $$(awk -F '"' -v unit="$$unit" '/"id":/{id=$$4} id==unit && /"state":"retained-assembly"/{print $$4}' \
-			games/gs1/recon/translation-units.json); do \
+			games/tbs/recon/translation-units.json); do \
 			diff=$$(awk -F '\t' -v owner="$$owner" '$$1==owner{print $$2}' "$$report"); \
 			if test -z "$$diff" || test "$$diff" -eq 0; then \
 				printf 'translation-unit retained owner is exact or unscored: %s %s -- if exact, run alchemy adopt to move it out of the retained corpus; if unscored, fix the score first\n' "$$unit" "$$owner"; \
@@ -286,15 +286,15 @@ check-owners: source-tracking-check
 	$(CHECK) owners
 
 corpus-check:
-	@test -f games/gs1/project.json
-	@test -f games/gs2/project.json
+	@test -f games/tbs/project.json
+	@test -f games/tla/project.json
 	@test -f games/alchemy/project.json
 	@if test -d draft; then \
-		printf 'legacy draft/ directory found; use games/gs1/recon/<edition>/\n'; \
+		printf 'legacy draft/ directory found; use games/tbs/recon/<edition>/\n'; \
 		exit 1; \
 	fi
-	@if find games/gs1/semantic -maxdepth 1 -name '*.c' -print | grep -q .; then \
-		printf 'source hypotheses belong in games/gs1/recon/, not games/gs1/semantic/ metadata\n'; \
+	@if find games/tbs/semantic -maxdepth 1 -name '*.c' -print | grep -q .; then \
+		printf 'source hypotheses belong in games/tbs/recon/, not games/tbs/semantic/ metadata\n'; \
 		exit 1; \
 	fi
 	@printf 'corpus ok: two shared-source games, 12 edition targets, Alchemy integration separate\n'
@@ -445,6 +445,6 @@ clean:
 	@find $(TOOLS) -type d -name target -prune -exec rm -rf -- {} +
 	@printf 'generated trees removed; roms/ untouched\n'
 
-# Both games build the licensed agscc submodule; GS2 selects -mgs2 at compile time.
-.PHONY: compilers-gs2
-compilers-gs2: compilers
+# Both games build the licensed agscc submodule; TLA selects -mgs2 at compile time.
+.PHONY: compilers-tla
+compilers-tla: compilers

@@ -12,7 +12,7 @@ use crate::coverage::pipeline::{build_coverage_map, BuildOptions, CoverageMap};
 use crate::coverage::tree::{ref_tree, root, work_tree};
 use serde_json::Value;
 use std::path::{Path, PathBuf};
-const USAGE: &str = "usage: alchemy check coverage [--target gs1-en|gs2-en] [--exact-ref <ref>|worktree] [--recon-ref <ref>|worktree|none] [--write|--check|--assembly-spans|--self-test]";
+const USAGE: &str = "usage: alchemy check coverage [--target tbs-en|tla-en] [--exact-ref <ref>|worktree] [--recon-ref <ref>|worktree|none] [--write|--check|--assembly-spans|--self-test]";
 fn get<'a>(v: &'a Value, key: &str) -> Option<&'a Value> {
     v.as_object()?.get(key)
 }
@@ -52,7 +52,7 @@ struct Options {
 }
 fn parse(argv: &[String]) -> Result<Options, String> {
     let mut o = Options {
-        target: "gs1-en".into(),
+        target: "tbs-en".into(),
         ..Options::default()
     };
     let mut i = 0;
@@ -61,17 +61,17 @@ fn parse(argv: &[String]) -> Result<Options, String> {
             "--target" => {
                 i += 1;
                 o.target = match argv.get(i).map(String::as_str) {
-                    Some("gs1-en") => "gs1-en".into(),
-                    Some("gs2-en") => "gs2-en".into(),
+                    Some("tbs-en") => "tbs-en".into(),
+                    Some("tla-en") => "tla-en".into(),
                     Some(v) => {
                         return Err(format!(
-                            "unsupported decomp target {}; expected gs1-en or gs2-en",
+                            "unsupported decomp target {}; expected tbs-en or tla-en",
                             quote(v)
                         ))
                     }
                     None => {
                         return Err(
-                            "unsupported decomp target undefined; expected gs1-en or gs2-en".into(),
+                            "unsupported decomp target undefined; expected tbs-en or tla-en".into(),
                         )
                     }
                 };
@@ -213,7 +213,7 @@ fn update_readme(
     }
     for (id, svg) in trees {
         let version = svg_cache_version(svg);
-        let needle = format!("games/gs1/assets/readme/{target}-{id}.svg");
+        let needle = format!("games/tbs/assets/readme/{target}-{id}.svg");
         if let Some(pos) = out.find(&needle) {
             let end = pos + needle.len();
             let rest = &out[end..];
@@ -256,7 +256,7 @@ mod tests {
         };
         let updated = update_readme(
             "# Alchemy\n\n## Status: 52% DONE\n\nDetails\n",
-            "gs1-en",
+            "tbs-en",
             &map,
             &[],
         );

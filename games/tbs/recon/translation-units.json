@@ -4,31 +4,210 @@
   "original_translation_units": "unknown",
   "units": [
     {
+      "id": "retained-staged-actor-scene-37b",
+      "game": "tbs",
+      "source": "games/tbs/SRC/FIELD/SOL_SHINDEN/STAGED_ACTOR_SCENE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_37b",
+      "absolute_symbols": {
+        "Func_02002b08": {
+          "address": "0x0200a44c",
+          "kind": "thumb"
+        },
+        "Func_02002b08_a": {
+          "address": "0x0200a3a4",
+          "kind": "thumb"
+        },
+        "Func_02002b76": {
+          "address": "0x0200a544",
+          "kind": "thumb"
+        },
+        "Func_02002b76_a": {
+          "address": "0x0200a44c",
+          "kind": "thumb"
+        },
+        "Func_02002b7a": {
+          "address": "0x0200a514",
+          "kind": "thumb"
+        },
+        "Func_02002b7a_a": {
+          "address": "0x0200a4c4",
+          "kind": "thumb"
+        },
+        "Func_02002c02": {
+          "address": "0x0200a51c",
+          "kind": "thumb"
+        },
+        "Func_02002c02_a": {
+          "address": "0x0200a44c",
+          "kind": "thumb"
+        },
+        "Func_02002c18": {
+          "address": "0x0200a4f4",
+          "kind": "thumb"
+        },
+        "Func_02002c18_a": {
+          "address": "0x0200a4ac",
+          "kind": "thumb"
+        },
+        "Func_02002cbc": {
+          "address": "0x0200a4d4",
+          "kind": "thumb"
+        },
+        "Func_02002cbc_a": {
+          "address": "0x0200a44c",
+          "kind": "thumb"
+        },
+        "Func_02002cce": {
+          "address": "0x0200a4cc",
+          "kind": "thumb"
+        },
+        "Func_02002cce_a": {
+          "address": "0x0200a4bc",
+          "kind": "thumb"
+        },
+        "Func_02002cce_b": {
+          "address": "0x0200a3a4",
+          "kind": "thumb"
+        },
+        "Func_02002d68": {
+          "address": "0x0200a514",
+          "kind": "thumb"
+        },
+        "Func_02002d68_a": {
+          "address": "0x0200a3a4",
+          "kind": "thumb"
+        },
+        "Func_02002dd4": {
+          "address": "0x0200a4f4",
+          "kind": "thumb"
+        },
+        "Func_02002dd4_a": {
+          "address": "0x0200a44c",
+          "kind": "thumb"
+        },
+        "Func_02002e18": {
+          "address": "0x0200a4c4",
+          "kind": "thumb"
+        },
+        "Func_02002e18_a": {
+          "address": "0x0200a4b4",
+          "kind": "thumb"
+        },
+        "Func_02002eb2": {
+          "address": "0x0200a504",
+          "kind": "thumb"
+        },
+        "Func_02002eb2_a": {
+          "address": "0x0200a4d4",
+          "kind": "thumb"
+        },
+        "Func_02003080": {
+          "address": "0x0200a46c",
+          "kind": "thumb"
+        },
+        "Func_02003080_a": {
+          "address": "0x0200a444",
+          "kind": "thumb"
+        },
+        "Func_0200308a": {
+          "address": "0x0200a514",
+          "kind": "thumb"
+        },
+        "Func_0200308a_a": {
+          "address": "0x0200a4ac",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x02000614",
+          "extent": 1656,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
       "id": "retained-multi-phase-presentation-3a4",
       "game": "tbs",
       "source": "games/tbs/recon/en/overlays/resource_3a4_c_02001838.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a4",
       "absolute_symbols": {
-        "Func_02005486_a": {"address": "0x0200bb68", "kind": "thumb"},
-        "Func_02005486_b": {"address": "0x0200bb38", "kind": "thumb"},
-        "Func_02005516_a": {"address": "0x0200bc80", "kind": "thumb"},
-        "Func_02005516_b": {"address": "0x0200bbf0", "kind": "thumb"},
-        "Func_02005546_a": {"address": "0x0200bb68", "kind": "thumb"},
-        "Func_02005546_b": {"address": "0x0200bb38", "kind": "thumb"},
-        "Func_0200567c_a": {"address": "0x0200bc50", "kind": "thumb"},
-        "Func_0200567c_b": {"address": "0x0200bb68", "kind": "thumb"},
-        "Func_0200567e_a": {"address": "0x0200bbf0", "kind": "thumb"},
-        "Func_0200567e_b": {"address": "0x0200bb28", "kind": "thumb"},
-        "Func_02005770_a": {"address": "0x0200bc50", "kind": "thumb"},
-        "Func_02005770_b": {"address": "0x0200bb38", "kind": "thumb"},
-        "Func_0200578a_a": {"address": "0x0200bbf0", "kind": "thumb"},
-        "Func_0200578a_b": {"address": "0x0200bb98", "kind": "thumb"},
-        "Func_020058a6_a": {"address": "0x0200bd20", "kind": "thumb"},
-        "Func_020058a6_b": {"address": "0x0200bc50", "kind": "thumb"}
+        "Func_02005486_a": {
+          "address": "0x0200bb68",
+          "kind": "thumb"
+        },
+        "Func_02005486_b": {
+          "address": "0x0200bb38",
+          "kind": "thumb"
+        },
+        "Func_02005516_a": {
+          "address": "0x0200bc80",
+          "kind": "thumb"
+        },
+        "Func_02005516_b": {
+          "address": "0x0200bbf0",
+          "kind": "thumb"
+        },
+        "Func_02005546_a": {
+          "address": "0x0200bb68",
+          "kind": "thumb"
+        },
+        "Func_02005546_b": {
+          "address": "0x0200bb38",
+          "kind": "thumb"
+        },
+        "Func_0200567c_a": {
+          "address": "0x0200bc50",
+          "kind": "thumb"
+        },
+        "Func_0200567c_b": {
+          "address": "0x0200bb68",
+          "kind": "thumb"
+        },
+        "Func_0200567e_a": {
+          "address": "0x0200bbf0",
+          "kind": "thumb"
+        },
+        "Func_0200567e_b": {
+          "address": "0x0200bb28",
+          "kind": "thumb"
+        },
+        "Func_02005770_a": {
+          "address": "0x0200bc50",
+          "kind": "thumb"
+        },
+        "Func_02005770_b": {
+          "address": "0x0200bb38",
+          "kind": "thumb"
+        },
+        "Func_0200578a_a": {
+          "address": "0x0200bbf0",
+          "kind": "thumb"
+        },
+        "Func_0200578a_b": {
+          "address": "0x0200bb98",
+          "kind": "thumb"
+        },
+        "Func_020058a6_a": {
+          "address": "0x0200bd20",
+          "kind": "thumb"
+        },
+        "Func_020058a6_b": {
+          "address": "0x0200bc50",
+          "kind": "thumb"
+        }
       },
       "local_symbols": [],
-      "owners": [{"address": "0x02001838", "extent": 1236, "state": "retained-assembly"}]
+      "owners": [
+        {
+          "address": "0x02001838",
+          "extent": 1236,
+          "state": "retained-assembly"
+        }
+      ]
     },
     {
       "id": "retained-actor-group-departure-sequence-372",

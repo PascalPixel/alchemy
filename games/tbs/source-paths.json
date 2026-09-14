@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_37b:02000614": {
+      "name": "FieldScene_RunStagedActorScene",
+      "source": "FIELD/SOL_SHINDEN/STAGED_ACTOR_SCENE.C"
+    },
     "resource_372:020031ac": {
       "name": "Scene_RunActorGroupDepartureSequence"
     },

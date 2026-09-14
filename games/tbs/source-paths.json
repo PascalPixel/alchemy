@@ -9643,7 +9643,8 @@
       "source": "FIELD/HEIDIA/CONDITIONAL_SETUP.C"
     },
     "resource_37b:02000150": {
-      "name": "RunEventScript01"
+      "name": "FieldScene_SetupStagedActors",
+      "source": "FIELD/SOL_SHINDEN/SETUP_STAGED_ACTORS.C"
     },
     "resource_383:02002fd4": {
       "name": "RunEventScript01",

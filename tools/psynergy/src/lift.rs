@@ -1983,15 +1983,6 @@ impl<'a> Lifter<'a> {
             return;
         }
         let Offset::Imm(off) = offset else { return };
-        if let Some(slot) = self.regs[rn as usize]
-            .as_ref()
-            .and_then(|v| v.e.as_deref())
-            .and_then(|e| e.strip_prefix("&slot"))
-        {
-            let e = format!("slot{slot}");
-            self.set_reg(rd, Val::memory(e));
-            return;
-        }
         let base = self.val_of(rn, None);
         let c_type = width.c_type();
         if let Some(c) = base.c {
@@ -3568,6 +3559,15 @@ mod tests {
         ]);
         assert!(text.contains("slot0 = (slot0 + 1);"), "{text}");
         assert!(text.contains("(u32)slot0 <= 4"), "{text}");
+    }
+
+    #[test]
+    fn addressed_stack_load_keeps_field_offset() {
+        let text = lifted(&[
+            0xb086, 0xaf00, 0x68b8, 0x6939, 0xf000, 0xf800, 0xb006, 0x4770,
+        ]);
+        assert!(text.contains("&slot0 + 8"), "{text}");
+        assert!(text.contains("&slot0 + 16"), "{text}");
     }
 
     /// `L: bl X; cmp r0, #0; bne cont; bl Y; b exit; cont: bl Z; adds r5, #1;

@@ -1,11 +1,11 @@
 //! Canonical address-qualified owner, symbol, path, and routing register.
 //! String records use the path stem as their symbol; object records carry
-//! exceptions. GS1 remains the compatibility default during the migration.
+//! exceptions. TBS remains the compatibility default during the migration.
 use serde_json::{Map, Value};
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Component, Path, PathBuf};
-pub const SOURCE_PATHS_MANIFEST: &str = "games/gs1/source-paths.json";
+pub const SOURCE_PATHS_MANIFEST: &str = "games/tbs/source-paths.json";
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub enum SourceOwner {
     Main(u32),
@@ -87,7 +87,7 @@ impl SourceOwner {
     /// Stable synthetic route used by the compiler tables. Source location is
     /// presentation; compiler routing belongs to the owner.
     pub fn routing_path(self) -> PathBuf {
-        self.routing_path_for_game("gs1")
+        self.routing_path_for_game("tbs")
     }
     pub fn routing_path_for_game(self, game: &str) -> PathBuf {
         let root = Path::new("games").join(game).join("src");
@@ -151,7 +151,7 @@ pub struct SourcePaths {
 }
 impl SourcePaths {
     pub fn load(repository: &Path) -> Result<Self, String> {
-        Self::load_for_game(repository, "gs1")
+        Self::load_for_game(repository, "tbs")
     }
     pub fn load_for_game(repository: &Path, game: &str) -> Result<Self, String> {
         let (source_directory, manifest) = game_paths(game)?;
@@ -165,7 +165,7 @@ impl SourcePaths {
             .map_err(|error| format!("{}: {error}", path.display()))
     }
     pub fn parse(repository: &Path, text: &str) -> Result<Self, String> {
-        Self::parse_for_game(repository, "gs1", text)
+        Self::parse_for_game(repository, "tbs", text)
     }
     pub fn parse_for_game(repository: &Path, game: &str, text: &str) -> Result<Self, String> {
         let (source_directory, manifest) = game_paths(game)?;
@@ -577,7 +577,7 @@ fn game_paths(game: &str) -> Result<(PathBuf, PathBuf), String> {
     }
     let root = Path::new("games").join(game);
     Ok((
-        root.join(if game == "gs1" { "SRC" } else { "src" }),
+        root.join(if game == "tbs" { "SRC" } else { "src" }),
         root.join("source-paths.json"),
     ))
 }
@@ -670,14 +670,14 @@ mod tests {
         let root = tempdir().unwrap();
         let paths = SourcePaths::parse(root.path(), manifest()).unwrap();
         assert!(paths.main_sources().unwrap_err().contains("missing source"));
-        let main = root.path().join("games/gs1/SRC/battle/resolve_action.c");
+        let main = root.path().join("games/tbs/SRC/battle/resolve_action.c");
         fs::create_dir_all(main.parent().unwrap()).unwrap();
         fs::write(&main, "void resolve_action(void) {}\n").unwrap();
         assert_eq!(paths.main_sources().unwrap().len(), 1);
         assert!(paths.all_sources().unwrap_err().contains("missing source"));
         let overlay = root
             .path()
-            .join("games/gs1/SRC/battle/effects/spawn_configured_effect.c");
+            .join("games/tbs/SRC/battle/effects/spawn_configured_effect.c");
         fs::create_dir_all(overlay.parent().unwrap()).unwrap();
         fs::write(&overlay, "void spawn_configured_effect(void) {}\n").unwrap();
         assert_eq!(paths.all_sources().unwrap().len(), 2);
@@ -688,7 +688,7 @@ mod tests {
         let root = tempdir().unwrap();
         let text = r#"{"format":3,"owners":{"main:080bbb0c":"battle/resolve_action.C"}}"#;
         let paths = SourcePaths::parse(root.path(), text).unwrap();
-        let source = root.path().join("games/gs1/SRC/battle/resolve_action.C");
+        let source = root.path().join("games/tbs/SRC/battle/resolve_action.C");
         fs::create_dir_all(source.parent().unwrap()).unwrap();
         fs::write(&source, "void resolve_action(void) {}\n").unwrap();
         assert_eq!(paths.main_sources().unwrap().len(), 1);
@@ -752,7 +752,7 @@ mod tests {
                 .registered_source_path(SourceOwner::Main(0x080b_bb0c))
                 .unwrap(),
             root.path()
-                .join("games/gs1/SRC")
+                .join("games/tbs/SRC")
                 .join("battle/resolve_action.c")
         );
     }
@@ -769,13 +769,13 @@ mod tests {
         let paths = SourcePaths::parse(root.path(), manifest()).unwrap();
         assert_eq!(
             paths
-                .owner_for_path(Path::new("games/gs1/SRC/battle/resolve_action.c"))
+                .owner_for_path(Path::new("games/tbs/SRC/battle/resolve_action.c"))
                 .unwrap(),
             Some(SourceOwner::Main(0x080b_bb0c))
         );
         assert_eq!(
             paths
-                .owner_for_path(Path::new("games/gs1/SRC/resource_382_c_0200013c.c"))
+                .owner_for_path(Path::new("games/tbs/SRC/resource_382_c_0200013c.c"))
                 .unwrap(),
             Some(SourceOwner::Overlay {
                 resource: 0x382,
@@ -822,7 +822,7 @@ mod tests {
             paths
                 .overlay_owner_for_path(
                     "resource_39b",
-                    Path::new("games/gs1/SRC/battle/effects/spawn_configured_effect.c")
+                    Path::new("games/tbs/SRC/battle/effects/spawn_configured_effect.c")
                 )
                 .unwrap(),
             Some(SourceOwner::Overlay {
@@ -866,7 +866,7 @@ mod tests {
         );
         assert_eq!(
             reloaded.owners_for_path(Path::new(
-                "games/gs1/SRC/overlays/shared/integrate_effect_motion.c"
+                "games/tbs/SRC/overlays/shared/integrate_effect_motion.c"
             )),
             vec![SourceOwner::Overlay {
                 resource: 0x39c,
@@ -877,21 +877,21 @@ mod tests {
     #[test]
     fn each_game_owns_an_independent_descriptive_registry() {
         let root = tempdir().unwrap();
-        let manifest_path = root.path().join("games/gs2/source-paths.json");
+        let manifest_path = root.path().join("games/tla/source-paths.json");
         fs::create_dir_all(manifest_path.parent().unwrap()).unwrap();
         fs::write(
             &manifest_path,
             r#"{"format":3,"owners":{"main:080132cc":"system/constant_zero_result.c"}}"#,
         )
         .unwrap();
-        let paths = SourcePaths::load_for_game(root.path(), "gs2").unwrap();
+        let paths = SourcePaths::load_for_game(root.path(), "tla").unwrap();
         assert_eq!(
             paths.repository_relative_path(SourceOwner::Main(0x0801_32cc)),
-            PathBuf::from("games/gs2/src/system/constant_zero_result.c")
+            PathBuf::from("games/tla/src/system/constant_zero_result.c")
         );
         assert_eq!(
-            SourceOwner::Main(0x0801_32cc).routing_path_for_game("gs2"),
-            PathBuf::from("games/gs2/src/080132cc.c")
+            SourceOwner::Main(0x0801_32cc).routing_path_for_game("tla"),
+            PathBuf::from("games/tla/src/080132cc.c")
         );
     }
 }

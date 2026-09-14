@@ -1070,7 +1070,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
         "image_base": image_base,
         "image_size": image.len(),
         "claimed_bytes": total,
-        "translation_unit_manifest": "games/gs1/recon/translation-units.json",
+        "translation_unit_manifest": "games/tbs/recon/translation-units.json",
         "main_symbol_exports": export_path
             .as_ref()
             .map(|path| relative(root, path)),
@@ -1100,22 +1100,22 @@ mod tests {
         s.insert("b".into(), (200, 8));
         assert_eq!(module_end(&["a".into(), "b".into()], &s).unwrap(), 208);
         let ParsedArgs::Run(o) =
-            parse_args(&["--source-only".into(), "--target=gs2-en".into()]).unwrap()
+            parse_args(&["--source-only".into(), "--target=tla-en".into()]).unwrap()
         else {
             panic!()
         };
-        assert_eq!(o.output, "out/gs2-en/claimed");
+        assert_eq!(o.output, "out/tla-en/claimed");
         let ParsedArgs::Run(options) = parse_args(&[
-            "--target=gs1-de".into(),
+            "--target=tbs-de".into(),
             "--compile-only".into(),
-            "--output=out/gs1-de/compile".into(),
+            "--output=out/tbs-de/compile".into(),
         ])
         .unwrap() else {
             panic!()
         };
         assert!(options.compile_only);
         assert!(!options.source_only);
-        assert_eq!(options.output, "out/gs1-de/compile");
+        assert_eq!(options.output, "out/tbs-de/compile");
         assert!(parse_args(&["--source-only".into(), "--compile-only".into()]).is_err());
         let values: Vec<_> = (0..32).collect();
         assert_eq!(

@@ -167,7 +167,7 @@ fn call_relocations(object: &str, work: &Path) -> Result<BTreeSet<String>, Strin
     )
 }
 fn translation_unit_signature() -> Result<Vec<u8>, String> {
-    fs::read(root().join("games/gs1/recon/translation-units.json"))
+    fs::read(root().join("games/tbs/recon/translation-units.json"))
         .map_err(|error| error.to_string())
 }
 pub fn compile_overlay_c(
@@ -202,14 +202,14 @@ pub fn compile_overlay_c(
     }
     let (stem, address) = (owner.address_stem(), i64::from(owner.address()));
     let units = translation_units()?;
-    let unit = units.unit_for_game_owner("gs1", owner);
+    let unit = units.unit_for_game_owner("tbs", owner);
     let reference = crate::overlay::rom::canonical_overlay(&root(), overlay)?;
     let routing_source = owner.routing_path().to_string_lossy().into_owned();
     let work_display = work.to_string_lossy().to_string();
     let at = |name: &str| work.join(name).to_string_lossy().to_string();
     let assembly = at(&format!("{stem}.s"));
     let mut options = SourceToAssemblyPlanOptions::new(
-        CompilerTarget::Gs1,
+        CompilerTarget::Tbs,
         routing_source.clone(),
         source_display.clone(),
         assembly.clone(),
@@ -280,7 +280,7 @@ pub fn compile_overlay_c(
         &work_display,
         extra_flags,
         f64::from(overlay::RESOURCE_BASE),
-        CompilerTarget::Gs1,
+        CompilerTarget::Tbs,
         &configuration,
     )?
     .actual;
@@ -327,7 +327,7 @@ fn compile_overlay_unit(
     let [assembly, object, symbols_source, symbols_object, elf] =
         ["s", "o", "symbols.s", "symbols.o", "elf"].map(at);
     let mut options = SourceToAssemblyPlanOptions::new(
-        CompilerTarget::Gs1,
+        CompilerTarget::Tbs,
         unit.source_owner(first.address)?
             .routing_path()
             .to_string_lossy(),
@@ -338,7 +338,7 @@ fn compile_overlay_unit(
     if let Some(edition) = edition {
         options
             .preprocessor_flags
-            .push(format!("-DGS1_EDITION_{}=1", edition.to_ascii_uppercase()));
+            .push(format!("-DTBS_EDITION_{}=1", edition.to_ascii_uppercase()));
     }
     let register = names.symbol_bindings(Some(overlay));
     let binding_text = crate::compiler::source_bindings::with_register(
@@ -1050,8 +1050,8 @@ mod source_activation_tests {
         };
         let mut unit = TranslationUnit {
             id: "shared".into(),
-            game: "gs1".into(),
-            source: "games/gs1/SRC/overlays/shared.c".into(),
+            game: "tbs".into(),
+            source: "games/tbs/SRC/overlays/shared.c".into(),
             compiler_route: "canonical-gcc296".into(),
             overlay: Some("resource_382".into()),
             absolute_symbols: BTreeMap::new(),

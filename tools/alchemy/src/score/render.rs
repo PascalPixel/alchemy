@@ -77,8 +77,8 @@ impl SourceIdentity {
             (owner, registered)
         };
         let routing = match owner {
-            SourceOwner::Main(_) if target == CompilerTarget::Gs2 => {
-                Path::new("games/gs2/src").join(owner.legacy_relative_path())
+            SourceOwner::Main(_) if target == CompilerTarget::Tla => {
+                Path::new("games/tla/src").join(owner.legacy_relative_path())
             }
             SourceOwner::Main(_) if registered => owner.routing_path(),
             SourceOwner::Main(_) => path.to_path_buf(),
@@ -112,10 +112,10 @@ struct RenderedScore {
 }
 pub fn region_size(root: &Path, address: u32) -> Option<usize> {
     for manifest in [
-        "out/gs1-en/claimed/manifest.json",
-        "out/gs1-en/full/claimed/manifest.json",
-        "out/gs1-en/asm/manifest.json",
-        "out/gs1-en/full/asm/manifest.json",
+        "out/tbs-en/claimed/manifest.json",
+        "out/tbs-en/full/claimed/manifest.json",
+        "out/tbs-en/asm/manifest.json",
+        "out/tbs-en/full/asm/manifest.json",
     ] {
         let Ok(document) = crate::compiler::build_io::read_json::<Value>(root.join(manifest))
         else {
@@ -737,7 +737,7 @@ fn source_input_signature(
         .map(|game| {
             root.join("games")
                 .join(game)
-                .join(if game == "gs1" { "INCLUDE" } else { "include" })
+                .join(if game == "tbs" { "INCLUDE" } else { "include" })
         })
         .into_iter()
         .collect::<Vec<_>>();
@@ -758,7 +758,7 @@ mod cache_key_tests {
     use super::*;
     #[test]
     fn object_consumers_cannot_reuse_a_byte_only_cache_after_source_revert() {
-        let mut options = crate::score::cli::Options::gs1("summary.c".into());
+        let mut options = crate::score::cli::Options::tbs("summary.c".into());
         assert!(byte_cache_allowed(&options));
         options.unit = Some("summary".into());
         assert!(!byte_cache_allowed(&options));
@@ -784,10 +784,10 @@ mod cache_key_tests {
             source_cache_key_with_environment(
                 source,
                 route,
-                CompilerTarget::Gs1,
+                CompilerTarget::Tbs,
                 owner,
                 configuration,
-                "roms/gs1-en.gba",
+                "roms/tbs-en.gba",
                 b"reference-rom",
                 None,
                 None,
@@ -796,7 +796,7 @@ mod cache_key_tests {
             )
             .unwrap()
         };
-        let route = "games/gs1/SRC/08000000.c";
+        let route = "games/tbs/SRC/08000000.c";
         let base = key(route, "08000000", &routed, b"host-a", b"bundle-a");
         for changed in [
             key(
@@ -807,7 +807,7 @@ mod cache_key_tests {
                 b"bundle-a",
             ),
             key(
-                "games/gs1/recon/en/main/08000000.c",
+                "games/tbs/recon/en/main/08000000.c",
                 "08000000",
                 &routed,
                 b"host-a",
@@ -834,8 +834,8 @@ mod cache_key_tests {
         let key = |contents: &[u8]| {
             source_cache_key_with_environment(
                 source,
-                "games/gs1/SRC/08000000.c",
-                CompilerTarget::Gs1,
+                "games/tbs/SRC/08000000.c",
+                CompilerTarget::Tbs,
                 "08000000",
                 &configuration,
                 rom_path,
@@ -892,7 +892,7 @@ mod region_size_tests {
 
     fn scratch_root() -> tempfile::TempDir {
         let dir = tempfile::tempdir().unwrap();
-        fs::create_dir_all(dir.path().join("out/gs1-en/asm")).unwrap();
+        fs::create_dir_all(dir.path().join("out/tbs-en/asm")).unwrap();
         dir
     }
 
@@ -915,14 +915,14 @@ mod region_size_tests {
         let root = directory.path();
         assert_eq!(region_size(root, 0x080a_b5e4), None);
         fs::write(
-            root.join("out/gs1-en/asm/manifest.json"),
+            root.join("out/tbs-en/asm/manifest.json"),
             r#"{"regions":[{"address":134986508,"size":6332}]}"#,
         )
         .unwrap();
         assert_eq!(region_size(root, 0x080a_b5e4), None);
-        fs::create_dir_all(root.join("out/gs1-en/claimed")).unwrap();
+        fs::create_dir_all(root.join("out/tbs-en/claimed")).unwrap();
         fs::write(
-            root.join("out/gs1-en/claimed/manifest.json"),
+            root.join("out/tbs-en/claimed/manifest.json"),
             r#"{"regions":[{"address":134942628,"size":296}]}"#,
         )
         .unwrap();
@@ -933,8 +933,8 @@ mod region_size_tests {
     fn merged_owner_size_uses_verified_function_extent_not_object_extent() {
         let directory = scratch_root();
         let root = directory.path();
-        fs::create_dir_all(root.join("out/gs1-en/claimed")).unwrap();
-        let path = root.join("out/gs1-en/claimed/manifest.json");
+        fs::create_dir_all(root.join("out/tbs-en/claimed")).unwrap();
+        let path = root.join("out/tbs-en/claimed/manifest.json");
         let mut document = serde_json::json!({
             "regions": [{
                 "address": 0x08001000u32, "end": 0x08001030u32, "size": 48,
@@ -968,7 +968,7 @@ mod source_identity_tests {
 
     fn scratch_root() -> tempfile::TempDir {
         let root = tempfile::tempdir().unwrap();
-        fs::create_dir_all(root.path().join("games/gs1")).unwrap();
+        fs::create_dir_all(root.path().join("games/tbs")).unwrap();
         root
     }
 
@@ -977,34 +977,34 @@ mod source_identity_tests {
         let directory = scratch_root();
         let root = directory.path();
         fs::write(
-            root.join("games/gs1/source-paths.json"),
+            root.join("games/tbs/source-paths.json"),
             r#"{"format":3,"owners":{"main:080b0fa4":"battle/inventory/draw_paged_item_list.c"}}"#,
         )
         .unwrap();
         let identity = SourceIdentity::resolve(
             root,
-            "games/gs1/SRC/battle/inventory/draw_paged_item_list.c",
-            CompilerTarget::Gs1,
+            "games/tbs/SRC/battle/inventory/draw_paged_item_list.c",
+            CompilerTarget::Tbs,
             None,
             None,
         )
         .unwrap();
         assert_eq!(identity.owner, SourceOwner::Main(0x080b0fa4));
-        assert_eq!(identity.routing, PathBuf::from("games/gs1/src/080b0fa4.c"));
-        let source = "games/gs1/recon/en/main/080ab5e4.c";
+        assert_eq!(identity.routing, PathBuf::from("games/tbs/src/080b0fa4.c"));
+        let source = "games/tbs/recon/en/main/080ab5e4.c";
         let identity =
-            SourceIdentity::resolve(root, source, CompilerTarget::Gs1, None, None).unwrap();
+            SourceIdentity::resolve(root, source, CompilerTarget::Tbs, None, None).unwrap();
         assert_eq!(identity.owner, SourceOwner::Main(0x080ab5e4));
         assert_eq!(identity.routing, PathBuf::from(source));
         let identity = SourceIdentity::resolve(
             root,
             "candidate.c",
-            CompilerTarget::Gs1,
+            CompilerTarget::Tbs,
             Some(0x080a8904),
             None,
         )
         .unwrap();
-        assert_eq!(identity.routing, PathBuf::from("games/gs1/src/080a8904.c"));
+        assert_eq!(identity.routing, PathBuf::from("games/tbs/src/080a8904.c"));
     }
     #[test]
     fn register_binding_changes_invalidate_candidate_source_identity() {
@@ -1012,18 +1012,18 @@ mod source_identity_tests {
         let root = directory.path();
         fs::write(root.join("candidate.c"), "void Scene_Run(void) {}\n").unwrap();
         let signature = |route| {
-            source_input_signature(root, "candidate.c", route, CompilerTarget::Gs1).unwrap()
+            source_input_signature(root, "candidate.c", route, CompilerTarget::Tbs).unwrap()
         };
-        let register = root.join("games/gs1/source-paths.json");
+        let register = root.join("games/tbs/source-paths.json");
         fs::write(&register, r#"{"format":3,"owners":{"main:08001234":{"name":"Scene_Run"},"resource_380:02000100":{"name":"Scene_Run"}}}"#).unwrap();
-        let main = signature("games/gs1/SRC/08001234.c");
-        let overlay = signature("games/gs1/SRC/resource_380_c_02000100.c");
+        let main = signature("games/tbs/SRC/08001234.c");
+        let overlay = signature("games/tbs/SRC/resource_380_c_02000100.c");
         assert_ne!(main, overlay);
         fs::write(&register, r#"{"format":3,"owners":{"main:08001234":{"name":"Scene_Start"},"resource_380:02000100":{"name":"Scene_Run"}}}"#).unwrap();
-        assert_ne!(main, signature("games/gs1/SRC/08001234.c"));
+        assert_ne!(main, signature("games/tbs/SRC/08001234.c"));
         assert_eq!(
             overlay,
-            signature("games/gs1/SRC/resource_380_c_02000100.c")
+            signature("games/tbs/SRC/resource_380_c_02000100.c")
         );
     }
 }

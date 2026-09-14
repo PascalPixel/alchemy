@@ -386,8 +386,8 @@ pub fn compiler_bundle_signature_uncached() -> String {
     compiler_bundle_signature_for_paths(
         &signature_paths(),
         &[
-            root().join("games/gs1/INCLUDE"),
-            root().join("games/gs2/include"),
+            root().join("games/tbs/INCLUDE"),
+            root().join("games/tla/include"),
         ],
     )
 }

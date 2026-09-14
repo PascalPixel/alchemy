@@ -28,7 +28,7 @@ fn require_verified_index() -> Result<(), String> {
         Path::new("make"),
         &["--no-print-directory", "index-sync-check"],
     )?;
-    let attestation = Path::new("out/gs1-en/reports/verified-tree");
+    let attestation = Path::new("out/tbs-en/reports/verified-tree");
     let expected = std::fs::read_to_string(attestation)
         .map_err(|_| "verified-tree attestation is missing; stage the tree and run make verify")?;
     if command(Path::new("git"), &["write-tree"])? != expected.trim() {

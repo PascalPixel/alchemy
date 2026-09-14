@@ -69,7 +69,7 @@ fn hexadecimal(value: &Value) -> Option<u64> {
 }
 
 fn overlay_span(name: &str, address: u32) -> Result<usize, String> {
-    let path = root().join("games/gs1/semantic/regions.json");
+    let path = root().join("games/tbs/semantic/regions.json");
     let document: Value = read_json(&path)?;
     document["manual_regions"]
         .as_array()
@@ -151,7 +151,7 @@ impl Target {
                 },
             )
         } else {
-            let rom_path = root().join("roms/gs1-en.gba");
+            let rom_path = root().join("roms/tbs-en.gba");
             let rom =
                 fs::read(&rom_path).map_err(|error| format!("{}: {error}", rom_path.display()))?;
             let stem = owner.address_stem();
@@ -163,7 +163,7 @@ impl Target {
                 &work.path().to_string_lossy(),
                 &local_flags(&source_path),
                 ROM_BASE,
-                CompilerTarget::Gs1,
+                CompilerTarget::Tbs,
                 &CandidateCompilerConfiguration::default(),
             )?;
             let expected = window(
@@ -221,7 +221,7 @@ impl Target {
                     &work.path().to_string_lossy(),
                     &local_flags(&self.source),
                     ROM_BASE,
-                    CompilerTarget::Gs1,
+                    CompilerTarget::Tbs,
                     &CandidateCompilerConfiguration::default(),
                 )?
                 .actual

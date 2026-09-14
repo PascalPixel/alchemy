@@ -23,7 +23,7 @@ pub fn bundle() -> PathBuf {
     root().join("out/compilers/dist")
 }
 /// Both games use the licensed agscc source and the same executable bundle.
-/// GS2 selects its reconstructed lowering with the explicit -mgs2 option.
+/// TLA selects its reconstructed lowering with the explicit -mgs2 option.
 pub fn bundle_for(_target: CompilerTarget) -> PathBuf {
     bundle()
 }
@@ -68,14 +68,14 @@ pub fn compiler_assembly_command(source: &str, object: &str) -> Vec<String> {
 }
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum CompilerTarget {
-    Gs1,
-    Gs2,
+    Tbs,
+    Tla,
 }
 impl CompilerTarget {
     pub fn as_str(self) -> &'static str {
         match self {
-            CompilerTarget::Gs1 => "gs1",
-            CompilerTarget::Gs2 => "gs2",
+            CompilerTarget::Tbs => "tbs",
+            CompilerTarget::Tla => "tla",
         }
     }
 }
@@ -97,7 +97,7 @@ pub(crate) fn include_flag(target: CompilerTarget) -> String {
         root()
             .join("games")
             .join(target.as_str())
-            .join(if target == CompilerTarget::Gs1 {
+            .join(if target == CompilerTarget::Tbs {
                 "INCLUDE"
             } else {
                 "include"
@@ -108,17 +108,17 @@ pub(crate) fn include_flag(target: CompilerTarget) -> String {
 /// Whether the game's own code was built to interwork with ARM callers.
 ///
 /// This is a per-game build fact read off the shipped images, not a tuning.
-/// GS1 interworks: 1174 of its 1195 located gs1-en functions return through
-/// `pop {rN}; bx rN`. GS2 does not: 1539 of 1581 gs2-en functions return with
+/// TBS interworks: 1174 of its 1195 located tbs-en functions return through
+/// `pop {rN}; bx rN`. TLA does not: 1539 of 1581 tla-en functions return with
 /// `pop {..., pc}`, which arm.c `thumb_exit` reaches only when TARGET_INTERWORK
 /// is clear, and the battle owner's epilogue at 08120454+0x2054 matches that
-/// output byte for byte while GS1's owner matches the interworking output.
-/// GS2's remaining interworking returns sit in objects inherited from the GS1
+/// output byte for byte while TBS's owner matches the interworking output.
+/// TLA's remaining interworking returns sit in objects inherited from the TBS
 /// build, which keep the Agbcc family and its own flag set.
 fn interworks(target: CompilerTarget) -> bool {
     match target {
-        CompilerTarget::Gs1 => true,
-        CompilerTarget::Gs2 => false,
+        CompilerTarget::Tbs => true,
+        CompilerTarget::Tla => false,
     }
 }
 fn base_cflags(target: CompilerTarget) -> Vec<String> {
@@ -129,7 +129,7 @@ fn base_cflags(target: CompilerTarget) -> Vec<String> {
     if interworks(target) {
         flags.push("-mthumb-interwork".to_string());
     }
-    if target == CompilerTarget::Gs2 {
+    if target == CompilerTarget::Tla {
         flags.push("-mgs2".to_string());
     }
     for flag in [
@@ -145,7 +145,7 @@ fn base_cflags(target: CompilerTarget) -> Vec<String> {
     flags
 }
 pub fn cflags() -> Vec<String> {
-    base_cflags(CompilerTarget::Gs1)
+    base_cflags(CompilerTarget::Tbs)
 }
 pub fn agbcc_cflags() -> Vec<String> {
     ["-mthumb-interwork", "-O2", "-fno-builtin", "-ffreestanding"]
@@ -184,13 +184,13 @@ fn has_owner(table: &'static [&'static str], source: &str) -> bool {
 pub fn family_for_source(target: CompilerTarget, source: &str) -> CompilerFamily {
     let stem = source_stem_ref(source);
     let agbcc = match target {
-        CompilerTarget::Gs1 => has(AGBCC_SOURCES, stem),
-        CompilerTarget::Gs2 => has(GS2_AGBCC_SOURCES, stem),
+        CompilerTarget::Tbs => has(AGBCC_SOURCES, stem),
+        CompilerTarget::Tla => has(TLA_AGBCC_SOURCES, stem),
     };
     if agbcc {
         return CompilerFamily::Agbcc;
     }
-    if target == CompilerTarget::Gs1 && has_owner(SOFT_FLOAT_LIBRARY_OVERLAY_SOURCES, source) {
+    if target == CompilerTarget::Tbs && has_owner(SOFT_FLOAT_LIBRARY_OVERLAY_SOURCES, source) {
         return CompilerFamily::SoftFloatLibrary;
     }
     CompilerFamily::Game
@@ -202,8 +202,8 @@ pub fn cflags_for_target_source(target: CompilerTarget, source: &str) -> Vec<Str
     match (family_for_source(target, source), target) {
         (CompilerFamily::Agbcc, _) => agbcc_cflags(),
         (CompilerFamily::SoftFloatLibrary, _) => soft_float_library_cflags(),
-        (CompilerFamily::Game, CompilerTarget::Gs1) => cflags(),
-        (CompilerFamily::Game, CompilerTarget::Gs2) => base_cflags(CompilerTarget::Gs2),
+        (CompilerFamily::Game, CompilerTarget::Tbs) => cflags(),
+        (CompilerFamily::Game, CompilerTarget::Tla) => base_cflags(CompilerTarget::Tla),
     }
 }
 #[cfg(test)]
@@ -219,45 +219,45 @@ mod target_tests {
     }
     #[test]
     fn each_game_uses_its_own_include_tree() {
-        let gs1 = cflags_for_target(CompilerTarget::Gs1);
-        let gs2 = cflags_for_target(CompilerTarget::Gs2);
-        assert!(gs1.iter().any(|flag| flag.ends_with("/games/gs1/INCLUDE")));
-        assert!(gs2.iter().any(|flag| flag.ends_with("/games/gs2/include")));
-        assert!(!gs2.iter().any(|flag| flag.ends_with("/games/gs1/INCLUDE")));
-        let shared: Vec<&String> = gs1
+        let tbs = cflags_for_target(CompilerTarget::Tbs);
+        let tla = cflags_for_target(CompilerTarget::Tla);
+        assert!(tbs.iter().any(|flag| flag.ends_with("/games/tbs/INCLUDE")));
+        assert!(tla.iter().any(|flag| flag.ends_with("/games/tla/include")));
+        assert!(!tla.iter().any(|flag| flag.ends_with("/games/tbs/INCLUDE")));
+        let shared: Vec<&String> = tbs
             .iter()
             .filter(|flag| *flag != "-mthumb-interwork" && !flag.starts_with("-I"))
             .collect();
-        let derived: Vec<&String> = gs2
+        let derived: Vec<&String> = tla
             .iter()
             .filter(|flag| *flag != "-mgs2" && !flag.starts_with("-I"))
             .collect();
         assert_eq!(shared, derived);
-        for flags in [&gs1, &gs2] {
+        for flags in [&tbs, &tla] {
             assert!(!flags
                 .iter()
                 .any(|flag| flag == "-mthumb-inline-register-call"));
         }
     }
     /// The images disagree about interworking, so the two Game routes do too.
-    /// GS2 keeps the -fcall-used-r4 ABI: only 29 of 1414 measured gs2-en
+    /// TLA keeps the -fcall-used-r4 ABI: only 29 of 1414 measured tla-en
     /// functions save r4, and all of those are inherited Agbcc-family objects.
     #[test]
-    fn only_gs1_game_code_interworks() {
-        let gs1 = cflags_for_target_source(CompilerTarget::Gs1, "080bbb0c.c");
-        let gs2 = cflags_for_target_source(CompilerTarget::Gs2, "08120454.c");
-        assert!(gs1.iter().any(|flag| flag == "-mthumb-interwork"));
-        assert!(!gs2.iter().any(|flag| flag == "-mthumb-interwork"));
-        assert!(gs2.iter().any(|flag| flag == "-mgs2"));
-        assert!(!gs1.iter().any(|flag| flag == "-mgs2"));
+    fn only_tbs_game_code_interworks() {
+        let tbs = cflags_for_target_source(CompilerTarget::Tbs, "080bbb0c.c");
+        let tla = cflags_for_target_source(CompilerTarget::Tla, "08120454.c");
+        assert!(tbs.iter().any(|flag| flag == "-mthumb-interwork"));
+        assert!(!tla.iter().any(|flag| flag == "-mthumb-interwork"));
+        assert!(tla.iter().any(|flag| flag == "-mgs2"));
+        assert!(!tbs.iter().any(|flag| flag == "-mgs2"));
         assert_eq!(
-            bundle_for(CompilerTarget::Gs1),
-            bundle_for(CompilerTarget::Gs2)
+            bundle_for(CompilerTarget::Tbs),
+            bundle_for(CompilerTarget::Tla)
         );
-        assert!(!cflags_for_target_source(CompilerTarget::Gs2, "081c2168.c")
+        assert!(!cflags_for_target_source(CompilerTarget::Tla, "081c2168.c")
             .iter()
             .any(|flag| flag == "-mgs2"));
-        for flags in [&gs1, &gs2] {
+        for flags in [&tbs, &tla] {
             assert!(flags.iter().any(|flag| flag == "-fcall-used-r4"));
             assert!(flags.iter().any(|flag| flag == "-mthumb"));
         }
@@ -270,11 +270,11 @@ mod target_tests {
             "080994d0.c",
             "080114a0.c",
             "0800307c.c",
-            "games/gs1/src/resource_3ab_c_020007f4.c",
-            "games/gs1/src/resource_381_c_02002e0c.c",
+            "games/tbs/src/resource_3ab_c_020007f4.c",
+            "games/tbs/src/resource_381_c_02002e0c.c",
         ] {
             assert_eq!(
-                cflags_for_target_source(CompilerTarget::Gs1, owner),
+                cflags_for_target_source(CompilerTarget::Tbs, owner),
                 cflags(),
                 "per-file override for {owner}"
             );
@@ -283,12 +283,12 @@ mod target_tests {
     #[test]
     fn soft_float_library_family_is_uniform() {
         for owner in [
-            "games/gs1/src/resource_3a7_c_0200142c.c",
-            "games/gs1/src/resource_3a7_c_02001544.c",
-            "games/gs1/src/resource_3bf_c_02005ae0.c",
-            "games/gs1/src/resource_3a7_c_0200145c.c",
+            "games/tbs/src/resource_3a7_c_0200142c.c",
+            "games/tbs/src/resource_3a7_c_02001544.c",
+            "games/tbs/src/resource_3bf_c_02005ae0.c",
+            "games/tbs/src/resource_3a7_c_0200145c.c",
         ] {
-            let flags = cflags_for_target_source(CompilerTarget::Gs1, owner);
+            let flags = cflags_for_target_source(CompilerTarget::Tbs, owner);
             assert!(!flags.iter().any(|flag| flag == "-mthumb-interwork"));
             assert!(!flags.iter().any(|flag| flag == "-fcall-used-r4"));
             assert!(flags.iter().any(|flag| flag == "-O2"));
@@ -298,12 +298,12 @@ mod target_tests {
     fn agbcc_family_has_one_flag_set() {
         for owner in ["080fb670.c", "08006878.c", "080fa514.c"] {
             assert_eq!(
-                cflags_for_target_source(CompilerTarget::Gs1, owner),
+                cflags_for_target_source(CompilerTarget::Tbs, owner),
                 agbcc_cflags()
             );
         }
         assert_eq!(
-            cflags_for_target_source(CompilerTarget::Gs2, "081c2168.c"),
+            cflags_for_target_source(CompilerTarget::Tla, "081c2168.c"),
             agbcc_cflags()
         );
     }

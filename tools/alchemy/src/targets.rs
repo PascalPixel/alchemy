@@ -16,18 +16,18 @@ macro_rules! target_registry {
 }
 
 target_registry! {
-    Gs1Ja => ("gs1-ja", "roms/gs1-ja.gba", "GS1_EDITION_JA", "out/gs1-ja"),
-    Gs1En => ("gs1-en", "roms/gs1-en.gba", "GS1_EDITION_EN", "out/gs1-en"),
-    Gs1De => ("gs1-de", "roms/gs1-de.gba", "GS1_EDITION_DE", "out/gs1-de"),
-    Gs1Es => ("gs1-es", "roms/gs1-es.gba", "GS1_EDITION_ES", "out/gs1-es"),
-    Gs1Fr => ("gs1-fr", "roms/gs1-fr.gba", "GS1_EDITION_FR", "out/gs1-fr"),
-    Gs1It => ("gs1-it", "roms/gs1-it.gba", "GS1_EDITION_IT", "out/gs1-it"),
-    Gs2Ja => ("gs2-ja", "roms/gs2-ja.gba", "GS2_EDITION_JA", "out/gs2-ja"),
-    Gs2En => ("gs2-en", "roms/gs2-en.gba", "GS2_EDITION_EN", "out/gs2-en"),
-    Gs2De => ("gs2-de", "roms/gs2-de.gba", "GS2_EDITION_DE", "out/gs2-de"),
-    Gs2Es => ("gs2-es", "roms/gs2-es.gba", "GS2_EDITION_ES", "out/gs2-es"),
-    Gs2Fr => ("gs2-fr", "roms/gs2-fr.gba", "GS2_EDITION_FR", "out/gs2-fr"),
-    Gs2It => ("gs2-it", "roms/gs2-it.gba", "GS2_EDITION_IT", "out/gs2-it"),
+    TbsJa => ("tbs-ja", "roms/tbs-ja.gba", "TBS_EDITION_JA", "out/tbs-ja"),
+    TbsEn => ("tbs-en", "roms/tbs-en.gba", "TBS_EDITION_EN", "out/tbs-en"),
+    TbsDe => ("tbs-de", "roms/tbs-de.gba", "TBS_EDITION_DE", "out/tbs-de"),
+    TbsEs => ("tbs-es", "roms/tbs-es.gba", "TBS_EDITION_ES", "out/tbs-es"),
+    TbsFr => ("tbs-fr", "roms/tbs-fr.gba", "TBS_EDITION_FR", "out/tbs-fr"),
+    TbsIt => ("tbs-it", "roms/tbs-it.gba", "TBS_EDITION_IT", "out/tbs-it"),
+    TlaJa => ("tla-ja", "roms/tla-ja.gba", "TLA_EDITION_JA", "out/tla-ja"),
+    TlaEn => ("tla-en", "roms/tla-en.gba", "TLA_EDITION_EN", "out/tla-en"),
+    TlaDe => ("tla-de", "roms/tla-de.gba", "TLA_EDITION_DE", "out/tla-de"),
+    TlaEs => ("tla-es", "roms/tla-es.gba", "TLA_EDITION_ES", "out/tla-es"),
+    TlaFr => ("tla-fr", "roms/tla-fr.gba", "TLA_EDITION_FR", "out/tla-fr"),
+    TlaIt => ("tla-it", "roms/tla-it.gba", "TLA_EDITION_IT", "out/tla-it"),
 }
 
 impl DecompTargetId {
@@ -63,21 +63,21 @@ pub struct DecompTarget {
 
 const PRODUCTS: [(CompilerTarget, u64, &str, &str, &str); 2] = [
     (
-        CompilerTarget::Gs1,
+        CompilerTarget::Tbs,
         0x0080_0000,
-        "games/gs1/SRC",
-        "games/gs1/asm",
-        "games/gs1/assets/manifest.json",
+        "games/tbs/SRC",
+        "games/tbs/asm",
+        "games/tbs/assets/manifest.json",
     ),
     (
-        CompilerTarget::Gs2,
+        CompilerTarget::Tla,
         0x0100_0000,
-        "games/gs2/src",
-        "games/gs2/asm",
-        "games/gs2/assets/manifest.json",
+        "games/tla/src",
+        "games/tla/asm",
+        "games/tla/assets/manifest.json",
     ),
 ];
-pub const DEFAULT_TARGET: DecompTargetId = DecompTargetId::Gs1En;
+pub const DEFAULT_TARGET: DecompTargetId = DecompTargetId::TbsEn;
 
 pub fn parse_decomp_target(value: &str) -> Result<DecompTargetId, String> {
     TARGET_IDS
@@ -131,8 +131,8 @@ fn self_test() -> Result<String, String> {
     for id in TARGET_IDS {
         let target = target_for(id);
         let root = match target.compiler {
-            CompilerTarget::Gs1 => "games/gs1/",
-            CompilerTarget::Gs2 => "games/gs2/",
+            CompilerTarget::Tbs => "games/tbs/",
+            CompilerTarget::Tla => "games/tla/",
         };
         if !relative_path(target.output_dir)
             || ![target.source_dir, target.asm_dir, target.asset_manifest]
@@ -143,12 +143,12 @@ fn self_test() -> Result<String, String> {
             return Err(format!("{id} does not have isolated relative paths"));
         }
     }
-    for invalid in ["", "gs1", "GS1-en", "gs1-en ", "alchemy"] {
+    for invalid in ["", "tbs", "TBS-en", "tbs-en ", "alchemy"] {
         if parse_decomp_target(invalid).is_ok() {
             return Err(format!("invalid target was accepted: {invalid}"));
         }
     }
-    Ok("self-test=ok build_targets=12 default=gs1-en".into())
+    Ok("self-test=ok build_targets=12 default=tbs-en".into())
 }
 
 #[cfg(test)]
@@ -159,7 +159,7 @@ mod tests {
     fn registry_covers_isolated_targets() {
         assert_eq!(
             self_test().unwrap(),
-            "self-test=ok build_targets=12 default=gs1-en"
+            "self-test=ok build_targets=12 default=tbs-en"
         );
     }
 }

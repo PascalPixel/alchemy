@@ -25,7 +25,7 @@ const OVERLAY_FIRST: usize = 0x36f;
 const OVERLAY_LAST: usize = 0x3ce;
 const CORRESPONDENCE_SCHEMA_VERSION: u32 = 4;
 const CORPUS_EDITION_BUILD_SCHEMA_VERSION: u32 = 3;
-const USAGE: &str = "usage: alchemy cross-edition ([--calls] [--json] [--rom-dir DIR] [--object FILE] [--edition-build FILE] <8-digit-owner> | --game gs2 [--rom-dir DIR] --edition-build FILE <8-digit-en-owner> | [--json] [--rom-dir DIR] --span BYTES <resource_xxx:02xxxxxx> | --all [--rom-dir DIR] [--object-dir DIR] [--write FILE] [--edition-build FILE] | --all-overlays [--rom-dir DIR] [--write FILE] [--edition-build FILE])";
+const USAGE: &str = "usage: alchemy cross-edition ([--calls] [--json] [--rom-dir DIR] [--object FILE] [--edition-build FILE] <8-digit-owner> | --game tla [--rom-dir DIR] --edition-build FILE <8-digit-en-owner> | [--json] [--rom-dir DIR] --span BYTES <resource_xxx:02xxxxxx> | --all [--rom-dir DIR] [--object-dir DIR] [--write FILE] [--edition-build FILE] | --all-overlays [--rom-dir DIR] [--write FILE] [--edition-build FILE])";
 #[derive(Debug, Serialize)]
 struct Report {
     schema_version: u32,
@@ -363,9 +363,9 @@ struct OverlayOwnerEdition {
 }
 pub fn run(args: &[String]) -> Result<(), String> {
     let options = parse(args)?;
-    if options.game == "gs2" {
+    if options.game == "tla" {
         let owner = options.owner.as_deref().ok_or(USAGE)?;
-        return run_gs2_edition_build(&options, owner);
+        return run_tla_edition_build(&options, owner);
     }
     let roms = read_roms(&options.rom_dir)?;
     if options.all_overlays {
@@ -507,7 +507,7 @@ fn analyze_owner(
     }
     let report = Report {
         schema_version: 1,
-        game: "gs1",
+        game: "tbs",
         owner: owner.into(),
         owner_edition: "en",
         base_edition: "ja",
@@ -603,7 +603,7 @@ fn compile_edition_object(owner: &str, edition: &str, source: &Path) -> Result<P
     fs::write(
         &wrapper,
         format!(
-            "#define GS1_EDITION_{} 1\n#include \"{}\"\n",
+            "#define TBS_EDITION_{} 1\n#include \"{}\"\n",
             edition.to_ascii_uppercase(),
             include
         ),
@@ -622,7 +622,7 @@ fn compile_edition_object(owner: &str, edition: &str, source: &Path) -> Result<P
         &routing_text,
         &output_text,
         &[],
-        CompilerTarget::Gs1,
+        CompilerTarget::Tbs,
     )?;
     let object = output.join("owner.o");
     run_compiler(
@@ -696,7 +696,7 @@ fn edition_build_report(
         .replace('\\', "/");
     let edition_variant = fs::read_to_string(&source_path)
         .map_err(|error| format!("{}: {error}", source_path.display()))?
-        .contains("#include \"GS1_EDITION.H\"");
+        .contains("#include \"TBS_EDITION.H\"");
     let compile_each_edition = unit.is_some() || edition_variant;
     let literal_sites = literal_sites(object_path, symbol_offset, report.size)?;
     let en_reference =
@@ -795,7 +795,7 @@ fn edition_build_report(
     }
     let build = EditionBuildReport {
         schema_version: 1,
-        game: "gs1",
+        game: "tbs",
         source_edition: "en",
         source: source_report_path,
         object: object_path.display().to_string(),
@@ -895,7 +895,7 @@ fn corpus_report(
     let regional = |owner: &&CorpusOwner| !owner.core_diff_bytes_from_ja.is_empty();
     CorpusReport {
         schema_version: CORRESPONDENCE_SCHEMA_VERSION,
-        game: "gs1",
+        game: "tbs",
         source_edition: "en",
         base_edition: "ja",
         source_state,
@@ -1109,7 +1109,7 @@ fn write_corpus_edition_build(
         .collect::<Result<Vec<_>, String>>()?;
     let build = CorpusEditionBuildReport {
         schema_version: CORPUS_EDITION_BUILD_SCHEMA_VERSION,
-        game: "gs1",
+        game: "tbs",
         source_edition: "en",
         source_state: "byte-exact C compiled or relinked per edition",
         owners_total,
@@ -1306,7 +1306,7 @@ fn run_tool(command: &mut Command, label: &str) -> Result<(), String> {
 fn parse(args: &[String]) -> Result<Options, String> {
     let mut owner = None;
     let mut object = None;
-    let mut object_dir = PathBuf::from("out/gs1-en/full/claimed/obj");
+    let mut object_dir = PathBuf::from("out/tbs-en/full/claimed/obj");
     let mut rom_dir = PathBuf::from("roms");
     let mut json = false;
     let mut calls = false;
@@ -1315,7 +1315,7 @@ fn parse(args: &[String]) -> Result<Options, String> {
     let mut write = None;
     let mut edition_build = None;
     let mut span = None;
-    let mut game = "gs1";
+    let mut game = "tbs";
     let mut index = 0;
     while index < args.len() {
         match args[index].as_str() {
@@ -1346,9 +1346,9 @@ fn parse(args: &[String]) -> Result<Options, String> {
             "--game" => {
                 index += 1;
                 game = match args.get(index).map(String::as_str) {
-                    Some("gs1") => "gs1",
-                    Some("gs2") => "gs2",
-                    _ => return Err(format!("--game wants gs1 or gs2\n{USAGE}")),
+                    Some("tbs") => "tbs",
+                    Some("tla") => "tla",
+                    _ => return Err(format!("--game wants tbs or tla\n{USAGE}")),
                 };
             }
             "--span" => {
@@ -1427,7 +1427,7 @@ fn parse_explicit_overlay_owner(value: &str, span: Option<usize>) -> Result<Over
     let resource = resource as usize;
     if !(OVERLAY_FIRST..=OVERLAY_LAST).contains(&resource) {
         return Err(format!(
-            "overlay resource {resource:03x} is outside the GS1 code-overlay range"
+            "overlay resource {resource:03x} is outside the TBS code-overlay range"
         ));
     }
     let en_offset = u64::from(address)
@@ -1491,7 +1491,7 @@ fn resolve_object(
     }
     let paths = [
         object_dir.join(format!("{owner}.o")),
-        PathBuf::from(format!("out/gs1-en/claimed/obj/{owner}.o")),
+        PathBuf::from(format!("out/tbs-en/claimed/obj/{owner}.o")),
     ];
     exact_objects(object_dir)
         .ok()
@@ -1508,7 +1508,7 @@ fn resolve_object(
 fn read_roms(directory: &Path) -> Result<EditionRoms, String> {
     let mut images = BTreeMap::new();
     for edition in EDITIONS {
-        let path = directory.join(format!("gs1-{edition}.gba"));
+        let path = directory.join(format!("tbs-{edition}.gba"));
         images.insert(edition, read_rom(&path)?);
     }
     Ok(EditionRoms { images })
@@ -1528,7 +1528,7 @@ fn registers() -> Result<&'static Registers, String> {
 }
 fn translation_unit(owner: &str) -> Result<Option<&'static TranslationUnit>, String> {
     let source_owner = SourceOwner::parse(&format!("main:{owner}"))?;
-    Ok(registers()?.units.unit_for_game_owner("gs1", source_owner))
+    Ok(registers()?.units.unit_for_game_owner("tbs", source_owner))
 }
 /// Refuse to count a corpus probe whose source is unregistered or contains a
 /// forbidden construct; the correspondence record must never rest on
@@ -1538,7 +1538,7 @@ pub(crate) fn compliance_error_for(owner: SourceOwner) -> Result<Option<String>,
     let registers = registers()?;
     let source = match registers
         .units
-        .unit_for_game_owner("gs1", owner)
+        .unit_for_game_owner("tbs", owner)
         .map(|unit| crate::compiler::routing::root().join(&unit.source))
     {
         Some(path) => path,
@@ -1895,7 +1895,7 @@ fn write_overlay_edition_build(
         .units
         .units
         .iter()
-        .filter(|unit| unit.game == "gs1" && unit.overlay.is_some() && unit.exact())
+        .filter(|unit| unit.game == "tbs" && unit.overlay.is_some() && unit.exact())
         .collect::<Vec<_>>();
     if units.is_empty() {
         return Err("no declared exact overlay reconstruction composition".into());
@@ -2001,7 +2001,7 @@ fn run_overlay_owner(options: &Options, roms: &EditionRoms, value: &str) -> Resu
         .collect::<Result<Vec<_>, String>>()?;
     let report = OverlayOwnerReport {
         schema_version: CORRESPONDENCE_SCHEMA_VERSION,
-        game: "gs1",
+        game: "tbs",
         owner: owner.name,
         size: owner.size,
         core_bytes: found.mask.iter().filter(|masked| !**masked).count(),
@@ -2057,7 +2057,7 @@ fn exact_overlay_owners() -> Result<Vec<OverlayOwner>, String> {
             .ok_or_else(|| format!("{}: address is below overlay base", source.owner.id()))?
             as usize;
         if !assembly.contains_key(&resource) {
-            let source = format!("games/gs1/asm/overlays/resource_{resource:03x}_overlay.s");
+            let source = format!("games/tbs/asm/overlays/resource_{resource:03x}_overlay.s");
             let text = fs::read_to_string(&source).map_err(|error| format!("{source}: {error}"))?;
             assembly.insert(resource, text.lines().map(str::to_string).collect());
         }
@@ -2093,7 +2093,7 @@ fn exact_overlay_owners() -> Result<Vec<OverlayOwner>, String> {
     }
     owners.sort_by_key(|owner| (owner.resource, owner.en_offset));
     if owners.is_empty() {
-        return Err("games/gs1/SRC/ contains no exact overlay C owners".into());
+        return Err("games/tbs/SRC/ contains no exact overlay C owners".into());
     }
     Ok(owners)
 }
@@ -2875,41 +2875,41 @@ fn print_report(report: &Report, calls: bool) {
         }
     }
 }
-/// GS2 owners relink from their per-edition sources rather than from one EN
+/// TLA owners relink from their per-edition sources rather than from one EN
 /// object: every edition file names its own owner symbol and the delta
 /// header retargets each callee to the address in its name, so the proof
 /// that a callee is bound correctly is that the ROM's BL field decodes to
 /// the address the symbol is named after.
 #[derive(serde::Deserialize)]
-struct Gs2Register {
-    owners: Vec<Gs2Owner>,
+struct TlaRegister {
+    owners: Vec<TlaOwner>,
 }
 #[derive(serde::Deserialize)]
-struct Gs2Owner {
+struct TlaOwner {
     size: usize,
     starts: BTreeMap<String, String>,
 }
-fn run_gs2_edition_build(options: &Options, owner: &str) -> Result<(), String> {
+fn run_tla_edition_build(options: &Options, owner: &str) -> Result<(), String> {
     let path = options
         .edition_build
         .as_deref()
-        .ok_or("--game gs2 relinks only through --edition-build FILE")?;
+        .ok_or("--game tla relinks only through --edition-build FILE")?;
     if options.object.is_some() || options.calls || options.json || options.span.is_some() {
         return Err(format!(
-            "--game gs2 takes only --rom-dir and --edition-build\n{USAGE}"
+            "--game tla takes only --rom-dir and --edition-build\n{USAGE}"
         ));
     }
     let root = crate::compiler::routing::root();
-    let register: Gs2Register =
-        crate::compiler::build_io::read_json(root.join("games/gs2/recon/cross-edition.json"))?;
+    let register: TlaRegister =
+        crate::compiler::build_io::read_json(root.join("games/tla/recon/cross-edition.json"))?;
     let entry = register
         .owners
         .iter()
         .find(|entry| entry.starts.get("en").is_some_and(|start| start == owner))
-        .ok_or_else(|| format!("{owner}: not an EN owner in games/gs2/recon/cross-edition.json"))?;
+        .ok_or_else(|| format!("{owner}: not an EN owner in games/tla/recon/cross-edition.json"))?;
     let output_root = std::env::temp_dir()
         .join("alchemy-cross-edition")
-        .join("gs2")
+        .join("tla")
         .join(owner);
     let mut editions = Vec::with_capacity(EDITIONS.len());
     for edition in EDITIONS {
@@ -2918,9 +2918,9 @@ fn run_gs2_edition_build(options: &Options, owner: &str) -> Result<(), String> {
             .get(edition)
             .ok_or_else(|| format!("{owner}: register lacks a {edition} start"))?;
         let start = parse_rom_address(start_text)?;
-        let rom = read_rom(&options.rom_dir.join(format!("gs2-{edition}.gba")))?;
-        let source = root.join(format!("games/gs2/recon/{edition}/main/{start_text}.c"));
-        let built = build_gs2_edition(
+        let rom = read_rom(&options.rom_dir.join(format!("tla-{edition}.gba")))?;
+        let source = root.join(format!("games/tla/recon/{edition}/main/{start_text}.c"));
+        let built = build_tla_edition(
             &output_root,
             edition,
             start_text,
@@ -2953,9 +2953,9 @@ fn run_gs2_edition_build(options: &Options, owner: &str) -> Result<(), String> {
     }
     let build = EditionBuildReport {
         schema_version: 1,
-        game: "gs2",
+        game: "tla",
         source_edition: "en",
-        source: format!("games/gs2/recon/en/main/{owner}.c"),
+        source: format!("games/tla/recon/en/main/{owner}.c"),
         object: "compiled from each edition's own source".into(),
         owner_symbol: format!("Func_{owner}"),
         size: entry.size,
@@ -2992,7 +2992,7 @@ fn run_gs2_edition_build(options: &Options, owner: &str) -> Result<(), String> {
         Err("one or more editions are not byte-exact".into())
     }
 }
-fn build_gs2_edition(
+fn build_tla_edition(
     output_root: &Path,
     edition: &str,
     owner: &str,
@@ -3007,9 +3007,9 @@ fn build_gs2_edition(
     let output = output_root.join("compiled").join(edition);
     fs::create_dir_all(&output).map_err(|error| format!("{}: {error}", output.display()))?;
     let owner_address = u32::from_str_radix(owner, 16)
-        .map_err(|error| format!("invalid gs2 owner {owner}: {error}"))?;
+        .map_err(|error| format!("invalid tla owner {owner}: {error}"))?;
     let routing = SourceOwner::Main(owner_address)
-        .routing_path_for_game("gs2")
+        .routing_path_for_game("tla")
         .to_string_lossy()
         .into_owned();
     let assembly = compile_to_assembly(
@@ -3017,7 +3017,7 @@ fn build_gs2_edition(
         &routing,
         &output.to_string_lossy(),
         &[],
-        CompilerTarget::Gs2,
+        CompilerTarget::Tla,
     )?;
     let object = output.join("owner.o");
     run_compiler(
@@ -3055,7 +3055,7 @@ fn build_gs2_edition(
         + reference.len().abs_diff(linked.len());
     Ok((values, differing, object_size))
 }
-/// A GS2 callee named `Func_XXXXXXXX` or a literal named `Value_XXXXXXXX`
+/// A TLA callee named `Func_XXXXXXXX` or a literal named `Value_XXXXXXXX`
 /// is bound at the number in its name; the byte comparison of the linked
 /// owner against the ROM is what proves the binding.
 fn named_locations(relocations: &[RelocationSite], edition: &str) -> EditionLocations {
@@ -3281,7 +3281,7 @@ mod tests {
     fn artifact_substitution_and_callee_inference_fail_closed() {
         let unit: TranslationUnit = serde_json::from_value(serde_json::json!({
             "id": "complete-symbols-fixture",
-            "game": "gs1",
+            "game": "tbs",
             "source": "fixture.c",
             "compiler_route": "canonical-gcc296",
             "owners": [
@@ -3500,9 +3500,9 @@ mod tests {
             .collect();
         let row = compact_corpus_edition_build_owner(EditionBuildReport {
             schema_version: 1,
-            game: "gs1",
+            game: "tbs",
             source_edition: "en",
-            source: "games/gs1/SRC/example.c".into(),
+            source: "games/tbs/SRC/example.c".into(),
             object: "out/example.o".into(),
             owner_symbol: "Func_08002ee4".into(),
             size: 4,
@@ -3546,10 +3546,10 @@ mod tests {
     }
 }
 #[cfg(test)]
-mod gs2_tests {
+mod tla_tests {
     use super::*;
     #[test]
-    fn gs2_callees_are_proved_at_the_address_in_their_name() {
+    fn tla_callees_are_proved_at_the_address_in_their_name() {
         let site = |symbol: &str, external: bool| RelocationSite {
             symbol: symbol.into(),
             external,

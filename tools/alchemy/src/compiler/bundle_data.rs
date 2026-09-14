@@ -3,7 +3,7 @@ pub type TargetExecutables = (&'static str, &'static [ExecutableDigests]);
 pub type HostTargets = (&'static str, &'static [TargetExecutables]);
 pub type HostDigests = (&'static str, &'static [&'static str]);
 
-// Licensed agscc f209503: GS2 lowering is opt-in; both games use this bundle.
+// Licensed agscc f209503: TLA lowering is opt-in; both games use this bundle.
 const GAME: &[ExecutableDigests] = &[
     (
         "xgcc",
@@ -26,17 +26,17 @@ const GAME: &[ExecutableDigests] = &[
         &["de8c6568d5742acda7dff00acdfd501d50cb767770fb77fa6d688925bb7fec61"],
     ),
 ];
-const EMPTY_GS1: &[ExecutableDigests] = &[
+const EMPTY_TBS: &[ExecutableDigests] = &[
     ("xgcc", &[]),
     ("cpp0", &[]),
     ("tradcpp0", &[]),
     ("cc1", &[]),
     ("as", &[]),
 ];
-const EMPTY: &[TargetExecutables] = &[("gs1", EMPTY_GS1), ("gs2", EMPTY_GS1)];
+const EMPTY: &[TargetExecutables] = &[("tbs", EMPTY_TBS), ("tla", EMPTY_TBS)];
 
 pub static EXPECTED: &[HostTargets] = &[
-    ("darwin-arm64", &[("gs1", GAME), ("gs2", GAME)]),
+    ("darwin-arm64", &[("tbs", GAME), ("tla", GAME)]),
     ("darwin-x64", EMPTY),
     // The old modified Linux bundle is not evidence for this restored route.
     ("linux-x64", EMPTY),
@@ -47,7 +47,7 @@ pub static AGBCC_EXPECTED: &[HostDigests] = &[
         "darwin-arm64",
         &[
             // Stock pret/agbcc da598c1: 300 identical objects across twelve
-            // editions; all 4,178 claimed GS1 EN bytes independently linked.
+            // editions; all 4,178 claimed TBS EN bytes independently linked.
             "1b871e9350265d6a530f26d6149818e3294a8b0231a574960226e506a7a5e677",
             // Second local host build of the same stock pret/agbcc da598c1
             // source, admitted on the same reproduction evidence as the gas

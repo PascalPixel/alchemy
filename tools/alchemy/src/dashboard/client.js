@@ -115,7 +115,7 @@ function accept(snapshot) {
   root.setAttribute("aria-busy", String(snapshot.scanning));
   if (snapshot.hasCharts && snapshot.revision !== lastRevision) render(snapshot);
   document.title = snapshot.summary
-    ? `Alchemy — 12 targets · ${percent(snapshot.summary.donePercent)} GS1 EN done`
+    ? `Alchemy — 12 targets · ${percent(snapshot.summary.donePercent)} TBS EN done`
     : "Alchemy — published coverage";
   if (snapshot.published) {
     showError("Showing published charts. Live coverage is unavailable until the current build verifies.", "");

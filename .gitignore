@@ -26,8 +26,8 @@ roms/
 *.gba
 *.rom
 *.bin
-!games/gs1/assets/maps/**/metatiles.bin
-!games/gs1/assets/maps/**/metatile_attributes.bin
+!games/tbs/assets/maps/**/metatiles.bin
+!games/tbs/assets/maps/**/metatile_attributes.bin
 *.elf
 *.o
 *.a

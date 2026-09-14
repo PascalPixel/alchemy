@@ -1,119 +1,119 @@
 # One human-authored register for music identity. Missing titles stay absent until Nintendo Music evidence is supplied.
-kind	game	sound_id	name	en	de	es	fr	it	ja	source	gs1	gs2	evidence
-# GS2's Battle Mode requester exposes decimal slots 0–96, not song titles.
-track	gs2	709	try-your-luck	Try Your Luck!						https://goldensunwiki.net/wiki/Music
-track	gs2	68	the-broken-seal-ending	The Broken Seal (Ending)						https://goldensunwiki.net/wiki/Music
-track	gs2	74	the-adventure-resumes	The Adventure Resumes						https://goldensunwiki.net/wiki/Music
-track	gs2	727	venus-lighthouse-entrance	Venus Lighthouse Entrance						https://goldensunwiki.net/wiki/Music
-track	gs2	1	super-lucky-dice	Super Lucky Dice						https://goldensunwiki.net/wiki/Music
-track	gs2	2	alhafra	Alhafra						https://goldensunwiki.net/wiki/Music
-track	gs2	3	champa	Champa						https://goldensunwiki.net/wiki/Music
-track	gs2	4	daila	Daila						https://goldensunwiki.net/wiki/Music
-track	gs2	5	apojii-islands	Apojii Islands						https://goldensunwiki.net/wiki/Music
-track	gs2	6	izumo-festival	Izumo Festival						https://goldensunwiki.net/wiki/Music
-track	gs2	7	izumo	Izumo						https://goldensunwiki.net/wiki/Music
-track	gs2	8	the-wise-ones-trap	The Wise One's Trap						https://goldensunwiki.net/wiki/Music
-track	gs2	9	kandorean-temple-caves	Kandorean Temple Caves						https://goldensunwiki.net/wiki/Music
-track	gs2	10	kibombo	Kibombo						https://goldensunwiki.net/wiki/Music
-track	gs2	11	rituals	Rituals						https://goldensunwiki.net/wiki/Music
-track	gs2	12	lemuria	Lemuria						https://goldensunwiki.net/wiki/Music
-track	gs2	13	madra	Madra						https://goldensunwiki.net/wiki/Music
-track	gs2	14	islands	Islands						https://goldensunwiki.net/wiki/Music
-track	gs2	15	garoh	Garoh						https://goldensunwiki.net/wiki/Music
-track	gs2	16	yallam	Yallam						https://goldensunwiki.net/wiki/Music
-track	gs2	17	childrens-song	Children's Song						https://goldensunwiki.net/wiki/Music
-track	gs2	20	airs-rock	Air's Rock						https://goldensunwiki.net/wiki/Music
-track	gs2	21	aqua-rock	Aqua Rock						https://goldensunwiki.net/wiki/Music
-track	gs2	22	madra-catacombs	Madra Catacombs						https://goldensunwiki.net/wiki/Music
-track	gs2	23	caverns	Caverns						https://goldensunwiki.net/wiki/Music
-track	gs2	24	gaia-rock	Gaia Rock						https://goldensunwiki.net/wiki/Music
-track	gs2	25	inside-the-gabomba-statue	Inside the Gabomba Statue						https://goldensunwiki.net/wiki/Music
-track	gs2	26	jupiter-lighthouse	Jupiter Lighthouse						https://goldensunwiki.net/wiki/Music
-track	gs2	27	magma-rock	Magma Rock						https://goldensunwiki.net/wiki/Music
-track	gs2	28	mars-lighthouse	Mars Lighthouse						https://goldensunwiki.net/wiki/Music
-track	gs2	29	tundaria-tower	Tundaria Tower						https://goldensunwiki.net/wiki/Music
-track	gs2	30	taopo-swamp	Taopo Swamp						https://goldensunwiki.net/wiki/Music
-track	gs2	31	ankohl-ruins	Ankohl Ruins						https://goldensunwiki.net/wiki/Music
-track	gs2	34	fated-connection-with-sworn-enemies	Fated Connection with Sworn Enemies						https://goldensunwiki.net/wiki/Music
-track	gs2	35	how-to-use-a-djinni	How to Use a Djinni						https://goldensunwiki.net/wiki/Music
-track	gs2	36	an-unsettling-feeling	An Unsettling Feeling						https://goldensunwiki.net/wiki/Music
-track	gs2	37	shaman-village	Shaman Village						https://goldensunwiki.net/wiki/Music
-track	gs2	38	loneliness-and-sadness	Loneliness and Sadness						https://goldensunwiki.net/wiki/Music
-track	gs2	39	crisis	Crisis						https://goldensunwiki.net/wiki/Music
-track	gs2	40	main-theme-title	Main Theme (Title)						https://goldensunwiki.net/wiki/Music
-track	gs2	41	to-the-open-sea	To the Open Sea						https://goldensunwiki.net/wiki/Music
-track	gs2	42	a-journey-around-the-world	A Journey around the World						https://goldensunwiki.net/wiki/Music
-track	gs2	43	journey-to-save-the-world	Journey to Save the World						https://goldensunwiki.net/wiki/Music
-track	gs2	44	the-lost-age-ending	The Lost Age (Ending)						https://goldensunwiki.net/wiki/Music
-track	gs2	55	test-your-skills	Test Your Skills						https://goldensunwiki.net/wiki/Music
-track	gs2	76	trial-road	Trial Road						https://goldensunwiki.net/wiki/Music
-track	gs2	49	battle-jenna	Battle (Jenna)						https://goldensunwiki.net/wiki/Music
-track	gs2	50	battle-the-lost-age	Battle (The Lost Age)						https://goldensunwiki.net/wiki/Music
-track	gs2	51	a-powerful-opponent	A Powerful Opponent						https://goldensunwiki.net/wiki/Music
-track	gs2	52	battling-a-powerful-foe	Battling a Powerful Foe						https://goldensunwiki.net/wiki/Music
-track	gs2	56	battle-on-the-sea	Battle on the Sea						https://goldensunwiki.net/wiki/Music
-track	gs2	57	battle-with-karst-and-agatio	Battle with Karst & Agatio						https://goldensunwiki.net/wiki/Music
-track	gs2	53	battle-with-flame-dragon	Battle with Flame Dragon						https://goldensunwiki.net/wiki/Music
-track	gs2	54	battle-with-doom-dragon	Battle with Doom Dragon						https://goldensunwiki.net/wiki/Music
-track	gs2	58	victory	Victory!						https://goldensunwiki.net/wiki/Music
-track	gs2	59	defeated	Defeated...						https://goldensunwiki.net/wiki/Music
-track	gs2	60	wind-adepts	Wind Adepts						https://goldensunwiki.net/wiki/Music
-track	gs2	61	tidal-wave	Tidal Wave						https://goldensunwiki.net/wiki/Music
-track	gs2	62	felix-returns	Felix Returns						https://goldensunwiki.net/wiki/Music
-track	gs2	63	alchemy-unleashed	Alchemy Unleashed						https://goldensunwiki.net/wiki/Music
-track	gs2	64	the-passage-of-time	The Passage of Time						https://goldensunwiki.net/wiki/Music
-track	gs2	65	sea-of-time	Sea of Time						https://goldensunwiki.net/wiki/Music
-track	gs2	70	main-theme-title	Main Theme (Title)						https://goldensunwiki.net/wiki/Music
-track	gs2	71	password-entry	Password Entry						https://goldensunwiki.net/wiki/Music
-track	gs2	72	the-final-lighthouse	The Final Lighthouse						https://goldensunwiki.net/wiki/Music
-track	gs2	73	golden-sun-twilight	Golden Sun (Twilight)						https://goldensunwiki.net/wiki/Music
-track	gs2	67	vanished-vale	Vanished Vale						https://goldensunwiki.net/wiki/Music
-track	gs2	75	to-be-continued	To Be Continued...						https://goldensunwiki.net/wiki/Music
-track	gs2	700	village-theme	Village Theme						https://goldensunwiki.net/wiki/Music
-track	gs2	701	gondowan-settlement	Gondowan Settlement						https://goldensunwiki.net/wiki/Music
-track	gs2	702	an-unsettling-feeling	An Unsettling Feeling						https://goldensunwiki.net/wiki/Music
-track	gs2	703	lemurian-palace	Lemurian Palace						https://goldensunwiki.net/wiki/Music
-track	gs2	704	sinking-into-sorrow	Sinking into Sorrow						https://goldensunwiki.net/wiki/Music
-track	gs2	705	reuniting-with-hama	Reuniting with Hama						https://goldensunwiki.net/wiki/Music
-track	gs2	706	port-town-theme	Port-Town Theme						https://goldensunwiki.net/wiki/Music
-track	gs2	707	colosseum-finals	Colosseum Finals						https://goldensunwiki.net/wiki/Music
-track	gs2	708	colosseum	Colosseum						https://goldensunwiki.net/wiki/Music
-track	gs2	710	tolbi	Tolbi						https://goldensunwiki.net/wiki/Music
-track	gs2	720	anemos-inner-sanctum	Anemos Inner Sanctum						https://goldensunwiki.net/wiki/Music
-track	gs2	721	contigo	Contigo						https://goldensunwiki.net/wiki/Music
-track	gs2	722	the-broken-seal	The Broken Seal						https://goldensunwiki.net/wiki/Music
-track	gs2	723	dungeon-theme	Dungeon Theme						https://goldensunwiki.net/wiki/Music
-track	gs2	724	cave-theme	Cave Theme						https://goldensunwiki.net/wiki/Music
-track	gs2	725	yampi-desert	Yampi Desert						https://goldensunwiki.net/wiki/Music
-track	gs2	726	remote-village	Remote Village						https://goldensunwiki.net/wiki/Music
-track	gs2	728	dehkan-plateau	Dehkan Plateau						https://goldensunwiki.net/wiki/Music
-track	gs2	729	gabomba-catacombs	Gabomba Catacombs						https://goldensunwiki.net/wiki/Music
-track	gs2	730	babis-theme	Babi's Theme						https://goldensunwiki.net/wiki/Music
-track	gs2	741	set-sail-on-the-karagol-sea	Set Sail on the Karagol Sea						https://goldensunwiki.net/wiki/Music
-track	gs2	742	a-long-journey	A Long Journey						https://goldensunwiki.net/wiki/Music
-track	gs2	743	venus-lighthouse	Venus Lighthouse						https://goldensunwiki.net/wiki/Music
-track	gs2	750	battle-the-broken-seal	Battle (The Broken Seal)						https://goldensunwiki.net/wiki/Music
-track	gs2	751	battle-with-star-magician	Battle with Star Magician						https://goldensunwiki.net/wiki/Music
-track	gs2	752	battle-with-valukar	Battle with Valukar						https://goldensunwiki.net/wiki/Music
-track	gs2	753	battle-with-sentinel	Battle with Sentinel						https://goldensunwiki.net/wiki/Music
-track	gs2	754	battle-with-dullahan	Battle with Dullahan						https://goldensunwiki.net/wiki/Music
+kind	game	sound_id	name	en	de	es	fr	it	ja	source	tbs	tla	evidence
+# TLA's Battle Mode requester exposes decimal slots 0–96, not song titles.
+track	tla	709	try-your-luck	Try Your Luck!						https://goldensunwiki.net/wiki/Music
+track	tla	68	the-broken-seal-ending	The Broken Seal (Ending)						https://goldensunwiki.net/wiki/Music
+track	tla	74	the-adventure-resumes	The Adventure Resumes						https://goldensunwiki.net/wiki/Music
+track	tla	727	venus-lighthouse-entrance	Venus Lighthouse Entrance						https://goldensunwiki.net/wiki/Music
+track	tla	1	super-lucky-dice	Super Lucky Dice						https://goldensunwiki.net/wiki/Music
+track	tla	2	alhafra	Alhafra						https://goldensunwiki.net/wiki/Music
+track	tla	3	champa	Champa						https://goldensunwiki.net/wiki/Music
+track	tla	4	daila	Daila						https://goldensunwiki.net/wiki/Music
+track	tla	5	apojii-islands	Apojii Islands						https://goldensunwiki.net/wiki/Music
+track	tla	6	izumo-festival	Izumo Festival						https://goldensunwiki.net/wiki/Music
+track	tla	7	izumo	Izumo						https://goldensunwiki.net/wiki/Music
+track	tla	8	the-wise-ones-trap	The Wise One's Trap						https://goldensunwiki.net/wiki/Music
+track	tla	9	kandorean-temple-caves	Kandorean Temple Caves						https://goldensunwiki.net/wiki/Music
+track	tla	10	kibombo	Kibombo						https://goldensunwiki.net/wiki/Music
+track	tla	11	rituals	Rituals						https://goldensunwiki.net/wiki/Music
+track	tla	12	lemuria	Lemuria						https://goldensunwiki.net/wiki/Music
+track	tla	13	madra	Madra						https://goldensunwiki.net/wiki/Music
+track	tla	14	islands	Islands						https://goldensunwiki.net/wiki/Music
+track	tla	15	garoh	Garoh						https://goldensunwiki.net/wiki/Music
+track	tla	16	yallam	Yallam						https://goldensunwiki.net/wiki/Music
+track	tla	17	childrens-song	Children's Song						https://goldensunwiki.net/wiki/Music
+track	tla	20	airs-rock	Air's Rock						https://goldensunwiki.net/wiki/Music
+track	tla	21	aqua-rock	Aqua Rock						https://goldensunwiki.net/wiki/Music
+track	tla	22	madra-catacombs	Madra Catacombs						https://goldensunwiki.net/wiki/Music
+track	tla	23	caverns	Caverns						https://goldensunwiki.net/wiki/Music
+track	tla	24	gaia-rock	Gaia Rock						https://goldensunwiki.net/wiki/Music
+track	tla	25	inside-the-gabomba-statue	Inside the Gabomba Statue						https://goldensunwiki.net/wiki/Music
+track	tla	26	jupiter-lighthouse	Jupiter Lighthouse						https://goldensunwiki.net/wiki/Music
+track	tla	27	magma-rock	Magma Rock						https://goldensunwiki.net/wiki/Music
+track	tla	28	mars-lighthouse	Mars Lighthouse						https://goldensunwiki.net/wiki/Music
+track	tla	29	tundaria-tower	Tundaria Tower						https://goldensunwiki.net/wiki/Music
+track	tla	30	taopo-swamp	Taopo Swamp						https://goldensunwiki.net/wiki/Music
+track	tla	31	ankohl-ruins	Ankohl Ruins						https://goldensunwiki.net/wiki/Music
+track	tla	34	fated-connection-with-sworn-enemies	Fated Connection with Sworn Enemies						https://goldensunwiki.net/wiki/Music
+track	tla	35	how-to-use-a-djinni	How to Use a Djinni						https://goldensunwiki.net/wiki/Music
+track	tla	36	an-unsettling-feeling	An Unsettling Feeling						https://goldensunwiki.net/wiki/Music
+track	tla	37	shaman-village	Shaman Village						https://goldensunwiki.net/wiki/Music
+track	tla	38	loneliness-and-sadness	Loneliness and Sadness						https://goldensunwiki.net/wiki/Music
+track	tla	39	crisis	Crisis						https://goldensunwiki.net/wiki/Music
+track	tla	40	main-theme-title	Main Theme (Title)						https://goldensunwiki.net/wiki/Music
+track	tla	41	to-the-open-sea	To the Open Sea						https://goldensunwiki.net/wiki/Music
+track	tla	42	a-journey-around-the-world	A Journey around the World						https://goldensunwiki.net/wiki/Music
+track	tla	43	journey-to-save-the-world	Journey to Save the World						https://goldensunwiki.net/wiki/Music
+track	tla	44	the-lost-age-ending	The Lost Age (Ending)						https://goldensunwiki.net/wiki/Music
+track	tla	55	test-your-skills	Test Your Skills						https://goldensunwiki.net/wiki/Music
+track	tla	76	trial-road	Trial Road						https://goldensunwiki.net/wiki/Music
+track	tla	49	battle-jenna	Battle (Jenna)						https://goldensunwiki.net/wiki/Music
+track	tla	50	battle-the-lost-age	Battle (The Lost Age)						https://goldensunwiki.net/wiki/Music
+track	tla	51	a-powerful-opponent	A Powerful Opponent						https://goldensunwiki.net/wiki/Music
+track	tla	52	battling-a-powerful-foe	Battling a Powerful Foe						https://goldensunwiki.net/wiki/Music
+track	tla	56	battle-on-the-sea	Battle on the Sea						https://goldensunwiki.net/wiki/Music
+track	tla	57	battle-with-karst-and-agatio	Battle with Karst & Agatio						https://goldensunwiki.net/wiki/Music
+track	tla	53	battle-with-flame-dragon	Battle with Flame Dragon						https://goldensunwiki.net/wiki/Music
+track	tla	54	battle-with-doom-dragon	Battle with Doom Dragon						https://goldensunwiki.net/wiki/Music
+track	tla	58	victory	Victory!						https://goldensunwiki.net/wiki/Music
+track	tla	59	defeated	Defeated...						https://goldensunwiki.net/wiki/Music
+track	tla	60	wind-adepts	Wind Adepts						https://goldensunwiki.net/wiki/Music
+track	tla	61	tidal-wave	Tidal Wave						https://goldensunwiki.net/wiki/Music
+track	tla	62	felix-returns	Felix Returns						https://goldensunwiki.net/wiki/Music
+track	tla	63	alchemy-unleashed	Alchemy Unleashed						https://goldensunwiki.net/wiki/Music
+track	tla	64	the-passage-of-time	The Passage of Time						https://goldensunwiki.net/wiki/Music
+track	tla	65	sea-of-time	Sea of Time						https://goldensunwiki.net/wiki/Music
+track	tla	70	main-theme-title	Main Theme (Title)						https://goldensunwiki.net/wiki/Music
+track	tla	71	password-entry	Password Entry						https://goldensunwiki.net/wiki/Music
+track	tla	72	the-final-lighthouse	The Final Lighthouse						https://goldensunwiki.net/wiki/Music
+track	tla	73	golden-sun-twilight	Golden Sun (Twilight)						https://goldensunwiki.net/wiki/Music
+track	tla	67	vanished-vale	Vanished Vale						https://goldensunwiki.net/wiki/Music
+track	tla	75	to-be-continued	To Be Continued...						https://goldensunwiki.net/wiki/Music
+track	tla	700	village-theme	Village Theme						https://goldensunwiki.net/wiki/Music
+track	tla	701	gondowan-settlement	Gondowan Settlement						https://goldensunwiki.net/wiki/Music
+track	tla	702	an-unsettling-feeling	An Unsettling Feeling						https://goldensunwiki.net/wiki/Music
+track	tla	703	lemurian-palace	Lemurian Palace						https://goldensunwiki.net/wiki/Music
+track	tla	704	sinking-into-sorrow	Sinking into Sorrow						https://goldensunwiki.net/wiki/Music
+track	tla	705	reuniting-with-hama	Reuniting with Hama						https://goldensunwiki.net/wiki/Music
+track	tla	706	port-town-theme	Port-Town Theme						https://goldensunwiki.net/wiki/Music
+track	tla	707	colosseum-finals	Colosseum Finals						https://goldensunwiki.net/wiki/Music
+track	tla	708	colosseum	Colosseum						https://goldensunwiki.net/wiki/Music
+track	tla	710	tolbi	Tolbi						https://goldensunwiki.net/wiki/Music
+track	tla	720	anemos-inner-sanctum	Anemos Inner Sanctum						https://goldensunwiki.net/wiki/Music
+track	tla	721	contigo	Contigo						https://goldensunwiki.net/wiki/Music
+track	tla	722	the-broken-seal	The Broken Seal						https://goldensunwiki.net/wiki/Music
+track	tla	723	dungeon-theme	Dungeon Theme						https://goldensunwiki.net/wiki/Music
+track	tla	724	cave-theme	Cave Theme						https://goldensunwiki.net/wiki/Music
+track	tla	725	yampi-desert	Yampi Desert						https://goldensunwiki.net/wiki/Music
+track	tla	726	remote-village	Remote Village						https://goldensunwiki.net/wiki/Music
+track	tla	728	dehkan-plateau	Dehkan Plateau						https://goldensunwiki.net/wiki/Music
+track	tla	729	gabomba-catacombs	Gabomba Catacombs						https://goldensunwiki.net/wiki/Music
+track	tla	730	babis-theme	Babi's Theme						https://goldensunwiki.net/wiki/Music
+track	tla	741	set-sail-on-the-karagol-sea	Set Sail on the Karagol Sea						https://goldensunwiki.net/wiki/Music
+track	tla	742	a-long-journey	A Long Journey						https://goldensunwiki.net/wiki/Music
+track	tla	743	venus-lighthouse	Venus Lighthouse						https://goldensunwiki.net/wiki/Music
+track	tla	750	battle-the-broken-seal	Battle (The Broken Seal)						https://goldensunwiki.net/wiki/Music
+track	tla	751	battle-with-star-magician	Battle with Star Magician						https://goldensunwiki.net/wiki/Music
+track	tla	752	battle-with-valukar	Battle with Valukar						https://goldensunwiki.net/wiki/Music
+track	tla	753	battle-with-sentinel	Battle with Sentinel						https://goldensunwiki.net/wiki/Music
+track	tla	754	battle-with-dullahan	Battle with Dullahan						https://goldensunwiki.net/wiki/Music
 # Golden Sun titles below use exact/note-shape identity with the requester-listed
 # Golden Sun: The Lost Age arrangements, while retaining each game's official name.
-track	gs1	1	town-theme	Town Theme						https://goldensunwiki.net/wiki/Music
-track	gs1	3	palace-theme	Palace Theme						https://goldensunwiki.net/wiki/Music
-track	gs1	5	temple-theme	Temple Theme						https://goldensunwiki.net/wiki/Music
-track	gs1	8	colosseum	Colosseum						https://goldensunwiki.net/wiki/Music
-track	gs1	9	try-your-luck	Try Your Luck!						https://goldensunwiki.net/wiki/Music
-track	gs1	10	tolbi	Tolbi						https://goldensunwiki.net/wiki/Music
-track	gs1	24	cave-theme	Cave Theme						https://goldensunwiki.net/wiki/Music
-track	gs1	25	desert-theme	Desert Theme						https://goldensunwiki.net/wiki/Music
-track	gs1	26	remote-village	Remote Village						https://goldensunwiki.net/wiki/Music
-track	gs1	28	babi-lighthouse	Babi Lighthouse						https://goldensunwiki.net/wiki/Music
-track	gs1	29	labyrinth-theme	Labyrinth Theme						https://goldensunwiki.net/wiki/Music
-track	gs1	41	set-sail-on-the-karagol-sea	Set Sail on the Karagol Sea						https://goldensunwiki.net/wiki/Music
-track	gs1	42	a-long-journey	A Long Journey						https://goldensunwiki.net/wiki/Music
-track	gs1	52	battling-a-powerful-foe	Battling a Powerful Foe						https://goldensunwiki.net/wiki/Music
-track	gs1	64	the-passage-of-time	The Passage of Time						https://goldensunwiki.net/wiki/Music
+track	tbs	1	town-theme	Town Theme						https://goldensunwiki.net/wiki/Music
+track	tbs	3	palace-theme	Palace Theme						https://goldensunwiki.net/wiki/Music
+track	tbs	5	temple-theme	Temple Theme						https://goldensunwiki.net/wiki/Music
+track	tbs	8	colosseum	Colosseum						https://goldensunwiki.net/wiki/Music
+track	tbs	9	try-your-luck	Try Your Luck!						https://goldensunwiki.net/wiki/Music
+track	tbs	10	tolbi	Tolbi						https://goldensunwiki.net/wiki/Music
+track	tbs	24	cave-theme	Cave Theme						https://goldensunwiki.net/wiki/Music
+track	tbs	25	desert-theme	Desert Theme						https://goldensunwiki.net/wiki/Music
+track	tbs	26	remote-village	Remote Village						https://goldensunwiki.net/wiki/Music
+track	tbs	28	babi-lighthouse	Babi Lighthouse						https://goldensunwiki.net/wiki/Music
+track	tbs	29	labyrinth-theme	Labyrinth Theme						https://goldensunwiki.net/wiki/Music
+track	tbs	41	set-sail-on-the-karagol-sea	Set Sail on the Karagol Sea						https://goldensunwiki.net/wiki/Music
+track	tbs	42	a-long-journey	A Long Journey						https://goldensunwiki.net/wiki/Music
+track	tbs	52	battling-a-powerful-foe	Battling a Powerful Foe						https://goldensunwiki.net/wiki/Music
+track	tbs	64	the-passage-of-time	The Passage of Time						https://goldensunwiki.net/wiki/Music
 shared		1									1	701	match-midi-notes:note-shape:1790
 shared		3									3	703	match-midi-notes:note-shape:1562
 shared		5									5	705	match-midi-notes:note-shape:1928

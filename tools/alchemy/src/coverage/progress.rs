@@ -6,7 +6,7 @@ use crate::coverage::tree::{root, work_tree_at};
 use serde_json::{json, Value};
 use std::path::Path;
 
-const USAGE: &str = "usage: full-c-progress [--target gs1-en|gs2-en] [--check|--subject|--json|--write-report|--self-test]";
+const USAGE: &str = "usage: full-c-progress [--target tbs-en|tla-en] [--check|--subject|--json|--write-report|--self-test]";
 
 fn totals(report: &ProgressTally) -> (i64, i64) {
     (
@@ -84,7 +84,7 @@ fn display(report: &ProgressTally) -> String {
 }
 
 fn command<'a>(argv: &'a [String]) -> Result<Option<(String, &'a str)>, String> {
-    let mut target = "gs1-en".to_string();
+    let mut target = "tbs-en".to_string();
     let mut action = "";
     let mut index = 0;
     while index < argv.len() {
@@ -92,15 +92,15 @@ fn command<'a>(argv: &'a [String]) -> Result<Option<(String, &'a str)>, String> 
             "--target" => {
                 index += 1;
                 target = match argv.get(index).map(String::as_str) {
-                    Some(target @ ("gs1-en" | "gs2-en")) => target.into(),
+                    Some(target @ ("tbs-en" | "tla-en")) => target.into(),
                     Some(other) => {
                         return Err(format!(
-                            "unsupported decomp target \"{other}\"; expected gs1-en or gs2-en"
+                            "unsupported decomp target \"{other}\"; expected tbs-en or tla-en"
                         ))
                     }
                     None => {
                         return Err(
-                            "unsupported decomp target undefined; expected gs1-en or gs2-en".into(),
+                            "unsupported decomp target undefined; expected tbs-en or tla-en".into(),
                         )
                     }
                 };

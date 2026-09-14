@@ -540,7 +540,7 @@ fn inventory_members(
     units: &TranslationUnits,
 ) -> Result<BTreeMap<SourceOwner, InventoryMember>, String> {
     let mut members = BTreeMap::new();
-    for unit in units.units.iter().filter(|unit| unit.game == "gs1") {
+    for unit in units.units.iter().filter(|unit| unit.game == "tbs") {
         let source = text(&unit.source);
         let mut insert = |ordinal, address, role, state, alias: &str, extent| {
             let key = unit.source_owner(address)?;
@@ -583,7 +583,7 @@ fn inventory_members(
 }
 fn source_group(source: &str) -> Option<String> {
     Path::new(source)
-        .strip_prefix("games/gs1/SRC")
+        .strip_prefix("games/tbs/SRC")
         .ok()?
         .parent()?
         .to_str()
@@ -593,7 +593,7 @@ fn source_group(source: &str) -> Option<String> {
 fn source_path(paths: &SourcePaths, owner: SourceOwner) -> Option<String> {
     paths
         .mapped_relative_path(owner)
-        .map(|path| text(Path::new("games/gs1/SRC").join(path)))
+        .map(|path| text(Path::new("games/tbs/SRC").join(path)))
 }
 fn hex(value: u64) -> String {
     format!("0x{value:08x}")
@@ -618,7 +618,7 @@ fn space_size(line: &str) -> Option<usize> {
     usize::from_str_radix(value.trim_start_matches("0x"), radix).ok()
 }
 fn overlay_placeholders(root: &Path) -> Result<BTreeMap<SourceOwner, Vec<(u64, usize)>>, String> {
-    let directory = root.join("games/gs1/asm/overlays");
+    let directory = root.join("games/tbs/asm/overlays");
     let mut files = std::fs::read_dir(&directory)
         .map_err(|error| format!("{}: {error}", directory.display()))?
         .filter_map(Result::ok)
@@ -676,7 +676,7 @@ fn overlay_placeholders(root: &Path) -> Result<BTreeMap<SourceOwner, Vec<(u64, u
     Ok(placeholders)
 }
 fn semantic_overlay_spans(root: &Path) -> Result<BTreeMap<SourceOwner, Vec<(u64, usize)>>, String> {
-    let document = read_json::<Value>(&root.join("games/gs1/semantic/overlay-assembly.json"))?;
+    let document = read_json::<Value>(&root.join("games/tbs/semantic/overlay-assembly.json"))?;
     if document["format"].as_u64() != Some(1) {
         return Err("overlay assembly evidence format differs".into());
     }
@@ -861,7 +861,7 @@ fn owner_inventory(
                         owner.id()
                     ));
                 }
-                let overlay = format!("games/gs1/asm/overlays/resource_{resource:03x}_overlay.s");
+                let overlay = format!("games/tbs/asm/overlays/resource_{resource:03x}_overlay.s");
                 let artifact = if exact || declared {
                     json!({"source":overlay,"composition":if exact{"overlay-placeholder"}else{"structured-overlay-assembly"},"overlapping_retained_evidence":semantic.get(owner).map(|spans|span_values(spans))})
                 } else {
@@ -900,7 +900,7 @@ fn owner_inventory(
             "original_translation_unit":{"status":"unknown"},"role":role,"alias":alias
         }));
     }
-    let units = units.units.iter().filter(|unit| unit.game == "gs1").map(|unit| {
+    let units = units.units.iter().filter(|unit| unit.game == "tbs").map(|unit| {
         let members = unit.owners.iter().enumerate().map(|(ordinal, member)| json!({"owner":unit.source_owner(member.address).unwrap().id(),"role":"owner","ordinal":ordinal,"alias":member.canonical_name,"extent":member.extent,"declared_state":owner_state(member.state)})).chain(unit.local_symbols.iter().enumerate().map(|(ordinal, member)| json!({"owner":unit.source_owner(member.address).unwrap().id(),"role":"local-symbol","ordinal":ordinal,"alias":member.canonical_name,"extent":member.extent,"declared_state":Value::Null}))).collect::<Vec<_>>();
         let absolute_symbols = unit.absolute_symbols.iter().map(|(name, symbol)| json!({"name":name,"address":hex(symbol.address),"kind":absolute_kind(symbol.kind)})).collect::<Vec<_>>();
         json!({"id":unit.id,"game":unit.game,"source":unit.source,"compiler_route":unit.compiler_route,"container":if unit.overlay.is_none(){json!({"kind":"main-rom","overlay":Value::Null})}else{json!({"kind":"overlay-image","overlay":unit.overlay})},"original_translation_unit":{"status":"unknown"},"production_composition_sections":unit.composition_sections(),"absolute_symbols":absolute_symbols,"members":members})
@@ -911,13 +911,13 @@ fn owner_inventory(
         .filter(|(owner, _)| !registered.contains(owner))
         .flat_map(|(owner, spans)| {
             spans.iter().map(|(start, size)| {
-                json!({"role":"unregistered-retained-region","container":{"kind":"overlay-image","overlay":owner.overlay_id()},"address":hex(*start),"extent":size,"source":format!("games/gs1/asm/overlays/{}_overlay.s",owner.overlay_id().unwrap_or_default()),"retention":"keep_structured_asm","evidence":"games/gs1/semantic/overlay-assembly.json"})
+                json!({"role":"unregistered-retained-region","container":{"kind":"overlay-image","overlay":owner.overlay_id()},"address":hex(*start),"extent":size,"source":format!("games/tbs/asm/overlays/{}_overlay.s",owner.overlay_id().unwrap_or_default()),"retention":"keep_structured_asm","evidence":"games/tbs/semantic/overlay-assembly.json"})
             })
         })
         .collect::<Vec<_>>();
     Ok(json!({
-        "format":1,"kind":"gs1-production-owner-inventory","scope":"derived production/retention inventory; source-paths is the sole name authority and no original translation-unit boundary is asserted",
-        "target":"gs1-en","identity_authority":"games/gs1/source-paths.json","inputs":{"translation_units":"games/gs1/recon/translation-units.json","claimed_manifest":"out/gs1-en/full/claimed/manifest.json","asm_manifest":"out/gs1-en/full/asm/manifest.json","overlay_sources":"games/gs1/asm/overlays/resource_*_overlay.s","overlay_assembly_evidence":"games/gs1/semantic/overlay-assembly.json"},
+        "format":1,"kind":"tbs-production-owner-inventory","scope":"derived production/retention inventory; source-paths is the sole name authority and no original translation-unit boundary is asserted",
+        "target":"tbs-en","identity_authority":"games/tbs/source-paths.json","inputs":{"translation_units":"games/tbs/recon/translation-units.json","claimed_manifest":"out/tbs-en/full/claimed/manifest.json","asm_manifest":"out/tbs-en/full/asm/manifest.json","overlay_sources":"games/tbs/asm/overlays/resource_*_overlay.s","overlay_assembly_evidence":"games/tbs/semantic/overlay-assembly.json"},
         "summary":{"registered":registered.len(),"main":registered.iter().filter(|owner| owner.is_main()).count(),"overlay":registered.iter().filter(|owner| !owner.is_main()).count(),"known_production_extents":known_extents,"unknown_original_translation_units":registered.len(),"complete_registered_identity_coverage":true,"states":states,"current_source_groups":groups},
         "reconstruction_units":units,"owners":owners,"auxiliary_main_assembly_regions":auxiliary_regions,"auxiliary_overlay_structured_assembly_regions":auxiliary_overlay_regions
     }))
@@ -938,7 +938,7 @@ fn validate_translation_units(
     let main = units
         .units
         .iter()
-        .filter(|unit| unit.game == "gs1" && unit.overlay.is_none())
+        .filter(|unit| unit.game == "tbs" && unit.overlay.is_none())
         .collect::<Vec<_>>();
     let expected = main.iter().map(|unit| {
         let exact = unit.exact_owner_count();
@@ -1347,7 +1347,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
         "translation_units":translation_units,
         "declared_main_translation_units_strict":true,
         "registered_owner_coverage":{
-            "authority":"games/gs1/source-paths.json",
+            "authority":"games/tbs/source-paths.json",
             "scope":"registered-owner lower bound; does not assert original translation-unit boundaries",
             "registered":owner_coverage.registered,
             "registered_main":owner_coverage.registered_main,

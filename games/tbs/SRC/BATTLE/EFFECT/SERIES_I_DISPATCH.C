@@ -1,38 +1,36 @@
-#include "TYPES.H"
+#include "BATTLE_PRESENTATION.H"
 
-s32 BattleEffectI(s32, s32);
-
-void BattleFx_RunSeriesIMode0(s32 effect)
+void BattleFx_RunSeriesIMode0(struct BattleEffectArgument *effect)
 {
-    BattleEffectI(effect, 0);
+    BattleEffect_RunBurstShower(effect, 0);
 }
 
-void BattleFx_RunSeriesIMode2(s32 effect)
+void BattleFx_RunSeriesIMode2(struct BattleEffectArgument *effect)
 {
-    BattleEffectI(effect, 2);
+    BattleEffect_RunBurstShower(effect, 2);
 }
 
-void BattleFx_RunSeriesIMode6(s32 effect)
+void BattleFx_RunSeriesIMode6(struct BattleEffectArgument *effect)
 {
-    BattleEffectI(effect, 6);
+    BattleEffect_RunBurstShower(effect, 6);
 }
 
-void BattleFx_RunSeriesIMode3(s32 effect)
+void BattleFx_RunSeriesIMode3(struct BattleEffectArgument *effect)
 {
-    BattleEffectI(effect, 3);
+    BattleEffect_RunBurstShower(effect, 3);
 }
 
-void BattleFx_RunSeriesIMode5(s32 effect)
+void BattleFx_RunSeriesIMode5(struct BattleEffectArgument *effect)
 {
-    BattleEffectI(effect, 5);
+    BattleEffect_RunBurstShower(effect, 5);
 }
 
-void BattleFx_RunSeriesIMode7(s32 effect)
+void BattleFx_RunSeriesIMode7(struct BattleEffectArgument *effect)
 {
-    BattleEffectI(effect, 7);
+    BattleEffect_RunBurstShower(effect, 7);
 }
 
-void BattleFx_RunSeriesIMode4(s32 effect)
+void BattleFx_RunSeriesIMode4(struct BattleEffectArgument *effect)
 {
-    BattleEffectI(effect, 4);
+    BattleEffect_RunBurstShower(effect, 4);
 }

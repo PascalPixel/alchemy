@@ -19,6 +19,8 @@
 typedef void (*DrawRectangleFn)(
     void *dest, void *src, s32 x, s32 y, u32 w, s32 h);
 
+extern u8 Value_000000a8;
+
 void Func_080cd594(s32 mode);
 void Func_080e0524(s32 effect_id, void *work, s32 flag_a, s32 flag_b);
 void Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
@@ -60,7 +62,7 @@ s32 Func_080d59b0(void *object)
     Func_080cd594(0);
     M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x0100;
     M2C_FIELD((void *)0x04000050, s16 *, 0) = 0;
-    Func_080e0524(0xA8, work, 1, 1);
+    Func_080e0524((s32)&Value_000000a8, work, 1, 1);
     Func_080ed408(46, 7, 7, 3, 1);
     callback_a = (DrawRectangleFn) heap_cache[7];
     Func_080ed408(47, 7, 7, 15, 1);
@@ -112,6 +114,7 @@ s32 Func_080d59b0(void *object)
                 Func_08004cb4(record);
 
                 if (frame == j * 16 + 64) {
+                    target = *target_slot;
                     Func_080d6888(
                         M2C_FIELD(target, s16 *, member_id_offset),
                         0, 5, -1, 0);
@@ -133,7 +136,7 @@ s32 Func_080d59b0(void *object)
                 velocity = M2C_FIELD(star, s32 *, 4);
                 if (velocity <= 0x7FFFFF) {
                     phase = M2C_FIELD(star, s32 *, 24);
-                    kind = ((phase >= 0 ? phase : phase + 15) >> 4) & 7;
+                    kind = (phase / 16) & 7;
                     if (kind <= 3) {
                         callback_a(
                             draw_destination,
@@ -154,21 +157,23 @@ s32 Func_080d59b0(void *object)
                         s32 accumulator;
                         s32 new_velocity;
                         s32 new_phase;
+                        s32 previous_accumulator;
 
-                        accumulator = M2C_FIELD(star, s32 *, 16) + 0x2000;
-                        new_velocity = velocity + M2C_FIELD(star, s32 *, 16);
-                        new_phase = phase + M2C_FIELD(star, s32 *, 8);
+                        previous_accumulator = M2C_FIELD(star, s32 *, 16);
+                        accumulator = previous_accumulator + 0x2000;
+                        new_velocity = M2C_FIELD(star, s32 *, 4) + previous_accumulator;
+                        new_phase = M2C_FIELD(star, s32 *, 24) + M2C_FIELD(star, s32 *, 8);
                         M2C_FIELD(star, s32 *, 4) = new_velocity;
                         M2C_FIELD(star, s32 *, 16) = accumulator;
                         M2C_FIELD(star, s32 *, 24) = new_phase;
-                        if (new_velocity > 0x5C00000 && accumulator == 0) {
+                        if (new_velocity > 0x5C0000 && accumulator == 0) {
                             s32 bounced;
 
-                            bounced = -(M2C_FIELD(star, s32 *, 16) + 0x2001);
+                            bounced = -(previous_accumulator + 0x2001);
                             M2C_FIELD(star, s32 *, 8) =
                                 M2C_FIELD(star, s32 *, 8) + 4;
                             bounced = (bounced + (s32) ((u32) bounced >> 31)) >> 1;
-                            M2C_FIELD(star, s32 *, 4) = 0x5C00000;
+                            M2C_FIELD(star, s32 *, 4) = 0x5C0000;
                             M2C_FIELD(star, s32 *, 16) = bounced;
                         }
                     }

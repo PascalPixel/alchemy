@@ -63,7 +63,6 @@ void Func_080db264(void *object)
     s32 member;
     s32 member_offset;
     s32 member_frame;
-    s32 limit;
 
     cache = (void **)0x03001eec;
     cursor = cache;
@@ -73,7 +72,7 @@ void Func_080db264(void *object)
     FIELD(work, void *, 0x7828) = object;
     Func_080cdb24(1);
 
-    if (FIELD(object, s32, 24) == 2)
+    if (FIELD(FIELD(work, void *, 0x7828), s32, 24) == 2)
         *(volatile u16 *)0x04000020 = 0x80;
     else
         *(volatile u16 *)0x04000020 = 0x100;
@@ -85,12 +84,12 @@ void Func_080db264(void *object)
     Func_080e0524((s32)&Value_000000c4, (u8 *)work + 0x60e, 1, 1);
     Func_080e0524((s32)&Value_00000073, source, 0, 0);
 
-    if (FIELD(object, s32, 24) == 2) {
-        if (FIELD(object, s32, 4) == 1)
+    if (FIELD(FIELD(work, void *, 0x7828), s32, 24) == 2) {
+        if (FIELD(FIELD(work, void *, 0x7828), s32, 4) == 1)
             *(volatile u32 *)0x04000028 = 0xfffff000;
         else
             *(volatile u32 *)0x04000028 = 0x1000;
-    } else if (FIELD(object, s32, 4) == 1) {
+    } else if (FIELD(FIELD(work, void *, 0x7828), s32, 4) == 1) {
         *(volatile u32 *)0x04000028 = 0xffff8000;
     }
 
@@ -128,7 +127,7 @@ void Func_080db264(void *object)
                 center_x = ((32 - frame) * Func_08002322(radius) >> 16) + 64;
                 center_y = -(Func_0800231c(radius) * 8 >> 16) - 8;
                 sprite = (u8 *)work + (Func_08004458() & 3) * 0xb40 + 0x60e;
-                if (FIELD(object, s32, 24) == 0) {
+                if (FIELD(FIELD(work, void *, 0x7828), s32, 24) == 0) {
                     rectangles[0](canvas, sprite,
                         center_x + (Func_08004458() & 7) - 16,
                         center_y, 24, 120);
@@ -149,7 +148,7 @@ void Func_080db264(void *object)
                         particle->vy = -(velocity * Func_0800231c(random_angle) * 2) >> 7;
                         particle->life = (Func_08004458() & 7) + 32;
                         spawned++;
-                        if (spawned == Data_080eeadc[FIELD(object, s32, 24) * 2 + 1])
+                        if (spawned == Data_080eeadc[FIELD(FIELD(work, void *, 0x7828), s32, 24) * 2 + 1])
                             break;
                     }
                     i++;
@@ -184,13 +183,12 @@ void Func_080db264(void *object)
         } while (i != 1024);
 
         if ((u32)(frame - 4) <= 91) {
-            limit = FIELD(object, s32, 20);
             member = 0;
             member_offset = 36;
             member_frame = 4;
-            while (member != limit) {
+            while (member != FIELD(FIELD(work, void *, 0x7828), s32, 20)) {
                 if (frame == member_frame)
-                    Func_080d6888(FIELD(object, s16, member_offset), 7, 5, member, 10);
+                    Func_080d6888(FIELD(FIELD(work, void *, 0x7828), s16, member_offset), 7, 5, member, 10);
                 member++;
                 member_offset += 2;
                 member_frame += 4;

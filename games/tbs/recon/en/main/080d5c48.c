@@ -13,8 +13,8 @@
  * 0x04000028). The per-actor draw is an icon popup: a fixed 16x20 sprite for
  * 72 frames starting at actor i's frame offset (i*16), plus a 16x12 animated
  * marker (9 cels of 192 bytes, indexed through Func_080022ec/Func_080022fc)
- * that keeps drawing at the last computed position for every frame at or
- * after that offset, with no upper bound. Total animation length is
+ * drawn within that same 72-frame window. Both range guards precede the
+ * first draw and skip the second draw as well. Total animation length is
  * (WORK_EFX->cnt + 1) * 32 frames, not the template's fixed 80.
  *
  * The draw calls go through the r7 slot of the games/tbs/asm/080072e4.s
@@ -41,7 +41,7 @@ void Func_080041d8(s32, s32);
 u32 Func_08004458(void);
 void Func_080f9010(s32);
 void Func_080b50e8(s32);
-void Func_080e396c(s32, struct EffectPosition *);
+void Func_080e396c(s32, s32 *);
 s32 Func_080022ec(s32, s32);
 s32 Func_080022fc(s32, s32);
 void Func_080030f8(s32);
@@ -90,7 +90,8 @@ void Func_080d5c48(Efx *efx)
     s32 base;
     s32 cel;
     s32 old_y;
-    struct EffectPosition pos;
+    /* Three-word coordinate record, as in the exact burst-shower sibling. */
+    s32 pos[3];
 
     entry = (u32 *)(Data_03001e50 + 40 * 4);
     dst = (void *)*entry;
@@ -132,20 +133,20 @@ void Func_080d5c48(Efx *efx)
                 cur++;
                 continue;
             }
-            Func_080e396c(WORK_EFX->actors[i], &pos);
+            Func_080e396c(WORK_EFX->actors[i], pos);
             if (WORK_EFX->side == 1) {
-                pos.x -= 112;
+                pos[0] -= 112;
             }
-            old_y = pos.y;
-            pos.y = old_y - 16;
-            draw(dst, work + 1728, pos.x - 8, old_y - 20, 16, 20);
+            old_y = pos[1];
+            pos[1] = old_y - 16;
+            draw(dst, work + 1728, pos[0] - 8, old_y - 20, 16, 20);
             if (frame < base) {
                 cur++;
                 continue;
             }
             cel = Func_080022fc(
                 Func_080022ec((frame - base) + cur->tick, 6), 9);
-            draw(dst, work + cel * 192, pos.x - 8, pos.y - 16, 16, 12);
+            draw(dst, work + cel * 192, pos[0] - 8, pos[1] - 16, 16, 12);
             cur++;
         }
         *(s32 *)(work + 0x7824) = 1;

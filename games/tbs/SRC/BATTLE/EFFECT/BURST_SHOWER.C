@@ -1,96 +1,6 @@
-#include "TYPES.H"
+#include "BATTLE_PRESENTATION.H"
 
 #define BattleEffect_RunBurstShower Func_080dbc30
-
-/*
- * Battle-presentation effect sequence at 0x080dbc30 (1468 bytes), in the
- * same kind-39 "battle work block" family as the exact
- * games/tbs/SRC/BATTLE/EFFECT/PUFF_ARC.C (owner 080d9fc8) and
- * games/tbs/src/battle/effects/work/fetch_rectangle_blitters.c (owner 080cef64).
- * The heap-allocation cache Data_03001e50[kind], the republished effect
- * argument at work + 0x7828, the sixty-four twenty-eight byte particle
- * records at work + 0x7080, the display pair at 0x7780/0x7784 and the
- * frame_ready flag at 0x7824 are all taken from those two owners.
- *
- * Unlike its siblings this owner is shared by eight presentation variants:
- * the caller passes a `mode` selector in r1 that steers the graphics it
- * loads, the palette it installs, the sprite it draws and the member
- * reactions it triggers.  Behaviour:
- *
- *   - mode 7 allocates the kind-46 and kind-47 rectangle blitters itself,
- *     with a shape pair BattleFx_FetchRectangleBlitters never produces
- *     (kind 47 as 7,7,7,2 rather than 7,7,3,3 or 7,7,7,3), and keeps both
- *     entries so the draw below can pick between them by side; every other
- *     mode takes the pair through BattleFx_FetchRectangleBlitters.
- *   - the shared sheet is decompressed into work + 0xC56.  Modes 5 and 7
- *     use their own sheets and stop there; the rest also decompress the
- *     kind-41 block and then install a palette -- mode 6 writes a sixty-four
- *     step grey ramp straight into palette RAM and clears BLDCNT, the others
- *     copy a canned palette through the word-copy entry at 0x03001388.
- *   - all sixty-four particle records are disarmed (tick -1), the source
- *     actor's screen position is fetched once and nudged per mode, and each
- *     listed member's screen position is fetched into `seat`.
- *   - sixty-four frames then run.  Mode 5 draws one large 72x62 cell of a
- *     three-cell, three-frame sequence at the source position instead of
- *     spawning; every other mode arms particle `frame` with a random
- *     scattered target taken from the member seat it is cycling through
- *     (frames 48..63 spawn nothing, so the shower tails off).  All sixty-four
- *     particle records are then walked, drawn and advanced -- in mode 5 none
- *     is ever armed, so that walk is a no-op there -- and one member per
- *     frame is sent a reaction.
- *
- * Uncertain, and left as read from the reference:
- *   - Spark.unk08 and Spark.unk14 are never touched by this owner.
- *   - the particle x seed is `pos[0] << 15` while y is `pos[1] << 16`, so x
- *     runs at half the fixed-point scale of y.  It looks like an original
- *     slip, and it is reproduced as written.
- *   - the store at work + 0x7780 is identical in both mode arms; only the
- *     value at 0x7784 differs.  The duplicate store is what the reference
- *     emits, so the if/else is kept rather than hoisted.
- *   - the role of work + 0x77A8 (set to 8 whenever a member reacts) and of
- *     the 0x04000020 write in mode 5 are only known from their use here.
- *   - the palette switch tests `cmp #4` before its five-entry table, and the
- *     table's fifth slot is the default block, so the reference's case range
- *     really does reach 4 while case 4 and the default share one body.  The
- *     empty `case 4:` label above `default:` is how that is spelled here; a
- *     plain `default:` alone would narrow the range test to 3.
- *
- * Residual: the instruction multiset is identical to the reference
- * (wrong_instructions=0) and the extent matches exactly at 1468 bytes; four
- * halfwords differ, from two remaining interleaves where the reference issues
- * an independent instruction between the two halves of a constant
- * materialisation instead of after it (the 0x05000000 at the palette copy,
- * and the work + 0x7080 ahead of the particle loop).
- *
- * Both are post-reload scheduling decisions, and the earlier note here that
- * claimed otherwise was wrong: the canonical route runs only sched2 (the dump
- * directory has an .23.sched2 and no sched1 file), and recompiling the very
- * same preprocessed input with -fno-schedule-insns2 moves both regions, so
- * sched2 does own their order.  The grey-ramp loop above was closed by
- * writing its initialisation as `for (i = 0, pal = (u16 *)0x05000000; ...)`,
- * and that worked by feeding sched2 a different instruction order, not by
- * bypassing it: without sched2 the counter assignment sits before the pointer
- * constant, and sched2 is what lifts `mov r0, #160` over it.
- *
- * At the palette copy the ready set is {ldr r3, lsl r0, mov r2}, all
- * of equal priority, and the tie is broken by original instruction order; the
- * reference picks the pool load, which would need the callee address to be
- * emitted before the destination constant.  calls.c forbids that: the arm
- * port has SMALL_REGISTER_CLASSES, so a register argument whose rtx_cost
- * exceeds two -- which 0x05000000 does -- is copied into a pseudo in the
- * argument loop, and prepare_call_address only forces the callee address
- * afterwards.  Hoisting the callee or source pointer did not close that
- * residual.  In the particle loop, deriving the record from its array index
- * lets the compiler place the 32-pixel width ahead of the base calculation,
- * closing three halfwords.  The remaining base add precedes the 64-pixel
- * height load instead of following it.  A block-local record pointer keeps
- * the same output.  These measured misses do not prove C is impossible.
- *
- * Callee spellings follow the exact sibling: plain Func_<address> for every
- * target the owner register has no distinct name for.  `alchemy inspect`
- * reports source-file basenames for several of these, which are file names
- * rather than symbol spellings, so they are not adopted here.
- */
 
 /* Six drawn arguments: destination, source cell, x, y, width, height.
    Called through the r4 bx bank, so it is an indirect call through a
@@ -140,7 +50,7 @@ void Func_08002dd8(s32);
 s32 Func_080cdbc0(void);
 
 /* The caller's effect state, republished at work + 0x7828. */
-typedef struct Efx {
+typedef struct BattleEffectArgument {
     s32 kind;
     s32 side;
     s32 actor;
@@ -169,6 +79,11 @@ typedef struct Spark {
 #define SHEET (work + 0xC56)
 #define SPARKS ((Spark *)(work + 0x7080))
 
+static __inline__ void CopyPalette(CopyWords copy, void *destination, const void *source, s32 size)
+{
+    copy(destination, source, size);
+}
+
 void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
 {
     u32 *cache;
@@ -185,6 +100,8 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
     s32 pick;
     s32 lum;
     s32 id;
+    s32 width;
+    s32 height;
 
     cache = (u32 *)(Data_03001e50 + 40 * 4);
     dst = (void *)cache[40 - 40];
@@ -237,7 +154,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
                 id = (s32)&Value_0000008d;
                 break;
             }
-            ((CopyWords)0x03001388)((void *)0x05000000, Func_08002f40(id), 128);
+            CopyPalette((CopyWords)0x03001388, (void *)0x05000000, Func_08002f40(id), 128);
         }
     }
 
@@ -319,6 +236,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
             aim[0] = (seat[pick][0] + (Func_08004458() & 31)) - 16;
             aim[1] = (seat[pick][1] + (Func_08004458() & 63)) - 16;
             if (frame <= 47) {
+                /* The original uses half the vertical fixed-point scale for x. */
                 SPARKS[frame].x = pos[0] << 15;
                 SPARKS[frame].y = pos[1] << 16;
                 SPARKS[frame].dx = (aim[0] - pos[0]) << 11;
@@ -328,6 +246,8 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
         }
 
         i = 0;
+        width = 32;
+        height = 64;
         do {
             Spark *spark = &SPARKS[i];
             if (spark->tick >= 0) {
@@ -335,21 +255,21 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
                     if (spark->tick > 5) {
                         ((DrawRectangle)blit[WORK_EFX->side])(dst, SHEET,
                             ((s16 *)&spark->x)[1] - 16,
-                            ((s16 *)&spark->y)[1] - 32, 32, 64);
+                            ((s16 *)&spark->y)[1] - 32, width, height);
                     }
                 } else if (mode == 4) {
                     if (spark->tick > 5) {
                         ((DrawRectangle)blit[0])(dst,
                             SHEET + ((spark->tick / 4) << 11),
                             ((s16 *)&spark->x)[1] - 16,
-                            ((s16 *)&spark->y)[1] - 32, 32, 64);
+                            ((s16 *)&spark->y)[1] - 32, width, height);
                     }
                 } else if (mode != 5) {
                     if (spark->tick > 1) {
                         ((DrawRectangle)blit[0])(dst,
                             SHEET + ((spark->tick / 4) << 11),
                             ((s16 *)&spark->x)[1] - 16,
-                            ((s16 *)&spark->y)[1] - 32, 32, 64);
+                            ((s16 *)&spark->y)[1] - 32, width, height);
                     }
                 }
                 spark->x += spark->dx;

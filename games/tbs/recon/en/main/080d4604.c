@@ -195,10 +195,12 @@ void BattleEffect_RunSparkGroups(void *object, s32 kind)
             ring = (Spark *)(ring_base + 0x7080);
             for (i = 0; i != 16; i++) {
                 s32 angle;
+                s32 radius;
 
+                radius = i * 2;
                 angle = Func_08004458() & 0xFFFF;
-                ring->x = (i * 2) * Func_08002322(angle);
-                ring->y = -((i * 2) * Func_0800231c(angle));
+                ring->x = radius * Func_08002322(angle);
+                ring->y = -(radius * Func_0800231c(angle));
                 ring->timer = (i / 2) + 25;
                 ring++;
             }

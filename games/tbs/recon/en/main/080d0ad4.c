@@ -3,6 +3,9 @@
 
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 
+typedef s32 (*WordCopy)(void *destination, const void *source, s32 size);
+void *Func_08002f40(s32 resource);
+u32 Func_08005340(const void *source, void *destination);
 void **Func_080b5098(s32 member_id);
 void Func_080e396c(s32 member_id, struct EffectPosition *result);
 s32 Func_080ed408(s32 id, s32 width, s32 height, s32 mode, s32 variant);
@@ -52,7 +55,7 @@ s32 Func_080d0ad4(s32 actor) {
     void *sp40;
     void *sp44;
     struct BattleEffectVectorWork vector_work;
-    s32 temp_r0_37;
+    u8 *palette;
     s32 temp_r1_252;
     s32 temp_r3_103;
     s32 temp_r3_257;
@@ -88,9 +91,9 @@ s32 Func_080d0ad4(s32 actor) {
     M2C_FIELD(temp_r2_18, s32 *, 0x7828) = actor;
     Func_080cd594(0);
     *(u16 *)0x04000020 = 0x100;
-    temp_r0_37 = Func_08002f40((s32)&Value_00000079);
-    Func_080072f0(0x05000000, temp_r0_37, 0x80, 0x03001388);
-    Func_08005340(temp_r0_37 + 0x80, sp44);
+    palette = Func_08002f40((s32)&Value_00000079);
+    ((WordCopy)0x03001388)((void *)0x05000000, palette, 0x80);
+    Func_08005340(palette + 0x80, sp44);
     Func_08005340(
         Func_08002f40((s32)&Value_00000073),
         temp_r6_25);

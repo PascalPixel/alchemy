@@ -15,7 +15,7 @@ typedef void (*DrawRectangleFn)(
     s32 height);
 
 #define DRAW_RECTANGLE(destination, source, x, y) \
-    draw_rectangle( \
+    draw_args[0]( \
         (void *)(destination), (source), (x), (y), sp0, sp4)
 
 void Func_080dc968(void *arg0) {
@@ -23,8 +23,9 @@ void Func_080dc968(void *arg0) {
     s32 sp4;
     s32 sp8;
     s32 *spC;
-    s32 *sp10;
     s32 sp14;
+    DrawRectangleFn draw_args[2];
+    s32 local_record[3];
     s32 sp18;
     s32 sp1C;
     s32 sp20;
@@ -34,17 +35,15 @@ void Func_080dc968(void *arg0) {
     void *sp30;
     s32 sp34;
     struct M2cAggregate_deref_absolute_03001f00_0 *sp38;
-    DrawRectangleFn draw_rectangle;
-    u32 sp44;
-    M2C_UNK sp50;
-    M2C_UNK sp60;
+    s32 actor_position[3];
+    struct { s32 x; s32 y; s32 z; s32 color; } sp50;
+    struct { s32 x; s32 y; s32 z; } sp60;
     s16 temp_r8_454;
     s16 temp_sl_455;
-    s32 *temp_r2_129;
-    s32 *var_r5_252;
-    s32 *var_r5_723;
-    s32 *var_r5_811;
-    s32 *var_r6_389;
+    u8 *var_r5_252;
+    u8 *var_r5_723;
+    u8 *var_r5_811;
+    u8 *var_r6_389;
     s32 temp_r0_1078;
     s32 temp_r0_1119;
     s32 temp_r0_395;
@@ -74,11 +73,11 @@ void Func_080dc968(void *arg0) {
     s32 var_r9_242;
     s32 var_r9_371;
     s32 var_r9_710;
-    struct M2cAggregate_absolute_02010000 *temp_r3_25;
-    struct M2cAggregate_absolute_02010000 *var_r1_515;
-    struct M2cAggregate_absolute_02010000 *var_r5_836;
-    struct M2cAggregate_absolute_02010000 *var_r7_185;
-    struct M2cAggregate_absolute_02010000 *var_r7_927;
+    u8 *temp_r3_25;
+    u8 *var_r1_515;
+    u8 *var_r5_836;
+    u8 *var_r7_185;
+    u8 *var_r7_927;
     u32 temp_r0_885;
     u32 temp_r1_1012;
     u32 temp_r1_887;
@@ -95,7 +94,7 @@ void Func_080dc968(void *arg0) {
 
     sp38 = absolute_03001f00.field_0000;
     sp34 = *(s32 *)0x03001EF0;
-    temp_r3_25 = *(struct M2cAggregate_absolute_02010000 **)0x03001EEC;
+    temp_r3_25 = *(u8 **)0x03001EEC;
     sp24 = *(struct M2cAggregate_absolute_02010000 **)0x03001EF4;
     sp20 = (s32) absolute_03001ad0.field_0004;
     M2C_FIELD(temp_r3_25, void **, 0x7828) = arg0;
@@ -105,7 +104,7 @@ void Func_080dc968(void *arg0) {
     *(s16 *)0x05000000 = 0;
     *(s16 *)0x05000002 = 0;
     M2C_FIELD(temp_r3_25, s32 *, 0x7780) = 0;
-    Func_080041d8(0x080CD261);
+    Func_080041d8(0x080CD261, 0x480);
     Func_080cd104(0, 0);
     Func_080d6750(M2C_FIELD(temp_r3_25, void **, 0x7828));
     Func_080dbb24(9, 0x172, 1);
@@ -114,13 +113,11 @@ void Func_080dc968(void *arg0) {
     Func_080e0524(0x73, sp24, 0, 0);
     sp30 = Func_08002f40(0xD2);
     sp0 = 2;
-    Func_080ed408(0x2E, 7, 7, 3);
+    Func_080ed408(0x2E, 7, 7, 3, 2);
     sp0 = 3;
-    Func_080ed408(0x2F, 7, 7);
-    draw_rectangle = (DrawRectangleFn)absolute_03001f00.field_0008;
-    temp_r2_129 = &sp0 + 0x3C;
-    sp10 = temp_r2_129;
-    M2C_FIELD(temp_r2_129, u32 *, 4) = (u32) absolute_03001f00.field_000c;
+    Func_080ed408(0x2F, 7, 7, 3, 3);
+    draw_args[0] = (DrawRectangleFn)absolute_03001f00.field_0008;
+    draw_args[1] = (DrawRectangleFn)absolute_03001f00.field_000c;
     absolute_03001ce0.field_0010 = 0xF0;
     Func_080030f8(1);
     Func_080b5040(1, 0x3B, 0);
@@ -141,15 +138,15 @@ void Func_080dc968(void *arg0) {
     var_r7_185 = temp_r3_25 + 0x7080;
     do {
         M2C_FIELD(var_r7_185, s32 *, 0) = (s32) ((Func_08002304(Func_08004458(), 0x60) + 0xC) << 0x10);
-        var_r7_185->field_0004 = ((0x3F & Func_08004458()) + 0x20) << 0x10;
-        var_r7_185->field_000c = 0;
-        var_r7_185->field_0010 = 0;
-        var_r7_185->field_0018 = 0;
+        M2C_FIELD(var_r7_185, s32 *, 4) = ((0x3F & Func_08004458()) + 0x20) << 0x10;
+        M2C_FIELD(var_r7_185, s32 *, 0xC) = 0;
+        M2C_FIELD(var_r7_185, s32 *, 0x10) = 0;
+        M2C_FIELD(var_r7_185, s32 *, 0x18) = 0;
         var_r9_242 = 0;
         var_r6_247 = (sp2C * 0x480) + 0x02013800;
-        var_r5_252 = (sp2C * 0x2A0) + &absolute_02010000;
+        var_r5_252 = (u8 *)&absolute_02010000 + (sp2C * 0x2A0);
 loop_4:
-        *var_r5_252 = (0xF & Func_08004458()) + 0x30;
+        *(s32 *)var_r5_252 = (0xF & Func_08004458()) + 0x30;
         Func_080049ac();
         Func_08004c6c(Func_08004458());
         Func_08004bd4(Func_08004458());
@@ -172,7 +169,7 @@ loop_4:
     if (*(s32 *)0x03001B04 & 3) {
 
     } else {
-        spC = &sp0 + 0x6C;
+        spC = local_record;
 loop_9:
         if (sp28 <= 0xD1) {
             if (sp28 == 0) {
@@ -196,7 +193,7 @@ loop_9:
 loop_15:
                 M2C_FIELD(&sp50, s32 *, 0) = var_r5_383;
                 M2C_FIELD(&sp50, s32 *, 8) = var_r7_376;
-                temp_r0_395 = *var_r6_389;
+                temp_r0_395 = *(s32 *)var_r6_389;
                 var_r6_389 += 4;
                 sp8 = var_r4_387;
                 Func_08009008(temp_r0_395, &sp50, 0x080EEB40, 0);
@@ -254,18 +251,18 @@ loop_20:
             if (sp28 < (s32) (temp_r6_436 + 0x50)) {
                 var_r9_710 = 0;
                 var_r7_717 = (sp2C * 0x480) + 0x02013800;
-                var_r5_723 = (sp2C * 0x2A0) + &absolute_02010000;
+                var_r5_723 = (u8 *)&absolute_02010000 + (sp2C * 0x2A0);
                 do {
-                    if ((s32) *var_r5_723 > 0) {
+                    if (*(s32 *)var_r5_723 > 0) {
                         Func_08004a44(var_r7_717);
-                        M2C_FIELD(spC, s32 *, 0) = *var_r5_723;
+                        M2C_FIELD(spC, s32 *, 0) = *(s32 *)var_r5_723;
                         Func_080e3944(spC, &sp60);
                         M2C_FIELD(&sp60, s32 *, 0) = (s32) (((s32) M2C_FIELD(&sp60, s32 *, 0) >> 1) + temp_r8_454);
                         M2C_FIELD(&sp60, s32 *, 4) = (s32) (M2C_FIELD(&sp60, s32 *, 4) + temp_sl_455 + 0x10);
-                        *var_r5_723 -= 4;
+                        *(s32 *)var_r5_723 -= 4;
                         sp0 = 5;
                         sp4 = 0xA;
-                        DRAW_RECTANGLE(sp34, (struct M2cAggregate_absolute_02010000 *) &sp24->unknown_0000[M2C_FIELD((void *)0x080EDE48, u16 *, 8)], M2C_FIELD(&sp60, s32 *, 0) - 2, M2C_FIELD(&sp60, s32 *, 4) - 5);
+                        draw_args[1]((void *)sp34, (u8 *)sp24 + M2C_FIELD((void *)0x080EDE48, u16 *, 8), M2C_FIELD(&sp60, s32 *, 0) - 2, M2C_FIELD(&sp60, s32 *, 4) - 5, 5, 10);
                     }
                     var_r9_710 += 1;
                     var_r7_717 += 0x30;
@@ -347,7 +344,7 @@ block_36:
     sp2C = 0;
     var_r5_811 = temp_r3_25 + 0x77D8;
     do {
-        temp_r0_813 = *var_r5_811;
+        temp_r0_813 = *(s32 *)var_r5_811;
         var_r5_811 += 4;
         Func_08009038(temp_r0_813);
         temp_r0_816 = sp2C + 1;
@@ -363,17 +360,17 @@ block_36:
         temp_r2_844 = M2C_FIELD(temp_r3_25, void **, 0x7828);
         if (temp_r0_841 < (s32) M2C_FIELD(temp_r2_844, s32 *, 0x14)) {
             Func_080e396c(M2C_FIELD(temp_r2_844, s16 *,
-                (temp_r0_841 * 2) + 0x24), &sp44);
+                (temp_r0_841 * 2) + 0x24), actor_position);
             temp_r0_885 = 0 - ((Func_08004458() & 0x1F) + 0x28);
-            var_r5_836->field_0004 = temp_r0_885;
-            temp_r1_887 = sp44;
+            M2C_FIELD(var_r5_836, s32 *, 4) = temp_r0_885;
+            temp_r1_887 = actor_position[0];
             temp_r3_891 = 0x50 - temp_r0_885;
             M2C_FIELD(var_r5_836, s32 *, 0) = (s32) (((s32) (temp_r1_887 + (temp_r1_887 >> 0x1F)) >> 1) + ((s32) (temp_r3_891 + (temp_r3_891 >> 0x1F)) >> 1));
         } else {
             M2C_FIELD(var_r5_836, s32 *, 0) = (s32) ((0x3F & Func_08004458()) + 0x50);
-            var_r5_836->field_0004 = 0 - ((Func_08004458() & 0x1F) + 0x28);
+            M2C_FIELD(var_r5_836, s32 *, 4) = 0 - ((Func_08004458() & 0x1F) + 0x28);
         }
-        var_r5_836->field_0018 = -1U;
+        M2C_FIELD(var_r5_836, s32 *, 0x18) = -1U;
         temp_r2_915 = sp2C + 1;
         var_r5_836 += 0x1C;
         sp2C = temp_r2_915;
@@ -386,7 +383,7 @@ loop_58:
     if ((sp28 < (s32) (sp2C * 2)) && (sp28 <= 0x28)) {
 
     } else {
-        temp_r3_938 = var_r7_927->field_0018;
+        temp_r3_938 = M2C_FIELD(var_r7_927, s32 *, 0x18);
         if ((s32) temp_r3_938 >= 0) {
             if ((s32) temp_r3_938 <= 0x17) {
                 var_r6_943 = temp_r3_938;
@@ -397,26 +394,26 @@ loop_58:
                 temp_r5_956 = *(u8 *)(0x080EDE9F + temp_r6_949);
                 sp0 = (s32) temp_r5_956;
                 sp4 = *(u8 *)(0x080EDEA5 + temp_r6_949);
-                DRAW_RECTANGLE(sp34,
+                draw_args[sp2C & 1]((void *)sp34,
                     (struct M2cAggregate_absolute_02010000 *)
                         &absolute_02010000.unknown_0000[
                             *(u16 *)(0x080EDEB2 + (temp_r6_949 * 2))],
                     (M2C_FIELD(var_r7_927, s32 *, 0) -
                         (temp_r5_956 >> 1)) - 8,
-                    (var_r7_927->field_0004 +
-                        *(s8 *)(0x080EDEAB + temp_r6_949)) - 0x28);
-                if ((s32) var_r7_927->field_0018 <= 0xB) {
+                    (M2C_FIELD(var_r7_927, s32 *, 4) +
+                        *(u8 *)(0x080EDEAB + temp_r6_949)) - 0x28, sp0, sp4);
+                if ((s32) M2C_FIELD(var_r7_927, s32 *, 0x18) <= 0xB) {
                     sp0 = 0x10;
                     sp4 = 0x15;
-                    DRAW_RECTANGLE(sp34, temp_r3_25 + 0x16AC, M2C_FIELD(var_r7_927, s32 *, 0) + 4, var_r7_927->field_0004 - 0x28);
+                    DRAW_RECTANGLE(sp34, temp_r3_25 + 0x16AC, M2C_FIELD(var_r7_927, s32 *, 0) + 4, M2C_FIELD(var_r7_927, s32 *, 4) - 0x28);
                     sp0 = 0x1D;
                     sp4 = 0x23;
-                    DRAW_RECTANGLE(sp34, temp_r3_25 + 0x17FC, M2C_FIELD(var_r7_927, s32 *, 0) - 0x10, var_r7_927->field_0004 - 0x13);
+                    DRAW_RECTANGLE(sp34, temp_r3_25 + 0x17FC, M2C_FIELD(var_r7_927, s32 *, 0) - 0x10, M2C_FIELD(var_r7_927, s32 *, 4) - 0x13);
                 }
             }
-            var_r7_927->field_0018 += 1;
+            M2C_FIELD(var_r7_927, s32 *, 0x18) += 1;
         } else {
-            temp_r1_1012 = var_r7_927->field_0004;
+            temp_r1_1012 = M2C_FIELD(var_r7_927, s32 *, 4);
             var_r5_1013 = 0x18;
             if ((s32) temp_r1_1012 > 0x38) {
                 var_r5_1013 = (0x18 - temp_r1_1012) + 0x38;
@@ -426,17 +423,17 @@ loop_58:
             DRAW_RECTANGLE(sp34, temp_r3_25 + 0x16AC, M2C_FIELD(var_r7_927, s32 *, 0) + 4, temp_r1_1012 - 0x28);
             sp0 = 0x1D;
             sp4 = 0x23;
-            DRAW_RECTANGLE(sp34, temp_r3_25 + 0x17FC, M2C_FIELD(var_r7_927, s32 *, 0) - 0x10, var_r7_927->field_0004 - 0x13);
+            DRAW_RECTANGLE(sp34, temp_r3_25 + 0x17FC, M2C_FIELD(var_r7_927, s32 *, 0) - 0x10, M2C_FIELD(var_r7_927, s32 *, 4) - 0x13);
             if (var_r5_1013 > 0) {
                 sp0 = 0x15;
                 sp4 = var_r5_1013;
-                DRAW_RECTANGLE(sp34, temp_r3_25 + 0x1BF3, M2C_FIELD(var_r7_927, s32 *, 0) - 0x14, var_r7_927->field_0004 + 0x10);
+                DRAW_RECTANGLE(sp34, temp_r3_25 + 0x1BF3, M2C_FIELD(var_r7_927, s32 *, 0) - 0x14, M2C_FIELD(var_r7_927, s32 *, 4) + 0x10);
             }
             M2C_FIELD(var_r7_927, s32 *, 0) = (s32) (M2C_FIELD(var_r7_927, s32 *, 0) - 6);
-            temp_r3_1064 = var_r7_927->field_0004 + 0xC;
-            var_r7_927->field_0004 = temp_r3_1064;
+            temp_r3_1064 = M2C_FIELD(var_r7_927, s32 *, 4) + 0xC;
+            M2C_FIELD(var_r7_927, s32 *, 4) = temp_r3_1064;
             if ((s32) temp_r3_1064 > 0x4F) {
-                var_r7_927->field_0018 = 0;
+                M2C_FIELD(var_r7_927, s32 *, 0x18) = 0;
                 M2C_FIELD(temp_r3_25, s32 *, 0x77A8) = 2;
                 Func_080f9010(0x86);
                 temp_r0_1078 = Func_080022fc(sp2C, 6);
@@ -445,7 +442,7 @@ loop_58:
                     temp_r5_1087 = (temp_r0_1078 * 2) + 0x24;
                     sp0 = 8;
                     Func_080d6888(M2C_FIELD(temp_r2_1081, s16 *,
-                        temp_r5_1087), 7, 5, temp_r0_1078);
+                        temp_r5_1087), 7, 5, temp_r0_1078, 8);
                     Func_080b5088(M2C_FIELD(
                         M2C_FIELD(temp_r3_25, void **, 0x7828), s16 *,
                         temp_r5_1087), 1);

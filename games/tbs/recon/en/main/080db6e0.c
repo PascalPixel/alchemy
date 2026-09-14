@@ -241,8 +241,8 @@ void Func_080db6e0(void *object, s32 variant)
         if (frame > 2 && table[near_idx] != 0) {
             particle = (u8 *)work + 0x7080;
             i = 0;
-            while (i < frame) {
-                if (M2C_FIELD(particle, s32 *, 4) >= 0) {
+            do {
+                if (i < frame && M2C_FIELD(particle, s32 *, 4) >= 0) {
                     Func_080e3944(particle, screen);
                     x = screen[0] >> 1;
                     x = x
@@ -250,7 +250,7 @@ void Func_080db6e0(void *object, s32 variant)
                             s32 *, 4) << 5)
                         - 16;
                     age = M2C_FIELD(particle, s32 *, 24);
-                    if (age <= 20) {
+                    if ((u32)age <= 20) {
                         which = Func_080022ec(age, 3);
                         sprite_off = Data_080eeaec[which];
                         size = Data_080eeafa[which];
@@ -261,6 +261,7 @@ void Func_080db6e0(void *object, s32 variant)
                             screen[1] - (s32) half,
                             size, size);
                     }
+                    age = M2C_FIELD(particle, s32 *, 24);
                     if (age <= 20) {
                         M2C_FIELD(particle, s32 *, 24) = age + 1;
                     }
@@ -268,7 +269,7 @@ void Func_080db6e0(void *object, s32 variant)
                 }
                 i++;
                 particle = (u8 *)particle + 28;
-            }
+            } while (i != table[near_idx]);
         }
         if (variant == 0) {
             member_count =

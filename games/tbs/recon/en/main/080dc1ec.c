@@ -47,13 +47,15 @@ s32 Func_080dc1ec(void *object)
     DrawRectangleFn callback_pair[2];
     u8 *star;
     s32 i;
+    s32 velocity_a;
+    s32 velocity_b;
     s32 outer;
     s32 j;
     s32 facing;
     s32 record[3];
     s32 result[3];
-    s32 velocity_a;
-    s32 velocity_b;
+    s32 neg_outer;
+    u32 random_mask;
 
     cursor = (void **)0x03001EEC;
     work = *cursor++;
@@ -65,14 +67,15 @@ s32 Func_080dc1ec(void *object)
         M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4) ^ 1,
         callback_pair);
 
+    random_mask = 0xFF;
     star = (u8 *)0x02010000;
     for (i = 0; i != 256; i++) {
         M2C_FIELD(star, s32 *, 0) =
-            (s32) (((Func_08004458() & 0xFF) - 127) << 16);
+            (s32) (((Func_08004458() & random_mask) - 127) << 16);
         M2C_FIELD(star, s32 *, 4) =
-            (s32) (((Func_08004458() & 0xFF) - 127) << 16);
+            (s32) (((Func_08004458() & random_mask) - 127) << 16);
         M2C_FIELD(star, s32 *, 8) =
-            (s32) (((Func_08004458() & 0xFF) - 127) << 16);
+            (s32) (((Func_08004458() & random_mask) - 127) << 16);
         M2C_FIELD(star, s32 *, 12) = 0;
         M2C_FIELD(star, s32 *, 16) = 0;
         M2C_FIELD(star, s32 *, 20) = 0;
@@ -88,38 +91,41 @@ s32 Func_080dc1ec(void *object)
     record[1] = (s32) (160 << 15);
     record[2] = 0;
 
-    outer = 0;
-    do {
+    for (outer = 0; outer != 160; outer++) {
         facing = *(s32 *)0x03001E80;
         Func_080049ac();
         Func_080051d8(facing, facing + 12);
         Func_08004cb4(record);
 
+        neg_outer = -outer;
         velocity_a = outer << 8;
-        velocity_b = -velocity_a;
+        velocity_b = neg_outer << 8;
         for (j = 0; j != 64; j++) {
             s32 quarter;
 
             star = (u8 *)0x02010000 + j * 28;
 
-            quarter = (j >= 0 ? j : j + 3) >> 2;
+            quarter = j / 4;
             if (outer > quarter && M2C_FIELD(star, s32 *, 24) == 0) {
                 {
                     s32 selector;
 
                     Func_080049e8();
                     selector = j & 3;
-                    if (selector > 1) {
-                        if (selector == 2) {
-                            Func_08004c6c(velocity_b);
-                        } else if (selector == 3) {
-                            Func_08004bd4(velocity_b);
-                            Func_08004c6c(velocity_b);
-                        }
-                    } else if (selector == 1) {
-                        Func_08004bd4(velocity_b);
-                    } else if (selector == 0) {
+                    switch (selector) {
+                    case 0:
                         Func_08004c1c(velocity_a);
+                        break;
+                    case 1:
+                        Func_08004bd4(velocity_b);
+                        break;
+                    case 2:
+                        Func_08004c6c(velocity_b);
+                        break;
+                    case 3:
+                        Func_08004bd4(velocity_b);
+                        Func_08004c6c(velocity_b);
+                        break;
                     }
                 }
 
@@ -157,20 +163,21 @@ s32 Func_080dc1ec(void *object)
                 }
 
                 Func_080e38b8(star, 60, 0);
-            }
 
-            quarter = (j >= 0 ? j : j + 3) >> 2;
-            quarter += 30;
-            if (outer > quarter) {
-                M2C_FIELD(star, s32 *, 12) =
-                    M2C_FIELD(star, s32 *, 12)
-                    + (-M2C_FIELD(star, s32 *, 0) >> 8);
-                M2C_FIELD(star, s32 *, 16) =
-                    M2C_FIELD(star, s32 *, 16)
-                    + (-M2C_FIELD(star, s32 *, 4) >> 8);
-                M2C_FIELD(star, s32 *, 20) =
-                    M2C_FIELD(star, s32 *, 20)
-                    + (-M2C_FIELD(star, s32 *, 8) >> 8);
+                quarter = j / 4;
+                quarter += 30;
+                if (outer > quarter) {
+                    M2C_FIELD(star, s32 *, 12) =
+                        M2C_FIELD(star, s32 *, 12)
+                        + (-M2C_FIELD(star, s32 *, 0) >> 8);
+                    M2C_FIELD(star, s32 *, 16) =
+                        M2C_FIELD(star, s32 *, 16)
+                        + (-M2C_FIELD(star, s32 *, 4) >> 8);
+                    M2C_FIELD(star, s32 *, 20) =
+                        M2C_FIELD(star, s32 *, 20)
+                        + (-M2C_FIELD(star, s32 *, 8) >> 8);
+                }
+
             }
 
             velocity_b -= outer << 3;
@@ -179,8 +186,7 @@ s32 Func_080dc1ec(void *object)
 
         M2C_FIELD(work, s32 *, 0x7824) = 1;
         Func_080030f8(1);
-        outer++;
-    } while (outer != 160);
+    }
 
     Func_08004278((void *)0x080CD261);
     Func_08002dd8(47);

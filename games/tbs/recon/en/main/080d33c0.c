@@ -12,6 +12,7 @@
 
 void *Func_08002f40(s32 resource_id);
 void **Func_080b5098(s32 member_id);
+void Func_080d6888(s32, s32, s32, s32, s32);
 extern u8 Value_000000cd;
 
 typedef void (*DrawRectangleFn)(
@@ -79,9 +80,9 @@ s32 Func_080d33c0(s32 actor) {
         M2C_FIELD(var_r5_78, s32 *, 4) = temp_r9_71;
         M2C_FIELD(var_r5_78, s32 *, 0) = (s32) M2C_FIELD(temp_r6_64, s32 *, 8);
         M2C_FIELD(var_r5_78, s32 *, 8) = (s32) M2C_FIELD(temp_r6_64, s32 *, 0x10);
-        M2C_FIELD(var_r5_78, s32 *, 0xC) = (s32) ((s32) ((Func_08004458() - 0x7F) << 0x10) >> 5);
+        M2C_FIELD(var_r5_78, s32 *, 0xC) = (s32) ((s32) (((0xFF & Func_08004458()) - 0x7F) << 0x10) >> 5);
         M2C_FIELD(var_r5_78, s32 *, 0x10) = (s32) ((s32) (((0x7F & Func_08004458()) - 0x10) << 0x10) >> 6);
-        M2C_FIELD(var_r5_78, s32 *, 0x14) = (s32) ((s32) ((Func_08004458() - 0x7F) << 0x10) >> 5);
+        M2C_FIELD(var_r5_78, s32 *, 0x14) = (s32) ((s32) (((0xFF & Func_08004458()) - 0x7F) << 0x10) >> 5);
         temp_r0_123 = var_r8_76;
         var_r8_76 += 1;
         M2C_FIELD(var_r5_78, s32 *, 0x18) = -1;
@@ -181,12 +182,15 @@ loop_15:
                     M2C_FIELD(var_r6_260, s32 *, 0x14) = (s32) (var_r2_380 >> 6);
                 }
                 if ((s32) M2C_FIELD(var_r6_260, s32 *, 4) < 0) {
+                    s32 member_offset;
+
                     ((u8 *)0x02010000)[var_r8_251] = 1;
                     M2C_FIELD(var_r6_260, u32 *, 0x18) = 0U;
                     M2C_FIELD(var_r6_260, s32 *, 0) = (s32) M2C_FIELD(&sp18, s32 *, 0);
-                    temp_r5_407 = M2C_FIELD(temp_r7_17, void **, 0x7828);
                     M2C_FIELD(var_r6_260, s32 *, 4) = (s32) ((M2C_FIELD(&sp18, s32 *, 4) + (0x1F & Func_08004458())) - 0x10);
-                    Func_080d6888(*(s16 *)((u8 *)temp_r5_407 + ((Func_080022fc(var_r8_251, M2C_FIELD(temp_r5_407, s32 *, 0x14)) * 2) + 0x24)), 7, 5, 4);
+                    temp_r5_407 = M2C_FIELD(temp_r7_17, void **, 0x7828);
+                    member_offset = (Func_080022fc(var_r8_251, M2C_FIELD(temp_r5_407, s32 *, 0x14)) * 2) + 0x24;
+                    Func_080d6888(*(s16 *)((u8 *)temp_r5_407 + member_offset), 7, 5, member_offset, 4);
                     temp_r5_422 = M2C_FIELD(temp_r7_17, void **, 0x7828);
                     Func_080b5088(*(s16 *)((u8 *)temp_r5_422 + ((Func_080022fc(var_r8_251, M2C_FIELD(temp_r5_422, s32 *, 0x14)) * 2) + 0x24)), 0);
                     M2C_FIELD(temp_r7_17, s32 *, 0x77A8) = 4;

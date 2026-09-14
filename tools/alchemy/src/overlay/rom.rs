@@ -4,7 +4,7 @@ use std::path::Path;
 pub struct CanonicalRom(Vec<u8>, usize);
 impl CanonicalRom {
     pub fn load(root: &Path) -> Result<Self, String> {
-        let path = root.join("roms/gs1-en.gba");
+        let path = root.join("roms/tbs-en.gba");
         let bytes = std::fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?;
         resource_table(&bytes).map(|table| Self(bytes, table))
     }

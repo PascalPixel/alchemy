@@ -149,7 +149,7 @@ pub fn source_to_assembly_plan(options: &SourceToAssemblyPlanOptions) -> Result<
 /// Direct hot-search preprocessing, defaulting the reported GCC minor to 96.
 pub fn direct_preprocessor_command(input: &str, output: &str) -> Result<Vec<String>> {
     direct_preprocessor_command_for_target_with_minor_and_flags(
-        CompilerTarget::Gs1,
+        CompilerTarget::Tbs,
         input,
         output,
         96,
@@ -199,8 +199,8 @@ mod tests {
     #[test]
     fn uppercase_c_preserves_the_c_route_and_codegen_flags() {
         let mut options = SourceToAssemblyPlanOptions::new(
-            CompilerTarget::Gs1,
-            "games/gs1/src/080bbb0c.c",
+            CompilerTarget::Tbs,
+            "games/tbs/src/080bbb0c.c",
             "candidate.c",
             "candidate.s",
         );
@@ -216,9 +216,9 @@ mod tests {
     }
     #[test]
     fn diagnostics_preserve_canonical_flags_and_reject_codegen_overrides() {
-        for source in ["games/gs1/src/080bbb0c.c", "games/gs1/src/08006878.c"] {
+        for source in ["games/tbs/src/080bbb0c.c", "games/tbs/src/08006878.c"] {
             let mut options = SourceToAssemblyPlanOptions::new(
-                CompilerTarget::Gs1,
+                CompilerTarget::Tbs,
                 source,
                 "source.c",
                 "source.s",
@@ -243,48 +243,48 @@ mod tests {
     #[test]
     fn edition_define_stays_in_old_agbcc_preprocessor_step() {
         let mut options = SourceToAssemblyPlanOptions::new(
-            CompilerTarget::Gs1,
-            "games/gs1/src/08006878.c",
+            CompilerTarget::Tbs,
+            "games/tbs/src/08006878.c",
             "candidate.c",
             "candidate.s",
         );
-        options.preprocessor_flags = vec!["-DGS1_EDITION_JA=1".into()];
+        options.preprocessor_flags = vec!["-DTBS_EDITION_JA=1".into()];
         let plan = source_to_assembly_plan(&options).unwrap();
         assert!(plan[0]
             .iter()
-            .any(|argument| argument == "-DGS1_EDITION_JA=1"));
+            .any(|argument| argument == "-DTBS_EDITION_JA=1"));
         assert!(!plan[1]
             .iter()
-            .any(|argument| argument.starts_with("-DGS1_EDITION_")));
+            .any(|argument| argument.starts_with("-DTBS_EDITION_")));
     }
     #[test]
     fn edition_define_reaches_gcc296_driver() {
         let mut options = SourceToAssemblyPlanOptions::new(
-            CompilerTarget::Gs2,
-            "games/gs2/src/08120450.c",
+            CompilerTarget::Tla,
+            "games/tla/src/08120450.c",
             "candidate.c",
             "candidate.s",
         );
-        options.preprocessor_flags = vec!["-DGS2_EDITION_IT=1".into()];
+        options.preprocessor_flags = vec!["-DTLA_EDITION_IT=1".into()];
         let plan = source_to_assembly_plan(&options).unwrap();
         assert_eq!(plan.len(), 1);
         assert!(plan[0]
             .iter()
-            .any(|argument| argument == "-DGS2_EDITION_IT=1"));
+            .any(|argument| argument == "-DTLA_EDITION_IT=1"));
     }
     #[test]
-    fn shared_gs2_audio_owner_routes_through_old_agbcc() {
+    fn shared_tla_audio_owner_routes_through_old_agbcc() {
         let mut options = SourceToAssemblyPlanOptions::new(
-            CompilerTarget::Gs2,
-            "games/gs2/src/081c28e0.c",
+            CompilerTarget::Tla,
+            "games/tla/src/081c28e0.c",
             "candidate.c",
             "candidate.s",
         );
-        options.preprocessor_flags = vec!["-DGS2_EDITION_JA=1".into()];
+        options.preprocessor_flags = vec!["-DTLA_EDITION_JA=1".into()];
         let plan = source_to_assembly_plan(&options).unwrap();
         assert!(plan[1][0].ends_with("/agbcc/old_agbcc"));
         assert!(plan[0]
             .iter()
-            .any(|argument| argument == "-DGS2_EDITION_JA=1"));
+            .any(|argument| argument == "-DTLA_EDITION_JA=1"));
     }
 }

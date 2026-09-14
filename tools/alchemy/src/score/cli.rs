@@ -1,7 +1,7 @@
 use crate::candidate::CandidateCompilerConfiguration;
 use crate::compiler::routing::CompilerTarget;
 use std::path::Path;
-pub const USAGE: &str = "usage: alchemy score <candidate.c|overlay:address> [--unit ID] [--rom FILE] [--target gs1|gs2] [--owner OWNER] [--symbol ADDRESS] [--size BYTES] [--reference-symbols] [--work DIR] [--align] [--first] [--allocator-order] [--asm] [--patch FILE]";
+pub const USAGE: &str = "usage: alchemy score <candidate.c|overlay:address> [--unit ID] [--rom FILE] [--target tbs|tla] [--owner OWNER] [--symbol ADDRESS] [--size BYTES] [--reference-symbols] [--work DIR] [--align] [--first] [--allocator-order] [--asm] [--patch FILE]";
 pub const SHORT_USAGE: &str = "usage: alchemy score <candidate.c> [--rom FILE]";
 #[derive(Debug, Clone)]
 pub struct Options {
@@ -22,13 +22,13 @@ pub struct Options {
     pub patch: Option<String>,
 }
 impl Options {
-    pub fn gs1(source: String) -> Self {
+    pub fn tbs(source: String) -> Self {
         Self {
             source,
             rom: None,
             work: None,
             configuration: CandidateCompilerConfiguration::default(),
-            target: CompilerTarget::Gs1,
+            target: CompilerTarget::Tbs,
             owner: None,
             overlay: None,
             unit: None,
@@ -48,8 +48,8 @@ pub enum ParseOutcome {
     Options(Box<Options>),
 }
 pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> {
-    let mut options = Options::gs1(String::new());
-    options.rom = Some(root.join("roms/gs1-en.gba").to_string_lossy().into_owned());
+    let mut options = Options::tbs(String::new());
+    options.rom = Some(root.join("roms/tbs-en.gba").to_string_lossy().into_owned());
     let mut rest = Vec::new();
     let mut rom_explicit = false;
     let mut index = 0;
@@ -66,9 +66,9 @@ pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> 
             }
             "--target" => {
                 options.target = match next(&mut index).map(String::as_str) {
-                    Some("gs1") => CompilerTarget::Gs1,
-                    Some("gs2") => CompilerTarget::Gs2,
-                    _ => return Err("--target must be gs1 or gs2".into()),
+                    Some("tbs") => CompilerTarget::Tbs,
+                    Some("tla") => CompilerTarget::Tla,
+                    _ => return Err("--target must be tbs or tla".into()),
                 }
             }
             "--size" | "--span" => {
@@ -112,8 +112,8 @@ pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> 
         return Err(SHORT_USAGE.into());
     }
     options.source = rest.pop().unwrap_or_default();
-    if !rom_explicit && options.target == CompilerTarget::Gs2 {
-        options.rom = Some(root.join("roms/gs2-en.gba").to_string_lossy().into_owned());
+    if !rom_explicit && options.target == CompilerTarget::Tla {
+        options.rom = Some(root.join("roms/tla-en.gba").to_string_lossy().into_owned());
     }
     if options.work.is_none() && options.unit.is_none() {
         options.work = Some(default_work(root, &options.source));
@@ -205,9 +205,9 @@ mod tests {
     fn parses_cross_game_reference_options() {
         let root = Path::new("/repo");
         let args = [
-            "games/gs2/recon/ja/main/08120450.c",
+            "games/tla/recon/ja/main/08120450.c",
             "--target",
-            "gs2",
+            "tla",
             "--size",
             "0x206c",
             "--reference-symbols",
@@ -218,11 +218,11 @@ mod tests {
         let ParseOutcome::Options(options) = options_of(root, &args).unwrap() else {
             panic!("expected parsed options");
         };
-        assert_eq!(options.target, CompilerTarget::Gs2);
+        assert_eq!(options.target, CompilerTarget::Tla);
         assert_eq!(options.size, Some(8300));
         assert_eq!(options.owner, None);
         assert!(options.configuration.reference_symbols);
-        assert_eq!(options.rom.as_deref(), Some("/repo/roms/gs2-en.gba"));
+        assert_eq!(options.rom.as_deref(), Some("/repo/roms/tla-en.gba"));
     }
     #[test]
     fn size_must_be_positive() {

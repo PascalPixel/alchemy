@@ -186,7 +186,7 @@ mod tests {
         std::fs::create_dir(root.path().join("roms")).unwrap();
         std::fs::create_dir(root.path().join("out")).unwrap();
         let image = [1, 2, 3, 4, 5, 6];
-        std::fs::write(root.path().join("roms/gs1-en.gba"), image).unwrap();
+        std::fs::write(root.path().join("roms/tbs-en.gba"), image).unwrap();
         let output = root.path().join("out/owner.bin");
         let mut options = parse(&[
             "main:08000002".into(),

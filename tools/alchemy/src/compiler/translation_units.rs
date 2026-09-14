@@ -17,7 +17,7 @@ struct ReviewedRegion {
     span_bytes: usize,
 }
 pub fn reviewed_overlay_spans(root: &Path) -> Result<BTreeMap<SourceOwner, usize>, String> {
-    let path = root.join("games/gs1/semantic/regions.json");
+    let path = root.join("games/tbs/semantic/regions.json");
     let document: ReviewedRegions = crate::compiler::build_io::read_json(path)?;
     let mut spans = BTreeMap::new();
     for region in document.manual_regions {
@@ -150,8 +150,8 @@ pub struct TranslationUnit {
 impl TranslationUnit {
     pub fn target(&self) -> Result<CompilerTarget, String> {
         match self.game.as_str() {
-            "gs1" => Ok(CompilerTarget::Gs1),
-            "gs2" => Ok(CompilerTarget::Gs2),
+            "tbs" => Ok(CompilerTarget::Tbs),
+            "tla" => Ok(CompilerTarget::Tla),
             _ => Err(format!("{}: unsupported game {}", self.id, self.game)),
         }
     }
@@ -236,7 +236,7 @@ pub struct TranslationUnits {
 }
 impl TranslationUnits {
     pub fn load(root: &Path) -> Result<Self, String> {
-        let path = root.join("games/gs1/recon/translation-units.json");
+        let path = root.join("games/tbs/recon/translation-units.json");
         let mut document: Self = crate::compiler::build_io::read_json(&path)?;
         if document.format != FORMAT
             || document.kind != "reconstruction-composition-contracts"
@@ -567,7 +567,7 @@ mod tests {
     #[test]
     fn reviewed_owner_duplicates_never_select_the_last_extent() {
         let root = tempfile::tempdir().unwrap();
-        let path = root.path().join("games/gs1/semantic/regions.json");
+        let path = root.path().join("games/tbs/semantic/regions.json");
         std::fs::create_dir_all(path.parent().unwrap()).unwrap();
         for sizes in [[4, 4], [4, 8]] {
             let rows = sizes.map(|span| {
@@ -638,10 +638,10 @@ mod tests {
             AbsoluteSymbolKind::Data
         );
         let owner = SourceOwner::Main(0x080f_37ec);
-        assert!(manifest.unit_for_game_owner("gs1", owner).is_some());
-        assert!(manifest.unit_for_game_owner("gs2", owner).is_none());
+        assert!(manifest.unit_for_game_owner("tbs", owner).is_some());
+        assert!(manifest.unit_for_game_owner("tla", owner).is_none());
         let root = crate::compiler::routing::root();
-        let names = SourcePaths::load_for_game(root, "gs1").unwrap();
+        let names = SourcePaths::load_for_game(root, "tbs").unwrap();
         let candidate = manifest
             .unit("overlay-candidate-bindings-373-020015dc")
             .unwrap();
@@ -660,7 +660,7 @@ mod tests {
         installed.owners[0].address = 0x0200_0f5c;
         installed.owners[0].extent = 0x30;
         assert!(invalid_state(&installed));
-        invalid.source = PathBuf::from("games/gs1/SRC/invalid-retained-overlay.c");
+        invalid.source = PathBuf::from("games/tbs/SRC/invalid-retained-overlay.c");
         assert!(invalid_state(&invalid));
         let i = unconditional_quoted_includes;
         assert!(i("#define X \\\n#include \"x\"").is_empty());

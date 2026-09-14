@@ -1,16 +1,16 @@
 <p align="center">
-  <img src="games/gs1/assets/readme/djinn_101_idle.gif" width="64" height="64" alt="Venus Djinn">
-  <img src="games/gs1/assets/readme/djinn_102_idle.gif" width="64" height="64" alt="Jupiter Djinn">
-  <img src="games/gs1/assets/readme/djinn_103_idle.gif" width="64" height="64" alt="Mars Djinn">
-  <img src="games/gs1/assets/readme/djinn_104_idle.gif" width="64" height="64" alt="Mercury Djinn">
+  <img src="games/tbs/assets/readme/djinn_101_idle.gif" width="64" height="64" alt="Venus Djinn">
+  <img src="games/tbs/assets/readme/djinn_102_idle.gif" width="64" height="64" alt="Jupiter Djinn">
+  <img src="games/tbs/assets/readme/djinn_103_idle.gif" width="64" height="64" alt="Mars Djinn">
+  <img src="games/tbs/assets/readme/djinn_104_idle.gif" width="64" height="64" alt="Mercury Djinn">
 </p>
 
 <h1 align="center">Alchemy</h1>
 
 <p align="center"><strong>Golden Sun 25th Anniversary Preservation Project</strong></p>
 
-Alchemy is an unofficial fan project rebuilding _Golden Sun_ and _Golden Sun:
-The Lost Age_ for the Game Boy Advance from the ground up, without any of the
+Alchemy is an unofficial fan project rebuilding _Golden Sun: The Broken Seal_
+(TBS) and _Golden Sun: The Lost Age_ (TLA) for the Game Boy Advance from the ground up, without any of the
 original makers' files. It preserves all six Japanese and European editions of
 each game as they shipped on the cartridge. The Japanese release is treated as
 the original and the others as its translations; English _Golden Sun_ is the
@@ -18,7 +18,7 @@ first edition rebuilt in full.
 
 ## Status: 50.97% DONE
 
-![ROM contents](games/gs1/assets/readme/gs1-en-rom.svg?v=7b6a8f76614b4fc4)
+![ROM contents](games/tbs/assets/readme/tbs-en-rom.svg?v=d667fbf737389fb7)
 
 ## What this is
 

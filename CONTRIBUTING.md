@@ -1,11 +1,16 @@
 # Contributing to Alchemy
 
+Game identities are **TBS** (_The Broken Seal_) and **TLA** (_The Lost Age_).
+Use `tbs` and `tla` in paths and target names. The compiler option `-mgs2`
+retains its approved upstream spelling. Pascal identified the first battle
+character sheet as Robin (Isaac in English); it is `ROBIN_BATTLE.8bpp.png`.
+
 Recover matching C, reuse what already works, and keep the build honest.
 
 Alchemy reconstructs _Golden Sun_ and _Golden Sun: The Lost Age_ as ordinary,
 readable C that reproduces the shipped games. Japanese releases are the source
 editions; localizations are measured differences. The production gate requires
-a complete byte-identical GS1 English build. Passing that gate does not mean
+a complete byte-identical TBS English build. Passing that gate does not mean
 all code is C or that all twelve target ROMs have been rebuilt.
 
 ## The two directives
@@ -111,7 +116,7 @@ Use the existing declaration in `games/<game>/recon/translation-units.json`.
 For a main module that needs one:
 
 ```sh
-./alchemy unit scaffold gs1 <unit-id> <start-hex> <end-hex>
+./alchemy unit scaffold tbs <unit-id> <start-hex> <end-hex>
 ```
 
 Register the unit before scoring it. Preserve function order and shared
@@ -154,7 +159,7 @@ unrelated target. Confirm target-side preconditions separately and score every
 complete owner. Use each target's declarations and bindings, not the sibling's
 addresses. Preserve exact neighbors; never adopt overlapping units independently.
 
-`games/gs1/recon/compiler-repair-patterns.json` is the executable repair
+`games/tbs/recon/compiler-repair-patterns.json` is the executable repair
 catalog. `alchemy match` runs decoder-named, bounded catalog operations.
 A new generalized operation needs safety guards, a regression fixture and an
 actual closure; its acceptance tests belong in `make test`. Manual
@@ -217,7 +222,7 @@ in the recovery queue rather than relabeling them merely to increase DONE.
 
 The classification records remain: main evidence is exposed by the assembly
 manifest, overlay evidence lives in
-`games/gs1/semantic/overlay-assembly.json`, and both are still parsed and
+`games/tbs/semantic/overlay-assembly.json`, and both are still parsed and
 validated from the same inputs. Reconstructed scenes use
 `structured_scene_module`, not the retired `generated_call_script_module`.
 Only Pascal may establish a replacement standard, and it requires positive
@@ -232,7 +237,7 @@ eventually rebuild byte-identically from a clean checkout and approved local
 inputs. Correspondence checks and compile-only targets do not establish this.
 
 Recover Japanese correspondence before calling EN source shared. Measure actual
-localization differences and GS2 behavior; do not count one recovery twelve
+localization differences and TLA behavior; do not count one recovery twelve
 times. Assets must rebuild from maintained inputs, and final source must be
 organized into evidenced modules with shared interfaces.
 
@@ -261,8 +266,8 @@ do not replace linked byte comparison.
 
 GCC source and compiler modifications belong in the licensed `agscc` submodule,
 never as source patches in this repository. Pascal approved moving the existing
-GS2 lowering into `agscc` behind `-mgs2` on 2026-09-13. Both games use the same
-compiler bundle; only GS2 game code enables that option. The GS2 lowering is a
+TLA lowering into `agscc` behind `-mgs2` on 2026-09-13. Both games use the same
+compiler bundle; only TLA game code enables that option. The TLA lowering is a
 reconstruction, not a claim to recovered historical compiler source.
 
 Use the approved `agbcc` and `agscc` submodules and bundle. Game code uses
@@ -270,7 +275,7 @@ canonical GCC 2.96; recorded prebuilt-library families have their own fixed
 routes established by provenance, not score. Commands live in
 `tools/alchemy/src/compiler/routing.rs`.
 
-**Apart from the approved GS2 option above, do not modify agscc unless
+**Apart from the approved TLA option above, do not modify agscc unless
 restoring historical stock GCC 2.96 shipped by Red Hat.** Every change, including diagnostic or host-port changes, requires
 Pascal's approval, a specific historical release and source/vendor-patch
 evidence, and proof of restored fidelity. Better matching, determinism, version
@@ -355,7 +360,7 @@ make progress-subject
 ```
 
 The index and worktree must agree. `make verify` checks staged source,
-production GS1 EN ROM, overlays, units, ownership, ordinary C, compiler
+production TBS EN ROM, overlays, units, ownership, ordinary C, compiler
 provenance and repository rules. It does not rescore every draft, run every test
 or build twelve ROMs. The hook accepts only the verified tree; use the exact
 progress prefix printed by `make progress-subject`. Push only when requested.
@@ -502,9 +507,9 @@ observable behavior, including bugs.
 ### Project Atlas
 
 Atlas replaces the current layout below with area workspaces under
-`games/gs1/SRC/FIELD/`, shared field engine code in `FIELD/COMMON/`, and
+`games/tbs/SRC/FIELD/`, shared field engine code in `FIELD/COMMON/`, and
 cross-location modules in `FIELD/SHARED/`. The `atlas_destination` column in
-`games/gs1/locations.tsv` records the destination for each overlay. Source and
+`games/tbs/locations.tsv` records the destination for each overlay. Source and
 include files have moved; maps now accompany their evidenced areas, messages
 and credits live in `TEXT`. The glyph sheet is in `GRAPHICS/FONT`; mixed item,
 status, window and menu-image banks are in `GRAPHICS/TILE`, not classified as
@@ -558,11 +563,11 @@ padding remain with their index file. Compression is counted at stored size,
 not decoded size. Missing or inconsistent component extents keep the package
 unsplit rather than assigning guessed byte ranges to files.
 Keep the optional music debugger separate. Migrate source, assets
-and viewer in verified stages; completion requires the full GS1 English ROM to
-remain byte-identical and the migration to be committed. Do not claim GS2 or
-other editions verified from GS1 evidence.
+and viewer in verified stages; completion requires the full TBS English ROM to
+remain byte-identical and the migration to be committed. Do not claim TLA or
+other editions verified from TBS evidence.
 
-GS1 `SRC/` uses the following responsibilities. These are our
+TBS `SRC/` uses the following responsibilities. These are our
 reconstruction choices, not recovered Camelot directory names. Keep a shallow
 module tree; do not create a folder for each function or sort whole scenes into
 actor/dialogue/story categories. A scene's actors, dialogue and events belong
@@ -584,8 +589,8 @@ unit, overlay identity, compiler route or completion credit.
 | `DEBUG/` | Debug facilities. |
 
 Area-specific code belongs in `SRC/FIELD/<area>/`; one location may have
-several separately compiled overlays. `games/gs1/locations.tsv` retains the
-ROM-backed GS1 English location assignments for all 96 overlays. The scene
+several separately compiled overlays. `games/tbs/locations.tsv` retains the
+ROM-backed TBS English location assignments for all 96 overlays. The scene
 selector is bounded to 0–200 by `08029094`; `0808ab48` loads the resource from
 the eight-byte scene table at `0809f1a8`. The location resolver `0808b158`
 (through veneer `0808a5d0`) scans ordered rules at `0809ddd8`, matching either
@@ -603,11 +608,11 @@ place to fill a folder, and never merge distinct overlay address spaces simply
 because they share a location. Shared field engine code belongs in `FIELD/COMMON/`.
 
 Keep classification metadata outside source folders; provisional-source records live
-in `games/gs1/semantic/provisional-source.json`. Code stays out of assets: overlay assembly
+in `games/tbs/semantic/provisional-source.json`. Code stays out of assets: overlay assembly
 and compression recipes belong in `asm/overlays/`, battle assembly in
-`asm/battle/`. GS1 non-executable battle-effect tables are in `SRC/BATTLE/DATA/`;
-GS1 sound inputs are already in
+`asm/battle/`. TBS non-executable battle-effect tables are in `SRC/BATTLE/DATA/`;
+TBS sound inputs are already in
 the game-root `SOUND/`, separate from player code in `SRC/SOUND/`.
-GS2 retains its existing layout until independently mapped. Update paths,
+TLA retains its existing layout until independently mapped. Update paths,
 caches and coverage together. Music titles require actual identification,
 not guessed numbering.

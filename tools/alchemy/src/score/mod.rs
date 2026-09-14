@@ -278,7 +278,7 @@ mod tests {
             })
             .unwrap();
         let work = tempfile::tempdir().unwrap();
-        let mut options = crate::score::cli::Options::gs1(String::new());
+        let mut options = crate::score::cli::Options::tbs(String::new());
         options.unit = Some(unit.id.clone());
         options.work = Some(work.path().to_string_lossy().into_owned());
         options.first = true;
@@ -301,7 +301,7 @@ mod tests {
         assert!(exact_mismatch(&output(1)));
         let repository = std::env::temp_dir().join(format!("diff-no-rom-{}", std::process::id()));
         let error = canonical_overlay(&repository, "resource_36f").unwrap_err();
-        assert!(error.contains("roms/gs1-en.gba"));
+        assert!(error.contains("roms/tbs-en.gba"));
         let work = root().join("out/diff-unit-test");
         let _ = std::fs::remove_dir_all(&work);
         std::fs::create_dir_all(&work).unwrap();
@@ -327,7 +327,7 @@ mod tests {
         let output = run(*options).unwrap();
         let staged = root()
             .join(&work)
-            .join("try/games/gs1/SRC/FIELD/ALTIN/MOTION_PARTICLE.C");
+            .join("try/games/tbs/SRC/FIELD/ALTIN/MOTION_PARTICLE.C");
         assert!(std::fs::read_to_string(staged)
             .unwrap()
             .contains("../../../INCLUDE/TYPES.H"));

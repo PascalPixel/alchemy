@@ -92,7 +92,7 @@ fn run(args: &[String]) -> Result<(), String> {
     let source_root =
         root.join("games")
             .join(&game)
-            .join(if game == "gs1" { "SRC" } else { "src" });
+            .join(if game == "tbs" { "SRC" } else { "src" });
     let inventory: Value =
         read_json(&root.join(format!("out/{game}-en/full/rebuilt.owner-inventory.json")))?;
     let register_path = root.join(format!("games/{game}/source-paths.json"));
@@ -604,7 +604,7 @@ fn run(args: &[String]) -> Result<(), String> {
     // games/<game>/include), so a function defined under such a name still
     // links by its address.
     let mut header_aliases: BTreeMap<String, Vec<String>> = BTreeMap::new();
-    if let Ok(entries) = fs::read_dir(root.join("games").join(&game).join(if game == "gs1" {
+    if let Ok(entries) = fs::read_dir(root.join("games").join(&game).join(if game == "tbs" {
         "INCLUDE"
     } else {
         "include"

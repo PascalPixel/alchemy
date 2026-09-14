@@ -211,18 +211,18 @@ pub fn self_test() -> Result<(), String> {
         return Err("preprocessed findings lost source identity".into());
     }
     let source = "/* M2C_FIELD */\n#define M2C_FIELD(x) (x)\n";
-    let found = find_named_source_tool_leaks("games/gs1/SRC/graphics/window/example.c", source);
+    let found = find_named_source_tool_leaks("games/tbs/SRC/graphics/window/example.c", source);
     if found.len() != 1 || found[0].line != 2 || !found[0].token.contains("M2C_FIELD") {
         return Err("named-source gate missed a tool-branded identifier".into());
     }
-    if !find_named_source_tool_leaks("games/gs1/SRC/unidentified/example.c", source).is_empty() {
+    if !find_named_source_tool_leaks("games/tbs/SRC/unidentified/example.c", source).is_empty() {
         return Err("named-source gate crossed its owned boundary".into());
     }
-    if !find_named_source_tool_leaks("games/gs1/recon/example.c", source).is_empty() {
+    if !find_named_source_tool_leaks("games/tbs/recon/example.c", source).is_empty() {
         return Err("named-source gate treated a reconstruction draft as production source".into());
     }
-    if find_named_source_tool_leaks("games/gs2/src/example.c", source).is_empty() {
-        return Err("named-source gate did not apply outside gs1".into());
+    if find_named_source_tool_leaks("games/tla/src/example.c", source).is_empty() {
+        return Err("named-source gate did not apply outside tbs".into());
     }
     Ok(())
 }
@@ -239,8 +239,8 @@ mod tests {
     #[test]
     fn atlas_source_names_keep_tool_leak_checks() {
         let source = "void f(void) { M2C_ERROR(); }";
-        let lower = find_named_source_tool_leaks("games/gs1/SRC/field/example.c", source);
-        let upper = find_named_source_tool_leaks("games/gs1/SRC/FIELD/EXAMPLE.C", source);
+        let lower = find_named_source_tool_leaks("games/tbs/SRC/field/example.c", source);
+        let upper = find_named_source_tool_leaks("games/tbs/SRC/FIELD/EXAMPLE.C", source);
         assert!(!lower.is_empty());
         assert_eq!(lower.len(), upper.len());
     }

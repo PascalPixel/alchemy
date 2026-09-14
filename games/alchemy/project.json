@@ -2,7 +2,7 @@
   "format": 2,
   "product": "alchemy",
   "kind": "integration",
-  "inputs": ["games/gs1", "games/gs2"],
+  "inputs": ["games/tbs", "games/tla"],
   "layout": {
     "source": "games/alchemy/src",
     "assets": "games/alchemy/assets",

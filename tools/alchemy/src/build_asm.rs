@@ -123,8 +123,8 @@ pub fn repository_root() -> PathBuf {
 }
 pub fn parse_args(argv: &[String]) -> Result<ParseOutcome, String> {
     let mut options = Options {
-        rom: "roms/gs1-en.gba".into(),
-        output: "out/gs1-en/asm".into(),
+        rom: "roms/tbs-en.gba".into(),
+        output: "out/tbs-en/asm".into(),
         source: None,
         source_only: false,
     };
@@ -168,7 +168,7 @@ fn resolve(root: &Path, cwd: &Path, value: &str) -> PathBuf {
     let path = Path::new(value);
     if path.is_absolute() {
         path.to_path_buf()
-    } else if value.starts_with("out/") || value.starts_with("games/gs1/asm/") {
+    } else if value.starts_with("out/") || value.starts_with("games/tbs/asm/") {
         root.join(path)
     } else {
         cwd.join(path)
@@ -220,20 +220,20 @@ fn integer(value: &Value, name: &str) -> Result<u64, String> {
         .ok_or_else(|| format!("{name}: invalid address"))
 }
 fn load_layout(root: &Path) -> Result<BTreeMap<String, Placement>, String> {
-    let path = root.join("games/gs1/asm/manifest.json");
+    let path = root.join("games/tbs/asm/manifest.json");
     if !path.exists() {
         return Ok(BTreeMap::new());
     }
     let value: Value = read_json(&path)?;
     if value["format"].as_u64() != Some(1) || !value["regions"].is_array() {
-        return Err("games/gs1/asm/manifest.json: unsupported format".into());
+        return Err("games/tbs/asm/manifest.json: unsupported format".into());
     }
     let regions: Vec<LayoutRegion> = serde_json::from_value(value["regions"].clone())
-        .map_err(|_| "games/gs1/asm/manifest.json: unsupported format".to_string())?;
+        .map_err(|_| "games/tbs/asm/manifest.json: unsupported format".to_string())?;
     let mut result = BTreeMap::new();
     for item in regions {
         if result.contains_key(&item.source) {
-            return Err("games/gs1/asm/manifest.json: invalid or duplicate source".into());
+            return Err("games/tbs/asm/manifest.json: invalid or duplicate source".into());
         }
         let inferred = u64::from_str_radix(&stem(Path::new(&item.source)), 16)
             .map_err(|_| format!("{}: invalid address", item.source))?;
@@ -592,12 +592,12 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
     };
     let output = rooted(root, &options.output);
     std::fs::create_dir_all(&output).map_err(|error| format!("{}: {error}", output.display()))?;
-    let mut sources = assembly_sources(&root.join("games/gs1/asm"))?;
+    let mut sources = assembly_sources(&root.join("games/tbs/asm"))?;
     // These packages are assembled through the asset manifest, with their own
     // placement and compression. They are not standalone main-image regions.
     sources.retain(|source| {
-        !source.starts_with(root.join("games/gs1/asm/overlays"))
-            && !source.starts_with(root.join("games/gs1/asm/battle"))
+        !source.starts_with(root.join("games/tbs/asm/overlays"))
+            && !source.starts_with(root.join("games/tbs/asm/battle"))
     });
     let mut stems = BTreeSet::new();
     for source in &sources {
@@ -617,7 +617,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
         return Err("no reconstructed assembly sources".into());
     }
     let layout = load_layout(root)?;
-    let classification_path = root.join("games/gs1/asm/classification.json");
+    let classification_path = root.join("games/tbs/asm/classification.json");
     let classification = load_classification(&classification_path)?;
     let explicit = explicit_classifications(&classification)?;
     let source_names: BTreeSet<String> = sources
@@ -690,7 +690,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
         ));
     }
     if options.source.is_none() {
-        let alignment_path = root.join("games/gs1/asm/alignment.json");
+        let alignment_path = root.join("games/tbs/asm/alignment.json");
         let category = classification
             .structural
             .iter()

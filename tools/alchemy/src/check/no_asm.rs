@@ -36,7 +36,7 @@ fn prefix(target: DecompTarget, source: &str) -> Result<Vec<String>, String> {
             format!(
                 "-I{}",
                 include
-                    .with_file_name(if compiler == CompilerTarget::Gs1 {
+                    .with_file_name(if compiler == CompilerTarget::Tbs {
                         "INCLUDE"
                     } else {
                         "include"
@@ -151,14 +151,14 @@ fn macro_self_test() -> Result<(), String> {
     if !find_forbidden("fixture.c", text).is_empty() {
         return Err("macro fixture did not evade the raw scan".into());
     }
-    let target = target_for(DecompTargetId::Gs1En);
-    let paths = SourcePaths::load_for_game(root, "gs1")?;
+    let target = target_for(DecompTargetId::TbsEn);
+    let paths = SourcePaths::load_for_game(root, "tbs")?;
     let registered = paths
         .all_sources()?
         .into_iter()
         .find(|source| {
             uses_agbcc_compiler(
-                CompilerTarget::Gs1,
+                CompilerTarget::Tbs,
                 &source.owner.routing_path().to_string_lossy(),
             )
         })
@@ -170,7 +170,7 @@ fn macro_self_test() -> Result<(), String> {
     if sibling(root, &human.to_string_lossy()) != Some(root.join(human).with_extension("s")) {
         return Err("relative sibling path did not resolve under repository root".into());
     }
-    let routing = registered.owner.routing_path_for_game("gs1");
+    let routing = registered.owner.routing_path_for_game("tbs");
     let mut command = prefix(target, &routing.to_string_lossy())?;
     command.push(source.to_string_lossy().into_owned());
     let found = run(root, &("macro-regression".into(), command))?;

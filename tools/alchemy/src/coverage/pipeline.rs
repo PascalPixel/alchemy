@@ -36,10 +36,10 @@ pub struct ProgressTally {
 }
 pub fn rom_size(target: &str) -> Result<i64, String> {
     match target {
-        "gs1-en" => Ok(0x800000),
-        "gs2-en" => Ok(0x1000000),
+        "tbs-en" => Ok(0x800000),
+        "tla-en" => Ok(0x1000000),
         other => Err(format!(
-            "unsupported decomp target {other:?}; expected gs1-en or gs2-en"
+            "unsupported decomp target {other:?}; expected tbs-en or tla-en"
         )),
     }
 }
@@ -134,7 +134,7 @@ pub struct Owner {
     pub spans: Vec<Span>,
 }
 pub fn overlay_owners(tree: &SourceTree, name: &str) -> Vec<Owner> {
-    let Some(source) = tree.read(&format!("games/gs1/asm/overlays/{name}")) else {
+    let Some(source) = tree.read(&format!("games/tbs/asm/overlays/{name}")) else {
         return Vec::new();
     };
     let Some(_id) = overlay_name(name) else {
@@ -186,7 +186,7 @@ pub fn overlay_owners(tree: &SourceTree, name: &str) -> Vec<Owner> {
 }
 pub fn overlay_ids(tree: &SourceTree) -> Vec<(String, String)> {
     let mut names: Vec<_> = tree
-        .list("games/gs1/asm/overlays")
+        .list("games/tbs/asm/overlays")
         .into_iter()
         .filter_map(|name| overlay_name(&name).map(|id| (id, name)))
         .collect();
@@ -257,7 +257,7 @@ fn validated_executable(value: &Value) -> Result<Vec<Span>, String> {
 /// semantic-candidate coverage. Progress reporting and commit hooks use this
 /// narrow view of the same audited intervals and exact-owner model.
 pub fn progress_tally(options: &BuildOptions) -> Result<ProgressTally, String> {
-    let game = options.target.split('-').next().unwrap_or("gs1");
+    let game = options.target.split('-').next().unwrap_or("tbs");
     let inventory = read_json(
         options.exact,
         &format!("games/{game}/metrics/{}-executable.json", options.target),
@@ -300,8 +300,8 @@ pub fn progress_tally(options: &BuildOptions) -> Result<ProgressTally, String> {
     })
 }
 fn candidate_main(tree: &SourceTree, executable: &[Span]) -> (Vec<Span>, usize) {
-    let directory = "games/gs1/recon/en/main";
-    let dossiers = json(tree, "games/gs1/recon/en/dossiers.json").unwrap_or(Value::Null);
+    let directory = "games/tbs/recon/en/main";
+    let dossiers = json(tree, "games/tbs/recon/en/dossiers.json").unwrap_or(Value::Null);
     let records = dossiers.get("records").and_then(Value::as_object);
     let mut spans = Vec::new();
     let mut sources = 0;
@@ -330,10 +330,10 @@ fn candidate_main(tree: &SourceTree, executable: &[Span]) -> (Vec<Span>, usize) 
     (intersect(&normalize(&spans), executable), sources)
 }
 fn candidate_overlay(tree: &SourceTree, executable: &SpanMap) -> (SpanMap, usize) {
-    let directory = "games/gs1/recon/en/overlays";
-    let dossiers = json(tree, "games/gs1/recon/en/dossiers.json").unwrap_or(Value::Null);
+    let directory = "games/tbs/recon/en/overlays";
+    let dossiers = json(tree, "games/tbs/recon/en/dossiers.json").unwrap_or(Value::Null);
     let records = dossiers.get("records").and_then(Value::as_object);
-    let reviewed = json(tree, "games/gs1/semantic/regions.json").unwrap_or(Value::Null);
+    let reviewed = json(tree, "games/tbs/semantic/regions.json").unwrap_or(Value::Null);
     let mut extents = BTreeMap::new();
     for region in array(&reviewed, "manual_regions") {
         let id = text(region, "overlay");
@@ -344,13 +344,13 @@ fn candidate_overlay(tree: &SourceTree, executable: &SpanMap) -> (SpanMap, usize
     }
     let mut spans = SpanMap::new();
     let mut sources = BTreeSet::new();
-    let units = json(tree, "games/gs1/recon/translation-units.json").unwrap_or(Value::Null);
+    let units = json(tree, "games/tbs/recon/translation-units.json").unwrap_or(Value::Null);
     let mut registered = BTreeSet::new();
     for unit in array(&units, "units") {
         let source = text(unit, "source");
         registered.insert(source.clone());
         let id = text(unit, "overlay");
-        if text(unit, "game") != "gs1"
+        if text(unit, "game") != "tbs"
             || !executable.contains_key(&id)
             || !source.starts_with(&format!("{directory}/"))
             || !(source.ends_with(".c") || source.ends_with(".C"))
@@ -492,10 +492,10 @@ fn main_assembly_classification(tree: &SourceTree) -> (Vec<Span>, Vec<Span>, Vec
     let mut proven = Vec::new();
     let mut draft = Vec::new();
     let mut credited = Vec::new();
-    let credited_kinds = json(tree, "games/gs1/asm/classification.json")
+    let credited_kinds = json(tree, "games/tbs/asm/classification.json")
         .map(|document| credited_kinds(&document))
         .unwrap_or_default();
-    if let Some(value) = json(tree, "out/gs1-en/full/asm/manifest.json") {
+    if let Some(value) = json(tree, "out/tbs-en/full/asm/manifest.json") {
         for region in array(&value, "regions") {
             let retention = text(region, "retention");
             let kind = text(region, "kind");
@@ -531,7 +531,7 @@ fn main_assembly_classification(tree: &SourceTree) -> (Vec<Span>, Vec<Span>, Vec
             }
         }
     }
-    if let Some(value) = json(tree, "games/gs1/semantic/main-regions.json") {
+    if let Some(value) = json(tree, "games/tbs/semantic/main-regions.json") {
         for region in array(&value, "non_c_ranges") {
             if matches!(
                 text(region, "kind").as_str(),
@@ -554,10 +554,10 @@ fn overlay_assembly_classification(
     executable: &SpanMap,
 ) -> Result<(SpanMap, SpanMap), String> {
     let source = tree
-        .read("games/gs1/semantic/overlay-assembly.json")
+        .read("games/tbs/semantic/overlay-assembly.json")
         .ok_or_else(|| "overlay assembly classification is missing".to_string())?;
     let document: Value = serde_json::from_str(&source)
-        .map_err(|error| format!("games/gs1/semantic/overlay-assembly.json: {error}"))?;
+        .map_err(|error| format!("games/tbs/semantic/overlay-assembly.json: {error}"))?;
     overlay_assembly_classification_document(&document, inventory, executable)
 }
 fn overlay_assembly_classification_document(
@@ -804,7 +804,7 @@ fn overlay_tiles(
                 Some(short.into()),
                 Some(span.start),
             );
-            tile.source = Some(format!("games/gs1/asm/overlays/{id}_overlay.s"));
+            tile.source = Some(format!("games/tbs/asm/overlays/{id}_overlay.s"));
             out.push(tile);
         }
     }
@@ -874,15 +874,15 @@ fn atlas_source(locations: &str, id: &str) -> Option<String> {
             .then(|| fields.get(6).copied())
             .flatten()
             .filter(|path| !path.is_empty())
-            .map(|path| format!("games/gs1/{path}/"))
+            .map(|path| format!("games/tbs/{path}/"))
     })
 }
 fn streams(tree: &SourceTree) -> Vec<Stream> {
-    let Some(manifest) = json(tree, "games/gs1/assets/manifest.json") else {
+    let Some(manifest) = json(tree, "games/tbs/assets/manifest.json") else {
         return Vec::new();
     };
     let mut out = Vec::new();
-    let locations = tree.read("games/gs1/locations.tsv").unwrap_or_default();
+    let locations = tree.read("games/tbs/locations.tsv").unwrap_or_default();
     for series in array(&manifest, "series") {
         if text(series, "kind") != "golden-sun-thumb-overlay-series" {
             continue;
@@ -912,11 +912,11 @@ fn streams(tree: &SourceTree) -> Vec<Stream> {
 }
 fn shared_map_assets(tree: &SourceTree, areas: &[Area]) -> Result<Value, String> {
     let read = |path| json(tree, path).ok_or_else(|| format!("missing Atlas input: {path}"));
-    let scenes = read("games/gs1/assets/data/battle_effect_tail.json")?;
-    let maps = read("games/gs1/assets/maps/map_load_table.json")?;
-    let directory = read("games/gs1/assets/data/resource_directory.json")?;
+    let scenes = read("games/tbs/assets/data/battle_effect_tail.json")?;
+    let maps = read("games/tbs/assets/maps/map_load_table.json")?;
+    let directory = read("games/tbs/assets/data/resource_directory.json")?;
     let locations = tree
-        .read("games/gs1/locations.tsv")
+        .read("games/tbs/locations.tsv")
         .ok_or("missing Atlas locations")?;
     let scenes = array(&scenes, "segments")
         .iter()
@@ -1184,7 +1184,7 @@ fn component_children(region: &Value, data: &[Span]) -> Vec<Tile> {
     }
 }
 fn asset_tiles(tree: &SourceTree, data: &[Span], rom: i64) -> Vec<Tile> {
-    let Some(manifest) = json(tree, "out/gs1-en/full/assets/manifest.json") else {
+    let Some(manifest) = json(tree, "out/tbs-en/full/assets/manifest.json") else {
         return vec![Tile {
             label: "Unclassified ROM data".into(),
             bytes: bytes(data),
@@ -1194,7 +1194,7 @@ fn asset_tiles(tree: &SourceTree, data: &[Span], rom: i64) -> Vec<Tile> {
     };
     let sequence_classes = sound_sequence_classes(
         &tree
-            .read("games/gs1/SOUND/SEQUENCE/SEQUENCES.tsv")
+            .read("games/tbs/SOUND/SEQUENCE/SEQUENCES.tsv")
             .unwrap_or_default(),
     );
     let mut groups: BTreeMap<String, Vec<Tile>> = BTreeMap::new();
@@ -1220,9 +1220,9 @@ fn asset_tiles(tree: &SourceTree, data: &[Span], rom: i64) -> Vec<Tile> {
             .filter_map(Value::as_str)
             .find(|source| kind == "golden-sun-pcm-wave" && source.ends_with(".wav"))
             .or_else(|| sources.first().and_then(Value::as_str))
-            .unwrap_or("games/gs1/assets/manifest.json");
+            .unwrap_or("games/tbs/assets/manifest.json");
         let owner = if kind == "golden-sun-sound-sequence" {
-            "games/gs1/SOUND/SEQUENCE/SEQUENCES.tsv"
+            "games/tbs/SOUND/SEQUENCE/SEQUENCES.tsv"
         } else {
             sources.first().and_then(Value::as_str).unwrap_or(source)
         };
@@ -1333,7 +1333,7 @@ fn entry(bytes: i64, total: i64) -> Value {
 }
 pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String> {
     let rom = rom_size(&options.target)?;
-    let game = options.target.split('-').next().unwrap_or("gs1");
+    let game = options.target.split('-').next().unwrap_or("tbs");
     let inventory = read_json(
         options.exact,
         &format!("games/{game}/metrics/{}-executable.json", options.target),
@@ -1538,7 +1538,7 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
         "rom_bytes": rom,
         "asset_verification": json(options.exact, &format!("out/{}/full/assets/manifest.json", options.target))
             .and_then(|manifest| manifest.get("verification").cloned()),
-        "shared_map_assets": if options.target == "gs1-en" {
+        "shared_map_assets": if options.target == "tbs-en" {
             shared_map_assets(options.exact, &rom_areas)?
         } else { json!({}) },
         "executable_bytes": executable,
@@ -1564,12 +1564,12 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
             "proven_source": options.exact.id(),
             "draft_source": options.recon.map_or("absent", |tree| tree.id()),
             "draft_sources": (candidate_main_sources + candidate_overlay_sources) as i64,
-            "main_draft_census": "games/gs1/recon/en/dossiers.json",
+            "main_draft_census": "games/tbs/recon/en/dossiers.json",
             "proven_assembly_standard": "handwritten-or-library-proven",
             "credited_assembly_bytes": bytes(&retained_main),
             "withdrawn_assembly_bytes": withdrawn_assembly,
-            "main_assembly_classification": "out/gs1-en/full/asm/manifest.json",
-            "overlay_assembly_classification": "games/gs1/semantic/overlay-assembly.json",
+            "main_assembly_classification": "out/tbs-en/full/asm/manifest.json",
+            "overlay_assembly_classification": "games/tbs/semantic/overlay-assembly.json",
             "draft_superseded_bytes": 0,
             "draft_outside_extent_bytes": 0,
             "draft_unresolved": []
@@ -1620,11 +1620,11 @@ mod tests {
             std::fs::write(path, source).unwrap();
         };
         write(
-            "games/gs1/locations.tsv",
+            "games/tbs/locations.tsv",
             "resource_3a0\tXian\t\t\t\t\tSRC/FIELD/XIAN\n".into(),
         );
         write(
-            "games/gs1/assets/data/battle_effect_tail.json",
+            "games/tbs/assets/data/battle_effect_tail.json",
             json!({"segments":[{
                 "address":"0x0809f1a8", "records":[{"resource_id":928,"effect_id":7},
                     {"resource_id":928,"effect_id":7}, {"resource_id":999,"effect_id":99}]
@@ -1632,18 +1632,18 @@ mod tests {
             .to_string(),
         );
         write(
-            "games/gs1/assets/maps/map_load_table.json",
+            "games/tbs/assets/maps/map_load_table.json",
             json!({"fields":["palette","tiles"],
             "records":[{"map_index":7,"palette":"0","tiles":"1"}]})
             .to_string(),
         );
         write(
-            "games/gs1/assets/data/resource_directory.json",
+            "games/tbs/assets/data/resource_directory.json",
             json!({"slots":["0x08001000","0x08002000"]}).to_string(),
         );
         let tiles = [
-            (0x08001000, "games/gs1/GRAPHICS/TILE/SHARED.PNG"),
-            (0x08002000, "games/gs1/SRC/FIELD/XIAN/MAP.PNG"),
+            (0x08001000, "games/tbs/GRAPHICS/TILE/SHARED.PNG"),
+            (0x08002000, "games/tbs/SRC/FIELD/XIAN/MAP.PNG"),
         ]
         .map(|(address, source)| Tile {
             address: Some(address),
@@ -1659,12 +1659,12 @@ mod tests {
         assert_eq!(
             shared_map_assets(&tree, &areas).unwrap(),
             json!({
-                "games/gs1/SRC/FIELD/XIAN/": ["games/gs1/GRAPHICS/TILE/SHARED.PNG"]
+                "games/tbs/SRC/FIELD/XIAN/": ["games/tbs/GRAPHICS/TILE/SHARED.PNG"]
             })
         );
         assert_eq!(areas[0].bytes, 64);
         write(
-            "games/gs1/assets/data/resource_directory.json",
+            "games/tbs/assets/data/resource_directory.json",
             json!({"slots":[]}).to_string(),
         );
         assert!(shared_map_assets(&tree, &areas).is_err());
@@ -1695,7 +1695,7 @@ mod tests {
         // The live register credits the libgcc call_via thunks, and the
         // pipeline counts exactly that region from the built manifest.
         let tree = crate::coverage::tree::work_tree();
-        let live = json(&tree, "games/gs1/asm/classification.json").unwrap();
+        let live = json(&tree, "games/tbs/asm/classification.json").unwrap();
         assert!(credited_kinds(&live).contains("runtime_thunk_bundle"));
         let (_, _, credited) = main_assembly_classification(&tree);
         // The thunk bundle at 0x080072e4 is credited, the credited spans do not
@@ -1738,7 +1738,7 @@ mod tests {
     #[test]
     fn overlay_drafts_follow_units_with_legacy_filename_fallback() {
         let root = tempfile::tempdir().unwrap();
-        let directory = "games/gs1/recon/en/overlays";
+        let directory = "games/tbs/recon/en/overlays";
         let write = |path: &str, source: &str| {
             let path = root.path().join(path);
             std::fs::create_dir_all(path.parent().unwrap()).unwrap();
@@ -1760,7 +1760,7 @@ mod tests {
             |entry, extent, state| json!({"address": entry, "extent": extent, "state": state});
         let unit = |name, owners| {
             json!({
-                "game": "gs1", "overlay": "resource_test",
+                "game": "tbs", "overlay": "resource_test",
                 "source": format!("{directory}/{name}.c"), "owners": owners
             })
         };
@@ -1772,14 +1772,14 @@ mod tests {
                 owner("0x02000140", 0x20, "exact-c")
             ]),
         );
-        write("games/gs1/recon/translation-units.json", &json!({"units": [
+        write("games/tbs/recon/translation-units.json", &json!({"units": [
             named.clone(), named,
             unit("resource_test_c_02000160", json!([owner("0x02000160", 0x10, "retained-assembly")])),
             unit("resource_test_c_02000180", json!([owner("0x02000180", 0x10, "exact-c")])),
             unit("missing", json!([owner("0x02000190", 0x10, "retained-assembly")])),
             unit("uncanonical", json!([owner("0x020001a0", 0x10, "retained-assembly")]))
         ]}).to_string());
-        write("games/gs1/recon/en/dossiers.json", &json!({"records": {
+        write("games/tbs/recon/en/dossiers.json", &json!({"records": {
             "resource_test:02000100": {"span_bytes": 0x20},
             "resource_test:02000160": {"span_bytes": 0x20},
             "resource_test:02000180": {"span_bytes": 0x10},
@@ -1827,7 +1827,7 @@ mod tests {
         let span = Span::new(0x081a7020, 0x081e120c);
         let children = sprite_children(
             &tree,
-            "games/gs1/GRAPHICS/CHARACTER/characters_chr_081a_index.json",
+            "games/tbs/GRAPHICS/CHARACTER/characters_chr_081a_index.json",
             span,
             &[span],
         );
@@ -1844,7 +1844,7 @@ mod tests {
         assert_eq!(tile_json(&parent)["children"].as_array().unwrap().len(), 22);
         assert!(sprite_children(
             &tree,
-            "games/gs1/GRAPHICS/CHARACTER/characters_chr_081a_index.json",
+            "games/tbs/GRAPHICS/CHARACTER/characters_chr_081a_index.json",
             Span::new(span.start, span.end - 1),
             &[span]
         )
@@ -1869,7 +1869,7 @@ mod tests {
             root: std::env::temp_dir()
                 .join(format!("alchemy-coverage-missing-{}", std::process::id())),
         };
-        assert!(exact_main(&missing, "gs1-en", &executable).is_err());
+        assert!(exact_main(&missing, "tbs-en", &executable).is_err());
     }
     #[test]
     fn physical_stream_validation_rejects_bad_ranges_and_overlap() {
@@ -1923,7 +1923,7 @@ mod tests {
         let locations = "resource_36f\tTitle\ttitle\t0\t0x99b\tevidence\tSRC/MENU/TITLE\n";
         assert_eq!(
             atlas_source(locations, "36f").as_deref(),
-            Some("games/gs1/SRC/MENU/TITLE/")
+            Some("games/tbs/SRC/MENU/TITLE/")
         );
     }
 

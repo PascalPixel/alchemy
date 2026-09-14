@@ -17,22 +17,22 @@ const CLIENT: &str = include_str!("client.js");
 const STYLES: &str = include_str!("style.css");
 const TREES: [(&str, &str); 1] = [("rom", "ROM contents")];
 const COVERAGE_DIRS: [&str; 16] = [
-    "games/gs1/locations.tsv",
-    "games/gs1/asm",
-    "games/gs1/assets",
-    "games/gs1/GRAPHICS",
-    "games/gs1/SOUND",
-    "games/gs1/TEXT",
-    "games/gs1/metrics",
-    "games/gs1/semantic",
-    "games/gs1/SRC",
-    "games/gs1/source-paths.json",
-    "games/gs1/recon",
-    "games/gs1/project.json",
-    "games/gs2",
-    "games/gs2/project.json",
+    "games/tbs/locations.tsv",
+    "games/tbs/asm",
+    "games/tbs/assets",
+    "games/tbs/GRAPHICS",
+    "games/tbs/SOUND",
+    "games/tbs/TEXT",
+    "games/tbs/metrics",
+    "games/tbs/semantic",
+    "games/tbs/SRC",
+    "games/tbs/source-paths.json",
+    "games/tbs/recon",
+    "games/tbs/project.json",
+    "games/tla",
+    "games/tla/project.json",
     "games/alchemy",
-    "out/gs1-en/reports",
+    "out/tbs-en/reports",
 ];
 fn page_version() -> String {
     svg_cache_version(&format!("{STYLES}\0{CLIENT}"))
@@ -65,7 +65,7 @@ fn document_number(document: &Value, path: &[&str]) -> Option<f64> {
 fn compute() -> Result<Live, String> {
     let tree = work_tree_at(root());
     let map = build_coverage_map(&BuildOptions {
-        target: "gs1-en".into(),
+        target: "tbs-en".into(),
         exact: &tree,
         recon: Some(&tree),
     })?;
@@ -75,7 +75,7 @@ fn compute() -> Result<Live, String> {
     Ok(live)
 }
 fn cached() -> Result<Live, String> {
-    let report = root().join("out/gs1-en/reports/coverage-map.json");
+    let report = root().join("out/tbs-en/reports/coverage-map.json");
     // Published charts survive removal of disposable build reports. They are
     // a fallback display, never proof of the current checkout's coverage.
     let document = std::fs::read(&report)
@@ -85,7 +85,7 @@ fn cached() -> Result<Live, String> {
     let trees = BOX_TREES
         .iter()
         .map(|name| {
-            let path = root().join(format!("games/gs1/assets/readme/gs1-en-{name}.svg"));
+            let path = root().join(format!("games/tbs/assets/readme/tbs-en-{name}.svg"));
             std::fs::read_to_string(&path)
                 .map(|svg| (*name, svg))
                 .map_err(|error| format!("{}: {error}", path.display()))
@@ -191,9 +191,9 @@ fn snapshot_from(state: &State) -> Value {
                 .collect::<Map<_, _>>(),
             "project": {
                 "title": "Golden Sun · The Lost Age",
-                "gs1": "ja · en · de · es · fr · it",
-                "gs2": "ja · en · de · es · fr · it",
-                "fullTarget": "gs1-en",
+                "tbs": "ja · en · de · es · fr · it",
+                "tla": "ja · en · de · es · fr · it",
+                "fullTarget": "tbs-en",
                 "integration": "Alchemy"
             }
     });
@@ -379,8 +379,8 @@ impl Watcher {
             .map(|p| (p.clone(), fingerprint(&p)))
             .collect::<Vec<_>>();
         for p in [
-            "out/gs1-en/full/asm/manifest.json",
-            "out/gs1-en/full/assets/manifest.json",
+            "out/tbs-en/full/asm/manifest.json",
+            "out/tbs-en/full/assets/manifest.json",
             "out/decomp/diagnose/.revision",
         ]
         .iter()
@@ -475,7 +475,7 @@ mod tests {
         assert_eq!(live.summary["provenCBytes"], 400);
         assert_eq!(live.summary["draftCBytes"], 200);
         assert!(live.summary.get("correspondenceAvailable").is_none());
-        assert!(live.summary.get("gs1JaSources").is_none());
+        assert!(live.summary.get("tbsJaSources").is_none());
     }
 
     #[test]
@@ -525,7 +525,7 @@ mod tests {
         for path in [
             "/music/catalog",
             "/music/soundfont",
-            "/music/gs2/soundfont",
+            "/music/tla/soundfont",
             "/music/bgm_000.mid",
         ] {
             assert_eq!(response(path).status, 404);

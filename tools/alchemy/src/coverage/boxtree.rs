@@ -40,7 +40,7 @@ fn is_sound(tile: &Tile) -> bool {
     ) || tile
         .source
         .as_deref()
-        .is_some_and(|source| source.starts_with("games/gs1/SOUND/"))
+        .is_some_and(|source| source.starts_with("games/tbs/SOUND/"))
 }
 fn sound_type(tile: &Tile) -> usize {
     match (tile.group.as_deref(), tile.subgroup.as_deref()) {
@@ -491,7 +491,7 @@ pub fn svg_sized(tree: &str, map: &CoverageMap, width: f64, height: f64, folder:
         height: height - 44.0 - rows as f64 * 24.0 - if shared.is_empty() { 0.0 } else { 24.0 },
     };
     let mut out = vec![format!("<title>{}</title>", esc(&title))];
-    if let Ok(bytes) = std::fs::read(root().join("games/gs1/assets/fonts/weyard.otf")) {
+    if let Ok(bytes) = std::fs::read(root().join("games/tbs/assets/fonts/weyard.otf")) {
         out.push(format!("<defs><style>@font-face{{font-family:Weyard;src:url(data:font/otf;base64,{}) format('opentype');font-style:italic;}}.weyard{{font-family:Weyard;font-size:16px;font-style:italic;fill:#fff;text-shadow:1px 1px 0 #000;}}</style></defs>", base64(&bytes)));
     } else {
         out.push("<style>.weyard{font-family:monospace;font-size:16px;fill:#fff;text-shadow:1px 1px 0 #000;}</style>".into());
@@ -587,7 +587,7 @@ fn content_version_uses_standard_sha1_prefix() {
 }
 pub fn box_tree_path(target: &str, tree: &str) -> std::path::PathBuf {
     root()
-        .join("games/gs1/assets/readme")
+        .join("games/tbs/assets/readme")
         .join(format!("{target}-{tree}.svg"))
 }
 
@@ -626,7 +626,7 @@ mod tests {
     #[test]
     fn folder_view_uses_only_its_files_without_scaling_the_font() {
         let map = CoverageMap {
-            document: serde_json::json!({"target":"gs1-en", "shared_map_assets": {
+            document: serde_json::json!({"target":"tbs-en", "shared_map_assets": {
                 "FIELD/XIAN/": ["GRAPHICS/TILE/SHARED.PNG"]
             }}),
             executable_areas: vec![],
@@ -651,18 +651,18 @@ mod tests {
         assert!(!rendered.contains("HEIDIA"));
         assert!(rendered.contains("font-size:16px"));
         assert!(rendered.contains("viewBox=\"0 0 540 960\""));
-        assert!(rendered.contains("GS1 EN · XIAN"));
+        assert!(rendered.contains("TBS EN · XIAN"));
         assert!(rendered.contains("Shared files (1)"));
         assert!(rendered.contains("GRAPHICS/TILE/SHARED.PNG"));
         assert!(rendered.contains("data-usage-revision="));
         assert!(!super::svg_at("rom", &map, 540.0, "FIELD/HEIDIA/").contains("Shared files"));
-        assert!(super::svg_at("rom", &map, 320.0, "").contains("<title>GS1 EN</title>"));
+        assert!(super::svg_at("rom", &map, 320.0, "").contains("<title>TBS EN</title>"));
     }
 
     #[test]
     fn all_directories_wrap_files_without_duplicating_bytes() {
         let tile = Tile {
-            source: Some("games/gs1/SRC/battle/effects/fire.c".into()),
+            source: Some("games/tbs/SRC/battle/effects/fire.c".into()),
             address: Some(0x080bbb0c),
             bytes: 100,
             categories: [100, 0, 0, 0, 0, 0],
@@ -674,10 +674,10 @@ mod tests {
         let mut node = &grouped[0];
         for path in [
             "games/",
-            "games/gs1/",
-            "games/gs1/SRC/",
-            "games/gs1/SRC/battle/",
-            "games/gs1/SRC/battle/effects/",
+            "games/tbs/",
+            "games/tbs/SRC/",
+            "games/tbs/SRC/battle/",
+            "games/tbs/SRC/battle/effects/",
         ] {
             assert_eq!(node.source.as_deref(), Some(path));
             assert_eq!(node.children.len(), 1);

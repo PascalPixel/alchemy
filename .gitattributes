@@ -1,3 +1,3 @@
 # Coverage figures are wholly generated. Keep one side during a merge, then run
 # `make coverage`. Configure once with `git config merge.generated.driver true`.
-games/gs1/assets/readme/*.svg merge=generated
+games/tbs/assets/readme/*.svg merge=generated

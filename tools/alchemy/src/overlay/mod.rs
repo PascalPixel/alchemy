@@ -44,11 +44,11 @@ struct AuditOverlay {
     intervals: Vec<AuditInterval>,
 }
 pub(crate) fn overlay_assembly(root: &Path, overlay: &str) -> PathBuf {
-    root.join(format!("games/gs1/asm/overlays/{overlay}_overlay.s"))
+    root.join(format!("games/tbs/asm/overlays/{overlay}_overlay.s"))
 }
 pub(crate) fn retained_source(root: &Path, owner: SourceOwner) -> PathBuf {
     root.join(format!(
-        "games/gs1/recon/en/overlays/{}.c",
+        "games/tbs/recon/en/overlays/{}.c",
         owner.legacy_stem()
     ))
 }
@@ -223,8 +223,8 @@ pub fn placeholder_lines(stem: &str, span: i64, aliases: &[InternalAlias]) -> Ve
 }
 fn audit_intervals(root: &Path, overlay: &str) -> Result<Option<Vec<AuditInterval>>, String> {
     let path = root
-        .join("games/gs1/metrics")
-        .join("gs1-en-executable.json");
+        .join("games/tbs/metrics")
+        .join("tbs-en-executable.json");
     if !path.exists() {
         return Ok(None);
     }
@@ -321,7 +321,7 @@ impl OverlayLock {
         }
         Err(format!(
             "{} is still locked after 60s. If no other adoption is running, a \
-             previous one was killed mid-splice: check `git status games/gs1/asm/overlays/` \
+             previous one was killed mid-splice: check `git status games/tbs/asm/overlays/` \
              before deleting the lock file.",
             path.display()
         ))

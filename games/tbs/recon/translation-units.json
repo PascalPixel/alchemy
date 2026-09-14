@@ -6692,29 +6692,113 @@
     {
       "id": "retained-overlay-383-02001f50",
       "game": "tbs",
-      "source": "games/tbs/recon/en/overlays/resource_383_c_02001f50.c",
+      "source": "games/tbs/SRC/FIELD/VAULT/SELECT_ACTOR_PAIR.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_383",
       "absolute_symbols": {
-        "Func_02006e30": {
-          "address": "0x0200ce44",
+        "Func_0200cd44": {
+          "address": "0x0200cd44",
           "kind": "thumb"
         },
-        "Func_02006e30_a": {
-          "address": "0x0200cd3c",
+        "Func_0200cc7c": {
+          "address": "0x0200cc7c",
           "kind": "thumb"
         },
-        "Func_02006e48": {
+        "Func_0200cd24": {
+          "address": "0x0200cd24",
+          "kind": "thumb"
+        },
+        "Func_0200cdd4": {
+          "address": "0x0200cdd4",
+          "kind": "thumb"
+        },
+        "Func_0200ce04": {
           "address": "0x0200ce04",
           "kind": "thumb"
         },
-        "Func_02006e48_a": {
+        "Func_0200ce0c": {
+          "address": "0x0200ce0c",
+          "kind": "thumb"
+        },
+        "Func_0200cd3c": {
+          "address": "0x0200cd3c",
+          "kind": "thumb"
+        },
+        "Func_0200ce14": {
+          "address": "0x0200ce14",
+          "kind": "thumb"
+        },
+        "Func_0200ce44": {
+          "address": "0x0200ce44",
+          "kind": "thumb"
+        },
+        "Func_0200cdfc": {
           "address": "0x0200cdfc",
           "kind": "thumb"
         },
-        "Func_02006e48_b": {
+        "Func_0200c5f4": {
+          "address": "0x0200c5f4",
+          "kind": "thumb"
+        },
+        "Func_0200c658": {
+          "address": "0x0200c658",
+          "kind": "thumb"
+        },
+        "Func_0200cefc": {
+          "address": "0x0200cefc",
+          "kind": "thumb"
+        },
+        "Func_0200ce3c": {
+          "address": "0x0200ce3c",
+          "kind": "thumb"
+        },
+        "Func_0200c684": {
+          "address": "0x0200c684",
+          "kind": "thumb"
+        },
+        "Func_0200cdf4": {
+          "address": "0x0200cdf4",
+          "kind": "thumb"
+        },
+        "Func_0200cddc": {
+          "address": "0x0200cddc",
+          "kind": "thumb"
+        },
+        "Func_0200cd7c": {
+          "address": "0x0200cd7c",
+          "kind": "thumb"
+        },
+        "Func_0200cea4": {
+          "address": "0x0200cea4",
+          "kind": "thumb"
+        },
+        "Func_0200ceac": {
+          "address": "0x0200ceac",
+          "kind": "thumb"
+        },
+        "Func_0200a1c8": {
+          "address": "0x0200a1c8",
+          "kind": "thumb"
+        },
+        "Func_0200cce4": {
           "address": "0x0200cce4",
           "kind": "thumb"
+        },
+        "Func_0200cd1c": {
+          "address": "0x0200cd1c",
+          "kind": "thumb"
+        },
+        "Func_0200cc74": {
+          "address": "0x0200cc74",
+          "kind": "thumb"
+        },
+        "Func_0200cd4c": {
+          "address": "0x0200cd4c",
+          "kind": "thumb"
+        },
+        "Data_03001ebc": {
+          "address": "0x03001ebc",
+          "kind": "data"
         }
       },
       "local_symbols": [],
@@ -6722,7 +6806,7 @@
         {
           "address": "0x02001f50",
           "extent": 632,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },

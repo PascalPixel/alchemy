@@ -1033,8 +1033,7 @@ impl<'a> Lifter<'a> {
                 .map(|(k, _)| i + 1 + k)
                 .max();
             if let Some(back) = back {
-                let whole = self.ins.len();
-                self.loop_enter(i, back + 1, back + 1, whole);
+                self.loop_enter(i, back + 1);
             }
             self.emit(format!("{}:;", label_name(addr)));
             self.emitted_labels.insert(addr);
@@ -1187,7 +1186,7 @@ impl<'a> Lifter<'a> {
         // update, `adds r3, #2` walking a pointer, belongs to the body.
         let outer_vars = std::mem::take(&mut self.loop_vars);
         let whole = self.ins.len();
-        let pre = self.loop_enter_except(i, from, from + 1, whole, Some(counter));
+        let pre = self.loop_enter_except(i, from, Some(counter));
         self.emit(head);
         let saved = self.indent.clone();
         self.indent.push_str("    ");
@@ -1871,6 +1870,7 @@ impl<'a> Lifter<'a> {
                     let text = self.fmt(&v);
                     self.emit(format!("{name} = {text};"));
                     push_unique(&mut self.slots, &name);
+                    self.regs[rd as usize] = Some(Val::expr(name));
                 } else {
                     self.stack_args.insert(imm / 4, v);
                 }
@@ -2365,7 +2365,7 @@ impl<'a> Lifter<'a> {
                 }
                 let outer_vars = std::mem::take(&mut self.loop_vars);
                 let whole = self.ins.len();
-                let pre = self.loop_enter(l, from, from + 1, whole);
+                let pre = self.loop_enter(l, from);
                 // A rotated test may contain calls, stores and early exits.
                 // Its entire prefix must execute on every iteration.
                 self.emit("for (;;) {");
@@ -2805,18 +2805,11 @@ impl<'a> Lifter<'a> {
         false
     }
 
-    /// Before a loop body: a register the body writes and either reads first
-    /// or leaves live past the loop is a variable, `vN`, holding the value
-    /// that enters the loop. A parameter register keeps its own name. The
-    /// state that enters the loop is returned for `loop_exit`.
-    fn loop_enter(
-        &mut self,
-        start: usize,
-        stop: usize,
-        after: usize,
-        end: usize,
-    ) -> Vec<Option<Val>> {
-        self.loop_enter_except(start, stop, after, end, None)
+    /// Name registers the loop reads before overwriting them, preserving
+    /// parameter names. Return the entry state for `loop_exit`; values only
+    /// live after the loop are materialized on exit, not at entry.
+    fn loop_enter(&mut self, start: usize, stop: usize) -> Vec<Option<Val>> {
+        self.loop_enter_except(start, stop, None)
     }
 
     /// `loop_enter` with one register left alone: the counter a counted
@@ -2825,8 +2818,6 @@ impl<'a> Lifter<'a> {
         &mut self,
         start: usize,
         stop: usize,
-        after: usize,
-        end: usize,
         skip: Option<u8>,
     ) -> Vec<Option<Val>> {
         for r in self.loop_writes(start, stop) {
@@ -2843,7 +2834,6 @@ impl<'a> Lifter<'a> {
             // Only a value the body reads before it writes is carried
             // around the loop; a register the body merely leaves live is
             // assigned where the body defines it, on the way out.
-            let _ = (after, end);
             if !self.read_before_write(start, stop, r) {
                 continue;
             }
@@ -2951,7 +2941,7 @@ impl<'a> Lifter<'a> {
         let outer_vars = std::mem::take(&mut self.loop_vars);
         // Liveness past the loop follows the code wherever it continues.
         let whole = self.ins.len();
-        let pre = self.loop_enter(i, from, from + 1, whole);
+        let pre = self.loop_enter(i, from);
         self.emit("do {");
         let saved = self.indent.clone();
         self.indent.push_str("    ");
@@ -3008,10 +2998,7 @@ impl<'a> Lifter<'a> {
         false
     }
 
-    /// Whether register `r` is read at or after instruction `at` before it
-    /// is written, scanning the straight line until the region ends. A call
-    /// may read an argument register; a jump leaves the answer unknown, so
-    /// both count as live.
+    /// Whether any reachable path reads register `r` before overwriting it.
     fn live_after(&self, at: usize, _end: usize, r: u8) -> bool {
         // The code after a region is whatever the machine executes next:
         // the walk follows every branch, both ways for a conditional one,
@@ -3078,7 +3065,9 @@ fn writes(kind: &Kind) -> Vec<u8> {
         | Kind::ShiftImm { rd, .. }
         | Kind::Alu { rd, .. } => vec![rd],
         Kind::Bl { .. } => vec![0, 1, 2, 3, 12, 14],
-        Kind::Ldmia { list, .. } => (0..8u8).filter(|b| list & (1 << b) != 0).collect(),
+        Kind::Ldmia { list, .. } | Kind::Pop { list, .. } => {
+            (0..8u8).filter(|b| list & (1 << b) != 0).collect()
+        }
         _ => vec![],
     }
 }
@@ -3557,6 +3546,7 @@ mod tests {
         .collect();
         let mut tables = BTreeMap::new();
         let mut lifter = Lifter::new(&ins, &mut tables, &|_, _| None, &[]);
+        assert!(!lifter.live_after(1, ins.len(), 3));
         lifter.regs[8] = Some(Val::expr("v8"));
         lifter.loop_vars.insert(8, "v8".into());
         lifter.run(0, ins.len());
@@ -3568,6 +3558,16 @@ mod tests {
     fn high_register_call_argument_is_not_a_return_snapshot() {
         let text = lifted(&[0x2007, 0x4680, 0x4640, 0xf000, 0xfff9, 0x4770]);
         assert!(!text.contains("return_value"), "{text}");
+    }
+
+    #[test]
+    fn stack_write_consumes_increment_before_comparison() {
+        let text = lifted(&[
+            0xb500, 0xb081, 0x9000, 0x9b00, 0x3301, 0x9300, 0x2b04, 0xd801, 0x2001, 0xe000, 0x2000,
+            0xb001, 0xbd00,
+        ]);
+        assert!(text.contains("slot0 = (slot0 + 1);"), "{text}");
+        assert!(text.contains("(u32)slot0 <= 4"), "{text}");
     }
 
     /// `L: bl X; cmp r0, #0; bne cont; bl Y; b exit; cont: bl Z; adds r5, #1;

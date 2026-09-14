@@ -4,6 +4,35 @@
   "original_translation_units": "unknown",
   "units": [
     {
+      "id": "lunpa-scene-position-pairs",
+      "game": "tbs",
+      "source": "games/tbs/SRC/FIELD/LUNPA/SET_POSITION_PAIRS.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3bf",
+      "absolute_symbols": {
+        "Data_0200f73c": {
+          "address": "0x0200f73c",
+          "kind": "data"
+        },
+        "Func_0200d5d0": {
+          "address": "0x0200d5d0",
+          "kind": "thumb"
+        },
+        "Func_0200d5d8": {
+          "address": "0x0200d5d8",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x02000d54",
+          "extent": 120,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
       "id": "staged-actor-setup-37b",
       "game": "tbs",
       "source": "games/tbs/SRC/FIELD/SOL_SHINDEN/SETUP_STAGED_ACTORS.C",

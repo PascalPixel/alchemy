@@ -1,6 +1,7 @@
 //! Owner lookup against the repository: the retained module register,
 //! the source register, the canonical ROM, and the overlay scorer.
 
+use crate::compiler::build_io::read as read_file;
 use crate::compiler::source_paths::{SourceOwner, SourcePaths};
 use serde::Deserialize;
 use std::path::{Path, PathBuf};
@@ -107,10 +108,6 @@ pub fn span_for(
     u32::try_from(span).map_err(|_| format!("{}: owner extent exceeds address space", owner.id()))
 }
 
-pub fn overlay_image(root: &Path, overlay: &str) -> Result<Vec<u8>, String> {
-    crate::overlay::rom::canonical_overlay(root, overlay)
-}
-
 #[derive(Debug, Clone)]
 pub struct Score {
     pub candidate: u32,
@@ -203,13 +200,6 @@ pub fn score_in(
     })
 }
 
-/// The canonical main image, read once per call: the ROM as loaded at
-/// `decode::MAIN_BASE`.
-pub fn main_image(root: &Path) -> Result<Vec<u8>, String> {
-    let path = root.join("roms/tbs-en.gba");
-    std::fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))
-}
-
 /// Read one complete owner window, independent of its address space.
 pub fn image_window(
     root: &Path,
@@ -221,7 +211,7 @@ pub fn image_window(
     let (image, base, extent) = if let Some(overlay) = owner.overlay_id() {
         let extent = span_for(root, &overlay, entry, span)?;
         (
-            overlay_image(root, &overlay)?,
+            crate::overlay::rom::canonical_overlay(root, &overlay)?,
             psynergy::decode::OVERLAY_BASE,
             extent,
         )
@@ -230,7 +220,11 @@ pub fn image_window(
             Some(span) => span,
             None => main_extent(root, entry)?,
         };
-        (main_image(root)?, psynergy::decode::MAIN_BASE, extent)
+        (
+            read_file(root.join("roms/tbs-en.gba"))?,
+            psynergy::decode::MAIN_BASE,
+            extent,
+        )
     };
     let end = entry
         .checked_sub(base)

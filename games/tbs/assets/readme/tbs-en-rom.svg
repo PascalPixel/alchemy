@@ -11518,9 +11518,9 @@
 </g>
 <g aria-label="37b: 5,396 bytes · Unknown, Drafted, C · 0x0878c76c" data-node="leaf" data-kind="folder" data-bytes="5396" data-address="0x0878c76c" data-source="games/tbs/SRC/FIELD/SOL_SHINDEN/">
 <title>37b: 5,396 bytes · Unknown, Drafted, C · 0x0878c76c</title>
-<rect x="223.71876120699574" y="593.9260437516954" width="9.928794271833084" height="3.4478674034719257" style="fill:#d9d9d4"/>
-<rect x="223.71876120699574" y="592.2845434702087" width="9.928794271833084" height="1.641500281486634" style="fill:#96c8c9"/>
-<rect x="223.71876120699574" y="584.4808463532723" width="9.928794271833084" height="7.803697116936459" style="fill:#326b7d"/>
+<rect x="223.71876120699574" y="593.9284331261954" width="9.928794271833084" height="3.4454780289719453" style="fill:#d9d9d4"/>
+<rect x="223.71876120699574" y="593.9260437516954" width="9.928794271833084" height="0.0023893744999805445" style="fill:#96c8c9"/>
+<rect x="223.71876120699574" y="584.4808463532722" width="9.928794271833084" height="9.445197398423092" style="fill:#326b7d"/>
 </g>
 <g aria-label="37c: 192 bytes · Unknown, C · 0x0878dc80" data-node="leaf" data-kind="folder" data-bytes="192" data-address="0x0878dc80" data-source="games/tbs/SRC/FIELD/SOL_SHINDEN/">
 <title>37c: 192 bytes · Unknown, C · 0x0878dc80</title>
@@ -25805,7 +25805,7 @@
 <rect x="248" y="840" width="16" height="16" style="fill:#6cafb2"/>
 <text class="weyard legend-label" x="268" y="848" dominant-baseline="middle">Assembly 0.6%</text>
 <rect x="376" y="840" width="16" height="16" style="fill:#326b7d"/>
-<text class="weyard legend-label" x="396" y="848" dominant-baseline="middle">C 5.6%</text>
+<text class="weyard legend-label" x="396" y="848" dominant-baseline="middle">C 5.7%</text>
 <rect x="8" y="864" width="16" height="16" style="fill:#eadb83"/>
 <text class="weyard legend-label" x="28" y="872" dominant-baseline="middle">Fonts 0.3%</text>
 <rect x="112" y="864" width="16" height="16" style="fill:#8fb7ec"/>

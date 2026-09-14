@@ -4830,9 +4830,9 @@
 </g>
 <g aria-label="3a4: 10,716 bytes · Unknown, Drafted, C · 0x087b9cb4" data-node="leaf" data-kind="folder" data-bytes="10716" data-address="0x087b9cb4" data-source="games/tbs/SRC/FIELD/ALTIN/">
 <title>3a4: 10,716 bytes · Unknown, Drafted, C · 0x087b9cb4</title>
-<rect x="16.5" y="444.19071783117704" width="11.026460860617952" height="4.247293331992512" style="fill:#d9d9d4"/>
-<rect x="16.5" y="442.4357779176206" width="11.026460860617952" height="1.7549399135564154" style="fill:#96c8c9"/>
-<rect x="16.5" y="434.47666289763833" width="11.026460860617952" height="7.959115019982288" style="fill:#326b7d"/>
+<rect x="16.5" y="444.392659692054" width="11.026460860617952" height="4.045351471115568" style="fill:#d9d9d4"/>
+<rect x="16.5" y="442.6129656149062" width="11.026460860617952" height="1.779694077147783" style="fill:#96c8c9"/>
+<rect x="16.5" y="434.47666289763833" width="11.026460860617952" height="8.136302717267865" style="fill:#326b7d"/>
 </g>
 </g>
 <g aria-label="MAP_253.json: 3,872 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 6 items" data-node="container" data-kind="file" data-bytes="3872" data-source="games/tbs/SRC/FIELD/ALTIN/MAP_253.json">
@@ -10169,9 +10169,9 @@
 </g>
 <g aria-label="39d: 7,288 bytes · Unknown, Drafted, C · 0x087b0400" data-node="leaf" data-kind="folder" data-bytes="7288" data-address="0x087b0400" data-source="games/tbs/SRC/FIELD/MERCURY/">
 <title>39d: 7,288 bytes · Unknown, Drafted, C · 0x087b0400</title>
-<rect x="36.32859708415298" y="760.8152451473337" width="7.6637179585915405" height="4.444217843957151" style="fill:#d9d9d4"/>
-<rect x="36.32859708415298" y="760.7150439492605" width="7.6637179585915405" height="0.10020119807330448" style="fill:#96c8c9"/>
-<rect x="36.32859708415298" y="743.781041474872" width="7.6637179585915405" height="16.934002474388457" style="fill:#326b7d"/>
+<rect x="36.32859708415298" y="761.1305842118586" width="7.6637179585915405" height="4.12887877943234" style="fill:#d9d9d4"/>
+<rect x="36.32859708415298" y="761.0303830137854" width="7.6637179585915405" height="0.10020119807330448" style="fill:#96c8c9"/>
+<rect x="36.32859708415298" y="743.781041474872" width="7.6637179585915405" height="17.249341538913267" style="fill:#326b7d"/>
 </g>
 </g>
 <g aria-label="MAP_226.json: 2,812 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 6 items" data-node="container" data-kind="file" data-bytes="2812" data-source="games/tbs/SRC/FIELD/MERCURY/MAP_226.json">

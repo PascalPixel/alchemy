@@ -4,6 +4,33 @@
   "original_translation_units": "unknown",
   "units": [
     {
+      "id": "retained-multi-phase-presentation-3a4",
+      "game": "tbs",
+      "source": "games/tbs/recon/en/overlays/resource_3a4_c_02001838.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3a4",
+      "absolute_symbols": {
+        "Func_02005486_a": {"address": "0x0200bb68", "kind": "thumb"},
+        "Func_02005486_b": {"address": "0x0200bb38", "kind": "thumb"},
+        "Func_02005516_a": {"address": "0x0200bc80", "kind": "thumb"},
+        "Func_02005516_b": {"address": "0x0200bbf0", "kind": "thumb"},
+        "Func_02005546_a": {"address": "0x0200bb68", "kind": "thumb"},
+        "Func_02005546_b": {"address": "0x0200bb38", "kind": "thumb"},
+        "Func_0200567c_a": {"address": "0x0200bc50", "kind": "thumb"},
+        "Func_0200567c_b": {"address": "0x0200bb68", "kind": "thumb"},
+        "Func_0200567e_a": {"address": "0x0200bbf0", "kind": "thumb"},
+        "Func_0200567e_b": {"address": "0x0200bb28", "kind": "thumb"},
+        "Func_02005770_a": {"address": "0x0200bc50", "kind": "thumb"},
+        "Func_02005770_b": {"address": "0x0200bb38", "kind": "thumb"},
+        "Func_0200578a_a": {"address": "0x0200bbf0", "kind": "thumb"},
+        "Func_0200578a_b": {"address": "0x0200bb98", "kind": "thumb"},
+        "Func_020058a6_a": {"address": "0x0200bd20", "kind": "thumb"},
+        "Func_020058a6_b": {"address": "0x0200bc50", "kind": "thumb"}
+      },
+      "local_symbols": [],
+      "owners": [{"address": "0x02001838", "extent": 1236, "state": "retained-assembly"}]
+    },
+    {
       "id": "retained-actor-group-departure-sequence-372",
       "game": "tbs",
       "source": "games/tbs/recon/en/overlays/actor_group_departure_sequence.c",

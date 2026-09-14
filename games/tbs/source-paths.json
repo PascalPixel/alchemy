@@ -18422,6 +18422,14 @@
     "resource_382:02001674": {
       "name": "SceneActor_CheckFacingAndRange",
       "source": "FIELD/VAULT/FACING_RANGE.C"
+    },
+    "resource_3a4:02001770": {
+      "name": "SceneMotion_UpdateTimedActor",
+      "source": "FIELD/ALTIN/TIMED_ACTOR.C"
+    },
+    "resource_39d:02000928": {
+      "name": "SceneActor_InitializeMotion",
+      "source": "FIELD/MERCURY/INITIALIZE_MOTION.C"
     }
   }
 }

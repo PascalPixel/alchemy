@@ -1,30 +1,11 @@
 /*
- * Runtime call bindings measured on 2026-09-10 (alchemy inspect, site order),
- * for a translation unit that cannot yet be declared: the reviewed complete
- * extent in semantic/regions.json (1236) and the evidence row in
- * semantic/overlay-assembly.json (1208) disagree, and the unit
- * register must satisfy both. Declare these as absolute_symbols once the
- * two registers agree on this owner.
- *   Func_02005486_a      0x0200bb68
- *   Func_02005486_b      0x0200bb38
- *   Func_02005516_a      0x0200bc80
- *   Func_02005516_b      0x0200bbf0
- *   Func_02005546_a      0x0200bb68
- *   Func_02005546_b      0x0200bb38
- *   Func_0200567c_a      0x0200bc50
- *   Func_0200567c_b      0x0200bb68
- *   Func_0200567e_a      0x0200bbf0
- *   Func_0200567e_b      0x0200bb28
- *   Func_02005770_a      0x0200bc50
- *   Func_02005770_b      0x0200bb38
- *   Func_0200578a_a      0x0200bbf0
- *   Func_0200578a_b      0x0200bb98
- *   Func_020058a6_a      0x0200bd20
- *   Func_020058a6_b      0x0200bc50
+ * Runtime call bindings live in retained-multi-phase-presentation-3a4.
+ * Legacy labels can denote different veneers; the suffixes distinguish
+ * those calls. Complete extent is 1236 bytes, including the closing pool.
  */
 #include "TYPES.H"
 
-/* AUDITED GENERATED CALL SCRIPT for Scene_BuildMultiPhasePresentation:
+/* Draft scene reconstruction for Scene_BuildMultiPhasePresentation:
  * 107 calls, repeated actor-state phases, and terminal coordinate forwarding
  * across the complete decoded owner. */
 

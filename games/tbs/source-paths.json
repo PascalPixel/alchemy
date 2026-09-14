@@ -9519,7 +9519,8 @@
       "name": "RunParticleFieldEffect"
     },
     "main:080dbc30": {
-      "name": "BattleEffectI"
+      "name": "BattleEffect_RunBurstShower",
+      "source": "BATTLE/EFFECT/BURST_SHOWER.C"
     },
     "main:080dd9c0": {
       "name": "FunctionHead_080dd9c0"
@@ -18384,6 +18385,18 @@
     "resource_3bc:02000da4": {
       "name": "Scene_SetupLogRollingStage",
       "source": "FIELD/COLOSSO/LOG_ROLLING_SETUP.C"
+    },
+    "main:080d0468": {
+      "name": "Graphics_ConvertBackgroundToBlueRamp",
+      "source": "GRAPHICS/PALETTE/CONVERT_BACKGROUND_BLUE.C"
+    },
+    "main:080d40ec": {
+      "name": "Graphics_UpdatePhasePalette",
+      "source": "GRAPHICS/PALETTE/UPDATE_PHASE.C"
+    },
+    "main:080dd77c": {
+      "name": "BattleEffect_RunRisingColumns",
+      "source": "BATTLE/EFFECT/RISING_COLUMNS.C"
     }
   }
 }

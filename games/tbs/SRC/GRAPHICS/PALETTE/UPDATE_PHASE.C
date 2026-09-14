@@ -2,6 +2,12 @@
 
 typedef void *(*WordCopy)(void *destination, const void *source, s32 size);
 
+static __inline__ void CopyPalette(WordCopy copy, void *destination,
+                                   const void *source, s32 size)
+{
+    copy(destination, source, size);
+}
+
 s32 Func_08002322(s32 angle);
 
 void Graphics_UpdatePhasePalette(s32 frame, s32 red_phase, s32 green_phase, s32 blue_phase)
@@ -50,5 +56,5 @@ void Graphics_UpdatePhasePalette(s32 frame, s32 red_phase, s32 green_phase, s32 
     } while (index != 64);
 
     copy = (WordCopy)0x03001388;
-    copy((void *)0x05000002, palette, sizeof(palette));
+    CopyPalette(copy, (void *)0x05000002, palette, sizeof(palette));
 }

@@ -34,6 +34,9 @@
  * which an ordinary integer literal cannot produce (the same reasoning
  * 080ce85c's Value_000000af comment already records for this callee).
  *
+ * Both coordinate output arrays hold three words: the projection helper
+ * reads and writes the third component even when this owner uses only two.
+ *
  * The `screen2` output of Func_080e3944 is written (including its own
  * y_offset adjustment) but never read again in this owner; the call is
  * kept only for observable side effects, following the same
@@ -130,7 +133,7 @@ void Func_080dc454(void)
             window = (u32)frame;
             if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x14)
                     != 0) {
-                s32 screen[2];
+                s32 screen[3];
 
                 member = 0;
                 member_id_offset = 0x24;
@@ -149,7 +152,7 @@ void Func_080dc454(void)
                     screen[0] += y_offset;
                     if (window <= 63) {
                         s32 record[3];
-                        s32 screen2[2];
+                        s32 screen2[3];
                         s32 spin;
                         s32 idx_base;
                         u8 *src;

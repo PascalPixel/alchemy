@@ -20,7 +20,7 @@ void Func_080041d8(void *,s32);
 void Func_080df90c(s32,s16,s32);
 void **Func_080b5098(s16);
 s32 Func_08004458(void);
-void Func_080e3980(s16,s32 *);
+void Func_080e3980(s32,s32 *);
 void Func_080d6888(s16,s32,s32,s32,s32);
 void Func_080b5088(s16,s32);
 void Func_080b50e8(s32);
@@ -52,7 +52,7 @@ void Func_080dfa48(void *object, s32 variant)
 
     FIELD(work, void *, 0x7828) = object;
     Func_080cd594(0);
-    if (FIELD(object, s32, 4) == 0) {
+    if (FIELD(FIELD(work, void *, 0x7828), s32, 4) == 0) {
         Func_080ed408(46,7,7,3,2);
         Func_080ed408(47,7,7,11,2);
     } else {
@@ -75,8 +75,8 @@ void Func_080dfa48(void *object, s32 variant)
     FIELD(work,s32,0x7780)=2;
     FIELD(work,s32,0x7784)=75;
     Func_080041d8((void *)0x080cd261,0x480);
-    Func_080df90c(FIELD(object,s32,8),FIELD(object,s16,36),10);
-    actor_sprite=*Func_080b5098(FIELD(object,s16,36));
+    Func_080df90c(FIELD(FIELD(work, void *, 0x7828),s32,8),FIELD(FIELD(work, void *, 0x7828),s16,36),10);
+    actor_sprite=*Func_080b5098(FIELD(FIELD(work, void *, 0x7828),s16,36));
 
     particle=(Particle *)((u8 *)work+0x7080);
     i=0;
@@ -85,36 +85,36 @@ void Func_080dfa48(void *object, s32 variant)
         particle->y=FIELD(actor_sprite,s32,12)+0xa0000;
         particle->z=FIELD(actor_sprite,s32,16);
         particle->vx=(Func_08004458()&0x1ff)<<11;
-        particle->vy=(Func_08004458()-64)<<11;
-        particle->vz=(Func_08004458()-128)<<11;
+        particle->vy=((Func_08004458()&255)-64)<<11;
+        particle->vz=((Func_08004458()&255)-128)<<11;
         if(particle->x>0) particle->vx=-particle->vx;
-        particle->life=((i+((u32)i>>31))>>1)+16;
+        particle->life=(i/2)+16;
         i++; particle++;
     } while(i!=64);
 
-    Func_080e3980(FIELD(object,s16,36),origin);
+    Func_080e3980(FIELD(FIELD(work, void *, 0x7828),s16,36),origin);
     frame=0;
     do {
         if(frame<=14) {
-            Func_080e3980((s16)FIELD(object,s32,8),screen);
+            Func_080e3980(FIELD(FIELD(work, void *, 0x7828),s32,8),screen);
             rectangle[0](canvas,work,
-                ((screen[0]+((u32)screen[0]>>31))>>1)-16,
+                (screen[0]/2)-16,
                 screen[1]-48,40,32);
             rectangle[1](canvas,work,
-                ((screen[0]+((u32)screen[0]>>31))>>1)-16,
+                (screen[0]/2)-16,
                 screen[1]-16,40,32);
         }
         if(frame==10) {
-            Func_080d6888(FIELD(object,s16,36),7,5,0,8);
-            Func_080b5088(FIELD(object,s16,36),4);
+            Func_080d6888(FIELD(FIELD(work, void *, 0x7828),s16,36),7,5,0,8);
+            Func_080b5088(FIELD(FIELD(work, void *, 0x7828),s16,36),4);
             Func_080b50e8(134);
             FIELD(work,s32,0x77a8)=8;
         }
         offset=frame-8;
         if((u32)offset<=11) {
-            size=(offset+((u32)offset>>31))>>1;
+            size=offset/2;
             rectangle[0](canvas,(u8 *)0x02010000+size*0x3c0,
-                ((origin[0]+((u32)origin[0]>>31))>>1)-16,
+                (origin[0]/2)-16,
                 screen[1]-40,20,48);
         }
         if((u32)offset<=55) {
@@ -128,7 +128,7 @@ void Func_080dfa48(void *object, s32 variant)
                     size=(particle->life>>4)+2;
                     screen[0]>>=1;
                     rectangle[0](canvas,(u8 *)source+Data_080ede48[size-1],
-                        screen[0]-((size+((u32)size>>31))>>1),
+                        screen[0]-(size/2),
                         screen[1]-size,size,size*2);
                     Func_080e38b8(particle,60,-0x200);
                     particle->life--;

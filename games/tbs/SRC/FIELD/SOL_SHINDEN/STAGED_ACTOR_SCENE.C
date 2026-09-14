@@ -1,46 +1,8 @@
 #include "TYPES.H"
 
-/* Overlay resource_37b, scene script at 02000614 (1656 bytes).
- *
- * The routine writes 0x100 and 32 into the shared scene work record at
- * Data_03001ebc offsets 0x1c0 and 0x1c8, issues one long straight-line run of
- * 167 scene calls, then writes 0x204 and 16 into the same two fields before its
- * final call and returns. The call arguments select four subjects - 8, 5, 1 and
- * 0 - and carry fixed-point coordinate pairs and small mode/step numbers. There
- * are no loops and no switch tables; the only control flow is one test of a
- * value-returning call at 02000a4e that selects constant 0x1010 or 0x1011, and
- * two null guards at 02000be6 and 02000c16 that forward a probed record's s16
- * fields at +10 and +18 into a following call.
- *
- * The work-record pointer at Data_03001ebc is read twice, once at the head and
- * once at the tail, because the frame saves only lr: nothing can hold the
- * pointer across the intervening calls.
- *
- * Uncertain: the roles of the individual calls. Their runtime entry points are
- * unnamed apart from one - the eighteen sites whose loader binding is 0200a3a4
- * reach Scene_RunSplitPairSteps (resource 020023a4) - so the wording above
- * describes argument shapes, not proven behaviour. Every site nonetheless keeps
- * its legacy Func_<pre-relocation-word> spelling, including those eighteen:
- * alchemy binds an overlay call from that spelling, and refuses a project name
- * ("no stable overlay call binding") until the owner's translation unit
- * declares its runtime symbol. The meaning of work-record offsets 0x1c0 and
- * 0x1c8 is inherited from the sibling overlay scene scripts in the corpus and
- * is not independently established here.
- *
- * Measurement status: this owner has no entry in source-paths.json and no
- * translation unit, so `alchemy score` refuses this file outright with
- * "ambiguous overlay call identity" - thirteen legacy names below reach two or
- * three different runtime targets from different sites and cannot be bound
- * without the absolute_symbols table listed further down. Measured on an
- * alias-substituted diagnostic copy (twenty-five ambiguous sites respelled to a
- * different legacy name with the same runtime target, which emits identical
- * bytes; the two sites with no same-target alias deliberately pointed
- * elsewhere), the owner scores candidate=1656 reference=1656
- * differing_halfwords=2, and the complete aligned diff holds exactly those two
- * deliberate call-target differences. This file is therefore expected to be
- * BYTE-EXACT once the unit exists: route it to adoption verification rather
- * than retaining it as a draft.
- */
+/* Staged scene for actors 8, 5, 1 and 0. The shared work pointer is fetched
+ * again at the tail after the intervening calls. Runtime veneer bindings
+ * belong to this module's translation-unit declaration. */
 
 #define FieldScene_RunStagedActorScene Func_02000614
 
@@ -214,30 +176,6 @@ void Func_020030ba();
 void Func_020030c8();
 void Func_020030da();
 
-/* Thirteen of the legacy call names below reach two or three different loader
- * bindings from different sites in this one owner, so each extra site needs its
- * own declaration and its runtime address declared in the owner's translation
- * unit. Required absolute_symbols entries:
- *
- *   Func_02002b08    0x0200a44c      Func_02002b08_a  0x0200a3a4
- *   Func_02002b76    0x0200a544      Func_02002b76_a  0x0200a44c
- *   Func_02002b7a    0x0200a514      Func_02002b7a_a  0x0200a4c4
- *   Func_02002c02    0x0200a51c      Func_02002c02_a  0x0200a44c
- *   Func_02002c18    0x0200a4f4      Func_02002c18_a  0x0200a4ac
- *   Func_02002cbc    0x0200a4d4      Func_02002cbc_a  0x0200a44c
- *   Func_02002cce    0x0200a4cc      Func_02002cce_a  0x0200a4bc
- *                                    Func_02002cce_b  0x0200a3a4
- *   Func_02002d68    0x0200a514      Func_02002d68_a  0x0200a3a4
- *   Func_02002dd4    0x0200a4f4      Func_02002dd4_a  0x0200a44c
- *   Func_02002e18    0x0200a4c4      Func_02002e18_a  0x0200a4b4
- *   Func_02002eb2    0x0200a504      Func_02002eb2_a  0x0200a4d4
- *   Func_02003080    0x0200a46c      Func_02003080_a  0x0200a444
- *   Func_0200308a    0x0200a514      Func_0200308a_a  0x0200a4ac
- *
- * Every entry is thumb. Without them alchemy score refuses the owner with
- * "ambiguous overlay call identity"; with them the body below links byte for
- * byte against the reference.
- */
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant

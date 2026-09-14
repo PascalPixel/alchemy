@@ -24,12 +24,11 @@ pub struct Report {
 
 impl Report {
     fn new(text: impl Into<String>, repair: Option<RepairPlan>) -> Self {
-        let dimensions = repair
-            .as_ref()
-            .map_or_else(Vec::new, RepairPlan::dimensions);
         Self {
             text: text.into(),
-            dimensions,
+            dimensions: repair
+                .as_ref()
+                .map_or_else(Vec::new, RepairPlan::dimensions),
             repair,
         }
     }
@@ -38,9 +37,8 @@ impl Report {
         Self::new(format!("allocator_order=undecoded reason={reason}\n"), None)
     }
 
-    fn edit(mut text: String, value: &str, repair: Option<RepairPlan>) -> Self {
-        text += &format!("edit={value}\n");
-        Self::new(text, repair)
+    fn edit(text: String, value: &str, repair: Option<RepairPlan>) -> Self {
+        Self::new(format!("{text}edit={value}\n"), repair)
     }
 }
 
@@ -139,15 +137,12 @@ fn analyze(
     pairs: &[(Option<String>, Option<String>)],
     stem: &str,
 ) -> Report {
-    let (vars, hard) = (variables(dwarf), dispositions(dumps[2], stem));
+    let (vars, hard) = (variables(dwarf, stem), dispositions(dumps[2], stem));
     let (mut roles, mut stacks) = (Vec::new(), Vec::new());
-    let (mut index, mut candidate, mut reference) = (0usize, String::new(), String::new());
+    let (mut candidate, mut reference) = (String::new(), String::new());
+    let mut owner_uids = uids.iter();
     for (left, right) in pairs {
-        let uid = left.as_ref().and_then(|_| {
-            let value = uids.get(index).copied();
-            index += 1;
-            value
-        });
+        let uid = left.as_ref().and_then(|_| owner_uids.next().copied());
         if left == right {
             continue;
         }
@@ -370,17 +365,21 @@ fn paired_phase_plan(source: &str, vars: &[Var], roles: &[(u32, u8, u8)]) -> Opt
     ))
 }
 
-fn variables(text: &str) -> Vec<Var> {
-    text.split("Abbrev Number:")
+fn variables(text: &str, stem: &str) -> Vec<Var> {
+    text.split("\n <1>")
+        .find_map(|entry| {
+            let head = entry.split("Abbrev Number:").nth(1)?;
+            (head.contains("DW_TAG_subprogram")
+                && attribute(head, "DW_AT_name") == Some(format!("Func_{stem}").as_str()))
+            .then_some(entry)
+        })
+        .unwrap_or("")
+        .split("Abbrev Number:")
         .filter(|entry| {
             entry.contains("DW_TAG_variable") || entry.contains("DW_TAG_formal_parameter")
         })
         .filter_map(|entry| {
-            let name = attribute(entry, "DW_AT_name")?
-                .rsplit_once(':')?
-                .1
-                .trim()
-                .into();
+            let name = attribute(entry, "DW_AT_name")?.into();
             let location = attribute(entry, "DW_AT_location").unwrap_or("");
             Some((
                 name,
@@ -392,7 +391,8 @@ fn variables(text: &str) -> Vec<Var> {
 }
 
 fn attribute<'a>(entry: &'a str, key: &str) -> Option<&'a str> {
-    entry.lines().find(|line| line.contains(key))
+    let line = entry.lines().find(|line| line.contains(key))?;
+    Some(line.split_once(':')?.1.trim())
 }
 
 fn asm_uids(text: &str, stem: &str) -> Vec<u32> {

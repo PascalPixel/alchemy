@@ -105,6 +105,15 @@ the affected object or unit, read the complete residual, and retain a supported
 improvement. Use `--work out/<experiment>` for native diagnostics. Do not run
 full asset, coverage or twelve-edition checks after every source spelling.
 
+For a persistent local mismatch, walk back the complete draft to a smaller
+experimental C scaffold and leave the unresolved owner on temporary assembly.
+Freeze an explicitly bounded, byte-compared local invariant, then restore one
+coherent source section at a time. Reject expansions that lose the invariant;
+the first failing expansion identifies the context to reconstruct next. These
+partial witnesses stay under ignored `out/`, earn no whole-owner C credit and
+do not shorten reviewed extents. Retire assembly only after the complete owner
+and its integration pass, not merely because the isolated section matches.
+
 Extraction reports the bounded image's base, entry and span. Keep these local
 reference bytes under ignored `out/`; never commit them. Psynergy works outside
 this repository and knows no default ROM, owner register, scene layout or

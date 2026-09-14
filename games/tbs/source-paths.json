@@ -9826,7 +9826,8 @@
       "source": "FIELD/VAULT/PROMPT.C"
     },
     "resource_383:02001f50": {
-      "name": "Scene_SelectAndConfigureActorPair"
+      "name": "FieldScene_SelectActorPair",
+      "source": "FIELD/VAULT/SELECT_ACTOR_PAIR.C"
     },
     "resource_383:020021c8": {
       "name": "Scene_RunConditionalActorSequence"

@@ -1,8 +1,13 @@
 use crate::compiler::{canonical_json::canonical_json, routing::root};
 use serde_json::Value;
+use std::path::Path;
 
-pub const NATIVE_ROOTS: [&str; 7] = [
+pub const NATIVE_ROOTS: [&str; 11] = [
     "games/COMMON",
+    "games/THE LOST AGE/SRC",
+    "games/THE LOST AGE/INCLUDE",
+    "games/THE LOST AGE/SOUND",
+    "games/THE LOST AGE/PROJECT.JSON",
     "games/THE BROKEN SEAL/SRC",
     "games/THE BROKEN SEAL/INCLUDE",
     "games/THE BROKEN SEAL/SOUND",
@@ -10,6 +15,73 @@ pub const NATIVE_ROOTS: [&str; 7] = [
     "games/THE BROKEN SEAL/PREVIEW",
     "games/THE BROKEN SEAL/SOURCE.JSON",
 ];
+
+fn exact_file(path: &Path) -> bool {
+    let mut current = std::path::PathBuf::new();
+    for part in path.components() {
+        match part {
+            std::path::Component::ParentDir => {
+                current.pop();
+            }
+            std::path::Component::CurDir => {}
+            _ => current.push(part.as_os_str()),
+        }
+    }
+    while let Some(name) = current.file_name() {
+        let Some(parent) = current.parent() else {
+            return false;
+        };
+        if !std::fs::read_dir(parent)
+            .is_ok_and(|entries| entries.flatten().any(|entry| entry.file_name() == name))
+        {
+            return false;
+        }
+        current = parent.to_path_buf();
+    }
+    path.is_file()
+}
+
+fn check_table_sources(path: &Path) -> Result<(), String> {
+    let text = std::fs::read_to_string(path).map_err(|e| e.to_string())?;
+    let mut rows = text.lines().filter(|line| !line.starts_with('#'));
+    let Some(column) = rows
+        .next()
+        .and_then(|header| header.split('\t').position(|field| field == "source"))
+    else {
+        return Ok(());
+    };
+    for row in rows {
+        let Some(source) = row
+            .split('\t')
+            .nth(column)
+            .filter(|source| !source.is_empty())
+        else {
+            continue;
+        };
+        let suffix = Path::new(source)
+            .extension()
+            .and_then(|e| e.to_str())
+            .unwrap_or("");
+        if !["mid", "wav", "pcm4", "png"]
+            .iter()
+            .any(|e| suffix.eq_ignore_ascii_case(e))
+        {
+            continue;
+        }
+        let resolved = if source.starts_with("games/") {
+            root().join(source)
+        } else {
+            path.parent().unwrap().join(source)
+        };
+        if !exact_file(&resolved) {
+            return Err(format!(
+                "{}: source filename must exist with exact spelling: {source}",
+                path.display()
+            ));
+        }
+    }
+    Ok(())
+}
 
 pub fn run(arguments: &[String]) -> Result<(), String> {
     let check = arguments == ["--check"];
@@ -25,6 +97,12 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
                 continue;
             }
             let path = entry.path();
+            if !exact_file(path) {
+                return Err(format!(
+                    "native path must exist with exact spelling: {}",
+                    path.display()
+                ));
+            }
             if path
                 .file_name()
                 .and_then(|p| p.to_str())
@@ -43,6 +121,9 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
                 .all(|part| part == part.to_ascii_uppercase())
             {
                 return Err(format!("native filenames must be uppercase: {name}"));
+            }
+            if path.extension().and_then(|e| e.to_str()) == Some("TSV") {
+                check_table_sources(path)?;
             }
             if path.extension().and_then(|e| e.to_str()) != Some("JSON") {
                 continue;
@@ -74,4 +155,19 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
     }
     println!("native format ok: json_files={count} width=120 uppercase=true");
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn media_references_require_exact_filename_case() {
+        let dir = tempfile::tempdir().unwrap();
+        std::fs::write(dir.path().join("TRACK.MID"), b"test").unwrap();
+        assert!(super::exact_file(&dir.path().join("TRACK.MID")));
+        assert!(!super::exact_file(&dir.path().join("track.mid")));
+        std::fs::create_dir(dir.path().join("SOUND")).unwrap();
+        std::fs::write(dir.path().join("SOUND/TRACK.MID"), b"test").unwrap();
+        assert!(super::exact_file(&dir.path().join("SOUND/TRACK.MID")));
+        assert!(!super::exact_file(&dir.path().join("sound/TRACK.MID")));
+    }
 }

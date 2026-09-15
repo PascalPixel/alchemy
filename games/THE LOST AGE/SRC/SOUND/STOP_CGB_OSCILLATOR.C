@@ -1,8 +1,8 @@
 // Approved reference provenance: adapted from pret/pokeemerald
 // src/m4a.c:CgbOscOff at commit 83df84e40623b79281f2397faa611cbf044170bd.
 // Register addresses and control flow were checked against this ROM region.
-#include "audio_engine_symbols.h"
-#include "types.h"
+#include "AUDIO_ENGINE_SYMBOLS.H"
+#include "TYPES.H"
 
 void Cgb_StopOscillator(u8 channel_id)
 {

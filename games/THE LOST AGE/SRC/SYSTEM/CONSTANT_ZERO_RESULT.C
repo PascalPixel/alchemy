@@ -1,4 +1,4 @@
-#include "runtime.h"
+#include "RUNTIME.H"
 
 int Runtime_ConstantZeroResult(void)
 {

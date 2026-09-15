@@ -854,7 +854,7 @@ void FieldScene_RunActorPositionTransition(void)
         assert_eq!(
             source_symbol_bindings(
                 &root,
-                "games/THE LOST AGE/src/08001234.c",
+                "games/THE LOST AGE/SRC/08001234.c",
                 CompilerTarget::Tla
             )
             .unwrap(),

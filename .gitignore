@@ -2,7 +2,11 @@
 games/*/assets/**/preview*.png
 .cache/
 .cmatch*/
-toolchain/
+# Installed dependencies survive output cleanup; never commit local executables.
+/toolchain/
+/tools/compilers/
+/tools/.compiler.lock
+/tools/.install-*/
 toolchains/
 scratch/
 work/

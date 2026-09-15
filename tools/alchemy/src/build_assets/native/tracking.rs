@@ -63,7 +63,7 @@ pub(in crate::build_assets) fn check(root: &Path) -> Result<(), String> {
     };
     let mut private = BTreeSet::new();
     let mut bytes: BTreeMap<String, Vec<u8>> = BTreeMap::new();
-    let ctx = Context::new(root);
+    let mut ctx = Context::new(root);
     if let Some(index) = &index {
         validate(index)?;
         for input in index["private_inputs"]
@@ -83,14 +83,23 @@ pub(in crate::build_assets) fn check(root: &Path) -> Result<(), String> {
             let allowed = match kind {
                 "grid" | "metatiles" => name.ends_with(".bin"),
                 "tiles" => name.ends_with("/CHR.png") || name.ends_with("_CHR.png"),
-                "palette" => name == COLORS,
+                "sprite" | "sprite-atlas" => {
+                    (name.starts_with("games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_")
+                        || name.starts_with("games/tbs/SRC/GRAPHICS/CHARACTER/BATTLE_"))
+                        && name.ends_with(".PNG")
+                }
+                "palette" | "palette-raw" => name == COLORS,
                 _ => false,
             };
             if !allowed {
                 return Err(format!("unrecognized native private input {name}"));
             }
             private.insert(name.to_string());
-            if kind == "palette" {
+            if matches!(kind, "sprite" | "sprite-atlas") {
+                character::check(&mut ctx, input)?;
+                continue;
+            }
+            if matches!(kind, "palette" | "palette-raw") {
                 let palette = ctx.document(&root.join(name))?;
                 let mut data = vec![];
                 for bank in input["banks"].as_array().ok_or("missing palette indices")? {

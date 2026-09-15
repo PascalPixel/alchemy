@@ -28,7 +28,7 @@ use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
-const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--manifest MANIFEST] [-o OUTPUT] [rom] | --migrate-sources OUTPUT | --install-sources OUTPUT | --extract-sources ROM | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
+const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--manifest MANIFEST] [-o OUTPUT] [rom] | --audit-characters OUTPUT | --migrate-characters OUTPUT | --migrate-sources OUTPUT | --install-sources OUTPUT | --extract-sources ROM | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
 const ROM_BASE: usize = 0x0800_0000;
 const ROM_SIZE: usize = 0x0080_0000;
 fn repository_root() -> PathBuf {
@@ -454,6 +454,31 @@ fn check_shared_palette(
         return Ok(None);
     };
     let name = json_string(&shared["source"], "shared palette source")?;
+    if shared.get("banks").is_some() {
+        let data = palette_banks(root, shared)?;
+        let colors = data
+            .chunks_exact(2)
+            .map(|b| {
+                let color = u16::from_le_bytes([b[0], b[1]]);
+                [
+                    ((color & 31) << 3) as u8,
+                    (((color >> 5) & 31) << 3) as u8,
+                    (((color >> 10) & 31) << 3) as u8,
+                ]
+            })
+            .collect::<Vec<_>>();
+        let expected = if entry["pixel_format"] == "indices" {
+            (0..colors.len()).map(|i| [i as u8; 3]).collect::<Vec<_>>()
+        } else {
+            colors
+        };
+        if image.palette != expected || image.pixels.iter().any(|p| *p as usize >= expected.len()) {
+            return Err(format!(
+                "indexed image differs from declared palette {name}"
+            ));
+        }
+        return Ok(Some(name.into()));
+    }
     let palette = indexed_png(&fs::read(root_path(root, name)?).map_err(|e| e.to_string())?)
         .map_err(|e| e.to_string())?;
     let offset = number(&shared["offset"], "shared palette offset")?;
@@ -475,6 +500,91 @@ fn check_shared_palette(
         return Err(format!("palette differs from the shared palette {name}"));
     }
     Ok(Some(name.to_string()))
+}
+fn palette_banks(root: &Path, entry: &Value) -> Result<Vec<u8>, String> {
+    let source = root_path(root, json_string(&entry["source"], "palette source")?)?;
+    let document = json(&source)?;
+    let mut bytes = vec![];
+    for slot in entry["banks"]
+        .as_array()
+        .ok_or("missing palette bank sequence")?
+    {
+        let values = document["banks"]
+            .get(number(slot, "palette bank")?)
+            .and_then(Value::as_array)
+            .ok_or("missing palette bank")?;
+        if values.len() != 16 {
+            return Err("palette bank needs sixteen colors".into());
+        }
+        for color in values {
+            bytes.extend(
+                u16::try_from(number(color, "palette color")?)
+                    .map_err(|_| "palette exceeds u16")?
+                    .to_le_bytes(),
+            );
+        }
+    }
+    Ok(bytes)
+}
+fn indexed_rect(
+    image: &psynergy::assets::image::IndexedImage,
+    entry: &Value,
+) -> Result<(usize, usize, Vec<u8>), String> {
+    let (width, height) = (image.width as usize, image.height as usize);
+    let Some(rect) = entry.get("source_rect") else {
+        return Ok((
+            width,
+            height,
+            image.pixels.iter().map(|p| *p as u8).collect(),
+        ));
+    };
+    let x = number(&rect["x"], "sheet x")?;
+    let y = number(&rect["y"], "sheet y")?;
+    let w = number(&rect["width"], "sheet width")?;
+    let h = number(&rect["height"], "sheet height")?;
+    if w == 0
+        || h == 0
+        || x.checked_add(w).is_none_or(|end| end > width)
+        || y.checked_add(h).is_none_or(|end| end > height)
+    {
+        return Err("indexed section lies outside sheet".into());
+    }
+    let mut pixels = Vec::with_capacity(w.checked_mul(h).ok_or("indexed section overflows")?);
+    for row in y..y + h {
+        pixels.extend(
+            image.pixels[row * width + x..row * width + x + w]
+                .iter()
+                .map(|p| *p as u8),
+        );
+    }
+    Ok((w, h, pixels))
+}
+
+#[test]
+fn indexed_sections_preserve_rows_and_reject_outside_bounds() {
+    use serde_json::json;
+    let image = psynergy::assets::image::IndexedImage {
+        width: 4,
+        height: 3,
+        pixels: (0..12).collect(),
+        palette: vec![],
+        has_transparency: false,
+    };
+    assert_eq!(
+        indexed_rect(
+            &image,
+            &json!({"source_rect":{"x":1,"y":1,"width":2,"height":2}})
+        )
+        .unwrap(),
+        (2, 2, vec![5, 6, 9, 10])
+    );
+    for rect in [
+        json!({"x":3,"y":0,"width":2,"height":1}),
+        json!({"x":0,"y":2,"width":1,"height":2}),
+        json!({"x":0,"y":0,"width":0,"height":1}),
+    ] {
+        assert!(indexed_rect(&image, &json!({"source_rect":rect})).is_err());
+    }
 }
 fn binary_source(source: &Path, entry: &Value) -> Result<Vec<u8>, String> {
     let data = fs::read(source).map_err(|error| error.to_string())?;
@@ -501,10 +611,23 @@ fn binary_source(source: &Path, entry: &Value) -> Result<Vec<u8>, String> {
         .to_vec())
 }
 fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String> {
+    build_component_cached(&Context::new(root), entry)
+}
+fn build_component_cached(ctx: &Context, entry: &Value) -> Result<ComponentResult, String> {
+    let root = &ctx.root;
     let kind = json_string(&entry["kind"], "component kind")?;
     let source_name = json_string(&entry["source"], "component source")?;
     let source = root_path(root, source_name)?;
     let (data, details, sources) = match kind {
+        "bgr555-banks" => {
+            let data = palette_banks(root, entry)?;
+            let colors = data.len() / 2;
+            (
+                data,
+                serde_json::json!({"palette_entries":colors}),
+                vec![source_name.into()],
+            )
+        }
         "golden-sun-map-grid" => {
             let width = number(&entry["width"], "grid width")?;
             let height = number(&entry["height"], "grid height")?;
@@ -706,12 +829,10 @@ fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String
             )
         }
         "indexed-bytes" | "raw-lz-bytes" | "zero-skip-bytes" | "zero-skip-bank" | "mtf4-bytes" => {
-            let encoded = fs::read(&source).map_err(|e| e.to_string())?;
-            let image = indexed_png(&encoded).map_err(|e| e.to_string())?;
+            let image = ctx.indexed(&source)?;
             let mut sources = vec![source_name.to_string()];
             sources.extend(check_shared_palette(root, entry, &image)?);
-            let (width, height) = (image.width as usize, image.height as usize);
-            let pixels: Vec<u8> = image.pixels.iter().map(|pixel| *pixel as u8).collect();
+            let (width, height, pixels) = indexed_rect(&image, entry)?;
             let built = if kind == "zero-skip-bank" {
                 let frames = component_frames(entry, width, height, &pixels, 1)?;
                 let base = u32::try_from(number(&entry["address"], "bank address")?)
@@ -724,7 +845,7 @@ fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String
                 built
             } else if kind == "indexed-bytes" && entry.get("frame_width").is_none() {
                 psynergy::assets::image::indexed_bytes(
-                    &encoded,
+                    &fs::read(&source).map_err(|e| e.to_string())?,
                     number(&entry["size"], "component size")?,
                 )
                 .map_err(|error| error.to_string())?
@@ -2218,7 +2339,7 @@ fn build_general_lz_cached(
             if sequence {
                 component["frame"] = Value::from(index);
             }
-            let result = build_component(root, &component)?;
+            let result = build_component_cached(ctx, &component)?;
             if index == 0 {
                 sources.push(json_string(&component["source"], "component source")?.to_string());
                 sources.extend(result.sources.iter().skip(1).cloned());
@@ -2273,16 +2394,34 @@ fn closure_self_test() -> Result<String, String> {
 struct Context {
     root: PathBuf,
     documents: std::cell::RefCell<HashMap<PathBuf, std::rc::Rc<Value>>>,
+    images:
+        std::cell::RefCell<HashMap<PathBuf, std::rc::Rc<psynergy::assets::image::IndexedImage>>>,
 }
 impl Context {
     fn new(root: &Path) -> Self {
         Self {
             root: root.to_path_buf(),
             documents: Default::default(),
+            images: Default::default(),
         }
     }
     fn source(&self, name: &str) -> Result<PathBuf, String> {
         root_path(&self.root, name)
+    }
+    fn indexed(
+        &self,
+        path: &Path,
+    ) -> Result<std::rc::Rc<psynergy::assets::image::IndexedImage>, String> {
+        if let Some(image) = self.images.borrow().get(path) {
+            return Ok(image.clone());
+        }
+        let image = std::rc::Rc::new(
+            indexed_png(&fs::read(path).map_err(|e| e.to_string())?).map_err(|e| e.to_string())?,
+        );
+        self.images
+            .borrow_mut()
+            .insert(path.to_path_buf(), image.clone());
+        Ok(image)
     }
     fn document(&self, path: &Path) -> Result<std::rc::Rc<Value>, String> {
         if let Some(value) = self.documents.borrow().get(path) {
@@ -2887,6 +3026,7 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
             ))
         }
         "gba-4bpp-tiles"
+        | "bgr555-banks"
         | "gba-8bpp-tiles"
         | "1bpp-tiles"
         | "gba-palette"
@@ -2902,7 +3042,7 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
         | "zero-skip-bank"
         | "mtf4-bytes"
         | "golden-sun-thumb-overlay" => {
-            let result = build_component(&ctx.root, entry)?;
+            let result = build_component_cached(ctx, entry)?;
             Ok((result.data, result.sources, result.details))
         }
         "components" => {
@@ -2914,7 +3054,7 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
                     .map(|pointer| json_string(pointer, "components pointer"))
                     .transpose()?
                     .unwrap_or("/components");
-                let document = json(&source_path(entry_source)?)?;
+                let document = ctx.document(&source_path(entry_source)?)?;
                 let parts = document
                     .pointer(pointer)
                     .ok_or("components pointer is absent")?
@@ -2970,7 +3110,7 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
             let mut sources = Vec::new();
             let mut reports = Vec::new();
             for component in components {
-                let result = build_component(&ctx.root, component)?;
+                let result = build_component_cached(ctx, component)?;
                 decoded.extend(result.data);
                 sources.extend(result.sources);
                 reports.push(serde_json::json!({"kind":component.get("kind"),"source":component.get("source"),"details":result.details}));
@@ -3033,7 +3173,7 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
             ))
         }
         "record-table" | "pointer-table" => {
-            let document = json(&source_path(entry_source)?)?;
+            let document = ctx.document(&source_path(entry_source)?)?;
             let document = match entry.get("pointer") {
                 Some(pointer) => document
                     .pointer(json_string(pointer, "table pointer")?)
@@ -5005,6 +5145,20 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
     Ok(())
 }
 fn run(arguments: Vec<String>) -> Result<ExitCode, String> {
+    if arguments.first().map(String::as_str) == Some("--audit-characters") {
+        if arguments.len() != 2 {
+            return Err(USAGE.into());
+        }
+        native::audit_characters(&repository_root(), Path::new(&arguments[1]))?;
+        return Ok(ExitCode::SUCCESS);
+    }
+    if arguments.first().map(String::as_str) == Some("--migrate-characters") {
+        if arguments.len() != 2 {
+            return Err(USAGE.into());
+        }
+        native::migrate_characters(&repository_root(), Path::new(&arguments[1]))?;
+        return Ok(ExitCode::SUCCESS);
+    }
     if arguments.first().map(String::as_str) == Some("--migrate-sources") {
         if arguments.len() != 2 {
             return Err(USAGE.into());

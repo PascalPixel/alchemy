@@ -387,7 +387,7 @@ pub fn compiler_bundle_signature_uncached() -> String {
         &signature_paths(),
         &[
             root().join("games/THE BROKEN SEAL/INCLUDE"),
-            root().join("games/tla/include"),
+            root().join("games/THE LOST AGE/include"),
         ],
     )
 }

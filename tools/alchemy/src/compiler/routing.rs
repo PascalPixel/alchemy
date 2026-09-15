@@ -86,6 +86,7 @@ impl CompilerTarget {
 pub fn game_directory(game: &str) -> &str {
     match game {
         "tbs" => "THE BROKEN SEAL",
+        "tla" => "THE LOST AGE",
         "alchemy" => "COMMON",
         _ => game,
     }
@@ -235,7 +236,9 @@ mod target_tests {
         assert!(tbs
             .iter()
             .any(|flag| flag.ends_with("/games/THE BROKEN SEAL/INCLUDE")));
-        assert!(tla.iter().any(|flag| flag.ends_with("/games/tla/include")));
+        assert!(tla
+            .iter()
+            .any(|flag| flag.ends_with("/games/THE LOST AGE/include")));
         assert!(!tla
             .iter()
             .any(|flag| flag.ends_with("/games/THE BROKEN SEAL/INCLUDE")));

@@ -205,7 +205,7 @@ mod tests {
     fn parses_cross_game_reference_options() {
         let root = Path::new("/repo");
         let args = [
-            "games/tla/recon/ja/main/08120450.c",
+            "games/THE LOST AGE/recon/ja/main/08120450.c",
             "--target",
             "tla",
             "--size",

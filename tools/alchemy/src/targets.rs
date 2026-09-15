@@ -72,9 +72,9 @@ const PRODUCTS: [(CompilerTarget, u64, &str, &str, &str); 2] = [
     (
         CompilerTarget::Tla,
         0x0100_0000,
-        "games/tla/src",
-        "games/tla/asm",
-        "games/tla/assets/manifest.json",
+        "games/THE LOST AGE/src",
+        "games/THE LOST AGE/asm",
+        "games/THE LOST AGE/assets/manifest.json",
     ),
 ];
 pub const DEFAULT_TARGET: DecompTargetId = DecompTargetId::TbsEn;
@@ -132,7 +132,7 @@ fn self_test() -> Result<String, String> {
         let target = target_for(id);
         let root = match target.compiler {
             CompilerTarget::Tbs => "games/THE BROKEN SEAL/",
-            CompilerTarget::Tla => "games/tla/",
+            CompilerTarget::Tla => "games/THE LOST AGE/",
         };
         if !relative_path(target.output_dir)
             || ![target.source_dir, target.asm_dir, target.asset_manifest]

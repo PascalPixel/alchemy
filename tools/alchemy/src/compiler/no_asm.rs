@@ -226,7 +226,7 @@ pub fn self_test() -> Result<(), String> {
     if !find_named_source_tool_leaks("games/THE BROKEN SEAL/recon/example.c", source).is_empty() {
         return Err("named-source gate treated a reconstruction draft as production source".into());
     }
-    if find_named_source_tool_leaks("games/tla/src/example.c", source).is_empty() {
+    if find_named_source_tool_leaks("games/THE LOST AGE/src/example.c", source).is_empty() {
         return Err("named-source gate did not apply outside tbs".into());
     }
     Ok(())

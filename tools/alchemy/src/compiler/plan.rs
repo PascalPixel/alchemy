@@ -318,7 +318,7 @@ mod tests {
     fn edition_define_reaches_gcc296_driver() {
         let mut options = SourceToAssemblyPlanOptions::new(
             CompilerTarget::Tla,
-            "games/tla/src/08120450.c",
+            "games/THE LOST AGE/src/08120450.c",
             "candidate.c",
             "candidate.s",
         );
@@ -333,7 +333,7 @@ mod tests {
     fn shared_tla_audio_owner_routes_through_old_agbcc() {
         let mut options = SourceToAssemblyPlanOptions::new(
             CompilerTarget::Tla,
-            "games/tla/src/081c28e0.c",
+            "games/THE LOST AGE/src/081c28e0.c",
             "candidate.c",
             "candidate.s",
         );

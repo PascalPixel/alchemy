@@ -3116,13 +3116,16 @@ fn run_tla_edition_build(options: &Options, owner: &str) -> Result<(), String> {
         ));
     }
     let root = crate::compiler::routing::root();
-    let register: TlaRegister =
-        crate::compiler::build_io::read_json(root.join("games/tla/recon/cross-edition.json"))?;
+    let register: TlaRegister = crate::compiler::build_io::read_json(
+        root.join("games/THE LOST AGE/recon/cross-edition.json"),
+    )?;
     let entry = register
         .owners
         .iter()
         .find(|entry| entry.starts.get("en").is_some_and(|start| start == owner))
-        .ok_or_else(|| format!("{owner}: not an EN owner in games/tla/recon/cross-edition.json"))?;
+        .ok_or_else(|| {
+            format!("{owner}: not an EN owner in games/THE LOST AGE/recon/cross-edition.json")
+        })?;
     let output_root = std::env::temp_dir()
         .join("alchemy-cross-edition")
         .join("tla")
@@ -3135,7 +3138,9 @@ fn run_tla_edition_build(options: &Options, owner: &str) -> Result<(), String> {
             .ok_or_else(|| format!("{owner}: register lacks a {edition} start"))?;
         let start = parse_rom_address(start_text)?;
         let rom = read_rom(&options.rom_dir.join(format!("tla-{edition}.gba")))?;
-        let source = root.join(format!("games/tla/recon/{edition}/main/{start_text}.c"));
+        let source = root.join(format!(
+            "games/THE LOST AGE/recon/{edition}/main/{start_text}.c"
+        ));
         let built = build_tla_edition(
             &output_root,
             edition,
@@ -3157,7 +3162,7 @@ fn run_tla_edition_build(options: &Options, owner: &str) -> Result<(), String> {
         schema_version: 1,
         game: "tla",
         source_edition: "en",
-        source: format!("games/tla/recon/en/main/{owner}.c"),
+        source: format!("games/THE LOST AGE/recon/en/main/{owner}.c"),
         object: "compiled from each edition's own source".into(),
         owner_symbol: format!("Func_{owner}"),
         size: entry.size,

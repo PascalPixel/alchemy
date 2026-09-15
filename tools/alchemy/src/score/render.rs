@@ -78,7 +78,7 @@ impl SourceIdentity {
         };
         let routing = match owner {
             SourceOwner::Main(_) if target == CompilerTarget::Tla => {
-                Path::new("games/tla/src").join(owner.legacy_relative_path())
+                Path::new("games/THE LOST AGE/src").join(owner.legacy_relative_path())
             }
             SourceOwner::Main(_) if registered => owner.routing_path(),
             SourceOwner::Main(_) => path.to_path_buf(),

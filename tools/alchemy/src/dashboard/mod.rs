@@ -29,8 +29,8 @@ const COVERAGE_DIRS: [&str; 16] = [
     "games/THE BROKEN SEAL/source-paths.json",
     "games/THE BROKEN SEAL/recon",
     "games/THE BROKEN SEAL/project.json",
-    "games/tla",
-    "games/tla/project.json",
+    "games/THE LOST AGE",
+    "games/THE LOST AGE/project.json",
     "games/COMMON",
     "out/tbs-en/reports",
 ];

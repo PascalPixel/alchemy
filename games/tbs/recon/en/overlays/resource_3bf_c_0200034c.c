@@ -5,13 +5,7 @@
 
 extern u8 *Data_03001ebc;
 extern s32 Data_0200df18[];
-struct RegionBounds {
-    s32 left;
-    s32 top;
-    s32 right;
-    s32 bottom;
-};
-extern struct RegionBounds Data_0200df30[];
+extern s32 Data_0200df30[];
 extern s32 Data_0200ded8[];
 extern u8 *Func_020059ba(s32);
 
@@ -28,7 +22,7 @@ u8 *FieldScene_FindActorRegion(s32 *layer, s32 *slot, s32 *region)
     s32 posy;
     s32 offset;
     s32 posx;
-    struct RegionBounds *bounds;
+    s32 *bounds;
     s32 x;
     s32 y;
     s32 left;
@@ -46,19 +40,19 @@ u8 *FieldScene_FindActorRegion(s32 *layer, s32 *slot, s32 *region)
         kind = **(s16 **)(*(u8 **)(actor + 80) + 40);
         ids = Data_0200df18;
         part = 0;
-        bounds = Data_0200df30;
         do {
             if (kind == *ids++) {
+                bounds = Data_0200df30 + part * 4;
                 *region = part;
                 offset = Data_0200ded8[*layer];
                 posx = *(s32 *)(player + 8);
                 x = ((posx >> 16) + (offset >> 16)) >> 4;
                 posy = *(s32 *)(player + 16);
                 y = ((posy >> 16) + (s16)offset) >> 4;
-                left = (*(s16 *)(actor + 10) + bounds->left) >> 4;
-                top = (*(s16 *)(actor + 18) + bounds->top) >> 4;
-                right = (*(s16 *)(actor + 10) + bounds->right) >> 4;
-                bottom = (*(s16 *)(actor + 18) + bounds->bottom) >> 4;
+                left = (*(s16 *)(actor + 10) + bounds[0]) >> 4;
+                top = (*(s16 *)(actor + 18) + bounds[1]) >> 4;
+                right = (*(s16 *)(actor + 10) + bounds[2]) >> 4;
+                bottom = (*(s16 *)(actor + 18) + bounds[3]) >> 4;
                 if (left <= x && x < right && top <= y && y < bottom) {
                     if (part & 1) {
                         if (left != (posx >> 20)) {
@@ -74,7 +68,6 @@ u8 *FieldScene_FindActorRegion(s32 *layer, s32 *slot, s32 *region)
                 }
             }
             part++;
-            bounds++;
         } while ((u32)part <= 5);
         idx++;
         list++;

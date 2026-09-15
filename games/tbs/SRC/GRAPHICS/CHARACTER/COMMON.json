@@ -20385,5 +20385,1775 @@
         }
       ]
     }
+  },
+  "archives": {
+    "f4": {
+      "archive": {
+        "offsets": [7490, 52, 8823, 1439, 9907, 2555, 11074, 3766, 12344, 5152, 13540, 6319, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/f4/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 14603,
+          "source_rect": {
+            "x": 0,
+            "y": 29808,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "f5": {
+      "archive": {
+        "offsets": [11774, 52, 13783, 2062, 15754, 4071, 17681, 6038, 19471, 7850, 21168, 9733, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/f5/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 23134,
+          "source_rect": {
+            "x": 0,
+            "y": 29936,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "f6": {
+      "archive": {
+        "offsets": [4814, 44, 5766, 1025, 6718, 2014, 7677, 3002, 8752, 4101, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/f6/archive/offsets",
+          "size": 44
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 0, 2, 4, 6, 8],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 9438,
+          "source_rect": {
+            "x": 0,
+            "y": 30064,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "f7": {
+      "archive": {
+        "offsets": [8711, 52, 10222, 1547, 11697, 3070, 13119, 4518, 14454, 5791, 16027, 7370, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/f7/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 17336,
+          "source_rect": {
+            "x": 0,
+            "y": 30192,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "f8": {
+      "archive": {
+        "offsets": [4857, 52, 5695, 873, 6511, 1679, 7294, 2456, 7995, 3164, 8870, 4009, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/f8/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 9705,
+          "source_rect": {
+            "x": 0,
+            "y": 30320,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "f9": {
+      "archive": {
+        "offsets": [7603, 52, 8919, 1311, 10253, 2585, 11593, 3874, 12937, 5204, 13931, 6218, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/f9/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 15361,
+          "source_rect": {
+            "x": 0,
+            "y": 30448,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "fa": {
+      "archive": {
+        "offsets": [13633, 68, 15515, 1897, 17274, 3615, 18876, 5224, 20649, 7098, 22260, 8698, 23899, 10265, 25808, 11982, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/fa/archive/offsets",
+          "size": 68
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 0, 2, 4, 6, 8, 10, 12, 14],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 27511,
+          "source_rect": {
+            "x": 0,
+            "y": 30576,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "fb": {
+      "archive": {
+        "offsets": [12149, 76, 13589, 1431, 15032, 2781, 16464, 4116, 17901, 5581, 19019, 6748, 20491, 8122, 21694, 9245, 23228, 10693, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/fb/archive/offsets",
+          "size": 76
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 17, 0, 2, 4, 6, 8, 10, 12, 14, 16],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 24695,
+          "source_rect": {
+            "x": 0,
+            "y": 30704,
+            "width": 512,
+            "height": 192
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "fc": {
+      "archive": {
+        "offsets": [13745, 68, 15536, 1894, 17235, 3652, 18804, 5289, 20380, 7028, 22132, 8766, 23576, 10332, 25267, 11993, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/fc/archive/offsets",
+          "size": 68
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 0, 2, 4, 6, 8, 10, 12, 14],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 26965,
+          "source_rect": {
+            "x": 0,
+            "y": 30896,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "fd": {
+      "archive": {
+        "offsets": [10222, 52, 12061, 1775, 13893, 3474, 15699, 5135, 17535, 6988, 18888, 8352, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/fd/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 20702,
+          "source_rect": {
+            "x": 0,
+            "y": 31024,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "fe": {
+      "archive": {
+        "offsets": [8617, 52, 10196, 1601, 11645, 3026, 13152, 4454, 14582, 5831, 15996, 7300, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/fe/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 17417,
+          "source_rect": {
+            "x": 0,
+            "y": 31152,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "ff": {
+      "archive": {
+        "offsets": [9081, 52, 10613, 1504, 12148, 2940, 13683, 4362, 15249, 6033, 16634, 7539, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/ff/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 18214,
+          "source_rect": {
+            "x": 0,
+            "y": 31280,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "100": {
+      "archive": {
+        "offsets": [7936, 52, 9331, 1416, 10709, 2780, 12072, 4139, 13470, 5512, 14737, 6736, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/100/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 15960,
+          "source_rect": {
+            "x": 0,
+            "y": 31408,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "101": {
+      "archive": {
+        "offsets": [3013, 36, 3785, 801, 4539, 1571, 5259, 2314, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/101/archive/offsets",
+          "size": 36
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 0, 2, 4, 6],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 5907,
+          "source_rect": {
+            "x": 0,
+            "y": 31536,
+            "width": 512,
+            "height": 64
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "102": {
+      "archive": {
+        "offsets": [3190, 44, 3833, 718, 4432, 1349, 5031, 1964, 5632, 2583, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/102/archive/offsets",
+          "size": 44
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 0, 2, 4, 6, 8],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 6180,
+          "source_rect": {
+            "x": 0,
+            "y": 31600,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "103": {
+      "archive": {
+        "offsets": [2878, 36, 3561, 738, 4268, 1456, 4979, 2185, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/103/archive/offsets",
+          "size": 36
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 0, 2, 4, 6],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 5621,
+          "source_rect": {
+            "x": 0,
+            "y": 31728,
+            "width": 512,
+            "height": 64
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "104": {
+      "archive": {
+        "offsets": [2850, 36, 3590, 796, 4299, 1526, 4990, 2237, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/104/archive/offsets",
+          "size": 36
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 0, 2, 4, 6],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 5614,
+          "source_rect": {
+            "x": 0,
+            "y": 31792,
+            "width": 512,
+            "height": 64
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "105": {
+      "archive": {
+        "offsets": [9180, 52, 10746, 1674, 12281, 3277, 13735, 4806, 15227, 6325, 16654, 7875, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/105/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 17966,
+          "source_rect": {
+            "x": 0,
+            "y": 31856,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "106": {
+      "archive": {
+        "offsets": [8446, 52, 9913, 1464, 11348, 2854, 12739, 4201, 14365, 5752, 15768, 7109, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/106/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 17181,
+          "source_rect": {
+            "x": 0,
+            "y": 31984,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "107": {
+      "archive": {
+        "offsets": [10015, 76, 11283, 1298, 12482, 2469, 13677, 3636, 14865, 4810, 15959, 5924, 16917, 6915, 17878, 7865, 18855, 8829, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/107/archive/offsets",
+          "size": 76
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 17, 0, 2, 4, 6, 8, 10, 12, 14, 16],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 19877,
+          "source_rect": {
+            "x": 0,
+            "y": 32112,
+            "width": 512,
+            "height": 192
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "108": {
+      "archive": {
+        "offsets": [3013, 52, 3542, 576, 4075, 1108, 4611, 1651, 5114, 2159, 5542, 2556, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/108/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 32,
+          "frame_height": 32,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 5942,
+          "source_rect": {
+            "x": 0,
+            "y": 32304,
+            "width": 256,
+            "height": 64
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "109": {
+      "archive": {
+        "offsets": [2477, 52, 2897, 470, 3326, 892, 3752, 1307, 4165, 1748, 4508, 2069, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/109/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 32,
+          "frame_height": 32,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 4870,
+          "source_rect": {
+            "x": 0,
+            "y": 32368,
+            "width": 256,
+            "height": 64
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "10a": {
+      "archive": {
+        "offsets": [2448, 60, 2777, 391, 3110, 720, 3444, 1053, 3801, 1432, 4098, 1735, 4382, 2047, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/10a/archive/offsets",
+          "size": 60
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 32,
+          "frame_height": 32,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 13, 0, 2, 4, 6, 8, 10, 12],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 4740,
+          "source_rect": {
+            "x": 0,
+            "y": 32432,
+            "width": 256,
+            "height": 64
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "10b": {
+      "archive": {
+        "offsets": [2452, 52, 2817, 423, 3213, 806, 3587, 1173, 4078, 1615, 4528, 1993, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/10b/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 32,
+          "frame_height": 32,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 4942,
+          "source_rect": {
+            "x": 0,
+            "y": 32496,
+            "width": 256,
+            "height": 64
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "10c": {
+      "archive": {
+        "offsets": [1330, 52, 1533, 253, 1743, 467, 1945, 665, 2185, 905, 2364, 1101, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/10c/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 32,
+          "frame_height": 32,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 2536,
+          "source_rect": {
+            "x": 0,
+            "y": 32560,
+            "width": 256,
+            "height": 64
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "10d": {
+      "archive": {
+        "offsets": [2139, 52, 2496, 401, 2853, 733, 3199, 1057, 3525, 1371, 3850, 1701, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/10d/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 32,
+          "frame_height": 32,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 4204,
+          "source_rect": {
+            "x": 0,
+            "y": 32624,
+            "width": 256,
+            "height": 64
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "10e": {
+      "archive": {
+        "offsets": [2065, 52, 2417, 399, 2772, 746, 3112, 1081, 3403, 1382, 3658, 1644, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/10e/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 32,
+          "frame_height": 32,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 4028,
+          "source_rect": {
+            "x": 0,
+            "y": 32688,
+            "width": 256,
+            "height": 64
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "10f": {
+      "archive": {
+        "offsets": [1308, 44, 1582, 321, 1843, 581, 2052, 808, 2282, 1037, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/10f/archive/offsets",
+          "size": 44
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 32,
+          "frame_height": 32,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 0, 2, 4, 6, 8],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 2516,
+          "source_rect": {
+            "x": 0,
+            "y": 32752,
+            "width": 256,
+            "height": 64
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "110": {
+      "archive": {
+        "offsets": [2436, 52, 2827, 434, 3216, 812, 3602, 1181, 4035, 1642, 4392, 2024, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/110/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 32,
+          "frame_height": 32,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 4739,
+          "source_rect": {
+            "x": 0,
+            "y": 32816,
+            "width": 256,
+            "height": 64
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "111": {
+      "archive": {
+        "offsets": [2510, 52, 2956, 497, 3384, 921, 3802, 1343, 4133, 1674, 4561, 2075, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/111/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 32,
+          "frame_height": 32,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 4919,
+          "source_rect": {
+            "x": 0,
+            "y": 32880,
+            "width": 256,
+            "height": 64
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "112": {
+      "archive": {
+        "offsets": [1679, 52, 1940, 323, 2215, 590, 2491, 867, 2747, 1081, 3009, 1311, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/112/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 32,
+          "frame_height": 32,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 3323,
+          "source_rect": {
+            "x": 0,
+            "y": 32944,
+            "width": 256,
+            "height": 64
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "113": {
+      "archive": {
+        "offsets": [1876, 52, 2195, 338, 2498, 611, 2784, 869, 3144, 1229, 3428, 1507, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/113/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 32,
+          "frame_height": 32,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 3699,
+          "source_rect": {
+            "x": 0,
+            "y": 33008,
+            "width": 256,
+            "height": 64
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "114": {
+      "archive": {
+        "offsets": [8442, 52, 9928, 1569, 11313, 2996, 12675, 4378, 14033, 5823, 15327, 7175, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/114/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 16566,
+          "source_rect": {
+            "x": 0,
+            "y": 33072,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "115": {
+      "archive": {
+        "offsets": [7711, 52, 9040, 1419, 10327, 2740, 11558, 3992, 12494, 4948, 13781, 6279, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/115/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 15025,
+          "source_rect": {
+            "x": 0,
+            "y": 33200,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "116": {
+      "archive": {
+        "offsets": [15469, 68, 17480, 2157, 19356, 4043, 21182, 5877, 22635, 7386, 24690, 9586, 26695, 11609, 28497, 13437, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/116/archive/offsets",
+          "size": 68
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 0, 2, 4, 6, 8, 10, 12, 14],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 30428,
+          "source_rect": {
+            "x": 0,
+            "y": 33328,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "117": {
+      "archive": {
+        "offsets": [4320, 76, 4788, 551, 5254, 1025, 5722, 1499, 6196, 1958, 6631, 2390, 7157, 2894, 7674, 3388, 8121, 3809, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/117/archive/offsets",
+          "size": 76
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 32,
+          "frame_height": 32,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 17, 0, 2, 4, 6, 8, 10, 12, 14, 16],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 8579,
+          "source_rect": {
+            "x": 0,
+            "y": 33456,
+            "width": 256,
+            "height": 96
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "118": {
+      "archive": {
+        "offsets": [7473, 52, 8781, 1326, 10092, 2601, 11389, 3864, 12684, 5100, 13867, 6179, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/118/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 15113,
+          "source_rect": {
+            "x": 0,
+            "y": 33552,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "119": {
+      "archive": {
+        "offsets": [3008, 52, 3516, 560, 4039, 1084, 4569, 1614, 4976, 2023, 5442, 2489, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/119/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 32,
+          "frame_height": 32,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 5909,
+          "source_rect": {
+            "x": 0,
+            "y": 33680,
+            "width": 256,
+            "height": 64
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "11a": {
+      "archive": {
+        "offsets": [14723, 68, 16641, 1972, 18487, 3802, 20257, 5511, 22314, 7543, 24009, 9269, 25702, 10945, 27682, 12806, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/11a/archive/offsets",
+          "size": 68
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 0, 2, 4, 6, 8, 10, 12, 14],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 29644,
+          "source_rect": {
+            "x": 0,
+            "y": 33744,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "11b": {
+      "archive": {
+        "offsets": [7828, 52, 9211, 1400, 10538, 2690, 11837, 3921, 13022, 5157, 14299, 6451, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/11b/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 15693,
+          "source_rect": {
+            "x": 0,
+            "y": 33872,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "11c": {
+      "archive": {
+        "offsets": [5394, 52, 6262, 916, 7184, 1826, 8112, 2742, 9094, 3714, 9939, 4604, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/11c/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 10726,
+          "source_rect": {
+            "x": 0,
+            "y": 34000,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "11d": {
+      "archive": {
+        "offsets": [10140, 52, 11751, 1645, 13328, 3211, 14931, 4790, 16700, 6539, 18380, 8381, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/11d/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 20309,
+          "source_rect": {
+            "x": 0,
+            "y": 34128,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "11e": {
+      "archive": {
+        "offsets": [3377, 52, 3970, 646, 4555, 1232, 5110, 1776, 5608, 2274, 6153, 2820, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/11e/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 6659,
+          "source_rect": {
+            "x": 0,
+            "y": 34256,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "11f": {
+      "archive": {
+        "offsets": [9588, 68, 11688, 1201, 13710, 2297, 15680, 3439, 17733, 4768, 19562, 6050, 21637, 7179, 23666, 8451, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/11f/archive/offsets",
+          "size": 68
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 0, 2, 4, 6, 8, 10, 12, 14],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 25729,
+          "source_rect": {
+            "x": 0,
+            "y": 34384,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "120": {
+      "archive": {
+        "offsets": [14899, 68, 15954, 1925, 16975, 3723, 18034, 5484, 19201, 7279, 20325, 9027, 21349, 10868, 22417, 12784, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/120/archive/offsets",
+          "size": 68
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 0, 2, 4, 6, 8, 10, 12, 14],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 23470,
+          "source_rect": {
+            "x": 0,
+            "y": 34512,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "121": {
+      "archive": {
+        "offsets": [11943, 76, 13326, 1476, 14684, 2857, 16036, 4218, 17222, 5464, 18339, 6641, 19572, 7876, 20877, 9207, 22203, 10567, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/121/archive/offsets",
+          "size": 76
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 17, 0, 2, 4, 6, 8, 10, 12, 14, 16],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 23522,
+          "source_rect": {
+            "x": 0,
+            "y": 34640,
+            "width": 512,
+            "height": 192
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "122": {
+      "archive": {
+        "offsets": [10736, 76, 11911, 1191, 13092, 2299, 14262, 3408, 15480, 4685, 16577, 5765, 17742, 6897, 19007, 8147, 20282, 9415, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/122/archive/offsets",
+          "size": 76
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 17, 0, 2, 4, 6, 8, 10, 12, 14, 16],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 21534,
+          "source_rect": {
+            "x": 0,
+            "y": 34832,
+            "width": 512,
+            "height": 192
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "123": {
+      "archive": {
+        "offsets": [9131, 52, 10602, 1524, 12112, 3035, 13672, 4597, 15209, 6134, 16668, 7595, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/123/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 18148,
+          "source_rect": {
+            "x": 0,
+            "y": 35024,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "124": {
+      "archive": {
+        "offsets": [15248, 68, 16962, 2015, 18701, 3877, 20629, 5749, 23203, 7324, 25134, 9233, 26691, 11946, 28651, 14024, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/124/archive/offsets",
+          "size": 68
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 0, 2, 4, 6, 8, 10, 12, 14],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 30701,
+          "source_rect": {
+            "x": 0,
+            "y": 35152,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "125": {
+      "archive": {
+        "offsets": [16172, 68, 18230, 1907, 20203, 3703, 22181, 5646, 24073, 8182, 26312, 10197, 29070, 11923, 31432, 13956, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/125/archive/offsets",
+          "size": 68
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 0, 2, 4, 6, 8, 10, 12, 14],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 32681,
+          "source_rect": {
+            "x": 0,
+            "y": 35280,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "126": {
+      "archive": {
+        "offsets": [7512, 52, 8846, 1353, 10164, 2651, 11470, 3941, 12721, 5162, 13789, 6208, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/126/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 15061,
+          "source_rect": {
+            "x": 0,
+            "y": 35408,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "127": {
+      "archive": {
+        "offsets": [5954, 52, 6951, 1024, 7959, 1999, 8952, 2959, 9937, 3948, 10844, 4870, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/127/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 11927,
+          "source_rect": {
+            "x": 0,
+            "y": 35536,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    }
   }
 }

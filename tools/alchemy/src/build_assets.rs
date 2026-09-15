@@ -28,7 +28,7 @@ use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
-const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--manifest MANIFEST] [-o OUTPUT] [rom] | --audit-characters OUTPUT | --migrate-characters OUTPUT | --migrate-sources OUTPUT | --install-sources OUTPUT | --extract-sources ROM | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
+const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--manifest MANIFEST] [-o OUTPUT] [rom] | --audit-characters OUTPUT | --migrate-characters OUTPUT | --migrate-graphics OUTPUT | --migrate-stills OUTPUT | --migrate-tiles OUTPUT | --migrate-portraits OUTPUT | --migrate-data OUTPUT | --register-graphics-palettes | --migrate-sources OUTPUT | --install-sources OUTPUT | --extract-sources ROM | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
 const ROM_BASE: usize = 0x0800_0000;
 const ROM_SIZE: usize = 0x0080_0000;
 fn repository_root() -> PathBuf {
@@ -660,6 +660,28 @@ fn build_component_cached(ctx: &Context, entry: &Value) -> Result<ComponentResul
             return Ok(result);
         }
         "gba-4bpp-tiles" | "gba-8bpp-tiles" | "gba-palette" => {
+            if kind == "gba-8bpp-tiles" && entry.get("source_rect").is_some() {
+                let image = ctx.indexed(&source)?;
+                let (width, height, pixels) = indexed_rect(&image, entry)?;
+                if width % 8 != 0 || height % 8 != 0 {
+                    return Err("tiled atlas must contain whole tiles".into());
+                }
+                let mut data = Vec::with_capacity(pixels.len());
+                for y in (0..height).step_by(8) {
+                    for x in (0..width).step_by(8) {
+                        for row in 0..8 {
+                            data.extend_from_slice(
+                                &pixels[(y + row) * width + x..(y + row) * width + x + 8],
+                            );
+                        }
+                    }
+                }
+                return Ok(ComponentResult {
+                    data,
+                    sources: vec![source_name.into()],
+                    details: serde_json::json!({"width":width,"height":height,"bpp":8}),
+                });
+            }
             let bpp = if kind == "gba-4bpp-tiles" {
                 GbaBpp::Bpp4
             } else {
@@ -2311,8 +2333,29 @@ fn build_general_lz_cached(
     let plan_path = root_path(root, plan_name)?;
     let plan_document = ctx.document(&plan_path)?;
     let plan = select_plan(&plan_document, entry)?;
+    let component_document = entry
+        .get("components_source")
+        .map(|source| {
+            let source = json_string(source, "general-LZ components source")?;
+            ctx.document(&root_path(root, source)?)
+        })
+        .transpose()?;
+    let referenced_components = if let Some(document) = component_document.as_ref() {
+        let pointer = json_string(
+            &entry["components_pointer"],
+            "general-LZ components pointer",
+        )?;
+        Some(
+            document
+                .pointer(pointer)
+                .ok_or("general-LZ components pointer is absent")?,
+        )
+    } else {
+        None
+    };
     let components = entry
         .get("components")
+        .or(referenced_components)
         .or_else(|| plan_document.get("components"))
         .and_then(Value::as_array)
         .ok_or("general-LZ components are not an array".to_string())?;
@@ -4477,6 +4520,31 @@ fn build_entry_native_tail(
             Ok((built, sources, report))
         }
         "golden-sun-delta7-still" => {
+            if entry.get("source_rect").is_some() {
+                let image = ctx.indexed(&source_path(entry_source)?)?;
+                let (width, height, pixels) = indexed_rect(&image, entry)?;
+                if width != number(&entry["width"], "still width")?
+                    || height != number(&entry["height"], "still height")?
+                {
+                    return Err("still atlas dimensions differ".into());
+                }
+                let palette = build_component_cached(ctx, &entry["palette"])?;
+                if palette.data.len() != number(&entry["palette_entries"], "still colors")? * 2 {
+                    return Err("still palette dimensions differ".into());
+                }
+                let mut built = palette.data;
+                built.extend(
+                    psynergy::assets::compression::encode_delta7(&pixels)
+                        .map_err(|e| e.to_string())?,
+                );
+                let mut sources = vec![entry_source.to_string()];
+                sources.extend(palette.sources);
+                return Ok((
+                    built,
+                    sources,
+                    serde_json::json!({"width":width,"height":height}),
+                ));
+            }
             let built = psynergy::assets::compression::delta7_image(
                 &fs::read(source_path(entry_source)?).map_err(|error| error.to_string())?,
                 number(&entry["width"], "delta7 width")?,
@@ -5145,6 +5213,55 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
     Ok(())
 }
 fn run(arguments: Vec<String>) -> Result<ExitCode, String> {
+    if arguments.first().map(String::as_str) == Some("--migrate-palettes") {
+        if arguments.len() != 2 {
+            return Err(USAGE.into());
+        }
+        native::migrate_palettes(&repository_root(), Path::new(&arguments[1]))?;
+        return Ok(ExitCode::SUCCESS);
+    }
+    if arguments.first().map(String::as_str) == Some("--register-graphics-palettes") {
+        if arguments.len() != 1 {
+            return Err(USAGE.into());
+        }
+        native::register_palettes(&repository_root())?;
+        return Ok(ExitCode::SUCCESS);
+    }
+    if arguments.first().map(String::as_str) == Some("--migrate-data") {
+        if arguments.len() != 2 {
+            return Err(USAGE.into());
+        }
+        native::migrate_data(&repository_root(), Path::new(&arguments[1]))?;
+        return Ok(ExitCode::SUCCESS);
+    }
+    if arguments.first().map(String::as_str) == Some("--migrate-portraits") {
+        if arguments.len() != 2 {
+            return Err(USAGE.into());
+        }
+        native::migrate_portraits(&repository_root(), Path::new(&arguments[1]))?;
+        return Ok(ExitCode::SUCCESS);
+    }
+    if arguments.first().map(String::as_str) == Some("--migrate-tiles") {
+        if arguments.len() != 2 {
+            return Err(USAGE.into());
+        }
+        native::migrate_tiles(&repository_root(), Path::new(&arguments[1]))?;
+        return Ok(ExitCode::SUCCESS);
+    }
+    if arguments.first().map(String::as_str) == Some("--migrate-stills") {
+        if arguments.len() != 2 {
+            return Err(USAGE.into());
+        }
+        native::migrate_stills(&repository_root(), Path::new(&arguments[1]))?;
+        return Ok(ExitCode::SUCCESS);
+    }
+    if arguments.first().map(String::as_str) == Some("--migrate-graphics") {
+        if arguments.len() != 2 {
+            return Err(USAGE.into());
+        }
+        native::migrate_graphics(&repository_root(), Path::new(&arguments[1]))?;
+        return Ok(ExitCode::SUCCESS);
+    }
     if arguments.first().map(String::as_str) == Some("--audit-characters") {
         if arguments.len() != 2 {
             return Err(USAGE.into());

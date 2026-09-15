@@ -1,6 +1,19 @@
 use super::*;
 mod character;
+mod data;
+mod palette;
+pub(super) use palette::migrate as migrate_palettes;
+pub(super) use palette::register as register_palettes;
+mod graphics;
+pub(super) use data::migrate as migrate_data;
+mod portrait;
+mod still;
+mod tile;
+pub(super) use portrait::migrate as migrate_portraits;
+pub(super) use still::migrate as migrate_stills;
+pub(super) use tile::migrate as migrate_tiles;
 mod identity;
+pub(super) use graphics::migrate as migrate_graphics;
 mod tracking;
 pub(super) use character::migrate as migrate_characters;
 pub(super) use identity::audit as audit_characters;
@@ -889,16 +902,96 @@ pub fn extract(root: &Path, rom_path: &Path) -> Result<(), String> {
     let mut maps: BTreeMap<String, Vec<u8>> = BTreeMap::new();
     let mut tiles: BTreeMap<String, Vec<u8>> = BTreeMap::new();
     let mut banks: BTreeMap<usize, Vec<u16>> = BTreeMap::new();
+    let mut tables = serde_json::Map::new();
     for input in index["private_inputs"]
         .as_array()
         .ok_or("missing private inputs")?
     {
         let source = json_string(&input["source"], "private source")?;
         let kind = json_string(&input["kind"], "private kind")?;
-        if matches!(kind, "sprite" | "sprite-atlas") {
+        if matches!(
+            kind,
+            "sprite"
+                | "sprite-atlas"
+                | "archive-atlas"
+                | "still-atlas"
+                | "tile-atlas"
+                | "portrait-atlas"
+        ) {
             continue;
         }
         let target = address(&input["region_address"])?;
+        if kind == "palette-table" {
+            let start = target
+                .checked_sub(ROM_BASE)
+                .ok_or("palette table precedes ROM")?;
+            let length = address(&input["decoded_length"])?;
+            let data = rom
+                .get(start..start.checked_add(length).ok_or("palette table overflows")?)
+                .ok_or("palette table exceeds ROM")?;
+            if length % 2 != 0
+                || sha256::hex(data)
+                    != json_string(&input["decoded_sha256"], "palette table digest")?
+            {
+                return Err("palette table differs".into());
+            }
+            let pointer = json_string(&input["pointer"], "palette table pointer")?;
+            let key = pointer
+                .strip_prefix("/tables/")
+                .ok_or("palette table pointer differs")?;
+            tables.insert(
+                key.into(),
+                json!(data
+                    .chunks_exact(2)
+                    .map(|p| u16::from_le_bytes([p[0], p[1]]))
+                    .collect::<Vec<_>>()),
+            );
+            continue;
+        }
+        if kind == "palette-buffer" {
+            let start = target.checked_sub(ROM_BASE).ok_or("palette precedes ROM")?;
+            let length = address(&input["decoded_length"])?;
+            let data = if input["codec"] == "raw" {
+                rom.get(
+                    start
+                        ..start
+                            .checked_add(length)
+                            .ok_or("palette extent overflows")?,
+                )
+                .ok_or("palette exceeds ROM")?
+                .to_vec()
+            } else if input["codec"] == "general-lz" {
+                psynergy::assets::lz::decode_general(&rom, start, rom.len(), length as u64)
+                    .map_err(|e| e.to_string())?
+                    .0
+            } else if input["codec"] == "palette-lz" {
+                psynergy::assets::lz::decode_palette(&rom, start, rom.len(), length as u64)
+                    .map_err(|e| e.to_string())?
+                    .0
+            } else {
+                return Err("unrecognized palette buffer codec".into());
+            };
+            if sha256::hex(&data) != json_string(&input["decoded_sha256"], "palette buffer digest")?
+            {
+                return Err("palette buffer differs".into());
+            }
+            let slots = input["banks"].as_array().ok_or("palette slots absent")?;
+            if data.len() != slots.len() * 32 {
+                return Err("palette buffer dimensions differ".into());
+            }
+            for (slot, bytes) in slots.iter().zip(data.chunks_exact(32)) {
+                let values = bytes
+                    .chunks_exact(2)
+                    .map(|p| u16::from_le_bytes([p[0], p[1]]))
+                    .collect::<Vec<_>>();
+                let slot = address(slot)?;
+                if banks.get(&slot).is_some_and(|b| *b != values) {
+                    return Err("shared palette buffer differs".into());
+                }
+                banks.insert(slot, values);
+            }
+            continue;
+        }
         let region = regions
             .iter()
             .find(|r| address(&r["address"]).ok() == Some(target))
@@ -1018,7 +1111,7 @@ pub fn extract(root: &Path, rom_path: &Path) -> Result<(), String> {
     document(
         root,
         COLORS,
-        &json!({"format":"bgr555-banks","colors_per_bank":16,"banks":colors}),
+        &json!({"format":"bgr555-banks","colors_per_bank":16,"banks":colors,"tables":tables}),
     )?;
     println!(
         "extracted={} checksum=verified",

@@ -593,6 +593,15 @@ Rust extraction and source checks verify their pixels and encoded bank hashes.
 Use `alchemy build assets --audit-characters OUTPUT` for the Japanese message
 and descriptor audit. The common descriptor catalog also feeds animation and UI
 consumers; do not split banks by an export label alone.
+Additional sprite archives use the same character atlas, with archive offsets
+and frame order retained in metadata until runtime associations establish names.
+Shared still images, dialogue portraits and eight-bit tile banks use indexed
+atlases under `GRAPHICS/COMMON`; their palettes remain separate. Unknown location
+and runtime-role fields stay null. Pixel appearance does not establish a world-map
+or battle association. Palette tables preserve all sixteen bits, including the
+high bit represented by alpha in former RGBA exports. Byte visualizations become
+typed data streams rather than graphical source inputs. Extraction must reproduce
+every registered atlas, palette bank and table as well as the ordinary rebuild.
 Battle-effect tables now accompany their consumers in `SRC/BATTLE/DATA`.
 Preserve separate compilation and load boundaries. The remaining source groups are `SYSTEM`, `LIB`, `GRAPHICS`,
 `SOUND`, `GAME`, `BATTLE`, `MENU` and `DEBUG`; shared headers belong in `INCLUDE`.

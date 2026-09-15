@@ -1,0 +1,114 @@
+{
+  "format": 1,
+  "kind": "indexed-tile-atlas",
+  "banks": {
+    "0x08424c6c": {
+      "palette_banks": [891, 892, 893, 894, 895, 896, 897, 898, 899, 900, 901, 902, 903, 904],
+      "runtime_role": null
+    },
+    "0x08424e64": {
+      "source_rect": {
+        "x": 0,
+        "y": 0,
+        "width": 128,
+        "height": 64
+      },
+      "runtime_role": null,
+      "identity": null
+    },
+    "0x08426520": {
+      "source_rect": {
+        "x": 0,
+        "y": 64,
+        "width": 128,
+        "height": 64
+      },
+      "runtime_role": null,
+      "identity": null
+    },
+    "0x08427a40": {
+      "source_rect": {
+        "x": 0,
+        "y": 128,
+        "width": 128,
+        "height": 64
+      },
+      "runtime_role": null,
+      "identity": null
+    },
+    "0x0842860c": {
+      "source_rect": {
+        "x": 0,
+        "y": 192,
+        "width": 128,
+        "height": 64
+      },
+      "runtime_role": null,
+      "identity": null
+    },
+    "0x08429180": {
+      "source_rect": {
+        "x": 0,
+        "y": 256,
+        "width": 128,
+        "height": 128
+      },
+      "runtime_role": null,
+      "identity": null
+    },
+    "0x0842b028": {
+      "palette_banks": [905, 906, 907, 908, 909, 910, 911, 912, 913, 914, 915, 916, 917, 918],
+      "runtime_role": null
+    },
+    "0x0842b218": {
+      "source_rect": {
+        "x": 0,
+        "y": 384,
+        "width": 128,
+        "height": 64
+      },
+      "runtime_role": null,
+      "identity": null
+    },
+    "0x0842c7b8": {
+      "source_rect": {
+        "x": 0,
+        "y": 448,
+        "width": 128,
+        "height": 64
+      },
+      "runtime_role": null,
+      "identity": null
+    },
+    "0x0842dc68": {
+      "source_rect": {
+        "x": 0,
+        "y": 512,
+        "width": 128,
+        "height": 64
+      },
+      "runtime_role": null,
+      "identity": null
+    },
+    "0x0842e570": {
+      "source_rect": {
+        "x": 0,
+        "y": 576,
+        "width": 128,
+        "height": 64
+      },
+      "runtime_role": null,
+      "identity": null
+    },
+    "0x0842ee74": {
+      "source_rect": {
+        "x": 0,
+        "y": 640,
+        "width": 128,
+        "height": 128
+      },
+      "runtime_role": null,
+      "identity": null
+    }
+  }
+}

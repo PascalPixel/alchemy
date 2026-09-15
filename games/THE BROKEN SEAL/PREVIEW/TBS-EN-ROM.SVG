@@ -4736,8 +4736,8 @@
 <path class="bevel-dark" d="M158.18158388011918 377.37613833336485 H204.33336996592584 V348.29404662875413" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="KUUPUAPPU_RUNPA: 592 bytes · Unknown, C · 0x08797740" data-node="leaf" data-kind="folder" data-bytes="592" data-address="0x08797740" data-source="games/THE BROKEN SEAL/SRC/FIELD/COMMON/KUUPUAPPU_RUNPA/">
 <title>KUUPUAPPU_RUNPA: 592 bytes · Unknown, C · 0x08797740</title>
-<rect x="160.68158388011918" y="353.5502057517802" width="9.175860681259602" height="0.7986256282406675" style="fill:#d9d9d4"/>
-<rect x="160.68158388011918" y="350.79404662875413" width="9.175860681259602" height="2.756159123026063" style="fill:#326b7d"/>
+<rect x="160.68158388011918" y="353.5562104557519" width="9.175860681259602" height="0.7926209242689332" style="fill:#d9d9d4"/>
+<rect x="160.68158388011918" y="350.79404662875413" width="9.175860681259602" height="2.762163826997797" style="fill:#326b7d"/>
 </g>
 <g aria-label="KUUPUAPPU_RUNPA.BIN: 2,360 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 2 items" data-node="container" data-kind="file" data-bytes="2360" data-source="games/THE BROKEN SEAL/SRC/FIELD/COMMON/KUUPUAPPU_RUNPA/KUUPUAPPU_RUNPA.BIN">
 <title>KUUPUAPPU_RUNPA.BIN: 2,360 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 2 items</title>

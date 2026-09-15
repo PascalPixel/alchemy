@@ -201,7 +201,13 @@ owner is exact from the shared object; isolated adoption cannot prove a unit.
 Consolidate related functions when the resulting compilation context is proven.
 Use `alchemy unit flatten --help` for complete-overlay consolidation.
 Unknown executable gaps outside registered owners still block whole-overlay
-completion. Keep genuine assembly and data separate. Do not trade byte equality
+completion. Compiler-generated inter-function alignment may be declared separately
+in an exact overlay unit’s `compiler_gaps` as a two-byte `start`/`end` range
+between adjacent exact owners. The admitted assembler must emit those bytes
+in the preceding function section, and verification must compare them with
+the loaded reference before coverage counts them. Keep function extents
+unchanged; compiler fill is not handwritten or library assembly.
+Keep genuine assembly and data separate. Do not trade byte equality
 for tidiness or delay productive recovery for unrelated folder cleanup.
 
 Run the integration gate once per finished coherent batch, repair failures,

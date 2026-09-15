@@ -426,7 +426,7 @@ fn exact_overlay(
     let mut owners = OwnerMap::new();
     let mut spans = SpanMap::new();
     for (id, name) in pairs {
-        let list = overlay_owners(tree, name)
+        let mut list = overlay_owners(tree, name)
             .into_iter()
             .map(|mut owner| -> Result<Owner, String> {
                 let source_owner = SourceOwner::parse(&format!("{id}:{:08x}", owner.entry))?;
@@ -454,6 +454,41 @@ fn exact_overlay(
             .into_iter()
             .filter(|owner| !owner.spans.is_empty())
             .collect::<Vec<_>>();
+        if let Some(units) = json(tree, "games/THE BROKEN SEAL/recon/translation-units.json") {
+            for unit in array(&units, "units")
+                .iter()
+                .filter(|unit| text(unit, "game") == "tbs" && text(unit, "overlay") == *id)
+            {
+                for gap in array(unit, "compiler_gaps") {
+                    let (Some(start), Some(end)) = (address(gap, "start"), address(gap, "end"))
+                    else {
+                        return Err("compiler alignment gap has invalid bounds".into());
+                    };
+                    let source = text(unit, "source");
+                    let preceding = list.iter().any(|owner| {
+                        owner.source == source && owner.spans.iter().any(|span| span.end == start)
+                    });
+                    let following = list
+                        .iter()
+                        .any(|owner| owner.source == source && owner.entry == end);
+                    let span = Span::new(start, end);
+                    if end - start != 2
+                        || end & 3 != 0
+                        || !preceding
+                        || !following
+                        || bytes(&intersect(&[span], mapped(executable, id))) != 2
+                    {
+                        return Err(format!("{id}: compiler gap lacks exact adjacent owners"));
+                    }
+                    list.push(Owner {
+                        label: format!("{} compiler alignment", text(unit, "id")),
+                        source,
+                        entry: start,
+                        spans: vec![span],
+                    });
+                }
+            }
+        }
         let flat: Vec<_> = list.iter().flat_map(|o| o.spans.iter().copied()).collect();
         owners.insert(id.clone(), list);
         spans.insert(id.clone(), normalize(&flat));

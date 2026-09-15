@@ -98,6 +98,8 @@ void Func_0200131c(void)
     void *p46;
     void *p57;
     void *p58;
+    s32 first_mask;
+    s32 second_mask;
     Func_02002d00();
     Scene_Call3(Func_02002d6e, 0, 10485760, 8388608);
     Scene_Call3(Func_02002d7c, 8, 9961472, 7340032);
@@ -124,9 +126,15 @@ void Func_0200131c(void)
     Func_02002f2e(121);
     Func_02002ddc(30);
     p26 = Func_02002e0a(8);
-    *(u8 *)((u8 *)(p26) + 35) |= 0x1;
+    {
+        s32 value = *(u8 *)((u8 *)(p26) + 35);
+        first_mask = 1;
+        value |= first_mask;
+        *(u8 *)((u8 *)(p26) + 35) = value;
+    }
     p27 = Func_02002e1a(9);
-    *(u8 *)((u8 *)(p27) + 35) |= 0x1;
+    first_mask |= *(u8 *)((u8 *)(p27) + 35);
+    *(u8 *)((u8 *)(p27) + 35) = first_mask;
     Func_02002e72(0, 4);
     Func_02002f60(121);
     Func_02002e6e(0);
@@ -167,9 +175,15 @@ void Func_0200131c(void)
     Func_02002f7e(0x2410);
     Func_02002f96_a(8, 0);
     p57 = Func_02002f1c(8);
-    *(u8 *)((u8 *)(p57) + 35) |= 0x1;
+    {
+        s32 value = *(u8 *)((u8 *)(p57) + 35);
+        second_mask = 1;
+        value |= second_mask;
+        *(u8 *)((u8 *)(p57) + 35) = value;
+    }
     p58 = Func_02002f2c(9);
-    *(u8 *)((u8 *)(p58) + 35) |= 0x1;
+    second_mask |= *(u8 *)((u8 *)(p58) + 35);
+    *(u8 *)((u8 *)(p58) + 35) = second_mask;
     Scene_Call3(Func_02002f4a, 8, 65536, 32768);
     Scene_Call3(Func_02002f58, 9, 65536, 32768);
     Scene_Call3(Func_02002f7a, 8, 144, 200);

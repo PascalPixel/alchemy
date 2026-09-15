@@ -614,18 +614,14 @@
 	.set sub_02003622, 0x02003622
 	.global Overlay_02000000
 Overlay_02000000:
-	.4byte 0x47204c00
-	.4byte 0x02009a0d
-	.4byte 0x47204c00
-	.4byte 0x02008031
-	.4byte 0x47204c00
-	.4byte 0x0200803d
-	.4byte 0x47204c00
-	.4byte 0x02008045
-	.4byte 0x47204c00
-	.4byte 0x02008075
-	.4byte 0x47204c00
-	.4byte 0x02008039
+	.irp EntryTarget, 0x02009a0d, 0x02008031, 0x0200803d, 0x02008045, 0x02008075, 0x02008039
+	.if ((\EntryTarget & 1) == 0) && ((\EntryTarget & 3) != 0)
+	.error "ARM entry point target must be word aligned"
+	.endif
+	ldr r4, [pc, #0]
+	bx r4
+	.4byte \EntryTarget
+	.endr
 AlchemyC_02000030:
 	.space 0x8
 
@@ -694,94 +690,14 @@ AlchemyC_02001760:
 	.space 0x2ac
 AlchemyC_02001a0c:
 	.space 0xc8
-	.4byte 0x47204c00
-	.4byte 0x080000c1
-	.4byte 0x47204c00
-	.4byte 0x08009129
-	.4byte 0x47204c00
-	.4byte 0x080091b9
-	.4byte 0x47204c00
-	.4byte 0x080091c1
-	.4byte 0x47204c00
-	.4byte 0x080091e1
-	.4byte 0x47204c00
-	.4byte 0x08015041
-	.4byte 0x47204c00
-	.4byte 0x080770c1
-	.4byte 0x47204c00
-	.4byte 0x080770c9
-	.4byte 0x47204c00
-	.4byte 0x080770d1
-	.4byte 0x47204c00
-	.4byte 0x0808a011
-	.4byte 0x47204c00
-	.4byte 0x0808a019
-	.4byte 0x47204c00
-	.4byte 0x0808a021
-	.4byte 0x47204c00
-	.4byte 0x0808a071
-	.4byte 0x47204c00
-	.4byte 0x0808a081
-	.4byte 0x47204c00
-	.4byte 0x0808a091
-	.4byte 0x47204c00
-	.4byte 0x0808a0b9
-	.4byte 0x47204c00
-	.4byte 0x0808a0c9
-	.4byte 0x47204c00
-	.4byte 0x0808a0e1
-	.4byte 0x47204c00
-	.4byte 0x0808a0e9
-	.4byte 0x47204c00
-	.4byte 0x0808a0f1
-	.4byte 0x47204c00
-	.4byte 0x0808a101
-	.4byte 0x47204c00
-	.4byte 0x0808a111
-	.4byte 0x47204c00
-	.4byte 0x0808a131
-	.4byte 0x47204c00
-	.4byte 0x0808a139
-	.4byte 0x47204c00
-	.4byte 0x0808a149
-	.4byte 0x47204c00
-	.4byte 0x0808a151
-	.4byte 0x47204c00
-	.4byte 0x0808a171
-	.4byte 0x47204c00
-	.4byte 0x0808a179
-	.4byte 0x47204c00
-	.4byte 0x0808a181
-	.4byte 0x47204c00
-	.4byte 0x0808a1b9
-	.4byte 0x47204c00
-	.4byte 0x0808a1e1
-	.4byte 0x47204c00
-	.4byte 0x0808a1e9
-	.4byte 0x47204c00
-	.4byte 0x0808a1f1
-	.4byte 0x47204c00
-	.4byte 0x0808a201
-	.4byte 0x47204c00
-	.4byte 0x0808a209
-	.4byte 0x47204c00
-	.4byte 0x0808a211
-	.4byte 0x47204c00
-	.4byte 0x0808a219
-	.4byte 0x47204c00
-	.4byte 0x0808a221
-	.4byte 0x47204c00
-	.4byte 0x0808a249
-	.4byte 0x47204c00
-	.4byte 0x0808a361
-	.4byte 0x47204c00
-	.4byte 0x0808a369
-	.4byte 0x47204c00
-	.4byte 0x0808a371
-	.4byte 0x47204c00
-	.4byte 0x0808a579
-	.4byte 0x47204c00
-	.4byte 0x080f9011
+	.irp EntryTarget, 0x080000c1, 0x08009129, 0x080091b9, 0x080091c1, 0x080091e1, 0x08015041, 0x080770c1, 0x080770c9, 0x080770d1, 0x0808a011, 0x0808a019, 0x0808a021, 0x0808a071, 0x0808a081, 0x0808a091, 0x0808a0b9, 0x0808a0c9, 0x0808a0e1, 0x0808a0e9, 0x0808a0f1, 0x0808a101, 0x0808a111, 0x0808a131, 0x0808a139, 0x0808a149, 0x0808a151, 0x0808a171, 0x0808a179, 0x0808a181, 0x0808a1b9, 0x0808a1e1, 0x0808a1e9, 0x0808a1f1, 0x0808a201, 0x0808a209, 0x0808a211, 0x0808a219, 0x0808a221, 0x0808a249, 0x0808a361, 0x0808a369, 0x0808a371, 0x0808a579, 0x080f9011
+	.if ((\EntryTarget & 1) == 0) && ((\EntryTarget & 3) != 0)
+	.error "ARM entry point target must be word aligned"
+	.endif
+	ldr r4, [pc, #0]
+	bx r4
+	.4byte \EntryTarget
+	.endr
 	.4byte 0xffff0000
 	.4byte 0x000000a8
 	.4byte 0xc0000278

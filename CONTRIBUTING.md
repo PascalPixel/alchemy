@@ -226,6 +226,12 @@ temporarily assembled to make the ROM build. Drafts and unknown code earn no
 credit. Report exact-C share separately; converting already credited assembly
 to exact C improves that share without increasing DONE.
 
+Overlay assembly credit is per reviewed range. A `proven` range must carry
+`provenance.credit` of `library` or `handwritten`, evidence, and a nonempty
+`provenance.proof` or `provenance.object`, using the same rule as main-image
+assembly. A credited range does not credit other ranges of the same kind;
+strong reasoning and bare credit labels remain uncredited.
+
 Retained-ASM credit does not establish handwritten or third-party origin.
 Search exhaustion, register mismatches, compiler non-emission, repeated scripts
 and large functions are not evidence of authorship. Keep unresolved C candidates

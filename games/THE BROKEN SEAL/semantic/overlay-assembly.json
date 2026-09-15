@@ -2817,6 +2817,12 @@
       "kind": "register_interworking_dispatch_table",
       "retention": "keep_structured_asm",
       "confidence": "proven",
+      "provenance": {
+        "credit": "library",
+        "object": "agscc/gcc/config/arm/lib1funcs.asm:950-988 L_call_via_rX, agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148",
+        "proof": "Fresh cpp0 preprocessing with L_call_via_rX, __ELF__, __thumb__ and empty __USER_LABEL_PREFIX__, then approved ARM7TDMI GNU assembly produces a 60-byte text object with SHA-256 074f3ace44a2eb0745a927fc7ef482e0f52b4c91c32643ac56cf0c4af34a6d73. It is byte-identical to the bank at 020057b0..020057ec in freshly assembled maintained resource_3bf_overlay.s. The classified suffix 020057bc..020057ea is object bytes12..58. Complete production ROM verification passed before this source comparison; this new comparison independently verifies historical-source correspondence of the maintained representation.",
+        "scanned": "2026-09-15"
+      },
       "evidence": [
         "The complete 60-byte runtime bank at 0x20057b0..0x20057ec matches the historical GCC 2.96 L_call_via_rX assembly in agscc/gcc/config/arm/lib1funcs.asm:950-988, agscc 5ec3e2edf9b4d0eaa55140ccbc3ba74d8a352148. All fifteen bx r0..lr; nop pairs were independently compared against the decoded canonical ROM and that source assembled by the approved GNU assembler.",
         "Historical full-bank SHA-256: 074f3ace44a2eb0745a927fc7ef482e0f52b4c91c32643ac56cf0c4af34a6d73. This retained suffix contains eleven r3..sp pairs plus bx lr; the final nop is outside this retained range. Existing exact-C/glue boundaries are unchanged. This is positive third-party assembly correspondence, not a compiler-failure inference."

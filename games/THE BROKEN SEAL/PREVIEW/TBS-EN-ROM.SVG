@@ -1267,8 +1267,8 @@
 </g>
 </g>
 </g>
-<g aria-label="SRC: 7,152,749 bytes · Unknown, Drafted, C, Data · 9 items" data-node="container" data-kind="folder" data-bytes="7152749" data-source="games/THE BROKEN SEAL/SRC/">
-<title>SRC: 7,152,749 bytes · Unknown, Drafted, C, Data · 9 items</title>
+<g aria-label="SRC: 7,152,749 bytes · Unknown, Drafted, Assembly, C, Data · 9 items" data-node="container" data-kind="folder" data-bytes="7152749" data-source="games/THE BROKEN SEAL/SRC/">
+<title>SRC: 7,152,749 bytes · Unknown, Drafted, Assembly, C, Data · 9 items</title>
 <rect class="container-frame" x="8" y="164.05804901581442" width="814" height="1118.329419546899" fill="#1f7f93"/>
 <path class="bevel-light" d="M8 1282.3874685627136 V164.05804901581442 H822" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <path class="bevel-dark" d="M8 1282.3874685627136 H822 V164.05804901581442" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
@@ -2623,8 +2623,8 @@
 </g>
 </g>
 </g>
-<g aria-label="FIELD: 2,527,414 bytes · Unknown, Drafted, C, Data · 85 items" data-node="container" data-kind="folder" data-bytes="2527414" data-source="games/THE BROKEN SEAL/SRC/FIELD/">
-<title>FIELD: 2,527,414 bytes · Unknown, Drafted, C, Data · 85 items</title>
+<g aria-label="FIELD: 2,527,414 bytes · Unknown, Drafted, Assembly, C, Data · 85 items" data-node="container" data-kind="folder" data-bytes="2527414" data-source="games/THE BROKEN SEAL/SRC/FIELD/">
+<title>FIELD: 2,527,414 bytes · Unknown, Drafted, Assembly, C, Data · 85 items</title>
 <rect class="container-frame" x="33.19489671271079" y="186.05804901581442" width="762.6563633322393" height="410.6838237794332" fill="#1f7f93"/>
 <path class="bevel-light" d="M33.19489671271079 596.7418727952477 V186.05804901581442 H795.8512600449501" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <path class="bevel-dark" d="M33.19489671271079 596.7418727952477 H795.8512600449501 V186.05804901581442" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
@@ -8122,16 +8122,17 @@
 <rect x="636.0376973559282" y="234.58169769161412" width="26.46300116646234" height="7.506930970370222" style="fill:#326b7d"/>
 </g>
 </g>
-<g aria-label="LUNPA_FORTRESS: 14,772 bytes · Unknown, Drafted, C · 1 items" data-node="container" data-kind="folder" data-bytes="14772" data-source="games/THE BROKEN SEAL/SRC/FIELD/LUNPA_FORTRESS/">
-<title>LUNPA_FORTRESS: 14,772 bytes · Unknown, Drafted, C · 1 items</title>
+<g aria-label="LUNPA_FORTRESS: 14,772 bytes · Unknown, Drafted, Assembly, C · 1 items" data-node="container" data-kind="folder" data-bytes="14772" data-source="games/THE BROKEN SEAL/SRC/FIELD/LUNPA_FORTRESS/">
+<title>LUNPA_FORTRESS: 14,772 bytes · Unknown, Drafted, Assembly, C · 1 items</title>
 <rect class="container-frame" x="598.1340516340457" y="245.40685417456694" width="38.07841587643141" height="45.02825831093327" fill="#1f7f93"/>
 <path class="bevel-light" d="M598.1340516340457 290.4351124855002 V245.40685417456694 H636.2124675104772" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <path class="bevel-dark" d="M598.1340516340457 290.4351124855002 H636.2124675104772 V245.40685417456694" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="LUNPA_FORTRESS: 14,772 bytes · Unknown, Drafted, C · 0x087e7574" data-node="leaf" data-kind="folder" data-bytes="14772" data-address="0x087e7574" data-source="games/THE BROKEN SEAL/SRC/FIELD/LUNPA_FORTRESS/">
-<title>LUNPA_FORTRESS: 14,772 bytes · Unknown, Drafted, C · 0x087e7574</title>
-<rect x="600.6340516340457" y="286.82682940608163" width="33.07841587643141" height="1.1082830794186098" style="fill:#d9d9d4"/>
-<rect x="600.6340516340457" y="285.8702916871702" width="33.07841587643141" height="0.9565377189114164" style="fill:#96c8c9"/>
-<rect x="600.6340516340457" y="247.90685417456697" width="33.07841587643141" height="37.963437512603235" style="fill:#326b7d"/>
+<g aria-label="LUNPA_FORTRESS: 14,772 bytes · Unknown, Drafted, Assembly, C · 0x087e7574" data-node="leaf" data-kind="folder" data-bytes="14772" data-address="0x087e7574" data-source="games/THE BROKEN SEAL/SRC/FIELD/LUNPA_FORTRESS/">
+<title>LUNPA_FORTRESS: 14,772 bytes · Unknown, Drafted, Assembly, C · 0x087e7574</title>
+<rect x="600.6340516340457" y="286.9027020863352" width="33.07841587643141" height="1.032410399165013" style="fill:#d9d9d4"/>
+<rect x="600.6340516340457" y="285.94616436742376" width="33.07841587643141" height="0.9565377189114164" style="fill:#96c8c9"/>
+<rect x="600.6340516340457" y="285.87029168717015" width="33.07841587643141" height="0.07587268025359677" style="fill:#6cafb2"/>
+<rect x="600.6340516340457" y="247.90685417456692" width="33.07841587643141" height="37.963437512603235" style="fill:#326b7d"/>
 </g>
 </g>
 <g aria-label="MAKYURI_CHOJO: 11,168 bytes · Unknown, Drafted, C, Data · 3 items" data-node="container" data-kind="folder" data-bytes="11168" data-source="games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/">

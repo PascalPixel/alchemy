@@ -83996,7 +83996,7 @@
     {
       "id": "retained-overlay-3ab-0200131c",
       "game": "tbs",
-      "source": "games/THE BROKEN SEAL/recon/en/overlays/resource_3ab_c_0200131c.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_MURA/DIALOGUE_SEQUENCE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ab",
       "absolute_symbols": {
@@ -84034,7 +84034,7 @@
         {
           "address": "0x0200131c",
           "extent": 672,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },

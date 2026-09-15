@@ -14688,7 +14688,8 @@
       "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
     },
     "resource_3ab:0200131c": {
-      "name": "FieldScene_RunActorDialogueMovementSequence"
+      "name": "FieldScene_RunActorDialogueMovementSequence",
+      "source": "FIELD/RUNPA_MURA/DIALOGUE_SEQUENCE.C"
     },
     "resource_3ab:02000ff0": {
       "name": "FieldScene_RunFlagGatedActorDialogue",

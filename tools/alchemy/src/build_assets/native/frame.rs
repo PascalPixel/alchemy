@@ -1,6 +1,6 @@
 use super::*;
-const META: &str = "games/tbs/SRC/GRAPHICS/COMMON/UI.JSON";
-const SHEET: &str = "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG";
+const META: &str = "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/UI.JSON";
+const SHEET: &str = "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/TILE_BANK.PNG";
 pub(super) fn pixels(ctx: &Context, input: &Value, rom: &[u8]) -> Result<Vec<u8>, String> {
     let doc = ctx.document(&ctx.root.join(META))?;
     let offsets = doc["offset_table"]["segments"][0]["values"]

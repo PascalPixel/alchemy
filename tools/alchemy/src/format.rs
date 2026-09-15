@@ -1,13 +1,14 @@
 use crate::compiler::{canonical_json::canonical_json, routing::root};
 use serde_json::Value;
 
-pub const NATIVE_ROOTS: [&str; 6] = [
-    "games/tbs/SRC",
-    "games/tbs/INCLUDE",
-    "games/tbs/SOUND",
-    "games/tbs/TEXT",
-    "games/tbs/PREVIEW",
-    "games/tbs/SOURCE.JSON",
+pub const NATIVE_ROOTS: [&str; 7] = [
+    "games/COMMON",
+    "games/THE BROKEN SEAL/SRC",
+    "games/THE BROKEN SEAL/INCLUDE",
+    "games/THE BROKEN SEAL/SOUND",
+    "games/THE BROKEN SEAL/TEXT",
+    "games/THE BROKEN SEAL/PREVIEW",
+    "games/THE BROKEN SEAL/SOURCE.JSON",
 ];
 
 pub fn run(arguments: &[String]) -> Result<(), String> {

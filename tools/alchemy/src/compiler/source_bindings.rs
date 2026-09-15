@@ -1,13 +1,13 @@
 //! Per-source address bindings recovered from the owner register's companion
 //! manifest. Production C spells semantic names; this file is never included
-//! from `games/tbs/SRC` or `games/tbs/INCLUDE`. The compile plan expands it
+//! from `games/THE BROKEN SEAL/SRC` or `games/THE BROKEN SEAL/INCLUDE`. The compile plan expands it
 //! into a generated header under `out/`.
 use serde::Deserialize;
 use std::collections::{BTreeMap, HashSet};
 use std::path::{Component, Path, PathBuf};
 use std::sync::OnceLock;
 
-pub const SOURCE_BINDINGS_MANIFEST: &str = "games/tbs/recon/source-bindings.json";
+pub const SOURCE_BINDINGS_MANIFEST: &str = "games/THE BROKEN SEAL/recon/source-bindings.json";
 
 #[derive(Debug, Deserialize)]
 struct Manifest {
@@ -78,11 +78,11 @@ pub fn expand_binding_text(text: &str) -> String {
 }
 
 fn source_key(root: &Path, source: &Path) -> Option<String> {
-    let src_root = root.join("games/tbs/SRC");
+    let src_root = root.join("games/THE BROKEN SEAL/SRC");
     let relative = source
         .strip_prefix(&src_root)
         .ok()
-        .or_else(|| source.strip_prefix("games/tbs/SRC").ok())
+        .or_else(|| source.strip_prefix("games/THE BROKEN SEAL/SRC").ok())
         .or_else(|| {
             let nested = is_c_source_path(source)
                 && source.components().count() >= 2
@@ -137,7 +137,7 @@ fn lexical_join(base: &Path, rel: &str) -> PathBuf {
 }
 
 /// Production src keys for this TU: the file itself, plus `#include`d `.c`/`.C`
-/// files under `games/tbs/SRC`. Mixed leftover wrappers compile those src
+/// files under `games/THE BROKEN SEAL/SRC`. Mixed leftover wrappers compile those src
 /// files through a recon unit path that has no bindings key of its own.
 fn included_source_keys(root: &Path, source: &Path) -> Vec<String> {
     let mut keys = Vec::new();
@@ -191,7 +191,7 @@ pub fn production_bindings(
     }
     if let Some(source) = source {
         for key in included_source_keys(root, source) {
-            let src_path = root.join("games/tbs/SRC").join(&key);
+            let src_path = root.join("games/THE BROKEN SEAL/SRC").join(&key);
             if let Ok(src_text) = std::fs::read_to_string(&src_path) {
                 reserved.extend(type_tags(&src_text));
             }
@@ -397,7 +397,7 @@ mod tests {
                 "../../../SRC/BATTLE/EFFECT/ENABLE_TWO_CALLBACKS.C"
             ]
         );
-        let unit = Path::new("/workspace/games/tbs/recon/en/units/unit-0808fe38.c");
+        let unit = Path::new("/workspace/games/THE BROKEN SEAL/recon/en/units/unit-0808fe38.c");
         let resolved = lexical_join(unit.parent().unwrap(), &includes[1]);
         assert_eq!(
             source_key(Path::new("/workspace"), &resolved).as_deref(),
@@ -409,7 +409,7 @@ mod tests {
     #[test]
     fn uppercase_c_sources_and_includes_resolve_to_src_keys() {
         let root = tempdir().unwrap();
-        let source_root = root.path().join("games/tbs/SRC");
+        let source_root = root.path().join("games/THE BROKEN SEAL/SRC");
         let source = source_root.join("battle/main.C");
         let included = source_root.join("battle/helper.C");
         std::fs::create_dir_all(source.parent().unwrap()).unwrap();

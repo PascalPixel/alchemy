@@ -4,7 +4,7 @@
 
 GCC296_CFLAGS := -O2 -mthumb -mthumb-interwork -mcpu=arm7tdmi \
                  -fno-builtin -nostdinc -ffreestanding \
-                 -fcall-used-r4 -Igames/tbs/INCLUDE
+                 -fcall-used-r4 -I"games/THE BROKEN SEAL/INCLUDE"
 
 TOOLS := tools
 CARGO ?= cargo
@@ -28,6 +28,7 @@ PORTABLE_TOOLS := alchemy psynergy
 TOOLING_LINE_LIMIT := 100000
 TARGET ?= tbs-en
 TARGET_GAME := $(firstword $(subst -, ,$(TARGET)))
+TARGET_GAME_DIR := $(if $(filter tbs,$(TARGET_GAME)),THE BROKEN SEAL,$(TARGET_GAME))
 FULL_REPORT = out/$(TARGET)/full/rebuilt.json
 FULL_ROM = out/$(TARGET)/full/rebuilt.gba
 OWNER_INVENTORY = out/$(TARGET)/full/rebuilt.owner-inventory.json
@@ -194,11 +195,11 @@ classification-check: core-retained-check
 	@printf 'classification contracts ok\n'
 
 candidate-corpus-check:
-	$(CHECK) integrate --check games/tbs/recon/en/main
-	@actual=$$(find games/tbs/recon/en/units -maxdepth 1 -type f -name '*.c' -exec basename {} \; | LC_ALL=C sort); \
+	$(CHECK) integrate --check "games/THE BROKEN SEAL/recon/en/main"
+	@actual=$$(find "games/THE BROKEN SEAL/recon/en/units" -maxdepth 1 -type f -name '*.c' -exec basename {} \; | LC_ALL=C sort); \
 	covered=$$({ for route in $(CANDIDATE_SINGLE_OWNERS); do printf '%s\n' "$${route#*=}"; done; \
-		awk -F '"' '/"source": "games\/tbs\/recon\/en\/units\//{n=split($$4,part,"/"); print part[n]}' \
-			games/tbs/recon/translation-units.json; } | LC_ALL=C sort -u); \
+		awk -F '"' '/"source": "games\/THE BROKEN SEAL\/recon\/en\/units\//{n=split($$4,part,"/"); print part[n]}' \
+			"games/THE BROKEN SEAL/recon/translation-units.json"; } | LC_ALL=C sort -u); \
 	if test "$$actual" != "$$covered"; then \
 		printf 'unit corpus routes are incomplete\nactual:\n%s\ncovered:\n%s\n' "$$actual" "$$covered"; \
 		exit 1; \
@@ -206,7 +207,7 @@ candidate-corpus-check:
 	@set -e; total=0; \
 	for route in $(CANDIDATE_SINGLE_OWNERS); do \
 		owner=$${route%%=*}; source=$${route#*=}; \
-		result=$$($(COMPILER) score games/tbs/recon/en/units/$$source \
+		result=$$($(COMPILER) score "games/THE BROKEN SEAL/recon/en/units/$$source" \
 			--owner $$owner --first); \
 		diff=$$(printf '%s\n' "$$result" | sed -n 's/.*differing_halfwords=\([0-9][0-9]*\).*/\1/p' | head -n 1); \
 		if test -z "$$diff" || test "$$diff" -eq 0; then \
@@ -217,15 +218,15 @@ candidate-corpus-check:
 	done; \
 	printf 'single-owner corpus scanned=%s exact_retained=0\n' "$$total"
 	@set -e; total=0; \
-	units=$$(awk -F '"' '/"id":/{id=$$4} /"source": "games\/tbs\/recon\/en\/units\//{print id}' \
-		games/tbs/recon/translation-units.json); \
+	units=$$(awk -F '"' '/"id":/{id=$$4} /"source": "games\/THE BROKEN SEAL\/recon\/en\/units\//{print id}' \
+		"games/THE BROKEN SEAL/recon/translation-units.json"); \
 	for unit in $$units; do \
 		report=$$(mktemp /tmp/alchemy-tu-corpus.XXXXXX); \
 		$(COMPILER) score --unit $$unit | \
 			awk -F= '/^owner=/{owner=$$2} /^candidate=/{split($$0,a,"differing_halfwords="); print owner "\t" a[2]+0}' \
 			> "$$report"; \
 		for owner in $$(awk -F '"' -v unit="$$unit" '/"id":/{id=$$4} id==unit && /"state":"retained-assembly"/{print $$4}' \
-			games/tbs/recon/translation-units.json); do \
+			"games/THE BROKEN SEAL/recon/translation-units.json"); do \
 			diff=$$(awk -F '\t' -v owner="$$owner" '$$1==owner{print $$2}' "$$report"); \
 			if test -z "$$diff" || test "$$diff" -eq 0; then \
 				printf 'translation-unit retained owner is exact or unscored: %s %s -- if exact, run alchemy adopt to move it out of the retained corpus; if unscored, fix the score first\n' "$$unit" "$$owner"; \
@@ -271,15 +272,15 @@ check-owners: source-tracking-check
 	$(CHECK) owners
 
 corpus-check:
-	@test -f games/tbs/project.json
+	@test -f "games/THE BROKEN SEAL/project.json"
 	@test -f games/tla/project.json
-	@test -f games/alchemy/project.json
+	@test -f games/COMMON/PROJECT.JSON
 	@if test -d draft; then \
-		printf 'legacy draft/ directory found; use games/tbs/recon/<edition>/\n'; \
+		printf 'legacy draft/ directory found; use games/THE BROKEN SEAL/recon/<edition>/\n'; \
 		exit 1; \
 	fi
-	@if find games/tbs/semantic -maxdepth 1 -name '*.c' -print | grep -q .; then \
-		printf 'source hypotheses belong in games/tbs/recon/, not games/tbs/semantic/ metadata\n'; \
+	@if find "games/THE BROKEN SEAL/semantic" -maxdepth 1 -name '*.c' -print | grep -q .; then \
+		printf 'source hypotheses belong in games/THE BROKEN SEAL/recon/, not games/THE BROKEN SEAL/semantic/ metadata\n'; \
 		exit 1; \
 	fi
 	@printf 'corpus ok: two shared-source games, 12 edition targets, Alchemy integration separate\n'
@@ -334,17 +335,17 @@ tooling-index-check:
 verified-restore:
 	@set -eu; tree=$$(cat $(VERIFIED_TREE)); \
 	git cat-file -e "$$tree" || { printf 'no verified tree object: %s\n' "$$tree"; exit 1; }; \
-	git checkout "$$tree" -- games/$(TARGET_GAME); \
-	git diff --cached --name-status "$$tree" -- games/$(TARGET_GAME) | awk '$$1=="A"{print $$2}' | xargs -r git rm -q -f --cached; \
-	git diff --name-status "$$tree" -- games/$(TARGET_GAME) | awk '$$1=="A"{print $$2}' | xargs -r rm -f; \
-	printf 'games/%s restored to verified tree %s\n' '$(TARGET_GAME)' "$$tree"
+	git checkout "$$tree" -- "games/$(TARGET_GAME_DIR)"; \
+	git diff --cached --name-only -z --diff-filter=A "$$tree" -- "games/$(TARGET_GAME_DIR)" | xargs -0 -r git rm -q -f --cached; \
+	git diff --name-only -z --diff-filter=A "$$tree" -- "games/$(TARGET_GAME_DIR)" | xargs -0 -r rm -f; \
+	printf 'games/%s restored to verified tree %s\n' '$(TARGET_GAME_DIR)' "$$tree"
 
 register-shrink-check:
 	@set -eu; test -s $(VERIFIED_TREE) || { printf 'register shrink check: no verified tree yet\n'; exit 0; }; \
 	tree=$$(cat $(VERIFIED_TREE)); \
-	git cat-file -e "$$tree:games/$(TARGET_GAME)/source-paths.json" 2>/dev/null || { printf 'register shrink check: previous tree lacks the register\n'; exit 0; }; \
-	before=$$(git cat-file -p "$$tree:games/$(TARGET_GAME)/source-paths.json" | grep -c '^    "'); \
-	after=$$(git show :games/$(TARGET_GAME)/source-paths.json | grep -c '^    "'); \
+	git cat-file -e "$$tree:games/$(TARGET_GAME_DIR)/source-paths.json" 2>/dev/null || { printf 'register shrink check: previous tree lacks the register\n'; exit 0; }; \
+	before=$$(git cat-file -p "$$tree:games/$(TARGET_GAME_DIR)/source-paths.json" | grep -c '^    "'); \
+	after=$$(git show ":games/$(TARGET_GAME_DIR)/source-paths.json" | grep -c '^    "'); \
 	if [ "$$after" -lt "$$before" ] && [ "$${RETIRE:-0}" != "1" ]; then \
 		printf 'owner register shrank from %s to %s entries since verified tree %s; a retirement must say RETIRE=1, anything else is a wipe\n' "$$before" "$$after" "$$tree"; exit 1; fi; \
 	printf 'register shrink check ok: %s -> %s owners\n' "$$before" "$$after"

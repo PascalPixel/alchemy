@@ -49,7 +49,7 @@ fn parse_hex(text: &str) -> Result<u32, String> {
 
 /// Every retained overlay module, in register order.
 pub fn modules(root: &Path) -> Result<Vec<Module>, String> {
-    let path = root.join("games/tbs/semantic/overlay-assembly.json");
+    let path = root.join("games/THE BROKEN SEAL/semantic/overlay-assembly.json");
     let assembly: Assembly = crate::compiler::build_io::read_json(&path)?;
     let sources = SourcePaths::load(root)?;
     let mut modules = Vec::new();
@@ -92,7 +92,9 @@ pub fn span_for(
         .mapped_source_path(owner)
         .is_some_and(|path| path.is_file())
     {
-        let path = root.join(format!("games/tbs/asm/overlays/{overlay}_overlay.s"));
+        let path = root.join(format!(
+            "games/THE BROKEN SEAL/asm/overlays/{overlay}_overlay.s"
+        ));
         let text = std::fs::read_to_string(&path)
             .map_err(|error| format!("{}: {error}", path.display()))?;
         crate::compiler::overlay::placeholder_extent(&text, entry)
@@ -242,7 +244,7 @@ mod owner_tests {
     #[test]
     fn retained_regions_and_requested_spans_cannot_create_owners() {
         let root = tempfile::tempdir().unwrap();
-        let semantic = root.path().join("games/tbs/semantic");
+        let semantic = root.path().join("games/THE BROKEN SEAL/semantic");
         std::fs::create_dir_all(&semantic).unwrap();
         std::fs::write(semantic.join("regions.json"), r#"{"manual_regions":[{"overlay":"resource_374","entry":"0x02001000","span_bytes":512}]}"#).unwrap();
         std::fs::write(semantic.join("overlay-assembly.json"), r#"{"regions":[{"overlay":"resource_374","start":"0x02001010","end":"0x02001030","kind":"structured_scene_module"}]}"#).unwrap();
@@ -268,14 +270,14 @@ mod owner_tests {
             }
         )
         .is_err());
-        assert!(!root.path().join("games/tbs/SRC").exists());
+        assert!(!root.path().join("games/THE BROKEN SEAL/SRC").exists());
     }
 }
 
-/// The extent of a main owner: its retained assembly under `games/tbs/asm`
+/// The extent of a main owner: its retained assembly under `games/THE BROKEN SEAL/asm`
 /// assembled and measured, exactly as the integration gate measures it.
 pub fn main_extent(root: &Path, address: u32) -> Result<u32, String> {
-    let source = root.join(format!("games/tbs/asm/{address:08x}.s"));
+    let source = root.join(format!("games/THE BROKEN SEAL/asm/{address:08x}.s"));
     if !source.is_file() {
         return Err(format!("main:{address:08x} has no retained assembly"));
     }

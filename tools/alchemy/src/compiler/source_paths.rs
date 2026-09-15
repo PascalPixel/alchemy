@@ -5,7 +5,7 @@ use serde_json::{Map, Value};
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Component, Path, PathBuf};
-pub const SOURCE_PATHS_MANIFEST: &str = "games/tbs/source-paths.json";
+pub const SOURCE_PATHS_MANIFEST: &str = "games/THE BROKEN SEAL/source-paths.json";
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub enum SourceOwner {
     Main(u32),
@@ -90,7 +90,9 @@ impl SourceOwner {
         self.routing_path_for_game("tbs")
     }
     pub fn routing_path_for_game(self, game: &str) -> PathBuf {
-        let root = Path::new("games").join(game).join("src");
+        let root = Path::new("games")
+            .join(crate::compiler::routing::game_directory(game))
+            .join("src");
         root.join(self.legacy_relative_path())
     }
 }
@@ -575,7 +577,7 @@ fn game_paths(game: &str) -> Result<(PathBuf, PathBuf), String> {
     {
         return Err(format!("invalid game id {game:?}"));
     }
-    let root = Path::new("games").join(game);
+    let root = Path::new("games").join(crate::compiler::routing::game_directory(game));
     Ok((
         root.join(if game == "tbs" { "SRC" } else { "src" }),
         root.join("source-paths.json"),
@@ -670,14 +672,16 @@ mod tests {
         let root = tempdir().unwrap();
         let paths = SourcePaths::parse(root.path(), manifest()).unwrap();
         assert!(paths.main_sources().unwrap_err().contains("missing source"));
-        let main = root.path().join("games/tbs/SRC/battle/resolve_action.c");
+        let main = root
+            .path()
+            .join("games/THE BROKEN SEAL/SRC/battle/resolve_action.c");
         fs::create_dir_all(main.parent().unwrap()).unwrap();
         fs::write(&main, "void resolve_action(void) {}\n").unwrap();
         assert_eq!(paths.main_sources().unwrap().len(), 1);
         assert!(paths.all_sources().unwrap_err().contains("missing source"));
         let overlay = root
             .path()
-            .join("games/tbs/SRC/battle/effects/spawn_configured_effect.c");
+            .join("games/THE BROKEN SEAL/SRC/battle/effects/spawn_configured_effect.c");
         fs::create_dir_all(overlay.parent().unwrap()).unwrap();
         fs::write(&overlay, "void spawn_configured_effect(void) {}\n").unwrap();
         assert_eq!(paths.all_sources().unwrap().len(), 2);
@@ -688,7 +692,9 @@ mod tests {
         let root = tempdir().unwrap();
         let text = r#"{"format":3,"owners":{"main:080bbb0c":"battle/resolve_action.C"}}"#;
         let paths = SourcePaths::parse(root.path(), text).unwrap();
-        let source = root.path().join("games/tbs/SRC/battle/resolve_action.C");
+        let source = root
+            .path()
+            .join("games/THE BROKEN SEAL/SRC/battle/resolve_action.C");
         fs::create_dir_all(source.parent().unwrap()).unwrap();
         fs::write(&source, "void resolve_action(void) {}\n").unwrap();
         assert_eq!(paths.main_sources().unwrap().len(), 1);
@@ -752,7 +758,7 @@ mod tests {
                 .registered_source_path(SourceOwner::Main(0x080b_bb0c))
                 .unwrap(),
             root.path()
-                .join("games/tbs/SRC")
+                .join("games/THE BROKEN SEAL/SRC")
                 .join("battle/resolve_action.c")
         );
     }
@@ -769,13 +775,17 @@ mod tests {
         let paths = SourcePaths::parse(root.path(), manifest()).unwrap();
         assert_eq!(
             paths
-                .owner_for_path(Path::new("games/tbs/SRC/battle/resolve_action.c"))
+                .owner_for_path(Path::new(
+                    "games/THE BROKEN SEAL/SRC/battle/resolve_action.c"
+                ))
                 .unwrap(),
             Some(SourceOwner::Main(0x080b_bb0c))
         );
         assert_eq!(
             paths
-                .owner_for_path(Path::new("games/tbs/SRC/resource_382_c_0200013c.c"))
+                .owner_for_path(Path::new(
+                    "games/THE BROKEN SEAL/SRC/resource_382_c_0200013c.c"
+                ))
                 .unwrap(),
             Some(SourceOwner::Overlay {
                 resource: 0x382,
@@ -822,7 +832,7 @@ mod tests {
             paths
                 .overlay_owner_for_path(
                     "resource_39b",
-                    Path::new("games/tbs/SRC/battle/effects/spawn_configured_effect.c")
+                    Path::new("games/THE BROKEN SEAL/SRC/battle/effects/spawn_configured_effect.c")
                 )
                 .unwrap(),
             Some(SourceOwner::Overlay {
@@ -866,7 +876,7 @@ mod tests {
         );
         assert_eq!(
             reloaded.owners_for_path(Path::new(
-                "games/tbs/SRC/overlays/shared/integrate_effect_motion.c"
+                "games/THE BROKEN SEAL/SRC/overlays/shared/integrate_effect_motion.c"
             )),
             vec![SourceOwner::Overlay {
                 resource: 0x39c,

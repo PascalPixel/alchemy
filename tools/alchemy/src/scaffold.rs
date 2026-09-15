@@ -54,10 +54,11 @@ fn run(args: &[String]) -> Result<(), String> {
         .map_err(|_| "start is not hex")?;
     let end =
         u32::from_str_radix(end_hex.trim_start_matches("0x"), 16).map_err(|_| "end is not hex")?;
+    let directory = crate::compiler::routing::game_directory(game);
     let inventory: Value = read_json(Path::new(&format!(
         "out/{game}-en/full/rebuilt.owner-inventory.json"
     )))?;
-    let manifest_path = format!("games/{game}/recon/translation-units.json");
+    let manifest_path = format!("games/{directory}/recon/translation-units.json");
     let mut manifest: Value = read_json(Path::new(&manifest_path))?;
     // Owners already claimed by a declared unit are excluded: overlapping
     // declarations can never coexist, and the fix is extending that unit.
@@ -97,9 +98,9 @@ fn run(args: &[String]) -> Result<(), String> {
         let include = if exact && source.ends_with(".c") {
             Some(format!(
                 "../../../{}",
-                source.replace(&format!("games/{game}/"), "")
+                source.replace(&format!("games/{directory}/"), "")
             ))
-        } else if Path::new(&format!("games/{game}/recon/en/main/{hex}.c")).exists() {
+        } else if Path::new(&format!("games/{directory}/recon/en/main/{hex}.c")).exists() {
             Some(format!("../main/{hex}.c"))
         } else {
             None
@@ -135,7 +136,7 @@ fn run(args: &[String]) -> Result<(), String> {
             )),
         }
     }
-    let out = format!("games/{game}/recon/en/units/{unit_id}.c");
+    let out = format!("games/{directory}/recon/en/units/{unit_id}.c");
     // A declared unit refuses before the scaffold is written, so a refusal
     // leaves no file behind.
     if apply

@@ -69,7 +69,7 @@ fn hexadecimal(value: &Value) -> Option<u64> {
 }
 
 fn overlay_span(name: &str, address: u32) -> Result<usize, String> {
-    let path = root().join("games/tbs/semantic/regions.json");
+    let path = root().join("games/THE BROKEN SEAL/semantic/regions.json");
     let document: Value = read_json(&path)?;
     document["manual_regions"]
         .as_array()

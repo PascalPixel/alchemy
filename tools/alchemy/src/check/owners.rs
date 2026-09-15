@@ -23,7 +23,7 @@ fn exact(root: &Path) -> Result<HashSet<String>, String> {
         .map(|source| source.owner.legacy_stem())
         .collect::<HashSet<_>>();
     if stems.is_empty() {
-        return Err("games/tbs/SRC/ contains no C owners".into());
+        return Err("games/THE BROKEN SEAL/SRC/ contains no C owners".into());
     }
     Ok(stems)
 }
@@ -31,8 +31,8 @@ fn exact(root: &Path) -> Result<HashSet<String>, String> {
 fn validate_registered_main_symbols(root: &Path) -> Result<usize, String> {
     let register = SourcePaths::load(root)?;
     let mut count = 0;
-    for entry in std::fs::read_dir(root.join("games/tbs/asm"))
-        .map_err(|error| format!("games/tbs/asm: {error}"))?
+    for entry in std::fs::read_dir(root.join("games/THE BROKEN SEAL/asm"))
+        .map_err(|error| format!("games/THE BROKEN SEAL/asm: {error}"))?
     {
         let path = entry.map_err(|error| error.to_string())?.path();
         let Some(stem) = path.file_stem().and_then(|value| value.to_str()) else {
@@ -80,7 +80,9 @@ fn audited(root: &Path) -> Result<HashSet<String>, String> {
         .map(|owner| owner.legacy_stem())
         .collect();
     if stems.is_empty() {
-        return Err("games/tbs/semantic/regions.json contains no audited owners".into());
+        return Err(
+            "games/THE BROKEN SEAL/semantic/regions.json contains no audited owners".into(),
+        );
     }
     Ok(stems)
 }
@@ -90,11 +92,11 @@ fn validate_unmatchable(
     exact: &HashSet<String>,
     audited: &HashSet<String>,
 ) -> Result<usize, String> {
-    let document = json(&root.join("games/tbs/semantic/unmatchable.json"))?;
+    let document = json(&root.join("games/THE BROKEN SEAL/semantic/unmatchable.json"))?;
     let rows = document
         .get("unmatchable")
         .and_then(Value::as_array)
-        .ok_or("games/tbs/semantic/unmatchable.json has no unmatchable array")?;
+        .ok_or("games/THE BROKEN SEAL/semantic/unmatchable.json has no unmatchable array")?;
     let mut seen = HashSet::new();
     for row in rows {
         let owner = row
@@ -143,18 +145,20 @@ fn validate_unmatchable(
 }
 
 fn validate_provisional(root: &Path, exact: &HashSet<String>) -> Result<usize, String> {
-    let document = json(&root.join("games/tbs/semantic/provisional-source.json"))?;
+    let document = json(&root.join("games/THE BROKEN SEAL/semantic/provisional-source.json"))?;
     let rows = document
         .get("provisional")
         .and_then(Value::as_array)
-        .ok_or("games/tbs/semantic/provisional-source.json has no provisional array")?;
+        .ok_or("games/THE BROKEN SEAL/semantic/provisional-source.json has no provisional array")?;
     for row in rows {
         let owner = row
             .get("owner")
             .and_then(Value::as_str)
             .ok_or("provisional owner missing")?;
         if !exact.contains(owner) {
-            return Err(format!("{owner} is provisional but not in games/tbs/SRC/"));
+            return Err(format!(
+                "{owner} is provisional but not in games/THE BROKEN SEAL/SRC/"
+            ));
         }
         if row
             .get("reason")
@@ -170,11 +174,11 @@ fn validate_provisional(root: &Path, exact: &HashSet<String>) -> Result<usize, S
 }
 
 fn validate_sealed(root: &Path, exact: &HashSet<String>) -> Result<usize, String> {
-    let document = json(&root.join("games/tbs/semantic/sealed.json"))?;
+    let document = json(&root.join("games/THE BROKEN SEAL/semantic/sealed.json"))?;
     let rows = document
         .get("sealed")
         .and_then(Value::as_array)
-        .ok_or("games/tbs/semantic/sealed.json has no sealed array")?;
+        .ok_or("games/THE BROKEN SEAL/semantic/sealed.json has no sealed array")?;
     let mut seen = HashSet::new();
     for row in rows {
         let owner = row
@@ -190,7 +194,10 @@ fn validate_sealed(root: &Path, exact: &HashSet<String>) -> Result<usize, String
         if exact.contains(owner) {
             return Err(format!("{owner} has exact C; remove its seal"));
         }
-        if !root.join(format!("games/tbs/asm/{owner}.s")).is_file() {
+        if !root
+            .join(format!("games/THE BROKEN SEAL/asm/{owner}.s"))
+            .is_file()
+        {
             return Err(format!("{owner} is sealed but has no retained assembly"));
         }
         if row
@@ -255,7 +262,7 @@ fn validate_drafts(root: &Path, exact: &HashSet<String>) -> Result<usize, String
 }
 
 fn validate_reconstruction_records(root: &Path) -> Result<(), String> {
-    let path = root.join("games/tbs/recon/en/dossiers.json");
+    let path = root.join("games/THE BROKEN SEAL/recon/en/dossiers.json");
     let registry = json(&path)?;
     if registry.get("format").and_then(Value::as_u64) != Some(1) {
         return Err(format!("{} has an unsupported format", path.display()));
@@ -268,7 +275,7 @@ fn validate_reconstruction_records(root: &Path) -> Result<(), String> {
         SourceOwner::parse(owner).map_err(|error| format!("{owner}: {error}"))?;
         for duplicate in ["owner", "semantic_name"] {
             if record.get(duplicate).is_some() {
-                return Err(format!("{owner} repeats {duplicate}; owner identity comes from the registry key and names from games/tbs/source-paths.json"));
+                return Err(format!("{owner} repeats {duplicate}; owner identity comes from the registry key and names from games/THE BROKEN SEAL/source-paths.json"));
             }
         }
     }

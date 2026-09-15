@@ -4,7 +4,7 @@
   "target": "tbs-en",
   "derivation": "full-c-progress-v1",
   "audit": "complete",
-  "total_union_bytes": 1354956,
+  "total_union_bytes": 1354970,
   "main": {
     "id": "main",
     "executable_bytes": 548368,
@@ -33819,8 +33819,8 @@
     {
       "id": "resource_3bf",
       "decoded_bytes": 30580,
-      "executable_bytes": 24266,
-      "excluded_bytes": 6314,
+      "executable_bytes": 24280,
+      "excluded_bytes": 6300,
       "audit": "complete",
       "intervals": [
         {
@@ -34700,10 +34700,10 @@
           "evidence": "resource_3bf_overlay.s:fixed-ldr-bx-veneer"
         },
         {
-          "start": 33576892,
-          "end": 33576938,
+          "start": 33576880,
+          "end": 33576940,
           "kind": "thumb",
-          "evidence": "BL-reached bounded raw-halfword leaf"
+          "evidence": "Complete 60-byte historical GCC 2.96 L_call_via_rX runtime bank; approved source assembly matches maintained overlay bytes independently, including three formerly uncalled prefix pairs and final explicit nop. See semantic/overlay-assembly.json per-range library proof."
         },
         {
           "start": 33576940,

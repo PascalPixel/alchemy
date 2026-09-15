@@ -1,6 +1,8 @@
 #ifndef ALCHEMY_TYPES_H
 #define ALCHEMY_TYPES_H
 
+#include "VERSION.H"
+
 /* The fixed-width spellings every reconstructed translation unit uses.
    Before this header each of them carried its own copy: 7,751 typedef lines
    across 1,224 of 1,249 files, which is the same eight declarations restated

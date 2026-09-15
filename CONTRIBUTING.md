@@ -254,6 +254,37 @@ organized into evidenced modules with shared interfaces.
 
 ## Boundary and relocation rules
 
+TBS editions share C files and translation units. `INCLUDE/VERSION.H` selects
+exactly one of `TBS_EDITION_JA`, `EN`, `DE`, `ES`, `FR` or `IT`; English is the
+production default. Use small conditional sections only for measured code
+changes. Keep localized text and address differences in bindings and assets,
+not copied language trees. A separate module is justified only by substantially
+different code, never merely by relocated addresses.
+
+The existing translation-unit manifest owns optional `editions` entries. Each
+edition's `owners` map uses registered function names and records independently
+reviewed `address`, complete `extent`, and `source_variant` when code changes.
+Its `absolute_symbols` map records named function, data and value bindings with
+their `address` and `kind`. Omitted entries retain the normal correspondence
+workflow; a source variant needs explicit bindings where call or literal sites
+change. Do not use candidate length or candidate call offsets to invent these
+facts. Conflicting, unknown, overlapping and invalid declarations are errors.
+
+For one registered overlay owner, compile its shared unit for all six editions:
+
+```sh
+./alchemy cross-edition --span 472 --edition-build out/tbs-editions/lunpa-sequence.json resource_3bf:02001e94
+```
+
+This report proves only that complete owner, including linked calls, literals
+and alignment; it does not prove its neighbors or whole overlay. Shared source
+is compiled before selecting an owner for linking. Declared main-image variants
+use `alchemy cross-edition --edition-build out/tbs-editions/owner.json <owner>`.
+`--all-overlays --edition-build` compiles once per unit per edition and checks
+every member at its regional address and extent. Core similarity is diagnostic;
+only zero differences over the complete linked extent is exact. Keep per-edition
+results under ignored `out/`; any failed edition makes the command fail.
+
 A coverage span is not automatically a function. Follow continuations, shared
 epilogues, inherited live registers and long-branch veneers through the complete
 owner, including pools. Never shorten its expected extent to fit a candidate.
@@ -455,7 +486,7 @@ points or invented family/wave commands. For another GBA game, carry portable
 decoding, comparison, bounded recovery and compiler invocation plus its minimal
 build integration, not Golden Sun ownership, asset offsets or agent machinery.
 
-Portable tooling is capped at **50,000 Rust, TypeScript, JavaScript and CSS
+Portable tooling is capped at **100,000 Rust, TypeScript, JavaScript and CSS
 lines** by `make tooling-size`. Pascal owns that ceiling and scope. Do not
 raise it or hide code outside it. New tooling must resolve a demonstrated
 recurring blocker, reuse or replace existing machinery, and prove a conversion

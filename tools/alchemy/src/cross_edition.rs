@@ -25,7 +25,7 @@ const OVERLAY_FIRST: usize = 0x36f;
 const OVERLAY_LAST: usize = 0x3ce;
 const CORRESPONDENCE_SCHEMA_VERSION: u32 = 4;
 const CORPUS_EDITION_BUILD_SCHEMA_VERSION: u32 = 3;
-const USAGE: &str = "usage: alchemy cross-edition ([--calls] [--json] [--rom-dir DIR] [--object FILE] [--edition-build FILE] <8-digit-owner> | --game tla [--rom-dir DIR] --edition-build FILE <8-digit-en-owner> | [--json] [--rom-dir DIR] --span BYTES <resource_xxx:02xxxxxx> | --all [--rom-dir DIR] [--object-dir DIR] [--write FILE] [--edition-build FILE] | --all-overlays [--rom-dir DIR] [--write FILE] [--edition-build FILE])";
+const USAGE: &str = "usage: alchemy cross-edition ([--calls] [--json] [--rom-dir DIR] [--object FILE] [--edition-build FILE] <8-digit-owner> | --game tla [--rom-dir DIR] --edition-build FILE <8-digit-en-owner> | [--json] [--rom-dir DIR] [--edition-build FILE] --span BYTES <resource_xxx:02xxxxxx> | --all [--rom-dir DIR] [--object-dir DIR] [--write FILE] [--edition-build FILE] | --all-overlays [--rom-dir DIR] [--write FILE] [--edition-build FILE])";
 #[derive(Debug, Serialize)]
 struct Report {
     schema_version: u32,
@@ -250,6 +250,32 @@ struct EditionBuildEntry {
     byte_exact: bool,
     error: Option<String>,
 }
+impl EditionBuildEntry {
+    fn new(edition: &str, address: u64, size: usize) -> Self {
+        Self {
+            edition: edition.into(),
+            start: format!("0x{address:08x}"),
+            size,
+            external_symbols: BTreeMap::new(),
+            differing_bytes: None,
+            byte_exact: false,
+            error: None,
+        }
+    }
+    fn record(&mut self, result: Result<(BTreeMap<String, u64>, usize), String>) {
+        match result {
+            Ok((values, differences)) => {
+                self.external_symbols = values
+                    .into_iter()
+                    .map(|(name, value)| (name, format!("0x{value:08x}")))
+                    .collect();
+                self.differing_bytes = Some(differences);
+                self.byte_exact = differences == 0;
+            }
+            Err(error) => self.error = Some(error),
+        }
+    }
+}
 #[derive(Debug, Serialize)]
 struct CorpusEditionBuildReport {
     schema_version: u32,
@@ -379,6 +405,11 @@ pub fn run(args: &[String]) -> Result<(), String> {
         return run_overlay_owner(&options, &roms, owner);
     }
     let owner_address = owner_address(owner)?;
+    if let Some(path) = options.edition_build.as_deref() {
+        if let Some(unit) = translation_unit(owner)?.filter(|unit| !unit.editions.is_empty()) {
+            return write_declared_main_owner_build(path, owner, unit, &roms);
+        }
+    }
     let object_path = resolve_object(owner, options.object.as_deref(), &options.object_dir)?;
     let report = analyze_owner(
         owner,
@@ -550,6 +581,126 @@ fn write_edition_build(
         build.all_exact
     );
     Ok(build)
+}
+fn write_declared_main_owner_build(
+    path: &Path,
+    owner: &str,
+    unit: &TranslationUnit,
+    roms: &EditionRoms,
+) -> Result<(), String> {
+    if !unit.exact() {
+        return Err("edition builds require an exact shared C unit".into());
+    }
+    let identity = SourceOwner::Main(owner_address(owner)? as u32);
+    let member = unit
+        .owners
+        .iter()
+        .find(|member| member.address == identity.address())
+        .unwrap();
+    let en = edition_reference(
+        &roms.images["en"],
+        rom_offset(u64::from(member.address), roms.images["en"].len())?,
+        member.extent,
+    )?;
+    let mask = psynergy::thumb::relocation_info(en, u64::from(member.address)).0;
+    let source = crate::compiler::routing::root().join(&unit.source);
+    let route = format!("{:08x}", unit.owners[0].address);
+    let output = crate::compiler::routing::root()
+        .join("out/cross-edition")
+        .join(owner);
+    let mut entries = Vec::new();
+    for edition in EDITIONS {
+        let regional = unit.edition_owner(edition, member.address);
+        let extent = regional.map_or(member.extent, |member| member.extent);
+        let mut entry = EditionBuildEntry::new(edition, 0, extent);
+        let result = (|| {
+            let address = match regional {
+                Some(member) => u64::from(member.address),
+                None if edition == "en" => u64::from(member.address),
+                None => {
+                    ROM_BASE
+                        + locate(en, &mask, &anchors(en, &mask), &roms.images[edition])?.0 as u64
+                }
+            };
+            entry.start = format!("0x{address:08x}");
+            let start = rom_offset(address, roms.images[edition].len())?;
+            let reference = edition_reference(&roms.images[edition], start, extent)?;
+            let object = compile_edition_object(&route, edition, &source)?;
+            let (size, offset, _, _, relocations, complete) = relocation_mask(&object, owner)?;
+            if !complete || size != extent {
+                return Err("compiled shared unit or complete owner extent differs".into());
+            }
+            let mut locations = EditionLocations::new();
+            let mut symbols = if edition == "en" {
+                unit.canonical_symbols()?
+            } else {
+                BTreeMap::new()
+            };
+            if let Some(layout) = unit.editions.get(edition) {
+                symbols.extend(layout.absolute_symbols.clone());
+            }
+            for (name, symbol) in symbols {
+                locations
+                    .entry(name)
+                    .or_default()
+                    .insert(edition.into(), symbol.address);
+            }
+            let changed =
+                regional.is_some_and(|member| member.source_variant) || extent != member.extent;
+            if changed
+                && relocations.iter().any(|site| {
+                    (site.external
+                        || site.symbol.starts_with("Func_")
+                            && site.symbol != identity.legacy_name())
+                        && !locations.contains_key(&site.symbol)
+                })
+            {
+                return Err("source variant requires explicit edition bindings for every referenced external symbol".into());
+            }
+            if !changed && (extent != en.len() || core_diff_bytes(en, reference, &mask) != 0) {
+                return Err("regional source changes require a declared source variant".into());
+            }
+            let values = derive_link_symbols(
+                &relocations,
+                reference,
+                start,
+                &identity.legacy_name(),
+                true,
+                edition,
+                Some(&locations),
+            )?;
+            let linked = link_owner_for_edition(
+                &output,
+                edition,
+                &object,
+                &identity.legacy_name(),
+                address,
+                offset,
+                size,
+                &values,
+            )?;
+            let differences = reference
+                .iter()
+                .zip(&linked)
+                .filter(|(a, b)| a != b)
+                .count()
+                + reference.len().abs_diff(linked.len());
+            Ok((values, differences))
+        })();
+        entry.record(result);
+        entries.push(entry);
+    }
+    let all_exact = entries.iter().all(|entry| entry.byte_exact);
+    write_json(
+        path,
+        &serde_json::json!({"schema_version":1,"game":"tbs","owner":identity.id(),"source":unit.source,"scope":"complete owner linked from shared C","all_exact":all_exact,"editions":entries}),
+        "declared edition build",
+    )?;
+    if all_exact {
+        Ok(())
+    } else {
+        Err("declared owner is not byte-exact in all editions; see edition build report".into())
+    }
 }
 fn reference_call_locations(calls: &[CallTarget]) -> Result<EditionLocations, String> {
     let mut locations = EditionLocations::new();
@@ -761,37 +912,17 @@ fn edition_build_report(
             )
             .map(|linked| (values, linked))
         });
-        match built {
-            Ok((values, linked)) => {
-                let differing_bytes = reference
-                    .iter()
-                    .zip(&linked)
-                    .filter(|(left, right)| left != right)
-                    .count()
-                    + reference.len().abs_diff(linked.len());
-                editions.push(EditionBuildEntry {
-                    edition: edition.into(),
-                    start: format!("0x{:08x}", ROM_BASE + start as u64),
-                    size: variant_size,
-                    external_symbols: values
-                        .into_iter()
-                        .map(|(name, value)| (name, format!("0x{value:08x}")))
-                        .collect(),
-                    differing_bytes: Some(differing_bytes),
-                    byte_exact: differing_bytes == 0,
-                    error: None,
-                });
-            }
-            Err(error) => editions.push(EditionBuildEntry {
-                edition: edition.into(),
-                start: format!("0x{:08x}", ROM_BASE + start as u64),
-                size: variant_size,
-                external_symbols: BTreeMap::new(),
-                differing_bytes: None,
-                byte_exact: false,
-                error: Some(error),
-            }),
-        }
+        let mut entry = EditionBuildEntry::new(edition, ROM_BASE + start as u64, variant_size);
+        entry.record(built.map(|(values, linked)| {
+            let differences = reference
+                .iter()
+                .zip(&linked)
+                .filter(|(a, b)| a != b)
+                .count()
+                + reference.len().abs_diff(linked.len());
+            (values, differences)
+        }));
+        editions.push(entry);
     }
     let build = EditionBuildReport {
         schema_version: 1,
@@ -1392,8 +1523,10 @@ fn parse(args: &[String]) -> Result<Options, String> {
         let value = owner.as_deref().ok_or(USAGE)?;
         if value.starts_with("resource_") {
             parse_explicit_overlay_owner(value, span)?;
-            if object.is_some() || calls || edition_build.is_some() {
-                return Err(format!("explicit overlay owners do not accept --object, --calls, or --edition-build\n{USAGE}"));
+            if object.is_some() || calls {
+                return Err(format!(
+                    "explicit overlay owners do not accept --object or --calls\n{USAGE}"
+                ));
             }
         } else {
             owner_address(value)?;
@@ -1614,80 +1747,110 @@ fn exact_objects(object_dir: &Path) -> Result<BTreeMap<String, PathBuf>, String>
     }
     Ok(owners)
 }
-fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
-    let objects = exact_objects(&options.object_dir)?;
-    let owner_names = objects.keys().cloned().collect::<Vec<_>>();
-    let mut reports = BTreeMap::new();
+fn scan_correspondence<T: Located>(
+    identities: &BTreeMap<String, (SourceOwner, LocationKey)>,
+    interval: usize,
+    strict_hints: bool,
+    mut analyze: impl FnMut(&str, Option<&BTreeMap<&str, usize>>) -> Result<T, String>,
+) -> Result<(BTreeMap<String, T>, BTreeMap<String, String>), String> {
+    let mut matches = BTreeMap::new();
     let mut failures = BTreeMap::new();
-    let mut owner_symbol_bytes = 0;
-    for (index, owner) in owner_names.iter().enumerate() {
-        let object = &objects[owner];
-        if let Some(error) = compliance_error_for(SourceOwner::parse(&format!("main:{owner}"))?)? {
-            failures.insert(owner.clone(), error);
-            continue;
-        }
-        if let Ok((size, _, _, _, _, _)) = relocation_mask(&object, owner) {
-            owner_symbol_bytes += size;
-        }
-        match analyze_owner(owner, owner_address(owner)?, &object, roms, false, None) {
-            Ok(report) => {
-                reports.insert(owner.clone(), report);
+    for (index, (name, (identity, _))) in identities.iter().enumerate() {
+        let result = match compliance_error_for(*identity)? {
+            Some(error) => Err(error),
+            None => analyze(name, None),
+        };
+        match result {
+            Ok(found) => {
+                matches.insert(name.clone(), found);
             }
             Err(error) => {
-                failures.insert(owner.clone(), error);
+                failures.insert(name.clone(), error);
             }
         }
-        if (index + 1) % 100 == 0 || index + 1 == owner_names.len() {
+        if (index + 1) % interval == 0 || index + 1 == identities.len() {
             eprintln!(
                 "global matched={}/{} unresolved={}",
-                reports.len(),
+                matches.len(),
                 index + 1,
                 failures.len()
             );
         }
     }
-    remove_order_conflicts(&mut reports, &mut failures, "global")?;
-    let location_anchors = location_anchors(&reports)?;
-    let retry_names = failures
+    remove_order_conflicts(&mut matches, &mut failures, "global")?;
+    let anchors = location_anchors(&matches)?;
+    let retry = failures
         .iter()
         .filter(|(_, error)| !error.starts_with("compliance:"))
-        .map(|(owner, _)| owner.clone())
+        .map(|(name, _)| name.clone())
         .collect::<Vec<_>>();
-    for (index, owner) in retry_names.iter().enumerate() {
-        let hints = nearest_location_hints(
-            LocationKey {
-                group: None,
-                en_offset: rom_offset(owner_address(owner)?, usize::MAX)?,
-            },
-            &location_anchors,
-        )?;
-        let object = &objects[owner];
-        match analyze_owner(
-            owner,
-            owner_address(owner)?,
-            &object,
-            roms,
-            false,
-            Some(&hints),
-        ) {
-            Ok(report) => {
-                reports.insert(owner.clone(), report);
-                failures.remove(owner);
+    for (index, name) in retry.iter().enumerate() {
+        let hints = match nearest_location_hints(identities[name].1, &anchors) {
+            Ok(hints) => hints,
+            Err(error) if strict_hints => return Err(error),
+            Err(error) => {
+                failures.insert(name.clone(), error);
+                continue;
+            }
+        };
+        match analyze(name, Some(&hints)) {
+            Ok(found) => {
+                matches.insert(name.clone(), found);
+                failures.remove(name);
             }
             Err(error) => {
-                failures.insert(owner.clone(), error);
+                failures.insert(name.clone(), error);
             }
         }
-        if (index + 1) % 100 == 0 || index + 1 == retry_names.len() {
+        if (index + 1) % interval == 0 || index + 1 == retry.len() {
             eprintln!(
                 "locality matched={}/{} unresolved={}",
-                reports.len(),
-                owner_names.len(),
+                matches.len(),
+                identities.len(),
                 failures.len()
             );
         }
     }
-    remove_order_conflicts(&mut reports, &mut failures, "locality")?;
+    remove_order_conflicts(&mut matches, &mut failures, "locality")?;
+    Ok((matches, failures))
+}
+fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
+    let objects = exact_objects(&options.object_dir)?;
+    let owner_names = objects.keys().cloned().collect::<Vec<_>>();
+    let identities = owner_names
+        .iter()
+        .map(|name| {
+            Ok((
+                name.clone(),
+                (
+                    SourceOwner::parse(&format!("main:{name}"))?,
+                    LocationKey {
+                        group: None,
+                        en_offset: rom_offset(owner_address(name)?, usize::MAX)?,
+                    },
+                ),
+            ))
+        })
+        .collect::<Result<BTreeMap<_, _>, String>>()?;
+    let (reports, failures) = scan_correspondence(&identities, 100, true, |name, hints| {
+        analyze_owner(
+            name,
+            owner_address(name)?,
+            &objects[name],
+            roms,
+            false,
+            hints,
+        )
+    })?;
+    let owner_symbol_bytes = objects
+        .iter()
+        .filter(|(name, _)| {
+            !failures
+                .get(*name)
+                .is_some_and(|error| error.starts_with("compliance:"))
+        })
+        .filter_map(|(name, object)| relocation_mask(object, name).ok().map(|data| data.0))
+        .sum();
     if let Some(path) = &options.edition_build {
         write_corpus_edition_build(
             path,
@@ -1748,75 +1911,28 @@ fn run_all(options: &Options, roms: &EditionRoms) -> Result<(), String> {
 fn run_all_overlays(options: &Options, roms: &EditionRoms) -> Result<(), String> {
     let owner_list = exact_overlay_owners()?;
     let (resource_tables, decoded) = decode_overlay_resources(roms)?;
-    let mut matches = BTreeMap::new();
-    let mut failures = BTreeMap::new();
-    for (index, owner) in owner_list.iter().enumerate() {
-        if let Some(error) = compliance_error_for(SourceOwner::parse(&owner.name)?)? {
-            failures.insert(owner.name.clone(), error);
-            continue;
-        }
-        match analyze_overlay_owner(owner, &decoded, None) {
-            Ok(found) => {
-                matches.insert(owner.name.clone(), found);
-            }
-            Err(error) => {
-                failures.insert(owner.name.clone(), error);
-            }
-        }
-        if (index + 1) % 200 == 0 || index + 1 == owner_list.len() {
-            eprintln!(
-                "overlay global matched={}/{} unresolved={}",
-                matches.len(),
-                index + 1,
-                failures.len()
-            );
-        }
-    }
-    remove_order_conflicts(&mut matches, &mut failures, "global")?;
-    let global_hints = location_anchors(&matches)?;
-    let retry = failures
-        .iter()
-        .filter(|(_, error)| !error.starts_with("compliance:"))
-        .map(|(owner, _)| owner.clone())
-        .collect::<Vec<_>>();
     let by_name = owner_list
         .iter()
         .map(|owner| (owner.name.as_str(), owner))
         .collect::<BTreeMap<_, _>>();
-    for (index, name) in retry.iter().enumerate() {
-        let owner = by_name[name.as_str()];
-        let hints = match nearest_location_hints(
-            LocationKey {
-                group: Some(owner.resource),
-                en_offset: owner.en_offset,
-            },
-            &global_hints,
-        ) {
-            Ok(hints) => hints,
-            Err(error) => {
-                failures.insert(name.clone(), error);
-                continue;
-            }
-        };
-        match analyze_overlay_owner(owner, &decoded, Some(&hints)) {
-            Ok(found) => {
-                matches.insert(name.clone(), found);
-                failures.remove(name);
-            }
-            Err(error) => {
-                failures.insert(name.clone(), error);
-            }
-        }
-        if (index + 1) % 200 == 0 || index + 1 == retry.len() {
-            eprintln!(
-                "overlay locality matched={}/{} unresolved={}",
-                matches.len(),
-                owner_list.len(),
-                failures.len()
-            );
-        }
-    }
-    remove_order_conflicts(&mut matches, &mut failures, "locality")?;
+    let identities = owner_list
+        .iter()
+        .map(|owner| {
+            Ok((
+                owner.name.clone(),
+                (
+                    SourceOwner::parse(&owner.name)?,
+                    LocationKey {
+                        group: Some(owner.resource),
+                        en_offset: owner.en_offset,
+                    },
+                ),
+            ))
+        })
+        .collect::<Result<BTreeMap<_, _>, String>>()?;
+    let (matches, failures) = scan_correspondence(&identities, 200, false, |name, hints| {
+        analyze_overlay_owner(by_name[name], &decoded, hints)
+    })?;
     if let Some(path) = &options.edition_build {
         write_overlay_edition_build(path, &matches, &decoded)?;
     }
@@ -1886,6 +2002,118 @@ fn run_all_overlays(options: &Options, roms: &EditionRoms) -> Result<(), String>
         "overlay_correspondence",
     )
 }
+fn write_overlay_owner_build(
+    path: &Path,
+    owner: &OverlayOwner,
+    decoded: &DecodedOverlays,
+) -> Result<(), String> {
+    let identity = SourceOwner::parse(&owner.name)?;
+    let unit = registers()?
+        .units
+        .unit_for_game_owner("tbs", identity)
+        .filter(|unit| unit.exact())
+        .ok_or("edition builds require a declared exact C unit")?;
+    let declared = unit
+        .owners
+        .iter()
+        .find(|member| member.address == identity.address())
+        .unwrap();
+    if declared.extent != owner.size {
+        return Err("requested span differs from declared complete extent".into());
+    }
+    let mut entries = Vec::new();
+    for edition in EDITIONS {
+        let regional = unit.edition_owner(edition, identity.address());
+        let size = regional.map_or(owner.size, |owner| owner.extent);
+        let mut entry = EditionBuildEntry::new(edition, 0, size);
+        let result = (|| -> Result<usize, String> {
+            let address = overlay_edition_address(
+                unit,
+                identity.address(),
+                owner.size,
+                edition,
+                owner.resource,
+                decoded,
+                None,
+            )?;
+            let start = (address - OVERLAY_BASE as u32) as usize;
+            entry.start = format!("0x{address:08x}");
+            let placement = OverlayEditionPlacement {
+                reference: &decoded[edition][&owner.resource],
+                addresses: BTreeMap::from([(identity.address(), address)]),
+            };
+            let compiled = compile_declared_overlay_unit(
+                unit,
+                edition,
+                Some(&placement),
+                Some(identity.address()),
+            )?;
+            let expected = overlay_window(decoded, edition, owner.resource, start, size)?;
+            compare_overlay_member(&compiled, expected, address, size)
+        })();
+        entry.record(result.map(|differences| (BTreeMap::new(), differences)));
+        println!(
+            "edition={edition} size={} differing_bytes={:?} error={:?}",
+            entry.size, entry.differing_bytes, entry.error
+        );
+        entries.push(entry);
+    }
+    let all_exact = entries.iter().all(|entry| entry.byte_exact);
+    write_json(
+        path,
+        &serde_json::json!({"schema_version":1,"game":"tbs","owner":owner.name,"source":unit.source,
+        "scope":"complete owner linked from its shared translation unit; other members are not verified by this report",
+        "all_exact":all_exact,"editions":entries}),
+        "overlay owner edition build",
+    )?;
+    if all_exact {
+        Ok(())
+    } else {
+        Err("overlay owner is not byte-exact in every edition; see edition build report".into())
+    }
+}
+fn overlay_edition_address(
+    unit: &TranslationUnit,
+    address: u32,
+    extent: usize,
+    edition: &str,
+    resource: usize,
+    decoded: &DecodedOverlays,
+    found: Option<&OverlayMatch>,
+) -> Result<u32, String> {
+    if let Some(owner) = unit.edition_owner(edition, address) {
+        return Ok(owner.address);
+    }
+    if edition == "en" {
+        return Ok(address);
+    }
+    if let Some(found) = found {
+        return u32::try_from(OVERLAY_BASE + found.starts[edition] as u64)
+            .map_err(|_| "edition address overflow".into());
+    }
+    let offset = (address - OVERLAY_BASE as u32) as usize;
+    let en = overlay_window(decoded, "en", resource, offset, extent)?;
+    let mask = overlay_mask(en, offset);
+    let start = locate(en, &mask, &anchors(en, &mask), &decoded[edition][&resource])?.0;
+    u32::try_from(OVERLAY_BASE + start as u64).map_err(|_| "edition address overflow".into())
+}
+fn compare_overlay_member(
+    compiled: &crate::overlay::compile::Compiled,
+    reference: &[u8],
+    address: u32,
+    extent: usize,
+) -> Result<usize, String> {
+    let start = usize::try_from(i64::from(address) - compiled.address)
+        .map_err(|_| "owner precedes compiled overlay")?;
+    let actual = start
+        .checked_add(extent)
+        .and_then(|end| compiled.data.get(start..end))
+        .ok_or("compiled complete owner is absent")?;
+    if reference.len() != extent {
+        return Err("reference complete extent differs".into());
+    }
+    Ok(actual.iter().zip(reference).filter(|(a, b)| a != b).count())
+}
 fn write_overlay_edition_build(
     path: &Path,
     matches: &BTreeMap<String, OverlayMatch>,
@@ -1902,69 +2130,53 @@ fn write_overlay_edition_build(
     }
     let mut reports = Vec::new();
     for unit in units {
-        let found = unit
-            .owners
-            .iter()
-            .map(|owner| {
-                let source_owner = unit.source_owner(owner.address)?;
-                matches.get(&source_owner.id()).ok_or_else(|| {
-                    format!("{}: owner lacks overlay correspondence", source_owner.id())
-                })
-            })
-            .collect::<Result<Vec<_>, String>>()?;
+        let resource = usize::from_str_radix(
+            unit.overlay
+                .as_deref()
+                .unwrap()
+                .trim_start_matches("resource_"),
+            16,
+        )
+        .map_err(|_| "invalid unit resource")?;
         for edition in EDITIONS {
-            let mut addresses = BTreeMap::new();
-            let mut resource = None;
-            for (owner, counterpart) in unit.owners.iter().zip(&found) {
-                resource.get_or_insert(counterpart.owner.resource);
-                if resource != Some(counterpart.owner.resource) {
-                    return Err(format!("{}: unit crosses overlay resources", unit.id));
-                }
-                let address = u32::try_from(OVERLAY_BASE + counterpart.starts[edition] as u64)
-                    .map_err(|_| "edition overlay address overflow")?;
-                addresses.insert(owner.address, address);
-            }
-            let resource = resource.ok_or_else(|| format!("{}: unit has no owners", unit.id))?;
+            let addresses = unit
+                .symbols()
+                .map(|(address, _, extent)| {
+                    let identity = unit.source_owner(address)?;
+                    overlay_edition_address(
+                        unit,
+                        address,
+                        extent,
+                        edition,
+                        resource,
+                        decoded,
+                        matches.get(&identity.id()),
+                    )
+                    .map(|regional| (address, regional))
+                })
+                .collect::<Result<BTreeMap<_, _>, String>>()?;
             let placement = OverlayEditionPlacement {
                 reference: &decoded[edition][&resource],
                 addresses,
             };
-            let compiled = compile_declared_overlay_unit(unit, edition, Some(&placement))?;
-            for (owner, found) in unit.owners.iter().zip(&found) {
-                let source_owner = unit.source_owner(owner.address)?;
-                if found.owner.size != owner.extent {
-                    return Err(format!(
-                        "{}: owner extent differs from placeholder",
-                        source_owner.id()
-                    ));
-                }
-                let expected = overlay_window(
+            let compiled = compile_declared_overlay_unit(unit, edition, Some(&placement), None)?;
+            for (address, name, extent) in unit.symbols() {
+                let regional_address = placement.addresses[&address];
+                let extent = unit
+                    .edition_owner(edition, address)
+                    .map_or(extent, |owner| owner.extent);
+                let reference = overlay_window(
                     decoded,
                     edition,
-                    found.owner.resource,
-                    found.starts[edition],
-                    owner.extent,
+                    resource,
+                    (regional_address - OVERLAY_BASE as u32) as usize,
+                    extent,
                 )?;
-                let actual_address = placement.addresses[&owner.address];
-                let offset = usize::try_from(i64::from(actual_address) - compiled.address)
-                    .map_err(|_| {
-                        format!("{}: owner precedes compiled overlay", source_owner.id())
-                    })?;
-                let actual = offset
-                    .checked_add(owner.extent)
-                    .and_then(|end| compiled.data.get(offset..end))
-                    .ok_or_else(|| {
-                        format!("{}: compiled owner extent is absent", source_owner.id())
-                    })?;
-                if actual != expected {
-                    let difference = actual
-                        .iter()
-                        .zip(expected)
-                        .position(|(actual, expected)| actual != expected)
-                        .unwrap();
+                let differences =
+                    compare_overlay_member(&compiled, reference, regional_address, extent)?;
+                if differences != 0 {
                     return Err(format!(
-                        "{}: {edition} overlay owner differs at +0x{difference:x} ({:02x} != {:02x})",
-                        source_owner.id(), actual[difference], expected[difference]
+                        "{name}: {edition} complete overlay owner differs in {differences} bytes"
                     ));
                 }
             }
@@ -1973,7 +2185,7 @@ fn write_overlay_edition_build(
     }
     write_json(
         path,
-        &serde_json::json!({"format":1,"kind":"declared-overlay-reconstruction-composition-edition-builds","original_translation_units":"unknown","units":&reports}),
+        &serde_json::json!({"format":1,"kind":"declared-overlay-reconstruction-composition-edition-builds","original_translation_units":"unknown","units":reports}),
         "overlay edition build",
     )?;
     println!("overlay_edition_build={}", path.display());
@@ -1982,6 +2194,9 @@ fn write_overlay_edition_build(
 fn run_overlay_owner(options: &Options, roms: &EditionRoms, value: &str) -> Result<(), String> {
     let owner = parse_explicit_overlay_owner(value, options.span)?;
     let (_, decoded) = decode_overlay_resources(roms)?;
+    if let Some(path) = &options.edition_build {
+        return write_overlay_owner_build(path, &owner, &decoded);
+    }
     let found = analyze_overlay_owner(&owner, &decoded, None)?;
     let en = overlay_window(&decoded, "en", owner.resource, owner.en_offset, owner.size)?;
     let editions = EDITIONS
@@ -2929,27 +3144,13 @@ fn run_tla_edition_build(options: &Options, owner: &str) -> Result<(), String> {
             entry.size,
             &rom,
         );
-        let (external_symbols, differing_bytes, size, error) = match built {
-            Ok((values, differing, size)) => (
-                values
-                    .into_iter()
-                    .map(|(name, value)| (name, format!("0x{value:08x}")))
-                    .collect(),
-                Some(differing),
-                size,
-                None,
-            ),
-            Err(error) => (BTreeMap::new(), None, entry.size, Some(error)),
-        };
-        editions.push(EditionBuildEntry {
-            edition: edition.into(),
-            start: format!("0x{:08x}", ROM_BASE + start as u64),
-            size,
-            external_symbols,
-            byte_exact: differing_bytes == Some(0),
-            differing_bytes,
-            error,
+        let mut row = EditionBuildEntry::new(edition, ROM_BASE + start as u64, entry.size);
+        let result = built.map(|(values, differences, size)| {
+            row.size = size;
+            (values, differences)
         });
+        row.record(result);
+        editions.push(row);
     }
     let build = EditionBuildReport {
         schema_version: 1,
@@ -3078,6 +3279,81 @@ fn named_locations(relocations: &[RelocationSite], edition: &str) -> EditionLoca
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn declared_shared_main_source_checks_each_edition_and_rejects_changed_bytes() {
+        use crate::compiler::translation_units::{EditionLayout, EditionOwner};
+        let mut unit = registers()
+            .unwrap()
+            .units
+            .unit("battle-motion-apply-variant-motion")
+            .unwrap()
+            .clone();
+        let address = 0x080b83b0;
+        let name = unit
+            .owners
+            .iter()
+            .find(|member| member.address == address)
+            .unwrap()
+            .canonical_name
+            .clone();
+        let mut images = BTreeMap::new();
+        for edition in EDITIONS {
+            let mut rom = vec![0u8; (address - ROM_BASE as u32) as usize + 2];
+            let start = rom.len() - 2;
+            rom[start..].copy_from_slice(&[0x70, 0x47]);
+            images.insert(edition, rom);
+            unit.editions.insert(
+                edition.into(),
+                EditionLayout {
+                    owners: BTreeMap::from([(
+                        name.clone(),
+                        EditionOwner {
+                            address,
+                            extent: 2,
+                            source_variant: false,
+                        },
+                    )]),
+                    absolute_symbols: BTreeMap::new(),
+                },
+            );
+        }
+        // Synthetic references test edition plumbing, not regional ROM recovery.
+        let work = tempfile::tempdir().unwrap();
+        let report_path = work.path().join("editions.json");
+        let mut roms = EditionRoms { images };
+        write_declared_main_owner_build(&report_path, "080b83b0", &unit, &roms).unwrap();
+        let report: serde_json::Value =
+            serde_json::from_slice(&fs::read(&report_path).unwrap()).unwrap();
+        assert_eq!(report["all_exact"], true);
+        assert_eq!(report["editions"].as_array().unwrap().len(), 6);
+        let ja = roms.images.get_mut("ja").unwrap();
+        let last = ja.len() - 1;
+        ja[last] ^= 1;
+        assert!(write_declared_main_owner_build(&report_path, "080b83b0", &unit, &roms).is_err());
+        let report: serde_json::Value =
+            serde_json::from_slice(&fs::read(&report_path).unwrap()).unwrap();
+        assert_eq!(report["all_exact"], false);
+        assert_eq!(report["editions"][0]["byte_exact"], false);
+    }
+    #[test]
+    fn linked_overlay_comparison_includes_pools_and_complete_extents() {
+        let compiled = crate::overlay::compile::Compiled {
+            address: 0x02001000,
+            data: vec![0x70, 0x47, 0, 0, 0x38, 0x24, 0, 0],
+        };
+        assert_eq!(
+            compare_overlay_member(&compiled, &compiled.data, 0x02001000, 8).unwrap(),
+            0
+        );
+        let mut reference = compiled.data.clone();
+        reference[4] ^= 1;
+        assert_eq!(
+            compare_overlay_member(&compiled, &reference, 0x02001000, 8).unwrap(),
+            1
+        );
+        assert!(compare_overlay_member(&compiled, &reference, 0x02001000, 10).is_err());
+        assert!(compare_overlay_member(&compiled, &reference, 0x02000ffe, 8).is_err());
+    }
     #[test]
     fn literal_bindings_use_complete_reference_sites_and_reject_conflicts() {
         let relocation = RelocationSite {

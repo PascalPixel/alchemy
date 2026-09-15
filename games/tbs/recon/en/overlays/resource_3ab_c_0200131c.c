@@ -4,6 +4,9 @@
 
 #define FieldScene_RunActorDialogueMovementSequence Func_0200131c
 
+#define FieldScene_SpawnPeriodicLeaderEffect Func_020012a4
+extern void FieldScene_SpawnPeriodicLeaderEffect(void);
+
 void Func_02002cfe();
 void Func_02002d00();
 void Func_02002d58();
@@ -112,7 +115,7 @@ void Func_0200131c(void)
     Scene_Call3(Func_02002dd6, 9, 168, 288);
     Func_02002e06(0, 4);
     Scene_Call3(Func_02002de2, 0, 160, 296);
-    Func_02002cfe(33591973, 3200);
+    Func_02002cfe((u32)&FieldScene_SpawnPeriodicLeaderEffect, 3200);
     Func_02002db4(1);
     Func_02002f12(121);
     Func_02002dc0(20);
@@ -129,7 +132,7 @@ void Func_0200131c(void)
     Func_02002e6e(0);
     Func_02002e86(8, 1);
     Func_02002e8e(9, 1);
-    Func_02002d7c_a(33591973);
+    Func_02002d7c_a((u32)&FieldScene_SpawnPeriodicLeaderEffect);
     p34 = Func_02002e52(0);
     *(u8 *)((u8 *)(p34) + 85) |= 0x2;
     p35 = Func_02002e62(0);
@@ -144,7 +147,7 @@ void Func_0200131c(void)
     Func_02002ee6(0, 19);
     Func_02002fd4(127);
     Scene_Call2(Func_02002f56, 0, 258);
-    Func_02002de0(33591973, 3200);
+    Func_02002de0((u32)&FieldScene_SpawnPeriodicLeaderEffect, 3200);
     Func_02002e96(2);
     p46 = Func_02002ec4(0);
     *(s32 *)(p46 + 40) = 196608;
@@ -155,7 +158,7 @@ void Func_0200131c(void)
     Func_02002f96(0, 258);
     Func_02002ecc(10);
     Func_02002f44(0, 1);
-    Func_02002e32(33591973);
+    Func_02002e32((u32)&FieldScene_SpawnPeriodicLeaderEffect);
     Func_02002ee0(50);
     Func_02002f7e(0x2410);
     Func_02002f96_a(8, 0);

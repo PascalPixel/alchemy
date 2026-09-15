@@ -84023,6 +84023,10 @@
         "Func_02002f96_a": {
           "address": "0x02009a80",
           "kind": "thumb"
+        },
+        "Func_020012a4": {
+          "address": "0x020092a4",
+          "kind": "thumb"
         }
       },
       "local_symbols": [],

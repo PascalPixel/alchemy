@@ -132,6 +132,23 @@ pub struct TranslationSymbol {
     pub canonical_name: String,
     pub extent: usize,
 }
+#[derive(Clone, Debug, Deserialize, Default)]
+#[serde(deny_unknown_fields)]
+pub struct EditionLayout {
+    #[serde(default)]
+    pub owners: BTreeMap<String, EditionOwner>,
+    #[serde(default)]
+    pub absolute_symbols: BTreeMap<String, AbsoluteSymbol>,
+}
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct EditionOwner {
+    #[serde(deserialize_with = "hex32")]
+    pub address: u32,
+    pub extent: usize,
+    #[serde(default)]
+    pub source_variant: bool,
+}
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct TranslationUnit {
@@ -143,11 +160,65 @@ pub struct TranslationUnit {
     #[serde(default)]
     pub absolute_symbols: BTreeMap<String, AbsoluteSymbol>,
     #[serde(default)]
+    pub editions: BTreeMap<String, EditionLayout>,
+    #[serde(default)]
     pub local_symbols: Vec<TranslationSymbol>,
     pub owners: Vec<TranslationOwner>,
 }
 
 impl TranslationUnit {
+    fn validate_editions(&self) -> Result<(), String> {
+        for (edition, layout) in &self.editions {
+            if !["ja", "en", "de", "es", "fr", "it"].contains(&edition.as_str()) {
+                return Err(format!("{}: unsupported edition {edition}", self.id));
+            }
+            for (name, owner) in &layout.owners {
+                if !self.symbols().any(|member| member.1 == name)
+                    || owner.extent == 0
+                    || owner.address & 1 != 0
+                    || u32::try_from(owner.extent)
+                        .ok()
+                        .and_then(|n| owner.address.checked_add(n))
+                        .is_none()
+                    || self.source_owner(owner.address).is_err()
+                {
+                    return Err(format!("{}: invalid {edition} owner {name}", self.id));
+                }
+            }
+            for (name, symbol) in &layout.absolute_symbols {
+                if !c_identifier(name)
+                    || symbol.address > u32::MAX as u64
+                    || (symbol.kind != AbsoluteSymbolKind::Data && symbol.address & 1 != 0)
+                    || self
+                        .absolute_symbols
+                        .get(name)
+                        .is_some_and(|canonical| canonical.kind != symbol.kind)
+                    || self.overlay.is_some() && symbol.kind == AbsoluteSymbolKind::Arm
+                {
+                    return Err(format!("{}: invalid {edition} symbol {name}", self.id));
+                }
+            }
+        }
+        for (edition, layout) in &self.editions {
+            let mut spans = layout
+                .owners
+                .values()
+                .map(|owner| (owner.address, owner.extent))
+                .collect::<Vec<_>>();
+            spans.sort_unstable();
+            if spans
+                .windows(2)
+                .any(|pair| u64::from(pair[0].0) + pair[0].1 as u64 > u64::from(pair[1].0))
+            {
+                return Err(format!("{}: {edition} declared owners overlap", self.id));
+            }
+        }
+        Ok(())
+    }
+    pub fn edition_owner(&self, edition: &str, address: u32) -> Option<&EditionOwner> {
+        let name = self.symbols().find(|member| member.0 == address)?.1;
+        self.editions.get(edition)?.owners.get(name)
+    }
     pub fn target(&self) -> Result<CompilerTarget, String> {
         match self.game.as_str() {
             "tbs" => Ok(CompilerTarget::Tbs),
@@ -356,6 +427,7 @@ impl TranslationUnits {
                 }
             }
             let source = root.join(&unit.source);
+            unit.validate_editions()?;
             let grouped = source.starts_with(names.source_root());
             validate_production_state(root, unit, &source, grouped, &names)?;
         }
@@ -564,6 +636,75 @@ fn hex64<'de, D: Deserializer<'de>>(deserializer: D) -> Result<u64, D::Error> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn edition_layouts_preserve_names_extents_and_symbol_kinds() {
+        let document = TranslationUnits::load(crate::compiler::routing::root()).unwrap();
+        let unit = document.unit("heidia-village-scene").unwrap();
+        assert_eq!(unit.edition_owner("ja", 0x02001e94).unwrap().extent, 460);
+        assert!(unit.edition_owner("en", 0x02001e94).is_none());
+        assert!(unit.validate_editions().is_ok());
+        for address in [0, 0x02001e95, 0x08001e94, u32::MAX] {
+            let mut invalid = unit.clone();
+            invalid
+                .editions
+                .get_mut("ja")
+                .unwrap()
+                .owners
+                .values_mut()
+                .next()
+                .unwrap()
+                .address = address;
+            assert!(invalid.validate_editions().is_err());
+        }
+        for extent in [0, usize::MAX] {
+            let mut invalid = unit.clone();
+            invalid
+                .editions
+                .get_mut("ja")
+                .unwrap()
+                .owners
+                .values_mut()
+                .next()
+                .unwrap()
+                .extent = extent;
+            assert!(invalid.validate_editions().is_err());
+        }
+        let mut invalid = unit.clone();
+        invalid
+            .editions
+            .insert("xx".into(), EditionLayout::default());
+        assert!(invalid.validate_editions().is_err());
+        let mut invalid = unit.clone();
+        invalid.editions.get_mut("ja").unwrap().owners.insert(
+            "UnknownOwner".into(),
+            EditionOwner {
+                address: 0x02001e94,
+                extent: 460,
+                source_variant: true,
+            },
+        );
+        assert!(invalid.validate_editions().is_err());
+        let mut invalid = unit.clone();
+        invalid.editions.get_mut("ja").unwrap().owners.insert(
+            unit.owners[0].canonical_name.clone(),
+            EditionOwner {
+                address: 0x02001e94,
+                extent: 460,
+                source_variant: false,
+            },
+        );
+        assert!(invalid.validate_editions().unwrap_err().contains("overlap"));
+        let mut invalid = unit.clone();
+        invalid
+            .editions
+            .get_mut("ja")
+            .unwrap()
+            .absolute_symbols
+            .get_mut("Data_03001ebc")
+            .unwrap()
+            .kind = AbsoluteSymbolKind::Thumb;
+        assert!(invalid.validate_editions().is_err());
+    }
     #[test]
     fn reviewed_owner_duplicates_never_select_the_last_extent() {
         let root = tempfile::tempdir().unwrap();

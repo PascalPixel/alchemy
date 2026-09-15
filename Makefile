@@ -24,8 +24,8 @@ PORTABLE_TOOLS := alchemy psynergy
 # machinery; they do not raise it.
 # Only Pascal moves this number; a diff touching it without his recorded
 # decision is invalid regardless of how good the new machinery is.
-# 50,000 set by Pascal's decision, 2026-08-30.
-TOOLING_LINE_LIMIT := 50000
+# 100,000 set by Pascal's decision, 2026-09-15.
+TOOLING_LINE_LIMIT := 100000
 TARGET ?= tbs-en
 TARGET_GAME := $(firstword $(subst -, ,$(TARGET)))
 FULL_REPORT = out/$(TARGET)/full/rebuilt.json

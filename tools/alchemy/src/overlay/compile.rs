@@ -312,6 +312,7 @@ fn compile_overlay_unit(
     overlay: &str,
     edition: Option<&str>,
     placement: Option<&OverlayEditionPlacement<'_>>,
+    selected: Option<u32>,
 ) -> Result<Vec<Compiled>, String> {
     let names = SourcePaths::load(&root())?;
     let source = root().join(&unit.source);
@@ -363,8 +364,25 @@ fn compile_overlay_unit(
     // address, so intra-unit calls and pool words see the real layout.
     let mut members = unit.symbols().collect::<Vec<_>>();
     members.sort_by_key(|member| member.0);
+    let symbols = members
+        .iter()
+        .map(|member| unit.source_owner(member.0).map(|owner| owner.legacy_name()))
+        .collect::<Result<Vec<_>, _>>()?;
+    let sectioned = section_functions(
+        &produced,
+        &symbols.iter().map(String::as_str).collect::<Vec<_>>(),
+    )
+    .map_err(|error| format!("{}: {error}", unit.id))?;
+    fs::write(&assembly, sectioned).map_err(|error| error.to_string())?;
+    if let Some(selected) = selected {
+        members.retain(|member| member.0 == selected);
+        if members.is_empty() {
+            return Err(format!("{}: undeclared selected owner", unit.id));
+        }
+    }
     let mut placed: Vec<(u32, String, usize)> = Vec::new();
     for (address, _, extent) in &members {
+        let regional = edition.and_then(|edition| unit.edition_owner(edition, *address));
         placed.push((
             match placement {
                 Some(placement) => *placement.addresses.get(address).ok_or_else(|| {
@@ -373,16 +391,20 @@ fn compile_overlay_unit(
                 None => *address,
             },
             unit.source_owner(*address)?.legacy_name(),
-            *extent,
+            regional.map_or(*extent, |owner| owner.extent),
         ));
     }
-    let symbols: Vec<&str> = placed
-        .iter()
-        .map(|(_, symbol, _)| symbol.as_str())
-        .collect();
-    let sectioned =
-        section_functions(&produced, &symbols).map_err(|error| format!("{}: {error}", unit.id))?;
-    fs::write(&assembly, sectioned).map_err(|error| error.to_string())?;
+    let mut spans = placed.iter().collect::<Vec<_>>();
+    spans.sort_by_key(|member| member.0);
+    for pair in spans.windows(2) {
+        let end = u64::from(pair[0].0) + pair[0].2 as u64;
+        if end > u64::from(pair[1].0) {
+            return Err(format!(
+                "{}: regional extents overlap: {} and {}",
+                unit.id, pair[0].1, pair[1].1
+            ));
+        }
+    }
     checked(
         &crate::compiler::routing::compiler_assembly_command(&assembly, &object),
         work,
@@ -405,6 +427,38 @@ fn compile_overlay_unit(
     }
     let script = at("ld");
     let mut text = String::from("SECTIONS\n{\n");
+    for (address, symbol, _) in &placed {
+        let address = address + overlay::RUNTIME_BASE - overlay::RESOURCE_BASE;
+        text.push_str(&format!(
+            "  .text.{symbol} 0x{address:08x} : {{ *(.text.{symbol}) }}\n"
+        ));
+    }
+    text.push_str("  /DISCARD/ : { *(.text*) *(.comment) *(.note*) }\n}\n");
+    fs::write(&script, text).map_err(|error| format!("{script}: {error}"))?;
+    if selected.is_some() {
+        let selected_object = at("selected.o");
+        checked(
+            &strings(&[
+                "arm-none-eabi-ld",
+                "-r",
+                "-T",
+                &script,
+                "-o",
+                &selected_object,
+                &object,
+            ]),
+            work,
+        )?;
+        checked(
+            &strings(&[
+                "arm-none-eabi-objcopy",
+                "--strip-unneeded",
+                &selected_object,
+                &object,
+            ]),
+            work,
+        )?;
+    }
     let canonical = crate::overlay::rom::canonical_overlay(&root(), overlay)?;
     let reference = placement.map_or(canonical.as_slice(), |placement| placement.reference);
     let loaded = match placement {
@@ -412,9 +466,18 @@ fn compile_overlay_unit(
         None => None,
     };
     let mut calls = BTreeMap::<String, BTreeSet<u64>>::new();
-    let mut edition_symbols = BTreeMap::new();
-    for ((canonical_address, _, _), (address, _, extent)) in members.iter().zip(&placed) {
-        let (found, translations) = if placement.is_some() {
+    let layout = edition.and_then(|edition| unit.editions.get(edition));
+    let mut edition_symbols = layout
+        .map(|layout| layout.absolute_symbols.clone())
+        .unwrap_or_default();
+    for ((canonical_address, _, canonical_extent), (address, _, extent)) in
+        members.iter().zip(&placed)
+    {
+        let changed = canonical_extent != extent
+            || edition
+                .and_then(|edition| unit.edition_owner(edition, *canonical_address))
+                .is_some_and(|owner| owner.source_variant);
+        let (found, translations) = if placement.is_some() && !changed {
             paired_overlay_calls(&canonical, *canonical_address, reference, *address, *extent)?
         } else {
             (
@@ -430,19 +493,24 @@ fn compile_overlay_unit(
             calls.entry(name).or_default().extend(targets);
         }
         for (alias, symbol) in &unit.absolute_symbols {
-            let translated = match symbol.kind {
-                AbsoluteSymbolKind::Thumb => translations.get(&symbol.address).copied(),
-                AbsoluteSymbolKind::Data | AbsoluteSymbolKind::Arm => match &loaded {
-                    Some((canonical, edition)) => paired_data_alias(
-                        canonical,
-                        *canonical_address,
-                        edition,
-                        *address,
-                        *extent,
-                        symbol.address,
-                    )?,
-                    None => None,
-                },
+            if layout.is_some_and(|layout| layout.absolute_symbols.contains_key(alias)) || changed {
+                continue;
+            }
+            let thumb = symbol.kind == AbsoluteSymbolKind::Thumb;
+            let translated = if thumb && translations.contains_key(&symbol.address) {
+                translations.get(&symbol.address).copied()
+            } else if let Some((canonical, edition)) = &loaded {
+                paired_data_alias(
+                    canonical,
+                    *canonical_address,
+                    edition,
+                    *address,
+                    *extent,
+                    symbol.address | u64::from(thumb),
+                )?
+                .map(|address| address & !u64::from(thumb))
+            } else {
+                None
             };
             if let Some(address) = translated {
                 let translated = AbsoluteSymbol { address, ..*symbol };
@@ -456,20 +524,16 @@ fn compile_overlay_unit(
         }
     }
     if placement.is_some() {
-        for (alias, symbol) in &unit.absolute_symbols {
-            if symbol.kind != AbsoluteSymbolKind::Thumb && !edition_symbols.contains_key(alias) {
+        let undefined = checked(&strings(&["arm-none-eabi-nm", "-u", &object]), work)?;
+        for alias in undefined
+            .lines()
+            .filter_map(|line| line.split_whitespace().last())
+        {
+            if unit.absolute_symbols.contains_key(alias) && !edition_symbols.contains_key(alias) {
                 return Err(format!("{alias}: no corresponding regional data address"));
             }
         }
     }
-    for (address, symbol, _) in &placed {
-        let address = address + overlay::RUNTIME_BASE - overlay::RESOURCE_BASE;
-        text.push_str(&format!(
-            "  .text.{symbol} 0x{address:08x} : {{ *(.text.{symbol}) }}\n"
-        ));
-    }
-    text.push_str("  /DISCARD/ : { *(.text) *(.comment) *(.note*) }\n}\n");
-    fs::write(&script, text).map_err(|error| format!("{script}: {error}"))?;
     link_placed_object(
         [&object, &symbols_source, &symbols_object, &elf],
         work,
@@ -485,6 +549,7 @@ fn compile_overlay_unit(
         &names,
         &reference,
         &calls,
+        edition,
     )?;
     let mut compiled = Vec::new();
     for (address, symbol, extent) in &placed {
@@ -613,16 +678,27 @@ fn link_placed_object(
     names: &SourcePaths,
     reference: &[u8],
     calls: &BTreeMap<String, BTreeSet<u64>>,
+    edition: Option<&str>,
 ) -> Result<(), String> {
     let [object, symbols_source, symbols_object, elf] = files;
     let undefined = checked(&strings(&["arm-none-eabi-nm", "-u", object]), work)?;
     let relocations = call_relocations(object, work)?;
-    let mut stubs = names.main_symbol_exports();
+    let mut stubs = String::new();
     for name in undefined
         .lines()
         .filter_map(|line| line.split_whitespace().last())
     {
-        if names.main_symbol(name)?.is_some() {
+        if let Some(address) = names.main_symbol(name)? {
+            let symbol = unit
+                .and_then(|unit| unit.absolute_symbols.get(name).copied())
+                .or_else(|| {
+                    (edition.is_none() || edition == Some("en")).then_some(AbsoluteSymbol {
+                        address: u64::from(address),
+                        kind: AbsoluteSymbolKind::Thumb,
+                    })
+                })
+                .ok_or_else(|| format!("{name}: missing edition main symbol binding"))?;
+            stubs.push_str(&absolute_symbol_assembly(name, symbol));
             continue;
         }
         stubs.push_str(&overlay_external_assembly(
@@ -720,6 +796,7 @@ pub fn compile_declared_overlay_unit(
     unit: &TranslationUnit,
     edition: &str,
     placement: Option<&OverlayEditionPlacement<'_>>,
+    selected: Option<u32>,
 ) -> Result<Compiled, String> {
     if !unit.exact() || unit.overlay.is_none() {
         return Err(format!("{}: not a wholly exact overlay unit", unit.id));
@@ -732,6 +809,7 @@ pub fn compile_declared_overlay_unit(
             unit.overlay.as_deref().unwrap(),
             Some(edition),
             placement,
+            selected,
         )?,
         &unit.id,
     )
@@ -844,7 +922,7 @@ fn compile_production_overlay(
             }
         }
         compiled.extend(
-            compile_overlay_unit(unit, work, overlay, None, None)
+            compile_overlay_unit(unit, work, overlay, None, None, None)
                 .map_err(|error| format!("unit {}: {error}", unit.id))?,
         );
     }
@@ -1055,6 +1133,7 @@ mod source_activation_tests {
             compiler_route: "canonical-gcc296".into(),
             overlay: Some("resource_382".into()),
             absolute_symbols: BTreeMap::new(),
+            editions: BTreeMap::new(),
             local_symbols: Vec::new(),
             owners: vec![owner(0x0200_0100), owner(0x0200_0104)],
         };

@@ -197,6 +197,60 @@ fn direct_preprocessor_command_for_target_with_minor_and_flags(
 mod tests {
     use super::*;
     #[test]
+    fn shipped_preprocessor_selects_one_of_six_editions() {
+        let work = tempfile::tempdir().unwrap();
+        let input = work.path().join("version.c");
+        let output = work.path().join("version.i");
+        std::fs::write(&input, "#include \"VERSION.H\"\n#if defined(TBS_EDITION_JA)\nJA\n#elif defined(TBS_EDITION_EN)\nEN\n#elif defined(TBS_EDITION_DE)\nDE\n#elif defined(TBS_EDITION_ES)\nES\n#elif defined(TBS_EDITION_FR)\nFR\n#elif defined(TBS_EDITION_IT)\nIT\n#endif\n").unwrap();
+        for edition in ["JA", "EN", "DE", "ES", "FR", "IT", ""] {
+            let flags = if edition.is_empty() {
+                Vec::new()
+            } else {
+                vec![format!("-DTBS_EDITION_{edition}=1")]
+            };
+            let command = direct_preprocessor_command_for_target_with_minor_and_flags(
+                CompilerTarget::Tbs,
+                &input.to_string_lossy(),
+                &output.to_string_lossy(),
+                96,
+                &flags,
+            )
+            .unwrap();
+            let result = std::process::Command::new(&command[0])
+                .args(&command[1..])
+                .output()
+                .unwrap();
+            assert!(
+                result.status.success(),
+                "{}",
+                String::from_utf8_lossy(&result.stderr)
+            );
+            let expected = if edition.is_empty() { "EN" } else { edition };
+            assert!(std::fs::read_to_string(&output)
+                .unwrap()
+                .contains(&format!("\n{expected}\n")));
+        }
+        for flags in [
+            vec!["-DTBS_EDITION_JA=1".into(), "-DTBS_EDITION_EN=1".into()],
+            vec!["-DTBS_EDITION_JA=0".into()],
+        ] {
+            let command = direct_preprocessor_command_for_target_with_minor_and_flags(
+                CompilerTarget::Tbs,
+                &input.to_string_lossy(),
+                &output.to_string_lossy(),
+                96,
+                &flags,
+            )
+            .unwrap();
+            assert!(!std::process::Command::new(&command[0])
+                .args(&command[1..])
+                .output()
+                .unwrap()
+                .status
+                .success());
+        }
+    }
+    #[test]
     fn uppercase_c_preserves_the_c_route_and_codegen_flags() {
         let mut options = SourceToAssemblyPlanOptions::new(
             CompilerTarget::Tbs,

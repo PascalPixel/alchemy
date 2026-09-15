@@ -46,14 +46,17 @@ mod tests {
     #[test]
     fn relative_only_strips_the_repository_root() {
         assert_eq!(
-            relative("/repo", "/repo/games/tbs/SRC/a.c"),
-            "games/tbs/SRC/a.c"
+            relative("/repo", "/repo/games/THE BROKEN SEAL/SRC/a.c"),
+            "games/THE BROKEN SEAL/SRC/a.c"
         );
         assert_eq!(
             relative("/repo", "/opt/toolchain/agscc"),
             "/opt/toolchain/agscc"
         );
-        assert_eq!(relative("/repo", "games/tbs/SRC/a.c"), "games/tbs/SRC/a.c");
+        assert_eq!(
+            relative("/repo", "games/THE BROKEN SEAL/SRC/a.c"),
+            "games/THE BROKEN SEAL/SRC/a.c"
+        );
     }
 
     #[cfg(unix)]

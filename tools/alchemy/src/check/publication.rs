@@ -512,14 +512,14 @@ fn self_test() -> Result<(), String> {
     }
     for path in [
         "src/main.c",
-        "games/tbs/asm/080000c0.s",
-        "games/tbs/PREVIEW/title.png",
-        "games/tbs/SOUND/SEQUENCE/THEME.mid",
-        "games/tbs/SOUND/SAMPLE/WAVE.wav",
-        "games/tbs/SRC/SYSTEM/RESOURCE.JSON",
+        "games/THE BROKEN SEAL/asm/080000c0.s",
+        "games/THE BROKEN SEAL/PREVIEW/title.png",
+        "games/THE BROKEN SEAL/SOUND/SEQUENCE/THEME.mid",
+        "games/THE BROKEN SEAL/SOUND/SAMPLE/WAVE.wav",
+        "games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE.JSON",
         "tools/compare-roms/src/main.rs",
         "tools/alchemy/src/build_full.rs",
-        "games/tbs/SRC/SYSTEM/BUILD_STAMP.JSON",
+        "games/THE BROKEN SEAL/SRC/SYSTEM/BUILD_STAMP.JSON",
         "rom.sha1",
     ] {
         if let Some(reason) = publication_path_reason(path) {
@@ -539,16 +539,17 @@ fn self_test() -> Result<(), String> {
     if !signatures_hold {
         return Err("content-signature self-test failed".to_string());
     }
-    let hygiene_holds =
-        publication_data_reason("games/tbs/asm/08000000.s", b".incbin \"rom.gba\"\n")
-            == Some("committed incbin payload")
-            && conflict_marker_reason("CONTRIBUTING.md", b"a\n<<<<<<< HEAD\nb\n").is_some()
-            && conflict_marker_reason("CONTRIBUTING.md", b"a\n>>>>>>> topic\n").is_some()
-            && publication_data_reason("CONTRIBUTING.md", b"x\n<<<<<<< HEAD\n").is_none()
-            && conflict_marker_reason("CONTRIBUTING.md", b"Title\n=======\n\nbody\n").is_none()
-            && conflict_marker_reason("CONTRIBUTING.md", b"see <<<<<<<HEAD in the output\n")
-                .is_none()
-            && conflict_marker_reason("games/tbs/PREVIEW/x.png", b"<<<<<<< HEAD\n").is_none();
+    let hygiene_holds = publication_data_reason(
+        "games/THE BROKEN SEAL/asm/08000000.s",
+        b".incbin \"rom.gba\"\n",
+    ) == Some("committed incbin payload")
+        && conflict_marker_reason("CONTRIBUTING.md", b"a\n<<<<<<< HEAD\nb\n").is_some()
+        && conflict_marker_reason("CONTRIBUTING.md", b"a\n>>>>>>> topic\n").is_some()
+        && publication_data_reason("CONTRIBUTING.md", b"x\n<<<<<<< HEAD\n").is_none()
+        && conflict_marker_reason("CONTRIBUTING.md", b"Title\n=======\n\nbody\n").is_none()
+        && conflict_marker_reason("CONTRIBUTING.md", b"see <<<<<<<HEAD in the output\n").is_none()
+        && conflict_marker_reason("games/THE BROKEN SEAL/PREVIEW/x.png", b"<<<<<<< HEAD\n")
+            .is_none();
     if !hygiene_holds {
         return Err("source-hygiene self-test failed".to_string());
     }

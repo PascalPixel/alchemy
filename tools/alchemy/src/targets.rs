@@ -65,9 +65,9 @@ const PRODUCTS: [(CompilerTarget, u64, &str, &str, &str); 2] = [
     (
         CompilerTarget::Tbs,
         0x0080_0000,
-        "games/tbs/SRC",
-        "games/tbs/asm",
-        "games/tbs/SRC/SYSTEM/RESOURCE.JSON",
+        "games/THE BROKEN SEAL/SRC",
+        "games/THE BROKEN SEAL/asm",
+        "games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE.JSON",
     ),
     (
         CompilerTarget::Tla,
@@ -131,7 +131,7 @@ fn self_test() -> Result<String, String> {
     for id in TARGET_IDS {
         let target = target_for(id);
         let root = match target.compiler {
-            CompilerTarget::Tbs => "games/tbs/",
+            CompilerTarget::Tbs => "games/THE BROKEN SEAL/",
             CompilerTarget::Tla => "games/tla/",
         };
         if !relative_path(target.output_dir)

@@ -29,7 +29,7 @@ mod tests {
         let main = super::SourceOwner::parse_argument("080bbb0c").expect("main owner");
         assert_eq!(
             super::default_source(&repo, main).expect("main default"),
-            "games/tbs/recon/en/main/080bbb0c.c"
+            "games/THE BROKEN SEAL/recon/en/main/080bbb0c.c"
         );
         let overlay =
             super::SourceOwner::parse_argument("resource_3ba:02002910").expect("overlay owner");
@@ -116,11 +116,11 @@ fn run(args: &[String]) -> Result<(), String> {
 fn default_source(repo: &Path, owner: SourceOwner) -> Result<String, String> {
     let stem = owner.address_stem();
     let Some(overlay) = owner.overlay_id() else {
-        return Ok(format!("games/tbs/recon/en/main/{stem}.c"));
+        return Ok(format!("games/THE BROKEN SEAL/recon/en/main/{stem}.c"));
     };
     let paths = SourcePaths::load_for_game(repo, CompilerTarget::Tbs.as_str())?;
     Ok(paths.mapped_relative_path(owner).map_or_else(
-        || format!("games/tbs/recon/en/overlays/{overlay}_c_{stem}.c"),
+        || format!("games/THE BROKEN SEAL/recon/en/overlays/{overlay}_c_{stem}.c"),
         |path| path.to_string_lossy().into_owned(),
     ))
 }

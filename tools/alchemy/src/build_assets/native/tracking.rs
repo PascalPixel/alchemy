@@ -93,7 +93,7 @@ pub(in crate::build_assets) fn check(root: &Path) -> Result<(), String> {
             let name = json_string(&input["source"], "private input")?;
             let kind = json_string(&input["kind"], "private kind")?;
             let path = Path::new(name);
-            if !name.starts_with("games/tbs/SRC/")
+            if !name.starts_with("games/THE BROKEN SEAL/SRC/")
                 || path
                     .components()
                     .any(|c| matches!(c, std::path::Component::ParentDir))
@@ -101,19 +101,21 @@ pub(in crate::build_assets) fn check(root: &Path) -> Result<(), String> {
                 return Err("private native path escapes source tree".into());
             }
             let allowed = match kind {
-                "frame-atlas" => name == "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
-                "portrait-atlas" => name == "games/tbs/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+                "frame-atlas" => name == "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+                "portrait-atlas" => {
+                    name == "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG"
+                }
                 "tile-atlas" => matches!(
                     name,
-                    "games/tbs/SRC/GRAPHICS/COMMON/TILE.PNG"
-                        | "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG"
+                    "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/TILE.PNG"
+                        | "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/TILE_BANK.PNG"
                 ),
-                "still-atlas" => name == "games/tbs/SRC/GRAPHICS/COMMON/STILL.PNG",
+                "still-atlas" => name == "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/STILL.PNG",
                 "grid" | "metatiles" => name.ends_with(".BIN"),
                 "tiles" => name.ends_with("/CHR.PNG") || name.ends_with("_CHR.PNG"),
                 "sprite" | "sprite-atlas" | "archive-atlas" => {
-                    (name.starts_with("games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_")
-                        || name.starts_with("games/tbs/SRC/GRAPHICS/CHARACTER/BATTLE_"))
+                    (name.starts_with("games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_")
+                        || name.starts_with("games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/BATTLE_"))
                         && name.ends_with(".PNG")
                 }
                 "palette" | "palette-raw" | "palette-buffer" | "palette-table" => name == COLORS,

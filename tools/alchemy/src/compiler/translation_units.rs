@@ -17,7 +17,7 @@ struct ReviewedRegion {
     span_bytes: usize,
 }
 pub fn reviewed_overlay_spans(root: &Path) -> Result<BTreeMap<SourceOwner, usize>, String> {
-    let path = root.join("games/tbs/semantic/regions.json");
+    let path = root.join("games/THE BROKEN SEAL/semantic/regions.json");
     let document: ReviewedRegions = crate::compiler::build_io::read_json(path)?;
     let mut spans = BTreeMap::new();
     for region in document.manual_regions {
@@ -307,7 +307,7 @@ pub struct TranslationUnits {
 }
 impl TranslationUnits {
     pub fn load(root: &Path) -> Result<Self, String> {
-        let path = root.join("games/tbs/recon/translation-units.json");
+        let path = root.join("games/THE BROKEN SEAL/recon/translation-units.json");
         let mut document: Self = crate::compiler::build_io::read_json(&path)?;
         if document.format != FORMAT
             || document.kind != "reconstruction-composition-contracts"
@@ -464,7 +464,7 @@ fn validate_production_state(
             .all(|owner| owner.state == OwnerState::RetainedAssembly)
         && source.starts_with(
             root.join("games")
-                .join(&unit.game)
+                .join(crate::compiler::routing::game_directory(&unit.game))
                 .join("recon/en/overlays"),
         );
     if unit.exact() && !grouped {
@@ -514,7 +514,7 @@ fn validate_production_state(
         .map(|overlay| {
             let assembly = root
                 .join("games")
-                .join(&unit.game)
+                .join(crate::compiler::routing::game_directory(&unit.game))
                 .join("asm/overlays")
                 .join(format!("{overlay}_overlay.s"));
             std::fs::read_to_string(&assembly)
@@ -533,7 +533,7 @@ fn validate_production_state(
         let retained = placeholders.as_ref().map_or_else(
             || {
                 root.join("games")
-                    .join(&unit.game)
+                    .join(crate::compiler::routing::game_directory(&unit.game))
                     .join("asm")
                     .join(format!("{:08x}.s", member.address))
                     .is_file()
@@ -708,7 +708,9 @@ mod tests {
     #[test]
     fn reviewed_owner_duplicates_never_select_the_last_extent() {
         let root = tempfile::tempdir().unwrap();
-        let path = root.path().join("games/tbs/semantic/regions.json");
+        let path = root
+            .path()
+            .join("games/THE BROKEN SEAL/semantic/regions.json");
         std::fs::create_dir_all(path.parent().unwrap()).unwrap();
         for sizes in [[4, 4], [4, 8]] {
             let rows = sizes.map(|span| {
@@ -801,7 +803,7 @@ mod tests {
         installed.owners[0].address = 0x0200_0f5c;
         installed.owners[0].extent = 0x30;
         assert!(invalid_state(&installed));
-        invalid.source = PathBuf::from("games/tbs/SRC/invalid-retained-overlay.c");
+        invalid.source = PathBuf::from("games/THE BROKEN SEAL/SRC/invalid-retained-overlay.c");
         assert!(invalid_state(&invalid));
         let i = unconditional_quoted_includes;
         assert!(i("#define X \\\n#include \"x\"").is_empty());

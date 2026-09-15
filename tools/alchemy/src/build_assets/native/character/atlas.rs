@@ -68,7 +68,7 @@ pub(super) fn extract(root: &Path, inputs: &Value, rom: &[u8]) -> Result<(), Str
         }
     }
     for (source, (width, height, pixels, _)) in sheets {
-        if source == "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG" {
+        if source == "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/TILE_BANK.PNG" {
             write(
                 root,
                 &source,

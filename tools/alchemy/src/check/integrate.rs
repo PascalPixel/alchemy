@@ -164,7 +164,9 @@ fn run_pipeline(directory: &str, apply: bool) -> Result<PipelineReport, String> 
     let mut already_installed = 0;
     for (stem, candidate) in candidates {
         let owner = SourceOwner::parse(&format!("main:{stem}"))?;
-        let asm = repository.join("games/tbs/asm").join(format!("{stem}.s"));
+        let asm = repository
+            .join("games/THE BROKEN SEAL/asm")
+            .join(format!("{stem}.s"));
         if source_paths.source_path(owner).exists() {
             if asm.exists() {
                 unscored.push((stem, "installed C still has retained assembly".into()));
@@ -279,7 +281,9 @@ fn run_pipeline(directory: &str, apply: bool) -> Result<PipelineReport, String> 
                     .map_err(|error| format!("{}: {error}", parent.display()))?;
             }
             fs::copy(candidate, &exact).map_err(|error| format!("{}: {error}", exact.display()))?;
-            let asm = repository.join("games/tbs/asm").join(format!("{stem}.s"));
+            let asm = repository
+                .join("games/THE BROKEN SEAL/asm")
+                .join(format!("{stem}.s"));
             if asm.exists() {
                 fs::remove_file(&asm).map_err(|error| format!("{}: {error}", asm.display()))?;
             }

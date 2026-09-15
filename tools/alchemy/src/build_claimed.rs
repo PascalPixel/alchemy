@@ -1070,7 +1070,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
         "image_base": image_base,
         "image_size": image.len(),
         "claimed_bytes": total,
-        "translation_unit_manifest": "games/tbs/recon/translation-units.json",
+        "translation_unit_manifest": "games/THE BROKEN SEAL/recon/translation-units.json",
         "main_symbol_exports": export_path
             .as_ref()
             .map(|path| relative(root, path)),

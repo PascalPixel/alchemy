@@ -167,7 +167,7 @@ fn call_relocations(object: &str, work: &Path) -> Result<BTreeSet<String>, Strin
     )
 }
 fn translation_unit_signature() -> Result<Vec<u8>, String> {
-    fs::read(root().join("games/tbs/recon/translation-units.json"))
+    fs::read(root().join("games/THE BROKEN SEAL/recon/translation-units.json"))
         .map_err(|error| error.to_string())
 }
 pub fn compile_overlay_c(
@@ -1129,7 +1129,7 @@ mod source_activation_tests {
         let mut unit = TranslationUnit {
             id: "shared".into(),
             game: "tbs".into(),
-            source: "games/tbs/SRC/overlays/shared.c".into(),
+            source: "games/THE BROKEN SEAL/SRC/overlays/shared.c".into(),
             compiler_route: "canonical-gcc296".into(),
             overlay: Some("resource_382".into()),
             absolute_symbols: BTreeMap::new(),

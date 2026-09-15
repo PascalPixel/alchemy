@@ -2553,7 +2553,7 @@ fn closure_self_test() -> Result<String, String> {
     if missing.exists() {
         return Err("closure package self-test path exists".to_string());
     }
-    let index = root.join("games/tbs/SOUND/SAMPLE/SAMPLES.TSV");
+    let index = root.join("games/THE BROKEN SEAL/SOUND/SAMPLE/SAMPLES.TSV");
     let text =
         fs::read_to_string(index).map_err(|error| format!("PCM self-test index: {error}"))?;
     let mut rows = text.lines().filter(|line| !line.starts_with('#'));
@@ -2819,7 +2819,7 @@ fn expand_series(
                         .as_array()
                         .ok_or("overlay resource tuple malformed")?;
                     let name = json_string(&tuple[0], "overlay id")?.to_ascii_lowercase();
-                    let directory = format!("games/tbs/asm/overlays/resource_{name}");
+                    let directory = format!("games/THE BROKEN SEAL/asm/overlays/resource_{name}");
                     entries
                         .push(serde_json::json!({"address":tuple[1],"size":tuple[2],"kind":"golden-sun-general-lz","plan":format!("{directory}_stream.lz.json"),"components":[{"kind":"golden-sun-thumb-overlay","size":tuple[3],"source":format!("{directory}_overlay.s"),"base":series.get("base")}] }));
                 }
@@ -4789,7 +4789,7 @@ struct BuildOptions {
 fn parse_build_options(arguments: &[String], root: &Path) -> Result<BuildOptions, String> {
     let mut options = BuildOptions {
         rom: "roms/tbs-en.gba".to_string(),
-        manifest: root.join("games/tbs/SRC/SYSTEM/RESOURCE.JSON"),
+        manifest: root.join("games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE.JSON"),
         output: root.join("out/tbs-en/assets"),
         source_only: false,
     };
@@ -4859,7 +4859,7 @@ fn stamp_files(
         .follow_links(true)
         .into_iter()
         .filter_entry(|entry| {
-            if entry.path() == root.join("games/tbs/PREVIEW") {
+            if entry.path() == root.join("games/THE BROKEN SEAL/PREVIEW") {
                 return false; // Coverage figures are outputs, never ROM asset inputs.
             }
             entry.depth() == 0
@@ -4908,12 +4908,12 @@ fn stage_stamp_with_signature(
     });
     let mut files = BTreeMap::new();
     for directory in [
-        "games/tbs/SRC",
-        "games/tbs/GRAPHICS",
-        "games/tbs/SOUND",
-        "games/tbs/TEXT",
-        "games/tbs/asm/overlays",
-        "games/tbs/asm/battle",
+        "games/THE BROKEN SEAL/SRC",
+        "games/THE BROKEN SEAL/GRAPHICS",
+        "games/THE BROKEN SEAL/SOUND",
+        "games/THE BROKEN SEAL/TEXT",
+        "games/THE BROKEN SEAL/asm/overlays",
+        "games/THE BROKEN SEAL/asm/battle",
     ] {
         stamp_files(root, &root.join(directory), &mut files)?;
     }
@@ -4932,8 +4932,8 @@ fn stage_stamp_with_signature(
     }
     for name in [
         SOURCE_PATHS_MANIFEST,
-        "games/tbs/SOURCE.JSON",
-        "games/tbs/recon/translation-units.json",
+        "games/THE BROKEN SEAL/SOURCE.JSON",
+        "games/THE BROKEN SEAL/recon/translation-units.json",
     ] {
         let path = root.join(name);
         if path.is_file() {
@@ -5006,19 +5006,19 @@ fn asset_stamp_tracks_sound_and_included_overlay_sources() {
         "SRC",
         "recon",
     ] {
-        fs::create_dir_all(root.join("games/tbs").join(name)).unwrap();
+        fs::create_dir_all(root.join("games/THE BROKEN SEAL").join(name)).unwrap();
     }
-    let manifest = root.join("games/tbs/SRC/SYSTEM/RESOURCE.JSON");
-    let sound = root.join("games/tbs/SOUND/SEQUENCE/SEQUENCES.TSV");
-    let header = root.join("games/tbs/SRC/shared.h");
-    let unit = root.join("games/tbs/recon/translation-units.json");
-    let overlay = root.join("games/tbs/asm/overlays/fixture.s");
-    let battle = root.join("games/tbs/asm/battle/fixture.s");
+    let manifest = root.join("games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE.JSON");
+    let sound = root.join("games/THE BROKEN SEAL/SOUND/SEQUENCE/SEQUENCES.TSV");
+    let header = root.join("games/THE BROKEN SEAL/SRC/shared.h");
+    let unit = root.join("games/THE BROKEN SEAL/recon/translation-units.json");
+    let overlay = root.join("games/THE BROKEN SEAL/asm/overlays/fixture.s");
+    let battle = root.join("games/THE BROKEN SEAL/asm/battle/fixture.s");
     for path in [&manifest, &sound, &header, &unit, &overlay, &battle] {
         fs::write(path, "before").unwrap();
     }
     fs::write(
-        root.join("games/tbs/SRC/resource_373_c_02001000.c"),
+        root.join("games/THE BROKEN SEAL/SRC/resource_373_c_02001000.c"),
         "#include \"shared.h\"\nvoid Test(void) {}\n",
     )
     .unwrap();
@@ -5041,7 +5041,7 @@ fn asset_stamp_tracks_sound_and_included_overlay_sources() {
         "GRAPHICS/FONT/FONT.png",
         "TEXT/MESSAGES.json",
     ] {
-        let path = root.join("games/tbs").join(name);
+        let path = root.join("games/THE BROKEN SEAL").join(name);
         fs::create_dir_all(path.parent().unwrap()).unwrap();
         fs::write(&path, "asset input").unwrap();
         let next = stamp().unwrap();
@@ -5055,15 +5055,23 @@ fn asset_stamp_tracks_sound_and_included_overlay_sources() {
         previous = next;
     }
     fs::write(
-        root.join("games/tbs/SOUND/SEQUENCE/out/fixture.bin"),
+        root.join("games/THE BROKEN SEAL/SOUND/SEQUENCE/out/fixture.bin"),
         "ignored",
     )
     .unwrap();
     assert_eq!(previous, stamp().unwrap());
-    fs::create_dir_all(root.join("games/tbs/PREVIEW")).unwrap();
-    fs::write(root.join("games/tbs/PREVIEW/coverage.svg"), "generated").unwrap();
+    fs::create_dir_all(root.join("games/THE BROKEN SEAL/PREVIEW")).unwrap();
+    fs::write(
+        root.join("games/THE BROKEN SEAL/PREVIEW/coverage.svg"),
+        "generated",
+    )
+    .unwrap();
     assert_eq!(previous, stamp().unwrap());
-    fs::write(root.join("games/tbs/SRC/palette.json"), "source").unwrap();
+    fs::write(
+        root.join("games/THE BROKEN SEAL/SRC/palette.json"),
+        "source",
+    )
+    .unwrap();
     assert_ne!(previous, stamp().unwrap());
     fs::write(&header, "#include \"resource_373_c_02001000.c\"\n").unwrap();
     assert!(stamp().unwrap_err().contains("recursive C source include"));
@@ -5303,8 +5311,12 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
         .collect::<Vec<_>>();
     prune_files(&options.output, "*.bin", keep.iter())
         .map_err(|error| format!("asset output cleanup: {error}"))?;
-    let unused = unused_tracked_images(&root, all_sources.iter(), ["games/tbs/PREVIEW/"])
-        .map_err(|error| format!("tracked image audit: {error}"))?;
+    let unused = unused_tracked_images(
+        &root,
+        all_sources.iter(),
+        ["games/THE BROKEN SEAL/PREVIEW/"],
+    )
+    .map_err(|error| format!("tracked image audit: {error}"))?;
     if !unused.is_empty() {
         let shown = unused
             .iter()

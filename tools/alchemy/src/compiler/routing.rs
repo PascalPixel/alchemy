@@ -72,11 +72,22 @@ pub enum CompilerTarget {
     Tla,
 }
 impl CompilerTarget {
+    pub fn directory(self) -> &'static str {
+        game_directory(self.as_str())
+    }
     pub fn as_str(self) -> &'static str {
         match self {
             CompilerTarget::Tbs => "tbs",
             CompilerTarget::Tla => "tla",
         }
+    }
+}
+/// Build IDs remain stable when their physical workspaces are renamed.
+pub fn game_directory(game: &str) -> &str {
+    match game {
+        "tbs" => "THE BROKEN SEAL",
+        "alchemy" => "COMMON",
+        _ => game,
     }
 }
 /// The compiler family a source belongs to. Membership is provenance (which
@@ -96,7 +107,7 @@ pub(crate) fn include_flag(target: CompilerTarget) -> String {
         "-I{}",
         root()
             .join("games")
-            .join(target.as_str())
+            .join(target.directory())
             .join(if target == CompilerTarget::Tbs {
                 "INCLUDE"
             } else {
@@ -221,9 +232,13 @@ mod target_tests {
     fn each_game_uses_its_own_include_tree() {
         let tbs = cflags_for_target(CompilerTarget::Tbs);
         let tla = cflags_for_target(CompilerTarget::Tla);
-        assert!(tbs.iter().any(|flag| flag.ends_with("/games/tbs/INCLUDE")));
+        assert!(tbs
+            .iter()
+            .any(|flag| flag.ends_with("/games/THE BROKEN SEAL/INCLUDE")));
         assert!(tla.iter().any(|flag| flag.ends_with("/games/tla/include")));
-        assert!(!tla.iter().any(|flag| flag.ends_with("/games/tbs/INCLUDE")));
+        assert!(!tla
+            .iter()
+            .any(|flag| flag.ends_with("/games/THE BROKEN SEAL/INCLUDE")));
         let shared: Vec<&String> = tbs
             .iter()
             .filter(|flag| *flag != "-mthumb-interwork" && !flag.starts_with("-I"))
@@ -270,8 +285,8 @@ mod target_tests {
             "080994d0.c",
             "080114a0.c",
             "0800307c.c",
-            "games/tbs/src/resource_3ab_c_020007f4.c",
-            "games/tbs/src/resource_381_c_02002e0c.c",
+            "games/THE BROKEN SEAL/src/resource_3ab_c_020007f4.c",
+            "games/THE BROKEN SEAL/src/resource_381_c_02002e0c.c",
         ] {
             assert_eq!(
                 cflags_for_target_source(CompilerTarget::Tbs, owner),
@@ -283,10 +298,10 @@ mod target_tests {
     #[test]
     fn soft_float_library_family_is_uniform() {
         for owner in [
-            "games/tbs/src/resource_3a7_c_0200142c.c",
-            "games/tbs/src/resource_3a7_c_02001544.c",
-            "games/tbs/src/resource_3bf_c_02005ae0.c",
-            "games/tbs/src/resource_3a7_c_0200145c.c",
+            "games/THE BROKEN SEAL/src/resource_3a7_c_0200142c.c",
+            "games/THE BROKEN SEAL/src/resource_3a7_c_02001544.c",
+            "games/THE BROKEN SEAL/src/resource_3bf_c_02005ae0.c",
+            "games/THE BROKEN SEAL/src/resource_3a7_c_0200145c.c",
         ] {
             let flags = cflags_for_target_source(CompilerTarget::Tbs, owner);
             assert!(!flags.iter().any(|flag| flag == "-mthumb-interwork"));

@@ -17,21 +17,21 @@ use walkdir::WalkDir;
 const STYLES: &str = include_str!("style.css");
 const TREES: [(&str, &str); 1] = [("rom", "ROM contents")];
 const COVERAGE_DIRS: [&str; 16] = [
-    "games/tbs/locations.tsv",
-    "games/tbs/asm",
-    "games/tbs/SOURCE.JSON",
-    "games/tbs/SRC/GRAPHICS",
-    "games/tbs/SOUND",
-    "games/tbs/TEXT",
-    "games/tbs/metrics",
-    "games/tbs/semantic",
-    "games/tbs/SRC",
-    "games/tbs/source-paths.json",
-    "games/tbs/recon",
-    "games/tbs/project.json",
+    "games/THE BROKEN SEAL/locations.tsv",
+    "games/THE BROKEN SEAL/asm",
+    "games/THE BROKEN SEAL/SOURCE.JSON",
+    "games/THE BROKEN SEAL/SRC/GRAPHICS",
+    "games/THE BROKEN SEAL/SOUND",
+    "games/THE BROKEN SEAL/TEXT",
+    "games/THE BROKEN SEAL/metrics",
+    "games/THE BROKEN SEAL/semantic",
+    "games/THE BROKEN SEAL/SRC",
+    "games/THE BROKEN SEAL/source-paths.json",
+    "games/THE BROKEN SEAL/recon",
+    "games/THE BROKEN SEAL/project.json",
     "games/tla",
     "games/tla/project.json",
-    "games/alchemy",
+    "games/COMMON",
     "out/tbs-en/reports",
 ];
 fn page_version() -> String {
@@ -86,7 +86,7 @@ fn cached() -> Result<Live, String> {
         .iter()
         .map(|name| {
             let path = root()
-                .join("games/tbs/PREVIEW")
+                .join("games/THE BROKEN SEAL/PREVIEW")
                 .join(format!("tbs-en-{name}.svg").to_ascii_uppercase());
             std::fs::read_to_string(&path)
                 .map(|svg| (*name, svg))

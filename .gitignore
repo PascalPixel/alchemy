@@ -28,12 +28,12 @@ roms/
 *.bin
 # Native pixel, palette and packed map inputs are regenerated from a verified
 # local ROM by `alchemy build assets --extract-sources`.
-/games/tbs/SRC/**/CHR.PNG
-/games/tbs/SRC/**/*_CHR.PNG
-/games/tbs/SRC/**/*.BIN
-/games/tbs/SRC/GRAPHICS/COMMON/PALETTE.JSON
-/games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_*.PNG
-/games/tbs/SRC/GRAPHICS/CHARACTER/BATTLE_*.PNG
+/games/THE BROKEN SEAL/SRC/**/CHR.PNG
+/games/THE BROKEN SEAL/SRC/**/*_CHR.PNG
+/games/THE BROKEN SEAL/SRC/**/*.BIN
+/games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON
+/games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_*.PNG
+/games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/BATTLE_*.PNG
 *.elf
 *.o
 *.a
@@ -86,7 +86,7 @@ target/
 # Adoption's per-overlay lock (see tools/alchemy/src/overlay). Lives
 # beside the tracked assembly it guards, so it must never become committable.
 games/*/assets/code/*.adopt-lock
-/games/tbs/SRC/GRAPHICS/COMMON/STILL.PNG
-/games/tbs/SRC/GRAPHICS/COMMON/TILE.PNG
-/games/tbs/SRC/GRAPHICS/COMMON/PORTRAIT.PNG
-/games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG
+/games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/STILL.PNG
+/games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/TILE.PNG
+/games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG
+/games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/TILE_BANK.PNG

@@ -88,16 +88,17 @@ fn run(args: &[String]) -> Result<(), String> {
     ) else {
         return Err(USAGE.into());
     };
+    let directory = crate::compiler::routing::game_directory(&game);
     let root = std::env::current_dir().map_err(|e| e.to_string())?;
-    let source_root =
-        root.join("games")
-            .join(&game)
-            .join(if game == "tbs" { "SRC" } else { "src" });
+    let source_root = root
+        .join("games")
+        .join(crate::compiler::routing::game_directory(&game))
+        .join(if game == "tbs" { "SRC" } else { "src" });
     let inventory: Value =
         read_json(&root.join(format!("out/{game}-en/full/rebuilt.owner-inventory.json")))?;
-    let register_path = root.join(format!("games/{game}/source-paths.json"));
+    let register_path = root.join(format!("games/{directory}/source-paths.json"));
     let mut register: Value = read_json(&register_path)?;
-    let manifest_path = root.join(format!("games/{game}/recon/translation-units.json"));
+    let manifest_path = root.join(format!("games/{directory}/recon/translation-units.json"));
     let mut manifest: Value = read_json(&manifest_path)?;
 
     let mut owners = Vec::new();
@@ -604,11 +605,11 @@ fn run(args: &[String]) -> Result<(), String> {
     // games/<game>/include), so a function defined under such a name still
     // links by its address.
     let mut header_aliases: BTreeMap<String, Vec<String>> = BTreeMap::new();
-    if let Ok(entries) = fs::read_dir(root.join("games").join(&game).join(if game == "tbs" {
-        "INCLUDE"
-    } else {
-        "include"
-    })) {
+    if let Ok(entries) = fs::read_dir(
+        root.join("games")
+            .join(crate::compiler::routing::game_directory(&game))
+            .join(if game == "tbs" { "INCLUDE" } else { "include" }),
+    ) {
         for entry in entries.flatten() {
             let path = entry.path();
             if path

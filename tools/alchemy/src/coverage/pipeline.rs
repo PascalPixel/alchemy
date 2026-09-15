@@ -1082,9 +1082,16 @@ pub(crate) fn source_container(source: String, children: Vec<Tile>) -> Tile {
 /// declares the series layout and lists one component per package with its
 /// address, size and sheet image.
 fn sprite_children(tree: &SourceTree, source: &str, span: Span, data: &[Span]) -> Vec<Tile> {
-    let Some(index) = json(tree, source) else {
+    let Some(mut index) = json(tree, source) else {
         return Vec::new();
     };
+    if let Some(regions) = index["regions"].as_object() {
+        index = regions
+            .values()
+            .find(|region| asset_number(region, "address") == Some(span.start))
+            .cloned()
+            .unwrap_or(Value::Null);
+    }
     if text(&index, "layout") != "golden-sun-static-sprite-series" {
         return Vec::new();
     }
@@ -1827,7 +1834,7 @@ mod tests {
         let span = Span::new(0x081a7020, 0x081e120c);
         let children = sprite_children(
             &tree,
-            "games/tbs/SRC/GRAPHICS/CHARACTER/characters_chr_081a_index.json",
+            "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
             span,
             &[span],
         );
@@ -1844,7 +1851,7 @@ mod tests {
         assert_eq!(tile_json(&parent)["children"].as_array().unwrap().len(), 22);
         assert!(sprite_children(
             &tree,
-            "games/tbs/SRC/GRAPHICS/CHARACTER/characters_chr_081a_index.json",
+            "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
             Span::new(span.start, span.end - 1),
             &[span]
         )

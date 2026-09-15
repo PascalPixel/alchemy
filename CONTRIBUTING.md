@@ -374,8 +374,8 @@ Do not edit derived reports or treat old experiment outputs as build inputs.
 
 ## Setup and verification
 
-Install Rust, Ninja, Bun for browser-client tests, and
-`arm-none-eabi-binutils`. Supply approved ROMs under ignored `roms/` and
+Install Rust, Ninja and `arm-none-eabi-binutils`.
+Supply approved ROMs under ignored `roms/` and
 the bundle under `out/compilers/dist/`.
 
 ```sh
@@ -409,7 +409,7 @@ progress prefix printed by `make progress-subject`. Push only when requested.
 
 | Changed surface | Additional check |
 | --- | --- |
-| Rust tooling or browser clients | `make test` |
+| Rust tooling or dashboard | `make test` |
 | Shared edition/preprocessor logic | `make targets` |
 | Retained-ASM classification | `make classification-check` |
 | Candidate-corpus policy | `make candidate-corpus-check` |
@@ -525,8 +525,11 @@ not tile captions. The pixel font stays 16px when the layout changes.
 `make dashboard-service-install`
 installs its macOS login service; `make dashboard-restart` restarts it. Coverage
 inputs are watched, but the service keeps the binary it started with, so restart
-it after any tooling merge or it computes DONE under the old rules. Its client is the JavaScript exception to Rust tooling,
-included in the ceiling and `make test`.
+it after any tooling merge or it computes DONE under the old rules. Rust renders
+the dashboard and handles folder navigation, file details and shared-resource
+links through HTML requests. It serves no JavaScript; a script prohibition is
+also enforced by its content security policy. Refresh reads the latest watched
+coverage state. HTML forms can reveal a source in Finder through same-origin POST.
 
 ## Owners and names
 
@@ -578,10 +581,18 @@ each of its 224 records combines a two-byte advance with 15 two-byte bitmap rows
 Keep that interleaved layout intact; its 7,168 bytes are not all image pixels.
 Sound inputs are under `SOUND/SEQUENCE`, `SOUND/SAMPLE` and
 `SOUND/INSTRUMENT`; mixed residual sound definitions remain at the sound root.
-Character banks and their component indexes live together in `SRC/GRAPHICS/CHARACTER`.
-Their battle/field filename prefixes do not establish exclusive ownership:
-the common descriptor catalog feeds animation and UI consumers. Preserve shared
-palettes once; do not split banks by an export label alone.
+Character banks live in `SRC/GRAPHICS/CHARACTER`. Confirmed Japanese ROM names
+own `CHAR_<ROMAJI>.PNG` field sheets and `BATTLE_<ROMAJI>.PNG` battle sheets,
+with both bank definitions in one character JSON file. Names require message
+and runtime descriptor evidence; visual resemblance alone is insufficient.
+Unproven and shared banks occupy sections of `CHAR_COMMON.PNG`, described once
+in `COMMON.json`. Pixel indices remain separate from the common palette bank
+pool; compression recipes remain in `GRAPHICS/COMMON/COMPRESSION.json`.
+These extracted PNG inputs are private and ignored, registered in `SOURCE.json`;
+Rust extraction and source checks verify their pixels and encoded bank hashes.
+Use `alchemy build assets --audit-characters OUTPUT` for the Japanese message
+and descriptor audit. The common descriptor catalog also feeds animation and UI
+consumers; do not split banks by an export label alone.
 Battle-effect tables now accompany their consumers in `SRC/BATTLE/DATA`.
 Preserve separate compilation and load boundaries. The remaining source groups are `SYSTEM`, `LIB`, `GRAPHICS`,
 `SOUND`, `GAME`, `BATTLE`, `MENU` and `DEBUG`; shared headers belong in `INCLUDE`.

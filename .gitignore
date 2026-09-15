@@ -33,6 +33,8 @@ roms/
 /games/tbs/SRC/**/CHR.png
 /games/tbs/SRC/**/*_CHR.png
 /games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json
+/games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_*.PNG
+/games/tbs/SRC/GRAPHICS/CHARACTER/BATTLE_*.PNG
 *.elf
 *.o
 *.a

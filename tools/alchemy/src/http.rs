@@ -82,6 +82,8 @@ fn request(stream: impl std::io::Read) -> Result<(String, String, bool), &'stati
         return Err("bad request");
     }
     let mut action = false;
+    let mut origin = None;
+    let mut host = None;
     loop {
         line.clear();
         if r.read_line(&mut line).map_err(|_| "read failed")? == 0 {
@@ -92,8 +94,19 @@ fn request(stream: impl std::io::Read) -> Result<(String, String, bool), &'stati
         }
         if let Some((name, value)) = line.split_once(':') {
             action |= name.eq_ignore_ascii_case("X-Alchemy-Action") && value.trim() == "1";
+            if name.eq_ignore_ascii_case("Origin") {
+                origin = Some(value.trim().to_string());
+            }
+            if name.eq_ignore_ascii_case("Host") {
+                host = Some(value.trim().to_string());
+            }
         }
     }
+    let action = action
+        || (method == "POST"
+            && origin.zip(host).is_some_and(|(origin, host)| {
+                origin.eq_ignore_ascii_case(&format!("http://{host}"))
+            }));
     Ok((
         method,
         target.split('?').next().unwrap_or(&target).into(),
@@ -101,10 +114,6 @@ fn request(stream: impl std::io::Read) -> Result<(String, String, bool), &'stati
     ))
 }
 
-pub fn shell(title: &str, styles: &str) -> Response {
-    Response::new(200, "OK", Some("text/html; charset=utf-8"), "no-store",
-        format!("<!doctype html><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>{title}</title><style>{styles}</style><script type=\"module\" src=\"/client.js\"></script>"))
-}
 pub fn font() -> Response {
     match std::fs::read(root().join("games/tbs/assets/fonts/weyard.otf")) {
         Ok(bytes) => Response::new(200, "OK", Some("font/otf"), "no-store", bytes),
@@ -114,8 +123,8 @@ pub fn font() -> Response {
 pub fn not_found() -> Response {
     Response::new(404, "Not Found", None, "no-store", b"Not found".to_vec())
 }
-/// Explicit browser actions require POST plus a non-simple header. Cross-origin
-/// pages cannot send that header: this transport does not allow CORS preflight.
+/// Browser actions require POST and either the explicit header or an HTML form
+/// with an Origin matching Host. Cross-origin forms and CORS preflight fail.
 pub fn run(
     listener: TcpListener,
     response: fn(&str) -> Response,
@@ -160,6 +169,23 @@ fn route(
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn native_forms_require_same_origin_post() {
+        for (method, origin, allowed) in [
+            ("POST", "http://127.0.0.1:4650", true),
+            ("POST", "http://example.com", false),
+            ("POST", "null", false),
+            ("GET", "http://127.0.0.1:4650", false),
+        ] {
+            let text=format!("{method} /reveal/ART%2Fsheet.PNG HTTP/1.1\r\nHost: 127.0.0.1:4650\r\nOrigin: {origin}\r\n\r\n");
+            assert_eq!(request(text.as_bytes()).unwrap().2, allowed);
+        }
+        assert!(
+            !request(&b"POST /reveal/file HTTP/1.1\r\nHost: localhost\r\n\r\n"[..])
+                .unwrap()
+                .2
+        );
+    }
     #[test]
     fn browser_actions_require_post_and_explicit_header() {
         fn read_route(_: &str) -> Response {

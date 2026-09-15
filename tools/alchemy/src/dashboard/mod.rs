@@ -14,14 +14,13 @@ use std::{
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
 use walkdir::WalkDir;
-const CLIENT: &str = include_str!("client.js");
 const STYLES: &str = include_str!("style.css");
 const TREES: [(&str, &str); 1] = [("rom", "ROM contents")];
 const COVERAGE_DIRS: [&str; 16] = [
     "games/tbs/locations.tsv",
     "games/tbs/asm",
     "games/tbs/assets",
-    "games/tbs/GRAPHICS",
+    "games/tbs/SRC/GRAPHICS",
     "games/tbs/SOUND",
     "games/tbs/TEXT",
     "games/tbs/metrics",
@@ -36,7 +35,7 @@ const COVERAGE_DIRS: [&str; 16] = [
     "out/tbs-en/reports",
 ];
 fn page_version() -> String {
-    svg_cache_version(&format!("{STYLES}\0{CLIENT}"))
+    svg_cache_version(STYLES)
 }
 pub struct Live {
     revision: String,
@@ -313,21 +312,22 @@ fn reveal(path: &str) -> Response {
                 }
             })
     });
-    match result {
-        Ok(()) => Response::new(200, "OK", None, "no-store", b"Shown".to_vec()),
-        Err(message) => Response::new(400, "Bad Request", None, "no-store", message.into_bytes()),
-    }
+    let (status, reason, message) = match result {
+        Ok(()) => (200, "OK", "Shown in Finder".into()),
+        Err(message) => (400, "Bad Request", message),
+    };
+    Response::new(status, reason, Some("text/html; charset=utf-8"), "no-store",
+        format!("<!doctype html><style>body{{margin:0;background:#1f7f93;color:white;font:14px monospace}}</style>{}", crate::coverage::boxtree::esc(&message)))
 }
 fn response(path: &str) -> Response {
+    if path == "/"
+        || path.starts_with("/view/")
+        || path.starts_with("/inspect/")
+        || path.starts_with("/shared/")
+    {
+        return page(path);
+    }
     match path {
-        "/" => http::shell("Alchemy", STYLES),
-        "/client.js" => Response::new(
-            200,
-            "OK",
-            Some("text/javascript; charset=utf-8"),
-            "no-store",
-            CLIENT,
-        ),
         "/weyard.otf" => http::font(),
         "/snapshot" => Response::new(
             200,
@@ -489,6 +489,41 @@ impl Watcher {
     }
 }
 
+fn page(path: &str) -> Response {
+    let (encoded, selected, shared) = if let Some(path) = path.strip_prefix("/inspect/") {
+        let Some((address, folder)) = path.split_once('/') else {
+            return http::not_found();
+        };
+        let Ok(address) = i64::from_str_radix(address, 16) else {
+            return http::not_found();
+        };
+        (folder, Some(address), false)
+    } else if let Some(folder) = path.strip_prefix("/shared/") {
+        (folder, None, true)
+    } else {
+        (path.strip_prefix("/view/").unwrap_or(""), None, false)
+    };
+    let Some(folder) = crate::coverage::boxtree::decode_folder(encoded) else {
+        return http::not_found();
+    };
+    let content = state(|s| {
+        s.coverage
+            .as_ref()
+            .and_then(|live| live.map.as_ref())
+            .map(|map| crate::coverage::boxtree::html_page(map, &folder, selected, shared))
+    });
+    let (refresh, content) = match content {
+        Some(Some(content)) => ("", content),
+        Some(None) => return http::not_found(),
+        None => (
+            "<meta http-equiv=\"refresh\" content=\"2\">",
+            "<main class=\"loading\">Reading ROM coverage…</main>".into(),
+        ),
+    };
+    let mut response=Response::new(200,"OK",Some("text/html; charset=utf-8"),"no-store",format!("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">{refresh}<title>Alchemy</title><style>{STYLES}</style></head><body>{content}</body></html>"));
+    response.headers.push(("Content-Security-Policy","default-src 'self'; script-src 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'; object-src 'none'; base-uri 'none'".into()));
+    response
+}
 pub fn entry(args: &[String]) -> Result<(), String> {
     let Some(bind) = http::bind(args, "dashboard", 4650)? else {
         return Ok(());
@@ -635,26 +670,25 @@ mod tests {
         ] {
             assert_eq!(response(path).status, 404);
         }
-        for token in [
-            "AudioContext",
-            "musicPlayer",
-            "/music/",
-            "createBufferSource",
-        ] {
-            assert!(!CLIENT.contains(token));
-        }
-        assert!(CLIENT.contains("EventSource"));
+        assert_eq!(response("/client.js").status, 404);
+        let page = response("/");
+        assert!(!String::from_utf8(page.body).unwrap().contains("<script"));
+        assert!(page
+            .headers
+            .iter()
+            .any(|(key, value)| *key == "Content-Security-Policy"
+                && value.contains("script-src 'none'")));
         assert!(!STYLES.contains(".music-player"));
     }
     #[test]
-    fn browser_regressions() {
-        assert!(std::process::Command::new("bun")
-            .args([
-                "test",
-                concat!(env!("CARGO_MANIFEST_DIR"), "/src/dashboard/client.test.js")
-            ])
-            .status()
-            .expect("Bun is required for dashboard tests")
-            .success());
+    fn navigation_rejects_invalid_paths() {
+        for path in [
+            "/view/ff",
+            "/view/2e2e2f",
+            "/inspect/not-an-address/",
+            "/inspect/42/ff",
+        ] {
+            assert_eq!(response(path).status, 404);
+        }
     }
 }

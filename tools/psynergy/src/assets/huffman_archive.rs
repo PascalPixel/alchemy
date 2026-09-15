@@ -3,6 +3,8 @@
 //! address directory. No game addresses, command tables or bank counts.
 use super::{err, AssetError};
 use std::collections::HashMap;
+mod reader;
+pub use reader::{Message, MessageReader};
 
 /// A built archive and the addresses its self-referential header records.
 pub struct HuffmanArchive {

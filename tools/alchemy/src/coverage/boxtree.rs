@@ -20,6 +20,8 @@ fn display_bytes(categories: &[i64; 6], category: Category) -> i64 {
 use crate::coverage::pipeline::{source_container, CoverageMap};
 use crate::coverage::tree::root;
 use sha1::{Digest, Sha1};
+mod html;
+pub use html::{decode_folder, page as html_page};
 
 pub const BOX_TREES: [&str; 1] = ["rom"];
 const CHART_BACKGROUND: &str = "#1f7f93";
@@ -67,13 +69,13 @@ fn content_style(tile: &Tile) -> (&'static str, &'static str) {
     }
     match kind {
         "golden-sun-static-sprite-series" => ("Sprite sheets", "#b5a0de"),
-        "gba-palette" | "gba-palette-rgba" => ("Palettes", "#e8a6d3"),
+        "gba-palette" | "gba-palette-rgba" | "bgr555-banks" => ("Palettes", "#e8a6d3"),
         "golden-sun-kana-glyph-bank" | "golden-sun-namae-nyuuryoku" => ("Fonts", "#eadb83"),
         "golden-sun-message-archive" | "golden-sun-staff-roll" => ("Text", "#85cbd2"),
         _ if source.contains("/fonts_") || source.contains("/GRAPHICS/FONT/") => {
             ("Fonts", "#eadb83")
         }
-        _ if source.ends_with(".png") => ("Images", "#8fb7ec"),
+        _ if source.to_ascii_lowercase().ends_with(".png") => ("Images", "#8fb7ec"),
         _ => ("Other data", "#bda995"),
     }
 }
@@ -294,25 +296,27 @@ fn draw_tiles(
     }
 }
 
+fn label_width(name: &str) -> f64 {
+    // ASCII advances from Weyard's hmtx table, at its fixed 16px size.
+    const ADVANCES: [u8; 95] = [
+        5, 4, 6, 8, 9, 9, 10, 3, 5, 5, 9, 8, 3, 7, 3, 9, 7, 3, 7, 6, 7, 7, 7, 7, 6, 7, 5, 5, 5, 7,
+        6, 7, 9, 9, 8, 7, 8, 8, 7, 7, 9, 4, 8, 9, 7, 10, 9, 8, 8, 8, 8, 7, 6, 7, 8, 10, 10, 7, 8,
+        5, 6, 4, 5, 8, 3, 7, 7, 7, 8, 7, 6, 7, 7, 3, 8, 8, 4, 9, 7, 7, 7, 7, 8, 7, 6, 7, 8, 10, 8,
+        7, 8, 6, 3, 6, 9,
+    ];
+    name.chars()
+        .map(|c| {
+            if (' '..='~').contains(&c) {
+                ADVANCES[c as usize - 32] as f64
+            } else {
+                16.0
+            }
+        })
+        .sum()
+}
 fn caption(name: &str, body: Rect, folder: bool) -> Option<(String, Rect)> {
     if folder {
-        // ASCII advances from Weyard's hmtx table, at its fixed 16px size.
-        const ADVANCES: [u8; 95] = [
-            5, 4, 6, 8, 9, 9, 10, 3, 5, 5, 9, 8, 3, 7, 3, 9, 7, 3, 7, 6, 7, 7, 7, 7, 6, 7, 5, 5, 5,
-            7, 6, 7, 9, 9, 8, 7, 8, 8, 7, 7, 9, 4, 8, 9, 7, 10, 9, 8, 8, 8, 8, 7, 6, 7, 8, 10, 10,
-            7, 8, 5, 6, 4, 5, 8, 3, 7, 7, 7, 8, 7, 6, 7, 7, 3, 8, 8, 4, 9, 7, 7, 7, 7, 8, 7, 6, 7,
-            8, 10, 8, 7, 8, 6, 3, 6, 9,
-        ];
-        let width: f64 = name
-            .chars()
-            .map(|c| {
-                if (' '..='~').contains(&c) {
-                    ADVANCES[c as usize - 32] as f64
-                } else {
-                    16.0
-                }
-            })
-            .sum();
+        let width = label_width(name);
         if name.is_empty() || body.width < width + 4.0 || body.height < 20.0 {
             return None;
         }
@@ -415,7 +419,7 @@ fn base64(data: &[u8]) -> String {
     out
 }
 
-fn esc(value: &str) -> String {
+pub(crate) fn esc(value: &str) -> String {
     value
         .replace('&', "&amp;")
         .replace('<', "&lt;")

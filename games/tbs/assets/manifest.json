@@ -968,12 +968,6 @@
       "source": "games/tbs/assets/data/gba_header.json"
     },
     {
-      "address": "0x0800777c",
-      "size": "0x1e0",
-      "kind": "gba-palette",
-      "source": "games/tbs/SRC/GRAPHICS/PALETTE/0800777c.gbapal.png"
-    },
-    {
       "address": "0x0800795c",
       "size": "0x38",
       "kind": "typed-table",
@@ -1519,60 +1513,6 @@
       "size": "0x8530",
       "kind": "typed-table",
       "source": "games/tbs/assets/data/chr_catalog.json"
-    },
-    {
-      "address": "0x0818d554",
-      "size": "0x19acc",
-      "kind": "components",
-      "source": "games/tbs/SRC/GRAPHICS/CHARACTER/characters_chr_0818_index.json"
-    },
-    {
-      "address": "0x081a7020",
-      "size": "0x3a1ec",
-      "kind": "components",
-      "source": "games/tbs/SRC/GRAPHICS/CHARACTER/characters_chr_081a_index.json"
-    },
-    {
-      "address": "0x081e120c",
-      "size": "0x14ebc",
-      "kind": "components",
-      "source": "games/tbs/SRC/GRAPHICS/CHARACTER/characters_chr_081e_index.json"
-    },
-    {
-      "address": "0x081f60c8",
-      "size": "0x2a098",
-      "kind": "components",
-      "source": "games/tbs/SRC/GRAPHICS/CHARACTER/characters_chr_081f_index.json"
-    },
-    {
-      "address": "0x08220160",
-      "size": "0x24e60",
-      "kind": "components",
-      "source": "games/tbs/SRC/GRAPHICS/CHARACTER/characters_chr_zenhan_index.json"
-    },
-    {
-      "address": "0x08244fc0",
-      "size": "0x48018",
-      "kind": "components",
-      "source": "games/tbs/SRC/GRAPHICS/CHARACTER/characters_chr_index.json"
-    },
-    {
-      "address": "0x0828cfd8",
-      "size": "0x28088",
-      "kind": "components",
-      "source": "games/tbs/SRC/GRAPHICS/CHARACTER/characters_chr_0828_index.json"
-    },
-    {
-      "address": "0x082b5060",
-      "size": "0x4bf14",
-      "kind": "components",
-      "source": "games/tbs/SRC/GRAPHICS/CHARACTER/characters_chr_082b_index.json"
-    },
-    {
-      "address": "0x08300f74",
-      "size": "0x1f08c",
-      "kind": "components",
-      "source": "games/tbs/SRC/GRAPHICS/CHARACTER/characters_chr_0830_index.json"
     },
     {
       "address": "0x08320000",

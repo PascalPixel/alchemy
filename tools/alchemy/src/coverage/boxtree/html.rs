@@ -283,7 +283,7 @@ fn rust_viewer_links_folders_details_and_shared_sources_without_scripts() {
         ..Tile::default()
     };
     let map = CoverageMap {
-        document: json!({"asset_verification":"rom","shared_map_assets":{folder:["games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json"]}}),
+        document: json!({"asset_verification":"rom","shared_map_assets":{folder:["games/tbs/SRC/GRAPHICS/COMMON/PALETTE.JSON"]}}),
         rom_areas: vec![Area {
             tiles: vec![tile],
             ..Area::default()
@@ -298,7 +298,7 @@ fn rust_viewer_links_folders_details_and_shared_sources_without_scripts() {
     assert!(selected.contains("Last asset build: ROM bytes matched; appearance not verified"));
     assert!(selected.contains("Shared files (1)"));
     let shared = page(&map, folder, None, true).unwrap();
-    assert!(shared.contains("COMMON/PALETTE.json"));
+    assert!(shared.contains("COMMON/PALETTE.JSON"));
     assert!(!selected.contains("<script"));
     assert!(!selected.contains("javascript:"));
     assert!(page(&map, "missing/", None, false).is_none());

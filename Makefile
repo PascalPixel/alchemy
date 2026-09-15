@@ -58,7 +58,7 @@ CANDIDATE_SINGLE_OWNERS := \
 	full-rom-check overlay-check declared-tu-check owner-inventory-check strict-tu-check classification-check \
 	candidate-corpus-check source-tracking-check index-sync-check check-owners progress progress-report progress-check progress-subject \
 	correspondence correspondence-check edition-builds edition-builds-check \
-	coverage coverage-check clean clean-preview
+	coverage coverage-check native-format-check clean clean-preview
 .PHONY: targets $(HISTORICAL_TARGETS)
 
 help:
@@ -371,13 +371,16 @@ lint-all-targets: standard-check compiler-source-check
 	done
 	$(CHECK) no-asm
 
-test: lint tooling-size tooling-index-check tool-tests compiler-source-check
+test: native-format-check lint tooling-size tooling-index-check tool-tests compiler-source-check
 	$(CHECK) publication --self-test
 	$(CHECK) commit-progress --self-test
 	$(CHECK) progress --self-test
 	$(CHECK) no-asm --self-test
 
-verify: index-sync-check source-tracking-check corpus-check language-check register-shrink-check lint-production tooling-size tooling-index-check \
+native-format-check:
+	$(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- format --check
+
+verify: native-format-check index-sync-check source-tracking-check corpus-check language-check register-shrink-check lint-production tooling-size tooling-index-check \
 	strict-tu-check check-owners core-retained-check coverage-check | $(REPORT_DIR)
 	@tree=$$(git write-tree) || exit; \
 	printf '%s\n' "$$tree" > $(VERIFIED_TREE).tmp; \

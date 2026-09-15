@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="games/tbs/PREVIEW/djinn_101_idle.gif" width="64" height="64" alt="Venus Djinn">
-  <img src="games/tbs/PREVIEW/djinn_102_idle.gif" width="64" height="64" alt="Jupiter Djinn">
-  <img src="games/tbs/PREVIEW/djinn_103_idle.gif" width="64" height="64" alt="Mars Djinn">
-  <img src="games/tbs/PREVIEW/djinn_104_idle.gif" width="64" height="64" alt="Mercury Djinn">
+  <img src="games/tbs/PREVIEW/DJINN_101_IDLE.GIF" width="64" height="64" alt="Venus Djinn">
+  <img src="games/tbs/PREVIEW/DJINN_102_IDLE.GIF" width="64" height="64" alt="Jupiter Djinn">
+  <img src="games/tbs/PREVIEW/DJINN_103_IDLE.GIF" width="64" height="64" alt="Mars Djinn">
+  <img src="games/tbs/PREVIEW/DJINN_104_IDLE.GIF" width="64" height="64" alt="Mercury Djinn">
 </p>
 
 <h1 align="center">Alchemy</h1>

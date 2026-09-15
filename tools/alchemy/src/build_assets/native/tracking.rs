@@ -109,8 +109,8 @@ pub(in crate::build_assets) fn check(root: &Path) -> Result<(), String> {
                         | "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG"
                 ),
                 "still-atlas" => name == "games/tbs/SRC/GRAPHICS/COMMON/STILL.PNG",
-                "grid" | "metatiles" => name.ends_with(".bin"),
-                "tiles" => name.ends_with("/CHR.png") || name.ends_with("_CHR.png"),
+                "grid" | "metatiles" => name.ends_with(".BIN"),
+                "tiles" => name.ends_with("/CHR.PNG") || name.ends_with("_CHR.PNG"),
                 "sprite" | "sprite-atlas" | "archive-atlas" => {
                     (name.starts_with("games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_")
                         || name.starts_with("games/tbs/SRC/GRAPHICS/CHARACTER/BATTLE_"))

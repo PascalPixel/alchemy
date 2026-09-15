@@ -1,5 +1,5 @@
 use super::*;
-const META: &str = "games/tbs/SRC/GRAPHICS/COMMON/UI.json";
+const META: &str = "games/tbs/SRC/GRAPHICS/COMMON/UI.JSON";
 const SHEET: &str = "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG";
 pub(super) fn pixels(ctx: &Context, input: &Value, rom: &[u8]) -> Result<Vec<u8>, String> {
     let doc = ctx.document(&ctx.root.join(META))?;

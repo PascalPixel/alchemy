@@ -1166,6 +1166,32 @@ void SceneDialogue_RunActorNineFlaggedDialogue(void)
     Func_02002530(9, 0);
 }
 
+extern s32 *Func_020024ca_trigger(s32);
+extern s32 Func_0200249c_trigger(s32);
+extern void Func_020024b2_trigger(s32);
+extern u8 *TimerWork_03001ebc;
+static __inline__ s32 Timer_Query(s32 (*func)(), s32 value)
+{
+    return func(value);
+}
+static __inline__ void Timer_Call(void (*func)(), s32 value)
+{
+    func(value);
+}
+static __inline__ void Timer_Store(u16 *dst, s32 value)
+{
+    *dst = value;
+}
+#define SceneState_TriggerTimerAtLeaderRowTen Func_02000ac4
+void SceneState_TriggerTimerAtLeaderRowTen(void)
+{
+    s32 tile_z = Func_020024ca_trigger(0)[4] / 1048576;
+    if (Timer_Query(Func_0200249c_trigger, 0x243) == 0 && tile_z == 10) {
+        Timer_Call(Func_020024b2_trigger, 0x243);
+        Timer_Store((u16 *)(TimerWork_03001ebc + 364), 20);
+    }
+}
+
 void ActorPresentation_RunActorZeroCameraScene(void)
 {
     Func_020024f0();

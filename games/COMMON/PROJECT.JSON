@@ -2,7 +2,7 @@
   "format": 2,
   "product": "alchemy",
   "kind": "integration",
-  "inputs": ["games/THE BROKEN SEAL", "games/tla"],
+  "inputs": ["games/THE BROKEN SEAL", "games/THE LOST AGE"],
   "layout": {
     "source": "games/COMMON/SRC",
     "assets": "games/COMMON/ASSETS",

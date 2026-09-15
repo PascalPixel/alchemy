@@ -852,7 +852,12 @@ void FieldScene_RunActorPositionTransition(void)
             "#define tbs_Main Func_08001234\n"
         );
         assert_eq!(
-            source_symbol_bindings(&root, "games/tla/src/08001234.c", CompilerTarget::Tla).unwrap(),
+            source_symbol_bindings(
+                &root,
+                "games/THE LOST AGE/src/08001234.c",
+                CompilerTarget::Tla
+            )
+            .unwrap(),
             "#define tla_Main Func_08001234\n"
         );
         assert_eq!(

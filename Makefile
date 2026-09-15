@@ -28,7 +28,7 @@ PORTABLE_TOOLS := alchemy psynergy
 TOOLING_LINE_LIMIT := 100000
 TARGET ?= tbs-en
 TARGET_GAME := $(firstword $(subst -, ,$(TARGET)))
-TARGET_GAME_DIR := $(if $(filter tbs,$(TARGET_GAME)),THE BROKEN SEAL,$(TARGET_GAME))
+TARGET_GAME_DIR := $(if $(filter tbs,$(TARGET_GAME)),THE BROKEN SEAL,$(if $(filter tla,$(TARGET_GAME)),THE LOST AGE,$(TARGET_GAME)))
 FULL_REPORT = out/$(TARGET)/full/rebuilt.json
 FULL_ROM = out/$(TARGET)/full/rebuilt.gba
 OWNER_INVENTORY = out/$(TARGET)/full/rebuilt.owner-inventory.json
@@ -273,7 +273,7 @@ check-owners: source-tracking-check
 
 corpus-check:
 	@test -f "games/THE BROKEN SEAL/project.json"
-	@test -f games/tla/project.json
+	@test -f "games/THE LOST AGE/project.json"
 	@test -f games/COMMON/PROJECT.JSON
 	@if test -d draft; then \
 		printf 'legacy draft/ directory found; use games/THE BROKEN SEAL/recon/<edition>/\n'; \

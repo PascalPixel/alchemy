@@ -614,8 +614,10 @@ Native TBS names use uppercase folders, basenames and extensions throughout
 `.JSON`, `.PNG`, `.BIN`, `.MID`, `.WAV` and `.TSV`. Repository and tooling
 registries retain their established spellings outside these workspaces.
 The first game's physical root is `games/THE BROKEN SEAL`; its stable build IDs
-remain `tbs-ja`, `tbs-en` and the other edition-qualified targets. `games/COMMON`
-owns the shared integration workspace (`SRC`, `INCLUDE`, `ASSETS`, `PROJECT.JSON`).
+remain `tbs-ja`, `tbs-en` and the other edition-qualified targets. The second
+game's physical root is `games/THE LOST AGE`, retaining its `tla-` build IDs.
+`games/COMMON` owns the shared integration workspace
+(`SRC`, `INCLUDE`, `ASSETS`, `PROJECT.JSON`).
 Reuse there requires proved correspondence; it is currently an empty workspace,
 not a claim that either game's implementation is interchangeable. Edition-specific
 symbols and placements can build one C file for multiple ROMs, as the Lunpa

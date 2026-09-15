@@ -887,7 +887,7 @@ mod tests {
     #[test]
     fn each_game_owns_an_independent_descriptive_registry() {
         let root = tempdir().unwrap();
-        let manifest_path = root.path().join("games/tla/source-paths.json");
+        let manifest_path = root.path().join("games/THE LOST AGE/source-paths.json");
         fs::create_dir_all(manifest_path.parent().unwrap()).unwrap();
         fs::write(
             &manifest_path,
@@ -897,11 +897,11 @@ mod tests {
         let paths = SourcePaths::load_for_game(root.path(), "tla").unwrap();
         assert_eq!(
             paths.repository_relative_path(SourceOwner::Main(0x0801_32cc)),
-            PathBuf::from("games/tla/src/system/constant_zero_result.c")
+            PathBuf::from("games/THE LOST AGE/src/system/constant_zero_result.c")
         );
         assert_eq!(
             SourceOwner::Main(0x0801_32cc).routing_path_for_game("tla"),
-            PathBuf::from("games/tla/src/080132cc.c")
+            PathBuf::from("games/THE LOST AGE/src/080132cc.c")
         );
     }
 }

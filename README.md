@@ -21,7 +21,7 @@ first edition rebuilt in full.
 > Previously reported at 70%. Some assembly progress was retracted after a
 > stricter audit. We’re working our way back to 70% with verified recoveries.
 
-![ROM contents](<games/THE BROKEN SEAL/PREVIEW/TBS-EN-ROM.SVG?v=ed7e45fde47f4c37>)
+![ROM contents](<games/THE BROKEN SEAL/PREVIEW/TBS-EN-ROM.SVG?v=b5990c9422094c40>)
 
 ## What this is
 

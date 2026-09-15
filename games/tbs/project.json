@@ -8,7 +8,7 @@
     "source": "games/tbs/SRC",
     "source_paths": "games/tbs/source-paths.json",
     "assembly": "games/tbs/asm",
-    "assets": "games/tbs/assets",
+    "assets": "games/tbs/SRC",
     "include": "games/tbs/INCLUDE",
     "metrics": "games/tbs/metrics",
     "reconstruction": "games/tbs/recon",

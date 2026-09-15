@@ -69,7 +69,7 @@
       },
       "descriptor": {
         "id": 1,
-        "source": "games/tbs/assets/data/chr_catalog.json",
+        "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CATALOG.json",
         "pointer": "/segments/0/records/1",
         "frame_codec": "arena-lz/zero-skip"
       }
@@ -126,7 +126,7 @@
       },
       "descriptor": {
         "id": 321,
-        "source": "games/tbs/assets/data/chr_catalog.json",
+        "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CATALOG.json",
         "pointer": "/segments/0/records/321",
         "frame_codec": "arena-lz/zero-skip"
       }

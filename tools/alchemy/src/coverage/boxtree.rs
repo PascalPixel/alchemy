@@ -525,7 +525,7 @@ pub fn svg_sized(tree: &str, map: &CoverageMap, width: f64, height: f64, folder:
         height: height - 44.0 - rows as f64 * 24.0 - if shared.is_empty() { 0.0 } else { 24.0 },
     };
     let mut out = vec![format!("<title>{}</title>", esc(&title))];
-    if let Ok(bytes) = std::fs::read(root().join("games/tbs/assets/fonts/weyard.otf")) {
+    if let Ok(bytes) = std::fs::read(root().join("tools/alchemy/GRAPHICS/Weyard.otf")) {
         out.push(format!("<defs><style>@font-face{{font-family:Weyard;src:url(data:font/otf;base64,{}) format('opentype');font-style:italic;}}.weyard{{font-family:Weyard;font-size:16px;font-style:italic;fill:#fff;text-shadow:1px 1px 0 #000;}}</style></defs>", base64(&bytes)));
     } else {
         out.push("<style>.weyard{font-family:monospace;font-size:16px;fill:#fff;text-shadow:1px 1px 0 #000;}</style>".into());
@@ -621,7 +621,7 @@ fn content_version_uses_standard_sha1_prefix() {
 }
 pub fn box_tree_path(target: &str, tree: &str) -> std::path::PathBuf {
     root()
-        .join("games/tbs/assets/readme")
+        .join("games/tbs/PREVIEW")
         .join(format!("{target}-{tree}.svg"))
 }
 

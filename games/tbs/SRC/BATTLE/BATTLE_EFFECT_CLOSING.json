@@ -1,0 +1,270 @@
+{
+  "format": 1,
+  "kind": "typed-table",
+  "address": "0x080a0107",
+  "end": "0x080a1000",
+  "size": 3833,
+  "segments": [
+    {
+      "name": "alignment_080a0107",
+      "address": "0x080a0107",
+      "end": "0x080a0108",
+      "element": "u8",
+      "stride": 1,
+      "fill": 0
+    },
+    {
+      "name": "table_080a0108",
+      "address": "0x080a0108",
+      "end": "0x080a0128",
+      "element": "record",
+      "stride": 4,
+      "fields": [
+        {
+          "name": "palette_code",
+          "element": "le-u32"
+        }
+      ],
+      "records": [
+        {
+          "palette_code": 2113668
+        },
+        {
+          "palette_code": 2101764
+        },
+        {
+          "palette_code": 2101392
+        },
+        {
+          "palette_code": 2114052
+        },
+        {
+          "palette_code": 2113680
+        },
+        {
+          "palette_code": 2101776
+        },
+        {
+          "palette_code": 2105608
+        },
+        {
+          "palette_code": 2114064
+        }
+      ]
+    },
+    {
+      "name": "script_080a0128",
+      "address": "0x080a0128",
+      "end": "0x080a012c",
+      "element": "le-u32",
+      "stride": 4,
+      "values": [
+        [27]
+      ],
+      "entry_points": ["0x080a0128"]
+    },
+    {
+      "name": "script_pointers",
+      "address": "0x080a012c",
+      "end": "0x080a0138",
+      "element": "le-u32",
+      "stride": 4,
+      "values": [134869308, 134869320, 134869332]
+    },
+    {
+      "name": "sparse_table",
+      "address": "0x080a0138",
+      "end": "0x080a0288",
+      "element": "record",
+      "stride": 8,
+      "fields": [
+        {
+          "name": "key",
+          "element": "le-u32"
+        },
+        {
+          "name": "value",
+          "element": "le-u32"
+        }
+      ],
+      "records": [
+        {
+          "key": 65923,
+          "value": 3
+        },
+        {
+          "key": 65925,
+          "value": 20
+        },
+        {
+          "key": 65945,
+          "value": 75
+        },
+        {
+          "key": 65971,
+          "value": 167
+        },
+        {
+          "key": 65954,
+          "value": 104
+        },
+        {
+          "key": 65956,
+          "value": 107
+        },
+        {
+          "key": 65958,
+          "value": 112
+        },
+        {
+          "key": 65937,
+          "value": 50
+        },
+        {
+          "key": 65931,
+          "value": 36
+        },
+        {
+          "key": 65943,
+          "value": 72
+        },
+        {
+          "key": 65947,
+          "value": 88
+        },
+        {
+          "key": 65940,
+          "value": 60
+        },
+        {
+          "key": 65928,
+          "value": 30
+        },
+        {
+          "key": 65952,
+          "value": 99
+        },
+        {
+          "key": 65975,
+          "value": 178
+        },
+        {
+          "key": 65960,
+          "value": 135
+        },
+        {
+          "key": 131475,
+          "value": 53
+        },
+        {
+          "key": 131460,
+          "value": 11
+        },
+        {
+          "key": 131513,
+          "value": 183
+        },
+        {
+          "key": 65930,
+          "value": 35
+        },
+        {
+          "key": 131510,
+          "value": 174
+        },
+        {
+          "key": 0,
+          "value": 0
+        },
+        {
+          "key": 0,
+          "value": 0
+        },
+        {
+          "key": 0,
+          "value": 0
+        },
+        {
+          "key": 0,
+          "value": 0
+        },
+        {
+          "key": 0,
+          "value": 0
+        },
+        {
+          "key": 0,
+          "value": 0
+        },
+        {
+          "key": 0,
+          "value": 0
+        },
+        {
+          "key": 0,
+          "value": 0
+        },
+        {
+          "key": 0,
+          "value": 0
+        },
+        {
+          "key": 0,
+          "value": 0
+        },
+        {
+          "key": 0,
+          "value": 0
+        },
+        {
+          "key": 0,
+          "value": 0
+        },
+        {
+          "key": 0,
+          "value": 0
+        },
+        {
+          "key": 0,
+          "value": 0
+        },
+        {
+          "key": 0,
+          "value": 0
+        },
+        {
+          "key": 0,
+          "value": 0
+        },
+        {
+          "key": 0,
+          "value": 0
+        },
+        {
+          "key": 0,
+          "value": 0
+        },
+        {
+          "key": 65932,
+          "value": 39
+        },
+        {
+          "key": 65964,
+          "value": 152
+        },
+        {
+          "key": 4294967295,
+          "value": 0
+        }
+      ]
+    },
+    {
+      "name": "alignment_080a0288",
+      "address": "0x080a0288",
+      "end": "0x080a1000",
+      "element": "u8",
+      "stride": 1,
+      "fill": 0
+    }
+  ]
+}

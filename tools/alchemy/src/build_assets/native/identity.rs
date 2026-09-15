@@ -151,7 +151,7 @@ pub fn audit(root: &Path, output: &Path) -> Result<(), String> {
             .map_err(|e| format!("Japanese message {index}: {e}"))?;
         messages.push(json!({"id":index,"offset":message.offset,"encoded_size":message.bytes,"text":message.symbols.as_ref().map(|s|text(s)),"symbols":message.symbols}));
     }
-    let source = json(&root.join("games/tbs/assets/data/chr_catalog.json"))?;
+    let source = json(&root.join("games/tbs/SRC/GRAPHICS/CHARACTER/CATALOG.json"))?;
     let descriptors = source["segments"][0]["records"]
         .as_array()
         .ok_or("descriptor table missing")?;
@@ -225,7 +225,7 @@ pub fn audit(root: &Path, output: &Path) -> Result<(), String> {
     document(
         &output,
         "CHARACTERS.json",
-        &json!({"rom_sha256":sha256::hex(&japanese),"descriptor_table":ROM_BASE+ja_base,"descriptors":rows,"party_pose_source":"games/tbs/assets/graphics/sentou_hyouji_kihon.json","names":messages[102..109]}),
+        &json!({"rom_sha256":sha256::hex(&japanese),"descriptor_table":ROM_BASE+ja_base,"descriptors":rows,"party_pose_source":"games/tbs/SRC/GRAPHICS/COMMON/TABLES.json#/tables/0x080c2a0a","party_names":party_names(&japanese)?,"names":messages[102..109]}),
     )?;
     println!(
         "inverse_english_messages={count} japanese_messages={} descriptors={} japanese_table={:#x}",

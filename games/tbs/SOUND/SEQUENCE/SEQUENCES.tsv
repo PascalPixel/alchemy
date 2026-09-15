@@ -1,4 +1,4 @@
-# Byte-exact TBS SMSH sequence sources. Human titles live only in games/music.tsv.
+# Byte-exact TBS SMSH sequence sources, identified by ROM sound IDs.
 sound_id	class	address	size	source
 0	music	0x0815fb78	0x0000095c	BGM_000.mid
 1	music	0x081604d4	0x00000aec	BGM_001.mid

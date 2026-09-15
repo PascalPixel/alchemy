@@ -1,4 +1,4 @@
-# ROM-derived TLA sound-selection table. Human titles live only in games/music.tsv.
+# ROM-derived TLA sound-selection table, identified by ROM sound IDs.
 slot	header	player	source	status
 0	0x082ba798	1		empty
 1	0x082bae04	1	songs/midi/sound_001.mid	byte-exact

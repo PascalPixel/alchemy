@@ -1,0 +1,983 @@
+{
+  "format": 1,
+  "entries": [
+    {
+      "member_id": 1,
+      "name_text_id": "0x0290",
+      "sprite_id": 180,
+      "identity": null
+    },
+    {
+      "member_id": 2,
+      "name_text_id": "0x0291",
+      "sprite_id": 180,
+      "identity": null
+    },
+    {
+      "member_id": 3,
+      "name_text_id": "0x0292",
+      "sprite_id": 180,
+      "identity": null
+    },
+    {
+      "member_id": 4,
+      "name_text_id": "0x0293",
+      "sprite_id": 180,
+      "identity": null
+    },
+    {
+      "member_id": 5,
+      "name_text_id": "0x0294",
+      "sprite_id": 180,
+      "identity": null
+    },
+    {
+      "member_id": 6,
+      "name_text_id": "0x0295",
+      "sprite_id": 227,
+      "identity": null
+    },
+    {
+      "member_id": 7,
+      "name_text_id": "0x0296",
+      "sprite_id": 226,
+      "identity": null
+    },
+    {
+      "member_id": 8,
+      "name_text_id": "0x0297",
+      "sprite_id": 226,
+      "identity": null
+    },
+    {
+      "member_id": 9,
+      "name_text_id": "0x0298",
+      "sprite_id": 227,
+      "identity": null
+    },
+    {
+      "member_id": 10,
+      "name_text_id": "0x0299",
+      "sprite_id": 180,
+      "identity": null
+    },
+    {
+      "member_id": 11,
+      "name_text_id": "0x029a",
+      "sprite_id": 180,
+      "identity": null
+    },
+    {
+      "member_id": 12,
+      "name_text_id": "0x029b",
+      "sprite_id": 180,
+      "identity": null
+    },
+    {
+      "member_id": 13,
+      "name_text_id": "0x029c",
+      "sprite_id": 180,
+      "identity": null
+    },
+    {
+      "member_id": 14,
+      "name_text_id": "0x029d",
+      "sprite_id": 238,
+      "identity": null
+    },
+    {
+      "member_id": 15,
+      "name_text_id": "0x029e",
+      "sprite_id": 240,
+      "identity": null
+    },
+    {
+      "member_id": 16,
+      "name_text_id": "0x029f",
+      "sprite_id": 188,
+      "identity": null
+    },
+    {
+      "member_id": 17,
+      "name_text_id": "0x02a0",
+      "sprite_id": 186,
+      "identity": null
+    },
+    {
+      "member_id": 18,
+      "name_text_id": "0x02a1",
+      "sprite_id": 180,
+      "identity": null
+    },
+    {
+      "member_id": 19,
+      "name_text_id": "0x02a2",
+      "sprite_id": 187,
+      "identity": null
+    },
+    {
+      "member_id": 20,
+      "name_text_id": "0x02a3",
+      "sprite_id": 188,
+      "identity": null
+    },
+    {
+      "member_id": 21,
+      "name_text_id": "0x02a4",
+      "sprite_id": 27,
+      "identity": null
+    },
+    {
+      "member_id": 22,
+      "name_text_id": "0x02a5",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 23,
+      "name_text_id": "0x02a6",
+      "sprite_id": 241,
+      "identity": null
+    },
+    {
+      "member_id": 24,
+      "name_text_id": "0x02a7",
+      "sprite_id": 180,
+      "identity": null
+    },
+    {
+      "member_id": 25,
+      "name_text_id": "0x02a8",
+      "sprite_id": 227,
+      "identity": null
+    },
+    {
+      "member_id": 26,
+      "name_text_id": "0x02a9",
+      "sprite_id": 182,
+      "identity": null
+    },
+    {
+      "member_id": 27,
+      "name_text_id": "0x02aa",
+      "sprite_id": 226,
+      "identity": null
+    },
+    {
+      "member_id": 28,
+      "name_text_id": "0x02ab",
+      "sprite_id": 181,
+      "identity": null
+    },
+    {
+      "member_id": 29,
+      "name_text_id": "0x02ac",
+      "sprite_id": 181,
+      "identity": null
+    },
+    {
+      "member_id": 30,
+      "name_text_id": "0x02ad",
+      "sprite_id": 180,
+      "identity": null
+    },
+    {
+      "member_id": 31,
+      "name_text_id": "0x02ae",
+      "sprite_id": 180,
+      "identity": null
+    },
+    {
+      "member_id": 32,
+      "name_text_id": "0x02af",
+      "sprite_id": 188,
+      "identity": null
+    },
+    {
+      "member_id": 33,
+      "name_text_id": "0x02b0",
+      "sprite_id": 226,
+      "identity": null
+    },
+    {
+      "member_id": 34,
+      "name_text_id": "0x02b1",
+      "sprite_id": 226,
+      "identity": null
+    },
+    {
+      "member_id": 35,
+      "name_text_id": "0x02b2",
+      "sprite_id": 240,
+      "identity": null
+    },
+    {
+      "member_id": 36,
+      "name_text_id": "0x02b3",
+      "sprite_id": 188,
+      "identity": null
+    },
+    {
+      "member_id": 37,
+      "name_text_id": "0x02b4",
+      "sprite_id": 188,
+      "identity": null
+    },
+    {
+      "member_id": 38,
+      "name_text_id": "0x02b5",
+      "sprite_id": 188,
+      "identity": null
+    },
+    {
+      "member_id": 39,
+      "name_text_id": "0x02b6",
+      "sprite_id": 181,
+      "identity": null
+    },
+    {
+      "member_id": 40,
+      "name_text_id": "0x02b7",
+      "sprite_id": 181,
+      "identity": null
+    },
+    {
+      "member_id": 41,
+      "name_text_id": "0x02b8",
+      "sprite_id": 181,
+      "identity": null
+    },
+    {
+      "member_id": 42,
+      "name_text_id": "0x02b9",
+      "sprite_id": 187,
+      "identity": null
+    },
+    {
+      "member_id": 43,
+      "name_text_id": "0x02ba",
+      "sprite_id": 187,
+      "identity": null
+    },
+    {
+      "member_id": 44,
+      "name_text_id": "0x02bb",
+      "sprite_id": 266,
+      "identity": null
+    },
+    {
+      "member_id": 45,
+      "name_text_id": "0x02bc",
+      "sprite_id": 238,
+      "identity": null
+    },
+    {
+      "member_id": 46,
+      "name_text_id": "0x02bd",
+      "sprite_id": 241,
+      "identity": null
+    },
+    {
+      "member_id": 47,
+      "name_text_id": "0x02be",
+      "sprite_id": 241,
+      "identity": null
+    },
+    {
+      "member_id": 48,
+      "name_text_id": "0x02bf",
+      "sprite_id": 187,
+      "identity": null
+    },
+    {
+      "member_id": 49,
+      "name_text_id": "0x02c0",
+      "sprite_id": 187,
+      "identity": null
+    },
+    {
+      "member_id": 50,
+      "name_text_id": "0x02c1",
+      "sprite_id": 187,
+      "identity": null
+    },
+    {
+      "member_id": 51,
+      "name_text_id": "0x02c2",
+      "sprite_id": 181,
+      "identity": null
+    },
+    {
+      "member_id": 52,
+      "name_text_id": "0x02c3",
+      "sprite_id": 188,
+      "identity": null
+    },
+    {
+      "member_id": 53,
+      "name_text_id": "0x02c4",
+      "sprite_id": 183,
+      "identity": null
+    },
+    {
+      "member_id": 54,
+      "name_text_id": "0x02c5",
+      "sprite_id": 227,
+      "identity": null
+    },
+    {
+      "member_id": 55,
+      "name_text_id": "0x02c6",
+      "sprite_id": 188,
+      "identity": null
+    },
+    {
+      "member_id": 56,
+      "name_text_id": "0x02c7",
+      "sprite_id": 187,
+      "identity": null
+    },
+    {
+      "member_id": 57,
+      "name_text_id": "0x02c8",
+      "sprite_id": 188,
+      "identity": null
+    },
+    {
+      "member_id": 58,
+      "name_text_id": "0x02c9",
+      "sprite_id": 188,
+      "identity": null
+    },
+    {
+      "member_id": 59,
+      "name_text_id": "0x02ca",
+      "sprite_id": 181,
+      "identity": null
+    },
+    {
+      "member_id": 60,
+      "name_text_id": "0x02cb",
+      "sprite_id": 241,
+      "identity": null
+    },
+    {
+      "member_id": 61,
+      "name_text_id": "0x02cc",
+      "sprite_id": 241,
+      "identity": null
+    },
+    {
+      "member_id": 62,
+      "name_text_id": "0x02cd",
+      "sprite_id": 265,
+      "identity": null
+    },
+    {
+      "member_id": 63,
+      "name_text_id": "0x02ce",
+      "sprite_id": 240,
+      "identity": null
+    },
+    {
+      "member_id": 64,
+      "name_text_id": "0x02cf",
+      "sprite_id": 240,
+      "identity": null
+    },
+    {
+      "member_id": 65,
+      "name_text_id": "0x02d0",
+      "sprite_id": 187,
+      "identity": null
+    },
+    {
+      "member_id": 66,
+      "name_text_id": "0x02d1",
+      "sprite_id": 181,
+      "identity": null
+    },
+    {
+      "member_id": 67,
+      "name_text_id": "0x02d2",
+      "sprite_id": 226,
+      "identity": null
+    },
+    {
+      "member_id": 68,
+      "name_text_id": "0x02d3",
+      "sprite_id": 239,
+      "identity": null
+    },
+    {
+      "member_id": 69,
+      "name_text_id": "0x02d4",
+      "sprite_id": 182,
+      "identity": null
+    },
+    {
+      "member_id": 70,
+      "name_text_id": "0x02d5",
+      "sprite_id": 201,
+      "identity": null
+    },
+    {
+      "member_id": 71,
+      "name_text_id": "0x02d6",
+      "sprite_id": 187,
+      "identity": null
+    },
+    {
+      "member_id": 72,
+      "name_text_id": "0x02d7",
+      "sprite_id": 187,
+      "identity": null
+    },
+    {
+      "member_id": 73,
+      "name_text_id": "0x02d8",
+      "sprite_id": 180,
+      "identity": null
+    },
+    {
+      "member_id": 74,
+      "name_text_id": "0x02d9",
+      "sprite_id": 227,
+      "identity": null
+    },
+    {
+      "member_id": 75,
+      "name_text_id": "0x02da",
+      "sprite_id": 181,
+      "identity": null
+    },
+    {
+      "member_id": 76,
+      "name_text_id": "0x02db",
+      "sprite_id": 226,
+      "identity": null
+    },
+    {
+      "member_id": 77,
+      "name_text_id": "0x02dc",
+      "sprite_id": 229,
+      "identity": null
+    },
+    {
+      "member_id": 78,
+      "name_text_id": "0x02dd",
+      "sprite_id": 238,
+      "identity": null
+    },
+    {
+      "member_id": 79,
+      "name_text_id": "0x02de",
+      "sprite_id": 189,
+      "identity": null
+    },
+    {
+      "member_id": 80,
+      "name_text_id": "0x02df",
+      "sprite_id": 49,
+      "identity": null
+    },
+    {
+      "member_id": 81,
+      "name_text_id": "0x02e0",
+      "sprite_id": 186,
+      "identity": null
+    },
+    {
+      "member_id": 82,
+      "name_text_id": "0x02e1",
+      "sprite_id": 134,
+      "identity": null
+    },
+    {
+      "member_id": 83,
+      "name_text_id": "0x02e2",
+      "sprite_id": 186,
+      "identity": null
+    },
+    {
+      "member_id": 84,
+      "name_text_id": "0x02e3",
+      "sprite_id": 227,
+      "identity": null
+    },
+    {
+      "member_id": 85,
+      "name_text_id": "0x02e4",
+      "sprite_id": 182,
+      "identity": null
+    },
+    {
+      "member_id": 86,
+      "name_text_id": "0x02e5",
+      "sprite_id": 229,
+      "identity": null
+    },
+    {
+      "member_id": 87,
+      "name_text_id": "0x02e6",
+      "sprite_id": 227,
+      "identity": null
+    },
+    {
+      "member_id": 88,
+      "name_text_id": "0x02e7",
+      "sprite_id": 181,
+      "identity": null
+    },
+    {
+      "member_id": 89,
+      "name_text_id": "0x02e8",
+      "sprite_id": 183,
+      "identity": null
+    },
+    {
+      "member_id": 90,
+      "name_text_id": "0x02e9",
+      "sprite_id": 183,
+      "identity": null
+    },
+    {
+      "member_id": 91,
+      "name_text_id": "0x02ea",
+      "sprite_id": 112,
+      "identity": null
+    },
+    {
+      "member_id": 92,
+      "name_text_id": "0x02eb",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 93,
+      "name_text_id": "0x02ec",
+      "sprite_id": 182,
+      "identity": null
+    },
+    {
+      "member_id": 94,
+      "name_text_id": "0x02ed",
+      "sprite_id": 35,
+      "identity": null
+    },
+    {
+      "member_id": 95,
+      "name_text_id": "0x02ee",
+      "sprite_id": 64,
+      "identity": null
+    },
+    {
+      "member_id": 96,
+      "name_text_id": "0x02ef",
+      "sprite_id": 163,
+      "identity": null
+    },
+    {
+      "member_id": 97,
+      "name_text_id": "0x02f0",
+      "sprite_id": 186,
+      "identity": null
+    },
+    {
+      "member_id": 98,
+      "name_text_id": "0x02f1",
+      "sprite_id": 25,
+      "identity": null
+    },
+    {
+      "member_id": 99,
+      "name_text_id": "0x02f2",
+      "sprite_id": 188,
+      "identity": null
+    },
+    {
+      "member_id": 100,
+      "name_text_id": "0x02f3",
+      "sprite_id": 189,
+      "identity": null
+    },
+    {
+      "member_id": 101,
+      "name_text_id": "0x02f4",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 102,
+      "name_text_id": "0x02f5",
+      "sprite_id": 183,
+      "identity": null
+    },
+    {
+      "member_id": 103,
+      "name_text_id": "0x02f6",
+      "sprite_id": 85,
+      "identity": null
+    },
+    {
+      "member_id": 104,
+      "name_text_id": "0x02f7",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 105,
+      "name_text_id": "0x02f8",
+      "sprite_id": 238,
+      "identity": null
+    },
+    {
+      "member_id": 106,
+      "name_text_id": "0x02f9",
+      "sprite_id": 238,
+      "identity": null
+    },
+    {
+      "member_id": 107,
+      "name_text_id": "0x02fa",
+      "sprite_id": 239,
+      "identity": null
+    },
+    {
+      "member_id": 108,
+      "name_text_id": "0x02fb",
+      "sprite_id": 241,
+      "identity": null
+    },
+    {
+      "member_id": 109,
+      "name_text_id": "0x02fc",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 110,
+      "name_text_id": "0x02fd",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 111,
+      "name_text_id": "0x02fe",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 112,
+      "name_text_id": "0x02ff",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 113,
+      "name_text_id": "0x0300",
+      "sprite_id": 189,
+      "identity": null
+    },
+    {
+      "member_id": 114,
+      "name_text_id": "0x0301",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 115,
+      "name_text_id": "0x0302",
+      "sprite_id": 186,
+      "identity": null
+    },
+    {
+      "member_id": 116,
+      "name_text_id": "0x0303",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 117,
+      "name_text_id": "0x0304",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 118,
+      "name_text_id": "0x0305",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 119,
+      "name_text_id": "0x0306",
+      "sprite_id": 181,
+      "identity": null
+    },
+    {
+      "member_id": 120,
+      "name_text_id": "0x0307",
+      "sprite_id": 181,
+      "identity": null
+    },
+    {
+      "member_id": 121,
+      "name_text_id": "0x0308",
+      "sprite_id": 186,
+      "identity": null
+    },
+    {
+      "member_id": 122,
+      "name_text_id": "0x0309",
+      "sprite_id": 182,
+      "identity": null
+    },
+    {
+      "member_id": 123,
+      "name_text_id": "0x030a",
+      "sprite_id": 229,
+      "identity": null
+    },
+    {
+      "member_id": 124,
+      "name_text_id": "0x030b",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 125,
+      "name_text_id": "0x030c",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 126,
+      "name_text_id": "0x030d",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 127,
+      "name_text_id": "0x030e",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 128,
+      "name_text_id": "0x030f",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 129,
+      "name_text_id": "0x0310",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 130,
+      "name_text_id": "0x0311",
+      "sprite_id": 182,
+      "identity": null
+    },
+    {
+      "member_id": 131,
+      "name_text_id": "0x0312",
+      "sprite_id": 240,
+      "identity": null
+    },
+    {
+      "member_id": 132,
+      "name_text_id": "0x0313",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 133,
+      "name_text_id": "0x0314",
+      "sprite_id": 186,
+      "identity": null
+    },
+    {
+      "member_id": 134,
+      "name_text_id": "0x0315",
+      "sprite_id": 189,
+      "identity": null
+    },
+    {
+      "member_id": 135,
+      "name_text_id": "0x0316",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 136,
+      "name_text_id": "0x0317",
+      "sprite_id": 239,
+      "identity": null
+    },
+    {
+      "member_id": 137,
+      "name_text_id": "0x0318",
+      "sprite_id": 186,
+      "identity": null
+    },
+    {
+      "member_id": 138,
+      "name_text_id": "0x0319",
+      "sprite_id": 183,
+      "identity": null
+    },
+    {
+      "member_id": 139,
+      "name_text_id": "0x031a",
+      "sprite_id": 183,
+      "identity": null
+    },
+    {
+      "member_id": 140,
+      "name_text_id": "0x031b",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 141,
+      "name_text_id": "0x031c",
+      "sprite_id": 189,
+      "identity": null
+    },
+    {
+      "member_id": 142,
+      "name_text_id": "0x031d",
+      "sprite_id": 189,
+      "identity": null
+    },
+    {
+      "member_id": 143,
+      "name_text_id": "0x031e",
+      "sprite_id": 228,
+      "identity": null
+    },
+    {
+      "member_id": 144,
+      "name_text_id": "0x031f",
+      "sprite_id": 228,
+      "identity": null
+    },
+    {
+      "member_id": 145,
+      "name_text_id": "0x0320",
+      "sprite_id": 182,
+      "identity": null
+    },
+    {
+      "member_id": 146,
+      "name_text_id": "0x0321",
+      "sprite_id": 183,
+      "identity": null
+    },
+    {
+      "member_id": 147,
+      "name_text_id": "0x0322",
+      "sprite_id": 189,
+      "identity": null
+    },
+    {
+      "member_id": 148,
+      "name_text_id": "0x0323",
+      "sprite_id": 189,
+      "identity": null
+    },
+    {
+      "member_id": 149,
+      "name_text_id": "0x0324",
+      "sprite_id": 183,
+      "identity": null
+    },
+    {
+      "member_id": 150,
+      "name_text_id": "0x0325",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 151,
+      "name_text_id": "0x0326",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 152,
+      "name_text_id": "0x0327",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 153,
+      "name_text_id": "0x0328",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 154,
+      "name_text_id": "0x0329",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 155,
+      "name_text_id": "0x032a",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 156,
+      "name_text_id": "0x032b",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 157,
+      "name_text_id": "0x032c",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 158,
+      "name_text_id": "0x032d",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 159,
+      "name_text_id": "0x032e",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 160,
+      "name_text_id": "0x032f",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 161,
+      "name_text_id": "0x0330",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 162,
+      "name_text_id": "0x0331",
+      "sprite_id": 0,
+      "identity": null
+    },
+    {
+      "member_id": 163,
+      "name_text_id": "0x0332",
+      "sprite_id": 0,
+      "identity": null
+    }
+  ]
+}

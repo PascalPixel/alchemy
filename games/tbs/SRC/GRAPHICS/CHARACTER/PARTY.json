@@ -1,0 +1,32 @@
+{
+  "format": 1,
+  "kind": "party-battle-sprites",
+  "evidence": "Actor pose descriptors are bound by the runtime pose table. Japanese-ROM names and verified first-four actor bindings are owned by ROBIN.json, JERARUDO.json, IWAN.json and MEARII.json; the remaining identity is unproven.",
+  "entries": [
+    {
+      "actor": 0,
+      "descriptor": "0x140",
+      "identity": null
+    },
+    {
+      "actor": 1,
+      "descriptor": "0x141",
+      "identity": null
+    },
+    {
+      "actor": 2,
+      "descriptor": "0x142",
+      "identity": null
+    },
+    {
+      "actor": 3,
+      "descriptor": "0x143",
+      "identity": null
+    },
+    {
+      "actor": 5,
+      "descriptor": "0x145",
+      "identity": null
+    }
+  ]
+}

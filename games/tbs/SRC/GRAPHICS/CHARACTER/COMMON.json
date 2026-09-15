@@ -15882,7 +15882,12 @@
           },
           "pixel_format": "indices",
           "identity": null,
-          "identity_status": "runtime name association not established"
+          "identity_status": "runtime name association not established",
+          "user_observation": {
+            "description": "field character used on a tree",
+            "provenance": "tentative user image identification",
+            "runtime_binding_verified": false
+          }
         }
       ]
     },
@@ -15920,7 +15925,12 @@
           },
           "pixel_format": "indices",
           "identity": null,
-          "identity_status": "runtime name association not established"
+          "identity_status": "runtime name association not established",
+          "user_observation": {
+            "description": "elemental ball after Mercury Lighthouse activation",
+            "provenance": "user image identification",
+            "runtime_binding_verified": false
+          }
         }
       ]
     },
@@ -22147,6 +22157,74 @@
           "source_rect": {
             "x": 0,
             "y": 35536,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "f2": {
+      "archive": {
+        "offsets": [6941, 52, 8169, 1257, 9381, 2445, 10576, 3596, 11577, 4661, 12638, 5798, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/f2/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 13688,
+          "source_rect": {
+            "x": 0,
+            "y": 35664,
+            "width": 512,
+            "height": 128
+          },
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "f3": {
+      "archive": {
+        "offsets": [5202, 52, 6062, 891, 6926, 1745, 7779, 2609, 8645, 3440, 9491, 4329, 0]
+      },
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+          "pointer": "/archives/f3/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+            "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+          },
+          "size": 10256,
+          "source_rect": {
+            "x": 0,
+            "y": 35792,
             "width": 512,
             "height": 128
           },

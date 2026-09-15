@@ -52,14 +52,6 @@ fn extension(path: &str) -> &str {
         .and_then(|leaf| leaf.rsplit_once('.').map(|(_, suffix)| suffix))
         .unwrap_or("")
 }
-fn canonical_binary_source(path: &str) -> bool {
-    let normalized = path.replace('\\', "/").to_ascii_lowercase();
-    normalized.starts_with("games/tbs/assets/maps/")
-        && matches!(
-            normalized.rsplit('/').next(),
-            Some("metatiles.bin" | "metatile_attributes.bin")
-        )
-}
 fn publication_path_reason(path: &str) -> Option<&'static str> {
     let normalized = path.replace('\\', "/");
     let components: Vec<_> = normalized
@@ -86,7 +78,7 @@ fn publication_path_reason(path: &str) -> Option<&'static str> {
         return Some("private ROM name");
     }
     let suffix = extension(&normalized);
-    if listed(suffix, BLOCKED_EXTENSIONS) && !canonical_binary_source(&normalized) {
+    if listed(suffix, BLOCKED_EXTENSIONS) {
         return Some("private or generated file type");
     }
     let report_name = leaf
@@ -521,15 +513,13 @@ fn self_test() -> Result<(), String> {
     for path in [
         "src/main.c",
         "games/tbs/asm/080000c0.s",
-        "games/tbs/assets/graphics/title.png",
+        "games/tbs/PREVIEW/title.png",
         "games/tbs/SOUND/SEQUENCE/THEME.mid",
         "games/tbs/SOUND/SAMPLE/WAVE.wav",
-        "games/tbs/assets/data/layout.json",
+        "games/tbs/SRC/SYSTEM/RESOURCE.json",
         "tools/compare-roms/src/main.rs",
         "tools/alchemy/src/build_full.rs",
-        "games/tbs/assets/data/resource_2_build_stamp.stamp",
-        "games/tbs/assets/maps/town/metatiles.bin",
-        "games/tbs/assets/maps/town/metatile_attributes.bin",
+        "games/tbs/SRC/SYSTEM/BUILD_STAMP.json",
         "rom.sha1",
     ] {
         if let Some(reason) = publication_path_reason(path) {
@@ -558,7 +548,7 @@ fn self_test() -> Result<(), String> {
             && conflict_marker_reason("CONTRIBUTING.md", b"Title\n=======\n\nbody\n").is_none()
             && conflict_marker_reason("CONTRIBUTING.md", b"see <<<<<<<HEAD in the output\n")
                 .is_none()
-            && conflict_marker_reason("games/tbs/assets/readme/x.png", b"<<<<<<< HEAD\n").is_none();
+            && conflict_marker_reason("games/tbs/PREVIEW/x.png", b"<<<<<<< HEAD\n").is_none();
     if !hygiene_holds {
         return Err("source-hygiene self-test failed".to_string());
     }

@@ -878,7 +878,7 @@ fn atlas_source(locations: &str, id: &str) -> Option<String> {
     })
 }
 fn streams(tree: &SourceTree) -> Vec<Stream> {
-    let Some(manifest) = json(tree, "games/tbs/assets/manifest.json") else {
+    let Some(manifest) = json(tree, "games/tbs/SRC/SYSTEM/RESOURCE.json") else {
         return Vec::new();
     };
     let mut out = Vec::new();
@@ -912,9 +912,9 @@ fn streams(tree: &SourceTree) -> Vec<Stream> {
 }
 fn shared_map_assets(tree: &SourceTree, areas: &[Area]) -> Result<Value, String> {
     let read = |path| json(tree, path).ok_or_else(|| format!("missing Atlas input: {path}"));
-    let scenes = read("games/tbs/assets/data/battle_effect_tail.json")?;
-    let maps = read("games/tbs/assets/maps/map_load_table.json")?;
-    let directory = read("games/tbs/assets/data/resource_directory.json")?;
+    let scenes = read("games/tbs/SRC/BATTLE/BATTLE_EFFECT_TAIL.json")?;
+    let maps = read("games/tbs/SRC/FIELD/COMMON/LOAD_TABLE.json")?;
+    let directory = read("games/tbs/SRC/SYSTEM/RESOURCE_DIRECTORY.json")?;
     let locations = tree
         .read("games/tbs/locations.tsv")
         .ok_or("missing Atlas locations")?;
@@ -1227,7 +1227,7 @@ fn asset_tiles(tree: &SourceTree, data: &[Span], rom: i64) -> Vec<Tile> {
             .filter_map(Value::as_str)
             .find(|source| kind == "golden-sun-pcm-wave" && source.ends_with(".wav"))
             .or_else(|| sources.first().and_then(Value::as_str))
-            .unwrap_or("games/tbs/assets/manifest.json");
+            .unwrap_or("games/tbs/SRC/SYSTEM/RESOURCE.json");
         let owner = if kind == "golden-sun-sound-sequence" {
             "games/tbs/SOUND/SEQUENCE/SEQUENCES.tsv"
         } else {
@@ -1631,7 +1631,7 @@ mod tests {
             "resource_3a0\tXian\t\t\t\t\tSRC/FIELD/XIAN\n".into(),
         );
         write(
-            "games/tbs/assets/data/battle_effect_tail.json",
+            "games/tbs/SRC/BATTLE/BATTLE_EFFECT_TAIL.json",
             json!({"segments":[{
                 "address":"0x0809f1a8", "records":[{"resource_id":928,"effect_id":7},
                     {"resource_id":928,"effect_id":7}, {"resource_id":999,"effect_id":99}]
@@ -1639,13 +1639,13 @@ mod tests {
             .to_string(),
         );
         write(
-            "games/tbs/assets/maps/map_load_table.json",
+            "games/tbs/SRC/FIELD/COMMON/LOAD_TABLE.json",
             json!({"fields":["palette","tiles"],
             "records":[{"map_index":7,"palette":"0","tiles":"1"}]})
             .to_string(),
         );
         write(
-            "games/tbs/assets/data/resource_directory.json",
+            "games/tbs/SRC/SYSTEM/RESOURCE_DIRECTORY.json",
             json!({"slots":["0x08001000","0x08002000"]}).to_string(),
         );
         let tiles = [
@@ -1671,7 +1671,7 @@ mod tests {
         );
         assert_eq!(areas[0].bytes, 64);
         write(
-            "games/tbs/assets/data/resource_directory.json",
+            "games/tbs/SRC/SYSTEM/RESOURCE_DIRECTORY.json",
             json!({"slots":[]}).to_string(),
         );
         assert!(shared_map_assets(&tree, &areas).is_err());

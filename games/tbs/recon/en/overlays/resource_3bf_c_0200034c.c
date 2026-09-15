@@ -13,7 +13,7 @@ struct RegionBounds {
 };
 extern struct RegionBounds Data_0200df30[];
 extern s32 Data_0200ded8[];
-extern u8 *Func_0200d650(s32);
+extern u8 *Func_020059ba(s32);
 
 u8 *FieldScene_FindActorRegion(s32 *layer, s32 *slot, s32 *region)
 {
@@ -37,7 +37,7 @@ u8 *FieldScene_FindActorRegion(s32 *layer, s32 *slot, s32 *region)
     s32 bottom;
 
     work = Data_03001ebc;
-    player = Func_0200d650(0);
+    player = Func_020059ba(0);
     *layer = *(u16 *)(player + 6) >> 12;
     idx = 8;
     list = (u8 **)(work + 52);

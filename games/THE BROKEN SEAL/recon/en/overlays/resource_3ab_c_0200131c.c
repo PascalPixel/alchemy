@@ -134,7 +134,11 @@ void Func_0200131c(void)
     Func_02002e8e(9, 1);
     Func_02002d7c_a((u32)&FieldScene_SpawnPeriodicLeaderEffect);
     p34 = Func_02002e52(0);
-    *(u8 *)((u8 *)(p34) + 85) |= 0x2;
+    {
+        s32 value = 2;
+        value |= *(u8 *)((u8 *)(p34) + 85);
+        *(u8 *)((u8 *)(p34) + 85) = value;
+    }
     p35 = Func_02002e62(0);
     *(s32 *)(p35 + 40) = 393216;
     p36 = Func_02002e6e_a(0);

@@ -327,7 +327,7 @@ mod tests {
         let output = run(*options).unwrap();
         let staged = root()
             .join(&work)
-            .join("try/games/tbs/SRC/FIELD/ALTIN/MOTION_PARTICLE.C");
+            .join("try/games/tbs/SRC/FIELD/ARUTIN_MURA/MOTION_PARTICLE.C");
         assert!(std::fs::read_to_string(staged)
             .unwrap()
             .contains("../../../INCLUDE/TYPES.H"));

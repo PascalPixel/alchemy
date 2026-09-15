@@ -835,6 +835,27 @@ void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT_BODY.INC"
 }
 
+struct SceneActorMotionDetails { u8 pad[30]; u16 value; };
+union SceneActorMotionView {
+    s32 words[26];
+    struct {
+        u8 pad[80];
+        struct SceneActorMotionDetails *details;
+        u8 pad54[16];
+        u16 delta;
+    } state;
+};
+#define SceneActor_ApplyMotionDeltas Func_02000104
+void SceneActor_ApplyMotionDeltas(union SceneActorMotionView *object)
+{
+    object->words[2] += object->words[17];
+    object->words[3] += object->words[18];
+    object->words[4] += object->words[19];
+    object->words[6] += object->words[12];
+    object->words[7] += object->words[13];
+    object->state.details->value += object->state.delta;
+}
+
 void SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
                            u32 flags, const struct ConfiguredEffectOptions *options)
 {

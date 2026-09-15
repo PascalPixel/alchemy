@@ -8129,10 +8129,10 @@
 <path class="bevel-dark" d="M598.1340516340457 290.4351124855002 H636.2124675104772 V245.40685417456694" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="LUNPA_FORTRESS: 14,772 bytes · Unknown, Drafted, Assembly, C · 0x087e7574" data-node="leaf" data-kind="folder" data-bytes="14772" data-address="0x087e7574" data-source="games/THE BROKEN SEAL/SRC/FIELD/LUNPA_FORTRESS/">
 <title>LUNPA_FORTRESS: 14,772 bytes · Unknown, Drafted, Assembly, C · 0x087e7574</title>
-<rect x="600.6340516340457" y="286.9054118249157" width="33.07841587643141" height="1.0297006605845276" style="fill:#d9d9d4"/>
-<rect x="600.6340516340457" y="285.94887410600427" width="33.07841587643141" height="0.9565377189114164" style="fill:#96c8c9"/>
-<rect x="600.6340516340457" y="285.8486137785263" width="33.07841587643141" height="0.10026032747796716" style="fill:#6cafb2"/>
-<rect x="600.6340516340457" y="247.90685417456697" width="33.07841587643141" height="37.94175960395936" style="fill:#326b7d"/>
+<rect x="600.6340516340457" y="286.94876764220345" width="33.07841587643141" height="0.9863448432967581" style="fill:#d9d9d4"/>
+<rect x="600.6340516340457" y="285.99222992329203" width="33.07841587643141" height="0.9565377189114164" style="fill:#96c8c9"/>
+<rect x="600.6340516340457" y="285.8919695958141" width="33.07841587643141" height="0.10026032747796716" style="fill:#6cafb2"/>
+<rect x="600.6340516340457" y="247.90685417456697" width="33.07841587643141" height="37.98511542124712" style="fill:#326b7d"/>
 </g>
 </g>
 <g aria-label="MAKYURI_CHOJO: 11,168 bytes · Unknown, Drafted, C, Data · 3 items" data-node="container" data-kind="folder" data-bytes="11168" data-source="games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/">
@@ -8768,8 +8768,8 @@
 <path class="bevel-dark" d="M712.7775777729977 396.9962042816287 H727.8271329784297 V341.9282085668831" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="RUNPA_DOU: 3,248 bytes · Unknown, C · 0x087c5efc" data-node="leaf" data-kind="folder" data-bytes="3248" data-address="0x087c5efc" data-source="games/THE BROKEN SEAL/SRC/FIELD/RUNPA_DOU/">
 <title>RUNPA_DOU: 3,248 bytes · Unknown, C · 0x087c5efc</title>
-<rect x="715.2775777729977" y="365.41344120950305" width="10.049555205432087" height="1.2456987413427376" style="fill:#d9d9d4"/>
-<rect x="715.2775777729977" y="344.4282085668831" width="10.049555205432087" height="20.985232642619966" style="fill:#326b7d"/>
+<rect x="715.2775777729977" y="365.42713020666065" width="10.049555205432087" height="1.232009744185125" style="fill:#d9d9d4"/>
+<rect x="715.2775777729977" y="344.4282085668831" width="10.049555205432087" height="20.998921639777574" style="fill:#326b7d"/>
 </g>
 <g aria-label="RUNPA_DOU.BIN: 3,264 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 2 items" data-node="container" data-kind="file" data-bytes="3264" data-source="games/THE BROKEN SEAL/SRC/FIELD/RUNPA_DOU/RUNPA_DOU.BIN">
 <title>RUNPA_DOU.BIN: 3,264 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 2 items</title>
@@ -8942,16 +8942,15 @@
 </g>
 </g>
 </g>
-<g aria-label="RUNPA_MURA: 27,256 bytes · Unknown, Drafted, C, Data · 4 items" data-node="container" data-kind="folder" data-bytes="27256" data-source="games/THE BROKEN SEAL/SRC/FIELD/RUNPA_MURA/">
-<title>RUNPA_MURA: 27,256 bytes · Unknown, Drafted, C, Data · 4 items</title>
+<g aria-label="RUNPA_MURA: 27,256 bytes · Unknown, C, Data · 4 items" data-node="container" data-kind="folder" data-bytes="27256" data-source="games/THE BROKEN SEAL/SRC/FIELD/RUNPA_MURA/">
+<title>RUNPA_MURA: 27,256 bytes · Unknown, C, Data · 4 items</title>
 <rect class="container-frame" x="412.7769837281307" y="396.99620428162865" width="69.57506586764237" height="45.47086510815049" fill="#1f7f93"/>
 <path class="bevel-light" d="M412.7769837281307 442.4670693897791 V396.99620428162865 H482.35204959577305" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <path class="bevel-dark" d="M412.7769837281307 442.4670693897791 H482.35204959577305 V396.99620428162865" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="RUNPA_MURA: 4,968 bytes · Unknown, Drafted, C · 0x087c460c" data-node="leaf" data-kind="folder" data-bytes="4968" data-address="0x087c460c" data-source="games/THE BROKEN SEAL/SRC/FIELD/RUNPA_MURA/">
-<title>RUNPA_MURA: 4,968 bytes · Unknown, Drafted, C · 0x087c460c</title>
-<rect x="415.2769837281307" y="436.48859527520983" width="10.952484855827974" height="3.4784741145692957" style="fill:#d9d9d4"/>
-<rect x="415.2769837281307" y="436.480448965808" width="10.952484855827974" height="0.00814630940180163" style="fill:#96c8c9"/>
-<rect x="415.2769837281307" y="399.49620428162865" width="10.952484855827974" height="36.984244684179394" style="fill:#326b7d"/>
+<g aria-label="RUNPA_MURA: 4,968 bytes · Unknown, C · 0x087c460c" data-node="leaf" data-kind="folder" data-bytes="4968" data-address="0x087c460c" data-source="games/THE BROKEN SEAL/SRC/FIELD/RUNPA_MURA/">
+<title>RUNPA_MURA: 4,968 bytes · Unknown, C · 0x087c460c</title>
+<rect x="415.2769837281307" y="436.5700583692278" width="10.952484855827974" height="3.397011020551279" style="fill:#d9d9d4"/>
+<rect x="415.2769837281307" y="399.4962042816286" width="10.952484855827974" height="37.07385408759921" style="fill:#326b7d"/>
 </g>
 <g aria-label="RUNPA_MURA.BIN: 12,784 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 4 items" data-node="container" data-kind="file" data-bytes="12784" data-source="games/THE BROKEN SEAL/SRC/FIELD/RUNPA_MURA/RUNPA_MURA.BIN">
 <title>RUNPA_MURA.BIN: 12,784 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 4 items</title>

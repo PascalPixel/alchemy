@@ -120695,6 +120695,86 @@
         "Func_02003054_scene_scripts": {
           "address": "0x020098e4",
           "kind": "thumb"
+        },
+        "Dispatch_Data_02000240": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "Dispatch_Data_0200dfa4": {
+          "address": "0x0200dfa4",
+          "kind": "data"
+        },
+        "Dispatch_Data_03001ebc": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "Dispatch_SceneEvent_InstallTasks": {
+          "address": "0x000000a0",
+          "kind": "data"
+        },
+        "Dispatch_SceneEvent_SetupActors": {
+          "address": "0x000000a1",
+          "kind": "data"
+        },
+        "Dispatch_SceneEvent_RestoreActors": {
+          "address": "0x000000a2",
+          "kind": "data"
+        },
+        "Dispatch_SceneEvent_UpdateActors": {
+          "address": "0x000000a3",
+          "kind": "data"
+        },
+        "Dispatch_Func_0200d5a0": {
+          "address": "0x0200d5a0",
+          "kind": "thumb"
+        },
+        "Dispatch_Func_0200d5f8": {
+          "address": "0x0200d5f8",
+          "kind": "thumb"
+        },
+        "Dispatch_Func_0200cf60": {
+          "address": "0x0200cf60",
+          "kind": "thumb"
+        },
+        "Dispatch_Func_0200d0e4": {
+          "address": "0x0200d0e4",
+          "kind": "thumb"
+        },
+        "Dispatch_Func_0200d324": {
+          "address": "0x0200d324",
+          "kind": "thumb"
+        },
+        "Dispatch_Func_0200d650": {
+          "address": "0x0200d650",
+          "kind": "thumb"
+        },
+        "Dispatch_Func_0200d5e8": {
+          "address": "0x0200d5e8",
+          "kind": "thumb"
+        },
+        "Dispatch_Func_0200d708": {
+          "address": "0x0200d708",
+          "kind": "thumb"
+        },
+        "Dispatch_Func_0200d6a8": {
+          "address": "0x0200d6a8",
+          "kind": "thumb"
+        },
+        "Dispatch_Func_0200d520": {
+          "address": "0x0200d520",
+          "kind": "thumb"
+        },
+        "Dispatch_Func_0200b054": {
+          "address": "0x0200b054",
+          "kind": "thumb"
+        },
+        "Dispatch_Func_0200d610": {
+          "address": "0x0200d610",
+          "kind": "thumb"
+        },
+        "Dispatch_Func_0200d6a0": {
+          "address": "0x0200d6a0",
+          "kind": "thumb"
         }
       },
       "local_symbols": [],
@@ -121217,6 +121297,11 @@
         {
           "address": "0x02004d88",
           "extent": 24,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02004da0",
+          "extent": 448,
           "state": "exact-c"
         },
         {

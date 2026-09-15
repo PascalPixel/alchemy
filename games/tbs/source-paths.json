@@ -18456,6 +18456,10 @@
     "resource_39d:02000928": {
       "name": "SceneActor_InitializeMotion",
       "source": "FIELD/MERCURY/INITIALIZE_MOTION.C"
+    },
+    "resource_3bf:02004da0": {
+      "name": "FieldScene_DispatchActorUpdate",
+      "source": "FIELD/LUNPA/FORTRESS.C"
     }
   }
 }

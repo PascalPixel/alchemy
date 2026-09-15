@@ -375,8 +375,19 @@ Do not edit derived reports or treat old experiment outputs as build inputs.
 ## Setup and verification
 
 Install Rust, Ninja and `arm-none-eabi-binutils`.
-Supply approved ROMs under ignored `roms/` and
-the bundle under `out/compilers/dist/`.
+Supply approved ROMs under ignored `roms/`, initialize the compiler submodules,
+and run `make bootstrap`. If the compiler installation is missing, bootstrap
+builds the pinned `agscc` and `agbcc` sources and GNU GAS 2.10. Its GNU source
+archive comes from the [official release](https://ftp.gnu.org/gnu/binutils/binutils-2.10.tar.gz)
+and is checked against a committed SHA-256 before extraction. No third-party
+source edits or game flag changes are involved.
+
+The installer checks executable hashes and smoke compilations before installing
+the six required executables under ignored `tools/compilers/`. `bootstrap
+--check` validates without building; `bootstrap --build` rebuilds dependencies.
+`make bootstrap BUNDLE=/path/to/approved/bundle` also accepts an existing
+distribution. Bootstrap never replaces an existing different installation or
+admits new executable hashes.
 
 ```sh
 git submodule update --init
@@ -384,11 +395,39 @@ git config core.hooksPath .hooks
 ./alchemy --help
 ./psynergy --help
 make compiler-source-check
+make bootstrap
 ```
 
-Initialize submodules only in the main checkout. Worktrees may symlink its ROMs
-and approved bundle. `alchemy build compilers` builds pinned sources without
-authorizing bundle replacement. The launcher builds current tooling offline.
+Initialize submodules only in the main checkout. Worktrees may symlink its
+`roms/` and whole `tools/compilers/` directories. `alchemy build compilers` (or
+`make compiler-sources`) builds pinned sources without installing or admitting
+executables. A locally built compiler is not necessarily byte-identical to an
+approved distribution; executable admission still requires Pascal's approval
+and the existing reproduction evidence. The launcher builds current tooling
+offline.
+
+`out/` contains only generated objects, Rust binaries, reports, previews,
+downloaded assembler source and build caches. Deleting it is normal and
+requires no compiler recovery or approval.
+`make clean` preserves maintained game inputs, private `roms/` and installed
+`tools/compilers/`. `make verify-clean` validates dependencies, deletes generated
+output, and runs the production gate from scratch. Stage intended changes
+before running it, as with `make verify`.
+
+Asset and full-ROM builds restore absent private image, palette and packed-map
+inputs from the checksum-verified local ROM. Extraction runs in an isolated
+temporary workspace and installs only missing files, preserving existing source
+edits. `alchemy build assets --extract-missing-sources ROM` runs this preparation
+explicitly. It does not turn reference bytes into build-time fallback regions.
+
+The installed compiler executables live beside the Rust tooling, in ignored
+`tools/compilers/`. Downloaded source and temporary compilation work live under
+`out/compilers/` and are unnecessary once installation completes. The historical
+assembler comes from checksum-pinned GNU binutils,
+as neither compiler submodule supplies it. The bootstrap recipe owns all three
+dependencies; it needs no old output directory or worktree experiment. Its
+initial admitted source-build host is Apple Silicon macOS. Other host builds
+still require the existing executable-admission and reproduction evidence.
 
 Use `alchemy score` during source iteration and narrow builds when needed:
 `make build-claimed`, `make build-asm`, `make build-assets`,
@@ -465,7 +504,8 @@ responsibilities in another wrapper or registry.
 | `alchemy match` | Resolve an owner, obtain a decoder-named repair, then compile/score bounded Psynergy alternatives under project policy. `--acceptance-test` checks the five catalog fixtures. |
 | `alchemy adopt` | Verify and install a standalone overlay candidate; main integration uses `alchemy check integrate`. |
 | `alchemy unit` | `scaffold` declares a main unit; `flatten` consolidates a verified overlay under project ownership. |
-| `alchemy build` | `compilers`, `asm`, `claimed`, `full`/`rom`, `assets`, and `allocator`. The allocator stage generates canonical GCC dumps for Psynergy inspection. |
+| `alchemy bootstrap` | Build and install a missing compiler toolchain from pinned sources. `--check` validates without building; `--build` rebuilds; `--from BUNDLE` imports an admitted distribution. |
+| `alchemy build` | `compilers`, `asm`, `claimed`, `full`/`rom`, `assets`, and `allocator`. Compiler source builds do not install a distribution. The allocator stage generates canonical GCC dumps for Psynergy inspection. |
 | `alchemy verify` | Run the staged repository's verification contract. |
 | `alchemy coverage` | Rebuild and publish project coverage. |
 | `alchemy check` | `publication`, `commit-progress`, `owners`, `retained`, `coverage`, `integrate`, `no-asm`, `progress`, and `routes`: repository contracts, not portable file operations. |
@@ -609,7 +649,7 @@ Uppercase is a project convention, not recovered historical spelling. Ensure
 uppercase `.C` is compiled as C, never inferred as C++, without changing the
 approved compiler route or optimization flags.
 
-Native TBS names use uppercase folders, basenames and extensions throughout
+Native game names use uppercase folders, basenames and extensions throughout
 `SRC`, `INCLUDE`, `SOUND`, `TEXT`, `PREVIEW` and `SOURCE.JSON`: `.C`, `.H`,
 `.JSON`, `.PNG`, `.BIN`, `.MID`, `.WAV` and `.TSV`. Repository and tooling
 registries retain their established spellings outside these workspaces.
@@ -617,7 +657,12 @@ The first game's physical root is `games/THE BROKEN SEAL`; its stable build IDs
 remain `tbs-ja`, `tbs-en` and the other edition-qualified targets. The second
 game's physical root is `games/THE LOST AGE`, retaining its `tla-` build IDs.
 `games/COMMON` owns the shared integration workspace
-(`SRC`, `INCLUDE`, `ASSETS`, `PROJECT.JSON`).
+(`SRC`, `INCLUDE`, `PROJECT.JSON`). Audio inputs belong in each game's `SOUND`,
+with `SEQUENCE`, `SAMPLE` and `INSTRUMENT` owners; runtime audio C stays in
+`SRC/SOUND`. TLA uses the same uppercase source/header layout. Shared editable
+assets belong beside their owner in `COMMON/SRC`; there is no generic `ASSETS`
+directory. Retain ROM sound IDs and storage relationships without inventing
+cross-game asset matches.
 Reuse there requires proved correspondence; it is currently an empty workspace,
 not a claim that either game's implementation is interchangeable. Edition-specific
 symbols and placements can build one C file for multiple ROMs, as the Lunpa

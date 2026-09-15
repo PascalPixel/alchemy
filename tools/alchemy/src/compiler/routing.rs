@@ -20,7 +20,7 @@ pub fn root() -> &'static Path {
     })
 }
 pub fn bundle() -> PathBuf {
-    root().join("out/compilers/dist")
+    root().join("tools/compilers")
 }
 /// Both games use the licensed agscc source and the same executable bundle.
 /// TLA selects its reconstructed lowering with the explicit -mgs2 option.
@@ -109,11 +109,7 @@ pub(crate) fn include_flag(target: CompilerTarget) -> String {
         root()
             .join("games")
             .join(target.directory())
-            .join(if target == CompilerTarget::Tbs {
-                "INCLUDE"
-            } else {
-                "include"
-            })
+            .join("INCLUDE")
             .display()
     )
 }
@@ -238,7 +234,7 @@ mod target_tests {
             .any(|flag| flag.ends_with("/games/THE BROKEN SEAL/INCLUDE")));
         assert!(tla
             .iter()
-            .any(|flag| flag.ends_with("/games/THE LOST AGE/include")));
+            .any(|flag| flag.ends_with("/games/THE LOST AGE/INCLUDE")));
         assert!(!tla
             .iter()
             .any(|flag| flag.ends_with("/games/THE BROKEN SEAL/INCLUDE")));

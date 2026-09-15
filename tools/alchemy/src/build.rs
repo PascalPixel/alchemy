@@ -13,11 +13,11 @@ pub fn entry(args: &[String]) -> ExitCode {
         "allocator" => crate::allocator::entry(&rest),
         "compilers" if rest == ["--help"] || rest == ["-h"] => {
             println!(
-                "usage: alchemy build compilers\nBuilds pinned compiler sources without staging."
+                "usage: alchemy build compilers\nBuilds pinned compiler sources without installing or admitting executables.\nUse alchemy bootstrap --from BUNDLE to install an approved distribution."
             );
             ExitCode::SUCCESS
         }
-        "compilers" => crate::make_target("compilers", &rest),
+        "compilers" => crate::make_target("compiler-sources", &rest),
         "asm" => crate::result(crate::build_asm::entry(&rest)),
         "claimed" => crate::result(crate::build_claimed::entry(&rest)),
         "full" | "rom" => crate::result(crate::build_full::run(&rest)),

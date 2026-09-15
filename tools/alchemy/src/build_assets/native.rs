@@ -363,6 +363,82 @@ pub fn extract(root: &Path, rom_path: &Path) -> Result<(), String> {
     );
     Ok(())
 }
+
+/// Regenerate absent private inputs in isolation, preserving existing edits.
+pub fn extract_missing(root: &Path, rom_path: &Path) -> Result<(), String> {
+    let index = json(&root.join(INDEX))?;
+    validate(&index)?;
+    let mut missing = std::collections::BTreeSet::new();
+    for input in index["private_inputs"]
+        .as_array()
+        .ok_or("missing private inputs")?
+    {
+        let source = json_string(&input["source"], "private source")?;
+        if !root_path(root, source)?.exists() {
+            missing.insert(source.to_string());
+        }
+    }
+    if missing.is_empty() {
+        return Ok(());
+    }
+    let stage = tempfile::tempdir().map_err(|e| e.to_string())?;
+    // Atlas configurations are inputs too, although they are not region plans.
+    for entry in walkdir::WalkDir::new(root.join("games/THE BROKEN SEAL/SRC")) {
+        let entry = entry.map_err(|e| e.to_string())?;
+        if entry.file_type().is_file()
+            && entry.path().extension().and_then(|e| e.to_str()) == Some("JSON")
+        {
+            let destination = stage
+                .path()
+                .join(entry.path().strip_prefix(root).map_err(|e| e.to_string())?);
+            std::fs::create_dir_all(destination.parent().unwrap()).map_err(|e| e.to_string())?;
+            std::fs::copy(entry.path(), destination).map_err(|e| e.to_string())?;
+        }
+    }
+    for name in std::iter::once(INDEX).chain(
+        index["regions"]
+            .as_array()
+            .ok_or("missing regions")?
+            .iter()
+            .filter_map(|region| region["plan"].as_str()),
+    ) {
+        let destination = root_path(stage.path(), name)?;
+        std::fs::create_dir_all(destination.parent().unwrap()).map_err(|e| e.to_string())?;
+        std::fs::copy(root_path(root, name)?, destination).map_err(|e| e.to_string())?;
+    }
+    extract(stage.path(), rom_path)?;
+    for name in &missing {
+        let bytes = std::fs::read(root_path(stage.path(), name)?).map_err(|e| e.to_string())?;
+        create_missing(&root_path(root, name)?, &bytes)?;
+    }
+    println!("restored missing private source files: {}", missing.len());
+    Ok(())
+}
+
+fn create_missing(path: &Path, bytes: &[u8]) -> Result<(), String> {
+    use std::io::Write;
+    std::fs::create_dir_all(path.parent().ok_or("source has no parent")?)
+        .map_err(|e| e.to_string())?;
+    match std::fs::OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .open(path)
+    {
+        Ok(mut file) => file.write_all(bytes).map_err(|e| e.to_string()),
+        Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => Ok(()),
+        Err(error) => Err(error.to_string()),
+    }
+}
+
+#[test]
+fn restoring_missing_inputs_preserves_existing_edits() {
+    let temp = tempfile::tempdir().unwrap();
+    let path = temp.path().join("SRC/CHR.PNG");
+    create_missing(&path, b"original").unwrap();
+    std::fs::write(&path, b"user edit").unwrap();
+    create_missing(&path, b"regenerated").unwrap();
+    assert_eq!(std::fs::read(path).unwrap(), b"user edit");
+}
 fn decode_metatiles(data: &[u8], mode: u8) -> Result<Vec<u8>, String> {
     if data.first() != Some(&mode) || data.len() % 2 != 1 {
         return Err("invalid metatile transform header".into());

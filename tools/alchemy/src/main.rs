@@ -1,6 +1,7 @@
 use std::process::ExitCode;
 
 mod allocator;
+mod bootstrap;
 mod build;
 mod build_asm;
 mod build_assets;
@@ -24,6 +25,7 @@ mod score;
 mod targets;
 
 const USAGE: &str = "usage: alchemy <command> [args]\n\
+  bootstrap             install or validate the persistent compiler toolchain\n\
   extract OWNER         extract reference bytes for psynergy decompile\n\
   inspect OWNER         resolve calls and symbols; --asm shows annotated instructions\n\
   score SOURCE          compile through the approved route and compare the owner\n\
@@ -47,6 +49,7 @@ fn main() -> ExitCode {
     };
     let rest = &arguments[1..];
     match command {
+        "bootstrap" => result(bootstrap::run(rest)),
         "unit" if rest.first().map(String::as_str) == Some("scaffold") => {
             scaffold::entry(&rest[1..])
         }

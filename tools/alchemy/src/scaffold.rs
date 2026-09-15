@@ -95,7 +95,7 @@ fn run(args: &[String]) -> Result<(), String> {
             continue;
         }
         let source = production["source"].as_str().unwrap_or("");
-        let include = if exact && source.ends_with(".c") {
+        let include = if exact && source.to_ascii_lowercase().ends_with(".c") {
             Some(format!(
                 "../../../{}",
                 source.replace(&format!("games/{directory}/"), "")

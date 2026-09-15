@@ -72,9 +72,9 @@ const PRODUCTS: [(CompilerTarget, u64, &str, &str, &str); 2] = [
     (
         CompilerTarget::Tla,
         0x0100_0000,
-        "games/THE LOST AGE/src",
+        "games/THE LOST AGE/SRC",
         "games/THE LOST AGE/asm",
-        "games/THE LOST AGE/assets/manifest.json",
+        "games/THE LOST AGE/SRC/SYSTEM/RESOURCE.JSON",
     ),
 ];
 pub const DEFAULT_TARGET: DecompTargetId = DecompTargetId::TbsEn;

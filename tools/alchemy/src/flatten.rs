@@ -93,7 +93,7 @@ fn run(args: &[String]) -> Result<(), String> {
     let source_root = root
         .join("games")
         .join(crate::compiler::routing::game_directory(&game))
-        .join(if game == "tbs" { "SRC" } else { "src" });
+        .join("SRC");
     let inventory: Value =
         read_json(&root.join(format!("out/{game}-en/full/rebuilt.owner-inventory.json")))?;
     let register_path = root.join(format!("games/{directory}/source-paths.json"));
@@ -608,7 +608,7 @@ fn run(args: &[String]) -> Result<(), String> {
     if let Ok(entries) = fs::read_dir(
         root.join("games")
             .join(crate::compiler::routing::game_directory(&game))
-            .join(if game == "tbs" { "INCLUDE" } else { "include" }),
+            .join("INCLUDE"),
     ) {
         for entry in entries.flatten() {
             let path = entry.path();

@@ -78,7 +78,7 @@ impl SourceIdentity {
         };
         let routing = match owner {
             SourceOwner::Main(_) if target == CompilerTarget::Tla => {
-                Path::new("games/THE LOST AGE/src").join(owner.legacy_relative_path())
+                Path::new("games/THE LOST AGE/SRC").join(owner.legacy_relative_path())
             }
             SourceOwner::Main(_) if registered => owner.routing_path(),
             SourceOwner::Main(_) => path.to_path_buf(),
@@ -731,13 +731,10 @@ fn source_input_signature(
     compiler: CompilerTarget,
 ) -> Result<Vec<u8>, String> {
     let path = root.join(source);
-    let include_dirs = vec![root.join("games").join(compiler.directory()).join(
-        if compiler == CompilerTarget::Tbs {
-            "INCLUDE"
-        } else {
-            "include"
-        },
-    )];
+    let include_dirs = vec![root
+        .join("games")
+        .join(compiler.directory())
+        .join("INCLUDE")];
     let mut signature = source_tree_signature(&path, &include_dirs)?;
     signature.extend(
         crate::candidate::production_symbol_bindings(root, routing_source, source, compiler)?
@@ -989,7 +986,7 @@ mod source_identity_tests {
         assert_eq!(identity.owner, SourceOwner::Main(0x080b0fa4));
         assert_eq!(
             identity.routing,
-            PathBuf::from("games/THE BROKEN SEAL/src/080b0fa4.c")
+            PathBuf::from("games/THE BROKEN SEAL/SRC/080b0fa4.c")
         );
         let source = "games/THE BROKEN SEAL/recon/en/main/080ab5e4.c";
         let identity =
@@ -1006,7 +1003,7 @@ mod source_identity_tests {
         .unwrap();
         assert_eq!(
             identity.routing,
-            PathBuf::from("games/THE BROKEN SEAL/src/080a8904.c")
+            PathBuf::from("games/THE BROKEN SEAL/SRC/080a8904.c")
         );
     }
     #[test]

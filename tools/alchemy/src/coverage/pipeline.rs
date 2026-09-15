@@ -878,7 +878,7 @@ fn atlas_source(locations: &str, id: &str) -> Option<String> {
     })
 }
 fn streams(tree: &SourceTree) -> Vec<Stream> {
-    let Some(manifest) = json(tree, "games/tbs/SRC/SYSTEM/RESOURCE.json") else {
+    let Some(manifest) = json(tree, "games/tbs/SRC/SYSTEM/RESOURCE.JSON") else {
         return Vec::new();
     };
     let mut out = Vec::new();
@@ -912,9 +912,9 @@ fn streams(tree: &SourceTree) -> Vec<Stream> {
 }
 fn shared_map_assets(tree: &SourceTree, areas: &[Area]) -> Result<Value, String> {
     let read = |path| json(tree, path).ok_or_else(|| format!("missing Atlas input: {path}"));
-    let scenes = read("games/tbs/SRC/BATTLE/BATTLE_EFFECT_TAIL.json")?;
-    let maps = read("games/tbs/SRC/FIELD/COMMON/LOAD_TABLE.json")?;
-    let directory = read("games/tbs/SRC/SYSTEM/RESOURCE_DIRECTORY.json")?;
+    let scenes = read("games/tbs/SRC/BATTLE/BATTLE_EFFECT_TAIL.JSON")?;
+    let maps = read("games/tbs/SRC/FIELD/COMMON/LOAD_TABLE.JSON")?;
+    let directory = read("games/tbs/SRC/SYSTEM/RESOURCE_DIRECTORY.JSON")?;
     let locations = tree
         .read("games/tbs/locations.tsv")
         .ok_or("missing Atlas locations")?;
@@ -1201,7 +1201,7 @@ fn asset_tiles(tree: &SourceTree, data: &[Span], rom: i64) -> Vec<Tile> {
     };
     let sequence_classes = sound_sequence_classes(
         &tree
-            .read("games/tbs/SOUND/SEQUENCE/SEQUENCES.tsv")
+            .read("games/tbs/SOUND/SEQUENCE/SEQUENCES.TSV")
             .unwrap_or_default(),
     );
     let mut groups: BTreeMap<String, Vec<Tile>> = BTreeMap::new();
@@ -1225,11 +1225,13 @@ fn asset_tiles(tree: &SourceTree, data: &[Span], rom: i64) -> Vec<Tile> {
         let source = sources
             .iter()
             .filter_map(Value::as_str)
-            .find(|source| kind == "golden-sun-pcm-wave" && source.ends_with(".wav"))
+            .find(|source| {
+                kind == "golden-sun-pcm-wave" && source.to_ascii_lowercase().ends_with(".wav")
+            })
             .or_else(|| sources.first().and_then(Value::as_str))
-            .unwrap_or("games/tbs/SRC/SYSTEM/RESOURCE.json");
+            .unwrap_or("games/tbs/SRC/SYSTEM/RESOURCE.JSON");
         let owner = if kind == "golden-sun-sound-sequence" {
-            "games/tbs/SOUND/SEQUENCE/SEQUENCES.tsv"
+            "games/tbs/SOUND/SEQUENCE/SEQUENCES.TSV"
         } else {
             sources.first().and_then(Value::as_str).unwrap_or(source)
         };
@@ -1631,7 +1633,7 @@ mod tests {
             "resource_3a0\tXian\t\t\t\t\tSRC/FIELD/XIAN\n".into(),
         );
         write(
-            "games/tbs/SRC/BATTLE/BATTLE_EFFECT_TAIL.json",
+            "games/tbs/SRC/BATTLE/BATTLE_EFFECT_TAIL.JSON",
             json!({"segments":[{
                 "address":"0x0809f1a8", "records":[{"resource_id":928,"effect_id":7},
                     {"resource_id":928,"effect_id":7}, {"resource_id":999,"effect_id":99}]
@@ -1639,13 +1641,13 @@ mod tests {
             .to_string(),
         );
         write(
-            "games/tbs/SRC/FIELD/COMMON/LOAD_TABLE.json",
+            "games/tbs/SRC/FIELD/COMMON/LOAD_TABLE.JSON",
             json!({"fields":["palette","tiles"],
             "records":[{"map_index":7,"palette":"0","tiles":"1"}]})
             .to_string(),
         );
         write(
-            "games/tbs/SRC/SYSTEM/RESOURCE_DIRECTORY.json",
+            "games/tbs/SRC/SYSTEM/RESOURCE_DIRECTORY.JSON",
             json!({"slots":["0x08001000","0x08002000"]}).to_string(),
         );
         let tiles = [
@@ -1671,7 +1673,7 @@ mod tests {
         );
         assert_eq!(areas[0].bytes, 64);
         write(
-            "games/tbs/SRC/SYSTEM/RESOURCE_DIRECTORY.json",
+            "games/tbs/SRC/SYSTEM/RESOURCE_DIRECTORY.JSON",
             json!({"slots":[]}).to_string(),
         );
         assert!(shared_map_assets(&tree, &areas).is_err());
@@ -1834,7 +1836,7 @@ mod tests {
         let span = Span::new(0x081a7020, 0x081e120c);
         let children = sprite_children(
             &tree,
-            "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+            "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
             span,
             &[span],
         );
@@ -1851,7 +1853,7 @@ mod tests {
         assert_eq!(tile_json(&parent)["children"].as_array().unwrap().len(), 22);
         assert!(sprite_children(
             &tree,
-            "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+            "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
             Span::new(span.start, span.end - 1),
             &[span]
         )

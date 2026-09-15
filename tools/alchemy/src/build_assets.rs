@@ -2553,7 +2553,7 @@ fn closure_self_test() -> Result<String, String> {
     if missing.exists() {
         return Err("closure package self-test path exists".to_string());
     }
-    let index = root.join("games/tbs/SOUND/SAMPLE/SAMPLES.tsv");
+    let index = root.join("games/tbs/SOUND/SAMPLE/SAMPLES.TSV");
     let text =
         fs::read_to_string(index).map_err(|error| format!("PCM self-test index: {error}"))?;
     let mut rows = text.lines().filter(|line| !line.starts_with('#'));
@@ -2905,7 +2905,7 @@ fn expand_series(
             }
             "golden-sun-sound-sequence-series" => {
                 let index_name = json_string(&series["index"], "sequence index")?;
-                if !index_name.ends_with(".tsv") {
+                if !index_name.to_ascii_lowercase().ends_with(".tsv") {
                     return Err("sequence series requires its canonical TSV table".into());
                 }
                 let index_path = ctx.source(index_name)?;
@@ -2948,7 +2948,7 @@ fn expand_series(
             }
             "golden-sun-pcm-wave-series" => {
                 let index_name = json_string(&series["index"], "PCM index")?;
-                if !index_name.ends_with(".tsv") {
+                if !index_name.to_ascii_lowercase().ends_with(".tsv") {
                     return Err("PCM series requires its canonical TSV table".into());
                 }
                 let index_path = ctx.source(index_name)?;
@@ -4628,7 +4628,7 @@ fn build_entry_native_tail(
     match kind {
         "golden-sun-sound-sequence" => {
             let source = source_path(entry_source)?;
-            let (built, report) = if entry_source.ends_with(".json") {
+            let (built, report) = if entry_source.to_ascii_lowercase().ends_with(".json") {
                 let document = json(&source)?;
                 let document = if let Some(pointer) = entry.get("pointer") {
                     document
@@ -4789,7 +4789,7 @@ struct BuildOptions {
 fn parse_build_options(arguments: &[String], root: &Path) -> Result<BuildOptions, String> {
     let mut options = BuildOptions {
         rom: "roms/tbs-en.gba".to_string(),
-        manifest: root.join("games/tbs/SRC/SYSTEM/RESOURCE.json"),
+        manifest: root.join("games/tbs/SRC/SYSTEM/RESOURCE.JSON"),
         output: root.join("out/tbs-en/assets"),
         source_only: false,
     };
@@ -4932,7 +4932,7 @@ fn stage_stamp_with_signature(
     }
     for name in [
         SOURCE_PATHS_MANIFEST,
-        "games/tbs/SOURCE.json",
+        "games/tbs/SOURCE.JSON",
         "games/tbs/recon/translation-units.json",
     ] {
         let path = root.join(name);
@@ -5008,8 +5008,8 @@ fn asset_stamp_tracks_sound_and_included_overlay_sources() {
     ] {
         fs::create_dir_all(root.join("games/tbs").join(name)).unwrap();
     }
-    let manifest = root.join("games/tbs/SRC/SYSTEM/RESOURCE.json");
-    let sound = root.join("games/tbs/SOUND/SEQUENCE/SEQUENCES.tsv");
+    let manifest = root.join("games/tbs/SRC/SYSTEM/RESOURCE.JSON");
+    let sound = root.join("games/tbs/SOUND/SEQUENCE/SEQUENCES.TSV");
     let header = root.join("games/tbs/SRC/shared.h");
     let unit = root.join("games/tbs/recon/translation-units.json");
     let overlay = root.join("games/tbs/asm/overlays/fixture.s");

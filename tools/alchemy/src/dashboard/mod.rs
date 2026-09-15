@@ -19,7 +19,7 @@ const TREES: [(&str, &str); 1] = [("rom", "ROM contents")];
 const COVERAGE_DIRS: [&str; 16] = [
     "games/tbs/locations.tsv",
     "games/tbs/asm",
-    "games/tbs/SOURCE.json",
+    "games/tbs/SOURCE.JSON",
     "games/tbs/SRC/GRAPHICS",
     "games/tbs/SOUND",
     "games/tbs/TEXT",
@@ -85,7 +85,9 @@ fn cached() -> Result<Live, String> {
     let trees = BOX_TREES
         .iter()
         .map(|name| {
-            let path = root().join(format!("games/tbs/PREVIEW/tbs-en-{name}.svg"));
+            let path = root()
+                .join("games/tbs/PREVIEW")
+                .join(format!("tbs-en-{name}.svg").to_ascii_uppercase());
             std::fs::read_to_string(&path)
                 .map(|svg| (*name, svg))
                 .map_err(|error| format!("{}: {error}", path.display()))

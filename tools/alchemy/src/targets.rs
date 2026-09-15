@@ -67,7 +67,7 @@ const PRODUCTS: [(CompilerTarget, u64, &str, &str, &str); 2] = [
         0x0080_0000,
         "games/tbs/SRC",
         "games/tbs/asm",
-        "games/tbs/SRC/SYSTEM/RESOURCE.json",
+        "games/tbs/SRC/SYSTEM/RESOURCE.JSON",
     ),
     (
         CompilerTarget::Tla,

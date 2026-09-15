@@ -622,7 +622,7 @@ fn content_version_uses_standard_sha1_prefix() {
 pub fn box_tree_path(target: &str, tree: &str) -> std::path::PathBuf {
     root()
         .join("games/tbs/PREVIEW")
-        .join(format!("{target}-{tree}.svg"))
+        .join(format!("{target}-{tree}.svg").to_ascii_uppercase())
 }
 
 #[cfg(test)]

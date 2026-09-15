@@ -28,9 +28,10 @@ roms/
 *.bin
 # Native pixel, palette and packed map inputs are regenerated from a verified
 # local ROM by `alchemy build assets --extract-sources`.
-/games/tbs/SRC/**/CHR.png
-/games/tbs/SRC/**/*_CHR.png
-/games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json
+/games/tbs/SRC/**/CHR.PNG
+/games/tbs/SRC/**/*_CHR.PNG
+/games/tbs/SRC/**/*.BIN
+/games/tbs/SRC/GRAPHICS/COMMON/PALETTE.JSON
 /games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_*.PNG
 /games/tbs/SRC/GRAPHICS/CHARACTER/BATTLE_*.PNG
 *.elf

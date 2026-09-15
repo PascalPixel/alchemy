@@ -13,6 +13,7 @@ mod coverage;
 mod cross_edition;
 mod dashboard;
 mod flatten;
+mod format;
 mod generated_files;
 mod http;
 mod matching;
@@ -35,6 +36,7 @@ const USAGE: &str = "usage: alchemy <command> [args]\n\
   coverage              rebuild and report ROM coverage\n\
   dashboard             serve live coverage on localhost:4650\n\
   check                 run repository contract checks\n\
+  format                format native game data and check uppercase filenames\n\
   overlay               legacy overlay operations during migration";
 
 fn main() -> ExitCode {
@@ -61,6 +63,7 @@ fn main() -> ExitCode {
         "build" => build::entry(rest),
         "verify" | "coverage" => make_target(command, rest),
         "check" => check::entry(rest),
+        "format" => result(format::run(rest)),
         "overlay" => overlay::entry(rest),
         "extract" | "adopt" | "inspect" => recovery_command(command, rest),
         "score" => match overlay_candidate(rest) {

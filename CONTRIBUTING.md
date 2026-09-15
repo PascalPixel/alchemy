@@ -586,9 +586,9 @@ own `CHAR_<ROMAJI>.PNG` field sheets and `BATTLE_<ROMAJI>.PNG` battle sheets,
 with both bank definitions in one character JSON file. Names require message
 and runtime descriptor evidence; visual resemblance alone is insufficient.
 Unproven and shared banks occupy sections of `CHAR_COMMON.PNG`, described once
-in `COMMON.json`. Pixel indices remain separate from the common palette bank
-pool; compression recipes remain in `GRAPHICS/COMMON/COMPRESSION.json`.
-These extracted PNG inputs are private and ignored, registered in `SOURCE.json`;
+in `COMMON.JSON`. Pixel indices remain separate from the common palette bank
+pool; compression recipes remain in `GRAPHICS/COMMON/COMPRESSION.JSON`.
+These extracted PNG inputs are private and ignored, registered in `SOURCE.JSON`;
 Rust extraction and source checks verify their pixels and encoded bank hashes.
 Use `alchemy build assets --audit-characters OUTPUT` for the Japanese message
 and descriptor audit. The common descriptor catalog also feeds animation and UI
@@ -609,6 +609,28 @@ Uppercase is a project convention, not recovered historical spelling. Ensure
 uppercase `.C` is compiled as C, never inferred as C++, without changing the
 approved compiler route or optimization flags.
 
+Native TBS names use uppercase folders, basenames and extensions throughout
+`SRC`, `INCLUDE`, `SOUND`, `TEXT`, `PREVIEW` and `SOURCE.JSON`: `.C`, `.H`,
+`.JSON`, `.PNG`, `.BIN`, `.MID`, `.WAV` and `.TSV`. Repository and tooling
+registries retain their established spellings outside these workspaces.
+`alchemy format` formats native JSON; `alchemy format --check` gates both
+formatting and uppercase names. JSON uses two-space indentation, a 120-column
+layout, compact records and packed short data tuples. Long individual strings
+remain intact. Preserve field order, values and the recorded binary boundaries.
+Use JSON for these codec and table definitions; changing to TOML adds a parser
+and migration without reducing their token arrays.
+
+Keep editable inputs beside their native owner. Registered protected inputs
+remain private and ignored even when their filename ends in `.PNG` or `.JSON`.
+Tracked, shareable README illustrations belong in `PREVIEW`; disposable audit
+images and exports belong in `out/<target>/previews`. Builds, caches and reports
+belong in their existing stable target directories under `out`. Reuse those
+destinations rather than accumulating a new directory for every export.
+Migration backups are temporary and may be removed after the migration commit,
+native extraction check and complete ROM verification pass. `make clean-preview`
+lists generated trees; `make clean` removes them, including caches and reports.
+Neither command removes tracked previews or native inputs.
+
 Move area-exclusive maps and graphics beside their code only after their
 consumers establish ownership. Shared map containers remain once under `SRC/FIELD/COMMON`;
 reused tile banks and palettes remain in `SRC/GRAPHICS/COMMON`, sequences,
@@ -616,7 +638,7 @@ samples and instrument definitions in `SOUND`, and localized messages in `TEXT`.
 Do not duplicate shared resources, invent asset associations, or publish
 protected extracted inputs. Use `.gitkeep` only for necessary empty destinations.
 
-`games/tbs/SOURCE.json` binds map containers, graphics resources and scene loaders
+`games/tbs/SOURCE.JSON` binds map containers, graphics resources and scene loaders
 to their physical inputs. Each map owner has one named JSON file containing its
 container sections and one packed binary file. Each grid section contains two
 128×128 byte planes followed by a 128×128 little-endian word plane; its original

@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3ab:02000ac4": {
+      "name": "SceneState_TriggerTimerAtLeaderRowTen",
+      "source": "FIELD/LUNPA/ACTOR_SEQUENCE.C"
+    },
     "resource_37b:02000614": {
       "name": "FieldScene_RunStagedActorScene",
       "source": "FIELD/SOL_SHINDEN/STAGED_ACTOR_SCENE.C"

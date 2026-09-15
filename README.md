@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="games/tbs/PREVIEW/djinn_101_idle.gif" width="64" height="64" alt="Venus Djinn">
-  <img src="games/tbs/PREVIEW/djinn_102_idle.gif" width="64" height="64" alt="Jupiter Djinn">
-  <img src="games/tbs/PREVIEW/djinn_103_idle.gif" width="64" height="64" alt="Mars Djinn">
-  <img src="games/tbs/PREVIEW/djinn_104_idle.gif" width="64" height="64" alt="Mercury Djinn">
+  <img src="games/tbs/PREVIEW/DJINN_101_IDLE.GIF" width="64" height="64" alt="Venus Djinn">
+  <img src="games/tbs/PREVIEW/DJINN_102_IDLE.GIF" width="64" height="64" alt="Jupiter Djinn">
+  <img src="games/tbs/PREVIEW/DJINN_103_IDLE.GIF" width="64" height="64" alt="Mars Djinn">
+  <img src="games/tbs/PREVIEW/DJINN_104_IDLE.GIF" width="64" height="64" alt="Mercury Djinn">
 </p>
 
 <h1 align="center">Alchemy</h1>
@@ -21,7 +21,7 @@ first edition rebuilt in full.
 > Previously reported at 70%. Some assembly progress was retracted after a
 > stricter audit. We’re working our way back to 70% with verified recoveries.
 
-![ROM contents](games/tbs/PREVIEW/tbs-en-rom.svg?v=45cbeb17ca01b35b)
+![ROM contents](games/tbs/PREVIEW/TBS-EN-ROM.SVG?v=ea4726e2e2837613)
 
 ## What this is
 

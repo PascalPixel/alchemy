@@ -516,10 +516,10 @@ fn self_test() -> Result<(), String> {
         "games/tbs/PREVIEW/title.png",
         "games/tbs/SOUND/SEQUENCE/THEME.mid",
         "games/tbs/SOUND/SAMPLE/WAVE.wav",
-        "games/tbs/SRC/SYSTEM/RESOURCE.json",
+        "games/tbs/SRC/SYSTEM/RESOURCE.JSON",
         "tools/compare-roms/src/main.rs",
         "tools/alchemy/src/build_full.rs",
-        "games/tbs/SRC/SYSTEM/BUILD_STAMP.json",
+        "games/tbs/SRC/SYSTEM/BUILD_STAMP.JSON",
         "rom.sha1",
     ] {
         if let Some(reason) = publication_path_reason(path) {

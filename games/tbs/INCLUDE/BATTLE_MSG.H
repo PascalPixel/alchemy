@@ -3,7 +3,7 @@
 
 #include "TYPES.H"
 
-/* games/tbs/TEXT/MESSAGE_ARCHIVE.json の英文から付けた識別名。 */
+/* games/tbs/TEXT/MESSAGE_ARCHIVE.JSON の英文から付けた識別名。 */
 /* 番号はリンク時定数。プールされる絶対シンボルとして参照する。 */
 extern char Value_00000810;
 extern char Value_00000811;

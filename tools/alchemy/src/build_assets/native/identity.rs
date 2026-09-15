@@ -105,7 +105,7 @@ pub fn audit(root: &Path, output: &Path) -> Result<(), String> {
     }
     let english = fs::read(root.join("roms/tbs-en.gba")).map_err(|e| e.to_string())?;
     let japanese = fs::read(root.join("roms/tbs-ja.gba")).map_err(|e| e.to_string())?;
-    let archive = json(&root.join("games/tbs/TEXT/MESSAGE_ARCHIVE.json"))?;
+    let archive = json(&root.join("games/tbs/TEXT/MESSAGE_ARCHIVE.JSON"))?;
     let mut reader = MessageReader::new(
         &english,
         ROM_BASE as u32,
@@ -151,7 +151,7 @@ pub fn audit(root: &Path, output: &Path) -> Result<(), String> {
             .map_err(|e| format!("Japanese message {index}: {e}"))?;
         messages.push(json!({"id":index,"offset":message.offset,"encoded_size":message.bytes,"text":message.symbols.as_ref().map(|s|text(s)),"symbols":message.symbols}));
     }
-    let source = json(&root.join("games/tbs/SRC/GRAPHICS/CHARACTER/CATALOG.json"))?;
+    let source = json(&root.join("games/tbs/SRC/GRAPHICS/CHARACTER/CATALOG.JSON"))?;
     let descriptors = source["segments"][0]["records"]
         .as_array()
         .ok_or("descriptor table missing")?;
@@ -181,7 +181,11 @@ pub fn audit(root: &Path, output: &Path) -> Result<(), String> {
     for entry in walkdir::WalkDir::new(root.join("games/tbs/SRC/GRAPHICS/CHARACTER")) {
         let entry = entry.map_err(|e| e.to_string())?;
         if !entry.file_type().is_file()
-            || entry.path().extension().and_then(|e| e.to_str()) != Some("json")
+            || !entry
+                .path()
+                .extension()
+                .and_then(|e| e.to_str())
+                .is_some_and(|e| e.eq_ignore_ascii_case("json"))
         {
             continue;
         }
@@ -225,7 +229,7 @@ pub fn audit(root: &Path, output: &Path) -> Result<(), String> {
     document(
         &output,
         "CHARACTERS.json",
-        &json!({"rom_sha256":sha256::hex(&japanese),"descriptor_table":ROM_BASE+ja_base,"descriptors":rows,"party_pose_source":"games/tbs/SRC/GRAPHICS/COMMON/TABLES.json#/tables/0x080c2a0a","party_names":party_names(&japanese)?,"names":messages[102..109]}),
+        &json!({"rom_sha256":sha256::hex(&japanese),"descriptor_table":ROM_BASE+ja_base,"descriptors":rows,"party_pose_source":"games/tbs/SRC/GRAPHICS/COMMON/TABLES.JSON#/tables/0x080c2a0a","party_names":party_names(&japanese)?,"names":messages[102..109]}),
     )?;
     println!(
         "inverse_english_messages={count} japanese_messages={} descriptors={} japanese_table={:#x}",

@@ -40,14 +40,14 @@ u8 *FieldScene_FindActorRegion(s32 *layer, s32 *slot, s32 *region)
         kind = **(s16 **)(*(u8 **)(actor + 80) + 40);
         ids = Data_0200df18;
         part = 0;
+        bounds = Data_0200df30;
         do {
             if (kind == *ids++) {
-                bounds = Data_0200df30 + part * 4;
                 *region = part;
                 offset = Data_0200ded8[*layer];
                 posx = *(s32 *)(player + 8);
-                x = ((posx >> 16) + (offset >> 16)) >> 4;
                 posy = *(s32 *)(player + 16);
+                x = ((posx >> 16) + (offset >> 16)) >> 4;
                 y = ((posy >> 16) + (s16)offset) >> 4;
                 left = (*(s16 *)(actor + 10) + bounds[0]) >> 4;
                 top = (*(s16 *)(actor + 18) + bounds[1]) >> 4;
@@ -68,6 +68,7 @@ u8 *FieldScene_FindActorRegion(s32 *layer, s32 *slot, s32 *region)
                 }
             }
             part++;
+            bounds += 4;
         } while ((u32)part <= 5);
         idx++;
         list++;

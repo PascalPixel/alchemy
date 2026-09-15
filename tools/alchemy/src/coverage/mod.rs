@@ -213,7 +213,7 @@ fn update_readme(
     }
     for (id, svg) in trees {
         let version = svg_cache_version(svg);
-        let needle = format!("games/tbs/assets/readme/{target}-{id}.svg");
+        let needle = format!("games/tbs/PREVIEW/{target}-{id}.svg");
         if let Some(pos) = out.find(&needle) {
             let end = pos + needle.len();
             let rest = &out[end..];

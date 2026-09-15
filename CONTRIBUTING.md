@@ -532,8 +532,23 @@ included in the ceiling and `make test`.
 
 Use modules and evidenced jobs, not one file per address. Merge related C only
 when shared compilation stays exact. No address filenames, ordinal placeholders,
-resource-number folders, codenames or invented geography. Keep addresses in the
-owner register and `Func_<address>` compatibility aliases.
+resource-number folders, codenames or invented geography. Use distinct
+directories for separately loaded overlays, named from decoded locations, map
+geometry and evidenced scene differences. Use short romaji prefixes from the
+Japanese ROM location names and a short area suffix; repeat the location prefix
+so related folders sort together. Reused areas may add a short scene-phase
+qualifier. Shared overlays name the locations they serve. These are working
+names, not recovered historical directory names.
+Keep folder labels uppercase ASCII. Prefer a repeated location prefix and one
+short area word: `HAIDIA_MURA`, `HAIDIA_HEYA`, `RUNPA_DOU`, `RUNPA_JO`.
+Use the Japanese ROM's name rather than its English localization; shorten
+romaji consistently, and record the decoded label and any abbreviation in the
+existing owner evidence. Use `MURA` for an evidenced village, `MACHI` for a town,
+`HEYA` for interiors, and `DOU` for a cave. A reused area can add `SAI` for a
+return scene. Resource identities and addresses belong in metadata, not folder
+labels. Inspect maps and scene behavior before choosing an area suffix.
+Keep function addresses in the owner register and
+`Func_<address>` compatibility aliases.
 
 Use neutral Japanese commercial C vocabulary appropriate to 2000–2001:
 `Subsystem_VerbObject`, short locals such as `pos`, `cnt`, `tbl`, `buf`
@@ -550,7 +565,9 @@ observable behavior, including bugs.
 
 Atlas replaces the current layout below with area workspaces under
 `games/tbs/SRC/FIELD/`, shared field engine code in `FIELD/COMMON/`, and
-cross-location modules in `FIELD/SHARED/`. The `atlas_destination` column in
+cross-location modules under distinct `FIELD/SHARED_<resource>/` directories.
+Each overlay has its own workspace; the three Lunpa modules use `LUNPA_TOWN`,
+`LUNPA_CAVE` and `LUNPA_FORTRESS`. The `atlas_destination` column in
 `games/tbs/locations.tsv` records the destination for each overlay. Source and
 include files have moved; maps now accompany their evidenced areas, messages
 and credits live in `TEXT`. The glyph sheet is in `GRAPHICS/FONT`; mixed item,
@@ -574,7 +591,8 @@ uppercase `.C` is compiled as C, never inferred as C++, without changing the
 approved compiler route or optimization flags.
 
 Move area-exclusive maps and graphics beside their code only after their
-consumers establish ownership. Shared graphics remain in `GRAPHICS`, sequences,
+consumers establish ownership. Shared map containers and their graphics remain
+once in `GRAPHICS/MAP`; other shared graphics remain in `GRAPHICS`, sequences,
 samples and instrument definitions in `SOUND`, and localized messages in `TEXT`.
 Do not duplicate shared resources, invent asset associations, or publish
 protected extracted inputs. Use `.gitkeep` only for necessary empty destinations.
@@ -616,6 +634,15 @@ actor/dialogue/story categories. A scene's actors, dialogue and events belong
 with its area or loadable module. Moving a file does not change its translation
 unit, overlay identity, compiler route or completion credit.
 
+Use `COMMON` for genuinely common runtime code and interfaces, rather than a
+generic `SHARED` catch-all. Prefer this short commercial C vocabulary appropriate
+to the period; it does not establish a recovered historical spelling. Common
+engine code has one owner. A separately loaded overlay used by several locations
+still has its own named directory and compilation identity; the existing
+`FIELD/SHARED/<locations>/` directory groups those overlays, not merged engine
+code. Reused graphics belong under game-root `GRAPHICS/`; exclusive map inputs
+stay beside their overlay. Remove empty directories left by moves.
+
 | Folder | Responsibility |
 | --- | --- |
 | `SYSTEM/` | Startup, scheduling, memory, input, save, link and resource loading. |
@@ -624,14 +651,19 @@ unit, overlay identity, compiler route or completion credit.
 | `SOUND/` | Sound and music player code, not the sound assets. |
 | `GAME/` | Shared character, party, inventory, item, ability, Djinn and flag rules. |
 | `FIELD/COMMON/` | Shared map, camera, object, event and script runtime. |
-| `FIELD/<area>/` | Area modules and their exclusive assets. |
-| `FIELD/SHARED/` | Loadable modules serving multiple areas. |
+| `FIELD/<location-or-scene>/` | Distinct loadable area modules and their exclusive assets. |
+| `FIELD/SHARED/<locations>/` | Distinct loadable modules serving multiple areas. |
 | `BATTLE/` | Battle rules, presentation, motion and effect modules. |
 | `MENU/` | Menu interaction, shops, inns and selection screens. |
 | `DEBUG/` | Debug facilities. |
 
-Area-specific code belongs in `SRC/FIELD/<area>/`; one location may have
-several separately compiled overlays. `games/tbs/locations.tsv` retains the
+Area-specific code belongs in the overlay directory recorded by
+`atlas_destination`; one location may have several separately compiled overlays.
+Their source and assets remain in distinct directories without changing compiler
+composition. Shared library code and genuinely reused assets keep one common
+owner. Retained assembly and recovery candidates remain in their existing
+registries. These directory choices do not establish original Camelot names.
+`games/tbs/locations.tsv` retains the
 ROM-backed TBS English location assignments for all 96 overlays. The scene
 selector is bounded to 0–200 by `08029094`; `0808ab48` loads the resource from
 the eight-byte scene table at `0809f1a8`. The location resolver `0808b158`

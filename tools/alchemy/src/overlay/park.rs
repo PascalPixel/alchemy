@@ -29,7 +29,7 @@ fn number(row: &serde_json::Value, key: &str) -> Option<i64> {
 }
 fn audit_multi_register_evidence(root: &Path, overlays: &[String]) -> Result<Vec<String>, String> {
     let evidence: serde_json::Value = serde_json::from_slice(
-        &fs::read(root.join("games/tbs/semantic/overlay-assembly.json"))
+        &fs::read(root.join("games/THE BROKEN SEAL/semantic/overlay-assembly.json"))
             .map_err(|e| e.to_string())?,
     )
     .map_err(|e| e.to_string())?;
@@ -133,7 +133,7 @@ fn git(root: &Path, arguments: &[&str]) -> Result<String, String> {
 fn pre_adoption_text(root: &Path, target: SourceOwner) -> Result<String, String> {
     let overlay = target.overlay_id().expect("overlay owner");
     let address = i64::from(target.address());
-    let relative = format!("games/tbs/asm/overlays/{overlay}_overlay.s");
+    let relative = format!("games/THE BROKEN SEAL/asm/overlays/{overlay}_overlay.s");
     let tag = format!("AlchemyC_{address:08x}:");
     let log = git(
         root,
@@ -359,7 +359,9 @@ pub fn run_audit(root: &Path, argv: &[String]) -> Result<i32, String> {
     }
     let overlays: Vec<String> = if argv.is_empty() || argv[0] == "--all" {
         let mut names = Vec::new();
-        for entry in fs::read_dir(root.join("games/tbs/asm/overlays")).map_err(|e| e.to_string())? {
+        for entry in fs::read_dir(root.join("games/THE BROKEN SEAL/asm/overlays"))
+            .map_err(|e| e.to_string())?
+        {
             let name = entry
                 .map_err(|e| e.to_string())?
                 .file_name()
@@ -706,15 +708,15 @@ pub(crate) fn park_one(
         // The unit register mirrors the adoption edit in place rather than
         // losing the unit: a unit pointing at a moved file is unscoreable,
         // and rebuilding it later drops its absolute symbols.
-        let units = root.join("games/tbs/recon/translation-units.json");
-        let evidence = root.join("games/tbs/semantic/overlay-assembly.json");
+        let units = root.join("games/THE BROKEN SEAL/recon/translation-units.json");
+        let evidence = root.join("games/THE BROKEN SEAL/semantic/overlay-assembly.json");
         let snapshot = crate::compiler::build_io::Snapshot::take(&[
             units.clone(),
             evidence.clone(),
             assembly.clone(),
             installed.clone(),
             parked.clone(),
-            root.join("games/tbs/source-paths.json"),
+            root.join("games/THE BROKEN SEAL/source-paths.json"),
         ])?;
         let parked_relative = parked
             .strip_prefix(root)
@@ -815,22 +817,25 @@ mod tests {
         let root = tempdir().unwrap();
         let units = root.path().join("translation-units.json");
         fs::write(&units, r#"{"units":[
-{"id":"overlay-37a-actor","overlay":"resource_37a","source":"games/tbs/SRC/a.c","absolute_symbols":{"Func_02004698_a":{"address":"0x0200aa54","kind":"thumb"}},"owners":[{"address":"0x02001be8","extent":192,"state":"exact-c"}]},
-{"id":"shared-37a","overlay":"resource_37a","source":"games/tbs/SRC/b.c","absolute_symbols":{},"owners":[{"address":"0x02001be8","extent":192,"state":"exact-c"},{"address":"0x02002000","extent":8,"state":"exact-c"}]},
-{"id":"other-37b","overlay":"resource_37b","source":"games/tbs/SRC/c.c","absolute_symbols":{},"owners":[{"address":"0x02001be8","extent":4,"state":"exact-c"}]}
+{"id":"overlay-37a-actor","overlay":"resource_37a","source":"games/THE BROKEN SEAL/SRC/a.c","absolute_symbols":{"Func_02004698_a":{"address":"0x0200aa54","kind":"thumb"}},"owners":[{"address":"0x02001be8","extent":192,"state":"exact-c"}]},
+{"id":"shared-37a","overlay":"resource_37a","source":"games/THE BROKEN SEAL/SRC/b.c","absolute_symbols":{},"owners":[{"address":"0x02001be8","extent":192,"state":"exact-c"},{"address":"0x02002000","extent":8,"state":"exact-c"}]},
+{"id":"other-37b","overlay":"resource_37b","source":"games/THE BROKEN SEAL/SRC/c.c","absolute_symbols":{},"owners":[{"address":"0x02001be8","extent":4,"state":"exact-c"}]}
 ]}"#).unwrap();
         super::retire_owner_in_units(
             &units,
             "resource_37a",
             0x02001be8,
-            "games/tbs/recon/en/overlays/x.c",
+            "games/THE BROKEN SEAL/recon/en/overlays/x.c",
         )
         .unwrap();
         let after: serde_json::Value =
             serde_json::from_str(&fs::read_to_string(&units).unwrap()).unwrap();
         let unit = &after["units"][0];
         assert_eq!(unit["id"], "overlay-37a-actor");
-        assert_eq!(unit["source"], "games/tbs/recon/en/overlays/x.c");
+        assert_eq!(
+            unit["source"],
+            "games/THE BROKEN SEAL/recon/en/overlays/x.c"
+        );
         assert_eq!(unit["owners"][0]["state"], "retained-assembly");
         assert_eq!(
             unit["absolute_symbols"]["Func_02004698_a"]["address"],
@@ -838,7 +843,7 @@ mod tests {
         );
         let shared = &after["units"][1];
         assert_eq!(shared["id"], "shared-37a");
-        assert_eq!(shared["source"], "games/tbs/SRC/b.c");
+        assert_eq!(shared["source"], "games/THE BROKEN SEAL/SRC/b.c");
         assert_eq!(shared["owners"][0]["state"], "retained-assembly");
         assert_eq!(shared["owners"][1]["state"], "exact-c");
         assert_eq!(after["units"][2]["owners"][0]["state"], "exact-c");
@@ -870,7 +875,7 @@ mod tests {
     #[test]
     fn audit_reports_a_placeholder_without_exact_source() {
         let root = tempdir().unwrap();
-        let code = root.path().join("games/tbs/asm/overlays");
+        let code = root.path().join("games/THE BROKEN SEAL/asm/overlays");
         fs::create_dir_all(&code).unwrap();
         fs::write(
             code.join("resource_382_overlay.s"),
@@ -884,7 +889,7 @@ mod tests {
     #[test]
     fn literal_pool_address_is_not_adoptable() {
         let root = tempdir().unwrap();
-        let semantic = root.path().join("games/tbs/semantic");
+        let semantic = root.path().join("games/THE BROKEN SEAL/semantic");
         fs::create_dir_all(&semantic).unwrap();
         fs::write(
             semantic.join("regions.json"),

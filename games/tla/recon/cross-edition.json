@@ -147,7 +147,7 @@
   },
   "compiler_family_probe": {
     "target": "tla-en:08120454-081224c0",
-    "source_probe": "games/tbs/src/battle/resolve_action.c",
+    "source_probe": "games/THE BROKEN SEAL/src/battle/resolve_action.c",
     "method": "Compile the proved TBS source with each locally approved compiler family, disassemble it and the TLA owner, then measure exact mnemonic n-grams. This is a compiler-family diagnostic, not a claim that the TBS source is exact TLA source.",
     "mnemonic_ngram_coverage": {
       "8": {
@@ -238,7 +238,7 @@
       "tla_every_edition": 1,
       "tla_owner_offset": "009c",
       "tla_register": "r3",
-      "tbs_corresponding_site": "TBS owner 080bbb0c expresses the same source construct at owner offset 0082: BATTLE_COPY_UNIT calls through a constant IWRAM address, ((BattleUnitCopyFn)0x03001388)(copy, target, size) in games/tbs/src/battle/action_resolve_target_action.c:154-155, and TLA spells the identical shape as ((void (*)(void *, const void *, s32))0x03000730)(...) in games/tla/recon/ja/main/battle_delta.h:433-435. TBS +0x7a..+0x86 is 4baf 1c2a 9804 1c39 f74b fbaf, whose BL targets 080072f0 = bank + 3*4 = _call_via_r3; TLA +0x94..+0xa0 is 4bb4 0052 9805 4641 469e f800. Same four bytes, same slot, same surrounding shape. One source construct, two lowerings."
+      "tbs_corresponding_site": "TBS owner 080bbb0c expresses the same source construct at owner offset 0082: BATTLE_COPY_UNIT calls through a constant IWRAM address, ((BattleUnitCopyFn)0x03001388)(copy, target, size) in games/THE BROKEN SEAL/src/battle/action_resolve_target_action.c:154-155, and TLA spells the identical shape as ((void (*)(void *, const void *, s32))0x03000730)(...) in games/tla/recon/ja/main/battle_delta.h:433-435. TBS +0x7a..+0x86 is 4baf 1c2a 9804 1c39 f74b fbaf, whose BL targets 080072f0 = bank + 3*4 = _call_via_r3; TLA +0x94..+0xa0 is 4bb4 0052 9805 4641 469e f800. Same four bytes, same slot, same surrounding shape. One source construct, two lowerings."
     },
     "tla_veneer_sites": [
       "08016e4e",

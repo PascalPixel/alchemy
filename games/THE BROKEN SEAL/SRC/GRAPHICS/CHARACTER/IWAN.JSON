@@ -1,0 +1,143 @@
+{
+  "format": "golden-sun-character",
+  "identity": {
+    "actor": 2,
+    "romaji": "IWAN",
+    "japanese": "ｲﾜﾝ",
+    "message_id": 104,
+    "message_offset": 245313,
+    "message_encoded_size": 4,
+    "symbols": [178, 220, 221],
+    "rom": "roms/tbs-ja.gba",
+    "rom_sha256": "088bedae4bad8b67e87ff10035a898d3639f3182d486fe5a5d113bab223e0a26"
+  },
+  "association_evidence": {
+    "field": "party actor ID; REMAP_CHARACTER_ID_BY_FLAGS; 0808b3ec placement to Object_CreateFar; 0800c150 descriptor lookup",
+    "battle": "party_sprites entries 0-3; sentou_hyouji_kihon actor_pose_rows",
+    "scope": "actors 0-3 only; dense name IDs do not establish actor 5 identity"
+  },
+  "banks": {
+    "field": {
+      "format": 1,
+      "kind": "components",
+      "address": "0x081a1ce0",
+      "size": "0x00005340",
+      "components": [
+        {
+          "kind": "golden-sun-general-lz",
+          "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+          "plan_section": "/recipes/bae9723d2c205446cf3a132a409681f96407dcb7529caeb12374bba7ce6e5ccf",
+          "size": 21001,
+          "components": [
+            {
+              "kind": "zero-skip-bytes",
+              "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_IWAN.PNG",
+              "frame_width": 32,
+              "frame_height": 32,
+              "columns": 8,
+              "palette": {
+                "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+                "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+              },
+              "pixel_format": "indices"
+            }
+          ]
+        },
+        {"kind": "byte-fill", "value": 0, "size": 3},
+        {
+          "kind": "pointer-table",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/IWAN.JSON",
+          "pointer": "/banks/field/directory",
+          "size": 308
+        }
+      ],
+      "streams": {
+        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+        "pointer": "/recipes/bae9723d2c205446cf3a132a409681f96407dcb7529caeb12374bba7ce6e5ccf"
+      },
+      "directory": {
+        "format": 1,
+        "kind": "pointer-table",
+        "base_address": "0x081a1ce0",
+        "address": "0x081a6eec",
+        "slot_count": 77,
+        "slots": [
+          "0x081a1ce0", "0x081a1e16", "0x081a1f39", "0x081a2072", "0x081a21af", "0x081a22ed", "0x081a23db",
+          "0x081a247e", "0x081a253d", "0x081a263a", "0x081a26f8", "0x081a27ea", "0x081a28cd", "0x081a29b1",
+          "0x081a2aa3", "0x081a2b78", "0x081a2c64", "0x081a2d43", "0x081a2e16", "0x081a2f25", "0x081a3002",
+          "0x081a3131", "0x081a3255", "0x081a338b", "0x081a34cd", "0x081a360a", "0x081a3743", "0x081a3877",
+          "0x081a3980", "0x081a3a9f", "0x081a3bcb", "0x081a3cf4", "0x081a3e16", "0x081a3f25", "0x081a403c",
+          "0x081a4144", "0x081a4272", "0x081a4375", "0x081a4483", "0x081a45b6", "0x081a46ab", "0x081a47ce",
+          "0x081a48ff", "0x081a4a3a", "0x081a4b5b", "0x081a4c68", "0x081a4d76", "0x081a4e98", "0x081a4fa6",
+          "0x081a50bb", "0x081a51d5", "0x081a5306", "0x081a5409", "0x081a5534", "0x081a5662", "0x081a5794",
+          "0x081a58b3", "0x081a59d9", "0x081a5b0b", "0x081a5c0e", "0x081a5d34", "0x081a5e3c", "0x081a5f61",
+          "0x081a6077", "0x081a6196", "0x081a62c2", "0x081a63c5", "0x081a64cb", "0x081a662f", "0x081a6770",
+          "0x081a68a5", "0x081a69ce", "0x081a6ac5", "0x081a6bb7", "0x081a6cce", "0x081a6dd5", "null"
+        ]
+      },
+      "descriptor": {
+        "id": 2,
+        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CATALOG.JSON",
+        "pointer": "/segments/0/records/2",
+        "frame_codec": "arena-lz/zero-skip"
+      }
+    },
+    "battle": {
+      "format": 1,
+      "kind": "components",
+      "address": "0x082f8190",
+      "size": "0x00000c34",
+      "components": [
+        {
+          "kind": "golden-sun-general-lz",
+          "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+          "plan_section": "/recipes/a8dd23dc850bf33dc37f86930a5a9f9381fdeb223146d0fadfefad4636a3f47a",
+          "size": 3040,
+          "components": [
+            {
+              "kind": "zero-skip-bytes",
+              "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/BATTLE_IWAN.PNG",
+              "frame_width": 64,
+              "frame_height": 64,
+              "columns": 8,
+              "palette": {
+                "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+                "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+              },
+              "pixel_format": "indices"
+            }
+          ]
+        },
+        {
+          "kind": "pointer-table",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/IWAN.JSON",
+          "pointer": "/banks/battle/directory",
+          "size": 84
+        }
+      ],
+      "streams": {
+        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+        "pointer": "/recipes/a8dd23dc850bf33dc37f86930a5a9f9381fdeb223146d0fadfefad4636a3f47a"
+      },
+      "directory": {
+        "format": 1,
+        "kind": "pointer-table",
+        "base_address": "0x082f8190",
+        "address": "0x082f8d70",
+        "slot_count": 21,
+        "slots": [
+          "0x082f8190", "0x082f82ab", "0x082f8351", "0x082f8406", "0x082f847c", "0x082f8536", "0x082f85b4",
+          "0x082f862e", "0x082f86bc", "0x082f878c", "0x082f87f3", "0x082f88c1", "0x082f891f", "0x082f8958",
+          "0x082f8a1c", "0x082f8a80", "0x082f8b18", "0x082f8bb2", "0x082f8c3f", "0x082f8cd7", "null"
+        ]
+      },
+      "descriptor": {
+        "id": 322,
+        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CATALOG.JSON",
+        "pointer": "/segments/0/records/322",
+        "frame_codec": "arena-lz/zero-skip"
+      }
+    }
+  },
+  "regions": null
+}

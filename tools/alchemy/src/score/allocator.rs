@@ -10,7 +10,7 @@ type Var = (String, Option<u8>, Option<i32>);
 #[test]
 fn split_pointer_rejects_induction() {
     assert!(!split_pointer_uses(
-        include_str!("../../../../games/tbs/recon/en/main/0808c30c.c"),
+        include_str!("../../../../games/THE BROKEN SEAL/recon/en/main/0808c30c.c"),
         "id"
     ));
 }

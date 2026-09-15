@@ -164,7 +164,7 @@ pub(crate) fn render_options(
     render(root, &options)
 }
 pub fn audit_corpus(root: &Path) -> Result<i32, String> {
-    let directory = root.join("games/tbs/recon/en/overlays");
+    let directory = root.join("games/THE BROKEN SEAL/recon/en/overlays");
     let mut sources = std::fs::read_dir(&directory)
         .map_err(|error| format!("{}: {error}", directory.display()))?
         .filter_map(Result::ok)
@@ -182,7 +182,7 @@ pub fn audit_corpus(root: &Path) -> Result<i32, String> {
     let paths = SourcePaths::load(root)?;
     let reviewed = crate::overlay::reviewed_spans(root)?;
     let dossiers: Value = serde_json::from_slice(
-        &std::fs::read(root.join("games/tbs/recon/en/dossiers.json"))
+        &std::fs::read(root.join("games/THE BROKEN SEAL/recon/en/dossiers.json"))
             .map_err(|error| error.to_string())?,
     )
     .map_err(|error| error.to_string())?;

@@ -162,10 +162,13 @@ fn stale(output: &Path, source: &Path) -> Result<(), String> {
     }
 }
 fn audit(root: &Path) -> Result<Audit, String> {
-    let inventory_path = root.join("games/tbs/metrics/tbs-en-executable.json");
+    let inventory_path = root.join("games/THE BROKEN SEAL/metrics/tbs-en-executable.json");
     let asm_path = root.join("out/tbs-en/full/asm/manifest.json");
     let claimed_path = root.join("out/tbs-en/full/claimed/manifest.json");
-    stale(&asm_path, &root.join("games/tbs/asm/classification.json"))?;
+    stale(
+        &asm_path,
+        &root.join("games/THE BROKEN SEAL/asm/classification.json"),
+    )?;
     let inventory = document(&inventory_path)?;
     let asm = regions(&document(&asm_path)?, true)?;
     let claimed = regions(&document(&claimed_path)?, false)?;

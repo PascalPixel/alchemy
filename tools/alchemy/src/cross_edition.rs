@@ -2272,7 +2272,8 @@ fn exact_overlay_owners() -> Result<Vec<OverlayOwner>, String> {
             .ok_or_else(|| format!("{}: address is below overlay base", source.owner.id()))?
             as usize;
         if !assembly.contains_key(&resource) {
-            let source = format!("games/tbs/asm/overlays/resource_{resource:03x}_overlay.s");
+            let source =
+                format!("games/THE BROKEN SEAL/asm/overlays/resource_{resource:03x}_overlay.s");
             let text = fs::read_to_string(&source).map_err(|error| format!("{source}: {error}"))?;
             assembly.insert(resource, text.lines().map(str::to_string).collect());
         }
@@ -2308,7 +2309,7 @@ fn exact_overlay_owners() -> Result<Vec<OverlayOwner>, String> {
     }
     owners.sort_by_key(|owner| (owner.resource, owner.en_offset));
     if owners.is_empty() {
-        return Err("games/tbs/SRC/ contains no exact overlay C owners".into());
+        return Err("games/THE BROKEN SEAL/SRC/ contains no exact overlay C owners".into());
     }
     Ok(owners)
 }
@@ -3778,7 +3779,7 @@ mod tests {
             schema_version: 1,
             game: "tbs",
             source_edition: "en",
-            source: "games/tbs/SRC/example.c".into(),
+            source: "games/THE BROKEN SEAL/SRC/example.c".into(),
             object: "out/example.o".into(),
             owner_symbol: "Func_08002ee4".into(),
             size: 4,

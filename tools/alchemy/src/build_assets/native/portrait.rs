@@ -1,6 +1,6 @@
 use super::*;
-const SHEET: &str = "games/tbs/SRC/GRAPHICS/COMMON/PORTRAIT.PNG";
-const META: &str = "games/tbs/SRC/GRAPHICS/COMMON/PORTRAIT.JSON";
+const SHEET: &str = "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG";
+const META: &str = "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.JSON";
 pub(super) fn pixels(input: &Value, rom: &[u8]) -> Result<Vec<u8>, String> {
     let start = address(&input["region_address"])?
         .checked_sub(ROM_BASE)

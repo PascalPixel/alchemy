@@ -1,0 +1,832 @@
+{
+  "format": 1,
+  "kind": "components",
+  "address": "0x084366f8",
+  "size": "0x592c",
+  "images": 57,
+  "entries": [
+    0, 1, 2, 3, 4, 5, 6, 7, null, null, null, null, null, null, null, null, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+    19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
+    48, 49, 50, 51, 52, 53, 54, 55, 56, null, null, null, null, null, null, null, null, null, null, null, null, null,
+    null, null
+  ],
+  "offset_table": {
+    "format": 1,
+    "kind": "typed-table",
+    "address": "0x084366f8",
+    "size": 160,
+    "segments": [
+      {
+        "address": "0x084366f8",
+        "end": "0x08436798",
+        "stride": 2,
+        "element": "le-u16",
+        "values": [
+          160, 564, 940, 1364, 1832, 2280, 2720, 3152, 0, 0, 0, 0, 0, 0, 0, 0, 3664, 4028, 4392, 4772, 5132, 5524, 5988,
+          6468, 6972, 7316, 7692, 8080, 8444, 8812, 9168, 9524, 9868, 10256, 10652, 11060, 11428, 11824, 12180, 12576,
+          12912, 13356, 13760, 14168, 14552, 15004, 15396, 15832, 16176, 16544, 17008, 17400, 17764, 18136, 18548,
+          18912, 19296, 19696, 20080, 20528, 20940, 21388, 21820, 22268, 22468, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0
+        ]
+      }
+    ]
+  },
+  "components": [
+    {
+      "kind": "typed-table",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.JSON",
+      "pointer": "/offset_table",
+      "size": 160
+    },
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [919],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 371,
+      "source_rect": {"x": 0, "y": 0, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 1},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [920],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 343,
+      "source_rect": {"x": 0, "y": 32, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 1},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [921],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 391,
+      "source_rect": {"x": 0, "y": 64, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 1},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [922],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 434,
+      "source_rect": {"x": 0, "y": 96, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 2},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [923],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 414,
+      "source_rect": {"x": 0, "y": 128, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 2},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [924],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 406,
+      "source_rect": {"x": 0, "y": 160, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 2},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [925],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 399,
+      "source_rect": {"x": 0, "y": 192, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 1},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [926],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 480,
+      "source_rect": {"x": 0, "y": 224, "width": 32, "height": 32}
+    },
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [927],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 332,
+      "source_rect": {"x": 0, "y": 256, "width": 32, "height": 32}
+    },
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [928],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 330,
+      "source_rect": {"x": 0, "y": 288, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 2},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [929],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 348,
+      "source_rect": {"x": 0, "y": 320, "width": 32, "height": 32}
+    },
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [930],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 325,
+      "source_rect": {"x": 0, "y": 352, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 3},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [931],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 358,
+      "source_rect": {"x": 0, "y": 384, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 2},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [932],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 430,
+      "source_rect": {"x": 0, "y": 416, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 2},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [933],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 447,
+      "source_rect": {"x": 0, "y": 448, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 1},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [934],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 471,
+      "source_rect": {"x": 0, "y": 480, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 1},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [935],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 311,
+      "source_rect": {"x": 0, "y": 512, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 1},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [936],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 344,
+      "source_rect": {"x": 0, "y": 544, "width": 32, "height": 32}
+    },
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [937],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 353,
+      "source_rect": {"x": 0, "y": 576, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 3},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [938],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 329,
+      "source_rect": {"x": 0, "y": 608, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 3},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [939],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 334,
+      "source_rect": {"x": 0, "y": 640, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 2},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [940],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 321,
+      "source_rect": {"x": 0, "y": 672, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 3},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [941],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 322,
+      "source_rect": {"x": 0, "y": 704, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 2},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [942],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 309,
+      "source_rect": {"x": 0, "y": 736, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 3},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [943],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 353,
+      "source_rect": {"x": 0, "y": 768, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 3},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [944],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 363,
+      "source_rect": {"x": 0, "y": 800, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 1},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [945],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 375,
+      "source_rect": {"x": 0, "y": 832, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 1},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [946],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 335,
+      "source_rect": {"x": 0, "y": 864, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 1},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [947],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 364,
+      "source_rect": {"x": 0, "y": 896, "width": 32, "height": 32}
+    },
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [948],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 322,
+      "source_rect": {"x": 0, "y": 928, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 2},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [949],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 364,
+      "source_rect": {"x": 0, "y": 960, "width": 32, "height": 32}
+    },
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [950],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 302,
+      "source_rect": {"x": 0, "y": 992, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 2},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [951],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 409,
+      "source_rect": {"x": 0, "y": 1024, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 3},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [952],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 372,
+      "source_rect": {"x": 0, "y": 1056, "width": 32, "height": 32}
+    },
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [953],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 373,
+      "source_rect": {"x": 0, "y": 1088, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 3},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [954],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 351,
+      "source_rect": {"x": 0, "y": 1120, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 1},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [955],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 417,
+      "source_rect": {"x": 0, "y": 1152, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 3},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [956],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 360,
+      "source_rect": {"x": 0, "y": 1184, "width": 32, "height": 32}
+    },
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [957],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 401,
+      "source_rect": {"x": 0, "y": 1216, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 3},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [958],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 311,
+      "source_rect": {"x": 0, "y": 1248, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 1},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [959],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 333,
+      "source_rect": {"x": 0, "y": 1280, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 3},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [960],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 431,
+      "source_rect": {"x": 0, "y": 1312, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 1},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [961],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 360,
+      "source_rect": {"x": 0, "y": 1344, "width": 32, "height": 32}
+    },
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [962],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 329,
+      "source_rect": {"x": 0, "y": 1376, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 3},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [963],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 339,
+      "source_rect": {"x": 0, "y": 1408, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 1},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [964],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 378,
+      "source_rect": {"x": 0, "y": 1440, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 2},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [965],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 332,
+      "source_rect": {"x": 0, "y": 1472, "width": 32, "height": 32}
+    },
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [966],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 349,
+      "source_rect": {"x": 0, "y": 1504, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 3},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [919],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 365,
+      "source_rect": {"x": 0, "y": 1536, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 3},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [920],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 349,
+      "source_rect": {"x": 0, "y": 1568, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 3},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [923],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 414,
+      "source_rect": {"x": 0, "y": 1600, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 2},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [924],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 378,
+      "source_rect": {"x": 0, "y": 1632, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 2},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [967],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 414,
+      "source_rect": {"x": 0, "y": 1664, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 2},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [943],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 397,
+      "source_rect": {"x": 0, "y": 1696, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 3},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [923],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 414,
+      "source_rect": {"x": 0, "y": 1728, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 2},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [953],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 166,
+      "source_rect": {"x": 0, "y": 1760, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 2},
+    {
+      "kind": "bgr555-banks",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+      "banks": [968],
+      "size": 32
+    },
+    {
+      "kind": "mtf4-bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+      "size": 327,
+      "source_rect": {"x": 0, "y": 1792, "width": 32, "height": 32}
+    },
+    {"kind": "byte-fill", "value": 0, "size": 1}
+  ],
+  "portraits": {
+    "0": {"identity": null, "source_rect": {"x": 0, "y": 0, "width": 32, "height": 32}, "component": 2},
+    "1": {"identity": null, "source_rect": {"x": 0, "y": 32, "width": 32, "height": 32}, "component": 5},
+    "2": {"identity": null, "source_rect": {"x": 0, "y": 64, "width": 32, "height": 32}, "component": 8},
+    "3": {"identity": null, "source_rect": {"x": 0, "y": 96, "width": 32, "height": 32}, "component": 11},
+    "4": {"identity": null, "source_rect": {"x": 0, "y": 128, "width": 32, "height": 32}, "component": 14},
+    "5": {"identity": null, "source_rect": {"x": 0, "y": 160, "width": 32, "height": 32}, "component": 17},
+    "6": {"identity": null, "source_rect": {"x": 0, "y": 192, "width": 32, "height": 32}, "component": 20},
+    "7": {"identity": null, "source_rect": {"x": 0, "y": 224, "width": 32, "height": 32}, "component": 23},
+    "8": {"identity": null, "source_rect": {"x": 0, "y": 256, "width": 32, "height": 32}, "component": 25},
+    "9": {"identity": null, "source_rect": {"x": 0, "y": 288, "width": 32, "height": 32}, "component": 27},
+    "10": {"identity": null, "source_rect": {"x": 0, "y": 320, "width": 32, "height": 32}, "component": 30},
+    "11": {"identity": null, "source_rect": {"x": 0, "y": 352, "width": 32, "height": 32}, "component": 32},
+    "12": {"identity": null, "source_rect": {"x": 0, "y": 384, "width": 32, "height": 32}, "component": 35},
+    "13": {"identity": null, "source_rect": {"x": 0, "y": 416, "width": 32, "height": 32}, "component": 38},
+    "14": {"identity": null, "source_rect": {"x": 0, "y": 448, "width": 32, "height": 32}, "component": 41},
+    "15": {"identity": null, "source_rect": {"x": 0, "y": 480, "width": 32, "height": 32}, "component": 44},
+    "16": {"identity": null, "source_rect": {"x": 0, "y": 512, "width": 32, "height": 32}, "component": 47},
+    "17": {"identity": null, "source_rect": {"x": 0, "y": 544, "width": 32, "height": 32}, "component": 50},
+    "18": {"identity": null, "source_rect": {"x": 0, "y": 576, "width": 32, "height": 32}, "component": 52},
+    "19": {"identity": null, "source_rect": {"x": 0, "y": 608, "width": 32, "height": 32}, "component": 55},
+    "20": {"identity": null, "source_rect": {"x": 0, "y": 640, "width": 32, "height": 32}, "component": 58},
+    "21": {"identity": null, "source_rect": {"x": 0, "y": 672, "width": 32, "height": 32}, "component": 61},
+    "22": {"identity": null, "source_rect": {"x": 0, "y": 704, "width": 32, "height": 32}, "component": 64},
+    "23": {"identity": null, "source_rect": {"x": 0, "y": 736, "width": 32, "height": 32}, "component": 67},
+    "24": {"identity": null, "source_rect": {"x": 0, "y": 768, "width": 32, "height": 32}, "component": 70},
+    "25": {"identity": null, "source_rect": {"x": 0, "y": 800, "width": 32, "height": 32}, "component": 73},
+    "26": {"identity": null, "source_rect": {"x": 0, "y": 832, "width": 32, "height": 32}, "component": 76},
+    "27": {"identity": null, "source_rect": {"x": 0, "y": 864, "width": 32, "height": 32}, "component": 79},
+    "28": {"identity": null, "source_rect": {"x": 0, "y": 896, "width": 32, "height": 32}, "component": 82},
+    "29": {"identity": null, "source_rect": {"x": 0, "y": 928, "width": 32, "height": 32}, "component": 84},
+    "30": {"identity": null, "source_rect": {"x": 0, "y": 960, "width": 32, "height": 32}, "component": 87},
+    "31": {"identity": null, "source_rect": {"x": 0, "y": 992, "width": 32, "height": 32}, "component": 89},
+    "32": {"identity": null, "source_rect": {"x": 0, "y": 1024, "width": 32, "height": 32}, "component": 92},
+    "33": {"identity": null, "source_rect": {"x": 0, "y": 1056, "width": 32, "height": 32}, "component": 95},
+    "34": {"identity": null, "source_rect": {"x": 0, "y": 1088, "width": 32, "height": 32}, "component": 97},
+    "35": {"identity": null, "source_rect": {"x": 0, "y": 1120, "width": 32, "height": 32}, "component": 100},
+    "36": {"identity": null, "source_rect": {"x": 0, "y": 1152, "width": 32, "height": 32}, "component": 103},
+    "37": {"identity": null, "source_rect": {"x": 0, "y": 1184, "width": 32, "height": 32}, "component": 106},
+    "38": {"identity": null, "source_rect": {"x": 0, "y": 1216, "width": 32, "height": 32}, "component": 108},
+    "39": {"identity": null, "source_rect": {"x": 0, "y": 1248, "width": 32, "height": 32}, "component": 111},
+    "40": {"identity": null, "source_rect": {"x": 0, "y": 1280, "width": 32, "height": 32}, "component": 114},
+    "41": {"identity": null, "source_rect": {"x": 0, "y": 1312, "width": 32, "height": 32}, "component": 117},
+    "42": {"identity": null, "source_rect": {"x": 0, "y": 1344, "width": 32, "height": 32}, "component": 120},
+    "43": {"identity": null, "source_rect": {"x": 0, "y": 1376, "width": 32, "height": 32}, "component": 122},
+    "44": {"identity": null, "source_rect": {"x": 0, "y": 1408, "width": 32, "height": 32}, "component": 125},
+    "45": {"identity": null, "source_rect": {"x": 0, "y": 1440, "width": 32, "height": 32}, "component": 128},
+    "46": {"identity": null, "source_rect": {"x": 0, "y": 1472, "width": 32, "height": 32}, "component": 131},
+    "47": {"identity": null, "source_rect": {"x": 0, "y": 1504, "width": 32, "height": 32}, "component": 133},
+    "48": {"identity": null, "source_rect": {"x": 0, "y": 1536, "width": 32, "height": 32}, "component": 136},
+    "49": {"identity": null, "source_rect": {"x": 0, "y": 1568, "width": 32, "height": 32}, "component": 139},
+    "50": {"identity": null, "source_rect": {"x": 0, "y": 1600, "width": 32, "height": 32}, "component": 142},
+    "51": {"identity": null, "source_rect": {"x": 0, "y": 1632, "width": 32, "height": 32}, "component": 145},
+    "52": {"identity": null, "source_rect": {"x": 0, "y": 1664, "width": 32, "height": 32}, "component": 148},
+    "53": {"identity": null, "source_rect": {"x": 0, "y": 1696, "width": 32, "height": 32}, "component": 151},
+    "54": {"identity": null, "source_rect": {"x": 0, "y": 1728, "width": 32, "height": 32}, "component": 154},
+    "55": {"identity": null, "source_rect": {"x": 0, "y": 1760, "width": 32, "height": 32}, "component": 157},
+    "56": {"identity": null, "source_rect": {"x": 0, "y": 1792, "width": 32, "height": 32}, "component": 160}
+  }
+}

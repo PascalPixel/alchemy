@@ -12,9 +12,9 @@ use serde_json::json;
 use std::collections::BTreeSet;
 pub(super) use tracking::check as check_tracking;
 
-const INDEX: &str = "games/tbs/SOURCE.JSON";
-const COLORS: &str = "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.JSON";
-const RECIPES: &str = "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.JSON";
+const INDEX: &str = "games/THE BROKEN SEAL/SOURCE.JSON";
+const COLORS: &str = "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON";
+const RECIPES: &str = "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON";
 
 fn decode_buffer(input: &Value, rom: &[u8], fallback: usize) -> Result<Vec<u8>, String> {
     let start = address(&input["region_address"])?

@@ -42,7 +42,7 @@ fn is_sound(tile: &Tile) -> bool {
     ) || tile
         .source
         .as_deref()
-        .is_some_and(|source| source.starts_with("games/tbs/SOUND/"))
+        .is_some_and(|source| source.starts_with("games/THE BROKEN SEAL/SOUND/"))
 }
 fn sound_type(tile: &Tile) -> usize {
     match (tile.group.as_deref(), tile.subgroup.as_deref()) {
@@ -147,7 +147,7 @@ fn directories(tiles: Vec<Tile>, base: &str) -> Vec<Tile> {
 }
 fn source_name(source: &str) -> &str {
     match source.trim_end_matches('/') {
-        "games/tbs" => "The Broken Seal",
+        "games/THE BROKEN SEAL" => "The Broken Seal",
         _ => source
             .trim_end_matches('/')
             .rsplit('/')
@@ -621,7 +621,7 @@ fn content_version_uses_standard_sha1_prefix() {
 }
 pub fn box_tree_path(target: &str, tree: &str) -> std::path::PathBuf {
     root()
-        .join("games/tbs/PREVIEW")
+        .join("games/THE BROKEN SEAL/PREVIEW")
         .join(format!("{target}-{tree}.svg").to_ascii_uppercase())
 }
 
@@ -719,7 +719,7 @@ mod tests {
     #[test]
     fn all_directories_wrap_files_without_duplicating_bytes() {
         let tile = Tile {
-            source: Some("games/tbs/SRC/battle/effects/fire.c".into()),
+            source: Some("games/THE BROKEN SEAL/SRC/battle/effects/fire.c".into()),
             address: Some(0x080bbb0c),
             bytes: 100,
             categories: [100, 0, 0, 0, 0, 0],
@@ -731,10 +731,10 @@ mod tests {
         let mut node = &grouped[0];
         for path in [
             "games/",
-            "games/tbs/",
-            "games/tbs/SRC/",
-            "games/tbs/SRC/battle/",
-            "games/tbs/SRC/battle/effects/",
+            "games/THE BROKEN SEAL/",
+            "games/THE BROKEN SEAL/SRC/",
+            "games/THE BROKEN SEAL/SRC/battle/",
+            "games/THE BROKEN SEAL/SRC/battle/effects/",
         ] {
             assert_eq!(node.source.as_deref(), Some(path));
             assert_eq!(node.children.len(), 1);

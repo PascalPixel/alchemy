@@ -1,0 +1,143 @@
+{
+  "format": "golden-sun-character",
+  "identity": {
+    "actor": 3,
+    "romaji": "MEARII",
+    "japanese": "ﾒｱﾘｨ",
+    "message_id": 105,
+    "message_offset": 245317,
+    "message_encoded_size": 5,
+    "symbols": [210, 177, 216, 168],
+    "rom": "roms/tbs-ja.gba",
+    "rom_sha256": "088bedae4bad8b67e87ff10035a898d3639f3182d486fe5a5d113bab223e0a26"
+  },
+  "association_evidence": {
+    "field": "party actor ID; REMAP_CHARACTER_ID_BY_FLAGS; 0808b3ec placement to Object_CreateFar; 0800c150 descriptor lookup",
+    "battle": "party_sprites entries 0-3; sentou_hyouji_kihon actor_pose_rows",
+    "scope": "actors 0-3 only; dense name IDs do not establish actor 5 identity"
+  },
+  "banks": {
+    "field": {
+      "format": 1,
+      "kind": "components",
+      "address": "0x081a7020",
+      "size": "0x000056b4",
+      "components": [
+        {
+          "kind": "golden-sun-general-lz",
+          "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+          "plan_section": "/recipes/c1c36703aeef7d668bedf309880e68abffd317d3b5d00779d5f960251c441128",
+          "size": 21881,
+          "components": [
+            {
+              "kind": "zero-skip-bytes",
+              "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_MEARII.PNG",
+              "frame_width": 32,
+              "frame_height": 32,
+              "columns": 8,
+              "palette": {
+                "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+                "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+              },
+              "pixel_format": "indices"
+            }
+          ]
+        },
+        {"kind": "byte-fill", "value": 0, "size": 3},
+        {
+          "kind": "pointer-table",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/MEARII.JSON",
+          "pointer": "/banks/field/directory",
+          "size": 312
+        }
+      ],
+      "streams": {
+        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+        "pointer": "/recipes/c1c36703aeef7d668bedf309880e68abffd317d3b5d00779d5f960251c441128"
+      },
+      "directory": {
+        "format": 1,
+        "kind": "pointer-table",
+        "base_address": "0x081a7020",
+        "address": "0x081ac59c",
+        "slot_count": 78,
+        "slots": [
+          "0x081a7020", "0x081a7185", "0x081a7309", "0x081a7479", "0x081a75c6", "0x081a7716", "0x081a773b",
+          "0x081a774b", "0x081a7756", "0x081a777b", "0x081a7786", "0x081a7858", "0x081a7925", "0x081a79ec",
+          "0x081a7aa1", "0x081a7b6f", "0x081a7c3e", "0x081a7d07", "0x081a7db7", "0x081a7e68", "0x081a7f32",
+          "0x081a7fdb", "0x081a80a7", "0x081a8177", "0x081a8231", "0x081a82ff", "0x081a846c", "0x081a8601",
+          "0x081a877a", "0x081a88b5", "0x081a8a07", "0x081a8b71", "0x081a8ce4", "0x081a8e2d", "0x081a8f85",
+          "0x081a90a7", "0x081a9219", "0x081a9362", "0x081a94ac", "0x081a95fc", "0x081a972c", "0x081a989b",
+          "0x081a99ea", "0x081a9b68", "0x081a9c82", "0x081a9dcf", "0x081a9f38", "0x081aa0ab", "0x081aa1f0",
+          "0x081aa323", "0x081aa455", "0x081aa5c4", "0x081aa70c", "0x081aa852", "0x081aa9a1", "0x081aaaf9",
+          "0x081aac56", "0x081aad94", "0x081aaece", "0x081ab014", "0x081ab137", "0x081ab243", "0x081ab3b4",
+          "0x081ab50b", "0x081ab5f5", "0x081ab6fb", "0x081ab836", "0x081ab9ac", "0x081abb06", "0x081abc52",
+          "0x081abd95", "0x081abea0", "0x081abfc3", "0x081ac104", "0x081ac212", "0x081ac2ff", "0x081ac453", "null"
+        ]
+      },
+      "descriptor": {
+        "id": 3,
+        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CATALOG.JSON",
+        "pointer": "/segments/0/records/3",
+        "frame_codec": "arena-lz/zero-skip"
+      }
+    },
+    "battle": {
+      "format": 1,
+      "kind": "components",
+      "address": "0x08300110",
+      "size": "0x00000e64",
+      "components": [
+        {
+          "kind": "golden-sun-general-lz",
+          "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+          "plan_section": "/recipes/9834263fdd4eb1bc601e99e55fe11928ece5180fc9d84a0ca20e444396a81d17",
+          "size": 3600,
+          "components": [
+            {
+              "kind": "zero-skip-bytes",
+              "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/BATTLE_MEARII.PNG",
+              "frame_width": 64,
+              "frame_height": 64,
+              "columns": 8,
+              "palette": {
+                "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+                "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+              },
+              "pixel_format": "indices"
+            }
+          ]
+        },
+        {
+          "kind": "pointer-table",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/MEARII.JSON",
+          "pointer": "/banks/battle/directory",
+          "size": 84
+        }
+      ],
+      "streams": {
+        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+        "pointer": "/recipes/9834263fdd4eb1bc601e99e55fe11928ece5180fc9d84a0ca20e444396a81d17"
+      },
+      "directory": {
+        "format": 1,
+        "kind": "pointer-table",
+        "base_address": "0x08300110",
+        "address": "0x08300f20",
+        "slot_count": 21,
+        "slots": [
+          "0x08300110", "0x0830024e", "0x083002f4", "0x083003d2", "0x08300462", "0x0830051d", "0x0830059a",
+          "0x08300655", "0x08300710", "0x08300816", "0x083008e2", "0x083009be", "0x08300a7b", "0x08300b7b",
+          "0x08300c19", "0x08300ca1", "0x08300da2", "0x08300e35", "0x08300ebe", "0x08300f0f", "null"
+        ]
+      },
+      "descriptor": {
+        "id": 323,
+        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CATALOG.JSON",
+        "pointer": "/segments/0/records/323",
+        "frame_codec": "arena-lz/zero-skip"
+      }
+    }
+  },
+  "regions": null
+}

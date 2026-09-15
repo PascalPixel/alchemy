@@ -254,7 +254,7 @@ mod tests {
     fn uppercase_c_preserves_the_c_route_and_codegen_flags() {
         let mut options = SourceToAssemblyPlanOptions::new(
             CompilerTarget::Tbs,
-            "games/tbs/src/080bbb0c.c",
+            "games/THE BROKEN SEAL/src/080bbb0c.c",
             "candidate.c",
             "candidate.s",
         );
@@ -270,7 +270,10 @@ mod tests {
     }
     #[test]
     fn diagnostics_preserve_canonical_flags_and_reject_codegen_overrides() {
-        for source in ["games/tbs/src/080bbb0c.c", "games/tbs/src/08006878.c"] {
+        for source in [
+            "games/THE BROKEN SEAL/src/080bbb0c.c",
+            "games/THE BROKEN SEAL/src/08006878.c",
+        ] {
             let mut options = SourceToAssemblyPlanOptions::new(
                 CompilerTarget::Tbs,
                 source,
@@ -298,7 +301,7 @@ mod tests {
     fn edition_define_stays_in_old_agbcc_preprocessor_step() {
         let mut options = SourceToAssemblyPlanOptions::new(
             CompilerTarget::Tbs,
-            "games/tbs/src/08006878.c",
+            "games/THE BROKEN SEAL/src/08006878.c",
             "candidate.c",
             "candidate.s",
         );

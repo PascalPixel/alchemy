@@ -170,7 +170,7 @@ unrelated target. Confirm target-side preconditions separately and score every
 complete owner. Use each target's declarations and bindings, not the sibling's
 addresses. Preserve exact neighbors; never adopt overlapping units independently.
 
-`games/tbs/recon/compiler-repair-patterns.json` is the executable repair
+`games/THE BROKEN SEAL/recon/compiler-repair-patterns.json` is the executable repair
 catalog. `alchemy match` runs decoder-named, bounded catalog operations.
 A new generalized operation needs safety guards, a regression fixture and an
 actual closure; its acceptance tests belong in `make test`. Manual
@@ -233,7 +233,7 @@ in the recovery queue rather than relabeling them merely to increase DONE.
 
 The classification records remain: main evidence is exposed by the assembly
 manifest, overlay evidence lives in
-`games/tbs/semantic/overlay-assembly.json`, and both are still parsed and
+`games/THE BROKEN SEAL/semantic/overlay-assembly.json`, and both are still parsed and
 validated from the same inputs. Reconstructed scenes use
 `structured_scene_module`, not the retired `generated_call_script_module`.
 Only Pascal may establish a replacement standard, and it requires positive
@@ -567,11 +567,11 @@ observable behavior, including bugs.
 ### Project Atlas
 
 Atlas replaces the current layout below with area workspaces under
-`games/tbs/SRC/FIELD/`, shared field engine code in `FIELD/COMMON/`, and
+`games/THE BROKEN SEAL/SRC/FIELD/`, shared field engine code in `FIELD/COMMON/`, and
 cross-location modules under distinct named `FIELD/COMMON/<area>/` directories.
 Each overlay has its own workspace; the three Lunpa modules use `RUNPA_MURA`,
 `RUNPA_DOU` and `RUNPA_JO`. The `atlas_destination` column in
-`games/tbs/locations.tsv` records the destination for each overlay. Source and
+`games/THE BROKEN SEAL/locations.tsv` records the destination for each overlay. Source and
 include files have moved; maps now accompany their evidenced areas, messages
 and credits live in `TEXT`. The glyph sheet is in `SRC/GRAPHICS/FONT`; mixed item,
 status, window and menu-image banks are in `SRC/GRAPHICS/TILE`, not classified as
@@ -613,6 +613,15 @@ Native TBS names use uppercase folders, basenames and extensions throughout
 `SRC`, `INCLUDE`, `SOUND`, `TEXT`, `PREVIEW` and `SOURCE.JSON`: `.C`, `.H`,
 `.JSON`, `.PNG`, `.BIN`, `.MID`, `.WAV` and `.TSV`. Repository and tooling
 registries retain their established spellings outside these workspaces.
+The first game's physical root is `games/THE BROKEN SEAL`; its stable build IDs
+remain `tbs-ja`, `tbs-en` and the other edition-qualified targets. `games/COMMON`
+owns the shared integration workspace (`SRC`, `INCLUDE`, `ASSETS`, `PROJECT.JSON`).
+Reuse there requires proved correspondence; it is currently an empty workspace,
+not a claim that either game's implementation is interchangeable. Edition-specific
+symbols and placements can build one C file for multiple ROMs, as the Lunpa
+overlay demonstrates. A single source tree for all twelve ROMs also requires
+proved cross-game ownership, target-specific compiler profiles and asset bindings.
+Keep the game boundaries until those callers are supported and verified.
 `alchemy format` formats native JSON; `alchemy format --check` gates both
 formatting and uppercase names. JSON uses two-space indentation, a 120-column
 layout, compact records and packed short data tuples. Long individual strings
@@ -638,7 +647,7 @@ samples and instrument definitions in `SOUND`, and localized messages in `TEXT`.
 Do not duplicate shared resources, invent asset associations, or publish
 protected extracted inputs. Use `.gitkeep` only for necessary empty destinations.
 
-`games/tbs/SOURCE.JSON` binds map containers, graphics resources and scene loaders
+`games/THE BROKEN SEAL/SOURCE.JSON` binds map containers, graphics resources and scene loaders
 to their physical inputs. Each map owner has one named JSON file containing its
 container sections and one packed binary file. Each grid section contains two
 128×128 byte planes followed by a 128×128 little-endian word plane; its original
@@ -721,7 +730,7 @@ Their source and assets remain in distinct directories without changing compiler
 composition. Shared library code and genuinely reused assets keep one common
 owner. Retained assembly and recovery candidates remain in their existing
 registries. These directory choices do not establish original Camelot names.
-`games/tbs/locations.tsv` retains the
+`games/THE BROKEN SEAL/locations.tsv` retains the
 ROM-backed TBS English location assignments for all 96 overlays. The scene
 selector is bounded to 0–200 by `08029094`; `0808ab48` loads the resource from
 the eight-byte scene table at `0809f1a8`. The location resolver `0808b158`
@@ -740,7 +749,7 @@ place to fill a folder, and never merge distinct overlay address spaces simply
 because they share a location. Shared field engine code belongs in `FIELD/COMMON/`.
 
 Keep classification metadata outside source folders; provisional-source records live
-in `games/tbs/semantic/provisional-source.json`. Code stays out of assets: overlay assembly
+in `games/THE BROKEN SEAL/semantic/provisional-source.json`. Code stays out of assets: overlay assembly
 and compression recipes belong in `asm/overlays/`, battle assembly in
 `asm/battle/`. TBS non-executable battle-effect tables are in `SRC/BATTLE/DATA/`;
 TBS sound inputs are already in

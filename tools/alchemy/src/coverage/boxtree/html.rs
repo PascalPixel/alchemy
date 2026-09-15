@@ -258,12 +258,12 @@ pub fn page(
 
 #[test]
 fn folder_routes_are_roundtrip_and_reject_escape_or_invalid_encoding() {
-    let folder = "games/tbs/SRC/FIELD/HAIDIA_MURA/";
+    let folder = "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/";
     assert_eq!(decode_folder(&encode(folder)).as_deref(), Some(folder));
     for bad in ["x", "ff", "0g"] {
         assert!(decode_folder(bad).is_none());
     }
-    for bad in ["../", "/etc/", "games/../", "games/tbs"] {
+    for bad in ["../", "/etc/", "games/../", "games/THE BROKEN SEAL"] {
         assert!(decode_folder(&encode(bad)).is_none());
     }
 }
@@ -272,7 +272,7 @@ fn folder_routes_are_roundtrip_and_reject_escape_or_invalid_encoding() {
 fn rust_viewer_links_folders_details_and_shared_sources_without_scripts() {
     use crate::coverage::model::Area;
     use serde_json::json;
-    let folder = "games/tbs/SRC/GRAPHICS/CHARACTER/";
+    let folder = "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/";
     let file = format!("{folder}CHAR_IWAN.PNG");
     let tile = Tile {
         label: "CHAR_IWAN.PNG".into(),
@@ -283,7 +283,7 @@ fn rust_viewer_links_folders_details_and_shared_sources_without_scripts() {
         ..Tile::default()
     };
     let map = CoverageMap {
-        document: json!({"asset_verification":"rom","shared_map_assets":{folder:["games/tbs/SRC/GRAPHICS/COMMON/PALETTE.JSON"]}}),
+        document: json!({"asset_verification":"rom","shared_map_assets":{folder:["games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON"]}}),
         rom_areas: vec![Area {
             tiles: vec![tile],
             ..Area::default()

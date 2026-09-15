@@ -1,0 +1,19 @@
+{
+  "format": 2,
+  "product": "alchemy",
+  "kind": "integration",
+  "inputs": ["games/THE BROKEN SEAL", "games/tla"],
+  "layout": {
+    "source": "games/COMMON/SRC",
+    "assets": "games/COMMON/ASSETS",
+    "include": "games/COMMON/INCLUDE",
+    "output": "out/alchemy"
+  },
+  "reference_rom": null,
+  "policy": {
+    "byte_exact": false,
+    "preserve_reference_builds": true,
+    "source_reuse_requires_proved_correspondence": true,
+    "integration_changes_live_in_this_product": true
+  }
+}

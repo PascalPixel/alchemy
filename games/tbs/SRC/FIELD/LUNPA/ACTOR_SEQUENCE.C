@@ -1060,6 +1060,33 @@ void FieldScene_RunActorEighteenPromptDialogue(void)
     Func_020021c2();
 }
 
+extern s32 Func_020021ba_dialogue_07f4(s32);
+extern s32 Func_020021c4_dialogue_07f4(s32);
+extern void Func_02002282_dialogue_07f4(s32);
+extern void Func_0200229a_dialogue_07f4(s32, s32);
+extern void Func_02002292_dialogue_07f4(s32);
+extern void Func_020022aa_dialogue_07f4(s32, s32);
+static __inline__ void SelectActor18_CallMessage(void (*func)(), s32 message)
+{
+    func(message);
+}
+#define SceneDialogue_RunActorEighteenFlaggedLine Func_020007f4
+void SceneDialogue_RunActorEighteenFlaggedLine(void)
+{
+    if (Func_020021ba_dialogue_07f4(0x941) == 0) {
+        s32 message = Func_020021c4_dialogue_07f4(0x85a);
+        if (message == 0)
+            message = 0x1be2;
+        else
+            message = 0x1ba5;
+        SelectActor18_CallMessage(Func_02002282_dialogue_07f4, message);
+        Func_0200229a_dialogue_07f4(18, 0);
+    } else {
+        Func_02002292_dialogue_07f4(0x250c);
+        Func_020022aa_dialogue_07f4(18, 0);
+    }
+}
+
 void SceneDialogue_RunActor9Line(void) { Func_02002228(); Func_020022be(0x1ba6); Func_020022de(9, 0); Func_02002242(); }
 
 void SceneDialogue_ShowLine1BAA(void) { Func_02002248(); Func_020022de_a(0x1baa); Func_020022fe(11, 0); Func_02002262(); }

@@ -465,6 +465,17 @@ fn exact_overlay(
 /// nothing. Handwritten credit needs the three-part record (no tool emits it,
 /// no library matches, a recognisable hand-coded idiom) that the pool owner
 /// writes into proof; the gate reads the fields, not the argument.
+fn assembly_credit(entry: &Value) -> bool {
+    let provenance = &entry["provenance"];
+    matches!(
+        text(provenance, "credit").as_str(),
+        "library" | "handwritten"
+    ) && array(entry, "evidence")
+        .iter()
+        .any(|item| item.as_str().is_some_and(|s| !s.trim().is_empty()))
+        && (!text(provenance, "proof").trim().is_empty()
+            || !text(provenance, "object").trim().is_empty())
+}
 fn credited_kinds(classification: &Value) -> BTreeSet<String> {
     // `groups` is an array of kind entries; an object of entries reads the same.
     let groups: Vec<Value> = match &classification["groups"] {
@@ -475,17 +486,7 @@ fn credited_kinds(classification: &Value) -> BTreeSet<String> {
     array(classification, "structural")
         .iter()
         .chain(groups.iter())
-        .filter(|entry| {
-            let provenance = &entry["provenance"];
-            matches!(
-                text(provenance, "credit").as_str(),
-                "library" | "handwritten"
-            ) && array(entry, "evidence")
-                .iter()
-                .any(|item| item.as_str().is_some_and(|s| !s.trim().is_empty()))
-                && (!text(provenance, "proof").trim().is_empty()
-                    || !text(provenance, "object").trim().is_empty())
-        })
+        .filter(|entry| assembly_credit(entry))
         .map(|entry| text(entry, "kind"))
         .collect()
 }
@@ -556,7 +557,7 @@ fn overlay_assembly_classification(
     tree: &SourceTree,
     inventory: &BTreeMap<String, Vec<Region>>,
     executable: &SpanMap,
-) -> Result<(SpanMap, SpanMap), String> {
+) -> Result<(SpanMap, SpanMap, SpanMap), String> {
     let source = tree
         .read("games/THE BROKEN SEAL/semantic/overlay-assembly.json")
         .ok_or_else(|| "overlay assembly classification is missing".to_string())?;
@@ -569,7 +570,7 @@ fn overlay_assembly_classification_document(
     document: &Value,
     inventory: &BTreeMap<String, Vec<Region>>,
     executable: &SpanMap,
-) -> Result<(SpanMap, SpanMap), String> {
+) -> Result<(SpanMap, SpanMap, SpanMap), String> {
     let mut proven: SpanMap = inventory
         .iter()
         .map(|(id, regions)| {
@@ -592,6 +593,7 @@ fn overlay_assembly_classification_document(
         })
         .collect();
     let mut draft = SpanMap::new();
+    let mut credited = SpanMap::new();
     if integer(document, "format") != Some(1) {
         return Err("overlay assembly classification has unsupported format".into());
     }
@@ -628,19 +630,24 @@ fn overlay_assembly_classification_document(
                 "assembly classification {index} promotes a scene reconstruction without compiler-impossibility proof"
             ));
         }
-        if text(row, "confidence") == "proven" {
+        if text(row, "confidence") == "proven" && assembly_credit(row) {
+            credited.entry(overlay).or_default().push(span);
+        } else if text(row, "confidence") == "proven" {
             proven.entry(overlay).or_default().push(span);
         } else {
             draft.entry(overlay).or_default().push(span);
         }
     }
-    for spans in proven.values_mut() {
+    for spans in credited.values_mut() {
         *spans = normalize(spans);
+    }
+    for (overlay, spans) in &mut proven {
+        *spans = subtract(spans, mapped(&credited, overlay));
     }
     for spans in draft.values_mut() {
         *spans = normalize(spans);
     }
-    Ok((proven, draft))
+    Ok((proven, draft, credited))
 }
 fn partition(executable: &[Span], cuts: &[i64]) -> Vec<Span> {
     let mut out = Vec::new();
@@ -1381,19 +1388,18 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
     // The register credits library kinds with their proof; those proven
     // spans count as assembly. Everything else the old standard marked is
     // withdrawn: it returns to Unknown, and its total is published as
-    // withdrawn_assembly_bytes, so no byte leaves the map silently. The
-    // overlay register carries no credit field yet, so no overlay assembly is
-    // credited.
+    // withdrawn_assembly_bytes, so no byte leaves the map silently. Overlay
+    // credit is per reviewed range, using the same provenance rule as main.
     let (withdrawn_main, withdrawn_draft_main, retained_main) =
         main_assembly_classification(options.exact);
-    let (withdrawn_overlay, withdrawn_draft_overlay) =
+    let (withdrawn_overlay, withdrawn_draft_overlay, retained_overlay) =
         overlay_assembly_classification(options.exact, &overlay_regions, &overlay_exec)?;
     let withdrawn_assembly = bytes(&withdrawn_main)
         + bytes(&withdrawn_draft_main)
         + mapped_bytes(&withdrawn_overlay)
         + mapped_bytes(&withdrawn_draft_overlay);
     let draft_main: Vec<Span> = Vec::new();
-    let (retained_overlay, draft_overlay): (SpanMap, SpanMap) = (SpanMap::new(), SpanMap::new());
+    let draft_overlay = SpanMap::new();
     let (candidate_main, candidate_main_sources) = options
         .recon
         .map(|tree| candidate_main(tree, &main_exec))
@@ -1583,7 +1589,7 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
             "draft_sources": (candidate_main_sources + candidate_overlay_sources) as i64,
             "main_draft_census": "games/THE BROKEN SEAL/recon/en/dossiers.json",
             "proven_assembly_standard": "handwritten-or-library-proven",
-            "credited_assembly_bytes": bytes(&retained_main),
+            "credited_assembly_bytes": bytes(&retained_main) + mapped_bytes(&retained_overlay),
             "withdrawn_assembly_bytes": withdrawn_assembly,
             "main_assembly_classification": "out/tbs-en/full/asm/manifest.json",
             "overlay_assembly_classification": "games/THE BROKEN SEAL/semantic/overlay-assembly.json",
@@ -1959,7 +1965,7 @@ mod tests {
     }
     #[test]
     fn evidence_backed_proven_assembly_is_counted() {
-        let (found, draft) = overlay_assembly_classification_document(
+        let (found, draft, credited) = overlay_assembly_classification_document(
             &classification(json!([region(
                 "0x02000120",
                 "0x02000140",
@@ -1971,6 +1977,7 @@ mod tests {
         )
         .unwrap();
         assert!(draft.is_empty());
+        assert!(credited.is_empty());
         assert_eq!(
             found["resource_test"],
             vec![Span::new(0x0200_0120, 0x0200_0140)]
@@ -1978,7 +1985,7 @@ mod tests {
     }
     #[test]
     fn strong_assembly_reasoning_remains_draft() {
-        let (proven, draft) = overlay_assembly_classification_document(
+        let (proven, draft, credited) = overlay_assembly_classification_document(
             &classification(json!([region(
                 "0x02000120",
                 "0x02000140",
@@ -1990,9 +1997,55 @@ mod tests {
         )
         .unwrap();
         assert!(proven.values().all(Vec::is_empty));
+        assert!(credited.is_empty());
         assert_eq!(
             draft["resource_test"],
             vec![Span::new(0x0200_0120, 0x0200_0140)]
+        );
+    }
+    #[test]
+    fn overlay_credit_requires_proven_range_and_its_own_provenance() {
+        let mut library = region(
+            "0x02000120",
+            "0x02000140",
+            "proven",
+            json!(["historical assembly match"]),
+        );
+        library["provenance"] = json!({"credit":"library", "proof":"assembled bytes agree"});
+        let uncredited = region(
+            "0x02000140",
+            "0x02000160",
+            "proven",
+            json!(["retained reasoning"]),
+        );
+        let mut strong = library.clone();
+        strong["start"] = json!("0x02000160");
+        strong["end"] = json!("0x02000180");
+        strong["confidence"] = json!("strong");
+        let mut bare = library.clone();
+        bare["start"] = json!("0x02000180");
+        bare["end"] = json!("0x020001a0");
+        bare["provenance"] = json!({"credit":"library"});
+        let (withdrawn, draft, credited) = overlay_assembly_classification_document(
+            &classification(json!([library, uncredited, strong, bare])),
+            &no_inventory(),
+            &executable(),
+        )
+        .unwrap();
+        assert_eq!(
+            credited["resource_test"],
+            vec![Span::new(0x0200_0120, 0x0200_0140)]
+        );
+        assert_eq!(
+            draft["resource_test"],
+            vec![Span::new(0x0200_0160, 0x0200_0180)]
+        );
+        assert_eq!(
+            withdrawn["resource_test"],
+            vec![
+                Span::new(0x0200_0140, 0x0200_0160),
+                Span::new(0x0200_0180, 0x0200_01a0)
+            ]
         );
     }
     #[test]

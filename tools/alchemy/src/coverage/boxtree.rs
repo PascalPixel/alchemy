@@ -603,7 +603,7 @@ pub fn svg_sized(tree: &str, map: &CoverageMap, width: f64, height: f64, folder:
 pub fn render_box_trees(map: &CoverageMap) -> Vec<(&'static str, String)> {
     BOX_TREES
         .iter()
-        .map(|tree| (*tree, svg(tree, map, 540.0)))
+        .map(|tree| (*tree, svg(tree, map, 830.0)))
         .collect()
 }
 pub fn svg_cache_version(svg: &str) -> String {
@@ -870,7 +870,7 @@ mod tests {
         assert_eq!(BOX_TREES, ["rom"]);
         // Physical streams, not decoded executable owners, determine ROM area.
         assert_eq!(tree_tiles(&map).iter().map(|t| t.bytes).sum::<i64>(), 600);
-        for width in [320.0, 540.0] {
+        for width in [320.0, 540.0, 830.0] {
             let rendered = svg("rom", &map, width);
             assert!(rendered.contains(&format!("viewBox=\"0 0 {width} {}\"", width * 16.0 / 9.0)));
             assert!(rendered.contains("font-size:16px"));

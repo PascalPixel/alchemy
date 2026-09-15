@@ -1,5 +1,5 @@
-#include "audio_engine_symbols.h"
-#include "types.h"
+#include "AUDIO_ENGINE_SYMBOLS.H"
+#include "TYPES.H"
 
 #define AUDIO_ENGINE_IDENT 0x68736D53
 

@@ -13,7 +13,13 @@ struct SharedBundleLock {
 static SHARED_BUNDLE_LOCK: OnceLock<Result<SharedBundleLock>> = OnceLock::new();
 pub fn acquire_compiler_bundle_shared_lock() -> Result<()> {
     let result = SHARED_BUNDLE_LOCK.get_or_init(|| {
-        let path = bundle().join(".compiler.lock");
+        if !bundle().is_dir() {
+            return Err(format!(
+                "compiler toolchain is not installed at {}; run alchemy bootstrap",
+                bundle().display()
+            ));
+        }
+        let path = bundle().parent().unwrap().join(".compiler.lock");
         let file = OpenOptions::new()
             .create(true)
             .read(true)
@@ -121,10 +127,10 @@ pub const UNSUPPORTED_HOST_MESSAGE: &str =
 pub fn host_admission_message(host: &str, what: &str) -> String {
     [
         format!("compiler bundle has no approved {what} digests for host {host} yet."),
-        "Admit this host: build and stage the committed compiler source".to_string(),
-        "(`alchemy build compilers`), run the full `make verify`, and pin".to_string(),
-        "the digests from that green verify -- the same admission every listed".to_string(),
-        "digest already passed.".to_string(),
+        "Executable admission requires Pascal's approval and reproduction evidence.".to_string(),
+        "`alchemy build compilers` builds source only; it does not admit hashes.".to_string(),
+        "`alchemy bootstrap --from BUNDLE` installs distributions already admitted".to_string(),
+        "in compiler/bundle_data.rs; it cannot approve a newly built toolchain.".to_string(),
     ]
     .join(" ")
 }
@@ -187,8 +193,13 @@ pub fn validate_bundle(target: CompilerTarget) -> Result<()> {
     if validation_cached(target.as_str()) {
         return Ok(());
     }
-    let host = host_key().ok_or_else(|| UNSUPPORTED_HOST_MESSAGE.to_string())?;
     let bundle_dir = bundle_for(target);
+    validate_game_directory(&bundle_dir, target)?;
+    cache_validation(target.as_str());
+    Ok(())
+}
+fn validate_game_directory(bundle_dir: &Path, target: CompilerTarget) -> Result<()> {
+    let host = host_key().ok_or_else(|| UNSUPPORTED_HOST_MESSAGE.to_string())?;
     let entries = EXPECTED
         .iter()
         .find(|(key, _)| *key == host)
@@ -232,7 +243,6 @@ pub fn validate_bundle(target: CompilerTarget) -> Result<()> {
             target.as_str()
         )
     })?;
-    cache_validation(target.as_str());
     Ok(())
 }
 pub fn validate_agbcc_bundle() -> Result<()> {
@@ -240,8 +250,13 @@ pub fn validate_agbcc_bundle() -> Result<()> {
     if validation_cached("agbcc") {
         return Ok(());
     }
-    let host = host_key().ok_or_else(|| UNSUPPORTED_HOST_MESSAGE.to_string())?;
     let driver = agbcc_driver();
+    validate_agbcc_driver(&driver)?;
+    cache_validation("agbcc");
+    Ok(())
+}
+fn validate_agbcc_driver(driver: &Path) -> Result<()> {
+    let host = host_key().ok_or_else(|| UNSUPPORTED_HOST_MESSAGE.to_string())?;
     let missing = "compiler bundle agbcc bundle is missing executable old_agbcc".to_string();
     if executable_mode(&driver) != Some(true) {
         return Err(missing);
@@ -264,8 +279,14 @@ pub fn validate_agbcc_bundle() -> Result<()> {
         "/dev/null".into(),
     ])
     .map_err(|detail| format!("compiler bundle agbcc smoke compile failed: {detail}"))?;
-    cache_validation("agbcc");
     Ok(())
+}
+/// Validate a prospective installation without changing routing or cache state.
+pub fn validate_installation(directory: &Path) -> Result<()> {
+    ensure_no_codegen_environment_overrides()?;
+    validate_game_directory(directory, CompilerTarget::Tbs)?;
+    validate_game_directory(directory, CompilerTarget::Tla)?;
+    validate_agbcc_driver(&directory.join("agbcc/old_agbcc"))
 }
 pub fn signature_paths() -> Vec<PathBuf> {
     let bundle_dir = bundle();
@@ -387,7 +408,7 @@ pub fn compiler_bundle_signature_uncached() -> String {
         &signature_paths(),
         &[
             root().join("games/THE BROKEN SEAL/INCLUDE"),
-            root().join("games/THE LOST AGE/include"),
+            root().join("games/THE LOST AGE/INCLUDE"),
         ],
     )
 }

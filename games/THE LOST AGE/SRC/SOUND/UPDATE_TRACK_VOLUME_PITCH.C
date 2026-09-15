@@ -1,8 +1,8 @@
 // Approved reference provenance: adapted from pret/pokeemerald
 // src/m4a.c:TrkVolPitSet at commit 83df84e40623b79281f2397faa611cbf044170bd.
 // Names and layout were checked against this ROM region and exact compiler output.
-#include "audio_engine_symbols.h"
-#include "types.h"
+#include "AUDIO_ENGINE_SYMBOLS.H"
+#include "TYPES.H"
 
 struct MusicPlayerState;
 

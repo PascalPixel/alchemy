@@ -1,5 +1,5 @@
-#include "audio_engine_symbols.h"
-#include "types.h"
+#include "AUDIO_ENGINE_SYMBOLS.H"
+#include "TYPES.H"
 
 void MusicPlayer_SetPan(u8 *object, u32 selected, u32 value)
 {

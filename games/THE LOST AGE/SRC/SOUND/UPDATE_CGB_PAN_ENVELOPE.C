@@ -1,5 +1,5 @@
-#include "audio_engine_symbols.h"
-#include "types.h"
+#include "AUDIO_ENGINE_SYMBOLS.H"
+#include "TYPES.H"
 
 struct CgbChannel
 {

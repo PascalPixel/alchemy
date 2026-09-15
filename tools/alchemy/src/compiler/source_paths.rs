@@ -92,7 +92,7 @@ impl SourceOwner {
     pub fn routing_path_for_game(self, game: &str) -> PathBuf {
         let root = Path::new("games")
             .join(crate::compiler::routing::game_directory(game))
-            .join("src");
+            .join("SRC");
         root.join(self.legacy_relative_path())
     }
 }
@@ -578,10 +578,7 @@ fn game_paths(game: &str) -> Result<(PathBuf, PathBuf), String> {
         return Err(format!("invalid game id {game:?}"));
     }
     let root = Path::new("games").join(crate::compiler::routing::game_directory(game));
-    Ok((
-        root.join(if game == "tbs" { "SRC" } else { "src" }),
-        root.join("source-paths.json"),
-    ))
+    Ok((root.join("SRC"), root.join("source-paths.json")))
 }
 fn validate_source_path(source: &str) -> Result<PathBuf, String> {
     let path = Path::new(source);
@@ -891,17 +888,17 @@ mod tests {
         fs::create_dir_all(manifest_path.parent().unwrap()).unwrap();
         fs::write(
             &manifest_path,
-            r#"{"format":3,"owners":{"main:080132cc":"system/constant_zero_result.c"}}"#,
+            r#"{"format":3,"owners":{"main:080132cc":"SYSTEM/CONSTANT_ZERO_RESULT.C"}}"#,
         )
         .unwrap();
         let paths = SourcePaths::load_for_game(root.path(), "tla").unwrap();
         assert_eq!(
             paths.repository_relative_path(SourceOwner::Main(0x0801_32cc)),
-            PathBuf::from("games/THE LOST AGE/src/system/constant_zero_result.c")
+            PathBuf::from("games/THE LOST AGE/SRC/SYSTEM/CONSTANT_ZERO_RESULT.C")
         );
         assert_eq!(
             SourceOwner::Main(0x0801_32cc).routing_path_for_game("tla"),
-            PathBuf::from("games/THE LOST AGE/src/080132cc.c")
+            PathBuf::from("games/THE LOST AGE/SRC/080132cc.c")
         );
     }
 }

@@ -18,6 +18,7 @@ const BLOCKED_DIRECTORIES: &[&str] = &[
     "cmatch",
     "comparisons",
     "compiler-output",
+    "compilers",
     "diffs",
     "disassembly",
     "dist",
@@ -421,7 +422,9 @@ fn check_push(root: &Path, updates: &str) -> Result<(), String> {
         .filter(|line| !line.is_empty())
         .collect();
     if updates.is_empty() {
-        return Err("publication gate scanned nothing: no ref update on stdin".to_string());
+        // Git supplies no updates when the remote is already current. There
+        // is no outgoing payload to inspect; staged changes are not pushed.
+        return Ok(());
     }
     let mut commits = Vec::new();
     for update in updates {
@@ -623,6 +626,16 @@ mod tests {
         assert!(new_text_file_reason("CONTRIBUTING.md", false).is_none());
         assert!(new_text_file_reason("AGENTS.md", false).is_none());
         assert!(new_text_file_reason("notes.txt", false).is_some());
+    }
+    #[test]
+    fn push_without_ref_updates_is_a_noop_but_malformed_updates_fail() {
+        let root = tempfile::tempdir().unwrap();
+        assert!(check_push(root.path(), "").is_ok());
+        assert!(check_push(root.path(), "\n  \n").is_ok());
+        assert_eq!(
+            check_push(root.path(), "invalid").unwrap_err(),
+            "invalid pre-push update"
+        );
     }
     #[test]
     fn documents_include_ignored_output_and_allow_only_agent_pointers() {

@@ -64,6 +64,9 @@ CANDIDATE_SINGLE_OWNERS := \
 
 help:
 	@printf '%s\n' \
+		'make bootstrap        build/install missing compiler dependencies' \
+		'make bootstrap BUNDLE=/path/to/bundle   install an approved bundle' \
+		'make verify-clean     verify after deleting generated output' \
 		'make verify           fast byte-exact production gate' \
 		'make audit            exhaustive editions, candidates, and reports audit' \
 		'make reports          refresh analysis reports and coverage figures' \
@@ -95,13 +98,13 @@ build-claimed:
 build-asm:
 	$(BUILD) asm
 
-build-assets:
+build-assets: prepare-inputs
 	$(ASSETS)
 
-build-full:
+build-full: prepare-inputs
 	$(BUILD) full --target $(TARGET)
 
-build-rom:
+build-rom: prepare-inputs
 	$(BUILD) rom --target $(TARGET)
 
 full-rom-check: build-full
@@ -273,7 +276,7 @@ check-owners: source-tracking-check
 
 corpus-check:
 	@test -f "games/THE BROKEN SEAL/project.json"
-	@test -f "games/THE LOST AGE/project.json"
+	@test -f "games/THE LOST AGE/PROJECT.JSON"
 	@test -f games/COMMON/PROJECT.JSON
 	@if test -d draft; then \
 		printf 'legacy draft/ directory found; use games/THE BROKEN SEAL/recon/<edition>/\n'; \
@@ -372,7 +375,7 @@ lint-all-targets: standard-check compiler-source-check
 	done
 	$(CHECK) no-asm
 
-test: native-format-check lint tooling-size tooling-index-check tool-tests compiler-source-check
+test: toolchain-check native-format-check lint tooling-size tooling-index-check tool-tests compiler-source-check
 	$(CHECK) publication --self-test
 	$(CHECK) commit-progress --self-test
 	$(CHECK) progress --self-test
@@ -381,7 +384,7 @@ test: native-format-check lint tooling-size tooling-index-check tool-tests compi
 native-format-check:
 	$(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- format --check
 
-verify: native-format-check index-sync-check source-tracking-check corpus-check language-check register-shrink-check lint-production tooling-size tooling-index-check \
+verify: toolchain-check native-format-check index-sync-check source-tracking-check corpus-check language-check register-shrink-check lint-production tooling-size tooling-index-check \
 	strict-tu-check check-owners core-retained-check coverage-check | $(REPORT_DIR)
 	@tree=$$(git write-tree) || exit; \
 	printf '%s\n' "$$tree" > $(VERIFIED_TREE).tmp; \
@@ -399,9 +402,30 @@ standard-check:
 	test "$$actual" = "$$expected" || { printf 'compiler flags differ\nexpected:\n%s\nactual:\n%s\n' "$$expected" "$$actual"; exit 1; }
 	@printf 'compiler standard ok\n'
 
-.PHONY: compilers
+.PHONY: bootstrap compiler-sources compilers toolchain-check verify-clean prepare-inputs
+
+prepare-inputs:
+ifeq ($(TARGET_GAME),tbs)
+	$(ASSETS) --extract-missing-sources roms/tbs-en.gba
+endif
+
+bootstrap:
+	$(COMPILER) bootstrap $(if $(BUNDLE),--from "$(BUNDLE)")
+
+toolchain-check:
+	$(COMPILER) bootstrap --check
+
+# Check dependencies before cleaning so a missing installation leaves the
+# current reports intact. Repeat after cleanup to enforce the storage boundary.
+verify-clean: toolchain-check
+	$(MAKE) clean
+	$(MAKE) toolchain-check
+	$(MAKE) verify
 
 compilers:
+	$(MAKE) compiler-sources
+
+compiler-sources: compiler-source-check
 	sh agscc/build.sh
 	$(MAKE) -C agbcc/gcc old -j1
 
@@ -413,7 +437,7 @@ compiler-source-check:
 		esac; \
 		test "$$(git rev-parse :$$repo)" = "$$approved" || { printf '%s gitlink is not approved\n' "$$repo"; exit 1; }; \
 		test "$$(git -C "$$repo" rev-parse HEAD)" = "$$approved" || { printf '%s checkout is not approved\n' "$$repo"; exit 1; }; \
-		state=$$(git -C "$$repo" status --porcelain --untracked-files=all); \
+		state=$$(git -C "$$repo" status --porcelain --untracked-files=all -- . ':(exclude,glob)**/.DS_Store'); \
 		test -z "$$state" || { printf '%s compiler source is dirty\n' "$$repo"; exit 1; }; \
 	done
 	@printf 'compiler sources match approved submodules\n'

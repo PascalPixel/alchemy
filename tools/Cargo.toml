@@ -3,8 +3,8 @@
 # Each crate is a workspace member and a row in the CONTRIBUTING tooling index.
 [workspace]
 resolver = "2"
-members = ["*"]
-exclude = []
+members = ["alchemy", "psynergy"]
+exclude = ["compilers"]
 
 [workspace.package]
 version = "0.1.0"

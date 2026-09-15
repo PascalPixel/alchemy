@@ -106327,6 +106327,26 @@
         "TimerWork_03001ebc": {
           "address": "0x03001ebc",
           "kind": "data"
+        },
+        "Effect_Leader": {
+          "address": "0x02009a00",
+          "kind": "thumb"
+        },
+        "Effect_Random": {
+          "address": "0x02009938",
+          "kind": "thumb"
+        },
+        "Effect_Cosine": {
+          "address": "0x02009948",
+          "kind": "thumb"
+        },
+        "Effect_Sine": {
+          "address": "0x02009940",
+          "kind": "thumb"
+        },
+        "Effect_Phase_03001e40": {
+          "address": "0x03001e40",
+          "kind": "data"
         }
       },
       "local_symbols": [],
@@ -106534,6 +106554,11 @@
         {
           "address": "0x02001240",
           "extent": 100,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020012a4",
+          "extent": 120,
           "state": "exact-c"
         },
         {

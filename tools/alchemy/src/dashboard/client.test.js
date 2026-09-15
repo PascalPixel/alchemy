@@ -136,7 +136,8 @@ test("file activation does not navigate its ancestor folder", async () => {
   expect(loads).toBe(1);
   expect(chart.dataset.folder).toBe("games/tbs/SRC/");
   expect(back.hidden).toBe(false);
-  expect(selection.hidden).toBe(true);
+  expect(selection.hidden).toBe(false);
+  expect(selections).toBe(4);
 });
 
 test("selection shows source details without copying and tolerates missing addresses", async () => {
@@ -150,10 +151,43 @@ test("selection shows source details without copying and tolerates missing addre
   expect(selection.dataset.address).toBe("0x080bbb0c");
   expect(selection.children[0].children[0]).toBe(attributes["data-source"]);
   expect(selection.children[2].children[0].attributes["data-action"]).toBe("copy-selection");
+  expect(selection.dataset.source).toBe(attributes["data-source"]);
+  expect(selection.children[2].children[1].attributes["data-action"]).toBe("reveal-selection");
   show(selection, { getAttribute: () => null });
   expect(selection.dataset.address).toBe("");
   expect(selection.children[0].children[0]).toBe("Unresolved source");
   expect(selection.children[2].children[0]).toBeNull();
+  expect(selection.children[2].children[1]).toBeNull();
+});
+
+test("reveal is an explicit POST, reports missing files, and ignores synthesized key clicks", async () => {
+  const source = await Bun.file(new URL("./client.js", import.meta.url)).text();
+  const feedback = { textContent: "" };
+  const selection = { dataset: { source: "games/tbs/GRAPHICS/My sheet.PNG" }, querySelector: () => feedback };
+  const panel = { querySelector: name => name === ".viewer-selection" ? selection : {} };
+  class Element {
+    closest(selector) { return selector === ".panel" ? panel : selector === "[data-action]" ? this : null; }
+    getAttribute() { return "reveal-selection"; }
+  }
+  const requests = [];
+  let ok = true;
+  const activate = new Function("Element", "fetch",
+    source.slice(source.indexOf("async function activateTile"), source.indexOf("function showSelection")) + ";return activateTile;")(
+      Element, async (...args) => { requests.push(args); return { ok }; });
+  const event = { type: "keydown", key: "Enter", target: new Element(), preventDefault() {} };
+  await activate(event);
+  expect(requests).toHaveLength(0);
+  event.type = "click";
+  await activate(event);
+  expect(requests[0]).toEqual(["/reveal/games%2Ftbs%2FGRAPHICS%2FMy%20sheet.PNG", {
+    method: "POST", headers: { "X-Alchemy-Action": "1" },
+  }]);
+  expect(feedback.textContent).toBe("Shown in file browser");
+  expect(event.target.disabled).toBe(false);
+  ok = false;
+  await activate(event);
+  expect(feedback.textContent).toContain("Could not show this item");
+  expect(event.target.disabled).toBe(false);
 });
 
 test("selection controls copy once, report rejection, and close without navigating", async () => {

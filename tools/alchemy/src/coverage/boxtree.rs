@@ -290,6 +290,35 @@ fn draw_tiles(
 }
 
 fn caption(name: &str, body: Rect, folder: bool) -> Option<(String, Rect)> {
+    if folder {
+        // ASCII advances from Weyard's hmtx table, at its fixed 16px size.
+        const ADVANCES: [u8; 95] = [
+            5, 4, 6, 8, 9, 9, 10, 3, 5, 5, 9, 8, 3, 7, 3, 9, 7, 3, 7, 6, 7, 7, 7, 7, 6, 7, 5, 5, 5,
+            7, 6, 7, 9, 9, 8, 7, 8, 8, 7, 7, 9, 4, 8, 9, 7, 10, 9, 8, 8, 8, 8, 7, 6, 7, 8, 10, 10,
+            7, 8, 5, 6, 4, 5, 8, 3, 7, 7, 7, 8, 7, 6, 7, 7, 3, 8, 8, 4, 9, 7, 7, 7, 7, 8, 7, 6, 7,
+            8, 10, 8, 7, 8, 6, 3, 6, 9,
+        ];
+        let width: f64 = name
+            .chars()
+            .map(|c| {
+                if (' '..='~').contains(&c) {
+                    ADVANCES[c as usize - 32] as f64
+                } else {
+                    16.0
+                }
+            })
+            .sum();
+        if name.is_empty() || body.width < width + 4.0 || body.height < 20.0 {
+            return None;
+        }
+        let bounds = Rect {
+            x: body.x + 2.0,
+            y: body.y,
+            width,
+            height: 18.0,
+        };
+        return Some((format!("<text class=\"weyard rectangle-label folder-label\" x=\"{}\" y=\"{}\" pointer-events=\"none\">{}</text>", bounds.x, body.y + 16.0, esc(name)), bounds));
+    }
     let columns = ((body.width - 8.0) / 9.0).max(0.0) as usize;
     if columns == 0 || name.is_empty() || body.height < 28.0 || (!folder && body.width < 64.0) {
         return None;
@@ -593,6 +622,29 @@ pub fn box_tree_path(target: &str, tree: &str) -> std::path::PathBuf {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn folder_names_fit_at_fixed_pixel_size_without_wide_letter_estimates() {
+        let body = super::Rect {
+            x: 0.0,
+            y: 0.0,
+            width: 26.0,
+            height: 20.0,
+        };
+        let (text, bounds) = super::caption("LIB", body, true).unwrap();
+        assert_eq!(bounds.width, 19.0);
+        assert!(text.contains(">LIB</text>"));
+        assert!(super::caption("WWW", body, true).is_none());
+        assert!(super::caption(
+            "LIB",
+            super::Rect {
+                height: 19.0,
+                ..body
+            },
+            true
+        )
+        .is_none());
+        assert!(super::caption("LIB", body, false).is_none());
+    }
     use super::{
         content_style, directories, draw_tiles, leaves, sound_type, svg, tree_tiles, BOX_TREES,
         SOUND_TYPES,

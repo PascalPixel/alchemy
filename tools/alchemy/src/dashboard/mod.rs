@@ -8,7 +8,8 @@ use crate::coverage::{
 use serde_json::{json, Map, Value};
 use std::{
     net::TcpListener,
-    path::{Path, PathBuf},
+    path::{Component, Path, PathBuf},
+    process::Command,
     sync::Mutex,
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
@@ -245,6 +246,78 @@ fn rebuild() -> bool {
     })
 }
 
+fn reveal_path(repo: &Path, encoded: &str) -> Result<PathBuf, String> {
+    let mut bytes = Vec::new();
+    let mut input = encoded.bytes();
+    while let Some(byte) = input.next() {
+        bytes.push(if byte == b'%' {
+            let high = input.next().and_then(|b| (b as char).to_digit(16));
+            let low = input.next().and_then(|b| (b as char).to_digit(16));
+            match (high, low) {
+                (Some(high), Some(low)) => (high * 16 + low) as u8,
+                _ => return Err("Invalid source path".into()),
+            }
+        } else {
+            byte
+        });
+    }
+    let source = String::from_utf8(bytes).map_err(|_| "Invalid source path")?;
+    let path = Path::new(&source);
+    if source.is_empty()
+        || !path
+            .components()
+            .all(|part| matches!(part, Component::Normal(_)))
+    {
+        return Err("Source must be inside this repository".into());
+    }
+    let repo = repo.canonicalize().map_err(|e| e.to_string())?;
+    let path = repo
+        .join(path)
+        .canonicalize()
+        .map_err(|_| "Item is not on disk")?;
+    if !path.starts_with(repo) || !(path.is_file() || path.is_dir()) {
+        return Err("Source must be inside this repository".into());
+    }
+    Ok(path)
+}
+fn reveal(path: &str) -> Response {
+    let Some(encoded) = path.strip_prefix("/reveal/") else {
+        return http::not_found();
+    };
+    let result = reveal_path(&root(), encoded).and_then(|path| {
+        let mut command = if cfg!(target_os = "macos") {
+            let mut command = Command::new("open");
+            command.arg("-R").arg(&path);
+            command
+        } else if cfg!(target_os = "windows") {
+            let mut command = Command::new("explorer.exe");
+            command.arg(format!("/select,{}", path.display()));
+            command
+        } else {
+            let mut command = Command::new("xdg-open");
+            command.arg(if path.is_dir() {
+                path.as_path()
+            } else {
+                path.parent().expect("repository file parent")
+            });
+            command
+        };
+        command
+            .output()
+            .map_err(|e| e.to_string())
+            .and_then(|output| {
+                if output.status.success() {
+                    Ok(())
+                } else {
+                    Err("Could not open file browser".into())
+                }
+            })
+    });
+    match result {
+        Ok(()) => Response::new(200, "OK", None, "no-store", b"Shown".to_vec()),
+        Err(message) => Response::new(400, "Bad Request", None, "no-store", message.into_bytes()),
+    }
+}
 fn response(path: &str) -> Response {
     match path {
         "/" => http::shell("Alchemy", STYLES),
@@ -436,11 +509,43 @@ pub fn entry(args: &[String]) -> Result<(), String> {
         "Alchemy dashboard on http://{}/",
         listener.local_addr().map_err(|e| e.to_string())?
     );
-    http::run(listener, response).map_err(|e| e.to_string())
+    http::run(listener, response, reveal).map_err(|e| e.to_string())
 }
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn reveal_resolves_encoded_files_and_folders_but_never_escapes_repository() {
+        let repo = tempfile::tempdir().unwrap();
+        std::fs::create_dir(repo.path().join("ART")).unwrap();
+        std::fs::write(repo.path().join("ART/My sheet.PNG"), b"fixture").unwrap();
+        assert_eq!(
+            reveal_path(repo.path(), "ART%2FMy%20sheet.PNG").unwrap(),
+            repo.path().join("ART/My sheet.PNG").canonicalize().unwrap()
+        );
+        assert!(reveal_path(repo.path(), "ART%2F").unwrap().is_dir());
+        for bad in [
+            "",
+            "%",
+            "%GG",
+            "%FF",
+            "%2Fetc%2Fpasswd",
+            "..%2FREADME.md",
+            "ART%2F..%2FREADME.md",
+            "missing",
+        ] {
+            assert!(reveal_path(repo.path(), bad).is_err(), "{bad}");
+        }
+        #[cfg(unix)]
+        {
+            let outside = tempfile::tempdir().unwrap();
+            std::os::unix::fs::symlink(outside.path(), repo.path().join("escape")).unwrap();
+            assert!(reveal_path(repo.path(), "escape").is_err());
+        }
+        assert_eq!(response("/reveal/ART").status, 404);
+        assert_eq!(reveal("/other").status, 404);
+    }
 
     #[test]
     fn published_charts_survive_missing_reports_without_claiming_live_progress() {

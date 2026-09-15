@@ -171,6 +171,23 @@ async function activateTile(event) {
     }
     return;
   }
+  if (action === "reveal-selection") {
+    event.preventDefault();
+    const button = target.closest("[data-action]");
+    if (button.disabled) return;
+    button.disabled = true;
+    const feedback = selection.querySelector(".selection-feedback");
+    try {
+      const response = await fetch(`/reveal/${encodeURIComponent(selection.dataset.source)}`, {
+        method: "POST", headers: { "X-Alchemy-Action": "1" },
+      });
+      if (!response.ok) throw Error("Reveal failed");
+      feedback.textContent = "Shown in file browser";
+    } catch {
+      feedback.textContent = "Could not show this item — it may not be on disk";
+    } finally { button.disabled = false; }
+    return;
+  }
   const tile = target?.closest("g[data-node]");
   const folder = tile?.getAttribute("data-kind") === "folder" ? tile : null;
   const back = target?.closest("[data-action='back']");
@@ -193,6 +210,7 @@ async function activateTile(event) {
   hideTooltip();
   try {
     await loadTree(panel, chart.dataset.tree, chart.dataset.title, chart.dataset.revision, chart.clientWidth, path);
+    if (folder && chart.dataset.folder === path) showSelection(selection, folder);
     if (sharedSource && chart.dataset.folder === path) {
       for (const file of chart.querySelectorAll("g[data-source]")) {
         if (file.getAttribute("data-source") !== sharedSource) continue;
@@ -207,11 +225,15 @@ function showSelection(selection, tile) {
   const source = tile.getAttribute("data-source");
   const address = tile.getAttribute("data-address");
   selection.dataset.address = address ?? "";
+  selection.dataset.source = source ?? "";
   selection.replaceChildren(
     h("div", {}, source ?? "Unresolved source"),
     h("div", {}, tile.getAttribute("aria-label") ?? "No details available"),
     h("div", { className: "selection-controls" },
       address ? h("button", { "data-action": "copy-selection" }, "Copy address") : null,
+      source ? h("button", { "data-action": "reveal-selection" },
+        /Mac/.test(globalThis.navigator?.platform ?? "") ? "Show in Finder" :
+        /Win/.test(globalThis.navigator?.platform ?? "") ? "Show in Explorer" : "Show in file manager") : null,
       h("button", { "data-action": "close-selection" }, "Close")),
     h("div", { className: "selection-feedback" }),
   );

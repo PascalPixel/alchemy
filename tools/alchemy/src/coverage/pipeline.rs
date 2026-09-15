@@ -1827,7 +1827,7 @@ mod tests {
         let span = Span::new(0x081a7020, 0x081e120c);
         let children = sprite_children(
             &tree,
-            "games/tbs/GRAPHICS/CHARACTER/characters_chr_081a_index.json",
+            "games/tbs/SRC/GRAPHICS/CHARACTER/characters_chr_081a_index.json",
             span,
             &[span],
         );
@@ -1844,7 +1844,7 @@ mod tests {
         assert_eq!(tile_json(&parent)["children"].as_array().unwrap().len(), 22);
         assert!(sprite_children(
             &tree,
-            "games/tbs/GRAPHICS/CHARACTER/characters_chr_081a_index.json",
+            "games/tbs/SRC/GRAPHICS/CHARACTER/characters_chr_081a_index.json",
             Span::new(span.start, span.end - 1),
             &[span]
         )

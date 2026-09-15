@@ -565,37 +565,53 @@ observable behavior, including bugs.
 
 Atlas replaces the current layout below with area workspaces under
 `games/tbs/SRC/FIELD/`, shared field engine code in `FIELD/COMMON/`, and
-cross-location modules under distinct `FIELD/SHARED_<resource>/` directories.
-Each overlay has its own workspace; the three Lunpa modules use `LUNPA_TOWN`,
-`LUNPA_CAVE` and `LUNPA_FORTRESS`. The `atlas_destination` column in
+cross-location modules under distinct named `FIELD/COMMON/<area>/` directories.
+Each overlay has its own workspace; the three Lunpa modules use `RUNPA_MURA`,
+`RUNPA_DOU` and `RUNPA_JO`. The `atlas_destination` column in
 `games/tbs/locations.tsv` records the destination for each overlay. Source and
 include files have moved; maps now accompany their evidenced areas, messages
-and credits live in `TEXT`. The glyph sheet is in `GRAPHICS/FONT`; mixed item,
-status, window and menu-image banks are in `GRAPHICS/TILE`, not classified as
+and credits live in `TEXT`. The glyph sheet is in `SRC/GRAPHICS/FONT`; mixed item,
+status, window and menu-image banks are in `SRC/GRAPHICS/TILE`, not classified as
 fonts merely because their former package was called localization.
-The localization glyph table lives beside its sheet in `GRAPHICS/FONT`:
+The localization glyph table lives beside its sheet in `SRC/GRAPHICS/FONT`:
 each of its 224 records combines a two-byte advance with 15 two-byte bitmap rows.
 Keep that interleaved layout intact; its 7,168 bytes are not all image pixels.
 Sound inputs are under `SOUND/SEQUENCE`, `SOUND/SAMPLE` and
 `SOUND/INSTRUMENT`; mixed residual sound definitions remain at the sound root.
-Character banks and their component indexes live together in `GRAPHICS/CHARACTER`.
+Character banks and their component indexes live together in `SRC/GRAPHICS/CHARACTER`.
 Their battle/field filename prefixes do not establish exclusive ownership:
 the common descriptor catalog feeds animation and UI consumers. Preserve shared
 palettes once; do not split banks by an export label alone.
 Battle-effect tables now accompany their consumers in `SRC/BATTLE/DATA`.
-Remaining graphics placement is a separate stage. Preserve separate compilation and
-load boundaries. The remaining source groups are `SYSTEM`, `LIB`, `GRAPHICS`,
+Preserve separate compilation and load boundaries. The remaining source groups are `SYSTEM`, `LIB`, `GRAPHICS`,
 `SOUND`, `GAME`, `BATTLE`, `MENU` and `DEBUG`; shared headers belong in `INCLUDE`.
 Uppercase is a project convention, not recovered historical spelling. Ensure
 uppercase `.C` is compiled as C, never inferred as C++, without changing the
 approved compiler route or optimization flags.
 
 Move area-exclusive maps and graphics beside their code only after their
-consumers establish ownership. Shared map containers and their graphics remain
-once in `GRAPHICS/MAP`; other shared graphics remain in `GRAPHICS`, sequences,
+consumers establish ownership. Shared map containers remain once under `SRC/FIELD/COMMON`;
+reused tile banks and palettes remain in `SRC/GRAPHICS/COMMON`, sequences,
 samples and instrument definitions in `SOUND`, and localized messages in `TEXT`.
 Do not duplicate shared resources, invent asset associations, or publish
 protected extracted inputs. Use `.gitkeep` only for necessary empty destinations.
+
+`games/tbs/SOURCE.json` binds map containers, graphics resources and scene loaders
+to their physical inputs. Each map owner has one named JSON file containing its
+container sections and one packed binary file. Each grid section contains two
+128×128 byte planes followed by a 128×128 little-endian word plane; its original
+2×2 metatile words follow it. Recorded offsets and lengths preserve every flag,
+row and component boundary. Each graphics owner has one indexed `CHR` sheet;
+tile offsets select its independent 512-tile banks. Identical tile banks have one
+physical section. Palette banks and compression recipes have one common owner.
+These are reconstruction formats, not evidence of Camelot's authoring files.
+
+Packed maps, new `CHR` sheets and the common palette file are private, ignored
+inputs. Regenerate them with `alchemy build assets --extract-sources roms/tbs-en.gba`;
+the Rust reader requires the registered ROM checksum and decoded input hashes.
+The ordinary build encodes these sources and compares every stored region with
+the ROM; `--source-only` builds them without reading the ROM. Do not commit the
+private inputs or replace uncertain edge regions with invented blank cells.
 
 Image round-trip equality proves storage bytes, not the intended picture layout
 or colors. Establish frame boundaries, tile ordering and palette selection from
@@ -638,9 +654,9 @@ Use `COMMON` for genuinely common runtime code and interfaces, rather than a
 generic `SHARED` catch-all. Prefer this short commercial C vocabulary appropriate
 to the period; it does not establish a recovered historical spelling. Common
 engine code has one owner. A separately loaded overlay used by several locations
-still has its own named directory and compilation identity; the existing
-`FIELD/SHARED/<locations>/` directory groups those overlays, not merged engine
-code. Reused graphics belong under game-root `GRAPHICS/`; exclusive map inputs
+still has its own named directory and compilation identity; its
+`FIELD/COMMON/<locations>/` directory groups those overlays, not merged engine
+code. Reused graphics belong under `SRC/GRAPHICS/COMMON/`; exclusive map inputs
 stay beside their overlay. Remove empty directories left by moves.
 
 | Folder | Responsibility |
@@ -652,7 +668,7 @@ stay beside their overlay. Remove empty directories left by moves.
 | `GAME/` | Shared character, party, inventory, item, ability, Djinn and flag rules. |
 | `FIELD/COMMON/` | Shared map, camera, object, event and script runtime. |
 | `FIELD/<location-or-scene>/` | Distinct loadable area modules and their exclusive assets. |
-| `FIELD/SHARED/<locations>/` | Distinct loadable modules serving multiple areas. |
+| `FIELD/COMMON/<locations>/` | Distinct loadable modules serving multiple areas. |
 | `BATTLE/` | Battle rules, presentation, motion and effect modules. |
 | `MENU/` | Menu interaction, shops, inns and selection screens. |
 | `DEBUG/` | Debug facilities. |

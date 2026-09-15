@@ -7939,7 +7939,7 @@
         10
       ],
       "palette": {
-        "source": "games/tbs/GRAPHICS/PALETTE/0800777c.gbapal.png",
+        "source": "games/tbs/SRC/GRAPHICS/PALETTE/0800777c.gbapal.png",
         "offset": 16,
         "entries": 224
       },

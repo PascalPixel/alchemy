@@ -535,6 +535,78 @@ fn mtf4_index(table: &mut [u8; 16], value: u8) -> u32 {
     table[..=index].rotate_right(1);
     index as u32
 }
+pub fn decode_mtf4_lz(
+    data: &[u8],
+    start: usize,
+    end: usize,
+    maximum: u64,
+) -> Result<(Vec<u8>, usize), AssetError> {
+    if start >= end || data.get(start) != Some(&2) {
+        return err("tag-2 stream header missing");
+    }
+    let mut bits = LsbBits::new(data, start + 1, end)?;
+    let mut table: [u8; 16] = std::array::from_fn(|i| i as u8);
+    let mut output = Vec::new();
+    loop {
+        if bits.get(1)? != 0 {
+            if output.len() as u64 >= maximum {
+                return err("decoded output crossed configured bound");
+            }
+            let width = if bits.get(1)? != 0 {
+                2
+            } else if bits.get(1)? != 0 {
+                3
+            } else {
+                4
+            };
+            let low = bits.get(width)? as usize;
+            let a = table[low];
+            table[..=low].rotate_right(1);
+            let high = bits.get(width)? as usize;
+            let b = table[high];
+            table[..=high].rotate_right(1);
+            output.push(a | b << 4);
+            continue;
+        }
+        let Some(length) = decode_length(&mut bits)? else {
+            return Ok((output, bits.cursor));
+        };
+        let distance = if bits.get(1)? != 0 {
+            bits.get(5)? + 1
+        } else {
+            let window = output.len() as i64 - 33;
+            let width = if (0..2048).contains(&window) {
+                bit_length(window as u32)
+            } else {
+                12
+            };
+            bits.get(width)? + 33
+        };
+        append_copy(&mut output, distance, length, maximum)?;
+    }
+}
+
+#[test]
+fn tag_two_decodes_literals_and_overlapping_copies_with_a_strict_bound() {
+    let decoded = [0x21, 0x43, 0x65, 0x65, 0x65, 0x65, 0x65, 0x65];
+    let tokens = [
+        Mtf4LzToken::Literal { width: 4 },
+        Mtf4LzToken::Literal { width: 4 },
+        Mtf4LzToken::Literal { width: 4 },
+        Mtf4LzToken::Copy {
+            length: 5,
+            distance: 1,
+        },
+    ];
+    let mut bytes = encode_mtf4_lz(&decoded, &tokens).unwrap();
+    bytes.extend([0, 0]);
+    assert_eq!(
+        decode_mtf4_lz(&bytes, 0, bytes.len(), 8).unwrap().0,
+        decoded
+    );
+    assert!(decode_mtf4_lz(&bytes, 0, bytes.len(), 7).is_err());
+    assert!(decode_mtf4_lz(&bytes, 0, bytes.len() - 3, 8).is_err());
+}
 /// Encode `decoded` as a tag-2 stream: tag byte 2, then LSB-first bits where
 /// a literal is `1`, a two-bit width selector (`1` = 2 bits, `01` = 3 bits,
 /// `00` = 4 bits) and the low then high nibble as MTF indices, and a copy uses

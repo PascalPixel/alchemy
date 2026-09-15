@@ -10022,7 +10022,7 @@
     {
       "id": "story-beat-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/SHARED/KUUPUAPPU_RUNPA/BEAT.C",
+      "source": "games/tbs/SRC/FIELD/COMMON/KUUPUAPPU_RUNPA/BEAT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_384",
       "absolute_symbols": {
@@ -17561,7 +17561,7 @@
     {
       "id": "facing-dialogue-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/SHARED/RUNPA_SUHARA/FACING.C",
+      "source": "games/tbs/SRC/FIELD/COMMON/RUNPA_SUHARA/FACING.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ac",
       "absolute_symbols": {
@@ -79041,7 +79041,7 @@
     {
       "id": "actor-event-setup-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/SHARED/YAMA_RAMA/EVENT_SETUP_SCENE.C",
+      "source": "games/tbs/SRC/FIELD/COMMON/YAMA_RAMA/EVENT_SETUP_SCENE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a2",
       "absolute_symbols": {
@@ -96681,7 +96681,7 @@
     {
       "id": "overlays-scene-dialogue-flagged-message",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/SHARED/KAREI_TOREBI/FLAGGED_MESSAGE.C",
+      "source": "games/tbs/SRC/FIELD/COMMON/KAREI_TOREBI/FLAGGED_MESSAGE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ae",
       "absolute_symbols": {
@@ -101408,7 +101408,7 @@
     {
       "id": "overlays-scene-actor-facing-gated",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/SHARED/SHINDEN_HEYA/FACING_GATED.C",
+      "source": "games/tbs/SRC/FIELD/COMMON/SHINDEN_HEYA/FACING_GATED.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_378",
       "absolute_symbols": {
@@ -121348,7 +121348,7 @@
     {
       "id": "actor-transition-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/SHARED/IMIRU_FUCHIN/TRANSITION.C",
+      "source": "games/tbs/SRC/FIELD/COMMON/IMIRU_FUCHIN/TRANSITION.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39a",
       "absolute_symbols": {
@@ -160309,7 +160309,7 @@
     {
       "id": "facing-target-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/SHARED/HAIDIA_BABI/FACING_TARGET.C",
+      "source": "games/tbs/SRC/FIELD/COMMON/HAIDIA_BABI/FACING_TARGET.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_377",
       "absolute_symbols": {
@@ -170733,7 +170733,7 @@
     {
       "id": "school-and-roof-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/SHARED/SHIAN_JIIN/TEMPLE_ROOMS.C",
+      "source": "games/tbs/SRC/FIELD/COMMON/SHIAN_JIIN/TEMPLE_ROOMS.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39e",
       "absolute_symbols": {

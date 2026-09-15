@@ -7,9 +7,10 @@
 extern s32 *Data_03001e70;
 extern s32 Data_0200df18[];
 extern s32 Data_0200df30[];
-extern struct StagedActor *Func_0200d650(s32);
-extern void Func_0200d5d8(s32, s32, s32, s32, s32, s32);
-extern s32 Func_02008244(u32, s32, s32, u32, u32, s32);
+extern struct StagedActor *Func_02005f22(s32);
+extern void Func_02005f70(s32, s32, s32, s32, s32, s32);
+extern s32 Func_02000bf0(u32, s32, s32, u32, u32, s32);
+extern s32 Func_02000c02(u32, s32, s32, u32, u32, s32);
 
 static __inline__ void Scene_Call6(
     void (*func)(s32, s32, s32, s32, s32, s32),
@@ -21,7 +22,7 @@ static __inline__ void Scene_Call6(
 s32 FieldScene_RedrawActorFootprint(s32 id)
 {
     s32 *work = Data_03001e70;
-    struct StagedActor *actor = Func_0200d650(id);
+    struct StagedActor *actor = Func_02005f22(id);
     struct StagedActorProbe probe;
     u32 idx = 0;
     s32 offset;
@@ -72,9 +73,9 @@ draw:
     probe.position_z >>= 20;
     dst_x = work[0x13c / 4] >> 20;
     dst_z = work[0x140 / 4] >> 20;
-    Scene_Call6(Func_0200d5d8, probe.position_x, probe.position_z,
+    Scene_Call6(Func_02005f70, probe.position_x, probe.position_z,
         width, height, dst_x + probe.position_x, dst_z + probe.position_z);
-    Func_02008244(0, probe.position_x, probe.position_z, width, height, 255);
-    Func_02008244(2, probe.position_x, probe.position_z, width, height, 255);
+    Func_02000bf0(0, probe.position_x, probe.position_z, width, height, 255);
+    Func_02000c02(2, probe.position_x, probe.position_z, width, height, 255);
     return 1;
 }

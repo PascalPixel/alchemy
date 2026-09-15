@@ -106311,6 +106311,22 @@
         "Func_02002b56_setup": {
           "address": "0x02009990",
           "kind": "thumb"
+        },
+        "Func_020024ca_trigger": {
+          "address": "0x02009a00",
+          "kind": "thumb"
+        },
+        "Func_0200249c_trigger": {
+          "address": "0x020099c0",
+          "kind": "thumb"
+        },
+        "Func_020024b2_trigger": {
+          "address": "0x020099c8",
+          "kind": "thumb"
+        },
+        "TimerWork_03001ebc": {
+          "address": "0x03001ebc",
+          "kind": "data"
         }
       },
       "local_symbols": [],
@@ -106443,6 +106459,11 @@
         {
           "address": "0x02000a90",
           "extent": 52,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000ac4",
+          "extent": 72,
           "state": "exact-c"
         },
         {

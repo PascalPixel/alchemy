@@ -16,12 +16,12 @@ each game as they shipped on the cartridge. The Japanese release is treated as
 the original and the others as its translations; English _Golden Sun_ is the
 first edition rebuilt in full.
 
-## Status: 51.51% DONE
+## Status: 51.52% DONE
 
 > Previously reported at 70%. Some assembly progress was retracted after a
 > stricter audit. We’re working our way back to 70% with verified recoveries.
 
-![ROM contents](games/tbs/assets/readme/tbs-en-rom.svg?v=88120e93095066dc)
+![ROM contents](games/tbs/assets/readme/tbs-en-rom.svg?v=4608b5850a743a1e)
 
 ## What this is
 

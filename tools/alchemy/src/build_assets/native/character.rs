@@ -9,7 +9,7 @@ const OLD_PALETTE: &str = "games/tbs/SRC/GRAPHICS/PALETTE/0800777c.gbapal.png";
 fn gray(entries: usize) -> Vec<[u8; 3]> {
     (0..entries).map(|i| [i as u8; 3]).collect()
 }
-fn image(pixels: &[u8], width: u32, height: u32) -> Result<Vec<u8>, String> {
+pub(super) fn image(pixels: &[u8], width: u32, height: u32) -> Result<Vec<u8>, String> {
     if pixels.len() != width as usize * height as usize || pixels.iter().any(|p| *p >= 224) {
         return Err("character sheet dimensions or indices differ".into());
     }
@@ -28,7 +28,7 @@ fn image(pixels: &[u8], width: u32, height: u32) -> Result<Vec<u8>, String> {
     }
     Ok(data)
 }
-fn zero_skip(bytes: &[u8], length: usize) -> Result<Vec<u8>, String> {
+pub(super) fn zero_skip(bytes: &[u8], length: usize) -> Result<Vec<u8>, String> {
     let mut output = vec![];
     for (i, byte) in bytes.iter().enumerate() {
         if *byte == 0 {

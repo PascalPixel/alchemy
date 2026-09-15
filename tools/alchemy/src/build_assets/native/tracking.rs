@@ -81,25 +81,58 @@ pub(in crate::build_assets) fn check(root: &Path) -> Result<(), String> {
                 return Err("private native path escapes source tree".into());
             }
             let allowed = match kind {
+                "portrait-atlas" => name == "games/tbs/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
+                "tile-atlas" => name == "games/tbs/SRC/GRAPHICS/COMMON/TILE.PNG",
+                "still-atlas" => name == "games/tbs/SRC/GRAPHICS/COMMON/STILL.PNG",
                 "grid" | "metatiles" => name.ends_with(".bin"),
                 "tiles" => name.ends_with("/CHR.png") || name.ends_with("_CHR.png"),
-                "sprite" | "sprite-atlas" => {
+                "sprite" | "sprite-atlas" | "archive-atlas" => {
                     (name.starts_with("games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_")
                         || name.starts_with("games/tbs/SRC/GRAPHICS/CHARACTER/BATTLE_"))
                         && name.ends_with(".PNG")
                 }
-                "palette" | "palette-raw" => name == COLORS,
+                "palette" | "palette-raw" | "palette-buffer" | "palette-table" => name == COLORS,
                 _ => false,
             };
             if !allowed {
                 return Err(format!("unrecognized native private input {name}"));
             }
             private.insert(name.to_string());
+            if kind == "palette-table" {
+                let doc = ctx.document(&root.join(name))?;
+                let values = doc
+                    .pointer(json_string(&input["pointer"], "palette table pointer")?)
+                    .ok_or("palette table absent")?;
+                let bytes = integer_array(values, "le-u16-array")?;
+                if bytes.len() != address(&input["decoded_length"])?
+                    || sha256::hex(&bytes)
+                        != json_string(&input["decoded_sha256"], "palette table digest")?
+                {
+                    return Err("palette table differs".into());
+                }
+                continue;
+            }
+            if kind == "portrait-atlas" {
+                portrait::check(&ctx, input)?;
+                continue;
+            }
+            if kind == "tile-atlas" {
+                tile::check(&mut ctx, index, input)?;
+                continue;
+            }
+            if kind == "still-atlas" {
+                still::check(&mut ctx, index, input)?;
+                continue;
+            }
+            if kind == "archive-atlas" {
+                graphics::check(&mut ctx, index, input)?;
+                continue;
+            }
             if matches!(kind, "sprite" | "sprite-atlas") {
                 character::check(&mut ctx, input)?;
                 continue;
             }
-            if matches!(kind, "palette" | "palette-raw") {
+            if matches!(kind, "palette" | "palette-raw" | "palette-buffer") {
                 let palette = ctx.document(&root.join(name))?;
                 let mut data = vec![];
                 for bank in input["banks"].as_array().ok_or("missing palette indices")? {

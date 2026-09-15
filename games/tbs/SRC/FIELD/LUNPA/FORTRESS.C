@@ -4898,7 +4898,10 @@ void FieldScene_RunSupplementalSequenceOne(void)
     BattleRuntime_WaitIfModeZero_4_02001e94(70);
     ObjectMotion_ResetAndSetPositionInMode2_1_02001e94(12, 0x2a0, 88); /* object_id 12, x 0x2a0, z 88 */
     ObjectMotion_CommitCurrentPositionAndActivate_1_02001e94(12);
+#if !defined(TBS_EDITION_JA)
+    /* The localized sequence adds this turn after actor 12 is placed. */
     ObjectMotion_SetAngleToward_7_02001e94(12, 0, 0);
+#endif
     ObjectMotion_CallThenWaitForAnimationChange_4_02001e94(12, 3);
     BattleRuntime_WaitIfModeZero_5_02001e94(30);
     SceneWork_SetStepValue_7_02001e94((sequence_2438 + 6));

@@ -152,7 +152,7 @@ fn run(mut options: crate::score::cli::Options) -> Result<String, String> {
 /// compiles once, every function is linked at its owner's address, and each
 /// member's bytes are compared with the canonical overlay image.
 fn score_overlay_unit(unit: &TranslationUnit, overlay: &str) -> Result<String, String> {
-    let compiled = crate::overlay::compile::compile_declared_overlay_unit(unit, "en", None)?;
+    let compiled = crate::overlay::compile::compile_declared_overlay_unit(unit, "en", None, None)?;
     let reference = canonical_overlay(root(), overlay)?;
     let base = 0x0200_0000i64;
     let mut output = String::new();

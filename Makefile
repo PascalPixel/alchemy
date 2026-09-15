@@ -255,22 +255,7 @@ core-retained-check:
 	$(CHECK) retained --check
 
 source-tracking-check:
-	@set -e; paths=$$(mktemp /tmp/alchemy-game-inputs.XXXXXX); \
-	ignored=$$(mktemp /tmp/alchemy-ignored-inputs.XXXXXX); \
-	trap 'rm -f "$$paths" "$$ignored"' EXIT; \
-	find games -type f ! -name '.DS_Store' -print0 > "$$paths"; \
-	test -s "$$paths"; \
-	xargs -0 git ls-files --error-unmatch -- \
-		< "$$paths" > /dev/null; \
-	status=0; git check-ignore --no-index -z --stdin \
-		< "$$paths" > "$$ignored" || status=$$?; \
-	if [ "$$status" -eq 0 ]; then \
-		printf 'tracked game input is ignored:\n'; \
-		tr '\0' '\n' < "$$ignored"; \
-		exit 1; \
-	fi; \
-	if [ "$$status" -ne 1 ]; then exit "$$status"; fi; \
-	printf 'game input tracking ok\n'
+	$(CHECK) source-tracking
 
 index-sync-check:
 	@git diff --quiet --ignore-submodules -- || { \

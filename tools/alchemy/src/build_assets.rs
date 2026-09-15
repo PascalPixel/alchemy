@@ -1,5 +1,6 @@
 //! Native entry point for the asset build stage.
 mod gba_header;
+mod native;
 use crate::compiler::build_io::relative;
 use crate::compiler::bundle::{
     compiler_bundle_signature, executable_signature, host_executable_signature,
@@ -27,7 +28,7 @@ use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
-const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--manifest MANIFEST] [-o OUTPUT] [rom] | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
+const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--manifest MANIFEST] [-o OUTPUT] [rom] | --migrate-sources OUTPUT | --install-sources OUTPUT | --extract-sources ROM | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
 const ROM_BASE: usize = 0x0800_0000;
 const ROM_SIZE: usize = 0x0080_0000;
 fn repository_root() -> PathBuf {
@@ -475,11 +476,51 @@ fn check_shared_palette(
     }
     Ok(Some(name.to_string()))
 }
+fn binary_source(source: &Path, entry: &Value) -> Result<Vec<u8>, String> {
+    let data = fs::read(source).map_err(|error| error.to_string())?;
+    let offset = entry
+        .get("source_offset")
+        .map(|v| number(v, "binary source offset"))
+        .transpose()?
+        .unwrap_or(0);
+    let available = data
+        .len()
+        .checked_sub(offset)
+        .ok_or("binary source offset is outside file")?;
+    let length = entry
+        .get("source_length")
+        .map(|v| number(v, "binary source length"))
+        .transpose()?
+        .unwrap_or(available);
+    let end = offset
+        .checked_add(length)
+        .ok_or("binary source extent overflows")?;
+    Ok(data
+        .get(offset..end)
+        .ok_or("binary source extent is outside file")?
+        .to_vec())
+}
 fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String> {
     let kind = json_string(&entry["kind"], "component kind")?;
     let source_name = json_string(&entry["source"], "component source")?;
     let source = root_path(root, source_name)?;
     let (data, details, sources) = match kind {
+        "golden-sun-map-grid" => {
+            let width = number(&entry["width"], "grid width")?;
+            let height = number(&entry["height"], "grid height")?;
+            if width != 128 || height != 128 {
+                return Err("Golden Sun grid must contain 128x128 cells".into());
+            }
+            let data = binary_source(&source, entry)?;
+            if data.len() != width * height * 4 {
+                return Err("Golden Sun grid must contain two u8 planes and one u16 plane".into());
+            }
+            (
+                data,
+                serde_json::json!({"width":width,"height":height,"planes":["u8","u8","le-u16"]}),
+                vec![source_name.to_string()],
+            )
+        }
         "u8-array" | "s8-array" | "be-s16-array" | "le-u16-array" | "le-u32-array" => {
             let document = json(&source)?;
             let pointer = json_string(&entry["pointer"], "array pointer")?;
@@ -585,6 +626,26 @@ fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String
                 }
                 built.truncate(size);
             }
+            if let Some(offset) = entry.get("tile_offset") {
+                if kind == "gba-palette" || entry.get("frames").is_some() {
+                    return Err("tile section requires an ordinary tiled image".into());
+                }
+                let tile_bytes = if bpp == GbaBpp::Bpp4 { 32 } else { 64 };
+                let start = number(offset, "tile offset")?
+                    .checked_mul(tile_bytes)
+                    .ok_or("tile offset overflows")?;
+                let length = number(&entry["tile_count"], "tile count")?
+                    .checked_mul(tile_bytes)
+                    .ok_or("tile count overflows")?;
+                let end = start.checked_add(length).ok_or("tile extent overflows")?;
+                if length == 0 {
+                    return Err("tile section must be nonempty".into());
+                }
+                built = built
+                    .get(start..end)
+                    .ok_or("tile section is outside sheet")?
+                    .to_vec();
+            }
             (built, details, vec![source_name.to_string()])
         }
         "gba-palette-rgba" => {
@@ -606,7 +667,10 @@ fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String
         "gba-tilemap16" => {
             // The tilemap text is the whole source file, or one text value of
             // a JSON source selected by `pointer`.
-            let text = if let Some(pointer) = entry.get("pointer") {
+            let binary = entry.get("format").and_then(Value::as_str) == Some("binary");
+            let text = if binary {
+                String::new()
+            } else if let Some(pointer) = entry.get("pointer") {
                 let document = json(&source)?;
                 json_string(
                     document
@@ -618,7 +682,15 @@ fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String
             } else {
                 fs::read_to_string(&source).map_err(|e| e.to_string())?
             };
-            let entries = import_tilemap(&text).map_err(|e| e.to_string())?;
+            let entries = if binary {
+                let data = binary_source(&source, entry)?;
+                if data.is_empty() || data.len() % 2 != 0 {
+                    return Err("binary tilemap needs complete nonempty u16 words".into());
+                }
+                data
+            } else {
+                import_tilemap(&text).map_err(|e| e.to_string())?
+            };
             let built = if let Some(mode) = entry.get("delta_mode") {
                 let mode = u8::try_from(number(mode, "tilemap delta mode")?)
                     .map_err(|_| "tilemap delta mode exceeds u8")?;
@@ -732,6 +804,66 @@ fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String
         sources: dedup_sources(sources),
         details,
     })
+}
+
+#[test]
+fn binary_map_components_preserve_words_and_refuse_wrong_extents() {
+    let root = tempfile::tempdir().unwrap();
+    fs::write(root.path().join("metatiles.bin"), [0x21, 0xf4, 0x32, 0x18]).unwrap();
+    let entry = serde_json::json!({"kind":"gba-tilemap16","format":"binary","source":"metatiles.bin","size":4});
+    assert_eq!(
+        build_component(root.path(), &entry).unwrap().data,
+        [0x21, 0xf4, 0x32, 0x18]
+    );
+    fs::write(root.path().join("metatiles.bin"), [0x21, 0xf4, 0x32]).unwrap();
+    assert!(build_component(root.path(), &entry).is_err());
+    let entry = serde_json::json!({"kind":"golden-sun-map-grid","source":"map.bin","width":128,"height":128,"size":65536});
+    fs::write(root.path().join("map.bin"), vec![0; 65535]).unwrap();
+    assert!(build_component(root.path(), &entry).is_err());
+    let mut source = vec![0; 65536];
+    source[32768..32770].copy_from_slice(&[0x21, 0xf4]);
+    fs::write(root.path().join("map.bin"), &source).unwrap();
+    assert_eq!(build_component(root.path(), &entry).unwrap().data, source);
+    source.extend([0x21, 0xf4, 0x32, 0x18]);
+    fs::write(root.path().join("map.bin"), &source).unwrap();
+    let packed = serde_json::json!({"kind":"gba-tilemap16","format":"binary","source":"map.bin","size":4,"source_offset":65536,"source_length":4});
+    assert_eq!(
+        build_component(root.path(), &packed).unwrap().data,
+        [0x21, 0xf4, 0x32, 0x18]
+    );
+    let grid = serde_json::json!({"kind":"golden-sun-map-grid","source":"map.bin","width":128,"height":128,"size":65536,"source_offset":0,"source_length":65536});
+    assert_eq!(
+        build_component(root.path(), &grid).unwrap().data,
+        &source[..65536]
+    );
+    let mut invalid = packed.clone();
+    invalid["source_length"] = serde_json::json!(5);
+    assert!(build_component(root.path(), &invalid).is_err());
+    invalid["source_offset"] = serde_json::json!(usize::MAX);
+    assert!(build_component(root.path(), &invalid).is_err());
+}
+
+#[test]
+fn shared_tile_sheets_select_whole_banks_and_reject_invalid_sections() {
+    let root = tempfile::tempdir().unwrap();
+    let pixels = [vec![0x13; 32], vec![0x57; 32]].concat();
+    let palette = (0u16..16)
+        .flat_map(|i| (i | i << 5 | i << 10).to_le_bytes())
+        .collect::<Vec<_>>();
+    let image =
+        psynergy::assets::image::png_from_gba_tiles(&pixels, &palette, GbaBpp::Bpp4, 2).unwrap();
+    fs::write(root.path().join("tiles.png"), image).unwrap();
+    let entry = serde_json::json!({"kind":"gba-4bpp-tiles","source":"tiles.png","tile_offset":1,"tile_count":1,"size":32});
+    assert_eq!(
+        build_component(root.path(), &entry).unwrap().data,
+        vec![0x57; 32]
+    );
+    for (offset, count) in [(2, 1), (1, 0), (usize::MAX, 1), (1, usize::MAX)] {
+        let mut invalid = entry.clone();
+        invalid["tile_offset"] = Value::from(offset);
+        invalid["tile_count"] = Value::from(count);
+        assert!(build_component(root.path(), &invalid).is_err());
+    }
 }
 /// An integer array member: a JSON integer, or hexadecimal text such as
 /// `"0x3c"` for values that read better in the radix their consumer uses.
@@ -2045,10 +2177,18 @@ fn encode_lz_stream(decoded: &[u8], plan: &Value, arena: &[u8]) -> Result<Vec<u8
 /// selected plan. A plan array describes a sequence of streams: stream `i`
 /// encodes the components with atlas frame `i` selected, is padded to
 /// `stream_alignment`, and may read the streams before it as its arena.
+#[cfg(test)]
 fn build_general_lz(root: &Path, entry: &Value) -> Result<(Vec<u8>, Vec<String>, Value), String> {
+    build_general_lz_cached(&Context::new(root), entry)
+}
+fn build_general_lz_cached(
+    ctx: &Context,
+    entry: &Value,
+) -> Result<(Vec<u8>, Vec<String>, Value), String> {
+    let root = &ctx.root;
     let plan_name = json_string(&entry["plan"], "general-LZ plan")?;
     let plan_path = root_path(root, plan_name)?;
-    let plan_document = json(&plan_path)?;
+    let plan_document = ctx.document(&plan_path)?;
     let plan = select_plan(&plan_document, entry)?;
     let components = entry
         .get("components")
@@ -2132,15 +2272,27 @@ fn closure_self_test() -> Result<String, String> {
 }
 struct Context {
     root: PathBuf,
+    documents: std::cell::RefCell<HashMap<PathBuf, std::rc::Rc<Value>>>,
 }
 impl Context {
     fn new(root: &Path) -> Self {
         Self {
             root: root.to_path_buf(),
+            documents: Default::default(),
         }
     }
     fn source(&self, name: &str) -> Result<PathBuf, String> {
         root_path(&self.root, name)
+    }
+    fn document(&self, path: &Path) -> Result<std::rc::Rc<Value>, String> {
+        if let Some(value) = self.documents.borrow().get(path) {
+            return Ok(value.clone());
+        }
+        let value = std::rc::Rc::new(json(path)?);
+        self.documents
+            .borrow_mut()
+            .insert(path.to_path_buf(), value.clone());
+        Ok(value)
     }
 }
 #[test]
@@ -2182,6 +2334,18 @@ fn expand_series(
     for series in &series_list {
         let kind = json_string(&series["kind"], "series kind")?;
         match kind {
+            "golden-sun-native-source-series" => {
+                let name = json_string(&series["index"], "native source index")?;
+                let index = json(&ctx.source(name)?)?;
+                native::validate(&index)?;
+                entries.extend(
+                    index["regions"]
+                        .as_array()
+                        .ok_or("native regions missing")?
+                        .iter()
+                        .cloned(),
+                );
+            }
             "golden-sun-delta7-still-series" => {
                 let index_name = json_string(&series["index"], "delta7 index")?;
                 let index = json(&ctx.source(index_name)?)?;
@@ -2794,7 +2958,7 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
             ))
         }
         "golden-sun-general-lz" => {
-            let (built, sources, report) = build_general_lz(&ctx.root, entry)?;
+            let (built, sources, report) = build_general_lz_cached(ctx, entry)?;
             Ok((built, sources, report))
         }
         "golden-sun-kind2-lz" => {
@@ -2813,11 +2977,8 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
             }
             let plan_name = json_string(&entry["plan"], "kind-2 plan")?;
             let plan_path = source_path(plan_name)?;
-            let plan_document = json(&plan_path)?;
-            let plan_section = entry.get("plan_section").and_then(Value::as_str);
-            let plan = plan_section
-                .and_then(|section| plan_document.get(section))
-                .unwrap_or(&plan_document);
+            let plan_document = ctx.document(&plan_path)?;
+            let plan = select_plan(&plan_document, entry)?;
             if let Some(layout) = entry.get("layout") {
                 if layout != &Value::Null && plan.get("layout") != Some(layout) {
                     return Err("tag-2 plan layout differs from manifest".to_string());
@@ -4427,6 +4588,7 @@ fn stage_stamp_with_signature(
     }
     for name in [
         SOURCE_PATHS_MANIFEST,
+        "games/tbs/SOURCE.json",
         "games/tbs/recon/translation-units.json",
     ] {
         let path = root.join(name);
@@ -4843,6 +5005,27 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
     Ok(())
 }
 fn run(arguments: Vec<String>) -> Result<ExitCode, String> {
+    if arguments.first().map(String::as_str) == Some("--migrate-sources") {
+        if arguments.len() != 2 {
+            return Err(USAGE.into());
+        }
+        native::migrate(&repository_root(), Path::new(&arguments[1]))?;
+        return Ok(ExitCode::SUCCESS);
+    }
+    if arguments.first().map(String::as_str) == Some("--extract-sources") {
+        if arguments.len() != 2 {
+            return Err(USAGE.into());
+        }
+        native::extract(&repository_root(), Path::new(&arguments[1]))?;
+        return Ok(ExitCode::SUCCESS);
+    }
+    if arguments.first().map(String::as_str) == Some("--install-sources") {
+        if arguments.len() != 2 {
+            return Err(USAGE.into());
+        }
+        native::install(&repository_root(), Path::new(&arguments[1]))?;
+        return Ok(ExitCode::SUCCESS);
+    }
     if matches!(
         arguments.first().map(String::as_str),
         Some("--verify-smsh-midi" | "--verify-smsh-source")
@@ -4904,4 +5087,7 @@ pub fn entry(arguments: &[String]) -> ExitCode {
             ExitCode::FAILURE
         }
     }
+}
+pub(crate) fn check_source_tracking() -> Result<(), String> {
+    native::check_tracking(&repository_root())
 }

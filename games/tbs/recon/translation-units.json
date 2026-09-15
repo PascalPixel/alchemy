@@ -6,7 +6,7 @@
     {
       "id": "lunpa-scene-position-pairs",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/LUNPA/SET_POSITION_PAIRS.C",
+      "source": "games/tbs/SRC/FIELD/RUNPA_JO/SET_POSITION_PAIRS.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bf",
       "absolute_symbols": {
@@ -35,7 +35,7 @@
     {
       "id": "staged-actor-setup-37b",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/SOL_SHINDEN/SETUP_STAGED_ACTORS.C",
+      "source": "games/tbs/SRC/FIELD/SORU_SEKIZO/SETUP_STAGED_ACTORS.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37b",
       "absolute_symbols": {
@@ -164,7 +164,7 @@
     {
       "id": "retained-staged-actor-scene-37b",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/SOL_SHINDEN/STAGED_ACTOR_SCENE.C",
+      "source": "games/tbs/SRC/FIELD/SORU_SEKIZO/STAGED_ACTOR_SCENE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37b",
       "absolute_symbols": {
@@ -6054,7 +6054,7 @@
     {
       "id": "overlay-37d-unit",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/SOL_SHINDEN/SCENE_37D.C",
+      "source": "games/tbs/SRC/FIELD/SORU_MEIRO/SCENE_37D.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37d",
       "absolute_symbols": {},
@@ -6095,7 +6095,7 @@
     {
       "id": "overlay-37e-unit",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/SOL_SHINDEN/SCENE_37E.C",
+      "source": "games/tbs/SRC/FIELD/SORU_ROKA/SCENE_37E.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37e",
       "absolute_symbols": {},
@@ -6721,7 +6721,7 @@
     {
       "id": "retained-overlay-383-02001f50",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/VAULT/SELECT_ACTOR_PAIR.C",
+      "source": "games/tbs/SRC/FIELD/KUUPUAPPU_HEYA/SELECT_ACTOR_PAIR.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_383",
       "absolute_symbols": {
@@ -7028,7 +7028,7 @@
     {
       "id": "save-menu",
       "game": "tbs",
-      "source": "games/tbs/SRC/MENU/SAVE/SAVE_MENU.C",
+      "source": "games/tbs/SRC/MENU/CLEAR/SAVE_MENU.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_370",
       "absolute_symbols": {},
@@ -7069,7 +7069,7 @@
     {
       "id": "timed-actor-events",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/HEIDIA/TIMED_EVENTS.C",
+      "source": "games/tbs/SRC/FIELD/HAIDIA_HEYA/TIMED_EVENTS.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_376",
       "absolute_symbols": {
@@ -8761,7 +8761,7 @@
     {
       "id": "conditional-scene-setup",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/HEIDIA/CONDITIONAL_SETUP.C",
+      "source": "games/tbs/SRC/FIELD/HAIDIA_FUNKA/CONDITIONAL_SETUP.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_379",
       "absolute_symbols": {
@@ -9960,7 +9960,7 @@
     {
       "id": "scene-table-state-update",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/SOL_SHINDEN/TABLE_UPDATE.C",
+      "source": "games/tbs/SRC/FIELD/SORU_DOU/TABLE_UPDATE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37c",
       "absolute_symbols": {
@@ -10022,7 +10022,7 @@
     {
       "id": "story-beat-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/SHARED/BEAT.C",
+      "source": "games/tbs/SRC/FIELD/SHARED/KUUPUAPPU_RUNPA/BEAT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_384",
       "absolute_symbols": {
@@ -10287,7 +10287,7 @@
     {
       "id": "actor-placement-dialogue-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/VAULT/PLACEMENT.C",
+      "source": "games/tbs/SRC/FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_386",
       "absolute_symbols": {
@@ -10910,7 +10910,7 @@
     {
       "id": "gate-actor-placement-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/GOMA/GATE_PLACEMENT.C",
+      "source": "games/tbs/SRC/FIELD/GOMA_IKE/GATE_PLACEMENT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_388",
       "absolute_symbols": {
@@ -10984,7 +10984,7 @@
     {
       "id": "actor-message-branch-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/BILIBIN/MESSAGE_BRANCH.C",
+      "source": "games/tbs/SRC/FIELD/BIRIBINO_HEYA/MESSAGE_BRANCH.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38c",
       "absolute_symbols": {
@@ -11548,7 +11548,7 @@
     {
       "id": "entry-layout-selector-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/KOLIMA/ENTRY_LAYOUT.C",
+      "source": "games/tbs/SRC/FIELD/KORIMA_HEYA/ENTRY_LAYOUT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_390",
       "absolute_symbols": {
@@ -11771,7 +11771,7 @@
     {
       "id": "preset-layout-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/KOLIMA/PRESET_LAYOUT.C",
+      "source": "games/tbs/SRC/FIELD/KORIMA_MAGARI/PRESET_LAYOUT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_394",
       "absolute_symbols": {
@@ -12079,7 +12079,7 @@
     {
       "id": "orbiting-entity-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/BILIBIN/ORBITING.C",
+      "source": "games/tbs/SRC/FIELD/BIRIBINO_NIWA/ORBITING.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38e",
       "absolute_symbols": {
@@ -12370,7 +12370,7 @@
     {
       "id": "background-scroll-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/KOLIMA/BACKGROUND_SCROLL.C",
+      "source": "games/tbs/SRC/FIELD/TORETO_EDA/BACKGROUND_SCROLL.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_397",
       "absolute_symbols": {
@@ -12572,7 +12572,7 @@
     {
       "id": "scenario-region-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/BILIBIN/REGION.C",
+      "source": "games/tbs/SRC/FIELD/BIRIBINO_DOU/REGION.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_398",
       "absolute_symbols": {
@@ -13366,7 +13366,7 @@
     {
       "id": "flagged-dialogue-object-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/XIAN/FLAGGED_OBJECT.C",
+      "source": "games/tbs/SRC/FIELD/SHIAN_HEYA/FLAGGED_OBJECT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a1",
       "absolute_symbols": {
@@ -13756,7 +13756,7 @@
     {
       "id": "actor-motion-particle-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/ALTIN/MOTION_PARTICLE.C",
+      "source": "games/tbs/SRC/FIELD/ARUTIN_MURA/MOTION_PARTICLE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a3",
       "absolute_symbols": {
@@ -14974,7 +14974,7 @@
     {
       "id": "party-events",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/KALAY/PARTY_EVENTS.C",
+      "source": "games/tbs/SRC/FIELD/KAREI_KYUDEN/PARTY_EVENTS.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3aa",
       "absolute_symbols": {
@@ -17561,7 +17561,7 @@
     {
       "id": "facing-dialogue-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/SHARED/FACING.C",
+      "source": "games/tbs/SRC/FIELD/SHARED/RUNPA_SUHARA/FACING.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ac",
       "absolute_symbols": {
@@ -18043,7 +18043,7 @@
     {
       "id": "facing-events",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/TOLBI/FACING_EVENTS.C",
+      "source": "games/tbs/SRC/FIELD/TOREBI_HEYA/FACING_EVENTS.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b6",
       "absolute_symbols": {
@@ -19012,7 +19012,7 @@
     {
       "id": "entry-cue-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/SUHALLA/ENTRY_CUE.C",
+      "source": "games/tbs/SRC/FIELD/SUHARA_MURA/ENTRY_CUE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c1",
       "absolute_symbols": {
@@ -19199,7 +19199,7 @@
     {
       "id": "actor-record-setup-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/SUHALLA/RECORD_SETUP.C",
+      "source": "games/tbs/SRC/FIELD/SUHARA_HEYA/RECORD_SETUP.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c2",
       "absolute_symbols": {
@@ -20451,7 +20451,7 @@
     {
       "id": "actor-prompt-dialogue",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/SUHALLA/ACTOR_PROMPT.C",
+      "source": "games/tbs/SRC/FIELD/SUHARA_GATE/ACTOR_PROMPT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c3",
       "absolute_symbols": {
@@ -21160,7 +21160,7 @@
     {
       "id": "flagged-cue-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/LALIVERO/FLAGGED_CUE.C",
+      "source": "games/tbs/SRC/FIELD/RARIBERO_MACHI/FLAGGED_CUE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c6",
       "absolute_symbols": {
@@ -23255,7 +23255,7 @@
     {
       "id": "actor-pose-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/LALIVERO/POSE.C",
+      "source": "games/tbs/SRC/FIELD/RARIBERO_HEYA/POSE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c7",
       "absolute_symbols": {
@@ -24826,7 +24826,7 @@
     {
       "id": "table-load-audio-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/LEMURIAN_SHIP/TABLE_AUDIO.C",
+      "source": "games/tbs/SRC/FIELD/BABI_FUNE/TABLE_AUDIO.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ca",
       "absolute_symbols": {
@@ -24939,7 +24939,7 @@
     {
       "id": "digit-value-dialogue-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/MENU/LINK/DIGIT_VALUE.C",
+      "source": "games/tbs/SRC/MENU/LINK_LOBBY/DIGIT_VALUE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3cb",
       "absolute_symbols": {
@@ -25176,7 +25176,7 @@
     {
       "id": "empty-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/DEBUG/EMPTY.C",
+      "source": "games/tbs/SRC/DEBUG/TEST_ROOMS/EMPTY.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3cc",
       "absolute_symbols": {
@@ -25270,7 +25270,7 @@
     {
       "id": "record-count-panel-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/DEBUG/RECORD_COUNT.C",
+      "source": "games/tbs/SRC/DEBUG/ITEM_LEVEL/RECORD_COUNT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3cd",
       "absolute_symbols": {
@@ -25873,7 +25873,7 @@
     {
       "id": "actor-motion-event-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/VAULT/MOTION_EVENT.C",
+      "source": "games/tbs/SRC/FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_385",
       "absolute_symbols": {
@@ -27205,7 +27205,7 @@
     {
       "id": "extended-effect-presentation-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/SOL_SHINDEN/EXTENDED_EFFECT.C",
+      "source": "games/tbs/SRC/FIELD/SORU_FUNKA/EXTENDED_EFFECT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_381",
       "absolute_symbols": {
@@ -29055,7 +29055,7 @@
     {
       "id": "party-introduction-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/SOL_SHINDEN/PARTY_INTRO.C",
+      "source": "games/tbs/SRC/FIELD/SORU_STAR/PARTY_INTRO.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_380",
       "absolute_symbols": {
@@ -34321,7 +34321,7 @@
     {
       "id": "scene-state-coordinator-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/COLOSSO/COORDINATOR.C",
+      "source": "games/tbs/SRC/FIELD/KOROSSEO_KAWA/COORDINATOR.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ba",
       "absolute_symbols": {
@@ -36636,7 +36636,7 @@
     {
       "id": "status-dispatch-message-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/COLOSSO/STATUS_DISPATCH.C",
+      "source": "games/tbs/SRC/FIELD/KORASHIAMU_IRIGUCHI/STATUS_DISPATCH.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b9",
       "absolute_symbols": {
@@ -39862,7 +39862,7 @@
     {
       "id": "object-scale-update-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/PASSENGER_SHIP/OBJECT_SCALE.C",
+      "source": "games/tbs/SRC/FIELD/FUNE_HOBASHIRA/OBJECT_SCALE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b0",
       "absolute_symbols": {
@@ -41069,7 +41069,7 @@
     {
       "id": "story-actor-transfer-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/WORLD/ACTOR_TRANSFER.C",
+      "source": "games/tbs/SRC/FIELD/WORLD_MAP/ACTOR_TRANSFER.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_371",
       "absolute_symbols": {
@@ -44598,7 +44598,7 @@
     {
       "id": "actor-group-departure-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/HEIDIA/GROUP_DEPARTURE.C",
+      "source": "games/tbs/SRC/FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_372",
       "absolute_symbols": {
@@ -49356,7 +49356,7 @@
     {
       "id": "extended-field-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/HEIDIA/EXTENDED.C",
+      "source": "games/tbs/SRC/FIELD/HAIDIA_IE/EXTENDED.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_374",
       "absolute_symbols": {
@@ -50479,7 +50479,7 @@
     {
       "id": "guarded-step-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/SOL_SHINDEN/GUARDED_STEP.C",
+      "source": "games/tbs/SRC/FIELD/SORU_SEKIZO/GUARDED_STEP.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37b",
       "absolute_symbols": {
@@ -51506,7 +51506,7 @@
     {
       "id": "dialogue-prompt-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/VAULT/PROMPT.C",
+      "source": "games/tbs/SRC/FIELD/KUUPUAPPU_HEYA/PROMPT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_383",
       "absolute_symbols": {
@@ -56353,7 +56353,7 @@
     {
       "id": "actor-depth-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/GOMA/DEPTH.C",
+      "source": "games/tbs/SRC/FIELD/GOMA_IRIGUCHI/DEPTH.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_387",
       "absolute_symbols": {
@@ -57474,7 +57474,7 @@
     {
       "id": "palette-transition-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/KOLIMA/PALETTE.C",
+      "source": "games/tbs/SRC/FIELD/KORIMA_KI/PALETTE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_395",
       "absolute_symbols": {
@@ -59269,7 +59269,7 @@
     {
       "id": "flagged-dialogue-choreography-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/IMIL/FLAGGED_CHOREOGRAPHY.C",
+      "source": "games/tbs/SRC/FIELD/IMIRU_MURA/FLAGGED_CHOREOGRAPHY.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_399",
       "absolute_symbols": {
@@ -61423,7 +61423,7 @@
     {
       "id": "effect-spawn-sequence-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/XIAN/SPAWN_SEQUENCE.C",
+      "source": "games/tbs/SRC/FIELD/SHIAN_MURA/SPAWN_SEQUENCE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a0",
       "absolute_symbols": {
@@ -62180,7 +62180,7 @@
     {
       "id": "party-departure-prompt-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/LUNPA/PARTY_DEPARTURE.C",
+      "source": "games/tbs/SRC/FIELD/RUNPA_DOU/PARTY_DEPARTURE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ad",
       "absolute_symbols": {
@@ -65081,7 +65081,7 @@
     {
       "id": "extended-actor-choreography-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/PASSENGER_SHIP/EXTENDED_CHOREOGRAPHY.C",
+      "source": "games/tbs/SRC/FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b1",
       "absolute_symbols": {
@@ -72867,7 +72867,7 @@
     {
       "id": "scripted-actor-presentation-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/VENUS/SCRIPTED_PRESENTATION.C",
+      "source": "games/tbs/SRC/FIELD/VINASU_CHOJO/SCRIPTED_PRESENTATION.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c9",
       "absolute_symbols": {
@@ -78702,7 +78702,7 @@
     {
       "id": "overlay-38a-unit",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/GOMA/BURST.C",
+      "source": "games/tbs/SRC/FIELD/GOMA_SUIRO/BURST.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38a",
       "absolute_symbols": {
@@ -79041,7 +79041,7 @@
     {
       "id": "actor-event-setup-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/SHARED/EVENT_SETUP_SCENE.C",
+      "source": "games/tbs/SRC/FIELD/SHARED/YAMA_RAMA/EVENT_SETUP_SCENE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a2",
       "absolute_symbols": {
@@ -80916,7 +80916,7 @@
     {
       "id": "command-list-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/DEBUG/COMMAND_LIST_SCENE.C",
+      "source": "games/tbs/SRC/DEBUG/MENU_TEST/COMMAND_LIST_SCENE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ce",
       "absolute_symbols": {
@@ -84343,7 +84343,7 @@
     {
       "id": "colosso-log-rolling-stage-script",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/COLOSSO/LOG_ROLLING.C",
+      "source": "games/tbs/SRC/FIELD/KOROSSEO_MARUTA/LOG_ROLLING.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bc",
       "absolute_symbols": {
@@ -87596,7 +87596,7 @@
     {
       "id": "scene-id-selected-actor-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/LAMAKAN/SELECTED_ACTOR_SCENE_ID_SELECTED_ACTOR_SCENE.C",
+      "source": "games/tbs/SRC/FIELD/RAMAKAN_SABAKU/SELECTED_ACTOR_SCENE_ID_SELECTED_ACTOR_SCENE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a5",
       "absolute_symbols": {
@@ -88004,7 +88004,7 @@
     {
       "id": "actor-arrival-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/KALAY/ARRIVAL.C",
+      "source": "games/tbs/SRC/FIELD/KAREI_HEYA/ARRIVAL.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a9",
       "absolute_symbols": {
@@ -88471,7 +88471,7 @@
     {
       "id": "overlays-scene-actor-staged-palette",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/KOLIMA/STAGED_PALETTE.C",
+      "source": "games/tbs/SRC/FIELD/KORIMA_KAWA/STAGED_PALETTE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_393",
       "absolute_symbols": {
@@ -88617,7 +88617,7 @@
     {
       "id": "overlays-scene-actor-staged-particle",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/KOLIMA/STAGED_PARTICLE.C",
+      "source": "games/tbs/SRC/FIELD/KORIMA_HIROBA/STAGED_PARTICLE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_392",
       "absolute_symbols": {
@@ -88952,7 +88952,7 @@
     {
       "id": "overlays-scene-dialogue-actor-presentation",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/VAULT/ACTOR_PRESENTATION.C",
+      "source": "games/tbs/SRC/FIELD/KUUPUAPPU_MURA/ACTOR_PRESENTATION.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_382",
       "absolute_symbols": {
@@ -90646,7 +90646,7 @@
     {
       "id": "overlays-scene-actor-proximity",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/TOLBI/PROXIMITY.C",
+      "source": "games/tbs/SRC/FIELD/TOREBI_MACHI/PROXIMITY.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b5",
       "absolute_symbols": {
@@ -90949,7 +90949,7 @@
     {
       "id": "overlays-scene-field-extended-sequence",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/KOLIMA/EXTENDED_SEQUENCE.C",
+      "source": "games/tbs/SRC/FIELD/KORIMA_MURA/EXTENDED_SEQUENCE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38f",
       "absolute_symbols": {
@@ -91681,7 +91681,7 @@
     {
       "id": "overlays-scene-story-branching-formation",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/KOLIMA/BRANCHING_FORMATION.C",
+      "source": "games/tbs/SRC/FIELD/KORIMA_HASHI/BRANCHING_FORMATION.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_391",
       "absolute_symbols": {
@@ -92418,7 +92418,7 @@
     {
       "id": "overlays-scene-actor-staged-placement",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/GOMA/STAGED_PLACEMENT.C",
+      "source": "games/tbs/SRC/FIELD/GOMA_HASHIRA/STAGED_PLACEMENT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_389",
       "absolute_symbols": {
@@ -93202,7 +93202,7 @@
     {
       "id": "map-locations-heidia-village-story-village-story-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/MERCURY/AERIE.C",
+      "source": "games/tbs/SRC/FIELD/MAKYURI_CHOJO/AERIE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39d",
       "absolute_symbols": {
@@ -94559,7 +94559,7 @@
     {
       "id": "map-locations-sol-shinden-inner-sanctum-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/SOL_SHINDEN/INNER_SANCTUM.C",
+      "source": "games/tbs/SRC/FIELD/SORU_NICHIGETSU/INNER_SANCTUM.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37a",
       "absolute_symbols": {
@@ -96677,7 +96677,7 @@
     {
       "id": "overlays-scene-dialogue-flagged-message",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/SHARED/FLAGGED_MESSAGE.C",
+      "source": "games/tbs/SRC/FIELD/SHARED/KAREI_TOREBI/FLAGGED_MESSAGE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ae",
       "absolute_symbols": {
@@ -98557,7 +98557,7 @@
     {
       "id": "overlays-scene-actor-selected-presentation",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/SUHALLA/SELECTED_PRESENTATION.C",
+      "source": "games/tbs/SRC/FIELD/SUHARA_SABAKU/SELECTED_PRESENTATION.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c0",
       "absolute_symbols": {
@@ -99151,7 +99151,7 @@
     {
       "id": "overlays-scene-state-select-by-runtime-selector",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/VAULT/SELECT_BY_RUNTIME_SELECTOR.C",
+      "source": "games/tbs/SRC/FIELD/KUUPUAPPU_DOU/SELECT_BY_RUNTIME_SELECTOR.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a7",
       "absolute_symbols": {
@@ -99852,7 +99852,7 @@
     {
       "id": "overlays-scene-story-flag-branched",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/BILIBIN/FLAG_BRANCHED.C",
+      "source": "games/tbs/SRC/FIELD/BIRIBINO_KYUDEN/FLAG_BRANCHED.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38d",
       "absolute_symbols": {
@@ -101404,7 +101404,7 @@
     {
       "id": "overlays-scene-actor-facing-gated",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/SHARED/FACING_GATED.C",
+      "source": "games/tbs/SRC/FIELD/SHARED/SHINDEN_HEYA/FACING_GATED.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_378",
       "absolute_symbols": {
@@ -104772,7 +104772,7 @@
     {
       "id": "overlays-scene-story-actor-sequence",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/LUNPA/ACTOR_SEQUENCE.C",
+      "source": "games/tbs/SRC/FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3ab",
       "absolute_symbols": {
@@ -106620,7 +106620,7 @@
     {
       "id": "overlays-scene-dialogue-choice",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/TOLBI/CHOICE.C",
+      "source": "games/tbs/SRC/FIELD/TOREBI_KYUDEN/CHOICE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b8",
       "absolute_symbols": {
@@ -109409,7 +109409,7 @@
     {
       "id": "field-probe-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/MERCURY/FIELD_PROBE_SCENE.C",
+      "source": "games/tbs/SRC/FIELD/MAKYURI_HEYA/FIELD_PROBE_SCENE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39c",
       "absolute_symbols": {
@@ -113739,7 +113739,7 @@
     {
       "id": "heidia-village-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/LUNPA/FORTRESS.C",
+      "source": "games/tbs/SRC/FIELD/RUNPA_JO/FORTRESS.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bf",
       "editions": {
@@ -121344,7 +121344,7 @@
     {
       "id": "actor-transition-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/SHARED/TRANSITION.C",
+      "source": "games/tbs/SRC/FIELD/SHARED/IMIRU_FUCHIN/TRANSITION.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39a",
       "absolute_symbols": {
@@ -124072,7 +124072,7 @@
     {
       "id": "multi-encounter-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/PASSENGER_SHIP/MULTI_ENCOUNTER.C",
+      "source": "games/tbs/SRC/FIELD/FUNE_KANPAN/MULTI_ENCOUNTER.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3af",
       "absolute_symbols": {
@@ -127391,7 +127391,7 @@
     {
       "id": "map-init-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/BABI_LIGHTHOUSE/MAP_INIT.C",
+      "source": "games/tbs/SRC/FIELD/BABI_CHIKA/MAP_INIT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c4",
       "absolute_symbols": {
@@ -129494,7 +129494,7 @@
     {
       "id": "task-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/COLOSSO/TASK.C",
+      "source": "games/tbs/SRC/FIELD/KOROSSEO_KABE/TASK.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bb",
       "absolute_symbols": {
@@ -131538,7 +131538,7 @@
     {
       "id": "staged-step-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/CROSSBONE/STAGED_STEP.C",
+      "source": "games/tbs/SRC/FIELD/TAKARA_ASHIBA/STAGED_STEP.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b4",
       "absolute_symbols": {
@@ -133713,7 +133713,7 @@
     {
       "id": "staged-motion-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/HEIDIA/STAGED_MOTION.C",
+      "source": "games/tbs/SRC/FIELD/HAIDIA_MURA/STAGED_MOTION.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_373",
       "absolute_symbols": {
@@ -139315,7 +139315,7 @@
     {
       "id": "staged-navigation-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/CROSSBONE/STAGED_NAV.C",
+      "source": "games/tbs/SRC/FIELD/TAKARA_HASHIRA/STAGED_NAV.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b3",
       "absolute_symbols": {
@@ -140508,7 +140508,7 @@
     {
       "id": "branching-event-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/BABI_LIGHTHOUSE/BRANCHING_EVENT.C",
+      "source": "games/tbs/SRC/FIELD/BABI_IRIGUCHI/BRANCHING_EVENT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c5",
       "absolute_symbols": {
@@ -143659,7 +143659,7 @@
     {
       "id": "staged-group-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/KALAY/STAGED_GROUP.C",
+      "source": "games/tbs/SRC/FIELD/KAREI_MACHI/STAGED_GROUP.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a8",
       "absolute_symbols": {
@@ -148325,7 +148325,7 @@
     {
       "id": "waypoint-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/MOGALL/WAYPOINT.C",
+      "source": "games/tbs/SRC/FIELD/MOGORU_MORI/WAYPOINT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39f",
       "absolute_symbols": {
@@ -150415,7 +150415,7 @@
     {
       "id": "set-piece-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/ALTIN/SET_PIECE.C",
+      "source": "games/tbs/SRC/FIELD/ARUTIN_YAMA/SET_PIECE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a4",
       "absolute_symbols": {
@@ -153161,7 +153161,7 @@
     {
       "id": "staged-pair-region-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/HEIDIA/STAGED_PAIR_REGION.C",
+      "source": "games/tbs/SRC/FIELD/HAIDIA_DOU/STAGED_PAIR_REGION.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3a6",
       "absolute_symbols": {
@@ -154156,7 +154156,7 @@
     {
       "id": "extended-presentation-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/ALTMILLER/EXTENDED_PRESENTATION.C",
+      "source": "games/tbs/SRC/FIELD/ARUTAMIRA_DOU/EXTENDED_PRESENTATION.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bd",
       "absolute_symbols": {
@@ -155809,7 +155809,7 @@
     {
       "id": "prologue-route-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/CROSSBONE/ISLAND_AND_CAVES.C",
+      "source": "games/tbs/SRC/FIELD/TAKARA_SHIMA/ISLAND_AND_CAVES.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b2",
       "absolute_symbols": {
@@ -158126,7 +158126,7 @@
     {
       "id": "staged-effect-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/MERCURY/STAGED_EFFECT.C",
+      "source": "games/tbs/SRC/FIELD/MAKYURI_IRIGUCHI/STAGED_EFFECT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39b",
       "absolute_symbols": {
@@ -159099,7 +159099,7 @@
     {
       "id": "push-puzzle-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/BILIBIN/PUSH_PUZZLE.C",
+      "source": "games/tbs/SRC/FIELD/BIRIBINO_MURA/PUSH_PUZZLE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_38b",
       "absolute_symbols": {
@@ -160305,7 +160305,7 @@
     {
       "id": "facing-target-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/SHARED/FACING_TARGET.C",
+      "source": "games/tbs/SRC/FIELD/SHARED/HAIDIA_BABI/FACING_TARGET.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_377",
       "absolute_symbols": {
@@ -161541,7 +161541,7 @@
     {
       "id": "scenario-dispatch-37f",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/SOL_SHINDEN/SCENARIO_DISPATCH.C",
+      "source": "games/tbs/SRC/FIELD/SORU_IRIGUCHI/SCENARIO_DISPATCH.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37f",
       "absolute_symbols": {
@@ -164084,7 +164084,7 @@
     {
       "id": "scene-topic",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/TOLBI/TOPIC.C",
+      "source": "games/tbs/SRC/FIELD/TOREBI_IZUMI/TOPIC.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b7",
       "absolute_symbols": {
@@ -164297,7 +164297,7 @@
     {
       "id": "staged-pair-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/GONDOWAN/STAGED_PAIR.C",
+      "source": "games/tbs/SRC/FIELD/KARAGORU_DOU/STAGED_PAIR.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3be",
       "absolute_symbols": {
@@ -165168,7 +165168,7 @@
     {
       "id": "field-entry-setup",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/VENUS/ENTRY_SETUP.C",
+      "source": "games/tbs/SRC/FIELD/VINASU_HEYA/ENTRY_SETUP.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c8",
       "absolute_symbols": {
@@ -167254,7 +167254,7 @@
     {
       "id": "four-actor-encounter",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/KOLIMA/FOUR_ENCOUNTER.C",
+      "source": "games/tbs/SRC/FIELD/TORETO_HEYA/FOUR_ENCOUNTER.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_396",
       "absolute_symbols": {
@@ -168619,7 +168619,7 @@
     {
       "id": "overlays-scene-story-progress-actor",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/HEIDIA/PROGRESS_ACTOR.C",
+      "source": "games/tbs/SRC/FIELD/HAIDIA_SUKURETA/PROGRESS_ACTOR.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_375",
       "absolute_symbols": {
@@ -170729,7 +170729,7 @@
     {
       "id": "school-and-roof-scene",
       "game": "tbs",
-      "source": "games/tbs/SRC/FIELD/SHARED/TEMPLE_ROOMS.C",
+      "source": "games/tbs/SRC/FIELD/SHARED/SHIAN_JIIN/TEMPLE_ROOMS.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39e",
       "absolute_symbols": {

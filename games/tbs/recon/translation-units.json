@@ -106347,6 +106347,30 @@
         "Effect_Phase_03001e40": {
           "address": "0x03001e40",
           "kind": "data"
+        },
+        "Func_020021ba_dialogue_07f4": {
+          "address": "0x020099c0",
+          "kind": "thumb"
+        },
+        "Func_020021c4_dialogue_07f4": {
+          "address": "0x020099c0",
+          "kind": "thumb"
+        },
+        "Func_02002282_dialogue_07f4": {
+          "address": "0x02009a70",
+          "kind": "thumb"
+        },
+        "Func_02002292_dialogue_07f4": {
+          "address": "0x02009a70",
+          "kind": "thumb"
+        },
+        "Func_0200229a_dialogue_07f4": {
+          "address": "0x02009a80",
+          "kind": "thumb"
+        },
+        "Func_020022aa_dialogue_07f4": {
+          "address": "0x02009a80",
+          "kind": "thumb"
         }
       },
       "local_symbols": [],
@@ -106434,6 +106458,11 @@
         {
           "address": "0x02000764",
           "extent": 144,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020007f4",
+          "extent": 80,
           "state": "exact-c"
         },
         {

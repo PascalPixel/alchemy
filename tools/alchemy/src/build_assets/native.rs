@@ -1,5 +1,9 @@
 use super::*;
+mod character;
+mod identity;
 mod tracking;
+pub(super) use character::migrate as migrate_characters;
+pub(super) use identity::audit as audit_characters;
 use serde_json::json;
 use std::collections::BTreeSet;
 pub(super) use tracking::check as check_tracking;
@@ -881,6 +885,7 @@ pub fn extract(root: &Path, rom_path: &Path) -> Result<(), String> {
     }
     let regions = index["regions"].as_array().unwrap();
     let ctx = Context::new(root);
+    character::extract_all(root, &index["private_inputs"], &rom)?;
     let mut maps: BTreeMap<String, Vec<u8>> = BTreeMap::new();
     let mut tiles: BTreeMap<String, Vec<u8>> = BTreeMap::new();
     let mut banks: BTreeMap<usize, Vec<u16>> = BTreeMap::new();
@@ -889,11 +894,42 @@ pub fn extract(root: &Path, rom_path: &Path) -> Result<(), String> {
         .ok_or("missing private inputs")?
     {
         let source = json_string(&input["source"], "private source")?;
+        let kind = json_string(&input["kind"], "private kind")?;
+        if matches!(kind, "sprite" | "sprite-atlas") {
+            continue;
+        }
         let target = address(&input["region_address"])?;
         let region = regions
             .iter()
             .find(|r| address(&r["address"]).ok() == Some(target))
             .ok_or("missing input region")?;
+        if kind == "palette-raw" {
+            let start = target.checked_sub(ROM_BASE).ok_or("input precedes ROM")?;
+            let end = start
+                .checked_add(address(&region["size"])?)
+                .ok_or("palette extent overflows")?;
+            let data = rom.get(start..end).ok_or("palette outside ROM")?;
+            if sha256::hex(data) != json_string(&input["decoded_sha256"], "palette digest")? {
+                return Err("raw palette differs".into());
+            }
+            for (slot, bank) in input["banks"]
+                .as_array()
+                .ok_or("missing palette banks")?
+                .iter()
+                .zip(data.chunks_exact(32))
+            {
+                let values = bank
+                    .chunks_exact(2)
+                    .map(|b| u16::from_le_bytes([b[0], b[1]]))
+                    .collect::<Vec<_>>();
+                let slot = address(slot)?;
+                if banks.get(&slot).is_some_and(|existing| *existing != values) {
+                    return Err("shared raw palette bank differs".into());
+                }
+                banks.insert(slot, values);
+            }
+            continue;
+        }
         let plan_path = root_path(root, json_string(&region["plan"], "input plan")?)?;
         let plan_document = ctx.document(&plan_path)?;
         let plan = select_plan(&plan_document, region)?;
@@ -919,7 +955,6 @@ pub fn extract(root: &Path, rom_path: &Path) -> Result<(), String> {
             codec => return Err(format!("unsupported private input codec {codec}")),
         }
         .map_err(|e| e.to_string())?;
-        let kind = json_string(&input["kind"], "private kind")?;
         if kind == "metatiles" {
             decoded = decode_metatiles(&decoded, address(&input["transform_mode"])? as u8)?;
         }

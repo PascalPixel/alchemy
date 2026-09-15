@@ -151,6 +151,15 @@ pub struct EditionOwner {
 }
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
+pub struct CompilerGap {
+    #[serde(deserialize_with = "hex32")]
+    pub start: u32,
+    #[serde(deserialize_with = "hex32")]
+    pub end: u32,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct TranslationUnit {
     pub id: String,
     pub game: String,
@@ -164,6 +173,8 @@ pub struct TranslationUnit {
     #[serde(default)]
     pub local_symbols: Vec<TranslationSymbol>,
     pub owners: Vec<TranslationOwner>,
+    #[serde(default)]
+    pub compiler_gaps: Vec<CompilerGap>,
 }
 
 impl TranslationUnit {
@@ -415,6 +426,26 @@ impl TranslationUnits {
                     "{}: declared symbol extents overlap or overflow",
                     unit.id
                 ));
+            }
+            if !unit.compiler_gaps.is_empty() && (unit.overlay.is_none() || !unit.exact()) {
+                return Err(format!(
+                    "{}: compiler gaps require an exact overlay unit",
+                    unit.id
+                ));
+            }
+            let mut gaps = BTreeSet::new();
+            for gap in &unit.compiler_gaps {
+                let adjacent = unit.owners.windows(2).any(|pair| {
+                    pair[0].address.checked_add(pair[0].extent as u32) == Some(gap.start)
+                        && pair[1].address == gap.end
+                });
+                if !adjacent
+                    || gap.end.checked_sub(gap.start) != Some(2)
+                    || gap.end & 3 != 0
+                    || !gaps.insert(gap.start)
+                {
+                    return Err(format!("{}: invalid compiler alignment gap", unit.id));
+                }
             }
             for (name, symbol) in &unit.absolute_symbols {
                 if !c_identifier(name)

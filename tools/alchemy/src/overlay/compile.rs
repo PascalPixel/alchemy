@@ -567,6 +567,18 @@ fn compile_overlay_unit(
             work,
         )?;
         let mut data = fs::read(&piece).map_err(|error| format!("{piece}: {error}"))?;
+        if placement.is_none() {
+            for gap in &unit.compiler_gaps {
+                if address.checked_add(*extent as u32) != Some(gap.start) {
+                    continue;
+                }
+                let gap_len = (gap.end - gap.start) as usize;
+                let loaded_reference = overlay::load(reference, 0)?;
+                let offset = (gap.start - overlay::RESOURCE_BASE) as usize;
+                verify_compiler_gap(&data, *extent, &loaded_reference, offset, gap_len)
+                    .map_err(|error| format!("{}: {error} at {:08x}", unit.id, gap.start))?;
+            }
+        }
         // The assembler rounds a section up to its alignment; a function of
         // an odd number of halfwords carries two bytes of fill past its
         // declared extent, and the image's own alignment halfword owns that
@@ -587,6 +599,25 @@ fn compile_overlay_unit(
         });
     }
     Ok(compiled)
+}
+
+fn verify_compiler_gap(
+    section: &[u8],
+    owner_extent: usize,
+    reference: &[u8],
+    offset: usize,
+    length: usize,
+) -> Result<(), String> {
+    let emitted = section
+        .get(owner_extent..owner_extent + length)
+        .ok_or("missing compiler gap bytes")?;
+    let expected = reference
+        .get(offset..offset + length)
+        .ok_or("compiler gap outside reference")?;
+    if emitted != expected {
+        return Err("compiler gap differs".into());
+    }
+    Ok(())
 }
 
 /// Gives every listed function its own `.text.<symbol>` section: the
@@ -1032,6 +1063,17 @@ pub(crate) fn split_lines(text: &str) -> Vec<String> {
 }
 #[cfg(test)]
 mod source_activation_tests {
+    #[test]
+    fn compiler_gap_rejects_modern_nop_fill_and_missing_bytes() {
+        let reference = [0x70, 0x47, 0, 0];
+        assert!(super::verify_compiler_gap(&reference, 2, &reference, 2, 2).is_ok());
+        assert!(
+            super::verify_compiler_gap(&[0x70, 0x47, 0xc0, 0x46], 2, &reference, 2, 2).is_err()
+        );
+        assert!(super::verify_compiler_gap(&reference[..2], 2, &reference, 2, 2).is_err());
+        assert!(super::verify_compiler_gap(&reference, 2, &reference[..2], 2, 2).is_err());
+    }
+
     use super::*;
     use crate::compiler::translation_units::{OwnerState, TranslationOwner};
     use tempfile::tempdir;
@@ -1135,6 +1177,7 @@ mod source_activation_tests {
             absolute_symbols: BTreeMap::new(),
             editions: BTreeMap::new(),
             local_symbols: Vec::new(),
+            compiler_gaps: Vec::new(),
             owners: vec![owner(0x0200_0100), owner(0x0200_0104)],
         };
         let check = |units: &[TranslationUnit]| {

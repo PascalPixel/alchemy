@@ -7,7 +7,7 @@ mod owners;
 mod publication;
 mod retained;
 
-const USAGE: &str = "usage: alchemy check <publication|commit-progress|owners|retained|coverage|integrate|no-asm|progress|routes> [args]";
+const USAGE: &str = "usage: alchemy check <publication|commit-progress|source-tracking|owners|retained|coverage|integrate|no-asm|progress|routes> [args]";
 
 fn routes(arguments: &[String]) -> ExitCode {
     if arguments == ["--standard"] {
@@ -30,6 +30,15 @@ pub fn entry(arguments: &[String]) -> ExitCode {
     };
     let rest = &arguments[1..];
     match command {
+        "source-tracking" if rest.is_empty() => {
+            match crate::build_assets::check_source_tracking() {
+                Ok(()) => ExitCode::SUCCESS,
+                Err(error) => {
+                    eprintln!("error: {error}");
+                    ExitCode::FAILURE
+                }
+            }
+        }
         "publication" => publication::entry(rest),
         "commit-progress" => commit_progress::entry(rest),
         "owners" => owners::entry(rest),

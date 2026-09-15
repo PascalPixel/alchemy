@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3ab:02000104": {
+      "name": "SceneActor_ApplyMotionDeltas",
+      "source": "FIELD/LUNPA/ACTOR_SEQUENCE.C"
+    },
     "resource_3ab:020007f4": {
       "name": "SceneDialogue_RunActorEighteenFlaggedLine",
       "source": "FIELD/LUNPA/ACTOR_SEQUENCE.C"

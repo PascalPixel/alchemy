@@ -21,7 +21,7 @@ first edition rebuilt in full.
 > Previously reported at 70%. Some assembly progress was retracted after a
 > stricter audit. We’re working our way back to 70% with verified recoveries.
 
-![ROM contents](games/tbs/assets/readme/tbs-en-rom.svg?v=9c0353131cffd5b5)
+![ROM contents](games/tbs/assets/readme/tbs-en-rom.svg?v=88120e93095066dc)
 
 ## What this is
 

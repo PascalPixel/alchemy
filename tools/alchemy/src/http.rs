@@ -65,7 +65,7 @@ impl Response {
         Ok(())
     }
 }
-fn request(stream: &TcpStream) -> Result<(String, String), &'static str> {
+fn request(stream: impl std::io::Read) -> Result<(String, String, bool), &'static str> {
     let mut r = BufReader::new(stream);
     let mut line = String::new();
     if r.read_line(&mut line).map_err(|_| "read failed")? == 0 {
@@ -81,6 +81,7 @@ fn request(stream: &TcpStream) -> Result<(String, String), &'static str> {
     if !version.starts_with("HTTP/1.") {
         return Err("bad request");
     }
+    let mut action = false;
     loop {
         line.clear();
         if r.read_line(&mut line).map_err(|_| "read failed")? == 0 {
@@ -89,8 +90,15 @@ fn request(stream: &TcpStream) -> Result<(String, String), &'static str> {
         if line == "\r\n" || line == "\n" {
             break;
         }
+        if let Some((name, value)) = line.split_once(':') {
+            action |= name.eq_ignore_ascii_case("X-Alchemy-Action") && value.trim() == "1";
+        }
     }
-    Ok((method, target.split('?').next().unwrap_or(&target).into()))
+    Ok((
+        method,
+        target.split('?').next().unwrap_or(&target).into(),
+        action,
+    ))
 }
 
 pub fn shell(title: &str, styles: &str) -> Response {
@@ -106,21 +114,39 @@ pub fn font() -> Response {
 pub fn not_found() -> Response {
     Response::new(404, "Not Found", None, "no-store", b"Not found".to_vec())
 }
-pub fn run(listener: TcpListener, response: fn(&str) -> Response) -> std::io::Result<()> {
+/// Explicit browser actions require POST plus a non-simple header. Cross-origin
+/// pages cannot send that header: this transport does not allow CORS preflight.
+pub fn run(
+    listener: TcpListener,
+    response: fn(&str) -> Response,
+    action: fn(&str) -> Response,
+) -> std::io::Result<()> {
     for stream in listener.incoming() {
         let stream = stream?;
-        std::thread::spawn(move || serve(stream, response));
+        std::thread::spawn(move || serve(stream, response, action));
     }
     Ok(())
 }
-fn serve(mut stream: TcpStream, response: fn(&str) -> Response) {
+fn serve(mut stream: TcpStream, response: fn(&str) -> Response, action: fn(&str) -> Response) {
     let _ = stream.set_read_timeout(Some(Duration::from_secs(5)));
     let _ = stream.set_write_timeout(Some(Duration::from_secs(10)));
-    let Ok((method, path)) = request(&stream) else {
+    let Ok((method, path, explicit_action)) = request(&stream) else {
         return;
     };
-    let reply = if method == "GET" || method == "HEAD" {
-        response(&path)
+    let reply = route(&method, &path, explicit_action, response, action);
+    let _ = reply.write(&mut stream, method != "HEAD");
+}
+fn route(
+    method: &str,
+    path: &str,
+    explicit_action: bool,
+    response: fn(&str) -> Response,
+    action: fn(&str) -> Response,
+) -> Response {
+    if method == "GET" || method == "HEAD" {
+        response(path)
+    } else if method == "POST" && explicit_action {
+        action(path)
     } else {
         Response::new(
             405,
@@ -129,12 +155,42 @@ fn serve(mut stream: TcpStream, response: fn(&str) -> Response) {
             "no-store",
             b"Method not allowed".to_vec(),
         )
-    };
-    let _ = reply.write(&mut stream, method != "HEAD");
+    }
 }
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn browser_actions_require_post_and_explicit_header() {
+        fn read_route(_: &str) -> Response {
+            Response::new(404, "Not Found", None, "no-store", b"read".to_vec())
+        }
+        fn action_route(path: &str) -> Response {
+            Response::new(200, "OK", None, "no-store", path.as_bytes().to_vec())
+        }
+        for (method, header, status) in [
+            ("GET", true, 404),
+            ("HEAD", true, 404),
+            ("POST", false, 405),
+            ("OPTIONS", true, 405),
+            ("POST", true, 200),
+        ] {
+            let request_text = format!(
+                "{method} /reveal/ART%2Fsheet.PNG HTTP/1.1\r\n{}\r\n",
+                if header {
+                    "X-Alchemy-Action: 1\r\n"
+                } else {
+                    ""
+                }
+            );
+            let (method, path, explicit) = request(request_text.as_bytes()).unwrap();
+            let reply = route(&method, &path, explicit, read_route, action_route);
+            assert_eq!(reply.status, status);
+            if status == 200 {
+                assert_eq!(reply.body, b"/reveal/ART%2Fsheet.PNG");
+            }
+        }
+    }
     #[test]
     fn invalid_bind_never_falls_back() {
         assert!(bind(&["--bind".into(), "nonsense".into()], "dashboard", 4650).is_err());

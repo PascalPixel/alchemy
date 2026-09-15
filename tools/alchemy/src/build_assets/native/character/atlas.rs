@@ -7,10 +7,30 @@ pub(super) fn extract(root: &Path, inputs: &Value, rom: &[u8]) -> Result<(), Str
     let ctx = Context::new(root);
     let mut sheets: BTreeMap<String, (usize, usize, Vec<u8>, Vec<bool>)> = BTreeMap::new();
     for input in inputs.as_array().ok_or("private input list missing")? {
-        if !matches!(input["kind"].as_str(), Some("sprite" | "sprite-atlas")) {
+        if !matches!(
+            input["kind"].as_str(),
+            Some(
+                "sprite"
+                    | "sprite-atlas"
+                    | "archive-atlas"
+                    | "still-atlas"
+                    | "tile-atlas"
+                    | "portrait-atlas"
+            )
+        ) {
             continue;
         }
-        let decoded = pixels(&ctx, input, rom)?;
+        let decoded = if input["kind"] == "portrait-atlas" {
+            super::super::portrait::pixels(input, rom)?
+        } else if input["kind"] == "tile-atlas" {
+            super::super::tile::pixels(input, rom)?
+        } else if input["kind"] == "still-atlas" {
+            super::super::still::pixels(input, rom)?
+        } else if input["kind"] == "archive-atlas" {
+            super::super::graphics::pixels(&ctx, input, rom)?
+        } else {
+            pixels(&ctx, input, rom)?
+        };
         let source = json_string(&input["source"], "sprite source")?;
         let w = address(&input["width"])?;
         let h = address(&input["height"])?;

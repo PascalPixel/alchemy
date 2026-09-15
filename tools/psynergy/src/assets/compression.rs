@@ -61,6 +61,70 @@ pub fn encode_mtf4(pixels: &[u8]) -> Result<Vec<u8>, AssetError> {
     Ok(bits.bytes)
 }
 
+pub fn decode_mtf4(bytes: &[u8], count: usize) -> Result<Vec<u8>, AssetError> {
+    const PREFIX: [&str; 15] = [
+        "00",
+        "010",
+        "011",
+        "100",
+        "101",
+        "110",
+        "11100",
+        "11101",
+        "11110",
+        "1111100",
+        "1111101",
+        "1111110",
+        "111111100",
+        "111111101",
+        "111111110",
+    ];
+    let mut cursor = 0usize;
+    let mut read = || -> Result<u8, AssetError> {
+        let byte = bytes
+            .get(cursor / 8)
+            .ok_or_else(|| AssetError("truncated MTF4 stream".into()))?;
+        let bit = (byte >> (cursor % 8)) & 1;
+        cursor += 1;
+        Ok(bit)
+    };
+    let mut table: [u8; 16] = std::array::from_fn(|i| i as u8);
+    let mut pixels = Vec::new();
+    for _ in 0..count {
+        let mut index = 0;
+        if read()? != 0 {
+            let mut prefix = String::new();
+            loop {
+                prefix.push(if read()? == 0 { '0' } else { '1' });
+                if let Some(slot) = PREFIX.iter().position(|p| *p == prefix) {
+                    index = slot + 1;
+                    break;
+                }
+                if !PREFIX.iter().any(|p| p.starts_with(&prefix)) {
+                    return Err(AssetError("invalid MTF4 prefix or early terminator".into()));
+                }
+            }
+        }
+        pixels.push(table[index]);
+        table[..=index].rotate_right(1);
+    }
+    for _ in 0..10 {
+        if read()? != 1 {
+            return Err(AssetError("MTF4 terminator differs".into()));
+        }
+    }
+    Ok(pixels)
+}
+
+#[test]
+fn mtf4_inverse_checks_order_and_termination() {
+    let pixels = (0..16u8).cycle().take(1024).collect::<Vec<_>>();
+    let encoded = encode_mtf4(&pixels).unwrap();
+    assert_eq!(decode_mtf4(&encoded, pixels.len()).unwrap(), pixels);
+    assert!(decode_mtf4(&encoded[..encoded.len() - 2], pixels.len()).is_err());
+    assert!(decode_mtf4(&encoded, pixels.len() - 1).is_err());
+}
+
 /// Zero-skip byte stream: literals 1..=0xdf, runs of up to 32 zeros as
 /// `0xdf + count`, and a terminating zero byte.
 pub fn encode_zero_skip(pixels: &[u8]) -> Result<Vec<u8>, AssetError> {
@@ -157,6 +221,70 @@ pub fn encode_delta7(pixels: &[u8]) -> Result<Vec<u8>, AssetError> {
     }
     bits.align(16, 0);
     Ok(bits.bytes)
+}
+
+pub fn decode_delta7(bytes: &[u8], count: usize) -> Result<Vec<u8>, AssetError> {
+    let mut cursor = 0usize;
+    let mut read = |n: usize| -> Result<u8, AssetError> {
+        let mut value = 0;
+        for shift in 0..n {
+            let byte = bytes
+                .get(cursor / 8)
+                .ok_or_else(|| AssetError("truncated delta7 stream".into()))?;
+            value |= ((byte >> (cursor % 8)) & 1) << shift;
+            cursor += 1;
+        }
+        Ok(value)
+    };
+    let mut pixels = Vec::new();
+    let mut previous = 0u8;
+    for _ in 0..count {
+        let delta = match read(2)? {
+            0 => 0,
+            1 => {
+                if read(1)? == 0 {
+                    1 + read(1)?
+                } else {
+                    127 - read(1)?
+                }
+            }
+            3 => {
+                if read(1)? == 0 {
+                    3 + read(3)?
+                } else {
+                    125 - read(3)?
+                }
+            }
+            _ => {
+                if read(1)? != 0 {
+                    let pixel = read(7)?;
+                    pixels.push(pixel);
+                    previous = pixel;
+                    continue;
+                }
+                if read(1)? == 0 {
+                    11 + read(4)?
+                } else {
+                    117 - read(4)?
+                }
+            }
+        };
+        previous = previous.wrapping_add(delta) & 127;
+        pixels.push(previous);
+    }
+    Ok(pixels)
+}
+
+#[test]
+fn delta7_inverse_covers_every_transition() {
+    for previous in 0..128u8 {
+        for pixel in 0..128u8 {
+            let input = [previous, pixel];
+            let encoded = encode_delta7(&input).unwrap();
+            assert_eq!(decode_delta7(&encoded, 2).unwrap(), input);
+        }
+    }
+    assert!(decode_delta7(&[], 1).is_err());
 }
 
 /// Delta-code little-endian 16-bit tile entries behind a mode byte: mode 0

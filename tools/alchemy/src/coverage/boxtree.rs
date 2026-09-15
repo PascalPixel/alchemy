@@ -143,6 +143,17 @@ fn directories(tiles: Vec<Tile>, base: &str) -> Vec<Tile> {
     }
     out
 }
+fn source_name(source: &str) -> &str {
+    match source.trim_end_matches('/') {
+        "games/tbs" => "The Broken Seal",
+        _ => source
+            .trim_end_matches('/')
+            .rsplit('/')
+            .next()
+            .unwrap_or(source),
+    }
+}
+
 fn draw_tiles(
     out: &mut Vec<String>,
     tiles: &[&Tile],
@@ -187,7 +198,11 @@ fn draw_tiles(
         }
         let label = format!(
             "{}: {} bytes · {}{}{}",
-            tile.label,
+            if folder {
+                source_name(tile.source.as_deref().unwrap())
+            } else {
+                &tile.label
+            },
             commas(tile.bytes),
             status,
             if container {
@@ -240,17 +255,7 @@ fn draw_tiles(
                 ));
             }
         }
-        let name = tile
-            .source
-            .as_deref()
-            .map(|source| {
-                source
-                    .trim_end_matches('/')
-                    .rsplit('/')
-                    .next()
-                    .unwrap_or(source)
-            })
-            .unwrap_or("");
+        let name = tile.source.as_deref().map(source_name).unwrap_or("");
         let caption = caption(name, body, folder).filter(|(_, bounds)| {
             (tile.source.is_none() || tile.source.as_deref() != parent_source)
                 && !reserved.iter().any(|r| {
@@ -462,13 +467,9 @@ pub fn svg_sized(tree: &str, map: &CoverageMap, width: f64, height: f64, folder:
         .as_str()
         .map(|target| target.replace('-', " ").to_uppercase());
     let title = if folder.is_empty() {
-        identity.unwrap_or_else(|| description.into())
+        "Alchemy".into()
     } else {
-        let location = folder
-            .trim_end_matches('/')
-            .rsplit('/')
-            .next()
-            .unwrap_or(description);
+        let location = source_name(folder);
         identity.map_or_else(|| location.into(), |id| format!("{id} · {location}"))
     };
     let mut legend = Vec::new();
@@ -708,7 +709,7 @@ mod tests {
         assert!(rendered.contains("GRAPHICS/TILE/SHARED.PNG"));
         assert!(rendered.contains("data-usage-revision="));
         assert!(!super::svg_at("rom", &map, 540.0, "FIELD/HEIDIA/").contains("Shared files"));
-        assert!(super::svg_at("rom", &map, 320.0, "").contains("<title>TBS EN</title>"));
+        assert!(super::svg_at("rom", &map, 320.0, "").contains("<title>Alchemy</title>"));
     }
 
     #[test]

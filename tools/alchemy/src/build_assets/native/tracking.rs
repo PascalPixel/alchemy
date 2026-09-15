@@ -34,6 +34,25 @@ fn paths(data: &[u8]) -> BTreeSet<String> {
         .map(str::to_string)
         .collect()
 }
+fn source_spelling(spellings: &mut BTreeMap<String, String>, name: &str) -> Result<(), String> {
+    if let Some(previous) = spellings.insert(name.to_ascii_lowercase(), name.to_string()) {
+        if previous != name {
+            return Err(format!(
+                "source filenames differ only by case: {previous}, {name}"
+            ));
+        }
+    }
+    Ok(())
+}
+
+#[test]
+fn private_sources_cannot_collide_on_case_insensitive_filesystems() {
+    let mut spellings = BTreeMap::new();
+    source_spelling(&mut spellings, "COMMON/CHR.png").unwrap();
+    source_spelling(&mut spellings, "COMMON/CHR.png").unwrap();
+    assert!(source_spelling(&mut spellings, "COMMON/CHR.PNG").is_err());
+    source_spelling(&mut spellings, "COMMON/TILE_BANK.PNG").unwrap();
+}
 fn classify(
     files: &BTreeSet<String>,
     tracked: &BTreeSet<String>,
@@ -66,6 +85,7 @@ pub(in crate::build_assets) fn check(root: &Path) -> Result<(), String> {
     let mut ctx = Context::new(root);
     if let Some(index) = &index {
         validate(index)?;
+        let mut spellings = BTreeMap::new();
         for input in index["private_inputs"]
             .as_array()
             .ok_or("missing native private inputs")?
@@ -81,8 +101,13 @@ pub(in crate::build_assets) fn check(root: &Path) -> Result<(), String> {
                 return Err("private native path escapes source tree".into());
             }
             let allowed = match kind {
+                "frame-atlas" => name == "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
                 "portrait-atlas" => name == "games/tbs/SRC/GRAPHICS/COMMON/PORTRAIT.PNG",
-                "tile-atlas" => name == "games/tbs/SRC/GRAPHICS/COMMON/TILE.PNG",
+                "tile-atlas" => matches!(
+                    name,
+                    "games/tbs/SRC/GRAPHICS/COMMON/TILE.PNG"
+                        | "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG"
+                ),
                 "still-atlas" => name == "games/tbs/SRC/GRAPHICS/COMMON/STILL.PNG",
                 "grid" | "metatiles" => name.ends_with(".bin"),
                 "tiles" => name.ends_with("/CHR.png") || name.ends_with("_CHR.png"),
@@ -97,7 +122,12 @@ pub(in crate::build_assets) fn check(root: &Path) -> Result<(), String> {
             if !allowed {
                 return Err(format!("unrecognized native private input {name}"));
             }
+            source_spelling(&mut spellings, name)?;
             private.insert(name.to_string());
+            if kind == "frame-atlas" {
+                frame::check(&mut ctx, index, input)?;
+                continue;
+            }
             if kind == "palette-table" {
                 let doc = ctx.document(&root.join(name))?;
                 let values = doc

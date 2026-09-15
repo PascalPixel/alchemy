@@ -20,7 +20,6 @@ const GBA_LOGO_WIDTH: u32 = 104;
 const GBA_LOGO_HEIGHT: u32 = 16;
 
 const LOGO_SHA256: &str = "08a0153cfd6b0ea54b938f7d209933fa849da0d56f5a34c481060c9ff2fad818";
-const LOGO_PNG_SHA256: &str = "060df97f1ea5afefd2c32a471614d116ef855b545800695a451915d8f5f350ba";
 const CODEWORDS: [&str; 16] = [
     "1", "0110", "01010", "0100", "00010", "011110", "010110", "000110", "00110", "011111",
     "010111", "000111", "0010", "01110", "00111", "0000",
@@ -247,7 +246,7 @@ fn parse_gba_header_source(value: &Value) -> Result<(), String> {
         ],
         "GBA header source",
     )?;
-    if !number_equals(source.get("format"), 2)
+    if !(number_equals(source.get("format"), 2) || number_equals(source.get("format"), 3))
         || source.get("kind").and_then(Value::as_str)
             != Some("gba-cartridge-header-standard-fields")
         || source.get("address").and_then(Value::as_str) != Some("0x08000000")
@@ -279,14 +278,19 @@ fn parse_gba_header_source(value: &Value) -> Result<(), String> {
     )?;
     exact_keys(
         logo,
-        &["codec", "source", "width", "height", "bpp"],
+        if number_equals(source.get("format"), 3) {
+            &["codec", "rows", "width", "height", "bpp"]
+        } else {
+            &["codec", "source", "width", "height", "bpp"]
+        },
         "GBA header logo",
     )?;
     if logo.get("codec").and_then(Value::as_str) != Some("gba-bios-huffman-logo")
-        || logo
-            .get("source")
-            .and_then(Value::as_str)
-            .is_none_or(str::is_empty)
+        || (number_equals(source.get("format"), 2)
+            && logo
+                .get("source")
+                .and_then(Value::as_str)
+                .is_none_or(str::is_empty))
         || !number_equals(logo.get("width"), GBA_LOGO_WIDTH as u64)
         || !number_equals(logo.get("height"), GBA_LOGO_HEIGHT as u64)
         || !number_equals(logo.get("bpp"), 1)
@@ -295,6 +299,9 @@ fn parse_gba_header_source(value: &Value) -> Result<(), String> {
         || standard.get("device_type").and_then(Value::as_str) != Some("0x00")
     {
         return Err("GBA header standard values differ".to_string());
+    }
+    if number_equals(source.get("format"), 3) {
+        logo_rows(&Value::Object(logo.clone()))?;
     }
     let reserved = source_array(
         standard.get("reserved_zero_ranges"),
@@ -423,16 +430,49 @@ fn huffman_logo(data: &[u8]) -> Result<Vec<u8>, String> {
     Ok(output)
 }
 
-fn encode_gba_logo(image: &[u8]) -> Result<Vec<u8>, String> {
-    let decoded = indexed_png(image).map_err(|error| error.0)?;
-    let pixels: Vec<u8> = decoded.pixels.iter().map(|pixel| *pixel as u8).collect();
-    if decoded.width != GBA_LOGO_WIDTH
-        || decoded.height != GBA_LOGO_HEIGHT
-        || decoded.palette != vec![[255, 255, 255], [0, 0, 0]]
-        || sha256_hex(image) != LOGO_PNG_SHA256
-    {
-        return Err("GBA logo source must be the canonical 104x16 monochrome PNG".to_string());
+fn logo_rows(logo: &Value) -> Result<Vec<u8>, String> {
+    let rows = logo["rows"].as_array().ok_or("GBA logo rows absent")?;
+    if rows.len() != GBA_LOGO_HEIGHT as usize {
+        return Err("GBA logo row count differs".into());
     }
+    let mut pixels = vec![];
+    for row in rows {
+        let row = row.as_str().ok_or("GBA logo row is not text")?;
+        if row.len() != GBA_LOGO_WIDTH as usize || row.bytes().any(|p| p != b'0' && p != b'1') {
+            return Err("GBA logo requires 104 binary pixels per row".into());
+        }
+        pixels.extend(row.bytes().map(|p| p - b'0'));
+    }
+    Ok(pixels)
+}
+
+#[test]
+fn inline_logo_requires_binary_rows_and_the_firmware_fingerprint() {
+    let row = "0".repeat(104);
+    let mut logo = serde_json::json!({"rows":vec![row;16]});
+    assert_eq!(logo_rows(&logo).unwrap().len(), 1664);
+    assert!(encode_gba_logo(&serde_json::json!({"standard":{"logo":logo.clone()}}), &[]).is_err());
+    logo["rows"][0] = Value::from("0".repeat(103));
+    assert!(logo_rows(&logo).is_err());
+    logo["rows"][0] = Value::from("2".repeat(104));
+    assert!(logo_rows(&logo).is_err());
+    logo["rows"].as_array_mut().unwrap().pop();
+    assert!(logo_rows(&logo).is_err());
+}
+
+fn encode_gba_logo(source: &Value, image: &[u8]) -> Result<Vec<u8>, String> {
+    let pixels = if source["standard"]["logo"].get("rows").is_some() {
+        logo_rows(&source["standard"]["logo"])?
+    } else {
+        let decoded = indexed_png(image).map_err(|error| error.0)?;
+        if decoded.width != GBA_LOGO_WIDTH
+            || decoded.height != GBA_LOGO_HEIGHT
+            || decoded.palette != vec![[255, 255, 255], [0, 0, 0]]
+        {
+            return Err("GBA logo requires a 104x16 monochrome bitmap".into());
+        }
+        decoded.pixels.iter().map(|p| *p as u8).collect::<Vec<_>>()
+    };
     let output = huffman_logo(&addition_deltas(&tiled_logo_bits(&pixels)))?;
     if sha256_hex(&output) != LOGO_SHA256 {
         return Err("GBA logo source does not encode the standard firmware logo".to_string());
@@ -481,7 +521,7 @@ fn build_gba_header(source: &Value, logo_image: &[u8]) -> Result<Vec<u8>, String
     let edition = edition(source)?;
     let mut output = vec![0u8; GBA_HEADER_SIZE];
     output[0..4].copy_from_slice(&encode_arm_branch(GBA_HEADER_ADDRESS, edition.target)?);
-    output[0x04..0xa0].copy_from_slice(&encode_gba_logo(logo_image)?);
+    output[0x04..0xa0].copy_from_slice(&encode_gba_logo(source, logo_image)?);
     output[0xa0..0xac].copy_from_slice(&title_bytes(&edition.title)?);
     output[0xac..0xb0].copy_from_slice(edition.game_code.as_bytes());
     output[0xb0..0xb2].copy_from_slice(edition.maker_code.as_bytes());
@@ -499,7 +539,7 @@ pub(super) fn build_gba_header_component(
 ) -> Result<Vec<u8>, String> {
     parse_gba_header_source(source)?;
     if address == GBA_LOGO_ADDRESS && size == GBA_LOGO_SIZE {
-        return encode_gba_logo(logo_image);
+        return encode_gba_logo(source, logo_image);
     }
     if address == GBA_FIXED_ADDRESS && size == GBA_FIXED_SIZE {
         return Ok(vec![0x96, 0, 0, 0, 0, 0, 0, 0, 0, 0]);

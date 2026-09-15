@@ -115,7 +115,7 @@ fn request(stream: impl std::io::Read) -> Result<(String, String, bool), &'stati
 }
 
 pub fn font() -> Response {
-    match std::fs::read(root().join("games/tbs/assets/fonts/weyard.otf")) {
+    match std::fs::read(root().join("tools/alchemy/GRAPHICS/Weyard.otf")) {
         Ok(bytes) => Response::new(200, "OK", Some("font/otf"), "no-store", bytes),
         Err(_) => not_found(),
     }

@@ -45642,6 +45642,1688 @@
         }
       ],
       "plan_section": "/recipes/076a6a007273940472b137df8b2906d376a965ea12ab68931ebe4bf432f7d58a"
+    },
+    {
+      "address": "0x083cdb84",
+      "size": "0x642",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/b63d76a6bdf4eb14cbc80b9345bf6c56256527b103fe5f5f88f98d3f647475c5",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x7080",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 0,
+            "width": 240,
+            "height": 240
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083ce248",
+      "size": "0x265",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/3cb88c767c87d6df65a391523bfaa4ac4d082d2117c72501b645a11427299016",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x7080",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 240,
+            "width": 240,
+            "height": 240
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083ce530",
+      "size": "0x4fc",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/3f535ea572cb29a37151098eafd1f9518c23af16f4f74d290961762398ebd0a2",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x7080",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 480,
+            "width": 240,
+            "height": 240
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083ceaac",
+      "size": "0x668",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/e200c9627149d90025109cfd5591097d39ba51ed2916d196e5e0ac1deb0a0310",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x7080",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 720,
+            "width": 240,
+            "height": 240
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083cf194",
+      "size": "0x67f",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/b0c6b854086b2461775a8213485cb9fa940a87400939793d35c432c3779010ce",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x7080",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 960,
+            "width": 240,
+            "height": 240
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083cf894",
+      "size": "0x369",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/7165806f1920ddae282d91636ae68f68172e9674b21ac0f3cb6d87f266491ed9",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x7080",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 1200,
+            "width": 240,
+            "height": 240
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083d0050",
+      "size": "0x81f",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/c67dae4a4287704a69f0036232b667c1fd238b06c05a4863c96fda99981ea6e5",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x5500",
+          "canvas_size": "0x5640",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 1440,
+            "width": 240,
+            "height": 184
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083d1f4c",
+      "size": "0x3d8",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/63a08b4f2f70823057260ca905533be0d1a974723ddd52968a22f564f7a6b96b",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x10e0",
+          "canvas_size": "0x12c0",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 1624,
+            "width": 240,
+            "height": 40
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083d3390",
+      "size": "0xfc7",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/502bd2042b2b1ebca778907847767d36b4c066e723ae79e82fa9fe593920d290",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x3840",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 1664,
+            "width": 240,
+            "height": 120
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083d6244",
+      "size": "0x315",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/6ef64364ce80f84ae8429520718d16d39f735e4e4ee4c854d8224e548659f71e",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x1200",
+          "canvas_size": "0x12c0",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 1784,
+            "width": 240,
+            "height": 40
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083d65dc",
+      "size": "0x1d06",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/837b2ef89abcfb863b9d7ed9f34e04f4a695884b5a357e1dc2e13c9bbb198011",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x564c",
+          "canvas_size": "0x5a00",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 1824,
+            "width": 240,
+            "height": 192
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083dd604",
+      "size": "0xc92",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/0ca4187aaa4d7709bf7b47a9a11dd4ee7b0406ef72250b7b41cb5ed542b25b56",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x1deb",
+          "canvas_size": "0x1e00",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 2016,
+            "width": 240,
+            "height": 64
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083de7d8",
+      "size": "0x83e",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/5e5ab15387c244ae6ac749c7a53f91fbc5629b3bef1d6ff4df58afdcf595efe2",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x1b00",
+          "canvas_size": "0x1e00",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 2080,
+            "width": 240,
+            "height": 64
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083e1f48",
+      "size": "0x7aa",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/325f3493634d155364342beef959302bc0b687f7f56625ade16680a8d86056ec",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x63c0",
+          "canvas_size": "0x6540",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 2144,
+            "width": 240,
+            "height": 216
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083e2774",
+      "size": "0x370",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/246b569b56cafb38203eaa2278312cc00d5aca14524f6dd51271f0191f7f76f4",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x3180",
+          "canvas_size": "0x3480",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 2360,
+            "width": 240,
+            "height": 112
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083e463c",
+      "size": "0x32b",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/f00cf240604a4970b2b99e5dd93433d1c720f43aaba771a1fa5cb2c26668600e",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x800",
+          "canvas_size": "0xb40",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 2472,
+            "width": 240,
+            "height": 24
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083e9df0",
+      "size": "0xd4b",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/3f8dfe37edf8ed4aea2fec7dbf09f3bdcc753e9e0b64409e6ab9caa3111885fa",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x2d25",
+          "canvas_size": "0x30c0",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 2496,
+            "width": 240,
+            "height": 104
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083f81dc",
+      "size": "0x1480",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/133004c85267bd4e16c3a84c578cdfdc24b1282f276469f13e597e0853dd3a62",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x5e01",
+          "canvas_size": "0x6180",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 2600,
+            "width": 240,
+            "height": 208
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083f96dc",
+      "size": "0x41b",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/a4bd0d88297c13d2d613c6c4037da71991c9603348d5c84518269816b2870736",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x603e",
+          "canvas_size": "0x6180",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 2808,
+            "width": 240,
+            "height": 208
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083fb504",
+      "size": "0x36a",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/8cfd4f91695e596c478a4b6f1f6b21971a01dcf75831a02dbe8cf3c8475bbcbc",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x6680",
+          "canvas_size": "0x6900",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 3016,
+            "width": 240,
+            "height": 224
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083fcbd8",
+      "size": "0xc0b",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/698d416a52a6569431e4c45703e33ed7f462f5de0fba026396c1519d005a5745",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x3000",
+          "canvas_size": "0x30c0",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 3240,
+            "width": 240,
+            "height": 104
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083fe3c8",
+      "size": "0x9b3",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/3f4d968ce6de524e932ce4f3ae724fe28e9881325c8d51007854a3e768fb7701",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x1901",
+          "canvas_size": "0x1a40",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 3344,
+            "width": 240,
+            "height": 56
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083ff9f8",
+      "size": "0x755",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/9ffa23812a8ca11cc628c4e88ec66c9c12f6cc220f00706e5a14e9595e0c355b",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x5100",
+          "canvas_size": "0x5280",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 3400,
+            "width": 240,
+            "height": 176
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x084001d0",
+      "size": "0xa4e",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/7768ec8e617c1fae5e0f4ac8d7d15d7d61af96671aea953b499f8d175cbd05f1",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x5100",
+          "canvas_size": "0x5280",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 3576,
+            "width": 240,
+            "height": 176
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x08400ca0",
+      "size": "0xabb",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/8b6e3549e8ad5cc8995f8ce08a372f3c5e513124f61b30e97d12b596e338d427",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x2580",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 3752,
+            "width": 240,
+            "height": 80
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x0809c410",
+      "size": "0x100",
+      "kind": "gba-4bpp-tiles",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 3832,
+        "width": 32,
+        "height": 16
+      }
+    },
+    {
+      "address": "0x0809c510",
+      "size": "0x100",
+      "kind": "gba-4bpp-tiles",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 3848,
+        "width": 32,
+        "height": 16
+      }
+    },
+    {
+      "address": "0x0809ff58",
+      "size": "0xc6",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/2402c40942a70fceb37338a261afbe2e6ce1c69b7220cf3642fbc8fd959f1f04",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x300",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 3864,
+            "width": 16,
+            "height": 96
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x080a001e",
+      "size": "0x9a",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/f37bd8a88c61817dae54516ea99c30ffaf4af591a731a1fb4e4afe13f2da91ac",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x300",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 3960,
+            "width": 16,
+            "height": 96
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x080a00b8",
+      "size": "0x4f",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/a75ba503ae65e00d94825610402121047ad19e95d51ad2a90ac6f469ef962be9",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x200",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 4056,
+            "width": 16,
+            "height": 64
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x080af04c",
+      "size": "0x40",
+      "kind": "gba-4bpp-tiles",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 4120,
+        "width": 16,
+        "height": 8
+      }
+    },
+    {
+      "address": "0x080af08c",
+      "size": "0x100",
+      "kind": "gba-4bpp-tiles",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 4128,
+        "width": 32,
+        "height": 16
+      }
+    },
+    {
+      "address": "0x080af18c",
+      "size": "0x80",
+      "kind": "gba-4bpp-tiles",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 4144,
+        "width": 16,
+        "height": 16
+      }
+    },
+    {
+      "address": "0x080af26c",
+      "size": "0x20",
+      "kind": "gba-4bpp-tiles",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 4160,
+        "width": 8,
+        "height": 8
+      }
+    },
+    {
+      "address": "0x080c5b30",
+      "size": "0xe0",
+      "kind": "gba-4bpp-tiles",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 4168,
+        "width": 56,
+        "height": 8
+      }
+    },
+    {
+      "address": "0x08320fb0",
+      "size": "0x2000",
+      "kind": "gba-4bpp-tiles",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 4176,
+        "width": 128,
+        "height": 128
+      }
+    },
+    {
+      "address": "0x083c3594",
+      "size": "0x761",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/981220fde2d22c7daef62348a1624958a10abe2481e0d826cb3101e613fb116a",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x4b00",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 4304,
+            "width": 240,
+            "height": 160
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083cb53c",
+      "size": "0x7c5",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/951d94bc70fb0bf934400410d0a7e35a73fc8b057647a47eb9951529ee5b9b1b",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x6d2a",
+          "canvas_size": "0x7080",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 4464,
+            "width": 240,
+            "height": 240
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083cbd84",
+      "size": "0x1180",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/1778edc15b274701b982694a5713e1811cbf3357f1e4119b3ff191f979287978",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x5300",
+          "canvas_size": "0x5640",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 4704,
+            "width": 240,
+            "height": 184
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083eee10",
+      "size": "0x1da",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/5a0329322a881b4c3a30ff8a55bdeccac19bd3b5e2c9876ec26fe09428ec116c",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x320",
+          "canvas_size": "0x3c0",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 4888,
+            "width": 240,
+            "height": 8
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083f090c",
+      "size": "0x1542",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/832397b667a448ac1cc24943170d19c2bc8bdee06d931a554297f60ac1ff5b11",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x5100",
+          "canvas_size": "0x5280",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 4896,
+            "width": 240,
+            "height": 176
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083f293c",
+      "size": "0x344",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/1ffdc4a483e8e4c39b67ad1a46ce34d6a823cd861aea0182345575b29505880b",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0xb40",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 5072,
+            "width": 240,
+            "height": 24
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083f2d00",
+      "size": "0x992",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/ec4c3c0428887da7be0ffefc1627f4ba298e0c4ef2d8d7b26ad0aac238c1533e",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x2d00",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 5096,
+            "width": 240,
+            "height": 96
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083f3714",
+      "size": "0x301",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/b97d5bfb9d178779bbbd64ec9509029005912aa394456bf512661cdbf970d188",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x810",
+          "canvas_size": "0xb40",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 5192,
+            "width": 240,
+            "height": 24
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083f3a98",
+      "size": "0xc2d",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/ec56ea8af3b008005abd94124c0ff027406bb9920a1ad32e602092794d1d255f",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x2580",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 5216,
+            "width": 240,
+            "height": 80
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083f4748",
+      "size": "0xac5",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/272bab67fd8b072050260b46d70ce4b9b4d53d00d43232a3cb791267ce1a0ae2",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x1a40",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 5296,
+            "width": 240,
+            "height": 56
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083f5428",
+      "size": "0x80b",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/dae9e0903e82daad964d04ea282f55f7b9c7df211cdc1729eb2fa973693f85f2",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x1b00",
+          "canvas_size": "0x1e00",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 5352,
+            "width": 240,
+            "height": 64
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x0840539c",
+      "size": "0x15ec",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/e3d5f41ba4b1daca14ff4a80bf8aae12aaa8623c7c8ab0831eac7a3f588bae70",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x38dc",
+          "canvas_size": "0x3c00",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 5416,
+            "width": 240,
+            "height": 128
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x0840914c",
+      "size": "0xf94",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/c4a8fd57f8783b611a16705ec5fa7505f11e676f11f1ab426eacd317ea93d970",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x2d00",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 5544,
+            "width": 240,
+            "height": 96
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x0840a0e0",
+      "size": "0x37b",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/4b8a9999706008e595f209496927892247ad903656b661fbb90455931fea00a3",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x1073",
+          "canvas_size": "0x12c0",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 5640,
+            "width": 240,
+            "height": 40
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x0840a45c",
+      "size": "0x42f",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/913eb86f4d0edc8b9e17aef96c89982c29389e18730cf856491bc0ad3453852b",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0xd80",
+          "canvas_size": "0xf00",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 5680,
+            "width": 240,
+            "height": 32
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x0840a90c",
+      "size": "0x104c",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/4186b0d7f644e5693b16e6e09784c42382fae9a8c4232a8127dd8f9fb0b10a4e",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x2514",
+          "canvas_size": "0x2580",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 5712,
+            "width": 240,
+            "height": 80
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x0840ba5c",
+      "size": "0x468",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/2aee28497a299fd7f1ce0814d8413fed2e9b855d7b2947a0cb74d575ce64fd0d",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x104e",
+          "canvas_size": "0x12c0",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 5792,
+            "width": 240,
+            "height": 40
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x0840d018",
+      "size": "0x1ab2",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/273dc658959df58cb9c634573d9fbe6e4427cb6a3c500f5641106ddeb515a19e",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x3956",
+          "canvas_size": "0x3c00",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 5832,
+            "width": 240,
+            "height": 128
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x0843f868",
+      "size": "0x21b2",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/7282a43bca9ccbd1e91b8a7c32650145230e5dcf67a7977f7b854a83df3c8c19",
+      "components_source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+      "components_pointer": "/archives/f2/components"
+    },
+    {
+      "address": "0x08441a1c",
+      "size": "0x18f4",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/4d4c5d742846c9697040891831ec3525b0025e88e7b410ba1775a5719bf9eefc",
+      "components_source": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+      "components_pointer": "/archives/f3/components"
+    },
+    {
+      "address": "0x0809e4ce",
+      "size": "0x1b2",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/3d205beea03cd2e251408d4d15ca3fd5109f319497681dd384c12603e2fa5800",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x600",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 5960,
+            "width": 96,
+            "height": 32
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x08324be8",
+      "size": "0x64be",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "components": [
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0x9600",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 5992,
+            "width": 240,
+            "height": 160
+          }
+        }
+      ],
+      "plan_section": "/recipes/02a1f11a7b890d636fc55657374231e1410002d4f26de6cf7a7d100862c760bb"
+    },
+    {
+      "address": "0x08333960",
+      "size": "0x668",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "components": [
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0x9600",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 6152,
+            "width": 240,
+            "height": 160
+          }
+        }
+      ],
+      "plan_section": "/recipes/d38a1618c3128b752005ad272bff4afe8d0bbf683e9542751f3902e4cf360ec3"
+    },
+    {
+      "address": "0x08410250",
+      "size": "0x1025",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/930891f3c13c402a6b95e0b3a0a2d0dc835484d9df479bae95dc574008888ea7",
+      "components": [
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0x2a00",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 6312,
+            "width": 112,
+            "height": 96
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083f7f44",
+      "size": "0x217",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/567862a962ce0594db7bbe4abcdb91d6b430db3befd7ba51bbde2ee89f9e84ba",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x39c",
+          "canvas_size": "0x3c0",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 6408,
+            "width": 240,
+            "height": 8
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083c5838",
+      "size": "0x2c5d",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/6795685b965a5d765909df262946c2994529c33cd260c9c634b3baa114f32771",
+      "components": [
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0x9600",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 6416,
+            "width": 240,
+            "height": 160
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083ee404",
+      "size": "0x35b",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/66214d380a638df7c9f668330b60840c44743c95fb9cf6c68bd405f1a49e234e",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x640",
+          "canvas_size": "0x780",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 6576,
+            "width": 240,
+            "height": 16
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x083ee7e0",
+      "size": "0x209",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/6cc9fca2fb5af916fcda7fbde14697ec2060f2f8d5e8cd4533643abbb92f65a9",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x320",
+          "canvas_size": "0x3c0",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 6592,
+            "width": 240,
+            "height": 8
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x08403408",
+      "size": "0x2eb",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/6d9789c9a4f002dec93442e4072afbfe95dce635bf9b4c533e2a358d962fe35e",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x600",
+          "canvas_size": "0x780",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 6600,
+            "width": 240,
+            "height": 16
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x08404048",
+      "size": "0x2b9",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/fba239f116e77ef4e747037f3c39410224a280d72063557fd648b19168fcfaa9",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x400",
+          "canvas_size": "0x780",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 6616,
+            "width": 240,
+            "height": 16
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x08404384",
+      "size": "0xf96",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "plan_section": "/recipes/5d6bb52f492120a8a1a98686670ed8d8adae5caa28cc6c4762b9b4588681c6ad",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x239d",
+          "canvas_size": "0x2580",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 6632,
+            "width": 240,
+            "height": 80
+          }
+        }
+      ]
+    },
+    {
+      "address": "0x08323a70",
+      "size": "0xf77",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "components": [
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0x1000",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 6712,
+            "width": 64,
+            "height": 64
+          }
+        },
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0x400",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 6776,
+            "width": 32,
+            "height": 32
+          }
+        },
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0x400",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 6808,
+            "width": 32,
+            "height": 32
+          }
+        },
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0x100",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 6840,
+            "width": 16,
+            "height": 16
+          }
+        },
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0x100",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 6856,
+            "width": 16,
+            "height": 16
+          }
+        },
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0x100",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 6872,
+            "width": 16,
+            "height": 16
+          }
+        },
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0x100",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 6888,
+            "width": 16,
+            "height": 16
+          }
+        },
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0x100",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 6904,
+            "width": 16,
+            "height": 16
+          }
+        },
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0x100",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 6920,
+            "width": 16,
+            "height": 16
+          }
+        }
+      ],
+      "plan_section": "/recipes/77cb23c6c0d14921d0580d6d50d69e409c2c44266e275524585e968f957f0ee2"
+    },
+    {
+      "address": "0x0832b2a8",
+      "size": "0x84f5",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "components": [
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0xa140",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 6936,
+            "width": 240,
+            "height": 344
+          }
+        },
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0xac80",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 7280,
+            "width": 240,
+            "height": 184
+          }
+        }
+      ],
+      "plan_section": "/recipes/c6c16ccb0e0a1aa9cf9cf8f9bbd239d90e32a21ca46f956d38a7f36d21ad1b13"
+    },
+    {
+      "address": "0x08333fc8",
+      "size": "0x182a",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "components": [
+        {
+          "kind": "bgr555-banks",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+          "banks": [969, 970, 971, 972, 973, 974, 975, 976, 977, 978, 979, 980, 981, 982],
+          "size": 448
+        },
+        {
+          "kind": "le-u16-array",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/DATA.json",
+          "pointer": "/tables/1f885e2b5d02488128802eb430cb6ad4e7fb188200fd13b22d2ccc3073ae5948",
+          "size": 2048
+        },
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0x4000",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 7464,
+            "width": 128,
+            "height": 128
+          }
+        },
+        {
+          "kind": "gba-8bpp-tiles",
+          "size": "0x1000",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 7592,
+            "width": 128,
+            "height": 32
+          }
+        }
+      ],
+      "plan_section": "/recipes/2b1905fda247f61b6dfeac1b8fbc8f4f056018d80dcb43f80c4c84b07fc6c07b"
+    },
+    {
+      "address": "0x0833ac08",
+      "size": "0x2b4",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "components": [
+        {
+          "kind": "bgr555-banks",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+          "banks": [983],
+          "size": 32
+        },
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x480",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 7624,
+            "width": 72,
+            "height": 32
+          }
+        }
+      ],
+      "plan_section": "/recipes/a0da2e7b29f429f01f9f49cf4f88dfc0854d8b7911a4add552e9eae5b1be8027"
+    },
+    {
+      "address": "0x08434ca8",
+      "size": "0x1250",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/tbs/SRC/GRAPHICS/COMMON/COMPRESSION.json",
+      "components": [
+        {
+          "kind": "bgr555-banks",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+          "banks": [984, 985, 986, 987, 988],
+          "size": 160
+        },
+        {
+          "kind": "gba-4bpp-tiles",
+          "size": "0x2000",
+          "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "source_rect": {
+            "x": 0,
+            "y": 7656,
+            "width": 32,
+            "height": 512
+          }
+        }
+      ],
+      "plan_section": "/recipes/0521e0db91c935a07fa912bbf8e7df3f1abc4be63d41fde11e388b2edd060923"
+    },
+    {
+      "address": "0x08012f20",
+      "size": 128,
+      "kind": "gba-4bpp-tiles",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "frames": 4,
+      "columns": 4,
+      "frame_tiles_wide": 1,
+      "frame_tiles_high": 1,
+      "pixel_format": "indices",
+      "source_rect": {
+        "x": 0,
+        "y": 8168,
+        "width": 32,
+        "height": 8
+      }
+    },
+    {
+      "address": "0x080aea4c",
+      "size": "0x600",
+      "kind": "gba-4bpp-tiles",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "frames": 12,
+      "frame_tiles_wide": 2,
+      "frame_tiles_high": 2,
+      "columns": 3,
+      "pixel_format": "indices",
+      "source_rect": {
+        "x": 0,
+        "y": 8176,
+        "width": 48,
+        "height": 64
+      }
+    },
+    {
+      "address": "0x080b3940",
+      "size": 768,
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "frames": 6,
+      "frame_tiles_wide": 2,
+      "frame_tiles_high": 2,
+      "columns": 6,
+      "kind": "gba-4bpp-tiles",
+      "pixel_format": "indices",
+      "source_rect": {
+        "x": 0,
+        "y": 8240,
+        "width": 96,
+        "height": 16
+      }
+    },
+    {
+      "address": "0x080b3c40",
+      "size": 256,
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "frames": 2,
+      "frame_tiles_wide": 2,
+      "frame_tiles_high": 2,
+      "columns": 2,
+      "kind": "gba-4bpp-tiles",
+      "pixel_format": "indices",
+      "source_rect": {
+        "x": 0,
+        "y": 8256,
+        "width": 32,
+        "height": 16
+      }
+    },
+    {
+      "address": "0x080b3d40",
+      "size": 320,
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "frames": 10,
+      "frame_tiles_wide": 1,
+      "frame_tiles_high": 1,
+      "columns": 10,
+      "kind": "gba-4bpp-tiles",
+      "pixel_format": "indices",
+      "source_rect": {
+        "x": 0,
+        "y": 8272,
+        "width": 80,
+        "height": 8
+      }
+    },
+    {
+      "address": "0x080b3e80",
+      "size": 256,
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "frames": 2,
+      "frame_tiles_wide": 2,
+      "frame_tiles_high": 2,
+      "columns": 2,
+      "kind": "gba-4bpp-tiles",
+      "pixel_format": "indices",
+      "source_rect": {
+        "x": 0,
+        "y": 8280,
+        "width": 32,
+        "height": 16
+      }
+    },
+    {
+      "address": "0x080b3f80",
+      "size": 384,
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "frames": 3,
+      "frame_tiles_wide": 2,
+      "frame_tiles_high": 2,
+      "columns": 3,
+      "kind": "gba-4bpp-tiles",
+      "pixel_format": "indices",
+      "source_rect": {
+        "x": 0,
+        "y": 8296,
+        "width": 48,
+        "height": 16
+      }
+    },
+    {
+      "address": "0x080c3734",
+      "size": "0x800",
+      "kind": "gba-4bpp-tiles",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "frames": 16,
+      "frame_tiles_wide": 2,
+      "frame_tiles_high": 2,
+      "columns": 8,
+      "pixel_format": "indices",
+      "source_rect": {
+        "x": 0,
+        "y": 8312,
+        "width": 128,
+        "height": 32
+      }
+    },
+    {
+      "address": "0x080c5a30",
+      "size": "0x100",
+      "kind": "gba-4bpp-tiles",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "frames": 8,
+      "frame_tiles_wide": 1,
+      "frame_tiles_high": 1,
+      "columns": 8,
+      "pixel_format": "indices",
+      "source_rect": {
+        "x": 0,
+        "y": 8344,
+        "width": 64,
+        "height": 8
+      }
+    },
+    {
+      "address": "0x0843c024",
+      "size": "0x3842",
+      "kind": "components",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/UI.json"
     }
   ],
   "private_inputs": [
@@ -51294,7 +52976,7 @@
         "height": 256
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51313,7 +52995,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51332,7 +53014,7 @@
         "height": 416
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51351,7 +53033,7 @@
         "height": 256
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51370,7 +53052,7 @@
         "height": 128
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51389,7 +53071,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51408,7 +53090,7 @@
         "height": 192
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51427,7 +53109,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51446,7 +53128,7 @@
         "height": 128
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51465,7 +53147,7 @@
         "height": 192
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51484,7 +53166,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51503,7 +53185,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51522,7 +53204,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51541,7 +53223,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51560,7 +53242,7 @@
         "height": 192
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51579,7 +53261,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51598,7 +53280,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51617,7 +53299,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51636,7 +53318,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51655,7 +53337,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51674,7 +53356,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51693,7 +53375,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51712,7 +53394,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51731,7 +53413,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51750,7 +53432,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51769,7 +53451,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51788,7 +53470,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51807,7 +53489,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51826,7 +53508,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51845,7 +53527,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51864,7 +53546,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51883,7 +53565,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51902,7 +53584,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51921,7 +53603,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51940,7 +53622,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51959,7 +53641,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51978,7 +53660,7 @@
         "height": 288
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -51997,7 +53679,7 @@
         "height": 288
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52016,7 +53698,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52035,7 +53717,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52054,7 +53736,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52073,7 +53755,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52092,7 +53774,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52111,7 +53793,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52130,7 +53812,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52149,7 +53831,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52168,7 +53850,7 @@
         "height": 192
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52187,7 +53869,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52206,7 +53888,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52225,7 +53907,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52244,7 +53926,7 @@
         "height": 192
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52263,7 +53945,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52282,7 +53964,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52301,7 +53983,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52320,7 +54002,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52339,7 +54021,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52358,7 +54040,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52377,7 +54059,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52396,7 +54078,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52415,7 +54097,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52434,7 +54116,7 @@
         "height": 128
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52453,7 +54135,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52472,7 +54154,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52491,7 +54173,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52510,7 +54192,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52529,7 +54211,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52548,7 +54230,7 @@
         "height": 192
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52567,7 +54249,7 @@
         "height": 128
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52586,7 +54268,7 @@
         "height": 224
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52605,7 +54287,7 @@
         "height": 128
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52624,7 +54306,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52643,7 +54325,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52662,7 +54344,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52681,7 +54363,7 @@
         "height": 128
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52700,7 +54382,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52719,7 +54401,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52738,7 +54420,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52757,7 +54439,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52776,7 +54458,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52795,7 +54477,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52814,7 +54496,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52833,7 +54515,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52852,7 +54534,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52871,7 +54553,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52890,7 +54572,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52909,7 +54591,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52928,7 +54610,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52947,7 +54629,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52966,7 +54648,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -52985,7 +54667,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53004,7 +54686,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53023,7 +54705,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53042,7 +54724,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53061,7 +54743,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53080,7 +54762,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53099,7 +54781,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53118,7 +54800,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53137,7 +54819,7 @@
         "height": 224
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53156,7 +54838,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53175,7 +54857,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53194,7 +54876,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53213,7 +54895,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53232,7 +54914,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53251,7 +54933,7 @@
         "height": 192
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53270,7 +54952,7 @@
         "height": 128
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53289,7 +54971,7 @@
         "height": 128
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53308,7 +54990,7 @@
         "height": 128
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53327,7 +55009,7 @@
         "height": 128
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53346,7 +55028,7 @@
         "height": 96
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53365,7 +55047,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53384,7 +55066,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53403,7 +55085,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53422,7 +55104,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53441,7 +55123,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53460,7 +55142,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53479,7 +55161,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53498,7 +55180,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53517,7 +55199,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53536,7 +55218,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53555,7 +55237,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53574,7 +55256,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53593,7 +55275,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53612,7 +55294,7 @@
         "height": 96
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53631,7 +55313,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53650,7 +55332,7 @@
         "height": 16
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53669,7 +55351,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53688,7 +55370,7 @@
         "height": 128
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53707,7 +55389,7 @@
         "height": 16
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53726,7 +55408,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53745,7 +55427,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53764,7 +55446,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53783,7 +55465,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53802,7 +55484,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53821,7 +55503,7 @@
         "height": 16
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53840,7 +55522,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53859,7 +55541,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53878,7 +55560,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53897,7 +55579,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53916,7 +55598,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53935,7 +55617,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53954,7 +55636,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53973,7 +55655,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -53992,7 +55674,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54011,7 +55693,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54030,7 +55712,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54049,7 +55731,7 @@
         "height": 16
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54068,7 +55750,7 @@
         "height": 16
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54087,7 +55769,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54106,7 +55788,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54125,7 +55807,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54144,7 +55826,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54163,7 +55845,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54182,7 +55864,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54201,7 +55883,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54220,7 +55902,7 @@
         "height": 96
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54239,7 +55921,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54258,7 +55940,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54277,7 +55959,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54296,7 +55978,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54315,7 +55997,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54334,7 +56016,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54353,7 +56035,7 @@
         "height": 16
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54372,7 +56054,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54391,7 +56073,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54410,7 +56092,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54429,7 +56111,7 @@
         "height": 128
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54448,7 +56130,7 @@
         "height": 16
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54467,7 +56149,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54486,7 +56168,7 @@
         "height": 8
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54505,7 +56187,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54524,7 +56206,7 @@
         "height": 16
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54543,7 +56225,7 @@
         "height": 96
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54562,7 +56244,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54581,7 +56263,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54600,7 +56282,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54619,7 +56301,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54638,7 +56320,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54657,7 +56339,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54676,7 +56358,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54695,7 +56377,7 @@
         "height": 16
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54714,7 +56396,7 @@
         "height": 16
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54733,7 +56415,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54752,7 +56434,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54771,7 +56453,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54790,7 +56472,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54809,7 +56491,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54828,7 +56510,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54847,7 +56529,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54866,7 +56548,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54885,7 +56567,7 @@
         "height": 128
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54904,7 +56586,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54923,7 +56605,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54942,7 +56624,7 @@
         "height": 160
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54961,7 +56643,7 @@
         "height": 96
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54980,7 +56662,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -54999,7 +56681,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55018,7 +56700,7 @@
         "height": 16
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55037,7 +56719,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55056,7 +56738,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55075,7 +56757,7 @@
         "height": 16
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55094,7 +56776,7 @@
         "height": 192
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55113,7 +56795,7 @@
         "height": 192
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55132,7 +56814,7 @@
         "height": 192
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55151,7 +56833,7 @@
         "height": 192
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55170,7 +56852,7 @@
         "height": 192
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55189,7 +56871,7 @@
         "height": 192
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55208,7 +56890,7 @@
         "height": 192
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55227,7 +56909,7 @@
         "height": 192
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55246,7 +56928,7 @@
         "height": 192
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55265,7 +56947,7 @@
         "height": 192
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55284,7 +56966,7 @@
         "height": 192
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55303,7 +56985,7 @@
         "height": 192
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55322,7 +57004,7 @@
         "height": 192
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55341,7 +57023,7 @@
         "height": 192
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55360,7 +57042,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55379,7 +57061,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55398,7 +57080,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55417,7 +57099,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55436,7 +57118,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55455,7 +57137,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55474,7 +57156,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55493,7 +57175,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55512,7 +57194,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55531,7 +57213,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55550,7 +57232,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55569,7 +57251,7 @@
         "height": 192
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55588,7 +57270,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55607,7 +57289,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55626,7 +57308,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55645,7 +57327,7 @@
         "height": 48
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55664,7 +57346,7 @@
         "height": 48
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55683,7 +57365,7 @@
         "height": 128
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55702,7 +57384,7 @@
         "height": 8
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55721,7 +57403,7 @@
         "height": 8
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55740,7 +57422,7 @@
         "height": 8
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55759,7 +57441,7 @@
         "height": 16
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55778,7 +57460,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55797,7 +57479,7 @@
         "height": 8
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55816,7 +57498,7 @@
         "height": 8
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55835,7 +57517,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55854,7 +57536,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55873,7 +57555,7 @@
         "height": 16
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55892,7 +57574,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55911,7 +57593,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55930,7 +57612,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55949,7 +57631,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55968,7 +57650,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -55987,7 +57669,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56006,7 +57688,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56025,7 +57707,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56044,7 +57726,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56063,7 +57745,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56082,7 +57764,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56101,7 +57783,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56120,7 +57802,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56139,7 +57821,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56158,7 +57840,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56177,7 +57859,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56196,7 +57878,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56215,7 +57897,7 @@
         "height": 64
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56234,7 +57916,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56253,7 +57935,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56272,7 +57954,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56291,7 +57973,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56310,7 +57992,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56329,7 +58011,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56348,7 +58030,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56367,7 +58049,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56386,7 +58068,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56405,7 +58087,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56424,7 +58106,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56443,7 +58125,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56462,7 +58144,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56481,7 +58163,7 @@
         "height": 32
       },
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56500,7 +58182,7 @@
       "encoded_sha256": "df6b0cebe79abcadb50ebe2281bed5f797d94a7a13a73705f3e3f863d29ae983",
       "region_address": "0x081f4968",
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56519,7 +58201,7 @@
       "encoded_sha256": "f21f790f4f1f76027427890845041ef0815ce1b84e43991eab646dc142417a9a",
       "region_address": "0x082c16b4",
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56538,7 +58220,7 @@
       "encoded_sha256": "e2932f3a13bac8efe88beabc07bd72a41acf492f71ca3dcb0100433b15f1eb5d",
       "region_address": "0x082c78f0",
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56557,7 +58239,7 @@
       "encoded_sha256": "b150e8d223e43f75d970e40eeaedf73d2b9355d24aec831dd925c94d13691ef9",
       "region_address": "0x082cb73c",
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56576,7 +58258,7 @@
       "encoded_sha256": "2fca0eed08c019635db639c4d520a88a0b55b964a7f6eefa16e84cef9dbb7bb5",
       "region_address": "0x082cb9f8",
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56595,7 +58277,7 @@
       "encoded_sha256": "bd726382a3bcdf24cf0d62f6eb63c93373e61752db62ec1dfeb3620864fc09ff",
       "region_address": "0x082cbd5c",
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56614,7 +58296,7 @@
       "encoded_sha256": "ff6fdd8699d6a4e8b018a01b44fab54011ef129a65621bf945677e221f9ac09b",
       "region_address": "0x082cbff0",
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56633,7 +58315,7 @@
       "encoded_sha256": "39e9977feb71d648c80873585998002643a7392949a947b50e291079f174ca7d",
       "region_address": "0x082cc318",
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56652,7 +58334,7 @@
       "encoded_sha256": "6a15e5223961325b5dcb4352c12995d1bd98175ab28f80938bcfc87008e0c803",
       "region_address": "0x082cc5d8",
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56671,7 +58353,7 @@
       "encoded_sha256": "d573d58ba1034b3f97792975bd244f3f95b5f61a243d5df029663caf6a55b0db",
       "region_address": "0x082cc8d4",
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56690,7 +58372,7 @@
       "encoded_sha256": "3be307f4eadec55ea4fbe177000cbd74a2774dcec225030272c7501e8d131437",
       "region_address": "0x082ccbe4",
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56709,7 +58391,7 @@
       "encoded_sha256": "0f8c3ce9600573fc30cbbf4be8fc56e227e16506c38926f38766d363221f99d5",
       "region_address": "0x082cd0d0",
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56728,7 +58410,7 @@
       "encoded_sha256": "521d20ec9bad24578aa462fc30c6bbc0557bf0706714f578e3b653c38bf7a7fc",
       "region_address": "0x082cd488",
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56747,7 +58429,7 @@
       "encoded_sha256": "dc540c9a9435fa8b944c90cd1ea14f10897b310ffbf4501787dbe285a8bbd914",
       "region_address": "0x082cd718",
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56766,7 +58448,7 @@
       "encoded_sha256": "9a23e7f600992d99e5821e64d95570ba65de132c594d1d45cece01e37d7198e8",
       "region_address": "0x082cfdc0",
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56785,7 +58467,7 @@
       "encoded_sha256": "2176eb0b06a56846360f546e95a45143c42bcc8af5aede8725d2531298671ab6",
       "region_address": "0x082d00e4",
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56804,7 +58486,7 @@
       "encoded_sha256": "c021cb1f54e3823a97a052b1aa82a3b90f6a277ba44edfcc8493aa1f15498d54",
       "region_address": "0x082d05d0",
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56823,7 +58505,7 @@
       "encoded_sha256": "2ce3e2168a64dd392e089e9387f9f5c080e182de22d92630f35544e502356bb4",
       "region_address": "0x082d0814",
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56842,7 +58524,7 @@
       "encoded_sha256": "b12724b1af686378abf1b40fcff3ce1560c822b71c2fdda9b6e3ca42f9c901fe",
       "region_address": "0x082d0e6c",
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56861,7 +58543,7 @@
       "encoded_sha256": "77f51029c64e811e2d7ed6f7c80654f1d0e02d65accb9c97bc7c1f3ee5e97baf",
       "region_address": "0x082d7658",
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56880,7 +58562,7 @@
       "encoded_sha256": "00702deb6a7611e9e132fe5665d4a810a80eaf1caad1ecece2ef89c84110e657",
       "region_address": "0x082d8c80",
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56899,7 +58581,7 @@
       "encoded_sha256": "b1b887f3f4731250589ce5879c0a839d3b78930d013fb15ef1f20d187a07d2b5",
       "region_address": "0x082e1e54",
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56918,7 +58600,7 @@
       "encoded_sha256": "8fd68f26d328ebf484a8d78b423cd30d14d602f24c16df034b8d9f85ae7f2aea",
       "region_address": "0x082eca2c",
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56937,7 +58619,7 @@
       "encoded_sha256": "203083ac1d6eccecf07cb882ad5e4186617e5aa5714fde3a2002d95a09a50b57",
       "region_address": "0x082f32dc",
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56956,7 +58638,7 @@
       "encoded_sha256": "508267061de7f8b4a1e538af255612183b2cb873bc82f90c10b0a8c3f98d527a",
       "region_address": "0x082faacc",
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56975,7 +58657,7 @@
       "encoded_sha256": "a0969181339424144185e5102f5e633ce6e3c7aca3513098210bf322f96cb52b",
       "region_address": "0x081f60c8",
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -56994,7 +58676,7 @@
       "encoded_sha256": "8fd68b3fc2bc2f066fc33afc0bde46901a5e651a25ccdcd32e0c97eb9a0b3c8d",
       "region_address": "0x082a75d4",
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "sprite-atlas",
@@ -57013,7 +58695,7 @@
       "encoded_sha256": "45a626998bf631f5dfe34458b7afa4c73f64afd902626ca774685d2a331cbb09",
       "region_address": "0x082b4440",
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57035,7 +58717,7 @@
       "decoded_length": 14655,
       "offsets": [7490, 52, 8823, 1439, 9907, 2555, 11074, 3766, 12344, 5152, 13540, 6319, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57057,7 +58739,7 @@
       "decoded_length": 23186,
       "offsets": [11774, 52, 13783, 2062, 15754, 4071, 17681, 6038, 19471, 7850, 21168, 9733, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57079,7 +58761,7 @@
       "decoded_length": 9482,
       "offsets": [4814, 44, 5766, 1025, 6718, 2014, 7677, 3002, 8752, 4101, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57101,7 +58783,7 @@
       "decoded_length": 17388,
       "offsets": [8711, 52, 10222, 1547, 11697, 3070, 13119, 4518, 14454, 5791, 16027, 7370, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57123,7 +58805,7 @@
       "decoded_length": 9757,
       "offsets": [4857, 52, 5695, 873, 6511, 1679, 7294, 2456, 7995, 3164, 8870, 4009, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57145,7 +58827,7 @@
       "decoded_length": 15413,
       "offsets": [7603, 52, 8919, 1311, 10253, 2585, 11593, 3874, 12937, 5204, 13931, 6218, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57167,7 +58849,7 @@
       "decoded_length": 27579,
       "offsets": [13633, 68, 15515, 1897, 17274, 3615, 18876, 5224, 20649, 7098, 22260, 8698, 23899, 10265, 25808, 11982, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57189,7 +58871,7 @@
       "decoded_length": 24771,
       "offsets": [12149, 76, 13589, 1431, 15032, 2781, 16464, 4116, 17901, 5581, 19019, 6748, 20491, 8122, 21694, 9245, 23228, 10693, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57211,7 +58893,7 @@
       "decoded_length": 27033,
       "offsets": [13745, 68, 15536, 1894, 17235, 3652, 18804, 5289, 20380, 7028, 22132, 8766, 23576, 10332, 25267, 11993, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57233,7 +58915,7 @@
       "decoded_length": 20754,
       "offsets": [10222, 52, 12061, 1775, 13893, 3474, 15699, 5135, 17535, 6988, 18888, 8352, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57255,7 +58937,7 @@
       "decoded_length": 17469,
       "offsets": [8617, 52, 10196, 1601, 11645, 3026, 13152, 4454, 14582, 5831, 15996, 7300, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57277,7 +58959,7 @@
       "decoded_length": 18266,
       "offsets": [9081, 52, 10613, 1504, 12148, 2940, 13683, 4362, 15249, 6033, 16634, 7539, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57299,7 +58981,7 @@
       "decoded_length": 16012,
       "offsets": [7936, 52, 9331, 1416, 10709, 2780, 12072, 4139, 13470, 5512, 14737, 6736, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57321,7 +59003,7 @@
       "decoded_length": 5943,
       "offsets": [3013, 36, 3785, 801, 4539, 1571, 5259, 2314, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57343,7 +59025,7 @@
       "decoded_length": 6224,
       "offsets": [3190, 44, 3833, 718, 4432, 1349, 5031, 1964, 5632, 2583, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57365,7 +59047,7 @@
       "decoded_length": 5657,
       "offsets": [2878, 36, 3561, 738, 4268, 1456, 4979, 2185, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57387,7 +59069,7 @@
       "decoded_length": 5650,
       "offsets": [2850, 36, 3590, 796, 4299, 1526, 4990, 2237, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57409,7 +59091,7 @@
       "decoded_length": 18018,
       "offsets": [9180, 52, 10746, 1674, 12281, 3277, 13735, 4806, 15227, 6325, 16654, 7875, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57431,7 +59113,7 @@
       "decoded_length": 17233,
       "offsets": [8446, 52, 9913, 1464, 11348, 2854, 12739, 4201, 14365, 5752, 15768, 7109, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57453,7 +59135,7 @@
       "decoded_length": 19953,
       "offsets": [10015, 76, 11283, 1298, 12482, 2469, 13677, 3636, 14865, 4810, 15959, 5924, 16917, 6915, 17878, 7865, 18855, 8829, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57475,7 +59157,7 @@
       "decoded_length": 5994,
       "offsets": [3013, 52, 3542, 576, 4075, 1108, 4611, 1651, 5114, 2159, 5542, 2556, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57497,7 +59179,7 @@
       "decoded_length": 4922,
       "offsets": [2477, 52, 2897, 470, 3326, 892, 3752, 1307, 4165, 1748, 4508, 2069, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57519,7 +59201,7 @@
       "decoded_length": 4800,
       "offsets": [2448, 60, 2777, 391, 3110, 720, 3444, 1053, 3801, 1432, 4098, 1735, 4382, 2047, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57541,7 +59223,7 @@
       "decoded_length": 4994,
       "offsets": [2452, 52, 2817, 423, 3213, 806, 3587, 1173, 4078, 1615, 4528, 1993, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57563,7 +59245,7 @@
       "decoded_length": 2588,
       "offsets": [1330, 52, 1533, 253, 1743, 467, 1945, 665, 2185, 905, 2364, 1101, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57585,7 +59267,7 @@
       "decoded_length": 4256,
       "offsets": [2139, 52, 2496, 401, 2853, 733, 3199, 1057, 3525, 1371, 3850, 1701, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57607,7 +59289,7 @@
       "decoded_length": 4080,
       "offsets": [2065, 52, 2417, 399, 2772, 746, 3112, 1081, 3403, 1382, 3658, 1644, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57629,7 +59311,7 @@
       "decoded_length": 2560,
       "offsets": [1308, 44, 1582, 321, 1843, 581, 2052, 808, 2282, 1037, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57651,7 +59333,7 @@
       "decoded_length": 4791,
       "offsets": [2436, 52, 2827, 434, 3216, 812, 3602, 1181, 4035, 1642, 4392, 2024, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57673,7 +59355,7 @@
       "decoded_length": 4971,
       "offsets": [2510, 52, 2956, 497, 3384, 921, 3802, 1343, 4133, 1674, 4561, 2075, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57695,7 +59377,7 @@
       "decoded_length": 3375,
       "offsets": [1679, 52, 1940, 323, 2215, 590, 2491, 867, 2747, 1081, 3009, 1311, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57717,7 +59399,7 @@
       "decoded_length": 3751,
       "offsets": [1876, 52, 2195, 338, 2498, 611, 2784, 869, 3144, 1229, 3428, 1507, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57739,7 +59421,7 @@
       "decoded_length": 16618,
       "offsets": [8442, 52, 9928, 1569, 11313, 2996, 12675, 4378, 14033, 5823, 15327, 7175, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57761,7 +59443,7 @@
       "decoded_length": 15077,
       "offsets": [7711, 52, 9040, 1419, 10327, 2740, 11558, 3992, 12494, 4948, 13781, 6279, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57783,7 +59465,7 @@
       "decoded_length": 30496,
       "offsets": [15469, 68, 17480, 2157, 19356, 4043, 21182, 5877, 22635, 7386, 24690, 9586, 26695, 11609, 28497, 13437, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57805,7 +59487,7 @@
       "decoded_length": 8655,
       "offsets": [4320, 76, 4788, 551, 5254, 1025, 5722, 1499, 6196, 1958, 6631, 2390, 7157, 2894, 7674, 3388, 8121, 3809, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57827,7 +59509,7 @@
       "decoded_length": 15165,
       "offsets": [7473, 52, 8781, 1326, 10092, 2601, 11389, 3864, 12684, 5100, 13867, 6179, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57849,7 +59531,7 @@
       "decoded_length": 5961,
       "offsets": [3008, 52, 3516, 560, 4039, 1084, 4569, 1614, 4976, 2023, 5442, 2489, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57871,7 +59553,7 @@
       "decoded_length": 29712,
       "offsets": [14723, 68, 16641, 1972, 18487, 3802, 20257, 5511, 22314, 7543, 24009, 9269, 25702, 10945, 27682, 12806, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57893,7 +59575,7 @@
       "decoded_length": 15745,
       "offsets": [7828, 52, 9211, 1400, 10538, 2690, 11837, 3921, 13022, 5157, 14299, 6451, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57915,7 +59597,7 @@
       "decoded_length": 10778,
       "offsets": [5394, 52, 6262, 916, 7184, 1826, 8112, 2742, 9094, 3714, 9939, 4604, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57937,7 +59619,7 @@
       "decoded_length": 20361,
       "offsets": [10140, 52, 11751, 1645, 13328, 3211, 14931, 4790, 16700, 6539, 18380, 8381, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57959,7 +59641,7 @@
       "decoded_length": 6711,
       "offsets": [3377, 52, 3970, 646, 4555, 1232, 5110, 1776, 5608, 2274, 6153, 2820, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -57981,7 +59663,7 @@
       "decoded_length": 25797,
       "offsets": [9588, 68, 11688, 1201, 13710, 2297, 15680, 3439, 17733, 4768, 19562, 6050, 21637, 7179, 23666, 8451, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -58003,7 +59685,7 @@
       "decoded_length": 23538,
       "offsets": [14899, 68, 15954, 1925, 16975, 3723, 18034, 5484, 19201, 7279, 20325, 9027, 21349, 10868, 22417, 12784, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -58025,7 +59707,7 @@
       "decoded_length": 23598,
       "offsets": [11943, 76, 13326, 1476, 14684, 2857, 16036, 4218, 17222, 5464, 18339, 6641, 19572, 7876, 20877, 9207, 22203, 10567, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -58047,7 +59729,7 @@
       "decoded_length": 21610,
       "offsets": [10736, 76, 11911, 1191, 13092, 2299, 14262, 3408, 15480, 4685, 16577, 5765, 17742, 6897, 19007, 8147, 20282, 9415, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -58069,7 +59751,7 @@
       "decoded_length": 18200,
       "offsets": [9131, 52, 10602, 1524, 12112, 3035, 13672, 4597, 15209, 6134, 16668, 7595, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -58091,7 +59773,7 @@
       "decoded_length": 30769,
       "offsets": [15248, 68, 16962, 2015, 18701, 3877, 20629, 5749, 23203, 7324, 25134, 9233, 26691, 11946, 28651, 14024, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -58113,7 +59795,7 @@
       "decoded_length": 32749,
       "offsets": [16172, 68, 18230, 1907, 20203, 3703, 22181, 5646, 24073, 8182, 26312, 10197, 29070, 11923, 31432, 13956, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -58135,7 +59817,7 @@
       "decoded_length": 15113,
       "offsets": [7512, 52, 8846, 1353, 10164, 2651, 11470, 3941, 12721, 5162, 13789, 6208, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "archive-atlas",
@@ -58157,7 +59839,7 @@
       "decoded_length": 11979,
       "offsets": [5954, 52, 6951, 1024, 7959, 1999, 8952, 2959, 9937, 3948, 10844, 4870, 0],
       "atlas_width": 512,
-      "atlas_height": 35664
+      "atlas_height": 35920
     },
     {
       "kind": "still-atlas",
@@ -61188,6 +62870,2159 @@
       "region_address": "0x0840bf48",
       "decoded_length": 132,
       "decoded_sha256": "cd73e9ef064f1fbffefff6e6def7d2d4a89ebbe9046af985a25bbedf90c1b51b"
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 0,
+        "width": 240,
+        "height": 240
+      },
+      "width": 240,
+      "height": 240,
+      "atlas_width": 1024,
+      "region_address": "0x083cdb84",
+      "encoded_sha256": "6af24817739c0b4f30adcd0773314a2fea5be42d24a8f384f9e50f4d7678da5c",
+      "decoded_sha256": "c116ee10ffad283f02ce4ea2115b7fa3774cbfcebfbf8ada16ff97b4fa262e26",
+      "decoded_length": "0x7080",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 240,
+        "width": 240,
+        "height": 240
+      },
+      "width": 240,
+      "height": 240,
+      "atlas_width": 1024,
+      "region_address": "0x083ce248",
+      "encoded_sha256": "abd5dfbcba4dec0b742d2bab48812b391a890e9644a569ee228dc4be2dc1e16d",
+      "decoded_sha256": "ef693dfb21922f0608e7a43eeb63bc8889b552946058dd826222d40b54110063",
+      "decoded_length": "0x7080",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 480,
+        "width": 240,
+        "height": 240
+      },
+      "width": 240,
+      "height": 240,
+      "atlas_width": 1024,
+      "region_address": "0x083ce530",
+      "encoded_sha256": "7629aafec9093eccedc8a34bb5d4b89fbc517b24d55c554c27cabb904d7f539b",
+      "decoded_sha256": "3cb3634b68d51a7292d1f91fd4a0f2ad55bccd700cdfeb5140274c6f399cdc5d",
+      "decoded_length": "0x7080",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 720,
+        "width": 240,
+        "height": 240
+      },
+      "width": 240,
+      "height": 240,
+      "atlas_width": 1024,
+      "region_address": "0x083ceaac",
+      "encoded_sha256": "7ac3a1f8b5870a438b39502ae0efa89699be80a769375fbdfc45cf7cf1844125",
+      "decoded_sha256": "93a2471eeec460c1a37cd03e60799ad16369417e3ee0b976e2318e6c41747b89",
+      "decoded_length": "0x7080",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 960,
+        "width": 240,
+        "height": 240
+      },
+      "width": 240,
+      "height": 240,
+      "atlas_width": 1024,
+      "region_address": "0x083cf194",
+      "encoded_sha256": "4301987332c2d968621569e393441aa20710c3d5b8e4d3c422ac439d3186071b",
+      "decoded_sha256": "4c3b48082552ea40725f55f2b68a4257188b60ade61d8b6ced93ad3790a3de99",
+      "decoded_length": "0x7080",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 1200,
+        "width": 240,
+        "height": 240
+      },
+      "width": 240,
+      "height": 240,
+      "atlas_width": 1024,
+      "region_address": "0x083cf894",
+      "encoded_sha256": "165b38e6201260ec6ba03cf55a827a237f731b5a001aaa2ff53cd175de950846",
+      "decoded_sha256": "66fa15d42acb495a4871ea362d26a62582cdc103b6d94184879a1488fb93a699",
+      "decoded_length": "0x7080",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 1440,
+        "width": 240,
+        "height": 184
+      },
+      "width": 240,
+      "height": 184,
+      "atlas_width": 1024,
+      "region_address": "0x083d0050",
+      "encoded_sha256": "18b5d6e933dd26c826e68bcb875177e4cfd97f9cb1e6f0c8935522bd5c0b5e70",
+      "decoded_sha256": "74c0c406065dd217793a859fa13923b8c36aa76b5a8098f68cfec6edccb8fa47",
+      "decoded_length": "0x5500",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 1624,
+        "width": 240,
+        "height": 40
+      },
+      "width": 240,
+      "height": 40,
+      "atlas_width": 1024,
+      "region_address": "0x083d1f4c",
+      "encoded_sha256": "6d73a2183dcd330613fe905ae60e82618b1b9830d77098fed038a0c71a755fdf",
+      "decoded_sha256": "d31655c62f6639c2e6df9bc04a4e77781047f4ec3a5b5a047624b1a469d255f6",
+      "decoded_length": "0x10e0",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 1664,
+        "width": 240,
+        "height": 120
+      },
+      "width": 240,
+      "height": 120,
+      "atlas_width": 1024,
+      "region_address": "0x083d3390",
+      "encoded_sha256": "91a888dcbfaee4ff5b26e34179f2c77d2785169cca8251823148be70e7803eff",
+      "decoded_sha256": "d28d230b3e9478ee6f6eb5f96136902b1c84d3593c68a7df74125e33ee809285",
+      "decoded_length": "0x3840",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 1784,
+        "width": 240,
+        "height": 40
+      },
+      "width": 240,
+      "height": 40,
+      "atlas_width": 1024,
+      "region_address": "0x083d6244",
+      "encoded_sha256": "735a7c3bc3538846186dd4e9bee1c8a4b62fa3099beed4f9491299f921cd9e4f",
+      "decoded_sha256": "b9514e46234daffc6a03bc59a1fe234aed41026ae3b0cce971e3aafda1d08d6e",
+      "decoded_length": "0x1200",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 1824,
+        "width": 240,
+        "height": 192
+      },
+      "width": 240,
+      "height": 192,
+      "atlas_width": 1024,
+      "region_address": "0x083d65dc",
+      "encoded_sha256": "5d2d9f86dd2c1069375fc3215545dec2d1cbee379e6bed2a67122e679c33609d",
+      "decoded_sha256": "cdf875edaccf380dfd9c324b4f3d8348252aa296e373a6d90dff66a9e85eb1eb",
+      "decoded_length": "0x564c",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 2016,
+        "width": 240,
+        "height": 64
+      },
+      "width": 240,
+      "height": 64,
+      "atlas_width": 1024,
+      "region_address": "0x083dd604",
+      "encoded_sha256": "304b27bdf365bc9fcbd454fcecbfcc485605c127a0c9ed5d2c511aff8057e8aa",
+      "decoded_sha256": "f800e449ca7373d785fdec164520ab7fba53789dc51cadf00105d97d56e07935",
+      "decoded_length": "0x1deb",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 2080,
+        "width": 240,
+        "height": 64
+      },
+      "width": 240,
+      "height": 64,
+      "atlas_width": 1024,
+      "region_address": "0x083de7d8",
+      "encoded_sha256": "cb978fd519331c93bf80539dfaf826b1d8d9da5bc1a94c03b90104a345d559fa",
+      "decoded_sha256": "c85ae29d697b915347370576d8867883955a66b6c3cba60829047e0aa9b30952",
+      "decoded_length": "0x1b00",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 2144,
+        "width": 240,
+        "height": 216
+      },
+      "width": 240,
+      "height": 216,
+      "atlas_width": 1024,
+      "region_address": "0x083e1f48",
+      "encoded_sha256": "bada4a31a64c0fe6d570bd4d58c0f71c96a821446d5bb95e7141906269149a9e",
+      "decoded_sha256": "28cdd26910e40badaf1767f91baf7c6dd8920f9d40ec17032a57d9ff9d2613ba",
+      "decoded_length": "0x63c0",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 2360,
+        "width": 240,
+        "height": 112
+      },
+      "width": 240,
+      "height": 112,
+      "atlas_width": 1024,
+      "region_address": "0x083e2774",
+      "encoded_sha256": "be74a402c935c0b201aaf47884f63e928120a44660555e750908f0cf842f3948",
+      "decoded_sha256": "3201a8518e553fc7ec2a6f8017450f4487e3dc19e0371cec3d3a9061af516c12",
+      "decoded_length": "0x3180",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 2472,
+        "width": 240,
+        "height": 24
+      },
+      "width": 240,
+      "height": 24,
+      "atlas_width": 1024,
+      "region_address": "0x083e463c",
+      "encoded_sha256": "56d924c2c966f7cf437a5508d1a705a97129c6c81c0c8b218b94adf7e5814c2d",
+      "decoded_sha256": "d43a22f40711ac1f87ecb805a94e3ca4cf866b778cf779991310ab8acab100b5",
+      "decoded_length": "0x800",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 2496,
+        "width": 240,
+        "height": 104
+      },
+      "width": 240,
+      "height": 104,
+      "atlas_width": 1024,
+      "region_address": "0x083e9df0",
+      "encoded_sha256": "463bd69950adc574d6b290b27420d91dd82d8d81fb56f9da8c102a6ce008e0b2",
+      "decoded_sha256": "c7c3856a2e99e85f91ec0b099356008b53ac6f55e241e94d281dcdf667824f56",
+      "decoded_length": "0x2d25",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 2600,
+        "width": 240,
+        "height": 208
+      },
+      "width": 240,
+      "height": 208,
+      "atlas_width": 1024,
+      "region_address": "0x083f81dc",
+      "encoded_sha256": "9271a1dacbb1780125e12a74306daddad79ed976b12e239d83cd39ac36a4efc6",
+      "decoded_sha256": "b077c5877d4b27ef2136e10e1e52052c5d4a0f4f197ca0035300ae427863027c",
+      "decoded_length": "0x5e01",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 2808,
+        "width": 240,
+        "height": 208
+      },
+      "width": 240,
+      "height": 208,
+      "atlas_width": 1024,
+      "region_address": "0x083f96dc",
+      "encoded_sha256": "70a0f1c033967d5ee8bbbb8c4a3ca6d1edcda3930ccc8372edeebae30e05041f",
+      "decoded_sha256": "54c4321eceaa540ca8ecdd37f69976f1d82694d7d277c4de75bf6918bd235ad8",
+      "decoded_length": "0x603e",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 3016,
+        "width": 240,
+        "height": 224
+      },
+      "width": 240,
+      "height": 224,
+      "atlas_width": 1024,
+      "region_address": "0x083fb504",
+      "encoded_sha256": "ac9e4f2771f3e5fb1110ad341ac11cc6143958fe2d1a56f5af86c2b780dbb97a",
+      "decoded_sha256": "437181f0cc1186aac457f8e8f377a0cccf7fa8e918c764bd834b0cd57627e5ee",
+      "decoded_length": "0x6680",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 3240,
+        "width": 240,
+        "height": 104
+      },
+      "width": 240,
+      "height": 104,
+      "atlas_width": 1024,
+      "region_address": "0x083fcbd8",
+      "encoded_sha256": "53b6eb03cdcee2b2a34fcd58eba99840883a5e6b9bd85b0e38824cf7d3ce7d0e",
+      "decoded_sha256": "f0e3e0f62d8dd5802fd59e36779319a4e6ef0f74835824d947abfb59a10e4b22",
+      "decoded_length": "0x3000",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 3344,
+        "width": 240,
+        "height": 56
+      },
+      "width": 240,
+      "height": 56,
+      "atlas_width": 1024,
+      "region_address": "0x083fe3c8",
+      "encoded_sha256": "5ab82cea18635064a546819943d150367d0ad1ccc3d546693af4111d0ccf0e12",
+      "decoded_sha256": "605d3aea288a7b0b197170864bc674cc08e92e46de367e919fee744d636ef00d",
+      "decoded_length": "0x1901",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 3400,
+        "width": 240,
+        "height": 176
+      },
+      "width": 240,
+      "height": 176,
+      "atlas_width": 1024,
+      "region_address": "0x083ff9f8",
+      "encoded_sha256": "dff48927444643dd62e6a77781a33dfea5c931930379a4dbb4f929697c0e023e",
+      "decoded_sha256": "e3de61f6f5ffe57df02a7492c66d98bbf34cf94950c1e57dda080bc8e4d32e67",
+      "decoded_length": "0x5100",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 3576,
+        "width": 240,
+        "height": 176
+      },
+      "width": 240,
+      "height": 176,
+      "atlas_width": 1024,
+      "region_address": "0x084001d0",
+      "encoded_sha256": "29438c2472c1becfa5670c033368afd6f2eb1fdda39c12da40fbb79ba8098971",
+      "decoded_sha256": "3c620edcecda791982675b65c1b05099f7173f940bd97a35eaf9c5df3f7872b4",
+      "decoded_length": "0x5100",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 3752,
+        "width": 240,
+        "height": 80
+      },
+      "width": 240,
+      "height": 80,
+      "atlas_width": 1024,
+      "region_address": "0x08400ca0",
+      "encoded_sha256": "1524ae0a558f307c39a1335edb8477075c37db666a36c566673b3fc36dc5c63a",
+      "decoded_sha256": "13aeddce0b7a792b181bc72dc40e1f0c2a4aa6b79e42c8a135d3e6d58ce3d416",
+      "decoded_length": "0x2580",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 3832,
+        "width": 32,
+        "height": 16
+      },
+      "width": 32,
+      "height": 16,
+      "atlas_width": 1024,
+      "region_address": "0x0809c410",
+      "encoded_sha256": "09fe7f36a16388f39827ffa3a104857e360ca45aa5ab960c405964a4f7ad2a07",
+      "decoded_sha256": "ed7f2febea67c244751cdf0c1393a11a9b4faad82a78d7de195903c492713887",
+      "decoded_length": "0x100",
+      "bpp": 4,
+      "codec": "raw",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 3848,
+        "width": 32,
+        "height": 16
+      },
+      "width": 32,
+      "height": 16,
+      "atlas_width": 1024,
+      "region_address": "0x0809c510",
+      "encoded_sha256": "a0f069714bb58fec949682e4b0690076bbfde89af0d31225d0d413f92e098500",
+      "decoded_sha256": "13984ab87f38a0c5975885fce8d3544c372327ebf613d6b97716478d5a8dbb88",
+      "decoded_length": "0x100",
+      "bpp": 4,
+      "codec": "raw",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 3864,
+        "width": 16,
+        "height": 96
+      },
+      "width": 16,
+      "height": 96,
+      "atlas_width": 1024,
+      "region_address": "0x0809ff58",
+      "encoded_sha256": "42b386973db82da17d5025ba01c26dda3e6fc2a3a04d4b8be2b199656eabf87c",
+      "decoded_sha256": "a436808d0979cd19a0a6b652f716fee0227df6b12a83a395d29c2d7be2e2b3c0",
+      "decoded_length": "0x300",
+      "bpp": 4,
+      "codec": "golden-sun-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 3960,
+        "width": 16,
+        "height": 96
+      },
+      "width": 16,
+      "height": 96,
+      "atlas_width": 1024,
+      "region_address": "0x080a001e",
+      "encoded_sha256": "213e817ac62e387cb7bbd190ce657cf23a83a4aafb96dad111ff5b3a243b21d2",
+      "decoded_sha256": "a4b2b0ed2db9d422ad692182950b9b0e18a3d951a7ab52296b95ceaeaa79b959",
+      "decoded_length": "0x300",
+      "bpp": 4,
+      "codec": "golden-sun-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 4056,
+        "width": 16,
+        "height": 64
+      },
+      "width": 16,
+      "height": 64,
+      "atlas_width": 1024,
+      "region_address": "0x080a00b8",
+      "encoded_sha256": "eefc36e88e3b31fe5e387e2644b2e1092be204ee4128caa665559107bd81fb9b",
+      "decoded_sha256": "2e908bc4f175661246c96ada47b455b5c86a182562e7d985b04b477eb1e7f8f1",
+      "decoded_length": "0x200",
+      "bpp": 4,
+      "codec": "golden-sun-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 4120,
+        "width": 16,
+        "height": 8
+      },
+      "width": 16,
+      "height": 8,
+      "atlas_width": 1024,
+      "region_address": "0x080af04c",
+      "encoded_sha256": "65594f2c76735127c29827e2a73c6261803c68934284b06c5b654636985c7f73",
+      "decoded_sha256": "c06fa81290a7cd0fb691ad21c2ec8573fa4205bd026dd1ebf6fbeacd18bb464f",
+      "decoded_length": "0x40",
+      "bpp": 4,
+      "codec": "raw",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 4128,
+        "width": 32,
+        "height": 16
+      },
+      "width": 32,
+      "height": 16,
+      "atlas_width": 1024,
+      "region_address": "0x080af08c",
+      "encoded_sha256": "2d9903646430881ea91208b7db5a14354e0b5df7acfff39e47fa3ce65991ef8c",
+      "decoded_sha256": "cda5010ed703fe8241b7956ca617301bece621e04b356e488eb28cf4194f5dda",
+      "decoded_length": "0x100",
+      "bpp": 4,
+      "codec": "raw",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 4144,
+        "width": 16,
+        "height": 16
+      },
+      "width": 16,
+      "height": 16,
+      "atlas_width": 1024,
+      "region_address": "0x080af18c",
+      "encoded_sha256": "1197e74e914d69ea31ff1c94a1cfc6df82b9d5751d831b4ccfa36c38d6df38ca",
+      "decoded_sha256": "5166f1efc6f448bd1a4cf1c2715deb74fb82472841a198d29766ad43f284b75e",
+      "decoded_length": "0x80",
+      "bpp": 4,
+      "codec": "raw",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 4160,
+        "width": 8,
+        "height": 8
+      },
+      "width": 8,
+      "height": 8,
+      "atlas_width": 1024,
+      "region_address": "0x080af26c",
+      "encoded_sha256": "e84ef79b829fd37f85d0a2f1ac337ed7504c10a8b3fd772472d95cc9b29da36c",
+      "decoded_sha256": "9c78edb54bf2ecdeedcd5fee55dfebfa5c3d7b67ff01981f32488f2ffd00d931",
+      "decoded_length": "0x20",
+      "bpp": 4,
+      "codec": "raw",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 4168,
+        "width": 56,
+        "height": 8
+      },
+      "width": 56,
+      "height": 8,
+      "atlas_width": 1024,
+      "region_address": "0x080c5b30",
+      "encoded_sha256": "c671897a6ca9c7de36f77e3395932c8acbffc841e6ff4b82477126a1cda8aac0",
+      "decoded_sha256": "789a1ccd8fea8ab945d493fa173b9748806ad0d9a35fca2153738d52d2bdbb66",
+      "decoded_length": "0xe0",
+      "bpp": 4,
+      "codec": "raw",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 4176,
+        "width": 128,
+        "height": 128
+      },
+      "width": 128,
+      "height": 128,
+      "atlas_width": 1024,
+      "region_address": "0x08320fb0",
+      "encoded_sha256": "962b55d4f30af2c5e175035aa77b5e939eb7df7d7a5c2881723b3fd43eb40e43",
+      "decoded_sha256": "ac05b269a0f1a76858b33c99d3245409abc283cded1ddbdaa88c423daf185ff7",
+      "decoded_length": "0x2000",
+      "bpp": 4,
+      "codec": "raw",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 4304,
+        "width": 240,
+        "height": 160
+      },
+      "width": 240,
+      "height": 160,
+      "atlas_width": 1024,
+      "region_address": "0x083c3594",
+      "encoded_sha256": "9cb50a1035cbad602a8f734bb68cdd0c63f7ac60e34c2760d00548429d2b919c",
+      "decoded_sha256": "1cf7e40ec652e5ad7e77eeb814daf98ba70087a528566c2b8d7e9e9059d3608c",
+      "decoded_length": "0x4b00",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 4464,
+        "width": 240,
+        "height": 240
+      },
+      "width": 240,
+      "height": 240,
+      "atlas_width": 1024,
+      "region_address": "0x083cb53c",
+      "encoded_sha256": "e7fab93d52dd1d369728057f3facc93476a0fbf3dd7e23d964a8e8eea4f0f132",
+      "decoded_sha256": "d9065a86af2215db0946c002f2be2fa7c4a84635e1331576d205f36c4cbc4aeb",
+      "decoded_length": "0x6d2a",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 4704,
+        "width": 240,
+        "height": 184
+      },
+      "width": 240,
+      "height": 184,
+      "atlas_width": 1024,
+      "region_address": "0x083cbd84",
+      "encoded_sha256": "7c317a99d766e7f0cc7b534f26d59245d254af7c1d841b0df832b51bd1fd8ca9",
+      "decoded_sha256": "c1987fb16246acab4414ac53d35fbd573044547a0bec377a5490f01c03fdd18c",
+      "decoded_length": "0x5300",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 4888,
+        "width": 240,
+        "height": 8
+      },
+      "width": 240,
+      "height": 8,
+      "atlas_width": 1024,
+      "region_address": "0x083eee10",
+      "encoded_sha256": "11be6b6ec3df2b2f5df0ed2e2b1f60e0794c98d99fefcc1aeb05a59cf8b5ea17",
+      "decoded_sha256": "478c1e3027f763d2210e889e3362b957ee40e7bea9f096260dbdc53b1985fd00",
+      "decoded_length": "0x320",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 4896,
+        "width": 240,
+        "height": 176
+      },
+      "width": 240,
+      "height": 176,
+      "atlas_width": 1024,
+      "region_address": "0x083f090c",
+      "encoded_sha256": "39e48adbfeb9f59be41912b705bba2e5949c15a2a42c2366559a7df8f3e84a34",
+      "decoded_sha256": "816bd112492a860c29549d46777ff362e068d9cdbaa74d9e8535765256b23ec4",
+      "decoded_length": "0x5100",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 5072,
+        "width": 240,
+        "height": 24
+      },
+      "width": 240,
+      "height": 24,
+      "atlas_width": 1024,
+      "region_address": "0x083f293c",
+      "encoded_sha256": "50b563adbc67d402855463aca82683da25d2e22dae30fc75e378815640e14f7d",
+      "decoded_sha256": "ffc905be1c335a795690f240ace994c2b6bc7be01e9bc403abca259ec9a86c50",
+      "decoded_length": "0xb40",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 5096,
+        "width": 240,
+        "height": 96
+      },
+      "width": 240,
+      "height": 96,
+      "atlas_width": 1024,
+      "region_address": "0x083f2d00",
+      "encoded_sha256": "e60312a4dc0a9a17554c7c1542ff348b7162922b40f5b5fff68358bb8e6483b8",
+      "decoded_sha256": "2de2dba9231e367308dc4b4b569343fa2eae1ad631dcf19cac5812f512ccf1dc",
+      "decoded_length": "0x2d00",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 5192,
+        "width": 240,
+        "height": 24
+      },
+      "width": 240,
+      "height": 24,
+      "atlas_width": 1024,
+      "region_address": "0x083f3714",
+      "encoded_sha256": "903149d991623a0fb595433058f805ed87f508d9a92e01e21159ae6a99245fad",
+      "decoded_sha256": "774e71181b3f4a8b263fee6be039115f48fde5b2f0f7ee962b76c2b39115bd3f",
+      "decoded_length": "0x810",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 5216,
+        "width": 240,
+        "height": 80
+      },
+      "width": 240,
+      "height": 80,
+      "atlas_width": 1024,
+      "region_address": "0x083f3a98",
+      "encoded_sha256": "21920d9a85ec188dec58db29764c33180c3be3356bc944a2f92089cf46b13b0b",
+      "decoded_sha256": "4d3708285a64533c4a45385d10e5297b904c66376d6259904066e26768098173",
+      "decoded_length": "0x2580",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 5296,
+        "width": 240,
+        "height": 56
+      },
+      "width": 240,
+      "height": 56,
+      "atlas_width": 1024,
+      "region_address": "0x083f4748",
+      "encoded_sha256": "c4a09468512d4745d69bae3396e2c5fa9cf5a782271501fcfeb26c061e911533",
+      "decoded_sha256": "7935055d64ae6e796a8400b55bc0badda53bada4d82011c2f77fcc2f75741539",
+      "decoded_length": "0x1a40",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 5352,
+        "width": 240,
+        "height": 64
+      },
+      "width": 240,
+      "height": 64,
+      "atlas_width": 1024,
+      "region_address": "0x083f5428",
+      "encoded_sha256": "2557652830390e9a474d08311ba08d190667e5f795bfc29ee7f1b990bfe7c099",
+      "decoded_sha256": "02bf344498709412991c195d6554c08a3f1f665622f84ed704bb9e13f06fa74d",
+      "decoded_length": "0x1b00",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 5416,
+        "width": 240,
+        "height": 128
+      },
+      "width": 240,
+      "height": 128,
+      "atlas_width": 1024,
+      "region_address": "0x0840539c",
+      "encoded_sha256": "6a06d1f731841a2a0ce587bf83146fc366a09c748a46288b15220faa921c7696",
+      "decoded_sha256": "5344996afe41fb2a2c7c4de3f34a3758599438c02076e26ba57f4c753f5cb701",
+      "decoded_length": "0x38dc",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 5544,
+        "width": 240,
+        "height": 96
+      },
+      "width": 240,
+      "height": 96,
+      "atlas_width": 1024,
+      "region_address": "0x0840914c",
+      "encoded_sha256": "7a14db89b0da5952f47b270932da0f6692834a8386cba4e9dcafe1d62d325d92",
+      "decoded_sha256": "b8006731112d251e7e0f0c9e4fbfed9ff6bb890f200cc7f691f3ba9d4b86f062",
+      "decoded_length": "0x2d00",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 5640,
+        "width": 240,
+        "height": 40
+      },
+      "width": 240,
+      "height": 40,
+      "atlas_width": 1024,
+      "region_address": "0x0840a0e0",
+      "encoded_sha256": "c879495dd63d69f87e14096136cc2f15a44ba59769f7e6100b865633ea7f7bb1",
+      "decoded_sha256": "ae257c69eeadff269bf2dd0f965be9a64579110f9c434eb2b69725b57d78b35c",
+      "decoded_length": "0x1073",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 5680,
+        "width": 240,
+        "height": 32
+      },
+      "width": 240,
+      "height": 32,
+      "atlas_width": 1024,
+      "region_address": "0x0840a45c",
+      "encoded_sha256": "22b3950456e7991fa89b3c0624cd83e759b991b80b8414a6171dcbff66b6a012",
+      "decoded_sha256": "63771acdc61831994a74cc1ae4d2196f7c39fef877ec4013fd2f002554442e76",
+      "decoded_length": "0xd80",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 5712,
+        "width": 240,
+        "height": 80
+      },
+      "width": 240,
+      "height": 80,
+      "atlas_width": 1024,
+      "region_address": "0x0840a90c",
+      "encoded_sha256": "778270bec9a2cdc12d4464b2c48f6567e0cd169f1f6762bd622f7e5a304cbe71",
+      "decoded_sha256": "9e68c86a9e21586fd3fd311eb9ed34d5eb9a181b11567da2a08d4d722bf66a67",
+      "decoded_length": "0x2514",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 5792,
+        "width": 240,
+        "height": 40
+      },
+      "width": 240,
+      "height": 40,
+      "atlas_width": 1024,
+      "region_address": "0x0840ba5c",
+      "encoded_sha256": "9331aab13696bc19c45ca749ba784426d1ce961940df8a195f977f232bb6a43b",
+      "decoded_sha256": "b500254ca97e2357871750ff82ecc44b5bec6fda52fb8beee59520fb4ce543a2",
+      "decoded_length": "0x104e",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 5832,
+        "width": 240,
+        "height": 128
+      },
+      "width": 240,
+      "height": 128,
+      "atlas_width": 1024,
+      "region_address": "0x0840d018",
+      "encoded_sha256": "ba241c5e06e3bbb5f8b4e6599c283b5c683815b0b3eab157b11d6e3eed6440e3",
+      "decoded_sha256": "ced36f605326cc4038d0cbb56ab498572daecb92beac6debecb7bae4b36b2b65",
+      "decoded_length": "0x3956",
+      "bpp": 4,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "archive-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+      "metadata": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+      "pointer": "/archives/f2/components/1",
+      "width": 512,
+      "height": 128,
+      "source_rect": {
+        "x": 0,
+        "y": 35664,
+        "width": 512,
+        "height": 128
+      },
+      "decoded_sha256": "1fa69d72bec146c6b89da41cd5c4d6fd2850918ba811ecc5a559c267d1417c26",
+      "encoded_sha256": "c8ede23ecddff08fd1227adc1cc35cf2d6f10052c4141095321bb156248f3b79",
+      "region_address": "0x0843f868",
+      "encoded_length": 8626,
+      "decoded_length": 13740,
+      "offsets": [6941, 52, 8169, 1257, 9381, 2445, 10576, 3596, 11577, 4661, 12638, 5798, 0],
+      "atlas_width": 512,
+      "atlas_height": 35920
+    },
+    {
+      "kind": "archive-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+      "metadata": "games/tbs/SRC/GRAPHICS/CHARACTER/COMMON.json",
+      "pointer": "/archives/f3/components/1",
+      "width": 512,
+      "height": 128,
+      "source_rect": {
+        "x": 0,
+        "y": 35792,
+        "width": 512,
+        "height": 128
+      },
+      "decoded_sha256": "060a634f143c50c25f1410ff3a93106059c2981462c92116a1ad3af8570cec74",
+      "encoded_sha256": "093fd5faf2f2f7e06c778acb93f354af8c93043d25a5dee56a4d0cceee04f3e0",
+      "region_address": "0x08441a1c",
+      "encoded_length": 6388,
+      "decoded_length": 10308,
+      "offsets": [5202, 52, 6062, 891, 6926, 1745, 7779, 2609, 8645, 3440, 9491, 4329, 0],
+      "atlas_width": 512,
+      "atlas_height": 35920
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 5960,
+        "width": 96,
+        "height": 32
+      },
+      "width": 96,
+      "height": 32,
+      "atlas_width": 1024,
+      "region_address": "0x0809e4ce",
+      "encoded_sha256": "19559ec4ae52c8564da246274a3bf2067f60bdb0b0f103c5d9c419b55284d887",
+      "decoded_sha256": "6b8f942fcae1de5f297a6080c822f6f1a10684d7bde6bd0f74a15f471070c51c",
+      "decoded_length": "0x600",
+      "bpp": 4,
+      "codec": "golden-sun-halfword-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 5992,
+        "width": 240,
+        "height": 160
+      },
+      "width": 240,
+      "height": 160,
+      "atlas_width": 1024,
+      "region_address": "0x08324be8",
+      "encoded_sha256": "621fa65c95f00ff5a5ce5646a8c6446ea98c68fc708aa4055a3a4944d1b127b6",
+      "decoded_sha256": "a0ae3addb34b1b5e00c7374f41399e3d0df87e4b1241740dd100b23ccd7aebc1",
+      "decoded_length": "0x9600",
+      "bpp": 8,
+      "codec": "golden-sun-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 6152,
+        "width": 240,
+        "height": 160
+      },
+      "width": 240,
+      "height": 160,
+      "atlas_width": 1024,
+      "region_address": "0x08333960",
+      "encoded_sha256": "9932764b723843d7af846728d4a7346d1301276557df1cbaf383d766b3321c15",
+      "decoded_sha256": "f4061b1471fd1a485888448b781b4da98700078ad09a065af4e80d3fe31da882",
+      "decoded_length": "0x9600",
+      "bpp": 8,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 6312,
+        "width": 112,
+        "height": 96
+      },
+      "width": 112,
+      "height": 96,
+      "atlas_width": 1024,
+      "region_address": "0x08410250",
+      "encoded_sha256": "fffc702d902c6c29ca784674104bf2a853b5086b3399810520840ec867064a20",
+      "decoded_sha256": "5eb8193f935593ebfb61f4d29f254a816e1159850588210f9ec6f6d131b1277d",
+      "decoded_length": "0x2a00",
+      "bpp": 8,
+      "codec": "golden-sun-tagged-palette-lz",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 6408,
+        "width": 240,
+        "height": 8
+      },
+      "width": 240,
+      "height": 8,
+      "atlas_width": 1024,
+      "region_address": "0x083f7f44",
+      "encoded_sha256": "ad79c1e399ed3b4f2e742c53a84df66df8be481864a7a5782be73eb9f03cc2c4",
+      "decoded_sha256": "44b2998eba517fde5e54ddf798633d645f21d58174d7bc0a8efedf57209694f3",
+      "decoded_length": "0x39c",
+      "bpp": 4,
+      "codec": "golden-sun-general-lz-prefill",
+      "identity": null,
+      "runtime_role": null,
+      "prefill": "0x1000",
+      "header": 1,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 6416,
+        "width": 240,
+        "height": 160
+      },
+      "width": 240,
+      "height": 160,
+      "atlas_width": 1024,
+      "region_address": "0x083c5838",
+      "encoded_sha256": "5303f59ec2a3df70976276ef8054a3ea1d91b07e5aaa8df17defaabdc4254ae6",
+      "decoded_sha256": "86dd1feae85e420c3b1e5895f553217b37db37f708d04398f72b71aacd50e332",
+      "decoded_length": "0x9600",
+      "bpp": 8,
+      "codec": "golden-sun-general-lz-prefill",
+      "identity": null,
+      "runtime_role": null,
+      "prefill": "0x1000",
+      "header": 1,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 6576,
+        "width": 240,
+        "height": 16
+      },
+      "width": 240,
+      "height": 16,
+      "atlas_width": 1024,
+      "region_address": "0x083ee404",
+      "encoded_sha256": "c7747a20088fe780a7925efea22d3da0f558ade614d673367ead4e74202097d4",
+      "decoded_sha256": "ab6ee83f022b909162f89b90fcdce0d034ce3a090427db80039a99030dfd8f97",
+      "decoded_length": "0x640",
+      "bpp": 4,
+      "codec": "golden-sun-general-lz-prefill",
+      "identity": null,
+      "runtime_role": null,
+      "prefill": "0x1000",
+      "header": 1,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 6592,
+        "width": 240,
+        "height": 8
+      },
+      "width": 240,
+      "height": 8,
+      "atlas_width": 1024,
+      "region_address": "0x083ee7e0",
+      "encoded_sha256": "c57ad491ebcc68245ad54974319a55d9f734313d8300b165e177cbd3ecf1f7b5",
+      "decoded_sha256": "e063e3696b7b7338ddcb3f172622664cdc4aaab83c54b1d8ef74851df2044651",
+      "decoded_length": "0x320",
+      "bpp": 4,
+      "codec": "golden-sun-general-lz-prefill",
+      "identity": null,
+      "runtime_role": null,
+      "prefill": "0x1000",
+      "header": 1,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 6600,
+        "width": 240,
+        "height": 16
+      },
+      "width": 240,
+      "height": 16,
+      "atlas_width": 1024,
+      "region_address": "0x08403408",
+      "encoded_sha256": "1cea26a5891a0fbffcdb1c4c4b1cb679e2af13942db90d78467bd68fb9d252b4",
+      "decoded_sha256": "1de3011111ad9744e6166f18595c408b815c259da58a7c1bb8d495b7b7f4747d",
+      "decoded_length": "0x600",
+      "bpp": 4,
+      "codec": "golden-sun-general-lz-prefill",
+      "identity": null,
+      "runtime_role": null,
+      "prefill": "0x1000",
+      "header": 1,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 6616,
+        "width": 240,
+        "height": 16
+      },
+      "width": 240,
+      "height": 16,
+      "atlas_width": 1024,
+      "region_address": "0x08404048",
+      "encoded_sha256": "3c27b32ea56d8e29949600bf44099c90224da73f4d18217c2ef7cf6583d38ad2",
+      "decoded_sha256": "c00b936f810a9cf4fef0a3f2511e1e3f7aa62fd182ba525b534f7b61cd9281f4",
+      "decoded_length": "0x400",
+      "bpp": 4,
+      "codec": "golden-sun-general-lz-prefill",
+      "identity": null,
+      "runtime_role": null,
+      "prefill": "0x1000",
+      "header": 1,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 6632,
+        "width": 240,
+        "height": 80
+      },
+      "width": 240,
+      "height": 80,
+      "atlas_width": 1024,
+      "region_address": "0x08404384",
+      "encoded_sha256": "aa193aa2fd5bd4d49ba9c82dacb7fab07f2880f8733ed920febf683b02be721b",
+      "decoded_sha256": "8c4a42a0e8d96ee0be82049c4537675378cc67e42b68bc2b191557b744da16de",
+      "decoded_length": "0x239d",
+      "bpp": 4,
+      "codec": "golden-sun-general-lz-prefill",
+      "identity": null,
+      "runtime_role": null,
+      "prefill": "0x1000",
+      "header": 1,
+      "atlas_height": 8576
+    },
+    {
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "region_address": "0x08323a70",
+      "encoded_sha256": "05034ba9d775926f67e22ac3a234702113bca560a9b175c0ccb73cbe2890c280",
+      "component_index": 0,
+      "component_offset": 0,
+      "decoded_length": 4096,
+      "buffer_length": 7680,
+      "codec": "golden-sun-palette-lz",
+      "kind": "tile-atlas",
+      "source_rect": {
+        "x": 0,
+        "y": 6712,
+        "width": 64,
+        "height": 64
+      },
+      "width": 64,
+      "height": 64,
+      "atlas_width": 1024,
+      "bpp": 8,
+      "decoded_sha256": "fe95edff09854466e0f3df0f063803e2f9d70de96754175f32d436f8cbeab0ff",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "region_address": "0x08323a70",
+      "encoded_sha256": "05034ba9d775926f67e22ac3a234702113bca560a9b175c0ccb73cbe2890c280",
+      "component_index": 1,
+      "component_offset": 4096,
+      "decoded_length": 1024,
+      "buffer_length": 7680,
+      "codec": "golden-sun-palette-lz",
+      "kind": "tile-atlas",
+      "source_rect": {
+        "x": 0,
+        "y": 6776,
+        "width": 32,
+        "height": 32
+      },
+      "width": 32,
+      "height": 32,
+      "atlas_width": 1024,
+      "bpp": 8,
+      "decoded_sha256": "aa3f4af8c7b71abb80563f53e30e89b8fd2ee3749b5e45eaa8a1c3d5818272e3",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "region_address": "0x08323a70",
+      "encoded_sha256": "05034ba9d775926f67e22ac3a234702113bca560a9b175c0ccb73cbe2890c280",
+      "component_index": 2,
+      "component_offset": 5120,
+      "decoded_length": 1024,
+      "buffer_length": 7680,
+      "codec": "golden-sun-palette-lz",
+      "kind": "tile-atlas",
+      "source_rect": {
+        "x": 0,
+        "y": 6808,
+        "width": 32,
+        "height": 32
+      },
+      "width": 32,
+      "height": 32,
+      "atlas_width": 1024,
+      "bpp": 8,
+      "decoded_sha256": "e30a4ff62cd0c1b471c7cad681004eb6247fdf8ef4c6743cb8017ca49a9d99eb",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "region_address": "0x08323a70",
+      "encoded_sha256": "05034ba9d775926f67e22ac3a234702113bca560a9b175c0ccb73cbe2890c280",
+      "component_index": 3,
+      "component_offset": 6144,
+      "decoded_length": 256,
+      "buffer_length": 7680,
+      "codec": "golden-sun-palette-lz",
+      "kind": "tile-atlas",
+      "source_rect": {
+        "x": 0,
+        "y": 6840,
+        "width": 16,
+        "height": 16
+      },
+      "width": 16,
+      "height": 16,
+      "atlas_width": 1024,
+      "bpp": 8,
+      "decoded_sha256": "03d45a1c1b6b3545f8ad3af9891bb21128f9905ce4294a4d17c89335b62c82a9",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "region_address": "0x08323a70",
+      "encoded_sha256": "05034ba9d775926f67e22ac3a234702113bca560a9b175c0ccb73cbe2890c280",
+      "component_index": 4,
+      "component_offset": 6400,
+      "decoded_length": 256,
+      "buffer_length": 7680,
+      "codec": "golden-sun-palette-lz",
+      "kind": "tile-atlas",
+      "source_rect": {
+        "x": 0,
+        "y": 6856,
+        "width": 16,
+        "height": 16
+      },
+      "width": 16,
+      "height": 16,
+      "atlas_width": 1024,
+      "bpp": 8,
+      "decoded_sha256": "afa0aa308b75604158f1d93f4f969f13584c817c5acc2c0fd04f51e035ded1e1",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "region_address": "0x08323a70",
+      "encoded_sha256": "05034ba9d775926f67e22ac3a234702113bca560a9b175c0ccb73cbe2890c280",
+      "component_index": 5,
+      "component_offset": 6656,
+      "decoded_length": 256,
+      "buffer_length": 7680,
+      "codec": "golden-sun-palette-lz",
+      "kind": "tile-atlas",
+      "source_rect": {
+        "x": 0,
+        "y": 6872,
+        "width": 16,
+        "height": 16
+      },
+      "width": 16,
+      "height": 16,
+      "atlas_width": 1024,
+      "bpp": 8,
+      "decoded_sha256": "eb2075aa6eb52fe2c54ff8089868ba01c50d0fa7949b71564100d0b957c96756",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "region_address": "0x08323a70",
+      "encoded_sha256": "05034ba9d775926f67e22ac3a234702113bca560a9b175c0ccb73cbe2890c280",
+      "component_index": 6,
+      "component_offset": 6912,
+      "decoded_length": 256,
+      "buffer_length": 7680,
+      "codec": "golden-sun-palette-lz",
+      "kind": "tile-atlas",
+      "source_rect": {
+        "x": 0,
+        "y": 6888,
+        "width": 16,
+        "height": 16
+      },
+      "width": 16,
+      "height": 16,
+      "atlas_width": 1024,
+      "bpp": 8,
+      "decoded_sha256": "efa1f08ff9720249249b698f22f335fc67166ff80a3fef882ee1f4e243a917c2",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "region_address": "0x08323a70",
+      "encoded_sha256": "05034ba9d775926f67e22ac3a234702113bca560a9b175c0ccb73cbe2890c280",
+      "component_index": 7,
+      "component_offset": 7168,
+      "decoded_length": 256,
+      "buffer_length": 7680,
+      "codec": "golden-sun-palette-lz",
+      "kind": "tile-atlas",
+      "source_rect": {
+        "x": 0,
+        "y": 6904,
+        "width": 16,
+        "height": 16
+      },
+      "width": 16,
+      "height": 16,
+      "atlas_width": 1024,
+      "bpp": 8,
+      "decoded_sha256": "a8d5126394891bdd716f0d58ce69279fef1017f87d82105efd6c41b35470ad70",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "region_address": "0x08323a70",
+      "encoded_sha256": "05034ba9d775926f67e22ac3a234702113bca560a9b175c0ccb73cbe2890c280",
+      "component_index": 8,
+      "component_offset": 7424,
+      "decoded_length": 256,
+      "buffer_length": 7680,
+      "codec": "golden-sun-palette-lz",
+      "kind": "tile-atlas",
+      "source_rect": {
+        "x": 0,
+        "y": 6920,
+        "width": 16,
+        "height": 16
+      },
+      "width": 16,
+      "height": 16,
+      "atlas_width": 1024,
+      "bpp": 8,
+      "decoded_sha256": "1ece38c477dc0e28f3d1a4baa44ea65bef9dadbf52f8ba6dfc964d6f40b8e94a",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "region_address": "0x0832b2a8",
+      "encoded_sha256": "8b1d47226fcf5360c436255796421716d9b722576dc028a0ec92574d499208d3",
+      "component_index": 0,
+      "component_offset": 0,
+      "decoded_length": 41280,
+      "buffer_length": 85440,
+      "codec": "golden-sun-palette-lz",
+      "kind": "tile-atlas",
+      "source_rect": {
+        "x": 0,
+        "y": 6936,
+        "width": 240,
+        "height": 344
+      },
+      "width": 240,
+      "height": 344,
+      "atlas_width": 1024,
+      "bpp": 4,
+      "decoded_sha256": "cc112c6b97e95ad491353981606834930b994bb906358520d590ddd2ab9467e3",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "region_address": "0x0832b2a8",
+      "encoded_sha256": "8b1d47226fcf5360c436255796421716d9b722576dc028a0ec92574d499208d3",
+      "component_index": 1,
+      "component_offset": 41280,
+      "decoded_length": 44160,
+      "buffer_length": 85440,
+      "codec": "golden-sun-palette-lz",
+      "kind": "tile-atlas",
+      "source_rect": {
+        "x": 0,
+        "y": 7280,
+        "width": 240,
+        "height": 184
+      },
+      "width": 240,
+      "height": 184,
+      "atlas_width": 1024,
+      "bpp": 8,
+      "decoded_sha256": "2957f95af5c3dcc71dd0ed1c3b6d5d86b5a36e91f9f8212c86d55bd2fadf086c",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+      "region_address": "0x08333fc8",
+      "encoded_sha256": "78ecb6598d923b7329ee2ef45527e565efcf23e124bc7c70958a7f63ae3e909c",
+      "component_index": 0,
+      "component_offset": 0,
+      "decoded_length": 448,
+      "buffer_length": 22976,
+      "codec": "golden-sun-general-lz",
+      "kind": "palette-buffer",
+      "banks": [969, 970, 971, 972, 973, 974, 975, 976, 977, 978, 979, 980, 981, 982],
+      "decoded_sha256": "7403d41d938a90a22700a4d3e124c36ef0a09505a121e16b62f4e9f300a4849a"
+    },
+    {
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "region_address": "0x08333fc8",
+      "encoded_sha256": "78ecb6598d923b7329ee2ef45527e565efcf23e124bc7c70958a7f63ae3e909c",
+      "component_index": 2,
+      "component_offset": 2496,
+      "decoded_length": 16384,
+      "buffer_length": 22976,
+      "codec": "golden-sun-general-lz",
+      "kind": "tile-atlas",
+      "source_rect": {
+        "x": 0,
+        "y": 7464,
+        "width": 128,
+        "height": 128
+      },
+      "width": 128,
+      "height": 128,
+      "atlas_width": 1024,
+      "bpp": 8,
+      "decoded_sha256": "36f0165d67fd6e028d4fa416e2e2058153a2bd7d3a6aae93dba78efd58b5d0dc",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "region_address": "0x08333fc8",
+      "encoded_sha256": "78ecb6598d923b7329ee2ef45527e565efcf23e124bc7c70958a7f63ae3e909c",
+      "component_index": 3,
+      "component_offset": 18880,
+      "decoded_length": 4096,
+      "buffer_length": 22976,
+      "codec": "golden-sun-general-lz",
+      "kind": "tile-atlas",
+      "source_rect": {
+        "x": 0,
+        "y": 7592,
+        "width": 128,
+        "height": 32
+      },
+      "width": 128,
+      "height": 32,
+      "atlas_width": 1024,
+      "bpp": 8,
+      "decoded_sha256": "52f5c6a49b222233a7b4b4ec998c0e444088b5782dcc0856b7a2e121c043430d",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+      "region_address": "0x0833ac08",
+      "encoded_sha256": "a871dc7a6459fc6e35f50b30dd1ced9d7d3ae42d4702b05ee87fb71db8444d9d",
+      "component_index": 0,
+      "component_offset": 0,
+      "decoded_length": 32,
+      "buffer_length": 1184,
+      "codec": "golden-sun-general-lz",
+      "kind": "palette-buffer",
+      "banks": [983],
+      "decoded_sha256": "38c27bd257552f48fc15da6e0514f46910ee22f74999a41b10222e572c690ea4"
+    },
+    {
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "region_address": "0x0833ac08",
+      "encoded_sha256": "a871dc7a6459fc6e35f50b30dd1ced9d7d3ae42d4702b05ee87fb71db8444d9d",
+      "component_index": 1,
+      "component_offset": 32,
+      "decoded_length": 1152,
+      "buffer_length": 1184,
+      "codec": "golden-sun-general-lz",
+      "kind": "tile-atlas",
+      "source_rect": {
+        "x": 0,
+        "y": 7624,
+        "width": 72,
+        "height": 32
+      },
+      "width": 72,
+      "height": 32,
+      "atlas_width": 1024,
+      "bpp": 4,
+      "decoded_sha256": "7a5069140e7117ac6bf3309e4248e035a566b51023f873301516b4477f67dd1b",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/PALETTE.json",
+      "region_address": "0x08434ca8",
+      "encoded_sha256": "e2a599acbf273a1d29f78fd0e26ff266b75abb8073e7e91f62cd2e97026a0da0",
+      "component_index": 0,
+      "component_offset": 0,
+      "decoded_length": 160,
+      "buffer_length": 8352,
+      "codec": "golden-sun-general-lz",
+      "kind": "palette-buffer",
+      "banks": [984, 985, 986, 987, 988],
+      "decoded_sha256": "268426d6fa40c146f09c5122d96a4b81b129284d04bffc0af0f452483acfe061"
+    },
+    {
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "region_address": "0x08434ca8",
+      "encoded_sha256": "e2a599acbf273a1d29f78fd0e26ff266b75abb8073e7e91f62cd2e97026a0da0",
+      "component_index": 1,
+      "component_offset": 160,
+      "decoded_length": 8192,
+      "buffer_length": 8352,
+      "codec": "golden-sun-general-lz",
+      "kind": "tile-atlas",
+      "source_rect": {
+        "x": 0,
+        "y": 7656,
+        "width": 32,
+        "height": 512
+      },
+      "width": 32,
+      "height": 512,
+      "atlas_width": 1024,
+      "bpp": 4,
+      "decoded_sha256": "77a28c7223536b3f952fd41020e70822b84216c5596cb557d18a7b73f0fe2444",
+      "identity": null,
+      "runtime_role": null,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 8168,
+        "width": 32,
+        "height": 8
+      },
+      "width": 32,
+      "height": 8,
+      "atlas_width": 1024,
+      "region_address": "0x08012f20",
+      "encoded_sha256": "8e6bf379f095385822595834f73f51e59ad460274cff55bdffaf779b672d0673",
+      "decoded_sha256": "db5b857b7042d7991b6946f1cac4054fd7b4f76768edb73af2a039bd970facb0",
+      "decoded_length": 128,
+      "bpp": 4,
+      "codec": "raw",
+      "identity": null,
+      "runtime_role": null,
+      "frames": 4,
+      "columns": 4,
+      "frame_tiles_wide": 1,
+      "frame_tiles_high": 1,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 8176,
+        "width": 48,
+        "height": 64
+      },
+      "width": 48,
+      "height": 64,
+      "atlas_width": 1024,
+      "region_address": "0x080aea4c",
+      "encoded_sha256": "468355bde2c4c716fdb2c0bf65991943448e0f2edce1667076b8c69633700363",
+      "decoded_sha256": "5fca10851581322b463b4d579e34f279fea4fac3ef244758e5ee18a6aa5335ee",
+      "decoded_length": "0x600",
+      "bpp": 4,
+      "codec": "raw",
+      "identity": null,
+      "runtime_role": null,
+      "frames": 12,
+      "columns": 3,
+      "frame_tiles_wide": 2,
+      "frame_tiles_high": 2,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 8240,
+        "width": 96,
+        "height": 16
+      },
+      "width": 96,
+      "height": 16,
+      "atlas_width": 1024,
+      "region_address": "0x080b3940",
+      "encoded_sha256": "a1f69cc2941a05722c0fc8e6b20f8be07517f24e64c4ccdf5ea7e0e705f97c4a",
+      "decoded_sha256": "8b01c4b4e529bd926066d81f1cf9c3fcb59d6a15d1518acc4927cf96c90a8c31",
+      "decoded_length": 768,
+      "bpp": 4,
+      "codec": "raw",
+      "identity": null,
+      "runtime_role": null,
+      "frames": 6,
+      "columns": 6,
+      "frame_tiles_wide": 2,
+      "frame_tiles_high": 2,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 8256,
+        "width": 32,
+        "height": 16
+      },
+      "width": 32,
+      "height": 16,
+      "atlas_width": 1024,
+      "region_address": "0x080b3c40",
+      "encoded_sha256": "84ad301022fd7736964c31cc61c5703114facbe19ea5cf4aa7e9e93a626bf251",
+      "decoded_sha256": "b1135e18f9e7d7e200c44095986179d681d15b371a08a4ecb605c0eaeb9f255d",
+      "decoded_length": 256,
+      "bpp": 4,
+      "codec": "raw",
+      "identity": null,
+      "runtime_role": null,
+      "frames": 2,
+      "columns": 2,
+      "frame_tiles_wide": 2,
+      "frame_tiles_high": 2,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 8272,
+        "width": 80,
+        "height": 8
+      },
+      "width": 80,
+      "height": 8,
+      "atlas_width": 1024,
+      "region_address": "0x080b3d40",
+      "encoded_sha256": "42c2644a093d4f05b4a8c18801fd9628630f628d7e31e841b3fbf62cbd0ddd0b",
+      "decoded_sha256": "a1f72689f407e4adc3cc1f097e97fc7b1ed2782dba6b49cee40813336e93ba6a",
+      "decoded_length": 320,
+      "bpp": 4,
+      "codec": "raw",
+      "identity": null,
+      "runtime_role": null,
+      "frames": 10,
+      "columns": 10,
+      "frame_tiles_wide": 1,
+      "frame_tiles_high": 1,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 8280,
+        "width": 32,
+        "height": 16
+      },
+      "width": 32,
+      "height": 16,
+      "atlas_width": 1024,
+      "region_address": "0x080b3e80",
+      "encoded_sha256": "8886617abf3b3f2a04e85c965f91ab588792ef97a502d46f32a4a717bb6a7b03",
+      "decoded_sha256": "b8def3fd5bd3e6f49974d3ac5a411eb9dda0987c07ffe47928f93f6eb807bedd",
+      "decoded_length": 256,
+      "bpp": 4,
+      "codec": "raw",
+      "identity": null,
+      "runtime_role": null,
+      "frames": 2,
+      "columns": 2,
+      "frame_tiles_wide": 2,
+      "frame_tiles_high": 2,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 8296,
+        "width": 48,
+        "height": 16
+      },
+      "width": 48,
+      "height": 16,
+      "atlas_width": 1024,
+      "region_address": "0x080b3f80",
+      "encoded_sha256": "d0b146e55ea3bdb50c8763125de006525e670953002c910522b317dd3386713f",
+      "decoded_sha256": "c6faa95caec71226cf64a06fa65595368dc24955618a4d01c761ed710e67b2d2",
+      "decoded_length": 384,
+      "bpp": 4,
+      "codec": "raw",
+      "identity": null,
+      "runtime_role": null,
+      "frames": 3,
+      "columns": 3,
+      "frame_tiles_wide": 2,
+      "frame_tiles_high": 2,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 8312,
+        "width": 128,
+        "height": 32
+      },
+      "width": 128,
+      "height": 32,
+      "atlas_width": 1024,
+      "region_address": "0x080c3734",
+      "encoded_sha256": "9b44d2a4de654674b3134ef147d99acd001b29f6ee9d7067f8afc12518e3dad2",
+      "decoded_sha256": "e8faa716e360e4eb6d7475294c923be41f8d6a1ad1dda85b1fb89d95fe955e7c",
+      "decoded_length": "0x800",
+      "bpp": 4,
+      "codec": "raw",
+      "identity": null,
+      "runtime_role": null,
+      "frames": 16,
+      "columns": 8,
+      "frame_tiles_wide": 2,
+      "frame_tiles_high": 2,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "tile-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 8344,
+        "width": 64,
+        "height": 8
+      },
+      "width": 64,
+      "height": 8,
+      "atlas_width": 1024,
+      "region_address": "0x080c5a30",
+      "encoded_sha256": "88c7aa4fc482b61f30f33e72a4e6004c3614b313c1db0af5ebd560c6c96c2492",
+      "decoded_sha256": "36f50443a08d98d661b96c01bd820440edfbce4b379e1cd2feb58fc27f0963ec",
+      "decoded_length": "0x100",
+      "bpp": 4,
+      "codec": "raw",
+      "identity": null,
+      "runtime_role": null,
+      "frames": 8,
+      "columns": 8,
+      "frame_tiles_wide": 1,
+      "frame_tiles_high": 1,
+      "atlas_height": 8576
+    },
+    {
+      "kind": "frame-atlas",
+      "source": "games/tbs/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+      "source_rect": {
+        "x": 0,
+        "y": 8352,
+        "width": 224,
+        "height": 224
+      },
+      "width": 224,
+      "height": 224,
+      "atlas_width": 1024,
+      "atlas_height": 8576,
+      "region_address": "0x0843c024",
+      "encoded_sha256": "bfc838c2cda59374f499ea7fc5607122b042b23cd87a5f2d586e9cf424a4eb4f",
+      "decoded_sha256": "20ee17f9475d73ef9f5e3799a021caf2787e0a0c4fc330c69ad3dc77b4f5aae1"
     }
   ],
   "characters": [

@@ -28,7 +28,7 @@ use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
-const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--manifest MANIFEST] [-o OUTPUT] [rom] | --audit-characters OUTPUT | --migrate-characters OUTPUT | --migrate-graphics OUTPUT | --migrate-stills OUTPUT | --migrate-tiles OUTPUT | --migrate-portraits OUTPUT | --migrate-data OUTPUT | --register-graphics-palettes | --migrate-sources OUTPUT | --install-sources OUTPUT | --extract-sources ROM | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
+const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--manifest MANIFEST] [-o OUTPUT] [rom] | --audit-characters OUTPUT | --extract-sources ROM | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
 const ROM_BASE: usize = 0x0800_0000;
 const ROM_SIZE: usize = 0x0080_0000;
 fn repository_root() -> PathBuf {
@@ -586,6 +586,59 @@ fn indexed_sections_preserve_rows_and_reject_outside_bounds() {
         assert!(indexed_rect(&image, &json!({"source_rect":rect})).is_err());
     }
 }
+#[test]
+fn tile_frames_keep_each_frames_tile_order() {
+    let frames =
+        serde_json::json!({"frames":2,"columns":2,"frame_tiles_wide":2,"frame_tiles_high":2});
+    assert_eq!(
+        tile_coordinates(32, 16, &frames).unwrap(),
+        [
+            (0, 0),
+            (8, 0),
+            (0, 8),
+            (8, 8),
+            (16, 0),
+            (24, 0),
+            (16, 8),
+            (24, 8)
+        ]
+    );
+    assert!(tile_coordinates(32, 8, &frames).is_err());
+    let mut invalid = frames;
+    invalid["columns"] = serde_json::json!(0);
+    assert!(tile_coordinates(32, 16, &invalid).is_err());
+    invalid["columns"] = serde_json::json!(2);
+    invalid["frame_tiles_wide"] = serde_json::json!(usize::MAX);
+    assert!(tile_coordinates(32, 16, &invalid).is_err());
+}
+
+#[test]
+fn typed_byte_frames_select_complete_frames_and_reject_invalid_extents() {
+    let directory = tempfile::tempdir().unwrap();
+    fs::write(
+        directory.path().join("frames.json"),
+        "{\"frames\":[0,1,2,3,4,5]}",
+    )
+    .unwrap();
+    let mut entry = serde_json::json!({"kind":"u8-array","source":"frames.json","pointer":"/frames","frame_size":2,"frame":1,"size":2});
+    assert_eq!(
+        build_component(directory.path(), &entry).unwrap().data,
+        [2, 3]
+    );
+    entry["frame"] = serde_json::json!(2);
+    assert_eq!(
+        build_component(directory.path(), &entry).unwrap().data,
+        [4, 5]
+    );
+    entry["frame"] = serde_json::json!(3);
+    assert!(build_component(directory.path(), &entry).is_err());
+    entry["frame"] = serde_json::json!(usize::MAX);
+    assert!(build_component(directory.path(), &entry).is_err());
+    entry["frame"] = serde_json::json!(0);
+    entry["frame_size"] = serde_json::json!(4);
+    assert!(build_component(directory.path(), &entry).is_err());
+}
+
 fn binary_source(source: &Path, entry: &Value) -> Result<Vec<u8>, String> {
     let data = fs::read(source).map_err(|error| error.to_string())?;
     let offset = entry
@@ -610,6 +663,51 @@ fn binary_source(source: &Path, entry: &Value) -> Result<Vec<u8>, String> {
         .ok_or("binary source extent is outside file")?
         .to_vec())
 }
+fn tile_coordinates(
+    width: usize,
+    height: usize,
+    entry: &Value,
+) -> Result<Vec<(usize, usize)>, String> {
+    if width % 8 != 0 || height % 8 != 0 {
+        return Err("tile dimensions require whole tiles".into());
+    }
+    let mut coordinates = vec![];
+    if let Some(frames) = entry.get("frames") {
+        let frames = number(frames, "tile frames")?;
+        let columns = number(&entry["columns"], "tile columns")?;
+        let w = number(&entry["frame_tiles_wide"], "frame tile width")?
+            .checked_mul(8)
+            .ok_or("frame width overflows")?;
+        let h = number(&entry["frame_tiles_high"], "frame tile height")?
+            .checked_mul(8)
+            .ok_or("frame height overflows")?;
+        if frames == 0
+            || columns == 0
+            || w == 0
+            || h == 0
+            || columns.checked_mul(w) != Some(width)
+            || frames.div_ceil(columns).checked_mul(h) != Some(height)
+        {
+            return Err("tile frame atlas dimensions differ".into());
+        }
+        for frame in 0..frames {
+            for y in (0..h).step_by(8) {
+                for x in (0..w).step_by(8) {
+                    coordinates.push((frame % columns * w + x, frame / columns * h + y));
+                }
+            }
+        }
+    } else {
+        for y in (0..height).step_by(8) {
+            for x in (0..width).step_by(8) {
+                coordinates.push((x, y));
+            }
+        }
+    }
+    Ok(coordinates)
+}
+
+#[cfg(test)]
 fn build_component(root: &Path, entry: &Value) -> Result<ComponentResult, String> {
     build_component_cached(&Context::new(root), entry)
 }
@@ -648,7 +746,20 @@ fn build_component_cached(ctx: &Context, entry: &Value) -> Result<ComponentResul
             let document = json(&source)?;
             let pointer = json_string(&entry["pointer"], "array pointer")?;
             let values = document.pointer(pointer).ok_or("array pointer is absent")?;
-            let data = integer_array(values, kind)?;
+            let mut data = integer_array(values, kind)?;
+            if let Some(size) = entry.get("frame_size") {
+                let size = number(size, "array frame size")?;
+                let frame = number(&entry["frame"], "array frame")?;
+                if size == 0 || data.len() % size != 0 {
+                    return Err("array frames have a partial extent".into());
+                }
+                let start = frame.checked_mul(size).ok_or("array frame overflows")?;
+                let end = start.checked_add(size).ok_or("array frame end overflows")?;
+                data = data
+                    .get(start..end)
+                    .ok_or("array frame exceeds source")?
+                    .to_vec();
+            }
             (
                 data,
                 serde_json::json!({"pointer":pointer}),
@@ -660,26 +771,56 @@ fn build_component_cached(ctx: &Context, entry: &Value) -> Result<ComponentResul
             return Ok(result);
         }
         "gba-4bpp-tiles" | "gba-8bpp-tiles" | "gba-palette" => {
-            if kind == "gba-8bpp-tiles" && entry.get("source_rect").is_some() {
+            if matches!(kind, "gba-8bpp-tiles" | "gba-4bpp-tiles")
+                && entry.get("source_rect").is_some()
+            {
                 let image = ctx.indexed(&source)?;
                 let (width, height, pixels) = indexed_rect(&image, entry)?;
                 if width % 8 != 0 || height % 8 != 0 {
                     return Err("tiled atlas must contain whole tiles".into());
                 }
                 let mut data = Vec::with_capacity(pixels.len());
-                for y in (0..height).step_by(8) {
-                    for x in (0..width).step_by(8) {
-                        for row in 0..8 {
-                            data.extend_from_slice(
-                                &pixels[(y + row) * width + x..(y + row) * width + x + 8],
-                            );
+                for (x, y) in tile_coordinates(width, height, entry)? {
+                    for row in 0..8 {
+                        let values = &pixels[(y + row) * width + x..(y + row) * width + x + 8];
+                        if kind == "gba-4bpp-tiles" {
+                            if values.iter().any(|p| *p > 15) {
+                                return Err("four-bit tile pixel exceeds palette".into());
+                            }
+                            data.extend(values.chunks_exact(2).map(|p| p[0] | p[1] << 4));
+                        } else {
+                            data.extend_from_slice(values);
                         }
                     }
+                }
+                if let Some(canvas) = entry.get("canvas_size") {
+                    let size = number(&entry["size"], "component size")?;
+                    if data.len() != number(canvas, "canvas size")?
+                        || size > data.len()
+                        || data[size..].iter().any(|p| *p != 0)
+                    {
+                        return Err("tile canvas carries data outside stored extent".into());
+                    }
+                    data.truncate(size);
+                }
+                if let Some(offset) = entry.get("tile_offset") {
+                    let bytes = if kind == "gba-4bpp-tiles" { 32 } else { 64 };
+                    let start = number(offset, "tile offset")?
+                        .checked_mul(bytes)
+                        .ok_or("tile offset overflows")?;
+                    let length = number(&entry["tile_count"], "tile count")?
+                        .checked_mul(bytes)
+                        .ok_or("tile count overflows")?;
+                    let end = start.checked_add(length).ok_or("tile extent overflows")?;
+                    data = data
+                        .get(start..end)
+                        .ok_or("tile extent exceeds canvas")?
+                        .to_vec();
                 }
                 return Ok(ComponentResult {
                     data,
                     sources: vec![source_name.into()],
-                    details: serde_json::json!({"width":width,"height":height,"bpp":8}),
+                    details: serde_json::json!({"width":width,"height":height,"bpp":if kind=="gba-4bpp-tiles"{4}else{8}}),
                 });
             }
             let bpp = if kind == "gba-4bpp-tiles" {
@@ -2408,7 +2549,7 @@ fn build_general_lz_cached(
 }
 fn closure_self_test() -> Result<String, String> {
     let root = repository_root();
-    let missing = root.join("games/tbs/assets/data/closure/__self_test_missing__/index.json");
+    let missing = root.join("out/__self_test_missing__/index.json");
     if missing.exists() {
         return Err("closure package self-test path exists".to_string());
     }
@@ -2670,13 +2811,6 @@ fn expand_series(
                         json_string(&series["source_prefix"], "series source prefix")?
                     );
                     entries.push(serde_json::json!({"address":resource.get("address"),"size":resource.get("size"),"kind":"golden-sun-kind2-lz","plan":format!("{directory}_tiles.kind2.json"),"components":[{"kind":"gba-4bpp-tiles","size":"0x4000","source":format!("{directory}_tiles.4bpp.png")}] }));
-                }
-            }
-            "golden-sun-prefill-lz-series" => {
-                for resource in series_values(series, "resources")? {
-                    let name = json_string(&resource["id"], "prefill id")?.to_ascii_lowercase();
-                    let directory = format!("games/tbs/assets/data/resource_{name}");
-                    entries.push(serde_json::json!({"address":resource.get("address"),"size":resource.get("size"),"kind":"golden-sun-general-lz","plan":format!("{directory}_stream.lz.json"),"components":[{"kind":"raw-lz-bytes","size":resource.get("decoded_size"),"source":format!("{directory}_content.png")}] }));
                 }
             }
             "golden-sun-thumb-overlay-series" => {
@@ -3055,7 +3189,10 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
         "gba-cartridge-header-standard-fields" => {
             let source = source_path(entry_source)?;
             let document = json(&source)?;
-            let logo = json_string(&document["standard"]["logo"]["source"], "header logo")?;
+            let logo = document["standard"]["logo"]
+                .get("source")
+                .map(|v| json_string(v, "header logo"))
+                .transpose()?;
             let built = build_gba_header_bytes(
                 ctx,
                 &source,
@@ -3064,7 +3201,9 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
             )?;
             Ok((
                 built.clone(),
-                vec![entry_source.to_string(), logo.to_string()],
+                std::iter::once(entry_source.to_string())
+                    .chain(logo.map(str::to_string))
+                    .collect(),
                 serde_json::json!({"standard_header_bytes":built.len()}),
             ))
         }
@@ -3251,14 +3390,12 @@ fn build_gba_header_bytes(
     size: usize,
 ) -> Result<Vec<u8>, String> {
     let document = read_gba_header_source(source)?;
-    let logo = json_string(&document["standard"]["logo"]["source"], "header logo")?;
-    let logo_path = ctx.source(logo)?;
-    build_gba_header_component(
-        &document,
-        &fs::read(logo_path).map_err(|e| e.to_string())?,
-        address as u32,
-        size,
-    )
+    let logo_image = if let Some(logo) = document["standard"]["logo"].get("source") {
+        fs::read(ctx.source(json_string(logo, "header logo")?)?).map_err(|e| e.to_string())?
+    } else {
+        vec![]
+    };
+    build_gba_header_component(&document, &logo_image, address as u32, size)
 }
 const SEQUENCE_DURATIONS: [usize; 49] = [
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 28,
@@ -4652,7 +4789,7 @@ struct BuildOptions {
 fn parse_build_options(arguments: &[String], root: &Path) -> Result<BuildOptions, String> {
     let mut options = BuildOptions {
         rom: "roms/tbs-en.gba".to_string(),
-        manifest: root.join("games/tbs/assets/manifest.json"),
+        manifest: root.join("games/tbs/SRC/SYSTEM/RESOURCE.json"),
         output: root.join("out/tbs-en/assets"),
         source_only: false,
     };
@@ -4722,7 +4859,7 @@ fn stamp_files(
         .follow_links(true)
         .into_iter()
         .filter_entry(|entry| {
-            if entry.path() == root.join("games/tbs/assets/readme") {
+            if entry.path() == root.join("games/tbs/PREVIEW") {
                 return false; // Coverage figures are outputs, never ROM asset inputs.
             }
             entry.depth() == 0
@@ -4771,7 +4908,6 @@ fn stage_stamp_with_signature(
     });
     let mut files = BTreeMap::new();
     for directory in [
-        "games/tbs/assets",
         "games/tbs/SRC",
         "games/tbs/GRAPHICS",
         "games/tbs/SOUND",
@@ -4863,7 +4999,7 @@ fn asset_stamp_tracks_sound_and_included_overlay_sources() {
     let directory = tempfile::tempdir().unwrap();
     let root = directory.path();
     for name in [
-        "assets",
+        "SRC/SYSTEM",
         "SOUND/SEQUENCE/out",
         "asm/overlays",
         "asm/battle",
@@ -4872,7 +5008,7 @@ fn asset_stamp_tracks_sound_and_included_overlay_sources() {
     ] {
         fs::create_dir_all(root.join("games/tbs").join(name)).unwrap();
     }
-    let manifest = root.join("games/tbs/assets/manifest.json");
+    let manifest = root.join("games/tbs/SRC/SYSTEM/RESOURCE.json");
     let sound = root.join("games/tbs/SOUND/SEQUENCE/SEQUENCES.tsv");
     let header = root.join("games/tbs/SRC/shared.h");
     let unit = root.join("games/tbs/recon/translation-units.json");
@@ -4924,14 +5060,10 @@ fn asset_stamp_tracks_sound_and_included_overlay_sources() {
     )
     .unwrap();
     assert_eq!(previous, stamp().unwrap());
-    fs::create_dir_all(root.join("games/tbs/assets/readme")).unwrap();
-    fs::write(
-        root.join("games/tbs/assets/readme/coverage.svg"),
-        "generated",
-    )
-    .unwrap();
+    fs::create_dir_all(root.join("games/tbs/PREVIEW")).unwrap();
+    fs::write(root.join("games/tbs/PREVIEW/coverage.svg"), "generated").unwrap();
     assert_eq!(previous, stamp().unwrap());
-    fs::write(root.join("games/tbs/assets/palette.json"), "source").unwrap();
+    fs::write(root.join("games/tbs/SRC/palette.json"), "source").unwrap();
     assert_ne!(previous, stamp().unwrap());
     fs::write(&header, "#include \"resource_373_c_02001000.c\"\n").unwrap();
     assert!(stamp().unwrap_err().contains("recursive C source include"));
@@ -5171,7 +5303,7 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
         .collect::<Vec<_>>();
     prune_files(&options.output, "*.bin", keep.iter())
         .map_err(|error| format!("asset output cleanup: {error}"))?;
-    let unused = unused_tracked_images(&root, all_sources.iter(), ["games/tbs/assets/readme/"])
+    let unused = unused_tracked_images(&root, all_sources.iter(), ["games/tbs/PREVIEW/"])
         .map_err(|error| format!("tracked image audit: {error}"))?;
     if !unused.is_empty() {
         let shown = unused
@@ -5213,55 +5345,6 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
     Ok(())
 }
 fn run(arguments: Vec<String>) -> Result<ExitCode, String> {
-    if arguments.first().map(String::as_str) == Some("--migrate-palettes") {
-        if arguments.len() != 2 {
-            return Err(USAGE.into());
-        }
-        native::migrate_palettes(&repository_root(), Path::new(&arguments[1]))?;
-        return Ok(ExitCode::SUCCESS);
-    }
-    if arguments.first().map(String::as_str) == Some("--register-graphics-palettes") {
-        if arguments.len() != 1 {
-            return Err(USAGE.into());
-        }
-        native::register_palettes(&repository_root())?;
-        return Ok(ExitCode::SUCCESS);
-    }
-    if arguments.first().map(String::as_str) == Some("--migrate-data") {
-        if arguments.len() != 2 {
-            return Err(USAGE.into());
-        }
-        native::migrate_data(&repository_root(), Path::new(&arguments[1]))?;
-        return Ok(ExitCode::SUCCESS);
-    }
-    if arguments.first().map(String::as_str) == Some("--migrate-portraits") {
-        if arguments.len() != 2 {
-            return Err(USAGE.into());
-        }
-        native::migrate_portraits(&repository_root(), Path::new(&arguments[1]))?;
-        return Ok(ExitCode::SUCCESS);
-    }
-    if arguments.first().map(String::as_str) == Some("--migrate-tiles") {
-        if arguments.len() != 2 {
-            return Err(USAGE.into());
-        }
-        native::migrate_tiles(&repository_root(), Path::new(&arguments[1]))?;
-        return Ok(ExitCode::SUCCESS);
-    }
-    if arguments.first().map(String::as_str) == Some("--migrate-stills") {
-        if arguments.len() != 2 {
-            return Err(USAGE.into());
-        }
-        native::migrate_stills(&repository_root(), Path::new(&arguments[1]))?;
-        return Ok(ExitCode::SUCCESS);
-    }
-    if arguments.first().map(String::as_str) == Some("--migrate-graphics") {
-        if arguments.len() != 2 {
-            return Err(USAGE.into());
-        }
-        native::migrate_graphics(&repository_root(), Path::new(&arguments[1]))?;
-        return Ok(ExitCode::SUCCESS);
-    }
     if arguments.first().map(String::as_str) == Some("--audit-characters") {
         if arguments.len() != 2 {
             return Err(USAGE.into());
@@ -5269,32 +5352,11 @@ fn run(arguments: Vec<String>) -> Result<ExitCode, String> {
         native::audit_characters(&repository_root(), Path::new(&arguments[1]))?;
         return Ok(ExitCode::SUCCESS);
     }
-    if arguments.first().map(String::as_str) == Some("--migrate-characters") {
-        if arguments.len() != 2 {
-            return Err(USAGE.into());
-        }
-        native::migrate_characters(&repository_root(), Path::new(&arguments[1]))?;
-        return Ok(ExitCode::SUCCESS);
-    }
-    if arguments.first().map(String::as_str) == Some("--migrate-sources") {
-        if arguments.len() != 2 {
-            return Err(USAGE.into());
-        }
-        native::migrate(&repository_root(), Path::new(&arguments[1]))?;
-        return Ok(ExitCode::SUCCESS);
-    }
     if arguments.first().map(String::as_str) == Some("--extract-sources") {
         if arguments.len() != 2 {
             return Err(USAGE.into());
         }
         native::extract(&repository_root(), Path::new(&arguments[1]))?;
-        return Ok(ExitCode::SUCCESS);
-    }
-    if arguments.first().map(String::as_str) == Some("--install-sources") {
-        if arguments.len() != 2 {
-            return Err(USAGE.into());
-        }
-        native::install(&repository_root(), Path::new(&arguments[1]))?;
         return Ok(ExitCode::SUCCESS);
     }
     if matches!(

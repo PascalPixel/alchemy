@@ -1,6 +1,10 @@
 {
   "format": 3,
   "owners": {
+    "resource_3ab:020012a4": {
+      "name": "FieldScene_SpawnPeriodicLeaderEffect",
+      "source": "FIELD/LUNPA/ACTOR_SEQUENCE.C"
+    },
     "resource_3ab:02000ac4": {
       "name": "SceneState_TriggerTimerAtLeaderRowTen",
       "source": "FIELD/LUNPA/ACTOR_SEQUENCE.C"

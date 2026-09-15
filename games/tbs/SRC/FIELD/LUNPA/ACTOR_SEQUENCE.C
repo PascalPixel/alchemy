@@ -1512,6 +1512,28 @@ void FieldScene_RunScene3abSequenceG(void)
     }
 }
 
+extern s32 *Effect_Leader(s32);
+extern u32 Effect_Random(void);
+extern s32 Effect_Cosine(s32);
+extern s32 Effect_Sine(s32);
+extern u32 Effect_Phase_03001e40;
+#define FieldScene_SpawnPeriodicLeaderEffect Func_020012a4
+void FieldScene_SpawnPeriodicLeaderEffect(void)
+{
+    s32 *actor = Effect_Leader(0);
+    u32 phase = Effect_Phase_03001e40 & 15;
+    if (phase == 0) {
+        s32 angle = ((Effect_Random() * 52) >> 16) * 64 + 230;
+        s32 velocity[3];
+        velocity[0] = Effect_Cosine(angle) / 4;
+        velocity[1] = phase;
+        velocity[2] = Effect_Sine(angle) / 2;
+        SpawnConfiguredEffect(actor[2], actor[3], actor[4],
+            velocity[0], velocity[1], velocity[2], phase,
+            (const struct ConfiguredEffectOptions *)phase);
+    }
+}
+
 void FieldScene_RunLeaderMovementSequence(void)
 {
     Func_02002fa0();

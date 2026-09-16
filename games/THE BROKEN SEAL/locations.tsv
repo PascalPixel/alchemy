@@ -62,7 +62,7 @@ resource_3a3	Altin	area	75,76	0x9c5	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectio
 resource_3a4	Alpine Crossing; Altin Peak	area	77,78,79,80,81,82,83,84,85,86,87	0x9c4,0x9c6	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/ARUTIN_YAMA
 resource_3a5	Lamakan Desert	area	89,90,91,92	0x9c8	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/RAMAKAN_SABAKU
 resource_3a6	Vale; Vale Cave	area	93,94,95	0x9c9,0x9ca	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/HAIDIA_DOU
-resource_3a7	Vault Cave	area	96,97,98	0x9cb	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/VAULT_CAVE
+resource_3a7	Vault Cave	area	96,97,98	0x9cb	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/KUUPUAPPU_DOU
 resource_3a8	Kalay; Hammet Palace; Kalay Tunnel Entrance; Kalay Tunnel	area	99,102,153,154,155,156	0x9cd,0x9ce,0x9e5,0x9e6	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/KAREI_MACHI
 resource_3a9	Kalay Sanctum; Kalay	area	100,101	0x9cc,0x9cd	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/KAREI_HEYA
 resource_3aa	Hammet Palace	area	103	0x9ce	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/KAREI_KYUDEN
@@ -86,7 +86,7 @@ resource_3bb	Colosseum Final 2	area	144	0x9e1	0809f1a8;0809ddd8;0808b158;Menu_Dr
 resource_3bc	Colosseum Final 3	area	145	0x9e2	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/KOROSSEO_MARUTA
 resource_3bd	Altmiller Cave	area	146,147,148,149,150,151	0x9e3	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/ARUTAMIRA_DOU
 resource_3be	Gondowan Passage; Gondowan Cave	area	152,157,158	0x9e4,0x9e7	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/KARAGORU_DOU
-resource_3bf	Lunpa Fortress	area	160,161,162,163	0x9e9	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/LUNPA_FORTRESS
+resource_3bf	Lunpa Fortress	area	160,161,162,163	0x9e9	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/RUNPA_JO
 resource_3c0	Suhalla Desert	area	164,165,166	0x9ea	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/SUHARA_SABAKU
 resource_3c1	Suhalla	area	167	0x9ec	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/SUHARA_MURA
 resource_3c2	Suhalla Sanctum; Suhalla	area	168	0x9eb,0x9ec	0809f1a8;0809ddd8;0808b158;Menu_DrawSelectionRow	SRC/FIELD/SUHARA_HEYA

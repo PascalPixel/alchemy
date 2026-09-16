@@ -16,12 +16,12 @@ each game as they shipped on the cartridge. The Japanese release is treated as
 the original and the others as its translations; English _Golden Sun_ is the
 first edition rebuilt in full.
 
-## Status: 51.63% DONE
+## Status: 54.86% DONE
 
 > Previously reported at 70%. Some assembly progress was retracted after a
 > stricter audit. We’re working our way back to 70% with verified recoveries.
 
-![ROM contents](<games/THE BROKEN SEAL/PREVIEW/TBS-EN-ROM.SVG?v=76c010f89737fdc9>)
+![ROM contents](<games/THE BROKEN SEAL/PREVIEW/TBS-EN-ROM.SVG?v=c5bc8a03b828e48c>)
 
 ## What this is
 

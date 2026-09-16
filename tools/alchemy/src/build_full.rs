@@ -1,7 +1,7 @@
 //! Compose the claimed C, retained assembly, and asset outputs into the full ROM.
 use crate::compiler::build_io::{argv, read, read_json, rooted, text, write};
 use crate::compiler::canonical_json::write_canonical;
-use crate::compiler::source_paths::{SourceOwner, SourcePaths};
+use crate::compiler::source_paths::{SourceOwner, SourcePaths, SHARED_SOURCE_ROOT};
 use crate::compiler::translation_units::{AbsoluteSymbolKind, OwnerState, TranslationUnits};
 use crate::targets::{
     parse_decomp_target, target_for, BuildSupport, DecompTargetId, DEFAULT_TARGET,
@@ -584,8 +584,10 @@ fn inventory_members(
     Ok(members)
 }
 fn source_group(source: &str) -> Option<String> {
-    Path::new(source)
+    let source = Path::new(source);
+    source
         .strip_prefix("games/THE BROKEN SEAL/SRC")
+        .or_else(|_| source.strip_prefix(SHARED_SOURCE_ROOT))
         .ok()?
         .parent()?
         .to_str()
@@ -595,7 +597,7 @@ fn source_group(source: &str) -> Option<String> {
 fn source_path(paths: &SourcePaths, owner: SourceOwner) -> Option<String> {
     paths
         .mapped_relative_path(owner)
-        .map(|path| text(Path::new("games/THE BROKEN SEAL/SRC").join(path)))
+        .map(|_| text(paths.repository_relative_path(owner)))
 }
 fn hex(value: u64) -> String {
     format!("0x{value:08x}")

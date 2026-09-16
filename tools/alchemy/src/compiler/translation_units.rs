@@ -1,6 +1,8 @@
 use crate::compiler::routing::CompilerTarget;
 use crate::compiler::source_inputs::quoted_include;
-use crate::compiler::source_paths::{c_identifier, lower_hex, SourceOwner, SourcePaths};
+use crate::compiler::source_paths::{
+    c_identifier, lower_hex, SourceOwner, SourcePaths, SHARED_SOURCE_ROOT,
+};
 use serde::{de::Error, Deserialize, Deserializer};
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Component, Path, PathBuf};
@@ -459,7 +461,8 @@ impl TranslationUnits {
             }
             let source = root.join(&unit.source);
             unit.validate_editions()?;
-            let grouped = source.starts_with(names.source_root());
+            let grouped = source.starts_with(names.source_root())
+                || source.starts_with(root.join(SHARED_SOURCE_ROOT));
             validate_production_state(root, unit, &source, grouped, &names)?;
         }
         Ok(document)
@@ -836,6 +839,11 @@ mod tests {
         assert!(invalid_state(&installed));
         invalid.source = PathBuf::from("games/THE BROKEN SEAL/SRC/invalid-retained-overlay.c");
         assert!(invalid_state(&invalid));
+        let shared = manifest.unit("audio-cgb-channel-mute").unwrap();
+        assert!(shared.source.starts_with(SHARED_SOURCE_ROOT) && shared.exact());
+        let shared_source = root.join(&shared.source);
+        assert!(validate_production_state(root, shared, &shared_source, true, &names).is_ok());
+        assert!(validate_production_state(root, shared, &shared_source, false, &names).is_err());
         let i = unconditional_quoted_includes;
         assert!(i("#define X \\\n#include \"x\"").is_empty());
         assert!(i("/* */ #if 0\n#include \"x\"").is_empty());

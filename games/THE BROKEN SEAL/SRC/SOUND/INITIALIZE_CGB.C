@@ -102,12 +102,12 @@ void MusicTrack_DispatchExtendedCommand(struct MusicPlayerState *, struct MusicT
 void MusicTrack_EndTie(struct MusicPlayerState *, struct MusicTrackState *);
 void AudioEngine_SetPcmRate(u32);
 void MusicTrack_Stop(struct MusicPlayerState *, struct MusicTrackState *);
-void MusicPlayer_UpdateFade(struct MusicPlayerState *);
-void MusicTrack_UpdateVolumePitch(
+void MusicPlayer_StepFade(struct MusicPlayerState *);
+void MusicTrack_CalcOutput(
     struct MusicPlayerState *,
     struct MusicTrackState *);
 void CgbAudio_Update(void);
-void Cgb_StopOscillator(u8);
+void CgbChannel_Mute(u8);
 s32 Cgb_KeyToFrequency(s32, s32, s32);
 extern u8 Value_00000000;
 
@@ -144,12 +144,12 @@ void CgbAudio_Initialize(struct CgbChannel *channels)
     mplay_jump_table[29].player_track = MusicTrack_EndTie;
     mplay_jump_table[30].word = AudioEngine_SetPcmRate;
     mplay_jump_table[31].player_track = MusicTrack_Stop;
-    mplay_jump_table[32].player = MusicPlayer_UpdateFade;
-    mplay_jump_table[33].player_track = MusicTrack_UpdateVolumePitch;
+    mplay_jump_table[32].player = MusicPlayer_StepFade;
+    mplay_jump_table[33].player_track = MusicTrack_CalcOutput;
 
     state->cgb_channels = channels;
     state->cgb_sound = CgbAudio_Update;
-    state->cgb_osc_off.handler = Cgb_StopOscillator;
+    state->cgb_osc_off.handler = CgbChannel_Mute;
     state->midi_key_to_cgb_freq.handler = Cgb_KeyToFrequency;
     state->max_lines = (u32)&Value_00000000;
 

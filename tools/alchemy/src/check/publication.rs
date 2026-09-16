@@ -975,7 +975,23 @@ fn asset_game(path: &str) -> Option<&str> {
     };
     asset.then_some(*game)
 }
+/// The shared root holds only nested C source that every game compiles
+/// byte-exact from the same text; assets, metadata and headers stay in a game.
+fn shared_root_reason(path: &str) -> Option<&'static str> {
+    let components: Vec<_> = path.split('/').collect();
+    let [top, root, rest @ ..] = components.as_slice() else {
+        return None;
+    };
+    if !top.eq_ignore_ascii_case("games") || !root.eq_ignore_ascii_case("COMMON") {
+        return None;
+    }
+    let source = matches!(rest, ["SRC", _, .., leaf] if extension(leaf) == "C");
+    (!source).then_some("games/COMMON holds only shared SRC/<module>/*.C source")
+}
 fn manifestless_reason(path: &str, manifests: &[String]) -> Option<&'static str> {
+    if let Some(reason) = shared_root_reason(path) {
+        return Some(reason);
+    }
     let game = asset_game(path)?;
     let manifested = path.starts_with("games/") && manifests.iter().any(|known| known == game);
     let code = listed(extension(path), MANIFESTLESS_EXTENSIONS);
@@ -2001,6 +2017,36 @@ fn text_fixtures() -> Vec<Fixture> {
             b"void f(void) {}\n".to_vec(),
             false,
             None,
+        ),
+        (
+            "games/COMMON/SRC/SOUND/X.C",
+            b"void f(void) {}\n".to_vec(),
+            false,
+            None,
+        ),
+        (
+            "games/COMMON/SRC/X.C",
+            b"void f(void) {}\n".to_vec(),
+            true,
+            Some("games/COMMON holds only"),
+        ),
+        (
+            "games/COMMON/SRC/SOUND/X.H",
+            b"void f(void);\n".to_vec(),
+            true,
+            Some("games/COMMON holds only"),
+        ),
+        (
+            "games/COMMON/SRC/SOUND/TABLE.JSON",
+            empty(),
+            true,
+            Some("games/COMMON holds only"),
+        ),
+        (
+            "games/COMMON/recon/translation-units.json",
+            empty(),
+            true,
+            Some("games/COMMON holds only"),
         ),
         (
             "games/THE BROKEN SEAL/SRC/FIELD/SCENE/SCENE.C",

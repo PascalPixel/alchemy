@@ -6,6 +6,12 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Component, Path, PathBuf};
 pub const SOURCE_PATHS_MANIFEST: &str = "games/THE BROKEN SEAL/source-paths.json";
+/// Source both games compile byte-exact from the same text lives here once.
+pub const SHARED_SOURCE_ROOT: &str = "games/COMMON/SRC";
+/// Each game's register spells a shared source relative to its own `SRC`.
+const SHARED_SOURCE_PREFIX: &str = "../../COMMON/SRC";
+/// Every game whose register must name each shared source.
+const SHARED_SOURCE_GAMES: [&str; 2] = ["tbs", "tla"];
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub enum SourceOwner {
     Main(u32),
@@ -280,7 +286,15 @@ impl SourcePaths {
     }
     pub fn mapped_source_path(&self, owner: SourceOwner) -> Option<PathBuf> {
         self.mapped_relative_path(owner)
-            .map(|path| self.source_root().join(path))
+            .map(|path| self.repository.join(self.repository_path(path)))
+    }
+    /// A register path as a normalized repository path: shared sources resolve
+    /// under `games/COMMON/SRC`, everything else under this game's `SRC`.
+    fn repository_path(&self, relative: &Path) -> PathBuf {
+        match relative.strip_prefix(SHARED_SOURCE_PREFIX) {
+            Ok(shared) => Path::new(SHARED_SOURCE_ROOT).join(shared),
+            Err(_) => self.source_directory.join(relative),
+        }
     }
     pub fn registered_name(&self, owner: SourceOwner) -> Option<&str> {
         self.records.get(&owner).map(|record| record.name.as_str())
@@ -415,10 +429,10 @@ impl SourcePaths {
             .unwrap_or_else(|| owner.legacy_relative_path())
     }
     pub fn source_path(&self, owner: SourceOwner) -> PathBuf {
-        self.source_root().join(self.relative_path(owner))
+        self.repository.join(self.repository_relative_path(owner))
     }
     pub fn repository_relative_path(&self, owner: SourceOwner) -> PathBuf {
-        self.source_directory.join(self.relative_path(owner))
+        self.repository_path(&self.relative_path(owner))
     }
     pub fn owners_for_path(&self, path: &Path) -> Vec<SourceOwner> {
         let Some(relative) = self.path_within_source_root(path) else {
@@ -513,7 +527,7 @@ impl SourcePaths {
             if main_only && !owner.is_main() {
                 continue;
             }
-            let path = source_root.join(relative);
+            let path = self.repository.join(self.repository_path(relative));
             if !path.is_file() {
                 return Err(format!(
                     "{} maps to missing source {}",
@@ -531,15 +545,22 @@ impl SourcePaths {
             .collect())
     }
     fn path_within_source_root(&self, path: &Path) -> Option<PathBuf> {
+        let shared = |rest: &Path| Path::new(SHARED_SOURCE_PREFIX).join(rest);
         if path.is_absolute() {
             return path
                 .strip_prefix(self.source_root())
                 .ok()
-                .map(Path::to_path_buf);
+                .map(Path::to_path_buf)
+                .or_else(|| {
+                    path.strip_prefix(self.repository.join(SHARED_SOURCE_ROOT))
+                        .ok()
+                        .map(shared)
+                });
         }
         path.strip_prefix(&self.source_directory)
             .ok()
             .map(Path::to_path_buf)
+            .or_else(|| path.strip_prefix(SHARED_SOURCE_ROOT).ok().map(shared))
             .or_else(|| {
                 // A manifest-relative path is useful to in-memory tooling and
                 // tests, but an arbitrary path elsewhere in the repository is
@@ -554,11 +575,13 @@ impl SourcePaths {
             .map(|source| source.path)
             .collect();
         let mut unowned = Vec::new();
-        visit_c_files(&self.source_root(), &mut |path| {
-            if !known.contains(path) {
-                unowned.push(path.to_path_buf());
-            }
-        })?;
+        for directory in [self.source_root(), self.repository.join(SHARED_SOURCE_ROOT)] {
+            visit_c_files(&directory, &mut |path| {
+                if !known.contains(path) {
+                    unowned.push(path.to_path_buf());
+                }
+            })?;
+        }
         if let Some(path) = unowned.first() {
             return Err(format!(
                 "nested exact source is absent from {}: {}",
@@ -567,6 +590,22 @@ impl SourcePaths {
             ));
         }
         Ok(())
+    }
+    /// Shared source is admitted only when every game's register names it, so
+    /// each game's own build and checks compile the same text.
+    pub fn validate_shared_sources(repository: &Path) -> Result<usize, String> {
+        let registers = SHARED_SOURCE_GAMES
+            .iter()
+            .map(|game| Self::load_for_game(repository, game))
+            .collect::<Result<Vec<_>, _>>()?;
+        let mut shared = Vec::new();
+        visit_c_files(&repository.join(SHARED_SOURCE_ROOT), &mut |path| {
+            shared.push(path.to_path_buf());
+        })?;
+        for register in &registers {
+            register.validate_tree()?;
+        }
+        Ok(shared.len())
     }
 }
 fn game_paths(game: &str) -> Result<(PathBuf, PathBuf), String> {
@@ -581,7 +620,10 @@ fn game_paths(game: &str) -> Result<(PathBuf, PathBuf), String> {
     Ok((root.join("SRC"), root.join("source-paths.json")))
 }
 fn validate_source_path(source: &str) -> Result<PathBuf, String> {
-    let path = Path::new(source);
+    let registered = Path::new(source);
+    let path = registered
+        .strip_prefix(SHARED_SOURCE_PREFIX)
+        .unwrap_or(registered);
     let address_named = path
         .file_stem()
         .and_then(|stem| stem.to_str())
@@ -599,7 +641,7 @@ fn validate_source_path(source: &str) -> Result<PathBuf, String> {
             "source path {source:?} must be a nested, relative .c or .C path"
         ));
     }
-    Ok(path.to_path_buf())
+    Ok(registered.to_path_buf())
 }
 fn source_stem(path: &Path) -> Option<String> {
     path.file_stem()?.to_str().map(str::to_owned)
@@ -880,6 +922,64 @@ mod tests {
                 address: 0x0200_0104
             }]
         );
+    }
+    #[test]
+    fn shared_source_resolves_once_for_every_game_register() {
+        let root = tempdir().unwrap();
+        let owner = SourceOwner::Main(0x0800_1000);
+        let register = |game: &str, owners: &str| {
+            let manifest = root
+                .path()
+                .join("games")
+                .join(crate::compiler::routing::game_directory(game))
+                .join("source-paths.json");
+            fs::create_dir_all(manifest.parent().unwrap()).unwrap();
+            fs::write(manifest, format!(r#"{{"format":3,"owners":{{{owners}}}}}"#)).unwrap();
+        };
+        let named =
+            r#""main:08001000":{"name":"Sound_Mix","source":"../../COMMON/SRC/SOUND/MIX.C"}"#;
+        register("tbs", named);
+        register("tla", named);
+        let source = root.path().join("games/COMMON/SRC/SOUND/MIX.C");
+        fs::create_dir_all(source.parent().unwrap()).unwrap();
+        fs::write(&source, "void Sound_Mix(void) {}\n").unwrap();
+        for game in SHARED_SOURCE_GAMES {
+            let paths = SourcePaths::load_for_game(root.path(), game).unwrap();
+            assert_eq!(paths.mapped_source_path(owner), Some(source.clone()));
+            assert_eq!(paths.source_path(owner), source);
+            assert_eq!(
+                paths.repository_relative_path(owner),
+                PathBuf::from("games/COMMON/SRC/SOUND/MIX.C")
+            );
+            for path in [Path::new("games/COMMON/SRC/SOUND/MIX.C"), source.as_path()] {
+                assert_eq!(paths.owner_for_path(path).unwrap(), Some(owner));
+            }
+            assert_eq!(paths.main_sources().unwrap()[0].path, source);
+            paths.validate_tree().unwrap();
+        }
+        assert_eq!(
+            SourcePaths::validate_shared_sources(root.path()).unwrap(),
+            1
+        );
+        register("tla", "");
+        assert!(SourcePaths::validate_shared_sources(root.path())
+            .unwrap_err()
+            .contains("games/COMMON/SRC/SOUND/MIX.C"));
+    }
+    #[test]
+    fn shared_prefix_admits_only_nested_c_below_the_common_root() {
+        let root = tempdir().unwrap();
+        for path in [
+            "../../COMMON/SRC/MIX.C",
+            "../../COMMON/SRC/../SOUND/MIX.C",
+            "../../COMMON/INCLUDE/SOUND/MIX.C",
+            "../COMMON/SRC/SOUND/MIX.C",
+            "../../COMMON/SRC/SOUND/080bbb0c.C",
+            "../../COMMON/SRC/SOUND/MIX.H",
+        ] {
+            let text = format!("{{\"format\":3,\"owners\":{{\"main:080bbb0c\":{{\"name\":\"mix\",\"source\":{path:?}}}}}}}");
+            assert!(SourcePaths::parse(root.path(), &text).is_err(), "{path}");
+        }
     }
     #[test]
     fn each_game_owns_an_independent_descriptive_registry() {

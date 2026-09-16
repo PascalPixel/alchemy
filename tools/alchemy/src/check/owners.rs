@@ -282,9 +282,10 @@ fn validate_reconstruction_records(root: &Path) -> Result<(), String> {
     Ok(())
 }
 
-fn validate() -> Result<(usize, usize, usize, usize, usize, usize), String> {
+fn validate() -> Result<(usize, usize, usize, usize, usize, usize, usize), String> {
     let root = root();
     let exact = exact(&root)?;
+    let shared = SourcePaths::validate_shared_sources(&root)?;
     let names = validate_registered_main_symbols(&root)?;
     let audited = audited(&root)?;
     let unmatchable = validate_unmatchable(&root, &exact, &audited)?;
@@ -299,6 +300,7 @@ fn validate() -> Result<(usize, usize, usize, usize, usize, usize), String> {
         drafts,
         audited.len(),
         names,
+        shared,
     ))
 }
 
@@ -315,8 +317,8 @@ pub(super) fn entry(arguments: &[String]) -> ExitCode {
         return ExitCode::from(2);
     }
     match validate() {
-        Ok((unmatchable, provisional, sealed, drafts, audited, names)) => {
-            println!("owner registers ok: {unmatchable} unmatchable, {provisional} provisional, {sealed} sealed, {drafts} drafts, {audited} audited, {names} named main assembly owners");
+        Ok((unmatchable, provisional, sealed, drafts, audited, names, shared)) => {
+            println!("owner registers ok: {unmatchable} unmatchable, {provisional} provisional, {sealed} sealed, {drafts} drafts, {audited} audited, {names} named main assembly owners, {shared} shared sources");
             ExitCode::SUCCESS
         }
         Err(error) => {

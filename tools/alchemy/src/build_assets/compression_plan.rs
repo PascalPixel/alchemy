@@ -149,6 +149,26 @@ fn read_sequence(data: &mut &[u8], count: usize, group: bool) -> Result<Vec<Valu
     }
     Ok(tokens)
 }
+/// Whether a table is its header followed only by complete control records,
+/// as every serialized stream is; the publication gate reads no other bytes.
+pub(crate) fn well_formed_table(table: &[u8]) -> bool {
+    let Some(mut data) = table.strip_prefix(MAGIC.as_slice()) else {
+        return false;
+    };
+    while !data.is_empty() {
+        let repeats = match data.split_first() {
+            Some((8, rest)) => {
+                data = rest;
+                read_integer(&mut data)
+            }
+            _ => Ok(1),
+        };
+        if !repeats.is_ok_and(|count| count > 0) || read_record(&mut data, false).is_err() {
+            return false;
+        }
+    }
+    true
+}
 fn walk(
     value: &mut Value,
     action: &mut impl FnMut(&mut Value) -> Result<(), String>,
@@ -368,6 +388,10 @@ mod tests {
         repack(root, &path).unwrap();
         assert_eq!(fs::read(&path).unwrap(), metadata);
         assert_eq!(fs::read(&table_path).unwrap(), bytes);
+        assert!(well_formed_table(&bytes));
+        assert!(!well_formed_table(&bytes[MAGIC.len()..]));
+        assert!(!well_formed_table(&[bytes.as_slice(), &[10]].concat()));
+        assert!(!well_formed_table(&[bytes.as_slice(), &[8, 0, 7]].concat()));
         let document = json(&path).unwrap();
         let mut invalid = document.clone();
         invalid["tile"]["tokens"]["offset"] = json!(7);

@@ -15,6 +15,7 @@ use crate::compiler::source_paths::{SourcePaths, SOURCE_PATHS_MANIFEST};
 use crate::generated_files::{prune_files, unused_tracked_images};
 use crate::overlay::compile::assemble_overlay;
 use crate::overlay::source::OverlaySource;
+pub(crate) use compression_plan::well_formed_table;
 use gba_header::{build_gba_header_component, read_gba_header_source};
 use psynergy::assets::lz::{PaletteGroup, PaletteOperation};
 use psynergy::assets::text::import_tilemap;

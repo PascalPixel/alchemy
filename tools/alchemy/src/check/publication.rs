@@ -1,6 +1,9 @@
 //! Fail-closed publication checks for staged changes, outgoing history and
 //! whole tracked trees. Only what pret would commit passes: editable build
 //! inputs, source and tooling, never presentation material made from the game.
+use psynergy::assets::image::{indexed_png, PNG_SIGNATURE};
+use psynergy::assets::midi::{midi_events, EventBody, MidiEvent};
+use psynergy::assets::wav::wav_pcm8;
 use std::io::{BufRead, BufReader, Read, Write};
 use std::path::Path;
 use std::process::{Command, ExitCode, Stdio};
@@ -16,15 +19,56 @@ const PRESENTATION_EXTENSIONS: &[&str] = &[
     "mov",
 ];
 const BACKUP_EXTENSIONS: &[&str] = &["bak", "orig", "rej", "swp"];
+/// Prose formats; CONTRIBUTING is the only guide and README the only introduction.
+const DOCUMENT_EXTENSIONS: &[&str] = &["adoc", "asciidoc", "markdown", "md", "mdx", "rst", "txt"];
+const OWNED_DOCUMENTS: &[&str] = &["README.md", "CONTRIBUTING.md", "AGENTS.md", "CLAUDE.md"];
 /// Code a game without an asset manifest may track under its asset roots.
 const MANIFESTLESS_EXTENSIONS: &[&str] = &["c", "h", "inc", "gitkeep"];
+/// Tooling metadata under `games/<game>/`; every other directory is an asset root.
+const METADATA_DIRECTORIES: &[&str] = &["metrics", "preview", "recon", "semantic"];
+/// Structured tables the asset build reads, where long numeric arrays are data.
+const DATA_TABLE_EXTENSIONS: &[&str] = &["json", "tsv"];
+/// The licensed compiler submodules whose commits `make compiler-source-check` pins.
+const APPROVED_GITLINKS: &[&str] = &["agbcc", "agscc"];
+/// The one compression control table a game's `SRC` may track.
+const TOKEN_TABLE: &str = "GRAPHICS/COMMON/COMPRESSION.TOKENS";
 const FONT_TABLES: &[&[u8]] = &[
     b"BASE", b"CFF ", b"COLR", b"CPAL", b"DSIG", b"EBDT", b"EBLC", b"FFTM", b"GDEF", b"GPOS",
     b"GSUB", b"LTSH", b"OS/2", b"STAT", b"SVG ", b"VDMX", b"cmap", b"cvt ", b"fpgm", b"gasp",
     b"glyf", b"hdmx", b"head", b"hhea", b"kern", b"loca", b"maxp", b"name", b"post", b"prep",
 ];
-const BASE64_RUN_MAX: usize = 255;
-const BASE64_LINE_MIN: usize = 60;
+/// Standard ancillary PNG chunks and their largest specified bodies. Text,
+/// profile, EXIF and private chunks carry arbitrary bytes and are refused.
+const PNG_ANCILLARY: &[(&[u8], usize)] = &[
+    (b"tRNS", 256),
+    (b"sRGB", 1),
+    (b"gAMA", 4),
+    (b"cHRM", 32),
+    (b"pHYs", 9),
+    (b"sBIT", 4),
+    (b"bKGD", 6),
+    (b"tIME", 7),
+];
+const PNG_SCANLINES_MAX: usize = 1 << 26;
+/// Alphanumeric runs this long are measured as possible encodings.
+const ENCODED_RUN_MIN: usize = 16;
+/// Encoded characters one text may hold; the tracked tree peaks near 32.
+const ENCODED_CHARACTERS_MAX: usize = 128;
+/// Digest-sized hex runs one text may hold; SOURCE.JSON carries about 3,400.
+const DIGEST_RUNS_MAX: usize = 16_384;
+/// Consecutive integer literals that form an array rather than an expression.
+const NUMERIC_RUN_MIN: usize = 16;
+/// Array elements a text outside the game data tables may hold; the tree peaks
+/// near 720 in the executable-gap package.
+const NUMERIC_ELEMENTS_MAX: usize = 2_048;
+const INTEGER_SUFFIXES: &[&str] = &[
+    "usize", "isize", "u128", "i128", "u64", "i64", "u32", "i32", "u16", "i16", "u8", "i8", "ull",
+    "llu", "ul", "lu", "ll", "u", "l",
+];
+/// Where the cartridge logo sits in a GBA header.
+const LOGO: std::ops::Range<usize> = 0x04..0xa0;
+const LOGO_REASON: &str = "Nintendo logo from a GBA cartridge header: ROM material";
+const UNREGISTERED: &str = "unregistered binary: pret commits only editable build inputs";
 const BLOCKED_DIRECTORIES: &[&str] = &[
     ".cache",
     "alchemy-gcc",
@@ -106,6 +150,10 @@ fn publication_path_reason(path: &str) -> Option<&'static str> {
     if listed(suffix, BACKUP_EXTENSIONS) || leaf.ends_with('~') {
         return Some("editor or merge backup");
     }
+    // A rename or copy lands here too: every document path is judged as new.
+    if listed(suffix, DOCUMENT_EXTENSIONS) && !OWNED_DOCUMENTS.contains(&normalized.as_str()) {
+        return Some("separate document: use CONTRIBUTING.md");
+    }
     if directories
         .iter()
         .any(|directory| directory.eq_ignore_ascii_case("preview"))
@@ -135,6 +183,22 @@ fn gba_header(data: &[u8]) -> bool {
 }
 fn gba_image(data: &[u8]) -> bool {
     data.len().is_multiple_of(0x8000) && data.len() <= 0x0400_0000 && gba_header(data)
+}
+/// The cartridge logo, read at run time from the local verified ROM; the gate
+/// source never carries it. Without the ROM the logo scan is skipped.
+fn nintendo_logo(root: &Path) -> Option<Vec<u8>> {
+    let mut header = [0; 0xc0];
+    std::fs::File::open(root.join("roms/tbs-en.gba"))
+        .ok()?
+        .read_exact(&mut header)
+        .ok()?;
+    gba_header(&header).then(|| header[LOGO].to_vec())
+}
+fn contains(data: &[u8], needle: &[u8]) -> bool {
+    !needle.is_empty()
+        && data
+            .windows(needle.len())
+            .any(|window| window[0] == needle[0] && window == needle)
 }
 fn publication_content_reason(data: &[u8]) -> Option<&'static str> {
     if gba_image(data) {
@@ -197,18 +261,6 @@ fn conflict_marker_reason(path: &str, data: &[u8]) -> Option<String> {
         "unresolved conflict marker at line {line}; resolve the merge before committing"
     ))
 }
-fn new_text_file_reason(path: &str, existing: bool) -> Option<String> {
-    if existing
-        || !listed(extension(path), &["md", "txt"])
-        || matches!(
-            path,
-            "README.md" | "CONTRIBUTING.md" | "AGENTS.md" | "CLAUDE.md"
-        )
-    {
-        return None;
-    }
-    Some(format!("separate document {path}: use CONTRIBUTING.md"))
-}
 fn check_documents(root: &Path) -> Result<(), String> {
     let mut pending = vec![root.to_path_buf()];
     let mut rejected = Vec::new();
@@ -233,7 +285,7 @@ fn check_documents(root: &Path) -> Result<(), String> {
                 .strip_prefix(root)
                 .map_err(|e| e.to_string())?
                 .to_string_lossy();
-            if !listed(extension(&relative), &["md", "txt"])
+            if !listed(extension(&relative), DOCUMENT_EXTENSIONS)
                 || matches!(relative.as_ref(), "README.md" | "CONTRIBUTING.md")
             {
                 continue;
@@ -279,10 +331,10 @@ fn binary(data: &[u8]) -> bool {
     data.contains(&0) || std::str::from_utf8(data).is_err()
 }
 struct Png {
-    depth: u8,
     colour: u8,
     animated: bool,
 }
+/// A loose PNG sniff for presentation formats, whatever the file is named.
 fn png(data: &[u8]) -> Option<Png> {
     if !data.starts_with(b"\x89PNG\r\n\x1a\n") || data.get(12..16) != Some(b"IHDR") {
         return None;
@@ -298,7 +350,6 @@ fn png(data: &[u8]) -> Option<Png> {
         offset = offset.saturating_add(length).saturating_add(12);
     }
     Some(Png {
-        depth: *data.get(24)?,
         colour: *data.get(25)?,
         animated,
     })
@@ -339,28 +390,197 @@ fn presentation_magic_reason(data: &[u8]) -> Option<&'static str> {
         _ => None,
     }
 }
-/// The binary build inputs a game may track; everything else is text.
-fn registered_binary(path: &str, data: &[u8]) -> bool {
-    let components: Vec<_> = path.split('/').collect();
-    let area = match components.as_slice() {
-        ["games", _, area, _, ..] => *area,
-        _ => return data.is_empty(),
+/// Every chunk from the PNG signature to the last byte, or `None` when a chunk
+/// is truncated.
+fn png_chunks(data: &[u8]) -> Option<Vec<(&[u8], &[u8])>> {
+    let mut rest = data.strip_prefix(PNG_SIGNATURE.as_slice())?;
+    let mut chunks = Vec::new();
+    while !rest.is_empty() {
+        let length = u32::from_be_bytes(rest.get(..4)?.try_into().ok()?) as usize;
+        let body = rest.get(8..length.checked_add(8)?)?;
+        chunks.push((&rest[4..8], body));
+        rest = rest.get(length + 12..)?;
+    }
+    Some(chunks)
+}
+/// Inflate a zlib stream to exactly `size` bytes, checksum included.
+fn inflate(stream: &[u8], size: usize) -> Option<Vec<u8>> {
+    let mut decoder = fdeflate::Decompressor::new();
+    let mut output = vec![0; size + 1];
+    let (mut consumed, mut produced) = (0, 0);
+    while !decoder.is_done() {
+        let (input, written) = decoder
+            .read(&stream[consumed..], &mut output, produced, true)
+            .ok()?;
+        if input == 0 && written == 0 {
+            return None;
+        }
+        consumed += input;
+        produced += written;
+    }
+    output.truncate(size);
+    (produced == size).then_some(output)
+}
+/// Inflate one zlib stream that must end the input. The decoder may read past
+/// a stream's end, so the stream proves it is exact by failing once its last
+/// checksum byte is removed.
+fn inflate_exact(stream: &[u8], size: usize) -> Option<Vec<u8>> {
+    let output = inflate(stream, size)?;
+    let (_, shorter) = stream.split_last()?;
+    inflate(shorter, size).is_none().then_some(output)
+}
+/// The packed pixel bytes of a PNG that is exactly an indexed build input:
+/// IHDR, PLTE, contiguous IDAT and a final IEND with only small standard
+/// ancillary chunks, one zlib stream holding exactly its non-interlaced
+/// scanlines, and pixels the asset build reads.
+fn indexed_png_bytes(data: &[u8]) -> Option<Vec<u8>> {
+    let chunks = png_chunks(data)?;
+    let (_, header) = chunks
+        .first()
+        .filter(|(kind, body)| *kind == b"IHDR" && body.len() == 13)?;
+    chunks
+        .last()
+        .filter(|(kind, body)| *kind == b"IEND" && body.is_empty())?;
+    let number = |at: usize| u32::from_be_bytes(header[at..at + 4].try_into().unwrap()) as usize;
+    let (width, height, depth) = (number(0), number(4), header[8]);
+    if width == 0 || height == 0 || !matches!(depth, 1 | 2 | 4 | 8) || header[9..] != [3, 0, 0, 0] {
+        return None;
+    }
+    let kinds: Vec<&[u8]> = chunks.iter().map(|(kind, _)| *kind).collect();
+    let first = kinds.iter().position(|kind| *kind == b"IDAT")?;
+    let last = kinds.iter().rposition(|kind| *kind == b"IDAT")?;
+    let palette = kinds.iter().position(|kind| *kind == b"PLTE")?;
+    let ordered = chunks
+        .iter()
+        .enumerate()
+        .all(|(index, (kind, body))| match *kind {
+            b"IHDR" => index == 0,
+            b"PLTE" => index == palette && palette < first,
+            b"IDAT" => (first..=last).contains(&index),
+            b"IEND" => index + 1 == chunks.len(),
+            _ => PNG_ANCILLARY
+                .iter()
+                .any(|(name, limit)| kind == name && body.len() <= *limit),
+        })
+        && kinds[first..=last].iter().all(|kind| *kind == b"IDAT");
+    if !ordered {
+        return None;
+    }
+    let row = (width * usize::from(depth)).div_ceil(8) + 1;
+    let size = row
+        .checked_mul(height)
+        .filter(|size| *size <= PNG_SCANLINES_MAX)?;
+    let stream: Vec<u8> = chunks[first..=last]
+        .iter()
+        .flat_map(|(_, body)| body.iter().copied())
+        .collect();
+    let scanlines = inflate_exact(&stream, size)?;
+    if scanlines.chunks(row).any(|line| line[0] > 4) {
+        return None;
+    }
+    let image = indexed_png(data).ok()?;
+    Some(
+        image
+            .pixels
+            .chunks(8 / usize::from(depth))
+            .map(|group| group.iter().fold(0u32, |byte, pixel| byte << depth | pixel) as u8)
+            .collect(),
+    )
+}
+/// A standard MIDI file exactly as the sequence build reads it: MThd then only
+/// MTrk chunks covering the file, every track closed by end-of-track, text
+/// meta events as text and the rest at their specified sizes, and no
+/// system-exclusive payloads.
+fn midi_reason(data: &[u8]) -> Option<&'static str> {
+    const MALFORMED: &str =
+        "MIDI is not an exact sequence build input: MThd, MTrk, sized or text metas only";
+    let mut offset = 0;
+    while offset < data.len() {
+        let expected: &[u8] = if offset == 0 { b"MThd" } else { b"MTrk" };
+        let size = data
+            .get(offset + 4..offset + 8)
+            .map(|size| u32::from_be_bytes(size.try_into().unwrap()) as usize);
+        match size {
+            Some(size) if data[offset..offset + 4] == *expected => offset += 8 + size,
+            _ => return Some(MALFORMED),
+        }
+    }
+    let Ok(report) = midi_events(data) else {
+        return Some(MALFORMED);
     };
-    if data.is_empty() {
-        return true;
+    if offset != data.len() {
+        return Some(MALFORMED);
     }
-    if extension(path).eq_ignore_ascii_case("pcm4") {
-        return area == "SOUND" && components[3] == "SAMPLE" && data.len() <= 64;
+    let mut text = String::new();
+    let mut last: Vec<Option<&MidiEvent>> = vec![None; usize::from(report.tracks)];
+    for event in &report.events {
+        match &event.body {
+            EventBody::Sysex { .. } => return Some(MALFORMED),
+            EventBody::Meta { meta, data } => match (meta, data.len()) {
+                (0x00, 0 | 2)
+                | (0x20 | 0x21, 1)
+                | (0x2f, 0)
+                | (0x51, 3)
+                | (0x54, 5)
+                | (0x58, 4)
+                | (0x59, 2) => {}
+                (0x01..=0x0f | 0x7f, _) => match std::str::from_utf8(data) {
+                    Ok(value) => {
+                        text.push_str(value);
+                        text.push('\n');
+                    }
+                    Err(_) => return Some(MALFORMED),
+                },
+                _ => return Some(MALFORMED),
+            },
+            EventBody::Channel { .. } => {}
+        }
+        let final_event = &mut last[event.track];
+        if final_event.is_none_or(|known| known.order < event.order) {
+            *final_event = Some(event);
+        }
     }
-    let indexed = png(data)
-        .is_some_and(|image| matches!(image.colour, 0 | 3) && image.depth <= 8 && !image.animated);
-    let wave = data.get(8..12).is_some_and(|form| {
-        (data.starts_with(b"RIFF") && form == b"WAVE")
-            || (data.starts_with(b"FORM") && form == b"AIFF")
+    let closed = last.iter().all(|event| {
+        event.is_some_and(
+            |event| matches!(&event.body, EventBody::Meta { meta: 0x2f, data } if data.is_empty()),
+        )
     });
-    (matches!(area, "SRC" | "TEXT") && indexed)
-        || (area == "SRC" && data.starts_with(b"ALCHTOK1"))
-        || (area == "SOUND" && (wave || data.starts_with(b"MThd")))
+    if !closed {
+        return Some(MALFORMED);
+    }
+    data_uri_reason(&text).or_else(|| encoded_reason(&text, false))
+}
+/// The binary build inputs a game may track, each parsed exactly as the asset
+/// build reads it; everything else is text.
+fn binary_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Option<&'static str> {
+    if data.is_empty() {
+        return None;
+    }
+    let components: Vec<_> = path.split('/').collect();
+    let (area, rest) = match components.as_slice() {
+        ["games", _, area, rest @ ..] if !rest.is_empty() => (*area, rest.join("/")),
+        _ => return Some(UNREGISTERED),
+    };
+    match (area, extension(path).to_ascii_lowercase().as_str()) {
+        ("SOUND", "pcm4") => {
+            (!rest.starts_with("SAMPLE/") || data.len() > 64).then_some(UNREGISTERED)
+        }
+        ("SRC" | "TEXT", "png") => match indexed_png_bytes(data) {
+            None => {
+                Some("PNG is not an exact indexed build input: standard chunks, one exact stream")
+            }
+            Some(pixels) => logo
+                .is_some_and(|logo| contains(&pixels, logo))
+                .then_some(LOGO_REASON),
+        },
+        ("SRC", "tokens") if rest == TOKEN_TABLE => (!crate::build_assets::well_formed_table(data))
+            .then_some("compression control table is not ALCHTOK1 followed by complete records"),
+        ("SOUND", "wav") => wav_pcm8(data)
+            .is_err()
+            .then_some("WAV is not a canonical mono 8-bit PCM build input"),
+        ("SOUND", "mid") => midi_reason(data),
+        _ => Some(UNREGISTERED),
+    }
 }
 fn data_uri_reason(text: &str) -> Option<&'static str> {
     let lower = text.to_ascii_lowercase();
@@ -384,82 +604,215 @@ fn data_uri_reason(text: &str) -> Option<&'static str> {
     });
     embedded.then_some("embedded data URI: pret commits only editable build inputs")
 }
-fn base64_byte(byte: u8) -> bool {
-    byte.is_ascii_alphanumeric() || matches!(byte, b'+' | b'/')
+enum Run {
+    Plain,
+    Digest,
+    Encoded,
 }
-/// Longest base64-alphabet run in a line that mixes upper case, lower case and
-/// digits, as encoded bytes do; bit rows and hex digests do not.
-fn base64_run(line: &[u8]) -> usize {
-    let mut best = 0;
-    let mut run = (0, 0);
-    for byte in line.iter().chain(b" ").copied() {
-        if base64_byte(byte) || (byte == b'=' && run.0 > 0) {
-            let class = match byte {
-                b'A'..=b'Z' => 1,
-                b'a'..=b'z' => 2,
-                b'0'..=b'9' => 4,
-                _ => 0,
-            };
-            run = (run.0 + 1, run.1 | class);
+/// Classify one alphanumeric run. Decimal runs are numbers; hashes and 64-bit
+/// words are digests; other hex, upper-case base32 and mixed-case runs that do
+/// not read as words are encodings. Base64 and base64url split into runs at
+/// `+`, `/`, `-` and `_`.
+fn classify(run: &[u8]) -> Run {
+    if run.len() < ENCODED_RUN_MIN {
+        return Run::Plain;
+    }
+    let digits = run
+        .strip_prefix(b"0x")
+        .or_else(|| run.strip_prefix(b"0X"))
+        .unwrap_or(run);
+    if digits.iter().all(u8::is_ascii_hexdigit) {
+        return match digits.len() {
+            _ if digits.iter().all(u8::is_ascii_digit) => Run::Plain,
+            16 | 32 | 40 | 64 => Run::Digest,
+            _ => Run::Encoded,
+        };
+    }
+    let base32 = run
+        .iter()
+        .all(|byte| byte.is_ascii_uppercase() || (b'2'..=b'7').contains(byte))
+        && run.iter().any(u8::is_ascii_digit);
+    let mixed = run.iter().any(u8::is_ascii_uppercase) && run.iter().any(u8::is_ascii_lowercase);
+    if base32 || (mixed && !wordlike(run)) {
+        Run::Encoded
+    } else {
+        Run::Plain
+    }
+}
+/// Whether a mixed-case run reads as identifier words: once numbers are
+/// removed, three fifths of its letters sit in words of three or more letters,
+/// as in `SelectActor25SceneVariant` and not in random base64.
+fn wordlike(run: &[u8]) -> bool {
+    let (mut letters, mut worded, mut index) = (0, 0, 0);
+    while index < run.len() {
+        if run[index].is_ascii_digit() {
+            let prefixed = run[index] == b'0'
+                && matches!(run.get(index + 1), Some(b'x' | b'X'))
+                && run.get(index + 2).is_some_and(u8::is_ascii_hexdigit);
+            index += 1 + usize::from(prefixed);
+            while run.get(index).is_some_and(u8::is_ascii_hexdigit) {
+                index += 1;
+            }
             continue;
         }
-        if run.1 == 7 && run.0 > best {
-            best = run.0;
-        }
-        run = (0, 0);
+        let capital = usize::from(run[index].is_ascii_uppercase());
+        let lower = run[index + capital..]
+            .iter()
+            .take_while(|byte| byte.is_ascii_lowercase())
+            .count();
+        let length = if lower >= 2 { capital + lower } else { 1 };
+        letters += length;
+        worded += if lower >= 2 { length } else { 0 };
+        index += length;
     }
-    best
+    letters < 8 || worded * 5 >= letters * 3
 }
-fn base64_reason(text: &str) -> Option<&'static str> {
-    let mut block = (0, 0);
-    for line in text.lines() {
-        let length = base64_run(line.as_bytes());
-        if length > BASE64_RUN_MAX {
-            return Some("base64 payload: pret commits only editable build inputs");
+/// One integer literal: decimal, `0x` hex, `0b` binary, a `\x` escape or a
+/// two-digit hex byte, with an optional Rust or C integer suffix.
+fn numeric(token: &[u8]) -> bool {
+    let token = match token {
+        [b'-' | b'+', rest @ ..] => rest,
+        _ => token,
+    };
+    if token.len() == 2 && token.iter().all(u8::is_ascii_hexdigit) {
+        return true;
+    }
+    let body = INTEGER_SUFFIXES
+        .iter()
+        .find_map(|suffix| {
+            let split = token
+                .len()
+                .checked_sub(suffix.len())
+                .filter(|split| *split > 0)?;
+            token[split..]
+                .eq_ignore_ascii_case(suffix.as_bytes())
+                .then(|| &token[..split])
+        })
+        .unwrap_or(token);
+    let digits = |digits: &[u8], limit: usize, valid: fn(&u8) -> bool| {
+        !digits.is_empty() && digits.len() <= limit && digits.iter().all(valid)
+    };
+    match body {
+        [b'0', b'x' | b'X', rest @ ..] => digits(rest, 16, u8::is_ascii_hexdigit),
+        [b'0', b'b' | b'B', rest @ ..] => digits(rest, 64, |bit| matches!(bit, b'0' | b'1')),
+        [b'x' | b'X', rest @ ..] => digits(rest, 2, u8::is_ascii_hexdigit),
+        _ => digits(body, 20, u8::is_ascii_digit),
+    }
+}
+/// Elements of numeric array literals: runs of integer tokens separated only
+/// by whitespace, commas, brackets, quotes and escapes.
+fn numeric_elements(text: &[u8]) -> usize {
+    let separator = |byte: &u8| byte.is_ascii_whitespace() || b",;:()[]{}\\\"'".contains(byte);
+    let (mut total, mut run) = (0, 0);
+    for token in text.split(separator).filter(|token| !token.is_empty()) {
+        if numeric(token) {
+            run += 1;
+            continue;
         }
-        block = if length >= BASE64_LINE_MIN {
-            (block.0 + 1, block.1 + length)
-        } else {
-            (0, 0)
-        };
-        if block.0 >= 2 && block.1 > BASE64_RUN_MAX {
-            return Some("base64 payload: pret commits only editable build inputs");
+        total += if run >= NUMERIC_RUN_MIN { run } else { 0 };
+        run = 0;
+    }
+    total + if run >= NUMERIC_RUN_MIN { run } else { 0 }
+}
+/// Encoded content measured over a whole text, whatever its lines or quoting.
+fn encoded_reason(text: &str, arrays: bool) -> Option<&'static str> {
+    let (mut characters, mut digests) = (0, 0);
+    for run in text.as_bytes().split(|byte| !byte.is_ascii_alphanumeric()) {
+        match classify(run) {
+            Run::Encoded => characters += run.len(),
+            Run::Digest => digests += 1,
+            Run::Plain => {}
         }
     }
-    None
+    if characters > ENCODED_CHARACTERS_MAX {
+        return Some(
+            "encoded payload (base64, base32 or hex): pret commits only editable build inputs",
+        );
+    }
+    if digests > DIGEST_RUNS_MAX {
+        return Some(
+            "encoded payload in digest-sized hex runs: pret commits only editable build inputs",
+        );
+    }
+    (arrays && numeric_elements(text.as_bytes()) > NUMERIC_ELEMENTS_MAX).then_some(
+        "numeric array outside the game data tables: pret commits only editable build inputs",
+    )
 }
+fn blocked_include(literal: &str, bytes: bool) -> bool {
+    let literal = literal.replace('\\', "/");
+    literal.split('/').any(|component| {
+        listed(component, &["out", "roms"]) || (bytes && component.eq_ignore_ascii_case("games"))
+    }) || listed(extension(&literal), PRESENTATION_EXTENSIONS)
+        || listed(extension(&literal), BLOCKED_EXTENSIONS)
+}
+/// `include_bytes!` of game, ROM or output bytes, and `include_str!` of ROM or
+/// output text, in any delimiter, spacing, case or `concat!` split.
 fn included_bytes_reason(path: &str, text: &str) -> Option<&'static str> {
     if !extension(path).eq_ignore_ascii_case("rs") {
         return None;
     }
-    let embedded = text.match_indices("include_bytes!(").any(|(index, word)| {
+    let embedded = text.match_indices("include_").any(|(index, word)| {
+        if text[..index]
+            .bytes()
+            .next_back()
+            .is_some_and(|byte| byte.is_ascii_alphanumeric() || byte == b'_')
+        {
+            return false;
+        }
         let rest = &text[index + word.len()..];
-        let mut depth = 1;
+        let (bytes, rest) = match (rest.strip_prefix("bytes"), rest.strip_prefix("str")) {
+            (Some(rest), _) => (true, rest),
+            (_, Some(rest)) => (false, rest),
+            _ => return false,
+        };
+        let Some(rest) = rest.trim_start().strip_prefix('!') else {
+            return false;
+        };
+        let rest = rest.trim_start();
+        let (open, close) = match rest.chars().next() {
+            Some('(') => ('(', ')'),
+            Some('[') => ('[', ']'),
+            Some('{') => ('{', '}'),
+            _ => return false,
+        };
+        let mut depth = 0;
         let end = rest
             .char_indices()
             .find(|(_, ch)| {
-                depth += match ch {
-                    '(' => 1,
-                    ')' => -1,
-                    _ => 0,
-                };
+                depth += i32::from(*ch == open) - i32::from(*ch == close);
                 depth == 0
             })
             .map_or(rest.len(), |(end, _)| end);
-        rest[..end].split('"').skip(1).step_by(2).any(|literal| {
-            let literal = literal.replace('\\', "/");
-            literal
-                .split('/')
-                .any(|component| matches!(component, "games" | "roms" | "out"))
-                || listed(extension(&literal), PRESENTATION_EXTENSIONS)
-                || listed(extension(&literal), BLOCKED_EXTENSIONS)
-        })
+        let literals: Vec<_> = rest[..end].split('"').skip(1).step_by(2).collect();
+        blocked_include(&literals.concat(), bytes)
+            || literals
+                .into_iter()
+                .any(|literal| blocked_include(literal, bytes))
     });
-    embedded.then_some("include_bytes! of game, ROM or output bytes")
+    embedded.then_some("include_bytes! or include_str! of game, ROM or output bytes")
 }
-fn publication_data_reason(path: &str, data: &[u8]) -> Option<&'static str> {
-    if listed(extension(path), &["asm", "s"]) && incbin(data) {
+/// Filter attributes such as `filter=lfs` store content outside the scanned blob.
+fn attributes_reason(path: &str, text: &str) -> Option<&'static str> {
+    let leaf = path.rsplit('/').next().unwrap_or(path);
+    let filtered = leaf.eq_ignore_ascii_case(".gitattributes")
+        && text
+            .lines()
+            .filter(|line| !line.trim_start().starts_with('#'))
+            .flat_map(str::split_whitespace)
+            .any(|attribute| attribute.starts_with("filter="));
+    filtered.then_some(
+        "Git filter attribute such as filter=lfs: content would bypass the publication gate",
+    )
+}
+fn publication_data_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Option<&'static str> {
+    if logo.is_some_and(|logo| contains(data, logo)) {
+        return Some(LOGO_REASON);
+    }
+    if listed(extension(path), &["asm", "inc", "s"]) && incbin(data) {
         return Some("committed incbin payload");
+    }
+    if data.starts_with(b"version https://git-lfs") || data.starts_with(b"version https://hawser") {
+        return Some("Git LFS pointer: content stored outside Git bypasses the publication gate");
     }
     if let Some(reason) =
         publication_content_reason(data).or_else(|| presentation_magic_reason(data))
@@ -467,13 +820,14 @@ fn publication_data_reason(path: &str, data: &[u8]) -> Option<&'static str> {
         return Some(reason);
     }
     if binary(data) || extension(path).eq_ignore_ascii_case("pcm4") {
-        return (!registered_binary(path, data))
-            .then_some("unregistered binary: pret commits only editable build inputs");
+        return binary_reason(path, data, logo);
     }
     let text = std::str::from_utf8(data).unwrap_or("");
+    let table = asset_game(path).is_some() && listed(extension(path), DATA_TABLE_EXTENSIONS);
     data_uri_reason(text)
-        .or_else(|| base64_reason(text))
+        .or_else(|| encoded_reason(text, !table))
         .or_else(|| included_bytes_reason(path, text))
+        .or_else(|| attributes_reason(path, text))
 }
 /// Games whose asset manifest is tracked in the inspected tree.
 fn manifest_games<'a>(paths: impl IntoIterator<Item = &'a str>) -> Vec<String> {
@@ -487,15 +841,29 @@ fn manifest_games<'a>(paths: impl IntoIterator<Item = &'a str>) -> Vec<String> {
         )
         .collect()
 }
-fn manifestless_reason(path: &str, manifests: &[String]) -> Option<&'static str> {
+/// The game whose asset roots hold `path`: every directory under
+/// `games/<game>/` except tooling metadata, with `asm/overlays` holding
+/// overlay streams, all matched without regard to case.
+fn asset_game(path: &str) -> Option<&str> {
     let components: Vec<_> = path.split('/').collect();
-    let asset = match components.as_slice() {
-        ["games", game, "SRC" | "SOUND" | "TEXT", _, ..] => Some(game),
-        ["games", game, "asm", "overlays", _, ..] => Some(game),
-        _ => None,
-    }?;
+    let [top, game, area, rest @ ..] = components.as_slice() else {
+        return None;
+    };
+    if !top.eq_ignore_ascii_case("games") || rest.is_empty() {
+        return None;
+    }
+    let asset = if area.eq_ignore_ascii_case("asm") {
+        rest.len() > 1 && rest[0].eq_ignore_ascii_case("overlays")
+    } else {
+        !listed(area, METADATA_DIRECTORIES)
+    };
+    asset.then_some(*game)
+}
+fn manifestless_reason(path: &str, manifests: &[String]) -> Option<&'static str> {
+    let game = asset_game(path)?;
+    let manifested = path.starts_with("games/") && manifests.iter().any(|known| known == game);
     let code = listed(extension(path), MANIFESTLESS_EXTENSIONS);
-    (!code && !manifests.iter().any(|game| game == asset))
+    (!code && !manifested)
         .then_some("game material without a consuming asset manifest (SRC/SYSTEM/RESOURCE.JSON)")
 }
 fn byte_dump(message: &str) -> bool {
@@ -561,7 +929,8 @@ fn nul_list(value: &[u8]) -> Vec<String> {
         .map(|field| String::from_utf8_lossy(field).into_owned())
         .collect()
 }
-/// Parse `git diff --raw -z`; rename records have an old and a new path.
+/// Parse `git diff --raw -z` into `(path, gitlink)` records. Renames and copies
+/// name their new path, which every path rule judges as new.
 fn raw_changes(value: &[u8]) -> Result<(bool, Vec<(String, bool)>), String> {
     let fields = nul_list(value);
     let mut changes = Vec::new();
@@ -578,9 +947,8 @@ fn raw_changes(value: &[u8]) -> Result<(bool, Vec<(String, bool)>), String> {
         }
         let path = fields[index + usize::from(paired)].clone();
         index += 1 + usize::from(paired);
-        if metadata[4] != "D" && metadata[1] != "160000" {
-            let existing = metadata[4] != "A" && !metadata[4].starts_with('C');
-            changes.push((path, existing));
+        if metadata[4] != "D" {
+            changes.push((path, metadata[1] == "160000"));
         }
     }
     Ok((!fields.is_empty(), changes))
@@ -589,8 +957,31 @@ struct Entry {
     scope: String,
     path: String,
     object: String,
-    existing: bool,
-    manifest_reason: Option<&'static str>,
+    listing_reason: Option<&'static str>,
+}
+/// One inspected path. Approved compiler submodules carry no blob to read;
+/// any other gitlink fails without being read.
+fn inspected(
+    scope: &str,
+    path: String,
+    object: String,
+    gitlink: bool,
+    manifests: &[String],
+) -> Option<Entry> {
+    let listing_reason = if gitlink {
+        if APPROVED_GITLINKS.contains(&path.as_str()) {
+            return None;
+        }
+        Some("unapproved gitlink: only the agbcc and agscc submodules are approved")
+    } else {
+        manifestless_reason(&path, manifests)
+    };
+    Some(Entry {
+        scope: scope.to_string(),
+        path,
+        object,
+        listing_reason,
+    })
 }
 /// Stream blobs through one `git cat-file --batch` process in request order.
 fn blobs(
@@ -639,23 +1030,20 @@ fn blobs(
     Ok(())
 }
 fn scan(root: &Path, entries: Vec<Entry>, conflicts: bool) -> Result<(), String> {
+    let logo = nintendo_logo(root);
     let mut failures = Vec::new();
     let mut readable = Vec::new();
     for entry in entries {
-        if let Some(reason) = new_text_file_reason(&entry.path, entry.existing) {
-            failures.push(format!("{} {reason}", entry.scope));
-            continue;
+        match publication_path_reason(&entry.path).or(entry.listing_reason) {
+            Some(reason) => failures.push(format!("{} {}: {reason}", entry.scope, entry.path)),
+            None => readable.push(entry),
         }
-        if let Some(reason) = publication_path_reason(&entry.path).or(entry.manifest_reason) {
-            failures.push(format!("{} {}: {reason}", entry.scope, entry.path));
-            continue;
-        }
-        readable.push(entry);
     }
     let objects = readable.iter().map(|entry| entry.object.clone()).collect();
     blobs(root, objects, |index, data| {
         let entry = &readable[index];
-        let reason = publication_data_reason(&entry.path, data).map(str::to_string);
+        let reason =
+            publication_data_reason(&entry.path, data, logo.as_deref()).map(str::to_string);
         let reason = reason.or_else(|| {
             conflicts
                 .then(|| conflict_marker_reason(&entry.path, data))
@@ -674,8 +1062,8 @@ fn scan(root: &Path, entries: Vec<Entry>, conflicts: bool) -> Result<(), String>
         ))
     }
 }
-/// Tracked `(object, path)` pairs of the index or of a revision, without gitlinks.
-fn tracked(root: &Path, revision: Option<&str>) -> Result<Vec<(String, String)>, String> {
+/// Tracked `(gitlink, object, path)` records of the index or of a revision.
+fn tracked(root: &Path, revision: Option<&str>) -> Result<Vec<(bool, String, String)>, String> {
     let output = match revision {
         None => git(root, &["ls-files", "--stage", "-z"], "index scan")?,
         Some(revision) => git(
@@ -700,32 +1088,28 @@ fn tracked(root: &Path, revision: Option<&str>) -> Result<Vec<(String, String)>,
         };
         let repeated = entries
             .last()
-            .is_some_and(|(_, last): &(String, String)| last == path);
-        if fields[0] != "160000" && !repeated {
-            entries.push((object.to_string(), path.to_string()));
+            .is_some_and(|(_, _, last): &(bool, String, String)| last == path);
+        if !repeated {
+            entries.push((fields[0] == "160000", object.to_string(), path.to_string()));
         }
     }
     Ok(entries)
 }
 fn manifests_of(root: &Path, revision: Option<&str>) -> Result<Vec<String>, String> {
-    let paths = tracked(root, revision)?;
-    Ok(manifest_games(paths.iter().map(|(_, path)| path.as_str())))
+    let records = tracked(root, revision)?;
+    Ok(manifest_games(
+        records.iter().map(|(_, _, path)| path.as_str()),
+    ))
 }
 fn tree_entries(root: &Path, revision: Option<&str>) -> Result<Vec<Entry>, String> {
-    let paths = tracked(root, revision)?;
-    let manifests = manifest_games(paths.iter().map(|(_, path)| path.as_str()));
+    let records = tracked(root, revision)?;
+    let manifests = manifest_games(records.iter().map(|(_, _, path)| path.as_str()));
     let scope = revision.map_or("tree".to_string(), |revision| {
         format!("tree {}", &revision[..12.min(revision.len())])
     });
-    Ok(paths
+    Ok(records
         .into_iter()
-        .map(|(object, path)| Entry {
-            scope: scope.clone(),
-            manifest_reason: manifestless_reason(&path, &manifests),
-            object,
-            path,
-            existing: true,
-        })
+        .filter_map(|(gitlink, object, path)| inspected(&scope, path, object, gitlink, &manifests))
         .collect())
 }
 fn check_tree(root: &Path, revision: Option<&str>) -> Result<(), String> {
@@ -755,12 +1139,9 @@ fn check_staged(root: &Path) -> Result<(), String> {
     let manifests = manifests_of(root, None)?;
     let entries = changes
         .into_iter()
-        .map(|(path, existing)| Entry {
-            scope: "staged".to_string(),
-            object: format!(":{path}"),
-            manifest_reason: manifestless_reason(&path, &manifests),
-            path,
-            existing,
+        .filter_map(|(path, gitlink)| {
+            let object = format!(":{path}");
+            inspected("staged", path, object, gitlink, &manifests)
         })
         .collect();
     scan(root, entries, true)
@@ -847,15 +1228,11 @@ fn check_push(root: &Path, updates: &str) -> Result<(), String> {
         )?;
         let (_, changes) = raw_changes(&output)?;
         let manifests = manifests_of(root, Some(&commit))?;
-        for (path, existing) in changes {
-            entries.push(Entry {
-                scope: commit[..12.min(commit.len())].to_string(),
-                object: format!("{commit}:{path}"),
-                manifest_reason: manifestless_reason(&path, &manifests),
-                path,
-                existing,
-            });
-        }
+        let scope = &commit[..12.min(commit.len())];
+        entries.extend(changes.into_iter().filter_map(|(path, gitlink)| {
+            let object = format!("{commit}:{path}");
+            inspected(scope, path, object, gitlink, &manifests)
+        }));
     }
     // Each pushed tip must also pass as a whole tree, not only as its deltas.
     for tip in tips {
@@ -864,48 +1241,107 @@ fn check_push(root: &Path, updates: &str) -> Result<(), String> {
     scan(root, entries, false)
 }
 /// Every file-level decision for one blob, as `scan` makes it.
-fn publication_reason(path: &str, data: &[u8], manifests: &[String]) -> Option<&'static str> {
+fn publication_reason(
+    path: &str,
+    data: &[u8],
+    manifests: &[String],
+    logo: Option<&[u8]>,
+) -> Option<&'static str> {
     publication_path_reason(path)
         .or_else(|| manifestless_reason(path, manifests))
-        .or_else(|| publication_data_reason(path, data))
+        .or_else(|| publication_data_reason(path, data, logo))
 }
-fn png_fixture(depth: u8, colour: u8, animated: bool) -> Vec<u8> {
-    let chunk = |kind: &[u8], body: &[u8]| {
-        let mut chunk = (body.len() as u32).to_be_bytes().to_vec();
-        chunk.extend_from_slice(kind);
-        chunk.extend_from_slice(body);
-        chunk.extend_from_slice(&[0; 4]);
-        chunk
-    };
-    let mut data = b"\x89PNG\r\n\x1a\n".to_vec();
-    data.extend(chunk(
-        b"IHDR",
-        &[0, 0, 0, 16, 0, 0, 0, 16, depth, colour, 0, 0, 0],
-    ));
-    if animated {
-        data.extend(chunk(b"acTL", &[0, 0, 0, 2, 0, 0, 0, 0]));
-    }
-    data.extend(chunk(b"IDAT", &[0x78, 0x01]));
-    data.extend(chunk(b"IEND", &[]));
-    data
-}
-/// Deterministic encoded-looking text; fixtures are built at run time so the
+/// Deterministic pseudo-random bytes. Fixtures are built at run time so the
 /// tracked gate source never carries the payloads it rejects.
-fn base64_fixture(length: usize, seed: u32) -> String {
-    let alphabet = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+fn fixture_bytes(length: usize, seed: u32) -> Vec<u8> {
     let mut state = seed;
     (0..length)
         .map(|_| {
             state = state.wrapping_mul(1_103_515_245).wrapping_add(12_345);
-            alphabet[(state >> 16) as usize % 64] as char
+            (state >> 16) as u8
         })
         .collect()
 }
+fn encoded_fixture(alphabet: &[u8], length: usize, seed: u32) -> String {
+    fixture_bytes(length, seed)
+        .into_iter()
+        .map(|byte| alphabet[usize::from(byte) % alphabet.len()] as char)
+        .collect()
+}
+fn crc32(bytes: &[u8]) -> u32 {
+    !bytes.iter().fold(!0u32, |crc, byte| {
+        (0..8).fold(crc ^ u32::from(*byte), |crc, _| {
+            (crc >> 1) ^ (0xedb8_8320 & 0u32.wrapping_sub(crc & 1))
+        })
+    })
+}
+fn png_chunk(kind: &[u8], body: &[u8]) -> Vec<u8> {
+    let mut chunk = (body.len() as u32).to_be_bytes().to_vec();
+    chunk.extend_from_slice(kind);
+    chunk.extend_from_slice(body);
+    let crc = crc32(&chunk[4..]);
+    chunk.extend_from_slice(&crc.to_be_bytes());
+    chunk
+}
+/// Unfiltered blank scanlines of a square image.
+fn scanlines(size: usize, depth: usize) -> Vec<u8> {
+    let row = (size * depth).div_ceil(8) + 1;
+    vec![0; row * size]
+}
+/// A square PNG: IHDR, a full palette, `extra` chunks, one IDAT and IEND.
+fn png_fixture(
+    size: u32,
+    depth: u8,
+    colour: u8,
+    stream: &[u8],
+    extra: &[(&[u8], &[u8])],
+) -> Vec<u8> {
+    let header = [
+        size.to_be_bytes().as_slice(),
+        &size.to_be_bytes(),
+        &[depth, colour, 0, 0, 0],
+    ]
+    .concat();
+    let palette: Vec<u8> = (0..3usize << depth)
+        .map(|index| (index / 3) as u8)
+        .collect();
+    let mut data = PNG_SIGNATURE.to_vec();
+    data.extend(png_chunk(b"IHDR", &header));
+    data.extend(png_chunk(b"PLTE", &palette));
+    for (kind, body) in extra {
+        data.extend(png_chunk(kind, body));
+    }
+    data.extend(png_chunk(b"IDAT", stream));
+    data.extend(png_chunk(b"IEND", &[]));
+    data
+}
+fn indexed_fixture(depth: u8) -> Vec<u8> {
+    let stream = fdeflate::compress_to_vec(&scanlines(16, usize::from(depth)));
+    png_fixture(16, depth, 3, &stream, &[])
+}
+/// A one-track MIDI file of a note and, when `closed`, its end-of-track.
+fn midi_fixture(events: &[u8], closed: bool) -> Vec<u8> {
+    let mut track = [&[0, 0x90, 60, 100, 96, 0x80, 60, 0], events].concat();
+    if closed {
+        track.extend([0, 0xff, 0x2f, 0]);
+    }
+    [
+        b"MThd".as_slice(),
+        &[0, 0, 0, 6, 0, 0, 0, 1, 0, 96],
+        b"MTrk",
+        &(track.len() as u32).to_be_bytes(),
+        &track,
+    ]
+    .concat()
+}
+/// A deterministic stand-in for the cartridge logo; the real bytes stay in the ROM.
+fn logo_fixture() -> Vec<u8> {
+    fixture_bytes(LOGO.len(), 0x0bad_1060)
+}
 /// `(path, bytes, game has a manifest, expected rejection reason fragment)`.
 type Fixture = (&'static str, Vec<u8>, bool, Option<&'static str>);
-fn fixtures() -> Vec<Fixture> {
-    let tbs = "games/THE BROKEN SEAL";
-    let uri = |media: &str| format!("data{}{media};base64,{}", ':', base64_fixture(24, 7));
+fn binary_fixtures() -> Vec<Fixture> {
+    let logo = logo_fixture();
     let font = [b"OTTO".as_slice(), &[0, 10, 0, 128, 0, 3, 0, 32], b"CFF "].concat();
     let mut fragment = vec![0u8; 0x1000];
     fragment[..4].copy_from_slice(&[0x2e, 0, 0, 0xea]);
@@ -914,38 +1350,59 @@ fn fixtures() -> Vec<Fixture> {
         .iter()
         .fold(0u8, |sum, byte| sum.wrapping_add(*byte));
     fragment[0xbd] = 0u8.wrapping_sub(sum).wrapping_sub(0x19);
-    let lines = (0..5)
-        .map(|seed| format!("  {}\n", base64_fixture(76, seed)))
-        .collect::<String>();
-    let rows = (0..16)
-        .map(|_| format!("        \"{}\",\n", "01".repeat(52)))
-        .collect::<String>();
-    let checksums = (0..4)
-        .map(|seed| {
-            format!(
-                "checksum = \"{:064x}\"\n",
-                u128::from(seed as u32) * 0x9e37_79b9_7f4a_7c15
-            )
-        })
-        .collect::<String>();
-    let wave = [
-        b"RIFF".as_slice(),
-        &[36, 0, 0, 0],
-        b"WAVEfmt ",
-        &[16, 0, 0, 0, 1, 0],
+    let blank = scanlines(16, 4);
+    let stream = fdeflate::compress_to_vec(&blank);
+    let mut trailing = indexed_fixture(4);
+    trailing.extend_from_slice(&[0; 4]);
+    let surplus = fdeflate::compress_to_vec(&[blank.as_slice(), &[0; 64]].concat());
+    let second = [
+        stream.clone(),
+        fdeflate::compress_to_vec(&fixture_bytes(512, 9)),
     ]
     .concat();
-    let midi = [b"MThd".as_slice(), &[0, 0, 0, 6, 0, 1, 0, 2, 0, 96]].concat();
+    // The first row holds the logo under the Sub filter: each byte less its left.
+    let mut row = logo.clone();
+    row.resize(160, 0);
+    let mut hidden = scanlines(160, 8);
+    hidden[0] = 1;
+    for index in 0..row.len() {
+        let left = index.checked_sub(1).map_or(0, |left| row[left]);
+        hidden[1 + index] = row[index].wrapping_sub(left);
+    }
+    let hidden = fdeflate::compress_to_vec(&hidden);
+    let wave = psynergy::assets::wav::pcm8_wav(&[0; 64], 8000).unwrap();
+    let listed_wave = [
+        b"RIFF".as_slice(),
+        &(wave.len() as u32 + 4).to_le_bytes(),
+        &wave[8..36],
+        b"LIST\x04\0\0\0INFO",
+        &wave[36..],
+    ]
+    .concat();
+    let samples: Vec<u8> = logo.iter().map(|byte| byte.wrapping_sub(128)).collect();
+    let midi = midi_fixture(&[], true);
+    let meta = |kind: u8, payload: &[u8]| {
+        psynergy::assets::midi::append_conductor_meta(&midi, kind, payload).unwrap()
+    };
+    let base64: Vec<u8> = (b'A'..=b'Z')
+        .chain(b'a'..=b'z')
+        .chain(b'0'..=b'9')
+        .chain(*b"+/")
+        .collect();
+    let directive = [b"alchemy-mid2agb\0".as_slice(), b"{\"format\":1}"].concat();
+    let table = [b"ALCHTOK1".as_slice(), &[9, 0xd0, 0x01, 0, 5, 8, 3, 7]].concat();
+    let garbled = [b"ALCHTOK1".as_slice(), &fixture_bytes(64, 5)].concat();
     let unregistered = Some("unregistered binary");
-    let presentation = Some("presentation material");
-    let embed = Some("data URI");
-    let base64 = Some("base64 payload");
+    let malformed_png = Some("exact indexed build input");
+    let wav = Some("canonical mono 8-bit PCM");
+    let sequence = Some("exact sequence build input");
+    let nintendo = Some("Nintendo logo");
     vec![
         (
             "tools/alchemy/GRAPHICS/Weyard.otf",
             font.clone(),
             true,
-            presentation,
+            Some("presentation material"),
         ),
         ("notes.dat", font, true, Some("font")),
         (
@@ -958,23 +1415,23 @@ fn fixtures() -> Vec<Fixture> {
             "games/THE BROKEN SEAL/PREVIEW/DJINN_101_IDLE.GIF",
             b"GIF89a".to_vec(),
             true,
-            presentation,
+            Some("presentation material"),
         ),
         (
             "games/THE BROKEN SEAL/PREVIEW/title.png",
-            png_fixture(4, 3, false),
+            indexed_fixture(4),
             true,
             Some("PREVIEW"),
         ),
         (
             "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/SHOT.PNG",
-            png_fixture(8, 6, false),
+            png_fixture(16, 8, 6, &stream, &[]),
             true,
             Some("truecolour"),
         ),
         (
             "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/IDLE.INDEXED.PNG",
-            png_fixture(4, 3, true),
+            png_fixture(16, 4, 3, &stream, &[(b"acTL", &[0, 0, 0, 2, 0, 0, 0, 0])]),
             true,
             Some("animated PNG"),
         ),
@@ -997,48 +1454,10 @@ fn fixtures() -> Vec<Fixture> {
             unregistered,
         ),
         (
-            "games/THE BROKEN SEAL/PREVIEW/TBS-EN-ROM.SVG",
-            format!("<svg><image href=\"{}\"/></svg>", uri("image/png")).into_bytes(),
+            "games/THE BROKEN SEAL/SOUND/X.PNG",
+            indexed_fixture(4),
             true,
-            embed,
-        ),
-        (
-            "tools/alchemy/src/dashboard/index.html",
-            format!("<style>@font-face{{src:url({})}}</style>", uri("font/otf")).into_bytes(),
-            true,
-            embed,
-        ),
-        (
-            "tools/alchemy/src/coverage/figure.rs",
-            format!(
-                "format!(\"{}{{}}\", payload)",
-                uri("application/octet-stream")
-            )
-            .into_bytes(),
-            true,
-            embed,
-        ),
-        (
-            "games/THE BROKEN SEAL/SRC/SYSTEM/BLOB.JSON",
-            format!("{{\"bytes\": \"{}\"}}\n", base64_fixture(300, 3)).into_bytes(),
-            true,
-            base64,
-        ),
-        (
-            "tools/alchemy/src/dashboard/font.css",
-            lines.into_bytes(),
-            true,
-            base64,
-        ),
-        (
-            "tools/alchemy/src/assets.rs",
-            format!(
-                "const LOGO: &[u8] = include_bytes{}\"../../../{tbs}/SRC/LOGO.DAT\");\n",
-                "!("
-            )
-            .into_bytes(),
-            true,
-            Some("include_bytes!"),
+            unregistered,
         ),
         (
             "games/THE BROKEN SEAL/SRC/SYSTEM/HEADER.DAT",
@@ -1047,32 +1466,140 @@ fn fixtures() -> Vec<Fixture> {
             Some("ROM header fragment"),
         ),
         (
-            "games/THE BROKEN SEAL/recon/en/main/0800ebec.c.bak",
-            b"int x;\n".to_vec(),
-            true,
-            Some("backup"),
-        ),
-        (
             "games/THE LOST AGE/SOUND/SEQUENCE/X.MID",
             midi.clone(),
             false,
             Some("asset manifest"),
         ),
         (
+            "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/TRAILING.INDEXED.PNG",
+            trailing,
+            true,
+            malformed_png,
+        ),
+        (
+            "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/TEXT.INDEXED.PNG",
+            png_fixture(16, 4, 3, &stream, &[(b"tEXt", b"Comment\0payload")]),
+            true,
+            malformed_png,
+        ),
+        (
+            "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/SURPLUS.INDEXED.PNG",
+            png_fixture(16, 4, 3, &surplus, &[]),
+            true,
+            malformed_png,
+        ),
+        (
+            "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/SECOND.INDEXED.PNG",
+            png_fixture(16, 4, 3, &second, &[]),
+            true,
+            malformed_png,
+        ),
+        (
+            "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/LOGO.INDEXED.PNG",
+            png_fixture(160, 8, 3, &hidden, &[]),
+            true,
+            nintendo,
+        ),
+        (
+            "games/THE BROKEN SEAL/SOUND/SAMPLE/LONG.PCM8.WAV",
+            [wave.as_slice(), &[0]].concat(),
+            true,
+            wav,
+        ),
+        (
+            "games/THE BROKEN SEAL/SOUND/SAMPLE/LIST.PCM8.WAV",
+            listed_wave,
+            true,
+            wav,
+        ),
+        (
+            "games/THE BROKEN SEAL/SOUND/SAMPLE/LOGO.PCM8.WAV",
+            psynergy::assets::wav::pcm8_wav(&samples, 8000).unwrap(),
+            true,
+            nintendo,
+        ),
+        (
+            "games/THE BROKEN SEAL/SOUND/SEQUENCE/CHUNK.MID",
+            [midi.as_slice(), b"XXXX\0\0\0\x01\0"].concat(),
+            true,
+            sequence,
+        ),
+        (
+            "games/THE BROKEN SEAL/SOUND/SEQUENCE/SYSEX.MID",
+            midi_fixture(&[0, 0xf0, 3, 1, 2, 0xf7], true),
+            true,
+            sequence,
+        ),
+        (
+            "games/THE BROKEN SEAL/SOUND/SEQUENCE/BINARY.MID",
+            meta(0x7f, &[0xff, 0xfe, 0x80]),
+            true,
+            sequence,
+        ),
+        (
+            "games/THE BROKEN SEAL/SOUND/SEQUENCE/OPEN.MID",
+            midi_fixture(&[], false),
+            true,
+            sequence,
+        ),
+        (
+            "games/THE BROKEN SEAL/SOUND/SEQUENCE/TEMPO.MID",
+            meta(0x51, &fixture_bytes(64, 3)),
+            true,
+            sequence,
+        ),
+        (
+            "games/THE BROKEN SEAL/SOUND/SEQUENCE/TIMED.MID",
+            meta(0x51, &[7, 0xa1, 0x20]),
+            true,
+            None,
+        ),
+        (
+            "games/THE BROKEN SEAL/SOUND/SEQUENCE/PAYLOAD.MID",
+            meta(0x01, encoded_fixture(&base64, 600, 2).as_bytes()),
+            true,
+            Some("encoded payload"),
+        ),
+        (
+            "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/SPARE.TOKENS",
+            table.clone(),
+            true,
+            unregistered,
+        ),
+        (
+            "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.TOKENS",
+            garbled,
+            true,
+            Some("compression control table"),
+        ),
+        (
             "games/THE BROKEN SEAL/SRC/GRAPHICS/FONT/LOCALIZATION_GLYPHS_0020_00FF.1BPP.PNG",
-            png_fixture(1, 3, false),
+            indexed_fixture(1),
             true,
             None,
         ),
         (
             "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/UI_MTF_00.INDEXED.PNG",
-            png_fixture(4, 3, false),
+            indexed_fixture(4),
+            true,
+            None,
+        ),
+        (
+            "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/UI_TILE.8BPP.PNG",
+            png_fixture(
+                16,
+                8,
+                3,
+                &fdeflate::compress_to_vec(&scanlines(16, 8)),
+                &[(b"tRNS", &[0])],
+            ),
             true,
             None,
         ),
         (
             "games/THE BROKEN SEAL/TEXT/STAFF_ROLL_MOJI.1BPP.PNG",
-            png_fixture(8, 0, false),
+            indexed_fixture(1),
             true,
             None,
         ),
@@ -1084,7 +1611,7 @@ fn fixtures() -> Vec<Fixture> {
         ),
         (
             "games/THE BROKEN SEAL/SOUND/SEQUENCE/THEME.MID",
-            midi,
+            meta(0x7f, &directive),
             true,
             None,
         ),
@@ -1096,9 +1623,212 @@ fn fixtures() -> Vec<Fixture> {
         ),
         (
             "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.TOKENS",
-            b"ALCHTOK1\x09\xd0\x01\0".to_vec(),
+            table,
             true,
             None,
+        ),
+    ]
+}
+fn text_fixtures() -> Vec<Fixture> {
+    let tbs = "games/THE BROKEN SEAL";
+    let letters = || (b'A'..=b'Z').chain(b'a'..=b'z').chain(b'0'..=b'9');
+    let base64: Vec<u8> = letters().chain(*b"+/").collect();
+    let base64url: Vec<u8> = letters().chain(*b"-_").collect();
+    let base32: Vec<u8> = (b'A'..=b'Z').chain(b'2'..=b'7').collect();
+    let hex: Vec<u8> = (b'0'..=b'9').chain(b'a'..=b'f').collect();
+    let text = |value: String| value.into_bytes();
+    let uri = |media: &str| {
+        format!(
+            "data{}{media};base64,{}",
+            ':',
+            encoded_fixture(&base64, 24, 7)
+        )
+    };
+    let lines = |width: usize, count: u32| {
+        (0..count)
+            .map(|seed| format!("  {}\n", encoded_fixture(&base64, width, seed)))
+            .collect::<String>()
+    };
+    let quoted = (0..12)
+        .map(|seed| format!("    \"{}\",\n", encoded_fixture(&base64url, 32, seed)))
+        .collect::<String>();
+    let digests = |count: u64| {
+        (0..count)
+            .map(|seed| format!("{:016x}\n", seed.wrapping_mul(0x9e37_79b9_7f4a_7c15)))
+            .collect::<String>()
+    };
+    let checksums = (0..4u64)
+        .map(|seed| {
+            format!(
+                "checksum = \"{:064x}\"\n",
+                u128::from(seed) * 0x9e37_79b9_7f4a_7c15
+            )
+        })
+        .collect::<String>();
+    let rows = (0..16)
+        .map(|_| format!("        \"{}\",\n", "01".repeat(52)))
+        .collect::<String>();
+    let bytes = fixture_bytes(4096, 6);
+    let joined = |format: fn(&u8) -> String, separator: &str| {
+        bytes.iter().map(format).collect::<Vec<_>>().join(separator)
+    };
+    let array = joined(|byte| format!("0x{byte:02x}"), ", ");
+    let decimal = joined(|byte| byte.to_string(), ", ");
+    let escapes = joined(|byte| format!("\\x{byte:02x}"), "");
+    let dump = joined(|byte| format!("{byte:02x}"), " ");
+    let identifiers = (0..400)
+        .map(|index| {
+            let address = 0x0200_d650 + index * 4;
+            let body = format!("RunOverlayObjectCommand{index}(); Func_{address:08x}();");
+            format!("void SelectActor{index}SceneVariant(void) {{ {body} }}\n")
+        })
+        .collect::<String>();
+    let pointer = format!(
+        "version https://git-lfs.github.com/spec/v1\noid sha256:{}\nsize 8388608\n",
+        encoded_fixture(&hex, 64, 3)
+    );
+    let bang = "!";
+    let logo_include = format!(
+        "include_bytes{bang} (\"../../../GAMES/{}/LOGO.DAT\")",
+        &tbs[6..]
+    );
+    let header_include =
+        format!("include_str {bang} [concat{bang}(\"../ro\", \"ms/header.json\")]");
+    let source_include = format!("include_str{bang}(\"../../../../{tbs}/asm/08002d5c.s\")");
+    let svg_uri = text(format!("<svg><image href=\"{}\"/></svg>", uri("image/png")));
+    let css_uri = text(format!(
+        "<style>@font-face{{src:url({})}}</style>",
+        uri("font/otf")
+    ));
+    let rust_uri = text(format!(
+        "format!(\"{}{{}}\", x)",
+        uri("application/octet-stream")
+    ));
+    let json_base64 = text(format!(
+        "{{\"bytes\": \"{}\"}}\n",
+        encoded_fixture(&base64, 300, 3)
+    ));
+    let base32_key = text(format!(
+        "const KEY: &str = \"{}\";\n",
+        encoded_fixture(&base32, 400, 4)
+    ));
+    let hex_blob = text(format!(
+        "{{\"blob\": \"{}\"}}\n",
+        encoded_fixture(&hex, 400, 5)
+    ));
+    let quoted = text(format!("const DATA: &[&str] = &[\n{quoted}];\n"));
+    let array = text(format!("const DATA: [u8; 4096] = [{array}];\n"));
+    let escapes = text(format!("const DATA: &[u8] = b\"{escapes}\";\n"));
+    let dump = text(format!("// {dump}\n"));
+    let c_table = text(format!("const u8 table[] = {{{decimal}}};\n"));
+    let json_table = text(format!("{{\"values\": [{decimal}]}}\n"));
+    let logo_include = text(format!("const LOGO: &[u8] = {logo_include};\n"));
+    let header_include = text(format!("const HEADER: &str = {header_include};\n"));
+    let source_include = text(format!("let source = {source_include};\n"));
+    let attributes = b"*.PNG filter=lfs diff=lfs merge=lfs -text\n".to_vec();
+    let svg = b"<svg><style>.label{font-family:monospace}</style><rect/></svg>".to_vec();
+    let empty = || b"{}\n".to_vec();
+    let encoded = Some("encoded payload");
+    let arrays = Some("numeric array");
+    let manifest = Some("asset manifest");
+    let include = Some("include_bytes! or include_str!");
+    let uri = Some("data URI");
+    vec![
+        (
+            "games/THE BROKEN SEAL/PREVIEW/TBS-EN-ROM.SVG",
+            svg_uri,
+            true,
+            uri,
+        ),
+        ("tools/alchemy/src/dashboard/index.html", css_uri, true, uri),
+        ("tools/alchemy/src/coverage/figure.rs", rust_uri, true, uri),
+        (
+            "games/THE BROKEN SEAL/SRC/SYSTEM/BLOB.JSON",
+            json_base64,
+            true,
+            encoded,
+        ),
+        (
+            "tools/alchemy/src/dashboard/font.css",
+            text(lines(76, 5)),
+            true,
+            encoded,
+        ),
+        (
+            "tools/alchemy/src/dashboard/glyphs.css",
+            text(lines(40, 12)),
+            true,
+            encoded,
+        ),
+        ("tools/alchemy/src/assets.rs", quoted, true, encoded),
+        ("tools/alchemy/src/key.rs", base32_key, true, encoded),
+        ("tools/alchemy/src/blob.json", hex_blob, true, encoded),
+        (
+            "tools/alchemy/src/words.rs",
+            text(digests(17_000)),
+            true,
+            Some("digest-sized"),
+        ),
+        ("tools/alchemy/src/rom_table.rs", array, true, arrays),
+        ("tools/alchemy/src/rom_bytes.rs", escapes, true, arrays),
+        ("tools/alchemy/src/rom_dump.rs", dump, true, arrays),
+        (
+            "games/THE BROKEN SEAL/SRC/BATTLE/TABLE.C",
+            c_table,
+            true,
+            arrays,
+        ),
+        (
+            "games/THE BROKEN SEAL/SRC/BATTLE/DATA/TABLE.JSON",
+            json_table,
+            true,
+            None,
+        ),
+        (
+            "games/THE LOST AGE/DATA/TABLE.JSON",
+            empty(),
+            false,
+            manifest,
+        ),
+        (
+            "games/THE LOST AGE/src/battle/table.json",
+            empty(),
+            false,
+            manifest,
+        ),
+        (
+            "Games/THE BROKEN SEAL/SRC/TABLE.JSON",
+            empty(),
+            true,
+            manifest,
+        ),
+        (
+            "games/THE LOST AGE/recon/en/main/08120454.json",
+            empty(),
+            false,
+            None,
+        ),
+        ("tools/alchemy/src/logo.rs", logo_include, true, include),
+        ("tools/alchemy/src/header.rs", header_include, true, include),
+        (
+            "tools/alchemy/src/recovery/fixture.rs",
+            source_include,
+            true,
+            None,
+        ),
+        (
+            "tools/alchemy/assets/figure.png",
+            text(pointer),
+            true,
+            Some("Git LFS pointer"),
+        ),
+        (".gitattributes", attributes, true, Some("filter attribute")),
+        (".gitattributes", b"*.TOKENS binary\n".to_vec(), true, None),
+        (
+            "games/THE BROKEN SEAL/recon/en/main/0800ebec.c.bak",
+            b"int x;\n".to_vec(),
+            true,
+            Some("backup"),
         ),
         (
             "games/THE LOST AGE/asm/overlays/.gitkeep",
@@ -1112,22 +1842,34 @@ fn fixtures() -> Vec<Fixture> {
             false,
             None,
         ),
-        ("tools/Cargo.lock", checksums.into_bytes(), true, None),
+        (
+            "games/THE BROKEN SEAL/SRC/FIELD/SCENE/SCENE.C",
+            text(identifiers),
+            true,
+            None,
+        ),
+        ("tools/Cargo.lock", text(checksums), true, None),
+        (
+            "tools/alchemy/src/hashes.rs",
+            text(digests(4_096)),
+            true,
+            None,
+        ),
         (
             "games/THE BROKEN SEAL/SRC/SYSTEM/ROM_HEADER.JSON",
-            rows.into_bytes(),
+            text(rows),
             true,
             None,
         ),
         (
             "tools/alchemy/src/dashboard/style.css",
-            b"body { font: 400 16px monospace; }\n".to_vec(),
+            b"body { font: 16px mono; }\n".to_vec(),
             true,
             None,
         ),
         (
             "games/THE BROKEN SEAL/PREVIEW/TBS-EN-ROM.SVG",
-            b"<svg><style>.label{font-family:monospace}</style><rect width=\"8\"/></svg>".to_vec(),
+            svg,
             true,
             None,
         ),
@@ -1136,9 +1878,10 @@ fn fixtures() -> Vec<Fixture> {
 fn check_fixtures() -> Result<(), String> {
     let tbs = vec!["THE BROKEN SEAL".to_string()];
     let both = vec!["THE BROKEN SEAL".to_string(), "THE LOST AGE".to_string()];
-    for (path, data, manifested, expected) in fixtures() {
+    let logo = logo_fixture();
+    for (path, data, manifested, expected) in binary_fixtures().into_iter().chain(text_fixtures()) {
         let manifests = if manifested { &both } else { &tbs };
-        let actual = publication_reason(path, &data, manifests);
+        let actual = publication_reason(path, &data, manifests, Some(&logo));
         let holds = match expected {
             Some(fragment) => actual.is_some_and(|reason| reason.contains(fragment)),
             None => actual.is_none(),
@@ -1151,7 +1894,7 @@ fn check_fixtures() -> Result<(), String> {
     }
     Ok(())
 }
-fn self_test() -> Result<(), String> {
+fn self_test(root: &Path) -> Result<(), String> {
     for directory in BLOCKED_DIRECTORIES {
         let path = format!("{directory}/fixture.c");
         if publication_path_reason(&path).is_none() {
@@ -1162,6 +1905,7 @@ fn self_test() -> Result<(), String> {
         .iter()
         .chain(PRESENTATION_EXTENSIONS)
         .chain(BACKUP_EXTENSIONS)
+        .chain(DOCUMENT_EXTENSIONS)
     {
         let path = format!("fixture.{suffix}");
         if publication_path_reason(&path).is_none() {
@@ -1177,6 +1921,10 @@ fn self_test() -> Result<(), String> {
         ".cmatch-fresh/result.s",
         "games/THE BROKEN SEAL/PREVIEW/title.png",
         "games/THE BROKEN SEAL/asm/080000c0.s~",
+        "docs/README.md",
+        "GUIDE.markdown",
+        "tools/alchemy/NOTES.RST",
+        "games/THE BROKEN SEAL/recon/plan.adoc",
     ] {
         if publication_path_reason(path).is_none() {
             return Err(format!("private path accepted: {path}"));
@@ -1184,6 +1932,8 @@ fn self_test() -> Result<(), String> {
     }
     for path in [
         "src/main.c",
+        "README.md",
+        "CONTRIBUTING.md",
         "games/THE BROKEN SEAL/asm/080000c0.s",
         "games/THE BROKEN SEAL/PREVIEW/TBS-EN-ROM.SVG",
         "games/THE BROKEN SEAL/SOUND/SEQUENCE/THEME.mid",
@@ -1212,13 +1962,29 @@ fn self_test() -> Result<(), String> {
         return Err("content-signature self-test failed".to_string());
     }
     check_fixtures()?;
+    // The real logo, when the local ROM supplies it, is found at any offset.
+    if let Some(logo) = nintendo_logo(root) {
+        let hidden = [b"version 1\n".as_slice(), &logo, b"\n"].concat();
+        if logo.len() != LOGO.len()
+            || publication_data_reason("tools/alchemy/src/notes.rs", &hidden, Some(&logo))
+                != Some(LOGO_REASON)
+        {
+            return Err("the cartridge logo from the local ROM was accepted".to_string());
+        }
+    }
     let hygiene_holds = publication_data_reason(
         "games/THE BROKEN SEAL/asm/08000000.s",
         b".incbin \"rom.gba\"\n",
+        None,
     ) == Some("committed incbin payload")
+        && publication_data_reason(
+            "games/THE BROKEN SEAL/SRC/FIELD/IMPORT.INC",
+            b"  .incbin \"x\"\n",
+            None,
+        ) == Some("committed incbin payload")
         && conflict_marker_reason("CONTRIBUTING.md", b"a\n<<<<<<< HEAD\nb\n").is_some()
         && conflict_marker_reason("CONTRIBUTING.md", b"a\n>>>>>>> topic\n").is_some()
-        && publication_data_reason("CONTRIBUTING.md", b"x\n<<<<<<< HEAD\n").is_none()
+        && publication_data_reason("CONTRIBUTING.md", b"x\n<<<<<<< HEAD\n", None).is_none()
         && conflict_marker_reason("CONTRIBUTING.md", b"Title\n=======\n\nbody\n").is_none()
         && conflict_marker_reason("CONTRIBUTING.md", b"see <<<<<<<HEAD in the output\n").is_none()
         && conflict_marker_reason("games/THE BROKEN SEAL/PREVIEW/x.png", b"<<<<<<< HEAD\n")
@@ -1275,7 +2041,7 @@ pub(super) fn entry(arguments: &[String]) -> ExitCode {
             }
             check_push(root, &updates).map_or_else(|error| fail(&error), |_| ExitCode::SUCCESS)
         }
-        [argument] if argument == "--self-test" => self_test().map_or_else(
+        [argument] if argument == "--self-test" => self_test(root).map_or_else(
             |error| fail(&error),
             |_| {
                 println!("self-test=ok");
@@ -1289,18 +2055,30 @@ pub(super) fn entry(arguments: &[String]) -> ExitCode {
 mod tests {
     use super::*;
     #[test]
-    fn git_records_preserve_renames_and_skip_submodules() {
+    fn git_records_name_new_paths_and_flag_gitlinks() {
         let raw = b":100644 100644 a b M\0kept.c\0\
-                    :100644 100644 a b R100\0old.txt\0new.txt\0\
-                    :000000 160000 a b A\0vendor\0";
+                    :100644 100644 a b R100\0README.md\0GUIDE.md\0\
+                    :000000 160000 a b A\0vendor\0\
+                    :160000 000000 a b D\0retired\0";
         let (_, changes) = raw_changes(raw).unwrap();
-        assert_eq!(changes.len(), 2);
-        assert_eq!(changes[0], ("kept.c".to_string(), true));
-        assert_eq!(changes[1], ("new.txt".to_string(), true));
-        assert!(new_text_file_reason("README.md", false).is_none());
-        assert!(new_text_file_reason("CONTRIBUTING.md", false).is_none());
-        assert!(new_text_file_reason("AGENTS.md", false).is_none());
-        assert!(new_text_file_reason("notes.txt", false).is_some());
+        assert_eq!(
+            changes,
+            [
+                ("kept.c".to_string(), false),
+                ("GUIDE.md".to_string(), false),
+                ("vendor".to_string(), true)
+            ]
+        );
+        assert!(publication_path_reason("GUIDE.md").is_some());
+        for owned in OWNED_DOCUMENTS {
+            assert!(publication_path_reason(owned).is_none());
+        }
+        assert!(inspected("staged", "agbcc".into(), ":agbcc".into(), true, &[]).is_none());
+        let foreign = inspected("staged", "vendor".into(), ":vendor".into(), true, &[]).unwrap();
+        assert!(foreign
+            .listing_reason
+            .unwrap()
+            .contains("unapproved gitlink"));
     }
     #[test]
     fn push_without_ref_updates_is_a_noop_but_malformed_updates_fail() {
@@ -1327,7 +2105,12 @@ mod tests {
         std::fs::write(root.join("worktrees/scene/README.md"), "its own").unwrap();
         std::fs::write(root.join("worktrees/scene/score.txt"), "its own").unwrap();
         assert!(check_documents(&root).is_ok());
-        for name in ["out/verdict.md", "out/score.txt", "AGENTS.md"] {
+        for name in [
+            "out/verdict.md",
+            "out/score.txt",
+            "out/plan.rst",
+            "AGENTS.md",
+        ] {
             std::fs::write(root.join(name), "another guide").unwrap();
             assert!(check_documents(&root).unwrap_err().contains(name));
             std::fs::remove_file(root.join(name)).unwrap();
@@ -1337,7 +2120,84 @@ mod tests {
     #[test]
     fn every_publication_rule_rejects_its_fixture_and_accepts_build_inputs() {
         check_fixtures().unwrap();
-        self_test().unwrap();
+        self_test(crate::compiler::routing::root()).unwrap();
+    }
+    #[test]
+    fn encoded_measures_whole_texts_and_spares_identifiers_and_digests() {
+        let base64: Vec<u8> = (b'A'..=b'Z')
+            .chain(b'a'..=b'z')
+            .chain(b'0'..=b'9')
+            .chain(*b"+/")
+            .collect();
+        // Each line alone is short; the file as a whole is a payload.
+        let short = (0..10)
+            .map(|seed| format!("{}\n", encoded_fixture(&base64, 48, seed)))
+            .collect::<String>();
+        assert!(encoded_reason(&short, true).is_some());
+        assert!(encoded_reason(&short[..49], true).is_none());
+        for name in [
+            "SelectActor25SceneVariant",
+            "RunOverlayObjectCommand14",
+            "SetWorkspaceHalfword382To1018",
+            "0xfffffffffffffff3",
+            "0x0FFFFFFFFFFFFFFFu",
+        ] {
+            assert!(
+                matches!(classify(name.as_bytes()), Run::Plain | Run::Digest),
+                "{name}"
+            );
+        }
+        let hex: Vec<u8> = (b'0'..=b'9').chain(b'a'..=b'f').collect();
+        let base32: Vec<u8> = (b'A'..=b'Z').chain(b'2'..=b'7').collect();
+        for (alphabet, length) in [(&hex, 20), (&hex, 48), (&base32, 16), (&base32, 32)] {
+            let run = encoded_fixture(alphabet, length, 11);
+            assert!(matches!(classify(run.as_bytes()), Run::Encoded), "{run}");
+        }
+        let digest = encoded_fixture(&hex, 64, 12);
+        assert!(matches!(classify(digest.as_bytes()), Run::Digest));
+        assert!(matches!(classify("1".repeat(64).as_bytes()), Run::Plain));
+        for token in ["0x1f", "-12", "255u8", "0xffULL", "x7f", "de", "0b1010"] {
+            assert!(numeric(token.as_bytes()), "{token}");
+        }
+        for token in ["u8", "i32", "0x", "r7", "1.5", "face"] {
+            assert!(!numeric(token.as_bytes()), "{token}");
+        }
+        let fifteen = (0..15)
+            .map(|index| index.to_string())
+            .collect::<Vec<_>>()
+            .join(", ");
+        assert_eq!(numeric_elements(fifteen.as_bytes()), 0);
+        assert_eq!(numeric_elements(format!("[{fifteen}, 15]").as_bytes()), 16);
+    }
+    #[test]
+    fn logo_hidden_in_filtered_pixels_is_found_after_decoding() {
+        let logo = logo_fixture();
+        let (_, png, _, _) = binary_fixtures()
+            .into_iter()
+            .find(|(path, ..)| path.ends_with("/LOGO.INDEXED.PNG"))
+            .unwrap();
+        assert!(!contains(&png, &logo));
+        assert!(contains(&indexed_png_bytes(&png).unwrap(), &logo));
+        let path = "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/LOGO.INDEXED.PNG";
+        assert_eq!(publication_data_reason(path, &png, None), None);
+        assert_eq!(
+            publication_data_reason(path, &png, Some(&logo)),
+            Some(LOGO_REASON)
+        );
+    }
+    #[test]
+    fn exact_inflation_refuses_surplus_and_trailing_streams() {
+        let data = fixture_bytes(300, 1);
+        let stream = fdeflate::compress_to_vec(&data);
+        assert_eq!(inflate_exact(&stream, 300).unwrap(), data);
+        assert!(inflate_exact(&stream, 299).is_none());
+        assert!(inflate_exact(&stream, 301).is_none());
+        for trailing in [1, 4, 8, 64] {
+            let padded = [stream.as_slice(), &vec![0; trailing]].concat();
+            assert!(inflate(&padded, 300).is_some());
+            assert!(inflate_exact(&padded, 300).is_none(), "{trailing}");
+        }
+        assert!(inflate_exact(&stream[..stream.len() - 1], 300).is_none());
     }
     fn commit(root: &Path, files: &[(&str, Vec<u8>)]) -> String {
         for (path, data) in files {
@@ -1367,15 +2227,12 @@ mod tests {
         let directory = tempfile::tempdir().unwrap();
         let root = directory.path();
         git(root, &["init", "--quiet"], "fixture git").unwrap();
-        let midi = [b"MThd".as_slice(), &[0, 0, 0, 6, 0, 1, 0, 1, 0, 96]].concat();
+        let midi = midi_fixture(&[], true);
         let inputs = commit(
             root,
             &[
                 ("games/X/SRC/SYSTEM/RESOURCE.JSON", b"{}\n".to_vec()),
-                (
-                    "games/X/SRC/GRAPHICS/TILE/A.4BPP.PNG",
-                    png_fixture(4, 3, false),
-                ),
+                ("games/X/SRC/GRAPHICS/TILE/A.4BPP.PNG", indexed_fixture(4)),
                 ("games/X/SOUND/SEQUENCE/A.MID", midi.clone()),
                 ("games/X/SRC/MAIN.C", b"void main(void) {}\n".to_vec()),
                 ("games/Y/SRC/MAIN.C", b"void main(void) {}\n".to_vec()),
@@ -1405,9 +2262,90 @@ mod tests {
         );
         let update = format!("refs/heads/main {inputs} refs/heads/main {zero}\n");
         assert!(check_push(root, &update).is_ok());
-        let manifestless = commit(root, &[("games/Y/SOUND/SEQUENCE/A.MID", midi)]);
+        let manifestless = commit(
+            root,
+            &[
+                ("games/Y/SOUND/SEQUENCE/A.MID", midi),
+                ("games/Y/Data/TABLE.JSON", b"{}\n".to_vec()),
+            ],
+        );
         let error = check_tree(root, Some(&manifestless)).unwrap_err();
         assert!(error.contains("games/Y/SOUND/SEQUENCE/A.MID: game material without"));
+        assert!(error.contains("games/Y/Data/TABLE.JSON: game material without"));
         assert!(!error.contains("games/X/SOUND"), "{error}");
+    }
+    #[test]
+    fn renamed_documents_lfs_and_foreign_gitlinks_fail_in_every_mode() {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        let run = |args: &[&str]| git(root, args, "fixture git").unwrap();
+        run(&["init", "--quiet"]);
+        let head = commit(
+            root,
+            &[
+                ("README.md", b"# fixture\n".to_vec()),
+                ("tools/src/main.rs", b"fn main() {}\n".to_vec()),
+            ],
+        );
+        run(&["mv", "README.md", "GUIDE.md"]);
+        let error = check_staged(root).unwrap_err();
+        assert!(
+            error.contains("staged GUIDE.md: separate document"),
+            "{error}"
+        );
+        assert!(check_tree(root, None).unwrap_err().contains("GUIDE.md"));
+        run(&["mv", "GUIDE.md", "README.md"]);
+        run(&[
+            "update-index",
+            "--add",
+            "--cacheinfo",
+            &format!("160000,{head},vendor/tool"),
+        ]);
+        run(&[
+            "update-index",
+            "--add",
+            "--cacheinfo",
+            &format!("160000,{head},agbcc"),
+        ]);
+        let error = check_staged(root).unwrap_err();
+        assert!(
+            error.contains("staged vendor/tool: unapproved gitlink"),
+            "{error}"
+        );
+        assert!(!error.contains("staged agbcc"), "{error}");
+        let error = check_tree(root, None).unwrap_err();
+        assert!(
+            error.contains("tree vendor/tool: unapproved gitlink"),
+            "{error}"
+        );
+        assert_eq!(error.lines().count(), 2, "{error}");
+        run(&["update-index", "--force-remove", "vendor/tool"]);
+        assert!(check_tree(root, None).is_ok());
+        let pointer = format!(
+            "version https://git-lfs.github.com/spec/v1\noid sha256:{}\nsize 8388608\n",
+            "0".repeat(64)
+        );
+        let pushed = commit(
+            root,
+            &[
+                (
+                    ".gitattributes",
+                    b"*.gba filter=lfs diff=lfs merge=lfs -text\n".to_vec(),
+                ),
+                ("tools/assets/figure.png", pointer.into_bytes()),
+            ],
+        );
+        let error = check_tree(root, None).unwrap_err();
+        assert!(
+            error.contains(".gitattributes: Git filter attribute"),
+            "{error}"
+        );
+        assert!(
+            error.contains("tools/assets/figure.png: Git LFS pointer"),
+            "{error}"
+        );
+        let update = format!("refs/heads/main {pushed} refs/heads/main {head}\n");
+        let error = check_push(root, &update).unwrap_err();
+        assert!(error.contains("figure.png: Git LFS pointer"), "{error}");
     }
 }

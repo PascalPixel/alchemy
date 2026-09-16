@@ -1553,9 +1553,9 @@
       ]
     },
     {
-      "id": "candidate-resource-3c9-02004bec",
+      "id": "extended-actor-transition",
       "game": "tbs",
-      "source": "games/THE BROKEN SEAL/recon/en/overlays/resource_3c9_c_02004bec.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/EXTENDED_ACTOR_TRANSITION.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c9",
       "absolute_symbols": {
@@ -2657,7 +2657,7 @@
         {
           "address": "0x02004bec",
           "extent": 2716,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -6262,155 +6262,18 @@
       ]
     },
     {
-      "id": "retained-overlay-3b9-02000710",
+      "id": "branching-actor-presentation",
       "game": "tbs",
-      "source": "games/THE BROKEN SEAL/recon/en/overlays/resource_3b9_c_02000710.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KORASHIAMU_IRIGUCHI/BRANCHING_ACTOR_PRESENTATION.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3b9",
-      "absolute_symbols": {
-        "Func_020033f0": {
-          "address": "0x200acbc",
-          "kind": "thumb"
-        },
-        "Func_020033f0_a": {
-          "address": "0x200ac94",
-          "kind": "thumb"
-        },
-        "Func_02003412": {
-          "address": "0x200acc4",
-          "kind": "thumb"
-        },
-        "Func_02003412_a": {
-          "address": "0x200abec",
-          "kind": "thumb"
-        },
-        "Func_020023b2": {
-          "address": "0x2009c5c",
-          "kind": "thumb"
-        },
-        "Func_020023b2_a": {
-          "address": "0x2009c48",
-          "kind": "thumb"
-        },
-        "Func_02003490": {
-          "address": "0x200ace4",
-          "kind": "thumb"
-        },
-        "Func_02003490_a": {
-          "address": "0x200abec",
-          "kind": "thumb"
-        },
-        "Func_0200349c": {
-          "address": "0x200acec",
-          "kind": "thumb"
-        },
-        "Func_0200349c_a": {
-          "address": "0x200ac7c",
-          "kind": "thumb"
-        },
-        "Func_02003482": {
-          "address": "0x200ac74",
-          "kind": "thumb"
-        },
-        "Func_02003482_a": {
-          "address": "0x200abec",
-          "kind": "thumb"
-        },
-        "Func_02003534": {
-          "address": "0x200acac",
-          "kind": "thumb"
-        },
-        "Func_02003534_a": {
-          "address": "0x200ac0c",
-          "kind": "thumb"
-        },
-        "Func_02003508": {
-          "address": "0x200ac5c",
-          "kind": "thumb"
-        },
-        "Func_02003508_a": {
-          "address": "0x200ac14",
-          "kind": "thumb"
-        },
-        "Func_0200358a": {
-          "address": "0x200acbc",
-          "kind": "thumb"
-        },
-        "Func_0200358a_a": {
-          "address": "0x200ac54",
-          "kind": "thumb"
-        },
-        "Func_0200359e": {
-          "address": "0x200acbc",
-          "kind": "thumb"
-        },
-        "Func_0200359e_a": {
-          "address": "0x200ac54",
-          "kind": "thumb"
-        },
-        "Func_020036a8": {
-          "address": "0x200ac6c",
-          "kind": "thumb"
-        },
-        "Func_020036a8_a": {
-          "address": "0x200ac1c",
-          "kind": "thumb"
-        },
-        "Func_0200385c": {
-          "address": "0x200acbc",
-          "kind": "thumb"
-        },
-        "Func_0200385c_a": {
-          "address": "0x200abec",
-          "kind": "thumb"
-        },
-        "Func_02003866": {
-          "address": "0x200acbc",
-          "kind": "thumb"
-        },
-        "Func_02003866_a": {
-          "address": "0x200ac2c",
-          "kind": "thumb"
-        },
-        "Func_02003886": {
-          "address": "0x200ac6c",
-          "kind": "thumb"
-        },
-        "Func_02003886_a": {
-          "address": "0x200ac1c",
-          "kind": "thumb"
-        },
-        "Func_020038a0": {
-          "address": "0x200ac1c",
-          "kind": "thumb"
-        },
-        "Func_020038a0_a": {
-          "address": "0x200abec",
-          "kind": "thumb"
-        },
-        "Func_02003966": {
-          "address": "0x200ac4c",
-          "kind": "thumb"
-        },
-        "Func_02003966_a": {
-          "address": "0x200abc4",
-          "kind": "thumb"
-        },
-        "Func_02003998": {
-          "address": "0x200ac6c",
-          "kind": "thumb"
-        },
-        "Func_02003998_a": {
-          "address": "0x200ac1c",
-          "kind": "thumb"
-        }
-      },
+      "absolute_symbols": {},
       "local_symbols": [],
       "owners": [
         {
           "address": "0x02000710",
           "extent": 1724,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -77931,22 +77794,6 @@
       "overlay": null
     },
     {
-      "id": "battle-presentation-wait-sync-retained",
-      "game": "tbs",
-      "source": "games/THE BROKEN SEAL/recon/en/units/battle-presentation-wait-sync-retained.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080b6a60",
-          "extent": 128,
-          "state": "retained-assembly"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "battle-effects-run-palette-ramp-mode0-retained",
       "game": "tbs",
       "source": "games/THE BROKEN SEAL/recon/en/units/battle-effects-run-palette-ramp-mode0-retained.c",
@@ -83677,9 +83524,9 @@
       ]
     },
     {
-      "id": "retained-overlay-39c-020028b0",
+      "id": "column-choreography",
       "game": "tbs",
-      "source": "games/THE BROKEN SEAL/recon/en/overlays/resource_39c_c_020028b0.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/COLUMN_CHOREOGRAPHY.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39c",
       "absolute_symbols": {
@@ -83769,7 +83616,7 @@
         {
           "address": "0x020028b0",
           "extent": 1308,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -84322,9 +84169,9 @@
       ]
     },
     {
-      "id": "retained-overlay-3bb-020016d4",
+      "id": "lifted-actor-coordinator",
       "game": "tbs",
-      "source": "games/THE BROKEN SEAL/recon/en/overlays/resource_3bb_c_020016d4.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/LIFTED_ACTOR_COORDINATOR.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bb",
       "absolute_symbols": {
@@ -84350,7 +84197,7 @@
         {
           "address": "0x020016d4",
           "extent": 452,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },

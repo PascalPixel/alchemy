@@ -1,6 +1,6 @@
 #include "TYPES.H"
 
-#define Func_020028b0 Func_020028b0
+#define FieldScene_RunColumnChoreography Func_020028b0
 
 void Func_020029b8();
 void Func_020029c4();
@@ -131,11 +131,6 @@ void Func_020088ae();
 void Func_020088b0();
 void Func_020088c0();
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);
@@ -171,14 +166,18 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-void Func_020028b0(void)
+/* When actor 10 stands in tile column 51, plays the scripted actor
+ * choreography; each of its two query branches advances the scene step counter
+ * once. The closing call runs on every path. */
+void FieldScene_RunColumnChoreography(void)
 {
-    u32 i;
     s32 record;
     s32 pos;
 
     record = Value1(Func_0200838c, 10);
-    pos = *(s32 *)(record + 8) / 0x100000;
+    pos = *(s32 *)(record + 8);
+    if (pos < 0) pos += 0xfffff;
+    pos >>= 20;
     Func_0200837c();
     if (pos != 51) {
     } else {
@@ -321,5 +320,4 @@ void Func_020028b0(void)
         Call1(Func_0200882e, 0x871);
     }
     Func_02008862();
-    /* unlifted: 0x020028c0..0x020028c4 (2) */
 }

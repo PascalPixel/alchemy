@@ -41,7 +41,8 @@
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_3c9:02004bec": {
-      "name": "Scene_RunExtendedActorTransition"
+      "name": "Scene_RunExtendedActorTransition",
+      "source": "FIELD/VINASU_CHOJO/EXTENDED_ACTOR_TRANSITION.C"
     },
     "resource_3c8:02004610": {
       "name": "Scene_RunParticleWaveSequence"
@@ -226,7 +227,8 @@
       "name": "SaveState_ProcessSelectedSlot"
     },
     "main:08020198": {
-      "name": "StatusMenu_DrawCharacterSummary"
+      "name": "StatusMenu_DrawCharacterSummary",
+      "source": "MENU/DRAW_CHARACTER_SUMMARY.C"
     },
     "main:080f92fc": {
       "name": "AudioTest_RunParameterController"
@@ -1684,7 +1686,8 @@
       "source": "BATTLE/EFFECT/COUNTER_REVEAL.C"
     },
     "main:08098848": {
-      "name": "BattleEffect_RunTargetedItemBreak"
+      "name": "BattleEffect_RunTargetedItemBreak",
+      "source": "BATTLE/EFFECT/RUN_TARGETED_ITEM_BREAK.C"
     },
     "main:080cd260": {
       "name": "BattlePresentation_ProcessPendingGraphicsTransfer"
@@ -2984,7 +2987,8 @@
       "name": "ShopCursor_Advance"
     },
     "main:080b0958": {
-      "name": "ShopCursor_MoveTowardTarget"
+      "name": "ShopCursor_MoveTowardTarget",
+      "source": "MENU/SHOP/CURSOR_MOVE_TOWARD_TARGET.C"
     },
     "main:080b09fc": {
       "name": "Shop_SetCursor",
@@ -2998,7 +3002,8 @@
       "source": "MENU/SHOP/CURSOR_PLACE.C"
     },
     "main:080b6a60": {
-      "name": "BattleParty_PrepareActiveOwners"
+      "name": "BattleParty_PrepareActiveOwners",
+      "source": "BATTLE/PARTY/PREPARE_ACTIVE_OWNERS.C"
     },
     "main:080b6d30": {
       "name": "SummonSlot_RegisterActorSprites"
@@ -9753,7 +9758,8 @@
       "name": "UiWindow_MarkVisibleTileAttributes"
     },
     "main:08097194": {
-      "name": "BattleEffect_CleanupSceneObjects"
+      "name": "BattleEffect_CleanupSceneObjects",
+      "source": "BATTLE/EFFECT/CLEANUP_SCENE_OBJECTS.C"
     },
     "main:080a1d08": {
       "name": "InventoryMenu_ShowModalMessage"
@@ -9877,7 +9883,8 @@
       "source": "FIELD/KORASHIAMU_IRIGUCHI/STATUS_DISPATCH.C"
     },
     "resource_3b9:02000710": {
-      "name": "Scene_RunBranchingActorPresentation"
+      "name": "Scene_RunBranchingActorPresentation",
+      "source": "FIELD/KORASHIAMU_IRIGUCHI/BRANCHING_ACTOR_PRESENTATION.C"
     },
     "resource_3b9:02000dcc": {
       "name": "Scene_RunLargeActorPresentationSetup"
@@ -13836,7 +13843,8 @@
       "source": "FIELD/MAKYURI_HEYA/FIELD_PROBE_SCENE.C"
     },
     "resource_39c:020028b0": {
-      "name": "FieldScene_RunScene39cSequenceD"
+      "name": "FieldScene_RunColumnChoreography",
+      "source": "FIELD/MAKYURI_HEYA/COLUMN_CHOREOGRAPHY.C"
     },
     "resource_3b7:02000074": {
       "name": "FieldScene_RunActorCueBranch",
@@ -16409,7 +16417,8 @@
       "source": "FIELD/KOROSSEO_KABE/TASK.C"
     },
     "resource_3bb:020016d4": {
-      "name": "FieldScene_RunLiftedActorCoordinator"
+      "name": "FieldScene_RunLiftedActorCoordinator",
+      "source": "FIELD/KOROSSEO_KABE/LIFTED_ACTOR_COORDINATOR.C"
     },
     "resource_3bb:02002450": {
       "name": "CommandInterpolationRenderer_Update"
@@ -17121,7 +17130,8 @@
       "source": "FIELD/MOGORU_MORI/WAYPOINT.C"
     },
     "resource_39f:02002500": {
-      "name": "RunEventScript01"
+      "name": "FieldScene_RunSceneEntryHook",
+      "source": "FIELD/MOGORU_MORI/SCENE_ENTRY_HOOK.C"
     },
     "resource_39f:02001c34": {
       "name": "FieldScene_RunSupplementalSequenceOne",

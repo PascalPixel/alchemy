@@ -6,9 +6,9 @@ In Golden Sun, lighting the four Elemental Lighthouses releases Alchemy upon the
 
 The two games share much of the same code, so Alchemy recovers them side by side.
 
-## Status: 54.97% DONE
+## Status: 55.57% DONE
 
-![ROM contents](<games/THE BROKEN SEAL/PREVIEW/TBS-EN-ROM.SVG?v=2730659476df5144>)
+![ROM contents](<games/THE BROKEN SEAL/PREVIEW/TBS-EN-ROM.SVG?v=29a4c0f622089dec>)
 
 **DONE** is how much of the game has been recovered and proven to rebuild
 exactly like the original. Solid blocks are proven, lighter blocks are close

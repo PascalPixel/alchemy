@@ -13,11 +13,13 @@
 
 /* Scenes, named after the area modules that load them. */
 enum SceneId {
+    SCENE_WORLD_MAP = 2,
     SCENE_KUUPUAPPU_MURA = 20,
     SCENE_KUUPUAPPU_RUNPA = 22,
     SCENE_KUUPUAPPU_MURA_SAI = 23,
     SCENE_RUNPA_MURA = 104,
     SCENE_RUNPA_SUHARA = 105,
+    SCENE_RUNPA_DOU = 106,
     SCENE_SUHARA_GATE = 169
 };
 
@@ -109,15 +111,24 @@ enum ActorBehavior {
 /* How an actor turns when the party talks to it. */
 enum ActorTalkFacing {
     TALK_FACE_PARTY = 0,
-    TALK_FACE_PARTY_AND_BACK = 1
+    TALK_FACE_PARTY_AND_BACK = 1,
+    TALK_KEEP_FACING = 2
 };
 
 /* The actor takes its sprite slot from the actor placed before it. */
 #define PLACEMENT_SHARE_PREVIOUS_SPRITE 0x01
 
-/* Actors placed from the table take ids from here on; lower ids are the party. */
+/*
+ * The party's actors share their characters' ids, whose names are messages
+ * 0x66 onward; the leader is the protagonist. Actors placed from the table
+ * take ids from ACTOR_FIRST_PLACED on, and a placement whose sprite is a party
+ * id places that party member instead.
+ */
 enum {
     ACTOR_PARTY_LEADER = 0,
+    ACTOR_GARET = 1,
+    ACTOR_IVAN = 2,
+    ACTOR_MIA = 3,
     ACTOR_FIRST_PLACED = 8
 };
 
@@ -141,7 +152,7 @@ enum SceneEventKind {
     EVENT_EXIT = 1,
     /* Stepping on a trigger; the value is a script. */
     EVENT_TOUCH = 2,
-    /* Searching a spot; the value is what the search finds. */
+    /* Searching a spot; the value is what the search finds or a script. */
     EVENT_SEARCH = 3,
     /* Using Psynergy on a target; the value is a message or a script. */
     EVENT_PSYNERGY = 5
@@ -156,6 +167,8 @@ enum SceneEventKind {
 #define SEARCH(target) (EVENT_SEARCH | (target) << 4)
 
 enum SearchTarget {
+    /* The search names nothing it checked. */
+    SEARCH_UNNAMED = 0,
     SEARCH_CHEST = 1,
     SEARCH_JAR,
     SEARCH_BARREL,

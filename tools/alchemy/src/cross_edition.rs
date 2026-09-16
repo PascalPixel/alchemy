@@ -2038,9 +2038,31 @@ fn write_overlay_owner_build(
             )?;
             let start = (address - OVERLAY_BASE as u32) as usize;
             entry.start = format!("0x{address:08x}");
+            let mut addresses = BTreeMap::from([(identity.address(), address)]);
+            if unit.data.is_some() {
+                // A data unit keeps its other functions linked; placing each
+                // where this edition has it lets the owner's calls resolve.
+                for member in unit
+                    .owners
+                    .iter()
+                    .filter(|member| member.address != identity.address())
+                {
+                    if let Ok(other) = overlay_edition_address(
+                        unit,
+                        member.address,
+                        member.extent,
+                        edition,
+                        owner.resource,
+                        decoded,
+                        None,
+                    ) {
+                        addresses.insert(member.address, other);
+                    }
+                }
+            }
             let placement = OverlayEditionPlacement {
                 reference: &decoded[edition][&owner.resource],
-                addresses: BTreeMap::from([(identity.address(), address)]),
+                addresses,
             };
             let compiled = compile_declared_overlay_unit(
                 unit,

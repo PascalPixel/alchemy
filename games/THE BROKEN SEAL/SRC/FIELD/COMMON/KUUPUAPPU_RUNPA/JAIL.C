@@ -165,7 +165,7 @@ void LeftThief_Talk(void)
 void RightThief_Talk(void)
 {
     Event_Begin();
-    Actor_SetAnimationAndWait(ACTOR_RIGHT_THIEF, 4);
+    Actor_SetAnimationAndWait(ACTOR_RIGHT_THIEF, ANIM_SHAKE_HEAD);
     Event_Wait(20);
     Event_SetMessage(MSG_RIGHT_THIEF_REGRETS_STAYING);
     Event_ShowMessage(ACTOR_RIGHT_THIEF, 0);

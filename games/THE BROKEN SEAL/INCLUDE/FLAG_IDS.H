@@ -3,6 +3,12 @@
 
 /* Game flags shared by more than one scene. */
 enum GameFlagId {
+    /*
+     * Set while the party keeps its position across a scene load: the loader
+     * skips the entrance's position and facing, and scenes skip their
+     * arrival scripts.
+     */
+    FLAG_KEEP_PARTY_POSITION = 0x109,
     /* Shows the location name when the next scene starts. */
     FLAG_SHOW_LOCATION_NAME = 0x12f,
     /* The Vault thieves are held in the jail. */

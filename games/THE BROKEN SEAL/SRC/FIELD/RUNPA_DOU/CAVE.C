@@ -277,7 +277,7 @@ void SouthPuddle_Freeze(void)
 
     puddle = Actor_Get(ACTOR_SOUTH_PUDDLE);
     if (puddle != NULL) {
-        puddle->priority_flags = 1;
+        puddle->priority_flags = ACTOR_PRIORITY_AUTOMATIC;
         puddle->motion_flags = 0;
     }
     Map_CopyCellAttributes(7, 32, 1, 1, 8, 32);
@@ -293,7 +293,7 @@ void Gate_DrawPropped(void)
     Actor_SetAnimation(ACTOR_GATE_PUDDLE, PUDDLE_ANIM_FROZEN);
     if (pillar != NULL) {
         Actor_SetSpriteFlags(pillar, 0);
-        pillar->priority_flags = 1;
+        pillar->priority_flags = ACTOR_PRIORITY_AUTOMATIC;
     }
     Map_CopyCells(41, 87, 2, 5, 21, 59);
     Task_Wait(4);
@@ -317,7 +317,7 @@ void GatePuddle_Freeze(void)
     GameFlag_Set(FLAG_CAVE_GATE_PROPPED);
     if (pillar != NULL) {
         Actor_SetSpriteFlags(pillar, 0);
-        pillar->priority_flags = 1;
+        pillar->priority_flags = ACTOR_PRIORITY_AUTOMATIC;
     }
     if (GameFlag_IsSet(FLAG_CAVE_GATE_RAISED) == 0) {
         Audio_PlayCue(SOUND_GATE_MOVE);

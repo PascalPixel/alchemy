@@ -976,6 +976,39 @@ fn paired_overlay_calls(
     Ok((calls, translations))
 }
 
+/// Where an edition keeps one of the unit's functions, read from the literal
+/// that loads its address at the same site of a paired owner.
+pub(crate) fn paired_function_address(
+    canonical: &[u8],
+    canonical_address: u32,
+    edition: &[u8],
+    edition_address: u32,
+    extent: usize,
+    function: u32,
+) -> Result<Option<u32>, String> {
+    let pointer = function
+        .checked_sub(overlay::RESOURCE_BASE)
+        .ok_or("overlay function lies below the resource base")?
+        + overlay::RUNTIME_BASE
+        | 1;
+    let found = paired_data_alias(
+        canonical,
+        canonical_address,
+        edition,
+        edition_address,
+        extent,
+        u64::from(pointer),
+    )?;
+    found
+        .map(|value| {
+            (value as u32 & !1)
+                .checked_sub(overlay::RUNTIME_BASE)
+                .map(|offset| offset + overlay::RESOURCE_BASE)
+                .ok_or_else(|| "regional function pointer lies below the runtime base".to_string())
+        })
+        .transpose()
+}
+
 fn paired_data_alias(
     canonical: &[u8],
     canonical_address: u32,
@@ -1387,6 +1420,39 @@ mod source_activation_tests {
             paired_overlay_calls(&canonical, 0x0200_0020, &regional, 0x0200_0028, 4).unwrap();
         assert_eq!(calls["Func_02000124"], BTreeSet::from([0x0200_8122]));
         assert_eq!(translated[&0x0200_8102], 0x0200_8122);
+    }
+    #[test]
+    fn regional_function_addresses_come_from_paired_pointer_literals() {
+        let mut canonical = vec![0; 0x34];
+        let mut regional = vec![0; 0x3c];
+        canonical[0x20..0x22].copy_from_slice(&0x4800u16.to_le_bytes());
+        regional[0x28..0x2a].copy_from_slice(&0x4800u16.to_le_bytes());
+        canonical[0x24..0x28].copy_from_slice(&0x0200_8469u32.to_le_bytes());
+        regional[0x2c..0x30].copy_from_slice(&0x0200_84a9u32.to_le_bytes());
+        assert_eq!(
+            paired_function_address(
+                &canonical,
+                0x0200_0020,
+                &regional,
+                0x0200_0028,
+                8,
+                0x0200_0468
+            )
+            .unwrap(),
+            Some(0x0200_04a8)
+        );
+        assert_eq!(
+            paired_function_address(
+                &canonical,
+                0x0200_0020,
+                &regional,
+                0x0200_0028,
+                8,
+                0x0200_0500
+            )
+            .unwrap(),
+            None
+        );
     }
     #[test]
     fn regional_data_aliases_come_from_corresponding_reference_literals() {

@@ -16,26 +16,56 @@ struct GameState {
     s16 entrance;
     s16 saved_scene;
     s16 saved_entrance;
+    u8 unknown_1c8[0x78];
+    /* Where Retreat returns the party. */
+    s16 retreat_scene;
+    s16 retreat_entrance;
+    u8 unknown_244[8];
+    /* Set while Cloak hides the party; no monsters appear. */
+    s16 cloaked;
 };
 
 LAYOUT_OFFSET_GUARD(GameState_Entrance, struct GameState, entrance, 0x1c2);
+LAYOUT_OFFSET_GUARD(GameState_RetreatEntrance, struct GameState, retreat_entrance, 0x242);
+LAYOUT_OFFSET_GUARD(GameState_Cloaked, struct GameState, cloaked, 0x24c);
 
 extern struct GameState gGameState;
 
+/* Counts the frames the game has drawn. */
+extern u32 gFrameCount;
+
 /* The engine's event work. */
 struct EventWork {
-    u8 unknown_000[0x1c0];
+    u8 unknown_000[0x16c];
+    /* The map trigger the leader has run into, handled on the next frame. */
+    s16 touched_trigger;
+    u8 unknown_16e[0x10];
+    /* Psynergy the player has asked to use, handled on the next frame. */
+    s16 psynergy_request;
+    u8 unknown_180[2];
+    /* A trigger a script raises for the events that answer it. */
+    s16 raised_trigger;
+    u8 unknown_184[0x3c];
     /* How the screen opens when the scene starts. */
     s32 start_transition;
+    u8 unknown_1c4[0x14];
+    /* The message the next dialogue line shows. */
+    u16 message;
 };
 
+LAYOUT_OFFSET_GUARD(EventWork_TouchedTrigger, struct EventWork, touched_trigger, 0x16c);
+LAYOUT_OFFSET_GUARD(EventWork_PsynergyRequest, struct EventWork, psynergy_request, 0x17e);
+LAYOUT_OFFSET_GUARD(EventWork_RaisedTrigger, struct EventWork, raised_trigger, 0x182);
 LAYOUT_OFFSET_GUARD(EventWork_StartTransition, struct EventWork, start_transition, 0x1c0);
+LAYOUT_OFFSET_GUARD(EventWork_Message, struct EventWork, message, 0x1d8);
 
 extern struct EventWork *gEventWork;
 
 /* A scene transition is a style in the high byte and its variant in the low byte. */
 enum SceneTransitionStyle {
     TRANSITION_FADE = 0,
+    /* Fades in from the colour behind the background layers. */
+    TRANSITION_BACKDROP_FADE = 1,
     TRANSITION_WINDOW = 2
 };
 
@@ -50,6 +80,46 @@ union FieldCoordinate {
     } part;
 };
 
+/*
+ * The sprite an object draws. It keeps the three GBA sprite attribute words
+ * the engine copies into OAM.
+ */
+struct FieldSprite {
+    u8 unknown_00[4];
+    u16 y : 8;
+    u16 affine : 2;
+    u16 blend_mode : 2;
+    u16 mosaic : 1;
+    u16 full_color : 1;
+    u16 shape : 2;
+    u16 x : 9;
+    u16 affine_index : 5;
+    u16 flip_x : 1;
+    u16 flip_y : 1;
+    u16 tile : 10;
+    /* Sprites with a lower priority draw above the background layers. */
+    u16 priority : 2;
+    u16 palette : 4;
+    u8 unknown_0a[0x12];
+    /* The VRAM block that holds the sprite's frames. */
+    u8 vram_block;
+    u8 unknown_1d;
+    u16 rotation;
+    u8 unknown_20[6];
+    u8 flags;
+    u8 part_count;
+};
+
+LAYOUT_OFFSET_GUARD(FieldSprite_VramBlock, struct FieldSprite, vram_block, 0x1c);
+LAYOUT_OFFSET_GUARD(FieldSprite_Rotation, struct FieldSprite, rotation, 0x1e);
+LAYOUT_OFFSET_GUARD(FieldSprite_PartCount, struct FieldSprite, part_count, 0x27);
+
+/*
+ * Actors and effects share the engine's object records; FIELD_EFFECT.H
+ * joins the two views.
+ */
+union FieldObject;
+
 /* The runtime actor as event scripts see it. */
 struct FieldActor {
     u8 unknown_00[6];
@@ -62,13 +132,21 @@ struct FieldActor {
     s32 scale_x;
     s32 scale_y;
     u8 unknown_20[3];
-    /* Bit 0 clears when a script sets the sprite priority. */
     u8 priority_flags;
-    u8 unknown_24[0x31];
-    /* Bit 0 keeps the actor standing on the terrain height. */
+    s32 velocity_x;
+    s32 velocity_y;
+    s32 velocity_z;
+    s32 speed;
+    s32 acceleration;
+    u8 unknown_38[0x18];
+    struct FieldSprite *sprite;
+    u8 unknown_54;
     u8 motion_flags;
     u8 unknown_56[3];
     u8 collision_flags;
+    u8 unknown_5a[0x12];
+    /* Called each frame while set. */
+    void (*update)(union FieldObject *object);
 };
 
 LAYOUT_OFFSET_GUARD(FieldActor_Facing, struct FieldActor, facing, 0x06);
@@ -78,6 +156,34 @@ LAYOUT_OFFSET_GUARD(FieldActor_ScaleY, struct FieldActor, scale_y, 0x1c);
 LAYOUT_OFFSET_GUARD(FieldActor_PriorityFlags, struct FieldActor, priority_flags, 0x23);
 LAYOUT_OFFSET_GUARD(FieldActor_MotionFlags, struct FieldActor, motion_flags, 0x55);
 LAYOUT_OFFSET_GUARD(FieldActor_CollisionFlags, struct FieldActor, collision_flags, 0x59);
+LAYOUT_OFFSET_GUARD(FieldActor_VelocityY, struct FieldActor, velocity_y, 0x28);
+LAYOUT_OFFSET_GUARD(FieldActor_Speed, struct FieldActor, speed, 0x30);
+LAYOUT_OFFSET_GUARD(FieldActor_Sprite, struct FieldActor, sprite, 0x50);
+LAYOUT_OFFSET_GUARD(FieldActor_Update, struct FieldActor, update, 0x6c);
+
+/* An actor's priority flags. */
+enum ActorPriorityFlag {
+    /* Cleared when a script sets the sprite priority. */
+    ACTOR_PRIORITY_AUTOMATIC = 0x01,
+    /*
+     * Set on objects the party passes over or stands on: effects, a glint
+     * on the ground, and a pillar while the leader stands on top of it.
+     */
+    ACTOR_PRIORITY_UNDERFOOT = 0x02
+};
+
+/* An actor's motion flags. */
+enum ActorMotionFlag {
+    /* Keeps the actor standing on the terrain height. */
+    ACTOR_FOLLOWS_TERRAIN = 0x01,
+    /* Pulls a raised actor back to the ground. */
+    ACTOR_FALLS = 0x02
+};
+
+/* The task priority scenes run their per-frame callbacks at. */
+enum {
+    TASK_PRIORITY_SCENE = 3200
+};
 
 /*
  * Animations a person's sprite plays. The party leader nods when the player
@@ -95,6 +201,15 @@ enum ActorAnimation {
 
 /* A speaker id with this bit opens the message window above the speaker. */
 #define SPEAKER_WINDOW_ABOVE 0x4000
+
+/*
+ * A map cell animation is a list of steps of five words: the column and row
+ * of a block of source cells, its width and height, and the frames the
+ * block holds once copied into place. MAP_CELL_STEPS_END ends the list.
+ */
+#define MAP_CELL_STEP(src_x, src_y, width, height, frames) \
+    (src_x), (src_y), (width), (height), (frames)
+#define MAP_CELL_STEPS_END 0xffff
 
 /*
  * The engine entry points a scene overlay imports. Scripts do not call them
@@ -149,6 +264,36 @@ void Engine_AudioPlayCue(s32 cue);
 void Engine_ShopOpen(s32 shop, s32 keeper);
 void Engine_InnOpen(s32 inn, s32 keeper);
 void Engine_SanctumOpen(s32 priest);
+s32 Engine_TaskAddCallback(void (*callback)(void), s32 priority);
+s32 Engine_TaskRemoveCallback(void (*callback)(void));
+s32 Engine_RandomNext(void);
+s32 Engine_MathSin(s32 angle);
+s32 Engine_MathCos(s32 angle);
+s32 Engine_MathDivide(s32 dividend, s32 divisor);
+void *Engine_HeapAllocate(s32 slot, s32 size);
+void Engine_HeapRelease(s32 slot);
+s32 Engine_VramLoad(s32 block, s32 size, const void *data);
+struct FieldActor *Engine_ObjectCreate(s32 type, s32 fixed_x, s32 fixed_y, s32 fixed_z);
+void Engine_ObjectSetAnimation(struct FieldActor *object, s32 animation);
+void Engine_ObjectSetScript(struct FieldActor *object, const s32 *script);
+void Engine_ObjectSetBlendMode(struct FieldActor *object, s32 mode);
+void Engine_ObjectSetPalette(struct FieldActor *object, s32 palette);
+void Engine_ObjectSetPartPalettes(struct FieldActor *object, s32 palette);
+void Engine_MapAnimateCells(const u16 *steps, s32 dest_x, s32 dest_y);
+void Engine_MapObjectSetPosition(s32 object, s32 fixed_x, s32 fixed_z);
+void Engine_ItemLoadIcon(s32 item);
+void Engine_ItemShowFound(s32 item, s32 height);
+s32 Engine_PartyGiveItem(s32 item, s32 flags);
+void Engine_ActorStop(s32 actor);
+void Engine_ActorCenterAndWalk(s32 actor, s32 priority, s32 dz);
+void Engine_ActorWalkByAndWait(s32 actor, s32 dx, s32 dz);
+s32 Engine_LeaderCheckAhead(void);
+void Engine_PsynergyBegin(s32 ability, s32 flags);
+void Engine_PsynergySetTarget(s32 caster, s32 target);
+void Engine_PsynergyRaiseHands(void);
+void Engine_PsynergyPlayEffect(s32 effect);
+void Engine_PsynergyLowerHands(void);
+void Engine_PsynergyCancel(void);
 
 /* Holding the party still while an event plays; waits count frames. */
 static inline void Event_Begin(void)
@@ -409,6 +554,163 @@ static inline void Inn_Open(s32 inn, s32 keeper)
 static inline void Sanctum_Open(s32 priest)
 {
     Engine_SanctumOpen(priest);
+}
+
+
+static inline s32 Task_AddCallback(void (*callback)(void), s32 priority)
+{
+    return Engine_TaskAddCallback(callback, priority);
+}
+
+static inline s32 Task_RemoveCallback(void (*callback)(void))
+{
+    return Engine_TaskRemoveCallback(callback);
+}
+
+static inline s32 Random_Next(void)
+{
+    return Engine_RandomNext();
+}
+
+static inline s32 Math_Sin(s32 angle)
+{
+    return Engine_MathSin(angle);
+}
+
+static inline s32 Math_Cos(s32 angle)
+{
+    return Engine_MathCos(angle);
+}
+
+static inline s32 Math_Divide(s32 dividend, s32 divisor)
+{
+    return Engine_MathDivide(dividend, divisor);
+}
+
+static inline void *Heap_Allocate(s32 slot, s32 size)
+{
+    return Engine_HeapAllocate(slot, size);
+}
+
+static inline void Heap_Release(s32 slot)
+{
+    Engine_HeapRelease(slot);
+}
+
+static inline s32 Vram_Load(s32 block, s32 size, const void *data)
+{
+    return Engine_VramLoad(block, size, data);
+}
+
+static inline struct FieldActor *Object_Create(s32 type, s32 fixed_x, s32 fixed_y, s32 fixed_z)
+{
+    return Engine_ObjectCreate(type, fixed_x, fixed_y, fixed_z);
+}
+
+static inline void Object_SetAnimation(struct FieldActor *object, s32 animation)
+{
+    Engine_ObjectSetAnimation(object, animation);
+}
+
+static inline void Object_SetScript(struct FieldActor *object, const s32 *script)
+{
+    Engine_ObjectSetScript(object, script);
+}
+
+/* The GBA sprite modes an object's sprite can take. */
+enum ObjectBlendMode {
+    OBJECT_BLEND_NORMAL = 0,
+    OBJECT_BLEND_TRANSLUCENT = 1
+};
+
+static inline void Object_SetBlendMode(struct FieldActor *object, s32 mode)
+{
+    Engine_ObjectSetBlendMode(object, mode);
+}
+
+static inline void Object_SetPalette(struct FieldActor *object, s32 palette)
+{
+    Engine_ObjectSetPalette(object, palette);
+}
+
+static inline void Object_SetPartPalettes(struct FieldActor *object, s32 palette)
+{
+    Engine_ObjectSetPartPalettes(object, palette);
+}
+
+static inline void Map_AnimateCells(const u16 *steps, s32 dest_x, s32 dest_y)
+{
+    Engine_MapAnimateCells(steps, dest_x, dest_y);
+}
+
+static inline void MapObject_SetPosition(s32 object, s32 fixed_x, s32 fixed_z)
+{
+    Engine_MapObjectSetPosition(object, fixed_x, fixed_z);
+}
+
+static inline void Item_LoadIcon(s32 item)
+{
+    Engine_ItemLoadIcon(item);
+}
+
+static inline void Item_ShowFound(s32 item, s32 height)
+{
+    Engine_ItemShowFound(item, height);
+}
+
+static inline s32 Party_GiveItem(s32 item, s32 flags)
+{
+    return Engine_PartyGiveItem(item, flags);
+}
+
+static inline void Actor_Stop(s32 actor)
+{
+    Engine_ActorStop(actor);
+}
+
+static inline void Actor_CenterAndWalk(s32 actor, s32 priority, s32 dz)
+{
+    Engine_ActorCenterAndWalk(actor, priority, dz);
+}
+
+static inline void Actor_WalkByAndWait(s32 actor, s32 dx, s32 dz)
+{
+    Engine_ActorWalkByAndWait(actor, dx, dz);
+}
+
+static inline s32 Leader_CheckAhead(void)
+{
+    return Engine_LeaderCheckAhead();
+}
+
+static inline void Psynergy_Begin(s32 ability, s32 flags)
+{
+    Engine_PsynergyBegin(ability, flags);
+}
+
+static inline void Psynergy_SetTarget(s32 caster, s32 target)
+{
+    Engine_PsynergySetTarget(caster, target);
+}
+
+static inline void Psynergy_RaiseHands(void)
+{
+    Engine_PsynergyRaiseHands();
+}
+
+static inline void Psynergy_PlayEffect(s32 effect)
+{
+    Engine_PsynergyPlayEffect(effect);
+}
+
+static inline void Psynergy_LowerHands(void)
+{
+    Engine_PsynergyLowerHands();
+}
+
+static inline void Psynergy_Cancel(void)
+{
+    Engine_PsynergyCancel();
 }
 
 #endif

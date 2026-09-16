@@ -9,10 +9,17 @@ use std::path::Path;
 type Var = (String, Option<u8>, Option<i32>);
 #[test]
 fn split_pointer_rejects_induction() {
-    assert!(!split_pointer_uses(
-        include_str!("../../../../games/THE BROKEN SEAL/recon/en/main/0808c30c.c"),
-        "id"
-    ));
+    let induction = concat!(
+        "u8 *id = base + offset;\n",
+        "do {\n",
+        "    Func_08077118(*id, value);\n",
+        "    object = Runtime_GetObject(*id);\n",
+        "    id++;\n",
+        "} while (--count != 0);\n",
+    );
+    let split = induction.replace("    id++;\n", "    object = Runtime_GetObject(*id);\n");
+    assert!(!split_pointer_uses(induction, "id"));
+    assert!(split_pointer_uses(&split, "id"));
 }
 
 #[derive(Clone, Debug)]

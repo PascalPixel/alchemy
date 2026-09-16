@@ -1,0 +1,3 @@
+	.irp EntryTarget, 0x0200828d, 0x02008045, 0x02008089, 0x02008091, 0x020080d1, 0x02008085, 0x020083a9
+	overlay_veneer \EntryTarget
+	.endr

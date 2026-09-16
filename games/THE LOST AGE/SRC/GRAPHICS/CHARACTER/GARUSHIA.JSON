@@ -1,0 +1,110 @@
+{
+  "format": "golden-sun-character",
+  "identity": {
+    "actor": 4,
+    "romaji": "GARUSHIA",
+    "japanese": "ｶﾞﾙｼｱ",
+    "message_id": 135,
+    "message_offset": 413816,
+    "message_encoded_size": 5,
+    "symbols": [182, 222, 217, 188, 177],
+    "rom": "roms/tla-ja.gba",
+    "rom_sha256": "19dd48b74726f323cd829e226b60aa1b373c51fb2e840804efe2d2dc2891a890"
+  },
+  "association_evidence": {
+    "field": "descriptor 4: sheet review of the decoded ROM frames against Japanese name message 135; no runtime actor placement naming this descriptor has been read",
+    "battle": "descriptor 508: sheet review of the 64x64 body frames; the sheet directly precedes the weapon-layer sheets 509-512 that pose row 5 at 0x081287d4 names",
+    "scope": "names come from the dense party-name messages 131-138; descriptor bindings are sheet-review associations, not runtime evidence"
+  },
+  "banks": {
+    "field": {
+      "format": 1,
+      "kind": "components",
+      "address": "0x08337d72",
+      "size": "0x000108aa",
+      "components": [
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/CHAR_GARUSHIA.PNG",
+          "frame_width": 32,
+          "frame_height": 32,
+          "columns": 8,
+          "pixel_format": "indices",
+          "frames": 204,
+          "size": 67754
+        }
+      ],
+      "directory": {
+        "format": 1,
+        "kind": "pointer-table",
+        "base_address": "0x08337d72",
+        "address": "0x08307bbc",
+        "slot_count": 204,
+        "slots": [
+          "0x08337d72", "0x08337efe", "0x08338029", "0x0833814c", "0x08338272", "0x0833839e", "0x083384cd",
+          "0x08338611", "0x08338744", "0x08338885", "0x083389c2", "0x08338ae5", "0x08338c3f", "0x08338dad",
+          "0x08338f13", "0x08339086", "0x0833920c", "0x083392d8", "0x083393c0", "0x083394f7", "0x08339653",
+          "0x083397bd", "0x083398f3", "0x083399fb", "0x08339adf", "0x08339b9e", "0x08339c9c", "0x08339da2",
+          "0x08339f00", "0x0833a076", "0x0833a191", "0x0833a281", "0x0833a335", "0x0833a48b", "0x0833a5f4",
+          "0x0833a750", "0x0833a85c", "0x0833a967", "0x0833aa79", "0x0833ab9e", "0x0833accb", "0x0833ae0b",
+          "0x0833af3c", "0x0833b063", "0x0833b19f", "0x0833b2d8", "0x0833b3fe", "0x0833b502", "0x0833b635",
+          "0x0833b787", "0x0833b8e0", "0x0833ba5b", "0x0833bbd4", "0x0833bd53", "0x0833bed4", "0x0833c04e",
+          "0x0833c18d", "0x0833c2e1", "0x0833c428", "0x0833c575", "0x0833c6d8", "0x0833c822", "0x0833c986",
+          "0x0833cae6", "0x0833cc3b", "0x0833cda1", "0x0833cee9", "0x0833d059", "0x0833d1c2", "0x0833d317",
+          "0x0833d47b", "0x0833d5ce", "0x0833d74f", "0x0833d899", "0x0833d9c0", "0x0833daee", "0x0833dc37",
+          "0x0833dd8f", "0x0833decf", "0x0833e011", "0x0833e153", "0x0833e2ba", "0x0833e43d", "0x0833e56a",
+          "0x0833e68f", "0x0833e7c1", "0x0833e906", "0x0833ea6b", "0x0833ebc3", "0x0833ece5", "0x0833ee37",
+          "0x0833ef88", "0x0833f0ea", "0x0833f23c", "0x0833f38c", "0x0833f4e8", "0x0833f64b", "0x0833f7ba",
+          "0x0833f910", "0x0833fa45", "0x0833fb8c", "0x0833fce1", "0x0833fe4a", "0x0833ff99", "0x083400b5",
+          "0x083401ef", "0x08340346", "0x083404a6", "0x083405fa", "0x08340749", "0x083408ac", "0x08340a06",
+          "0x08340b72", "0x08340cd0", "0x08340e15", "0x08340f77", "0x083410c2", "0x0834120b", "0x08341359",
+          "0x083414b3", "0x08341617", "0x08341762", "0x083418ab", "0x083419f9", "0x08341b53", "0x08341cb7",
+          "0x08341dfd", "0x08341f47", "0x08342094", "0x083421ea", "0x08342350", "0x0834249c", "0x083425e6",
+          "0x08342730", "0x08342888", "0x083429e9", "0x08342b34", "0x08342c7a", "0x08342dc8", "0x08342f1f",
+          "0x08343082", "0x083431ce", "0x08343314", "0x0834345b", "0x083435ba", "0x08343718", "0x08343864",
+          "0x083439aa", "0x08343af1", "0x08343c50", "0x08343dae", "0x08343ef4", "0x08344053", "0x083441ae",
+          "0x083442e5", "0x0834443b", "0x08344586", "0x083446da", "0x0834482a", "0x0834498c", "0x08344ae3",
+          "0x08344c3f", "0x08344d9f", "0x08344eeb", "0x08345031", "0x08345171", "0x083452c5", "0x08345428",
+          "0x08345575", "0x083456a0", "0x083457e2", "0x0834593d", "0x08345a94", "0x08345bda", "0x08345d3d",
+          "0x08345e99", "0x08345fe8", "0x08346145", "0x08346295", "0x083463e3", "0x08346536", "0x08346651",
+          "0x0834677b", "0x083468d9", "0x08346a3c", "0x08346ba3", "0x08346d02", "0x08346e61", "0x08346fa3",
+          "0x083470f2", "0x08347243", "0x08347397", "0x08347531", "0x08347687", "0x083477ed", "0x08347958",
+          "0x08347aba", "0x08347c11", "0x08347d6e", "0x08347ef4", "0x0834807f", "0x0834820d", "0x08348376", "0x083484ba"
+        ]
+      },
+      "descriptor": {"id": 4, "address": "0x08300050", "frame_codec": "zero-skip", "palette": "0x08017b10"}
+    },
+    "battle": {
+      "format": 1,
+      "kind": "components",
+      "address": "0x085a93f8",
+      "size": "0x00005b63",
+      "components": [
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/BATTLE_GARUSHIA.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "pixel_format": "indices",
+          "frames": 20,
+          "size": 23395
+        }
+      ],
+      "directory": {
+        "format": 1,
+        "kind": "pointer-table",
+        "base_address": "0x085a93f8",
+        "address": "0x08310e24",
+        "slot_count": 20,
+        "slots": [
+          "0x085a93f8", "0x085a97ff", "0x085a9c40", "0x085aa058", "0x085aa4ad", "0x085aa8b2", "0x085aace8",
+          "0x085ab187", "0x085ab68a", "0x085abb31", "0x085abfd8", "0x085ac45a", "0x085ac903", "0x085acd95",
+          "0x085ad251", "0x085ad6d5", "0x085adb6e", "0x085ae0cf", "0x085ae622", "0x085aea57"
+        ]
+      },
+      "descriptor": {"id": 508, "address": "0x083027b0", "frame_codec": "zero-skip", "palette": "0x08017b10"}
+    }
+  },
+  "regions": null
+}

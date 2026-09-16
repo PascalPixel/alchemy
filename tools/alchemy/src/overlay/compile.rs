@@ -11,6 +11,7 @@ use crate::compiler::translation_units::{
     AbsoluteSymbol, AbsoluteSymbolKind, TranslationUnit, TranslationUnits,
 };
 use crate::overlay::source::OverlaySource;
+use crate::targets::DecompTarget;
 use psynergy::process::run as checked;
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
@@ -166,10 +167,7 @@ fn call_relocations(object: &str, work: &Path) -> Result<BTreeSet<String>, Strin
             .collect(),
     )
 }
-fn translation_unit_signature() -> Result<Vec<u8>, String> {
-    fs::read(root().join("games/THE BROKEN SEAL/recon/translation-units.json"))
-        .map_err(|error| error.to_string())
-}
+/// Compile one overlay owner for the default target, answering from the cache.
 pub fn compile_overlay_c(
     source: &Path,
     work: &Path,
@@ -178,8 +176,46 @@ pub fn compile_overlay_c(
     routing_source: Option<&Path>,
     extra_flags: &[String],
 ) -> Result<Compiled, String> {
+    compile_overlay_c_for(
+        crate::targets::target_for(crate::targets::DEFAULT_TARGET),
+        source,
+        work,
+        overlay,
+        extent,
+        routing_source,
+        extra_flags,
+        true,
+    )
+}
+/// One fresh compile of an overlay owner of `target`'s game: nothing read
+/// from or written to the cache, so repeated calls measure the compiler.
+pub fn compile_overlay_c_fresh(
+    target: DecompTarget,
+    source: &Path,
+    work: &Path,
+    overlay: &str,
+    extent: usize,
+) -> Result<Compiled, String> {
+    compile_overlay_c_for(target, source, work, overlay, extent, None, &[], false)
+}
+fn translation_unit_signature() -> Result<Vec<u8>, String> {
+    fs::read(root().join("games/THE BROKEN SEAL/recon/translation-units.json"))
+        .map_err(|error| error.to_string())
+}
+#[allow(clippy::too_many_arguments)]
+fn compile_overlay_c_for(
+    target: DecompTarget,
+    source: &Path,
+    work: &Path,
+    overlay: &str,
+    extent: usize,
+    routing_source: Option<&Path>,
+    extra_flags: &[String],
+    cached: bool,
+) -> Result<Compiled, String> {
+    let game = target.compiler.as_str();
     let source_display = source.to_string_lossy().to_string();
-    let source_paths = SourcePaths::load(&root())?;
+    let source_paths = SourcePaths::load_for_game(&root(), game)?;
     let route = routing_source.unwrap_or(source);
     let owner = source_paths
         .overlay_owner_for_path(overlay, route)?
@@ -202,28 +238,34 @@ pub fn compile_overlay_c(
     }
     let (stem, address) = (owner.address_stem(), i64::from(owner.address()));
     let units = translation_units()?;
-    let unit = units.unit_for_game_owner("tbs", owner);
-    let reference = crate::overlay::rom::canonical_overlay(&root(), overlay)?;
-    let routing_source = owner.routing_path().to_string_lossy().into_owned();
+    let unit = units.unit_for_game_owner(game, owner);
+    let reference = crate::overlay::rom::canonical_overlay_for(&root(), target, overlay)?;
+    let routing_source = owner
+        .routing_path_for_game(game)
+        .to_string_lossy()
+        .into_owned();
     let work_display = work.to_string_lossy().to_string();
     let at = |name: &str| work.join(name).to_string_lossy().to_string();
     let assembly = at(&format!("{stem}.s"));
     let mut options = SourceToAssemblyPlanOptions::new(
-        CompilerTarget::Tbs,
+        target.compiler,
         routing_source.clone(),
         source_display.clone(),
         assembly.clone(),
     );
     options.preprocessed_output = Some(at(&format!("{stem}.i")));
     let register = source_paths.symbol_bindings(Some(overlay));
-    let binding_text = crate::compiler::source_bindings::with_register(
-        &register,
-        &crate::compiler::source_bindings::production_bindings(
+    // The recovered-binding manifest names Broken Seal symbols only; a
+    // Lost Age owner binds through its own register alone.
+    let recovered = match target.compiler {
+        CompilerTarget::Tbs => crate::compiler::source_bindings::production_bindings(
             &root(),
             &register,
             Some(Path::new(&source_display)),
         )?,
-    );
+        CompilerTarget::Tla => String::new(),
+    };
+    let binding_text = crate::compiler::source_bindings::with_register(&register, &recovered);
     let bindings = write_overlay_bindings(overlay, &binding_text)?;
     options.preprocessor_flags = vec!["-include".into(), bindings.to_string_lossy().into_owned()];
     options.support_flags = extra_flags.to_vec();
@@ -260,7 +302,7 @@ pub fn compile_overlay_c(
     // Compiles with local includes or diagnostic dumps are throwaway by
     // construction and must never be persisted: every candidate has unique
     // source, so caching them would grow the database without bound.
-    if extra_flags.is_empty() {
+    if cached && extra_flags.is_empty() {
         if let Ok(cache) = overlay_c_cache() {
             let hit = cache
                 .get(&cache_key)
@@ -280,12 +322,12 @@ pub fn compile_overlay_c(
         &work_display,
         extra_flags,
         f64::from(overlay::RESOURCE_BASE),
-        CompilerTarget::Tbs,
+        target.compiler,
         &configuration,
     )?
     .actual;
     // Mirror the read-side guard above: never persist a flag-mutated compile.
-    if extra_flags.is_empty() {
+    if cached && extra_flags.is_empty() {
         if let Ok(cache) = overlay_c_cache() {
             let _ = cache.put(&cache_key, &[("payload", &data)]);
         }
@@ -919,7 +961,15 @@ fn compile_production_overlay(
 ) -> Result<Vec<Compiled>, String> {
     let text = source.read_text().map_err(|error| error.to_string())?;
     let placeholders = placeholder_addresses(&text);
-    let names = SourcePaths::load(&root())?;
+    // A listing in a game's retained overlay directory compiles for that
+    // game; in-memory listings keep the default target.
+    let target = match source {
+        OverlaySource::Path(path) => crate::overlay::owners::assembly_target(path),
+        _ => crate::targets::target_for(crate::targets::DEFAULT_TARGET),
+    };
+    let names = SourcePaths::load_for_game(&root(), target.compiler.as_str())?;
+    // Units compose only from the game's own source root, which keeps a
+    // Broken Seal unit out of a Lost Age overlay and the reverse.
     let units = translation_units()?;
     let mut paths = BTreeSet::new();
     for address in &placeholders {
@@ -963,7 +1013,7 @@ fn compile_production_overlay(
         let extent = placeholder_extent(&text, *address)
             .ok_or_else(|| format!("{} has no complete placeholder extent", owner.id()))?;
         compiled.push(
-            compile_overlay_c(&path, work, overlay, extent, None, &[])
+            compile_overlay_c_for(target, &path, work, overlay, extent, None, &[], true)
                 .map_err(|error| format!("{}: {error}", owner.id()))?,
         );
     }

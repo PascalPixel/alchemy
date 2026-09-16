@@ -6,7 +6,7 @@ pub(super) fn pixels(ctx: &Context, input: &Value, rom: &[u8]) -> Result<Vec<u8>
     let offsets = doc["offset_table"]["segments"][0]["values"]
         .as_array()
         .ok_or("UI offsets absent")?;
-    let recipes = ctx.document(&ctx.root.join(RECIPES))?;
+    let recipes = ctx.document(&ctx.root.join(broken_seal().recipes))?;
     let plans = recipes
         .pointer(json_string(
             &doc["components"][1]["plan_section"],

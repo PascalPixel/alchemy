@@ -5,6 +5,7 @@
 //! flag: a function that is not exact under its family's flags is not exact,
 //! and stays retained assembly until an ordinary C spelling reproduces it.
 use crate::compiler::routing_data::*;
+use crate::compiler::source_paths::SourceOwner;
 use std::path::{Path, PathBuf};
 use std::sync::OnceLock;
 /// Repository root: `<crate>/../..`.
@@ -200,24 +201,26 @@ fn source_stem_ref(source: &str) -> &str {
         _ => base,
     }
 }
-fn has(table: &'static [&'static str], value: &str) -> bool {
-    table.contains(&value)
+/// The owner a routing source names. Routing sources are the synthetic
+/// owner routes (`SourceOwner::routing_path_for_game`), whose stem is the
+/// owner's legacy stem; any other path names no owner and routes as game code.
+fn routed_owner(source: &str) -> Option<String> {
+    SourceOwner::from_legacy_stem(source_stem_ref(source)).map(SourceOwner::id)
 }
-/// Family membership follows an owner across adopt/park path changes.
-fn has_owner(table: &'static [&'static str], source: &str) -> bool {
-    let stem = source_stem_ref(source);
-    table.iter().any(|entry| source_stem_ref(entry) == stem)
+fn has(table: &'static [&'static str], owner: Option<&str>) -> bool {
+    owner.is_some_and(|owner| table.contains(&owner))
 }
 pub fn family_for_source(target: CompilerTarget, source: &str) -> CompilerFamily {
-    let stem = source_stem_ref(source);
-    let agbcc = match target {
-        CompilerTarget::Tbs => has(AGBCC_SOURCES, stem),
-        CompilerTarget::Tla => has(TLA_AGBCC_SOURCES, stem),
+    let owner = routed_owner(source);
+    let owner = owner.as_deref();
+    let (agbcc, soft_float): (&[&str], &[&str]) = match target {
+        CompilerTarget::Tbs => (AGBCC_SOURCES, SOFT_FLOAT_LIBRARY_OVERLAY_SOURCES),
+        CompilerTarget::Tla => (TLA_AGBCC_SOURCES, &[]),
     };
-    if agbcc {
+    if has(agbcc, owner) {
         return CompilerFamily::Agbcc;
     }
-    if target == CompilerTarget::Tbs && has_owner(SOFT_FLOAT_LIBRARY_OVERLAY_SOURCES, source) {
+    if has(soft_float, owner) {
         return CompilerFamily::SoftFloatLibrary;
     }
     CompilerFamily::Game
@@ -339,6 +342,62 @@ mod target_tests {
             assert!(!flags.iter().any(|flag| flag == "-fcall-used-r4"));
             assert!(flags.iter().any(|flag| flag == "-O2"));
         }
+    }
+    /// Tables are keyed by canonical owner IDs. Membership is provenance, so an
+    /// owner stays listed when its C is retired to assembly.
+    #[test]
+    fn family_tables_name_canonical_owners() {
+        for table in [
+            AGBCC_SOURCES,
+            TLA_AGBCC_SOURCES,
+            SOFT_FLOAT_LIBRARY_OVERLAY_SOURCES,
+        ] {
+            for entry in table {
+                let owner = SourceOwner::parse(entry).expect("canonical owner id");
+                assert_eq!(owner.id(), *entry);
+            }
+        }
+    }
+    /// An owner route claims only its own owner: a main address does not
+    /// claim the overlay function linked at the same number, nor the other game.
+    #[test]
+    fn family_follows_the_owner_route() {
+        assert_eq!(
+            family_for_source(
+                CompilerTarget::Tla,
+                &SourceOwner::Main(0x081c_2168)
+                    .routing_path_for_game("tla")
+                    .to_string_lossy()
+            ),
+            CompilerFamily::Agbcc
+        );
+        assert_eq!(
+            family_for_source(CompilerTarget::Tbs, "081c2168.c"),
+            CompilerFamily::Game
+        );
+        assert_eq!(
+            family_for_source(CompilerTarget::Tla, "080fb670.c"),
+            CompilerFamily::Game
+        );
+        assert_eq!(
+            family_for_source(
+                CompilerTarget::Tbs,
+                "games/THE BROKEN SEAL/SRC/resource_3a7_c_0200142c.c"
+            ),
+            CompilerFamily::SoftFloatLibrary
+        );
+        assert_eq!(
+            family_for_source(CompilerTarget::Tbs, "resource_3a8_c_0200142c.c"),
+            CompilerFamily::Game
+        );
+        assert_eq!(
+            family_for_source(CompilerTarget::Tbs, "0200142c.c"),
+            CompilerFamily::Game
+        );
+        assert_eq!(
+            family_for_source(CompilerTarget::Tla, "SOUND/FADE_MUSIC_PLAYER.C"),
+            CompilerFamily::Game
+        );
     }
     #[test]
     fn agbcc_family_has_one_flag_set() {

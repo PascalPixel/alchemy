@@ -91,7 +91,12 @@ fn reachable(input: &[u8], base: i64, seeds: &[i64], sweep: bool) -> BTreeMap<i6
     let mut queue: Vec<i64> = seeds.iter().copied().filter(|s| inside(*s, 2)).collect();
     let mut offset = 0i64;
     while offset < length - 1 {
-        if read_u16(offset) & 0xff00 == 0xb500 {
+        // A veneer's target word is not a prologue, whatever its low half.
+        let veneer_target = offset % 4 == 0
+            && offset >= 4
+            && read_u16(offset - 4) == 0x4c00
+            && read_u16(offset - 2) == 0x4720;
+        if read_u16(offset) & 0xff00 == 0xb500 && !veneer_target {
             queue.push(base + offset);
         }
         offset += 2;
@@ -183,7 +188,10 @@ fn reachable(input: &[u8], base: i64, seeds: &[i64], sweep: bool) -> BTreeMap<i6
                         let displacement =
                             sign_extend(((half & 0x7ff) << 12) | ((low & 0x7ff) << 1), 23);
                         let target = pc + 4 + displacement;
-                        if inside(target, 2) {
+                        // A whole overlay's functions are seeded by their
+                        // prologues; a call names its target without walking
+                        // it, so veneers and data a call lands on stay data.
+                        if inside(target, 2) && sweep {
                             queue.push(target);
                         }
                     }
@@ -280,10 +288,12 @@ fn build_source(input: &[u8], base: i64, seeds: &[i64], sweep: bool) -> Result<S
             let text = &row.1;
             let target = crate::overlay::compile::js_parse_int_hex(&found[3])
                 .ok_or_else(|| format!("branch target is not hex: {text}"))?;
-            if instructions.contains_key(&target)
-                && instructions.get(&(target - 2)).copied() != Some(4)
-                && rows.get(&(target - 2)).is_none_or(|row| row.0 != 4)
-            {
+            // A label cannot sit inside a four-byte row emitted as code; a
+            // row left as data is written in halfwords around the label.
+            let swallowed = instructions.contains_key(&(target - 2))
+                && (instructions.get(&(target - 2)).copied() == Some(4)
+                    || rows.get(&(target - 2)).is_some_and(|row| row.0 == 4));
+            if instructions.contains_key(&target) && !swallowed {
                 labels
                     .entry(target)
                     .or_insert_with(|| format!(".L_{}", hex(target, 8)));
@@ -412,4 +422,120 @@ fn build_source(input: &[u8], base: i64, seeds: &[i64], sweep: bool) -> Result<S
         }
     }
     Err("overlay reconstruction did not converge".to_string())
+}
+/// Retained assembly for a whole code overlay as an export writes it: the
+/// reconstructed listing, with the game's `overlay_veneer` macro included and
+/// every run of fixed veneers written through it. The leading `entry_veneers`
+/// are the overlay's entry table; any later run is an import table. The
+/// macro emits the same eight bytes per veneer, so reassembly is unchanged.
+pub fn export_overlay_source(
+    input: &[u8],
+    base: i64,
+    veneer_macro: &str,
+    entry_veneers: usize,
+) -> Result<String, String> {
+    let listing = build_overlay_source(input, base)?;
+    let lines: Vec<&str> = listing.lines().collect();
+    let entry_label = format!("Overlay_{}:", hex(base, 8));
+    let opening = lines
+        .iter()
+        .position(|line| *line == entry_label)
+        .ok_or("reconstructed listing has no overlay entry label")?
+        + 1;
+    if lines.first() != Some(&".syntax unified") {
+        return Err("reconstructed listing does not open with .syntax unified".into());
+    }
+    let mut output = vec![lines[0].to_string(), format!(".include \"{veneer_macro}\"")];
+    let mut index = 1;
+    while index < lines.len() {
+        let mut run = veneer_run(&lines[index..]);
+        if index == opening {
+            if run.len() < entry_veneers {
+                return Err(format!(
+                    "overlay opens with {} fixed entry veneers; the game has {entry_veneers}",
+                    run.len()
+                ));
+            }
+            run.truncate(entry_veneers);
+        }
+        if run.is_empty() {
+            output.push(lines[index].to_string());
+            index += 1;
+            continue;
+        }
+        let targets: Vec<String> = run
+            .iter()
+            .map(|(target, _)| format!("0x{target:08x}"))
+            .collect();
+        output.push(format!("\t.irp EntryTarget, {}", targets.join(", ")));
+        output.push("\toverlay_veneer \\EntryTarget".to_string());
+        output.push("\t.endr".to_string());
+        index += run.iter().map(|(_, lines)| lines).sum::<usize>();
+    }
+    Ok(format!("{}\n", output.join("\n")))
+}
+/// The fixed veneers the listing opens with, as (target, listing lines).
+/// Each is `.4byte 0x47204c00` then its target word, which the emitter
+/// writes as one `.4byte` or, before a label or code, as two `.2byte`
+/// halves. A target is Thumb, word-aligned ARM, or IWRAM/EWRAM/ROM.
+fn veneer_run(lines: &[&str]) -> Vec<(u32, usize)> {
+    let mut run = Vec::new();
+    let mut at = 0;
+    while lines.get(at) == Some(&"\t.4byte 0x47204c00") {
+        let hex = |line: Option<&&str>, prefix: &str, width: usize| {
+            line.and_then(|line| line.strip_prefix(prefix))
+                .filter(|digits| digits.len() == width)
+                .and_then(|digits| u32::from_str_radix(digits, 16).ok())
+        };
+        let (target, used) = match hex(lines.get(at + 1), "\t.4byte 0x", 8) {
+            Some(target) => (target, 2),
+            None => match (
+                hex(lines.get(at + 1), "\t.2byte 0x", 4),
+                hex(lines.get(at + 2), "\t.2byte 0x", 4),
+            ) {
+                (Some(low), Some(high)) => (low | high << 16, 3),
+                _ => break,
+            },
+        };
+        let addressable = matches!(target >> 24, 0x02 | 0x03 | 0x08);
+        if !addressable || (target & 1 == 0 && target & 3 != 0) {
+            break;
+        }
+        run.push((target, used));
+        at += used;
+    }
+    run
+}
+#[cfg(test)]
+mod export_tests {
+    use super::*;
+
+    #[test]
+    fn exported_veneers_go_through_the_game_macro_and_reassemble() {
+        // Two entry veneers, a leaf `bx lr`, one import veneer.
+        let mut image = Vec::new();
+        for target in [0x0200_8011u32, 0x0200_8015, 0x0800_00c1] {
+            if target == 0x0800_00c1 {
+                image.extend([0x70, 0x47, 0x00, 0x00]);
+            }
+            image.extend([0x00, 0x4c, 0x20, 0x47]);
+            image.extend(target.to_le_bytes());
+        }
+        let text = export_overlay_source(
+            &image,
+            OVERLAY_BASE,
+            "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+            2,
+        )
+        .unwrap();
+        assert!(text.contains("\t.irp EntryTarget, 0x02008011, 0x02008015\n"));
+        assert!(text.contains("\t.irp EntryTarget, 0x080000c1\n"));
+        assert!(!text.contains("0x47204c00"));
+        assert_eq!(
+            crate::overlay::compile::assemble_overlay_raw(&OverlaySource::text(text), OVERLAY_BASE)
+                .unwrap(),
+            image
+        );
+        assert!(export_overlay_source(&image, OVERLAY_BASE, "OVERLAY.INC", 3).is_err());
+    }
 }

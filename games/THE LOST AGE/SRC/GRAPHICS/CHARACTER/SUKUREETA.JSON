@@ -1,0 +1,850 @@
+{
+  "format": "golden-sun-character",
+  "identity": {
+    "actor": null,
+    "romaji": "SUKUREETA",
+    "japanese": "ｽｸﾚｰﾀ",
+    "message_id": 4953,
+    "message_offset": 452346,
+    "message_encoded_size": 4,
+    "symbols": [189, 184, 218, 176, 192],
+    "english_message_id": 4967,
+    "rom": "roms/tla-ja.gba",
+    "rom_sha256": "19dd48b74726f323cd829e226b60aa1b373c51fb2e840804efe2d2dc2891a890"
+  },
+  "association_evidence": {
+    "field": "descriptor 0x038: actor placement rows stage it with the party descriptors in the opening overlays: 0x64e second table (0x004, 0x005, 0x038, 0x039), 0x650 (0x038, 0x005, 0x006) and 0x651 (0x039, 0x038, 0x005, 0x006), plus 0x64b, 0x64d, 0x64f and 0x653, and later party scenes 0x65f, 0x670, 0x682, 0x68d, 0x694, 0x6a3, 0x6a8 and 0x6ae. The Idejima overlay 0x650 loads English message 0x1645, which addresses Kraden. In 0x670 it stands beside descriptor 0x01c, so the sheet-reviewed 0x01c is another character. 0x0803d2f0 maps descriptors 0x037 and 0x038 to portrait 132.",
+    "name": "Japanese message 4953 spells the name in the cast-name run 4945-4954 (ROBIN, JERARUDO, IWAN, MEARII, JASUMIN, SHIBA, PIKAADO, AREKUSU, SUKUREETA, HAMO); English message 4967 holds the same position in the English run 4959-4968.",
+    "scope": "field bank only; no battle bank is named for this character"
+  },
+  "banks": {
+    "field": {
+      "format": 1,
+      "kind": "components",
+      "address": "0x083d79b0",
+      "size": "0x0000311b",
+      "components": [
+        {
+          "kind": "golden-sun-general-lz",
+          "plan": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/SUKUREETA.JSON",
+          "plan_section": "/banks/field/streams",
+          "size": 12571,
+          "components": [
+            {
+              "kind": "zero-skip-bytes",
+              "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/CHAR_SUKUREETA.PNG",
+              "frame_width": 32,
+              "frame_height": 32,
+              "columns": 8,
+              "palette": {
+                "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+                "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+              },
+              "pixel_format": "indices"
+            }
+          ]
+        }
+      ],
+      "streams": [
+        {"codec": "golden-sun-arena-lz", "decoded_size": 369, "encoded_size": 371},
+        {"codec": "golden-sun-arena-lz", "decoded_size": 334, "encoded_size": 336},
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 360,
+          "encoded_size": 312,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 181,
+            "exceptions": [
+              [38, ["l", 1]],
+              [49, ["l", 1]],
+              [50, ["l", 1]],
+              [153, ["l", 1]],
+              [171, ["l", 1]],
+              [182, ["l", 1]],
+              [206, ["l", 1]]
+            ]
+          }
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 369,
+          "encoded_size": 33,
+          "tokens": {"predictor": "greedy-lz-v1", "split": 16, "exceptions": [[115, ["l", 1]]]}
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 334,
+          "encoded_size": 16,
+          "tokens": {"predictor": "greedy-lz-v1", "split": 5, "exceptions": []}
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 360,
+          "encoded_size": 182,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 21,
+            "exceptions": [
+              [26, ["c", 4, 623]],
+              [171, ["l", 1]],
+              [182, ["l", 1]],
+              [193, ["c", 3, 544]],
+              [228, ["l", 1]],
+              [262, ["l", 1]],
+              [277, ["l", 1]],
+              [316, ["l", 1]]
+            ]
+          }
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 372,
+          "encoded_size": 206,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 125,
+            "exceptions": [[224, ["l", 1]], [291, ["l", 1]], [307, ["l", 1]], [334, ["l", 1]]]
+          }
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 327,
+          "encoded_size": 134,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 73,
+            "exceptions": [
+              [9, ["l", 1]],
+              [57, ["l", 1]],
+              [58, ["l", 1]],
+              [70, ["l", 1]],
+              [71, ["l", 1]],
+              [96, ["l", 1]]
+            ]
+          }
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 360,
+          "encoded_size": 243,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 87,
+            "exceptions": [
+              [0, ["l", 1]],
+              [26, ["l", 1]],
+              [140, ["l", 1]],
+              [146, ["l", 1]],
+              [147, ["l", 1]],
+              [153, ["l", 1]],
+              [182, ["l", 1]],
+              [193, ["c", 3, 1066]],
+              [228, ["l", 1]],
+              [262, ["l", 1]],
+              [277, ["l", 1]],
+              [316, ["l", 1]]
+            ]
+          }
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 372,
+          "encoded_size": 186,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 103,
+            "exceptions": [
+              [11, ["l", 1]],
+              [20, ["l", 1]],
+              [21, ["l", 1]],
+              [73, ["l", 1]],
+              [168, ["l", 1]],
+              [291, ["l", 1]],
+              [307, ["l", 1]],
+              [334, ["l", 1]]
+            ]
+          }
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 331,
+          "encoded_size": 139,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 77,
+            "exceptions": [[30, ["l", 1]], [55, ["c", 3, 742]], [72, ["l", 1]], [87, ["l", 1]]]
+          }
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 358,
+          "encoded_size": 238,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 75,
+            "exceptions": [
+              [27, ["l", 1]],
+              [79, ["l", 1]],
+              [151, ["l", 1]],
+              [180, ["l", 1]],
+              [191, ["c", 3, 1634]],
+              [226, ["l", 1]],
+              [260, ["l", 1]],
+              [275, ["l", 1]],
+              [314, ["l", 1]]
+            ]
+          }
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 366,
+          "encoded_size": 173,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 86,
+            "exceptions": [
+              [22, ["l", 1]],
+              [35, ["l", 1]],
+              [61, ["l", 1]],
+              [77, ["l", 1]],
+              [134, ["l", 1]],
+              [285, ["l", 1]],
+              [301, ["l", 1]],
+              [328, ["l", 1]]
+            ]
+          }
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 335,
+          "encoded_size": 142,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 76,
+            "exceptions": [
+              [6, ["l", 1]],
+              [17, ["l", 1]],
+              [18, ["l", 1]],
+              [32, ["l", 1]],
+              [33, ["l", 1]],
+              [45, ["c", 3, 2178]],
+              [58, ["l", 1]],
+              [59, ["l", 1]]
+            ]
+          }
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 361,
+          "encoded_size": 233,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 65,
+            "exceptions": [
+              [38, ["l", 1]],
+              [51, ["l", 1]],
+              [56, ["l", 1]],
+              [183, ["l", 1]],
+              [194, ["c", 3, 2187]],
+              [229, ["l", 1]],
+              [263, ["l", 1]],
+              [278, ["l", 1]],
+              [317, ["l", 1]]
+            ]
+          }
+        },
+        {"codec": "golden-sun-arena-lz", "decoded_size": 330, "encoded_size": 332},
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 369,
+          "encoded_size": 276,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 119,
+            "exceptions": [
+              [16, ["c", 4, 2895]],
+              [30, ["l", 1]],
+              [31, ["l", 1]],
+              [46, ["c", 3, 2873]],
+              [81, ["l", 1]],
+              [88, ["l", 1]],
+              [96, ["l", 1]],
+              [97, ["l", 1]],
+              [160, ["l", 1]],
+              [161, ["l", 1]],
+              [189, ["c", 4, 46]],
+              [337, ["l", 1]],
+              [344, ["l", 1]]
+            ]
+          }
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 362,
+          "encoded_size": 303,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 139,
+            "exceptions": [
+              [26, ["l", 1]],
+              [38, ["l", 1]],
+              [49, ["l", 1]],
+              [55, ["l", 1]],
+              [56, ["l", 1]],
+              [80, ["l", 1]],
+              [91, ["l", 1]],
+              [156, ["l", 1]],
+              [162, ["l", 1]],
+              [191, ["l", 1]]
+            ]
+          }
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 356,
+          "encoded_size": 293,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 162,
+            "exceptions": [
+              [59, ["l", 1]],
+              [95, ["l", 1]],
+              [180, ["l", 1]],
+              [267, ["l", 1]],
+              [268, ["l", 1]],
+              [316, ["l", 1]]
+            ]
+          }
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 339,
+          "encoded_size": 262,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 119,
+            "exceptions": [
+              [18, ["l", 1]],
+              [40, ["l", 1]],
+              [54, ["l", 1]],
+              [60, ["l", 1]],
+              [61, ["l", 1]],
+              [67, ["l", 1]],
+              [68, ["l", 1]],
+              [74, ["l", 1]],
+              [85, ["l", 1]],
+              [86, ["l", 1]],
+              [95, ["l", 1]],
+              [96, ["l", 1]],
+              [117, ["l", 1]],
+              [201, ["l", 1]],
+              [249, ["l", 1]],
+              [317, ["l", 1]],
+              [318, ["l", 1]]
+            ]
+          }
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 367,
+          "encoded_size": 300,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 136,
+            "exceptions": [
+              [17, ["l", 1]],
+              [18, ["l", 1]],
+              [23, ["l", 1]],
+              [37, ["l", 1]],
+              [48, ["l", 1]],
+              [121, ["l", 1]],
+              [143, ["l", 1]],
+              [153, ["l", 1]],
+              [171, ["l", 1]],
+              [172, ["l", 1]],
+              [186, ["l", 1]],
+              [187, ["l", 1]],
+              [192, ["l", 1]],
+              [193, ["l", 1]],
+              [300, ["l", 1]]
+            ]
+          }
+        },
+        {"codec": "golden-sun-arena-lz", "decoded_size": 357, "encoded_size": 359},
+        {"codec": "golden-sun-arena-lz", "decoded_size": 339, "encoded_size": 341},
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 355,
+          "encoded_size": 287,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 119,
+            "exceptions": [
+              [24, ["l", 1]],
+              [32, ["l", 1]],
+              [49, ["l", 1]],
+              [159, ["c", 3, 546]],
+              [184, ["c", 3, 2263]],
+              [197, ["l", 1]],
+              [212, ["l", 1]],
+              [317, ["l", 1]]
+            ]
+          }
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 352,
+          "encoded_size": 302,
+          "tokens": {"predictor": "greedy-lz-v1", "split": 147, "exceptions": [[267, ["l", 1]]]}
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 359,
+          "encoded_size": 290,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 152,
+            "exceptions": [
+              [16, ["c", 3, 1252]],
+              [38, ["l", 1]],
+              [39, ["l", 1]],
+              [52, ["l", 1]],
+              [53, ["l", 1]],
+              [83, ["l", 1]],
+              [84, ["l", 1]],
+              [94, ["l", 1]],
+              [95, ["l", 1]],
+              [108, ["l", 1]],
+              [117, ["l", 1]],
+              [157, ["l", 1]],
+              [274, ["l", 1]],
+              [301, ["l", 1]],
+              [302, ["l", 1]]
+            ]
+          }
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 338,
+          "encoded_size": 271,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 118,
+            "exceptions": [
+              [22, ["l", 1]],
+              [28, ["l", 1]],
+              [44, ["l", 1]],
+              [50, ["l", 1]],
+              [57, ["l", 1]],
+              [71, ["l", 1]],
+              [142, ["l", 1]],
+              [143, ["l", 1]],
+              [167, ["l", 1]],
+              [191, ["l", 1]],
+              [192, ["l", 1]],
+              [258, ["l", 1]],
+              [285, ["l", 1]],
+              [286, ["l", 1]],
+              [299, ["l", 1]],
+              [300, ["l", 1]]
+            ]
+          }
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 364,
+          "encoded_size": 298,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 146,
+            "exceptions": [
+              [48, ["l", 1]],
+              [69, ["l", 1]],
+              [83, ["l", 1]],
+              [84, ["l", 1]],
+              [104, ["l", 1]],
+              [203, ["l", 1]]
+            ]
+          }
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 340,
+          "encoded_size": 260,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 125,
+            "exceptions": [
+              [27, ["l", 1]],
+              [38, ["l", 1]],
+              [39, ["l", 1]],
+              [53, ["l", 1]],
+              [54, ["c", 4, 1768]],
+              [68, ["l", 1]],
+              [83, ["l", 1]],
+              [110, ["l", 1]],
+              [141, ["l", 1]],
+              [154, ["l", 1]],
+              [187, ["l", 1]],
+              [204, ["l", 1]],
+              [205, ["l", 1]],
+              [210, ["l", 1]],
+              [211, ["l", 1]],
+              [246, ["l", 1]],
+              [247, ["l", 1]],
+              [295, ["l", 1]],
+              [330, ["l", 1]]
+            ]
+          }
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 368,
+          "encoded_size": 286,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 112,
+            "exceptions": [
+              [56, ["l", 1]],
+              [68, ["l", 1]],
+              [88, ["l", 1]],
+              [116, ["l", 1]],
+              [146, ["l", 1]],
+              [152, ["l", 1]],
+              [153, ["l", 1]],
+              [158, ["c", 3, 1877]],
+              [170, ["c", 3, 3887]],
+              [194, ["l", 1]],
+              [286, ["l", 1]],
+              [304, ["l", 1]],
+              [324, ["l", 1]],
+              [329, ["l", 1]],
+              [330, ["l", 1]]
+            ]
+          }
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 343,
+          "encoded_size": 287,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 157,
+            "exceptions": [[39, ["l", 1]], [47, ["l", 1]], [66, ["l", 1]], [155, ["l", 1]]]
+          }
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 348,
+          "encoded_size": 252,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 112,
+            "exceptions": [
+              [32, ["l", 1]],
+              [46, ["c", 4, 2574]],
+              [74, ["l", 1]],
+              [75, ["l", 1]],
+              [117, ["l", 1]],
+              [150, ["l", 1]],
+              [191, ["l", 1]],
+              [200, ["l", 1]],
+              [201, ["l", 1]],
+              [245, ["l", 1]],
+              [298, ["l", 1]]
+            ]
+          }
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 369,
+          "encoded_size": 306,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 143,
+            "exceptions": [
+              [32, ["l", 1]],
+              [62, ["l", 1]],
+              [77, ["l", 1]],
+              [100, ["l", 1]],
+              [146, ["l", 1]],
+              [190, ["l", 1]],
+              [195, ["l", 1]],
+              [196, ["l", 1]],
+              [341, ["l", 1]],
+              [342, ["l", 1]],
+              [359, ["l", 1]]
+            ]
+          }
+        },
+        {"codec": "golden-sun-arena-lz", "decoded_size": 408, "encoded_size": 410},
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 350,
+          "encoded_size": 300,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 161,
+            "exceptions": [
+              [43, ["l", 1]],
+              [53, ["l", 1]],
+              [69, ["l", 1]],
+              [75, ["l", 1]],
+              [81, ["l", 1]],
+              [82, ["l", 1]],
+              [130, ["l", 1]],
+              [332, ["l", 1]]
+            ]
+          }
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 336,
+          "encoded_size": 263,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 126,
+            "exceptions": [
+              [12, ["l", 1]],
+              [34, ["l", 1]],
+              [35, ["l", 1]],
+              [50, ["l", 1]],
+              [74, ["l", 1]],
+              [98, ["l", 1]],
+              [99, ["l", 1]],
+              [113, ["l", 1]],
+              [142, ["l", 1]],
+              [150, ["l", 1]],
+              [191, ["l", 1]],
+              [192, ["l", 1]],
+              [197, ["l", 1]],
+              [229, ["l", 1]],
+              [318, ["l", 1]]
+            ]
+          }
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 357,
+          "encoded_size": 294,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 135,
+            "exceptions": [
+              [129, ["l", 1]],
+              [143, ["l", 1]],
+              [152, ["l", 1]],
+              [153, ["l", 1]],
+              [211, ["l", 1]],
+              [284, ["l", 1]],
+              [285, ["l", 1]],
+              [294, ["l", 1]],
+              [295, ["l", 1]],
+              [300, ["l", 1]],
+              [305, ["l", 1]]
+            ]
+          }
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 351,
+          "encoded_size": 298,
+          "tokens": {"predictor": "greedy-lz-v1", "split": 157, "exceptions": [[163, ["l", 1]], [296, ["l", 1]]]}
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 339,
+          "encoded_size": 292,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 148,
+            "exceptions": [
+              [41, ["l", 1]],
+              [42, ["l", 1]],
+              [58, ["l", 1]],
+              [69, ["l", 1]],
+              [94, ["l", 1]],
+              [95, ["l", 1]],
+              [182, ["l", 1]],
+              [183, ["l", 1]],
+              [230, ["l", 1]],
+              [334, ["l", 1]]
+            ]
+          }
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 354,
+          "encoded_size": 282,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 109,
+            "exceptions": [
+              [14, ["l", 1]],
+              [67, ["l", 1]],
+              [68, ["l", 1]],
+              [121, ["l", 1]],
+              [176, ["l", 1]],
+              [206, ["l", 1]],
+              [207, ["l", 1]],
+              [220, ["l", 1]],
+              [221, ["l", 1]],
+              [235, ["l", 1]],
+              [259, ["l", 1]]
+            ]
+          }
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 356,
+          "encoded_size": 293,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 151,
+            "exceptions": [
+              [55, ["l", 1]],
+              [56, ["l", 1]],
+              [114, ["l", 1]],
+              [152, ["l", 1]],
+              [180, ["l", 1]],
+              [300, ["l", 1]],
+              [301, ["l", 1]]
+            ]
+          }
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 343,
+          "encoded_size": 278,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 122,
+            "exceptions": [
+              [22, ["l", 1]],
+              [115, ["l", 1]],
+              [176, ["l", 1]],
+              [197, ["l", 1]],
+              [198, ["l", 1]],
+              [212, ["l", 1]],
+              [230, ["l", 1]],
+              [301, ["l", 1]],
+              [302, ["l", 1]],
+              [312, ["l", 1]],
+              [313, ["l", 1]]
+            ]
+          }
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 353,
+          "encoded_size": 290,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 118,
+            "exceptions": [
+              [48, ["l", 1]],
+              [154, ["l", 1]],
+              [155, ["l", 1]],
+              [160, ["l", 1]],
+              [161, ["l", 1]],
+              [176, ["l", 1]],
+              [177, ["l", 1]],
+              [193, ["l", 1]],
+              [194, ["l", 1]],
+              [231, ["l", 1]],
+              [261, ["l", 1]],
+              [262, ["l", 1]],
+              [275, ["l", 1]],
+              [276, ["l", 1]],
+              [289, ["l", 1]],
+              [321, ["l", 1]],
+              [322, ["l", 1]]
+            ]
+          }
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 326,
+          "encoded_size": 280,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 154,
+            "exceptions": [
+              [31, ["l", 1]],
+              [32, ["l", 1]],
+              [58, ["l", 1]],
+              [66, ["l", 1]],
+              [82, ["l", 1]],
+              [96, ["c", 3, 1713]],
+              [179, ["l", 1]],
+              [186, ["l", 1]],
+              [187, ["l", 1]],
+              [200, ["l", 1]],
+              [201, ["l", 1]],
+              [210, ["l", 1]],
+              [211, ["l", 1]]
+            ]
+          }
+        },
+        {"codec": "golden-sun-arena-lz", "decoded_size": 370, "encoded_size": 372},
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 388,
+          "encoded_size": 339,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 205,
+            "exceptions": [
+              [12, ["l", 1]],
+              [248, ["l", 1]],
+              [302, ["l", 1]],
+              [316, ["l", 1]],
+              [328, ["l", 1]],
+              [329, ["l", 1]],
+              [343, ["l", 1]]
+            ]
+          }
+        },
+        {
+          "codec": "golden-sun-arena-lz",
+          "decoded_size": 399,
+          "encoded_size": 331,
+          "tokens": {
+            "predictor": "greedy-lz-v1",
+            "split": 175,
+            "exceptions": [[25, ["l", 1]], [350, ["l", 1]], [351, ["l", 1]], [390, ["l", 1]]]
+          }
+        }
+      ],
+      "directory": {
+        "format": 1,
+        "kind": "pointer-table",
+        "base_address": "0x083d79b0",
+        "address": "0x08309f30",
+        "slot_count": 47,
+        "slots": [
+          "0x083d79b0", "0x083d7b23", "0x083d7c73", "0x083d7dab", "0x083d7dcc", "0x083d7ddc", "0x083d7e92",
+          "0x083d7f60", "0x083d7fe6", "0x083d80d9", "0x083d8193", "0x083d821e", "0x083d830c", "0x083d83b9",
+          "0x083d8447", "0x083d8530", "0x083d867c", "0x083d8790", "0x083d88bf", "0x083d89e4", "0x083d8aea",
+          "0x083d8c16", "0x083d8d7d", "0x083d8ed2", "0x083d8ff1", "0x083d911f", "0x083d9241", "0x083d9350",
+          "0x083d947a", "0x083d957e", "0x083d969c", "0x083d97bb", "0x083d98b7", "0x083d99e9", "0x083d9b83",
+          "0x083d9caf", "0x083d9db6", "0x083d9edc", "0x083da006", "0x083da12a", "0x083da244", "0x083da369",
+          "0x083da47f", "0x083da5a1", "0x083da6b9", "0x083da82d", "0x083da980"
+        ]
+      },
+      "descriptor": {
+        "id": 56,
+        "address": "0x08300460",
+        "frame_codec": "golden-sun-arena-lz/zero-skip",
+        "palette": "0x08017b10"
+      },
+      "runtime_bindings": [
+        {"overlay": "0x650", "scene": "9", "folder": "IDEJIMA", "placement_table": 0, "row": 0, "x": 0, "z": 0},
+        {"overlay": "0x64d", "scene": "4", "folder": "VINASU_IRIGUCHI", "placement_table": 0, "row": 0, "x": 8, "z": 8},
+        {"overlay": "0x64e", "scene": "5", "folder": "VINASU_CHOJO", "placement_table": 0, "row": 0, "x": 8, "z": 8},
+        {"overlay": "0x64e", "scene": "5", "folder": "VINASU_CHOJO", "placement_table": 1, "row": 2, "x": 8, "z": 8}
+      ]
+    }
+  }
+}

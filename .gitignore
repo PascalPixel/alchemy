@@ -30,14 +30,19 @@ roms/
 *.gba
 *.rom
 *.bin
-# Native pixel, palette and packed map inputs are regenerated from a verified
-# local ROM by `alchemy build assets --extract-sources`.
-/games/THE BROKEN SEAL/SRC/**/CHR.PNG
-/games/THE BROKEN SEAL/SRC/**/*_CHR.PNG
-/games/THE BROKEN SEAL/SRC/**/*.BIN
-/games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON
-/games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_*.PNG
-/games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/BATTLE_*.PNG
+# Native pixel, palette, packed map and unidentified layer inputs of every game
+# are regenerated from its verified local ROM by
+# `alchemy build assets --extract-sources ROM --target TARGET`.
+/games/*/SRC/**/CHR.PNG
+/games/*/SRC/**/*_CHR.PNG
+/games/*/SRC/**/*.BIN
+/games/*/SRC/GRAPHICS/COMMON/PALETTE.JSON
+/games/*/SRC/GRAPHICS/COMMON/STILL.PNG
+/games/*/SRC/GRAPHICS/COMMON/TILE.PNG
+/games/*/SRC/GRAPHICS/COMMON/PORTRAIT.PNG
+/games/*/SRC/GRAPHICS/COMMON/TILE_BANK.PNG
+/games/*/SRC/GRAPHICS/CHARACTER/CHAR_*.PNG
+/games/*/SRC/GRAPHICS/CHARACTER/BATTLE_*.PNG
 *.elf
 *.o
 *.a
@@ -90,7 +95,3 @@ target/
 # Adoption's per-overlay lock (see tools/alchemy/src/overlay). Lives
 # beside the tracked assembly it guards, so it must never become committable.
 games/*/asm/**/*.adopt-lock
-/games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/STILL.PNG
-/games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/TILE.PNG
-/games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG
-/games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/TILE_BANK.PNG

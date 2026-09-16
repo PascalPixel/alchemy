@@ -1,5 +1,6 @@
 //! Native entry point for the asset build stage.
 mod compression_plan;
+mod derive_index;
 mod gba_header;
 mod native;
 use crate::compiler::build_io::relative;
@@ -29,9 +30,8 @@ use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
-const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--manifest MANIFEST] [-o OUTPUT] [rom] | --compact-plans PLAN | --derive-plans PLAN | --review-images OUTPUT [--update-baseline] | --audit-characters OUTPUT | --extract-sources ROM | --extract-missing-sources ROM | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
+const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--target TARGET] [--manifest MANIFEST] [-o OUTPUT] [rom] | --compact-plans PLAN | --derive-plans PLAN | --review-images OUTPUT [--update-baseline | --target TARGET] | --audit-characters OUTPUT [--target TARGET] | --extract-sources ROM [--target TARGET] | --extract-missing-sources ROM [--target TARGET] | --derive-index ROM --target TARGET --scenes N[=NAME],... [-o OUTPUT] [--stage DIR] [--preview DIR] | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
 const ROM_BASE: usize = 0x0800_0000;
-const ROM_SIZE: usize = 0x0080_0000;
 fn repository_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -151,6 +151,43 @@ fn root_path(root: &Path, name: &str) -> Result<PathBuf, String> {
         ));
     }
     Ok(path)
+}
+/// Views, stages and derived rows of game material are disposable output: they
+/// may only be written under the repository's ignored out/ directory.
+fn ignored_output_path(root: &Path, output: &Path, label: &str) -> Result<PathBuf, String> {
+    let output = if output.is_absolute() {
+        output.to_path_buf()
+    } else {
+        root.join(output)
+    };
+    if !output.starts_with(root.join("out")) {
+        return Err(format!(
+            "{label} must remain in the ignored repository out/ directory"
+        ));
+    }
+    if output
+        .components()
+        .any(|part| matches!(part, std::path::Component::ParentDir))
+    {
+        return Err(format!("{label} output cannot contain parent traversal"));
+    }
+    Ok(output)
+}
+#[test]
+fn ignored_output_stays_under_out() {
+    let root = Path::new("/repository");
+    assert_eq!(
+        ignored_output_path(root, Path::new("out/tla-en/preview"), "preview").unwrap(),
+        root.join("out/tla-en/preview")
+    );
+    for escaped in [
+        "games/THE LOST AGE/PREVIEW",
+        "out/../games/THE LOST AGE",
+        "/elsewhere/out",
+        "outside",
+    ] {
+        assert!(ignored_output_path(root, Path::new(escaped), "preview").is_err());
+    }
 }
 fn root_relative(root: &Path, path: &Path) -> Result<String, String> {
     let relative = path.strip_prefix(root).map_err(|_| {
@@ -743,6 +780,12 @@ fn build_component_cached(ctx: &Context, entry: &Value) -> Result<ComponentResul
                 vec![source_name.to_string()],
             )
         }
+        // Bytes of unknown structure come from a registered private binary.
+        "u8-array" if entry.get("format").and_then(Value::as_str) == Some("binary") => (
+            binary_source(&source, entry)?,
+            serde_json::json!({"format":"binary"}),
+            vec![source_name.to_string()],
+        ),
         "u8-array" | "s8-array" | "be-s16-array" | "le-u16-array" | "le-u32-array" => {
             let document = json(&source)?;
             let pointer = json_string(&entry["pointer"], "array pointer")?;
@@ -1125,6 +1168,15 @@ fn binary_map_components_preserve_words_and_refuse_wrong_extents() {
     invalid["source_length"] = serde_json::json!(5);
     assert!(build_component(root.path(), &invalid).is_err());
     invalid["source_offset"] = serde_json::json!(usize::MAX);
+    assert!(build_component(root.path(), &invalid).is_err());
+    // An odd-length private layer is plain bytes, not tilemap words.
+    let layer = serde_json::json!({"kind":"u8-array","format":"binary","source":"map.bin","size":3,"source_offset":65537,"source_length":3});
+    assert_eq!(
+        build_component(root.path(), &layer).unwrap().data,
+        [0xf4, 0x32, 0x18]
+    );
+    let mut invalid = layer.clone();
+    invalid["source_length"] = serde_json::json!(4);
     assert!(build_component(root.path(), &invalid).is_err());
 }
 
@@ -2835,7 +2887,13 @@ fn expand_series(
                         .as_array()
                         .ok_or("overlay resource tuple malformed")?;
                     let name = json_string(&tuple[0], "overlay id")?.to_ascii_lowercase();
-                    let directory = format!("games/THE BROKEN SEAL/asm/overlays/resource_{name}");
+                    // The Broken Seal's manifest predates the prefix; every
+                    // other game names its own overlay directory.
+                    let prefix = match series.get("source_prefix") {
+                        Some(prefix) => json_string(prefix, "overlay series source prefix")?,
+                        None => "games/THE BROKEN SEAL/asm/overlays/resource_",
+                    };
+                    let directory = format!("{prefix}{name}");
                     entries
                         .push(serde_json::json!({"address":tuple[1],"size":tuple[2],"kind":"golden-sun-general-lz","plan":format!("{directory}_stream.lz.json"),"components":[{"kind":"golden-sun-thumb-overlay","size":tuple[3],"source":format!("{directory}_overlay.s"),"base":series.get("base")}] }));
                 }
@@ -2844,8 +2902,10 @@ fn expand_series(
                 // A family is [id, container address, header size, [slot,
                 // address, size]...]: the container header is a typed table
                 // whose offset words must agree with the listed components,
-                // and each slot is a general-LZ stream or typed table whose
-                // plan and values live in the family's JSON document.
+                // and each slot is an LZ stream or typed table whose plan and
+                // values live in the family's JSON document. The Broken Seal
+                // headers carry six component offsets; The Lost Age's carry
+                // seven, so the header is 0x24 bytes plus four per slot.
                 for family in series_values(series, "families")? {
                     let tuple = family.as_array().ok_or("map family malformed")?;
                     let name = json_string(&tuple[0], "map family id")?.to_ascii_lowercase();
@@ -2856,27 +2916,27 @@ fn expand_series(
                     let source = format!("{directory}.json");
                     let document = json(&ctx.source(&source)?)?;
                     let container = number(&tuple[1], "map container")?;
-                    let mut offsets = [0usize; 6];
+                    let slots = map_component_slots(number(&tuple[2], "map header size")?)?;
+                    let mut offsets = vec![0usize; slots];
                     entries.push(serde_json::json!({"address":tuple[1],"size":tuple[2],"kind":"typed-table","source":source,"pointer":"/header"}));
                     for raw in &tuple[3..] {
                         let item = raw.as_array().ok_or("map component malformed")?;
                         let slot = number(&item[0], "map component slot")?;
                         let address = number(&item[1], "map component address")?;
-                        if slot >= 6 || offsets[slot] != 0 || address <= container {
+                        if slot >= slots || offsets[slot] != 0 || address <= container {
                             return Err(
                                 "map component slots must be unique and follow the header".into()
                             );
                         }
                         offsets[slot] = address - container;
-                        let (section, component) = match slot {
-                            0 => (
-                                "metatiles",
-                                serde_json::json!({"kind":"gba-tilemap16","pointer":"/metatiles/tilemap","delta_mode":document["metatiles"]["transform_mode"]}),
-                            ),
-                            1 => (
-                                "descriptors",
-                                serde_json::json!({"kind":"u8-array","pointer":"/descriptors/records"}),
-                            ),
+                        let section = map_component_section(slots, slot);
+                        let component = match slot {
+                            0 => {
+                                serde_json::json!({"kind":"gba-tilemap16","pointer":"/metatiles/tilemap","delta_mode":document["metatiles"]["transform_mode"]})
+                            }
+                            1 => {
+                                serde_json::json!({"kind":"u8-array","pointer":"/descriptors/records"})
+                            }
                             2 => {
                                 let plan = format!("{directory}_grid.lz.json");
                                 let decoded_size =
@@ -2884,17 +2944,16 @@ fn expand_series(
                                 entries.push(serde_json::json!({"address":item[1],"size":item[2],"kind":"golden-sun-general-lz","plan":plan,"components":[{"kind":"indexed-bytes","size":decoded_size,"source":format!("{directory}_grid_content.png")}]}));
                                 continue;
                             }
-                            3 => (
-                                "animation_queues",
-                                serde_json::json!({"kind":"le-u16-array","pointer":"/animation_queues/words"}),
-                            ),
-                            4 => (
-                                "blend_animation",
-                                serde_json::json!({"kind":"le-u16-array","pointer":"/blend_animation/words"}),
-                            ),
-                            _ => {
-                                entries.push(serde_json::json!({"address":item[1],"size":item[2],"kind":"typed-table","source":source,"pointer":"/sparse_cells"}));
+                            _ if document[section].get("codec").is_none() => {
+                                // Raw typed segments stay tables until their meaning is known.
+                                entries.push(serde_json::json!({"address":item[1],"size":item[2],"kind":"typed-table","source":source,"pointer":format!("/{section}")}));
                                 continue;
+                            }
+                            _ if document[section].get("words").is_some() => {
+                                serde_json::json!({"kind":"le-u16-array","pointer":format!("/{section}/words")})
+                            }
+                            _ => {
+                                serde_json::json!({"kind":"u8-array","pointer":format!("/{section}/values")})
                             }
                         };
                         let mut component = component;
@@ -3016,6 +3075,55 @@ fn expand_series(
         }
     }
     Ok(())
+}
+/// Component slots a map container header declares: 0x24 bytes of parameters
+/// and records, then one u32 offset per slot (six in TBS, seven in TLA).
+fn map_component_slots(header_size: usize) -> Result<usize, String> {
+    match header_size
+        .checked_sub(0x24)
+        .map(|words| (words % 4, words / 4))
+    {
+        Some((0, slots @ (6 | 7))) => Ok(slots),
+        _ => Err(format!(
+            "map container header 0x{header_size:x} does not hold six or seven component offsets"
+        )),
+    }
+}
+/// The document section of one slot. The Lost Age inserts a 0x4000-byte layer
+/// after the grid, so its later slots keep neutral names until identified.
+fn map_component_section(slots: usize, slot: usize) -> &'static str {
+    const BROKEN_SEAL: [&str; 6] = [
+        "metatiles",
+        "descriptors",
+        "grid",
+        "animation_queues",
+        "blend_animation",
+        "sparse_cells",
+    ];
+    const LOST_AGE: [&str; 7] = [
+        "metatiles",
+        "descriptors",
+        "grid",
+        "component3",
+        "component4",
+        "component5",
+        "component6",
+    ];
+    if slots == 7 {
+        LOST_AGE[slot]
+    } else {
+        BROKEN_SEAL[slot]
+    }
+}
+#[test]
+fn map_headers_hold_six_or_seven_component_offsets() {
+    assert_eq!(map_component_slots(0x3c).unwrap(), 6);
+    assert_eq!(map_component_slots(0x40).unwrap(), 7);
+    for invalid in [0, 0x24, 0x38, 0x3e, 0x44] {
+        assert!(map_component_slots(invalid).is_err());
+    }
+    assert_eq!(map_component_section(6, 5), "sparse_cells");
+    assert_eq!(map_component_section(7, 6), "component6");
 }
 fn series_values<'a>(value: &'a Value, key: &str) -> Result<&'a Vec<Value>, String> {
     value
@@ -4550,10 +4658,12 @@ fn pcm_records_preserve_exact_headers_loops_and_padding() {
 
 /// Message markup is printable ASCII text and `{"command": name}` atoms from
 /// the source's command table, each with an `argument` when the table says so;
-/// `null` is an empty message.
+/// `null` is an empty message. Text may also use the characters the source's
+/// optional glyph table declares, each standing for its symbol sequence.
 fn message_symbols(
     message: &Value,
     commands: &serde_json::Map<String, Value>,
+    glyphs: Option<&serde_json::Map<String, Value>>,
     symbol_count: usize,
 ) -> Result<Option<Vec<u16>>, String> {
     let atoms = match message {
@@ -4572,10 +4682,19 @@ fn message_symbols(
     for atom in atoms {
         if let Some(text) = atom.as_str() {
             for character in text.chars() {
-                if !character.is_ascii_graphic() && character != ' ' {
-                    return Err("message text must be printable ASCII".into());
+                if character.is_ascii_graphic() || character == ' ' {
+                    symbols.push(symbol(character as usize)?);
+                    continue;
                 }
-                symbols.push(symbol(character as usize)?);
+                let glyph = (!character.is_ascii())
+                    .then(|| glyphs?.get(character.encode_utf8(&mut [0; 4]) as &str))
+                    .flatten()
+                    .and_then(Value::as_array)
+                    .filter(|sequence| !sequence.is_empty())
+                    .ok_or("message text must be printable ASCII or a declared glyph")?;
+                for value in glyph {
+                    symbols.push(symbol(number(value, "glyph symbol")?)?);
+                }
             }
             continue;
         }
@@ -4610,20 +4729,39 @@ fn message_symbols(
 fn message_markup_follows_the_declared_command_table() {
     let commands = serde_json::json!({"end":{"opcode":2},"color":{"opcode":8,"argument":true}});
     let commands = commands.as_object().unwrap();
-    assert_eq!(message_symbols(&Value::Null, commands, 123).unwrap(), None);
+    let glyphs = serde_json::json!({"\u{2014}":[176],"\u{30af}":[131,78],"A":[1],"\u{e9}":[]});
+    let glyphs = Some(glyphs.as_object().unwrap());
     assert_eq!(
-        message_symbols(&serde_json::json!("Hi"), commands, 123).unwrap(),
+        message_symbols(&Value::Null, commands, None, 123).unwrap(),
+        None
+    );
+    assert_eq!(
+        message_symbols(&serde_json::json!("Hi"), commands, None, 123).unwrap(),
         Some(vec![72, 105])
     );
     assert_eq!(
         message_symbols(
             &serde_json::json!([{"command":"color","argument":5},"z",{"command":"end"}]),
             commands,
+            None,
             123
         )
         .unwrap(),
         Some(vec![8, 5, 122, 2])
     );
+    assert_eq!(
+        message_symbols(
+            &serde_json::json!("A\u{2014}\u{30af}"),
+            commands,
+            glyphs,
+            242
+        )
+        .unwrap(),
+        Some(vec![65, 176, 131, 78])
+    );
+    assert!(message_symbols(&serde_json::json!("\u{2014}"), commands, glyphs, 123).is_err());
+    assert!(message_symbols(&serde_json::json!("\u{e9}"), commands, glyphs, 242).is_err());
+    assert!(message_symbols(&serde_json::json!("\u{2015}"), commands, glyphs, 242).is_err());
     for bad in [
         serde_json::json!("{"),
         serde_json::json!("\u{e9}"),
@@ -4633,7 +4771,7 @@ fn message_markup_follows_the_declared_command_table() {
         serde_json::json!([{"command":"color","argument":123}]),
         serde_json::json!([7]),
     ] {
-        assert!(message_symbols(&bad, commands, 123).is_err(), "{bad}");
+        assert!(message_symbols(&bad, commands, None, 123).is_err(), "{bad}");
     }
 }
 
@@ -4728,6 +4866,10 @@ fn build_entry_native_tail(
             let commands = document["commands"]
                 .as_object()
                 .ok_or("message commands missing")?;
+            let glyphs = match document.get("glyphs") {
+                None => None,
+                Some(glyphs) => Some(glyphs.as_object().ok_or("message glyphs must be a table")?),
+            };
             let source_banks = document["banks"]
                 .as_array()
                 .ok_or("message banks missing")?;
@@ -4742,7 +4884,7 @@ fn build_entry_native_tail(
                 banks.push(
                     messages
                         .iter()
-                        .map(|message| message_symbols(message, commands, symbol_count))
+                        .map(|message| message_symbols(message, commands, glyphs, symbol_count))
                         .collect::<Result<Vec<_>, _>>()?,
                 );
             }
@@ -4802,15 +4944,19 @@ fn build_entry_native_tail(
 }
 struct BuildOptions {
     rom: String,
+    /// The target's cartridge size; a source-only build has no ROM to measure.
+    rom_size: usize,
     manifest: PathBuf,
     output: PathBuf,
     source_only: bool,
 }
 fn parse_build_options(arguments: &[String], root: &Path) -> Result<BuildOptions, String> {
+    let target = crate::targets::decomp_target(option_value(arguments, "--target")?.as_deref())?;
     let mut options = BuildOptions {
-        rom: "roms/tbs-en.gba".to_string(),
-        manifest: root.join("games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE.JSON"),
-        output: root.join("out/tbs-en/assets"),
+        rom: target.rom.to_string(),
+        rom_size: target.rom_size as usize,
+        manifest: root.join(target.asset_manifest),
+        output: root.join(target.output_dir).join("assets"),
         source_only: false,
     };
     let mut positional = false;
@@ -4827,6 +4973,11 @@ fn parse_build_options(arguments: &[String], root: &Path) -> Result<BuildOptions
                     (name, Some(value))
                 });
             match option {
+                "--target" => {
+                    if inline.is_none() {
+                        index += 1;
+                    }
+                }
                 "--manifest" | "-o" | "--output" => {
                     let value = match inline {
                         Some(value) => value.to_string(),
@@ -4867,6 +5018,58 @@ fn parse_build_options(arguments: &[String], root: &Path) -> Result<BuildOptions
     }
     Ok(options)
 }
+/// The value of `--name VALUE` or `--name=VALUE`, if present once.
+fn option_value(arguments: &[String], name: &str) -> Result<Option<String>, String> {
+    let mut found = None;
+    let mut index = 0;
+    while index < arguments.len() {
+        let argument = &arguments[index];
+        let value = if argument == name {
+            index += 1;
+            Some(
+                arguments
+                    .get(index)
+                    .ok_or_else(|| format!("{name} requires a value"))?
+                    .clone(),
+            )
+        } else {
+            argument
+                .strip_prefix(name)
+                .and_then(|rest| rest.strip_prefix('='))
+                .map(str::to_string)
+        };
+        if let Some(value) = value {
+            if found.replace(value).is_some() {
+                return Err(format!("{name} was given more than once"));
+            }
+        }
+        index += 1;
+    }
+    Ok(found)
+}
+#[test]
+fn build_options_follow_the_target_and_explicit_paths_override_it() {
+    let root = Path::new("/repo");
+    let arguments = |items: &[&str]| items.iter().map(|s| s.to_string()).collect::<Vec<_>>();
+    let tla = parse_build_options(&arguments(&["--target", "tla-en"]), root).unwrap();
+    assert_eq!(tla.rom, "roms/tla-en.gba");
+    assert_eq!(
+        tla.manifest,
+        root.join("games/THE LOST AGE/SRC/SYSTEM/RESOURCE.JSON")
+    );
+    assert_eq!(tla.output, root.join("out/tla-en/assets"));
+    let tbs = parse_build_options(&arguments(&["-o", "out/x", "roms/a.gba"]), root).unwrap();
+    assert_eq!(tbs.rom, "roms/a.gba");
+    assert_eq!(
+        tbs.manifest,
+        root.join("games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE.JSON")
+    );
+    assert_eq!(tbs.output, root.join("out/x"));
+    assert!(parse_build_options(&arguments(&["--target=tla"]), root).is_err());
+    assert!(
+        parse_build_options(&arguments(&["--target", "tla-en", "--target=tbs-en"]), root).is_err()
+    );
+}
 fn stamp_files(
     root: &Path,
     directory: &Path,
@@ -4879,7 +5082,10 @@ fn stamp_files(
         .follow_links(true)
         .into_iter()
         .filter_entry(|entry| {
-            if entry.path() == root.join("games/THE BROKEN SEAL/PREVIEW") {
+            if native::games()
+                .iter()
+                .any(|game| entry.path() == root.join(game.game_dir()).join("PREVIEW"))
+            {
                 return false; // Coverage figures are outputs, never ROM asset inputs.
             }
             entry.depth() == 0
@@ -4927,15 +5133,21 @@ fn stage_stamp_with_signature(
         b"mode:rom\0"
     });
     let mut files = BTreeMap::new();
-    for directory in [
-        "games/THE BROKEN SEAL/SRC",
-        "games/THE BROKEN SEAL/GRAPHICS",
-        "games/THE BROKEN SEAL/SOUND",
-        "games/THE BROKEN SEAL/TEXT",
-        "games/THE BROKEN SEAL/asm/overlays",
-        "games/THE BROKEN SEAL/asm/battle",
-    ] {
-        stamp_files(root, &root.join(directory), &mut files)?;
+    for game in native::games() {
+        for directory in [
+            "SRC",
+            "GRAPHICS",
+            "SOUND",
+            "TEXT",
+            "asm/overlays",
+            "asm/battle",
+        ] {
+            stamp_files(
+                root,
+                &root.join(game.game_dir()).join(directory),
+                &mut files,
+            )?;
+        }
     }
     let source_paths = SourcePaths::load(root)?;
     let overlay_sources = source_paths
@@ -4950,14 +5162,15 @@ fn stage_stamp_with_signature(
         let signature = compiler_source_tree_signature(root, &source, &[flags])?;
         stamp_record(&mut stream, &name, &signature);
     }
-    for name in [
-        SOURCE_PATHS_MANIFEST,
-        "games/THE BROKEN SEAL/SOURCE.JSON",
-        "games/THE BROKEN SEAL/recon/translation-units.json",
-    ] {
-        let path = root.join(name);
+    let mut names = vec![SOURCE_PATHS_MANIFEST.to_string()];
+    for game in native::games() {
+        names.push(native::NativePaths::of(&game).index);
+        names.push(format!("{}/recon/translation-units.json", game.game_dir()));
+    }
+    for name in names {
+        let path = root.join(&name);
         if path.is_file() {
-            files.insert(name.into(), path);
+            files.insert(name, path);
         }
     }
     files
@@ -5172,7 +5385,7 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
         };
         Some(fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?)
     };
-    let rom_size = rom.as_ref().map_or(ROM_SIZE, Vec::len);
+    let rom_size = rom.as_ref().map_or(options.rom_size, Vec::len);
     let manifest = json(&options.manifest)?;
     if number(&manifest["format"], "asset manifest format")? != 1 {
         return Err("unsupported asset manifest format".to_string());
@@ -5331,12 +5544,21 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
         .collect::<Vec<_>>();
     prune_files(&options.output, "*.bin", keep.iter())
         .map_err(|error| format!("asset output cleanup: {error}"))?;
-    let unused = unused_tracked_images(
-        &root,
-        all_sources.iter(),
-        ["games/THE BROKEN SEAL/PREVIEW/"],
-    )
-    .map_err(|error| format!("tracked image audit: {error}"))?;
+    // Review figures are outputs, and another game's images belong to its own manifest.
+    let manifest_name = relative(&root, &options.manifest);
+    let ignored_images = native::games()
+        .iter()
+        .flat_map(|game| {
+            let directory = game.game_dir();
+            if manifest_name.starts_with(&format!("{directory}/")) {
+                vec![format!("{directory}/PREVIEW/")]
+            } else {
+                vec![format!("{directory}/PREVIEW/"), format!("{directory}/")]
+            }
+        })
+        .collect::<Vec<_>>();
+    let unused = unused_tracked_images(&root, all_sources.iter(), ignored_images)
+        .map_err(|error| format!("tracked image audit: {error}"))?;
     if !unused.is_empty() {
         let shown = unused
             .iter()
@@ -5395,31 +5617,38 @@ fn run(arguments: Vec<String>) -> Result<ExitCode, String> {
     }
     if arguments.first().map(String::as_str) == Some("--review-images") {
         let update = arguments.len() == 3 && arguments[2] == "--update-baseline";
-        if arguments.len() != 2 && !update {
+        let target = (arguments.len() == 4 && arguments[2] == "--target")
+            .then(|| crate::targets::decomp_target(Some(&arguments[3])))
+            .transpose()?;
+        if arguments.len() != 2 && !update && target.is_none() {
             return Err(USAGE.into());
         }
-        native::export_review(&repository_root(), Path::new(&arguments[1]), update)?;
+        // The Broken Seal keeps its registered review plan; other games review
+        // the field maps their SOURCE.JSON scenes load.
+        match target.filter(|t| t.source_dir != native::broken_seal().source) {
+            Some(target) => {
+                native::export_field_review(&repository_root(), Path::new(&arguments[1]), &target)?
+            }
+            None => native::export_review(&repository_root(), Path::new(&arguments[1]), update)?,
+        }
+        return Ok(ExitCode::SUCCESS);
+    }
+    if arguments.first().map(String::as_str) == Some("--derive-index") {
+        derive_index::run(&repository_root(), &arguments[1..])?;
         return Ok(ExitCode::SUCCESS);
     }
     if arguments.first().map(String::as_str) == Some("--extract-missing-sources") {
-        if arguments.len() != 2 {
-            return Err(USAGE.into());
-        }
-        native::extract_missing(&repository_root(), Path::new(&arguments[1]))?;
+        let (rom, target) = rom_and_target(&arguments[1..])?;
+        native::extract_missing(&repository_root(), Path::new(&rom), &target)?;
         return Ok(ExitCode::SUCCESS);
     }
     if arguments.first().map(String::as_str) == Some("--audit-characters") {
-        if arguments.len() != 2 {
-            return Err(USAGE.into());
-        }
-        native::audit_characters(&repository_root(), Path::new(&arguments[1]))?;
+        native::audit_characters(&repository_root(), &arguments[1..])?;
         return Ok(ExitCode::SUCCESS);
     }
     if arguments.first().map(String::as_str) == Some("--extract-sources") {
-        if arguments.len() != 2 {
-            return Err(USAGE.into());
-        }
-        native::extract(&repository_root(), Path::new(&arguments[1]))?;
+        let (rom, target) = rom_and_target(&arguments[1..])?;
+        native::extract(&repository_root(), Path::new(&rom), &target)?;
         return Ok(ExitCode::SUCCESS);
     }
     if matches!(
@@ -5474,6 +5703,22 @@ fn run(arguments: Vec<String>) -> Result<ExitCode, String> {
     }
     native_asset_main(&arguments)?;
     Ok(ExitCode::SUCCESS)
+}
+/// `ROM [--target TARGET]`; the target selects the game's native source index.
+fn rom_and_target(arguments: &[String]) -> Result<(String, crate::targets::DecompTarget), String> {
+    let target = crate::targets::decomp_target(option_value(arguments, "--target")?.as_deref())?;
+    let rest = arguments
+        .iter()
+        .enumerate()
+        .filter(|(index, argument)| {
+            !argument.starts_with("--target") && !(*index > 0 && arguments[index - 1] == "--target")
+        })
+        .map(|(_, argument)| argument.clone())
+        .collect::<Vec<_>>();
+    match rest.as_slice() {
+        [rom] if !rom.starts_with('-') => Ok((rom.clone(), target)),
+        _ => Err(USAGE.into()),
+    }
 }
 pub fn entry(arguments: &[String]) -> ExitCode {
     match run(arguments.to_vec()) {

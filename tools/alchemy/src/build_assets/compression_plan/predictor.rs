@@ -337,6 +337,11 @@ pub(in crate::build_assets) fn materialize(
     }
     tokens(decoded, plan, None, arena)
 }
+/// The predictor form of one explicit plan, or the plan itself when its codec
+/// has no predictor; the logical controls are checked to be unchanged.
+pub(in crate::build_assets) fn compact_plan(decoded: &[u8], plan: &Value) -> Result<Value, String> {
+    Ok(derive_stream(decoded, plan, &[])?.unwrap_or_else(|| plan.clone()))
+}
 fn derive_stream(decoded: &[u8], plan: &Value, arena: &[u8]) -> Result<Option<Value>, String> {
     let codec = json_string(&plan["codec"], "codec")?;
     if !supported(codec) || !plan["tokens"].is_array() {

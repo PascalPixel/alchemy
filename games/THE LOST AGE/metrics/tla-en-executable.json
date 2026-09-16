@@ -4,10 +4,10 @@
   "target": "tla-en",
   "derivation": "full-c-progress-v1",
   "audit": "incomplete",
-  "total_union_bytes": 896,
+  "total_union_bytes": 500,
   "main": {
     "id": "main",
-    "executable_bytes": 896,
+    "executable_bytes": 500,
     "audit": "incomplete",
     "intervals": [
       {
@@ -15,12 +15,6 @@
         "end": 134296272,
         "kind": "thumb",
         "evidence": "games/THE LOST AGE/SRC/SYSTEM/CONSTANT_ZERO_RESULT.C:byte-identical-claimed-C"
-      },
-      {
-        "start": 136061288,
-        "end": 136061360,
-        "kind": "thumb",
-        "evidence": "games/THE LOST AGE/SRC/SOUND/FADE_MUSIC_PLAYER.C:12-ROM-zero-delta-C"
       },
       {
         "start": 136062528,
@@ -45,24 +39,6 @@
         "end": 136063732,
         "kind": "thumb",
         "evidence": "games/THE LOST AGE/SRC/SOUND/UPDATE_CGB_PAN_ENVELOPE.C:12-ROM-zero-delta-C"
-      },
-      {
-        "start": 136064872,
-        "end": 136064976,
-        "kind": "thumb",
-        "evidence": "games/THE LOST AGE/SRC/SOUND/MUSIC_PLAYER_SET_VOLUME.C:12-ROM-zero-delta-C"
-      },
-      {
-        "start": 136064976,
-        "end": 136065092,
-        "kind": "thumb",
-        "evidence": "games/THE LOST AGE/SRC/SOUND/MUSIC_PLAYER_SET_PITCH.C:12-ROM-zero-delta-C"
-      },
-      {
-        "start": 136065092,
-        "end": 136065196,
-        "kind": "thumb",
-        "evidence": "games/THE LOST AGE/SRC/SOUND/MUSIC_PLAYER_SET_PAN.C:12-ROM-zero-delta-C"
       },
       {
         "start": 136065856,

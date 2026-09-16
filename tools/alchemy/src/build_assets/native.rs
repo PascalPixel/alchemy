@@ -6,7 +6,7 @@ mod identity;
 mod portrait;
 mod review;
 mod review_defaults;
-pub(super) use review::export as export_review;
+pub(super) use review::{export as export_review, export_field as export_field_review};
 mod still;
 mod tile;
 mod tracking;
@@ -15,9 +15,38 @@ use serde_json::json;
 use std::collections::BTreeSet;
 pub(super) use tracking::check as check_tracking;
 
-const INDEX: &str = "games/THE BROKEN SEAL/SOURCE.JSON";
-const COLORS: &str = "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON";
-const RECIPES: &str = "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON";
+use crate::targets::{target_for, DecompTarget, DecompTargetId};
+
+/// Where one game keeps its native source index and the shared documents the
+/// index's private inputs are extracted into.
+pub(in crate::build_assets) struct NativePaths {
+    pub index: String,
+    pub colors: String,
+    pub recipes: String,
+    pub source: &'static str,
+}
+impl NativePaths {
+    pub fn of(target: &DecompTarget) -> Self {
+        let game = target.game_dir();
+        Self {
+            index: format!("{game}/SOURCE.JSON"),
+            colors: format!("{}/GRAPHICS/COMMON/PALETTE.JSON", target.source_dir),
+            recipes: format!("{}/GRAPHICS/COMMON/COMPRESSION.JSON", target.source_dir),
+            source: target.source_dir,
+        }
+    }
+}
+/// The review sheets, atlases and UI frames are still Broken Seal documents.
+pub(in crate::build_assets) fn broken_seal() -> NativePaths {
+    NativePaths::of(&target_for(DecompTargetId::TbsEn))
+}
+/// One game per product: every edition of a game shares its source tree.
+pub(in crate::build_assets) fn games() -> [DecompTarget; 2] {
+    [
+        target_for(DecompTargetId::TbsEn),
+        target_for(DecompTargetId::TlaEn),
+    ]
+}
 
 fn decode_buffer(input: &Value, rom: &[u8], fallback: usize) -> Result<Vec<u8>, String> {
     let start = address(&input["region_address"])?
@@ -77,6 +106,13 @@ fn decode_buffer(input: &Value, rom: &[u8], fallback: usize) -> Result<Vec<u8>, 
     Ok(decoded)
 }
 
+pub(in crate::build_assets) fn write_source(
+    root: &Path,
+    name: &str,
+    bytes: &[u8],
+) -> Result<(), String> {
+    write(root, name, bytes)
+}
 fn write(root: &Path, name: &str, bytes: &[u8]) -> Result<(), String> {
     let path = root_path(root, name)?;
     fs::create_dir_all(path.parent().ok_or("source has no parent")?).map_err(|e| e.to_string())?;
@@ -141,8 +177,9 @@ pub fn validate(index: &Value) -> Result<(), String> {
     Ok(())
 }
 
-pub fn extract(root: &Path, rom_path: &Path) -> Result<(), String> {
-    let index = json(&root.join(INDEX))?;
+pub fn extract(root: &Path, rom_path: &Path, target: &DecompTarget) -> Result<(), String> {
+    let paths = NativePaths::of(target);
+    let index = json(&root.join(&paths.index))?;
     validate(&index)?;
     let rom = fs::read(rom_path).map_err(|e| e.to_string())?;
     if sha256::hex(&rom) != json_string(&index["reference_sha256"], "reference checksum")? {
@@ -357,7 +394,7 @@ pub fn extract(root: &Path, rom_path: &Path) -> Result<(), String> {
     }
     document(
         root,
-        COLORS,
+        &paths.colors,
         &json!({"format":"bgr555-banks","colors_per_bank":16,"banks":colors,"tables":tables}),
     )?;
     println!(
@@ -368,8 +405,9 @@ pub fn extract(root: &Path, rom_path: &Path) -> Result<(), String> {
 }
 
 /// Regenerate absent private inputs in isolation, preserving existing edits.
-pub fn extract_missing(root: &Path, rom_path: &Path) -> Result<(), String> {
-    let index = json(&root.join(INDEX))?;
+pub fn extract_missing(root: &Path, rom_path: &Path, target: &DecompTarget) -> Result<(), String> {
+    let paths = NativePaths::of(target);
+    let index = json(&root.join(&paths.index))?;
     validate(&index)?;
     let mut missing = std::collections::BTreeSet::new();
     for input in index["private_inputs"]
@@ -386,7 +424,7 @@ pub fn extract_missing(root: &Path, rom_path: &Path) -> Result<(), String> {
     }
     let stage = tempfile::tempdir().map_err(|e| e.to_string())?;
     // Atlas configurations are inputs too, although they are not region plans.
-    for entry in walkdir::WalkDir::new(root.join("games/THE BROKEN SEAL/SRC")) {
+    for entry in walkdir::WalkDir::new(root.join(paths.source)) {
         let entry = entry.map_err(|e| e.to_string())?;
         if entry.file_type().is_file()
             && entry.path().extension().and_then(|e| e.to_str()) == Some("JSON")
@@ -398,7 +436,7 @@ pub fn extract_missing(root: &Path, rom_path: &Path) -> Result<(), String> {
             std::fs::copy(entry.path(), destination).map_err(|e| e.to_string())?;
         }
     }
-    for name in std::iter::once(INDEX).chain(
+    for name in std::iter::once(paths.index.as_str()).chain(
         index["regions"]
             .as_array()
             .ok_or("missing regions")?
@@ -409,7 +447,7 @@ pub fn extract_missing(root: &Path, rom_path: &Path) -> Result<(), String> {
         std::fs::create_dir_all(destination.parent().unwrap()).map_err(|e| e.to_string())?;
         std::fs::copy(root_path(root, name)?, destination).map_err(|e| e.to_string())?;
     }
-    extract(stage.path(), rom_path)?;
+    extract(stage.path(), rom_path, target)?;
     for name in &missing {
         let bytes = std::fs::read(root_path(stage.path(), name)?).map_err(|e| e.to_string())?;
         create_missing(&root_path(root, name)?, &bytes)?;
@@ -441,6 +479,12 @@ fn restoring_missing_inputs_preserves_existing_edits() {
     std::fs::write(&path, b"user edit").unwrap();
     create_missing(&path, b"regenerated").unwrap();
     assert_eq!(std::fs::read(path).unwrap(), b"user edit");
+}
+pub(in crate::build_assets) fn decode_metatile_words(
+    data: &[u8],
+    mode: u8,
+) -> Result<Vec<u8>, String> {
+    decode_metatiles(data, mode)
 }
 fn decode_metatiles(data: &[u8], mode: u8) -> Result<Vec<u8>, String> {
     if data.first() != Some(&mode) || data.len() % 2 != 1 {

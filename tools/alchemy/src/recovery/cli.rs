@@ -3,7 +3,7 @@ use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-const USAGE: &str = "usage: alchemy <extract|inspect|adopt> OWNER [options]\nUse psynergy for portable decompilation and disassembly; alchemy score compiles a project owner.";
+const USAGE: &str = "usage: alchemy <extract|inspect|adopt> OWNER [options] [--target GAME-EDITION]\nextract also accepts a bare overlay (resource_XXX) to write its complete loaded image.\nUse psynergy for portable decompilation and disassembly; alchemy score compiles a project owner.";
 
 struct Options {
     asm: bool,
@@ -13,6 +13,7 @@ struct Options {
     out: Option<PathBuf>,
     path: Option<String>,
     source: Option<PathBuf>,
+    target: crate::targets::DecompTarget,
 }
 
 fn parse(arguments: &[String]) -> Result<Options, String> {
@@ -24,6 +25,7 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
         out: None,
         path: None,
         source: None,
+        target: owners::default_target(),
     };
     let mut iter = arguments.iter();
     while let Some(argument) = iter.next() {
@@ -45,6 +47,9 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
             "--out" => options.out = Some(PathBuf::from(value("--out")?)),
             "--path" => options.path = Some(value("--path")?),
             "--source" => options.source = Some(PathBuf::from(value("--source")?)),
+            "--target" => {
+                options.target = crate::targets::decomp_target(Some(&value("--target")?))?
+            }
             other if other.starts_with("--") => return Err(format!("unknown flag {other}")),
             other => options.positional.push(other.to_string()),
         }
@@ -80,7 +85,27 @@ fn extract(root: &Path, options: &Options) -> Result<(), String> {
     if !parent.starts_with(output_root) {
         return Err("extracted reference bytes must stay under ignored out/".into());
     }
-    let (image, base, mut entry, span) = owners::image_window(root, owner, options.span)?;
+    // A bare overlay identity is complete in the ROM directory: write its whole
+    // loaded image. This establishes no owner boundary; `--span` is refused.
+    if owner.starts_with("resource_") && !owner.contains(':') {
+        if options.span.is_some() {
+            return Err(
+                "a complete overlay image takes no --span; name an owner to bound it".into(),
+            );
+        }
+        let decoded = crate::overlay::rom::canonical_overlay_for(root, options.target, owner)?;
+        let image = crate::compiler::overlay::load(&decoded, 0)?;
+        let base = crate::compiler::overlay::RUNTIME_BASE;
+        write_new(path, &image)?;
+        println!(
+            "extracted {} loaded bytes; base=0x{base:08x} entry=0x{base:08x} target={} overlay={owner}",
+            image.len(),
+            options.target.id
+        );
+        return Ok(());
+    }
+    let (image, base, mut entry, span) =
+        owners::image_window_for(root, options.target, owner, options.span)?;
     let start = (entry - base) as usize;
     let image = if base == crate::compiler::overlay::RESOURCE_BASE {
         entry += crate::compiler::overlay::RUNTIME_BASE - base;
@@ -88,14 +113,18 @@ fn extract(root: &Path, options: &Options) -> Result<(), String> {
     } else {
         image
     };
+    write_new(path, &image[start..start + span as usize])?;
+    println!("extracted {span} loaded bytes; base=0x{entry:08x} entry=0x{entry:08x}");
+    Ok(())
+}
+
+fn write_new(path: &Path, bytes: &[u8]) -> Result<(), String> {
     std::fs::OpenOptions::new()
         .write(true)
         .create_new(true)
         .open(path)
-        .and_then(|mut file| file.write_all(&image[start..start + span as usize]))
-        .map_err(|error| format!("{}: {error}", path.display()))?;
-    println!("extracted {span} loaded bytes; base=0x{entry:08x} entry=0x{entry:08x}");
-    Ok(())
+        .and_then(|mut file| file.write_all(bytes))
+        .map_err(|error| format!("{}: {error}", path.display()))
 }
 
 pub fn entry(arguments: &[String]) -> ExitCode {
@@ -128,7 +157,8 @@ pub fn entry(arguments: &[String]) -> ExitCode {
 /// Native disassembly of the complete bounded owner, with resolved call names.
 fn disasm(root: &Path, options: &Options) -> Result<(), String> {
     let owner = owner_argument(options)?;
-    let (image, base, entry, span) = owners::image_window(root, owner, options.span)?;
+    let (image, base, entry, span) =
+        owners::image_window_for(root, options.target, owner, options.span)?;
     let directory = root.join("out/disassemble");
     std::fs::create_dir_all(&directory).map_err(|e| e.to_string())?;
     let work = tempfile::tempdir_in(directory).map_err(|e| e.to_string())?;
@@ -136,7 +166,7 @@ fn disasm(root: &Path, options: &Options) -> Result<(), String> {
     let start = (entry - base) as usize;
     std::fs::write(&binary, &image[start..start + span as usize]).map_err(|e| e.to_string())?;
     let rows = crate::score::disasm::disassemble(&binary.to_string_lossy(), entry)?;
-    let calls = super::imports::imports(root, owner, Some(span))?;
+    let calls = super::imports::imports_for(root, options.target, owner, Some(span))?;
     for (address, instruction) in rows {
         let annotation = calls
             .iter()
@@ -156,6 +186,13 @@ fn disasm(root: &Path, options: &Options) -> Result<(), String> {
 
 fn adopt_owner(root: &Path, options: &Options) -> Result<(), String> {
     let owner = owner_argument(options)?;
+    if options.target.id != crate::targets::DEFAULT_TARGET {
+        return Err(format!(
+            "adopt writes the {} registers only; --target {} is not adoptable yet",
+            crate::targets::DEFAULT_TARGET,
+            options.target.id
+        ));
+    }
     let request = super::adopt::Request {
         owner,
         span: options.span,
@@ -173,7 +210,7 @@ fn adopt_owner(root: &Path, options: &Options) -> Result<(), String> {
 /// object per line, for the humanizing passes that annotate the units.
 fn imports_owner(root: &Path, options: &Options) -> Result<i32, String> {
     let owner = owner_argument(options)?;
-    for import in super::imports::imports(root, owner, options.span)? {
+    for import in super::imports::imports_for(root, options.target, owner, options.span)? {
         println!(
             "{}",
             serde_json::to_string(&import).map_err(|error| error.to_string())?

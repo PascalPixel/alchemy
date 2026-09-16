@@ -1,0 +1,140 @@
+{
+  "format": 1,
+  "maps": {
+    "26c": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08a7951c",
+        "size": "0x40",
+        "segments": [
+          {
+            "name": "parameters",
+            "address": "0x08a7951c",
+            "end": "0x08a79528",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 64, 64, 3, 0, 0, 0, 2, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "address": "0x08a79528",
+            "end": "0x08a79540",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [0, 4112, 0, 65535], [0, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "address": "0x08a79540",
+            "end": "0x08a7955c",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x40", "0x48", "0x50", "0x34c", "0x0", "0x0", "0x410"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 9,
+        "encoded_size": 8,
+        "tokens": [["l", 3], ["c", 6, 2]],
+        "lookahead": "",
+        "component": "map-metatiles-2x2",
+        "transform_mode": 0,
+        "metatiles": 1,
+        "tilemap_source": "games/THE LOST AGE/SRC/FIELD/COMMON/MAP.BIN",
+        "tilemap_offset": 65536,
+        "tilemap_length": 8
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 4,
+        "encoded_size": 8,
+        "tokens": [["l", 1], ["c", 3, 1]],
+        "lookahead": "0000",
+        "component": "map-descriptors-4byte",
+        "record_size": 4,
+        "records": [[0, 0, 0, 0]]
+      },
+      "grid_source": "games/THE LOST AGE/SRC/FIELD/COMMON/MAP.BIN",
+      "grid_offset": 0,
+      "grid_compression": {
+        "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+        "section": "4fd91a3c4e4f9da8f7b406a850810cafbc4821d28a2982daa8fa2875cc617d58"
+      },
+      "component3": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 16384,
+        "encoded_size": 196,
+        "tokens": [
+          [
+            "g",
+            [
+              ["l"], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1],
+              ["c", 272, 1]
+            ]
+          ],
+          [
+            "g",
+            [
+              ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1],
+              ["c", 272, 1]
+            ]
+          ],
+          [
+            "g",
+            [
+              ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1],
+              ["c", 272, 1]
+            ]
+          ],
+          [
+            "g",
+            [
+              ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1],
+              ["c", 272, 1]
+            ]
+          ],
+          [
+            "g",
+            [
+              ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1],
+              ["c", 272, 1]
+            ]
+          ],
+          [
+            "g",
+            [
+              ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1],
+              ["c", 272, 1]
+            ]
+          ],
+          [
+            "g",
+            [
+              ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1],
+              ["c", 272, 1]
+            ]
+          ],
+          ["g", [["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 63, 1], ["e"]]]
+        ],
+        "lookahead": "00",
+        "tag": 1
+      },
+      "component6": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 13,
+        "encoded_size": 16,
+        "tokens": [["l", 6], ["c", 2, 1], ["l", 1], ["c", 4, 1]],
+        "lookahead": "000000"
+      }
+    }
+  }
+}

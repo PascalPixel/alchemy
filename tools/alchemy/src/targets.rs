@@ -59,15 +59,40 @@ pub struct DecompTarget {
     pub asm_dir: &'static str,
     pub asset_manifest: &'static str,
     pub output_dir: &'static str,
+    /// Fixed `ldr r4, [pc, #0]; bx r4` entry veneers every code overlay of
+    /// this game opens with: six in The Broken Seal, seven in The Lost Age.
+    pub overlay_entry_veneers: usize,
 }
 
-const PRODUCTS: [(CompilerTarget, u64, &str, &str, &str); 2] = [
+impl DecompTarget {
+    /// The game's physical root, `games/THE BROKEN SEAL` or `games/THE LOST AGE`.
+    pub fn game_dir(&self) -> &'static str {
+        self.source_dir
+            .strip_suffix("/SRC")
+            .expect("source_dir ends with /SRC")
+    }
+    /// Retained overlay assembly for one resource-qualified overlay.
+    pub fn overlay_assembly(&self, overlay: &str) -> String {
+        format!("{}/{overlay}_overlay.s", self.overlay_dir())
+    }
+    /// The directory of retained overlay assembly and stream plans.
+    pub fn overlay_dir(&self) -> String {
+        format!("{}/overlays", self.asm_dir)
+    }
+    /// The game's shared `overlay_veneer` macro, included by every overlay.
+    pub fn overlay_macro(&self) -> String {
+        format!("{}/COMMON/OVERLAY.INC", self.source_dir)
+    }
+}
+
+const PRODUCTS: [(CompilerTarget, u64, &str, &str, &str, usize); 2] = [
     (
         CompilerTarget::Tbs,
         0x0080_0000,
         "games/THE BROKEN SEAL/SRC",
         "games/THE BROKEN SEAL/asm",
         "games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE.JSON",
+        6,
     ),
     (
         CompilerTarget::Tla,
@@ -75,6 +100,7 @@ const PRODUCTS: [(CompilerTarget, u64, &str, &str, &str); 2] = [
         "games/THE LOST AGE/SRC",
         "games/THE LOST AGE/asm",
         "games/THE LOST AGE/SRC/SYSTEM/RESOURCE.JSON",
+        7,
     ),
 ];
 pub const DEFAULT_TARGET: DecompTargetId = DecompTargetId::TbsEn;
@@ -100,7 +126,8 @@ pub fn decomp_target(id: Option<&str>) -> Result<DecompTarget, String> {
 pub fn target_for(id: DecompTargetId) -> DecompTarget {
     let index = id as usize;
     let (name, rom, edition_define, output_dir) = TARGETS[index];
-    let (compiler, rom_size, source_dir, asm_dir, asset_manifest) = PRODUCTS[index / 6];
+    let (compiler, rom_size, source_dir, asm_dir, asset_manifest, overlay_entry_veneers) =
+        PRODUCTS[index / 6];
     debug_assert_eq!(name, id.as_str());
     DecompTarget {
         id,
@@ -117,6 +144,7 @@ pub fn target_for(id: DecompTargetId) -> DecompTarget {
         asm_dir,
         asset_manifest,
         output_dir,
+        overlay_entry_veneers,
     }
 }
 #[cfg(test)]
@@ -139,6 +167,10 @@ fn self_test() -> Result<String, String> {
                 .iter()
                 .all(|path| path.starts_with(root))
             || !outputs.insert(target.output_dir)
+            || !target.game_dir().starts_with(root.trim_end_matches('/'))
+            || !target.overlay_macro().starts_with(root)
+            || target.overlay_assembly("resource_649")
+                != format!("{root}asm/overlays/resource_649_overlay.s")
         {
             return Err(format!("{id} does not have isolated relative paths"));
         }
@@ -155,6 +187,17 @@ fn self_test() -> Result<String, String> {
 mod tests {
     use super::*;
 
+    #[test]
+    fn games_name_their_roots_macro_and_entry_veneers() {
+        let tla = target_for(DecompTargetId::TlaEn);
+        assert_eq!(tla.game_dir(), "games/THE LOST AGE");
+        assert_eq!(
+            tla.overlay_macro(),
+            "games/THE LOST AGE/SRC/COMMON/OVERLAY.INC"
+        );
+        assert_eq!(tla.overlay_entry_veneers, 7);
+        assert_eq!(target_for(DEFAULT_TARGET).overlay_entry_veneers, 6);
+    }
     #[test]
     fn registry_covers_isolated_targets() {
         assert_eq!(

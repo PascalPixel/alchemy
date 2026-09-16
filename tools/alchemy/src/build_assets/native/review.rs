@@ -5,20 +5,7 @@ const REVIEW: &str = "games/THE BROKEN SEAL/SRC/GRAPHICS/REVIEW.JSON";
 
 /// Export derived review sheets from private native inputs, without reading scratch or ROM files.
 pub(crate) fn export(root: &Path, output: &Path, update_baseline: bool) -> Result<(), String> {
-    let output = if output.is_absolute() {
-        output.to_path_buf()
-    } else {
-        root.join(output)
-    };
-    if !output.starts_with(root.join("out")) {
-        return Err("review images must remain in the ignored repository out/ directory".into());
-    }
-    if output
-        .components()
-        .any(|part| matches!(part, std::path::Component::ParentDir))
-    {
-        return Err("review output cannot contain parent traversal".into());
-    }
+    let output = review_output(root, output)?;
     let mut plan: Value =
         serde_json::from_slice(&fs::read(root.join(REVIEW)).map_err(|e| e.to_string())?)
             .map_err(|e| e.to_string())?;
@@ -27,9 +14,10 @@ pub(crate) fn export(root: &Path, output: &Path, update_baseline: bool) -> Resul
     }
     let mut source_plan = plan.clone();
     super::review_defaults::expand(root, &mut plan)?;
-    let colors: Value =
-        serde_json::from_slice(&fs::read(root.join(COLORS)).map_err(|e| e.to_string())?)
-            .map_err(|e| e.to_string())?;
+    let colors: Value = serde_json::from_slice(
+        &fs::read(root.join(broken_seal().colors)).map_err(|e| e.to_string())?,
+    )
+    .map_err(|e| e.to_string())?;
     let mut palettes = Vec::new();
     let mut owners = BTreeMap::<String, Value>::new();
     for palette in plan["palettes"]
@@ -217,6 +205,243 @@ pub(crate) fn export(root: &Path, output: &Path, update_baseline: bool) -> Resul
     )
     .map_err(|e| e.to_string())?;
     println!("review images={image_count} baseline=matched source={REVIEW}");
+    Ok(())
+}
+
+/// Review images are disposable audit output under the ignored out/ directory.
+fn review_output(root: &Path, output: &Path) -> Result<PathBuf, String> {
+    ignored_output_path(root, output, "review images")
+}
+
+/// Review images of every field map a game's SOURCE.JSON scenes load: one
+/// composite per container and one image per BG layer, all 8-bit indexed over
+/// the scene's fourteen loaded palettes (`palette * 16 + color`).
+pub(crate) fn export_field(
+    root: &Path,
+    output: &Path,
+    target: &crate::targets::DecompTarget,
+) -> Result<(), String> {
+    use crate::build_assets::derive_index::{render_field, FieldMap};
+    let output = review_output(root, output)?;
+    let paths = NativePaths::of(target);
+    let read = |name: &str| -> Result<Value, String> {
+        serde_json::from_slice(
+            &fs::read(root_path(root, name)?).map_err(|e| format!("{name}: {e}"))?,
+        )
+        .map_err(|e| format!("{name}: {e}"))
+    };
+    let index = read(&paths.index)?;
+    let colors = read(&paths.colors)?;
+    let rows = |key: &str| {
+        index[key]
+            .as_array()
+            .ok_or(format!("{} lacks {key}", paths.index))
+    };
+    let binding = |resource: &str| -> Result<&Value, String> {
+        rows("bindings")?
+            .iter()
+            .find(|row| row["resource"] == resource)
+            .ok_or(format!("resource {resource} has no binding"))
+    };
+    let mut scenes = rows("scenes")?.iter().collect::<Vec<_>>();
+    scenes.sort_by_key(|scene| scene["scene_index"].as_u64());
+    let mut containers = Vec::<(String, Vec<u64>, Value)>::new();
+    for scene in scenes {
+        let loader = &scene["loader"];
+        let container = json_string(&loader["container"], "scene container")?;
+        let index = scene["scene_index"].as_u64().ok_or("scene index")?;
+        match containers.iter_mut().find(|(c, _, _)| c == container) {
+            Some((_, indices, _)) => indices.push(index),
+            None => containers.push((container.to_string(), vec![index], loader.clone())),
+        }
+    }
+    let mut sheets = BTreeMap::<String, Vec<u8>>::new();
+    let mut images = Vec::new();
+    for (container, scene_indices, loader) in &containers {
+        let layout = rows("layouts")?
+            .iter()
+            .find(|row| row["container"] == container.as_str())
+            .ok_or(format!("container {container} has no layout"))?;
+        let name = json_string(&layout["name"], "layout name")?;
+        let document = read(json_string(&layout["source"], "layout source")?)?;
+        let segments = document["maps"][container.as_str()]["header"]["segments"]
+            .as_array()
+            .ok_or(format!("container {container} lacks header segments"))?;
+        let segment = |label: &str| {
+            segments
+                .iter()
+                .find(|s| s["name"] == label)
+                .map(|s| &s["values"])
+                .ok_or(format!("container {container} lacks {label}"))
+        };
+        let parameters = segment("parameters")?
+            .as_array()
+            .ok_or("header parameters")?
+            .iter()
+            .map(|v| u8::try_from(address(v)?).map_err(|_| "header parameter".to_string()))
+            .collect::<Result<Vec<_>, _>>()?;
+        let records = segment("records")?.as_array().ok_or("header records")?;
+        let mut origins = [0usize; 3];
+        for (layer, origin) in origins.iter_mut().enumerate() {
+            *origin = address(records.get(layer).map(|r| &r[0]).ok_or("header records")?)?;
+        }
+        let map_name = json_string(&layout["map"], "layout map")?;
+        let binary = fs::read(root_path(root, map_name)?).map_err(|e| {
+            format!("{map_name}: {e}; restore private inputs with --extract-missing-sources ROM")
+        })?;
+        let span = |offset: &str, length: &str| -> Result<&[u8], String> {
+            let start = address(&layout[offset])?;
+            binary
+                .get(start..start + address(&layout[length])?)
+                .ok_or(format!("{map_name} is shorter than its layout"))
+        };
+        let mut charblocks = Vec::new();
+        let mut charblock_resources = Vec::new();
+        for field in ["vram_charblock1", "vram_charblock2", "vram_charblock3"] {
+            let resource = json_string(&loader[field], "charblock resource")?;
+            let row = binding(resource)?;
+            let sheet = json_string(&row["sources"][0], "charblock sheet")?;
+            if !sheets.contains_key(sheet) {
+                let image = psynergy::assets::image::indexed_png(
+                    &fs::read(root_path(root, sheet)?).map_err(|e| format!("{sheet}: {e}"))?,
+                )
+                .map_err(|e| e.to_string())?;
+                if image.width != 256 {
+                    return Err(format!("{sheet} is not 32 tiles wide"));
+                }
+                let pixels = image
+                    .pixels
+                    .iter()
+                    .map(|&v| {
+                        u8::try_from(v)
+                            .ok()
+                            .filter(|v| *v < 16)
+                            .ok_or("tile exceeds 4bpp")
+                    })
+                    .collect::<Result<Vec<_>, _>>()?;
+                sheets.insert(sheet.to_string(), pixels);
+            }
+            let pixels = &sheets[sheet];
+            let first = address(&row["tile_offset"])?;
+            let mut tiles = Vec::with_capacity(512 * 64);
+            for tile in first..first + 512 {
+                for p in 0..64 {
+                    let at = (tile / 32 * 8 + p / 8) * 256 + tile % 32 * 8 + p % 8;
+                    tiles.push(*pixels.get(at).ok_or(format!("{sheet} lacks tile {tile}"))?);
+                }
+            }
+            charblocks.push(tiles);
+            charblock_resources.push(resource.to_string());
+        }
+        let palette_resource = json_string(&loader["palette"], "palette resource")?;
+        let banks = binding(palette_resource)?["palette_banks"]
+            .as_array()
+            .ok_or(format!("palette {palette_resource} lacks banks"))?;
+        let mut palette = vec![0u8; 768];
+        for (slot, bank) in banks.iter().enumerate() {
+            let values = colors["banks"][address(bank)?]
+                .as_array()
+                .ok_or("palette bank")?;
+            for (color, word) in values.iter().enumerate().take(16) {
+                let word = address(word)?;
+                for (channel, shift) in [0, 5, 10].into_iter().enumerate() {
+                    let c = (word >> shift) & 31;
+                    palette[(slot * 16 + color) * 3 + channel] = ((c << 3) | (c >> 2)) as u8;
+                }
+            }
+        }
+        let field = render_field(&FieldMap {
+            parameters: &parameters,
+            origins,
+            grid: span("grid_offset", "grid_length")?,
+            metatiles: span("metatile_offset", "metatile_length")?,
+            charblocks: [&charblocks[0], &charblocks[1], &charblocks[2]],
+            palettes: banks.len(),
+        })?;
+        let stem = format!("MAP_{name}_{}", container.to_ascii_uppercase());
+        let order = field.order();
+        let describe = |file: String, layers: Vec<usize>, transparent: bool| {
+            json!({"file":file,"scenes":scene_indices,"container":container,"name":name,
+                "size":[field.width,field.height],"palette_resource":palette_resource,
+                "charblock_resources":charblock_resources,"transparent":transparent,
+                "layers":layers.iter().map(|&i| json!({"bg":field.layers[i].bg,"priority":field.layers[i].priority,
+                    "charblock":field.layers[i].charblock,"opaque":field.layers[i].opaque})).collect::<Vec<_>>(),
+                "unresolved_screen_entries":field.unresolved})
+        };
+        images.push((
+            describe(format!("{stem}.PNG"), order, false),
+            field.composite(),
+            palette.clone(),
+        ));
+        for (layer, pixels) in field.layers.iter().enumerate().map(|(i, l)| (i, &l.pixels)) {
+            images.push((
+                describe(
+                    format!("{stem}_BG{}.PNG", field.layers[layer].bg),
+                    vec![layer],
+                    true,
+                ),
+                pixels.clone(),
+                palette.clone(),
+            ));
+        }
+    }
+    images.sort_by(|a, b| a.0["file"].as_str().cmp(&b.0["file"].as_str()));
+    let mut digest = Sha256::new();
+    digest.update(b"ALCHEMY_REVIEW_V1\0");
+    let mut generated = Vec::new();
+    let mut pixel_count = 0;
+    for (entry, pixels, palette) in &images {
+        let name = json_string(&entry["file"], "review filename")?;
+        let (width, height) = (address(&entry["size"][0])?, address(&entry["size"][1])?);
+        let transparent = entry["transparent"] == true;
+        digest_image(
+            &mut digest,
+            name,
+            width,
+            height,
+            pixels,
+            palette,
+            transparent,
+        )?;
+        pixel_count += pixels.len();
+        let mut bytes = Vec::new();
+        {
+            let mut encoder = png::Encoder::new(&mut bytes, width as u32, height as u32);
+            encoder.set_color(png::ColorType::Indexed);
+            encoder.set_depth(png::BitDepth::Eight);
+            encoder.set_palette(palette.clone());
+            if transparent {
+                encoder.set_trns(vec![0]);
+            }
+            encoder
+                .write_header()
+                .map_err(|e| e.to_string())?
+                .write_image_data(pixels)
+                .map_err(|e| e.to_string())?;
+        }
+        generated.push((name.to_string(), bytes));
+    }
+    let baseline = json!({"format":"indexed-rgba-v1","images":images.len(),"pixels":pixel_count,
+        "sha256":format!("{:x}",digest.finalize())});
+    fs::create_dir_all(&output).map_err(|e| e.to_string())?;
+    for (name, bytes) in generated {
+        fs::write(output.join(name), bytes).map_err(|e| e.to_string())?;
+    }
+    let plan = json!({"format":"alchemy-field-review-v1","target":target.id.as_str(),"source":paths.index,
+        "loader":"field map loader: BGCNT priority from header bytes 4..7, charblock base from bytes 7..10; tile resources 1..3 fill charblocks 1..3",
+        "images":images.iter().map(|(entry, _, _)| entry.clone()).collect::<Vec<_>>(),"baseline":baseline});
+    fs::write(
+        output.join("INDEX.JSON"),
+        format!("{}\n", canonical_json(&plan)),
+    )
+    .map_err(|e| e.to_string())?;
+    println!(
+        "review images={} maps={} baseline={} source={}",
+        images.len(),
+        containers.len(),
+        plan["baseline"]["sha256"].as_str().unwrap_or_default(),
+        paths.index
+    );
     Ok(())
 }
 

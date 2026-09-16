@@ -1,0 +1,2999 @@
+{
+  "format": 1,
+  "kind": "record-table",
+  "bias": "0x26c",
+  "radix": 16,
+  "element": "le-u16-array",
+  "index_field": "map_index",
+  "fields": ["container", "palette", "vram_charblock1", "vram_charblock2", "vram_charblock3", "vram_charblock4"],
+  "records": [
+    {
+      "map_index": 0,
+      "container": "26c",
+      "palette": "26d",
+      "vram_charblock1": "26e",
+      "vram_charblock2": "26f",
+      "vram_charblock3": "270",
+      "vram_charblock4": "271"
+    },
+    {
+      "map_index": 1,
+      "container": "26c",
+      "palette": "26d",
+      "vram_charblock1": "26e",
+      "vram_charblock2": "26f",
+      "vram_charblock3": "270",
+      "vram_charblock4": "271"
+    },
+    {
+      "map_index": 2,
+      "container": "272",
+      "palette": "273",
+      "vram_charblock1": "274",
+      "vram_charblock2": "275",
+      "vram_charblock3": "276",
+      "vram_charblock4": "277"
+    },
+    {
+      "map_index": 3,
+      "container": "278",
+      "palette": "279",
+      "vram_charblock1": "27a",
+      "vram_charblock2": "27b",
+      "vram_charblock3": "27c",
+      "vram_charblock4": "27d"
+    },
+    {
+      "map_index": 4,
+      "container": "27e",
+      "palette": "27f",
+      "vram_charblock1": "280",
+      "vram_charblock2": "281",
+      "vram_charblock3": "282",
+      "vram_charblock4": "283"
+    },
+    {
+      "map_index": 5,
+      "container": "284",
+      "palette": "285",
+      "vram_charblock1": "286",
+      "vram_charblock2": "287",
+      "vram_charblock3": "288",
+      "vram_charblock4": "289"
+    },
+    {
+      "map_index": 6,
+      "container": "28a",
+      "palette": "285",
+      "vram_charblock1": "286",
+      "vram_charblock2": "287",
+      "vram_charblock3": "288",
+      "vram_charblock4": "289"
+    },
+    {
+      "map_index": 7,
+      "container": "28b",
+      "palette": "28c",
+      "vram_charblock1": "28d",
+      "vram_charblock2": "28e",
+      "vram_charblock3": "28f",
+      "vram_charblock4": "290"
+    },
+    {
+      "map_index": 8,
+      "container": "291",
+      "palette": "292",
+      "vram_charblock1": "293",
+      "vram_charblock2": "294",
+      "vram_charblock3": "295",
+      "vram_charblock4": "296"
+    },
+    {
+      "map_index": 9,
+      "container": "297",
+      "palette": "298",
+      "vram_charblock1": "299",
+      "vram_charblock2": "29a",
+      "vram_charblock3": "29b",
+      "vram_charblock4": "29c"
+    },
+    {
+      "map_index": 10,
+      "container": "29d",
+      "palette": "298",
+      "vram_charblock1": "299",
+      "vram_charblock2": "29a",
+      "vram_charblock3": "29b",
+      "vram_charblock4": "29c"
+    },
+    {
+      "map_index": 11,
+      "container": "29e",
+      "palette": "29f",
+      "vram_charblock1": "2a0",
+      "vram_charblock2": "2a1",
+      "vram_charblock3": "2a2",
+      "vram_charblock4": "2a3"
+    },
+    {
+      "map_index": 12,
+      "container": "2a4",
+      "palette": "2a5",
+      "vram_charblock1": "2a6",
+      "vram_charblock2": "2a7",
+      "vram_charblock3": "2a8",
+      "vram_charblock4": "2a9"
+    },
+    {
+      "map_index": 13,
+      "container": "2aa",
+      "palette": "2ab",
+      "vram_charblock1": "2ac",
+      "vram_charblock2": "2ad",
+      "vram_charblock3": "2ae",
+      "vram_charblock4": "2af"
+    },
+    {
+      "map_index": 14,
+      "container": "2b0",
+      "palette": "2ab",
+      "vram_charblock1": "2ac",
+      "vram_charblock2": "2ad",
+      "vram_charblock3": "2ae",
+      "vram_charblock4": "2af"
+    },
+    {
+      "map_index": 15,
+      "container": "2b1",
+      "palette": "2ab",
+      "vram_charblock1": "2ac",
+      "vram_charblock2": "2ad",
+      "vram_charblock3": "2ae",
+      "vram_charblock4": "2af"
+    },
+    {
+      "map_index": 16,
+      "container": "2b2",
+      "palette": "2ab",
+      "vram_charblock1": "2ac",
+      "vram_charblock2": "2ad",
+      "vram_charblock3": "2ae",
+      "vram_charblock4": "2af"
+    },
+    {
+      "map_index": 17,
+      "container": "2b3",
+      "palette": "2ab",
+      "vram_charblock1": "2ac",
+      "vram_charblock2": "2ad",
+      "vram_charblock3": "2ae",
+      "vram_charblock4": "2af"
+    },
+    {
+      "map_index": 18,
+      "container": "2b4",
+      "palette": "2ab",
+      "vram_charblock1": "2ac",
+      "vram_charblock2": "2ad",
+      "vram_charblock3": "2ae",
+      "vram_charblock4": "2af"
+    },
+    {
+      "map_index": 19,
+      "container": "2b5",
+      "palette": "2ab",
+      "vram_charblock1": "2ac",
+      "vram_charblock2": "2ad",
+      "vram_charblock3": "2ae",
+      "vram_charblock4": "2af"
+    },
+    {
+      "map_index": 20,
+      "container": "2b6",
+      "palette": "2b7",
+      "vram_charblock1": "299",
+      "vram_charblock2": "2b8",
+      "vram_charblock3": "29b",
+      "vram_charblock4": "29c"
+    },
+    {
+      "map_index": 21,
+      "container": "2b9",
+      "palette": "2ba",
+      "vram_charblock1": "2bb",
+      "vram_charblock2": "2bc",
+      "vram_charblock3": "2bd",
+      "vram_charblock4": "2be"
+    },
+    {
+      "map_index": 22,
+      "container": "2bf",
+      "palette": "2c0",
+      "vram_charblock1": "2c1",
+      "vram_charblock2": "2a7",
+      "vram_charblock3": "2a8",
+      "vram_charblock4": "2a9"
+    },
+    {
+      "map_index": 23,
+      "container": "2c2",
+      "palette": "2c0",
+      "vram_charblock1": "2c1",
+      "vram_charblock2": "2a7",
+      "vram_charblock3": "2a8",
+      "vram_charblock4": "2a9"
+    },
+    {
+      "map_index": 24,
+      "container": "2c3",
+      "palette": "2c0",
+      "vram_charblock1": "2c1",
+      "vram_charblock2": "2a7",
+      "vram_charblock3": "2a8",
+      "vram_charblock4": "2a9"
+    },
+    {
+      "map_index": 25,
+      "container": "2c4",
+      "palette": "2c0",
+      "vram_charblock1": "2c1",
+      "vram_charblock2": "2a7",
+      "vram_charblock3": "2a8",
+      "vram_charblock4": "2a9"
+    },
+    {
+      "map_index": 26,
+      "container": "2c5",
+      "palette": "2c0",
+      "vram_charblock1": "2c1",
+      "vram_charblock2": "2a7",
+      "vram_charblock3": "2a8",
+      "vram_charblock4": "2a9"
+    },
+    {
+      "map_index": 27,
+      "container": "2c6",
+      "palette": "2c0",
+      "vram_charblock1": "2c1",
+      "vram_charblock2": "2a7",
+      "vram_charblock3": "2a8",
+      "vram_charblock4": "2a9"
+    },
+    {
+      "map_index": 28,
+      "container": "2c7",
+      "palette": "2c8",
+      "vram_charblock1": "2c1",
+      "vram_charblock2": "2a7",
+      "vram_charblock3": "2a8",
+      "vram_charblock4": "2a9"
+    },
+    {
+      "map_index": 29,
+      "container": "2c9",
+      "palette": "2c0",
+      "vram_charblock1": "2c1",
+      "vram_charblock2": "2a7",
+      "vram_charblock3": "2a8",
+      "vram_charblock4": "2a9"
+    },
+    {
+      "map_index": 30,
+      "container": "2ca",
+      "palette": "2c0",
+      "vram_charblock1": "2c1",
+      "vram_charblock2": "2a7",
+      "vram_charblock3": "2a8",
+      "vram_charblock4": "2a9"
+    },
+    {
+      "map_index": 31,
+      "container": "2cb",
+      "palette": "2cc",
+      "vram_charblock1": "2cd",
+      "vram_charblock2": "2ce",
+      "vram_charblock3": "2cf",
+      "vram_charblock4": "2d0"
+    },
+    {
+      "map_index": 32,
+      "container": "2d1",
+      "palette": "2d2",
+      "vram_charblock1": "2d3",
+      "vram_charblock2": "2d4",
+      "vram_charblock3": "2d5",
+      "vram_charblock4": "2d6"
+    },
+    {
+      "map_index": 33,
+      "container": "2d7",
+      "palette": "2d8",
+      "vram_charblock1": "2d9",
+      "vram_charblock2": "2da",
+      "vram_charblock3": "2db",
+      "vram_charblock4": "2dc"
+    },
+    {
+      "map_index": 34,
+      "container": "2dd",
+      "palette": "2de",
+      "vram_charblock1": "2df",
+      "vram_charblock2": "2e0",
+      "vram_charblock3": "2e1",
+      "vram_charblock4": "2e2"
+    },
+    {
+      "map_index": 35,
+      "container": "2e3",
+      "palette": "2e4",
+      "vram_charblock1": "2e5",
+      "vram_charblock2": "2e6",
+      "vram_charblock3": "2e7",
+      "vram_charblock4": "2e8"
+    },
+    {
+      "map_index": 36,
+      "container": "2e9",
+      "palette": "2ea",
+      "vram_charblock1": "2eb",
+      "vram_charblock2": "2ec",
+      "vram_charblock3": "2ed",
+      "vram_charblock4": "2ee"
+    },
+    {
+      "map_index": 37,
+      "container": "2ef",
+      "palette": "2f0",
+      "vram_charblock1": "2f1",
+      "vram_charblock2": "2f2",
+      "vram_charblock3": "2f3",
+      "vram_charblock4": "2f4"
+    },
+    {
+      "map_index": 38,
+      "container": "2f5",
+      "palette": "2f6",
+      "vram_charblock1": "2f7",
+      "vram_charblock2": "2f8",
+      "vram_charblock3": "2f9",
+      "vram_charblock4": "2fa"
+    },
+    {
+      "map_index": 39,
+      "container": "2fb",
+      "palette": "2fc",
+      "vram_charblock1": "2fd",
+      "vram_charblock2": "2fe",
+      "vram_charblock3": "2ff",
+      "vram_charblock4": "300"
+    },
+    {
+      "map_index": 40,
+      "container": "301",
+      "palette": "302",
+      "vram_charblock1": "303",
+      "vram_charblock2": "304",
+      "vram_charblock3": "305",
+      "vram_charblock4": "306"
+    },
+    {
+      "map_index": 41,
+      "container": "307",
+      "palette": "308",
+      "vram_charblock1": "309",
+      "vram_charblock2": "30a",
+      "vram_charblock3": "30b",
+      "vram_charblock4": "30c"
+    },
+    {
+      "map_index": 42,
+      "container": "30d",
+      "palette": "30e",
+      "vram_charblock1": "30f",
+      "vram_charblock2": "310",
+      "vram_charblock3": "311",
+      "vram_charblock4": "312"
+    },
+    {
+      "map_index": 43,
+      "container": "313",
+      "palette": "314",
+      "vram_charblock1": "315",
+      "vram_charblock2": "316",
+      "vram_charblock3": "317",
+      "vram_charblock4": "318"
+    },
+    {
+      "map_index": 44,
+      "container": "319",
+      "palette": "31a",
+      "vram_charblock1": "31b",
+      "vram_charblock2": "31c",
+      "vram_charblock3": "31d",
+      "vram_charblock4": "31e"
+    },
+    {
+      "map_index": 45,
+      "container": "31f",
+      "palette": "320",
+      "vram_charblock1": "321",
+      "vram_charblock2": "322",
+      "vram_charblock3": "323",
+      "vram_charblock4": "324"
+    },
+    {
+      "map_index": 46,
+      "container": "325",
+      "palette": "326",
+      "vram_charblock1": "327",
+      "vram_charblock2": "328",
+      "vram_charblock3": "329",
+      "vram_charblock4": "32a"
+    },
+    {
+      "map_index": 47,
+      "container": "32b",
+      "palette": "32c",
+      "vram_charblock1": "327",
+      "vram_charblock2": "328",
+      "vram_charblock3": "329",
+      "vram_charblock4": "32a"
+    },
+    {
+      "map_index": 48,
+      "container": "32d",
+      "palette": "32e",
+      "vram_charblock1": "327",
+      "vram_charblock2": "328",
+      "vram_charblock3": "329",
+      "vram_charblock4": "32a"
+    },
+    {
+      "map_index": 49,
+      "container": "32f",
+      "palette": "330",
+      "vram_charblock1": "331",
+      "vram_charblock2": "332",
+      "vram_charblock3": "333",
+      "vram_charblock4": "334"
+    },
+    {
+      "map_index": 50,
+      "container": "335",
+      "palette": "336",
+      "vram_charblock1": "337",
+      "vram_charblock2": "338",
+      "vram_charblock3": "339",
+      "vram_charblock4": "33a"
+    },
+    {
+      "map_index": 51,
+      "container": "33b",
+      "palette": "33c",
+      "vram_charblock1": "331",
+      "vram_charblock2": "33d",
+      "vram_charblock3": "33e",
+      "vram_charblock4": "334"
+    },
+    {
+      "map_index": 52,
+      "container": "33f",
+      "palette": "340",
+      "vram_charblock1": "341",
+      "vram_charblock2": "342",
+      "vram_charblock3": "343",
+      "vram_charblock4": "344"
+    },
+    {
+      "map_index": 53,
+      "container": "345",
+      "palette": "346",
+      "vram_charblock1": "347",
+      "vram_charblock2": "348",
+      "vram_charblock3": "349",
+      "vram_charblock4": "34a"
+    },
+    {
+      "map_index": 54,
+      "container": "34b",
+      "palette": "34c",
+      "vram_charblock1": "34d",
+      "vram_charblock2": "34e",
+      "vram_charblock3": "34f",
+      "vram_charblock4": "350"
+    },
+    {
+      "map_index": 55,
+      "container": "351",
+      "palette": "352",
+      "vram_charblock1": "331",
+      "vram_charblock2": "33d",
+      "vram_charblock3": "33e",
+      "vram_charblock4": "334"
+    },
+    {
+      "map_index": 56,
+      "container": "353",
+      "palette": "354",
+      "vram_charblock1": "331",
+      "vram_charblock2": "33d",
+      "vram_charblock3": "33e",
+      "vram_charblock4": "334"
+    },
+    {
+      "map_index": 57,
+      "container": "355",
+      "palette": "354",
+      "vram_charblock1": "331",
+      "vram_charblock2": "33d",
+      "vram_charblock3": "33e",
+      "vram_charblock4": "334"
+    },
+    {
+      "map_index": 58,
+      "container": "356",
+      "palette": "357",
+      "vram_charblock1": "2bb",
+      "vram_charblock2": "2bc",
+      "vram_charblock3": "2bd",
+      "vram_charblock4": "2be"
+    },
+    {
+      "map_index": 59,
+      "container": "358",
+      "palette": "359",
+      "vram_charblock1": "2bb",
+      "vram_charblock2": "2bc",
+      "vram_charblock3": "2bd",
+      "vram_charblock4": "2be"
+    },
+    {
+      "map_index": 60,
+      "container": "34b",
+      "palette": "35a",
+      "vram_charblock1": "34d",
+      "vram_charblock2": "34e",
+      "vram_charblock3": "34f",
+      "vram_charblock4": "350"
+    },
+    {
+      "map_index": 61,
+      "container": "35b",
+      "palette": "35c",
+      "vram_charblock1": "347",
+      "vram_charblock2": "348",
+      "vram_charblock3": "349",
+      "vram_charblock4": "34a"
+    },
+    {
+      "map_index": 62,
+      "container": "30d",
+      "palette": "35d",
+      "vram_charblock1": "30f",
+      "vram_charblock2": "310",
+      "vram_charblock3": "311",
+      "vram_charblock4": "312"
+    },
+    {
+      "map_index": 63,
+      "container": "35e",
+      "palette": "35f",
+      "vram_charblock1": "360",
+      "vram_charblock2": "361",
+      "vram_charblock3": "362",
+      "vram_charblock4": "363"
+    },
+    {
+      "map_index": 64,
+      "container": "364",
+      "palette": "35f",
+      "vram_charblock1": "360",
+      "vram_charblock2": "361",
+      "vram_charblock3": "362",
+      "vram_charblock4": "363"
+    },
+    {
+      "map_index": 65,
+      "container": "365",
+      "palette": "35f",
+      "vram_charblock1": "360",
+      "vram_charblock2": "361",
+      "vram_charblock3": "362",
+      "vram_charblock4": "363"
+    },
+    {
+      "map_index": 66,
+      "container": "366",
+      "palette": "35f",
+      "vram_charblock1": "360",
+      "vram_charblock2": "361",
+      "vram_charblock3": "362",
+      "vram_charblock4": "363"
+    },
+    {
+      "map_index": 67,
+      "container": "367",
+      "palette": "35f",
+      "vram_charblock1": "360",
+      "vram_charblock2": "361",
+      "vram_charblock3": "362",
+      "vram_charblock4": "363"
+    },
+    {
+      "map_index": 68,
+      "container": "368",
+      "palette": "35f",
+      "vram_charblock1": "360",
+      "vram_charblock2": "361",
+      "vram_charblock3": "362",
+      "vram_charblock4": "363"
+    },
+    {
+      "map_index": 69,
+      "container": "369",
+      "palette": "35f",
+      "vram_charblock1": "360",
+      "vram_charblock2": "361",
+      "vram_charblock3": "362",
+      "vram_charblock4": "363"
+    },
+    {
+      "map_index": 70,
+      "container": "36a",
+      "palette": "35f",
+      "vram_charblock1": "360",
+      "vram_charblock2": "361",
+      "vram_charblock3": "362",
+      "vram_charblock4": "363"
+    },
+    {
+      "map_index": 71,
+      "container": "36b",
+      "palette": "35f",
+      "vram_charblock1": "360",
+      "vram_charblock2": "361",
+      "vram_charblock3": "362",
+      "vram_charblock4": "363"
+    },
+    {
+      "map_index": 72,
+      "container": "36c",
+      "palette": "35f",
+      "vram_charblock1": "360",
+      "vram_charblock2": "361",
+      "vram_charblock3": "362",
+      "vram_charblock4": "363"
+    },
+    {
+      "map_index": 73,
+      "container": "36d",
+      "palette": "35f",
+      "vram_charblock1": "360",
+      "vram_charblock2": "361",
+      "vram_charblock3": "362",
+      "vram_charblock4": "363"
+    },
+    {
+      "map_index": 74,
+      "container": "36e",
+      "palette": "35f",
+      "vram_charblock1": "360",
+      "vram_charblock2": "361",
+      "vram_charblock3": "362",
+      "vram_charblock4": "363"
+    },
+    {
+      "map_index": 75,
+      "container": "36f",
+      "palette": "370",
+      "vram_charblock1": "371",
+      "vram_charblock2": "361",
+      "vram_charblock3": "362",
+      "vram_charblock4": "363"
+    },
+    {
+      "map_index": 76,
+      "container": "372",
+      "palette": "373",
+      "vram_charblock1": "371",
+      "vram_charblock2": "361",
+      "vram_charblock3": "362",
+      "vram_charblock4": "374"
+    },
+    {
+      "map_index": 77,
+      "container": "375",
+      "palette": "376",
+      "vram_charblock1": "371",
+      "vram_charblock2": "361",
+      "vram_charblock3": "362",
+      "vram_charblock4": "377"
+    },
+    {
+      "map_index": 78,
+      "container": "378",
+      "palette": "379",
+      "vram_charblock1": "37a",
+      "vram_charblock2": "37b",
+      "vram_charblock3": "37c",
+      "vram_charblock4": "37d"
+    },
+    {
+      "map_index": 79,
+      "container": "37e",
+      "palette": "379",
+      "vram_charblock1": "37a",
+      "vram_charblock2": "37b",
+      "vram_charblock3": "37c",
+      "vram_charblock4": "37d"
+    },
+    {
+      "map_index": 80,
+      "container": "37f",
+      "palette": "379",
+      "vram_charblock1": "37a",
+      "vram_charblock2": "37b",
+      "vram_charblock3": "37c",
+      "vram_charblock4": "37d"
+    },
+    {
+      "map_index": 81,
+      "container": "380",
+      "palette": "381",
+      "vram_charblock1": "382",
+      "vram_charblock2": "383",
+      "vram_charblock3": "384",
+      "vram_charblock4": "385"
+    },
+    {
+      "map_index": 82,
+      "container": "386",
+      "palette": "381",
+      "vram_charblock1": "382",
+      "vram_charblock2": "383",
+      "vram_charblock3": "384",
+      "vram_charblock4": "385"
+    },
+    {
+      "map_index": 83,
+      "container": "387",
+      "palette": "381",
+      "vram_charblock1": "382",
+      "vram_charblock2": "383",
+      "vram_charblock3": "384",
+      "vram_charblock4": "385"
+    },
+    {
+      "map_index": 84,
+      "container": "388",
+      "palette": "381",
+      "vram_charblock1": "382",
+      "vram_charblock2": "383",
+      "vram_charblock3": "384",
+      "vram_charblock4": "385"
+    },
+    {
+      "map_index": 85,
+      "container": "389",
+      "palette": "381",
+      "vram_charblock1": "382",
+      "vram_charblock2": "383",
+      "vram_charblock3": "384",
+      "vram_charblock4": "385"
+    },
+    {
+      "map_index": 86,
+      "container": "38a",
+      "palette": "381",
+      "vram_charblock1": "382",
+      "vram_charblock2": "383",
+      "vram_charblock3": "384",
+      "vram_charblock4": "385"
+    },
+    {
+      "map_index": 87,
+      "container": "38b",
+      "palette": "381",
+      "vram_charblock1": "382",
+      "vram_charblock2": "383",
+      "vram_charblock3": "384",
+      "vram_charblock4": "385"
+    },
+    {
+      "map_index": 88,
+      "container": "38c",
+      "palette": "381",
+      "vram_charblock1": "382",
+      "vram_charblock2": "383",
+      "vram_charblock3": "384",
+      "vram_charblock4": "385"
+    },
+    {
+      "map_index": 89,
+      "container": "38d",
+      "palette": "381",
+      "vram_charblock1": "382",
+      "vram_charblock2": "383",
+      "vram_charblock3": "384",
+      "vram_charblock4": "385"
+    },
+    {
+      "map_index": 90,
+      "container": "38e",
+      "palette": "38f",
+      "vram_charblock1": "390",
+      "vram_charblock2": "391",
+      "vram_charblock3": "392",
+      "vram_charblock4": "393"
+    },
+    {
+      "map_index": 91,
+      "container": "394",
+      "palette": "395",
+      "vram_charblock1": "303",
+      "vram_charblock2": "304",
+      "vram_charblock3": "305",
+      "vram_charblock4": "306"
+    },
+    {
+      "map_index": 92,
+      "container": "396",
+      "palette": "397",
+      "vram_charblock1": "309",
+      "vram_charblock2": "30a",
+      "vram_charblock3": "30b",
+      "vram_charblock4": "398"
+    },
+    {
+      "map_index": 93,
+      "container": "399",
+      "palette": "397",
+      "vram_charblock1": "309",
+      "vram_charblock2": "30a",
+      "vram_charblock3": "30b",
+      "vram_charblock4": "398"
+    },
+    {
+      "map_index": 94,
+      "container": "39a",
+      "palette": "39b",
+      "vram_charblock1": "39c",
+      "vram_charblock2": "39d",
+      "vram_charblock3": "39e",
+      "vram_charblock4": "39f"
+    },
+    {
+      "map_index": 95,
+      "container": "3a0",
+      "palette": "3a1",
+      "vram_charblock1": "3a2",
+      "vram_charblock2": "3a3",
+      "vram_charblock3": "3a4",
+      "vram_charblock4": "3a5"
+    },
+    {
+      "map_index": 96,
+      "container": "3a6",
+      "palette": "3a7",
+      "vram_charblock1": "3a8",
+      "vram_charblock2": "3a9",
+      "vram_charblock3": "3aa",
+      "vram_charblock4": "3ab"
+    },
+    {
+      "map_index": 97,
+      "container": "3ac",
+      "palette": "3ad",
+      "vram_charblock1": "3a8",
+      "vram_charblock2": "3a9",
+      "vram_charblock3": "3aa",
+      "vram_charblock4": "3ab"
+    },
+    {
+      "map_index": 98,
+      "container": "3ae",
+      "palette": "3af",
+      "vram_charblock1": "3b0",
+      "vram_charblock2": "3b1",
+      "vram_charblock3": "3b2",
+      "vram_charblock4": "3b3"
+    },
+    {
+      "map_index": 99,
+      "container": "3b4",
+      "palette": "3b5",
+      "vram_charblock1": "3b6",
+      "vram_charblock2": "3b7",
+      "vram_charblock3": "3b8",
+      "vram_charblock4": "3b9"
+    },
+    {
+      "map_index": 100,
+      "container": "3ba",
+      "palette": "3bb",
+      "vram_charblock1": "3bc",
+      "vram_charblock2": "3bd",
+      "vram_charblock3": "3be",
+      "vram_charblock4": "3bf"
+    },
+    {
+      "map_index": 101,
+      "container": "3c0",
+      "palette": "3bb",
+      "vram_charblock1": "3bc",
+      "vram_charblock2": "3bd",
+      "vram_charblock3": "3be",
+      "vram_charblock4": "3bf"
+    },
+    {
+      "map_index": 102,
+      "container": "3c1",
+      "palette": "3c2",
+      "vram_charblock1": "3c3",
+      "vram_charblock2": "3c4",
+      "vram_charblock3": "3c5",
+      "vram_charblock4": "3c6"
+    },
+    {
+      "map_index": 103,
+      "container": "3c7",
+      "palette": "3c8",
+      "vram_charblock1": "3c3",
+      "vram_charblock2": "3c4",
+      "vram_charblock3": "3c5",
+      "vram_charblock4": "3c6"
+    },
+    {
+      "map_index": 104,
+      "container": "3c9",
+      "palette": "3ca",
+      "vram_charblock1": "3cb",
+      "vram_charblock2": "3cc",
+      "vram_charblock3": "3cd",
+      "vram_charblock4": "3ce"
+    },
+    {
+      "map_index": 105,
+      "container": "3cf",
+      "palette": "3d0",
+      "vram_charblock1": "3d1",
+      "vram_charblock2": "3d2",
+      "vram_charblock3": "3d3",
+      "vram_charblock4": "3d4"
+    },
+    {
+      "map_index": 106,
+      "container": "3d5",
+      "palette": "3d6",
+      "vram_charblock1": "3d7",
+      "vram_charblock2": "3d8",
+      "vram_charblock3": "3d9",
+      "vram_charblock4": "3da"
+    },
+    {
+      "map_index": 107,
+      "container": "3db",
+      "palette": "3dc",
+      "vram_charblock1": "3dd",
+      "vram_charblock2": "3de",
+      "vram_charblock3": "3df",
+      "vram_charblock4": "3e0"
+    },
+    {
+      "map_index": 108,
+      "container": "3e1",
+      "palette": "3e2",
+      "vram_charblock1": "3e3",
+      "vram_charblock2": "3e4",
+      "vram_charblock3": "3e5",
+      "vram_charblock4": "3e6"
+    },
+    {
+      "map_index": 109,
+      "container": "3e7",
+      "palette": "3e8",
+      "vram_charblock1": "3b6",
+      "vram_charblock2": "3b7",
+      "vram_charblock3": "3b8",
+      "vram_charblock4": "3b9"
+    },
+    {
+      "map_index": 110,
+      "container": "3e9",
+      "palette": "3ea",
+      "vram_charblock1": "3eb",
+      "vram_charblock2": "3ec",
+      "vram_charblock3": "3ed",
+      "vram_charblock4": "3ee"
+    },
+    {
+      "map_index": 111,
+      "container": "3ef",
+      "palette": "3f0",
+      "vram_charblock1": "3eb",
+      "vram_charblock2": "3ec",
+      "vram_charblock3": "3ed",
+      "vram_charblock4": "3ee"
+    },
+    {
+      "map_index": 112,
+      "container": "3f1",
+      "palette": "3f2",
+      "vram_charblock1": "3eb",
+      "vram_charblock2": "3ec",
+      "vram_charblock3": "3ed",
+      "vram_charblock4": "3ee"
+    },
+    {
+      "map_index": 113,
+      "container": "3f3",
+      "palette": "3f4",
+      "vram_charblock1": "3eb",
+      "vram_charblock2": "3ec",
+      "vram_charblock3": "3ed",
+      "vram_charblock4": "3ee"
+    },
+    {
+      "map_index": 114,
+      "container": "3f5",
+      "palette": "3f6",
+      "vram_charblock1": "3eb",
+      "vram_charblock2": "3ec",
+      "vram_charblock3": "3ed",
+      "vram_charblock4": "3ee"
+    },
+    {
+      "map_index": 115,
+      "container": "3f7",
+      "palette": "3f8",
+      "vram_charblock1": "3eb",
+      "vram_charblock2": "3ec",
+      "vram_charblock3": "3ed",
+      "vram_charblock4": "3ee"
+    },
+    {
+      "map_index": 116,
+      "container": "3f9",
+      "palette": "3fa",
+      "vram_charblock1": "3fb",
+      "vram_charblock2": "3fc",
+      "vram_charblock3": "3fd",
+      "vram_charblock4": "3fe"
+    },
+    {
+      "map_index": 117,
+      "container": "3ff",
+      "palette": "400",
+      "vram_charblock1": "3fb",
+      "vram_charblock2": "3fc",
+      "vram_charblock3": "3fd",
+      "vram_charblock4": "3fe"
+    },
+    {
+      "map_index": 118,
+      "container": "401",
+      "palette": "402",
+      "vram_charblock1": "403",
+      "vram_charblock2": "404",
+      "vram_charblock3": "405",
+      "vram_charblock4": "406"
+    },
+    {
+      "map_index": 119,
+      "container": "407",
+      "palette": "408",
+      "vram_charblock1": "3fb",
+      "vram_charblock2": "3fc",
+      "vram_charblock3": "3fd",
+      "vram_charblock4": "3fe"
+    },
+    {
+      "map_index": 120,
+      "container": "409",
+      "palette": "40a",
+      "vram_charblock1": "40b",
+      "vram_charblock2": "40c",
+      "vram_charblock3": "40d",
+      "vram_charblock4": "40e"
+    },
+    {
+      "map_index": 121,
+      "container": "40f",
+      "palette": "410",
+      "vram_charblock1": "411",
+      "vram_charblock2": "412",
+      "vram_charblock3": "413",
+      "vram_charblock4": "414"
+    },
+    {
+      "map_index": 122,
+      "container": "415",
+      "palette": "410",
+      "vram_charblock1": "411",
+      "vram_charblock2": "412",
+      "vram_charblock3": "413",
+      "vram_charblock4": "414"
+    },
+    {
+      "map_index": 123,
+      "container": "416",
+      "palette": "410",
+      "vram_charblock1": "411",
+      "vram_charblock2": "412",
+      "vram_charblock3": "413",
+      "vram_charblock4": "414"
+    },
+    {
+      "map_index": 124,
+      "container": "417",
+      "palette": "410",
+      "vram_charblock1": "411",
+      "vram_charblock2": "412",
+      "vram_charblock3": "413",
+      "vram_charblock4": "414"
+    },
+    {
+      "map_index": 125,
+      "container": "418",
+      "palette": "410",
+      "vram_charblock1": "411",
+      "vram_charblock2": "412",
+      "vram_charblock3": "413",
+      "vram_charblock4": "414"
+    },
+    {
+      "map_index": 126,
+      "container": "419",
+      "palette": "41a",
+      "vram_charblock1": "41b",
+      "vram_charblock2": "41c",
+      "vram_charblock3": "41d",
+      "vram_charblock4": "41e"
+    },
+    {
+      "map_index": 127,
+      "container": "41f",
+      "palette": "420",
+      "vram_charblock1": "3a2",
+      "vram_charblock2": "3a3",
+      "vram_charblock3": "3a4",
+      "vram_charblock4": "3a5"
+    },
+    {
+      "map_index": 128,
+      "container": "421",
+      "palette": "420",
+      "vram_charblock1": "3a2",
+      "vram_charblock2": "3a3",
+      "vram_charblock3": "3a4",
+      "vram_charblock4": "3a5"
+    },
+    {
+      "map_index": 129,
+      "container": "422",
+      "palette": "423",
+      "vram_charblock1": "424",
+      "vram_charblock2": "425",
+      "vram_charblock3": "426",
+      "vram_charblock4": "427"
+    },
+    {
+      "map_index": 130,
+      "container": "428",
+      "palette": "429",
+      "vram_charblock1": "331",
+      "vram_charblock2": "332",
+      "vram_charblock3": "33e",
+      "vram_charblock4": "334"
+    },
+    {
+      "map_index": 131,
+      "container": "42a",
+      "palette": "42b",
+      "vram_charblock1": "299",
+      "vram_charblock2": "29a",
+      "vram_charblock3": "29b",
+      "vram_charblock4": "29c"
+    },
+    {
+      "map_index": 132,
+      "container": "42c",
+      "palette": "42d",
+      "vram_charblock1": "42e",
+      "vram_charblock2": "42f",
+      "vram_charblock3": "430",
+      "vram_charblock4": "431"
+    },
+    {
+      "map_index": 133,
+      "container": "432",
+      "palette": "433",
+      "vram_charblock1": "331",
+      "vram_charblock2": "332",
+      "vram_charblock3": "333",
+      "vram_charblock4": "334"
+    },
+    {
+      "map_index": 134,
+      "container": "434",
+      "palette": "435",
+      "vram_charblock1": "436",
+      "vram_charblock2": "437",
+      "vram_charblock3": "438",
+      "vram_charblock4": "439"
+    },
+    {
+      "map_index": 135,
+      "container": "43a",
+      "palette": "43b",
+      "vram_charblock1": "30f",
+      "vram_charblock2": "310",
+      "vram_charblock3": "311",
+      "vram_charblock4": "312"
+    },
+    {
+      "map_index": 136,
+      "container": "33f",
+      "palette": "43c",
+      "vram_charblock1": "341",
+      "vram_charblock2": "342",
+      "vram_charblock3": "343",
+      "vram_charblock4": "344"
+    },
+    {
+      "map_index": 137,
+      "container": "43d",
+      "palette": "43e",
+      "vram_charblock1": "43f",
+      "vram_charblock2": "440",
+      "vram_charblock3": "441",
+      "vram_charblock4": "442"
+    },
+    {
+      "map_index": 138,
+      "container": "443",
+      "palette": "444",
+      "vram_charblock1": "445",
+      "vram_charblock2": "446",
+      "vram_charblock3": "447",
+      "vram_charblock4": "448"
+    },
+    {
+      "map_index": 139,
+      "container": "449",
+      "palette": "44a",
+      "vram_charblock1": "44b",
+      "vram_charblock2": "44c",
+      "vram_charblock3": "44d",
+      "vram_charblock4": "44e"
+    },
+    {
+      "map_index": 140,
+      "container": "44f",
+      "palette": "44a",
+      "vram_charblock1": "44b",
+      "vram_charblock2": "44c",
+      "vram_charblock3": "44d",
+      "vram_charblock4": "44e"
+    },
+    {
+      "map_index": 141,
+      "container": "450",
+      "palette": "44a",
+      "vram_charblock1": "44b",
+      "vram_charblock2": "44c",
+      "vram_charblock3": "44d",
+      "vram_charblock4": "44e"
+    },
+    {
+      "map_index": 142,
+      "container": "451",
+      "palette": "44a",
+      "vram_charblock1": "44b",
+      "vram_charblock2": "44c",
+      "vram_charblock3": "44d",
+      "vram_charblock4": "44e"
+    },
+    {
+      "map_index": 143,
+      "container": "452",
+      "palette": "44a",
+      "vram_charblock1": "44b",
+      "vram_charblock2": "44c",
+      "vram_charblock3": "44d",
+      "vram_charblock4": "44e"
+    },
+    {
+      "map_index": 144,
+      "container": "453",
+      "palette": "44a",
+      "vram_charblock1": "44b",
+      "vram_charblock2": "44c",
+      "vram_charblock3": "44d",
+      "vram_charblock4": "44e"
+    },
+    {
+      "map_index": 145,
+      "container": "454",
+      "palette": "455",
+      "vram_charblock1": "44b",
+      "vram_charblock2": "44c",
+      "vram_charblock3": "44d",
+      "vram_charblock4": "44e"
+    },
+    {
+      "map_index": 146,
+      "container": "456",
+      "palette": "455",
+      "vram_charblock1": "44b",
+      "vram_charblock2": "44c",
+      "vram_charblock3": "44d",
+      "vram_charblock4": "44e"
+    },
+    {
+      "map_index": 147,
+      "container": "457",
+      "palette": "455",
+      "vram_charblock1": "44b",
+      "vram_charblock2": "44c",
+      "vram_charblock3": "44d",
+      "vram_charblock4": "44e"
+    },
+    {
+      "map_index": 148,
+      "container": "458",
+      "palette": "459",
+      "vram_charblock1": "45a",
+      "vram_charblock2": "45b",
+      "vram_charblock3": "45c",
+      "vram_charblock4": "45d"
+    },
+    {
+      "map_index": 149,
+      "container": "45e",
+      "palette": "45f",
+      "vram_charblock1": "460",
+      "vram_charblock2": "461",
+      "vram_charblock3": "462",
+      "vram_charblock4": "463"
+    },
+    {
+      "map_index": 150,
+      "container": "464",
+      "palette": "465",
+      "vram_charblock1": "466",
+      "vram_charblock2": "467",
+      "vram_charblock3": "468",
+      "vram_charblock4": "469"
+    },
+    {
+      "map_index": 151,
+      "container": "46a",
+      "palette": "46b",
+      "vram_charblock1": "46c",
+      "vram_charblock2": "46d",
+      "vram_charblock3": "46e",
+      "vram_charblock4": "46f"
+    },
+    {
+      "map_index": 152,
+      "container": "470",
+      "palette": "471",
+      "vram_charblock1": "472",
+      "vram_charblock2": "473",
+      "vram_charblock3": "474",
+      "vram_charblock4": "475"
+    },
+    {
+      "map_index": 153,
+      "container": "476",
+      "palette": "471",
+      "vram_charblock1": "472",
+      "vram_charblock2": "473",
+      "vram_charblock3": "474",
+      "vram_charblock4": "475"
+    },
+    {
+      "map_index": 154,
+      "container": "477",
+      "palette": "478",
+      "vram_charblock1": "479",
+      "vram_charblock2": "47a",
+      "vram_charblock3": "47b",
+      "vram_charblock4": "47c"
+    },
+    {
+      "map_index": 155,
+      "container": "47d",
+      "palette": "478",
+      "vram_charblock1": "479",
+      "vram_charblock2": "47a",
+      "vram_charblock3": "47b",
+      "vram_charblock4": "47c"
+    },
+    {
+      "map_index": 156,
+      "container": "47e",
+      "palette": "478",
+      "vram_charblock1": "479",
+      "vram_charblock2": "47a",
+      "vram_charblock3": "47b",
+      "vram_charblock4": "47c"
+    },
+    {
+      "map_index": 157,
+      "container": "47f",
+      "palette": "478",
+      "vram_charblock1": "479",
+      "vram_charblock2": "47a",
+      "vram_charblock3": "47b",
+      "vram_charblock4": "47c"
+    },
+    {
+      "map_index": 158,
+      "container": "480",
+      "palette": "478",
+      "vram_charblock1": "479",
+      "vram_charblock2": "47a",
+      "vram_charblock3": "47b",
+      "vram_charblock4": "47c"
+    },
+    {
+      "map_index": 159,
+      "container": "481",
+      "palette": "478",
+      "vram_charblock1": "479",
+      "vram_charblock2": "47a",
+      "vram_charblock3": "47b",
+      "vram_charblock4": "47c"
+    },
+    {
+      "map_index": 160,
+      "container": "482",
+      "palette": "38f",
+      "vram_charblock1": "390",
+      "vram_charblock2": "391",
+      "vram_charblock3": "392",
+      "vram_charblock4": "393"
+    },
+    {
+      "map_index": 161,
+      "container": "483",
+      "palette": "478",
+      "vram_charblock1": "479",
+      "vram_charblock2": "47a",
+      "vram_charblock3": "47b",
+      "vram_charblock4": "47c"
+    },
+    {
+      "map_index": 162,
+      "container": "484",
+      "palette": "478",
+      "vram_charblock1": "479",
+      "vram_charblock2": "47a",
+      "vram_charblock3": "47b",
+      "vram_charblock4": "47c"
+    },
+    {
+      "map_index": 163,
+      "container": "485",
+      "palette": "486",
+      "vram_charblock1": "382",
+      "vram_charblock2": "383",
+      "vram_charblock3": "384",
+      "vram_charblock4": "385"
+    },
+    {
+      "map_index": 164,
+      "container": "487",
+      "palette": "488",
+      "vram_charblock1": "489",
+      "vram_charblock2": "48a",
+      "vram_charblock3": "48b",
+      "vram_charblock4": "48c"
+    },
+    {
+      "map_index": 165,
+      "container": "48d",
+      "palette": "48e",
+      "vram_charblock1": "48f",
+      "vram_charblock2": "490",
+      "vram_charblock3": "491",
+      "vram_charblock4": "492"
+    },
+    {
+      "map_index": 166,
+      "container": "493",
+      "palette": "494",
+      "vram_charblock1": "2bb",
+      "vram_charblock2": "2bc",
+      "vram_charblock3": "2bd",
+      "vram_charblock4": "495"
+    },
+    {
+      "map_index": 167,
+      "container": "496",
+      "palette": "497",
+      "vram_charblock1": "2bb",
+      "vram_charblock2": "2bc",
+      "vram_charblock3": "2bd",
+      "vram_charblock4": "498"
+    },
+    {
+      "map_index": 168,
+      "container": "499",
+      "palette": "49a",
+      "vram_charblock1": "37a",
+      "vram_charblock2": "37b",
+      "vram_charblock3": "37c",
+      "vram_charblock4": "37d"
+    },
+    {
+      "map_index": 169,
+      "container": "49b",
+      "palette": "49a",
+      "vram_charblock1": "37a",
+      "vram_charblock2": "37b",
+      "vram_charblock3": "37c",
+      "vram_charblock4": "37d"
+    },
+    {
+      "map_index": 170,
+      "container": "49c",
+      "palette": "49a",
+      "vram_charblock1": "37a",
+      "vram_charblock2": "37b",
+      "vram_charblock3": "37c",
+      "vram_charblock4": "37d"
+    },
+    {
+      "map_index": 171,
+      "container": "49d",
+      "palette": "49e",
+      "vram_charblock1": "49f",
+      "vram_charblock2": "4a0",
+      "vram_charblock3": "4a1",
+      "vram_charblock4": "4a2"
+    },
+    {
+      "map_index": 172,
+      "container": "4a3",
+      "palette": "4a4",
+      "vram_charblock1": "4a5",
+      "vram_charblock2": "4a6",
+      "vram_charblock3": "4a7",
+      "vram_charblock4": "4a8"
+    },
+    {
+      "map_index": 173,
+      "container": "4a9",
+      "palette": "4a4",
+      "vram_charblock1": "4a5",
+      "vram_charblock2": "4a6",
+      "vram_charblock3": "4a7",
+      "vram_charblock4": "4a8"
+    },
+    {
+      "map_index": 174,
+      "container": "4aa",
+      "palette": "4a4",
+      "vram_charblock1": "4a5",
+      "vram_charblock2": "4a6",
+      "vram_charblock3": "4a7",
+      "vram_charblock4": "4a8"
+    },
+    {
+      "map_index": 175,
+      "container": "4ab",
+      "palette": "4a4",
+      "vram_charblock1": "4a5",
+      "vram_charblock2": "4a6",
+      "vram_charblock3": "4a7",
+      "vram_charblock4": "4a8"
+    },
+    {
+      "map_index": 176,
+      "container": "4ac",
+      "palette": "4ad",
+      "vram_charblock1": "489",
+      "vram_charblock2": "48a",
+      "vram_charblock3": "48b",
+      "vram_charblock4": "48c"
+    },
+    {
+      "map_index": 177,
+      "container": "4ae",
+      "palette": "4af",
+      "vram_charblock1": "48f",
+      "vram_charblock2": "490",
+      "vram_charblock3": "491",
+      "vram_charblock4": "492"
+    },
+    {
+      "map_index": 178,
+      "container": "4b0",
+      "palette": "4b1",
+      "vram_charblock1": "4b2",
+      "vram_charblock2": "4b3",
+      "vram_charblock3": "4b4",
+      "vram_charblock4": "4b5"
+    },
+    {
+      "map_index": 179,
+      "container": "4b6",
+      "palette": "4b1",
+      "vram_charblock1": "4b2",
+      "vram_charblock2": "4b3",
+      "vram_charblock3": "4b4",
+      "vram_charblock4": "4b5"
+    },
+    {
+      "map_index": 180,
+      "container": "4b7",
+      "palette": "4b1",
+      "vram_charblock1": "4b2",
+      "vram_charblock2": "4b3",
+      "vram_charblock3": "4b4",
+      "vram_charblock4": "4b5"
+    },
+    {
+      "map_index": 181,
+      "container": "4b8",
+      "palette": "4b1",
+      "vram_charblock1": "4b2",
+      "vram_charblock2": "4b3",
+      "vram_charblock3": "4b4",
+      "vram_charblock4": "4b5"
+    },
+    {
+      "map_index": 182,
+      "container": "4b9",
+      "palette": "4ba",
+      "vram_charblock1": "34d",
+      "vram_charblock2": "34e",
+      "vram_charblock3": "34f",
+      "vram_charblock4": "350"
+    },
+    {
+      "map_index": 183,
+      "container": "4bb",
+      "palette": "4bc",
+      "vram_charblock1": "4bd",
+      "vram_charblock2": "4be",
+      "vram_charblock3": "4bf",
+      "vram_charblock4": "4c0"
+    },
+    {
+      "map_index": 184,
+      "container": "4c1",
+      "palette": "4c2",
+      "vram_charblock1": "4c3",
+      "vram_charblock2": "4c4",
+      "vram_charblock3": "4c5",
+      "vram_charblock4": "4c6"
+    },
+    {
+      "map_index": 185,
+      "container": "4c7",
+      "palette": "41a",
+      "vram_charblock1": "4c8",
+      "vram_charblock2": "4c9",
+      "vram_charblock3": "4ca",
+      "vram_charblock4": "4cb"
+    },
+    {
+      "map_index": 186,
+      "container": "4cc",
+      "palette": "4cd",
+      "vram_charblock1": "2cd",
+      "vram_charblock2": "2ce",
+      "vram_charblock3": "2cf",
+      "vram_charblock4": "2d0"
+    },
+    {
+      "map_index": 187,
+      "container": "4ce",
+      "palette": "4cd",
+      "vram_charblock1": "2cd",
+      "vram_charblock2": "2ce",
+      "vram_charblock3": "2cf",
+      "vram_charblock4": "2d0"
+    },
+    {
+      "map_index": 188,
+      "container": "4cf",
+      "palette": "4cd",
+      "vram_charblock1": "2cd",
+      "vram_charblock2": "2ce",
+      "vram_charblock3": "2cf",
+      "vram_charblock4": "2d0"
+    },
+    {
+      "map_index": 189,
+      "container": "4d0",
+      "palette": "4cd",
+      "vram_charblock1": "2cd",
+      "vram_charblock2": "2ce",
+      "vram_charblock3": "2cf",
+      "vram_charblock4": "2d0"
+    },
+    {
+      "map_index": 190,
+      "container": "2cb",
+      "palette": "4cd",
+      "vram_charblock1": "2cd",
+      "vram_charblock2": "2ce",
+      "vram_charblock3": "2cf",
+      "vram_charblock4": "2d0"
+    },
+    {
+      "map_index": 191,
+      "container": "4d1",
+      "palette": "4cd",
+      "vram_charblock1": "2cd",
+      "vram_charblock2": "2ce",
+      "vram_charblock3": "2cf",
+      "vram_charblock4": "2d0"
+    },
+    {
+      "map_index": 192,
+      "container": "4d2",
+      "palette": "4d3",
+      "vram_charblock1": "2d3",
+      "vram_charblock2": "2d4",
+      "vram_charblock3": "2d5",
+      "vram_charblock4": "2d6"
+    },
+    {
+      "map_index": 193,
+      "container": "2d1",
+      "palette": "4d4",
+      "vram_charblock1": "2d3",
+      "vram_charblock2": "2d4",
+      "vram_charblock3": "2d5",
+      "vram_charblock4": "2d6"
+    },
+    {
+      "map_index": 194,
+      "container": "4c7",
+      "palette": "4d5",
+      "vram_charblock1": "4c8",
+      "vram_charblock2": "4c9",
+      "vram_charblock3": "4ca",
+      "vram_charblock4": "4cb"
+    },
+    {
+      "map_index": 195,
+      "container": "4d6",
+      "palette": "4d7",
+      "vram_charblock1": "341",
+      "vram_charblock2": "342",
+      "vram_charblock3": "343",
+      "vram_charblock4": "344"
+    },
+    {
+      "map_index": 196,
+      "container": "4d8",
+      "palette": "4d9",
+      "vram_charblock1": "4da",
+      "vram_charblock2": "4db",
+      "vram_charblock3": "4dc",
+      "vram_charblock4": "4dd"
+    },
+    {
+      "map_index": 197,
+      "container": "4de",
+      "palette": "4df",
+      "vram_charblock1": "4da",
+      "vram_charblock2": "4db",
+      "vram_charblock3": "4dc",
+      "vram_charblock4": "4dd"
+    },
+    {
+      "map_index": 198,
+      "container": "4e0",
+      "palette": "4e1",
+      "vram_charblock1": "4e2",
+      "vram_charblock2": "4e3",
+      "vram_charblock3": "4e4",
+      "vram_charblock4": "4e5"
+    },
+    {
+      "map_index": 199,
+      "container": "4e6",
+      "palette": "4e7",
+      "vram_charblock1": "4e8",
+      "vram_charblock2": "4e9",
+      "vram_charblock3": "4ea",
+      "vram_charblock4": "4eb"
+    },
+    {
+      "map_index": 200,
+      "container": "4ec",
+      "palette": "4ed",
+      "vram_charblock1": "4ee",
+      "vram_charblock2": "4ef",
+      "vram_charblock3": "4f0",
+      "vram_charblock4": "4f1"
+    },
+    {
+      "map_index": 201,
+      "container": "4f2",
+      "palette": "4f3",
+      "vram_charblock1": "2cd",
+      "vram_charblock2": "2ce",
+      "vram_charblock3": "2cf",
+      "vram_charblock4": "2d0"
+    },
+    {
+      "map_index": 202,
+      "container": "4f4",
+      "palette": "4f5",
+      "vram_charblock1": "2cd",
+      "vram_charblock2": "2ce",
+      "vram_charblock3": "2cf",
+      "vram_charblock4": "2d0"
+    },
+    {
+      "map_index": 203,
+      "container": "4f6",
+      "palette": "4f7",
+      "vram_charblock1": "2cd",
+      "vram_charblock2": "2ce",
+      "vram_charblock3": "2cf",
+      "vram_charblock4": "2d0"
+    },
+    {
+      "map_index": 204,
+      "container": "4f8",
+      "palette": "4f9",
+      "vram_charblock1": "2cd",
+      "vram_charblock2": "2ce",
+      "vram_charblock3": "2cf",
+      "vram_charblock4": "2d0"
+    },
+    {
+      "map_index": 205,
+      "container": "4fa",
+      "palette": "4fb",
+      "vram_charblock1": "2cd",
+      "vram_charblock2": "2ce",
+      "vram_charblock3": "2cf",
+      "vram_charblock4": "2d0"
+    },
+    {
+      "map_index": 206,
+      "container": "4fc",
+      "palette": "4fd",
+      "vram_charblock1": "2d3",
+      "vram_charblock2": "2d4",
+      "vram_charblock3": "4fe",
+      "vram_charblock4": "2d6"
+    },
+    {
+      "map_index": 207,
+      "container": "4ff",
+      "palette": "500",
+      "vram_charblock1": "2d3",
+      "vram_charblock2": "2d4",
+      "vram_charblock3": "4fe",
+      "vram_charblock4": "2d6"
+    },
+    {
+      "map_index": 208,
+      "container": "501",
+      "palette": "502",
+      "vram_charblock1": "503",
+      "vram_charblock2": "504",
+      "vram_charblock3": "505",
+      "vram_charblock4": "506"
+    },
+    {
+      "map_index": 209,
+      "container": "507",
+      "palette": "508",
+      "vram_charblock1": "509",
+      "vram_charblock2": "50a",
+      "vram_charblock3": "50b",
+      "vram_charblock4": "50c"
+    },
+    {
+      "map_index": 210,
+      "container": "50d",
+      "palette": "50e",
+      "vram_charblock1": "3b0",
+      "vram_charblock2": "3b1",
+      "vram_charblock3": "3b2",
+      "vram_charblock4": "3b3"
+    },
+    {
+      "map_index": 211,
+      "container": "50f",
+      "palette": "510",
+      "vram_charblock1": "511",
+      "vram_charblock2": "512",
+      "vram_charblock3": "513",
+      "vram_charblock4": "514"
+    },
+    {
+      "map_index": 212,
+      "container": "515",
+      "palette": "516",
+      "vram_charblock1": "517",
+      "vram_charblock2": "518",
+      "vram_charblock3": "519",
+      "vram_charblock4": "51a"
+    },
+    {
+      "map_index": 213,
+      "container": "51b",
+      "palette": "51c",
+      "vram_charblock1": "51d",
+      "vram_charblock2": "51e",
+      "vram_charblock3": "51f",
+      "vram_charblock4": "520"
+    },
+    {
+      "map_index": 214,
+      "container": "521",
+      "palette": "522",
+      "vram_charblock1": "37a",
+      "vram_charblock2": "37b",
+      "vram_charblock3": "37c",
+      "vram_charblock4": "37d"
+    },
+    {
+      "map_index": 215,
+      "container": "523",
+      "palette": "522",
+      "vram_charblock1": "37a",
+      "vram_charblock2": "37b",
+      "vram_charblock3": "37c",
+      "vram_charblock4": "37d"
+    },
+    {
+      "map_index": 216,
+      "container": "524",
+      "palette": "522",
+      "vram_charblock1": "37a",
+      "vram_charblock2": "37b",
+      "vram_charblock3": "37c",
+      "vram_charblock4": "37d"
+    },
+    {
+      "map_index": 217,
+      "container": "525",
+      "palette": "526",
+      "vram_charblock1": "479",
+      "vram_charblock2": "47a",
+      "vram_charblock3": "47b",
+      "vram_charblock4": "47c"
+    },
+    {
+      "map_index": 218,
+      "container": "527",
+      "palette": "526",
+      "vram_charblock1": "479",
+      "vram_charblock2": "47a",
+      "vram_charblock3": "47b",
+      "vram_charblock4": "47c"
+    },
+    {
+      "map_index": 219,
+      "container": "528",
+      "palette": "526",
+      "vram_charblock1": "479",
+      "vram_charblock2": "47a",
+      "vram_charblock3": "47b",
+      "vram_charblock4": "47c"
+    },
+    {
+      "map_index": 220,
+      "container": "529",
+      "palette": "526",
+      "vram_charblock1": "479",
+      "vram_charblock2": "47a",
+      "vram_charblock3": "47b",
+      "vram_charblock4": "47c"
+    },
+    {
+      "map_index": 221,
+      "container": "52a",
+      "palette": "526",
+      "vram_charblock1": "479",
+      "vram_charblock2": "47a",
+      "vram_charblock3": "47b",
+      "vram_charblock4": "47c"
+    },
+    {
+      "map_index": 222,
+      "container": "52b",
+      "palette": "526",
+      "vram_charblock1": "479",
+      "vram_charblock2": "47a",
+      "vram_charblock3": "47b",
+      "vram_charblock4": "47c"
+    },
+    {
+      "map_index": 223,
+      "container": "52c",
+      "palette": "526",
+      "vram_charblock1": "479",
+      "vram_charblock2": "47a",
+      "vram_charblock3": "47b",
+      "vram_charblock4": "47c"
+    },
+    {
+      "map_index": 224,
+      "container": "52d",
+      "palette": "52e",
+      "vram_charblock1": "382",
+      "vram_charblock2": "383",
+      "vram_charblock3": "384",
+      "vram_charblock4": "385"
+    },
+    {
+      "map_index": 225,
+      "container": "52f",
+      "palette": "530",
+      "vram_charblock1": "4c8",
+      "vram_charblock2": "4c9",
+      "vram_charblock3": "4ca",
+      "vram_charblock4": "531"
+    },
+    {
+      "map_index": 226,
+      "container": "532",
+      "palette": "533",
+      "vram_charblock1": "534",
+      "vram_charblock2": "535",
+      "vram_charblock3": "536",
+      "vram_charblock4": "537"
+    },
+    {
+      "map_index": 227,
+      "container": "538",
+      "palette": "539",
+      "vram_charblock1": "534",
+      "vram_charblock2": "535",
+      "vram_charblock3": "536",
+      "vram_charblock4": "53a"
+    },
+    {
+      "map_index": 228,
+      "container": "53b",
+      "palette": "53c",
+      "vram_charblock1": "53d",
+      "vram_charblock2": "53e",
+      "vram_charblock3": "53f",
+      "vram_charblock4": "540"
+    },
+    {
+      "map_index": 229,
+      "container": "53b",
+      "palette": "541",
+      "vram_charblock1": "53d",
+      "vram_charblock2": "53e",
+      "vram_charblock3": "53f",
+      "vram_charblock4": "540"
+    },
+    {
+      "map_index": 230,
+      "container": "542",
+      "palette": "543",
+      "vram_charblock1": "503",
+      "vram_charblock2": "504",
+      "vram_charblock3": "505",
+      "vram_charblock4": "506"
+    },
+    {
+      "map_index": 231,
+      "container": "544",
+      "palette": "545",
+      "vram_charblock1": "546",
+      "vram_charblock2": "547",
+      "vram_charblock3": "548",
+      "vram_charblock4": "549"
+    },
+    {
+      "map_index": 232,
+      "container": "54a",
+      "palette": "54b",
+      "vram_charblock1": "54c",
+      "vram_charblock2": "54d",
+      "vram_charblock3": "54e",
+      "vram_charblock4": "54f"
+    },
+    {
+      "map_index": 233,
+      "container": "550",
+      "palette": "551",
+      "vram_charblock1": "54c",
+      "vram_charblock2": "54d",
+      "vram_charblock3": "54e",
+      "vram_charblock4": "54f"
+    },
+    {
+      "map_index": 234,
+      "container": "552",
+      "palette": "553",
+      "vram_charblock1": "554",
+      "vram_charblock2": "555",
+      "vram_charblock3": "556",
+      "vram_charblock4": "557"
+    },
+    {
+      "map_index": 235,
+      "container": "552",
+      "palette": "558",
+      "vram_charblock1": "554",
+      "vram_charblock2": "555",
+      "vram_charblock3": "556",
+      "vram_charblock4": "557"
+    },
+    {
+      "map_index": 236,
+      "container": "34b",
+      "palette": "559",
+      "vram_charblock1": "34d",
+      "vram_charblock2": "34e",
+      "vram_charblock3": "34f",
+      "vram_charblock4": "350"
+    },
+    {
+      "map_index": 237,
+      "container": "55a",
+      "palette": "55b",
+      "vram_charblock1": "2cd",
+      "vram_charblock2": "2ce",
+      "vram_charblock3": "55c",
+      "vram_charblock4": "2d0"
+    },
+    {
+      "map_index": 238,
+      "container": "55d",
+      "palette": "55b",
+      "vram_charblock1": "2cd",
+      "vram_charblock2": "2ce",
+      "vram_charblock3": "55c",
+      "vram_charblock4": "2d0"
+    },
+    {
+      "map_index": 239,
+      "container": "55e",
+      "palette": "55b",
+      "vram_charblock1": "2cd",
+      "vram_charblock2": "2ce",
+      "vram_charblock3": "55c",
+      "vram_charblock4": "2d0"
+    },
+    {
+      "map_index": 240,
+      "container": "55f",
+      "palette": "55b",
+      "vram_charblock1": "2cd",
+      "vram_charblock2": "2ce",
+      "vram_charblock3": "55c",
+      "vram_charblock4": "2d0"
+    },
+    {
+      "map_index": 241,
+      "container": "560",
+      "palette": "55b",
+      "vram_charblock1": "2cd",
+      "vram_charblock2": "2ce",
+      "vram_charblock3": "55c",
+      "vram_charblock4": "2d0"
+    },
+    {
+      "map_index": 242,
+      "container": "561",
+      "palette": "55b",
+      "vram_charblock1": "2cd",
+      "vram_charblock2": "2ce",
+      "vram_charblock3": "55c",
+      "vram_charblock4": "2d0"
+    },
+    {
+      "map_index": 243,
+      "container": "562",
+      "palette": "563",
+      "vram_charblock1": "564",
+      "vram_charblock2": "565",
+      "vram_charblock3": "566",
+      "vram_charblock4": "567"
+    },
+    {
+      "map_index": 244,
+      "container": "568",
+      "palette": "563",
+      "vram_charblock1": "564",
+      "vram_charblock2": "565",
+      "vram_charblock3": "566",
+      "vram_charblock4": "567"
+    },
+    {
+      "map_index": 245,
+      "container": "569",
+      "palette": "56a",
+      "vram_charblock1": "56b",
+      "vram_charblock2": "56c",
+      "vram_charblock3": "56d",
+      "vram_charblock4": "56e"
+    },
+    {
+      "map_index": 246,
+      "container": "56f",
+      "palette": "570",
+      "vram_charblock1": "571",
+      "vram_charblock2": "572",
+      "vram_charblock3": "573",
+      "vram_charblock4": "574"
+    },
+    {
+      "map_index": 247,
+      "container": "575",
+      "palette": "576",
+      "vram_charblock1": "577",
+      "vram_charblock2": "578",
+      "vram_charblock3": "579",
+      "vram_charblock4": "57a"
+    },
+    {
+      "map_index": 248,
+      "container": "57b",
+      "palette": "57c",
+      "vram_charblock1": "2bb",
+      "vram_charblock2": "2bc",
+      "vram_charblock3": "2bd",
+      "vram_charblock4": "2be"
+    },
+    {
+      "map_index": 249,
+      "container": "57d",
+      "palette": "38f",
+      "vram_charblock1": "390",
+      "vram_charblock2": "391",
+      "vram_charblock3": "392",
+      "vram_charblock4": "393"
+    },
+    {
+      "map_index": 250,
+      "container": "57e",
+      "palette": "57f",
+      "vram_charblock1": "580",
+      "vram_charblock2": "581",
+      "vram_charblock3": "582",
+      "vram_charblock4": "583"
+    },
+    {
+      "map_index": 251,
+      "container": "584",
+      "palette": "57f",
+      "vram_charblock1": "580",
+      "vram_charblock2": "581",
+      "vram_charblock3": "582",
+      "vram_charblock4": "583"
+    },
+    {
+      "map_index": 252,
+      "container": "585",
+      "palette": "57f",
+      "vram_charblock1": "580",
+      "vram_charblock2": "581",
+      "vram_charblock3": "582",
+      "vram_charblock4": "583"
+    },
+    {
+      "map_index": 253,
+      "container": "586",
+      "palette": "57f",
+      "vram_charblock1": "580",
+      "vram_charblock2": "581",
+      "vram_charblock3": "582",
+      "vram_charblock4": "583"
+    },
+    {
+      "map_index": 254,
+      "container": "587",
+      "palette": "57f",
+      "vram_charblock1": "580",
+      "vram_charblock2": "581",
+      "vram_charblock3": "582",
+      "vram_charblock4": "583"
+    },
+    {
+      "map_index": 255,
+      "container": "588",
+      "palette": "57f",
+      "vram_charblock1": "580",
+      "vram_charblock2": "581",
+      "vram_charblock3": "582",
+      "vram_charblock4": "583"
+    },
+    {
+      "map_index": 256,
+      "container": "589",
+      "palette": "57f",
+      "vram_charblock1": "580",
+      "vram_charblock2": "581",
+      "vram_charblock3": "582",
+      "vram_charblock4": "583"
+    },
+    {
+      "map_index": 257,
+      "container": "58a",
+      "palette": "57f",
+      "vram_charblock1": "580",
+      "vram_charblock2": "581",
+      "vram_charblock3": "582",
+      "vram_charblock4": "583"
+    },
+    {
+      "map_index": 258,
+      "container": "58b",
+      "palette": "57f",
+      "vram_charblock1": "580",
+      "vram_charblock2": "581",
+      "vram_charblock3": "582",
+      "vram_charblock4": "583"
+    },
+    {
+      "map_index": 259,
+      "container": "58c",
+      "palette": "58d",
+      "vram_charblock1": "577",
+      "vram_charblock2": "578",
+      "vram_charblock3": "579",
+      "vram_charblock4": "57a"
+    },
+    {
+      "map_index": 260,
+      "container": "58e",
+      "palette": "58f",
+      "vram_charblock1": "577",
+      "vram_charblock2": "578",
+      "vram_charblock3": "579",
+      "vram_charblock4": "57a"
+    },
+    {
+      "map_index": 261,
+      "container": "590",
+      "palette": "591",
+      "vram_charblock1": "592",
+      "vram_charblock2": "593",
+      "vram_charblock3": "594",
+      "vram_charblock4": "595"
+    },
+    {
+      "map_index": 262,
+      "container": "596",
+      "palette": "597",
+      "vram_charblock1": "598",
+      "vram_charblock2": "599",
+      "vram_charblock3": "59a",
+      "vram_charblock4": "59b"
+    },
+    {
+      "map_index": 263,
+      "container": "59c",
+      "palette": "59d",
+      "vram_charblock1": "4c3",
+      "vram_charblock2": "4c4",
+      "vram_charblock3": "4c5",
+      "vram_charblock4": "4c6"
+    },
+    {
+      "map_index": 264,
+      "container": "59e",
+      "palette": "59f",
+      "vram_charblock1": "5a0",
+      "vram_charblock2": "5a1",
+      "vram_charblock3": "5a2",
+      "vram_charblock4": "5a3"
+    },
+    {
+      "map_index": 265,
+      "container": "5a4",
+      "palette": "5a5",
+      "vram_charblock1": "5a0",
+      "vram_charblock2": "5a1",
+      "vram_charblock3": "5a2",
+      "vram_charblock4": "5a3"
+    },
+    {
+      "map_index": 266,
+      "container": "5a6",
+      "palette": "5a7",
+      "vram_charblock1": "5a0",
+      "vram_charblock2": "5a1",
+      "vram_charblock3": "5a2",
+      "vram_charblock4": "5a3"
+    },
+    {
+      "map_index": 267,
+      "container": "5a8",
+      "palette": "51c",
+      "vram_charblock1": "51d",
+      "vram_charblock2": "51e",
+      "vram_charblock3": "51f",
+      "vram_charblock4": "520"
+    },
+    {
+      "map_index": 268,
+      "container": "30d",
+      "palette": "5a9",
+      "vram_charblock1": "30f",
+      "vram_charblock2": "310",
+      "vram_charblock3": "311",
+      "vram_charblock4": "312"
+    },
+    {
+      "map_index": 269,
+      "container": "34b",
+      "palette": "5aa",
+      "vram_charblock1": "34d",
+      "vram_charblock2": "34e",
+      "vram_charblock3": "34f",
+      "vram_charblock4": "350"
+    },
+    {
+      "map_index": 270,
+      "container": "5ab",
+      "palette": "5ac",
+      "vram_charblock1": "577",
+      "vram_charblock2": "578",
+      "vram_charblock3": "579",
+      "vram_charblock4": "5ad"
+    },
+    {
+      "map_index": 271,
+      "container": "5ae",
+      "palette": "5af",
+      "vram_charblock1": "5b0",
+      "vram_charblock2": "5b1",
+      "vram_charblock3": "5b2",
+      "vram_charblock4": "5b3"
+    },
+    {
+      "map_index": 272,
+      "container": "5b4",
+      "palette": "5af",
+      "vram_charblock1": "5b0",
+      "vram_charblock2": "5b1",
+      "vram_charblock3": "5b2",
+      "vram_charblock4": "5b3"
+    },
+    {
+      "map_index": 273,
+      "container": "5b5",
+      "palette": "5af",
+      "vram_charblock1": "5b0",
+      "vram_charblock2": "5b1",
+      "vram_charblock3": "5b2",
+      "vram_charblock4": "5b3"
+    },
+    {
+      "map_index": 274,
+      "container": "5b6",
+      "palette": "5af",
+      "vram_charblock1": "5b0",
+      "vram_charblock2": "5b1",
+      "vram_charblock3": "5b2",
+      "vram_charblock4": "5b3"
+    },
+    {
+      "map_index": 275,
+      "container": "5b7",
+      "palette": "5b8",
+      "vram_charblock1": "577",
+      "vram_charblock2": "5b9",
+      "vram_charblock3": "579",
+      "vram_charblock4": "5ba"
+    },
+    {
+      "map_index": 276,
+      "container": "5bb",
+      "palette": "5b8",
+      "vram_charblock1": "577",
+      "vram_charblock2": "578",
+      "vram_charblock3": "579",
+      "vram_charblock4": "5bc"
+    },
+    {
+      "map_index": 277,
+      "container": "5bd",
+      "palette": "5be",
+      "vram_charblock1": "5b0",
+      "vram_charblock2": "5bf",
+      "vram_charblock3": "5b2",
+      "vram_charblock4": "5c0"
+    },
+    {
+      "map_index": 278,
+      "container": "5c1",
+      "palette": "5af",
+      "vram_charblock1": "5b0",
+      "vram_charblock2": "5b1",
+      "vram_charblock3": "5b2",
+      "vram_charblock4": "5b3"
+    },
+    {
+      "map_index": 279,
+      "container": "5c2",
+      "palette": "5af",
+      "vram_charblock1": "5b0",
+      "vram_charblock2": "5b1",
+      "vram_charblock3": "5b2",
+      "vram_charblock4": "5b3"
+    },
+    {
+      "map_index": 280,
+      "container": "5c3",
+      "palette": "5af",
+      "vram_charblock1": "5b0",
+      "vram_charblock2": "5b1",
+      "vram_charblock3": "5b2",
+      "vram_charblock4": "5b3"
+    },
+    {
+      "map_index": 281,
+      "container": "5c4",
+      "palette": "5af",
+      "vram_charblock1": "5b0",
+      "vram_charblock2": "5b1",
+      "vram_charblock3": "5b2",
+      "vram_charblock4": "5b3"
+    },
+    {
+      "map_index": 282,
+      "container": "5c5",
+      "palette": "5af",
+      "vram_charblock1": "5b0",
+      "vram_charblock2": "5b1",
+      "vram_charblock3": "5b2",
+      "vram_charblock4": "5b3"
+    },
+    {
+      "map_index": 283,
+      "container": "5c6",
+      "palette": "5af",
+      "vram_charblock1": "5b0",
+      "vram_charblock2": "5b1",
+      "vram_charblock3": "5b2",
+      "vram_charblock4": "5b3"
+    },
+    {
+      "map_index": 284,
+      "container": "5c7",
+      "palette": "5af",
+      "vram_charblock1": "5b0",
+      "vram_charblock2": "5b1",
+      "vram_charblock3": "5b2",
+      "vram_charblock4": "5b3"
+    },
+    {
+      "map_index": 285,
+      "container": "5c8",
+      "palette": "5b8",
+      "vram_charblock1": "577",
+      "vram_charblock2": "578",
+      "vram_charblock3": "579",
+      "vram_charblock4": "5c9"
+    },
+    {
+      "map_index": 286,
+      "container": "5ca",
+      "palette": "5b8",
+      "vram_charblock1": "577",
+      "vram_charblock2": "578",
+      "vram_charblock3": "579",
+      "vram_charblock4": "5c9"
+    },
+    {
+      "map_index": 287,
+      "container": "5cb",
+      "palette": "5b8",
+      "vram_charblock1": "577",
+      "vram_charblock2": "578",
+      "vram_charblock3": "579",
+      "vram_charblock4": "5c9"
+    },
+    {
+      "map_index": 288,
+      "container": "5cc",
+      "palette": "5b8",
+      "vram_charblock1": "577",
+      "vram_charblock2": "578",
+      "vram_charblock3": "579",
+      "vram_charblock4": "5c9"
+    },
+    {
+      "map_index": 289,
+      "container": "5ab",
+      "palette": "5cd",
+      "vram_charblock1": "577",
+      "vram_charblock2": "578",
+      "vram_charblock3": "579",
+      "vram_charblock4": "5ad"
+    },
+    {
+      "map_index": 290,
+      "container": "5ae",
+      "palette": "5ce",
+      "vram_charblock1": "5b0",
+      "vram_charblock2": "5b1",
+      "vram_charblock3": "5b2",
+      "vram_charblock4": "5b3"
+    },
+    {
+      "map_index": 291,
+      "container": "5b4",
+      "palette": "5ce",
+      "vram_charblock1": "5b0",
+      "vram_charblock2": "5b1",
+      "vram_charblock3": "5b2",
+      "vram_charblock4": "5b3"
+    },
+    {
+      "map_index": 292,
+      "container": "5b5",
+      "palette": "5ce",
+      "vram_charblock1": "5b0",
+      "vram_charblock2": "5b1",
+      "vram_charblock3": "5b2",
+      "vram_charblock4": "5b3"
+    },
+    {
+      "map_index": 293,
+      "container": "5b6",
+      "palette": "5ce",
+      "vram_charblock1": "5b0",
+      "vram_charblock2": "5b1",
+      "vram_charblock3": "5b2",
+      "vram_charblock4": "5b3"
+    },
+    {
+      "map_index": 294,
+      "container": "5b7",
+      "palette": "5cf",
+      "vram_charblock1": "577",
+      "vram_charblock2": "578",
+      "vram_charblock3": "579",
+      "vram_charblock4": "5ba"
+    },
+    {
+      "map_index": 295,
+      "container": "5bb",
+      "palette": "5d0",
+      "vram_charblock1": "577",
+      "vram_charblock2": "578",
+      "vram_charblock3": "579",
+      "vram_charblock4": "5bc"
+    },
+    {
+      "map_index": 296,
+      "container": "5bd",
+      "palette": "5d1",
+      "vram_charblock1": "5b0",
+      "vram_charblock2": "5b1",
+      "vram_charblock3": "5b2",
+      "vram_charblock4": "5c0"
+    },
+    {
+      "map_index": 297,
+      "container": "5c1",
+      "palette": "5ce",
+      "vram_charblock1": "5b0",
+      "vram_charblock2": "5b1",
+      "vram_charblock3": "5b2",
+      "vram_charblock4": "5b3"
+    },
+    {
+      "map_index": 298,
+      "container": "5c2",
+      "palette": "5ce",
+      "vram_charblock1": "5b0",
+      "vram_charblock2": "5b1",
+      "vram_charblock3": "5b2",
+      "vram_charblock4": "5b3"
+    },
+    {
+      "map_index": 299,
+      "container": "5c3",
+      "palette": "5ce",
+      "vram_charblock1": "5b0",
+      "vram_charblock2": "5b1",
+      "vram_charblock3": "5b2",
+      "vram_charblock4": "5b3"
+    },
+    {
+      "map_index": 300,
+      "container": "5c4",
+      "palette": "5ce",
+      "vram_charblock1": "5b0",
+      "vram_charblock2": "5b1",
+      "vram_charblock3": "5b2",
+      "vram_charblock4": "5b3"
+    },
+    {
+      "map_index": 301,
+      "container": "5c5",
+      "palette": "5ce",
+      "vram_charblock1": "5b0",
+      "vram_charblock2": "5b1",
+      "vram_charblock3": "5b2",
+      "vram_charblock4": "5b3"
+    },
+    {
+      "map_index": 302,
+      "container": "5c6",
+      "palette": "5ce",
+      "vram_charblock1": "5b0",
+      "vram_charblock2": "5b1",
+      "vram_charblock3": "5b2",
+      "vram_charblock4": "5b3"
+    },
+    {
+      "map_index": 303,
+      "container": "5c7",
+      "palette": "5ce",
+      "vram_charblock1": "5b0",
+      "vram_charblock2": "5b1",
+      "vram_charblock3": "5b2",
+      "vram_charblock4": "5b3"
+    },
+    {
+      "map_index": 304,
+      "container": "5c8",
+      "palette": "5cf",
+      "vram_charblock1": "577",
+      "vram_charblock2": "578",
+      "vram_charblock3": "579",
+      "vram_charblock4": "5c9"
+    },
+    {
+      "map_index": 305,
+      "container": "5ca",
+      "palette": "5cf",
+      "vram_charblock1": "577",
+      "vram_charblock2": "578",
+      "vram_charblock3": "579",
+      "vram_charblock4": "5c9"
+    },
+    {
+      "map_index": 306,
+      "container": "5cb",
+      "palette": "5cf",
+      "vram_charblock1": "577",
+      "vram_charblock2": "578",
+      "vram_charblock3": "579",
+      "vram_charblock4": "5c9"
+    },
+    {
+      "map_index": 307,
+      "container": "5cc",
+      "palette": "5cf",
+      "vram_charblock1": "577",
+      "vram_charblock2": "578",
+      "vram_charblock3": "579",
+      "vram_charblock4": "5c9"
+    },
+    {
+      "map_index": 308,
+      "container": "5d2",
+      "palette": "5d3",
+      "vram_charblock1": "5d4",
+      "vram_charblock2": "5d5",
+      "vram_charblock3": "5d6",
+      "vram_charblock4": "5d7"
+    },
+    {
+      "map_index": 309,
+      "container": "5d8",
+      "palette": "5d9",
+      "vram_charblock1": "5da",
+      "vram_charblock2": "5db",
+      "vram_charblock3": "5dc",
+      "vram_charblock4": "5dd"
+    },
+    {
+      "map_index": 310,
+      "container": "5de",
+      "palette": "5df",
+      "vram_charblock1": "5e0",
+      "vram_charblock2": "5e1",
+      "vram_charblock3": "5e2",
+      "vram_charblock4": "5e3"
+    },
+    {
+      "map_index": 311,
+      "container": "5e4",
+      "palette": "5e5",
+      "vram_charblock1": "5e6",
+      "vram_charblock2": "5e7",
+      "vram_charblock3": "5e8",
+      "vram_charblock4": "5e9"
+    },
+    {
+      "map_index": 312,
+      "container": "5ea",
+      "palette": "5eb",
+      "vram_charblock1": "5da",
+      "vram_charblock2": "5db",
+      "vram_charblock3": "5dc",
+      "vram_charblock4": "5dd"
+    },
+    {
+      "map_index": 313,
+      "container": "5ec",
+      "palette": "5eb",
+      "vram_charblock1": "5da",
+      "vram_charblock2": "5db",
+      "vram_charblock3": "5dc",
+      "vram_charblock4": "5dd"
+    },
+    {
+      "map_index": 314,
+      "container": "5ed",
+      "palette": "5ee",
+      "vram_charblock1": "5ef",
+      "vram_charblock2": "5f0",
+      "vram_charblock3": "5f1",
+      "vram_charblock4": "5f2"
+    },
+    {
+      "map_index": 315,
+      "container": "5f3",
+      "palette": "5f4",
+      "vram_charblock1": "327",
+      "vram_charblock2": "328",
+      "vram_charblock3": "329",
+      "vram_charblock4": "32a"
+    },
+    {
+      "map_index": 316,
+      "container": "5f5",
+      "palette": "5f6",
+      "vram_charblock1": "327",
+      "vram_charblock2": "328",
+      "vram_charblock3": "329",
+      "vram_charblock4": "32a"
+    },
+    {
+      "map_index": 317,
+      "container": "5f7",
+      "palette": "5f8",
+      "vram_charblock1": "2f7",
+      "vram_charblock2": "2f8",
+      "vram_charblock3": "2f9",
+      "vram_charblock4": "2fa"
+    },
+    {
+      "map_index": 318,
+      "container": "5f9",
+      "palette": "5fa",
+      "vram_charblock1": "5fb",
+      "vram_charblock2": "5fc",
+      "vram_charblock3": "5fd",
+      "vram_charblock4": "5fe"
+    },
+    {
+      "map_index": 319,
+      "container": "5ff",
+      "palette": "600",
+      "vram_charblock1": "5da",
+      "vram_charblock2": "5db",
+      "vram_charblock3": "5dc",
+      "vram_charblock4": "5dd"
+    },
+    {
+      "map_index": 320,
+      "container": "601",
+      "palette": "602",
+      "vram_charblock1": "603",
+      "vram_charblock2": "604",
+      "vram_charblock3": "605",
+      "vram_charblock4": "606"
+    },
+    {
+      "map_index": 321,
+      "container": "607",
+      "palette": "608",
+      "vram_charblock1": "609",
+      "vram_charblock2": "60a",
+      "vram_charblock3": "60b",
+      "vram_charblock4": "60c"
+    },
+    {
+      "map_index": 322,
+      "container": "60d",
+      "palette": "60e",
+      "vram_charblock1": "60f",
+      "vram_charblock2": "610",
+      "vram_charblock3": "611",
+      "vram_charblock4": "612"
+    },
+    {
+      "map_index": 323,
+      "container": "613",
+      "palette": "614",
+      "vram_charblock1": "615",
+      "vram_charblock2": "616",
+      "vram_charblock3": "617",
+      "vram_charblock4": "618"
+    },
+    {
+      "map_index": 324,
+      "container": "619",
+      "palette": "61a",
+      "vram_charblock1": "61b",
+      "vram_charblock2": "61c",
+      "vram_charblock3": "61d",
+      "vram_charblock4": "61e"
+    },
+    {
+      "map_index": 325,
+      "container": "61f",
+      "palette": "620",
+      "vram_charblock1": "621",
+      "vram_charblock2": "622",
+      "vram_charblock3": "623",
+      "vram_charblock4": "624"
+    },
+    {
+      "map_index": 326,
+      "container": "625",
+      "palette": "626",
+      "vram_charblock1": "627",
+      "vram_charblock2": "628",
+      "vram_charblock3": "629",
+      "vram_charblock4": "62a"
+    },
+    {
+      "map_index": 327,
+      "container": "62b",
+      "palette": "62c",
+      "vram_charblock1": "62d",
+      "vram_charblock2": "62e",
+      "vram_charblock3": "62f",
+      "vram_charblock4": "630"
+    },
+    {
+      "map_index": 328,
+      "container": "631",
+      "palette": "632",
+      "vram_charblock1": "633",
+      "vram_charblock2": "634",
+      "vram_charblock3": "635",
+      "vram_charblock4": "636"
+    },
+    {
+      "map_index": 329,
+      "container": "637",
+      "palette": "638",
+      "vram_charblock1": "639",
+      "vram_charblock2": "63a",
+      "vram_charblock3": "63b",
+      "vram_charblock4": "63c"
+    },
+    {
+      "map_index": 330,
+      "container": "63d",
+      "palette": "63e",
+      "vram_charblock1": "63f",
+      "vram_charblock2": "640",
+      "vram_charblock3": "641",
+      "vram_charblock4": "642"
+    },
+    {
+      "map_index": 331,
+      "container": "643",
+      "palette": "644",
+      "vram_charblock1": "645",
+      "vram_charblock2": "646",
+      "vram_charblock3": "647",
+      "vram_charblock4": "648"
+    }
+  ]
+}

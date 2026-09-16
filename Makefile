@@ -58,7 +58,7 @@ CANDIDATE_SINGLE_OWNERS := \
 .PHONY: help verify audit reports test lint lint-production lint-all-targets build-tools tool-tests tooling-size tooling-index-check \
 	build-claimed build-asm build-assets build-full build-rom \
 	standard-check compiler-source-check corpus-check core-retained-check \
-	full-rom-check overlay-check declared-tu-check owner-inventory-check strict-tu-check classification-check \
+	full-rom-check tla-assets-check overlay-check declared-tu-check owner-inventory-check strict-tu-check classification-check \
 	candidate-corpus-check source-tracking-check index-sync-check publication-tree-check check-owners progress progress-report progress-check progress-subject \
 	correspondence correspondence-check edition-builds edition-builds-check \
 	coverage coverage-check native-format-check review-images-check clean clean-preview
@@ -77,6 +77,7 @@ help:
 		'make build-rom        rebuild the ROM' \
 		'make build-full       rebuild and compare every owned byte' \
 		'make full-rom-check   prove the complete tbs-en ROM byte-exact' \
+		'make tla-assets-check prove every tla-en asset region byte-exact' \
 		'make overlay-check    audit every exact overlay owner' \
 		'make declared-tu-check prove declared production translation-unit contracts' \
 		'make owner-inventory-check prove registered owner production coverage' \
@@ -117,6 +118,14 @@ full-rom-check: build-full
 	@grep -Fq '"unowned_bytes": 0' $(FULL_REPORT)
 	@grep -Fq '"rom_fallback_bytes": 0' $(FULL_REPORT)
 	@printf 'full ROM contract ok: %s\n' '$(TARGET)'
+
+# The Lost Age has no full ROM contract yet; every asset region its manifest
+# owns is rebuilt from source and compared with the tla-en ROM.
+TLA_ASSETS = out/tla-en/assets
+tla-assets-check: prepare-inputs
+	$(ASSETS) --target tla-en -o $(TLA_ASSETS) roms/tla-en.gba
+	@grep -Fq '"verification": "rom"' $(TLA_ASSETS)/manifest.json
+	@printf 'asset contract ok: tla-en\n'
 
 overlay-check:
 	$(OVERLAY) audit --all
@@ -260,7 +269,7 @@ coverage-check: full-rom-check
 core-retained-check:
 	$(CHECK) retained --check
 
-source-tracking-check:
+source-tracking-check: prepare-inputs
 	$(CHECK) source-tracking
 
 index-sync-check:
@@ -392,7 +401,7 @@ native-format-check:
 review-images-check: source-tracking-check
 	$(ASSETS) --review-images out/tbs-en/graphics-review
 
-verify: toolchain-check native-format-check index-sync-check publication-tree-check source-tracking-check review-images-check corpus-check language-check register-shrink-check lint-production tooling-size tooling-index-check \
+verify: toolchain-check native-format-check index-sync-check publication-tree-check source-tracking-check review-images-check $(if $(wildcard roms/tla-en.gba),tla-assets-check) corpus-check language-check register-shrink-check lint-production tooling-size tooling-index-check \
 	strict-tu-check check-owners core-retained-check coverage-check | $(REPORT_DIR)
 	@tree=$$(git write-tree) || exit; \
 	printf '%s\n' "$$tree" > $(VERIFIED_TREE).tmp; \
@@ -412,10 +421,11 @@ standard-check:
 
 .PHONY: bootstrap compiler-sources compilers toolchain-check verify-clean prepare-inputs
 
+# Every game's registered private inputs are checked by source tracking, so
+# both indexed editions are restored whatever TARGET selects.
 prepare-inputs:
-ifeq ($(TARGET_GAME),tbs)
 	$(ASSETS) --extract-missing-sources roms/tbs-en.gba
-endif
+	$(ASSETS) --extract-missing-sources roms/tla-en.gba --target tla-en
 
 bootstrap:
 	$(COMPILER) bootstrap $(if $(BUNDLE),--from "$(BUNDLE)")

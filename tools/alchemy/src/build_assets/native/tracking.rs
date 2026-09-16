@@ -75,15 +75,17 @@ fn classify(
     Ok(())
 }
 pub(in crate::build_assets) fn check(root: &Path) -> Result<(), String> {
-    let index = if root.join(INDEX).is_file() {
-        Some(json(&root.join(INDEX))?)
-    } else {
-        None
-    };
     let mut private = BTreeSet::new();
     let mut bytes: BTreeMap<String, Vec<u8>> = BTreeMap::new();
     let mut ctx = Context::new(root);
-    if let Some(index) = &index {
+    for game in games() {
+        let paths = NativePaths::of(&game);
+        if !root.join(&paths.index).is_file() {
+            continue;
+        }
+        let index = &json(&root.join(&paths.index))?;
+        let source = paths.source;
+        let colors = paths.colors.as_str();
         validate(index)?;
         let mut spellings = BTreeMap::new();
         for input in index["private_inputs"]
@@ -93,7 +95,7 @@ pub(in crate::build_assets) fn check(root: &Path) -> Result<(), String> {
             let name = json_string(&input["source"], "private input")?;
             let kind = json_string(&input["kind"], "private kind")?;
             let path = Path::new(name);
-            if !name.starts_with("games/THE BROKEN SEAL/SRC/")
+            if !name.starts_with(&format!("{source}/"))
                 || path
                     .components()
                     .any(|c| matches!(c, std::path::Component::ParentDir))
@@ -101,24 +103,21 @@ pub(in crate::build_assets) fn check(root: &Path) -> Result<(), String> {
                 return Err("private native path escapes source tree".into());
             }
             let allowed = match kind {
-                "frame-atlas" => name == "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
-                "portrait-atlas" => {
-                    name == "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG"
+                "frame-atlas" => name == format!("{source}/GRAPHICS/COMMON/TILE_BANK.PNG"),
+                "portrait-atlas" => name == format!("{source}/GRAPHICS/COMMON/PORTRAIT.PNG"),
+                "tile-atlas" => {
+                    name == format!("{source}/GRAPHICS/COMMON/TILE.PNG")
+                        || name == format!("{source}/GRAPHICS/COMMON/TILE_BANK.PNG")
                 }
-                "tile-atlas" => matches!(
-                    name,
-                    "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/TILE.PNG"
-                        | "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/TILE_BANK.PNG"
-                ),
-                "still-atlas" => name == "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/STILL.PNG",
-                "grid" | "metatiles" => name.ends_with(".BIN"),
+                "still-atlas" => name == format!("{source}/GRAPHICS/COMMON/STILL.PNG"),
+                "grid" | "metatiles" | "layer" => name.ends_with(".BIN"),
                 "tiles" => name.ends_with("/CHR.PNG") || name.ends_with("_CHR.PNG"),
                 "sprite" | "sprite-atlas" | "archive-atlas" => {
-                    (name.starts_with("games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_")
-                        || name.starts_with("games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/BATTLE_"))
+                    (name.starts_with(&format!("{source}/GRAPHICS/CHARACTER/CHAR_"))
+                        || name.starts_with(&format!("{source}/GRAPHICS/CHARACTER/BATTLE_")))
                         && name.ends_with(".PNG")
                 }
-                "palette" | "palette-raw" | "palette-buffer" | "palette-table" => name == COLORS,
+                "palette" | "palette-raw" | "palette-buffer" | "palette-table" => name == colors,
                 _ => false,
             };
             if !allowed {

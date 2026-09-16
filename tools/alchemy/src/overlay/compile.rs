@@ -987,6 +987,8 @@ pub fn assemble_overlay_raw(source: &OverlaySource, base: i64) -> Result<Vec<u8>
             "arm-none-eabi-as",
             "-mcpu=arm7tdmi",
             "-mthumb-interwork",
+            "-I",
+            &root().to_string_lossy(),
             "-o",
             &object,
             &assembly,
@@ -1017,6 +1019,22 @@ pub fn assemble_overlay_raw(source: &OverlaySource, base: i64) -> Result<Vec<u8>
     )?;
     fs::read(&binary).map_err(|error| error.to_string())
 }
+#[test]
+fn shared_src_veneer_macro_resolves_from_temporary_assembly() {
+    let source = OverlaySource::text(concat!(
+        ".syntax unified\n.thumb\n",
+        ".include \"games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC\"\n",
+        "overlay_veneer 0x08000000\noverlay_veneer 0x08000001\n"
+    ));
+    assert_eq!(
+        assemble_overlay_raw(&source, 0x02000000).unwrap(),
+        [
+            0x00, 0x4c, 0x20, 0x47, 0x00, 0x00, 0x00, 0x08, 0x00, 0x4c, 0x20, 0x47, 0x01, 0x00,
+            0x00, 0x08
+        ]
+    );
+}
+
 pub fn assemble_overlay(source: &OverlaySource, base: i64) -> Result<Vec<u8>, String> {
     let work = tempdir().map_err(|error| error.to_string())?;
     let mut result = assemble_overlay_raw(source, base)?;

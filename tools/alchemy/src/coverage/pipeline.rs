@@ -495,11 +495,9 @@ fn exact_overlay(
     }
     Ok((owners, spans))
 }
-/// Kinds whose retained bytes count as proven assembly: the register credits
-/// them as library with proof beside the claim. A bare label credits
-/// nothing. Handwritten credit needs the three-part record (no tool emits it,
-/// no library matches, a recognisable hand-coded idiom) that the pool owner
-/// writes into proof; the gate reads the fields, not the argument.
+const OVERLAY_VENEER_MACRO: &str = "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC";
+
+/// Original assembly credit requires evidence and a proof or object.
 fn assembly_credit(entry: &Value) -> bool {
     let provenance = &entry["provenance"];
     matches!(
@@ -599,6 +597,19 @@ fn overlay_assembly_classification(
     let document: Value = serde_json::from_str(&source).map_err(|error| {
         format!("games/THE BROKEN SEAL/semantic/overlay-assembly.json: {error}")
     })?;
+    for row in array(&document, "regions")
+        .iter()
+        .filter(|row| text(&row["provenance"], "credit") == "reconstructed_veneer")
+    {
+        for source in [
+            OVERLAY_VENEER_MACRO.to_string(),
+            text(&row["provenance"], "source"),
+        ] {
+            if tree.read(&source).is_none() {
+                return Err(format!("reconstructed veneer source is missing: {source}"));
+            }
+        }
+    }
     overlay_assembly_classification_document(&document, inventory, executable)
 }
 fn overlay_assembly_classification_document(
@@ -665,7 +676,26 @@ fn overlay_assembly_classification_document(
                 "assembly classification {index} promotes a scene reconstruction without compiler-impossibility proof"
             ));
         }
-        if text(row, "confidence") == "proven" && assembly_credit(row) {
+        if text(&row["provenance"], "credit") == "reconstructed_veneer" {
+            let veneer_spans = mapped(inventory, &overlay)
+                .iter()
+                .filter(|region| region.kind == "veneer" && !region.evidence.trim().is_empty())
+                .map(|region| region.span)
+                .collect::<Vec<_>>();
+            if text(row, "confidence") != "proven"
+                || text(row, "kind") != "veneer"
+                || text(&row["provenance"], "proof") != OVERLAY_VENEER_MACRO
+                || !text(&row["provenance"], "source").starts_with("games/THE BROKEN SEAL/SRC/")
+                || span.start % 4 != 0
+                || span.bytes() % 8 != 0
+                || bytes(&intersect(&[span], &veneer_spans)) != span.bytes()
+            {
+                return Err(format!(
+                    "assembly classification {index} has invalid reconstructed veneer credit"
+                ));
+            }
+            credited.entry(overlay).or_default().push(span);
+        } else if text(row, "confidence") == "proven" && assembly_credit(row) {
             credited.entry(overlay).or_default().push(span);
         } else if text(row, "confidence") == "proven" {
             proven.entry(overlay).or_default().push(span);
@@ -1419,12 +1449,8 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
     let exact_main = exact_main(options.exact, &options.target, &main_exec)?;
     let pairs = overlay_ids(options.exact);
     let (owners, exact_overlay) = exact_overlay(options.exact, &pairs, &overlay_exec)?;
-    // Retained assembly is credited only when proven handwritten or library.
-    // The register credits library kinds with their proof; those proven
-    // spans count as assembly. Everything else the old standard marked is
-    // withdrawn: it returns to Unknown, and its total is published as
-    // withdrawn_assembly_bytes, so no byte leaves the map silently. Overlay
-    // credit is per reviewed range, using the same provenance rule as main.
+    // Overlay linkage also admits Pascal-authorized, audited veneer reconstruction.
+    // Other assembly still needs handwritten/library provenance per range.
     let (withdrawn_main, withdrawn_draft_main, retained_main) =
         main_assembly_classification(options.exact);
     let (withdrawn_overlay, withdrawn_draft_overlay, retained_overlay) =
@@ -1623,7 +1649,7 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
             "draft_source": options.recon.map_or("absent", |tree| tree.id()),
             "draft_sources": (candidate_main_sources + candidate_overlay_sources) as i64,
             "main_draft_census": "games/THE BROKEN SEAL/recon/en/dossiers.json",
-            "proven_assembly_standard": "handwritten-or-library-proven",
+            "proven_assembly_standard": "handwritten-or-library-proven; audited-overlay-veneer-reconstruction",
             "credited_assembly_bytes": bytes(&retained_main) + mapped_bytes(&retained_overlay),
             "withdrawn_assembly_bytes": withdrawn_assembly,
             "main_assembly_classification": "out/tbs-en/full/asm/manifest.json",
@@ -2038,6 +2064,60 @@ mod tests {
             vec![Span::new(0x0200_0120, 0x0200_0140)]
         );
     }
+    #[test]
+    fn reconstructed_veneer_credit_is_restricted_to_audited_linkage() {
+        let mut row = region(
+            "0x02000120",
+            "0x02000140",
+            "proven",
+            json!(["verified fixed linkage"]),
+        );
+        row["kind"] = json!("veneer");
+        row["provenance"] = json!({"credit":"reconstructed_veneer", "proof":OVERLAY_VENEER_MACRO,
+            "source":"games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/IMPORT.INC"});
+        let inventory = BTreeMap::from([(
+            "resource_test".into(),
+            vec![Region {
+                span: Span::new(0x0200_0120, 0x0200_0140),
+                kind: "veneer".into(),
+                evidence: "audited".into(),
+            }],
+        )]);
+        let (_, _, credited) = overlay_assembly_classification_document(
+            &classification(json!([row.clone()])),
+            &inventory,
+            &executable(),
+        )
+        .unwrap();
+        assert_eq!(
+            credited["resource_test"],
+            vec![Span::new(0x0200_0120, 0x0200_0140)]
+        );
+        assert!(!assembly_credit(&row));
+        for (key, value) in [
+            ("kind", json!("structured_scene_module")),
+            ("confidence", json!("strong")),
+            ("end", json!("0x02000148")),
+            ("start", json!("0x02000122")),
+            ("end", json!("0x0200013e")),
+        ] {
+            let mut invalid = row.clone();
+            invalid[key] = value;
+            assert!(overlay_assembly_classification_document(
+                &classification(json!([invalid])),
+                &inventory,
+                &executable()
+            )
+            .is_err());
+        }
+        assert!(overlay_assembly_classification_document(
+            &classification(json!([row])),
+            &no_inventory(),
+            &executable()
+        )
+        .is_err());
+    }
+
     #[test]
     fn overlay_credit_requires_proven_range_and_its_own_provenance() {
         let mut library = region(

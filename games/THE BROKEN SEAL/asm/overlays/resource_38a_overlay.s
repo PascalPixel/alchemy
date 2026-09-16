@@ -1,4 +1,5 @@
 .syntax unified
+.include "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC"
 	.thumb
 	.set sub_02000736, 0x02000736
 	.set sub_02000740, 0x02000740
@@ -56,18 +57,7 @@
 	.set sub_02000dd2, 0x02000dd2
 	.global Overlay_02000000
 Overlay_02000000:
-	.4byte 0x47204c00
-	.4byte 0x02008415
-	.4byte 0x47204c00
-	.4byte 0x02008315
-	.4byte 0x47204c00
-	.4byte 0x02008349
-	.4byte 0x47204c00
-	.4byte 0x02008351
-	.4byte 0x47204c00
-	.4byte 0x020083e5
-	.4byte 0x47204c00
-	.4byte 0x02008345
+.include "games/THE BROKEN SEAL/SRC/FIELD/GOMA_SUIRO/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x16
 	.2byte 0x0000
@@ -101,52 +91,7 @@ AlchemyC_020004d4:
 	.space 0x20
 AlchemyC_020004f4:
 	.space 0x1b8
-	.4byte 0x47204c00
-	.4byte 0x03000380
-	.4byte 0x47204c00
-	.4byte 0x080000c1
-	.4byte 0x47204c00
-	.4byte 0x08000119
-	.4byte 0x47204c00
-	.4byte 0x08000121
-	.4byte 0x47204c00
-	.4byte 0x08009081
-	.4byte 0x47204c00
-	.4byte 0x08009099
-	.4byte 0x47204c00
-	.4byte 0x080090c9
-	.4byte 0x47204c00
-	.4byte 0x080091c1
-	.4byte 0x47204c00
-	.4byte 0x080091e1
-	.4byte 0x47204c00
-	.4byte 0x080091e9
-	.4byte 0x47204c00
-	.4byte 0x080091f1
-	.4byte 0x47204c00
-	.4byte 0x080091f9
-	.4byte 0x47204c00
-	.4byte 0x080770c1
-	.4byte 0x47204c00
-	.4byte 0x080770c9
-	.4byte 0x47204c00
-	.4byte 0x080770d1
-	.4byte 0x47204c00
-	.4byte 0x0808a081
-	.4byte 0x47204c00
-	.4byte 0x0808a091
-	.4byte 0x47204c00
-	.4byte 0x0808a0b9
-	.4byte 0x47204c00
-	.4byte 0x0808a0e9
-	.4byte 0x47204c00
-	.4byte 0x0808a0f1
-	.4byte 0x47204c00
-	.4byte 0x0808a101
-	.4byte 0x47204c00
-	.4byte 0x0808a161
-	.4byte 0x47204c00
-	.4byte 0x080f9011
+.include "games/THE BROKEN SEAL/SRC/FIELD/GOMA_SUIRO/IMPORT.INC"
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c

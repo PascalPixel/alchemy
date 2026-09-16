@@ -1,4 +1,5 @@
 .syntax unified
+.include "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC"
 	.thumb
 	.set sub_020005d4, 0x020005d4
 	.set sub_02000a14, 0x02000a14
@@ -200,18 +201,7 @@
 	.set sub_020013ca, 0x020013ca
 	.global Overlay_02000000
 Overlay_02000000:
-	.4byte 0x47204c00
-	.4byte 0x020083dd
-	.4byte 0x47204c00
-	.4byte 0x02008031
-	.4byte 0x47204c00
-	.4byte 0x0200803d
-	.4byte 0x47204c00
-	.4byte 0x02008045
-	.4byte 0x47204c00
-	.4byte 0x02008065
-	.4byte 0x47204c00
-	.4byte 0x02008039
+.include "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_HEYA/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x8
 AlchemyC_02000038:
@@ -256,68 +246,7 @@ AlchemyC_020008cc:
 	.space 0x50
 AlchemyC_0200091c:
 	.space 0x7c
-	.4byte 0x47204c00
-	.4byte 0x08009081
-	.4byte 0x47204c00
-	.4byte 0x080090c9
-	.4byte 0x47204c00
-	.4byte 0x080090d1
-	.4byte 0x47204c00
-	.4byte 0x08009179
-	.4byte 0x47204c00
-	.4byte 0x080091c1
-	.4byte 0x47204c00
-	.4byte 0x080091e1
-	.4byte 0x47204c00
-	.4byte 0x080770c1
-	.4byte 0x47204c00
-	.4byte 0x080770c9
-	.4byte 0x47204c00
-	.4byte 0x0808a011
-	.4byte 0x47204c00
-	.4byte 0x0808a019
-	.4byte 0x47204c00
-	.4byte 0x0808a021
-	.4byte 0x47204c00
-	.4byte 0x0808a071
-	.4byte 0x47204c00
-	.4byte 0x0808a081
-	.4byte 0x47204c00
-	.4byte 0x0808a091
-	.4byte 0x47204c00
-	.4byte 0x0808a0d1
-	.4byte 0x47204c00
-	.4byte 0x0808a0f1
-	.4byte 0x47204c00
-	.4byte 0x0808a101
-	.4byte 0x47204c00
-	.4byte 0x0808a111
-	.4byte 0x47204c00
-	.4byte 0x0808a129
-	.4byte 0x47204c00
-	.4byte 0x0808a139
-	.4byte 0x47204c00
-	.4byte 0x0808a171
-	.4byte 0x47204c00
-	.4byte 0x0808a179
-	.4byte 0x47204c00
-	.4byte 0x0808a181
-	.4byte 0x47204c00
-	.4byte 0x0808a1b9
-	.4byte 0x47204c00
-	.4byte 0x0808a1e9
-	.4byte 0x47204c00
-	.4byte 0x0808a249
-	.4byte 0x47204c00
-	.4byte 0x0808a361
-	.4byte 0x47204c00
-	.4byte 0x0808a581
-	.4byte 0x47204c00
-	.4byte 0x080b0009
-	.4byte 0x47204c00
-	.4byte 0x080b0011
-	.4byte 0x47204c00
-	.4byte 0x080f9011
+.include "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_HEYA/IMPORT.INC"
 	.4byte 0x00000015
 	.4byte 0x00000009
 	.4byte 0x00010000

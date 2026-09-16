@@ -1,4 +1,5 @@
 .syntax unified
+.include "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC"
 	.thumb
 	.set sub_02002ffc, 0x02002ffc
 	.set sub_02003588, 0x02003588
@@ -1227,19 +1228,7 @@
 	.set sub_02006c26, 0x02006c26
 	.global Overlay_02000000
 Overlay_02000000:
-	.4byte 0x47204c00
-	.4byte 0x020085cd
-	.4byte 0x47204c00
-	.4byte 0x0200805d
-	.4byte 0x47204c00
-	.4byte 0x02008069
-	.4byte 0x47204c00
-	.4byte 0x02008071
-	.4byte 0x47204c00
-	.4byte 0x0200814d
-	.4byte 0x47204c00
-	.2byte 0x8065
-	.2byte 0x0200
+.include "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x2c
 AlchemyC_0200005c:
@@ -2071,142 +2060,7 @@ AlchemyC_020034a8:
 	.space 0x18
 AlchemyC_020034f0:
 	.space 0x30
-	.4byte 0x47204c00
-	.4byte 0x030003e0
-	.4byte 0x47204c00
-	.4byte 0x080000c1
-	.4byte 0x47204c00
-	.4byte 0x080000f9
-	.4byte 0x47204c00
-	.4byte 0x08000101
-	.4byte 0x47204c00
-	.4byte 0x08000119
-	.4byte 0x47204c00
-	.4byte 0x08000121
-	.4byte 0x47204c00
-	.4byte 0x08000141
-	.4byte 0x47204c00
-	.4byte 0x08000151
-	.4byte 0x47204c00
-	.4byte 0x080001c9
-	.4byte 0x47204c00
-	.4byte 0x08009099
-	.4byte 0x47204c00
-	.4byte 0x080090c9
-	.4byte 0x47204c00
-	.4byte 0x08009181
-	.4byte 0x47204c00
-	.4byte 0x080091c1
-	.4byte 0x47204c00
-	.4byte 0x08015011
-	.4byte 0x47204c00
-	.4byte 0x08015019
-	.4byte 0x47204c00
-	.4byte 0x08015079
-	.4byte 0x47204c00
-	.4byte 0x08015211
-	.4byte 0x47204c00
-	.4byte 0x08015229
-	.4byte 0x47204c00
-	.4byte 0x08015231
-	.4byte 0x47204c00
-	.4byte 0x08015239
-	.4byte 0x47204c00
-	.4byte 0x08015251
-	.4byte 0x47204c00
-	.4byte 0x08015401
-	.4byte 0x47204c00
-	.4byte 0x080770c1
-	.4byte 0x47204c00
-	.4byte 0x080770c9
-	.4byte 0x47204c00
-	.4byte 0x080770d1
-	.4byte 0x47204c00
-	.4byte 0x0808a011
-	.4byte 0x47204c00
-	.4byte 0x0808a019
-	.4byte 0x47204c00
-	.4byte 0x0808a021
-	.4byte 0x47204c00
-	.4byte 0x0808a031
-	.4byte 0x47204c00
-	.4byte 0x0808a071
-	.4byte 0x47204c00
-	.4byte 0x0808a081
-	.4byte 0x47204c00
-	.4byte 0x0808a091
-	.4byte 0x47204c00
-	.4byte 0x0808a099
-	.4byte 0x47204c00
-	.4byte 0x0808a0a1
-	.4byte 0x47204c00
-	.4byte 0x0808a0a9
-	.4byte 0x47204c00
-	.4byte 0x0808a0c1
-	.4byte 0x47204c00
-	.4byte 0x0808a0c9
-	.4byte 0x47204c00
-	.4byte 0x0808a0d1
-	.4byte 0x47204c00
-	.4byte 0x0808a0e9
-	.4byte 0x47204c00
-	.4byte 0x0808a0f1
-	.4byte 0x47204c00
-	.4byte 0x0808a101
-	.4byte 0x47204c00
-	.4byte 0x0808a111
-	.4byte 0x47204c00
-	.4byte 0x0808a119
-	.4byte 0x47204c00
-	.4byte 0x0808a129
-	.4byte 0x47204c00
-	.4byte 0x0808a131
-	.4byte 0x47204c00
-	.4byte 0x0808a139
-	.4byte 0x47204c00
-	.4byte 0x0808a149
-	.4byte 0x47204c00
-	.4byte 0x0808a151
-	.4byte 0x47204c00
-	.4byte 0x0808a159
-	.4byte 0x47204c00
-	.4byte 0x0808a171
-	.4byte 0x47204c00
-	.4byte 0x0808a179
-	.4byte 0x47204c00
-	.4byte 0x0808a181
-	.4byte 0x47204c00
-	.4byte 0x0808a1b9
-	.4byte 0x47204c00
-	.4byte 0x0808a1d1
-	.4byte 0x47204c00
-	.4byte 0x0808a1e9
-	.4byte 0x47204c00
-	.4byte 0x0808a1f1
-	.4byte 0x47204c00
-	.4byte 0x0808a209
-	.4byte 0x47204c00
-	.4byte 0x0808a211
-	.4byte 0x47204c00
-	.4byte 0x0808a219
-	.4byte 0x47204c00
-	.4byte 0x0808a221
-	.4byte 0x47204c00
-	.4byte 0x0808a249
-	.4byte 0x47204c00
-	.4byte 0x0808a331
-	.4byte 0x47204c00
-	.4byte 0x0808a349
-	.4byte 0x47204c00
-	.4byte 0x0808a361
-	.4byte 0x47204c00
-	.4byte 0x0808a371
-	.4byte 0x47204c00
-	.4byte 0x080b0011
-	.4byte 0x47204c00
-	.4byte 0x080f9011
-	.4byte 0x47204c00
-	.4byte 0x080f9079
+.include "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/IMPORT.INC"
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000015

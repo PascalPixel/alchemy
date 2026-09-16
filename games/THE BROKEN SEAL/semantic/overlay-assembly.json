@@ -1,6 +1,6 @@
 {
   "format": 1,
-  "comment": "Retained assembly ranges, not proof of original-source language. Credit requires positive evidence of handwritten or third-party assembly; compiler mismatch or non-emission alone is insufficient. Strong entries remain unverified and eligible for ordinary C recovery. Complete owner bounds live in semantic/regions.json.",
+  "comment": "Retained assembly ranges. Handwritten/library credit requires original-source evidence. Pascal-authorized reconstructed_veneer credit applies only to byte-exact fixed overlay linkage inside audited veneer ranges; it makes no original-authorship claim. Other strong entries remain unverified. Complete owner bounds live in semantic/regions.json.",
   "regions": [
     {
       "overlay": "resource_3c8",
@@ -3016,6 +3016,3462 @@
         "Complete 760-byte scene dispatcher through return and trailing literal pool; the previous 720-byte inventory omitted 40 referenced pool bytes. The adjacent owner begins at 0x02000d1c.",
         "The scored ordinary C draft reconstructs all 16 table targets and explicit reference-site call bindings but remains 40 halfwords different. Assembly is the temporary build representation, not a handwritten-assembly or compiler-impossibility classification; no DONE credit is claimed."
       ]
+    },
+    {
+      "overlay": "resource_36f",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/MENU/TITLE/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_36f",
+      "start": "0x02000538",
+      "end": "0x020005f8",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/MENU/TITLE/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_370",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/MENU/CLEAR/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_370",
+      "start": "0x02001324",
+      "end": "0x020014d4",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/MENU/CLEAR/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_371",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_371",
+      "start": "0x02004184",
+      "end": "0x020044ac",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_372",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_372",
+      "start": "0x0200463c",
+      "end": "0x020048bc",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_373",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_373",
+      "start": "0x02005e8c",
+      "end": "0x02006154",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_374",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_374",
+      "start": "0x020025ec",
+      "end": "0x02002854",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_375",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_SUKURETA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_375",
+      "start": "0x02001a4c",
+      "end": "0x02001bdc",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_SUKURETA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_376",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_HEYA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_376",
+      "start": "0x0200114c",
+      "end": "0x020012fc",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_HEYA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_377",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/HAIDIA_BABI/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_377",
+      "start": "0x02001814",
+      "end": "0x02001ab4",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/HAIDIA_BABI/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_378",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_378",
+      "start": "0x02003528",
+      "end": "0x02003740",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_379",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_FUNKA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_379",
+      "start": "0x02000ab8",
+      "end": "0x02000c00",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_FUNKA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_37a",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_NICHIGETSU/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_37a",
+      "start": "0x0200296c",
+      "end": "0x02002afc",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_NICHIGETSU/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_37b",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_SEKIZO/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_37b",
+      "start": "0x020023bc",
+      "end": "0x0200256c",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_SEKIZO/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_37c",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_DOU/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_37c",
+      "start": "0x020000a0",
+      "end": "0x020000c8",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_DOU/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_37d",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_MEIRO/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_37d",
+      "start": "0x020000a0",
+      "end": "0x020000c0",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_MEIRO/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_37e",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_ROKA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_37e",
+      "start": "0x020000a0",
+      "end": "0x020000c0",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_ROKA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_37f",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_37f",
+      "start": "0x02001b24",
+      "end": "0x02001cd4",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_380",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_380",
+      "start": "0x02004864",
+      "end": "0x02004b1c",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_381",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_381",
+      "start": "0x020033e4",
+      "end": "0x0200362c",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_382",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_MURA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_382",
+      "start": "0x02001910",
+      "end": "0x02001ad0",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_MURA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_383",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_383",
+      "start": "0x02004c6c",
+      "end": "0x02004f2c",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_384",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KUUPUAPPU_RUNPA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_384",
+      "start": "0x02000260",
+      "end": "0x020002d0",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KUUPUAPPU_RUNPA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_385",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_MURA_SAI/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_385",
+      "start": "0x02001060",
+      "end": "0x020011b8",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_MURA_SAI/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_386",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA_SAI/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_386",
+      "start": "0x020005dc",
+      "end": "0x020006dc",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA_SAI/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_387",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/GOMA_IRIGUCHI/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_387",
+      "start": "0x0200108c",
+      "end": "0x02001234",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/GOMA_IRIGUCHI/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_388",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/GOMA_IKE/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_388",
+      "start": "0x020000d8",
+      "end": "0x02000108",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/GOMA_IKE/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_389",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/GOMA_HASHIRA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_389",
+      "start": "0x020013a8",
+      "end": "0x02001518",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/GOMA_HASHIRA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_38a",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/GOMA_SUIRO/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_38a",
+      "start": "0x020006b4",
+      "end": "0x02000764",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/GOMA_SUIRO/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_38b",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_MURA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_38b",
+      "start": "0x02001018",
+      "end": "0x020011c0",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_MURA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_38c",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_HEYA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_38c",
+      "start": "0x02000500",
+      "end": "0x02000598",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_HEYA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_38d",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_KYUDEN/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_38d",
+      "start": "0x02002408",
+      "end": "0x020025c0",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_KYUDEN/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_38e",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_NIWA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_38e",
+      "start": "0x02000a4c",
+      "end": "0x02000bd4",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_NIWA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_38f",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MURA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_38f",
+      "start": "0x0200299c",
+      "end": "0x02002bd4",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MURA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_390",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_HEYA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_390",
+      "start": "0x020002b8",
+      "end": "0x02000318",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_HEYA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_391",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_HASHI/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_391",
+      "start": "0x02002b84",
+      "end": "0x02002d2c",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_HASHI/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_392",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_HIROBA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_392",
+      "start": "0x02000d94",
+      "end": "0x02000e8c",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_HIROBA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_393",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KAWA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_393",
+      "start": "0x02000e24",
+      "end": "0x02000ed4",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KAWA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_394",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MAGARI/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_394",
+      "start": "0x02000ffc",
+      "end": "0x0200111c",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MAGARI/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_395",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_395",
+      "start": "0x02001908",
+      "end": "0x02001ab8",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_396",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_396",
+      "start": "0x02001a20",
+      "end": "0x02001c00",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_397",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/TORETO_EDA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_397",
+      "start": "0x02000304",
+      "end": "0x0200035c",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/TORETO_EDA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_398",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_DOU/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_398",
+      "start": "0x02000908",
+      "end": "0x020009b0",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_DOU/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_399",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_399",
+      "start": "0x02002170",
+      "end": "0x020023f0",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_39a",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_39a",
+      "start": "0x02002260",
+      "end": "0x02002418",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_39b",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_39b",
+      "start": "0x020023ec",
+      "end": "0x0200261c",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_39c",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_39c",
+      "start": "0x0200597c",
+      "end": "0x02005c6c",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_39d",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_39d",
+      "start": "0x02003630",
+      "end": "0x02003848",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_39e",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_39e",
+      "start": "0x02004344",
+      "end": "0x02004584",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_39f",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_39f",
+      "start": "0x02002cec",
+      "end": "0x02002ebc",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3a0",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/SHIAN_MURA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3a0",
+      "start": "0x02001338",
+      "end": "0x020014c0",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/SHIAN_MURA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3a1",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/SHIAN_HEYA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3a1",
+      "start": "0x0200061c",
+      "end": "0x020006c4",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/SHIAN_HEYA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3a2",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/YAMA_RAMA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3a2",
+      "start": "0x02001498",
+      "end": "0x02001620",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/YAMA_RAMA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3a3",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_MURA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3a3",
+      "start": "0x02000e20",
+      "end": "0x02000fc8",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_MURA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3a4",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3a4",
+      "start": "0x02003a78",
+      "end": "0x02003d28",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3a5",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3a5",
+      "start": "0x02001c8c",
+      "end": "0x02001e4c",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3a6",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_DOU/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3a6",
+      "start": "0x02001c1c",
+      "end": "0x02001d64",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_DOU/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3a7",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_DOU/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3a7",
+      "start": "0x02001070",
+      "end": "0x02001158",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_DOU/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3a8",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3a8",
+      "start": "0x02003b14",
+      "end": "0x02003d84",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3a9",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KAREI_HEYA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3a9",
+      "start": "0x020003e8",
+      "end": "0x020004a0",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KAREI_HEYA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3aa",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KAREI_KYUDEN/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3aa",
+      "start": "0x02001a34",
+      "end": "0x02001b94",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KAREI_KYUDEN/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3ab",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_MURA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3ab",
+      "start": "0x02001920",
+      "end": "0x02001b38",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_MURA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3ac",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/RUNPA_SUHARA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3ac",
+      "start": "0x02000490",
+      "end": "0x020004f8",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/RUNPA_SUHARA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3ad",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_DOU/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3ad",
+      "start": "0x02001ad4",
+      "end": "0x02001c34",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_DOU/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3ae",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KAREI_TOREBI/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3ae",
+      "start": "0x02001500",
+      "end": "0x020016b8",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KAREI_TOREBI/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3af",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3af",
+      "start": "0x0200425c",
+      "end": "0x02004464",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3b0",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HOBASHIRA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3b0",
+      "start": "0x020011b4",
+      "end": "0x02001314",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HOBASHIRA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3b1",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3b1",
+      "start": "0x02006420",
+      "end": "0x02006668",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3b2",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_SHIMA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3b2",
+      "start": "0x02002fb8",
+      "end": "0x02003120",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_SHIMA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3b3",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3b3",
+      "start": "0x02002a34",
+      "end": "0x02002bbc",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3b4",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_ASHIBA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3b4",
+      "start": "0x02002468",
+      "end": "0x02002608",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_ASHIBA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3b5",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_MACHI/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3b5",
+      "start": "0x02000cfc",
+      "end": "0x02000e6c",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_MACHI/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3b6",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_HEYA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3b6",
+      "start": "0x02000998",
+      "end": "0x02000a90",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_HEYA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3b7",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3b7",
+      "start": "0x02001864",
+      "end": "0x020019cc",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3b8",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_KYUDEN/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3b8",
+      "start": "0x02004340",
+      "end": "0x02004550",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_KYUDEN/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3b9",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KORASHIAMU_IRIGUCHI/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3b9",
+      "start": "0x02002b8c",
+      "end": "0x02002d3c",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KORASHIAMU_IRIGUCHI/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3ba",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3ba",
+      "start": "0x02003b08",
+      "end": "0x02003e08",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3bb",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3bb",
+      "start": "0x02003da0",
+      "end": "0x020040c0",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3bc",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3bc",
+      "start": "0x02004840",
+      "end": "0x02004bb0",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3bd",
+      "start": "0x02000000",
+      "end": "0x02000020",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3bd",
+      "start": "0x02003c00",
+      "end": "0x02003e78",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3be",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3be",
+      "start": "0x0200148c",
+      "end": "0x020015dc",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3bf",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3bf",
+      "start": "0x02005588",
+      "end": "0x020057b0",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3c0",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3c0",
+      "start": "0x020011f4",
+      "end": "0x0200137c",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3c1",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_MURA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3c1",
+      "start": "0x02000288",
+      "end": "0x020002f0",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_MURA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3c2",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_HEYA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3c2",
+      "start": "0x02000b34",
+      "end": "0x02000c3c",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_HEYA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3c3",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_GATE/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3c3",
+      "start": "0x0200085c",
+      "end": "0x02000974",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_GATE/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3c4",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3c4",
+      "start": "0x02003024",
+      "end": "0x020031b4",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3c5",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_IRIGUCHI/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3c5",
+      "start": "0x02002d80",
+      "end": "0x02002f98",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_IRIGUCHI/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3c6",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_MACHI/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3c6",
+      "start": "0x020014d8",
+      "end": "0x02001638",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_MACHI/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3c7",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_HEYA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3c7",
+      "start": "0x020011dc",
+      "end": "0x02001314",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_HEYA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3c8",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3c8",
+      "start": "0x02004da4",
+      "end": "0x02005004",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3c9",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3c9",
+      "start": "0x02005bfc",
+      "end": "0x02005ed4",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3ca",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3ca",
+      "start": "0x0200131c",
+      "end": "0x020014ac",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3cb",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3cb",
+      "start": "0x02001714",
+      "end": "0x020018ec",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3cc",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/DEBUG/TEST_ROOMS/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3cc",
+      "start": "0x020000b8",
+      "end": "0x020000c8",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/DEBUG/TEST_ROOMS/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3cd",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/DEBUG/ITEM_LEVEL/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3cd",
+      "start": "0x020007e8",
+      "end": "0x020008d0",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/DEBUG/ITEM_LEVEL/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_3ce",
+      "start": "0x02000000",
+      "end": "0x02000030",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/DEBUG/MENU_TEST/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_3ce",
+      "start": "0x02001190",
+      "end": "0x020012b0",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Complete fixed eight-byte Thumb linkage: LDR r4,[PC,#0]; BX r4; resolved target word. The calling convention permits r4 clobber.",
+        "Shared overlay_veneer macro reproduces this audited range; full overlay and ROM reproduction must pass.",
+        "Pascal explicitly authorized DONE credit for reconstructed veneer assembly. Original macro, generator and authorship remain unidentified."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+        "source": "games/THE BROKEN SEAL/SRC/DEBUG/MENU_TEST/IMPORT.INC"
+      }
     }
   ]
 }

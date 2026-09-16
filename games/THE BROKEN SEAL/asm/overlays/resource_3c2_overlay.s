@@ -1,4 +1,5 @@
 .syntax unified
+.include "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC"
 	.thumb
 	.set sub_02000b82, 0x02000b82
 	.set sub_02000bd4, 0x02000bd4
@@ -269,18 +270,7 @@
 	.set sub_0200165e, 0x0200165e
 	.global Overlay_02000000
 Overlay_02000000:
-	.4byte 0x47204c00
-	.4byte 0x02008a79
-	.4byte 0x47204c00
-	.4byte 0x02008031
-	.4byte 0x47204c00
-	.4byte 0x02008041
-	.4byte 0x47204c00
-	.4byte 0x02008049
-	.4byte 0x47204c00
-	.4byte 0x02008a55
-	.4byte 0x47204c00
-	.4byte 0x02008039
+.include "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_HEYA/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x8
 AlchemyC_02000038:
@@ -305,72 +295,7 @@ AlchemyC_02000a54:
 	.space 0x24
 AlchemyC_02000a78:
 	.space 0xbc
-	.4byte 0x47204c00
-	.4byte 0x080770c1
-	.4byte 0x47204c00
-	.4byte 0x080770c9
-	.4byte 0x47204c00
-	.4byte 0x0808a011
-	.4byte 0x47204c00
-	.4byte 0x0808a019
-	.4byte 0x47204c00
-	.4byte 0x0808a021
-	.4byte 0x47204c00
-	.4byte 0x0808a071
-	.4byte 0x47204c00
-	.4byte 0x0808a081
-	.4byte 0x47204c00
-	.4byte 0x0808a091
-	.4byte 0x47204c00
-	.4byte 0x0808a0b9
-	.4byte 0x47204c00
-	.4byte 0x0808a0d1
-	.4byte 0x47204c00
-	.4byte 0x0808a0e9
-	.4byte 0x47204c00
-	.4byte 0x0808a0f1
-	.4byte 0x47204c00
-	.4byte 0x0808a101
-	.4byte 0x47204c00
-	.4byte 0x0808a111
-	.4byte 0x47204c00
-	.4byte 0x0808a131
-	.4byte 0x47204c00
-	.4byte 0x0808a139
-	.4byte 0x47204c00
-	.4byte 0x0808a149
-	.4byte 0x47204c00
-	.4byte 0x0808a151
-	.4byte 0x47204c00
-	.4byte 0x0808a171
-	.4byte 0x47204c00
-	.4byte 0x0808a179
-	.4byte 0x47204c00
-	.4byte 0x0808a181
-	.4byte 0x47204c00
-	.4byte 0x0808a1b9
-	.4byte 0x47204c00
-	.4byte 0x0808a1e9
-	.4byte 0x47204c00
-	.4byte 0x0808a211
-	.4byte 0x47204c00
-	.4byte 0x0808a219
-	.4byte 0x47204c00
-	.4byte 0x0808a249
-	.4byte 0x47204c00
-	.4byte 0x0808a4f1
-	.4byte 0x47204c00
-	.4byte 0x0808a571
-	.4byte 0x47204c00
-	.4byte 0x0808a581
-	.4byte 0x47204c00
-	.4byte 0x080b0009
-	.4byte 0x47204c00
-	.4byte 0x080b0011
-	.4byte 0x47204c00
-	.4byte 0x080b0019
-	.4byte 0x47204c00
-	.4byte 0x080f9011
+.include "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_HEYA/IMPORT.INC"
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095

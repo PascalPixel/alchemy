@@ -1,4 +1,5 @@
 .syntax unified
+.include "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC"
 	.thumb
 	.set sub_02000342, 0x02000342
 	.set sub_02000acc, 0x02000acc
@@ -514,19 +515,7 @@
 	.set sub_02005fb4, 0x02005fb4
 	.global Overlay_02000000
 Overlay_02000000:
-	.4byte 0x47204c00
-	.4byte 0x02008f71
-	.4byte 0x47204c00
-	.4byte 0x02008cc5
-	.4byte 0x47204c00
-	.4byte 0x02008d41
-	.4byte 0x47204c00
-	.4byte 0x02008d49
-	.4byte 0x47204c00
-	.4byte 0x02008ec5
-	.4byte 0x47204c00
-	.2byte 0x8d3d
-	.2byte 0x0200
+.include "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_SHIMA/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x3c
 AlchemyC_0200006c:
@@ -1766,98 +1755,7 @@ AlchemyC_02002e70:
 	.2byte 0x0000
 AlchemyC_02002ed8:
 	.space 0xd8
-	.4byte 0x47204c00
-	.4byte 0x03000380
-	.4byte 0x47204c00
-	.4byte 0x080000c1
-	.4byte 0x47204c00
-	.4byte 0x080000f9
-	.4byte 0x47204c00
-	.4byte 0x08000119
-	.4byte 0x47204c00
-	.4byte 0x08000121
-	.4byte 0x47204c00
-	.4byte 0x08000129
-	.4byte 0x47204c00
-	.4byte 0x08000141
-	.4byte 0x47204c00
-	.4byte 0x08000151
-	.4byte 0x47204c00
-	.4byte 0x080001c9
-	.4byte 0x47204c00
-	.4byte 0x08009081
-	.4byte 0x47204c00
-	.4byte 0x08009099
-	.4byte 0x47204c00
-	.4byte 0x080090c9
-	.4byte 0x47204c00
-	.4byte 0x08009151
-	.4byte 0x47204c00
-	.4byte 0x08009159
-	.4byte 0x47204c00
-	.4byte 0x08009179
-	.4byte 0x47204c00
-	.4byte 0x080091c1
-	.4byte 0x47204c00
-	.4byte 0x080091d9
-	.4byte 0x47204c00
-	.4byte 0x080091e1
-	.4byte 0x47204c00
-	.4byte 0x080091e9
-	.4byte 0x47204c00
-	.4byte 0x08009279
-	.4byte 0x47204c00
-	.4byte 0x08015251
-	.4byte 0x47204c00
-	.4byte 0x080770c1
-	.4byte 0x47204c00
-	.4byte 0x080770c9
-	.4byte 0x47204c00
-	.4byte 0x0808a011
-	.4byte 0x47204c00
-	.4byte 0x0808a019
-	.4byte 0x47204c00
-	.4byte 0x0808a021
-	.4byte 0x47204c00
-	.4byte 0x0808a061
-	.4byte 0x47204c00
-	.4byte 0x0808a081
-	.4byte 0x47204c00
-	.4byte 0x0808a091
-	.4byte 0x47204c00
-	.4byte 0x0808a0c1
-	.4byte 0x47204c00
-	.4byte 0x0808a0d9
-	.4byte 0x47204c00
-	.4byte 0x0808a0e1
-	.4byte 0x47204c00
-	.4byte 0x0808a0e9
-	.4byte 0x47204c00
-	.4byte 0x0808a0f1
-	.4byte 0x47204c00
-	.4byte 0x0808a101
-	.4byte 0x47204c00
-	.4byte 0x0808a161
-	.4byte 0x47204c00
-	.4byte 0x0808a1e1
-	.4byte 0x47204c00
-	.4byte 0x0808a249
-	.4byte 0x47204c00
-	.4byte 0x0808a251
-	.4byte 0x47204c00
-	.4byte 0x0808a261
-	.4byte 0x47204c00
-	.4byte 0x0808a361
-	.4byte 0x47204c00
-	.4byte 0x0808a371
-	.4byte 0x47204c00
-	.4byte 0x0808a399
-	.4byte 0x47204c00
-	.4byte 0x0808a3c1
-	.4byte 0x47204c00
-	.4byte 0x0808a5e9
-	.4byte 0x47204c00
-	.4byte 0x080f9011
+.include "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_SHIMA/IMPORT.INC"
 	.4byte 0x46c04700
 	.4byte 0x46c04708
 	.4byte 0x46c04710

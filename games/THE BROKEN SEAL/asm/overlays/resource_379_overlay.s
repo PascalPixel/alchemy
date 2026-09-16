@@ -1,4 +1,5 @@
 .syntax unified
+.include "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC"
 	.thumb
 	.set sub_02000b70, 0x02000b70
 	.set sub_02000ba2, 0x02000ba2
@@ -260,18 +261,7 @@
 	.set sub_02001656, 0x02001656
 	.global Overlay_02000000
 Overlay_02000000:
-	.4byte 0x47204c00
-	.4byte 0x02008055
-	.4byte 0x47204c00
-	.4byte 0x02008031
-	.4byte 0x47204c00
-	.4byte 0x0200803d
-	.4byte 0x47204c00
-	.4byte 0x02008045
-	.4byte 0x47204c00
-	.4byte 0x0200804d
-	.4byte 0x47204c00
-	.4byte 0x02008039
+.include "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_FUNKA/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x8
 AlchemyC_02000038:
@@ -286,88 +276,7 @@ AlchemyC_02000054:
 	.space 0x20
 AlchemyC_02000074:
 	.space 0xa44
-	.4byte 0x47204c00
-	.4byte 0x080000c1
-	.4byte 0x47204c00
-	.4byte 0x08009129
-	.4byte 0x47204c00
-	.4byte 0x08009179
-	.4byte 0x47204c00
-	.4byte 0x080091f1
-	.4byte 0x47204c00
-	.4byte 0x080091f9
-	.4byte 0x47204c00
-	.4byte 0x080770c9
-	.4byte 0x47204c00
-	.4byte 0x080770d1
-	.4byte 0x47204c00
-	.4byte 0x0808a011
-	.4byte 0x47204c00
-	.4byte 0x0808a019
-	.4byte 0x47204c00
-	.4byte 0x0808a021
-	.4byte 0x47204c00
-	.4byte 0x0808a071
-	.4byte 0x47204c00
-	.4byte 0x0808a091
-	.4byte 0x47204c00
-	.4byte 0x0808a099
-	.4byte 0x47204c00
-	.4byte 0x0808a0a1
-	.4byte 0x47204c00
-	.4byte 0x0808a0b9
-	.4byte 0x47204c00
-	.4byte 0x0808a0c1
-	.4byte 0x47204c00
-	.4byte 0x0808a0c9
-	.4byte 0x47204c00
-	.4byte 0x0808a0d1
-	.4byte 0x47204c00
-	.4byte 0x0808a0f1
-	.4byte 0x47204c00
-	.4byte 0x0808a101
-	.4byte 0x47204c00
-	.4byte 0x0808a111
-	.4byte 0x47204c00
-	.4byte 0x0808a131
-	.4byte 0x47204c00
-	.4byte 0x0808a139
-	.4byte 0x47204c00
-	.4byte 0x0808a149
-	.4byte 0x47204c00
-	.4byte 0x0808a151
-	.4byte 0x47204c00
-	.4byte 0x0808a171
-	.4byte 0x47204c00
-	.4byte 0x0808a179
-	.4byte 0x47204c00
-	.4byte 0x0808a181
-	.4byte 0x47204c00
-	.4byte 0x0808a1b9
-	.4byte 0x47204c00
-	.4byte 0x0808a1e9
-	.4byte 0x47204c00
-	.4byte 0x0808a1f1
-	.4byte 0x47204c00
-	.4byte 0x0808a209
-	.4byte 0x47204c00
-	.4byte 0x0808a211
-	.4byte 0x47204c00
-	.4byte 0x0808a219
-	.4byte 0x47204c00
-	.4byte 0x0808a221
-	.4byte 0x47204c00
-	.4byte 0x0808a249
-	.4byte 0x47204c00
-	.4byte 0x0808a2d9
-	.4byte 0x47204c00
-	.4byte 0x0808a2e9
-	.4byte 0x47204c00
-	.4byte 0x0808a361
-	.4byte 0x47204c00
-	.4byte 0x0808a369
-	.4byte 0x47204c00
-	.4byte 0x080f9011
+.include "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_FUNKA/IMPORT.INC"
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003

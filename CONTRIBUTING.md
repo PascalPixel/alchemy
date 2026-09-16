@@ -238,6 +238,20 @@ Overlay assembly credit is per reviewed range. A `proven` range must carry
 assembly. A credited range does not credit other ranges of the same kind;
 strong reasoning and bare credit labels remain uncredited.
 
+Pascal also authorizes DONE credit for reconstructed fixed overlay veneers.
+Use the shared `overlay_veneer` assembly macro in
+`games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC`, preserving each target word and
+bank position. Verified entry and import lists live in the overlay's existing
+Japanese-named SRC directory as `ENTRY.INC` and `IMPORT.INC`; retained assembly
+includes them at their original positions. Each credited record uses kind
+`veneer`, confidence `proven` and
+`provenance.credit: reconstructed_veneer`, with that macro path as its proof.
+The range must contain complete eight-byte veneers, start word aligned, lie
+entirely inside audited veneer intervals and reproduce the canonical overlay
+and ROM exactly. This is assembly-linkage reconstruction credit; it does not
+identify Camelot's original author, macro or generator. Other assembly retains
+the handwritten/library evidence requirement.
+
 Retained-ASM credit does not establish handwritten or third-party origin.
 Search exhaustion, register mismatches, compiler non-emission, repeated scripts
 and large functions are not evidence of authorship. Keep unresolved C candidates

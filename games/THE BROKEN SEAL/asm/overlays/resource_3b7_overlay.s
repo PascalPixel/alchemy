@@ -1,4 +1,5 @@
 .syntax unified
+.include "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC"
 	.thumb
 	.set sub_02000c0c, 0x02000c0c
 	.set sub_0200190a, 0x0200190a
@@ -335,18 +336,7 @@
 	.set sub_02003136, 0x02003136
 	.global Overlay_02000000
 Overlay_02000000:
-	.4byte 0x47204c00
-	.4byte 0x020081d9
-	.4byte 0x47204c00
-	.4byte 0x02008031
-	.4byte 0x47204c00
-	.4byte 0x0200803d
-	.4byte 0x47204c00
-	.4byte 0x02008045
-	.4byte 0x47204c00
-	.4byte 0x020081a9
-	.4byte 0x47204c00
-	.4byte 0x02008039
+.include "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x8
 AlchemyC_02000038:
@@ -2898,100 +2888,7 @@ AlchemyC_020016a8:
 	.4byte 0x00014ccc
 	.4byte 0xfffe0000
 	.4byte 0x0200a138
-	.4byte 0x47204c00
-	.4byte 0x03000380
-	.4byte 0x47204c00
-	.4byte 0x030003ac
-	.4byte 0x47204c00
-	.4byte 0x080000c1
-	.4byte 0x47204c00
-	.4byte 0x080000d1
-	.4byte 0x47204c00
-	.4byte 0x080000f9
-	.4byte 0x47204c00
-	.4byte 0x08000119
-	.4byte 0x47204c00
-	.4byte 0x08000121
-	.4byte 0x47204c00
-	.4byte 0x08009081
-	.4byte 0x47204c00
-	.4byte 0x08009089
-	.4byte 0x47204c00
-	.4byte 0x08009181
-	.4byte 0x47204c00
-	.4byte 0x08015011
-	.4byte 0x47204c00
-	.4byte 0x08015019
-	.4byte 0x47204c00
-	.4byte 0x08015081
-	.4byte 0x47204c00
-	.4byte 0x080150b1
-	.4byte 0x47204c00
-	.4byte 0x08015121
-	.4byte 0x47204c00
-	.4byte 0x08015141
-	.4byte 0x47204c00
-	.4byte 0x08015399
-	.4byte 0x47204c00
-	.4byte 0x08077049
-	.4byte 0x47204c00
-	.4byte 0x080770c1
-	.4byte 0x47204c00
-	.4byte 0x080770c9
-	.4byte 0x47204c00
-	.4byte 0x08077231
-	.4byte 0x47204c00
-	.4byte 0x080772c9
-	.4byte 0x47204c00
-	.4byte 0x080772e1
-	.4byte 0x47204c00
-	.4byte 0x08077309
-	.4byte 0x47204c00
-	.4byte 0x0808a011
-	.4byte 0x47204c00
-	.4byte 0x0808a019
-	.4byte 0x47204c00
-	.4byte 0x0808a021
-	.4byte 0x47204c00
-	.4byte 0x0808a061
-	.4byte 0x47204c00
-	.4byte 0x0808a071
-	.4byte 0x47204c00
-	.4byte 0x0808a081
-	.4byte 0x47204c00
-	.4byte 0x0808a0d1
-	.4byte 0x47204c00
-	.4byte 0x0808a0f1
-	.4byte 0x47204c00
-	.4byte 0x0808a101
-	.4byte 0x47204c00
-	.4byte 0x0808a159
-	.4byte 0x47204c00
-	.4byte 0x0808a171
-	.4byte 0x47204c00
-	.4byte 0x0808a179
-	.4byte 0x47204c00
-	.4byte 0x0808a181
-	.4byte 0x47204c00
-	.4byte 0x0808a1b9
-	.4byte 0x47204c00
-	.4byte 0x0808a261
-	.4byte 0x47204c00
-	.4byte 0x0808a271
-	.4byte 0x47204c00
-	.4byte 0x0808a361
-	.4byte 0x47204c00
-	.4byte 0x0808a371
-	.4byte 0x47204c00
-	.4byte 0x0808a399
-	.4byte 0x47204c00
-	.4byte 0x0808a461
-	.4byte 0x47204c00
-	.4byte 0x0808a5b1
-	.4byte 0x47204c00
-	.4byte 0x080b0061
-	.4byte 0x47204c00
-	.4byte 0x080f9011
+.include "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/IMPORT.INC"
 	.4byte 0x46c04700
 	.4byte 0x46c04708
 	.4byte 0x46c04710

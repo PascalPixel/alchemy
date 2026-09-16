@@ -1,4 +1,5 @@
 .syntax unified
+.include "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC"
 	.thumb
 	.set sub_02000342, 0x02000342
 	.set sub_02000acc, 0x02000acc
@@ -466,19 +467,7 @@
 	.set sub_02005762, 0x02005762
 	.global Overlay_02000000
 Overlay_02000000:
-	.4byte 0x47204c00
-	.4byte 0x0200a59d
-	.4byte 0x47204c00
-	.4byte 0x02009271
-	.4byte 0x47204c00
-	.4byte 0x020092d9
-	.4byte 0x47204c00
-	.4byte 0x020092e1
-	.4byte 0x47204c00
-	.4byte 0x0200a371
-	.4byte 0x47204c00
-	.2byte 0x92b1
-	.2byte 0x0200
+.include "games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x3c
 AlchemyC_0200006c:
@@ -2141,110 +2130,7 @@ AlchemyC_02002480:
 	.4byte 0x00000973
 	.4byte 0x02008e21
 	.4byte 0x00000984
-	.4byte 0x47204c00
-	.4byte 0x03000380
-	.4byte 0x47204c00
-	.4byte 0x030003e0
-	.4byte 0x47204c00
-	.4byte 0x080000c1
-	.4byte 0x47204c00
-	.4byte 0x080000d1
-	.4byte 0x47204c00
-	.4byte 0x080000f9
-	.4byte 0x47204c00
-	.4byte 0x08000119
-	.4byte 0x47204c00
-	.4byte 0x08000121
-	.4byte 0x47204c00
-	.4byte 0x08000129
-	.4byte 0x47204c00
-	.4byte 0x08009081
-	.4byte 0x47204c00
-	.4byte 0x08009099
-	.4byte 0x47204c00
-	.4byte 0x080090c9
-	.4byte 0x47204c00
-	.4byte 0x080090d1
-	.4byte 0x47204c00
-	.4byte 0x08009151
-	.4byte 0x47204c00
-	.4byte 0x08009159
-	.4byte 0x47204c00
-	.4byte 0x08009179
-	.4byte 0x47204c00
-	.4byte 0x08009181
-	.4byte 0x47204c00
-	.4byte 0x080091b9
-	.4byte 0x47204c00
-	.4byte 0x080091c1
-	.4byte 0x47204c00
-	.4byte 0x080091d9
-	.4byte 0x47204c00
-	.4byte 0x080091e1
-	.4byte 0x47204c00
-	.4byte 0x080091e9
-	.4byte 0x47204c00
-	.4byte 0x080091f1
-	.4byte 0x47204c00
-	.4byte 0x080091f9
-	.4byte 0x47204c00
-	.4byte 0x08015041
-	.4byte 0x47204c00
-	.4byte 0x080770c1
-	.4byte 0x47204c00
-	.4byte 0x080770c9
-	.4byte 0x47204c00
-	.4byte 0x080770d1
-	.4byte 0x47204c00
-	.4byte 0x0808a011
-	.4byte 0x47204c00
-	.4byte 0x0808a019
-	.4byte 0x47204c00
-	.4byte 0x0808a021
-	.4byte 0x47204c00
-	.4byte 0x0808a039
-	.4byte 0x47204c00
-	.4byte 0x0808a081
-	.4byte 0x47204c00
-	.4byte 0x0808a091
-	.4byte 0x47204c00
-	.4byte 0x0808a099
-	.4byte 0x47204c00
-	.4byte 0x0808a0c1
-	.4byte 0x47204c00
-	.4byte 0x0808a0e1
-	.4byte 0x47204c00
-	.4byte 0x0808a0e9
-	.4byte 0x47204c00
-	.4byte 0x0808a0f1
-	.4byte 0x47204c00
-	.4byte 0x0808a101
-	.4byte 0x47204c00
-	.4byte 0x0808a119
-	.4byte 0x47204c00
-	.4byte 0x0808a141
-	.4byte 0x47204c00
-	.4byte 0x0808a159
-	.4byte 0x47204c00
-	.4byte 0x0808a161
-	.4byte 0x47204c00
-	.4byte 0x0808a1e1
-	.4byte 0x47204c00
-	.4byte 0x0808a209
-	.4byte 0x47204c00
-	.4byte 0x0808a211
-	.4byte 0x47204c00
-	.4byte 0x0808a219
-	.4byte 0x47204c00
-	.4byte 0x0808a229
-	.4byte 0x47204c00
-	.4byte 0x0808a3c1
-	.4byte 0x47204c00
-	.4byte 0x0808a409
-	.4byte 0x47204c00
-	.4byte 0x0808a5e9
-	.4byte 0x47204c00
-	.4byte 0x080f9011
+.include "games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/IMPORT.INC"
 	.4byte 0x46c04700
 	.4byte 0x46c04708
 	.4byte 0x46c04710

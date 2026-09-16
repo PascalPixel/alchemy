@@ -1,4 +1,5 @@
 .syntax unified
+.include "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC"
 	.thumb
 	.set sub_0200089c, 0x0200089c
 	.set sub_020008f4, 0x020008f4
@@ -773,19 +774,7 @@
 	.set sub_02004918, 0x02004918
 	.global Overlay_02000000
 Overlay_02000000:
-	.4byte 0x47204c00
-	.4byte 0x020086e1
-	.4byte 0x47204c00
-	.4byte 0x02008089
-	.4byte 0x47204c00
-	.4byte 0x02008095
-	.4byte 0x47204c00
-	.4byte 0x0200809d
-	.4byte 0x47204c00
-	.4byte 0x02008101
-	.4byte 0x47204c00
-	.2byte 0x8091
-	.2byte 0x0200
+.include "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_KYUDEN/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x58
 AlchemyC_02000088:
@@ -1367,116 +1356,7 @@ AlchemyC_020019b0:
 	.4byte 0x0000026e
 	.4byte 0x0000012f
 	.4byte 0x00000202
-	.4byte 0x47204c00
-	.4byte 0x080000c1
-	.4byte 0x47204c00
-	.4byte 0x08000101
-	.4byte 0x47204c00
-	.4byte 0x080090d1
-	.4byte 0x47204c00
-	.4byte 0x08009129
-	.4byte 0x47204c00
-	.4byte 0x08009189
-	.4byte 0x47204c00
-	.4byte 0x08009191
-	.4byte 0x47204c00
-	.4byte 0x080091c1
-	.4byte 0x47204c00
-	.4byte 0x080091e1
-	.4byte 0x47204c00
-	.4byte 0x08015041
-	.4byte 0x47204c00
-	.4byte 0x080770c1
-	.4byte 0x47204c00
-	.4byte 0x080770c9
-	.4byte 0x47204c00
-	.4byte 0x080770d1
-	.4byte 0x47204c00
-	.4byte 0x0808a011
-	.4byte 0x47204c00
-	.4byte 0x0808a019
-	.4byte 0x47204c00
-	.4byte 0x0808a021
-	.4byte 0x47204c00
-	.4byte 0x0808a039
-	.4byte 0x47204c00
-	.4byte 0x0808a061
-	.4byte 0x47204c00
-	.4byte 0x0808a071
-	.4byte 0x47204c00
-	.4byte 0x0808a081
-	.4byte 0x47204c00
-	.4byte 0x0808a091
-	.4byte 0x47204c00
-	.4byte 0x0808a099
-	.4byte 0x47204c00
-	.4byte 0x0808a0a1
-	.4byte 0x47204c00
-	.4byte 0x0808a0a9
-	.4byte 0x47204c00
-	.4byte 0x0808a0b9
-	.4byte 0x47204c00
-	.4byte 0x0808a0c1
-	.4byte 0x47204c00
-	.4byte 0x0808a0c9
-	.4byte 0x47204c00
-	.4byte 0x0808a0d1
-	.4byte 0x47204c00
-	.4byte 0x0808a0d9
-	.4byte 0x47204c00
-	.4byte 0x0808a0e1
-	.4byte 0x47204c00
-	.4byte 0x0808a0e9
-	.4byte 0x47204c00
-	.4byte 0x0808a0f1
-	.4byte 0x47204c00
-	.4byte 0x0808a101
-	.4byte 0x47204c00
-	.4byte 0x0808a111
-	.4byte 0x47204c00
-	.4byte 0x0808a129
-	.4byte 0x47204c00
-	.4byte 0x0808a131
-	.4byte 0x47204c00
-	.4byte 0x0808a139
-	.4byte 0x47204c00
-	.4byte 0x0808a149
-	.4byte 0x47204c00
-	.4byte 0x0808a169
-	.4byte 0x47204c00
-	.4byte 0x0808a171
-	.4byte 0x47204c00
-	.4byte 0x0808a179
-	.4byte 0x47204c00
-	.4byte 0x0808a181
-	.4byte 0x47204c00
-	.4byte 0x0808a189
-	.4byte 0x47204c00
-	.4byte 0x0808a191
-	.4byte 0x47204c00
-	.4byte 0x0808a1b9
-	.4byte 0x47204c00
-	.4byte 0x0808a1e9
-	.4byte 0x47204c00
-	.4byte 0x0808a1f1
-	.4byte 0x47204c00
-	.4byte 0x0808a209
-	.4byte 0x47204c00
-	.4byte 0x0808a211
-	.4byte 0x47204c00
-	.4byte 0x0808a229
-	.4byte 0x47204c00
-	.4byte 0x0808a249
-	.4byte 0x47204c00
-	.4byte 0x0808a361
-	.4byte 0x47204c00
-	.4byte 0x0808a369
-	.4byte 0x47204c00
-	.4byte 0x0808a371
-	.4byte 0x47204c00
-	.4byte 0x0808a389
-	.4byte 0x47204c00
-	.4byte 0x080f9011
+.include "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_KYUDEN/IMPORT.INC"
 	.4byte 0x00000022
 	.4byte 0x02008031
 	.4byte 0x0000000c

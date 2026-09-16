@@ -1,4 +1,5 @@
 .syntax unified
+.include "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC"
 	.thumb
 	.set sub_02000308, 0x02000308
 	.set sub_02000310, 0x02000310
@@ -45,14 +46,7 @@
 	.set sub_020004c2, 0x020004c2
 	.global Overlay_02000000
 Overlay_02000000:
-	.irp EntryTarget, 0x020081e5, 0x02008031, 0x0200803d, 0x02008045, 0x0200806d, 0x02008039
-	.if ((\EntryTarget & 1) == 0) && ((\EntryTarget & 3) != 0)
-	.error "ARM entry point target must be word aligned"
-	.endif
-	ldr r4, [pc, #0]
-	bx r4
-	.4byte \EntryTarget
-	.endr
+.include "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KUUPUAPPU_RUNPA/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x8
 AlchemyC_02000038:
@@ -80,14 +74,7 @@ AlchemyC_020001d0:
 	.2byte 0x0000
 AlchemyC_020001e4:
 	.space 0x7c
-	.irp EntryTarget, 0x080770d1, 0x0808a011, 0x0808a019, 0x0808a021, 0x0808a081, 0x0808a111, 0x0808a131, 0x0808a139, 0x0808a149, 0x0808a151, 0x0808a171, 0x0808a181, 0x0808a249, 0x080f9011
-	.if ((\EntryTarget & 1) == 0) && ((\EntryTarget & 3) != 0)
-	.error "ARM entry point target must be word aligned"
-	.endif
-	ldr r4, [pc, #0]
-	bx r4
-	.4byte \EntryTarget
-	.endr
+.include "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KUUPUAPPU_RUNPA/IMPORT.INC"
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095

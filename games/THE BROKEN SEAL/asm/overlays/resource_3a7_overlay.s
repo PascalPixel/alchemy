@@ -1,4 +1,5 @@
 .syntax unified
+.include "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC"
 	.thumb
 	.set sub_020002de, 0x020002de
 	.set sub_02000322, 0x02000322
@@ -148,19 +149,7 @@
 	.set sub_02002d3e, 0x02002d3e
 	.global Overlay_02000000
 Overlay_02000000:
-	.4byte 0x47204c00
-	.4byte 0x02008ca1
-	.4byte 0x47204c00
-	.4byte 0x02008031
-	.4byte 0x47204c00
-	.4byte 0x0200808d
-	.4byte 0x47204c00
-	.4byte 0x020080e1
-	.4byte 0x47204c00
-	.4byte 0x020082e1
-	.4byte 0x47204c00
-	.2byte 0x8085
-	.2byte 0x0200
+.include "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_DOU/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x54
 
@@ -896,69 +885,7 @@ AlchemyC_02000c50:
 	.4byte 0x000009aa
 	.4byte 0x00000242
 	.4byte 0x00000060
-	.4byte 0x47204c00
-	.4byte 0x030003ac
-	.4byte 0x47204c00
-	.4byte 0x030003e0
-	.4byte 0x47204c00
-	.4byte 0x080000c1
-	.4byte 0x47204c00
-	.4byte 0x080000d1
-	.4byte 0x47204c00
-	.4byte 0x080000f9
-	.4byte 0x47204c00
-	.4byte 0x08000129
-	.4byte 0x47204c00
-	.4byte 0x08000319
-	.4byte 0x47204c00
-	.4byte 0x08009081
-	.4byte 0x47204c00
-	.4byte 0x08009099
-	.4byte 0x47204c00
-	.4byte 0x080090c9
-	.4byte 0x47204c00
-	.4byte 0x08009129
-	.4byte 0x47204c00
-	.4byte 0x08009151
-	.4byte 0x47204c00
-	.4byte 0x08009159
-	.4byte 0x47204c00
-	.4byte 0x080091b9
-	.4byte 0x47204c00
-	.4byte 0x080091c1
-	.4byte 0x47204c00
-	.4byte 0x080091d9
-	.4byte 0x47204c00
-	.4byte 0x080091e1
-	.4byte 0x47204c00
-	.4byte 0x080091f1
-	.4byte 0x47204c00
-	.4byte 0x080091f9
-	.4byte 0x47204c00
-	.4byte 0x08015041
-	.4byte 0x47204c00
-	.4byte 0x080770c1
-	.4byte 0x47204c00
-	.4byte 0x080770c9
-	.4byte 0x47204c00
-	.4byte 0x080770d1
-	.4byte 0x47204c00
-	.4byte 0x0808a011
-	.4byte 0x47204c00
-	.4byte 0x0808a019
-	.4byte 0x47204c00
-	.4byte 0x0808a021
-	.4byte 0x47204c00
-	.4byte 0x0808a081
-	.4byte 0x47204c00
-	.4byte 0x0808a0f1
-	.4byte 0x47204c00
-	.4byte 0x0808a101
-	.4byte 0x47204c00
-	.4byte 0x0808a1e1
-	.4byte 0x47204c00
-	.2byte 0x9011
-	.2byte 0x080f
+.include "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_DOU/IMPORT.INC"
 AlchemyC_02001158:
 	.space 0x158
 .L_020012b0:

@@ -1,4 +1,5 @@
 .syntax unified
+.include "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC"
 	.thumb
 	.set sub_02000118, 0x02000118
 	.set sub_0200012a, 0x0200012a
@@ -6,18 +7,7 @@
 	.set sub_0200013e, 0x0200013e
 	.global Overlay_02000000
 Overlay_02000000:
-	.4byte 0x47204c00
-	.4byte 0x02008055
-	.4byte 0x47204c00
-	.4byte 0x02008031
-	.4byte 0x47204c00
-	.4byte 0x0200803d
-	.4byte 0x47204c00
-	.4byte 0x02008045
-	.4byte 0x47204c00
-	.4byte 0x0200804d
-	.4byte 0x47204c00
-	.4byte 0x02008039
+.include "games/THE BROKEN SEAL/SRC/FIELD/SORU_MEIRO/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x8
 AlchemyC_02000038:
@@ -30,14 +20,7 @@ AlchemyC_0200004c:
 	.space 0x8
 AlchemyC_02000054:
 	.space 0x4c
-	.4byte 0x47204c00
-	.4byte 0x080091f1
-	.4byte 0x47204c00
-	.4byte 0x080770c1
-	.4byte 0x47204c00
-	.4byte 0x0808a2f9
-	.4byte 0x47204c00
-	.4byte 0x0808a5e1
+.include "games/THE BROKEN SEAL/SRC/FIELD/SORU_MEIRO/IMPORT.INC"
 	.4byte 0xffff0000
 	.4byte 0x00000078
 	.4byte 0x40000064

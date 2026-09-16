@@ -1,4 +1,5 @@
 .syntax unified
+.include "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC"
 	.thumb
 	.set sub_020013c0, 0x020013c0
 	.set sub_020013ca, 0x020013ca
@@ -141,18 +142,7 @@
 	.set sub_020024a6, 0x020024a6
 	.global Overlay_02000000
 Overlay_02000000:
-	.4byte 0x47204c00
-	.4byte 0x020083cd
-	.4byte 0x47204c00
-	.4byte 0x02008031
-	.4byte 0x47204c00
-	.4byte 0x0200803d
-	.4byte 0x47204c00
-	.4byte 0x02008045
-	.4byte 0x47204c00
-	.4byte 0x0200804d
-	.4byte 0x47204c00
-	.4byte 0x02008039
+.include "games/THE BROKEN SEAL/SRC/MENU/CLEAR/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x8
 AlchemyC_02000038:
@@ -2436,118 +2426,7 @@ AlchemyC_0200004c:
 	.2byte 0x0000
 AlchemyC_020012c8:
 	.space 0x4c
-	.4byte 0x47204c00
-	.4byte 0x03000380
-	.4byte 0x47204c00
-	.4byte 0x030003ac
-	.4byte 0x47204c00
-	.4byte 0x080000c1
-	.4byte 0x47204c00
-	.4byte 0x080000d1
-	.4byte 0x47204c00
-	.4byte 0x080000d9
-	.4byte 0x47204c00
-	.4byte 0x08000171
-	.4byte 0x47204c00
-	.4byte 0x08000179
-	.4byte 0x47204c00
-	.4byte 0x080001a9
-	.4byte 0x47204c00
-	.4byte 0x080001f1
-	.4byte 0x47204c00
-	.4byte 0x08000291
-	.4byte 0x47204c00
-	.4byte 0x080002a9
-	.4byte 0x47204c00
-	.4byte 0x08000301
-	.4byte 0x47204c00
-	.4byte 0x08000371
-	.4byte 0x47204c00
-	.4byte 0x08000381
-	.4byte 0x47204c00
-	.4byte 0x08015011
-	.4byte 0x47204c00
-	.4byte 0x08015019
-	.4byte 0x47204c00
-	.4byte 0x08015041
-	.4byte 0x47204c00
-	.4byte 0x08015061
-	.4byte 0x47204c00
-	.4byte 0x08015071
-	.4byte 0x47204c00
-	.4byte 0x08015079
-	.4byte 0x47204c00
-	.4byte 0x08015081
-	.4byte 0x47204c00
-	.4byte 0x08015089
-	.4byte 0x47204c00
-	.4byte 0x08015141
-	.4byte 0x47204c00
-	.4byte 0x080151f1
-	.4byte 0x47204c00
-	.4byte 0x080151f9
-	.4byte 0x47204c00
-	.4byte 0x08015211
-	.4byte 0x47204c00
-	.4byte 0x08015281
-	.4byte 0x47204c00
-	.4byte 0x080152e9
-	.4byte 0x47204c00
-	.4byte 0x080152f1
-	.4byte 0x47204c00
-	.4byte 0x080152f9
-	.4byte 0x47204c00
-	.4byte 0x08015301
-	.4byte 0x47204c00
-	.4byte 0x08015319
-	.4byte 0x47204c00
-	.4byte 0x08015321
-	.4byte 0x47204c00
-	.4byte 0x08015361
-	.4byte 0x47204c00
-	.4byte 0x08015391
-	.4byte 0x47204c00
-	.4byte 0x080153d9
-	.4byte 0x47204c00
-	.4byte 0x08015419
-	.4byte 0x47204c00
-	.4byte 0x08077009
-	.4byte 0x47204c00
-	.4byte 0x08077019
-	.4byte 0x47204c00
-	.4byte 0x08077099
-	.4byte 0x47204c00
-	.4byte 0x080770c1
-	.4byte 0x47204c00
-	.4byte 0x080770c9
-	.4byte 0x47204c00
-	.4byte 0x080770d1
-	.4byte 0x47204c00
-	.4byte 0x08077151
-	.4byte 0x47204c00
-	.4byte 0x08077169
-	.4byte 0x47204c00
-	.4byte 0x08077271
-	.4byte 0x47204c00
-	.4byte 0x08077301
-	.4byte 0x47204c00
-	.4byte 0x08077319
-	.4byte 0x47204c00
-	.4byte 0x0808a011
-	.4byte 0x47204c00
-	.4byte 0x0808a081
-	.4byte 0x47204c00
-	.4byte 0x0808a239
-	.4byte 0x47204c00
-	.4byte 0x0808a361
-	.4byte 0x47204c00
-	.4byte 0x0808a369
-	.4byte 0x47204c00
-	.4byte 0x0808a371
-	.4byte 0x47204c00
-	.4byte 0x0808a4d9
-	.4byte 0x47204c00
-	.4byte 0x080f9011
+.include "games/THE BROKEN SEAL/SRC/MENU/CLEAR/IMPORT.INC"
 	.4byte 0x00040004
 	.4byte 0x00000004
 	.4byte 0x00800040

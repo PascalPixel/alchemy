@@ -1,4 +1,5 @@
 .syntax unified
+.include "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC"
 	.thumb
 	.set sub_0200033e, 0x0200033e
 	.set sub_02000368, 0x02000368
@@ -38,19 +39,7 @@
 	.set sub_0200058a, 0x0200058a
 	.global Overlay_02000000
 Overlay_02000000:
-	.4byte 0x47204c00
-	.4byte 0x020081c5
-	.4byte 0x47204c00
-	.4byte 0x0200805d
-	.4byte 0x47204c00
-	.4byte 0x02008069
-	.4byte 0x47204c00
-	.4byte 0x02008071
-	.4byte 0x47204c00
-	.4byte 0x020081bd
-	.4byte 0x47204c00
-	.2byte 0x8065
-	.2byte 0x0200
+.include "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_HEYA/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x2a
 	.2byte 0x0000
@@ -74,30 +63,7 @@ AlchemyC_020001bc:
 	.space 0x8
 AlchemyC_020001c4:
 	.space 0xf4
-	.4byte 0x47204c00
-	.4byte 0x08009181
-	.4byte 0x47204c00
-	.4byte 0x080091e1
-	.4byte 0x47204c00
-	.4byte 0x080770c1
-	.4byte 0x47204c00
-	.4byte 0x0808a019
-	.4byte 0x47204c00
-	.4byte 0x0808a021
-	.4byte 0x47204c00
-	.4byte 0x0808a039
-	.4byte 0x47204c00
-	.4byte 0x0808a081
-	.4byte 0x47204c00
-	.4byte 0x0808a0f1
-	.4byte 0x47204c00
-	.4byte 0x0808a171
-	.4byte 0x47204c00
-	.4byte 0x0808a181
-	.4byte 0x47204c00
-	.4byte 0x080b0009
-	.4byte 0x47204c00
-	.4byte 0x080b0019
+.include "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_HEYA/IMPORT.INC"
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095

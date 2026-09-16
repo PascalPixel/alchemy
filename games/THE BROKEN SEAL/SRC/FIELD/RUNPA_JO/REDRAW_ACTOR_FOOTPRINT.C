@@ -1,4 +1,3 @@
-/* Draft C: complete owner reviewed, but linked bytes do not yet match. */
 #include "STAGED_ACTOR_PROBE.H"
 #include "STAGED_ACTOR_PROBE_STATE.H"
 
@@ -32,10 +31,14 @@ s32 FieldScene_RedrawActorFootprint(s32 id)
     s32 x1;
     s32 z0;
     s32 z1;
-    s32 dst_x;
     s32 dst_z;
 
-    if (*STAGED_ACTOR_PROBE_DETAILS(actor)->unknown_28 != Data_0200df18[idx]) {
+    if (*STAGED_ACTOR_PROBE_DETAILS(actor)->unknown_28 != Data_0200df18[idx])
+        goto search;
+    probe.footprint_index = idx;
+    goto draw;
+search:
+    {
         struct StagedActorProbe *buf = &probe;
 
         do {
@@ -44,6 +47,7 @@ s32 FieldScene_RedrawActorFootprint(s32 id)
             if (idx > 5)
                 goto draw;
         } while (*STAGED_ACTOR_PROBE_DETAILS(actor)->unknown_28 != Data_0200df18[idx]);
+        buf = 0;
     }
     probe.footprint_index = idx;
 draw:
@@ -71,10 +75,10 @@ draw:
     probe.position_z += Data_0200df30[offset + 1] << 16;
     probe.position_x >>= 20;
     probe.position_z >>= 20;
-    dst_x = work[0x13c / 4] >> 20;
+    idx = work[0x13c / 4] >> 20;
     dst_z = work[0x140 / 4] >> 20;
     Scene_Call6(Func_02005f70, probe.position_x, probe.position_z,
-        width, height, dst_x + probe.position_x, dst_z + probe.position_z);
+        width, height, idx + probe.position_x, dst_z + probe.position_z);
     Func_02000bf0(0, probe.position_x, probe.position_z, width, height, 255);
     Func_02000c02(2, probe.position_x, probe.position_z, width, height, 255);
     return 1;

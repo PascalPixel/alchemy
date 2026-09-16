@@ -9,6 +9,8 @@ GCC296_CFLAGS := -O2 -mthumb -mthumb-interwork -mcpu=arm7tdmi \
 TOOLS := tools
 CARGO ?= cargo
 export CARGO_TARGET_DIR := $(CURDIR)/out/cargo-target
+# Bootstrap's native arm-none-eabi binutils come first for every recipe and test.
+export PATH := $(CURDIR)/tools/binutils/bin:$(PATH)
 CARGO_RUN := $(CARGO) run --offline --quiet --release --manifest-path
 
 BUILD := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- build

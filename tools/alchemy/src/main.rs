@@ -42,6 +42,7 @@ const USAGE: &str = "usage: alchemy <command> [args]\n\
   overlay               legacy overlay operations during migration";
 
 fn main() -> ExitCode {
+    compiler::routing::prefer_installed_binutils();
     let arguments: Vec<String> = std::env::args().skip(1).collect();
     let Some(command) = arguments.first().map(String::as_str) else {
         eprintln!("{USAGE}");

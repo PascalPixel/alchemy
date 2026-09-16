@@ -22,6 +22,26 @@ pub fn root() -> &'static Path {
 pub fn bundle() -> PathBuf {
     root().join("tools/compilers")
 }
+/// Native `arm-none-eabi` binutils built by bootstrap; ignored like the compilers.
+pub fn binutils_prefix() -> PathBuf {
+    root().join("tools/binutils")
+}
+/// Put the installed binutils first on `PATH` for every child process, so the
+/// build never depends on system packages or an emulated host toolchain.
+pub fn prefer_installed_binutils() {
+    let bin = binutils_prefix().join("bin");
+    if !bin.is_dir() {
+        return;
+    }
+    let current = std::env::var_os("PATH").unwrap_or_default();
+    if let Some(path) = path_with_first(&bin, &current) {
+        std::env::set_var("PATH", path);
+    }
+}
+fn path_with_first(first: &Path, current: &std::ffi::OsStr) -> Option<std::ffi::OsString> {
+    let rest = std::env::split_paths(current).filter(|entry| entry != first);
+    std::env::join_paths(std::iter::once(first.to_path_buf()).chain(rest)).ok()
+}
 /// Both games use the licensed agscc source and the same executable bundle.
 /// TLA selects its reconstructed lowering with the explicit -mgs2 option.
 pub fn bundle_for(_target: CompilerTarget) -> PathBuf {
@@ -216,6 +236,19 @@ pub fn cflags_for_target_source(target: CompilerTarget, source: &str) -> Vec<Str
 #[cfg(test)]
 mod target_tests {
     use super::*;
+    #[test]
+    fn installed_binutils_lead_path_once() {
+        let first = Path::new("/repo/tools/binutils/bin");
+        let current =
+            std::env::join_paths(["/usr/local/bin", "/repo/tools/binutils/bin", "/usr/bin"])
+                .unwrap();
+        let path = path_with_first(first, &current).unwrap();
+        let entries: Vec<PathBuf> = std::env::split_paths(&path).collect();
+        assert_eq!(
+            entries,
+            [first, Path::new("/usr/local/bin"), Path::new("/usr/bin")]
+        );
+    }
     #[test]
     fn assembly_uses_historical_soft_float_abi() {
         let command = assembly_command("input.s", "output.o");

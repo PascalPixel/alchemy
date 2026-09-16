@@ -4,6 +4,7 @@
 # Installed dependencies survive output cleanup; never commit local executables.
 /toolchain/
 /tools/compilers
+/tools/binutils
 /tools/.compiler.lock
 /tools/.install-*/
 toolchains/

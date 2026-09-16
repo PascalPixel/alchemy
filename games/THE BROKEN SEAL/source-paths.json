@@ -2,20 +2,20 @@
   "format": 3,
   "owners": {
     "resource_3ab:02000104": {
-      "name": "SceneActor_ApplyMotionDeltas",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "Effect_Move",
+      "source": "FIELD/RUNPA_MURA/EFFECT.C"
     },
     "resource_3ab:020007f4": {
-      "name": "SceneDialogue_RunActorEighteenFlaggedLine",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "EastGuard_MindRead",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:020012a4": {
-      "name": "FieldScene_SpawnPeriodicLeaderEffect",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "Leader_KickUpDust",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:02000ac4": {
-      "name": "SceneState_TriggerTimerAtLeaderRowTen",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "Party_WatchForFortress",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_37b:02000614": {
       "name": "FieldScene_RunStagedActorScene",
@@ -14608,182 +14608,184 @@
       "name": "FieldScene_RunScene3afSequenceA",
       "source": "FIELD/FUNE_KANPAN/MULTI_ENCOUNTER.C"
     },
-    "resource_3ab:02000030": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C",
+    "resource_3ab:02000030": {
+      "name": "Effect_SetPriority",
+      "source": "FIELD/RUNPA_MURA/EFFECT.C"
+    },
     "resource_3ab:0200013c": {
-      "name": "SpawnConfiguredEffect",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "Effect_Spawn"
     },
     "resource_3ab:020017d8": {
-      "name": "update_orbiting_effect",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "FloatingNut_Update",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:02001840": {
-      "name": "InitializeSpawnedOrbitingEffect",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "FloatingNut_Initialize",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:02000884": {
-      "name": "SceneDialogue_ShowLine1BB0",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "VillagerG_Talk",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:02000738": {
-      "name": "SceneDialogue_ShowLine1B9C",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "WestGuard_Talk",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:0200034c": {
-      "name": "SceneData_ReturnZero",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "Scene_GetRegions",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:02000468": {
-      "name": "SceneActor_SetActor8FlagByLeaderDepth",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "IcePillar_UpdateDrawOrder",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:020006bc": {
-      "name": "FieldScene_RunScriptedSteps947And29E1",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "Well_Search",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:020003c0": {
-      "name": "FieldScene_RunStepFD1WithActor181",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "FloatingNut_Catch",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:02000388": {
-      "name": "SceneData_SelectTableByScene9f",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "Scene_GetPlacements",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:02000864": {
-      "name": "SceneDialogue_ShowLine1BAA",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "VillagerC_Talk",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:020008a4": {
-      "name": "SceneDialogue_RunActor10Scene",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "VillagerB_Shivers",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:02000350": {
-      "name": "SceneData_SelectTableBySelector224",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "Scene_GetExits",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:02000d14": {
-      "name": "SceneState_Run83WhenFlag201Clear",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "Reveal_PlayTreasureCue",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:020003f4": {
-      "name": "FieldScene_DrawTilesAndResetActor8",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "HiddenPuddle_Freeze",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:02000314": {
-      "name": "SceneData_SelectDataByRuntimeSelector",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "Scene_GetEntrances",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:02000844": {
-      "name": "SceneDialogue_RunActor9Line",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "VillagerA_Talk",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:02000fa0": {
-      "name": "SceneState_SetThreeCellsAt6x11AndFlag241",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "Cloak_Begin",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:020000a0": {
-      "name": "OverlayObject_CreateConfiguredObject",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "Effect_Create",
+      "source": "FIELD/RUNPA_MURA/EFFECT.C"
     },
     "resource_3ab:0200118c": {
-      "name": "SceneState_SetThreeCellsAt7x12",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "Gateway_Reopen",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:02000f9c": {
-      "name": "FieldScene_NoOp",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "Scene_DoNothing",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:02000764": {
-      "name": "FieldScene_RunActorEighteenPromptDialogue",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "EastGuard_Talk",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:02000a90": {
-      "name": "SceneDialogue_RunActorNineFlaggedDialogue",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "RightGuard_MindRead",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:02000d08": {
-      "name": "FieldScene_CallHelper27cc",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "Party_CheckAhead",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:02000048": {
-      "name": "OverlayObject_CreateConfigured",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "Effect_CreateTranslucent",
+      "source": "FIELD/RUNPA_MURA/EFFECT.C"
     },
     "resource_3ab:020008cc": {
-      "name": "SceneDialogue_RunActorTwelveDialogue",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "VillagerD_Talk",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:02000b0c": {
-      "name": "ActorPresentation_RunActorZeroCameraScene",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "Garet_RefusesToReturn",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:0200131c": {
-      "name": "FieldScene_RunActorDialogueMovementSequence",
-      "source": "FIELD/RUNPA_MURA/DIALOGUE_SEQUENCE.C"
+      "name": "Party_ThrownOut",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:02000ff0": {
-      "name": "FieldScene_RunFlagGatedActorDialogue",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "Guards_CatchParty",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:02000d30": {
-      "name": "FieldScene_BuildFlaggedMapLayout",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "HiddenSwitch_Pull",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:020008ec": {
-      "name": "FieldScene_RunSupplementalSequenceTwo",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "LeftGuard_Talk",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:02000b6c": {
-      "name": "FieldScene_RunSupplementalSequenceThree",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "Door_Enter",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:020005f0": {
-      "name": "FieldScene_RunOpeningSequence",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "Reveal_HideSecrets",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:020015bc": {
-      "name": "FieldScene_RunLeaderMovementSequence",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "Leader_SneaksOut",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:020011d0": {
-      "name": "FieldScene_RunScene3ab_020011d0",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "Cloak_End",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:02000eb0": {
-      "name": "FieldScene_RunScene3ab_02000eb0",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "Guards_BlockGate",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:02000c74": {
-      "name": "FieldScene_RunScene3abSequenceE",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "FortressGate_Enter",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:02000c10": {
-      "name": "FieldScene_RunScene3abSequenceC",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "HiddenPassage_Enter",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:02000980": {
-      "name": "FieldScene_RunScene3abSequenceA",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "RightGuard_Talk",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:020009d4": {
-      "name": "FieldScene_RunScene3abSequenceB",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "LeftGuard_MindRead",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:020006e4": {
-      "name": "FieldScene_RunScene3abSequenceF",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "Scene_GetEvents",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:02001240": {
-      "name": "FieldScene_RunScene3abSequenceG",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "Guards_Watch",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:0200049c": {
-      "name": "FieldScene_RunSupplementalSequenceOne",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "Reveal_ShowSecrets",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_3ab:02001668": {
-      "name": "FieldScene_InitializeStoryActors",
-      "source": "FIELD/RUNPA_MURA/ACTOR_SEQUENCE.C"
+      "name": "Scene_Initialize",
+      "source": "FIELD/RUNPA_MURA/VILLAGE.C"
     },
     "resource_38d:020004ec": {
       "name": "FieldScene_RunSlotSubjectBranch",

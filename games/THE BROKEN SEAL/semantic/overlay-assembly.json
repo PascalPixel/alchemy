@@ -4718,6 +4718,20 @@
     },
     {
       "overlay": "resource_3ab",
+      "start": "0x0200013c",
+      "end": "0x02000314",
+      "kind": "compiler_scheduling_module",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "Effect_Spawn is the one recorded compiler gap in the RUNPA_MURA showcase: its C rewrite is not exact, so its 472 bytes stay in the listing as assembled halfwords.",
+        "Ordinary C with honest types and a plain flag clear reproduces the full extent, frame, calls and data layout; the best of 22 structural spellings differs in 4 halfwords because the GCC 2.96 sched2 pass orders two load pairs differently.",
+        "The only exact spellings needed volatile effect fields or a byte-pointer helper to steer the scheduler; those are matching tricks and are not admitted in a showcase module.",
+        "games/THE BROKEN SEAL/recon/en/dossiers.json#resource_3ab:02000000"
+      ]
+    },
+    {
+      "overlay": "resource_3ab",
       "start": "0x02001920",
       "end": "0x02001b38",
       "kind": "veneer",

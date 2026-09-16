@@ -20,6 +20,8 @@ enum SceneId {
     SCENE_RUNPA_MURA = 104,
     SCENE_RUNPA_SUHARA = 105,
     SCENE_RUNPA_DOU = 106,
+    SCENE_RUNPA_JO_GATE = 159,
+    SCENE_RUNPA_JO = 160,
     SCENE_SUHARA_GATE = 169
 };
 
@@ -155,13 +157,32 @@ enum SceneEventKind {
     /* Searching a spot; the value is what the search finds or a script. */
     EVENT_SEARCH = 3,
     /* Using Psynergy on a target; the value is a message or a script. */
-    EVENT_PSYNERGY = 5
+    EVENT_PSYNERGY = 5,
+    /* A trigger a script raises; the value is a script. */
+    EVENT_RAISED = 6
 };
+
+/*
+ * A touch event can wait for the leader to walk into its trigger while
+ * facing one way; the facing sits in bits 12 to 15.
+ */
+#define EVENT_TOUCH_WALKING 0x200
+#define EVENT_TOUCH_FACING 0x400
+#define TOUCH_WALKING_INTO(facing) \
+    (EVENT_TOUCH | EVENT_TOUCH_WALKING | EVENT_TOUCH_FACING | (facing))
 
 /* A Psynergy event aims at an actor rather than a map trigger. */
 #define EVENT_PSYNERGY_ON_ACTOR 0x10
 #define PSYNERGY_ON_ACTOR(ability) \
     (EVENT_PSYNERGY | EVENT_PSYNERGY_ON_ACTOR | (ability) << 8)
+
+/*
+ * A Psynergy event can answer the Psynergy wherever it is used, at one phase
+ * of its use given in the top four bits; each Psynergy numbers its own phases.
+ */
+#define EVENT_PSYNERGY_IN_AREA 0x80
+#define PSYNERGY_IN_AREA(ability, phase) \
+    ((u32)(phase) << 28 | (ability) << 8 | EVENT_PSYNERGY_IN_AREA | EVENT_PSYNERGY)
 
 /* Searches report what the party checked; the target sits above the kind. */
 #define SEARCH(target) (EVENT_SEARCH | (target) << 4)

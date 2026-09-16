@@ -4,6 +4,7 @@ use crate::compiler::source_paths::{SourceOwner, SourcePaths};
 use crate::compiler::symbols::symbol_is_thumb;
 use crate::compiler::translation_units::{TranslationUnit, TranslationUnits};
 use crate::overlay::compile::compile_declared_overlay_unit;
+use crate::overlay::compile::paired_function_address;
 use crate::overlay::compile::OverlayEditionPlacement;
 use objdiff_core::{
     diff::{ArmArchVersion, DiffObjConfig, DiffSide},
@@ -2047,7 +2048,7 @@ fn write_overlay_owner_build(
                     .iter()
                     .filter(|member| member.address != identity.address())
                 {
-                    if let Ok(other) = overlay_edition_address(
+                    let other = overlay_edition_address(
                         unit,
                         member.address,
                         member.extent,
@@ -2055,7 +2056,23 @@ fn write_overlay_owner_build(
                         owner.resource,
                         decoded,
                         None,
-                    ) {
+                    )
+                    .ok()
+                    .or_else(|| {
+                        // A member the edition cannot anchor still sits where
+                        // the owner's own pointer to it says.
+                        paired_function_address(
+                            &decoded["en"][&owner.resource],
+                            identity.address(),
+                            &decoded[edition][&owner.resource],
+                            address,
+                            owner.size,
+                            member.address,
+                        )
+                        .ok()
+                        .flatten()
+                    });
+                    if let Some(other) = other {
                         addresses.insert(member.address, other);
                     }
                 }

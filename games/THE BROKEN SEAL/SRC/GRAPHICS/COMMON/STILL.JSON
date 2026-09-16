@@ -6,205 +6,205 @@
       "source_rect": {"x": 0, "y": 0, "width": 256, "height": 120},
       "palette": "3d0d14246f926740a80d686452288e576f0af1bcb02fc7e23bc11dd5d5d371d1",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "1e": {
       "source_rect": {"x": 0, "y": 120, "width": 256, "height": 120},
       "palette": "560422b5d8d1b31eb02dfabfc3d251485250c59cfc05bfbb3a1df5b3e6952182",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "1f": {
       "source_rect": {"x": 0, "y": 240, "width": 256, "height": 120},
       "palette": "af33c94685001c19effd3d5f8ebbda525b4c223d6527c597fe7df670a26db06d",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "20": {
       "source_rect": {"x": 0, "y": 360, "width": 256, "height": 120},
       "palette": "44e3b655b78795a74f48a27fe4e82dc578092034a81b1292233679f4f96fdf72",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "21": {
       "source_rect": {"x": 0, "y": 480, "width": 256, "height": 120},
       "palette": "8793f132d325818bc5c271c642f70763c1b47832e1bf91dcfb16df1b832a1e3b",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "22": {
       "source_rect": {"x": 0, "y": 600, "width": 256, "height": 120},
       "palette": "74a20ce7f87c5c6b11eb78bfe056b222c82b452a4bcced283788bea188bbf6a9",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "23": {
       "source_rect": {"x": 0, "y": 720, "width": 256, "height": 120},
       "palette": "8d79944718057f21587763020ee1a4a54d1378c654e3f6b8452b0dff60b4e0c7",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "24": {
       "source_rect": {"x": 0, "y": 840, "width": 256, "height": 120},
       "palette": "a0af3fe9e67c644f0a40bb69ca89f7f9f98a4d08f15d5b234d9cd04732a60a9e",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "25": {
       "source_rect": {"x": 0, "y": 960, "width": 256, "height": 120},
       "palette": "2011048fcb00af8c8b307df729d2878535b4ddbab563acda67e1b3bf6b20b0bb",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "26": {
       "source_rect": {"x": 0, "y": 1080, "width": 256, "height": 120},
       "palette": "90f011b381768dadacacca4dacf6baf9759b090efa85c2a9f6d35647a0a28507",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "27": {
       "source_rect": {"x": 0, "y": 1200, "width": 256, "height": 120},
       "palette": "29762534ce9266e1927a48bd90ae28260d4481128b44d55a60a738c8e4b29225",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "28": {
       "source_rect": {"x": 0, "y": 1320, "width": 256, "height": 120},
       "palette": "b742cf8a6d0ec15e7c871483eee801efc422aaae0b2528606cd6151977c450c2",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "29": {
       "source_rect": {"x": 0, "y": 1440, "width": 256, "height": 120},
       "palette": "35faa8765a4c9d0088dc391b9666b868cb32cd30d71083507626d6b57b43289c",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "2a": {
       "source_rect": {"x": 0, "y": 1560, "width": 256, "height": 120},
       "palette": "5f1f5a715c5dcb19a186740d8bc328243fc7dd976768fbf2d59ef84ab3d7a57e",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "2b": {
       "source_rect": {"x": 0, "y": 1680, "width": 256, "height": 120},
       "palette": "b3632100814ccd417d7b5fd0e69641e08923f3fe3101bf4e1ba4872a7dcb62d4",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "2c": {
       "source_rect": {"x": 0, "y": 1800, "width": 256, "height": 120},
       "palette": "823737100c4984f03309eebed34afb36d49b45b4e8b54b41b9fb6d57611fadbf",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "2d": {
       "source_rect": {"x": 0, "y": 1920, "width": 256, "height": 120},
       "palette": "13c503ba444fad974a32c109d18dffcee2e65939d3d0308aeec71c1542f0f5bf",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "2e": {
       "source_rect": {"x": 0, "y": 2040, "width": 256, "height": 120},
       "palette": "1544a29af81f8660ace3498ed7b0001756a3ebbdb47687307c4091f05d157d79",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "2f": {
       "source_rect": {"x": 0, "y": 2160, "width": 256, "height": 120},
       "palette": "175a99fad418ac8a1218f12c16f167f7e7624df9958d168352b2abdffcb2d850",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "30": {
       "source_rect": {"x": 0, "y": 2280, "width": 256, "height": 120},
       "palette": "3afcfe09b4388a53586a223143f0b2caec591fdc7fd53fb9b20b81882a8ef6ca",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "31": {
       "source_rect": {"x": 0, "y": 2400, "width": 256, "height": 120},
       "palette": "f953ebfb4e02177de2b55a468048a937aa4c0f387c71345b4ddb4397103924e7",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "32": {
       "source_rect": {"x": 0, "y": 2520, "width": 256, "height": 120},
       "palette": "6397eac6a8cca61c8d75e08e1311b87c3fa50bd9715ec4aaa0d4e2e5a2ecbbce",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "33": {
       "source_rect": {"x": 0, "y": 2640, "width": 256, "height": 120},
       "palette": "d122f8d72ae5fa20ee1eada6ef28e8705b17dfc6a18255f6c2a655105be87b2d",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "34": {
       "source_rect": {"x": 0, "y": 2760, "width": 256, "height": 120},
       "palette": "39a019c56bd31ffa166f5f51e057eabaa792cdd23a7ac3dd0d9dc979e95300ef",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "35": {
       "source_rect": {"x": 0, "y": 2880, "width": 256, "height": 120},
       "palette": "fd21f6205466840a352db90e8e8e10879dec017272ba8e251e1f90ea70472423",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "36": {
       "source_rect": {"x": 0, "y": 3000, "width": 256, "height": 120},
       "palette": "ee7000b94f949a125193294c642e34493306c0b2de291ec061ef424b4196dda4",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "37": {
       "source_rect": {"x": 0, "y": 3120, "width": 256, "height": 120},
       "palette": "bc748a921dc1290efa88560f2e2f2c8eccd3008103d379b1495eaeff5fb39c26",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "38": {
       "source_rect": {"x": 0, "y": 3240, "width": 256, "height": 120},
       "palette": "af789b93de185a5a4c1ccca49948306be3db517e3345ce891c1145385fb8f325",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "39": {
       "source_rect": {"x": 0, "y": 3360, "width": 256, "height": 120},
       "palette": "3d984d73abd3d175dc0699decbdc5f83541f9979049ab98a0e9bf08cb313914f",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "3a": {
       "source_rect": {"x": 0, "y": 3480, "width": 256, "height": 120},
       "palette": "7e60ab697fdcc7abb3cee0cc065ddee67f913ba86c7832816e65d68c08958a6c",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "3b": {
       "source_rect": {"x": 0, "y": 3600, "width": 256, "height": 120},
       "palette": "0149fa39b4d2742270d9b689b2a53493a76809247d6a040896b467aea3481180",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "3c": {
       "source_rect": {"x": 0, "y": 3720, "width": 256, "height": 120},
       "palette": "f5ad8ba094190152f414cc815c2a0e0f95e443d66cf580682c3490d4a8447fc2",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "3d": {
       "source_rect": {"x": 0, "y": 3840, "width": 256, "height": 120},
       "palette": "ba1c334ec8b31227e2b9aa0eb21c7b3007f134d18a91e5b05112965a94cfdad2",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     },
     "3e": {
       "source_rect": {"x": 0, "y": 3960, "width": 256, "height": 120},
       "palette": "1ff9e300751fb0e420616bea3f646fe7b3f060e76a0e7606946655affeb4b046",
       "identity": null,
-      "runtime_role": null
+      "runtime_role": "battle-background"
     }
   },
   "palettes": {

@@ -645,6 +645,19 @@ Rust extraction and source checks verify their pixels and encoded bank hashes.
 Use `alchemy build assets --audit-characters OUTPUT` for the Japanese message
 and descriptor audit. The common descriptor catalog also feeds animation and UI
 consumers; do not split banks by an export label alone.
+Derived identification sheets are owned by `SRC/GRAPHICS/REVIEW.JSON`. Run
+`alchemy build assets --review-images out/ROM_LIBRARY_REVIEW` to regenerate the
+curated sheets and index from private native SRC inputs. This command needs no
+previous audit output or ROM; restore missing private inputs with
+`alchemy build assets --extract-missing-sources roms/tbs-en.gba` first. The review
+records asset families, tentative identifications, palette references and source
+coordinate recipes separately from native storage order. Continue identification
+by editing the relevant evidence in `REVIEW.JSON`; unknown palettes, incomplete
+effect cuts and provisional geometry must remain explicit. Ordinary sheets derive
+from native owners; the review stores only presentation exceptions.
+The regenerated images and all audit folders remain private, ignored and
+disposable; commit metadata and the exporter only.
+
 Additional sprite archives use the same character atlas, with archive offsets
 and frame order retained in metadata until runtime associations establish names.
 Shared still images, dialogue portraits and eight-bit tile banks use indexed

@@ -33,6 +33,7 @@ dependencies = [
 name = "alchemy"
 version = "0.1.0"
 dependencies = [
+ "fdeflate",
  "fs2",
  "objdiff-core",
  "png",

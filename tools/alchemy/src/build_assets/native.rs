@@ -6,7 +6,9 @@ mod identity;
 mod portrait;
 mod review;
 mod review_defaults;
-pub(super) use review::{export as export_review, export_field as export_field_review};
+pub(super) use review::{
+    export as export_review, export_field as export_field_review, plan_inputs as review_plan_inputs,
+};
 mod still;
 mod tile;
 mod tracking;

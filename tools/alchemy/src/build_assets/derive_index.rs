@@ -1285,6 +1285,39 @@ pub(super) fn run(root: &Path, arguments: &[String]) -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn previews_stages_and_rows_are_refused_outside_out_before_reading_the_rom() {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        let arguments = |option: &str, path: &str| {
+            [
+                "missing.gba",
+                "--target",
+                "tla-en",
+                "--scenes",
+                "4",
+                option,
+                path,
+            ]
+            .map(String::from)
+        };
+        for option in ["--preview", "--stage", "-o"] {
+            for path in [
+                "games/THE LOST AGE/PREVIEW",
+                "games/THE LOST AGE/SRC/FIELD",
+                "tools/alchemy/GRAPHICS",
+                "out/../games/THE LOST AGE",
+            ] {
+                let error = run(root, &arguments(option, path)).unwrap_err();
+                assert!(
+                    error.contains("output") || error.contains("out/"),
+                    "{option} {path}: {error}"
+                );
+            }
+        }
+        let error = run(root, &arguments("--preview", "out/tla-en/preview")).unwrap_err();
+        assert!(error.contains("missing.gba"), "{error}");
+    }
 
     #[test]
     fn scene_requests_accept_optional_romaji_names() {

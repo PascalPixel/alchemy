@@ -233,15 +233,8 @@ pub fn audit(root: &Path, arguments: &[String]) -> Result<(), String> {
         }
         _ => return Err("usage: --audit-characters OUTPUT [--target TARGET]".into()),
     };
-    let output = Path::new(&output);
-    let output = if output.is_absolute() {
-        output.to_path_buf()
-    } else {
-        root.join(output)
-    };
-    if !output.starts_with(root.join("out")) {
-        return Err("identity audit contains private ROM messages; use out".into());
-    }
+    // The audit quotes private ROM messages: out/ only, with no `..` escape.
+    let output = ignored_output_path(root, Path::new(&output), "identity audit")?;
     let edition = edition(&target);
     let english_target = target_for(edition.english);
     let japanese_target = target_for(edition.japanese);
@@ -467,4 +460,20 @@ pub fn audit(root: &Path, arguments: &[String]) -> Result<(), String> {
         );
     }
     Ok(())
+}
+
+#[test]
+fn identity_audit_is_refused_outside_out_before_reading_roms() {
+    let directory = tempfile::tempdir().unwrap();
+    let root = directory.path();
+    for output in [
+        "games/THE BROKEN SEAL/PREVIEW",
+        "out/../games/THE BROKEN SEAL/PREVIEW",
+        "tools/alchemy/GRAPHICS",
+    ] {
+        let error = audit(root, &[output.to_string()]).unwrap_err();
+        assert!(error.contains("identity audit"), "{output}: {error}");
+    }
+    let error = audit(root, &["out/identity".to_string()]).unwrap_err();
+    assert!(!error.contains("identity audit"), "{error}");
 }

@@ -13,7 +13,7 @@ const BLOCKED_EXTENSIONS: &[&str] = &[
     "tgz", "unidiff", "ups", "xdelta", "xdelta3", "zip", "7z",
 ];
 /// Fonts, rasters, audio and video no build consumes.
-const PRESENTATION_EXTENSIONS: &[&str] = &[
+pub(crate) const PRESENTATION_EXTENSIONS: &[&str] = &[
     "otf", "ttf", "ttc", "woff", "woff2", "eot", "fnt", "bdf", "pcf", "gif", "jpg", "jpeg", "webp",
     "bmp", "ico", "avif", "apng", "tif", "tiff", "mp3", "ogg", "flac", "m4a", "aac", "mp4", "webm",
     "mov",
@@ -61,6 +61,59 @@ const NUMERIC_RUN_MIN: usize = 16;
 /// Array elements a text outside the game data tables may hold; the tree peaks
 /// near 720 in the executable-gap package.
 const NUMERIC_ELEMENTS_MAX: usize = 2_048;
+/// Byte values one flat JSON array may hold before only a named typed table
+/// explains it; the tracked tree peaks at 518 in `action_modes`.
+const JSON_BYTE_ARRAY_MIN: usize = 256;
+/// Element types of a typed table segment, as `build_assets::typed_table` reads them.
+const TYPED_ELEMENTS: &[&str] = &[
+    "u8",
+    "s8",
+    "le-u16",
+    "le-s16",
+    "le-u32",
+    "le-s32",
+    "ascii-fixed",
+    "ascii-pool",
+    "pool-pointer",
+    "thumb-pointer",
+    "record",
+];
+/// Words that mark bytes nobody has explained yet, in a name or a label.
+const UNEXPLAINED_WORDS: &[&str] = &[
+    "blob",
+    "dump",
+    "opaque",
+    "pending",
+    "raw",
+    "residual",
+    "unclassified",
+    "unidentified",
+    "unknown",
+    "unreferenced",
+    "unresolved",
+];
+/// Words that name a container rather than what it holds.
+const CONTAINER_WORDS: &[&str] = &[
+    "array", "block", "buffer", "byte", "bytes", "chunk", "data", "region", "segment", "span",
+    "storage", "table", "values",
+];
+/// Kinds and representations that store copied or decoded bytes, not a source form.
+const BYTE_COPY_LABELS: &[&str] = &[
+    "byte-values",
+    "decoded-byte-streams",
+    "integer-region-package",
+    "integer-regions",
+];
+/// Label words for bytes that are a stream or a fill rather than a table.
+const STREAM_LABEL_WORDS: &[&str] = &["fill", "padding", "stream", "streams"];
+/// Labels of a JSON object that say what kind of bytes it holds.
+const BYTE_LABEL_FIELDS: &[&str] = &["kind", "representation", "role", "source_kind"];
+/// State words for bytes whose content still awaits verification. A state of
+/// `typed_values_pending` names typed values whose meaning is still open, and
+/// is not a dump.
+const UNVERIFIED_STATE_WORDS: &[&str] = &["required", "unverified"];
+const JSON_BYTE_DUMP_REASON: &str = "byte dump in JSON: copied bytes, a stream, fill or unexplained byte run, or 256 or more byte values outside the named values of a typed table; decode them into a source form or register a private input";
+const JSON_UNPARSED_REASON: &str = "tracked JSON does not parse, so its numbers cannot be measured";
 const INTEGER_SUFFIXES: &[&str] = &[
     "usize", "isize", "u128", "i128", "u64", "i64", "u32", "i32", "u16", "i16", "u8", "i8", "ull",
     "llu", "ul", "lu", "ll", "u", "l",
@@ -738,6 +791,135 @@ fn encoded_reason(text: &str, arrays: bool) -> Option<&'static str> {
         "numeric array outside the game data tables: pret commits only editable build inputs",
     )
 }
+/// Lower-case alphanumeric words of a name or label.
+fn label_words(label: &str) -> impl Iterator<Item = String> + '_ {
+    label
+        .split(|ch: char| !ch.is_ascii_alphanumeric())
+        .filter(|word| !word.is_empty())
+        .map(str::to_ascii_lowercase)
+}
+/// A name that says what its values mean: no word marks the bytes as
+/// unexplained, and one word of three or more letters is not a container,
+/// an address or a number, as `inventory_counter_slots` and not `residual_001`.
+fn semantic_name(name: &str) -> bool {
+    let words: Vec<_> = label_words(name).collect();
+    !words.iter().any(|word| listed(word, UNEXPLAINED_WORDS))
+        && words.iter().any(|word| {
+            word.len() >= 3
+                && word.bytes().all(|byte| byte.is_ascii_alphabetic())
+                && !listed(word, CONTAINER_WORDS)
+        })
+}
+type JsonObject = serde_json::Map<String, serde_json::Value>;
+fn labels(object: &JsonObject) -> impl Iterator<Item = &str> {
+    BYTE_LABEL_FIELDS
+        .iter()
+        .filter_map(|field| object.get(*field).and_then(serde_json::Value::as_str))
+}
+/// An object whose kind or representation stores copied or decoded bytes
+/// instead of a source form, as `decoded-byte-streams` or `byte_values`.
+fn byte_copy_label(object: &JsonObject) -> bool {
+    labels(object).any(|label| {
+        let label = label_words(label).collect::<Vec<_>>().join("-");
+        listed(&label, BYTE_COPY_LABELS)
+    })
+}
+/// An object whose labels say its bytes are a stream, fill or unexplained,
+/// as `general_lz_stream` or `unresolved_fill`, or whose source state says
+/// their content still awaits verification, as `fill_verification_required`.
+fn unfinished_bytes_label(object: &JsonObject) -> bool {
+    let unverified = object
+        .get("source_state")
+        .and_then(serde_json::Value::as_str)
+        .is_some_and(|state| label_words(state).any(|word| listed(&word, UNVERIFIED_STATE_WORDS)));
+    unverified
+        || labels(object).any(|label| {
+            label_words(label)
+                .any(|word| listed(&word, UNEXPLAINED_WORDS) || listed(&word, STREAM_LABEL_WORDS))
+        })
+}
+/// A key that is a content digest, as in a map of streams keyed by hash.
+fn digest_key(key: &str) -> bool {
+    key.len() >= 16 && key.bytes().all(|byte| byte.is_ascii_hexdigit())
+}
+/// A whole number from 0 to 255, however it is written.
+fn byte_value(value: &serde_json::Value) -> bool {
+    value
+        .as_f64()
+        .is_some_and(|number| number.fract() == 0.0 && (0.0..=255.0).contains(&number))
+}
+/// Whether an array under `key` is the `values` of a typed table segment
+/// whose element type and semantic name give it structure, reached through
+/// no digest key.
+fn typed_table_values(key: Option<&str>, objects: &[&JsonObject], digest_path: bool) -> bool {
+    let Some(segment) = objects.last() else {
+        return false;
+    };
+    let names: Vec<_> = ["name", "id"]
+        .iter()
+        .filter_map(|field| segment.get(*field).and_then(serde_json::Value::as_str))
+        .collect();
+    key == Some("values")
+        && !digest_path
+        && segment
+            .get("element")
+            .and_then(serde_json::Value::as_str)
+            .is_some_and(|element| TYPED_ELEMENTS.contains(&element))
+        && !names.is_empty()
+        && names
+            .iter()
+            .all(|name| !label_words(name).any(|word| listed(&word, UNEXPLAINED_WORDS)))
+        && names.iter().any(|name| semantic_name(name))
+}
+/// Whether a JSON value copies bytes instead of explaining them: an object
+/// labelled as copied bytes; a flat array of `JSON_BYTE_ARRAY_MIN` or more
+/// byte values that is not a typed table's named values; or a byte run of
+/// `NUMERIC_RUN_MIN` or more inside an object labelled as a stream, fill or
+/// unexplained bytes.
+fn copied_bytes<'a>(
+    value: &'a serde_json::Value,
+    key: Option<&str>,
+    objects: &mut Vec<&'a JsonObject>,
+    digest_path: bool,
+) -> bool {
+    match value {
+        serde_json::Value::Array(items) => {
+            let bytes = items.iter().all(byte_value);
+            let untyped = items.len() >= JSON_BYTE_ARRAY_MIN
+                && !typed_table_values(key, objects, digest_path);
+            let unfinished = items.len() >= NUMERIC_RUN_MIN
+                && objects.iter().any(|object| unfinished_bytes_label(object));
+            (bytes && (untyped || unfinished))
+                || items
+                    .iter()
+                    .any(|item| copied_bytes(item, None, objects, digest_path))
+        }
+        serde_json::Value::Object(object) => {
+            if byte_copy_label(object) {
+                return true;
+            }
+            objects.push(object);
+            let copied = object.iter().any(|(name, item)| {
+                copied_bytes(item, Some(name), objects, digest_path || digest_key(name))
+            });
+            objects.pop();
+            copied
+        }
+        _ => false,
+    }
+}
+/// Byte dumps stored as JSON numbers, which the text measures cannot see
+/// inside game data tables: decoded streams, residual regions, hash-keyed
+/// stream maps and any other long flat byte array without a typed table.
+fn json_byte_dump_reason(path: &str, text: &str) -> Option<&'static str> {
+    if !extension(path).eq_ignore_ascii_case("json") {
+        return None;
+    }
+    let Ok(document) = serde_json::from_str::<serde_json::Value>(text) else {
+        return Some(JSON_UNPARSED_REASON);
+    };
+    copied_bytes(&document, None, &mut Vec::new(), false).then_some(JSON_BYTE_DUMP_REASON)
+}
 fn blocked_include(literal: &str, bytes: bool) -> bool {
     let literal = literal.replace('\\', "/");
     literal.split('/').any(|component| {
@@ -942,6 +1124,7 @@ fn publication_data_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Opti
         .or_else(|| diff_reason(text))
         .or_else(|| data_uri_reason(text))
         .or_else(|| encoded_reason(text, !table))
+        .or_else(|| json_byte_dump_reason(path, text))
         .or_else(|| included_bytes_reason(path, text))
         .or_else(|| attributes_reason(path, text))
 }
@@ -1838,8 +2021,10 @@ fn text_fixtures() -> Vec<Fixture> {
         })
         .collect::<String>();
     let rows = (0..16)
-        .map(|_| format!("        \"{}\",\n", "01".repeat(52)))
-        .collect::<String>();
+        .map(|_| format!("\"{}\"", "01".repeat(52)))
+        .collect::<Vec<_>>()
+        .join(",\n        ");
+    let rows = format!("{{\"logo\": [\n        {rows}\n]}}\n");
     let bytes = fixture_bytes(4096, 6);
     let joined = |format: fn(&u8) -> String, separator: &str| {
         bytes.iter().map(format).collect::<Vec<_>>().join(separator)
@@ -1958,7 +2143,7 @@ fn text_fixtures() -> Vec<Fixture> {
             "games/THE BROKEN SEAL/SRC/BATTLE/DATA/TABLE.JSON",
             json_table,
             true,
-            None,
+            Some("byte dump in JSON"),
         ),
         (
             "games/THE LOST AGE/DATA/TABLE.JSON",
@@ -2142,11 +2327,175 @@ fn text_fixtures() -> Vec<Fixture> {
         ),
     ]
 }
+/// Typed tables that explain their bytes, and byte dumps in the shapes the
+/// tree once carried: decoded stream maps keyed by hash, residual byte-value
+/// regions, streams, fills, bytes awaiting verification and bare arrays.
+/// Every array is built here, so this source carries none of them.
+fn json_fixtures() -> Vec<Fixture> {
+    use serde_json::{json, Value};
+    const DATABASE: &str = "games/THE BROKEN SEAL/SRC/GAME/GAMEPLAY_DATABASES.JSON";
+    const CATALOG: &str = "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/TABLES.JSON";
+    const STAFF: &str = "games/THE BROKEN SEAL/TEXT/STAFF_ROLL_INDEX.JSON";
+    const STREAMS: &str = "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.JSON";
+    const RESIDUAL: &str = "games/THE BROKEN SEAL/SRC/SYSTEM/FINAL_BYTE_REGIONS_INDEX.JSON";
+    const RUNTIME: &str = "games/THE BROKEN SEAL/SRC/SYSTEM/EARLY_RUNTIME_INDEX.JSON";
+    let bytes = |length: usize| json!(fixture_bytes(length, 9));
+    let document = |value: Value| format!("{value:#}\n").into_bytes();
+    // A typed segment labelled `field: label` with `extra` fields merged in.
+    let segment = |field: &str, label: &str, element: &str, length: usize, extra: Value| {
+        let mut segment = json!({"element": element, "stride": 1, "values": bytes(length)});
+        segment[field] = json!(label);
+        for (key, value) in extra.as_object().into_iter().flatten() {
+            segment[key] = value.clone();
+        }
+        segment
+    };
+    let table = |segments: Vec<Value>| {
+        document(json!({"format": 1, "kind": "typed-table", "segments": segments}))
+    };
+    let named =
+        |name: &str, length: usize| table(vec![segment("name", name, "u8", length, json!({}))]);
+    let catalog = document(
+        json!({"format": 1, "kind": "typed-table-catalog", "tables": {
+        "0x080c2a0a": {"format": 1, "kind": "typed-table", "segments": [
+            segment("name", "action_modes", "u8", 518, json!({"min": 0, "max": 9})),
+            segment("name", "action_display", "u8", 300, json!({}))]}}}),
+    );
+    let digest = |seed: u64| format!("{:064x}", u128::from(seed + 1) * 0x9e37_79b9_7f4a_7c15);
+    let streams: serde_json::Map<_, _> = (0..3).map(|seed| (digest(seed), bytes(768))).collect();
+    let decoded = json!({"format": 1, "kind": "decoded-byte-streams", "streams": streams});
+    let hashed: serde_json::Map<_, _> = [(
+        digest(7),
+        segment("name", "title_tiles", "u8", 300, json!({})),
+    )]
+    .into_iter()
+    .collect();
+    let residual = json!({"format": 1, "regions": [{"name": "residual_001",
+        "representation": "byte_values", "values": bytes(1916)}]});
+    // Typed rows whose meaning is still open, as grid_lookup_a is today.
+    let rows: Vec<Vec<u8>> = fixture_bytes(256, 5)
+        .chunks(16)
+        .map(<[u8]>::to_vec)
+        .collect();
+    let pending = json!({"id": "grid_lookup_a", "element": "u8", "stride": 16,
+        "source_state": "typed_values_pending", "values": rows});
+    let required = segment(
+        "id",
+        "lookup_storage",
+        "u8",
+        4036,
+        json!({"source_state": "private_content_and_fill_verification_required"}),
+    );
+    let stream = segment(
+        "name",
+        "haikei_stream",
+        "u8",
+        239,
+        json!({"role": "compressed_background", "source_kind": "general_lz_stream"}),
+    );
+    let fill = segment(
+        "name",
+        "aki_080f53ce",
+        "u8",
+        76,
+        json!({"source_kind": "unresolved_fill"}),
+    );
+    let envelope = segment(
+        "name",
+        "henka_hyou",
+        "u8",
+        60,
+        json!({"role": "envelope_table"}),
+    );
+    let package = json!({"format": 1, "regions": [{"kind": "integer-region-package",
+        "address": "0x08001b70", "index": "FINAL_BYTE_REGIONS_INDEX.JSON"}]});
+    let floats: Vec<f64> = fixture_bytes(256, 9).into_iter().map(f64::from).collect();
+    // Whole numbers written as floats are still bytes.
+    let floats = json!({"segments": [{"name": "title_tiles", "values": floats}]});
+    let dump = Some("byte dump in JSON");
+    vec![
+        (DATABASE, named("inventory_counter_slots", 512), true, None),
+        (CATALOG, catalog, true, None),
+        (
+            STAFF,
+            table(vec![segment("id", "lines", "pool-pointer", 339, json!({}))]),
+            true,
+            None,
+        ),
+        (
+            "tools/alchemy/src/slots.json",
+            named("inventory_counter_slots", 512),
+            true,
+            None,
+        ),
+        (DATABASE, named("residual_001", 255), true, None),
+        (DATABASE, named("residual_001", 256), true, dump),
+        (DATABASE, named("unreferenced_storage", 512), true, dump),
+        (DATABASE, named("region_0807b490", 512), true, dump),
+        (DATABASE, named("pending_slots", 512), true, dump),
+        (
+            DATABASE,
+            table(vec![segment(
+                "name",
+                "inventory_counter_slots",
+                "bytes",
+                512,
+                json!({}),
+            )]),
+            true,
+            dump,
+        ),
+        (
+            DATABASE,
+            document(
+                json!({"name": "inventory_counter_slots", "element": "u8", "bytes": bytes(512)}),
+            ),
+            true,
+            dump,
+        ),
+        (DATABASE, document(floats), true, dump),
+        (STREAMS, document(decoded), true, dump),
+        (
+            STREAMS,
+            document(json!({"format": 1, "streams": hashed})),
+            true,
+            dump,
+        ),
+        (RESIDUAL, document(residual), true, dump),
+        (RUNTIME, table(vec![pending]), true, None),
+        (RUNTIME, table(vec![required]), true, dump),
+        (RUNTIME, table(vec![stream]), true, dump),
+        (RUNTIME, table(vec![fill]), true, dump),
+        (RUNTIME, table(vec![envelope]), true, None),
+        (
+            "games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE.JSON",
+            document(package),
+            true,
+            dump,
+        ),
+        (
+            "tools/alchemy/src/rom.json",
+            document(bytes(256)),
+            true,
+            dump,
+        ),
+        (
+            DATABASE,
+            b"{\"values\": [1, 2,]}\n".to_vec(),
+            true,
+            Some("does not parse"),
+        ),
+    ]
+}
 fn check_fixtures() -> Result<(), String> {
     let tbs = vec!["THE BROKEN SEAL".to_string()];
     let both = vec!["THE BROKEN SEAL".to_string(), "THE LOST AGE".to_string()];
     let logo = logo_fixture();
-    for (path, data, manifested, expected) in binary_fixtures().into_iter().chain(text_fixtures()) {
+    let fixtures = binary_fixtures()
+        .into_iter()
+        .chain(text_fixtures())
+        .chain(json_fixtures());
+    for (path, data, manifested, expected) in fixtures {
         let manifests = if manifested { &both } else { &tbs };
         let actual = publication_reason(path, &data, manifests, Some(&logo));
         let holds = match expected {
@@ -2383,6 +2732,34 @@ mod tests {
             std::fs::remove_file(root.join(name)).unwrap();
         }
         std::fs::remove_dir_all(root).unwrap();
+    }
+    #[test]
+    fn json_byte_dumps_need_the_named_values_of_a_typed_table() {
+        for name in [
+            "inventory_counter_slots",
+            "action_modes",
+            "lines",
+            "hyou_a_001",
+        ] {
+            assert!(semantic_name(name), "{name}");
+        }
+        for name in [
+            "residual_001",
+            "unreferenced_storage",
+            "region_0807b490",
+            "table_values",
+            "u8",
+            "pending_slots",
+        ] {
+            assert!(!semantic_name(name), "{name}");
+        }
+        assert!(digest_key(&"9e".repeat(32)) && !digest_key("0x080c2a0a"));
+        // Every JSON fixture is decided by this rule alone.
+        for (path, data, _, expected) in json_fixtures() {
+            let actual = json_byte_dump_reason(path, std::str::from_utf8(&data).unwrap());
+            assert_eq!(actual.is_some(), expected.is_some(), "{path}: {actual:?}");
+        }
+        assert!(json_byte_dump_reason("games/X/SRC/TABLE.TSV", "not json").is_none());
     }
     #[test]
     fn every_publication_rule_rejects_its_fixture_and_accepts_build_inputs() {

@@ -3008,7 +3008,8 @@
       "name": "SummonSlot_RegisterActorSprites"
     },
     "main:080b8db8": {
-      "name": "BattlePresentation_ApplyUnitDamage"
+      "name": "BattlePresentation_ApplyUnitDamage",
+      "source": "BATTLE/PRESENTATION/APPLY_UNIT_DAMAGE.C"
     },
     "main:080bae40": {
       "name": "BattleTarget_SelectForAction"
@@ -6081,7 +6082,8 @@
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_380:02000f8c": {
-      "name": "Scene_RunActorFormationSequence"
+      "name": "FieldScene_RunElementalStarDemand",
+      "source": "FIELD/SORU_STAR/ELEMENTAL_STAR_DEMAND.C"
     },
     "resource_3c9:02003e9c": {
       "name": "Scene_RunMultiActorPresentation",
@@ -10924,7 +10926,8 @@
       "name": "Scene_RunScene371SequenceA"
     },
     "resource_374:02000bbc": {
-      "name": "Scene_RunScene374SequenceA"
+      "name": "FieldScene_RunElderAidEvent",
+      "source": "FIELD/HAIDIA_IE/ELDER_AID_EVENT.C"
     },
     "resource_3cb:020012e0": {
       "name": "Scene_RunScene3cbSequenceA"
@@ -18287,7 +18290,8 @@
       "source": "FIELD/SORU_IRIGUCHI/SCENARIO_DISPATCH.C"
     },
     "resource_37f:02000a24": {
-      "name": "Scene_RunFormationEntry"
+      "name": "FieldScene_RunSceneEntryHook",
+      "source": "FIELD/SORU_IRIGUCHI/SCENE_ENTRY_HOOK.C"
     },
     "resource_3c8:02001780": {
       "name": "FieldScene_SetupActorTenCamera",
@@ -18351,6 +18355,18 @@
     "resource_3bf:02004da0": {
       "name": "FieldScene_DispatchActorUpdate",
       "source": "FIELD/RUNPA_JO/FORTRESS.C"
+    },
+    "resource_3a0:02000408": {
+      "name": "SceneActor_UpdateTracking",
+      "source": "FIELD/SHIAN_MURA/ACTOR_TRACKING.C"
+    },
+    "main:0801776c": {
+      "name": "UiText_ShowPositionedMessageAndWait",
+      "source": "GRAPHICS/TEXT/SHOW_POSITIONED_MESSAGE_AND_WAIT.C"
+    },
+    "main:080b2b10": {
+      "name": "Sanctum_RunPartyService",
+      "source": "MENU/SHOP/RUN_PARTY_SERVICE.C"
     }
   }
 }

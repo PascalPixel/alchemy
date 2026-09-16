@@ -1513,19 +1513,6 @@
       ]
     },
     {
-      "overlay": "resource_380",
-      "start": "0x02000f8c",
-      "end": "0x02001450",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
-        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
-        "games/THE BROKEN SEAL/recon/en/dossiers.json#resource_380:02000f8c"
-      ]
-    },
-    {
       "overlay": "resource_3bc",
       "start": "0x02001a0c",
       "end": "0x02001c20",
@@ -1694,20 +1681,6 @@
         "This segment preserves retained assembly from the historical 0x02001db0–0x02002282 range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",
         "The historical merged-body draft and unsuccessful flag probes do not establish compiler impossibility. Owner-bounded candidates and dated measurements are retained in the reconstruction corpus.",
         "games/THE BROKEN SEAL/recon/en/dossiers.json#resource_3af:02001db0"
-      ]
-    },
-    {
-      "overlay": "resource_374",
-      "start": "0x02000b8c",
-      "end": "0x0200105a",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
-        "02000b8c is a literal loaded by02000942; preceding owner returns02000b88, and next prologue is02000bbc. Claim ends0200105a but final referenced pool extends through02001084.",
-        "Current reference has114 calls, not dossier113. Candidate omits site02000ee2, legacy Func_020031c4, actual overlay target020022e0, with r0=22,r1=8192,r2=60.",
-        "games/THE BROKEN SEAL/recon/en/dossiers.json#resource_374:02000b8c"
       ]
     },
     {
@@ -2488,19 +2461,6 @@
       "end": "0x02002602"
     },
     {
-      "overlay": "resource_374",
-      "start": "0x02000bbc",
-      "end": "0x02001084",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
-        "2026-09-10: a measured C draft was generated for this owner through the approved route (extract, decompile, per-target call binding, score) and recorded; no compiler-impossibility claim is made, and the bytes remain retained assembly until a candidate is byte-exact.",
-        "games/THE BROKEN SEAL/recon/en/dossiers.json#resource_374:02000bbc"
-      ]
-    },
-    {
       "overlay": "resource_37a",
       "start": "0x02002108",
       "end": "0x020025b0",
@@ -2576,18 +2536,6 @@
         "Retained scene reconstruction is Draft ASM. Nonzero candidate differences do not prove ordinary C impossible.",
         "2026-09-11: the last code owner of the overlay, never registered before; 652-byte reviewed extent, decompiled through the approved route and scored as a measured draft.",
         "games/THE BROKEN SEAL/recon/en/dossiers.json#resource_3b8:020040b4"
-      ]
-    },
-    {
-      "overlay": "resource_37f",
-      "start": "0x02000a24",
-      "end": "0x02000d1c",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "Complete 760-byte scene dispatcher through return and trailing literal pool; the previous 720-byte inventory omitted 40 referenced pool bytes. The adjacent owner begins at 0x02000d1c.",
-        "The scored ordinary C draft reconstructs all 16 table targets and explicit reference-site call bindings but remains 40 halfwords different. Assembly is the temporary build representation, not a handwritten-assembly or compiler-impossibility classification; no DONE credit is claimed."
       ]
     },
     {

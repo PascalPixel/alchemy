@@ -5123,9 +5123,9 @@
       ]
     },
     {
-      "id": "retained-overlay-380-actor-formation",
+      "id": "elemental-star-demand",
       "game": "tbs",
-      "source": "games/THE BROKEN SEAL/recon/en/overlays/resource_380_c_02000f8c.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/ELEMENTAL_STAR_DEMAND.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_380",
       "absolute_symbols": {
@@ -5214,7 +5214,7 @@
         {
           "address": "0x02000f8c",
           "extent": 1220,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ],
       "local_symbols": []
@@ -25042,9 +25042,9 @@
       ]
     },
     {
-      "id": "retained-overlay-374-02000bbc",
+      "id": "elder-aid-event",
       "game": "tbs",
-      "source": "games/THE BROKEN SEAL/recon/en/overlays/resource_374_c_02000bbc.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/ELDER_AID_EVENT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_374",
       "absolute_symbols": {
@@ -25142,7 +25142,7 @@
         {
           "address": "0x02000bbc",
           "extent": 1224,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -161148,9 +161148,9 @@
       ]
     },
     {
-      "id": "scene-formation-dispatch-37f",
+      "id": "scene-entry-hook",
       "game": "tbs",
-      "source": "games/THE BROKEN SEAL/recon/en/overlays/resource_37f_c_02000a24.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/SCENE_ENTRY_HOOK.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37f",
       "absolute_symbols": {
@@ -161199,7 +161199,7 @@
         {
           "address": "0x02000a24",
           "extent": 760,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },

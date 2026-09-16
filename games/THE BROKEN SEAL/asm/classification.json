@@ -2380,10 +2380,9 @@
         "approved_compiler_cannot_express_reference_entry_schedule_without_forbidden_register_constraints",
         "byte_exact_reconstruction"
       ],
-      "expected_files": 2,
-      "expected_bytes": 976,
+      "expected_files": 1,
+      "expected_bytes": 708,
       "files": [
-        "080b8db8",
         "080ba2c0"
       ]
     },
@@ -2664,28 +2663,6 @@
       "expected_bytes": 344,
       "files": [
         "08090658"
-      ]
-    },
-    {
-      "kind": "shop_party_treatment_compiler_allocation_module",
-      "origin": "compiler",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "complete_ordinary_c_semantics_and_exact_664_byte_owner_extent",
-        "equal_branch_topology_and_identical_literal_pool",
-        "all_calls_arguments_fields_loops_messages_and_observable_memory_operations_are_accounted_for",
-        "residual_is_confined_to_equivalent_long_lived_selection_unit_kind_and_retry_register_roles",
-        "allocator_decoder_finds_no_unique_safe_source_repair",
-        "canonical_regmove_scheduling_cse_gcse_rerun_cse_and_o3_routes_preserve_the_floor_while_remaining_routes_regress",
-        "relocation_normalized_core_is_identical_in_ja_en_es_and_it_with_only_localized_two_byte_de_and_one_byte_fr_variants",
-        "inline_assembly_fixed_registers_compiler_barriers_and_forced_allocation_are_disallowed",
-        "byte_exact_reconstruction"
-      ],
-      "expected_files": 1,
-      "expected_bytes": 664,
-      "files": [
-        "080b2b10"
       ]
     },
     {

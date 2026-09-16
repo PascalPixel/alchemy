@@ -77700,22 +77700,6 @@
       "overlay": null
     },
     {
-      "id": "ui-render-drain-pending-retained",
-      "game": "tbs",
-      "source": "games/THE BROKEN SEAL/recon/en/units/ui-render-drain-pending-retained.c",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x08019854",
-          "extent": 136,
-          "state": "retained-assembly"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "battle-unit-lookup-weapon-value-by-class-retained",
       "game": "tbs",
       "source": "games/THE BROKEN SEAL/recon/en/units/battle-unit-lookup-weapon-value-by-class-retained.c",

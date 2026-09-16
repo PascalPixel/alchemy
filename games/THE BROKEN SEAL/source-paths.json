@@ -1194,7 +1194,8 @@
       "source": "BATTLE/EFFECT/DATA_SELECT_RESULT_POINTER.C"
     },
     "main:0808b8e8": {
-      "name": "BattleEffect_ClearOutOfBoundsObjects"
+      "name": "BattleEffect_ClearOutOfBoundsObjects",
+      "source": "BATTLE/EFFECT/CLEAR_OUT_OF_BOUNDS_OBJECTS.C"
     },
     "main:0808d428": {
       "name": "GameFlag_IsConditionActive",
@@ -4075,7 +4076,8 @@
       "source": "SYSTEM/CLEAR_WORD_IF_SET.C"
     },
     "main:08019854": {
-      "name": "UiWork_AdvanceChannelTransition"
+      "name": "UiWork_AdvanceChannelTransition",
+      "source": "GRAPHICS/RENDER/ADVANCE_CHANNEL_TRANSITION.C"
     },
     "main:080198dc": {
       "name": "UiWork_ClearValueNameTables",
@@ -9423,7 +9425,8 @@
       "source": "BATTLE/PRESENTATION/RUN_ACTION_AND_WAIT.C"
     },
     "main:080a1a40": {
-      "name": "BattleEffect_PositionSprite"
+      "name": "UiMenu_PositionCursor",
+      "source": "GRAPHICS/WINDOW/MENU_POSITION_CURSOR.C"
     },
     "main:0808e4b4": {
       "name": "BattleFx_FindMatchingEvent",
@@ -18367,6 +18370,46 @@
     "main:080b2b10": {
       "name": "Sanctum_RunPartyService",
       "source": "MENU/SHOP/RUN_PARTY_SERVICE.C"
+    },
+    "main:08090488": {
+      "name": "DisplayTransition_UpdateFromCentre",
+      "source": "GRAPHICS/DISPLAY/TRANSITION_UPDATE_FROM_CENTRE.C"
+    },
+    "main:08098c08": {
+      "name": "SpawnHeavyImpactEffect",
+      "source": "BATTLE/EFFECT/SPAWN_HEAVY_IMPACT_EFFECT.C"
+    },
+    "main:080b6c08": {
+      "name": "BattleParty_ListActorIds",
+      "source": "BATTLE/PARTY/LIST_ACTOR_IDS.C"
+    },
+    "main:08010704": {
+      "name": "Map_CopyCellAttributeRect",
+      "source": "FIELD/COMMON/MAP/COPY_CELL_ATTRIBUTE_RECT.C"
+    },
+    "main:08019d2c": {
+      "name": "Localization_LookupEntryId",
+      "source": "GRAPHICS/WINDOW/LOOKUP_ENTRY_ID.C"
+    },
+    "resource_3a7:02000944": {
+      "name": "SceneActor_LiftLowActorOnSubjectTile",
+      "source": "FIELD/KUUPUAPPU_DOU/LIFT_LOW_ACTOR.C"
+    },
+    "main:0807a7a0": {
+      "name": "InventorySnapshot_Restore",
+      "source": "GAME/INVENTORY/RESTORE_SNAPSHOT.C"
+    },
+    "main:0808c30c": {
+      "name": "BattleParty_ApplyHealthDelta",
+      "source": "BATTLE/PARTY/APPLY_HEALTH_DELTA.C"
+    },
+    "main:080b110c": {
+      "name": "Shop_DrawItemPrice",
+      "source": "MENU/SHOP/DRAW_ITEM_PRICE.C"
+    },
+    "main:0800bbc0": {
+      "name": "AnimationObject_Allocate",
+      "source": "GRAPHICS/ANIMATION/ALLOCATE_OBJECT.C"
     }
   }
 }

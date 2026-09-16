@@ -1,9 +1,10 @@
 use super::*;
+use sha2::Sha256;
 
 const REVIEW: &str = "games/THE BROKEN SEAL/SRC/GRAPHICS/REVIEW.JSON";
 
 /// Export derived review sheets from private native inputs, without reading scratch or ROM files.
-pub(crate) fn export(root: &Path, output: &Path) -> Result<(), String> {
+pub(crate) fn export(root: &Path, output: &Path, update_baseline: bool) -> Result<(), String> {
     let output = if output.is_absolute() {
         output.to_path_buf()
     } else {
@@ -24,6 +25,7 @@ pub(crate) fn export(root: &Path, output: &Path) -> Result<(), String> {
     if plan["format"] != 3 {
         return Err("unsupported graphics review format".into());
     }
+    let mut source_plan = plan.clone();
     super::review_defaults::expand(root, &mut plan)?;
     let colors: Value =
         serde_json::from_slice(&fs::read(root.join(COLORS)).map_err(|e| e.to_string())?)
@@ -130,8 +132,13 @@ pub(crate) fn export(root: &Path, output: &Path) -> Result<(), String> {
         palettes.push(rgb);
     }
     let images = plan["images"].as_array().ok_or("missing review images")?;
+    let image_count = images.len();
+    let mut names = BTreeSet::new();
     let mut sources = BTreeMap::new();
     let mut generated = Vec::new();
+    let mut digest = Sha256::new();
+    digest.update(b"ALCHEMY_REVIEW_V1\0");
+    let mut pixel_count = 0usize;
     for image in images {
         let raster = render(root, image, &mut sources)?;
         let width = raster.width;
@@ -151,6 +158,19 @@ pub(crate) fn export(root: &Path, output: &Path) -> Result<(), String> {
         if Path::new(name).components().count() != 1 || !name.ends_with(".PNG") {
             return Err("review filename must be a flat PNG name".into());
         }
+        if !names.insert(name) {
+            return Err("duplicate review filename".into());
+        }
+        digest_image(
+            &mut digest,
+            name,
+            width,
+            height,
+            &pixels,
+            palette,
+            image["transparent"] == true,
+        )?;
+        pixel_count += pixels.len();
         let mut bytes = Vec::new();
         {
             let mut encoder = png::Encoder::new(
@@ -172,6 +192,20 @@ pub(crate) fn export(root: &Path, output: &Path) -> Result<(), String> {
         }
         generated.push((name.to_string(), bytes));
     }
+    let baseline = json!({"format":"indexed-rgba-v1","images":images.len(),"pixels":pixel_count,
+        "sha256":format!("{:x}",digest.finalize())});
+    if !update_baseline && source_plan["baseline"] != baseline {
+        return Err(format!("graphics review baseline differs: {baseline}; review the changes before using --update-baseline"));
+    }
+    if update_baseline {
+        source_plan["baseline"] = baseline.clone();
+        fs::write(
+            root.join(REVIEW),
+            format!("{}\n", canonical_json(&source_plan)),
+        )
+        .map_err(|e| e.to_string())?;
+    }
+    plan["baseline"] = baseline;
     // Validate the complete batch before writing any output.
     fs::create_dir_all(&output).map_err(|e| e.to_string())?;
     for (name, bytes) in generated {
@@ -182,7 +216,47 @@ pub(crate) fn export(root: &Path, output: &Path) -> Result<(), String> {
         format!("{}\n", canonical_json(&plan)),
     )
     .map_err(|e| e.to_string())?;
-    println!("review images={} source={REVIEW}", images.len());
+    println!("review images={image_count} baseline=matched source={REVIEW}");
+    Ok(())
+}
+
+/// Stable across PNG compression: sorted filenames, dimensions, indices and RGBA.
+fn digest_image(
+    digest: &mut Sha256,
+    name: &str,
+    width: usize,
+    height: usize,
+    pixels: &[u8],
+    palette: &[u8],
+    transparent: bool,
+) -> Result<(), String> {
+    digest.update(
+        u32::try_from(name.len())
+            .map_err(|_| "review name is too long")?
+            .to_le_bytes(),
+    );
+    digest.update(name.as_bytes());
+    for value in [width, height] {
+        digest.update(
+            u32::try_from(value)
+                .map_err(|_| "review dimensions exceed u32")?
+                .to_le_bytes(),
+        );
+    }
+    digest.update(pixels);
+    let mut rgba = [0u8; 4096 * 4];
+    for chunk in pixels.chunks(4096) {
+        for (&index, color) in chunk.iter().zip(rgba.chunks_exact_mut(4)) {
+            let at = index as usize * 3;
+            color[..3].copy_from_slice(
+                palette
+                    .get(at..at + 3)
+                    .ok_or("review digest index exceeds palette")?,
+            );
+            color[3] = if transparent && index == 0 { 0 } else { 255 };
+        }
+        digest.update(&rgba[..chunk.len() * 4]);
+    }
     Ok(())
 }
 
@@ -532,6 +606,49 @@ fn render(
 mod tests {
     use super::*;
 
+    #[test]
+    fn review_digest_detects_names_geometry_indices_colors_and_alpha() {
+        let fixture = |name: &str,
+                       width: usize,
+                       height: usize,
+                       pixels: &[u8],
+                       palette: &[u8],
+                       transparent: bool| {
+            let mut hash = Sha256::new();
+            hash.update(b"ALCHEMY_REVIEW_V1\0");
+            digest_image(&mut hash, name, width, height, pixels, palette, transparent).unwrap();
+            format!("{:x}", hash.finalize())
+        };
+        let pixels = [0, 1, 2, 3];
+        let palette = [9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 11, 12];
+        let expected = fixture("sample.PNG", 2, 2, &pixels, &palette, true);
+        assert_eq!(
+            expected,
+            "13a1617b12eae97b9fb883a683bc3fad877cca3e6f86a508cb427df97f9b15a9"
+        );
+        assert_ne!(
+            expected,
+            fixture("other.PNG", 2, 2, &pixels, &palette, true)
+        );
+        assert_ne!(
+            expected,
+            fixture("sample.PNG", 1, 4, &pixels, &palette, true)
+        );
+        assert_ne!(
+            expected,
+            fixture("sample.PNG", 2, 2, &[0, 2, 1, 3], &palette, true)
+        );
+        let mut changed = palette;
+        changed[3] += 1;
+        assert_ne!(
+            expected,
+            fixture("sample.PNG", 2, 2, &pixels, &changed, true)
+        );
+        assert_ne!(
+            expected,
+            fixture("sample.PNG", 2, 2, &pixels, &palette, false)
+        );
+    }
     #[test]
     fn tile_roundtrip_preserves_rows_across_tile_boundaries() {
         for bpp in [4, 8] {

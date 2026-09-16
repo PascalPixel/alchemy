@@ -1,4 +1,5 @@
 //! Native entry point for the asset build stage.
+mod compression_plan;
 mod gba_header;
 mod native;
 use crate::compiler::build_io::relative;
@@ -28,7 +29,7 @@ use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
-const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--manifest MANIFEST] [-o OUTPUT] [rom] | --review-images OUTPUT | --audit-characters OUTPUT | --extract-sources ROM | --extract-missing-sources ROM | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
+const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--manifest MANIFEST] [-o OUTPUT] [rom] | --compact-plans PLAN | --derive-plans PLAN | --review-images OUTPUT [--update-baseline] | --audit-characters OUTPUT | --extract-sources ROM | --extract-missing-sources ROM | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
 const ROM_BASE: usize = 0x0800_0000;
 const ROM_SIZE: usize = 0x0080_0000;
 fn repository_root() -> PathBuf {
@@ -2392,6 +2393,16 @@ fn encode_lz_stream(decoded: &[u8], plan: &Value, arena: &[u8]) -> Result<Vec<u8
     if decoded.len() != number(&plan["decoded_size"], "decoded_size")? {
         return Err("decoded components do not match plan size".to_string());
     }
+    let materialized = if codec != "golden-sun-arena-lz" || plan.get("tokens").is_some() {
+        Some(compression_plan::materialize(decoded, plan, arena)?)
+    } else {
+        None
+    };
+    let mut expanded = plan.clone();
+    if let Some(tokens) = materialized {
+        expanded["tokens"] = tokens;
+    }
+    let plan = &expanded;
     let mut built = match codec {
         "golden-sun-general-lz-prefill" => psynergy::assets::lz::encode_general_prefill(
             decoded,
@@ -2541,6 +2552,9 @@ fn build_general_lz_cached(
         built.extend(stream);
     }
     sources.push(plan_name.to_string());
+    if let Some(source) = compression_plan::table_source(&plan_document) {
+        sources.push(source.to_string());
+    }
     Ok((
         built,
         dedup_sources(sources),
@@ -2611,7 +2625,9 @@ impl Context {
         if let Some(value) = self.documents.borrow().get(path) {
             return Ok(value.clone());
         }
-        let value = std::rc::Rc::new(json(path)?);
+        let mut document = json(path)?;
+        compression_plan::expand(&self.root, &mut document)?;
+        let value = std::rc::Rc::new(document);
         self.documents
             .borrow_mut()
             .insert(path.to_path_buf(), value.clone());
@@ -3312,7 +3328,8 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
             if decoded.len() != number(&plan["decoded_size"], "decoded_size")? {
                 return Err("decoded tag-2 components do not match plan".to_string());
             }
-            let tokens = plan["tokens"]
+            let materialized = compression_plan::materialize(&decoded, plan, &[])?;
+            let tokens = materialized
                 .as_array()
                 .ok_or("tag-2 tokens must be an array")?
                 .iter()
@@ -3348,6 +3365,9 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
                 }
             }
             sources.push(plan_name.to_string());
+            if let Some(source) = compression_plan::table_source(&plan_document) {
+                sources.push(source.to_string());
+            }
             Ok((
                 built,
                 dedup_sources(sources),
@@ -5357,11 +5377,28 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
     Ok(())
 }
 fn run(arguments: Vec<String>) -> Result<ExitCode, String> {
-    if arguments.first().map(String::as_str) == Some("--review-images") {
+    if arguments.first().map(String::as_str) == Some("--derive-plans") {
         if arguments.len() != 2 {
             return Err(USAGE.into());
         }
-        native::export_review(&repository_root(), Path::new(&arguments[1]))?;
+        let root = repository_root();
+        compression_plan::derive(&root, &root_path(&root, &arguments[1])?)?;
+        return Ok(ExitCode::SUCCESS);
+    }
+    if arguments.first().map(String::as_str) == Some("--compact-plans") {
+        if arguments.len() != 2 {
+            return Err(USAGE.into());
+        }
+        let root = repository_root();
+        compression_plan::repack(&root, &root_path(&root, &arguments[1])?)?;
+        return Ok(ExitCode::SUCCESS);
+    }
+    if arguments.first().map(String::as_str) == Some("--review-images") {
+        let update = arguments.len() == 3 && arguments[2] == "--update-baseline";
+        if arguments.len() != 2 && !update {
+            return Err(USAGE.into());
+        }
+        native::export_review(&repository_root(), Path::new(&arguments[1]), update)?;
         return Ok(ExitCode::SUCCESS);
     }
     if arguments.first().map(String::as_str) == Some("--extract-missing-sources") {

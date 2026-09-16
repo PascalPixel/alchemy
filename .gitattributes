@@ -1,3 +1,6 @@
 # Coverage figures are wholly generated. Keep one side during a merge, then run
 # `make coverage`. Configure once with `git config merge.generated.driver true`.
 "games/THE BROKEN SEAL/PREVIEW/*.SVG" merge=generated
+
+# Typed compression controls must retain their exact bytes on checkout.
+*.TOKENS binary

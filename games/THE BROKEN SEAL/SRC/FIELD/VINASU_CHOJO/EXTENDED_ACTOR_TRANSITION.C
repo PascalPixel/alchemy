@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "STAGED_ACTOR.H"
 
 #define Scene_RunExtendedActorTransition Func_02004bec
 
@@ -295,19 +296,23 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2) { f(a0, a1, a2
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3) { f(a0, a1, a2, a3); }
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5) { f(a0, a1, a2, a3, a4, a5); }
 
+/* Stages the long actor transition, takes one of two query-selected branches
+ * that both advance the scene step counter by three, then posts the next scene
+ * request and clears two halfwords of the record whose pointer cell lies 48
+ * bytes before the scene work cell. */
 void Scene_RunExtendedActorTransition(void)
 {
     u8 *rec;
     u8 *record;
     s32 none;
-    s32 v5;
-    s32 v8;
-    u8 *base5_200e3c0;
-    u8 *base5_200e39c;
-    s32 base5_3001ebc;
+    s32 turn;
+    s32 step_pending;
+    u8 *group_action;
+    u8 *closing_action;
+    s32 cell;
     struct SceneWork *work;
 
-    v8 = 0;
+    step_pending = 0;
     Call1(Func_0200a9f8, 0x282e);
     Call2(Func_0200aa3a, 21, 0x102);
     Func_0200a940(20);
@@ -349,16 +354,16 @@ void Scene_RunExtendedActorTransition(void)
     Func_0200aad4(21, 6, 0);
     Call3(Func_0200aa72_a, 21, 0x30000, 0x18000);
     *(u8 *)(Func_0200aa68(21) + 90) &= 254;
-    v5 = 128;
+    turn = 128;
     rec = Func_0200aa78(21);
     *(void (**)(u8 *))(rec + 108) = Func_02000400;
-    *(u16 *)(rec + 6) = (v5 << 8);
+    *(u16 *)(rec + 6) = (turn << 8);
     Func_0200aace(21, 184, 237);
     CallAction(Func_0200aac6, 21, Data_0200e360);
     Func_0200aa7c(120);
     Func_020055ea(0);
     Func_0200ac28(72);
-    Func_0200ab9a( 0x40000, (v5 << 8));
+    Func_0200ab9a( 0x40000, (turn << 8));
     Call4(Func_0200abb4, 0x1560000, 0x200000, 0xd40000, 1);
     Func_0200abc0();
     Func_0200aaae(20);
@@ -446,7 +451,7 @@ void Scene_RunExtendedActorTransition(void)
         Func_020058c4(2);
         Func_0200adec(3, 4);
         Func_020058d2(3);
-        v8 = 1;
+        step_pending = 1;
     } else {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 3;
         Func_0200ad86(60);
@@ -456,7 +461,7 @@ void Scene_RunExtendedActorTransition(void)
         Func_0200ae2a(3, 4);
         Func_02005910(3);
     }
-    if (v8 != 0) {
+    if (step_pending != 0) {
         *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 3;
     }
     Func_02005944( 0, 0x4000);
@@ -490,24 +495,24 @@ void Scene_RunExtendedActorTransition(void)
     Call6(Func_0200ae68, 92, 86, 11, 72, 16, 20);
     Call6(Func_0200ae7a, 19, 92, 19, 68, 8, 21);
     rec = Pointer1(Func_0200af38_a, 0);
-    *(s32 *)(rec + 16) += -0x200000;
+    ((struct StagedActor *)rec)->z.value += -0x200000;
     none = 0;
-    *(u16 *)(rec + 102) = none;
+    ((struct StagedActor *)rec)->vertical_motion_direction = none;
     Func_0200a88e(rec);
     rec = Pointer1(Func_0200af58, 1);
-    *(s32 *)(rec + 8) += -0x40000;
-    *(s32 *)(rec + 16) += -0x200000;
-    *(u16 *)(rec + 102) = none;
+    ((struct StagedActor *)rec)->x.value += -0x40000;
+    ((struct StagedActor *)rec)->z.value += -0x200000;
+    ((struct StagedActor *)rec)->vertical_motion_direction = none;
     Func_0200a8b0(rec);
     rec = Pointer1(Func_0200af7a, 2);
-    *(s32 *)(rec + 8) += -0x40000;
-    *(s32 *)(rec + 16) += -0x200000;
-    *(u16 *)(rec + 102) = none;
+    ((struct StagedActor *)rec)->x.value += -0x40000;
+    ((struct StagedActor *)rec)->z.value += -0x200000;
+    ((struct StagedActor *)rec)->vertical_motion_direction = none;
     Func_0200a8d0(rec);
     rec = Pointer1(Func_0200af9a, 3);
-    *(s32 *)(rec + 8) += -0x40000;
-    *(s32 *)(rec + 16) += -0x120000;
-    *(u16 *)(rec + 102) = none;
+    ((struct StagedActor *)rec)->x.value += -0x40000;
+    ((struct StagedActor *)rec)->z.value += -0x120000;
+    ((struct StagedActor *)rec)->vertical_motion_direction = none;
     Func_0200a8f2(rec);
     record = Func_0200afbc(23);
     *(s32 *)(record + 12) = 0x380000;
@@ -522,11 +527,11 @@ void Scene_RunExtendedActorTransition(void)
     Func_0200b0a2(1, 6, 0);
     Func_0200b0ac(2, 6, 0);
     Func_0200b0b6(3, 6, 0);
-    base5_200e3c0 = Data_0200e3c0;
-    Func_0200b058(0, base5_200e3c0);
-    Func_0200b060( 1, base5_200e3c0);
-    Func_0200b068( 2, base5_200e3c0);
-    Func_0200b070( 3, base5_200e3c0);
+    group_action = Data_0200e3c0;
+    Func_0200b058(0, group_action);
+    Func_0200b060( 1, group_action);
+    Func_0200b068( 2, group_action);
+    Func_0200b070( 3, group_action);
     Call3(Func_0200afd8, 0x30000, 0x30000, 0x10000);
     Func_0200b04e(80);
     Call3(Func_0200afee, 0x60000, 0x60000, 0x10000);
@@ -603,26 +608,26 @@ void Scene_RunExtendedActorTransition(void)
     Call3(Func_0200b2f6, 1, 0x10000, 0x8000);
     Call3(Func_0200b304, 2, 0x10000, 0x8000);
     Call3(Func_0200b312, 3, 0x10000, 0x8000);
-    base5_200e39c = Data_0200e39c;
-    Func_0200b324(1, base5_200e39c);
-    Func_0200b32c( 2, base5_200e39c);
-    Func_0200b334(3, base5_200e39c);
+    closing_action = Data_0200e39c;
+    Func_0200b324(1, closing_action);
+    Func_0200b32c( 2, closing_action);
+    Func_0200b334(3, closing_action);
     Func_0200b302_a(60);
     Call3(Func_0200b340, 0, 0x10000, 0x8000);
     Call3(Func_0200b38c, 0, 0x110, 216);
     Call3(Func_0200b390, 0, 0x110, 254);
     Func_0200b32e(80);
-    base5_3001ebc = (u32)&Data_03001ebc;
-    work = *(struct SceneWork **)base5_3001ebc;
+    cell = (u32)&Data_03001ebc;
+    work = *(struct SceneWork **)cell;
     work->request = 0x201;
     work->setup = 16;
     Func_0200b4ba();
-    base5_3001ebc -= 48;
+    cell -= 48;
     Func_0200b4c8();
     Func_0200b356(80);
     Func_0200b2f2();
-    *(u16 *)((*(s32 *)base5_3001ebc + 0x12f4)) = none;
-    *(u16 *)((*(s32 *)base5_3001ebc + 0x12f6)) = none;
+    *(u16 *)((*(s32 *)cell + 0x12f4)) = none;
+    *(u16 *)((*(s32 *)cell + 0x12f6)) = none;
     Call3(Func_0200b32c_a, 0x284f, 0, 0);
     Func_0200b318();
     Func_0200b37e(80);

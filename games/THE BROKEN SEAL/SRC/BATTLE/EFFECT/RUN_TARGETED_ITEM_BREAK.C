@@ -1,29 +1,6 @@
 #include "TYPES.H"
 
-#define BattleFx_RunTargetedItemBreak Func_08098848
-
-/*
- * Companion to RunBattleEffect07 (0x08098954) and Func_08099da4 (the
- * mode-11 twin): this is the mode-7 case handler inside the second,
- * "targeted" battle-effect dispatcher Func_08096960 --
- *     case 7: Func_08098848(target_id); break;
- * target_id is loaded into r0 by every case in that switch, but this
- * body never reads r0 (confirmed against the retained assembly: r0 is
- * first written, never read, before its first use), matching the same
- * pattern already adopted for RunBurstParticleMainObject (0x080985a8)
- * and StartOrbitingParticleEffect (0x08099128), which also ignore the
- * argument their caller passes.
- *
- * scene->0x10 (main_object) and scene->0x14 (child) are the exact same
- * two fields read by Func_08099da4 (the mode-11 sibling), which performs
- * an almost byte-identical opening sequence: guard on child != 0, call
- * Func_08097384, link main_object->0x68 = child, then
- * Object_SetCallback(main_object, 0x0809f0bc), then spawn two objects at
- * scene->{x,y,z} +/- 0x200000 in x, +0x100000 in y. Func_08099da4 spawns
- * through SpawnItemBreakEffectMode1 (0x0809a3c4); this owner spawns
- * through SpawnItemBreakEffectMode3 (0x08098a84), matching the spawn
- * helper RunBattleEffect07 (0x08098954) itself uses for the same mode.
- */
+#define BattleEffect_RunTargetedItemBreak Func_08098848
 
 struct BattleEffectScene {
     u8 reserved_00[4];
@@ -32,6 +9,15 @@ struct BattleEffectScene {
     s32 z;
     void *main_object;
     void *child;
+};
+
+struct EffectChild {
+    u8 reserved_00[12];
+    s32 y;
+    u8 reserved_10[0x55 - 0x10];
+    u8 flag;
+    u8 reserved_56[0x6c - 0x56];
+    void (*callback)(void);
 };
 
 extern struct BattleEffectScene *Data_03001f30;
@@ -48,7 +34,11 @@ void ObjectGroup_ApplyRandomChildValues(void);
 void UpdateRisingParticleBurst(void *effect);
 void BattleFx_PrepareBufferInterpolation(void);
 
-void BattleFx_RunTargetedItemBreak(void)
+/* Links the scene child to the main object, spawns two mode-3 item-break
+ * anchors on either side of the scene position, sends them outward, then
+ * raises both anchors and the child together until the child has risen
+ * 0x200000 before finishing both bursts. */
+void BattleEffect_RunTargetedItemBreak(void)
 {
     struct BattleEffectScene *scene;
     void *main_object;
@@ -88,24 +78,19 @@ void BattleFx_RunTargetedItemBreak(void)
     }
 
     Object_CommitPosition(anchors[0]);
-    *(void (**)(void))((u8 *)child + 0x6c) = ObjectGroup_ApplyRandomChildValues;
+    ((struct EffectChild *)child)->callback = ObjectGroup_ApplyRandomChildValues;
     Audio_PlayCue(130);
-    /* Reference schedules the reload of anchors[0] (needed for the guard
-       below) ahead of this store; every source-level ordering tried here
-       keeps the two swapped relative to one another (2 differing
-       halfwords, wrong_instructions=0, objdiff class=ordering) -- a
-       GCC-2.96 -O2 scheduler placement, not a semantic difference. */
-    *(u8 *)((u8 *)child + 0x55) = 4;
+    ((struct EffectChild *)child)->flag = 4;
 
-    start_y = *(s32 *)((u8 *)child + 0xc);
+    start_y = ((struct EffectChild *)child)->y;
     if (anchors[0] != 0 && anchors[1] != 0 &&
         start_y <= start_y + 0x200000) {
         do {
             *(s32 *)((u8 *)anchors[0] + 0xc) += 0x4000;
             *(s32 *)((u8 *)anchors[1] + 0xc) += 0x4000;
-            *(s32 *)((u8 *)child + 0xc) += 0x4000;
+            ((struct EffectChild *)child)->y += 0x4000;
             WaitFrames(1);
-        } while (*(s32 *)((u8 *)child + 0xc) <= start_y + 0x200000);
+        } while (((struct EffectChild *)child)->y <= start_y + 0x200000);
     }
 
     UpdateRisingParticleBurst(anchors[0]);

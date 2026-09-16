@@ -1,9 +1,5 @@
 #include "TYPES.H"
 
-/* AUDITED GENERATED CALL SCRIPT for FieldScene_RunLiftedActorCoordinator:
- * A phase-two fast path, full and revisit branches, the lifted actor-state
- * transfer, and all 40 calls across the complete scene coordinator. */
-
 #define FieldScene_RunLiftedActorCoordinator Func_020016d4
 
 void Func_020034de();
@@ -51,12 +47,6 @@ extern s16 Data_02000240[];
 
 #define SceneTransition_Phase Data_02000240[225]
 
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);
@@ -82,7 +72,11 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-void Func_020016d4(s32 scene)
+/* In transition phase 2 only the fast path runs. Otherwise route 0 plays the
+ * full presentation, passing actor 0's position on with Y raised by 0x400000,
+ * route 1 plays the short revisit, and every such path ends in the common
+ * coordinator tail. */
+void FieldScene_RunLiftedActorCoordinator(s32 scene)
 {
     void *actor;
     s32 path;
@@ -105,7 +99,7 @@ void Func_020016d4(s32 scene)
         Func_0200573a(scene, 0);
         Func_02004310(0, 632, 264);
         Call3(Func_020056d6_a, 0, 65536, 32768);
-        Func_02005702(0, 616, 264);
+        Call3(Func_02005702, 0, 616, 264);
         Value3(Func_0200577e, 0, 49152, 20);
         Func_020057ea();
         Call2(Func_020057b6, 16384, 2048);

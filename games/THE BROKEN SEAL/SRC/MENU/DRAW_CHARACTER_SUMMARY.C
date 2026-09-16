@@ -3,7 +3,7 @@
 void Func_08016478(void);
 void Func_0801e41c(s32, s32, s32, s32, s32);
 void Func_0801e8b0(void *, s32, s32, s32);
-s32 Func_0801e940(s32, s32, s32, s32);
+void Func_0801e940(s32, s32, s32, s32);
 void Func_0801e9d4(s32, s32, s32, s32, s32);
 void Func_0801e7c0(s32, s32, s32, s32);
 s32 Func_0801f680(s32, void *);
@@ -17,6 +17,9 @@ extern u8 Data_080371e0[];
 #define StatusLabelMessage Value_00000009
 #define StatusMenu_DrawCharacterSummary Func_08020198
 
+/* Draws one character entry into the summary surface: its name, the two-digit
+ * value at +0x1c, the class message selected by +0x1d, the formatted value at
+ * +0x20, the six-digit value at +0x24 and the closing label. */
 void StatusMenu_DrawCharacterSummary(s32 surface, u8 *st)
 {
     u32 buf[4];

@@ -10,10 +10,12 @@ extern struct PartyState Data_02000240;
 s32 Func_08077148(void);
 struct BattleUnit *Runtime_GetObject(s32 unit_id);
 
+/* Caps the active party at four owners, or three in the alternate battle mode,
+ * optionally writes their identifiers with a 0xff terminator, marks each
+ * selected battle unit with status 2, and returns the selected count. */
 s32 BattleParty_PrepareActiveOwners(u16 *owners)
 {
     s32 limit;
-    s32 left;
     s32 count;
     s32 index;
 
@@ -25,17 +27,12 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners)
     if (count > limit)
         count = limit;
 
-    index = 0;
-    if (count > 0) {
-        left = count;
-        do {
-            s32 owner = Data_02000240.active_owners[index++];
+    for (index = 0; index < count; index++) {
+        s32 owner = Data_02000240.active_owners[index];
 
-            if (owners != 0)
-                *owners++ = owner;
-            Runtime_GetObject(owner)->status_12a = 2;
-            left--;
-        } while (left != 0);
+        if (owners != 0)
+            *owners++ = owner;
+        Runtime_GetObject(owner)->status_12a = 2;
     }
 
     if (owners != 0)

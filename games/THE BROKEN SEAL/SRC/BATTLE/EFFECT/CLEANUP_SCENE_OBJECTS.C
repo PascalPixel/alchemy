@@ -47,10 +47,10 @@ void Func_08003f3c(s32 handle);
 void Func_0809202c(void);
 void Func_08002dd8(s32 asset_id);
 
-#define BattleFx_CleanupSceneObjects Func_08097194
+#define BattleEffect_CleanupSceneObjects Func_08097194
 
 /* Drain effect objects, restore the scene position, and release effect data. */
-void BattleFx_CleanupSceneObjects(void)
+void BattleEffect_CleanupSceneObjects(void)
 {
     struct BattleEffectScene **scene_cell;
     struct BattleEffectScene *scene;
@@ -63,15 +63,11 @@ void BattleFx_CleanupSceneObjects(void)
     scene = *scene_cell;
     runtime = *(struct BattleEffectRuntime **)((u8 *)scene_cell - 116);
     position = *(struct BattleEffectPosition **)((u8 *)scene_cell - 192);
-    scene_object = scene->objects;
-    remaining = 23;
-
-    do {
+    for (remaining = 0; remaining < 24; remaining++) {
+        scene_object = &scene->objects[remaining];
         if (scene_object->active != 0)
             Func_0809bb34(scene_object);
-        scene_object++;
-        remaining--;
-    } while (remaining >= 0);
+    }
 
     if (runtime->teardown_blocked == 0) {
         s32 waited = 0;

@@ -10,13 +10,16 @@ struct ShopCursorSprite {
     u8 unknown_0a[0x0a];
     u8 screen_y;
     u8 unknown_1b;
-    u16 attributes;
+    u16 attr_x : 9;
+    u16 attr_rest : 7;
 };
 
+/* Moves the cursor sprite a quarter of its remaining signed X and Y distance
+ * toward the target, at least one pixel per axis, and refreshes the packed
+ * screen coordinate of each axis that moved. */
 void ShopCursor_MoveTowardTarget(struct ShopCursor *cursor)
 {
     struct ShopCursorSprite *sprite;
-    u32 attributes;
     s32 delta;
     s32 step;
 
@@ -39,9 +42,7 @@ void ShopCursor_MoveTowardTarget(struct ShopCursor *cursor)
             else
                 sprite->x += 1;
         }
-        attributes = sprite->x & 0x1ff;
-        attributes |= sprite->attributes & 0xfffffe00u;
-        sprite->attributes = attributes;
+        sprite->attr_x = sprite->x;
 
 move_y:
         delta = sprite->y - cursor->target_y;

@@ -28,7 +28,7 @@ use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
-const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--manifest MANIFEST] [-o OUTPUT] [rom] | --audit-characters OUTPUT | --extract-sources ROM | --extract-missing-sources ROM | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
+const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--manifest MANIFEST] [-o OUTPUT] [rom] | --review-images OUTPUT | --audit-characters OUTPUT | --extract-sources ROM | --extract-missing-sources ROM | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
 const ROM_BASE: usize = 0x0800_0000;
 const ROM_SIZE: usize = 0x0080_0000;
 fn repository_root() -> PathBuf {
@@ -5357,6 +5357,13 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
     Ok(())
 }
 fn run(arguments: Vec<String>) -> Result<ExitCode, String> {
+    if arguments.first().map(String::as_str) == Some("--review-images") {
+        if arguments.len() != 2 {
+            return Err(USAGE.into());
+        }
+        native::export_review(&repository_root(), Path::new(&arguments[1]))?;
+        return Ok(ExitCode::SUCCESS);
+    }
     if arguments.first().map(String::as_str) == Some("--extract-missing-sources") {
         if arguments.len() != 2 {
             return Err(USAGE.into());

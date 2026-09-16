@@ -3418,23 +3418,12 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
             ))
         }
         "gba-cartridge-header-standard-fields" => {
-            let source = source_path(entry_source)?;
-            let document = json(&source)?;
-            let logo = document["standard"]["logo"]
-                .get("source")
-                .map(|v| json_string(v, "header logo"))
-                .transpose()?;
-            let built = build_gba_header_bytes(
-                ctx,
-                &source,
-                address,
-                number(&entry["size"], "header size")?,
-            )?;
+            let document = read_gba_header_source(&source_path(entry_source)?)?;
+            let size = number(&entry["size"], "header size")?;
+            let built = build_gba_header_component(&document, address as u32, size)?;
             Ok((
                 built.clone(),
-                std::iter::once(entry_source.to_string())
-                    .chain(logo.map(str::to_string))
-                    .collect(),
+                vec![entry_source.to_string()],
                 serde_json::json!({"standard_header_bytes":built.len()}),
             ))
         }
@@ -3617,20 +3606,6 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
         }
         _ => build_entry_native_tail(ctx, entry, kind, address, entry_source),
     }
-}
-fn build_gba_header_bytes(
-    ctx: &Context,
-    source: &Path,
-    address: usize,
-    size: usize,
-) -> Result<Vec<u8>, String> {
-    let document = read_gba_header_source(source)?;
-    let logo_image = if let Some(logo) = document["standard"]["logo"].get("source") {
-        fs::read(ctx.source(json_string(logo, "header logo")?)?).map_err(|e| e.to_string())?
-    } else {
-        vec![]
-    };
-    build_gba_header_component(&document, &logo_image, address as u32, size)
 }
 const SEQUENCE_DURATIONS: [usize; 49] = [
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 28,

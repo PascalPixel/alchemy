@@ -203,7 +203,7 @@ fn score_overlay_unit(unit: &TranslationUnit, overlay: &str) -> Result<String, S
     Ok(output)
 }
 
-fn exact_mismatch(output: &RenderOutput) -> bool {
+pub(crate) fn exact_mismatch(output: &RenderOutput) -> bool {
     output.differing_halfwords != 0
         || output.candidate_length != output.reference_length
         || (output.candidate_length == 0

@@ -62,7 +62,7 @@ CANDIDATE_SINGLE_OWNERS := \
 .PHONY: help verify audit reports test lint lint-production lint-all-targets build-tools tool-tests tooling-size tooling-index-check \
 	build-claimed build-asm build-assets build-full build-rom \
 	standard-check compiler-source-check corpus-check core-retained-check \
-	full-rom-check tla-assets-check overlay-check declared-tu-check owner-inventory-check strict-tu-check classification-check \
+	full-rom-check tla-assets-check tla-owners-check overlay-check declared-tu-check owner-inventory-check strict-tu-check classification-check \
 	candidate-corpus-check source-tracking-check index-sync-check publication-tree-check plan-tails-check overlay-data-check showcase-check check-owners progress progress-report progress-check progress-subject \
 	correspondence correspondence-check edition-builds edition-builds-check \
 	coverage coverage-check native-format-check review-images-check clean clean-preview
@@ -82,6 +82,7 @@ help:
 		'make build-full       rebuild and compare every owned byte' \
 		'make full-rom-check   prove the complete tbs-en ROM byte-exact' \
 		'make tla-assets-check prove every tla-en asset region byte-exact' \
+		'make tla-owners-check prove every exact tla-en owner and shared source' \
 		'make overlay-check    audit every exact overlay owner' \
 		'make declared-tu-check prove declared production translation-unit contracts' \
 		'make owner-inventory-check prove registered owner production coverage' \
@@ -130,6 +131,12 @@ tla-assets-check: prepare-inputs
 	$(ASSETS) --target tla-en -o $(TLA_ASSETS) roms/tla-en.gba
 	@grep -Fq '"verification": "rom"' $(TLA_ASSETS)/manifest.json
 	@printf 'asset contract ok: tla-en\n'
+
+# Every owner the TLA register gives a source, and with them the TLA half of
+# every shared source in games/COMMON, scores byte-exact over its audited
+# extent against the tla-en ROM.
+tla-owners-check:
+	$(CHECK) tla-owners roms/tla-en.gba
 
 overlay-check:
 	$(OVERLAY) audit --all
@@ -419,7 +426,7 @@ native-format-check:
 review-images-check: source-tracking-check
 	$(ASSETS) --review-images out/tbs-en/graphics-review
 
-verify: toolchain-check native-format-check index-sync-check publication-tree-check plan-tails-check overlay-data-check source-tracking-check review-images-check $(if $(wildcard roms/tla-en.gba),tla-assets-check) corpus-check language-check register-shrink-check lint-production tooling-size tooling-index-check \
+verify: toolchain-check native-format-check index-sync-check publication-tree-check plan-tails-check overlay-data-check source-tracking-check review-images-check $(if $(wildcard roms/tla-en.gba),tla-assets-check tla-owners-check) corpus-check language-check register-shrink-check lint-production tooling-size tooling-index-check \
 	strict-tu-check check-owners core-retained-check coverage-check showcase-check | $(REPORT_DIR)
 	@tree=$$(git write-tree) || exit; \
 	printf '%s\n' "$$tree" > $(VERIFIED_TREE).tmp; \

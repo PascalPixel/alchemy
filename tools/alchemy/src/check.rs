@@ -11,8 +11,9 @@ mod publication;
 pub(crate) use publication::PRESENTATION_EXTENSIONS;
 mod retained;
 mod showcase;
+mod tla_owners;
 
-const USAGE: &str = "usage: alchemy check <publication|commit-progress|source-tracking|owners|retained|coverage|integrate|no-asm|plan-tails|overlay-data|progress|routes|showcase> [args]";
+const USAGE: &str = "usage: alchemy check <publication|commit-progress|source-tracking|owners|tla-owners|retained|coverage|integrate|no-asm|plan-tails|overlay-data|progress|routes|showcase> [args]";
 
 /// The tracked paths under `games/` that `keep` selects, with their worktree
 /// contents; `make verify` has already required the worktree to match the index.
@@ -108,6 +109,7 @@ pub fn entry(arguments: &[String]) -> ExitCode {
         "publication" => publication::entry(rest),
         "commit-progress" => commit_progress::entry(rest),
         "owners" => owners::entry(rest),
+        "tla-owners" => tla_owners::entry(rest),
         "retained" => retained::entry(rest),
         "coverage" => {
             crate::coverage::entry(rest);

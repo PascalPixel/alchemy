@@ -5,213 +5,158 @@
 #include "TYPES.H"
 
 /*
- * Shared layouts for the reconstructed game audio engine.
- *
- * The named fields below are backed by accesses in Alchemy's exact C or local
- * assembly.  Offset-named storage is intentional where the field's role is not
- * yet established.  Exact sources compiled through the raw old_agbcc route
- * mirror these declarations locally because that route does not preprocess
- * #include directives.
+ * Sound driver work areas, laid out from the reads and writes of the driver
+ * routines in the ROM. A field is named only where a reconstructed routine
+ * uses it; the rest keep their offsets.
  */
 
-struct CgbChannel;
-struct MusicPlayerState;
-struct MusicTrackState;
+/* Written into every work area while it is idle; routines add to it while busy. */
+#define SOUND_LOCK 0x68736D53
 
-typedef void (*PlayerMainCallback)(struct MusicPlayerState *);
-typedef void (*CgbUpdateCallback)(void);
-typedef void (*CgbDisableCallback)(u8);
-typedef s32 (*KeyToFrequencyCallback)(s32, s32, s32);
-typedef void (*NoteHandler)(
-    u32,
-    struct MusicPlayerState *,
-    struct MusicTrackState *);
+/* The driver keeps its work area address in the BIOS sound pointer. */
+#define SOUND_WORK (*(struct SoundWork **)0x03007FF0)
 
-union CgbDisableCallbackSlot {
-    CgbUpdateCallback placeholder;
-    CgbDisableCallback handler;
+struct SoundNote;
+struct SoundPlayer;
+struct SoundTrack;
+
+typedef void (*SoundCommand)(struct SoundPlayer *player, struct SoundTrack *track);
+
+/* The twelve bytes a sequence selects from a voice bank. */
+struct SoundVoice {
+    u8 kind;                        /* 0x00 */
+    u8 base_key;                    /* 0x01 */
+    u8 length;                      /* 0x02 */
+    u8 pan_or_sweep;                /* 0x03 */
+    const void *target;             /* 0x04 */
+    u8 attack;                      /* 0x08 */
+    u8 decay;                       /* 0x09 */
+    u8 sustain;                     /* 0x0a */
+    u8 release;                     /* 0x0b */
 };
 
-union KeyToFrequencyCallbackSlot {
-    CgbUpdateCallback placeholder;
-    KeyToFrequencyCallback handler;
+/* A note sounding on a DirectSound voice or on one of the four CGB channels. */
+struct SoundNote {
+    u8 state;                       /* 0x00 */
+    u8 kind;                        /* 0x01 */
+    u8 out_right;                   /* 0x02 */
+    u8 out_left;                    /* 0x03 */
+    u8 unk04[2];
+    u8 sustain;                     /* 0x06 */
+    u8 unk07[3];
+    u8 peak;                        /* 0x0a */
+    u8 unk0b[0x0e];
+    u8 sustain_level;               /* 0x19 */
+    u8 unk1a;
+    u8 pan_bits;                    /* 0x1b */
+    u8 channel_bits;                /* 0x1c */
+    u8 unk1d[0x0f];
+    struct SoundTrack *track;       /* 0x2c */
+    struct SoundNote *prev;         /* 0x30 */
+    struct SoundNote *next;         /* 0x34 */
+    u8 unk38[8];
 };
 
-typedef void (*PlayerTrackCommand)(
-    struct MusicPlayerState *,
-    struct MusicTrackState *);
-typedef void (*WordAudioCommand)(u32);
-typedef void (*PlayerCommand)(struct MusicPlayerState *);
-
-union AudioCommandSlot {
-    PlayerTrackCommand player_track;
-    WordAudioCommand word;
-    PlayerCommand player;
+struct SoundTrack {
+    u8 flags;                       /* 0x00 */
+    u8 unk01[0x0a];
+    s8 key_offset_b;                /* 0x0b */
+    u8 unk0c;
+    u8 fine;                        /* 0x0d */
+    u8 unk0e;
+    u8 bend_range;                  /* 0x0f */
+    u8 unk10[3];
+    u8 volume_scale;                /* 0x13 */
+    u8 unk14;
+    s8 pan_offset;                  /* 0x15 */
+    u8 unk16[3];
+    u8 lfo_speed;                   /* 0x19 */
+    u8 unk1a[4];
+    u8 tail_level;                  /* 0x1e */
+    u8 tail_length;                 /* 0x1f */
+    struct SoundNote *notes;        /* 0x20 */
+    struct SoundVoice voice;        /* 0x24 */
+    u8 unk30[0x10];
+    const u8 *cursor;               /* 0x40 */
+    u8 unk44[0x0c];
 };
 
-/* 楽曲トラックは0x50バイト。+0x40は次のコマンド位置。 */
-struct MusicTrackState {
-    u8 flags;                     /* 0x00 */
-    u8 unknown01[0x1d];          /* 0x01 */
-    u8 pseudo_echo_volume;       /* 0x1e */
-    u8 pseudo_echo_length;       /* 0x1f */
-    void *channel;                /* 0x20 */
-    u8 tone_type;                 /* 0x24 */
-    u8 tone_key;                  /* 0x25 */
-    u8 tone_length;               /* 0x26 */
-    u8 tone_pan_sweep;            /* 0x27 */
-    u32 wave_pointer;              /* 0x28 */
-    u8 tone_attack;               /* 0x2c */
-    u8 tone_decay;                /* 0x2d */
-    u8 tone_sustain;              /* 0x2e */
-    u8 tone_release;              /* 0x2f */
-    u8 track_gap[0x10];
-    const u8 *command;            /* 0x40 */
-    u8 pattern_stack_bytes[0x0c]; /* 0x44 */
+struct SequenceHeader {
+    u8 track_count;                 /* 0x00 */
+    u8 unk01;
+    u8 priority;                    /* 0x02 */
+    u8 mode;                        /* 0x03 */
+    const struct SoundVoice *voices; /* 0x04 */
+    const u8 *tracks[1];            /* 0x08 */
 };
 
-/* One music-player state is 0x40 bytes. */
-struct MusicPlayerState {
-    u32 song_header_word;                  /* 0x00 */
-    u32 status;                           /* 0x04 */
-    u8 track_count;                       /* 0x08 */
-    u8 priority;                          /* 0x09 */
-    u8 command;                           /* 0x0a */
-    u8 config;                            /* 0x0b */
-    u8 clock_and_gap[0x0c];               /* 0x0c */
-    u8 *memory_area;                      /* 0x18 */
-    u8 tempo_and_fade_bytes[0x10];        /* 0x1c */
-    struct MusicTrackState *tracks;       /* 0x2c */
-    void *voice_group;                    /* 0x30 */
-    u32 ident;                            /* 0x34 */
-    PlayerMainCallback next_callback;             /* 0x38 */
-    struct MusicPlayerState *next_player;         /* 0x3c */
+struct SoundPlayer {
+    const struct SequenceHeader *header; /* 0x00 */
+    u32 status;                     /* 0x04 */
+    u8 track_count;                 /* 0x08 */
+    u8 priority;                    /* 0x09 */
+    u8 unk0a;
+    u8 check_priority;              /* 0x0b */
+    u32 ticks;                      /* 0x0c */
+    u8 unk10[8];
+    u8 *work_bytes;                 /* 0x18 */
+    u16 tempo;                      /* 0x1c */
+    u16 tempo_scale;                /* 0x1e */
+    u16 tempo_step;                 /* 0x20 */
+    u16 tempo_count;                /* 0x22 */
+    u16 fade_period;                /* 0x24 */
+    u16 fade_counter;               /* 0x26 */
+    u16 fade_volume;                /* 0x28 */
+    u8 unk2a[2];
+    struct SoundTrack *tracks;      /* 0x2c */
+    const struct SoundVoice *voices; /* 0x30 */
+    u32 lock;                       /* 0x34 */
+    void (*next_tick)(struct SoundPlayer *player);  /* 0x38 */
+    struct SoundPlayer *next_tick_player;           /* 0x3c */
 };
 
-/* One Game Boy sound channel is 0x40 bytes. */
-struct CgbChannel {
-    u8 status_flags;                        /* 0x00 */
-    u8 type;                                /* 0x01 */
-    u8 right_volume;                        /* 0x02 */
-    u8 left_volume;                         /* 0x03 */
-    u8 attack;                              /* 0x04 */
-    u8 decay;                               /* 0x05 */
-    u8 sustain;                             /* 0x06 */
-    u8 release;                             /* 0x07 */
-    u8 key;                                 /* 0x08 */
-    u8 envelope_volume;                     /* 0x09 */
-    u8 envelope_goal;                       /* 0x0a */
-    u8 envelope_counter;                    /* 0x0b */
-    u8 pseudo_echo_volume;                  /* 0x0c */
-    u8 pseudo_echo_length;                  /* 0x0d */
-    u8 dummy1[2];                           /* 0x0e */
-    u8 gate_time;                           /* 0x10 */
-    u8 midi_key;                            /* 0x11 */
-    u8 velocity;                            /* 0x12 */
-    u8 priority;                            /* 0x13 */
-    u8 rhythm_pan;                          /* 0x14 */
-    u8 dummy3[3];                           /* 0x15 */
-    u8 dummy5;                              /* 0x18 */
-    s8 sustain_goal;                        /* 0x19 */
-    u8 n4;                                  /* 0x1a */
-    u8 pan;                                 /* 0x1b */
-    u8 pan_mask;                            /* 0x1c */
-    u8 modify;                              /* 0x1d */
-    u8 length;                              /* 0x1e */
-    u8 sweep;                               /* 0x1f */
-    u32 frequency;                          /* 0x20 */
-    const u8 *wave_pointer;                 /* 0x24 */
-    const u8 *current_pointer;              /* 0x28 */
-    struct MusicTrackState *track;           /* 0x2c */
-    struct CgbChannel *previous_channel;    /* 0x30 */
-    struct CgbChannel *next_channel;        /* 0x34 */
-    u8 dummy4[8];                            /* 0x38 */
+struct SoundWork {
+    u32 lock;                       /* 0x000 */
+    volatile u8 transfer_countdown; /* 0x004 */
+    u8 reverb;                      /* 0x005 */
+    u8 pcm_note_count;              /* 0x006 */
+    u8 volume;                      /* 0x007 */
+    u8 rate;                        /* 0x008 */
+    u8 unk09[2];
+    u8 transfer_period;             /* 0x00b */
+    u8 unk0c;
+    u8 unk0d[3];
+    u32 frame_samples;              /* 0x010 */
+    u32 output_rate;                /* 0x014 */
+    u32 rate_step;                  /* 0x018 */
+    struct SoundNote *cgb_notes;    /* 0x01c */
+    void (*tick)(struct SoundPlayer *player);       /* 0x020 */
+    struct SoundPlayer *tick_player;                /* 0x024 */
+    void (*cgb_update)(void);                       /* 0x028 */
+    void (*cgb_mute)(u8 channel);                   /* 0x02c */
+    s32 (*cgb_frequency)(u8 kind, u8 key, u8 fine); /* 0x030 */
+    SoundCommand *commands;         /* 0x034 */
+    void (*note_on)(u32 command, struct SoundPlayer *player, struct SoundTrack *track); /* 0x038 */
+    void (*unk3c)(void);
+    u8 unk40[0x10];
+    struct SoundNote pcm_notes[12]; /* 0x050 */
+    s8 buffers[2][0x630];           /* 0x350 */
 };
 
-/*
- * The complete sound state is 0xfb0 bytes: a 0x50-byte header, twelve
- * 0x40-byte direct-sound channel records, and two 0x630-byte PCM buffers.
- */
-struct AudioEngineState {
-    u32 ident;                                        /* 0x000 */
-    u8 pcm_dma_counter;                               /* 0x004 */
-    u8 reverb;                                        /* 0x005 */
-    u8 max_pcm_channels;                              /* 0x006 */
-    u8 master_volume;                                 /* 0x007 */
-    u8 pcm_rate;                                      /* 0x008 */
-    u8 mode;                                          /* 0x009 */
-    u8 c15_counter;                                   /* 0x00a */
-    u8 pcm_dma_period;                                /* 0x00b */
-    u8 max_lines;                                     /* 0x00c */
-    u8 gap[3];                                        /* 0x00d */
-    u32 pcm_samples_per_vblank;                       /* 0x010 */
-    u32 pcm_freq;                                     /* 0x014 */
-    u32 div_freq;                                     /* 0x018 */
-    struct CgbChannel *cgb_channels;                  /* 0x01c */
-    PlayerMainCallback mplay_main_head;               /* 0x020 */
-    struct MusicPlayerState *music_player_head;       /* 0x024 */
-    CgbUpdateCallback cgb_sound;                      /* 0x028 */
-    union CgbDisableCallbackSlot cgb_osc_off;         /* 0x02c */
-    union KeyToFrequencyCallbackSlot midi_key_to_cgb_freq; /* 0x030 */
-    union AudioCommandSlot *mplay_jump_table;         /* 0x034 */
-    NoteHandler ply_note;                             /* 0x038 */
-    CgbUpdateCallback ext_volume_pitch;               /* 0x03c */
-    u8 gap2[0x10];                                    /* 0x040 */
-    u8 direct_channels[12][0x40];                     /* 0x050 */
-    s8 pcm_buffers[2][0x630];                         /* 0x350 */
+/* One of the players the driver opens at boot, with its track storage. */
+struct PlayerSlot {
+    struct SoundPlayer *player;     /* 0x00 */
+    struct SoundTrack *tracks;      /* 0x04 */
+    u8 track_count;                 /* 0x08 */
+    u8 unk09;
+    u16 check_priority;             /* 0x0a */
 };
 
-/* One entry in the eight-record table at 0x080fc624. */
-struct PlayerBootstrapRecord {
-    struct MusicPlayerState *player;   /* 0x00 */
-    struct MusicTrackState *tracks;    /* 0x04 */
-    u8 max_tracks;                     /* 0x08 */
-    u8 unknown09;                      /* 0x09 */
-    u16 config;                        /* 0x0a */
+/* One song: its sequence and the player slot that plays it. */
+struct SongEntry {
+    const struct SequenceHeader *header; /* 0x00 */
+    u16 slot;                       /* 0x04 */
+    u16 unk06;
 };
-
-#define AUDIO_ENGINE_OFFSET(type, field) \
-    ((u32)&(((type *)0)->field))
-
-typedef char MusicTrackState_size[
-    sizeof(struct MusicTrackState) == 0x50 ? 1 : -1
-];
-typedef char MusicTrackState_command_offset[
-    AUDIO_ENGINE_OFFSET(struct MusicTrackState, command) == 0x40 ? 1 : -1
-];
-typedef char MusicPlayerState_size[
-    sizeof(struct MusicPlayerState) == 0x40 ? 1 : -1
-];
-typedef char MusicPlayerState_tracks_offset[
-    AUDIO_ENGINE_OFFSET(struct MusicPlayerState, tracks) == 0x2c ? 1 : -1
-];
-typedef char MusicPlayerState_ident_offset[
-    AUDIO_ENGINE_OFFSET(struct MusicPlayerState, ident) == 0x34 ? 1 : -1
-];
-typedef char CgbChannel_size[
-    sizeof(struct CgbChannel) == 0x40 ? 1 : -1
-];
-typedef char AudioEngineState_size[
-    sizeof(struct AudioEngineState) == 0xfb0 ? 1 : -1
-];
-typedef char AudioEngineState_direct_channels_offset[
-    AUDIO_ENGINE_OFFSET(struct AudioEngineState, direct_channels) == 0x50
-        ? 1 : -1
-];
-
-#undef AUDIO_ENGINE_OFFSET
-
-void Audio_Initialize(void);
-void CgbAudio_Initialize(struct CgbChannel *channels);
-void MusicPlayer_ExecuteMemoryAccessCommand(
-    struct MusicPlayerState *player,
-    struct MusicTrackState *track);
-void AudioEngine_Initialize(struct AudioEngineState *audio_state);
-void AudioEngine_SetMode(u32 value);
-void MusicPlayer_Initialize(
-    struct MusicPlayerState *player,
-    struct MusicTrackState *tracks,
-    u32 count);
-void CgbChannel_UpdatePanEnvelope(struct CgbChannel *channel);
 
 #endif

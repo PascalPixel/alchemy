@@ -1,4 +1,4 @@
-//! Live coverage only. Music playback is a separate optional process.
+//! Live coverage only.
 use super::http::{self, root, Response};
 use crate::coverage::{
     boxtree::{render_box_trees, svg_cache_version, BOX_TREES},
@@ -328,7 +328,6 @@ fn response(path: &str) -> Response {
         return page(path);
     }
     match path {
-        "/weyard.otf" => http::font(),
         "/snapshot" => Response::new(
             200,
             "OK",
@@ -679,6 +678,13 @@ mod tests {
             .any(|(key, value)| *key == "Content-Security-Policy"
                 && value.contains("script-src 'none'")));
         assert!(!STYLES.contains(".music-player"));
+    }
+    #[test]
+    fn dashboard_serves_no_font_and_styles_labels_with_system_monospace() {
+        assert_eq!(response("/weyard.otf").status, 404);
+        assert!(!STYLES.contains("@font-face"));
+        assert!(!STYLES.contains("url("));
+        assert!(STYLES.contains("16px/20px ui-monospace"));
     }
     #[test]
     fn navigation_rejects_invalid_paths() {

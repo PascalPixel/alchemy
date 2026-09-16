@@ -2,10 +2,9 @@ use crate::compiler::{canonical_json::canonical_json, routing::root};
 use serde_json::Value;
 use std::path::Path;
 
-pub const NATIVE_ROOTS: [&str; 10] = [
+pub const NATIVE_ROOTS: [&str; 9] = [
     "games/THE LOST AGE/SRC",
     "games/THE LOST AGE/INCLUDE",
-    "games/THE LOST AGE/SOUND",
     "games/THE LOST AGE/PROJECT.JSON",
     "games/THE BROKEN SEAL/SRC",
     "games/THE BROKEN SEAL/INCLUDE",
@@ -61,7 +60,7 @@ fn check_table_sources(path: &Path) -> Result<(), String> {
             .extension()
             .and_then(|e| e.to_str())
             .unwrap_or("");
-        if !["mid", "wav", "pcm4", "png"]
+        if !["mid", "wav", "png"]
             .iter()
             .any(|e| suffix.eq_ignore_ascii_case(e))
         {

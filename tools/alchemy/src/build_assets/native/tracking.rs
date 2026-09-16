@@ -53,6 +53,58 @@ fn private_sources_cannot_collide_on_case_insensitive_filesystems() {
     assert!(source_spelling(&mut spellings, "COMMON/CHR.PNG").is_err());
     source_spelling(&mut spellings, "COMMON/TILE_BANK.PNG").unwrap();
 }
+/// A preview, sprite animation, converted font, player audio or README
+/// picture under `games/`: the publication gate's presentation types, anything
+/// but the coverage SVG under `PREVIEW`, and README pictures. Tools write these
+/// into ignored `out/` or nowhere; ignoring them in place still leaves
+/// presentation material in a game tree.
+fn presentation_file(path: &str) -> bool {
+    let components: Vec<_> = path.split('/').collect();
+    let leaf = components.last().copied().unwrap_or("");
+    let suffix = leaf.rsplit_once('.').map_or("", |(_, suffix)| suffix);
+    let listed = |value: &str, choices: &[&str]| {
+        choices
+            .iter()
+            .any(|choice| value.eq_ignore_ascii_case(choice))
+    };
+    let preview = components[..components.len().saturating_sub(1)]
+        .iter()
+        .any(|directory| directory.eq_ignore_ascii_case("PREVIEW"));
+    let readme = leaf
+        .get(..6)
+        .is_some_and(|stem| stem.eq_ignore_ascii_case("README"));
+    listed(suffix, crate::check::PRESENTATION_EXTENSIONS)
+        || (preview && !suffix.eq_ignore_ascii_case("svg"))
+        || (readme && listed(suffix, &["png", "svg"]))
+}
+/// A path of the shape `alchemy build assets --extract-sources` writes: pixel
+/// sheets, packed bytes and palettes restored from the local ROM, which
+/// must be registered private inputs whatever their ignore status.
+fn extracted_input_shape(path: &str) -> bool {
+    let upper = path.to_ascii_uppercase();
+    let components: Vec<_> = upper.split('/').collect();
+    let ["GAMES", _, "SRC", rest @ ..] = components.as_slice() else {
+        return false;
+    };
+    let leaf = rest.last().copied().unwrap_or("");
+    let under =
+        |directory: &[&str]| rest.len() == directory.len() + 1 && rest.starts_with(directory);
+    leaf == "CHR.PNG"
+        || leaf.ends_with("_CHR.PNG")
+        || leaf.ends_with(".BIN")
+        || (under(&["GRAPHICS", "COMMON"])
+            && [
+                "PALETTE.JSON",
+                "STILL.PNG",
+                "TILE.PNG",
+                "PORTRAIT.PNG",
+                "TILE_BANK.PNG",
+            ]
+            .contains(&leaf))
+        || (under(&["GRAPHICS", "CHARACTER"])
+            && (leaf.starts_with("CHAR_") || leaf.starts_with("BATTLE_"))
+            && leaf.ends_with(".PNG"))
+}
 fn classify(
     files: &BTreeSet<String>,
     tracked: &BTreeSet<String>,
@@ -60,6 +112,16 @@ fn classify(
     private: &BTreeSet<String>,
 ) -> Result<(), String> {
     for file in files {
+        if presentation_file(file) {
+            return Err(format!(
+                "presentation material under games/: write previews, fonts and exports to ignored out/: {file}"
+            ));
+        }
+        if !private.contains(file) && extracted_input_shape(file) {
+            return Err(format!(
+                "unregistered extracted input: register it in the game's SOURCE.JSON private_inputs or remove it: {file}"
+            ));
+        }
         if private.contains(file) {
             if tracked.contains(file) || !ignored.contains(file) {
                 return Err(format!(
@@ -348,4 +410,56 @@ fn private_inputs_require_registration_ignoring_and_nonpublication() {
     assert!(classify(&files, &files, &ignored, &private).is_err());
     assert!(classify(&files, &tracked, &BTreeSet::new(), &private).is_err());
     assert!(classify(&files, &BTreeSet::new(), &ignored, &private).is_err());
+
+    let tbs = "games/THE BROKEN SEAL";
+    let set = |names: &[String]| names.iter().cloned().collect::<BTreeSet<_>>();
+    let tile = format!("{tbs}/SRC/GRAPHICS/TILE/X.INDEXED.PNG");
+    let figure = format!("{tbs}/PREVIEW/TBS-EN-ROM.SVG");
+    let sheet = format!("{tbs}/SRC/GRAPHICS/CHARACTER/CHAR_ROBIN.PNG");
+    let inputs = set(&[tile.clone(), figure.clone(), sheet.clone()]);
+    let published = set(&[tile.clone(), figure.clone()]);
+    let registered = set(&[sheet.clone()]);
+    classify(&inputs, &published, &registered, &registered).unwrap();
+    for (name, fragment) in [
+        (format!("{tbs}/PREVIEW/X.GIF"), "presentation material"),
+        (format!("{tbs}/PREVIEW/TITLE.png"), "presentation material"),
+        (format!("{tbs}/README.PNG"), "presentation material"),
+        (format!("{tbs}/TOOLS/Weyard.otf"), "presentation material"),
+        (
+            format!("{tbs}/SOUND/SEQUENCE/THEME.ogg"),
+            "presentation material",
+        ),
+        (
+            format!("{tbs}/SRC/FIELD/Y/CHR.PNG"),
+            "unregistered extracted input",
+        ),
+        (
+            format!("{tbs}/SRC/FIELD/Y/MAP.BIN"),
+            "unregistered extracted input",
+        ),
+        (
+            format!("{tbs}/SRC/GRAPHICS/COMMON/palette.json"),
+            "unregistered extracted input",
+        ),
+        (
+            format!("{tbs}/SRC/GRAPHICS/CHARACTER/BATTLE_IWAN.PNG"),
+            "unregistered extracted input",
+        ),
+    ] {
+        let files = set(&[tile.clone(), name.clone()]);
+        // Tracked and not ignored, ignored and untracked: either way it fails.
+        for (tracked, ignored) in [
+            (set(&[tile.clone(), name.clone()]), BTreeSet::new()),
+            (set(&[tile.clone()]), set(&[name.clone()])),
+        ] {
+            let error = classify(&files, &tracked, &ignored, &BTreeSet::new()).unwrap_err();
+            assert!(error.contains(fragment) && error.contains(&name), "{error}");
+        }
+    }
+    // A registered private sheet under PREVIEW is still presentation material.
+    let preview_sheet = format!("{tbs}/PREVIEW/CHR.PNG");
+    let files = set(&[preview_sheet.clone()]);
+    assert!(classify(&files, &BTreeSet::new(), &files, &files)
+        .unwrap_err()
+        .contains("presentation material"));
 }

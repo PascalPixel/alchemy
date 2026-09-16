@@ -8,6 +8,7 @@ mod overlay_data;
 mod owners;
 mod plan_tails;
 mod publication;
+pub(crate) use publication::PRESENTATION_EXTENSIONS;
 mod retained;
 
 const USAGE: &str = "usage: alchemy check <publication|commit-progress|source-tracking|owners|retained|coverage|integrate|no-asm|plan-tails|overlay-data|progress|routes> [args]";

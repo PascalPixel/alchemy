@@ -3,6 +3,46 @@ use sha2::Sha256;
 
 const REVIEW: &str = "games/THE BROKEN SEAL/SRC/GRAPHICS/REVIEW.JSON";
 
+/// A game's declared review plan and the repository paths it names, which
+/// `export` reads. They count as consumed game material; a game without a
+/// plan declares nothing.
+pub(crate) fn plan_inputs(root: &Path, game_dir: &str) -> Result<Vec<String>, String> {
+    if !REVIEW.starts_with(&format!("{game_dir}/")) || !root.join(REVIEW).is_file() {
+        return Ok(Vec::new());
+    }
+    fn named(value: &Value, inputs: &mut Vec<String>) {
+        match value {
+            Value::String(text) if text.starts_with("games/") => inputs.push(text.clone()),
+            Value::Array(items) => items.iter().for_each(|item| named(item, inputs)),
+            Value::Object(fields) => fields.values().for_each(|item| named(item, inputs)),
+            _ => {}
+        }
+    }
+    let plan = json(&root.join(REVIEW))?;
+    let mut inputs = vec![REVIEW.to_string()];
+    named(&plan, &mut inputs);
+    Ok(inputs)
+}
+#[test]
+fn review_plan_inputs_name_the_plan_and_its_repository_paths() {
+    let directory = tempfile::tempdir().unwrap();
+    let root = directory.path();
+    let game = REVIEW.split("/SRC/").next().unwrap();
+    assert!(plan_inputs(root, game).unwrap().is_empty());
+    fs::create_dir_all(root.join(REVIEW).parent().unwrap()).unwrap();
+    let image = format!("{game}/SRC/GRAPHICS/TILE/A.4BPP.PNG");
+    fs::write(
+        root.join(REVIEW),
+        json!({"format": 3, "sheets": [{"output": "A.PNG", "source": image}]}).to_string(),
+    )
+    .unwrap();
+    assert_eq!(
+        plan_inputs(root, game).unwrap(),
+        [REVIEW.to_string(), image]
+    );
+    assert!(plan_inputs(root, "games/THE LOST AGE").unwrap().is_empty());
+}
+
 /// Export derived review sheets from private native inputs, without reading scratch or ROM files.
 pub(crate) fn export(root: &Path, output: &Path, update_baseline: bool) -> Result<(), String> {
     let output = review_output(root, output)?;

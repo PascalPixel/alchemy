@@ -12,7 +12,7 @@ use crate::compiler::routing::{cflags_for_target_source, CompilerTarget};
 use crate::compiler::sha256;
 use crate::compiler::source_inputs::compiler_source_tree_signature;
 use crate::compiler::source_paths::{SourcePaths, SOURCE_PATHS_MANIFEST};
-use crate::generated_files::{prune_files, unused_tracked_images};
+use crate::generated_files::{prune_files, unconsumed_tracked_material};
 use crate::overlay::compile::assemble_overlay;
 use crate::overlay::source::OverlaySource;
 pub(crate) use compression_plan::well_formed_table;
@@ -183,8 +183,12 @@ fn ignored_output_stays_under_out() {
     );
     for escaped in [
         "games/THE LOST AGE/PREVIEW",
+        "games/THE BROKEN SEAL/SRC/GRAPHICS/REVIEW",
         "out/../games/THE LOST AGE",
+        "tools/alchemy/GRAPHICS",
+        "out/../tools/alchemy",
         "/elsewhere/out",
+        "/repository/tools/out",
         "outside",
     ] {
         assert!(ignored_output_path(root, Path::new(escaped), "preview").is_err());
@@ -2753,6 +2757,8 @@ struct Context {
     documents: std::cell::RefCell<HashMap<PathBuf, std::rc::Rc<Value>>>,
     images:
         std::cell::RefCell<HashMap<PathBuf, std::rc::Rc<psynergy::assets::image::IndexedImage>>>,
+    /// Every input path the build resolved or read, for the consumer audit.
+    opened: std::cell::RefCell<BTreeSet<PathBuf>>,
 }
 impl Context {
     fn new(root: &Path) -> Self {
@@ -2760,15 +2766,26 @@ impl Context {
             root: root.to_path_buf(),
             documents: Default::default(),
             images: Default::default(),
+            opened: Default::default(),
         }
     }
     fn source(&self, name: &str) -> Result<PathBuf, String> {
-        root_path(&self.root, name)
+        let path = root_path(&self.root, name)?;
+        self.opened.borrow_mut().insert(path.clone());
+        Ok(path)
+    }
+    /// Repository-relative names of every input this build resolved or read.
+    fn opened_names(&self) -> impl Iterator<Item = String> + '_ {
+        let opened = self.opened.borrow().clone();
+        opened
+            .into_iter()
+            .filter_map(|path| root_relative(&self.root, &path).ok())
     }
     fn indexed(
         &self,
         path: &Path,
     ) -> Result<std::rc::Rc<psynergy::assets::image::IndexedImage>, String> {
+        self.opened.borrow_mut().insert(path.to_path_buf());
         if let Some(image) = self.images.borrow().get(path) {
             return Ok(image.clone());
         }
@@ -2781,6 +2798,7 @@ impl Context {
         Ok(image)
     }
     fn document(&self, path: &Path) -> Result<std::rc::Rc<Value>, String> {
+        self.opened.borrow_mut().insert(path.to_path_buf());
         if let Some(value) = self.documents.borrow().get(path) {
             return Ok(value.clone());
         }
@@ -5398,6 +5416,60 @@ fn asset_stamp_tracks_sound_and_included_overlay_sources() {
     fs::write(&header, "#include \"resource_373_c_02001000.c\"\n").unwrap();
     assert!(stamp().unwrap_err().contains("recursive C source include"));
 }
+#[test]
+fn material_audit_reports_only_game_material_no_build_read() {
+    let directory = tempfile::tempdir().unwrap();
+    let root = directory.path();
+    let game = native::broken_seal();
+    let game = game.index.strip_suffix("/SOURCE.JSON").unwrap();
+    let manifest = root.join(format!("{game}/SRC/SYSTEM/RESOURCE.JSON"));
+    let git = |args: &[&str]| {
+        let output = std::process::Command::new("git")
+            .args(args)
+            .current_dir(root)
+            .output()
+            .unwrap();
+        assert!(output.status.success(), "git {args:?}");
+    };
+    git(&["init", "--quiet"]);
+    for name in [
+        "SRC/SYSTEM/RESOURCE.JSON",
+        "SRC/A.JSON",
+        "SRC/B.JSON",
+        "SRC/X.C",
+        "recon/en/dossiers.json",
+    ] {
+        let path = root.join(game).join(name);
+        fs::create_dir_all(path.parent().unwrap()).unwrap();
+        fs::write(path, "{}\n").unwrap();
+    }
+    git(&["add", "games"]);
+    let read = || [format!("{game}/SRC/A.JSON")];
+    let error = audit_material_consumers(root, &manifest, read()).unwrap_err();
+    assert!(error.contains("has no build consumer"), "{error}");
+    assert_eq!(
+        error.lines().skip(1).map(str::trim).collect::<Vec<_>>(),
+        [format!("{game}/SRC/B.JSON")]
+    );
+    let everything = [format!("{game}/SRC/A.JSON"), format!("{game}/SRC/B.JSON")];
+    audit_material_consumers(root, &manifest, everything).unwrap();
+    // A manifest that is not a game's own reads no game's material.
+    fs::write(root.join("OTHER.JSON"), "{}\n").unwrap();
+    audit_material_consumers(root, &root.join("OTHER.JSON"), read()).unwrap();
+    // A reused build audits the inputs its manifest recorded, and a manifest
+    // without them is rebuilt.
+    let output = root.join("region.bin");
+    fs::write(&output, [7u8; 4]).unwrap();
+    let mut built = serde_json::json!({"format": 1, "rom_base": ROM_BASE, "rom_size": 16,
+        "verification": "source_only", "asset_bytes": 4, "inputs": read(), "regions": [{
+            "address": ROM_BASE, "size": 4, "end": ROM_BASE + 4, "output_size": 4,
+            "output_sha256": sha256::hex(&[7u8; 4]), "kind": "byte-fill", "sources": [],
+            "output": output.to_string_lossy()}]});
+    let (_, _, inputs) = reusable_asset_manifest(&built, true, 16).unwrap();
+    assert!(audit_material_consumers(root, &manifest, inputs).is_err());
+    built.as_object_mut().unwrap().remove("inputs");
+    assert!(reusable_asset_manifest(&built, true, 16).is_none());
+}
 fn output_matches(region: &Value) -> bool {
     let Some(output) = region.get("output").and_then(Value::as_str) else {
         return false;
@@ -5424,7 +5496,7 @@ fn reusable_asset_manifest(
     manifest: &Value,
     source_only: bool,
     rom_size: usize,
-) -> Option<(usize, u64)> {
+) -> Option<(usize, u64, Vec<String>)> {
     if manifest.get("format")?.as_u64()? != 1
         || manifest.get("rom_base")?.as_u64()? != ROM_BASE as u64
         || manifest.get("rom_size")?.as_u64()? != rom_size as u64
@@ -5456,7 +5528,44 @@ fn reusable_asset_manifest(
     if manifest.get("asset_bytes")?.as_u64()? != total {
         return None;
     }
-    Some((regions.len(), total))
+    let inputs = manifest
+        .get("inputs")?
+        .as_array()?
+        .iter()
+        .map(|input| input.as_str().map(str::to_string))
+        .collect::<Option<Vec<_>>>()?;
+    Some((regions.len(), total, inputs))
+}
+/// Every piece of game material tracked under the manifest's game must be an
+/// input this build read, or named by the game's declared review plan. Code,
+/// tooling metadata, registries and the coverage figure are exempt by
+/// category (`generated_files::unconsumed_material`); nothing else is.
+fn audit_material_consumers(
+    root: &Path,
+    manifest: &Path,
+    inputs: impl IntoIterator<Item = String>,
+) -> Result<(), String> {
+    let Ok(manifest) = fs::canonicalize(manifest) else {
+        return Ok(());
+    };
+    let Some(game) = native::games().into_iter().find(|game| {
+        fs::canonicalize(root.join(game.asset_manifest)).is_ok_and(|path| path == manifest)
+    }) else {
+        return Ok(());
+    };
+    let directory = game.game_dir();
+    let mut consumed = inputs.into_iter().collect::<BTreeSet<_>>();
+    consumed.insert(game.asset_manifest.to_string());
+    consumed.extend(native::review_plan_inputs(root, directory)?);
+    let unconsumed = unconsumed_tracked_material(root, directory, &consumed)
+        .map_err(|error| format!("tracked material audit: {error}"))?;
+    if unconsumed.is_empty() {
+        return Ok(());
+    }
+    Err(format!(
+        "tracked game material has no build consumer; make the asset manifest read it or remove it:\n  {}",
+        unconsumed.join("\n  ")
+    ))
 }
 fn native_asset_main(arguments: &[String]) -> Result<(), String> {
     let root = repository_root();
@@ -5497,9 +5606,10 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
             == stamp
     {
         if let Ok(previous) = json(&built_manifest) {
-            if let Some((count, bytes)) =
+            if let Some((count, bytes, inputs)) =
                 reusable_asset_manifest(&previous, options.source_only, rom_size)
             {
+                audit_material_consumers(&root, &options.manifest, inputs)?;
                 println!("assets={count} bytes={bytes} reused=stamp");
                 return Ok(());
             }
@@ -5590,37 +5700,13 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
         .collect::<Vec<_>>();
     prune_files(&options.output, "*.bin", keep.iter())
         .map_err(|error| format!("asset output cleanup: {error}"))?;
-    // Review figures are outputs, and another game's images belong to its own manifest.
-    let manifest_name = relative(&root, &options.manifest);
-    let ignored_images = native::games()
+    let inputs = all_sources
         .iter()
-        .flat_map(|game| {
-            let directory = game.game_dir();
-            if manifest_name.starts_with(&format!("{directory}/")) {
-                vec![format!("{directory}/PREVIEW/")]
-            } else {
-                vec![format!("{directory}/PREVIEW/"), format!("{directory}/")]
-            }
-        })
-        .collect::<Vec<_>>();
-    let unused = unused_tracked_images(&root, all_sources.iter(), ignored_images)
-        .map_err(|error| format!("tracked image audit: {error}"))?;
-    if !unused.is_empty() {
-        let shown = unused
-            .iter()
-            .take(20)
-            .cloned()
-            .collect::<Vec<_>>()
-            .join("\n  ");
-        let suffix = if unused.len() > 20 {
-            format!("\n  ... and {} more", unused.len() - 20)
-        } else {
-            String::new()
-        };
-        return Err(format!(
-            "tracked images are not byte-verified asset sources:\n  {shown}{suffix}"
-        ));
-    }
+        .map(|source| root_relative(&root, Path::new(source)).unwrap_or_else(|_| source.clone()))
+        .chain(ctx.opened_names())
+        .chain([relative(&root, &options.manifest)])
+        .collect::<BTreeSet<_>>();
+    audit_material_consumers(&root, &options.manifest, inputs.iter().cloned())?;
     let asset_bytes = regions
         .iter()
         .map(|region| number(&region["size"], "asset size").unwrap_or(0))
@@ -5631,6 +5717,7 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
         "rom_size": rom_size,
         "verification": if options.source_only { "source_only" } else { "rom" },
         "asset_bytes": asset_bytes,
+        "inputs": inputs,
         "regions": regions,
     });
     let manifest_bytes = format!("{}\n", canonical_json(&output_manifest));

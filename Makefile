@@ -277,7 +277,6 @@ check-owners: source-tracking-check
 corpus-check:
 	@test -f "games/THE BROKEN SEAL/project.json"
 	@test -f "games/THE LOST AGE/PROJECT.JSON"
-	@test -f games/COMMON/PROJECT.JSON
 	@if test -d draft; then \
 		printf 'legacy draft/ directory found; use games/THE BROKEN SEAL/recon/<edition>/\n'; \
 		exit 1; \
@@ -286,7 +285,7 @@ corpus-check:
 		printf 'source hypotheses belong in games/THE BROKEN SEAL/recon/, not games/THE BROKEN SEAL/semantic/ metadata\n'; \
 		exit 1; \
 	fi
-	@printf 'corpus ok: two shared-source games, 12 edition targets, Alchemy integration separate\n'
+	@printf 'corpus ok: two shared-source games, 12 edition targets\n'
 
 build-tools:
 	@set -e; for host in $(HOSTS); do \

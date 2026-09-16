@@ -10,7 +10,11 @@ enum GameFlagId {
     /* The Lunpa chef has told the party about the prisoner in the fortress. */
     FLAG_LUNPA_HEARD_OF_PRISONER = 0x940,
     /* Lunpa's shops and inn trade with the party again. */
-    FLAG_LUNPA_TRADE_REOPENED = 0x941
+    FLAG_LUNPA_TRADE_REOPENED = 0x941,
+    /* Hammet and Bunza have met again in West Lunpa Cave. */
+    FLAG_LUNPA_CAVE_REUNION_SEEN = 0x94d,
+    /* The party stayed behind when Hammet and Bunza left for Kalay. */
+    FLAG_PARTY_STAYED_IN_LUNPA = 0x94f
 };
 
 #endif

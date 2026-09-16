@@ -103,8 +103,8 @@
       "source": "FIELD/TOREBI_HEYA/FACING_EVENTS.C"
     },
     "resource_3ad:02001760": {
-      "name": "SceneEvent_RunPartyDeparture",
-      "source": "FIELD/RUNPA_DOU/PARTY_DEPARTURE.C"
+      "name": "Party_RidesWagon",
+      "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_3a3:020006f0": {
       "name": "SceneMotion_UpdateTimedActor",
@@ -5723,8 +5723,8 @@
       "source": "FIELD/KORIMA_MAGARI/PRESET_LAYOUT.C"
     },
     "resource_3ad:02000038": {
-      "name": "get_default_result",
-      "source": "FIELD/RUNPA_DOU/PARTY_DEPARTURE.C"
+      "name": "Scene_GetRegions",
+      "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_372:020000e8": {
       "name": "SceneData_GetTableD0E4",
@@ -5851,12 +5851,12 @@
       "source": "FIELD/COMMON/RUNPA_SUHARA/INTERIORS.C"
     },
     "resource_3ad:0200131c": {
-      "name": "SceneData_ReturnOne",
-      "source": "FIELD/RUNPA_DOU/PARTY_DEPARTURE.C"
+      "name": "Party_ConfirmsStaying",
+      "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_3ad:02001a0c": {
-      "name": "Scene_RunSceneEntryHook",
-      "source": "FIELD/RUNPA_DOU/PARTY_DEPARTURE.C"
+      "name": "Scene_Initialize",
+      "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_3ac:0200004c": {
       "name": "Scene_GetEvents",
@@ -5899,8 +5899,8 @@
       "source": "FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE.C"
     },
     "resource_3ad:02001368": {
-      "name": "Dialogue_AskMessage254a",
-      "source": "FIELD/RUNPA_DOU/PARTY_DEPARTURE.C"
+      "name": "Mia_AsksIfRidingAfterAll",
+      "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_3b1:02005038": {
       "name": "Actor_RunFirstMatchingSlot",
@@ -6301,8 +6301,8 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_3ad:0200134c": {
-      "name": "Dialogue_ShowLine255DAndReturnOne",
-      "source": "FIELD/RUNPA_DOU/PARTY_DEPARTURE.C"
+      "name": "Garet_ChecksNothingLeftToDo",
+      "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_388:0200003c": {
       "name": "SceneData_GetSecondaryTable",
@@ -6377,8 +6377,8 @@
       "source": "FIELD/SUHARA_GATE/ACTOR_PROMPT.C"
     },
     "resource_3ad:0200141c": {
-      "name": "Dialogue_AskMessage255c",
-      "source": "FIELD/RUNPA_DOU/PARTY_DEPARTURE.C"
+      "name": "Garet_AsksAboutThingsToDo",
+      "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_399:02001990": {
       "name": "Actor_SetActorZeroFacingC000AndRun",
@@ -6950,8 +6950,8 @@
       "source": "FIELD/IMIRU_MURA/FLAGGED_CHOREOGRAPHY.C"
     },
     "resource_3ad:020012c4": {
-      "name": "Dialogue_AskMessage2549",
-      "source": "FIELD/RUNPA_DOU/PARTY_DEPARTURE.C"
+      "name": "Garet_AsksIfNotRiding",
+      "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_399:02001960": {
       "name": "State_UpdateActor11WithFlag203",
@@ -7254,8 +7254,8 @@
       "source": "MENU/TITLE/MINIMAL.C"
     },
     "resource_3ad:02000044": {
-      "name": "SceneData_SelectTable9cc0ByState",
-      "source": "FIELD/RUNPA_DOU/PARTY_DEPARTURE.C"
+      "name": "Scene_GetPlacements",
+      "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_374:02000088": {
       "name": "SceneData_GetTableAfa0",
@@ -7442,8 +7442,8 @@
       "source": "FIELD/VINASU_CHOJO/SCRIPTED_PRESENTATION.C"
     },
     "resource_3ad:020012f0": {
-      "name": "Dialogue_AskMessage254d",
-      "source": "FIELD/RUNPA_DOU/PARTY_DEPARTURE.C"
+      "name": "Garet_AsksAboutUnfinishedBusiness",
+      "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_372:02000198": {
       "name": "Scene_SetupDescriptorD774",
@@ -7486,8 +7486,8 @@
       "source": "FIELD/TORETO_EDA/BACKGROUND_SCROLL.C"
     },
     "resource_3ad:02000200": {
-      "name": "State_ApplyFlag203",
-      "source": "FIELD/RUNPA_DOU/PARTY_DEPARTURE.C"
+      "name": "NorthPuddle_Freeze",
+      "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_3ba:02002fc4": {
       "name": "Effect_SpawnKind285AtRandomChance",
@@ -7742,8 +7742,8 @@
       "source": "FIELD/BIRIBINO_NIWA/ORBITING.C"
     },
     "resource_3ad:02000074": {
-      "name": "SceneData_GetTable9dd4",
-      "source": "FIELD/RUNPA_DOU/PARTY_DEPARTURE.C"
+      "name": "Scene_GetEvents",
+      "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_386:02000380": {
       "name": "Scene_RunActor19StepByPlace",
@@ -7782,8 +7782,8 @@
       "source": "FIELD/VINASU_CHOJO/SCRIPTED_PRESENTATION.C"
     },
     "resource_3ad:02000030": {
-      "name": "SceneData_GetTable9c34",
-      "source": "FIELD/RUNPA_DOU/PARTY_DEPARTURE.C"
+      "name": "Scene_GetEntrances",
+      "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_3ba:02002d8c": {
       "name": "State_InitTableWordsAndLoad3200",
@@ -8006,8 +8006,8 @@
       "source": "FIELD/SUHARA_MURA/ENTRY_CUE.C"
     },
     "resource_3ad:02001320": {
-      "name": "Dialogue_AskMessage2557",
-      "source": "FIELD/RUNPA_DOU/PARTY_DEPARTURE.C"
+      "name": "Bunza_AsksAboutUnfinishedBusiness",
+      "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_387:02000db8": {
       "name": "OvObj_WaitForHeight",
@@ -8114,8 +8114,8 @@
       "source": "FIELD/SORU_FUNKA/EXTENDED_EFFECT.C"
     },
     "resource_3ad:020000d4": {
-      "name": "State_RunRepaintSequenceWithWaits",
-      "source": "FIELD/RUNPA_DOU/PARTY_DEPARTURE.C"
+      "name": "Gate_DrawPropped",
+      "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_3ac:020002d0": {
       "name": "WeaponMerchant_Talk",
@@ -8778,8 +8778,8 @@
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_3ad:02000094": {
-      "name": "State_MarkActor9AndConfigureRegion7_32",
-      "source": "FIELD/RUNPA_DOU/PARTY_DEPARTURE.C"
+      "name": "SouthPuddle_Freeze",
+      "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_398:02000280": {
       "name": "Scene_RunActorFifteenScene",
@@ -9106,8 +9106,8 @@
       "source": "FIELD/KORIMA_MAGARI/PRESET_LAYOUT.C"
     },
     "resource_3ad:0200007c": {
-      "name": "Actor_SetSlotEightMode0WhenPresent",
-      "source": "FIELD/RUNPA_DOU/PARTY_DEPARTURE.C"
+      "name": "HiddenPuddle_Freeze",
+      "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_371:020038fc": {
       "name": "Effect_RestoreBlendRegisters",
@@ -9178,8 +9178,8 @@
       "source": "FIELD/BABI_FUNE/TABLE_AUDIO.C"
     },
     "resource_3ad:020012ac": {
-      "name": "Dialogue_IsPromptResultZero",
-      "source": "FIELD/RUNPA_DOU/PARTY_DEPARTURE.C"
+      "name": "Leader_AnswersYes",
+      "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_3ba:020001a8": {
       "name": "State_ApplyRectsForActorsNineAndTen",
@@ -9266,8 +9266,8 @@
       "source": "FIELD/COMMON/KUUPUAPPU_RUNPA/JAIL.C"
     },
     "resource_3ad:0200003c": {
-      "name": "SceneData_GetTable9CAC",
-      "source": "FIELD/RUNPA_DOU/PARTY_DEPARTURE.C"
+      "name": "Scene_GetExits",
+      "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_3c8:02001f28": {
       "name": "FieldScene_RunGuardedRectStep",
@@ -9888,8 +9888,8 @@
       "source": "FIELD/KORASHIAMU_IRIGUCHI/STATUS_DISPATCH.C"
     },
     "resource_3ad:020004a8": {
-      "name": "Scene_RunMultiActorPresentation",
-      "source": "FIELD/RUNPA_DOU/PARTY_DEPARTURE.C"
+      "name": "Reunion_Begin",
+      "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_3b1:02001b34": {
       "name": "Scene_RunThreeActorPresentation",
@@ -10001,8 +10001,8 @@
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3ad:02000828": {
-      "name": "Scene_RunDialogueCameraChoreography",
-      "source": "FIELD/RUNPA_DOU/PARTY_DEPARTURE.C"
+      "name": "Reunion_Converse",
+      "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_380:02001d04": {
       "name": "Scene_RunActorFourteenGuestScene",
@@ -10017,8 +10017,8 @@
       "source": "FIELD/SUHARA_HEYA/RECORD_SETUP.C"
     },
     "resource_3ad:02001448": {
-      "name": "Scene_RunLateScript",
-      "source": "FIELD/RUNPA_DOU/PARTY_DEPARTURE.C"
+      "name": "Party_StaysBehind",
+      "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_372:02001b18": {
       "name": "Scene_RunReturnScript",
@@ -10114,8 +10114,8 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_3ad:02000210": {
-      "name": "Scene_RunOpeningAuxiliarySequence",
-      "source": "FIELD/RUNPA_DOU/PARTY_DEPARTURE.C"
+      "name": "Gate_Lower",
+      "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_374:020004d4": {
       "name": "Scene_RunMiddleAuxiliarySequence",
@@ -10536,8 +10536,8 @@
       "source": "FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE.C"
     },
     "resource_3ad:02000384": {
-      "name": "Scene_RunScene3ad",
-      "source": "FIELD/RUNPA_DOU/PARTY_DEPARTURE.C"
+      "name": "Gate_Raise",
+      "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_3ba:02000974": {
       "name": "Scene_RunScene3ba",
@@ -10628,12 +10628,12 @@
       "source": "FIELD/HAIDIA_HEYA/TIMED_EVENTS.C"
     },
     "resource_3ad:02001394": {
-      "name": "Scene_RunScene3ad",
-      "source": "FIELD/RUNPA_DOU/PARTY_DEPARTURE.C"
+      "name": "Bunza_CannotWait",
+      "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_3ad:020011b8": {
-      "name": "Scene_RunScene3ad",
-      "source": "FIELD/RUNPA_DOU/PARTY_DEPARTURE.C"
+      "name": "WagonChoice_Run",
+      "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_3ba:02000270": {
       "name": "Scene_RunScene3ba",
@@ -10700,20 +10700,20 @@
       "source": "FIELD/HAIDIA_IE/EXTENDED.C"
     },
     "resource_3ad:020001b0": {
-      "name": "Actor_MarkSlot10AndRunFlag202Step",
-      "source": "FIELD/RUNPA_DOU/PARTY_DEPARTURE.C"
+      "name": "GatePuddle_Freeze",
+      "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_3ad:02000460": {
-      "name": "Scene_RunGuardedLine1528Scene",
-      "source": "FIELD/RUNPA_DOU/PARTY_DEPARTURE.C"
+      "name": "RaisingSwitch_Flip",
+      "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_399:02001794": {
       "name": "Scene_RunScene399SequenceA",
       "source": "FIELD/IMIRU_MURA/FLAGGED_CHOREOGRAPHY.C"
     },
     "resource_3ad:0200033c": {
-      "name": "Scene_RunScene3adSequenceA",
-      "source": "FIELD/RUNPA_DOU/PARTY_DEPARTURE.C"
+      "name": "LoweringSwitch_Flip",
+      "source": "FIELD/RUNPA_DOU/CAVE.C"
     },
     "resource_387:020003d0": {
       "name": "Scene_RunScene387SequenceC",

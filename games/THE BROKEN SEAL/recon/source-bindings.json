@@ -94,7 +94,6 @@
     "FIELD/KOROSSEO_KAWA/COORDINATOR.C": "",
     "FIELD/SORU_DOU/TABLE_UPDATE.C": "#define Resource37c_Run @F02000054\n#define State_Run @F02000030\n#define state_update_0432 @F02000038\n#define SceneData_GetPrimaryTable37c @F0200003c\n#define SceneData_GetSecondaryTable37c @F02000044\n#define SceneData_GetTertiaryTable37c @F0200004c\n\n#define Resource37c_GetPrimaryTable     @F02000030\n#define Resource37c_NullCallback        @F02000038\n#define Resource37c_GetSecondaryTable   @F0200003c\n#define Resource37c_GetTertiaryTable    @F02000044\n#define Resource37c_GetQuaternaryTable  @F0200004c\n#define Resource37c_Run                 @F02000054\n\ns32 @F02000118(s32);\nvoid @F0200011a(s32);\nvoid @F0200012a(s32, s32, s32);\nvoid @F0200013a(s32);\nvoid @F02000146(void);\n#define Resource37c_TestSetupGate   @F02000118\n#define Resource37c_SetSetupFlag    @F0200011a\n#define Resource37c_SetViewScale    @F0200012a\n#define Resource37c_QueueSoundCue   @F0200013a\n#define Resource37c_FinalizeSetup   @F02000146\n",
     "FIELD/WORLD_MAP/ACTOR_TRANSFER.C": "",
-    "FIELD/RUNPA_DOU/PARTY_DEPARTURE.C": "",
     "FIELD/KAREI_KYUDEN/PARTY_EVENTS.C": "",
     "FIELD/SORU_STAR/PARTY_INTRO.C": "",
     "FIELD/BIRIBINO_DOU/REGION.C": "",

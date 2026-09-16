@@ -417,6 +417,12 @@ fn compile_overlay_unit(
     )
     .map_err(|error| format!("{}: {error}", unit.id))?;
     fs::write(&assembly, sectioned).map_err(|error| error.to_string())?;
+    let unselected = members
+        .iter()
+        .zip(&symbols)
+        .filter(|(member, _)| selected.is_some_and(|selected| member.0 != selected))
+        .map(|(member, symbol)| (member.0, symbol.clone()))
+        .collect::<Vec<_>>();
     if let Some(selected) = selected {
         members.retain(|member| member.0 == selected);
         if members.is_empty() {
@@ -494,8 +500,11 @@ fn compile_overlay_unit(
         text.push_str(&format!("  .rodata 0x{address:08x} : {{ *(.rodata) }}\n"));
         if selected.is_some() {
             // The tables point at the unit's other functions, so those stay
-            // linked well away from the overlay; only the selected owner is
-            // extracted.
+            // linked; each keeps its own placement so the selected owner's
+            // calls to them resolve as in the image. Only the selected owner
+            // is extracted, and a function without a placement links well
+            // away from the overlay.
+            text.push_str(&unselected_sections(&unselected, placement));
             text.push_str("  .text.unselected 0x02100000 : { *(.text.*) }\n");
         }
     }
@@ -700,6 +709,26 @@ fn compile_overlay_unit(
     Ok(compiled)
 }
 
+/// Linker placements for the functions a selected-owner build of a data unit
+/// keeps: the canonical address, or the edition's placement when one is given.
+fn unselected_sections(
+    unselected: &[(u32, String)],
+    placement: Option<&OverlayEditionPlacement<'_>>,
+) -> String {
+    unselected
+        .iter()
+        .filter_map(|(address, symbol)| {
+            let address = match placement {
+                Some(placement) => *placement.addresses.get(address)?,
+                None => *address,
+            };
+            let address = address + overlay::RUNTIME_BASE - overlay::RESOURCE_BASE;
+            Some(format!(
+                "  .text.{symbol} 0x{address:08x} : {{ *(.text.{symbol}) }}\n"
+            ))
+        })
+        .collect()
+}
 /// The data section's address in another edition. Every canonical literal
 /// that points into the section must pair with an edition literal at the same
 /// site, and all pairs must agree on one section base; a unit whose functions
@@ -1304,6 +1333,45 @@ mod source_activation_tests {
     use super::*;
     use crate::compiler::translation_units::{OwnerState, TranslationOwner};
     use tempfile::tempdir;
+    #[test]
+    fn unselected_data_unit_functions_keep_their_placements() {
+        let unselected = [
+            (0x0200_00d4, "Func_020000d4".to_string()),
+            (0x0200_0210, "Func_02000210".to_string()),
+        ];
+        assert_eq!(
+            unselected_sections(&unselected, None),
+            "  .text.Func_020000d4 0x020080d4 : { *(.text.Func_020000d4) }\n  .text.Func_02000210 0x02008210 : { *(.text.Func_02000210) }\n"
+        );
+        let placement = OverlayEditionPlacement {
+            reference: &[],
+            addresses: BTreeMap::from([(0x0200_00d4, 0x0200_00e0)]),
+        };
+        assert_eq!(
+            unselected_sections(&unselected, Some(&placement)),
+            "  .text.Func_020000d4 0x020080e0 : { *(.text.Func_020000d4) }\n"
+        );
+    }
+    #[test]
+    fn selected_data_unit_owner_calls_its_siblings_where_the_image_has_them() {
+        let manifest = crate::compiler::translation_units::TranslationUnits::load(&root()).unwrap();
+        let unit = manifest.unit("runpa-dou-cave").unwrap();
+        // The gate puddle's Frost script calls the scene's gate redraw.
+        let owner = unit
+            .owners
+            .iter()
+            .find(|owner| owner.address == 0x0200_01b0)
+            .unwrap();
+        let compiled =
+            compile_declared_overlay_unit(unit, "en", None, Some(owner.address)).unwrap();
+        let reference = crate::overlay::rom::canonical_overlay(&root(), "resource_3ad").unwrap();
+        let start = (owner.address - overlay::RESOURCE_BASE) as usize;
+        let offset = (i64::from(owner.address) - compiled.address) as usize;
+        assert_eq!(
+            &compiled.data[offset..offset + owner.extent],
+            &reference[start..start + owner.extent]
+        );
+    }
     #[test]
     fn regional_overlay_calls_keep_canonical_names_and_take_regional_targets() {
         let call = |value: u16| {

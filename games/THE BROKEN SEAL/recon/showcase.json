@@ -11,6 +11,11 @@
       "source": "SRC/FIELD/COMMON/RUNPA_SUHARA",
       "overlay": "resource_3ac",
       "allowed_data": []
+    },
+    {
+      "source": "SRC/FIELD/RUNPA_DOU",
+      "overlay": "resource_3ad",
+      "allowed_data": []
     }
   ]
 }

@@ -75768,22 +75768,66 @@
           "address": "0x080fab3c",
           "extent": 64,
           "state": "exact-c"
-        },
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "audio-music-player-step-fade",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/SOUND/MUSIC_PLAYER_STEP_FADE.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
         {
           "address": "0x080fab7c",
           "extent": 200,
           "state": "exact-c"
-        },
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "audio-music-track-calc-output",
+      "game": "tbs",
+      "source": "games/COMMON/SRC/SOUND/MUSIC_TRACK_CALC_OUTPUT.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
         {
           "address": "0x080fac44",
           "extent": 180,
           "state": "exact-c"
-        },
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "audio-cgb-key-to-frequency",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/SOUND/CGB_KEY_TO_FREQUENCY.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
         {
           "address": "0x080facf8",
           "extent": 168,
           "state": "exact-c"
-        },
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "audio-cgb-channel-mute",
+      "game": "tbs",
+      "source": "games/COMMON/SRC/SOUND/CGB_CHANNEL_MUTE.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
         {
           "address": "0x080fada0",
           "extent": 80,

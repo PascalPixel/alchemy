@@ -309,7 +309,11 @@ corpus-check:
 		printf 'source hypotheses belong in games/THE BROKEN SEAL/recon/, not games/THE BROKEN SEAL/semantic/ metadata\n'; \
 		exit 1; \
 	fi
-	@printf 'corpus ok: two shared-source games, 12 edition targets\n'
+	@roots=$$(git ls-files -- games | cut -d/ -f2 | grep -vx COMMON | LC_ALL=C sort -u | tr '\n' '|'); \
+	test "$$roots" = 'THE BROKEN SEAL|THE LOST AGE|' || { \
+		printf 'games/ holds only the two game roots and the COMMON shared source root, found: %s\n' "$$roots"; exit 1; \
+	}
+	@printf 'corpus ok: two shared-source games, 12 edition targets, games/COMMON shared source only\n'
 
 build-tools:
 	@set -e; for host in $(HOSTS); do \

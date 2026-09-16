@@ -3144,16 +3144,20 @@
       "name": "MusicPlayer_Stop"
     },
     "main:080fab7c": {
-      "name": "MusicPlayer_UpdateFade"
+      "name": "MusicPlayer_StepFade",
+      "source": "SOUND/MUSIC_PLAYER_STEP_FADE.C"
     },
     "main:080fac44": {
-      "name": "MusicTrack_UpdateVolumePitch"
+      "name": "MusicTrack_CalcOutput",
+      "source": "../../COMMON/SRC/SOUND/MUSIC_TRACK_CALC_OUTPUT.C"
     },
     "main:080facf8": {
-      "name": "Cgb_KeyToFrequency"
+      "name": "Cgb_KeyToFrequency",
+      "source": "SOUND/CGB_KEY_TO_FREQUENCY.C"
     },
     "main:080fada0": {
-      "name": "Cgb_StopOscillator"
+      "name": "CgbChannel_Mute",
+      "source": "../../COMMON/SRC/SOUND/CGB_CHANNEL_MUTE.C"
     },
     "main:080fadf0": {
       "name": "CgbChannel_UpdatePanEnvelope",

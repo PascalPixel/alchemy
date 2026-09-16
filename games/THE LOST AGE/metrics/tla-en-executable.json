@@ -26,13 +26,13 @@
         "start": 136063200,
         "end": 136063380,
         "kind": "thumb",
-        "evidence": "games/THE LOST AGE/SRC/SOUND/UPDATE_TRACK_VOLUME_PITCH.C:12-ROM-zero-delta-C"
+        "evidence": "games/COMMON/SRC/SOUND/MUSIC_TRACK_CALC_OUTPUT.C:12-ROM-zero-delta-C"
       },
       {
         "start": 136063548,
         "end": 136063628,
         "kind": "thumb",
-        "evidence": "games/THE LOST AGE/SRC/SOUND/STOP_CGB_OSCILLATOR.C:12-ROM-zero-delta-C"
+        "evidence": "games/COMMON/SRC/SOUND/CGB_CHANNEL_MUTE.C:12-ROM-zero-delta-C"
       },
       {
         "start": 136063628,

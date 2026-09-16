@@ -413,6 +413,7 @@ fn compile_overlay_unit(
     let sectioned = section_functions(
         &produced,
         &symbols.iter().map(String::as_str).collect::<Vec<_>>(),
+        unit.data.is_some(),
     )
     .map_err(|error| format!("{}: {error}", unit.id))?;
     fs::write(&assembly, sectioned).map_err(|error| error.to_string())?;
@@ -467,6 +468,19 @@ fn compile_overlay_unit(
             ));
         }
     }
+    let canonical = crate::overlay::rom::canonical_overlay(&root(), overlay)?;
+    let reference = placement.map_or(canonical.as_slice(), |placement| placement.reference);
+    let loaded = match placement {
+        Some(_) => Some((overlay::load(&canonical, 0)?, overlay::load(reference, 0)?)),
+        None => None,
+    };
+    let data_address = match (unit.data, &loaded) {
+        (None, _) => None,
+        (Some(data), None) => Some(data.address),
+        (Some(data), Some((canonical, edition))) => Some(regional_data_address(
+            data, &members, &placed, canonical, edition,
+        )?),
+    };
     let script = at("ld");
     let mut text = String::from("SECTIONS\n{\n");
     for (address, symbol, _) in &placed {
@@ -474,6 +488,16 @@ fn compile_overlay_unit(
         text.push_str(&format!(
             "  .text.{symbol} 0x{address:08x} : {{ *(.text.{symbol}) }}\n"
         ));
+    }
+    if let Some(address) = data_address {
+        let address = address + overlay::RUNTIME_BASE - overlay::RESOURCE_BASE;
+        text.push_str(&format!("  .rodata 0x{address:08x} : {{ *(.rodata) }}\n"));
+        if selected.is_some() {
+            // The tables point at the unit's other functions, so those stay
+            // linked well away from the overlay; only the selected owner is
+            // extracted.
+            text.push_str("  .text.unselected 0x02100000 : { *(.text.*) }\n");
+        }
     }
     text.push_str("  /DISCARD/ : { *(.text*) *(.comment) *(.note*) }\n}\n");
     fs::write(&script, text).map_err(|error| format!("{script}: {error}"))?;
@@ -501,12 +525,6 @@ fn compile_overlay_unit(
             work,
         )?;
     }
-    let canonical = crate::overlay::rom::canonical_overlay(&root(), overlay)?;
-    let reference = placement.map_or(canonical.as_slice(), |placement| placement.reference);
-    let loaded = match placement {
-        Some(_) => Some((overlay::load(&canonical, 0)?, overlay::load(reference, 0)?)),
-        None => None,
-    };
     let mut calls = BTreeMap::<String, BTreeSet<u64>>::new();
     let layout = edition.and_then(|edition| unit.editions.get(edition));
     let mut edition_symbols = layout
@@ -571,9 +589,19 @@ fn compile_overlay_unit(
             .lines()
             .filter_map(|line| line.split_whitespace().last())
         {
-            if unit.absolute_symbols.contains_key(alias) && !edition_symbols.contains_key(alias) {
+            let Some(symbol) = unit.absolute_symbols.get(alias) else {
+                continue;
+            };
+            if edition_symbols.contains_key(alias) {
+                continue;
+            }
+            // Only the unselected functions a data unit keeps linked can
+            // lack a regional address; their bytes are never extracted, and
+            // a selected owner that needed the symbol still fails its compare.
+            if unit.data.is_none() || selected.is_none() {
                 return Err(format!("{alias}: no corresponding regional data address"));
             }
+            edition_symbols.insert(alias.to_string(), *symbol);
         }
     }
     link_placed_object(
@@ -640,7 +668,84 @@ fn compile_overlay_unit(
             data: overlay::encode(&data, (*address - overlay::RESOURCE_BASE) as usize)?,
         });
     }
+    if let (Some(data), Some(address), None, None) = (unit.data, data_address, placement, selected)
+    {
+        let piece = at("rodata.bin");
+        checked(
+            &strings(&[
+                "arm-none-eabi-objcopy",
+                "-O",
+                "binary",
+                "-j",
+                ".rodata",
+                &elf,
+                &piece,
+            ]),
+            work,
+        )?;
+        let bytes = fs::read(&piece).map_err(|error| format!("{piece}: {error}"))?;
+        if bytes.len() != data.extent {
+            return Err(format!(
+                "{}: read-only data linked extent differs ({} != {})",
+                unit.id,
+                bytes.len(),
+                data.extent
+            ));
+        }
+        compiled.push(Compiled {
+            address: i64::from(address),
+            data: overlay::encode(&bytes, (address - overlay::RESOURCE_BASE) as usize)?,
+        });
+    }
     Ok(compiled)
+}
+
+/// The data section's address in another edition. Every canonical literal
+/// that points into the section must pair with an edition literal at the same
+/// site, and all pairs must agree on one section base; a unit whose functions
+/// never load a data address keeps the canonical placement.
+fn regional_data_address(
+    data: crate::compiler::translation_units::UnitData,
+    members: &[(u32, &str, usize)],
+    placed: &[(u32, String, usize)],
+    canonical: &[u8],
+    edition: &[u8],
+) -> Result<u32, String> {
+    let start = data.address + overlay::RUNTIME_BASE - overlay::RESOURCE_BASE;
+    let end = u64::from(start) + data.extent as u64;
+    let mut base = None;
+    for ((canonical_address, _, canonical_extent), (edition_address, _, extent)) in
+        members.iter().zip(placed)
+    {
+        let slice = |image: &[u8], address: u32, extent: usize| {
+            let offset = (address - overlay::RESOURCE_BASE) as usize;
+            image
+                .get(offset..offset + extent)
+                .ok_or_else(|| format!("overlay owner 0x{address:08x} exceeds its image"))
+                .map(|bytes| psynergy::thumb::relocation_info(bytes, u64::from(address)).1)
+        };
+        let canonical_sites = slice(canonical, *canonical_address, *canonical_extent)?;
+        let edition_sites = slice(edition, *edition_address, *extent)?;
+        for site in canonical_sites
+            .iter()
+            .filter(|site| site.0 == b'L' && (u64::from(start)..end).contains(&u64::from(site.3)))
+        {
+            let paired = edition_sites
+                .iter()
+                .find(|candidate| candidate.0 == b'L' && candidate.1 == site.1)
+                .ok_or("edition lacks a literal load of the unit's data")?;
+            let regional = paired
+                .3
+                .checked_sub(site.3 - start)
+                .ok_or("edition data literal precedes its section")?;
+            if base.replace(regional).is_some_and(|old| old != regional) {
+                return Err("edition data literals disagree on the section base".into());
+            }
+        }
+    }
+    Ok(base.map_or(data.address, |base| {
+        base - overlay::RUNTIME_BASE + overlay::RESOURCE_BASE
+    }))
 }
 
 fn verify_compiler_gap(
@@ -665,13 +770,25 @@ fn verify_compiler_gap(
 /// Gives every listed function its own `.text.<symbol>` section: the
 /// section directive goes before the `.align` that opens the function's
 /// block, so the function's literal pool, which follows its code, stays with
-/// it. A function outside the list or a data section is an error, since the
-/// placement script would drop it.
-fn section_functions(assembly: &str, symbols: &[&str]) -> Result<String, String> {
+/// it. A function outside the list is an error, since the placement script
+/// would drop it; so is any data section other than the `.rodata` of a unit
+/// that declares where its read-only data links.
+fn section_functions(
+    assembly: &str,
+    symbols: &[&str],
+    read_only_data: bool,
+) -> Result<String, String> {
     let lines: Vec<&str> = assembly.lines().collect();
     for line in &lines {
         let trimmed = line.trim();
-        if trimmed.starts_with(".section") || trimmed == ".data" || trimmed == ".rodata" {
+        let rodata = trimmed
+            .strip_prefix(".section")
+            .is_some_and(|name| name.trim() == ".rodata");
+        if (rodata && !read_only_data)
+            || (!rodata && trimmed.starts_with(".section"))
+            || trimmed == ".data"
+            || trimmed == ".rodata"
+        {
             return Err(format!("unit assembly switches sections: {trimmed}"));
         }
     }
@@ -988,6 +1105,18 @@ fn compile_production_overlay(
         validate_shared_overlay_source(&root(), &names, &units.units, overlay, &path)?;
     }
     let mut handled = BTreeSet::new();
+    let mut data_blocks = text
+        .lines()
+        .filter_map(|line| {
+            u32::from_str_radix(
+                line.trim()
+                    .strip_prefix("AlchemyData_")?
+                    .strip_suffix(':')?,
+                16,
+            )
+            .ok()
+        })
+        .collect::<BTreeSet<_>>();
     let mut compiled = Vec::new();
     for unit in units.units.iter().filter(|unit| {
         unit.overlay.as_deref() == Some(overlay)
@@ -1002,10 +1131,25 @@ fn compile_production_overlay(
                 ));
             }
         }
+        if let Some(data) = unit.data {
+            if overlay::data_placeholder_extent(&text, data.address) != Some(data.extent)
+                || !data_blocks.remove(&data.address)
+            {
+                return Err(format!(
+                    "{}: unit data has no AlchemyData_{:08x} placeholder of {} bytes",
+                    unit.id, data.address, data.extent
+                ));
+            }
+        }
         compiled.extend(
             compile_overlay_unit(unit, work, overlay, None, None, None)
                 .map_err(|error| format!("unit {}: {error}", unit.id))?,
         );
+    }
+    if let Some(address) = data_blocks.first() {
+        return Err(format!(
+            "{overlay}: AlchemyData_{address:08x} is not declared by an exact unit"
+        ));
     }
     for address in placeholders.difference(&handled) {
         let owner = SourceOwner::parse(&format!("{overlay}:{address:08x}"))?;
@@ -1212,6 +1356,43 @@ mod source_activation_tests {
         .is_err());
     }
     #[test]
+    fn regional_data_follows_the_paired_literal_of_any_table_in_the_section() {
+        let data = crate::compiler::translation_units::UnitData {
+            address: 0x0200_0100,
+            extent: 0x40,
+        };
+        let mut canonical = vec![0; 0x140];
+        let mut regional = vec![0; 0x150];
+        canonical[0x30..0x32].copy_from_slice(&0x4800u16.to_le_bytes());
+        canonical[0x34..0x38].copy_from_slice(&0x0200_8110u32.to_le_bytes());
+        regional[0x38..0x3a].copy_from_slice(&0x4800u16.to_le_bytes());
+        regional[0x3c..0x40].copy_from_slice(&0x0200_8124u32.to_le_bytes());
+        let members = [(0x0200_0030u32, "Func_02000030", 8usize)];
+        let placed = [(0x0200_0038u32, "Func_02000030".to_string(), 8usize)];
+        assert_eq!(
+            regional_data_address(data, &members, &placed, &canonical, &regional),
+            Ok(0x0200_0114)
+        );
+        regional[0x3c..0x40].fill(0);
+        regional[0x38..0x3a].fill(0);
+        assert!(regional_data_address(data, &members, &placed, &canonical, &regional).is_err());
+        canonical[0x34..0x38].copy_from_slice(&0x0200_8020u32.to_le_bytes());
+        assert_eq!(
+            regional_data_address(data, &members, &placed, &canonical, &regional),
+            Ok(0x0200_0100)
+        );
+    }
+    #[test]
+    fn only_a_data_unit_may_switch_to_its_read_only_section() {
+        let assembly = "\t.align\t2\n\t.global\tFunc_02000030\n\t.thumb_func\nFunc_02000030:\n\tbx\tlr\n\t.section .rodata\n\t.align\t2\ngTable:\n\t.word\t1\n";
+        let sectioned = section_functions(assembly, &["Func_02000030"], true).unwrap();
+        assert!(sectioned.contains(".section\t.text.Func_02000030"));
+        assert!(sectioned.contains(".section .rodata"));
+        assert!(section_functions(assembly, &["Func_02000030"], false).is_err());
+        let writable = assembly.replace(".section .rodata", ".data");
+        assert!(section_functions(&writable, &["Func_02000030"], true).is_err());
+    }
+    #[test]
     fn only_explicit_overlay_placeholders_activate_exact_c() {
         assert_eq!(
             placeholder_addresses(
@@ -1261,6 +1442,7 @@ mod source_activation_tests {
             editions: BTreeMap::new(),
             local_symbols: Vec::new(),
             compiler_gaps: Vec::new(),
+            data: None,
             owners: vec![owner(0x0200_0100), owner(0x0200_0104)],
         };
         let check = |units: &[TranslationUnit]| {

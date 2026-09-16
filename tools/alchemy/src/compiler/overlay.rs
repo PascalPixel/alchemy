@@ -62,6 +62,25 @@ pub fn placeholder_extent(text: &str, address: u32) -> Option<usize> {
     let lines = text.lines().collect::<Vec<_>>();
     usize::try_from(placeholder_block(&lines, i64::from(address))?.span).ok()
 }
+/// The one `AlchemyData_<address>:` block a unit's read-only data fills: a
+/// label followed only by positive `.space` lines, as for C placeholders.
+pub fn data_placeholder_extent(text: &str, address: u32) -> Option<usize> {
+    let tag = format!("AlchemyData_{address:08x}:");
+    let lines = text.lines().map(str::trim).collect::<Vec<_>>();
+    let mut matches = (0..lines.len()).filter(|index| lines[*index] == tag);
+    let start = matches.next()?;
+    if matches.next().is_some() {
+        return None;
+    }
+    let mut span = 0usize;
+    for line in lines[start + 1..]
+        .iter()
+        .take_while(|line| line.starts_with(".space "))
+    {
+        span = span.checked_add(usize::try_from(space_size(line)?).ok()?)?;
+    }
+    (span > 0).then_some(span)
+}
 
 fn transform(bytes: &[u8], offset: usize, encode: bool) -> Result<Vec<u8>, String> {
     if !offset.is_multiple_of(2) || !bytes.len().is_multiple_of(2) {
@@ -264,6 +283,25 @@ mod tests {
         }
         assert_eq!(
             placeholder_extent(&format!("{text}{text}"), 0x02000100),
+            None
+        );
+    }
+
+    #[test]
+    fn data_placeholders_are_unique_labelled_space_blocks() {
+        let text = "AlchemyData_020002d0:\n\t.space 0x100\n\t.space 0x100\n";
+        assert_eq!(data_placeholder_extent(text, 0x020002d0), Some(0x200));
+        assert_eq!(data_placeholder_extent(text, 0x020002d4), None);
+        assert_eq!(
+            data_placeholder_extent(&format!("{text}{text}"), 0x020002d0),
+            None
+        );
+        assert_eq!(
+            data_placeholder_extent("AlchemyData_020002d0:\n\t.4byte 1\n", 0x020002d0),
+            None
+        );
+        assert_eq!(
+            data_placeholder_extent("AlchemyC_020002d0:\n\t.space 4\n", 0x020002d0),
             None
         );
     }

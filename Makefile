@@ -63,7 +63,7 @@ CANDIDATE_SINGLE_OWNERS := \
 	build-claimed build-asm build-assets build-full build-rom \
 	standard-check compiler-source-check corpus-check core-retained-check \
 	full-rom-check tla-assets-check overlay-check declared-tu-check owner-inventory-check strict-tu-check classification-check \
-	candidate-corpus-check source-tracking-check index-sync-check publication-tree-check plan-tails-check overlay-data-check check-owners progress progress-report progress-check progress-subject \
+	candidate-corpus-check source-tracking-check index-sync-check publication-tree-check plan-tails-check overlay-data-check showcase-check check-owners progress progress-report progress-check progress-subject \
 	correspondence correspondence-check edition-builds edition-builds-check \
 	coverage coverage-check native-format-check review-images-check clean clean-preview
 .PHONY: targets $(HISTORICAL_TARGETS)
@@ -295,6 +295,10 @@ plan-tails-check:
 overlay-data-check:
 	$(CHECK) overlay-data --max $(OVERLAY_DATA_DIRECTIVES_MAX)
 
+# Registered showcase folders must not regress; see "Showcase: Lunpa" in CONTRIBUTING.md.
+showcase-check:
+	$(CHECK) showcase
+
 check-owners: source-tracking-check
 	$(CHECK) owners
 
@@ -416,7 +420,7 @@ review-images-check: source-tracking-check
 	$(ASSETS) --review-images out/tbs-en/graphics-review
 
 verify: toolchain-check native-format-check index-sync-check publication-tree-check plan-tails-check overlay-data-check source-tracking-check review-images-check $(if $(wildcard roms/tla-en.gba),tla-assets-check) corpus-check language-check register-shrink-check lint-production tooling-size tooling-index-check \
-	strict-tu-check check-owners core-retained-check coverage-check | $(REPORT_DIR)
+	strict-tu-check check-owners core-retained-check coverage-check showcase-check | $(REPORT_DIR)
 	@tree=$$(git write-tree) || exit; \
 	printf '%s\n' "$$tree" > $(VERIFIED_TREE).tmp; \
 	mv $(VERIFIED_TREE).tmp $(VERIFIED_TREE); \

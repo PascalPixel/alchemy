@@ -33,6 +33,22 @@
       ]
     },
     {
+      "id": "lunpa-redraw-actor-footprint",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/REDRAW_ACTOR_FOOTPRINT.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3bf",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x020008c0",
+          "extent": 284,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
       "id": "lunpa-find-actor-region",
       "game": "tbs",
       "source": "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/FIND_ACTOR_REGION.C",

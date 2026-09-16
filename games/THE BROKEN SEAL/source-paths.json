@@ -17845,6 +17845,10 @@
       "name": "FieldScene_FindActorRegion",
       "source": "FIELD/RUNPA_JO/FIND_ACTOR_REGION.C"
     },
+    "resource_3bf:020008c0": {
+      "name": "FieldScene_RedrawActorFootprint",
+      "source": "FIELD/RUNPA_JO/REDRAW_ACTOR_FOOTPRINT.C"
+    },
     "resource_3bf:02000d54": {
       "name": "FieldScene_SetPositionPairs",
       "source": "FIELD/RUNPA_JO/SET_POSITION_PAIRS.C"

@@ -5114,7 +5114,7 @@
         "start": 135247636,
         "end": 135247654,
         "kind": "thumb",
-        "evidence": "games/THE BROKEN SEAL/SRC/SOUND/MUSIC_TRACK_SET_TONE_DECAY.C:byte-identical-claimed-C"
+        "evidence": "games/THE BROKEN SEAL/SRC/SOUND/MUSIC_TRACK_SET_VOICE_DECAY.C:byte-identical-claimed-C"
       },
       {
         "start": 135247654,
@@ -5126,7 +5126,7 @@
         "start": 135247656,
         "end": 135247674,
         "kind": "thumb",
-        "evidence": "games/THE BROKEN SEAL/SRC/SOUND/MUSIC_TRACK_SET_TONE_SUSTAIN.C:byte-identical-claimed-C"
+        "evidence": "games/THE BROKEN SEAL/SRC/SOUND/MUSIC_TRACK_SET_VOICE_SUSTAIN.C:byte-identical-claimed-C"
       },
       {
         "start": 135247674,
@@ -5138,7 +5138,7 @@
         "start": 135247676,
         "end": 135247694,
         "kind": "thumb",
-        "evidence": "games/THE BROKEN SEAL/SRC/SOUND/MUSIC_TRACK_SET_TONE_RELEASE.C:byte-identical-claimed-C"
+        "evidence": "games/THE BROKEN SEAL/SRC/SOUND/MUSIC_TRACK_SET_VOICE_RELEASE.C:byte-identical-claimed-C"
       },
       {
         "start": 135247694,

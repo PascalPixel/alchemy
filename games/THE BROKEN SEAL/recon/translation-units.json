@@ -75136,22 +75136,6 @@
       "overlay": null
     },
     {
-      "id": "audio-music-track-read-command-byte",
-      "game": "tbs",
-      "source": "games/THE BROKEN SEAL/SRC/SOUND/MUSIC_TRACK_READ_COMMAND_BYTE.C",
-      "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x080fa1c8",
-          "extent": 10,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "audio-engine-initialize",
       "game": "tbs",
       "source": "games/THE BROKEN SEAL/SRC/SOUND/ENGINE_INITIALIZE.C",
@@ -75183,12 +75167,34 @@
           "address": "0x080fa928",
           "extent": 124,
           "state": "exact-c"
-        },
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "audio-engine-resume-direct-sound",
+      "game": "tbs",
+      "source": "games/COMMON/SRC/SOUND/AUDIO_ENGINE_RESUME_DIRECT_SOUND.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
         {
           "address": "0x080fa9a4",
           "extent": 60,
           "state": "exact-c"
-        },
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "audio-music-player",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/SOUND/MUSIC_PLAYER.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
         {
           "address": "0x080fa9e0",
           "extent": 120,
@@ -75272,6 +75278,70 @@
       "overlay": null
     },
     {
+      "id": "audio-cgb-note-update-pan-envelope",
+      "game": "tbs",
+      "source": "games/COMMON/SRC/SOUND/CGB_NOTE_UPDATE_PAN_ENVELOPE.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080fadf0",
+          "extent": 104,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "audio-music-player-set-volume",
+      "game": "tbs",
+      "source": "games/COMMON/SRC/SOUND/MUSIC_PLAYER_SET_VOLUME.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080fb2cc",
+          "extent": 104,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "audio-music-player-set-pitch",
+      "game": "tbs",
+      "source": "games/COMMON/SRC/SOUND/MUSIC_PLAYER_SET_PITCH.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080fb334",
+          "extent": 116,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "audio-music-player-set-pan",
+      "game": "tbs",
+      "source": "games/COMMON/SRC/SOUND/MUSIC_PLAYER_SET_PAN.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080fb3a8",
+          "extent": 104,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
       "id": "audio-music-track-clear-modulation",
       "game": "tbs",
       "source": "games/THE BROKEN SEAL/SRC/SOUND/MUSIC_TRACK_CLEAR_MODULATION.C",
@@ -75288,9 +75358,9 @@
       "overlay": null
     },
     {
-      "id": "audio-music-track-read-wave-pointer",
+      "id": "audio-music-track-read-voice-target",
       "game": "tbs",
-      "source": "games/THE BROKEN SEAL/SRC/SOUND/MUSIC_TRACK_READ_WAVE_POINTER.C",
+      "source": "games/COMMON/SRC/SOUND/MUSIC_TRACK_READ_VOICE_TARGET.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],

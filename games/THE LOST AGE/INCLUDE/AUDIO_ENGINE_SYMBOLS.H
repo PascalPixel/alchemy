@@ -3,11 +3,5 @@
 
 #define MusicPlayer_FadeOutPause Func_081c2168
 #define MusicPlayer_FadeIn Func_081c2188
-#define AudioEngine_EnablePcmDma Func_081c2640
-#define CgbChannel_UpdatePanEnvelope Func_081c2a8c
-#define MusicPlayer_SetVolume Func_081c2f68
-#define MusicPlayer_SetPitch Func_081c2fd0
-#define MusicPlayer_SetPan Func_081c3044
-#define MusicTrack_ReadWavePointer Func_081c3340
 
 #endif

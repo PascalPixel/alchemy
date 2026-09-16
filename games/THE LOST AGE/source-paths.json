@@ -2,7 +2,10 @@
   "format": 3,
   "owners": {
     "main:080132cc": "SYSTEM/CONSTANT_ZERO_RESULT.C",
-    "main:081c2640": "SOUND/ENABLE_PCM_DMA.C",
+    "main:081c2640": {
+      "name": "AudioEngine_ResumeDirectSound",
+      "source": "../../COMMON/SRC/SOUND/AUDIO_ENGINE_RESUME_DIRECT_SOUND.C"
+    },
     "main:081c28e0": {
       "name": "MusicTrack_CalcOutput",
       "source": "../../COMMON/SRC/SOUND/MUSIC_TRACK_CALC_OUTPUT.C"
@@ -11,7 +14,25 @@
       "name": "CgbChannel_Mute",
       "source": "../../COMMON/SRC/SOUND/CGB_CHANNEL_MUTE.C"
     },
-    "main:081c2a8c": "SOUND/UPDATE_CGB_PAN_ENVELOPE.C",
-    "main:081c3340": "SOUND/MUSIC_TRACK_READ_WAVE_POINTER.C"
+    "main:081c2a8c": {
+      "name": "CgbNote_UpdatePanEnvelope",
+      "source": "../../COMMON/SRC/SOUND/CGB_NOTE_UPDATE_PAN_ENVELOPE.C"
+    },
+    "main:081c2f68": {
+      "name": "MusicPlayer_SetVolume",
+      "source": "../../COMMON/SRC/SOUND/MUSIC_PLAYER_SET_VOLUME.C"
+    },
+    "main:081c2fd0": {
+      "name": "MusicPlayer_SetPitch",
+      "source": "../../COMMON/SRC/SOUND/MUSIC_PLAYER_SET_PITCH.C"
+    },
+    "main:081c3044": {
+      "name": "MusicPlayer_SetPan",
+      "source": "../../COMMON/SRC/SOUND/MUSIC_PLAYER_SET_PAN.C"
+    },
+    "main:081c3340": {
+      "name": "MusicTrack_ReadVoiceTarget",
+      "source": "../../COMMON/SRC/SOUND/MUSIC_TRACK_READ_VOICE_TARGET.C"
+    }
   }
 }

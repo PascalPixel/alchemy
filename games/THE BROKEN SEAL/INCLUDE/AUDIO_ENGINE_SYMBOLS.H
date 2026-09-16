@@ -4,8 +4,8 @@
 #include "TYPES.H"
 
 #define Audio_NoopStub Func_080fa260
-#define Audio_Place Func_08006864
+#define Bios_CpuSet Func_08006864
 
-void Audio_Place(const void *source, void *destination, u32 control);
+void Bios_CpuSet(const void *source, void *destination, u32 control);
 
 #endif

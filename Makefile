@@ -40,6 +40,10 @@ MAIN_CORRESPONDENCE_MATCHED_MIN := 1393
 MAIN_CORRESPONDENCE_UNRESOLVED_MAX := 44
 OVERLAY_CORRESPONDENCE_MATCHED_MIN := 2562
 OVERLAY_CORRESPONDENCE_UNRESOLVED_MAX := 38
+# Raw .byte/.2byte/.4byte/.word values (aliases included, one per operand) in
+# games/*/asm/overlays/*_overlay.s. The total may only fall: lower this number
+# when listing data becomes typed tables or private inputs; never raise it.
+OVERLAY_DATA_DIRECTIVES_MAX := 77508
 HISTORICAL_TARGETS := tbs-ja tbs-en tbs-de tbs-es tbs-fr tbs-it \
 	tla-ja tla-en tla-de tla-es tla-fr tla-it
 CANDIDATE_SINGLE_OWNERS := \
@@ -59,7 +63,7 @@ CANDIDATE_SINGLE_OWNERS := \
 	build-claimed build-asm build-assets build-full build-rom \
 	standard-check compiler-source-check corpus-check core-retained-check \
 	full-rom-check tla-assets-check overlay-check declared-tu-check owner-inventory-check strict-tu-check classification-check \
-	candidate-corpus-check source-tracking-check index-sync-check publication-tree-check check-owners progress progress-report progress-check progress-subject \
+	candidate-corpus-check source-tracking-check index-sync-check publication-tree-check plan-tails-check overlay-data-check check-owners progress progress-report progress-check progress-subject \
 	correspondence correspondence-check edition-builds edition-builds-check \
 	coverage coverage-check native-format-check review-images-check clean clean-preview
 .PHONY: targets $(HISTORICAL_TARGETS)
@@ -285,6 +289,12 @@ index-sync-check:
 publication-tree-check:
 	$(CHECK) publication --tree
 
+plan-tails-check:
+	$(CHECK) plan-tails
+
+overlay-data-check:
+	$(CHECK) overlay-data --max $(OVERLAY_DATA_DIRECTIVES_MAX)
+
 check-owners: source-tracking-check
 	$(CHECK) owners
 
@@ -401,7 +411,7 @@ native-format-check:
 review-images-check: source-tracking-check
 	$(ASSETS) --review-images out/tbs-en/graphics-review
 
-verify: toolchain-check native-format-check index-sync-check publication-tree-check source-tracking-check review-images-check $(if $(wildcard roms/tla-en.gba),tla-assets-check) corpus-check language-check register-shrink-check lint-production tooling-size tooling-index-check \
+verify: toolchain-check native-format-check index-sync-check publication-tree-check plan-tails-check overlay-data-check source-tracking-check review-images-check $(if $(wildcard roms/tla-en.gba),tla-assets-check) corpus-check language-check register-shrink-check lint-production tooling-size tooling-index-check \
 	strict-tu-check check-owners core-retained-check coverage-check | $(REPORT_DIR)
 	@tree=$$(git write-tree) || exit; \
 	printf '%s\n' "$$tree" > $(VERIFIED_TREE).tmp; \

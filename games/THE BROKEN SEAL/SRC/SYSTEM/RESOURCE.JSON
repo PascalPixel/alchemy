@@ -340,7 +340,7 @@
     {"address": "0x0801404c", "size": "0xfb4", "kind": "byte-fill", "value": 0},
     {
       "address": "0x08000000",
-      "size": "0xa0",
+      "size": "0x04",
       "kind": "gba-cartridge-header-standard-fields",
       "source": "games/THE BROKEN SEAL/SRC/SYSTEM/ROM_HEADER.JSON"
     },

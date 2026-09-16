@@ -1,29 +1,22 @@
-//! GBA cartridge-header codec.
+//! GBA cartridge-header codec. Like pret's `rom_header.s`, the source reserves
+//! the 156-byte cartridge logo instead of describing it: the logo is a private
+//! input extracted from the verified ROM and placed by its own region.
 
 use std::fs;
 use std::path::Path;
 
 use crate::compiler::canonical_json::is_canonical_json_text;
-use psynergy::assets::image::indexed_png;
 use serde_json::{Map, Value};
-use sha2::{Digest, Sha256};
 
 const GBA_HEADER_ADDRESS: u32 = 0x0800_0000;
 const GBA_HEADER_SIZE: usize = 0xc0;
-const GBA_LOGO_ADDRESS: u32 = GBA_HEADER_ADDRESS + 0x04;
+const GBA_LOGO_OFFSET: usize = 0x04;
 const GBA_LOGO_SIZE: usize = 0x9c;
 const GBA_FIXED_ADDRESS: u32 = GBA_HEADER_ADDRESS + 0xb2;
 const GBA_FIXED_SIZE: usize = 0x0a;
 const GBA_RESERVED_END_ADDRESS: u32 = GBA_HEADER_ADDRESS + 0xbe;
 const GBA_RESERVED_END_SIZE: usize = 0x02;
-const GBA_LOGO_WIDTH: u32 = 104;
-const GBA_LOGO_HEIGHT: u32 = 16;
 
-const LOGO_SHA256: &str = "08a0153cfd6b0ea54b938f7d209933fa849da0d56f5a34c481060c9ff2fad818";
-const CODEWORDS: [&str; 16] = [
-    "1", "0110", "01010", "0100", "00010", "011110", "010110", "000110", "00110", "011111",
-    "010111", "000111", "0010", "01110", "00111", "0000",
-];
 const EXPECTED_RESERVED: [(&str, usize); 2] = [("0x080000b5", 7), ("0x080000be", 2)];
 const EXPECTED_UNRESOLVED: [(&str, &str, usize); 6] = [
     ("entry_branch", "0x08000000", 4),
@@ -33,10 +26,6 @@ const EXPECTED_UNRESOLVED: [(&str, &str, usize); 6] = [
     ("software_version", "0x080000bc", 1),
     ("complement_checksum", "0x080000bd", 1),
 ];
-
-fn sha256_hex(data: &[u8]) -> String {
-    format!("{:x}", Sha256::digest(data))
-}
 
 #[derive(Clone, Debug)]
 struct Edition {
@@ -246,7 +235,7 @@ fn parse_gba_header_source(value: &Value) -> Result<(), String> {
         ],
         "GBA header source",
     )?;
-    if !(number_equals(source.get("format"), 2) || number_equals(source.get("format"), 3))
+    if !number_equals(source.get("format"), 4)
         || source.get("kind").and_then(Value::as_str)
             != Some("gba-cartridge-header-standard-fields")
         || source.get("address").and_then(Value::as_str) != Some("0x08000000")
@@ -262,7 +251,6 @@ fn parse_gba_header_source(value: &Value) -> Result<(), String> {
     exact_keys(
         standard,
         &[
-            "logo",
             "fixed_value",
             "unit_code",
             "device_type",
@@ -270,38 +258,11 @@ fn parse_gba_header_source(value: &Value) -> Result<(), String> {
         ],
         "GBA header standard fields",
     )?;
-    let logo = object(
-        standard
-            .get("logo")
-            .ok_or("GBA header logo must be an object")?,
-        "GBA header logo",
-    )?;
-    exact_keys(
-        logo,
-        if number_equals(source.get("format"), 3) {
-            &["codec", "rows", "width", "height", "bpp"]
-        } else {
-            &["codec", "source", "width", "height", "bpp"]
-        },
-        "GBA header logo",
-    )?;
-    if logo.get("codec").and_then(Value::as_str) != Some("gba-bios-huffman-logo")
-        || (number_equals(source.get("format"), 2)
-            && logo
-                .get("source")
-                .and_then(Value::as_str)
-                .is_none_or(str::is_empty))
-        || !number_equals(logo.get("width"), GBA_LOGO_WIDTH as u64)
-        || !number_equals(logo.get("height"), GBA_LOGO_HEIGHT as u64)
-        || !number_equals(logo.get("bpp"), 1)
-        || standard.get("fixed_value").and_then(Value::as_str) != Some("0x96")
+    if standard.get("fixed_value").and_then(Value::as_str) != Some("0x96")
         || standard.get("unit_code").and_then(Value::as_str) != Some("0x00")
         || standard.get("device_type").and_then(Value::as_str) != Some("0x00")
     {
         return Err("GBA header standard values differ".to_string());
-    }
-    if number_equals(source.get("format"), 3) {
-        logo_rows(&Value::Object(logo.clone()))?;
     }
     let reserved = source_array(
         standard.get("reserved_zero_ranges"),
@@ -376,110 +337,6 @@ pub(super) fn read_gba_header_source(path: &Path) -> Result<Value, String> {
     Ok(value)
 }
 
-fn tiled_logo_bits(pixels: &[u8]) -> Vec<u8> {
-    let mut decoded = vec![0u8; GBA_LOGO_WIDTH as usize * GBA_LOGO_HEIGHT as usize / 8];
-    let tiles_wide = GBA_LOGO_WIDTH as usize / 8;
-    for y in 0..GBA_LOGO_HEIGHT as usize {
-        for x in 0..GBA_LOGO_WIDTH as usize {
-            let tile = (y / 8) * tiles_wide + x / 8;
-            let bit = tile * 64 + (y & 7) * 8 + (x & 7);
-            decoded[bit >> 3] |= pixels[y * GBA_LOGO_WIDTH as usize + x] << (bit & 7);
-        }
-    }
-    decoded
-}
-
-fn addition_deltas(decoded: &[u8]) -> Vec<u8> {
-    let mut output = vec![0u8; decoded.len() + 4];
-    let header = ((decoded.len() as u32) << 8) | 0x82;
-    output[0..4].copy_from_slice(&header.to_le_bytes());
-    let mut previous = 0u16;
-    for (index, bytes) in decoded.chunks_exact(2).enumerate() {
-        let current = u16::from_le_bytes([bytes[0], bytes[1]]);
-        let delta = current.wrapping_sub(previous);
-        output[4 + index * 2..6 + index * 2].copy_from_slice(&delta.to_le_bytes());
-        previous = current;
-    }
-    output
-}
-
-fn huffman_logo(data: &[u8]) -> Result<Vec<u8>, String> {
-    let mut output = vec![0u8; GBA_LOGO_SIZE];
-    let mut position = 0usize;
-    for value in data {
-        for nibble in [value & 0x0f, value >> 4] {
-            for character in CODEWORDS[nibble as usize].bytes() {
-                if position >= 0x4ce {
-                    return Err("GBA logo exceeds its fixed Huffman field".to_string());
-                }
-                if character == b'1' {
-                    let word_offset = (position / 32) * 4;
-                    let shift = 31 - position % 32;
-                    let mut word = u32::from_le_bytes(
-                        output[word_offset..word_offset + 4].try_into().unwrap(),
-                    );
-                    word |= 1u32 << shift;
-                    output[word_offset..word_offset + 4].copy_from_slice(&word.to_le_bytes());
-                }
-                position += 1;
-            }
-        }
-    }
-    output[0x98] = 0x21;
-    output[0x99] = 0xd4;
-    Ok(output)
-}
-
-fn logo_rows(logo: &Value) -> Result<Vec<u8>, String> {
-    let rows = logo["rows"].as_array().ok_or("GBA logo rows absent")?;
-    if rows.len() != GBA_LOGO_HEIGHT as usize {
-        return Err("GBA logo row count differs".into());
-    }
-    let mut pixels = vec![];
-    for row in rows {
-        let row = row.as_str().ok_or("GBA logo row is not text")?;
-        if row.len() != GBA_LOGO_WIDTH as usize || row.bytes().any(|p| p != b'0' && p != b'1') {
-            return Err("GBA logo requires 104 binary pixels per row".into());
-        }
-        pixels.extend(row.bytes().map(|p| p - b'0'));
-    }
-    Ok(pixels)
-}
-
-#[test]
-fn inline_logo_requires_binary_rows_and_the_firmware_fingerprint() {
-    let row = "0".repeat(104);
-    let mut logo = serde_json::json!({"rows":vec![row;16]});
-    assert_eq!(logo_rows(&logo).unwrap().len(), 1664);
-    assert!(encode_gba_logo(&serde_json::json!({"standard":{"logo":logo.clone()}}), &[]).is_err());
-    logo["rows"][0] = Value::from("0".repeat(103));
-    assert!(logo_rows(&logo).is_err());
-    logo["rows"][0] = Value::from("2".repeat(104));
-    assert!(logo_rows(&logo).is_err());
-    logo["rows"].as_array_mut().unwrap().pop();
-    assert!(logo_rows(&logo).is_err());
-}
-
-fn encode_gba_logo(source: &Value, image: &[u8]) -> Result<Vec<u8>, String> {
-    let pixels = if source["standard"]["logo"].get("rows").is_some() {
-        logo_rows(&source["standard"]["logo"])?
-    } else {
-        let decoded = indexed_png(image).map_err(|error| error.0)?;
-        if decoded.width != GBA_LOGO_WIDTH
-            || decoded.height != GBA_LOGO_HEIGHT
-            || decoded.palette != vec![[255, 255, 255], [0, 0, 0]]
-        {
-            return Err("GBA logo requires a 104x16 monochrome bitmap".into());
-        }
-        decoded.pixels.iter().map(|p| *p as u8).collect::<Vec<_>>()
-    };
-    let output = huffman_logo(&addition_deltas(&tiled_logo_bits(&pixels)))?;
-    if sha256_hex(&output) != LOGO_SHA256 {
-        return Err("GBA logo source does not encode the standard firmware logo".to_string());
-    }
-    Ok(output)
-}
-
 fn encode_arm_branch(address: u32, target: u32) -> Result<Vec<u8>, String> {
     if address > 0xffff_fffc
         || target > 0xffff_fffc
@@ -516,12 +373,13 @@ fn edition(source: &Value) -> Result<Edition, String> {
     }
 }
 
-fn build_gba_header(source: &Value, logo_image: &[u8]) -> Result<Vec<u8>, String> {
+/// The header with its logo field reserved as zero bytes; the checksum covers
+/// only the fields after the logo.
+fn build_gba_header(source: &Value) -> Result<Vec<u8>, String> {
     parse_gba_header_source(source)?;
     let edition = edition(source)?;
     let mut output = vec![0u8; GBA_HEADER_SIZE];
     output[0..4].copy_from_slice(&encode_arm_branch(GBA_HEADER_ADDRESS, edition.target)?);
-    output[0x04..0xa0].copy_from_slice(&encode_gba_logo(source, logo_image)?);
     output[0xa0..0xac].copy_from_slice(&title_bytes(&edition.title)?);
     output[0xac..0xb0].copy_from_slice(edition.game_code.as_bytes());
     output[0xb0..0xb2].copy_from_slice(edition.maker_code.as_bytes());
@@ -533,13 +391,13 @@ fn build_gba_header(source: &Value, logo_image: &[u8]) -> Result<Vec<u8>, String
 
 pub(super) fn build_gba_header_component(
     source: &Value,
-    logo_image: &[u8],
     address: u32,
     size: usize,
 ) -> Result<Vec<u8>, String> {
     parse_gba_header_source(source)?;
-    if address == GBA_LOGO_ADDRESS && size == GBA_LOGO_SIZE {
-        return encode_gba_logo(source, logo_image);
+    let logo = GBA_HEADER_ADDRESS as u64 + GBA_LOGO_OFFSET as u64;
+    if (address as u64) < logo + GBA_LOGO_SIZE as u64 && logo < address as u64 + size as u64 {
+        return Err("the cartridge logo is a registered private input, not a header field".into());
     }
     if address == GBA_FIXED_ADDRESS && size == GBA_FIXED_SIZE {
         return Ok(vec![0x96, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
@@ -554,9 +412,41 @@ pub(super) fn build_gba_header_component(
         && address >= GBA_HEADER_ADDRESS
         && (address as u64 + size as u64) <= GBA_HEADER_ADDRESS as u64 + GBA_HEADER_SIZE as u64
     {
-        let header = build_gba_header(source, logo_image)?;
+        let header = build_gba_header(source)?;
         let offset = (address - GBA_HEADER_ADDRESS) as usize;
         return Ok(header[offset..offset + size].to_vec());
     }
     Err("GBA header component is not independently determined".to_string())
+}
+
+#[test]
+fn header_fields_build_around_the_reserved_logo() {
+    let mut source = serde_json::json!({
+        "format": 4, "kind": "gba-cartridge-header-standard-fields", "address": "0x08000000",
+        "standard": {"fixed_value": "0x96", "unit_code": "0x00", "device_type": "0x00",
+            "reserved_zero_ranges": [{"address": "0x080000b5", "size": 7}, {"address": "0x080000be", "size": 2}]},
+        "edition": {"entry_branch": {"instruction_set": "arm", "operation": "b", "target": "0x080000c0"},
+            "title": {"text": "TEST", "padding": "nul", "field_bytes": 12},
+            "game_code": "ATST", "maker_code": "01", "software_version": 2, "complement_checksum": "derived"},
+        "unresolved_fields": []
+    });
+    let branch = build_gba_header_component(&source, 0x0800_0000, 4).unwrap();
+    assert_eq!(branch, 0xea00_002eu32.to_le_bytes());
+    let fields = build_gba_header_component(&source, 0x0800_00a0, 0x20).unwrap();
+    assert_eq!(&fields[..6], b"TEST\0\0");
+    assert_eq!(&fields[0x0c..0x12], b"ATST01");
+    assert_eq!((fields[0x12], fields[0x1c]), (0x96, 2));
+    let sum = fields[..0x1e]
+        .iter()
+        .fold(0x19u8, |sum, byte| sum.wrapping_add(*byte));
+    assert_eq!(sum, 0, "complement checksum");
+    // No range reaching into the logo field builds, and no source may carry it.
+    for (address, size) in [(0x0800_0000, 5), (0x0800_0004, 0x9c), (0x0800_009f, 2)] {
+        assert!(build_gba_header_component(&source, address, size).is_err());
+    }
+    source["standard"]["logo"] = serde_json::json!({"source": "LOGO.BIN"});
+    assert!(build_gba_header_component(&source, 0x0800_0000, 4).is_err());
+    source["standard"].as_object_mut().unwrap().remove("logo");
+    source["format"] = Value::from(3);
+    assert!(build_gba_header_component(&source, 0x0800_0000, 4).is_err());
 }

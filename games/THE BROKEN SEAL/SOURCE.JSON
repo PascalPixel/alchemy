@@ -48159,6 +48159,15 @@
       "plan_section": "/recipes/127a0cf3413c9e4602de8b81984b9b1a1271fc86a2692333aa3e9b235d4f2cbb"
     },
     {
+      "address": "0x08000004",
+      "size": "0x9c",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/ROM_HEADER_LOGO.BIN",
+      "source_offset": 0,
+      "source_length": 156
+    },
+    {
       "address": "0x08000764",
       "size": "0xc",
       "kind": "u8-array",
@@ -65049,6 +65058,13 @@
       "source_offset": 3154,
       "region_address": "0x080f38bc",
       "decoded_sha256": "9e98f0edf99ef42f6c232e1e8c9f2075186bf3c51a3fba03b8288aa3bfcac5c3"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/ROM_HEADER_LOGO.BIN",
+      "source_offset": 0,
+      "region_address": "0x08000004",
+      "decoded_sha256": "08a0153cfd6b0ea54b938f7d209933fa849da0d56f5a34c481060c9ff2fad818"
     }
   ],
   "characters": [

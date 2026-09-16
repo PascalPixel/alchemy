@@ -18076,8 +18076,8 @@
 <rect x="812.1425467968406" y="884.179304083541" width="5.4997972431714395" height="0.7153119199758611" style="fill:#326b7d"/>
 </g>
 </g>
-<g aria-label="SYSTEM: 59,002 bytes · C, Data · 33 items" data-node="container" data-kind="folder" data-bytes="59002" data-source="games/THE BROKEN SEAL/SRC/SYSTEM/">
-<title>SYSTEM: 59,002 bytes · C, Data · 33 items</title>
+<g aria-label="SYSTEM: 59,002 bytes · C, Data · 34 items" data-node="container" data-kind="folder" data-bytes="59002" data-source="games/THE BROKEN SEAL/SRC/SYSTEM/">
+<title>SYSTEM: 59,002 bytes · C, Data · 34 items</title>
 <rect class="container-frame" x="801.4012004189382" y="887.2522719635048" width="18.598799581061826" height="393.1351965992088" fill="#1f7f93"/>
 <path class="bevel-light" d="M801.4012004189382 1280.3874685627136 V887.2522719635048 H820" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <path class="bevel-dark" d="M801.4012004189382 1280.3874685627136 H820 V887.2522719635048" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
@@ -18811,23 +18811,27 @@
 <title>RESOURCE_DIRECTORY.JSON · pointer-table · 0x08320000: 4,000 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08320000</title>
 <rect data-content-type="Other data" x="803.9012004189382" y="1179.5888088563022" width="13.598799581061826" height="25.381152950693796" style="fill:#bda995"/>
 </g>
-<g aria-label="ROM_HEADER.JSON: 192 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 3 items" data-node="container" data-kind="file" data-bytes="192" data-source="games/THE BROKEN SEAL/SRC/SYSTEM/ROM_HEADER.JSON">
-<title>ROM_HEADER.JSON: 192 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 3 items</title>
-<rect class="container-frame" x="803.4012004189382" y="1205.469961806996" width="3.503711899454838" height="5.276230590138759" fill="#1f7f93"/>
-<path class="bevel-light" d="M803.4012004189382 1210.7461923971348 V1205.469961806996 H806.904912318393" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<path class="bevel-dark" d="M803.4012004189382 1210.7461923971348 H806.904912318393 V1205.469961806996" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="ROM_HEADER.JSON · gba-cartridge-header-standard-fields · 0x08000000: 160 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08000000" data-node="leaf" data-kind="file" data-bytes="160" data-address="0x08000000" data-source="games/THE BROKEN SEAL/SRC/SYSTEM/ROM_HEADER.JSON">
-<title>ROM_HEADER.JSON · gba-cartridge-header-standard-fields · 0x08000000: 160 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08000000</title>
-<rect data-content-type="Other data" x="804.7150923812337" y="1206.7838537692917" width="0.8759279748637095" height="2.06105089214574" style="fill:#bda995"/>
+<g aria-label="ROM_HEADER.JSON: 36 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 3 items" data-node="container" data-kind="file" data-bytes="36" data-source="games/THE BROKEN SEAL/SRC/SYSTEM/ROM_HEADER.JSON">
+<title>ROM_HEADER.JSON: 36 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 3 items</title>
+<rect class="container-frame" x="803.4012004189382" y="1205.469961806996" width="3.503711899454838" height="0.9892932356510173" fill="#1f7f93"/>
+<path class="bevel-light" d="M803.4012004189382 1206.459255042647 V1205.469961806996 H806.904912318393" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M803.4012004189382 1206.459255042647 H806.904912318393 V1205.469961806996" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="ROM_HEADER.JSON · gba-cartridge-header-standard-fields · 0x08000000: 4 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08000000" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x08000000" data-source="games/THE BROKEN SEAL/SRC/SYSTEM/ROM_HEADER.JSON">
+<title>ROM_HEADER.JSON · gba-cartridge-header-standard-fields · 0x08000000: 4 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08000000</title>
+<rect data-content-type="Other data" x="803.7321088745629" y="1205.8008702626207" width="0.16717029342385162" height="0.3274763244016571" style="fill:#bda995"/>
 </g>
 <g aria-label="ROM_HEADER.JSON · gba-cartridge-header-standard-fields · 0x080000a0: 28 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x080000a0" data-node="leaf" data-kind="file" data-bytes="28" data-address="0x080000a0" data-source="games/THE BROKEN SEAL/SRC/SYSTEM/ROM_HEADER.JSON">
 <title>ROM_HEADER.JSON · gba-cartridge-header-standard-fields · 0x080000a0: 28 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x080000a0</title>
-<rect data-content-type="Other data" x="804.4239773371523" y="1209.4297175922197" width="1.2391760693105467" height="0.293697886700945" style="fill:#bda995"/>
+<rect data-content-type="Other data" x="804.106525969155" y="1205.840946770365" width="2.0930607990211683" height="0.24732330891275434" style="fill:#bda995"/>
 </g>
 <g aria-label="ROM_HEADER.JSON · gba-cartridge-header-standard-fields · 0x080000bc: 4 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x080000bc" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x080000bc" data-source="games/THE BROKEN SEAL/SRC/SYSTEM/ROM_HEADER.JSON">
 <title>ROM_HEADER.JSON · gba-cartridge-header-standard-fields · 0x080000bc: 4 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x080000bc</title>
-<rect data-content-type="Other data" x="805.8647478482422" y="1209.3376141472982" width="0.10949099685796371" height="0.47790477654392627" style="fill:#bda995"/>
+<rect data-content-type="Other data" x="806.4068335693445" y="1205.8008702626207" width="0.1671702934238517" height="0.32747632440165697" style="fill:#bda995"/>
 </g>
+</g>
+<g aria-label="ROM_HEADER_LOGO.BIN · u8-array · 0x08000004: 156 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08000004" data-node="leaf" data-kind="file" data-bytes="156" data-address="0x08000004" data-source="games/THE BROKEN SEAL/SRC/SYSTEM/ROM_HEADER_LOGO.BIN">
+<title>ROM_HEADER_LOGO.BIN · u8-array · 0x08000004: 156 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 0x08000004</title>
+<rect data-content-type="Other data" x="803.9012004189382" y="1206.959255042647" width="2.503711899454838" height="3.2869373544877423" style="fill:#bda995"/>
 </g>
 <g aria-label="RUNTIME_SUPPORT.JSON: 528 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 5 items" data-node="container" data-kind="file" data-bytes="528" data-source="games/THE BROKEN SEAL/SRC/SYSTEM/RUNTIME_SUPPORT.JSON">
 <title>RUNTIME_SUPPORT.JSON: 528 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 5 items</title>

@@ -8,7 +8,7 @@ The two games share much of the same code, so Alchemy recovers them side by side
 
 ## Status: 54.97% DONE
 
-![ROM contents](<games/THE BROKEN SEAL/PREVIEW/TBS-EN-ROM.SVG?v=3d7baf01c22baf32>)
+![ROM contents](<games/THE BROKEN SEAL/PREVIEW/TBS-EN-ROM.SVG?v=5125a7a4b486eb44>)
 
 **DONE** is how much of the game has been recovered and proven to rebuild
 exactly like the original. Solid blocks are proven, lighter blocks are close

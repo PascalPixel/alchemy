@@ -509,21 +509,8 @@ AlchemyC_02000cf4:
 	.4byte 0x020090e0
 	.4byte 0x840000e0
 .include "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KAWA/IMPORT.INC"
-	.4byte 0x46c04700
-	.4byte 0x46c04708
-	.4byte 0x46c04710
-	.4byte 0x46c04718
-	.4byte 0x46c04720
-	.4byte 0x46c04728
-	.4byte 0x46c04730
-	.4byte 0x46c04738
-	.4byte 0x46c04740
-	.4byte 0x46c04748
-	.4byte 0x46c04750
-	.4byte 0x46c04758
-	.4byte 0x46c04760
-	.4byte 0x46c04768
-	.4byte 0x46c04770
+AlchemyRuntime_02000ed4:
+	.space 0x3c
 	.4byte 0x00100000
 	.4byte 0x00100000
 	.4byte 0x00100000

@@ -345,10 +345,12 @@ fn assembly_accounting(regions: &[Region]) -> Result<AssemblyAccounting, String>
         "merge_with_function_owner",
         "merge_with_continuations",
     ];
+    // Compiler runtime built from its licensed container is explained, not C debt.
     let retained = [
         "keep_asm",
         "keep_structured_asm",
         "adjacent_section_alignment",
+        "container_runtime",
     ];
     let mut result = AssemblyAccounting::default();
     for region in regions {

@@ -804,6 +804,120 @@ fn attributes_reason(path: &str, text: &str) -> Option<&'static str> {
         "Git filter attribute such as filter=lfs: content would bypass the publication gate",
     )
 }
+/// Word sequences that mark text under a license this repository cannot carry.
+/// Each is stored split by `|` and joined at run time, so the gate's own
+/// source never holds a phrase it rejects.
+const LICENSE_PHRASES: &[&str] = &[
+    "SP|DX Lic|ense Ident|ifier",
+    "G|NU Gen|eral Pub|lic Lic|ense",
+    "G|NU Les|ser Gen|eral Pub|lic Lic|ense",
+    "G|NU Lib|rary Gen|eral Pub|lic Lic|ense",
+];
+const COPYRIGHT: &str = "Copy|right";
+const FOUNDATION: &str = "Fr|ee Soft|ware Found|ation";
+/// Words a copyright line may hold between `Copyright` and the holder: years,
+/// `(C)` and separators.
+const COPYRIGHT_WINDOW: usize = 32;
+const LICENSE_REASON: &str = "license marker (SPDX identifier, GNU GPL or LGPL text, or an FSF copyright): this repository carries no license; compiler and runtime code lives in its licensed submodule";
+const DIFF_REASON: &str = "patch or diff content: compiler changes live in their licensed submodules, and a diff is never a tracked input";
+fn unsplit(value: &str) -> Vec<String> {
+    value
+        .replace('|', "")
+        .split_whitespace()
+        .map(str::to_ascii_lowercase)
+        .collect()
+}
+fn holds_sequence(words: &[&str], phrase: &[String]) -> bool {
+    !phrase.is_empty()
+        && words
+            .windows(phrase.len())
+            .any(|window| window.iter().zip(phrase).all(|(word, part)| *word == part))
+}
+/// License identifiers, GNU license texts and Free Software Foundation
+/// copyright lines, matched as word sequences so comment leaders, line breaks
+/// and case do not hide them.
+fn license_reason(text: &str) -> Option<&'static str> {
+    let lower = text.to_ascii_lowercase();
+    if !["license", "licence", "foundation"]
+        .iter()
+        .any(|word| lower.contains(word))
+    {
+        return None;
+    }
+    let words: Vec<&str> = lower
+        .split(|ch: char| !ch.is_ascii_alphanumeric())
+        .filter(|word| !word.is_empty())
+        .collect();
+    if LICENSE_PHRASES
+        .iter()
+        .any(|phrase| holds_sequence(&words, &unsplit(phrase)))
+    {
+        return Some(LICENSE_REASON);
+    }
+    let copyright = unsplit(COPYRIGHT).concat();
+    let foundation = unsplit(FOUNDATION);
+    let attributed = words.iter().enumerate().any(|(index, word)| {
+        *word == copyright && {
+            let end = (index + 1 + COPYRIGHT_WINDOW + foundation.len()).min(words.len());
+            holds_sequence(&words[index + 1..end], &foundation)
+        }
+    });
+    attributed.then_some(LICENSE_REASON)
+}
+/// `N` or `N,M`.
+fn line_range(value: &str) -> bool {
+    let digits = |part: &str| !part.is_empty() && part.bytes().all(|byte| byte.is_ascii_digit());
+    match value.split_once(',') {
+        Some((start, count)) => digits(start) && digits(count),
+        None => digits(value),
+    }
+}
+/// A unified hunk header, `@@ -A,B +C,D @@`, or a combined one with more `@`
+/// and more old ranges.
+fn unified_hunk(line: &str) -> bool {
+    let fence = line.bytes().take_while(|byte| *byte == b'@').count();
+    if fence < 2 {
+        return false;
+    }
+    let Some((ranges, _)) = line[fence..].split_once(&format!(" {}", &line[..fence])) else {
+        return false;
+    };
+    // A leading space, one old range per parent, then the new range.
+    let Some(("", ranges)) = ranges.split_once(' ') else {
+        return false;
+    };
+    let ranges: Vec<_> = ranges.split(' ').collect();
+    let Some((new, old)) = ranges.split_last() else {
+        return false;
+    };
+    old.len() + 1 == fence
+        && old
+            .iter()
+            .all(|range| range.strip_prefix('-').is_some_and(line_range))
+        && new.strip_prefix('+').is_some_and(line_range)
+}
+/// A context hunk's old-range line, `*** A,B ****`.
+fn context_hunk(line: &str) -> bool {
+    line.strip_prefix("*** ")
+        .and_then(|rest| rest.strip_suffix(" ****"))
+        .is_some_and(line_range)
+}
+/// Unified, combined, context and Git binary diff hunks, judged by structure
+/// whatever the file is called.
+fn diff_reason(text: &str) -> Option<&'static str> {
+    let lines: Vec<&str> = text
+        .split('\n')
+        .map(|line| line.strip_suffix('\r').unwrap_or(line))
+        .collect();
+    let hunk = lines.windows(2).any(|pair| {
+        let (line, next) = (pair[0], pair[1]);
+        (unified_hunk(line) && next.starts_with([' ', '+', '-', '\\']))
+            || (line == "*".repeat(15) && context_hunk(next))
+            || (line == "GIT binary patch"
+                && (next.starts_with("literal ") || next.starts_with("delta ")))
+    });
+    hunk.then_some(DIFF_REASON)
+}
 fn publication_data_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Option<&'static str> {
     if logo.is_some_and(|logo| contains(data, logo)) {
         return Some(LOGO_REASON);
@@ -824,7 +938,9 @@ fn publication_data_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Opti
     }
     let text = std::str::from_utf8(data).unwrap_or("");
     let table = asset_game(path).is_some() && listed(extension(path), DATA_TABLE_EXTENSIONS);
-    data_uri_reason(text)
+    license_reason(text)
+        .or_else(|| diff_reason(text))
+        .or_else(|| data_uri_reason(text))
         .or_else(|| encoded_reason(text, !table))
         .or_else(|| included_bytes_reason(path, text))
         .or_else(|| attributes_reason(path, text))
@@ -1338,6 +1454,46 @@ fn midi_fixture(events: &[u8], closed: bool) -> Vec<u8> {
 fn logo_fixture() -> Vec<u8> {
     fixture_bytes(LOGO.len(), 0x0bad_1060)
 }
+/// Toolchain-code fixtures, built at run time from split phrases and
+/// substituted hunk markers so this source holds none of what it rejects:
+/// `(license header, wrapped license text, lesser license text, FSF copyright,
+/// unified diff, headerless hunk, context diff, binary patch)`.
+fn toolchain_fixtures() -> [String; 8] {
+    let phrase = |split: &str| split.replace('|', "");
+    let general = phrase(LICENSE_PHRASES[1]);
+    let words: Vec<&str> = general.split(' ').collect();
+    let (at, minus, plus, star) = ('@', '-', '+', '*');
+    [
+        format!(
+            "/*\n * {}: GPL-2.0-or-later WITH GCC-exception-2.0\n */\nint body;\n",
+            phrase(LICENSE_PHRASES[0]).replace(' ', "-")
+        ),
+        format!(
+            "@ under the terms of the {} {} {}\n@ {} as published by the author\n",
+            words[0], words[1], words[2], words[3]
+        ),
+        format!("; see the {}, version 2.1\n", phrase(LICENSE_PHRASES[2])),
+        format!(
+            "/* {} (C) 1995, 1996, 1998, 1999, 2000 {}, Inc. */\n",
+            phrase(COPYRIGHT),
+            phrase(FOUNDATION)
+        ),
+        format!(
+            "{m}{m}{m} a/gcc/config/arm/arm.c\n{p}{p}{p} b/gcc/config/arm/arm.c\n{a}{a} -8806,4 +8806,5 {a}{a} arm_expand_prologue\n context\n{p}  added (rtx);\n",
+            m = minus,
+            p = plus,
+            a = at
+        ),
+        format!("{a}{a} -1 +1 {a}{a}\n{m}old\n{p}new\n", a = at, m = minus, p = plus),
+        format!(
+            "{}\n{s}{s}{s} 12,14 {s}{s}{s}{s}\n  kept\n{m}{m}{m} 12,15 {m}{m}{m}{m}\n",
+            star.to_string().repeat(15),
+            s = star,
+            m = minus
+        ),
+        format!("GIT binary {}\nliteral 12\nzcmZ\n", "patch"),
+    ]
+}
 /// `(path, bytes, game has a manifest, expected rejection reason fragment)`.
 type Fixture = (&'static str, Vec<u8>, bool, Option<&'static str>);
 fn binary_fixtures() -> Vec<Fixture> {
@@ -1728,6 +1884,10 @@ fn text_fixtures() -> Vec<Fixture> {
     let attributes = b"*.PNG filter=lfs diff=lfs merge=lfs -text\n".to_vec();
     let svg = b"<svg><style>.label{font-family:monospace}</style><rect/></svg>".to_vec();
     let empty = || b"{}\n".to_vec();
+    let [license_header, wrapped_license, lesser_license, copyright, unified, headerless, context, binary_patch] =
+        toolchain_fixtures();
+    let license = Some("license marker");
+    let patch = Some("patch or diff");
     let encoded = Some("encoded payload");
     let arrays = Some("numeric array");
     let manifest = Some("asset manifest");
@@ -1870,6 +2030,67 @@ fn text_fixtures() -> Vec<Fixture> {
         (
             "games/THE BROKEN SEAL/PREVIEW/TBS-EN-ROM.SVG",
             svg,
+            true,
+            None,
+        ),
+        (
+            "games/THE BROKEN SEAL/INCLUDE/ADD_PARTS_BODY.INC",
+            text(license_header),
+            true,
+            license,
+        ),
+        (
+            "games/THE BROKEN SEAL/asm/080072e4.s",
+            text(wrapped_license),
+            true,
+            license,
+        ),
+        ("tools/alchemy/src/runtime.rs", text(lesser_license), true, license),
+        (
+            "games/THE BROKEN SEAL/SRC/LIB/SOFT_FLOAT.C",
+            text(copyright),
+            true,
+            license,
+        ),
+        (
+            "games/THE BROKEN SEAL/recon/notes.json",
+            text(unified),
+            true,
+            patch,
+        ),
+        ("CONTRIBUTING.md", text(headerless), true, patch),
+        ("tools/alchemy/src/compiler.rs", text(context), true, patch),
+        (
+            "games/THE BROKEN SEAL/SRC/SYSTEM/BUILD.INC",
+            text(binary_patch),
+            true,
+            patch,
+        ),
+        (
+            "CONTRIBUTING.md",
+            text(format!(
+                "Code whose license this repository cannot carry stays in the {} submodules; {}{} marks a hunk.\n",
+                "licensed", "@", "@"
+            )),
+            true,
+            None,
+        ),
+        (
+            "tools/alchemy/src/score/fixture.rs",
+            text(format!(
+                "write(&patch, \"{a}{a} -1 +1 {a}{a}\\n-a\\n+b\\n\");\n{a}{a} -1 +1 {a}{a}\nnot a body\n",
+                a = '@'
+            )),
+            true,
+            None,
+        ),
+        (
+            "games/THE BROKEN SEAL/SRC/FIELD/FOUNDATION.C",
+            text(format!(
+                "/* {} of the {} */\nvoid Found(void) {{}}\n",
+                "the free software",
+                FOUNDATION.replace('|', "")
+            )),
             true,
             None,
         ),
@@ -2273,6 +2494,106 @@ mod tests {
         assert!(error.contains("games/Y/SOUND/SEQUENCE/A.MID: game material without"));
         assert!(error.contains("games/Y/Data/TABLE.JSON: game material without"));
         assert!(!error.contains("games/X/SOUND"), "{error}");
+    }
+    #[test]
+    fn toolchain_license_markers_patches_and_foreign_gitlinks_fail_in_every_mode() {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        let run = |args: &[&str]| git(root, args, "fixture git").unwrap();
+        run(&["init", "--quiet"]);
+        let base = commit(root, &[("tools/src/main.rs", b"fn main() {}\n".to_vec())]);
+        let [license_header, _, _, copyright, unified, _, context, _] = toolchain_fixtures();
+        std::fs::create_dir_all(root.join("games/X/SRC/LIB")).unwrap();
+        std::fs::write(root.join("games/X/SRC/LIB/RUNTIME.C"), &license_header).unwrap();
+        std::fs::write(root.join("gcc.json"), &unified).unwrap();
+        run(&["add", "games/X/SRC/LIB/RUNTIME.C", "gcc.json"]);
+        let error = check_staged(root).unwrap_err();
+        assert!(
+            error.contains("staged games/X/SRC/LIB/RUNTIME.C: license marker"),
+            "{error}"
+        );
+        assert!(error.contains("staged gcc.json: patch or diff"), "{error}");
+        let error = check_tree(root, None).unwrap_err();
+        assert!(error.contains("tree gcc.json: patch or diff"), "{error}");
+        let pushed = commit(
+            root,
+            &[
+                ("tools/src/runtime.rs", copyright.into_bytes()),
+                ("tools/src/compiler.rs", context.into_bytes()),
+            ],
+        );
+        run(&[
+            "update-index",
+            "--add",
+            "--cacheinfo",
+            &format!("160000,{base},vendor/gcc"),
+        ]);
+        run(&[
+            "-c",
+            "user.name=fixture",
+            "-c",
+            "user.email=fixture@example.invalid",
+            "commit",
+            "--quiet",
+            "--message",
+            "gitlink",
+        ]);
+        let linked = String::from_utf8(run(&["rev-parse", "HEAD"]))
+            .unwrap()
+            .trim()
+            .to_string();
+        let error = check_tree(root, Some(&pushed)).unwrap_err();
+        for path in [
+            "RUNTIME.C: license marker",
+            "gcc.json: patch or diff",
+            "runtime.rs: license marker",
+            "compiler.rs: patch or diff",
+        ] {
+            assert!(error.contains(path), "{path}: {error}");
+        }
+        let update = format!("refs/heads/main {linked} refs/heads/main {base}\n");
+        let error = check_push(root, &update).unwrap_err();
+        assert!(error.contains("vendor/gcc: unapproved gitlink"), "{error}");
+        assert!(error.contains("runtime.rs: license marker"), "{error}");
+        assert!(error.contains("gcc.json: patch or diff"), "{error}");
+    }
+    #[test]
+    fn license_and_diff_structure_ignore_prose_and_escaped_strings() {
+        let [license_header, wrapped, lesser, copyright, unified, headerless, context, binary] =
+            toolchain_fixtures();
+        for text in [&license_header, &wrapped, &lesser, &copyright] {
+            assert_eq!(license_reason(text), Some(LICENSE_REASON), "{text}");
+            assert_eq!(
+                license_reason(&text.to_ascii_uppercase()),
+                Some(LICENSE_REASON)
+            );
+        }
+        for text in [&unified, &headerless, &context, &binary] {
+            assert_eq!(diff_reason(text), Some(DIFF_REASON), "{text}");
+            assert_eq!(diff_reason(&text.replace('\n', "\r\n")), Some(DIFF_REASON));
+        }
+        let at = "@@";
+        assert!(unified_hunk(&format!("{at} -1,2 +3 {at} context")));
+        assert!(unified_hunk(&format!("{at}@ -1,2 -1,2 +1,3 {at}@")));
+        for line in [
+            format!("{at} -1,2 +3"),
+            format!("{at} 1,2 +3 {at}"),
+            format!("{at} -1,x +3 {at}"),
+            format!("{at}@ -1 +1 {at}@"),
+            format!("x{at} -1 +1 {at}"),
+        ] {
+            assert!(!unified_hunk(&line), "{line}");
+        }
+        assert!(diff_reason(&format!("{at} -1 +1 {at}\nplain\n")).is_none());
+        assert!(license_reason("license: see the licensed agscc submodule\n").is_none());
+        // The words must appear in order and, for a copyright, near it.
+        let far = format!(
+            "{} (C) 1999\n{}\n{}\n",
+            COPYRIGHT.replace('|', ""),
+            "word ".repeat(COPYRIGHT_WINDOW + 1),
+            FOUNDATION.replace('|', "")
+        );
+        assert!(license_reason(&far).is_none());
     }
     #[test]
     fn renamed_documents_lfs_and_foreign_gitlinks_fail_in_every_mode() {

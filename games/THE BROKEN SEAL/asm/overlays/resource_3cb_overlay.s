@@ -2742,21 +2742,8 @@ AlchemyC_02001294:
 	.4byte 0x03001d08
 	.4byte 0x02008149
 .include "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/IMPORT.INC"
-	.4byte 0x46c04700
-	.4byte 0x46c04708
-	.4byte 0x46c04710
-	.4byte 0x46c04718
-	.4byte 0x46c04720
-	.4byte 0x46c04728
-	.4byte 0x46c04730
-	.4byte 0x46c04738
-	.4byte 0x46c04740
-	.4byte 0x46c04748
-	.4byte 0x46c04750
-	.4byte 0x46c04758
-	.4byte 0x46c04760
-	.4byte 0x46c04768
-	.4byte 0x46c04770
+AlchemyRuntime_020018ec:
+	.space 0x3c
 	.4byte 0x434d4753
 	.4byte 0x33323130
 	.4byte 0x31434241

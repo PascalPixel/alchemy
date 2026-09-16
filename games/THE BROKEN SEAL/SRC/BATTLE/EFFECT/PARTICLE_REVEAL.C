@@ -25,7 +25,7 @@
  * Every `Func_080072f4`/`Func_08007314` call site is an indirect call
  * through the value the reference loads into r4/r12 immediately before the
  * `bl`, not a real function -- both addresses fall inside the
- * `_call_via_rN` trampoline bank at games/THE BROKEN SEAL/asm/080072e4.s (r4 slot at
+ * container-built `_call_via_rN` bank at 0x080072e4 (r4 slot at
  * +0x10, ip/r12 slot at +0x30). All such call sites here go through
  * `routine[]`, a two-entry DrawRectangleFn array Func_080cef64 fills.
  *

@@ -117,9 +117,6 @@ pub fn game_directory(game: &str) -> &str {
 pub enum CompilerFamily {
     /// Game code: the staged GCC 2.96 with the canonical flags.
     Game,
-    /// The soft-float support leaves shipped prebuilt with the toolchain:
-    /// stock ABI (r4 callee-saved) and no interworking.
-    SoftFloatLibrary,
     /// Library code built with agbcc.
     Agbcc,
 }
@@ -181,12 +178,14 @@ pub fn agbcc_cflags() -> Vec<String> {
         .map(|s| (*s).to_string())
         .collect()
 }
-/// The soft-float library family: the canonical flags without interworking
-/// and with the stock r4 callee-saved ABI, uniformly for every member.
-pub fn soft_float_library_cflags() -> Vec<String> {
+/// The compiler runtime the images linked from the toolchain library, built
+/// from the licensed agscc container (`compiler::runtime`): the canonical
+/// flags without interworking, with the stock r4 callee-saved ABI and without
+/// the game's include tree, uniformly for every member.
+pub fn runtime_library_cflags() -> Vec<String> {
     cflags()
         .into_iter()
-        .filter(|f| f != "-mthumb-interwork" && f != "-fcall-used-r4")
+        .filter(|f| f != "-mthumb-interwork" && f != "-fcall-used-r4" && !f.starts_with("-I"))
         .collect()
 }
 pub fn cflags_for_target(target: CompilerTarget) -> Vec<String> {
@@ -213,15 +212,12 @@ fn has(table: &'static [&'static str], owner: Option<&str>) -> bool {
 pub fn family_for_source(target: CompilerTarget, source: &str) -> CompilerFamily {
     let owner = routed_owner(source);
     let owner = owner.as_deref();
-    let (agbcc, soft_float): (&[&str], &[&str]) = match target {
-        CompilerTarget::Tbs => (AGBCC_SOURCES, SOFT_FLOAT_LIBRARY_OVERLAY_SOURCES),
-        CompilerTarget::Tla => (TLA_AGBCC_SOURCES, &[]),
+    let agbcc: &[&str] = match target {
+        CompilerTarget::Tbs => AGBCC_SOURCES,
+        CompilerTarget::Tla => TLA_AGBCC_SOURCES,
     };
     if has(agbcc, owner) {
         return CompilerFamily::Agbcc;
-    }
-    if has(soft_float, owner) {
-        return CompilerFamily::SoftFloatLibrary;
     }
     CompilerFamily::Game
 }
@@ -231,7 +227,6 @@ pub fn uses_agbcc_compiler(target: CompilerTarget, source: &str) -> bool {
 pub fn cflags_for_target_source(target: CompilerTarget, source: &str) -> Vec<String> {
     match (family_for_source(target, source), target) {
         (CompilerFamily::Agbcc, _) => agbcc_cflags(),
-        (CompilerFamily::SoftFloatLibrary, _) => soft_float_library_cflags(),
         (CompilerFamily::Game, CompilerTarget::Tbs) => cflags(),
         (CompilerFamily::Game, CompilerTarget::Tla) => base_cflags(CompilerTarget::Tla),
     }
@@ -330,28 +325,29 @@ mod target_tests {
         }
     }
     #[test]
-    fn soft_float_library_family_is_uniform() {
-        for owner in [
-            "games/THE BROKEN SEAL/src/resource_3a7_c_0200142c.c",
-            "games/THE BROKEN SEAL/src/resource_3a7_c_02001544.c",
-            "games/THE BROKEN SEAL/src/resource_3bf_c_02005ae0.c",
-            "games/THE BROKEN SEAL/src/resource_3a7_c_0200145c.c",
-        ] {
-            let flags = cflags_for_target_source(CompilerTarget::Tbs, owner);
-            assert!(!flags.iter().any(|flag| flag == "-mthumb-interwork"));
-            assert!(!flags.iter().any(|flag| flag == "-fcall-used-r4"));
-            assert!(flags.iter().any(|flag| flag == "-O2"));
+    fn runtime_library_flags_are_the_stock_canonical_set() {
+        let flags = runtime_library_cflags();
+        assert!(!flags.iter().any(|flag| flag == "-mthumb-interwork"));
+        assert!(!flags.iter().any(|flag| flag == "-fcall-used-r4"));
+        assert!(!flags.iter().any(|flag| flag.starts_with("-I")));
+        for flag in ["-O2", "-mthumb", "-mcpu=arm7tdmi"] {
+            assert!(flags.iter().any(|candidate| candidate == flag));
         }
+        // The former overlay soft-float owners now route as ordinary game
+        // code: no tracked C claims them; the container builds them.
+        assert_eq!(
+            family_for_source(
+                CompilerTarget::Tbs,
+                "games/THE BROKEN SEAL/src/resource_3a7_c_0200142c.c"
+            ),
+            CompilerFamily::Game
+        );
     }
     /// Tables are keyed by canonical owner IDs. Membership is provenance, so an
     /// owner stays listed when its C is retired to assembly.
     #[test]
     fn family_tables_name_canonical_owners() {
-        for table in [
-            AGBCC_SOURCES,
-            TLA_AGBCC_SOURCES,
-            SOFT_FLOAT_LIBRARY_OVERLAY_SOURCES,
-        ] {
+        for table in [AGBCC_SOURCES, TLA_AGBCC_SOURCES] {
             for entry in table {
                 let owner = SourceOwner::parse(entry).expect("canonical owner id");
                 assert_eq!(owner.id(), *entry);
@@ -378,13 +374,6 @@ mod target_tests {
         assert_eq!(
             family_for_source(CompilerTarget::Tla, "080fb670.c"),
             CompilerFamily::Game
-        );
-        assert_eq!(
-            family_for_source(
-                CompilerTarget::Tbs,
-                "games/THE BROKEN SEAL/SRC/resource_3a7_c_0200142c.c"
-            ),
-            CompilerFamily::SoftFloatLibrary
         );
         assert_eq!(
             family_for_source(CompilerTarget::Tbs, "resource_3a8_c_0200142c.c"),

@@ -495,6 +495,65 @@ fn exact_overlay(
     }
     Ok((owners, spans))
 }
+/// Compiler runtime links built from the licensed container count as proven,
+/// as pret counts linked libgcc. Main links are credited only as the built
+/// asm manifest placed them; overlay links only where the tracked listing
+/// reserves their window. Data windows lie outside executable intervals.
+fn runtime_credit(
+    tree: &SourceTree,
+    main_exec: &[Span],
+    overlay_exec: &SpanMap,
+) -> Result<(Vec<Span>, SpanMap), String> {
+    let Some(registry) = json(tree, crate::compiler::runtime::REGISTRY) else {
+        return Ok((Vec::new(), SpanMap::new()));
+    };
+    let placed = json(tree, "out/tbs-en/full/asm/manifest.json")
+        .map(|manifest| {
+            array(&manifest, "regions")
+                .iter()
+                .filter(|region| {
+                    text(region, "source") == crate::compiler::runtime::REGISTRY
+                        && text(region, "retention") == "container_runtime"
+                })
+                .filter_map(|region| Some((integer(region, "address")?, integer(region, "size")?)))
+                .collect::<BTreeMap<_, _>>()
+        })
+        .unwrap_or_default();
+    let mut main = Vec::new();
+    let mut overlays = SpanMap::new();
+    for link in array(&registry, "links") {
+        let image = text(link, "image");
+        let start = address(link, "text").ok_or_else(|| {
+            format!(
+                "{}: invalid runtime link",
+                crate::compiler::runtime::REGISTRY
+            )
+        })?;
+        if image == "main" {
+            if let Some(size) = placed.get(&start) {
+                main.push(Span::new(start, start + size));
+            }
+            continue;
+        }
+        let listing = tree
+            .read(&format!(
+                "games/THE BROKEN SEAL/asm/overlays/{image}_overlay.s"
+            ))
+            .unwrap_or_default();
+        for (window, size) in crate::compiler::runtime::listing_windows(&listing)? {
+            if i64::from(window) == start {
+                overlays
+                    .entry(image.clone())
+                    .or_default()
+                    .push(Span::new(start, start + size as i64));
+            }
+        }
+    }
+    for (id, spans) in &mut overlays {
+        *spans = intersect(&normalize(spans), mapped(overlay_exec, id));
+    }
+    Ok((intersect(&normalize(&main), main_exec), overlays))
+}
 const OVERLAY_VENEER_MACRO: &str = "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC";
 
 /// Original assembly credit requires evidence and a proof or object.
@@ -1453,8 +1512,19 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
     // Other assembly still needs handwritten/library provenance per range.
     let (withdrawn_main, withdrawn_draft_main, retained_main) =
         main_assembly_classification(options.exact);
-    let (withdrawn_overlay, withdrawn_draft_overlay, retained_overlay) =
+    let (mut withdrawn_overlay, withdrawn_draft_overlay, mut retained_overlay) =
         overlay_assembly_classification(options.exact, &overlay_regions, &overlay_exec)?;
+    let (runtime_main, runtime_overlay) = runtime_credit(options.exact, &main_exec, &overlay_exec)?;
+    let retained_main = normalize(&[retained_main, runtime_main].concat());
+    let withdrawn_main = subtract(&withdrawn_main, &retained_main);
+    for (id, spans) in runtime_overlay {
+        let retained = retained_overlay.entry(id.clone()).or_default();
+        *retained = normalize(&[retained.clone(), spans].concat());
+        let retained = retained.clone();
+        if let Some(withdrawn) = withdrawn_overlay.get_mut(&id) {
+            *withdrawn = subtract(withdrawn, &retained);
+        }
+    }
     let withdrawn_assembly = bytes(&withdrawn_main)
         + bytes(&withdrawn_draft_main)
         + mapped_bytes(&withdrawn_overlay)
@@ -1649,7 +1719,7 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
             "draft_source": options.recon.map_or("absent", |tree| tree.id()),
             "draft_sources": (candidate_main_sources + candidate_overlay_sources) as i64,
             "main_draft_census": "games/THE BROKEN SEAL/recon/en/dossiers.json",
-            "proven_assembly_standard": "handwritten-or-library-proven; audited-overlay-veneer-reconstruction",
+            "proven_assembly_standard": "handwritten-or-library-proven; audited-overlay-veneer-reconstruction; container-built-compiler-runtime",
             "credited_assembly_bytes": bytes(&retained_main) + mapped_bytes(&retained_overlay),
             "withdrawn_assembly_bytes": withdrawn_assembly,
             "main_assembly_classification": "out/tbs-en/full/asm/manifest.json",
@@ -1776,28 +1846,81 @@ mod tests {
             credited.into_iter().collect::<Vec<_>>(),
             ["grouped", "hand", "thunks"]
         );
-        // The live register credits the libgcc call_via thunks, and the
-        // pipeline counts exactly that region from the built manifest.
+        // No tracked assembly carries the compiler runtime: the call_via bank
+        // at 0x080072e4 is a container-built link, credited exactly where the
+        // built manifest placed it, and retained credited spans never overlap.
         let tree = crate::coverage::tree::work_tree();
         let live = json(&tree, "games/THE BROKEN SEAL/asm/classification.json").unwrap();
-        assert!(credited_kinds(&live).contains("runtime_thunk_bundle"));
+        assert!(!credited_kinds(&live).contains("runtime_thunk_bundle"));
         let (_, _, credited) = main_assembly_classification(&tree);
-        // The thunk bundle at 0x080072e4 is credited, the credited spans do not
-        // overlap, and their total is what the register credits today; the
-        // register grows, so the count is not pinned.
-        let thunk = credited.iter().find(|span| span.start == 0x0800_72e4);
-        assert!(thunk.is_some(), "credited spans: {credited:?}");
-        assert!(matches!(
-            thunk.map(|span| span.end - span.start),
-            Some(56 | 60)
-        ));
+        assert!(!credited.iter().any(|span| span.start == 0x0800_72e4));
         for pair in credited.windows(2) {
             assert!(
                 pair[0].end <= pair[1].start,
                 "overlapping credited spans: {pair:?}"
             );
         }
-        assert!(bytes(&credited) >= 60);
+        let rom = [Span::new(0x0800_0000, 0x0880_0000)];
+        let (main, _) = runtime_credit(&tree, &rom, &SpanMap::new()).unwrap();
+        assert!(
+            main.contains(&Span::new(0x0800_72e4, 0x0800_7320)),
+            "runtime spans: {main:?}"
+        );
+    }
+    #[test]
+    fn runtime_credit_needs_a_placed_main_region_and_a_reserved_overlay_window() {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        let write = |path: &str, text: String| {
+            let path = root.join(path);
+            std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+            std::fs::write(path, text).unwrap();
+        };
+        write(
+            crate::compiler::runtime::REGISTRY,
+            json!({"links": [
+                {"image": "main", "text": "0x080072e4", "members": ["_m"]},
+                {"image": "main", "text": "0x08001000", "members": ["_m"]},
+                {"image": "resource_3bf", "text": "0x020057b0", "rodata": "0x02005f90", "members": ["_m"]},
+                {"image": "resource_373", "text": "0x02006154", "members": ["_m"]}
+            ]})
+            .to_string(),
+        );
+        write(
+            "out/tbs-en/full/asm/manifest.json",
+            json!({"regions": [
+                {"address": 0x0800_72e4, "size": 60, "source": crate::compiler::runtime::REGISTRY, "retention": "container_runtime"},
+                {"address": 0x0800_1000, "size": 60, "source": "games/THE BROKEN SEAL/asm/08001000.s", "retention": "keep_asm"}
+            ]})
+            .to_string(),
+        );
+        write(
+            "games/THE BROKEN SEAL/asm/overlays/resource_3bf_overlay.s",
+            "AlchemyRuntime_020057b0:\n\t.space 0x728\n\t.4byte 1\nAlchemyRuntime_02005f90:\n\t.space 0x14\n".into(),
+        );
+        write(
+            "games/THE BROKEN SEAL/asm/overlays/resource_373_overlay.s",
+            "\t.4byte 0\n".into(),
+        );
+        let tree = crate::coverage::tree::work_tree_at(root.to_path_buf());
+        let rom = [Span::new(0x0800_0000, 0x0880_0000)];
+        let executable = SpanMap::from([
+            (
+                "resource_3bf".to_string(),
+                vec![Span::new(0x0200_57bc, 0x0200_6000)],
+            ),
+            (
+                "resource_373".to_string(),
+                vec![Span::new(0x0200_6154, 0x0200_6190)],
+            ),
+        ]);
+        let (main, overlays) = runtime_credit(&tree, &rom, &executable).unwrap();
+        assert_eq!(main, [Span::new(0x0800_72e4, 0x0800_7320)]);
+        assert_eq!(
+            overlays["resource_3bf"],
+            [Span::new(0x0200_57bc, 0x0200_5ed8)]
+        );
+        assert!(mapped(&overlays, "resource_373").is_empty());
     }
     fn region(start: &str, end: &str, confidence: &str, evidence: Value) -> Value {
         json!({

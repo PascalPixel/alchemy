@@ -781,18 +781,17 @@ fn render(
         "camelot" => {
             let base = crop(root, &recipe["base"], sources)?.bytes(8)?;
             let animation = crop(root, &recipe["animation"], sources)?.bytes(8)?;
-            let owner: Value = serde_json::from_slice(
-                &fs::read(root_path(
-                    root,
-                    json_string(&recipe["tilemap_source"], "tilemap source")?,
-                )?)
-                .map_err(|e| e.to_string())?,
-            )
-            .map_err(|e| e.to_string())?;
-            let words = owner
-                .pointer(json_string(&recipe["tilemap_pointer"], "tilemap pointer")?)
-                .and_then(Value::as_array)
-                .ok_or("missing opening tilemap")?;
+            // The opening tilemap is private: little-endian words in its binary input.
+            let name = json_string(&recipe["tilemap_source"], "tilemap source")?;
+            let tilemap = fs::read(root_path(root, name)?).map_err(|e| {
+                format!("{name}: {e}; restore private inputs with --extract-missing-sources ROM")
+            })?;
+            let words = tilemap
+                .get(address(&recipe["tilemap_offset"])?..)
+                .ok_or("missing opening tilemap")?
+                .chunks_exact(2)
+                .map(|word| usize::from(u16::from_le_bytes([word[0], word[1]])))
+                .collect::<Vec<_>>();
             for frame in 0..address(&recipe["frames"])? {
                 let mut bytes = base.clone();
                 let start = address(&recipe["replace_tile"])? * 64;
@@ -808,8 +807,7 @@ fn render(
                     );
                 for y in 0..20 {
                     for x in 0..30 {
-                        let word =
-                            address(words.get(y * 32 + x).ok_or("opening tilemap truncated")?)?;
+                        let word = *words.get(y * 32 + x).ok_or("opening tilemap truncated")?;
                         let at = (word & 1023) * 64;
                         let tile = Raster::tiles(
                             bytes.get(at..at + 64).ok_or("opening tile exceeds bank")?,

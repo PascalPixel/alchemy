@@ -1,0 +1,52 @@
+{
+  "presentation_review": "GRAPHICS/REVIEW.JSON#UI_BATTLE_MENU_ICONS_0x43c024-0x43f866_SHEET.PNG",
+  "format": 1,
+  "kind": "components",
+  "address": "0x0843c024",
+  "size": "0x3842",
+  "offset_table": {
+    "format": 1,
+    "kind": "typed-table",
+    "address": "0x0843c024",
+    "size": 98,
+    "segments": [
+      {
+        "address": "0x0843c024",
+        "end": "0x0843c086",
+        "stride": 2,
+        "element": "le-u16",
+        "values": [
+          98, 482, 898, 1186, 1538, 1858, 2178, 2530, 2850, 2882, 3234, 3266, 3554, 3586, 3618, 3970, 4354, 4674, 4994,
+          5314, 5634, 5954, 6242, 6434, 6786, 7074, 7394, 7682, 8066, 8450, 8834, 9186, 9218, 9538, 9826, 10114, 10402,
+          10754, 11074, 11394, 11778, 12130, 12482, 12834, 13058, 13346, 13634, 13890, 14146
+        ]
+      }
+    ]
+  },
+  "components": [
+    {
+      "kind": "typed-table",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/UI.JSON",
+      "pointer": "/offset_table",
+      "size": 98
+    },
+    {
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "plan_section": "/recipes/0c42df1a58d740b25b70cc0d66c2f9eed7ae101a76230b613d615659892fe8a0",
+      "size": 14304,
+      "components": [
+        {
+          "kind": "indexed-bytes",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/TILE_BANK.PNG",
+          "frame_width": 32,
+          "frame_height": 32,
+          "columns": 7,
+          "size": 1024,
+          "source_rect": {"x": 0, "y": 8352, "width": 224, "height": 224}
+        }
+      ],
+      "stream_alignment": 32
+    }
+  ]
+}

@@ -1,0 +1,221 @@
+{
+  "format": 1,
+  "kind": "typed-table-package",
+  "regions": [
+    {
+      "name": "range_080f39ab",
+      "address": "0x080f39ab",
+      "end": "0x080f4000",
+      "format": 1,
+      "kind": "typed-table",
+      "size": 1621,
+      "segments": [
+        {
+          "name": "haichi_hyou",
+          "address": "0x080f39ab",
+          "end": "0x080f39b1",
+          "role": "placement_table",
+          "values": [96, 136, 140, 160, 168, 184],
+          "source_kind": "u8_table",
+          "count": 6,
+          "element": "u8",
+          "stride": 1
+        },
+        {
+          "name": "henka_hyou",
+          "address": "0x080f39b1",
+          "end": "0x080f39ed",
+          "role": "envelope_table",
+          "values": [
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
+            16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2,
+            1, 0
+          ],
+          "source_kind": "u8_table",
+          "count": 60,
+          "element": "u8",
+          "stride": 1
+        },
+        {
+          "name": "soroe_080f39ed",
+          "address": "0x080f39ed",
+          "end": "0x080f39ee",
+          "role": "alignment_candidate",
+          "source_kind": "unresolved_fill",
+          "element": "u8",
+          "stride": 1,
+          "fill": 0
+        },
+        {
+          "name": "iro_henka_00",
+          "address": "0x080f39ee",
+          "end": "0x080f3a2e",
+          "role": "color_curve",
+          "values": [
+            0, 524, 1071, 1643, 2240, 2863, 3513, 4191, 4898, 5635, 6403, 7202, 8035, 8901, 9803, 10740, 11715, 12729,
+            13783, 14877, 16014, 17195, 18422, 19694, 21015, 22386, 23808, 25283, 26812, 28397, 30041, 31744
+          ],
+          "source_kind": "u16_table",
+          "count": 32,
+          "element": "le-u16",
+          "stride": 2
+        },
+        {
+          "name": "iro_henka_01",
+          "address": "0x080f3a2e",
+          "end": "0x080f3a6e",
+          "role": "color_curve",
+          "values": [
+            0, 613, 1247, 1902, 2580, 3281, 4005, 4753, 5526, 6324, 7148, 7999, 8876, 9782, 10716, 11680, 12674, 13699,
+            14755, 15843, 16965, 18121, 19312, 20538, 21801, 23101, 24440, 25818, 27237, 28697, 30199, 31744
+          ],
+          "source_kind": "u16_table",
+          "count": 32,
+          "element": "le-u16",
+          "stride": 2
+        },
+        {
+          "name": "iro_henka_02",
+          "address": "0x080f3a6e",
+          "end": "0x080f3aae",
+          "role": "color_curve",
+          "values": [
+            0, 360, 759, 1201, 1689, 2226, 2817, 3466, 4178, 4957, 5808, 6738, 7752, 8856, 10058, 11365, 12784, 14325,
+            15996, 17806, 19767, 21888, 24183, 26662, 29340, 31744, 31744, 31744, 31744, 31744, 31744, 31744
+          ],
+          "source_kind": "u16_table",
+          "count": 32,
+          "element": "le-u16",
+          "stride": 2
+        },
+        {
+          "name": "aki_080f3aae",
+          "address": "0x080f3aae",
+          "end": "0x080f4000",
+          "role": "tail_fill_candidate",
+          "source_kind": "unresolved_fill",
+          "element": "u8",
+          "stride": 1,
+          "fill": 0
+        }
+      ]
+    },
+    {
+      "name": "range_080f541a",
+      "address": "0x080f541a",
+      "end": "0x080f6000",
+      "format": 1,
+      "kind": "typed-table",
+      "size": 3046,
+      "segments": [
+        {
+          "name": "hantei_dankai",
+          "address": "0x080f541a",
+          "end": "0x080f5426",
+          "role": "comparison_thresholds",
+          "values": [147, 80, 15, -42, -95, -32767],
+          "source_kind": "s16_table",
+          "count": 6,
+          "element": "le-s16",
+          "stride": 2
+        },
+        {
+          "name": "aki_080f5426",
+          "address": "0x080f5426",
+          "end": "0x080f6000",
+          "role": "tail_fill_candidate",
+          "source_kind": "unresolved_fill",
+          "element": "u8",
+          "stride": 1,
+          "fill": 0
+        }
+      ]
+    },
+    {
+      "name": "range_080f86f8",
+      "address": "0x080f86f8",
+      "end": "0x080f9000",
+      "format": 1,
+      "kind": "typed-table",
+      "size": 2312,
+      "segments": [
+        {
+          "name": "zahyoubisei_hyou",
+          "address": "0x080f86f8",
+          "end": "0x080f870c",
+          "role": "coordinate_adjustments",
+          "values": [0, 4, 20, 56, 120, 220, 364, 560, 816, 1140],
+          "source_kind": "u16_table",
+          "count": 10,
+          "element": "le-u16",
+          "stride": 2
+        },
+        {
+          "name": "hyouji_shoki_hyou",
+          "address": "0x080f870c",
+          "end": "0x080f8712",
+          "role": "display_setup",
+          "values": [0, 3, 1, 4, 2, 5],
+          "source_kind": "u8_table",
+          "count": 6,
+          "element": "u8",
+          "stride": 1
+        },
+        {
+          "name": "haba_hyou_00",
+          "address": "0x080f8712",
+          "end": "0x080f871a",
+          "role": "display_widths",
+          "values": [0, 1, 2, 3, 4, 5, 6, 7],
+          "source_kind": "u8_table",
+          "count": 8,
+          "element": "u8",
+          "stride": 1
+        },
+        {
+          "name": "haichi_hyou_00",
+          "address": "0x080f871a",
+          "end": "0x080f8728",
+          "role": "display_positions",
+          "values": [2, 0, 232, 232, 32, 32, 200, 200, 28, 28, 208, 208, 219, 219],
+          "source_kind": "u8_table",
+          "count": 14,
+          "element": "u8",
+          "stride": 1
+        },
+        {
+          "name": "haichi_hyou_01",
+          "address": "0x080f8728",
+          "end": "0x080f8736",
+          "role": "display_positions",
+          "values": [2, 152, 0, 152, 8, 104, 8, 104, 118, 140, 118, 140, 6, 108],
+          "source_kind": "u8_table",
+          "count": 14,
+          "element": "u8",
+          "stride": 1
+        },
+        {
+          "name": "haba_hyou_01",
+          "address": "0x080f8736",
+          "end": "0x080f873e",
+          "role": "display_widths",
+          "values": [28, 28, 26, 26, 28, 28, 20, 24],
+          "source_kind": "u8_table",
+          "count": 8,
+          "element": "u8",
+          "stride": 1
+        },
+        {
+          "name": "aki_080f873e",
+          "address": "0x080f873e",
+          "end": "0x080f9000",
+          "role": "tail_fill_candidate",
+          "source_kind": "unresolved_fill",
+          "element": "u8",
+          "stride": 1,
+          "fill": 0
+        }
+      ]
+    }
+  ]
+}

@@ -422,10 +422,12 @@ standard-check:
 .PHONY: bootstrap compiler-sources compilers toolchain-check verify-clean prepare-inputs
 
 # Every game's registered private inputs are checked by source tracking, so
-# both indexed editions are restored whatever TARGET selects.
+# both indexed editions are restored whatever TARGET selects. A clone without
+# The Lost Age ROM cannot restore that game's inputs; source tracking then
+# checks their registration but not their absent bytes.
 prepare-inputs:
 	$(ASSETS) --extract-missing-sources roms/tbs-en.gba
-	$(ASSETS) --extract-missing-sources roms/tla-en.gba --target tla-en
+	$(if $(wildcard roms/tla-en.gba),$(ASSETS) --extract-missing-sources roms/tla-en.gba --target tla-en)
 
 bootstrap:
 	$(COMPILER) bootstrap $(if $(BUNDLE),--from "$(BUNDLE)")

@@ -704,6 +704,29 @@
       }
     },
     {
+      "kind": "iwram_code_records",
+      "origin": "unknown",
+      "retention": "keep_asm",
+      "confidence": "proven",
+      "evidence": [
+        "five_fixed_38_word_arm_records",
+        "record_selected_by_index_and_copied_to_iwram_by_Func_080037d4",
+        "branch_to_record_end_with_nop_padding",
+        "byte_exact_reconstruction"
+      ],
+      "expected_files": 1,
+      "expected_bytes": 760,
+      "files": [
+        "08000404"
+      ],
+      "provenance": {
+        "scanned": "2026-09-16",
+        "verdict": "arm_code_formerly_stored_as_u32_records",
+        "credit": "none",
+        "reason": "760 bytes of ARM instructions previously registered as five 38-word u32 records. Func_080037d4 copies record r0 (0-4) by DMA transfer to IWRAM 0x03000bd8; each record branches to its own end or runs through it, nop-padded, and the last keeps 132 bytes after its branch. The source reconstructs the instructions; no authorship evidence is claimed."
+      }
+    },
+    {
       "kind": "nonstandard_thumb_branch_module",
       "origin": "program_or_library_runtime",
       "retention": "keep_structured_asm",

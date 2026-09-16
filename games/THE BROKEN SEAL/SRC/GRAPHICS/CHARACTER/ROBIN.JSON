@@ -1,0 +1,163 @@
+{
+  "format": "golden-sun-character",
+  "identity": {
+    "actor": 0,
+    "romaji": "ROBIN",
+    "japanese": "ﾛﾋﾞﾝ",
+    "message_id": 102,
+    "message_offset": 245303,
+    "message_encoded_size": 4,
+    "symbols": [219, 203, 222, 221],
+    "rom": "roms/tbs-ja.gba",
+    "rom_sha256": "088bedae4bad8b67e87ff10035a898d3639f3182d486fe5a5d113bab223e0a26"
+  },
+  "association_evidence": {
+    "field": "party actor ID; REMAP_CHARACTER_ID_BY_FLAGS; 0808b3ec placement to Object_CreateFar; 0800c150 descriptor lookup",
+    "battle": "party_sprites entries 0-3; sentou_hyouji_kihon actor_pose_rows",
+    "scope": "actors 0-3 only; dense name IDs do not establish actor 5 identity"
+  },
+  "banks": {
+    "field": {
+      "format": 1,
+      "kind": "components",
+      "address": "0x0818d554",
+      "size": "0x0000e8f0",
+      "components": [
+        {
+          "kind": "golden-sun-general-lz",
+          "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+          "plan_section": "/recipes/83083a80948d011afb322d05531e7ca6707078cf5e4a2dc7515d17490e375315",
+          "size": 58786,
+          "components": [
+            {
+              "kind": "zero-skip-bytes",
+              "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_ROBIN.PNG",
+              "frame_width": 32,
+              "frame_height": 32,
+              "columns": 8,
+              "palette": {
+                "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+                "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+              },
+              "pixel_format": "indices"
+            }
+          ]
+        },
+        {"kind": "byte-fill", "value": 0, "size": 2},
+        {
+          "kind": "pointer-table",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/ROBIN.JSON",
+          "pointer": "/banks/field/directory",
+          "size": 844
+        }
+      ],
+      "streams": {
+        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+        "pointer": "/recipes/83083a80948d011afb322d05531e7ca6707078cf5e4a2dc7515d17490e375315"
+      },
+      "directory": {
+        "format": 1,
+        "kind": "pointer-table",
+        "base_address": "0x0818d554",
+        "address": "0x0819baf8",
+        "slot_count": 211,
+        "slots": [
+          "0x0818d554", "0x0818d6ab", "0x0818d7d1", "0x0818d916", "0x0818da89", "0x0818dbf0", "0x0818dcb1",
+          "0x0818dd5f", "0x0818de0f", "0x0818dec7", "0x0818df95", "0x0818e04c", "0x0818e0f9", "0x0818e19c",
+          "0x0818e24b", "0x0818e307", "0x0818e3c9", "0x0818e478", "0x0818e525", "0x0818e5cc", "0x0818e693",
+          "0x0818e7c3", "0x0818e8f2", "0x0818e9fc", "0x0818eadd", "0x0818ebb9", "0x0818eca4", "0x0818ed2e",
+          "0x0818edf6", "0x0818ef13", "0x0818f03b", "0x0818f17d", "0x0818f2cd", "0x0818f41f", "0x0818f554",
+          "0x0818f695", "0x0818f7e0", "0x0818f8ec", "0x0818fa10", "0x0818fb7f", "0x0818fca8", "0x0818fe09",
+          "0x0818ff28", "0x0819006d", "0x081901bd", "0x08190307", "0x08190460", "0x08190589", "0x081906cd",
+          "0x081907d3", "0x081908e2", "0x08190a39", "0x08190b6f", "0x08190c87", "0x08190df4", "0x08190f21",
+          "0x0819106c", "0x081911a9", "0x081912f5", "0x0819144c", "0x08191564", "0x08191692", "0x081917bb",
+          "0x081918d2", "0x08191a44", "0x08191ba8", "0x08191cc3", "0x08191d63", "0x08191e53", "0x08191f06",
+          "0x08191fae", "0x081920bd", "0x08192161", "0x0819225e", "0x0819232c", "0x081923ef", "0x08192500",
+          "0x081925ac", "0x0819269f", "0x08192765", "0x0819283e", "0x0819295c", "0x08192a83", "0x08192b92",
+          "0x08192cf9", "0x08192e62", "0x08192f9a", "0x081930f4", "0x08193246", "0x08193354", "0x0819346a",
+          "0x081935b8", "0x081936bf", "0x081937dd", "0x08193943", "0x08193a79", "0x08193bcf", "0x08193d14",
+          "0x08193e3c", "0x08193f77", "0x081940be", "0x081941d7", "0x081942fc", "0x0819443c", "0x0819454a",
+          "0x08194689", "0x081947e3", "0x08194912", "0x08194a21", "0x08194b7f", "0x08194caa", "0x08194dc2",
+          "0x08194edf", "0x08195000", "0x08195145", "0x0819525a", "0x08195373", "0x08195496", "0x081955d4",
+          "0x0819571b", "0x08195880", "0x081959db", "0x08195b2e", "0x08195c72", "0x08195d9d", "0x08195edc",
+          "0x08195ffe", "0x08196109", "0x08196215", "0x08196328", "0x08196430", "0x08196524", "0x0819661e",
+          "0x0819672f", "0x08196819", "0x08196911", "0x08196a4d", "0x08196b7b", "0x08196cbd", "0x08196e04",
+          "0x08196f34", "0x08197090", "0x081971f5", "0x08197314", "0x08197438", "0x08197555", "0x08197676",
+          "0x08197797", "0x081978c3", "0x081979f4", "0x08197b30", "0x08197c51", "0x08197d57", "0x08197e9f",
+          "0x08197fb2", "0x081980e2", "0x081981e3", "0x081982f6", "0x0819844a", "0x08198578", "0x081986bf",
+          "0x081987f1", "0x08198939", "0x08198a87", "0x08198bda", "0x08198d0b", "0x08198e22", "0x08198f3a",
+          "0x0819906b", "0x08199176", "0x081992a2", "0x081993b9", "0x081994dd", "0x08199631", "0x0819974b",
+          "0x0819983e", "0x08199932", "0x08199a2f", "0x08199b08", "0x08199bcb", "0x08199d30", "0x08199dd9",
+          "0x08199ec4", "0x08199fd8", "0x0819a148", "0x0819a28e", "0x0819a37d", "0x0819a439", "0x0819a500",
+          "0x0819a593", "0x0819a668", "0x0819a773", "0x0819a8e3", "0x0819aa2a", "0x0819ab16", "0x0819abc1",
+          "0x0819ac38", "0x0819adbd", "0x0819aeea", "0x0819b007", "0x0819b136", "0x0819b255", "0x0819b366",
+          "0x0819b40a", "0x0819b520", "0x0819b5e8", "0x0819b6a4", "0x0819b757", "0x0819b85f", "0x0819b981", "null"
+        ]
+      },
+      "descriptor": {
+        "id": 0,
+        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CATALOG.JSON",
+        "pointer": "/segments/0/records/0",
+        "frame_codec": "arena-lz/zero-skip"
+      }
+    },
+    "battle": {
+      "format": 1,
+      "kind": "components",
+      "address": "0x082ddcc8",
+      "size": "0x00000e40",
+      "components": [
+        {
+          "kind": "golden-sun-general-lz",
+          "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+          "plan_section": "/recipes/c2edf714e05ab036775cf070de0e89de058e67e8072c81a44f9e7abf53327993",
+          "size": 3561,
+          "components": [
+            {
+              "kind": "zero-skip-bytes",
+              "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/BATTLE_ROBIN.PNG",
+              "frame_width": 64,
+              "frame_height": 64,
+              "columns": 8,
+              "palette": {
+                "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+                "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+              },
+              "pixel_format": "indices"
+            }
+          ]
+        },
+        {"kind": "byte-fill", "value": 0, "size": 3},
+        {
+          "kind": "pointer-table",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/ROBIN.JSON",
+          "pointer": "/banks/battle/directory",
+          "size": 84
+        }
+      ],
+      "streams": {
+        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+        "pointer": "/recipes/c2edf714e05ab036775cf070de0e89de058e67e8072c81a44f9e7abf53327993"
+      },
+      "directory": {
+        "format": 1,
+        "kind": "pointer-table",
+        "base_address": "0x082ddcc8",
+        "address": "0x082deab4",
+        "slot_count": 21,
+        "slots": [
+          "0x082ddcc8", "0x082ddde7", "0x082dde8d", "0x082ddf3e", "0x082ddfbc", "0x082de064", "0x082de0dc",
+          "0x082de1c4", "0x082de27e", "0x082de34e", "0x082de44e", "0x082de4f4", "0x082de579", "0x082de625",
+          "0x082de684", "0x082de6f9", "0x082de785", "0x082de7e6", "0x082de867", "0x082de997", "null"
+        ]
+      },
+      "descriptor": {
+        "id": 320,
+        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CATALOG.JSON",
+        "pointer": "/segments/0/records/320",
+        "frame_codec": "arena-lz/zero-skip"
+      }
+    }
+  },
+  "regions": null
+}

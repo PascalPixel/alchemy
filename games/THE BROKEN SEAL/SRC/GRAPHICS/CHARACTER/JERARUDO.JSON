@@ -1,0 +1,147 @@
+{
+  "format": "golden-sun-character",
+  "identity": {
+    "actor": 1,
+    "romaji": "JERARUDO",
+    "japanese": "ｼﾞｪﾗﾙﾄﾞ",
+    "message_id": 103,
+    "message_offset": 245307,
+    "message_encoded_size": 6,
+    "symbols": [188, 222, 170, 215, 217, 196, 222],
+    "rom": "roms/tbs-ja.gba",
+    "rom_sha256": "088bedae4bad8b67e87ff10035a898d3639f3182d486fe5a5d113bab223e0a26"
+  },
+  "association_evidence": {
+    "field": "party actor ID; REMAP_CHARACTER_ID_BY_FLAGS; 0808b3ec placement to Object_CreateFar; 0800c150 descriptor lookup",
+    "battle": "party_sprites entries 0-3; sentou_hyouji_kihon actor_pose_rows",
+    "scope": "actors 0-3 only; dense name IDs do not establish actor 5 identity"
+  },
+  "banks": {
+    "field": {
+      "format": 1,
+      "kind": "components",
+      "address": "0x0819be44",
+      "size": "0x00005e9c",
+      "components": [
+        {
+          "kind": "golden-sun-general-lz",
+          "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+          "plan_section": "/recipes/e4cb1be7a502901b30d871f8eb78763a575143eb2c82982329f0233438ffe054",
+          "size": 23841,
+          "components": [
+            {
+              "kind": "zero-skip-bytes",
+              "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CHAR_JERARUDO.PNG",
+              "frame_width": 32,
+              "frame_height": 32,
+              "columns": 8,
+              "palette": {
+                "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+                "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+              },
+              "pixel_format": "indices"
+            }
+          ]
+        },
+        {"kind": "byte-fill", "value": 0, "size": 3},
+        {
+          "kind": "pointer-table",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/JERARUDO.JSON",
+          "pointer": "/banks/field/directory",
+          "size": 376
+        }
+      ],
+      "streams": {
+        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+        "pointer": "/recipes/e4cb1be7a502901b30d871f8eb78763a575143eb2c82982329f0233438ffe054"
+      },
+      "directory": {
+        "format": 1,
+        "kind": "pointer-table",
+        "base_address": "0x0819be44",
+        "address": "0x081a1b68",
+        "slot_count": 94,
+        "slots": [
+          "0x0819be44", "0x0819bfa1", "0x0819c0cb", "0x0819c215", "0x0819c39a", "0x0819c502", "0x0819c51e",
+          "0x0819c533", "0x0819c542", "0x0819c564", "0x0819c56f", "0x0819c623", "0x0819c6b4", "0x0819c746",
+          "0x0819c7fd", "0x0819c8af", "0x0819c958", "0x0819ca4a", "0x0819cadb", "0x0819cb94", "0x0819cc14",
+          "0x0819ccc2", "0x0819cd9c", "0x0819ce30", "0x0819cefc", "0x0819cf7e", "0x0819d096", "0x0819d1f1",
+          "0x0819d331", "0x0819d486", "0x0819d5b1", "0x0819d700", "0x0819d802", "0x0819d938", "0x0819dac0",
+          "0x0819dc1f", "0x0819dd88", "0x0819dea0", "0x0819dfb5", "0x0819e0fe", "0x0819e209", "0x0819e347",
+          "0x0819e471", "0x0819e586", "0x0819e6b1", "0x0819e7ca", "0x0819e937", "0x0819ea42", "0x0819eb5c",
+          "0x0819ece6", "0x0819ee46", "0x0819ef99", "0x0819f0e3", "0x0819f209", "0x0819f351", "0x0819f46e",
+          "0x0819f572", "0x0819f65f", "0x0819f765", "0x0819f8b3", "0x0819fa0e", "0x0819fb41", "0x0819fc47",
+          "0x0819fc57", "0x0819fc67", "0x0819fe08", "0x0819ff0f", "0x081a0027", "0x081a0037", "0x081a0047",
+          "0x081a018e", "0x081a02a4", "0x081a03cb", "0x081a053a", "0x081a0667", "0x081a0771", "0x081a0895",
+          "0x081a09cf", "0x081a0ac4", "0x081a0bc6", "0x081a0cc9", "0x081a0dff", "0x081a0f2e", "0x081a106c",
+          "0x081a1171", "0x081a1285", "0x081a13a2", "0x081a14a9", "0x081a158c", "0x081a1665", "0x081a178d",
+          "0x081a1922", "0x081a1a4c", "null"
+        ]
+      },
+      "descriptor": {
+        "id": 1,
+        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CATALOG.JSON",
+        "pointer": "/segments/0/records/1",
+        "frame_codec": "arena-lz/zero-skip"
+      }
+    },
+    "battle": {
+      "format": 1,
+      "kind": "components",
+      "address": "0x082e7a70",
+      "size": "0x00001044",
+      "components": [
+        {
+          "kind": "golden-sun-general-lz",
+          "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+          "plan_section": "/recipes/e9c2523e664b7fd1e3ea9bf9f02555a9ce32ce3f38e59889daba71d503e0e3fa",
+          "size": 4078,
+          "components": [
+            {
+              "kind": "zero-skip-bytes",
+              "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/BATTLE_JERARUDO.PNG",
+              "frame_width": 64,
+              "frame_height": 64,
+              "columns": 8,
+              "palette": {
+                "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+                "banks": [877, 878, 879, 880, 881, 882, 883, 884, 885, 886, 887, 888, 889, 890]
+              },
+              "pixel_format": "indices"
+            }
+          ]
+        },
+        {"kind": "byte-fill", "value": 0, "size": 2},
+        {
+          "kind": "pointer-table",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/JERARUDO.JSON",
+          "pointer": "/banks/battle/directory",
+          "size": 84
+        }
+      ],
+      "streams": {
+        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+        "pointer": "/recipes/e9c2523e664b7fd1e3ea9bf9f02555a9ce32ce3f38e59889daba71d503e0e3fa"
+      },
+      "directory": {
+        "format": 1,
+        "kind": "pointer-table",
+        "base_address": "0x082e7a70",
+        "address": "0x082e8a60",
+        "slot_count": 21,
+        "slots": [
+          "0x082e7a70", "0x082e7ba3", "0x082e7c75", "0x082e7d44", "0x082e7dfb", "0x082e7eb9", "0x082e7f66",
+          "0x082e803e", "0x082e8106", "0x082e81e1", "0x082e828b", "0x082e83a0", "0x082e8464", "0x082e8532",
+          "0x082e85d5", "0x082e8670", "0x082e8715", "0x082e87ad", "0x082e884a", "0x082e8963", "null"
+        ]
+      },
+      "descriptor": {
+        "id": 321,
+        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CATALOG.JSON",
+        "pointer": "/segments/0/records/321",
+        "frame_codec": "arena-lz/zero-skip"
+      }
+    }
+  },
+  "regions": null
+}

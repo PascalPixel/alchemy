@@ -4,10 +4,10 @@
   "target": "tbs-en",
   "derivation": "full-c-progress-v1",
   "audit": "complete",
-  "total_union_bytes": 1354970,
+  "total_union_bytes": 1355730,
   "main": {
     "id": "main",
-    "executable_bytes": 548368,
+    "executable_bytes": 549128,
     "audit": "complete",
     "intervals": [
       {
@@ -21,6 +21,12 @@
         "end": 134218756,
         "kind": "arm",
         "evidence": "games/THE BROKEN SEAL/asm/executable_gaps/080003c0.s:gba_arm_entry"
+      },
+      {
+        "start": 134218756,
+        "end": 134219516,
+        "kind": "arm",
+        "evidence": "games/THE BROKEN SEAL/asm/executable_gaps/08000404.s:iwram_code_records"
       },
       {
         "start": 134219516,

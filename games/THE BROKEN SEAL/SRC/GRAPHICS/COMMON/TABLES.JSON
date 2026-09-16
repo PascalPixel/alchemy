@@ -1,0 +1,4692 @@
+{
+  "format": 1,
+  "kind": "typed-table-catalog",
+  "tables": {
+    "0x08073852": {
+      "format": 1,
+      "kind": "typed-table-package",
+      "id": "namae_nyuuryoku_gamen",
+      "address": "0x08073852",
+      "end": "0x08077000",
+      "next_code_address": "0x08077000",
+      "regions": [
+        {
+          "format": 1,
+          "kind": "typed-table",
+          "id": "resource_table",
+          "address": "0x08073852",
+          "end": "0x08073864",
+          "size": 18,
+          "segments": [
+            {"id": "alignment", "address": "0x08073852", "end": "0x08073854", "element": "u8", "stride": 1, "fill": 0},
+            {
+              "id": "resource_ids",
+              "address": "0x08073854",
+              "end": "0x08073864",
+              "element": "le-u32",
+              "stride": 4,
+              "values": [90, 91, 92, 93]
+            }
+          ]
+        },
+        {
+          "format": 1,
+          "kind": "typed-table",
+          "id": "tile_pointer",
+          "address": "0x08073965",
+          "end": "0x08077000",
+          "size": 13979,
+          "segments": [
+            {
+              "id": "stream_alignment",
+              "address": "0x08073965",
+              "end": "0x08073968",
+              "element": "u8",
+              "stride": 1,
+              "fill": 0
+            },
+            {
+              "id": "ui_tile_pointer",
+              "address": "0x08073968",
+              "end": "0x0807396c",
+              "target": "0x080310a4",
+              "element": "le-u32",
+              "stride": 4,
+              "values": [134418596]
+            },
+            {
+              "id": "alignment_tail",
+              "address": "0x0807396c",
+              "end": "0x08077000",
+              "element": "u8",
+              "stride": 1,
+              "fill": 0
+            }
+          ]
+        }
+      ]
+    },
+    "0x080af20c": {
+      "format": 1,
+      "kind": "typed-table",
+      "address": "0x080af20c",
+      "end": "0x080af26c",
+      "size": 96,
+      "consumer": {"display_rows": 3, "display_columns": 4, "mask_rows": 6},
+      "segments": [
+        {
+          "name": "display_glyph_cells",
+          "address": "0x080af20c",
+          "end": "0x080af23c",
+          "element": "record",
+          "stride": 4,
+          "fields": [{"name": "glyphs", "element": "u8", "terminated_capacity": 4, "min": 1, "max": 255}],
+          "records": [
+            {"glyphs": [76, 118]},
+            {"glyphs": [72, 80]},
+            {"glyphs": [47]},
+            {"glyphs": [80, 80]},
+            {"glyphs": [120]},
+            {"glyphs": [46]},
+            {"glyphs": [43]},
+            {"glyphs": [45]},
+            {"glyphs": [76, 118]},
+            {"glyphs": [47]},
+            {"glyphs": [72, 80]},
+            {"glyphs": [80, 80]}
+          ]
+        },
+        {
+          "name": "mask_rows",
+          "address": "0x080af23c",
+          "end": "0x080af26c",
+          "element": "le-u32",
+          "stride": 8,
+          "values": [
+            [348160, 0], [84234320, 0], [84234320, 5], [84234320, 1285], [84234320, 328965], [84234320, 84215045]
+          ]
+        }
+      ]
+    },
+    "0x080af28c": {
+      "format": 1,
+      "kind": "typed-table",
+      "address": "0x080af28c",
+      "end": "0x080b0000",
+      "size": 3444,
+      "segments": [
+        {
+          "name": "auxiliary_display_glyph_cells",
+          "address": "0x080af28c",
+          "end": "0x080af294",
+          "element": "record",
+          "stride": 4,
+          "fields": [{"name": "glyphs", "element": "u8", "terminated_capacity": 4, "min": 1, "max": 255}],
+          "records": [{"glyphs": [76, 118]}, {"glyphs": [47]}]
+        },
+        {
+          "name": "x_offsets",
+          "address": "0x080af294",
+          "end": "0x080af29d",
+          "element": "s8",
+          "stride": 1,
+          "values": [0, 1, 1, 2, 2, 1, 1, 0, 0]
+        },
+        {
+          "name": "y_offsets",
+          "address": "0x080af29d",
+          "end": "0x080af2a6",
+          "element": "s8",
+          "stride": 1,
+          "values": [0, -1, -1, -2, -2, -1, -1, 0, 0]
+        },
+        {
+          "name": "order_0",
+          "address": "0x080af2a6",
+          "end": "0x080af2b0",
+          "element": "u8",
+          "stride": 1,
+          "values": [0, 1, 4, 3, 2, 5, 6, 7, 8, 9],
+          "index_count": 10,
+          "permutation": true
+        },
+        {
+          "name": "order_0_terminator",
+          "address": "0x080af2b0",
+          "end": "0x080af2b1",
+          "element": "u8",
+          "stride": 1,
+          "fill": 255
+        },
+        {
+          "name": "order_1",
+          "address": "0x080af2b1",
+          "end": "0x080af2bb",
+          "element": "u8",
+          "stride": 1,
+          "values": [1, 4, 3, 2, 5, 6, 7, 8, 9, 0],
+          "index_count": 10,
+          "permutation": true
+        },
+        {
+          "name": "order_1_terminator",
+          "address": "0x080af2bb",
+          "end": "0x080af2bc",
+          "element": "u8",
+          "stride": 1,
+          "fill": 255
+        },
+        {
+          "name": "order_2",
+          "address": "0x080af2bc",
+          "end": "0x080af2cf",
+          "element": "u8",
+          "stride": 1,
+          "values": [129, 132, 131, 130, 133, 134, 135, 136, 137, 1, 4, 3, 2, 5, 6, 7, 8, 9, 0],
+          "min": 0,
+          "max": 254,
+          "unique": true
+        },
+        {
+          "name": "order_2_terminator",
+          "address": "0x080af2cf",
+          "end": "0x080af2d0",
+          "element": "u8",
+          "stride": 1,
+          "fill": 255
+        },
+        {
+          "name": "order_3",
+          "address": "0x080af2d0",
+          "end": "0x080af2e3",
+          "element": "u8",
+          "stride": 1,
+          "values": [129, 132, 131, 130, 133, 134, 135, 136, 137, 0, 1, 4, 3, 2, 5, 6, 7, 8, 9],
+          "min": 0,
+          "max": 254,
+          "unique": true
+        },
+        {
+          "name": "order_3_terminator",
+          "address": "0x080af2e3",
+          "end": "0x080af2e4",
+          "element": "u8",
+          "stride": 1,
+          "fill": 255
+        },
+        {
+          "name": "lookup_ids",
+          "address": "0x080af2e4",
+          "end": "0x080af2fc",
+          "element": "le-u32",
+          "stride": 12,
+          "values": [[86, 117, 166], [86, 117, 166]],
+          "min": 0,
+          "max": 65535
+        },
+        {
+          "name": "mode_selectors",
+          "address": "0x080af2fc",
+          "end": "0x080af301",
+          "element": "u8",
+          "stride": 1,
+          "values": [6, 7, 7, 6, 6],
+          "min": 6,
+          "max": 7
+        },
+        {
+          "name": "mode_selector_padding",
+          "address": "0x080af301",
+          "end": "0x080af304",
+          "element": "u8",
+          "stride": 1,
+          "fill": 0
+        },
+        {
+          "name": "object_resource_ids",
+          "address": "0x080af304",
+          "end": "0x080af314",
+          "element": "le-u32",
+          "stride": 4,
+          "values": [90, 91, 92, 93],
+          "min": 0,
+          "max": 65535
+        },
+        {"name": "alignment", "address": "0x080af314", "end": "0x080b0000", "element": "u8", "stride": 1, "fill": 0}
+      ]
+    },
+    "0x080c2a0a": {
+      "format": 1,
+      "kind": "typed-table",
+      "address": "0x080c2a0a",
+      "end": "0x080c3734",
+      "size": 3370,
+      "segments": [
+        {"name": "alignment", "address": "0x080c2a0a", "end": "0x080c2a0c", "element": "u8", "stride": 1, "fill": 0},
+        {
+          "name": "party_capacity",
+          "address": "0x080c2a0c",
+          "end": "0x080c2a10",
+          "element": "le-u32",
+          "stride": 4,
+          "values": [16]
+        },
+        {
+          "name": "party_order_offsets",
+          "address": "0x080c2a10",
+          "end": "0x080c2a1c",
+          "element": "s8",
+          "stride": 1,
+          "values": [0, -1, 1, -2, 2, -3, 3, -4, 4, 0, 0, 0]
+        },
+        {
+          "name": "actor_pose_rows",
+          "address": "0x080c2a1c",
+          "end": "0x080c2a62",
+          "element": "le-u16",
+          "stride": 14,
+          "actors": [0, 1, 2, 3, 5],
+          "values": [
+            [320, 334, 326, 327, 320, 320, 320], [329, 329, 328, 321, 321, 321, 321],
+            [331, 331, 331, 331, 322, 330, 322], [323, 323, 333, 333, 332, 323, 323],
+            [336, 336, 325, 325, 325, 325, 325]
+          ]
+        },
+        {
+          "name": "party_positions",
+          "address": "0x080c2a62",
+          "end": "0x080c2a7c",
+          "element": "record",
+          "stride": 2,
+          "fields": [{"name": "x", "element": "s8"}, {"name": "y", "element": "s8"}],
+          "records": [
+            {"x": 80, "y": 48},
+            {"x": 80, "y": 16},
+            {"x": 80, "y": -16},
+            {"x": 80, "y": -48},
+            {"x": 0, "y": 0},
+            {"x": -80, "y": 50},
+            {"x": -80, "y": 30},
+            {"x": -80, "y": 10},
+            {"x": -80, "y": -10},
+            {"x": -80, "y": -30},
+            {"x": -80, "y": -50},
+            {"x": 0, "y": 0},
+            {"x": 0, "y": 0}
+          ]
+        },
+        {
+          "name": "transform_q16",
+          "address": "0x080c2a7c",
+          "end": "0x080c2ab8",
+          "element": "le-s32",
+          "stride": 4,
+          "values": [65536, 0, 0, -52428, 65536, 0, 0, 0, 65536, 0, 0, 0, 5242880, 0, 0]
+        },
+        {
+          "name": "formula_control",
+          "address": "0x080c2ab8",
+          "end": "0x080c2ac0",
+          "element": "u8",
+          "stride": 1,
+          "values": [100, 60, 30, 30, 30, 30, 0, 0]
+        },
+        {
+          "name": "rate_tables",
+          "address": "0x080c2ac0",
+          "end": "0x080c2b80",
+          "element": "le-u32",
+          "stride": 24,
+          "values": [
+            [100, 50, 30, 10, 10, 10], [100, 80, 60, 40, 20, 10], [100, 50, 30, 10, 10, 10], [100, 80, 60, 40, 20, 10],
+            [100, 70, 40, 30, 20, 10], [100, 50, 30, 10, 10, 10], [100, 80, 60, 40, 20, 10], [100, 50, 30, 10, 10, 10]
+          ]
+        },
+        {
+          "name": "probability_curves",
+          "address": "0x080c2b80",
+          "end": "0x080c2b98",
+          "element": "u8",
+          "stride": 8,
+          "values": [
+            [32, 32, 32, 32, 32, 32, 32, 32], [53, 47, 41, 35, 29, 23, 17, 11], [113, 56, 31, 20, 14, 10, 7, 5]
+          ]
+        },
+        {
+          "name": "action_modes",
+          "address": "0x080c2b98",
+          "end": "0x080c2d9e",
+          "element": "u8",
+          "stride": 1,
+          "values": [
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 9, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 9, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2,
+            2, 8, 2, 8, 2, 2, 2, 2, 2, 2, 8, 2, 8, 2, 2, 2, 2, 2, 8, 8, 2, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 6, 6, 6, 2, 6, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 6, 2, 6,
+            6, 6, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 2, 6, 2, 6, 6, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            6, 6, 6, 2, 6, 2, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 5, 5, 5, 0, 0, 3, 5, 5, 5, 0, 0, 3, 5, 5, 5,
+            0, 0, 3, 5, 9, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 2, 0, 2, 0, 0, 0, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 2
+          ],
+          "min": 0,
+          "max": 9
+        },
+        {
+          "name": "action_mode_padding",
+          "address": "0x080c2d9e",
+          "end": "0x080c2da0",
+          "element": "u8",
+          "stride": 1,
+          "fill": 0
+        },
+        {
+          "name": "action_display",
+          "address": "0x080c2da0",
+          "end": "0x080c35bc",
+          "element": "le-u32",
+          "stride": 4,
+          "bits": {"animation_id": 12, "descriptor_flags": 20},
+          "values": [
+            [0, 0], [0, 0], [0, 0], [1, 0], [1, 1], [1, 2], [2, 0], [2, 1], [2, 2], [3, 0], [3, 1], [3, 2], [4, 0],
+            [4, 1], [4, 2], [5, 0], [5, 1], [5, 2], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [6, 0], [6, 1],
+            [6, 2], [7, 0], [7, 1], [7, 2], [8, 0], [8, 1], [8, 2], [9, 0], [9, 1], [9, 2], [10, 0], [10, 1], [10, 2],
+            [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [11, 0], [11, 1], [11, 2], [12, 0], [12, 1], [12, 2],
+            [13, 0], [13, 1], [13, 2], [14, 0], [14, 1], [14, 2], [15, 0], [15, 1], [15, 2], [0, 0], [0, 0], [0, 0],
+            [0, 0], [0, 0], [0, 0], [16, 0], [16, 1], [16, 2], [17, 0], [17, 1], [17, 2], [18, 0], [18, 1], [18, 2],
+            [19, 0], [19, 1], [19, 2], [20, 0], [20, 1], [20, 2], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0],
+            [0, 0], [0, 0], [0, 0], [21, 0], [21, 1], [21, 2], [22, 0], [22, 1], [22, 2], [23, 0], [23, 1], [23, 2],
+            [24, 0], [24, 1], [25, 0], [26, 0], [26, 1], [27, 0], [27, 1], [28, 0], [28, 1], [29, 0], [29, 1], [30, 0],
+            [30, 1], [31, 0], [31, 1], [32, 0], [32, 0], [33, 0], [33, 1], [0, 0], [36, 0], [37, 0], [38, 0], [39, 0],
+            [41, 0], [40, 0], [42, 0], [42, 1], [43, 0], [44, 0], [45, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0],
+            [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0],
+            [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [49, 0],
+            [50, 0], [51, 0], [52, 0], [3, 0], [3, 1], [3, 2], [13, 0], [13, 1], [13, 2], [26, 0], [26, 1], [28, 0],
+            [28, 0], [30, 0], [30, 1], [53, 0], [54, 0], [55, 0], [56, 0], [56, 1], [56, 1], [15, 0], [15, 1], [15, 2],
+            [20, 0], [20, 1], [20, 2], [18, 0], [18, 1], [18, 2], [33, 0], [58, 0], [57, 0], [59, 0], [68, 129],
+            [60, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0],
+            [0, 0], [108, 4], [109, 4], [110, 4], [111, 4], [112, 4], [113, 4], [114, 4], [63, 0], [116, 4], [66, 0],
+            [118, 4], [119, 4], [120, 4], [121, 4], [122, 4], [123, 4], [64, 0], [125, 4], [65, 0], [127, 4], [128, 4],
+            [129, 4], [130, 4], [131, 4], [310, 0], [310, 0], [132, 4], [61, 0], [62, 0], [0, 0], [0, 0], [0, 0],
+            [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [22, 0], [22, 0], [22, 0], [22, 0], [22, 0],
+            [212, 0], [24, 0], [24, 1], [25, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0],
+            [380, 0], [380, 0], [212, 0], [21, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0],
+            [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0],
+            [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [104, 4], [200, 0], [201, 0], [202, 0],
+            [107, 4], [203, 0], [100, 4], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0],
+            [0, 0], [0, 0], [0, 0], [0, 0], [204, 0], [205, 0], [102, 4], [206, 0], [207, 0], [208, 0], [209, 0],
+            [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0],
+            [210, 0], [103, 4], [211, 0], [105, 4], [212, 0], [213, 0], [214, 0], [0, 0], [0, 0], [0, 0], [0, 0],
+            [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [219, 0], [215, 0], [216, 0],
+            [101, 4], [217, 0], [106, 4], [218, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0],
+            [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [250, 64], [1, 8], [5, 8], [9, 8], [0, 0], [0, 0], [251, 64],
+            [2, 8], [6, 8], [10, 8], [0, 0], [0, 0], [252, 64], [3, 8], [7, 8], [11, 8], [0, 0], [0, 0], [253, 64],
+            [4, 8], [8, 8], [12, 8], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0],
+            [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [400, 128], [400, 128], [400, 128],
+            [401, 128], [401, 128], [401, 128], [402, 128], [402, 128], [402, 128], [403, 128], [403, 128], [404, 128],
+            [404, 128], [405, 128], [405, 128], [300, 0], [300, 0], [301, 0], [302, 0], [303, 0], [304, 0], [305, 0],
+            [306, 0], [307, 0], [381, 0], [406, 128], [407, 128], [0, 0], [0, 0], [0, 0], [308, 0], [309, 0], [310, 0],
+            [311, 0], [312, 0], [313, 0], [314, 0], [315, 0], [316, 0], [317, 0], [318, 0], [319, 0], [320, 0],
+            [321, 0], [322, 0], [323, 0], [324, 0], [325, 0], [326, 0], [327, 0], [328, 0], [329, 0], [330, 0],
+            [133, 4], [332, 0], [333, 0], [334, 0], [335, 0], [336, 0], [337, 0], [338, 0], [339, 0], [340, 0],
+            [134, 4], [342, 0], [343, 0], [344, 0], [345, 0], [346, 0], [347, 0], [348, 0], [349, 0], [350, 0],
+            [351, 0], [352, 0], [353, 0], [354, 0], [389, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0],
+            [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [382, 0], [383, 0], [122, 4], [111, 4], [384, 128], [385, 128],
+            [386, 0], [135, 4], [388, 0]
+          ]
+        },
+        {
+          "name": "selection_defaults",
+          "address": "0x080c35bc",
+          "end": "0x080c35c4",
+          "element": "le-u32",
+          "stride": 4,
+          "values": [1, 2]
+        },
+        {
+          "name": "selection_order",
+          "address": "0x080c35c4",
+          "end": "0x080c35d4",
+          "element": "u8",
+          "stride": 1,
+          "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+          "index_count": 16,
+          "permutation": true
+        },
+        {
+          "name": "selection_matrix_q16",
+          "address": "0x080c35d4",
+          "end": "0x080c3604",
+          "element": "le-s32",
+          "stride": 12,
+          "values": [[65536, 0, 0], [0, 65536, 0], [0, 0, 65536], [0, 0, 0]]
+        },
+        {
+          "name": "particle_offsets",
+          "address": "0x080c3604",
+          "end": "0x080c3620",
+          "element": "le-u32",
+          "stride": 4,
+          "values": [0, 1, 5, 14, 30, 46, 62]
+        },
+        {
+          "name": "particle_dimensions",
+          "address": "0x080c3620",
+          "end": "0x080c3627",
+          "element": "u8",
+          "stride": 1,
+          "values": [1, 2, 3, 4, 4, 4, 4]
+        },
+        {
+          "name": "particle_padding",
+          "address": "0x080c3627",
+          "end": "0x080c3628",
+          "element": "u8",
+          "stride": 1,
+          "fill": 0
+        },
+        {
+          "name": "particle_sources",
+          "address": "0x080c3628",
+          "end": "0x080c3638",
+          "element": "le-u32",
+          "stride": 4,
+          "values": [78, 1102, 2126, 3150]
+        },
+        {
+          "name": "particle_adjustments",
+          "address": "0x080c3638",
+          "end": "0x080c3648",
+          "element": "le-u32",
+          "stride": 4,
+          "values": [0, 10, 20, 0]
+        },
+        {
+          "name": "short_id_map",
+          "address": "0x080c3648",
+          "end": "0x080c366c",
+          "element": "record",
+          "stride": 4,
+          "fields": [{"name": "id", "element": "le-u16"}, {"name": "slot", "element": "le-u16"}],
+          "records": [
+            {"id": 18, "slot": 56},
+            {"id": 1, "slot": 1},
+            {"id": 19, "slot": 57},
+            {"id": 2, "slot": 2},
+            {"id": 3, "slot": 3},
+            {"id": 4, "slot": 4},
+            {"id": 5, "slot": 5},
+            {"id": 6, "slot": 6},
+            {"id": 65535, "slot": 65535}
+          ]
+        },
+        {
+          "name": "long_id_map",
+          "address": "0x080c366c",
+          "end": "0x080c3734",
+          "element": "record",
+          "stride": 4,
+          "fields": [{"name": "id", "element": "le-u16"}, {"name": "slot", "element": "le-u16"}],
+          "records": [
+            {"id": 93, "slot": 0},
+            {"id": 90, "slot": 1},
+            {"id": 92, "slot": 2},
+            {"id": 91, "slot": 3},
+            {"id": 30, "slot": 4},
+            {"id": 32, "slot": 5},
+            {"id": 33, "slot": 6},
+            {"id": 43, "slot": 7},
+            {"id": 31, "slot": 8},
+            {"id": 53, "slot": 9},
+            {"id": 38, "slot": 10},
+            {"id": 42, "slot": 11},
+            {"id": 37, "slot": 12},
+            {"id": 54, "slot": 13},
+            {"id": 58, "slot": 14},
+            {"id": 69, "slot": 15},
+            {"id": 71, "slot": 16},
+            {"id": 56, "slot": 17},
+            {"id": 51, "slot": 18},
+            {"id": 49, "slot": 19},
+            {"id": 45, "slot": 20},
+            {"id": 40, "slot": 21},
+            {"id": 39, "slot": 22},
+            {"id": 41, "slot": 23},
+            {"id": 44, "slot": 24},
+            {"id": 50, "slot": 25},
+            {"id": 52, "slot": 26},
+            {"id": 57, "slot": 27},
+            {"id": 61, "slot": 28},
+            {"id": 47, "slot": 29},
+            {"id": 46, "slot": 30},
+            {"id": 66, "slot": 31},
+            {"id": 67, "slot": 32},
+            {"id": 121, "slot": 33},
+            {"id": 122, "slot": 34},
+            {"id": 124, "slot": 35},
+            {"id": 125, "slot": 36},
+            {"id": 118, "slot": 37},
+            {"id": 128, "slot": 38},
+            {"id": 119, "slot": 39},
+            {"id": 18, "slot": 40},
+            {"id": 19, "slot": 41},
+            {"id": 36, "slot": 42},
+            {"id": 48, "slot": 43},
+            {"id": 34, "slot": 44},
+            {"id": 55, "slot": 45},
+            {"id": 35, "slot": 46},
+            {"id": 65, "slot": 47},
+            {"id": 70, "slot": 48},
+            {"id": 65535, "slot": 65535}
+          ]
+        }
+      ]
+    },
+    "0x080c3f34": {
+      "format": 1,
+      "kind": "typed-table",
+      "address": "0x080c3f34",
+      "end": "0x080c5938",
+      "size": 6660,
+      "record_size": 20,
+      "segments": [
+        {
+          "name": "formation_00",
+          "address": "0x080c3f34",
+          "end": "0x080c3f98",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 35,
+              "djinn_counts": [7, 0, 0, 0],
+              "equipment": [8, 78, 124, 149],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 35,
+              "djinn_counts": [0, 0, 7, 0],
+              "equipment": [37, 79, 121, 149],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 35,
+              "djinn_counts": [0, 0, 0, 7],
+              "equipment": [191, 236, 142, 159],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 35,
+              "djinn_counts": [0, 7, 0, 0],
+              "equipment": [60, 108, 140, 171],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_01",
+          "address": "0x080c3f98",
+          "end": "0x080c3fd4",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 3,
+              "djinn_counts": [1, 0, 0, 0],
+              "equipment": [1, 90, 127, 156],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 3,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [1, 90, 127, 156],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_02",
+          "address": "0x080c3fd4",
+          "end": "0x080c4024",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 6,
+              "djinn_counts": [1, 0, 0, 0],
+              "equipment": [17, 75, 118, 156],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 6,
+              "djinn_counts": [0, 0, 0, 1],
+              "equipment": [31, 75, 118, 156],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 6,
+              "djinn_counts": [0, 1, 0, 0],
+              "equipment": [56, 104, 136, 166],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_03",
+          "address": "0x080c4024",
+          "end": "0x080c4088",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 11,
+              "djinn_counts": [2, 0, 0, 0],
+              "equipment": [2, 92, 119, 146],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 11,
+              "djinn_counts": [0, 0, 2, 0],
+              "equipment": [32, 92, 119, 146],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 11,
+              "djinn_counts": [0, 0, 0, 2],
+              "equipment": [57, 92, 137, 157],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 11,
+              "djinn_counts": [0, 2, 0, 0],
+              "equipment": [58, 92, 137, 157],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_04",
+          "address": "0x080c4088",
+          "end": "0x080c40ec",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 15,
+              "djinn_counts": [3, 0, 0, 0],
+              "equipment": [3, 77, 120, 147],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 15,
+              "djinn_counts": [0, 0, 3, 0],
+              "equipment": [33, 77, 120, 147],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 15,
+              "djinn_counts": [0, 4, 0, 0],
+              "equipment": [60, 107, 129, 167],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 15,
+              "djinn_counts": [0, 0, 0, 4],
+              "equipment": [59, 107, 129, 167],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_05",
+          "address": "0x080c40ec",
+          "end": "0x080c4150",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 18,
+              "djinn_counts": [4, 0, 0, 0],
+              "equipment": [4, 78, 121, 158],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 18,
+              "djinn_counts": [0, 0, 4, 0],
+              "equipment": [4, 78, 121, 158],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 18,
+              "djinn_counts": [0, 5, 0, 0],
+              "equipment": [61, 108, 138, 168],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 18,
+              "djinn_counts": [0, 0, 0, 5],
+              "equipment": [60, 94, 138, 168],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_06",
+          "address": "0x080c4150",
+          "end": "0x080c41b4",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 20,
+              "djinn_counts": [6, 0, 0, 0],
+              "equipment": [4, 78, 121, 148],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 20,
+              "djinn_counts": [0, 0, 5, 0],
+              "equipment": [4, 78, 121, 148],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 20,
+              "djinn_counts": [0, 6, 0, 0],
+              "equipment": [61, 108, 138, 168],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 20,
+              "djinn_counts": [0, 0, 0, 6],
+              "equipment": [60, 94, 138, 168],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_07",
+          "address": "0x080c41b4",
+          "end": "0x080c4218",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 35,
+              "djinn_counts": [0, 0, 3, 4],
+              "equipment": [20, 98, 140, 160],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 35,
+              "djinn_counts": [7, 0, 0, 0],
+              "equipment": [35, 82, 122, 149],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 35,
+              "djinn_counts": [0, 0, 4, 3],
+              "equipment": [61, 110, 132, 159],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 35,
+              "djinn_counts": [0, 7, 0, 0],
+              "equipment": [61, 113, 140, 171],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_08",
+          "address": "0x080c4218",
+          "end": "0x080c427c",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 35,
+              "djinn_counts": [0, 0, 4, 3],
+              "equipment": [5, 84, 140, 151],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 35,
+              "djinn_counts": [5, 0, 2, 0],
+              "equipment": [35, 82, 122, 149],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 35,
+              "djinn_counts": [0, 5, 0, 2],
+              "equipment": [61, 110, 132, 159],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 35,
+              "djinn_counts": [2, 2, 1, 2],
+              "equipment": [61, 113, 140, 171],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_09",
+          "address": "0x080c427c",
+          "end": "0x080c42e0",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 35,
+              "djinn_counts": [0, 4, 3, 0],
+              "equipment": [8, 78, 124, 149],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 35,
+              "djinn_counts": [4, 0, 3, 0],
+              "equipment": [37, 79, 121, 149],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 35,
+              "djinn_counts": [3, 0, 0, 4],
+              "equipment": [23, 110, 142, 159],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 35,
+              "djinn_counts": [0, 3, 1, 3],
+              "equipment": [60, 108, 140, 171],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_10",
+          "address": "0x080c42e0",
+          "end": "0x080c4330",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [15, 89, 127, 0],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [15, 89, 127, 0],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 5,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 103, 127, 0],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_11",
+          "address": "0x080c4330",
+          "end": "0x080c4380",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 2,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [16, 89, 127, 0],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 2,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [16, 89, 127, 0],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 5,
+              "level": 2,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 103, 127, 0],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_12",
+          "address": "0x080c4380",
+          "end": "0x080c43bc",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 3,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [1, 90, 127, 156],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 3,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [1, 90, 127, 156],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_13",
+          "address": "0x080c43bc",
+          "end": "0x080c440c",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 4,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [1, 90, 118, 156],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 4,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [31, 90, 118, 156],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 4,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 90, 136, 166],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_14",
+          "address": "0x080c440c",
+          "end": "0x080c445c",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 5,
+              "djinn_counts": [1, 0, 0, 0],
+              "equipment": [1, 90, 118, 156],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 5,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [31, 90, 118, 156],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 5,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [56, 90, 136, 166],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_15",
+          "address": "0x080c445c",
+          "end": "0x080c44c0",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [1, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [31, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 104, 127, 156],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 104, 127, 156],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_16",
+          "address": "0x080c44c0",
+          "end": "0x080c4524",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [1, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [31, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 104, 127, 156],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 104, 127, 156],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_17",
+          "address": "0x080c4524",
+          "end": "0x080c4588",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 1,
+              "level": 30,
+              "djinn_counts": [0, 0, 2, 0],
+              "equipment": [31, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 0,
+              "level": 30,
+              "djinn_counts": [2, 0, 0, 0],
+              "equipment": [2, 75, 118, 145],
+              "abilities": [140, 149],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 30,
+              "djinn_counts": [0, 2, 0, 0],
+              "equipment": [57, 104, 127, 156],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 30,
+              "djinn_counts": [0, 0, 0, 2],
+              "equipment": [56, 104, 127, 156],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_18",
+          "address": "0x080c4588",
+          "end": "0x080c45ec",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [1, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [31, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 104, 127, 156],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 104, 127, 156],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_19",
+          "address": "0x080c45ec",
+          "end": "0x080c4650",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [1, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [31, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 104, 127, 156],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 104, 127, 156],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_20",
+          "address": "0x080c4650",
+          "end": "0x080c46a0",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 6,
+              "djinn_counts": [1, 0, 0, 0],
+              "equipment": [27, 75, 118, 156],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 6,
+              "djinn_counts": [0, 0, 1, 0],
+              "equipment": [31, 75, 118, 156],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 6,
+              "djinn_counts": [0, 0, 0, 1],
+              "equipment": [56, 104, 136, 166],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_21",
+          "address": "0x080c46a0",
+          "end": "0x080c46f0",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 7,
+              "djinn_counts": [1, 0, 0, 0],
+              "equipment": [27, 75, 128, 156],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 7,
+              "djinn_counts": [0, 0, 1, 0],
+              "equipment": [17, 75, 128, 156],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 7,
+              "djinn_counts": [0, 0, 0, 1],
+              "equipment": [56, 104, 136, 166],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_22",
+          "address": "0x080c46f0",
+          "end": "0x080c4740",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 8,
+              "djinn_counts": [2, 0, 0, 0],
+              "equipment": [17, 75, 128, 156],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 8,
+              "djinn_counts": [0, 0, 1, 0],
+              "equipment": [17, 75, 128, 156],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 8,
+              "djinn_counts": [0, 0, 0, 2],
+              "equipment": [56, 104, 128, 166],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_23",
+          "address": "0x080c4740",
+          "end": "0x080c4790",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 9,
+              "djinn_counts": [2, 0, 0, 0],
+              "equipment": [17, 75, 128, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 9,
+              "djinn_counts": [0, 0, 1, 0],
+              "equipment": [17, 75, 128, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 9,
+              "djinn_counts": [0, 0, 0, 2],
+              "equipment": [56, 104, 128, 166],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_24",
+          "address": "0x080c4790",
+          "end": "0x080c47e0",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 9,
+              "djinn_counts": [2, 0, 0, 0],
+              "equipment": [17, 75, 128, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 9,
+              "djinn_counts": [0, 0, 1, 0],
+              "equipment": [17, 75, 128, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 9,
+              "djinn_counts": [0, 0, 0, 2],
+              "equipment": [56, 104, 128, 166],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_25",
+          "address": "0x080c47e0",
+          "end": "0x080c4844",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 10,
+              "djinn_counts": [2, 0, 0, 0],
+              "equipment": [2, 75, 119, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 10,
+              "djinn_counts": [0, 0, 2, 0],
+              "equipment": [17, 75, 119, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 10,
+              "djinn_counts": [0, 2, 0, 0],
+              "equipment": [57, 104, 128, 157],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 10,
+              "djinn_counts": [0, 0, 0, 2],
+              "equipment": [56, 104, 128, 157],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_26",
+          "address": "0x080c4844",
+          "end": "0x080c48a8",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 10,
+              "djinn_counts": [0, 0, 2, 0],
+              "equipment": [2, 75, 119, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 10,
+              "djinn_counts": [0, 0, 0, 2],
+              "equipment": [17, 75, 119, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 10,
+              "djinn_counts": [2, 0, 0, 0],
+              "equipment": [57, 104, 128, 157],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 10,
+              "djinn_counts": [0, 2, 0, 0],
+              "equipment": [56, 104, 128, 157],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_27",
+          "address": "0x080c48a8",
+          "end": "0x080c490c",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 10,
+              "djinn_counts": [0, 2, 0, 0],
+              "equipment": [2, 75, 119, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 10,
+              "djinn_counts": [2, 0, 0, 0],
+              "equipment": [17, 75, 119, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 10,
+              "djinn_counts": [0, 0, 0, 2],
+              "equipment": [57, 104, 128, 157],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 10,
+              "djinn_counts": [0, 0, 2, 0],
+              "equipment": [56, 104, 128, 157],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_28",
+          "address": "0x080c490c",
+          "end": "0x080c4970",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 10,
+              "djinn_counts": [0, 0, 0, 2],
+              "equipment": [2, 75, 119, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 10,
+              "djinn_counts": [0, 2, 0, 0],
+              "equipment": [17, 75, 119, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 10,
+              "djinn_counts": [0, 0, 2, 0],
+              "equipment": [57, 104, 128, 157],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 10,
+              "djinn_counts": [2, 0, 0, 0],
+              "equipment": [56, 104, 128, 157],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_29",
+          "address": "0x080c4970",
+          "end": "0x080c49d4",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [1, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [31, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 104, 127, 156],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 104, 127, 156],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_30",
+          "address": "0x080c49d4",
+          "end": "0x080c4a38",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 11,
+              "djinn_counts": [2, 0, 0, 0],
+              "equipment": [2, 92, 119, 146],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 11,
+              "djinn_counts": [0, 0, 2, 0],
+              "equipment": [32, 92, 119, 146],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 11,
+              "djinn_counts": [0, 2, 0, 0],
+              "equipment": [58, 92, 137, 157],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 11,
+              "djinn_counts": [0, 0, 0, 2],
+              "equipment": [57, 92, 137, 157],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_31",
+          "address": "0x080c4a38",
+          "end": "0x080c4a9c",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 11,
+              "djinn_counts": [2, 0, 0, 0],
+              "equipment": [2, 92, 119, 146],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 11,
+              "djinn_counts": [0, 0, 2, 0],
+              "equipment": [32, 92, 119, 146],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 11,
+              "djinn_counts": [0, 2, 0, 0],
+              "equipment": [58, 92, 137, 157],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 11,
+              "djinn_counts": [0, 0, 0, 2],
+              "equipment": [58, 92, 137, 157],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_32",
+          "address": "0x080c4a9c",
+          "end": "0x080c4b00",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 12,
+              "djinn_counts": [2, 0, 0, 0],
+              "equipment": [2, 92, 119, 146],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 12,
+              "djinn_counts": [0, 0, 2, 0],
+              "equipment": [32, 92, 119, 146],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 12,
+              "djinn_counts": [0, 2, 0, 0],
+              "equipment": [58, 92, 137, 157],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 12,
+              "djinn_counts": [0, 0, 0, 2],
+              "equipment": [58, 92, 137, 157],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_33",
+          "address": "0x080c4b00",
+          "end": "0x080c4b64",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 13,
+              "djinn_counts": [3, 0, 0, 0],
+              "equipment": [3, 77, 120, 146],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 13,
+              "djinn_counts": [0, 0, 3, 0],
+              "equipment": [32, 77, 120, 146],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 13,
+              "djinn_counts": [0, 3, 0, 0],
+              "equipment": [18, 106, 137, 167],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 13,
+              "djinn_counts": [0, 0, 0, 3],
+              "equipment": [59, 105, 137, 167],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_34",
+          "address": "0x080c4b64",
+          "end": "0x080c4bc8",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 14,
+              "djinn_counts": [3, 0, 0, 0],
+              "equipment": [3, 77, 120, 147],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 14,
+              "djinn_counts": [0, 0, 3, 0],
+              "equipment": [32, 77, 120, 147],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 14,
+              "djinn_counts": [0, 3, 0, 0],
+              "equipment": [18, 106, 129, 167],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 14,
+              "djinn_counts": [0, 0, 0, 3],
+              "equipment": [59, 105, 129, 167],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_35",
+          "address": "0x080c4bc8",
+          "end": "0x080c4c2c",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [1, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [31, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 104, 127, 156],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 104, 127, 156],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_36",
+          "address": "0x080c4c2c",
+          "end": "0x080c4c90",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 15,
+              "djinn_counts": [2, 0, 0, 0],
+              "equipment": [2, 75, 119, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 15,
+              "djinn_counts": [0, 0, 2, 0],
+              "equipment": [17, 75, 119, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 15,
+              "djinn_counts": [0, 2, 0, 0],
+              "equipment": [57, 104, 128, 157],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 15,
+              "djinn_counts": [0, 0, 0, 2],
+              "equipment": [56, 104, 128, 157],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_37",
+          "address": "0x080c4c90",
+          "end": "0x080c4cf4",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 15,
+              "djinn_counts": [0, 2, 0, 0],
+              "equipment": [2, 75, 119, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 15,
+              "djinn_counts": [2, 0, 0, 0],
+              "equipment": [17, 75, 119, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 15,
+              "djinn_counts": [0, 0, 0, 2],
+              "equipment": [47, 104, 128, 157],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 15,
+              "djinn_counts": [0, 0, 2, 0],
+              "equipment": [56, 104, 128, 157],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_38",
+          "address": "0x080c4cf4",
+          "end": "0x080c4d58",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 15,
+              "djinn_counts": [0, 0, 0, 2],
+              "equipment": [2, 75, 119, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 15,
+              "djinn_counts": [0, 2, 0, 0],
+              "equipment": [17, 75, 119, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 15,
+              "djinn_counts": [0, 0, 2, 0],
+              "equipment": [57, 104, 128, 157],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 15,
+              "djinn_counts": [2, 0, 0, 0],
+              "equipment": [56, 104, 128, 157],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_39",
+          "address": "0x080c4d58",
+          "end": "0x080c4dbc",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 15,
+              "djinn_counts": [0, 0, 2, 0],
+              "equipment": [2, 75, 119, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 15,
+              "djinn_counts": [0, 0, 0, 2],
+              "equipment": [17, 75, 119, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 15,
+              "djinn_counts": [2, 0, 0, 0],
+              "equipment": [57, 104, 128, 157],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 15,
+              "djinn_counts": [0, 2, 0, 0],
+              "equipment": [56, 104, 128, 157],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_40",
+          "address": "0x080c4dbc",
+          "end": "0x080c4e20",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 15,
+              "djinn_counts": [4, 0, 0, 0],
+              "equipment": [3, 77, 120, 147],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 15,
+              "djinn_counts": [0, 0, 4, 0],
+              "equipment": [33, 77, 120, 147],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 15,
+              "djinn_counts": [0, 4, 0, 0],
+              "equipment": [60, 92, 129, 167],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 15,
+              "djinn_counts": [0, 0, 0, 4],
+              "equipment": [59, 92, 129, 167],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_41",
+          "address": "0x080c4e20",
+          "end": "0x080c4e84",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 15,
+              "djinn_counts": [4, 0, 0, 0],
+              "equipment": [3, 77, 120, 147],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 15,
+              "djinn_counts": [0, 0, 4, 0],
+              "equipment": [33, 77, 120, 147],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 15,
+              "djinn_counts": [0, 4, 0, 0],
+              "equipment": [60, 107, 129, 167],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 15,
+              "djinn_counts": [0, 0, 0, 4],
+              "equipment": [59, 107, 129, 167],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_42",
+          "address": "0x080c4e84",
+          "end": "0x080c4ee8",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 16,
+              "djinn_counts": [4, 0, 0, 0],
+              "equipment": [3, 77, 120, 147],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 16,
+              "djinn_counts": [0, 0, 4, 0],
+              "equipment": [33, 77, 120, 147],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 16,
+              "djinn_counts": [0, 4, 0, 0],
+              "equipment": [60, 107, 138, 167],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 16,
+              "djinn_counts": [0, 0, 0, 5],
+              "equipment": [59, 107, 138, 167],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_43",
+          "address": "0x080c4ee8",
+          "end": "0x080c4f4c",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 17,
+              "djinn_counts": [5, 0, 0, 0],
+              "equipment": [3, 77, 120, 158],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 17,
+              "djinn_counts": [0, 0, 4, 0],
+              "equipment": [33, 77, 120, 158],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 17,
+              "djinn_counts": [0, 4, 0, 0],
+              "equipment": [60, 107, 138, 158],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 17,
+              "djinn_counts": [0, 0, 0, 5],
+              "equipment": [59, 107, 138, 158],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_44",
+          "address": "0x080c4f4c",
+          "end": "0x080c4fb0",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 17,
+              "djinn_counts": [5, 0, 0, 0],
+              "equipment": [3, 77, 120, 158],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 17,
+              "djinn_counts": [0, 0, 4, 0],
+              "equipment": [33, 77, 120, 158],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 17,
+              "djinn_counts": [0, 4, 0, 0],
+              "equipment": [60, 107, 138, 158],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 17,
+              "djinn_counts": [0, 0, 0, 5],
+              "equipment": [59, 107, 138, 158],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_45",
+          "address": "0x080c4fb0",
+          "end": "0x080c5014",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [1, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [31, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 104, 127, 156],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 104, 127, 156],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_46",
+          "address": "0x080c5014",
+          "end": "0x080c5078",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [1, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [31, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 104, 127, 156],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 104, 127, 156],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_47",
+          "address": "0x080c5078",
+          "end": "0x080c50dc",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [1, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [31, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 104, 127, 156],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 104, 127, 156],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_48",
+          "address": "0x080c50dc",
+          "end": "0x080c5140",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [1, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [31, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 104, 127, 156],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 104, 127, 156],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_49",
+          "address": "0x080c5140",
+          "end": "0x080c51a4",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [1, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [31, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 104, 127, 156],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 104, 127, 156],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_50",
+          "address": "0x080c51a4",
+          "end": "0x080c5208",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 17,
+              "djinn_counts": [5, 0, 0, 0],
+              "equipment": [4, 78, 121, 158],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 17,
+              "djinn_counts": [0, 0, 5, 0],
+              "equipment": [4, 78, 121, 158],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 17,
+              "djinn_counts": [0, 5, 0, 0],
+              "equipment": [61, 108, 138, 168],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 17,
+              "djinn_counts": [0, 0, 0, 5],
+              "equipment": [60, 94, 138, 168],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_51",
+          "address": "0x080c5208",
+          "end": "0x080c526c",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 18,
+              "djinn_counts": [6, 0, 0, 0],
+              "equipment": [4, 78, 121, 148],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 18,
+              "djinn_counts": [0, 0, 5, 0],
+              "equipment": [4, 78, 121, 148],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 18,
+              "djinn_counts": [0, 5, 0, 0],
+              "equipment": [61, 108, 138, 168],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 18,
+              "djinn_counts": [0, 0, 0, 6],
+              "equipment": [60, 94, 138, 168],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_52",
+          "address": "0x080c526c",
+          "end": "0x080c5294",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 18,
+              "djinn_counts": [6, 0, 0, 0],
+              "equipment": [16, 0, 120, 0],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_53",
+          "address": "0x080c5294",
+          "end": "0x080c52bc",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 19,
+              "djinn_counts": [6, 0, 0, 0],
+              "equipment": [16, 77, 120, 0],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_54",
+          "address": "0x080c52bc",
+          "end": "0x080c52e4",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 19,
+              "djinn_counts": [6, 0, 0, 0],
+              "equipment": [3, 77, 120, 0],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_55",
+          "address": "0x080c52e4",
+          "end": "0x080c5348",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [1, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [31, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 104, 127, 156],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 104, 127, 156],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_56",
+          "address": "0x080c5348",
+          "end": "0x080c53ac",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [1, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [31, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 104, 127, 156],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 104, 127, 156],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_57",
+          "address": "0x080c53ac",
+          "end": "0x080c5410",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [1, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [31, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 104, 127, 156],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 104, 127, 156],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_58",
+          "address": "0x080c5410",
+          "end": "0x080c5474",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [1, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [31, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 104, 127, 156],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 104, 127, 156],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_59",
+          "address": "0x080c5474",
+          "end": "0x080c54d8",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [1, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [31, 75, 118, 145],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 104, 127, 156],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 1,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [55, 104, 127, 156],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_60",
+          "address": "0x080c54d8",
+          "end": "0x080c553c",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 20,
+              "djinn_counts": [6, 0, 0, 0],
+              "equipment": [4, 78, 121, 148],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 20,
+              "djinn_counts": [0, 0, 5, 0],
+              "equipment": [4, 78, 121, 148],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 20,
+              "djinn_counts": [0, 5, 0, 0],
+              "equipment": [61, 108, 138, 168],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 20,
+              "djinn_counts": [0, 0, 0, 6],
+              "equipment": [60, 94, 138, 168],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_61",
+          "address": "0x080c553c",
+          "end": "0x080c55a0",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 20,
+              "djinn_counts": [6, 0, 0, 0],
+              "equipment": [4, 78, 121, 148],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 20,
+              "djinn_counts": [0, 0, 5, 0],
+              "equipment": [4, 78, 121, 148],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 20,
+              "djinn_counts": [0, 5, 0, 0],
+              "equipment": [61, 108, 138, 168],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 20,
+              "djinn_counts": [0, 0, 0, 6],
+              "equipment": [60, 94, 138, 168],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_62",
+          "address": "0x080c55a0",
+          "end": "0x080c5604",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 21,
+              "djinn_counts": [6, 0, 0, 0],
+              "equipment": [4, 78, 121, 148],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 21,
+              "djinn_counts": [0, 0, 5, 0],
+              "equipment": [4, 78, 121, 148],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 21,
+              "djinn_counts": [0, 6, 0, 0],
+              "equipment": [61, 108, 138, 168],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 21,
+              "djinn_counts": [0, 0, 0, 6],
+              "equipment": [60, 94, 138, 168],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_63",
+          "address": "0x080c5604",
+          "end": "0x080c5668",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 22,
+              "djinn_counts": [6, 0, 0, 0],
+              "equipment": [5, 79, 121, 148],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 22,
+              "djinn_counts": [0, 0, 6, 0],
+              "equipment": [34, 79, 121, 148],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 22,
+              "djinn_counts": [0, 6, 0, 0],
+              "equipment": [61, 109, 138, 169],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 22,
+              "djinn_counts": [0, 0, 0, 6],
+              "equipment": [60, 94, 139, 169],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_64",
+          "address": "0x080c5668",
+          "end": "0x080c56cc",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 23,
+              "djinn_counts": [7, 0, 0, 0],
+              "equipment": [5, 79, 121, 149],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 23,
+              "djinn_counts": [0, 0, 6, 0],
+              "equipment": [34, 79, 121, 149],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 23,
+              "djinn_counts": [0, 6, 0, 0],
+              "equipment": [61, 109, 138, 169],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 23,
+              "djinn_counts": [0, 0, 0, 6],
+              "equipment": [60, 94, 139, 169],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_65",
+          "address": "0x080c56cc",
+          "end": "0x080c5730",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 24,
+              "djinn_counts": [7, 0, 0, 0],
+              "equipment": [5, 79, 121, 149],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 24,
+              "djinn_counts": [0, 0, 6, 0],
+              "equipment": [34, 79, 121, 149],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 24,
+              "djinn_counts": [0, 7, 0, 0],
+              "equipment": [61, 109, 139, 169],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 24,
+              "djinn_counts": [0, 0, 0, 6],
+              "equipment": [60, 94, 139, 169],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_66",
+          "address": "0x080c5730",
+          "end": "0x080c5794",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 25,
+              "djinn_counts": [7, 0, 0, 0],
+              "equipment": [5, 79, 121, 149],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 25,
+              "djinn_counts": [0, 0, 7, 0],
+              "equipment": [34, 79, 121, 149],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 25,
+              "djinn_counts": [0, 7, 0, 0],
+              "equipment": [61, 109, 138, 169],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 25,
+              "djinn_counts": [0, 0, 0, 6],
+              "equipment": [60, 110, 139, 169],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_67",
+          "address": "0x080c5794",
+          "end": "0x080c57f8",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 27,
+              "djinn_counts": [7, 0, 0, 0],
+              "equipment": [6, 80, 122, 150],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 27,
+              "djinn_counts": [0, 0, 7, 0],
+              "equipment": [34, 80, 121, 150],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 26,
+              "djinn_counts": [0, 7, 0, 0],
+              "equipment": [61, 109, 140, 169],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 26,
+              "djinn_counts": [0, 0, 0, 7],
+              "equipment": [60, 110, 139, 169],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_68",
+          "address": "0x080c57f8",
+          "end": "0x080c585c",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 28,
+              "djinn_counts": [7, 0, 0, 0],
+              "equipment": [6, 80, 122, 150],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 28,
+              "djinn_counts": [0, 0, 7, 0],
+              "equipment": [34, 80, 121, 150],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 28,
+              "djinn_counts": [0, 7, 0, 0],
+              "equipment": [61, 109, 140, 171],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 28,
+              "djinn_counts": [0, 0, 0, 7],
+              "equipment": [60, 110, 141, 159],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_69",
+          "address": "0x080c585c",
+          "end": "0x080c58c0",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 29,
+              "djinn_counts": [7, 0, 0, 0],
+              "equipment": [9, 84, 122, 150],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 29,
+              "djinn_counts": [0, 0, 7, 0],
+              "equipment": [35, 80, 124, 150],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 29,
+              "djinn_counts": [0, 7, 0, 0],
+              "equipment": [61, 113, 140, 171],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 29,
+              "djinn_counts": [0, 0, 0, 7],
+              "equipment": [63, 112, 141, 159],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_70",
+          "address": "0x080c58c0",
+          "end": "0x080c5924",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 0,
+              "level": 33,
+              "djinn_counts": [7, 0, 0, 0],
+              "equipment": [9, 84, 122, 150],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 1,
+              "level": 33,
+              "djinn_counts": [0, 0, 7, 0],
+              "equipment": [35, 80, 124, 150],
+              "abilities": [140, 0],
+              "padding": 0
+            },
+            {
+              "actor": 3,
+              "level": 33,
+              "djinn_counts": [0, 7, 0, 0],
+              "equipment": [61, 113, 140, 171],
+              "abilities": [0, 0],
+              "padding": 0
+            },
+            {
+              "actor": 2,
+              "level": 33,
+              "djinn_counts": [0, 0, 0, 7],
+              "equipment": [63, 112, 141, 159],
+              "abilities": [141, 0],
+              "padding": 0
+            },
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        },
+        {
+          "name": "formation_71",
+          "address": "0x080c5924",
+          "end": "0x080c5938",
+          "element": "record",
+          "stride": 20,
+          "fields": [
+            {"name": "actor", "element": "u8"},
+            {"name": "level", "element": "u8"},
+            {"name": "djinn_counts", "element": "u8"},
+            {"name": "equipment", "element": "le-u16"},
+            {"name": "abilities", "element": "le-u16"},
+            {"name": "padding", "element": "le-u16", "min": 0, "max": 0}
+          ],
+          "records": [
+            {
+              "actor": 255,
+              "level": 0,
+              "djinn_counts": [0, 0, 0, 0],
+              "equipment": [0, 0, 0, 0],
+              "abilities": [0, 0],
+              "padding": 0
+            }
+          ]
+        }
+      ]
+    },
+    "0x080c5938": {
+      "format": 1,
+      "kind": "typed-table",
+      "address": "0x080c5938",
+      "end": "0x080c5a30",
+      "size": 248,
+      "segments": [
+        {
+          "name": "object_descriptor",
+          "address": "0x080c5938",
+          "end": "0x080c593c",
+          "element": "le-u32",
+          "stride": 4,
+          "values": [16]
+        },
+        {
+          "name": "weapon_map",
+          "address": "0x080c593c",
+          "end": "0x080c59a2",
+          "element": "le-u16",
+          "stride": 2,
+          "bits": {"item_id": 9, "weapon_class": 7},
+          "values": [
+            [1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6, 0], [7, 0], [8, 0], [9, 0], [10, 0], [11, 0], [15, 1], [16, 1],
+            [17, 1], [18, 1], [19, 1], [20, 1], [21, 1], [22, 1], [23, 1], [24, 1], [25, 1], [26, 1], [27, 1], [31, 2],
+            [32, 2], [33, 2], [34, 2], [35, 2], [36, 2], [37, 2], [38, 2], [43, 3], [44, 3], [45, 3], [46, 3], [47, 3],
+            [48, 3], [49, 3], [50, 3], [55, 4], [56, 4], [57, 4], [58, 5], [59, 4], [60, 4], [61, 5], [62, 4], [63, 4],
+            [64, 4], [65, 4]
+          ]
+        },
+        {
+          "name": "weapon_map_terminator",
+          "address": "0x080c59a2",
+          "end": "0x080c59a4",
+          "element": "le-u16",
+          "stride": 2,
+          "values": [65535]
+        },
+        {
+          "name": "field_52_q16",
+          "address": "0x080c59a4",
+          "end": "0x080c59c4",
+          "element": "le-u32",
+          "stride": 4,
+          "values": [65536, 65536, 65536, 65536, 524288, 65536, 65536, 65536]
+        },
+        {
+          "name": "field_48_q16",
+          "address": "0x080c59c4",
+          "end": "0x080c59e4",
+          "element": "le-u32",
+          "stride": 4,
+          "values": [262144, 262144, 262144, 262144, 1310720, 262144, 262144, 262144]
+        },
+        {
+          "name": "field_40_q16",
+          "address": "0x080c59e4",
+          "end": "0x080c5a04",
+          "element": "le-u32",
+          "stride": 4,
+          "values": [196608, 393216, 458752, 655360, 327680, 131072, 196608, 360448]
+        },
+        {
+          "name": "effect_percent",
+          "address": "0x080c5a04",
+          "end": "0x080c5a24",
+          "element": "le-u32",
+          "stride": 4,
+          "values": [140, 140, 150, 200, 200, 150, 100, 100]
+        },
+        {
+          "name": "control",
+          "address": "0x080c5a24",
+          "end": "0x080c5a30",
+          "element": "le-u32",
+          "stride": 4,
+          "values": [0, 20, 27]
+        }
+      ]
+    },
+    "0x08411278": {
+      "format": 1,
+      "kind": "golden-sun-motion-path",
+      "resource_id": "0x0d2",
+      "address": "0x08411278",
+      "size": "0x01a8",
+      "consumer": {
+        "function": "Func_080dc968",
+        "initial_frame": 0,
+        "delta_first_frame": 1,
+        "delta_last_frame": 209,
+        "initial_encoding": "be-s16-pair",
+        "delta_encoding": "s8-pair",
+        "boundary_delta_pairs": 1
+      },
+      "initial": [160, 95],
+      "deltas": [
+        [-5, -3], [-4, -3], [-4, -3], [-4, -2], [-4, -3], [-4, -3], [-4, -3], [-4, -3], [-4, -4], [-5, -3], [-4, -3],
+        [-4, -3], [-4, -3], [-4, -3], [-4, -3], [-3, -3], [-4, -3], [-4, -3], [-4, -3], [-3, -3], [-4, -3], [-3, -3],
+        [-4, -3], [-4, -2], [-3, -3], [-3, -3], [-4, -2], [-3, -3], [-4, -2], [-3, -2], [-3, -3], [-3, -2], [-3, -2],
+        [-4, -2], [-3, -1], [-3, -2], [-3, -1], [-2, -2], [-3, -1], [-3, -2], [-3, -1], [-3, -1], [-3, -1], [-3, -1],
+        [-2, -1], [-3, -1], [-2, -1], [-3, 0], [-3, -1], [-2, -1], [-3, 0], [-2, -1], [-2, 0], [-3, -1], [-2, 0],
+        [-2, 0], [-2, -1], [-2, 0], [-2, 0], [-2, 0], [-2, 0], [-2, -1], [-2, 0], [-2, 0], [-1, 0], [-2, 0], [-1, 0],
+        [-1, 0], [-2, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 1], [-1, 0], [-1, 1], [-1, 0], [-1, 1], [-1, 1],
+        [0, 1], [-1, 1], [0, 1], [-1, 1], [0, 1], [0, 2], [0, 1], [0, 1], [0, 1], [0, 2], [0, 1], [1, 2], [0, 1],
+        [1, 3], [1, 0], [1, 1], [2, 1], [1, 2], [2, 1], [2, 1], [2, 1], [3, 1], [2, 2], [3, 1], [2, 1], [3, 0], [3, 1],
+        [3, 1], [3, 0], [3, 1], [3, 0], [3, 1], [3, 0], [2, 0], [3, 0], [3, 0], [3, -1], [3, 0], [2, -1], [2, -1],
+        [3, -1], [2, -1], [2, -2], [1, -1], [2, -2], [1, -1], [1, -2], [1, -1], [1, -2], [1, -1], [1, -1], [0, -1],
+        [0, -1], [1, -2], [0, -1], [0, -1], [0, -1], [-1, -1], [0, -1], [0, 0], [-1, -1], [0, -1], [-1, -1], [-1, 0],
+        [0, -1], [-1, -1], [-1, 0], [-1, -1], [-1, 0], [0, -1], [-1, 0], [-1, -1], [-1, 0], [-1, 0], [-1, 0], [-1, -1],
+        [-1, 0], [-1, 0], [-1, 0], [-1, 0], [0, 0], [-1, 0], [-1, 0], [0, 0], [-1, 0], [0, 0], [1, 1], [-2, 0], [0, 0],
+        [0, 1], [0, 0], [0, 1], [0, 0], [0, 1], [2, 0], [-1, 1], [0, 0], [1, 0], [0, 1], [1, 0], [0, 1], [0, 0], [1, 0],
+        [1, 1], [1, 1], [1, 0], [2, 1], [3, 1], [3, 2], [4, 1], [5, 2], [5, 2], [6, 1], [6, 3], [6, 2], [7, 3], [7, 3],
+        [7, 3], [6, 3], [7, 4], [7, 4], [7, 4], [7, 5], [7, 6], [8, 6], [7, 6], [8, 6], [7, 6], [8, 6], [7, 6]
+      ],
+      "boundary_deltas": [[8, 6]]
+    },
+    "0x08411420": {
+      "format": 1,
+      "kind": "golden-sun-motion-path",
+      "resource_id": "0x0d3",
+      "address": "0x08411420",
+      "size": "0x0054",
+      "consumer": {
+        "function": "Func_080e89ec",
+        "initial_frame": 18,
+        "delta_first_frame": 19,
+        "delta_last_frame": 58,
+        "initial_encoding": "be-s16-pair",
+        "delta_encoding": "s8-pair",
+        "boundary_delta_pairs": 0
+      },
+      "initial": [17, -39],
+      "deltas": [
+        [6, 5], [6, 5], [6, 6], [6, 5], [6, 6], [6, 5], [6, 5], [5, 5], [5, 4], [5, 4], [4, 4], [5, 4], [5, 3], [5, 4],
+        [4, 3], [4, 3], [3, 3], [2, 2], [0, 2], [0, 1], [-2, 1], [-3, 0], [-4, -1], [-5, -1], [-6, -3], [-7, -4],
+        [-8, -7], [-11, -8], [-13, -9], [-17, -9], [-18, -9], [-20, -8], [-21, -7], [-21, -4], [-20, -1], [-20, 1],
+        [-20, 7], [-18, 13], [-18, 29], [0, 0]
+      ],
+      "boundary_deltas": []
+    },
+    "0x08411474": {
+      "format": 1,
+      "kind": "typed-table",
+      "address": "0x08411474",
+      "end": "0x08411e74",
+      "size": 2560,
+      "segments": [
+        {
+          "name": "stream_offsets",
+          "address": "0x08411474",
+          "end": "0x08411e74",
+          "element": "le-u32",
+          "stride": 4,
+          "values": [
+            2560, 2996, 3307, 3403, 3419, 3443, 3488, 3513, 3538, 3838, 4027, 4264, 4679, 4970, 5043, 5138, 5290, 5490,
+            5625, 5681, 5697, 5727, 5770, 5789, 5808, 5951, 6071, 6486, 7120, 7822, 8424, 8683, 8744, 8760, 8776, 8792,
+            8808, 8832, 8875, 8898, 8921, 8947, 9105, 9864, 10590, 11339, 12086, 12878, 13294, 13310, 13326, 13342,
+            13370, 13404, 13486, 13513, 13558, 13838, 14467, 15247, 16028, 16686, 17334, 18093, 18665, 18681, 18697,
+            18721, 18763, 18793, 18878, 18914, 19102, 19847, 20630, 21259, 22006, 22572, 22926, 23224, 23586, 23602,
+            23618, 23645, 23672, 23732, 23808, 23835, 23990, 24360, 25084, 25825, 26506, 26794, 26860, 26876, 26892,
+            26921, 26946, 26982, 27026, 27074, 27150, 27178, 27206, 27237, 27477, 27940, 28712, 29064, 29121, 29371,
+            29526, 29560, 29590, 29622, 29678, 29705, 29774, 29816, 29845, 29864, 29889, 30184, 30605, 30757, 30846,
+            30928, 31003, 31019, 31035, 31055, 31071, 31095, 31140, 31165, 31190, 31206, 31222, 31242, 31258, 31282,
+            31327, 31352, 31377, 31393, 31409, 31425, 31441, 31471, 31514, 31533, 31552, 31568, 31584, 31600, 31616,
+            31646, 31689, 31708, 31727, 31743, 31759, 31775, 31791, 31815, 31858, 31881, 31904, 31920, 31936, 31952,
+            31968, 31992, 32035, 32058, 32081, 32097, 32113, 32129, 32157, 32191, 32273, 32300, 32327, 32343, 32359,
+            32375, 32403, 32437, 32519, 32546, 32573, 32589, 32605, 32629, 32671, 32701, 32786, 32822, 32858, 32874,
+            32890, 32914, 32956, 32986, 33071, 33107, 33143, 33159, 33175, 33202, 33229, 33289, 33365, 33392, 33419,
+            33435, 33451, 33478, 33505, 33565, 33641, 33668, 33695, 33724, 33749, 33785, 33829, 33877, 33953, 33981,
+            34009, 34038, 34063, 34099, 34143, 34191, 34267, 34295, 34323, 34357, 34387, 34419, 34475, 34502, 34571,
+            34613, 34642, 34676, 34706, 34738, 34794, 34821, 34890, 34932, 34961, 34981, 35001, 35021, 35041, 35061,
+            35081, 35101, 35121, 35899, 35919, 36151, 36712, 37072, 37092, 37112, 37132, 37152, 37172, 37192, 37212,
+            37232, 37252, 37272, 37292, 37312, 37332, 37520, 38193, 38858, 38878, 38898, 38918, 38938, 38958, 38978,
+            38998, 39018, 39038, 39058, 39078, 39098, 39118, 39138, 39158, 39178, 39198, 39218, 39238, 39258, 39278,
+            39298, 39318, 39338, 39358, 39378, 39398, 39418, 39438, 39458, 39478, 39498, 39518, 39538, 39558, 39798,
+            39946, 39986, 40006, 40026, 40046, 40066, 40086, 40314, 40498, 40601, 40700, 40826, 40871, 41090, 41323,
+            41517, 41768, 41915, 41935, 41955, 41975, 41995, 42015, 42144, 42220, 42403, 42869, 43317, 43719, 43980,
+            44094, 44114, 44134, 44154, 44174, 44194, 44214, 44234, 44254, 44274, 44325, 44794, 45298, 45800, 46301,
+            46785, 47165, 47185, 47205, 47225, 47245, 47265, 47285, 47305, 47325, 47488, 47825, 48284, 48750, 49158,
+            49594, 50095, 50498, 50518, 50538, 50558, 50578, 50598, 50618, 50638, 50708, 51136, 51530, 51861, 52301,
+            52576, 52791, 53049, 53332, 53352, 53372, 53392, 53412, 53432, 53452, 53472, 53538, 53762, 54267, 54671,
+            55112, 55393, 55494, 55514, 55541, 55561, 55581, 55601, 55621, 55641, 55661, 55681, 55701, 55721, 55899,
+            56164, 56599, 56840, 56872, 57020, 57146, 57166, 57186, 57206, 57226, 57246, 57266, 57286, 57306, 57326,
+            57346, 57442, 57549, 57590, 57610, 57720, 57793, 57813, 57833, 57853, 57873, 57893, 57913, 57933, 57953,
+            57973, 57993, 58013, 58033, 58053, 58073, 58093, 58113, 58133, 58153, 58173, 58193, 58213, 58233, 58253,
+            58273, 58293, 58313, 58333, 58353, 58373, 58393, 58413, 58433, 58453, 58473, 58493, 58513, 58533, 58553,
+            58573, 58593, 58613, 58633, 58653, 58673, 58693, 58713, 58733, 58753, 58773, 58793, 58813, 58833, 58853,
+            58873, 58893, 58913, 58933, 58953, 58973, 58993, 59013, 59033, 59053, 59073, 59093, 59113, 59133, 59153,
+            59173, 59193, 59213, 59233, 59253, 59273, 59293, 59313, 59333, 59353, 59373, 59393, 59413, 59433, 59453,
+            59473, 59493, 59513, 59533, 59553, 59573, 59593, 59613, 59633, 59653, 59673, 59693, 59713, 59733, 59753,
+            59773, 59793, 59813, 59833, 59853, 59873, 59893, 59913, 59933, 59953, 59973, 59993, 60013, 60033, 60053,
+            60073, 60093, 60113, 60133, 60153, 60173, 60193, 60213, 60233, 60253, 60273, 60293, 60313, 60333, 60353,
+            60373, 60393, 60413, 60433, 60453, 60473, 60493, 60513, 60981, 61001, 61100, 61393, 61579, 61599, 61619,
+            61639, 61659, 61679, 61699, 61719, 61739, 61759, 61779, 61799, 61819, 61839, 61896, 62376, 62828, 62848,
+            62868, 62888, 62908, 62928, 62948, 62968, 62988, 63008, 63028, 63048, 63068, 63088, 63108, 63128, 63148,
+            63168, 63188, 63208, 63228, 63248, 63268, 63288, 63308, 63328, 63348, 63368, 63388, 63408, 63428, 63448,
+            63468, 63488, 63508
+          ]
+        }
+      ]
+    }
+  }
+}

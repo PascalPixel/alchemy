@@ -46485,9 +46485,11 @@
         },
         {
           "kind": "le-u16-array",
-          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.JSON",
-          "pointer": "/tables/1f885e2b5d02488128802eb430cb6ad4e7fb188200fd13b22d2ccc3073ae5948",
-          "size": 2048
+          "format": "binary",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "size": 2048,
+          "source_offset": 624,
+          "source_length": 2048
         },
         {
           "kind": "gba-8bpp-tiles",
@@ -46659,6 +46661,2725 @@
       "size": "0x3842",
       "kind": "components",
       "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/UI.JSON"
+    },
+    {
+      "address": "0x083cd090",
+      "size": "0x488",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 143650,
+      "source_length": 1160
+    },
+    {
+      "address": "0x083cd518",
+      "size": "0x5ec",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 144810,
+      "source_length": 1516
+    },
+    {
+      "address": "0x083d6010",
+      "size": "0x1b4",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "plan_section": "/recipes/35c61869d4b37260686f7f976b3c229f9523eee0cdf46b0e5bad57f4e42ff978",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x300",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 183921,
+          "source_length": 768
+        }
+      ]
+    },
+    {
+      "address": "0x083d82e4",
+      "size": "0x277",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "plan_section": "/recipes/abd53ec1dde8e78f538c3a696ce6e18ddb6db181165eeb36ae28c29d0e94355c",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x480",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 184689,
+          "source_length": 1152
+        }
+      ]
+    },
+    {
+      "address": "0x083d85e0",
+      "size": "0x444",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 185841,
+      "source_length": 1092
+    },
+    {
+      "address": "0x083dc1f8",
+      "size": "0x220",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 221391,
+      "source_length": 544
+    },
+    {
+      "address": "0x083dc418",
+      "size": "0x43b",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "plan_section": "/recipes/96846e575edf8f3606e7a43fe4f77a3fe7a2095eb9c795b1cfafe9133acf55b0",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x8b0",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 221935,
+          "source_length": 2224
+        }
+      ]
+    },
+    {
+      "address": "0x083dc854",
+      "size": "0x114",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 224159,
+      "source_length": 276
+    },
+    {
+      "address": "0x083dc968",
+      "size": "0x19c",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "plan_section": "/recipes/3706299bf407adde1e7efd83e161d48dd2844a37ec9e9d675a75e48dbca965c7",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x35c",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 224435,
+          "source_length": 860
+        }
+      ]
+    },
+    {
+      "address": "0x083dd0e4",
+      "size": "0x49d",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "plan_section": "/recipes/78fbc2286e0de876275bc7cca40661488558b9cb8e5b4a4313ae76e87ef9f088",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0xa00",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 227877,
+          "source_length": 2560
+        }
+      ]
+    },
+    {
+      "address": "0x083e2ae4",
+      "size": "0x29c",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 264567,
+      "source_length": 668
+    },
+    {
+      "address": "0x083e2d80",
+      "size": "0x1bb",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "plan_section": "/recipes/62d1e4e0453b1f2b86021516a45cb17fc18016c00d879741c0778170aa590646",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x302",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 265235,
+          "source_length": 770
+        }
+      ]
+    },
+    {
+      "address": "0x083e2f3c",
+      "size": "0x940",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "plan_section": "/recipes/80623063b0fdccd131ae180b4c94ae14dc6a52a06477eedd702515f979898506",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0xc08",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 266005,
+          "source_length": 3080
+        }
+      ]
+    },
+    {
+      "address": "0x083e387c",
+      "size": "0x417",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "plan_section": "/recipes/4530bce77bf35415f69c922638dfaea9e21732b75c379d29a1f74758f1aae40a",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x604",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 269085,
+          "source_length": 1540
+        }
+      ]
+    },
+    {
+      "address": "0x083f5f4c",
+      "size": "0x7b0",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 366241,
+      "source_length": 1968
+    },
+    {
+      "address": "0x083f66fc",
+      "size": "0x518",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 368209,
+      "source_length": 1304
+    },
+    {
+      "address": "0x08403324",
+      "size": "0x61",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "plan_section": "/recipes/988957725fae04e3119a12176c8fb79ae414b94ac9fe01c04db426e9cf9842c6",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x101",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 439939,
+          "source_length": 257
+        }
+      ]
+    },
+    {
+      "address": "0x08073864",
+      "size": "0x101",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "plan_section": "/recipes/3e24acf531139934ad67292778eb7d47ef91e96b3168ff8f8e9e06f1b317cdd9",
+      "components": [
+        {
+          "kind": "le-u16-array",
+          "format": "binary",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "size": 624,
+          "source_offset": 0,
+          "source_length": 624
+        }
+      ]
+    },
+    {
+      "address": "0x083f5210",
+      "size": "0x196",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "plan_section": "/recipes/0c528f001b87acc3a71bdf42f4edc80a62fecdc587af97c2c531696887a33759",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x2b8",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 365235,
+          "source_length": 696
+        }
+      ]
+    },
+    {
+      "address": "0x08411474",
+      "size": "0xf828",
+      "kind": "components",
+      "components": [
+        {
+          "kind": "typed-table",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/TABLES.JSON",
+          "pointer": "/tables/0x08411474",
+          "size": 2560
+        },
+        {
+          "kind": "golden-sun-general-lz",
+          "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+          "plan_section": "/recipes/ef11bb54163092afca06cf3c06669eb2fe96b775bc02a55c69cee572e3c5c31a",
+          "size": 60968,
+          "components": [
+            {
+              "kind": "u8-array",
+              "format": "binary",
+              "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+              "frame_size": 1024,
+              "size": 1024,
+              "source_offset": 478140,
+              "source_length": 655360
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "address": "0x08420c9c",
+      "size": "0x39ec",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x4488",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 1133500,
+          "source_length": 17544
+        }
+      ],
+      "plan_section": "/recipes/2d9aafc89c00dd90ad50941db5b89ffcf79ce63e43c2ad833bc78fd5d2d024c4"
+    },
+    {
+      "address": "0x08424688",
+      "size": "0x152",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x3a2",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 1151044,
+          "source_length": 930
+        }
+      ],
+      "plan_section": "/recipes/3aa52551f226d5640839212c7ecb159b42a39a524fe6c2abbfe6e09ed6a523e3"
+    },
+    {
+      "address": "0x084247dc",
+      "size": "0x48e",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x1000",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 1151974,
+          "source_length": 4096
+        }
+      ],
+      "plan_section": "/recipes/59ea6c67faeeca603064670bcb7cadcfc772a815644f834504ad76e54067d36d"
+    },
+    {
+      "address": "0x084303b4",
+      "size": "0x189a",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x7080",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 1156070,
+          "source_length": 28800
+        }
+      ],
+      "plan_section": "/recipes/e6f800cab323a5ea0ce959278a8a4b7b143e8d816167588518027614f34051fe"
+    },
+    {
+      "address": "0x08431c50",
+      "size": "0x15c6",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x7080",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 1184870,
+          "source_length": 28800
+        }
+      ],
+      "plan_section": "/recipes/05cf6cd512484d991cb8661bf109850922746979caabf2a26983766f3b2817e8"
+    },
+    {
+      "address": "0x08433218",
+      "size": "0x1a8e",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x7080",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 1213670,
+          "source_length": 28800
+        }
+      ],
+      "plan_section": "/recipes/55ad552e25b13e9657de47fba0c6fa44888528298cff9742bd95d06bfb1eb4dc"
+    },
+    {
+      "address": "0x083357f4",
+      "size": "0x1910",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x9692",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 2672,
+          "source_length": 38546
+        }
+      ],
+      "plan_section": "/recipes/ead5fa45988191b734525da26ab4c65bde4a5b555556f75264adb938ac5f1504"
+    },
+    {
+      "address": "0x08337104",
+      "size": "0x3b04",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x964d",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 41218,
+          "source_length": 38477
+        }
+      ],
+      "plan_section": "/recipes/1d60ac3d475d556b851bbda5dfa76db3854aed3e3120f3569a5b464cddd5bd6f"
+    },
+    {
+      "address": "0x083c3cf8",
+      "size": "0x1334",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x6a98",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 79695,
+          "source_length": 27288
+        }
+      ],
+      "plan_section": "/recipes/33303fe7ad1c067676c2ba0540b8a1a8930466deaa2f846f44f6b1d1e64b1dfe"
+    },
+    {
+      "address": "0x083c502c",
+      "size": "0x64c",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x1003",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 106983,
+          "source_length": 4099
+        }
+      ],
+      "plan_section": "/recipes/c3589a1344e5e2d1f1545a9aef03afdc8c504796c818a4585232c40806f444f6"
+    },
+    {
+      "address": "0x083c8498",
+      "size": "0x3024",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x7f38",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 111082,
+          "source_length": 32568
+        }
+      ],
+      "plan_section": "/recipes/b6d70a0c83b69fcdfb468fd9db96cc58e41223d4551a07cfce6a14517a818f49"
+    },
+    {
+      "address": "0x083cfc00",
+      "size": "0x3d0",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x5ed",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 146326,
+          "source_length": 1517
+        }
+      ],
+      "plan_section": "/recipes/9edbc53424802c2813c1106abe2d2f2d42118f489f5e9ee6f6cdc56ed84816ef"
+    },
+    {
+      "address": "0x083d0870",
+      "size": "0x4a4",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x7d2",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 147843,
+          "source_length": 2002
+        }
+      ],
+      "plan_section": "/recipes/3853e82bfb3da8075e9fcb31849d435b6cc03964a45c5bd78f726c26e155b8cd"
+    },
+    {
+      "address": "0x083d0d14",
+      "size": "0x534",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x86a",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 149845,
+          "source_length": 2154
+        }
+      ],
+      "plan_section": "/recipes/1950573f710434d8661cf70614468337b3983b5b2e2ca954fb64acd8d1bfde22"
+    },
+    {
+      "address": "0x083d1248",
+      "size": "0xc84",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x2038",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 151999,
+          "source_length": 8248
+        }
+      ],
+      "plan_section": "/recipes/820617a87c527a59ca45b1b89b31c392ea3e75f9a04df3a732b22caed136049a"
+    },
+    {
+      "address": "0x083d2324",
+      "size": "0x106c",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x1ddc",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 160247,
+          "source_length": 7644
+        }
+      ],
+      "plan_section": "/recipes/aa5b10633165b9760c0443b2ac7c1e2387dcf3fe89d6ca5561ab4757075cc92d"
+    },
+    {
+      "address": "0x083d4358",
+      "size": "0x25c",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x441",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 167891,
+          "source_length": 1089
+        }
+      ],
+      "plan_section": "/recipes/8d7c3f39c49931b83d530048d4a18ee2441c5eedc6b40e9b3e8a0f4fccf71489"
+    },
+    {
+      "address": "0x083d45b4",
+      "size": "0x175c",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x3601",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 168980,
+          "source_length": 13825
+        }
+      ],
+      "plan_section": "/recipes/5ed0ee4e55b0580e3c53dccd407f1f35ca206f977f32a7ba8b0a7f0001ccd7f6"
+    },
+    {
+      "address": "0x083d5d10",
+      "size": "0x300",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x45c",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 182805,
+          "source_length": 1116
+        }
+      ],
+      "plan_section": "/recipes/34dbf266197240075ffaaa44dd15bc6ec26dc5e82ed6beffad51008c2c06f790"
+    },
+    {
+      "address": "0x083d8a24",
+      "size": "0x1bd4",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x3c7f",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 186933,
+          "source_length": 15487
+        }
+      ],
+      "plan_section": "/recipes/6299b3b0a09bb79bf29cfcdf14096ab054522ca6e37e1f7645b62e341e918174"
+    },
+    {
+      "address": "0x083da5f8",
+      "size": "0x1c00",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x4a1b",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 202420,
+          "source_length": 18971
+        }
+      ],
+      "plan_section": "/recipes/f8ed938996faef265093e998c29a8fc01939f228a95744890b50dde22efaa94f"
+    },
+    {
+      "address": "0x083dcb04",
+      "size": "0x5e0",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0xa16",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 225295,
+          "source_length": 2582
+        }
+      ],
+      "plan_section": "/recipes/f6e202ff8dcf9d1290ba44d2060ed552b320bd73931e39aa91b5f29167d85cb2"
+    },
+    {
+      "address": "0x083de298",
+      "size": "0x540",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x10b3",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 230437,
+          "source_length": 4275
+        }
+      ],
+      "plan_section": "/recipes/808d75968ae56441b564330112a3d4caca776bde47e6eacbf9af72c032c06801"
+    },
+    {
+      "address": "0x083df018",
+      "size": "0x390",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x6ca",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 234712,
+          "source_length": 1738
+        }
+      ],
+      "plan_section": "/recipes/44d515402309f0385148c43ed6fcf1fab5eba28e815da071f51d080a739a8eb8"
+    },
+    {
+      "address": "0x083df3a8",
+      "size": "0x1258",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x42d2",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 236450,
+          "source_length": 17106
+        }
+      ],
+      "plan_section": "/recipes/868834460de133c34f99df20129b145f902cd86a3436bed31f593186bd0711a6"
+    },
+    {
+      "address": "0x083e0600",
+      "size": "0xaf0",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x102f",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 253556,
+          "source_length": 4143
+        }
+      ],
+      "plan_section": "/recipes/9191d6801f470b804404bbec1da61a077dbc4cd215d2005a75052d24c40967a3"
+    },
+    {
+      "address": "0x083e10f0",
+      "size": "0xdd8",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x1ad4",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 257699,
+          "source_length": 6868
+        }
+      ],
+      "plan_section": "/recipes/70716b9fd9ece74e51f9e0c533c85e7ed11f5d648312e881af0172532cd120fa"
+    },
+    {
+      "address": "0x083e3d18",
+      "size": "0x4c8",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x9f4",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 270625,
+          "source_length": 2548
+        }
+      ],
+      "plan_section": "/recipes/083ae12f3d8b9a6ccc04328590a5dee7866033bce6267aca090a10e18dd34d3b"
+    },
+    {
+      "address": "0x083e41e0",
+      "size": "0x3dc",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x66e",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 273173,
+          "source_length": 1646
+        }
+      ],
+      "plan_section": "/recipes/6b6a43aa5b3cdbaf684a3527c127237de98a0284e6649d5f6cec40ae17027342"
+    },
+    {
+      "address": "0x083e4968",
+      "size": "0xad4",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x1653",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 274819,
+          "source_length": 5715
+        }
+      ],
+      "plan_section": "/recipes/9c1dddd2feb5acb9c1f2a69352bbe4f276a2225afe6123dc2c6da503092db900"
+    },
+    {
+      "address": "0x083e54c0",
+      "size": "0x144c",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x3006",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 280534,
+          "source_length": 12294
+        }
+      ],
+      "plan_section": "/recipes/ff54afa1008359fdbf799f29c71cde305af394b24a353e699eec0027e13c9872"
+    },
+    {
+      "address": "0x083e690c",
+      "size": "0xd9c",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x2b6c",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 292828,
+          "source_length": 11116
+        }
+      ],
+      "plan_section": "/recipes/79538c44b78437ad16e84d5be26aca51f769914384d294c1224d1c55038b75cb"
+    },
+    {
+      "address": "0x083e76a8",
+      "size": "0x21c",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x3f7",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 303944,
+          "source_length": 1015
+        }
+      ],
+      "plan_section": "/recipes/42749a387eed8699ea3d46cbc36c7a73112f4299048ff43a96876f7431afb6d6"
+    },
+    {
+      "address": "0x083e78c4",
+      "size": "0x2fc",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x53d",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 304959,
+          "source_length": 1341
+        }
+      ],
+      "plan_section": "/recipes/cd29c7f39aa1be5539d5a649163378b78b5ae30c803d0d8bf69f95ca237ac890"
+    },
+    {
+      "address": "0x083e7bc0",
+      "size": "0x3a0",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x6e0",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 306300,
+          "source_length": 1760
+        }
+      ],
+      "plan_section": "/recipes/a1fef7ed7436a21d981ac721b4bcce86ee3e1a71f60ecf3bb42168747b5fa7d6"
+    },
+    {
+      "address": "0x083e7f60",
+      "size": "0x16b0",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x27c8",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 308060,
+          "source_length": 10184
+        }
+      ],
+      "plan_section": "/recipes/2155de01ad704c12f60f82e5ea9cc570d13e82328936872287d244c18d6addfd"
+    },
+    {
+      "address": "0x083e9610",
+      "size": "0x760",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x1a2f",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 318244,
+          "source_length": 6703
+        }
+      ],
+      "plan_section": "/recipes/d4ace8d59b2d6a3a28bff66dec2686291909117e30e0e82bd996de1f51b47359"
+    },
+    {
+      "address": "0x083eab3c",
+      "size": "0xc74",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x144a",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 324947,
+          "source_length": 5194
+        }
+      ],
+      "plan_section": "/recipes/05470c93de73fc21bd31aba9e058ee15d2be3295058f34f8f814b419bbcbbef0"
+    },
+    {
+      "address": "0x083eb7b0",
+      "size": "0x84",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0xcc",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 330141,
+          "source_length": 204
+        }
+      ],
+      "plan_section": "/recipes/2102a05e14abe8116079dbd68a28fc7049a758c7d526a7e580434caf06f08b40"
+    },
+    {
+      "address": "0x083eb8b8",
+      "size": "0x3e8",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x766",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 330345,
+          "source_length": 1894
+        }
+      ],
+      "plan_section": "/recipes/5cb04ddde9e3085fe7f5002c08a262c8b01ec0b758279b53bf5ab2d53277956e"
+    },
+    {
+      "address": "0x083ebca0",
+      "size": "0x558",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0xa34",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 332239,
+          "source_length": 2612
+        }
+      ],
+      "plan_section": "/recipes/c8defa3c0f34e2fca1c328e2504e3bb783c74662efb82500594eefa685ba9035"
+    },
+    {
+      "address": "0x083ec1f8",
+      "size": "0xc18",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x1296",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 334851,
+          "source_length": 4758
+        }
+      ],
+      "plan_section": "/recipes/48c5854d779b131b21c9a2ecadab3046f1b721de08328314c4f81c7ed3e0cf9b"
+    },
+    {
+      "address": "0x083ece10",
+      "size": "0xcd4",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x1230",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 339609,
+          "source_length": 4656
+        }
+      ],
+      "plan_section": "/recipes/25cb128548ea87b746aa53b1d34395e2bf059723dabf87703bde6b6b5cb1bcf9"
+    },
+    {
+      "address": "0x083edae4",
+      "size": "0x8a0",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0xc73",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 344265,
+          "source_length": 3187
+        }
+      ],
+      "plan_section": "/recipes/e904749023ab70338fae645da9033ba7a62a840e0e321d24d8944f9a0c4f6920"
+    },
+    {
+      "address": "0x083ee9ec",
+      "size": "0x3a4",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x7b3",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 347452,
+          "source_length": 1971
+        }
+      ],
+      "plan_section": "/recipes/50083650b3df9154eee448ac2f8d92c437b5850b95743de861481af5bfd509de"
+    },
+    {
+      "address": "0x083eefec",
+      "size": "0x3b8",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x651",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 349423,
+          "source_length": 1617
+        }
+      ],
+      "plan_section": "/recipes/51e4e41d320936bf7e960e47bfaee538d97fd86c5adaed62f9394d8fe7453e8d"
+    },
+    {
+      "address": "0x083ef3a4",
+      "size": "0x26c",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x43c",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 351040,
+          "source_length": 1084
+        }
+      ],
+      "plan_section": "/recipes/2a309719e9049678c74888830755d1f7b9840b575a8e68847c611124303f6374"
+    },
+    {
+      "address": "0x083ef610",
+      "size": "0x440",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x705",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 352124,
+          "source_length": 1797
+        }
+      ],
+      "plan_section": "/recipes/75f676ce3f71a45f814ad7847ad5d588cd72560490e17f8a07c1c60306103c3b"
+    },
+    {
+      "address": "0x083efa50",
+      "size": "0x2b4",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x436",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 353921,
+          "source_length": 1078
+        }
+      ],
+      "plan_section": "/recipes/5774e2ec3eb24d1aae2095a441a0363f15c98097505737f3a6c3e7602eb3828c"
+    },
+    {
+      "address": "0x083efd04",
+      "size": "0xb88",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x1830",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 354999,
+          "source_length": 6192
+        }
+      ],
+      "plan_section": "/recipes/d1c48c47a91f84a7d036f70aa4332f576331c65efe8dd9d2b92660f92f2e5c60"
+    },
+    {
+      "address": "0x083f1e50",
+      "size": "0xa6c",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0xfcc",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 361191,
+          "source_length": 4044
+        }
+      ],
+      "plan_section": "/recipes/1e4fa4abd85ed92c66ba333fff1d08ab4279a2dd77568a9cbd9c0efe1f2f9350"
+    },
+    {
+      "address": "0x083f5cb8",
+      "size": "0x84",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x136",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 365931,
+          "source_length": 310
+        }
+      ],
+      "plan_section": "/recipes/cc7f0328396e37b8917b2e17f12101a0fb8977c37143ae7c6b4c95b20fdb6b2a"
+    },
+    {
+      "address": "0x083f6c14",
+      "size": "0x624",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x961",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 369513,
+          "source_length": 2401
+        }
+      ],
+      "plan_section": "/recipes/805a20a1b3dedaeec488e52f66df1b24e34c6550feb37b165abf1ecbfa4139cb"
+    },
+    {
+      "address": "0x083f7238",
+      "size": "0x868",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x1006",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 371914,
+          "source_length": 4102
+        }
+      ],
+      "plan_section": "/recipes/182530aa0943af12e1305a866d46ea1a63d6203127c8c711db0dfcf471ee64c1"
+    },
+    {
+      "address": "0x083f7aa0",
+      "size": "0x424",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x6dc",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 376016,
+          "source_length": 1756
+        }
+      ],
+      "plan_section": "/recipes/0dc5ab6ac211840d56e289da06d68ccc9e206c1f03a5a89d081ee9da7863f207"
+    },
+    {
+      "address": "0x083f9af8",
+      "size": "0x198c",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x6c18",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 377772,
+          "source_length": 27672
+        }
+      ],
+      "plan_section": "/recipes/f6aa8ced6515899872cd2e8d9de451e20a3f37f441b3ecb99fcefe58e176d953"
+    },
+    {
+      "address": "0x083fb870",
+      "size": "0x12e8",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x2131",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 405444,
+          "source_length": 8497
+        }
+      ],
+      "plan_section": "/recipes/42b9130a11970de63f5ceb59a1b75e701db78e20b7e4a06618b632485bf7f850"
+    },
+    {
+      "address": "0x083fd7e4",
+      "size": "0x4d0",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0xbf6",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 413941,
+          "source_length": 3062
+        }
+      ],
+      "plan_section": "/recipes/840a84a54598b55ee7dc6daf6d52bb1b955b366a683d9906311d4737810dc9a2"
+    },
+    {
+      "address": "0x083fdcb4",
+      "size": "0x694",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x118c",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 417003,
+          "source_length": 4492
+        }
+      ],
+      "plan_section": "/recipes/ad30698867c8d9f9d9330576c843821c5f2e8af285e24dd99e9b456a5804f163"
+    },
+    {
+      "address": "0x083fed7c",
+      "size": "0xbfc",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x17f4",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 421495,
+          "source_length": 6132
+        }
+      ],
+      "plan_section": "/recipes/8758139e814795cb8ab4b1749926aa77de4bc28eada4ccada4df878336a31f11"
+    },
+    {
+      "address": "0x0840175c",
+      "size": "0x640",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0xb0e",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 427627,
+          "source_length": 2830
+        }
+      ],
+      "plan_section": "/recipes/a9c5c345d2be5e08a1838a99fe6f7fe12bd81a8f9b4c4d6a91be9975c6b0f24d"
+    },
+    {
+      "address": "0x08401d9c",
+      "size": "0x1588",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x250a",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 430457,
+          "source_length": 9482
+        }
+      ],
+      "plan_section": "/recipes/3c2d9798a8a869a5be7642ea713c9943a14900edbb80008f13a673396312ccd9"
+    },
+    {
+      "address": "0x084036f4",
+      "size": "0x5a0",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0xbda",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 440196,
+          "source_length": 3034
+        }
+      ],
+      "plan_section": "/recipes/659a2bfbeeca7f78cef20a6571107015d52146388687adffd0e00966af27dc93"
+    },
+    {
+      "address": "0x08403c94",
+      "size": "0x334",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x551",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 443230,
+          "source_length": 1361
+        }
+      ],
+      "plan_section": "/recipes/3e8fe6c58f95e36cd39d2d8f206c12107df26923d2fd3b26aac16d5df565eb0d"
+    },
+    {
+      "address": "0x08406988",
+      "size": "0xda0",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x1f6d",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 444591,
+          "source_length": 8045
+        }
+      ],
+      "plan_section": "/recipes/efe06658afb507d93fc9bee5abc94063e01858003ae1781f51b87e9ece655ea8"
+    },
+    {
+      "address": "0x08407728",
+      "size": "0x1200",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x1bd8",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 452636,
+          "source_length": 7128
+        }
+      ],
+      "plan_section": "/recipes/1d2ae6ee2a1e10b5b62356e2175c117a4377987bb47c5b76d6f5d79a24622a99"
+    },
+    {
+      "address": "0x08408928",
+      "size": "0x7a4",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0xc28",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 459764,
+          "source_length": 3112
+        }
+      ],
+      "plan_section": "/recipes/931d74a432f3fdb7c43c16ad975e16db0e11cde2b651477e62fdb607b6c61b66"
+    },
+    {
+      "address": "0x0840bfcc",
+      "size": "0x6b8",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0xc11",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 462876,
+          "source_length": 3089
+        }
+      ],
+      "plan_section": "/recipes/d16ad7159326ef7ecc6635b8c0c54698d9f98460d70508e4253bc6797c62b3d5"
+    },
+    {
+      "address": "0x0840c684",
+      "size": "0x914",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0xd5c",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 465965,
+          "source_length": 3420
+        }
+      ],
+      "plan_section": "/recipes/aefd43501f025064dd4f36c1aed6a1e464a0d94fa4d43b629c0c8b0bf0d05286"
+    },
+    {
+      "address": "0x0840eacc",
+      "size": "0x1050",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0x1742",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 469385,
+          "source_length": 5954
+        }
+      ],
+      "plan_section": "/recipes/14d489513d025afaf806fa9d28cfa1f175f51c19c0bab935e4e3c738e0422023"
+    },
+    {
+      "address": "0x0840fb1c",
+      "size": "0x6b4",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "size": "0xaf1",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+          "source_offset": 475339,
+          "source_length": 2801
+        }
+      ],
+      "plan_section": "/recipes/127a0cf3413c9e4602de8b81984b9b1a1271fc86a2692333aa3e9b235d4f2cbb"
+    },
+    {
+      "address": "0x08000764",
+      "size": "0xc",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 0,
+      "source_length": 12
+    },
+    {
+      "address": "0x08001b70",
+      "size": "0x77c",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 12,
+      "source_length": 1916
+    },
+    {
+      "address": "0x0800380a",
+      "size": "0x6",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 1928,
+      "source_length": 6
+    },
+    {
+      "address": "0x08007a20",
+      "size": "0x84",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 1934,
+      "source_length": 132
+    },
+    {
+      "address": "0x08007b14",
+      "size": "0x28",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 2066,
+      "source_length": 40
+    },
+    {
+      "address": "0x08007bc4",
+      "size": "0x8",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 2106,
+      "source_length": 8
+    },
+    {
+      "address": "0x08007c3c",
+      "size": "0x28",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 2114,
+      "source_length": 40
+    },
+    {
+      "address": "0x0800c0c6",
+      "size": "0x6",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 2154,
+      "source_length": 6
+    },
+    {
+      "address": "0x0800c628",
+      "size": "0x4",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 2160,
+      "source_length": 4
+    },
+    {
+      "address": "0x0800c87c",
+      "size": "0x4",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 2164,
+      "source_length": 4
+    },
+    {
+      "address": "0x08012fa0",
+      "size": "0x2b4",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 2168,
+      "source_length": 692
+    },
+    {
+      "address": "0x08013274",
+      "size": "0x58",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 2860,
+      "source_length": 88
+    },
+    {
+      "address": "0x0801356c",
+      "size": "0x18",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 2948,
+      "source_length": 24
+    },
+    {
+      "address": "0x08013724",
+      "size": "0x60",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 2972,
+      "source_length": 96
+    },
+    {
+      "address": "0x0801403c",
+      "size": "0x10",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 3068,
+      "source_length": 16
+    },
+    {
+      "address": "0x0801c466",
+      "size": "0x6",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 3084,
+      "source_length": 6
+    },
+    {
+      "address": "0x080209cc",
+      "size": "0x4",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 3090,
+      "source_length": 4
+    },
+    {
+      "address": "0x08073808",
+      "size": "0xa",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 3094,
+      "source_length": 10
+    },
+    {
+      "address": "0x08091778",
+      "size": "0x4",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 3104,
+      "source_length": 4
+    },
+    {
+      "address": "0x080917c2",
+      "size": "0xe",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 3108,
+      "source_length": 14
+    },
+    {
+      "address": "0x08091c3e",
+      "size": "0x6",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 3122,
+      "source_length": 6
+    },
+    {
+      "address": "0x080a5784",
+      "size": "0x4",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 3128,
+      "source_length": 4
+    },
+    {
+      "address": "0x080a63e0",
+      "size": "0x4",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 3132,
+      "source_length": 4
+    },
+    {
+      "address": "0x080a939e",
+      "size": "0x6",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 3136,
+      "source_length": 6
+    },
+    {
+      "address": "0x080c5c30",
+      "size": "0x8",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 3142,
+      "source_length": 8
+    },
+    {
+      "address": "0x080f2b6c",
+      "size": "0x4",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 3150,
+      "source_length": 4
+    },
+    {
+      "address": "0x080f38bc",
+      "size": "0xef",
+      "kind": "golden-sun-general-lz",
+      "plan": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+      "plan_section": "/recipes/9e98f0edf99ef42f6c232e1e8c9f2075186bf3c51a3fba03b8288aa3bfcac5c3",
+      "components": [
+        {
+          "kind": "u8-array",
+          "format": "binary",
+          "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+          "size": 768,
+          "source_offset": 3154,
+          "source_length": 768
+        }
+      ]
+    },
+    {
+      "address": "0x080f53ce",
+      "size": "0x4c",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 3922,
+      "source_length": 76
+    },
+    {
+      "address": "0x080fa674",
+      "size": "0x4",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 3998,
+      "source_length": 4
+    },
+    {
+      "address": "0x0811dac8",
+      "size": "0x70",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4002,
+      "source_length": 112
+    },
+    {
+      "address": "0x083249e7",
+      "size": "0x1",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4114,
+      "source_length": 1
+    },
+    {
+      "address": "0x083357f2",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4115,
+      "source_length": 2
+    },
+    {
+      "address": "0x0833f2fe",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4117,
+      "source_length": 2
+    },
+    {
+      "address": "0x0834fa6e",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4119,
+      "source_length": 2
+    },
+    {
+      "address": "0x0835305e",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4121,
+      "source_length": 2
+    },
+    {
+      "address": "0x0835eb02",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4123,
+      "source_length": 2
+    },
+    {
+      "address": "0x0836f1b2",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4125,
+      "source_length": 2
+    },
+    {
+      "address": "0x08376c52",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4127,
+      "source_length": 2
+    },
+    {
+      "address": "0x0837a492",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4129,
+      "source_length": 2
+    },
+    {
+      "address": "0x0837eeca",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4131,
+      "source_length": 2
+    },
+    {
+      "address": "0x083838c6",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4133,
+      "source_length": 2
+    },
+    {
+      "address": "0x08387b42",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4135,
+      "source_length": 2
+    },
+    {
+      "address": "0x0838ecee",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4137,
+      "source_length": 2
+    },
+    {
+      "address": "0x08396baa",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4139,
+      "source_length": 2
+    },
+    {
+      "address": "0x0839b63a",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4141,
+      "source_length": 2
+    },
+    {
+      "address": "0x0839f8ee",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4143,
+      "source_length": 2
+    },
+    {
+      "address": "0x083a326e",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4145,
+      "source_length": 2
+    },
+    {
+      "address": "0x083afaaa",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4147,
+      "source_length": 2
+    },
+    {
+      "address": "0x083be3f2",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4149,
+      "source_length": 2
+    },
+    {
+      "address": "0x083c3572",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4151,
+      "source_length": 2
+    },
+    {
+      "address": "0x083c3cf5",
+      "size": "0x3",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4153,
+      "source_length": 3
+    },
+    {
+      "address": "0x083c8495",
+      "size": "0x3",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4156,
+      "source_length": 3
+    },
+    {
+      "address": "0x083cbd01",
+      "size": "0x3",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4159,
+      "source_length": 3
+    },
+    {
+      "address": "0x083ce1c6",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4162,
+      "source_length": 2
+    },
+    {
+      "address": "0x083ce4ad",
+      "size": "0x3",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4164,
+      "source_length": 3
+    },
+    {
+      "address": "0x083cf813",
+      "size": "0x1",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4167,
+      "source_length": 1
+    },
+    {
+      "address": "0x083cfbfd",
+      "size": "0x3",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4168,
+      "source_length": 3
+    },
+    {
+      "address": "0x083d086f",
+      "size": "0x1",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4171,
+      "source_length": 1
+    },
+    {
+      "address": "0x083d4357",
+      "size": "0x1",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4172,
+      "source_length": 1
+    },
+    {
+      "address": "0x083d6559",
+      "size": "0x3",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4173,
+      "source_length": 3
+    },
+    {
+      "address": "0x083d82e2",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4176,
+      "source_length": 2
+    },
+    {
+      "address": "0x083d855b",
+      "size": "0x1",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4178,
+      "source_length": 1
+    },
+    {
+      "address": "0x083dc853",
+      "size": "0x1",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4179,
+      "source_length": 1
+    },
+    {
+      "address": "0x083dd581",
+      "size": "0x3",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4180,
+      "source_length": 3
+    },
+    {
+      "address": "0x083de296",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4183,
+      "source_length": 2
+    },
+    {
+      "address": "0x083df016",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4185,
+      "source_length": 2
+    },
+    {
+      "address": "0x083e26f2",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4187,
+      "source_length": 2
+    },
+    {
+      "address": "0x083e2f3b",
+      "size": "0x1",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4189,
+      "source_length": 1
+    },
+    {
+      "address": "0x083e3c93",
+      "size": "0x1",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4190,
+      "source_length": 1
+    },
+    {
+      "address": "0x083e4967",
+      "size": "0x1",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4191,
+      "source_length": 1
+    },
+    {
+      "address": "0x083eab3b",
+      "size": "0x1",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4192,
+      "source_length": 1
+    },
+    {
+      "address": "0x083ee75f",
+      "size": "0x1",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4193,
+      "source_length": 1
+    },
+    {
+      "address": "0x083ee9e9",
+      "size": "0x3",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4194,
+      "source_length": 3
+    },
+    {
+      "address": "0x083eefea",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4197,
+      "source_length": 2
+    },
+    {
+      "address": "0x083f1e4e",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4199,
+      "source_length": 2
+    },
+    {
+      "address": "0x083f3692",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4201,
+      "source_length": 2
+    },
+    {
+      "address": "0x083f3a15",
+      "size": "0x3",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4203,
+      "source_length": 3
+    },
+    {
+      "address": "0x083f46c5",
+      "size": "0x3",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4206,
+      "source_length": 3
+    },
+    {
+      "address": "0x083f520d",
+      "size": "0x3",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4209,
+      "source_length": 3
+    },
+    {
+      "address": "0x083f53a6",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4212,
+      "source_length": 2
+    },
+    {
+      "address": "0x083f5c33",
+      "size": "0x1",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4214,
+      "source_length": 1
+    },
+    {
+      "address": "0x083f815b",
+      "size": "0x1",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4215,
+      "source_length": 1
+    },
+    {
+      "address": "0x083f9af7",
+      "size": "0x1",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4216,
+      "source_length": 1
+    },
+    {
+      "address": "0x083fb86e",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4217,
+      "source_length": 2
+    },
+    {
+      "address": "0x083fd7e3",
+      "size": "0x1",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4219,
+      "source_length": 1
+    },
+    {
+      "address": "0x083fed7b",
+      "size": "0x1",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4220,
+      "source_length": 1
+    },
+    {
+      "address": "0x0840014d",
+      "size": "0x3",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4221,
+      "source_length": 3
+    },
+    {
+      "address": "0x08400c1e",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4224,
+      "source_length": 2
+    },
+    {
+      "address": "0x0840175b",
+      "size": "0x1",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4226,
+      "source_length": 1
+    },
+    {
+      "address": "0x08403385",
+      "size": "0x3",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4227,
+      "source_length": 3
+    },
+    {
+      "address": "0x084036f3",
+      "size": "0x1",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4230,
+      "source_length": 1
+    },
+    {
+      "address": "0x08404301",
+      "size": "0x3",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4231,
+      "source_length": 3
+    },
+    {
+      "address": "0x0840531a",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4234,
+      "source_length": 2
+    },
+    {
+      "address": "0x0840a45b",
+      "size": "0x1",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4236,
+      "source_length": 1
+    },
+    {
+      "address": "0x0840a88b",
+      "size": "0x1",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4237,
+      "source_length": 1
+    },
+    {
+      "address": "0x0840eaca",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4238,
+      "source_length": 2
+    },
+    {
+      "address": "0x08411275",
+      "size": "0x3",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4240,
+      "source_length": 3
+    },
+    {
+      "address": "0x084247da",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4243,
+      "source_length": 2
+    },
+    {
+      "address": "0x08424c6a",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4245,
+      "source_length": 2
+    },
+    {
+      "address": "0x08424e61",
+      "size": "0x3",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4247,
+      "source_length": 3
+    },
+    {
+      "address": "0x0842651e",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4250,
+      "source_length": 2
+    },
+    {
+      "address": "0x08427a3e",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4252,
+      "source_length": 2
+    },
+    {
+      "address": "0x0842860a",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4254,
+      "source_length": 2
+    },
+    {
+      "address": "0x0842917e",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4256,
+      "source_length": 2
+    },
+    {
+      "address": "0x0842c7b6",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4258,
+      "source_length": 2
+    },
+    {
+      "address": "0x0842dc66",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4260,
+      "source_length": 2
+    },
+    {
+      "address": "0x08431c4e",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4262,
+      "source_length": 2
+    },
+    {
+      "address": "0x08433216",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4264,
+      "source_length": 2
+    },
+    {
+      "address": "0x08434ca6",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4266,
+      "source_length": 2
+    },
+    {
+      "address": "0x0843f866",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4268,
+      "source_length": 2
+    },
+    {
+      "address": "0x08441a1a",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4270,
+      "source_length": 2
+    },
+    {
+      "address": "0x08445b82",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4272,
+      "source_length": 2
+    },
+    {
+      "address": "0x08448da6",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4274,
+      "source_length": 2
+    },
+    {
+      "address": "0x0844a4aa",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4276,
+      "source_length": 2
+    },
+    {
+      "address": "0x08451092",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4278,
+      "source_length": 2
+    },
+    {
+      "address": "0x08459a16",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4280,
+      "source_length": 2
+    },
+    {
+      "address": "0x084614f2",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4282,
+      "source_length": 2
+    },
+    {
+      "address": "0x08464586",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4284,
+      "source_length": 2
+    },
+    {
+      "address": "0x08467996",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4286,
+      "source_length": 2
+    },
+    {
+      "address": "0x0846a202",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4288,
+      "source_length": 2
+    },
+    {
+      "address": "0x0846bcf2",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4290,
+      "source_length": 2
+    },
+    {
+      "address": "0x0846cb0a",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4292,
+      "source_length": 2
+    },
+    {
+      "address": "0x0846d7f6",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4294,
+      "source_length": 2
+    },
+    {
+      "address": "0x08476cb2",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4296,
+      "source_length": 2
+    },
+    {
+      "address": "0x084779be",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4298,
+      "source_length": 2
+    },
+    {
+      "address": "0x08479ad2",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4300,
+      "source_length": 2
+    },
+    {
+      "address": "0x0847dd2e",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4302,
+      "source_length": 2
+    },
+    {
+      "address": "0x08483712",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4304,
+      "source_length": 2
+    },
+    {
+      "address": "0x0848c992",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4306,
+      "source_length": 2
+    },
+    {
+      "address": "0x0848d57e",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4308,
+      "source_length": 2
+    },
+    {
+      "address": "0x0849449e",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4310,
+      "source_length": 2
+    },
+    {
+      "address": "0x0849a702",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4312,
+      "source_length": 2
+    },
+    {
+      "address": "0x0849e7ca",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4314,
+      "source_length": 2
+    },
+    {
+      "address": "0x084a1e92",
+      "size": "0x2",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4316,
+      "source_length": 2
+    },
+    {
+      "address": "0x087fd4b9",
+      "size": "0x3",
+      "kind": "u8-array",
+      "format": "binary",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 4318,
+      "source_length": 3
     }
   ],
   "private_inputs": [
@@ -61653,6 +64374,681 @@
       "region_address": "0x0843c024",
       "encoded_sha256": "bfc838c2cda59374f499ea7fc5607122b042b23cd87a5f2d586e9cf424a4eb4f",
       "decoded_sha256": "20ee17f9475d73ef9f5e3799a021caf2787e0a0c4fc330c69ad3dc77b4f5aae1"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 0,
+      "region_address": "0x08073864",
+      "decoded_sha256": "2e4db28985caf952039c24270648acecb0fb1f4a9ced4975a743aa2dac2ae729"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 624,
+      "region_address": "0x08333fc8",
+      "decoded_sha256": "1f885e2b5d02488128802eb430cb6ad4e7fb188200fd13b22d2ccc3073ae5948"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 2672,
+      "region_address": "0x083357f4",
+      "decoded_sha256": "1ddc1539b29f5a77ccad85d87b98ab89042b0609fb797d6ba64366113e773fb9"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 41218,
+      "region_address": "0x08337104",
+      "decoded_sha256": "f1ed42aec055445a25139b3af5dbd753e80e906dc3a010ac0c51069721801e61"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 79695,
+      "region_address": "0x083c3cf8",
+      "decoded_sha256": "d87d3eec3d6bd53bc093ac5e93ae98aad5fe0b8dd46a72a67e3aec8b024f38ac"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 106983,
+      "region_address": "0x083c502c",
+      "decoded_sha256": "132bc056a9d9d660b6870063a553df466f40ed5fc4592547940a584fb0c8fdab"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 111082,
+      "region_address": "0x083c8498",
+      "decoded_sha256": "be234c3016c71cdf3312f3f9b26ec575490cb08b1c6dc86a675c9df660aa13ae"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 143650,
+      "region_address": "0x083cd090",
+      "decoded_sha256": "672b69b88a4ac99b94d3d3267d53099c00f81f13096999f01e38c39d9595a8a6"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 144810,
+      "region_address": "0x083cd518",
+      "decoded_sha256": "80ed5e74fd958b8edacf983769d6997ef32f6d9eb8a3110fd2fd92e7c7942b2c"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 146326,
+      "region_address": "0x083cfc00",
+      "decoded_sha256": "7457511ca0f16e01a95d10a7c2f8ee5431efe118e3d3b4346466e94f8a894d40"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 147843,
+      "region_address": "0x083d0870",
+      "decoded_sha256": "855ef78bf71f646cdfb23217c55bd25c878164bef8a996f83c8ffaa6e835bb92"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 149845,
+      "region_address": "0x083d0d14",
+      "decoded_sha256": "cacbf9e4c31cb8eade2e1bb06760f96054ca5ec4ad54cb2ff55204750e584775"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 151999,
+      "region_address": "0x083d1248",
+      "decoded_sha256": "ed6c07fc0595f1c5e52b15f1f7325f303762a2dca4e99d930f64f5c4fc494187"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 160247,
+      "region_address": "0x083d2324",
+      "decoded_sha256": "cf3cb6d9f2449f84e5336dbc49c07093299e47b523a6e9f81d6fb4b6532cd484"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 167891,
+      "region_address": "0x083d4358",
+      "decoded_sha256": "3d68f6b2f537e39c7dc4de5dfb2d2028df6e0490a75dc4be9b1a18c854cf065b"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 168980,
+      "region_address": "0x083d45b4",
+      "decoded_sha256": "df62283bb97800d344f558bfaf0b2075a0c7b2b191d78d3521336e7baecef6d2"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 182805,
+      "region_address": "0x083d5d10",
+      "decoded_sha256": "e24961e1d7d750f5d52865757606c30c27e59860c3608b40ae5257245b09c3e2"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 183921,
+      "region_address": "0x083d6010",
+      "decoded_sha256": "c26910905acc6a6ad0d7240ed2dea95b434b3d5e1a78e50ed1f5ee2fc6cc8cf9"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 184689,
+      "region_address": "0x083d82e4",
+      "decoded_sha256": "cbf1a44da344cc15997e6359bc31972b67e9cad15feb97c5d46ff378fb06da37"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 185841,
+      "region_address": "0x083d85e0",
+      "decoded_sha256": "880fb9338b9a04ca9af388a7f81e3e0d87926d7d493a80c45238bbe4989f6ea2"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 186933,
+      "region_address": "0x083d8a24",
+      "decoded_sha256": "7f39c2bea59f398b4958b995e7e62aabd15dc76b72428bf2c377c4401336412b"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 202420,
+      "region_address": "0x083da5f8",
+      "decoded_sha256": "e13fe4867c489a91334a292900418967ede53ceef20900382e10648c5c8181c3"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 221391,
+      "region_address": "0x083dc1f8",
+      "decoded_sha256": "33e54585f575812ebd31ac4d9ee8ed9a68666c6760d6ce551230a261a9498a3b"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 221935,
+      "region_address": "0x083dc418",
+      "decoded_sha256": "a04c4547b583b155ee0dbff814000b236689e63358ca8bfd7ec168ddea89a7b5"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 224159,
+      "region_address": "0x083dc854",
+      "decoded_sha256": "eee525d4bf881b11671c2543940aaff0aced937626ae26862bbdcb08eac4e0cb"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 224435,
+      "region_address": "0x083dc968",
+      "decoded_sha256": "1c970a3ed30248d412c58b54a0526ea15591f2b42d99ddccd0be0fc4e80d26a5"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 225295,
+      "region_address": "0x083dcb04",
+      "decoded_sha256": "fc1346538cf66fd600f2d449508da228021b0be8c3eab306c53d6b3727f05d1a"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 227877,
+      "region_address": "0x083dd0e4",
+      "decoded_sha256": "98d90505fb79978f03ec3f96755b1491f0dd8ba76312fda4e15dbbdd7a596d96"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 230437,
+      "region_address": "0x083de298",
+      "decoded_sha256": "e6f49462841baf8d47f3c7bbfe1dee39632b88855f1a1999a33d7b5d86c374dc"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 234712,
+      "region_address": "0x083df018",
+      "decoded_sha256": "d99f99ef53cf1a4fb83883037bcee5ab2224dc95101f272aafe79f0666aa87ff"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 236450,
+      "region_address": "0x083df3a8",
+      "decoded_sha256": "1900b1731764e15ea801b42bf18386fb5ce6dcfed3b0453f3bb393b8d2fb3186"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 253556,
+      "region_address": "0x083e0600",
+      "decoded_sha256": "d716536192843272b90f542bba16fe79ca12dc2de37f4a480d2b53b84ee116a2"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 257699,
+      "region_address": "0x083e10f0",
+      "decoded_sha256": "9c095395e8b7a570684a16500393dfe6d1b61bc0b842f2e59ec69a8e12a62f2f"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 264567,
+      "region_address": "0x083e2ae4",
+      "decoded_sha256": "0fb7c4b12bf95317d25a49ab5b40c54bbd7c63badcb66016654ae3a61f95a172"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 265235,
+      "region_address": "0x083e2d80",
+      "decoded_sha256": "60c1ebc0a80013b4007d494d78869a6bb359de146ff88d1c8fb44f6d79efafc8"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 266005,
+      "region_address": "0x083e2f3c",
+      "decoded_sha256": "c4f295f0907e5d92f7fa7a1b1ada9326683fa7eff3437704417bf726cd32de22"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 269085,
+      "region_address": "0x083e387c",
+      "decoded_sha256": "5a50cbadc99d7855d1ae1f7aa5ed1e41ff1391880c36d0ec75dc3c1b2f47e083"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 270625,
+      "region_address": "0x083e3d18",
+      "decoded_sha256": "dd3369bb72116ad80bb417c7904ae21de85841413dccca6ef07ed107501501d9"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 273173,
+      "region_address": "0x083e41e0",
+      "decoded_sha256": "d526123f48d177e019e7c0b194e78bba8c2d2716eb60d891a985d0e7d4f28fed"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 274819,
+      "region_address": "0x083e4968",
+      "decoded_sha256": "be972d306df00c9c0650dd8fdfddad2b46e9e46cd39e84fde160abb04452c3bd"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 280534,
+      "region_address": "0x083e54c0",
+      "decoded_sha256": "5ba8d014d21fbbe9f1e0fee789b8d25b5dc8c04656d54dd2a7887e924eaeb190"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 292828,
+      "region_address": "0x083e690c",
+      "decoded_sha256": "078c2c7591e85b222b1ec9623a03d70f84393030bc494196b073f044a81a58f7"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 303944,
+      "region_address": "0x083e76a8",
+      "decoded_sha256": "d5af0b39914e09e4416b0c7a6c20284629b94182c9940bb892279453af0801c3"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 304959,
+      "region_address": "0x083e78c4",
+      "decoded_sha256": "1f230be47744369679b2cbd7b52cc6bb8926a0c84a169b1ba5e0dea5074b1f84"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 306300,
+      "region_address": "0x083e7bc0",
+      "decoded_sha256": "30480ceac03a854c0af65c855852332a21e1b245c0c33ec424b5adad954fada0"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 308060,
+      "region_address": "0x083e7f60",
+      "decoded_sha256": "0bbee4c2bfdae27f6cb6cfff90fe8b4d3f279512ee8a80063610f3bf78982edf"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 318244,
+      "region_address": "0x083e9610",
+      "decoded_sha256": "772749af1f9188dcaf9167fe74e0c9aca4100d37ab0ae38c200fc3b0f9efc2fc"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 324947,
+      "region_address": "0x083eab3c",
+      "decoded_sha256": "50f31e88ffd91dd6918ba6732f2a4f901fafb804fb04d8f88720ecdc2722bf5a"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 330141,
+      "region_address": "0x083eb7b0",
+      "decoded_sha256": "b341cfe57933062344312033ed5381fa68b30d09b8805e39cc10ba456abbc994"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 330345,
+      "region_address": "0x083eb8b8",
+      "decoded_sha256": "7dd21ce21999ad0775a41d89bca3263d4442718c089f471924a1d125d1f4e3f6"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 332239,
+      "region_address": "0x083ebca0",
+      "decoded_sha256": "34950e000add3161c0ae5529425fd72f3f9ba4d98b61031ac299c07b974e402c"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 334851,
+      "region_address": "0x083ec1f8",
+      "decoded_sha256": "8a26d0f8ed7561e9a56c46f992dc044cd36bc32b853419def10d3dac39793d74"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 339609,
+      "region_address": "0x083ece10",
+      "decoded_sha256": "353ad1f9fa2aff28226bd8788f94964603e1c2a179f0263113539689852ce9af"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 344265,
+      "region_address": "0x083edae4",
+      "decoded_sha256": "ab4353225f428e451e60e380345c07115c0fcd4d8b5ac4722524350143e72547"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 347452,
+      "region_address": "0x083ee9ec",
+      "decoded_sha256": "44b7a5c35308d67b33984d41de0fc012d560137b9a332746b7d3b254d8439dad"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 349423,
+      "region_address": "0x083eefec",
+      "decoded_sha256": "e8019e173c33a5846e6ae41b734ed37825d507c1493f6cddc1fe0a888306ae80"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 351040,
+      "region_address": "0x083ef3a4",
+      "decoded_sha256": "8f620c7f28dff95799df21897d0a80e6b769d78deb2cc59cfd93975a35d48106"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 352124,
+      "region_address": "0x083ef610",
+      "decoded_sha256": "93ce385196b6fa188b9a856f6a23684eed366c7ba323d3ee012840781cefe488"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 353921,
+      "region_address": "0x083efa50",
+      "decoded_sha256": "6ba6d6f802fd9011d99bd452f3bc526dbe0c1f2bafe048b1ed102bbb3b7164bc"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 354999,
+      "region_address": "0x083efd04",
+      "decoded_sha256": "f175389d7629f1fb87e84a499c68d7dce025b39c49ff2236a167e54f9caf1bba"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 361191,
+      "region_address": "0x083f1e50",
+      "decoded_sha256": "a1ed26ad272a4ac2d1e58a1639d7536b2d06cac39d1a21dcf6e7f4d86af7c02e"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 365235,
+      "region_address": "0x083f5210",
+      "decoded_sha256": "4ffad8a33e741f3c02d6924f5f2d46bd2196047ea59bb94fede0367641ef5b7b"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 365931,
+      "region_address": "0x083f5cb8",
+      "decoded_sha256": "9f942e3a62d69566caa40f7e27eb9c759f85d31ec219b66b1b4dc6e77490d4e6"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 366241,
+      "region_address": "0x083f5f4c",
+      "decoded_sha256": "d02ff6e316eaaf743cf955e5d81780c983f6f39a516224f02491ed898b28fe27"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 368209,
+      "region_address": "0x083f66fc",
+      "decoded_sha256": "5654f3954f17ffbe1e4656c2895afa6dc2cd071e67dfe80ea615d0c8847a6b0d"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 369513,
+      "region_address": "0x083f6c14",
+      "decoded_sha256": "e6a041d3c5fef405d4b10d8dd9d3d03d1e7e12172e357d03f54e30bd26556b01"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 371914,
+      "region_address": "0x083f7238",
+      "decoded_sha256": "2e82478ebb569184ce5f4353f6ed64b12b4b85a3f5b1636ac751b3be339afc5c"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 376016,
+      "region_address": "0x083f7aa0",
+      "decoded_sha256": "4a3f7efc34ee439132285cc8fc45a1487ae045910b78d0c1052fd04c973a2c33"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 377772,
+      "region_address": "0x083f9af8",
+      "decoded_sha256": "e1f9e96f86c24144e07033009187b0581ab4d2d31e5e61511b10784bf964b466"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 405444,
+      "region_address": "0x083fb870",
+      "decoded_sha256": "ec42abc9512642f5a2e62635db750b317dc271aadde6d8c9d831c1bc2c725d42"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 413941,
+      "region_address": "0x083fd7e4",
+      "decoded_sha256": "82bc69aef5e048f64e4c58268e8656ef2c7e9ed8f2380652104568d07cd0e95e"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 417003,
+      "region_address": "0x083fdcb4",
+      "decoded_sha256": "22009de9a9b799219979afa6c7739445f771c9907cd50137dad64b017b9c91fa"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 421495,
+      "region_address": "0x083fed7c",
+      "decoded_sha256": "6ea15e5bf7d1fed08b5cc98d4bc0ba0009cda0e0e5b2a726262cc7164f05706e"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 427627,
+      "region_address": "0x0840175c",
+      "decoded_sha256": "f4e6276daf6c7ffe93cced8c8b939a7ed37fc7fa8b462bb5cdf1116c7ef1de8a"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 430457,
+      "region_address": "0x08401d9c",
+      "decoded_sha256": "e545e3a17d183c620db581d247ffe81f850583bc630335f9831040cb27ab0977"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 439939,
+      "region_address": "0x08403324",
+      "decoded_sha256": "ae8466dc7ad99d394180962c89ede4a122111a81fe75c85d8289decdb99500f1"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 440196,
+      "region_address": "0x084036f4",
+      "decoded_sha256": "bb0f06dfdbc743a3a7ba907afd5c3d1bf9e5af10554572778fde5bb23f0b8bf1"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 443230,
+      "region_address": "0x08403c94",
+      "decoded_sha256": "70fe52934e98b4e48ceee719c8720f8f26ae680b6495a2dc457bd52f7db33dab"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 444591,
+      "region_address": "0x08406988",
+      "decoded_sha256": "dffa925dae4dd424b76952c901658af550d969bec7ffec215c657f3a307d5e0b"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 452636,
+      "region_address": "0x08407728",
+      "decoded_sha256": "a1fdb444750b9e5947c312263f92f3d7008083b619b7209c1c1ae9d93c9ff881"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 459764,
+      "region_address": "0x08408928",
+      "decoded_sha256": "35fdbd9de003e7c0ffb9eb59f6f17407ae48a14be5b7d2d3583f084c49be63bf"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 462876,
+      "region_address": "0x0840bfcc",
+      "decoded_sha256": "f58dcabf997ee5991bd62b40c2af461bab20356d0c50aeb9e99efea892f966b9"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 465965,
+      "region_address": "0x0840c684",
+      "decoded_sha256": "c679adf5fac83a22f8bf83fcb8733e7faad8964fe3d49cb0fb3f744cd0c14936"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 469385,
+      "region_address": "0x0840eacc",
+      "decoded_sha256": "afed79ebd8361cfaff1528c7d433eb1523e11942c7c3667a61995981b31b0b8f"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 475339,
+      "region_address": "0x0840fb1c",
+      "decoded_sha256": "fd950f75f6871c48938613a08b933f74126702e6b09db362dbd4587baa88d9f4"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 478140,
+      "region_address": "0x08411474",
+      "decoded_sha256": "4401a7f2fedcdb940b92de688ed4e2a8ef565950ba940ac520ddedef963e7dfb"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 1133500,
+      "region_address": "0x08420c9c",
+      "decoded_sha256": "6e0069605f5fad019292caf42ed0fab617f63a9c239856c42caef3f0c74295b1"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 1151044,
+      "region_address": "0x08424688",
+      "decoded_sha256": "23b65345094ca08cefba8a15412afb28bc538021a80cbf91787a8143c8558235"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 1151974,
+      "region_address": "0x084247dc",
+      "decoded_sha256": "c2cf03233f8dda454db50de7685b2295cc6ed82bf68d737fde48a6dfdcc43cb7"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 1156070,
+      "region_address": "0x084303b4",
+      "decoded_sha256": "ca3a870317f08b173c97710b3ef30545c5b88d29e33fdf1ffaab3adacec52a64"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 1184870,
+      "region_address": "0x08431c50",
+      "decoded_sha256": "4e5980d8eb3ab5abe6bede6b111d86c72b5fa340d74d9b2578b7769cd94ee72b"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/DATA.BIN",
+      "source_offset": 1213670,
+      "region_address": "0x08433218",
+      "decoded_sha256": "35c44b0590c2e1d8f1bad2883273aa28b49d36e1f6ae79cb7e19e9133e0af14d"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "regions": [
+        "0x08000764", "0x08001b70", "0x0800380a", "0x08007a20", "0x08007b14", "0x08007bc4", "0x08007c3c", "0x0800c0c6",
+        "0x0800c628", "0x0800c87c", "0x08012fa0", "0x08013274", "0x0801356c", "0x08013724", "0x0801403c", "0x0801c466",
+        "0x080209cc", "0x08073808", "0x08091778", "0x080917c2", "0x08091c3e", "0x080a5784", "0x080a63e0", "0x080a939e",
+        "0x080c5c30", "0x080f2b6c", "0x080f53ce", "0x080fa674", "0x0811dac8", "0x083249e7", "0x083357f2", "0x0833f2fe",
+        "0x0834fa6e", "0x0835305e", "0x0835eb02", "0x0836f1b2", "0x08376c52", "0x0837a492", "0x0837eeca", "0x083838c6",
+        "0x08387b42", "0x0838ecee", "0x08396baa", "0x0839b63a", "0x0839f8ee", "0x083a326e", "0x083afaaa", "0x083be3f2",
+        "0x083c3572", "0x083c3cf5", "0x083c8495", "0x083cbd01", "0x083ce1c6", "0x083ce4ad", "0x083cf813", "0x083cfbfd",
+        "0x083d086f", "0x083d4357", "0x083d6559", "0x083d82e2", "0x083d855b", "0x083dc853", "0x083dd581", "0x083de296",
+        "0x083df016", "0x083e26f2", "0x083e2f3b", "0x083e3c93", "0x083e4967", "0x083eab3b", "0x083ee75f", "0x083ee9e9",
+        "0x083eefea", "0x083f1e4e", "0x083f3692", "0x083f3a15", "0x083f46c5", "0x083f520d", "0x083f53a6", "0x083f5c33",
+        "0x083f815b", "0x083f9af7", "0x083fb86e", "0x083fd7e3", "0x083fed7b", "0x0840014d", "0x08400c1e", "0x0840175b",
+        "0x08403385", "0x084036f3", "0x08404301", "0x0840531a", "0x0840a45b", "0x0840a88b", "0x0840eaca", "0x08411275",
+        "0x084247da", "0x08424c6a", "0x08424e61", "0x0842651e", "0x08427a3e", "0x0842860a", "0x0842917e", "0x0842c7b6",
+        "0x0842dc66", "0x08431c4e", "0x08433216", "0x08434ca6", "0x0843f866", "0x08441a1a", "0x08445b82", "0x08448da6",
+        "0x0844a4aa", "0x08451092", "0x08459a16", "0x084614f2", "0x08464586", "0x08467996", "0x0846a202", "0x0846bcf2",
+        "0x0846cb0a", "0x0846d7f6", "0x08476cb2", "0x084779be", "0x08479ad2", "0x0847dd2e", "0x08483712", "0x0848c992",
+        "0x0848d57e", "0x0849449e", "0x0849a702", "0x0849e7ca", "0x084a1e92", "0x087fd4b9"
+      ],
+      "decoded_sha256": "de69eccc7650cb850e8ea7d0308c240ba035d22e1d536bef4325e013eb4cab24"
+    },
+    {
+      "kind": "bytes",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESIDUALS.BIN",
+      "source_offset": 3154,
+      "region_address": "0x080f38bc",
+      "decoded_sha256": "9e98f0edf99ef42f6c232e1e8c9f2075186bf3c51a3fba03b8288aa3bfcac5c3"
     }
   ],
   "characters": [

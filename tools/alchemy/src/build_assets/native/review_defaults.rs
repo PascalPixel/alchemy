@@ -318,7 +318,7 @@ fn layout(plan: &Value, row: &Value) -> Result<Value, String> {
             json!({"kind":kind,"inputs":row[1].as_array().ok_or("missing byte inputs")?.iter().map(|p|expand_input(plan,p)).collect::<Vec<_>>(),"native_bpp":row[2],"output_bpp":row[3],"pieces":row[4].as_array().ok_or("missing byte pieces")?.iter().map(|p|expand_piece(plan,p,true)).collect::<Vec<_>>(),"source_frame_size":row[5]})
         }
         "camelot" => {
-            json!({"kind":kind,"base":expand_input(plan,&row[1]),"animation":expand_input(plan,&row[2]),"tilemap_source":plan["sources"][address(&row[3])?],"tilemap_pointer":row[4],"frames":row[5],"stride":row[6],"replace_tile":row[7],"replace_bytes":row[8]})
+            json!({"kind":kind,"base":expand_input(plan,&row[1]),"animation":expand_input(plan,&row[2]),"tilemap_source":plan["sources"][address(&row[3])?],"tilemap_offset":row[4],"frames":row[5],"stride":row[6],"replace_tile":row[7],"replace_bytes":row[8]})
         }
         _ => return Err("unknown exception layout".into()),
     };

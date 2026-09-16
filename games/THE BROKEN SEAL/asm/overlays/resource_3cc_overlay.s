@@ -1,0 +1,157 @@
+.syntax unified
+.include "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC"
+	.thumb
+	.set sub_02000114, 0x02000114
+	.set sub_02000116, 0x02000116
+	.set sub_0200012c, 0x0200012c
+	.set sub_0200012e, 0x0200012e
+	.set sub_02000144, 0x02000144
+	.set sub_02000146, 0x02000146
+	.set sub_0200015c, 0x0200015c
+	.set sub_0200015e, 0x0200015e
+	.global Overlay_02000000
+Overlay_02000000:
+.include "games/THE BROKEN SEAL/SRC/DEBUG/TEST_ROOMS/ENTRY.INC"
+AlchemyC_02000030:
+	.space 0x8
+AlchemyC_02000038:
+	.space 0x4
+AlchemyC_0200003c:
+	.space 0x8
+AlchemyC_02000044:
+	.space 0x8
+AlchemyC_0200004c:
+	.space 0x16
+	.2byte 0x0000
+AlchemyC_02000064:
+	.space 0x16
+	.2byte 0x0000
+AlchemyC_0200007c:
+	.space 0x16
+	.2byte 0x0000
+AlchemyC_02000094:
+	.space 0x16
+	.2byte 0x0000
+AlchemyC_020000ac:
+	.space 0x8
+AlchemyC_020000b4:
+	.space 0x4
+.include "games/THE BROKEN SEAL/SRC/DEBUG/TEST_ROOMS/IMPORT.INC"
+	.4byte 0x00500050
+	.4byte 0x00000000
+	.4byte 0x00000050
+	.4byte 0x00500000
+	.4byte 0x00010003
+	.4byte 0x00000002
+	.4byte 0x00000000
+	.4byte 0x00780078
+	.4byte 0x00000000
+	.4byte 0x00000078
+	.4byte 0x00780000
+	.4byte 0x00010003
+	.4byte 0x00000002
+	.4byte 0x00000000
+	.4byte 0x0028003c
+	.4byte 0x00000000
+	.4byte 0x00000080
+	.4byte 0x00800000
+	.4byte 0x00010002
+	.4byte 0x00000001
+	.4byte 0x00000000
+	.4byte 0x0028003c
+	.4byte 0x00000000
+	.4byte 0x00000080
+	.4byte 0x00800000
+	.4byte 0x00010002
+	.4byte 0x00000003
+	.4byte 0x00000000
+	.4byte 0x00800080
+	.4byte 0x00000000
+	.4byte 0x00000080
+	.4byte 0x00800000
+	.4byte 0x00020003
+	.4byte 0x00000001
+	.4byte 0x00000000
+	.4byte 0x00800080
+	.4byte 0x00000000
+	.4byte 0x00000080
+	.4byte 0x00800000
+	.4byte 0x00020003
+	.4byte 0x00000001
+	.4byte 0x00000000
+	.4byte 0x00200020
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00800080
+	.4byte 0x00000000
+	.4byte 0x00000080
+	.4byte 0x00800000
+	.4byte 0x00020003
+	.4byte 0x00000001
+	.4byte 0x00000000
+	.4byte 0xffff0000
+	.4byte 0x000000c0
+	.4byte 0x800000c0
+	.4byte 0xffff0000
+	.4byte 0xffffffff
+	.4byte 0x0000ffff
+	.4byte 0x0000ffff
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x000000bf
+	.4byte 0x000000c0
+	.4byte 0x000000c1
+	.4byte 0x000000c2
+	.4byte 0x000001ff
+	.4byte 0x0030005a
+	.4byte 0x00000001
+	.4byte 0x01f00000
+	.4byte 0x00000000
+	.4byte 0x00b00000
+	.4byte 0x00000000
+	.4byte 0x0044005b
+	.4byte 0x00000001
+	.4byte 0x01f00000
+	.4byte 0x00000000
+	.4byte 0x00c80000
+	.4byte 0x00000000
+	.4byte 0x0058005c
+	.4byte 0x00000001
+	.4byte 0x02100000
+	.4byte 0x00000000
+	.4byte 0x00b00000
+	.4byte 0x00008000
+	.4byte 0x006c005d
+	.4byte 0x00000001
+	.4byte 0x02100000
+	.4byte 0x00000000
+	.4byte 0x00c80000
+	.4byte 0x00008000
+	.4byte 0x0000ffff
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0xffff0008
+	.4byte 0x0200804d
+	.4byte 0x00000000
+	.4byte 0xffff0009
+	.4byte 0x02008065
+	.4byte 0x00000000
+	.4byte 0xffff000a
+	.4byte 0x0200807d
+	.4byte 0x00000000
+	.4byte 0xffff000b
+	.4byte 0x02008095
+	.4byte 0xffffffff
+	.4byte 0x00000000
+	.4byte 0x00000000

@@ -702,6 +702,23 @@ fn binary_source(source: &Path, entry: &Value) -> Result<Vec<u8>, String> {
         .ok_or("binary source extent is outside file")?
         .to_vec())
 }
+/// Select `frame` of an array that stores a sequence of `frame_size` frames.
+fn array_frame(entry: &Value, data: Vec<u8>) -> Result<Vec<u8>, String> {
+    let Some(size) = entry.get("frame_size") else {
+        return Ok(data);
+    };
+    let size = number(size, "array frame size")?;
+    let frame = number(&entry["frame"], "array frame")?;
+    if size == 0 || data.len() % size != 0 {
+        return Err("array frames have a partial extent".into());
+    }
+    let start = frame.checked_mul(size).ok_or("array frame overflows")?;
+    let end = start.checked_add(size).ok_or("array frame end overflows")?;
+    Ok(data
+        .get(start..end)
+        .ok_or("array frame exceeds source")?
+        .to_vec())
+}
 fn tile_coordinates(
     width: usize,
     height: usize,
@@ -781,32 +798,32 @@ fn build_component_cached(ctx: &Context, entry: &Value) -> Result<ComponentResul
                 vec![source_name.to_string()],
             )
         }
-        // Bytes of unknown structure come from a registered private binary.
-        "u8-array" if entry.get("format").and_then(Value::as_str) == Some("binary") => (
-            binary_source(&source, entry)?,
-            serde_json::json!({"format":"binary"}),
-            vec![source_name.to_string()],
-        ),
+        // Bytes of unknown structure come from a registered private binary,
+        // already in their stored element order.
+        "u8-array" | "s8-array" | "be-s16-array" | "le-u16-array" | "le-u32-array"
+            if entry.get("format").and_then(Value::as_str) == Some("binary") =>
+        {
+            let data = binary_source(&source, entry)?;
+            let width = match kind {
+                "u8-array" | "s8-array" => 1,
+                "le-u32-array" => 4,
+                _ => 2,
+            };
+            if data.len() % width != 0 {
+                return Err("binary array has a partial element".into());
+            }
+            (
+                array_frame(entry, data)?,
+                serde_json::json!({"format":"binary"}),
+                vec![source_name.to_string()],
+            )
+        }
         "u8-array" | "s8-array" | "be-s16-array" | "le-u16-array" | "le-u32-array" => {
             let document = json(&source)?;
             let pointer = json_string(&entry["pointer"], "array pointer")?;
             let values = document.pointer(pointer).ok_or("array pointer is absent")?;
-            let mut data = integer_array(values, kind)?;
-            if let Some(size) = entry.get("frame_size") {
-                let size = number(size, "array frame size")?;
-                let frame = number(&entry["frame"], "array frame")?;
-                if size == 0 || data.len() % size != 0 {
-                    return Err("array frames have a partial extent".into());
-                }
-                let start = frame.checked_mul(size).ok_or("array frame overflows")?;
-                let end = start.checked_add(size).ok_or("array frame end overflows")?;
-                data = data
-                    .get(start..end)
-                    .ok_or("array frame exceeds source")?
-                    .to_vec();
-            }
             (
-                data,
+                array_frame(entry, integer_array(values, kind)?)?,
                 serde_json::json!({"pointer":pointer}),
                 vec![source_name.to_string()],
             )
@@ -1179,6 +1196,26 @@ fn binary_map_components_preserve_words_and_refuse_wrong_extents() {
     let mut invalid = layer.clone();
     invalid["source_length"] = serde_json::json!(4);
     assert!(build_component(root.path(), &invalid).is_err());
+    // Private word tables keep stored order; a frame sequence selects whole frames.
+    let words = serde_json::json!({"kind":"le-u16-array","format":"binary","source":"map.bin","size":4,"source_offset":65536,"source_length":4});
+    assert_eq!(
+        build_component(root.path(), &words).unwrap().data,
+        [0x21, 0xf4, 0x32, 0x18]
+    );
+    let mut invalid = words.clone();
+    invalid["source_length"] = serde_json::json!(3);
+    assert!(build_component(root.path(), &invalid).is_err());
+    let mut frames = words.clone();
+    frames["kind"] = serde_json::json!("u8-array");
+    frames["frame_size"] = serde_json::json!(2);
+    frames["frame"] = serde_json::json!(1);
+    frames["size"] = serde_json::json!(2);
+    assert_eq!(
+        build_component(root.path(), &frames).unwrap().data,
+        [0x32, 0x18]
+    );
+    frames["frame"] = serde_json::json!(2);
+    assert!(build_component(root.path(), &frames).is_err());
 }
 
 #[test]
@@ -1638,6 +1675,75 @@ fn typed_pointer_tables_use_the_owner_register() {
     assert_eq!(hex["segments"][0]["values"][0], 0x0800_1003);
     resolved["segments"][1]["values"][0] = Value::from(2147483648_i64);
     assert!(typed_table(&resolved).is_err());
+}
+
+/// Derive a stream directory: one `le-u32` word per index giving where that
+/// index's stream starts relative to the directory, or zero when it has none.
+/// The streams named by `stream_offsets.streams` (a pointer into the table's
+/// source document, keyed by decimal index) follow one another from
+/// `stream_offsets.first` in index order, each `encoded_size` bytes long.
+fn resolve_stream_offsets(table: &mut Value, source: &Value) -> Result<(), String> {
+    for segment in table["segments"]
+        .as_array_mut()
+        .ok_or("table segments missing")?
+    {
+        let Some(spec) = segment.get("stream_offsets").cloned() else {
+            continue;
+        };
+        if segment.get("values").is_some() || segment["element"] != "le-u32" {
+            return Err("stream offsets derive the le-u32 words of a segment".into());
+        }
+        let streams = source
+            .pointer(json_string(&spec["streams"], "stream offsets pointer")?)
+            .and_then(Value::as_object)
+            .ok_or("stream offsets pointer is absent")?;
+        let size = number(&segment["end"], "segment end")?
+            .checked_sub(number(&segment["address"], "segment address")?)
+            .ok_or("segment ends before it starts")?;
+        let count = size / 4;
+        if streams.keys().any(|key| {
+            key.parse::<usize>()
+                .map_or(true, |index| index >= count || index.to_string() != *key)
+        }) {
+            return Err("stream index lies outside its directory".into());
+        }
+        let mut next = number(&spec["first"], "first stream offset")?;
+        let mut values = Vec::with_capacity(count);
+        for index in 0..count {
+            match streams.get(&index.to_string()) {
+                Some(stream) => {
+                    values.push(next);
+                    next = next
+                        .checked_add(number(&stream["encoded_size"], "stream encoded size")?)
+                        .ok_or("stream offsets overflow")?;
+                }
+                None => values.push(0),
+            }
+        }
+        let object = segment.as_object_mut().ok_or("table segment differs")?;
+        object.remove("stream_offsets");
+        object.insert("values".into(), serde_json::json!(values));
+    }
+    Ok(())
+}
+
+#[test]
+fn stream_directories_derive_offsets_from_encoded_sizes() {
+    let source = serde_json::json!({"streams":{"1":{"encoded_size":3},"3":{"encoded_size":5}},
+        "table":{"format":1,"kind":"typed-table","address":0,"size":16,"segments":[
+            {"address":0,"end":16,"stride":4,"element":"le-u32","stream_offsets":{"streams":"/streams","first":16}}]}});
+    let mut table = source["table"].clone();
+    resolve_stream_offsets(&mut table, &source).unwrap();
+    assert_eq!(
+        typed_table(&table).unwrap(),
+        [0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 19, 0, 0, 0]
+    );
+    let mut outside = source.clone();
+    outside["streams"]["4"] = serde_json::json!({"encoded_size":1});
+    assert!(resolve_stream_offsets(&mut source["table"].clone(), &outside).is_err());
+    let mut stored = source["table"].clone();
+    stored["segments"][0]["values"] = serde_json::json!([0, 0, 0, 0]);
+    assert!(resolve_stream_offsets(&mut stored, &source).is_err());
 }
 
 /// Replace `1bpp-rows` record fields with the packed rows of the atlas frame
@@ -4912,18 +5018,19 @@ fn build_entry_native_tail(
             ))
         }
         "typed-table" => {
-            let document = json(&source_path(entry_source)?)?;
+            let source = json(&source_path(entry_source)?)?;
             let document = if let Some(pointer) = entry.get("pointer") {
-                document
+                source
                     .pointer(json_string(pointer, "table pointer")?)
                     .ok_or("table pointer is absent")?
             } else {
-                &document
+                &source
             };
             if number(&document["address"], "table address")? != address {
                 return Err("table address differs from manifest".into());
             }
             let mut document = document.clone();
+            resolve_stream_offsets(&mut document, &source)?;
             let has_symbols = document["segments"]
                 .as_array()
                 .is_some_and(|segments| segments.iter().any(|s| s["element"] == "thumb-pointer"));
@@ -5425,49 +5532,6 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
         .unwrap_or_default();
     expand_closure_packages(&mut ctx, &manifest, &mut entries)?;
     expand_series(&mut ctx, &manifest, &mut entries)?;
-    let mut index = 0;
-    while index < entries.len() {
-        if entries[index].get("kind").and_then(Value::as_str) != Some("integer-region-package") {
-            index += 1;
-            continue;
-        }
-        let package = entries.remove(index);
-        let source_name = json_string(&package["source"], "integer package source")?;
-        let encoding = json_string(&package["encoding"], "integer package encoding")?;
-        if !matches!(encoding, "u8-array" | "s8-array" | "be-s16-array") {
-            return Err("unknown integer encoding".into());
-        }
-        let text = fs::read_to_string(ctx.source(source_name)?).map_err(|e| e.to_string())?;
-        let document: Value = serde_json::from_str(&text).map_err(|e| e.to_string())?;
-        if document["kind"] != "integer-regions"
-            || document["format"] != 1
-            || !crate::compiler::canonical_json::is_canonical_json_text(&text, &document)
-        {
-            return Err("integer package source differs".into());
-        }
-        let regions = document
-            .get("regions")
-            .and_then(Value::as_array)
-            .ok_or("integer package regions are missing")?;
-        let generated = regions
-            .iter()
-            .enumerate()
-            .map(|(i, region)| {
-                let size = integer_array(&region["values"], encoding)?.len();
-                if size == 0 {
-                    return Err("empty integer region".to_string());
-                }
-                Ok(serde_json::json!({
-                    "address": region.get("address"),
-                    "size": size,
-                    "kind": encoding,
-                    "source": source_name,
-                    "pointer": format!("/regions/{i}/values"),
-                }))
-            })
-            .collect::<Result<Vec<_>, String>>()?;
-        entries.splice(index..index, generated);
-    }
     entries.sort_unstable_by_key(|entry| {
         number(
             entry.get("address").unwrap_or(&Value::Null),

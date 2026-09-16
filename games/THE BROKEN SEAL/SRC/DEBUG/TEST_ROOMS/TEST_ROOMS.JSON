@@ -1,0 +1,685 @@
+{
+  "format": 1,
+  "maps": {
+    "33f": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08774e48",
+        "size": "0x3c",
+        "segments": [
+          {
+            "name": "parameters",
+            "address": "0x08774e48",
+            "end": "0x08774e54",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 64, 64, 3, 0, 0, 0, 2, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "address": "0x08774e54",
+            "end": "0x08774e6c",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [0, 4112, 0, 65535], [0, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "address": "0x08774e6c",
+            "end": "0x08774e84",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x3c", "0x44", "0x4c", "0x0", "0x0", "0x348"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 9,
+        "encoded_size": 8,
+        "tokens": [["l", 3], ["c", 6, 2]],
+        "lookahead": "",
+        "component": "map-metatiles-2x2",
+        "transform_mode": 0,
+        "metatiles": 1,
+        "tilemap_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",
+        "tilemap_offset": 362464,
+        "tilemap_length": 8
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 4,
+        "encoded_size": 8,
+        "tokens": [["l", 1], ["c", 3, 1]],
+        "lookahead": "0000",
+        "component": "map-descriptors-4byte",
+        "record_size": 4,
+        "records": [[0, 0, 0, 0]]
+      },
+      "sparse_cells": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08775190",
+        "size": "0x4",
+        "record_size": 3,
+        "segments": [
+          {
+            "name": "terminator",
+            "address": "0x08775190",
+            "end": "0x08775193",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255
+          },
+          {"name": "alignment", "address": "0x08775193", "end": "0x08775194", "stride": 1, "element": "u8", "fill": 0}
+        ]
+      },
+      "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",
+      "grid_offset": 296928,
+      "grid_compression": {
+        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+        "section": "f187ee5eba183387245e9c8bbfa8be028d96243d0f165febe163538a6fdeed21"
+      }
+    },
+    "345": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x087756b0",
+        "size": "0x3c",
+        "segments": [
+          {
+            "name": "parameters",
+            "address": "0x087756b0",
+            "end": "0x087756bc",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 64, 64, 3, 0, 0, 0, 2, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "address": "0x087756bc",
+            "end": "0x087756d4",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [0, 4112, 0, 65535], [0, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "address": "0x087756d4",
+            "end": "0x087756ec",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x3c", "0x44", "0x4c", "0x0", "0x0", "0x348"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 9,
+        "encoded_size": 8,
+        "tokens": [["l", 3], ["c", 6, 2]],
+        "lookahead": "",
+        "component": "map-metatiles-2x2",
+        "transform_mode": 0,
+        "metatiles": 1,
+        "tilemap_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",
+        "tilemap_offset": 362464,
+        "tilemap_length": 8
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 4,
+        "encoded_size": 8,
+        "tokens": [["l", 1], ["c", 3, 1]],
+        "lookahead": "0000",
+        "component": "map-descriptors-4byte",
+        "record_size": 4,
+        "records": [[0, 0, 0, 0]]
+      },
+      "sparse_cells": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x087759f8",
+        "size": "0x4",
+        "record_size": 3,
+        "segments": [
+          {
+            "name": "terminator",
+            "address": "0x087759f8",
+            "end": "0x087759fb",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255
+          },
+          {"name": "alignment", "address": "0x087759fb", "end": "0x087759fc", "stride": 1, "element": "u8", "fill": 0}
+        ]
+      },
+      "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",
+      "grid_offset": 296928,
+      "grid_compression": {
+        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+        "section": "f187ee5eba183387245e9c8bbfa8be028d96243d0f165febe163538a6fdeed21"
+      }
+    },
+    "34b": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08775f18",
+        "size": "0x3c",
+        "segments": [
+          {
+            "name": "parameters",
+            "address": "0x08775f18",
+            "end": "0x08775f24",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 64, 64, 3, 0, 0, 0, 2, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "address": "0x08775f24",
+            "end": "0x08775f3c",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [0, 4112, 0, 65535], [0, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "address": "0x08775f3c",
+            "end": "0x08775f54",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x3c", "0x44", "0x4c", "0x0", "0x0", "0x348"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 9,
+        "encoded_size": 8,
+        "tokens": [["l", 3], ["c", 6, 2]],
+        "lookahead": "",
+        "component": "map-metatiles-2x2",
+        "transform_mode": 0,
+        "metatiles": 1,
+        "tilemap_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",
+        "tilemap_offset": 362464,
+        "tilemap_length": 8
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 4,
+        "encoded_size": 8,
+        "tokens": [["l", 1], ["c", 3, 1]],
+        "lookahead": "0000",
+        "component": "map-descriptors-4byte",
+        "record_size": 4,
+        "records": [[0, 0, 0, 0]]
+      },
+      "sparse_cells": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08776260",
+        "size": "0x4",
+        "record_size": 3,
+        "segments": [
+          {
+            "name": "terminator",
+            "address": "0x08776260",
+            "end": "0x08776263",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255
+          },
+          {"name": "alignment", "address": "0x08776263", "end": "0x08776264", "stride": 1, "element": "u8", "fill": 0}
+        ]
+      },
+      "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",
+      "grid_offset": 296928,
+      "grid_compression": {
+        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+        "section": "f187ee5eba183387245e9c8bbfa8be028d96243d0f165febe163538a6fdeed21"
+      }
+    },
+    "351": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08776780",
+        "size": "0x3c",
+        "segments": [
+          {
+            "name": "parameters",
+            "address": "0x08776780",
+            "end": "0x0877678c",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 64, 64, 3, 0, 0, 0, 2, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "address": "0x0877678c",
+            "end": "0x087767a4",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [0, 4112, 0, 65535], [0, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "address": "0x087767a4",
+            "end": "0x087767bc",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x3c", "0x44", "0x4c", "0x0", "0x0", "0x348"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 9,
+        "encoded_size": 8,
+        "tokens": [["l", 3], ["c", 6, 2]],
+        "lookahead": "",
+        "component": "map-metatiles-2x2",
+        "transform_mode": 0,
+        "metatiles": 1,
+        "tilemap_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",
+        "tilemap_offset": 362464,
+        "tilemap_length": 8
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 4,
+        "encoded_size": 8,
+        "tokens": [["l", 1], ["c", 3, 1]],
+        "lookahead": "0000",
+        "component": "map-descriptors-4byte",
+        "record_size": 4,
+        "records": [[0, 0, 0, 0]]
+      },
+      "sparse_cells": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08776ac8",
+        "size": "0x4",
+        "record_size": 3,
+        "segments": [
+          {
+            "name": "terminator",
+            "address": "0x08776ac8",
+            "end": "0x08776acb",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255
+          },
+          {"name": "alignment", "address": "0x08776acb", "end": "0x08776acc", "stride": 1, "element": "u8", "fill": 0}
+        ]
+      },
+      "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",
+      "grid_offset": 296928,
+      "grid_compression": {
+        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+        "section": "f187ee5eba183387245e9c8bbfa8be028d96243d0f165febe163538a6fdeed21"
+      }
+    },
+    "357": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08776fe8",
+        "size": "0x3c",
+        "segments": [
+          {
+            "name": "parameters",
+            "address": "0x08776fe8",
+            "end": "0x08776ff4",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 64, 64, 3, 0, 0, 0, 2, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "address": "0x08776ff4",
+            "end": "0x0877700c",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [0, 4112, 0, 65535], [0, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "address": "0x0877700c",
+            "end": "0x08777024",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x3c", "0x44", "0x4c", "0x0", "0x0", "0x348"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 9,
+        "encoded_size": 8,
+        "tokens": [["l", 3], ["c", 6, 2]],
+        "lookahead": "",
+        "component": "map-metatiles-2x2",
+        "transform_mode": 0,
+        "metatiles": 1,
+        "tilemap_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",
+        "tilemap_offset": 362464,
+        "tilemap_length": 8
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 4,
+        "encoded_size": 8,
+        "tokens": [["l", 1], ["c", 3, 1]],
+        "lookahead": "0000",
+        "component": "map-descriptors-4byte",
+        "record_size": 4,
+        "records": [[0, 0, 0, 0]]
+      },
+      "sparse_cells": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08777330",
+        "size": "0x4",
+        "record_size": 3,
+        "segments": [
+          {
+            "name": "terminator",
+            "address": "0x08777330",
+            "end": "0x08777333",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255
+          },
+          {"name": "alignment", "address": "0x08777333", "end": "0x08777334", "stride": 1, "element": "u8", "fill": 0}
+        ]
+      },
+      "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",
+      "grid_offset": 296928,
+      "grid_compression": {
+        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+        "section": "f187ee5eba183387245e9c8bbfa8be028d96243d0f165febe163538a6fdeed21"
+      }
+    },
+    "35d": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08777850",
+        "size": "0x3c",
+        "segments": [
+          {
+            "name": "parameters",
+            "address": "0x08777850",
+            "end": "0x0877785c",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 64, 64, 3, 0, 0, 0, 2, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "address": "0x0877785c",
+            "end": "0x08777874",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [0, 4112, 0, 65535], [0, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "address": "0x08777874",
+            "end": "0x0877788c",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x3c", "0x44", "0x4c", "0x0", "0x0", "0x348"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 9,
+        "encoded_size": 8,
+        "tokens": [["l", 3], ["c", 6, 2]],
+        "lookahead": "",
+        "component": "map-metatiles-2x2",
+        "transform_mode": 0,
+        "metatiles": 1,
+        "tilemap_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",
+        "tilemap_offset": 362464,
+        "tilemap_length": 8
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 4,
+        "encoded_size": 8,
+        "tokens": [["l", 1], ["c", 3, 1]],
+        "lookahead": "0000",
+        "component": "map-descriptors-4byte",
+        "record_size": 4,
+        "records": [[0, 0, 0, 0]]
+      },
+      "sparse_cells": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08777b98",
+        "size": "0x4",
+        "record_size": 3,
+        "segments": [
+          {
+            "name": "terminator",
+            "address": "0x08777b98",
+            "end": "0x08777b9b",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255
+          },
+          {"name": "alignment", "address": "0x08777b9b", "end": "0x08777b9c", "stride": 1, "element": "u8", "fill": 0}
+        ]
+      },
+      "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",
+      "grid_offset": 296928,
+      "grid_compression": {
+        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+        "section": "f187ee5eba183387245e9c8bbfa8be028d96243d0f165febe163538a6fdeed21"
+      }
+    },
+    "363": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x087780b8",
+        "size": "0x3c",
+        "segments": [
+          {
+            "name": "parameters",
+            "address": "0x087780b8",
+            "end": "0x087780c4",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 64, 64, 3, 0, 0, 0, 2, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "address": "0x087780c4",
+            "end": "0x087780dc",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [0, 4112, 0, 65535], [0, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "address": "0x087780dc",
+            "end": "0x087780f4",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x3c", "0x44", "0x4c", "0x0", "0x0", "0x348"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 9,
+        "encoded_size": 8,
+        "tokens": [["l", 3], ["c", 6, 2]],
+        "lookahead": "",
+        "component": "map-metatiles-2x2",
+        "transform_mode": 0,
+        "metatiles": 1,
+        "tilemap_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",
+        "tilemap_offset": 362464,
+        "tilemap_length": 8
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 4,
+        "encoded_size": 8,
+        "tokens": [["l", 1], ["c", 3, 1]],
+        "lookahead": "0000",
+        "component": "map-descriptors-4byte",
+        "record_size": 4,
+        "records": [[0, 0, 0, 0]]
+      },
+      "sparse_cells": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08778400",
+        "size": "0x4",
+        "record_size": 3,
+        "segments": [
+          {
+            "name": "terminator",
+            "address": "0x08778400",
+            "end": "0x08778403",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255
+          },
+          {"name": "alignment", "address": "0x08778403", "end": "0x08778404", "stride": 1, "element": "u8", "fill": 0}
+        ]
+      },
+      "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",
+      "grid_offset": 296928,
+      "grid_compression": {
+        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+        "section": "f187ee5eba183387245e9c8bbfa8be028d96243d0f165febe163538a6fdeed21"
+      }
+    },
+    "369": {
+      "format": 1,
+      "kind": "golden-sun-map-container",
+      "header": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08778920",
+        "size": "0x3c",
+        "segments": [
+          {
+            "name": "parameters",
+            "address": "0x08778920",
+            "end": "0x0877892c",
+            "stride": 12,
+            "element": "u8",
+            "values": [0, 0, 64, 64, 3, 0, 0, 0, 2, 2, 0, 0]
+          },
+          {
+            "name": "records",
+            "address": "0x0877892c",
+            "end": "0x08778944",
+            "stride": 8,
+            "element": "le-u16",
+            "values": [[0, 4112, 0, 65535], [0, 4112, 0, 65535], [0, 4112, 0, 65535]]
+          },
+          {
+            "name": "component_offsets",
+            "address": "0x08778944",
+            "end": "0x0877895c",
+            "stride": 4,
+            "element": "le-u32",
+            "values": ["0x3c", "0x44", "0x4c", "0x0", "0x0", "0x348"]
+          }
+        ]
+      },
+      "metatiles": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 9,
+        "encoded_size": 8,
+        "tokens": [["l", 3], ["c", 6, 2]],
+        "lookahead": "",
+        "component": "map-metatiles-2x2",
+        "transform_mode": 0,
+        "metatiles": 1,
+        "tilemap_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",
+        "tilemap_offset": 362464,
+        "tilemap_length": 8
+      },
+      "descriptors": {
+        "format": 1,
+        "codec": "golden-sun-general-lz",
+        "decoded_size": 4,
+        "encoded_size": 8,
+        "tokens": [["l", 1], ["c", 3, 1]],
+        "lookahead": "0000",
+        "component": "map-descriptors-4byte",
+        "record_size": 4,
+        "records": [[0, 0, 0, 0]]
+      },
+      "sparse_cells": {
+        "format": 1,
+        "kind": "typed-table",
+        "address": "0x08778c68",
+        "size": "0x4",
+        "record_size": 3,
+        "segments": [
+          {
+            "name": "terminator",
+            "address": "0x08778c68",
+            "end": "0x08778c6b",
+            "stride": 1,
+            "element": "u8",
+            "fill": 255
+          },
+          {"name": "alignment", "address": "0x08778c6b", "end": "0x08778c6c", "stride": 1, "element": "u8", "fill": 0}
+        ]
+      },
+      "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",
+      "grid_offset": 296928,
+      "grid_compression": {
+        "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+        "section": "f187ee5eba183387245e9c8bbfa8be028d96243d0f165febe163538a6fdeed21"
+      }
+    }
+  }
+}

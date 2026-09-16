@@ -32581,280 +32581,280 @@
       "decoded_sha256": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/COMMON/MAP.BIN",
       "source_offset": 65544,
       "region_address": "0x08a79868",
       "decoded_sha256": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/COMMON/MAP.BIN",
       "source_offset": 81928,
       "region_address": "0x08a7992c",
       "decoded_sha256": "26b84f60789875677489925c00538559c2b32cb9513d73c03111c9493d56e831"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/VINASU_IRIGUCHI.BIN",
       "source_offset": 77712,
       "region_address": "0x08a85c64",
       "decoded_sha256": "d365a6edc250c3c1967b01b447248e06a2ab053ebeceb4021a2f0f94a0c52340"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/VINASU_IRIGUCHI.BIN",
       "source_offset": 94096,
       "region_address": "0x08a85dc4",
       "decoded_sha256": "ca2fd00fa001190744c15c317643ab092e7048ce086a243e2be9437c898de1bb"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/VINASU_IRIGUCHI.BIN",
       "source_offset": 94098,
       "region_address": "0x08a85dcc",
       "decoded_sha256": "ca2fd00fa001190744c15c317643ab092e7048ce086a243e2be9437c898de1bb"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/VINASU_IRIGUCHI.BIN",
       "source_offset": 94100,
       "region_address": "0x08a85dd4",
       "decoded_sha256": "5d709041056a049f8fed4096a7ace9073cea7b3dfdb2c0b5e59e95a30e97c957"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/VINASU_CHOJO.BIN",
       "source_offset": 69168,
       "region_address": "0x08a8ac50",
       "decoded_sha256": "1f0cd998aa87d5dc422bf2730218e215b7f4bc5a159dfaf62e1292c86e4a4999"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/VINASU_CHOJO.BIN",
       "source_offset": 85552,
       "region_address": "0x08a8ad84",
       "decoded_sha256": "1b0031bb707faa4395d9b16ec26aa5be1f832a8af53e5ec0c4f0bee5b5549125"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/VINASU_CHOJO.BIN",
       "source_offset": 86938,
       "region_address": "0x08a8b00c",
       "decoded_sha256": "e47f9b94308d03950731c12862044316a3d50c27241c87fc5f3d506ce49f7622"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/VINASU_CHOJO.BIN",
       "source_offset": 87000,
       "region_address": "0x08a8b034",
       "decoded_sha256": "422eeb177c19f98d28c1b5fbbedd742a1ea76ffb5bdca17aa98597e9be533852"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/SUHARA_GATE/SUHARA_GATE.BIN",
       "source_offset": 209840,
       "region_address": "0x08a9491c",
       "decoded_sha256": "a2626d3a51873d1e96051fc8ffe96c6f900a310bd3ceb8e6744b618272be2087"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/SUHARA_GATE/SUHARA_GATE.BIN",
       "source_offset": 226224,
       "region_address": "0x08a94ac4",
       "decoded_sha256": "4f33b9292c6ef018a2e6b7ef7f42e94b014e66b0c1e6027c186f11eb1c6794c3"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/SUHARA_GATE/SUHARA_GATE.BIN",
       "source_offset": 226270,
       "region_address": "0x08a94ae4",
       "decoded_sha256": "ca2fd00fa001190744c15c317643ab092e7048ce086a243e2be9437c898de1bb"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/SUHARA_GATE/SUHARA_GATE.BIN",
       "source_offset": 226272,
       "region_address": "0x08a94aec",
       "decoded_sha256": "26b84f60789875677489925c00538559c2b32cb9513d73c03111c9493d56e831"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/SUHARA_GATE/SUHARA_GATE.BIN",
       "source_offset": 226285,
       "region_address": "0x08a9fdd8",
       "decoded_sha256": "8b5c0e81e0c659803db91c983e19a49e8dee0aca09040f8576105b22fe0c40a8"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/SUHARA_GATE/SUHARA_GATE.BIN",
       "source_offset": 242669,
       "region_address": "0x08a9ffa0",
       "decoded_sha256": "4008ad25dafdb6212111d2eacd30e2346f242d133bc8240b9dcb8b4df623f53a"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/SUHARA_GATE/SUHARA_GATE.BIN",
       "source_offset": 242683,
       "region_address": "0x08a9ffb4",
       "decoded_sha256": "ca2fd00fa001190744c15c317643ab092e7048ce086a243e2be9437c898de1bb"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/SUHARA_GATE/SUHARA_GATE.BIN",
       "source_offset": 242685,
       "region_address": "0x08a9ffbc",
       "decoded_sha256": "26b84f60789875677489925c00538559c2b32cb9513d73c03111c9493d56e831"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/SUHARA_GATE/SUHARA_GATE.BIN",
       "source_offset": 242698,
       "region_address": "0x08aa151c",
       "decoded_sha256": "1f799acef906c0b7eaa4facce24f22af5774a907b23566bca87bf36c4c8c8fbb"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/SUHARA_GATE/SUHARA_GATE.BIN",
       "source_offset": 259082,
       "region_address": "0x08aa16ec",
       "decoded_sha256": "39c242df896226b7755e757d3d29a6b59039965f3b5ea0360436827db1bfef33"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/SUHARA_GATE/SUHARA_GATE.BIN",
       "source_offset": 260508,
       "region_address": "0x08aa1924",
       "decoded_sha256": "2dfede4ddff5c503033cf9e9a32176ea546e618366e5cd21df0b771debaae509"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/SUHARA_GATE/SUHARA_GATE.BIN",
       "source_offset": 260530,
       "region_address": "0x08aa1938",
       "decoded_sha256": "0c0647a720d884e820aec8739f6e84894df3b7c7fc9a81621e1bcf18b6026a03"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/IDEJIMA/IDEJIMA.BIN",
       "source_offset": 72592,
       "region_address": "0x08aa9f14",
       "decoded_sha256": "f68562f9121e45335cf5f984a6a13836786dc2884e596717e509aee6ebfbec1f"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/IDEJIMA/IDEJIMA.BIN",
       "source_offset": 88976,
       "region_address": "0x08aaa0d8",
       "decoded_sha256": "276a68fb8bddf7351517113536615564cce487de016c957427476ee1d3504659"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/IDEJIMA/IDEJIMA.BIN",
       "source_offset": 89046,
       "region_address": "0x08aaa100",
       "decoded_sha256": "f0c5609894fff6883b0314c03d36600ba0ab808a223c04a86931632ae9ffc648"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/IDEJIMA/IDEJIMA.BIN",
       "source_offset": 89056,
       "region_address": "0x08aaa110",
       "decoded_sha256": "0428c4f40d1b1b8a279439e1ec881f7b333db18f9f704045a8ea87bf56bd3bb5"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/DAIRA_MURA/DAIRA_MURA.BIN",
       "source_offset": 148584,
       "region_address": "0x08aaffac",
       "decoded_sha256": "760fc6b5ef01d3471f24a412d07d48f0973410065710e94999c78f4faf97b977"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/DAIRA_MURA/DAIRA_MURA.BIN",
       "source_offset": 164968,
       "region_address": "0x08ab01d8",
       "decoded_sha256": "63f8327c509d7c8b8ac2e1815d78a4a13242d671e41baf0bba255ccea48e95e9"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/DAIRA_MURA/DAIRA_MURA.BIN",
       "source_offset": 165858,
       "region_address": "0x08ab0360",
       "decoded_sha256": "36d16b22d3ab46d7002066708f4d88dd98444653743f5d9d10d7bfa0b4d85a34"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/DAIRA_MURA/DAIRA_MURA.BIN",
       "source_offset": 165939,
       "region_address": "0x08abb5a4",
       "decoded_sha256": "f946297257e1f320c15e57c480c0fe3f4d809b8ff27c217f71b15f4061defb4b"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/DAIRA_MURA/DAIRA_MURA.BIN",
       "source_offset": 182323,
       "region_address": "0x08abb7c8",
       "decoded_sha256": "63f8327c509d7c8b8ac2e1815d78a4a13242d671e41baf0bba255ccea48e95e9"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/DAIRA_MURA/DAIRA_MURA.BIN",
       "source_offset": 183213,
       "region_address": "0x08abb950",
       "decoded_sha256": "9acc9d6fcbad981987031f4276486943d93f015be1daf83a3014d26349a6e36c"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/DAIRA_HEYA/DAIRA_HEYA.BIN",
       "source_offset": 138024,
       "region_address": "0x08abe018",
       "decoded_sha256": "85731e5294eee73d0b48ac4507bf85a73cb4f00490b1e6da1d83940739ee360f"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/DAIRA_HEYA/DAIRA_HEYA.BIN",
       "source_offset": 154408,
       "region_address": "0x08abe190",
       "decoded_sha256": "f948e8f145869eaf96c3453017bbbf74d697d5c60d0f76ff5f72a880dd9f374b"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/DAIRA_HEYA/DAIRA_HEYA.BIN",
       "source_offset": 155346,
       "region_address": "0x08abe2f8",
       "decoded_sha256": "149bd49ec26762a41b074b20eb0bdf48f55fd04a4f9defd841c1579b9edd3758"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/DAIRA_HEYA/DAIRA_HEYA.BIN",
       "source_offset": 155356,
       "region_address": "0x08abe308",
       "decoded_sha256": "370090eb38f8de3d1d9cf31a5b7212cad8a3bc142bf210cd31d55f1d34b1d8e8"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/DAIRA_HEYA/DAIRA_HEYA.BIN",
       "source_offset": 155459,
       "region_address": "0x08ac3f1c",
       "decoded_sha256": "083fd063a136297545543693d6f52a584776d0ac7b48415ce8a7804202c5a5b7"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/DAIRA_HEYA/DAIRA_HEYA.BIN",
       "source_offset": 171843,
       "region_address": "0x08ac4048",
       "decoded_sha256": "76d356d74a67c4bf0403adbceaa3f298fc751c09c584bdbe7e7cf47203855557"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/DAIRA_HEYA/DAIRA_HEYA.BIN",
       "source_offset": 172897,
       "region_address": "0x08ac4228",
       "decoded_sha256": "cd1f39fb114d62dda305b23179b12667ea93ae492bed5d017a8b63d6285dad06"
     },
     {
-      "kind": "layer",
+      "kind": "bytes",
       "source": "games/THE LOST AGE/SRC/FIELD/DAIRA_HEYA/DAIRA_HEYA.BIN",
       "source_offset": 172919,
       "region_address": "0x08ac423c",

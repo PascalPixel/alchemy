@@ -1,9 +1,7 @@
 #include "TYPES.H"
 
-#define FieldScene_RunActorFormation Func_02000f8c
+#define FieldScene_RunElementalStarDemand Func_02000f8c
 
-/* Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds. */
 extern u8 Data_03001ebc[];
 void Func_020051f8();
 void Func_02005208();
@@ -29,7 +27,7 @@ void Func_020059fc_b();
 void Func_02005a1c();
 struct ObjectRuntime;
 struct ObjectRuntime *Func_02005a30(u32);
-u8 *Func_02005a38_a();
+void Func_02005a38_a();
 struct ObjectRuntime *Func_02005a38_b(u32);
 void Func_02005a50();
 void Func_02005a58();
@@ -54,7 +52,7 @@ void Func_02005b64();
 void Func_02005b68();
 void Func_02005b70();
 void Func_02005b76();
-u8 *Func_02005b7c_a();
+void Func_02005b7c_a();
 struct ObjectRuntime *Func_02005b7c_b(u32);
 void Func_02005b86();
 void Func_02005b88();
@@ -125,11 +123,6 @@ void Func_02005e82();
 void Func_02005ea6();
 void Func_02005eba();
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);
@@ -160,21 +153,25 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-/* The scene step counter at 0x1d8 of the shared scene work record. */
-static __inline__ void bump_step(s32 amount)
+/* Moves the event's current message on by amount. */
+static __inline__ void SkipMessage(s32 amount)
 {
     u8 *work = *(u8 **)Data_03001ebc;
 
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
-void FieldScene_RunActorFormation(void)
+/* The demand for the Elemental Stars. Its dialogue starts at message 0x107d
+ * while the actors move into place; a nonzero answer to the prompt skips one
+ * reply, and the dialogue then continues from message 0x108d. */
+void FieldScene_RunElementalStarDemand(void)
 {
-    u8 *p10;
-    u8 *p9;
-    u8 *rec8;
-    u8 *record;
-    s32 v5;
+    u8 *field_85;
+    u8 *field_80_38;
+    u8 *record12;
+    u8 *record8;
+    s32 cnt;
+    s32 zero;
 
     Func_02005aae(61);
     Func_020059ae(10, 4);
@@ -189,7 +186,7 @@ void FieldScene_RunActorFormation(void)
     Func_02005a1c(10, 1);
     Call3(Func_02005a78, 10, 0xb000, 10);
     Func_0200524c(10, 20);
-    Call2((void (*)())Func_02005a38_a, 11, 1);
+    Call2(Func_02005a38_a, 11, 1);
     Call3(Func_02005a94, 11, 0xd000, 20);
     Func_02005268(11, 30);
     Call3(Func_02005ab8, 9, 0x102, 60);
@@ -200,26 +197,27 @@ void FieldScene_RunActorFormation(void)
     Func_02005a8a(9, 2);
     Func_02005a72(9, 4);
     Func_020052b6(9, 10);
-    rec8 = (u8 *)Func_02005a30(12);
-    record = (u8 *)Func_02005a38_b(8);
-    p9 = *(u8 **)(rec8 + 80) + 38;
-    *p9 = 0;
-    *(s32 *)(rec8 + 24) = 0x1999;
-    *(s32 *)(rec8 + 28) = 0x1999;
-    *(s32 *)((s32)record + 24) = 0x1999;
-    *(s32 *)((s32)record + 28) = 0x1999;
+    record12 = (u8 *)Func_02005a30(12);
+    record8 = (u8 *)Func_02005a38_b(8);
+    field_80_38 = *(u8 **)(record12 + 80) + 38;
+    zero = 0;
+    *field_80_38 = zero;
+    *(s32 *)(record12 + 24) = 0x1999;
+    *(s32 *)(record12 + 28) = 0x1999;
+    *(s32 *)(record8 + 24) = 0x1999;
+    *(s32 *)(record8 + 28) = 0x1999;
     Call2(Func_02005ae0, 12, 0x100);
     Call3(Func_02005aac, 12, 0x1d70000, 0x1220000);
-    p10 = rec8 + 85;
-    *p10 = 0;
-    *(s32 *)(rec8 + 12) = 0x280000;
+    field_85 = record12 + 85;
+    *field_85 = zero;
+    *(s32 *)(record12 + 12) = 0x280000;
     Func_02005a50(1);
     Func_0200530c(12, 10);
     Call3(Func_02005b5c, 5, 0x100, 0);
     Call3(Func_02005b68, 9, 0x100, 30);
     Call3(Func_02005b64, 5, 0xc000, 0);
     Call3(Func_02005b70, 9, 0xb000, 10);
-    Call3((void (*)())Func_02005b7c_a, 11, 0xd000, 0);
+    Call3(Func_02005b7c_a, 11, 0xd000, 0);
     Call3(Func_02005b88, 10, 0xb000, 0);
     Call2(Func_02005bbc_a, 0x20000, 0x4000);
     Call4(Func_02005bd2_a, 0x1d70000, -1, 0x1350000, 1);
@@ -227,67 +225,30 @@ void FieldScene_RunActorFormation(void)
     Call3(Func_02005b3a, 8, 0x1d70000, 0x1220000);
     Func_02005c50_a(190);
     Func_02005bc8(12, 2);
-    /*
-     * RESIDUAL, 63 HALFWORDS, AND A MEASURED BOUNDARY RATHER THAN AN OPEN TASK.
-     *
-     * Two facts, one cause. The candidate emits an extra movs r5, #0 to
-     * initialise this counter, and later re-uses the constant 1 that the
-     * reference re-materialises at the flag update below. Both follow from
-     * one variable serving as counter and as or-accumulator, so GCC keeps a
-     * single pseudo in a callee-saved register across the whole function and
-     * shares the constant along it.
-     *
-     * The obvious repair does not work, and the reason is worth recording.
-     * Constant sharing here is decided after CSE and allocation, not by
-     * source variable identity: giving the two loops their own counter
-     * variable, disjoint from the accumulator, changes nothing at all --
-     * still 63 halfwords, still the same registers. Adding a named result
-     * temporary on top changes nothing. The compound or-assign is worse at
-     * 66, and scoping the neighbouring store's constant into its own block
-     * is far worse at 318.
-     *
-     * So the liveness reading is right about the mechanism -- the constant
-     * survives because its holder is callee-saved and never clobbered -- and
-     * wrong about the lever, because no source-level scoping or naming
-     * reaches that decision. The three techniques that closed owners tonight
-     * all act locally: a symbol address cannot be an immediate, a result
-     * temporary changes which operand owns the result, and a canonical call
-     * alias fixes a binding. None of them reaches a whole-function decision.
-     * Measured, not assumed.
-     *
-     * Retested later against the levers that closed resource_3a8 and
-     * resource_38f, which do reach whole-function liveness rather than a
-     * single statement: carrying the zero into the loop through v5, with and
-     * without the two byte stores taking it too, costs sixteen bytes and 483
-     * halfwords. Splitting the loop counters off v5, giving the flag merge its
-     * own result local, declaring that result inside the block, spelling the
-     * merge as a compound or-assign, and moving the byte store past the block
-     * are all neutral or worse. The whole-function conclusion holds under the
-     * newer levers as well.
-     */
-    for (v5 = 0; v5 != 90; v5++) {
-        *(s32 *)(rec8 + 12) += -0x1999;
-        *(s32 *)(rec8 + 24) += 0x28f;
-        *(s32 *)(rec8 + 28) += 0x28f;
-        *(s32 *)((s32)record + 24) += 0x28f;
-        *(s32 *)((s32)record + 28) += 0x28f;
+    for (cnt = 0; cnt != 90; cnt++) {
+        *(s32 *)(record12 + 12) += -0x1999;
+        *(s32 *)(record12 + 24) += 0x28f;
+        *(s32 *)(record12 + 28) += 0x28f;
+        *(s32 *)(record8 + 24) += 0x28f;
+        *(s32 *)(record8 + 28) += 0x28f;
         Func_02005b04(1);
     }
-    *p10 = 5;
+    *field_85 = 5;
     Func_02005b14(80);
-    for (v5 = 0; v5 != 60; v5++) {
-        *(s32 *)(rec8 + 12) += -0x8000;
+    for (cnt = 0; cnt != 60; cnt++) {
+        *(s32 *)(record12 + 12) += -0x8000;
         Func_02005b26(1);
     }
-    *p10 = 3;
+    *field_85 = 3;
     Func_02005b36(30);
-    *p9 = 1;
+    *field_80_38 = 1;
     Func_02005bb6(8, 0, 0);
     Func_02005c3e_a(12, 1);
     {
         u8 *flags = (u8 *)Func_02005b7c_b(12) + 35;
-        v5 = 1 | *flags;
-        *flags = v5;
+        cnt = 1;
+        cnt |= *flags;
+        *flags = cnt;
     }
     Func_02005c16(12, 0);
     Call3(Func_02005ba4, 12, 0x8000, 0x4000);
@@ -337,7 +298,7 @@ void FieldScene_RunActorFormation(void)
     Func_02005cd2(80);
     Value2(Func_02005da2, 11, 0);
     if (Value2(Func_02005d02, 0, 0) != 0) {
-        bump_step(1);
+        SkipMessage(1);
     }
     Func_02005dd8(9, 0, 20);
     Func_02005e5c_a();

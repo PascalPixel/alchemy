@@ -1,11 +1,10 @@
 #include "TYPES.H"
 
-#define Function Func_02000a24
+#define FieldScene_RunSceneEntryHook Func_02000a24
 
-extern u8 Data_02000240[];
-extern s16 Data_02000240_t[][1];
+extern s16 Data_02000240[];
 extern u8 Data_03001ebc[];
-extern u8 Data_00000010[];
+extern u8 Value_00000010;
 
 s32 Func_020025c8();
 void Func_020025d2();
@@ -41,7 +40,6 @@ void Func_0200272c();
 void Func_02002738();
 s32 Func_02002766();
 s32 Func_02002764(s32);
-void Func_0200276c();
 s32 Func_02002772();
 s32 Func_0200277e();
 s32 Func_0200277e_a(s32);
@@ -56,7 +54,6 @@ s32 Func_020027de();
 void Func_020027e6();
 void Func_02002828();
 void Func_020027ea();
-void Func_020027f2();
 s32 Func_0200280c();
 s32 Func_02002818();
 s32 Func_02002830();
@@ -76,82 +73,80 @@ void Func_020022a0();
 void Func_0200185a();
 void Func_02001b5e();
 
-static __inline__ s32 Value1(s32 (*f)(), s32 a0) { return f(a0); }
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
+static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
-    return f(a0, a1, a2);
+    return f(a0);
 }
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
+
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
     f(a0, a1, a2);
 }
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2,
-                             s32 a3, s32 a4, s32 a5)
+
+static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
     f(a0, a1, a2, a3, a4, a5);
 }
 
-void Function(void)
+/* Opens the scene with the window transition, playing sound 141 when flag
+ * 0x814 is set, then prepares the entrance the party arrived by. Entrances 1
+ * and 2 change the map once flag 0x81a is set. Entrance 3 clears actor 9's
+ * sprite flags. Entrance 8 stores two game-state halfwords and runs a scene
+ * until flag 0x802 is set. Entrances 11 to 13 clear the sprite flags of
+ * actors 9 to 19, run a scene until flag 0x804 is set and place actors 9 and
+ * 10 by flag. Entrances 14 to 16 clear those of actors 9 to 14, run a scene
+ * until flag 0x825 is set, run one more step, set flag 0x234 and change the
+ * map once flag 0x821 is set. */
+void FieldScene_RunSceneEntryHook(void)
 {
-    s32 selector;
-    s32 actor;
+    s32 entrance;
     u8 *work = *(u8 **)Data_03001ebc;
-    s32 off = 448;
 
-    *(s32 *)(work + off) = 0x204;
+    *(s32 *)(work + 448) = 0x204;
     if (Value1(Func_020025c8, 0x814) != 0) {
         Func_0200270a(141);
         Call3(Func_020025d2, 0x10000, 0x10000, 0x10000);
         Func_020026f6();
     }
 
-    selector = Data_02000240_t[225][0] - 1;
-    if ((u32)selector > 15)
-        return;
-
-    switch (selector) {
-    case 0:
+    entrance = Data_02000240[225];
+    switch (entrance) {
     case 1:
-        if (Value1(Func_02002648, 0x81a) == 0)
-            return;
-        Call6(Func_02002630, 1, 109, 4, 81, 1, 1);
-        Call6(Func_02002640, 0, 70, 30, 42, 1, 1);
-        Call6(Func_02002654, 0, 29, 3, 1, 3, 2);
-        Call6(Func_0200266c, 0, 29, 3, 2, 3, 1);
-        Func_02002650();
-        break;
-
     case 2:
-        actor = Func_020026e0(9);
-        Func_0200268e(actor, 0);
+        if (Value1(Func_02002648, 0x81a) != 0) {
+            Call6(Func_02002630, 1, 109, 4, 81, 1, 1);
+            Call6(Func_02002640, 0, 70, 30, 42, 1, 1);
+            Call6(Func_02002654, 0, 29, 3, 1, 3, 2);
+            Call6(Func_0200266c, 0, 29, 3, 2, 3, 1);
+            Func_02002650();
+        }
         break;
 
-    case 7:
-        Data_02000240_t[288][0] = (s16)Data_00000010;
-        Data_02000240_t[289][0] = 8;
-        if (Value1(Func_020026c0_a, 0x802) != 0)
-            return;
-        Func_0200185a();
+    case 3:
+        Func_0200268e(Func_020026e0(9), 0);
         break;
 
-    case 10:
+    case 8:
+        Data_02000240[288] = (s32)&Value_00000010;
+        Data_02000240[289] = 8;
+        if (Value1(Func_020026c0_a, 0x802) == 0)
+            Func_0200185a();
+        break;
+
     case 11:
     case 12:
-        actor = Func_02002712(9);  Func_020026c0_b(actor, 0);
-        actor = Func_0200271e(10); Func_020026cc(actor, 0);
-        actor = Func_0200272a(11); Func_020026d8(actor, 0);
-        actor = Func_02002736(12); Func_020026e4(actor, 0);
-        actor = Func_02002742(13); Func_020026f0(actor, 0);
-        actor = Func_0200274e(14); Func_020026fc(actor, 0);
-        actor = Func_0200275a(15); Func_02002708(actor, 0);
-        actor = Func_02002766(16); Func_02002714(actor, 0);
-        actor = Func_02002772(17); Func_02002720(actor, 0);
-        actor = Func_0200277e(18); Func_0200272c(actor, 0);
-        actor = Func_0200278a(19); Func_02002738(actor, 0);
+    case 13:
+        Func_020026c0_b(Func_02002712(9), 0);
+        Func_020026cc(Func_0200271e(10), 0);
+        Func_020026d8(Func_0200272a(11), 0);
+        Func_020026e4(Func_02002736(12), 0);
+        Func_020026f0(Func_02002742(13), 0);
+        Func_020026fc(Func_0200274e(14), 0);
+        Func_02002708(Func_0200275a(15), 0);
+        Func_02002714(Func_02002766(16), 0);
+        Func_02002720(Func_02002772(17), 0);
+        Func_0200272c(Func_0200277e(18), 0);
+        Func_02002738(Func_0200278a(19), 0);
         if (Value1(Func_02002756, 0x804) == 0)
             Func_02001b5e();
         if (Value1(Func_02002764, 0x303) != 0)
@@ -160,23 +155,23 @@ void Function(void)
             Call3(Func_02002800_a, 9, 0x5f80000, 0x880000);
         if (Value1(Func_02002796, 0x301) != 0)
             Call3(Func_02002828, 10, 0x7180000, 0x880000);
-        else if (Value1(Func_020027a6, 0xc0 << 2) != 0)
+        else if (Value1(Func_020027a6, 0x300) != 0)
             Call3(Func_02002828, 10, 0x7380000, 0x880000);
         break;
 
-    case 13:
     case 14:
     case 15:
-        actor = Func_02002800(9);  Func_020027ae(actor, 0);
-        actor = Func_0200280c(10); Func_020027ba(actor, 0);
-        actor = Func_02002818(11); Func_020027c6(actor, 0);
-        actor = Func_02002824(12); Func_020027d2(actor, 0);
-        actor = Func_02002830(13); Func_020027de(actor, 0);
-        actor = Func_0200283c(14); Func_020027ea(actor, 0);
+    case 16:
+        Func_020027ae(Func_02002800(9), 0);
+        Func_020027ba(Func_0200280c(10), 0);
+        Func_020027c6(Func_02002818(11), 0);
+        Func_020027d2(Func_02002824(12), 0);
+        Func_020027de(Func_02002830(13), 0);
+        Func_020027ea(Func_0200283c(14), 0);
         if (Value1(Func_02002808, 0x825) == 0)
             Func_020022a0();
         Func_0200244a(1);
-        Func_02002826(141 * 4);
+        Func_02002826(0x234);
         if (Value1(Func_02002824_a, 0x821) != 0) {
             Call6(Func_0200280a, 0, 71, 100, 71, 1, 1);
             Call6(Func_0200281c, 122, 20, 120, 30, 1, 2);
@@ -185,7 +180,5 @@ void Function(void)
         }
         break;
 
-    default:
-        break;
     }
 }

@@ -3,6 +3,8 @@
 #include "GLOBAL_CELLS.H"
 #include "SOUND_IDS.H"
 
+void UiText_DrawQuantity(s32 value, s32 slot);
+void UiWindow_Close(s32 window, s32 style);
 s32 Func_080b27b0(s32 unit_id, s32 kind);
 s32 Func_080b2778(s32 unit_id, s32 kind);
 void Func_080b2da8(s32 unit_id, s32 mode);
@@ -18,15 +20,15 @@ void Func_080a1028(s32, s32, s32, s32, s32);
 void Func_080a1030(void);
 extern char Value_00000d27;
 
-/*
- * Reached from Shop_ConfirmAct (main:080b29a8) once the caller's
- * yes/no confirmation succeeds. Lets the player pick a party member from
- * shop->party_member_ids eligible for shop->party_action (checked through
- * Func_080b27b0's per-kind status test), previews the treatment's price via
- * Func_080b2778, and on confirmation charges the party's money and applies
- * the action through Func_080b2da8 before looping for another member.
- */
-s32 Func_080b2b10(void)
+#define Sanctum_RunPartyService Func_080b2b10
+
+/* Lets the player choose which party member receives the chosen sanctum
+ * service, starting on the first member who needs it; left and right move the
+ * cursor and B leaves. A on a member who needs the service quotes the
+ * donation. Declining it, or being unable to pay, says so and starts the
+ * choice again; paying treats the member and, while others still need the
+ * service, starts the choice again. */
+s32 Sanctum_RunPartyService(void)
 {
     struct ShopRuntime *shop = SHOP_RUNTIME;
     s32 price_window;
@@ -37,6 +39,7 @@ s32 Func_080b2b10(void)
     s32 unit_id;
     s32 retry;
     s32 price;
+    s32 message;
 
     price_window = 0;
     redraw = 1;
@@ -49,12 +52,6 @@ s32 Func_080b2b10(void)
     Func_080a1028(list_window, 2, 0, 8, price_window);
     price_window = UiWindow_CreateFar(1, 16, 23, 3, 2);
 
-    /* selection/unit_id/retry are zero-initialized here as three separate
-     * statements (not folded into the loop's init clause): the reference
-     * materializes 0 once in a low register for `selection` and copies it
-     * into both high-register locals via cheap `mov`s (Thumb cannot load
-     * an immediate directly into r8+), which only happens if unit_id and
-     * retry both have real explicit initializers at this exact point. */
     selection = 0;
     unit_id = 0;
     retry = 0;
@@ -69,8 +66,8 @@ s32 Func_080b2b10(void)
     for (;;) {
         if (retry != 0) {
             retry = 0;
-            redraw = 1;
             Func_080b28d4(0xd26);
+            redraw = 1;
             selection = 0;
             while (selection < shop->party_member_count) {
                 unit_id = shop->party_member_ids[selection];
@@ -101,34 +98,28 @@ s32 Func_080b2b10(void)
             }
             UiText_DrawQuantity(unit_id, 1);
             UiText_DrawQuantity(price, 5);
-            /* retry briefly carries the 0xd27 message-id base for this
-             * block's status prompts (retry+1/+2 on the two rejection
-             * paths, +3/+4 once the purchase actually proceeds) before
-             * being reused for its usual 0/1 retry-loop meaning below;
-             * the reference keeps both roles in the same register since
-             * their live ranges never overlap. */
-            retry = (s32)&Value_00000d27;
-            Func_080b28d4(retry);
+            message = (s32)&Value_00000d27;
+            Func_080b28d4(message);
             if (Func_080b0664(0) != 0) {
-                Func_080b2928(retry + 2);
+                Func_080b2928(message + 2);
                 retry = 1;
                 continue;
             }
             if ((u32)price > (u32)SHOP_PARTY_STATE.money) {
                 Audio_PlayCue(SOUND_MENU_CANCEL);
-                Func_080b2928(retry + 1);
+                Func_080b2928(message + 1);
                 retry = 1;
                 continue;
             }
             UiText_DrawQuantity(unit_id, 1);
-            Func_080b28d4(retry + 3);
+            Func_080b28d4(message + 3);
             UiWork_FinalizePending();
             Func_080b2da8(unit_id, kind);
             Func_080b3050(selection);
             Func_08077230(-price);
             Shop_DrawMoney();
             UiText_DrawQuantity(unit_id, 1);
-            Func_080b28d4(retry + 4);
+            Func_080b28d4(message + 4);
             if (Func_080b280c() != 0) {
                 retry = 1;
                 continue;

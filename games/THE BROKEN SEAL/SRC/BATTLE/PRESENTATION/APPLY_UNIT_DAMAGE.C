@@ -1,6 +1,6 @@
 #include "TYPES.H"
 
-#define BattlePres_ApplyUnitDamage Func_080b8db8
+#define BattlePresentation_ApplyUnitDamage Func_080b8db8
 #define Character_GetRuntimeRecord Func_08077008
 #define GetBattleObjectSlot Func_080b7dd0
 
@@ -22,18 +22,23 @@ void Func_08015120(s32 value, s32 mode);
 void Func_080151c8(s32 message_id);
 void Func_080b8ec4(s32 unit_id);
 
-void BattlePres_ApplyUnitDamage(u32 unit_id, s32 damage,
-                                        s32 show_message, void *context)
+/* Takes damage from a unit's HP, stopping at zero, and reports it with the
+ * unit posed in mode 5: an optional opening line (a bitter blow for units 0
+ * to 7, the party, and a critical hit for the others), the damage message,
+ * and a downed message once HP reaches zero. The unit returns to mode 1 at
+ * the end. */
+void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_message, u8 *context)
 {
     u8 local_context[4];
     struct CharacterRuntimeRecord *character;
     struct BattleMotionSlot *slot;
 
     if (context == 0) {
-        local_context[0] = 0;
-        local_context[1] = 0;
-        local_context[2] = 0;
-        local_context[3] = 0;
+        context = local_context;
+        context[0] = 0;
+        context[1] = 0;
+        context[2] = 0;
+        context[3] = 0;
     }
 
     character = Character_GetRuntimeRecord(unit_id);

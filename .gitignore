@@ -1,10 +1,9 @@
 .DS_Store
-games/*/assets/**/preview*.png
 .cache/
 .cmatch*/
 # Installed dependencies survive output cleanup; never commit local executables.
 /toolchain/
-/tools/compilers/
+/tools/compilers
 /tools/.compiler.lock
 /tools/.install-*/
 toolchains/
@@ -89,7 +88,7 @@ target/
 
 # Adoption's per-overlay lock (see tools/alchemy/src/overlay). Lives
 # beside the tracked assembly it guards, so it must never become committable.
-games/*/assets/code/*.adopt-lock
+games/*/asm/**/*.adopt-lock
 /games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/STILL.PNG
 /games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/TILE.PNG
 /games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/PORTRAIT.PNG

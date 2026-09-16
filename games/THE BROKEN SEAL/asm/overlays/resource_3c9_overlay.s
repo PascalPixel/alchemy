@@ -9444,21 +9444,8 @@ AlchemyC_020059f0:
 AlchemyC_02005b90:
 	.space 0x5c
 .include "games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/IMPORT.INC"
-	.4byte 0x46c04700
-	.4byte 0x46c04708
-	.4byte 0x46c04710
-	.4byte 0x46c04718
-	.4byte 0x46c04720
-	.4byte 0x46c04728
-	.4byte 0x46c04730
-	.4byte 0x46c04738
-	.4byte 0x46c04740
-	.4byte 0x46c04748
-	.4byte 0x46c04750
-	.4byte 0x46c04758
-	.4byte 0x46c04760
-	.4byte 0x46c04768
-	.4byte 0x46c04770
+AlchemyRuntime_02005ed4:
+	.space 0x3c
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c

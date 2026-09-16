@@ -2169,21 +2169,8 @@ AlchemyC_02003460:
 	bx	r0
 	.2byte 0x0000
 .include "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/IMPORT.INC"
-	.4byte 0x46c04700
-	.4byte 0x46c04708
-	.4byte 0x46c04710
-	.4byte 0x46c04718
-	.4byte 0x46c04720
-	.4byte 0x46c04728
-	.4byte 0x46c04730
-	.4byte 0x46c04738
-	.4byte 0x46c04740
-	.4byte 0x46c04748
-	.4byte 0x46c04750
-	.4byte 0x46c04758
-	.4byte 0x46c04760
-	.4byte 0x46c04768
-	.4byte 0x46c04770
+AlchemyRuntime_02003848:
+	.space 0x3c
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c

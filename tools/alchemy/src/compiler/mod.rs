@@ -10,6 +10,7 @@ pub(crate) mod overlay;
 pub(crate) mod plan;
 pub(crate) mod routing;
 mod routing_data;
+pub(crate) mod runtime;
 pub(crate) mod sha256;
 pub(crate) mod source_bindings;
 pub(crate) mod source_inputs;

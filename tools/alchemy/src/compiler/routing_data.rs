@@ -8,46 +8,6 @@
 // Routing belongs to the owner, not to whatever file currently holds it, so a
 // member keeps its family when its source is renamed, moved, or grouped.
 
-// The soft-float support leaves: prebuilt toolchain library code with the
-// stock ABI (r4 callee-saved) and no interworking, linked into the two
-// overlays that carry a copy. The resource qualifier matters: a bare address
-// would also claim the unrelated function another overlay links there.
-pub static SOFT_FLOAT_LIBRARY_OVERLAY_SOURCES: &[&str] = &[
-    "resource_3a7:0200142c",
-    "resource_3a7:0200143c",
-    "resource_3a7:0200144c",
-    "resource_3a7:02001564",
-    "resource_3a7:02001750",
-    "resource_3a7:02001760",
-    "resource_3bf:02005ac0",
-    "resource_3bf:02005ad0",
-    "resource_3bf:02005bd8",
-    "resource_3bf:02005be8",
-    "resource_3bf:02005bf8",
-    "resource_3bf:02005dd4",
-    "resource_3bf:02005de4",
-    "resource_3bf:02005df4",
-    "resource_3a7:02001770",
-    "resource_3bf:02005e04",
-    "resource_3a7:020015a4",
-    "resource_3bf:02005c38",
-    "resource_3a7:020013ac",
-    "resource_3a7:020013e4",
-    "resource_3a7:02001554",
-    "resource_3a7:02001740",
-    "resource_3bf:02005ae0",
-    "resource_3a7:02001544",
-    "resource_3bf:02005a40",
-    "resource_3bf:02005a78",
-    "resource_3bf:02005c08",
-    "resource_3bf:02005af0",
-    "resource_3bf:02005b6c",
-    "resource_3a7:020014d8",
-    "resource_3a7:0200145c",
-    "resource_3a7:02001574",
-    "resource_3a7:02001158",
-    "resource_3bf:020057ec",
-];
 // Library code built with agbcc.
 pub static AGBCC_SOURCES: &[&str] = &[
     "main:080fb73c",

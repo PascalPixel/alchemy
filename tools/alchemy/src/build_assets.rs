@@ -5293,6 +5293,12 @@ fn stage_stamp_with_signature(
         "<compiler-bundle>",
         signatures.bundle.as_bytes(),
     );
+    // Overlay runtime windows are built from the compiler container.
+    stamp_record(
+        &mut stream,
+        "<compiler-runtime>",
+        crate::compiler::runtime::signature(root)?.as_bytes(),
+    );
     stamp_record(
         &mut stream,
         "<host-binutils>",

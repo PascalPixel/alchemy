@@ -500,7 +500,7 @@
         "start": 134247140,
         "end": 134247200,
         "kind": "veneer",
-        "evidence": "games/THE BROKEN SEAL/asm/080072e4.s:runtime_thunk_bundle"
+        "evidence": "games/THE BROKEN SEAL/recon/compiler-runtime.json:_call_via_rX"
       },
       {
         "start": 134248852,

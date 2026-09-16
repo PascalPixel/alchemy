@@ -22,7 +22,7 @@
  *
  * `status` and `Func_080072f0`/`Func_080072f4` follow the established
  * sibling reading: both addresses are `_call_via_rN` thunk slots
- * (games/THE BROKEN SEAL/asm/080072e4.s) -- r3 for Func_080072f0, r4 for Func_080072f4
+ * (the container-built bank at 0x080072e4) -- r3 for Func_080072f0, r4 for Func_080072f4
  * -- so each call is a genuine indirect call through a traced function
  * pointer, not a call to a real symbol at that address.
  */

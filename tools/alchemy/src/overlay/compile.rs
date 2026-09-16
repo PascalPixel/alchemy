@@ -1091,7 +1091,22 @@ pub fn assemble_overlay(source: &OverlaySource, base: i64) -> Result<Vec<u8>, St
     let display = source.to_display_string();
     let overlay = source.overlay_id().unwrap_or_default();
     let mut occupied: std::collections::BTreeSet<usize> = std::collections::BTreeSet::new();
-    for compiled in compile_production_overlay(source, work.path(), &overlay)? {
+    // Compiler runtime windows take bytes built from the licensed container.
+    let listing = source.read_text().map_err(|error| error.to_string())?;
+    let game = match source {
+        OverlaySource::Path(path) => crate::overlay::owners::assembly_target(path).compiler,
+        _ => CompilerTarget::Tbs,
+    };
+    let runtime = crate::compiler::runtime::overlay_fill(&root(), game, &overlay, &listing)?
+        .into_iter()
+        .map(|(address, data)| Compiled {
+            address: i64::from(address),
+            data,
+        });
+    for compiled in compile_production_overlay(source, work.path(), &overlay)?
+        .into_iter()
+        .chain(runtime)
+    {
         let offset = compiled.address - base;
         if offset < 0 || offset + compiled.data.len() as i64 > result.len() as i64 {
             return Err(format!(

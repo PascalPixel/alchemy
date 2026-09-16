@@ -263,52 +263,6 @@
       }
     },
     {
-      "kind": "runtime_thunk_bundle",
-      "origin": "compiler_runtime",
-      "retention": "keep_asm",
-      "confidence": "proven",
-      "evidence": [
-        "approved_compiler_call_via_symbols",
-        "libgcc_call_via_rx_lib1funcs_asm_950_990_byte_identical_60_bytes",
-        "assembled_every_t_arm_elf_lib1asmfuncs_member_arm_and_thumb_only_call_via_rx_matches"
-      ],
-      "expected_files": 1,
-      "expected_bytes": 60,
-      "files": [
-        "080072e4"
-      ],
-      "provenance": {
-        "scanned": "2026-09-10",
-        "cross_rom": {
-          "method": "exact byte search of each region in the other eleven ROMs (tbs de/es/fr/it/ja, tla en/ja/de/es/fr/it), then pool-masked search (words in 0x02/0x03/0x08/0x09 spaces wildcarded) in the six TLA editions",
-          "regions": 1,
-          "bytes": 56,
-          "tla_exact": {
-            "regions": 1,
-            "bytes": 56,
-            "addresses": [
-              "80072e4->8017878"
-            ]
-          },
-          "tla_masked": {
-            "regions": 0,
-            "bytes": 0,
-            "addresses": []
-          },
-          "tbs_editions_only": {
-            "regions": 0,
-            "bytes": 0
-          }
-        },
-        "verdict": "library_proven",
-        "credit": "library",
-        "object": "agscc gcc/config/arm/lib1funcs.asm:950-990 call_via macro (bx \\register; nop), built by t-arm-elf LIB1ASMFUNCS _call_via_rX",
-        "proof": "Byte-identical to libgcc _call_via_rX assembled from agscc gcc/config/arm/lib1funcs.asm:950-990 with the bundle cpp0/as; checked by searching the 60 assembled bytes in tbs-en at 0x080072e4 (scratchpad libgcc.ts, 2026-09-10).",
-        "note": "register extent is 56 bytes; the object is 60 (r0..sp then lr, lib1funcs.asm:972-986); the lr thunk at 0x0800731c-0x0800731f is unowned and belongs to this region",
-        "extent_review": "2026-09-10: extent moved 56 -> 60; the lr thunk word 0x46c04770 at 0x0800731c was registered as boundary_word_0800731c in executable_gaps/index.json and is now the fifteenth call_via entry, matching lib1funcs.asm:972-986"
-      }
-    },
-    {
       "kind": "bios_wrapper",
       "origin": "bios_interface",
       "retention": "keep_asm",

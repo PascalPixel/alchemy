@@ -1815,119 +1815,8 @@ AlchemyC_020054dc:
 AlchemyC_02005520:
 	.space 0x68
 .include "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/IMPORT.INC"
-	bx r0
-	nop
-	bx r1
-	nop
-	bx r2
-	nop
-	bx r3
-	nop
-	bx r4
-	nop
-	bx r5
-	nop
-	bx r6
-	nop
-	bx r7
-	nop
-	bx r8
-	nop
-	bx r9
-	nop
-	bx r10
-	nop
-	bx r11
-	nop
-	bx r12
-	nop
-	bx r13
-	nop
-	bx lr
-	nop
-.L_020057ec:
-AlchemyC_020057ec:
-	.space 0x1ce
-.L_020059ba:
-	.space 0x86
-AlchemyC_02005a40:
-	.space 0x36
-	.balign 4, 0
-AlchemyC_02005a78:
-	.space 0x3e
-	.balign 4, 0
-AlchemyC_02005ab8:
-	.space 0x8
-AlchemyC_02005ac0:
-	.space 0x10
-AlchemyC_02005ad0:
-	.space 0x10
-AlchemyC_02005ae0:
-	.space 0x10
-AlchemyC_02005af0:
-	.space 0x7c
-AlchemyC_02005b6c:
-	.space 0x6c
-AlchemyC_02005bd8:
-	.space 0x10
-AlchemyC_02005be8:
-	.space 0x10
-AlchemyC_02005bf8:
-	.space 0x10
-AlchemyC_02005c08:
-	.space 0x30
-AlchemyC_02005c38:
-	.space 0x44
-.L_02005c7c:
-	.space 0xc
-.L_02005c88:
-	.space 0x40
-.L_02005cc8:
-	.space 0xa
-.L_02005cd2:
-	.space 0x2a
-.L_02005cfc:
-	.space 0x2
-.L_02005cfe:
-	.space 0x22
-.L_02005d20:
-	.space 0x36
-.L_02005d56:
-	.space 0x12
-.L_02005d68:
-	.space 0x4
-.L_02005d6c:
-	.space 0xc
-.L_02005d78:
-	.space 0x18
-.L_02005d90:
-	.space 0x1c
-.L_02005dac:
-	.space 0x28
-AlchemyC_02005dd4:
-	.space 0x6
-.L_02005dda:
-	.space 0xa
-AlchemyC_02005de4:
-	.space 0x2
-.L_02005de6:
-	.space 0x8
-.L_02005dee:
-	.space 0x4
-.L_02005df2:
-	.space 0x2
-AlchemyC_02005df4:
-	.space 0x10
-AlchemyC_02005e04:
-	.space 0x4
-.L_02005e08:
-	.space 0x18
-.L_02005e20:
-	.space 0x18
-.L_02005e38:
-	.space 0x12
-.L_02005e4a:
-	.space 0x8e
+AlchemyRuntime_020057b0:
+	.space 0x728
 	.4byte 0x00100000
 	.4byte 0x00100000
 	.4byte 0x00100000
@@ -1974,11 +1863,8 @@ AlchemyC_02005e04:
 	.4byte 0xffffffe0
 	.4byte 0x00000008
 	.4byte 0x00000020
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
+AlchemyRuntime_02005f90:
+	.space 0x14
 	.4byte 0x00000000
 	.4byte 0x00000015
 	.4byte 0x00000010

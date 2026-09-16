@@ -30,7 +30,7 @@ use crate::compiler::canonical_json::write_canonical;
 use crate::compiler::{
     build_io::{argv, read, read_json, relative, rooted, text, write},
     bundle::host_executable_signature,
-    sha256,
+    runtime, sha256,
     thumb::standalone_wide_transfer_lines,
 };
 use psynergy::cache::SqliteCache;
@@ -705,6 +705,47 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
             built.address,
             region_value(&output, &source_name, &built, &category),
         ));
+    }
+    let runtime_game = Path::new(runtime::REGISTRY).starts_with(
+        Path::new(&options.asm_dir)
+            .parent()
+            .unwrap_or(Path::new("")),
+    );
+    if options.source.is_none() && runtime_game {
+        // Main-image compiler runtime links are built from the licensed
+        // container; no tracked source holds their code.
+        let category = Classification {
+            kind: "compiler_runtime".into(),
+            origin: "compiler_runtime".into(),
+            retention: "container_runtime".into(),
+            confidence: "proven".into(),
+            evidence: vec!["built_from_licensed_compiler_container".into()],
+        };
+        let registry = runtime::Registry::load(root)?;
+        for link in registry.links_for("main") {
+            let data = runtime::build(root, link)?.text;
+            let address = u64::from(link.text);
+            let name = format!("{address:08x}");
+            if let Some(rom) = rom.as_ref() {
+                let start = (address - ROM_BASE) as usize;
+                if rom.get(start..start + data.len()) != Some(data.as_slice()) {
+                    return Err(format!("{name}: container-built runtime bytes differ"));
+                }
+            }
+            write(output.join(format!("{name}.bin")), &data)?;
+            let count = counts.entry(category.kind.clone()).or_default();
+            count.files += 1;
+            count.bytes += data.len();
+            let built = BuiltRegion {
+                address,
+                run_address: address,
+                data,
+            };
+            regions.push((
+                address,
+                region_value(&output, runtime::REGISTRY, &built, &category),
+            ));
+        }
     }
     if options.source.is_none() {
         let alignment_path = asm.join("alignment.json");

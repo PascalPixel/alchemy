@@ -16063,25 +16063,9 @@
       "name": "SceneData_SelectOverlayDataBySelector",
       "source": "FIELD/KUUPUAPPU_DOU/SELECT_BY_RUNTIME_SELECTOR.C"
     },
-    "resource_3a7:020015a4": {
-      "name": "SoftFloat_Pack",
-      "source": "LIB/SOFT_FLOAT.C"
-    },
-    "resource_3a7:02001564": {
-      "name": "SoftFloat_IsZeroForConvert",
-      "source": "LIB/SOFT_FLOAT.C"
-    },
-    "resource_3a7:02001760": {
-      "name": "SoftFloat_IsZeroForPack",
-      "source": "LIB/SOFT_FLOAT.C"
-    },
     "resource_3a7:02000734": {
       "name": "SceneState_SetEntries16To21Byte35",
       "source": "FIELD/KUUPUAPPU_DOU/SELECT_BY_RUNTIME_SELECTOR.C"
-    },
-    "resource_3a7:02001424": {
-      "name": "SoftFloat_GetNaNRecord",
-      "source": "LIB/SOFT_FLOAT.C"
     },
     "resource_3a7:020002e0": {
       "name": "SceneData_SelectDataByRuntimeSelector",
@@ -16095,10 +16079,6 @@
       "name": "SceneData_FindActiveSlotAtCell",
       "source": "FIELD/KUUPUAPPU_DOU/SELECT_BY_RUNTIME_SELECTOR.C"
     },
-    "resource_3a7:020013e4": {
-      "name": "SoftFloat_Subtract",
-      "source": "LIB/SOFT_FLOAT.C"
-    },
     "resource_3a7:020006e4": {
       "name": "SceneState_DispatchByActorZeroDepth",
       "source": "FIELD/KUUPUAPPU_DOU/SELECT_BY_RUNTIME_SELECTOR.C"
@@ -16111,29 +16091,13 @@
       "name": "SceneData_SelectByRuntimeSelector",
       "source": "FIELD/KUUPUAPPU_DOU/SELECT_BY_RUNTIME_SELECTOR.C"
     },
-    "resource_3a7:02001574": {
-      "name": "SoftFloat_ShiftRight",
-      "source": "LIB/SOFT_FLOAT.C"
-    },
-    "resource_3a7:02001770": {
-      "name": "SoftFloat_Unpack",
-      "source": "LIB/SOFT_FLOAT.C"
-    },
     "resource_3a7:020005ec": {
       "name": "SceneState_ApplyRectAndSetupActor19",
       "source": "FIELD/KUUPUAPPU_DOU/SELECT_BY_RUNTIME_SELECTOR.C"
     },
-    "resource_3a7:020013ac": {
-      "name": "SoftFloat_Add",
-      "source": "LIB/SOFT_FLOAT.C"
-    },
     "resource_3a7:02000458": {
       "name": "SceneActor_IsActor10AtTile16x12",
       "source": "FIELD/KUUPUAPPU_DOU/SELECT_BY_RUNTIME_SELECTOR.C"
-    },
-    "resource_3a7:0200143c": {
-      "name": "SoftFloat_IsInfinityForAdd",
-      "source": "LIB/SOFT_FLOAT.C"
     },
     "resource_3a7:02000084": {
       "name": "SceneData_GetTable9C5C",
@@ -16146,14 +16110,6 @@
     "resource_3a7:02000c08": {
       "name": "SceneActor_InitSlots10To15AndStartTask",
       "source": "FIELD/KUUPUAPPU_DOU/SELECT_BY_RUNTIME_SELECTOR.C"
-    },
-    "resource_3a7:0200142c": {
-      "name": "SoftFloat_IsNaNForAdd",
-      "source": "LIB/SOFT_FLOAT.C"
-    },
-    "resource_3a7:0200145c": {
-      "name": "SoftFloat_FromInt",
-      "source": "LIB/SOFT_FLOAT.C"
     },
     "resource_3a7:0200040c": {
       "name": "FieldScene_NoOp",
@@ -16171,14 +16127,6 @@
       "name": "SceneState_SetFlag953",
       "source": "FIELD/KUUPUAPPU_DOU/SELECT_BY_RUNTIME_SELECTOR.C"
     },
-    "resource_3a7:0200144c": {
-      "name": "SoftFloat_IsZeroForAdd",
-      "source": "LIB/SOFT_FLOAT.C"
-    },
-    "resource_3a7:020014d8": {
-      "name": "SoftFloat_ToInt",
-      "source": "LIB/SOFT_FLOAT.C"
-    },
     "resource_3a7:02000c50": {
       "name": "SceneActor_SetupActors11To14AndInstallTask",
       "source": "FIELD/KUUPUAPPU_DOU/SELECT_BY_RUNTIME_SELECTOR.C"
@@ -16195,33 +16143,13 @@
       "name": "SceneActor_TransformAndApplyRecordPosition",
       "source": "FIELD/KUUPUAPPU_DOU/SELECT_BY_RUNTIME_SELECTOR.C"
     },
-    "resource_3a7:02001544": {
-      "name": "SoftFloat_IsNaNForConvert",
-      "source": "LIB/SOFT_FLOAT.C"
-    },
-    "resource_3a7:02001740": {
-      "name": "SoftFloat_IsNaNForPack",
-      "source": "LIB/SOFT_FLOAT.C"
-    },
     "resource_3a7:02000398": {
       "name": "SceneState_ApplyThreeRects",
       "source": "FIELD/KUUPUAPPU_DOU/SELECT_BY_RUNTIME_SELECTOR.C"
     },
-    "resource_3a7:02001554": {
-      "name": "SoftFloat_IsInfinityForConvert",
-      "source": "LIB/SOFT_FLOAT.C"
-    },
     "resource_3a7:02000640": {
       "name": "SceneActor_SetupSlotTwenty",
       "source": "FIELD/KUUPUAPPU_DOU/SELECT_BY_RUNTIME_SELECTOR.C"
-    },
-    "resource_3a7:02001750": {
-      "name": "SoftFloat_IsInfinityForPack",
-      "source": "LIB/SOFT_FLOAT.C"
-    },
-    "resource_3a7:02001158": {
-      "name": "SoftFloat_AddParts",
-      "source": "LIB/SOFT_FLOAT.C"
     },
     "resource_3a7:020009c0": {
       "name": "FieldScene_RunOpeningAuxiliarySequence",
@@ -18144,78 +18072,6 @@
     "resource_3bf:02005520": {
       "name": "ActivateFiveActorGroupFromFlags",
       "source": "FIELD/RUNPA_JO/FORTRESS.C"
-    },
-    "resource_3bf:02005a40": {
-      "name": "SoftFloat_Add",
-      "source": "LIB/SOFT_FLOAT_LUNPA.C"
-    },
-    "resource_3bf:02005a78": {
-      "name": "SoftFloat_Subtract",
-      "source": "LIB/SOFT_FLOAT_LUNPA.C"
-    },
-    "resource_3bf:02005ab8": {
-      "name": "SoftFloat_GetNaNRecord",
-      "source": "LIB/SOFT_FLOAT_LUNPA.C"
-    },
-    "resource_3bf:02005ac0": {
-      "name": "SoftFloat_IsNaNForAdd",
-      "source": "LIB/SOFT_FLOAT_LUNPA.C"
-    },
-    "resource_3bf:02005ad0": {
-      "name": "SoftFloat_IsInfinityForAdd",
-      "source": "LIB/SOFT_FLOAT_LUNPA.C"
-    },
-    "resource_3bf:02005ae0": {
-      "name": "SoftFloat_IsZeroForAdd",
-      "source": "LIB/SOFT_FLOAT_LUNPA.C"
-    },
-    "resource_3bf:02005af0": {
-      "name": "SoftFloat_FromInt",
-      "source": "LIB/SOFT_FLOAT_LUNPA.C"
-    },
-    "resource_3bf:02005b6c": {
-      "name": "SoftFloat_ToInt",
-      "source": "LIB/SOFT_FLOAT_LUNPA.C"
-    },
-    "resource_3bf:02005bd8": {
-      "name": "SoftFloat_IsNaNForConvert",
-      "source": "LIB/SOFT_FLOAT_LUNPA.C"
-    },
-    "resource_3bf:02005be8": {
-      "name": "SoftFloat_IsInfinityForConvert",
-      "source": "LIB/SOFT_FLOAT_LUNPA.C"
-    },
-    "resource_3bf:02005bf8": {
-      "name": "SoftFloat_IsZeroForConvert",
-      "source": "LIB/SOFT_FLOAT_LUNPA.C"
-    },
-    "resource_3bf:02005c08": {
-      "name": "SoftFloat_ShiftRight",
-      "source": "LIB/SOFT_FLOAT_LUNPA.C"
-    },
-    "resource_3bf:02005c38": {
-      "name": "SoftFloat_Pack",
-      "source": "LIB/SOFT_FLOAT_LUNPA.C"
-    },
-    "resource_3bf:02005dd4": {
-      "name": "SoftFloat_IsNaNForPack",
-      "source": "LIB/SOFT_FLOAT_LUNPA.C"
-    },
-    "resource_3bf:02005de4": {
-      "name": "SoftFloat_IsInfinityForPack",
-      "source": "LIB/SOFT_FLOAT_LUNPA.C"
-    },
-    "resource_3bf:02005df4": {
-      "name": "SoftFloat_IsZeroForPack",
-      "source": "LIB/SOFT_FLOAT_LUNPA.C"
-    },
-    "resource_3bf:02005e04": {
-      "name": "SoftFloat_Unpack",
-      "source": "LIB/SOFT_FLOAT_LUNPA.C"
-    },
-    "resource_3bf:020057ec": {
-      "name": "SoftFloat_AddParts",
-      "source": "LIB/SOFT_FLOAT_LUNPA.C"
     },
     "resource_3bf:02000c78": {
       "name": "PlaceActorTwelveAndFinishScene",

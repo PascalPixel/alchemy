@@ -8,8 +8,20 @@
 	.set sub_02000dfc, 0x02000dfc
 	.set sub_02000e32, 0x02000e32
 	.set sub_02001084, 0x02001084
+	.set sub_020012b0, 0x020012b0
+	.set sub_020012b4, 0x020012b4
+	.set sub_020012d4, 0x020012d4
+	.set sub_020012f4, 0x020012f4
+	.set sub_02001308, 0x02001308
+	.set sub_02001312, 0x02001312
+	.set sub_02001322, 0x02001322
+	.set sub_02001330, 0x02001330
+	.set sub_02001334, 0x02001334
+	.set sub_0200139a, 0x0200139a
+	.set sub_020013c8, 0x020013c8
 	.set sub_02001426, 0x02001426
 	.set sub_020016ac, 0x020016ac
+	.set sub_0200171a, 0x0200171a
 	.set sub_02001724, 0x02001724
 	.set sub_0200172e, 0x0200172e
 	.set sub_02001836, 0x02001836
@@ -168,7 +180,7 @@ AlchemyC_02000134:
 	push	{r5, r6, r7}
 	movs	r0, #0
 	sub	sp, #12
-	bl	.L_020012b0
+	bl	sub_020012b0
 	ldrh	r3, [r0, #6]
 	movs	r2, #10
 	ldrsh	r1, [r0, r2]
@@ -201,7 +213,7 @@ AlchemyC_02000134:
 .L_020001be:
 	adds	r0, r5, #0
 	adds	r0, #11
-	bl	.L_020012f4
+	bl	sub_020012f4
 	cmp	r6, r0
 	beq.n	.L_0200029e
 	adds	r5, #1
@@ -254,36 +266,36 @@ AlchemyC_02000134:
 	str	r3, [r7, #8]
 	adds	r0, r6, #0
 	adds	r1, r7, #0
-	bl	.L_02001308
+	bl	sub_02001308
 	cmp	r0, #0
 	bgt.n	.L_0200029e
 	movs	r1, #8
 	mov	r0, r8
-	bl	.L_020012d4
+	bl	sub_020012d4
 	ldr	r5, [pc, #120]
 	movs	r0, #15
-	bl	.L_020012b4
+	bl	sub_020012b4
 	movs	r0, #238
-	bl	.L_0200139a
+	bl	sub_0200139a
 	str	r5, [r6, #48]
 	str	r5, [r6, #52]
 	ldr	r1, [r7, #0]
 	ldr	r2, [r7, #4]
 	ldr	r3, [r7, #8]
 	adds	r0, r6, #0
-	bl	.L_02001312
+	bl	sub_02001312
 	mov	r0, r8
 	str	r5, [r0, #48]
 	str	r5, [r0, #52]
 	ldr	r1, [r7, #0]
 	ldr	r2, [r7, #4]
 	ldr	r3, [r7, #8]
-	bl	.L_02001322
+	bl	sub_02001322
 	adds	r0, r6, #0
-	bl	.L_02001330
+	bl	sub_02001330
 	movs	r0, #144
 	lsls	r0, r0, #1
-	bl	.L_020013c8
+	bl	sub_020013c8
 	ldr	r3, [r7, #0]
 	str	r3, [r6, #8]
 	ldr	r3, [r7, #8]
@@ -300,7 +312,7 @@ AlchemyC_02000134:
 	str	r3, [r2, #56]
 	str	r3, [r2, #64]
 	movs	r1, #1
-	bl	.L_02001334
+	bl	sub_02001334
 .L_0200029e:
 	add	sp, #12
 	pop	{r3, r5, r6}
@@ -496,7 +508,7 @@ AlchemyC_02000b54:
 	adds	r2, r0, #0
 	lsls	r1, r1, #14
 	adds	r0, r5, #0
-	bl	.L_0200171a
+	bl	sub_0200171a
 	adds	r2, r5, #0
 	adds	r2, #94
 	movs	r3, #8
@@ -886,104 +898,8 @@ AlchemyC_02000c50:
 	.4byte 0x00000242
 	.4byte 0x00000060
 .include "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_DOU/IMPORT.INC"
-AlchemyC_02001158:
-	.space 0x158
-.L_020012b0:
-	.space 0x4
-.L_020012b4:
-	.space 0x20
-.L_020012d4:
-	.space 0x20
-.L_020012f4:
-	.space 0x14
-.L_02001308:
-	.space 0xa
-.L_02001312:
-	.space 0x10
-.L_02001322:
-	.space 0xe
-.L_02001330:
-	.space 0x4
-.L_02001334:
-	.space 0x56
-.L_0200138a:
-	.space 0x10
-.L_0200139a:
-	.space 0x12
-AlchemyC_020013ac:
-	.space 0xe
-.L_020013ba:
-	.space 0xe
-.L_020013c8:
-	.space 0x1a
-	.2byte 0x0000
-AlchemyC_020013e4:
-	.space 0x3e
-	.2byte 0x0000
-AlchemyC_02001424:
-	.space 0x8
-AlchemyC_0200142c:
-	.space 0x10
-AlchemyC_0200143c:
-	.space 0x10
-AlchemyC_0200144c:
-	.space 0x10
-AlchemyC_0200145c:
-	.space 0xe
-.L_0200146a:
-	.space 0x4
-.L_0200146e:
-	.space 0x1e
-.L_0200148c:
-	.space 0x4c
-AlchemyC_020014d8:
-	.space 0x2
-.L_020014da:
-	.space 0xc
-.L_020014e6:
-	.space 0x1a
-.L_02001500:
-	.space 0x44
-AlchemyC_02001544:
-	.space 0xa
-.L_0200154e:
-	.space 0x6
-AlchemyC_02001554:
-	.space 0x10
-AlchemyC_02001564:
-	.space 0x10
-AlchemyC_02001574:
-	.space 0x22
-.L_02001596:
-	.space 0xe
-AlchemyC_020015a4:
-	.space 0x4
-.L_020015a8:
-	.space 0x8
-.L_020015b0:
-	.space 0x14
-.L_020015c4:
-	.space 0x12
-.L_020015d6:
-	.space 0x12
-.L_020015e8:
-	.space 0x1a
-.L_02001602:
-	.space 0x2
-.L_02001604:
-	.space 0x3e
-.L_02001642:
-	.space 0xd8
-.L_0200171a:
-	.space 0x26
-AlchemyC_02001740:
-	.space 0x10
-AlchemyC_02001750:
-	.space 0x10
-AlchemyC_02001760:
-	.space 0x10
-AlchemyC_02001770:
-	.space 0xd4
+AlchemyRuntime_02001158:
+	.space 0x6ec
 	.4byte 0x00100000
 	.4byte 0x00100000
 	.4byte 0x00100000
@@ -1001,11 +917,8 @@ AlchemyC_02001770:
 	.4byte 0x0000fff0
 	.4byte 0x00100000
 	.4byte 0x0000001b
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
+AlchemyRuntime_02001888:
+	.space 0x14
 	.4byte 0xffff0000
 	.4byte 0x00000078
 	.4byte 0x40000098

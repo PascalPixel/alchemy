@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "kind": "tbs-showcase-modules",
+  "folders": [
+    {
+      "source": "SRC/FIELD/COMMON/KUUPUAPPU_RUNPA",
+      "overlay": "resource_384",
+      "allowed_data": []
+    },
+    {
+      "source": "SRC/FIELD/COMMON/RUNPA_SUHARA",
+      "overlay": "resource_3ac",
+      "allowed_data": []
+    }
+  ]
+}

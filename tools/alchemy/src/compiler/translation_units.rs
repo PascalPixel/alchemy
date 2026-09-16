@@ -159,6 +159,16 @@ pub struct CompilerGap {
     #[serde(deserialize_with = "hex32")]
     pub end: u32,
 }
+/// Where an exact overlay unit's read-only data section links: the unit's
+/// initialized tables compile to `.rodata`, which the placement script puts
+/// at this resource address, filling the listing's `AlchemyData_` placeholder.
+#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq)]
+#[serde(deny_unknown_fields)]
+pub struct UnitData {
+    #[serde(deserialize_with = "hex32")]
+    pub address: u32,
+    pub extent: usize,
+}
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -177,6 +187,8 @@ pub struct TranslationUnit {
     pub owners: Vec<TranslationOwner>,
     #[serde(default)]
     pub compiler_gaps: Vec<CompilerGap>,
+    #[serde(default)]
+    pub data: Option<UnitData>,
 }
 
 impl TranslationUnit {
@@ -449,6 +461,9 @@ impl TranslationUnits {
                     return Err(format!("{}: invalid compiler alignment gap", unit.id));
                 }
             }
+            if let Some(data) = unit.data {
+                validate_unit_data(unit, data)?;
+            }
             for (name, symbol) in &unit.absolute_symbols {
                 if !c_identifier(name)
                     || (symbol.kind != AbsoluteSymbolKind::Data && symbol.address & 1 != 0)
@@ -481,6 +496,28 @@ impl TranslationUnits {
                     .any(|member| member.address == owner.address())
         })
     }
+}
+/// A data section belongs to a wholly exact overlay unit, is word aligned,
+/// stays in EWRAM and never overlaps the unit's functions.
+fn validate_unit_data(unit: &TranslationUnit, data: UnitData) -> Result<(), String> {
+    let end = u32::try_from(data.extent)
+        .ok()
+        .and_then(|extent| data.address.checked_add(extent));
+    let overlaps = unit.symbols().any(|(address, _, extent)| {
+        u64::from(address) < u64::from(data.address) + data.extent as u64
+            && u64::from(data.address) < u64::from(address) + extent as u64
+    });
+    if unit.overlay.is_none()
+        || !unit.exact()
+        || data.extent == 0
+        || data.address & 3 != 0
+        || !(0x0200_0000..0x0300_0000).contains(&data.address)
+        || end.is_none_or(|end| end > 0x0300_0000)
+        || overlaps
+    {
+        return Err(format!("{}: invalid unit data placement", unit.id));
+    }
+    Ok(())
 }
 fn validate_production_state(
     root: &Path,
@@ -551,9 +588,19 @@ fn validate_production_state(
                 .join(crate::compiler::routing::game_directory(&unit.game))
                 .join("asm/overlays")
                 .join(format!("{overlay}_overlay.s"));
-            std::fs::read_to_string(&assembly)
-                .map_err(|error| format!("{}: {error}", assembly.display()))
-                .map(|text| crate::compiler::overlay::placeholder_addresses(&text))
+            let text = std::fs::read_to_string(&assembly)
+                .map_err(|error| format!("{}: {error}", assembly.display()))?;
+            if let Some(data) = unit.data {
+                if crate::compiler::overlay::data_placeholder_extent(&text, data.address)
+                    != Some(data.extent)
+                {
+                    return Err(format!(
+                        "{}: unit data needs one AlchemyData_{:08x} placeholder of {} bytes",
+                        unit.id, data.address, data.extent
+                    ));
+                }
+            }
+            Ok(crate::compiler::overlay::placeholder_addresses(&text))
         })
         .transpose()?;
     let reviewed = if retained_overlay_candidate {
@@ -847,5 +894,28 @@ mod tests {
         let i = unconditional_quoted_includes;
         assert!(i("#define X \\\n#include \"x\"").is_empty());
         assert!(i("/* */ #if 0\n#include \"x\"").is_empty());
+    }
+    #[test]
+    fn unit_data_belongs_to_word_aligned_ewram_outside_the_functions() {
+        let manifest = TranslationUnits::load(crate::compiler::routing::root()).unwrap();
+        let unit = manifest.unit("kuupuappu-runpa-jail").unwrap();
+        let data = unit.data.unwrap();
+        assert_eq!((data.address, data.extent), (0x0200_02d0, 0x200));
+        assert!(validate_unit_data(unit, data).is_ok());
+        for (address, extent) in [
+            (0x0200_02d2, 4),
+            (0x0200_02d0, 0),
+            (0x0300_0000, 4),
+            (0x02ff_fffc, 8),
+            (0x0200_0030, 4),
+        ] {
+            assert!(validate_unit_data(unit, UnitData { address, extent }).is_err());
+        }
+        let mut inexact = unit.clone();
+        inexact.owners[0].state = OwnerState::RetainedAssembly;
+        assert!(validate_unit_data(&inexact, data).is_err());
+        let mut main = unit.clone();
+        main.overlay = None;
+        assert!(validate_unit_data(&main, data).is_err());
     }
 }

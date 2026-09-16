@@ -166,6 +166,40 @@ fn included_source_keys(root: &Path, source: &Path) -> Vec<String> {
     keys
 }
 
+/// Names an overlay translation unit binds itself: the runtime symbols it
+/// declares for its source. The shared alias map must not rename them, or a
+/// call through the overlay's own import veneer would be redirected to the
+/// main-image address. Main-image units keep the shared map.
+fn unit_symbol_names(root: &Path, source: &Path) -> HashSet<String> {
+    static UNITS: OnceLock<Vec<(String, Vec<String>)>> = OnceLock::new();
+    let units = UNITS.get_or_init(|| {
+        let path = root.join("games/THE BROKEN SEAL/recon/translation-units.json");
+        let Ok(document) = crate::compiler::build_io::read_json::<serde_json::Value>(&path) else {
+            return Vec::new();
+        };
+        document["units"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .filter(|unit| unit["overlay"].is_string())
+            .filter_map(|unit| {
+                let names = unit["absolute_symbols"]
+                    .as_object()?
+                    .keys()
+                    .cloned()
+                    .collect();
+                Some((unit["source"].as_str()?.to_string(), names))
+            })
+            .collect()
+    });
+    let relative = source.strip_prefix(root).unwrap_or(source);
+    units
+        .iter()
+        .filter(|(unit_source, _)| Path::new(unit_source) == relative)
+        .flat_map(|(_, names)| names.iter().cloned())
+        .collect()
+}
+
 /// Register names plus the per-source / common address map for one compile.
 pub fn production_bindings(
     root: &Path,
@@ -177,6 +211,7 @@ pub fn production_bindings(
         if let Ok(source_text) = std::fs::read_to_string(source) {
             reserved.extend(type_tags(&source_text));
         }
+        reserved.extend(unit_symbol_names(root, source));
     }
     let mut text = String::new();
     let manifest = load_tbs()?;

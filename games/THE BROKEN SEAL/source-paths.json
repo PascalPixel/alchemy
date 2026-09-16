@@ -5724,12 +5724,12 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_384:020001d0": {
-      "name": "Scene_RunClosingBeat",
-      "source": "FIELD/COMMON/KUUPUAPPU_RUNPA/BEAT.C"
+      "name": "VaultDoor_Leave",
+      "source": "FIELD/COMMON/KUUPUAPPU_RUNPA/JAIL.C"
     },
     "resource_3ac:02000038": {
-      "name": "SceneData_ReturnZero",
-      "source": "FIELD/COMMON/RUNPA_SUHARA/FACING.C"
+      "name": "Scene_GetRegions",
+      "source": "FIELD/COMMON/RUNPA_SUHARA/INTERIORS.C"
     },
     "resource_399:0200065c": {
       "name": "Scene_RunSingleStep",
@@ -5744,8 +5744,8 @@
       "source": "FIELD/COMMON/SHIAN_JIIN/TEMPLE_ROOMS.C"
     },
     "resource_384:02000030": {
-      "name": "SceneData_GetScriptTable",
-      "source": "FIELD/COMMON/KUUPUAPPU_RUNPA/BEAT.C"
+      "name": "Scene_GetEntrances",
+      "source": "FIELD/COMMON/KUUPUAPPU_RUNPA/JAIL.C"
     },
     "resource_3b9:02001c5c": {
       "name": "State_ForwardMaskedHalfwordWith10",
@@ -5768,8 +5768,8 @@
       "source": "MENU/CLEAR/SAVE_MENU.C"
     },
     "resource_3ac:020001d8": {
-      "name": "Dialogue_RunActor16FlaggedDialogue",
-      "source": "FIELD/COMMON/RUNPA_SUHARA/FACING.C"
+      "name": "ItemMerchant_ReadMind",
+      "source": "FIELD/COMMON/RUNPA_SUHARA/INTERIORS.C"
     },
     "resource_3c2:02000030": {
       "name": "SceneData_GetScriptTable",
@@ -5832,8 +5832,8 @@
       "source": "FIELD/HAIDIA_IE/EXTENDED.C"
     },
     "resource_3ac:0200014c": {
-      "name": "Dialogue_RunActor18Dialogue",
-      "source": "FIELD/COMMON/RUNPA_SUHARA/FACING.C"
+      "name": "InnClerk_Talk",
+      "source": "FIELD/COMMON/RUNPA_SUHARA/INTERIORS.C"
     },
     "resource_3ad:0200131c": {
       "name": "SceneData_ReturnOne",
@@ -5844,8 +5844,8 @@
       "source": "FIELD/RUNPA_DOU/PARTY_DEPARTURE.C"
     },
     "resource_3ac:0200004c": {
-      "name": "SceneData_SelectTableBySubStateAndFlag941",
-      "source": "FIELD/COMMON/RUNPA_SUHARA/FACING.C"
+      "name": "Scene_GetEvents",
+      "source": "FIELD/COMMON/RUNPA_SUHARA/INTERIORS.C"
     },
     "resource_3a1:02000524": {
       "name": "Dialogue_RunActor9MotionDialogue",
@@ -5985,8 +5985,8 @@
       "source": "FIELD/KORIMA_HEYA/ENTRY_LAYOUT.C"
     },
     "resource_3ac:02000338": {
-      "name": "Dialogue_RunActor15FlaggedDialogue",
-      "source": "FIELD/COMMON/RUNPA_SUHARA/FACING.C"
+      "name": "ArmorMerchant_ReadMind",
+      "source": "FIELD/COMMON/RUNPA_SUHARA/INTERIORS.C"
     },
     "resource_3ba:020026a8": {
       "name": "SceneData_SelectBlockAndResetCounters",
@@ -6125,8 +6125,8 @@
       "source": "FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE.C"
     },
     "resource_384:02000170": {
-      "name": "Scene_RunActor8Beat",
-      "source": "FIELD/COMMON/KUUPUAPPU_RUNPA/BEAT.C"
+      "name": "ThiefLeader_ReadMind",
+      "source": "FIELD/COMMON/KUUPUAPPU_RUNPA/JAIL.C"
     },
     "resource_374:020022f8": {
       "name": "OvObj_UpdateOnFrameBit1",
@@ -6229,8 +6229,8 @@
       "source": "FIELD/ARUTIN_MURA/MOTION_PARTICLE.C"
     },
     "resource_3ac:020000fc": {
-      "name": "Dialogue_RunActor20DialogueA",
-      "source": "FIELD/COMMON/RUNPA_SUHARA/FACING.C"
+      "name": "Chef_Talk",
+      "source": "FIELD/COMMON/RUNPA_SUHARA/INTERIORS.C"
     },
     "resource_37b:02001a04": {
       "name": "Scene_RunFiveValueStep11",
@@ -6473,8 +6473,8 @@
       "source": "FIELD/KOROSSEO_KAWA/COORDINATOR.C"
     },
     "resource_384:020001e4": {
-      "name": "Scene_InitSceneStateByStep",
-      "source": "FIELD/COMMON/KUUPUAPPU_RUNPA/BEAT.C"
+      "name": "Scene_Initialize",
+      "source": "FIELD/COMMON/KUUPUAPPU_RUNPA/JAIL.C"
     },
     "resource_3c9:020005ec": {
       "name": "Effect_SpawnAndBobWithActorZero",
@@ -6954,8 +6954,8 @@
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_384:02000190": {
-      "name": "Scene_RunActor9Beat",
-      "source": "FIELD/COMMON/KUUPUAPPU_RUNPA/BEAT.C"
+      "name": "LeftThief_ReadMind",
+      "source": "FIELD/COMMON/KUUPUAPPU_RUNPA/JAIL.C"
     },
     "resource_3aa:02000264": {
       "name": "Scene_DispatchSceneByIndex",
@@ -7014,8 +7014,8 @@
       "source": "FIELD/VINASU_CHOJO/SCRIPTED_PRESENTATION.C"
     },
     "resource_384:0200006c": {
-      "name": "SceneData_SelectSceneScriptByStep10",
-      "source": "FIELD/COMMON/KUUPUAPPU_RUNPA/BEAT.C"
+      "name": "Scene_GetEvents",
+      "source": "FIELD/COMMON/KUUPUAPPU_RUNPA/JAIL.C"
     },
     "resource_372:02004618": {
       "name": "Scene_RunScriptedStep1120",
@@ -7102,8 +7102,8 @@
       "source": "FIELD/SUHARA_GATE/ACTOR_PROMPT.C"
     },
     "resource_384:02000094": {
-      "name": "Scene_RunActors8To10OpeningSequence",
-      "source": "FIELD/COMMON/KUUPUAPPU_RUNPA/BEAT.C"
+      "name": "ThiefLeader_Talk",
+      "source": "FIELD/COMMON/KUUPUAPPU_RUNPA/JAIL.C"
     },
     "resource_3ca:02000044": {
       "name": "SceneData_GetTable971c",
@@ -7258,8 +7258,8 @@
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_3ac:02000044": {
-      "name": "SceneData_GetTable865c",
-      "source": "FIELD/COMMON/RUNPA_SUHARA/FACING.C"
+      "name": "Scene_GetPlacements",
+      "source": "FIELD/COMMON/RUNPA_SUHARA/INTERIORS.C"
     },
     "resource_3b9:02001a14": {
       "name": "State_DispatchByStatus448",
@@ -7302,8 +7302,8 @@
       "source": "FIELD/TORETO_EDA/BACKGROUND_SCROLL.C"
     },
     "resource_3ac:02000454": {
-      "name": "Dialogue_RunActor22FacingDialogue",
-      "source": "FIELD/COMMON/RUNPA_SUHARA/FACING.C"
+      "name": "TravelingPriest_Talk",
+      "source": "FIELD/COMMON/RUNPA_SUHARA/INTERIORS.C"
     },
     "resource_376:020000d4": {
       "name": "SceneData_ReturnZero",
@@ -7522,8 +7522,8 @@
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_384:0200003c": {
-      "name": "SceneData_GetMessageTable",
-      "source": "FIELD/COMMON/KUUPUAPPU_RUNPA/BEAT.C"
+      "name": "Scene_GetExits",
+      "source": "FIELD/COMMON/KUUPUAPPU_RUNPA/JAIL.C"
     },
     "resource_387:02000da8": {
       "name": "OvObj_TurnStateByEighth",
@@ -7734,8 +7734,8 @@
       "source": "FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.C"
     },
     "resource_3ac:02000030": {
-      "name": "SceneData_GetTable84f8",
-      "source": "FIELD/COMMON/RUNPA_SUHARA/FACING.C"
+      "name": "Scene_GetEntrances",
+      "source": "FIELD/COMMON/RUNPA_SUHARA/INTERIORS.C"
     },
     "resource_39e:02001334": {
       "name": "FieldScene_DispatchByFacing",
@@ -7834,8 +7834,8 @@
       "source": "FIELD/SORU_FUNKA/EXTENDED_EFFECT.C"
     },
     "resource_3ac:0200008c": {
-      "name": "Dialogue_RunActor17FlaggedDialogue",
-      "source": "FIELD/COMMON/RUNPA_SUHARA/FACING.C"
+      "name": "Innkeeper_Talk",
+      "source": "FIELD/COMMON/RUNPA_SUHARA/INTERIORS.C"
     },
     "resource_3b6:02000328": {
       "name": "Scene_RunActorsThirtyOneToThirtyThreeChoreography",
@@ -7854,8 +7854,8 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_384:02000038": {
-      "name": "SceneData_ReturnZero",
-      "source": "FIELD/COMMON/KUUPUAPPU_RUNPA/BEAT.C"
+      "name": "Scene_GetRegions",
+      "source": "FIELD/COMMON/KUUPUAPPU_RUNPA/JAIL.C"
     },
     "resource_383:02000378": {
       "name": "State_RunGuardedActorStep",
@@ -8010,8 +8010,8 @@
       "source": "FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
     },
     "resource_3ac:02000374": {
-      "name": "Dialogue_RunActor15FacingFlaggedDialogue",
-      "source": "FIELD/COMMON/RUNPA_SUHARA/FACING.C"
+      "name": "ArmorMerchant_Talk",
+      "source": "FIELD/COMMON/RUNPA_SUHARA/INTERIORS.C"
     },
     "resource_3c9:02002334": {
       "name": "State_ApplyPair140And0",
@@ -8102,8 +8102,8 @@
       "source": "FIELD/RUNPA_DOU/PARTY_DEPARTURE.C"
     },
     "resource_3ac:020002d0": {
-      "name": "Dialogue_RunActor14FacingFlaggedDialogue",
-      "source": "FIELD/COMMON/RUNPA_SUHARA/FACING.C"
+      "name": "WeaponMerchant_Talk",
+      "source": "FIELD/COMMON/RUNPA_SUHARA/INTERIORS.C"
     },
     "resource_383:020007cc": {
       "name": "Dialogue_RunActor10Line",
@@ -8254,8 +8254,8 @@
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_3ac:02000124": {
-      "name": "Dialogue_RunActor20DialogueB",
-      "source": "FIELD/COMMON/RUNPA_SUHARA/FACING.C"
+      "name": "Chef_ReadMind",
+      "source": "FIELD/COMMON/RUNPA_SUHARA/INTERIORS.C"
     },
     "resource_38e:02000088": {
       "name": "SceneData_GetTable8c08",
@@ -8462,8 +8462,8 @@
       "source": "FIELD/RARIBERO_HEYA/POSE.C"
     },
     "resource_3ac:02000224": {
-      "name": "Dialogue_RunActor16FacingFlaggedDialogue",
-      "source": "FIELD/COMMON/RUNPA_SUHARA/FACING.C"
+      "name": "ItemMerchant_Talk",
+      "source": "FIELD/COMMON/RUNPA_SUHARA/INTERIORS.C"
     },
     "resource_3c1:0200003c": {
       "name": "SceneData_GetMessageTable",
@@ -8570,8 +8570,8 @@
       "source": "FIELD/SORU_SEKIZO/GUARDED_STEP.C"
     },
     "resource_384:020001b0": {
-      "name": "Scene_RunActor10Beat",
-      "source": "FIELD/COMMON/KUUPUAPPU_RUNPA/BEAT.C"
+      "name": "RightThief_ReadMind",
+      "source": "FIELD/COMMON/KUUPUAPPU_RUNPA/JAIL.C"
     },
     "resource_3c9:02000894": {
       "name": "State_ApplyArgMode0AndSet10",
@@ -8734,8 +8734,8 @@
       "source": "FIELD/BIRIBINO_DOU/REGION.C"
     },
     "resource_3ac:02000294": {
-      "name": "Dialogue_RunActor14FlaggedDialogue",
-      "source": "FIELD/COMMON/RUNPA_SUHARA/FACING.C"
+      "name": "WeaponMerchant_ReadMind",
+      "source": "FIELD/COMMON/RUNPA_SUHARA/INTERIORS.C"
     },
     "resource_3c8:0200196c": {
       "name": "SceneState_ApplyRectAt19_44AndRunThree",
@@ -8818,8 +8818,8 @@
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_3ac:0200016c": {
-      "name": "Dialogue_RunActor21FlaggedDialogue",
-      "source": "FIELD/COMMON/RUNPA_SUHARA/FACING.C"
+      "name": "TemplePriest_Talk",
+      "source": "FIELD/COMMON/RUNPA_SUHARA/INTERIORS.C"
     },
     "resource_399:020001ec": {
       "name": "SceneData_SelectTableByWord224B",
@@ -8890,8 +8890,8 @@
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_384:02000110": {
-      "name": "Scene_RunActor9Intro",
-      "source": "FIELD/COMMON/KUUPUAPPU_RUNPA/BEAT.C"
+      "name": "LeftThief_Talk",
+      "source": "FIELD/COMMON/KUUPUAPPU_RUNPA/JAIL.C"
     },
     "resource_3cd:0200071c": {
       "name": "Scene_RunEntrySetup",
@@ -9006,8 +9006,8 @@
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_3ac:020003dc": {
-      "name": "State_SetRuntimeWord448To521",
-      "source": "FIELD/COMMON/RUNPA_SUHARA/FACING.C"
+      "name": "Scene_Initialize",
+      "source": "FIELD/COMMON/RUNPA_SUHARA/INTERIORS.C"
     },
     "resource_386:02000030": {
       "name": "State_CheckPositionWindow",
@@ -9082,8 +9082,8 @@
       "source": "FIELD/SHIAN_HEYA/FLAGGED_OBJECT.C"
     },
     "resource_384:02000044": {
-      "name": "SceneData_SelectActorTableByStep10",
-      "source": "FIELD/COMMON/KUUPUAPPU_RUNPA/BEAT.C"
+      "name": "Scene_GetPlacements",
+      "source": "FIELD/COMMON/KUUPUAPPU_RUNPA/JAIL.C"
     },
     "resource_394:02000030": {
       "name": "SceneData_GetTable9170",
@@ -9246,8 +9246,8 @@
       "source": "FIELD/TORETO_EDA/BACKGROUND_SCROLL.C"
     },
     "resource_384:02000140": {
-      "name": "Scene_RunActor10Intro",
-      "source": "FIELD/COMMON/KUUPUAPPU_RUNPA/BEAT.C"
+      "name": "RightThief_Talk",
+      "source": "FIELD/COMMON/KUUPUAPPU_RUNPA/JAIL.C"
     },
     "resource_3ad:0200003c": {
       "name": "SceneData_GetTable9CAC",
@@ -9258,8 +9258,8 @@
       "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
     },
     "resource_3ac:0200003c": {
-      "name": "SceneData_GetTable8630",
-      "source": "FIELD/COMMON/RUNPA_SUHARA/FACING.C"
+      "name": "Scene_GetExits",
+      "source": "FIELD/COMMON/RUNPA_SUHARA/INTERIORS.C"
     },
     "resource_3b1:02000e14": {
       "name": "Dialogue_RunActorThirteenFlag300Branch",

@@ -157,18 +157,24 @@ fn score_overlay_unit(unit: &TranslationUnit, overlay: &str) -> Result<String, S
     let base = 0x0200_0000i64;
     let mut output = String::new();
     let mut mismatches = Vec::new();
-    for owner in &unit.owners {
-        let address = i64::from(owner.address);
+    let data = unit.data.map(|data| (data.address, data.extent, "data"));
+    let members = unit
+        .owners
+        .iter()
+        .map(|owner| (owner.address, owner.extent, "owner"))
+        .chain(data);
+    for (address, extent, scope) in members {
+        let address = i64::from(address);
         let offset = usize::try_from(address - compiled.address)
-            .map_err(|_| format!("{}: owner precedes the compiled unit", unit.id))?;
+            .map_err(|_| format!("{}: {scope} precedes the compiled unit", unit.id))?;
         let candidate = compiled
             .data
-            .get(offset..offset + owner.extent)
+            .get(offset..offset + extent)
             .ok_or_else(|| format!("{}: compiled unit lacks 0x{address:08x}", unit.id))?;
         let start = usize::try_from(address - base)
-            .map_err(|_| format!("{}: owner precedes the overlay image", unit.id))?;
+            .map_err(|_| format!("{}: {scope} precedes the overlay image", unit.id))?;
         let expected = reference
-            .get(start..start + owner.extent)
+            .get(start..start + extent)
             .ok_or_else(|| format!("{}: overlay image lacks 0x{address:08x}", unit.id))?;
         let differing = candidate
             .chunks(2)
@@ -176,7 +182,7 @@ fn score_overlay_unit(unit: &TranslationUnit, overlay: &str) -> Result<String, S
             .filter(|(a, b)| a != b)
             .count();
         output.push_str(&format!(
-            "scope=translation-unit\nowner=0x{address:08x}\ncandidate={} reference={} differing_halfwords={differing}\n",
+            "scope=translation-unit\n{scope}=0x{address:08x}\ncandidate={} reference={} differing_halfwords={differing}\n",
             candidate.len(),
             expected.len()
         ));

@@ -30,7 +30,7 @@ roms/
 *.gba
 *.rom
 *.bin
-# Native pixel, palette, packed map and unidentified layer inputs of every game
+# Native pixel, palette, packed map and unidentified byte inputs of every game
 # are regenerated from its verified local ROM by
 # `alchemy build assets --extract-sources ROM --target TARGET`.
 /games/*/SRC/**/CHR.PNG

@@ -1,0 +1,86 @@
+.syntax unified
+.include "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC"
+	.thumb
+	.set sub_0200015c, 0x0200015c
+	.set sub_0200017a, 0x0200017a
+	.set sub_0200017e, 0x0200017e
+	.set sub_02000184, 0x02000184
+	.set sub_0200018e, 0x0200018e
+	.set sub_02000190, 0x02000190
+	.set sub_0200019c, 0x0200019c
+	.set sub_0200019e, 0x0200019e
+	.global Overlay_02000000
+Overlay_02000000:
+.include "games/THE BROKEN SEAL/SRC/FIELD/GOMA_IKE/ENTRY.INC"
+AlchemyC_02000030:
+	.space 0x8
+AlchemyC_02000038:
+	.space 0x4
+AlchemyC_0200003c:
+	.space 0x8
+AlchemyC_02000044:
+	.space 0x8
+AlchemyC_0200004c:
+	.space 0x8
+AlchemyC_02000054:
+	.space 0x84
+.include "games/THE BROKEN SEAL/SRC/FIELD/GOMA_IKE/IMPORT.INC"
+	.4byte 0xffff0000
+	.4byte 0x000000ac
+	.4byte 0x40000095
+	.4byte 0xffff0000
+	.4byte 0xffffffff
+	.4byte 0x0000ffff
+	.4byte 0xffff0001
+	.4byte 0x00000078
+	.4byte 0x40000058
+	.4byte 0x00180000
+	.4byte 0x01f80008
+	.4byte 0x000001a8
+	.4byte 0xffff0002
+	.4byte 0x000001a8
+	.4byte 0x40000158
+	.4byte 0x00180000
+	.4byte 0x01f80008
+	.4byte 0x000001a8
+	.4byte 0xffff0003
+	.4byte 0x00000198
+	.4byte 0x40000088
+	.4byte 0x00180000
+	.4byte 0x01f80008
+	.4byte 0x000001a8
+	.4byte 0x0000ffff
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x0000001a
+	.4byte 0x0010401b
+	.4byte 0x0020501b
+	.4byte 0x0030301b
+	.4byte 0x000001ff
+	.4byte 0xffff00d4
+	.4byte 0x00000001
+	.4byte 0x00080000
+	.4byte 0x00000000
+	.4byte 0x00080000
+	.4byte 0x00024000
+	.4byte 0x0000ffff
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000021
+	.4byte 0xffff0005
+	.4byte 0x00000001
+	.4byte 0x00000021
+	.4byte 0xffff0006
+	.4byte 0x00000002
+	.4byte 0x00000021
+	.4byte 0xffff0007
+	.4byte 0x00000003
+	.4byte 0xffffffff
+	.4byte 0x00000000
+	.4byte 0x00000000

@@ -492,7 +492,7 @@ impl Deriver<'_> {
                 .ok_or_else(|| format!("layer {} lost its region", layer.address))?;
             component["source_offset"] = json!(offset);
             component["source_length"] = json!(layer.bytes.len());
-            self.output.private_inputs.push(json!({"kind":"layer","source":layer.map,"source_offset":offset,"region_address":layer.address,"decoded_sha256":sha256::hex(&layer.bytes)}));
+            self.output.private_inputs.push(json!({"kind":"bytes","source":layer.map,"source_offset":offset,"region_address":layer.address,"decoded_sha256":sha256::hex(&layer.bytes)}));
         }
         Ok(())
     }

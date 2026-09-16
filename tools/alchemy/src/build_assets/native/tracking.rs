@@ -84,6 +84,9 @@ pub(in crate::build_assets) fn check(root: &Path) -> Result<(), String> {
             continue;
         }
         let index = &json(&root.join(&paths.index))?;
+        // A clone without this game's reference ROM cannot restore its private
+        // inputs; their registration is still checked, their absent bytes are not.
+        let restorable = root.join(game.rom).is_file();
         let source = paths.source;
         let colors = paths.colors.as_str();
         validate(index)?;
@@ -110,7 +113,7 @@ pub(in crate::build_assets) fn check(root: &Path) -> Result<(), String> {
                         || name == format!("{source}/GRAPHICS/COMMON/TILE_BANK.PNG")
                 }
                 "still-atlas" => name == format!("{source}/GRAPHICS/COMMON/STILL.PNG"),
-                "grid" | "metatiles" | "layer" => name.ends_with(".BIN"),
+                "grid" | "metatiles" | "bytes" => name.ends_with(".BIN"),
                 "tiles" => name.ends_with("/CHR.PNG") || name.ends_with("_CHR.PNG"),
                 "sprite" | "sprite-atlas" | "archive-atlas" => {
                     (name.starts_with(&format!("{source}/GRAPHICS/CHARACTER/CHAR_"))
@@ -125,6 +128,9 @@ pub(in crate::build_assets) fn check(root: &Path) -> Result<(), String> {
             }
             source_spelling(&mut spellings, name)?;
             private.insert(name.to_string());
+            if !restorable && !root.join(name).exists() {
+                continue;
+            }
             if kind == "frame-atlas" {
                 frame::check(&mut ctx, index, input)?;
                 continue;
@@ -182,6 +188,19 @@ pub(in crate::build_assets) fn check(root: &Path) -> Result<(), String> {
                 }
                 if sha256::hex(&data) != json_string(&input["decoded_sha256"], "input hash")? {
                     return Err(format!("private palette differs: {name}"));
+                }
+                continue;
+            }
+            if kind == "bytes" {
+                if !bytes.contains_key(name) {
+                    let file = fs::read(root.join(name)).map_err(|e| {
+                        format!("{name}: {e}; run alchemy build assets --extract-sources ROM")
+                    })?;
+                    bytes.insert(name.to_string(), file);
+                }
+                let span = byte_span(index, input, name, &bytes[name])?;
+                if sha256::hex(&span) != json_string(&input["decoded_sha256"], "input hash")? {
+                    return Err(format!("private native bytes differ: {name}"));
                 }
                 continue;
             }
@@ -271,6 +290,53 @@ pub(in crate::build_assets) fn check(root: &Path) -> Result<(), String> {
     Ok(())
 }
 
+/// The registered spans of a byte input, in the order it lists its regions.
+fn byte_span(index: &Value, input: &Value, name: &str, file: &[u8]) -> Result<Vec<u8>, String> {
+    let mut span = Vec::new();
+    for target in byte_input_regions(input)? {
+        let (_, component) = registered_component(input_region(index, target)?, name)?;
+        if input
+            .get("source_offset")
+            .is_some_and(|offset| *offset != component["source_offset"])
+        {
+            return Err("private byte extent differs from component".into());
+        }
+        let start = address(&component["source_offset"])?;
+        let end = start
+            .checked_add(address(&component["source_length"])?)
+            .ok_or("private source extent overflows")?;
+        span.extend_from_slice(
+            file.get(start..end)
+                .ok_or("private source extent outside file")?,
+        );
+    }
+    Ok(span)
+}
+#[test]
+fn byte_inputs_digest_every_listed_span_in_order() {
+    let index = serde_json::json!({"regions":[
+        {"address":"0x08000010","size":2,"kind":"u8-array","format":"binary","source":"A.BIN","source_offset":0,"source_length":2},
+        {"address":"0x08000020","size":6,"kind":"components","components":[
+            {"kind":"byte-fill","size":4,"value":0},
+            {"kind":"le-u16-array","format":"binary","source":"A.BIN","size":2,"source_offset":2,"source_length":2}]}]});
+    let grouped =
+        serde_json::json!({"kind":"bytes","source":"A.BIN","regions":["0x08000010","0x08000020"]});
+    assert_eq!(
+        byte_span(&index, &grouped, "A.BIN", &[1, 2, 3, 4]).unwrap(),
+        [1, 2, 3, 4]
+    );
+    assert!(byte_span(&index, &grouped, "A.BIN", &[1, 2, 3]).is_err());
+    assert!(byte_span(&index, &grouped, "B.BIN", &[1, 2, 3, 4]).is_err());
+    let single = serde_json::json!({"kind":"bytes","source":"A.BIN","source_offset":2,"region_address":"0x08000020"});
+    assert_eq!(
+        byte_span(&index, &single, "A.BIN", &[1, 2, 3, 4]).unwrap(),
+        [3, 4]
+    );
+    let moved = serde_json::json!({"kind":"bytes","source":"A.BIN","source_offset":0,"region_address":"0x08000020"});
+    assert!(byte_span(&index, &moved, "A.BIN", &[1, 2, 3, 4]).is_err());
+    let absent = serde_json::json!({"kind":"bytes","source":"A.BIN","region_address":"0x08000030"});
+    assert!(byte_span(&index, &absent, "A.BIN", &[1, 2, 3, 4]).is_err());
+}
 #[test]
 fn private_inputs_require_registration_ignoring_and_nonpublication() {
     let files = BTreeSet::from(["FIELD.C".into(), "MAP.bin".into()]);

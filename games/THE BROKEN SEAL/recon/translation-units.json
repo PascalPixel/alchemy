@@ -33,6 +33,22 @@
       ]
     },
     {
+      "id": "lunpa-find-actor-region",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/FIND_ACTOR_REGION.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3bf",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0200034c",
+          "extent": 296,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
       "id": "staged-actor-setup-37b",
       "game": "tbs",
       "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_SEKIZO/SETUP_STAGED_ACTORS.C",

@@ -16,7 +16,7 @@ use std::{
 use walkdir::WalkDir;
 const STYLES: &str = include_str!("style.css");
 const TREES: [(&str, &str); 1] = [("rom", "ROM contents")];
-const COVERAGE_DIRS: [&str; 16] = [
+const COVERAGE_DIRS: [&str; 15] = [
     "games/THE BROKEN SEAL/locations.tsv",
     "games/THE BROKEN SEAL/asm",
     "games/THE BROKEN SEAL/SOURCE.JSON",
@@ -31,7 +31,6 @@ const COVERAGE_DIRS: [&str; 16] = [
     "games/THE BROKEN SEAL/project.json",
     "games/THE LOST AGE",
     "games/THE LOST AGE/PROJECT.JSON",
-    "games/COMMON",
     "out/tbs-en/reports",
 ];
 fn page_version() -> String {
@@ -195,8 +194,7 @@ fn snapshot_from(state: &State) -> Value {
                 "title": "Golden Sun · The Lost Age",
                 "tbs": "ja · en · de · es · fr · it",
                 "tla": "ja · en · de · es · fr · it",
-                "fullTarget": "tbs-en",
-                "integration": "Alchemy"
+                "fullTarget": "tbs-en"
             }
     });
     let object = document.as_object_mut().expect("dashboard snapshot object");

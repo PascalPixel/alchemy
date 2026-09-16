@@ -87,7 +87,6 @@ pub fn game_directory(game: &str) -> &str {
     match game {
         "tbs" => "THE BROKEN SEAL",
         "tla" => "THE LOST AGE",
-        "alchemy" => "COMMON",
         _ => game,
     }
 }

@@ -1,3 +1,5 @@
+mod cli;
+
 use psynergy::{compare, decode, lift, repair, unit};
 use std::fs::{self, OpenOptions};
 use std::io::Write;
@@ -11,6 +13,7 @@ const USAGE: &str = "usage: psynergy <command> [args]\n\
   repair SOURCE         enumerate or emit a named C repair\n\
   inspect allocator DIR read existing GCC allocation dumps\n\
   convert FORMAT        convert explicit files (convert --help lists formats)\n\
+  decode-lz INPUT       decode one tagged LZ stream at --offset\n\
 No default ROM, project registry, compiler route, or adoption authority.";
 const CODE_USAGE: &str = "usage: psynergy decompile INPUT --base ADDRESS --entry ADDRESS --span BYTES [--name NAME] [--out FILE]\n\
        psynergy disassemble INPUT --base ADDRESS --entry ADDRESS --span BYTES [--out FILE]";
@@ -321,6 +324,8 @@ fn main() -> ExitCode {
             psynergy::allocator::inspect(std::path::Path::new(&rest[1])).map(|text| (text, 0))
         }
         "inspect" => Err(INSPECT_USAGE.into()),
+        "decode-lz" if help => Ok((cli::decode_lz::USAGE.into(), 0)),
+        "decode-lz" => cli::decode_lz::run(rest).map(|text| (text, 0)),
         "convert" => psynergy::convert::run(rest).map(|_| (String::new(), 0)),
         _ => Err(format!("unknown psynergy command: {command}\n{USAGE}")),
     };

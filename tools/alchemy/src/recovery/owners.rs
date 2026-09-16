@@ -3,6 +3,7 @@
 
 use crate::compiler::build_io::read as read_file;
 use crate::compiler::source_paths::{SourceOwner, SourcePaths};
+use crate::targets::DecompTarget;
 use serde::Deserialize;
 use std::path::{Path, PathBuf};
 use std::process::Command;
@@ -85,16 +86,51 @@ pub fn span_for(
     entry: u32,
     requested: Option<u32>,
 ) -> Result<u32, String> {
+    span_for_target(root, default_target(), overlay, entry, requested)
+}
+
+/// The production default target, `tbs-en`, which every legacy entry point assumes.
+pub fn default_target() -> DecompTarget {
+    crate::targets::target_for(crate::targets::DEFAULT_TARGET)
+}
+
+/// The reviewed owner register of the target's game. A game with no
+/// `semantic/regions.json` yet has no reviewed owners: an empty register, so a
+/// caller-supplied `--span` still cannot establish one.
+fn reviewed_spans(
+    root: &Path,
+    target: DecompTarget,
+) -> Result<std::collections::BTreeMap<SourceOwner, usize>, String> {
+    use crate::compiler::routing::CompilerTarget;
+    let register = root.join(target.game_dir()).join("semantic/regions.json");
+    match target.compiler {
+        CompilerTarget::Tbs => crate::compiler::translation_units::reviewed_overlay_spans(root),
+        CompilerTarget::Tla if !register.is_file() => Ok(Default::default()),
+        CompilerTarget::Tla => Err(format!(
+            "{}: reviewed regions of {} are not read yet; \
+             translation_units::reviewed_overlay_spans must take the game directory",
+            register.display(),
+            target.id
+        )),
+    }
+}
+
+/// `span_for` against one registered target's reviewed register and retained assembly.
+pub fn span_for_target(
+    root: &Path,
+    target: DecompTarget,
+    overlay: &str,
+    entry: u32,
+    requested: Option<u32>,
+) -> Result<u32, String> {
     let owner = SourceOwner::parse(&format!("{overlay}:{entry:08x}"))?;
-    let reviewed = crate::compiler::translation_units::reviewed_overlay_spans(root)?;
-    let paths = SourcePaths::load(root)?;
+    let reviewed = reviewed_spans(root, target)?;
+    let paths = SourcePaths::load_for_game(root, target.compiler.as_str())?;
     let installed = if paths
         .mapped_source_path(owner)
         .is_some_and(|path| path.is_file())
     {
-        let path = root.join(format!(
-            "games/THE BROKEN SEAL/asm/overlays/{overlay}_overlay.s"
-        ));
+        let path = root.join(target.overlay_assembly(overlay));
         let text = std::fs::read_to_string(&path)
             .map_err(|error| format!("{}: {error}", path.display()))?;
         crate::compiler::overlay::placeholder_extent(&text, entry)
@@ -208,22 +244,32 @@ pub fn image_window(
     owner: &str,
     span: Option<u32>,
 ) -> Result<(Vec<u8>, u32, u32, u32), String> {
+    image_window_for(root, default_target(), owner, span)
+}
+
+/// `image_window` against one registered target's ROM, register and assembly.
+pub fn image_window_for(
+    root: &Path,
+    target: DecompTarget,
+    owner: &str,
+    span: Option<u32>,
+) -> Result<(Vec<u8>, u32, u32, u32), String> {
     let owner = SourceOwner::parse_argument(owner)?;
     let entry = owner.address();
     let (image, base, extent) = if let Some(overlay) = owner.overlay_id() {
-        let extent = span_for(root, &overlay, entry, span)?;
+        let extent = span_for_target(root, target, &overlay, entry, span)?;
         (
-            crate::overlay::rom::canonical_overlay(root, &overlay)?,
+            crate::overlay::rom::canonical_overlay_for(root, target, &overlay)?,
             psynergy::decode::OVERLAY_BASE,
             extent,
         )
     } else {
         let extent = match span {
             Some(span) => span,
-            None => main_extent(root, entry)?,
+            None => main_extent_for(root, target, entry)?,
         };
         (
-            read_file(root.join("roms/tbs-en.gba"))?,
+            read_file(root.join(target.rom))?,
             psynergy::decode::MAIN_BASE,
             extent,
         )
@@ -274,10 +320,10 @@ mod owner_tests {
     }
 }
 
-/// The extent of a main owner: its retained assembly under `games/THE BROKEN SEAL/asm`
-/// assembled and measured, exactly as the integration gate measures it.
-pub fn main_extent(root: &Path, address: u32) -> Result<u32, String> {
-    let source = root.join(format!("games/THE BROKEN SEAL/asm/{address:08x}.s"));
+/// The extent of a main owner: its retained assembly under the target's `asm`
+/// directory assembled and measured, exactly as the integration gate measures it.
+pub fn main_extent_for(root: &Path, target: DecompTarget, address: u32) -> Result<u32, String> {
+    let source = root.join(format!("{}/{address:08x}.s", target.asm_dir));
     if !source.is_file() {
         return Err(format!("main:{address:08x} has no retained assembly"));
     }

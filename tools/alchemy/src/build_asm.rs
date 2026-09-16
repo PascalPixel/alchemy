@@ -13,7 +13,7 @@ pub fn entry(arguments: &[String]) -> Result<(), String> {
     }
     let options = match parse_args(arguments)? {
         ParseOutcome::Help => {
-            println!("usage: alchemy build asm [-h] [--source-only] [--output OUTPUT] [--source SOURCE] [rom]");
+            println!("usage: alchemy build asm [-h] [--target GAME-EDITION] [--source-only] [--output OUTPUT] [--source SOURCE] [rom]");
             return Ok(());
         }
         ParseOutcome::Run(options) => options,
@@ -46,6 +46,8 @@ pub struct Options {
     pub output: String,
     pub source: Option<String>,
     pub source_only: bool,
+    /// The target's retained assembly root, `games/<GAME>/asm`.
+    pub asm_dir: String,
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ParseOutcome {
@@ -122,11 +124,13 @@ pub fn repository_root() -> PathBuf {
     crate::compiler::routing::root().to_path_buf()
 }
 pub fn parse_args(argv: &[String]) -> Result<ParseOutcome, String> {
+    let mut target = crate::targets::decomp_target(None)?;
     let mut options = Options {
-        rom: "roms/tbs-en.gba".into(),
-        output: "out/tbs-en/asm".into(),
+        rom: String::new(),
+        output: String::new(),
         source: None,
         source_only: false,
+        asm_dir: String::new(),
     };
     let mut positional = false;
     let mut index = 0usize;
@@ -136,6 +140,11 @@ pub fn parse_args(argv: &[String]) -> Result<ParseOutcome, String> {
             return Ok(ParseOutcome::Help);
         } else if argument == "--source-only" {
             options.source_only = true;
+        } else if argument == "--target" {
+            index += 1;
+            target = crate::targets::decomp_target(Some(
+                argv.get(index).ok_or("--target requires a value")?,
+            ))?;
         } else if argument == "--output" || argument == "--source" {
             index += 1;
             let value = argv
@@ -162,13 +171,20 @@ pub fn parse_args(argv: &[String]) -> Result<ParseOutcome, String> {
     if options.source_only && positional {
         return Err("--source-only does not accept a ROM".into());
     }
+    if !positional {
+        options.rom = target.rom.into();
+    }
+    if options.output.is_empty() {
+        options.output = format!("{}/asm", target.output_dir);
+    }
+    options.asm_dir = target.asm_dir.into();
     Ok(ParseOutcome::Run(options))
 }
 fn resolve(root: &Path, cwd: &Path, value: &str) -> PathBuf {
     let path = Path::new(value);
     if path.is_absolute() {
         path.to_path_buf()
-    } else if value.starts_with("out/") || value.starts_with("games/THE BROKEN SEAL/asm/") {
+    } else if value.starts_with("out/") || value.starts_with("games/") {
         root.join(path)
     } else {
         cwd.join(path)
@@ -219,23 +235,22 @@ fn integer(value: &Value, name: &str) -> Result<u64, String> {
         .filter(|value| *value <= u32::MAX as u64)
         .ok_or_else(|| format!("{name}: invalid address"))
 }
-fn load_layout(root: &Path) -> Result<BTreeMap<String, Placement>, String> {
-    let path = root.join("games/THE BROKEN SEAL/asm/manifest.json");
+fn load_layout(root: &Path, asm_dir: &str) -> Result<BTreeMap<String, Placement>, String> {
+    let manifest = format!("{asm_dir}/manifest.json");
+    let path = root.join(&manifest);
     if !path.exists() {
         return Ok(BTreeMap::new());
     }
     let value: Value = read_json(&path)?;
     if value["format"].as_u64() != Some(1) || !value["regions"].is_array() {
-        return Err("games/THE BROKEN SEAL/asm/manifest.json: unsupported format".into());
+        return Err(format!("{manifest}: unsupported format"));
     }
     let regions: Vec<LayoutRegion> = serde_json::from_value(value["regions"].clone())
-        .map_err(|_| "games/THE BROKEN SEAL/asm/manifest.json: unsupported format".to_string())?;
+        .map_err(|_| format!("{manifest}: unsupported format"))?;
     let mut result = BTreeMap::new();
     for item in regions {
         if result.contains_key(&item.source) {
-            return Err(
-                "games/THE BROKEN SEAL/asm/manifest.json: invalid or duplicate source".into(),
-            );
+            return Err(format!("{manifest}: invalid or duplicate source"));
         }
         let inferred = u64::from_str_radix(&stem(Path::new(&item.source)), 16)
             .map_err(|_| format!("{}: invalid address", item.source))?;
@@ -594,12 +609,12 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
     };
     let output = rooted(root, &options.output);
     std::fs::create_dir_all(&output).map_err(|error| format!("{}: {error}", output.display()))?;
-    let mut sources = assembly_sources(&root.join("games/THE BROKEN SEAL/asm"))?;
+    let asm = root.join(&options.asm_dir);
+    let mut sources = assembly_sources(&asm)?;
     // These packages are assembled through the asset manifest, with their own
     // placement and compression. They are not standalone main-image regions.
     sources.retain(|source| {
-        !source.starts_with(root.join("games/THE BROKEN SEAL/asm/overlays"))
-            && !source.starts_with(root.join("games/THE BROKEN SEAL/asm/battle"))
+        !source.starts_with(asm.join("overlays")) && !source.starts_with(asm.join("battle"))
     });
     let mut stems = BTreeSet::new();
     for source in &sources {
@@ -618,8 +633,8 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
     if sources.is_empty() {
         return Err("no reconstructed assembly sources".into());
     }
-    let layout = load_layout(root)?;
-    let classification_path = root.join("games/THE BROKEN SEAL/asm/classification.json");
+    let layout = load_layout(root, &options.asm_dir)?;
+    let classification_path = asm.join("classification.json");
     let classification = load_classification(&classification_path)?;
     let explicit = explicit_classifications(&classification)?;
     let source_names: BTreeSet<String> = sources
@@ -692,7 +707,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
         ));
     }
     if options.source.is_none() {
-        let alignment_path = root.join("games/THE BROKEN SEAL/asm/alignment.json");
+        let alignment_path = asm.join("alignment.json");
         let category = classification
             .structural
             .iter()

@@ -1,6 +1,8 @@
 use super::*;
 mod atlas;
+mod catalog;
 mod raw;
+pub(super) use catalog::{catalog, Catalog, Descriptor};
 
 fn gray(entries: usize) -> Vec<[u8; 3]> {
     (0..entries).map(|i| [i as u8; 3]).collect()
@@ -67,7 +69,10 @@ fn bank(ctx: &Context, input: &Value) -> Result<Value, String> {
 fn component(bank: &Value) -> &Value {
     if bank["kind"] == "zero-skip-bank" {
         bank
-    } else if bank["components"][0]["kind"] == "zero-skip-bank" {
+    } else if matches!(
+        bank["components"][0]["kind"].as_str(),
+        Some("zero-skip-bank" | "zero-skip-bytes")
+    ) {
         &bank["components"][0]
     } else {
         &bank["components"][0]["components"][0]
@@ -78,7 +83,9 @@ fn pixels(ctx: &Context, input: &Value, rom: &[u8]) -> Result<Vec<u8>, String> {
     if component(&bank)["kind"] == "zero-skip-bank" {
         return raw::pixels(input, component(&bank), rom);
     }
-    let component = &bank["components"][0]["components"][0];
+    let component = component(&bank);
+    // Uncompressed frames (The Lost Age codec 0) lie back to back in the bank.
+    let raw = bank["components"][0]["kind"] == "zero-skip-bytes";
     let width = address(&input["width"])?;
     let height = address(&input["height"])?;
     let fw = address(&component["frame_width"])?;
@@ -90,7 +97,9 @@ fn pixels(ctx: &Context, input: &Value, rom: &[u8]) -> Result<Vec<u8>, String> {
     let slots = bank["directory"]["slots"]
         .as_array()
         .ok_or("character directory missing")?;
-    let plans = if bank["streams"].is_array() {
+    let plans = if raw {
+        Value::Null
+    } else if bank["streams"].is_array() {
         bank["streams"].clone()
     } else {
         let document = ctx.document(&root_path(
@@ -105,14 +114,22 @@ fn pixels(ctx: &Context, input: &Value, rom: &[u8]) -> Result<Vec<u8>, String> {
             .cloned()
             .ok_or("sprite recipes missing")?
     };
-    let streams = plans.as_array().ok_or("character streams missing")?;
-    if slots.last().and_then(Value::as_str) != Some("null") {
-        return Err("character directory terminator differs".into());
-    }
-    let pointers = slots[..slots.len() - 1]
+    // The Broken Seal closes each directory with a null slot. The Lost Age
+    // packs directories back to back, so every declared slot is a frame.
+    let slots = match slots.split_last() {
+        Some((last, rest)) if last == "null" => rest,
+        _ if slots.len() == address(&bank["directory"]["slot_count"])? => &slots[..],
+        _ => return Err("character directory terminator differs".into()),
+    };
+    let pointers = slots
         .iter()
         .map(address)
         .collect::<Result<BTreeSet<_>, _>>()?;
+    let streams = match plans.as_array() {
+        Some(streams) => streams.clone(),
+        None if raw => vec![Value::Null; pointers.len()],
+        None => return Err("character streams missing".into()),
+    };
     if pointers.len() != streams.len() {
         return Err("character directory aliases differ from physical streams".into());
     }
@@ -123,11 +140,28 @@ fn pixels(ctx: &Context, input: &Value, rom: &[u8]) -> Result<Vec<u8>, String> {
         .ok_or("character extent overflows")?;
     let rom = rom.get(..end).ok_or("character bank outside ROM")?;
     let mut output = vec![0; width.checked_mul(height).ok_or("sheet extent overflows")?];
-    for (frame, (slot, stream)) in pointers.iter().zip(streams).enumerate() {
+    let ends = pointers
+        .iter()
+        .skip(1)
+        .map(|next| next.checked_sub(ROM_BASE))
+        .chain(std::iter::once(Some(end)))
+        .collect::<Option<Vec<_>>>()
+        .ok_or("character frame precedes ROM")?;
+    for (frame, (slot, stream)) in pointers.iter().zip(&streams).enumerate() {
         let start = slot
             .checked_sub(ROM_BASE)
             .ok_or("character frame precedes ROM")?;
         let (data, size) = match stream["codec"].as_str() {
+            None if raw => {
+                let data = rom
+                    .get(start..ends[frame])
+                    .ok_or("character frame outside bank")?
+                    .to_vec();
+                if data.last() != Some(&0) {
+                    return Err("raw character frame does not end at the next frame".into());
+                }
+                (data, 0)
+            }
             Some("golden-sun-arena-lz") => {
                 let (data, size, _) =
                     psynergy::assets::lz::decode_arena(rom, start).map_err(|e| e.to_string())?;
@@ -166,8 +200,9 @@ fn pixels(ctx: &Context, input: &Value, rom: &[u8]) -> Result<Vec<u8>, String> {
             }
             _ => return Err("unregistered character frame codec".into()),
         };
-        if data.len() != address(&stream["decoded_size"])?
-            || size != address(&stream["encoded_size"])?
+        if !raw
+            && (data.len() != address(&stream["decoded_size"])?
+                || size != address(&stream["encoded_size"])?)
         {
             return Err("character stream extent differs".into());
         }
@@ -191,6 +226,59 @@ fn pixels(ctx: &Context, input: &Value, rom: &[u8]) -> Result<Vec<u8>, String> {
         return Err("character pixels differ from registered input".into());
     }
     Ok(output)
+}
+/// One descriptor's decoded frames, as rendered into a character sheet.
+pub(super) struct Sheet {
+    pub frames: usize,
+    pub unique_frames: usize,
+    pub codec: &'static str,
+    pub png: Vec<u8>,
+}
+/// Decode every frame each descriptor of `target` names and colour it with the
+/// target's sprite palette. Descriptors whose directory is loaded at runtime
+/// (a null frame directory) have no sheet.
+pub(super) fn sheets(
+    target: &DecompTarget,
+    rom: &[u8],
+) -> Result<(Catalog, Vec<Descriptor>, BTreeMap<usize, Sheet>), String> {
+    let catalog = catalog(target)?;
+    let descriptors = catalog.descriptors(rom)?;
+    let directories = catalog.directories(rom, &descriptors)?;
+    let palette = catalog.palette(rom)?;
+    let mut sheets = BTreeMap::new();
+    for descriptor in &descriptors {
+        let Some(slots) = directories.get(&descriptor.frame_directory) else {
+            continue;
+        };
+        let codec = catalog::frame_codec(catalog.game, descriptor.frame_codec)
+            .ok_or_else(|| format!("descriptor {} frame codec is unregistered", descriptor.id))?;
+        let frames = slots
+            .iter()
+            .map(|slot| {
+                catalog::frame(
+                    rom,
+                    catalog.game,
+                    descriptor.frame_codec,
+                    *slot,
+                    descriptor.width,
+                    descriptor.height,
+                )
+                .map_err(|e| format!("descriptor {}: {e}", descriptor.id))
+            })
+            .collect::<Result<Vec<_>, _>>()?;
+        let (width, height, pixels) =
+            catalog::sheet(&frames, descriptor.width, descriptor.height, 8);
+        sheets.insert(
+            descriptor.id,
+            Sheet {
+                frames: frames.len(),
+                unique_frames: slots.iter().collect::<BTreeSet<_>>().len(),
+                codec,
+                png: catalog::preview(&pixels, width, height, &palette)?,
+            },
+        );
+    }
+    Ok((catalog, descriptors, sheets))
 }
 pub(super) fn extract_all(root: &Path, inputs: &Value, rom: &[u8]) -> Result<(), String> {
     atlas::extract(root, inputs, rom)
@@ -231,4 +319,51 @@ fn sprite_zero_runs_require_exact_frame_and_terminator() {
     assert!(zero_skip(&encoded[..encoded.len() - 1], pixels.len()).is_err());
     assert!(zero_skip(&[0, 1], 0).is_err());
     assert!(zero_skip(&[0xe0, 0], 32).is_err());
+}
+
+#[test]
+fn packed_raw_frames_decode_between_directory_slots() {
+    let root = tempfile::tempdir().unwrap();
+    let frames = [[vec![3; 4], vec![0; 12]].concat(), vec![5; 16]];
+    let streams = frames
+        .iter()
+        .map(|frame| psynergy::assets::compression::encode_zero_skip(frame).unwrap())
+        .collect::<Vec<_>>();
+    let mut rom = vec![0xaa; 8];
+    let first = ROM_BASE + rom.len();
+    rom.extend(&streams[0]);
+    let second = ROM_BASE + rom.len();
+    rom.extend(&streams[1]);
+    let size = rom.len() - 8;
+    rom.push(0xaa);
+    let bank = |slots: Value| {
+        json!({"banks":{"field":{"format":1,"kind":"components","address":first,"size":size,
+            "components":[{"kind":"zero-skip-bytes","source":"CHAR.PNG","frame_width":4,"frame_height":4,
+                "columns":2,"frames":2,"size":size,"pixel_format":"indices"}],
+            "directory":{"format":1,"kind":"pointer-table","base_address":first,"address":ROM_BASE,
+                "slot_count":2,"slots":slots}}}})
+    };
+    let slots = json!([format!("{first:#x}"), format!("{second:#x}")]);
+    fs::write(root.path().join("PACKED.JSON"), bank(slots).to_string()).unwrap();
+    let ctx = Context::new(root.path());
+    let expected = (0..4)
+        .flat_map(|row| {
+            [
+                &frames[0][row * 4..row * 4 + 4],
+                &frames[1][row * 4..row * 4 + 4],
+            ]
+            .concat()
+        })
+        .collect::<Vec<_>>();
+    let mut input = json!({"metadata":"PACKED.JSON","pointer":"/banks/field","width":8,"height":4,
+        "decoded_sha256": sha256::hex(&expected)});
+    assert_eq!(pixels(&ctx, &input, &rom).unwrap(), expected);
+    input["decoded_sha256"] = json!(sha256::hex(&[0u8; 32]));
+    assert!(pixels(&ctx, &input, &rom).is_err());
+    // A slot count that disagrees with the unterminated slots is refused.
+    let mut document = bank(json!([format!("{first:#x}")]));
+    document["banks"]["field"]["directory"]["slot_count"] = json!(2);
+    fs::write(root.path().join("SHORT.JSON"), document.to_string()).unwrap();
+    input["metadata"] = json!("SHORT.JSON");
+    assert!(pixels(&Context::new(root.path()), &input, &rom).is_err());
 }

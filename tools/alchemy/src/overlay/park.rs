@@ -359,9 +359,8 @@ pub fn run_audit(root: &Path, argv: &[String]) -> Result<i32, String> {
     }
     let overlays: Vec<String> = if argv.is_empty() || argv[0] == "--all" {
         let mut names = Vec::new();
-        for entry in fs::read_dir(root.join("games/THE BROKEN SEAL/asm/overlays"))
-            .map_err(|e| e.to_string())?
-        {
+        let directory = crate::targets::target_for(crate::targets::DEFAULT_TARGET).overlay_dir();
+        for entry in fs::read_dir(root.join(directory)).map_err(|e| e.to_string())? {
             let name = entry
                 .map_err(|e| e.to_string())?
                 .file_name()
@@ -849,7 +848,8 @@ mod tests {
         assert_eq!(after["units"][2]["owners"][0]["state"], "exact-c");
     }
     use super::{audit_with_rom, thumb_standalone_wide_transfer_lines};
-    use crate::overlay::audited_span;
+    use crate::overlay::adopt::audited_span;
+    use crate::targets::{target_for, DEFAULT_TARGET};
     use std::fs;
     use tempfile::tempdir;
     #[test]
@@ -896,7 +896,13 @@ mod tests {
             r#"{"manual_regions":[{"overlay":"resource_371","entry":"0x02000010","span_bytes":16}]}"#,
         )
         .unwrap();
-        let accepts = |entry, span| audited_span(root.path(), "resource_371", entry, span).is_ok();
+        let accepts = |entry: u32, span| {
+            let owner = crate::compiler::source_paths::SourceOwner::parse(&format!(
+                "resource_371:{entry:08x}"
+            ))
+            .unwrap();
+            audited_span(root.path(), target_for(DEFAULT_TARGET), owner, span).is_ok()
+        };
         assert!(accepts(0x02000010, 16));
         for (entry, span) in [
             (0x02000000, 4),

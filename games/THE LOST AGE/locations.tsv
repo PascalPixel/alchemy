@@ -1,0 +1,15 @@
+# TLA English overlay identities derived from the ROM location-name resolver, not source filenames.
+# Scene records: 080f17a8 holds 8-byte {u16 overlay, u8 area, u8 variant, u16 map_index, u16 mode}; the rows below are the Lost Age opening scenes only.
+# Name rules: resolver 080ca280 scans 080ef4a4 in order. Bit 15 of the selector matches the scene instead of the area; its low 15 bits select an entry or 0x7fff as a wildcard.
+# The matched result plus 0xe58 is the location name. Message IDs refer to TEXT/MESSAGE_ARCHIVE.JSON.
+# resource_652 shows North Osenia Islet only for scene 11 entry 7; every other Daila entry resolves to Daila.
+# English display names identify places; atlas destinations are the Japanese romaji source folders, as in The Broken Seal.
+resource_id	locations	role	scene_ids	name_message_ids	evidence	atlas_destination
+resource_64a	(Clear data)	save_menu	1	0x0e59	080f17a8;080ef4a4;080ca280	SRC/MENU/CLEAR
+resource_64b	World Map	world_map	2	0x0e5a	080f17a8;080ef4a4;080ca280	SRC/FIELD/WORLD_MAP
+resource_64d	Venus Lighthouse	area	4	0x0e5c	080f17a8;080ef4a4;080ca280	SRC/FIELD/VINASU_IRIGUCHI
+resource_64e	Venus Lighthouse	area	5	0x0e5c	080f17a8;080ef4a4;080ca280	SRC/FIELD/VINASU_CHOJO
+resource_64f	Suhalla Gate	area	6,7,8	0x0e5d	080f17a8;080ef4a4;080ca280	SRC/FIELD/SUHARA_GATE
+resource_650	Idejima	area	9	0x0e5e	080f17a8;080ef4a4;080ca280	SRC/FIELD/IDEJIMA
+resource_651	Daila	area	10,13	0x0e60	080f17a8;080ef4a4;080ca280	SRC/FIELD/DAIRA_MURA
+resource_652	Daila; North Osenia Islet	area	11,12	0x0e60,0x0e5f	080f17a8;080ef4a4;080ca280	SRC/FIELD/DAIRA_HEYA

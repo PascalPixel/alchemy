@@ -1,28 +1,20 @@
+pub mod adopt;
 pub mod assembly;
 pub mod compile;
+pub mod export;
+pub mod owners;
 pub mod park;
 pub mod rom;
 pub mod score;
 pub mod source;
-use crate::compiler::no_asm::{expanded_forbidden, find_forbidden};
-use crate::compiler::source_paths::{SourceOwner, SourcePaths};
+use crate::compiler::source_paths::SourceOwner;
 use crate::overlay::assembly::OVERLAY_BASE;
-use crate::overlay::compile::assemble_overlay;
-use crate::overlay::source::OverlaySource;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use tempfile::tempdir;
-#[derive(Debug, Clone)]
-pub struct Options {
-    pub span: Option<i64>,
-    pub id: String,
-    pub source: String,
-    pub apply: bool,
-    pub where_: bool,
-}
 #[derive(Debug, Clone, PartialEq)]
 pub struct InternalAlias {
     pub label: String,
@@ -44,9 +36,7 @@ struct AuditOverlay {
     intervals: Vec<AuditInterval>,
 }
 pub(crate) fn overlay_assembly(root: &Path, overlay: &str) -> PathBuf {
-    root.join(format!(
-        "games/THE BROKEN SEAL/asm/overlays/{overlay}_overlay.s"
-    ))
+    root.join(crate::targets::target_for(crate::targets::DEFAULT_TARGET).overlay_assembly(overlay))
 }
 pub(crate) fn retained_source(root: &Path, owner: SourceOwner) -> PathBuf {
     root.join(format!(
@@ -249,292 +239,15 @@ pub fn audited_kind(root: &Path, overlay: &str, entry: i64) -> Result<Option<Str
     }))
 }
 pub(crate) fn reviewed_spans(root: &Path) -> Result<BTreeMap<SourceOwner, usize>, String> {
-    crate::compiler::translation_units::reviewed_overlay_spans(root)
+    owners::reviewed_spans(
+        root,
+        crate::targets::target_for(crate::targets::DEFAULT_TARGET),
+    )
 }
-fn audited_span(root: &Path, overlay: &str, start: i64, span_bytes: i64) -> Result<(), String> {
-    let owner = SourceOwner::parse(&format!("{overlay}:{start:08x}"))?;
-    crate::compiler::translation_units::resolve_overlay_span(
-        &reviewed_spans(root)?,
-        owner,
-        None,
-        Some(usize::try_from(span_bytes).map_err(|_| "invalid overlay span")?),
-    )?;
-    Ok(())
-}
-const USAGE: &str =
-    "usage: alchemy overlay adopt <overlay:offsetHex> --source FILE [--span BYTES] [--apply] [--where]";
-fn options_of(argv: &[String]) -> Result<Option<Options>, String> {
-    let (mut span, mut id, mut source) = (None, String::new(), String::new());
-    let (mut apply, mut where_) = (false, false);
-    let mut args = argv.iter();
-    while let Some(argument) = args.next() {
-        match argument.as_str() {
-            "--source" | "-s" => source = args.next().cloned().unwrap_or_default(),
-            "--span" => {
-                span = Some(
-                    args.next()
-                        .and_then(|value| value.parse::<i64>().ok())
-                        .filter(|value| *value > 0)
-                        .ok_or("--span must be a positive byte count")?,
-                )
-            }
-            "--apply" => apply = true,
-            "--where" => where_ = true,
-            "-h" | "--help" => return Ok(None),
-            _ if id.is_empty() => id = argument.clone(),
-            _ => return Err(format!("unrecognized argument: {argument}")),
-        }
-    }
-    if id.is_empty() || source.is_empty() {
-        return Err("both an overlay function id and --source are required".to_string());
-    }
-    Ok(Some(Options {
-        span,
-        id,
-        source,
-        apply,
-        where_,
-    }))
-}
-struct OverlayLock {
-    path: PathBuf,
-}
-impl OverlayLock {
-    fn acquire(assembly: &Path) -> Result<Self, String> {
-        let path = assembly.with_extension("s.adopt-lock");
-        for attempt in 0..600 {
-            match fs::OpenOptions::new()
-                .write(true)
-                .create_new(true)
-                .open(&path)
-            {
-                Ok(_) => return Ok(OverlayLock { path }),
-                Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => {
-                    if attempt == 0 {
-                        eprintln!(
-                            "waiting for another adoption to finish with {}",
-                            assembly.display()
-                        );
-                    }
-                    std::thread::sleep(std::time::Duration::from_millis(100));
-                }
-                Err(error) => return Err(format!("{}: {error}", path.display())),
-            }
-        }
-        Err(format!(
-            "{} is still locked after 60s. If no other adoption is running, a \
-             previous one was killed mid-splice: check `git status games/THE BROKEN SEAL/asm/overlays/` \
-             before deleting the lock file.",
-            path.display()
-        ))
-    }
-}
-impl Drop for OverlayLock {
-    fn drop(&mut self) {
-        let _ = fs::remove_file(&self.path);
-    }
-}
-fn revert(
-    installed: &Path,
-    assembly: &Path,
-    preexisting: &Option<Vec<u8>>,
-    original_text: &str,
-) -> Result<(), String> {
-    match preexisting {
-        Some(data) => fs::write(installed, data).map_err(|error| error.to_string())?,
-        None => {
-            let _ = fs::remove_file(installed);
-        }
-    }
-    fs::write(assembly, original_text).map_err(|error| error.to_string())
-}
-fn differing_runs(actual: &[u8], expected: &[u8]) -> String {
-    let mut runs = Vec::new();
-    let mut start = None;
-    let mut previous = 0;
-    for offset in
-        (0..actual.len().min(expected.len())).filter(|offset| actual[*offset] != expected[*offset])
-    {
-        if start.is_some() && offset != previous + 1 {
-            runs.push((start.take().unwrap(), previous));
-        }
-        start.get_or_insert(offset);
-        previous = offset;
-    }
-    if let Some(start) = start {
-        runs.push((start, previous));
-    }
-    if runs.is_empty() {
-        return "(none; length change only)".to_string();
-    }
-    runs.into_iter()
-        .map(|(start, end)| format!("0x{:x}+{}", OVERLAY_BASE + start as i64, end - start + 1))
-        .collect::<Vec<_>>()
-        .join(" ")
-}
-pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
-    let Some(options) = options_of(args)? else {
-        println!("{USAGE}");
-        return Ok(0);
-    };
-    let source_text = fs::read_to_string(&options.source)
-        .map_err(|error| format!("{}: {error}", options.source))?;
-    let mut forbidden = find_forbidden(&options.source, &source_text)
-        .into_iter()
-        .map(|finding| format!("{}:{}", finding.token, finding.line))
-        .collect::<Vec<_>>()
-        .join(",");
-    let (overlay, address) = options
-        .id
-        .split_once(':')
-        .ok_or_else(|| format!("unparseable overlay id: {}", options.id))?;
-    let entry = i64::from_str_radix(address.trim_start_matches("0x"), 16)
-        .map_err(|_| format!("unparseable overlay id: {}", options.id))?;
-    let offset = if entry >= OVERLAY_BASE {
-        entry - OVERLAY_BASE
-    } else {
-        entry
-    };
-    let entry = OVERLAY_BASE + offset;
-    let span = options
-        .span
-        .ok_or("--span BYTES is required for overlay adoption")?;
-    let owner = SourceOwner::parse(&format!("{overlay}:{entry:08x}"))?;
-    audited_span(root, overlay, entry, span)?;
-    let source_paths = SourcePaths::load(root)?;
-    let installed = source_paths.registered_source_path(owner)?;
-    let stem = owner.address_stem();
-    let assembly = overlay_assembly(root, overlay);
-    let _lock = OverlayLock::acquire(&assembly)?;
-    // New TU declarations precede their C placeholders during adoption.
-    // Compare the completed overlay with the ROM, not that transitional tree.
-    let baseline = rom::canonical_overlay(root, overlay)?;
-    let original_text = fs::read_to_string(&assembly).map_err(|error| error.to_string())?;
-    let lines: Vec<String> = original_text
-        .split('\n')
-        .map(|line| line.to_string())
-        .collect();
-    let offsets = listing_offsets(&assembly)?;
-    let (first, last) = region_lines(&offsets, offset, span)?;
-    let marker = format!("AlchemyC_{stem}:");
-    if lines.iter().any(|line| line == &marker) {
-        return Err(format!("{} is already adopted as C", options.id));
-    }
-    let aliases = internal_aliases(&lines, first, last, offset, span)?;
-    let mut replaced_lines: Vec<String> = Vec::with_capacity(lines.len());
-    replaced_lines.extend(lines[..(first - 1) as usize].iter().cloned());
-    replaced_lines.extend(placeholder_lines(&stem, span, &aliases));
-    replaced_lines.extend(lines[last as usize..].iter().cloned());
-    let replaced = replaced_lines.join("\n");
-    let preexisting = if installed.exists() {
-        Some(fs::read(&installed).map_err(|error| error.to_string())?)
-    } else {
-        None
-    };
-    let shared_with_other_owners = source_paths
-        .owners_for_path(&installed)
-        .into_iter()
-        .any(|registered| registered != owner);
-    if shared_with_other_owners {
-        let candidate = fs::read(&options.source).map_err(|error| error.to_string())?;
-        if preexisting.as_deref() != Some(candidate.as_slice()) {
-            return Err(format!("{} is shared by other exact owners; refusing to overwrite it with differing source", installed.display()));
-        }
-    }
-    let source_is_installed = fs::canonicalize(&options.source)
-        .ok()
-        .zip(fs::canonicalize(&installed).ok())
-        .is_some_and(|(source, destination)| source == destination);
-    let rebuild: Result<Vec<u8>, String> = (|| {
-        if let Some(parent) = installed.parent() {
-            fs::create_dir_all(parent).map_err(|error| error.to_string())?;
-        }
-        if !source_is_installed {
-            fs::copy(&options.source, &installed).map_err(|error| error.to_string())?;
-        }
-        fs::write(&assembly, &replaced).map_err(|error| error.to_string())?;
-        assemble_overlay(&OverlaySource::path(&assembly), OVERLAY_BASE)
-    })();
-    let rebuilt = match rebuild {
-        Ok(data) => data,
-        Err(error) => {
-            revert(&installed, &assembly, &preexisting, &original_text)?;
-            return Err(error);
-        }
-    };
-    if rebuilt.len() != baseline.len() || rebuilt != baseline {
-        let differing = psynergy::compare::differing_offsets(&rebuilt, &baseline, 1).len();
-        revert(&installed, &assembly, &preexisting, &original_text)?;
-        println!(
-            "adopt=rejected {} differing_bytes={} size={}/{}",
-            options.id,
-            differing,
-            rebuilt.len(),
-            baseline.len()
-        );
-        if options.where_ {
-            println!("differing_at {}", differing_runs(&rebuilt, &baseline));
-        }
-        return Ok(1);
-    }
-    if forbidden.is_empty() {
-        forbidden = match expanded_forbidden(root, &installed) {
-            Ok(forbidden) => forbidden,
-            Err(error) => {
-                revert(&installed, &assembly, &preexisting, &original_text)?;
-                return Err(error);
-            }
-        };
-    }
-    if !forbidden.is_empty() {
-        revert(&installed, &assembly, &preexisting, &original_text)?;
-        println!(
-            "adopt=evidence-only {} exact_bytes={} forbidden={} source_retained=true",
-            options.id, span, forbidden
-        );
-        return Ok(1);
-    }
-    // One exact assembly is a sample; installation needs thirty fresh
-    // compiles to agree. The check runs here because every overlay
-    // adoption, direct or through `alchemy adopt`, passes through this apply.
-    if options.apply {
-        let width = u32::try_from(span).map_err(|_| format!("{}: span exceeds u32", options.id))?;
-        match crate::recovery::repeatable(root, &installed, &options.id, width) {
-            Ok(line) => println!("{line}"),
-            Err(error) => {
-                revert(&installed, &assembly, &preexisting, &original_text)?;
-                return Err(error);
-            }
-        }
-    }
-    if !options.apply {
-        revert(&installed, &assembly, &preexisting, &original_text)?;
-        let source_base = crate::compiler::plan::basename(&options.source);
-        println!(
-            "adopt=ready {} span={} aliases={} lines={}-{} source={} (pass --apply to install)",
-            options.id,
-            span,
-            aliases.len(),
-            first,
-            last,
-            source_base
-        );
-        return Ok(0);
-    }
-    println!(
-        "adopt=applied {} span={} aliases={} c={}",
-        options.id,
-        span,
-        aliases.len(),
-        source_paths.repository_relative_path(owner).display()
-    );
-    Ok(0)
-}
-
 use crate::compiler::routing::root;
 use std::process::ExitCode;
 
-const OVERLAY_USAGE: &str = "usage: alchemy overlay <adopt|park|audit> [args]";
+const OVERLAY_USAGE: &str = "usage: alchemy overlay <adopt|park|audit|export> [args]";
 
 pub(crate) fn code(result: Result<i32, String>) -> ExitCode {
     match result {
@@ -554,9 +267,10 @@ pub fn entry(arguments: &[String]) -> ExitCode {
     };
     let rest = &arguments[1..];
     match command {
-        "adopt" => code(run(root(), rest)),
+        "adopt" => code(adopt::run(root(), rest)),
         "park" => code(park::run(root(), rest)),
         "audit" => code(park::run_audit(root(), rest)),
+        "export" => code(export::run(root(), rest)),
         "-h" | "--help" => {
             println!("{OVERLAY_USAGE}");
             ExitCode::SUCCESS

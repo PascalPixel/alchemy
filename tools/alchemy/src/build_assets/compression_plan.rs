@@ -3,7 +3,7 @@
 use super::*;
 use serde_json::json;
 mod predictor;
-pub(super) use predictor::{derive, materialize};
+pub(super) use predictor::{compact_plan, derive, materialize};
 
 const MAGIC: &[u8; 8] = b"ALCHTOK1";
 const FORMAT: &str = "alchemy-lz-controls-v1";
@@ -194,7 +194,7 @@ fn restore_recipe_codec(document: &mut Value) -> Result<(), String> {
     if !codec.is_string() {
         return Err("recipe codec default must be a string".into());
     }
-    if let Some(recipes) = document["recipes"].as_object_mut() {
+    if let Some(recipes) = document.get_mut("recipes").and_then(Value::as_object_mut) {
         for rows in recipes.values_mut().filter_map(Value::as_array_mut) {
             for row in rows.iter_mut().filter_map(Value::as_object_mut) {
                 row.entry("codec").or_insert_with(|| codec.clone());
@@ -273,7 +273,7 @@ fn compact(document: &mut Value) -> Result<Vec<u8>, String> {
         Ok(())
     })?;
     let mut inherited = false;
-    if let Some(recipes) = document["recipes"].as_object_mut() {
+    if let Some(recipes) = document.get_mut("recipes").and_then(Value::as_object_mut) {
         for rows in recipes.values_mut().filter_map(Value::as_array_mut) {
             for row in rows.iter_mut().filter_map(Value::as_object_mut) {
                 if row.get("codec").and_then(Value::as_str) == Some("golden-sun-arena-lz") {
@@ -382,6 +382,29 @@ mod tests {
         corrupt[8] ^= 1;
         fs::write(table_path, corrupt).unwrap();
         assert!(expand(root, &mut document.clone()).is_err());
+    }
+
+    #[test]
+    fn hash_keyed_default_plans_without_recipes_roundtrip() {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        let path = root.join("COMPRESSION.JSON");
+        let original = json!({
+            "aa":{"format":1,"codec":"golden-sun-kind2-lz","decoded_size":4,"tokens":{"predictor":"greedy-lz-v1","exceptions":[]}},
+            "bb":{"format":1,"codec":"golden-sun-tagged-palette-lz","decoded_size":8,"tokens":{"predictor":"greedy-lz-v1","exceptions":[[3,["l"]],[5,["c",2,1]]]}}
+        });
+        fs::write(&path, original.to_string()).unwrap();
+        repack(root, &path).unwrap();
+        let metadata = fs::read(&path).unwrap();
+        assert!(json(&path).unwrap().get("recipes").is_none());
+        let mut restored = json(&path).unwrap();
+        expand(root, &mut restored).unwrap();
+        restored.as_object_mut().unwrap().remove("token_table");
+        assert_eq!(restored["aa"]["tokens"], original["aa"]["tokens"]);
+        assert_eq!(restored["bb"]["tokens"], original["bb"]["tokens"]);
+        assert_eq!(restored, original);
+        repack(root, &path).unwrap();
+        assert_eq!(fs::read(&path).unwrap(), metadata);
     }
 
     #[test]

@@ -6,8 +6,9 @@
 //! from the main image, and a prologue names a function of the overlay
 //! itself. Registered names come from the source register.
 
-use super::owners::image_window;
+use super::owners::image_window_for;
 use crate::compiler::source_paths::{SourceOwner, SourcePaths};
+use crate::targets::DecompTarget;
 use psynergy::decode::{decode_window_at, Kind, MAIN_BASE, OVERLAY_BASE};
 use std::path::Path;
 
@@ -41,12 +42,18 @@ fn read_u32(image: &[u8], at: usize) -> Option<u32> {
     ]))
 }
 
-/// Resolves every call site of an owner's window.
-pub fn imports(root: &Path, owner: &str, span: Option<u32>) -> Result<Vec<Import>, String> {
+/// Resolves every call site of an owner's window against one registered
+/// target's ROM and source register.
+pub fn imports_for(
+    root: &Path,
+    target: DecompTarget,
+    owner: &str,
+    span: Option<u32>,
+) -> Result<Vec<Import>, String> {
     let resolved = SourceOwner::parse_argument(owner)?;
     let overlay = resolved.overlay_id();
-    let (image, base, entry, span) = image_window(root, owner, span)?;
-    let sources = SourcePaths::load(root)?;
+    let (image, base, entry, span) = image_window_for(root, target, owner, span)?;
+    let sources = SourcePaths::load_for_game(root, target.compiler.as_str())?;
     let ins = decode_window_at(&image, base, entry, span);
     let mut found = Vec::new();
     for x in &ins {

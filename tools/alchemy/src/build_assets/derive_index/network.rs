@@ -553,32 +553,6 @@ struct Blend {
     control: u16,
     alpha: u16,
 }
-/// The Lost Age's unnamed map plane after the grid (container slot 3), one
-/// byte per cell of the 128x128 grid. Its nonzero cells outline each room's
-/// walls and obstacles; zero cells inside a room are taken as floor.
-fn floor_plane(deriver: &Deriver, container: usize) -> Option<Vec<u8>> {
-    if component_slots(&deriver.target) != 7 {
-        return None;
-    }
-    let (base, size) = deriver.directory.resource(container).ok()?;
-    let offsets = (0..7)
-        .map(|k| u32_at(deriver.rom, base + 0x24 + 4 * k).map(|o| o as usize))
-        .collect::<Result<Vec<_>, _>>()
-        .ok()?;
-    let start = offsets[3];
-    if start == 0 {
-        return None;
-    }
-    let end = offsets
-        .iter()
-        .copied()
-        .filter(|o| *o > start)
-        .min()
-        .unwrap_or(size);
-    let plane = decode_tagged(deriver.rom, base + start, base + end).ok()?;
-    (plane.len() == CELLS * CELLS).then_some(plane)
-}
-
 fn blend(deriver: &Deriver, container: usize) -> Option<Blend> {
     let (base, size) = deriver.directory.resource(container).ok()?;
     let slots = component_slots(&deriver.target);
@@ -772,6 +746,8 @@ struct Room {
     floor: Vec<bool>,
     level: i64,
     position: Option<(i64, i64)>,
+    /// Where the room stands in 3D: across, down the page, and its level.
+    position3d: Option<(i64, i64, i64)>,
 }
 impl Room {
     fn span(&self) -> (i64, i64) {
@@ -856,7 +832,6 @@ fn cut_rooms(
     map_index: usize,
     image: &Image,
     codes: &BTreeMap<u8, Vec<(usize, usize)>>,
-    ground: Option<&[u8]>,
 ) -> (usize, Vec<Option<usize>>, Vec<Room>) {
     let (columns, rows) = (image.width / 16, image.height / 16);
     let mut drawn = (0..columns * rows)
@@ -967,12 +942,18 @@ fn cut_rooms(
             let threshold = codes
                 .values()
                 .any(|cells| cells.contains(&(cell % columns, cell / columns)));
-            floor[y * width + x] = !threshold
-                && ground.is_none_or(|g| g[cell / columns * CELLS + cell % columns] == 0);
+            floor[y * width + x] = !threshold;
             for hy in y..y + 3 {
                 for hx in x..x + 3 {
                     halo[hy * (width + 2) + hx] = true;
                 }
+            }
+        }
+        // The top two drawn cells of each column are the back wall, which may
+        // stand in front of the room behind it.
+        for x in 0..width {
+            for y in (0..height).filter(|&y| mask[y * width + x]).take(2) {
+                floor[y * width + x] = false;
             }
         }
         rooms.push(Room {
@@ -985,6 +966,7 @@ fn cut_rooms(
             floor,
             level: 0,
             position: None,
+            position3d: None,
         });
     }
     (columns, room_of, rooms)
@@ -1143,6 +1125,7 @@ struct Block {
     area: usize,
     mask: Vec<bool>,
     halo: Vec<bool>,
+    floor: Vec<bool>,
     position: Option<(i64, i64)>,
 }
 impl Block {
@@ -1163,11 +1146,15 @@ impl Block {
         let (w, h) = ((right - left) / 16, (bottom - top) / 16);
         let mut mask = vec![false; (w * h) as usize];
         let mut halo = vec![false; ((w + 2) * (h + 2)) as usize];
+        let mut floor = vec![false; (w * h) as usize];
         for &r in &members {
             let (rx, ry) = ((at(r).0 - left) / 16, (at(r).1 - top) / 16);
             let (rw, rh) = rooms[r].span();
             for y in 0..rh {
                 for x in 0..rw {
+                    if rooms[r].floor[(y * rw + x) as usize] {
+                        floor[((ry + y) * w + rx + x) as usize] = true;
+                    }
                     if rooms[r].mask[(y * rw + x) as usize] {
                         mask[((ry + y) * w + rx + x) as usize] = true;
                         for hy in ry + y..ry + y + 3 {
@@ -1187,8 +1174,24 @@ impl Block {
             size: (w, h),
             mask,
             halo,
+            floor,
             position: None,
         }
+    }
+    /// Whether this block at `at` has floor on floor of `other` at `other_at`.
+    fn overlaps(&self, at: (i64, i64), other: &Block, other_at: (i64, i64)) -> bool {
+        let (ax, ay) = (at.0.div_euclid(16), at.1.div_euclid(16));
+        let (bx, by) = (other_at.0.div_euclid(16), other_at.1.div_euclid(16));
+        let (aw, ah) = self.size;
+        let (bw, bh) = other.size;
+        let (x0, x1) = (ax.max(bx), (ax + aw).min(bx + bw));
+        let (y0, y1) = (ay.max(by), (ay + ah).min(by + bh));
+        (y0..y1).any(|y| {
+            (x0..x1).any(|x| {
+                self.floor[((y - ay) * aw + x - ax) as usize]
+                    && other.floor[((y - by) * bw + x - bx) as usize]
+            })
+        })
     }
     /// Whether this block at `at` comes within a cell of `other` at `other_at`.
     fn touches(&self, at: (i64, i64), other: &Block, other_at: (i64, i64)) -> bool {
@@ -1247,7 +1250,13 @@ fn pack_cost(
 
 /// The free spot for `block` with the lowest pack cost, searched outward
 /// from positions that join its stairs, or around the placed drawing.
-fn pack_spot(blocks: &[Block], joins: &[Join], block: usize, others: &[usize]) -> (i64, i64) {
+fn pack_spot(
+    blocks: &[Block],
+    joins: &[Join],
+    block: usize,
+    others: &[usize],
+    tight: bool,
+) -> (i64, i64) {
     let snap = |p: (i64, i64)| (p.0.div_euclid(16) * 16, p.1.div_euclid(16) * 16);
     let mut ideals = joins
         .iter()
@@ -1268,10 +1277,11 @@ fn pack_spot(blocks: &[Block], joins: &[Join], block: usize, others: &[usize]) -
         let (w, h) = blocks[block].size;
         for &o in others {
             let (p, (ow, oh)) = (blocks[o].position.unwrap(), blocks[o].size);
-            ideals.push((p.0 + ow * 16 + 32, p.1));
-            ideals.push((p.0, p.1 + oh * 16 + 32));
-            ideals.push((p.0 - w * 16 - 32, p.1));
-            ideals.push((p.0, p.1 - h * 16 - 32));
+            let gap = if tight { 0 } else { 32 };
+            ideals.push((p.0 + ow * 16 + gap, p.1));
+            ideals.push((p.0, p.1 + oh * 16 + gap));
+            ideals.push((p.0 - w * 16 - gap, p.1));
+            ideals.push((p.0, p.1 - h * 16 - gap));
         }
         ideals.truncate(24);
     }
@@ -1279,9 +1289,14 @@ fn pack_spot(blocks: &[Block], joins: &[Join], block: usize, others: &[usize]) -
         return (0, 0);
     }
     let free = |at: (i64, i64)| {
-        others
-            .iter()
-            .all(|&o| !blocks[block].touches(at, &blocks[o], blocks[o].position.unwrap()))
+        others.iter().all(|&o| {
+            let there = blocks[o].position.unwrap();
+            if tight {
+                !blocks[block].overlaps(at, &blocks[o], there)
+            } else {
+                !blocks[block].touches(at, &blocks[o], there)
+            }
+        })
     };
     let mut best: Option<(i64, (i64, i64))> = None;
     for ideal in &ideals {
@@ -1328,6 +1343,11 @@ struct Family {
     mark: Option<usize>,
     /// Doors meet doors with no lines: levels are packed as layers.
     packed: bool,
+    /// Packed with every level in one plane, rooms of all levels side by side.
+    flat: bool,
+    /// Scenes left out because their exits lead to different scenes by flag,
+    /// like the ship, which docks in several places.
+    stops: BTreeSet<usize>,
     /// Scenes to draw on their own instead of a world map family.
     scope: Option<BTreeSet<usize>>,
     errors: Vec<String>,
@@ -1339,6 +1359,7 @@ impl Family {
         root: (usize, i16),
         world_exits: Vec<u32>,
         scope: Option<BTreeSet<usize>>,
+        expand: bool,
     ) -> Self {
         let scene_address = scene_address(&deriver.target);
         let mut family = Family {
@@ -1354,6 +1375,8 @@ impl Family {
             bands: Vec::new(),
             mark: None,
             packed: false,
+            flat: false,
+            stops: BTreeSet::new(),
             scope: scope.clone(),
             errors: Vec::new(),
         };
@@ -1364,7 +1387,8 @@ impl Family {
         while let Some(index) = queue.pop_front() {
             if index == WORLD_MAP
                 || family.scenes.contains_key(&index)
-                || family.scope.as_ref().is_some_and(|s| !s.contains(&index))
+                || family.stops.contains(&index)
+                || (!expand && family.scope.as_ref().is_some_and(|s| !s.contains(&index)))
             {
                 continue;
             }
@@ -1394,6 +1418,22 @@ impl Family {
                     continue;
                 }
             };
+            // Expanding from a scene list stops at a scene whose exit leads to
+            // different scenes by flag: the ship, which docks in several places.
+            let outside = family.scope.as_ref().is_some_and(|s| !s.contains(&index));
+            if expand && outside {
+                let mut destinations: BTreeMap<u32, BTreeSet<usize>> = BTreeMap::new();
+                for exit in &tables.exits {
+                    destinations
+                        .entry(exit.exit)
+                        .or_default()
+                        .insert(exit.to_scene);
+                }
+                if destinations.values().any(|d| d.len() > 1) {
+                    family.stops.insert(index);
+                    continue;
+                }
+            }
             // An exit whose destination depends on flags (a ship that docks in
             // several places) is followed only back into this family, or by
             // its default when none of its destinations is known yet.
@@ -1475,9 +1515,7 @@ impl Family {
                         .push((cell % CELLS, cell / CELLS));
                 }
             }
-            let ground = floor_plane(deriver, container);
-            let (columns, room_of, rooms) =
-                cut_rooms(self.maps.len(), &image, &map.codes, ground.as_deref());
+            let (columns, room_of, rooms) = cut_rooms(self.maps.len(), &image, &map.codes);
             let offset = self.rooms.len();
             map.room_of = room_of.into_iter().map(|r| r.map(|r| r + offset)).collect();
             (map.image, map.columns, map.layers) = (image, columns, layers);
@@ -1707,7 +1745,7 @@ impl Family {
                 Some(
                     match (
                         self.packed,
-                        self.rooms[other].level == self.rooms[room].level,
+                        self.flat || self.rooms[other].level == self.rooms[room].level,
                     ) {
                         // Packed thresholds sit on the entrance; stairs on stairs.
                         (true, true) => dx + dy,
@@ -1750,7 +1788,7 @@ impl Family {
         let neighbours = others
             .iter()
             .copied()
-            .filter(|&o| self.rooms[o].level == level)
+            .filter(|&o| self.flat || self.rooms[o].level == level)
             .collect::<Vec<_>>();
         let free = |at: (i64, i64)| {
             neighbours.iter().all(|&o| {
@@ -1862,8 +1900,79 @@ impl Family {
     fn place(&mut self) {
         let mut blocks: Vec<Block> = Vec::new();
         let mut rank = Vec::new();
-        for (component, (start, rooms)) in self.components.clone().into_iter().enumerate() {
+        // In 3D each linked group keeps its levels stacked with stairs over
+        // stairs, and groups stand side by side across the page.
+        let mut across = 0;
+        for (start, rooms) in self.components.clone() {
+            let flat = std::mem::replace(&mut self.flat, false);
             let placed = self.layout(start, &rooms);
+            self.flat = flat;
+            let left = placed
+                .iter()
+                .map(|&r| self.rooms[r].position.unwrap().0)
+                .min()
+                .unwrap_or(0);
+            let top = placed
+                .iter()
+                .map(|&r| self.rooms[r].position.unwrap().1)
+                .min()
+                .unwrap_or(0);
+            let right = placed
+                .iter()
+                .map(|&r| self.rooms[r].bounds(self.rooms[r].position.unwrap()).2)
+                .max()
+                .unwrap_or(0);
+            for &r in &placed {
+                let (x, y) = self.rooms[r].position.unwrap();
+                self.rooms[r].position3d = Some((x - left + across, y - top, self.rooms[r].level));
+            }
+            across += right - left + 256;
+            if self.flat {
+                for &r in &placed {
+                    self.rooms[r].position = None;
+                }
+            }
+        }
+        if self.packed && self.flat {
+            // One plane: rooms of every level pack floor against floor, stairs
+            // meeting stairs like doors; linked groups then pack together.
+            let mut groups = Vec::new();
+            for (start, rooms) in self.components.clone() {
+                let placed = self.layout(start, &rooms);
+                groups.push(Block::new(&self.rooms, 0, placed));
+            }
+            let order = {
+                let mut order = (0..groups.len()).collect::<Vec<_>>();
+                order.sort_by_key(|&b| std::cmp::Reverse(groups[b].area));
+                order
+            };
+            let mut shown: Vec<usize> = Vec::new();
+            for &group in &order {
+                let spot = if shown.is_empty() {
+                    (0, 0)
+                } else {
+                    pack_spot(&groups, &[], group, &shown, true)
+                };
+                groups[group].position = Some(spot);
+                shown.push(group);
+            }
+            for group in &groups {
+                let at = group.position.unwrap();
+                for &room in &group.rooms {
+                    let (x, y) = self.rooms[room].position.unwrap();
+                    self.rooms[room].position =
+                        Some((at.0 + x - group.origin.0, at.1 + y - group.origin.1));
+                }
+            }
+            return;
+        }
+        for (component, (start, rooms)) in self.components.clone().into_iter().enumerate() {
+            let placed = rooms
+                .iter()
+                .copied()
+                .filter(|&r| self.rooms[r].position.is_some())
+                .collect::<Vec<_>>();
+            let _ = start;
             let mut levels: BTreeMap<i64, Vec<usize>> = BTreeMap::new();
             for room in placed {
                 levels.entry(self.rooms[room].level).or_default().push(room);
@@ -1970,7 +2079,7 @@ impl Family {
         };
         let mut placed: Vec<usize> = Vec::new();
         for &block in &order {
-            let spot = pack_spot(&blocks, &joins, block, &placed);
+            let spot = pack_spot(&blocks, &joins, block, &placed, false);
             blocks[block].position = Some(spot);
             placed.push(block);
         }
@@ -1984,7 +2093,7 @@ impl Family {
                     .collect::<Vec<_>>();
                 let current = blocks[block].position.unwrap();
                 let before = pack_cost(&blocks, &joins, block, current, &others);
-                let spot = pack_spot(&blocks, &joins, block, &others);
+                let spot = pack_spot(&blocks, &joins, block, &others, false);
                 if pack_cost(&blocks, &joins, block, spot, &others) < before {
                     blocks[block].position = Some(spot);
                     moved = true;
@@ -2038,7 +2147,7 @@ impl Family {
             let at = shift(self.rooms[r].position.unwrap());
             canvas.blit(&self.rooms[r].image, at.0, at.1);
         }
-        if self.packed {
+        if self.packed && !self.flat {
             for &(level, at) in &self.bands {
                 let at = shift(at);
                 canvas.label(at.0, at.1 - 96, &format!("L{level}"));
@@ -2211,6 +2320,7 @@ impl Family {
                 "cells": [r.cells.0, r.cells.1, r.cells.2, r.cells.3],
                 "level": (r.level != i64::MIN).then_some(r.level),
                 "position": r.position.map(|p| [p.0, p.1]),
+                "position3d": r.position3d.map(|p| [p.0, p.1, p.2]),
             })).collect::<Vec<_>>(),
             "links": self.links.iter().map(|l| json!({
                 "scene": l.exit.scene,
@@ -2219,6 +2329,8 @@ impl Family {
                 "to_scene": l.exit.to_scene,
                 "entrance": l.exit.entrance,
                 "from_room": l.from,
+                "start": [l.start.0, l.start.1],
+                "end": [l.end.0, l.end.1],
                 "to_room": l.to,
                 "rise": l.rise,
             })).collect::<Vec<_>>(),
@@ -2227,18 +2339,103 @@ impl Family {
     }
 }
 
+/// Every placed room's picture and 3D position, and a local three.js viewer
+/// that stands each room on its level. The pictures are the game's, so they
+/// stay in the ignored output directory.
+fn export_3d(family: &Family, output: &Path) -> Result<(), String> {
+    let pictures = output.join("ROOMS");
+    fs::create_dir_all(&pictures).map_err(|e| e.to_string())?;
+    let mut rooms = Vec::new();
+    for (index, room) in family.rooms.iter().enumerate() {
+        let Some((x, y, level)) = room.position3d else {
+            continue;
+        };
+        let name = format!("ROOM_{index:03}.PNG");
+        fs::write(pictures.join(&name), room.image.png()?).map_err(|e| e.to_string())?;
+        rooms.push(json!({
+            "container": resource_name(family.maps[room.map].container),
+            "scenes": family.maps[room.map].scenes,
+            "cells": [room.cells.0, room.cells.1, room.cells.2, room.cells.3],
+            "x": x,
+            "y": y,
+            "level": level,
+            "width": room.image.width,
+            "height": room.image.height,
+            "image": format!("ROOMS/{name}"),
+        }));
+    }
+    let data = serde_json::to_string(&json!({"rooms": rooms})).map_err(|e| e.to_string())?;
+    let html = VIEWER.replace("__ROOMS__", &data);
+    fs::write(output.join("VIEWER.HTML"), html).map_err(|e| e.to_string())?;
+    Ok(())
+}
+
+const VIEWER: &str = r#"<!doctype html>
+<html><head><meta charset="utf-8"><title>Rooms in 3D</title>
+<style>html,body{margin:0;height:100%;background:#000;overflow:hidden}</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+</head><body><script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+const data = __ROOMS__;
+const LEVEL_HEIGHT = 240;
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 1, 100000);
+const renderer = new THREE.WebGLRenderer({ antialias: false });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(devicePixelRatio);
+document.body.appendChild(renderer.domElement);
+const loader = new THREE.TextureLoader();
+const box = new THREE.Box3();
+for (const room of data.rooms) {
+  const texture = loader.load(room.image);
+  texture.magFilter = THREE.NearestFilter;
+  texture.minFilter = THREE.NearestFilter;
+  texture.colorSpace = THREE.SRGBColorSpace;
+  const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true, alphaTest: 0.5, side: THREE.DoubleSide });
+  const plane = new THREE.Mesh(new THREE.PlaneGeometry(room.width, room.height), material);
+  plane.rotation.x = -Math.PI / 2;
+  plane.position.set(room.x + room.width / 2, room.level * LEVEL_HEIGHT, room.y + room.height / 2);
+  scene.add(plane);
+  box.expandByObject(plane);
+}
+const centre = box.getCenter(new THREE.Vector3());
+const size = box.getSize(new THREE.Vector3()).length();
+camera.position.set(centre.x + size * 0.4, centre.y + size * 0.6, centre.z + size * 0.6);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.copy(centre);
+controls.update();
+addEventListener("resize", () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+renderer.setAnimationLoop(() => renderer.render(scene, camera));
+</script></body></html>
+"#;
+
 const USAGE: &str =
-    "usage: alchemy build assets --network ROM --target TARGET -o DIR [--from WORLD_MAP_EXIT | --scenes LIST] [--mark SCENE] [--packed]";
+    "usage: alchemy build assets --network ROM --target TARGET -o DIR [--from WORLD_MAP_EXIT | --scenes LIST] [--mark SCENE] [--packed | --flat] [--expand]";
 
 pub(in crate::build_assets) fn run(root: &Path, arguments: &[String]) -> Result<(), String> {
     let (mut rom_path, mut target, mut output, mut from, mut mark, mut scenes) =
         (None, None, None, None, None, None);
     let mut packed = false;
+    let mut flat = false;
+    let mut expand = false;
     let mut rest = arguments.iter();
     while let Some(argument) = rest.next() {
         let slot = match argument.as_str() {
             "--packed" => {
                 packed = true;
+                continue;
+            }
+            "--flat" => {
+                (packed, flat) = (true, true);
+                continue;
+            }
+            "--expand" => {
+                expand = true;
                 continue;
             }
             "--target" => &mut target,
@@ -2304,12 +2501,16 @@ pub(in crate::build_assets) fn run(root: &Path, arguments: &[String]) -> Result<
             scope.extend(parse(first)?..=parse(last)?);
         }
         let first = *scope.first().ok_or("--scenes names no scene")?;
-        let mut family = Family::gather(&mut deriver, (first, -1), Vec::new(), Some(scope));
+        let mut family = Family::gather(&mut deriver, (first, -1), Vec::new(), Some(scope), expand);
         family.mark = mark;
         family.packed = packed;
+        family.flat = flat;
         family.place();
         fs::create_dir_all(&output).map_err(|e| e.to_string())?;
         let path = output.join(format!("NETWORK_SCENES_{}.PNG", list.replace(',', "_")));
+        if packed {
+            export_3d(&family, &output)?;
+        }
         fs::write(&path, family.draw().png()?).map_err(|e| e.to_string())?;
         eprintln!(
             "network={} rooms={} links={}",
@@ -2356,9 +2557,10 @@ pub(in crate::build_assets) fn run(root: &Path, arguments: &[String]) -> Result<
     let mut reports = Vec::new();
     let mut drawn: Vec<BTreeSet<(usize, (usize, usize, usize, usize))>> = Vec::new();
     for (scene, (entrance, world_exits)) in roots {
-        let mut family = Family::gather(&mut deriver, (scene, entrance), world_exits, None);
+        let mut family = Family::gather(&mut deriver, (scene, entrance), world_exits, None, false);
         family.mark = mark;
         family.packed = packed;
+        family.flat = flat;
         let rooms = family
             .members
             .iter()

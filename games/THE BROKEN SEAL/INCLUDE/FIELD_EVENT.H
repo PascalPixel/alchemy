@@ -114,7 +114,12 @@ struct FieldSprite {
     /* Sprites with a lower priority draw above the background layers. */
     u16 priority : 2;
     u16 palette : 4;
-    u8 unknown_0a[0x0e];
+    u8 unknown_0a[0x0a];
+    /* The third attribute word of a two-part sprite's second part. */
+    u16 second_tile : 10;
+    u16 second_priority : 2;
+    u16 second_palette : 4;
+    u8 unknown_16[2];
     /* The 16.16 factor an actor's contact radius is scaled by. */
     s32 scale;
     /* The VRAM block that holds the sprite's frames. */

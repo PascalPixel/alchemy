@@ -45,14 +45,16 @@ fn valid(message: &str, expected: &str) -> bool {
 }
 
 fn self_test() -> Result<(), String> {
-    let expected = "☀️ 52% –";
+    let expected = "☀️ 52% ⚓️ ?% –";
     let bad = [
         "missing",
-        "☀️ 51% – stale",
-        "☀️ 52% - wrong dash",
-        "☀️ 52% –",
+        "☀️ 52% – one game",
+        "☀️ 51% ⚓️ ?% – stale",
+        "☀️ 52% ⚓️ 7% – unmeasured",
+        "☀️ 52% ⚓️ ?% - wrong dash",
+        "☀️ 52% ⚓️ ?% –",
     ];
-    if !valid("☀️ 52% – Name the owner", expected)
+    if !valid("☀️ 52% ⚓️ ?% – Name the owner", expected)
         || bad.into_iter().any(|message| valid(message, expected))
     {
         return Err("subject prefix self-test failed".into());

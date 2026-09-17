@@ -6,13 +6,14 @@ In Golden Sun, lighting the four Elemental Lighthouses releases Alchemy upon the
 
 The two games share much of the same code, so Alchemy recovers them side by side.
 
-## Status: 56.19% DONE
+## Status: ☀️ 56.19% · ⚓️ pending
 
 ![ROM contents](<games/THE BROKEN SEAL/PREVIEW/TBS-EN-ROM.SVG?v=2dc213b350c87acb>)
 
-**DONE** is how much of the game has been recovered and proven to rebuild
-exactly like the original. Solid blocks are proven, lighter blocks are close
-but not exact yet, and the rest is still unknown.
+**DONE** is how much of each game has been recovered and proven to rebuild
+exactly like the original: ☀️ for The Broken Seal and ⚓️ for The Lost Age,
+which is pending until its code has been mapped. Solid blocks are proven,
+lighter blocks are close but not exact yet, and the rest is still unknown.
 
 Alchemy is not a remake, a mod, an emulator or a download of the games, and you
 need your own copy of the games to build it. Build instructions are in

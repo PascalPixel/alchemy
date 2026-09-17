@@ -9,6 +9,7 @@ use self::boxtree::{box_tree_path, render_box_trees, svg_cache_version, BOX_TREE
 use crate::compiler::canonical_json::canonical_json;
 use crate::coverage::jsnum::{commas, number};
 use crate::coverage::pipeline::{build_coverage_map, BuildOptions, CoverageMap};
+use crate::coverage::progress::{game_done, measured, GameDone};
 use crate::coverage::tree::{ref_tree, root, work_tree};
 use serde_json::Value;
 use std::path::{Path, PathBuf};
@@ -163,11 +164,20 @@ fn readme_metrics(proven_c: f64, proven_asm: f64, executable: f64) -> String {
         share(done)
     )
 }
+/// The README status line: ☀️ The Broken Seal and ⚓️ The Lost Age, each
+/// pending until its executable audit gives it a denominator.
+fn status_line(sun: Option<GameDone>, anchor: Option<GameDone>) -> String {
+    let show = |done: Option<GameDone>| {
+        done.map_or("pending".to_string(), |d| format!("{:.2}%", d.percent()))
+    };
+    format!("## Status: ☀️ {} · ⚓️ {}", show(sun), show(anchor))
+}
 fn update_readme(
     text: &str,
     target: &str,
     map: &CoverageMap,
     trees: &[(&'static str, String)],
+    status: &str,
 ) -> String {
     let proven_c = field(&map.document, &["categories", "proven_c", "bytes"]);
     let proven_asm = field(&map.document, &["categories", "proven_asm", "bytes"]);
@@ -177,10 +187,7 @@ fn update_readme(
     let mut out = text.to_string();
     if let Some(start) = out.find("## Status:") {
         if let Some(end) = out[start..].find('\n') {
-            out.replace_range(
-                start..start + end,
-                &format!("## Status: {percent:.2}% DONE"),
-            );
+            out.replace_range(start..start + end, status);
         }
     }
     if let Some(end) = out.find("\n\nDONE measures") {
@@ -229,8 +236,9 @@ fn update_readme(
 }
 #[cfg(test)]
 mod tests {
-    use super::{readme_metrics, update_readme};
+    use super::{readme_metrics, status_line, update_readme};
     use crate::coverage::pipeline::CoverageMap;
+    use crate::coverage::progress::GameDone;
     use serde_json::json;
     #[test]
     fn readme_metrics_reports_all_done_categories() {
@@ -257,16 +265,25 @@ mod tests {
             rom_areas: Vec::new(),
             executable_areas: Vec::new(),
         };
+        let sun = GameDone {
+            game_c: 250,
+            game_asm: 340,
+            executable: 1000,
+            ..GameDone::default()
+        };
+        let status = status_line(Some(sun), None);
+        assert_eq!(status, "## Status: ☀️ 59.00% · ⚓️ pending");
         let updated = update_readme(
             "# Alchemy\n\n## Status: 52% DONE\n\nDetails\n",
             "tbs-en",
             &map,
             &[],
+            &status,
         );
-        assert!(updated.contains("## Status: 59.00% DONE"));
+        assert!(updated.contains("## Status: ☀️ 59.00% · ⚓️ pending"));
         assert!(!updated.contains("52% DONE"));
         let image = "![ROM contents](<games/THE BROKEN SEAL/PREVIEW/TBS-EN-ROM.SVG?v=old>)";
-        let updated = update_readme(image, "tbs-en", &map, &[("rom", "<svg/>".into())]);
+        let updated = update_readme(image, "tbs-en", &map, &[("rom", "<svg/>".into())], &status);
         assert!(updated.starts_with("![ROM contents](<games/THE BROKEN SEAL/"));
         assert!(updated.ends_with(">)"));
         assert!(!updated.contains("v=old"));
@@ -315,6 +332,17 @@ fn run(argv: &[String]) -> Result<String, String> {
     }
     let rendered = render_box_trees(&map);
     let map_json = canonical_json(&tracked(&map.document));
+    let sun = if o.target == "tbs-en" {
+        Some(game_done(&map)?)
+    } else {
+        measured(&root(), "tbs-en")?
+    };
+    let anchor = if o.target == "tla-en" {
+        Some(game_done(&map)?)
+    } else {
+        measured(&root(), "tla-en")?
+    };
+    let status = status_line(sun, anchor);
     if o.check {
         for (id, svg) in &rendered {
             if read(&box_tree_path(&o.target, id))? != *svg {
@@ -324,7 +352,7 @@ fn run(argv: &[String]) -> Result<String, String> {
             }
         }
         let readme = read(&root().join("README.md"))?;
-        if update_readme(&readme, &o.target, &map, &rendered) != readme {
+        if update_readme(&readme, &o.target, &map, &rendered, &status) != readme {
             return Err("README coverage values are stale; run: make coverage".into());
         }
         return Ok(format!("coverage-map=current {}", summary(&map.document)?));
@@ -337,7 +365,7 @@ fn run(argv: &[String]) -> Result<String, String> {
         let readme = read(&root().join("README.md"))?;
         write(
             &root().join("README.md"),
-            &update_readme(&readme, &o.target, &map, &rendered),
+            &update_readme(&readme, &o.target, &map, &rendered, &status),
         )?;
         return Ok(format!(
             "map={} trees={} {}",

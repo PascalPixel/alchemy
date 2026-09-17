@@ -6,9 +6,9 @@ that finishes it.
 
 ## Now
 
-### ☀️ 60% DONE
+### ☀️ 60%
 
-DONE is 56.19%: 761,772 of 1,355,730 executable bytes. 60% is 813,438 bytes,
+☀️ is 56.19%: 761,772 of 1,355,730 executable bytes. 60% is 813,438 bytes,
 51,666 more.
 
 - Recheck and adopt what the stopped recovery run found. Exact:
@@ -30,7 +30,8 @@ main-image C, eight overlay listings for its opening scenes and its extracted
 assets, but no main-image disassembly and no executable audit. Audit its
 executable map, produce assembly listings where the build needs them, and
 credit only ranges that meet the retained-assembly evidence standard in
-[COMPLETION](.agents/COMPLETION.md); everything else stays unresolved.
+[COMPLETION](.agents/COMPLETION.md); everything else stays unresolved. The
+audit gives ⚓️ its denominator, so it stops being pending.
 
 ### Alchemy builds, Psynergy reads
 

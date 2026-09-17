@@ -724,9 +724,44 @@ struct Map {
     /// Room per cell, row by row, for cells that draw something.
     room_of: Vec<Option<usize>>,
     codes: BTreeMap<u8, Vec<(usize, usize)>>,
+    /// The field grid as the scene loads it.
+    grid: Vec<u8>,
     blend: Option<Blend>,
     layers: Vec<[usize; 3]>,
     error: Option<String>,
+}
+
+/// Whether two maps draw one place in different story states: the same layout
+/// cell for cell, though each numbers its metatiles its own way. Contigo's two
+/// towns agree on 84% of their drawn cells; unrelated maps of TLA's Anemos
+/// and Contigo agree on at most 55%, through their shared fill.
+fn same_place(a: &Map, b: &Map) -> bool {
+    if a.grid.len() != 65536 || b.grid.len() != 65536 {
+        return false;
+    }
+    let words = |grid: &[u8]| {
+        (0..CELLS * CELLS)
+            .map(|c| u16::from_le_bytes([grid[32768 + c * 2], grid[32769 + c * 2]]))
+            .collect::<Vec<_>>()
+    };
+    let (a, b) = (words(&a.grid), words(&b.grid));
+    let drawn = a
+        .iter()
+        .zip(&b)
+        .filter(|(x, y)| **x != 0 || **y != 0)
+        .count();
+    // Cells that follow each metatile's most common counterpart.
+    let agreeing = |from: &[u16], to: &[u16]| {
+        let mut pairs: BTreeMap<u16, BTreeMap<u16, usize>> = BTreeMap::new();
+        for (&x, &y) in from.iter().zip(to).filter(|(x, y)| **x != 0 || **y != 0) {
+            *pairs.entry(x).or_default().entry(y).or_default() += 1;
+        }
+        pairs
+            .values()
+            .map(|counts| counts.values().max().copied().unwrap_or(0))
+            .sum::<usize>()
+    };
+    drawn > 0 && 4 * agreeing(&a, &b).min(agreeing(&b, &a)) >= 3 * drawn
 }
 
 /// A room: one connected drawn area of a map, separated from the others by
@@ -746,8 +781,9 @@ struct Room {
     floor: Vec<bool>,
     level: i64,
     position: Option<(i64, i64)>,
-    /// Where the room stands in 3D: across, down the page, and its level.
-    position3d: Option<(i64, i64, i64)>,
+    /// Drawing order among rooms of one floor: a room is drawn over the rooms
+    /// it holds, as a village is over the houses inside it.
+    z_index: i64,
 }
 impl Room {
     fn span(&self) -> (i64, i64) {
@@ -756,7 +792,6 @@ impl Room {
             (self.cells.3 - self.cells.1) as i64,
         )
     }
-    /// Whether this room at `at` comes within a cell of `other` at `other_at`.
     /// Whether this room at `at` has floor on floor of `other` at `other_at`;
     /// walls may stand over the room behind them.
     fn overlaps(&self, at: (i64, i64), other: &Room, other_at: (i64, i64)) -> bool {
@@ -773,6 +808,7 @@ impl Room {
             })
         })
     }
+    /// Whether this room at `at` comes within a cell of `other` at `other_at`.
     fn touches(&self, at: (i64, i64), other: &Room, other_at: (i64, i64)) -> bool {
         let (ax, ay) = (at.0.div_euclid(16), at.1.div_euclid(16));
         let (bx, by) = (other_at.0.div_euclid(16) - 1, other_at.1.div_euclid(16) - 1);
@@ -826,26 +862,131 @@ impl Room {
     }
 }
 
+/// Whether a picture cell is the border marker that fences off areas packed
+/// into one map: a letter A in pure cyan, 0x7fe0 in BGR555, on black. A
+/// blend laying light over it dims the cyan a little and the black to dark
+/// cyan. Contigo's town and the area beside it share one map this way.
+fn marker(image: &Image, cell: (usize, usize)) -> bool {
+    let mut cyan = 0;
+    for p in 0..256 {
+        let at = ((cell.1 * 16 + p / 16) * image.width + cell.0 * 16 + p % 16) * 4;
+        let [r, g, b, a] = [0, 1, 2, 3].map(|k| image.rgba[at + k]);
+        match (r == 0 && g == b, g) {
+            (true, 224..) => cyan += 1,
+            (true, ..64) => {}
+            _ if a != 0 => return false,
+            _ => {}
+        }
+    }
+    cyan >= 48
+}
+
+/// Markers stand in straight fences that meet at corners, but a map may draw
+/// art over some of them. A fence closes a short gap between its markers,
+/// and runs on over art to meet a fence across its path when that fence is
+/// near: gold Contigo shows six markers of its east fence, which then meets
+/// the north and south fences as green Contigo's whole fence does.
+fn close_fences(found: &[bool], columns: usize, rows: usize) -> Vec<bool> {
+    const GAP: usize = 8;
+    const REACH: usize = 16;
+    const SLACK: usize = 4;
+    let mut fence = found.to_vec();
+    for _ in 0..2 {
+        for across in [true, false] {
+            let (length, count) = if across {
+                (columns, rows)
+            } else {
+                (rows, columns)
+            };
+            let cell = |line: usize, k: usize| match across {
+                true => line * columns + k,
+                false => k * columns + line,
+            };
+            for line in 0..count {
+                let posts = (0..length)
+                    .filter(|&k| fence[cell(line, k)])
+                    .collect::<Vec<_>>();
+                for pair in posts.windows(2) {
+                    if pair[1] - pair[0] <= GAP {
+                        for k in pair[0]..pair[1] {
+                            fence[cell(line, k)] = true;
+                        }
+                    }
+                }
+                let mut runs = Vec::new();
+                let mut k = 0;
+                while k < length {
+                    if !fence[cell(line, k)] {
+                        k += 1;
+                        continue;
+                    }
+                    let start = k;
+                    while k < length && fence[cell(line, k)] {
+                        k += 1;
+                    }
+                    if k - start >= 2 {
+                        runs.push((start, k - 1));
+                    }
+                }
+                // A fence of two or more cells across the path at step `k`,
+                // passing within a few cells of this line.
+                let crosses = |fence: &[bool], k: usize| {
+                    (line.saturating_sub(SLACK)..=(line + SLACK).min(count - 1)).any(|other| {
+                        other != line
+                            && fence[cell(other, k)]
+                            && (other > 0 && fence[cell(other - 1, k)]
+                                || other + 1 < count && fence[cell(other + 1, k)])
+                    })
+                };
+                for (start, end) in runs {
+                    let ahead =
+                        (end + 1..length.min(end + 1 + REACH)).find(|&k| crosses(&fence, k));
+                    if let Some(to) = ahead {
+                        for k in end..=to {
+                            fence[cell(line, k)] = true;
+                        }
+                    }
+                    let behind = (start.saturating_sub(REACH)..start)
+                        .rev()
+                        .find(|&k| crosses(&fence, k));
+                    if let Some(from) = behind {
+                        for k in from..=start {
+                            fence[cell(line, k)] = true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    fence
+}
+
 /// Split a map picture into rooms and cut each one out on a clear ground. A
-/// dark doorway or trigger cell between drawn cells still joins them.
+/// dark doorway or trigger cell between drawn cells still joins them; a
+/// border marker never does.
 fn cut_rooms(
     map_index: usize,
     image: &Image,
     codes: &BTreeMap<u8, Vec<(usize, usize)>>,
 ) -> (usize, Vec<Option<usize>>, Vec<Room>) {
     let (columns, rows) = (image.width / 16, image.height / 16);
+    let found = (0..columns * rows)
+        .map(|cell| marker(image, (cell % columns, cell / columns)))
+        .collect::<Vec<_>>();
+    let fence = close_fences(&found, columns, rows);
     let mut drawn = (0..columns * rows)
         .map(|cell| {
             let (cx, cy) = (cell % columns, cell / columns);
-            (0..256).any(|p| {
-                let at = ((cy * 16 + p / 16) * image.width + cx * 16 + p % 16) * 4;
-                image.rgba[at + 3] != 0 && image.rgba[at..at + 3] != [0, 0, 0]
-            })
+            !fence[cell]
+                && (0..256).any(|p| {
+                    let at = ((cy * 16 + p / 16) * image.width + cx * 16 + p % 16) * 4;
+                    image.rgba[at + 3] != 0 && image.rgba[at..at + 3] != [0, 0, 0]
+                })
         })
         .collect::<Vec<_>>();
     for cells in codes.values() {
         for &(x, y) in cells {
-            if x < columns && y < rows {
+            if x < columns && y < rows && !fence[y * columns + x] {
                 drawn[y * columns + x] = true;
             }
         }
@@ -854,8 +995,9 @@ fn cut_rooms(
     for cy in 0..rows {
         for cx in 0..columns {
             let at = |x: usize, y: usize| x < columns && y < rows && lit[y * columns + x];
-            if at(cx.wrapping_sub(1), cy) && at(cx + 1, cy)
-                || at(cx, cy.wrapping_sub(1)) && at(cx, cy + 1)
+            if !fence[cy * columns + cx]
+                && (at(cx.wrapping_sub(1), cy) && at(cx + 1, cy)
+                    || at(cx, cy.wrapping_sub(1)) && at(cx, cy + 1))
             {
                 drawn[cy * columns + cx] = true;
             }
@@ -966,7 +1108,7 @@ fn cut_rooms(
             floor,
             level: 0,
             position: None,
-            position3d: None,
+            z_index: 0,
         });
     }
     (columns, room_of, rooms)
@@ -1125,7 +1267,6 @@ struct Block {
     area: usize,
     mask: Vec<bool>,
     halo: Vec<bool>,
-    floor: Vec<bool>,
     position: Option<(i64, i64)>,
 }
 impl Block {
@@ -1146,15 +1287,11 @@ impl Block {
         let (w, h) = ((right - left) / 16, (bottom - top) / 16);
         let mut mask = vec![false; (w * h) as usize];
         let mut halo = vec![false; ((w + 2) * (h + 2)) as usize];
-        let mut floor = vec![false; (w * h) as usize];
         for &r in &members {
             let (rx, ry) = ((at(r).0 - left) / 16, (at(r).1 - top) / 16);
             let (rw, rh) = rooms[r].span();
             for y in 0..rh {
                 for x in 0..rw {
-                    if rooms[r].floor[(y * rw + x) as usize] {
-                        floor[((ry + y) * w + rx + x) as usize] = true;
-                    }
                     if rooms[r].mask[(y * rw + x) as usize] {
                         mask[((ry + y) * w + rx + x) as usize] = true;
                         for hy in ry + y..ry + y + 3 {
@@ -1174,24 +1311,8 @@ impl Block {
             size: (w, h),
             mask,
             halo,
-            floor,
             position: None,
         }
-    }
-    /// Whether this block at `at` has floor on floor of `other` at `other_at`.
-    fn overlaps(&self, at: (i64, i64), other: &Block, other_at: (i64, i64)) -> bool {
-        let (ax, ay) = (at.0.div_euclid(16), at.1.div_euclid(16));
-        let (bx, by) = (other_at.0.div_euclid(16), other_at.1.div_euclid(16));
-        let (aw, ah) = self.size;
-        let (bw, bh) = other.size;
-        let (x0, x1) = (ax.max(bx), (ax + aw).min(bx + bw));
-        let (y0, y1) = (ay.max(by), (ay + ah).min(by + bh));
-        (y0..y1).any(|y| {
-            (x0..x1).any(|x| {
-                self.floor[((y - ay) * aw + x - ax) as usize]
-                    && other.floor[((y - by) * bw + x - bx) as usize]
-            })
-        })
     }
     /// Whether this block at `at` comes within a cell of `other` at `other_at`.
     fn touches(&self, at: (i64, i64), other: &Block, other_at: (i64, i64)) -> bool {
@@ -1250,13 +1371,7 @@ fn pack_cost(
 
 /// The free spot for `block` with the lowest pack cost, searched outward
 /// from positions that join its stairs, or around the placed drawing.
-fn pack_spot(
-    blocks: &[Block],
-    joins: &[Join],
-    block: usize,
-    others: &[usize],
-    tight: bool,
-) -> (i64, i64) {
+fn pack_spot(blocks: &[Block], joins: &[Join], block: usize, others: &[usize]) -> (i64, i64) {
     let snap = |p: (i64, i64)| (p.0.div_euclid(16) * 16, p.1.div_euclid(16) * 16);
     let mut ideals = joins
         .iter()
@@ -1277,11 +1392,10 @@ fn pack_spot(
         let (w, h) = blocks[block].size;
         for &o in others {
             let (p, (ow, oh)) = (blocks[o].position.unwrap(), blocks[o].size);
-            let gap = if tight { 0 } else { 32 };
-            ideals.push((p.0 + ow * 16 + gap, p.1));
-            ideals.push((p.0, p.1 + oh * 16 + gap));
-            ideals.push((p.0 - w * 16 - gap, p.1));
-            ideals.push((p.0, p.1 - h * 16 - gap));
+            ideals.push((p.0 + ow * 16 + 32, p.1));
+            ideals.push((p.0, p.1 + oh * 16 + 32));
+            ideals.push((p.0 - w * 16 - 32, p.1));
+            ideals.push((p.0, p.1 - h * 16 - 32));
         }
         ideals.truncate(24);
     }
@@ -1289,14 +1403,9 @@ fn pack_spot(
         return (0, 0);
     }
     let free = |at: (i64, i64)| {
-        others.iter().all(|&o| {
-            let there = blocks[o].position.unwrap();
-            if tight {
-                !blocks[block].overlaps(at, &blocks[o], there)
-            } else {
-                !blocks[block].touches(at, &blocks[o], there)
-            }
-        })
+        others
+            .iter()
+            .all(|&o| !blocks[block].touches(at, &blocks[o], blocks[o].position.unwrap()))
     };
     let mut best: Option<(i64, (i64, i64))> = None;
     for ideal in &ideals {
@@ -1343,8 +1452,8 @@ struct Family {
     mark: Option<usize>,
     /// Doors meet doors with no lines: levels are packed as layers.
     packed: bool,
-    /// Packed with every level in one plane, rooms of all levels side by side.
-    flat: bool,
+    /// Assembled as one world: doors on their arrivals, floors stacked.
+    world: bool,
     /// Scenes left out because their exits lead to different scenes by flag,
     /// like the ship, which docks in several places.
     stops: BTreeSet<usize>,
@@ -1375,7 +1484,7 @@ impl Family {
             bands: Vec::new(),
             mark: None,
             packed: false,
-            flat: false,
+            world: false,
             stops: BTreeSet::new(),
             scope: scope.clone(),
             errors: Vec::new(),
@@ -1487,6 +1596,7 @@ impl Family {
             columns: 1,
             room_of: vec![None],
             codes: BTreeMap::new(),
+            grid: Vec::new(),
             blend: blend(deriver, container),
             layers: Vec::new(),
             error: None,
@@ -1504,6 +1614,7 @@ impl Family {
                 .ok_or("the container was staged without a preview")?;
             let (image, layers) = picture(deriver, preview, map.blend)?;
             let binary = &deriver.staged.binaries[&preview.map];
+            map.grid = binary[preview.grid_offset..preview.grid_offset + 65536].to_vec();
             for (cell, &code) in binary[preview.grid_offset..preview.grid_offset + CELLS * CELLS]
                 .iter()
                 .enumerate()
@@ -1745,7 +1856,7 @@ impl Family {
                 Some(
                     match (
                         self.packed,
-                        self.flat || self.rooms[other].level == self.rooms[room].level,
+                        self.rooms[other].level == self.rooms[room].level,
                     ) {
                         // Packed thresholds sit on the entrance; stairs on stairs.
                         (true, true) => dx + dy,
@@ -1788,7 +1899,7 @@ impl Family {
         let neighbours = others
             .iter()
             .copied()
-            .filter(|&o| self.flat || self.rooms[o].level == level)
+            .filter(|&o| self.rooms[o].level == level)
             .collect::<Vec<_>>();
         let free = |at: (i64, i64)| {
             neighbours.iter().all(|&o| {
@@ -1900,79 +2011,8 @@ impl Family {
     fn place(&mut self) {
         let mut blocks: Vec<Block> = Vec::new();
         let mut rank = Vec::new();
-        // In 3D each linked group keeps its levels stacked with stairs over
-        // stairs, and groups stand side by side across the page.
-        let mut across = 0;
-        for (start, rooms) in self.components.clone() {
-            let flat = std::mem::replace(&mut self.flat, false);
-            let placed = self.layout(start, &rooms);
-            self.flat = flat;
-            let left = placed
-                .iter()
-                .map(|&r| self.rooms[r].position.unwrap().0)
-                .min()
-                .unwrap_or(0);
-            let top = placed
-                .iter()
-                .map(|&r| self.rooms[r].position.unwrap().1)
-                .min()
-                .unwrap_or(0);
-            let right = placed
-                .iter()
-                .map(|&r| self.rooms[r].bounds(self.rooms[r].position.unwrap()).2)
-                .max()
-                .unwrap_or(0);
-            for &r in &placed {
-                let (x, y) = self.rooms[r].position.unwrap();
-                self.rooms[r].position3d = Some((x - left + across, y - top, self.rooms[r].level));
-            }
-            across += right - left + 256;
-            if self.flat {
-                for &r in &placed {
-                    self.rooms[r].position = None;
-                }
-            }
-        }
-        if self.packed && self.flat {
-            // One plane: rooms of every level pack floor against floor, stairs
-            // meeting stairs like doors; linked groups then pack together.
-            let mut groups = Vec::new();
-            for (start, rooms) in self.components.clone() {
-                let placed = self.layout(start, &rooms);
-                groups.push(Block::new(&self.rooms, 0, placed));
-            }
-            let order = {
-                let mut order = (0..groups.len()).collect::<Vec<_>>();
-                order.sort_by_key(|&b| std::cmp::Reverse(groups[b].area));
-                order
-            };
-            let mut shown: Vec<usize> = Vec::new();
-            for &group in &order {
-                let spot = if shown.is_empty() {
-                    (0, 0)
-                } else {
-                    pack_spot(&groups, &[], group, &shown, true)
-                };
-                groups[group].position = Some(spot);
-                shown.push(group);
-            }
-            for group in &groups {
-                let at = group.position.unwrap();
-                for &room in &group.rooms {
-                    let (x, y) = self.rooms[room].position.unwrap();
-                    self.rooms[room].position =
-                        Some((at.0 + x - group.origin.0, at.1 + y - group.origin.1));
-                }
-            }
-            return;
-        }
         for (component, (start, rooms)) in self.components.clone().into_iter().enumerate() {
-            let placed = rooms
-                .iter()
-                .copied()
-                .filter(|&r| self.rooms[r].position.is_some())
-                .collect::<Vec<_>>();
-            let _ = start;
+            let placed = self.layout(start, &rooms);
             let mut levels: BTreeMap<i64, Vec<usize>> = BTreeMap::new();
             for room in placed {
                 levels.entry(self.rooms[room].level).or_default().push(room);
@@ -2079,7 +2119,7 @@ impl Family {
         };
         let mut placed: Vec<usize> = Vec::new();
         for &block in &order {
-            let spot = pack_spot(&blocks, &joins, block, &placed, false);
+            let spot = pack_spot(&blocks, &joins, block, &placed);
             blocks[block].position = Some(spot);
             placed.push(block);
         }
@@ -2093,7 +2133,7 @@ impl Family {
                     .collect::<Vec<_>>();
                 let current = blocks[block].position.unwrap();
                 let before = pack_cost(&blocks, &joins, block, current, &others);
-                let spot = pack_spot(&blocks, &joins, block, &others, false);
+                let spot = pack_spot(&blocks, &joins, block, &others);
                 if pack_cost(&blocks, &joins, block, spot, &others) < before {
                     blocks[block].position = Some(spot);
                     moved = true;
@@ -2116,9 +2156,195 @@ impl Family {
         }
     }
 
-    fn draw(&self) -> Image {
+    /// One world in three steps. Every room stands where its doors meet the
+    /// arrivals they lead to, as nearly as all of its links allow; stairs put
+    /// rooms on floors; and on a floor a room is drawn over the rooms it holds.
+    fn assemble(&mut self) {
+        // The offset between two rooms' corners that puts a door on its
+        // arrival, and the floors the link climbs.
+        let mut joins = self
+            .links
+            .iter()
+            .filter_map(|l| {
+                let (from, to) = (l.from?, l.to?);
+                (from != to && self.members.contains(&from) && self.members.contains(&to)).then(
+                    || {
+                        let (a, b) = (self.rooms[from].origin(), self.rooms[to].origin());
+                        let offset = (
+                            l.start.0 - a.0 - (l.end.0 - b.0),
+                            l.start.1 - a.1 - (l.end.1 - b.1),
+                        );
+                        (from, to, offset, l.rise)
+                    },
+                )
+            })
+            .collect::<Vec<_>>();
+        // The same room of one place in two story states stands in one spot,
+        // as if a link joined them corner to corner.
+        for &a in &self.members {
+            for &b in self.members.range(a + 1..) {
+                let (ra, rb) = (&self.rooms[a], &self.rooms[b]);
+                if ra.map != rb.map
+                    && ra.cells == rb.cells
+                    && same_place(&self.maps[ra.map], &self.maps[rb.map])
+                {
+                    joins.push((a, b, (0, 0), 0));
+                }
+            }
+        }
+        // Groups of rooms that joins hold together, each from the room its
+        // component starts from.
+        let mut groups: Vec<(usize, BTreeSet<usize>)> = Vec::new();
+        for (start, _) in &self.components {
+            if groups.iter().any(|(_, rooms)| rooms.contains(start)) {
+                continue;
+            }
+            let (mut rooms, mut stack) = (BTreeSet::from([*start]), vec![*start]);
+            while let Some(room) = stack.pop() {
+                for &(a, b, _, _) in &joins {
+                    let other = match (a == room, b == room) {
+                        (true, _) => b,
+                        (_, true) => a,
+                        _ => continue,
+                    };
+                    if rooms.insert(other) {
+                        stack.push(other);
+                    }
+                }
+            }
+            groups.push((*start, rooms));
+        }
+        let mut across = 0;
+        for (start, rooms) in groups {
+            // A first stand along a spanning tree, which also sets the floors.
+            let mut at = BTreeMap::from([(start, (0i64, 0i64))]);
+            self.rooms[start].level = 0;
+            let mut queue = std::collections::VecDeque::from([start]);
+            while let Some(room) = queue.pop_front() {
+                for &(from, to, (dx, dy), rise) in &joins {
+                    let (other, sign) = match (from == room, to == room) {
+                        (true, false) => (to, 1),
+                        (false, true) => (from, -1),
+                        _ => continue,
+                    };
+                    if at.contains_key(&other) {
+                        continue;
+                    }
+                    let here = at[&room];
+                    at.insert(other, (here.0 + sign * dx, here.1 + sign * dy));
+                    self.rooms[other].level = self.rooms[room].level + sign * rise;
+                    queue.push_back(other);
+                }
+            }
+            // Each room then moves, axis by axis, to the median of where its
+            // links want it while that shortens them, so one link that
+            // disagrees with the rest does not pull a room off all the others.
+            for _ in 0..64 {
+                let mut moved = false;
+                for &room in rooms.iter().filter(|&&r| r != start) {
+                    let wanted = joins
+                        .iter()
+                        .filter_map(
+                            |&(from, to, (dx, dy), _)| match (from == room, to == room) {
+                                (true, false) => Some((at[&to].0 - dx, at[&to].1 - dy)),
+                                (false, true) => Some((at[&from].0 + dx, at[&from].1 + dy)),
+                                _ => None,
+                            },
+                        )
+                        .collect::<Vec<_>>();
+                    if wanted.is_empty() {
+                        continue;
+                    }
+                    let gap = |p: (i64, i64)| {
+                        wanted
+                            .iter()
+                            .map(|w| (w.0 - p.0).abs() + (w.1 - p.1).abs())
+                            .sum::<i64>()
+                    };
+                    let median = |mut values: Vec<i64>| {
+                        values.sort_unstable();
+                        values[(values.len() - 1) / 2]
+                    };
+                    let best = (
+                        median(wanted.iter().map(|w| w.0).collect()),
+                        median(wanted.iter().map(|w| w.1).collect()),
+                    );
+                    if gap(best) < gap(at[&room]) {
+                        at.insert(room, best);
+                        moved = true;
+                    }
+                }
+                if !moved {
+                    break;
+                }
+            }
+            for &(from, to, _, rise) in joins.iter().filter(|j| rooms.contains(&j.0)) {
+                let climbed = self.rooms[to].level - self.rooms[from].level;
+                if climbed != rise {
+                    self.errors.push(format!(
+                        "rooms {from} and {to} stand {climbed} floors apart across a link that climbs {rise}"
+                    ));
+                }
+            }
+            let left = at.values().map(|p| p.0).min().unwrap_or(0);
+            let top = at.values().map(|p| p.1).min().unwrap_or(0);
+            let mut right = left;
+            for (&room, &(x, y)) in &at {
+                self.rooms[room].position = Some((x - left + across, y - top));
+                right = right.max(x + self.rooms[room].image.width as i64);
+            }
+            across += right - left + 256;
+            // On a floor, a room holds a smaller room whose every link leads
+            // to it, as a village holds a house whose only door opens onto the
+            // village, when at least half of the smaller room lies inside.
+            for &room in &rooms {
+                let mut partners = BTreeSet::new();
+                let mut leaves = false;
+                for l in &self.links {
+                    match (l.from, l.to) {
+                        (Some(f), Some(t)) if f == room && t != room => partners.insert(t),
+                        (Some(f), Some(t)) if t == room && f != room => partners.insert(f),
+                        (Some(f), None) if f == room => {
+                            leaves = true;
+                            continue;
+                        }
+                        _ => continue,
+                    };
+                }
+                let held = &self.rooms[room];
+                let (l, t, r, b) = held.bounds(held.position.unwrap());
+                let holders = rooms
+                    .iter()
+                    .filter(|&&o| {
+                        let other = &self.rooms[o];
+                        let (ol, ot, or, ob) = other.bounds(other.position.unwrap());
+                        let overlap =
+                            (r.min(or) - l.max(ol)).max(0) * (b.min(ob) - t.max(ot)).max(0);
+                        // A partner in the holder's spot is the holder in
+                        // another story state.
+                        let in_holder = |p: &usize| {
+                            let partner = &self.rooms[*p];
+                            partner.position == other.position && partner.cells == other.cells
+                        };
+                        o != room
+                            && !leaves
+                            && other.level == held.level
+                            && other.area > held.area
+                            && 2 * overlap >= (r - l) * (b - t)
+                            && !partners.is_empty()
+                            && partners.iter().all(in_holder)
+                    })
+                    .count();
+                self.rooms[room].z_index = -(holders as i64);
+            }
+        }
+    }
+
+    fn draw(&self, floor: Option<i64>) -> Image {
         let shown = (0..self.rooms.len())
-            .filter(|&r| self.rooms[r].position.is_some())
+            .filter(|&r| {
+                self.rooms[r].position.is_some() && floor.is_none_or(|f| self.rooms[r].level == f)
+            })
             .collect::<Vec<_>>();
         let boxes = shown
             .iter()
@@ -2137,17 +2363,22 @@ impl Family {
         let mut canvas = Image::new((right - left) as usize, (bottom - top) as usize, ground);
         let shift = |p: (i64, i64)| (p.0 - left, p.1 - top);
         // Rooms further down the page are drawn later, so their walls stand
-        // in front of the rooms behind them.
+        // in front of the rooms behind them; in a world, floors stack first
+        // and a room covers the rooms it holds.
         let mut layered = shown.clone();
         layered.sort_by_key(|&r| {
-            let (x, y) = self.rooms[r].position.unwrap();
-            (y, x)
+            let room = &self.rooms[r];
+            let (x, y) = room.position.unwrap();
+            match self.world {
+                true => (room.level, room.z_index, y, x),
+                false => (0, 0, y, x),
+            }
         });
         for &r in &layered {
             let at = shift(self.rooms[r].position.unwrap());
             canvas.blit(&self.rooms[r].image, at.0, at.1);
         }
-        if self.packed && !self.flat {
+        if self.packed && !self.world {
             for &(level, at) in &self.bands {
                 let at = shift(at);
                 canvas.label(at.0, at.1 - 96, &format!("L{level}"));
@@ -2301,6 +2532,19 @@ impl Family {
         canvas
     }
 
+    /// How far a placed link's door stands from its arrival in another room,
+    /// across and down.
+    fn gap(&self, link: &Link) -> Option<i64> {
+        if link.from == link.to {
+            return None;
+        }
+        let (from, to) = (&self.rooms[link.from?], &self.rooms[link.to?]);
+        from.position?;
+        to.position?;
+        let (a, b) = (from.at(link.start), to.at(link.end));
+        Some((a.0 - b.0).abs() + (a.1 - b.1).abs())
+    }
+
     fn report(&self) -> Value {
         json!({
             "world_map_exits": self.world_exits,
@@ -2320,7 +2564,7 @@ impl Family {
                 "cells": [r.cells.0, r.cells.1, r.cells.2, r.cells.3],
                 "level": (r.level != i64::MIN).then_some(r.level),
                 "position": r.position.map(|p| [p.0, p.1]),
-                "position3d": r.position3d.map(|p| [p.0, p.1, p.2]),
+                "z_index": r.z_index,
             })).collect::<Vec<_>>(),
             "links": self.links.iter().map(|l| json!({
                 "scene": l.exit.scene,
@@ -2331,7 +2575,9 @@ impl Family {
                 "from_room": l.from,
                 "start": [l.start.0, l.start.1],
                 "end": [l.end.0, l.end.1],
+                "trigger": self.scenes.get(&l.exit.scene).and_then(|t| t.triggers.get(&l.exit.exit)).map(|&(code, control)| json!({"code": code, "control": format!("0x{control:x}")})),
                 "to_room": l.to,
+                "gap": self.gap(l),
                 "rise": l.rise,
             })).collect::<Vec<_>>(),
             "errors": self.errors,
@@ -2339,26 +2585,33 @@ impl Family {
     }
 }
 
-/// Every placed room's picture and 3D position, and a local three.js viewer
-/// that stands each room on its level. The pictures are the game's, so they
-/// stay in the ignored output directory.
-fn export_3d(family: &Family, output: &Path) -> Result<(), String> {
+/// Every room of an assembled world with its picture, and a local three.js
+/// viewer that lays each room on its floor. The pictures are the game's, so
+/// they stay in the ignored output directory.
+fn export_world(family: &Family, output: &Path) -> Result<(), String> {
     let pictures = output.join("ROOMS");
     fs::create_dir_all(&pictures).map_err(|e| e.to_string())?;
+    let grids = output.join("GRIDS");
+    fs::create_dir_all(&grids).map_err(|e| e.to_string())?;
+    for map in family.maps.iter().filter(|m| !m.grid.is_empty()) {
+        let name = format!("MAP_{}.BIN", resource_name(map.container).to_uppercase());
+        fs::write(grids.join(name), &map.grid).map_err(|e| e.to_string())?;
+    }
     let mut rooms = Vec::new();
     for (index, room) in family.rooms.iter().enumerate() {
-        let Some((x, y, level)) = room.position3d else {
+        let Some((x, z)) = room.position.filter(|_| family.members.contains(&index)) else {
             continue;
         };
         let name = format!("ROOM_{index:03}.PNG");
         fs::write(pictures.join(&name), room.image.png()?).map_err(|e| e.to_string())?;
         rooms.push(json!({
+            "room": index,
             "container": resource_name(family.maps[room.map].container),
             "scenes": family.maps[room.map].scenes,
-            "cells": [room.cells.0, room.cells.1, room.cells.2, room.cells.3],
             "x": x,
-            "y": y,
-            "level": level,
+            "z": z,
+            "floor": room.level,
+            "z_index": room.z_index,
             "width": room.image.width,
             "height": room.image.height,
             "image": format!("ROOMS/{name}"),
@@ -2378,7 +2631,9 @@ const VIEWER: &str = r#"<!doctype html>
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 const data = __ROOMS__;
-const LEVEL_HEIGHT = 240;
+// A 16-pixel cell is a metre; floors stand three metres apart.
+const METRE = 16;
+const FLOOR_HEIGHT = 3 * METRE;
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 1, 100000);
 const renderer = new THREE.WebGLRenderer({ antialias: false });
@@ -2387,23 +2642,27 @@ renderer.setPixelRatio(devicePixelRatio);
 document.body.appendChild(renderer.domElement);
 const loader = new THREE.TextureLoader();
 const box = new THREE.Box3();
+// Seen from above, floors draw bottom to top and a room over the rooms it
+// holds, like a z-index, until real walls give depth.
 for (const room of data.rooms) {
   const texture = loader.load(room.image);
   texture.magFilter = THREE.NearestFilter;
   texture.minFilter = THREE.NearestFilter;
   texture.colorSpace = THREE.SRGBColorSpace;
-  const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true, alphaTest: 0.5, side: THREE.DoubleSide });
+  const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true, alphaTest: 0.5, depthTest: false });
   const plane = new THREE.Mesh(new THREE.PlaneGeometry(room.width, room.height), material);
   plane.rotation.x = -Math.PI / 2;
-  plane.position.set(room.x + room.width / 2, room.level * LEVEL_HEIGHT, room.y + room.height / 2);
+  plane.position.set(room.x + room.width / 2, room.floor * FLOOR_HEIGHT, room.z + room.height / 2);
+  plane.renderOrder = room.floor * 1000 + room.z_index;
   scene.add(plane);
   box.expandByObject(plane);
 }
 const centre = box.getCenter(new THREE.Vector3());
 const size = box.getSize(new THREE.Vector3()).length();
-camera.position.set(centre.x + size * 0.4, centre.y + size * 0.6, centre.z + size * 0.6);
+camera.position.set(centre.x + size * 0.3, centre.y + size * 0.7, centre.z + size * 0.5);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.target.copy(centre);
+controls.maxPolarAngle = Math.PI / 2 - 0.05;
 controls.update();
 addEventListener("resize", () => {
   camera.aspect = innerWidth / innerHeight;
@@ -2415,13 +2674,13 @@ renderer.setAnimationLoop(() => renderer.render(scene, camera));
 "#;
 
 const USAGE: &str =
-    "usage: alchemy build assets --network ROM --target TARGET -o DIR [--from WORLD_MAP_EXIT | --scenes LIST] [--mark SCENE] [--packed | --flat] [--expand]";
+    "usage: alchemy build assets --network ROM --target TARGET -o DIR [--from WORLD_MAP_EXIT | --scenes LIST] [--mark SCENE] [--packed | --world] [--expand]";
 
 pub(in crate::build_assets) fn run(root: &Path, arguments: &[String]) -> Result<(), String> {
     let (mut rom_path, mut target, mut output, mut from, mut mark, mut scenes) =
         (None, None, None, None, None, None);
     let mut packed = false;
-    let mut flat = false;
+    let mut world = false;
     let mut expand = false;
     let mut rest = arguments.iter();
     while let Some(argument) = rest.next() {
@@ -2430,8 +2689,8 @@ pub(in crate::build_assets) fn run(root: &Path, arguments: &[String]) -> Result<
                 packed = true;
                 continue;
             }
-            "--flat" => {
-                (packed, flat) = (true, true);
+            "--world" => {
+                (packed, world) = (true, true);
                 continue;
             }
             "--expand" => {
@@ -2504,19 +2763,39 @@ pub(in crate::build_assets) fn run(root: &Path, arguments: &[String]) -> Result<
         let mut family = Family::gather(&mut deriver, (first, -1), Vec::new(), Some(scope), expand);
         family.mark = mark;
         family.packed = packed;
-        family.flat = flat;
-        family.place();
+        family.world = world;
         fs::create_dir_all(&output).map_err(|e| e.to_string())?;
-        let path = output.join(format!("NETWORK_SCENES_{}.PNG", list.replace(',', "_")));
-        if packed {
-            export_3d(&family, &output)?;
+        let name = format!("NETWORK_SCENES_{}", list.replace(',', "_"));
+        let path = output.join(format!("{name}.PNG"));
+        if world {
+            family.assemble();
+            export_world(&family, &output)?;
+            let floors = family
+                .members
+                .iter()
+                .map(|&r| family.rooms[r].level)
+                .collect::<BTreeSet<_>>();
+            for floor in floors {
+                let picture = family.draw(Some(floor)).png()?;
+                fs::write(output.join(format!("{name}_FLOOR_{floor}.PNG")), picture)
+                    .map_err(|e| e.to_string())?;
+            }
+        } else {
+            family.place();
         }
-        fs::write(&path, family.draw().png()?).map_err(|e| e.to_string())?;
+        fs::write(&path, family.draw(None).png()?).map_err(|e| e.to_string())?;
+        let gaps = family
+            .links
+            .iter()
+            .filter_map(|l| family.gap(l))
+            .collect::<Vec<_>>();
         eprintln!(
-            "network={} rooms={} links={}",
+            "network={} rooms={} links={} meeting={} widest_gap={}",
             path.display(),
             family.members.len(),
-            family.links.len()
+            family.links.len(),
+            gaps.iter().filter(|&&g| g == 0).count(),
+            gaps.iter().max().unwrap_or(&0)
         );
         let text = canonical_json(
             &json!({"format":"alchemy-map-network-v2","target":deriver.target.id.as_str(),"families":[family.report()]}),
@@ -2530,6 +2809,9 @@ pub(in crate::build_assets) fn run(root: &Path, arguments: &[String]) -> Result<
         )
         .map_err(|e| e.to_string())?;
         return Ok(());
+    }
+    if world {
+        return Err("--world assembles the scenes that --scenes names".into());
     }
     let world = scene_record(&deriver, WORLD_MAP)?;
     let overlay = Overlay::read(
@@ -2560,7 +2842,6 @@ pub(in crate::build_assets) fn run(root: &Path, arguments: &[String]) -> Result<
         let mut family = Family::gather(&mut deriver, (scene, entrance), world_exits, None, false);
         family.mark = mark;
         family.packed = packed;
-        family.flat = flat;
         let rooms = family
             .members
             .iter()
@@ -2580,7 +2861,7 @@ pub(in crate::build_assets) fn run(root: &Path, arguments: &[String]) -> Result<
             "NETWORK_{:03}_SCENE_{scene:03}.PNG",
             family.world_exits[0]
         ));
-        fs::write(&path, family.draw().png()?).map_err(|e| e.to_string())?;
+        fs::write(&path, family.draw(None).png()?).map_err(|e| e.to_string())?;
         eprintln!(
             "network={} maps={} rooms={} links={}",
             path.display(),

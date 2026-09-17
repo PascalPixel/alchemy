@@ -4,7 +4,7 @@
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
-void ScheduleCallbackAfterFrames(s32, s32);
+s32 ScheduleCallbackAfterFrames(s32, s32);
 void Func_08097868(void);
 
 void Ui_FillBank15PaletteGrey(void)
@@ -34,8 +34,5 @@ void Ui_FillBank15PaletteGrey(void)
     *p = 0x739C;
     p += 1;
     *p = 0x739C;
-    {
-        s32 n = 0x480;
-        ScheduleCallbackAfterFrames((s32)Func_08097868, n);
-    }
+    ScheduleCallbackAfterFrames((s32)Func_08097868, 0x480);
 }

@@ -4,42 +4,26 @@ s32 WaitFrames(s32);
 
 void SerialRuntime_WaitForTransferA(void)
 {
-    u32 work;
-    u32 count;
+    u32 count = 0;
 
-    count = 0;
     if (*(volatile s32 *)0x02002080 != 0) {
-        work = 0x02002080;
-loop:
-        WaitFrames(1);
-        count += 1;
-        if (count <= 0x927BFU) {
-            if (*(volatile s32 *)work != 0) {
-                goto loop;
-            }
-        }
+        do {
+            WaitFrames(1);
+            count++;
+        } while (count <= 0x927BF && *(volatile s32 *)0x02002080 != 0);
     }
 }
 
 
 void SerialRuntime_WaitForTransferB(void)
 {
-    s32 work;
-    u32 count;
-    s32 idle;
+    u32 count = 0;
 
-    count = 0;
     if (*(volatile s32 *)0x020023AC != 0) {
-        work = 0x020023AC;
-loop:
-        WaitFrames(1);
-        count += 1;
-        idle = 0;
-        if (count <= 0x927BFU) {
-            if (*(volatile s32 *)work != idle) {
-                goto loop;
-            }
-        }
+        do {
+            WaitFrames(1);
+            count++;
+        } while (count <= 0x927BF && *(volatile s32 *)0x020023AC != 0);
     }
 }
 

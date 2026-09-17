@@ -1,4 +1,5 @@
 #include "OBJECT_RUNTIME.H"
+#include "FIELD_EVENT.H"
 
 void Object_SetCallback(struct ObjectRuntime *, const void *);
 void Object_ResetMotion(struct ObjectRuntime *);
@@ -66,22 +67,15 @@ void ObjectMotion_ArmCallback(s32 object_id, s32 angle, s32 wait)
     }
 }
 
-void ObjectMotion_SetActionVariant(s32 object_id, s32 variant)
+void ObjectMotion_SetActionVariant(s32 object_id, s32 priority)
 {
-    u32 object_address;
-    u8 *object_state;
-    s32 variant_bits;
-    s32 state_mask;
-    s32 variant_mask;
+    struct ObjectRuntime *object = ObjectTable_Get(object_id);
 
-    variant_mask = 3;
-    object_address = (u32)ObjectTable_Get(object_id);
-    if (object_address != 0 && (0xF & *(volatile s8 *)(object_address + 0x54)) == 1) {
-        variant_bits = (variant_mask & variant) * 4;
-        state_mask = -0xD;
-        object_state = *(u8 **)(object_address + 0x50);
-        object_state[9] = (state_mask & object_state[9]) | variant_bits;
-        object_state[0x15] = (state_mask & object_state[0x15]) | variant_bits;
-        *(u8 *)(object_address + 0x23) = 0xFE & *(u8 *)(object_address + 0x23);
+    if (object != NULL && (object->animation_kind & 0xF) == 1) {
+        struct FieldSprite *sprite = object->animation;
+
+        sprite->priority = priority;
+        sprite->second_priority = priority;
+        object->unknown_23 &= ~ACTOR_PRIORITY_AUTOMATIC;
     }
 }

@@ -35,7 +35,6 @@
 #define FinishStagedActorEffect Func_02003080
 #define SetStagedActorTransition Func_02002f6c
 #define SpawnConfiguredEffect Func_0200013c
-#define AdvanceStagedActorPair Func_020003a8
 #define SceneActor_ApplyPlacementQueryAndTag Func_02000ec8
 #define SceneActor_ApplyPlacementQuery Func_02000f58
 #define Data_0200e1e8 Data_0200acf8
@@ -631,7 +630,7 @@ void SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
 #include "CONFIGURED_EFFECT_SPAWN_BODY.INC"
 }
 
-s32 Func_02000314(s32 *a, s32 *b)
+s32 FixedPoint_Distance(s32 *a, s32 *b)
 {
     s32 dx = (*a++ - *b++) >> 16;
     s32 dy = (*a++ - *b++) >> 16;
@@ -643,7 +642,7 @@ s32 Func_02000314(s32 *a, s32 *b)
     return ((IwramSqrt02000314) 0x030001D8)(dxsq + dysq + dzsq);
 }
 
-s32 *Func_02000350(s32 *arg0)
+s32 *StagedActor_FindAtTile(s32 *arg0)
 {
     extern u8 *Data_03001ebc;
 
@@ -662,7 +661,7 @@ s32 *Func_02000350(s32 *arg0)
     return 0;
 }
 
-void AdvanceStagedActorPair(void)
+void StagedActor_AdvancePair(void)
 {
 
     s32 destination[3];
@@ -734,7 +733,7 @@ void AdvanceStagedActorPair(void)
     SetStagedActorTransition(lead_actor, 1);
 }
 
-s32 Func_02000528(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
+s32 StagedActor_FillGridAttributeRectangle(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
 {
     u8 *g = (u8 *)Data_03001e70;
     u8 *base;
@@ -762,7 +761,7 @@ s32 Func_02000528(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
     return 0;
 }
 
-s32 Func_0200058c(Ent *a)
+s32 StagedActor_StopBlockedMotion(Ent *a)
 {
     extern s32 Data_0200aca0[];
 
@@ -807,7 +806,7 @@ done:
     return 0;
 }
 
-s32 Func_02000758(s32 *a)
+s32 StagedActor_FindClearPosition(s32 *a)
 {
     extern s32 Data_0200aca0[];
 
@@ -911,7 +910,7 @@ found:
     return ret;
 }
 
-void Func_020008ec(
+void SceneActor_MoveAndRedraw(
     StagedActorMovementRequest request)
 {
 #include "RUN_STAGED_ACTOR_MOVEMENT_AND_REDRAW_BODY.INC"

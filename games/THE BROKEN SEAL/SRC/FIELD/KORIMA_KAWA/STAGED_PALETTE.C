@@ -192,7 +192,7 @@ s32 Func_02001b4e();
  * load-bearing and must not become struct field access.
  */
 
-s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b)
+s32 FixedPoint_Distance(s32 *a, s32 *b)
 {
     s32 dx = (*a++ - *b++) >> 16;
     s32 dy = (*a++ - *b++) >> 16;
@@ -204,7 +204,7 @@ s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b)
     return ((IwramIntegerSquareRoot) 0x030001D8)(dx2 + dy2 + dz2);
 }
 
-s32 *SceneActor_FindAtTileXZ(s32 *arg0)
+s32 *StagedActor_FindAtTile(s32 *arg0)
 {
     s32 **slots = (s32 **)(Data_03001ebc + 0x14);
     u32 i;
@@ -294,7 +294,7 @@ void StagedActor_AdvancePair(void)
     SetStagedActorTransition(lead, 1);
 }
 
-s32 SceneState_FillGridAttributeRectangle(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
+s32 StagedActor_FillGridAttributeRectangle(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
 {
     u8 *g = (u8 *)Data_03001e70;
     u8 *base;
@@ -322,7 +322,7 @@ s32 SceneState_FillGridAttributeRectangle(u32 arg0, s32 arg1, s32 arg2, u32 arg3
     return 0;
 }
 
-s32 StagedActor_CheckProbe(struct StagedActor *actor)
+s32 StagedActor_StopBlockedMotion(struct StagedActor *actor)
 {
     extern s32 Data_02008f10[];
 
@@ -504,7 +504,7 @@ found:
 #include "STAGED_ACTOR_MOVEMENT.H"
 
 
-void Func_02000608(
+void SceneActor_MoveAndRedraw(
     StagedActorMovementRequest request)
 {
 #include "RUN_STAGED_ACTOR_MOVEMENT_AND_REDRAW_BODY.INC"

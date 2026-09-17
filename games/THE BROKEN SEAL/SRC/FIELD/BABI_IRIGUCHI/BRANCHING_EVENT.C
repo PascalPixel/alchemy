@@ -1,6 +1,5 @@
 #include "TYPES.H"
 
-#define CalculateFixedPointPositionDistance Func_02000030
 #define StagedActorStepTable Data_0200afd4
 #define GetStagedActor Func_02002f24
 #define FindNextStagedActor Func_02000176
@@ -15,12 +14,10 @@
 #define FinishStagedActorMove Func_02002fac
 #define FinishStagedActorEffect Func_02003178
 #define SetStagedActorTransition Func_02002fbc
-#define SceneActor_ResetMotionWhenAheadBlocked Func_020002a8
 #define SceneActor_PushObjectAheadIfLevel Func_020026fc
 #define TestActorPosition Func_02003344
 #define ActorProbeOffsets Data_0200b02c
 #define ActorSearchStep Data_0200afd4
-#define StagedActor_FindClearPosition Func_02000474
 #define Data_0200e1e8 Data_0200b02c
 #define Data_0200e190 Data_0200afd4
 #define Func_02006610 Func_0200347c
@@ -109,7 +106,6 @@
 #define SecondaryOverlayData_020027a0 Data_0200b9e8
 #define TertiaryOverlayData_020027a0 Data_0200bac0
 #define DefaultOverlayData_020027a0 Data_0200bc28
-#define StagedActor_PushActorAhead Func_020000c4
 #define SceneData_SelectDataByRuntimeSelector Func_02000fdc
 #define SceneData_SelectTableB91cByRuntimeSelector Func_020027a0
 
@@ -1053,7 +1049,7 @@ static __inline__ void bump_step_02001238(s32 amount)
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
-s32 Func_02000030(s32 *first_position, s32 *second_position)
+s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
 {
     s32 delta_x = (*first_position++ - *second_position++) >> 16;
     s32 delta_y = (*first_position++ - *second_position++) >> 16;
@@ -1065,7 +1061,7 @@ s32 Func_02000030(s32 *first_position, s32 *second_position)
     return ((IwramIntegerSquareRoot) 0x030001D8)(delta_x_squared + delta_y_squared + delta_z_squared);
 }
 
-s32 *Func_0200006c(s32 *arg0)
+s32 *StagedActor_FindAtTile(s32 *arg0)
 {
     extern u8 *Data_03001ebc;
 
@@ -1084,7 +1080,7 @@ s32 *Func_0200006c(s32 *arg0)
     return 0;
 }
 
-void StagedActor_PushActorAhead(void)
+void StagedActor_AdvancePair(void)
 {
 
     s32 dest[3];
@@ -1156,7 +1152,7 @@ void StagedActor_PushActorAhead(void)
     SetStagedActorTransition(lead, 1);
 }
 
-s32 Func_02000244(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
+s32 StagedActor_FillGridAttributeRectangle(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
 {
     u8 *g = (u8 *)Data_03001e70;
     u8 *base;
@@ -1184,7 +1180,7 @@ s32 Func_02000244(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
     return 0;
 }
 
-s32 SceneActor_ResetMotionWhenAheadBlocked(Ent *a)
+s32 StagedActor_StopBlockedMotion(Ent *a)
 {
     extern s32 Data_0200afd4[];
 
@@ -1234,7 +1230,7 @@ s32 StagedActor_FindClearPosition(s32 *a)
 #include "FIND_CLEAR_ACTOR_POSITION_BODY.INC"
 }
 
-void Func_02000608(
+void SceneActor_MoveAndRedraw(
     StagedActorMovementRequest request)
 {
 #include "RUN_STAGED_ACTOR_MOVEMENT_AND_REDRAW_BODY.INC"

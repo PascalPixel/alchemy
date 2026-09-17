@@ -14,7 +14,6 @@
 #define FinishStagedActorMove Func_020015d4
 #define FinishStagedActorEffect Func_020016f8
 #define SetStagedActorTransition Func_020015ec
-#define StagedActor_AdvanceActorPair Func_020000c4
 
 #include "STAGED_ACTOR.H"
 
@@ -41,7 +40,6 @@ void Func_020015ec(struct StagedActor *arg0, s32 arg1);
 #define TestActorPosition Func_02001954
 #define ActorProbeOffsets Data_020095ac
 #define ActorSearchStep Data_02009554
-#define StagedActor_FindClearPosition Func_02000474
 
 #include "FIND_CLEAR_ACTOR_POSITION.H"
 
@@ -410,7 +408,6 @@ void Func_020025a8(void);
 
 typedef s32 (*IwramIntegerSquareRoot)(s32);
 
-#define CalculateFixedPointPositionDistance Func_02000030
 
 
 #include "TYPES.H"
@@ -477,7 +474,7 @@ extern s32 Func_0200171a(
 
 
 
-s32 Func_02000030(s32 *first_position, s32 *second_position)
+s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
 {
     s32 delta_x = (*first_position++ - *second_position++) >> 16;
     s32 delta_y = (*first_position++ - *second_position++) >> 16;
@@ -489,7 +486,7 @@ s32 Func_02000030(s32 *first_position, s32 *second_position)
     return ((IwramIntegerSquareRoot) 0x030001D8)(delta_x_squared + delta_y_squared + delta_z_squared);
 }
 
-s32 *Func_0200006c(s32 *arg0)
+s32 *StagedActor_FindAtTile(s32 *arg0)
 {
     s32 **slots = (s32 **)(*(u8 **)Data_03001ebc + 0x14);
     u32 i;
@@ -506,7 +503,7 @@ s32 *Func_0200006c(s32 *arg0)
     return 0;
 }
 
-void StagedActor_AdvanceActorPair(void)
+void StagedActor_AdvancePair(void)
 {
     s32 dst[3];
     struct StagedActor *lead;
@@ -577,7 +574,7 @@ void StagedActor_AdvanceActorPair(void)
     SetStagedActorTransition(lead, 1);
 }
 
-s32 Func_02000244(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
+s32 StagedActor_FillGridAttributeRectangle(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
 {
     u8 *g = (u8 *)Data_03001e70;
     u8 *base;
@@ -605,7 +602,7 @@ s32 Func_02000244(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
     return 0;
 }
 
-s32 StagedActor_ResetMotionIfBlockedAhead(struct StagedActor *actor)
+s32 StagedActor_StopBlockedMotion(struct StagedActor *actor)
 {
     struct StagedActorProbePoint probe;
     u32 dir;
@@ -654,7 +651,7 @@ s32 StagedActor_FindClearPosition(s32 *a)
 #include "FIND_CLEAR_ACTOR_POSITION_BODY.INC"
 }
 
-void Func_02000608(StagedActorMovementRequest request)
+void SceneActor_MoveAndRedraw(StagedActorMovementRequest request)
 {
 #include "RUN_STAGED_ACTOR_MOVEMENT_AND_REDRAW_BODY.INC"
 }

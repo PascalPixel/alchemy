@@ -27,17 +27,6 @@ struct StagedActorFootprint {
     s32 z1;
 };
 
-extern struct StagedActorFootprint Data_0200adc0[];
-extern u32 Data_0200ad68[];
-
-#define StagedActorFootprints Data_0200adc0
-#define StagedActorDirectionSteps Data_0200ad68
-#define FindStagedActorProbeTarget Func_020007de
-#define ClassifyStagedActorProbePosition Func_02003140
-
-extern struct StagedActor *FindStagedActorProbeTarget(
-    s32 *direction_out, s32 *actor_slot_out, struct StagedActorProbe *probe);
-
 #define STAGED_ACTOR_PROBE_OFFSET(field) \
     ((u32)&(((struct StagedActorProbe *)0)->field))
 typedef char StagedActorProbe_size[
@@ -54,7 +43,5 @@ typedef char StagedActorProbe_position_z_offset[
 typedef char StagedActorFootprint_size[
     sizeof(struct StagedActorFootprint) == 0x10 ? 1 : -1
 ];
-
-extern s32 ClassifyStagedActorProbePosition(struct StagedActor *actor, s32 *position);
 
 #endif

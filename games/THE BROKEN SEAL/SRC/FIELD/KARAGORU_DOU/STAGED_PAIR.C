@@ -19,9 +19,6 @@
 #define StagedActorPairScene_SpawnPrimaryEffect Func_02000048
 #define StagedActorPairScene_SpawnSecondaryEffect Func_020000a0
 #define StagedActorPairScene_SpawnConfiguredEffect Func_0200013c
-#define StagedActorPairScene_AdvancePair Func_020003a8
-#define StagedActorPairScene_StopBlockedMotion Func_0200058c
-#define StagedActorPairScene_FindClearPosition Func_02000758
 #define StagedActorPairScene_GetVariantData Func_02000cc0
 #define StagedActorPairScene_GetInitialValue Func_02000d14
 #define StagedActorPairScene_RunStep Func_020010f0
@@ -593,7 +590,7 @@ void StagedActorPairScene_SpawnConfiguredEffect(
     }
 }
 
-s32 Func_02000314(s32 *a, s32 *b)
+s32 FixedPoint_Distance(s32 *a, s32 *b)
 {
     s32 dx = (*a++ - *b++) >> 16;
     s32 dy = (*a++ - *b++) >> 16;
@@ -605,7 +602,7 @@ s32 Func_02000314(s32 *a, s32 *b)
     return ((IwramSqrt02000314) 0x030001D8)(dxsq + dysq + dzsq);
 }
 
-s32 *Func_02000350(s32 *arg0)
+s32 *StagedActor_FindAtTile(s32 *arg0)
 {
     extern u8 *Data_03001ebc;
 
@@ -624,7 +621,7 @@ s32 *Func_02000350(s32 *arg0)
     return 0;
 }
 
-void StagedActorPairScene_AdvancePair(void)
+void StagedActor_AdvancePair(void)
 {
     extern u8 Data_03001ebc[];
 
@@ -697,7 +694,7 @@ void StagedActorPairScene_AdvancePair(void)
     SetStagedActorTransition(lead_actor, 1);
 }
 
-s32 Func_02000528(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
+s32 StagedActor_FillGridAttributeRectangle(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
 {
     u8 *g = (u8 *)Data_03001e70;
     u8 *base;
@@ -725,7 +722,7 @@ s32 Func_02000528(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
     return 0;
 }
 
-s32 StagedActorPairScene_StopBlockedMotion(MovingActor *actor)
+s32 StagedActor_StopBlockedMotion(MovingActor *actor)
 {
     extern u8 Data_03001ebc[];
 
@@ -772,7 +769,7 @@ done:
     return 0;
 }
 
-s32 StagedActorPairScene_FindClearPosition(s32 *search)
+s32 StagedActor_FindClearPosition(s32 *search)
 {
     extern u8 Data_03001ebc[];
 
@@ -882,7 +879,7 @@ found:
     return moved;
 }
 
-void Func_020008ec(StagedActorMovementRequest request)
+void SceneActor_MoveAndRedraw(StagedActorMovementRequest request)
 {
 #include "RUN_STAGED_ACTOR_MOVEMENT_AND_REDRAW_BODY.INC"
 }

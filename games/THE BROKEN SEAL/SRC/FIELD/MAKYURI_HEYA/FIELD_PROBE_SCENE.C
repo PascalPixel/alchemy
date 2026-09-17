@@ -916,7 +916,6 @@ struct EffectWork {
 
 typedef s32 (*IwramIntegerSquareRoot)(s32);
 
-#define CalculateFixedPointPositionDistance Func_02000314
 
 extern u8 *Data_03001e70;
 extern u8 Data_02010000[];
@@ -1185,7 +1184,7 @@ void BattleEffect_SpawnConfigured(s32 x, s32 y,
     }
 }
 
-s32 Func_02000314(s32 *first_position, s32 *second_position)
+s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
 {
     s32 delta_x = (*first_position++ - *second_position++) >> 16;
     s32 delta_y = (*first_position++ - *second_position++) >> 16;
@@ -1197,7 +1196,7 @@ s32 Func_02000314(s32 *first_position, s32 *second_position)
     return ((IwramIntegerSquareRoot) 0x030001D8)(delta_x_squared + delta_y_squared + delta_z_squared);
 }
 
-s32 *Func_02000350(s32 *arg0)
+s32 *StagedActor_FindAtTile(s32 *arg0)
 {
     s32 **slots = (s32 **)(Data_03001ebc + 0x14);
     u32 i;
@@ -1214,7 +1213,7 @@ s32 *Func_02000350(s32 *arg0)
     return 0;
 }
 
-s32 Func_02000528(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
+s32 StagedActor_FillGridAttributeRectangle(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
 {
     u8 *g = Data_03001e70;
     u8 *base;
@@ -1242,7 +1241,7 @@ s32 Func_02000528(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
     return 0;
 }
 
-s32 Func_0200058c(Ent *a)
+s32 StagedActor_StopBlockedMotion(Ent *a)
 {
     Desc d;
     u32 idx;
@@ -1285,7 +1284,7 @@ done:
     return 0;
 }
 
-s32 Func_02000758(s32 *a)
+s32 StagedActor_FindClearPosition(s32 *a)
 {
     s32 sel;
     s32 buf[3];
@@ -1425,7 +1424,7 @@ found:
 #include "STAGED_ACTOR_MOVEMENT.H"
 
 
-void Func_020008ec(StagedActorMovementRequest request)
+void SceneActor_MoveAndRedraw(StagedActorMovementRequest request)
 {
 #include "RUN_STAGED_ACTOR_MOVEMENT_AND_REDRAW_BODY.INC"
 }

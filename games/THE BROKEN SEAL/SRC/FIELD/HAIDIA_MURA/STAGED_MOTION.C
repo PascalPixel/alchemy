@@ -1,6 +1,5 @@
 #include "TYPES.H"
 
-#define CalculateFixedPointPositionDistance Func_02000030
 #define StagedActorStepTable Data_0200e190
 #define GetStagedActor Func_020060b8
 #define FindNextStagedActor Func_02000176
@@ -241,9 +240,6 @@
 #define OverlayObject_UpdateOnFrameBit1 Func_02005c20
 #define SceneEffect_UpdateObjectOnOddFrames Func_02005c5c
 #define SceneEffect_UpdateObjectOnOddFramesOnly Func_02005c98
-#define MapStagedActor_AdvancePair Func_020000c4
-#define MapStagedActor_StopBlockedMotion Func_020002a8
-#define MapStagedActor_FindClearPosition Func_02000474
 #define MapStagedScene_SelectPrimaryData Func_020009dc
 #define MapStagedScene_GetEmptyData Func_020009e4
 #define MapStagedScene_SelectSecondaryData Func_020009e8
@@ -1979,7 +1975,7 @@ static __inline__ s32 Value2_02003fb0(s32 (*f)(), s32 a0, s32 a1)
     return f(a0, a1);
 }
 
-s32 Func_02000030(s32 *first_position, s32 *second_position)
+s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
 {
     typedef s32(*IwramIntegerSquareRoot)(s32);
 
@@ -1993,7 +1989,7 @@ s32 Func_02000030(s32 *first_position, s32 *second_position)
     return ((IwramIntegerSquareRoot) 0x030001D8)(delta_x_squared + delta_y_squared + delta_z_squared);
 }
 
-s32 *Func_0200006c(s32 *arg0)
+s32 *StagedActor_FindAtTile(s32 *arg0)
 {
     extern u8 *Data_03001ebc;
 
@@ -2012,7 +2008,7 @@ s32 *Func_0200006c(s32 *arg0)
     return 0;
 }
 
-void MapStagedActor_AdvancePair(void)
+void StagedActor_AdvancePair(void)
 {
 
 
@@ -2085,7 +2081,7 @@ void MapStagedActor_AdvancePair(void)
     SetStagedActorTransition(lead_actor, 1);
 }
 
-s32 Func_02000244(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
+s32 StagedActor_FillGridAttributeRectangle(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
 {
     u8 *g = (u8 *)Data_03001e70;
     u8 *base;
@@ -2113,7 +2109,7 @@ s32 Func_02000244(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
     return 0;
 }
 
-s32 MapStagedActor_StopBlockedMotion(SceneActorRecord *actor)
+s32 StagedActor_StopBlockedMotion(SceneActorRecord *actor)
 {
     extern s32 Data_0200e190[];
 
@@ -2158,7 +2154,7 @@ done:
     return 0;
 }
 
-s32 MapStagedActor_FindClearPosition(s32 *request)
+s32 StagedActor_FindClearPosition(s32 *request)
 {
     extern s32 Data_0200e190[];
 
@@ -2262,7 +2258,7 @@ found:
     return found;
 }
 
-void Func_02000608(StagedActorMovementRequest request)
+void SceneActor_MoveAndRedraw(StagedActorMovementRequest request)
 {
 #include "RUN_STAGED_ACTOR_MOVEMENT_AND_REDRAW_BODY.INC"
 }

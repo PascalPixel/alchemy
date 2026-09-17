@@ -30,7 +30,7 @@
 #include "STAGED_ACTOR_MOVEMENT.H"
 
 
-void Func_02000608(
+void SceneActor_MoveAndRedraw(
     StagedActorMovementRequest request)
 {
 #include "RUN_STAGED_ACTOR_MOVEMENT_AND_REDRAW_BODY.INC"

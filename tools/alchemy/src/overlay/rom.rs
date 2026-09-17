@@ -19,8 +19,11 @@ impl CanonicalRom {
     }
     /// Any registered target's ROM, located through its resource-directory self-pointer.
     pub fn load_target(root: &Path, target: DecompTarget) -> Result<Self, String> {
-        let path = root.join(target.rom);
-        let bytes = std::fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?;
+        Self::from_file(&root.join(target.rom), target)
+    }
+    /// A target's ROM read from an explicit path and checked against its size.
+    pub fn from_file(path: &Path, target: DecompTarget) -> Result<Self, String> {
+        let bytes = std::fs::read(path).map_err(|error| format!("{}: {error}", path.display()))?;
         if bytes.len() as u64 != target.rom_size {
             return Err(format!(
                 "{}: {} bytes, expected {} for {}",

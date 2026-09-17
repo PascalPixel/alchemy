@@ -2,8 +2,20 @@
 //! names with a source scores byte-exact against the TLA ROM over its audited
 //! extent, and every shared source under `games/COMMON/SRC` is one of them, so
 //! a shared file cannot drift from the second game unnoticed.
+//!
+//! A main-image owner's extent is its interval in the TLA executable
+//! inventory. An overlay owner's extent is its reviewed span in
+//! `games/THE LOST AGE/semantic/regions.json`; its retained listing must hold
+//! an `AlchemyC_` placeholder of exactly that span, and the listing assembled
+//! with every placeholder compiled must reproduce the overlay the ROM loads.
+use crate::compiler::overlay::placeholder_extent;
 use crate::compiler::routing::CompilerTarget;
 use crate::compiler::source_paths::{SourceOwner, SourcePaths, SHARED_SOURCE_ROOT};
+use crate::overlay::assembly::OVERLAY_BASE;
+use crate::overlay::compile::assemble_overlay;
+use crate::overlay::owners::{production_target, register_path, reviewed_spans};
+use crate::overlay::rom::CanonicalRom;
+use crate::overlay::source::OverlaySource;
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
@@ -60,12 +72,14 @@ fn inventory_extents(text: &str) -> Result<BTreeMap<u32, usize>, String> {
     Ok(extents)
 }
 
-/// Every owner the register gives a source, with its audited extent. An owner
-/// without an audited interval, or a shared source no owner compiles, fails.
+/// Every owner the register gives a source, with its audited extent: a main
+/// owner's inventory interval or an overlay owner's reviewed span. An owner
+/// without one, or a shared source no owner compiles, fails.
 fn scored_owners(
     root: &Path,
     register: &SourcePaths,
     extents: &BTreeMap<u32, usize>,
+    reviewed: &BTreeMap<SourceOwner, usize>,
     shared: &BTreeSet<PathBuf>,
 ) -> Result<Vec<ScoredOwner>, String> {
     let mut owners = Vec::new();
@@ -74,15 +88,19 @@ fn scored_owners(
         let Some(path) = register.mapped_source_path(owner) else {
             continue;
         };
-        if !owner.is_main() {
-            return Err(format!(
-                "{}: TLA overlay owners are not scored yet",
-                owner.id()
-            ));
-        }
-        let extent = *extents
-            .get(&owner.address())
-            .ok_or_else(|| format!("{}: no audited extent in {INVENTORY}", owner.id()))?;
+        let extent = if owner.is_main() {
+            *extents
+                .get(&owner.address())
+                .ok_or_else(|| format!("{}: no audited extent in {INVENTORY}", owner.id()))?
+        } else {
+            *reviewed.get(&owner).ok_or_else(|| {
+                format!(
+                    "{}: no reviewed span in {}",
+                    owner.id(),
+                    register_path(Path::new(""), production_target(CompilerTarget::Tla)).display()
+                )
+            })?
+        };
         let relative = path.strip_prefix(root).unwrap_or(&path).to_path_buf();
         unscored.remove(&relative);
         owners.push(ScoredOwner {
@@ -120,6 +138,77 @@ fn shared_sources(root: &Path) -> Result<BTreeSet<PathBuf>, String> {
     Ok(sources)
 }
 
+/// Differing halfwords between two equal-length windows.
+fn differing_halfwords(built: &[u8], reference: &[u8]) -> usize {
+    built
+        .chunks(2)
+        .zip(reference.chunks(2))
+        .filter(|(left, right)| left != right)
+        .count()
+}
+
+/// Each overlay's C owners, checked from the one listing that places them:
+/// every owner needs a placeholder of its reviewed span, and the assembled
+/// overlay must equal the ROM's inside each owner and as a whole.
+fn overlay_mismatches(
+    root: &Path,
+    rom: &CanonicalRom,
+    owners: &[&ScoredOwner],
+) -> Result<Vec<String>, String> {
+    let target = production_target(CompilerTarget::Tla);
+    let mut by_overlay = BTreeMap::<String, Vec<&ScoredOwner>>::new();
+    for scored in owners {
+        let overlay = scored.owner.overlay_id().expect("overlay owner");
+        by_overlay.entry(overlay).or_default().push(scored);
+    }
+    let mut mismatches = Vec::new();
+    for (overlay, members) in by_overlay {
+        let listing = root.join(target.overlay_assembly(&overlay));
+        let text = std::fs::read_to_string(&listing)
+            .map_err(|error| format!("{}: {error}", listing.display()))?;
+        for scored in &members {
+            let placed = placeholder_extent(&text, scored.owner.address());
+            if placed != Some(scored.extent) {
+                return Err(format!(
+                    "{} {} has no AlchemyC placeholder of its {}-byte reviewed span",
+                    scored.owner.id(),
+                    scored.source,
+                    scored.extent
+                ));
+            }
+        }
+        let built = assemble_overlay(&OverlaySource::path(&listing), OVERLAY_BASE)?;
+        let reference = rom.overlay(&overlay)?;
+        if built.len() != reference.len() {
+            mismatches.push(format!(
+                "{overlay} assembles to {} bytes, the ROM loads {}",
+                built.len(),
+                reference.len()
+            ));
+            continue;
+        }
+        let before = mismatches.len();
+        for scored in &members {
+            let start = (i64::from(scored.owner.address()) - OVERLAY_BASE) as usize;
+            let end = start + scored.extent;
+            let differing = differing_halfwords(&built[start..end], &reference[start..end]);
+            if differing != 0 {
+                mismatches.push(format!(
+                    "{} {} differs in {differing} halfwords",
+                    scored.owner.id(),
+                    scored.source
+                ));
+            }
+        }
+        if mismatches.len() == before && built != reference {
+            mismatches.push(format!(
+                "{overlay} differs from the ROM outside its C owners"
+            ));
+        }
+    }
+    Ok(mismatches)
+}
+
 fn check(root: &Path, rom: &Path) -> Result<String, String> {
     if !rom.is_file() {
         return Err(format!("{}: TLA ROM not found", rom.display()));
@@ -128,9 +217,22 @@ fn check(root: &Path, rom: &Path) -> Result<String, String> {
     let inventory = std::fs::read_to_string(root.join(INVENTORY))
         .map_err(|error| format!("{INVENTORY}: {error}"))?;
     let shared = shared_sources(root)?;
-    let owners = scored_owners(root, &register, &inventory_extents(&inventory)?, &shared)?;
+    let reviewed = reviewed_spans(root, production_target(CompilerTarget::Tla))?;
+    let owners = scored_owners(
+        root,
+        &register,
+        &inventory_extents(&inventory)?,
+        &reviewed,
+        &shared,
+    )?;
+    let (main, overlays): (Vec<&ScoredOwner>, Vec<&ScoredOwner>) =
+        owners.iter().partition(|scored| scored.owner.is_main());
     let mut mismatches = Vec::new();
-    for scored in &owners {
+    if !overlays.is_empty() {
+        let canonical = CanonicalRom::from_file(rom, production_target(CompilerTarget::Tla))?;
+        mismatches.extend(overlay_mismatches(root, &canonical, &overlays)?);
+    }
+    for scored in main {
         let mut options = crate::score::cli::Options::tbs(scored.source.clone());
         options.target = CompilerTarget::Tla;
         options.rom = Some(rom.to_string_lossy().into_owned());
@@ -154,8 +256,9 @@ fn check(root: &Path, rom: &Path) -> Result<String, String> {
         ));
     }
     Ok(format!(
-        "tla owners ok: {} exact owners, {} shared sources",
+        "tla owners ok: {} exact owners ({} overlay), {} shared sources",
         owners.len(),
+        overlays.len(),
         shared.len()
     ))
 }
@@ -190,7 +293,8 @@ mod tests {
         let register = SourcePaths::load_for_game(root.path(), "tla").unwrap();
         let shared = shared_sources(root.path()).unwrap();
         let extents = BTreeMap::from([(0x081c_2a3c, 80)]);
-        let owners = scored_owners(root.path(), &register, &extents, &shared).unwrap();
+        let owners =
+            scored_owners(root.path(), &register, &extents, &BTreeMap::new(), &shared).unwrap();
         assert_eq!(
             owners,
             [ScoredOwner {
@@ -199,7 +303,13 @@ mod tests {
                 extent: 80,
             }]
         );
-        let missing = scored_owners(root.path(), &register, &BTreeMap::new(), &shared);
+        let missing = scored_owners(
+            root.path(),
+            &register,
+            &BTreeMap::new(),
+            &BTreeMap::new(),
+            &shared,
+        );
         assert!(missing
             .unwrap_err()
             .contains("main:081c2a3c: no audited extent"));
@@ -213,8 +323,58 @@ mod tests {
         );
         let register = SourcePaths::load_for_game(orphan.path(), "tla").unwrap();
         let shared = shared_sources(orphan.path()).unwrap();
-        let error = scored_owners(orphan.path(), &register, &extents, &shared).unwrap_err();
+        let error = scored_owners(
+            orphan.path(),
+            &register,
+            &extents,
+            &BTreeMap::new(),
+            &shared,
+        )
+        .unwrap_err();
         assert!(error.contains("SOUND/ORPHAN.C"), "{error}");
+    }
+
+    #[test]
+    fn overlay_owners_take_their_reviewed_span() {
+        let register = r#"{"format":3,"owners":{"resource_650:02000038":{"name":"Scene_GetEntrances","source":"FIELD/IDEJIMA/ISLAND.C"}}}"#;
+        let root = fixture(register, &[]);
+        let register = SourcePaths::load_for_game(root.path(), "tla").unwrap();
+        let owner = SourceOwner::parse("resource_650:02000038").unwrap();
+        let unreviewed = scored_owners(
+            root.path(),
+            &register,
+            &BTreeMap::new(),
+            &BTreeMap::new(),
+            &BTreeSet::new(),
+        )
+        .unwrap_err();
+        assert!(
+            unreviewed.contains("resource_650:02000038: no reviewed span"),
+            "{unreviewed}"
+        );
+        let owners = scored_owners(
+            root.path(),
+            &register,
+            &BTreeMap::new(),
+            &BTreeMap::from([(owner, 8)]),
+            &BTreeSet::new(),
+        )
+        .unwrap();
+        assert_eq!(
+            owners,
+            [ScoredOwner {
+                owner,
+                source: "games/THE LOST AGE/SRC/FIELD/IDEJIMA/ISLAND.C".into(),
+                extent: 8,
+            }]
+        );
+    }
+
+    #[test]
+    fn halfword_differences_are_counted_per_pair() {
+        assert_eq!(differing_halfwords(&[1, 2, 3, 4], &[1, 2, 3, 4]), 0);
+        assert_eq!(differing_halfwords(&[1, 2, 3, 4], &[1, 9, 3, 4]), 1);
+        assert_eq!(differing_halfwords(&[1, 2, 3, 4], &[0, 0, 0, 0]), 2);
     }
 
     #[test]

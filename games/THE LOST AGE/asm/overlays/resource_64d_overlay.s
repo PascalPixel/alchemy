@@ -789,14 +789,14 @@
 	.global Overlay_02000000
 Overlay_02000000:
 .include "games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/ENTRY.INC"
-	.4byte 0x47704800
-	.4byte 0x0200ad20
-	.4byte 0x47702000
-	.4byte 0x47704800
-	.4byte 0x0200adf8
-	.4byte 0x47704800
-	.2byte 0xae08
-	.2byte 0x0200
+AlchemyC_02000038:
+	.space 0x8
+AlchemyC_02000040:
+	.space 0x4
+AlchemyC_02000044:
+	.space 0x8
+AlchemyC_0200004c:
+	.space 0x8
 	push	{r5, lr}
 	movs	r1, #128
 	lsls	r1, r1, #7
@@ -822,26 +822,8 @@ Overlay_02000000:
 	movs	r0, #8
 	bl	sub_02002ad4
 	pop	{r5, pc}
-	push	{r5, lr}
-	adds	r5, r0, #0
-	ldr	r2, [r5, #12]
-	ldr	r3, [r5, #16]
-	ldr	r1, [r5, #8]
-	adds	r5, #100
-	bl	.L_020026b6
-	ldrh	r2, [r5, #0]
-	movs	r3, #224
-	adds	r2, #1
-	strh	r2, [r5, #0]
-	lsls	r3, r3, #11
-	lsls	r2, r2, #16
-	ands	r3, r2
-	cmp	r3, #0
-	bne.n	.L_020000c4
-	movs	r0, #125
-	bl	sub_02002b26
-.L_020000c4:
-	pop	{r5, pc}
+AlchemyC_0200009c:
+	.space 0x2a
 	.2byte 0x0000
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
@@ -880,9 +862,8 @@ Overlay_02000000:
 	pop	{r5, r6, r7, pc}
 	.2byte 0x0000
 	.4byte 0x0200809d
-	.4byte 0x47704800
-	.2byte 0xaf88
-	.2byte 0x0200
+AlchemyC_02000120:
+	.space 0x8
 	push	{r5, r6, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -1087,8 +1068,8 @@ Overlay_02000000:
 	pop	{r5, r6, pc}
 	.4byte 0x02000240
 	.4byte 0x00000004
-	.2byte 0x2000
-	.2byte 0x4770
+AlchemyC_02000308:
+	.space 0x4
 	push	{r5, r6, lr}
 	mov	r6, r8
 	push	{r6}

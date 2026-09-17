@@ -1046,50 +1046,16 @@
 	.global Overlay_02000000
 Overlay_02000000:
 .include "games/THE LOST AGE/SRC/FIELD/IDEJIMA/ENTRY.INC"
-	.4byte 0x47704800
-	.4byte 0x0200b7f8
-	.4byte 0x47702000
-	.4byte 0x47704800
-	.4byte 0x0200b828
-	.4byte 0x47704800
-	.2byte 0xb844
-	.2byte 0x0200
-	push	{lr}
-	ldr	r3, [pc, #48]
-	movs	r2, #241
-	lsls	r2, r2, #1
-	adds	r3, r3, r2
-	movs	r2, #0
-	ldrsh	r3, [r3, r2]
-	cmp	r3, #2
-	beq.n	.L_0200007e
-	cmp	r3, #2
-	bgt.n	.L_02000070
-	cmp	r3, #1
-	beq.n	.L_0200007a
-	b.n	.L_02000082
-.L_02000070:
-	cmp	r3, #3
-	beq.n	.L_0200007a
-	cmp	r3, #4
-	beq.n	.L_0200007e
-	b.n	.L_02000082
-.L_0200007a:
-	ldr	r0, [pc, #16]
-	b.n	.L_02000084
-.L_0200007e:
-	ldr	r0, [pc, #16]
-	b.n	.L_02000084
-.L_02000082:
-	ldr	r0, [pc, #16]
-.L_02000084:
-	pop	{pc}
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x0200b8f8
-	.4byte 0x0200b910
-	.2byte 0xb8ec
-	.2byte 0x0200
+AlchemyC_02000038:
+	.space 0x8
+AlchemyC_02000040:
+	.space 0x4
+AlchemyC_02000044:
+	.space 0x8
+AlchemyC_0200004c:
+	.space 0x8
+AlchemyC_02000054:
+	.space 0x44
 	push	{r5, r6, lr}
 	adds	r6, r0, #0
 	bl	sub_02003276
@@ -3241,13 +3207,8 @@ Overlay_02000000:
 	pop	{r5, pc}
 	.2byte 0x0000
 	.4byte 0x0200b7c4
-	.4byte 0x4b034a04
-	.4byte 0x4a048013
-	.4byte 0x60132300
-	.4byte 0x00004770
-	.4byte 0x00000000
-	.4byte 0x0200bc14
-	.4byte 0x0200bc10
+AlchemyC_0200153c:
+	.space 0x1c
 	.4byte 0x4a0c4b0d
 	.4byte 0x4053881b
 	.4byte 0x141b041b
@@ -3352,69 +3313,11 @@ Overlay_02000000:
 	bl	sub_0200493a
 	pop	{pc}
 	.2byte 0x0000
-	push	{lr}
-	movs	r3, #192
-	lsls	r3, r3, #18
-	ldr	r3, [r3, #32]
-	movs	r2, #132
-	lsls	r2, r2, #1
-	adds	r3, r3, r2
-	movs	r2, #128
-	lsls	r2, r2, #7
-	str	r2, [r3, #24]
-	movs	r2, #128
-	lsls	r2, r2, #6
-	sub	sp, #8
-	str	r2, [r3, #28]
-	movs	r3, #1
-	str	r3, [sp, #0]
-	str	r3, [sp, #4]
-	movs	r2, #75
-	movs	r3, #8
-	movs	r0, #72
-	movs	r1, #10
-	bl	sub_02004804
-	movs	r0, #9
-	movs	r1, #2
-	bl	sub_020048c4
-	add	sp, #8
-	pop	{pc}
+AlchemyC_02001650:
+	.space 0x3a
 	.2byte 0x0000
-	push	{r5, r6, r7, lr}
-	adds	r4, r0, #0
-	adds	r6, r2, #0
-	adds	r5, r1, #0
-	lsls	r3, r3, #16
-	movs	r0, #244
-	asrs	r7, r3, #16
-	lsls	r0, r0, #1
-	adds	r3, r6, #0
-	adds	r1, r4, #0
-	adds	r2, r5, #0
-	bl	sub_0200481c
-	adds	r6, r0, #0
-	cmp	r6, #0
-	beq.n	.L_020016d0
-	movs	r0, #151
-	ldr	r5, [r6, #80]
-	bl	sub_020049da
-	adds	r0, r6, #0
-	movs	r1, #1
-	bl	sub_02004822
-	ldr	r1, [pc, #20]
-	adds	r0, r6, #0
-	bl	sub_02004832
-	adds	r2, r6, #0
-	movs	r3, #0
-	adds	r2, #85
-	strb	r3, [r2, #0]
-	strb	r3, [r5, #26]
-	strh	r7, [r5, #18]
-.L_020016d0:
-	pop	{r5, r6, r7, pc}
-	.2byte 0x0000
-	.2byte 0xb97c
-	.2byte 0x0200
+AlchemyC_0200168c:
+	.space 0x4c
 	push	{r5, r6, lr}
 	mov	r6, fp
 	mov	r5, sl
@@ -5626,30 +5529,14 @@ Overlay_02000000:
 	mov	fp, r7
 	pop	{r5, r6, r7, pc}
 	.2byte 0x0000
-	.4byte 0x00004770
-	.2byte 0x4770
+AlchemyC_02002c30:
+	.space 0x2
 	.2byte 0x0000
-	push	{r5, lr}
-	movs	r5, #180
-	bl	sub_0200586e
-.L_02002c40:
-	movs	r3, #1
-	subs	r5, #1
-	negs	r3, r3
-	cmp	r5, r3
-	beq.n	.L_02002c58
-	movs	r0, #1
-	bl	sub_02005d86
-	ldr	r3, [pc, #12]
-	ldr	r3, [r3, #4]
-	cmp	r3, #0
-	beq.n	.L_02002c40
-.L_02002c58:
-	bl	sub_0200588e
-	pop	{r5, pc}
+AlchemyC_02002c34:
+	.space 0x2
 	.2byte 0x0000
-	.2byte 0x1150
-	.2byte 0x0300
+AlchemyC_02002c38:
+	.space 0x2c
 	push	{r5, lr}
 	bl	sub_02005898
 	bl	sub_02005e24
@@ -5931,8 +5818,8 @@ Overlay_02000000:
 	.4byte 0x02000240
 	.4byte 0x0200aefc
 	.4byte 0x0000000c
-	.2byte 0x2000
-	.2byte 0x4770
+AlchemyC_02002f84:
+	.space 0x4
 	push	{r5, r6, lr}
 	adds	r5, r0, #0
 	bl	sub_02006166

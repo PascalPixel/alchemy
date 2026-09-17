@@ -189,6 +189,12 @@ fn repeatable(
     }
     const RUNS: usize = 30;
     let overlay = owner.overlay_id().ok_or("expected an overlay owner")?;
+    // A member of a translation unit repeats the unit compile the production
+    // listing links; a standalone owner compiles its own source.
+    let unit =
+        crate::compiler::translation_units::TranslationUnits::load_game(root, target.compiler)?
+            .unit_for_game_owner(target.compiler.as_str(), owner)
+            .cloned();
     let offset = crate::overlay::overlay_offset(owner);
     let expected = baseline
         .get(offset..offset + span as usize)
@@ -208,13 +214,23 @@ fn repeatable(
                     let mut exact = 0;
                     while next.fetch_add(1, std::sync::atomic::Ordering::Relaxed) < RUNS {
                         let work = tempfile::tempdir().map_err(|error| error.to_string())?;
-                        let compiled = crate::overlay::compile::compile_overlay_c_fresh(
-                            target,
-                            installed,
-                            work.path(),
-                            &overlay,
-                            span as usize,
-                        )?;
+                        let compiled = match &unit {
+                            Some(unit) => {
+                                crate::overlay::compile::compile_overlay_unit_fresh(unit)?
+                                    .into_iter()
+                                    .find(|member| member.address == i64::from(owner.address()))
+                                    .ok_or_else(|| {
+                                        format!("{id}: unit {} did not place it", unit.id)
+                                    })?
+                            }
+                            None => crate::overlay::compile::compile_overlay_c_fresh(
+                                target,
+                                installed,
+                                work.path(),
+                                &overlay,
+                                span as usize,
+                            )?,
+                        };
                         exact += usize::from(compiled.data == expected);
                     }
                     Ok::<usize, String>(exact)

@@ -55,7 +55,7 @@ fn run(mut options: crate::score::cli::Options) -> Result<String, String> {
         });
         return Ok(format!("{}{twins}", output.stdout));
     };
-    let manifest = TranslationUnits::load(root())?;
+    let manifest = TranslationUnits::load_game(root(), options.target)?;
     let unit = manifest
         .unit(&id)
         .ok_or_else(|| format!("unknown translation unit {id}"))?
@@ -72,7 +72,8 @@ fn run(mut options: crate::score::cli::Options) -> Result<String, String> {
     }
     if let Some(overlay) = unit.overlay.clone() {
         if options.owner.is_none() && unit.exact() {
-            return score_overlay_unit(&unit, &overlay);
+            let work = options.work.as_ref().map(|work| root().join(work));
+            return score_overlay_unit(&unit, &overlay, work.as_deref());
         }
     }
     options.source = unit.source.to_string_lossy().into_owned();
@@ -159,8 +160,12 @@ fn run(mut options: crate::score::cli::Options) -> Result<String, String> {
 /// An overlay unit is proved the way the full build places it: the unit
 /// compiles once, every function is linked at its owner's address, and each
 /// member's bytes are compared with the canonical overlay image.
-fn score_overlay_unit(unit: &TranslationUnit, overlay: &str) -> Result<String, String> {
-    let (output, mismatches) = score_overlay_image(unit, overlay, None, None, false, None)?;
+fn score_overlay_unit(
+    unit: &TranslationUnit,
+    overlay: &str,
+    work: Option<&Path>,
+) -> Result<String, String> {
+    let (output, mismatches) = score_overlay_image(unit, overlay, None, work, false, None)?;
     if !mismatches.is_empty() && unit.exact() {
         return Err(format!(
             "{output}translation unit {} has byte mismatches in {}",
@@ -244,7 +249,12 @@ pub(crate) fn score_overlay_image(
     first: Option<u32>,
 ) -> Result<(String, Vec<String>), String> {
     let compiled = crate::overlay::compile::compile_unit_in_image(unit, image, candidate, work)?;
-    let reference = canonical_overlay(root(), image)?;
+    // Each game's units compare with the overlay its own ROM loads.
+    let reference = crate::overlay::rom::canonical_overlay_for(
+        root(),
+        crate::overlay::owners::production_target(unit.target()?),
+        image,
+    )?;
     compare_image_owners(unit, image, &compiled, &reference, label, first)
 }
 /// Each owner `image` links, compiled against its complete extent in that

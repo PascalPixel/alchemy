@@ -9,6 +9,9 @@ struct MapRenderWork {
     u8 unknown_0fd[3];
     s16 first;
     s16 second;
+    u8 unknown_104[0x16];
+    /* The rotation sprites on the map turn to. */
+    u16 rotation;
 };
 
 extern struct MapRenderWork *Data_03001e70;

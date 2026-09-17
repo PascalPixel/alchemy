@@ -1,19 +1,5 @@
 #include "TYPES.H"
 
-#define StagedActorStepTable Data_0200ded8
-#define GetStagedActor Func_02005724
-#define FindNextStagedActor Func_02000176
-#define FindBlockingStagedActor Func_020001a2
-#define FindElevatedBlockingStagedActor Func_020001ce
-#define CanStartStagedActorMove Func_02005780
-#define SetStagedActorMode Func_02005760
-#define SelectStagedActorSlot Func_02005748
-#define StartStagedActorEffect Func_0200596e
-#define StartNextStagedActorMove Func_02005796
-#define StartLeadStagedActorMove Func_020057a6
-#define FinishStagedActorMove Func_020057b4
-#define FinishStagedActorEffect Func_02005990
-#define SetStagedActorTransition Func_020057cc
 #define StartDoraHouseAccidentScene Func_020010a8
 #define TurnActorToSceneDirection Func_02001be4
 #define SelectPrimarySceneData Func_020009dc
@@ -1105,42 +1091,6 @@
 #include "STAGED_ACTOR.H"
 #include "OBJECT_RUNTIME.H"
 
-typedef struct Obj {
-    u8 pad0[8];
-    s32 x;          /* 0x08 */
-    s32 y;          /* 0x0c */
-    s32 z;          /* 0x10 */
-} Obj;
-
-typedef struct Req {
-    s32 kind;       /* 0x00 */
-    s32 f4;         /* 0x04 */
-    s32 x;          /* 0x08 */
-    s32 y;          /* 0x0c */
-    s32 z;          /* 0x10 */
-    s32 f14;        /* 0x14 */
-} Req;
-
-typedef struct MovingActor {
-    u8 pad0[6];
-    u16 kind;       /* 0x06 */
-    s32 x;          /* 0x08 */
-    s32 y;          /* 0x0c */
-    s32 z;          /* 0x10 */
-    u8 pad14[0x10];
-    s32 vx;         /* 0x24 */
-    u8 pad28[4];
-    s32 vy;         /* 0x2c */
-    u8 pad30[8];
-    s32 a;          /* 0x38 */
-    u8 pad3c[4];
-    s32 b;          /* 0x40 */
-} MovingActor;
-
-typedef struct BlockingActor {
-    u8 pad0[0x50];
-    s32 *info;      /* 0x50 */
-} BlockingActor;
 
 typedef struct SceneActor {
     u8 pad0[8];
@@ -1157,9 +1107,7 @@ typedef struct DirectionalSceneActor {
     s32 z;          /* 0x10 */
 } DirectionalSceneActor;
 
-extern s32 Data_0200df30[];
 extern s32 Value_00000f2e;
-extern u8 Data_02010000[];
 extern u8 Value_000000a0;
 extern u8 Value_000000a1;
 extern u8 Value_000000a2;
@@ -1187,8 +1135,6 @@ extern s32 Value_00000f2a;
 extern s32 Value_00000f2b;
 extern s32 Value_00000f2c;
 extern s32 Value_00000f2d;
-extern s32 Data_0200ded8[];
-extern s32 Data_0200df18[];
 extern u8 Value_00002440;
 extern u8 Value_00002459;
 extern u8 Value_0000256c;
@@ -1219,22 +1165,6 @@ extern u8 Data_02009151[], Data_0200938d[], Data_02009a45[];
 extern u8 Data_02009719[], Data_0200975d[], Data_020097bd[];
 extern u8 Data_02009529[], Data_020099e9[], Data_0200969d[];
 
-typedef s32(*IwramIntegerSquareRoot)(s32);
-struct StagedActor *Func_02005724(s32 arg0);
-struct StagedActor *Func_02000176(s32 *arg0, struct StagedActor *arg1);
-struct StagedActor *Func_020001a2(s32 *arg0, struct StagedActor *arg1);
-struct StagedActor *Func_020001ce(s32 *arg0, struct StagedActor *arg1);
-s32 Func_02005780(struct StagedActor *arg0, s32 *arg1);
-void Func_02005760(struct StagedActor *arg0, s32 arg1);
-void Func_02005748(s32 arg0);
-void Func_0200596e(s32 arg0);
-void Func_02005796(struct StagedActor *arg0, s32 arg1, s32 arg2, s32 arg3);
-void Func_020057a6(struct StagedActor *arg0, s32 arg1, s32 arg2, s32 arg3);
-void Func_020057b4(struct StagedActor *arg0);
-void Func_02005990(void);
-void Func_020057cc(struct StagedActor *arg0, s32 arg1);
-Obj *Func_020007de(s32 *, s32 *, Req *);
-s32 Func_02005b3c(Obj *, s32 *);
 void Func_02006736(s32, s32, s32);
 void Func_02006754(s32);
 void Func_020067d0(s32, s32, s32);
@@ -1275,8 +1205,6 @@ s32 Func_02002040(s32, s32);
 void Func_0200662a(s32);
 s32 Func_0200205c(s32, s32);
 void Func_02006646(s32);
-BlockingActor *Func_02000342(s32 *position, MovingActor *actor);
-s32 Func_02005902(MovingActor *actor, s32 *position);
 void Func_02002fe6(s32);
 void Func_02006afe(void);
 void Func_0200317a(s32);
@@ -3420,270 +3348,6 @@ static __inline__ s32 Value2_02004f60(s32 (*f)(), s32 a0, s32 a1)
 
 extern u8 Value_00002421;
 
-s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
-{
-    s32 delta_x = (*first_position++ - *second_position++) >> 16;
-    s32 delta_y = (*first_position++ - *second_position++) >> 16;
-    s32 delta_z = (*first_position - *second_position) >> 16;
-    s32 delta_x_squared = delta_x *delta_x;
-    s32 delta_y_squared = delta_y *delta_y;
-    s32 delta_z_squared = delta_z *delta_z;
-
-    return ((IwramIntegerSquareRoot) 0x030001D8)(delta_x_squared + delta_y_squared + delta_z_squared);
-}
-
-s32 *StagedActor_FindAtTile(s32 *arg0)
-{
-    extern u8 *Data_03001ebc;
-
-    s32 **slots = (s32 **)(Data_03001ebc + 0x14);
-    u32 i;
-
-    for (i = 8; i <= 65; i++) {
-        s32 *p = slots[i];
-
-        if ((arg0[0] >> 20) == (p[2] >> 20)
-            && (arg0[1] / 0x10000) == (p[3] / 0x10000)
-            && (arg0[2] >> 20) == (p[4] >> 20)) {
-            return p;
-        }
-    }
-    return 0;
-}
-
-void StagedActor_AdvancePair(void)
-{
-    extern s32 Data_0200dfa4;
-
-    s32 destination[3];
-    struct StagedActor *lead_actor;
-    struct StagedActor *next_actor;
-    struct StagedActor *blocking_actor;
-    s32 facing_index;
-    u32 step;
-    s32 move_rate;
-    s32 zero;
-
-    lead_actor = GetStagedActor(0);
-    facing_index = lead_actor->direction_and_kind >> 12;
-    step = StagedActorStepTable[facing_index];
-    destination[0] = lead_actor->x.value + (step & 0xffff0000);
-    destination[1] = lead_actor->y;
-    step <<= 16;
-    destination[2] = lead_actor->z.value + step;
-    next_actor = FindNextStagedActor(destination, lead_actor);
-    if (next_actor == 0) return;
-
-    step = StagedActorStepTable[facing_index];
-    destination[0] = next_actor->x.value + (step & 0xffff0000);
-    destination[1] = next_actor->y;
-    step <<= 16;
-    destination[2] = next_actor->z.value + step;
-    blocking_actor = FindBlockingStagedActor(destination, next_actor);
-    if (blocking_actor != 0 && (blocking_actor->collision_flags & 1) != 0) return;
-
-    destination[0] = next_actor->x.value;
-    destination[1] = next_actor->y + 0x100000;
-    destination[2] = next_actor->z.value;
-    blocking_actor = FindElevatedBlockingStagedActor(destination, next_actor);
-    if (blocking_actor != 0 && (blocking_actor->collision_flags & 1) != 0) return;
-
-    next_actor->transition_mode = 2;
-    step = StagedActorStepTable[facing_index];
-    destination[0] = next_actor->x.value + (step & 0xffff0000);
-    destination[1] = next_actor->y;
-    step <<= 16;
-    destination[2] = next_actor->z.value + step;
-    if (CanStartStagedActorMove(next_actor, destination) > 0) return;
-
-    zero = next_actor->transition_busy;
-    if (zero != 0) return;
-
-    SetStagedActorMode(lead_actor, 8);
-    move_rate = 0x3333;
-    SelectStagedActorSlot(15);
-    StartStagedActorEffect(185);
-    next_actor->move_rate_x = move_rate;
-    next_actor->move_rate_z = move_rate;
-    StartNextStagedActorMove(next_actor, destination[0], destination[1], destination[2]);
-    lead_actor->move_rate_x = move_rate;
-    lead_actor->move_rate_z = move_rate;
-    StartLeadStagedActorMove(lead_actor, destination[0], destination[1], destination[2]);
-    FinishStagedActorMove(next_actor);
-    FinishStagedActorEffect();
-    next_actor->x.value = destination[0];
-    next_actor->z.value = destination[2];
-    next_actor->unknown_24 = zero;
-    next_actor->unknown_2c = zero;
-    lead_actor->unknown_38 = 0x80000000;
-    lead_actor->unknown_40 = 0x80000000;
-    lead_actor->unknown_24 = zero;
-    lead_actor->unknown_2c = zero;
-    lead_actor->x.value = lead_actor->x.parts.cell << 16;
-    lead_actor->z.value = lead_actor->z.parts.cell << 16;
-    SetStagedActorTransition(lead_actor, 1);
-}
-
-s32 StagedActor_FillGridAttributeRectangle(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
-{
-    extern u8 *Data_03001e70;
-
-    u8 *g = Data_03001e70;
-    u8 *base;
-    u32 i;
-    u32 j;
-
-    if (g != 0) {
-        if (arg0 <= 2) {
-            u32 off = arg0 * 48 + 304;
-
-            base = *(u8 **)(g + off);
-        } else {
-            base = Data_02010000;
-        }
-        base += (arg1 + (arg2 << 7)) * 4;
-        for (i = 0; i < arg4; i++) {
-            u8 *p = base + (i << 9);
-
-            for (j = 0; j < arg3; j++) {
-                p[2] = (u8)arg5;
-                p += 4;
-            }
-        }
-    }
-    return 0;
-}
-
-s32 StagedActor_StopBlockedMotion(MovingActor *actor)
-{
-    extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
-
-    s32 destination[3];
-    u32 direction_index = actor->kind >> 12;
-    s32 step = Data_0200ded8[direction_index];
-    BlockingActor *blocking_actor;
-
-    destination[0] = actor->x + (step & 0xffff0000);
-    destination[1] = actor->y;
-    step <<= 16;
-    destination[2] = actor->z + step;
-    blocking_actor = Func_02000342(destination, actor);
-    if (blocking_actor != 0) {
-        u32 kind_index = 0;
-        s32 blocking_kind = ((s16 *)*(s32 *)((u8 *)blocking_actor->info + 0x28))[kind_index];
-
-        {
-            s32 *p = Data_0200df18;
-
-            do {
-                if (blocking_kind == *p++) {
-                    goto done;
-                }
-                kind_index++;
-            } while (kind_index <= 5);
-        }
-        actor->vx = 0;
-        actor->vy = 0;
-        actor->a = 0x80000000;
-        actor->b = 0x80000000;
-    }
-    step = Data_0200ded8[direction_index];
-    destination[0] = actor->x + (step & 0xffff0000);
-    destination[1] = actor->y;
-    step <<= 16;
-    destination[2] = actor->z + step;
-    if (Func_02005902(actor, destination) > 0) {
-        actor->vx = 0;
-        actor->vy = 0;
-        actor->a = 0x80000000;
-        actor->b = 0x80000000;
-    }
-done:
-    return 0;
-}
-
-s32 StagedActor_FindClearPosition(Req *request)
-{
-    extern s32 Data_0200dfa4;
-
-    extern s32 Data_0200ded8[];
-
-    s32 out;
-    s32 vec[3];
-    Obj *r;
-    s32 n;
-    s32 nx, ny;
-    u8 *flag;
-    s32 i, j;
-    s32 w1, w2;
-    s32 off;
-
-    request->f14 = 0;
-    r = Func_020007de(&out, &request->f4, request);
-    if (r == 0) {
-        return 0;
-    }
-    flag = (u8 *)r + 0x22;
-    *flag = 2;
-    {
-        s32 k = request->kind;
-
-        n = 0;
-        off = k * 4;
-        w1 = Data_0200df30[off + 1];
-        if (w1 < 0) {
-            w1 = -w1;
-        }
-        w2 = Data_0200df30[off + 3];
-        if (w2 < 0) {
-            w2 = -w2;
-        }
-        ny = (w1 + w2) >> 4;
-        w1 = Data_0200df30[off];
-        if (w1 < 0) {
-            w1 = -w1;
-        }
-        w2 = Data_0200df30[off + 2];
-        if (w2 < 0) {
-            w2 = -w2;
-        }
-        nx = (w1 + w2) >> 4;
-    }
-    vec[0] = r->x + (Data_0200ded8[out] & 0xffff0000);
-    {
-        s32 ry = r->y;
-
-        vec[1] = ry;
-        vec[2] = r->z + (Data_0200ded8[out] << 16);
-        request->y = ry;
-    }
-    for (;;) {
-        request->z = vec[2] + (Data_0200df30[request->kind * 4 + 1] << 16);
-        for (j = 0; j < ny; j++) {
-            request->x = vec[0] + (Data_0200df30[request->kind * 4] << 16);
-            for (i = 0; i < nx; i++) {
-                if (Func_02005b3c(r, &request->x) == 2) {
-                    goto found;
-                }
-                request->x += 0x100000;
-            }
-            request->z += 0x100000;
-        }
-        n++;
-        vec[0] += Data_0200ded8[out] & 0xffff0000;
-        vec[2] += Data_0200ded8[out] << 16;
-    }
-found:
-    *flag = 0;
-    if (n == 0) {
-        return 0;
-    }
-    request->x = r->x + (Data_0200ded8[out] & 0xffff0000) * n;
-    request->y = r->y;
-    request->z = r->z + (Data_0200ded8[out] << 16) * n;
-    return 1;
-}
 
 s32 SelectPrimarySceneData(void)
 {

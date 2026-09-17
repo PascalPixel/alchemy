@@ -2,8 +2,10 @@
 @ リンカが遠距離処理へ到達するために生成する。Cでは表現不能。
 .syntax unified
 	.thumb
+	.global Object_CheckMovementCollision
 	.global Func_080091d8
 	.thumb_func
+Object_CheckMovementCollision:
 Func_080091d8:
 	ldr	r4, [pc, #0]
 	bx	r4

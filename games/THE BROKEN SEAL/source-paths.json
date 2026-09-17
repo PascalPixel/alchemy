@@ -10962,27 +10962,27 @@
     },
     "resource_373:02000030": {
       "name": "FixedPoint_Distance",
-      "source": "FIELD/HAIDIA_MURA/STAGED_MOTION.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_373:0200006c": {
       "name": "StagedActor_FindAtTile",
-      "source": "FIELD/HAIDIA_MURA/STAGED_MOTION.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_373:02000244": {
       "name": "StagedActor_FillGridAttributeRectangle",
-      "source": "FIELD/HAIDIA_MURA/STAGED_MOTION.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_373:020000c4": {
       "name": "StagedActor_AdvancePair",
-      "source": "FIELD/HAIDIA_MURA/STAGED_MOTION.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_373:020002a8": {
       "name": "StagedActor_StopBlockedMotion",
-      "source": "FIELD/HAIDIA_MURA/STAGED_MOTION.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_373:02000474": {
       "name": "StagedActor_FindClearPosition",
-      "source": "FIELD/HAIDIA_MURA/STAGED_MOTION.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_373:020009dc": {
       "name": "MapStagedScene_SelectPrimaryData",
@@ -11258,7 +11258,7 @@
     "resource_373:02000608": {
       "name": "SceneActor_MoveAndRedraw",
       "call_via": "020068d6",
-      "source": "FIELD/HAIDIA_MURA/STAGED_MOTION.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_375:02000170": {
       "name": "FieldScene_RunActorPositionSequence",
@@ -12337,15 +12337,15 @@
     },
     "resource_392:02000030": {
       "name": "FixedPoint_Distance",
-      "source": "FIELD/KORIMA_HIROBA/STAGED_PARTICLE.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_392:0200006c": {
       "name": "StagedActor_FindAtTile",
-      "source": "FIELD/KORIMA_HIROBA/STAGED_PARTICLE.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_392:02000244": {
       "name": "StagedActor_FillGridAttributeRectangle",
-      "source": "FIELD/KORIMA_HIROBA/STAGED_PARTICLE.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_392:02000cb4": {
       "name": "SceneEffect_InitOrbitingParticle",
@@ -12353,7 +12353,7 @@
     },
     "resource_392:020000c4": {
       "name": "StagedActor_AdvancePair",
-      "source": "FIELD/KORIMA_HIROBA/STAGED_PARTICLE.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_392:020009e4": {
       "name": "SceneData_ReturnZero",
@@ -12381,7 +12381,7 @@
     },
     "resource_392:020002a8": {
       "name": "StagedActor_StopBlockedMotion",
-      "source": "FIELD/KORIMA_HIROBA/STAGED_PARTICLE.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_392:02000a2c": {
       "name": "FieldScene_SetupActor11Effect181",
@@ -12405,24 +12405,24 @@
     },
     "resource_392:02000474": {
       "name": "StagedActor_FindClearPosition",
-      "source": "FIELD/KORIMA_HIROBA/STAGED_PARTICLE.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_392:02000608": {
       "name": "SceneActor_MoveAndRedraw",
       "call_via": "0200160e",
-      "source": "FIELD/KORIMA_HIROBA/STAGED_PARTICLE.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_393:02000030": {
       "name": "FixedPoint_Distance",
-      "source": "FIELD/KORIMA_KAWA/STAGED_PALETTE.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_393:0200006c": {
       "name": "StagedActor_FindAtTile",
-      "source": "FIELD/KORIMA_KAWA/STAGED_PALETTE.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_393:02000244": {
       "name": "StagedActor_FillGridAttributeRectangle",
-      "source": "FIELD/KORIMA_KAWA/STAGED_PALETTE.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_393:020009e4": {
       "name": "MapStagedScene_GetEmptyData",
@@ -12434,7 +12434,7 @@
     },
     "resource_393:020000c4": {
       "name": "StagedActor_AdvancePair",
-      "source": "FIELD/KORIMA_KAWA/STAGED_PALETTE.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_393:02000cf4": {
       "name": "SceneEffect_AdjustColorChannels",
@@ -12446,7 +12446,7 @@
     },
     "resource_393:020002a8": {
       "name": "StagedActor_StopBlockedMotion",
-      "source": "FIELD/KORIMA_KAWA/STAGED_PALETTE.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_393:020009f8": {
       "name": "FieldScene_RunActorTenPlacementScene",
@@ -12466,7 +12466,7 @@
     },
     "resource_393:02000474": {
       "name": "StagedActor_FindClearPosition",
-      "source": "FIELD/KORIMA_KAWA/STAGED_PALETTE.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_393:02000c8c": {
       "name": "SceneEffect_AdjustPaletteColors",
@@ -12483,7 +12483,7 @@
     "resource_393:02000608": {
       "name": "SceneActor_MoveAndRedraw",
       "call_via": "02001656",
-      "source": "FIELD/KORIMA_KAWA/STAGED_PALETTE.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_39d:020008cc": {
       "name": "FindNearestF2Actor",
@@ -12814,27 +12814,27 @@
     },
     "resource_3a6:02000314": {
       "name": "FixedPoint_Distance",
-      "source": "FIELD/HAIDIA_DOU/STAGED_PAIR_REGION.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3a6:02000350": {
       "name": "StagedActor_FindAtTile",
-      "source": "FIELD/HAIDIA_DOU/STAGED_PAIR_REGION.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3a6:020003a8": {
       "name": "StagedActor_AdvancePair",
-      "source": "FIELD/HAIDIA_DOU/STAGED_PAIR_REGION.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3a6:02000528": {
       "name": "StagedActor_FillGridAttributeRectangle",
-      "source": "FIELD/HAIDIA_DOU/STAGED_PAIR_REGION.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3a6:0200058c": {
       "name": "StagedActor_StopBlockedMotion",
-      "source": "FIELD/HAIDIA_DOU/STAGED_PAIR_REGION.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3a6:02000758": {
       "name": "StagedActor_FindClearPosition",
-      "source": "FIELD/HAIDIA_DOU/STAGED_PAIR_REGION.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3a6:02000d80": {
       "name": "SelectSceneDataByState",
@@ -12943,7 +12943,7 @@
     "resource_3a6:020008ec": {
       "name": "SceneActor_MoveAndRedraw",
       "call_via": "020027ca",
-      "source": "FIELD/HAIDIA_DOU/STAGED_PAIR_REGION.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3a8:02000590": {
       "name": "FieldScene_RunStagedGroupSequence",
@@ -13341,15 +13341,15 @@
     },
     "resource_3bd:02000030": {
       "name": "FixedPoint_Distance",
-      "source": "FIELD/ARUTAMIRA_DOU/EXTENDED_PRESENTATION.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3bd:0200006c": {
       "name": "StagedActor_FindAtTile",
-      "source": "FIELD/ARUTAMIRA_DOU/EXTENDED_PRESENTATION.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3bd:02000244": {
       "name": "StagedActor_FillGridAttributeRectangle",
-      "source": "FIELD/ARUTAMIRA_DOU/EXTENDED_PRESENTATION.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3bd:020009dc": {
       "name": "FieldScene_SetActor13Value41",
@@ -13357,7 +13357,7 @@
     },
     "resource_3bd:020002a8": {
       "name": "StagedActor_StopBlockedMotion",
-      "source": "FIELD/ARUTAMIRA_DOU/EXTENDED_PRESENTATION.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3bd:02000b0c": {
       "name": "FieldScene_RunIndexedStep3",
@@ -13389,7 +13389,7 @@
     },
     "resource_3bd:020000c4": {
       "name": "StagedActor_AdvancePair",
-      "source": "FIELD/ARUTAMIRA_DOU/EXTENDED_PRESENTATION.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3bd:02003a30": {
       "name": "OverlayObject_UpdateThreeStateMotion",
@@ -13413,7 +13413,7 @@
     },
     "resource_3bd:02000474": {
       "name": "StagedActor_FindClearPosition",
-      "source": "FIELD/ARUTAMIRA_DOU/EXTENDED_PRESENTATION.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3bd:02000b24": {
       "name": "FieldScene_RunIndexedStep5",
@@ -13473,7 +13473,7 @@
     "resource_3bd:02000608": {
       "name": "SceneActor_MoveAndRedraw",
       "call_via": "020045fa",
-      "source": "FIELD/ARUTAMIRA_DOU/EXTENDED_PRESENTATION.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3bd:02003644": {
       "name": "FieldScene_RunScene3bdSequenceA"
@@ -13500,27 +13500,27 @@
     },
     "resource_3be:02000314": {
       "name": "FixedPoint_Distance",
-      "source": "FIELD/KARAGORU_DOU/STAGED_PAIR.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3be:02000350": {
       "name": "StagedActor_FindAtTile",
-      "source": "FIELD/KARAGORU_DOU/STAGED_PAIR.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3be:020003a8": {
       "name": "StagedActor_AdvancePair",
-      "source": "FIELD/KARAGORU_DOU/STAGED_PAIR.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3be:02000528": {
       "name": "StagedActor_FillGridAttributeRectangle",
-      "source": "FIELD/KARAGORU_DOU/STAGED_PAIR.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3be:0200058c": {
       "name": "StagedActor_StopBlockedMotion",
-      "source": "FIELD/KARAGORU_DOU/STAGED_PAIR.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3be:02000758": {
       "name": "StagedActor_FindClearPosition",
-      "source": "FIELD/KARAGORU_DOU/STAGED_PAIR.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3be:02000cc0": {
       "name": "StagedActorPairScene_GetVariantData",
@@ -13600,7 +13600,7 @@
     },
     "resource_3be:020008ec": {
       "name": "SceneActor_MoveAndRedraw",
-      "source": "FIELD/KARAGORU_DOU/STAGED_PAIR.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_39c:02003d20": {
       "name": "Scene_RunSelectorEntry"
@@ -13615,23 +13615,23 @@
     },
     "resource_39c:02000314": {
       "name": "FixedPoint_Distance",
-      "source": "FIELD/MAKYURI_HEYA/FIELD_PROBE_SCENE.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_39c:02000350": {
       "name": "StagedActor_FindAtTile",
-      "source": "FIELD/MAKYURI_HEYA/FIELD_PROBE_SCENE.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_39c:02000528": {
       "name": "StagedActor_FillGridAttributeRectangle",
-      "source": "FIELD/MAKYURI_HEYA/FIELD_PROBE_SCENE.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_39c:0200058c": {
       "name": "StagedActor_StopBlockedMotion",
-      "source": "FIELD/MAKYURI_HEYA/FIELD_PROBE_SCENE.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_39c:02000758": {
       "name": "StagedActor_FindClearPosition",
-      "source": "FIELD/MAKYURI_HEYA/FIELD_PROBE_SCENE.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_39c:02004f90": {
       "name": "set_record_table_value",
@@ -13894,7 +13894,7 @@
     "resource_39c:020008ec": {
       "name": "SceneActor_MoveAndRedraw",
       "call_via": "020066d2",
-      "source": "FIELD/MAKYURI_HEYA/FIELD_PROBE_SCENE.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_39c:020028b0": {
       "name": "FieldScene_RunColumnChoreography",
@@ -14938,15 +14938,15 @@
     },
     "resource_391:02000030": {
       "name": "FixedPoint_Distance",
-      "source": "FIELD/KORIMA_HASHI/BRANCHING_FORMATION.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_391:0200006c": {
       "name": "StagedActor_FindAtTile",
-      "source": "FIELD/KORIMA_HASHI/BRANCHING_FORMATION.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_391:02000244": {
       "name": "StagedActor_FillGridAttributeRectangle",
-      "source": "FIELD/KORIMA_HASHI/BRANCHING_FORMATION.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_391:02000a60": {
       "name": "SceneData_GetTableb0e4",
@@ -14970,7 +14970,7 @@
     },
     "resource_391:02000474": {
       "name": "StagedActor_FindClearPosition",
-      "source": "FIELD/KORIMA_HASHI/BRANCHING_FORMATION.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_391:02002768": {
       "name": "FieldScene_RunSplitPairSteps",
@@ -15010,7 +15010,7 @@
     },
     "resource_391:020002a8": {
       "name": "StagedActor_StopBlockedMotion",
-      "source": "FIELD/KORIMA_HASHI/BRANCHING_FORMATION.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_391:020009dc": {
       "name": "OverlayObject_ClearPendingAndRestoreMode",
@@ -15018,7 +15018,7 @@
     },
     "resource_391:020000c4": {
       "name": "StagedActor_AdvancePair",
-      "source": "FIELD/KORIMA_HASHI/BRANCHING_FORMATION.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_391:02000c14": {
       "name": "SceneActor_PassSubjectOffsetPosition",
@@ -15035,19 +15035,19 @@
     "resource_391:02000608": {
       "name": "SceneActor_MoveAndRedraw",
       "call_via": "020034ae",
-      "source": "FIELD/KORIMA_HASHI/BRANCHING_FORMATION_MOVE_AND_REDRAW.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_389:02000030": {
       "name": "FixedPoint_Distance",
-      "source": "FIELD/GOMA_HASHIRA/STAGED_PLACEMENT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_389:0200006c": {
       "name": "StagedActor_FindAtTile",
-      "source": "FIELD/GOMA_HASHIRA/STAGED_PLACEMENT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_389:02000244": {
       "name": "StagedActor_FillGridAttributeRectangle",
-      "source": "FIELD/GOMA_HASHIRA/STAGED_PLACEMENT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_389:02000b58": {
       "name": "SceneData_ReturnZero",
@@ -15059,7 +15059,7 @@
     },
     "resource_389:02000474": {
       "name": "StagedActor_FindClearPosition",
-      "source": "FIELD/GOMA_HASHIRA/STAGED_PLACEMENT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_389:0200109c": {
       "name": "FieldScene_RunFourStepSequence",
@@ -15079,7 +15079,7 @@
     },
     "resource_389:020000c4": {
       "name": "StagedActor_AdvancePair",
-      "source": "FIELD/GOMA_HASHIRA/STAGED_PLACEMENT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_389:02000a00": {
       "name": "SceneEffect_AdvancePositionByAxisMode",
@@ -15095,7 +15095,7 @@
     },
     "resource_389:020002a8": {
       "name": "StagedActor_StopBlockedMotion",
-      "source": "FIELD/GOMA_HASHIRA/STAGED_PLACEMENT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_389:02000b5c": {
       "name": "SceneData_GetTable9750",
@@ -15131,7 +15131,7 @@
     },
     "resource_389:02000608": {
       "name": "SceneActor_MoveAndRedraw",
-      "source": "FIELD/GOMA_HASHIRA/STAGED_PLACEMENT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_39b:02000030": {
       "name": "SetEffectRecordMode",
@@ -15143,27 +15143,27 @@
     },
     "resource_39b:02000314": {
       "name": "FixedPoint_Distance",
-      "source": "FIELD/MAKYURI_IRIGUCHI/STAGED_EFFECT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_39b:02000350": {
       "name": "StagedActor_FindAtTile",
-      "source": "FIELD/MAKYURI_IRIGUCHI/STAGED_EFFECT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_39b:020003a8": {
       "name": "StagedActor_AdvancePair",
-      "source": "FIELD/MAKYURI_IRIGUCHI/STAGED_EFFECT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_39b:02000528": {
       "name": "StagedActor_FillGridAttributeRectangle",
-      "source": "FIELD/MAKYURI_IRIGUCHI/STAGED_EFFECT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_39b:0200058c": {
       "name": "StagedActor_StopBlockedMotion",
-      "source": "FIELD/MAKYURI_IRIGUCHI/STAGED_EFFECT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_39b:02000758": {
       "name": "StagedActor_FindClearPosition",
-      "source": "FIELD/MAKYURI_IRIGUCHI/STAGED_EFFECT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_39b:02000ed0": {
       "name": "run_scene_effect_sequence",
@@ -15299,34 +15299,34 @@
     "resource_39b:020008ec": {
       "name": "SceneActor_MoveAndRedraw",
       "call_via": "02003082",
-      "source": "FIELD/MAKYURI_IRIGUCHI/STAGED_EFFECT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_39b:02002030": {
       "name": "FieldScene_RunScene39bSequenceA"
     },
     "resource_3b2:02000030": {
       "name": "FixedPoint_Distance",
-      "source": "FIELD/TAKARA_SHIMA/ISLAND_AND_CAVES.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3b2:0200006c": {
       "name": "StagedActor_FindAtTile",
-      "source": "FIELD/TAKARA_SHIMA/ISLAND_AND_CAVES.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3b2:020000c4": {
       "name": "StagedActor_AdvancePair",
-      "source": "FIELD/TAKARA_SHIMA/ISLAND_AND_CAVES.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3b2:02000244": {
       "name": "StagedActor_FillGridAttributeRectangle",
-      "source": "FIELD/TAKARA_SHIMA/ISLAND_AND_CAVES.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3b2:020002a8": {
       "name": "StagedActor_StopBlockedMotion",
-      "source": "FIELD/TAKARA_SHIMA/ISLAND_AND_CAVES.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3b2:02000474": {
       "name": "StagedActor_FindClearPosition",
-      "source": "FIELD/TAKARA_SHIMA/ISLAND_AND_CAVES.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3b2:020009dc": {
       "name": "SetEffectOwnerMode",
@@ -15627,7 +15627,7 @@
     "resource_3b2:02000608": {
       "name": "SceneActor_MoveAndRedraw",
       "call_via": "020038a2",
-      "source": "FIELD/TAKARA_SHIMA/ISLAND_AND_CAVES.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3b3:02000030": "FIELD/TAKARA_HASHIRA/STAGED_NAV.C",
     "resource_3b3:0200013c": {
@@ -15636,27 +15636,27 @@
     },
     "resource_3b3:02000314": {
       "name": "FixedPoint_Distance",
-      "source": "FIELD/TAKARA_HASHIRA/STAGED_NAV.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3b3:02000350": {
       "name": "StagedActor_FindAtTile",
-      "source": "FIELD/TAKARA_HASHIRA/STAGED_NAV.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3b3:020003a8": {
       "name": "StagedActor_AdvancePair",
-      "source": "FIELD/TAKARA_HASHIRA/STAGED_NAV.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3b3:02000528": {
       "name": "StagedActor_FillGridAttributeRectangle",
-      "source": "FIELD/TAKARA_HASHIRA/STAGED_NAV.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3b3:0200058c": {
       "name": "StagedActor_StopBlockedMotion",
-      "source": "FIELD/TAKARA_HASHIRA/STAGED_NAV.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3b3:02000758": {
       "name": "StagedActor_FindClearPosition",
-      "source": "FIELD/TAKARA_HASHIRA/STAGED_NAV.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3b3:02002230": {
       "name": "SceneEffect_SpawnRandomizedParticle",
@@ -15805,19 +15805,19 @@
     "resource_3b3:020008ec": {
       "name": "SceneActor_MoveAndRedraw",
       "call_via": "02003622",
-      "source": "FIELD/TAKARA_HASHIRA/STAGED_NAV.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3c4:02000030": {
       "name": "FixedPoint_Distance",
-      "source": "FIELD/BABI_CHIKA/MAP_INIT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3c4:0200006c": {
       "name": "StagedActor_FindAtTile",
-      "source": "FIELD/BABI_CHIKA/MAP_INIT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3c4:02000244": {
       "name": "StagedActor_FillGridAttributeRectangle",
-      "source": "FIELD/BABI_CHIKA/MAP_INIT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3c4:02001068": {
       "name": "advance_effect_motion",
@@ -15853,7 +15853,7 @@
     },
     "resource_3c4:02000474": {
       "name": "StagedActor_FindClearPosition",
-      "source": "FIELD/BABI_CHIKA/MAP_INIT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3c4:02001270": {
       "name": "SceneData_SelectDataByRuntimeSelector",
@@ -15941,7 +15941,7 @@
     },
     "resource_3c4:020002a8": {
       "name": "StagedActor_StopBlockedMotion",
-      "source": "FIELD/BABI_CHIKA/MAP_INIT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3c4:020009dc": "FIELD/BABI_CHIKA/MAP_INIT.C",
     "resource_3c4:02001038": {
@@ -15978,7 +15978,7 @@
     },
     "resource_3c4:020000c4": {
       "name": "StagedActor_AdvancePair",
-      "source": "FIELD/BABI_CHIKA/MAP_INIT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3c4:020013b4": {
       "name": "SceneActor_PassPointTwoRightOfActorZero",
@@ -16074,7 +16074,7 @@
     "resource_3c4:02000608": {
       "name": "SceneActor_MoveAndRedraw",
       "call_via": "02003936",
-      "source": "FIELD/BABI_CHIKA/MAP_INIT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3c4:0200259c": {
       "name": "FieldScene_InitializeActorGroups"
@@ -17071,15 +17071,15 @@
     },
     "resource_39f:02000030": {
       "name": "FixedPoint_Distance",
-      "source": "FIELD/MOGORU_MORI/WAYPOINT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_39f:0200006c": {
       "name": "StagedActor_FindAtTile",
-      "source": "FIELD/MOGORU_MORI/WAYPOINT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_39f:02000244": {
       "name": "StagedActor_FillGridAttributeRectangle",
-      "source": "FIELD/MOGORU_MORI/WAYPOINT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_39f:02002ba4": {
       "name": "update_orbiting_effect",
@@ -17123,7 +17123,7 @@
     },
     "resource_39f:02000474": {
       "name": "StagedActor_FindClearPosition",
-      "source": "FIELD/MOGORU_MORI/WAYPOINT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_39f:02001520": {
       "name": "SceneState_ApplyCrossRectsAroundActor11",
@@ -17163,7 +17163,7 @@
     },
     "resource_39f:020000c4": {
       "name": "StagedActor_AdvancePair",
-      "source": "FIELD/MOGORU_MORI/WAYPOINT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_39f:02001454": {
       "name": "FieldScene_RunProbedActorEightOrTenScene",
@@ -17187,7 +17187,7 @@
     },
     "resource_39f:020002a8": {
       "name": "StagedActor_StopBlockedMotion",
-      "source": "FIELD/MOGORU_MORI/WAYPOINT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_39f:020009dc": "FIELD/MOGORU_MORI/WAYPOINT.C",
     "resource_39f:02001078": {
@@ -17253,19 +17253,19 @@
     "resource_39f:02000608": {
       "name": "SceneActor_MoveAndRedraw",
       "call_via": "0200363e",
-      "source": "FIELD/MOGORU_MORI/WAYPOINT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3b4:02000030": {
       "name": "FixedPoint_Distance",
-      "source": "FIELD/TAKARA_ASHIBA/STAGED_STEP.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3b4:0200006c": {
       "name": "StagedActor_FindAtTile",
-      "source": "FIELD/TAKARA_ASHIBA/STAGED_STEP.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3b4:02000244": {
       "name": "StagedActor_FillGridAttributeRectangle",
-      "source": "FIELD/TAKARA_ASHIBA/STAGED_STEP.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3b4:020009ec": {
       "name": "Resource3b4_EmptyHookA",
@@ -17293,7 +17293,7 @@
     },
     "resource_3b4:020000c4": {
       "name": "StagedActor_AdvancePair",
-      "source": "FIELD/TAKARA_ASHIBA/STAGED_STEP.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3b4:02000a50": {
       "name": "SceneData_SelectDataByRuntimeSelector",
@@ -17365,7 +17365,7 @@
     },
     "resource_3b4:020002a8": {
       "name": "StagedActor_StopBlockedMotion",
-      "source": "FIELD/TAKARA_ASHIBA/STAGED_STEP.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3b4:02001c5c": {
       "name": "FieldScene_RunTwoStepSequence",
@@ -17485,7 +17485,7 @@
     },
     "resource_3b4:02000474": {
       "name": "StagedActor_FindClearPosition",
-      "source": "FIELD/TAKARA_ASHIBA/STAGED_STEP.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3b4:020012d4": {
       "name": "FieldScene_RunStep12ValueEeb",
@@ -17554,19 +17554,19 @@
     "resource_3b4:02000608": {
       "name": "SceneActor_MoveAndRedraw",
       "call_via": "02002d8a",
-      "source": "FIELD/TAKARA_ASHIBA/STAGED_STEP.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3c5:02000030": {
       "name": "FixedPoint_Distance",
-      "source": "FIELD/BABI_IRIGUCHI/BRANCHING_EVENT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3c5:0200006c": {
       "name": "StagedActor_FindAtTile",
-      "source": "FIELD/BABI_IRIGUCHI/BRANCHING_EVENT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3c5:02000244": {
       "name": "StagedActor_FillGridAttributeRectangle",
-      "source": "FIELD/BABI_IRIGUCHI/BRANCHING_EVENT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3c5:02000cf0": {
       "name": "advance_effect_motion",
@@ -17590,7 +17590,7 @@
     },
     "resource_3c5:02000474": {
       "name": "StagedActor_FindClearPosition",
-      "source": "FIELD/BABI_IRIGUCHI/BRANCHING_EVENT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3c5:02002820": {
       "name": "SceneState_ApplyRectsAtActors8And9",
@@ -17662,7 +17662,7 @@
     },
     "resource_3c5:020002a8": {
       "name": "StagedActor_StopBlockedMotion",
-      "source": "FIELD/BABI_IRIGUCHI/BRANCHING_EVENT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3c5:020009dc": "FIELD/BABI_IRIGUCHI/BRANCHING_EVENT.C",
     "resource_3c5:020027a0": {
@@ -17679,7 +17679,7 @@
     },
     "resource_3c5:020000c4": {
       "name": "StagedActor_AdvancePair",
-      "source": "FIELD/BABI_IRIGUCHI/BRANCHING_EVENT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3c5:02001214": {
       "name": "FieldScene_RunStepWithValue2693",
@@ -17724,7 +17724,7 @@
     "resource_3c5:02000608": {
       "name": "SceneActor_MoveAndRedraw",
       "call_via": "0200371a",
-      "source": "FIELD/BABI_IRIGUCHI/BRANCHING_EVENT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3a5:02000030": "FIELD/RAMAKAN_SABAKU/SELECTED_ACTOR_SET_EFFECT_RECORD_MODE.C",
     "resource_3a5:02000e00": {
@@ -17874,23 +17874,23 @@
     },
     "resource_3bf:02000030": {
       "name": "FixedPoint_Distance",
-      "source": "FIELD/RUNPA_JO/FORTRESS.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3bf:0200006c": {
       "name": "StagedActor_FindAtTile",
-      "source": "FIELD/RUNPA_JO/FORTRESS.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3bf:020000c4": {
       "name": "StagedActor_AdvancePair",
-      "source": "FIELD/RUNPA_JO/FORTRESS.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3bf:02000244": {
       "name": "StagedActor_FillGridAttributeRectangle",
-      "source": "FIELD/RUNPA_JO/FORTRESS.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3bf:020002a8": {
       "name": "StagedActor_StopBlockedMotion",
-      "source": "FIELD/RUNPA_JO/FORTRESS.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3bf:0200034c": {
       "name": "FieldScene_FindActorRegion",
@@ -17906,7 +17906,7 @@
     },
     "resource_3bf:02000474": {
       "name": "StagedActor_FindClearPosition",
-      "source": "FIELD/RUNPA_JO/FORTRESS.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3bf:020009dc": {
       "name": "SelectPrimarySceneData",
@@ -18299,7 +18299,7 @@
     "resource_3bf:02000608": {
       "name": "SceneActor_MoveAndRedraw",
       "call_via": "02005f32",
-      "source": "FIELD/RUNPA_JO/FORTRESS_MOVE_AND_REDRAW.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3bf:02000e80": {
       "name": "FieldScene_UpdateTableBObjectPair",
@@ -18605,6 +18605,28 @@
     "main:08010704": {
       "name": "Map_CopyCellAttributeRect",
       "source": "FIELD/COMMON/MAP/COPY_CELL_ATTRIBUTE_RECT.C"
+    },
+    "resource_39c:020003a8": {
+      "name": "StagedActor_AdvancePair",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+    },
+    "main:080030f8": {
+      "name": "WaitFrames"
+    },
+    "main:08009080": {
+      "name": "Object_SetMode"
+    },
+    "main:08009150": {
+      "name": "Object_SetPosition"
+    },
+    "main:08009158": {
+      "name": "Object_CommitPosition"
+    },
+    "main:080091d8": {
+      "name": "Object_CheckMovementCollision"
+    },
+    "main:080f9010": {
+      "name": "Audio_PlayCue"
     },
     "main:08019d2c": {
       "name": "Localization_LookupEntryId",

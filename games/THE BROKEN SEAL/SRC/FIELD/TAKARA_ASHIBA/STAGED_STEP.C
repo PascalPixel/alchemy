@@ -1,22 +1,5 @@
 #include "TYPES.H"
 
-#define StagedActorStepTable Data_0200a644
-#define GetStagedActor Func_02002614
-#define FindNextStagedActor Func_02000176
-#define FindBlockingStagedActor Func_020001a2
-#define FindElevatedBlockingStagedActor Func_020001ce
-#define CanStartStagedActorMove Func_02002680
-#define SetStagedActorMode Func_02002660
-#define SelectStagedActorSlot Func_02002628
-#define StartStagedActorEffect Func_020027c6
-#define StartNextStagedActorMove Func_02002696
-#define StartLeadStagedActorMove Func_020026a6
-#define FinishStagedActorMove Func_020026b4
-#define FinishStagedActorEffect Func_020027e8
-#define SetStagedActorTransition Func_020026cc
-#define TestActorPosition Func_02002a3c
-#define ActorProbeOffsets Data_0200a69c
-#define ActorSearchStep Data_0200a644
 #define FieldScene_RunIndexedStep0 Func_02001108
 #define FieldScene_RunIndexedStep1 Func_02001114
 #define SceneState_ResetCounter412OnHeading4000B Func_02001120
@@ -28,35 +11,6 @@
 #define FieldScene_RunStep10ValueEe9 Func_0200126c
 #define FieldScene_RunStep11ValueEea Func_020012a0
 #define FieldScene_RunStep12ValueEeb Func_020012d4
-#define Data_0200e1e8 Data_0200a69c
-#define Data_0200e190 Data_0200a644
-#define Func_02006610 Func_02002b6c
-#define Func_0200661c Func_02002b78
-#define Func_020066b4 Func_02002c10
-#define Func_02006714 Func_02002c50
-#define Func_0200668a Func_02002bf6
-#define Func_0200672c Func_02002c68
-#define Func_020066ea Func_02002c46
-#define Func_020066c4 Func_02002c30
-#define RefreshStagedActor Func_02002c68_a
-#define Func_02006614 Func_02002bc8
-#define Func_0200661e Func_02002bd2
-#define Func_0200687c Func_02002d30
-#define Func_02006658 Func_02002bfc
-#define Func_02006776 Func_02002cb2
-#define Func_0200678e Func_02002cca
-#define Func_02006740 Func_02002c9c
-#define Func_020067a4 Func_02002ce0
-#define Func_020067bc Func_02002cf8
-#define Func_020067d4 Func_02002d10
-#define Func_0200677a Func_02002cd6
-#define Func_020068f4 Func_02002da8
-#define Func_020068fa Func_02002dae
-#define Func_020066b8 Func_02002c6c
-#define Func_02006752 Func_02002cee
-#define Func_020067ae Func_02002d4a
-#define Func_020069d0 Func_02002e84
-#define STAGED_ACTOR_MOVEMENT_UNTYPED_LOCATION_CALL
 #define SceneActor_SetActor15ModeZero Func_020009dc
 #define ActorPresentation_SetSceneCell58AndMarkActorEight Func_02001a48
 #define ActorPresentation_RepaintCellsAtActorsElevenAndTwelve Func_02001df8
@@ -131,31 +85,8 @@
 #define FieldScene_NoOpCallback Func_02001980
 
 #include "STAGED_ACTOR.H"
-#include "FIND_CLEAR_ACTOR_POSITION.H"
-#include "STAGED_ACTOR_MOVEMENT.H"
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
 
-typedef struct { s32 unk0; s32 unk4; s32 unk8; } Desc;
-
-typedef struct { u8 filler0[0x28]; s16 *unk28; } Sub;
-
-typedef struct {
-    u8 filler0[6];
-    u16 unk6;
-    s32 unk8;
-    s32 unkC;
-    s32 unk10;
-    u8 filler14[0x10];
-    s32 unk24;
-    u8 filler28[4];
-    s32 unk2C;
-    u8 filler30[8];
-    s32 unk38;
-    u8 filler3C[4];
-    s32 unk40;
-    u8 filler44[0xC];
-    Sub *unk50;
-} Ent;
 
 struct Actor {
     s32 f00;
@@ -180,26 +111,8 @@ struct Slot {
     u16 f06;
 };
 
-extern u8 Data_02010000[];
-extern s32 Data_0200a684[];
 extern s32 Data_0200af74[];
 
-typedef s32(*IwramIntegerSquareRoot)(s32);
-struct StagedActor *Func_02002614(s32 arg0);
-struct StagedActor *Func_02000176(s32 *arg0, struct StagedActor *arg1);
-struct StagedActor *Func_020001a2(s32 *arg0, struct StagedActor *arg1);
-struct StagedActor *Func_020001ce(s32 *arg0, struct StagedActor *arg1);
-s32 Func_02002680(struct StagedActor *arg0, s32 *arg1);
-void Func_02002660(struct StagedActor *arg0, s32 arg1);
-void Func_02002628(s32 arg0);
-void Func_020027c6(s32 arg0);
-void Func_02002696(struct StagedActor *arg0, s32 arg1, s32 arg2, s32 arg3);
-void Func_020026a6(struct StagedActor *arg0, s32 arg1, s32 arg2, s32 arg3);
-void Func_020026b4(struct StagedActor *arg0);
-void Func_020027e8(void);
-void Func_020026cc(struct StagedActor *arg0, s32 arg1);
-Ent *Func_02000342(Desc *, Ent *);
-s32 Func_02002802(Ent *, Desc *);
 void Func_020090b8(s32);
 u8 *Func_0200a540(s32);
 void Func_0200a5c8(void);
@@ -698,193 +611,6 @@ static __inline__ s32 Value1_02000e50(s32 (*f)(), s32 a0)
     return f(a0);
 }
 
-s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
-{
-    s32 delta_x = (*first_position++ - *second_position++) >> 16;
-    s32 delta_y = (*first_position++ - *second_position++) >> 16;
-    s32 delta_z = (*first_position - *second_position) >> 16;
-    s32 delta_x_squared = delta_x *delta_x;
-    s32 delta_y_squared = delta_y *delta_y;
-    s32 delta_z_squared = delta_z *delta_z;
-
-    return ((IwramIntegerSquareRoot) 0x030001D8)(delta_x_squared + delta_y_squared + delta_z_squared);
-}
-
-s32 *StagedActor_FindAtTile(s32 *arg0)
-{
-    extern u8 *Data_03001ebc;
-
-    s32 **slots = (s32 **)(Data_03001ebc + 0x14);
-    u32 i;
-
-    for (i = 8; i <= 65; i++) {
-        s32 *p = slots[i];
-
-        if ((arg0[0] >> 20) == (p[2] >> 20)
-            && (arg0[1] / 0x10000) == (p[3] / 0x10000)
-            && (arg0[2] >> 20) == (p[4] >> 20)) {
-            return p;
-        }
-    }
-    return 0;
-}
-
-void StagedActor_AdvancePair(void)
-{
-
-    s32 dst[3];
-    struct StagedActor *lead;
-    struct StagedActor *next;
-    struct StagedActor *blocker;
-    s32 dir;
-    u32 step;
-    s32 rate;
-    s32 zero;
-
-    lead = GetStagedActor(0);
-    dir = lead->direction_and_kind >> 12;
-    step = StagedActorStepTable[dir];
-    dst[0] = lead->x.value + (step & 0xffff0000);
-    dst[1] = lead->y;
-    step <<= 16;
-    dst[2] = lead->z.value + step;
-    next = FindNextStagedActor(dst, lead);
-    if (next == 0) return;
-
-    step = StagedActorStepTable[dir];
-    dst[0] = next->x.value + (step & 0xffff0000);
-    dst[1] = next->y;
-    step <<= 16;
-    dst[2] = next->z.value + step;
-    blocker = FindBlockingStagedActor(dst, next);
-    if (blocker != 0 && (blocker->collision_flags & 1) != 0) return;
-
-    dst[0] = next->x.value;
-    dst[1] = next->y + 0x100000;
-    dst[2] = next->z.value;
-    blocker = FindElevatedBlockingStagedActor(dst, next);
-    if (blocker != 0 && (blocker->collision_flags & 1) != 0) return;
-
-    next->transition_mode = 2;
-    step = StagedActorStepTable[dir];
-    dst[0] = next->x.value + (step & 0xffff0000);
-    dst[1] = next->y;
-    step <<= 16;
-    dst[2] = next->z.value + step;
-    if (CanStartStagedActorMove(next, dst) > 0) return;
-
-    zero = next->transition_busy;
-    if (zero != 0) return;
-
-    SetStagedActorMode(lead, 8);
-    rate = 0x3333;
-    SelectStagedActorSlot(15);
-    StartStagedActorEffect(185);
-    next->move_rate_x = rate;
-    next->move_rate_z = rate;
-    StartNextStagedActorMove(next, dst[0], dst[1], dst[2]);
-    lead->move_rate_x = rate;
-    lead->move_rate_z = rate;
-    StartLeadStagedActorMove(lead, dst[0], dst[1], dst[2]);
-    FinishStagedActorMove(next);
-    FinishStagedActorEffect();
-    next->x.value = dst[0];
-    next->z.value = dst[2];
-    next->unknown_24 = zero;
-    next->unknown_2c = zero;
-    lead->unknown_38 = 0x80000000;
-    lead->unknown_40 = 0x80000000;
-    lead->unknown_24 = zero;
-    lead->unknown_2c = zero;
-    lead->x.value = lead->x.parts.cell << 16;
-    lead->z.value = lead->z.parts.cell << 16;
-    SetStagedActorTransition(lead, 1);
-}
-
-s32 StagedActor_FillGridAttributeRectangle(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
-{
-    u8 *g = (u8 *)Data_03001e70;
-    u8 *base;
-    u32 i;
-    u32 j;
-
-    if (g != 0) {
-        if (arg0 <= 2) {
-            u32 off = arg0 * 48 + 304;
-
-            base = *(u8 **)(g + off);
-        } else {
-            base = Data_02010000;
-        }
-        base += (arg1 + (arg2 << 7)) * 4;
-        for (i = 0; i < arg4; i++) {
-            u8 *p = base + (i << 9);
-
-            for (j = 0; j < arg3; j++) {
-                p[2] = (u8)arg5;
-                p += 4;
-            }
-        }
-    }
-    return 0;
-}
-
-s32 StagedActor_StopBlockedMotion(Ent *a)
-{
-    extern s32 Data_0200a644[];
-
-    Desc d;
-    u32 idx;
-    s32 m;
-    Ent *r;
-
-    idx = a->unk6 >> 12;
-    m = Data_0200a644[idx];
-    d.unk0 = a->unk8 + (m & 0xffff0000);
-    d.unk4 = a->unkC;
-    m = m << 16;
-    d.unk8 = a->unk10 + m;
-    r = Func_02000342(&d, a);
-    if (r != 0) {
-        u32 i = 0;
-        s32 v = *r->unk50->unk28;
-        s32 *p = Data_0200a684;
-
-        do {
-            if (v == *p++) goto done;
-            i++;
-        } while (i <= 5);
-        a->unk24 = 0;
-        a->unk2C = 0;
-        a->unk38 = 0x80000000;
-        a->unk40 = 0x80000000;
-    }
-    m = Data_0200a644[idx];
-    d.unk0 = a->unk8 + (m & 0xffff0000);
-    d.unk4 = a->unkC;
-    m = m << 16;
-    d.unk8 = a->unk10 + m;
-    if (Func_02002802(a, &d) > 0) {
-        a->unk24 = 0;
-        a->unk2C = 0;
-        a->unk38 = 0x80000000;
-        a->unk40 = 0x80000000;
-    }
-done:
-    return 0;
-}
-
-s32 StagedActor_FindClearPosition(s32 *a)
-{
-    extern u8 *Data_03001ebc;
-
-#include "FIND_CLEAR_ACTOR_POSITION_BODY.INC"
-}
-
-void SceneActor_MoveAndRedraw(StagedActorMovementRequest request)
-{
-#include "RUN_STAGED_ACTOR_MOVEMENT_AND_REDRAW_BODY.INC"
-}
 
 /* resource_3b4 actor presentation: cell repaints for slots 11 and 12. */
 

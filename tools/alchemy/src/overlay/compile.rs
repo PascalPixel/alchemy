@@ -449,25 +449,49 @@ fn compile_overlay_unit(
                 .map(|owner| owner.legacy_name())
         })
         .collect::<Result<Vec<_>, _>>()?;
-    let sectioned = section_functions(
+    let mut sectioned = section_functions(
         &produced,
         &symbols.iter().map(String::as_str).collect::<Vec<_>>(),
         unit.data.is_some(),
     )
     .map_err(|error| format!("{}: {error}", unit.id))?;
-    fs::write(&assembly, sectioned).map_err(|error| error.to_string())?;
     let unselected = members
         .iter()
         .zip(&symbols)
         .filter(|(member, _)| selected.is_some_and(|selected| member.canonical != selected))
         .map(|(member, symbol)| (member.canonical, symbol.clone()))
         .collect::<Vec<_>>();
+    // A selected member links alone: only its section stays, so a call or
+    // literal reaching another member is an undefined name. It binds at that
+    // member's canonical address and, in a placement, pairs from the canonical
+    // site like any other binding. A data unit keeps every function linked
+    // instead, since its tables point at them.
+    let mut unit_symbols = unit.absolute_symbols.clone();
     if let Some(selected) = selected {
-        members.retain(|member| member.canonical == selected);
-        if members.is_empty() {
-            return Err(format!("{}: undeclared selected owner", unit.id));
+        let index = members
+            .iter()
+            .position(|member| member.canonical == selected)
+            .ok_or_else(|| format!("{}: undeclared selected owner", unit.id))?;
+        if unit.data.is_none() {
+            sectioned = selected_section(&sectioned, &symbols[index])
+                .map_err(|error| format!("{}: {error}", unit.id))?;
         }
+        for (member, symbol) in members.iter().zip(&symbols) {
+            if unit.data.is_none() && member.canonical != selected {
+                unit_symbols.insert(
+                    symbol.clone(),
+                    AbsoluteSymbol {
+                        address: u64::from(
+                            member.canonical + overlay::RUNTIME_BASE - overlay::RESOURCE_BASE,
+                        ),
+                        kind: AbsoluteSymbolKind::Thumb,
+                    },
+                );
+            }
+        }
+        members.retain(|member| member.canonical == selected);
     }
+    fs::write(&assembly, sectioned).map_err(|error| error.to_string())?;
     let mut placed: Vec<(u32, String, usize)> = Vec::new();
     for member in &members {
         let regional =
@@ -619,7 +643,7 @@ fn compile_overlay_unit(
             canonical: image_at(unit.image(), &canonical),
             placed: placement.map(|placement| image_at(image, placement.reference)),
             direct: instance && english,
-            unit_symbols: &unit.absolute_symbols,
+            unit_symbols: &unit_symbols,
             declared: &declared,
             members: &links,
             keeps_unselected: unit.data.is_some() && selected.is_some(),
@@ -1101,6 +1125,28 @@ fn section_functions(
             next += 1;
         }
         out.push((*line).to_string());
+    }
+    Ok(format!("{}\n", out.join("\n")))
+}
+
+/// Sectioned unit assembly reduced to its file header and one member's
+/// section, pool included. The other members' labels become undefined.
+fn selected_section(sectioned: &str, symbol: &str) -> Result<String, String> {
+    let opening = format!("\t.section\t.text.{symbol},\"ax\",%progbits");
+    let mut out = Vec::new();
+    let (mut header, mut keep, mut found) = (true, false, false);
+    for line in sectioned.lines() {
+        if line.trim_start().starts_with(".section") {
+            header = false;
+            keep = line == opening;
+            found |= keep;
+        }
+        if header || keep {
+            out.push(line);
+        }
+    }
+    if !found {
+        return Err(format!("unit assembly has no section for {symbol}"));
     }
     Ok(format!("{}\n", out.join("\n")))
 }
@@ -2457,6 +2503,73 @@ mod source_activation_tests {
         assert!(!bound.contains_key("Data_0200a1f0"));
         assert_eq!(bound[SPELLED], data(0x0200_a900));
         assert_eq!(bound["Scene_Helper"], thumb(0x0200_8200));
+    }
+    #[test]
+    fn selected_member_reaches_other_members_where_they_are_placed() {
+        // A member linked alone keeps only its own section, so its call to
+        // another member and that member's address in its pool are undefined
+        // names, bound at their canonical address and paired from there.
+        let mut placement = Placement::new(REGISTER);
+        placement.canonical = placed_image(
+            0x10,
+            0x0200_0040,
+            [0x0200_8100, 0x0200_8180],
+            [0x0200_a000, 0x0200_8181],
+        );
+        placement.instance = placed_image(
+            0x30,
+            0x0200_0080,
+            [0x0200_8200, 0x0200_81c0],
+            [0x0200_a800, 0x0200_81c1],
+        );
+        let member = "Func_02000180";
+        placement
+            .undefined
+            .retain(|name, _| !name.starts_with("Func_") && name != SPELLED);
+        placement.undefined.insert(
+            member.into(),
+            SymbolUses {
+                call: true,
+                value: true,
+            },
+        );
+        placement
+            .unit_symbols
+            .insert(member.into(), thumb(0x0200_8180));
+        let (canonical, _) = placement.bind(false, false, &BTreeMap::new()).unwrap();
+        assert_eq!(canonical[member], thumb(0x0200_8180));
+        // An instance registers no owner of a legacy member name; pairing speaks.
+        let (instance, _) = placement.bind(true, true, &BTreeMap::new()).unwrap();
+        assert_eq!(instance[member], thumb(0x0200_81c0));
+        let (edition, _) = placement
+            .bind_as(Some("resource_3bf"), false, &BTreeMap::new())
+            .unwrap();
+        assert_eq!(edition[member], thumb(0x0200_81c0));
+        // A member the placed code does not reach is an error, not a guess.
+        placement.instance[0x88..0x8c].copy_from_slice(&[0; 4]);
+        let error = placement.bind(true, true, &BTreeMap::new()).unwrap_err();
+        assert!(
+            error.contains("edition lacks a corresponding overlay call"),
+            "{error}"
+        );
+    }
+    #[test]
+    fn selected_section_keeps_the_file_header_and_one_member() {
+        let sectioned = "\t.file\t\"UNIT.C\"\n\t.code\t16\n.text\n\t.align\t2\n\
+            \t.section\t.text.Func_02000030,\"ax\",%progbits\n\t.global\tFunc_02000030\nFunc_02000030:\n\tbl\tFunc_0200006c\n\t.align\t2\n\
+            \t.section\t.text.Func_0200006c,\"ax\",%progbits\n\t.global\tFunc_0200006c\nFunc_0200006c:\n\tbx\tlr\n.L4:\n\t.word\tFunc_02000030\n";
+        assert_eq!(
+            selected_section(sectioned, "Func_0200006c").unwrap(),
+            "\t.file\t\"UNIT.C\"\n\t.code\t16\n.text\n\t.align\t2\n\
+            \t.section\t.text.Func_0200006c,\"ax\",%progbits\n\t.global\tFunc_0200006c\nFunc_0200006c:\n\tbx\tlr\n.L4:\n\t.word\tFunc_02000030\n"
+        );
+        assert_eq!(
+            selected_section(sectioned, "Func_02000030").unwrap(),
+            "\t.file\t\"UNIT.C\"\n\t.code\t16\n.text\n\t.align\t2\n\
+            \t.section\t.text.Func_02000030,\"ax\",%progbits\n\t.global\tFunc_02000030\nFunc_02000030:\n\tbl\tFunc_0200006c\n\t.align\t2\n"
+        );
+        let error = selected_section(sectioned, "Func_02000244").unwrap_err();
+        assert!(error.contains("no section for Func_02000244"), "{error}");
     }
     #[test]
     fn instance_binding_reaching_a_different_main_target_is_rejected() {

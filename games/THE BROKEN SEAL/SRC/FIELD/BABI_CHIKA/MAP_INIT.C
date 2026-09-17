@@ -1666,135 +1666,71 @@ void SceneActor_LandOnHighestPlatform(s32 subject)
 
 void FieldScene_RunMiddleSequence(void)
 {
-    extern u8 Data_03001ebc[];
-
-    s32 saved[28];
-    s32 frame;
-    s32 outer;
-    s32 base;
-    s32 zero;
+    struct FieldActor saved;
+    s32 i;
+    s32 j;
     s32 found;
-    s32 inner;
-    s32 slot;
-    s32 rec;
-    s32 tmp;
-    s32 dst;
-    s32 pa;
-    s32 pb;
-    s32 v0;
-    s32 va;
-    s32 v4;
-    s32 vb;
-    s32 v3;
 
     Func_02004e0a();
-    outer = 0;
-    frame = (s32)saved;
-    zero = outer;
-    base = 12;
-    L_02001d20:;
-    rec = Value1_02001d04(Func_02004e30, base);
-    if ((12 & *(u8 *)(*(volatile s32 *)(rec + 80) + 9)) == 12) {
-        slot = outer + 0x200;
-        if (Value1_02001d04(Func_02004e10, slot) == 0) {
-            Func_02004e52(base);
+    for (i = 0; i <= 2; i++) {
+        if (((struct FieldActor *)Value1_02001d04(Func_02004e30, i + 12))->sprite->priority == 3
+            && Value1_02001d04(Func_02004e10, i + 0x200) == 0) {
+            Func_02004e52(i + 12);
             Func_02002d82();
-            Func_02004e90(base, 0, 0);
-            Func_02004e36(slot);
-            goto L_02001f40;
+            Func_02004e90(i + 12, 0, 0);
+            Func_02004e36(i + 0x200);
+            break;
+        }
+        if ((((struct FieldActor *)Value1_02001d04(Func_02004ef4, i + 12))->z.fixed >> 20) == 9
+            && Value1_02001d04(Func_02004ed0, i + 0x200) == 0) {
+            *(s32 *)(Value1_02001d04(Func_02004f16, i + 12) + 20) = 0;
+            ((struct FieldActor *)Value1_02001d04(Func_02004f1e, i + 12))->velocity_y = 0;
+            *(s32 *)(Func_02004f26(i + 12) + 60) = -0x80000000;
+            ((struct FieldActor *)Func_02004f32(i + 12))->motion_flags = 0;
+            *(u16 *)(Func_02004f3c(i + 12) + 100) = 0;
+            found = i;
+            for (j = 0; j < i; j++) {
+                if (Value1_02001d04(Func_02004f1c, 0x200 + j) == 0) {
+                    saved.x.fixed = ((struct FieldActor *)Value1_02001d04(Func_02004e6e, i + 12))->x.fixed;
+                    saved.y.fixed = ((struct FieldActor *)Value1_02001d04(Func_02004e7a, i + 12))->y.fixed;
+                    saved.z.fixed = ((struct FieldActor *)Value1_02001d04(Func_02004e86, i + 12))->z.fixed;
+                    ((struct FieldActor *)Func_02004e92_a(i + 12))->x.fixed =
+                        ((struct FieldActor *)Value1_02001d04(Func_02004e9e, j + 12))->x.fixed;
+                    ((struct FieldActor *)Value1_02001d04(Func_02004ea8, i + 12))->y.fixed =
+                        ((struct FieldActor *)Value1_02001d04(Func_02004eb0, j + 12))->y.fixed;
+                    ((struct FieldActor *)Value1_02001d04(Func_02004eba, i + 12))->z.fixed =
+                        ((struct FieldActor *)Value1_02001d04(Func_02004ec2, j + 12))->z.fixed;
+                    ((struct FieldActor *)Func_02004ecc(j + 12))->x.fixed = saved.x.fixed;
+                    ((struct FieldActor *)Func_02004ed8(j + 12))->y.fixed = saved.y.fixed;
+                    ((struct FieldActor *)Func_02004ee4(j + 12))->z.fixed = saved.z.fixed;
+                    found = j;
+                    break;
+                }
+            }
+            *(s32 *)(Func_02004f6a(found + 12) + 20) = 0;
+            ((struct FieldActor *)Func_02004f74(found + 12))->velocity_y = 0;
+            *(s32 *)(Func_02004f7e(found + 12) + 60) = -0x80000000;
+            ((struct FieldActor *)Func_02004f8a(found + 12))->motion_flags = 0;
+            *(u16 *)(Func_02004f96(found + 12) + 100) = 0;
+            Value2(Func_02005010, 0x30000, 0x6000);
+            ((struct FieldActor *)Func_0200502c())->motion_flags = 0;
+            Call4(Func_02005034, 0xa80000, 0x80000, 0xb80000, 1);
+            Func_02005040();
+            Func_02003aee(found + 12);
+            if ((((struct FieldActor *)Value1_02001d04(Func_02004fd4, found + 12))->x.fixed >> 20) == 8) {
+                (*(s16 *)(Func_02004fe2(10) + 100))++;
+                (*(s16 *)(Func_02004ff0(11) + 100))--;
+            } else {
+                (*(s16 *)(Func_02004ffe(10) + 100))--;
+                (*(s16 *)(Func_0200500c(11) + 100))++;
+            }
+            ((struct FieldActor *)Func_0200501a(found + 12))->update = (void (*)(union FieldObject *))0x2009a99;
+            Func_020039d4(40);
+            ((struct FieldActor *)Func_0200502a(found + 12))->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+            Func_0200500e(0x200 + found);
+            break;
         }
     }
-    goto L_02001de4;
-    L_02001d5e:;
-    rec = Value1_02001d04(Func_02004e6e, base);
-    *(s32 *)(frame + 8) = *(volatile s32 *)(rec + 8);
-    rec = Value1_02001d04(Func_02004e7a, base);
-    *(s32 *)(frame + 12) = *(volatile s32 *)(rec + 12);
-    rec = Value1_02001d04(Func_02004e86, base);
-    *(s32 *)(frame + 16) = *(volatile s32 *)(rec + 16);
-    dst = Func_02004e92_a(base);
-    pa = inner + 12;
-    rec = Value1_02001d04(Func_02004e9e, pa);
-    *(volatile s32 *)(dst + 8) = *(volatile s32 *)(rec + 8);
-    dst = Value1_02001d04(Func_02004ea8, base);
-    rec = Value1_02001d04(Func_02004eb0, pa);
-    *(volatile s32 *)(dst + 12) = *(volatile s32 *)(rec + 12);
-    dst = Value1_02001d04(Func_02004eba, base);
-    rec = Value1_02001d04(Func_02004ec2, pa);
-    *(volatile s32 *)(dst + 16) = *(volatile s32 *)(rec + 16);
-    rec = Func_02004ecc(pa);
-    *(volatile s32 *)(rec + 8) = *(s32 *)(frame + 8);
-    rec = Func_02004ed8(pa);
-    *(volatile s32 *)(rec + 12) = *(s32 *)(frame + 12);
-    found = inner;
-    rec = Func_02004ee4(pa);
-    *(volatile s32 *)(rec + 16) = *(s32 *)(frame + 16);
-    goto L_02001e56;
-    L_02001de4:;
-    rec = Value1_02001d04(Func_02004ef4, base);
-    if ((*(volatile s32 *)(rec + 16) >> 20) != 9) {
-        goto L_02001f36;
-    }
-    tmp = Value1_02001d04(Func_02004ed0, outer + 0x200);
-    if (tmp != 0) {
-        goto L_02001f36;
-    }
-    rec = Value1_02001d04(Func_02004f16, base);
-    *(volatile s32 *)(rec + 20) = tmp;
-    rec = Value1_02001d04(Func_02004f1e, base);
-    *(volatile s32 *)(rec + 40) = tmp;
-    rec = Func_02004f26(base);
-    *(volatile s32 *)(rec + 60) = -0x80000000;
-    *(u8 *)(Func_02004f32(base) + 85) = tmp;
-    *(volatile u16 *)(Func_02004f3c(base) + 100) = tmp;
-    found = outer;
-    for (inner = 0; inner < outer; inner++) {
-        if (Value1_02001d04(Func_02004f1c, 0x200 + inner) == 0) {
-            goto L_02001d5e;
-        }
-    }
-    L_02001e56:;
-    pb = found + 12;
-    rec = Func_02004f6a(pb);
-    *(volatile s32 *)(rec + 20) = zero;
-    rec = Func_02004f74(pb);
-    *(volatile s32 *)(rec + 40) = zero;
-    rec = Func_02004f7e(pb);
-    *(volatile s32 *)(rec + 60) = -0x80000000;
-    *(u8 *)(Func_02004f8a(pb) + 85) = zero;
-    *(volatile u16 *)(Func_02004f96(pb) + 100) = zero;
-    Value2(Func_02005010, 0x30000, 0x6000);
-    *(u8 *)(Func_0200502c() + 85) = zero;
-    Call4(Func_02005034, 0xa80000, 0x80000, 0xb80000, 1);
-    Func_02005040();
-    Func_02003aee(pb);
-    rec = Value1_02001d04(Func_02004fd4, pb);
-    if ((*(volatile s32 *)(rec + 8) >> 20) == 8) {
-        vb = (Func_02004fe2(10) + 100);
-        *(volatile u16 *)(vb) = (*(volatile u16 *)(vb) + 1);
-        v0 = (Func_02004ff0(11) + 100);
-        v3 = (*(volatile u16 *)(v0)- 1);
-    } else {
-        va = (Func_02004ffe(10) + 100);
-        v4 = (*(volatile u16 *)(va)- 1);
-        *(volatile u16 *)(va) = v4;
-        v0 = (Func_0200500c(11) + 100);
-        v3 = (*(volatile u16 *)(v0) + 1);
-    }
-    *(volatile u16 *)(v0) = v3;
-    rec = Func_0200501a(pb);
-    *(volatile s32 *)(rec + 108) = 0x2009a99;
-    Func_020039d4(40);
-    *(u8 *)(Func_0200502a(pb) + 35) |= 2;
-    Func_0200500e(0x200 + found);
-    goto L_02001f40;
-    L_02001f36:;
-    outer = outer + 1;
-    base = base + 1;
-    if (outer <= 2) {
-        goto L_02001d20;
-    }
-    L_02001f40:;
     Func_0200503e();
 }
 

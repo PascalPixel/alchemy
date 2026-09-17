@@ -176,7 +176,8 @@ struct FieldActor {
     /* Counts the frames of a rise while rise_enabled is set. */
     u8 rise_counter;
     u8 rise_enabled;
-    u8 unknown_64[8];
+    u16 unknown_64;
+    u8 unknown_66[6];
     /* Called each frame while set. */
     void (*update)(union FieldObject *object);
 };

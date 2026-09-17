@@ -208,7 +208,6 @@
 #define RunEventScript02 Func_020019bc
 #define FieldScene_RunThreeActorChoreography Func_020019e8
 #define FieldScene_RunPrimaryScriptChoreography Func_02000f90
-#define ACTOR_FLAGS_OFFSET_02000f90 90
 #define ACTOR_DONE_OFFSET 100
 #define SceneActor_UpdateCountdownArcPosition Func_0200154c
 #define SceneState_StoreTable96adToWork Func_020016c8
@@ -1619,11 +1618,9 @@ void FieldScene_RunPrimaryScriptChoreography(void)
 {
     extern u8 Data_0200a5ec[];
 
-    s32 record;
+    struct FieldActor *leader;
     s32 tbl;
-    s32 val;
-    u16 *done;
-    u8 *work;
+    struct EventWork *work;
 
     Func_020031c4();
     Call3_02000f90(Func_020032e6, 3, 0xb60000, 0x960000);
@@ -1631,23 +1628,22 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Func_0200312a(1);
     Call2_02000f90(Func_02003302, 0x4ccc, 0x999);
     Call4_02000f90(Func_0200331c, 0x8c0000, -1, 0xa40000, 1);
-    /* Enter the scene phase. */
-    work = *(u8 *volatile *)Data_03001ebc;
-    *(volatile s32 *)(work + 0x1c0) = 0x100;
-    *(volatile s32 *)(work + 0x1c8) = 40;
+    work = *(struct EventWork **)Data_03001ebc;
+    work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    work->transition_frames = 40;
     Func_0200336e();
     Call3_02000f90(Func_02003248, 0, 0x6666, 0x3333);
     Call3_02000f90(Func_02003248, 1, 0x6666, 0x3333);
     Call3_02000f90(Func_0200325c, 2, 0x6666, 0x3333);
     Func_020032a6(0, 142, 221);
     Call3_02000f90(Func_02003342, 0, 0xd000, 0);
-    record = Value1_02000f90(Func_02003270, 0);
-    if (record != 0) {
-        Func_020032e6(1, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+    leader = (struct FieldActor *)Value1_02000f90(Func_02003270, 0);
+    if (leader != NULL) {
+        Func_020032e6(1, leader->x.fixed, leader->z.fixed);
     }
-    record = Value1_02000f90(Func_02003284, 0);
-    if (record != 0) {
-        Func_020032fa(2, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+    leader = (struct FieldActor *)Value1_02000f90(Func_02003284, 0);
+    if (leader != NULL) {
+        Func_020032fa(2, leader->x.fixed, leader->z.fixed);
     }
     Func_020032dc(1, 150, 234);
     Func_020032ee(2, 134, 234);
@@ -1708,9 +1704,7 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Func_020034e0(3, 3);
     Func_0200344e(40);
     Call3_02000f90(Func_02003484, 3, 0x10000, 0x8000);
-    done = (u16 *)(Func_02003482(3) + ACTOR_DONE_OFFSET);
-    val = 0;
-    *done = val;
+    ((struct Work_399 *)Func_02003482(3))->f100 = 0;
     Call2_02000f90(Func_020034a0, 3, 0x200a670);
     while (*(s16 *)(Func_020034d6(3) + ACTOR_DONE_OFFSET) == 0) {
         Func_020033f8(1);
@@ -1751,9 +1745,7 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Func_0200361c(1);
     Func_02003622(2);
     Call3_02000f90(Func_02003618, 3, 0x30000, 0x18000);
-    done = (u16 *)(Func_02003270(3) + ACTOR_DONE_OFFSET);
-    val = 0;
-    *done = val;
+    ((struct Work_399 *)Func_02003270(3))->f100 = 0;
     Call2_02000f90(Func_02003634, 3, 0x200a6e0);
     while (*(s16 *)(Func_02003632(3) + ACTOR_DONE_OFFSET) == 0) {
         Func_02003554(1);
@@ -1765,22 +1757,17 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Call3_02000f90(Func_02003684, 1, 0x40000, 0x20000);
     Call3_02000f90(Func_02003248, 2, 0x40000, 0x20000);
     Func_02003830(152);
-    *(u8 *)(Func_02003696(0) + ACTOR_FLAGS_OFFSET_02000f90) &= 254;
-    *(u8 *)(Func_020036a8(1) + ACTOR_FLAGS_OFFSET_02000f90) &= 254;
-    *(u8 *)(Func_020036b8(2) + ACTOR_FLAGS_OFFSET_02000f90) &= 254;
+    ((struct FieldActor *)Func_02003696(0))->unknown_5a &= 254;
+    ((struct FieldActor *)Func_020036a8(1))->unknown_5a &= 254;
+    ((struct FieldActor *)Func_020036b8(2))->unknown_5a &= 254;
     Func_020036fa(0, 132, 206);
     Func_02003704(1, 136, 221);
     Call3_02000f90(Func_020036fa, 2, 122, 238);
     Func_020036fc(3);
     Func_020036ca(80);
-    *(u8 *)(Func_020036f0(0) + ACTOR_FLAGS_OFFSET_02000f90) |= 1;
-    *(u8 *)(Func_02003700(1) + ACTOR_FLAGS_OFFSET_02000f90) |= 1;
-    {
-        u8 *flags = (u8 *)(Func_02003270(2) + ACTOR_FLAGS_OFFSET_02000f90);
-        u8 raised = (u8)(*flags | 1);
-
-        *flags = raised;
-    }
+    ((struct FieldActor *)Func_020036f0(0))->unknown_5a |= 1;
+    ((struct FieldActor *)Func_02003700(1))->unknown_5a |= 1;
+    ((struct FieldActor *)Func_02003270(2))->unknown_5a |= 1;
     Call3_02000f90(Func_02003728, 0, 0xcccc, 0x6666);
     Call3_02000f90(Func_02003732, 1, 0xcccc, 0x6666);
     Call3_02000f90(Func_0200373c, 2, 0xcccc, 0x6666);
@@ -1788,10 +1775,9 @@ void FieldScene_RunPrimaryScriptChoreography(void)
     Func_0200374e(1, tbl);
     Func_0200376e(2, tbl);
     Func_020032c2(20);
-    /* Advance the scene phase word to its next value. */
-    work = *(u8 *volatile *)Data_03001ebc;
-    *(volatile s32 *)(work + 0x1c0) = 0x209;
-    *(volatile s32 *)(work + 0x1c8) = 24;
+    work = *(struct EventWork **)Data_03001ebc;
+    work->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+    work->transition_frames = 24;
     Call1_02000f90(Data_0200a218, 0x82b);
     Func_0200375c();
 }

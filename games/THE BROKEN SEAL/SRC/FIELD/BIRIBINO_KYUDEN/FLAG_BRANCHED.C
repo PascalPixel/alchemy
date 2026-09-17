@@ -3,13 +3,12 @@ void Func_020035de_motion();
 void Func_020036ec_motion();
 void Func_020038ac_motion();
 
+extern u8 LinkedMessage_TooYoungForTheJob;
+
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
-extern u8 Data_00001440[];
 extern u8 Data_0200a5c0[];
 extern u8 Data_03001ebc[];
-typedef void SceneEndFunc(void);
-extern volatile SceneEndFunc Func_02002596;
 void Func_02002ce4();
 void Func_02002d02();
 void Func_02002d34();
@@ -95,7 +94,7 @@ void Func_020030d0();
 void Func_020030d8_a();
 void Func_020030d8_b();
 void Func_0200311c();
-s32 Func_0200313e_a();
+void Func_0200313e_a();
 s32 Func_0200313e_b();
 void Func_0200314a();
 void Func_02003156();
@@ -1373,8 +1372,6 @@ void FieldScene_RunScene38d_020005f4(void)
 void FieldScene_RunLongBranchingChoreography(void)
 {
     s32 record;
-    u8 *work;
-    s32 base5_200a5c0;
 
     Func_02002d34();
     Call4(Func_02002e56, -1, -1, -1, 0);
@@ -1391,13 +1388,11 @@ void FieldScene_RunLongBranchingChoreography(void)
     }
     Func_02002d62();
     Func_02002d50(1);
-    work = *(u8 *volatile *)Data_03001ebc;
-    *(volatile s32 *)(((s32)work + 0x1c0)) = 0x100;
-    *(volatile s32 *)(((s32)work + 0x1c8)) = 40;
+    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x100;
+    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c8) = 40;
     Func_02002efa();
     Func_02002f0e();
-    if (Value1(Func_02002dbc, 0x85f) != 0) {
-    } else {
+    if (Value1(Func_02002dbc, 0x85f) == 0) {
         Func_02002de0(80);
         Call3(Func_02002e7a, 19, 0x37e0000, 0x31e0000);
         Call2(Func_02002f02, 0x9999, 0x1333);
@@ -1444,16 +1439,16 @@ void FieldScene_RunLongBranchingChoreography(void)
         Call3(Func_02002fe8, 0, 0x37e, 0x2ac);
         record = Value1(Func_02002fae, 0);
         if (record != 0) {
-            Func_0200301c(1, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+            Func_0200301c(1, *(s32 *)(record + 8), *(s32 *)(record + 16));
         }
         record = Value1(Func_02002fc2, 0);
         if (record != 0) {
-            Func_02003030(2, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+            Func_02003030(2, *(s32 *)(record + 8), *(s32 *)(record + 16));
         }
         if (Value1(Func_02002f8e, 3) != 0) {
             record = Value1(Func_02002fe0, 0);
             if (record != 0) {
-                Func_0200304e(3, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+                Func_0200304e(3, *(s32 *)(record + 8), *(s32 *)(record + 16));
             }
         }
         Call3(Func_02003000, 1, 0x9999, 0x4ccc);
@@ -1479,7 +1474,7 @@ void FieldScene_RunLongBranchingChoreography(void)
         Call3(Func_02003178, 18, 0x7000, 10);
         Call3(Func_02003172, 0x2012, 0, 10);
         Call3(Func_0200318e, 19, 0x1000, 10);
-        ((void (*)())Func_0200313e_a)(19, 3);
+        Func_0200313e_a(19, 3);
         Call3(Func_020031a2, 18, 0x5000, 40);
         Call3(Func_020031ae, 18, 0x7000, 10);
         Func_0200315e(18, 4);
@@ -1494,8 +1489,8 @@ void FieldScene_RunLongBranchingChoreography(void)
         if (Value2(Func_0200313e_b, 0, 0) == 0) {
             goto L_02000f86;
         }
-        L_02000cb6:;
-        Func_020031f2((s32)Data_00001440);
+    L_02000cb6:
+        Func_020031f2((s32)&LinkedMessage_TooYoungForTheJob);
         Call3(Func_02003214, 0x2012, 0, 10);
         Call3(Func_0200327e, 19, 0x3000, 0);
         Func_0200322e(18, 4);
@@ -1527,10 +1522,10 @@ void FieldScene_RunLongBranchingChoreography(void)
         Call1(Func_0200323c, 0x85f);
         Call3(Func_02003292, 0, 0x10000, 0x8000);
         Call3(Func_020032d6_b, 0, 0x37e, 0x2f0);
-        *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c8)) = 16;
+        *(s32 *)(*(u8 **)Data_03001ebc + 0x1c8) = 16;
         Func_020033b0();
         Func_020033bc();
-        Func_02002596();
+        goto L_0200177e;
     }
     Call3(Func_020032d4, 0, 0x9999, 0x4ccc);
     Call3(Func_02003310, 0, 0x37e, 0x2ac);
@@ -1541,16 +1536,16 @@ void FieldScene_RunLongBranchingChoreography(void)
     Func_0200336c(0, 1);
     record = Value1(Func_0200330a, 0);
     if (record != 0) {
-        Func_02003378(1, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+        Func_02003378(1, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     record = Value1(Func_0200331e, 0);
     if (record != 0) {
-        Func_0200338c(2, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+        Func_0200338c(2, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     if (Value1(Func_020032ea, 3) != 0) {
         record = Value1(Func_0200333c, 0);
         if (record != 0) {
-            Func_020033aa(3, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+            Func_020033aa(3, *(s32 *)(record + 8), *(s32 *)(record + 16));
         }
     }
     Call3(Func_0200335c, 1, 0x9999, 0x4ccc);
@@ -1578,7 +1573,7 @@ void FieldScene_RunLongBranchingChoreography(void)
     if (Value2(Func_0200340e, 0, 0) == 1) {
         goto L_02000cb6;
     }
-    L_02000f86:;
+L_02000f86:
     Call3(Func_020034f0, 3, 0xc000, 0);
     Call3(Func_020034fc, 0, 0xc000, 0);
     Call3(Func_02003508, 1, 0xc000, 0);
@@ -1593,11 +1588,11 @@ void FieldScene_RunLongBranchingChoreography(void)
     record = Func_0200348a(20);
     Func_02003438(record, 0);
     record = Func_02003496(20);
-    *(volatile s32 *)(record + 24) = 0x8000;
-    *(volatile s32 *)(record + 28) = 0x8000;
+    *(s32 *)(record + 24) = 0x8000;
+    *(s32 *)(record + 28) = 0x8000;
     record = Value1(Func_020034a4, 18);
     if (record != 0) {
-        Func_02003512(20, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+        Func_02003512(20, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     Func_02003428(1);
     Func_0200353a(20, 6, 0);
@@ -1747,11 +1742,10 @@ void FieldScene_RunLongBranchingChoreography(void)
     Call3(Func_02003b08, 19, 0x1000, 10);
     Func_02003ab8(19, 3);
     Func_02003a1e(20);
-    base5_200a5c0 = (s32)Data_0200a5c0;
-    Call3(Func_02003af2, 0, 0x10013, base5_200a5c0);
-    Call3(Func_02003afc, 1, 0x10013, base5_200a5c0);
-    Call3(Func_02003b06, 2, 0x10013, base5_200a5c0);
-    Call3(Func_02003b10, 3, 0x10013, base5_200a5c0);
+    Call3(Func_02003af2, 0, 0x10013, (s32)Data_0200a5c0);
+    Call3(Func_02003afc, 1, 0x10013, (s32)Data_0200a5c0);
+    Call3(Func_02003b06, 2, 0x10013, (s32)Data_0200a5c0);
+    Call3(Func_02003b10, 3, 0x10013, (s32)Data_0200a5c0);
     Call3(Func_02003a8a, 19, 0x9999, 0x4ccc);
     Call3(Func_02003ace_b, 19, 0x354, 0x286);
     Call3(Func_02003ada, 19, 0x354, 0x29a);
@@ -1767,7 +1761,7 @@ void FieldScene_RunLongBranchingChoreography(void)
     Func_02003b5e(0, 3);
     Func_02003b66(1, 3);
     Func_02003b76_b(2, 3);
-    Call3(Func_02003baa_b, 19, 0x10000, base5_200a5c0);
+    Call3(Func_02003baa_b, 19, 0x10000, (s32)Data_0200a5c0);
     Func_02003b82(1, 2);
     record = Value1(Func_02003b20, 0);
     if (record != 0) {
@@ -1791,10 +1785,11 @@ void FieldScene_RunLongBranchingChoreography(void)
     Func_02003c3e(3, 0, 0);
     Call3(Func_02003bf4, 0, 0x10000, 0x8000);
     Call3(Func_02003c38, 0, 0x37e, 0x2f0);
-    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c8)) = 16;
-    ((s64 (*)())Func_02003d12_a)();
+    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c8) = 16;
+    Func_02003d12_a();
     Func_02003d1e();
     Call1(Func_02003bd4, 0x321);
+L_0200177e:
     Func_02003d12_b(29);
     Func_02003bfe();
 }

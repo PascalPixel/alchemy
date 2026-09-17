@@ -1590,38 +1590,26 @@ void SceneActor_MarkObjectAtTiles94To95(void)
 
 void FieldScene_RunCommandSequence(s32 a0)
 {
-    extern s16 Data_02000240_t[][1];
-    extern u8 Data_0200c41c[];
+    struct FieldActor *actor;
+    s32 x;
+    s32 z;
 
-    extern u8 Data_03001ebc[];
-
-    u32 i;
-    s32 p10;
-    s32 p10b;
-    s32 p9;
-    s32 p9b;
-    s32 record;
-
-    record = Func_02004a7e();
-    p9 = *(s16 *)(record + 10);
-    p10 = *(s16 *)(record + 18);
+    actor = (struct FieldActor *)Func_02004a7e();
+    x = actor->x.part.pixel;
+    z = actor->z.part.pixel;
     Func_02004a76();
     Call3_02000db8(Func_02004aac, a0, 0x10000, 0x8000);
     Call3_02000db8(Func_02004aba, 0, 0x10000, 0x8000);
     Call3_02000db8(Func_02004ac8, 1, 0x10000, 0x8000);
     Call3_02000db8(Func_02004ad6, 2, 0x10000, 0x8000);
     Call3_02000db8(Func_02004ae4, 3, 0x10000, 0x8000);
-    Call3_02000db8((void (*)())Func_02004b28, 0, ((s32)p9 << 16), ((s32)((s32)p10 << 16) + -0x300000));
-    Func_02004b3a(1, ((s32)((s32)p9 << 16) + -0x100000), (-0x280000 + (s32)((s32)p10 << 16)));
-    Func_02004b48(2, ((s32)((s32)p9 << 16) + 0x100000), (-0x280000 + (s32)((s32)p10 << 16)));
-    Func_02004b54(3, ((s32)p9 << 16), ((s32)((s32)p10 << 16) + -0x200000));
-    Func_02004b62(a0, ((s32)p9 << 16), ((s32)((s32)p10 << 16) + -0x500000));
-    record = Func_02004b28_a(0);
-    {
-        s32 shown = 0xc000;
-
-        *(volatile u16 *)(record + 6) = shown;
-    }
+    Call3_02000db8((void (*)())Func_02004b28, 0, x << 16, (z << 16) - 0x300000);
+    Func_02004b3a(1, (x << 16) - 0x100000, (z << 16) - 0x280000);
+    Func_02004b48(2, (x << 16) + 0x100000, (z << 16) - 0x280000);
+    Func_02004b54(3, x << 16, (z << 16) - 0x200000);
+    Func_02004b62(a0, x << 16, (z << 16) - 0x500000);
+    actor = (struct FieldActor *)Func_02004b28_a(0);
+    actor->facing = 0xc000;
     Func_02004be6(0, 0);
     Func_02004c32();
     Func_02004c46();
@@ -1642,47 +1630,44 @@ void FieldScene_RunCommandSequence(s32 a0)
     Call3_02000db8(Func_02004c64, 3, 0x101, 60);
     Func_02004c4c(3, 0);
     Call3_02000db8(Func_02004c78, a0, 0x102, 60);
-    if (Value2(Func_02004c68, a0, 0) != 0) {
-    } else {
-        L_02000f28:;
-        Call1(Func_02004c5c, 0x20d5);
-        Func_02004c34(2, 3);
-        Func_02004bd2(2);
-        Func_02004c42(1, 3);
-        Func_02004be0(2);
-        Func_02004c50(3, 3);
-        Func_02004bee(1);
-        Func_02004c66(0, 3);
-        Func_02004c6e(a0, 3);
-        Func_02004cae(a0, 0);
-        Call3_02000db8(Func_02004cca, a0, 0xa000, 0);
-        Func_02004c18(20);
-        Func_02004cc8(a0, 0);
-        Call2(Func_02004d04, 0x30000, 0x6000);
-        Call4(Func_02004d1e, 0x1380000, -1, 0x680000, 1);
-        Func_02004d2a();
-        Func_02004cf2(a0, 0);
-        Call2(Func_02004d2e, 0x18000, 0x3000);
-        Call4(Func_02004d48, 0x3080000, -1, 0x680000, 1);
-        Func_02004d18(a0, 0);
-        Func_02004d5c();
-        Func_02004d24(a0, 0);
-        Call2(Func_02004d60, 0x30000, 0x6000);
-        Call4(Func_02004d7a, 0x4d80000, -1, 0xa80000, 1);
-        Func_02004d86();
-        Call3_02000db8(Func_02004d32, a0, 0x6000, 0);
-        Func_02004d5a(a0, 0);
-        Call4(Func_02004da4, 0x5180000, -1, 0xa80000, 1);
-        Func_02004db0();
-        Func_02004d5a_a(a0, 0, 0);
-        Func_02004d82(a0, 0);
-        Func_02004d8a(a0, 0);
-        Func_02004d92(a0, 0);
-        Func_02004dc2(0, 0);
-        Func_02004d7a_a(a0, 2);
-        if (Value2(Func_02004db2, a0, 0) != 0) {
-            goto L_02000f28;
-        }
+    if (Value2(Func_02004c68, a0, 0) == 0) {
+        do {
+            Call1(Func_02004c5c, 0x20d5);
+            Func_02004c34(2, 3);
+            Func_02004bd2(2);
+            Func_02004c42(1, 3);
+            Func_02004be0(2);
+            Func_02004c50(3, 3);
+            Func_02004bee(1);
+            Func_02004c66(0, 3);
+            Func_02004c6e(a0, 3);
+            Func_02004cae(a0, 0);
+            Call3_02000db8(Func_02004cca, a0, 0xa000, 0);
+            Func_02004c18(20);
+            Func_02004cc8(a0, 0);
+            Call2(Func_02004d04, 0x30000, 0x6000);
+            Call4(Func_02004d1e, 0x1380000, -1, 0x680000, 1);
+            Func_02004d2a();
+            Func_02004cf2(a0, 0);
+            Call2(Func_02004d2e, 0x18000, 0x3000);
+            Call4(Func_02004d48, 0x3080000, -1, 0x680000, 1);
+            Func_02004d18(a0, 0);
+            Func_02004d5c();
+            Func_02004d24(a0, 0);
+            Call2(Func_02004d60, 0x30000, 0x6000);
+            Call4(Func_02004d7a, 0x4d80000, -1, 0xa80000, 1);
+            Func_02004d86();
+            Call3_02000db8(Func_02004d32, a0, 0x6000, 0);
+            Func_02004d5a(a0, 0);
+            Call4(Func_02004da4, 0x5180000, -1, 0xa80000, 1);
+            Func_02004db0();
+            Func_02004d5a_a(a0, 0, 0);
+            Func_02004d82(a0, 0);
+            Func_02004d8a(a0, 0);
+            Func_02004d92(a0, 0);
+            Func_02004dc2(0, 0);
+            Func_02004d7a_a(a0, 2);
+        } while (Value2(Func_02004db2, a0, 0) != 0);
         Func_02004d90(a0, 2);
         Call1(Func_02004dae, 0x20d4);
         Func_02004dc6(a0, 0);
@@ -1708,30 +1693,28 @@ void FieldScene_RunCommandSequence(s32 a0)
     Func_02004e28(0, 3);
     Func_02004dbe(6);
     Func_02004e2e_a(1, 2);
-    record = Value1(Func_02004dec, 0);
-    if (record != 0) {
-        Func_02004e1e_a(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
+    actor = (struct FieldActor *)Value1(Func_02004dec, 0);
+    if (actor != 0) {
+        Func_02004e1e_a(1, actor->x.part.pixel, actor->z.part.pixel);
     }
     Func_02004e4e(2, 2);
-    record = Value1(Func_02004e0c, 0);
-    if (record != 0) {
-        Func_02004e3e(2, *(s16 *)(record + 10), *(s16 *)(record + 18));
+    actor = (struct FieldActor *)Value1(Func_02004e0c, 0);
+    if (actor != 0) {
+        Func_02004e3e(2, actor->x.part.pixel, actor->z.part.pixel);
     }
     Func_02004e6e(3, 2);
-    record = Value1(Func_02004e2c, 0);
-    if (record != 0) {
-        Func_02004e5e(3, *(s16 *)(record + 10), *(s16 *)(record + 18));
+    actor = (struct FieldActor *)Value1(Func_02004e2c, 0);
+    if (actor != 0) {
+        Func_02004e5e(3, actor->x.part.pixel, actor->z.part.pixel);
     }
-    Func_02004e7e(a0, (p9 - 16), (p10 - 64));
+    Func_02004e7e(a0, x - 16, z - 64);
     Func_02004e98(1, 0, 0);
     Func_02004ea2(2, 0, 0);
     Func_02004eac(3, 0, 0);
-    Func_02004ea8(a0, (p9 - 16), (p10 - 16));
-    Func_02004eb2(a0, p9, p10);
+    Func_02004ea8(a0, x - 16, z - 16);
+    Func_02004eb2(a0, x, z);
     Call3_02000db8(Func_02004f26, a0, 0xc000, 10);
     Func_02004e82();
-    p9b = (p9 - 16);
-    p10b = ((s32)p9 << 16);
 }
 
 void FieldScene_RunScene3ba_020015e0(s32 a0)

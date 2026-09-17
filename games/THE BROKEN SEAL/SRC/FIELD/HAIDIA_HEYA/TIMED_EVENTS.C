@@ -154,7 +154,7 @@ void Func_02001610();
 void Func_0200161a_a();
 void Func_0200161a_b();
 void Func_02001620();
-u8 *Func_0200162c();
+struct FieldActor *Func_0200162c();
 u8 *Func_02001664();
 void Func_0200169e();
 void Func_020016ba();
@@ -735,15 +735,24 @@ void FieldScene_RunIndexedStep8(void)
     Func_0200061e(8);
 }
 
+/*
+ * The record the fourth scene work cell (0x03001ec8) points to. The main-image
+ * routine at 080949a8 counts the halfword at 0x1f80 down and, while the
+ * halfword at 0x1f84 is set, plays cue 172 rather than 171.
+ */
+struct FlashCueWork {
+    u8 unknown_0000[0x1f84];
+    s16 alternate_cue;
+};
+
 s32 Func_02000368(void)
 {
     extern u8 Data_03001ebc[];
     void Func_020015a2();
     void Func_020015d4();
 
-    u32 i;
     u8 *record;
-    u8 *volatile *scene = (u8 *volatile *)Data_03001ebc;
+    u8 **scene = (u8 **)Data_03001ebc;
 
     *(s32 *)(scene[0] + 0x1c0) = 0x209;
     if (Value1(Func_02001500, 0x834) != 0) {
@@ -763,12 +772,7 @@ s32 Func_02000368(void)
         Func_02001610(21, 0, 0);
         Func_0200161a_a(22, 0, 0);
         Func_020016ce();
-        {
-            u16 *target = (u16 *)(scene[3] + 0x1f84);
-            s32 shown = 1;
-
-            *target = shown;
-        }
+        ((struct FlashCueWork *)scene[3])->alternate_cue = 1;
         Func_020016ec();
         Func_0200157a(30);
         Func_02001706_a();
@@ -781,12 +785,7 @@ s32 Func_02000368(void)
                 Func_02000aba();
             }
         }
-        {
-            u8 *record = Func_0200162c(10);
-            u8 value = *(volatile u8 *)&record[89];
-
-            record[89] = (u8)(value | 128);
-        }
+        Func_0200162c(10)->collision_flags |= 0x80;
     }
     if (Data_02000240_t[225][0] == 2) {
         if (Value1(Func_0200160c, 0x815) != 0) {

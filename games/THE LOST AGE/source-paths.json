@@ -33,6 +33,142 @@
     "main:081c3340": {
       "name": "MusicTrack_ReadVoiceTarget",
       "source": "../../COMMON/SRC/SOUND/MUSIC_TRACK_READ_VOICE_TARGET.C"
+    },
+    "resource_64e:02000038": {
+      "name": "Object_SetSpritePriority",
+      "source": "FIELD/VINASU_CHOJO/AERIE.C"
+    },
+    "resource_64e:02000650": {
+      "name": "Scene_GetEntrances",
+      "source": "FIELD/VINASU_CHOJO/AERIE.C"
+    },
+    "resource_64e:02000658": {
+      "name": "Scene_GetRegions",
+      "source": "FIELD/VINASU_CHOJO/AERIE.C"
+    },
+    "resource_64e:0200065c": {
+      "name": "Scene_GetExits",
+      "source": "FIELD/VINASU_CHOJO/AERIE.C"
+    },
+    "resource_64e:02000664": {
+      "name": "SceneActor_CyclePalette",
+      "source": "FIELD/VINASU_CHOJO/AERIE.C"
+    },
+    "resource_64e:02000678": {
+      "name": "SceneActor_ClearSpriteFlags",
+      "source": "FIELD/VINASU_CHOJO/AERIE.C"
+    },
+    "resource_64e:02000684": {
+      "name": "Scene_GetPlacements",
+      "source": "FIELD/VINASU_CHOJO/AERIE.C"
+    },
+    "resource_64e:02000874": {
+      "name": "Scene_LowerActor10AtColumn42",
+      "source": "FIELD/VINASU_CHOJO/AERIE.C"
+    },
+    "resource_64e:020008d4": {
+      "name": "Search_ReadRelief",
+      "source": "FIELD/VINASU_CHOJO/AERIE.C"
+    },
+    "resource_64e:020008fc": {
+      "name": "Search_ReadTrueRoadInscription",
+      "source": "FIELD/VINASU_CHOJO/AERIE.C"
+    },
+    "resource_64e:02000924": {
+      "name": "SceneMap_ApplyFirstCellSet",
+      "source": "FIELD/VINASU_CHOJO/AERIE.C"
+    },
+    "resource_64e:02000998": {
+      "name": "SceneMap_ApplySecondCellSet",
+      "source": "FIELD/VINASU_CHOJO/AERIE.C"
+    },
+    "resource_64e:02000a0c": {
+      "name": "Scene_GetEvents",
+      "source": "FIELD/VINASU_CHOJO/AERIE.C"
+    },
+    "resource_64e:02000a14": {
+      "name": "SceneEvent_Idle",
+      "source": "FIELD/VINASU_CHOJO/AERIE.C"
+    },
+    "resource_64e:02000b28": {
+      "name": "Scene_PrepareMap",
+      "source": "FIELD/VINASU_CHOJO/AERIE.C"
+    },
+    "resource_650:02000038": {
+      "name": "Scene_GetEntrances",
+      "source": "FIELD/IDEJIMA/ISLAND.C"
+    },
+    "resource_650:02000040": {
+      "name": "Scene_GetRegions",
+      "source": "FIELD/IDEJIMA/ISLAND.C"
+    },
+    "resource_650:02000044": {
+      "name": "Scene_GetExits",
+      "source": "FIELD/IDEJIMA/ISLAND.C"
+    },
+    "resource_650:0200004c": {
+      "name": "Scene_GetPlacements",
+      "source": "FIELD/IDEJIMA/ISLAND.C"
+    },
+    "resource_650:02000054": {
+      "name": "Scene_GetEvents",
+      "source": "FIELD/IDEJIMA/ISLAND.C"
+    },
+    "resource_650:0200153c": {
+      "name": "ScanlineWave_Reset",
+      "source": "FIELD/IDEJIMA/ISLAND.C"
+    },
+    "resource_650:02001650": {
+      "name": "DriftScene_Prepare",
+      "source": "FIELD/IDEJIMA/ISLAND.C"
+    },
+    "resource_650:0200168c": {
+      "name": "SceneObject_Spawn",
+      "source": "FIELD/IDEJIMA/ISLAND.C"
+    },
+    "resource_650:02002c30": {
+      "name": "FelixWake_BeginStep",
+      "source": "FIELD/IDEJIMA/ISLAND.C"
+    },
+    "resource_650:02002c34": {
+      "name": "FelixWake_EndStep",
+      "source": "FIELD/IDEJIMA/ISLAND.C"
+    },
+    "resource_650:02002c38": {
+      "name": "FelixWake_WaitForButton",
+      "source": "FIELD/IDEJIMA/ISLAND.C"
+    },
+    "resource_650:02002f84": {
+      "name": "Scene_PrepareMap",
+      "source": "FIELD/IDEJIMA/ISLAND.C"
+    },
+    "resource_64d:02000038": {
+      "name": "Scene_GetEntrances",
+      "source": "FIELD/VINASU_IRIGUCHI/ENTRANCE.C"
+    },
+    "resource_64d:02000040": {
+      "name": "Scene_GetRegions",
+      "source": "FIELD/VINASU_IRIGUCHI/ENTRANCE.C"
+    },
+    "resource_64d:02000044": {
+      "name": "Scene_GetExits",
+      "source": "FIELD/VINASU_IRIGUCHI/ENTRANCE.C"
+    },
+    "resource_64d:0200004c": {
+      "name": "Scene_GetPlacements",
+      "source": "FIELD/VINASU_IRIGUCHI/ENTRANCE.C"
+    },
+    "resource_64d:0200009c": {
+      "name": "Actor_UpdateParticleTrail",
+      "source": "FIELD/VINASU_IRIGUCHI/ENTRANCE.C"
+    },
+    "resource_64d:02000120": {
+      "name": "Scene_GetEvents",
+      "source": "FIELD/VINASU_IRIGUCHI/ENTRANCE.C"
+    },
+    "resource_64d:02000308": {
+      "name": "Scene_PrepareMap",
+      "source": "FIELD/VINASU_IRIGUCHI/ENTRANCE.C"
     }
   }
 }

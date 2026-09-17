@@ -629,8 +629,37 @@ impl TranslationUnits {
     /// The manifest as written, before any check across units, registers or
     /// listings: what an adoption consults while its placeholder is absent.
     pub fn declared(root: &Path) -> Result<Self, String> {
-        let path = root.join("games/THE BROKEN SEAL/recon/translation-units.json");
+        Self::declared_game(root, CompilerTarget::Tbs)
+    }
+    /// One game's manifest as written, `games/<GAME>/recon/translation-units.json`,
+    /// declaring only that game's units. The Broken Seal must have one; a game
+    /// that has not composed a unit yet has none and declares nothing.
+    pub fn declared_game(root: &Path, game: CompilerTarget) -> Result<Self, String> {
+        let path = root.join(format!(
+            "games/{}/recon/translation-units.json",
+            crate::compiler::routing::game_directory(game.as_str())
+        ));
+        if game != CompilerTarget::Tbs && !path.is_file() {
+            return Ok(Self {
+                format: FORMAT,
+                kind: "reconstruction-composition-contracts".into(),
+                original_translation_units: "unknown".into(),
+                units: Vec::new(),
+            });
+        }
         let document: Self = crate::compiler::build_io::read_json(&path)?;
+        if let Some(unit) = document
+            .units
+            .iter()
+            .find(|unit| unit.game != game.as_str())
+        {
+            return Err(format!(
+                "{}: {} unit declared in the {} manifest",
+                unit.id,
+                unit.game,
+                game.as_str()
+            ));
+        }
         if document.format != FORMAT
             || document.kind != "reconstruction-composition-contracts"
             || document.original_translation_units != "unknown"
@@ -643,7 +672,11 @@ impl TranslationUnits {
         Ok(document)
     }
     pub fn load(root: &Path) -> Result<Self, String> {
-        let mut document = Self::declared(root)?;
+        Self::load_game(root, CompilerTarget::Tbs)
+    }
+    /// One game's manifest, checked against that game's registers and listings.
+    pub fn load_game(root: &Path, game: CompilerTarget) -> Result<Self, String> {
+        let mut document = Self::declared_game(root, game)?;
         let mut ids = BTreeSet::new();
         let mut claimed = BTreeSet::new();
         let mut main_aliases = BTreeSet::new();
@@ -1233,6 +1266,29 @@ mod tests {
     use super::fixture::*;
     use super::*;
     use serde_json::json;
+    #[test]
+    fn each_game_manifest_declares_only_its_own_units() {
+        let work = tempfile::tempdir().unwrap();
+        let empty = TranslationUnits::load_game(work.path(), CompilerTarget::Tla).unwrap();
+        assert!(empty.units.is_empty());
+        assert!(TranslationUnits::load_game(work.path(), CompilerTarget::Tbs).is_err());
+        let path = work
+            .path()
+            .join("games/THE LOST AGE/recon/translation-units.json");
+        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+        std::fs::write(
+            &path,
+            format!(
+                r#"{{"format":{FORMAT},"kind":"reconstruction-composition-contracts","original_translation_units":"unknown","units":[{{"id":"wrong-game","game":"tbs","source":"a.c","compiler_route":"canonical-gcc296","overlay":"resource_650","absolute_symbols":{{}},"local_symbols":[],"owners":[{{"address":"0x02000038","extent":8,"state":"exact-c"}}]}}]}}"#
+            ),
+        )
+        .unwrap();
+        let error = TranslationUnits::load_game(work.path(), CompilerTarget::Tla).unwrap_err();
+        assert!(
+            error.contains("tbs unit declared in the tla manifest"),
+            "{error}"
+        );
+    }
 
     /// The loaded staged-actor unit after `edit`, checked as `load` checks it.
     fn edited(

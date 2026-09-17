@@ -1,4 +1,209 @@
 {
   "format": 1,
-  "manual_regions": []
+  "manual_regions": [
+    {
+      "overlay": "resource_64e",
+      "entry": "0x02000038",
+      "span_bytes": 70,
+      "evidence": "Complete owner in the decoded tla-en image, reached through a direct call: its return and literal pool end 70 bytes in, followed by a 2-byte alignment halfword, at the next owner 0x02000080. Byte-exact C from FIELD/VINASU_CHOJO/AERIE.C."
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x02000650",
+      "span_bytes": 8,
+      "evidence": "Complete owner in the decoded tla-en image, reached through loader entry 1: its return and literal pool end 8 bytes in, at the next owner 0x02000658. Byte-exact C from FIELD/VINASU_CHOJO/AERIE.C."
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x02000658",
+      "span_bytes": 4,
+      "evidence": "Complete owner in the decoded tla-en image, reached through loader entry 5: its return and literal pool end 4 bytes in, at the next owner 0x0200065c. Byte-exact C from FIELD/VINASU_CHOJO/AERIE.C."
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x0200065c",
+      "span_bytes": 8,
+      "evidence": "Complete owner in the decoded tla-en image, reached through loader entry 2: its return and literal pool end 8 bytes in, at the next owner 0x02000664. Byte-exact C from FIELD/VINASU_CHOJO/AERIE.C."
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x02000664",
+      "span_bytes": 20,
+      "evidence": "Complete owner in the decoded tla-en image, reached through a data-pointer: its return and literal pool end 20 bytes in, at the next owner 0x02000678. Byte-exact C from FIELD/VINASU_CHOJO/AERIE.C."
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x02000678",
+      "span_bytes": 12,
+      "evidence": "Complete owner in the decoded tla-en image, reached through a data-pointer: its return and literal pool end 12 bytes in, at the next owner 0x02000684. Byte-exact C from FIELD/VINASU_CHOJO/AERIE.C."
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x02000684",
+      "span_bytes": 40,
+      "evidence": "Complete owner in the decoded tla-en image, reached through loader entry 3: its return and literal pool end 40 bytes in, at the next owner 0x020006ac. Byte-exact C from FIELD/VINASU_CHOJO/AERIE.C."
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x02000874",
+      "span_bytes": 96,
+      "evidence": "Complete owner in the decoded tla-en image, reached through a direct call: its return and literal pool end 96 bytes in, at the next owner 0x020008d4. Byte-exact C from FIELD/VINASU_CHOJO/AERIE.C."
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x020008d4",
+      "span_bytes": 40,
+      "evidence": "Complete owner in the decoded tla-en image, reached through a data-pointer: its return and literal pool end 40 bytes in, at the next owner 0x020008fc. Byte-exact C from FIELD/VINASU_CHOJO/AERIE.C."
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x020008fc",
+      "span_bytes": 40,
+      "evidence": "Complete owner in the decoded tla-en image, reached through a data-pointer: its return and literal pool end 40 bytes in, at the next owner 0x02000924. Byte-exact C from FIELD/VINASU_CHOJO/AERIE.C."
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x02000924",
+      "span_bytes": 116,
+      "evidence": "Complete owner in the decoded tla-en image, reached through a data-pointer: its return and literal pool end 116 bytes in, at the next owner 0x02000998. Byte-exact C from FIELD/VINASU_CHOJO/AERIE.C."
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x02000998",
+      "span_bytes": 116,
+      "evidence": "Complete owner in the decoded tla-en image, reached through a data-pointer: its return and literal pool end 116 bytes in, at the next owner 0x02000a0c. Byte-exact C from FIELD/VINASU_CHOJO/AERIE.C."
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x02000a0c",
+      "span_bytes": 8,
+      "evidence": "Complete owner in the decoded tla-en image, reached through loader entry 4: its return and literal pool end 8 bytes in, at the next owner 0x02000a14. Byte-exact C from FIELD/VINASU_CHOJO/AERIE.C."
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x02000a14",
+      "span_bytes": 4,
+      "evidence": "Complete owner in the decoded tla-en image, reached through a code-pointer: its return and literal pool end 4 bytes in, at the next owner 0x02000a18. Byte-exact C from FIELD/VINASU_CHOJO/AERIE.C."
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x02000b28",
+      "span_bytes": 4,
+      "evidence": "Complete owner in the decoded tla-en image, reached through loader entry 6: its return and literal pool end 4 bytes in, at the next owner 0x02000b2c. Byte-exact C from FIELD/VINASU_CHOJO/AERIE.C."
+    },
+    {
+      "overlay": "resource_650",
+      "entry": "0x02000038",
+      "span_bytes": 8,
+      "evidence": "Complete owner in the decoded tla-en image, reached through loader entry 1: its return and literal pool end 8 bytes in, at the next owner 0x02000040. Byte-exact C from FIELD/IDEJIMA/ISLAND.C."
+    },
+    {
+      "overlay": "resource_650",
+      "entry": "0x02000040",
+      "span_bytes": 4,
+      "evidence": "Complete owner in the decoded tla-en image, reached through loader entry 5: its return and literal pool end 4 bytes in, at the next owner 0x02000044. Byte-exact C from FIELD/IDEJIMA/ISLAND.C."
+    },
+    {
+      "overlay": "resource_650",
+      "entry": "0x02000044",
+      "span_bytes": 8,
+      "evidence": "Complete owner in the decoded tla-en image, reached through loader entry 2: its return and literal pool end 8 bytes in, at the next owner 0x0200004c. Byte-exact C from FIELD/IDEJIMA/ISLAND.C."
+    },
+    {
+      "overlay": "resource_650",
+      "entry": "0x0200004c",
+      "span_bytes": 8,
+      "evidence": "Complete owner in the decoded tla-en image, reached through loader entry 3: its return and literal pool end 8 bytes in, at the next owner 0x02000054. Byte-exact C from FIELD/IDEJIMA/ISLAND.C."
+    },
+    {
+      "overlay": "resource_650",
+      "entry": "0x02000054",
+      "span_bytes": 68,
+      "evidence": "Complete owner in the decoded tla-en image, reached through loader entry 4: its return and literal pool end 68 bytes in, at the next owner 0x02000098. Byte-exact C from FIELD/IDEJIMA/ISLAND.C."
+    },
+    {
+      "overlay": "resource_650",
+      "entry": "0x0200153c",
+      "span_bytes": 28,
+      "evidence": "Complete owner in the decoded tla-en image, reached through a direct call: its return and literal pool end 28 bytes in, at the next owner 0x02001558. Byte-exact C from FIELD/IDEJIMA/ISLAND.C."
+    },
+    {
+      "overlay": "resource_650",
+      "entry": "0x02001650",
+      "span_bytes": 58,
+      "evidence": "Complete owner in the decoded tla-en image, reached through a direct call: its return and literal pool end 58 bytes in, followed by a 2-byte alignment halfword, at the next owner 0x0200168c. Byte-exact C from FIELD/IDEJIMA/ISLAND.C."
+    },
+    {
+      "overlay": "resource_650",
+      "entry": "0x0200168c",
+      "span_bytes": 76,
+      "evidence": "Complete owner in the decoded tla-en image, reached through a direct call: its return and literal pool end 76 bytes in, at the next owner 0x020016d8. Byte-exact C from FIELD/IDEJIMA/ISLAND.C."
+    },
+    {
+      "overlay": "resource_650",
+      "entry": "0x02002c30",
+      "span_bytes": 2,
+      "evidence": "Complete owner in the decoded tla-en image, reached through a direct call: its return and literal pool end 2 bytes in, followed by a 2-byte alignment halfword, at the next owner 0x02002c34. Byte-exact C from FIELD/IDEJIMA/ISLAND.C."
+    },
+    {
+      "overlay": "resource_650",
+      "entry": "0x02002c34",
+      "span_bytes": 2,
+      "evidence": "Complete owner in the decoded tla-en image, reached through a direct call: its return and literal pool end 2 bytes in, followed by a 2-byte alignment halfword, at the next owner 0x02002c38. Byte-exact C from FIELD/IDEJIMA/ISLAND.C."
+    },
+    {
+      "overlay": "resource_650",
+      "entry": "0x02002c38",
+      "span_bytes": 44,
+      "evidence": "Complete owner in the decoded tla-en image, reached through a direct call: its return and literal pool end 44 bytes in, at the next owner 0x02002c64. Byte-exact C from FIELD/IDEJIMA/ISLAND.C."
+    },
+    {
+      "overlay": "resource_650",
+      "entry": "0x02002f84",
+      "span_bytes": 4,
+      "evidence": "Complete owner in the decoded tla-en image, reached through loader entry 6: its return and literal pool end 4 bytes in, at the next owner 0x02002f88. Byte-exact C from FIELD/IDEJIMA/ISLAND.C."
+    },
+    {
+      "overlay": "resource_64d",
+      "entry": "0x02000038",
+      "span_bytes": 8,
+      "evidence": "Complete owner in the decoded tla-en image, reached through loader entry 1: its return and literal pool end 8 bytes in, at the next owner 0x02000040. Byte-exact C from FIELD/VINASU_IRIGUCHI/ENTRANCE.C."
+    },
+    {
+      "overlay": "resource_64d",
+      "entry": "0x02000040",
+      "span_bytes": 4,
+      "evidence": "Complete owner in the decoded tla-en image, reached through loader entry 5: its return and literal pool end 4 bytes in, at the next owner 0x02000044. Byte-exact C from FIELD/VINASU_IRIGUCHI/ENTRANCE.C."
+    },
+    {
+      "overlay": "resource_64d",
+      "entry": "0x02000044",
+      "span_bytes": 8,
+      "evidence": "Complete owner in the decoded tla-en image, reached through loader entry 2: its return and literal pool end 8 bytes in, at the next owner 0x0200004c. Byte-exact C from FIELD/VINASU_IRIGUCHI/ENTRANCE.C."
+    },
+    {
+      "overlay": "resource_64d",
+      "entry": "0x0200004c",
+      "span_bytes": 8,
+      "evidence": "Complete owner in the decoded tla-en image, reached through loader entry 3: its return and literal pool end 8 bytes in, at the next owner 0x02000054. Byte-exact C from FIELD/VINASU_IRIGUCHI/ENTRANCE.C."
+    },
+    {
+      "overlay": "resource_64d",
+      "entry": "0x0200009c",
+      "span_bytes": 42,
+      "evidence": "Complete owner in the decoded tla-en image, reached through a code-pointer: its return and literal pool end 42 bytes in, followed by a 2-byte alignment halfword, at the next owner 0x020000c8. Byte-exact C from FIELD/VINASU_IRIGUCHI/ENTRANCE.C."
+    },
+    {
+      "overlay": "resource_64d",
+      "entry": "0x02000120",
+      "span_bytes": 8,
+      "evidence": "Complete owner in the decoded tla-en image, reached through loader entry 4: its return and literal pool end 8 bytes in, at the next owner 0x02000128. Byte-exact C from FIELD/VINASU_IRIGUCHI/ENTRANCE.C."
+    },
+    {
+      "overlay": "resource_64d",
+      "entry": "0x02000308",
+      "span_bytes": 4,
+      "evidence": "Complete owner in the decoded tla-en image, reached through loader entry 6: its return and literal pool end 4 bytes in, at the next owner 0x0200030c. Byte-exact C from FIELD/VINASU_IRIGUCHI/ENTRANCE.C."
+    }
+  ]
 }

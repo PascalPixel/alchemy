@@ -1,0 +1,393 @@
+{
+  "format": 5,
+  "kind": "reconstruction-composition-contracts",
+  "original_translation_units": "unknown",
+  "units": [
+    {
+      "id": "venus-lighthouse-top-scene",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/AERIE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_64e",
+      "absolute_symbols": {
+        "Actor_Get": {
+          "address": "0x02009ba4",
+          "kind": "thumb"
+        },
+        "Actor_SetAnimation": {
+          "address": "0x02009bec",
+          "kind": "thumb"
+        },
+        "Actor_SetSpriteFlags": {
+          "address": "0x02009b6c",
+          "kind": "thumb"
+        },
+        "Audio_PlayCue": {
+          "address": "0x02009cdc",
+          "kind": "thumb"
+        },
+        "Event_Begin": {
+          "address": "0x02009b94",
+          "kind": "thumb"
+        },
+        "Event_End": {
+          "address": "0x02009b9c",
+          "kind": "thumb"
+        },
+        "Event_SetMode": {
+          "address": "0x02009ca4",
+          "kind": "thumb"
+        },
+        "Event_Wait": {
+          "address": "0x02009b8c",
+          "kind": "thumb"
+        },
+        "GameFlag_Set": {
+          "address": "0x02009b1c",
+          "kind": "thumb"
+        },
+        "Map_CopyCellAttributes": {
+          "address": "0x02009b5c",
+          "kind": "thumb"
+        },
+        "Map_CopyCellsTo": {
+          "address": "0x02009b54",
+          "kind": "thumb"
+        },
+        "Message_Show": {
+          "address": "0x02009b7c",
+          "kind": "thumb"
+        },
+        "Object_SetPalette": {
+          "address": "0x02009c14",
+          "kind": "thumb"
+        },
+        "Party_GetLeaderActor": {
+          "address": "0x02009cc4",
+          "kind": "thumb"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "gSceneEntrances": {
+          "address": "0x02009e58",
+          "kind": "data"
+        },
+        "gSceneEvents": {
+          "address": "0x0200a408",
+          "kind": "data"
+        },
+        "gSceneExits": {
+          "address": "0x0200a0f8",
+          "kind": "data"
+        },
+        "gScenePlacements": {
+          "address": "0x0200a1b0",
+          "kind": "data"
+        },
+        "gScenePlacementsEntrance99": {
+          "address": "0x0200a378",
+          "kind": "data"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x02000038",
+          "extent": 70,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000650",
+          "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000658",
+          "extent": 4,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0200065c",
+          "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000664",
+          "extent": 20,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000678",
+          "extent": 12,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000684",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000874",
+          "extent": 96,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020008d4",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020008fc",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000924",
+          "extent": 116,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000998",
+          "extent": 116,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000a0c",
+          "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000a14",
+          "extent": 4,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000b28",
+          "extent": 4,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "idejima-island-scene",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/FIELD/IDEJIMA/ISLAND.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_650",
+      "absolute_symbols": {
+        "Actor_SetAnimation": {
+          "address": "0x0200b240",
+          "kind": "thumb"
+        },
+        "Audio_PlayCue": {
+          "address": "0x0200b328",
+          "kind": "thumb"
+        },
+        "Map_CopyCellsTo": {
+          "address": "0x0200b188",
+          "kind": "thumb"
+        },
+        "Object_Create": {
+          "address": "0x0200b178",
+          "kind": "thumb"
+        },
+        "Object_SetMode": {
+          "address": "0x0200b168",
+          "kind": "thumb"
+        },
+        "Object_SetScript": {
+          "address": "0x0200b170",
+          "kind": "thumb"
+        },
+        "Task_Wait": {
+          "address": "0x0200b138",
+          "kind": "thumb"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "gInput": {
+          "address": "0x03001150",
+          "kind": "data"
+        },
+        "gScanlineWaveCount": {
+          "address": "0x0200bc10",
+          "kind": "data"
+        },
+        "gScanlineWavePage": {
+          "address": "0x0200bc14",
+          "kind": "data"
+        },
+        "gSceneEntrances": {
+          "address": "0x0200b7f8",
+          "kind": "data"
+        },
+        "gSceneEvents": {
+          "address": "0x0200b8ec",
+          "kind": "data"
+        },
+        "gSceneEventsEntrance1": {
+          "address": "0x0200b8f8",
+          "kind": "data"
+        },
+        "gSceneEventsWake": {
+          "address": "0x0200b910",
+          "kind": "data"
+        },
+        "gSceneExits": {
+          "address": "0x0200b828",
+          "kind": "data"
+        },
+        "gScenePlacements": {
+          "address": "0x0200b844",
+          "kind": "data"
+        },
+        "gSpawnedObjectScript": {
+          "address": "0x0200b97c",
+          "kind": "data"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x02000038",
+          "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000040",
+          "extent": 4,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000044",
+          "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0200004c",
+          "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000054",
+          "extent": 68,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0200153c",
+          "extent": 28,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02001650",
+          "extent": 58,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0200168c",
+          "extent": 76,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02002c30",
+          "extent": 2,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02002c34",
+          "extent": 2,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02002c38",
+          "extent": 44,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02002f84",
+          "extent": 4,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "venus-lighthouse-approach-scene",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/ENTRANCE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_64d",
+      "absolute_symbols": {
+        "Audio_PlayCue": {
+          "address": "0x0200aa64",
+          "kind": "thumb"
+        },
+        "ParticleTrail_Spawn": {
+          "address": "0x0200a60c",
+          "kind": "thumb"
+        },
+        "__modsi3": {
+          "address": "0x0200a7dc",
+          "kind": "thumb"
+        },
+        "gSceneEntrances": {
+          "address": "0x0200ad20",
+          "kind": "data"
+        },
+        "gSceneEvents": {
+          "address": "0x0200af88",
+          "kind": "data"
+        },
+        "gSceneExits": {
+          "address": "0x0200adf8",
+          "kind": "data"
+        },
+        "gScenePlacements": {
+          "address": "0x0200ae08",
+          "kind": "data"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x02000038",
+          "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000040",
+          "extent": 4,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000044",
+          "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0200004c",
+          "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0200009c",
+          "extent": 42,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000120",
+          "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000308",
+          "extent": 4,
+          "state": "exact-c"
+        }
+      ]
+    }
+  ]
+}

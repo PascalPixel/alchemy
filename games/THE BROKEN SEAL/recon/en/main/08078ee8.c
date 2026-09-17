@@ -30,6 +30,7 @@ struct OwnerEquipTemplate {
 };
 
 extern s32 Data_0807b690[];
+extern u8 Value_00000066;
 
 void Func_08015020(s32, u16 *);
 void Func_080792fc(s32, u8);
@@ -41,23 +42,25 @@ void Owner_InitRecords(void)
 {
     struct OwnerRecordState *state;
     struct OwnerEquipTemplate *tmpl;
-    volatile u16 name_buf[16];
+    u16 name_buf[16];
     s32 owner;
     s32 *remote = Data_0807b690;
     s32 i;
     s32 slot;
+    u8 *name;
 
     for (owner = 0; owner <= 7; owner++) {
         state = (struct OwnerRecordState *)OwnerState_Get(owner);
-        Func_08015020(owner + 102, (u16 *)name_buf);
-        state->name[0] = name_buf[0];
+        Func_08015020(owner + (s32)&Value_00000066, name_buf);
+        name = state->name;
+        name[0] = name_buf[0];
+        i = 0;
         if (name_buf[0] != 0) {
-            i = 0;
             do {
                 i++;
                 if (i > 13)
                     break;
-                state->name[i] = (u8)name_buf[i];
+                name[i] = name_buf[i];
             } while (name_buf[i] != 0);
         }
         state->name_flags = 0;
@@ -70,10 +73,10 @@ void Owner_InitRecords(void)
                 state->class_id = (u8)*remote;
                 tmpl = (struct OwnerEquipTemplate *)Func_08078ed8(state->class_id);
 
-                for (i = 14; i != -1; i--)
+                for (i = 14; i >= 0; i--)
                     state->inventory[i] = 0;
 
-                for (i = 0; i != 13; i++) {
+                for (i = 0; i < sizeof(tmpl->items) / sizeof(tmpl->items[0]); i++) {
                     slot = Inventory_Add(*remote, tmpl->items[i] & 0x1ff);
                     Inventory_Equip(*remote, slot);
                 }

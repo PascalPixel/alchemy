@@ -7,7 +7,7 @@ struct OwnerInventoryState {
     u8 unknown_000[0xd8];
     u16 inventory[15];
     u8 unknown_0f6[0x32];
-    volatile u8 class_id;           /* 0x128 */
+    u8 class_id;                    /* 0x128 */
 };
 
 struct OwnerActionSlot {

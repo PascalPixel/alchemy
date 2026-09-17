@@ -19,7 +19,7 @@ s32 Ui_Place(s32, s16 *, s32);
 #endif
 
 extern u8 gCell[];
-extern void *volatile gBattleWork;
+extern void *gBattleWork;
 extern volatile s32 gIw;
 extern void *gIw2;
 extern char Value_00000845;

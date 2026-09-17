@@ -2,28 +2,6 @@
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 
-void UiWork_ClearValueNameTables(void)
-{
-    s32 no;
-    u32 *wtbl;
-    u16 *htbl;
-    volatile u32 *wp;
-    volatile u16 *hp;
-
-    wtbl = (u32 *)((u8 *)*(u32 *)ADDR_03001E8C + RENDER_VALUE_TBL_OFS);
-    htbl = (u16 *)((u8 *)*(u32 *)ADDR_03001E8C + RENDER_NAME_TBL_OFS);
-    no = 0;
-
-    /* 対応する値と識別子は同じ順序で消去する。 */
-    do {
-        wp = wtbl + no;
-        hp = htbl + no;
-        *wp = 0;
-        *hp = 0;
-        no++;
-    } while (no != 8);
-}
-
 struct UiNamedValueWork {
     u8 filler0[RENDER_VALUE_TBL_OFS];
     u32 values[8];
@@ -31,6 +9,22 @@ struct UiNamedValueWork {
 };
 
 extern u8 *Data_03001e8c;
+
+void UiWork_ClearValueNameTables(void)
+{
+    s32 no;
+    struct UiNamedValueWork *work;
+
+    work = (struct UiNamedValueWork *)Data_03001e8c;
+    no = 0;
+
+    /* 対応する値と識別子は同じ順序で消去する。 */
+    do {
+        work->values[no] = 0;
+        work->flags[no] = 0;
+        no++;
+    } while (no != 8);
+}
 
 void UiWork_PushValueSlot(u32 value, u32 flag)
 {

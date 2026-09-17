@@ -2,15 +2,15 @@
 
 static __inline__ void CopyBlock(u32 *map, u8 *base, u32 rowmod, u32 colmod, u32 parity)
 {
-    volatile u16 *colors;
+    u16 *colors;
     u8 *destination;
     u32 index = ((*map << 20) >> 18) + parity;
 
-    colors = (volatile u16 *)0x02020000;
+    colors = (u16 *)0x02020000;
     colors += index;
     destination = base + (rowmod + colmod + parity) * 2;
     *(u16 *)destination = *colors;
-    colors = (volatile u16 *)0x02020004;
+    colors = (u16 *)0x02020004;
     colors += index;
     *(u16 *)(destination + 64) = *colors;
 }

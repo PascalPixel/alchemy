@@ -126,7 +126,7 @@
     "GRAPHICS/ICON/PREPARE_TRANSFER_FOR_ITEM.C": "void @F0801a5a4(struct State_0801a4c0 *, u32);\n\n#define Ui_Apply @F0801a5a4\n#define gIw @D03001e94\n#define gRom @D08029ee4\n",
     "GRAPHICS/WINDOW/SET_RENDER_RESULT_FROM_OBJECT.C": "s32 @F080915ac(u32 id);\n\n#define BattleFx_GetResourceId @F080915ac\n#define gCell @D02000240\n#define gIw @D03001e8c\n#define gRom @D0809fc28\n",
     "GRAPHICS/TEXT/DRAW_DRAW_QUANTITY_PAIR_WITH_CUE.C": "void @F08077088(void);\n\n#define Ui_Run @F08077088\n",
-    "GRAPHICS/TEXT/MSG_SHOW_LOCALIZED_MESSAGE_AND_WAIT.C": "volatile unsigned char @F08016738(void);\nvoid @F08017aa4(s16 *, s32, s32, s32);\n\n#define Ui_Place @F0801965c\n#define Ui_Run @F08016738\n#define Ui_SetMode @F08017aa4\n#define gBattleWork @D03001e74\n#define gCell @D02000240\n#define gIw @D03001c94\n#define gIw2 @D03001f34\n",
+    "GRAPHICS/TEXT/MSG_SHOW_LOCALIZED_MESSAGE_AND_WAIT.C": "unsigned char @F08016738(void);\nvoid @F08017aa4(s16 *, s32, s32, s32);\n\n#define Ui_Place @F0801965c\n#define Ui_Run @F08016738\n#define Ui_SetMode @F08017aa4\n#define gBattleWork @D03001e74\n#define gCell @D02000240\n#define gIw @D03001c94\n#define gIw2 @D03001f34\n",
     "SOUND/ENGINE_INITIALIZE.C": "#define Math_Div @F080022ec\n#define Sound_FrameLengths @D080fb914\n#define Sound_CommandTable @D02004000\n",
     "SOUND/CGB_KEY_TO_FREQUENCY.C": "#define Sound_CgbPitchCodes @D080fb92c\n#define Sound_CgbFrequencySteps @D080fb9b0\n#define Sound_NoisePitchCodes @D080fb9c8\n",
     "SOUND/MUSIC_TRACK_CLEAR_MODULATION.C": "\n\nvoid @F080072ec();\n\n#define Audio_Run @F080072ec\n#define gRom @D080fba48\n",

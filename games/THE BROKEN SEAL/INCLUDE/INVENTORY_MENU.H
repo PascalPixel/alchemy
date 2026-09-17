@@ -5,7 +5,8 @@
 #include "MENU_RESULT.H"
 
 struct InventoryMenuIcon {
-    u8 unknown_00[5];
+    struct InventoryMenuIcon *next; /* 0x00 */
+    u8 unknown_04;
     u8 state;                       /* 0x05 */
     u16 x;                          /* 0x06 */
     u16 y;                          /* 0x08 */
@@ -35,7 +36,7 @@ struct InventoryMenuState {
     u8 party_count;                 /* 0x219 */
     u8 item_owner;                  /* 0x21a */
     u8 target_owner;                /* 0x21b */
-    struct InventoryMenuIcon * volatile selected_item_icon; /* 0x21c */
+    struct InventoryMenuIcon *selected_item_icon; /* 0x21c */
     u8 unknown_220[2];
     s16 completion_flag;            /* 0x222 */
     u8 unknown_224[0x36];

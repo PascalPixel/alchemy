@@ -43,7 +43,7 @@ void GameFlag_RefreshLureCap(void)
 }
 
 /* runtime/get_build_stamp_time.c */
-extern volatile u8 gIw;
+extern u8 gIw;
 extern u8 gVal[];
 
 u16 Runtime_GetBuildStampTime(void)

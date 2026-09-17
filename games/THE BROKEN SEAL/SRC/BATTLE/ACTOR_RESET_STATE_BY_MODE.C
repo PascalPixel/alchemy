@@ -1,40 +1,30 @@
 #include "TYPES.H"
-#include "SCENE.H"
-
-u8 *Runtime_GetObject(s32);
+#include "BATTLE_RUNTIME.H"
 
 u8 *Item_GetData(u16);
-void BattleUnit_Recalculate(s32);
 
 void BattleUnit_ResetStateByMode(s32 id, s32 mode)
 {
-    u8 *state;
+    struct BattleUnit *unit;
 
-    state = Runtime_GetObject(id);
+    unit = BattleUnit_Get(id);
     if (mode == 0) {
-        *(u16 *)(state + 56) = *(u16 *)(state + 52);
-        Actor_Do(id);
+        unit->hp = unit->max_hp;
+        BattleUnit_UpdateRatios(id);
     } else if (mode == 1) {
-        state[0x131] = 0;
+        unit->poison = 0;
     } else if (mode == 2) {
-        state[320] = 0;
+        unit->evil_spirit = 0;
     } else if (mode == 3) {
-        volatile u16 *entry;
         s32 i;
-        s32 mask;
 
-        mask = 0x200;
-        entry = (volatile u16 *)state;
-        i = 14;
-        entry = (volatile u16 *)((u8 *)entry + 216);
-        do {
-            if ((*entry & mask) != 0 &&
-                (Item_GetData(*entry)[3] & 1) != 0) {
-                *entry ^= mask;
-                BattleUnit_Recalculate(id);
+        for (i = 0; i < 15; i++) {
+            if (unit->inventory[i] & 0x200) {
+                if (Item_GetData(unit->inventory[i])[3] & 1) {
+                    unit->inventory[i] ^= 0x200;
+                    BattleUnit_Recalculate(id);
+                }
             }
-            i--;
-            entry++;
-        } while (i >= 0);
+        }
     }
 }

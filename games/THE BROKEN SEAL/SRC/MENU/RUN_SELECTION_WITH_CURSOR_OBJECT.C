@@ -25,18 +25,15 @@ s32 Menu_RunSelectionWithCursorObject(void)
     win = UiWindow_Create(1, 0, 28, 20, 2);
     Func_080292c4(win, sel);
     Func_0801c0dc(obj, &res);
-    goto loop_test;
-loop_body:
-    if (ev == 1)
-        Func_080292c4(win, *(volatile s32 *)&sel);
-    Func_0801c154(obj,
-                  pos[0] * 8 + 58,
-                  pos[1] * 8 + 20);
-loop_test:
-    WaitFrames(1);
-    ev = Func_0802938c(win, &sel, pos);
-    if (ev != -1)
-        goto loop_body;
+    for (;;) {
+        WaitFrames(1);
+        ev = Func_0802938c(win, &sel, pos);
+        if (ev == -1)
+            break;
+        if (ev == 1)
+            Func_080292c4(win, sel);
+        Func_0801c154(obj, pos[0] * 8 + 58, pos[1] * 8 + 20);
+    }
     Func_0801c17c(res);
     UiWork_Finalize(win, 2);
     return 0;

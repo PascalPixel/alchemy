@@ -12,6 +12,8 @@ use crate::targets::{decomp_target, DecompTarget, DecompTargetId};
 use psynergy::assets::lz::{GeneralToken, Mtf4LzToken};
 use serde_json::json;
 
+pub(super) mod network;
+
 const DECODED_LIMIT: u64 = 0x2_0000;
 const TILE_BANK: usize = 0x4000;
 const TILES_PER_BANK: usize = 512;

@@ -89,9 +89,9 @@ regenerate analysis, not inside every edit loop.
 ## Commit and push
 
 The subject starts with the exact prefix `make progress-subject` prints, such
-as `☀️ 56% – `, and the hook accepts only the verified tree. A commit written by
-an agent ends with that agent's `Co-Authored-By` trailer. Commits need not raise
-DONE ([RECOVERY](RECOVERY.md)).
+as `☀️ 56% ⚓️ ?% – `, and the hook accepts only the verified tree. A commit
+written by an agent ends with that agent's `Co-Authored-By` trailer. Commits
+need not raise DONE ([RECOVERY](RECOVERY.md)).
 
 Push only when Pascal asks. Passing verification is not authorization to change
 origin. When a push is requested, push `main` only after the batch's

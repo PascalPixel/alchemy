@@ -9,11 +9,22 @@ route. Names, plausible behavior, matching size and fuzzy scores are not proof.
 Each instance owner is credited once, in its own image; sharing a source
 neither multiplies nor reduces credit.
 
-**☀️ DONE = retained assembly + exact C**, divided by audited executable bytes.
-Use the coverage map's retained-assembly category, not every unresolved
-function temporarily assembled to make the ROM build. Compiler runtime built
-from the licensed containers counts in that category as explained, as pret
-counts linked libgcc; bytes restored from the ROM as a private input never
+Each game has its own DONE: **☀️** for The Broken Seal and **⚓️** for The Lost
+Age.
+
+**DONE = common permanent assembly + common C + game permanent assembly + game
+C**, divided by that game's audited executable bytes. Common parts are credited
+bytes whose source lives under `games/COMMON/` and compiles for both games; game
+parts are the game's own. Each game counts its own images once, so a shared
+source adds to both games' DONE, each over its own bytes. A game whose
+executable audit is incomplete has no denominator: its DONE is pending, shown as
+`?` in the commit prefix and "pending" in the README, never estimated.
+`make progress` prints both games with their four parts.
+
+Permanent assembly is the coverage map's retained-assembly category, not every
+unresolved function temporarily assembled to make the ROM build. Compiler
+runtime built from the licensed containers counts in that category as
+explained, as pret counts linked libgcc; bytes restored from the ROM as a private input never
 count. Drafts and unknown code earn no credit. Report exact-C share separately;
 converting already credited assembly to exact C improves that share without
 increasing DONE. A match that needed a scheduling trick earns nothing

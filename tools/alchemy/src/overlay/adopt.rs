@@ -248,6 +248,48 @@ fn repeatable(
     ))
 }
 
+/// An owner whose registered source other owners share adopts only that
+/// source, byte for byte. When the source is a module linked into several
+/// images, the owner must also be declared where its unit links it, as a
+/// canonical owner or an instance member, so it never compiles on its own.
+fn shared_source_guard(
+    root: &Path,
+    source_paths: &SourcePaths,
+    owner: SourceOwner,
+    installed: &Path,
+    candidate: &[u8],
+) -> Result<(), String> {
+    let shared = source_paths
+        .owners_for_path(installed)
+        .into_iter()
+        .any(|registered| registered != owner);
+    if !shared {
+        return Ok(());
+    }
+    if fs::read(installed).ok().as_deref() != Some(candidate) {
+        return Err(format!(
+            "{} is shared by other exact owners; refusing to overwrite it with differing source",
+            installed.display()
+        ));
+    }
+    if !source_paths.links_module_path(installed) {
+        return Ok(());
+    }
+    let relative = installed.strip_prefix(root).unwrap_or(installed);
+    let declared = crate::compiler::translation_units::TranslationUnits::declared(root)?
+        .units
+        .iter()
+        .any(|unit| unit.source == relative && unit.declares(&owner.image(), owner.address()));
+    if declared {
+        return Ok(());
+    }
+    Err(format!(
+        "{} is linked into several images; declare {} in the instances of its translation unit before adopting it",
+        installed.display(),
+        owner.id()
+    ))
+}
+
 pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
     let Some(options) = options_of(args)? else {
         println!("{USAGE}");
@@ -308,16 +350,8 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
     } else {
         None
     };
-    let shared_with_other_owners = source_paths
-        .owners_for_path(&installed)
-        .into_iter()
-        .any(|registered| registered != owner);
-    if shared_with_other_owners {
-        let candidate = fs::read(&options.source).map_err(|error| error.to_string())?;
-        if preexisting.as_deref() != Some(candidate.as_slice()) {
-            return Err(format!("{} is shared by other exact owners; refusing to overwrite it with differing source", installed.display()));
-        }
-    }
+    let candidate = fs::read(&options.source).map_err(|error| error.to_string())?;
+    shared_source_guard(root, &source_paths, owner, &installed, &candidate)?;
     let source_is_installed = fs::canonicalize(&options.source)
         .ok()
         .zip(fs::canonicalize(&installed).ok())
@@ -418,7 +452,9 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::compiler::translation_units::fixture::{Repository, FIND};
     use crate::targets::DecompTargetId;
+    use serde_json::json;
 
     fn arguments(values: &[&str]) -> Vec<String> {
         values.iter().map(|value| value.to_string()).collect()
@@ -454,5 +490,40 @@ mod tests {
         ]))
         .unwrap_err();
         assert!(error.contains("tla-en"), "{error}");
+    }
+
+    #[test]
+    fn adopting_a_linked_module_owner_requires_identical_source_and_instance_record() {
+        let repository = Repository::new();
+        let root = repository.0.path();
+        let owner = |id: &str| SourceOwner::parse(id).unwrap();
+        let guard = |id: &str, candidate: &[u8]| {
+            let names = SourcePaths::load(root).unwrap();
+            let owner = owner(id);
+            let installed = names.registered_source_path(owner).unwrap();
+            shared_source_guard(root, &names, owner, &installed, candidate)
+        };
+        // A declared instance member adopts only the shared source itself.
+        guard("resource_39b:02000630", b"\n").unwrap();
+        let error = guard("resource_39b:02000630", b"void f(void) {}\n").unwrap_err();
+        assert!(error.contains("is shared by other exact owners"), "{error}");
+        // An owner of the module that no unit declares in its image is refused.
+        let record = json!({"name": FIND, "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"});
+        repository.record("resource_39c:02000630", record);
+        let error = guard("resource_39c:02000630", b"\n").unwrap_err();
+        assert!(
+            error.contains("STAGED_ACTOR.C is linked into several images; declare resource_39c:02000630 in the instances of its translation unit before adopting it"),
+            "{error}"
+        );
+        // Related overlays loaded at one address keep their standalone route.
+        repository.write("games/THE BROKEN SEAL/SRC/FIELD/KORIMA/SHARED.C", "\n");
+        for id in ["resource_392:02000100", "resource_393:02000100"] {
+            repository.record(id, json!("FIELD/KORIMA/SHARED.C"));
+        }
+        guard("resource_393:02000100", b"\n").unwrap();
+        // An owner nothing else shares needs neither.
+        repository.write("games/THE BROKEN SEAL/SRC/FIELD/KORIMA/ALONE.C", "\n");
+        repository.record("resource_394:02000100", json!("FIELD/KORIMA/ALONE.C"));
+        guard("resource_394:02000100", b"void f(void) {}\n").unwrap();
     }
 }

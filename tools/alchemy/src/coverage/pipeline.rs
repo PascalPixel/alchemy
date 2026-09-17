@@ -455,11 +455,21 @@ fn exact_overlay(
             .filter(|owner| !owner.spans.is_empty())
             .collect::<Vec<_>>();
         if let Some(units) = json(tree, "games/THE BROKEN SEAL/recon/translation-units.json") {
-            for unit in array(&units, "units")
+            // Each placeholder already credits its owner once, in its own
+            // overlay; an instance adds only the fill it declares there.
+            let linked = array(&units, "units")
                 .iter()
-                .filter(|unit| text(unit, "game") == "tbs" && text(unit, "overlay") == *id)
-            {
-                for gap in array(unit, "compiler_gaps") {
+                .filter(|unit| text(unit, "game") == "tbs")
+                .filter_map(|unit| match text(unit, "overlay") == *id {
+                    true => Some((unit, unit)),
+                    false => unit
+                        .get("instances")?
+                        .get(id)
+                        .map(|instance| (unit, instance)),
+                })
+                .collect::<Vec<_>>();
+            for (unit, layout) in linked {
+                for gap in array(layout, "compiler_gaps") {
                     let (Some(start), Some(end)) = (address(gap, "start"), address(gap, "end"))
                     else {
                         return Err("compiler alignment gap has invalid bounds".into());
@@ -1941,6 +1951,110 @@ mod tests {
     }
     fn no_inventory() -> BTreeMap<String, Vec<Region>> {
         BTreeMap::new()
+    }
+    #[test]
+    fn coverage_credits_instance_owners_once_in_their_own_overlay_with_compiler_gap() {
+        let root = tempfile::tempdir().unwrap();
+        let write = |path: &str, text: &str| {
+            let path = root.path().join(path);
+            std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+            std::fs::write(path, text).unwrap();
+        };
+        let source = "games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/STAGED_ACTOR.C";
+        write(source, "void FieldScene_FindActorRegion(void) {}\n");
+        let mut register = serde_json::Map::new();
+        for (image, find, redraw) in [
+            ("resource_3bf", "0200034c", "020008c0"),
+            ("resource_39b", "02000630", "02000ba4"),
+        ] {
+            for (address, name) in [
+                (find, "FieldScene_FindActorRegion"),
+                (redraw, "FieldScene_RedrawActorFootprint"),
+            ] {
+                let record = json!({"name": name, "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"});
+                register.insert(format!("{image}:{address}"), record);
+            }
+        }
+        write(
+            SOURCE_PATHS_MANIFEST,
+            &json!({"format": 3, "owners": register}).to_string(),
+        );
+        // A 1394-byte first member leaves one halfword of fill in each image.
+        write(
+            "games/THE BROKEN SEAL/asm/overlays/resource_3bf_overlay.s",
+            "AlchemyC_0200034c:\n\t.space 0x572\n\t.short 0\nAlchemyC_020008c0:\n\t.space 0x11c\n",
+        );
+        write(
+            "games/THE BROKEN SEAL/asm/overlays/resource_39b_overlay.s",
+            "AlchemyC_02000630:\n\t.space 0x572\n\t.short 0\nAlchemyC_02000ba4:\n\t.space 0x11c\n",
+        );
+        let units = |gap: (&str, &str)| {
+            json!({"units": [{
+                "id": "staged-actor", "game": "tbs", "source": source, "overlay": "resource_3bf",
+                "owners": [
+                    {"address": "0x0200034c", "extent": 1394, "state": "exact-c"},
+                    {"address": "0x020008c0", "extent": 284, "state": "exact-c"}
+                ],
+                "instances": {"resource_39b": {
+                    "owners": {
+                        "FieldScene_FindActorRegion": {"address": "0x02000630", "extent": 1394},
+                        "FieldScene_RedrawActorFootprint": {"address": "0x02000ba4", "extent": 284}
+                    },
+                    "compiler_gaps": [{"start": gap.0, "end": gap.1}]
+                }}
+            }]})
+            .to_string()
+        };
+        write(
+            "games/THE BROKEN SEAL/recon/translation-units.json",
+            &units(("0x02000ba2", "0x02000ba4")),
+        );
+        let tree = crate::coverage::tree::work_tree_at(root.path().to_path_buf());
+        let executable = SpanMap::from([
+            (
+                "resource_3bf".into(),
+                vec![Span::new(0x0200_0000, 0x0200_1000)],
+            ),
+            (
+                "resource_39b".into(),
+                vec![Span::new(0x0200_0000, 0x0200_1000)],
+            ),
+        ]);
+        let (owners, spans) = exact_overlay(&tree, &overlay_ids(&tree), &executable).unwrap();
+        let entries = |id: &str| {
+            owners[id]
+                .iter()
+                .map(|owner| (owner.label.as_str(), owner.entry, bytes(&owner.spans)))
+                .collect::<Vec<_>>()
+        };
+        // Each owner once, in its own overlay; the instance adds its own fill.
+        assert_eq!(
+            entries("resource_3bf"),
+            [
+                ("FieldScene_FindActorRegion", 0x0200_034c, 1394),
+                ("FieldScene_RedrawActorFootprint", 0x0200_08c0, 284)
+            ]
+        );
+        assert_eq!(
+            entries("resource_39b"),
+            [
+                ("FieldScene_FindActorRegion", 0x0200_0630, 1394),
+                ("FieldScene_RedrawActorFootprint", 0x0200_0ba4, 284),
+                ("staged-actor compiler alignment", 0x0200_0ba2, 2)
+            ]
+        );
+        assert_eq!(bytes(&spans["resource_3bf"]), 1394 + 284);
+        assert_eq!(spans["resource_39b"], [Span::new(0x0200_0630, 0x0200_0cc0)]);
+        // Fill that no two adjacent exact owners bound is refused.
+        write(
+            "games/THE BROKEN SEAL/recon/translation-units.json",
+            &units(("0x020008be", "0x020008c0")),
+        );
+        let error = exact_overlay(&tree, &overlay_ids(&tree), &executable).unwrap_err();
+        assert_eq!(
+            error,
+            "resource_39b: compiler gap lacks exact adjacent owners"
+        );
     }
     #[test]
     fn overlay_drafts_follow_units_with_legacy_filename_fallback() {

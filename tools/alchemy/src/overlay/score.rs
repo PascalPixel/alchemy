@@ -94,12 +94,80 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     {
         return Err("overlay scoring currently requires the canonical TBS reference".into());
     }
+    if let Some((output, exact)) = score_instance_owner(root, &options)? {
+        println!("reference_from=rom representation=loader-runtime container_roundtrip=required");
+        print!("{output}");
+        return Ok(i32::from(!exact));
+    }
     let rendered = render_options(root, options)?;
     println!("reference_from=rom representation=loader-runtime container_roundtrip=required");
     print!("{}", rendered.stdout);
     Ok(i32::from(
         rendered.differing_halfwords != 0 || rendered.candidate_length != rendered.reference_length,
     ))
+}
+
+/// An instance owner has no standalone object: its candidate compiles as the
+/// whole unit source, links into the owner's image as production links it,
+/// and every owner of that instance is compared over its complete extent.
+fn score_instance_owner(
+    root: &Path,
+    options: &crate::score::cli::Options,
+) -> Result<Option<(String, bool)>, String> {
+    let (Some(address), Some(overlay)) = (options.owner, options.overlay.as_deref()) else {
+        return Ok(None);
+    };
+    let owner = SourceOwner::parse(&format!("{overlay}:{address:08x}"))?;
+    let units = TranslationUnits::load(root)?;
+    let Some(unit) = units.unit_for_game_owner("tbs", owner) else {
+        return Ok(None);
+    };
+    let Some(member) = unit.instance_owner(overlay, address) else {
+        return Ok(None);
+    };
+    let route = format!("alchemy score --unit {} --instance {overlay}", unit.id);
+    if options.asm
+        || options.allocator_order
+        || options.patch.is_some()
+        || options.configuration.owner_symbol.is_some()
+        || options.configuration.reference_symbols
+    {
+        return Err(format!(
+            "{} is an instance owner of unit {}: its score compiles the whole unit, so --asm, --allocator-order, --patch, --symbol and --reference-symbols do not apply; see {route}",
+            owner.id(),
+            unit.id
+        ));
+    }
+    if let Some(size) = options.size.filter(|size| *size != member.extent) {
+        return Err(format!(
+            "{}: requested span {size} differs from complete instance extent {}",
+            owner.id(),
+            member.extent
+        ));
+    }
+    let explicit = Path::new(&options.source);
+    let candidate = match explicit.is_file() {
+        true => explicit
+            .canonicalize()
+            .map_err(|error| format!("{}: {error}", explicit.display()))?,
+        false => root.join(&unit.source),
+    };
+    let work = options.work.as_ref().map(|work| root.join(work));
+    let (scored, differing) = crate::score::score_overlay_image(
+        unit,
+        overlay,
+        Some(&candidate),
+        work.as_deref(),
+        true,
+        Some(address),
+    )?;
+    let output = format!(
+        "unit={} instance={overlay} owner={}\n{scored}differing_owners={}\n",
+        unit.id,
+        owner.id(),
+        differing.len()
+    );
+    Ok(Some((output, differing.is_empty())))
 }
 
 pub(crate) fn render_options(
@@ -155,6 +223,14 @@ pub(crate) fn render_options(
     );
     options.configuration.overlay_extent = Some(span);
     if let Some(unit) = units.unit_for_game_owner("tbs", resolved) {
+        if unit.instance_owner(&overlay, resolved.address()).is_some() {
+            return Err(format!(
+                "{} is an instance owner of unit {}; score it through its unit with alchemy score --unit {} --instance {overlay}",
+                resolved.id(),
+                unit.id,
+                unit.id
+            ));
+        }
         options.configuration.absolute_symbols = unit.canonical_symbols()?;
     }
     options.rom = Some(reference.to_string_lossy().into_owned());

@@ -2,10 +2,10 @@ use crate::candidate::{assemble, compile_to_assembly};
 use crate::compiler::routing::CompilerTarget;
 use crate::compiler::source_paths::{SourceOwner, SourcePaths};
 use crate::compiler::symbols::symbol_is_thumb;
-use crate::compiler::translation_units::{TranslationUnit, TranslationUnits};
+use crate::compiler::translation_units::{PlacedMember, TranslationUnit, TranslationUnits};
 use crate::overlay::compile::compile_declared_overlay_unit;
 use crate::overlay::compile::paired_function_address;
-use crate::overlay::compile::OverlayEditionPlacement;
+use crate::overlay::compile::OverlayPlacement;
 use objdiff_core::{
     diff::{ArmArchVersion, DiffObjConfig, DiffSide},
     obj,
@@ -611,7 +611,7 @@ fn write_declared_main_owner_build(
         .join(owner);
     let mut entries = Vec::new();
     for edition in EDITIONS {
-        let regional = unit.edition_owner(edition, member.address);
+        let regional = unit.edition_owner(unit.image(), edition, member.address);
         let extent = regional.map_or(member.extent, |member| member.extent);
         let mut entry = EditionBuildEntry::new(edition, 0, extent);
         let result = (|| {
@@ -2009,29 +2009,30 @@ fn write_overlay_owner_build(
     decoded: &DecodedOverlays,
 ) -> Result<(), String> {
     let identity = SourceOwner::parse(&owner.name)?;
+    let image = identity.image();
     let unit = registers()?
         .units
         .unit_for_game_owner("tbs", identity)
         .filter(|unit| unit.exact())
         .ok_or("edition builds require a declared exact C unit")?;
-    let declared = unit
-        .owners
-        .iter()
+    // A canonical owner or an instance owner: its unit links it into its own image.
+    let member = unit
+        .owners_in(&image)
         .find(|member| member.address == identity.address())
-        .unwrap();
-    if declared.extent != owner.size {
+        .ok_or_else(|| format!("{} is not a declared owner", identity.id()))?;
+    if member.extent != owner.size {
         return Err("requested span differs from declared complete extent".into());
     }
     let mut entries = Vec::new();
     for edition in EDITIONS {
-        let regional = unit.edition_owner(edition, identity.address());
+        let regional = unit.edition_owner(&image, edition, member.canonical);
         let size = regional.map_or(owner.size, |owner| owner.extent);
         let mut entry = EditionBuildEntry::new(edition, 0, size);
         let result = (|| -> Result<usize, String> {
             let address = overlay_edition_address(
                 unit,
-                identity.address(),
-                owner.size,
+                &image,
+                member,
                 edition,
                 owner.resource,
                 decoded,
@@ -2039,19 +2040,18 @@ fn write_overlay_owner_build(
             )?;
             let start = (address - OVERLAY_BASE as u32) as usize;
             entry.start = format!("0x{address:08x}");
-            let mut addresses = BTreeMap::from([(identity.address(), address)]);
+            let mut addresses = BTreeMap::from([(member.canonical, address)]);
             if unit.data.is_some() {
                 // A data unit keeps its other functions linked; placing each
                 // where this edition has it lets the owner's calls resolve.
-                for member in unit
-                    .owners
-                    .iter()
-                    .filter(|member| member.address != identity.address())
+                for other_member in unit
+                    .owners_in(&image)
+                    .filter(|other| other.canonical != member.canonical)
                 {
                     let other = overlay_edition_address(
                         unit,
-                        member.address,
-                        member.extent,
+                        &image,
+                        other_member,
                         edition,
                         owner.resource,
                         decoded,
@@ -2067,25 +2067,26 @@ fn write_overlay_owner_build(
                             &decoded[edition][&owner.resource],
                             address,
                             owner.size,
-                            member.address,
+                            other_member.address,
                         )
                         .ok()
                         .flatten()
                     });
                     if let Some(other) = other {
-                        addresses.insert(member.address, other);
+                        addresses.insert(other_member.canonical, other);
                     }
                 }
             }
-            let placement = OverlayEditionPlacement {
+            let placement = OverlayPlacement {
                 reference: &decoded[edition][&owner.resource],
                 addresses,
             };
             let compiled = compile_declared_overlay_unit(
                 unit,
+                &image,
                 edition,
                 Some(&placement),
-                Some(identity.address()),
+                Some(member.canonical),
             )?;
             let expected = overlay_window(decoded, edition, owner.resource, start, size)?;
             compare_overlay_member(&compiled, expected, address, size)
@@ -2111,27 +2112,29 @@ fn write_overlay_owner_build(
         Err("overlay owner is not byte-exact in every edition; see edition build report".into())
     }
 }
+/// Where `image`, resource `resource`, links `member` in `edition`: its
+/// reviewed layout, its English address, the corpus match, or a located window.
 fn overlay_edition_address(
     unit: &TranslationUnit,
-    address: u32,
-    extent: usize,
+    image: &str,
+    member: PlacedMember<'_>,
     edition: &str,
     resource: usize,
     decoded: &DecodedOverlays,
     found: Option<&OverlayMatch>,
 ) -> Result<u32, String> {
-    if let Some(owner) = unit.edition_owner(edition, address) {
+    if let Some(owner) = unit.edition_owner(image, edition, member.canonical) {
         return Ok(owner.address);
     }
     if edition == "en" {
-        return Ok(address);
+        return Ok(member.address);
     }
     if let Some(found) = found {
         return u32::try_from(OVERLAY_BASE + found.starts[edition] as u64)
             .map_err(|_| "edition address overflow".into());
     }
-    let offset = (address - OVERLAY_BASE as u32) as usize;
-    let en = overlay_window(decoded, "en", resource, offset, extent)?;
+    let offset = (member.address - OVERLAY_BASE as u32) as usize;
+    let en = overlay_window(decoded, "en", resource, offset, member.extent)?;
     let mask = overlay_mask(en, offset);
     let start = locate(en, &mask, &anchors(en, &mask), &decoded[edition][&resource])?.0;
     u32::try_from(OVERLAY_BASE + start as u64).map_err(|_| "edition address overflow".into())
@@ -2169,58 +2172,66 @@ fn write_overlay_edition_build(
     }
     let mut reports = Vec::new();
     for unit in units {
-        let resource = usize::from_str_radix(
-            unit.overlay
-                .as_deref()
-                .unwrap()
-                .trim_start_matches("resource_"),
-            16,
-        )
-        .map_err(|_| "invalid unit resource")?;
-        for edition in EDITIONS {
-            let addresses = unit
-                .symbols()
-                .map(|(address, _, extent)| {
-                    let identity = unit.source_owner(address)?;
-                    overlay_edition_address(
-                        unit,
-                        address,
-                        extent,
+        // The canonical overlay, then each instance, compiled once per edition.
+        for image in unit.images() {
+            let resource = usize::from_str_radix(image.trim_start_matches("resource_"), 16)
+                .map_err(|_| "invalid unit resource")?;
+            for edition in EDITIONS {
+                let addresses = unit
+                    .members_in(image)
+                    .map(|member| {
+                        let identity = unit.source_owner(image, member.address)?;
+                        overlay_edition_address(
+                            unit,
+                            image,
+                            member,
+                            edition,
+                            resource,
+                            decoded,
+                            matches.get(&identity.id()),
+                        )
+                        .map(|regional| (member.canonical, regional))
+                    })
+                    .collect::<Result<BTreeMap<_, _>, String>>()?;
+                let placement = OverlayPlacement {
+                    reference: &decoded[edition][&resource],
+                    addresses,
+                };
+                let compiled =
+                    compile_declared_overlay_unit(unit, image, edition, Some(&placement), None)?;
+                for member in unit.members_in(image) {
+                    let regional_address = placement.addresses[&member.canonical];
+                    let extent = unit
+                        .edition_owner(image, edition, member.canonical)
+                        .map_or(member.extent, |owner| owner.extent);
+                    let reference = overlay_window(
+                        decoded,
                         edition,
                         resource,
-                        decoded,
-                        matches.get(&identity.id()),
-                    )
-                    .map(|regional| (address, regional))
-                })
-                .collect::<Result<BTreeMap<_, _>, String>>()?;
-            let placement = OverlayEditionPlacement {
-                reference: &decoded[edition][&resource],
-                addresses,
-            };
-            let compiled = compile_declared_overlay_unit(unit, edition, Some(&placement), None)?;
-            for (address, name, extent) in unit.symbols() {
-                let regional_address = placement.addresses[&address];
-                let extent = unit
-                    .edition_owner(edition, address)
-                    .map_or(extent, |owner| owner.extent);
-                let reference = overlay_window(
-                    decoded,
-                    edition,
-                    resource,
-                    (regional_address - OVERLAY_BASE as u32) as usize,
-                    extent,
-                )?;
-                let differences =
-                    compare_overlay_member(&compiled, reference, regional_address, extent)?;
-                if differences != 0 {
-                    return Err(format!(
-                        "{name}: {edition} complete overlay owner differs in {differences} bytes"
-                    ));
+                        (regional_address - OVERLAY_BASE as u32) as usize,
+                        extent,
+                    )?;
+                    let differences =
+                        compare_overlay_member(&compiled, reference, regional_address, extent)?;
+                    if differences != 0 {
+                        let name = member.name;
+                        let place = match image == unit.image() {
+                            true => String::new(),
+                            false => format!(" in {image}"),
+                        };
+                        return Err(format!(
+                            "{name}: {edition} complete overlay owner{place} differs in {differences} bytes"
+                        ));
+                    }
                 }
             }
+            let owners = unit.owners_in(image).count();
+            let mut report = serde_json::json!({"id":unit.id,"overlay":image,"source":unit.source,"c_compiles":EDITIONS.len(),"owners":owners,"editions":EDITIONS});
+            if image != unit.image() {
+                report["canonical_overlay"] = unit.image().into();
+            }
+            reports.push(report);
         }
-        reports.push(serde_json::json!({"id":unit.id,"overlay":unit.overlay,"source":unit.source,"c_compiles":EDITIONS.len(),"owners":unit.owners.len(),"editions":EDITIONS}));
     }
     write_json(
         path,
@@ -3715,6 +3726,71 @@ mod tests {
             parse_explicit_overlay_owner("resource_392:02000bcc", None),
             Err(error) if error.contains("require --span")
         ));
+    }
+    #[test]
+    fn cross_edition_builds_instances_per_edition() {
+        use crate::compiler::translation_units::fixture::{Repository, FIND, REDRAW};
+        let repository = Repository::new();
+        let unit = repository.load().unwrap().units.remove(0);
+        let member = |image: &str, name: &str| {
+            unit.members_in(image)
+                .find(|member| member.name == name)
+                .unwrap()
+        };
+        // Every resource of every edition: the owner's code at its English
+        // offset, or eight bytes later outside English.
+        let code = (0..142u16)
+            .flat_map(|index| (0x2000 | index).to_le_bytes())
+            .collect::<Vec<_>>();
+        let mut decoded = DecodedOverlays::new();
+        for edition in EDITIONS {
+            let shift = if edition == "en" { 0 } else { 8 };
+            let images = [(0x3bf, 0x8c0), (0x389, 0x8c0), (0x39b, 0xba4)].map(|(resource, en)| {
+                let mut image = vec![0xff; 0x1000];
+                image[en + shift..en + shift + code.len()].copy_from_slice(&code);
+                (resource, image)
+            });
+            decoded.insert(edition, images.into_iter().collect());
+        }
+        let address = |image: &str, name: &str, edition: &str, found: Option<&OverlayMatch>| {
+            let resource =
+                usize::from_str_radix(image.trim_start_matches("resource_"), 16).unwrap();
+            overlay_edition_address(
+                &unit,
+                image,
+                member(image, name),
+                edition,
+                resource,
+                &decoded,
+                found,
+            )
+            .unwrap()
+        };
+        // An instance declares its own regional layout; the canonical image does not share it.
+        assert_eq!(address("resource_39b", REDRAW, "ja", None), 0x0200_0bb4);
+        assert_eq!(address("resource_3bf", REDRAW, "ja", None), 0x0200_08c8);
+        // English is the instance's own address, never the canonical one.
+        assert_eq!(address("resource_39b", REDRAW, "en", None), 0x0200_0ba4);
+        // Other editions come from the instance resource's own correspondence.
+        assert_eq!(address("resource_389", REDRAW, "de", None), 0x0200_08c8);
+        let found = OverlayMatch {
+            owner: OverlayOwner {
+                name: "resource_39b:02000630".into(),
+                resource: 0x39b,
+                en_offset: 0x630,
+                size: 296,
+            },
+            mask: Vec::new(),
+            starts: EDITIONS
+                .into_iter()
+                .map(|edition| (edition, 0x640))
+                .collect(),
+            methods: BTreeMap::new(),
+        };
+        assert_eq!(
+            address("resource_39b", FIND, "fr", Some(&found)),
+            0x0200_0640
+        );
     }
     #[test]
     fn locates_explicit_overlay_owner_with_masked_regional_literal() {

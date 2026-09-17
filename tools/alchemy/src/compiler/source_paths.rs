@@ -76,6 +76,10 @@ impl SourceOwner {
             Self::Overlay { resource, .. } => Some(format!("resource_{resource:03x}")),
         }
     }
+    /// The image that links this owner: `main` or its overlay resource.
+    pub fn image(self) -> String {
+        self.overlay_id().unwrap_or_else(|| "main".into())
+    }
     pub fn is_main(self) -> bool {
         matches!(self, Self::Main(_))
     }
@@ -242,18 +246,40 @@ impl SourcePaths {
             if owners.len() <= 1 {
                 continue;
             }
-            let first = owners[0];
-            let same_address = owners
-                .iter()
-                .all(|owner| owner.address() == first.address());
-            let same_overlay = owners
-                .iter()
-                .all(|owner| owner.overlay_id() == first.overlay_id());
-            if owners.iter().any(|owner| owner.is_main()) || (!same_address && !same_overlay) {
+            if owners.iter().all(|owner| owner.is_main()) {
                 return Err(format!(
-                    "{} may be shared only by one overlay translation unit or by overlay owners at one load address",
+                    "{} maps several main-image owners; register their names and declare them in one translation unit",
                     path.display()
                 ));
+            }
+            if owners.iter().any(|owner| owner.is_main()) {
+                return Err(format!(
+                    "{} is shared by main-image and overlay owners; translation-unit instances cover overlay images only",
+                    path.display()
+                ));
+            }
+            if !links_module(owners) {
+                continue;
+            }
+            // Translation-unit instances find each member by its registered name.
+            let mut members = BTreeSet::new();
+            for owner in owners {
+                let record = &records[owner];
+                if !record.named {
+                    return Err(format!(
+                        "{} is linked into several images, so {} needs an explicit name",
+                        path.display(),
+                        owner.id()
+                    ));
+                }
+                if !members.insert((owner.image(), record.name.as_str())) {
+                    return Err(format!(
+                        "{} names {} twice in {}",
+                        path.display(),
+                        record.name,
+                        owner.image()
+                    ));
+                }
             }
         }
         Ok(Self {
@@ -337,29 +363,61 @@ impl SourcePaths {
         }
         exports
     }
-    /// The register's name bindings for one image, as preprocessor input.
-    ///
-    /// Production sources spell the semantic name; the ABI alias belongs to
-    /// the register, not to the source. The build hands each translation
-    /// unit the bindings for its own image, so a rename is one register
-    /// edit and overlay images keep their independent name spaces.
-    pub fn symbol_bindings(&self, overlay: Option<&str>) -> String {
+    /// The owners one image registers under `name`.
+    pub fn overlay_owners_named(&self, overlay: &str, name: &str) -> Vec<SourceOwner> {
+        self.records
+            .iter()
+            .filter(|(owner, record)| {
+                record.name == name && owner.overlay_id().as_deref() == Some(overlay)
+            })
+            .map(|(owner, _)| *owner)
+            .collect()
+    }
+    /// The register's name bindings for one compile, as preprocessor input.
+    /// Sources spell semantic names; the register owns their ABI aliases. A
+    /// main compile binds every unambiguous main name; an overlay compile only
+    /// the owners it defines, so other names bind in the image being linked.
+    pub fn symbol_bindings(&self, owner: Option<SourceOwner>) -> String {
+        let image = owner.and_then(SourceOwner::overlay_id);
+        let compiled = owner
+            .filter(|owner| !owner.is_main())
+            .map(|owner| self.compiled_owners(owner));
         let mut seen = BTreeMap::new();
         for (owner, record) in &self.records {
-            if owner.overlay_id().as_deref() != overlay || !record.named {
+            if owner.overlay_id() != image || !record.named {
                 continue;
             }
             seen.entry(record.name.as_str())
-                .and_modify(|address| *address = None)
-                .or_insert(Some(owner.address_stem()));
+                .and_modify(|found| *found = None)
+                .or_insert(Some(*owner));
         }
         let mut text = String::new();
-        for (name, address) in seen {
-            if let Some(address) = address {
-                text.push_str(&format!("#define {name} Func_{address}\n"));
+        for (name, owner) in seen {
+            let Some(owner) = owner else {
+                continue;
+            };
+            if compiled
+                .as_ref()
+                .is_none_or(|compiled| compiled.contains(&owner))
+            {
+                text.push_str(&format!("#define {name} Func_{}\n", owner.address_stem()));
             }
         }
         text
+    }
+    /// The routed overlay owner and every owner its registered source maps
+    /// in the same image.
+    fn compiled_owners(&self, owner: SourceOwner) -> BTreeSet<SourceOwner> {
+        let mut owners = self
+            .mapped_relative_path(owner)
+            .and_then(|path| self.by_path.get(path))
+            .into_iter()
+            .flatten()
+            .filter(|other| other.overlay_id() == owner.overlay_id())
+            .copied()
+            .collect::<BTreeSet<_>>();
+        owners.insert(owner);
+        owners
     }
     pub fn registered_owners(&self) -> impl Iterator<Item = SourceOwner> + '_ {
         self.records.keys().copied()
@@ -450,6 +508,17 @@ impl SourcePaths {
             .and_then(SourceOwner::from_legacy_stem)
             .into_iter()
             .collect()
+    }
+    /// Whether `path` is one module linked into several images at different addresses.
+    pub fn links_module_path(&self, path: &Path) -> bool {
+        links_module(&self.owners_for_path(path))
+    }
+    /// Sources linked into several images at different addresses, with their owners.
+    pub fn module_paths(&self) -> impl Iterator<Item = (&Path, &[SourceOwner])> {
+        self.by_path
+            .iter()
+            .filter(|(_, owners)| links_module(owners))
+            .map(|(path, owners)| (path.as_path(), owners.as_slice()))
     }
     pub fn owner_for_path(&self, path: &Path) -> Result<Option<SourceOwner>, String> {
         match self.owners_for_path(path).as_slice() {
@@ -618,6 +687,16 @@ fn game_paths(game: &str) -> Result<(PathBuf, PathBuf), String> {
     }
     let root = Path::new("games").join(crate::compiler::routing::game_directory(game));
     Ok((root.join("SRC"), root.join("source-paths.json")))
+}
+/// Several images at several addresses: one module linked into each image,
+/// rather than one image's unit or related overlays loaded at one address.
+fn links_module(owners: &[SourceOwner]) -> bool {
+    owners
+        .iter()
+        .any(|owner| owner.image() != owners[0].image())
+        && owners
+            .iter()
+            .any(|owner| owner.address() != owners[0].address())
 }
 fn validate_source_path(source: &str) -> Result<PathBuf, String> {
     let registered = Path::new(source);
@@ -802,6 +881,51 @@ mod tests {
         );
     }
     #[test]
+    fn overlay_bindings_define_only_the_owners_one_compile_defines() {
+        let root = tempdir().unwrap();
+        let paths = SourcePaths::parse(
+            root.path(),
+            r#"{"format":3,"owners":{
+            "main:08001234":{"name":"Main_Run"},
+            "resource_380:02000100":{"name":"Scene_First","source":"FIELD/X/SCENE.C"},
+            "resource_380:02000104":{"name":"Scene_Second","source":"FIELD/X/SCENE.C"},
+            "resource_380:02000200":{"name":"Scene_Other","source":"FIELD/X/OTHER.C"},
+            "resource_380:02000300":{"name":"Scene_Unadopted"},
+            "resource_380:02000400":{"name":"Scene_Twice"},
+            "resource_380:02000404":{"name":"Scene_Twice"},
+            "resource_381:02000100":{"name":"Scene_First","source":"FIELD/Y/SCENE.C"}}}"#,
+        )
+        .unwrap();
+        let owner = |id| Some(SourceOwner::parse(id).unwrap());
+        let unit = "#define Scene_First Func_02000100\n#define Scene_Second Func_02000104\n";
+        assert_eq!(paths.symbol_bindings(owner("resource_380:02000104")), unit);
+        assert_eq!(
+            paths.symbol_bindings(owner("resource_380:02000300")),
+            "#define Scene_Unadopted Func_02000300\n"
+        );
+        assert_eq!(paths.symbol_bindings(owner("resource_380:02000400")), "");
+        assert_eq!(
+            paths.symbol_bindings(owner("resource_381:02000100")),
+            "#define Scene_First Func_02000100\n"
+        );
+        for main in [None, owner("main:08001234")] {
+            assert_eq!(
+                paths.symbol_bindings(main),
+                "#define Main_Run Func_08001234\n"
+            );
+        }
+        assert_eq!(
+            paths.overlay_owners_named("resource_380", "Scene_Twice"),
+            [
+                owner("resource_380:02000400").unwrap(),
+                owner("resource_380:02000404").unwrap()
+            ]
+        );
+        assert!(paths
+            .overlay_owners_named("resource_382", "Scene_First")
+            .is_empty());
+    }
+    #[test]
     fn ambiguous_main_symbols_are_not_exported() {
         let root = tempdir().unwrap();
         let paths = SourcePaths::parse(root.path(), r#"{"format":3,"owners":{"main:08000000":{"name":"same"},"main:08000004":{"name":"same"}}}"#).unwrap();
@@ -879,6 +1003,119 @@ mod tests {
                 address: 0x0200_013c
             })
         );
+        assert_eq!(paths.module_paths().count(), 0);
+    }
+    const STAGED_ACTOR: &str = "FIELD/COMMON/OBJECT/STAGED_ACTOR.C";
+    fn register(owners: &[(&str, &str)]) -> Result<SourcePaths, String> {
+        let owners = owners
+            .iter()
+            .map(|(id, record)| format!("{id:?}:{record}"))
+            .collect::<Vec<_>>()
+            .join(",");
+        SourcePaths::parse(
+            tempdir().unwrap().path(),
+            &format!(r#"{{"format":3,"owners":{{{owners}}}}}"#),
+        )
+    }
+    #[test]
+    fn one_named_source_can_own_different_addresses_in_several_overlays() {
+        let find = r#"{"name":"FieldScene_FindActorRegion","source":"FIELD/COMMON/OBJECT/STAGED_ACTOR.C"}"#;
+        let redraw = r#"{"name":"FieldScene_RedrawActorFootprint","source":"FIELD/COMMON/OBJECT/STAGED_ACTOR.C"}"#;
+        let paths = register(&[
+            ("resource_3bf:0200034c", find),
+            ("resource_3bf:020008c0", redraw),
+            ("resource_389:0200034c", find),
+            ("resource_389:020008c0", redraw),
+            ("resource_39b:02000630", find),
+            ("resource_39b:02000ba4", redraw),
+        ])
+        .unwrap();
+        let owner = |id| SourceOwner::parse(id).unwrap();
+        let path = Path::new("games/THE BROKEN SEAL/SRC").join(STAGED_ACTOR);
+        assert_eq!(paths.owners_for_path(&path).len(), 6);
+        assert!(paths.owner_for_path(&path).is_err());
+        assert!(paths.overlay_owner_for_path("resource_39b", &path).is_err());
+        assert_eq!(
+            paths
+                .module_paths()
+                .map(|(path, owners)| (path, owners.len()))
+                .collect::<Vec<_>>(),
+            [(Path::new(STAGED_ACTOR), 6)]
+        );
+        // Each image's compile defines that image's owners of the module.
+        assert_eq!(
+            paths.symbol_bindings(Some(owner("resource_39b:02000ba4"))),
+            "#define FieldScene_FindActorRegion Func_02000630\n#define FieldScene_RedrawActorFootprint Func_02000ba4\n"
+        );
+        assert_eq!(
+            paths.registered_name(owner("resource_389:020008c0")),
+            Some("FieldScene_RedrawActorFootprint")
+        );
+    }
+    #[test]
+    fn cross_image_sharing_without_explicit_names_is_rejected() {
+        let named = r#"{"name":"FieldScene_FindActorRegion","source":"FIELD/COMMON/OBJECT/STAGED_ACTOR.C"}"#;
+        for unnamed in [
+            r#""FIELD/COMMON/OBJECT/STAGED_ACTOR.C""#,
+            r#"{"source":"FIELD/COMMON/OBJECT/STAGED_ACTOR.C","call_via":"020066d2"}"#,
+        ] {
+            let error = register(&[
+                ("resource_39b:02000630", unnamed),
+                ("resource_3bf:0200034c", named),
+            ])
+            .unwrap_err();
+            assert!(
+                error.contains("STAGED_ACTOR.C is linked into several images, so resource_39b:02000630 needs an explicit name"),
+                "{error}"
+            );
+        }
+        // Owners at one load address in related overlays keep file-stem names.
+        let stem = r#""FIELD/COMMON/OBJECT/STAGED_ACTOR.C""#;
+        assert!(register(&[
+            ("resource_39b:02000630", stem),
+            ("resource_39c:02000630", stem)
+        ])
+        .is_ok());
+    }
+    #[test]
+    fn duplicate_member_name_within_one_image_is_rejected() {
+        let find = r#"{"name":"FieldScene_FindActorRegion","source":"FIELD/COMMON/OBJECT/STAGED_ACTOR.C"}"#;
+        let error = register(&[
+            ("resource_3bf:0200034c", find),
+            ("resource_3bf:020008c0", find),
+            ("resource_39b:02000630", find),
+        ])
+        .unwrap_err();
+        assert!(
+            error.contains("STAGED_ACTOR.C names FieldScene_FindActorRegion twice in resource_3bf"),
+            "{error}"
+        );
+        // One image's own translation unit keeps its file-stem records.
+        let stem = r#""FIELD/COMMON/OBJECT/STAGED_ACTOR.C""#;
+        assert!(register(&[
+            ("resource_3bf:0200034c", stem),
+            ("resource_3bf:020008c0", stem)
+        ])
+        .is_ok());
+    }
+    #[test]
+    fn main_and_overlay_sharing_is_rejected_before_main_instances() {
+        let particle = r#"{"name":"BattleEffect_CreateRadialParticle","source":"BATTLE/EFFECT/RADIAL_PARTICLE.C"}"#;
+        let error = register(&[
+            ("main:0809a484", particle),
+            ("resource_380:0200013c", particle),
+        ])
+        .unwrap_err();
+        assert!(
+            error.contains("RADIAL_PARTICLE.C is shared by main-image and overlay owners"),
+            "{error}"
+        );
+        let error =
+            register(&[("main:0809a44c", particle), ("main:0809a484", particle)]).unwrap_err();
+        assert!(
+            error.contains("RADIAL_PARTICLE.C maps several main-image owners"),
+            "{error}"
+        );
     }
     #[test]
     fn one_overlay_translation_unit_can_map_multiple_owners() {
@@ -897,31 +1134,47 @@ mod tests {
         let root = tempdir().unwrap();
         let manifest_path = root.path().join(SOURCE_PATHS_MANIFEST);
         fs::create_dir_all(manifest_path.parent().unwrap()).unwrap();
-        fs::write(&manifest_path, r#"{"format":3,"owners":{"resource_39b:02000104":"overlays/shared/integrate_effect_motion.c","resource_39c:02000104":"overlays/shared/integrate_effect_motion.c"}}"#).unwrap();
+        fs::write(
+            &manifest_path,
+            r#"{"format":3,"owners":{
+            "resource_3bf:0200034c":{"name":"FieldScene_FindActorRegion","source":"FIELD/COMMON/OBJECT/STAGED_ACTOR.C","call_via":"0200d5d0"},
+            "resource_389:0200034c":{"name":"FieldScene_FindActorRegion","source":"FIELD/COMMON/OBJECT/STAGED_ACTOR.C"},
+            "resource_39b:02000630":{"name":"FieldScene_FindActorRegion","source":"FIELD/COMMON/OBJECT/STAGED_ACTOR.C"}}}"#,
+        )
+        .unwrap();
+        let owner = |id| SourceOwner::parse(id).unwrap();
         let paths = SourcePaths::load(root.path()).unwrap();
         assert!(paths
-            .unregister_owner(SourceOwner::Overlay {
-                resource: 0x39b,
-                address: 0x0200_0104
-            })
+            .unregister_owner(owner("resource_3bf:0200034c"))
             .unwrap());
         let reloaded = SourcePaths::load(root.path()).unwrap();
+        let parked = owner("resource_3bf:0200034c");
         assert_eq!(
-            reloaded.registered_name(SourceOwner::Overlay {
-                resource: 0x39b,
-                address: 0x0200_0104
-            }),
-            Some("integrate_effect_motion")
+            reloaded.registered_name(parked),
+            Some("FieldScene_FindActorRegion")
         );
+        assert_eq!(reloaded.registered_call_via(parked), Some(0x0200_d5d0));
+        assert!(reloaded.mapped_relative_path(parked).is_none());
+        // The other images still link the module, under the same name.
+        let path = Path::new("games/THE BROKEN SEAL/SRC").join(STAGED_ACTOR);
         assert_eq!(
-            reloaded.owners_for_path(Path::new(
-                "games/THE BROKEN SEAL/SRC/overlays/shared/integrate_effect_motion.c"
-            )),
-            vec![SourceOwner::Overlay {
-                resource: 0x39c,
-                address: 0x0200_0104
-            }]
+            reloaded.owners_for_path(&path),
+            [
+                owner("resource_389:0200034c"),
+                owner("resource_39b:02000630")
+            ]
         );
+        for id in ["resource_389:0200034c", "resource_39b:02000630"] {
+            assert_eq!(
+                reloaded.registered_name(owner(id)),
+                Some("FieldScene_FindActorRegion")
+            );
+            assert_eq!(
+                reloaded.mapped_relative_path(owner(id)),
+                Some(Path::new(STAGED_ACTOR))
+            );
+        }
+        assert_eq!(reloaded.module_paths().count(), 1);
     }
     #[test]
     fn shared_source_resolves_once_for_every_game_register() {

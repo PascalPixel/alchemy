@@ -62,6 +62,9 @@ fn run(mut options: crate::score::cli::Options) -> Result<String, String> {
             options.target.as_str()
         ));
     }
+    if options.instance.is_some() || options.all_instances {
+        return score_instances(&unit, &options);
+    }
     if let Some(overlay) = unit.overlay.clone() {
         if options.owner.is_none() && unit.exact() {
             return score_overlay_unit(&unit, &overlay);
@@ -152,15 +155,116 @@ fn run(mut options: crate::score::cli::Options) -> Result<String, String> {
 /// compiles once, every function is linked at its owner's address, and each
 /// member's bytes are compared with the canonical overlay image.
 fn score_overlay_unit(unit: &TranslationUnit, overlay: &str) -> Result<String, String> {
-    let compiled = crate::overlay::compile::compile_declared_overlay_unit(unit, "en", None, None)?;
-    let reference = canonical_overlay(root(), overlay)?;
+    let (output, mismatches) = score_overlay_image(unit, overlay, None, None, false, None)?;
+    if !mismatches.is_empty() && unit.exact() {
+        return Err(format!(
+            "{output}translation unit {} has byte mismatches in {}",
+            unit.id,
+            mismatches.join(",")
+        ));
+    }
+    Ok(output)
+}
+/// `--instance IMAGE` or `--all-instances`: the unit linked into each image
+/// as production links it, every owner compared over its complete extent in
+/// its own image, including an instance's trailing alignment halfword.
+fn score_instances(
+    unit: &TranslationUnit,
+    options: &crate::score::cli::Options,
+) -> Result<String, String> {
+    if unit.overlay.is_none() || !unit.exact() {
+        return Err(format!(
+            "{}: instances belong to wholly exact overlay units",
+            unit.id
+        ));
+    }
+    let images = match &options.instance {
+        Some(image) if unit.instance(image).is_some() => vec![image.as_str()],
+        Some(image) => {
+            let instances = unit.instances.keys().cloned().collect::<Vec<_>>();
+            return Err(format!(
+                "{}: no instance links it into {image} (instances: {})",
+                unit.id,
+                instances.join(", ")
+            ));
+        }
+        None => unit.images().collect(),
+    };
+    let work = options.work.as_ref().map(|work| root().join(work));
+    report_images(unit, &images, |image| {
+        let work = work.as_ref().map(|work| work.join(image));
+        score_overlay_image(unit, image, None, work.as_deref(), true, None)
+    })
+}
+/// Every owner of every image, then one summary line; an error when any
+/// owner differs.
+fn report_images(
+    unit: &TranslationUnit,
+    images: &[&str],
+    score: impl Fn(&str) -> Result<(String, Vec<String>), String>,
+) -> Result<String, String> {
+    let (mut output, mut mismatches, mut owners) = (String::new(), Vec::new(), 0);
+    for image in images {
+        let (scored, differing) = score(image)?;
+        output.push_str(&scored);
+        owners += unit.owners_in(image).count();
+        mismatches.extend(
+            differing
+                .into_iter()
+                .map(|owner| format!("{image}:{owner}")),
+        );
+    }
+    output.push_str(&format!(
+        "images={} owners={owners} differing_owners={}\n",
+        images.len(),
+        mismatches.len()
+    ));
+    if !mismatches.is_empty() {
+        return Err(format!(
+            "{output}translation unit {} has byte mismatches in {}",
+            unit.id,
+            mismatches.join(",")
+        ));
+    }
+    Ok(output)
+}
+/// One image's owners of `unit`, compiled from `candidate` or the unit
+/// source: the score lines and the owners whose bytes differ.
+pub(crate) fn score_overlay_image(
+    unit: &TranslationUnit,
+    image: &str,
+    candidate: Option<&Path>,
+    work: Option<&Path>,
+    label: bool,
+    first: Option<u32>,
+) -> Result<(String, Vec<String>), String> {
+    let compiled = crate::overlay::compile::compile_unit_in_image(unit, image, candidate, work)?;
+    let reference = canonical_overlay(root(), image)?;
+    compare_image_owners(unit, image, &compiled, &reference, label, first)
+}
+/// Each owner `image` links, compiled against its complete extent in that
+/// image's resource-form reference; `first` puts one owner's lines first,
+/// where a caller reading one score line finds them.
+fn compare_image_owners(
+    unit: &TranslationUnit,
+    image: &str,
+    compiled: &crate::overlay::compile::Compiled,
+    reference: &[u8],
+    label: bool,
+    first: Option<u32>,
+) -> Result<(String, Vec<String>), String> {
     let base = 0x0200_0000i64;
     let mut output = String::new();
     let mut mismatches = Vec::new();
-    let data = unit.data.map(|data| (data.address, data.extent, "data"));
-    let members = unit
-        .owners
-        .iter()
+    let mut owners = unit.owners_in(image).collect::<Vec<_>>();
+    owners.sort_by_key(|owner| Some(owner.address) != first);
+    // A unit's data section links only into its canonical overlay.
+    let data = unit
+        .data
+        .filter(|_| unit.overlay.as_deref() == Some(image))
+        .map(|data| (data.address, data.extent, "data"));
+    let members = owners
+        .into_iter()
         .map(|owner| (owner.address, owner.extent, "owner"))
         .chain(data);
     for (address, extent, scope) in members {
@@ -181,8 +285,12 @@ fn score_overlay_unit(unit: &TranslationUnit, overlay: &str) -> Result<String, S
             .zip(expected.chunks(2))
             .filter(|(a, b)| a != b)
             .count();
+        let image_line = match label {
+            true => format!("image={image}\n"),
+            false => String::new(),
+        };
         output.push_str(&format!(
-            "scope=translation-unit\n{scope}=0x{address:08x}\ncandidate={} reference={} differing_halfwords={differing}\n",
+            "scope=translation-unit\n{image_line}{scope}=0x{address:08x}\ncandidate={} reference={} differing_halfwords={differing}\n",
             candidate.len(),
             expected.len()
         ));
@@ -193,14 +301,7 @@ fn score_overlay_unit(unit: &TranslationUnit, overlay: &str) -> Result<String, S
             mismatches.push(format!("0x{address:08x}"));
         }
     }
-    if !mismatches.is_empty() && unit.exact() {
-        return Err(format!(
-            "{output}translation unit {} has byte mismatches in {}",
-            unit.id,
-            mismatches.join(",")
-        ));
-    }
-    Ok(output)
+    Ok((output, mismatches))
 }
 
 pub(crate) fn exact_mismatch(output: &RenderOutput) -> bool {
@@ -230,7 +331,7 @@ fn validate_layout(
     let rows = String::from_utf8_lossy(&output.stdout);
     let mut mismatches = Vec::new();
     for (address, _, extent) in unit.symbols() {
-        let owner = unit.source_owner(address)?;
+        let owner = unit.source_owner(unit.image(), address)?;
         let symbol = owner.legacy_name();
         let offset = address
             .checked_sub(base)
@@ -260,6 +361,107 @@ fn fail(message: &str) -> ! {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn score_unit_all_instances_reports_every_owner_including_alignment_halfword() {
+        use crate::compiler::translation_units::fixture::Repository;
+        use crate::overlay::compile::Compiled;
+        let repository = Repository::new();
+        let unit = repository.load().unwrap().units.remove(0);
+        // Resource-form images whose owners hold a pattern of their offsets;
+        // FieldScene_FindActorRegion's last halfword in resource_39b is fill.
+        let reference = |image: &str| {
+            let mut bytes = vec![0u8; 0x1000];
+            for owner in unit.owners_in(image) {
+                let start = (owner.address - 0x0200_0000) as usize;
+                for (index, byte) in bytes[start..start + owner.extent].iter_mut().enumerate() {
+                    *byte = (start + index) as u8 | 1;
+                }
+            }
+            if image == "resource_39b" {
+                bytes[0x0630 + 294..0x0630 + 296].fill(0);
+            }
+            bytes
+        };
+        // The unit as compiled for one image: one span from its first owner.
+        let compiled = |image: &str, fill: [u8; 2]| {
+            let owners = unit.owners_in(image).collect::<Vec<_>>();
+            let first = owners[0].address as usize - 0x0200_0000;
+            let last = owners[owners.len() - 1];
+            let end = last.address as usize - 0x0200_0000 + last.extent;
+            let mut data = reference(image)[first..end].to_vec();
+            if image == "resource_39b" {
+                data[294..296].copy_from_slice(&fill);
+            }
+            Compiled {
+                address: i64::from(owners[0].address),
+                data,
+            }
+        };
+        let images = unit.images().collect::<Vec<_>>();
+        let report = |fill: [u8; 2]| {
+            report_images(&unit, &images, |image| {
+                compare_image_owners(
+                    &unit,
+                    image,
+                    &compiled(image, fill),
+                    &reference(image),
+                    true,
+                    None,
+                )
+            })
+        };
+        let output = report([0, 0]).unwrap();
+        assert_eq!(output.matches("scope=translation-unit\nimage=").count(), 6);
+        for (image, owner, extent) in [
+            ("resource_3bf", "0x0200034c", 296),
+            ("resource_3bf", "0x020008c0", 284),
+            ("resource_389", "0x0200034c", 296),
+            ("resource_389", "0x020008c0", 284),
+            ("resource_39b", "0x02000630", 296),
+            ("resource_39b", "0x02000ba4", 284),
+        ] {
+            let line = format!(
+                "image={image}\nowner={owner}\ncandidate={extent} reference={extent} differing_halfwords=0\n"
+            );
+            assert!(output.contains(&line), "{line}{output}");
+        }
+        assert!(
+            output.ends_with("images=3 owners=6 differing_owners=0\n"),
+            "{output}"
+        );
+        // Modern NOP fill in the alignment halfword is a real difference.
+        let error = report([0xc0, 0x46]).unwrap_err();
+        assert!(
+            error.contains("image=resource_39b\nowner=0x02000630\ncandidate=296 reference=296 differing_halfwords=1\nfirst_difference=+0x126\n"),
+            "{error}"
+        );
+        assert!(
+            error.contains("images=3 owners=6 differing_owners=1\n"),
+            "{error}"
+        );
+        assert!(
+            error.ends_with(
+                "translation unit staged-actor has byte mismatches in resource_39b:0x02000630"
+            ),
+            "{error}"
+        );
+        // A standalone score reads the first score line: the selected owner's.
+        let redraw = 0x0200_0ba4;
+        let (lines, _) = compare_image_owners(
+            &unit,
+            "resource_39b",
+            &compiled("resource_39b", [0, 0]),
+            &reference("resource_39b"),
+            true,
+            Some(redraw),
+        )
+        .unwrap();
+        assert!(
+            lines.starts_with("scope=translation-unit\nimage=resource_39b\nowner=0x02000ba4\n"),
+            "{lines}"
+        );
+        assert_eq!(lines.matches("owner=0x02000630").count(), 1);
+    }
     #[test]
     fn retained_overlay_unit_scores_without_an_owner_override() {
         // Any overlay unit that is retained right now: naming one would break

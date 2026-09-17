@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 
 #define InitializeStagedActorState Func_02006488
 #define GetDescendingMotionStep Func_0200649a
@@ -2654,11 +2655,7 @@ void SceneDialogue_RunActor12Line(void)
 
 void FieldScene_RunScene3b1_02000728(void)
 {
-    extern u8 Data_0200e840[];
     extern u8 Data_03001ebc[];
-
-    u32 i;
-    s32 record;
 
     Func_02006bf4();
     if (Value1(Func_02006bd2, 0x928) != 0) {
@@ -2668,35 +2665,19 @@ void FieldScene_RunScene3b1_02000728(void)
         Func_02006cb6(8, 4);
         Func_02004fc8(8);
         Func_02006cc4(8, 3);
-    } else {
-        if (Value1(Func_02006c0c, 0x925) != 0) {
-            Call1(Func_02006d1e_a, 0x1e06);
-            Func_02006d36(8, 0);
-        } else {
-            if (Value1(Func_02006c26, 0x921) != 0) {
-                Call1(Func_02006d38, 0x1dcd);
-                Func_02006d50(8, 0);
-                record = Value1(Func_02006c3e, 0x925);
-                if (record != 0) {
-                    goto L_020007cc;
-                }
-                record = Value1(Func_02006c48_a, 0x924);
-                if (record == 0) {
-                    goto L_020007cc;
-                }
-                {
-                    u16 *target = (u16 *)((*(u8 *volatile *)Data_03001ebc + 0x172));
-                    s32 shown = 1;
-
-                    *target = shown;
-                }
-            } else {
-                Call1(Func_02006d6a, 0x1d30);
-                Func_02006d82(8, 0);
-            }
+    } else if (Value1(Func_02006c0c, 0x925) != 0) {
+        Call1(Func_02006d1e_a, 0x1e06);
+        Func_02006d36(8, 0);
+    } else if (Value1(Func_02006c26, 0x921) != 0) {
+        Call1(Func_02006d38, 0x1dcd);
+        Func_02006d50(8, 0);
+        if (Value1(Func_02006c3e, 0x925) == 0 && Value1(Func_02006c48_a, 0x924) != 0) {
+            (*(struct EventWork **)Data_03001ebc)->unknown_172 = 1;
         }
+    } else {
+        Call1(Func_02006d6a, 0x1d30);
+        Func_02006d82(8, 0);
     }
-    L_020007cc:;
     Func_02006c9e();
 }
 
@@ -3423,53 +3404,35 @@ void FieldScene_RunPrimarySequence(s32 a0, s32 a1, s32 a2)
 
 void FieldScene_RunScene3b1SequenceC(void)
 {
-    extern u8 Data_0200e840[];
-    extern u8 Data_03001ebc[];
+    struct FieldActor *leader;
 
-    u32 i;
-    s32 record;
-
-    record = Func_02007d82(0);
-    if ((u32)((*(volatile u16 *)(record + 6) + -0x2000) << 16) > -0x40000000) {
-        if (Value1(Func_02007d50, 0x928) != 0) {
-            if (Value1(Func_02007d5a, 0x93e) == 0) {
-                Func_02007f1c(17);
-                goto L_0200194e;
-            }
+    leader = (struct FieldActor *)Func_02007d82(0);
+    if ((u16)(leader->facing - 0x2000) > 0xc000) {
+        if (Value1(Func_02007d50, 0x928) != 0 && Value1(Func_02007d5a, 0x93e) == 0) {
+            Func_02007f1c(17);
+        } else {
+            Func_02007f24(15);
         }
-        Func_02007f24(15);
     } else {
         Func_02007d9a();
         if (Value1(Func_02007d78, 0x93e) != 0) {
             Call1(Func_02007e8a, 0x1f81);
+        } else if (Value1(Func_02007d8c, 0x8a0) != 0) {
+            Call1(Func_02007e9e, 0x1f48);
+        } else if (Value1(Func_02007d9e, 0x928) != 0) {
+            Call1(Func_02007eb0, 0x1f7f);
+        } else if (Value1(Func_02007db0, 0x925) != 0) {
+            Call1(Func_02007ec2, 0x1f7d);
         } else {
-            if (Value1(Func_02007d8c, 0x8a0) != 0) {
-                Call1(Func_02007e9e, 0x1f48);
-            } else {
-                if (Value1(Func_02007d9e, 0x928) != 0) {
-                    Call1(Func_02007eb0, 0x1f7f);
-                } else {
-                    if (Value1(Func_02007db0, 0x925) != 0) {
-                        Call1(Func_02007ec2, 0x1f7d);
-                    } else {
-                        Call1(Func_02007eca, 0x1f7b);
-                    }
-                }
-            }
+            Call1(Func_02007eca, 0x1f7b);
         }
-        if (Value1(Func_02007dc8, 0x928) != 0) {
-            record = Value1(Func_02007dd2, 0x93e);
-            if (record != 0) {
-                goto L_02001942;
-            }
+        if (Value1(Func_02007dc8, 0x928) != 0 && Value1(Func_02007dd2, 0x93e) == 0) {
             Func_02007ef6(17, 0);
         } else {
-            L_02001942:;
             Func_02007f00(15, 0);
         }
         Func_02007e1c();
     }
-    L_0200194e:;
 }
 
 void FieldScene_RunScene3b1SequenceD(void)
@@ -5456,15 +5419,12 @@ void RunActorsEightAndNineMapEvent(void)
 
 void FieldScene_RunScene3b1_02006110(void)
 {
-    extern u8 Data_0200e840[];
     extern u8 Data_03001ebc[];
 
-    u32 i;
     s32 rec2;
     s32 rec4;
     s32 rec7;
     s32 rec8;
-    s32 record;
 
     rec2 = Value2(Func_0200b0cc, 0, 0);
     rec8 = Func_0200b0d6(1, 0);
@@ -5474,7 +5434,7 @@ void FieldScene_RunScene3b1_02006110(void)
     Func_0200aa3a(10, 0, 0);
     Func_0200a9f2(8, 0x1d8, 144, 0x5000);
     Func_0200aa06(27, 0x198, 142, 0x3000);
-    *(s32 *)(*(u8 *volatile *)Data_03001ebc + 0x1c0) = 0x201;
+    (*(struct EventWork **)Data_03001ebc)->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     Func_0200c7b8();
     Func_0200c7cc();
     Func_0200c652(40);
@@ -5524,7 +5484,7 @@ void FieldScene_RunScene3b1_02006110(void)
     Func_0200c868(27, 0x198, 132);
     Call3(Func_0200c874, 27, 0x1bc, 132);
     Func_0200c896(27, 0, 0);
-    *(s32 *)(*(u8 *volatile *)Data_03001ebc + 0x1c0) = 0x202;
+    (*(struct EventWork **)Data_03001ebc)->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Func_0200c992();
     Func_0200c99e();
     Call2(Func_0200c712, 0x92c, 0x935);

@@ -43,7 +43,9 @@ struct EventWork {
     u8 unknown_000[0x16c];
     /* The map trigger the leader has run into, handled on the next frame. */
     s16 touched_trigger;
-    u8 unknown_16e[0x10];
+    u8 unknown_16e[4];
+    u16 unknown_172;
+    u8 unknown_174[0xa];
     /* Psynergy the player has asked to use, handled on the next frame. */
     s16 psynergy_request;
     u8 unknown_180[2];

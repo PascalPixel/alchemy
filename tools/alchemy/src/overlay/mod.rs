@@ -63,6 +63,68 @@ fn parse_listing_row(row: &str) -> Option<(i64, i64)> {
     }
     Some((line.parse().ok()?, i64::from_str_radix(offset, 16).ok()?))
 }
+
+#[derive(Debug, Clone, Copy)]
+pub struct ListingRow {
+    pub line: i64,
+    pub offset: i64,
+    pub width: i64,
+}
+
+fn parse_listing_width(row: &str) -> Option<ListingRow> {
+    let mut fields = row.split_whitespace();
+    let line = fields.next()?;
+    let offset = fields.next()?;
+    let encoded = fields.next()?;
+    if !line.bytes().all(|byte| byte.is_ascii_digit())
+        || !offset.bytes().all(|byte| byte.is_ascii_hexdigit())
+    {
+        return None;
+    }
+    let digits = encoded
+        .bytes()
+        .take_while(|byte| byte.is_ascii_hexdigit())
+        .count();
+    if digits < 4 || !digits.is_multiple_of(2) {
+        return None;
+    }
+    Some(ListingRow {
+        line: line.parse().ok()?,
+        offset: i64::from_str_radix(offset, 16).ok()?,
+        width: (digits / 2) as i64,
+    })
+}
+
+pub fn listing_rows(assembly: &Path) -> Result<Vec<ListingRow>, String> {
+    let work = tempdir().map_err(|error| error.to_string())?;
+    let listing = work.path().join("listing.lst");
+    let object = work.path().join("listing.o");
+    let output = Command::new("arm-none-eabi-as")
+        .args(["-mcpu=arm7tdmi", "-mthumb-interwork"])
+        .arg(format!("-al={}", listing.display()))
+        .arg("-o")
+        .arg(&object)
+        .arg(assembly)
+        .output()
+        .map_err(|error| format!("as failed: {error}"))?;
+    if !output.status.success() {
+        return Err(format!(
+            "as failed: {}",
+            String::from_utf8_lossy(&output.stderr).trim()
+        ));
+    }
+    let text = fs::read_to_string(&listing).map_err(|error| error.to_string())?;
+    let mut rows = Vec::new();
+    let mut seen = std::collections::HashSet::new();
+    for row in text.lines() {
+        if let Some(parsed) = parse_listing_width(row) {
+            if seen.insert(parsed.line) {
+                rows.push(parsed);
+            }
+        }
+    }
+    Ok(rows)
+}
 pub fn listing_offsets(assembly: &Path) -> Result<Vec<(i64, i64)>, String> {
     let work = tempdir().map_err(|error| error.to_string())?;
     let listing = work.path().join("listing.lst");

@@ -16,7 +16,7 @@ it. Ask three questions of every file, generated files included:
 
 | May be tracked | Examples here |
 | --- | --- |
-| Reconstructed C, headers and code assembly | `SRC/**/*.C`, `INCLUDE/*.H`, `asm/*.s` |
+| Reconstructed C, headers and raw code listings | `SRC/**/*.C`, `INCLUDE/*.H`, `raw/*.s` |
 | Names, addresses, sizes and hashes | `source-paths.json`, `SOURCE.JSON` |
 | Assets the build reads, in editable form | indexed PNG, WAV, MIDI and message JSON reached from `SRC/SYSTEM/RESOURCE.JSON` |
 | Encoder settings without payload bytes | `COMPRESSION.JSON` |

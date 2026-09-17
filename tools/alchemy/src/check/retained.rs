@@ -167,7 +167,7 @@ fn audit(root: &Path) -> Result<Audit, String> {
     let claimed_path = root.join("out/tbs-en/full/claimed/manifest.json");
     stale(
         &asm_path,
-        &root.join("games/THE BROKEN SEAL/asm/classification.json"),
+        &root.join("games/THE BROKEN SEAL/raw/classification.json"),
     )?;
     let inventory = document(&inventory_path)?;
     let asm = regions(&document(&asm_path)?, true)?;

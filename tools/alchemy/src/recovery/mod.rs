@@ -149,7 +149,7 @@ mod tests {
     use psynergy::compare::topology::{compare, compare_symbols, Comparison};
     #[test]
     fn live_arm_owner_fails_closed() {
-        let source = include_str!("../../../../games/THE BROKEN SEAL/asm/08002d5c.s");
+        let source = include_str!("../../../../games/THE BROKEN SEAL/raw/08002d5c.s");
         assert!(matches!(
             compare(source, source, "Func_08002d5c"),
             Comparison::Uncovered(reason) if reason == "candidate-arm-mode"
@@ -157,7 +157,7 @@ mod tests {
     }
     #[test]
     fn live_pool_fill_matches_align_spelling() {
-        let source = include_str!("../../../../games/THE BROKEN SEAL/asm/080908e0.s");
+        let source = include_str!("../../../../games/THE BROKEN SEAL/raw/080908e0.s");
         let aligned = source.replace("\tmovs\tr0, r0\n\t.4byte", "\t.align\t2, 0\n\t.4byte");
         assert_ne!(source, aligned);
         assert_eq!(
@@ -167,7 +167,7 @@ mod tests {
     }
     #[test]
     fn live_multi_entry_reference_is_owner_scoped() {
-        let source = include_str!("../../../../games/THE BROKEN SEAL/asm/08002dd8.s");
+        let source = include_str!("../../../../games/THE BROKEN SEAL/raw/08002dd8.s");
         let changed_later_owner = source.replace("Func_08002df0:\n", "Func_08002df0:\n\tnop\n");
         assert!(matches!(
             compare(source, &changed_later_owner, "Func_08002dd8"),
@@ -176,7 +176,7 @@ mod tests {
     }
     #[test]
     fn live_named_reference_matches_legacy_candidate_entry() {
-        let reference = include_str!("../../../../games/THE BROKEN SEAL/asm/080a24d0.s");
+        let reference = include_str!("../../../../games/THE BROKEN SEAL/raw/080a24d0.s");
         let candidate = reference.replace("RunAssetSelectionScreen", "Func_080a24d0");
         assert_eq!(
             compare_symbols(
@@ -190,7 +190,7 @@ mod tests {
     }
     #[test]
     fn live_0800307c_pool_island_skip_is_not_a_cfg_edge() {
-        let reference = include_str!("../../../../games/THE BROKEN SEAL/asm/0800307c.s");
+        let reference = include_str!("../../../../games/THE BROKEN SEAL/raw/0800307c.s");
         let candidate = reference.replace(
             "\torrs\tr3, r2\n.L1:",
             "\torrs\tr3, r2\n\tb\t.Lpool_done\n.Lpool:\n\t.word\t0\n.Lpool_done:\n.L1:",

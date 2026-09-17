@@ -17,7 +17,7 @@
  *
  * Func_080072f4 and Func_080072f0 are not real callees: they are the r4
  * and r3 entries of the _call_via_rN trampoline bundle at
- * games/THE BROKEN SEAL/asm/080072e4.s.  Every Func_080072f4 site is an indirect call
+ * games/THE BROKEN SEAL/raw/080072e4.s.  Every Func_080072f4 site is an indirect call
  * through the draw-rectangle callback pair Func_080cef64 populates;
  * Func_080072f0 is a direct call to the routine at 0x03001388 with that
  * pointer passed as the trailing WordCopyFn argument.

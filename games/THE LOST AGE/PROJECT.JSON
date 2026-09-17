@@ -7,7 +7,7 @@
   "source_paths": "games/THE LOST AGE/source-paths.json",
   "layout": {
     "source": "games/THE LOST AGE/SRC",
-    "assembly": "games/THE LOST AGE/asm",
+    "assembly": "games/THE LOST AGE/raw",
     "assets": "games/THE LOST AGE/SRC",
     "include": "games/THE LOST AGE/INCLUDE",
     "metrics": "games/THE LOST AGE/metrics",

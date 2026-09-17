@@ -497,7 +497,7 @@
             {
               "address": "0x08007676",
               "count": 131,
-              "consumer": "games/THE BROKEN SEAL/asm/080044d0.s:08007676",
+              "consumer": "games/THE BROKEN SEAL/raw/080044d0.s:08007676",
               "values": [
                 "0x00fd",
                 "0x0100",

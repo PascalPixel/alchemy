@@ -28,7 +28,7 @@
  * backwards/forwards through the acceptable slots, B cancels with -1 and A
  * accepts with the slot index.
  *
- * Evidence and open points, all from games/THE BROKEN SEAL/asm/08020244.s and the
+ * Evidence and open points, all from games/THE BROKEN SEAL/raw/08020244.s and the
  * project's already-recovered callees:
  *   - The 0x40-byte entry stride and the field offsets below are fixed by
  *     the callees that receive the slot record: UiText_DrawFourNumbersInRow

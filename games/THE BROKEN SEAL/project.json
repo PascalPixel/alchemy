@@ -7,7 +7,7 @@
   "layout": {
     "source": "games/THE BROKEN SEAL/SRC",
     "source_paths": "games/THE BROKEN SEAL/source-paths.json",
-    "assembly": "games/THE BROKEN SEAL/asm",
+    "assembly": "games/THE BROKEN SEAL/raw",
     "assets": "games/THE BROKEN SEAL/SRC",
     "include": "games/THE BROKEN SEAL/INCLUDE",
     "metrics": "games/THE BROKEN SEAL/metrics",

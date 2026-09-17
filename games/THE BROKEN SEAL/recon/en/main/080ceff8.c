@@ -33,7 +33,7 @@
  * through the literal pool.
  *
  * Both palette copies and the WordCopy call at 0x03001388 route through
- * the r6 slot of the _call_via_rN trampoline (games/THE BROKEN SEAL/asm/080072e4.s),
+ * the r6 slot of the _call_via_rN trampoline (games/THE BROKEN SEAL/raw/080072e4.s),
  * exactly as in the template.  The two per-frame rectangle draws route
  * through the r4 slot of the same trampoline, using function pointers
  * staged from Data_03001e50[46]/[47] before the loop and spilled across

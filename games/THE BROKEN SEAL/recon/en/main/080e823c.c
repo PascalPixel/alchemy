@@ -28,7 +28,7 @@
  *     both graphics jobs.
  *
  * `Func_080072f4` is not a real symbol: it is the r4 entry of the
- * `_call_via_rN` trampoline block at games/THE BROKEN SEAL/asm/080072e4.s, so a `bl` there
+ * `_call_via_rN` trampoline block at games/THE BROKEN SEAL/raw/080072e4.s, so a `bl` there
  * is an indirect call through the DrawRectangleFn value carried in r4. That
  * finding is recorded in games/THE BROKEN SEAL/recon/en/dossiers.json#main:080dc1ec and is
  * modelled here the way the 0x080d41a4 draft models it.

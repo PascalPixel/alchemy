@@ -41,7 +41,7 @@
  * indirect call through the value the reference loads into r3/r4/r5
  * immediately before the `bl`, not a real callee: those addresses are
  * consecutive slots of the `_call_via_rN` trampoline bank at
- * games/THE BROKEN SEAL/asm/080072e4.s (r3 at +0x0c, r4 at +0x10, r5 at +0x14). They
+ * games/THE BROKEN SEAL/raw/080072e4.s (r3 at +0x0c, r4 at +0x10, r5 at +0x14). They
  * are modelled here as ordinary calls through the cached draw callbacks,
  * through the IWRAM word copier at 0x03001388 and through the IWRAM fill
  * routine at 0x03000164 -- the same treatment 080ce4e8.c, 080cd594.c and

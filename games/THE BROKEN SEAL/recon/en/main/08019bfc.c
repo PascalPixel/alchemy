@@ -5,7 +5,7 @@
    Inferred from the retained assembly's shift-by-3/register-offset ldr
    pattern (not a compile-time struct-field offset -- both fields are
    fetched through the same running byte offset), cross-checked against the
-   ARM twin at games/THE BROKEN SEAL/asm/relocated_arm_helpers/08015430.s which
+   ARM twin at games/THE BROKEN SEAL/raw/relocated_arm_helpers/08015430.s which
    references the same literal address and lookup shape. */
 #define Data_0803842c ((const u8 *)0x0803842c)
 

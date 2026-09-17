@@ -10,7 +10,7 @@
  * republished effect argument at 0x7828), the effect-argument layout
  * (direction 0x04, source id 0x08, member count 0x14, member ids 0x24) and
  * the DrawRectangleFn convention (an indirect call through the _call_via_rN
- * trampolines at games/THE BROKEN SEAL/asm/080072e4.s: 0x080072f0 = r3, 0x080072f4 = r4,
+ * trampolines at games/THE BROKEN SEAL/raw/080072e4.s: 0x080072f0 = r3, 0x080072f4 = r4,
  * 0x080072f8 = r5) are taken from those owners.
  *
  * Behaviour: the owner takes the effect argument and a small variant index.

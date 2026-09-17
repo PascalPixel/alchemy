@@ -48,7 +48,7 @@
  *
  * Neither `Func_080072f0` nor `Func_080072f4` is a real function symbol:
  * they are entries 3 and 4 of the `_call_via_rN` trampoline bundle at
- * games/THE BROKEN SEAL/asm/080072e4.s, i.e. indirect calls through whatever pointer
+ * games/THE BROKEN SEAL/raw/080072e4.s, i.e. indirect calls through whatever pointer
  * the compiler kept in that register.  Here they are the IWRAM copy
  * routine at 0x03001388, the IWRAM fill routine at 0x03000168, and the
  * two blit routines Func_080ed408 publishes into heap_cache[46] and

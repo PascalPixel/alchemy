@@ -284,7 +284,7 @@ pub fn main_image(target: CompilerTarget) -> Result<&'static [u8], String> {
 
 /// Each main-image import veneer of an overlay, by runtime address, with the
 /// main addresses a call through it passes: its target, then each far-call
-/// veneer (`asm/0808a080.s`) up to the final function. The loader never
+/// veneer (`raw/0808a080.s`) up to the final function. The loader never
 /// rewrites a veneer, so either image form serves.
 pub fn import_veneers(reference: &[u8], main: &[u8]) -> Vec<(u64, Vec<u32>)> {
     (0..reference.len().saturating_sub(7))
@@ -447,7 +447,7 @@ impl OverlayImage<'_> {
         let listing = self
             .names
             .source_root()
-            .with_file_name("asm")
+            .with_file_name("raw")
             .join("overlays")
             .join(format!("{}_overlay.s", self.overlay));
         std::fs::read_to_string(&listing)
@@ -620,7 +620,7 @@ mod tests {
         let rom = crate::overlay::rom::CanonicalRom::load(root).unwrap();
         let main = main_image(CompilerTarget::Tbs).unwrap();
         let names = SourcePaths::load(root).unwrap();
-        let listings = root.join("games/THE BROKEN SEAL/asm/overlays");
+        let listings = root.join("games/THE BROKEN SEAL/raw/overlays");
         let mut overlays = 0;
         for entry in std::fs::read_dir(listings).unwrap() {
             let file = entry.unwrap().file_name().into_string().unwrap();

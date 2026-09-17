@@ -13,7 +13,7 @@
  * single Func_080041d8(0x080CD261,0x480) callback, Func_08004458() as the
  * RNG, and (per games/THE BROKEN SEAL/recon/en/dossiers.json#main:080e01e4's already-resolved
  * derivation) Func_080072f4 is not a real callee -- it is the r4 slot of
- * the _call_via_rN trampoline at games/THE BROKEN SEAL/asm/080072e4.s, so every call
+ * the _call_via_rN trampoline at games/THE BROKEN SEAL/raw/080072e4.s, so every call
  * through it below is modeled as a genuine indirect call through a
  * DrawRectangleFn value read out of the `callbacks` pair Func_080cef64
  * fills in.

@@ -94,7 +94,7 @@ s32 Func_080072f0(s32 value, s32 unused1, s32 unused2, s32 iwramRoutine);
 
 /*
  * Evidence-backed but unproven name (see the evidence summary above),
- * registered in source-paths.json. The retained games/THE BROKEN SEAL/asm/0808e23c.s
+ * registered in source-paths.json. The retained games/THE BROKEN SEAL/raw/0808e23c.s
  * only exposes the Func_0808e23c label (no dual canonical-name label, unlike
  * its exact-adjacent siblings), so `compiler workbench` needs
  * `--owner 0x0808e23c --size 632` rather than resolving this name.

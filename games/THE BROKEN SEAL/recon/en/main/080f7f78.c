@@ -7,7 +7,7 @@
  *
  * The work block lives at 0x02010000 and is published through the pointer
  * cell Data_02004c00, exactly the block the four siblings already index.
- * Offsets recovered from the literal pools of games/THE BROKEN SEAL/asm/080f7f78.s and
+ * Offsets recovered from the literal pools of games/THE BROKEN SEAL/raw/080f7f78.s and
  * cross-checked against consume_slot_bytes.c:
  *
  *   0x0000  nodes[0x400]      12-byte {prev, back, slot} chain records
@@ -48,7 +48,7 @@
  *   - match_ofs is typed u32 because the reference shifts it logically; the
  *     value it ever holds (1..63) does not distinguish the two signednesses.
  *
- * Residual against games/THE BROKEN SEAL/asm/080f7f78.s: 1836 candidate bytes against
+ * Residual against games/THE BROKEN SEAL/raw/080f7f78.s: 1836 candidate bytes against
  * 1920, differing_halfwords=916. Both sides carry the same five calls in the
  * same order and the same six chain walks, and every reference branch, loop
  * and store is represented. What is left is allocation and placement, not

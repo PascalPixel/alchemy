@@ -41,7 +41,7 @@ MAIN_CORRESPONDENCE_UNRESOLVED_MAX := 44
 OVERLAY_CORRESPONDENCE_MATCHED_MIN := 2562
 OVERLAY_CORRESPONDENCE_UNRESOLVED_MAX := 38
 # Raw .byte/.2byte/.4byte/.word values (aliases included, one per operand) in
-# games/*/asm/overlays/*_overlay.s. The total may only fall: lower this number
+# games/*/raw/overlays/*_overlay.s. The total may only fall: lower this number
 # when listing data becomes typed tables or private inputs; never raise it.
 OVERLAY_DATA_DIRECTIVES_MAX := 77508
 HISTORICAL_TARGETS := tbs-ja tbs-en tbs-de tbs-es tbs-fr tbs-it \
@@ -278,9 +278,11 @@ edition-builds-check: correspondence-check
 	@printf 'cross-edition edition-build audit ok\n'
 
 coverage: full-rom-check $(if $(wildcard roms/tla-en.gba),tla-assets-check) | $(REPORT_DIR)
+	$(if $(wildcard roms/tla-en.gba),$(COMPILER) coverage audit --target tla-en --output out/tla-en/reports/executable-audit-candidate.json)
 	$(CHECK) coverage --write
 
 coverage-check: full-rom-check $(if $(wildcard roms/tla-en.gba),tla-assets-check)
+	$(if $(wildcard roms/tla-en.gba),$(COMPILER) coverage audit --target tla-en --output out/tla-en/reports/executable-audit-candidate.json)
 	$(CHECK) coverage --check
 
 core-retained-check:

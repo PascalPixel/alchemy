@@ -18,10 +18,10 @@
  * itself and still running on frames where the kind's ring count is zero.
  *
  * Shaped from an m2c decompile of the target's own retained assembly
- * (games/THE BROKEN SEAL/asm/080c972c.s) rather than the member_orbit template, since
+ * (games/THE BROKEN SEAL/raw/080c972c.s) rather than the member_orbit template, since
  * the two functions share only field offsets and callees, not structure.
  * `Func_080072f4` is not a real symbol: it is the r4 entry of the
- * _call_via_rN trampoline bundle at games/THE BROKEN SEAL/asm/080072e4.s
+ * _call_via_rN trampoline bundle at games/THE BROKEN SEAL/raw/080072e4.s
  * (0x080072e4 + 4*4), so every call through it is modeled as a direct call
  * through the DrawRectangleFn cached from Func_080ed408's heap slot
  * (sp10/sp14 below, matching the reference's own sp+16/sp+20 spill slots),

@@ -387,7 +387,7 @@ fn topology_for_owner(
     let reference = root
         .join("games")
         .join(options.target.directory())
-        .join("asm")
+        .join("raw")
         .join(format!("{stem}.s"));
     let candidate_symbol = format!("Func_{stem}");
     if !main || !reference.is_file() {
@@ -542,7 +542,7 @@ fn render_asm(
     let reference = root
         .join("games")
         .join(options.target.directory())
-        .join("asm")
+        .join("raw")
         .join(format!("{stem}.s"));
     let patch = read_patch(options.patch.as_deref())?;
     let source = staged_source(root, options, work, patch.as_deref())?;

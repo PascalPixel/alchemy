@@ -1,8 +1,11 @@
 use super::model::{
     area, bytes, intersect, normalize, subtract, Area, Category, Span, Tile, CATEGORIES,
 };
-use crate::compiler::source_paths::{SourceOwner, SourcePaths, SOURCE_PATHS_MANIFEST};
+#[cfg(test)]
+use crate::compiler::source_paths::SOURCE_PATHS_MANIFEST;
+use crate::compiler::source_paths::{SourceOwner, SourcePaths};
 use crate::coverage::tree::{read_json, SourceTree, ROM_BASE};
+use crate::targets::DecompTarget;
 use serde_json::{json, Map, Value};
 use std::{
     collections::{BTreeMap, BTreeSet},
@@ -133,8 +136,8 @@ pub struct Owner {
     pub entry: i64,
     pub spans: Vec<Span>,
 }
-pub fn overlay_owners(tree: &SourceTree, name: &str) -> Vec<Owner> {
-    let Some(source) = tree.read(&format!("games/THE BROKEN SEAL/asm/overlays/{name}")) else {
+fn overlay_owners_for(tree: &SourceTree, directory: &str, name: &str) -> Vec<Owner> {
+    let Some(source) = tree.read(&format!("{directory}/{name}")) else {
         return Vec::new();
     };
     let Some(_id) = overlay_name(name) else {
@@ -184,9 +187,13 @@ pub fn overlay_owners(tree: &SourceTree, name: &str) -> Vec<Owner> {
     }
     out
 }
+#[cfg(test)]
 pub fn overlay_ids(tree: &SourceTree) -> Vec<(String, String)> {
+    overlay_ids_for(tree, "games/THE BROKEN SEAL/raw/overlays")
+}
+fn overlay_ids_for(tree: &SourceTree, directory: &str) -> Vec<(String, String)> {
     let mut names: Vec<_> = tree
-        .list("games/THE BROKEN SEAL/asm/overlays")
+        .list(directory)
         .into_iter()
         .filter_map(|name| overlay_name(&name).map(|id| (id, name)))
         .collect();
@@ -292,7 +299,10 @@ pub fn progress_tally(options: &BuildOptions) -> Result<ProgressTally, String> {
         return Err("executable inventory total is stale".into());
     }
     let exact_main = exact_main(options.exact, &options.target, &main)?;
-    let (_, exact_overlays) = exact_overlay(options.exact, &overlay_ids(options.exact), &overlays)?;
+    let target = crate::targets::decomp_target(Some(&options.target))?;
+    let overlay_dir = target.overlay_dir();
+    let pairs = overlay_ids_for(options.exact, &overlay_dir);
+    let (_, exact_overlays) = exact_overlay_for(options.exact, &target, &pairs, &overlays)?;
     Ok(ProgressTally {
         main_exact: bytes(&exact_main),
         main_executable: bytes(&main),
@@ -300,14 +310,21 @@ pub fn progress_tally(options: &BuildOptions) -> Result<ProgressTally, String> {
         overlay_executable: mapped_bytes(&overlays),
     })
 }
-fn candidate_main(tree: &SourceTree, executable: &[Span]) -> (Vec<Span>, usize) {
-    let directory = "games/THE BROKEN SEAL/recon/en/main";
-    let dossiers =
-        json(tree, "games/THE BROKEN SEAL/recon/en/dossiers.json").unwrap_or(Value::Null);
+fn candidate_main(
+    tree: &SourceTree,
+    target: &DecompTarget,
+    executable: &[Span],
+) -> (Vec<Span>, usize) {
+    let directory = format!("{}/recon/en/main", target.game_dir());
+    let dossiers = json(
+        tree,
+        &format!("{}/recon/en/dossiers.json", target.game_dir()),
+    )
+    .unwrap_or(Value::Null);
     let records = dossiers.get("records").and_then(Value::as_object);
     let mut spans = Vec::new();
     let mut sources = 0;
-    for name in tree.list(directory) {
+    for name in tree.list(&directory) {
         let Some(stem) = name.strip_suffix(".c").or_else(|| name.strip_suffix(".C")) else {
             continue;
         };
@@ -331,12 +348,23 @@ fn candidate_main(tree: &SourceTree, executable: &[Span]) -> (Vec<Span>, usize) 
     }
     (intersect(&normalize(&spans), executable), sources)
 }
-fn candidate_overlay(tree: &SourceTree, executable: &SpanMap) -> (SpanMap, usize) {
-    let directory = "games/THE BROKEN SEAL/recon/en/overlays";
-    let dossiers =
-        json(tree, "games/THE BROKEN SEAL/recon/en/dossiers.json").unwrap_or(Value::Null);
+fn candidate_overlay(
+    tree: &SourceTree,
+    target: &DecompTarget,
+    executable: &SpanMap,
+) -> (SpanMap, usize) {
+    let directory = format!("{}/recon/en/overlays", target.game_dir());
+    let dossiers = json(
+        tree,
+        &format!("{}/recon/en/dossiers.json", target.game_dir()),
+    )
+    .unwrap_or(Value::Null);
     let records = dossiers.get("records").and_then(Value::as_object);
-    let reviewed = json(tree, "games/THE BROKEN SEAL/semantic/regions.json").unwrap_or(Value::Null);
+    let reviewed = json(
+        tree,
+        &format!("{}/semantic/regions.json", target.game_dir()),
+    )
+    .unwrap_or(Value::Null);
     let mut extents = BTreeMap::new();
     for region in array(&reviewed, "manual_regions") {
         let id = text(region, "overlay");
@@ -347,14 +375,17 @@ fn candidate_overlay(tree: &SourceTree, executable: &SpanMap) -> (SpanMap, usize
     }
     let mut spans = SpanMap::new();
     let mut sources = BTreeSet::new();
-    let units =
-        json(tree, "games/THE BROKEN SEAL/recon/translation-units.json").unwrap_or(Value::Null);
+    let units = json(
+        tree,
+        &format!("{}/recon/translation-units.json", target.game_dir()),
+    )
+    .unwrap_or(Value::Null);
     let mut registered = BTreeSet::new();
     for unit in array(&units, "units") {
         let source = text(unit, "source");
         registered.insert(source.clone());
         let id = text(unit, "overlay");
-        if text(unit, "game") != "tbs"
+        if text(unit, "game") != target.compiler.as_str()
             || !executable.contains_key(&id)
             || !source.starts_with(&format!("{directory}/"))
             || !(source.ends_with(".c") || source.ends_with(".C"))
@@ -380,7 +411,7 @@ fn candidate_overlay(tree: &SourceTree, executable: &SpanMap) -> (SpanMap, usize
                 .push(Span::new(entry, end));
         }
     }
-    for name in tree.list(directory) {
+    for name in tree.list(&directory) {
         let source = format!("{directory}/{name}");
         if registered.contains(&source) {
             continue;
@@ -414,19 +445,32 @@ fn candidate_overlay(tree: &SourceTree, executable: &SpanMap) -> (SpanMap, usize
     }
     (spans, sources.len())
 }
+#[cfg(test)]
 fn exact_overlay(
     tree: &SourceTree,
     pairs: &[(String, String)],
     executable: &SpanMap,
 ) -> Result<(OwnerMap, SpanMap), String> {
+    let target = crate::targets::target_for(crate::targets::DEFAULT_TARGET);
+    exact_overlay_for(tree, &target, pairs, executable)
+}
+fn exact_overlay_for(
+    tree: &SourceTree,
+    target: &DecompTarget,
+    pairs: &[(String, String)],
+    executable: &SpanMap,
+) -> Result<(OwnerMap, SpanMap), String> {
+    let manifest_path = format!("{}/source-paths.json", target.game_dir());
     let manifest = tree
-        .read(SOURCE_PATHS_MANIFEST)
-        .ok_or_else(|| format!("missing canonical owner register {SOURCE_PATHS_MANIFEST}"))?;
-    let source_paths = SourcePaths::parse(Path::new(""), &manifest)?;
+        .read(&manifest_path)
+        .ok_or_else(|| format!("missing canonical owner register {manifest_path}"))?;
+    let source_paths =
+        SourcePaths::parse_for_game(Path::new(""), target.compiler.as_str(), &manifest)?;
+    let overlay_dir = target.overlay_dir();
     let mut owners = OwnerMap::new();
     let mut spans = SpanMap::new();
     for (id, name) in pairs {
-        let mut list = overlay_owners(tree, name)
+        let mut list = overlay_owners_for(tree, &overlay_dir, name)
             .into_iter()
             .map(|mut owner| -> Result<Owner, String> {
                 let source_owner = SourceOwner::parse(&format!("{id}:{:08x}", owner.entry))?;
@@ -434,7 +478,7 @@ fn exact_overlay(
                     .registered_name(source_owner)
                     .ok_or_else(|| {
                         format!(
-                            "exact owner {} has no name in {SOURCE_PATHS_MANIFEST}",
+                            "exact owner {} has no name in {manifest_path}",
                             source_owner.id()
                         )
                     })?
@@ -454,12 +498,13 @@ fn exact_overlay(
             .into_iter()
             .filter(|owner| !owner.spans.is_empty())
             .collect::<Vec<_>>();
-        if let Some(units) = json(tree, "games/THE BROKEN SEAL/recon/translation-units.json") {
+        let units_path = format!("{}/recon/translation-units.json", target.game_dir());
+        if let Some(units) = json(tree, &units_path) {
             // Each placeholder already credits its owner once, in its own
             // overlay; an instance adds only the fill it declares there.
             let linked = array(&units, "units")
                 .iter()
-                .filter(|unit| text(unit, "game") == "tbs")
+                .filter(|unit| text(unit, "game") == target.compiler.as_str())
                 .filter_map(|unit| match text(unit, "overlay") == *id {
                     true => Some((unit, unit)),
                     false => unit
@@ -509,26 +554,44 @@ fn exact_overlay(
 /// as pret counts linked libgcc. Main links are credited only as the built
 /// asm manifest placed them; overlay links only where the tracked listing
 /// reserves their window. Data windows lie outside executable intervals.
+#[cfg(test)]
 fn runtime_credit(
     tree: &SourceTree,
     main_exec: &[Span],
     overlay_exec: &SpanMap,
 ) -> Result<(Vec<Span>, SpanMap), String> {
+    let target = crate::targets::target_for(crate::targets::DEFAULT_TARGET);
+    runtime_credit_for(tree, &target, main_exec, overlay_exec)
+}
+fn runtime_credit_for(
+    tree: &SourceTree,
+    target: &DecompTarget,
+    main_exec: &[Span],
+    overlay_exec: &SpanMap,
+) -> Result<(Vec<Span>, SpanMap), String> {
+    // The runtime registry currently describes the TBS linked container.
+    // A TLA registry must be independently evidenced before it earns credit.
+    if target.compiler != crate::compiler::routing::CompilerTarget::Tbs {
+        return Ok((Vec::new(), SpanMap::new()));
+    }
     let Some(registry) = json(tree, crate::compiler::runtime::REGISTRY) else {
         return Ok((Vec::new(), SpanMap::new()));
     };
-    let placed = json(tree, "out/tbs-en/full/asm/manifest.json")
-        .map(|manifest| {
-            array(&manifest, "regions")
-                .iter()
-                .filter(|region| {
-                    text(region, "source") == crate::compiler::runtime::REGISTRY
-                        && text(region, "retention") == "container_runtime"
-                })
-                .filter_map(|region| Some((integer(region, "address")?, integer(region, "size")?)))
-                .collect::<BTreeMap<_, _>>()
-        })
-        .unwrap_or_default();
+    let placed = json(
+        tree,
+        &format!("{}/full/asm/manifest.json", target.output_dir),
+    )
+    .map(|manifest| {
+        array(&manifest, "regions")
+            .iter()
+            .filter(|region| {
+                text(region, "source") == crate::compiler::runtime::REGISTRY
+                    && text(region, "retention") == "container_runtime"
+            })
+            .filter_map(|region| Some((integer(region, "address")?, integer(region, "size")?)))
+            .collect::<BTreeMap<_, _>>()
+    })
+    .unwrap_or_default();
     let mut main = Vec::new();
     let mut overlays = SpanMap::new();
     for link in array(&registry, "links") {
@@ -546,9 +609,7 @@ fn runtime_credit(
             continue;
         }
         let listing = tree
-            .read(&format!(
-                "games/THE BROKEN SEAL/asm/overlays/{image}_overlay.s"
-            ))
+            .read(&target.overlay_assembly(&image))
             .unwrap_or_default();
         for (window, size) in crate::compiler::runtime::listing_windows(&listing)? {
             if i64::from(window) == start {
@@ -564,6 +625,7 @@ fn runtime_credit(
     }
     Ok((intersect(&normalize(&main), main_exec), overlays))
 }
+#[cfg(test)]
 const OVERLAY_VENEER_MACRO: &str = "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC";
 
 /// Original assembly credit requires evidence and a proof or object.
@@ -595,14 +657,28 @@ fn credited_kinds(classification: &Value) -> BTreeSet<String> {
 /// Withdrawn, draft, and credited main assembly: credited spans are the
 /// proven regions whose kind the register credits, and they leave the
 /// withdrawn list so they are counted once.
+#[cfg(test)]
 fn main_assembly_classification(tree: &SourceTree) -> (Vec<Span>, Vec<Span>, Vec<Span>) {
+    let target = crate::targets::target_for(crate::targets::DEFAULT_TARGET);
+    main_assembly_classification_for(tree, &target)
+}
+fn main_assembly_classification_for(
+    tree: &SourceTree,
+    target: &DecompTarget,
+) -> (Vec<Span>, Vec<Span>, Vec<Span>) {
     let mut proven = Vec::new();
     let mut draft = Vec::new();
     let mut credited = Vec::new();
-    let credited_kinds = json(tree, "games/THE BROKEN SEAL/asm/classification.json")
-        .map(|document| credited_kinds(&document))
-        .unwrap_or_default();
-    if let Some(value) = json(tree, "out/tbs-en/full/asm/manifest.json") {
+    let credited_kinds = json(
+        tree,
+        &format!("{}/raw/classification.json", target.game_dir()),
+    )
+    .map(|document| credited_kinds(&document))
+    .unwrap_or_default();
+    if let Some(value) = json(
+        tree,
+        &format!("{}/full/asm/manifest.json", target.output_dir),
+    ) {
         for region in array(&value, "regions") {
             let retention = text(region, "retention");
             let kind = text(region, "kind");
@@ -638,7 +714,10 @@ fn main_assembly_classification(tree: &SourceTree) -> (Vec<Span>, Vec<Span>, Vec
             }
         }
     }
-    if let Some(value) = json(tree, "games/THE BROKEN SEAL/semantic/main-regions.json") {
+    if let Some(value) = json(
+        tree,
+        &format!("{}/semantic/main-regions.json", target.game_dir()),
+    ) {
         for region in array(&value, "non_c_ranges") {
             if matches!(
                 text(region, "kind").as_str(),
@@ -655,36 +734,57 @@ fn main_assembly_classification(tree: &SourceTree) -> (Vec<Span>, Vec<Span>, Vec
     }
     (normalize(&proven), normalize(&draft), normalize(&credited))
 }
-fn overlay_assembly_classification(
+fn overlay_assembly_classification_for(
     tree: &SourceTree,
+    target: &DecompTarget,
     inventory: &BTreeMap<String, Vec<Region>>,
     executable: &SpanMap,
 ) -> Result<(SpanMap, SpanMap, SpanMap), String> {
+    let classification_path = format!("{}/semantic/overlay-assembly.json", target.game_dir());
+    let veneer_macro = target.overlay_macro();
     let source = tree
-        .read("games/THE BROKEN SEAL/semantic/overlay-assembly.json")
+        .read(&classification_path)
         .ok_or_else(|| "overlay assembly classification is missing".to_string())?;
-    let document: Value = serde_json::from_str(&source).map_err(|error| {
-        format!("games/THE BROKEN SEAL/semantic/overlay-assembly.json: {error}")
-    })?;
+    let document: Value =
+        serde_json::from_str(&source).map_err(|error| format!("{classification_path}: {error}"))?;
     for row in array(&document, "regions")
         .iter()
         .filter(|row| text(&row["provenance"], "credit") == "reconstructed_veneer")
     {
-        for source in [
-            OVERLAY_VENEER_MACRO.to_string(),
-            text(&row["provenance"], "source"),
-        ] {
+        for source in [veneer_macro.clone(), text(&row["provenance"], "source")] {
             if tree.read(&source).is_none() {
                 return Err(format!("reconstructed veneer source is missing: {source}"));
             }
         }
     }
-    overlay_assembly_classification_document(&document, inventory, executable)
+    overlay_assembly_classification_document_for(
+        &document,
+        inventory,
+        executable,
+        &veneer_macro,
+        target.source_dir,
+    )
 }
+#[cfg(test)]
 fn overlay_assembly_classification_document(
     document: &Value,
     inventory: &BTreeMap<String, Vec<Region>>,
     executable: &SpanMap,
+) -> Result<(SpanMap, SpanMap, SpanMap), String> {
+    overlay_assembly_classification_document_for(
+        document,
+        inventory,
+        executable,
+        OVERLAY_VENEER_MACRO,
+        "games/THE BROKEN SEAL/SRC",
+    )
+}
+fn overlay_assembly_classification_document_for(
+    document: &Value,
+    inventory: &BTreeMap<String, Vec<Region>>,
+    executable: &SpanMap,
+    veneer_macro: &str,
+    source_dir: &str,
 ) -> Result<(SpanMap, SpanMap, SpanMap), String> {
     let mut proven: SpanMap = inventory
         .iter()
@@ -753,8 +853,8 @@ fn overlay_assembly_classification_document(
                 .collect::<Vec<_>>();
             if text(row, "confidence") != "proven"
                 || text(row, "kind") != "veneer"
-                || text(&row["provenance"], "proof") != OVERLAY_VENEER_MACRO
-                || !text(&row["provenance"], "source").starts_with("games/THE BROKEN SEAL/SRC/")
+                || text(&row["provenance"], "proof") != veneer_macro
+                || !text(&row["provenance"], "source").starts_with(&format!("{source_dir}/"))
                 || span.start % 4 != 0
                 || span.bytes() % 8 != 0
                 || bytes(&intersect(&[span], &veneer_spans)) != span.bytes()
@@ -878,6 +978,7 @@ fn overlay_tiles(
     semantic: &[Span],
     draft_assembly: &[Span],
     retained: &[Span],
+    assembly_source: &str,
 ) -> Vec<Tile> {
     let short = overlay_short(id);
     let exact: Vec<_> = owners
@@ -950,7 +1051,7 @@ fn overlay_tiles(
                 Some(short.into()),
                 Some(span.start),
             );
-            tile.source = Some(format!("games/THE BROKEN SEAL/asm/overlays/{id}_overlay.s"));
+            tile.source = Some(format!("{assembly_source}/{id}_overlay.s"));
             out.push(tile);
         }
     }
@@ -1012,7 +1113,7 @@ struct Stream {
     rom: i64,
     source: Option<String>,
 }
-fn atlas_source(locations: &str, id: &str) -> Option<String> {
+fn atlas_source(game_dir: &str, locations: &str, id: &str) -> Option<String> {
     let resource_id = format!("resource_{id}");
     locations.lines().find_map(|line| {
         let fields: Vec<_> = line.split('\t').collect();
@@ -1020,16 +1121,16 @@ fn atlas_source(locations: &str, id: &str) -> Option<String> {
             .then(|| fields.get(6).copied())
             .flatten()
             .filter(|path| !path.is_empty())
-            .map(|path| format!("games/THE BROKEN SEAL/{path}/"))
+            .map(|path| format!("{game_dir}/{path}/"))
     })
 }
-fn streams(tree: &SourceTree) -> Vec<Stream> {
-    let Some(manifest) = json(tree, "games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE.JSON") else {
+fn streams(tree: &SourceTree, target: &DecompTarget) -> Vec<Stream> {
+    let Some(manifest) = json(tree, target.asset_manifest) else {
         return Vec::new();
     };
     let mut out = Vec::new();
     let locations = tree
-        .read("games/THE BROKEN SEAL/locations.tsv")
+        .read(&format!("{}/locations.tsv", target.game_dir()))
         .unwrap_or_default();
     for series in array(&manifest, "series") {
         if text(series, "kind") != "golden-sun-thumb-overlay-series" {
@@ -1046,7 +1147,7 @@ fn streams(tree: &SourceTree) -> Vec<Stream> {
             let start = items[1].as_str().and_then(hex).unwrap_or(0);
             let rom = items[2].as_str().and_then(hex).unwrap_or(0);
             if rom > 0 {
-                let source = atlas_source(&locations, &id);
+                let source = atlas_source(target.game_dir(), &locations, &id);
                 out.push(Stream {
                     id: format!("resource_{id}"),
                     start,
@@ -1074,7 +1175,11 @@ fn shared_map_assets(tree: &SourceTree, areas: &[Area]) -> Result<Value, String>
     // The loader indexes 201 scene records; the historical field name is effect_id.
     for scene in array(scenes, "records").iter().take(201) {
         let resource = integer(scene, "resource_id").ok_or("invalid scene resource")?;
-        let Some(area) = atlas_source(&locations, &format!("{resource:x}")) else {
+        let Some(area) = atlas_source(
+            "games/THE BROKEN SEAL",
+            &locations,
+            &format!("{resource:x}"),
+        ) else {
             continue;
         };
         let map = array(&maps, "records")
@@ -1338,8 +1443,9 @@ fn component_children(region: &Value, data: &[Span]) -> Vec<Tile> {
         vec![]
     }
 }
-/// The Lost Age ROM by source: verified asset regions, exact main-image C, and
-/// the rest unclassified. Empty until its asset manifest has been built.
+/// The Lost Age ROM by source. The executable audit separates code that still
+/// lives as assembly from cartridge data; only independently exact intervals
+/// earn C credit. Empty until its asset manifest has been built.
 fn lost_age_tiles(tree: &SourceTree) -> Vec<Tile> {
     let Some(manifest) = json(tree, "out/tla-en/assets/manifest.json") else {
         return Vec::new();
@@ -1353,35 +1459,6 @@ fn lost_age_tiles(tree: &SourceTree) -> Vec<Tile> {
         *covered = normalize(covered);
         bytes(&spans)
     };
-    for region in array(&manifest, "regions") {
-        let (Some(start), Some(size)) = (integer(region, "address"), integer(region, "size"))
-        else {
-            continue;
-        };
-        let actual = claim(start, start + size, &mut covered);
-        if actual == 0 {
-            continue;
-        }
-        let kind = text(region, "kind");
-        let source = array(region, "sources")
-            .first()
-            .and_then(Value::as_str)
-            .unwrap_or("games/THE LOST AGE/SRC/SYSTEM/RESOURCE.JSON");
-        tiles.push(Tile {
-            label: format!(
-                "{} · {} · 0x{:08x}",
-                source.rsplit('/').next().unwrap_or(source),
-                kind,
-                start
-            ),
-            bytes: actual,
-            categories: [0, 0, 0, 0, 0, actual],
-            group: Some(kind),
-            address: Some(start),
-            source: Some(source.into()),
-            ..Tile::default()
-        });
-    }
     if let Some(metrics) = json(tree, "games/THE LOST AGE/metrics/tla-en-executable.json") {
         let intervals = metrics.pointer("/main/intervals").and_then(Value::as_array);
         for interval in intervals.into_iter().flatten() {
@@ -1413,21 +1490,125 @@ fn lost_age_tiles(tree: &SourceTree) -> Vec<Tile> {
             });
         }
     }
+    if let Some(audit) = json(tree, "out/tla-en/reports/executable-audit-candidate.json") {
+        let mut main_assembly = 0;
+        for interval in array(&audit["main"], "intervals") {
+            let (Some(start), Some(end)) = (integer(interval, "start"), integer(interval, "end"))
+            else {
+                continue;
+            };
+            let actual = claim(start, end, &mut covered);
+            if actual == 0 {
+                continue;
+            }
+            main_assembly += actual;
+        }
+        if main_assembly > 0 {
+            tiles.push(Tile {
+                label: "Main image assembly".into(),
+                bytes: main_assembly,
+                categories: [0, 0, 0, main_assembly, 0, 0],
+                group: Some("main-image-code".into()),
+                source: Some("games/THE LOST AGE/raw/main.s".into()),
+                ..Tile::default()
+            });
+        }
+        for overlay in array(&audit, "overlays") {
+            let (Some(start), Some(end)) =
+                (integer(overlay, "rom_start"), integer(overlay, "rom_end"))
+            else {
+                continue;
+            };
+            let actual = claim(start, end, &mut covered);
+            if actual == 0 {
+                continue;
+            }
+            let id = text(overlay, "id");
+            let source = format!("games/THE LOST AGE/raw/overlays/{id}_overlay.s");
+            tiles.push(Tile {
+                label: format!("{id} · compressed code overlay"),
+                bytes: actual,
+                categories: [0, 0, 0, actual, 0, 0],
+                group: Some("compressed-code-overlay".into()),
+                address: Some(start),
+                source: Some(source),
+                ..Tile::default()
+            });
+        }
+    }
+    for region in array(&manifest, "regions") {
+        let (Some(start), Some(size)) = (integer(region, "address"), integer(region, "size"))
+        else {
+            continue;
+        };
+        let actual = claim(start, start + size, &mut covered);
+        if actual == 0 {
+            continue;
+        }
+        let kind = text(region, "kind");
+        let source = array(region, "sources")
+            .first()
+            .and_then(Value::as_str)
+            .unwrap_or("games/THE LOST AGE/SRC/SYSTEM/RESOURCE.JSON");
+        tiles.push(Tile {
+            label: format!(
+                "{} · {} · 0x{:08x}",
+                source.rsplit('/').next().unwrap_or(source),
+                kind,
+                start
+            ),
+            bytes: actual,
+            categories: [0, 0, 0, 0, 0, actual],
+            group: Some(kind),
+            address: Some(start),
+            source: Some(source.into()),
+            ..Tile::default()
+        });
+    }
+    if let Some(audit) = json(tree, "out/tla-en/reports/executable-audit-candidate.json") {
+        for resource in array(&audit, "resources") {
+            if text(resource, "role") != "data-resource" {
+                continue;
+            }
+            let (Some(start), Some(end)) =
+                (integer(resource, "rom_start"), integer(resource, "rom_end"))
+            else {
+                continue;
+            };
+            let actual = claim(start, end, &mut covered);
+            if actual == 0 {
+                continue;
+            }
+            let id = text(resource, "id");
+            tiles.push(Tile {
+                label: format!("{id} · compressed data resource"),
+                bytes: actual,
+                categories: [0, 0, 0, 0, 0, actual],
+                group: Some("compressed-data-resource".into()),
+                address: Some(start),
+                source: Some("games/THE LOST AGE/SRC/SYSTEM/RESOURCE.JSON".into()),
+                ..Tile::default()
+            });
+        }
+    }
     let rest = bytes(&subtract(&[Span::new(ROM_BASE, ROM_BASE + rom)], &covered));
     if rest > 0 {
         tiles.push(Tile {
-            label: "Not yet classified".into(),
+            label: "Cartridge data".into(),
             bytes: rest,
-            categories: [0, 0, rest, 0, 0, 0],
+            categories: [0, 0, 0, 0, 0, rest],
             // Inside its game folder, so games/ stays the whole picture.
-            source: Some("games/THE LOST AGE/".into()),
+            source: Some("games/THE LOST AGE/SRC/SYSTEM/RESOURCE.JSON".into()),
             ..Tile::default()
         });
     }
     tiles
 }
-fn asset_tiles(tree: &SourceTree, data: &[Span], rom: i64) -> Vec<Tile> {
-    let Some(manifest) = json(tree, "out/tbs-en/full/assets/manifest.json") else {
+fn asset_tiles(tree: &SourceTree, target: &DecompTarget, data: &[Span], rom: i64) -> Vec<Tile> {
+    let Some(manifest) = json(
+        tree,
+        &format!("{}/full/assets/manifest.json", target.output_dir),
+    ) else {
         return vec![Tile {
             label: "Unclassified ROM data".into(),
             bytes: bytes(data),
@@ -1437,7 +1618,10 @@ fn asset_tiles(tree: &SourceTree, data: &[Span], rom: i64) -> Vec<Tile> {
     };
     let sequence_classes = sound_sequence_classes(
         &tree
-            .read("games/THE BROKEN SEAL/SOUND/SEQUENCE/SEQUENCES.TSV")
+            .read(&format!(
+                "{}/SOUND/SEQUENCE/SEQUENCES.TSV",
+                target.game_dir()
+            ))
             .unwrap_or_default(),
     );
     let mut groups: BTreeMap<String, Vec<Tile>> = BTreeMap::new();
@@ -1465,14 +1649,18 @@ fn asset_tiles(tree: &SourceTree, data: &[Span], rom: i64) -> Vec<Tile> {
                 kind == "golden-sun-pcm-wave" && source.to_ascii_lowercase().ends_with(".wav")
             })
             .or_else(|| sources.first().and_then(Value::as_str))
-            .unwrap_or("games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE.JSON");
+            .unwrap_or(target.asset_manifest);
         let owner = if kind == "golden-sun-sound-sequence" {
-            "games/THE BROKEN SEAL/SOUND/SEQUENCE/SEQUENCES.TSV"
+            format!("{}/SOUND/SEQUENCE/SEQUENCES.TSV", target.game_dir())
         } else {
-            sources.first().and_then(Value::as_str).unwrap_or(source)
+            sources
+                .first()
+                .and_then(Value::as_str)
+                .unwrap_or(source)
+                .to_string()
         };
         let mut children = if kind == "components" {
-            sprite_children(tree, owner, span, &actual_spans)
+            sprite_children(tree, &owner, span, &actual_spans)
         } else {
             Vec::new()
         };
@@ -1483,7 +1671,7 @@ fn asset_tiles(tree: &SourceTree, data: &[Span], rom: i64) -> Vec<Tile> {
             Some(group) => group,
             None => kind.clone(),
         };
-        groups.entry(owner.into()).or_default().push(Tile {
+        groups.entry(owner).or_default().push(Tile {
             label: format!(
                 "{} · {} · 0x{:08x}",
                 source.rsplit('/').next().unwrap_or(source),
@@ -1598,8 +1786,8 @@ pub struct Classification {
     draft_sources: usize,
 }
 pub fn classify(options: &BuildOptions) -> Result<Classification, String> {
-    let game =
-        crate::compiler::routing::game_directory(options.target.split('-').next().unwrap_or("tbs"));
+    let target = crate::targets::decomp_target(Some(&options.target))?;
+    let game = crate::compiler::routing::game_directory(target.compiler.as_str());
     let inventory = read_json(
         options.exact,
         &format!("games/{game}/metrics/{}-executable.json", options.target),
@@ -1624,15 +1812,22 @@ pub fn classify(options: &BuildOptions) -> Result<Classification, String> {
         overlay_regions.insert(id, rows);
     }
     let exact_main = exact_main(options.exact, &options.target, &main_exec)?;
-    let pairs = overlay_ids(options.exact);
-    let (owners, exact_overlay) = exact_overlay(options.exact, &pairs, &overlay_exec)?;
+    let overlay_dir = target.overlay_dir();
+    let pairs = overlay_ids_for(options.exact, &overlay_dir);
+    let (owners, exact_overlay) = exact_overlay_for(options.exact, &target, &pairs, &overlay_exec)?;
     // Overlay linkage also admits Pascal-authorized, audited veneer reconstruction.
     // Other assembly still needs handwritten/library provenance per range.
     let (withdrawn_main, withdrawn_draft_main, retained_main) =
-        main_assembly_classification(options.exact);
+        main_assembly_classification_for(options.exact, &target);
     let (mut withdrawn_overlay, withdrawn_draft_overlay, mut retained_overlay) =
-        overlay_assembly_classification(options.exact, &overlay_regions, &overlay_exec)?;
-    let (runtime_main, runtime_overlay) = runtime_credit(options.exact, &main_exec, &overlay_exec)?;
+        overlay_assembly_classification_for(
+            options.exact,
+            &target,
+            &overlay_regions,
+            &overlay_exec,
+        )?;
+    let (runtime_main, runtime_overlay) =
+        runtime_credit_for(options.exact, &target, &main_exec, &overlay_exec)?;
     let retained_main = normalize(&[retained_main, runtime_main].concat());
     let withdrawn_main = subtract(&withdrawn_main, &retained_main);
     for (id, spans) in runtime_overlay {
@@ -1645,11 +1840,11 @@ pub fn classify(options: &BuildOptions) -> Result<Classification, String> {
     }
     let (candidate_main, candidate_main_sources) = options
         .recon
-        .map(|tree| candidate_main(tree, &main_exec))
+        .map(|tree| candidate_main(tree, &target, &main_exec))
         .unwrap_or_default();
     let (candidate_overlay, candidate_overlay_sources) = options
         .recon
-        .map(|tree| candidate_overlay(tree, &overlay_exec))
+        .map(|tree| candidate_overlay(tree, &target, &overlay_exec))
         .unwrap_or_default();
     let semantic_main = subtract(
         &candidate_main,
@@ -1686,6 +1881,7 @@ pub fn classify(options: &BuildOptions) -> Result<Classification, String> {
 }
 pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String> {
     let rom = rom_size(&options.target)?;
+    let target = crate::targets::decomp_target(Some(&options.target))?;
     let Classification {
         main,
         main_exec,
@@ -1752,11 +1948,12 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
             mapped(&semantic_overlay, id),
             mapped(&draft_overlay, id),
             mapped(&retained_overlay, id),
+            &target.overlay_dir(),
         ));
     }
     executable_areas.push(area("overlays", "Decoded code overlays", overlay_tiles_all));
     let mut code = main_exec.clone();
-    let ss = streams(options.exact);
+    let ss = streams(options.exact, &target);
     let rom_span = Span::new(ROM_BASE, ROM_BASE + rom);
     validate_streams(&ss, rom_span, &main_exec)?;
     for stream in &ss {
@@ -1821,7 +2018,7 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
     rom_areas.push(area(
         "rom-data",
         "Assets & data",
-        asset_tiles(options.exact, &data, rom),
+        asset_tiles(options.exact, &target, &data, rom),
     ));
     let physical_total = rom_areas.iter().map(|area| area.bytes).sum::<i64>();
     if physical_total != rom {
@@ -1882,12 +2079,12 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
             "proven_source": options.exact.id(),
             "draft_source": options.recon.map_or("absent", |tree| tree.id()),
             "draft_sources": draft_sources as i64,
-            "main_draft_census": "games/THE BROKEN SEAL/recon/en/dossiers.json",
+            "main_draft_census": format!("{}/recon/en/dossiers.json", target.game_dir()),
             "proven_assembly_standard": "handwritten-or-library-proven; audited-overlay-veneer-reconstruction; container-built-compiler-runtime",
             "credited_assembly_bytes": bytes(&retained_main) + mapped_bytes(&retained_overlay),
             "withdrawn_assembly_bytes": withdrawn_assembly,
-            "main_assembly_classification": "out/tbs-en/full/asm/manifest.json",
-            "overlay_assembly_classification": "games/THE BROKEN SEAL/semantic/overlay-assembly.json",
+            "main_assembly_classification": format!("{}/full/asm/manifest.json", target.output_dir),
+            "overlay_assembly_classification": format!("{}/semantic/overlay-assembly.json", target.game_dir()),
             "draft_superseded_bytes": 0,
             "draft_outside_extent_bytes": 0,
             "draft_unresolved": []
@@ -2014,7 +2211,7 @@ mod tests {
         // at 0x080072e4 is a container-built link, credited exactly where the
         // built manifest placed it, and retained credited spans never overlap.
         let tree = crate::coverage::tree::work_tree();
-        let live = json(&tree, "games/THE BROKEN SEAL/asm/classification.json").unwrap();
+        let live = json(&tree, "games/THE BROKEN SEAL/raw/classification.json").unwrap();
         assert!(!credited_kinds(&live).contains("runtime_thunk_bundle"));
         let (_, _, credited) = main_assembly_classification(&tree);
         assert!(!credited.iter().any(|span| span.start == 0x0800_72e4));
@@ -2054,16 +2251,16 @@ mod tests {
             "out/tbs-en/full/asm/manifest.json",
             json!({"regions": [
                 {"address": 0x0800_72e4, "size": 60, "source": crate::compiler::runtime::REGISTRY, "retention": "container_runtime"},
-                {"address": 0x0800_1000, "size": 60, "source": "games/THE BROKEN SEAL/asm/08001000.s", "retention": "keep_asm"}
+                {"address": 0x0800_1000, "size": 60, "source": "games/THE BROKEN SEAL/raw/08001000.s", "retention": "keep_asm"}
             ]})
             .to_string(),
         );
         write(
-            "games/THE BROKEN SEAL/asm/overlays/resource_3bf_overlay.s",
+            "games/THE BROKEN SEAL/raw/overlays/resource_3bf_overlay.s",
             "AlchemyRuntime_020057b0:\n\t.space 0x728\n\t.4byte 1\nAlchemyRuntime_02005f90:\n\t.space 0x14\n".into(),
         );
         write(
-            "games/THE BROKEN SEAL/asm/overlays/resource_373_overlay.s",
+            "games/THE BROKEN SEAL/raw/overlays/resource_373_overlay.s",
             "\t.4byte 0\n".into(),
         );
         let tree = crate::coverage::tree::work_tree_at(root.to_path_buf());
@@ -2106,6 +2303,88 @@ mod tests {
     fn no_inventory() -> BTreeMap<String, Vec<Region>> {
         BTreeMap::new()
     }
+
+    #[test]
+    fn lost_age_coverage_reads_only_lost_age_owner_paths() {
+        let root = tempfile::tempdir().unwrap();
+        let write = |path: &str, text: &str| {
+            let path = root.path().join(path);
+            std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+            std::fs::write(path, text).unwrap();
+        };
+        write(
+            "games/THE LOST AGE/source-paths.json",
+            &json!({"format": 3, "owners": {
+                "resource_64a:02000100": "FIELD/TEST.C"
+            }})
+            .to_string(),
+        );
+        write(
+            "games/THE LOST AGE/SRC/FIELD/TEST.C",
+            "void Test(void) {}\n",
+        );
+        write(
+            "games/THE LOST AGE/raw/overlays/resource_64a_overlay.s",
+            "AlchemyC_02000100:\n\t.space 0x20\n",
+        );
+        let tree = crate::coverage::tree::work_tree_at(root.path().to_path_buf());
+        let target = crate::targets::decomp_target(Some("tla-en")).unwrap();
+        let executable = SpanMap::from([(
+            "resource_64a".into(),
+            vec![Span::new(0x0200_0100, 0x0200_0120)],
+        )]);
+        let pairs = overlay_ids_for(&tree, &target.overlay_dir());
+        let (owners, spans) = exact_overlay_for(&tree, &target, &pairs, &executable).unwrap();
+        assert_eq!(bytes(&spans["resource_64a"]), 0x20);
+        assert_eq!(
+            owners["resource_64a"][0].source,
+            "games/THE LOST AGE/SRC/FIELD/TEST.C"
+        );
+    }
+
+    #[test]
+    fn lost_age_rom_tree_classifies_audited_code_and_remaining_data() {
+        let root = tempfile::tempdir().unwrap();
+        let write = |path: &str, value: Value| {
+            let path = root.path().join(path);
+            std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+            std::fs::write(path, serde_json::to_vec(&value).unwrap()).unwrap();
+        };
+        write("out/tla-en/assets/manifest.json", json!({"regions": []}));
+        write(
+            "out/tla-en/reports/executable-audit-candidate.json",
+            json!({
+                "main": {"intervals": [
+                    {"start": 0x08000100, "end": 0x08000120, "kind": "thumb"}
+                ]},
+                "overlays": [{
+                    "id": "resource_649", "rom_start": 0x08001000,
+                    "rom_end": 0x08001100
+                }],
+                "resources": []
+            }),
+        );
+        write(
+            "games/THE LOST AGE/metrics/tla-en-executable.json",
+            json!({"main": {"intervals": [{
+                "start": 0x08000100, "end": 0x08000108,
+                "evidence": "games/COMMON/SRC/SOUND/TEST.C:exact"
+            }]}}),
+        );
+        let tree = crate::coverage::tree::work_tree_at(root.path().to_path_buf());
+        let tiles = lost_age_tiles(&tree);
+        let totals = tiles.iter().fold([0; 6], |mut totals, tile| {
+            for (total, bytes) in totals.iter_mut().zip(tile.categories) {
+                *total += bytes;
+            }
+            totals
+        });
+        assert_eq!(totals[Category::Unknown as usize], 0);
+        assert_eq!(totals[Category::ProvenC as usize], 8);
+        assert_eq!(totals[Category::DraftAsm as usize], 24 + 0x100);
+        assert_eq!(totals[Category::AssetData as usize], 0x1000000 - 32 - 0x100);
+    }
+
     #[test]
     fn coverage_credits_instance_owners_once_in_their_own_overlay_with_compiler_gap() {
         let root = tempfile::tempdir().unwrap();
@@ -2135,11 +2414,11 @@ mod tests {
         );
         // A 1394-byte first member leaves one halfword of fill in each image.
         write(
-            "games/THE BROKEN SEAL/asm/overlays/resource_3bf_overlay.s",
+            "games/THE BROKEN SEAL/raw/overlays/resource_3bf_overlay.s",
             "AlchemyC_0200034c:\n\t.space 0x572\n\t.short 0\nAlchemyC_020008c0:\n\t.space 0x11c\n",
         );
         write(
-            "games/THE BROKEN SEAL/asm/overlays/resource_39b_overlay.s",
+            "games/THE BROKEN SEAL/raw/overlays/resource_39b_overlay.s",
             "AlchemyC_02000630:\n\t.space 0x572\n\t.short 0\nAlchemyC_02000ba4:\n\t.space 0x11c\n",
         );
         let units = |gap: (&str, &str)| {
@@ -2267,7 +2546,11 @@ mod tests {
             Span::new(0x02000160, 0x02000170),
         ];
         assert_eq!(
-            candidate_overlay(&tree, &executable()),
+            candidate_overlay(
+                &tree,
+                &crate::targets::target_for(crate::targets::DEFAULT_TARGET),
+                &executable(),
+            ),
             (
                 BTreeMap::from([("resource_test".into(), expected.clone())]),
                 2
@@ -2277,7 +2560,11 @@ mod tests {
             &format!("{directory}/resource_test_c_020001c0.c"),
             "void Legacy_Run(void) {}\n",
         );
-        let (found, sources) = candidate_overlay(&tree, &executable());
+        let (found, sources) = candidate_overlay(
+            &tree,
+            &crate::targets::target_for(crate::targets::DEFAULT_TARGET),
+            &executable(),
+        );
         assert_eq!(sources, 3);
         assert_eq!(
             found["resource_test"],
@@ -2397,7 +2684,7 @@ mod tests {
     fn stream_ids_resolve_locations_resource_keys() {
         let locations = "resource_36f\tTitle\ttitle\t0\t0x99b\tevidence\tSRC/MENU/TITLE\n";
         assert_eq!(
-            atlas_source(locations, "36f").as_deref(),
+            atlas_source("games/THE BROKEN SEAL", locations, "36f").as_deref(),
             Some("games/THE BROKEN SEAL/SRC/MENU/TITLE/")
         );
     }

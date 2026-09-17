@@ -2,12 +2,12 @@
   "format": 1,
   "regions": [
     {
-      "source": "games/THE BROKEN SEAL/asm/08000770.s",
+      "source": "games/THE BROKEN SEAL/raw/08000770.s",
       "address": "0x08000770",
       "run_address": "0x03000000"
     },
     {
-      "source": "games/THE BROKEN SEAL/asm/080f9674.s",
+      "source": "games/THE BROKEN SEAL/raw/080f9674.s",
       "address": "0x080f9674",
       "run_address": "0x03007000"
     }

@@ -165,7 +165,7 @@ fn run_pipeline(directory: &str, apply: bool) -> Result<PipelineReport, String> 
     for (stem, candidate) in candidates {
         let owner = SourceOwner::parse(&format!("main:{stem}"))?;
         let asm = repository
-            .join("games/THE BROKEN SEAL/asm")
+            .join("games/THE BROKEN SEAL/raw")
             .join(format!("{stem}.s"));
         if source_paths.source_path(owner).exists() {
             if asm.exists() {
@@ -290,7 +290,7 @@ fn run_pipeline(directory: &str, apply: bool) -> Result<PipelineReport, String> 
             }
             fs::copy(candidate, &exact).map_err(|error| format!("{}: {error}", exact.display()))?;
             let asm = repository
-                .join("games/THE BROKEN SEAL/asm")
+                .join("games/THE BROKEN SEAL/raw")
                 .join(format!("{stem}.s"));
             if asm.exists() {
                 fs::remove_file(&asm).map_err(|error| format!("{}: {error}", asm.display()))?;

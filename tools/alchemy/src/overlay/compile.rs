@@ -2100,7 +2100,7 @@ mod source_activation_tests {
             let root = tempdir().unwrap();
             let listing = root
                 .path()
-                .join("games/THE BROKEN SEAL/asm/overlays/resource_3bf_overlay.s");
+                .join("games/THE BROKEN SEAL/raw/overlays/resource_3bf_overlay.s");
             fs::create_dir_all(listing.parent().unwrap()).unwrap();
             fs::write(
                 &listing,
@@ -2272,7 +2272,7 @@ mod source_activation_tests {
             "{error}"
         );
         assert!(error.contains(IMPORT_LIST), "{error}");
-        fs::remove_dir_all(binding.root.path().join("games/THE BROKEN SEAL/asm")).unwrap();
+        fs::remove_dir_all(binding.root.path().join("games/THE BROKEN SEAL/raw")).unwrap();
         let error = binding
             .bind(&BTreeMap::new(), &[("Object_Unimported", true, false)])
             .unwrap_err();

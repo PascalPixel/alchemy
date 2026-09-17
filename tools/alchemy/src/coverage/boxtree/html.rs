@@ -43,10 +43,38 @@ fn color(category: Category) -> &'static str {
     match category {
         Category::Unknown => "#d9d9d4",
         Category::DraftC => "#96c8c9",
-        Category::ProvenAsm => "#6cafb2",
+        Category::DraftAsm | Category::ProvenAsm => "#6cafb2",
         Category::ProvenC => "#326b7d",
         _ => "#bda995",
     }
+}
+fn legend(entries: &[Tile]) -> String {
+    let leaves = leaves(&entries.iter().collect::<Vec<_>>());
+    let mut items = Vec::new();
+    for (category, name) in DISPLAY_CATEGORIES {
+        if category == Category::AssetData {
+            continue;
+        }
+        if leaves
+            .iter()
+            .any(|tile| display_bytes(&tile.categories, category) > 0)
+        {
+            items.push((name, color(category)));
+        }
+    }
+    let mut data = std::collections::BTreeMap::new();
+    for tile in leaves {
+        if tile.categories[Category::AssetData as usize] == tile.bytes {
+            let style = content_style(tile);
+            data.insert(style.0, style.1);
+        }
+    }
+    items.extend(data);
+    items
+        .into_iter()
+        .map(|(name, swatch)| format!("<span style=\"--swatch:{swatch}\">{}</span>", esc(name)))
+        .collect::<Vec<_>>()
+        .join("")
 }
 /// A folder's name bar is 16px tall in the stylesheet whatever the window
 /// size; the layout estimates it in chart units only to shape its children.
@@ -70,7 +98,10 @@ fn tiles(
         let source = tile.source.as_deref().unwrap_or("");
         // A leaf holding its folder's unclassified bytes is named by its label.
         let directory = source.ends_with('/') && nested;
-        let name = if source.is_empty() || (source.ends_with('/') && !nested) {
+        let name = if source.is_empty()
+            || (source.ends_with('/') && !nested)
+            || (!nested && tile.address.is_none())
+        {
             &tile.label
         } else {
             source_name(source)
@@ -135,8 +166,9 @@ fn tiles(
                 esc(&title),
                 esc(name)
             ));
-        } else if source.ends_with('/') && !nested {
-            // Unclassified bytes have nowhere to open, but still say what they are.
+        } else if !nested {
+            // Aggregates with no single honest address still need a visible
+            // name; they are not links because there is nowhere exact to open.
             widths.insert(minimum);
             out.push_str(&format!(
                 "<span class=\"leaf-label label-w{minimum}\"><span>{}</span></span>",
@@ -198,23 +230,32 @@ pub fn page(
     if !folder.is_empty() && entries.is_empty() {
         return None;
     }
+    let legend = legend(&entries);
     let nested = directories(entries, folder);
     let verification = map.document["asset_verification"].as_str().unwrap_or("");
-    let heading = if folder.is_empty() {
+    let heading: String = if folder.is_empty() {
         "Alchemy".into()
     } else {
-        format!("TBS EN · {}", source_name(folder))
+        source_name(folder).into()
     };
-    let mut out=format!("<main><header><a class=\"back\" href=\"{}\" aria-label=\"Back\">‹</a><span>{}</span><a class=\"refresh\" href=\"{}\">Refresh</a></header><section class=\"chart\" aria-label=\"ROM contents\">",url(parent(folder)),esc(&heading),url(folder));
+    let back = if folder.is_empty() {
+        String::new()
+    } else {
+        format!(
+            "<a class=\"back\" href=\"{}\" aria-label=\"Back\">‹</a>",
+            url(parent(folder))
+        )
+    };
+    let mut out=format!("<main><header>{back}<span>{}</span><a class=\"refresh\" href=\"{}\">Refresh</a></header><section class=\"chart\" aria-label=\"ROM contents\">",esc(&heading),url(folder));
     let mut widths = std::collections::BTreeSet::new();
     tiles(
         &mut out,
         &nested.iter().collect::<Vec<_>>(),
         Rect {
-            x: 4.0,
-            y: 4.0,
-            width: 822.0,
-            height: 459.0,
+            x: 0.0,
+            y: 0.0,
+            width: 830.0,
+            height: 467.0,
         },
         (830.0, 467.0),
         folder,
@@ -271,7 +312,7 @@ pub fn page(
         }
         out.push_str("</aside>");
     }
-    out.push_str("<footer class=\"legend\"><span style=\"--swatch:#d9d9d4\">Unknown</span><span style=\"--swatch:#96c8c9\">Draft C</span><span style=\"--swatch:#6cafb2\">Assembly</span><span style=\"--swatch:#326b7d\">C</span><span style=\"--swatch:#bda995\">Assets</span></footer>");
+    out.push_str(&format!("<footer class=\"legend\">{legend}</footer>"));
     if shared || selected.is_some() {
         out.push_str("<iframe name=\"reveal-result\" class=\"action-result\" title=\"Finder action result\"></iframe>");
     }

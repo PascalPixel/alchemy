@@ -14,7 +14,7 @@
  * routines cached in Data_03001e50[]), copies a palette through the
  * generic word-copy helper (Func_080072f0 taking the 0x03001388 word-copy
  * routine as a trailing callback argument -- Func_080072f0 is the r3 slot
- * of the _call_via_rN trampoline at games/THE BROKEN SEAL/asm/080072e4.s, modeled as a
+ * of the _call_via_rN trampoline at games/THE BROKEN SEAL/raw/080072e4.s, modeled as a
  * direct call with the real callee as a trailing argument per that
  * trampoline's established convention), seeds a 256-slot particle pool at
  * 0x02010000 from one party member's position, then runs 128 frames.

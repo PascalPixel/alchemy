@@ -20,7 +20,7 @@
  * 28-byte fixed-point particle record based at 0x02010000, and the same
  * two-entry DrawRectangleFn table called through the `_call_via_r4`
  * trampoline that annotates as `bl Func_080072f4`
- * (games/THE BROKEN SEAL/asm/080072e4.s, r4 slot at +0x10).
+ * (games/THE BROKEN SEAL/raw/080072e4.s, r4 slot at +0x10).
  *
  * What remains uncertain:
  *

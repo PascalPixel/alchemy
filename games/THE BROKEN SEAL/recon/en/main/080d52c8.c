@@ -28,7 +28,7 @@
  * per member during the member's first 32 frames.
  *
  * `Func_080072f0` is not a real callee: it is the r3 entry of the
- * `_call_via_rN` trampoline bundle at games/THE BROKEN SEAL/asm/080072e4.s, so the two
+ * `_call_via_rN` trampoline bundle at games/THE BROKEN SEAL/raw/080072e4.s, so the two
  * sites that reach it are spelled here as what they are -- typed indirect
  * calls to the fixed IWRAM block copier at 0x03001388 and the fixed IWRAM
  * integer square root at 0x030001d8, the same reading already adopted in

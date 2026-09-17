@@ -134,7 +134,7 @@ fn git(root: &Path, arguments: &[&str]) -> Result<String, String> {
 fn pre_adoption_text(root: &Path, target: SourceOwner) -> Result<String, String> {
     let overlay = target.overlay_id().expect("overlay owner");
     let address = i64::from(target.address());
-    let relative = format!("games/THE BROKEN SEAL/asm/overlays/{overlay}_overlay.s");
+    let relative = format!("games/THE BROKEN SEAL/raw/overlays/{overlay}_overlay.s");
     let tag = format!("AlchemyC_{address:08x}:");
     let log = git(
         root,
@@ -1019,13 +1019,13 @@ mod tests {
             [(standalone, None)]
         );
 
-        let listing = game.join("asm/overlays/resource_39b_overlay.s");
+        let listing = game.join("raw/overlays/resource_39b_overlay.s");
         let spans = [
             (owner("resource_39b:02000630"), 296),
             (owner("resource_39b:02000ba4"), 284),
         ];
         let files = [
-            "asm/overlays/resource_39b_overlay.s",
+            "raw/overlays/resource_39b_overlay.s",
             "source-paths.json",
             "recon/translation-units.json",
             "semantic/overlay-assembly.json",
@@ -1095,7 +1095,7 @@ mod tests {
         );
         assert_eq!(unit.owners.len(), 2);
         // Parking the last instance leaves no empty instances map behind.
-        let listing = game.join("asm/overlays/resource_389_overlay.s");
+        let listing = game.join("raw/overlays/resource_389_overlay.s");
         let spans = [
             (owner("resource_389:0200034c"), 296),
             (owner("resource_389:020008c0"), 284),
@@ -1178,7 +1178,7 @@ mod tests {
     #[test]
     fn audit_reports_a_placeholder_without_exact_source() {
         let root = tempdir().unwrap();
-        let code = root.path().join("games/THE BROKEN SEAL/asm/overlays");
+        let code = root.path().join("games/THE BROKEN SEAL/raw/overlays");
         fs::create_dir_all(&code).unwrap();
         fs::write(
             code.join("resource_382_overlay.s"),

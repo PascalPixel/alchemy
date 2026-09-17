@@ -20,7 +20,7 @@
  *
  * Literal-pool constants were resolved by hand from the retained assembly's
  * own pc-relative immediates against the LiteralPool_* labels already
- * present in games/THE BROKEN SEAL/asm/080dd9c0.s, 080dda3c.s (pool bases 0x080dda18
+ * present in games/THE BROKEN SEAL/raw/080dd9c0.s, 080dda3c.s (pool bases 0x080dda18
  * and 0x080ddb0c match the given labels exactly), and cross-checked with a
  * standalone `arm-none-eabi-as -mthumb` + `objdump -d --adjust-vma`
  * reassembly of each region file. The reassembly widened the two `.set`
@@ -72,13 +72,13 @@ extern const u8 Data_080eebb9[];  /* interpolation table C: signed per-step ampl
 /*
  * Func_080072fc/Func_080072f4 are not real callees: they are the r6 and
  * r4 entries of the _call_via_rN trampoline bundle at
- * games/THE BROKEN SEAL/asm/080072e4.s (see games/THE BROKEN SEAL/recon/en/main/080e08c0.c's
+ * games/THE BROKEN SEAL/raw/080072e4.s (see games/THE BROKEN SEAL/recon/en/main/080e08c0.c's
  * header and its cited dossiers for the established shape). Every site
  * that the disassembly shows branching through one of those trampolines
  * is really an indirect call through the currently-selected
- * draw_cb_46/draw_cb_47 callback -- ground truth (games/THE BROKEN SEAL/asm/
+ * draw_cb_46/draw_cb_47 callback -- ground truth (games/THE BROKEN SEAL/raw/
  * 080ddb34.s) loads the pointer from the same stack slots the
- * continuation region (games/THE BROKEN SEAL/asm/080dda3c.s) spills them to right
+ * continuation region (games/THE BROKEN SEAL/raw/080dda3c.s) spills them to right
  * after the Func_080ed408(46, ...) / Func_080ed408(47, ...) calls:
  * [sp,#36] is draw_cb_46, [sp,#40] is draw_cb_47. Each call site below is
  * rewritten as an indirect call through whichever of the two the ground

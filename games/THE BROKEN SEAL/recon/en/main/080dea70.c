@@ -30,7 +30,7 @@
  * `Func_080072fc` / `Func_08007300` call site is an indirect call through
  * the value the reference loads into r3/r4/r5/r6/r7 immediately before the
  * `bl`, not a real callee: those five addresses are consecutive slots of
- * the `_call_via_rN` trampoline bank at games/THE BROKEN SEAL/asm/080072e4.s
+ * the `_call_via_rN` trampoline bank at games/THE BROKEN SEAL/raw/080072e4.s
  * (r3 at +0x0c, r4 at +0x10, r5 at +0x14, r6 at +0x18, r7 at +0x1c).
  * They are modelled here as ordinary calls through `draw_cb` /
  * `flash_cb` / the IWRAM word copier at 0x03001388, which is the same

@@ -31,8 +31,8 @@ fn exact(root: &Path) -> Result<HashSet<String>, String> {
 fn validate_registered_main_symbols(root: &Path) -> Result<usize, String> {
     let register = SourcePaths::load(root)?;
     let mut count = 0;
-    for entry in std::fs::read_dir(root.join("games/THE BROKEN SEAL/asm"))
-        .map_err(|error| format!("games/THE BROKEN SEAL/asm: {error}"))?
+    for entry in std::fs::read_dir(root.join("games/THE BROKEN SEAL/raw"))
+        .map_err(|error| format!("games/THE BROKEN SEAL/raw: {error}"))?
     {
         let path = entry.map_err(|error| error.to_string())?.path();
         let Some(stem) = path.file_stem().and_then(|value| value.to_str()) else {
@@ -195,7 +195,7 @@ fn validate_sealed(root: &Path, exact: &HashSet<String>) -> Result<usize, String
             return Err(format!("{owner} has exact C; remove its seal"));
         }
         if !root
-            .join(format!("games/THE BROKEN SEAL/asm/{owner}.s"))
+            .join(format!("games/THE BROKEN SEAL/raw/{owner}.s"))
             .is_file()
         {
             return Err(format!("{owner} is sealed but has no retained assembly"));

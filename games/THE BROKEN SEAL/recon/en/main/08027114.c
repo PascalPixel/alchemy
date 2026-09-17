@@ -8,7 +8,7 @@
  * of actor ids and the number of members; the member-count parameter is
  * reused as the result, so a link drop-out or a cancelled round returns -1.
  *
- * Evidence used, all from games/THE BROKEN SEAL/asm/08027114.s and its literal pools:
+ * Evidence used, all from games/THE BROKEN SEAL/raw/08027114.s and its literal pools:
  *   - The serial handshake writes 'V','S','S','T' into the local packet at
  *     0x02002224 and polls the peer packet at 0x02002024 + (side ^ 1) * 24,
  *     waiting for "VSST"/"EDVS" while "EXEC" keeps the wait alive.  The

@@ -730,7 +730,7 @@ mod tests {
         let registry = Registry::load(root).unwrap();
         for link in registry.links.iter().filter(|link| link.overlay()) {
             let path = root.join(format!(
-                "games/THE BROKEN SEAL/asm/overlays/{}_overlay.s",
+                "games/THE BROKEN SEAL/raw/overlays/{}_overlay.s",
                 link.image
             ));
             let listing = std::fs::read_to_string(&path).unwrap();

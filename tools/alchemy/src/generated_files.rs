@@ -76,7 +76,7 @@ fn carries_no_game_data(game_relative: &str) -> bool {
         // The generated coverage figure; the publication gate admits only SVG here.
         [directory, _] if directory.eq_ignore_ascii_case("PREVIEW") => is(suffix, &["svg"]),
         // Assembly listings' source registries; overlay streams are material.
-        [asm, area, ..] if asm.eq_ignore_ascii_case("asm") => {
+        [raw, area, ..] if raw.eq_ignore_ascii_case("raw") => {
             !area.eq_ignore_ascii_case("overlays") && is(suffix, &["json"])
         }
         // Owner names, addresses and locations.
@@ -132,12 +132,12 @@ fn only_game_material_needs_a_consumer_and_exemptions_are_categories() {
         "games/X/SRC/B.JSON",
         "games/X/SRC/X.C",
         "games/X/SRC/FIELD/MAP.INC",
-        "games/X/asm/overlays/resource_001_overlay.s",
-        "games/X/asm/overlays/resource_001_stream.lz.json",
-        "games/X/asm/overlays/.gitkeep",
-        "games/X/asm/manifest.json",
-        "games/X/asm/islands/0800a000/index.json",
-        "games/X/asm/islands/TABLE.TSV",
+        "games/X/raw/overlays/resource_001_overlay.s",
+        "games/X/raw/overlays/resource_001_stream.lz.json",
+        "games/X/raw/overlays/.gitkeep",
+        "games/X/raw/manifest.json",
+        "games/X/raw/islands/0800a000/index.json",
+        "games/X/raw/islands/TABLE.TSV",
         "games/X/recon/en/dossiers.json",
         "games/X/semantic/regions.json",
         "games/X/metrics/x-en-executable.json",
@@ -154,7 +154,7 @@ fn only_game_material_needs_a_consumer_and_exemptions_are_categories() {
     ];
     let consumed: BTreeSet<String> = [
         "games/X/SRC/A.JSON",
-        "games/X/asm/overlays/resource_001_stream.lz.json",
+        "games/X/raw/overlays/resource_001_stream.lz.json",
         "games/X/SOURCE.JSON",
     ]
     .map(String::from)
@@ -163,7 +163,7 @@ fn only_game_material_needs_a_consumer_and_exemptions_are_categories() {
         unconsumed_material(tracked, game, &consumed),
         [
             "games/X/SRC/B.JSON",
-            "games/X/asm/islands/TABLE.TSV",
+            "games/X/raw/islands/TABLE.TSV",
             "games/X/PREVIEW/TITLE.PNG",
             "games/X/TEXT/MESSAGE_ARCHIVE.JSON",
             "games/X/SOUND/SEQUENCE/A.MID",

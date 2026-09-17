@@ -16,13 +16,13 @@
  * Per games/THE BROKEN SEAL/recon/en/dossiers.json#main:080e01e4's fully-derived evidence,
  * "Func_080072f4" and "Func_08007300" are NOT real callees: 0x080072f4 and
  * 0x08007300 are the r4 and r7 slots of the `_call_via_rN` trampoline at
- * games/THE BROKEN SEAL/asm/080072e4.s (base 0x080072e4 + 4*4 and + 4*7).  Every `bl` to
+ * games/THE BROKEN SEAL/raw/080072e4.s (base 0x080072e4 + 4*4 and + 4*7).  Every `bl` to
  * either address in the retained assembly is an indirect call through
  * whatever DrawRectangleFn pointer the compiler most recently loaded into
  * that register -- here always one of the two "rectangle" pointers read
  * back from heap_cache[7]/heap_cache[8] right after the Func_080ed408 calls,
  * matching the immediate `ldr r4,[sp,#28]` / `ldr r7,[sp,#24]` right before
- * each such `bl` in games/THE BROKEN SEAL/asm/080e0564.s.
+ * each such `bl` in games/THE BROKEN SEAL/raw/080e0564.s.
  */
 #define M2C_FIELD(expr, type_ptr, offset) \
     (*(type_ptr)((u8 *)(expr) + (offset)))

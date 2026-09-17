@@ -9,7 +9,7 @@
  * heap_cache cursor-advance-then-index-N idiom) and the r4-slot
  * `_call_via_rN` trampoline finding recorded in
  * games/THE BROKEN SEAL/recon/en/dossiers.json#main:080dc1ec: a `bl` into
- * games/THE BROKEN SEAL/asm/080072e4.s's r4 veneer is an indirect call through a
+ * games/THE BROKEN SEAL/raw/080072e4.s's r4 veneer is an indirect call through a
  * DrawRectangleFn value carried in r4, not a call to a real function named
  * "Func_080072f4".
  *

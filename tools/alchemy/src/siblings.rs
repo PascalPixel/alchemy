@@ -400,7 +400,7 @@ impl<'a> Model<'a> {
         let draft = format!("games/THE BROKEN SEAL/{draft}");
         match owner.overlay_id() {
             _ if self.root.join(&draft).is_file() => draft,
-            Some(overlay) => format!("games/THE BROKEN SEAL/asm/overlays/{overlay}_overlay.s"),
+            Some(overlay) => format!("games/THE BROKEN SEAL/raw/overlays/{overlay}_overlay.s"),
             None => String::new(),
         }
     }
@@ -1159,14 +1159,12 @@ fn leads(
                     count[2] + sites.len(),
                 ];
             }
-            if listed {
-                let owners = sites.iter().take(LEAD_LIMIT).map(|site| edition.id(*site));
-                let record = json!({"sites": sites.len(), "owners": owners.collect::<Vec<_>>()});
-                families
-                    .entry(family)
-                    .or_default()
-                    .insert(target.into(), record);
-            }
+            let owners = sites.iter().take(LEAD_LIMIT).map(|site| edition.id(*site));
+            let record = json!({"sites": sites.len(), "owners": owners.collect::<Vec<_>>()});
+            families
+                .entry(family)
+                .or_default()
+                .insert(target.into(), record);
         }
         let mut record = json!({"report_only": true, "code_overlays": edition.names.len() - 1});
         for (scope, [matched, same, sites], of) in [
@@ -1281,6 +1279,9 @@ fn run(root: &Path, report: Option<&Path>) -> Result<bool, String> {
             "R3": {"enforced": true, "instanced_units": instanced, "violations": spelling},
         },
         "leads": lead_summary,
+        "tla_lead_families": lead_families.keys()
+            .filter(|index| lead_families[index].contains_key("tla-en"))
+            .map(|index| family(*index)).collect::<Vec<_>>(),
         "candidate_families": totals.candidates.iter().map(|index| family(*index)).collect::<Vec<_>>(),
         "near_families": totals.near.iter().map(|(index, near)| json!({
             "family": model.family_name(&census.families[*index]),
@@ -1808,7 +1809,10 @@ mod tests {
             families[&0]["tbs-ja"]["owners"],
             json!(["resource_381:02000100"])
         );
-        assert!(!families.contains_key(&1));
+        assert_eq!(
+            families[&1]["tbs-ja"]["owners"],
+            json!(["resource_380:02000200"])
+        );
         // Other editions never enter the rules.
         assert_eq!(model.findings(&census.families[0]).missed, [(2, TWIN)]);
     }

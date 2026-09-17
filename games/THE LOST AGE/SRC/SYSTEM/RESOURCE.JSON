@@ -4,7 +4,7 @@
     {
       "kind": "golden-sun-thumb-overlay-series",
       "base": "0x02000000",
-      "source_prefix": "games/THE LOST AGE/asm/overlays/resource_",
+      "source_prefix": "games/THE LOST AGE/raw/overlays/resource_",
       "resources": [
         ["64a", "0x08ec3d08", "0x1d10", "0x274a"], ["64b", "0x08ec5a18", "0x3df0", "0x6be8"],
         ["64d", "0x08ecc5f8", "0x19ec", "0x3050"], ["64e", "0x08ecdfe4", "0x11b8", "0x25ac"],

@@ -29,7 +29,7 @@
  * Func_080d6888 for every real party member on the state.
  *
  * `Func_080072f4` is not a real function symbol: it is the r4 entry of the
- * `_call_via_rN` trampoline bundle at games/THE BROKEN SEAL/asm/080072e4.s
+ * `_call_via_rN` trampoline bundle at games/THE BROKEN SEAL/raw/080072e4.s
  * (0x080072f4 == 0x080072e4 + 4*4), i.e. an indirect call through whatever
  * function pointer the compiler kept in r4 -- here the single blit routine
  * populated by `Func_080ed408(46, ...)` into heap_cache[7], already

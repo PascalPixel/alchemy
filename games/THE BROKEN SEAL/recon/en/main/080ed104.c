@@ -17,7 +17,7 @@
  * region, using only the fixed first member slot (object+0x24) twice.
  *
  * Two call sites in the retained assembly are `bl` targets that land inside
- * games/THE BROKEN SEAL/asm/080072e4.s, the fourteen-slot `call_via_rN` trampoline bundle
+ * games/THE BROKEN SEAL/raw/080072e4.s, the fourteen-slot `call_via_rN` trampoline bundle
  * (`bx rN; mov r8,r8` at 0x080072e4+4*N for N=r0..sp): 0x08007314 is exactly
  * the ip (r12) slot (N=12) and 0x080072f4 is exactly the r4 slot (N=4). Both
  * are therefore indirect calls through a genuinely traced function-pointer

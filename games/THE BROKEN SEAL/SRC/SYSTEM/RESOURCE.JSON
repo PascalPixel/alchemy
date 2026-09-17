@@ -64,7 +64,7 @@
       "address": "0x087fcd20",
       "size": "0x799",
       "kind": "golden-sun-general-lz",
-      "plan": "games/THE BROKEN SEAL/asm/overlays/resource_3ce_stream.lz.json",
+      "plan": "games/THE BROKEN SEAL/raw/overlays/resource_3ce_stream.lz.json",
       "selection": {
         "table": "0x0809f1a8",
         "record_index": 200,
@@ -80,7 +80,7 @@
           "kind": "golden-sun-thumb-overlay",
           "size": "0x168c",
           "base": "0x02000000",
-          "source": "games/THE BROKEN SEAL/asm/overlays/resource_3ce_overlay.s"
+          "source": "games/THE BROKEN SEAL/raw/overlays/resource_3ce_overlay.s"
         }
       ]
     },
@@ -89,42 +89,42 @@
       "address": "0x08007320",
       "size": "0x38",
       "kind": "le-u32-array",
-      "source": "games/THE BROKEN SEAL/asm/executable_gaps/index.json",
+      "source": "games/THE BROKEN SEAL/raw/executable_gaps/index.json",
       "pointer": "/gaps/2/sections/0/values"
     },
     {
       "address": "0x08007358",
       "size": "0x31e",
       "kind": "le-u16-array",
-      "source": "games/THE BROKEN SEAL/asm/executable_gaps/index.json",
+      "source": "games/THE BROKEN SEAL/raw/executable_gaps/index.json",
       "pointer": "/gaps/2/sections/1/tables/0/values"
     },
     {
       "address": "0x08007676",
       "size": "0x106",
       "kind": "le-u16-array",
-      "source": "games/THE BROKEN SEAL/asm/executable_gaps/index.json",
+      "source": "games/THE BROKEN SEAL/raw/executable_gaps/index.json",
       "pointer": "/gaps/2/sections/1/tables/1/values"
     },
     {
       "address": "0x080b5204",
       "size": "0x08",
       "kind": "le-u32-array",
-      "source": "games/THE BROKEN SEAL/asm/veneer_island_residual/index.json",
+      "source": "games/THE BROKEN SEAL/raw/veneer_island_residual/index.json",
       "pointer": "/gaps/0/sections/1/values"
     },
     {
       "address": "0x080b5218",
       "size": "0x20",
       "kind": "le-u32-array",
-      "source": "games/THE BROKEN SEAL/asm/veneer_island_residual/index.json",
+      "source": "games/THE BROKEN SEAL/raw/veneer_island_residual/index.json",
       "pointer": "/gaps/0/sections/3/values"
     },
     {
       "address": "0x080b5238",
       "size": "0x20",
       "kind": "le-u32-array",
-      "source": "games/THE BROKEN SEAL/asm/veneer_island_residual/index.json",
+      "source": "games/THE BROKEN SEAL/raw/veneer_island_residual/index.json",
       "pointer": "/gaps/0/sections/4/values"
     },
     {
@@ -571,7 +571,7 @@
       "size": "0x358",
       "kind": "golden-sun-thumb-overlay",
       "base": "0x080edaf0",
-      "source": "games/THE BROKEN SEAL/asm/battle/sentou_kouka_gousei.s"
+      "source": "games/THE BROKEN SEAL/raw/battle/sentou_kouka_gousei.s"
     },
     {
       "address": "0x080ede48",
@@ -596,7 +596,7 @@
       "size": "0x70",
       "kind": "golden-sun-thumb-overlay",
       "base": "0x080eefa4",
-      "source": "games/THE BROKEN SEAL/asm/battle/sentou_kouka_gousei_iro.s"
+      "source": "games/THE BROKEN SEAL/raw/battle/sentou_kouka_gousei_iro.s"
     },
     {
       "address": "0x080ef014",
@@ -610,7 +610,7 @@
       "size": "0x254",
       "kind": "golden-sun-thumb-overlay",
       "base": "0x080f0000",
-      "source": "games/THE BROKEN SEAL/asm/battle/sentou_kouka_tenkai.s"
+      "source": "games/THE BROKEN SEAL/raw/battle/sentou_kouka_tenkai.s"
     },
     {
       "address": "0x080f0a5c",

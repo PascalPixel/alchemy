@@ -4,29 +4,29 @@
   "target": "tbs-en",
   "derivation": "full-c-progress-v1",
   "audit": "complete",
-  "total_union_bytes": 1355730,
+  "total_union_bytes": 1356520,
   "main": {
     "id": "main",
-    "executable_bytes": 549128,
+    "executable_bytes": 549142,
     "audit": "complete",
     "intervals": [
       {
         "start": 134217920,
         "end": 134218688,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/080000c0.s:rom_dispatch_table"
+        "evidence": "games/THE BROKEN SEAL/raw/080000c0.s:rom_dispatch_table"
       },
       {
         "start": 134218688,
         "end": 134218756,
         "kind": "arm",
-        "evidence": "games/THE BROKEN SEAL/asm/executable_gaps/080003c0.s:gba_arm_entry"
+        "evidence": "games/THE BROKEN SEAL/raw/executable_gaps/080003c0.s:gba_arm_entry"
       },
       {
         "start": 134218756,
         "end": 134219516,
         "kind": "arm",
-        "evidence": "games/THE BROKEN SEAL/asm/executable_gaps/08000404.s:iwram_code_records"
+        "evidence": "games/THE BROKEN SEAL/raw/executable_gaps/08000404.s:iwram_code_records"
       },
       {
         "start": 134219516,
@@ -38,7 +38,7 @@
         "start": 134219632,
         "end": 134224752,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/08000770.s:relocated_iwram_payload"
+        "evidence": "games/THE BROKEN SEAL/raw/08000770.s:relocated_iwram_payload"
       },
       {
         "start": 134226668,
@@ -62,7 +62,7 @@
         "start": 134229464,
         "end": 134229504,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/08002dd8.s:shared_literal_thumb_helper_module"
+        "evidence": "games/THE BROKEN SEAL/raw/08002dd8.s:shared_literal_thumb_helper_module"
       },
       {
         "start": 134229504,
@@ -74,7 +74,7 @@
         "start": 134229754,
         "end": 134229756,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134229756,
@@ -86,7 +86,7 @@
         "start": 134229758,
         "end": 134229760,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134229760,
@@ -98,7 +98,7 @@
         "start": 134229762,
         "end": 134229764,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134229764,
@@ -110,7 +110,7 @@
         "start": 134229766,
         "end": 134229768,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134229768,
@@ -122,7 +122,7 @@
         "start": 134229770,
         "end": 134229772,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134229772,
@@ -134,7 +134,7 @@
         "start": 134229822,
         "end": 134229824,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134229824,
@@ -146,7 +146,7 @@
         "start": 134230026,
         "end": 134230028,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134230028,
@@ -164,7 +164,7 @@
         "start": 134232942,
         "end": 134232944,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134232944,
@@ -176,7 +176,7 @@
         "start": 134233010,
         "end": 134233012,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134233012,
@@ -188,7 +188,7 @@
         "start": 134233078,
         "end": 134233080,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134233080,
@@ -200,7 +200,7 @@
         "start": 134233146,
         "end": 134233148,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134233148,
@@ -212,7 +212,7 @@
         "start": 134233214,
         "end": 134233216,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134233216,
@@ -224,13 +224,31 @@
         "start": 134234318,
         "end": 134234320,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134234320,
         "end": 134234738,
         "kind": "thumb",
         "evidence": "adjacent audited thumb spans; see namespace evidence"
+      },
+      {
+        "start": 134234738,
+        "end": 134234740,
+        "kind": "executable_alignment",
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
+      },
+      {
+        "start": 134234740,
+        "end": 134234742,
+        "kind": "thumb",
+        "evidence": "games/THE BROKEN SEAL/SRC/SYSTEM/SCHEDULER/CALLBACK_SCHEDULER.C:byte-identical-claimed-C"
+      },
+      {
+        "start": 134234742,
+        "end": 134234744,
+        "kind": "executable_alignment",
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134234744,
@@ -242,7 +260,7 @@
         "start": 134235260,
         "end": 134235344,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/0800447c.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/0800447c.s:nonstandard_thumb_call_module"
       },
       {
         "start": 134235344,
@@ -254,7 +272,7 @@
         "start": 134235842,
         "end": 134235844,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134235844,
@@ -266,7 +284,7 @@
         "start": 134236586,
         "end": 134236588,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134236588,
@@ -278,7 +296,7 @@
         "start": 134236848,
         "end": 134237140,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/08004ab0.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/08004ab0.s:nonstandard_thumb_call_module"
       },
       {
         "start": 134237140,
@@ -302,7 +320,7 @@
         "start": 134238824,
         "end": 134238964,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/08005268.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/08005268.s:nonstandard_thumb_call_module"
       },
       {
         "start": 134238964,
@@ -314,7 +332,7 @@
         "start": 134240270,
         "end": 134240272,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134240272,
@@ -326,7 +344,7 @@
         "start": 134240990,
         "end": 134240992,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134240992,
@@ -338,7 +356,7 @@
         "start": 134241322,
         "end": 134241324,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134241324,
@@ -350,19 +368,19 @@
         "start": 134241550,
         "end": 134241552,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134241552,
         "end": 134241902,
         "kind": "thumb",
-        "evidence": "games/THE BROKEN SEAL/asm/08005d10.s:compiler_output"
+        "evidence": "games/THE BROKEN SEAL/raw/08005d10.s:compiler_output"
       },
       {
         "start": 134241902,
         "end": 134241904,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134241904,
@@ -374,31 +392,31 @@
         "start": 134242014,
         "end": 134242016,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134242016,
         "end": 134242250,
         "kind": "thumb",
-        "evidence": "games/THE BROKEN SEAL/asm/08005ee0.s:compiler_output"
+        "evidence": "games/THE BROKEN SEAL/raw/08005ee0.s:compiler_output"
       },
       {
         "start": 134242250,
         "end": 134242252,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134242252,
         "end": 134242438,
         "kind": "thumb",
-        "evidence": "games/THE BROKEN SEAL/asm/08005fcc.s:compiler_output"
+        "evidence": "games/THE BROKEN SEAL/raw/08005fcc.s:compiler_output"
       },
       {
         "start": 134242438,
         "end": 134242440,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134242440,
@@ -410,37 +428,37 @@
         "start": 134244250,
         "end": 134244252,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134244252,
         "end": 134244452,
         "kind": "thumb",
-        "evidence": "games/THE BROKEN SEAL/asm/0800679c.s:compiler_output"
+        "evidence": "games/THE BROKEN SEAL/raw/0800679c.s:compiler_output"
       },
       {
         "start": 134244452,
         "end": 134244462,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/08006864.s:bios_wrapper"
+        "evidence": "games/THE BROKEN SEAL/raw/08006864.s:bios_wrapper"
       },
       {
         "start": 134244462,
         "end": 134244464,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134244464,
         "end": 134244470,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/08006870.s:bios_wrapper"
+        "evidence": "games/THE BROKEN SEAL/raw/08006870.s:bios_wrapper"
       },
       {
         "start": 134244470,
         "end": 134244472,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134244472,
@@ -452,7 +470,7 @@
         "start": 134244622,
         "end": 134244624,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134244624,
@@ -464,7 +482,7 @@
         "start": 134245286,
         "end": 134245288,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134245288,
@@ -476,7 +494,7 @@
         "start": 134245478,
         "end": 134245480,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134245480,
@@ -488,7 +506,7 @@
         "start": 134246250,
         "end": 134246252,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134246252,
@@ -506,7 +524,7 @@
         "start": 134248852,
         "end": 134248880,
         "kind": "arm",
-        "evidence": "games/THE BROKEN SEAL/asm/08007994.s:relocated_stack_arm_kernel"
+        "evidence": "games/THE BROKEN SEAL/raw/08007994.s:relocated_stack_arm_kernel"
       },
       {
         "start": 134254592,
@@ -530,25 +548,25 @@
         "start": 134263142,
         "end": 134263144,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134263144,
         "end": 134263688,
         "kind": "thumb",
-        "evidence": "games/THE BROKEN SEAL/asm/0800b168.s:compiler_output"
+        "evidence": "games/THE BROKEN SEAL/raw/0800b168.s:compiler_output"
       },
       {
         "start": 134263688,
         "end": 134264450,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/0800b388.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/0800b388.s:nonstandard_thumb_call_module"
       },
       {
         "start": 134264450,
         "end": 134264452,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134264452,
@@ -560,7 +578,7 @@
         "start": 134265546,
         "end": 134265548,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134265548,
@@ -572,7 +590,7 @@
         "start": 134265926,
         "end": 134265928,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134265928,
@@ -584,7 +602,7 @@
         "start": 134266478,
         "end": 134266480,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134266480,
@@ -602,7 +620,7 @@
         "start": 134267714,
         "end": 134267716,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134267716,
@@ -614,7 +632,7 @@
         "start": 134267782,
         "end": 134267784,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134267784,
@@ -626,7 +644,7 @@
         "start": 134267950,
         "end": 134267952,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134267952,
@@ -638,7 +656,7 @@
         "start": 134267986,
         "end": 134267988,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134267988,
@@ -650,7 +668,7 @@
         "start": 134268230,
         "end": 134268232,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134268232,
@@ -662,7 +680,7 @@
         "start": 134268338,
         "end": 134268340,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134268340,
@@ -674,7 +692,7 @@
         "start": 134268460,
         "end": 134269052,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/0800c62c.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/0800c62c.s:nonstandard_thumb_call_module"
       },
       {
         "start": 134269056,
@@ -686,7 +704,7 @@
         "start": 134269506,
         "end": 134269508,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134269508,
@@ -698,7 +716,7 @@
         "start": 134269526,
         "end": 134269528,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134269528,
@@ -710,7 +728,7 @@
         "start": 134269546,
         "end": 134269548,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134269548,
@@ -722,13 +740,13 @@
         "start": 134269642,
         "end": 134269644,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134269644,
         "end": 134271280,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/0800cacc.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/0800cacc.s:nonstandard_thumb_call_module"
       },
       {
         "start": 134271280,
@@ -740,25 +758,25 @@
         "start": 134271306,
         "end": 134271308,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134271308,
         "end": 134271748,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/0800d14c.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/0800d14c.s:nonstandard_thumb_call_module"
       },
       {
         "start": 134271748,
         "end": 134271808,
         "kind": "thumb",
-        "evidence": "games/THE BROKEN SEAL/asm/0800d304.s:compiler_output"
+        "evidence": "games/THE BROKEN SEAL/raw/0800d304.s:compiler_output"
       },
       {
         "start": 134271808,
         "end": 134272596,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/0800d340.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/0800d340.s:nonstandard_thumb_call_module"
       },
       {
         "start": 134272596,
@@ -770,7 +788,7 @@
         "start": 134272626,
         "end": 134272628,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134272628,
@@ -782,7 +800,7 @@
         "start": 134272726,
         "end": 134272728,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134272728,
@@ -794,7 +812,7 @@
         "start": 134272894,
         "end": 134272896,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134272896,
@@ -806,7 +824,7 @@
         "start": 134272946,
         "end": 134272948,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134272948,
@@ -818,7 +836,7 @@
         "start": 134272998,
         "end": 134273000,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134273000,
@@ -830,7 +848,7 @@
         "start": 134273218,
         "end": 134273220,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134273220,
@@ -842,7 +860,7 @@
         "start": 134273254,
         "end": 134273256,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134273256,
@@ -854,7 +872,7 @@
         "start": 134273278,
         "end": 134273280,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134273280,
@@ -866,7 +884,7 @@
         "start": 134273314,
         "end": 134273316,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134273316,
@@ -878,7 +896,7 @@
         "start": 134273654,
         "end": 134273656,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134273656,
@@ -890,7 +908,7 @@
         "start": 134273694,
         "end": 134273696,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134273696,
@@ -902,7 +920,7 @@
         "start": 134273726,
         "end": 134273728,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134273728,
@@ -914,7 +932,7 @@
         "start": 134273776,
         "end": 134274268,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/0800daf0.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/0800daf0.s:nonstandard_thumb_call_module"
       },
       {
         "start": 134274268,
@@ -938,7 +956,7 @@
         "start": 134275710,
         "end": 134275712,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134275712,
@@ -950,7 +968,7 @@
         "start": 134275802,
         "end": 134275804,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134275804,
@@ -962,7 +980,7 @@
         "start": 134275846,
         "end": 134275848,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134275848,
@@ -974,7 +992,7 @@
         "start": 134275890,
         "end": 134275892,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134275892,
@@ -986,7 +1004,7 @@
         "start": 134275982,
         "end": 134275984,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134275984,
@@ -998,7 +1016,7 @@
         "start": 134276026,
         "end": 134276028,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134276028,
@@ -1010,7 +1028,7 @@
         "start": 134276070,
         "end": 134276072,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134276072,
@@ -1022,7 +1040,7 @@
         "start": 134276114,
         "end": 134276116,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134276116,
@@ -1034,7 +1052,7 @@
         "start": 134276158,
         "end": 134276160,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134276160,
@@ -1046,7 +1064,7 @@
         "start": 134276202,
         "end": 134276204,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134276204,
@@ -1058,7 +1076,7 @@
         "start": 134276246,
         "end": 134276248,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134276248,
@@ -1070,7 +1088,7 @@
         "start": 134276290,
         "end": 134276292,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134276292,
@@ -1082,7 +1100,7 @@
         "start": 134276334,
         "end": 134276336,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134276336,
@@ -1094,7 +1112,7 @@
         "start": 134276378,
         "end": 134276380,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134276380,
@@ -1106,7 +1124,7 @@
         "start": 134276422,
         "end": 134276424,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134276424,
@@ -1118,7 +1136,7 @@
         "start": 134276466,
         "end": 134276468,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134276468,
@@ -1130,7 +1148,7 @@
         "start": 134276510,
         "end": 134276512,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134276512,
@@ -1142,7 +1160,7 @@
         "start": 134276554,
         "end": 134276556,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134276556,
@@ -1154,7 +1172,7 @@
         "start": 134276834,
         "end": 134276836,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134276836,
@@ -1166,7 +1184,7 @@
         "start": 134277370,
         "end": 134277372,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134277372,
@@ -1178,7 +1196,7 @@
         "start": 134277414,
         "end": 134277416,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134277416,
@@ -1202,7 +1220,7 @@
         "start": 134281202,
         "end": 134281204,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134281204,
@@ -1238,7 +1256,7 @@
         "start": 134287796,
         "end": 134288356,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/080111b4.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/080111b4.s:nonstandard_thumb_call_module"
       },
       {
         "start": 134288356,
@@ -1250,7 +1268,7 @@
         "start": 134290666,
         "end": 134290668,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134290668,
@@ -1262,7 +1280,7 @@
         "start": 134290702,
         "end": 134290704,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134290704,
@@ -1274,7 +1292,7 @@
         "start": 134290738,
         "end": 134290740,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134290740,
@@ -1286,7 +1304,7 @@
         "start": 134290782,
         "end": 134290784,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134290784,
@@ -1298,7 +1316,7 @@
         "start": 134290834,
         "end": 134290836,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134290836,
@@ -1310,7 +1328,7 @@
         "start": 134290986,
         "end": 134290988,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134290988,
@@ -1322,7 +1340,7 @@
         "start": 134291050,
         "end": 134291052,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134291052,
@@ -1334,7 +1352,7 @@
         "start": 134291078,
         "end": 134291080,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134291080,
@@ -1346,7 +1364,7 @@
         "start": 134291150,
         "end": 134291152,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134291152,
@@ -1358,7 +1376,7 @@
         "start": 134291218,
         "end": 134291220,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134291220,
@@ -1370,7 +1388,7 @@
         "start": 134291270,
         "end": 134291272,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134291272,
@@ -1382,7 +1400,7 @@
         "start": 134291282,
         "end": 134291284,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134291284,
@@ -1394,7 +1412,7 @@
         "start": 134292166,
         "end": 134292168,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134292168,
@@ -1406,7 +1424,7 @@
         "start": 134292468,
         "end": 134292760,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/080123f4.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/080123f4.s:nonstandard_thumb_call_module"
       },
       {
         "start": 134292760,
@@ -1436,7 +1454,7 @@
         "start": 134307768,
         "end": 134307864,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/08015fb8.s:hidden_register_context_module"
+        "evidence": "games/THE BROKEN SEAL/raw/08015fb8.s:hidden_register_context_module"
       },
       {
         "start": 134307864,
@@ -1448,7 +1466,7 @@
         "start": 134308886,
         "end": 134308888,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134308888,
@@ -1460,7 +1478,7 @@
         "start": 134309014,
         "end": 134309016,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134309016,
@@ -1472,19 +1490,19 @@
         "start": 134309074,
         "end": 134309076,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134309076,
         "end": 134309226,
         "kind": "thumb",
-        "evidence": "games/THE BROKEN SEAL/asm/080164d4.s:compiler_output"
+        "evidence": "games/THE BROKEN SEAL/raw/080164d4.s:compiler_output"
       },
       {
         "start": 134309226,
         "end": 134309228,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134309228,
@@ -1496,7 +1514,7 @@
         "start": 134309486,
         "end": 134309488,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134309488,
@@ -1508,7 +1526,7 @@
         "start": 134309854,
         "end": 134309856,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134309856,
@@ -1520,7 +1538,7 @@
         "start": 134312802,
         "end": 134312804,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134312804,
@@ -1532,7 +1550,7 @@
         "start": 134314158,
         "end": 134314160,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134314160,
@@ -1544,7 +1562,7 @@
         "start": 134315146,
         "end": 134315148,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134315148,
@@ -1556,7 +1574,7 @@
         "start": 134319866,
         "end": 134319868,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134319868,
@@ -1568,7 +1586,7 @@
         "start": 134324170,
         "end": 134324172,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134324172,
@@ -1580,7 +1598,7 @@
         "start": 134324970,
         "end": 134324972,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134324972,
@@ -1592,7 +1610,7 @@
         "start": 134325034,
         "end": 134325036,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134325036,
@@ -1604,7 +1622,7 @@
         "start": 134325250,
         "end": 134325252,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134325252,
@@ -1616,7 +1634,7 @@
         "start": 134325666,
         "end": 134325668,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134325668,
@@ -1628,7 +1646,7 @@
         "start": 134326260,
         "end": 134326540,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/0801a7f4.s:hidden_register_context_module"
+        "evidence": "games/THE BROKEN SEAL/raw/0801a7f4.s:hidden_register_context_module"
       },
       {
         "start": 134326540,
@@ -1640,7 +1658,7 @@
         "start": 134326542,
         "end": 134326544,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134326544,
@@ -1652,7 +1670,7 @@
         "start": 134332614,
         "end": 134332616,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134332616,
@@ -1664,7 +1682,7 @@
         "start": 134332634,
         "end": 134332636,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134332636,
@@ -1676,7 +1694,7 @@
         "start": 134332754,
         "end": 134332756,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134332756,
@@ -1688,7 +1706,7 @@
         "start": 134332806,
         "end": 134332808,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134332808,
@@ -1700,7 +1718,7 @@
         "start": 134333154,
         "end": 134333156,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134333156,
@@ -1712,7 +1730,7 @@
         "start": 134333166,
         "end": 134333168,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134333168,
@@ -1730,7 +1748,7 @@
         "start": 134334766,
         "end": 134334768,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134334768,
@@ -1742,7 +1760,7 @@
         "start": 134334910,
         "end": 134334912,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/executable_gaps/0801c9be.s:executable_gap_continuation"
+        "evidence": "games/THE BROKEN SEAL/raw/executable_gaps/0801c9be.s:executable_gap_continuation"
       },
       {
         "start": 134334912,
@@ -1754,7 +1772,7 @@
         "start": 134334914,
         "end": 134334916,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/executable_gaps/0801c9c2.s:executable_gap_continuation"
+        "evidence": "games/THE BROKEN SEAL/raw/executable_gaps/0801c9c2.s:executable_gap_continuation"
       },
       {
         "start": 134334916,
@@ -1766,7 +1784,7 @@
         "start": 134334918,
         "end": 134335004,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/executable_gaps/0801c9c6.s:executable_gap_continuation"
+        "evidence": "games/THE BROKEN SEAL/raw/executable_gaps/0801c9c6.s:executable_gap_continuation"
       },
       {
         "start": 134335004,
@@ -1790,7 +1808,7 @@
         "start": 134336326,
         "end": 134336328,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134336328,
@@ -1802,7 +1820,7 @@
         "start": 134341658,
         "end": 134341660,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134341660,
@@ -1814,7 +1832,7 @@
         "start": 134342590,
         "end": 134342592,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134342592,
@@ -1826,7 +1844,7 @@
         "start": 134342742,
         "end": 134342744,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134342744,
@@ -1838,7 +1856,7 @@
         "start": 134342974,
         "end": 134342976,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134342976,
@@ -1850,7 +1868,7 @@
         "start": 134343122,
         "end": 134343124,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134343124,
@@ -1862,7 +1880,7 @@
         "start": 134343174,
         "end": 134343176,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134343176,
@@ -1874,7 +1892,7 @@
         "start": 134343226,
         "end": 134343228,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134343228,
@@ -1886,7 +1904,7 @@
         "start": 134343786,
         "end": 134343788,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134343788,
@@ -1898,7 +1916,7 @@
         "start": 134344170,
         "end": 134344172,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134344172,
@@ -1910,7 +1928,7 @@
         "start": 134348330,
         "end": 134348332,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134348332,
@@ -1928,7 +1946,7 @@
         "start": 134351830,
         "end": 134351832,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134351832,
@@ -1940,7 +1958,7 @@
         "start": 134354610,
         "end": 134354612,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134354612,
@@ -1952,7 +1970,7 @@
         "start": 134355694,
         "end": 134355696,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134355696,
@@ -1964,7 +1982,7 @@
         "start": 134355838,
         "end": 134355840,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134355840,
@@ -1976,7 +1994,7 @@
         "start": 134355910,
         "end": 134355912,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134355912,
@@ -1988,7 +2006,7 @@
         "start": 134356474,
         "end": 134356476,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/executable_gaps/08021dfa.s:executable_gap_continuation"
+        "evidence": "games/THE BROKEN SEAL/raw/executable_gaps/08021dfa.s:executable_gap_continuation"
       },
       {
         "start": 134356476,
@@ -2000,7 +2018,7 @@
         "start": 134356586,
         "end": 134356588,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134356588,
@@ -2012,19 +2030,19 @@
         "start": 134359674,
         "end": 134359676,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134359676,
         "end": 134359874,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/08022a7c.s:hidden_register_context_module"
+        "evidence": "games/THE BROKEN SEAL/raw/08022a7c.s:hidden_register_context_module"
       },
       {
         "start": 134359874,
         "end": 134359876,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134359876,
@@ -2036,7 +2054,7 @@
         "start": 134369746,
         "end": 134369748,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134369748,
@@ -2060,7 +2078,7 @@
         "start": 134377642,
         "end": 134377644,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134377644,
@@ -2072,7 +2090,7 @@
         "start": 134384102,
         "end": 134384104,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134384104,
@@ -2084,7 +2102,7 @@
         "start": 134385074,
         "end": 134385076,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134385076,
@@ -2096,7 +2114,7 @@
         "start": 134385138,
         "end": 134385140,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134385140,
@@ -2108,7 +2126,7 @@
         "start": 134385370,
         "end": 134385372,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134385372,
@@ -2120,7 +2138,7 @@
         "start": 134386146,
         "end": 134386148,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134386148,
@@ -2132,7 +2150,7 @@
         "start": 134386290,
         "end": 134386292,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134386292,
@@ -2144,7 +2162,7 @@
         "start": 134386898,
         "end": 134386900,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134386900,
@@ -2156,7 +2174,7 @@
         "start": 134386946,
         "end": 134386948,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134386948,
@@ -2180,7 +2198,7 @@
         "start": 134709802,
         "end": 134709804,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134709804,
@@ -2192,7 +2210,7 @@
         "start": 134709918,
         "end": 134709920,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134709920,
@@ -2204,7 +2222,7 @@
         "start": 134710178,
         "end": 134710180,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134710180,
@@ -2216,7 +2234,7 @@
         "start": 134710234,
         "end": 134710236,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134710236,
@@ -2228,7 +2246,7 @@
         "start": 134710290,
         "end": 134710292,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134710292,
@@ -2240,7 +2258,7 @@
         "start": 134710398,
         "end": 134710400,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134710400,
@@ -2252,7 +2270,7 @@
         "start": 134710446,
         "end": 134710448,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134710448,
@@ -2264,7 +2282,7 @@
         "start": 134710526,
         "end": 134710528,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134710528,
@@ -2276,7 +2294,7 @@
         "start": 134710662,
         "end": 134710664,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134710664,
@@ -2288,7 +2306,7 @@
         "start": 134711406,
         "end": 134711408,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134711408,
@@ -2300,7 +2318,7 @@
         "start": 134711678,
         "end": 134711680,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134711680,
@@ -2312,7 +2330,7 @@
         "start": 134711966,
         "end": 134711968,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134711968,
@@ -2324,7 +2342,7 @@
         "start": 134713046,
         "end": 134713048,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134713048,
@@ -2336,7 +2354,7 @@
         "start": 134713350,
         "end": 134713352,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134713352,
@@ -2348,7 +2366,7 @@
         "start": 134715570,
         "end": 134715572,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134715572,
@@ -2360,7 +2378,7 @@
         "start": 134716698,
         "end": 134716700,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134716700,
@@ -2372,7 +2390,7 @@
         "start": 134717942,
         "end": 134717944,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134717944,
@@ -2384,7 +2402,7 @@
         "start": 134718138,
         "end": 134718140,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134718140,
@@ -2396,7 +2414,7 @@
         "start": 134718178,
         "end": 134718180,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134718180,
@@ -2408,7 +2426,7 @@
         "start": 134718286,
         "end": 134718288,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134718288,
@@ -2420,7 +2438,7 @@
         "start": 134718614,
         "end": 134718616,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134718616,
@@ -2432,7 +2450,7 @@
         "start": 134718798,
         "end": 134718800,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134718800,
@@ -2444,7 +2462,7 @@
         "start": 134718894,
         "end": 134718896,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134718896,
@@ -2456,7 +2474,7 @@
         "start": 134719014,
         "end": 134719016,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134719016,
@@ -2480,7 +2498,7 @@
         "start": 134786676,
         "end": 134787116,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/0808ae74.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/0808ae74.s:nonstandard_thumb_call_module"
       },
       {
         "start": 134787116,
@@ -2492,7 +2510,7 @@
         "start": 134787872,
         "end": 134787992,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/0808b320.s:implicit_callee_saved_input_module"
+        "evidence": "games/THE BROKEN SEAL/raw/0808b320.s:implicit_callee_saved_input_module"
       },
       {
         "start": 134787992,
@@ -2504,13 +2522,13 @@
         "start": 134788074,
         "end": 134788076,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134788076,
         "end": 134788684,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/0808b3ec.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/0808b3ec.s:nonstandard_thumb_call_module"
       },
       {
         "start": 134788684,
@@ -2534,7 +2552,7 @@
         "start": 134790848,
         "end": 134791900,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/0808bec0.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/0808bec0.s:nonstandard_thumb_call_module"
       },
       {
         "start": 134791900,
@@ -2546,7 +2564,7 @@
         "start": 134797350,
         "end": 134797352,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134797352,
@@ -2558,7 +2576,7 @@
         "start": 134799534,
         "end": 134799536,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134799536,
@@ -2570,13 +2588,25 @@
         "start": 134801830,
         "end": 134801832,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134801832,
         "end": 134802508,
         "kind": "thumb",
         "evidence": "adjacent audited thumb spans; see namespace evidence"
+      },
+      {
+        "start": 134802508,
+        "end": 134802510,
+        "kind": "thumb",
+        "evidence": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SLOTS.C:byte-identical-claimed-C"
+      },
+      {
+        "start": 134802510,
+        "end": 134802512,
+        "kind": "executable_alignment",
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134802512,
@@ -2588,7 +2618,7 @@
         "start": 134803670,
         "end": 134803672,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134803672,
@@ -2612,7 +2642,7 @@
         "start": 134808962,
         "end": 134808964,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134808964,
@@ -2624,7 +2654,7 @@
         "start": 134809174,
         "end": 134809176,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134809176,
@@ -2636,7 +2666,7 @@
         "start": 134810204,
         "end": 134812020,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/08090a5c.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/08090a5c.s:nonstandard_thumb_call_module"
       },
       {
         "start": 134812020,
@@ -2648,7 +2678,7 @@
         "start": 134812818,
         "end": 134812820,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134812820,
@@ -2666,7 +2696,7 @@
         "start": 134813566,
         "end": 134813568,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134813568,
@@ -2684,7 +2714,7 @@
         "start": 134813682,
         "end": 134813684,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134813684,
@@ -2696,7 +2726,7 @@
         "start": 134813714,
         "end": 134813716,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134813716,
@@ -2714,7 +2744,7 @@
         "start": 134815934,
         "end": 134815936,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134815936,
@@ -2726,7 +2756,7 @@
         "start": 134815994,
         "end": 134815996,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134815996,
@@ -2738,7 +2768,7 @@
         "start": 134816086,
         "end": 134816088,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134816088,
@@ -2750,7 +2780,7 @@
         "start": 134816194,
         "end": 134816196,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134816196,
@@ -2762,7 +2792,7 @@
         "start": 134816450,
         "end": 134816452,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134816452,
@@ -2774,7 +2804,7 @@
         "start": 134816514,
         "end": 134816516,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134816516,
@@ -2786,7 +2816,7 @@
         "start": 134816738,
         "end": 134816740,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134816740,
@@ -2798,13 +2828,25 @@
         "start": 134817094,
         "end": 134817096,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134817096,
         "end": 134817116,
         "kind": "thumb",
         "evidence": "games/THE BROKEN SEAL/src/08092548.c:byte-identical-claimed-C"
+      },
+      {
+        "start": 134817116,
+        "end": 134817118,
+        "kind": "thumb",
+        "evidence": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/BY_ID.C:byte-identical-claimed-C"
+      },
+      {
+        "start": 134817118,
+        "end": 134817120,
+        "kind": "executable_alignment",
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134817120,
@@ -2816,7 +2858,7 @@
         "start": 134817542,
         "end": 134817544,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134817544,
@@ -2828,7 +2870,7 @@
         "start": 134817862,
         "end": 134817864,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134817864,
@@ -2840,7 +2882,7 @@
         "start": 134817910,
         "end": 134817912,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134817912,
@@ -2852,7 +2894,7 @@
         "start": 134818126,
         "end": 134818128,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134818128,
@@ -2864,7 +2906,7 @@
         "start": 134818418,
         "end": 134818420,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134818420,
@@ -2876,7 +2918,7 @@
         "start": 134818706,
         "end": 134818708,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134818708,
@@ -2888,13 +2930,13 @@
         "start": 134820026,
         "end": 134820028,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134820028,
         "end": 134820188,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/080930bc.s:hidden_register_context_module"
+        "evidence": "games/THE BROKEN SEAL/raw/080930bc.s:hidden_register_context_module"
       },
       {
         "start": 134820188,
@@ -2906,7 +2948,7 @@
         "start": 134820198,
         "end": 134820200,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134820200,
@@ -2918,7 +2960,7 @@
         "start": 134820330,
         "end": 134820332,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134820332,
@@ -2930,7 +2972,7 @@
         "start": 134821332,
         "end": 134821536,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/080935d4.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/080935d4.s:nonstandard_thumb_call_module"
       },
       {
         "start": 134821536,
@@ -2942,7 +2984,7 @@
         "start": 134822002,
         "end": 134822004,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134822004,
@@ -2954,7 +2996,7 @@
         "start": 134822912,
         "end": 134823464,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/08093c00.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/08093c00.s:nonstandard_thumb_call_module"
       },
       {
         "start": 134823464,
@@ -2966,7 +3008,7 @@
         "start": 134824414,
         "end": 134824416,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134824416,
@@ -2978,7 +3020,7 @@
         "start": 134825284,
         "end": 134825776,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/08094544.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/08094544.s:nonstandard_thumb_call_module"
       },
       {
         "start": 134825776,
@@ -2990,7 +3032,7 @@
         "start": 134826938,
         "end": 134826940,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134826940,
@@ -3002,7 +3044,7 @@
         "start": 134827642,
         "end": 134827644,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134827644,
@@ -3014,7 +3056,7 @@
         "start": 134828382,
         "end": 134828384,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134828384,
@@ -3026,7 +3068,7 @@
         "start": 134831062,
         "end": 134831064,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134831064,
@@ -3038,7 +3080,7 @@
         "start": 134835234,
         "end": 134835236,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134835236,
@@ -3050,7 +3092,7 @@
         "start": 134835326,
         "end": 134835328,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134835328,
@@ -3074,7 +3116,7 @@
         "start": 134839122,
         "end": 134839124,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134839124,
@@ -3086,7 +3128,7 @@
         "start": 134841052,
         "end": 134841248,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/080982dc.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/080982dc.s:nonstandard_thumb_call_module"
       },
       {
         "start": 134841248,
@@ -3098,7 +3140,7 @@
         "start": 134843150,
         "end": 134843152,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134843152,
@@ -3110,7 +3152,7 @@
         "start": 134843606,
         "end": 134843608,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134843608,
@@ -3122,7 +3164,7 @@
         "start": 134845168,
         "end": 134845248,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/080992f0.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/080992f0.s:nonstandard_thumb_call_module"
       },
       {
         "start": 134845248,
@@ -3134,7 +3176,7 @@
         "start": 134845360,
         "end": 134845632,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/080993b0.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/080993b0.s:nonstandard_thumb_call_module"
       },
       {
         "start": 134845632,
@@ -3146,7 +3188,7 @@
         "start": 134845646,
         "end": 134845648,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134845648,
@@ -3158,7 +3200,7 @@
         "start": 134846958,
         "end": 134846960,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134846960,
@@ -3170,7 +3212,7 @@
         "start": 134849610,
         "end": 134849612,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134849612,
@@ -3182,7 +3224,7 @@
         "start": 134849666,
         "end": 134849668,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134849668,
@@ -3194,7 +3236,7 @@
         "start": 134850230,
         "end": 134850232,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134850232,
@@ -3218,7 +3260,7 @@
         "start": 134850754,
         "end": 134850756,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134850756,
@@ -3230,7 +3272,7 @@
         "start": 134852182,
         "end": 134852184,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134852184,
@@ -3242,7 +3284,7 @@
         "start": 134852194,
         "end": 134852196,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134852196,
@@ -3254,7 +3296,7 @@
         "start": 134852826,
         "end": 134852828,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134852828,
@@ -3266,7 +3308,7 @@
         "start": 134854628,
         "end": 134854660,
         "kind": "literal_pool",
-        "evidence": "games/THE BROKEN SEAL/asm/0809b7e4.s:literal_pool"
+        "evidence": "games/THE BROKEN SEAL/raw/0809b7e4.s:literal_pool"
       },
       {
         "start": 134854660,
@@ -3290,7 +3332,7 @@
         "start": 134855258,
         "end": 134855260,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134855260,
@@ -3302,7 +3344,7 @@
         "start": 134855278,
         "end": 134855280,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134855280,
@@ -3314,7 +3356,7 @@
         "start": 134855928,
         "end": 134857016,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/0809bcf8.s:hidden_register_context_module"
+        "evidence": "games/THE BROKEN SEAL/raw/0809bcf8.s:hidden_register_context_module"
       },
       {
         "start": 134857016,
@@ -3338,7 +3380,7 @@
         "start": 134877294,
         "end": 134877296,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134877296,
@@ -3350,7 +3392,7 @@
         "start": 134877326,
         "end": 134877328,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134877328,
@@ -3362,7 +3404,7 @@
         "start": 134878522,
         "end": 134878524,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134878524,
@@ -3374,7 +3416,7 @@
         "start": 134879250,
         "end": 134879252,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134879252,
@@ -3386,7 +3428,7 @@
         "start": 134879934,
         "end": 134879936,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134879936,
@@ -3398,7 +3440,7 @@
         "start": 134880202,
         "end": 134880204,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134880204,
@@ -3410,19 +3452,19 @@
         "start": 134880822,
         "end": 134880824,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134880824,
         "end": 134881138,
         "kind": "thumb",
-        "evidence": "games/THE BROKEN SEAL/asm/080a1e38.s:compiler_output"
+        "evidence": "games/THE BROKEN SEAL/raw/080a1e38.s:compiler_output"
       },
       {
         "start": 134881138,
         "end": 134881140,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134881140,
@@ -3434,7 +3476,7 @@
         "start": 134882036,
         "end": 134882084,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/080a22f4.s:deliberate_dma_kick_macro"
+        "evidence": "games/THE BROKEN SEAL/raw/080a22f4.s:deliberate_dma_kick_macro"
       },
       {
         "start": 134882084,
@@ -3446,7 +3488,7 @@
         "start": 134886490,
         "end": 134886492,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134886492,
@@ -3458,7 +3500,7 @@
         "start": 134889198,
         "end": 134889200,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134889200,
@@ -3470,7 +3512,7 @@
         "start": 134889802,
         "end": 134889804,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134889804,
@@ -3482,13 +3524,13 @@
         "start": 134895496,
         "end": 134896530,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/080a5788.s:hidden_register_context_module"
+        "evidence": "games/THE BROKEN SEAL/raw/080a5788.s:hidden_register_context_module"
       },
       {
         "start": 134896530,
         "end": 134896532,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134896532,
@@ -3500,7 +3542,7 @@
         "start": 134897630,
         "end": 134897632,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134897632,
@@ -3518,7 +3560,7 @@
         "start": 134900222,
         "end": 134900224,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134900224,
@@ -3530,7 +3572,7 @@
         "start": 134902654,
         "end": 134902656,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134902656,
@@ -3542,19 +3584,19 @@
         "start": 134903886,
         "end": 134903888,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134903888,
         "end": 134904370,
         "kind": "thumb",
-        "evidence": "games/THE BROKEN SEAL/asm/080a7850.s:compiler_output"
+        "evidence": "games/THE BROKEN SEAL/raw/080a7850.s:compiler_output"
       },
       {
         "start": 134904370,
         "end": 134904372,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134904372,
@@ -3566,7 +3608,7 @@
         "start": 134907002,
         "end": 134907004,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134907004,
@@ -3584,7 +3626,7 @@
         "start": 134908178,
         "end": 134908180,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134908180,
@@ -3602,7 +3644,7 @@
         "start": 134911704,
         "end": 134912432,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/080a96d8.s:hidden_register_context_module"
+        "evidence": "games/THE BROKEN SEAL/raw/080a96d8.s:hidden_register_context_module"
       },
       {
         "start": 134912432,
@@ -3614,7 +3656,7 @@
         "start": 134912598,
         "end": 134912600,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134912600,
@@ -3626,7 +3668,7 @@
         "start": 134913210,
         "end": 134913212,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134913212,
@@ -3638,7 +3680,7 @@
         "start": 134913606,
         "end": 134913608,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134913608,
@@ -3650,7 +3692,7 @@
         "start": 134928084,
         "end": 134931188,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/080ad6d4.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/080ad6d4.s:nonstandard_thumb_call_module"
       },
       {
         "start": 134931188,
@@ -3662,7 +3704,7 @@
         "start": 134932822,
         "end": 134932824,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134932824,
@@ -3674,7 +3716,7 @@
         "start": 134932890,
         "end": 134932892,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134932892,
@@ -3698,7 +3740,7 @@
         "start": 134939866,
         "end": 134939868,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134939868,
@@ -3710,19 +3752,19 @@
         "start": 134941214,
         "end": 134941216,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134941216,
         "end": 134941290,
         "kind": "thumb",
-        "evidence": "games/THE BROKEN SEAL/asm/080b0a20.s:compiler_output"
+        "evidence": "games/THE BROKEN SEAL/raw/080b0a20.s:compiler_output"
       },
       {
         "start": 134941290,
         "end": 134941292,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134941292,
@@ -3734,7 +3776,7 @@
         "start": 134947086,
         "end": 134947088,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134947088,
@@ -3752,25 +3794,25 @@
         "start": 134959416,
         "end": 134959620,
         "kind": "arm",
-        "evidence": "games/THE BROKEN SEAL/asm/veneer_island_residual/080b5138.s:relocated_arm_runtime_module"
+        "evidence": "games/THE BROKEN SEAL/raw/veneer_island_residual/080b5138.s:relocated_arm_runtime_module"
       },
       {
         "start": 134959628,
         "end": 134959640,
         "kind": "arm",
-        "evidence": "games/THE BROKEN SEAL/asm/veneer_island_residual/080b520c.s:relocated_arm_runtime_module"
+        "evidence": "games/THE BROKEN SEAL/raw/veneer_island_residual/080b520c.s:relocated_arm_runtime_module"
       },
       {
         "start": 134959704,
         "end": 134959976,
         "kind": "arm",
-        "evidence": "games/THE BROKEN SEAL/asm/veneer_island_residual/080b5258.s:relocated_arm_runtime_module"
+        "evidence": "games/THE BROKEN SEAL/raw/veneer_island_residual/080b5258.s:relocated_arm_runtime_module"
       },
       {
         "start": 134959976,
         "end": 134960436,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/080b5368.s:hidden_register_context_module"
+        "evidence": "games/THE BROKEN SEAL/raw/080b5368.s:hidden_register_context_module"
       },
       {
         "start": 134960436,
@@ -3782,7 +3824,7 @@
         "start": 134961942,
         "end": 134961944,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134961944,
@@ -3794,7 +3836,7 @@
         "start": 134962490,
         "end": 134962492,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134962492,
@@ -3806,7 +3848,7 @@
         "start": 134962706,
         "end": 134962708,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134962708,
@@ -3818,19 +3860,19 @@
         "start": 134963358,
         "end": 134963360,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134963360,
         "end": 134963526,
         "kind": "thumb",
-        "evidence": "games/THE BROKEN SEAL/asm/080b60a0.s:compiler_output"
+        "evidence": "games/THE BROKEN SEAL/raw/080b60a0.s:compiler_output"
       },
       {
         "start": 134963526,
         "end": 134963528,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134963528,
@@ -3842,7 +3884,7 @@
         "start": 134966446,
         "end": 134966448,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134966448,
@@ -3854,7 +3896,7 @@
         "start": 134966478,
         "end": 134966480,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134966480,
@@ -3866,13 +3908,13 @@
         "start": 134970218,
         "end": 134970220,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134970220,
         "end": 134970832,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/080b7b6c.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/080b7b6c.s:nonstandard_thumb_call_module"
       },
       {
         "start": 134970832,
@@ -3884,7 +3926,7 @@
         "start": 134970914,
         "end": 134970916,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134970916,
@@ -3896,7 +3938,7 @@
         "start": 134971002,
         "end": 134971004,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134971004,
@@ -3908,7 +3950,7 @@
         "start": 134971168,
         "end": 134971248,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/080b7f20.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/080b7f20.s:nonstandard_thumb_call_module"
       },
       {
         "start": 134971248,
@@ -3920,7 +3962,7 @@
         "start": 134971290,
         "end": 134971292,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134971292,
@@ -3932,7 +3974,7 @@
         "start": 134971848,
         "end": 134971944,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/080b81c8.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/080b81c8.s:nonstandard_thumb_call_module"
       },
       {
         "start": 134971944,
@@ -3944,7 +3986,7 @@
         "start": 134972338,
         "end": 134972340,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134972340,
@@ -3956,7 +3998,7 @@
         "start": 134972438,
         "end": 134972440,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134972440,
@@ -3980,7 +4022,7 @@
         "start": 134972786,
         "end": 134972788,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134972788,
@@ -3992,7 +4034,7 @@
         "start": 134975318,
         "end": 134975320,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134975320,
@@ -4004,7 +4046,7 @@
         "start": 134976290,
         "end": 134976292,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134976292,
@@ -4028,7 +4070,7 @@
         "start": 134978350,
         "end": 134978352,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134978352,
@@ -4040,7 +4082,7 @@
         "start": 134980218,
         "end": 134980220,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134980220,
@@ -4052,7 +4094,7 @@
         "start": 134980286,
         "end": 134980288,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134980288,
@@ -4064,7 +4106,7 @@
         "start": 134982006,
         "end": 134982008,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134982008,
@@ -4076,7 +4118,7 @@
         "start": 134983230,
         "end": 134983232,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134983232,
@@ -4088,7 +4130,7 @@
         "start": 134986506,
         "end": 134986508,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134986508,
@@ -4100,7 +4142,7 @@
         "start": 134992866,
         "end": 134992868,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134992868,
@@ -4112,7 +4154,7 @@
         "start": 134992930,
         "end": 134992932,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134992932,
@@ -4124,7 +4166,7 @@
         "start": 134994000,
         "end": 134994072,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/080bd850.s:hidden_register_context_module"
+        "evidence": "games/THE BROKEN SEAL/raw/080bd850.s:hidden_register_context_module"
       },
       {
         "start": 134994072,
@@ -4136,7 +4178,7 @@
         "start": 134996362,
         "end": 134996364,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 134996364,
@@ -4154,7 +4196,7 @@
         "start": 135001418,
         "end": 135001420,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135001420,
@@ -4166,7 +4208,7 @@
         "start": 135001690,
         "end": 135001692,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135001692,
@@ -4178,7 +4220,7 @@
         "start": 135001714,
         "end": 135001716,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135001716,
@@ -4190,7 +4232,7 @@
         "start": 135001718,
         "end": 135001720,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135001720,
@@ -4214,7 +4256,7 @@
         "start": 135007798,
         "end": 135007800,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135007800,
@@ -4226,7 +4268,7 @@
         "start": 135007854,
         "end": 135007856,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135007856,
@@ -4238,7 +4280,7 @@
         "start": 135007910,
         "end": 135007912,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/executable_gaps/080c0ea6.s:executable_gap_continuation"
+        "evidence": "games/THE BROKEN SEAL/raw/executable_gaps/080c0ea6.s:executable_gap_continuation"
       },
       {
         "start": 135007912,
@@ -4250,7 +4292,7 @@
         "start": 135007978,
         "end": 135007980,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135007980,
@@ -4262,7 +4304,7 @@
         "start": 135008274,
         "end": 135008276,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135008276,
@@ -4274,7 +4316,7 @@
         "start": 135008748,
         "end": 135009336,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/080c11ec.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/080c11ec.s:nonstandard_thumb_call_module"
       },
       {
         "start": 135009336,
@@ -4286,7 +4328,7 @@
         "start": 135009392,
         "end": 135010000,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/080c1470.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/080c1470.s:nonstandard_thumb_call_module"
       },
       {
         "start": 135010000,
@@ -4298,7 +4340,7 @@
         "start": 135010198,
         "end": 135010200,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135010200,
@@ -4310,7 +4352,7 @@
         "start": 135010850,
         "end": 135010852,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135010852,
@@ -4322,7 +4364,7 @@
         "start": 135012262,
         "end": 135012264,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135012264,
@@ -4346,7 +4388,7 @@
         "start": 135041444,
         "end": 135041500,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/executable_gaps/080c91a4.s:executable_gap_continuation"
+        "evidence": "games/THE BROKEN SEAL/raw/executable_gaps/080c91a4.s:executable_gap_continuation"
       },
       {
         "start": 135041500,
@@ -4358,7 +4400,7 @@
         "start": 135060414,
         "end": 135060416,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135060416,
@@ -4370,7 +4412,7 @@
         "start": 135061134,
         "end": 135061136,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135061136,
@@ -4406,7 +4448,7 @@
         "start": 135090802,
         "end": 135090804,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135090804,
@@ -4418,7 +4460,7 @@
         "start": 135095670,
         "end": 135095672,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135095672,
@@ -4430,19 +4472,19 @@
         "start": 135096282,
         "end": 135096284,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135096284,
         "end": 135096454,
         "kind": "thumb",
-        "evidence": "games/THE BROKEN SEAL/asm/080d67dc.s:compiler_output"
+        "evidence": "games/THE BROKEN SEAL/raw/080d67dc.s:compiler_output"
       },
       {
         "start": 135096454,
         "end": 135096456,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135096456,
@@ -4466,7 +4508,7 @@
         "start": 135104902,
         "end": 135104904,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135104904,
@@ -4478,7 +4520,7 @@
         "start": 135117722,
         "end": 135117788,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/executable_gaps/080dbb9a.s:executable_gap_continuation"
+        "evidence": "games/THE BROKEN SEAL/raw/executable_gaps/080dbb9a.s:executable_gap_continuation"
       },
       {
         "start": 135117788,
@@ -4502,7 +4544,7 @@
         "start": 135129582,
         "end": 135129584,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135129584,
@@ -4514,7 +4556,7 @@
         "start": 135129634,
         "end": 135129636,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135129636,
@@ -4526,7 +4568,7 @@
         "start": 135129710,
         "end": 135129712,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135129712,
@@ -4538,7 +4580,7 @@
         "start": 135134762,
         "end": 135134764,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135134764,
@@ -4562,7 +4604,7 @@
         "start": 135145754,
         "end": 135145756,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135145756,
@@ -4574,7 +4616,7 @@
         "start": 135145842,
         "end": 135145844,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135145844,
@@ -4586,7 +4628,7 @@
         "start": 135149890,
         "end": 135149892,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135149892,
@@ -4598,7 +4640,7 @@
         "start": 135149972,
         "end": 135150100,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/080e3994.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/080e3994.s:nonstandard_thumb_call_module"
       },
       {
         "start": 135150100,
@@ -4622,7 +4664,7 @@
         "start": 135164638,
         "end": 135164704,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/executable_gaps/080e72de.s:executable_gap_continuation"
+        "evidence": "games/THE BROKEN SEAL/raw/executable_gaps/080e72de.s:executable_gap_continuation"
       },
       {
         "start": 135164704,
@@ -4634,25 +4676,25 @@
         "start": 135164728,
         "end": 135164830,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/080e7338.s:hidden_register_context_module"
+        "evidence": "games/THE BROKEN SEAL/raw/080e7338.s:hidden_register_context_module"
       },
       {
         "start": 135164830,
         "end": 135164832,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135164832,
         "end": 135164930,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/080e73a0.s:hidden_register_context_module"
+        "evidence": "games/THE BROKEN SEAL/raw/080e73a0.s:hidden_register_context_module"
       },
       {
         "start": 135164930,
         "end": 135164932,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135164932,
@@ -4694,13 +4736,13 @@
         "start": 135210730,
         "end": 135210732,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135210732,
         "end": 135211884,
         "kind": "thumb",
-        "evidence": "games/THE BROKEN SEAL/asm/080f26ec.s:compiler_output"
+        "evidence": "games/THE BROKEN SEAL/raw/080f26ec.s:compiler_output"
       },
       {
         "start": 135211888,
@@ -4712,7 +4754,7 @@
         "start": 135212730,
         "end": 135212732,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135212732,
@@ -4724,7 +4766,7 @@
         "start": 135213176,
         "end": 135214972,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/080f3078.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/080f3078.s:nonstandard_thumb_call_module"
       },
       {
         "start": 135214972,
@@ -4736,7 +4778,7 @@
         "start": 135217152,
         "end": 135217160,
         "kind": "veneer",
-        "evidence": "games/THE BROKEN SEAL/asm/080f4000.s:linker_veneer"
+        "evidence": "games/THE BROKEN SEAL/raw/080f4000.s:linker_veneer"
       },
       {
         "start": 135217160,
@@ -4748,7 +4790,7 @@
         "start": 135217382,
         "end": 135217384,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135217384,
@@ -4766,7 +4808,7 @@
         "start": 135225344,
         "end": 135225352,
         "kind": "veneer",
-        "evidence": "games/THE BROKEN SEAL/asm/080f6000.s:linker_veneer"
+        "evidence": "games/THE BROKEN SEAL/raw/080f6000.s:linker_veneer"
       },
       {
         "start": 135225352,
@@ -4784,13 +4826,13 @@
         "start": 135237760,
         "end": 135238118,
         "kind": "thumb",
-        "evidence": "games/THE BROKEN SEAL/asm/080f9080.s:compiler_output"
+        "evidence": "games/THE BROKEN SEAL/raw/080f9080.s:compiler_output"
       },
       {
         "start": 135238118,
         "end": 135238120,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135238120,
@@ -4802,7 +4844,7 @@
         "start": 135238854,
         "end": 135238856,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135238856,
@@ -4814,7 +4856,7 @@
         "start": 135239010,
         "end": 135239012,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135239012,
@@ -4826,7 +4868,7 @@
         "start": 135239022,
         "end": 135239024,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135239024,
@@ -4844,7 +4886,7 @@
         "start": 135240238,
         "end": 135240240,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135240240,
@@ -4856,7 +4898,7 @@
         "start": 135240318,
         "end": 135240320,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/080f9a7e.s:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/080f9a7e.s:alignment_padding"
       },
       {
         "start": 135240320,
@@ -4868,7 +4910,7 @@
         "start": 135240522,
         "end": 135240524,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135240524,
@@ -4880,31 +4922,31 @@
         "start": 135240562,
         "end": 135240564,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135240564,
         "end": 135240610,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/080f9b74.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/080f9b74.s:nonstandard_thumb_call_module"
       },
       {
         "start": 135240610,
         "end": 135240612,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135240612,
         "end": 135240630,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/080f9ba4.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/080f9ba4.s:nonstandard_thumb_call_module"
       },
       {
         "start": 135240630,
         "end": 135240632,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135240632,
@@ -4916,19 +4958,19 @@
         "start": 135240690,
         "end": 135240692,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135240692,
         "end": 135240702,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/080f9bf4.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/080f9bf4.s:nonstandard_thumb_call_module"
       },
       {
         "start": 135240702,
         "end": 135240704,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135240704,
@@ -4940,37 +4982,37 @@
         "start": 135241464,
         "end": 135241532,
         "kind": "thumb",
-        "evidence": "games/THE BROKEN SEAL/asm/080f9ef8.s:compiler_output"
+        "evidence": "games/THE BROKEN SEAL/raw/080f9ef8.s:compiler_output"
       },
       {
         "start": 135241532,
         "end": 135241580,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/080f9f3c.s:nonstandard_thumb_branch_module"
+        "evidence": "games/THE BROKEN SEAL/raw/080f9f3c.s:nonstandard_thumb_branch_module"
       },
       {
         "start": 135241580,
         "end": 135242092,
         "kind": "thumb",
-        "evidence": "games/THE BROKEN SEAL/asm/080f9f6c.s:compiler_output"
+        "evidence": "games/THE BROKEN SEAL/raw/080f9f6c.s:compiler_output"
       },
       {
         "start": 135242092,
         "end": 135242156,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/080fa16c.s:nonstandard_thumb_branch_module"
+        "evidence": "games/THE BROKEN SEAL/raw/080fa16c.s:nonstandard_thumb_branch_module"
       },
       {
         "start": 135242156,
         "end": 135242182,
         "kind": "thumb",
-        "evidence": "games/THE BROKEN SEAL/asm/080fa1ac.s:compiler_output"
+        "evidence": "games/THE BROKEN SEAL/raw/080fa1ac.s:compiler_output"
       },
       {
         "start": 135242182,
         "end": 135242184,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135242184,
@@ -4982,31 +5024,31 @@
         "start": 135242194,
         "end": 135242196,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135242196,
         "end": 135242214,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/080fa1d4.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/080fa1d4.s:nonstandard_thumb_call_module"
       },
       {
         "start": 135242214,
         "end": 135242216,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135242216,
         "end": 135242234,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/asm/080fa1e8.s:nonstandard_thumb_call_module"
+        "evidence": "games/THE BROKEN SEAL/raw/080fa1e8.s:nonstandard_thumb_call_module"
       },
       {
         "start": 135242234,
         "end": 135242236,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135242236,
@@ -5018,7 +5060,7 @@
         "start": 135242338,
         "end": 135242340,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135242340,
@@ -5030,7 +5072,7 @@
         "start": 135242530,
         "end": 135242532,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135242532,
@@ -5042,7 +5084,7 @@
         "start": 135242894,
         "end": 135242896,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135242896,
@@ -5054,7 +5096,7 @@
         "start": 135242954,
         "end": 135242956,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/080fa4ca.s:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/080fa4ca.s:alignment_padding"
       },
       {
         "start": 135242956,
@@ -5072,7 +5114,7 @@
         "start": 135246498,
         "end": 135246500,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135246500,
@@ -5084,7 +5126,7 @@
         "start": 135246894,
         "end": 135246896,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135246896,
@@ -5096,7 +5138,7 @@
         "start": 135247614,
         "end": 135247616,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135247616,
@@ -5108,7 +5150,7 @@
         "start": 135247634,
         "end": 135247636,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135247636,
@@ -5120,7 +5162,7 @@
         "start": 135247654,
         "end": 135247656,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135247656,
@@ -5132,7 +5174,7 @@
         "start": 135247674,
         "end": 135247676,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135247676,
@@ -5144,7 +5186,7 @@
         "start": 135247694,
         "end": 135247696,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135247696,
@@ -5156,7 +5198,7 @@
         "start": 135247738,
         "end": 135247740,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135247740,
@@ -5168,7 +5210,7 @@
         "start": 135247758,
         "end": 135247760,
         "kind": "executable_alignment",
-        "evidence": "games/THE BROKEN SEAL/asm/alignment.json:alignment_padding"
+        "evidence": "games/THE BROKEN SEAL/raw/alignment.json:alignment_padding"
       },
       {
         "start": 135247760,
@@ -5180,7 +5222,7 @@
         "start": 135811072,
         "end": 135811080,
         "kind": "veneer",
-        "evidence": "games/THE BROKEN SEAL/asm/08185000.s:linker_veneer"
+        "evidence": "games/THE BROKEN SEAL/raw/08185000.s:linker_veneer"
       },
       {
         "start": 135811080,
@@ -5307,7 +5349,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_36f_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_36f_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -5580,7 +5622,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_370_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_370_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -6513,7 +6555,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_371_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_371_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -7176,7 +7218,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_372_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_372_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -7983,7 +8025,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_373_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_373_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -8418,7 +8460,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_374_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_374_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -8613,7 +8655,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_375_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_375_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -8814,7 +8856,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_376_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_376_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -9225,7 +9267,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_377_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_377_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -9618,7 +9660,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_378_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_378_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -9705,7 +9747,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_379_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_379_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -9984,7 +10026,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_37a_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_37a_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -10437,7 +10479,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_37b_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_37b_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -10470,7 +10512,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_37c_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_37c_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -10503,7 +10545,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_37d_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_37d_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -10536,7 +10578,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_37e_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_37e_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -10809,7 +10851,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_37f_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_37f_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -11244,7 +11286,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_380_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_380_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -11655,7 +11697,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_381_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_381_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -12138,7 +12180,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_382_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_382_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -12687,7 +12729,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_383_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_383_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -12732,7 +12774,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_384_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_384_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -13113,7 +13155,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_385_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_385_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -13194,7 +13236,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_386_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_386_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -13473,7 +13515,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_387_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_387_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -13506,7 +13548,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_388_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_388_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -13743,7 +13785,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_389_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_389_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -13884,7 +13926,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_38a_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_38a_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -14097,7 +14139,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_38b_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_38b_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -14226,7 +14268,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_38c_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_38c_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -14529,7 +14571,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_38d_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_38d_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -14658,7 +14700,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_38e_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_38e_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -14967,7 +15009,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_38f_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_38f_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -15012,7 +15054,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_390_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_390_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -15309,7 +15351,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_391_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_391_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -15462,7 +15504,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_392_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_392_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -15591,7 +15633,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_393_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_393_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -15834,7 +15876,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_394_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_394_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -16095,7 +16137,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_395_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_395_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -16410,7 +16452,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_396_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_396_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -16521,7 +16563,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_397_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_397_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -16668,7 +16710,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_398_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_398_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -17043,7 +17085,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_399_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_399_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -17358,7 +17400,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_39a_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_39a_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -17367,8 +17409,8 @@
     {
       "id": "resource_39b",
       "decoded_bytes": 12284,
-      "executable_bytes": 8820,
-      "excluded_bytes": 3464,
+      "executable_bytes": 9596,
+      "excluded_bytes": 2688,
       "audit": "complete",
       "intervals": [
         {
@@ -17768,10 +17810,22 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33559524,
+          "end": 33560228,
+          "kind": "thumb",
+          "evidence": "strict loader-entry switch reachability; complete Thumb case block ends at its literal pool"
+        },
+        {
           "start": 33560228,
           "end": 33560272,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+        },
+        {
+          "start": 33560272,
+          "end": 33560344,
+          "kind": "thumb",
+          "evidence": "strict loader-entry switch reachability; complete Thumb case block branches to the shared return"
         },
         {
           "start": 33560344,
@@ -17985,7 +18039,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_39b_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_39b_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -19272,7 +19326,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_39c_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_39c_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -19743,7 +19797,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_39d_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_39d_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -20220,7 +20274,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_39e_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_39e_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -20595,7 +20649,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_39f_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_39f_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -20874,7 +20928,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3a0_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3a0_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -20955,7 +21009,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3a1_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3a1_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -21144,7 +21198,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3a2_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3a2_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -21321,7 +21375,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3a3_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3a3_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -22164,7 +22218,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3a4_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3a4_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -22983,7 +23037,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3a5_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3a5_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -23418,7 +23472,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3a6_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3a6_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -23751,7 +23805,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3a7_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3a7_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -24216,7 +24270,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3a8_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3a8_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -24279,7 +24333,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3a9_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3a9_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -24432,7 +24486,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3aa_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3aa_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -24867,7 +24921,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3ab_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3ab_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -24900,7 +24954,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3ac_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3ac_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -25107,7 +25161,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3ad_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3ad_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -25368,7 +25422,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3ae_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3ae_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -26055,7 +26109,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3af_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3af_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -26298,7 +26352,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3b0_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3b0_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -27087,7 +27141,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3b1_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3b1_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -27558,7 +27612,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3b2_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3b2_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -28179,7 +28233,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3b3_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3b3_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -28854,7 +28908,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3b4_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3b4_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -29109,7 +29163,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3b5_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3b5_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -29346,7 +29400,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3b6_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3b6_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -29565,7 +29619,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3b7_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3b7_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -29988,7 +30042,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3b8_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3b8_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -30435,7 +30489,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3b9_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3b9_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -31032,7 +31086,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3ba_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3ba_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -31851,7 +31905,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3bb_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3bb_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -32748,7 +32802,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3bc_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3bc_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -33411,7 +33465,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3bd_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3bd_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -33816,7 +33870,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3be_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3be_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -34815,7 +34869,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3bf_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3bf_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -35106,7 +35160,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3c0_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3c0_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -35163,7 +35217,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3c1_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3c1_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -35322,7 +35376,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3c2_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3c2_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -35427,7 +35481,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3c3_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3c3_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -35994,7 +36048,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3c4_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3c4_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -36459,7 +36513,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3c5_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3c5_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -36678,7 +36732,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3c6_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3c6_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -36963,7 +37017,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3c7_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3c7_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -37686,7 +37740,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3c8_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3c8_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -38493,7 +38547,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3c9_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3c9_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -38796,7 +38850,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3ca_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3ca_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -39123,7 +39177,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3cb_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3cb_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -39204,7 +39258,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3cc_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3cc_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -39297,7 +39351,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3cd_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3cd_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"
@@ -39480,7 +39534,7 @@
         }
       ],
       "evidence": [
-        "games/THE BROKEN SEAL/asm/overlays/resource_3ce_overlay.s",
+        "games/THE BROKEN SEAL/raw/overlays/resource_3ce_overlay.s",
         "assembler listing mapped to canonical instruction/directive source lines",
         "PC-relative literal targets and fixed ldr/bx veneers",
         "byte-identical decoded code-overlay round trip"

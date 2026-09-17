@@ -11,7 +11,7 @@
  * pointers at 0x77d8 that games/THE BROKEN SEAL/src/battle/effects/common/spawn_objects.c
  * fills, frame_ready at 0x7824 and the republished effect argument at
  * 0x7828), the DrawRectangleFn convention through the _call_via_r4 thunk at
- * games/THE BROKEN SEAL/asm/080072e4.s, the IWRAM word-copy kernel at 0x03001388 and the
+ * games/THE BROKEN SEAL/raw/080072e4.s, the IWRAM word-copy kernel at 0x03001388 and the
  * Value_ spelling for a pool-loaded resource id all come from those owners.
  *
  * Behaviour: three graphics resources are streamed in (palette plus scrolling

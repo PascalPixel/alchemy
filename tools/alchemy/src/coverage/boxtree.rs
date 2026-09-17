@@ -147,7 +147,6 @@ fn directories(tiles: Vec<Tile>, base: &str) -> Vec<Tile> {
 }
 fn source_name(source: &str) -> &str {
     match source.trim_end_matches('/') {
-        "games/THE BROKEN SEAL" => "The Broken Seal",
         _ => source
             .trim_end_matches('/')
             .rsplit('/')
@@ -296,8 +295,9 @@ fn draw_tiles(
     }
 }
 
-/// One advance per character for 16px system monospace labels; SF Mono is about 9.9px.
-const LABEL_ADVANCE: f64 = 10.0;
+/// One advance per character for 13px system sans labels, wide enough for
+/// the upper-case folder names; SF Pro capitals average about 8px.
+const LABEL_ADVANCE: f64 = 8.0;
 
 fn label_width(name: &str) -> f64 {
     name.chars().count() as f64 * LABEL_ADVANCE
@@ -314,7 +314,7 @@ fn caption(name: &str, body: Rect, folder: bool) -> Option<(String, Rect)> {
             width,
             height: 18.0,
         };
-        return Some((format!("<text class=\"label rectangle-label folder-label\" x=\"{}\" y=\"{}\" pointer-events=\"none\">{}</text>", bounds.x, body.y + 16.0, esc(name)), bounds));
+        return Some((format!("<text class=\"label rectangle-label folder-label\" x=\"{}\" y=\"{}\" pointer-events=\"none\">{}</text>", bounds.x, body.y + 14.0, esc(name)), bounds));
     }
     let columns = ((body.width - 8.0) / LABEL_ADVANCE).max(0.0) as usize;
     if columns == 0 || name.is_empty() || body.height < 28.0 || (!folder && body.width < 64.0) {
@@ -490,7 +490,7 @@ pub fn svg_sized(tree: &str, map: &CoverageMap, width: f64, height: f64, folder:
         height: height - 44.0 - rows as f64 * 24.0 - if shared.is_empty() { 0.0 } else { 24.0 },
     };
     let mut out = vec![format!("<title>{}</title>", esc(&title))];
-    out.push("<style>.label{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace;font-size:16px;fill:#fff;text-shadow:1px 1px 0 #000;}</style>".into());
+    out.push("<style>.label{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;fill:#fff;text-shadow:1px 1px 0 #000;}</style>".into());
     out.push(format!(
         "<svg x=\"{}\" y=\"0\" width=\"{}\" height=\"30\" overflow=\"hidden\"><text class=\"label\" x=\"0\" y=\"22\">{}</text></svg>",
         if folder.is_empty() { 8 } else { 36 },
@@ -589,17 +589,17 @@ pub fn box_tree_path(target: &str, tree: &str) -> std::path::PathBuf {
 #[cfg(test)]
 mod tests {
     #[test]
-    fn folder_names_fit_at_one_monospace_advance() {
+    fn folder_names_fit_at_one_label_advance() {
         let body = super::Rect {
             x: 0.0,
             y: 0.0,
-            width: 34.0,
+            width: 28.0,
             height: 20.0,
         };
         let (text, bounds) = super::caption("LIB", body, true).unwrap();
-        assert_eq!(bounds.width, 30.0);
+        assert_eq!(bounds.width, 24.0);
         assert!(text.contains(">LIB</text>"));
-        assert_eq!(super::caption("WWW", body, true).unwrap().1.width, 30.0);
+        assert_eq!(super::caption("WWW", body, true).unwrap().1.width, 24.0);
         assert!(super::caption("LIBS", body, true).is_none());
         assert!(super::caption(
             "LIB",
@@ -668,8 +668,8 @@ mod tests {
         let rendered = super::svg_at("rom", &map, 540.0, "FIELD/XIAN/");
         assert!(rendered.contains("FIELD/XIAN/ROOMS.C"));
         assert!(!rendered.contains("HEIDIA"));
-        assert!(rendered.contains("font-size:16px"));
-        assert!(rendered.contains("monospace"));
+        assert!(rendered.contains("font-size:13px"));
+        assert!(rendered.contains("sans-serif"));
         for embedded in ["base64", "@font-face", "data:", "url("] {
             assert!(!rendered.contains(embedded), "{embedded}");
         }
@@ -844,7 +844,7 @@ mod tests {
         for width in [320.0, 540.0, 830.0] {
             let rendered = svg("rom", &map, width);
             assert!(rendered.contains(&format!("viewBox=\"0 0 {width} {}\"", width * 16.0 / 9.0)));
-            assert!(rendered.contains("font-size:16px"));
+            assert!(rendered.contains("font-size:13px"));
             assert!(!rendered.contains("DONE"));
             assert!(rendered.contains("PCM samples"));
         }

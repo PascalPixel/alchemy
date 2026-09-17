@@ -40,7 +40,7 @@ use crate::compiler::source_inputs::compiler_source_tree_signature;
 use crate::compiler::source_paths::{SourceFile, SourceOwner, SourcePaths};
 use crate::compiler::symbols::{external_symbol, external_symbol_assembly, CALL_VIA_BASE};
 use crate::compiler::translation_units::{
-    AbsoluteSymbolKind, OwnerState, TranslationUnit, TranslationUnits,
+    AbsoluteSymbol, AbsoluteSymbolKind, OwnerState, TranslationUnit, TranslationUnits,
 };
 use crate::targets::{
     decomp_target, parse_decomp_target, target_for, BuildSupport, DecompTarget, DecompTargetId,
@@ -336,6 +336,70 @@ pub struct Compiled {
 fn binding(name: &str, address: u64, thumb: bool) -> String {
     let directive = if thumb { ".thumb_set" } else { ".set" };
     format!("{directive} {name}, 0x{address:08x}\n")
+}
+
+/// The manifest symbols of one complete unit object and the names it imports.
+struct UnitImports {
+    unit: String,
+    symbols: BTreeMap<String, AbsoluteSymbol>,
+    undefined: Vec<String>,
+}
+
+/// Imports that no address encoding names, such as the compiler's `__divsi3`
+/// and `__modsi3` division calls, bound where the importing unit's manifest
+/// places them, as `alchemy score --unit` binds them. Two units that place one
+/// name differently are refused; an import no unit places stays unresolved.
+fn unit_import_bindings(
+    units: &[UnitImports],
+) -> Result<BTreeMap<String, (String, AbsoluteSymbol)>> {
+    let mut bindings: BTreeMap<String, (String, AbsoluteSymbol)> = BTreeMap::new();
+    for imports in units {
+        for name in &imports.undefined {
+            if external_symbol(name, CALL_VIA_BASE).is_some() {
+                continue;
+            }
+            let Some(symbol) = imports.symbols.get(name) else {
+                continue;
+            };
+            match bindings.get(name) {
+                Some((first, bound)) if bound != symbol => {
+                    return Err(format!(
+                        "{name}: units {first} and {} bind it to different places",
+                        imports.unit
+                    ))
+                }
+                Some(_) => {}
+                None => {
+                    bindings.insert(name.clone(), (imports.unit.clone(), *symbol));
+                }
+            }
+        }
+    }
+    Ok(bindings)
+}
+
+/// The production link's external symbols: address-encoded and call-via
+/// names as before, then the imports declared units bind.
+fn externals_assembly(
+    undefined: &[String],
+    bindings: &BTreeMap<String, (String, AbsoluteSymbol)>,
+) -> Result<String> {
+    let mut externals = ".syntax unified\n.thumb\n".to_string();
+    for name in undefined {
+        if external_symbol(name, CALL_VIA_BASE).is_some() {
+            externals.push_str(&external_symbol_assembly(name, CALL_VIA_BASE)?);
+        } else if let Some((_, symbol)) = bindings.get(name) {
+            externals.push_str(&format!(".global {name}\n"));
+            externals.push_str(&binding(
+                name,
+                symbol.address,
+                symbol.kind == AbsoluteSymbolKind::Thumb,
+            ));
+        } else {
+            return Err(format!("unsupported external symbol: {name}"));
+        }
+    }
+    Ok(externals)
 }
 fn unit_slice(root: &str, unit: &TranslationUnit, owner: u32, object: &str) -> Result<String> {
     let symbol = format!("Func_{owner:08x}");
@@ -747,6 +811,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
         compiled[index] = Some(module);
     }
     let mut unit_compiles = Vec::new();
+    let mut unit_imports = Vec::new();
     for unit in declared_units {
         let mixed = !unit.exact();
         let work = if mixed {
@@ -813,6 +878,13 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
                 compiled[index] = Some(base.clone());
                 break;
             }
+        }
+        if !mixed {
+            unit_imports.push(UnitImports {
+                unit: unit.id.clone(),
+                symbols: unit.canonical_symbols()?,
+                undefined: base.undefined_names.clone(),
+            });
         }
         let exact = unit.exact_owner_count();
         let retained = unit.owners.len() - exact;
@@ -884,10 +956,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     }
     let symbols_source = output.join("externals.s");
     let symbols_object = output.join("externals.o");
-    let mut externals = ".syntax unified\n.thumb\n".to_string();
-    for name in &undefined {
-        externals.push_str(&external_symbol_assembly(name, CALL_VIA_BASE)?);
-    }
+    let externals = externals_assembly(&undefined, &unit_import_bindings(&unit_imports)?)?;
     write_file(&symbols_source, externals.as_bytes())?;
     run(
         &crate::compiler::routing::assembly_command(&text(&symbols_source), &text(&symbols_object)),
@@ -1131,6 +1200,93 @@ mod tests {
         );
         assert!(function_name("Func_0801c0c8"));
         assert!(!function_name("Func_0801C0C8"));
+    }
+    fn imports(
+        unit: &str,
+        symbols: &[(&str, u64, AbsoluteSymbolKind)],
+        undefined: &[&str],
+    ) -> UnitImports {
+        UnitImports {
+            unit: unit.into(),
+            symbols: symbols
+                .iter()
+                .map(|(name, address, kind)| {
+                    (
+                        (*name).to_string(),
+                        AbsoluteSymbol {
+                            address: *address,
+                            kind: *kind,
+                        },
+                    )
+                })
+                .collect(),
+            undefined: undefined.iter().map(|name| (*name).to_string()).collect(),
+        }
+    }
+    #[test]
+    fn production_link_binds_division_calls_where_their_units_place_them() {
+        use AbsoluteSymbolKind::{Data, Thumb};
+        let units = [
+            imports(
+                "divide",
+                &[
+                    ("__divsi3", 0x0800_22ec, Thumb),
+                    ("__modsi3", 0x0800_22fc, Thumb),
+                    ("Func_080a17c4", 0x0800_0000, Thumb),
+                    ("gUnused", 0x0300_0000, Data),
+                ],
+                &["Func_080a17c4", "__divsi3", "__modsi3"],
+            ),
+            imports(
+                "divide-again",
+                &[("__divsi3", 0x0800_22ec, Thumb)],
+                &["__divsi3"],
+            ),
+        ];
+        let bindings = unit_import_bindings(&units).unwrap();
+        // Address-encoded names keep their encoding, and a symbol no object
+        // imports binds nothing.
+        assert_eq!(
+            bindings.keys().collect::<Vec<_>>(),
+            ["__divsi3", "__modsi3"]
+        );
+        let undefined = ["Func_080a17c4", "__divsi3", "__modsi3", "_call_via_r3"].map(String::from);
+        let assembly = externals_assembly(&undefined, &bindings).unwrap();
+        assert_eq!(
+            assembly,
+            ".syntax unified\n.thumb\n\
+             .global Func_080a17c4\n.thumb_set Func_080a17c4, 0x080a17c4\n\
+             .global __divsi3\n.thumb_set __divsi3, 0x080022ec\n\
+             .global __modsi3\n.thumb_set __modsi3, 0x080022fc\n\
+             .global _call_via_r3\n.thumb_set _call_via_r3, 0x080072f0\n"
+        );
+        let data = unit_import_bindings(&[imports(
+            "table",
+            &[("gTable", 0x0803_7250, Data)],
+            &["gTable"],
+        )])
+        .unwrap();
+        assert!(externals_assembly(&["gTable".into()], &data)
+            .unwrap()
+            .ends_with(".global gTable\n.set gTable, 0x08037250\n"));
+    }
+    #[test]
+    fn production_link_refuses_unplaced_and_conflicting_imports() {
+        use AbsoluteSymbolKind::Thumb;
+        assert_eq!(
+            externals_assembly(&["__divsi3".into()], &BTreeMap::new()).unwrap_err(),
+            "unsupported external symbol: __divsi3"
+        );
+        let undeclared = unit_import_bindings(&[imports("plain", &[], &["__udivsi3"])]).unwrap();
+        assert!(externals_assembly(&["__udivsi3".into()], &undeclared).is_err());
+        let conflict = unit_import_bindings(&[
+            imports("first", &[("__modsi3", 0x0800_22fc, Thumb)], &["__modsi3"]),
+            imports("second", &[("__modsi3", 0x0800_2304, Thumb)], &["__modsi3"]),
+        ]);
+        assert_eq!(
+            conflict.unwrap_err(),
+            "__modsi3: units first and second bind it to different places"
+        );
     }
     #[test]
     fn linked_function_manifest_uses_stable_module_evidence() {

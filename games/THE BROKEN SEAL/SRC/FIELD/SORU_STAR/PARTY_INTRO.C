@@ -120,7 +120,7 @@ extern u8 Data_00001076[];
 extern u8 Data_03001ebc[];
 extern u8 Data_000010b0[];
 extern u8 Data_000010b2[];
-extern u8 Data_000010b6[];
+extern u8 LinkedMessage_AlexAsksForStars;
 extern u8 Data_0000200a[];
 extern u8 Data_00004009[];
 extern u8 Data_00008009[];
@@ -1495,15 +1495,6 @@ static __inline__ s32 Value1(s32 (*f)(), s32 a0)
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
-static __inline__ void Call1_02001d04(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 static __inline__ s32 Value0(s32 (*f)())
 {
     return f();
@@ -2176,15 +2167,17 @@ void Func_0200178c(void)
     Func_020066e6(1, 1);
 }
 
+static __inline__ void SetFlagBits(u8 *flags, u8 bits)
+{
+    *flags |= bits;
+}
+
 void FieldScene_RunActorFourteenGuestScene(void)
 {
     u32 i;
     u8 *rec;
     s32 record;
-    s32 base6_10b6;
-    s32 base5_200a;
     s32 none;
-    s32 v5;
 
     Func_0200673c(1, 3);
     Func_020066aa(10);
@@ -2200,14 +2193,12 @@ void FieldScene_RunActorFourteenGuestScene(void)
     Call3(Func_020067f0, 14, 0x5000, 10);
     Func_020067a8(14, 2);
     Func_02006716(20);
-    base6_10b6 = (s32)Data_000010b6;
-    Func_020067de(base6_10b6);
+    Func_020067de((s32)&LinkedMessage_AlexAsksForStars);
     Func_020067f6_a(14, 0);
     Call3(Func_020067a4, 10, 0x1d50000, 0x15c0000);
-    base5_200a = 0x200a;
     Func_0200673a(20);
-    Func_02005ff6(base5_200a, 10);
-    Func_02005ffe(base5_200a, 40);
+    Func_02005ff6(0x200a, 10);
+    Func_02005ffe(0x200a, 40);
     Call3(Func_020067c6, 10, 0x1fb0000, 0x15c0000);
     Func_020067f6_b(1, 2);
     Func_02006764(40);
@@ -2217,21 +2208,17 @@ void FieldScene_RunActorFourteenGuestScene(void)
     Call3(Func_020067ec_b, 1, 0x185, 0x1d4);
     Call3(Func_02006880, 1, 0xd000, 60);
     Func_02006054(1, 20);
-    Func_02006742((base6_10b6 + 4), 1, 10);
+    Func_02006742((s32)&LinkedMessage_AlexAsksForStars + 4, 1, 10);
     Call3(Func_020067e8, 1, 0x8000, 0x4000);
     rec = Value1(Func_020067e6, 1);
     rec[90] &= 254;
     none = 0;
     Call3(Func_0200683e_a, 1, 0x178, 0x1d6);
     Func_020067e4(30);
-    {
-        u8 value = *(volatile u8 *)&rec[90];
-
-        rec[90] = (u8)(value | 1);
-    }
+    SetFlagBits(&rec[90], 1);
     Func_02006874(14, 4);
     Func_020067fc(10);
-    Func_020068c2((base6_10b6 + 5));
+    Func_020068c2((s32)&LinkedMessage_AlexAsksForStars + 5);
     Func_020060be(14, 20);
     Call3(Func_0200690c, 1, 0x101, 60);
     Func_0200689c(14, 3);
@@ -2245,12 +2232,10 @@ void FieldScene_RunActorFourteenGuestScene(void)
     Func_020067c8(record, 0);
     rec = Value1(Func_0200688e, 14);
     rec[85] = none;
-    v5 = 0;
     Func_020069f6(220);
     for (i = 0; i != 30; i++) {
-        *(volatile s32 *)((s32)rec + 12) += 0x10000;
+        *(s32 *)(rec + 12) += 0x10000;
         Func_0200688a(1);
-        v5 = i;
     }
     rec[85] = 5;
     Func_0200692a(1, 2);
@@ -2283,28 +2268,24 @@ void FieldScene_RunActorFourteenGuestScene(void)
     Call3(Func_02006a6a, 1, 0xe000, 10);
     Func_02006a22(1, 2);
     if (Value2(Func_020069b2, 1, 0) != 0) {
-        s32 code;
-
         Func_0200699c(10);
         Value2(Func_02006a24_a, 14, 4);
-        do {
-            code = 0x10c3;
-        } while (0);
-        for (;;) {
-            Call1_02001d04(Func_02006ab4, code);
-            Value2(Func_02006ac4, 14, 0);
-            if (Value2(Func_02006a24_b, 1, 0) != 0)
-                break;
-            Func_020069e0_b(20);
-            Value2(Func_02006a68, 14, 4);
-            Func_020069ee(10);
-            code = 0x10c6;
+        Call1(Func_02006ab4, 0x10c3);
+        Value2(Func_02006ac4, 14, 0);
+        if (Value2(Func_02006a24_b, 1, 0) == 0) {
+            do {
+                Func_020069e0_b(20);
+                Value2(Func_02006a68, 14, 4);
+                Func_020069ee(10);
+                Call1(Func_02006ab4, 0x10c6);
+                Value2(Func_02006ac4, 14, 0);
+            } while (Value2(Func_02006a24_b, 1, 0) == 0);
         }
     }
     Func_02006a0e(30);
     Func_02006a96(14, 3);
     Func_02006a1c(20);
-    Call1_02001d04(Func_02006ae2, 0x10c4);
+    Call1(Func_02006ae2, 0x10c4);
     Func_020062de(14, 30);
     Func_02006ab2(14, 3);
     Func_02006a38(10);
@@ -2324,27 +2305,23 @@ void FieldScene_RunActorFourteenGuestScene(void)
     Func_02006b3a_a(1, 3);
     Func_02006aa8(20);
     rec = Value1(Func_02006ad6, 1);
-    {
-        u8 value = *(volatile u8 *)&rec[90];
-
-        rec[90] = (u8)(value | 1);
-    }
-    *(volatile s32 *)((s32)rec + 48) = 0x30000;
-    *(volatile s32 *)((s32)rec + 52) = 0x20000;
+    SetFlagBits(&rec[90], 1);
+    *(s32 *)(rec + 48) = 0x30000;
+    *(s32 *)(rec + 52) = 0x20000;
     Func_02006c52(153);
-    *(volatile s32 *)((s32)rec + 40) = 0x60000;
+    *(s32 *)(rec + 40) = 0x60000;
     Func_02006b54(1, 7);
     Call3(Func_02006b3a_b, 1, 0x156, 0x1d6);
     Func_02006b6a(1, 1);
     Func_02006af8(30);
     Func_02006c7e(153);
-    *(volatile s32 *)((s32)rec + 40) = 0x60000;
+    *(s32 *)(rec + 40) = 0x60000;
     Func_02006b80(1, 7);
     Call3(Func_02006b66, 1, 0x138, 0x1d6);
     Func_02006b96(1, 1);
     Func_02006b24(30);
     Func_02006caa(153);
-    *(volatile s32 *)((s32)rec + 40) = 0x60000;
+    *(s32 *)(rec + 40) = 0x60000;
     Func_02006bac(1, 7);
     Call3(Func_02006b92_b, 1, 0x116, 0x1e0);
     Func_02006bc2(1, 1);

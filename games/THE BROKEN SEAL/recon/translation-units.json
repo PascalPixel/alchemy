@@ -34406,6 +34406,10 @@
         "Func_02008e80": {
           "address": "0x0200cb0c",
           "kind": "thumb"
+        },
+        "LinkedMessage_AlexAsksForStars": {
+          "address": "0x000010b6",
+          "kind": "data"
         }
       },
       "local_symbols": [],

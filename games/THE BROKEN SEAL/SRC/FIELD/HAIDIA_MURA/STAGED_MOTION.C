@@ -232,6 +232,7 @@
 #define MapStagedScene_SelectQuaternaryData Func_02000aa4
 
 #include "STAGED_ACTOR.H"
+#include "FIELD_EVENT.H"
 
 
 /*
@@ -862,7 +863,7 @@ void Func_020099d0();
 void Func_020099fa();
 void Func_02009a52();
 void Func_02009a6a();
-u8 *Func_02009a9e();
+struct FieldActor *Func_02009a9e();
 void Func_02009aac();
 void Func_02009abe();
 void Func_02009ae4();
@@ -2699,50 +2700,44 @@ void FieldScene_RunLargeStagingSequence(void)
     extern u8 Data_03001ebc[];
 
     u32 i;
-    s32 rec;
+    s32 rec = 0;
     s32 rec3;
     u8 *rec8;
     u8 *record;
-    s32 none;
     s32 none2;
     s32 base7_200e590;
     s32 base5_ee8;
     s32 p1;
     s32 k;
     s32 p2;
+    s32 facing;
 
     rec3 = Value1_020034c8(Func_020094c0, 0);
     rec8 = Value1_020034c8(Func_020094c8, 14);
     Func_020094a6();
     Call4(Func_020095e0, -1, -1, -1, 0);
     Func_0200938e(1);
-    rec = 0;
-    {
-        u8 *slot = (u8 *)(Func_020095fa() + 85);
-
-        none = 0;
-        *slot = rec;
-    }
+    *(u8 *)(Func_020095fa() + 85) = 0;
     Func_020093a2(1);
     Call6(Func_02009466, 49, 53, 8, 4, 20, 50);
     Call6(Func_02009472, 2, 102, 84, 41, 2, 1);
     Call6(Func_02009482, 1, 102, 83, 41, 1, 1);
     Call6(Func_02009492, 0, 103, 82, 42, 1, 1);
     rec = Func_02009548(11);
-    *(u8 *)(rec + 85) = none;
+    *(u8 *)(rec + 85) = 0;
     k = 0x1840000;
     *(s32 *)(rec + 12) = 0xa00000;
     *(s32 *)(rec + 16) = 0x3480000;
     *(s32 *)(rec + 8) = k;
     Func_020094d4(rec, 0);
     rec = Func_02009572(12);
-    *(u8 *)(rec + 85) = none;
+    *(u8 *)(rec + 85) = 0;
     *(s32 *)(rec + 12) = 0xa00000;
     *(s32 *)(rec + 16) = 0x34c0000;
     *(s32 *)(rec + 8) = k;
     Func_020094f6(rec, 0);
     rec = Func_02009594(13);
-    *(u8 *)(rec + 85) = none;
+    *(u8 *)(rec + 85) = 0;
     *(s32 *)(rec + 16) = 0x3500000;
     *(s32 *)(rec + 12) = 0xa00000;
     *(s32 *)(rec + 8) = k;
@@ -2768,7 +2763,7 @@ void FieldScene_RunLargeStagingSequence(void)
     Call3(Func_0200963c, 5, 0xb333, 0x5999);
     Call3(Func_02009678, 5, 0x1a4, 0x42c);
     Func_02009794();
-    *(s32 *)(*(u8 *volatile *)Data_03001ebc + 0x1c8) = 60;
+    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c8) = 60;
     Func_02009778();
     Func_020096ae(5);
     Call3(Func_02009674, 5, 0x10000, 0x8000);
@@ -2861,12 +2856,9 @@ void FieldScene_RunLargeStagingSequence(void)
     *(s32 *)((s32)rec8 + 8) = 0x1ac0000;
     *(s32 *)((s32)rec8 + 12) = 0xd00000;
     *(s32 *)((s32)rec8 + 16) = 0x2480000;
-    {
-        s32 shown = 0x8000;
-
-        *(s32 *)((s32)rec8 + 108) = 0x200d75d;
-        *(u16 *)((s32)rec8 + 6) = shown;
-    }
+    facing = 0x8000;
+    *(u16 *)((s32)rec8 + 6) = facing;
+    *(s32 *)((s32)rec8 + 108) = 0x200d75d;
     Func_0200994c(4);
     Call3(Func_02009992, 14, 0x20000, 0x20000);
     Call4(Func_020098d2, (s32)rec8, 0x1980000, 0xd00000, 0x2480000);
@@ -2878,14 +2870,9 @@ void FieldScene_RunLargeStagingSequence(void)
     Call3(Func_02009aac, 9, 0x17a, 0x248);
     Func_02009a52(20);
     Call3(Func_02009b44, 0x2005, 0, 10);
-    *(volatile s32 *)((s32)rec8 + 108) = none2;
+    *(s32 *)((s32)rec8 + 108) = none2;
     Func_02009b70(1, 2);
-    {
-        u8 *record = Func_02009a9e(1);
-        u8 value = *(volatile u8 *)&record[35];
-
-        record[35] = (u8)(value | 1);
-    }
+    Func_02009a9e(1)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
     Func_02009966(p1);
     Func_0200996c(p2);
     Func_02009962(1);
@@ -2929,7 +2916,7 @@ void FieldScene_RunLargeStagingSequence(void)
     Func_02009c80(1, 2);
     Func_02009bd6_a(10);
     Func_02009cd8_a(5, 0, 0);
-    Func_02009ce2(1, 0x8000, 40);
+    Func_02009ce2(1, facing, 40);
     Call11(Func_02009d0e, 1, 1, 2, 25, 2, 5, 10, 14, 4, 14, none2);
     Func_02009c14(40);
     Call2(Func_02009d36, 5, 0x102);
@@ -3015,7 +3002,7 @@ void FieldScene_RunLargeStagingSequence(void)
     Call3(Func_02009f74, 5, 0x1c2, 0x2ee);
     Call3(Func_02009f80, 1, 0x1c2, 0x2ee);
     Func_02009f1e(60);
-    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c8)) = 60;
+    *(s32 *)((*(u8 **)Data_03001ebc + 0x1c8)) = 60;
     Func_0200a088();
     Func_0200a094();
     Func_0200a082(12);

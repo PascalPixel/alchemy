@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "FIELD_EFFECT.H"
 
 #define SetEffectRecordMode Func_02000030
 #define NULL ((void *)0)
@@ -774,36 +775,24 @@ reject:
     return 0;
 }
 
-void Func_020013b0(s32 a0)
+void Func_020013b0(union FieldObject *object)
 {
-    extern u8 Data_02000240[];
-    extern u8 Data_03001ebc[];
+    s32 velocity_x;
+    s32 velocity_y;
+    s32 velocity_z;
 
-    s32 Func_02001268();
-
-    s32 v68;
-    s32 v72;
-    s32 v76;
-    s32 step;
-    s32 t;
-
-    v68 = *(s32 *)(a0 + 68);
-    t = *(s32 *)(a0 + 8);
-    v72 = *(s32 *)(a0 + 72);
-    *(s32 *)(a0 + 8) = t + v68;
-    t = *(s32 *)(a0 + 12);
-    v76 = *(s32 *)(a0 + 76);
-    *(s32 *)(a0 + 12) = t + v72;
-    *(s32 *)(a0 + 16) += v76;
-    step = Value2(Func_02003e08, v68, 10);
-    *(s32 *)(a0 + 68) = v68 - step;
-    step = Func_02003e14(v72, 3);
-    *(s32 *)(a0 + 72) = v72 - step;
-    step = Func_02003e22(v76, 10);
-    *(volatile s32 *)(a0 + 76) = v76 - step;
-    *(volatile s32 *)(a0 + 24) += *(volatile s32 *)(a0 + 48);
-    *(volatile s32 *)(a0 + 28) += *(s32 *)(a0 + 52);
-    *(u16 *)(*(volatile s32 *)(a0 + 80) + 30) += *(u16 *)(a0 + 100);
+    object->effect.x += object->effect.velocity_x;
+    object->effect.y += object->effect.velocity_y;
+    object->effect.z += object->effect.velocity_z;
+    velocity_x = object->effect.velocity_x;
+    velocity_y = object->effect.velocity_y;
+    velocity_z = object->effect.velocity_z;
+    object->effect.velocity_x = velocity_x - Func_02003e08(velocity_x, 10);
+    object->effect.velocity_y = velocity_y - Func_02003e14(velocity_y, 3);
+    object->effect.velocity_z = velocity_z - Func_02003e22(velocity_z, 10);
+    object->effect.scale_x += object->effect.scale_rate_x;
+    object->effect.scale_y += object->effect.scale_rate_y;
+    object->effect.sprite->rotation += object->effect.spin;
 }
 
 s32 SceneActor_ApplyCounterLowBitsAsMode(u8 *actor)

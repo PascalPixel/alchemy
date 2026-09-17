@@ -1482,131 +1482,80 @@ do2:
 
 void UpdateStatueLight1(void)
 {
-    volatile s32 *st;
-    s32 s;
-    s32 t1 = 0x10000;
-    s32 t2 = 0x10000;
-    s32 t3 = 0x10000;
-    s32 m1 = -1;
-    s32 m2 = -1;
-    s32 m3 = 0xe666;
-
     if ((Func_02003726() & 3) != 0) {
-        u16 v = Data_0200ade4;
-        switch (v) {
-        case 0: {
-            s32 a;
-            s32 b;
+        switch (Data_0200ade4) {
+        case 0:
             Func_020038ca(0xbb);
-            a = 1;
-            b = 5;
-            Func_0200377e_a(0x2e, 0x3b, 30, 0x21, a, b);
+            Call6(Func_0200377e_a, 0x2e, 0x3b, 30, 0x21, 1, 5);
             break;
-        }
         case 1:
-            Func_02003790(0x2e, 0x3b, 30, 0x21, v, v);
-            Func_02003808(0x2e, 0x3b, 30, 0x22, v, 5);
+            Call6(Func_02003790, 0x2e, 0x3b, 30, 0x21, 1, 1);
+            Call6(Func_02003808, 0x2e, 0x3b, 30, 0x22, 1, 5);
             break;
         case 2:
-            v = 1;
-            Func_020037b0(0x2e, 0x3b, 30, 0x22, v, v);
-            Func_02003808(0x2e, 0x3b, 30, 0x23, v, 5);
+            Call6(Func_020037b0, 0x2e, 0x3b, 30, 0x22, 1, 1);
+            Call6(Func_02003808, 0x2e, 0x3b, 30, 0x23, 1, 5);
             break;
         case 3:
-            v = 1;
-            Func_020037d0(0x2e, 0x3b, 30, 0x23, v, v);
-            Func_02003808(0x2e, 0x3b, 30, 0x24, v, 5);
+            Call6(Func_020037d0, 0x2e, 0x3b, 30, 0x23, 1, 1);
+            Call6(Func_02003808, 0x2e, 0x3b, 30, 0x24, 1, 5);
             break;
-        case 4: {
-            s32 val = 2;
-            volatile s32 *p = &Data_0200ade8;
-            *p = val;
-        }
-            v = 1;
-            Func_020037f6(0x2e, 0x3b, 30, 0x24, v, v);
-            Func_02003808(0x2e, 0x3b, 30, 0x25, v, 5);
+        case 4:
+            Data_0200ade8 = 2;
+            Call6(Func_020037f6, 0x2e, 0x3b, 30, 0x24, 1, 1);
+            Call6(Func_02003808, 0x2e, 0x3b, 30, 0x25, 1, 5);
             break;
-        case 0x50: {
-            s32 a = 1;
-            s32 b = 10;
-            Func_0200381e(0x2e, 0x31, 30, 0x21, a, b);
+        case 0x50:
+            Call6(Func_0200381e, 0x2e, 0x31, 30, 0x21, 1, 10);
             break;
         }
-        }
-        {
-            u16 *c = &Data_0200ade4;
-            u32 w;
-            *c = *c + 1;
-            w = *c;
-            if (w > ((u32)(Func_0200381a() * 40) >> 16) + 90) {
-                *c = 0;
-            }
+        Data_0200ade4++;
+        if (Data_0200ade4 > ((u32)(Func_0200381a() * 40) >> 16) + 90) {
+            Data_0200ade4 = 0;
         }
     }
-    st = &Data_0200ade8;
-    s = *st;
-    if (s != 0) {
-        if (s == 2) {
-            Func_02003870(t1, t2, t3);
-        } else if (s == 1) {
-            Func_02003890(m1, m2, m3);
+    if (Data_0200ade8 != 0) {
+        if (Data_0200ade8 == 2) {
+            Call3(Func_02003870, 0x10000, 0x10000, 0x10000);
+        } else if (Data_0200ade8 == 1) {
+            Call3(Func_02003890, -1, -1, 0xe666);
         }
-        *st = *st - 1;
+        Data_0200ade8--;
     }
 }
 
 void UpdateStatueLight2(void)
 {
     if ((Func_02003882() & 3) != 0) {
-        u16 v = Data_0200addc;
-        switch (v) {
-        case 0: {
-            s32 a;
-            s32 b;
+        switch (Data_0200addc) {
+        case 0:
             Func_02003a26(0xbb);
-            a = 1;
-            b = 5;
-            Func_020038da(0x2f, 0x3b, 42, 0x21, a, b);
+            Call6(Func_020038da, 0x2f, 0x3b, 42, 0x21, 1, 5);
             break;
-        }
         case 1:
-            Func_020038ec(0x2f, 0x3b, 42, 0x21, v, v);
-            Func_02003964(0x2f, 0x3b, 42, 0x22, v, 5);
+            Call6(Func_020038ec, 0x2f, 0x3b, 42, 0x21, 1, 1);
+            Call6(Func_02003964, 0x2f, 0x3b, 42, 0x22, 1, 5);
             break;
         case 2:
-            v = 1;
-            Func_0200390c(0x2f, 0x3b, 42, 0x22, v, v);
-            Func_02003964(0x2f, 0x3b, 42, 0x23, v, 5);
+            Call6(Func_0200390c, 0x2f, 0x3b, 42, 0x22, 1, 1);
+            Call6(Func_02003964, 0x2f, 0x3b, 42, 0x23, 1, 5);
             break;
         case 3:
-            v = 1;
-            Func_0200392c(0x2f, 0x3b, 42, 0x23, v, v);
-            Func_02003964(0x2f, 0x3b, 42, 0x24, v, 5);
+            Call6(Func_0200392c, 0x2f, 0x3b, 42, 0x23, 1, 1);
+            Call6(Func_02003964, 0x2f, 0x3b, 42, 0x24, 1, 5);
             break;
-        case 4: {
-            s32 val = 2;
-            s32 *p = &Data_0200ade8;
-            *p = val;
-        }
-            v = 1;
-            Func_02003952(0x2f, 0x3b, 42, 0x24, v, v);
-            Func_02003964(0x2f, 0x3b, 42, 0x25, v, 5);
+        case 4:
+            Data_0200ade8 = 2;
+            Call6(Func_02003952, 0x2f, 0x3b, 42, 0x24, 1, 1);
+            Call6(Func_02003964, 0x2f, 0x3b, 42, 0x25, 1, 5);
             break;
-        case 0x5a: {
-            s32 a = 1;
-            s32 b = 10;
-            Func_0200397a(0x2f, 0x31, 42, 0x21, a, b);
+        case 0x5a:
+            Call6(Func_0200397a, 0x2f, 0x31, 42, 0x21, 1, 10);
             break;
         }
-        }
-        {
-            u16 *c = &Data_0200addc;
-            u32 w;
-            *c = *c + 1;
-            w = *c;
-            if (w > ((u32)(Func_02003976() * 40) >> 16) + 100) {
-                *c = 0;
-            }
+        Data_0200addc++;
+        if (Data_0200addc > ((u32)(Func_02003976() * 40) >> 16) + 100) {
+            Data_0200addc = 0;
         }
     }
 }
@@ -1614,55 +1563,35 @@ void UpdateStatueLight2(void)
 void UpdateStatueLight3(void)
 {
     if ((Func_020039a6() & 3) != 0) {
-        u16 v = Data_0200ade0;
-        switch (v) {
-        case 0: {
-            s32 a;
-            s32 b;
+        switch (Data_0200ade0) {
+        case 0:
             Func_02003b4a(0xbb);
-            a = 1;
-            b = 5;
-            Func_020039fe(0x30, 0x3b, 31, 0x24, a, b);
+            Call6(Func_020039fe, 0x30, 0x3b, 31, 0x24, 1, 5);
             break;
-        }
         case 1:
-            Func_02003a10(0x30, 0x3b, 31, 0x24, v, v);
-            Func_02003a88(0x30, 0x3b, 31, 0x25, v, 5);
+            Call6(Func_02003a10, 0x30, 0x3b, 31, 0x24, 1, 1);
+            Call6(Func_02003a88, 0x30, 0x3b, 31, 0x25, 1, 5);
             break;
         case 2:
-            v = 1;
-            Func_02003a30(0x30, 0x3b, 31, 0x25, v, v);
-            Func_02003a88(0x30, 0x3b, 31, 0x26, v, 5);
+            Call6(Func_02003a30, 0x30, 0x3b, 31, 0x25, 1, 1);
+            Call6(Func_02003a88, 0x30, 0x3b, 31, 0x26, 1, 5);
             break;
         case 3:
-            v = 1;
-            Func_02003a50(0x30, 0x3b, 31, 0x26, v, v);
-            Func_02003a88(0x30, 0x3b, 31, 0x27, v, 5);
+            Call6(Func_02003a50, 0x30, 0x3b, 31, 0x26, 1, 1);
+            Call6(Func_02003a88, 0x30, 0x3b, 31, 0x27, 1, 5);
             break;
-        case 4: {
-            s32 val = 2;
-            s32 *p = &Data_0200ade8;
-            *p = val;
-        }
-            v = 1;
-            Func_02003a76(0x30, 0x3b, 31, 0x27, v, v);
-            Func_02003a88(0x30, 0x3b, 31, 0x28, v, 5);
+        case 4:
+            Data_0200ade8 = 2;
+            Call6(Func_02003a76, 0x30, 0x3b, 31, 0x27, 1, 1);
+            Call6(Func_02003a88, 0x30, 0x3b, 31, 0x28, 1, 5);
             break;
-        case 0x5f: {
-            s32 a = 1;
-            s32 b = 10;
-            Func_02003a9e(0x30, 0x31, 31, 0x24, a, b);
+        case 0x5f:
+            Call6(Func_02003a9e, 0x30, 0x31, 31, 0x24, 1, 10);
             break;
         }
-        }
-        {
-            u16 *c = &Data_0200ade0;
-            u32 w;
-            *c = *c + 1;
-            w = *c;
-            if (w > ((u32)(Func_02003a9a() * 40) >> 16) + 105) {
-                *c = 0;
-            }
+        Data_0200ade0++;
+        if (Data_0200ade0 > ((u32)(Func_02003a9a() * 40) >> 16) + 105) {
+            Data_0200ade0 = 0;
         }
     }
 }
@@ -1670,55 +1599,35 @@ void UpdateStatueLight3(void)
 void UpdateStatueLight4(void)
 {
     if ((Func_02003aca() & 3) != 0) {
-        u16 v = Data_0200adec;
-        switch (v) {
-        case 0: {
-            s32 a;
-            s32 b;
+        switch (Data_0200adec) {
+        case 0:
             Func_02003c6e(0xbb);
-            a = 1;
-            b = 5;
-            Func_02003b22(0x2e, 0x3b, 41, 0x24, a, b);
+            Call6(Func_02003b22, 0x2e, 0x3b, 41, 0x24, 1, 5);
             break;
-        }
         case 1:
-            Func_02003b34(0x2e, 0x3b, 41, 0x24, v, v);
-            Func_02003bac(0x2e, 0x3b, 41, 0x25, v, 5);
+            Call6(Func_02003b34, 0x2e, 0x3b, 41, 0x24, 1, 1);
+            Call6(Func_02003bac, 0x2e, 0x3b, 41, 0x25, 1, 5);
             break;
         case 2:
-            v = 1;
-            Func_02003b54(0x2e, 0x3b, 41, 0x25, v, v);
-            Func_02003bac(0x2e, 0x3b, 41, 0x26, v, 5);
+            Call6(Func_02003b54, 0x2e, 0x3b, 41, 0x25, 1, 1);
+            Call6(Func_02003bac, 0x2e, 0x3b, 41, 0x26, 1, 5);
             break;
         case 3:
-            v = 1;
-            Func_02003b74(0x2e, 0x3b, 41, 0x26, v, v);
-            Func_02003bac(0x2e, 0x3b, 41, 0x27, v, 5);
+            Call6(Func_02003b74, 0x2e, 0x3b, 41, 0x26, 1, 1);
+            Call6(Func_02003bac, 0x2e, 0x3b, 41, 0x27, 1, 5);
             break;
-        case 4: {
-            s32 val = 2;
-            s32 *p = &Data_0200ade8;
-            *p = val;
-        }
-            v = 1;
-            Func_02003b9a(0x2e, 0x3b, 41, 0x27, v, v);
-            Func_02003bac(0x2e, 0x3b, 41, 0x28, v, 5);
+        case 4:
+            Data_0200ade8 = 2;
+            Call6(Func_02003b9a, 0x2e, 0x3b, 41, 0x27, 1, 1);
+            Call6(Func_02003bac, 0x2e, 0x3b, 41, 0x28, 1, 5);
             break;
-        case 0x55: {
-            s32 a = 1;
-            s32 b = 10;
-            Func_02003bc2(0x2e, 0x31, 41, 0x24, a, b);
+        case 0x55:
+            Call6(Func_02003bc2, 0x2e, 0x31, 41, 0x24, 1, 10);
             break;
         }
-        }
-        {
-            u16 *c = &Data_0200adec;
-            u32 w;
-            *c = *c + 1;
-            w = *c;
-            if (w > ((u32)(Func_02003bbe() * 40) >> 16) + 95) {
-                *c = 0;
-            }
+        Data_0200adec++;
+        if (Data_0200adec > ((u32)(Func_02003bbe() * 40) >> 16) + 95) {
+            Data_0200adec = 0;
         }
     }
 }

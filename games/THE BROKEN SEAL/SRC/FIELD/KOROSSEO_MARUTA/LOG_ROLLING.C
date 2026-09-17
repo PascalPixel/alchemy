@@ -708,7 +708,6 @@ void Func_02006a42_arrival();
 #define FieldScene_RunMultiPhaseActorSequence Func_02001474
 
 extern u8 StageSceneWork[];
-extern u8 Data_00003333[];
 extern u8 Data_00000091[];
 extern u8 Data_00002073[];
 extern u8 Data_02000434[];
@@ -1495,149 +1494,119 @@ s32 ColossoLogRollingStage_CheckPathClearance(s32 x, s32 y)
 void FieldScene_RunEarlySequence(void)
 {
     extern u8 Data_02000240[];
-    s32 rec4;
-    s32 rec2;
-    s32 base5_2000434;
+    extern u16 Data_0200cc38[];
+    s32 leader;
+    s32 log_actor;
+    u8 *state;
     s32 tile;
-    s32 v3;
-    s32 v7;
-    s32 v9;
-    s32 v5;
-    s32 base5_3333;
-    s32 slot16;
-    s32 slot12;
+    s32 x;
+    s32 steps;
+    s32 next_x;
+    s32 column;
+    s32 acceleration;
+    s32 direction;
+    s32 cell_step;
     s32 record;
-    s32 p5;
-    s32 p6;
-    s32 *q;
-    u8 *base0;
-    u8 *tbl;
-    s32 off;
-    s32 t;
-    s32 a8;
-    volatile s32 *fl;
-    s32 slot20[3];
+    s32 selected_actor;
+    s32 z;
+    volatile s32 *keys;
+    s32 cell_center[3];
 
-    base0 = Data_02000240;
-    base5_2000434 = (s32)(base0 + 500);
-    rec4 = Value1(Func_020051a0_head, *(volatile s32 *)base5_2000434);
-    rec2 = Value1(Func_020051a8_head, 31);
-    tbl = (u8 *)0x0200cc38;
-    v9 = 0;
-    off = (s32)(((u32)*(volatile u16 *)(rec4 + 6) >> 13) << 1);
-    tile = *(volatile u16 *)(tbl + off);
-    a8 = *(volatile s32 *)(rec4 + 8);
-    p5 = *(volatile s32 *)base5_2000434;
-    q = slot20;
-    q[0] = ((a8 & -0x100000) + 0x80000);
-    q[1] = *(volatile s32 *)(rec4 + 12);
-    q[2] = ((*(volatile s32 *)(rec4 + 16) & -0x100000) + 0x80000);
-    Call3(Func_02005036_head, 0x100000, tile, (s32)q);
-    v7 = *(volatile s32 *)(rec2 + 8);
-    v3 = q[0] - v7;
-    p6 = *(volatile s32 *)(rec2 + 16);
-    if (v3 < 0) {
-        v3 = v7 - q[0];
-        if (v3 > 0x80000) {
-            goto L_020009ea;
+    state = Data_02000240;
+    leader = Value1(Func_020051a0_head, *(s32 *)(state + 500));
+    log_actor = Value1(Func_020051a8_head, 31);
+    steps = 0;
+    tile = Data_0200cc38[*(u16 *)(leader + 6) >> 13];
+    selected_actor = *(s32 *)(state + 500);
+    cell_center[0] = (*(s32 *)(leader + 8) & -0x100000) + 0x80000;
+    cell_center[1] = *(s32 *)(leader + 12);
+    cell_center[2] = (*(s32 *)(leader + 16) & -0x100000) + 0x80000;
+    Call3(Func_02005036_head, 0x100000, tile, (s32)cell_center);
+    x = *(s32 *)(log_actor + 8);
+    z = *(s32 *)(log_actor + 16);
+    if ((cell_center[0] - x >= 0 ? cell_center[0] - x : x - cell_center[0]) > 0x80000
+        || (cell_center[2] - z >= 0 ? cell_center[2] - z : z - cell_center[2]) > 0x200000) {
+        goto far;
+    }
+    keys = (volatile s32 *)0x03001ae8;
+    if ((*keys & 32) != 0) {
+        direction = 2;
+        cell_step = -8;
+        for (;;) {
+            next_x = x - 0x100000;
+            if (Value2(Func_02000f3a_head, next_x, z) != 0) {
+                goto moved;
+            }
+            steps++;
+            x = next_x;
         }
-        t = q[2];
+    }
+    if ((*keys & 16) == 0) {
+        return;
+    }
+    direction = 3;
+    cell_step = 8;
+    for (;;) {
+        next_x = x + 0x100000;
+        if (Value2(Func_02000f68_head, next_x, z) != 0) {
+            goto moved;
+        }
+        steps++;
+        x = next_x;
+    }
+moved:
+    if (steps == 0) {
+        return;
+    }
+    Call6(Func_020051c0_head, 74, 8, 1, 4, *(s32 *)(log_actor + 8) >> 20, 9);
+    Call6(Func_020051d4_head, 120, 60, 8, 5, 74, 60);
+    Func_02005298_head();
+    Func_02005310_head(selected_actor, 8);
+    Func_0200529e_head(6);
+    *(s32 *)(log_actor + 48) = 0x8000;
+    acceleration = 0x3333;
+    *(s32 *)(log_actor + 52) = acceleration;
+    Value2(Func_0200519a_head, log_actor, direction);
+    Func_020051d6_head(log_actor, x, 0, z);
+    Func_020052c4_head(6);
+    Func_02005344_head(selected_actor, 2);
+    record = Value2(Func_02005154_head, 27, 0xccc);
+    Func_020051e2_head(*(s32 *)(record + 0x1e0), log_actor);
+    Call3(Func_0200531e_head, selected_actor, 0x8000, acceleration);
+    Func_0200549c_head(239);
+    Func_020051e4_head(leader, 2);
+    Func_0200522a_head(leader, ((steps * cell_step) << 16) + *(s32 *)(leader + 8), 0,
+                       *(s32 *)(leader + 16));
+    Func_02005238_head(leader);
+    Value2(Func_02005208_head, leader, 1);
+    Func_02005246_head(log_actor);
+    if (x >= 0x5300000) {
+        Call1(Func_020052f4_head, 0x369);
+        Func_020053b4_head(31, 3);
+        Func_020053a6_head(31, 18, 6);
+        Func_0200534c_head(30);
+        Func_0200523c_head(log_actor, 8);
+        Func_0200527a_head(log_actor);
+        *(u8 *)(log_actor + 35) = 2;
+        column = 84;
+        Call6(Func_020052be_head, 86, 10, 1, 2, column, 10);
+        Call6(Func_020052d0_head, 86, 9, 1, 1, column, 12);
+        Call1(Func_02005538_head, 0x120);
+        Func_0200553e_head(240);
     } else {
-        if (v3 > 0x80000) {
-            goto L_020009ea;
-        }
-        t = q[2];
+        Func_02005288_head(log_actor, 1);
+        Call1(Func_02005550_head, 0x120);
+        Func_02005556_head(213);
+        column = x >> 20;
+        Call6(Func_0200530a_head, 85, 9, 1, 4, column, 9);
+        Call6(Func_0200531c_head, 85, 9, 1, 4, column, 61);
     }
-    {
-        if ((t - p6) >= 0) {
-            if ((t - p6) > 0x200000) {
-                goto L_020009ea;
-            }
-            fl = (volatile s32 *)0x03001ae8;
-        } else {
-            if ((p6 - t) > 0x200000) {
-                goto L_020009ea;
-            }
-            fl = (volatile s32 *)0x03001ae8;
-        }
-        if ((*fl & 32) != 0) {
-            slot16 = 2;
-            slot12 = -8;
-            L_0200081c:;
-            v5 = (v7 + -0x100000);
-            if (Value2(Func_02000f3a_head, v5, p6) != 0) {
-                goto L_02000862;
-            }
-            v9 = (v9 + 1);
-            v7 = v5;
-            goto L_0200081c;
-        }
-        if ((*fl & 16) == 0) {
-            goto L_020009f2;
-        }
-        slot16 = 3;
-        slot12 = 8;
-        L_02000848:;
-        v5 = (v7 + 0x100000);
-        if (Value2(Func_02000f68_head, v5, p6) == 0) {
-            v9 = (v9 + 1);
-            v7 = v5;
-            goto L_02000848;
-        }
-        L_02000862:;
-        if (v9 == 0) {
-            goto L_020009f2;
-        }
-        Call6(Func_020051c0_head, 74, 8, 1, 4, (*(volatile s32 *)(rec2 + 8) >> 20), 9);
-        Call6(Func_020051d4_head, 120, 60, 8, 5, 74, 60);
-        Func_02005298_head();
-        Func_02005310_head(p5, 8);
-        Func_0200529e_head(6);
-        *(volatile s32 *)(rec2 + 48) = 0x8000;
-        base5_3333 = (s32)Data_00003333;
-        *(volatile s32 *)(rec2 + 52) = base5_3333;
-        Value2(Func_0200519a_head, rec2, slot16);
-        Func_020051d6_head(rec2, v7, 0, p6);
-        Func_020052c4_head(6);
-        Func_02005344_head(p5, 2);
-        record = Value2(Func_02005154_head, 27, 0xccc);
-        Func_020051e2_head(*(volatile s32 *)((record + 0x1e0)), rec2);
-        Call3(Func_0200531e_head, p5, 0x8000, base5_3333);
-        Func_0200549c_head(239);
-        Func_020051e4_head(rec4, 2);
-        Func_0200522a_head(rec4, (((v9 *slot12) << 16) + *(volatile s32 *)(rec4 + 8)), 0, *(volatile s32 *)(rec4 + 16));
-        Func_02005238_head(rec4);
-        Value2(Func_02005208_head, rec4, 1);
-        Func_02005246_head(rec2);
-        if (v7 >= 0x5300000) {
-            Call1(Func_020052f4_head, 0x369);
-            Func_020053b4_head(31, 3);
-            Func_020053a6_head(31, 18, 6);
-            Func_0200534c_head(30);
-            Func_0200523c_head(rec2, 8);
-            Func_0200527a_head(rec2);
-            *(u8 *)(rec2 + 35) = 2;
-            v5 = 84;
-            Call6(Func_020052be_head, 86, 10, 1, 2, v5, 10);
-            Call6(Func_020052d0_head, 86, 9, 1, 1, v5, 12);
-            Call1(Func_02005538_head, 0x120);
-            Func_0200553e_head(240);
-        } else {
-            Func_02005288_head(rec2, 1);
-            Call1(Func_02005550_head, 0x120);
-            Func_02005556_head(213);
-            v5 = (v7 >> 20);
-            Call6(Func_0200530a_head, 85, 9, 1, 4, v5, 9);
-            Call6(Func_0200531c_head, 85, 9, 1, 4, v5, 61);
-        }
-        Func_020053da_head(15);
-        Func_020053ee_head();
-        goto L_020009f2;
-    }
-    L_020009ea:;
+    Func_020053da_head(15);
+    Func_020053ee_head();
+    return;
+far:
     Func_02005014_head();
     Func_02000fd0_head();
-    L_020009f2:;
 }
 
 extern void Func_0200534e_set_scene_event_values(s32);
@@ -2236,28 +2205,19 @@ void Func_02006d68_motion();
 
 void FieldScene_RunFourStepActorMotion(s32 a0)
 {
-    u32 i;
-    s32 p10;
-    s32 p10b;
-    s32 p11;
-    s32 p8;
-    s32 p9;
-    s32 rec5;
-    s32 rec7;
-    s32 record;
-    s32 r10;
-    s32 v6;
-    u8 *p6;
+    s32 result;
+    s32 actor;
+    s32 x;
+    s32 y;
+    s32 raised_y;
+    s32 shifted_x;
 
     if (Data_02000240_t[225][0] == 2) {
         Func_0200499e_motion();
-        v6 = r10;
     } else {
         Func_02006b18_motion();
-        rec5 = Value2(Func_02004bb4_motion, a0, 4);
-        if (rec5 != 0) {
-            v6 = r10;
-        } else {
+        result = Value2(Func_02004bb4_motion, a0, 4);
+        if (result == 0) {
             Call1(Func_02006bde_motion, 0x20bf);
             Call2(Func_02006c32_motion, 0x30000, 0x6000);
             Call4(Func_02006c4c_motion, 0x3580000, -1, 0xa80000, 1);
@@ -2272,43 +2232,36 @@ void FieldScene_RunFourStepActorMotion(s32 a0)
             Func_02006cd4_motion();
             Call4(Func_02006cae_motion, -1, -1, -1, 0);
             Call3(Func_02006be4_motion, 0, 0x8000, 0x4000);
-            rec7 = Value1(Func_02006bda_motion, 0);
-            p8 = *(volatile s32 *)(rec7 + 12);
-            p6 = *(volatile s32 *)(rec7 + 8);
+            actor = Value1(Func_02006bda_motion, 0);
+            y = *(s32 *)(actor + 12);
+            x = *(s32 *)(actor + 8);
             Call3(Func_02006c00_motion, 0, 0x8000, 0x4000);
             Func_02006c50_motion(0, 10);
-            p9 = (0x60000 + p8);
-            Func_02006b02_motion(rec7, (s32)p6, p9, *(volatile s32 *)(rec7 + 16));
-            Func_02006b10_motion(rec7);
+            raised_y = 0x60000 + y;
+            Func_02006b02_motion(actor, x, raised_y, *(s32 *)(actor + 16));
+            Func_02006b10_motion(actor);
             Func_02006c70_motion(0, 14);
-            p10 = (0x400000 + (s32)p6);
-            Func_02006b24_motion(rec7, p10, p9, *(volatile s32 *)(rec7 + 16));
-            Func_02006b32_motion(rec7);
+            shifted_x = 0x400000 + x;
+            Func_02006b24_motion(actor, shifted_x, raised_y, *(s32 *)(actor + 16));
+            Func_02006b32_motion(actor);
             Func_02006c92_motion(0, 10);
-            Func_02006b44_motion(rec7, p10, (p8 + 0x360000), *(volatile s32 *)(rec7 + 16));
-            Func_02006b52_motion(rec7);
+            Func_02006b44_motion(actor, shifted_x, y + 0x360000, *(s32 *)(actor + 16));
+            Func_02006b52_motion(actor);
             Func_02006cb2_motion(0, 15);
-            v6 = ((s32)p6 + 0x300000);
-            v6 = ((s32)p6 + 0x300000);
-            Func_02006b64_motion(rec7, ((s32)p6 + 0x300000), (p8 + 0x360000), *(volatile s32 *)(rec7 + 16));
-            Func_02006b72_motion(rec7);
+            Func_02006b64_motion(actor, x + 0x300000, y + 0x360000, *(s32 *)(actor + 16));
+            Func_02006b72_motion(actor);
             Func_02006cd2_motion(0, 12);
             Func_02006d2a_motion(a0, 0);
             Func_02005a8c_motion(0);
             Func_02006d68_motion(0, 0);
             Func_02004dd0_motion(a0, 4);
-            goto L_02002298;
-        }
-        if (rec5 == 1) {
+        } else if (result == 1) {
             Call1(Func_02006d3e_motion, 0x20be);
             Func_02006d56_motion(a0, 0);
         }
-        L_02002298:;
-        Value3(Func_02004e4c_motion, rec5, a0, 4);
+        Value3(Func_02004e4c_motion, result, a0, 4);
         Func_02006cac_motion();
     }
-    p10b = v6;
-    p11 = a0;
 }
 
 void ColossoLogRollingStage_PositionActor(s32 selector, s32 x, s32 z)

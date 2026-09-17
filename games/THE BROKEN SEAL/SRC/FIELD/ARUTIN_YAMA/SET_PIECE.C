@@ -175,6 +175,7 @@
 #define RunEventScript01 Func_02003028
 
 #include "FACING_OBJECT.H"
+#include "FIELD_EVENT.H"
 
 struct Frame {
     s32 f00;
@@ -400,10 +401,10 @@ void Func_020048ea();
 void Func_02004902();
 void Func_020049dc();
 void Func_02004a68();
-s32 Func_02004a6e();
-s32 Func_02004a76();
-s32 Func_02004a7e();
-s32 Func_02004a86();
+struct FieldActor *Func_02004a6e();
+struct FieldActor *Func_02004a76();
+struct FieldActor *Func_02004a7e();
+struct FieldActor *Func_02004a86();
 void Func_02004aac();
 void Func_02004acc();
 void Func_02004ae2();
@@ -427,7 +428,7 @@ s32 Func_02004bbe_a();
 void Func_02004bfa();
 void Func_02004c10();
 void Func_02004c14();
-u8 *Func_02004c1c();
+struct FieldActor *Func_02004c1c();
 void Func_02004c4a();
 void Func_02004c56();
 void Func_02004c5e();
@@ -437,7 +438,7 @@ void Func_02004c76();
 void Func_02004c7c();
 void Func_02004c84();
 void Func_02004c92();
-u8 *Func_02004c98();
+struct FieldActor *Func_02004c98();
 void Func_02004c9a();
 void Func_02004c9e();
 void Func_02004cb2();
@@ -457,7 +458,7 @@ void Func_02004d2c();
 void Func_02004d38();
 void Func_02004d42();
 void Func_02004d44();
-s32 Func_02004d4c();
+void Func_02004d4c();
 s32 Func_02004d4c_a();
 void Func_02004d52();
 void Func_02004d5e();
@@ -473,7 +474,7 @@ void Func_02004e08();
 void Func_02004e30();
 void Func_02004e32();
 void Func_02004e60();
-s32 Func_02004e74();
+struct FieldActor *Func_02004e74();
 void Func_02004e9c();
 void Func_02004e9e();
 void Func_02004ea6();
@@ -1780,25 +1781,16 @@ void FieldScene_RunScene3a4_02000c9c(void)
 
 void FieldScene_RunSharedSetPiece(s32 a0)
 {
-    extern u8 Data_0200d238[];
+    struct FieldActor *actor0;
+    struct FieldActor *actor8;
+    struct FieldActor *actor9;
+    struct FieldActor *actor10;
+    struct FieldActor *actor;
 
-    u32 i;
-    s32 rec;
-    s32 rec2;
-    u8 *rec4;
-    s32 rec8;
-    u8 *record;
-    s32 none;
-    s32 base5_200abe1;
-    s32 base6_ffc00000;
-    s32 slot8;
-    s32 zero;
-
-    slot8 = a0;
-    rec2 = Value1(Func_02004a6e, 0);
-    rec = Value1(Func_02004a76, 8);
-    rec4 = Value1(Func_02004a7e, 9);
-    rec8 = Func_02004a86(10);
+    actor0 = Func_02004a6e(0);
+    actor8 = Func_02004a76(8);
+    actor9 = Func_02004a7e(9);
+    actor10 = Func_02004a86(10);
     Call2(Func_02004b62, 0, 0x102);
     Func_02004a68(40);
     Call2(Func_02004b84, 0x10000, 0x2000);
@@ -1812,36 +1804,24 @@ void FieldScene_RunSharedSetPiece(s32 a0)
     Func_02004c84(183);
     Call3(Func_02004aac, 0x30000, 0x30000, 0x10000);
     Func_02004ae2(20);
-    *(s32 *)((s32)rec4 + 24) = 0x13333;
-    *(s32 *)((s32)rec4 + 28) = 0x13333;
-    {
-        u8 *p = &rec4[35];
-        u8 two = 2;
-        u8 value = *(volatile u8 *)p;
-
-        none = 0;
-        *p = (u8)(value | two);
-    }
-    *(s32 *)((s32)rec4 + 108) = 0x2008099;
+    actor9->scale_x = 0x13333;
+    actor9->scale_y = 0x13333;
+    actor9->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+    actor9->update = (void (*)(union FieldObject *))SceneActor_CopyActor8PositionWithFixedY;
     Func_02004b90(8, 4);
-    *(volatile s32 *)(rec + 68) = 0x8000;
-    *(volatile s32 *)(rec + 8) = 0x3120000;
-    *(volatile s32 *)(rec + 12) = 0x200000;
-    *(volatile s32 *)(rec + 16) = 0x5a0000;
-    *(volatile s32 *)(rec + 24) = 0x20000;
-    *(volatile s32 *)(rec + 28) = 0x20000;
+    *(s32 *)((u8 *)actor8 + 68) = 0x8000;
+    actor8->x.fixed = 0x3120000;
+    actor8->y.fixed = 0x200000;
+    actor8->z.fixed = 0x5a0000;
+    actor8->scale_x = 0x20000;
+    actor8->scale_y = 0x20000;
     Func_02004b2e(10);
     Func_02004cec(183);
     Call3(Func_02004b12, 0x40000, 0x20000, 0x10000);
     Func_02004b48(20);
-    *(s32 *)(rec8 + 8) += 0xe0000;
-    *(s32 *)(rec8 + 12) += -0x80000;
-    {
-        s32 target = *(s32 *)(rec8 + 80);
-        s32 shown = 0xc000;
-
-        *(volatile u16 *)(target + 30) = shown;
-    }
+    actor10->x.fixed += 0xe0000;
+    actor10->y.fixed += -0x80000;
+    actor10->sprite->rotation = 0xc000;
     Func_02004d20(107);
     Call3(Func_02004b48_a, 0x10000, 0x10000, 0x10000);
     Call3(Func_02004c7c, 0, 0x102, 80);
@@ -1851,50 +1831,39 @@ void FieldScene_RunSharedSetPiece(s32 a0)
     Func_02004c9a(0, 0);
     Call2(Func_02004cb2, 0, 0x101);
     Call3(Func_02004bfa, 0, 0x28000, 0x14000);
-    *(volatile u16 *)(rec2 + 100) = none;
+    *(u16 *)((u8 *)actor0 + 100) = 0;
     Call2(Func_02004c10, 0, 0x200bdec);
     if (Value1(Func_02004bbe_a, 0x205) != 0) {
         Call3(Func_02004c66, 1, 0x36e0000, 0x2100000);
-        record = Func_02004c1c(1);
-        {
-            s32 shown = 0x5000;
-
-            *(u16 *)((s32)record + 6) = shown;
-        }
+        actor = Func_02004c1c(1);
+        actor->facing = 0x5000;
     }
     Call2(Func_02004d0e, 0x14000, 0x2800);
     Call4(Func_02004d26, 0x3120000, -1, 0x22c0000, 1);
-    Func_02004c14(slot8);
+    Func_02004c14(a0);
     Func_02004d0c(8, 1);
     Call3(Func_02004c60, 8, 0x195c2, 0xcae1);
-    *(volatile u16 *)(rec + 100) = none;
+    *(u16 *)((u8 *)actor8 + 100) = 0;
     Func_02004c76(8, 0x200bd78);
     do {
         Func_02004b4c(1);
-    } while (*(s16 *)(rec2 + 100) == 0);
-    ((void (*)())Func_02004d4c)(0, 0);
+    } while (*(s16 *)((u8 *)actor0 + 100) == 0);
+    Func_02004d4c(0, 0);
     do {
         Func_02004b62_a(1);
-    } while (*(s16 *)(rec + 100) == 0);
+    } while (*(s16 *)((u8 *)actor8 + 100) == 0);
     Func_02004d52(0, 2);
-    {
-        u8 *record = Func_02004c98(0);
-        u8 value = *(volatile u8 *)&record[35];
-
-        record[35] = (u8)(value | 1);
-    }
+    Func_02004c98(0)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
     Call1(Func_02004e30, 0x121);
-    zero = 0;
     Call3(Func_02004c56, -1, -1, 0xe666);
-    *(s32 *)((s32)rec4 + 8) = 0x3120000;
-    base6_ffc00000 = -0x400000;
-    *(s32 *)((s32)rec4 + 108) = zero;
-    *(s32 *)((s32)rec4 + 16) = 0x26a0000;
-    *(s32 *)((s32)rec4 + 12) = -0x400000;
+    actor9->x.fixed = 0x3120000;
+    actor9->update = NULL;
+    actor9->z.fixed = 0x26a0000;
+    actor9->y.fixed = -0x400000;
     Call3(Func_02004cda, 8, 0x19999, 0xcccc);
-    *(volatile s32 *)(rec + 68) = 0x1999;
-    *(volatile s32 *)(rec + 72) = 0x3333;
-    *(volatile s32 *)(rec + 40) = 0x40000;
+    *(s32 *)((u8 *)actor8 + 68) = 0x1999;
+    *(s32 *)((u8 *)actor8 + 72) = 0x3333;
+    actor8->velocity_y = 0x40000;
     Call3(Func_02004d1e, 8, 0x312, 0x25c);
     Call3(Func_02004d00, 8, 0x33333, 0x19999);
     Call3(Func_02004d2c, 8, 0x312, 0x284);
@@ -1904,10 +1873,9 @@ void FieldScene_RunSharedSetPiece(s32 a0)
     Call6(Func_02004cd2, 25, 35, 10, 5, 43, 35);
     Func_02004d9c(8, 0, 0);
     Func_02004da6(9, 0, 0);
-    base5_200abe1 = (s32)Func_0200abe1;
-    Call2(Func_02004c4a, base5_200abe1, 0xc80);
+    Func_02004c4a(Func_0200abe1, 0xc80);
     Func_02004d38(80);
-    Func_02004c5e(base5_200abe1);
+    Func_02004c5e(Func_0200abe1);
     Func_02004d44(60);
     Func_02004f02(17);
     Call3(Func_02004d28, -1, -1, 0xe666);
@@ -1925,7 +1893,7 @@ void FieldScene_RunSharedSetPiece(s32 a0)
     Call3(Func_02004eaa, 0, 0x6000, 40);
     Call3(Func_02004ec6, 1, 0x102, 0);
     Call3(Func_02004ed2, 0, 0x102, 60);
-    Call4(Func_02004f00, 0x3140000, base6_ffc00000, 0x2620000, 1);
+    Call4(Func_02004f00, 0x3140000, -0x400000, 0x2620000, 1);
     Func_02004f0c();
     Func_02004faa(148);
     Func_02004df8(240);
@@ -1936,9 +1904,9 @@ void FieldScene_RunSharedSetPiece(s32 a0)
         Call3(Func_02004e9c, 1, 0x348, 0x228);
         Call3(Func_02004ea6, 1, 0x356, 0x232);
         Func_02004ec6_a(1, 2);
-        record = Value1(Func_02004e74, 0);
-        if ((s32)record != 0) {
-            Func_02004eae(1, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
+        actor = Func_02004e74(0);
+        if (actor != NULL) {
+            Func_02004eae(1, actor->x.part.pixel, actor->z.part.pixel);
         }
         Func_02004ed4(1);
         Func_02004ee6(1, 0, 0);
@@ -2037,25 +2005,16 @@ void FieldScene_RunScene3a4_02001398(void)
 
 void FieldScene_RunScene3a4_02002310(void)
 {
-    extern u8 Data_0200d238[];
-
-    extern u8 Data_02000240[];
-
-    u32 i;
-    s32 record;
+    extern struct GameState Data_02000240;
 
     if (Value1_02002310(Func_02005e68, 0x8fe) != 0) {
-        *(volatile u16 *)(*(volatile s32 *)0x03001e70 + 20) &= 0xfdff;
+        *(u16 *)(*(u8 **)0x03001e70 + 20) &= ~0x200;
         Func_02005f1a(9, 0, 0);
     } else {
         Func_02005d7c();
-        if (Value1_02002310(Func_02005e8e, 0x109) == 0) {
-            if (Data_02000240_t[225][0] != 99) {
-                goto L_0200235a;
-            }
+        if (Value1_02002310(Func_02005e8e, 0x109) == 0 && Data_02000240.entrance == 99) {
             Func_02005172();
         } else {
-            L_0200235a:;
             Call6(Func_02005e94, 38, 24, 1, 2, 37, 24);
             Call6(Func_02005ea8, 44, 23, 1, 2, 45, 23);
             if (Value1_02002310(Func_02005ed6, 0x8fe) == 0) {

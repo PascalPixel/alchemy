@@ -99,7 +99,7 @@ void Func_02001584();
 void Func_02001598();
 void Func_020015ac();
 void Func_020015b6();
-u8 *Func_020015c0();
+struct FieldActor *Func_020015c0();
 void Func_020015c8();
 void Func_020015da();
 void Func_020015dc();
@@ -117,7 +117,7 @@ void Func_020016ca();
 void Func_020016ea();
 void Func_020014da_a();
 void Func_0200151a_a();
-s32 Func_02001522_a();
+struct FieldActor *Func_02001522_a();
 s32 Func_0200162a();
 s32 Func_02001636();
 s32 Func_0200165a();
@@ -752,55 +752,40 @@ void FieldScene_RunEarlySequence(void)
 
 void FieldScene_RunScene38bSequenceC(void)
 {
-    extern u8 Data_03001ebc[];
+    struct FieldActor *rec;
+    struct FieldActor *rec7;
 
-    u32 i;
-    s32 rec;
-    u8 *rec7;
-    u8 *record;
-
-    rec = Value1(Func_020014da, 0);
-    rec7 = Value1(Func_020014e2, 11);
-    if ((*(volatile s32 *)((s32)rec7 + 8) >> 20) != 6) {
-    } else {
+    rec = (struct FieldActor *)Value1(Func_020014da, 0);
+    rec7 = (struct FieldActor *)Value1(Func_020014e2, 11);
+    if ((rec7->x.fixed >> 20) == 6) {
         Func_020014da_a();
         Func_02001582(11, 1);
         Func_02001552(0, 2);
         Func_020014e8(20);
         Call3(Func_0200151a_a, 0, 0x3333, 0x1999);
         Call3(Func_02001524, 11, 0x3333, 0x1999);
-        *(u8 *)(Func_02001522_a(0) + 90) &= 254;
-        {
-            u8 zero = 0;
-            u8 *dst = rec7 + 85;
-
-            *dst = zero;
-        }
-        *(volatile s32 *)(rec + 24) = -0x10000;
+        Func_02001522_a(0)->unknown_5a &= ~1;
+        rec7->motion_flags = 0;
+        rec->scale_x = -0x10000;
         Call2(Func_020015da, 0, 0x102);
         Func_02001584(0, 16);
         Func_02001568(11, 111, 196);
-        *(volatile s32 *)(rec + 24) = 0x10000;
+        rec->scale_x = 0x10000;
         Func_0200157c(0, 128, 185);
         Func_0200154a(20);
-        *(volatile s32 *)(rec + 24) = -0x10000;
+        rec->scale_x = -0x10000;
         Call2(Func_0200160e, 0, 0x102);
         Func_020015b6(0, 16);
         Func_02001598(11, 121, 190);
-        *(volatile s32 *)(rec + 24) = 0x10000;
+        rec->scale_x = 0x10000;
         Func_020015ac(0, 141, 189);
         Func_0200157a(20);
-        *(volatile s32 *)(rec + 24) = -0x10000;
+        rec->scale_x = -0x10000;
         Call2(Func_0200163e, 0, 0x102);
         Func_020015e6(0, 16);
         Func_020015c8(11, 132, 186);
-        *(volatile s32 *)(rec + 24) = 0x10000;
-        {
-            u8 *record = Func_020015c0(0);
-            u8 value = *(volatile u8 *)&record[90];
-
-            record[90] = (u8)(value | 1);
-        }
+        rec->scale_x = 0x10000;
+        Func_020015c0(0)->unknown_5a |= 1;
         Call3(Func_020015dc, 0, 0x9999, 0x4ccc);
         Func_020015f6(0, 166, 185);
         Call3(Func_0200166a, 0, 0x8000, 20);

@@ -2887,21 +2887,15 @@ s32 StoryReward_LookupBySelection(u32 selection)
 
 void FieldScene_RunScene371_0200357c(void)
 {
-    extern u8 Data_02000240[];
-    extern u8 Data_0200e7a0[];
-    extern u8 Data_03001ebc[];
-    void Func_02008180();
-
-    u32 i;
-    s32 rec7;
+    struct FieldActor *actor;
     s32 record;
 
-    rec7 = Value1(Func_0200787e, 8);
+    actor = (struct FieldActor *)Value1(Func_0200787e, 8);
     Func_0200785e(60);
     Func_0200786a();
     Call2(Func_02007a22, 0x9999, 1);
-    *(s32 *)(rec7 + 24) = 0x13333;
-    *(s32 *)(rec7 + 28) = 0x13333;
+    actor->scale_x = 0x13333;
+    actor->scale_y = 0x13333;
     Func_02007988(8, 1);
     Func_0200772e(1);
     Func_02007946(0, 15);
@@ -2910,21 +2904,17 @@ void FieldScene_RunScene371_0200357c(void)
     record = Func_020078c0(8);
     Func_0200780e(record, 0);
     Call3(Func_020078e0, 8, 0x6666, 0x3333);
-    {
-        s32 shown = 0;
-
-        *(u16 *)(rec7 + 100) = shown;
-    }
+    actor->unknown_64 = 0;
     Value2(Func_020078f6, 8, 0x200d218);
     Value2(Func_02007778, 0x200b4a1, 0xc80);
-    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c0)) = 0x100;
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Call2(Func_02007a26, 0x10003, 1);
-    *(s32 *)(*(u8 *volatile *)Data_03001ebc + 0x1c8) = 32;
+    gEventWork->transition_frames = 32;
     Func_02007a4c();
     Func_020078ea(120);
     Call2(Func_02007aac, 0x16666, 0x12c);
     Call1_02001b5c(Func_020078fc, 0x10e);
-    *(s32 *)(*(u8 *volatile *)Data_03001ebc + 0x1c8) = 16;
+    gEventWork->transition_frames = 16;
     *(u16 *)0x05000000 = 0x7fff;
     Func_02007a7e();
     Func_02007a8a();

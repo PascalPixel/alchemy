@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 
 #define SetEffectRecordMode Func_02000030
 #define NULL ((void *)0)
@@ -98,8 +99,8 @@ void Func_020014e0();
 void Func_02001512();
 s32 Func_0200151c();
 void Func_02001536();
-s32 Func_02001538();
-s32 Func_02001544();
+struct FieldActor *Func_02001538();
+struct FieldActor *Func_02001544();
 s32 Func_02001550();
 void Func_02001570();
 void Func_02001576();
@@ -456,19 +457,17 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
 
 void FieldScene_RunScene387SequenceC(void)
 {
-    s32 record;
-    s32 v3;
-    s32 v5;
+    struct FieldActor *actor;
+    s32 tile_x;
 
-    record = Value1(Func_0200151c, 10);
-    v3 = *(volatile s32 *)(record + 8) / 0x100000;
-    if (v3 == 23) {
+    actor = (struct FieldActor *)Value1(Func_0200151c, 10);
+    tile_x = actor->x.fixed / 0x100000;
+    if (tile_x == 23) {
         Func_02001512(10);
-        *(u8 *)(Func_02001538(10) + 35) = 2;
-        v5 = 0;
-        *(u8 *)(Func_02001544(10) + 85) = v5;
+        Func_02001538(10)->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
+        Func_02001544(10)->motion_flags = 0;
         Func_020014d6(Func_02001550(10), 0);
-        Call6(Func_020014e0, 54, 17, 1, 1, v3, 17);
+        Call6(Func_020014e0, 54, 17, 1, 1, tile_x, 17);
         Call1(Func_02001536, 0x863);
     }
 }

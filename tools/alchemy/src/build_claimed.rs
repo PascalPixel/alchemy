@@ -208,7 +208,11 @@ fn module_contract(
         return unit
             .symbols()
             .map(|(address, _, extent)| {
-                Ok((unit.source_owner(address)?.legacy_name(), address, extent))
+                Ok((
+                    unit.source_owner(unit.image(), address)?.legacy_name(),
+                    address,
+                    extent,
+                ))
             })
             .collect();
     }
@@ -394,7 +398,9 @@ fn materialize_unit_owner(
         absolute_symbols: unit.canonical_symbols()?,
         ..Default::default()
     };
-    let route = unit.source_owner(unit.owners[0].address)?.routing_path();
+    let route = unit
+        .source_owner(unit.image(), unit.owners[0].address)?
+        .routing_path();
     let link = |object| {
         link_candidate_owned_routed_with_object(
             &source,
@@ -483,19 +489,15 @@ fn cache_hit(
     std::fs::write(output[1], assembly).ok()?;
     Some((defined, undefined))
 }
-/// Write one image's register bindings and return the path. The content hash
-/// is in the file name, so a rename changes the compiler command and the
+/// Write the main image's register bindings and return the path. The content
+/// hash is in the file name, so a rename changes the compiler command and the
 /// object cache key with it.
-fn write_symbol_bindings(
-    output: &Path,
-    source_paths: &SourcePaths,
-    overlay: Option<&str>,
-) -> Result<String> {
-    let text = source_paths.symbol_bindings(overlay);
+fn write_symbol_bindings(output: &Path, source_paths: &SourcePaths) -> Result<String> {
+    let text = source_paths.symbol_bindings(None);
     let stamp = digest(text.as_bytes());
     let directory = output.join("bindings");
     std::fs::create_dir_all(&directory).map_err(|e| format!("{}: {e}", directory.display()))?;
-    let path = directory.join(format!("{}-{}.h", overlay.unwrap_or("main"), &stamp[..16]));
+    let path = directory.join(format!("main-{}.h", &stamp[..16]));
     if !path.exists() {
         write_file(&path, text.as_bytes())?;
     }
@@ -703,7 +705,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     if let Some(path) = &export_path {
         write_file(path, source_paths.main_symbol_exports().as_bytes())?;
     }
-    let bindings = write_symbol_bindings(&output, &source_paths, None)?;
+    let bindings = write_symbol_bindings(&output, &source_paths)?;
     let cache = SqliteCache::open(&Path::new(root).join("out/cache/claimed-objects.sqlite3"))?;
     let signatures = CacheSignatures::production()?;
     let declared_units = units
@@ -767,7 +769,12 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
         )?;
         let mut declared = unit
             .symbols()
-            .map(|(address, _, _)| Ok((address, unit.source_owner(address)?.legacy_name())))
+            .map(|(address, _, _)| {
+                Ok((
+                    address,
+                    unit.source_owner(unit.image(), address)?.legacy_name(),
+                ))
+            })
             .collect::<Result<Vec<_>>>()?;
         declared.sort();
         if base.defined_names != declared.into_iter().map(|item| item.1).collect::<Vec<_>>() {

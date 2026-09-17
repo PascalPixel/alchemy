@@ -420,8 +420,10 @@ fn registered_owner_coverage(
         .collect::<BTreeSet<_>>();
     let mut declared = BTreeSet::new();
     for unit in &units.units {
-        for (address, _, _) in unit.symbols() {
-            declared.insert(unit.source_owner(address)?);
+        for image in unit.images() {
+            for member in unit.members_in(image) {
+                declared.insert(unit.source_owner(image, member.address)?);
+            }
         }
     }
     let counts = |owners: &BTreeSet<SourceOwner>| {
@@ -444,6 +446,8 @@ fn registered_owner_coverage(
 #[derive(Clone)]
 struct InventoryMember {
     unit: String,
+    /// The image whose instance links this member; none for the canonical image.
+    instance: Option<String>,
     source: String,
     role: &'static str,
     ordinal: usize,
@@ -544,10 +548,11 @@ fn inventory_members(
     let mut members = BTreeMap::new();
     for unit in units.units.iter().filter(|unit| unit.game == "tbs") {
         let source = text(&unit.source);
-        let mut insert = |ordinal, address, role, state, alias: &str, extent| {
-            let key = unit.source_owner(address)?;
+        let mut insert = |image: &str, ordinal, address, role, state, alias: &str, extent| {
+            let key = unit.source_owner(image, address)?;
             let value = InventoryMember {
                 unit: unit.id.clone(),
+                instance: (image != unit.image()).then(|| image.to_string()),
                 source: source.clone(),
                 role,
                 ordinal,
@@ -562,6 +567,7 @@ fn inventory_members(
         };
         for (ordinal, owner) in unit.owners.iter().enumerate() {
             insert(
+                unit.image(),
                 ordinal,
                 owner.address,
                 "owner",
@@ -572,6 +578,7 @@ fn inventory_members(
         }
         for (ordinal, symbol) in unit.local_symbols.iter().enumerate() {
             insert(
+                unit.image(),
                 ordinal,
                 symbol.address,
                 "local-symbol",
@@ -579,6 +586,26 @@ fn inventory_members(
                 &symbol.canonical_name,
                 symbol.extent,
             )?;
+        }
+        // Instances are wholly exact, and keep each member's role and ordinal.
+        for image in unit.instances.keys() {
+            let (mut owners, mut locals) = (0, 0);
+            for member in unit.members_in(image) {
+                let (role, ordinal, state) = match member.owner {
+                    true => ("owner", &mut owners, Some(owner_state(OwnerState::ExactC))),
+                    false => ("local-symbol", &mut locals, None),
+                };
+                insert(
+                    image,
+                    *ordinal,
+                    member.address,
+                    role,
+                    state,
+                    member.name,
+                    member.extent,
+                )?;
+                *ordinal += 1;
+            }
         }
     }
     Ok(members)
@@ -779,7 +806,7 @@ fn owner_inventory(
             |member| member.alias.clone(),
         );
         let unit = member.map(|member| {
-            json!({"id":member.unit,"role":member.role,"ordinal":member.ordinal,"declared_state":member.state})
+            json!({"id":member.unit,"instance":member.instance,"role":member.role,"ordinal":member.ordinal,"declared_state":member.state})
         });
         let declared = member.is_some();
         let exact = member.map_or(registered_source.is_some(), |member| {
@@ -907,9 +934,13 @@ fn owner_inventory(
         }));
     }
     let units = units.units.iter().filter(|unit| unit.game == "tbs").map(|unit| {
-        let members = unit.owners.iter().enumerate().map(|(ordinal, member)| json!({"owner":unit.source_owner(member.address).unwrap().id(),"role":"owner","ordinal":ordinal,"alias":member.canonical_name,"extent":member.extent,"declared_state":owner_state(member.state)})).chain(unit.local_symbols.iter().enumerate().map(|(ordinal, member)| json!({"owner":unit.source_owner(member.address).unwrap().id(),"role":"local-symbol","ordinal":ordinal,"alias":member.canonical_name,"extent":member.extent,"declared_state":Value::Null}))).collect::<Vec<_>>();
+        let members = unit.owners.iter().enumerate().map(|(ordinal, member)| json!({"owner":unit.source_owner(unit.image(), member.address).unwrap().id(),"role":"owner","ordinal":ordinal,"alias":member.canonical_name,"extent":member.extent,"declared_state":owner_state(member.state)})).chain(unit.local_symbols.iter().enumerate().map(|(ordinal, member)| json!({"owner":unit.source_owner(unit.image(), member.address).unwrap().id(),"role":"local-symbol","ordinal":ordinal,"alias":member.canonical_name,"extent":member.extent,"declared_state":Value::Null}))).collect::<Vec<_>>();
         let absolute_symbols = unit.absolute_symbols.iter().map(|(name, symbol)| json!({"name":name,"address":hex(symbol.address),"kind":absolute_kind(symbol.kind)})).collect::<Vec<_>>();
-        json!({"id":unit.id,"game":unit.game,"source":unit.source,"compiler_route":unit.compiler_route,"container":if unit.overlay.is_none(){json!({"kind":"main-rom","overlay":Value::Null})}else{json!({"kind":"overlay-image","overlay":unit.overlay})},"original_translation_unit":{"status":"unknown"},"production_composition_sections":unit.composition_sections(),"absolute_symbols":absolute_symbols,"members":members})
+        let instances = unit.instances.keys().map(|image| {
+            let members = unit.members_in(image).map(|member| json!({"owner":unit.source_owner(image, member.address).unwrap().id(),"role":if member.owner {"owner"} else {"local-symbol"},"alias":member.name,"extent":member.extent})).collect::<Vec<_>>();
+            json!({"overlay":image,"members":members})
+        }).collect::<Vec<_>>();
+        json!({"id":unit.id,"game":unit.game,"source":unit.source,"compiler_route":unit.compiler_route,"container":if unit.overlay.is_none(){json!({"kind":"main-rom","overlay":Value::Null})}else{json!({"kind":"overlay-image","overlay":unit.overlay})},"original_translation_unit":{"status":"unknown"},"production_composition_sections":unit.composition_sections(),"absolute_symbols":absolute_symbols,"members":members,"instances":instances})
     }).collect::<Vec<_>>();
     let auxiliary_regions = assembly.iter().filter(|region| !registered.contains(&SourceOwner::Main(region.address as u32))).map(|region| json!({"role":"non-owner-region","container":{"kind":"main-rom"},"address":hex(region.address),"run_address":region.run_address.map(hex),"extent":region.size,"source":region.source,"kind":region.kind,"origin":region.origin,"retention":region.retention,"confidence":region.confidence,"evidence":region.evidence})).collect::<Vec<_>>();
     let auxiliary_overlay_regions = semantic
@@ -1451,6 +1482,45 @@ pub fn self_test() -> Result<(), String> {
 mod tests {
     use super::*;
 
+    #[test]
+    fn owner_inventory_reports_unit_and_instance_for_every_member() {
+        use crate::compiler::translation_units::fixture::{Repository, FIND, REDRAW};
+        let repository = Repository::new();
+        let units = repository.load().unwrap();
+        let members = inventory_members(&units).unwrap();
+        assert_eq!(members.len(), 6);
+        let member = |id: &str| &members[&SourceOwner::parse(id).unwrap()];
+        for (id, instance, ordinal, alias, extent) in [
+            ("resource_3bf:0200034c", None, 0, FIND, 296),
+            ("resource_3bf:020008c0", None, 1, REDRAW, 284),
+            (
+                "resource_389:020008c0",
+                Some("resource_389"),
+                1,
+                REDRAW,
+                284,
+            ),
+            ("resource_39b:02000630", Some("resource_39b"), 0, FIND, 296),
+            (
+                "resource_39b:02000ba4",
+                Some("resource_39b"),
+                1,
+                REDRAW,
+                284,
+            ),
+        ] {
+            let member = member(id);
+            assert_eq!(member.unit, "staged-actor", "{id}");
+            assert_eq!(member.instance.as_deref(), instance, "{id}");
+            assert_eq!((member.role, member.ordinal), ("owner", ordinal), "{id}");
+            assert_eq!(
+                (member.alias.as_str(), member.extent),
+                (alias, extent),
+                "{id}"
+            );
+            assert_eq!(member.state, Some("exact-c"), "{id}");
+        }
+    }
     #[test]
     fn output_sidecars_preserve_multi_dot_stems() {
         let output = Path::new("out/custom/rebuilt.debug.gba");

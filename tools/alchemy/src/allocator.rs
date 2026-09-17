@@ -83,7 +83,7 @@ fn run(args: &[String]) -> Result<(), String> {
     // source carries no resource stem to infer an overlay from.
     fs::write(&bindings, {
         let register = SourcePaths::load_for_game(&repo, CompilerTarget::Tbs.as_str())?
-            .symbol_bindings(parsed.overlay_id().as_deref());
+            .symbol_bindings(Some(parsed));
         crate::compiler::source_bindings::with_register(
             &register,
             &crate::compiler::source_bindings::production_bindings(&repo, &register, Some(&src))?,

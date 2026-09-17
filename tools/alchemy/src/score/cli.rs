@@ -1,7 +1,7 @@
 use crate::candidate::CandidateCompilerConfiguration;
 use crate::compiler::routing::CompilerTarget;
 use std::path::Path;
-pub const USAGE: &str = "usage: alchemy score <candidate.c|overlay:address> [--unit ID] [--rom FILE] [--target tbs|tla] [--owner OWNER] [--symbol ADDRESS] [--size BYTES] [--reference-symbols] [--work DIR] [--align] [--first] [--allocator-order] [--asm] [--patch FILE]";
+pub const USAGE: &str = "usage: alchemy score <candidate.c|overlay:address> [--unit ID [--instance IMAGE | --all-instances]] [--rom FILE] [--target tbs|tla] [--owner OWNER] [--symbol ADDRESS] [--size BYTES] [--reference-symbols] [--work DIR] [--align] [--first] [--allocator-order] [--asm] [--patch FILE]";
 pub const SHORT_USAGE: &str = "usage: alchemy score <candidate.c> [--rom FILE]";
 #[derive(Debug, Clone)]
 pub struct Options {
@@ -13,6 +13,10 @@ pub struct Options {
     pub owner: Option<u32>,
     pub overlay: Option<String>,
     pub unit: Option<String>,
+    /// With `unit`: score the one instance that links it into this image.
+    pub instance: Option<String>,
+    /// With `unit`: score its canonical overlay and every instance.
+    pub all_instances: bool,
     pub precompiled_object: Option<String>,
     pub size: Option<usize>,
     pub align: bool,
@@ -32,6 +36,8 @@ impl Options {
             owner: None,
             overlay: None,
             unit: None,
+            instance: None,
+            all_instances: false,
             precompiled_object: None,
             size: None,
             align: false,
@@ -88,6 +94,14 @@ pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> 
                 options.overlay = owner.overlay_id();
             }
             "--unit" => options.unit = next(&mut index).cloned(),
+            "--instance" => {
+                options.instance = Some(
+                    next(&mut index)
+                        .ok_or("--instance requires an image")?
+                        .clone(),
+                )
+            }
+            "--all-instances" => options.all_instances = true,
             "--reference-symbols" => options.configuration.reference_symbols = true,
             "--work" => options.work = next(&mut index).cloned(),
             "--align" => options.align = true,
@@ -110,6 +124,14 @@ pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> 
     }
     if (options.unit.is_none() && rest.len() != 1) || (options.unit.is_some() && !rest.is_empty()) {
         return Err(SHORT_USAGE.into());
+    }
+    if options.instance.is_some() || options.all_instances {
+        if options.unit.is_none() || options.instance.is_some() && options.all_instances {
+            return Err("--instance IMAGE or --all-instances scores a declared --unit ID".into());
+        }
+        if options.owner.is_some() {
+            return Err("instance scores report every owner; omit --owner".into());
+        }
     }
     options.source = rest.pop().unwrap_or_default();
     if !rom_explicit && options.target == CompilerTarget::Tla {
@@ -223,6 +245,49 @@ mod tests {
         assert_eq!(options.owner, None);
         assert!(options.configuration.reference_symbols);
         assert_eq!(options.rom.as_deref(), Some("/repo/roms/tla-en.gba"));
+    }
+    #[test]
+    fn instance_scores_name_a_unit_and_no_owner() {
+        let parse = |args: &[&str]| {
+            let args = args.iter().map(|arg| arg.to_string()).collect::<Vec<_>>();
+            options_of(Path::new("/repo"), &args)
+        };
+        let ParseOutcome::Options(options) =
+            parse(&["--unit", "staged-actor", "--instance", "resource_389"]).unwrap()
+        else {
+            panic!("expected options")
+        };
+        assert_eq!(options.instance.as_deref(), Some("resource_389"));
+        assert!(!options.all_instances);
+        let ParseOutcome::Options(options) =
+            parse(&["--unit", "staged-actor", "--all-instances"]).unwrap()
+        else {
+            panic!("expected options")
+        };
+        assert!(options.all_instances && options.instance.is_none());
+        for args in [
+            &["--all-instances", "candidate.c"][..],
+            &[
+                "--unit",
+                "staged-actor",
+                "--instance",
+                "resource_389",
+                "--all-instances",
+            ],
+        ] {
+            let error = parse(args).unwrap_err();
+            assert!(error.contains("scores a declared --unit ID"), "{error}");
+        }
+        let error = parse(&[
+            "--unit",
+            "staged-actor",
+            "--all-instances",
+            "--owner",
+            "resource_389:0200034c",
+        ])
+        .unwrap_err();
+        assert!(error.contains("omit --owner"), "{error}");
+        assert!(parse(&["--unit", "staged-actor", "--instance"]).is_err());
     }
     #[test]
     fn size_must_be_positive() {

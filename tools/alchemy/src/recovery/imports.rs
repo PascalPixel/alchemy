@@ -33,15 +33,6 @@ fn read_u16(image: &[u8], at: usize) -> Option<u16> {
     Some(u16::from_le_bytes([*image.get(at)?, *image.get(at + 1)?]))
 }
 
-fn read_u32(image: &[u8], at: usize) -> Option<u32> {
-    Some(u32::from_le_bytes([
-        *image.get(at)?,
-        *image.get(at + 1)?,
-        *image.get(at + 2)?,
-        *image.get(at + 3)?,
-    ]))
-}
-
 /// Resolves every call site of an owner's window against one registered
 /// target's ROM and source register.
 pub fn imports_for(
@@ -79,9 +70,8 @@ pub fn imports_for(
         let at = offset as usize;
         let target = OVERLAY_BASE + offset as u32;
         let first = read_u16(&image, at).unwrap_or(0);
-        let second = read_u16(&image, at + 2).unwrap_or(0);
-        let (kind, main) = if first == 0x4c00 && second == 0x4720 {
-            ("veneer", read_u32(&image, at + 4).map(|w| w & !1))
+        let (kind, main) = if let Some(word) = psynergy::thumb::veneer_target(&image[at..]) {
+            ("veneer", Some(word & !1))
         } else if (first & 0xfe00) == 0xb400 || (first & 0xff80) == 0xb080 {
             ("prologue", None)
         } else {

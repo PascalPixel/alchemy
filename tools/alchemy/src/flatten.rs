@@ -160,6 +160,17 @@ fn run(args: &[String]) -> Result<(), String> {
     if owners.is_empty() {
         return Err(format!("{overlay}: no owners"));
     }
+    let addresses = owners
+        .iter()
+        .map(|owner| owner.address)
+        .collect::<BTreeSet<_>>();
+    let instanced = instanced_units(&manifest, &overlay, &addresses);
+    if !instanced.is_empty() {
+        return Err(format!(
+            "{overlay}: {} link into several images; flattening would copy their shared source into one overlay",
+            instanced.join(", ")
+        ));
+    }
     // Registered owners are not the full executable inventory: unregistered
     // code must also be closed before the overlay can be flattened as complete.
     let tree = crate::coverage::tree::work_tree_at(root.clone());
@@ -870,6 +881,37 @@ fn run(args: &[String]) -> Result<(), String> {
 }
 
 #[allow(clippy::too_many_arguments)]
+/// The units with instances that link any of `addresses` into `overlay`,
+/// as canonical owners or instance members.
+fn instanced_units(manifest: &Value, overlay: &str, addresses: &BTreeSet<u32>) -> Vec<String> {
+    let listed = |address: &Value| {
+        address
+            .as_str()
+            .and_then(|text| u32::from_str_radix(text.trim_start_matches("0x"), 16).ok())
+            .is_some_and(|address| addresses.contains(&address))
+    };
+    manifest["units"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .filter(|unit| {
+            let Some(instances) = unit["instances"].as_object().filter(|map| !map.is_empty())
+            else {
+                return false;
+            };
+            let canonical = unit["overlay"] == overlay
+                && unit["owners"]
+                    .as_array()
+                    .is_some_and(|owners| owners.iter().any(|owner| listed(&owner["address"])));
+            let instance = instances
+                .get(overlay)
+                .and_then(|instance| instance["owners"].as_object())
+                .is_some_and(|owners| owners.values().any(|owner| listed(&owner["address"])));
+            canonical || instance
+        })
+        .map(|unit| unit["id"].as_str().unwrap_or_default().to_string())
+        .collect()
+}
 fn apply_flatten(
     root: &Path,
     source_root: &Path,
@@ -1647,6 +1689,32 @@ fn write_json(path: &Path, value: &Value) -> Result<(), String> {
 mod tests {
     use super::*;
 
+    #[test]
+    fn flattening_refuses_owners_of_instanced_units() {
+        let manifest = json!({"units": [
+            {"id": "staged-actor", "overlay": "resource_3bf",
+             "owners": [{"address": "0x0200034c"}, {"address": "0x020008c0"}],
+             "instances": {"resource_39b": {"owners": {
+                 "FieldScene_FindActorRegion": {"address": "0x02000630", "extent": 296}}}}},
+            {"id": "lunpa-scene", "overlay": "resource_3bf", "owners": [{"address": "0x02000d54"}]},
+            {"id": "emptied", "overlay": "resource_3bf", "owners": [{"address": "0x02001000"}], "instances": {}}
+        ]});
+        let found = |overlay: &str, addresses: &[u32]| {
+            instanced_units(&manifest, overlay, &addresses.iter().copied().collect())
+        };
+        assert_eq!(
+            found("resource_3bf", &[0x0200_08c0, 0x0200_0d54]),
+            ["staged-actor"]
+        );
+        assert_eq!(found("resource_39b", &[0x0200_0630]), ["staged-actor"]);
+        for (overlay, addresses) in [
+            ("resource_3bf", &[0x0200_0d54, 0x0200_1000][..]),
+            ("resource_39b", &[0x0200_034c]),
+            ("resource_389", &[0x0200_034c]),
+        ] {
+            assert!(found(overlay, addresses).is_empty(), "{overlay}");
+        }
+    }
     #[test]
     fn flatten_rejects_unregistered_holes_and_missing_coverage() {
         use crate::coverage::model::{area, Category, Tile};

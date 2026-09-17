@@ -1,4 +1,5 @@
 //! Compile candidate C, link it at its ROM address, and return both byte spans.
+use crate::compiler::overlay::{OverlayImage, SymbolUses};
 use crate::compiler::plan::{basename, extname};
 use crate::compiler::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
 use crate::compiler::routing::{root, CompilerTarget};
@@ -132,10 +133,8 @@ pub fn source_symbol_bindings(
     routing_source: &str,
     compiler: CompilerTarget,
 ) -> Result<String, String> {
-    let overlay = SourceOwner::from_legacy_stem(&source_stem(routing_source))
-        .and_then(SourceOwner::overlay_id);
     Ok(SourcePaths::load_for_game(repository, compiler.as_str())?
-        .symbol_bindings(overlay.as_deref()))
+        .symbol_bindings(SourceOwner::from_legacy_stem(&source_stem(routing_source))))
 }
 /// Register names plus the per-source address map for one production file.
 pub fn production_symbol_bindings(
@@ -339,6 +338,23 @@ pub fn link_candidate_owned_routed_with_object(
             crate::compiler::overlay::call_symbols(rom, offset, extent)
         })
         .transpose()?;
+    let overlay = SourceOwner::from_legacy_stem(&source_stem(routing_source))
+        .and_then(SourceOwner::overlay_id);
+    let register = overlay_calls
+        .as_ref()
+        .map(|_| SourcePaths::load_for_game(root(), compiler.as_str()))
+        .transpose()?;
+    let image = match &register {
+        Some(names) => Some(OverlayImage {
+            overlay: overlay.as_deref().ok_or_else(|| {
+                format!("{routing_source}: an overlay link needs its overlay owner route")
+            })?,
+            reference: rom,
+            main: crate::compiler::overlay::main_image(compiler)?,
+            names,
+        }),
+        None => None,
+    };
     let call_via_base = configuration.call_via_base.unwrap_or(CALL_VIA_BASE);
     let mut names: Vec<String> = Vec::new();
     let undefined_symbols = run(&["arm-none-eabi-nm", "-u", link_object], cwd)?;
@@ -351,7 +367,9 @@ pub fn link_candidate_owned_routed_with_object(
         if !owner_relocations.contains_key(external) {
             continue;
         }
-        if !configuration.absolute_symbols.contains_key(external)
+        // An overlay owner binds every name through the overlay resolver.
+        if image.is_none()
+            && !configuration.absolute_symbols.contains_key(external)
             && external_symbol(external, call_via_base).is_none()
         {
             if configuration.reference_symbols {
@@ -390,13 +408,14 @@ pub fn link_candidate_owned_routed_with_object(
         BTreeMap::new()
     };
     for name in &names {
-        let (address, directive) = if let Some(symbol) = configuration.absolute_symbols.get(name) {
+        let (address, directive) = if let (Some(image), Some(calls)) = (&image, &overlay_calls) {
+            let mut uses = SymbolUses::default();
+            for site in owner_relocations.get(name).into_iter().flatten() {
+                uses.record(&site.kind);
+            }
+            let symbol = image.resolve(name, uses, &configuration.absolute_symbols, calls)?;
             (symbol.address, absolute_symbol_directive(symbol.kind))
-        } else if let Some(calls) = &overlay_calls {
-            let is_call = owner_relocations
-                .get(name)
-                .is_some_and(|sites| sites.iter().any(|site| site.kind == "R_ARM_THM_CALL"));
-            let symbol = crate::compiler::overlay::external(name, is_call, rom, calls)?;
+        } else if let Some(symbol) = configuration.absolute_symbols.get(name) {
             (symbol.address, absolute_symbol_directive(symbol.kind))
         } else {
             let symbol = resolved
@@ -870,6 +889,79 @@ void FieldScene_RunActorPositionTransition(void)
             "#define Scene_Run Func_02000100\n"
         );
         std::fs::remove_dir_all(root).unwrap();
+    }
+    #[test]
+    fn standalone_overlay_candidate_accepts_registered_semantic_names() {
+        use crate::compiler::overlay::{load, RESOURCE_BASE, RUNTIME_BASE};
+        // Names come from the live register, not from named owners, so
+        // renames and adoptions leave the test intact.
+        let names = SourcePaths::load(root()).unwrap();
+        let semantic = |name: &str| external_symbol(name, CALL_VIA_BASE).is_none();
+        let (overlay, helper, helper_name) = names
+            .registered_owners()
+            .find_map(|owner| {
+                let (overlay, name) = (owner.overlay_id()?, names.registered_name(owner)?);
+                (semantic(name) && names.overlay_owners_named(&overlay, name) == [owner])
+                    .then_some((overlay, owner, name))
+            })
+            .unwrap();
+        let (function, function_name) = names
+            .registered_owners()
+            .find_map(|owner| {
+                let name = names.registered_name(owner)?;
+                (owner.is_main()
+                    && semantic(name)
+                    && names.main_symbol(name).ok()? == Some(owner.address())
+                    && names.overlay_owners_named(&overlay, name).is_empty())
+                .then_some((owner.address(), name))
+            })
+            .unwrap();
+        let work = tempfile::tempdir().unwrap();
+        let path = |name: &str| work.path().join(name).to_string_lossy().into_owned();
+        std::fs::write(
+            path("candidate.s"),
+            format!(
+                ".syntax unified\n.thumb\n.text\n.global Func_02000100\n.thumb_func\n\
+                 .type Func_02000100, %function\nFunc_02000100:\npush {{lr}}\n\
+                 bl {helper_name}\nbl {function_name}\npop {{r0}}\nbx r0\n.align 2\n\
+                 .4byte {helper_name}\n.size Func_02000100, . - Func_02000100\n"
+            ),
+        )
+        .unwrap();
+        assemble(&path("candidate.s"), &path("candidate.o")).unwrap();
+        // One import veneer, at runtime 02008010, reaches the main function.
+        let mut reference = vec![0; 0x200];
+        reference[0x10..0x14].copy_from_slice(&0x4720_4c00u32.to_le_bytes());
+        reference[0x14..0x18].copy_from_slice(&(function | 1).to_le_bytes());
+        let configuration = CandidateCompilerConfiguration {
+            overlay_extent: Some(20),
+            ..Default::default()
+        };
+        let linked = link_candidate_owned_routed_with_object(
+            &path("candidate.c"),
+            &format!("games/THE BROKEN SEAL/SRC/{overlay}_c_02000100.c"),
+            "02000100",
+            &reference,
+            &path(""),
+            &[],
+            f64::from(RESOURCE_BASE),
+            CompilerTarget::Tbs,
+            &configuration,
+            Some(&path("candidate.o")),
+        )
+        .unwrap();
+        let runtime = load(&linked, 0x100).unwrap();
+        let call = |at: usize| {
+            let displacement = psynergy::thumb::bl_displacement(&runtime[at..at + 4]).unwrap();
+            i64::from(RUNTIME_BASE) + 0x100 + at as i64 + 4 + i64::from(displacement)
+        };
+        let helper_runtime = i64::from(helper.address()) + i64::from(RUNTIME_BASE - RESOURCE_BASE);
+        assert_eq!(call(2), helper_runtime);
+        assert_eq!(call(6), i64::from(RUNTIME_BASE) + 0x10);
+        assert_eq!(
+            u32::from_le_bytes(runtime[16..20].try_into().unwrap()),
+            helper_runtime as u32 | 1
+        );
     }
     #[test]
     fn decodes_a_forward_thumb_call_at_the_owner_address() {

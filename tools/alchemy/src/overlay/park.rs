@@ -3,6 +3,7 @@ use crate::compiler::{
     overlay::space_size,
     source_paths::{SourceOwner, SourcePaths},
     thumb::standalone_wide_transfer_lines as thumb_standalone_wide_transfer_lines,
+    translation_units::TranslationUnits,
 };
 use crate::overlay::assembly::OVERLAY_BASE;
 use crate::overlay::compile::assemble_overlay;
@@ -475,6 +476,8 @@ pub struct Parked {
     pub address: i64,
     pub span: i64,
     pub lines: usize,
+    /// Every owner restored: the owner, or each member of its instance.
+    pub owners: Vec<SourceOwner>,
 }
 /// Marks a parked owner retained in every unit that owns it. A unit whose
 /// only owner this is points its source at the parked draft with the owner
@@ -578,21 +581,21 @@ fn restore_retained_row(
         .map_err(|e| format!("{}: {e}", evidence_path.display()))
 }
 
-pub(crate) fn park_one(
+/// The listing with one owner's placeholder replaced by the assembly it
+/// retired: the text, the owner's span, the restored line count and the
+/// reference its bytes must reproduce, with that reference's origin.
+fn splice_restored(
     root: &Path,
     target: SourceOwner,
-    apply: bool,
-    reason: Option<&str>,
-) -> Result<Parked, String> {
+    text: &str,
+) -> Result<(String, i64, usize, Vec<u8>, &'static str), String> {
     let overlay = target.overlay_id().expect("overlay owner");
     let address = i64::from(target.address());
-    let assembly = overlay_assembly(root, &overlay);
-    let original = fs::read_to_string(&assembly).map_err(|error| error.to_string())?;
-    let lines: Vec<&str> = original.split('\n').collect();
+    let lines: Vec<&str> = text.split('\n').collect();
     let placeholder = placeholder_block(&lines, address).ok_or_else(|| {
         format!(
             "no AlchemyC_{address:08x} placeholder in {}",
-            assembly.display()
+            overlay_assembly(root, &overlay).display()
         )
     })?;
     let (start, end, span) = (placeholder.start, placeholder.end, placeholder.span);
@@ -617,7 +620,67 @@ pub(crate) fn park_one(
     replaced.extend(lines[..start].iter().map(|line| line.to_string()));
     replaced.extend(restored.iter().cloned());
     replaced.extend(lines[end..].iter().map(|line| line.to_string()));
-    let mut text = replaced.join("\n");
+    Ok((replaced.join("\n"), span, restored.len(), reference, oracle))
+}
+/// The owners one park restores: the owner itself, or every member of the
+/// instance it belongs to, since an instance links its unit as a whole.
+fn parked_members(
+    root: &Path,
+    target: SourceOwner,
+) -> Result<Vec<(SourceOwner, Option<String>)>, String> {
+    let image = target.image();
+    let units = TranslationUnits::declared(root)?;
+    let Some(unit) = units
+        .units
+        .iter()
+        .find(|unit| unit.game == "tbs" && unit.declares(&image, target.address()))
+    else {
+        return Ok(vec![(target, None)]);
+    };
+    if let Some(instance) = unit.instance(&image) {
+        let mut addresses = instance
+            .owners
+            .values()
+            .map(|owner| owner.address)
+            .collect::<Vec<_>>();
+        addresses.sort_unstable();
+        return addresses
+            .into_iter()
+            .map(|address| {
+                let owner = SourceOwner::parse(&format!("{image}:{address:08x}"))?;
+                Ok((owner, Some(unit.id.clone())))
+            })
+            .collect();
+    }
+    if !unit.instances.is_empty() {
+        let instances = unit.instances.keys().cloned().collect::<Vec<_>>();
+        return Err(format!(
+            "{} is a canonical owner of unit {}, which is also linked into {}; park those instances first",
+            target.id(),
+            unit.id,
+            instances.join(", ")
+        ));
+    }
+    Ok(vec![(target, None)])
+}
+pub(crate) fn park_one(
+    root: &Path,
+    target: SourceOwner,
+    apply: bool,
+    reason: Option<&str>,
+) -> Result<Parked, String> {
+    let overlay = target.overlay_id().expect("overlay owner");
+    let address = i64::from(target.address());
+    let assembly = overlay_assembly(root, &overlay);
+    let original = fs::read_to_string(&assembly).map_err(|error| error.to_string())?;
+    let members = parked_members(root, target)?;
+    let mut text = original.clone();
+    let mut restored = Vec::new();
+    for (owner, _) in &members {
+        let (updated, span, lines, reference, oracle) = splice_restored(root, *owner, &text)?;
+        text = updated;
+        restored.push((*owner, span, lines, reference, oracle));
+    }
     let (defined, referenced) = label_use(&text);
     for label in referenced.difference(&defined) {
         match restore_label(&text, label) {
@@ -633,110 +696,211 @@ pub(crate) fn park_one(
         &OverlaySource::named(overlay.clone(), text.clone()),
         OVERLAY_BASE,
     )?;
-    let at = (address - OVERLAY_BASE) as usize;
-    let window = image
-        .get(at..at + span as usize)
-        .ok_or_else(|| "the parked region runs past the image".to_string())?;
-    if window != reference.as_slice() {
-        return Err(format!(
-            "parked bytes differ from the {oracle} reference at 0x{address:08x}"
-        ));
-    }
-    if apply {
-        let owner = target;
-        let source_paths = SourcePaths::load(root)?;
-        let installed = source_paths.source_path(owner);
-        let shared = source_paths
-            .owners_for_path(&installed)
-            .into_iter()
-            .any(|registered| registered != owner);
-        let parked = retained_source(root, target);
-        fs::write(&assembly, &text).map_err(|error| error.to_string())?;
-        let parked_before = if shared && parked.exists() {
-            Some(fs::read(&parked).map_err(|error| {
-                let _ = fs::write(&assembly, &original);
-                format!(
-                    "cannot preserve {} before parking: {error}",
-                    parked.display()
-                )
-            })?)
-        } else {
-            None
-        };
-        let copied = if installed.exists() && shared {
-            fs::copy(&installed, &parked).map_err(|error| {
-                let _ = fs::write(&assembly, &original);
-                format!(
-                    "cannot copy {} to the EN reconstruction corpus: {error}",
-                    installed.display()
-                )
-            })?;
-            true
-        } else {
-            false
-        };
-        let moved = if installed.exists() && !shared {
-            fs::rename(&installed, &parked).map_err(|error| {
-                let _ = fs::write(&assembly, &original);
-                format!(
-                    "cannot move {} to the EN reconstruction corpus: {error}",
-                    installed.display()
-                )
-            })?;
-            true
-        } else {
-            false
-        };
-        if let Err(error) = source_paths.unregister_owner(owner) {
-            if moved {
-                let _ = fs::rename(&parked, &installed);
-            }
-            if copied {
-                match parked_before {
-                    Some(bytes) => {
-                        let _ = fs::write(&parked, bytes);
-                    }
-                    None => {
-                        let _ = fs::remove_file(&parked);
-                    }
-                }
-            }
-            let _ = fs::write(&assembly, &original);
-            return Err(error);
-        }
-        // The unit register mirrors the adoption edit in place rather than
-        // losing the unit: a unit pointing at a moved file is unscoreable,
-        // and rebuilding it later drops its absolute symbols.
-        let units = root.join("games/THE BROKEN SEAL/recon/translation-units.json");
-        let evidence = root.join("games/THE BROKEN SEAL/semantic/overlay-assembly.json");
-        let snapshot = crate::compiler::build_io::Snapshot::take(&[
-            units.clone(),
-            evidence.clone(),
-            assembly.clone(),
-            installed.clone(),
-            parked.clone(),
-            root.join("games/THE BROKEN SEAL/source-paths.json"),
-        ])?;
-        let parked_relative = parked
-            .strip_prefix(root)
-            .map(|p| p.to_string_lossy().into_owned())
-            .unwrap_or_else(|_| parked.to_string_lossy().into_owned());
-        let reason = reason.unwrap_or("no reason given");
-        let outcome = retire_owner_in_units(&units, &overlay, target.address(), &parked_relative)
-            .and_then(|()| restore_retained_row(&evidence, &overlay, address, span, reason));
-        if let Err(error) = outcome {
-            snapshot.restore();
+    for (owner, span, _, reference, oracle) in &restored {
+        let at = overlay_offset(*owner);
+        let window = image
+            .get(at..at + *span as usize)
+            .ok_or_else(|| "the parked region runs past the image".to_string())?;
+        if window != reference.as_slice() {
             return Err(format!(
-                "{error}; nothing parked, the assembly, source and registers are restored"
+                "parked bytes differ from the {oracle} reference at 0x{:08x}",
+                owner.address()
             ));
+        }
+    }
+    let span = restored
+        .iter()
+        .find(|row| row.0 == target)
+        .map_or(0, |row| row.1);
+    let lines = restored.iter().map(|row| row.2).sum();
+    if apply {
+        let reason = reason.unwrap_or("no reason given");
+        match members.first().and_then(|member| member.1.as_deref()) {
+            Some(unit) => {
+                let spans = restored
+                    .iter()
+                    .map(|row| (row.0, row.1))
+                    .collect::<Vec<_>>();
+                retire_instance(root, unit, &overlay, &spans, &assembly, &text, reason)?;
+            }
+            None => retire_owner(root, target, span, &assembly, &original, &text, reason)?,
         }
     }
     Ok(Parked {
         overlay: overlay.to_string(),
         address,
         span,
-        lines: restored.len(),
+        lines,
+        owners: restored.iter().map(|row| row.0).collect(),
     })
+}
+/// Retires one instance: its restored assembly, its owners' source paths
+/// (their names stay registered) and its manifest entry, with a retained row
+/// for each span. The shared source, the canonical unit and every other
+/// instance are untouched.
+fn retire_instance(
+    root: &Path,
+    unit: &str,
+    overlay: &str,
+    spans: &[(SourceOwner, i64)],
+    assembly: &Path,
+    text: &str,
+    reason: &str,
+) -> Result<(), String> {
+    let units = root.join("games/THE BROKEN SEAL/recon/translation-units.json");
+    let evidence = root.join("games/THE BROKEN SEAL/semantic/overlay-assembly.json");
+    let register = root.join("games/THE BROKEN SEAL/source-paths.json");
+    let snapshot = crate::compiler::build_io::Snapshot::take(&[
+        units.clone(),
+        evidence.clone(),
+        assembly.to_path_buf(),
+        register,
+    ])?;
+    let outcome = (|| {
+        fs::write(assembly, text).map_err(|error| format!("{}: {error}", assembly.display()))?;
+        let source_paths = SourcePaths::load(root)?;
+        for (owner, _) in spans {
+            source_paths.unregister_owner(*owner)?;
+        }
+        remove_instance_in_units(&units, unit, overlay)?;
+        for (owner, span) in spans {
+            let start = i64::from(owner.address());
+            restore_retained_row(&evidence, overlay, start, *span, reason)?;
+        }
+        Ok::<(), String>(())
+    })();
+    outcome.map_err(|error| {
+        snapshot.restore();
+        format!("{error}; nothing parked, the assembly and registers are restored")
+    })
+}
+/// Removes one image's instance from a unit, keeping its source, canonical
+/// owners and other instances.
+fn remove_instance_in_units(units_path: &Path, unit: &str, image: &str) -> Result<(), String> {
+    let text =
+        fs::read_to_string(units_path).map_err(|e| format!("{}: {e}", units_path.display()))?;
+    let mut manifest: serde_json::Value =
+        serde_json::from_str(&text).map_err(|e| format!("{}: {e}", units_path.display()))?;
+    let entry = manifest["units"]
+        .as_array_mut()
+        .into_iter()
+        .flatten()
+        .find(|entry| entry["id"].as_str() == Some(unit))
+        .and_then(serde_json::Value::as_object_mut)
+        .ok_or_else(|| format!("{}: no unit {unit}", units_path.display()))?;
+    let instances = entry
+        .get_mut("instances")
+        .and_then(serde_json::Value::as_object_mut)
+        .ok_or_else(|| format!("{unit} declares no instances"))?;
+    if instances.shift_remove(image).is_none() {
+        return Err(format!("{unit} has no instance in {image}"));
+    }
+    if instances.is_empty() {
+        entry.shift_remove("instances");
+    }
+    let rendered = serde_json::to_string_pretty(&manifest).map_err(|e| e.to_string())?;
+    fs::write(units_path, format!("{rendered}\n"))
+        .map_err(|e| format!("{}: {e}", units_path.display()))
+}
+/// Retires one standalone or canonical unit owner, as parking always has.
+fn retire_owner(
+    root: &Path,
+    target: SourceOwner,
+    span: i64,
+    assembly: &Path,
+    original: &str,
+    text: &str,
+    reason: &str,
+) -> Result<(), String> {
+    let overlay = target.overlay_id().expect("overlay owner");
+    let address = i64::from(target.address());
+    let owner = target;
+    let source_paths = SourcePaths::load(root)?;
+    let installed = source_paths.source_path(owner);
+    let shared = source_paths
+        .owners_for_path(&installed)
+        .into_iter()
+        .any(|registered| registered != owner);
+    let parked = retained_source(root, target);
+    fs::write(assembly, text).map_err(|error| error.to_string())?;
+    let parked_before = if shared && parked.exists() {
+        Some(fs::read(&parked).map_err(|error| {
+            let _ = fs::write(assembly, original);
+            format!(
+                "cannot preserve {} before parking: {error}",
+                parked.display()
+            )
+        })?)
+    } else {
+        None
+    };
+    let copied = if installed.exists() && shared {
+        fs::copy(&installed, &parked).map_err(|error| {
+            let _ = fs::write(assembly, original);
+            format!(
+                "cannot copy {} to the EN reconstruction corpus: {error}",
+                installed.display()
+            )
+        })?;
+        true
+    } else {
+        false
+    };
+    let moved = if installed.exists() && !shared {
+        fs::rename(&installed, &parked).map_err(|error| {
+            let _ = fs::write(assembly, original);
+            format!(
+                "cannot move {} to the EN reconstruction corpus: {error}",
+                installed.display()
+            )
+        })?;
+        true
+    } else {
+        false
+    };
+    if let Err(error) = source_paths.unregister_owner(owner) {
+        if moved {
+            let _ = fs::rename(&parked, &installed);
+        }
+        if copied {
+            match parked_before {
+                Some(bytes) => {
+                    let _ = fs::write(&parked, bytes);
+                }
+                None => {
+                    let _ = fs::remove_file(&parked);
+                }
+            }
+        }
+        let _ = fs::write(assembly, original);
+        return Err(error);
+    }
+    // The unit register mirrors the adoption edit in place rather than
+    // losing the unit: a unit pointing at a moved file is unscoreable,
+    // and rebuilding it later drops its absolute symbols.
+    let units = root.join("games/THE BROKEN SEAL/recon/translation-units.json");
+    let evidence = root.join("games/THE BROKEN SEAL/semantic/overlay-assembly.json");
+    let snapshot = crate::compiler::build_io::Snapshot::take(&[
+        units.clone(),
+        evidence.clone(),
+        assembly.to_path_buf(),
+        installed.clone(),
+        parked.clone(),
+        root.join("games/THE BROKEN SEAL/source-paths.json"),
+    ])?;
+    let parked_relative = parked
+        .strip_prefix(root)
+        .map(|p| p.to_string_lossy().into_owned())
+        .unwrap_or_else(|_| parked.to_string_lossy().into_owned());
+    let outcome = retire_owner_in_units(&units, &overlay, target.address(), &parked_relative)
+        .and_then(|()| restore_retained_row(&evidence, &overlay, address, span, reason));
+    if let Err(error) = outcome {
+        snapshot.restore();
+        return Err(format!(
+            "{error}; nothing parked, the assembly, source and registers are restored"
+        ));
+    }
+    Ok(())
 }
 pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     let mut apply = false;
@@ -765,11 +929,22 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
         let target = crate::overlay::score::resolve(root, &row)?;
         match park_one(root, target, apply, reason.as_deref()) {
             Ok(parked) => println!(
-                "parked {}:{:08x} span={} lines={}{}",
+                "parked {}:{:08x} span={} lines={}{}{}",
                 parked.overlay,
                 parked.address,
                 parked.span,
                 parked.lines,
+                match parked.owners.as_slice() {
+                    [_] => String::new(),
+                    owners => format!(
+                        " instance={}",
+                        owners
+                            .iter()
+                            .map(|owner| owner.id())
+                            .collect::<Vec<_>>()
+                            .join(",")
+                    ),
+                },
                 if apply { "" } else { " (dry run)" }
             ),
             Err(error) => {
@@ -811,6 +986,134 @@ mod tests {
         );
     }
 
+    #[test]
+    fn parking_an_instance_keeps_the_shared_source_and_other_instances() {
+        use crate::compiler::source_paths::SourceOwner;
+        use crate::compiler::translation_units::fixture::{Repository, STAGED_ACTOR};
+        let repository = Repository::new();
+        let root = repository.0.path();
+        let game = root.join("games/THE BROKEN SEAL");
+        repository.write(
+            "games/THE BROKEN SEAL/semantic/overlay-assembly.json",
+            r#"{"format":1,"regions":[]}"#,
+        );
+        let owner = |id: &str| SourceOwner::parse(id).unwrap();
+        // Parking one member of an instance parks every member it links there.
+        let members = super::parked_members(root, owner("resource_39b:02000ba4")).unwrap();
+        let unit = Some("staged-actor".to_string());
+        assert_eq!(
+            members,
+            [
+                (owner("resource_39b:02000630"), unit.clone()),
+                (owner("resource_39b:02000ba4"), unit),
+            ]
+        );
+        let error = super::parked_members(root, owner("resource_3bf:020008c0")).unwrap_err();
+        assert!(
+            error.contains("canonical owner of unit staged-actor, which is also linked into resource_389, resource_39b; park those instances first"),
+            "{error}"
+        );
+        let standalone = owner("resource_3a0:02000100");
+        assert_eq!(
+            super::parked_members(root, standalone).unwrap(),
+            [(standalone, None)]
+        );
+
+        let listing = game.join("asm/overlays/resource_39b_overlay.s");
+        let spans = [
+            (owner("resource_39b:02000630"), 296),
+            (owner("resource_39b:02000ba4"), 284),
+        ];
+        let files = [
+            "asm/overlays/resource_39b_overlay.s",
+            "source-paths.json",
+            "recon/translation-units.json",
+            "semantic/overlay-assembly.json",
+        ];
+        let contents = || files.map(|file| fs::read_to_string(game.join(file)).unwrap());
+        // A failure restores every register it touched.
+        let before = contents();
+        let error = super::retire_instance(
+            root,
+            "staged-actor",
+            "resource_39c",
+            &spans,
+            &listing,
+            "restored\n",
+            "probe",
+        )
+        .unwrap_err();
+        assert!(
+            error.contains("staged-actor has no instance in resource_39c"),
+            "{error}"
+        );
+        assert!(error.contains("nothing parked"), "{error}");
+        assert_eq!(contents(), before);
+
+        super::retire_instance(
+            root,
+            "staged-actor",
+            "resource_39b",
+            &spans,
+            &listing,
+            "restored\n",
+            "not exact",
+        )
+        .unwrap();
+        assert_eq!(fs::read_to_string(&listing).unwrap(), "restored\n");
+        assert!(game.join("SRC").join(STAGED_ACTOR).is_file());
+        let register: serde_json::Value =
+            serde_json::from_str(&fs::read_to_string(game.join("source-paths.json")).unwrap())
+                .unwrap();
+        for id in ["resource_39b:02000630", "resource_39b:02000ba4"] {
+            assert!(register["owners"][id].get("source").is_none(), "{id}");
+            assert!(register["owners"][id]["name"].is_string(), "{id}");
+        }
+        for id in ["resource_3bf:0200034c", "resource_389:020008c0"] {
+            assert_eq!(register["owners"][id]["source"], STAGED_ACTOR, "{id}");
+        }
+        let evidence: serde_json::Value = serde_json::from_str(
+            &fs::read_to_string(game.join("semantic/overlay-assembly.json")).unwrap(),
+        )
+        .unwrap();
+        let rows = evidence["regions"].as_array().unwrap();
+        assert_eq!(rows.len(), 2);
+        assert_eq!(
+            (&rows[0]["start"], &rows[0]["end"]),
+            (&"0x02000630".into(), &"0x02000758".into())
+        );
+        assert_eq!(
+            (&rows[1]["start"], &rows[1]["end"]),
+            (&"0x02000ba4".into(), &"0x02000cc0".into())
+        );
+        // The canonical unit and its other instance still load as one unit.
+        let units = repository.load().unwrap();
+        let unit = &units.units[0];
+        assert_eq!(
+            unit.images().collect::<Vec<_>>(),
+            ["resource_3bf", "resource_389"]
+        );
+        assert_eq!(unit.owners.len(), 2);
+        // Parking the last instance leaves no empty instances map behind.
+        let listing = game.join("asm/overlays/resource_389_overlay.s");
+        let spans = [
+            (owner("resource_389:0200034c"), 296),
+            (owner("resource_389:020008c0"), 284),
+        ];
+        super::retire_instance(
+            root,
+            "staged-actor",
+            "resource_389",
+            &spans,
+            &listing,
+            "restored\n",
+            "not exact",
+        )
+        .unwrap();
+        let manifest = fs::read_to_string(game.join("recon/translation-units.json")).unwrap();
+        assert!(!manifest.contains("\"instances\""), "{manifest}");
+        assert!(repository.load().unwrap().units[0].instances.is_empty());
+    }
     #[test]
     fn parking_mirrors_the_adoption_edit_on_the_unit_register() {
         let root = tempdir().unwrap();

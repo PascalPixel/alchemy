@@ -8,6 +8,13 @@ pub fn bl_displacement(pair: &[u8]) -> Option<i32> {
     let value = (i32::from(high & 0x7ff) << 12) | (i32::from(low & 0x7ff) << 1);
     Some((value << 9) >> 9)
 }
+/// The target word of a fixed interworking veneer that starts at `bytes`:
+/// `ldr r4, [pc, #0]`, `bx r4`, then the word. The load reaches that word only
+/// when the veneer starts on a word boundary, which the caller establishes.
+pub fn veneer_target(bytes: &[u8]) -> Option<u32> {
+    let word = |at: usize| Some(u32::from_le_bytes(bytes.get(at..at + 4)?.try_into().ok()?));
+    (word(0)? == 0x4720_4c00).then(|| word(4)).flatten()
+}
 /// A Thumb relocation-bearing site: kind (`b'B'` call, `b'L'` literal load),
 /// instruction offset, affected byte offset, and the referenced value.
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -53,7 +60,18 @@ pub fn relocation_info(bytes: &[u8], base: u64) -> (Vec<bool>, Vec<Reference>) {
 }
 #[cfg(test)]
 mod tests {
-    use super::{bl_displacement, relocation_info};
+    use super::{bl_displacement, relocation_info, veneer_target};
+    #[test]
+    fn veneers_load_r4_from_the_following_word_and_branch_through_it() {
+        let veneer = [0x00, 0x4c, 0x20, 0x47, 0x55, 0x20, 0x09, 0x08];
+        assert_eq!(veneer_target(&veneer), Some(0x0809_2055));
+        assert_eq!(veneer_target(&veneer[..7]), None);
+        for (at, other) in [(0, 0x01), (2, 0x28), (3, 0x46)] {
+            let mut changed = veneer;
+            changed[at] = other;
+            assert_eq!(veneer_target(&changed), None);
+        }
+    }
     #[test]
     fn calls_decode_both_signed_extremes_and_all_low_bits() {
         for upper in [0u16, 0x3ff, 0x400, 0x7ff] {

@@ -48,10 +48,17 @@ fn color(category: Category) -> &'static str {
         _ => "#bda995",
     }
 }
+/// A folder's name bar is 16px tall in the stylesheet whatever the window
+/// size; the layout estimates it in chart units only to shape its children.
+const HEADING_UNITS: f64 = 12.0;
+/// Draw `entries` into a box `area` chart units wide and tall. Each tile holds
+/// its children in an inner box below its name bar, so bars keep a fixed pixel
+/// height while tiles scale with the window.
 fn tiles(
     out: &mut String,
     entries: &[&Tile],
     frame: Rect,
+    area: (f64, f64),
     folder: &str,
     verification: &str,
     widths: &mut std::collections::BTreeSet<usize>,
@@ -61,8 +68,9 @@ fn tiles(
         let rect = placed.rect;
         let nested = !tile.children.is_empty();
         let source = tile.source.as_deref().unwrap_or("");
-        let directory = source.ends_with('/');
-        let name = if source.is_empty() {
+        // A leaf holding its folder's unclassified bytes is named by its label.
+        let directory = source.ends_with('/') && nested;
+        let name = if source.is_empty() || (source.ends_with('/') && !nested) {
             &tile.label
         } else {
             source_name(source)
@@ -85,10 +93,10 @@ fn tiles(
         out.push_str(&format!(
             "<div class=\"tile {}\" style=\"left:{}%;top:{}%;width:{}%;height:{}%\" title=\"{}\">",
             if nested { "container" } else { "leaf" },
-            rect.x / 830.0 * 100.0,
-            rect.y / 467.0 * 100.0,
-            rect.width / 830.0 * 100.0,
-            rect.height / 467.0 * 100.0,
+            rect.x / area.0 * 100.0,
+            rect.y / area.1 * 100.0,
+            rect.width / area.0 * 100.0,
+            rect.height / area.1 * 100.0,
             esc(&title)
         ));
         if !nested {
@@ -114,8 +122,8 @@ fn tiles(
             tile.address
                 .map(|a| format!("/inspect/{a:x}/{}", encode(folder)))
         };
+        let minimum = (label_width(name) + 8.0).ceil().max(72.0) as usize;
         if let Some(href) = href {
-            let minimum = (label_width(name) + 8.0).ceil().max(72.0) as usize;
             widths.insert(minimum);
             out.push_str(&format!(
                 "<a class=\"{} label-w{minimum}\" href=\"{href}\" aria-label=\"{}\"><span>{}</span></a>",
@@ -127,29 +135,42 @@ fn tiles(
                 esc(&title),
                 esc(name)
             ));
+        } else if source.ends_with('/') && !nested {
+            // Unclassified bytes have nowhere to open, but still say what they are.
+            widths.insert(minimum);
+            out.push_str(&format!(
+                "<span class=\"leaf-label label-w{minimum}\"><span>{}</span></span>",
+                esc(name)
+            ));
         }
-        out.push_str("</div>");
         if nested {
-            let inset = 2.0_f64.min(rect.width / 4.0).min(rect.height / 4.0);
-            let heading = if directory {
-                20.0_f64.min((rect.height - inset * 2.0).max(0.0))
+            let heading = if directory { HEADING_UNITS } else { 0.0 };
+            let inner = (
+                (rect.width - 4.0).max(1.0),
+                (rect.height - 4.0 - heading).max(1.0),
+            );
+            out.push_str(if directory {
+                "<div class=\"area headed\">"
             } else {
-                0.0
-            };
+                "<div class=\"area\">"
+            });
             tiles(
                 out,
                 &tile.children.iter().collect::<Vec<_>>(),
                 Rect {
-                    x: rect.x + inset,
-                    y: rect.y + inset + heading,
-                    width: rect.width - inset * 2.0,
-                    height: (rect.height - inset * 2.0 - heading).max(0.0),
+                    x: 0.0,
+                    y: 0.0,
+                    width: inner.0,
+                    height: inner.1,
                 },
+                inner,
                 folder,
                 verification,
                 widths,
             );
+            out.push_str("</div>");
         }
+        out.push_str("</div>");
     }
 }
 fn reveal_form(source: &str) -> String {
@@ -195,14 +216,16 @@ pub fn page(
             width: 822.0,
             height: 459.0,
         },
+        (830.0, 467.0),
         folder,
         verification,
         &mut widths,
     );
     out.push_str("</section>");
     out.push_str("<style>");
+    // A folder's name bar opens exactly when its name fits, under one query.
     for width in widths {
-        out.push_str(&format!("@container (min-width:{width}px) and (min-height:24px){{.label-w{width} span{{visibility:visible}}}}"));
+        out.push_str(&format!("@container (min-width:{width}px) and (min-height:24px){{.label-w{width} span{{visibility:visible}}.label-w{width}~.area.headed{{top:16px}}}}"));
     }
     out.push_str("</style>");
     if let Some(items) = map.document["shared_map_assets"][folder]

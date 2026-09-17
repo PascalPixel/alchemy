@@ -15,8 +15,15 @@ exactly like the original. Solid blocks are proven, lighter blocks are close
 but not exact yet, and the rest is still unknown.
 
 Alchemy is not a remake, a mod, an emulator or a download of the games, and you
-need your own copy of the games to build it. To build it or help out, see
-[CONTRIBUTING.md](CONTRIBUTING.md).
+need your own copy of the games to build it. Build instructions are in
+[AGENTS.md](AGENTS.md), and what is left to do is in [TODO.md](TODO.md).
+
+## Clean room
+
+Alchemy follows a documented clean-room policy modelled on long-running
+decompilations such as pret's. It is written from the games themselves, public
+documentation and its own recovery work, and records where each file comes
+from. It will open to outside contributions when it reaches 100%.
 
 ## Acknowledgements
 
@@ -24,5 +31,13 @@ _Golden Sun_, its characters, music, art and original code were created by
 Camelot Software Planning and published by Nintendo. Alchemy is an unofficial
 fan project and is not affiliated with or endorsed by either company.
 
-Thank you to the [r/GoldenSun community](https://www.reddit.com/r/GoldenSun/)
-for sharing Alchemy, cheering it on, and keeping the love for these games alive.
+Thank you to:
+
+- The [r/GoldenSun community](https://www.reddit.com/r/GoldenSun/), for sharing
+  Alchemy, cheering it on, and keeping the love for these games alive.
+- Tarpman and Karathan, for working out which compiler and flags Camelot used.
+- Coaltergeist, for [camelot-gcc](https://github.com/Coaltergeist/camelot-gcc),
+  the compiler Alchemy first built with.
+- [pret](https://github.com/pret), whose decompilations set the standard Alchemy
+  measures itself against, and whose [agbcc](https://github.com/pret/agbcc)
+  Alchemy builds with.

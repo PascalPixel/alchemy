@@ -9,7 +9,7 @@ fn every_advertised_command_has_help_and_documented_ownership() {
     let output = command().arg("--help").output().unwrap();
     assert!(output.status.success());
     let help = String::from_utf8(output.stdout).unwrap();
-    let contributing = include_str!("../../../CONTRIBUTING.md");
+    let tooling = include_str!("../../../.agents/TOOLING.md");
     for line in help.lines().filter(|line| line.starts_with("  ")) {
         let name = line.split_whitespace().next().unwrap();
         let output = command().args([name, "--help"]).output().unwrap();
@@ -23,7 +23,7 @@ fn every_advertised_command_has_help_and_documented_ownership() {
             "{name}"
         );
         assert!(
-            contributing.contains(&format!("| `alchemy {name}` |")),
+            tooling.contains(&format!("| `alchemy {name}` |")),
             "{name} missing from inventory"
         );
     }

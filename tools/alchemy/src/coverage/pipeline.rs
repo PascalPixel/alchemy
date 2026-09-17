@@ -1338,6 +1338,94 @@ fn component_children(region: &Value, data: &[Span]) -> Vec<Tile> {
         vec![]
     }
 }
+/// The Lost Age ROM by source: verified asset regions, exact main-image C, and
+/// the rest unclassified. Empty until its asset manifest has been built.
+fn lost_age_tiles(tree: &SourceTree) -> Vec<Tile> {
+    let Some(manifest) = json(tree, "out/tla-en/assets/manifest.json") else {
+        return Vec::new();
+    };
+    let rom = rom_size("tla-en").unwrap_or(0x1000000);
+    let mut tiles = Vec::new();
+    let mut covered: Vec<Span> = Vec::new();
+    let claim = |start: i64, end: i64, covered: &mut Vec<Span>| {
+        let spans = subtract(&[Span::new(start, end)], covered);
+        covered.extend_from_slice(&spans);
+        *covered = normalize(covered);
+        bytes(&spans)
+    };
+    for region in array(&manifest, "regions") {
+        let (Some(start), Some(size)) = (integer(region, "address"), integer(region, "size"))
+        else {
+            continue;
+        };
+        let actual = claim(start, start + size, &mut covered);
+        if actual == 0 {
+            continue;
+        }
+        let kind = text(region, "kind");
+        let source = array(region, "sources")
+            .first()
+            .and_then(Value::as_str)
+            .unwrap_or("games/THE LOST AGE/SRC/SYSTEM/RESOURCE.JSON");
+        tiles.push(Tile {
+            label: format!(
+                "{} · {} · 0x{:08x}",
+                source.rsplit('/').next().unwrap_or(source),
+                kind,
+                start
+            ),
+            bytes: actual,
+            categories: [0, 0, 0, 0, 0, actual],
+            group: Some(kind),
+            address: Some(start),
+            source: Some(source.into()),
+            ..Tile::default()
+        });
+    }
+    if let Some(metrics) = json(tree, "games/THE LOST AGE/metrics/tla-en-executable.json") {
+        let intervals = metrics.pointer("/main/intervals").and_then(Value::as_array);
+        for interval in intervals.into_iter().flatten() {
+            let (Some(start), Some(end)) = (integer(interval, "start"), integer(interval, "end"))
+            else {
+                continue;
+            };
+            let evidence = text(interval, "evidence");
+            let Some((source, _)) = evidence
+                .split_once(':')
+                .filter(|(source, _)| source.to_ascii_uppercase().ends_with(".C"))
+            else {
+                continue;
+            };
+            let actual = claim(start, end, &mut covered);
+            if actual == 0 {
+                continue;
+            }
+            tiles.push(Tile {
+                label: format!(
+                    "{} · 0x{start:08x}",
+                    source.rsplit('/').next().unwrap_or(source)
+                ),
+                bytes: actual,
+                categories: [actual, 0, 0, 0, 0, 0],
+                address: Some(start),
+                source: Some(source.into()),
+                ..Tile::default()
+            });
+        }
+    }
+    let rest = bytes(&subtract(&[Span::new(ROM_BASE, ROM_BASE + rom)], &covered));
+    if rest > 0 {
+        tiles.push(Tile {
+            label: "The Lost Age ROM · unclassified".into(),
+            bytes: rest,
+            categories: [0, 0, rest, 0, 0, 0],
+            // Inside its game folder, so games/ stays the whole picture.
+            source: Some("games/THE LOST AGE/".into()),
+            ..Tile::default()
+        });
+    }
+    tiles
+}
 fn asset_tiles(tree: &SourceTree, data: &[Span], rom: i64) -> Vec<Tile> {
     let Some(manifest) = json(tree, "out/tbs-en/full/assets/manifest.json") else {
         return vec![Tile {
@@ -1739,6 +1827,15 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
     if physical_total != rom {
         return Err(format!(
             "ROM treemap covers {physical_total} bytes, expected {rom}"
+        ));
+    }
+    // games/ holds both ROMs; The Lost Age joins the contents tree beside The
+    // Broken Seal without entering its DONE totals.
+    if options.target == "tbs-en" {
+        rom_areas.push(area(
+            "rom-lost-age",
+            "The Lost Age ROM",
+            lost_age_tiles(options.exact),
         ));
     }
     let executable = bytes(&main_exec) + mapped_bytes(&overlay_exec);

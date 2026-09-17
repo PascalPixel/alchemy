@@ -277,10 +277,10 @@ edition-builds: correspondence
 edition-builds-check: correspondence-check
 	@printf 'cross-edition edition-build audit ok\n'
 
-coverage: full-rom-check | $(REPORT_DIR)
+coverage: full-rom-check $(if $(wildcard roms/tla-en.gba),tla-assets-check) | $(REPORT_DIR)
 	$(CHECK) coverage --write
 
-coverage-check: full-rom-check
+coverage-check: full-rom-check $(if $(wildcard roms/tla-en.gba),tla-assets-check)
 	$(CHECK) coverage --check
 
 core-retained-check:

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "FIELD_EFFECT.H"
 
 #define OverlayObject_CreateAndInitialize Func_020009f4
 #define SceneEffect_SpawnNineRadialEffects Func_020011e0
@@ -409,13 +410,13 @@ void Func_0200464e();
 void Func_0200465c();
 s32 Func_0200466c();
 void Func_0200469e();
-s32 Func_020046a0();
+struct FieldActor *Func_020046a0();
 void Func_020046aa();
-u8 *Func_020046ba();
+struct FieldActor *Func_020046ba();
 void Func_020046e0();
 void Func_020046f8();
 void Func_02004700();
-u8 *Func_02004726();
+struct FieldActor *Func_02004726();
 void Func_02004730();
 void Func_02004736();
 void Func_02004744();
@@ -441,13 +442,13 @@ void Func_02004842();
 void Func_0200485c();
 s32 Func_02004860();
 void Func_0200489c();
-s32 Func_0200489e();
+struct FieldActor *Func_0200489e();
 void Func_020048a8();
-u8 *Func_020048b8();
+struct FieldActor *Func_020048b8();
 void Func_020048de();
 void Func_020048f6();
 void Func_020048fe();
-u8 *Func_02004924();
+struct FieldActor *Func_02004924();
 void Func_0200492e();
 void Func_02004934();
 void Func_02004942();
@@ -889,16 +890,14 @@ u8 *OverlayObject_PrepareSpawnedObjectMode4(s32 x, s32 y, s32 z, s32 kind)
     return ret;
 }
 
-void OverlayObject_IntegrateVelocities(void *arg0)
+void OverlayObject_IntegrateVelocities(union FieldObject *object)
 {
-    u8 *a = arg0;
-
-    *(volatile s32 *)(a + 0x08) += *(s32 *)(a + 0x44);
-    *(volatile s32 *)(a + 0x0C) += *(s32 *)(a + 0x48);
-    *(volatile s32 *)(a + 0x10) += *(s32 *)(a + 0x4C);
-    *(volatile s32 *)(a + 0x18) += *(s32 *)(a + 0x30);
-    *(volatile s32 *)(a + 0x1C) += *(s32 *)(a + 0x34);
-    *(volatile u16 *)(*(u8 **)(a + 0x50) + 0x1E) += *(u16 *)(a + 0x64);
+    object->effect.x += object->effect.velocity_x;
+    object->effect.y += object->effect.velocity_y;
+    object->effect.z += object->effect.velocity_z;
+    object->effect.scale_x += object->effect.scale_rate_x;
+    object->effect.scale_y += object->effect.scale_rate_y;
+    object->effect.sprite->rotation += object->effect.spin;
 }
 
 void SceneEffect_SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
@@ -1349,12 +1348,10 @@ void SceneState_RunUnlessActorZeroAt30_52(void)
 
 void FieldScene_RunSupplementalSequenceTwo(void)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 rec2;
     s32 rec7;
-    u8 *record;
+    struct FieldActor *actor;
     s32 value;
     s32 v5;
     s32 v6;
@@ -1362,21 +1359,19 @@ void FieldScene_RunSupplementalSequenceTwo(void)
     u8 *frame;
 
     Func_0200464e();
-    record = Value1(Func_0200466c, 18);
-    if ((*(volatile s32 *)((s32)record + 8) >> 20) != 46) {
-    } else {
+    actor = (struct FieldActor *)Value1(Func_0200466c, 18);
+    if ((actor->x.fixed >> 20) == 46) {
         Func_0200465c(30);
         rec2 = Func_02001f74(0x2e80000, 0, 0xb80000, 253);
         frame = slot16;
         *(s32 *)(frame + 8) = 0x9999;
         *(s32 *)(frame + 12) = 0x9999;
         *(s32 *)(frame + 4) = 7;
-        *(u8 *)(Func_020046a0(18) + 85) = 0;
+        Func_020046a0(18)->motion_flags = 0;
         Func_0200474c(185);
         for (i = 0; i < 16; i++) {
             Func_020045cc(3);
-            record = Func_020046ba(18);
-            *(volatile s32 *)((s32)record + 12) += -0x10000;
+            Func_020046ba(18)->y.fixed -= 0x10000;
             rec7 = Value0(Func_020045ee);
             rec7 = ((((u32)(rec7 << 4) >> 16) << 16) + 0x2e00000);
             value = Value0(Func_02004600);
@@ -1384,12 +1379,7 @@ void FieldScene_RunSupplementalSequenceTwo(void)
         }
         Call6(Func_020046aa, 51, 8, 1, 1, 49, 8);
         Func_02004700(30);
-        {
-            u8 *record = Func_02004726(18);
-            u8 value = *(volatile u8 *)&record[35];
-
-            record[35] = (u8)(value | 2);
-        }
+        Func_02004726(18)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
         Func_02004770(18, 3);
         Func_0200469e(rec2);
         Call6(Func_020046e0, 45, 4, 1, 1, 46, 8);
@@ -1436,12 +1426,10 @@ void ActorPresentation_ConfigureActorTwentyAndFlag200(void)
 
 void FieldScene_RunSupplementalSequenceOne(s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
     s32 rec2;
     s32 rec7;
-    u8 *record;
+    struct FieldActor *actor;
     s32 value;
     s32 arg0;
     s32 arg2;
@@ -1451,23 +1439,20 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
     u8 *slot;
 
     Func_02004842(a0);
-    record = Value1(Func_02004860, 19);
-    if ((*(volatile s32 *)((s32)record + 8) >> 20) != 48) {
-    } else {
-        if (Value1(Func_02004838, 0x202) == 0) {
-        } else {
+    actor = (struct FieldActor *)Value1(Func_02004860, 19);
+    if ((actor->x.fixed >> 20) == 48) {
+        if (Value1(Func_02004838, 0x202) != 0) {
             Func_0200485c(30);
             rec2 = Func_02002172(0x3020000, 0, 0x1120000, 223);
             slot = slot16;
             *(s32 *)(slot + 8) = 0x9999;
             *(s32 *)(slot + 12) = 0x9999;
             *(s32 *)(slot + 4) = 7;
-            *(u8 *)(Func_0200489e(19) + 85) = 0;
+            Func_0200489e(19)->motion_flags = 0;
             Func_0200494a(185);
             for (i = 0; i < 16; i++) {
                 Func_020047ca(3);
-                record = Func_020048b8(19);
-                *(volatile s32 *)((s32)record + 12) += -0x10000;
+                Func_020048b8(19)->y.fixed -= 0x10000;
                 rec7 = Value0(Func_020047ec);
                 arg0 = ((((u32)(rec7 << 4) >> 16) << 16) + 0x3000000);
                 value = Value0(Func_020047fe);
@@ -1476,12 +1461,7 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
             }
             Call6(Func_020048a8, 51, 8, 1, 1, 45, 14);
             Func_020048fe(30);
-            {
-                u8 *record = Func_02004924(19);
-                u8 value = *(volatile u8 *)&record[35];
-
-                record[35] = (u8)(value | 2);
-            }
+            Func_02004924(19)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
             Func_0200496e(19, 3);
             Func_0200489c(rec2);
             Call6(Func_020048de, 45, 4, 1, 1, 48, 14);
@@ -1902,67 +1882,67 @@ void FieldScene_RunScene3c4SequenceA(s32 a0)
     Func_0200519e(a0);
     Call6(Func_0200515a, 83, 45, 11, 8, 19, 45);
     record = Value1(Func_020051d0, 19);
-    p5 = *(volatile s32 *)(record + 8);
-    q = *(volatile s32 *)(Value1(Func_020051d8, 19) + 16);
+    p5 = *(s32 *)(record + 8);
+    q = *(s32 *)(Value1(Func_020051d8, 19) + 16);
     q >>= 20;
     p5 >>= 20;
     Func_0200517e(20, 56, 1, 1, p5, q);
     record = Value1(Func_020051f4, 20);
-    p5 = *(volatile s32 *)(record + 8);
-    q = *(volatile s32 *)(Value1(Func_020051fc, 20) + 16);
+    p5 = *(s32 *)(record + 8);
+    q = *(s32 *)(Value1(Func_020051fc, 20) + 16);
     q >>= 20;
     p5 >>= 20;
     Func_020051a2_a(20, 56, 1, 1, p5, q);
     record = Value1(Func_02005218_a, 21);
-    p5 = *(volatile s32 *)(record + 8);
-    q = *(volatile s32 *)(Value1(Func_02005220, 21) + 16);
+    p5 = *(s32 *)(record + 8);
+    q = *(s32 *)(Value1(Func_02005220, 21) + 16);
     q >>= 20;
     p5 >>= 20;
     Func_020051c6(20, 56, 1, 1, p5, q);
     record = Value1(Func_0200523c, 22);
-    p5 = *(volatile s32 *)(record + 8);
-    q = *(volatile s32 *)(Value1(Func_02005244, 22) + 16);
+    p5 = *(s32 *)(record + 8);
+    q = *(s32 *)(Value1(Func_02005244, 22) + 16);
     q >>= 20;
     p5 >>= 20;
     Func_020051ea(20, 56, 1, 1, p5, q);
     record = Value1(Func_02005260, 23);
-    p5 = *(volatile s32 *)(record + 8);
-    q = *(volatile s32 *)(Value1(Func_02005268, 23) + 16);
+    p5 = *(s32 *)(record + 8);
+    q = *(s32 *)(Value1(Func_02005268, 23) + 16);
     q >>= 20;
     p5 >>= 20;
     Func_0200520e(20, 56, 1, 1, p5, q);
     record = Value1(Func_02005284, 19);
-    if ((*(volatile s32 *)(record + 8) >> 20) == 25) {
+    if ((*(s32 *)(record + 8) >> 20) == 25) {
         record = Value1(Func_02005294, 19);
-        if ((*(volatile s32 *)(record + 16) >> 20) == 49) {
+        if ((*(s32 *)(record + 16) >> 20) == 49) {
             v6 = 1;
         }
     }
     record = Value1(Func_020052a4, 20);
-    if ((*(volatile s32 *)(record + 8) >> 20) == 23) {
+    if ((*(s32 *)(record + 8) >> 20) == 23) {
         record = Value1(Func_020052b2, 20);
-        if ((*(volatile s32 *)(record + 16) >> 20) == 49) {
+        if ((*(s32 *)(record + 16) >> 20) == 49) {
             v6 = (v6 + 1);
         }
     }
     record = Value1(Func_020052c2, 21);
-    if ((*(volatile s32 *)(record + 8) >> 20) == 25) {
+    if ((*(s32 *)(record + 8) >> 20) == 25) {
         record = Value1(Func_020052d0, 21);
-        if ((*(volatile s32 *)(record + 16) >> 20) == 47) {
+        if ((*(s32 *)(record + 16) >> 20) == 47) {
             v6 = (v6 + 1);
         }
     }
     record = Value1(Func_020052e0, 22);
-    if ((*(volatile s32 *)(record + 8) >> 20) == 23) {
+    if ((*(s32 *)(record + 8) >> 20) == 23) {
         record = Value1(Func_020052ee, 22);
-        if ((*(volatile s32 *)(record + 16) >> 20) == 47) {
+        if ((*(s32 *)(record + 16) >> 20) == 47) {
             v6 = (v6 + 1);
         }
     }
     record = Value1(Func_020052fe, 23);
-    if ((*(volatile s32 *)(record + 8) >> 20) == 24) {
+    if ((*(s32 *)(record + 8) >> 20) == 24) {
         record = Value1(Func_0200530c, 23);
-        if ((*(volatile s32 *)(record + 16) >> 20) == 48) {
+        if ((*(s32 *)(record + 16) >> 20) == 48) {
             v6 = (v6 + 1);
         }
     }
@@ -2097,18 +2077,18 @@ void FieldScene_RunScene3c4_02002480(void)
     Call6(Func_02005544, 89, 51, 8, 5, 25, 51);
     *(u8 *)(Func_020055ba(14) + 34) = 1;
     record = Value1_02002480(Func_020055c6, 12);
-    p5 = *(volatile s32 *)(record + 8);
+    p5 = *(s32 *)(record + 8);
     record = Value1_02002480(Func_020055ce, 12);
     p5 = p5 >> 20;
-    Call6(Func_02005574, 22, 52, 1, 1, p5, (*(volatile s32 *)(record + 16) >> 20));
+    Call6(Func_02005574, 22, 52, 1, 1, p5, (*(s32 *)(record + 16) >> 20));
     record = Value1_02002480(Func_020055ea, 13);
-    p5 = *(volatile s32 *)(record + 8);
+    p5 = *(s32 *)(record + 8);
     record = Value1_02002480(Func_020055f2, 13);
     p5 = p5 >> 20;
-    Call6(Func_02005598, 22, 52, 1, 1, p5, (*(volatile s32 *)(record + 16) >> 20));
+    Call6(Func_02005598, 22, 52, 1, 1, p5, (*(s32 *)(record + 16) >> 20));
     record = Value1_02002480(Func_0200560e, 14);
-    p5 = *(volatile s32 *)(record + 8);
+    p5 = *(s32 *)(record + 8);
     record = Value1_02002480(Func_02005616, 14);
     p5 = p5 >> 20;
-    Call6(Func_020055bc, 22, 52, 1, 1, p5, (*(volatile s32 *)(record + 16) >> 20));
+    Call6(Func_020055bc, 22, 52, 1, 1, p5, (*(s32 *)(record + 16) >> 20));
 }

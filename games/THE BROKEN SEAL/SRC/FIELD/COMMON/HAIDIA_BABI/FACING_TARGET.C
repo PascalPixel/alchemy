@@ -41,6 +41,7 @@
 #define FieldScene_RunSingleStep Func_020017b8
 
 #include "FACING_OBJECT.H"
+#include "FIELD_EVENT.H"
 
 /* The anchor pointer is read before the frame counter is stored: the reference
  * hoists `ldr r6,[r5,#104]` above the `strh`, and only that source order
@@ -571,7 +572,7 @@ void FieldScene_RunScene377_02000e34(void)
     s32 record;
 
     record = Func_02002766(0);
-    if ((u32)(*(volatile u16 *)(record + 6) + -0x2000) > 0x9000) {
+    if ((u32)(*(u16 *)(record + 6) + -0x2000) > 0x9000) {
         Func_020028f4(0, 13);
     } else {
         Func_02002762();
@@ -645,11 +646,9 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
 {
     extern u8 Data_03001ebc[];
 
-    u32 i;
-    u8 *rec2;
+    struct FieldActor *actor;
+    struct FieldSprite *sprite;
     s32 rec7;
-    s32 record;
-    u8 *p6;
 
     Func_02002cf8(a0);
     Call4(Func_02002e22, -1, -1, -1, 0);
@@ -659,39 +658,30 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
     Func_02002c36(1);
     Func_02002e3e(18, 1);
     rec7 = 0;
-    rec2 = Value4(Func_02002c98, 22, 0x1480000, 0x20000, 0xc30000);
-    rec2[85] = rec7;
-    p6 = *(volatile s32 *)((s32)rec2 + 80);
-    *(volatile s32 *)((s32)rec2 + 12) = 0x50000;
-    p6[39] = rec7;
-    {
-        s32 mask = -33;
-        p6[5] &= mask;
-    }
-    p6[9] &= 15;
+    actor = (struct FieldActor *)Value4(Func_02002c98, 22, 0x1480000, 0x20000, 0xc30000);
+    actor->motion_flags = rec7;
+    sprite = actor->sprite;
+    actor->y.fixed = 0x50000;
+    sprite->part_count = rec7;
+    sprite->full_color = 0;
+    sprite->palette = 0;
     rec7 = Value2(Func_02002c9e, 17, 0x608);
     Func_02002d5e(224);
-    Func_02002cce(p6[28], 128, (rec7 + 0x400));
+    Func_02002cce(sprite->vram_block, 128, rec7 + 0x400);
     Func_02002cc4(17);
-    {
-        s32 off = 0x1c0;
-        u8 *base = *(u8 *volatile *)Data_03001ebc;
-        s32 *slot = (s32 *)(base + off);
-        off += 66;
-        *slot = off;
-    }
+    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x202;
     Func_02002efe();
     Call3(Func_02002de4, 18, 0x10000, 0x8000);
     Call3(Func_02002e28, 18, 0x1e0, 176);
     Call3(Func_02002e34, 18, 0x1a4, 164);
     Call3(Func_02002e40, 18, 0x146, 185);
     Call3(Func_02002ecc, 18, 0x4000, 10);
-    Func_02002d3c((s32)rec2, 0x2009eac);
-    Func_02002d62((s32)rec2);
-    Call2(Func_02002d4a, (s32)rec2, 0x2009ecc);
-    Func_02002d70((s32)rec2);
+    Func_02002d3c(actor, 0x2009eac);
+    Func_02002d62(actor);
+    Call2(Func_02002d4a, (s32)actor, 0x2009ecc);
+    Func_02002d70(actor);
     Func_02002e06(20);
-    Func_02002d6c((s32)rec2);
+    Func_02002d6c(actor);
     Func_02002e9e(18, 2, 20);
     Func_02002f08(18, 0, 40);
     Func_02002f84();

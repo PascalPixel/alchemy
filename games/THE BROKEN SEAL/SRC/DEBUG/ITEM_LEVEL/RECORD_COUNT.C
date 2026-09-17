@@ -259,13 +259,13 @@ void FieldScene_RunCountAdjustPanel(void)
     void Func_02000930_a();
 
     u8 *record;
-    volatile s32 *work;
+    s32 *work;
     volatile u32 *key;
     s32 win;
     s32 flag;
     s32 msg;
 
-    work = (volatile s32 *)Data_02000240;
+    work = (s32 *)Data_02000240;
     record = Func_02000950(work[125]);
     win = Func_02000902(0, 0, 30, 9, 2);
 
@@ -276,8 +276,7 @@ void FieldScene_RunCountAdjustPanel(void)
     flag = 1;
     Func_0200093e(msg, win, 0, 32);
 
-loop:
-    {
+    for (;;) {
         if (flag != 0) {
             Func_02000978(win);
             Func_02000964(record, win, 0, 48);
@@ -315,7 +314,6 @@ loop:
         }
 
         Func_020009e6(1);
-        goto loop;
     }
 }
 

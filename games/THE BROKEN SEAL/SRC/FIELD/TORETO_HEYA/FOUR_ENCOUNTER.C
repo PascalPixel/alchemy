@@ -502,23 +502,23 @@ void FieldScene_RunFourActorEncounter(void)
     Call3(Func_020024b0, 0, 0xa60000, 0x500000);
     v6 = 192;
     record = Func_02002496(0);
-    *(volatile u16 *)(record + 6) = (v6 << 8);
+    *(u16 *)(record + 6) = (v6 << 8);
     Call3(Func_020024ca_a, 1, 0x940000, 0x5a0000);
     record = Func_020024b0_a(1);
-    *(volatile u16 *)(record + 6) = (v6 << 8);
+    *(u16 *)(record + 6) = (v6 << 8);
     Call3(Func_020024e0, 2, 0xb60000, 0x5a0000);
     record = Value1(Func_020024c6, 2);
-    *(volatile u16 *)(record + 6) = (v6 << 8);
+    *(u16 *)(record + 6) = (v6 << 8);
     if (rec != 0) {
         Call3(Func_020024fa, 3, 0xa60000, 0x680000);
         record = Value1(Func_020024e0_a, 3);
-        *(volatile u16 *)(record + 6) = (v6 << 8);
+        *(u16 *)(record + 6) = (v6 << 8);
     }
     Func_02001e14(0);
     Func_02002416(10);
-    work = *(u8 *volatile *)Data_03001ebc;
-    *(volatile s32 *)(((s32)work + 0x1c0)) = 0x100;
-    *(volatile s32 *)(((s32)work + 0x1c8)) = 48;
+    work = *(u8 **)Data_03001ebc;
+    *(s32 *)(((s32)work + 0x1c0)) = 0x100;
+    *(s32 *)(((s32)work + 0x1c8)) = 48;
     Func_020025f0();
     Func_020025fc();
     Func_020024f2(20);
@@ -622,9 +622,9 @@ void FieldScene_RunFourActorEncounter(void)
     Func_02002918(1, (v6 << 8), 0);
     Func_02002922(2, (v6 << 8), 20);
     Func_02002890(20);
-    *(volatile s32 *)Data_0200adcc = 0;
+    *(s32 *)Data_0200adcc = 0;
     {
-        volatile s32 *bank = (volatile s32 *)Data_0200adc0;
+        s32 *bank = (s32 *)Data_0200adc0;
         bank[0] = 0xa80000;
         bank[1] = 0x200000;
         base5_200962d = (s32)Func_0200962d;

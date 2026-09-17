@@ -865,17 +865,15 @@ s32 SceneData_GetTable9564(void)
 
 void FieldScene_ApplyTable9684ValueToFourSlots(void)
 {
-    u32 i;
-    s32 record;
-    s32 p;
+    s32 *p;
 
     Call2(Func_020013fc, 0xc1a, 1);
-    p = (s32)Data_02009684;
-    Func_020014c6(0, *(volatile s32 *)p);
-    Value2(Func_020014ce, 1, *(volatile s32 *)p);
-    Value2(Func_020014d6, 3, *(volatile s32 *)p);
-    Func_020014de(2, *(volatile s32 *)p);
-    *(volatile s32 *)p += 10;
+    p = (s32 *)Data_02009684;
+    Func_020014c6(0, *p);
+    Value2(Func_020014ce, 1, *p);
+    Value2(Func_020014d6, 3, *p);
+    Func_020014de(2, *p);
+    *p += 10;
     Func_0200149a(0);
     Func_020014a0(1);
     Func_020014a6(3);

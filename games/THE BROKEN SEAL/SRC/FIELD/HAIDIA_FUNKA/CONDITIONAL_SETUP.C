@@ -398,9 +398,9 @@ void RunEventScript01(void)
     Call4(Func_02000cb4, 0x1000000, -1, 0x2640000, 0);
     Func_02000cc0_a();
     Func_02000bc4();
-    work = *(u8 *volatile *)Data_03001ebc;
-    *(volatile s32 *)(((s32)work + 0x1c0)) = 0;
-    *(volatile s32 *)(((s32)work + 0x1c8)) = 32;
+    work = *(u8 **)Data_03001ebc;
+    *(s32 *)(work + 0x1c0) = 0;
+    *(s32 *)(work + 0x1c8) = 32;
     Func_02000d08();
     Call2(Func_02000cd8, 0xcccc, 0x1999);
     Call4(Func_02000cf2, 0x1000000, -1, 0x1f40000, 1);
@@ -671,9 +671,9 @@ void RunEventScript01(void)
     Func_02001612();
     Func_02001638(145);
     Func_02001536(30);
-    work = *(u8 *volatile *)Data_03001ebc;
-    *(volatile s32 *)(((s32)work + 0x1c0)) = 0;
-    *(volatile s32 *)(((s32)work + 0x1c8)) = 64;
+    work = *(u8 **)Data_03001ebc;
+    *(s32 *)(work + 0x1c0) = 0;
+    *(s32 *)(work + 0x1c8) = 64;
     Func_02001652();
     Call3(Func_02001540_a, -1, -1, 0xe666);
     Func_0200154c_a();

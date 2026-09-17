@@ -307,15 +307,12 @@ void FieldScene_RunScene38e_0200045c(void)
 {
     extern u8 Data_03001ebc[];
 
-    u32 i;
-    s32 record;
-
     Func_02000f34();
     if (Value1(Func_02000f1c, 0x200) == 0) {
         Func_02000d58();
     }
     Call3(Func_02000f7a, 0, 0x8000, 0x4000);
-    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c0)) = 0x100;
+    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x100;
     Func_02000fc0(0, 2);
     Call3(Func_02000fb4, 0, 2, -16);
     Func_02000f72(16);

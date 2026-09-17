@@ -1997,21 +1997,13 @@ void SceneState_ClearWorkWord24(void)
 
 s32 Func_02001750(void)
 {
-    extern u8 Data_02000240[];
     extern u8 Data_03001ebc[];
 
-    u32 i;
-    s32 record;
-
-    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c0)) = 0x204;
-    if (Value1(Func_02003a7e, 0x109) == 0) {
-        if (Data_02000240_t[224][0] != (s32)Data_00000034) {
-            goto L_0200178c;
-        }
+    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x204;
+    if (Value1(Func_02003a7e, 0x109) == 0 && Data_02000240_t[224][0] == (s32)Data_00000034) {
         Call1(Func_02003aa4, 0x144);
         Func_02002f30();
     } else {
-        L_0200178c:;
         Func_02002f72_a();
     }
     return 0;
@@ -2076,9 +2068,9 @@ void FieldScene_RunScene39a_02001b1c(void)
     record = 0;
     rec = Value4(Func_02003de6, 22, 0xf80000, 0x80000, 0x980000);
     if ((s32)rec != 0) {
-        p6 = *(volatile s32 *)((s32)rec + 80);
+        p6 = *(u8 **)(rec + 80);
         p6[38] = record;
-        *(u8 *)(((s32)p6 + 38) + 1) = record;
+        p6[39] = record;
         *((s8 *)p6 + 5) &= -33;
         p6[9] &= 15;
         rec[85] = record;
@@ -2087,7 +2079,7 @@ void FieldScene_RunScene39a_02001b1c(void)
         Func_02003e7c(230);
         Value3(Func_02003e1c, p6[28], 128, (rec7 + 0x400));
         Func_02003e1a(17);
-        *(volatile s32 *)Data_0200a488 = (s32)rec;
+        *(s32 *)Data_0200a488 = (s32)rec;
     }
 }
 

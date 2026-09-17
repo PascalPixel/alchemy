@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
@@ -106,8 +107,8 @@ void Func_02000b82();
 void Func_02000b90();
 void Func_02000ba0();
 void Func_02000ba4();
-s32 Func_02000bb6();
-u8 *Func_02000bc2();
+struct FieldActor *Func_02000bb6();
+struct FieldActor *Func_02000bc2();
 void Func_02000bc8();
 void Func_02000be4();
 void Func_02000bfc();
@@ -185,10 +186,10 @@ void Func_02000fac();
 void Func_02000fb4();
 s32 Func_02000fd4();
 void Func_02001014();
-s32 Func_02001020();
+struct FieldActor *Func_02001020();
 void Func_0200102a();
-u8 *Func_0200102c();
-u8 *Func_02001036();
+struct FieldActor *Func_0200102c();
+struct FieldActor *Func_02001036();
 void Func_0200103a();
 s32 Func_02001058();
 void Func_02001060();
@@ -486,21 +487,13 @@ void FieldScene_RunScene398SequenceA(void)
 {
     extern u8 Data_03001ebc[];
 
-    u32 i;
-    u8 *record;
-
     Func_02000b82();
     Func_02000ba4(8, 0, 0);
     Call1(Func_02000b7a, 0x883);
     Func_02000b90(40);
     Func_02000bc8(15, 2);
-    *(u8 *)(Func_02000bb6(15) + 85) = 0;
-    {
-        u8 *record = Func_02000bc2(15);
-        u8 value = *(volatile u8 *)&record[35];
-
-        record[35] = (u8)(value | 2);
-    }
+    Func_02000bb6(15)->motion_flags = 0;
+    Func_02000bc2(15)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
     Func_02000bfc(15, 2);
     Call6(Func_02000ba0, 0, 0, 1, 1, 18, 14);
     Func_02000be4();
@@ -572,8 +565,8 @@ void FieldScene_RunScene398SequenceB(void)
 
     rec7 = Value1(Func_02000c84, 11);
     rec8 = Func_02000c8c(12);
-    if ((*(volatile s32 *)(rec7 + 8) >> 20) == 35) {
-        if ((*(volatile s32 *)(rec7 + 16) >> 20) != 23) {
+    if ((*(s32 *)(rec7 + 8) >> 20) == 35) {
+        if ((*(s32 *)(rec7 + 16) >> 20) != 23) {
             goto L_02000330;
         }
         Call1(Func_02000c7c_a, 0x303);
@@ -581,8 +574,8 @@ void FieldScene_RunScene398SequenceB(void)
         L_02000330:;
         Call1(Func_02000c8c_a, 0x303);
     }
-    if ((*(volatile s32 *)(rec8 + 8) >> 20) == 35) {
-        if ((*(volatile s32 *)(rec8 + 16) >> 20) != 23) {
+    if ((*(s32 *)(rec8 + 8) >> 20) == 35) {
+        if ((*(s32 *)(rec8 + 16) >> 20) != 23) {
             goto L_02000350;
         }
         Call1(Func_02000c9c, 0x304);
@@ -724,14 +717,14 @@ void SceneState_SetRuntimeWord448To516(void)
 
 void FieldScene_RunScene398SequenceC(void)
 {
-    extern u8 Data_03001ebc[];
+    extern struct EventWork *Data_03001ebc;
     void Func_0200101a();
 
     u32 i;
     u8 *record;
     s32 v5;
 
-    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c0)) = 0x204;
+    Data_03001ebc->start_transition = 0x204;
     record = Func_02000ec6(18);
     Func_02000e94((s32)record, 0);
     record = Func_02000ed2(19);
@@ -783,15 +776,9 @@ void FieldScene_RunScene398SequenceC(void)
     if (Value1(Func_02000fd4, 0x883) != 0) {
         Func_0200101a_a(8, 0, 0);
         Func_0200102a(15, 5);
-        *(u8 *)(Func_02001020(15) + 85) = 0;
-        record = Func_0200102c(15);
-        *(volatile s32 *)((s32)record + 12) = -0x40000;
-        {
-            u8 *record = Func_02001036(15);
-            u8 value = *(volatile u8 *)&record[35];
-
-            record[35] = (u8)(value | 2);
-        }
+        Func_02001020(15)->motion_flags = 0;
+        Func_0200102c(15)->y.fixed = -0x40000;
+        Func_02001036(15)->priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
         Func_02001070(15, 2);
         Call6(Func_02001014, 0, 0, 1, 1, 18, 14);
     } else {

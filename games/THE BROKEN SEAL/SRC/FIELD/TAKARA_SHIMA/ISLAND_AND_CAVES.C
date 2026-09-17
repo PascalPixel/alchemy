@@ -83,6 +83,7 @@
 #define InitializeSwayingSceneObject Func_02002ed8
 
 #include "STAGED_ACTOR.H"
+#include "FIELD_EFFECT.H"
 
 /* Integrate position, velocity, rate and sprite angle for one scene effect.
    Signed division preserves decay toward zero for negative Z velocity. */
@@ -1087,16 +1088,14 @@ u8 *SpawnMode15Effect(s32 x, s32 y, s32 z, s32 kind)
     return 0;
 }
 
-void OverlayObject_IntegrateVelocities(void *arg0)
+void OverlayObject_IntegrateVelocities(union FieldObject *object)
 {
-    u8 *a = arg0;
-
-    *(volatile s32 *)(a + 0x08) += *(s32 *)(a + 0x44);
-    *(volatile s32 *)(a + 0x0C) += *(s32 *)(a + 0x48);
-    *(volatile s32 *)(a + 0x10) += *(s32 *)(a + 0x4C);
-    *(volatile s32 *)(a + 0x18) += *(s32 *)(a + 0x30);
-    *(volatile s32 *)(a + 0x1C) += *(s32 *)(a + 0x34);
-    *(volatile u16 *)(*(u8 **)(a + 0x50) + 0x1E) += *(u16 *)(a + 0x64);
+    object->effect.x += object->effect.velocity_x;
+    object->effect.y += object->effect.velocity_y;
+    object->effect.z += object->effect.velocity_z;
+    object->effect.scale_x += object->effect.scale_rate_x;
+    object->effect.scale_y += object->effect.scale_rate_y;
+    object->effect.sprite->rotation += object->effect.spin;
 }
 
 /* Creates the effect record and returns it, or 0 on failure. */
@@ -1653,10 +1652,6 @@ void ShowSaveMyLifeMessage(void)
 
 void FieldScene_RunScene3b2_0200167c(void)
 {
-    extern u8 Data_02000240[];
-    extern u8 Data_03001ebc[];
-
-    u32 i;
     s32 record;
 
     if (Value1_0200167c(Func_020046dc, 0x8c4) != 0) {
@@ -1664,25 +1659,25 @@ void FieldScene_RunScene3b2_0200167c(void)
         Call3(Func_02004762, 15, 0x3c80000, 0x3c80000);
     } else {
         record = Func_0200473a(15);
-        *(volatile s32 *)(record + 28) = 0x19999;
+        *(s32 *)(record + 28) = 0x19999;
     }
     if (Value1_0200167c(Func_02004714, 0x8c5) != 0) {
         Call3(Func_02004786, 16, 0x3c80000, 0x3c80000);
     } else {
         record = Func_0200475e(16);
-        *(volatile s32 *)(record + 28) = 0x19999;
+        *(s32 *)(record + 28) = 0x19999;
     }
     if (Value1_0200167c(Func_02004738, 0x8c6) != 0) {
         Call3(Func_020047aa, 17, 0x3c80000, 0x3c80000);
     } else {
         record = Func_02004782(17);
-        *(volatile s32 *)(record + 28) = 0x19999;
+        *(s32 *)(record + 28) = 0x19999;
     }
     if (Value1_0200167c(Func_0200475c, 0x8c7) != 0) {
         Call3(Func_020047ce, 18, 0x3c80000, 0x3c80000);
     } else {
         record = Func_020047a6(18);
-        *(volatile s32 *)(record + 28) = 0x19999;
+        *(s32 *)(record + 28) = 0x19999;
     }
 }
 

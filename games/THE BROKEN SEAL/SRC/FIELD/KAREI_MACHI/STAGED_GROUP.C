@@ -363,7 +363,7 @@ extern u8 Value_00001aa2[];
 extern const u32 SceneAction_GroupMotion[];
 extern const u32 SceneAction_GroupOffsetMotion[];
 extern s16 Data_02000240_t[][1];
-extern volatile s32 Data_0200bd84[];
+extern s32 Data_0200bd84[];
 extern const u8 Data_0200c21c[];
 extern const u8 Data_0200c230[];
 extern u8 Value_0200b9d5;
@@ -1924,29 +1924,23 @@ finish:
 
 void SceneState_ClearWord24WhenFlag200(void)
 {
-    extern u8 Data_03001ebc[];
-
-    u32 i;
-    s32 record;
+    extern u8 *Data_03001ee0;
 
     if (Value1(Func_02005168, 0x200) != 0) {
-        *(volatile s32 *)(*(volatile s32 *)0x03001ee0 + 24) = 0;
+        *(s32 *)(Data_03001ee0 + 24) = 0;
         Call1(Func_0200518c, 0x200);
     }
 }
 
 void SceneState_LinkRecordZeroWhenFlag200Clear(void)
 {
-    extern u8 Data_03001ebc[];
+    extern u8 *Data_03001ee0;
 
-    u32 i;
-    s32 rec;
     u8 *work;
 
     if (Value1_020015b4(Func_02005190, 0x200) == 0) {
-        work = *(volatile s32 *)0x03001ee0;
-        rec = Value1_020015b4(Func_020051e6, 0);
-        *(volatile s32 *)((s32)work + 24) = rec;
+        work = Data_03001ee0;
+        *(s32 *)(work + 24) = Value1_020015b4(Func_020051e6, 0);
         Call1_020015b4(Func_020051b0, 0x200);
     }
 }
@@ -2070,7 +2064,7 @@ void FieldScene_RunMiddleSequence(void)
     s32 r0;
     s32 v5;
     u8 *p5;
-    u8 *volatile *base = (u8 *volatile *)Data_03001ebc;
+    u8 **base = (u8 **)Data_03001ebc;
 
     *(s32 *)(base[0] + 0x1c0) = 0x204;
     Func_02005692(0);
@@ -2081,11 +2075,11 @@ void FieldScene_RunMiddleSequence(void)
         if (r0 != 0) {
             r0 = Value1_0200164c(Func_02005582, 0);
         }
-        *(volatile s32 *)(p5 + 24) = r0;
+        *(s32 *)(p5 + 24) = r0;
     } else {
         Call1_0200164c(Func_0200554e, 0x200);
         if (Data_02000240_t[225][0] == 4) {
-            *(volatile s32 *)(base[9] + 24) = rec7;
+            *(s32 *)(base[9] + 24) = rec7;
             Call1_0200164c(Func_02005572, 0x200);
         }
     }
@@ -2098,10 +2092,11 @@ void FieldScene_RunMiddleSequence(void)
             Call6(Func_02005576, 0, 0, 1, 1, v5, 14);
             Call6(Func_02005588, 0, 0, 1, 1, v5, 45);
             {
-                u8 *record = Func_02005606(11);
-                u8 value = *(volatile u8 *)&record[35];
+                u8 *p = Func_02005606(11) + 35;
+                s32 v = 2;
 
-                record[35] = (u8)(value | 2);
+                v |= *p;
+                *p = v;
             }
         }
     }
@@ -2116,7 +2111,7 @@ void FieldScene_RunMiddleSequence(void)
         {
             s32 shown = 0x5000;
 
-            *(volatile u16 *)((s32)record + 6) = shown;
+            *(u16 *)((s32)record + 6) = shown;
         }
         Call6(Func_020055e8, 88, 48, 88, 45, 2, 3);
         Call6(Func_020055fa, 24, 49, 24, 48, 2, 1);
@@ -2271,16 +2266,15 @@ void FieldScene_RunTwoActorCutsceneSequence(void)
     BattleRuntime_WaitIfModeZero_2(20);
     {
         /* Set bit 0 of the flag byte at +90. */
-        u8 *record = Scene_GetRecord_5(8);
-        u8 flags = *(volatile u8 *)&record[90];
+        u8 bits = 1;
+        u8 *flags = Scene_GetRecord_5(8) + 90;
+        u8 value = *flags;
 
-        record[90] = (u8)(flags | 1);
-    }
-    {
-        u8 *record = Scene_GetRecord_6(9);
-        u8 flags = *(volatile u8 *)&record[90];
-
-        record[90] = (u8)(flags | 1);
+        value |= bits;
+        *flags = value;
+        flags = Scene_GetRecord_6(9) + 90;
+        bits |= *flags;
+        *flags = bits;
     }
     BattleRuntime_WaitIfModeZero_3(20);
     ObjectMotion_CallThenWaitForAnimationChange_1(8, 4);
@@ -2413,16 +2407,15 @@ void FieldScene_RunTwoActorCutsceneSequence(void)
     BattleRuntime_WaitIfModeZero_16(20);
     {
         /* Set bit 0 of the flag byte at +90. */
-        u8 *record = Scene_GetRecord_10(8);
-        u8 flags = *(volatile u8 *)&record[90];
+        u8 bits = 1;
+        u8 *flags = Scene_GetRecord_10(8) + 90;
+        u8 value = *flags;
 
-        record[90] = (u8)(flags | 1);
-    }
-    {
-        u8 *record = Scene_GetRecord_11(9);
-        u8 flags = *(volatile u8 *)&record[90];
-
-        record[90] = (u8)(flags | 1);
+        value |= bits;
+        *flags = value;
+        flags = Scene_GetRecord_11(9) + 90;
+        bits |= *flags;
+        *flags = bits;
     }
     ObjectMotion_SetPositionAndReset_6(2, 192, 232);
     ObjectMotion_ArmCallback_27(2, 0xc000, 0);
@@ -2786,24 +2779,24 @@ void FieldScene_RunLateSequence(void)
         *(u8 *)(rec + 34) = 2;
         dst = tmp;
         w2 = Data_0200bd84[idx];
-        dst[0] = *(volatile s32 *)(rec + 8) + (w2 & -0x10000);
-        dst[1] = *(volatile s32 *)(rec + 12);
-        dst[2] = *(volatile s32 *)(rec + 16) + (w2 << 16);
+        dst[0] = *(s32 *)(rec + 8) + (w2 & -0x10000);
+        dst[1] = *(s32 *)(rec + 12);
+        dst[2] = *(s32 *)(rec + 16) + (w2 << 16);
         if (Value2(Func_02006dd2, rec, (s32)dst) <= 0) {
             Func_02006d8e(record, 8);
             k = 0x3333;
             Func_02006d4e(15);
             Func_02006fbc(185);
-            *(volatile s32 *)(rec + 48) = k;
-            *(volatile s32 *)(rec + 52) = k;
+            *(s32 *)(rec + 48) = k;
+            *(s32 *)(rec + 52) = k;
             Func_02006dd4(rec, dst[0], dst[1], dst[2]);
-            *(volatile s32 *)(record + 48) = k;
-            *(volatile s32 *)(record + 52) = k;
+            *(s32 *)(record + 48) = k;
+            *(s32 *)(record + 52) = k;
             Func_02006de6(record, dst[0], dst[1], dst[2]);
             Func_02006df4(rec);
             Func_02006fd8();
-            *(volatile s32 *)(rec + 8) = dst[0];
-            *(volatile s32 *)(rec + 16) = dst[2];
+            *(s32 *)(rec + 8) = dst[0];
+            *(s32 *)(rec + 16) = dst[2];
             *(s32 *)(rec + 36) = zero;
             *(s32 *)(rec + 44) = zero;
             Func_02006dde(record, 1);
@@ -2829,7 +2822,7 @@ void Func_020032a4(void)
     rec4 = Value1_0200164c(Func_02006ed6, 9);
     rec7 = Value1_0200164c(Func_02006e96, 0x302);
     if (rec7 != 0) {
-    } else if ((*(volatile s32 *)(rec8 + 8) >> 19) > 29) {
+    } else if ((*(s32 *)(rec8 + 8) >> 19) > 29) {
     } else {
         rec2 = Value1_0200164c(Func_02006ef6, 11);
         Func_02006ed4();
@@ -2888,7 +2881,7 @@ void Func_020032a4(void)
         Func_02007118();
     }
     if (Value1_0200164c(Func_020070f6, 0x303) != 0) {
-    } else if ((*(volatile s32 *)(rec4 + 8) >> 19) > 87) {
+    } else if ((*(s32 *)(rec4 + 8) >> 19) > 87) {
     } else {
         Func_0200712c();
         i = 67;
@@ -3000,7 +2993,7 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
                         Func_0200755e(230);
                         Call1_02003768(Func_020073c4, 0x202);
                     }
-                    Func_02007056(*(volatile s32 *)(rec7 + 8), *(volatile s32 *)(rec7 + 12), *(volatile s32 *)(rec7 + 16));
+                    Func_02007056(*(s32 *)(rec7 + 8), *(s32 *)(rec7 + 12), *(s32 *)(rec7 + 16));
                 }
             }
         }
@@ -3013,7 +3006,7 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
                     Func_020075a6(230);
                     Call1_02003768(Func_0200740c, 0x203);
                 }
-                Func_0200709e(*(volatile s32 *)(rec8 + 8), *(volatile s32 *)(rec8 + 12), *(volatile s32 *)(rec8 + 16));
+                Func_0200709e(*(s32 *)(rec8 + 8), *(s32 *)(rec8 + 12), *(s32 *)(rec8 + 16));
             }
         }
     }
@@ -3034,17 +3027,17 @@ void Func_02003864(s32 a0, s32 a1, s32 a2)
     rec7 = (u8 *)Value4(Func_020073fc, 222, (a0 + -0x80000), (((((u32)(value << 3) >> 16) << 16) + a1) + 0x100000), p8);
     if ((s32)rec7 != 0) {
         rec7[85] = (mask = 0);
-        link = (u8 *)*(volatile s32 *)((s32)rec7 + 80);
+        link = (u8 *)*(s32 *)((s32)rec7 + 80);
         mask -= 13;
         link[9] = ((link[9] & mask) | 8);
         Func_02007566((s32)rec7, 9);
         Func_0200746e((s32)rec7, 0);
         value = Func_020073ea();
-        *(volatile s32 *)((s32)rec7 + 36) = ((((u32)(value << 1) >> 16) - 1) << 16);
+        *(s32 *)((s32)rec7 + 36) = ((((u32)(value << 1) >> 16) - 1) << 16);
         value = Value0(Func_020073f8);
-        *(volatile s32 *)((s32)rec7 + 40) = ((((u32)(((value << 1) + value) << 1) >> 16) - 3) << 16);
+        *(s32 *)((s32)rec7 + 40) = ((((u32)(((value << 1) + value) << 1) >> 16) - 3) << 16);
         {
-            volatile u16 *target = (volatile u16 *)((s32)rec7 + 100);
+            u16 *target = (u16 *)((s32)rec7 + 100);
             s32 shown = 20;
 
             *target = shown;

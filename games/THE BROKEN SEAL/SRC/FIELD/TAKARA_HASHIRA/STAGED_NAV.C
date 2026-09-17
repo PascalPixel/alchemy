@@ -108,7 +108,7 @@ typedef struct {
 } Handle;
 
 extern u8 Data_02000240_t[][2];
-extern u8 Data_0200b738[];
+extern s32 Data_0200b738;
 extern u8 Value_00000073;
 extern u8 Value_00000074;
 extern u8 Value_00000077;
@@ -696,19 +696,19 @@ void FieldScene_RunPrimarySequence(void)
     u8 slot16[40];
 
     rec = Func_02003cee(0);
-    flag = *(volatile s32 *)0x03001e40 & 3;
+    flag = Data_03001e40 & 3;
     if (flag == 0) {
         base = slot16;
         *(s32 *)(base + 4) = 10;
         *(s32 *)(base + 8) = 0xb333;
         *(s32 *)(base + 12) = 0xb333;
         v1 = Func_02003c3e();
-        p6 = *(volatile s32 *)(rec + 8) + ((((u32)((v1 << 4) + v1) >> 16) - 8) << 16);
+        p6 = *(s32 *)(rec + 8) + ((((u32)((v1 << 4) + v1) >> 16) - 8) << 16);
         v2 = Func_02003c52();
-        p5 = *(volatile s32 *)(rec + 16) + ((((u32)((v2 << 4) + v2) >> 16) - 8) << 16);
+        p5 = *(s32 *)(rec + 16) + ((((u32)((v2 << 4) + v2) >> 16) - 8) << 16);
         v3 = Func_02003c66();
         record = Func_02003c5c((((u32)((v3 << 2) + v3) >> 16) << 16) + 0x30000, 10);
-        Call8(Func_02001386, p6, *(volatile s32 *)(rec + 12), p5, 0, record, flag, 0x90001, (s32)base);
+        Call8(Func_02001386, p6, *(s32 *)(rec + 12), p5, 0, record, flag, 0x90001, (s32)base);
     }
 }
 
@@ -729,14 +729,14 @@ s32 Func_02001268(void)
     rec = Func_02003d94(0);
     pflag = rec + 85;
     saved = *pflag;
-    mode = (*(volatile u16 *)(rec + 6) + 0x2000) & 0xc000;
+    mode = (*(u16 *)(rec + 6) + 0x2000) & 0xc000;
     if (Data_02000240_t[249][0] != 0) {
         return 0;
     }
     p = buf;
-    p[0] = (*(volatile s32 *)(rec + 8) & -0x100000) + 0x80000;
-    p[1] = *(volatile s32 *)(rec + 12);
-    p[2] = (*(volatile s32 *)(rec + 16) & -0x100000) + 0x80000;
+    p[0] = (*(s32 *)(rec + 8) & -0x100000) + 0x80000;
+    p[1] = *(s32 *)(rec + 12);
+    p[2] = (*(s32 *)(rec + 16) & -0x100000) + 0x80000;
     Call3(Func_02003d20, 0x100000, mode, (s32)p);
     if (Value2(Func_02003da0, (s32)rec, (s32)p) == 1) {
         goto reject;
@@ -744,9 +744,9 @@ s32 Func_02001268(void)
     if (Value2(Func_02001630, (s32)p, (s32)rec) != 0) {
         goto reject;
     }
-    p[0] = (*(volatile s32 *)(rec + 8) & -0x100000) + 0x80000;
-    p[1] = *(volatile s32 *)(rec + 12);
-    p[2] = (*(volatile s32 *)(rec + 16) & -0x100000) + 0x80000;
+    p[0] = (*(s32 *)(rec + 8) & -0x100000) + 0x80000;
+    p[1] = *(s32 *)(rec + 12);
+    p[2] = (*(s32 *)(rec + 16) & -0x100000) + 0x80000;
     Call3(Func_02003d5e, 0x200000, mode, (s32)p);
     if (Value2(Func_02001662, (s32)p, (s32)rec) != 0) {
         goto reject;
@@ -759,9 +759,9 @@ s32 Func_02001268(void)
     Func_02003d68(6);
     Func_02003eee(152);
     Func_02003da6((s32)rec, 7);
-    *(volatile s32 *)(rec + 48) = 0x30000;
-    *(volatile s32 *)(rec + 52) = 0x20000;
-    *(volatile s32 *)(rec + 40) = 0x40000;
+    *(s32 *)(rec + 48) = 0x30000;
+    *(s32 *)(rec + 52) = 0x20000;
+    *(s32 *)(rec + 40) = 0x40000;
     *pflag &= 126;
     Func_02003e3c((s32)rec, 0);
     Func_02003eaa(0, *(s16 *)((u8 *)p + 2), *(s16 *)((u8 *)p + 10));
@@ -919,7 +919,6 @@ void FieldScene_RunScene3b3SequenceA(void)
     extern u8 Data_03001ebc[];
 
     s32 record;
-    s32 count;
 
     record = Value1(Func_020040f2, 0x200);
     if (record == 0) {
@@ -931,18 +930,15 @@ void FieldScene_RunScene3b3SequenceA(void)
         Func_02002336(10, 83, 16, 5, 1, 10, 31);
         Func_0200234a(42, 83, 16, 5, 2, 10, 31);
     }
-    *(volatile s32 *)Data_0200b738 = 0;
+    Data_0200b738 = 0;
     Func_020040d6(0x20095cd, 0xc80);
     Func_020040d4(1);
     Func_02004106(1, 0, 0x2009579);
     Func_02004264(231);
-    *(volatile s32 *)Data_0200b738 = 0;
+    Data_0200b738 = 0;
     do {
         Func_020040ec(1);
-        count = *(volatile s32 *)Data_0200b738;
-        count = count + 1;
-        *(volatile s32 *)Data_0200b738 = count;
-    } while (count <= 100);
+    } while (++Data_0200b738 <= 100);
     Call1(Func_0200427c, 0x121);
     if (Value1(Func_020041bc, 0x200) == 0) {
         Call6(Func_0200418a, 0, 32, 32, 0, 32, 32);
@@ -1034,21 +1030,22 @@ void FieldScene_RunScene3b3_02001fd4(void)
     extern u8 Data_02000240[];
     extern u8 Data_03001ebc[];
 
-    u32 i;
-    u8 *record;
-
     Func_02004ae4();
     if (Value0(Func_02003244) == 0) {
         *(u8 *)(Func_02004b02(0) + 85) &= 254;
         *(u8 *)(Func_02004b14(0) + 35) &= 254;
         Func_020023ac();
         Func_02003d8c();
-        *(u8 *)(Func_02004b2a(0) + 85) |= 1;
         {
-            u8 *record = Func_02004b3a(0);
-            u8 value = *(volatile u8 *)&record[35];
+            u8 bits = 1;
+            u8 *flags = (u8 *)Func_02004b2a(0) + 85;
+            u8 value = *flags;
 
-            record[35] = (u8)(value | 1);
+            value |= bits;
+            *flags = value;
+            flags = (u8 *)Func_02004b3a(0) + 35;
+            bits |= *flags;
+            *flags = bits;
         }
     }
     Func_02004b3e();

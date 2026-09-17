@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 
 #define StartDoraHouseAccidentScene Func_020010a8
 #define TurnActorToSceneDirection Func_02001be4
@@ -360,7 +361,6 @@
 #define ObjectMotion_SetHorizontalPositionWithTerrain_3(args...) Func_020076e0(args)
 #define BattleRuntime_ScheduleShoulderButtonModeUpdate_1_02001e94(args...) Func_0200767c(args)
 #define GameFlag_Set_1_02001e94(a0) Call1(Func_02007662_c, a0)
-#define SCENE_PHASE (*(s32 *)(*(u8 *volatile *)Data_03001ebc + 0x1c0))
 #define BattleRuntime_Reset_1_0200206c() Call0(Func_020076a0)
 #define ObjectMotion_SetHorizontalPositionWithTerrain_1_0200206c(a0, a1, a2) Call3(Func_0200771e, a0, a1, a2)
 #define ObjectMotion_SetHorizontalPositionWithTerrain_2_0200206c(a0, a1, a2) Call3(Func_0200772c, a0, a1, a2)
@@ -2840,8 +2840,6 @@ void Func_0200a640();
  * calling form. Names without a repository binding are provisional.
  */
 
-/* Phase/status word at 0x1c0 of the shared scene work record. */
-
 /* Audited retained supplemental scene body.
  * The complete production span preserves 49 calls, 0 loop(s), and 0 explicit memory operation(s).
  * Approved GCC changes scheduling, allocation, control-flow lowering, and
@@ -3478,25 +3476,19 @@ void FieldScene_StartActorTwelveTransition(void)
 
 void FieldScene_UpdateActorTwelveTransition(void)
 {
-    extern s16 Data_02000240[];
-    extern u32 Data_0200dfa4;
-    extern u8 Data_03001e70[];
-    extern u8 Data_03001ebc[];
+    struct FieldActor *actor;
 
-    u8 *rec7;
-    s32 record;
-
-    record = Value1(Func_02006244, 12);
-    if ((*(volatile s32 *)(record + 16) >> 20) > 22) {
+    actor = (struct FieldActor *)Value1(Func_02006244, 12);
+    if ((actor->z.fixed >> 20) > 22) {
         Call3(Func_020061fc, 0x40000, 0x40000, 0x10000);
         Call3(Func_0200620a, -1, -1, 0xe666);
         Func_020063c8(144);
         Call6(Func_0200620c, 15, 20, 1, 1, 15, 22);
         Call6(Func_0200621e, 17, 23, 1, 3, 15, 23);
-        rec7 = Value1(Func_0200629c, 12);
-        if ((s32)rec7 != 0) {
-            Func_02006240((s32)rec7, 0);
-            rec7[35] = 2;
+        actor = (struct FieldActor *)Value1(Func_0200629c, 12);
+        if (actor != NULL) {
+            Func_02006240(actor, 0);
+            actor->priority_flags = ACTOR_PRIORITY_UNDERFOOT;
         }
         Call1(Func_0200627e, 0x943);
     }
@@ -3528,53 +3520,41 @@ void PlaceSceneObjectPairFromTableA(s32 table_index)
 
 void FieldScene_UpdateObjectPairA(void)
 {
-    extern s16 Data_02000240[];
-    extern u32 Data_0200dfa4;
-    extern u8 Data_03001e70[];
-    extern u8 Data_03001ebc[];
+    extern struct EventWork *Data_03001ebc;
 
-    s32 v6;
-    s32 raw;
-    s32 d;
-    u8 *p5;
+    struct EventWork *work;
+    s32 trigger;
+    s32 index;
 
-    p5 = *(volatile s32 *)Data_03001ebc;
-    v6 = 1;
-    if (Func_020062f2(234) != -v6) {
-        raw = *(s16 *)(((s32)p5 + 0x16c));
-        d = raw - 40;
-        if (Value1(Func_02006316, 0x941) != 0) {
-            if (d == 4) {
-                goto done;
-            }
+    work = Data_03001ebc;
+    if (Func_020062f2(234) != -1) {
+        trigger = work->touched_trigger;
+        index = trigger - 40;
+        if (Value1(Func_02006316, 0x941) == 0 || index != 4) {
+            Func_020019a4(index);
+            Func_020064c2(157);
+            Call3(Func_0200631a, 0x30000, 0x30000, 0x10000);
+            Call3(Func_02006324, -1, -1, 0xe666);
+            Func_02006356(trigger + 0x328);
         }
-        Func_020019a4(d);
-        Func_020064c2(157);
-        Call3(Func_0200631a, 0x30000, 0x30000, 0x10000);
-        Call3(Func_02006324, -v6, -v6, 0xe666);
-        Func_02006356(raw + 0x328);
     }
-done:;
 }
 
 void FieldScene_UpdateObjectPairB(void)
 {
-    extern s16 Data_02000240[];
-    extern u32 Data_0200dfa4;
-    extern u8 Data_03001e70[];
-    extern u8 Data_03001ebc[];
+    extern struct EventWork *Data_03001ebc;
 
-    u8 *p5;
-    s16 field;
+    struct EventWork *work;
+    s32 trigger;
 
-    p5 = *(volatile s32 *)Data_03001ebc;
+    work = Data_03001ebc;
     if (Func_020063de(234) != -1) {
-        field = *(s16 *)((s32)p5 + 0x16c);
-        Func_02001b44(field - 40);
+        trigger = work->touched_trigger;
+        Func_02001b44(trigger - 40);
         Func_0200659e(157);
         Call3(Func_020063f6, 0x30000, 0x30000, 0x10000);
         Call3(Func_02006400, -1, -1, 0xe666);
-        Func_02006432(field + 0x32d);
+        Func_02006432(trigger + 0x32d);
     }
 }
 
@@ -3595,22 +3575,19 @@ void PlaceSceneObjectPairFromTableB(s32 table_index)
 
 void FieldScene_UpdateTableBObjectPair(void)
 {
-    extern s16 Data_02000240[];
-    extern u32 Data_0200dfa4;
-    extern u8 Data_03001e70[];
-    extern u8 Data_03001ebc[];
+    extern struct EventWork *Data_03001ebc;
 
-    u8 *work;
-    s16 field;
+    struct EventWork *work;
+    s32 trigger;
 
-    work = *(volatile s32 *)Data_03001ebc;
+    work = Data_03001ebc;
     if (Func_02006492(234) != -1) {
-        field = *(s16 *)((s32)work + 0x16c);
-        Func_02001cd4(field - 40);
+        trigger = work->touched_trigger;
+        Func_02001cd4(trigger - 40);
         Func_02006652(157);
         Call3(Func_020064aa, 0x30000, 0x30000, 0x10000);
         Call3(Func_020064b4, -1, -1, 0xe666);
-        Func_020064e6(field + 0x330);
+        Func_020064e6(trigger + 0x330);
     }
 }
 
@@ -3631,22 +3608,19 @@ void PlaceSceneObjectPairFromTableC(s32 table_index)
 
 void FieldScene_UpdateObjectPairC(void)
 {
-    extern s16 Data_02000240[];
-    extern u32 Data_0200dfa4;
-    extern u8 Data_03001e70[];
-    extern u8 Data_03001ebc[];
+    extern struct EventWork *Data_03001ebc;
 
-    u8 *p5;
-    s16 field;
+    struct EventWork *work;
+    s32 trigger;
 
-    p5 = *(volatile s32 *)Data_03001ebc;
+    work = Data_03001ebc;
     if (Func_02006542(234) != -1) {
-        field = *(s16 *)((s32)p5 + 0x16c);
-        Func_02001e34(field - 40);
+        trigger = work->touched_trigger;
+        Func_02001e34(trigger - 40);
         Func_02006702(157);
         Call3(Func_0200655a, 0x30000, 0x30000, 0x10000);
         Call3(Func_02006564, -1, -1, 0xe666);
-        Func_02006596(field + 0x332);
+        Func_02006596(trigger + 0x332);
     }
 }
 
@@ -4055,11 +4029,11 @@ s32 IsPlayerOutsideSceneRectangle(void)
 void FieldScene_RunScene3bfSequenceA(void)
 {
     extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
+    extern struct EventWork *Data_03001ebc;
 
-    u8 *p5;
+    struct EventWork *work;
 
-    p5 = *(volatile s32 *)&Data_03001ebc;
+    work = Data_03001ebc;
     if (Value1_0200169c(Func_02006cb8, 0x214) == 0) {
         if (Value0(Func_02002d10) == 0) {
             if (Data_02000240[294] == 0) {
@@ -4069,12 +4043,7 @@ void FieldScene_RunScene3bfSequenceA(void)
                 }
             }
             if (Value1_0200169c(Func_02006cf4_b, 0x214) != 0) {
-                {
-                    volatile u16 *target = (volatile u16 *)(((s32)p5 + 0x182));
-                    s32 shown = 94;
-
-                    *target = shown;
-                }
+                work->raised_trigger = 94;
             }
         }
     }
@@ -4110,23 +4079,18 @@ void TriggerSceneStage95FromActor12(void)
 void FieldScene_RunScene3bfSequenceB(void)
 {
     extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
+    extern struct EventWork *Data_03001ebc;
 
-    u8 *p5;
+    struct EventWork *work;
 
-    p5 = *(volatile s32 *)&Data_03001ebc;
+    work = Data_03001ebc;
     if (Value1_0200169c(Func_02006d76, 0x225) == 0) {
         if (Value1_0200169c(Func_02003054_scene_scripts, 13) != 0) {
             if (Data_02000240[294] == 0) {
                 Call1_0200169c(Func_02006da2, 0x225);
                 Call1_0200169c(Func_02006d28, 0x200975d);
                 Call1_0200169c(Func_02006d2e, 0x20097bd);
-                {
-                    volatile u16 *target = (volatile u16 *)(((s32)p5 + 0x182));
-                    s32 shown = 96;
-
-                    *target = shown;
-                }
+                work->raised_trigger = 96;
             }
         }
     }
@@ -4135,23 +4099,18 @@ void FieldScene_RunScene3bfSequenceB(void)
 void FieldScene_RunScene3bfSequenceC(void)
 {
     extern s16 Data_02000240[];
-    extern u8 *Data_03001ebc;
+    extern struct EventWork *Data_03001ebc;
 
-    u8 *p5;
+    struct EventWork *work;
 
-    p5 = *(volatile s32 *)&Data_03001ebc;
+    work = Data_03001ebc;
     if (Value1_0200169c(Func_02006dd6, 0x225) == 0) {
         if (Value1_0200169c(Func_020030b4, 21) != 0) {
             if (Data_02000240[294] == 0) {
                 Call1_0200169c(Func_02006e02, 0x225);
                 Call1_0200169c(Func_02006d88, 0x20097bd);
                 Call1_0200169c(Func_02006d8e, 0x200975d);
-                {
-                    volatile u16 *target = (volatile u16 *)(((s32)p5 + 0x182));
-                    s32 shown = 96;
-
-                    *target = shown;
-                }
+                work->raised_trigger = 96;
             }
         }
     }
@@ -4512,12 +4471,9 @@ void InspectEmptyChest(void)
 void FieldScene_RunSupplementalSequenceOne(void)
 {
     extern u8 Data_02000240[];
-    extern u8 Data_03001ebc[];
+    extern struct EventWork *Data_03001ebc;
 
-    u32 i;
-    s32 record;
     s32 sequence_2438;
-    s32 status_record_2000240;
 
     Object_SetModeById_1_02001e94(0, 1);
     Object_SetModeById_2_02001e94(12, 1);
@@ -4566,11 +4522,9 @@ void FieldScene_RunSupplementalSequenceOne(void)
     BattleRuntime_WaitIfModeZero_5_02001e94(30);
     SceneWork_SetStepValue_7_02001e94((sequence_2438 + 6));
     BattleEvent_RunActionAndWait_7_02001e94(12, 0);
-    SCENE_PHASE = 0x200;
+    Data_03001ebc->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
     SharedWorkData_SetFirstAndSecondFields_1_02001e94((s32)Data_000000a1, 31);
-    status_record_2000240 = (s32)Data_02000240;
-    /* Status byte at +0x22b of the record. */
-    *(u8 *)((status_record_2000240 + 0x22b)) = 3;
+    Data_02000240[0x22b] = 3;
     BattleEffect_ComputeWeightedResultAndDispatch_1_02001e94(98, 3);
     ObjectMotion_SetHorizontalPositionWithTerrain_1_02001e94(12, 0, 0);
     ObjectMotion_SetHorizontalPositionWithTerrain_2_02001e94(13, 0, 0);
@@ -4695,25 +4649,16 @@ void ConfigureInteractionRegionC(void)
 
 void InspectVillageWell(void)
 {
-    extern u8 Data_02000240[];
+    extern u8 *Data_03001ebc;
 
-    extern u8 Data_03001ebc[];
-
-    u32 i;
-    s32 record;
-    s32 v5;
-    s32 v6;
-
-    if (*(s16 *)((*(u8 *volatile *)Data_03001ebc + 0xcb8)) != 0) {
+    if (*(s16 *)(Data_03001ebc + 0xcb8) != 0) {
         if (Value1_02001dc4(Func_02007930, 0x947) == 0) {
             Call2(Func_0200792c, 0x1528, 1);
             Func_02007ada(188);
-            v5 = 17;
-            v6 = 82;
             Func_02007960(1);
-            Call6_02001dc4(Func_0200791c, 6, 77, 1, 2, v5, v6);
+            Call6_02001dc4(Func_0200791c, 6, 77, 1, 2, 17, 82);
             Func_0200797a(5);
-            Call6_02001dc4(Func_02007932, 7, 77, 1, 2, v5, v6);
+            Call6_02001dc4(Func_02007932, 7, 77, 1, 2, 17, 82);
             Func_02007990(1);
             Func_020045d8();
             Call1_02001dc4(Func_0200798a, 0x947);
@@ -4723,23 +4668,16 @@ void InspectVillageWell(void)
 
 void RunSecondaryMapInteraction(void)
 {
-    extern u8 Data_03001ebc[];
+    extern u8 *Data_03001ebc;
 
-    u32 i;
-    s32 record;
-    s32 v5;
-    s32 v6;
-
-    if (*(s16 *)((*(u8 *volatile *)Data_03001ebc + 0xcb8)) != 0) {
+    if (*(s16 *)(Data_03001ebc + 0xcb8) != 0) {
         if (Value1_0200169c(Func_020079b4, 0x948) == 0) {
             Call2(Func_020079b0, 0x1528, 1);
             Func_02007b5e(188);
-            v5 = 3;
-            v6 = 55;
             Func_020079e4(1);
-            Call6_0200169c(Func_020079a0, 6, 77, 1, 2, v5, v6);
+            Call6_0200169c(Func_020079a0, 6, 77, 1, 2, 3, 55);
             Func_020079fe(5);
-            Call6_0200169c(Func_020079b6, 7, 77, 1, 2, v5, v6);
+            Call6_0200169c(Func_020079b6, 7, 77, 1, 2, 3, 55);
             Func_02007a14(1);
             Func_02004690();
             Call1_0200238c(Func_02007a0e, 0x948);
@@ -4805,22 +4743,19 @@ void NoOpInteractionCallback(void)
 
 void FieldScene_RunScene3bf_0200252c(void)
 {
-    extern u8 Data_03001ebc[];
+    struct FieldActor *actor;
 
-    u32 i;
-    s32 record;
-
-    record = Value1_0200252c(Func_02007b82, 0);
-    if (record != 0) {
-        Func_02007be0(2, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+    actor = (struct FieldActor *)Value1_0200252c(Func_02007b82, 0);
+    if (actor != NULL) {
+        Func_02007be0(2, actor->x.fixed, actor->z.fixed);
     }
-    record = Value1_0200252c(Func_02007b96, 0);
-    if (record != 0) {
-        Func_02007bf4(3, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+    actor = (struct FieldActor *)Value1_0200252c(Func_02007b96, 0);
+    if (actor != NULL) {
+        Func_02007bf4(3, actor->x.fixed, actor->z.fixed);
     }
-    record = Value1_0200252c(Func_02007baa, 0);
-    if (record != 0) {
-        Func_02007c08_a(1, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+    actor = (struct FieldActor *)Value1_0200252c(Func_02007baa, 0);
+    if (actor != NULL) {
+        Func_02007c08_a(1, actor->x.fixed, actor->z.fixed);
     }
     Func_02007c7a(0, 0, 0);
     Call3(Func_02007bd4, 2, 0xb333, 0x5999);

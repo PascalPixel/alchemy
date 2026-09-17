@@ -523,7 +523,7 @@ void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
     u8 *base;
 
     base = (u8 *)Data_02000240;
-    p6 = *(volatile s32 *)(base + 500);
+    p6 = *(u8 **)(base + 500);
     p10 = a0;
     rec7 = Value1(Func_0200170c, (s32)p6);
     Func_02001714(p10);
@@ -540,19 +540,16 @@ void FieldScene_RunMiddleAuxiliarySequence(s32 a0)
         Func_02001840(244);
         Value2(Func_020016d4, 0x2008401, 0xc80);
         rec7[85] = rec2;
-        {
-            s32 v12 = *(volatile s32 *)((s32)rec7 + 12) + 0x200000;
-            Func_0200171c((s32)rec7, *(volatile s32 *)((s32)rec7 + 8), v12, *(volatile s32 *)((s32)rec7 + 16));
-        }
+        Func_0200171c((s32)rec7, *(s32 *)(rec7 + 8), *(s32 *)(rec7 + 12) + 0x200000, *(s32 *)(rec7 + 16));
         Func_020017ba((s32)p6);
-        *(volatile s32 *)((s32)rec7 + 40) = rec2;
+        *(s32 *)(rec7 + 40) = rec2;
         rec7[85] = 4;
         *(u8 *)(base + 498) = 2;
         Call1(Func_02001762, 0x20f);
         Call2(Func_02001784, 0x218, p10);
         Call2(Func_0200178e, 0x210, 180);
         Func_020017aa();
-        *(u16 *)((*(u8 *volatile *)Data_03001ebc + 0x17c)) = rec2;
+        *(u16 *)(*(u8 **)Data_03001ebc + 0x17c) = rec2;
     }
 }
 
@@ -645,7 +642,7 @@ void PlaceActorTwelveWhenFlagClear(void)
 
 void SceneState_SetStateByte52(void)
 {
-    u8 *state = *(u8 *volatile *)0x03001f30;
+    u8 *state = *(u8 **)0x03001f30;
     state[52] = 1;
 }
 

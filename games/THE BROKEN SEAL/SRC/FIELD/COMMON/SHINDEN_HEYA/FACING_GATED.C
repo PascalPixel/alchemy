@@ -876,18 +876,18 @@ void Func_02003998();
 s32 Func_020039ac();
 void Func_020039b4();
 s32 Func_020039c8();
-u8 *Func_020039e2();
+struct FacingObject *Func_020039e2();
 void Func_020039ee();
-u8 *Func_020039f2_b();
+struct FacingObject *Func_020039f2_b();
 void Func_020039f2_a();
 void Func_02003a12();
 void Func_02003a12_a();
 void Func_02003a12_b();
-s32 Func_02003a20();
+struct FacingObject *Func_02003a20();
 s32 Func_02003a22();
 void Func_02003a28();
 void Func_02003a36();
-u8 *Func_02003a40();
+struct FacingObject *Func_02003a40();
 s32 Func_02003a4c();
 void Func_02003a50();
 s32 Func_02003a68();
@@ -1023,7 +1023,7 @@ void Func_020051e0();
 void Func_020051e0_a();
 void Func_020051e8();
 void Func_020051e8_a();
-u8 *Func_02005f7e();
+struct FacingObject *Func_02005f7e();
 void Func_02005200();
 void Func_02005212();
 void Func_0200522c();
@@ -1339,10 +1339,10 @@ void Func_02005f8e();
 void Func_02005faa();
 void Func_02005fb8();
 s32 Func_02005fbc();
-s32 Func_02005fbc_a();
+struct FacingObject *Func_02005fbc_a();
 void Func_02005fc8();
 void Func_02005fd8();
-s32 Func_02005fda();
+struct FacingObject *Func_02005fda();
 void Func_02005ff0();
 void Func_02005ff8();
 void Func_0200600c();
@@ -1411,10 +1411,10 @@ void Func_02006256();
 void Func_02006258();
 void Func_0200626a();
 void Func_02006286();
-u8 *Func_02006284();
+struct FacingObject *Func_02006284();
 void Func_02006298();
 u8 *Func_02006290();
-u8 *Func_0200629a();
+struct FacingObject *Func_0200629a();
 void Func_020062aa();
 void Func_020062bc();
 void Func_020062ce();
@@ -1544,7 +1544,7 @@ void Func_020066d4();
 void Func_0200671e();
 u8 *Func_02005fe8();
 u8 *Func_02005fe8_a();
-u8 *Func_02005fe8_b();
+struct FacingObject *Func_02005fe8_b();
 u8 *Func_02005fe8_c();
 u8 *Func_0200632a_a();
 u8 *Func_02006334();
@@ -1896,10 +1896,6 @@ void FieldScene_RunActorNineFlagDialogueB(void)
 
 void FieldScene_RunSupplementalSequenceOne(void)
 {
-
-    u32 i;
-    u8 *record;
-
     Func_02003954_a();
     Call1(Func_02003a12, 0x1164);
     Value2(Func_02003a22, 8, 0);
@@ -1909,59 +1905,34 @@ void FieldScene_RunSupplementalSequenceOne(void)
     } else {
         Func_0200397c(20);
         Value2(Func_02003a4c, 8, 0);
-        if (Value2(Func_020039ac, 0, 0) != 0) {
-        } else {
+        if (Value2(Func_020039ac, 0, 0) == 0) {
             Func_02003998(20);
             Value2(Func_02003a68, 8, 0);
-            if (Value2(Func_020039c8, 0, 0) != 0) {
-            } else {
+            if (Value2(Func_020039c8, 0, 0) == 0) {
                 Func_020039b4(20);
-                record = Func_020039e2(8);
-                {
-                    u32 shown = (u32)*(u16 *)((s32)record + 6);
-                    u32 low = 0xa000;
-
-                    if (shown < low) {
-                        goto L_02000488;
-                    }
+                if (Func_020039e2(8)->facing >= 0xa000 && Func_020039f2_b(8)->facing <= 0xe000) {
+                    Call3_scene_primary_script(Func_02003a12_a, 8, 0x8000, 0x4000);
+                    Func_02003ac4(8, 0, 0);
+                    Call1(Func_020039f2_a, 10);
+                    Func_02003a20(8)->facing_flags &= ~1;
+                    Func_02003a6c(8, 152, 120);
+                    Func_02003a12_b(1);
+                    Func_02003a40(8)->facing_flags |= 1;
+                    Func_02003a28(20);
+                    Func_02003ab0(8, 3);
+                    Func_02003a36(20);
+                    Func_02003aa0(0, 168, 120);
+                    Func_02003aa2(0, 192, 168);
+                    Func_02003a50(20);
+                    Func_02003aba(8, 168, 120);
+                    Call3_scene_primary_script(Func_02003b3e, 8, 0x3000, 0);
+                    Func_02003ad4(0);
+                } else {
+                    Func_02003ad0(0, 192, 168);
+                    Func_02003a7e(20);
+                    Call3_scene_primary_script(Func_02003b62, 8, 0x3000, 0);
+                    Func_02003af8(0);
                 }
-                record = Func_020039f2_b(8);
-                {
-                    u32 shown = (u32)*(u16 *)((s32)record + 6);
-                    u32 high = 0xe000;
-
-                    if (shown > high) {
-                        goto L_02000488;
-                    }
-                }
-                Call3_scene_primary_script(Func_02003a12_a, 8, 0x8000, 0x4000);
-                Func_02003ac4(8, 0, 0);
-                Call1(Func_020039f2_a, 10);
-                *(u8 *)(Func_02003a20(8) + 90) &= 254;
-                Func_02003a6c(8, 152, 120);
-                Func_02003a12_b(1);
-                {
-                    u8 *record = Func_02003a40(8);
-                    u8 value = *(volatile u8 *)&record[90];
-
-                    record[90] = (u8)(value | 1);
-                }
-                Func_02003a28(20);
-                Func_02003ab0(8, 3);
-                Func_02003a36(20);
-                Func_02003aa0(0, 168, 120);
-                Func_02003aa2(0, 192, 168);
-                Func_02003a50(20);
-                Func_02003aba(8, 168, 120);
-                Call3_scene_primary_script(Func_02003b3e, 8, 0x3000, 0);
-                Func_02003ad4(0);
-                goto L_020004aa;
-                L_02000488:
-                Func_02003ad0(0, 192, 168);
-                Func_02003a7e(20);
-                Call3_scene_primary_script(Func_02003b62, 8, 0x3000, 0);
-                Func_02003af8(0);
-                L_020004aa:
                 Func_02001d28();
                 Func_02003bbc(0, 0);
                 Func_02003bca(120);
@@ -3007,11 +2978,7 @@ void SceneEffect_StepEllipseOrbit(u8 *obj)
 void FieldScene_RunPairedActorChoreography(void)
 {
     u8 *Func_02005050();
-    s32 Func_02005f9e();
-
-    u32 i;
-    u8 *record;
-    s32 none;
+    struct FacingObject *Func_02005f9e();
 
     ObjectMotion_SetSpeedParameters_1_0200290c(0, 0x18000, 0xc000);
     ObjectMotion_SetSpeedParameters_2_0200290c(1, 0x18000, 0xc000);
@@ -3023,28 +2990,16 @@ void FieldScene_RunPairedActorChoreography(void)
     BattleRuntime_WaitIfModeZero_3_0200290c(15);
     ObjectMotion_SetAngleToward_1_0200290c(0, 1, 0);
     ObjectMotion_SetVariantCallback_5_0200290c(0, 1); /* object 0, variant 1 */
-    {
-        u8 *record = Scene_GetRecord_1_0200290c(0); /* main:0808a080 */
-        u8 value = *(volatile u8 *)&record[90];
-        s32 masked = value & 254;
-
-        none = 0;
-        record[90] = (u8)masked;
-    }
+    Scene_GetRecord_1_0200290c(0)->facing_flags &= ~1;
     ObjectMotion_ResetAndSetPositionInMode2_1_0200290c(0, 184, 168);
-    *(u8 *)(Scene_GetRecord_2_0200290c(1) + 90) &= 254;
-    ObjectMotion_SetPositionAndReset_10(1, 200, 168); /* object 1, x 200, z 168 */
+    Scene_GetRecord_2_0200290c(1)->facing_flags &= ~1;
+    ObjectMotion_SetPositionAndReset_10(1, 200, 168);
     BattleRuntime_WaitIfModeZero_4_0200290c(1);
-    *(u8 *)(Scene_GetRecord_3(1) + 90) |= 1;
+    Scene_GetRecord_3(1)->facing_flags |= 1;
     ObjectMotion_CommitCurrentPositionAndActivate_1_0200290c(0);
     Object_SetModeById_1_0200290c(0, 1);
-    *(u8 *)(Scene_GetRecord_4(0) + 90) |= 1;
-    {
-        u8 *record = Scene_GetRecord_5(1);
-        u8 value = *(volatile u8 *)&record[90];
-
-        record[90] = (u8)(value | 1);
-    }
+    Scene_GetRecord_4(0)->facing_flags |= 1;
+    Scene_GetRecord_5(1)->facing_flags |= 1;
     ObjectMotion_Launch_1(1, 2, 0);
     BattleRuntime_WaitIfModeZero_5_0200290c(15);
     ObjectMotion_SetAngleToward_2_0200290c(1, 8, 0);
@@ -3123,22 +3078,10 @@ void FieldScene_RunPairedActorChoreography(void)
     BattleRuntime_WaitIfModeZero_34_0200290c(10);
     ObjectMotion_CallThenWaitForAnimationChange_10_0200290c(1, 3); /* main:0808a110 */
     BattleRuntime_WaitIfModeZero_35_0200290c(10);
-    {
-        u8 *record = Scene_GetRecord_6(8); /* main:0808a080 */
-        s32 shown = 1;
-
-        *(volatile u16 *)(record + 100) = shown;
-    }
-    record = Scene_GetRecord_7(8); /* main:0808a080 */
-    *(volatile s32 *)(record + 108) = 0x2008031;
-    {
-        u8 *record = Scene_GetRecord_8(12); /* main:0808a080 */
-        s32 shown = 1;
-
-        *(volatile u16 *)(record + 100) = shown;
-    }
-    record = Scene_GetRecord_9(12); /* main:0808a080 */
-    *(volatile s32 *)(record + 108) = 0x2008031;
+    Scene_GetRecord_6(8)->unknown_64 = 1;
+    *(s32 *)(Scene_GetRecord_7(8) + 108) = (s32)UpdateFacingFromResolvedObject;
+    Scene_GetRecord_8(12)->unknown_64 = 1;
+    *(s32 *)(Scene_GetRecord_9(12) + 108) = (s32)UpdateFacingFromResolvedObject;
     ObjectMotion_SetPositionAndReset_1_0200290c(1, 196, 180);
     ObjectMotion_SetPositionAndReset_2_0200290c(1, 184, 184);
     ObjectMotion_SetPositionAndReset_3_0200290c(1, 180, 180);
@@ -3153,10 +3096,8 @@ void FieldScene_RunPairedActorChoreography(void)
     BattleRuntime_WaitIfModeZero_37_0200290c(10);
     ObjectMotion_ArmCallback_15(1, 0x5000, 0);
     BattleRuntime_WaitIfModeZero_38_0200290c(15);
-    record = Scene_GetRecord_10(12);
-    *(volatile s32 *)(record + 108) = none;
-    record = Scene_GetRecord_11(8); /* main:0808a080 */
-    *(volatile s32 *)(record + 108) = none;
+    *(s32 *)(Scene_GetRecord_10(12) + 108) = 0;
+    *(s32 *)(Scene_GetRecord_11(8) + 108) = 0;
     ObjectMotion_SetVariantCallback_1_0200290c(8, 2);
     BattleEffect_SpawnLinkedResourceObject_3_0200290c(8, 0x100, 0);
     Call1((void (*)())Func_0200632a_a, 60); /* main:0808a080 */

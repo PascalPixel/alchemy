@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 
 /* Branching dialogue and actor presentation sequences. */
 
@@ -122,11 +123,11 @@ void Func_02006630();
 void Func_02006634();
 void Func_02006646();
 void Func_0200664c();
-u8 *Func_02006652();
+struct FieldActor *Func_02006652();
 void Func_02006654();
 void Func_02006660();
 void Func_02006662();
-u8 *Func_0200666e();
+struct FieldActor *Func_0200666e();
 void Func_0200667c();
 void Func_02006692();
 void Func_0200669c();
@@ -3130,14 +3131,9 @@ void FieldScene_RunMainCutsceneSequence(void)
         Value3(Func_020066ec, 20, 0x4000, 0);
         Func_0200661a(20);
         Value3(Func_02006654, 20, 0xcccc, 0x6666);
-        Func_02006652(20)[90] &= 0xfe;
+        Func_02006652(20)->unknown_5a &= 0xfe;
         Value3(Func_02006798, 20, 0, -16);
-        {
-            u8 *record = Func_0200666e(20);
-            u8 value = *(volatile u8 *)&record[90];
-
-            record[90] = (u8)(value | 1);
-        }
+        Func_0200666e(20)->unknown_5a |= 1;
         Value3(Func_02006734, 14, 0x4000, 0);
         Func_02006662(40);
         Call3(Func_0200669c, 14, 0xcccc, 0x6666);
@@ -3987,21 +3983,19 @@ void FieldScene_RunMainCutsceneSequence(void)
 
 void FieldScene_RunScene3b8_02003d40(void)
 {
-    u32 i;
-    s32 record;
-    u8 *p5;
+    struct EventWork *work;
 
-    p5 = *(volatile s32 *)Data_03001ebc;
+    work = (struct EventWork *)Data_03001ebc[0];
     Func_02008128();
     Func_02008296(158);
     Call3_02003d40(Func_02008164, 0, 0x8000, 0x4000);
     Func_020081c4(0, 2);
-    if (*(s16 *)(((s32)p5 + 0x16c)) == 32) {
+    if (work->touched_trigger == 32) {
         Func_020080e0(1);
         Func_02008156(10);
         Call3_02003d40(Func_020081d2, 0, 0, -16);
     } else {
-        if (*(s16 *)(((s32)p5 + 0x16c)) == 30) {
+        if (work->touched_trigger == 30) {
             Func_020080fe(4);
             Func_02008174(10);
             Call3_02003d40(Func_020081e8, 0, 3, -16);
@@ -4012,7 +4006,7 @@ void FieldScene_RunScene3b8_02003d40(void)
         }
     }
     Func_020081a0(16);
-    Func_020082b6(*(s16 *)(((s32)p5 + 0x16c)));
+    Func_020082b6(work->touched_trigger);
     Func_0200814c(1);
     Func_02008152(2);
     Func_02008158(4);

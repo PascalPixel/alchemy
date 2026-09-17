@@ -246,6 +246,11 @@ s32 SceneData_GetTable8948OrTable8978(void)
     return (s32)Data_02008948;
 }
 
+static __inline__ void SetFlagBits(u8 *flags, u8 bits)
+{
+    *flags |= bits;
+}
+
 void FieldScene_RunActor8AtCell24Sequence(void)
 {
     s32 *record;
@@ -256,12 +261,7 @@ void FieldScene_RunActor8AtCell24Sequence(void)
     value = record[2] / 0x100000;
     if (value == 24) {
         Func_02000892(8);
-        {
-            u8 *record = Func_02000ac8(8);
-            u8 value = *(volatile u8 *)&record[35];
-
-            record[35] = (u8)(value | 2);
-        }
+        SetFlagBits(Func_02000ac8(8) + 35, 2);
         Call6(Func_02000aa6, 19, 74, 9, 3, 19, 17);
         target = Func_02000aec(8);
         Func_02000aba((s32)target, 0);
@@ -292,12 +292,7 @@ s32 FieldScene_PlaceActor8OnEntry(void)
         if (*(s16 *)(base + 0x1c2) == 5) {
             Call1(Func_02000b5e, 0x12f);
         } else {
-            {
-                u8 *record = Func_02000b6e(8);
-                u8 value = *(volatile u8 *)&record[89];
-
-                record[89] = (u8)(value | 16);
-            }
+            SetFlagBits(Func_02000b6e(8) + 89, 16);
             if (Value1(Func_02000b66, 0x864) != 0) {
                 Call3(Func_02000bb0, 8, 0x15a0000, 0x1240000);
                 record = Func_02000b96(8);

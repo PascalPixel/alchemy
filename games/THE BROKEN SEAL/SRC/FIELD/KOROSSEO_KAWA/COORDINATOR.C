@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 
 #define SceneData_GetTableC194 Func_02000030
 #define SceneData_GetTablec1dc Func_0200003c
@@ -8,7 +9,6 @@
 #define Object_SetModeById_2(args...) Func_02003daa(args)
 #define Object_SetModeById_3(args...) Func_02003dda(args)
 #define Object_SetModeById_4(args...) Func_02003e0a(args)
-#define AUX_COUNTDOWN (*(volatile s32 *)Data_0200c41c)
 #define FieldScene_RunOpeningAuxiliarySequence Func_0200004c
 #define FieldScene_RunScene3ba_02000270 Func_02000270
 #define FieldScene_RunScene3ba_02000974 Func_02000974
@@ -1231,12 +1231,9 @@ u8 *SceneData_GetTablec1f4(void)
  * countdown value, then advances (or, from 0, restarts) the countdown. */
 void FieldScene_RunOpeningAuxiliarySequence(void)
 {
-    extern s16 Data_02000240_t[][1];
-    extern u8 Data_0200c41c[];
+    extern s32 Data_0200c41c;
 
-    extern u8 Data_03001ebc[];
-
-    switch ((u32)AUX_COUNTDOWN) {
+    switch ((u32)Data_0200c41c) {
     case 66:
         Call6(Func_02003cc0, 92, 31, 2, 2, 50, 38); /* main:080091c8 */
         Call6(Func_02003cd2, 92, 31, 2, 2, 54, 38); /* main:080091c8 */
@@ -1258,10 +1255,10 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
         Call6(Func_02003d02, 92, 29, 2, 2, 54, 38); /* main:080091c8 */
         Object_SetModeById_4(16, 12); /* object 16, action 12 */
         Call6(Func_02003d14, 50, 24, 6, 1, 50, 12); /* main:080091c0 */
-        AUX_COUNTDOWN = 120;
+        Data_0200c41c = 120;
         break;
     }
-    AUX_COUNTDOWN = AUX_COUNTDOWN - 1;
+    Data_0200c41c = Data_0200c41c - 1;
 }
 
 void SceneState_ResetCounterAndStartTask(void)
@@ -2074,8 +2071,8 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
 {
     extern u8 Data_02000240[];
 
-    s32 rec;
-    s32 record;
+    struct FieldActor *rec;
+    struct FieldActor *record;
     s32 p9;
     s32 p11;
     s32 count;
@@ -2090,8 +2087,8 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
     u8 buf[8];
 
     rec = Value1_02001e7c(Func_02005b4e, owner);
-    p9 = *(s16 *)(rec + 10);
-    p11 = *(s16 *)(rec + 18);
+    p9 = rec->x.part.pixel;
+    p11 = rec->z.part.pixel;
     if (mode != 3) {
         count = Value0(Func_02005b24);
         for (i = 0; i < count; i++) {
@@ -2150,7 +2147,7 @@ L_main:
     Call3_02001e7c(Func_02005ca4, owner, 0x10000, 0x8000);
     record = Value1_02001e7c(Func_02005c9a, 0);
     if (record != 0) {
-        Func_02005ce8(obj, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+        Func_02005ce8(obj, record->x.fixed, record->z.fixed);
     }
     hi = p11 + 16;
     Func_02005cea(obj, p9, hi);
@@ -2172,9 +2169,9 @@ L_main:
     Func_02005d10(obj);
     ((void (*)())Func_02005cf4_a)(base + 512);
     rec = Value1_02001e7c(Func_02005d52, obj);
-    sx = *(volatile s32 *)(rec + 8) >> 20;
+    sx = rec->x.fixed >> 20;
     Func_02005d1e_a((obj << 4) + 880, sx);
-    sy = *(volatile s32 *)(rec + 16) >> 20;
+    sy = rec->z.fixed >> 20;
     Func_02005d2c((obj << 4) + 888, sy);
 }
 

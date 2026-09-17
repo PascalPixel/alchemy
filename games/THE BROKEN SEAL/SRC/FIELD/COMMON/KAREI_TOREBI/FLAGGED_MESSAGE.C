@@ -979,7 +979,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             rec7 = Func_02001ab4(19, 8, 11, 4, 2);
             Call4(Func_02001ad2, 0xc8a, rec7, 0, 0);
             base6_2000240 = (s32)Data_02000240;
-            Func_02001aec(*(volatile s32 *)(base6_2000240 + 16), 6, rec7, 24, 8);
+            Func_02001aec(*(s32 *)(base6_2000240 + 16), 6, rec7, 24, 8);
             if (Value2(Func_02001b5e, -1, 0) == 1) {
                 Func_02001af2(rec7, 2);
                 Func_02001bc2(0, 4);
@@ -987,7 +987,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
                 Func_02001c42(8, 0);
                 goto L_02000660;
             } else {
-                if ((u32)six00 <= (u32)*(volatile s32 *)(base6_2000240 + 16)) {
+                if ((u32)six00 <= (u32)*(s32 *)(base6_2000240 + 16)) {
                     goto L_0200061e;
                 }
                 Func_02001b10(rec7, 2);
@@ -1296,8 +1296,8 @@ void FieldScene_RunScene3aeSequenceB(void)
     record = Func_02002400(11);
     none = 0;
     record[35] = none;
-    *(u8 *)(*(volatile s32 *)((s32)record + 80) + 9) |= 12;
-    *(u8 *)(*(volatile s32 *)((s32)record + 80) + 21) |= 12;
+    *(u8 *)(*(s32 *)((s32)record + 80) + 9) |= 12;
+    *(u8 *)(*(s32 *)((s32)record + 80) + 21) |= 12;
     Call4(Func_020024f4, 0xe80000, -1, 0x1300000, 1);
     Call3(Func_0200244a, 0, 0x10000, 0x8000);
     Call3(Func_02002476, 0, 216, 0x110);
@@ -1436,21 +1436,21 @@ void FieldScene_RunScene3aeSequenceB(void)
     record = Value1(Func_020028fa, 10);
     record[89] = none;
     record[35] = 2;
-    *(u8 *)(*(volatile s32 *)((s32)record + 80) + 9) |= 12;
-    *(u8 *)(*(volatile s32 *)((s32)record + 80) + 38) = none;
+    *(u8 *)(*(s32 *)((s32)record + 80) + 9) |= 12;
+    *(u8 *)(*(s32 *)((s32)record + 80) + 38) = none;
     {
-        s32 target = *(volatile s32 *)((s32)record + 80);
+        s32 target = *(s32 *)((s32)record + 80);
         s32 shown = 0xc000;
 
-        *(volatile u16 *)(target + 30) = shown;
+        *(u16 *)(target + 30) = shown;
     }
     Call3(Func_02002a3a, 10, -12, 4);
     Call3(Func_020029de, 10, 0x4000, 0);
     {
-        u8 *record = Func_02002944(10);
-        u8 value = *(volatile u8 *)&record[90];
+        u8 *flags = Func_02002944(10) + 90;
+        u8 value = *flags | v6;
 
-        record[90] = (u8)(value | v6);
+        *flags = value;
     }
     Func_02002a62(159);
     Func_02002930(20);

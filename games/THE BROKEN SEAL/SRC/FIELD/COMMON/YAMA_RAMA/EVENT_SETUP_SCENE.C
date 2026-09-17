@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
@@ -679,16 +680,13 @@ void SceneDialogue_RunActor13Message1961(void)
 
 void FieldScene_RunPrimaryScript(void)
 {
-    extern u8 Data_03001ebc[];
-
-    u32 i;
-    s32 record;
+    extern struct EventWork *Data_03001ebc;
 
     Func_0200179e(188);
     Call3(Func_02001638, 0x2009788, 67, 6);
     *(u8 *)(Func_0200169e(0) + 85) = 0;
     Call3(Func_020016b6, 0, 0xcccc, 0x6666);
-    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c0)) = 0x100;
+    Data_03001ebc->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Func_02001714(0, 2);
     Call3(Func_02001708, 0, 0, -16);
     Func_020016b6_a(16);
@@ -697,11 +695,8 @@ void FieldScene_RunPrimaryScript(void)
 
 void FieldScene_RunScene3a2SequenceA(void)
 {
-    extern u8 Data_03001ebc[];
+    extern struct EventWork *Data_03001ebc;
     void Func_02001d40();
-
-    u32 i;
-    s32 record;
 
     Func_020016e0();
     Call3(Func_0200174e, 8, 0x880000, 0xa80000);
@@ -714,7 +709,7 @@ void FieldScene_RunScene3a2SequenceA(void)
     Call3(Func_02001802, 1, 0xa000, 0);
     Call3(Func_0200180e, 2, 0xc000, 0);
     Call3(Func_0200181a, 3, 0xe000, 0);
-    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c0)) = 0x201;
+    Data_03001ebc->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
     Func_0200186c();
     Func_02001878();
     Func_02001776_a(60);

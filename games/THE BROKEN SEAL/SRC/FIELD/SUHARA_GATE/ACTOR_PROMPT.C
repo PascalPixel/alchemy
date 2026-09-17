@@ -288,7 +288,7 @@ void Scene_RunScene3c3SequenceA(void)
     Talk_unk4_3(0, 0xc000, 0);
     record = Talk_unk6(0);
     if (record != 0) {
-        Talk_unk23_4(11, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+        Talk_unk23_4(11, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     Talk_unk24_4(1);
     Talk_unk5_3(11, 0x19999, 0xcccc);

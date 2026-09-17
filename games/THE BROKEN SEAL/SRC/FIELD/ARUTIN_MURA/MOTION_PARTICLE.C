@@ -805,7 +805,7 @@ void FieldScene_RunEarlySequence(void)
     s32 b;
     s32 c;
 
-    work = *(u8 *volatile *)&Data_03001ebc;
+    work = Data_03001ebc;
     Func_020013e0_local();
     for (i = 8; i <= 65; i++) {
         record = (u8 *)Value1(Func_0200140a, i);
@@ -836,7 +836,7 @@ void FieldScene_RunEarlySequence(void)
         Func_0200145c(*(s32 *)(tbl + off), a, b);
     }
     Call3(Func_020014e2, 0, 0x8000, 0x4000);
-    *(s32 *)((*(u8 *volatile *)&Data_03001ebc + 0x1c0)) = 0x100;
+    *(s32 *)(Data_03001ebc + 0x1c0) = 0x100;
     *(u8 *)(Func_020014e8(0) + 85) = 0;
     Func_0200152e(0, 2);
     if (idx == 6) {
@@ -858,16 +858,14 @@ void FieldScene_RunEarlySequence(void)
 
 void FieldScene_RunScene3a3SequenceB(void)
 {
-    u32 i;
-    s32 record;
-    u8 *p5;
+    u8 *work;
 
-    p5 = *(volatile s32 *)&Data_03001ebc;
+    work = Data_03001ebc;
     Func_02001554();
     *(u8 *)(Func_0200157a(0) + 85) = 0;
     Func_0200167e(123);
     Call3(Func_020015b2, 0, 2, -16);
-    Func_02001668(*(s16 *)(((s32)p5 + 0x16c)));
+    Func_02001668(*(s16 *)(work + 0x16c));
     Func_02001674();
     Func_02001680();
     Func_02001594();
@@ -909,22 +907,13 @@ void SceneMotion_UpdateTimedActor(struct SceneMotion *work)
 
 void FieldScene_RunScene3a3SequenceC(void)
 {
-    u32 i;
-    s32 record;
+    struct SceneMotion *motion;
 
-    record = Value1(Func_02001686, 18);
-    {
-        s32 shown = 0;
-
-        *(volatile u16 *)(record + 100) = shown;
-    }
-    {
-        s32 shown = 0;
-
-        *(volatile u16 *)((record + 100) + 2) = shown;
-    }
-    *(volatile s32 *)(record + 72) = 0x6666;
-    *(volatile s32 *)(record + 108) = 0x20086f1;
+    motion = (struct SceneMotion *)Value1(Func_02001686, 18);
+    motion->timer = 0;
+    motion->delay = 0;
+    *(s32 *)((u8 *)motion + 72) = 0x6666;
+    motion->callback = SceneMotion_UpdateTimedActor;
     Call3(Func_020016b6_a, 18, 0x13333, 0x9999);
     Call3(Func_020016ca_a, 18, 28, 0x1cc);
     Call3(Func_020016d6, 18, 24, 0x1c0);
@@ -992,7 +981,6 @@ void FieldScene_RunMiddleSequence(void)
     s32 rec6;
     s32 rec0;
     s32 kind;
-    s32 bit;
 
     scene = Value1(Func_020017d4, 0);
     rec5 = Value1(Func_0200179c, 0x242);
@@ -1021,12 +1009,12 @@ void FieldScene_RunMiddleSequence(void)
     Func_0200187e(kind);
     Func_02001884(21);
     goto L_020009da;
-    L_020009b8:;
+L_020009b8:
     Call6(Func_02001836, 0, 32, 32, 32, rec0, rec0);
     Func_0200189c(15);
     Func_020018a2(16);
     Func_020018a8(17);
-    L_020009da:;
+L_020009da:
     if (Value1(Func_02001866, 0x8ff) != 0) {
         Func_020018b8_a(18);
     } else {
@@ -1045,24 +1033,36 @@ void FieldScene_RunMiddleSequence(void)
     Func_020018d0((s32)Func_0200191a(19), 0);
     Func_02001980(22, 15);
     Call2((void (*)())Func_02001988_a, 23, 15);
-    bit = 8;
     Func_02001990(24, 15);
-    *(u8 *)(Func_0200193e(22) + 89) |= bit;
-    *(u8 *)(Func_0200194e(23) + 89) |= bit;
     {
-        u8 *record = Func_0200195c(24);
-        u8 value = *(volatile u8 *)&record[89];
+        u8 bits = 8;
+        u8 *flags = (u8 *)Func_0200193e(22) + 89;
+        u8 value = *flags;
 
-        record[89] = (u8)(value | bit);
+        value |= bits;
+        *flags = value;
+        flags = (u8 *)Func_0200194e(23) + 89;
+        value = *flags;
+        value |= bits;
+        *flags = value;
+        flags = (u8 *)Func_0200195c(24) + 89;
+        bits |= *flags;
+        *flags = bits;
     }
-    bit = 2;
-    *(u8 *)(Func_0200196a(22) + 35) |= bit;
-    *(u8 *)(Func_0200197a(23) + 35) |= bit;
     {
-        u8 *record = Func_02001988_b(24);
-        u8 value = *(volatile u8 *)&record[35];
+        u8 bits = 2;
+        u8 *flags = (u8 *)Func_0200196a(22) + 35;
+        u8 value = *flags;
 
-        record[35] = (u8)(value | bit);
+        value |= bits;
+        *flags = value;
+        flags = (u8 *)Func_0200197a(23) + 35;
+        value = *flags;
+        value |= bits;
+        *flags = value;
+        flags = (u8 *)Func_02001988_b(24) + 35;
+        bits |= *flags;
+        *flags = bits;
     }
     Func_02001a30(22, 1);
     Func_02001a38(23, 1);
@@ -1077,60 +1077,49 @@ void FieldScene_RunMiddleSequence(void)
 
 void FieldScene_RunScene3a3SequenceD(void)
 {
-    u32 i;
-    u8 *record;
+    u8 *actor;
+    s32 facing;
 
     if (Value1(Func_020019bc, 0x240) == 0) {
         Call3(Func_02001a3c, 8, 0x3280000, 0x2d70000);
-        record = Func_02001a12(8);
-        {
-            s32 shown = 0x3000;
-
-            *(volatile u16 *)((s32)record + 6) = shown;
-        }
+        actor = Func_02001a12(8);
+        facing = 0x3000;
+        *(u16 *)(actor + 6) = facing;
         Call3(Func_02001a52, 9, 0x31a0000, 0x3390000);
     }
     if (Value1(Func_020019e8, 0x241) == 0) {
         Call3(Func_02001a68, 10, 0x2300000, 0x2c60000);
-        record = Func_02001a3e(10);
-        {
-            s32 shown = 0x1000;
-
-            *(volatile u16 *)((s32)record + 6) = shown;
-        }
+        actor = Func_02001a3e(10);
+        facing = 0x1000;
+        *(u16 *)(actor + 6) = facing;
         Call3(Func_02001a80, 11, 0x2400000, 0x2c60000);
     }
     if (Value1(Func_02001a16, 0x242) == 0) {
         Call3(Func_02001a96, 15, 0x1270000, 0x2e80000);
-        record = Func_02001a6c(15);
-        {
-            s32 shown = 0xb000;
-
-            *(volatile u16 *)((s32)record + 6) = shown;
-        }
+        actor = Func_02001a6c(15);
+        facing = 0xb000;
+        *(u16 *)(actor + 6) = facing;
     } else {
-        record = Value1(Func_02001a7a, 15);
-        {
-            u8 value = *(volatile u8 *)&record[89];
+        u8 flags;
 
-            record[89] = (u8)(value | 4);
-        }
+        actor = (u8 *)Value1(Func_02001a7a, 15);
+        flags = 4;
+        flags |= actor[89];
+        actor[89] = flags;
     }
-    record = Value1(Func_02001a8c, 17);
-    if ((s32)record != 0) {
-        {
-            u8 value = *(volatile u8 *)&record[89];
+    actor = (u8 *)Value1(Func_02001a8c, 17);
+    if (actor != 0) {
+        u8 flags = 4;
 
-            record[89] = (u8)(value | 4);
-        }
+        flags |= actor[89];
+        actor[89] = flags;
     }
-    record = Value1(Func_02001aa2, 16);
-    if ((s32)record != 0) {
-        {
-            u8 value = *(volatile u8 *)&record[89];
+    actor = (u8 *)Value1(Func_02001aa2, 16);
+    if (actor != 0) {
+        u8 flags = 4;
 
-            record[89] = (u8)(value | 4);
-        }
+        flags |= actor[89];
+        actor[89] = flags;
     }
 }
 

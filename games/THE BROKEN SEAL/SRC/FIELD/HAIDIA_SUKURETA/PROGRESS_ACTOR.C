@@ -908,29 +908,20 @@ void FieldScene_RunActorPositionSequence(void)
  * A value-returning call also sets r0 last of its arguments. */
 void FieldScene_RunScene375_02000964(void)
 {
-    extern u8 Data_03001ebc[];
-
-    u32 i;
     s32 record;
+    s32 facing;
 
     Func_020023ec();
     Func_02002456(13, 0, 0);
     Call3(Func_02002464, 1, 0xd80000, 0x1080000);
     Call3(Func_02002472, 5, 0xf80000, 0x1080000);
     record = Func_02002430(1);
-    {
-        s32 shown = 0xc000;
-
-        *(volatile u16 *)(record + 6) = shown;
-    }
+    facing = 0xc000;
+    *(u16 *)(record + 6) = facing;
     record = Func_0200243c(5);
-    {
-        s32 shown = 0xc000;
-
-        *(volatile u16 *)(record + 6) = shown;
-    }
+    *(u16 *)(record + 6) = facing;
     Call3(Func_02002400, 0x200a0ac, 43, 8);
-    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c0)) = 0x202;
+    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x202;
     Func_02002572();
     Func_02002586();
     Func_02002444(40);
@@ -984,7 +975,7 @@ void FieldScene_RunScene375_02000964(void)
     Func_02002636(14, 0, 0);
     Func_02002640(15, 0, 0);
     Call1(Func_020025ce, 0x801);
-    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c0)) = 0x100;
+    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x100;
     Call2(Func_02002724, 0x10000, 0);
     Call1(Func_020025ea, 0x242);
     Func_0200260e();

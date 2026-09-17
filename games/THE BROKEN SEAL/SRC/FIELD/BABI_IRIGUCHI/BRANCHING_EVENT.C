@@ -64,6 +64,7 @@
 #define SceneData_SelectDataByRuntimeSelector Func_02000fdc
 #define SceneData_SelectTableB91cByRuntimeSelector Func_020027a0
 
+#include "FIELD_EFFECT.H"
 #include "STAGED_ACTOR.H"
 #include "SPAWN_CONFIGURED_EFFECT.H"
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
@@ -1041,16 +1042,14 @@ u8 *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 kind)
     return result;
 }
 
-void OverlayObject_IntegrateVelocities(void *arg0)
+void OverlayObject_IntegrateVelocities(union FieldObject *object)
 {
-    u8 *a = arg0;
-
-    *(volatile s32 *)(a + 0x08) += *(s32 *)(a + 0x44);
-    *(volatile s32 *)(a + 0x0C) += *(s32 *)(a + 0x48);
-    *(volatile s32 *)(a + 0x10) += *(s32 *)(a + 0x4C);
-    *(volatile s32 *)(a + 0x18) += *(s32 *)(a + 0x30);
-    *(volatile s32 *)(a + 0x1C) += *(s32 *)(a + 0x34);
-    *(volatile u16 *)(*(u8 **)(a + 0x50) + 0x1E) += *(u16 *)(a + 0x64);
+    object->effect.x += object->effect.velocity_x;
+    object->effect.y += object->effect.velocity_y;
+    object->effect.z += object->effect.velocity_z;
+    object->effect.scale_x += object->effect.scale_rate_x;
+    object->effect.scale_y += object->effect.scale_rate_y;
+    object->effect.sprite->rotation += object->effect.spin;
 }
 
 void SceneEffect_SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
@@ -1114,26 +1113,20 @@ void Func_02000cf0(struct MotionEffect *effect)
 
 void FieldScene_RunSupplementalSequenceOne(s32 a0)
 {
-    extern u8 Data_03001ebc[];
-
     u32 i;
-    s32 rec4;
+    struct FieldActor *leader;
     s32 zero;
-    s32 t;
-    s32 nv;
-    u8 *p8;
-    u8 *p6;
-    u8 slot28[40];
-    u8 slot16[12];
+    struct EffectOptions options;
+    s32 vec[3];
 
     Func_02003b90(a0);
     Call4(Func_02003c8a, -1, -1, -1, 0);
     Func_02003b1e();
     Func_02003af4(1);
-    *(volatile s32 *)(Func_02003bca(0) + 12) = 0x820000;
-    *(volatile s32 *)(Func_02003bd6(0) + 72) = 0x8000;
+    *(s32 *)(Func_02003bca(0) + 12) = 0x820000;
+    *(s32 *)(Func_02003bd6(0) + 72) = 0x8000;
     zero = 0;
-    *(volatile s32 *)(Func_02003be2(0) + 68) = zero;
+    *(s32 *)(Func_02003be2(0) + 68) = zero;
     *(u8 *)(Func_02003bec(0) + 85) = zero;
     Func_02003cf4();
     Func_02003d08();
@@ -1141,25 +1134,18 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
     Func_02003d44(204);
     *(u8 *)(Func_02003c0a(0) + 85) = 3;
     Func_02003bf6(24);
-    rec4 = Value1(Func_02003c1c, 0);
-    p8 = slot28;
-    *(s32 *)(p8 + 4) = 7;
-    *(s32 *)(p8 + 36) = 0x2008cf1;
-    *(s32 *)(p8 + 8) = 0xcccc;
-    *(s32 *)(p8 + 12) = 0xcccc;
-    i = 0;
-    p6 = slot16;
-    for (; i < 17; i++) {
-        *(s32 *)(p6) = Func_02003b7c(i << 12);
-        *(s32 *)(p6 + 4) = 0;
-        t = Func_02003b80(i << 12);
-        nv = *(s32 *)(p6);
-        nv = nv + nv / 2;
-        *(s32 *)(p6 + 8) = t;
-        *(s32 *)(p6) = nv;
-        Func_0200190c(*(s32 *)(rec4 + 8), *(s32 *)(rec4 + 12),
-              *(s32 *)(rec4 + 16), nv,
-              *(s32 *)(p6 + 4), t, 0x1090001, (s32)p8);
+    leader = (struct FieldActor *)Value1(Func_02003c1c, 0);
+    options.palette = 7;
+    options.update = (void (*)(union FieldObject *))Func_02000cf0;
+    options.start_scale_x = 0xcccc;
+    options.start_scale_y = 0xcccc;
+    for (i = 0; i < 17; i++) {
+        vec[0] = Func_02003b7c(i << 12);
+        vec[1] = 0;
+        vec[2] = Func_02003b80(i << 12);
+        vec[0] += vec[0] / 2;
+        Func_0200190c(leader->x.fixed, leader->y.fixed, leader->z.fixed, vec[0], vec[1], vec[2],
+                      EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1, &options);
     }
     Func_02003dbe(188);
     Call2(Func_02003d3e, 0, 0x101);
@@ -1168,8 +1154,8 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
     Call3(Func_02003c5c, -1, -1, 0xe666);
     Func_02003c68();
     Call2(Func_02003d72, 0, 0x100);
-    *(volatile s32 *)(Func_02003cc0(0) + 72) = 0x10000;
-    *(volatile s32 *)(Func_02003ccc(0) + 68) = 0x4000;
+    *(s32 *)(Func_02003cc0(0) + 72) = 0x10000;
+    *(s32 *)(Func_02003ccc(0) + 68) = 0x4000;
     Func_02003cc6();
 }
 
@@ -1186,12 +1172,12 @@ void FieldScene_RunScene3c5SequenceA(s32 a0)
     Func_02003c78();
     Func_02003c4e_a(1);
     record = Func_02003d24(0);
-    *(volatile s32 *)(record + 12) = 0x820000;
+    *(s32 *)(record + 12) = 0x820000;
     record = Func_02003d30(0);
-    *(volatile s32 *)(record + 72) = 0x4000;
+    *(s32 *)(record + 72) = 0x4000;
     v5 = 0;
     record = Func_02003d3c(0);
-    *(volatile s32 *)(record + 68) = v5;
+    *(s32 *)(record + 68) = v5;
     *(u8 *)(Func_02003d46(0) + 85) = v5;
     record = Func_02003d50(0);
     Func_02003cf6(record, 0);
@@ -1201,7 +1187,7 @@ void FieldScene_RunScene3c5SequenceA(s32 a0)
     Func_02003eaa(204);
     *(u8 *)(Func_02003d70(0) + 85) = 3;
     record = Func_02003d7c(0);
-    *(volatile s32 *)(record + 40) = -0x50000;
+    *(s32 *)(record + 40) = -0x50000;
     Func_02003d86(0);
     Func_02001c0a();
     Func_02003e0a(0, 15);

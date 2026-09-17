@@ -1822,7 +1822,6 @@ void Func_020006f4(void)
 {
     u32 i;
     s32 obj;
-    s32 pos;
     s32 mes;
 
     Func_020050a0();
@@ -1857,9 +1856,8 @@ void Func_020006f4(void)
     Call3(Func_02005124, 0x10000, 0x20000, 0x10000);
     Func_020051b2_a(20);
     Func_02005338(144);
-    pos = 21;
     Func_02005112(0x200d088, 76, 21);
-    Call6(Func_02005134, 0, 0, 1, 1, pos, pos);
+    Call6(Func_02005134, 0, 0, 1, 1, 21, 21);
     Call6(Func_0200513e, 87, 42, 21, 23, 1, 2);
     Func_020051ec(40);
     Func_0200516e(0, 0, 0);
@@ -1870,10 +1868,10 @@ void Func_020006f4(void)
     Func_02005226(20);
     Func_020053ac(144);
     Func_02005186(0x200d088, 76, 29);
-    Call6(Func_020051a8, 0, 0, 1, 1, pos, 29);
+    Call6(Func_020051a8, 0, 0, 1, 1, 21, 29);
     Call6(Func_020051b2_b, 87, 42, 21, 31, 1, 2);
     Func_02005260(40);
-    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c0)) = 0x202;
+    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x202;
     Func_020053ca();
     Func_020053d6();
     Call4(Func_020053a0, 0x2c80000, -1, 0x980000, 0);
@@ -1983,7 +1981,7 @@ void Func_02000a98(void)
     Call6(Func_02005544, 0, 0, 1, 1, 36, 10);
     Call6(Func_0200554c, 87, 42, 36, 12, 1, 2);
     Func_020055fa(40);
-    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c0)) = 0x202;
+    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x202;
     Func_02005764();
     Func_02005770();
     Call4(Func_02005738, 0xe80000, -1, 0x1dd0000, 0);
@@ -2184,7 +2182,7 @@ void Func_0200178c(void)
     Func_02006134(40);
     other = Value1(Func_02006162, 12);
     if (other != 0) {
-        Func_020061b8(13, *(volatile s32 *)(other + 8), *(volatile s32 *)(other + 16));
+        Func_020061b8(13, *(s32 *)(other + 8), *(s32 *)(other + 16));
     }
     Func_020061c2(12, 0, 0);
     Func_02006158(20);
@@ -2274,21 +2272,16 @@ void Func_0200178c(void)
     tbl += 216;
     left = 14;
     do {
-        u32 id = *(volatile u16 *)(tbl)& 0x1ff;
+        u32 id = *(u16 *)(tbl)& 0x1ff;
         tbl = (tbl + 2);
-        if (id - 220 > 1) {
-            if (id != 223) {
-                goto L_02001a86;
-            }
-        }
-        cnt = (cnt + 1);
-        L_02001a86:;
-        left = (left - 1);
+        if (id == 220 || id == 221 || id == 223)
+            cnt++;
+        left--;
     } while (left >= 0);
     Value2(Func_020064ee, 1, 0);
     if (Value2(Func_0200644e_b, 0, 0) == 0) {
         mes_a = (s32)Data_000010b0;
-        ((void (*)())Func_020064fa_a)(mes_a);
+        Func_020064fa_a(mes_a);
         Func_020064c2(1, 3);
         Func_02006448(10);
         if (cnt <= 2) {
@@ -2297,10 +2290,10 @@ void Func_0200178c(void)
             Func_02006500(1, 2);
             Func_0200646e_b(10);
             Func_02006410((mes_a + 1), 1, 0);
-            goto L_02001bdc;
+        } else {
+            Call1(Func_02006540, 0x10b4);
+            Func_02005d3c(1, 30);
         }
-        Call1(Func_02006540, 0x10b4);
-        Func_02005d3c(1, 30);
     } else {
         if (cnt <= 2) {
             mes_b = (s32)Data_000010b2;
@@ -2322,9 +2315,9 @@ void Func_0200178c(void)
             Func_020065c0(0, 2);
             Func_0200661a(0, 0, 30);
             {
-                u8 value = *(volatile u8 *)&obj[90];
+                u8 flags = obj[90] | 1;
 
-                obj[90] = (u8)(value | 1);
+                obj[90] = flags;
             }
         } else {
             Call1(Func_02006602, 0x10b5);
@@ -2335,7 +2328,6 @@ void Func_0200178c(void)
             Call3(Func_02006656, 0, 0xe000, 30);
         }
     }
-    L_02001bdc:;
     Call2(Func_0200668a_a, 0x8000, 0x1000);
     Func_0200668a_b(1, 1);
     Func_020066a6();
@@ -2346,27 +2338,27 @@ void Func_0200178c(void)
     obj[90] &= 254;
     Call3(Func_0200662a, 1, 0x108, 0x1e2);
     {
-        u8 value = *(volatile u8 *)&obj[90];
+        u8 flags = obj[90] | 1;
 
-        obj[90] = (u8)(value | 1);
+        obj[90] = flags;
     }
     Call3(Func_02006640, 1, 0x116, 0x1e0);
-    *(volatile s32 *)((s32)obj + 48) = 0x30000;
-    *(volatile s32 *)((s32)obj + 52) = 0x20000;
+    *(s32 *)(obj + 48) = 0x30000;
+    *(s32 *)(obj + 52) = 0x20000;
     Func_02006776(153);
-    *(volatile s32 *)((s32)obj + 40) = 0x60000;
+    *(s32 *)(obj + 40) = 0x60000;
     Func_02006678(1, 7);
     Call3(Func_0200665e, 1, 0x138, 0x1d6);
     Func_0200668e(1, 1);
     Func_0200661c(30);
     Func_020067a2(153);
-    *(volatile s32 *)((s32)obj + 40) = 0x60000;
+    *(s32 *)(obj + 40) = 0x60000;
     Func_020066a4(1, 7);
     Call3(Func_0200668a_c, 1, 0x156, 0x1d6);
     Func_020066ba(1, 1);
     Func_02006648(30);
     Func_020067ce(153);
-    *(volatile s32 *)((s32)obj + 40) = 0x60000;
+    *(s32 *)(obj + 40) = 0x60000;
     Func_020066d0(1, 7);
     Call3(Func_020066b6, 1, 0x178, 0x1d6);
     Func_020066e6(1, 1);
@@ -2572,26 +2564,23 @@ void FieldScene_RunActorFourteenGuestScene(void)
 
 void FieldScene_RunSixPassEffectSequence(void)
 {
-    u32 i;
+    u8 pass;
     s32 rec7;
     s32 record;
-    s32 v5;
 
     Func_02006da2();
     Func_02006f20(141);
-    v5 = 0;
-    do {
+    for (pass = 0; pass != 6; pass++) {
         Call2(Func_02006ee2_a, 0x4039d2, 1);
         Func_02006ef8_a(8);
         Func_02006db6(8);
         Call2(Func_02006ef8_b, 0x10000, 1);
         Func_02006f0e(8);
         Func_02006dcc(8);
-        if (v5 == 1) {
+        if (pass == 1) {
             Call3(Func_02006d58, 0x10000, 0x10000, 0x10000);
         }
-        v5 = ((u32)((v5 + 1) << 24) >> 24);
-    } while (v5 != 6);
+    }
     Call1_02002400(Func_02006f70, 0x121);
     Call3(Func_02006d76, -1, -1, 0xe666);
     Call6(Func_02006d68, 0, 40, 13, 46, 3, 3);
@@ -2610,7 +2599,7 @@ void FieldScene_RunSixPassEffectSequence(void)
     Func_02006e8c(10);
     record = Value1(Func_02006eba_b, 0);
     if (record != 0) {
-        Func_02006f10(1, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+        Func_02006f10(1, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     Call3(Func_02006eda, 1, 0x13333, 0x9999);
     Func_02006f14(1, 218, 172);
@@ -2639,7 +2628,7 @@ void FieldScene_RunSixPassEffectSequence(void)
     Func_02007030(1, 2, 20);
     Func_0200703a(0, 6, 0);
     Func_02007044(1, 6, 40);
-    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c0)) = 0x100;
+    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x100;
     Value0(Func_02007126);
     Func_02007132();
     Func_02007100(2);

@@ -285,19 +285,11 @@ void FieldScene_RunArrivalPlacement(void)
 
     Func_02000730(158);
 
-    /* The entry address is accumulated through these locals; folding them into
-     * one indexed expression does not reproduce the loads. */
     {
-        u32 off = idx << 3;
-        u32 value = (u32)Data_02008ef8;
-        u32 addr = off + 4;
-        u16 x = *(volatile u16 *)(value + addr);
-        u16 y;
+        u32 x = Data_02008ef8[idx].x;
+        u32 y = Data_02008ef8[idx].y;
 
-        addr += value;
-        y = *(volatile u16 *)(addr + 2);
-        value = *(volatile u32 *)(value + off);
-        Func_02000692(value, x, y);
+        Func_02000692(Data_02008ef8[idx].destination, x, y);
     }
 
     Func_020006f0(0, 0x00008000, 0x00004000);

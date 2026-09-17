@@ -583,10 +583,7 @@ typedef struct {
 
 extern u8 Value_00001000;
 extern u16 Data_0200ade4;
-/* 手番カウンタ。他のオーバーレイからも書き換わるため volatile。
- * The reference reloads this cell on the path where the compiler can prove the
- * value is unchanged, which in ordinary C only a volatile object produces. */
-extern volatile s32 Data_0200ade8;
+extern s32 Data_0200ade8;
 extern u16 Data_0200addc;
 extern u16 Data_0200ade0;
 extern u16 Data_0200adec;
@@ -1348,7 +1345,7 @@ void FieldScene_RunScene37a_020009f4(void)
     Func_02003440(0, 0);
     record = Value1(Func_0200340e, 0);
     if (record != 0) {
-        Func_0200344c(16, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+        Func_0200344c(16, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     Func_020034ae(0, 0, 1);
     Call3(Func_0200343c, 16, 0x10000, 0x8000);

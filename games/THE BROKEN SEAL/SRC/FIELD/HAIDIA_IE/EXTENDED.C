@@ -715,7 +715,7 @@ void FieldScene_RunMiddleAuxiliarySequence(void)
     rec8[85] = 0;
     p8 = v2;
     for (i = 0; i < 40; i++) {
-        *(volatile s32 *)((s32)rec8 + 12) += 0x1800;
+        *(s32 *)(rec8 + 12) += 0x1800;
         Func_02002b6c_a(1);
     }
     rec8[85] = p8;

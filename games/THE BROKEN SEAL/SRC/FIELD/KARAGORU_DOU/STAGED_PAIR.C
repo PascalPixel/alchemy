@@ -572,53 +572,47 @@ s32 FieldScene_RunScene3beSequenceA(void)
 
 void FieldScene_RunScene3beSequenceB(void)
 {
-    extern u8 Data_03001ebc[];
-
     s32 record;
 
-    if (Value1(Func_020022f2, 0x98a) != 0) {
-    } else {
-        if (Value1(Func_02002300, 0x9a0) == 0) {
-        } else {
-            Func_0200232a();
-            Call3(Func_02002358, 11, 0x10000, 0x8000);
-            record = Value1(Func_02002356, 0);
-            if (record != 0) {
-                Func_02002394(11, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
-            }
-            Call3(Func_02002390, 11, -8, 16);
-            Func_0200239e(11);
-            Call3(Func_020023f2, 11, 0xd000, 0);
-            Func_02002368(10);
-            Func_020023d2(0, 11, 0);
-            Call1(Func_020023f0, 0x23da);
-            Value2(Func_02002400, 11, 0);
-            if (Value2(Func_020023a0, 0, 0) == 0) {
-                Func_0200241c(11, 0);
-                Func_020023d6(11, 152, 232);
-                Call1(Func_0200239e_a, 0x9a0);
-                Func_020023f4(11);
-                Func_0200240c(11, 1);
-                Data_02000240_t[226][0] = (s32)Data_00000088;
-                Data_02000240_t[227][0] = 30;
-            } else {
-                bump_step(1);
-                Func_0200246c(11, 0);
-                Func_02002444(11, 2);
-                record = Value1(Func_02002412, 0);
-                if (record != 0) {
-                    Func_02002434(11, *(s16 *)(record + 10), *(s16 *)(record + 18));
-                }
-                Func_02002452(11);
-                Func_02002464(11, 0, 0);
-                Func_0200241a(30);
-                Func_0200247a(0, 2);
-                Func_0200246c_a(0, 0, 16);
-                Func_0200247a_a(0);
-                Func_02002492(0, 1);
-            }
-            Func_0200244e();
+    if (Value1(Func_020022f2, 0x98a) == 0 && Value1(Func_02002300, 0x9a0) != 0) {
+        Func_0200232a();
+        Call3(Func_02002358, 11, 0x10000, 0x8000);
+        record = Value1(Func_02002356, 0);
+        if (record != 0) {
+            Func_02002394(11, *(s32 *)(record + 8), *(s32 *)(record + 16));
         }
+        Call3(Func_02002390, 11, -8, 16);
+        Func_0200239e(11);
+        Call3(Func_020023f2, 11, 0xd000, 0);
+        Func_02002368(10);
+        Func_020023d2(0, 11, 0);
+        Call1(Func_020023f0, 0x23da);
+        Value2(Func_02002400, 11, 0);
+        if (Value2(Func_020023a0, 0, 0) == 0) {
+            Func_0200241c(11, 0);
+            Func_020023d6(11, 152, 232);
+            Call1(Func_0200239e_a, 0x9a0);
+            Func_020023f4(11);
+            Func_0200240c(11, 1);
+            Data_02000240_t[226][0] = (s32)Data_00000088;
+            Data_02000240_t[227][0] = 30;
+        } else {
+            bump_step(1);
+            Func_0200246c(11, 0);
+            Func_02002444(11, 2);
+            record = Value1(Func_02002412, 0);
+            if (record != 0) {
+                Func_02002434(11, *(s16 *)(record + 10), *(s16 *)(record + 18));
+            }
+            Func_02002452(11);
+            Func_02002464(11, 0, 0);
+            Func_0200241a(30);
+            Func_0200247a(0, 2);
+            Func_0200246c_a(0, 0, 16);
+            Func_0200247a_a(0);
+            Func_02002492(0, 1);
+        }
+        Func_0200244e();
     }
 }
 
@@ -685,13 +679,11 @@ void ActorPresentation_SelectActorNineScript(void)
 
 void FieldScene_RunScene3be_02001080(void)
 {
-    extern u8 Data_03001ebc[];
+    extern u8 *Data_03001ebc;
 
-    u32 i;
-    s32 record;
-    u8 *p5;
+    u8 *work;
 
-    p5 = *(volatile s32 *)Data_03001ebc;
+    work = Data_03001ebc;
     Func_020025a4();
     if (Value1(Func_0200258c, 0x204) != 0) {
         Call1(Func_020025a6, 0x9a3);
@@ -701,7 +693,7 @@ void FieldScene_RunScene3be_02001080(void)
         Call1(Func_020025b6, 0x9a5);
         Call1(Func_020025bc, 0x9a4);
     }
-    Func_02002672(*(s16 *)(((s32)p5 + 0x16c)));
+    Func_02002672(*(s16 *)(work + 0x16c));
     Func_02002686();
     Func_02002692();
     Func_020025f6();

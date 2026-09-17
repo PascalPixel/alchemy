@@ -2248,22 +2248,22 @@ void FieldScene_RunScene373SequenceC(void)
     rec8 = Value1(Func_02006fd6_a, 0);
     rec7 = Value1(Func_02006fde, 5);
     Func_02006fbc();
-    *(volatile s32 *)(rec7 + 8) = *(volatile s32 *)(rec8 + 8);
-    *(volatile s32 *)(rec7 + 12) = *(volatile s32 *)(rec8 + 12);
-    *(volatile s32 *)(rec7 + 16) = *(volatile s32 *)(rec8 + 16);
-    *(volatile s32 *)(rec7 + 56) = -0x80000000;
-    *(volatile s32 *)(rec7 + 60) = -0x80000000;
-    *(volatile s32 *)(rec7 + 64) = -0x80000000;
-    *(volatile s32 *)(rec7 + 36) = 0;
-    *(volatile s32 *)(rec7 + 40) = 0;
-    *(volatile s32 *)(rec7 + 44) = 0;
-    *(volatile s32 *)(rec7 + 20) = *(volatile s32 *)(rec8 + 12);
+    *(s32 *)(rec7 + 8) = *(s32 *)(rec8 + 8);
+    *(s32 *)(rec7 + 12) = *(s32 *)(rec8 + 12);
+    *(s32 *)(rec7 + 16) = *(s32 *)(rec8 + 16);
+    *(s32 *)(rec7 + 56) = -0x80000000;
+    *(s32 *)(rec7 + 60) = -0x80000000;
+    *(s32 *)(rec7 + 64) = -0x80000000;
+    *(s32 *)(rec7 + 36) = 0;
+    *(s32 *)(rec7 + 40) = 0;
+    *(s32 *)(rec7 + 44) = 0;
+    *(s32 *)(rec7 + 20) = *(s32 *)(rec8 + 12);
     Func_02006eb4(1);
     Call3(Func_02007022, 5, 0x10000, 0x8000);
     Call3(Func_02007064, 5, 110, 0x11b);
     Func_020070be(0, 5, 2);
     Call1(Func_020070d4, 0xf39);
-    if (*(volatile s32 *)(rec8 + 8) < *(volatile s32 *)(rec7 + 8)) {
+    if (*(s32 *)(rec8 + 8) < *(s32 *)(rec7 + 8)) {
         Call3(Func_020070fe, 0xa005, 0, 2);
     } else {
         Call3(Func_0200710a, 0x8005, 0, 2);
@@ -2371,7 +2371,7 @@ void FieldScene_RunScene373SequenceE(void)
     Call1(Func_02007482, 0xfce);
     Func_020074aa(22, 0);
     record = Func_020073f0(22);
-    *(volatile s32 *)(record + 108) = 0x200d72d;
+    *(s32 *)(record + 108) = 0x200d72d;
     Call2(Func_0200740c, 22, 0x200e248);
     Call1(Func_020073c2, 0x823);
     Func_020073e6();

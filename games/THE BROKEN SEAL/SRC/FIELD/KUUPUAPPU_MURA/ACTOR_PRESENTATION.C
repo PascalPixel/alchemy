@@ -752,27 +752,21 @@ static __inline__ s32 Value0(s32 (*f)())
 void FieldScene_RunScene382_020004a0(void)
 {
     extern u8 Data_03001ebc[];
-    u32 i;
     s32 record;
     u8 *p5;
 
-    p5 = *(volatile s32 *)Data_03001ebc;
-    if (Value1(Func_02001e32, 0x855) == 0) {
-        record = Value1(Func_02001e3c, 0x856);
-        if (record != 0) {
-            goto L_020004cc;
-        }
+    p5 = *(u8 **)Data_03001ebc;
+    if (Value1(Func_02001e32, 0x855) != 0 || Value1(Func_02001e3c, 0x856) == 0) {
+        Func_02001f68(*(s16 *)(p5 + 0x16c) - 19);
+        return;
     }
-    Func_02001f68((*(s16 *)(((s32)p5 + 0x16c)) - 19));
-    goto L_0200059e;
-    L_020004cc:;
     Func_02001e86();
     record = Value1(Func_02001eb4, 0);
     if (record != 0) {
-        Func_02001efa(2, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+        Func_02001efa(2, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     Call3(Func_02001ed4, 2, 0xcccc, 0x6666);
-    if (*(s16 *)(((s32)p5 + 0x16c)) == 20) {
+    if (*(s16 *)(p5 + 0x16c) == 20) {
         Call3(Func_02001f10_sequence, 2, 0x190, 0x1c0);
     } else {
         Call2(Func_02001f9a, 0xcccc, 0x1999);
@@ -792,11 +786,10 @@ void FieldScene_RunScene382_020004a0(void)
         Func_02001e8a(20);
     }
     Func_02001f50(2);
-    Func_02002030_sequence((*(s16 *)(((s32)p5 + 0x16c)) - 19));
+    Func_02002030_sequence(*(s16 *)(p5 + 0x16c) - 19);
     Func_02002044();
     Func_02002050();
     Func_02001f5c();
-    L_0200059e:;
 }
 
 void SceneState_SetFlags947And29dc(void)

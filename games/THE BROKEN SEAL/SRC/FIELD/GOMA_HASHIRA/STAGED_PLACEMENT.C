@@ -404,11 +404,11 @@ void FieldScene_RunPrimarySequence(void)
     if (flags == 0) {
         rec7a = Value1(Func_0200203e, 9);
         v1a = Value0(Func_02001fb4);
-        a0 = *(volatile s32 *)(rec7a + 8);
+        a0 = *(s32 *)(rec7a + 8);
         a0 = a0 + (s32)((((u32)(((v1a << 1) + v1a) << 2)) >> 16) << 16);
         rec4 = Func_0200205a(9);
         reca = (s32)Func_02002062(9);
-        a2 = *(volatile s32 *)(reca + 16);
+        a2 = *(s32 *)(reca + 16);
         a2 = a2 + 0x60000;
         v2a = Value0(Func_02001fde);
         ta = (s32)((u32)((v2a << 2) + v2a) >> 16);
@@ -419,17 +419,17 @@ void FieldScene_RunPrimarySequence(void)
         na = na + ta;
         v3a = Func_02001ff8();
         na = -na;
-        Call7(Func_020016ba, a0, *(volatile s32 *)(rec4 + 12), a2, 0, na,
+        Call7(Func_020016ba, a0, *(s32 *)(rec4 + 12), a2, 0, na,
               (s32)((u32)(v3a << 1) >> 16), flags);
         flags = *state & 15;
         if (flags == 0) {
             rec7b = Value1(Func_020020b4, 9);
             v1b = Value0(Func_0200202a);
-            a0 = *(volatile s32 *)(rec7b + 8);
+            a0 = *(s32 *)(rec7b + 8);
             a0 = a0 + (s32)((((u32)(((v1b << 1) + v1b) << 2)) >> 16) << 16);
             rec4 = Func_020020d0(9);
             recb = (s32)Func_020020d8(9);
-            a2 = *(volatile s32 *)(recb + 16);
+            a2 = *(s32 *)(recb + 16);
             a2 = a2 + 0x60000;
             v2b = Value0(Func_02002054);
             tb = (s32)((u32)((v2b << 2) + v2b) >> 16);
@@ -440,7 +440,7 @@ void FieldScene_RunPrimarySequence(void)
             nb = nb + tb;
             v3b = Func_0200206e();
             nb = -nb;
-            Call7(Func_02001730, a0, *(volatile s32 *)(rec4 + 12), a2, 0, nb,
+            Call7(Func_02001730, a0, *(s32 *)(rec4 + 12), a2, 0, nb,
                   (s32)((u32)(v3b << 1) >> 16), flags);
         }
     }
@@ -459,7 +459,7 @@ void Func_02000ce0(void)
     u8 *p0;
 
     r1 = Value1(Func_02002142, 9);
-    kind = *(volatile s32 *)(r1 + 8) / 0x100000;
+    kind = *(s32 *)(r1 + 8) / 0x100000;
     ((void (*)())Func_02002142_a)();
     if (kind == 25) {
         p0 = Func_0200215e(11);
@@ -481,9 +481,9 @@ void Func_02000ce0(void)
         Func_020021f6(9, 2, 0);
         Func_02002204(9);
         r4 = (s32)Func_020021da(9);
-        *(volatile s32 *)(r4 + 68) = zero;
+        *(s32 *)(r4 + 68) = zero;
         r5 = (s32)Func_020021e4_a(9);
-        *(volatile s32 *)(r5 + 72) = 0x9999;
+        *(s32 *)(r5 + 72) = 0x9999;
         Func_020021d6(3);
         Call3(Func_02002204_a, 9, 0x28000, 0x4000);
         Call1(Func_020022c4, 0x120);
@@ -495,11 +495,11 @@ void Func_02000ce0(void)
         Func_020022ee(189);
         rec7 = Value1(Func_02002234, 9);
         v1 = Value0(Func_020021aa);
-        a0 = *(volatile s32 *)(rec7 + 8);
+        a0 = *(s32 *)(rec7 + 8);
         a0 = a0 + (s32)((((u32)(((v1 << 1) + v1) << 2)) >> 16) << 16);
         rec4 = Func_02002250(9);
         r7 = (s32)Func_02002258(9);
-        a2 = *(volatile s32 *)(r7 + 16);
+        a2 = *(s32 *)(r7 + 16);
         a2 = a2 + 0x60000;
         v2 = Value0(Func_020021d4);
         t = (s32)((u32)((v2 << 2) + v2) >> 16);
@@ -510,7 +510,7 @@ void Func_02000ce0(void)
         n = n + t;
         v3 = Func_020021ee_a();
         n = -n;
-        Call7(Func_020018b0, a0, *(volatile s32 *)(rec4 + 12), a2, zero, n,
+        Call7(Func_020018b0, a0, *(s32 *)(rec4 + 12), a2, zero, n,
               (s32)((u32)(v3 << 1) >> 16), zero);
         Func_02002286(20);
         Func_02002364(154);
@@ -535,16 +535,16 @@ void Func_02000ecc(void)
     s32 g1a, g1b, g1c, g2a, g2b, g2c, g3a, g3b, g3c, g4a, g4b, g4c, g5a, g5b, g5c, g6a, g6b, g6c;
 
     q1 = Value1(Func_02002330, 10);
-    a = *(volatile s32 *)(q1 + 8) / 0x100000;
+    a = *(s32 *)(q1 + 8) / 0x100000;
     q2 = Value1(Func_02002342, 10);
-    b = *(volatile s32 *)(q2 + 16) / 0x100000;
+    b = *(s32 *)(q2 + 16) / 0x100000;
     if (a == 38) {
         if (b == 14) {
             q3 = (s32)Func_02002360(10);
-            *(volatile s32 *)(q3 + 12) = -0x20000;
+            *(s32 *)(q3 + 12) = -0x20000;
             e1 = Value1(Func_0200236a, 10);
             e2 = Value1(Func_02002372, 10);
-            *(volatile s32 *)(e1 + 60) = *(volatile s32 *)(e2 + 12);
+            *(s32 *)(e1 + 60) = *(s32 *)(e2 + 12);
             Func_0200243c(188);
             g1a = Value1(Func_02002382, 10);
             g1b = Value1(Func_0200238a, 10);
@@ -609,11 +609,14 @@ u8 *SceneData_GetTable9814(void)
     return (u8 *)0x02009814;
 }
 
+/* Sets bits in an actor's flag byte. */
+static __inline__ void SetFlagBits(u8 *flags, u8 bits)
+{
+    *flags |= bits;
+}
+
 void FieldScene_RunScene389_0200115c(void)
 {
-    u32 i;
-    u8 *record;
-
     Call1_0200115c(Func_0200251a, 0x20090c9);
     Func_020025a6();
     Call3(Func_02002652, 13, 0x100, 30);
@@ -629,12 +632,7 @@ void FieldScene_RunScene389_0200115c(void)
     Call3(Func_02002648, 13, 0x258, 248);
     Call3(Func_02002656, 13, 0x238, 0x128);
     Func_02002678(13, 0, 0);
-    {
-        u8 *record = Func_02002646(10);
-        u8 value = *(volatile u8 *)&record[35];
-
-        record[35] = (u8)(value | 2);
-    }
+    SetFlagBits(Func_02002646(10) + 35, 2);
     Call1_0200115c(Func_0200262e, 0x869);
     Func_02002652_a();
 }
@@ -644,15 +642,10 @@ s32 FieldScene_RunScene389_0200121c(void)
     u8 *record;
     u8 *work;
 
-    work = *(u8 *volatile *)Data_03001ebc;
-    *(volatile s32 *)(((s32)work + 0x1c0)) = 0x204;
-    *(volatile s32 *)(((s32)work + 0x1c8)) = 24;
-    {
-        u8 *record = Func_0200268a(9);
-        u8 value = *(volatile u8 *)&record[89];
-
-        record[89] = (u8)(value | 16);
-    }
+    work = *(u8 **)Data_03001ebc;
+    *(s32 *)((s32)work + 0x1c0) = 0x204;
+    *(s32 *)((s32)work + 0x1c8) = 24;
+    SetFlagBits(Func_0200268a(9) + 89, 16);
     if (Value1(Func_0200266a, 0x302) != 0) {
         Call3(Func_020026e4, 8, 0x1580000, 0x680000);
         Call6(Func_0200265e_a, 24, 40, 6, 3, 18, 6);
@@ -670,18 +663,16 @@ s32 FieldScene_RunScene389_0200121c(void)
         }
         *(u8 *)(Func_02002730(10) + 34) = 2;
         record = Value1(Func_0200273c, 10);
-        *(volatile s32 *)((s32)record + 12) = (*(volatile s32 *)((s32)record + 12) - 1);
+        *(s32 *)((s32)record + 12) = *(s32 *)((s32)record + 12) - 1;
         {
-            u8 mask = 2;
-            u8 *record = Func_02002748(10);
-            u8 value = *(volatile u8 *)&record[35];
+            u8 bits = 2;
+            u8 *flags = Func_02002748(10) + 35;
 
-            record[35] = (u8)(value | mask);
+            *flags |= bits;
         }
         Call6(Func_02002706, 36, 48, 5, 1, 36, 14);
-    } else {
     }
-    L_0200131c:;
+L_0200131c:
     if (Data_02000240[225] == 99) {
         Func_02002824();
         Func_02002830();
@@ -695,7 +686,7 @@ s32 FieldScene_RunScene389_0200121c(void)
     if (Data_02000240[282] != 0) {
         {
             s32 zero = 0;
-            *(volatile s32 *)Data_020098ec = zero;
+            *(s32 *)Data_020098ec = zero;
         }
         Call2(Func_02002734, 0x20090c9, 0xc80);
     }

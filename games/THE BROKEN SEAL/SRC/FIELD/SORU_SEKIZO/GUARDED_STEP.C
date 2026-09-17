@@ -596,16 +596,15 @@ s32 Func_0200105c(void)
 
     u8 *record;
 
-    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c0)) = 0x204;
+    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x204;
     Func_0200252c();
     Call1_0200105c(Func_020034b8, 0x144);
     record = (u8 *)Value1(Func_020034ee, 18);
     record[89] = 0;
-    record += 35;
     {
-        u8 value = *(volatile u8 *)record;
+        u8 flags = record[35] | 2;
 
-        *record = (u8)(value | 2);
+        record[35] = flags;
     }
     Func_020034b4((s32)Func_02003506(18), 0);
     *(u8 *)(Func_02003512(18) + 35) &= 254;
@@ -706,15 +705,15 @@ void Func_020014b8(void)
 
     u32 i;
     s32 value;
-    volatile s32 *p;
+    s32 *p;
     s32 buf;
 
-    p = (volatile s32 *)Data_0200aa50;
+    p = (s32 *)Data_0200aa50;
     buf = Value2(Func_02003890, 14, 0x400);
     Call2(Func_020038aa, 0x200a56c, buf);
     value = Func_020038be_a(Func_020038be(), 128, buf);
     for (i = 0; i < 9; i++) {
-        volatile s32 *q = p;
+        s32 *q = p;
 
         *q++ = 0;
         *q++ = 0x40004000;
@@ -723,7 +722,7 @@ void Func_020014b8(void)
     }
     value = Func_020038e8(Func_020038e6(), 128, buf + 128);
     for (i = 0; i < 9; i++) {
-        volatile s32 *q = p;
+        s32 *q = p;
 
         *q++ = 0;
         *q++ = 0x40004000;
@@ -732,7 +731,7 @@ void Func_020014b8(void)
     }
     value = Func_02003914(Func_02003910(), 128, buf + 0x100);
     for (i = 0; i < 9; i++) {
-        volatile s32 *q = p;
+        s32 *q = p;
 
         *q++ = 0;
         *q++ = 0x40004000;
@@ -800,9 +799,9 @@ void FieldScene_RunClosingSequence(void)
     s32 second;
 
     first = Value1_02001624(Func_02003a96, 0);
-    kind = *(volatile s32 *)(first + 8) >> 20;
+    kind = *(s32 *)(first + 8) >> 20;
     second = Value1_02001624(Func_02003aa0, 0);
-    if ((*(volatile s32 *)(second + 16) >> 20) == 8) {
+    if ((*(s32 *)(second + 16) >> 20) == 8) {
         if ((u32)(kind - 17) <= 1) {
             Call4(Func_02003a78, 2, 0x1100000, 0x800000, 255);
             Call4(Func_02003a88, 2, 0x1200000, 0x800000, 255);
@@ -819,7 +818,7 @@ void FieldScene_RunScene37bSequenceA(void)
 
     record = Value1_0200195c(Func_02003dce, 17);
     if (record != 0) {
-        if ((*(volatile s32 *)(record + 16) >> 20) == 8) {
+        if ((*(s32 *)(record + 16) >> 20) == 8) {
             Func_02003dc6();
             Func_02003edc(185);
             Call3(Func_02003df6, 17, 0x3333, 0x1999);

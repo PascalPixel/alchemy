@@ -21316,6 +21316,50 @@
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c6",
       "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x02009550",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x02009598",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x02009590",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x02009508",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x02009518",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x02009520",
+          "kind": "thumb"
+        },
+        "Engine_HeapAllocate": {
+          "address": "0x020094d8",
+          "kind": "thumb"
+        },
+        "Engine_HeapRelease": {
+          "address": "0x020094e0",
+          "kind": "thumb"
+        },
+        "Engine_ItemLoadIcon": {
+          "address": "0x02009510",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x020094f8",
+          "kind": "thumb"
+        },
+        "Engine_VramLoad": {
+          "address": "0x020094e8",
+          "kind": "thumb"
+        },
         "Func_02001572": {
           "address": "0x02009518",
           "kind": "thumb"
@@ -23323,6 +23367,14 @@
         "Func_02002802": {
           "address": "0x02009628",
           "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
         }
       },
       "local_symbols": [],
@@ -23401,6 +23453,11 @@
           "address": "0x020011e8",
           "extent": 36,
           "state": "exact-c"
+        },
+        {
+          "address": "0x0200120c",
+          "extent": 716,
+          "state": "exact-c"
         }
       ]
     },
@@ -23411,6 +23468,30 @@
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c7",
       "absolute_symbols": {
+        "Engine_ActorEnableActionCallback": {
+          "address": "0x02009224",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x02009214",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetActionCallback": {
+          "address": "0x020092ec",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200924c",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x020091dc",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagSet": {
+          "address": "0x020091e4",
+          "kind": "thumb"
+        },
         "Func_02001278": {
           "address": "0x020091dc",
           "kind": "thumb"
@@ -24914,6 +24995,22 @@
         "Func_020022bc": {
           "address": "0x02009284",
           "kind": "thumb"
+        },
+        "LinkedScene_RariberoHeya": {
+          "address": "0x000000b4",
+          "kind": "data"
+        },
+        "LinkedScene_RariberoSanctum": {
+          "address": "0x000000b3",
+          "kind": "data"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
         }
       },
       "local_symbols": [],
@@ -24971,6 +25068,11 @@
         {
           "address": "0x02000eec",
           "extent": 352,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0200104c",
+          "extent": 400,
           "state": "exact-c"
         }
       ]
@@ -41241,6 +41343,38 @@
           "address": "0x0200ce78",
           "kind": "data"
         },
+        "Engine_ActorGet": {
+          "address": "0x0200c2fc",
+          "kind": "thumb"
+        },
+        "Engine_ActorLookup": {
+          "address": "0x0200c46c",
+          "kind": "thumb"
+        },
+        "Engine_CameraMoveTo": {
+          "address": "0x0200c3f4",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200c28c",
+          "kind": "thumb"
+        },
+        "Engine_ObjectCreate": {
+          "address": "0x0200c20c",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetAnimation": {
+          "address": "0x0200c1fc",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetScript": {
+          "address": "0x0200c204",
+          "kind": "thumb"
+        },
+        "Engine_RandomNext": {
+          "address": "0x0200c19c",
+          "kind": "thumb"
+        },
         "Func_02000576": {
           "address": "0x020082cc",
           "kind": "thumb"
@@ -44456,6 +44590,22 @@
         "Func_02008234": {
           "address": "0x0200c214",
           "kind": "thumb"
+        },
+        "UnsignedModulo": {
+          "address": "0x0200c17c",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gFrameCount": {
+          "address": "0x03001e40",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
         }
       },
       "local_symbols": [],
@@ -44511,6 +44661,16 @@
           "state": "exact-c"
         },
         {
+          "address": "0x020002cc",
+          "extent": 36,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020002f0",
+          "extent": 36,
+          "state": "exact-c"
+        },
+        {
           "address": "0x02000314",
           "extent": 60,
           "state": "exact-c"
@@ -44563,6 +44723,11 @@
         {
           "address": "0x02000590",
           "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x02000598",
+          "extent": 284,
           "state": "exact-c"
         },
         {
@@ -44663,6 +44828,11 @@
         {
           "address": "0x02003130",
           "extent": 204,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020031fc",
+          "extent": 244,
           "state": "exact-c"
         },
         {
@@ -70517,6 +70687,122 @@
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c9",
       "absolute_symbols": {
+        "Engine_ActorDestroy": {
+          "address": "0x0200dd54",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200dd4c",
+          "kind": "thumb"
+        },
+        "Engine_ActorRunRepeatedMotion": {
+          "address": "0x0200dddc",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200ddb4",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetChildValue": {
+          "address": "0x0200dde4",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200ddac",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x0200dcac",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpritePriority": {
+          "address": "0x0200de1c",
+          "kind": "thumb"
+        },
+        "Engine_ActorsRefresh": {
+          "address": "0x0200dec4",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200decc",
+          "kind": "thumb"
+        },
+        "Engine_CameraMoveTo": {
+          "address": "0x0200de3c",
+          "kind": "thumb"
+        },
+        "Engine_ColorBufferApplySource": {
+          "address": "0x0200de84",
+          "kind": "thumb"
+        },
+        "Engine_ColorBufferApplyTarget": {
+          "address": "0x0200de7c",
+          "kind": "thumb"
+        },
+        "Engine_ColorBufferInterpolate": {
+          "address": "0x0200de8c",
+          "kind": "thumb"
+        },
+        "Engine_EventGetViewCenter": {
+          "address": "0x0200de4c",
+          "kind": "thumb"
+        },
+        "Engine_EventOpenScreen": {
+          "address": "0x0200de94",
+          "kind": "thumb"
+        },
+        "Engine_EventSetMessage": {
+          "address": "0x0200ddf4",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessageAndWait": {
+          "address": "0x0200de0c",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200dd2c",
+          "kind": "thumb"
+        },
+        "Engine_EventWaitForScreen": {
+          "address": "0x0200dea4",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200dc9c",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellsTo": {
+          "address": "0x0200dc94",
+          "kind": "thumb"
+        },
+        "Engine_MapRedraw": {
+          "address": "0x0200dc7c",
+          "kind": "thumb"
+        },
+        "Engine_MapRenderSetValues": {
+          "address": "0x0200dcbc",
+          "kind": "thumb"
+        },
+        "Engine_MathCos": {
+          "address": "0x0200dc24",
+          "kind": "thumb"
+        },
+        "Engine_MathDivide": {
+          "address": "0x0200dbec",
+          "kind": "thumb"
+        },
+        "Engine_MathSin": {
+          "address": "0x0200dc1c",
+          "kind": "thumb"
+        },
+        "Engine_TaskAddCallback": {
+          "address": "0x0200dc04",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x0200dbfc",
+          "kind": "thumb"
+        },
         "Func_02000976": {
           "address": "0x02008480",
           "kind": "thumb"
@@ -71776,6 +72062,18 @@
         "Func_0200b7dc": {
           "address": "0x0200dc1c",
           "kind": "thumb"
+        },
+        "SceneEffect_SpawnParticlesAboveActor": {
+          "address": "0x0200b6d0",
+          "kind": "thumb"
+        },
+        "SceneEffect_SpawnParticlesBesideActor": {
+          "address": "0x0200da28",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
         }
       },
       "local_symbols": [],
@@ -71803,6 +72101,11 @@
         {
           "address": "0x02000314",
           "extent": 140,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020003a0",
+          "extent": 94,
           "state": "exact-c"
         },
         {
@@ -71926,6 +72229,11 @@
           "state": "exact-c"
         },
         {
+          "address": "0x02003600",
+          "extent": 96,
+          "state": "exact-c"
+        },
+        {
           "address": "0x02003660",
           "extent": 112,
           "state": "exact-c"
@@ -71946,8 +72254,18 @@
           "state": "exact-c"
         },
         {
+          "address": "0x02003bc8",
+          "extent": 724,
+          "state": "exact-c"
+        },
+        {
           "address": "0x02003e9c",
           "extent": 928,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020048d8",
+          "extent": 592,
           "state": "exact-c"
         },
         {

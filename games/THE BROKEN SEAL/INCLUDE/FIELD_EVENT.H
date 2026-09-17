@@ -16,7 +16,10 @@ struct GameState {
     s16 entrance;
     s16 saved_scene;
     s16 saved_entrance;
-    u8 unknown_1c8[0x78];
+    u8 unknown_1c8[0x2c];
+    /* The actor whose position actor contact is measured from. */
+    s32 selected_actor;
+    u8 unknown_1f8[0x48];
     /* Where Retreat returns the party. */
     s16 retreat_scene;
     s16 retreat_entrance;
@@ -26,6 +29,7 @@ struct GameState {
 };
 
 LAYOUT_OFFSET_GUARD(GameState_Entrance, struct GameState, entrance, 0x1c2);
+LAYOUT_OFFSET_GUARD(GameState_SelectedActor, struct GameState, selected_actor, 0x1f4);
 LAYOUT_OFFSET_GUARD(GameState_RetreatEntrance, struct GameState, retreat_entrance, 0x242);
 LAYOUT_OFFSET_GUARD(GameState_Cloaked, struct GameState, cloaked, 0x24c);
 
@@ -48,16 +52,24 @@ struct EventWork {
     u8 unknown_184[0x3c];
     /* How the screen opens when the scene starts. */
     s32 start_transition;
-    u8 unknown_1c4[0x14];
+    u8 unknown_1c4[4];
+    /* The frames the screen takes to open or close. */
+    s32 transition_frames;
+    u8 unknown_1cc[0x0c];
     /* The message the next dialogue line shows. */
     u16 message;
+    u8 unknown_1da[6];
+    /* The actor at the centre of the area where actors are active. */
+    struct FieldActor *view_center;
 };
 
 LAYOUT_OFFSET_GUARD(EventWork_TouchedTrigger, struct EventWork, touched_trigger, 0x16c);
 LAYOUT_OFFSET_GUARD(EventWork_PsynergyRequest, struct EventWork, psynergy_request, 0x17e);
 LAYOUT_OFFSET_GUARD(EventWork_RaisedTrigger, struct EventWork, raised_trigger, 0x182);
 LAYOUT_OFFSET_GUARD(EventWork_StartTransition, struct EventWork, start_transition, 0x1c0);
+LAYOUT_OFFSET_GUARD(EventWork_TransitionFrames, struct EventWork, transition_frames, 0x1c8);
 LAYOUT_OFFSET_GUARD(EventWork_Message, struct EventWork, message, 0x1d8);
+LAYOUT_OFFSET_GUARD(EventWork_ViewCenter, struct EventWork, view_center, 0x1e0);
 
 extern struct EventWork *gEventWork;
 
@@ -100,7 +112,9 @@ struct FieldSprite {
     /* Sprites with a lower priority draw above the background layers. */
     u16 priority : 2;
     u16 palette : 4;
-    u8 unknown_0a[0x12];
+    u8 unknown_0a[0x0e];
+    /* The 16.16 factor an actor's contact radius is scaled by. */
+    s32 scale;
     /* The VRAM block that holds the sprite's frames. */
     u8 vram_block;
     u8 unknown_1d;
@@ -110,6 +124,7 @@ struct FieldSprite {
     u8 part_count;
 };
 
+LAYOUT_OFFSET_GUARD(FieldSprite_Scale, struct FieldSprite, scale, 0x18);
 LAYOUT_OFFSET_GUARD(FieldSprite_VramBlock, struct FieldSprite, vram_block, 0x1c);
 LAYOUT_OFFSET_GUARD(FieldSprite_Rotation, struct FieldSprite, rotation, 0x1e);
 LAYOUT_OFFSET_GUARD(FieldSprite_PartCount, struct FieldSprite, part_count, 0x27);
@@ -131,7 +146,9 @@ struct FieldActor {
     /* The sprite's scale on each axis; 0x10000 draws it at full size. */
     s32 scale_x;
     s32 scale_y;
-    u8 unknown_20[3];
+    /* How near another actor must come to touch this one. */
+    u16 radius;
+    u8 unknown_22;
     u8 priority_flags;
     s32 velocity_x;
     s32 velocity_y;
@@ -140,11 +157,19 @@ struct FieldActor {
     s32 acceleration;
     u8 unknown_38[0x18];
     struct FieldSprite *sprite;
-    u8 unknown_54;
+    /* Cleared while the actor is outside the area where actors are active. */
+    u8 active;
     u8 motion_flags;
     u8 unknown_56[3];
     u8 collision_flags;
-    u8 unknown_5a[0x12];
+    u8 unknown_5a;
+    u8 unknown_5b;
+    u8 unknown_5c;
+    u8 unknown_5d[5];
+    /* Counts the frames of a rise while rise_enabled is set. */
+    u8 rise_counter;
+    u8 rise_enabled;
+    u8 unknown_64[8];
     /* Called each frame while set. */
     void (*update)(union FieldObject *object);
 };
@@ -156,6 +181,7 @@ LAYOUT_OFFSET_GUARD(FieldActor_ScaleY, struct FieldActor, scale_y, 0x1c);
 LAYOUT_OFFSET_GUARD(FieldActor_PriorityFlags, struct FieldActor, priority_flags, 0x23);
 LAYOUT_OFFSET_GUARD(FieldActor_MotionFlags, struct FieldActor, motion_flags, 0x55);
 LAYOUT_OFFSET_GUARD(FieldActor_CollisionFlags, struct FieldActor, collision_flags, 0x59);
+LAYOUT_OFFSET_GUARD(FieldActor_RiseEnabled, struct FieldActor, rise_enabled, 0x63);
 LAYOUT_OFFSET_GUARD(FieldActor_VelocityY, struct FieldActor, velocity_y, 0x28);
 LAYOUT_OFFSET_GUARD(FieldActor_Speed, struct FieldActor, speed, 0x30);
 LAYOUT_OFFSET_GUARD(FieldActor_Sprite, struct FieldActor, sprite, 0x50);
@@ -294,6 +320,19 @@ void Engine_PsynergyRaiseHands(void);
 void Engine_PsynergyPlayEffect(s32 effect);
 void Engine_PsynergyLowerHands(void);
 void Engine_PsynergyCancel(void);
+void Engine_EventShowMessageAndWait(s32 speaker, s32 flags, s32 frames);
+struct FieldActor *Engine_EventGetViewCenter(void);
+struct FieldActor *Engine_ActorLookup(s32 actor);
+void Engine_ActorDestroy(s32 actor);
+void Engine_ActorSetChildValue(s32 actor, s32 value);
+void Engine_ActorEnableActionCallback(s32 actor, const u8 *table);
+void Engine_ActorSetActionCallback(struct FieldActor *actor, s32 value);
+void Engine_ActorsRefresh(void);
+void Engine_MapCopyCellsTo(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
+void Engine_MapRenderSetValues(s32 value0, s32 value1, s32 value2);
+void Engine_ColorBufferApplySource(s32 value, s32 mode);
+void Engine_ColorBufferApplyTarget(s32 value, s32 mode);
+void Engine_ColorBufferInterpolate(s32 frames);
 
 /* Holding the party still while an event plays; waits count frames. */
 static inline void Event_Begin(void)
@@ -711,6 +750,82 @@ static inline void Psynergy_LowerHands(void)
 static inline void Psynergy_Cancel(void)
 {
     Engine_PsynergyCancel();
+}
+
+/* Shows the next message for a speaker, then waits the given frames. */
+static inline void Event_ShowMessageAndWait(s32 speaker, s32 flags, s32 frames)
+{
+    Engine_EventShowMessageAndWait(speaker, flags, frames);
+}
+
+static inline struct FieldActor *Event_GetViewCenter(void)
+{
+    return Engine_EventGetViewCenter();
+}
+
+/* Gives NULL for an actor the scene does not hold. */
+static inline struct FieldActor *Actor_Lookup(s32 actor)
+{
+    return Engine_ActorLookup(actor);
+}
+
+/* Removes an actor from the scene and frees its slot. */
+static inline void Actor_Destroy(s32 actor)
+{
+    Engine_ActorDestroy(actor);
+}
+
+static inline void Actor_SetChildValue(s32 actor, s32 value)
+{
+    Engine_ActorSetChildValue(actor, value);
+}
+
+static inline void Actor_EnableActionCallback(s32 actor, const u8 *table)
+{
+    Engine_ActorEnableActionCallback(actor, table);
+}
+
+static inline void Actor_SetActionCallback(struct FieldActor *actor, s32 value)
+{
+    Engine_ActorSetActionCallback(actor, value);
+}
+
+/* Walks the scene's actor list after the map or camera changes. */
+static inline void Actors_Refresh(void)
+{
+    Engine_ActorsRefresh();
+}
+
+/*
+ * Copies a block of map cells; unlike Map_CopyCells the destination comes
+ * before the size.
+ */
+static inline void Map_CopyCellsTo(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width,
+                                   s32 height)
+{
+    Engine_MapCopyCellsTo(src_x, src_y, dest_x, dest_y, width, height);
+}
+
+/* Stores three map render values; a negative value leaves its slot unchanged. */
+static inline void MapRender_SetValues(s32 value0, s32 value1, s32 value2)
+{
+    Engine_MapRenderSetValues(value0, value1, value2);
+}
+
+/* The colour buffers a scene blends the palette through. */
+static inline void ColorBuffer_ApplySource(s32 value, s32 mode)
+{
+    Engine_ColorBufferApplySource(value, mode);
+}
+
+static inline void ColorBuffer_ApplyTarget(s32 value, s32 mode)
+{
+    Engine_ColorBufferApplyTarget(value, mode);
+}
+
+static inline void ColorBuffer_Interpolate(s32 frames)
+{
+    Engine_ColorBufferInterpolate(frames);
 }
 
 #endif

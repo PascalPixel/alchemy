@@ -8767,10 +8767,10 @@
 <path class="bevel-dark" d="M702.2021165067056 340.4144005593207 H754.2553958852635 V285.3610739891376" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="RARIBERO_HEYA: 3,420 bytes · Unknown, Drafted, Assembly, C · 0x087f21b8" data-node="leaf" data-kind="folder" data-bytes="3420" data-address="0x087f21b8" data-source="games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_HEYA/">
 <title>RARIBERO_HEYA: 3,420 bytes · Unknown, Drafted, Assembly, C · 0x087f21b8</title>
-<rect x="704.7021165067056" y="293.13621314902076" width="47.05327937855793" height="0.7972189440550442" style="fill:#d9d9d4"/>
-<rect x="704.7021165067056" y="292.956883275191" width="47.05327937855793" height="0.17932987382975382" style="fill:#96c8c9"/>
-<rect x="704.7021165067056" y="292.50767081896396" width="47.05327937855793" height="0.4492124562270071" style="fill:#6cafb2"/>
-<rect x="704.7021165067056" y="287.86107398913754" width="47.05327937855793" height="4.646596829826394" style="fill:#326b7d"/>
+<rect x="704.7021165067056" y="293.6351408177946" width="47.05327937855793" height="0.2982912752811747" style="fill:#d9d9d4"/>
+<rect x="704.7021165067056" y="293.4558109439648" width="47.05327937855793" height="0.17932987382975382" style="fill:#96c8c9"/>
+<rect x="704.7021165067056" y="293.0065984877378" width="47.05327937855793" height="0.4492124562270071" style="fill:#6cafb2"/>
+<rect x="704.7021165067056" y="287.86107398913754" width="47.05327937855793" height="5.145524498600263" style="fill:#326b7d"/>
 </g>
 <g aria-label="RARIBERO_HEYA.BIN: 20,248 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 4 items" data-node="container" data-kind="file" data-bytes="20248" data-source="games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_HEYA/RARIBERO_HEYA.BIN">
 <title>RARIBERO_HEYA.BIN: 20,248 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 4 items</title>
@@ -8848,9 +8848,9 @@
 <path class="bevel-dark" d="M754.2553958852635 319.47020023370754 H793.8266834491316 V285.3610739891376" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="RARIBERO_MACHI: 3,372 bytes · Unknown, Assembly, C · 0x087f148c" data-node="leaf" data-kind="folder" data-bytes="3372" data-address="0x087f148c" data-source="games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_MACHI/">
 <title>RARIBERO_MACHI: 3,372 bytes · Unknown, Assembly, C · 0x087f148c</title>
-<rect x="756.7553958852635" y="313.29271275441135" width="9.315306300770827" height="3.6774874792962065" style="fill:#d9d9d4"/>
-<rect x="756.7553958852635" y="311.24678662156344" width="9.315306300770827" height="2.0459261328478893" style="fill:#6cafb2"/>
-<rect x="756.7553958852635" y="287.8610739891376" width="9.315306300770827" height="23.385712632425875" style="fill:#326b7d"/>
+<rect x="756.7553958852635" y="316.9615676339909" width="9.315306300770827" height="0.008632599716657762" style="fill:#d9d9d4"/>
+<rect x="756.7553958852635" y="314.915641501143" width="9.315306300770827" height="2.0459261328478893" style="fill:#6cafb2"/>
+<rect x="756.7553958852635" y="287.8610739891376" width="9.315306300770827" height="27.054567512005423" style="fill:#326b7d"/>
 </g>
 <g aria-label="RARIBERO_MACHI.BIN: 7,184 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 2 items" data-node="container" data-kind="file" data-bytes="7184" data-source="games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_MACHI/RARIBERO_MACHI.BIN">
 <title>RARIBERO_MACHI.BIN: 7,184 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 2 items</title>
@@ -10920,10 +10920,10 @@
 <path class="bevel-dark" d="M690.5168193106722 505.2197886352452 H793.8266834491316 V482.24932110416694" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="VINASU_CHOJO: 13,960 bytes · Unknown, Drafted, Assembly, C · 0x087f6e64" data-node="leaf" data-kind="folder" data-bytes="13960" data-address="0x087f6e64" data-source="games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/">
 <title>VINASU_CHOJO: 13,960 bytes · Unknown, Drafted, Assembly, C · 0x087f6e64</title>
-<rect x="693.0168193106722" y="500.58933564355937" width="66.81284011802452" height="2.130452991685858" style="fill:#d9d9d4"/>
-<rect x="693.0168193106722" y="490.9475876630596" width="66.81284011802452" height="9.641747980499746" style="fill:#96c8c9"/>
-<rect x="693.0168193106722" y="490.32583008300867" width="66.81284011802452" height="0.6217575800509181" style="fill:#6cafb2"/>
-<rect x="693.0168193106722" y="484.7493211041669" width="66.81284011802452" height="5.576508978841775" style="fill:#326b7d"/>
+<rect x="693.0168193106722" y="501.58569251097015" width="66.81284011802452" height="1.13409612427507" style="fill:#d9d9d4"/>
+<rect x="693.0168193106722" y="492.08683291843244" width="66.81284011802452" height="9.498859592537732" style="fill:#96c8c9"/>
+<rect x="693.0168193106722" y="491.4650753383815" width="66.81284011802452" height="0.6217575800509181" style="fill:#6cafb2"/>
+<rect x="693.0168193106722" y="484.74932110416694" width="66.81284011802452" height="6.715754234214575" style="fill:#326b7d"/>
 </g>
 <g aria-label="VINASU_CHOJO.BIN: 5,756 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 2 items" data-node="container" data-kind="file" data-bytes="5756" data-source="games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/VINASU_CHOJO.BIN">
 <title>VINASU_CHOJO.BIN: 5,756 bytes · Other data · Last asset build: ROM bytes matched; appearance not verified · 2 items</title>
@@ -11154,10 +11154,10 @@
 <path class="bevel-dark" d="M776.2065462093854 595.1556183680583 H793.8266834491316 V505.2197886352452" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="WORLD_MAP: 13,652 bytes · Unknown, Drafted, Assembly, C · 0x0877a7c8" data-node="leaf" data-kind="folder" data-bytes="13652" data-address="0x0877a7c8" data-source="games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/">
 <title>WORLD_MAP: 13,652 bytes · Unknown, Drafted, Assembly, C · 0x0877a7c8</title>
-<rect x="778.7065462093854" y="580.4241620792574" width="12.620137239746242" height="12.23145628880095" style="fill:#d9d9d4"/>
-<rect x="778.7065462093854" y="560.4096173788136" width="12.620137239746242" height="20.014544700443874" style="fill:#96c8c9"/>
-<rect x="778.7065462093854" y="556.1416728141556" width="12.620137239746242" height="4.267944564657911" style="fill:#6cafb2"/>
-<rect x="778.7065462093854" y="507.71978863524527" width="12.620137239746242" height="48.421884178910375" style="fill:#326b7d"/>
+<rect x="778.7065462093854" y="582.9936389090004" width="12.620137239746242" height="9.661979459057921" style="fill:#d9d9d4"/>
+<rect x="778.7065462093854" y="563.1595175210566" width="12.620137239746242" height="19.834121387943757" style="fill:#96c8c9"/>
+<rect x="778.7065462093854" y="558.8915729563987" width="12.620137239746242" height="4.267944564657911" style="fill:#6cafb2"/>
+<rect x="778.7065462093854" y="507.7197886352452" width="12.620137239746242" height="51.17178432115352" style="fill:#326b7d"/>
 </g>
 </g>
 </g>

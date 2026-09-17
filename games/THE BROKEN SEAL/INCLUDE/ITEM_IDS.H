@@ -10,7 +10,8 @@ enum ItemId {
     ITEM_WATER_OF_LIFE = 0xbd,
     ITEM_SMOKE_BOMB = 0xe2,
     ITEM_SLEEP_BOMB = 0xe3,
-    ITEM_LUCKY_MEDAL = 0xe5
+    ITEM_LUCKY_MEDAL = 0xe5,
+    ITEM_BLACK_ORB = 0xf2
 };
 
 #endif

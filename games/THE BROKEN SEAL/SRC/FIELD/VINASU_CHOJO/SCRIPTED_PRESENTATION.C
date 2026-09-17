@@ -1,4 +1,8 @@
 #include "TYPES.H"
+#include "FIELD_EFFECT.H"
+#include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
+#include "SOUND_IDS.H"
 
 #define CreateOverlayObject Func_02005d1e
 #define SetOverlayObjectMode Func_02005d88
@@ -666,6 +670,26 @@ s32 OverlayObject_StepScaleByCounter(Spr *s)
     return 1;
 }
 
+/*
+ * Moves an effect like Effect_Move, and slows its horizontal velocity by a
+ * twenty-second across and a twentieth in depth each frame.
+ */
+void Effect_MoveWithDrag(union FieldObject *object)
+{
+    s32 velocity_x = object->effect.velocity_x;
+    s32 velocity_z;
+
+    object->effect.x += velocity_x;
+    object->effect.y += object->effect.velocity_y;
+    velocity_z = object->effect.velocity_z;
+    object->effect.z += velocity_z;
+    object->effect.velocity_x = velocity_x - Math_Divide(velocity_x, 22);
+    object->effect.velocity_z = velocity_z - Math_Divide(velocity_z, 20);
+    object->effect.scale_x += object->effect.scale_rate_x;
+    object->effect.scale_y += object->effect.scale_rate_y;
+    object->effect.sprite->rotation += object->effect.spin;
+}
+
 void OverlayObject_DecayRecordField1e(Spr_02000400 *s)
 {
     Obj_02000400 *o = s->obj;
@@ -1057,6 +1081,46 @@ void FieldScene_RunSetupSequence35c4(void)
     Func_020091ee(1);
 }
 
+/* An effect that circles an actor. */
+union OrbitEffect {
+    s32 words[26];
+    struct {
+        u8 unknown_00[8];
+        s32 x;
+        s32 y;
+        s32 z;
+        u8 unknown_14[0x1c];
+        s32 radius;
+        u8 unknown_34[4];
+        s32 saved_x;
+        s32 unknown_3c;
+        s32 saved_z;
+        u8 unknown_44[0x20];
+        u16 angle;
+    } orbit;
+};
+
+enum {
+    ORBIT_CENTER_ACTOR = 24
+};
+
+/*
+ * Places the effect on an ellipse around actor 24, its radius plus 3 across
+ * and two sine units deep, keeps a copy of the new position, then steps the
+ * angle back by a thirty-second of a turn.
+ */
+void SceneEffect_UpdateOrbitAroundActor(union OrbitEffect *effect)
+{
+    struct FieldActor *center = Actor_Get(ORBIT_CENTER_ACTOR);
+    u16 angle = effect->orbit.angle;
+
+    effect->orbit.x = center->x.fixed + Math_Cos(angle) * (effect->orbit.radius + 3);
+    effect->orbit.z = center->z.fixed + (Math_Sin(angle) << 1);
+    effect->orbit.saved_x = effect->orbit.x;
+    effect->orbit.saved_z = effect->orbit.z;
+    effect->orbit.angle -= 0x800;
+}
+
 /*
  * Per-frame orbit step for one actor: read the binary angle at +100, place
  * the actor on a circle around scene record 23, mirror the placement into
@@ -1248,6 +1312,122 @@ void FieldScene_RunScene3c9_02003924(void)
     Func_02009a00(2);
 }
 
+enum {
+    ACTOR_FIRST_OF_PAIR = 20,
+    ACTOR_SECOND_OF_PAIR = 19,
+    MSG_PAIR_DEFEATED = 0x2809
+};
+
+void SceneEffect_SpawnParticlesAboveActor(void);
+
+/*
+ * The pair's defeat. Actors 0 to 3 are placed facing northwest, actors 21
+ * and 6 between north and northeast, and the pair between south and
+ * southeast. Actors 24 and 25 are prepared, the particle task starts and the
+ * screen opens. The pair speak, then each falls away in three poses and is
+ * removed.
+ */
+void FieldScene_RunPairDefeat(void)
+{
+    struct FieldActor *actor;
+
+    Audio_PlayCue(141);
+    Map_CopyCellAttributes(17, 10, 4, 2, 17, 8);
+    Actor_Get(0)->facing = FACING_NORTHWEST;
+    Actor_Get(1)->facing = FACING_NORTHWEST;
+    Actor_SetPosition(1, PIXELS(328), PIXELS(168));
+    Actor_Get(2)->facing = FACING_NORTHWEST;
+    Actor_SetPosition(2, PIXELS(340), PIXELS(196));
+    Actor_Get(3)->facing = FACING_NORTHWEST;
+    Actor_SetPosition(3, PIXELS(326), PIXELS(204));
+    Actor_Get(21)->facing = FACING_NORTH + FACING_STEP;
+    Actor_SetPosition(21, PIXELS(200), PIXELS(216));
+    Actor_Get(6)->facing = FACING_NORTH + FACING_STEP;
+    Actor_SetPosition(6, PIXELS(200), PIXELS(216));
+    Actor_Get(ACTOR_FIRST_OF_PAIR)->facing = FACING_SOUTHEAST + FACING_STEP;
+    Actor_SetPosition(ACTOR_FIRST_OF_PAIR, PIXELS(310), PIXELS(158));
+    Actor_Get(ACTOR_SECOND_OF_PAIR)->facing = FACING_SOUTHEAST + FACING_STEP;
+    Actor_SetPosition(ACTOR_SECOND_OF_PAIR, PIXELS(292), PIXELS(158));
+
+    Actor_SetSpriteFlags(Actor_Get(24), 0);
+    Actor_SetChildValue(24, 7);
+    Actor_SetSpritePriority(24, 1);
+    actor = Actor_Get(24);
+    actor->scale_y = -0x10000;
+    actor->scale_x = 0x3333;
+    actor->motion_flags = 0;
+    actor->x.fixed = PIXELS(304);
+    actor->y.fixed = PIXELS(2);
+    actor->z.fixed = PIXELS(96);
+
+    Actor_SetSpriteFlags(Actor_Get(25), 0);
+    Actor_SetChildValue(25, 7);
+    Actor_SetSpritePriority(25, 1);
+    actor = Actor_Get(25);
+    actor->scale_y = -0x10000;
+    actor->scale_x = 0x3333;
+    actor->motion_flags = 0;
+    actor->x.fixed = PIXELS(304);
+    actor->y.fixed = PIXELS(34);
+    actor->z.fixed = PIXELS(96);
+
+    Task_AddCallback(SceneEffect_SpawnParticlesAboveActor, TASK_PRIORITY_SCENE);
+    Event_GetViewCenter()->motion_flags = 0;
+    Camera_MoveTo(PIXELS(304), PIXELS(32), PIXELS(180), 0);
+    Task_Wait(1);
+    Map_Redraw();
+    Task_Wait(1);
+    MapRender_SetValues(0x10000, 0x10000, 0x10000);
+    Event_OpenScreen();
+    Event_WaitForScreen();
+    Event_Wait(40);
+    Actor_RunRepeatedMotion(ACTOR_FIRST_OF_PAIR, 2);
+    Event_Wait(10);
+    Event_SetMessage(MSG_PAIR_DEFEATED);
+    State_ApplyArgMode0AndSet10(ACTOR_FIRST_OF_PAIR);
+    Actor_RunRepeatedMotion(ACTOR_SECOND_OF_PAIR, 3);
+    Event_Wait(20);
+    Event_ShowMessageAndWait(ACTOR_SECOND_OF_PAIR, 0, 40);
+    Audio_PlayCue(17);
+
+    actor = Actor_Get(ACTOR_FIRST_OF_PAIR);
+    actor->x.fixed = PIXELS(308);
+    actor->y.fixed = PIXELS(28);
+    actor->z.fixed = PIXELS(152);
+    Actor_SetAnimation(ACTOR_FIRST_OF_PAIR, 10);
+    Event_Wait(20);
+    actor->x.fixed = PIXELS(306);
+    actor->y.fixed = PIXELS(28);
+    actor->z.fixed = PIXELS(152);
+    Actor_SetAnimation(ACTOR_FIRST_OF_PAIR, 11);
+    Event_Wait(12);
+    actor->x.fixed = PIXELS(304);
+    actor->y.fixed = PIXELS(21);
+    actor->z.fixed = PIXELS(152);
+    Actor_SetAnimation(ACTOR_FIRST_OF_PAIR, 12);
+    Event_Wait(8);
+    Actor_Destroy(ACTOR_FIRST_OF_PAIR);
+
+    actor = Actor_Get(ACTOR_SECOND_OF_PAIR);
+    actor->x.fixed = PIXELS(294);
+    actor->y.fixed = PIXELS(28);
+    actor->z.fixed = PIXELS(152);
+    Actor_SetAnimation(ACTOR_SECOND_OF_PAIR, 8);
+    Event_Wait(20);
+    actor->x.fixed = PIXELS(300);
+    actor->y.fixed = PIXELS(27);
+    actor->z.fixed = PIXELS(152);
+    Actor_SetAnimation(ACTOR_SECOND_OF_PAIR, 9);
+    Event_Wait(12);
+    actor->x.fixed = PIXELS(304);
+    actor->y.fixed = PIXELS(17);
+    actor->z.fixed = PIXELS(152);
+    Actor_SetAnimation(ACTOR_SECOND_OF_PAIR, 10);
+    Event_Wait(8);
+    Actor_Destroy(ACTOR_SECOND_OF_PAIR);
+    Event_Wait(160);
+}
+
 void FieldScene_RunMultiActorPresentation(void)
 {
     s32 count_flag;
@@ -1358,6 +1538,93 @@ void FieldScene_RunMultiActorPresentation(void)
     Func_02009fb6(3, 4, 20);
     Func_0200a000(request_b, 0, 20);
     Call3_02003e9c(Func_0200a022, 21, 0x103, 40);
+}
+
+enum {
+    PARTICLE_SOURCE_ACTOR = 23
+};
+
+void SceneEffect_SpawnParticlesBesideActor(void);
+
+/*
+ * Restages the aerie after the pair's defeat: both of the pair are removed,
+ * map cells are copied, the camera and actors are refreshed, and actors 0 to
+ * 3 are placed with their rise stopped. The rise counters of actors 21 and 6
+ * are cleared, the particle task for actor 23 starts, and the palette is
+ * blended in from white over 40 frames.
+ */
+void FieldScene_RestageParty(void)
+{
+    struct FieldActor *actor;
+
+    Actor_Destroy(ACTOR_FIRST_OF_PAIR);
+    Actor_Destroy(ACTOR_SECOND_OF_PAIR);
+    Audio_PlayCue(141);
+    Map_CopyCellAttributes(17, 10, 4, 2, 17, 8);
+    Map_CopyCellsTo(102, 4, 74, 4, 18, 23);
+    Map_CopyCellsTo(39, 72, 11, 72, 16, 21);
+    Map_CopyCellAttributes(19, 6, 3, 7, 22, 6);
+    Map_CopyCellAttributes(19, 6, 3, 7, 13, 6);
+    Map_CopyCellAttributes(19, 6, 3, 7, 22, 13);
+    Map_CopyCellAttributes(19, 6, 3, 7, 13, 13);
+    MapRender_SetValues(0x20000, 0x20000, 0x10000);
+    Camera_MoveTo(-1, -1, -1, 0);
+    Actors_Refresh();
+    Map_Redraw();
+    Task_Wait(1);
+    Audio_PlayCue(SOUND_ITEM_BREAK);
+    Actor_SetAnimation(0, 19);
+    Actor_SetAnimation(1, 18);
+    Actor_SetAnimation(2, 18);
+    Actor_SetAnimation(3, 18);
+    Actor_SetSpriteFlags(Actor_Get(0), 0);
+    Actor_SetSpriteFlags(Actor_Get(1), 0);
+    Actor_SetSpriteFlags(Actor_Get(2), 0);
+    Actor_SetSpriteFlags(Actor_Get(3), 0);
+
+    actor = Actor_Get(0);
+    actor->x.fixed = PIXELS(346);
+    actor->y.fixed = PIXELS(32);
+    actor->z.fixed = PIXELS(205);
+    Actor_ParkRecord((u8 *)actor);
+    actor->rise_enabled = 0;
+    actor->velocity_y = 0x20000;
+
+    actor = Actor_Get(1);
+    actor->x.fixed = PIXELS(356);
+    actor->y.fixed = PIXELS(32);
+    actor->z.fixed = PIXELS(192);
+    Actor_ParkRecord((u8 *)actor);
+    actor->rise_enabled = 0;
+    actor->velocity_y = 0x20000;
+
+    actor = Actor_Get(2);
+    actor->x.fixed = PIXELS(360);
+    actor->y.fixed = PIXELS(32);
+    actor->z.fixed = PIXELS(222);
+    Actor_ParkRecord((u8 *)actor);
+    actor->rise_enabled = 0;
+    actor->velocity_y = 0x20000;
+
+    actor = Actor_Get(3);
+    actor->x.fixed = PIXELS(334);
+    actor->y.fixed = PIXELS(32);
+    actor->z.fixed = PIXELS(222);
+    Actor_ParkRecord((u8 *)actor);
+    actor->rise_enabled = 0;
+    actor->velocity_y = 0x20000;
+
+    Actor_Get(21)->rise_counter = 0;
+    Actor_Get(6)->rise_counter = 0;
+    Actor_Get(PARTICLE_SOURCE_ACTOR)->motion_flags |= 4;
+    Actor_SetChildValue(PARTICLE_SOURCE_ACTOR, 4);
+    Task_AddCallback(SceneEffect_SpawnParticlesBesideActor, TASK_PRIORITY_SCENE);
+    gEventWork->transition_frames = 1;
+    Event_OpenScreen();
+    ColorBuffer_ApplySource(0x7fff, 0);
+    ColorBuffer_ApplyTarget(0x10000, 0);
+    ColorBuffer_Interpolate(40);
+    Task_Wait(60);
 }
 
 void FieldScene_RunScene3c9_02004b28(void)

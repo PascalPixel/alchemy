@@ -3210,9 +3210,6 @@
       "name": "StoryActor_ApplyFlaggedMode",
       "source": "FIELD/WORLD_MAP/ACTOR_TRANSFER.C"
     },
-    "resource_371:020002cc": {
-      "name": "initialize_story_actor_animation_frame"
-    },
     "resource_371:02000314": {
       "name": "StoryActor_ResetPosition",
       "source": "FIELD/WORLD_MAP/ACTOR_TRANSFER.C"
@@ -18651,6 +18648,46 @@
     "main:0800bbc0": {
       "name": "AnimationObject_Allocate",
       "source": "GRAPHICS/ANIMATION/ALLOCATE_OBJECT.C"
+    },
+    "resource_371:020002cc": {
+      "name": "StoryActor_ApplyMapRotation",
+      "source": "FIELD/WORLD_MAP/ACTOR_TRANSFER.C"
+    },
+    "resource_371:020002f0": {
+      "name": "StoryActor_ApplyMapRotationWithCollision",
+      "source": "FIELD/WORLD_MAP/ACTOR_TRANSFER.C"
+    },
+    "resource_371:02000598": {
+      "name": "MapActor_UpdateContact",
+      "source": "FIELD/WORLD_MAP/ACTOR_TRANSFER.C"
+    },
+    "resource_371:020031fc": {
+      "name": "StoryScene_UpdateTransitionEffect",
+      "source": "FIELD/WORLD_MAP/ACTOR_TRANSFER.C"
+    },
+    "resource_3c9:020003a0": {
+      "name": "Effect_MoveWithDrag",
+      "source": "FIELD/VINASU_CHOJO/SCRIPTED_PRESENTATION.C"
+    },
+    "resource_3c9:02003600": {
+      "name": "SceneEffect_UpdateOrbitAroundActor",
+      "source": "FIELD/VINASU_CHOJO/SCRIPTED_PRESENTATION.C"
+    },
+    "resource_3c9:02003bc8": {
+      "name": "FieldScene_RunPairDefeat",
+      "source": "FIELD/VINASU_CHOJO/SCRIPTED_PRESENTATION.C"
+    },
+    "resource_3c9:020048d8": {
+      "name": "FieldScene_RestageParty",
+      "source": "FIELD/VINASU_CHOJO/SCRIPTED_PRESENTATION.C"
+    },
+    "resource_3c7:0200104c": {
+      "name": "Scene_Initialize",
+      "source": "FIELD/RARIBERO_HEYA/POSE.C"
+    },
+    "resource_3c6:0200120c": {
+      "name": "Scene_Initialize",
+      "source": "FIELD/RARIBERO_MACHI/FLAGGED_CUE.C"
     }
   }
 }

@@ -1,4 +1,8 @@
 #include "TYPES.H"
+#include "FIELD_EFFECT.H"
+#include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
+#include "ITEM_IDS.H"
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
@@ -1758,4 +1762,121 @@ s32 SceneData_SelectSecondaryTableByFlag9a7(void)
         return 0x02009EE4;
     }
     return 0x02009D04;
+}
+
+enum {
+    ENTRANCE_PRIMARY_SEQUENCE = 20,
+    ENTRANCE_PRIMARY_SEQUENCE_ALTERNATE = 21,
+    ENTRANCE_FROM_AERIE = 90,
+    ENTRANCE_FROM_AERIE_ALTERNATE = 91
+};
+
+enum {
+    FLAG_AERIE_EVENTS_DONE = 0x9a7,
+    FLAG_PRIMARY_SEQUENCE_SEEN = 0x9b8,
+    FLAG_ACTOR_18_MOVED = 0x9bb,
+    FLAG_ARRIVED_FROM_AERIE = 0x9bf
+};
+
+enum {
+    ACTOR_BLACK_ORB = 25
+};
+
+enum {
+    HEAP_ITEM_ICON = 17,
+    ITEM_ICON_BUFFER_SIZE = 0x608,
+    ITEM_ICON_TILES = 0x400,
+    ITEM_ICON_TILE_BYTES = 128
+};
+
+/*
+ * Lalivero's scene setup. Arriving from the aerie by entrance 90 or 91 sets
+ * flag 0x9a7, and entrance 90 also sets flag 0x9bf. Actors 19 to 21 take
+ * animation 3. Actor 25 is placed 10 pixels up and shows the Black Orb's icon.
+ * While flag 0x9a7 is set, actor 24's sprite flags and collision are cleared,
+ * three map cells are copied and flag 0x9bb moves actor 18. Otherwise actors 8
+ * and 9 face north and south, five cells are copied, and arriving by entrance
+ * 20 or 21 plays the primary sequence once, recorded by flag 0x9b8.
+ */
+s32 Scene_Initialize(void)
+{
+    union FieldObject *object;
+    struct FieldSprite *sprite;
+    u8 *icon;
+
+    if (gGameState.entrance == ENTRANCE_FROM_AERIE) {
+        GameFlag_Set(FLAG_AERIE_EVENTS_DONE);
+        GameFlag_Set(FLAG_ARRIVED_FROM_AERIE);
+    }
+    if (gGameState.entrance == ENTRANCE_FROM_AERIE_ALTERNATE) {
+        GameFlag_Set(FLAG_AERIE_EVENTS_DONE);
+    }
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gEventWork->transition_frames = 24;
+
+    Actor_SetAnimation(19, 3);
+    Actor_Get(19)->collision_flags = 0;
+    Actor_SetSpriteFlags(Actor_Get(19), 0);
+    Actor_SetAnimation(20, 3);
+    Actor_Get(20)->collision_flags = 0;
+    Actor_SetSpriteFlags(Actor_Get(20), 0);
+    Actor_SetAnimation(21, 3);
+    Actor_Get(21)->collision_flags = 0;
+    Actor_SetSpriteFlags(Actor_Get(21), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_BLACK_ORB), 0);
+
+    object = (union FieldObject *)Actor_Get(ACTOR_BLACK_ORB);
+    object->actor.unknown_5c = 1;
+    object->actor.motion_flags = 0;
+    sprite = object->actor.sprite;
+    object->actor.y.fixed = PIXELS(10);
+    sprite->part_count = 0;
+    sprite->full_color = 0;
+    sprite->palette = 0;
+    icon = Heap_Allocate(HEAP_ITEM_ICON, ITEM_ICON_BUFFER_SIZE);
+    Item_LoadIcon(ITEM_BLACK_ORB);
+    Vram_Load(sprite->vram_block, ITEM_ICON_TILE_BYTES, &icon[ITEM_ICON_TILES]);
+    Heap_Release(HEAP_ITEM_ICON);
+
+    if (GameFlag_IsSet(FLAG_AERIE_EVENTS_DONE)) {
+        Actor_SetSpriteFlags(Actor_Get(24), 0);
+        Actor_Get(24)->collision_flags = 0;
+        Map_CopyCellAttributes(20, 23, 1, 1, 14, 4);
+        Map_CopyCellAttributes(20, 23, 1, 1, 15, 4);
+        Map_CopyCellAttributes(20, 23, 1, 1, 16, 4);
+        if (GameFlag_IsSet(FLAG_ACTOR_18_MOVED)) {
+            Actor_SetPosition(18, PIXELS(56), PIXELS(184));
+        }
+    } else {
+        object = (union FieldObject *)Actor_Get(8);
+        object->actor.collision_flags = 0;
+        object->actor.priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+        object->actor.sprite->flags = 0;
+        object->actor.sprite->rotation = FACING_NORTH;
+        object = (union FieldObject *)Actor_Get(9);
+        object->actor.collision_flags = 0;
+        object->actor.priority_flags |= ACTOR_PRIORITY_UNDERFOOT;
+        object->actor.sprite->flags = 0;
+        object->actor.sprite->rotation = FACING_SOUTH;
+        Map_CopyCellAttributes(20, 23, 1, 1, 13, 23);
+        Map_CopyCellAttributes(20, 23, 1, 1, 14, 23);
+        Map_CopyCellAttributes(20, 23, 1, 1, 78, 23);
+        Map_CopyCellAttributes(20, 23, 1, 1, 17, 23);
+        Map_CopyCellAttributes(20, 23, 1, 1, 18, 23);
+        if ((gGameState.entrance == ENTRANCE_PRIMARY_SEQUENCE
+                || gGameState.entrance == ENTRANCE_PRIMARY_SEQUENCE_ALTERNATE)
+            && !GameFlag_IsSet(FLAG_PRIMARY_SEQUENCE_SEEN)) {
+            GameFlag_Set(FLAG_PRIMARY_SEQUENCE_SEEN);
+            object = (union FieldObject *)Actor_Get(11);
+            object->actor.unknown_5b = 1;
+            object = (union FieldObject *)Actor_Get(17);
+            object->actor.unknown_5b = 1;
+            Scene_RunPrimarySequence();
+            object = (union FieldObject *)Actor_Get(11);
+            object->actor.unknown_5b = 0;
+            object = (union FieldObject *)Actor_Get(17);
+            object->actor.unknown_5b = 0;
+        }
+    }
+    return 0;
 }

@@ -1,4 +1,7 @@
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
+#include "MAP_RENDER_WORK.H"
 
 #define StoryProgress_TriggerEvent0808 Func_02000030
 #define StoryProgress_TriggerEvent0809 Func_0200008c
@@ -1473,6 +1476,28 @@ s32 StoryActor_ApplyFlaggedMode(u8 *actor)
     return 1;
 }
 
+/* Turns the actor's sprite to the map's rotation. */
+s32 StoryActor_ApplyMapRotation(struct FieldActor *actor)
+{
+    struct MapRenderWork *work = Data_03001e70;
+    struct FieldSprite *sprite = actor->sprite;
+
+    sprite->rotation = work->rotation;
+    sprite->flags = 0;
+    return 1;
+}
+
+/* Sets the actor's first collision flag and turns its sprite to the map's rotation. */
+s32 StoryActor_ApplyMapRotationWithCollision(struct FieldActor *actor)
+{
+    struct MapRenderWork *work = Data_03001e70;
+    struct FieldSprite *sprite = actor->sprite;
+
+    actor->collision_flags |= 1;
+    sprite->rotation = work->rotation;
+    return 1;
+}
+
 s32 StoryActor_ResetPosition(u8 *actor)
 {
     extern u32 Data_03001e40;
@@ -1671,6 +1696,80 @@ void FieldScene_RunStep7D3B1E(void)
 u8 *SceneData_GetTableE3F4(void)
 {
     return Data_0200e3f4;
+}
+
+enum {
+    CONTACT_LAST_ACTOR = 65,
+    /* An actor's touch trigger is its id plus this base. */
+    CONTACT_TRIGGER_BASE = 100,
+    FLAG_CONTACT_PAUSED = 0x163,
+    FLAG_CONTACT_BLOCKED = 0x104
+};
+
+extern u8 Data_03001f54;
+
+/*
+ * Marks each placed actor active while it stands inside a window around the
+ * view centre: 160 pixels to either side, 300 pixels toward lower depth and
+ * 200 toward higher depth. When an active actor comes within reach of the
+ * selected actor, measured as the sum of the axis distances against both
+ * scaled radii, its trigger is recorded as touched unless flag 0x104 is set.
+ */
+void MapActor_UpdateContact(void)
+{
+    struct FieldActor *leader;
+    struct EventWork *work;
+    struct FieldActor *actor;
+    s32 left;
+    s32 right;
+    s32 top;
+    s32 bottom;
+    s32 leader_reach;
+    u32 i;
+
+    leader = Actor_Get(gGameState.selected_actor);
+    leader_reach = leader->sprite->scale * leader->radius;
+    work = gEventWork;
+    actor = work->view_center;
+    left = actor->x.fixed - PIXELS(160);
+    right = actor->x.fixed + PIXELS(160);
+    top = actor->z.fixed - PIXELS(300);
+    bottom = actor->z.fixed + PIXELS(200);
+
+    for (i = ACTOR_FIRST_PLACED; i <= CONTACT_LAST_ACTOR; i++) {
+        s32 x;
+        s32 z;
+        s32 dx;
+        s32 reach;
+        s32 scale;
+
+        actor = Actor_Lookup(i);
+        if (actor == NULL) {
+            continue;
+        }
+        x = actor->x.fixed;
+        z = actor->z.fixed;
+        if (x < left || x > right || z < top || z > bottom) {
+            actor->active = 0;
+            continue;
+        }
+        actor->active = 1;
+        if (Data_03001f54 != 0 && GameFlag_IsSet(FLAG_CONTACT_PAUSED) != 0) {
+            continue;
+        }
+        scale = actor->sprite->scale;
+        dx = actor->x.fixed - leader->x.fixed;
+        if (dx < 0) {
+            dx = leader->x.fixed - actor->x.fixed;
+        }
+        reach = leader_reach + actor->radius * scale;
+        if (dx + (actor->z.fixed - leader->z.fixed < 0 ? leader->z.fixed - actor->z.fixed
+                                                       : actor->z.fixed - leader->z.fixed)
+                < reach
+            && GameFlag_IsSet(FLAG_CONTACT_BLOCKED) == 0) {
+            work->touched_trigger = i + CONTACT_TRIGGER_BASE;
+        }
+    }
 }
 
 void SceneState_ApplyFlag85aBranch(void)
@@ -2674,6 +2773,62 @@ void StoryScene_StartTransition(void)
     Func_020075e8(109);
     Func_02007478(282);
     Func_020074cc();
+}
+
+enum {
+    TRANSITION_EFFECT_TYPE = 222,
+    TRANSITION_EFFECT_LEFT = 0x17b0,
+    TRANSITION_EFFECT_TOP = 0x0c4c,
+    TRANSITION_EFFECT_WIDTH = 40,
+    TRANSITION_EFFECT_DEPTH = 30
+};
+
+/* The motion script each transition effect runs. */
+extern const s32 Data_0200d14c[];
+
+s32 UnsignedModulo(u32 value, s32 divisor);
+
+/*
+ * The timed callback the transition schedules. Each run places one effect at
+ * a random point of a 40 by 30 pixel area with a random scale, and on every
+ * third frame moves the camera to one of four nearby points chosen at random.
+ */
+void StoryScene_UpdateTransitionEffect(void)
+{
+    u32 x = (u32)Random_Next() * TRANSITION_EFFECT_WIDTH >> 16;
+    u32 z = (u32)Random_Next() * TRANSITION_EFFECT_DEPTH >> 16;
+    struct FieldActor *object;
+
+    object = Object_Create(TRANSITION_EFFECT_TYPE, PIXELS(x) + PIXELS(TRANSITION_EFFECT_LEFT), 0,
+                           PIXELS(z) + PIXELS(TRANSITION_EFFECT_TOP));
+    if (object != NULL) {
+        struct FieldSprite *sprite = object->sprite;
+        s32 scale = (((u32)Random_Next() << 15) >> 16) + 0x13333;
+
+        sprite->flags = 0;
+        sprite->priority = 2;
+        object->motion_flags = 0;
+        object->scale_x = scale;
+        object->scale_y = scale;
+        Object_SetAnimation(object, 1);
+        Object_SetScript(object, Data_0200d14c);
+    }
+    if (UnsignedModulo(gFrameCount, 3) == 0) {
+        switch (((u32)Random_Next() << 2) >> 16) {
+        case 0:
+            Camera_MoveTo(PIXELS(0x17c7), -1, PIXELS(0x0c69), 1);
+            break;
+        case 1:
+            Camera_MoveTo(PIXELS(0x17c9), -1, PIXELS(0x0c67), 1);
+            break;
+        case 2:
+            Camera_MoveTo(PIXELS(0x17c9), -1, PIXELS(0x0c69), 1);
+            break;
+        case 3:
+            Camera_MoveTo(PIXELS(0x17c7), -1, PIXELS(0x0c67), 1);
+            break;
+        }
+    }
 }
 
 /* Drives actor 8 through a series of position/threshold setup calls and

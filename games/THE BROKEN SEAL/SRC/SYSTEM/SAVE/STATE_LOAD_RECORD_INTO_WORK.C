@@ -4,8 +4,6 @@
 struct State_080208e4 {
     u8 padding0[4];
     s32 value;
-    u8 padding8[0x222];
-    u8 flag;
 };
 
 s32 Func_080056cc(void);
@@ -18,9 +16,9 @@ extern char Value_0000000a;
 extern char Value_0000000c;
 extern char Data_02000000;
 extern s16 Data_02002004;
-extern volatile struct State_080208e4 Data_02000240;
+extern struct State_080208e4 Data_02000240;
 extern s32 Data_03001c9c;
-extern volatile u8 Data_03001d08;
+extern u8 Data_03001d08;
 extern s16 Data_03001d24;
 
 s32 SaveState_LoadRecordIntoWork(s32 arg)
@@ -49,11 +47,7 @@ s32 SaveState_LoadRecordIntoWork(s32 arg)
                 ret = -2;
             } else {
                 Data_03001c9c = Data_02000240.value;
-                {
-                    volatile u8 *state = (volatile u8 *)&Data_02000240;
-
-                    Data_03001d08 = state[0x22a];
-                }
+                Data_03001d08 = ((u8 *)&Data_02000240)[0x22a];
                 Data_03001d24 = 0;
                 Data_02002004 = value;
             }

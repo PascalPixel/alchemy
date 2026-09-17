@@ -3,7 +3,7 @@
 
 extern volatile u32 gIw;
 extern volatile u32 gIw2;
-extern u8 *volatile gBattleWork;
+extern u8 *gBattleWork;
 extern volatile u32 gIw3;
 
 void WaitFrames(s32);

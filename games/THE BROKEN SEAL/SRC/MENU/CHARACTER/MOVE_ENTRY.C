@@ -1,10 +1,18 @@
 #include "TYPES.H"
 
-struct CharacterSelectorOrderState {
-    u8 unknown_000[0x208];
+struct CharacterSelectorState {
+    u8 padding000[0x24];
+    s32 screen_handle;
+    u8 padding028[0x0e4];
+    s32 selector_window;
+    u8 padding110[0x34];
+    u16 row_positions[8];
+    u8 padding154[0x0b4];
     u16 character_ids[8];
-    u8 unknown_218;
-    volatile u8 character_count;
+    u8 padding218;
+    u8 character_count;
+    u8 padding21a[6];
+    u16 flags;
 };
 
 s32 Func_08077150(s32 character_id);
@@ -13,8 +21,8 @@ s32 Func_08077168(s32 character_id);
 
 s32 CharacterSelector_MoveEntry(s32 selected_index, s32 direction)
 {
-    struct CharacterSelectorOrderState *state =
-        *(struct CharacterSelectorOrderState **)0x03001f2c;
+    struct CharacterSelectorState *state =
+        *(struct CharacterSelectorState **)0x03001f2c;
     u32 reordered[14];
     s32 index;
 
@@ -60,6 +68,6 @@ s32 CharacterSelector_MoveEntry(s32 selected_index, s32 direction)
     for (index = 0; index < state->character_count; index++) {
         Func_08077150(reordered[index]);
     }
-    *(u8 *)&state->character_count = Func_08077158(state->character_ids);
+    state->character_count = Func_08077158(state->character_ids);
     return 1;
 }

@@ -276,8 +276,9 @@ void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
 {
     u8 *unit = Func_08077008(unit_id);
     s32 slot_offset = item_id * 2 + 216;
-    s32 masked = *(volatile u16 *)(unit + slot_offset) & 0x1ff;
-    s32 mult = (*(volatile u16 *)(unit + slot_offset) >> 11) + 1;
+    s32 masked = *(u16 *)(unit + slot_offset) & 0x1ff;
+    u32 entry = *(u16 *)(unit + slot_offset);
+    s32 mult = (entry >> 11) + 1;
 
     if (window != 0) {
         s32 result;

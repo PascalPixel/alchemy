@@ -10,7 +10,7 @@ struct Runtime1e74 {
     u8 unknown_656[0x1a2];
     s32 value_7f8;
     s32 value_7fc;
-    volatile s32 phase;
+    s32 phase;
     s32 value_804;
     s32 value_808;
     u8 unknown_80c[0x14];

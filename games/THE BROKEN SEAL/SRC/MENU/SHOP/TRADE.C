@@ -65,24 +65,21 @@ extern u8 Value_00000ad0[];
 s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
 {
     struct ShopRuntime *menu = Data_03001f2c;
-    u8 *unit = (u8 *)BattleUnit_Get(unit_id);
-    s32 slot_offset = slot * 2 + 216;
-    s32 masked = *(volatile u16 *)(unit + slot_offset) & 0x1ff;
-    struct ItemDefinition *info = Item_Get(masked);
+    struct BattleUnit *unit = (struct BattleUnit *)BattleUnit_Get(unit_id);
+    s32 item_id = unit->inventory[slot] & 0x1ff;
+    struct ItemDefinition *info = Item_Get(item_id);
     s32 replaced;
     s32 menu_value;
 
-    if (*(volatile u16 *)(unit + slot_offset) & 0x200)
+    if (unit->inventory[slot] & 0x200)
         return 0;
 
-    if (Func_08077218(unit_id, masked) == 0)
+    if (Func_08077218(unit_id, item_id) == 0)
         return 0;
 
     replaced = Func_08077228(unit_id, info->type);
     if (replaced != -1) {
-        s32 old_offset = replaced * 2 + 216;
-        u16 old_raw = *(u16 *)(unit + old_offset);
-        struct ItemDefinition *old_info = Item_Get(old_raw);
+        struct ItemDefinition *old_info = Item_Get(unit->inventory[replaced]);
 
         if (old_info->flags & 2)
             return 0;

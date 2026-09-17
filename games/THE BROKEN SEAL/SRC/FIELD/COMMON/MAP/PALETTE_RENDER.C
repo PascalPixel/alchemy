@@ -3,7 +3,7 @@
 static __inline__ void CopyEntry(u8 *map, u8 *destination)
 {
     u32 palette = *(u16 *)map;
-    volatile u16 *colors = (volatile u16 *)0x02010000;
+    u16 *colors = (u16 *)0x02010000;
 
     colors += palette * 2;
     *(u16 *)destination = *colors++;

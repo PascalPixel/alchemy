@@ -9,11 +9,11 @@ struct State_080935b0 {
     s32 fourth;
 };
 
-extern struct State_080935b0 *volatile gCam;
+extern struct State_080935b0 *gCam;
 
 void Map_SetWorkFourValues(s32 first, s32 second, s32 third, s32 fourth)
 {
-    volatile struct State_080935b0 *work = gCam;
+    struct State_080935b0 *work = gCam;
 
     work->first = first;
     work->second = second;

@@ -1,13 +1,12 @@
 #include "TYPES.H"
+#include "FIELD_EFFECT.H"
 
-void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(void *arg0)
+void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(union FieldObject *object)
 {
-    u8 *a = arg0;
-
-    *(volatile s32 *)(a + 0x08) += *(s32 *)(a + 0x44);
-    *(volatile s32 *)(a + 0x0C) += *(s32 *)(a + 0x48);
-    *(volatile s32 *)(a + 0x10) += *(s32 *)(a + 0x4C);
-    *(volatile s32 *)(a + 0x18) += *(s32 *)(a + 0x30);
-    *(volatile s32 *)(a + 0x1C) += *(s32 *)(a + 0x34);
-    *(volatile u16 *)(*(u8 **)(a + 0x50) + 0x1E) += *(u16 *)(a + 0x64);
+    object->effect.x += object->effect.velocity_x;
+    object->effect.y += object->effect.velocity_y;
+    object->effect.z += object->effect.velocity_z;
+    object->effect.scale_x += object->effect.scale_rate_x;
+    object->effect.scale_y += object->effect.scale_rate_y;
+    object->effect.sprite->rotation += object->effect.spin;
 }

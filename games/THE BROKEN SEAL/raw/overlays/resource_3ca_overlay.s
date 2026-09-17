@@ -1,5 +1,5 @@
 .syntax unified
-.include "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC"
+.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
 	.set sub_02001172, 0x02001172
 	.set sub_020013ce, 0x020013ce

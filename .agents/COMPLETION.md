@@ -69,7 +69,7 @@ hand-authored machine interface.
 
 Pascal authorizes DONE credit for reconstructed fixed overlay veneers. Use the
 shared `overlay_veneer` assembly macro in
-`games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC`, preserving each target word and
+`games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC`, preserving each target word and
 bank position. Verified entry and import lists live in the overlay's existing
 Japanese-named `SRC` directory as `ENTRY.INC` and `IMPORT.INC`; retained
 assembly includes them at their original positions. Each credited record uses

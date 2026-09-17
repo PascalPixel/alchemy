@@ -875,7 +875,7 @@ mod export_tests {
         let text = export_overlay_source(
             &image,
             OVERLAY_BASE,
-            "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC",
+            "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC",
             2,
         )
         .unwrap();

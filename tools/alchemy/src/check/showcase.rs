@@ -365,7 +365,7 @@ mod tests {
 
     const CLEAN_SOURCE: &str = "#include \"SCENE.H\"\n\n/* The keeper greets the party. */\nconst s16 gKeeperLines[] = { 1, 2 };\n\nvoid Keeper_Talk(void)\n{\n    Scene_Say(KEEPER_GREETING);\n}\n";
     const CLEAN_HEADER: &str = "#ifndef SCENE_H\n#define SCENE_H\n\nenum { KEEPER_GREETING = 0x1234 };\n#define TILES(count) ((count) << 4)\nvoid Scene_Say(s32 message);\n\n#endif\n";
-    const CLEAN_LISTING: &str = ".syntax unified\n.include \"games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC\"\n\t.thumb\n\t.global Overlay_02000000\nOverlay_02000000:\n.include \"games/THE BROKEN SEAL/SRC/FIELD/KEEP/ENTRY.INC\"\nAlchemyC_02000030:\n\t.space 0x12\n\t.balign 4, 0\n.include \"games/THE BROKEN SEAL/SRC/FIELD/KEEP/IMPORT.INC\"\nAlchemyData_02000100:\n\t.space 0x20\n";
+    const CLEAN_LISTING: &str = ".syntax unified\n.include \"games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC\"\n\t.thumb\n\t.global Overlay_02000000\nOverlay_02000000:\n.include \"games/THE BROKEN SEAL/SRC/FIELD/KEEP/ENTRY.INC\"\nAlchemyC_02000030:\n\t.space 0x12\n\t.balign 4, 0\n.include \"games/THE BROKEN SEAL/SRC/FIELD/KEEP/IMPORT.INC\"\nAlchemyData_02000100:\n\t.space 0x20\n";
 
     struct Fixture {
         directory: tempfile::TempDir,

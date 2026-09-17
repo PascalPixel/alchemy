@@ -4,14 +4,16 @@
 
 Each game has one physical root: `games/THE BROKEN SEAL` (build IDs `tbs-ja`,
 `tbs-en` and the other edition-qualified targets) and `games/THE LOST AGE`
-(`tla-` build IDs). TLA keeps its current layout until it is independently
-mapped. These directory choices are our reconstruction, not recovered Camelot
-names. Keep a shallow module tree: no folder per function, and no sorting of
+(`tla-` build IDs). Both games use the same shallow subsystem vocabulary, but
+a game gains a directory only when recovered source or assets need it; empty
+symmetry would claim structure the ROM has not proved. These directory choices
+are our reconstruction, not recovered Camelot names. Keep a shallow module
+tree: no folder per function, and no sorting of
 whole scenes into actor, dialogue or story categories. A scene's actors,
 dialogue and events belong with its area or loadable module. Moving a file does
 not change its translation unit, overlay identity, compiler route or credit.
 
-TBS `SRC/` responsibilities:
+Each game's `SRC/` responsibilities:
 
 | Folder | Responsibility |
 | --- | --- |
@@ -29,7 +31,10 @@ TBS `SRC/` responsibilities:
 
 Shared headers belong in `INCLUDE`. Use `COMMON` for genuinely common runtime
 code and interfaces, not a generic `SHARED` catch-all; common engine code has
-one owner. Each overlay has its own workspace. A separately loaded overlay used
+one owner. Game-wide overlay mechanics belong under `SYSTEM`, while common
+field table definitions belong under `FIELD/COMMON`; do not create a generic
+top-level `SRC/COMMON` bucket. Code proved identical between both games lives
+under `games/COMMON/SRC/<subsystem>`. Each overlay has its own workspace. A separately loaded overlay used
 by several locations still has its own named directory and compilation
 identity; its `FIELD/COMMON/<locations>/` directory groups those overlays, not
 merged engine code. Area code belongs in the directory the `atlas_destination`

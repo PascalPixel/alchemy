@@ -81,7 +81,7 @@ impl DecompTarget {
     }
     /// The game's shared `overlay_veneer` macro, included by every overlay.
     pub fn overlay_macro(&self) -> String {
-        format!("{}/COMMON/OVERLAY.INC", self.source_dir)
+        format!("{}/SYSTEM/OVERLAY.INC", self.source_dir)
     }
 }
 
@@ -193,7 +193,7 @@ mod tests {
         assert_eq!(tla.game_dir(), "games/THE LOST AGE");
         assert_eq!(
             tla.overlay_macro(),
-            "games/THE LOST AGE/SRC/COMMON/OVERLAY.INC"
+            "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
         );
         assert_eq!(tla.overlay_entry_veneers, 7);
         assert_eq!(target_for(DEFAULT_TARGET).overlay_entry_veneers, 6);

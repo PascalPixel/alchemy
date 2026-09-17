@@ -1,5 +1,5 @@
 .syntax unified
-.include "games/THE LOST AGE/SRC/COMMON/OVERLAY.INC"
+.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
 	.set sub_020007d2, 0x020007d2
 	.set sub_02003200, 0x02003200
@@ -6014,5 +6014,5 @@ AlchemyC_02002f84:
 	add	sp, #8
 	pop	{r5, r6, pc}
 .include "games/THE LOST AGE/SRC/FIELD/IDEJIMA/IMPORT.INC"
-.include "games/THE LOST AGE/SRC/COMMON/FIELD_TABLE.INC"
+.include "games/THE LOST AGE/SRC/FIELD/COMMON/FIELD_TABLE.INC"
 .include "games/THE LOST AGE/SRC/FIELD/IDEJIMA/FIELD_DATA.INC"

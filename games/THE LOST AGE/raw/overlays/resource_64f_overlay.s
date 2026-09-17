@@ -1,5 +1,5 @@
 .syntax unified
-.include "games/THE LOST AGE/SRC/COMMON/OVERLAY.INC"
+.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
 	.set sub_02000426, 0x02000426
 	.set sub_02000a84, 0x02000a84

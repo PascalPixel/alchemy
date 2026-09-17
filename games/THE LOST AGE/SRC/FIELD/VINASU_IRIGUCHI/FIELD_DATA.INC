@@ -1,5 +1,5 @@
 /* VINASU_IRIGUCHI field data: typed from resource_64d (runtime 0x200ad20-0x200b050).
-   Assembled through the macros of games/THE LOST AGE/SRC/COMMON/FIELD_TABLE.INC. */
+   Assembled through the macros of games/THE LOST AGE/SRC/FIELD/COMMON/FIELD_TABLE.INC. */
 
 FieldEntrances_02002d20:
 	field_entrance 0, -1, 172, 0, 149, 0x4000, -1, -1, -1, -1

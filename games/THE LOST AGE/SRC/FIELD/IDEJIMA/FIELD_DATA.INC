@@ -1,5 +1,5 @@
 /* IDEJIMA field data: typed from resource_650 (runtime 0x200b330-0x200b988).
-   Assembled through the macros of games/THE LOST AGE/SRC/COMMON/FIELD_TABLE.INC. */
+   Assembled through the macros of games/THE LOST AGE/SRC/FIELD/COMMON/FIELD_TABLE.INC. */
 
 FieldActorScript_02003330:
 	actor_op 0x27, 0x00000002

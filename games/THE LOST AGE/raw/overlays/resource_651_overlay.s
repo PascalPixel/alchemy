@@ -1,5 +1,5 @@
 .syntax unified
-.include "games/THE LOST AGE/SRC/COMMON/OVERLAY.INC"
+.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
 	.set sub_02000cfe, 0x02000cfe
 	.set sub_02000d3a, 0x02000d3a
@@ -1537,5 +1537,5 @@ Overlay_02000000:
 	bl	sub_0200194c
 	pop	{pc}
 .include "games/THE LOST AGE/SRC/FIELD/DAIRA_MURA/IMPORT.INC"
-.include "games/THE LOST AGE/SRC/COMMON/FIELD_TABLE.INC"
+.include "games/THE LOST AGE/SRC/FIELD/COMMON/FIELD_TABLE.INC"
 .include "games/THE LOST AGE/SRC/FIELD/DAIRA_MURA/FIELD_DATA.INC"

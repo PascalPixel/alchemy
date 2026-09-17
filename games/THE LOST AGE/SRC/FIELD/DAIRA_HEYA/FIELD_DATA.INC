@@ -1,5 +1,5 @@
 /* DAIRA_HEYA field data: typed from resource_652 (runtime 0x2008e04-0x2009ce4).
-   Assembled through the macros of games/THE LOST AGE/SRC/COMMON/FIELD_TABLE.INC. */
+   Assembled through the macros of games/THE LOST AGE/SRC/FIELD/COMMON/FIELD_TABLE.INC. */
 
 FieldFlaggedIds_02000e04:
 	field_flagged_id 0x000a, 0x220

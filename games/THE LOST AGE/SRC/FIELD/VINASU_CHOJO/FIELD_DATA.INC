@@ -1,5 +1,5 @@
 /* VINASU_CHOJO field data: typed from resource_64e (runtime 0x2009ce4-0x200a5ac).
-   Assembled through the macros of games/THE LOST AGE/SRC/COMMON/FIELD_TABLE.INC. */
+   Assembled through the macros of games/THE LOST AGE/SRC/FIELD/COMMON/FIELD_TABLE.INC. */
 
 FieldActorScript_02001ce4:
 	actor_wait 1

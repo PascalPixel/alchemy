@@ -1,5 +1,5 @@
 .syntax unified
-.include "games/THE LOST AGE/SRC/COMMON/OVERLAY.INC"
+.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
 	.set sub_020028c2, 0x020028c2
 	.set sub_02002924, 0x02002924
@@ -5063,5 +5063,5 @@ AlchemyC_02000308:
 	.4byte 0xa3f2ef0e
 	.4byte 0xf09a5f2b
 	.4byte 0x00003efe
-.include "games/THE LOST AGE/SRC/COMMON/FIELD_TABLE.INC"
+.include "games/THE LOST AGE/SRC/FIELD/COMMON/FIELD_TABLE.INC"
 .include "games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/FIELD_DATA.INC"

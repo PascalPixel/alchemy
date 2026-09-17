@@ -1,5 +1,5 @@
 /* DAIRA_MURA field data: typed from resource_651 (runtime 0x2008d80-0x2009910).
-   Assembled through the macros of games/THE LOST AGE/SRC/COMMON/FIELD_TABLE.INC. */
+   Assembled through the macros of games/THE LOST AGE/SRC/FIELD/COMMON/FIELD_TABLE.INC. */
 
 FieldFlaggedIds_02000d80:
 	field_flagged_id 0x0016, 0x216

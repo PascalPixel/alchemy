@@ -1663,7 +1663,7 @@ pub fn assemble_overlay_raw(source: &OverlaySource, base: i64) -> Result<Vec<u8>
 fn shared_src_veneer_macro_resolves_from_temporary_assembly() {
     let source = OverlaySource::text(concat!(
         ".syntax unified\n.thumb\n",
-        ".include \"games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC\"\n",
+        ".include \"games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC\"\n",
         "overlay_veneer 0x08000000\noverlay_veneer 0x08000001\n"
     ));
     assert_eq!(

@@ -626,7 +626,7 @@ fn runtime_credit_for(
     Ok((intersect(&normalize(&main), main_exec), overlays))
 }
 #[cfg(test)]
-const OVERLAY_VENEER_MACRO: &str = "games/THE BROKEN SEAL/SRC/COMMON/OVERLAY.INC";
+const OVERLAY_VENEER_MACRO: &str = "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC";
 
 /// Original assembly credit requires evidence and a proof or object.
 fn assembly_credit(entry: &Value) -> bool {

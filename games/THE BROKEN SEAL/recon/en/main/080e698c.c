@@ -16,7 +16,7 @@
  * target+8 and (s16)target+36) rather than looping over a member list.
  *
  * Func_080072ec is the r2-slot `_call_via_rN` veneer at
- * games/THE BROKEN SEAL/asm/080072e4.s (0x080072e4 + 4*2).  The retained assembly loads
+ * games/THE BROKEN SEAL/raw/080072e4.s (0x080072e4 + 4*2).  The retained assembly loads
  * 0x030001D8 -- the same relocated IWRAM square-root routine documented in
  * games/THE BROKEN SEAL/src/math/fixed_sqrt.c and games/THE BROKEN SEAL/src/unidentified/main/
  * battle/battle_owner_52.c -- into r2 immediately before the call, so it is

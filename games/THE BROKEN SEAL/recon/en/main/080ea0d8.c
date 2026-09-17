@@ -28,7 +28,7 @@
  *
  * `Func_080072f0`, `Func_080072f4`, `Func_080072f8`, `Func_08007308` and
  * `Func_0800730c` are NOT real callees: they are the r3/r4/r5/r9/sl entries of
- * the `_call_via_rN` trampoline bundle at games/THE BROKEN SEAL/asm/080072e4.s
+ * the `_call_via_rN` trampoline bundle at games/THE BROKEN SEAL/raw/080072e4.s
  * (0x080072e4 + 4*N).  Every one of those `bl` sites is an indirect call
  * through whatever function pointer the compiler happened to place in that
  * register.  Here they are only ever the two rectangle blitters that
@@ -162,7 +162,7 @@ void Func_08004c1c(s32 angle);
 void Func_08004c6c(s32 angle);
 /* Graphics_PrepareTransferInIwramWork */
 void Func_080051d8(void *work, void *out);
-/* _call_via_r3 thunk, games/THE BROKEN SEAL/asm/080072e4.s */
+/* _call_via_r3 thunk, games/THE BROKEN SEAL/raw/080072e4.s */
 void Func_080072f0(void *dest, s32 arg1, s32 arg2, void *routine);
 void Func_08009008(void *object, PlaceWork *place, void *scale, s32 flag);
 void Func_08009020(void *object, s32 order);

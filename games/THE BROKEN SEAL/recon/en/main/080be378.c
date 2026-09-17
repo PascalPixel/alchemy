@@ -4,8 +4,8 @@
 /*
  * Split function reconstructed as one whole owner per CONTRIBUTING.md's
  * "Split functions" section. Real entry/prologue at 0x080be378, real
- * epilogue at the tail of games/THE BROKEN SEAL/asm/080bef88.s (0x080bf1e8), spanning
- * 3696 bytes across games/THE BROKEN SEAL/asm/{080be378,080be76c,080beb08,080bef88}.s.
+ * epilogue at the tail of games/THE BROKEN SEAL/raw/080bef88.s (0x080bf1e8), spanning
+ * 3696 bytes across games/THE BROKEN SEAL/raw/{080be378,080be76c,080beb08,080bef88}.s.
  * See games/THE BROKEN SEAL/recon/en/dossiers.json#main:080be378 for the full map.
  *
  * All `bl sub_080bec5c` / `bl sub_080bec8a` / `bl sub_080bee00` / `bl
@@ -80,14 +80,14 @@ extern s32 Func_08077178(s16 id, u8 a, u8 b, u8 c, s32 mode);
 
 /*
  * Literal-pool constants, resolved from ground truth per CONTRIBUTING.md's
- * "Split functions" note: assembled games/THE BROKEN SEAL/asm/080be378.s and
- * games/THE BROKEN SEAL/asm/080be76c.s standalone (both already 4-byte aligned at their
+ * "Split functions" note: assembled games/THE BROKEN SEAL/raw/080be378.s and
+ * games/THE BROKEN SEAL/raw/080be76c.s standalone (both already 4-byte aligned at their
  * real load address, no parity padding needed), objdumped the result, and
  * for every `ldr rN, [pc, #imm]` whose target lands past the file's own
  * .text (i.e. in the gap before the next region) read the word straight out
  * of roms/tbs-en.gba at (target_address - 0x08000000). The head function's
  * four actor-status flag offsets and their four message ids came from
- * LiteralPool_080be738 (games/THE BROKEN SEAL/asm/080be378.s, right after the head's own
+ * LiteralPool_080be738 (games/THE BROKEN SEAL/raw/080be378.s, right after the head's own
  * code); Region_080be76c has its own separate, later literal pool holding
  * its own message ids and the tier==1/tier==4 compare/offset constants.
  */
@@ -139,7 +139,7 @@ extern s32 Func_08077178(s16 id, u8 a, u8 b, u8 c, s32 mode);
 
 /*
  * Region_080beb08's four text-pointer placeholders, resolved from ground
- * truth: assembled games/THE BROKEN SEAL/asm/080beb08.s standalone (already 4-byte
+ * truth: assembled games/THE BROKEN SEAL/raw/080beb08.s standalone (already 4-byte
  * aligned at its real load address 0x080beb08 mod 4 == 0, no parity padding
  * needed), objdumped the result with --adjust-vma=0x080beb08, and for each
  * `ldr rN, [pc, #imm]` whose resolved target lands in the region's own
@@ -235,7 +235,7 @@ void Func_080be378(u8 *req, u8 *tgt)
      * is what the previous draft's sparse `switch(tier){case 0: case 1:
      * ...}` produced. Every case below is spelled out individually per
      * JumpTable_080be570's 100 literal entries in
-     * games/THE BROKEN SEAL/asm/080be378.s (9 named targets, a 90-entry `.rept` block
+     * games/THE BROKEN SEAL/raw/080be378.s (9 named targets, a 90-entry `.rept` block
      * that all point at 0x080bee00, and a final distinct entry for index
      * 99). `default` covers tier < 0 or tier > 99, which is not reachable
      * for any real ability-tier value but is exactly what the reference's
@@ -302,7 +302,7 @@ L_080be700:
 L_080be76c:
     /*
      * Ground-truth fix (this pass): standalone objdump of
-     * games/THE BROKEN SEAL/asm/080be76c.s shows `ldr r4,[sp,#12]` (actor) feeding
+     * games/THE BROKEN SEAL/raw/080be76c.s shows `ldr r4,[sp,#12]` (actor) feeding
      * Func_08077160's argument, and its r0 return value moved straight into
      * fp and used as the Func_080be18c argument -- the prior draft had
      * mislabeled the call argument as req+0 and separately recomputed
@@ -375,7 +375,7 @@ L_080be888:
         {
             /*
              * Ground-truth fix (this pass): standalone-assembling
-             * games/THE BROKEN SEAL/asm/080be76c.s and objdumping it shows this array
+             * games/THE BROKEN SEAL/raw/080be76c.s and objdumping it shows this array
              * read is `ldr r4,[sp,#12]` (the actor stack-slot pointer,
              * dereferenced) not `mov rX,sl`/r10 (req) -- the prior draft
              * had all three occurrences of this "+216+slotIdx*2" array
@@ -454,7 +454,7 @@ L_080be984:
      * Exact/range classification of `abilityId` selecting one of many
      * distinct UI text-resource ids, all converging on L_080be7ca.
      * Reconstructed instruction-for-instruction from
-     * games/THE BROKEN SEAL/asm/080be76c.s (0x080be9ce-0x080bea9a) with every
+     * games/THE BROKEN SEAL/raw/080be76c.s (0x080be9ce-0x080bea9a) with every
      * literal-pool constant resolved from that region's own pool (see
      * games/THE BROKEN SEAL/recon/en/dossiers.json#main:080be378's attempt log for the
      * standalone-assemble-and-objdump derivation). K1..K4_ABILITY_ID are
@@ -579,7 +579,7 @@ L_080bec90:
     /* ---- case tier==6, address 0x080becea (not yet isolated separately;
      * the retained region for this case falls between the tier==5 tail
      * above and the internal L_080bee00 label below in
-     * games/THE BROKEN SEAL/asm/080beb08.s -- treated as an alias of L_080bee00's entry
+     * games/THE BROKEN SEAL/raw/080beb08.s -- treated as an alias of L_080bee00's entry
      * pending exact instruction-range isolation.
      */
 L_080becea:
@@ -702,7 +702,7 @@ L_080befb4_shared:
      * ---- buff/debuff classification (0x080befb4-0x080bf043) and the
      * elemental-table / status-code / sub_080772b8 flag-bit tail
      * (0x080bf044-0x080bf1a8), all standalone-assembled and objdumped from
-     * games/THE BROKEN SEAL/asm/080bef88.s against its real load address 0x080bef88 to
+     * games/THE BROKEN SEAL/raw/080bef88.s against its real load address 0x080bef88 to
      * get exact instruction offsets (see games/THE BROKEN SEAL/recon/en/dossiers.json#main:080be378
      * for the full worked-out addresses). This is the domain notes' "clamp/
      * finalize" continuation reached from every sub_080bee00 convergence
@@ -858,8 +858,8 @@ L_080bf1a8:
 
     /*
      * ---- shared internal veneer targets, addresses 0x080bec5c / 0x080bec8a
-     * (dead-unit tail-call / early-return, inside games/THE BROKEN SEAL/asm/080beb08.s)
-     * and 0x080bf1d4 / 0x080bf1d6 (inside games/THE BROKEN SEAL/asm/080bef88.s,
+     * (dead-unit tail-call / early-return, inside games/THE BROKEN SEAL/raw/080beb08.s)
+     * and 0x080bf1d4 / 0x080bf1d6 (inside games/THE BROKEN SEAL/raw/080bef88.s,
      * immediately before the real epilogue -- confirmed by the standalone
      * objdump to land right at the `movs r0,#0 / add sp,#48` epilogue
      * entry, i.e. these two skip the L_080bf1a8 status-remap check

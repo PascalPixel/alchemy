@@ -10,7 +10,7 @@
  * Value_XXXXXXXX effect-id idiom and the Func_080072f4/Func_080072f0
  * trampoline calls all follow those files.  Func_080072f4 and
  * Func_080072f0 are not real callees: they are the r4 and r3 entries of
- * the _call_via_rN bundle at games/THE BROKEN SEAL/asm/080072e4.s, so every
+ * the _call_via_rN bundle at games/THE BROKEN SEAL/raw/080072e4.s, so every
  * Func_080072f4 site here is an indirect call through one of the two
  * generated rectangle-blit routines (heap kinds 46 and 47).
  *

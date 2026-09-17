@@ -55,10 +55,10 @@ responsibilities in another wrapper or registry.
 | `alchemy bootstrap` | Build and install a missing compiler toolchain from pinned sources. `--check` validates without building; `--build` rebuilds; `--from BUNDLE` imports an admitted distribution. |
 | `alchemy build` | `compilers`, `asm`, `claimed`, `full`/`rom`, `assets` and `allocator`. Compiler source builds do not install a distribution. The allocator stage generates canonical GCC dumps for Psynergy inspection. `assets --network` draws map networks and assembles worlds ([ASSETS](ASSETS.md)). |
 | `alchemy verify` | Run the staged repository's verification contract. |
-| `alchemy coverage` | Rebuild and publish project coverage. |
-| `alchemy check` | `publication`, `commit-progress`, `owners`, `tla-owners`, `retained`, `coverage`, `integrate`, `no-asm`, `plan-tails`, `overlay-data`, `progress`, `routes`, `showcase` and `siblings`: repository contracts, not portable file operations. |
+| `alchemy coverage` | Rebuild and publish project coverage. `audit --target TARGET` inventories every ROM resource-directory pointer, physical spans only for byte-reproduced compressed streams, candidate executable overlay spans from canonical streams and assembler source-line evidence, and the bounded main image as the exact complement of ROM-verified asset regions. Raw pointers are hierarchical and never treated as file extents. `--calibrate` must reproduce the completed TBS audit before any executable method can become authoritative. |
+| `alchemy check` | `publication`, `commit-progress`, `source-tracking`, `owners`, `tla-owners`, `retained`, `coverage`, `integrate`, `no-asm`, `plan-tails`, `overlay-data`, `progress`, `routes`, `showcase` and `siblings`: repository contracts, not portable file operations. |
 | `alchemy cross-edition` | Compare reviewed owner correspondence across Golden Sun editions. |
-| `alchemy overlay` | `adopt`, `park` and `audit`: Golden Sun loader and resource integration. |
+| `alchemy overlay` | `adopt`, `park`, `audit` and `export`: Golden Sun loader, resource integration and byte-identical retained-source export. |
 | `alchemy dashboard` | Serve project coverage. |
 | `alchemy format` | Format native JSON; `--check` gates formatting and uppercase names. |
 
@@ -86,7 +86,7 @@ regression coverage.
 layout, compact records and packed short data tuples. Long individual strings
 stay intact; field order, values and recorded binary boundaries are preserved.
 
-`psynergy convert FORMAT INPUT OUTPUT [options]` supports `words2bin`,
+`psynergy convert FORMAT INPUT OUTPUT [options]` supports `decode-lz`, `words2bin`,
 `pairs2bin`, `tilemap2bin`, `png2bpp4`, `bpp42png`, `png2bpp8`, `bpp82png`,
 `png2bgr555`, `wav2pcm8` and `pcm82wav`. Bpp formats are GBA tile-major pixels,
 BGR555 is little-endian palette data, and PCM8 is signed sample data. Reverse
@@ -103,8 +103,9 @@ files and folders, the same hierarchy as the README's progress figure; it has
 no music player. Click a folder to open it and use Back to return. Addresses
 belong in hover details, not tile captions. Labels in both use one 13px system
 sans-serif font that does not scale with the layout. No game font is served or
-embedded. The Lost Age's bytes that no audit classifies yet show as one
-unlabelled tile inside its folder.
+embedded. The Lost Age executable audit separates code still represented as
+assembly from cartridge data; exact C takes precedence where independently
+proved. This display classification never grants DONE credit by itself.
 
 `make dashboard-service-install` installs its macOS login service;
 `make dashboard-restart` restarts it. Coverage inputs are watched, but the

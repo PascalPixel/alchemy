@@ -90,7 +90,7 @@ const PRODUCTS: [(CompilerTarget, u64, &str, &str, &str, usize); 2] = [
         CompilerTarget::Tbs,
         0x0080_0000,
         "games/THE BROKEN SEAL/SRC",
-        "games/THE BROKEN SEAL/asm",
+        "games/THE BROKEN SEAL/raw",
         "games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE.JSON",
         6,
     ),
@@ -98,7 +98,7 @@ const PRODUCTS: [(CompilerTarget, u64, &str, &str, &str, usize); 2] = [
         CompilerTarget::Tla,
         0x0100_0000,
         "games/THE LOST AGE/SRC",
-        "games/THE LOST AGE/asm",
+        "games/THE LOST AGE/raw",
         "games/THE LOST AGE/SRC/SYSTEM/RESOURCE.JSON",
         7,
     ),
@@ -170,7 +170,7 @@ fn self_test() -> Result<String, String> {
             || !target.game_dir().starts_with(root.trim_end_matches('/'))
             || !target.overlay_macro().starts_with(root)
             || target.overlay_assembly("resource_649")
-                != format!("{root}asm/overlays/resource_649_overlay.s")
+                != format!("{root}raw/overlays/resource_649_overlay.s")
         {
             return Err(format!("{id} does not have isolated relative paths"));
         }

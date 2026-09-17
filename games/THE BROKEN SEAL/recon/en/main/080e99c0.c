@@ -43,7 +43,7 @@
  *
  * `Func_080072f0`, `Func_080072f4`, `Func_080072fc` and `Func_08007308` are
  * NOT real callees: they are the r3/r4/r6/r9 entries of the `_call_via_rN`
- * trampoline bundle at games/THE BROKEN SEAL/asm/080072e4.s (0x080072e4 + 4*N), so every
+ * trampoline bundle at games/THE BROKEN SEAL/raw/080072e4.s (0x080072e4 + 4*N), so every
  * one of those `bl` sites is an indirect call through whatever function
  * pointer the compiler placed in that register.  Here the r4/r6/r9 sites are
  * only ever the two rectangle blitters that Func_080ed408(46, ...) and
@@ -142,7 +142,7 @@ void Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 /* Random16 */
 s32 Func_08004458(void);
-/* _call_via_r3 thunk, games/THE BROKEN SEAL/asm/080072e4.s */
+/* _call_via_r3 thunk, games/THE BROKEN SEAL/raw/080072e4.s */
 void Func_080072f0(void *dest, s32 arg1, s32 arg2, void *routine);
 void Func_080b5088(s32 member, s32 arg);
 void Func_080b50e8(s32 id);

@@ -14,7 +14,7 @@
  * Func_08004278 0x080CD261 callback pair and the Func_080e155c /
  * Func_080cd52c / Func_080030f8 frame tail are all shared with them.  Every
  * constant, offset and branch below was read from this owner's own reference
- * disassembly (games/THE BROKEN SEAL/asm/080d4604.s), not carried over from a template.
+ * disassembly (games/THE BROKEN SEAL/raw/080d4604.s), not carried over from a template.
  *
  * Behaviour: the owner takes the effect-state object plus a small `kind`
  * selector.  kind 0 and 1 use fixed anchor coordinates; any other kind

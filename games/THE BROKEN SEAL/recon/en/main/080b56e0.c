@@ -3,7 +3,7 @@
 
 /*
  * Draft reconstruction, not yet verified byte-exact against
- * games/THE BROKEN SEAL/asm/080b56e0.s. Traced directly from the retained assembly;
+ * games/THE BROKEN SEAL/raw/080b56e0.s. Traced directly from the retained assembly;
  * see games/THE BROKEN SEAL/recon/en/dossiers.json#main:080b56e0 for the evidence log.
  *
  * Structurally: an outer loop polls ADDR_03001AE8 (held-key level bits)
@@ -24,7 +24,7 @@
  * Battle_ReservedNoOp2A08 (games/THE BROKEN SEAL/src/battle/runtime/
  * reserved_no_op_a.c); B (or the sticky `held` flag it sets) writes 5 to
  * *(u8*)0x0200046b every pass once triggered once. When val2 changes,
- * Func_08077098 (a plain far-call veneer, see games/THE BROKEN SEAL/asm/
+ * Func_08077098 (a plain far-call veneer, see games/THE BROKEN SEAL/raw/
  * 08077098.s) and Func_080b5368(val2) run once.
  *
  * The unusual `(u16 *)(0x0200046b - 85)` pointer is deliberate: the

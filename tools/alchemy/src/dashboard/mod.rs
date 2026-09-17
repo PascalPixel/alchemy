@@ -18,7 +18,7 @@ const STYLES: &str = include_str!("style.css");
 const TREES: [(&str, &str); 1] = [("rom", "ROM contents")];
 const COVERAGE_DIRS: [&str; 15] = [
     "games/THE BROKEN SEAL/locations.tsv",
-    "games/THE BROKEN SEAL/asm",
+    "games/THE BROKEN SEAL/raw",
     "games/THE BROKEN SEAL/SOURCE.JSON",
     "games/THE BROKEN SEAL/SRC/GRAPHICS",
     "games/THE BROKEN SEAL/SOUND",

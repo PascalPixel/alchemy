@@ -3016,7 +3016,7 @@ fn expand_series(
                     // other game names its own overlay directory.
                     let prefix = match series.get("source_prefix") {
                         Some(prefix) => json_string(prefix, "overlay series source prefix")?,
-                        None => "games/THE BROKEN SEAL/asm/overlays/resource_",
+                        None => "games/THE BROKEN SEAL/raw/overlays/resource_",
                     };
                     let directory = format!("{prefix}{name}");
                     entries
@@ -5240,8 +5240,8 @@ fn stage_stamp_with_signature(
             "GRAPHICS",
             "SOUND",
             "TEXT",
-            "asm/overlays",
-            "asm/battle",
+            "raw/overlays",
+            "raw/battle",
         ] {
             stamp_files(
                 root,
@@ -5341,8 +5341,8 @@ fn asset_stamp_tracks_sound_and_included_overlay_sources() {
     for name in [
         "SRC/SYSTEM",
         "SOUND/SEQUENCE/out",
-        "asm/overlays",
-        "asm/battle",
+        "raw/overlays",
+        "raw/battle",
         "SRC",
         "recon",
     ] {
@@ -5352,8 +5352,8 @@ fn asset_stamp_tracks_sound_and_included_overlay_sources() {
     let sound = root.join("games/THE BROKEN SEAL/SOUND/SEQUENCE/SEQUENCES.TSV");
     let header = root.join("games/THE BROKEN SEAL/SRC/shared.h");
     let unit = root.join("games/THE BROKEN SEAL/recon/translation-units.json");
-    let overlay = root.join("games/THE BROKEN SEAL/asm/overlays/fixture.s");
-    let battle = root.join("games/THE BROKEN SEAL/asm/battle/fixture.s");
+    let overlay = root.join("games/THE BROKEN SEAL/raw/overlays/fixture.s");
+    let battle = root.join("games/THE BROKEN SEAL/raw/battle/fixture.s");
     for path in [&manifest, &sound, &header, &unit, &overlay, &battle] {
         fs::write(path, "before").unwrap();
     }

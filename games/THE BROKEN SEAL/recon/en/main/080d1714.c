@@ -5,7 +5,7 @@
 /*
  * Battle-presentation scene at 0x080d1714, a 400-frame sequence driven from
  * the shared cell window at Data_03001eec.  Structure recovered against
- * games/THE BROKEN SEAL/asm/080d1714.s; the neighbouring draft
+ * games/THE BROKEN SEAL/raw/080d1714.s; the neighbouring draft
  * games/THE BROKEN SEAL/recon/en/main/080d1350.c supplied the cell window, the
  * EffectRuntime offsets (0x7780 display pair, 0x77a8 impact mode, 0x7824
  * ready flag, 0x7828 argument pointer) and the indirect draw/copy idioms.

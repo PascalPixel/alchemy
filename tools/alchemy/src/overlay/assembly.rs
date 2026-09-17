@@ -11,6 +11,13 @@ const TARGET: &str = r"\b(b|bl|beq|bne|bcs|bcc|bmi|bpl|bvs|bvc|bhi|bls|bge|blt|b
 const ERRLINE: &str = r":(\d+): Error:";
 type Row = (i64, String);
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ExecutableSpan {
+    pub start: i64,
+    pub end: i64,
+    pub kind: &'static str,
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -32,9 +39,50 @@ mod tests {
         let text = build_region_source(&bytes, OVERLAY_BASE).unwrap();
         assert!(text.contains("push") && text.contains("pop"));
         assert_eq!(
+            executable_spans(&bytes, OVERLAY_BASE)
+                .unwrap()
+                .iter()
+                .map(|span| span.end - span.start)
+                .sum::<i64>(),
+            bytes.len() as i64
+        );
+        assert_eq!(
             assemble_overlay(&OverlaySource::text(text), OVERLAY_BASE).unwrap(),
             bytes
         );
+    }
+
+    #[test]
+    fn trusted_switches_require_the_gcc_register_chain() {
+        let mut image = vec![0u8; 0x60];
+        image[0..4].copy_from_slice(&[0x00, 0x4c, 0x20, 0x47]);
+        image[4..8].copy_from_slice(&0x0200_8021u32.to_le_bytes());
+        for (at, half) in [
+            (0x20, 0x2b01u16), // cmp r3, #1
+            (0x22, 0x4a03),    // ldr r2, [pc, #12] -> 0x30
+            (0x24, 0x009b),    // lsl r3, r3, #2
+            (0x26, 0x589b),    // ldr r3, [r3, r2]
+            (0x28, 0x469f),    // mov pc, r3
+            (0x50, 0x4770),    // case 0
+            (0x54, 0x4770),    // case 1
+        ] {
+            image[at..at + 2].copy_from_slice(&half.to_le_bytes());
+        }
+        image[0x30..0x34].copy_from_slice(&0x0200_8040u32.to_le_bytes());
+        image[0x40..0x44].copy_from_slice(&0x0200_8051u32.to_le_bytes());
+        image[0x44..0x48].copy_from_slice(&0x0200_8055u32.to_le_bytes());
+        let spans = trusted_overlay_spans(&image, OVERLAY_BASE, 1).unwrap();
+        assert!(spans.iter().any(|span| span.start == OVERLAY_BASE + 0x50));
+        assert!(spans.iter().any(|span| span.start == OVERLAY_BASE + 0x54));
+        assert!(!spans
+            .iter()
+            .any(|span| span.start < OVERLAY_BASE + 0x48 && span.end > OVERLAY_BASE + 0x40));
+
+        // Change the scaled index to r1 while the comparison and indexed
+        // load still use r3. The old nearby-opcode heuristic accepted this.
+        image[0x24..0x26].copy_from_slice(&0x0089u16.to_le_bytes());
+        let spans = trusted_overlay_spans(&image, OVERLAY_BASE, 1).unwrap();
+        assert!(!spans.iter().any(|span| span.start == OVERLAY_BASE + 0x50));
     }
 }
 
@@ -80,7 +128,15 @@ fn objdump_rows(data: &[u8], base: i64) -> Result<BTreeMap<i64, Row>, String> {
 /// region known to be code (a main-image owner's audited extent) is decoded
 /// through leaf functions without `push {lr}` and past computed branches;
 /// the emitter's byte check demotes anything that was really data.
-fn reachable(input: &[u8], base: i64, seeds: &[i64], sweep: bool) -> BTreeMap<i64, i64> {
+fn reachable(
+    input: &[u8],
+    base: i64,
+    seeds: &[i64],
+    discover_prologues: bool,
+    follow_calls: bool,
+    sweep: bool,
+    follow_switches: bool,
+) -> BTreeMap<i64, i64> {
     let length = input.len() as i64;
     let read_u16 = |offset: i64| -> i64 {
         let at = offset as usize;
@@ -89,29 +145,36 @@ fn reachable(input: &[u8], base: i64, seeds: &[i64], sweep: bool) -> BTreeMap<i6
     let inside = |address: i64, size: i64| base <= address && address + size <= base + length;
     let sign_extend = |value: i64, bits: u32| (value << (64 - bits)) >> (64 - bits);
     let mut queue: Vec<i64> = seeds.iter().copied().filter(|s| inside(*s, 2)).collect();
-    let mut offset = 0i64;
-    while offset < length - 1 {
-        // A veneer's target word is not a prologue, whatever its low half.
-        let veneer_target = offset % 4 == 0
-            && offset >= 4
-            && read_u16(offset - 4) == 0x4c00
-            && read_u16(offset - 2) == 0x4720;
-        if read_u16(offset) & 0xff00 == 0xb500 && !veneer_target {
-            queue.push(base + offset);
+    if discover_prologues {
+        let mut offset = 0i64;
+        while offset < length - 1 {
+            // A veneer's target word is not a prologue, whatever its low half.
+            let veneer_target = offset % 4 == 0
+                && offset >= 4
+                && read_u16(offset - 4) == 0x4c00
+                && read_u16(offset - 2) == 0x4720;
+            if read_u16(offset) & 0xff00 == 0xb500 && !veneer_target {
+                queue.push(base + offset);
+            }
+            offset += 2;
         }
-        offset += 2;
     }
     let mut offset = 0i64;
     while offset < length - 8 {
         let word = read_u16(offset);
         let following = read_u16(offset + 2);
-        if (0x4800..=0x48ff).contains(&word) && (0x4700..=0x47ff).contains(&following) {
+        let fixed_r0 = word == 0x4800 && following == 0x4700;
+        let fixed_r4 = word == 0x4c00 && following == 0x4720;
+        if fixed_r0 || fixed_r4 {
             let at = (offset + 4) as usize;
             let target = input[at] as i64
                 | ((input[at + 1] as i64) << 8)
                 | ((input[at + 2] as i64) << 16)
                 | ((input[at + 3] as i64) << 24);
-            let target = target & !1;
+            let mut target = target & !1;
+            if base == OVERLAY_BASE && !inside(target, 2) && inside(target - 0x8000, 2) {
+                target -= 0x8000;
+            }
             if inside(target, 2) {
                 queue.push(target);
             }
@@ -146,37 +209,94 @@ fn reachable(input: &[u8], base: i64, seeds: &[i64], sweep: bool) -> BTreeMap<i6
                 let half = read_u16(pc - base);
                 let mut size = 2;
                 let mut stop = false;
-                if half & 0xff87 == 0x4687 && sweep {
-                    // The guard and the table load sit just before the
-                    // dispatch by address, the guard usually in the block
-                    // that falls through an unconditional branch.
+                if half & 0xff87 == 0x4687 && follow_switches && pc >= base + 6 {
+                    // GCC's Thumb switch tail is an exact register chain:
+                    //
+                    //   cmp  index, #last
+                    //   ldr  table, [pc, #pool]
+                    //   lsl  index, index, #2
+                    //   ldr  target, [table, index]
+                    //   mov  pc, target
+                    //
+                    // Requiring those data-flow relationships matters: a
+                    // loose nearby-opcode search can turn scene tables into
+                    // thousands of false instructions.
                     let preceding: Vec<(i64, i64)> = (1..=12)
                         .map(|k| pc - 2 * k)
                         .filter(|at| inside(*at, 2))
                         .map(|at| (at, read_u16(at - base)))
                         .collect();
+                    let load_target = read_u16(pc - 2 - base);
+                    let scale_index = read_u16(pc - 4 - base);
+                    let load_table = read_u16(pc - 6 - base);
+                    let target_register = (half >> 3) & 0xf;
+                    let target_load_register = load_target & 7;
+                    let first_address_register = (load_target >> 3) & 7;
+                    let second_address_register = (load_target >> 6) & 7;
+                    let scaled_destination = scale_index & 7;
+                    let scaled_source = (scale_index >> 3) & 7;
+                    let scaled_amount = (scale_index >> 6) & 0x1f;
+                    let loaded_table_register = (load_table >> 8) & 7;
+                    let exact_tail = load_target & 0xfe00 == 0x5800
+                        && scale_index & 0xf800 == 0
+                        && scaled_amount == 2
+                        && load_table & 0xf800 == 0x4800
+                        && target_load_register == target_register
+                        && scaled_destination == scaled_source
+                        && ((first_address_register == loaded_table_register
+                            && second_address_register == scaled_destination)
+                            || (second_address_register == loaded_table_register
+                                && first_address_register == scaled_destination));
                     let limit = preceding
                         .iter()
-                        .find(|(_, h)| h & 0xf800 == 0x2800)
+                        .find(|(_, h)| h & 0xf800 == 0x2800 && ((h >> 8) & 7) == scaled_destination)
                         .map(|(_, h)| (h & 0xff) + 1);
-                    let table = preceding.iter().find_map(|(at, h)| {
-                        if h & 0xf800 != 0x4800 {
-                            return None;
-                        }
-                        let word = ((at + 4) & !3) + ((h & 0xff) << 2);
-                        inside(word, 4).then(|| read_u32(word - base))
-                    });
+                    let table = exact_tail
+                        .then(|| {
+                            let at = pc - 6;
+                            let word = ((at + 4) & !3) + ((load_table & 0xff) << 2);
+                            inside(word, 4).then(|| {
+                                let table = read_u32(word - base);
+                                if base == OVERLAY_BASE && inside(table - 0x8000, 4) {
+                                    table - 0x8000
+                                } else {
+                                    table
+                                }
+                            })
+                        })
+                        .flatten();
                     if let (Some(count), Some(table)) = (limit, table) {
                         if table % 4 == 0 && inside(table, count * 4) {
-                            for entry in 0..count {
-                                let at = table + entry * 4;
-                                for byte in at..at + 4 {
-                                    tables.insert(byte);
+                            let targets = (0..count)
+                                .map(|entry| {
+                                    let mut target = read_u32(table + entry * 4 - base) & !1;
+                                    if base == OVERLAY_BASE && inside(target - 0x8000, 2) {
+                                        target -= 0x8000;
+                                    }
+                                    target
+                                })
+                                .collect::<Vec<_>>();
+                            let plausible_block = |target: i64| {
+                                if !inside(target, 8) {
+                                    return false;
                                 }
-                                let target = read_u32(at - base) & !1;
-                                if inside(target, 2) {
-                                    queue.push(target);
+                                let half = |index: i64| read_u16(target + index * 2 - base);
+                                let high_words = [half(1), half(3)];
+                                let address_words = high_words
+                                    .iter()
+                                    .all(|high| matches!(*high, 0x0200 | 0x0300 | 0x0800));
+                                let small_value_words =
+                                    high_words == [0, 0] && half(0) < 0x1000 && half(2) < 0x1000;
+                                half(0) != 0 && !address_words && !small_value_words
+                            };
+                            if targets.iter().all(|target| plausible_block(*target)) {
+                                for entry in 0..count {
+                                    let at = table + entry * 4;
+                                    for byte in at..at + 4 {
+                                        tables.insert(byte);
+                                    }
                                 }
+                                queue.extend(targets);
                             }
                         }
                     }
@@ -187,11 +307,19 @@ fn reachable(input: &[u8], base: i64, seeds: &[i64], sweep: bool) -> BTreeMap<i6
                         size = 4;
                         let displacement =
                             sign_extend(((half & 0x7ff) << 12) | ((low & 0x7ff) << 1), 23);
-                        let target = pc + 4 + displacement;
+                        let target = if base == OVERLAY_BASE {
+                            // Stored overlays carry the loader's pre-relocation
+                            // displacement: destination = resource base + the
+                            // encoded value + the Thumb bias. The loader later
+                            // rewrites it for the 0x02008000 runtime address.
+                            base + displacement + 2
+                        } else {
+                            pc + 4 + displacement
+                        };
                         // A whole overlay's functions are seeded by their
                         // prologues; a call names its target without walking
                         // it, so veneers and data a call lands on stay data.
-                        if inside(target, 2) && sweep {
+                        if inside(target, 2) && follow_calls {
                             queue.push(target);
                         }
                     }
@@ -256,6 +384,217 @@ fn reachable(input: &[u8], base: i64, seeds: &[i64], sweep: bool) -> BTreeMap<i6
     }
     instructions
 }
+
+/// Conservatively inventory the executable bytes proved by the same decoder
+/// that emits a byte-identical overlay listing. Instructions, their referenced
+/// literal words, fixed loader veneers, and two-byte alignment holes between
+/// executable spans are counted; every other byte remains data.
+pub fn executable_spans(input: &[u8], base: i64) -> Result<Vec<ExecutableSpan>, String> {
+    if !input.len().is_multiple_of(2) {
+        return Err("overlay has an odd byte length".into());
+    }
+    let mut pointers = Vec::new();
+    for offset in (0..input.len().saturating_sub(3)).step_by(4) {
+        let word = u32::from_le_bytes(input[offset..offset + 4].try_into().unwrap());
+        if word & 1 == 0 {
+            continue;
+        }
+        let target = i64::from(word & !1);
+        if base <= target && target + 2 <= base + input.len() as i64 {
+            pointers.push(target);
+        }
+    }
+    let instructions = reachable(input, base, &pointers, true, true, false, false);
+    let read_u16 = |address: i64| {
+        let at = (address - base) as usize;
+        input[at] as i64 | ((input[at + 1] as i64) << 8)
+    };
+    let mut spans = Vec::new();
+    for (&start, &size) in &instructions {
+        spans.push(ExecutableSpan {
+            start,
+            end: start + size,
+            kind: "thumb",
+        });
+        if size == 2 {
+            let half = read_u16(start);
+            if half & 0xf800 == 0x4800 {
+                let word = ((start + 4) & !3) + ((half & 0xff) << 2);
+                if base <= word && word + 4 <= base + input.len() as i64 {
+                    spans.push(ExecutableSpan {
+                        start: word,
+                        end: word + 4,
+                        kind: "literal_pool",
+                    });
+                }
+            }
+        }
+    }
+    for offset in (0..input.len().saturating_sub(7)).step_by(4) {
+        if input[offset..offset + 4] != [0x00, 0x4c, 0x20, 0x47] {
+            continue;
+        }
+        let target = u32::from_le_bytes(input[offset + 4..offset + 8].try_into().unwrap());
+        if matches!(target >> 24, 0x02 | 0x03 | 0x08 | 0x09) {
+            spans.push(ExecutableSpan {
+                start: base + offset as i64,
+                end: base + offset as i64 + 8,
+                kind: "veneer",
+            });
+        }
+    }
+    spans.sort_by_key(|span| (span.start, span.end));
+    let mut merged: Vec<ExecutableSpan> = Vec::new();
+    for span in spans {
+        if let Some(last) = merged.last_mut() {
+            if span.start <= last.end && span.kind == last.kind {
+                last.end = last.end.max(span.end);
+                continue;
+            }
+        }
+        merged.push(span);
+    }
+    let mut union: Vec<(i64, i64)> = Vec::new();
+    for span in &merged {
+        if let Some(last) = union.last_mut() {
+            if span.start <= last.1 {
+                last.1 = last.1.max(span.end);
+                continue;
+            }
+        }
+        union.push((span.start, span.end));
+    }
+    for pair in union.windows(2) {
+        if pair[1].0 - pair[0].1 == 2 && read_u16(pair[0].1) == 0 {
+            merged.push(ExecutableSpan {
+                start: pair[0].1,
+                end: pair[1].0,
+                kind: "executable_alignment",
+            });
+        }
+    }
+    merged.sort_by_key(|span| (span.start, span.end));
+    Ok(merged)
+}
+
+/// Code reached from the loader's opening veneers, calls, branches and
+/// compiler switch tables. It deliberately does not seed prologue-shaped
+/// bytes, so it can safely complement the conservative prologue decoder.
+pub fn trusted_overlay_spans(
+    input: &[u8],
+    base: i64,
+    entry_veneers: usize,
+) -> Result<Vec<ExecutableSpan>, String> {
+    if input.len() < entry_veneers * 8 {
+        return Err("overlay is shorter than its entry veneer table".into());
+    }
+    let mut seeds = Vec::with_capacity(entry_veneers);
+    for entry in 0..entry_veneers {
+        let at = entry * 8;
+        if input[at..at + 4] != [0x00, 0x4c, 0x20, 0x47] {
+            return Err(format!("overlay entry {entry} is not a fixed veneer"));
+        }
+        let raw = u32::from_le_bytes(input[at + 4..at + 8].try_into().unwrap());
+        let mut target = i64::from(raw & !1);
+        if base == OVERLAY_BASE {
+            target -= 0x8000;
+        }
+        if target < base || target + 2 > base + input.len() as i64 {
+            return Err(format!("overlay entry {entry} target is outside the image"));
+        }
+        seeds.push(target);
+    }
+    let instructions = reachable(input, base, &seeds, false, true, false, true);
+    spans_from_instructions(input, base, instructions)
+}
+
+/// Candidate main-image inventory seeded only by direct call destinations
+/// that have a framed Thumb prologue. Unlike an overlay-wide prologue sweep,
+/// random `push`-shaped data cannot seed itself. Function-pointer-only entry
+/// points remain intentionally missing and are measured by TBS calibration.
+pub fn main_executable_spans(input: &[u8], base: i64) -> Result<Vec<ExecutableSpan>, String> {
+    if !input.len().is_multiple_of(2) {
+        return Err("main image has an odd byte length".into());
+    }
+    let half = |offset: usize| u16::from_le_bytes([input[offset], input[offset + 1]]);
+    let mut seeds = BTreeSet::new();
+    for offset in (0..input.len().saturating_sub(3)).step_by(2) {
+        let high = i64::from(half(offset));
+        let low = i64::from(half(offset + 2));
+        if high & 0xf800 != 0xf000 || low & 0xf800 != 0xf800 {
+            continue;
+        }
+        let displacement = (((high & 0x7ff) << 12) | ((low & 0x7ff) << 1)) << 41 >> 41;
+        let target = base + offset as i64 + 4 + displacement;
+        let relative = target - base;
+        if relative >= 0
+            && relative + 2 <= input.len() as i64
+            && i64::from(half(relative as usize)) & 0xff00 == 0xb500
+        {
+            seeds.insert(target);
+        }
+    }
+    // Static callback tables are the other ordinary way into a function.
+    // Require a word-aligned in-image Thumb pointer whose destination begins
+    // with a framed prologue; neither condition alone is enough to seed code.
+    for offset in (0..input.len().saturating_sub(3)).step_by(4) {
+        let word = u32::from_le_bytes(input[offset..offset + 4].try_into().unwrap());
+        if word & 1 == 0 {
+            continue;
+        }
+        let target = i64::from(word & !1);
+        let relative = target - base;
+        if relative >= 0
+            && relative + 2 <= input.len() as i64
+            && i64::from(half(relative as usize)) & 0xff00 == 0xb500
+        {
+            seeds.insert(target);
+        }
+    }
+    let instructions = reachable(
+        input,
+        base,
+        &seeds.into_iter().collect::<Vec<_>>(),
+        false,
+        true,
+        false,
+        false,
+    );
+    spans_from_instructions(input, base, instructions)
+}
+
+fn spans_from_instructions(
+    input: &[u8],
+    base: i64,
+    instructions: BTreeMap<i64, i64>,
+) -> Result<Vec<ExecutableSpan>, String> {
+    let read_u16 = |address: i64| {
+        let at = (address - base) as usize;
+        input[at] as i64 | ((input[at + 1] as i64) << 8)
+    };
+    let mut spans = Vec::new();
+    for (&start, &size) in &instructions {
+        spans.push(ExecutableSpan {
+            start,
+            end: start + size,
+            kind: "thumb",
+        });
+        if size == 2 {
+            let half = read_u16(start);
+            if half & 0xf800 == 0x4800 {
+                let word = ((start + 4) & !3) + ((half & 0xff) << 2);
+                if base <= word && word + 4 <= base + input.len() as i64 {
+                    spans.push(ExecutableSpan {
+                        start: word,
+                        end: word + 4,
+                        kind: "literal_pool",
+                    });
+                }
+            }
+        }
+    }
+    Ok(spans)
+}
 pub fn build_overlay_source(input: &[u8], base: i64) -> Result<String, String> {
     build_source(input, base, &[], false)
 }
@@ -271,7 +610,7 @@ fn build_source(input: &[u8], base: i64, seeds: &[i64], sweep: bool) -> Result<S
         return Err("overlay has an odd byte length".to_string());
     }
     let rows = objdump_rows(decoded, base)?;
-    let instructions = reachable(decoded, base, seeds, sweep);
+    let instructions = reachable(decoded, base, seeds, true, sweep, sweep, sweep);
     let mut covered: BTreeSet<i64> = BTreeSet::new();
     for (address, size) in &instructions {
         for byte in *address..*address + *size {
@@ -481,21 +820,33 @@ pub fn export_overlay_source(
 fn veneer_run(lines: &[&str]) -> Vec<(u32, usize)> {
     let mut run = Vec::new();
     let mut at = 0;
-    while lines.get(at) == Some(&"\t.4byte 0x47204c00") {
+    loop {
         let hex = |line: Option<&&str>, prefix: &str, width: usize| {
             line.and_then(|line| line.strip_prefix(prefix))
                 .filter(|digits| digits.len() == width)
                 .and_then(|digits| u32::from_str_radix(digits, 16).ok())
         };
-        let (target, used) = match hex(lines.get(at + 1), "\t.4byte 0x", 8) {
-            Some(target) => (target, 2),
-            None => match (
-                hex(lines.get(at + 1), "\t.2byte 0x", 4),
-                hex(lines.get(at + 2), "\t.2byte 0x", 4),
-            ) {
-                (Some(low), Some(high)) => (low | high << 16, 3),
-                _ => break,
+        let encoded = lines.get(at) == Some(&"\t.4byte 0x47204c00");
+        let decoded = lines
+            .get(at)
+            .is_some_and(|line| line.starts_with("\tldr\tr4, [pc, #0]"))
+            && lines.get(at + 1) == Some(&"\tbx\tr4");
+        let (target, used) = match (encoded, decoded) {
+            (true, _) => match hex(lines.get(at + 1), "\t.4byte 0x", 8) {
+                Some(target) => (target, 2),
+                None => match (
+                    hex(lines.get(at + 1), "\t.2byte 0x", 4),
+                    hex(lines.get(at + 2), "\t.2byte 0x", 4),
+                ) {
+                    (Some(low), Some(high)) => (low | high << 16, 3),
+                    _ => break,
+                },
             },
+            (false, true) => match hex(lines.get(at + 2), "\t.4byte 0x", 8) {
+                Some(target) => (target, 3),
+                None => break,
+            },
+            _ => break,
         };
         let addressable = matches!(target >> 24, 0x02 | 0x03 | 0x08);
         if !addressable || (target & 1 == 0 && target & 3 != 0) {
@@ -529,7 +880,7 @@ mod export_tests {
         )
         .unwrap();
         assert!(text.contains("\t.irp EntryTarget, 0x02008011, 0x02008015\n"));
-        assert!(text.contains("\t.irp EntryTarget, 0x080000c1\n"));
+        assert!(text.contains("\t.irp EntryTarget, 0x080000c1\n"), "{text}");
         assert!(!text.contains("0x47204c00"));
         assert_eq!(
             crate::overlay::compile::assemble_overlay_raw(&OverlaySource::text(text), OVERLAY_BASE)

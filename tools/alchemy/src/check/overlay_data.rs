@@ -5,7 +5,7 @@
 use std::path::Path;
 use std::process::ExitCode;
 
-const USAGE: &str = "usage: alchemy check overlay-data --max COUNT\n\nCount the raw integer data values in tracked games/*/asm/overlays/*_overlay.s listings and fail when the total exceeds COUNT.";
+const USAGE: &str = "usage: alchemy check overlay-data --max COUNT\n\nCount the raw integer data values in tracked games/*/raw/overlays/*_overlay.s listings and fail when the total exceeds COUNT.";
 /// GNU as integer data directives on ARM, aliases included, so a respelling
 /// cannot hide growth.
 const DIRECTIVES: [&str; 9] = [
@@ -14,7 +14,7 @@ const DIRECTIVES: [&str; 9] = [
 
 fn overlay_listing(path: &str) -> bool {
     let parts: Vec<&str> = path.split('/').collect();
-    matches!(parts.as_slice(), ["games", _, "asm", "overlays", name] if name.ends_with("_overlay.s"))
+    matches!(parts.as_slice(), ["games", _, "raw", "overlays", name] if name.ends_with("_overlay.s"))
 }
 
 /// The values a data directive statement emits: one per top-level operand.
@@ -142,15 +142,15 @@ fn every_emitted_integer_counts_however_it_is_spelled() {
 fn only_tracked_overlay_listings_count_and_the_total_may_only_fall() {
     let data = "\t.4byte 1\n\t.2byte 2, 3\n";
     let root = super::fixture_repository(&[
-        ("games/X/asm/overlays/resource_1_overlay.s", data, true),
-        ("games/Y/asm/overlays/resource_2_overlay.s", data, true),
-        ("games/X/asm/overlays/resource_3_overlay.s", data, false),
+        ("games/X/raw/overlays/resource_1_overlay.s", data, true),
+        ("games/Y/raw/overlays/resource_2_overlay.s", data, true),
+        ("games/X/raw/overlays/resource_3_overlay.s", data, false),
         (
-            "games/X/asm/overlays/nested/resource_4_overlay.s",
+            "games/X/raw/overlays/nested/resource_4_overlay.s",
             data,
             true,
         ),
-        ("games/X/asm/executable_gaps/08000404.s", data, true),
+        ("games/X/raw/executable_gaps/08000404.s", data, true),
     ]);
     assert_eq!(count(root.path()), Ok(6));
     assert!(ratchet(6, 6).is_ok());

@@ -21,7 +21,7 @@
  *      `movs r0,#0x83`, which only an address-of expression reproduces.
  *
  *   2. Every `bl` to 0x080072f4 in the retained assembly is a call through
- *      the trampoline at games/THE BROKEN SEAL/asm/080072e4.s (0x080072e4 + 4*4, the r4
+ *      the trampoline at games/THE BROKEN SEAL/raw/080072e4.s (0x080072e4 + 4*4, the r4
  *      slot): the fixed branch target is `bx r4`, and r4 is loaded with
  *      slot_pair[1 & idx] or rectangle[0]/rectangle[1] immediately
  *      before each call.  These are modeled as DrawRectangleFn calls

@@ -30,7 +30,7 @@
  * instead spills it to a stack slot and reloads it at each call site,
  * using r9 only inside the 60-iteration array-C loop later (a hoisted
  * `Table_080ede48` base, `mov r9,r3` / `mov r0,r9` in
- * games/THE BROKEN SEAL/asm/080e6eac.s, confirmed to be the ONLY other r9 use in the
+ * games/THE BROKEN SEAL/raw/080e6eac.s, confirmed to be the ONLY other r9 use in the
  * whole function via `grep r9`). Checked against gcc-2.96's actual
  * global-allocation priority formula (allocno_compare in
  * gcc/global.c: priority ~= log2(n_refs)*n_refs/live_length*size): a

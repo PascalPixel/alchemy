@@ -1024,7 +1024,7 @@ fn validate_production_state(
             || {
                 root.join("games")
                     .join(crate::compiler::routing::game_directory(&unit.game))
-                    .join("asm")
+                    .join("raw")
                     .join(format!("{:08x}.s", member.address))
                     .is_file()
             },
@@ -1085,7 +1085,7 @@ fn overlay_listing(root: &Path, game: &str, overlay: &str) -> Result<String, Str
     let assembly = root
         .join("games")
         .join(crate::compiler::routing::game_directory(game))
-        .join("asm/overlays")
+        .join("raw/overlays")
         .join(format!("{overlay}_overlay.s"));
     std::fs::read_to_string(&assembly).map_err(|error| format!("{}: {error}", assembly.display()))
 }
@@ -1184,7 +1184,7 @@ pub(crate) mod fixture {
                 .map(|address| format!("AlchemyC_{address:08x}:\n\t.space 4\n"))
                 .collect::<String>();
             self.write(
-                &format!("games/THE BROKEN SEAL/asm/overlays/{image}_overlay.s"),
+                &format!("games/THE BROKEN SEAL/raw/overlays/{image}_overlay.s"),
                 &text,
             );
         }
@@ -1643,7 +1643,7 @@ mod tests {
             error.contains("staged-actor: instance owner resource_39b:02000ba4 is not an AlchemyC_ placeholder in its overlay listing"),
             "{error}"
         );
-        let listing = "games/THE BROKEN SEAL/asm/overlays/resource_39b_overlay.s";
+        let listing = "games/THE BROKEN SEAL/raw/overlays/resource_39b_overlay.s";
         std::fs::remove_file(repository.0.path().join(listing)).unwrap();
         let error = repository.load().unwrap_err();
         assert!(

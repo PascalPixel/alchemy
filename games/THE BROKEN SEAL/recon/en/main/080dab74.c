@@ -9,7 +9,7 @@
  * byte particle records at 0x7080, display mode/value at 0x7780/0x7784,
  * frame_ready at 0x7824 and the republished effect argument at 0x7828) and
  * the DrawRectangleFn calling convention (an indirect call through the r4
- * slot of the _call_via_rN trampoline at games/THE BROKEN SEAL/asm/080072e4.s) are taken
+ * slot of the _call_via_rN trampoline at games/THE BROKEN SEAL/raw/080072e4.s) are taken
  * from those owners.  The blitter pair comes from the exact
  * games/THE BROKEN SEAL/src/battle/effects/work/fetch_rectangle_blitters.c.
  *

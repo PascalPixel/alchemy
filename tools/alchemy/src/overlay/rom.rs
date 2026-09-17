@@ -46,6 +46,16 @@ impl CanonicalRom {
     pub fn bytes(&self) -> &[u8] {
         &self.0
     }
+    /// Number of entries in the ROM's own resource directory.
+    pub fn resource_count(&self) -> usize {
+        directory_length(&self.0, self.1)
+    }
+    /// Address named by one resource-directory entry. Directory entries are
+    /// hierarchical and may alias or run backwards, so a raw pointer never
+    /// establishes a physical file extent by itself.
+    pub fn resource_pointer(&self, resource: usize) -> Result<usize, String> {
+        resource_pointer(&self.0, self.1, resource)
+    }
     /// Every resource that decodes to a code overlay of the target's shape:
     /// an even-length image opening with exactly `entry_veneers` veneers into
     /// the overlay's own load window. The range is read off the decoded

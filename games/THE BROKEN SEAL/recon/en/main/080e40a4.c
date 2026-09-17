@@ -51,7 +51,7 @@
  *
  * Neither Func_080072f0, Func_080072f4 nor Func_080072f8 is a real
  * function symbol: they are entries of the _call_via_rN trampoline bundle
- * at games/THE BROKEN SEAL/asm/080072e4.s, so they are spelled here as calls through
+ * at games/THE BROKEN SEAL/raw/080072e4.s, so they are spelled here as calls through
  * typed pointers - the IWRAM word copier at 0x03001388, the IWRAM clear
  * routine at 0x03000164, and the two blit routines Func_080ed408
  * publishes into heap_cache[46] and heap_cache[47].

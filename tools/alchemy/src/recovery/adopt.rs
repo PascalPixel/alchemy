@@ -218,7 +218,7 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
     let unmatchable = root.join("games/THE BROKEN SEAL/semantic/unmatchable.json");
     let units = root.join("games/THE BROKEN SEAL/recon/translation-units.json");
     let overlay_source: PathBuf = root.join(format!(
-        "games/THE BROKEN SEAL/asm/overlays/{overlay}_overlay.s"
+        "games/THE BROKEN SEAL/raw/overlays/{overlay}_overlay.s"
     ));
     let stems: Vec<String> = {
         let mut retired = vec![owner];

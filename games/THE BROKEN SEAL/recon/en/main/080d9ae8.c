@@ -18,7 +18,7 @@
  * games/THE BROKEN SEAL/src/battle/effects/work/fetch_rectangle_blitters.c: it
  * unconditionally writes two draw-callback words (the kind-46 and kind-47
  * allocator-cache slots) into out_pair.  The two `bl Func_080072f4` sites
- * below are `_call_via_r4` (games/THE BROKEN SEAL/asm/080072e4.s, N=4 slot) -- indirect
+ * below are `_call_via_r4` (games/THE BROKEN SEAL/raw/080072e4.s, N=4 slot) -- indirect
  * calls through a DrawRectangleFn already loaded into r4 from the saved
  * out_pair pointer, not calls to a real function of that name; modeled the
  * same way games/THE BROKEN SEAL/recon/en/main/080dc1ec.c and 080e01e4.c already do.

@@ -4,15 +4,15 @@
  * Startup interrupt/DMA init routine. Ordering and register-window
  * evidence:
  *   - REG_IME/REG_IE/REG_DISPSTAT/REG_KEYCNT addresses and values come
- *     straight from the literal pool in games/THE BROKEN SEAL/asm/0800300c.s.
+ *     straight from the literal pool in games/THE BROKEN SEAL/raw/0800300c.s.
  *   - The first DMA (source 0x08000770 -> dest 0x03000000, control
  *     0x84000500 = enabled|32-bit|0x500 words = 5120 bytes) matches the
  *     "relocated_iwram_payload" group's 5120-byte ROM->IWRAM copy
- *     recorded in games/THE BROKEN SEAL/asm/classification.json.
+ *     recorded in games/THE BROKEN SEAL/raw/classification.json.
  *   - The second DMA (source 0x08007320 -> dest 0x030000e0, control
  *     0x8400000e = enabled|32-bit|0x0e words = 56 bytes) matches the
  *     "iwram_dispatch_pointers_08007320" table copy recorded in
- *     games/THE BROKEN SEAL/asm/executable_gaps/index.json (14 handler pointers,
+ *     games/THE BROKEN SEAL/raw/executable_gaps/index.json (14 handler pointers,
  *     defaulting to Func_08003008/reserved_no_op_f, landing at
  *     run address 0x030000e0).
  *   - REG_IE = 0x1001 enables VBlank (bit0) + Keypad (bit12) IRQs, and

@@ -566,7 +566,7 @@ static __inline__ void SetScale(s32 actor, s32 horizontal, s32 vertical)
  * Complete actor-21 mode-four reset wrapper.
  *
  * Call symbol resolved directly against the raw region in
- * games/THE BROKEN SEAL/asm/overlays/resource_385_overlay. s(`push {lr} / movs r0,#21 / movs r1,#0 /
+ * games/THE BROKEN SEAL/raw/overlays/resource_385_overlay. s(`push {lr} / movs r0,#21 / movs r1,#0 /
  * movs r2,#4 / bl sub_02001f26 / pop {r0} / bx r0`): the per-site overlay
  * veneer is sub_02001f26, not a main-image address guessed from elsewhere.
  */
@@ -802,7 +802,7 @@ void SceneDialogue_RunActor11Line(void)
  * Complete actor-11 dialogue wrapper through its one-word pool.
  *
  * Call symbols resolved directly against the raw region in
- * games/THE BROKEN SEAL/asm/overlays/resource_385_overlay. s(lines 753-765, still unadopted at the
+ * games/THE BROKEN SEAL/raw/overlays/resource_385_overlay. s(lines 753-765, still unadopted at the
  * time of writing): `bl sub_0200167a`, `bl sub_02001674`, then
  * `bl .L_020009d6` -- the third call targets a local branch label at
  * 0x020009d6, not the guessed 0x020004b4.
@@ -822,7 +822,7 @@ void SceneDialogue_RunActor12TwoFlagScene(void)
  * Complete actor-12 two-flag dialogue scene through its three-word pool.
  *
  * Call symbols are per-site, not per-import: the raw region in
- * games/THE BROKEN SEAL/asm/overlays/resource_385_overlay. s(lines 766-783, still unadopted) spells
+ * games/THE BROKEN SEAL/raw/overlays/resource_385_overlay. s(lines 766-783, still unadopted) spells
  * every call as `bl sub_02000xxx`, and the two calls that both ultimately
  * reach GameFlag_Set go through TWO DIFFERENT overlay-local veneers,
  * sub_02001608 and sub_0200160e -- not the same symbol twice.
@@ -846,7 +846,7 @@ void SceneDialogue_ShowLine1CB0ForActor13(void)
  * Complete actor-13 dialogue wrapper through its one-word pool.
  *
  * Call symbols resolved directly against the raw region in
- * games/THE BROKEN SEAL/asm/overlays/resource_385_overlay. s(lines 757-769, still unadopted at the
+ * games/THE BROKEN SEAL/raw/overlays/resource_385_overlay. s(lines 757-769, still unadopted at the
  * time of writing): `bl sub_020016da`, `bl sub_020016d4`, `bl sub_02000a36`.
  */
 void Func_020016da(s32 dialogue);

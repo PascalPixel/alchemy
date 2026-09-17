@@ -8,7 +8,7 @@
  * per-member burst of falling "star" particles rather than an orbiting
  * ring.  Field offsets, the M2C_FIELD macro, the DrawRectangleFn calling
  * convention (an indirect call through the r4 slot of the _call_via_rN
- * trampoline at games/THE BROKEN SEAL/asm/080072e4.s -- see games/THE BROKEN SEAL/recon/en/main/
+ * trampoline at games/THE BROKEN SEAL/raw/080072e4.s -- see games/THE BROKEN SEAL/recon/en/main/
  * 080dc1ec.json's score.note for the full derivation), and most callee
  * signatures come from that template and from games/THE BROKEN SEAL/src/battle/
  * effects/puff_arc/run.c (also exact) and the measured-draft siblings

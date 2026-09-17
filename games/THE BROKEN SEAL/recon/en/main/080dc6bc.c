@@ -15,7 +15,7 @@
  * puff_arc's Puff array) with a random polar offset per particle (masked
  * 16-bit angle, masked 8-bit magnitude; a modulo-6 "element" of 5 gets a
  * zeroed offset instead), then runs 96 frames.  Each frame walks the active
- * effect state's member list (games/THE BROKEN SEAL/asm/080dc6bc.s reads the same
+ * effect state's member list (games/THE BROKEN SEAL/raw/080dc6bc.s reads the same
  * count-at-+20 / id-array-at-+36 layout as puff_arc's Efx struct), replaying
  * the shared facing/portrait setup (Func_080049ac/Func_080051d8/
  * Func_08004cb4) for every member, and for a member whose 40-frame window
@@ -27,7 +27,7 @@
  * other five.
  *
  * `bl Func_080072f0`/`bl Func_080072f4` are the r3/r4 entries of the
- * fourteen-slot `_call_via_rN` trampoline bundle at games/THE BROKEN SEAL/asm/
+ * fourteen-slot `_call_via_rN` trampoline bundle at games/THE BROKEN SEAL/raw/
  * 080072e4.s (`bx rN; mov r8,r8` at 0x080072e4+4*N), not real functions:
  * arm_function_arg (agscc/gcc/config/arm/arm.c) never places an
  * argument in r4, and tracing r3/r4's values back confirms both are

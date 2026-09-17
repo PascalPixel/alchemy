@@ -2323,7 +2323,7 @@ fn exact_overlay_owners() -> Result<Vec<OverlayOwner>, String> {
             as usize;
         if !assembly.contains_key(&resource) {
             let source =
-                format!("games/THE BROKEN SEAL/asm/overlays/resource_{resource:03x}_overlay.s");
+                format!("games/THE BROKEN SEAL/raw/overlays/resource_{resource:03x}_overlay.s");
             let text = fs::read_to_string(&source).map_err(|error| format!("{source}: {error}"))?;
             assembly.insert(resource, text.lines().map(str::to_string).collect());
         }

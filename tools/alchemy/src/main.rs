@@ -36,7 +36,7 @@ const USAGE: &str = "usage: alchemy <command> [args]\n\
   cross-edition         compare historical editions\n\
   build                 build compilers, ROM stages, assets or allocator dumps\n\
   verify                verify the staged repository using the build contract\n\
-  coverage              rebuild and report ROM coverage\n\
+  coverage              rebuild coverage; `coverage audit` inventories executable overlays\n\
   dashboard             serve live coverage on localhost:4650\n\
   check                 run repository contract checks\n\
   format                format native game data and check uppercase filenames\n\
@@ -66,7 +66,13 @@ fn main() -> ExitCode {
         }
         "dashboard" => result(dashboard::entry(rest)),
         "build" => build::entry(rest),
-        "verify" | "coverage" => make_target(command, rest),
+        "verify" => make_target(command, rest),
+        "coverage" if rest.first().map(String::as_str) == Some("audit") => result(
+            coverage::audit::run(&compiler::routing::root(), &rest[1..]).map(|line| {
+                println!("{line}");
+            }),
+        ),
+        "coverage" => make_target(command, rest),
         "check" => check::entry(rest),
         "format" => result(format::run(rest)),
         "overlay" => overlay::entry(rest),
@@ -94,7 +100,13 @@ fn main() -> ExitCode {
 
 fn make_target(target: &str, arguments: &[String]) -> ExitCode {
     if arguments == ["--help"] || arguments == ["-h"] {
-        println!("usage: alchemy {target}\nRuns the repository's make {target} contract.");
+        if target == "coverage" {
+            println!(
+                "usage: alchemy coverage\n       alchemy coverage audit --target tbs-en|tla-en [--output out/...json] [--calibrate]\nRebuilds published coverage, or inventories executable overlay spans."
+            );
+        } else {
+            println!("usage: alchemy {target}\nRuns the repository's make {target} contract.");
+        }
         return ExitCode::SUCCESS;
     }
     if !arguments.is_empty() {

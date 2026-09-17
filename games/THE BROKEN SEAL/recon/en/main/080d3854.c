@@ -6,7 +6,7 @@
  * member_orbit/run.c (owner 080ce85c, adopted, family score 8074/10000).
  * This owner is 1068 bytes -- structurally larger than the 724-byte
  * template -- and diverges from it in several concrete ways confirmed by
- * reading games/THE BROKEN SEAL/asm/080d3854.s and its objdump-resolved literal pools:
+ * reading games/THE BROKEN SEAL/raw/080d3854.s and its objdump-resolved literal pools:
  *
  *   - Func_080cd594 is called with mode 1, not 0.
  *   - The palette resource id is loaded from a literal pool word 0xCE
@@ -27,7 +27,7 @@
  *   - Every 8th frame in {16,24,...,64} it clears a canvas region through
  *     an indirect call to a small runtime routine at 0x03000168 (called via
  *     the r6 slot of the __call_via_rN veneer bank at 0x080072e4, per
- *     games/THE BROKEN SEAL/asm/080072e4.s), passing a fixed size and an 0x08080808
+ *     games/THE BROKEN SEAL/raw/080072e4.s), passing a fixed size and an 0x08080808
  *     fill pattern.
  *   - When the object's field 24 selects a non-zero row of the 3-byte-per-
  *     entry table at 0x080ee1ca, it draws three fixed 40x32 sprites through

@@ -9,7 +9,7 @@
  * (V-Counter IRQ), where it becomes the REG_DISPSTAT V-Count trigger
  * scanline.
  *
- * Evidence, all from games/THE BROKEN SEAL/asm/0800307c.s's literal pool and
+ * Evidence, all from games/THE BROKEN SEAL/raw/0800307c.s's literal pool and
  * already-adopted sibling owners in this repository (no other GS
  * decompilation project consulted):
  *   - 0x04000208/0x04000200/0x04000004 are REG_IME/REG_IE/REG_DISPSTAT,

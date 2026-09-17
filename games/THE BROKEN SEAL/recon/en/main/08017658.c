@@ -5,7 +5,7 @@
 /*
  * Not exact (measured-draft, see 08017658.json). Control flow, call targets,
  * call-argument shapes, and every RENDER_* field offset below are traced
- * directly from games/THE BROKEN SEAL/asm/08017658.s and match the reference exactly:
+ * directly from games/THE BROKEN SEAL/raw/08017658.s and match the reference exactly:
  * this candidate reaches the reference's own 276-byte length and its
  * instruction stream is the same 121 instructions in the same order and the
  * same literal-pool constants (RENDER_RESULT_OFS=0x12F4, +2, RENDER_ENTRY_TBL_OFS

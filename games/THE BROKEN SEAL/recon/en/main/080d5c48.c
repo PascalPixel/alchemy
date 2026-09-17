@@ -17,7 +17,7 @@
  * first draw and skip the second draw as well. Total animation length is
  * (WORK_EFX->cnt + 1) * 32 frames, not the template's fixed 80.
  *
- * The draw calls go through the r7 slot of the games/THE BROKEN SEAL/asm/080072e4.s
+ * The draw calls go through the r7 slot of the games/THE BROKEN SEAL/raw/080072e4.s
  * call-via-rN trampoline bundle (bl 0x08007300, matching the template's own
  * "r4 bx bank" DrawRectangle idiom one register over), so they are modeled
  * as an indirect call through a traced function-pointer local, never as a

@@ -1,7 +1,7 @@
 #include "TYPES.H"
 
 /*
- * games/THE BROKEN SEAL/asm/0808b674.s: "複数領域に分割された呼出し可能関数の先頭部。
+ * games/THE BROKEN SEAL/raw/0808b674.s: "複数領域に分割された呼出し可能関数の先頭部。
  * 後続するリテラルプールを同一ファイルに保持する。" (head portion of a
  * callable function split across multiple regions; the following literal
  * pool is kept in the same file.)

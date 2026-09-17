@@ -21,7 +21,7 @@
  * 0x02001364 (Data_02000240), 0x02001368 (the jump-table base 0x02009220),
  * 0x0200136c (0x109), 0x02001370 (0xe6), 0x02001374 (0x0200a711) and
  * 0x02001378 (0x951), read back from
- * games/THE BROKEN SEAL/asm/overlays/resource_3bc_overlay.s, immediately before the next
+ * games/THE BROKEN SEAL/raw/overlays/resource_3bc_overlay.s, immediately before the next
  * owner at 0x0200137c.  Four of those six words land past the compared window,
  * so the candidate is about sixteen bytes longer than the reviewed extent.
  * Do not shorten the owner to absorb that.

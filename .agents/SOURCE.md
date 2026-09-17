@@ -51,8 +51,8 @@ invent a place to fill a folder.
 
 Keep classification metadata outside source folders; provisional-source records
 live in `games/THE BROKEN SEAL/semantic/provisional-source.json`. Overlay
-assembly and compression recipes belong in `asm/overlays/`, battle assembly in
-`asm/battle/`. Raw `.byte`, `.2byte`, `.4byte` and `.word` data in overlay
+assembly and compression recipes belong in `raw/overlays/`, battle assembly in
+`raw/battle/`. Raw `.byte`, `.2byte`, `.4byte` and `.word` data in overlay
 listings is tolerated retained assembly, not a place for new data: the
 Makefile's `OVERLAY_DATA_DIRECTIVES_MAX` records its total, and `make verify`
 fails when the total grows.

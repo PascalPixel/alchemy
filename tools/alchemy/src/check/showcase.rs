@@ -345,7 +345,7 @@ pub(crate) fn check(root: &Path) -> Result<(usize, usize), Vec<String>> {
                 }
             }
         }
-        let listing = format!("{GAME}/asm/overlays/{}_overlay.s", folder.overlay);
+        let listing = format!("{GAME}/raw/overlays/{}_overlay.s", folder.overlay);
         match read(root, &listing) {
             Ok(text) => findings.extend(listing_findings(&listing, &text, &folder.allowed_data)),
             Err(error) => findings.push(error),
@@ -390,7 +390,7 @@ mod tests {
             );
             fixture.write("SRC/FIELD/KEEP/KEEP.C", CLEAN_SOURCE);
             fixture.write("INCLUDE/SCENE.H", CLEAN_HEADER);
-            fixture.write("asm/overlays/resource_3ff_overlay.s", CLEAN_LISTING);
+            fixture.write("raw/overlays/resource_3ff_overlay.s", CLEAN_LISTING);
             fixture
         }
 
@@ -496,7 +496,7 @@ mod tests {
     fn listing_data_needs_an_allowlist_and_code_is_refused() {
         let fixture = Fixture::new();
         fixture.write(
-            "asm/overlays/resource_3ff_overlay.s",
+            "raw/overlays/resource_3ff_overlay.s",
             &format!("{CLEAN_LISTING}\t.4byte 0x0000ffff\n"),
         );
         assert_finding(&fixture, "data directive outside the allowlist");
@@ -506,7 +506,7 @@ mod tests {
         );
         assert_eq!(check(fixture.directory.path()), Ok((1, 2)));
         fixture.write(
-            "asm/overlays/resource_3ff_overlay.s",
+            "raw/overlays/resource_3ff_overlay.s",
             &format!("{CLEAN_LISTING}\t.set sub_02000308, 0x02000308\n\tbx lr\n"),
         );
         assert_finding(&fixture, "retained code or symbol glue: .set");

@@ -113,7 +113,7 @@ fn tracked_plans_are_checked_and_untracked_ones_are_not() {
     let short = r#"{"codec": "golden-sun-general-lz", "lookahead": "010203"}"#;
     let root = super::fixture_repository(&[
         (
-            "games/X/asm/overlays/resource_1_stream.lz.json",
+            "games/X/raw/overlays/resource_1_stream.lz.json",
             short,
             true,
         ),

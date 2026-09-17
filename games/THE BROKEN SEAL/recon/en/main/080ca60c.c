@@ -20,7 +20,7 @@
  * Setup opens the resources through Func_080e0524, copies a palette to
  * 0x05000000 through the generic word-copy helper (Func_080072f0 taking the
  * 0x03001388 routine as a trailing callback argument -- Func_080072f0 is the
- * r3 slot of the _call_via_rN trampoline at games/THE BROKEN SEAL/asm/080072e4.s,
+ * r3 slot of the _call_via_rN trampoline at games/THE BROKEN SEAL/raw/080072e4.s,
  * modeled as a direct call with the real callee as a trailing argument per
  * that trampoline's established convention), then seeds three particle
  * pools: 64 slots at work+0x7080, 128 slots at 0x02010000 and 512 slots at

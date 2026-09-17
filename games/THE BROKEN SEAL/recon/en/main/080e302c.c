@@ -33,7 +33,7 @@
  * Neither `Func_080072f0` nor `Func_080072f4`, `Func_080072fc`,
  * `Func_08007304` and `Func_0800730c` is a real function symbol: they are
  * entries 3, 4, 6, 8 and 10 of the `_call_via_rN` trampoline bundle at
- * games/THE BROKEN SEAL/asm/080072e4.s, four bytes per slot from base 0x080072e4, i.e.
+ * games/THE BROKEN SEAL/raw/080072e4.s, four bytes per slot from base 0x080072e4, i.e.
  * indirect calls through whatever pointer the compiler kept in that slot.
  * Here they are exactly three distinct pointers: the IWRAM copy routine at
  * 0x03001388, and the two blit routines Func_080ed408 publishes into

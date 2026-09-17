@@ -16,7 +16,7 @@ use serde_json::{json, Value};
 use std::io::Write;
 use std::path::{Path, PathBuf};
 
-pub const USAGE: &str = "usage: alchemy overlay export RESOURCE... [--target GAME-EDITION] [--output DIR]\n       alchemy overlay export --list [--target GAME-EDITION]\nWrites resource_XXX_overlay.s and resource_XXX_stream.lz.json (default DIR: the target's asm/overlays)\nand prints each RESOURCE.JSON thumb-overlay series tuple [id, address, size, decoded_size].\n--list prints every resource whose decoded image has the target's entry-veneer shape.";
+pub const USAGE: &str = "usage: alchemy overlay export RESOURCE... [--target GAME-EDITION] [--output DIR]\n       alchemy overlay export --list [--target GAME-EDITION]\nWrites resource_XXX_overlay.s and resource_XXX_stream.lz.json (default DIR: the target's raw/overlays)\nand prints each RESOURCE.JSON thumb-overlay series tuple [id, address, size, decoded_size].\n--list prints every resource whose decoded image has the target's entry-veneer shape.";
 
 struct Options {
     target: DecompTarget,

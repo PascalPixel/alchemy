@@ -1488,8 +1488,28 @@ fn entry(bytes: i64, total: i64) -> Value {
         "percent_of_executable": crate::coverage::jsnum::round_half_up(bytes, total)
     })
 }
-pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String> {
-    let rom = rom_size(&options.target)?;
+/// Every image's audited executable spans, classified exactly as the coverage
+/// map counts them. Overlay spans use resource coordinates.
+pub struct Classification {
+    main: Vec<Region>,
+    pub main_exec: Vec<Span>,
+    pub overlay_exec: SpanMap,
+    pub exact_main: Vec<Span>,
+    owners: OwnerMap,
+    pub exact_overlay: SpanMap,
+    /// Assembly the register classifies without crediting it.
+    pub withdrawn_main: Vec<Span>,
+    pub withdrawn_draft_main: Vec<Span>,
+    pub retained_main: Vec<Span>,
+    pub withdrawn_overlay: SpanMap,
+    pub withdrawn_draft_overlay: SpanMap,
+    pub retained_overlay: SpanMap,
+    /// Draft C that neither exact C nor credited assembly already explains.
+    pub semantic_main: Vec<Span>,
+    pub semantic_overlay: SpanMap,
+    draft_sources: usize,
+}
+pub fn classify(options: &BuildOptions) -> Result<Classification, String> {
     let game =
         crate::compiler::routing::game_directory(options.target.split('-').next().unwrap_or("tbs"));
     let inventory = read_json(
@@ -1535,12 +1555,6 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
             *withdrawn = subtract(withdrawn, &retained);
         }
     }
-    let withdrawn_assembly = bytes(&withdrawn_main)
-        + bytes(&withdrawn_draft_main)
-        + mapped_bytes(&withdrawn_overlay)
-        + mapped_bytes(&withdrawn_draft_overlay);
-    let draft_main: Vec<Span> = Vec::new();
-    let draft_overlay = SpanMap::new();
     let (candidate_main, candidate_main_sources) = options
         .recon
         .map(|tree| candidate_main(tree, &main_exec))
@@ -1564,6 +1578,49 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
             )
         })
         .collect();
+    Ok(Classification {
+        main,
+        main_exec,
+        overlay_exec,
+        exact_main,
+        owners,
+        exact_overlay,
+        withdrawn_main,
+        withdrawn_draft_main,
+        retained_main,
+        withdrawn_overlay,
+        withdrawn_draft_overlay,
+        retained_overlay,
+        semantic_main,
+        semantic_overlay,
+        draft_sources: candidate_main_sources + candidate_overlay_sources,
+    })
+}
+pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String> {
+    let rom = rom_size(&options.target)?;
+    let Classification {
+        main,
+        main_exec,
+        overlay_exec,
+        exact_main,
+        owners,
+        exact_overlay,
+        withdrawn_main,
+        withdrawn_draft_main,
+        retained_main,
+        withdrawn_overlay,
+        withdrawn_draft_overlay,
+        retained_overlay,
+        semantic_main,
+        semantic_overlay,
+        draft_sources,
+    } = classify(options)?;
+    let withdrawn_assembly = bytes(&withdrawn_main)
+        + bytes(&withdrawn_draft_main)
+        + mapped_bytes(&withdrawn_overlay)
+        + mapped_bytes(&withdrawn_draft_overlay);
+    let draft_main: Vec<Span> = Vec::new();
+    let draft_overlay = SpanMap::new();
     let exact_overlay_bytes = mapped_bytes(&exact_overlay);
     let exact_bytes = bytes(&exact_main) + exact_overlay_bytes;
     let semantic_overlay_bytes = mapped_bytes(&semantic_overlay);
@@ -1727,7 +1784,7 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
         "provenance": {
             "proven_source": options.exact.id(),
             "draft_source": options.recon.map_or("absent", |tree| tree.id()),
-            "draft_sources": (candidate_main_sources + candidate_overlay_sources) as i64,
+            "draft_sources": draft_sources as i64,
             "main_draft_census": "games/THE BROKEN SEAL/recon/en/dossiers.json",
             "proven_assembly_standard": "handwritten-or-library-proven; audited-overlay-veneer-reconstruction; container-built-compiler-runtime",
             "credited_assembly_bytes": bytes(&retained_main) + mapped_bytes(&retained_overlay),

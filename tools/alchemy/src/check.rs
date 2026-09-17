@@ -13,7 +13,7 @@ mod retained;
 mod showcase;
 mod tla_owners;
 
-const USAGE: &str = "usage: alchemy check <publication|commit-progress|source-tracking|owners|tla-owners|retained|coverage|integrate|no-asm|plan-tails|overlay-data|progress|routes|showcase> [args]";
+const USAGE: &str = "usage: alchemy check <publication|commit-progress|source-tracking|owners|tla-owners|retained|coverage|integrate|no-asm|plan-tails|overlay-data|progress|routes|showcase|siblings> [args]";
 
 /// The tracked paths under `games/` that `keep` selects, with their worktree
 /// contents; `make verify` has already required the worktree to match the index.
@@ -125,6 +125,7 @@ pub fn entry(arguments: &[String]) -> ExitCode {
         }
         "routes" => routes(rest),
         "showcase" => showcase::entry(rest),
+        "siblings" => crate::siblings::check(rest),
         "-h" | "--help" => {
             println!("{USAGE}");
             ExitCode::SUCCESS

@@ -99,9 +99,19 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
         print!("{output}");
         return Ok(i32::from(!exact));
     }
+    let owner = match (options.owner, options.overlay.as_deref()) {
+        (Some(address), Some(overlay)) => SourceOwner::parse(&format!("{overlay}:{address:08x}")),
+        _ => resolve(root, &options.source),
+    };
     let rendered = render_options(root, options)?;
     println!("reference_from=rom representation=loader-runtime container_roundtrip=required");
     print!("{}", rendered.stdout);
+    if let Ok(owner) = owner {
+        print!(
+            "{}",
+            crate::score::cli::siblings_line(root, owner, rendered.reference_length)
+        );
+    }
     Ok(i32::from(
         rendered.differing_halfwords != 0 || rendered.candidate_length != rendered.reference_length,
     ))

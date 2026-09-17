@@ -320,6 +320,15 @@ pub fn run(root: &Path, args: &[String]) -> Result<i32, String> {
         .ok_or("--span BYTES is required for overlay adoption")?;
     let owner = SourceOwner::parse(&format!("{overlay}:{entry:08x}"))?;
     audited_span(root, target, owner, span)?;
+    // Every overlay adoption, direct or through `alchemy adopt`, passes here:
+    // an equivalent twin left behind or copied refuses before anything moves.
+    // The sibling census reads The Broken Seal's images and register.
+    if target.compiler == CompilerTarget::Tbs {
+        let extent = usize::try_from(span).map_err(|_| format!("{}: invalid span", options.id))?;
+        for line in crate::siblings::guard(root, &[(owner, extent)])? {
+            println!("{line}");
+        }
+    }
     let source_paths = SourcePaths::load_for_game(root, target.compiler.as_str())?;
     let installed = source_paths.registered_source_path(owner)?;
     let stem = owner.address_stem();

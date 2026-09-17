@@ -272,6 +272,14 @@ fn run_pipeline(directory: &str, apply: bool) -> Result<PipelineReport, String> 
             .iter()
             .map(|(stem, size, reason)| format!("evidence-only {stem} ({size}B exact): {reason}")),
     );
+    if apply && !accepted.is_empty() {
+        // The batch installs together: its owners count as exact for each other.
+        let installing = accepted
+            .iter()
+            .map(|(stem, extent, _)| Ok((SourceOwner::parse(&format!("main:{stem}"))?, *extent)))
+            .collect::<Result<Vec<_>, String>>()?;
+        lines.extend(crate::siblings::guard(&repository, &installing)?);
+    }
     if apply {
         for (stem, _, candidate) in &accepted {
             let owner = SourceOwner::parse(&format!("main:{stem}"))?;

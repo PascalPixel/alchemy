@@ -62,7 +62,7 @@ CANDIDATE_SINGLE_OWNERS := \
 .PHONY: help verify audit reports test lint lint-production lint-all-targets build-tools tool-tests tooling-size tooling-index-check \
 	build-claimed build-asm build-assets build-full build-rom \
 	standard-check compiler-source-check corpus-check core-retained-check \
-	full-rom-check tla-assets-check tla-owners-check overlay-check declared-tu-check owner-inventory-check strict-tu-check classification-check \
+	full-rom-check tla-assets-check tla-owners-check overlay-check declared-tu-check owner-inventory-check strict-tu-check siblings-check classification-check \
 	candidate-corpus-check source-tracking-check index-sync-check publication-tree-check plan-tails-check overlay-data-check showcase-check check-owners progress progress-report progress-check progress-subject \
 	correspondence correspondence-check edition-builds edition-builds-check \
 	coverage coverage-check native-format-check review-images-check clean clean-preview
@@ -87,6 +87,7 @@ help:
 		'make declared-tu-check prove declared production translation-unit contracts' \
 		'make owner-inventory-check prove registered owner production coverage' \
 		'make strict-tu-check  prove strict production TU composition and owner coverage' \
+		'make siblings-check   report twin families; reject address names in instanced sources' \
 		'make classification-check prove retained-assembly classifications' \
 		'make candidate-corpus-check rescore retained reconstruction C' \
 		'make source-tracking-check reject ignored or untracked Proven C' \
@@ -152,6 +153,11 @@ owner-inventory-check: full-rom-check
 
 strict-tu-check: declared-tu-check owner-inventory-check overlay-check
 	@printf 'strict production TU contracts ok; historical original boundaries remain unknown\n'
+
+# Missed siblings (R1) and copied modules (R2) are reported until their waves
+# close; semantic spelling in instanced sources (R3) is enforced.
+siblings-check: full-rom-check
+	$(CHECK) siblings
 
 targets: $(HISTORICAL_TARGETS)
 
@@ -427,7 +433,7 @@ review-images-check: source-tracking-check
 	$(ASSETS) --review-images out/tbs-en/graphics-review
 
 verify: toolchain-check native-format-check index-sync-check publication-tree-check plan-tails-check overlay-data-check source-tracking-check review-images-check $(if $(wildcard roms/tla-en.gba),tla-assets-check tla-owners-check) corpus-check language-check register-shrink-check lint-production tooling-size tooling-index-check \
-	strict-tu-check check-owners core-retained-check coverage-check showcase-check | $(REPORT_DIR)
+	strict-tu-check check-owners core-retained-check coverage-check showcase-check siblings-check | $(REPORT_DIR)
 	@tree=$$(git write-tree) || exit; \
 	printf '%s\n' "$$tree" > $(VERIFIED_TREE).tmp; \
 	mv $(VERIFIED_TREE).tmp $(VERIFIED_TREE); \

@@ -2,6 +2,7 @@
 //! Structural equality does not establish a byte-exact match.
 pub mod insns;
 pub mod topology;
+pub mod twins;
 use std::collections::BTreeSet;
 
 /// Weighted sequence alignment with deterministic left-first gap ties.

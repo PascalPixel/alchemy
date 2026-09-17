@@ -292,14 +292,11 @@ void FieldScene_RunActor17MessageBranch(void)
 {
     s32 Func_02000662_a();
 
-    u32 i;
-    s32 record;
-    u8 *dir;
+    u32 dir;
 
-    record = Value1(Func_02000662_a, 0);
-    dir = *(volatile u16 *)(record + 6);
+    dir = *(u16 *)(Value1(Func_02000662_a, 0) + 6);
     Func_02000648();
-    if ((u32)((s32)dir + -0xa001) <= 0x3ffe) {
+    if (dir + 0xFFFF5FFF <= 0x3FFE) {
         Func_020006ca(8, 17);
     } else {
         if (Value1(Func_0200064a, 0x845) == 0) {

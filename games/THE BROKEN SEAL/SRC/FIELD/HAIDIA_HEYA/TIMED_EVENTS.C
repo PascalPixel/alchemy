@@ -42,6 +42,7 @@
 #define FieldScene_RunLongPresentationSequence Func_02000658
 
 #include "FACING_OBJECT.H"
+#include "FIELD_EVENT.H"
 
 typedef struct {
     u8 pad_to_position[8];
@@ -172,7 +173,7 @@ void Func_020016de(void);
 s32 Func_02001706();
 s32 Func_02001718_a();
 s32 Func_02001718_b();
-s32 Func_02001726();
+struct FieldActor *Func_02001726();
 void Func_02001756();
 void Func_020017d0();
 void Func_020017ea();
@@ -182,7 +183,7 @@ void Func_02000808();
 s32 Func_0200177a();
 void Func_0200179a();
 s32 Func_0200179c();
-s32 Func_0200179e();
+struct FieldActor *Func_0200179e();
 void Func_020017b4();
 void Func_020017c2();
 void Func_020017dc();
@@ -211,10 +212,10 @@ s32 Func_020018ba();
 void Func_020018be();
 s32 Func_020018c4();
 void Func_020018fe();
-s32 Func_02001906();
+struct FieldActor *Func_02001906();
 void Func_02001908();
-s32 Func_0200191a();
-s32 Func_0200192e();
+struct FieldActor *Func_0200191a();
+struct FieldActor *Func_0200192e();
 void Func_02001930();
 void Func_02001948();
 void Func_0200194a();
@@ -842,11 +843,10 @@ void FieldScene_RunScene376_0200055c(void)
     extern u8 Data_03001ebc[];
     void Func_020017e2_a();
 
-    u32 i;
-    s32 record;
+    struct FieldActor *actor;
 
-    record = Func_02001726(0);
-    if ((u32)(*(volatile u16 *)(record + 6) + -0xa001) <= 0x3ffe) {
+    actor = Func_02001726(0);
+    if ((u32)(actor->facing - 0xa001) <= 0x3ffe) {
         Func_02001862(2, 22);
     } else {
         ((void (*)())Func_02001718_a)();
@@ -868,11 +868,10 @@ void FieldScene_RunScene376_020005d4(void)
 {
     extern u8 Data_03001ebc[];
 
-    u32 i;
-    s32 record;
+    struct FieldActor *actor;
 
-    record = Func_0200179e(0);
-    if ((u32)(*(volatile u16 *)(record + 6) + -0xa001) <= 0x3ffe) {
+    actor = Func_0200179e(0);
+    if ((u32)(actor->facing - 0xa001) <= 0x3ffe) {
         Func_020018da(3, 20);
     } else {
         if (Value1(Func_0200177a, 0x87a) != 0) {
@@ -900,6 +899,7 @@ void FieldScene_RunLongPresentationSequence(void)
 
     u32 i;
     s32 record;
+    struct FieldActor *actor;
     s32 v6;
     s32 base7_20090c1;
     s32 base5_20092fc;
@@ -928,22 +928,22 @@ void FieldScene_RunLongPresentationSequence(void)
     base7_20090c1 = (s32)Func_020090c1;
     Call2(Func_02001864, base7_20090c1, 0xc80);
     Func_02001862_b(1);
-    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c8)) = 32;
+    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c8) = 32;
     Func_020019fe_a();
     Func_02001a12_a();
     Func_02001930(0);
     Func_02001948(0, 1);
-    record = Value1(Func_02001906, 0);
-    if (record != 0) {
-        Func_02001954(1, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+    actor = Func_02001906(0);
+    if (actor != NULL) {
+        Func_02001954(1, actor->x.fixed, actor->z.fixed);
     }
-    record = Value1(Func_0200191a, 0);
-    if (record != 0) {
-        Func_02001968(2, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+    actor = Func_0200191a(0);
+    if (actor != NULL) {
+        Func_02001968(2, actor->x.fixed, actor->z.fixed);
     }
-    record = Value1(Func_0200192e, 0);
-    if (record != 0) {
-        Func_0200197c_a(3, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+    actor = Func_0200192e(0);
+    if (actor != NULL) {
+        Func_0200197c_a(3, actor->x.fixed, actor->z.fixed);
     }
     Call3(Func_02001972, 1, 0x318, 0x200);
     Call3(Func_02001980, 2, 0x338, 0x1f8);

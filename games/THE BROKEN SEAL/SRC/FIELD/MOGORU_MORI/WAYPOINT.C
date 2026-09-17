@@ -73,6 +73,7 @@
 #define SceneData_SelectDataByRuntimeSelector Func_02000f40
 #define SceneData_SelectTableBa48ByRuntimeSelector Func_020024ac
 
+#include "FIELD_EFFECT.H"
 #include "STAGED_ACTOR.H"
 #include "SPAWN_CONFIGURED_EFFECT.H"
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
@@ -768,16 +769,14 @@ u8 *OverlayObject_SpawnConfiguredWithMode15(s32 x, s32 y, s32 z, s32 kind)
     return ret;
 }
 
-void OverlayObject_IntegrateVelocities(void *arg0)
+void OverlayObject_IntegrateVelocities(union FieldObject *object)
 {
-    u8 *a = arg0;
-
-    *(volatile s32 *)(a + 0x08) += *(s32 *)(a + 0x44);
-    *(volatile s32 *)(a + 0x0C) += *(s32 *)(a + 0x48);
-    *(volatile s32 *)(a + 0x10) += *(s32 *)(a + 0x4C);
-    *(volatile s32 *)(a + 0x18) += *(s32 *)(a + 0x30);
-    *(volatile s32 *)(a + 0x1C) += *(s32 *)(a + 0x34);
-    *(volatile u16 *)(*(u8 **)(a + 0x50) + 0x1E) += *(u16 *)(a + 0x64);
+    object->effect.x += object->effect.velocity_x;
+    object->effect.y += object->effect.velocity_y;
+    object->effect.z += object->effect.velocity_z;
+    object->effect.scale_x += object->effect.scale_rate_x;
+    object->effect.scale_y += object->effect.scale_rate_y;
+    object->effect.sprite->rotation += object->effect.spin;
 }
 
 void SceneEffect_SpawnConfigured(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
@@ -851,34 +850,20 @@ void FieldScene_RunScene39f_02000d90(s32 a0, s32 a1, s32 a2, s32 a3)
 {
     extern u8 Data_03001ebc[];
 
-    u32 i;
-    s32 p10;
-    s32 p10b;
-    s32 p10c;
-    s32 p8;
-    s32 p8b;
-    s32 p9;
     s32 rec7;
-    s32 record;
 
-    p10 = a2;
-    p9 = a3;
-    p8 = a1;
     rec7 = Func_02003b62();
     Func_02003bec(a0, 1);
     Call3(Func_02003b82, a0, 0x30000, 0x18000);
     Func_02003c78(152);
-    *(volatile s32 *)(rec7 + 40) = p9;
-    *(volatile s32 *)(rec7 + 72) = 0x8000;
-    *(volatile s32 *)(rec7 + 68) = 0;
+    *(s32 *)(rec7 + 40) = a3;
+    *(s32 *)(rec7 + 72) = 0x8000;
+    *(s32 *)(rec7 + 68) = 0;
     Func_02003b36(rec7, 0);
-    Func_02003bb8(a0, p8, p10);
-    p8b = ((s32)p8 << 16);
-    p10b = ((s32)p10 << 16);
-    Func_02003bee(a0, p8b, p10b);
+    Func_02003bb8(a0, a1, a2);
+    Func_02003bee(a0, a1 << 16, a2 << 16);
     Func_02003b5e(rec7, 1);
-    *(volatile s32 *)(rec7 + 72) = 0x10000;
-    p10c = a0;
+    *(s32 *)(rec7 + 72) = 0x10000;
 }
 
 void FieldScene_RunSixCallSetupSequence(s32 no, s32 val)
@@ -1441,32 +1426,30 @@ void FieldScene_RunSupplementalSequenceOne(void)
 
     u8 *Func_02004b4e();
 
-    s32 one;
     s32 x;
     s32 y;
     u8 *record;
 
     Func_020049e4();
     record = Value1(Func_02004a02, 14);
-    x = *(volatile s32 *)((s32)record + 8);
+    x = *(s32 *)(record + 8);
     record = Value1(Func_02004a0a, 14);
-    y = *(volatile s32 *)((s32)record + 16);
+    y = *(s32 *)(record + 16);
     x >>= 20;
     y >>= 20;
-    one = 1;
-    Func_02001eb0(2, x, y, 1, one, 255);
-    Call6(Func_02001ec2, 2, x + 1, y, 1, one, 0);
-    Call6(Func_02001ed2, 2, x - 1, y, 1, one, 0);
-    Func_02001ee2(2, x, y + 1, 1, one, 0);
-    Func_02001ef4(2, x, y - 1, 1, one, 0);
+    Func_02001eb0(2, x, y, 1, 1, 255);
+    Call6(Func_02001ec2, 2, x + 1, y, 1, 1, 0);
+    Call6(Func_02001ed2, 2, x - 1, y, 1, 1, 0);
+    Func_02001ee2(2, x, y + 1, 1, 1, 0);
+    Func_02001ef4(2, x, y - 1, 1, 1, 0);
     record = Value1(Func_02004a72, 14);
-    if ((*(volatile s32 *)((s32)record + 16) >> 20) == 27) {
+    if ((*(s32 *)(record + 16) >> 20) == 27) {
         record = Value1(Func_02004a80, 14);
         record[85] = 0;
-        *(volatile s32 *)((s32)record + 20) = -0x20000;
-        *(volatile s32 *)((s32)record + 12) = -0x20000;
+        *(s32 *)(record + 20) = -0x20000;
+        *(s32 *)(record + 12) = -0x20000;
         Call1(Func_02004a6c, 0x214);
-        Call6(Func_02001f30, 2, 43, 23, 1, one, 255);
+        Call6(Func_02001f30, 2, 43, 23, 1, 1, 255);
     }
     Func_02004a9c();
 }

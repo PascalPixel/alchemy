@@ -1363,7 +1363,7 @@ void FieldScene_RunScene38d_020005f4(void)
         Call3(Func_02002b16, 19, 0xcccc, 0x6666);
         Call3(Func_02002b58, 19, 0x23a, 0x2f6);
         Func_02002b82(19, 0, 0);
-        *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c0)) = 0x209;
+        *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x209;
         Call1(Func_02002af6_event, 0x85e);
         Call1(Func_02002afc_event, 0x333);
         Func_02002b20();

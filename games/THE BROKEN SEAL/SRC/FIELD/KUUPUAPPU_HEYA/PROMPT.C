@@ -333,7 +333,6 @@
 #define ObjectMotion_SetSpeedParameters_7(args...) Func_02008580(args)
 #define BattleRuntime_WaitIfModeZero_22(args...) Func_02008416(args)
 #define BattleRuntime_ScheduleShoulderButtonModeUpdate_1_02002fd4(args...) Func_0200842a(args)
-#define SCENE_PHASE (*(s32 *)(*(u8 *volatile *)Data_03001ebc + 0x1c0))
 #define FieldScene_RunScene383SequenceB Func_02001ba0
 #define FieldScene_RunSteps107And250 Func_02001e64
 #define FieldScene_ConfigurePairedActors Func_02001e80
@@ -399,7 +398,7 @@ extern u8 Data_000012fc[];
 extern u8 Data_00001324[];
 extern u8 Data_0200d354[];
 extern u8 Data_0200d4c8[];
-extern u8 Data_0200e4f8[];
+extern u16 Data_0200e4f8;
 
 void Func_02004dbc(u8 *);
 u8 *Func_02004e04(s32);
@@ -2698,7 +2697,7 @@ void SceneActor_FaceActors24And25TowardActorZero(void)
 
 void FieldScene_RunLateSequence(void)
 {
-    extern u8 Data_03001ebc[];
+    extern u8 *Data_03001ebc;
 
     u32 i;
     s32 record;
@@ -2730,7 +2729,7 @@ void FieldScene_RunLateSequence(void)
     record = Func_02007a52(1);
     Func_020079c8(record, 0);
     Call3(Func_02007b14, 8, 0xb000, 0);
-    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c0)) = 0x209;
+    *(s32 *)(Data_03001ebc + 0x1c0) = 0x209;
     Func_02007b4a(0, 0);
     Func_02007b5e();
     Func_020079ca();
@@ -2780,7 +2779,7 @@ s32 OverlayObject_RunObjectTwoWhenFlagged(void)
  * the shared scene phase twice before returning. */
 void RunEventScript01(void)
 {
-    extern u8 Data_03001ebc[];
+    extern u8 *Data_03001ebc;
 
     u32 i;
     s32 record;
@@ -2789,7 +2788,7 @@ void RunEventScript01(void)
     u8 *actor12_record;
 
     record = Scene_GetRecord_1_02002fd4(12);
-    actor12_record = *(volatile s32 *)(record + 80);
+    actor12_record = *(u8 **)(record + 80);
     BattleRuntime_Reset_1_02002fd4();
     ObjectMotion_SetHorizontalPositionWithTerrain_1_02002fd4(10, 0x3180000, 0x1a00000);
     ObjectMotion_SetHorizontalPositionWithTerrain_2_02002fd4(11, 0x3200000, 0x1900000);
@@ -2817,7 +2816,7 @@ void RunEventScript01(void)
     ObjectMotion_ArmCallback_3_02002fd4(2, 0xb000, 0);
     ObjectMotion_SetSpeedParameters_1_02002fd4(8, 0xcccc, 0x6666);
     ObjectMotion_ArmCallback_4_02002fd4(8, 0xb000, 0);
-    SCENE_PHASE = 0x209;
+    *(s32 *)(Data_03001ebc + 0x1c0) = 0x209;
     ObjectMotion_SetPositionAndReset_1_02002fd4(0, 0);
     Object_CommitPositionThenWaitIfModeZero_1();
     Func_02007dae();
@@ -2984,9 +2983,9 @@ void RunEventScript01(void)
     Func_02007cf0(2, 3, 50);
     /* Write the field at +0x1c8, then the phase/status word at +0x1c0, of
      * the shared scene work record. */
-    work = *(u8 *volatile *)Data_03001ebc;
-    *(volatile s32 *)((work + 0x1c8)) = 30;
-    *(volatile s32 *)((work + 0x1c0)) = 0x201;
+    work = Data_03001ebc;
+    *(s32 *)(work + 0x1c8) = 30;
+    *(s32 *)(work + 0x1c0) = 0x201;
     Func_02008574();
     ObjectMotion_SetSpeedParameters_7();
     BattleRuntime_WaitIfModeZero_22(60);
@@ -3604,7 +3603,7 @@ void FieldScene_RunScene383_02004b2c(void)
     Call3(Func_02009990, 2, 0xc000, 0x6000);
     Call3(Func_0200999c, 24, 0x10000, 0x13333);
     Call3(Func_020099aa, 25, 0x18000, 0x18000);
-    *(volatile u16 *)Data_0200e4f8 = 0;
+    Data_0200e4f8 = 0;
     Call2(Func_020098a8, 0x200c8c9, 0xc94);
     Func_0200995e(0x1ff);
     Func_0200998a();

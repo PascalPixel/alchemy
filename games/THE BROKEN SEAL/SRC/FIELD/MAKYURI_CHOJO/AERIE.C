@@ -2892,23 +2892,20 @@ void RunScene59Sequence(void)
 
 void FieldScene_RunScene39d_02002ddc(void)
 {
-    u32 i;
     s32 record;
-    u8 *p5;
     u8 *work;
 
-    p5 = *(volatile s32 *)0x03001e70;
-    work = p5 + 0x164;
+    work = Data_03001e70 + 0x164;
     Func_020064c4();
-    *(volatile s32 *)(work + 12) = 0x3800000;
+    *(s32 *)(work + 12) = 0x3800000;
     Func_0200646e();
     Func_0200642c(1);
     *(u8 *)(Func_020064f2(9) + 85) = 0;
     Call3(Func_0200653e, 9, 0x680000, 0x1080000);
     record = Func_0200650c(9);
-    *(volatile s32 *)(record + 12) = -0x200000;
+    *(s32 *)(record + 12) = -0x200000;
     record = Value1(Func_02006516, 9);
-    *(volatile s32 *)(record + 60) = -0x200000;
+    *(s32 *)(record + 60) = -0x200000;
     *(u8 *)(Func_020065ec() + 85) = 0;
     Call2(Func_020065e0, 0xcccc, 0x1999);
     Call4(Func_020065fa, 0x800000, -1, 0xb80000, 1);

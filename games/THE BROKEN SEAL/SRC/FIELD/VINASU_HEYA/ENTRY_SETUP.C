@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "FIELD_EFFECT.H"
 
 #define NULL ((void *)0)
 #define RunOverlayObjectCommand0 Func_02004e8c
@@ -614,7 +615,7 @@ void Func_020057e6();
 s32 Func_02005812();
 s32 Func_02005816();
 void Func_02005870();
-s32 Func_02005882();
+struct FieldActor *Func_02005882();
 void Func_020058a8();
 void Func_020058b8();
 void Func_02005906();
@@ -643,15 +644,15 @@ void Func_02005e86(s32, s32, s32);
 void Func_02005dda(s32, s32, s32, s32, s32, s32);
 void Func_02005e46(void);
 void Func_02005ff0();
-s32 Func_02006002();
+struct FieldActor *Func_02006002();
 void Func_02006020();
 void Func_0200602e();
 void Func_02006036();
-s32 Func_0200603c();
+struct FieldActor *Func_0200603c();
 void Func_0200604e();
-s32 Func_02006050();
+struct FieldActor *Func_02006050();
 void Func_02006064();
-u8 *Func_02006074();
+struct FieldActor *Func_02006074();
 void Func_02006098();
 void Func_020060a4();
 void Func_020060a6();
@@ -1067,16 +1068,14 @@ void *OverlayObject_PrepareObjectWithCommand15(s32 arg0, s32 arg1, s32 arg2, s32
     return 0;
 }
 
-void OverlayObject_IntegrateVelocities(void *arg0)
+void OverlayObject_IntegrateVelocities(union FieldObject *object)
 {
-    u8 *a = arg0;
-
-    *(volatile s32 *)(a + 0x08) += *(s32 *)(a + 0x44);
-    *(volatile s32 *)(a + 0x0C) += *(s32 *)(a + 0x48);
-    *(volatile s32 *)(a + 0x10) += *(s32 *)(a + 0x4C);
-    *(volatile s32 *)(a + 0x18) += *(s32 *)(a + 0x30);
-    *(volatile s32 *)(a + 0x1C) += *(s32 *)(a + 0x34);
-    *(volatile u16 *)(*(u8 **)(a + 0x50) + 0x1E) += *(u16 *)(a + 0x64);
+    object->effect.x += object->effect.velocity_x;
+    object->effect.y += object->effect.velocity_y;
+    object->effect.z += object->effect.velocity_z;
+    object->effect.scale_x += object->effect.scale_rate_x;
+    object->effect.scale_y += object->effect.scale_rate_y;
+    object->effect.sprite->rotation += object->effect.spin;
 }
 
 /* Returns the party record; only its presentation block at +80 is read. */
@@ -1646,61 +1645,43 @@ void Func_0200096c(struct Effect_0200096c *effect)
     sprite->angle += effect->step64;
 }
 
-void FieldScene_RunSupplementalSequenceOne(s32 a0)
+void FieldScene_RunSupplementalSequenceOne(void)
 {
-    extern u8 Data_03001ebc[];
+    struct FieldActor *actor;
+    u32 i;
+    struct EffectOptions options;
 
-    s32 rec;
-    s32 v8;
-    s32 sh;
-    s32 record;
-    s32 half;
-    s32 w0;
-    s32 w1;
-    s32 w2;
-    s32 w4;
-    u8 *p10;
-    u8 *p16;
-    u8 slot28[40];
-    u8 slot16[12];
-
-    rec = Value1(Func_02005882, 0);
+    actor = Func_02005882(0);
     Func_02005870();
     Call4(Func_02005972, -1, -1, -1, 0);
     Func_020057e6();
     Func_0200579c(1);
-    *(volatile s32 *)(rec + 12) = 0x820000;
-    *(volatile s32 *)(rec + 72) = 0x8000;
-    *(volatile s32 *)(rec + 68) = 0;
-    *(volatile u8 *)(rec + 85) = 0;
+    actor->y.fixed = 0x820000;
+    *(s32 *)((u8 *)actor + 72) = 0x8000;
+    *(s32 *)((u8 *)actor + 68) = 0;
+    actor->motion_flags = 0;
     Func_020059d6();
     Func_020059ea();
     Func_020058a8(30);
     Func_02005a1e(204);
-    *(volatile u8 *)(rec + 85) = 3;
+    actor->motion_flags = 3;
     Func_020058b8(24);
-    p10 = slot28;
-    *(s32 *)(p10 + 4) = 7;
-    *(s32 *)(p10 + 36) = 0x200896d;
-    *(s32 *)(p10 + 8) = 0xcccc;
-    *(s32 *)(p10 + 12) = 0xcccc;
-    v8 = 0;
-    p16 = slot16;
-    do {
-        sh = v8 << 12;
-        *(s32 *)(p16) = Func_02005812(sh);
-        *(s32 *)(p16 + 4) = 0;
-        record = Func_02005816(sh);
-        *(s32 *)(p16 + 8) = record;
-        half = *(s32 *)p16;
-        *(s32 *)(p16) = half + half / 2;
-        w0 = *(volatile s32 *)(rec + 8);
-        w2 = *(volatile s32 *)(rec + 16);
-        w1 = *(volatile s32 *)(rec + 12);
-        w4 = *(volatile s32 *)(p16 + 4);
-        Func_02000b9a(w0, w1, w2, (*(s32 *)p16), w4, record, 0x1090001, (s32)p10);
-        v8 = (v8 + 1);
-    } while ((u32)v8 <= 16);
+    options.palette = 7;
+    options.update = (void (*)(union FieldObject *))0x200896d;
+    options.start_scale_x = 0xcccc;
+    options.start_scale_y = 0xcccc;
+    for (i = 0; i <= 16; i++) {
+        s32 angle;
+        s32 velocity[3];
+
+        angle = i << 12;
+        velocity[0] = Func_02005812(angle);
+        velocity[1] = 0;
+        velocity[2] = Func_02005816(angle);
+        velocity[0] += velocity[0] / 2;
+        Func_02000b9a(actor->x.fixed, actor->y.fixed, actor->z.fixed, velocity[0], velocity[1],
+                      velocity[2], 0x1090001, &options);
+    }
     Func_02005a8e(188);
     Call2(Func_02005a0e, 0, 0x101);
     Func_0200599e(0, 22);
@@ -1709,8 +1690,8 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
     Func_02005920();
     Call2(Func_02005a42, 0, 0x100);
     Func_02005ac6();
-    *(volatile s32 *)(rec + 72) = 0x10000;
-    *(volatile s32 *)(rec + 68) = 0x4000;
+    *(s32 *)((u8 *)actor + 72) = 0x10000;
+    *(s32 *)((u8 *)actor + 68) = 0x4000;
     Func_0200597e();
 }
 
@@ -2026,67 +2007,58 @@ void SceneState_ApplySixRectsAfterFlag161(void)
     Func_02005f5c(117, 55, 110, 55, a, a);
 }
 
+static __inline__ void SetFlagBits(u8 *flags, u8 bits)
+{
+    *flags |= bits;
+}
+
 void FieldScene_RunScene3c8SequenceC(void)
 {
-    extern u8 Data_03001ebc[];
+    struct FieldActor *actor;
+    s32 z;
 
-    u32 i;
-    s32 rec7;
-    u8 *record;
-    s32 v2;
-
-    rec7 = Value1(Func_02006002, 0);
+    actor = Func_02006002(0);
     Func_02005ff0();
     Call2(Func_02006020, 0, 0x200d21c);
     Func_0200602e(0);
     Func_020060a6(0, 6);
-    *(volatile s32 *)(rec7 + 40) = 0x40000;
+    actor->velocity_y = 0x40000;
     Call3(Func_02006036, 0, 0x40000, 0x20000);
-    if ((*(volatile s32 *)(rec7 + 16) >> 20) <= 54) {
-        *(u8 *)(Func_0200603c(0) + 90) &= 254;
-        v2 = 210;
+    if (actor->z.fixed >> 20 <= 54) {
+        Func_0200603c(0)->unknown_5a &= 254;
+        z = 210;
     } else {
-        *(u8 *)(Func_02006050(0) + 90) &= 254;
-        v2 = 238;
+        Func_02006050(0)->unknown_5a &= 254;
+        z = 238;
     }
-    Func_02006098(0, *(s16 *)(rec7 + 10), (v2 << 2));
+    Func_02006098(0, actor->x.part.pixel, z << 2);
     Func_0200604e(1);
-    {
-        u8 *record = Func_02006074(0);
-        u8 value = *(volatile u8 *)&record[90];
-
-        record[90] = (u8)(value | 1);
-    }
+    SetFlagBits(&Func_02006074(0)->unknown_5a, 1);
     Func_02006064(20);
-    *(volatile s32 *)(rec7 + 108) = 0x20085e5;
+    actor->update = (void (*)(union FieldObject *))0x20085e5;
     Call3(Func_02006154, 0, 0x102, 60);
     Func_020060fc(0, 4);
     Func_0200612c(0, 0);
     Func_0200610c(0, 4);
-    *(volatile s32 *)(rec7 + 108) = 0;
+    actor->update = 0;
     Func_020060a4();
 }
 
+struct EventWorkState {
+    u8 unknown_000[0xcb6];
+    u16 field_cb6;
+    u8 unknown_cb8[2];
+    u16 field_cba;
+};
+
 void FieldScene_RunScene3c8SequenceD(void)
 {
-    extern u8 Data_03001ebc[];
+    extern struct EventWorkState *Data_03001ebc;
+    struct EventWorkState *work;
 
-    u32 i;
-    s32 record;
-    u8 *p7;
-
-    p7 = *(volatile s32 *)Data_03001ebc;
-    {
-        volatile u16 *target = (volatile u16 *)((s32)p7 + 0xcba);
-        s32 shown = 0;
-
-        *target = shown;
-    }
-    {
-        s32 shown = 1;
-
-        *(volatile u16 *)(((s32)p7 + 0xcb6)) = shown;
-    }
+    work = Data_03001ebc;
+    work->field_cba = 0;
+    work->field_cb6 = 1;
     Func_020060c6();
     Func_02006136(0, 1);
     Call2(Func_020060ae, 0x2688, 1);
@@ -2101,7 +2073,7 @@ void FieldScene_RunScene3c8SequenceD(void)
     Func_0200610c_a(70);
     if (Value1_02001218(Func_020060fa, 0x982) == 0) {
         if (Value1_02001218(Func_02006104, 0x983) == 0) {
-            if ((*(volatile s32 *)0x03001e40 & 1) != 0) {
+            if ((Data_03001e40 & 1) != 0) {
                 Call1(Func_02006120, 0x982);
             } else {
                 Call1(Func_02006128, 0x983);
@@ -2149,12 +2121,7 @@ void FieldScene_RunScene3c8SequenceD(void)
     Call4(Func_02006430, 0x1c80000, -1, 0x1a70000, 1);
     Func_0200643c();
     Func_02006350();
-    {
-        volatile u16 *target = (volatile u16 *)((s32)p7 + 0xcb6);
-        s32 shown = 0;
-
-        *target = shown;
-    }
+    work->field_cb6 = 0;
 }
 
 void FieldScene_RunFlag986ActorOneScene(void)

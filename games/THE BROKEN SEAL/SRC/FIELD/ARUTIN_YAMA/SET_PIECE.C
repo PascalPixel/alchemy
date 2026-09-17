@@ -170,8 +170,8 @@
 #define GameFlag_Clear_1(a0) Call1(Func_02006f14, a0)
 #define GameFlag_Set_1(a0) Call1(Func_02006f1e, a0)
 #define BattleRuntime_ScheduleShoulderButtonModeUpdate_1(args...) Func_02006f42(args)
-#define SCENE_PHASE (*(volatile s32 *)(work + 0x1c0))
-#define SCENE_FIELD_1C8 (*(volatile s32 *)(work + 0x1c8))
+#define SCENE_PHASE (*(s32 *)(work + 0x1c0))
+#define SCENE_FIELD_1C8 (*(s32 *)(work + 0x1c8))
 #define RunEventScript01 Func_02003028
 
 #include "FACING_OBJECT.H"
@@ -1535,13 +1535,13 @@ void FieldScene_RunEarlySequence(void)
     Func_02004266(10);
     rec = p5 + 356;
     for (i = 0; i <= 23; i++) {
-        *(volatile s32 *)(rec + 12) += -0x10000;
+        *(s32 *)(rec + 12) -= 0x10000;
         Func_0200418e(4);
         if (i == 8) {
             record = Value1(Func_020042b8, 8);
-            *(volatile s32 *)(record + 24) = 0x1999;
+            *(s32 *)(record + 24) = 0x1999;
             record = Func_020042c0(8);
-            *(volatile s32 *)(record + 28) = 0x1999;
+            *(s32 *)(record + 28) = 0x1999;
             Call3(Func_02004320, 8, 0x980000, 0xd80000);
             Call2(Func_020042e8, 8, 0x200bd48);
         }
@@ -1578,7 +1578,7 @@ void Func_020007e8(void)
     Func_02004386(10);
     rec = p5 + 356;
     for (i = 23; i >= 0; i--) {
-        *(volatile s32 *)(rec + 12) += -0x10000;
+        *(s32 *)(rec + 12) -= 0x10000;
         Func_020042ae(4);
     }
     Func_020042fc(1, 0, 0x20086a1);
@@ -1615,7 +1615,7 @@ void Func_020008d4(void)
     Func_0200449a(10);
     rec = p8 + 356;
     for (i = 23; i >= 0; i--) {
-        *(volatile s32 *)(rec + 12) += -0x10000;
+        *(s32 *)(rec + 12) -= 0x10000;
         Func_020043c2(4);
     }
     Func_02004410(1, 0, 0x20086a1);
@@ -2081,7 +2081,7 @@ void FieldScene_RunScene3a4_02002428(void)
     extern u8 Data_02000240[];
 
     if (Value1(Func_02005f80, 0x8fe) != 0) {
-        *(volatile u16 *)(*(volatile s32 *)0x03001e70 + 20) &= 0xfdff;
+        *(u16 *)(*(u8 **)0x03001e70 + 20) &= ~0x200;
     } else {
         Call6(Func_02005f7e, 52, 42, 1, 1, 53, 42);
     }
@@ -2103,7 +2103,7 @@ void FieldScene_RunScene3a4_02002490(void)
     u8 *record;
 
     if (Value1_02002490(Func_02005fe8, 0x907) != 0) {
-        *(volatile u16 *)(*(volatile s32 *)0x03001e70 + 20) &= 0xfdff;
+        *(u16 *)(*(u8 **)0x03001e70 + 20) &= ~0x200;
         Func_0200609a(10, 0, 0);
     } else {
         if (Value1_02002490(Func_0200600a, 0x109) == 0) {
@@ -2124,9 +2124,9 @@ void FieldScene_RunScene3a4_02002490(void)
         Call6(Func_0200605a, 23, 13, 1, 1, 25, 13);
         {
             u8 *record = Func_020060d0(9);
-            u8 value = *(volatile u8 *)&record[35];
+            u8 flags = record[35] | 2;
 
-            record[35] = (u8)(value | 2);
+            record[35] = flags;
         }
     }
     if (Value1_02002490(Func_02006098, 0x325) != 0) {
@@ -2159,13 +2159,13 @@ void FieldScene_RunScene3a4_020025c0(void)
         Func_020061fc(9, 5);
         Call6(Func_0200614a, 45, 41, 1, 1, 43, 41);
         {
-            u8 value = *(volatile u8 *)&rec7[35];
+            u8 flags = rec7[35] | 2;
 
-            rec7[35] = (u8)(value | 2);
+            rec7[35] = flags;
         }
     }
     if (Value1_020025c0(Func_02006180, 0x907) != 0) {
-        *(volatile u16 *)(*(volatile s32 *)0x03001e70 + 20) &= 0xfdff;
+        *(u16 *)(*(u8 **)0x03001e70 + 20) &= ~0x200;
     }
     if (Value1_020025c0(Func_02006196, 0x326) != 0) {
         Call6(Func_02006186, 17, 93, 1, 1, 16, 92);
@@ -2192,9 +2192,9 @@ void FieldScene_RunScene3a4_020026c0(void)
         Call6(Func_02006226, 0, 0, 1, 1, 26, 26);
         {
             u8 *record = Func_0200629c(9);
-            u8 value = *(volatile u8 *)&record[35];
+            u8 flags = record[35] | 2;
 
-            record[35] = (u8)(value | 2);
+            record[35] = flags;
         }
     }
     Func_02005b74(11);
@@ -2203,9 +2203,9 @@ void FieldScene_RunScene3a4_020026c0(void)
         Call6(Func_02006262, 1, 0, 1, 1, 17, 10);
         {
             u8 *record = Func_020062d8(11);
-            u8 value = *(volatile u8 *)&record[35];
+            u8 flags = record[35] | 2;
 
-            record[35] = (u8)(value | 2);
+            record[35] = flags;
         }
     }
     Func_02005bb0(12);
@@ -2214,9 +2214,9 @@ void FieldScene_RunScene3a4_020026c0(void)
         Call6(Func_020062a0, 1, 0, 1, 1, 26, 15);
         {
             u8 *record = Func_02006316_a(12);
-            u8 value = *(volatile u8 *)&record[35];
+            u8 flags = record[35] | 2;
 
-            record[35] = (u8)(value | 2);
+            record[35] = flags;
         }
     }
     Call2(Func_02006212, 0x200b429, 0xc80);
@@ -2256,7 +2256,7 @@ void FieldScene_RunScene3a4_02002934(void)
         if (Value1_02002934(Func_020064ea, 0x109) == 0) {
             rec7 = Value1_02002934(Func_0200653c_a, 0);
             Func_0200651a();
-            *(volatile s32 *)(rec7 + 12) = 0x100000;
+            *(s32 *)(rec7 + 12) = 0x100000;
             Func_0200652c();
         }
     } else if (flag == 99) {
@@ -2382,7 +2382,7 @@ void FieldScene_RunScene3a4SequenceG(void)
             {
                 s32 v3 = Func_020066d4();
                 s32 tmp2824 = (((u32)(v3 << 15) >> 16) + 0x4ccc);
-                *(volatile s32 *)((s32)rec7 + 72) = 0x6666;
+                *(s32 *)(rec7 + 72) = 0x6666;
                 *(s32 *)((s32)rec7 + 28) = tmp2824;
                 *(s32 *)((s32)rec7 + 24) = tmp2824;
             }
@@ -2390,17 +2390,17 @@ void FieldScene_RunScene3a4SequenceG(void)
             Func_02006794((s32)rec7, 0);
             rec7[35] &= 254;
             {
-                u8 *p80 = (u8 *)(*(volatile s32 *)((s32)rec7 + 80));
+                u8 *p80 = *(u8 **)(rec7 + 80);
                 s32 mask9 = -13;
                 p80[9] = (mask9 & p80[9]) | 4;
             }
             Func_02006758((s32)rec7, 1);
             Call2(Func_02006768, (s32)rec7, 0x200c01c);
             value = Value0(Func_02006724);
-            *(volatile s32 *)((s32)rec7 + 36) = ((((u32)(((value << 1) + value) << 1) >> 16) - 3) << 16);
-            *(volatile s32 *)((s32)rec7 + 40) = 0x80000;
+            *(s32 *)(rec7 + 36) = ((((u32)(((value << 1) + value) << 1) >> 16) - 3) << 16);
+            *(s32 *)(rec7 + 40) = 0x80000;
             value = Value0(Func_0200673c);
-            *(volatile s32 *)((s32)rec7 + 44) = (((u32)(((value << 1) + value) << 9) >> 16) + -0x300);
+            *(s32 *)(rec7 + 44) = (((u32)(((value << 1) + value) << 9) >> 16) + -0x300);
         }
     }
 }
@@ -2446,7 +2446,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     Func_020068d8();
     Func_0200695a(10, 0, 0);
     Func_02006964(8, 0, 0);
-    *(s32 *)(*(u8 *volatile *)Data_03001ebc + 0x1c0) = 0x201;
+    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x201;
     Func_02006a3e();
     Func_02006a4a();
     Func_02006900(20);
@@ -2461,7 +2461,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     Func_02006a64(*(s32 *)(rec7 + 8), *(s32 *)(rec7 + 12), *(s32 *)(rec7 + 16), 1);
     Func_02006a70();
     Call1(Func_0200696e, 0x200cd6c);
-    *(s32 *)(*(u8 *volatile *)Data_03001ebc + 0x1c0) = 0x204;
+    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x204;
     Func_02006974();
 }
 
@@ -2471,7 +2471,6 @@ void FieldScene_RunScene3a4SequenceF(void)
 
     u32 i;
     s32 record;
-    s32 v6;
 
     Func_02006990();
     Func_02006a12(9, 0, 0);
@@ -2479,13 +2478,12 @@ void FieldScene_RunScene3a4SequenceF(void)
     Call1(Func_02006996, 0x323);
     Func_0200382e();
     Func_02006936();
-    v6 = 224;
     Func_020068c4(1);
-    *(volatile s32 *)(*(volatile s32 *)Data_03001ebc + (v6 << 1)) = 0x201;
+    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x201;
     Func_02006b0c();
     Func_02006b18();
     Func_0200364c();
-    *(volatile s32 *)(*(volatile s32 *)Data_03001ebc + (v6 << 1)) = 0x204;
+    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x204;
     Func_020069e8();
 }
 
@@ -2495,7 +2493,6 @@ void FieldScene_RunScene3a4SequenceE(void)
 
     u32 i;
     s32 record;
-    s32 v6;
 
     Func_020069f8();
     Func_02006a7a(10, 0, 0);
@@ -2503,13 +2500,12 @@ void FieldScene_RunScene3a4SequenceE(void)
     Call1(Func_020069fe, 0x325);
     Func_0200393e();
     Func_0200699e();
-    v6 = 224;
     Func_0200692c(1);
-    *(volatile s32 *)(*(volatile s32 *)Data_03001ebc + (v6 << 1)) = 0x201;
+    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x201;
     Func_02006b74();
     Func_02006b80();
     Func_020037a0();
-    *(volatile s32 *)(*(volatile s32 *)Data_03001ebc + (v6 << 1)) = 0x204;
+    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x204;
     Func_02006a50();
 }
 
@@ -2603,7 +2599,7 @@ void RunEventScript01(void)
     ObjectMotion_SetHorizontalPositionWithTerrain_1(8, 0x1480000, 0x580000);
     ObjectMotion_SetHorizontalPositionWithTerrain_2(9, 0x1480000, 0x580000);
     Object_SetModeById_1_02003028(8, 0);
-    work = *(u8 *volatile *)Data_03001ebc;
+    work = *(u8 **)Data_03001ebc;
     SCENE_PHASE = 0x100;
     SCENE_FIELD_1C8 = 40;
     BattleRuntime_WaitIfModeZero_1_02003028();
@@ -2611,15 +2607,15 @@ void RunEventScript01(void)
     BattleRuntime_WaitIfModeZero_2(20);
     record = Scene_GetRecord_1(0);
     if (record != 0) {
-        ObjectMotion_SetHorizontalPositionWithTerrain_3(1, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+        ObjectMotion_SetHorizontalPositionWithTerrain_3(1, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     record = Scene_GetRecord_2(0);
     if (record != 0) {
-        ObjectMotion_SetHorizontalPositionWithTerrain_4(2, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+        ObjectMotion_SetHorizontalPositionWithTerrain_4(2, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     record = Scene_GetRecord_3(0);
     if (record != 0) {
-        ObjectMotion_SetHorizontalPositionWithTerrain_5(3, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+        ObjectMotion_SetHorizontalPositionWithTerrain_5(3, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     ObjectMotion_SetSpeedParameters_2_02003028(1, 0x9999, 0x4ccc);
     ObjectMotion_SetSpeedParameters_3_02003028(2, 0x9999, 0x4ccc);
@@ -2707,9 +2703,9 @@ void RunEventScript01(void)
     ObjectMotion_EnableActionAndSetCallback_5(2, addr_0200c12c);
     ObjectMotion_MarkActiveAndSetActionCallback_3(3, addr_0200c12c);
     BattleRuntime_WaitIfModeZero_9(20);
-    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c0)) = 0x204;
+    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x204;
     GameFlag_Clear_1(0x12f);
-    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c8)) = 16;
+    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c8) = 16;
     GameFlag_Set_1(0x909);
     BattleRuntime_ScheduleShoulderButtonModeUpdate_1();
 }

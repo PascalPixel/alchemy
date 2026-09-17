@@ -402,7 +402,7 @@ void FieldScene_RunScene395_02000158(void)
                 goto L_02000220;
             }
             {
-                u16 *target = (u16 *)(*(u8 *volatile *)Data_03001ebc + 0x172);
+                u16 *target = (u16 *)(*(u8 **)Data_03001ebc + 0x172);
                 s32 shown = 1;
 
                 *target = shown;
@@ -469,12 +469,10 @@ void PaletteScene_RunFlaggedBranch(void)
 
 void RunEventScript01(void)
 {
-    extern u8 Data_02009dd0[];
+    extern s32 Data_02009dd0;
 
     u32 i;
     s32 rec8;
-    u8 *record;
-    s32 base5_2009dd0;
 
     rec8 = Func_02001ca2(0);
     Value3(Func_02001d40, 0, 0xc000, 0);
@@ -482,40 +480,37 @@ void RunEventScript01(void)
     Func_02001d96(20);
     Func_02001c1c(40);
     Func_02001dca(17);
-    base5_2009dd0 = (s32)Data_02009dd0;
-    *(volatile s32 *)base5_2009dd0 = 1;
+    Data_02009dd0 = 1;
     Call2(Func_02001c3a, 0x2009219, 0xc80);
     Func_02001c38_a(30);
-    *(volatile s32 *)base5_2009dd0 = 0;
+    Data_02009dd0 = 0;
     Call4(Func_02001da6, 0x1480000, -1, 0xeb0000, 1);
     Func_02001d96_a(0, 1);
     *(u8 *)(Func_02001d04(0) + 90) &= 254;
     Func_02001d56(0, 16);
     Call3(Func_02001d2c, 0, 0x20000, 0x20000);
     Func_02001e2a(133);
-    *(volatile s32 *)(rec8 + 40) = 0x50000;
-    *(volatile s32 *)(rec8 + 72) = 0x4000;
-    *(volatile s32 *)(rec8 + 68) = 0xa000;
+    *(s32 *)(rec8 + 40) = 0x50000;
+    *(s32 *)(rec8 + 72) = 0x4000;
+    *(s32 *)(rec8 + 68) = 0xa000;
     Call3(Func_02001d70, 0, 0x14f, 0x102);
-    if (*(volatile s32 *)(rec8 + 40) >= 0) {
-        do {
-            Func_02001cac(1);
-        } while (*(volatile s32 *)(rec8 + 40) >= 0);
+    while (*(s32 *)(rec8 + 40) >= 0) {
+        Func_02001cac(1);
     }
     do {
         Func_02001cb8_a(1);
-    } while (*(volatile s32 *)(rec8 + 40) <= 0);
+    } while (*(s32 *)(rec8 + 40) <= 0);
     Func_02001e6c(161);
     Func_02001db4(0, 19);
     Func_02001d5a(120);
     Call1_020002ec(Func_02001cea, 0x2009219);
     Func_02001ce2(40);
-    *(volatile s32 *)(rec8 + 68) = 0x4000;
+    *(s32 *)(rec8 + 68) = 0x4000;
     {
         u8 *record = Func_02001d92(0);
-        u8 value = *(volatile u8 *)&record[90];
+        u8 flags = record[90] | 1;
 
-        record[90] = (u8)(value | 1);
+        record[90] = flags;
     }
     Func_02001d82(80);
     Call1_020002ec(Func_02001e18, 0x14cc);
@@ -530,10 +525,10 @@ void RunEventScript01(void)
     {
         s32 shown = 0xc000;
 
-        *(volatile u16 *)(rec8 + 6) = shown;
+        *(u16 *)(rec8 + 6) = shown;
     }
-    *(volatile s32 *)(rec8 + 72) = 0x10000;
-    *(volatile s32 *)(rec8 + 68) = 0x4000;
+    *(s32 *)(rec8 + 72) = 0x10000;
+    *(s32 *)(rec8 + 68) = 0x4000;
     Func_02001e58(0, 2);
     Func_02001dde(40);
     Func_02001e58_a(0, 4, 0);

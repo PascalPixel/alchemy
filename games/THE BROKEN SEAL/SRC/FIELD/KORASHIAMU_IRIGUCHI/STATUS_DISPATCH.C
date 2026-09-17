@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 
 #define SceneData_SelectTableBySceneId Func_02000030
 #define SceneData_GetTableB2bc Func_02000074
@@ -1456,7 +1457,7 @@ void FieldScene_BuildActorPresentationGroup(void)
 {
     extern u8 Data_03001ebc[];
 
-    s32 rec2;
+    struct FieldActor *rec2;
     u8 *work;
     s32 shift;
     s32 phase;
@@ -1479,17 +1480,17 @@ void FieldScene_BuildActorPresentationGroup(void)
     rec2 = Func_02003f28(21);
     Func_02003ec6_a(rec2, 0);
     rec2 = Func_02003f34(19);
-    *(volatile s32 *)(rec2 + 24) = -0x10000;
+    rec2->scale_x = -0x10000;
     rec2 = Value1(Func_02003f3e, 20);
-    *(volatile s32 *)(rec2 + 24) = -0x10000;
+    rec2->scale_x = -0x10000;
     Func_02003ec6_b(1);
     Func_02003f98_a(0, 0, 0);
     Func_02003ed6(1);
-    work = *(u8 *volatile *)Data_03001ebc;
+    work = *(u8 **)Data_03001ebc;
     phase = 0x1c0;
-    *(volatile s32 *)(work + phase) = 0x200;
+    *(s32 *)(work + phase) = 0x200;
     field = 0x1c8;
-    *(volatile s32 *)(work + field) = 32;
+    *(s32 *)(work + field) = 32;
     Func_02004086();
     Func_0200409a();
     Func_02003f60(40);
@@ -1534,12 +1535,9 @@ void FieldScene_BuildActorPresentationGroup(void)
     Value2(Func_02003128, 18, shift);
     Func_020040f6(16);
     rec2 = Func_020040e4(16);
-    {
-        s32 shown = 0xd000;
-        *(volatile u16 *)(rec2 + 6) = shown;
-    }
-    *(volatile s32 *)(rec2 + 24) = 0x10000;
-    *(volatile s32 *)(rec2 + 28) = 0x10000;
+    rec2->facing = 0xd000;
+    rec2->scale_x = 0x10000;
+    rec2->scale_y = 0x10000;
     Func_020040d8(20);
     Func_02004150(16, 0);
     Func_020040e6(40);
@@ -1564,13 +1562,13 @@ void FieldScene_BuildActorPresentationGroup(void)
     Call3(Func_020041e4, 16, 184, 0x35f);
     Call3(Func_020041f0, 16, 184, 0x31c);
     Func_02004202(16, 0, 0);
-    work = *(u8 *volatile *)Data_03001ebc;
-    *(volatile s32 *)(work + phase) = 0x201;
-    *(volatile s32 *)(work + field) = 16;
+    work = *(u8 **)Data_03001ebc;
+    *(s32 *)(work + phase) = 0x201;
+    *(s32 *)(work + field) = 16;
     Func_020042e6();
     Func_020042f2();
-    work = *(u8 *volatile *)Data_03001ebc;
-    *(volatile s32 *)(work + phase) = 0x100;
+    work = *(u8 **)Data_03001ebc;
+    *(s32 *)(work + phase) = 0x100;
     Func_020042d4(69);
     Func_020041d8();
 }
@@ -1610,8 +1608,8 @@ void FieldScene_RunMiddleSequence(void)
     extern u8 Data_03001ebc[];
 
     u32 counter;
-    u8 *rec;
-    s32 rec2;
+    struct FieldActor *rec;
+    struct FieldActor *rec2;
     u8 *work;
 
     BattleRuntime_Reset_1_02001688();
@@ -1631,17 +1629,17 @@ void FieldScene_RunMiddleSequence(void)
     rec2 = Scene_GetRecord_1(21);
     Func_020042ae_a(rec2, 0);
     rec2 = Scene_GetRecord_2(19);
-    *(volatile s32 *)(rec2 + 24) = -0x10000;
+    rec2->scale_x = -0x10000;
     rec2 = Scene_GetRecord_3(20);
-    *(volatile s32 *)(rec2 + 24) = -0x10000;
+    rec2->scale_x = -0x10000;
     Func_020042ae_b(1);
     ObjectMotion_SetHorizontalPositionWithTerrain_2(0, 0, 0);
     Func_020042be(1);
     /* Advance the scene phase/status word at +0x1c0 and its companion word
      * at +0x1c8 of the shared scene work record. */
-    work = *(u8 *volatile *)Data_03001ebc;
-    *(volatile s32 *)((work + 0x1c0)) = 0x200;
-    *(volatile s32 *)((work + 0x1c8)) = 32;
+    work = *(u8 **)Data_03001ebc;
+    *(s32 *)((work + 0x1c0)) = 0x200;
+    *(s32 *)((work + 0x1c8)) = 32;
     BattleRuntime_WaitIfModeZero_1();
     ObjectMotion_SetSpeedParameters_1_02001688();
     BattleRuntime_WaitIfModeZero_2(40);
@@ -1682,14 +1680,14 @@ void FieldScene_RunMiddleSequence(void)
     ObjectMotion_ArmCallback_6(15, 0x3000, 0);
     Value2(Func_020034f2, 18, 0x3000);
     BattleRuntime_WaitIfModeZero_19(17, 0x101);
-    /* Clear the flag byte at +85, then step the +12 field back and forth
+    /* Clear the motion flags, then step the height up and back down
      * 20 times, waiting between each step. */
     rec = Scene_GetRecord_4(21);
-    rec[85] = 0;
+    rec->motion_flags = 0;
     for (counter = 0; counter < 20; counter++) {
-        *(volatile s32 *)(rec + 12) += 0x9999;
+        rec->y.fixed += 0x9999;
         Func_0200444a(4);
-        *(volatile s32 *)(rec + 12) += -0x4ccc;
+        rec->y.fixed += -0x4ccc;
         Func_0200445a(4);
     }
     Object_SetModeById_14(19, 6);
@@ -1699,15 +1697,10 @@ void FieldScene_RunMiddleSequence(void)
     ObjectMotion_EnableActionAndResetMotion_1(17);
     Object_SetModeById_16(17, 1);
     rec2 = Scene_GetRecord_5(17);
-    {
-        /* Set the u16 field at +6. */
-        s32 shown = 0xd000;
-
-        *(volatile u16 *)(rec2 + 6) = shown;
-    }
-    rec[85] = 3;
-    *(volatile s32 *)(rec + 24) = 0x10000;
-    *(volatile s32 *)(rec + 28) = 0x10000;
+    rec2->facing = 0xd000;
+    rec->motion_flags = 3;
+    rec->scale_x = 0x10000;
+    rec->scale_y = 0x10000;
     BattleRuntime_WaitIfModeZero_22(10);
     Audio_PlayCue_2(107);
     Func_020044da(0x10000, 0x10000, 0x10000);
@@ -1729,9 +1722,9 @@ void FieldScene_RunMiddleSequence(void)
     BattleRuntime_WaitIfModeZero_27(80);
     /* Advance the scene phase/status word at +0x1c0 and its companion word
      * at +0x1c8 of the shared scene work record. */
-    work = *(u8 *volatile *)Data_03001ebc;
-    *(volatile s32 *)((work + 0x1c0)) = 0x201;
-    *(volatile s32 *)((work + 0x1c8)) = 16;
+    work = *(u8 **)Data_03001ebc;
+    *(s32 *)((work + 0x1c0)) = 0x201;
+    *(s32 *)((work + 0x1c8)) = 16;
     Func_020046ea();
     ObjectMotion_SetSpeedParameters_4();
     GameFlag_Set_1(0x8a4);
@@ -2085,7 +2078,7 @@ void FieldScene_RunScene3b9_020023e0(void)
     extern u8 Data_03001ebc[];
 
     u32 i;
-    s32 record;
+    struct FieldActor *record;
 
     if (Value1(Func_02004fa2, 5) != 0) {
         Call1(Func_02004fb4, 0x16d);
@@ -2099,11 +2092,7 @@ void FieldScene_RunScene3b9_020023e0(void)
     Call3(Func_0200503a, 11, 0x19999, 0xcccc);
     Call3(Func_02005044, 0, 0x19999, 0xcccc);
     record = Func_02005042(11);
-    {
-        s32 shown = 0;
-
-        *(volatile u16 *)(record + 6) = shown;
-    }
+    record->facing = 0;
     Func_0200515a();
     Func_020050a2(0, 2);
     Func_020050aa(11, 2);
@@ -2256,7 +2245,7 @@ void FieldScene_RunScene3b9_02002820(void)
     extern u8 Data_03001ebc[];
 
     u32 i;
-    s32 record;
+    struct FieldActor *record;
 
     if (Value1(Func_020053e2_a, 5) != 0) {
         Call1(Func_020053f4, 0x16d);
@@ -2270,11 +2259,7 @@ void FieldScene_RunScene3b9_02002820(void)
     Call3(Func_0200547a, 11, 0x19999, 0xcccc);
     Call3(Func_02005484, 0, 0x19999, 0xcccc);
     record = Func_02005482(11);
-    {
-        s32 shown = 0x8000;
-
-        *(volatile u16 *)(record + 6) = shown;
-    }
+    record->facing = 0x8000;
     Func_0200559c();
     Func_020054e4(0, 2);
     Func_020054ec(11, 2);

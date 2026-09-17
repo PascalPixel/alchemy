@@ -718,12 +718,7 @@ void FieldScene_RunScene3b0_02000468(void)
 
 void FieldScene_RunScene3b0_020004b0(void)
 {
-    extern u8 Data_03001ebc[];
-
-    u32 i;
-    s32 record;
-
-    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c0)) = 0x202;
+    SCENE_PHASE = 0x202;
     Func_020017ae();
     Func_020017c2();
     Func_020016d8(20);

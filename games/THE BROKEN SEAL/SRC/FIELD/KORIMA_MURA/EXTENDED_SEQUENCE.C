@@ -2,7 +2,7 @@
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-#define SCENE_POINTER (*(u8 *volatile *)0x03001ebc)
+#define SCENE_POINTER (*(u8 **)0x03001ebc)
 #define SceneState_FlushPendingWordB698 Func_02000030
 #define SceneEffect_AdvanceCounterAndSwitchMode Func_02000050
 #define SceneData_InitRecordTable Func_020000a0
@@ -393,7 +393,7 @@ void FieldScene_ConfigureActor0ThenRun(s32 a0)
     Call3(Func_02002d34, 0, 0x8000, 0x4000);
     Func_02002d94(0, 2);
     Call3(Func_02002d88, 0, 0, -8);
-    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c8)) = 16;
+    *(s32 *)((*(u8 **)Data_03001ebc + 0x1c8)) = 16;
     Func_02002e54(a0);
 }
 
@@ -402,6 +402,8 @@ s32 FieldScene_SetupEntryBySelector(void)
     s16 step;
     u32 actor;
     u8 *tbl;
+    s32 x;
+    s32 y;
 
     step = Data_02000240[224];
 
@@ -432,11 +434,9 @@ s32 FieldScene_SetupEntryBySelector(void)
         }
         Func_0200314c(13, 9, 1, 1, 13, 8);
         Func_0200315e(13, 9, 1, 1, 15, 8);
-        {
-            s32 m = 14;
-            s32 n = 9;
-            Func_02003172_a(13, 9, 1, 1, m, n);
-        }
+        x = 14;
+        y = 9;
+        Func_02003172_a(13, 9, 1, 1, x, y);
     }
 
     if (Func_02003190(0x843) == 0) {

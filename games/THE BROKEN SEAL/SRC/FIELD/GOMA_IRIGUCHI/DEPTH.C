@@ -440,7 +440,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     s32 v3;
 
     record = Value1(Func_02001494, 9);
-    v3 = *(volatile s32 *)(record + 8) / 0x100000;
+    v3 = *(s32 *)(record + 8) / 0x100000;
     Call1(Func_02001476, 0x861);
     Call1(Func_0200147c, 0x862);
     if (v3 == 15) {
@@ -534,7 +534,7 @@ void FieldScene_RunScene387SequenceA(void)
     Call3(Func_0200188e, 0, 0xe000, 20);
     record = Value1(Func_020017fc, 0);
     if (record != 0) {
-        Func_02001842(1, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+        Func_02001842(1, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     Call3(Func_02001836, 1, 0x108, 168);
     Call3(Func_020018ba, 1, 0x6000, 20);

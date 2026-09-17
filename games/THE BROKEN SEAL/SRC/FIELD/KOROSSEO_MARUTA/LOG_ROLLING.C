@@ -1780,9 +1780,9 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
     s32 threea0;
     s32 mode;
 
-    p10 = *(volatile s32 *)StageSceneWork;
+    p10 = *(s32 *)StageSceneWork;
     base = Data_02000240;
-    p8 = *(volatile s32 *)(base + 500);
+    p8 = *(s32 *)(base + 500);
     mode = *(s16 *)(base + 450);
     if (mode == 2) {
         Func_020055ce_head();
@@ -1794,8 +1794,8 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
             s32 t1 = base7_2073 + 1;
             Func_020056a6_head(threea0 + t1);
             Func_020056be_head(a0, 0);
-            *(volatile s32 *)((0x1c0 + p10)) = 0x200;
-            *(volatile s32 *)((0x1c8 + p10)) = 15;
+            *(s32 *)((0x1c0 + p10)) = 0x200;
+            *(s32 *)((0x1c8 + p10)) = 15;
             Func_02005770_head();
             Func_0200577c_head();
             Func_02003262_head(a0);
@@ -2936,7 +2936,7 @@ L_main:
     Call3(Func_02007734_middle, owner, 0x10000, 0x8000);
     record = Value1(Func_0200772a_middle, 0);
     if (record != 0) {
-        Func_02007788_middle(obj, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+        Func_02007788_middle(obj, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     hi = p11 + 16;
     Func_02007782_middle(obj, p9, hi);
@@ -2958,9 +2958,9 @@ L_main:
     Func_020077a0_middle(obj);
     Func_0200777c_middle(base + 512);
     rec = Value1(Func_020077e2_middle, obj);
-    sx = *(volatile s32 *)(rec + 8) >> 20;
+    sx = *(s32 *)(rec + 8) >> 20;
     Func_020077ae_middle((obj << 4) + 880, sx);
-    sy = *(volatile s32 *)(rec + 16) >> 20;
+    sy = *(s32 *)(rec + 16) >> 20;
     Func_020077bc_middle((obj << 4) + 888, sy);
 }
 

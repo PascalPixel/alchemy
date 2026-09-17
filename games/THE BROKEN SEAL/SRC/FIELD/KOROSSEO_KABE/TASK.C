@@ -1100,10 +1100,6 @@ void FieldScene_RunTwoStepSequence(void)
  * address-taken one does not. */
 void SceneState_StoreSlotTileXToWork832To848(void)
 {
-
-    extern volatile s32 Data_0200c834;
-    extern volatile s32 Data_0200c838;
-
     /* The two stack arguments each need their own local: the reference builds
      * both into separate registers before storing either, and a literal pair
      * lets the compiler reuse one register for both. */
@@ -1132,11 +1128,9 @@ void SceneState_StoreSlotTileXToWork832To848(void)
 
 void SceneState_SetWorkByte35(void)
 {
+    u8 *record = *(u8 **)0x03001F30;
 
-    extern volatile s32 Data_0200c834;
-    extern volatile s32 Data_0200c838;
-
-    FIELD_AT_OFFSET(*(void **)0x03001F30, s8 *, 0x35) = 1;
+    record[53] = 1;
 }
 
 void SceneState_SetFlag331AndConfigureRegion46_17(void)
@@ -1188,10 +1182,6 @@ void FieldScene_SetFlag333AndDrawTiles(void)
 
 void SceneState_SendWord250With6(void)
 {
-
-    extern volatile s32 Data_0200c834;
-    extern volatile s32 Data_0200c838;
-
     s16 *tbl = SceneStateHalfwords;
 
     Func_020042aa(*(s32 *)(tbl + 250), 6, 0);
@@ -1306,11 +1296,9 @@ void FieldScene_RunStep17At40By25(void)
 void FieldScene_RunSupplementalSequenceOne(void)
 {
 
-    extern u8 Data_0200c834[];
-    extern u8 Data_0200c838[];
-    extern u8 Data_03001ebc[];
+    extern s32 Data_0200c834;
+    extern u32 Data_0200c838;
 
-    extern s32 Data_02000240_t[][1];
 
     s32 i;
     s32 rec8;
@@ -1321,12 +1309,9 @@ void FieldScene_RunSupplementalSequenceOne(void)
     s32 ya;
     s32 yb;
     s32 yd;
-    s32 flag;
-    s32 count;
     s32 record;
-    s32 base5;
 
-    rec8 = Func_02004674(Data_02000240_t[125][0]);
+    rec8 = Func_02004674(Data_02000240[125]);
     for (i = 22; i <= 25; i++) {
         rec7 = Value1(Func_0200467e, i);
         *(u8 *)(rec7 + 91) = 0;
@@ -1365,9 +1350,9 @@ void FieldScene_RunSupplementalSequenceOne(void)
         }
         *(s32 *)(rec8 + 16) = yb;
     }
-    if (*(volatile s32 *)Data_0200c838 != 0
+    if (Data_0200c838 != 0
         && *(s32 *)(rec7 + 56) == (s32)0x80000000) {
-        if (*(volatile s32 *)Data_0200c834 == 0) {
+        if (Data_0200c834 == 0) {
             Call6(Func_02004650, 58, 28, 7, 1, 58, 13);
         } else {
             Call6(Func_02004650, 58, 10, 1, 1, 58, 11);
@@ -1376,11 +1361,9 @@ void FieldScene_RunSupplementalSequenceOne(void)
         Call6(Func_02004666, 57, 11, 1, 1, 58, 11);
         Call6(Func_02004678, 58, 14, 7, 1, 58, 13);
     }
-    base5 = (s32)Data_0200c838;
-    if (*(volatile s32 *)base5 == 0) {
-        flag = *(volatile s32 *)Data_0200c834 ^ 1;
-        *(volatile s32 *)Data_0200c834 = flag;
-        if (flag != 0) {
+    if (Data_0200c838 == 0) {
+        Data_0200c834 ^= 1;
+        if (Data_0200c834 != 0) {
             record = Func_0200475c(22);
             Call4(Func_02004692, record, 0x3a80000, 0, 0xb80000);
             record = Func_02004770(23);
@@ -1402,28 +1385,21 @@ void FieldScene_RunSupplementalSequenceOne(void)
             Func_02004850(31, 10);
         }
     }
-    count = *(volatile s32 *)base5 + 1;
-    *(volatile s32 *)base5 = count;
-    if ((u32)count > 119) {
-        record = Value1(Func_020047b2, 0x104);
-        if (record == 0) {
-            *(volatile s32 *)base5 = record;
+    Data_0200c838++;
+    if (Data_0200c838 > 119) {
+        if (Value1(Func_020047b2, 0x104) == 0) {
+            Data_0200c838 = 0;
         }
     }
 }
 
 void FieldScene_RunScene3bbSequenceA(void)
 {
+    extern s32 Data_0200c834;
+    extern u32 Data_0200c838;
 
-    extern u8 Data_0200c834[];
-    extern u8 Data_0200c838[];
-    extern u8 Data_03001ebc[];
-
-    u32 i;
-    s32 record;
-
-    *(volatile s32 *)Data_0200c838 = 0;
-    *(volatile s32 *)Data_0200c834 = 0;
+    Data_0200c838 = 0;
+    Data_0200c834 = 0;
     Call1(Func_020046ac, 0x2008715);
     Call3(Func_0200489a, 22, 0x3a80000, 0xd80000);
     Call3(Func_020048a8, 23, 0x3c80000, 0xd80000);
@@ -1434,27 +1410,22 @@ void FieldScene_RunScene3bbSequenceA(void)
 
 void SceneState_ApplyTable8715AndValue104(void)
 {
-
-    extern volatile s32 Data_0200c834;
-    extern volatile s32 Data_0200c838;
-
     Func_02004700(0x2008715, 0xC85);
     Func_02004858(0x104);
 }
 
 /*
  * Spin until the first status word reaches zero with the second equal to 75,
- * giving up after 600 polls. Both words are re-read on every pass, so they are
- * volatile and their reads must not be hoisted or merged across the poll call.
+ * giving up after 600 polls. Both words are re-read on every pass, because the
+ * poll call lets the task that publishes them run.
  * The plain while loop is the spelling that reproduces the reference. What the
  * two words mean is not established here -- only that another task publishes
  * them while this owner spins.
  */
 void SceneState_WaitForStatusWords(void)
 {
-
-    extern volatile s32 Data_0200c834;
-    extern volatile s32 Data_0200c838;
+    extern s32 Data_0200c834;
+    extern u32 Data_0200c838;
 
     s32 cnt;
 
@@ -1473,9 +1444,8 @@ void SceneState_WaitForStatusWords(void)
 
 void SceneState_InstallTask8714AndApplyTwoRects(void)
 {
-
-    extern volatile s32 Data_0200c834;
-    extern volatile s32 Data_0200c838;
+    extern s32 Data_0200c834;
+    extern u32 Data_0200c838;
 
     Func_02004a58(31);
     Func_020048b0(820);                 /* 205 << 2 */
@@ -1869,8 +1839,6 @@ void Func_020020b8(s32 a, s32 b)
 
 void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
 {
-
-
     s32 rec;
     s32 record;
     s32 p9;
@@ -1947,7 +1915,7 @@ L_main:
     Call3(Func_020061d4, owner, 0x10000, 0x8000);
     record = Value1_02002114(Func_020061ca, 0);
     if (record != 0) {
-        Func_02006218(obj, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+        Func_02006218(obj, *(s32 *)(record + 8), *(s32 *)(record + 16));
     }
     hi = p11 + 16;
     Func_0200621a(obj, p9, hi);
@@ -1969,9 +1937,9 @@ L_main:
     Func_02006240(obj);
     Func_0200621c(base + 512);
     rec = Value1_02002114(Func_02006282, obj);
-    sx = *(volatile s32 *)(rec + 8) >> 20;
+    sx = *(s32 *)(rec + 8) >> 20;
     Func_0200624e_a((obj << 4) + 880, sx);
-    sy = *(volatile s32 *)(rec + 16) >> 20;
+    sy = *(s32 *)(rec + 16) >> 20;
     Func_0200625c((obj << 4) + 888, sy);
 }
 
@@ -2148,14 +2116,8 @@ void StagedActor_ResetMotionAfterRefresh(s32 slot)
 
 void SceneState_InitCursorWhenUnset(void)
 {
-
-    extern volatile s32 Data_0200c834;
-    extern volatile s32 Data_0200c838;
-
-    s16 *cursor = &Data_0200cb46;
-
-    if (*cursor == -1) {
-        *cursor = Func_02006d3e();
+    if (Data_0200cb46 == -1) {
+        Data_0200cb46 = Func_02006d3e();
     }
 }
 
@@ -2286,22 +2248,12 @@ void Resource3bb_EmptyHook(void)
 /* Complete eight-byte state setter plus its sole four-byte pool word. */
 void SceneState_SetHalfword1000To9(void)
 {
-
-    extern volatile s32 Data_0200c834;
-    extern volatile s32 Data_0200c838;
-
-    u16 *p = (u16 *)&Data_02001000;
-    u16 v = 9;
-    *p = v;
+    Data_02001000.f0 = 9;
 }
 
 void SceneState_WaitUntilStatusNine(void)
 {
-
-    extern volatile s32 Data_0200c834;
-    extern volatile s32 Data_0200c838;
-
-    s16 *status = (s16 *)&Data_02001000;
+    s16 *status = &Data_02001000.f0;
 
     while (*status != 9) {
         Func_02006fe8(1);

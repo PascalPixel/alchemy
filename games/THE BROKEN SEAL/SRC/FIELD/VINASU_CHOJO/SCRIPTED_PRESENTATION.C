@@ -1301,9 +1301,9 @@ void FieldScene_RunScene3c9_02003924(void)
     record = Func_020098ac(23);
     *(s32 *)(record + 12) = 0x280000;
     Call2(Func_02009774_a, 0x200da29, 0xc80);
-    work = *(u8 *volatile *)Data_03001ebc;
-    *(s32 *)(((s32)work + 0x1c0)) = 0x200;
-    *(s32 *)(((s32)work + 0x1c8)) = 24;
+    work = *(u8 **)Data_03001ebc;
+    *(s32 *)(work + 0x1c0) = 0x200;
+    *(s32 *)(work + 0x1c8) = 24;
     Func_02009a1e();
     Func_02009a32();
     Func_020098c0(40);
@@ -1697,25 +1697,16 @@ void SceneEffect_AdvanceGatedRiseCounter(u8 *obj)
     }
 }
 
-void FieldScene_RunScene3c9_02005b90(u8 *a0)
+void FieldScene_RunScene3c9_02005b90(union FieldObject *object)
 {
-    extern u8 Data_03001ebc[];
+    struct FieldEffect *anchor;
+    s32 spin;
 
-    s32 p10;
-    s32 p8;
-    s32 p8b;
-    s32 record;
-    s32 value;
-
-    p10 = *(s32 *)(a0 + 104);
-    p8 = *(u16 *)(a0 + 100);
-    record = Func_0200b7ce(p8);
-    *(volatile s32 *)(a0 + 8) = (*(s32 *)(p10 + 8) + (record *(*(s32 *)(a0 + 48) + 28)));
-    value = Func_0200b7dc(p8);
-    *(volatile s32 *)(a0 + 16) = ((value << 4) + 0xa40000);
-    *(volatile s32 *)(a0 + 56) = *(s32 *)(a0 + 8);
-    *(volatile s32 *)(a0 + 64) = ((value << 4) + 0xa40000);
-    p8b = *(volatile u16 *)(a0 + 100);
-    p8b = p8b + -0x200;
-    *(volatile u16 *)(a0 + 100) = (u16)p8b;
+    anchor = *(struct FieldEffect **)((u8 *)object + 104);
+    spin = object->effect.spin;
+    object->effect.x = anchor->x + Func_0200b7ce(spin) * (*(s32 *)((u8 *)object + 48) + 28);
+    object->effect.z = (Func_0200b7dc(spin) << 4) + 0xa40000;
+    *(s32 *)((u8 *)object + 56) = object->effect.x;
+    *(s32 *)((u8 *)object + 64) = object->effect.z;
+    object->effect.spin -= 0x200;
 }

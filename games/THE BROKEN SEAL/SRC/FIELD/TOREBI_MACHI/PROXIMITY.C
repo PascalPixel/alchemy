@@ -4,6 +4,7 @@
  */
 
 #include "TYPES.H"
+#include "FIELD_EFFECT.H"
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
@@ -103,7 +104,7 @@
  * Object-id slot at 0x1f4 of the shared scene work record, set once below to
  * the id of the object created earlier in the same function.
  */
-#define SCENE_OBJECT_ID (*(s32 *)(*(u8 *volatile *)Data_03001ebc + 0x1f4))
+#define SCENE_OBJECT_ID (*(s32 *)(*(u8 **)Data_03001ebc + 0x1f4))
 #define SceneState_SetValues31_2_4 Func_02000030
 #define SceneActor_GetPositionDistance Func_02000040
 #define SceneActor_UpdatePartnerProximity Func_02000170
@@ -138,22 +139,15 @@ struct SceneSetup {
     u16 second;
 };
 
-struct Rec_3b5 {
-    u8 pad00[9];
-    u8 lo9 : 2;
-    u8 mode9 : 2;               /* +9,  bits 2..3 */
-    u8 hi9 : 4;
-    u8 pad0a[11];
-    u8 lo15 : 2;
-    u8 mode15 : 2;              /* +21, bits 2..3 */
-    u8 hi15 : 4;
-};
-
-struct Work_3b5 {
-    u8 pad00[35];
-    u8 f35;                     /* +35 */
-    u8 pad24[44];
-    struct Rec_3b5 *volatile f80;   /* +80, re-read for the second store */
+/*
+ * The sprite of an actor in this scene repeats its priority bits in the byte
+ * at 0x15, beside the priority FieldSprite names at 0x09.
+ */
+struct SceneSprite {
+    u8 unknown_00[0x15];
+    u8 unknown_15_low : 2;
+    u8 priority_15 : 2;
+    u8 unknown_15_high : 4;
 };
 
 struct Actor {
@@ -229,7 +223,7 @@ void Func_020010ce(s32);
 void Func_020010e8(s32, s32);
 void Func_0200106a();
 s32 Func_02001070();
-s32 Func_0200107a();
+struct SceneActor *Func_0200107a();
 s32 Func_0200108c();
 void Func_0200109a();
 s32 Func_020010a0();
@@ -238,7 +232,7 @@ void Func_0200110e();
 void Func_0200113c();
 void Func_0200114a();
 s32 Func_02001150();
-s32 Func_0200115a();
+struct SceneActor *Func_0200115a();
 s32 SceneDialogue_ShowMessage();
 s32 SceneFlag_Test();
 void Func_0200116e();
@@ -293,7 +287,7 @@ void Func_020014fe(s32);
 void Func_0200150a(void);
 void Func_02001516(void);
 void Func_0200143a(void);
-struct Work_3b5 *Func_02001470();
+struct FieldActor *Func_02001470();
 void Func_020009e8();
 void Func_0200145c();
 s32 Func_020014ce();
@@ -611,6 +605,13 @@ struct SceneActor {
     s32 x, y, z;
     u8 unk_14[71];
     u8 active;
+    u8 unk_5c[8];
+    /*
+     * Read by the partner-proximity callback: bit 0 chooses actor 17 rather
+     * than 16 as the partner, and bit 1 is set while the party talks to the
+     * actor.
+     */
+    u16 proximity_flags;
 };
 
 s32 SceneActor_GetPositionDistance(s32 *, s32 *);
@@ -769,24 +770,19 @@ void SceneDialogue_RunMessage0e37(void)
 
 void FieldScene_RunSupplementalSequenceTwo(void)
 {
-    extern u8 Data_03001ebc[];
+    extern struct EventWork *Data_03001ebc;
 
-    u8 *__restrict p5;
-    s32 rec;
-    s32 p8;
+    struct EventWork *work;
+    struct SceneActor *actor;
+    s16 facing;
     s32 msg;
 
-    p5 = *(u8 **)Data_03001ebc;
-    rec = Func_0200107a(16);
-    p8 = *(s16 *)(rec + 6);
+    work = Data_03001ebc;
+    actor = Func_0200107a(16);
+    facing = actor->facing;
     Func_0200106a();
-    {
-        volatile u16 *flags = (volatile u16 *)(rec + 100);
-        u16 value = *flags;
-
-        *flags = (u16)(value | 2);
-    }
-    if (*(s16 *)(p5 + 0x17e) == 0) {
+    actor->proximity_flags |= 2;
+    if (work->psynergy_request == 0) {
         if (Func_02001070(0x950) != 0) {
             msg = (s32)Data_00002365;
         } else if (Func_0200108c(0x962) != 0) {
@@ -807,32 +803,27 @@ void FieldScene_RunSupplementalSequenceTwo(void)
     Func_0200113c(16, 0);
     Func_0200116e(16, 0, 2);
     Func_020011a0(16, 0, 10);
-    *(volatile u16 *)(rec + 6) = p8;
+    actor->facing = facing;
     Func_0200109a(1);
-    *(volatile u16 *)(rec + 100) &= 1;
+    actor->proximity_flags &= 1;
     Func_0200110e();
 }
 
 void Func_020003d0(void)
 {
-    extern u8 Data_03001ebc[];
+    extern struct EventWork *Data_03001ebc;
 
-    u8 *__restrict p5;
-    s32 rec;
-    s32 p8;
+    struct EventWork *work;
+    struct SceneActor *actor;
+    s16 facing;
     s32 msg;
 
-    p5 = *(u8 **)Data_03001ebc;
-    rec = Func_0200115a(17);
-    p8 = *(s16 *)(rec + 6);
+    work = Data_03001ebc;
+    actor = Func_0200115a(17);
+    facing = actor->facing;
     Func_0200114a();
-    {
-        volatile u16 *flags = (volatile u16 *)(rec + 100);
-        u16 value = *flags;
-
-        *flags = (u16)(value | 2);
-    }
-    if (*(s16 *)(p5 + 0x17e) == 0) {
+    actor->proximity_flags |= 2;
+    if (work->psynergy_request == 0) {
         if (Func_02001150(0x950) != 0) {
             msg = (s32)Data_00002366;
         } else if (SceneFlag_Test(0x962) != 0) {
@@ -853,9 +844,9 @@ void Func_020003d0(void)
     Func_0200121c(17, 0);
     Func_0200124e(17, 0, 2);
     Func_02001280(17, 0, 10);
-    *(volatile u16 *)(rec + 6) = p8;
+    actor->facing = facing;
     Func_0200117a(1);
-    *(volatile u16 *)(rec + 100) &= 1;
+    actor->proximity_flags &= 1;
     Func_020011ee();
 }
 
@@ -992,55 +983,45 @@ void SceneScript_SetupActors(void)
 }
 
 /*
- * Copy the player's two-bit mode into both mode fields of the given actor's
- * record and clear its flag byte at +35.
- *
- * f80 is volatile so that the pointer is loaded again for the second store;
- * without that the first load is reused and the second one disappears. The
- * two mode writes must stay bitfields so they share one 32-bit mask, which
- * explicit mask-and-or arithmetic does not produce.
+ * Update callback: draw the object at the party leader's sprite priority, in
+ * both places its sprite keeps it, and clear its priority flags.
  */
-void SceneActor_CopyPlayerModeToActor(struct Work_3b5 *work)
+void SceneActor_CopyPlayerModeToActor(union FieldObject *object)
 {
-    s32 bits;
+    s32 priority;
 
-    if (work != 0) {
-        bits = Func_02001470(0)->f80->mode9;
-        work->f35 = 0;
-        work->f80->mode9 = bits;
-        work->f80->mode15 = bits;
+    if (object != NULL) {
+        priority = Func_02001470(0)->sprite->priority;
+        object->actor.priority_flags = 0;
+        object->actor.sprite->priority = priority;
+        ((struct SceneSprite *)object->actor.sprite)->priority_15 = priority;
     }
 }
 
 s32 Func_02000728(s32 a0)
 {
-    extern u8 Data_03001ebc[];
+    extern struct EventWork *Data_03001ebc;
 
     u32 i;
     s32 record;
     s32 handler;
     s32 hidden;
 
-    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c0)) = 0x100;
+    Data_03001ebc->start_transition = 0x100;
     Call3(Func_020014f8, 16, 0x1600000, 0x1600000);
     Call2(Func_020014d8_a, 16, 0x2008ec0);
     record = Value1(Func_020014ce, 16);
     handler = 0x2008171;
-    {
-        volatile u16 *target = (volatile u16 *)(record + 100);
-        s32 shown = 1;
-
-        *target = shown;
-    }
-    *(volatile s32 *)(record + 108) = handler;
+    ((struct SceneActor *)record)->proximity_flags = 1;
+    *(s32 *)(record + 108) = handler;
     hidden = 0;
     Value3(Func_02001520, 17, 0x1700000, 0x1400000);
     Call2(Func_02001500_a, 17, 0x2008f90);
     record = Value1(Func_020014f6, 17);
-    *(volatile u16 *)(record + 100) = hidden;
-    *(volatile s32 *)(record + 108) = handler;
+    ((struct SceneActor *)record)->proximity_flags = hidden;
+    *(s32 *)(record + 108) = handler;
     record = Func_02001506(14);
-    *(volatile s32 *)(record + 108) = 0x20086e9;
+    *(s32 *)(record + 108) = 0x20086e9;
     if (Value1(Func_020014d8_b, 0x8c1) != 0) {
         Call3(Func_0200155a, 28, 0x13c0000, 0x1480000);
     }

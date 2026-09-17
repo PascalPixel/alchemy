@@ -3722,7 +3722,7 @@ void FieldScene_RunScene39eSequenceA(void)
     base5_200a5b9 = (s32)Func_0200a5b9;
     Call2_020026d8(Func_02006a34, base5_200a5b9, 0xc80);
     Call3(Func_02006b06, 0, 0x3333, 0x1999);
-    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c8)) = 60;
+    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c8) = 60;
     Func_02006c30();
     Func_02006c86(154);
     Func_02006b66(0, 2);
@@ -3757,7 +3757,7 @@ void FieldScene_RunScene39e_02002778(void)
     Call3_02002778(Func_02006b20_a, 0x200c764, 77, 8);
     *(u8 *)(Func_02006b96(0) + 85) = 0;
     Call3_02002778(Func_02006bb6, 0, 0xcccc, 0x6666);
-    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c0)) = 0x100;
+    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x100;
     Func_02006c0c(0, 2);
     Call3_02002778(Func_02006c00, 0, 0, -16);
     Func_02006b9e(16);
@@ -3775,7 +3775,7 @@ void FieldScene_RunScene39e_020027ec(void)
     Func_02006bcc();
     Call3_020027ec(Func_02006c12, 0, 0x8000, 0x4000);
     Call3_020027ec(Func_02006c36, 0, 168, 0x1f8);
-    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c0)) = 0x100;
+    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x100;
     Func_02006d40();
     Func_02006d54();
     Func_02006c6a(0);
@@ -3786,7 +3786,7 @@ void FieldScene_RunScene39e_020027ec(void)
     *(u8 *)(Func_02006c4e(8) + 91) = 0;
     Func_02006dd2(152);
     record = Func_02006c60(8);
-    *(volatile s32 *)(record + 40) = 0x80000;
+    *(s32 *)(record + 40) = 0x80000;
     Func_02006cbe(8, 1);
     Call1_02002778(Func_02006d0c, 0x17be);
     Func_02006d2e(8, 0, 20);
@@ -3825,7 +3825,7 @@ void FieldScene_RunScene39e_020027ec(void)
         Call3_020027ec(Func_02006e58, 8, 0x102, 60);
         Call1_02002778(Func_02006e2e, 0x17c8);
         Func_02006e3e(8, 0);
-        L_0200299c:;
+    L_0200299c:
         if (Value2(Func_02006d96, 0, 0) == 1) {
             Func_02006d80_a(10);
             Call3_020027ec(Func_02006e84, 8, 0x102, 60);
@@ -4306,9 +4306,9 @@ void FieldScene_RunRoofEnsembleSequence(void)
     {
         /* Set bit 0 of the flag byte at +90. */
         u8 *record = Scene_GetRecord_5_02002778(0);
-        u8 value = *(volatile u8 *)&record[90];
+        u8 value = record[90] | 1;
 
-        record[90] = (u8)(value | 1);
+        record[90] = value;
     }
     BattleRuntime_WaitIfModeZero_86(20);
     Func_02007c42();

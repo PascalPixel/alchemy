@@ -329,13 +329,11 @@ void FieldScene_RunScene3a5_020014b0(void)
     u16 *shown_addr;
     u8 *p5;
 
-    p5 = *(volatile s32 *)Data_03001ebc;
+    p5 = *(u8 **)Data_03001ebc;
     Func_02002512();
-    if (Value1(Func_02003208, 0x90a) != 0) {
-    } else {
+    if (Value1(Func_02003208, 0x90a) == 0) {
         rec8 = Value1(Func_02003216, 0x200);
-        if (rec8 != 0) {
-        } else {
+        if (rec8 == 0) {
             Call1(Func_0200322e, 0x200);
             Func_02003160(1);
             shown_addr = (u16 *)(p5 + 0xcba);
@@ -379,7 +377,6 @@ void FieldScene_RunScene3a5_020014b0(void)
             Func_0200328e_a(0);
         }
     }
-    /* unlifted: 0x02001590..0x02001594 (2), 0x0200159c..0x020015a0 (2) */
 }
 
 void FieldScene_RunScene3a5_02001874(void)

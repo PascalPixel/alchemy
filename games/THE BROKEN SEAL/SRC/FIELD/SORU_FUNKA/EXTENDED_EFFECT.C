@@ -1025,44 +1025,42 @@ void FieldScene_RunTwoPhaseActorSequence(void)
 
 void FieldScene_RunScene381_02000e30(s32 a0)
 {
-    s32 p10;
     u8 *rec7;
     s32 recA;
     s32 rec2;
-    s32 base6_0;
+    u8 i;
 
-    p10 = a0;
     recA = Func_0200432a(8);
     *(s32 *)(recA + 24) = 0x10000;
     *(s32 *)(recA + 28) = 0x10000;
-    Value3(Func_02004378, p10, 0x1d7, 0x122);
-    Call3(Func_020043fc, p10, 0xc000, 0);
+    Value3(Func_02004378, a0, 0x1d7, 0x122);
+    Call3(Func_020043fc, a0, 0xc000, 0);
     Func_02004332(10);
     Call3(Func_020043a6, 8, 0x1d70000, 0x1220000);
-    rec7 = Value1(Func_02004364, p10);
-    rec2 = Func_0200436c(p10);
+    rec7 = Value1(Func_02004364, a0);
+    rec2 = Func_0200436c(a0);
     Func_0200430a(rec2, 0);
-    Call2(Func_020043fc_a, p10, 0x100);
+    Call2(Func_020043fc_a, a0, 0x100);
     rec7[85] = 0;
     Func_020044c2(201);
-    base6_0 = 0;
+    i = 0;
     do {
-        *(volatile s32 *)((s32)rec7 + 12) += 0x8000;
+        *(s32 *)(rec7 + 12) += 0x8000;
         Func_0200437c(1);
-        base6_0 = ((u32)((base6_0 + 1) << 24) >> 24);
-    } while (base6_0 != 60);
+        i++;
+    } while (i != 60);
     Func_020044e4(190);
-    base6_0 = 0;
+    i = 0;
     do {
-        *(volatile s32 *)((s32)rec7 + 12) += 0x1999;
-        *(volatile s32 *)((s32)rec7 + 24) += -0x28f;
-        *(volatile s32 *)((s32)rec7 + 28) += -0x28f;
-        *(volatile s32 *)(recA + 24) += -0x28f;
-        *(volatile s32 *)(recA + 28) += -0x28f;
+        *(s32 *)(rec7 + 12) += 0x1999;
+        *(s32 *)(rec7 + 24) -= 0x28f;
+        *(s32 *)(rec7 + 28) -= 0x28f;
+        *(s32 *)(recA + 24) -= 0x28f;
+        *(s32 *)(recA + 28) -= 0x28f;
         Func_020043b8(1);
-        base6_0 = ((u32)((base6_0 + 1) << 24) >> 24);
-    } while (base6_0 != 90);
-    Func_02004434(p10, 0, 0);
+        i++;
+    } while (i != 90);
+    Func_02004434(a0, 0, 0);
     Func_0200443e(8, 0, 0);
 }
 

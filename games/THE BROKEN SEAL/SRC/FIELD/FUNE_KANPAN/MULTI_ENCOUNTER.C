@@ -1534,8 +1534,6 @@ u8 *SceneData_SelectTableByThreeFlags(void)
 
 void FieldScene_RunOpeningAuxiliarySequence(void)
 {
-    extern u8 Data_03001ebc[];
-
     s32 rec7;
     s32 record;
     s32 shown;
@@ -1552,7 +1550,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             rec7 = Value1(Func_02004d98, 21);
             record = Func_02004cfe();
             shown = ((u32)(90 * record) >> 16) + 60;
-            *(volatile u16 *)(rec7 + 100) = shown;
+            *(u16 *)(rec7 + 100) = shown;
             Func_02004dca(21, 0x200c4d8);
         } else {
             Call3(Func_02004e9e, 21, 0x103, 0);
@@ -1566,8 +1564,6 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
 
 void Func_02000af0(void)
 {
-    extern u8 Data_03001ebc[];
-
     s32 rec7;
     s32 record;
     s32 shown;
@@ -1584,7 +1580,7 @@ void Func_02000af0(void)
             rec7 = Value1(Func_02004e40, 24);
             record = Func_02004da6();
             shown = ((u32)(90 * record) >> 16) + 60;
-            *(volatile u16 *)(rec7 + 100) = shown;
+            *(u16 *)(rec7 + 100) = shown;
             Func_02004e72(24, 0x200c4d8);
         } else {
             Call3(Func_02004f46, 24, 0x103, 0);
@@ -1650,13 +1646,9 @@ void FieldScene_RunScene3af_02000bf0(void)
  * effects, then advances the shared scene phase. */
 void FieldScene_RunActorAndEffectPresentationSetup(void)
 {
-    extern u8 Data_03001ebc[];
-
-    u32 i;
     u8 *record;
 
-    if (GameFlag_IsSet_1(0x911) == 0) {
-    } else {
+    if (GameFlag_IsSet_1(0x911) != 0) {
         BattleRuntime_Reset_1();
         Func_02005114();
         ObjectMotion_SetAngleToward_1(0, 20, 10);
@@ -1747,9 +1739,10 @@ void FieldScene_RunActorAndEffectPresentationSetup(void)
         {
             /* Set the low bit of the flag byte at +35 of actor 20's record. */
             u8 *record = Scene_GetRecord_1(20);
-            u8 flags = *(volatile u8 *)&record[35];
+            u8 bits = 1;
 
-            record[35] = (u8)(flags | 1);
+            bits |= record[35];
+            record[35] = bits;
         }
         ObjectMotion_SetSpeedParameters_4(20, 0x13333, 0x9999);
         ObjectMotion_SetPositionAndReset_2(20, 182, 0x30e);
@@ -1773,10 +1766,7 @@ void FieldScene_RunActorAndEffectPresentationSetup(void)
 
 void FieldScene_RunScene3af_020010a0(void)
 {
-    extern u8 Data_03001ebc[];
-
-    u32 i;
-    u8 *record;
+    u8 bits;
 
     if (Value1_020010a0(Func_02005372, 0x911) != 0) {
         if (Value1_020010a0(Func_0200537c, 0x922) == 0) {
@@ -1787,7 +1777,13 @@ void FieldScene_RunScene3af_020010a0(void)
             *(u8 *)(Func_020053dc(20) + 90) &= 254;
             Call3(Func_02005444, 20, 232, 0x330);
             Func_020053d2(1);
-            *(u8 *)(Func_02005400(20) + 90) |= 1;
+            bits = 1;
+            {
+                u8 *record = Func_02005400(20);
+                u8 value = record[90];
+
+                record[90] = value | bits;
+            }
             Func_020053e8(20);
             Func_02005498(20, 2);
             Func_02004afe(20);
@@ -1797,9 +1793,9 @@ void FieldScene_RunScene3af_020010a0(void)
             Func_02005420(1);
             {
                 u8 *record = Func_0200544e(20);
-                u8 value = *(volatile u8 *)&record[90];
 
-                record[90] = (u8)(value | 1);
+                bits |= record[90];
+                record[90] = bits;
             }
             Func_02005434(20);
             Call3(Func_02005476, 20, 0x33333, 0x19999);
@@ -1815,10 +1811,7 @@ void FieldScene_RunScene3af_020010a0(void)
 
 void FieldScene_RunScene3af_020011c8(void)
 {
-    extern u8 Data_03001ebc[];
-
-    u32 i;
-    u8 *record;
+    u8 bits;
 
     if (Value1_020011c8(Func_0200549a, 0x911) != 0) {
         if (Value1_020011c8(Func_020054a4, 0x922) == 0) {
@@ -1829,7 +1822,13 @@ void FieldScene_RunScene3af_020011c8(void)
             *(u8 *)(Func_02005504(20) + 90) &= 254;
             Call3(Func_0200556c, 20, 202, 0x330);
             Func_020054fa(1);
-            *(u8 *)(Func_02005528(20) + 90) |= 1;
+            bits = 1;
+            {
+                u8 *record = Func_02005528(20);
+                u8 value = record[90];
+
+                record[90] = value | bits;
+            }
             Func_02005510_a(20);
             Func_020055c0(20, 2);
             Func_02004c26(20);
@@ -1839,9 +1838,9 @@ void FieldScene_RunScene3af_020011c8(void)
             Func_02005548(1);
             {
                 u8 *record = Func_02005576(20);
-                u8 value = *(volatile u8 *)&record[90];
 
-                record[90] = (u8)(value | 1);
+                bits |= record[90];
+                record[90] = bits;
             }
             Func_0200555c_a(20);
             Call3(Func_0200559e, 20, 0x33333, 0x19999);
@@ -1940,10 +1939,8 @@ void SceneActor_PlaceActors20To27(void)
 
 void FieldScene_RunScene3af_0200185c(void)
 {
-    extern u8 Data_03001ebc[];
-
-    u32 i;
     u8 *record;
+    u8 bits;
 
     Func_02005b4c();
     Call1(Func_02005b62, 0x200d160);
@@ -1952,15 +1949,21 @@ void FieldScene_RunScene3af_0200185c(void)
     Call3(Func_02005bee, 23, 0xee0000, 0x2720000);
     Call3(Func_02005bfa, 22, 0xcc0000, 0x2090000);
     record = Func_02005ba0(22);
-    *(volatile s32 *)((s32)record + 12) = 0x100000;
-    *(u8 *)(Func_02005bac(22) + 89) |= 128;
+    *(s32 *)(record + 12) = 0x100000;
+    bits = 128;
+    {
+        u8 *record = Func_02005bac(22);
+        u8 value = record[89];
+
+        record[89] = value | bits;
+    }
     Call3(Func_02005bd0, 22, 0x9999, 0x4ccc);
     Call2(Func_02005be0, 22, 0x200c58c);
     {
         u8 *record = Func_02005bce(21);
-        u8 value = *(volatile u8 *)&record[89];
 
-        record[89] = (u8)(value | 128);
+        bits |= record[89];
+        record[89] = bits;
     }
     Call3(Func_02005bf0, 21, 0xcccc, 0x6666);
     Call2(Func_02005c00, 21, 0x200c628);
@@ -1972,9 +1975,6 @@ void FieldScene_RunScene3af_0200185c(void)
 
 void FieldScene_RunScene3af_02001920(void)
 {
-    extern u8 Data_03001ebc[];
-
-    u32 i;
     u8 *record;
 
     Func_02005c10();
@@ -1987,14 +1987,15 @@ void FieldScene_RunScene3af_02001920(void)
     {
         s32 shown = 0;
 
-        *(volatile u16 *)((s32)record + 6) = shown;
+        *(u16 *)(record + 6) = shown;
     }
     Call2(Func_02005c88, 22, 0x200c980);
     {
         u8 *record = Func_02005c76(21);
-        u8 value = *(volatile u8 *)&record[89];
+        u8 bits = 128;
 
-        record[89] = (u8)(value | 128);
+        bits |= record[89];
+        record[89] = bits;
     }
     Call3(Func_02005c9a, 21, 0xcccc, 0x6666);
     Call2(Func_02005caa, 21, 0x200c628);
@@ -2006,9 +2007,6 @@ void FieldScene_RunScene3af_02001920(void)
 
 void FieldScene_RunScene3af_02001a98(void)
 {
-    extern u8 Data_03001ebc[];
-
-    u32 i;
     s32 record;
 
     Func_02005d88();
@@ -2026,14 +2024,14 @@ void FieldScene_RunScene3af_02001a98(void)
     {
         s32 shown = 0x3000;
 
-        *(volatile u16 *)(record + 6) = shown;
+        *(u16 *)(record + 6) = shown;
     }
     Call3_02001a98(Func_02005e88, 21, 0xe80000, 0x28a0000);
     record = Func_02005e2e(21);
     {
         s32 shown = 0xb000;
 
-        *(volatile u16 *)(record + 6) = shown;
+        *(u16 *)(record + 6) = shown;
     }
     Call4(Func_02005f4e, 0xe80000, -1, 0x27c0000, 0);
     Func_02005dc2();
@@ -2043,9 +2041,6 @@ void FieldScene_RunScene3af_02001a98(void)
 
 void FieldScene_RunScene3af_02001b58(void)
 {
-    extern u8 Data_03001ebc[];
-
-    u32 i;
     s32 record;
 
     Func_02005e48_a();
@@ -2069,14 +2064,14 @@ void FieldScene_RunScene3af_02001b58(void)
     {
         s32 shown = 0x3000;
 
-        *(volatile u16 *)(record + 6) = shown;
+        *(u16 *)(record + 6) = shown;
     }
     Call3(Func_02005f56, 23, 0xe80000, 0x28a0000);
     record = Func_02005efc(23);
     {
         s32 shown = 0xb000;
 
-        *(volatile u16 *)(record + 6) = shown;
+        *(u16 *)(record + 6) = shown;
     }
     Func_02005e58(1);
     Func_02003818(20, 23);
@@ -2084,13 +2079,9 @@ void FieldScene_RunScene3af_02001b58(void)
 
 void FieldScene_RunScene3af_02001c14(s32 a0, s32 a1)
 {
-    extern u8 Data_03001ebc[];
+    extern u8 *Data_03001ebc;
 
-    u32 i;
-    s32 p10;
-    s32 record;
-
-    *(s32 *)(*(u8 *volatile *)Data_03001ebc + 0x1c0) = 0x100;
+    *(s32 *)(Data_03001ebc + 0x1c0) = 0x100;
     Func_02006070_a();
     Func_02006084();
     Func_02005f22_a(20);
@@ -2109,11 +2100,10 @@ void FieldScene_RunScene3af_02001c14(s32 a0, s32 a1)
     Func_0200604a(a1, 2);
     Call1_02001c14(Func_02006070_b, 0x1e39);
     Func_02006092(a1, 0, 20);
-    *(s32 *)(*(u8 *volatile *)Data_03001ebc + 0x1c0) = 0x202;
+    *(s32 *)(Data_03001ebc + 0x1c0) = 0x202;
     Func_02006120();
     Func_0200612c();
     Func_0200610a(10);
-    p10 = a0;
 }
 
 void FieldScene_RunActorTwentyDialogueSequence(void)
@@ -2145,9 +2135,7 @@ void FieldScene_RunActorTwentyDialogueSequence(void)
  * flags) and advances the shared scene phase before the scene runs. */
 void FieldScene_ConfigureLeadActors(void)
 {
-    extern u8 Data_03001ebc[];
-    u8 *Func_02007d48();
-    u8 *Func_02007d62();
+    extern u8 *Data_03001ebc;
 
     u8 *record;
 
@@ -2162,19 +2150,20 @@ void FieldScene_ConfigureLeadActors(void)
         /* Clear the visibility/active flag at +6. */
         s32 shown = 0;
 
-        *(volatile u16 *)(record + 6) = shown;
+        *(u16 *)(record + 6) = shown;
     }
     ObjectMotion_EnableActionAndSetCallback_1_020029d4(22, 0x200c980);
     {
         /* Set the high bit of the flag byte at +89. */
         u8 *record = Scene_GetRecord_2_020029d4(21);
-        u8 flags = *(volatile u8 *)&record[89];
+        u8 bits = 128;
 
-        record[89] = (u8)(flags | 128);
+        bits |= record[89];
+        record[89] = bits;
     }
     ObjectMotion_SetSpeedParameters_1_020029d4(21, 0xcccc, 0x6666);
     ObjectMotion_EnableActionAndSetCallback_2_020029d4(21, 0x200c628);
-    SCENE_PHASE = 0x100;
+    *(s32 *)(Data_03001ebc + 0x1c0) = 0x100;
     BattleRuntime_WaitIfModeZero_1_020029d4();
     ObjectMotion_SetSpeedParameters_2_020029d4();
     BattleRuntime_WaitIfModeZero_2_020029d4(20);
@@ -2201,7 +2190,7 @@ void FieldScene_ConfigureLeadActors(void)
     BattleRuntime_WaitIfModeZero_4_020029d4(10);
     ObjectMotion_SetPositionAndReset_4_020029d4(20, 216, 0x244);
     ObjectMotion_SetHorizontalPositionWithTerrain_4(20, 0, 0);
-    SCENE_PHASE = 0x209;
+    *(s32 *)(Data_03001ebc + 0x1c0) = 0x209;
     GameFlag_Set_1_020029d4(0x92b);
     GameFlag_Clear_1(0x302);
     BattleRuntime_ScheduleShoulderButtonModeUpdate_1_020029d4();
@@ -2624,19 +2613,18 @@ void FieldScene_CallPairWith10(s32 a, s32 b)
 
 void FieldScene_ConfigureFourActorPresentation(void)
 {
-    extern u8 Data_0200db50[];
-    extern u8 Data_0200db60[];
-    extern u8 Data_03001ebc[];
+    extern s32 Data_0200db50[];
+    extern s32 Data_0200db60;
+    extern u8 *Data_03001ebc;
     s32 Func_02007d48();
     s32 Func_02007d62();
 
-    u32 i;
     s32 record;
     s32 base6_6014;
 
     BattleRuntime_Reset_1_02003a0c();
-    *(volatile s32 *)Data_0200db50 = 0x40000;
-    *(volatile s32 *)Data_0200db60 = -0x8000;
+    Data_0200db50[0] = 0x40000;
+    Data_0200db60 = -0x8000;
     Object_NotifyLastActiveOfEvent_1_02003a0c((s32)Data_0200d160);
     Func_02007c86(1);
     ObjectMotion_SetHorizontalPositionWithTerrain_1_02003a0c(21, 0xb60000, 0x26a0000);
@@ -2644,28 +2632,28 @@ void FieldScene_ConfigureFourActorPresentation(void)
     {
         s32 shown = 0xc000;
 
-        *(volatile u16 *)(record + 6) = shown;
+        *(u16 *)(record + 6) = shown;
     }
     ObjectMotion_SetHorizontalPositionWithTerrain_2_02003a0c(20, 0xda0000, 0x2040000);
     record = Scene_GetRecord_2_02003a0c(20);
     {
         s32 shown = 0xb000;
 
-        *(volatile u16 *)(record + 6) = shown;
+        *(u16 *)(record + 6) = shown;
     }
     ObjectMotion_SetHorizontalPositionWithTerrain_3_02003a0c(22, 0xcc0000, 0x20e0000);
     record = Scene_GetRecord_3_02003a0c(22);
     {
         s32 shown = 0xb000;
 
-        *(volatile u16 *)(record + 6) = shown;
+        *(u16 *)(record + 6) = shown;
     }
     ObjectMotion_SetHorizontalPositionWithTerrain_4_02003a0c(23, 0, 0);
     ObjectGroup_ConfigureChildValue_1_02003a0c(0, 15);
     record = Scene_GetRecord_4_02003a0c(0);
     Func_02007d32(record, 0);
     Func_02007cf0(1);
-    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c0)) = 0x202;
+    *(s32 *)(Data_03001ebc + 0x1c0) = 0x202;
     BattleRuntime_WaitIfModeZero_1_02003a0c();
     ObjectMotion_SetSpeedParameters_1_02003a0c();
     ObjectMotion_SetSpeedParameters_2_02003a0c(21, 0xcccc, 0x6666);
@@ -2721,6 +2709,7 @@ void FieldScene_ConfigureFourActorPresentation(void)
 void FieldScene_RunThreeActorEncounter(void)
 {
     u8 *record;
+    u8 bits;
 
     BattleRuntime_Reset_1_02003c88();
     ObjectMotion_SetSpeedParameters_1_02003c88(0, 0x10000, 0x8000);
@@ -2789,12 +2778,13 @@ void FieldScene_RunThreeActorEncounter(void)
     *(u8 *)(Scene_GetRecord_4_02003c88(22) + ACTOR_FLAGS_OFFSET) &= 254;
     ObjectMotion_SetPositionAndReset_3_02003c88(22, 162, 0x27a);
     BattleRuntime_WaitIfModeZero_3_02003c88(1);
+    bits = 1;
     {
         /* Set the low bit of the flag byte on actor 22. */
         u8 *record = Scene_GetRecord_5(22);
-        u8 value = *(volatile u8 *)&record[ACTOR_FLAGS_OFFSET];
+        u8 value = record[ACTOR_FLAGS_OFFSET];
 
-        record[ACTOR_FLAGS_OFFSET] = (u8)(value | 1);
+        record[ACTOR_FLAGS_OFFSET] = value | bits;
     }
     /* Clear the low bit of the flag byte on actor 21. */
     *(u8 *)(Scene_GetRecord_6(21) + ACTOR_FLAGS_OFFSET) &= 254;
@@ -2803,9 +2793,9 @@ void FieldScene_RunThreeActorEncounter(void)
     {
         /* Set the low bit of the flag byte on actor 21. */
         u8 *record = Scene_GetRecord_7(21);
-        u8 value = *(volatile u8 *)&record[ACTOR_FLAGS_OFFSET];
 
-        record[ACTOR_FLAGS_OFFSET] = (u8)(value | 1);
+        bits |= record[ACTOR_FLAGS_OFFSET];
+        record[ACTOR_FLAGS_OFFSET] = bits;
     }
     ObjectMotion_ArmCallback_4_02003c88(22, 0x3000, 0);
     Call2(Func_020078c8, 21, 0xd000);
@@ -2914,9 +2904,6 @@ void FieldScene_RunEncounterClosingSequence(void)
 
 void FieldScene_RunScene3af_02004218(void)
 {
-    extern u8 Data_03001ebc[];
-
-    u32 i;
     s32 record;
 
     Call4(Func_0200863e, 0xe80000, -1, 0x2a40000, 0);
@@ -2926,7 +2913,7 @@ void FieldScene_RunScene3af_02004218(void)
     {
         s32 shown = 0x4000;
 
-        *(volatile u16 *)(record + 6) = shown;
+        *(u16 *)(record + 6) = shown;
     }
     Func_020084aa_a(1);
 }

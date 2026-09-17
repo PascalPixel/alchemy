@@ -86,7 +86,12 @@ fn run(args: &[String]) -> Result<(), String> {
             .symbol_bindings(Some(parsed));
         crate::compiler::source_bindings::with_register(
             &register,
-            &crate::compiler::source_bindings::production_bindings(&repo, &register, Some(&src))?,
+            &crate::compiler::source_bindings::production_bindings(
+                &repo,
+                CompilerTarget::Tbs,
+                &register,
+                Some(&src),
+            )?,
         )
     })
     .map_err(|e| e.to_string())?;

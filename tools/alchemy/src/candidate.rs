@@ -148,6 +148,7 @@ pub fn production_symbol_bindings(
         &register,
         &crate::compiler::source_bindings::production_bindings(
             repository,
+            compiler,
             &register,
             Some(Path::new(production_source)),
         )?,

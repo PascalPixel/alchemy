@@ -73598,7 +73598,7 @@
     {
       "id": "audio-engine-initialize",
       "game": "tbs",
-      "source": "games/THE BROKEN SEAL/SRC/SOUND/ENGINE_INITIALIZE.C",
+      "source": "games/COMMON/SRC/SOUND/ENGINE_INITIALIZE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -73650,7 +73650,7 @@
     {
       "id": "audio-music-player",
       "game": "tbs",
-      "source": "games/THE BROKEN SEAL/SRC/SOUND/MUSIC_PLAYER.C",
+      "source": "games/COMMON/SRC/SOUND/MUSIC_PLAYER.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -73676,7 +73676,7 @@
     {
       "id": "audio-music-player-step-fade",
       "game": "tbs",
-      "source": "games/THE BROKEN SEAL/SRC/SOUND/MUSIC_PLAYER_STEP_FADE.C",
+      "source": "games/COMMON/SRC/SOUND/MUSIC_PLAYER_STEP_FADE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -73708,7 +73708,7 @@
     {
       "id": "audio-cgb-key-to-frequency",
       "game": "tbs",
-      "source": "games/THE BROKEN SEAL/SRC/SOUND/CGB_KEY_TO_FREQUENCY.C",
+      "source": "games/COMMON/SRC/SOUND/CGB_KEY_TO_FREQUENCY.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -73804,7 +73804,7 @@
     {
       "id": "audio-music-track-clear-modulation",
       "game": "tbs",
-      "source": "games/THE BROKEN SEAL/SRC/SOUND/MUSIC_TRACK_CLEAR_MODULATION.C",
+      "source": "games/COMMON/SRC/SOUND/MUSIC_TRACK_CLEAR_MODULATION.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -73893,7 +73893,7 @@
     {
       "id": "runtime-idle-forever",
       "game": "tbs",
-      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/IDLE_FOREVER.C",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/SCHEDULER/IDLE_FOREVER.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -74531,7 +74531,7 @@
     {
       "id": "runtime-reserved-no-op-f",
       "game": "tbs",
-      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESERVED_NO_OP_F.C",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/SCHEDULER/RESERVED_NO_OP_F.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
         "TransferCommandExecutor_Size": {
@@ -75231,7 +75231,7 @@
     {
       "id": "runtime-remap-bytes-by-table",
       "game": "tbs",
-      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/REMAP_BYTES_BY_TABLE.C",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/REMAP_BYTES_BY_TABLE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -75544,7 +75544,7 @@
     {
       "id": "runtime-blank-display-load-value-and-run",
       "game": "tbs",
-      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/BLANK_DISPLAY_LOAD_VALUE_AND_RUN.C",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/SCHEDULER/BLANK_DISPLAY_LOAD_VALUE_AND_RUN.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76033,9 +76033,9 @@
       "overlay": null
     },
     {
-      "id": "inventory-has-equipment-value-retained",
+      "id": "owner-init-records",
       "game": "tbs",
-      "source": "games/THE BROKEN SEAL/recon/en/units/inventory-has-equipment-value-retained.c",
+      "source": "games/THE BROKEN SEAL/SRC/GAME/CHARACTER/INIT_RECORDS.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
@@ -76043,8 +76043,19 @@
         {
           "address": "0x08078ee8",
           "extent": 284,
-          "state": "retained-assembly"
-        },
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "inventory-has-equipment-value-retained",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/recon/en/units/inventory-has-equipment-value-retained.c",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
         {
           "address": "0x08079460",
           "extent": 412,
@@ -109446,11 +109457,66 @@
       "overlay": null
     },
     {
+      "id": "audio-pcm-key-to-frequency",
+      "game": "tbs",
+      "source": "games/COMMON/SRC/SOUND/PCM_KEY_TO_FREQUENCY.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "Audio_UmulHigh32": {"address": "0x080f95e0", "kind": "thumb"},
+        "Sound_PcmFrequencySteps": {"address": "0x080fb8e4", "kind": "data"},
+        "Sound_PcmPitchCodes": {"address": "0x080fb830", "kind": "data"}
+      },
+      "local_symbols": [],
+      "owners": [
+        {"address": "0x080fa1fc", "extent": 100, "state": "exact-c"},
+        {"address": "0x080fa260", "extent": 2, "state": "exact-c"}
+      ],
+      "overlay": null
+    },
+    {
+      "id": "audio-music-track-dispatch-stream-command",
+      "game": "tbs",
+      "source": "games/COMMON/SRC/SOUND/MUSIC_TRACK_DISPATCH_STREAM_COMMAND.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "Runtime_InvokeWorkEntryWithArgs": {"address": "0x080072ec", "kind": "thumb"},
+        "Sound_ExtendedCommandTable": {"address": "0x080fba48", "kind": "data"}
+      },
+      "local_symbols": [],
+      "owners": [
+        {"address": "0x080fb670", "extent": 32, "state": "exact-c"}
+      ],
+      "overlay": null
+    },
+    {
+      "id": "audio-initialize-cgb",
+      "game": "tbs",
+      "source": "games/COMMON/SRC/SOUND/INITIALIZE_CGB.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "Sound_CommandTable": {"address": "0x02004000", "kind": "data"}
+      },
+      "local_symbols": [],
+      "owners": [
+        {"address": "0x080fa55c", "extent": 280, "state": "exact-c"}
+      ],
+      "overlay": null
+    },
+    {
       "id": "audio-sound",
       "game": "tbs",
-      "source": "games/THE BROKEN SEAL/SRC/SOUND/SOUND.C",
+      "source": "games/COMMON/SRC/SOUND/SOUND.C",
       "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
+      "absolute_symbols": {
+        "MusicPlayer_BeginFadeOut": {"address": "0x080fa280", "kind": "thumb"},
+        "Sound_CgbNotes": {"address": "0x02004090", "kind": "data"},
+        "Sound_Mixer": {"address": "0x080f9674", "kind": "thumb"},
+        "Sound_PlayerCount": {"address": "0x00000008", "kind": "data"},
+        "Sound_PlayerSlots": {"address": "0x080fc624", "kind": "data"},
+        "Sound_SongTable": {"address": "0x080fc684", "kind": "data"},
+        "Sound_Work": {"address": "0x02003050", "kind": "data"},
+        "Sound_WorkBytes": {"address": "0x02004350", "kind": "data"}
+      },
       "local_symbols": [],
       "owners": [
         {

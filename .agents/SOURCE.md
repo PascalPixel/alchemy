@@ -29,7 +29,9 @@ Each game's `SRC/` responsibilities:
 | `MENU/` | Menu interaction, shops, inns and selection screens. |
 | `DEBUG/` | Debug facilities. |
 
-Shared headers belong in `INCLUDE`. Use `COMMON` for genuinely common runtime
+Game-specific headers belong in each game's `INCLUDE`; interfaces consumed by
+identical source in both games live in `games/COMMON/INCLUDE/<subsystem>`.
+Use `COMMON` for genuinely common runtime
 code and interfaces, not a generic `SHARED` catch-all; common engine code has
 one owner. Game-wide overlay mechanics belong under `SYSTEM`, while common
 field table definitions belong under `FIELD/COMMON`; do not create a generic

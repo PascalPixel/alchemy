@@ -200,7 +200,7 @@
     },
     "main:08003008": {
       "name": "reserved_no_op_f",
-      "source": "SYSTEM/RESERVED_NO_OP_F.C"
+      "source": "SYSTEM/SCHEDULER/RESERVED_NO_OP_F.C"
     },
     "main:0800c0c4": "SYSTEM/RESOURCE/TABLE_RESERVED_NO_OP.C",
     "main:0801a90c": {
@@ -560,7 +560,7 @@
     "main:080c1a34": "GAME/PARTY/COMPUTE_ELIGIBLE_MEMBER_AVERAGE.C",
     "main:08003dec": {
       "name": "Runtime_PushSlotEntry",
-      "source": "SYSTEM/SLOT_PUSH_ENTRY.C"
+      "source": "SYSTEM/MEMORY/SLOT_PUSH_ENTRY.C"
     },
     "main:08003f04": {
       "name": "Resource_ClearSlotReferences",
@@ -1499,15 +1499,15 @@
     },
     "main:080fb410": {
       "name": "MusicTrack_ClearModulation",
-      "source": "SOUND/MUSIC_TRACK_CLEAR_MODULATION.C"
+      "source": "../../COMMON/SRC/SOUND/MUSIC_TRACK_CLEAR_MODULATION.C"
     },
     "main:080fb430": {
       "name": "MusicPlayer_SetModulationDepth",
-      "source": "SOUND/MUSIC_PLAYER_SET_MODULATION_DEPTH.C"
+      "source": "../../COMMON/SRC/SOUND/MUSIC_PLAYER_SET_MODULATION_DEPTH.C"
     },
     "main:080fb4a4": {
       "name": "MusicPlayer_SetLfoSpeed",
-      "source": "SOUND/MUSIC_PLAYER_SET_LFO_SPEED.C"
+      "source": "../../COMMON/SRC/SOUND/MUSIC_PLAYER_SET_LFO_SPEED.C"
     },
     "main:080fb6a4": {
       "name": "MusicTrack_ReadVoiceTarget",
@@ -1515,23 +1515,23 @@
     },
     "main:080fb714": {
       "name": "MusicTrack_SetVoiceDecay",
-      "source": "SOUND/MUSIC_TRACK_SET_VOICE_DECAY.C"
+      "source": "../../COMMON/SRC/SOUND/MUSIC_TRACK_SET_VOICE_DECAY.C"
     },
     "main:080fb728": {
       "name": "MusicTrack_SetVoiceSustain",
-      "source": "SOUND/MUSIC_TRACK_SET_VOICE_SUSTAIN.C"
+      "source": "../../COMMON/SRC/SOUND/MUSIC_TRACK_SET_VOICE_SUSTAIN.C"
     },
     "main:080fb73c": {
       "name": "MusicTrack_SetVoiceRelease",
-      "source": "SOUND/MUSIC_TRACK_SET_VOICE_RELEASE.C"
+      "source": "../../COMMON/SRC/SOUND/MUSIC_TRACK_SET_VOICE_RELEASE.C"
     },
     "main:080fb750": {
       "name": "MusicTrack_SetTailLevel",
-      "source": "SOUND/MUSIC_TRACK_SET_TAIL_LEVEL.C"
+      "source": "../../COMMON/SRC/SOUND/MUSIC_TRACK_SET_TAIL_LEVEL.C"
     },
     "main:080fb75c": {
       "name": "MusicTrack_SetTailLength",
-      "source": "SOUND/MUSIC_TRACK_SET_TAIL_LENGTH.C"
+      "source": "../../COMMON/SRC/SOUND/MUSIC_TRACK_SET_TAIL_LENGTH.C"
     },
     "main:08096810": {
       "name": "BattleFx_Run",
@@ -2130,7 +2130,7 @@
       "name": "Item_Use",
       "source": "GAME/ITEM/USE.C"
     },
-    "main:080b0694": "SYSTEM/NODE_CHAIN_GET_NODE_AT_INDEX.C",
+    "main:080b0694": "SYSTEM/MEMORY/NODE_CHAIN_GET_NODE_AT_INDEX.C",
     "main:080b7b30": {
       "name": "ReleaseBattleObjectRecords",
       "source": "BATTLE/MOTION/RELEASE_BATTLE_OBJECT_RECORDS.C"
@@ -2723,7 +2723,8 @@
       "name": "PartyInventory_Add"
     },
     "main:08078ee8": {
-      "name": "Owner_InitRecords"
+      "name": "Owner_InitRecords",
+      "source": "GAME/CHARACTER/INIT_RECORDS.C"
     },
     "main:08078664": {
       "name": "Inventory_Find"
@@ -3074,11 +3075,14 @@
     },
     "main:080fa1fc": {
       "name": "Pcm_KeyToFrequency",
-      "source": "SOUND/PCM_KEY_TO_FREQUENCY.C"
+      "source": "../../COMMON/SRC/SOUND/PCM_KEY_TO_FREQUENCY.C"
+    },
+    "main:080fa260": {
+      "name": "Audio_NoopStub"
     },
     "main:080fa2a0": {
       "name": "Audio_Initialize",
-      "source": "SOUND/SOUND.C"
+      "source": "../../COMMON/SRC/SOUND/SOUND.C"
     },
     "main:080fa318": {
       "name": "AudioEngine_RunMixer"
@@ -3112,7 +3116,7 @@
     },
     "main:080fa55c": {
       "name": "CgbAudio_Initialize",
-      "source": "SOUND/INITIALIZE_CGB.C"
+      "source": "../../COMMON/SRC/SOUND/INITIALIZE_CGB.C"
     },
     "main:080fa678": {
       "name": "AudioCommand_InvokeSlot34"
@@ -3122,7 +3126,7 @@
     },
     "main:080fa6a0": {
       "name": "AudioEngine_Initialize",
-      "source": "SOUND/ENGINE_INITIALIZE.C"
+      "source": "../../COMMON/SRC/SOUND/ENGINE_INITIALIZE.C"
     },
     "main:080fa798": {
       "name": "AudioEngine_SetPcmRate"
@@ -3142,7 +3146,7 @@
     },
     "main:080fa9e0": {
       "name": "MusicPlayer_Initialize",
-      "source": "SOUND/MUSIC_PLAYER.C"
+      "source": "../../COMMON/SRC/SOUND/MUSIC_PLAYER.C"
     },
     "main:080faa58": {
       "name": "MusicPlayer_StartSong"
@@ -3152,7 +3156,7 @@
     },
     "main:080fab7c": {
       "name": "MusicPlayer_StepFade",
-      "source": "SOUND/MUSIC_PLAYER_STEP_FADE.C"
+      "source": "../../COMMON/SRC/SOUND/MUSIC_PLAYER_STEP_FADE.C"
     },
     "main:080fac44": {
       "name": "MusicTrack_CalcOutput",
@@ -3160,7 +3164,7 @@
     },
     "main:080facf8": {
       "name": "Cgb_KeyToFrequency",
-      "source": "SOUND/CGB_KEY_TO_FREQUENCY.C"
+      "source": "../../COMMON/SRC/SOUND/CGB_KEY_TO_FREQUENCY.C"
     },
     "main:080fada0": {
       "name": "CgbChannel_Mute",
@@ -3532,11 +3536,11 @@
     },
     "main:08002ee4": {
       "name": "Runtime_IdleForever",
-      "source": "SYSTEM/IDLE_FOREVER.C"
+      "source": "SYSTEM/SCHEDULER/IDLE_FOREVER.C"
     },
     "main:0800352c": {
       "name": "Runtime_SetMainState19",
-      "source": "SYSTEM/SET_MAIN_STATE_19.C"
+      "source": "SYSTEM/SCHEDULER/SET_MAIN_STATE_19.C"
     },
     "main:08003538": {
       "name": "Input_UpdateKeyRepeatAndDirection",
@@ -3576,14 +3580,14 @@
     },
     "main:08004420": {
       "name": "Runtime_InvokeCallbacksByKey",
-      "source": "SYSTEM/CALLBACKS_INVOKE_BY_KEY.C"
+      "source": "SYSTEM/SCHEDULER/INVOKE_CALLBACKS_BY_KEY.C"
     },
     "main:080045a4": {
       "name": "Math_IntegerSqrt"
     },
     "main:080045e8": {
       "name": "Runtime_GetLowTableAddress",
-      "source": "SYSTEM/GET_LOW_TABLE_ADDRESS.C"
+      "source": "SYSTEM/RESOURCE/GET_LOW_TABLE_ADDRESS.C"
     },
     "main:080045f0": {
       "name": "Text_FormatHexToWork",
@@ -3597,7 +3601,7 @@
     },
     "main:080046c4": {
       "name": "Runtime_WriteDebugTextTiles",
-      "source": "SYSTEM/WRITE_DEBUG_TEXT_TILES.C"
+      "source": "DEBUG/RUNTIME/WRITE_TEXT_TILES.C"
     },
     "main:08004718": {
       "name": "Text_DrawHexRightAligned",
@@ -3855,7 +3859,7 @@
     },
     "main:0800eba0": {
       "name": "Runtime_CheckRadiusOverlap",
-      "source": "SYSTEM/GEOMETRY_CHECK_RADIUS_OVERLAP.C"
+      "source": "LIB/GEOMETRY/CHECK_RADIUS_OVERLAP.C"
     },
     "main:0800f7dc": {
       "name": "Field_CheckConfiguredKeysAndCount",
@@ -3863,7 +3867,7 @@
     },
     "main:0800f9cc": {
       "name": "Runtime_RemapBytesByTable",
-      "source": "SYSTEM/REMAP_BYTES_BY_TABLE.C"
+      "source": "SYSTEM/RESOURCE/REMAP_BYTES_BY_TABLE.C"
     },
     "main:0800fa8c": {
       "name": "Graphics_RenumberFillerEntries",
@@ -3971,7 +3975,7 @@
     },
     "main:08012330": {
       "name": "Runtime_SetWorkTripleIfNonNegative",
-      "source": "SYSTEM/SET_WORK_TRIPLE_IF_NON_NEGATIVE.C"
+      "source": "SYSTEM/MEMORY/SET_WORK_TRIPLE_IF_NON_NEGATIVE.C"
     },
     "main:08012350": {
       "name": "Map_WaitWorkValuesBelow256",
@@ -4066,7 +4070,7 @@
     },
     "main:080197b4": {
       "name": "Runtime_ClearWordIfSet",
-      "source": "SYSTEM/CLEAR_WORD_IF_SET.C"
+      "source": "SYSTEM/MEMORY/CLEAR_WORD_IF_SET.C"
     },
     "main:08019854": {
       "name": "UiWork_AdvanceChannelTransition",
@@ -4167,7 +4171,7 @@
     },
     "main:0801b36c": {
       "name": "NodeChain_GetNodeAtCount",
-      "source": "SYSTEM/NODE_CHAIN_GET_NODE_AT_COUNT.C"
+      "source": "SYSTEM/MEMORY/NODE_CHAIN_GET_NODE_AT_COUNT.C"
     },
     "main:0801b9a8": {
       "name": "Menu_ReloadNodeResource",
@@ -5389,7 +5393,7 @@
     },
     "main:080c0eec": {
       "name": "Runtime_AdjustDebugValueWithButtons",
-      "source": "SYSTEM/ADJUST_DEBUG_VALUE_WITH_BUTTONS.C"
+      "source": "DEBUG/RUNTIME/ADJUST_VALUE_WITH_BUTTONS.C"
     },
     "main:080c1014": {
       "name": "BattlePres_SetOtherActorRecordModes",
@@ -5409,7 +5413,7 @@
     },
     "main:080c1a24": {
       "name": "Runtime_RemoveIrqHandlerSlot2",
-      "source": "SYSTEM/CALLBACKS_REMOVE_IRQ_HANDLER_SLOT2.C"
+      "source": "SYSTEM/SCHEDULER/REMOVE_IRQ_HANDLER_SLOT2.C"
     },
     "main:080c1f50": {
       "name": "Summon_ResetCharge",
@@ -5666,11 +5670,11 @@
     },
     "main:080f4008": {
       "name": "Runtime_BlankDisplayAndRun",
-      "source": "SYSTEM/BLANK_DISPLAY_AND_RUN.C"
+      "source": "SYSTEM/SCHEDULER/BLANK_DISPLAY_AND_RUN.C"
     },
     "main:080f6008": {
       "name": "Runtime_BlankDisplayLoadValueAndRun",
-      "source": "SYSTEM/BLANK_DISPLAY_LOAD_VALUE_AND_RUN.C"
+      "source": "SYSTEM/SCHEDULER/BLANK_DISPLAY_LOAD_VALUE_AND_RUN.C"
     },
     "main:080f94f8": {
       "name": "Audio_SetWorkPairB"
@@ -5680,7 +5684,7 @@
     },
     "main:080fb690": {
       "name": "Runtime_CallWorkEntryWithArgs",
-      "source": "SYSTEM/DISPATCH_CALL_WORK_ENTRY_WITH_ARGS.C"
+      "source": "SYSTEM/SCHEDULER/CALL_WORK_ENTRY_WITH_ARGS.C"
     },
     "main:08185008": {
       "name": "Resource_GetMetadataRecord",
@@ -10896,7 +10900,7 @@
     },
     "main:080fb670": {
       "name": "MusicTrack_DispatchStreamCommand",
-      "source": "SOUND/MUSIC_TRACK_DISPATCH_STREAM_COMMAND.C"
+      "source": "../../COMMON/SRC/SOUND/MUSIC_TRACK_DISPATCH_STREAM_COMMAND.C"
     },
     "main:0808ce74": {
       "name": "Object_GetTriggerTileAheadOfCurrent",

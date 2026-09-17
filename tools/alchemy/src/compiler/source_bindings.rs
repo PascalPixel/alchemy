@@ -79,6 +79,16 @@ pub fn expand_binding_text(text: &str) -> String {
 
 fn source_key(root: &Path, source: &Path) -> Option<String> {
     let src_root = root.join("games/THE BROKEN SEAL/SRC");
+    let common_root = root.join("games/COMMON/SRC");
+    if let Ok(relative) = source
+        .strip_prefix(&common_root)
+        .or_else(|_| source.strip_prefix("games/COMMON/SRC"))
+    {
+        return Some(format!(
+            "../../COMMON/SRC/{}",
+            relative.to_string_lossy().replace('\\', "/")
+        ));
+    }
     let relative = source
         .strip_prefix(&src_root)
         .ok()
@@ -136,9 +146,10 @@ fn lexical_join(base: &Path, rel: &str) -> PathBuf {
     out
 }
 
-/// Production src keys for this TU: the file itself, plus `#include`d `.c`/`.C`
-/// files under `games/THE BROKEN SEAL/SRC`. Mixed leftover wrappers compile those src
-/// files through a recon unit path that has no bindings key of its own.
+/// Production source keys for this TU: the file itself, plus included C files
+/// under the game source tree or the shared COMMON source tree. Shared files
+/// retain per-game binding keys; their maintained C never embeds one game's
+/// addresses.
 fn included_source_keys(root: &Path, source: &Path) -> Vec<String> {
     let mut keys = Vec::new();
     let mut seen = HashSet::new();
@@ -203,9 +214,17 @@ fn unit_symbol_names(root: &Path, source: &Path) -> HashSet<String> {
 /// Register names plus the per-source / common address map for one compile.
 pub fn production_bindings(
     root: &Path,
+    compiler: crate::compiler::routing::CompilerTarget,
     register_text: &str,
     source: Option<&Path>,
 ) -> Result<String, String> {
+    // The recovered binding manifest records TBS addresses. TLA units own
+    // their independently evidenced symbols in their translation-unit
+    // manifests; applying TBS aliases to shared COMMON C silently compiles
+    // the right source against the wrong game.
+    if compiler != crate::compiler::routing::CompilerTarget::Tbs {
+        return Ok(String::new());
+    }
     let mut reserved = define_names(register_text);
     if let Some(source) = source {
         if let Ok(source_text) = std::fs::read_to_string(source) {
@@ -370,8 +389,9 @@ fn rewrite_extern_data_types(line: &str) -> String {
 mod tests {
     use super::{
         define_only_bindings, expand_binding_text, filter_reserved_defines, included_source_keys,
-        lexical_join, quoted_c_includes, source_key, type_tags,
+        lexical_join, production_bindings, quoted_c_includes, source_key, type_tags,
     };
+    use crate::compiler::routing::CompilerTarget;
     use std::collections::HashSet;
     use std::path::Path;
     use tempfile::tempdir;
@@ -458,6 +478,30 @@ mod tests {
         assert_eq!(
             included_source_keys(root.path(), &source),
             ["battle/main.C", "battle/helper.C"]
+        );
+    }
+
+    #[test]
+    fn common_sources_keep_their_per_game_binding_key() {
+        let root = Path::new("/workspace");
+        let source = root.join("games/COMMON/SRC/SOUND/ENGINE_INITIALIZE.C");
+        assert_eq!(
+            source_key(root, &source).as_deref(),
+            Some("../../COMMON/SRC/SOUND/ENGINE_INITIALIZE.C")
+        );
+    }
+
+    #[test]
+    fn tbs_binding_manifest_never_leaks_into_tla() {
+        assert_eq!(
+            production_bindings(
+                Path::new("/workspace"),
+                CompilerTarget::Tla,
+                "#define SharedName Func_08123456\n",
+                Some(Path::new("/workspace/games/COMMON/SRC/SOUND/ENGINE.C")),
+            )
+            .unwrap(),
+            ""
         );
     }
 }

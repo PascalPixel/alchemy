@@ -599,6 +599,7 @@ pub fn compile_source_for_owner(
         .unwrap_or_default();
     let binding_text = crate::compiler::source_bindings::production_bindings(
         Path::new(root),
+        compiler,
         &register_text,
         Some(Path::new(source)),
     )?;

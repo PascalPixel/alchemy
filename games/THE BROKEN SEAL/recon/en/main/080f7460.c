@@ -5,7 +5,7 @@
 /*
  * Full source-shape draft for the standalone presentation sequence at
  * 0x080f7460.  It is entered from Runtime_BlankDisplayLoadValueAndRun
- * (games/THE BROKEN SEAL/SRC/SYSTEM/BLANK_DISPLAY_LOAD_VALUE_AND_RUN.C, owner
+ * (games/THE BROKEN SEAL/SRC/SYSTEM/SCHEDULER/BLANK_DISPLAY_LOAD_VALUE_AND_RUN.C, owner
  * 080f6008) immediately after Audio_PlayCue(9), and it owns its whole
  * screen: it allocates its four blocks, builds two tilemaps and a tile
  * bank, seeds five 21-cell record entries, then runs a frame loop until

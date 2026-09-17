@@ -11,6 +11,7 @@
 use crate::compiler::overlay::placeholder_extent;
 use crate::compiler::routing::CompilerTarget;
 use crate::compiler::source_paths::{SourceOwner, SourcePaths, SHARED_SOURCE_ROOT};
+use crate::compiler::translation_units::TranslationUnits;
 use crate::overlay::assembly::OVERLAY_BASE;
 use crate::overlay::compile::assemble_overlay;
 use crate::overlay::owners::{production_target, register_path, reviewed_spans};
@@ -46,15 +47,20 @@ struct ScoredOwner {
     extent: usize,
 }
 
-/// Main-image interval extents keyed by their first address.
-fn inventory_extents(text: &str) -> Result<BTreeMap<u32, usize>, String> {
+/// Complete audited main-image executable ranges. Function boundaries belong
+/// to translation-unit manifests; denominator intervals may contain many
+/// owners and must never be mistaken for owner extents.
+fn inventory_ranges(text: &str) -> Result<Vec<(u32, u32)>, String> {
     let inventory: Value =
         serde_json::from_str(text).map_err(|error| format!("{INVENTORY}: {error}"))?;
+    if inventory.pointer("/main/audit").and_then(Value::as_str) != Some("complete") {
+        return Err(format!("{INVENTORY}: main executable audit is incomplete"));
+    }
     let intervals = inventory
         .pointer("/main/intervals")
         .and_then(Value::as_array)
         .ok_or_else(|| format!("{INVENTORY} has no main intervals"))?;
-    let mut extents = BTreeMap::new();
+    let mut ranges = Vec::new();
     for interval in intervals {
         let bound = |key: &str| {
             interval
@@ -67,9 +73,11 @@ fn inventory_extents(text: &str) -> Result<BTreeMap<u32, usize>, String> {
             return Err(format!("{INVENTORY}: empty interval at 0x{start:08x}"));
         }
         let start = u32::try_from(start).map_err(|_| format!("{INVENTORY}: start overflows"))?;
-        extents.insert(start, (end - u64::from(start)) as usize);
+        let end = u32::try_from(end).map_err(|_| format!("{INVENTORY}: end overflows"))?;
+        ranges.push((start, end));
     }
-    Ok(extents)
+    ranges.sort_unstable();
+    Ok(ranges)
 }
 
 /// Every owner the register gives a source, with its audited extent: a main
@@ -78,7 +86,8 @@ fn inventory_extents(text: &str) -> Result<BTreeMap<u32, usize>, String> {
 fn scored_owners(
     root: &Path,
     register: &SourcePaths,
-    extents: &BTreeMap<u32, usize>,
+    unit_extents: &BTreeMap<SourceOwner, usize>,
+    executable: &[(u32, u32)],
     reviewed: &BTreeMap<SourceOwner, usize>,
     shared: &BTreeSet<PathBuf>,
 ) -> Result<Vec<ScoredOwner>, String> {
@@ -89,9 +98,24 @@ fn scored_owners(
             continue;
         };
         let extent = if owner.is_main() {
-            *extents
-                .get(&owner.address())
-                .ok_or_else(|| format!("{}: no audited extent in {INVENTORY}", owner.id()))?
+            let extent = unit_extents
+                .get(&owner)
+                .copied()
+                .ok_or_else(|| format!("{}: no translation-unit owner extent", owner.id()))?;
+            let end = u32::try_from(extent)
+                .ok()
+                .and_then(|extent| owner.address().checked_add(extent))
+                .ok_or_else(|| format!("{}: invalid translation-unit owner extent", owner.id()))?;
+            if !executable
+                .iter()
+                .any(|&(start, bound)| start <= owner.address() && end <= bound)
+            {
+                return Err(format!(
+                    "{}: translation-unit extent lies outside the audited main executable ranges in {INVENTORY}",
+                    owner.id()
+                ));
+            }
+            extent
         } else {
             *reviewed.get(&owner).ok_or_else(|| {
                 format!(
@@ -214,14 +238,28 @@ fn check(root: &Path, rom: &Path) -> Result<String, String> {
         return Err(format!("{}: TLA ROM not found", rom.display()));
     }
     let register = SourcePaths::load_for_game(root, "tla")?;
+    let units = TranslationUnits::load_game(root, CompilerTarget::Tla)?;
     let inventory = std::fs::read_to_string(root.join(INVENTORY))
         .map_err(|error| format!("{INVENTORY}: {error}"))?;
     let shared = shared_sources(root)?;
     let reviewed = reviewed_spans(root, production_target(CompilerTarget::Tla))?;
+    let unit_extents = register
+        .registered_owners()
+        .filter(|owner| owner.is_main())
+        .filter_map(|owner| {
+            let unit = units.unit_for_game_owner("tla", owner)?;
+            let extent = unit
+                .owners_in("main")
+                .find(|member| member.address == owner.address())?
+                .extent;
+            Some((owner, extent))
+        })
+        .collect::<BTreeMap<_, _>>();
     let owners = scored_owners(
         root,
         &register,
-        &inventory_extents(&inventory)?,
+        &unit_extents,
+        &inventory_ranges(&inventory)?,
         &reviewed,
         &shared,
     )?;
@@ -238,6 +276,9 @@ fn check(root: &Path, rom: &Path) -> Result<String, String> {
         options.rom = Some(rom.to_string_lossy().into_owned());
         options.owner = Some(scored.owner.address());
         options.size = Some(scored.extent);
+        if let Some(unit) = units.unit_for_game_owner("tla", scored.owner) {
+            options.configuration.absolute_symbols = unit.canonical_symbols()?;
+        }
         options.work = Some(format!("out/tla-en/owners/{}", scored.owner.address_stem()));
         let rendered = crate::score::render::render(root, &options)?;
         if crate::score::exact_mismatch(&rendered) {
@@ -276,15 +317,20 @@ mod tests {
     }
 
     #[test]
-    fn inventory_intervals_give_audited_extents() {
-        let extents = inventory_extents(
-            r#"{"main":{"intervals":[{"start":136063548,"end":136063628},{"start":136065856,"end":136065928}]}}"#,
+    fn inventory_intervals_give_audited_ranges() {
+        let ranges = inventory_ranges(
+            r#"{"main":{"audit":"complete","intervals":[{"start":136063548,"end":136063628},{"start":136065856,"end":136065928}]}}"#,
         )
         .unwrap();
-        assert_eq!(extents.get(&0x081c_2a3c), Some(&80));
-        assert_eq!(extents.get(&0x081c_3340), Some(&72));
-        assert!(inventory_extents(r#"{"main":{"intervals":[{"start":8,"end":8}]}}"#).is_err());
-        assert!(inventory_extents(r#"{"overlays":[]}"#).is_err());
+        assert_eq!(
+            ranges,
+            [(0x081c_2a3c, 0x081c_2a8c), (0x081c_3340, 0x081c_3388)]
+        );
+        assert!(inventory_ranges(
+            r#"{"main":{"audit":"complete","intervals":[{"start":8,"end":8}]}}"#
+        )
+        .is_err());
+        assert!(inventory_ranges(r#"{"main":{"audit":"incomplete","intervals":[]}}"#).is_err());
     }
 
     #[test]
@@ -292,9 +338,18 @@ mod tests {
         let root = fixture(REGISTER, &["games/COMMON/SRC/SOUND/CHANNEL_MUTE.C"]);
         let register = SourcePaths::load_for_game(root.path(), "tla").unwrap();
         let shared = shared_sources(root.path()).unwrap();
-        let extents = BTreeMap::from([(0x081c_2a3c, 80)]);
-        let owners =
-            scored_owners(root.path(), &register, &extents, &BTreeMap::new(), &shared).unwrap();
+        let owner = SourceOwner::Main(0x081c_2a3c);
+        let extents = BTreeMap::from([(owner, 80)]);
+        let ranges = [(0x081c_0000, 0x081c_4000)];
+        let owners = scored_owners(
+            root.path(),
+            &register,
+            &extents,
+            &ranges,
+            &BTreeMap::new(),
+            &shared,
+        )
+        .unwrap();
         assert_eq!(
             owners,
             [ScoredOwner {
@@ -307,12 +362,13 @@ mod tests {
             root.path(),
             &register,
             &BTreeMap::new(),
+            &ranges,
             &BTreeMap::new(),
             &shared,
         );
         assert!(missing
             .unwrap_err()
-            .contains("main:081c2a3c: no audited extent"));
+            .contains("main:081c2a3c: no translation-unit owner extent"));
 
         let orphan = fixture(
             REGISTER,
@@ -327,6 +383,7 @@ mod tests {
             orphan.path(),
             &register,
             &extents,
+            &ranges,
             &BTreeMap::new(),
             &shared,
         )
@@ -344,6 +401,7 @@ mod tests {
             root.path(),
             &register,
             &BTreeMap::new(),
+            &[],
             &BTreeMap::new(),
             &BTreeSet::new(),
         )
@@ -356,6 +414,7 @@ mod tests {
             root.path(),
             &register,
             &BTreeMap::new(),
+            &[],
             &BTreeMap::from([(owner, 8)]),
             &BTreeSet::new(),
         )

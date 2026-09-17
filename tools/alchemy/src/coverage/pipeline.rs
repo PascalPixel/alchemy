@@ -604,7 +604,13 @@ fn runtime_credit_for(
         })?;
         if image == "main" {
             if let Some(size) = placed.get(&start) {
-                main.push(Span::new(start, start + size));
+                let span = Span::new(start, start + size);
+                if bytes(&intersect(&[span], main_exec)) != *size {
+                    return Err(format!(
+                        "main compiler runtime at 0x{start:08x} lies outside audited executable intervals"
+                    ));
+                }
+                main.push(span);
             }
             continue;
         }
@@ -613,15 +619,18 @@ fn runtime_credit_for(
             .unwrap_or_default();
         for (window, size) in crate::compiler::runtime::listing_windows(&listing)? {
             if i64::from(window) == start {
-                overlays
-                    .entry(image.clone())
-                    .or_default()
-                    .push(Span::new(start, start + size as i64));
+                let span = Span::new(start, start + size as i64);
+                if bytes(&intersect(&[span], mapped(overlay_exec, &image))) != size as i64 {
+                    return Err(format!(
+                        "{image} compiler runtime at 0x{start:08x} lies outside audited executable intervals"
+                    ));
+                }
+                overlays.entry(image.clone()).or_default().push(span);
             }
         }
     }
-    for (id, spans) in &mut overlays {
-        *spans = intersect(&normalize(spans), mapped(overlay_exec, id));
+    for spans in overlays.values_mut() {
+        *spans = normalize(spans);
     }
     Ok((intersect(&normalize(&main), main_exec), overlays))
 }
@@ -2222,14 +2231,28 @@ mod tests {
             );
         }
         let rom = [Span::new(0x0800_0000, 0x0880_0000)];
-        let (main, _) = runtime_credit(&tree, &rom, &SpanMap::new()).unwrap();
+        let inventory = read_json(
+            &tree,
+            "games/THE BROKEN SEAL/metrics/tbs-en-executable.json",
+        )
+        .unwrap();
+        let overlays = array(&inventory, "overlays")
+            .iter()
+            .map(|node| {
+                (
+                    text(node, "id"),
+                    validated_executable(node).expect("audited overlay"),
+                )
+            })
+            .collect();
+        let (main, _) = runtime_credit(&tree, &rom, &overlays).unwrap();
         assert!(
             main.contains(&Span::new(0x0800_72e4, 0x0800_7320)),
             "runtime spans: {main:?}"
         );
     }
     #[test]
-    fn runtime_credit_needs_a_placed_main_region_and_a_reserved_overlay_window() {
+    fn runtime_credit_requires_complete_audited_runtime_windows() {
         let directory = tempfile::tempdir().unwrap();
         let root = directory.path();
         let write = |path: &str, text: String| {
@@ -2265,10 +2288,23 @@ mod tests {
         );
         let tree = crate::coverage::tree::work_tree_at(root.to_path_buf());
         let rom = [Span::new(0x0800_0000, 0x0880_0000)];
-        let executable = SpanMap::from([
+        let partial = SpanMap::from([
             (
                 "resource_3bf".to_string(),
                 vec![Span::new(0x0200_57bc, 0x0200_6000)],
+            ),
+            (
+                "resource_373".to_string(),
+                vec![Span::new(0x0200_6154, 0x0200_6190)],
+            ),
+        ]);
+        assert!(runtime_credit(&tree, &rom, &partial)
+            .unwrap_err()
+            .contains("lies outside audited executable intervals"));
+        let executable = SpanMap::from([
+            (
+                "resource_3bf".to_string(),
+                vec![Span::new(0x0200_57b0, 0x0200_5ed8)],
             ),
             (
                 "resource_373".to_string(),
@@ -2279,7 +2315,7 @@ mod tests {
         assert_eq!(main, [Span::new(0x0800_72e4, 0x0800_7320)]);
         assert_eq!(
             overlays["resource_3bf"],
-            [Span::new(0x0200_57bc, 0x0200_5ed8)]
+            [Span::new(0x0200_57b0, 0x0200_5ed8)]
         );
         assert!(mapped(&overlays, "resource_373").is_empty());
     }

@@ -1,14 +1,182 @@
 {
   "format": 3,
   "owners": {
+    "main:08016d5c": {
+      "name": "GameFlag_GetByte",
+      "source": "GAME/FLAGS/GET_BYTE.C"
+    },
+    "main:08016d6c": {
+      "name": "GameFlag_SetByte",
+      "source": "GAME/FLAGS/SET_BYTE.C"
+    },
+    "main:08016db4": {
+      "name": "GameFlag_GetNibble",
+      "source": "GAME/FLAGS/GET_NIBBLE.C"
+    },
     "main:080132cc": "SYSTEM/CONSTANT_ZERO_RESULT.C",
+    "main:080caf70": {
+      "name": "BattleFx_ResetCounters",
+      "source": "BATTLE/EFFECT/COUNTERS_RESET.C"
+    },
+    "main:081c0428": {
+      "name": "Pcm_KeyToFrequencyWorkCopy"
+    },
+    "main:081c048c": {
+      "name": "Audio_NoopStubWorkCopy"
+    },
+    "main:081c1b94": {
+      "name": "MusicTrack_Stop"
+    },
+    "main:081c1e08": {
+      "name": "MusicTrack_ReleaseKey"
+    },
+    "main:081c1e70": {
+      "name": "MusicTrack_SetLfoSpeedFromCommand"
+    },
+    "main:081c1e84": {
+      "name": "MusicTrack_SetModulationFromCommand"
+    },
+    "main:081c1e98": {
+      "name": "Pcm_KeyToFrequency",
+      "source": "../../COMMON/SRC/SOUND/PCM_KEY_TO_FREQUENCY.C"
+    },
+    "main:081c1efc": {
+      "name": "Audio_NoopStub"
+    },
+    "main:081c1f00": {
+      "name": "Audio_ResumePlayer"
+    },
+    "main:081c1f1c": {
+      "name": "MusicPlayer_BeginFadeOut"
+    },
+    "main:081c1f3c": {
+      "name": "Audio_Initialize",
+      "source": "../../COMMON/SRC/SOUND/SOUND.C"
+    },
+    "main:081c128c": {
+      "name": "AudioEngine_RunMixerTick"
+    },
+    "main:081c1fb4": {
+      "name": "AudioEngine_RunMixer"
+    },
+    "main:081c1fc0": {
+      "name": "Audio_PlaySound"
+    },
+    "main:081c1fec": {
+      "name": "Audio_PlaySoundIfInactive"
+    },
+    "main:081c2038": {
+      "name": "Audio_PlayOrResumeSound"
+    },
+    "main:081c208c": {
+      "name": "Audio_StopSound"
+    },
+    "main:081c20c0": {
+      "name": "Audio_ResumeSound"
+    },
+    "main:081c20f4": {
+      "name": "Audio_StopAllPlayers"
+    },
+    "main:081c2120": {
+      "name": "MusicPlayer_Resume"
+    },
+    "main:081c212c": {
+      "name": "Audio_ResumeAllPlayers"
+    },
+    "main:081c2158": {
+      "name": "MusicPlayer_FadeOut"
+    },
+    "main:081c21f8": {
+      "name": "CgbAudio_Initialize",
+      "source": "../../COMMON/SRC/SOUND/INITIALIZE_CGB.C"
+    },
+    "main:081c09d0": {
+      "name": "MusicPlayer_Tick"
+    },
+    "main:081c07a2": {
+      "name": "MusicTrack_HandleNote"
+    },
+    "main:081c171c": {
+      "name": "Sound_LoadCommandTable"
+    },
+    "main:081c2328": {
+      "name": "AudioCommand_InvokeSlot35"
+    },
+    "main:081c233c": {
+      "name": "AudioEngine_Initialize",
+      "source": "../../COMMON/SRC/SOUND/ENGINE_INITIALIZE.C"
+    },
+    "main:081c2434": {
+      "name": "AudioEngine_SetPcmRate"
+    },
+    "main:081c24d8": {
+      "name": "AudioEngine_SetMode"
+    },
+    "main:081c2570": {
+      "name": "AudioEngine_StopAllChannels"
+    },
+    "main:081c25c4": {
+      "name": "AudioEngine_SuspendDirectSound"
+    },
+    "main:081c267c": {
+      "name": "MusicPlayer_Initialize",
+      "source": "../../COMMON/SRC/SOUND/MUSIC_PLAYER.C"
+    },
+    "main:081c26f4": {
+      "name": "MusicPlayer_StartSong"
+    },
+    "main:081c27d8": {
+      "name": "MusicPlayer_Stop"
+    },
+    "main:081c31b4": {
+      "name": "MusicTrack_OperateWorkByte",
+      "source": "SOUND/MUSIC_TRACK_OPERATE_WORK_BYTE.C"
+    },
+    "main:081c330c": {
+      "name": "MusicTrack_DispatchStreamCommand",
+      "source": "../../COMMON/SRC/SOUND/MUSIC_TRACK_DISPATCH_STREAM_COMMAND.C"
+    },
+    "main:081c33b0": {
+      "name": "MusicTrack_SetVoiceDecay",
+      "source": "../../COMMON/SRC/SOUND/MUSIC_TRACK_SET_VOICE_DECAY.C"
+    },
+    "main:081c33c4": {
+      "name": "MusicTrack_SetVoiceSustain",
+      "source": "../../COMMON/SRC/SOUND/MUSIC_TRACK_SET_VOICE_SUSTAIN.C"
+    },
+    "main:081c33d8": {
+      "name": "MusicTrack_SetVoiceRelease",
+      "source": "../../COMMON/SRC/SOUND/MUSIC_TRACK_SET_VOICE_RELEASE.C"
+    },
+    "main:081c33ec": {
+      "name": "MusicTrack_SetTailLevel",
+      "source": "../../COMMON/SRC/SOUND/MUSIC_TRACK_SET_TAIL_LEVEL.C"
+    },
+    "main:081c33f8": {
+      "name": "MusicTrack_SetTailLength",
+      "source": "../../COMMON/SRC/SOUND/MUSIC_TRACK_SET_TAIL_LENGTH.C"
+    },
+    "main:081c342c": {
+      "name": "Audio_EmptyCallback"
+    },
     "main:081c2640": {
       "name": "AudioEngine_ResumeDirectSound",
       "source": "../../COMMON/SRC/SOUND/AUDIO_ENGINE_RESUME_DIRECT_SOUND.C"
     },
+    "main:081c2818": {
+      "name": "MusicPlayer_StepFade",
+      "source": "../../COMMON/SRC/SOUND/MUSIC_PLAYER_STEP_FADE.C"
+    },
     "main:081c28e0": {
       "name": "MusicTrack_CalcOutput",
       "source": "../../COMMON/SRC/SOUND/MUSIC_TRACK_CALC_OUTPUT.C"
+    },
+    "main:081c2af4": {
+      "name": "CgbAudio_Update"
+    },
+    "main:081c2994": {
+      "name": "Cgb_KeyToFrequency",
+      "source": "../../COMMON/SRC/SOUND/CGB_KEY_TO_FREQUENCY.C"
     },
     "main:081c2a3c": {
       "name": "CgbChannel_Mute",
@@ -29,6 +197,18 @@
     "main:081c3044": {
       "name": "MusicPlayer_SetPan",
       "source": "../../COMMON/SRC/SOUND/MUSIC_PLAYER_SET_PAN.C"
+    },
+    "main:081c30ac": {
+      "name": "MusicTrack_ClearModulation",
+      "source": "../../COMMON/SRC/SOUND/MUSIC_TRACK_CLEAR_MODULATION.C"
+    },
+    "main:081c30cc": {
+      "name": "MusicPlayer_SetModulationDepth",
+      "source": "../../COMMON/SRC/SOUND/MUSIC_PLAYER_SET_MODULATION_DEPTH.C"
+    },
+    "main:081c3140": {
+      "name": "MusicPlayer_SetLfoSpeed",
+      "source": "../../COMMON/SRC/SOUND/MUSIC_PLAYER_SET_LFO_SPEED.C"
     },
     "main:081c3340": {
       "name": "MusicTrack_ReadVoiceTarget",

@@ -198,6 +198,12 @@ fn publication_path_reason(path: &str) -> Option<&'static str> {
         return Some("private ROM name");
     }
     let suffix = extension(&normalized);
+    if directories
+        .iter()
+        .any(|directory| listed(directory, TOOLCHAIN_DIRECTORIES))
+    {
+        return Some("compiler or runtime-library source: keep it in its licensed repository");
+    }
     if listed(suffix, BLOCKED_EXTENSIONS) {
         return Some("private or generated file type");
     }
@@ -1155,6 +1161,7 @@ fn publication_data_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Opti
         .or_else(|| json_byte_dump_reason(path, text))
         .or_else(|| included_bytes_reason(path, text))
         .or_else(|| attributes_reason(path, text))
+        .or_else(|| runtime_definition_reason(path, text))
 }
 /// Games whose asset manifest is tracked in the inspected tree.
 fn manifest_games<'a>(paths: impl IntoIterator<Item = &'a str>) -> Vec<String> {
@@ -1186,8 +1193,9 @@ fn asset_game(path: &str) -> Option<&str> {
     };
     asset.then_some(*game)
 }
-/// The shared root holds only nested C source that every game compiles
-/// byte-exact from the same text; assets, metadata and headers stay in a game.
+/// The shared root holds only nested C source and interface headers that every
+/// game compiles byte-exact from the same text; assets and metadata stay in a
+/// game.
 fn shared_root_reason(path: &str) -> Option<&'static str> {
     let components: Vec<_> = path.split('/').collect();
     let [top, root, rest @ ..] = components.as_slice() else {
@@ -1197,7 +1205,9 @@ fn shared_root_reason(path: &str) -> Option<&'static str> {
         return None;
     }
     let source = matches!(rest, ["SRC", _, .., leaf] if extension(leaf) == "C");
-    (!source).then_some("games/COMMON holds only shared SRC/<module>/*.C source")
+    let interface = matches!(rest, ["INCLUDE", _, .., leaf] if extension(leaf) == "H");
+    (!(source || interface))
+        .then_some("games/COMMON holds only shared SRC/<module>/*.C and INCLUDE/<module>/*.H")
 }
 fn manifestless_reason(path: &str, manifests: &[String]) -> Option<&'static str> {
     if let Some(reason) = shared_root_reason(path) {
@@ -1503,6 +1513,240 @@ fn revisions(root: &Path, local: &str, remote: &str) -> Result<Vec<String>, Stri
             .map(str::to_string)
             .collect()
     })
+}
+/// libgcc and soft-float routines a game links from its compiler runtime.
+/// Their definitions are licensed runtime code this repository never holds;
+/// calls, bindings and comments that name them are fine.
+const RUNTIME_ROUTINES: &[&str] = &[
+    "__divsi3",
+    "__modsi3",
+    "__udivsi3",
+    "__umodsi3",
+    "__divdi3",
+    "__moddi3",
+    "__udivdi3",
+    "__umoddi3",
+    "__muldi3",
+    "__ashldi3",
+    "__ashrdi3",
+    "__lshrdi3",
+    "__negdi2",
+    "__cmpdi2",
+    "__ucmpdi2",
+    "__addsf3",
+    "__subsf3",
+    "__mulsf3",
+    "__divsf3",
+    "__negsf2",
+    "__adddf3",
+    "__subdf3",
+    "__muldf3",
+    "__divdf3",
+    "__negdf2",
+    "__eqsf2",
+    "__nesf2",
+    "__gtsf2",
+    "__gesf2",
+    "__ltsf2",
+    "__lesf2",
+    "__eqdf2",
+    "__nedf2",
+    "__gtdf2",
+    "__gedf2",
+    "__ltdf2",
+    "__ledf2",
+    "__cmpsf2",
+    "__cmpdf2",
+    "__fixsfsi",
+    "__fixdfsi",
+    "__fixunssfsi",
+    "__fixunsdfsi",
+    "__floatsisf",
+    "__floatsidf",
+    "__extendsfdf2",
+    "__truncdfsf2",
+    "__pack_f",
+    "__unpack_f",
+    "__pack_d",
+    "__unpack_d",
+    "_call_via_r0",
+    "_call_via_r1",
+    "_call_via_r2",
+    "_call_via_r3",
+    "_call_via_r4",
+    "_call_via_r5",
+    "_call_via_r6",
+    "_call_via_r7",
+    "_call_via_fp",
+    "_call_via_ip",
+    "_call_via_sl",
+    "_call_via_sp",
+    "_call_via_lr",
+];
+/// Directory names that hold compiler, assembler or runtime-library source.
+const TOOLCHAIN_DIRECTORIES: &[&str] = &[
+    "gcc",
+    "libgcc",
+    "binutils",
+    "newlib",
+    "libiberty",
+    "bfd",
+    "opcodes",
+];
+fn runtime_definitions() -> &'static [regex::Regex; 2] {
+    static PATTERNS: std::sync::OnceLock<[regex::Regex; 2]> = std::sync::OnceLock::new();
+    PATTERNS.get_or_init(|| {
+        let names = RUNTIME_ROUTINES
+            .iter()
+            .map(|name| regex::escape(name))
+            .collect::<Vec<_>>()
+            .join("|");
+        [
+            // A C function header at the start of a line, not a prototype.
+            regex::Regex::new(&format!(r"(?m)^(?:[A-Za-z_][\w \t*]*[ \t*])?_*(?:{names})[ \t]*\([^;]*$"))
+                .expect("runtime C pattern"),
+            // An assembly symbol, label or lib1funcs entry macro.
+            regex::Regex::new(&format!(
+                r"(?m)^[ \t]*(?:\.globl[ \t]+_*(?:{names})\b|\.global[ \t]+_*(?:{names})\b|_*(?:{names}):|(?:ARM_)?FUNC_START[ \t(]+_*(?:{names})\b)"
+            ))
+            .expect("runtime assembly pattern"),
+        ]
+    })
+}
+/// A definition of a compiler-runtime routine in C or assembly source.
+fn runtime_definition_reason(path: &str, text: &str) -> Option<&'static str> {
+    if !listed(extension(path), &["c", "h", "s", "asm", "inc"]) {
+        return None;
+    }
+    let [c, assembly] = runtime_definitions();
+    let source = if listed(extension(path), &["c", "h"]) {
+        c
+    } else {
+        assembly
+    };
+    source
+        .is_match(text)
+        .then_some("compiler runtime routine: build it from its licensed container")
+}
+/// A commit message may describe work, never carry what may not be tracked.
+fn history_message_reason(message: &str) -> Option<&'static str> {
+    commit_message_reason(message)
+        .or_else(|| license_reason(message))
+        .or_else(|| diff_reason(message))
+        .or_else(|| runtime_definition_reason("message.c", message))
+        .or_else(|| runtime_definition_reason("message.s", message))
+}
+/// Scan every commit reachable from any ref, or from `revision`: each message, and each file
+/// version any commit introduced, against today's publication rules. Writes
+/// `out/history-audit.json` with every finding the history rewrite removes.
+fn check_history(root: &Path, revision: Option<&str>) -> Result<(), String> {
+    let listing = git(
+        root,
+        &["rev-list", revision.unwrap_or("--all")],
+        "history revision scan",
+    )?;
+    let commits: Vec<String> = String::from_utf8_lossy(&listing)
+        .lines()
+        .map(str::trim)
+        .filter(|line| !line.is_empty())
+        .map(str::to_string)
+        .collect();
+    let mut messages = Vec::new();
+    let mut entries = Vec::new();
+    let mut seen = BTreeSet::new();
+    for commit in &commits {
+        let message = git(
+            root,
+            &["show", "-s", "--format=%B", commit],
+            "commit message",
+        )?;
+        if let Some(reason) = history_message_reason(&String::from_utf8_lossy(&message)) {
+            messages.push(serde_json::json!({"commit": commit, "reason": reason}));
+        }
+        let output = git(
+            root,
+            &[
+                "diff-tree",
+                "--root",
+                "--no-commit-id",
+                "--raw",
+                "--no-abbrev",
+                "-r",
+                "-z",
+                commit,
+            ],
+            "history path scan",
+        )?;
+        let fields = nul_list(&output);
+        let manifests = manifests_of(root, Some(commit))?;
+        let mut index = 0;
+        while index + 1 < fields.len() {
+            let metadata: Vec<_> = fields[index].split_whitespace().collect();
+            let path = fields[index + 1].clone();
+            index += 2;
+            if metadata.len() != 5 || metadata[4] == "D" {
+                continue;
+            }
+            let object = metadata[3].to_string();
+            if !seen.insert((path.clone(), object.clone())) {
+                continue;
+            }
+            if let Some(entry) =
+                inspected(commit, path, object, metadata[1] == "160000", &manifests)
+            {
+                entries.push(entry);
+            }
+        }
+    }
+    let logo = nintendo_logo(root);
+    let mut files = Vec::new();
+    let mut readable = Vec::new();
+    for entry in entries {
+        match publication_path_reason(&entry.path).or(entry.listing_reason) {
+            Some(reason) => files.push(serde_json::json!({
+                "commit": entry.scope, "path": entry.path, "blob": entry.object, "reason": reason
+            })),
+            None => readable.push(entry),
+        }
+    }
+    let objects = readable.iter().map(|entry| entry.object.clone()).collect();
+    blobs(root, objects, |index, data| {
+        let entry = &readable[index];
+        let text = std::str::from_utf8(data).unwrap_or("");
+        let reason = publication_data_reason(&entry.path, data, logo.as_deref())
+            .or_else(|| runtime_definition_reason(&entry.path, text));
+        if let Some(reason) = reason {
+            files.push(serde_json::json!({
+                "commit": entry.scope, "path": entry.path, "blob": entry.object, "reason": reason
+            }));
+        }
+    })?;
+    let report = serde_json::json!({
+        "format": 1,
+        "commits": commits.len(),
+        "file_versions": seen.len(),
+        "files": files,
+        "messages": messages,
+    });
+    let path = root.join("out/history-audit.json");
+    std::fs::create_dir_all(root.join("out")).map_err(|error| error.to_string())?;
+    std::fs::write(
+        &path,
+        serde_json::to_string_pretty(&report).map_err(|e| e.to_string())? + "\n",
+    )
+    .map_err(|error| error.to_string())?;
+    println!(
+        "history-audit commits={} file_versions={} files={} messages={} report=out/history-audit.json",
+        commits.len(),
+        seen.len(),
+        files.len(),
+        messages.len()
+    );
+    if files.is_empty() && messages.is_empty() {
+        Ok(())
+    } else {
+        Err("history holds material that may not be published".to_string())
+    }
 }
 fn check_push(root: &Path, updates: &str) -> Result<(), String> {
     let updates: Vec<_> = updates
@@ -2220,7 +2464,7 @@ fn text_fixtures() -> Vec<Fixture> {
             Some("backup"),
         ),
         (
-            "games/THE LOST AGE/asm/overlays/.gitkeep",
+            "games/THE LOST AGE/raw/overlays/.gitkeep",
             Vec::new(),
             false,
             None,
@@ -2248,6 +2492,12 @@ fn text_fixtures() -> Vec<Fixture> {
             b"void f(void);\n".to_vec(),
             true,
             Some("games/COMMON holds only"),
+        ),
+        (
+            "games/COMMON/INCLUDE/SOUND/X.H",
+            b"void f(void);\n".to_vec(),
+            false,
+            None,
         ),
         (
             "games/COMMON/SRC/SOUND/TABLE.JSON",
@@ -2299,7 +2549,7 @@ fn text_fixtures() -> Vec<Fixture> {
             license,
         ),
         (
-            "games/THE BROKEN SEAL/asm/080072e4.s",
+            "games/THE BROKEN SEAL/raw/080072e4.s",
             text(wrapped_license),
             true,
             license,
@@ -2564,7 +2814,7 @@ fn self_test(root: &Path) -> Result<(), String> {
         "tbs-en.gba.lz",
         ".cmatch-fresh/result.s",
         "games/THE BROKEN SEAL/PREVIEW/title.png",
-        "games/THE BROKEN SEAL/asm/080000c0.s~",
+        "games/THE BROKEN SEAL/raw/080000c0.s~",
         "docs/README.md",
         "CONTRIBUTING.md",
         ".agents/notes.md",
@@ -2583,7 +2833,7 @@ fn self_test(root: &Path) -> Result<(), String> {
         "AGENTS.md",
         "TODO.md",
         ".agents/RECOVERY.md",
-        "games/THE BROKEN SEAL/asm/080000c0.s",
+        "games/THE BROKEN SEAL/raw/080000c0.s",
         "games/THE BROKEN SEAL/PREVIEW/TBS-EN-ROM.SVG",
         "games/THE BROKEN SEAL/SOUND/SEQUENCE/THEME.mid",
         "games/THE BROKEN SEAL/SOUND/SAMPLE/WAVE.wav",
@@ -2622,7 +2872,7 @@ fn self_test(root: &Path) -> Result<(), String> {
         }
     }
     let hygiene_holds = publication_data_reason(
-        "games/THE BROKEN SEAL/asm/08000000.s",
+        "games/THE BROKEN SEAL/raw/08000000.s",
         b".incbin \"rom.gba\"\n",
         None,
     ) == Some("committed incbin payload")
@@ -2660,7 +2910,7 @@ fn self_test(root: &Path) -> Result<(), String> {
     }
     Ok(())
 }
-const USAGE: &str = "usage: check publication [--documents | --staged | --pre-push | --tree [REV] | --self-test]\n\nModes:\n  --documents    Check owned documentation, including ignored output.\n  --staged       Check staged files before committing.\n  --pre-push     Check outgoing history and each pushed tree using update lines on stdin.\n  --tree [REV]   Check every file tracked in the index, or in revision REV.\n  --self-test    Run the publication gate's internal checks.\n  -h, --help     Show this help.";
+const USAGE: &str = "usage: check publication [--documents | --staged | --pre-push | --tree [REV] | --history [REV] | --self-test]\n\nModes:\n  --documents    Check owned documentation, including ignored output.\n  --history [REV] Check every commit message and file version in history, or reachable from REV; writes out/history-audit.json.\n  --staged       Check staged files before committing.\n  --pre-push     Check outgoing history and each pushed tree using update lines on stdin.\n  --tree [REV]   Check every file tracked in the index, or in revision REV.\n  --self-test    Run the publication gate's internal checks.\n  -h, --help     Show this help.";
 fn fail(message: &str) -> ExitCode {
     eprintln!("error: {message}");
     ExitCode::FAILURE
@@ -2668,6 +2918,11 @@ fn fail(message: &str) -> ExitCode {
 pub(super) fn entry(arguments: &[String]) -> ExitCode {
     let root = crate::compiler::routing::root();
     match arguments {
+        [argument] if argument == "--history" => {
+            check_history(root, None).map_or_else(|error| fail(&error), |_| ExitCode::SUCCESS)
+        }
+        [argument, revision] if argument == "--history" => check_history(root, Some(revision))
+            .map_or_else(|error| fail(&error), |_| ExitCode::SUCCESS),
         [argument] if argument == "--documents" => {
             check_documents(root).map_or_else(|error| fail(&error), |_| ExitCode::SUCCESS)
         }
@@ -2738,6 +2993,28 @@ mod tests {
             check_push(root.path(), "invalid").unwrap_err(),
             "invalid pre-push update"
         );
+    }
+    #[test]
+    fn runtime_routines_and_toolchain_sources_are_refused_where_they_are_defined() {
+        // Fixture names are assembled so this source never spells a definition.
+        let routine = format!("__{}si3", "div");
+        let defined_c = format!("SItype\n{routine} (SItype a, SItype b)\n{{\n");
+        let prototype = format!("SItype {routine} (SItype, SItype);\n");
+        let called = format!("int f(int a)\n{{\n    return {routine}(a, 3);\n}}\n");
+        let commented = format!("/* bl {routine} at 0x080022ec */\n");
+        assert!(runtime_definition_reason("SRC/LIB/DIVIDE.C", &defined_c).is_some());
+        assert!(runtime_definition_reason("SRC/LIB/DIVIDE.C", &prototype).is_none());
+        assert!(runtime_definition_reason("SRC/LIB/DIVIDE.C", &called).is_none());
+        assert!(runtime_definition_reason("SRC/LIB/DIVIDE.C", &commented).is_none());
+        let label = format!("\t.global {routine}\n{routine}:\n\tpush {{lr}}\n");
+        let branch = format!("\tbl {routine}\n");
+        assert!(runtime_definition_reason("asm/lib.s", &label).is_some());
+        assert!(runtime_definition_reason("asm/lib.s", &branch).is_none());
+        assert!(runtime_definition_reason("notes.json", &defined_c).is_none());
+        assert!(history_message_reason(&format!("Add the divider\n\n{defined_c}")).is_some());
+        assert!(history_message_reason(&format!("Bind {routine} calls in the link")).is_none());
+        assert!(publication_path_reason("vendor/gcc/toplev.c").is_some());
+        assert!(publication_path_reason("tools/reverse-gcc296/src/main.rs").is_none());
     }
     #[test]
     fn documents_include_ignored_output_and_allow_only_indexed_topics() {

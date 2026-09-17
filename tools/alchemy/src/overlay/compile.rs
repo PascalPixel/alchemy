@@ -301,6 +301,7 @@ fn compile_overlay_c_for(
     let recovered = match target.compiler {
         CompilerTarget::Tbs => crate::compiler::source_bindings::production_bindings(
             &root(),
+            CompilerTarget::Tbs,
             &register,
             Some(Path::new(&source_display)),
         )?,
@@ -454,6 +455,7 @@ fn compile_overlay_unit(
     let recovered = match game {
         CompilerTarget::Tbs => crate::compiler::source_bindings::production_bindings(
             &root(),
+            CompilerTarget::Tbs,
             &register,
             Some(source.as_path()),
         )?,

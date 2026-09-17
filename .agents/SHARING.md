@@ -63,15 +63,18 @@ Source that both games compile from the same text lives once under
 `games/COMMON/SRC/<module>/`. A file may live there only when both games
 compile it byte-exact from that text, proven by each game's check: the TBS
 production ROM gate, and for TLA `alchemy check tla-owners roms/tla-en.gba`,
-which `make verify` runs whenever that ROM is present. It scores every TLA
+which `make verify` runs whenever that ROM is present. Shared interfaces live
+once under `games/COMMON/INCLUDE/<module>/` and contain declarations only;
+each game includes them through its own `INCLUDE`. It scores every TLA
 main-image owner the register gives a source over its interval in
 `games/THE LOST AGE/metrics/tla-en-executable.json`, and every TLA overlay
 owner over its reviewed span from the listing that places it, and refuses a
-shared file no TLA owner compiles. Each game's `source-paths.json` registers it
+shared C file no TLA owner compiles. Each game's `source-paths.json` registers it
 as `../../COMMON/SRC/<module>/<FILE>.C` with that game's owner and name, and
 each game compiles it with its own route and `INCLUDE`. `alchemy check owners`
 refuses a shared file that either register omits; the publication gate admits
-only nested `.C` there. Everything else stays in its game.
+only nested `.C` source and nested `.H` interfaces there. Everything else stays
+in its game.
 
 Sharing a file across the two games requires proved correspondence; the game
 boundaries stay until that is shown. Retain ROM sound IDs and storage

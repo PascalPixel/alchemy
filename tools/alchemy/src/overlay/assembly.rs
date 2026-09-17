@@ -18,6 +18,126 @@ pub struct ExecutableSpan {
     pub kind: &'static str,
 }
 
+/// Recover a framed function's first halfword when the byte-identical source
+/// emitter had to leave only that halfword as data (usually because objdump
+/// grouped the following wide instruction differently). The following
+/// halfword must already be independently classified as executable; a
+/// prologue-shaped value in an unrelated table is not enough.
+pub fn adjacent_prologue_spans(
+    input: &[u8],
+    base: i64,
+    classified: &[ExecutableSpan],
+) -> Vec<ExecutableSpan> {
+    let covered = |address: i64| {
+        classified
+            .iter()
+            .any(|span| span.start <= address && address < span.end)
+    };
+    (0..input.len().saturating_sub(1))
+        .step_by(2)
+        .filter_map(|offset| {
+            let address = base + offset as i64;
+            let half = u16::from_le_bytes([input[offset], input[offset + 1]]);
+            (half & 0xff00 == 0xb500 && !covered(address) && covered(address + 2)).then_some(
+                ExecutableSpan {
+                    start: address,
+                    end: address + 2,
+                    kind: "thumb",
+                },
+            )
+        })
+        .collect()
+}
+
+/// GCC's unframed five-pair object integrator. It is emitted without a stack
+/// frame, reached through data rather than a direct call in many field
+/// overlays, and therefore has neither of the ordinary discovery anchors.
+/// Match the complete instruction sequence (including its return) so nearby
+/// object tables cannot be promoted merely for resembling one load/store.
+pub fn compiler_idiom_spans(input: &[u8], base: i64) -> Vec<ExecutableSpan> {
+    const OBJECT_INTEGRATOR: [u16; 27] = [
+        0x6883, 0x6c42, 0x189b, 0x6083, 0x6c82, 0x68c3, 0x189b, 0x60c3, 0x6cc2, 0x6903, 0x189b,
+        0x6103, 0x6b02, 0x6983, 0x189b, 0x6183, 0x6b42, 0x69c3, 0x189b, 0x61c3, 0x6d01, 0x3064,
+        0x8bcb, 0x8802, 0x189b, 0x83cb, 0x4770,
+    ];
+    const STATUS_NIBBLE_UPDATE: [u16; 11] = [
+        0x6d00, 0x2303, 0x7a42, 0x4019, 0x230d, 0x425b, 0x0089, 0x4013, 0x430b, 0x7243, 0x4770,
+    ];
+    let bytes = OBJECT_INTEGRATOR
+        .iter()
+        .flat_map(|half| half.to_le_bytes())
+        .collect::<Vec<_>>();
+    let mut spans = input
+        .windows(bytes.len())
+        .enumerate()
+        .filter(|(offset, window)| offset % 2 == 0 && *window == bytes)
+        .map(|(offset, _)| ExecutableSpan {
+            start: base + offset as i64,
+            end: base + offset as i64 + bytes.len() as i64,
+            kind: "thumb",
+        })
+        .collect::<Vec<_>>();
+    let status_bytes = STATUS_NIBBLE_UPDATE
+        .iter()
+        .flat_map(|half| half.to_le_bytes())
+        .collect::<Vec<_>>();
+    spans.extend(
+        input
+            .windows(status_bytes.len())
+            .enumerate()
+            .filter(|(offset, window)| offset % 2 == 0 && *window == status_bytes)
+            .map(|(offset, _)| ExecutableSpan {
+                start: base + offset as i64,
+                end: base + offset as i64 + status_bytes.len() as i64,
+                kind: "thumb",
+            }),
+    );
+    // Stock GCC 2.96's Thumb interworking bank is fifteen consecutive
+    // `bx rN; nop` pairs, r0 through lr. It has no framed entry and is often
+    // linked into an overlay without any in-image pointer to its first pair.
+    // The complete sixty-byte signature is source-defined by
+    // gcc/config/arm/lib1funcs.asm; shorter bx/nop runs are not sufficient.
+    let call_via = (0u16..15)
+        .flat_map(|register| [0x4700 | (register << 3), 0x46c0])
+        .flat_map(u16::to_le_bytes)
+        .collect::<Vec<_>>();
+    spans.extend(
+        input
+            .windows(call_via.len())
+            .enumerate()
+            .filter(|(offset, window)| offset % 2 == 0 && *window == call_via)
+            .map(|(offset, _)| ExecutableSpan {
+                start: base + offset as i64,
+                end: base + offset as i64 + call_via.len() as i64,
+                kind: "compiler_runtime",
+            }),
+    );
+    let read_half = |offset: usize| u16::from_le_bytes([input[offset], input[offset + 1]]);
+    let functions = spans.clone();
+    for function in functions {
+        if function.kind != "thumb" {
+            continue;
+        }
+        let start = (function.start - base) as usize;
+        let end = (function.end - base) as usize;
+        if start >= 2 && read_half(start - 2) == 0 {
+            spans.push(ExecutableSpan {
+                start: function.start - 2,
+                end: function.start,
+                kind: "executable_alignment",
+            });
+        }
+        if end + 2 <= input.len() && read_half(end) == 0 {
+            spans.push(ExecutableSpan {
+                start: function.end,
+                end: function.end + 2,
+                kind: "executable_alignment",
+            });
+        }
+    }
+    spans
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -83,6 +203,39 @@ mod tests {
         image[0x24..0x26].copy_from_slice(&0x0089u16.to_le_bytes());
         let spans = trusted_overlay_spans(&image, OVERLAY_BASE, 1).unwrap();
         assert!(!spans.iter().any(|span| span.start == OVERLAY_BASE + 0x50));
+    }
+
+    #[test]
+    fn complete_stock_call_via_bank_is_executable() {
+        let bank = (0u16..15)
+            .flat_map(|register| [0x4700 | (register << 3), 0x46c0])
+            .flat_map(u16::to_le_bytes)
+            .collect::<Vec<_>>();
+        let spans = compiler_idiom_spans(&bank, OVERLAY_BASE);
+        assert!(spans.iter().any(|span| {
+            span.start == OVERLAY_BASE
+                && span.end == OVERLAY_BASE + 60
+                && span.kind == "compiler_runtime"
+        }));
+        assert!(compiler_idiom_spans(&bank[..56], OVERLAY_BASE).is_empty());
+    }
+
+    #[test]
+    fn isolated_prologue_requires_adjacent_classified_code() {
+        let image = [0xe0, 0xb5, 0x00, 0x20, 0x00, 0xbd, 0xe0, 0xb5];
+        let classified = [ExecutableSpan {
+            start: OVERLAY_BASE + 2,
+            end: OVERLAY_BASE + 6,
+            kind: "thumb",
+        }];
+        assert_eq!(
+            adjacent_prologue_spans(&image, OVERLAY_BASE, &classified),
+            [ExecutableSpan {
+                start: OVERLAY_BASE,
+                end: OVERLAY_BASE + 2,
+                kind: "thumb",
+            }]
+        );
     }
 }
 
@@ -488,7 +641,12 @@ pub fn trusted_overlay_spans(
     if input.len() < entry_veneers * 8 {
         return Err("overlay is shorter than its entry veneer table".into());
     }
-    let mut seeds = Vec::with_capacity(entry_veneers);
+    let mut seeds = Vec::with_capacity(entry_veneers + 1);
+    // Camelot overlays place their first local routine immediately after the
+    // fixed loader veneer table. It is not necessarily named by an entry
+    // veneer (several tables point only at later public entry points), and it
+    // is often an unframed leaf, so neither ordinary discovery route sees it.
+    seeds.push(base + (entry_veneers * 8) as i64);
     for entry in 0..entry_veneers {
         let at = entry * 8;
         if input[at..at + 4] != [0x00, 0x4c, 0x20, 0x47] {
@@ -591,6 +749,30 @@ fn spans_from_instructions(
                     });
                 }
             }
+        }
+    }
+    let mut union = spans
+        .iter()
+        .map(|span| (span.start, span.end))
+        .collect::<Vec<_>>();
+    union.sort_unstable();
+    let mut merged: Vec<(i64, i64)> = Vec::new();
+    for span in union {
+        if let Some(last) = merged.last_mut() {
+            if span.0 <= last.1 {
+                last.1 = last.1.max(span.1);
+                continue;
+            }
+        }
+        merged.push(span);
+    }
+    for pair in merged.windows(2) {
+        if pair[1].0 - pair[0].1 == 2 && read_u16(pair[0].1) == 0 {
+            spans.push(ExecutableSpan {
+                start: pair[0].1,
+                end: pair[1].0,
+                kind: "executable_alignment",
+            });
         }
     }
     Ok(spans)

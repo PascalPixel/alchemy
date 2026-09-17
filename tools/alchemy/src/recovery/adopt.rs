@@ -149,6 +149,9 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
             ));
         }
     }
+    // Refuse before writing anything when an equivalent twin would be left
+    // outside exact C or copied; `overlay adopt --apply` checks again.
+    let siblings = crate::siblings::guard(root, &[(owner, span as usize)])?;
     let name = match request.name {
         Some(name) => name.to_string(),
         None => derive_name(root, &sources, &overlay, owner),
@@ -188,10 +191,11 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
             return Err(format!("{error}; nothing adopted"));
         }
     };
-    let mut report = vec![format!(
+    let mut report = siblings;
+    report.push(format!(
         "candidate={} reference={} differing_halfwords={} span={span}",
         result.candidate, result.reference, result.differing
-    )];
+    ));
     if result.differing != 0 {
         if !existed {
             let _ = std::fs::remove_file(&destination);

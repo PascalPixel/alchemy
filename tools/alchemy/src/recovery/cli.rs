@@ -7,6 +7,9 @@ const USAGE: &str = "usage: alchemy <extract|inspect|adopt> OWNER [options] [--t
 
 struct Options {
     asm: bool,
+    siblings: bool,
+    near: bool,
+    json: Option<PathBuf>,
     positional: Vec<String>,
     span: Option<u32>,
     name: Option<String>,
@@ -19,6 +22,9 @@ struct Options {
 fn parse(arguments: &[String]) -> Result<Options, String> {
     let mut options = Options {
         asm: false,
+        siblings: false,
+        near: false,
+        json: None,
         positional: Vec::new(),
         span: None,
         name: None,
@@ -36,6 +42,9 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
         };
         match argument.as_str() {
             "--asm" => options.asm = true,
+            "--siblings" => options.siblings = true,
+            "--near" => options.near = true,
+            "--json" => options.json = Some(PathBuf::from(value("--json")?)),
             "--span" => {
                 options.span = Some(
                     value("--span")?
@@ -137,6 +146,16 @@ pub fn entry(arguments: &[String]) -> ExitCode {
         "extract" => extract(&root, &options).map(|_| 0),
         "adopt" => adopt_owner(&root, &options).map(|_| 0),
         "inspect" if options.asm => disasm(&root, &options).map(|_| 0),
+        "inspect" if options.siblings => crate::siblings::inspect(
+            &root,
+            owner_argument(&options)?,
+            options.near,
+            options.json.as_deref(),
+        )
+        .map(|_| 0),
+        "inspect" if options.near || options.json.is_some() => {
+            Err("--near and --json belong to inspect --siblings".into())
+        }
         "inspect" => imports_owner(&root, &options),
         "-h" | "--help" => {
             println!("{USAGE}");

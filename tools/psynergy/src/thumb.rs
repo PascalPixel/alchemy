@@ -8,12 +8,23 @@ pub fn bl_displacement(pair: &[u8]) -> Option<i32> {
     let value = (i32::from(high & 0x7ff) << 12) | (i32::from(low & 0x7ff) << 1);
     Some((value << 9) >> 9)
 }
-/// The target word of a fixed interworking veneer that starts at `bytes`:
-/// `ldr r4, [pc, #0]`, `bx r4`, then the word. The load reaches that word only
-/// when the veneer starts on a word boundary, which the caller establishes.
-pub fn veneer_target(bytes: &[u8]) -> Option<u32> {
+/// The register and target word of a long-branch stub that starts at
+/// `bytes`: `ldr rN, [pc, #0]`, `bx rN` through one low register, then the
+/// word. The load reaches that word only when the stub starts on a word
+/// boundary, which the caller establishes.
+pub fn stub_target(bytes: &[u8]) -> Option<(u8, u32)> {
     let word = |at: usize| Some(u32::from_le_bytes(bytes.get(at..at + 4)?.try_into().ok()?));
-    (word(0)? == 0x4720_4c00).then(|| word(4)).flatten()
+    let code = word(0)?;
+    let register = (code >> 8) & 7;
+    (code == 0x4700_4800 | register << 19 | register << 8)
+        .then(|| Some((register as u8, word(4)?)))
+        .flatten()
+}
+/// The target word of a fixed interworking veneer: the stub through r4.
+pub fn veneer_target(bytes: &[u8]) -> Option<u32> {
+    stub_target(bytes)
+        .filter(|(register, _)| *register == 4)
+        .map(|(_, target)| target)
 }
 /// A Thumb relocation-bearing site: kind (`b'B'` call, `b'L'` literal load),
 /// instruction offset, affected byte offset, and the referenced value.
@@ -60,7 +71,7 @@ pub fn relocation_info(bytes: &[u8], base: u64) -> (Vec<bool>, Vec<Reference>) {
 }
 #[cfg(test)]
 mod tests {
-    use super::{bl_displacement, relocation_info, veneer_target};
+    use super::{bl_displacement, relocation_info, stub_target, veneer_target};
     #[test]
     fn veneers_load_r4_from_the_following_word_and_branch_through_it() {
         let veneer = [0x00, 0x4c, 0x20, 0x47, 0x55, 0x20, 0x09, 0x08];
@@ -71,6 +82,26 @@ mod tests {
             changed[at] = other;
             assert_eq!(veneer_target(&changed), None);
         }
+    }
+    #[test]
+    fn stubs_branch_through_the_register_they_load() {
+        for register in 0..8u8 {
+            let mut stub = [
+                0x00,
+                0x48 | register,
+                register << 3,
+                0x47,
+                0x81,
+                0x03,
+                0x00,
+                0x03,
+            ];
+            assert_eq!(stub_target(&stub), Some((register, 0x0300_0381)));
+            assert_eq!(veneer_target(&stub).is_some(), register == 4);
+            stub[2] = ((register + 1) % 8) << 3;
+            assert_eq!(stub_target(&stub), None);
+        }
+        assert_eq!(stub_target(&[0x00, 0x4b, 0x18, 0x47]), None);
     }
     #[test]
     fn calls_decode_both_signed_extremes_and_all_low_bits() {

@@ -22,12 +22,13 @@ mod overlay;
 mod recovery;
 mod scaffold;
 mod score;
+mod siblings;
 mod targets;
 
 const USAGE: &str = "usage: alchemy <command> [args]\n\
   bootstrap             install or validate the persistent compiler toolchain\n\
   extract OWNER         extract reference bytes for psynergy decompile\n\
-  inspect OWNER         resolve calls and symbols; --asm shows annotated instructions\n\
+  inspect OWNER         resolve calls and symbols; --asm shows annotated instructions, --siblings twins\n\
   score SOURCE          compile through the approved route and compare the owner\n\
   adopt OWNER           verify and integrate candidate C\n\
   match SOURCE          search decoder-named, catalogued source repairs\n\
@@ -174,7 +175,7 @@ fn recovery_command(command: &str, arguments: &[String]) -> ExitCode {
         let usage = match command {
             "extract" => "extract OWNER --out out/FILE [--span BYTES]",
             "adopt" => "adopt OWNER [--source FILE] [--span BYTES] [--name NAME] [--path PATH]",
-            "inspect" => "inspect OWNER [--span BYTES] [--asm]",
+            "inspect" => "inspect OWNER [--span BYTES] [--asm | --siblings [--near] [--json FILE]]",
             _ => return recovery::cli::entry(&["--help".to_string()]),
         };
         println!(

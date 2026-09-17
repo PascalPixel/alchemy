@@ -142,6 +142,20 @@ pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> 
     }
     Ok(ParseOutcome::Options(Box::new(options)))
 }
+/// The scored owner's relocation-masked twin count, so siblings stay visible
+/// during recovery; nothing when the images cannot be read.
+pub fn siblings_line(
+    root: &Path,
+    owner: crate::compiler::source_paths::SourceOwner,
+    extent: usize,
+) -> String {
+    crate::siblings::count(root, owner, extent).map_or(String::new(), |count| {
+        format!(
+            "siblings twins={count} (alchemy inspect {} --siblings)\n",
+            owner.id()
+        )
+    })
+}
 fn parse_size(value: &str) -> Result<usize, String> {
     let parsed = if let Some(hex) = value.strip_prefix("0x") {
         usize::from_str_radix(hex, 16)

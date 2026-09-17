@@ -48,7 +48,12 @@ pub fn entry(arguments: &[String]) {
 }
 fn run(mut options: crate::score::cli::Options) -> Result<String, String> {
     let Some(id) = options.unit.clone() else {
-        return render(root(), &options).map(|output| output.stdout);
+        let output = render(root(), &options)?;
+        let twins = options.owner.map_or(String::new(), |address| {
+            let owner = crate::compiler::source_paths::SourceOwner::Main(address);
+            crate::score::cli::siblings_line(root(), owner, output.reference_length)
+        });
+        return Ok(format!("{}{twins}", output.stdout));
     };
     let manifest = TranslationUnits::load(root())?;
     let unit = manifest

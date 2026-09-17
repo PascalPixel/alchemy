@@ -33,36 +33,232 @@
       ]
     },
     {
-      "id": "lunpa-redraw-actor-footprint",
+      "id": "staged-actor",
       "game": "tbs",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/REDRAW_ACTOR_FOOTPRINT.C",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/STAGED_ACTOR.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bf",
-      "absolute_symbols": {},
-      "local_symbols": [],
-      "owners": [
-        {
-          "address": "0x020008c0",
-          "extent": 284,
-          "state": "exact-c"
+      "absolute_symbols": {
+        "StagedActor_DirectionSteps": {
+          "address": "0x0200ded8",
+          "kind": "data"
+        },
+        "StagedActor_FootprintBounds": {
+          "address": "0x0200df30",
+          "kind": "data"
+        },
+        "StagedActor_FootprintKinds": {
+          "address": "0x0200df18",
+          "kind": "data"
         }
-      ]
-    },
-    {
-      "id": "lunpa-find-actor-region",
-      "game": "tbs",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/FIND_ACTOR_REGION.C",
-      "compiler_route": "canonical-gcc296",
-      "overlay": "resource_3bf",
-      "absolute_symbols": {},
+      },
       "local_symbols": [],
       "owners": [
         {
           "address": "0x0200034c",
           "extent": 296,
           "state": "exact-c"
+        },
+        {
+          "address": "0x020008c0",
+          "extent": 284,
+          "state": "exact-c"
         }
-      ]
+      ],
+      "instances": {
+        "resource_373": {
+          "owners": {
+            "FieldScene_FindActorRegion": {
+              "address": "0x0200034c",
+              "extent": 296
+            },
+            "FieldScene_RedrawActorFootprint": {
+              "address": "0x020008c0",
+              "extent": 284
+            }
+          }
+        },
+        "resource_389": {
+          "owners": {
+            "FieldScene_FindActorRegion": {
+              "address": "0x0200034c",
+              "extent": 296
+            },
+            "FieldScene_RedrawActorFootprint": {
+              "address": "0x020008c0",
+              "extent": 284
+            }
+          }
+        },
+        "resource_391": {
+          "owners": {
+            "FieldScene_FindActorRegion": {
+              "address": "0x0200034c",
+              "extent": 296
+            },
+            "FieldScene_RedrawActorFootprint": {
+              "address": "0x020008c0",
+              "extent": 284
+            }
+          }
+        },
+        "resource_392": {
+          "owners": {
+            "FieldScene_FindActorRegion": {
+              "address": "0x0200034c",
+              "extent": 296
+            },
+            "FieldScene_RedrawActorFootprint": {
+              "address": "0x020008c0",
+              "extent": 284
+            }
+          }
+        },
+        "resource_393": {
+          "owners": {
+            "FieldScene_FindActorRegion": {
+              "address": "0x0200034c",
+              "extent": 296
+            },
+            "FieldScene_RedrawActorFootprint": {
+              "address": "0x020008c0",
+              "extent": 284
+            }
+          }
+        },
+        "resource_39b": {
+          "owners": {
+            "FieldScene_FindActorRegion": {
+              "address": "0x02000630",
+              "extent": 296
+            },
+            "FieldScene_RedrawActorFootprint": {
+              "address": "0x02000ba4",
+              "extent": 284
+            }
+          }
+        },
+        "resource_39c": {
+          "owners": {
+            "FieldScene_FindActorRegion": {
+              "address": "0x02000630",
+              "extent": 296
+            },
+            "FieldScene_RedrawActorFootprint": {
+              "address": "0x02000ba4",
+              "extent": 284
+            }
+          }
+        },
+        "resource_39f": {
+          "owners": {
+            "FieldScene_FindActorRegion": {
+              "address": "0x0200034c",
+              "extent": 296
+            },
+            "FieldScene_RedrawActorFootprint": {
+              "address": "0x020008c0",
+              "extent": 284
+            }
+          }
+        },
+        "resource_3a6": {
+          "owners": {
+            "FieldScene_FindActorRegion": {
+              "address": "0x02000630",
+              "extent": 296
+            },
+            "FieldScene_RedrawActorFootprint": {
+              "address": "0x02000ba4",
+              "extent": 284
+            }
+          }
+        },
+        "resource_3b2": {
+          "owners": {
+            "FieldScene_FindActorRegion": {
+              "address": "0x0200034c",
+              "extent": 296
+            },
+            "FieldScene_RedrawActorFootprint": {
+              "address": "0x020008c0",
+              "extent": 284
+            }
+          }
+        },
+        "resource_3b3": {
+          "owners": {
+            "FieldScene_FindActorRegion": {
+              "address": "0x02000630",
+              "extent": 296
+            },
+            "FieldScene_RedrawActorFootprint": {
+              "address": "0x02000ba4",
+              "extent": 284
+            }
+          }
+        },
+        "resource_3b4": {
+          "owners": {
+            "FieldScene_FindActorRegion": {
+              "address": "0x0200034c",
+              "extent": 296
+            },
+            "FieldScene_RedrawActorFootprint": {
+              "address": "0x020008c0",
+              "extent": 284
+            }
+          }
+        },
+        "resource_3bd": {
+          "owners": {
+            "FieldScene_FindActorRegion": {
+              "address": "0x0200034c",
+              "extent": 296
+            },
+            "FieldScene_RedrawActorFootprint": {
+              "address": "0x020008c0",
+              "extent": 284
+            }
+          }
+        },
+        "resource_3be": {
+          "owners": {
+            "FieldScene_FindActorRegion": {
+              "address": "0x02000630",
+              "extent": 296
+            },
+            "FieldScene_RedrawActorFootprint": {
+              "address": "0x02000ba4",
+              "extent": 284
+            }
+          }
+        },
+        "resource_3c4": {
+          "owners": {
+            "FieldScene_FindActorRegion": {
+              "address": "0x0200034c",
+              "extent": 296
+            },
+            "FieldScene_RedrawActorFootprint": {
+              "address": "0x020008c0",
+              "extent": 284
+            }
+          }
+        },
+        "resource_3c5": {
+          "owners": {
+            "FieldScene_FindActorRegion": {
+              "address": "0x0200034c",
+              "extent": 296
+            },
+            "FieldScene_RedrawActorFootprint": {
+              "address": "0x020008c0",
+              "extent": 284
+            }
+          }
+        }
+      }
     },
     {
       "id": "staged-actor-setup-37b",

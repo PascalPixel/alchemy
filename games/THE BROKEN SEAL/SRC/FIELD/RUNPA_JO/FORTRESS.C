@@ -1,6 +1,5 @@
 #include "TYPES.H"
 
-#define CalculateFixedPointPositionDistance Func_02000030
 #define StagedActorStepTable Data_0200ded8
 #define GetStagedActor Func_02005724
 #define FindNextStagedActor Func_02000176
@@ -15,8 +14,6 @@
 #define FinishStagedActorMove Func_020057b4
 #define FinishStagedActorEffect Func_02005990
 #define SetStagedActorTransition Func_020057cc
-#define AdvanceStagedActorPair Func_020000c4
-#define FindClearActorPosition Func_02000474
 #define StartDoraHouseAccidentScene Func_020010a8
 #define TurnActorToSceneDirection Func_02001be4
 #define SelectPrimarySceneData Func_020009dc
@@ -39,7 +36,6 @@
 #define NoOpSceneCallbackD Func_020010a4
 #define NoOpInteractionCallback Func_02002528
 #define NoOpActorCallback Func_02004d4c
-#define StopBlockedActorMotion Func_020002a8
 #define ActivateSceneActor17 Func_020014bc
 #define ActivateSceneActor18 Func_02001650
 #define FinishActor20SceneSequence Func_02004d0c
@@ -3424,7 +3420,7 @@ static __inline__ s32 Value2_02004f60(s32 (*f)(), s32 a0, s32 a1)
 
 extern u8 Value_00002421;
 
-s32 Func_02000030(s32 *first_position, s32 *second_position)
+s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
 {
     s32 delta_x = (*first_position++ - *second_position++) >> 16;
     s32 delta_y = (*first_position++ - *second_position++) >> 16;
@@ -3436,7 +3432,7 @@ s32 Func_02000030(s32 *first_position, s32 *second_position)
     return ((IwramIntegerSquareRoot) 0x030001D8)(delta_x_squared + delta_y_squared + delta_z_squared);
 }
 
-s32 *Func_0200006c(s32 *arg0)
+s32 *StagedActor_FindAtTile(s32 *arg0)
 {
     extern u8 *Data_03001ebc;
 
@@ -3455,7 +3451,7 @@ s32 *Func_0200006c(s32 *arg0)
     return 0;
 }
 
-void AdvanceStagedActorPair(void)
+void StagedActor_AdvancePair(void)
 {
     extern s32 Data_0200dfa4;
 
@@ -3528,7 +3524,7 @@ void AdvanceStagedActorPair(void)
     SetStagedActorTransition(lead_actor, 1);
 }
 
-s32 Func_02000244(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
+s32 StagedActor_FillGridAttributeRectangle(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
 {
     extern u8 *Data_03001e70;
 
@@ -3558,7 +3554,7 @@ s32 Func_02000244(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
     return 0;
 }
 
-s32 StopBlockedActorMotion(MovingActor *actor)
+s32 StagedActor_StopBlockedMotion(MovingActor *actor)
 {
     extern s16 Data_02000240[];
     extern u8 *Data_03001ebc;
@@ -3607,7 +3603,7 @@ done:
     return 0;
 }
 
-s32 FindClearActorPosition(Req *request)
+s32 StagedActor_FindClearPosition(Req *request)
 {
     extern s32 Data_0200dfa4;
 

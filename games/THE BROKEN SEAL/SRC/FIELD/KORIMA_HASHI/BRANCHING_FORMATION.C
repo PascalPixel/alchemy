@@ -31,9 +31,6 @@
 #define RestoreStagedActorEffect Func_0200376c
 #define FinishStagedActorEffect_02000b1c Func_02003810
 #define SceneTransition_Phase Data_02000240[225]
-#define StagedActor_PushActorAhead Func_020000c4
-#define SceneActor_ResetMotionWhenAheadBlocked Func_020002a8
-#define FindStagedActorProbePosition Func_02000474
 #define OverlayObject_ClearPendingAndRestoreMode Func_020009dc
 #define SceneActor_UpdateRandomCounterMode Func_020009fc
 #define SceneData_GetTableb06c Func_02000a4c
@@ -56,6 +53,19 @@
 #include "STAGED_ACTOR.H"
 #include "STAGED_ACTOR_PROBE.H"
 #include "STAGED_ACTOR_EFFECT.H"
+
+extern struct StagedActorFootprint Data_0200adc0[];
+extern u32 Data_0200ad68[];
+
+#define StagedActorFootprints Data_0200adc0
+#define StagedActorDirectionSteps Data_0200ad68
+#define FindStagedActorProbeTarget Func_020007de
+#define ClassifyStagedActorProbePosition Func_02003140
+
+extern struct StagedActor *FindStagedActorProbeTarget(
+    s32 *direction_out, s32 *actor_slot_out, struct StagedActorProbe *probe);
+
+extern s32 ClassifyStagedActorProbePosition(struct StagedActor *actor, s32 *position);
 
 typedef struct { s32 unk0; s32 unk4; s32 unk8; } Desc;
 
@@ -273,7 +283,7 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 s32 Func_0200371e(struct StagedActorEffect *actor,
                          struct StagedActorEffectRequest *request);
 
-s32 Func_02000030(s32 *first_position, s32 *second_position)
+s32 FixedPoint_Distance(s32 *first_position, s32 *second_position)
 {
     s32 delta_x = (*first_position++ - *second_position++) >> 16;
     s32 delta_y = (*first_position++ - *second_position++) >> 16;
@@ -285,7 +295,7 @@ s32 Func_02000030(s32 *first_position, s32 *second_position)
     return ((IwramIntegerSquareRoot) 0x030001D8)(delta_x_squared + delta_y_squared + delta_z_squared);
 }
 
-s32 *Func_0200006c(s32 *arg0)
+s32 *StagedActor_FindAtTile(s32 *arg0)
 {
     s32 **slots = (s32 **)(Data_03001ebc + 0x14);
     u32 i;
@@ -302,7 +312,7 @@ s32 *Func_0200006c(s32 *arg0)
     return 0;
 }
 
-void StagedActor_PushActorAhead(void)
+void StagedActor_AdvancePair(void)
 {
     extern u32 Data_0200ad68[];
 
@@ -375,7 +385,7 @@ void StagedActor_PushActorAhead(void)
     SetStagedActorTransition(lead, 1);
 }
 
-s32 Func_02000244(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
+s32 StagedActor_FillGridAttributeRectangle(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
 {
     u8 *g = Data_03001e70;
     u8 *base;
@@ -403,7 +413,7 @@ s32 Func_02000244(u32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4, s32 arg5)
     return 0;
 }
 
-s32 SceneActor_ResetMotionWhenAheadBlocked(Ent *a)
+s32 StagedActor_StopBlockedMotion(Ent *a)
 {
     Desc d;
     u32 idx;
@@ -446,7 +456,7 @@ done:
     return 0;
 }
 
-s32 FindStagedActorProbePosition(struct StagedActorProbe *probe)
+s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe)
 {
     struct StagedActorProbePosition position;
     s32 direction;

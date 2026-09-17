@@ -10960,19 +10960,28 @@
     "resource_3cb:02000860": {
       "name": "Scene_RunScene3cbSequenceB"
     },
-    "resource_373:02000030": "FIELD/HAIDIA_MURA/STAGED_MOTION.C",
-    "resource_373:0200006c": "FIELD/HAIDIA_MURA/STAGED_MOTION.C",
-    "resource_373:02000244": "FIELD/HAIDIA_MURA/STAGED_MOTION.C",
+    "resource_373:02000030": {
+      "name": "FixedPoint_Distance",
+      "source": "FIELD/HAIDIA_MURA/STAGED_MOTION.C"
+    },
+    "resource_373:0200006c": {
+      "name": "StagedActor_FindAtTile",
+      "source": "FIELD/HAIDIA_MURA/STAGED_MOTION.C"
+    },
+    "resource_373:02000244": {
+      "name": "StagedActor_FillGridAttributeRectangle",
+      "source": "FIELD/HAIDIA_MURA/STAGED_MOTION.C"
+    },
     "resource_373:020000c4": {
-      "name": "MapStagedActor_AdvancePair",
+      "name": "StagedActor_AdvancePair",
       "source": "FIELD/HAIDIA_MURA/STAGED_MOTION.C"
     },
     "resource_373:020002a8": {
-      "name": "MapStagedActor_StopBlockedMotion",
+      "name": "StagedActor_StopBlockedMotion",
       "source": "FIELD/HAIDIA_MURA/STAGED_MOTION.C"
     },
     "resource_373:02000474": {
-      "name": "MapStagedActor_FindClearPosition",
+      "name": "StagedActor_FindClearPosition",
       "source": "FIELD/HAIDIA_MURA/STAGED_MOTION.C"
     },
     "resource_373:020009dc": {
@@ -12327,15 +12336,15 @@
       "source": "FIELD/KORIMA_MURA/EXTENDED_SEQUENCE.C"
     },
     "resource_392:02000030": {
-      "name": "SceneActor_CalculateFixedPointPositionDistance",
+      "name": "FixedPoint_Distance",
       "source": "FIELD/KORIMA_HIROBA/STAGED_PARTICLE.C"
     },
     "resource_392:0200006c": {
-      "name": "SceneActor_FindActorAtFixedPointPosition",
+      "name": "StagedActor_FindAtTile",
       "source": "FIELD/KORIMA_HIROBA/STAGED_PARTICLE.C"
     },
     "resource_392:02000244": {
-      "name": "SceneState_FillGridAttributeRectangle",
+      "name": "StagedActor_FillGridAttributeRectangle",
       "source": "FIELD/KORIMA_HIROBA/STAGED_PARTICLE.C"
     },
     "resource_392:02000cb4": {
@@ -12371,7 +12380,7 @@
       "source": "FIELD/KORIMA_HIROBA/STAGED_PARTICLE.C"
     },
     "resource_392:020002a8": {
-      "name": "StagedActor_CheckProbe",
+      "name": "StagedActor_StopBlockedMotion",
       "source": "FIELD/KORIMA_HIROBA/STAGED_PARTICLE.C"
     },
     "resource_392:02000a2c": {
@@ -12404,15 +12413,15 @@
       "source": "FIELD/KORIMA_HIROBA/STAGED_PARTICLE.C"
     },
     "resource_393:02000030": {
-      "name": "SceneActor_CalculateFixedPointDistance",
+      "name": "FixedPoint_Distance",
       "source": "FIELD/KORIMA_KAWA/STAGED_PALETTE.C"
     },
     "resource_393:0200006c": {
-      "name": "SceneActor_FindAtTileXZ",
+      "name": "StagedActor_FindAtTile",
       "source": "FIELD/KORIMA_KAWA/STAGED_PALETTE.C"
     },
     "resource_393:02000244": {
-      "name": "SceneState_FillGridAttributeRectangle",
+      "name": "StagedActor_FillGridAttributeRectangle",
       "source": "FIELD/KORIMA_KAWA/STAGED_PALETTE.C"
     },
     "resource_393:020009e4": {
@@ -12436,7 +12445,7 @@
       "source": "FIELD/KORIMA_KAWA/STAGED_PALETTE.C"
     },
     "resource_393:020002a8": {
-      "name": "StagedActor_CheckProbe",
+      "name": "StagedActor_StopBlockedMotion",
       "source": "FIELD/KORIMA_KAWA/STAGED_PALETTE.C"
     },
     "resource_393:020009f8": {
@@ -12803,19 +12812,28 @@
       "name": "SpawnConfiguredEffect",
       "source": "FIELD/HAIDIA_DOU/STAGED_PAIR_REGION.C"
     },
-    "resource_3a6:02000314": "FIELD/HAIDIA_DOU/STAGED_PAIR_REGION.C",
-    "resource_3a6:02000350": "FIELD/HAIDIA_DOU/STAGED_PAIR_REGION.C",
-    "resource_3a6:020003a8": {
-      "name": "AdvanceStagedActorPair",
+    "resource_3a6:02000314": {
+      "name": "FixedPoint_Distance",
       "source": "FIELD/HAIDIA_DOU/STAGED_PAIR_REGION.C"
     },
-    "resource_3a6:02000528": "FIELD/HAIDIA_DOU/STAGED_PAIR_REGION.C",
+    "resource_3a6:02000350": {
+      "name": "StagedActor_FindAtTile",
+      "source": "FIELD/HAIDIA_DOU/STAGED_PAIR_REGION.C"
+    },
+    "resource_3a6:020003a8": {
+      "name": "StagedActor_AdvancePair",
+      "source": "FIELD/HAIDIA_DOU/STAGED_PAIR_REGION.C"
+    },
+    "resource_3a6:02000528": {
+      "name": "StagedActor_FillGridAttributeRectangle",
+      "source": "FIELD/HAIDIA_DOU/STAGED_PAIR_REGION.C"
+    },
     "resource_3a6:0200058c": {
-      "name": "stop_blocked_actor_motion",
+      "name": "StagedActor_StopBlockedMotion",
       "source": "FIELD/HAIDIA_DOU/STAGED_PAIR_REGION.C"
     },
     "resource_3a6:02000758": {
-      "name": "find_clear_actor_position",
+      "name": "StagedActor_FindClearPosition",
       "source": "FIELD/HAIDIA_DOU/STAGED_PAIR_REGION.C"
     },
     "resource_3a6:02000d80": {
@@ -13321,15 +13339,24 @@
     "resource_3bd:020013f8": {
       "name": "FieldScene_RunExtendedActorPresentation"
     },
-    "resource_3bd:02000030": "FIELD/ARUTAMIRA_DOU/EXTENDED_PRESENTATION.C",
-    "resource_3bd:0200006c": "FIELD/ARUTAMIRA_DOU/EXTENDED_PRESENTATION.C",
-    "resource_3bd:02000244": "FIELD/ARUTAMIRA_DOU/EXTENDED_PRESENTATION.C",
+    "resource_3bd:02000030": {
+      "name": "FixedPoint_Distance",
+      "source": "FIELD/ARUTAMIRA_DOU/EXTENDED_PRESENTATION.C"
+    },
+    "resource_3bd:0200006c": {
+      "name": "StagedActor_FindAtTile",
+      "source": "FIELD/ARUTAMIRA_DOU/EXTENDED_PRESENTATION.C"
+    },
+    "resource_3bd:02000244": {
+      "name": "StagedActor_FillGridAttributeRectangle",
+      "source": "FIELD/ARUTAMIRA_DOU/EXTENDED_PRESENTATION.C"
+    },
     "resource_3bd:020009dc": {
       "name": "FieldScene_SetActor13Value41",
       "source": "FIELD/ARUTAMIRA_DOU/EXTENDED_PRESENTATION.C"
     },
     "resource_3bd:020002a8": {
-      "name": "SceneActor_ResetMotionIfBlockedAhead",
+      "name": "StagedActor_StopBlockedMotion",
       "source": "FIELD/ARUTAMIRA_DOU/EXTENDED_PRESENTATION.C"
     },
     "resource_3bd:02000b0c": {
@@ -13385,7 +13412,7 @@
       "source": "FIELD/ARUTAMIRA_DOU/EXTENDED_PRESENTATION.C"
     },
     "resource_3bd:02000474": {
-      "name": "SceneActor_FindClearActorPosition",
+      "name": "StagedActor_FindClearPosition",
       "source": "FIELD/ARUTAMIRA_DOU/EXTENDED_PRESENTATION.C"
     },
     "resource_3bd:02000b24": {
@@ -13472,27 +13499,27 @@
       "source": "FIELD/KARAGORU_DOU/STAGED_PAIR.C"
     },
     "resource_3be:02000314": {
-      "name": "calculate_position_distance",
+      "name": "FixedPoint_Distance",
       "source": "FIELD/KARAGORU_DOU/STAGED_PAIR.C"
     },
     "resource_3be:02000350": {
-      "name": "find_scene_actor_at_fixed_point_position",
+      "name": "StagedActor_FindAtTile",
       "source": "FIELD/KARAGORU_DOU/STAGED_PAIR.C"
     },
     "resource_3be:020003a8": {
-      "name": "StagedActorPairScene_AdvancePair",
+      "name": "StagedActor_AdvancePair",
       "source": "FIELD/KARAGORU_DOU/STAGED_PAIR.C"
     },
     "resource_3be:02000528": {
-      "name": "fill_scene_grid_attribute_rectangle",
+      "name": "StagedActor_FillGridAttributeRectangle",
       "source": "FIELD/KARAGORU_DOU/STAGED_PAIR.C"
     },
     "resource_3be:0200058c": {
-      "name": "StagedActorPairScene_StopBlockedMotion",
+      "name": "StagedActor_StopBlockedMotion",
       "source": "FIELD/KARAGORU_DOU/STAGED_PAIR.C"
     },
     "resource_3be:02000758": {
-      "name": "StagedActorPairScene_FindClearPosition",
+      "name": "StagedActor_FindClearPosition",
       "source": "FIELD/KARAGORU_DOU/STAGED_PAIR.C"
     },
     "resource_3be:02000cc0": {
@@ -13586,15 +13613,24 @@
       "name": "BattleEffect_SpawnConfigured",
       "source": "FIELD/MAKYURI_HEYA/FIELD_PROBE_SCENE.C"
     },
-    "resource_39c:02000314": "FIELD/MAKYURI_HEYA/FIELD_PROBE_SCENE.C",
-    "resource_39c:02000350": "FIELD/MAKYURI_HEYA/FIELD_PROBE_SCENE.C",
-    "resource_39c:02000528": "FIELD/MAKYURI_HEYA/FIELD_PROBE_SCENE.C",
+    "resource_39c:02000314": {
+      "name": "FixedPoint_Distance",
+      "source": "FIELD/MAKYURI_HEYA/FIELD_PROBE_SCENE.C"
+    },
+    "resource_39c:02000350": {
+      "name": "StagedActor_FindAtTile",
+      "source": "FIELD/MAKYURI_HEYA/FIELD_PROBE_SCENE.C"
+    },
+    "resource_39c:02000528": {
+      "name": "StagedActor_FillGridAttributeRectangle",
+      "source": "FIELD/MAKYURI_HEYA/FIELD_PROBE_SCENE.C"
+    },
     "resource_39c:0200058c": {
-      "name": "stop_blocked_actor_motion",
+      "name": "StagedActor_StopBlockedMotion",
       "source": "FIELD/MAKYURI_HEYA/FIELD_PROBE_SCENE.C"
     },
     "resource_39c:02000758": {
-      "name": "find_clear_actor_position",
+      "name": "StagedActor_FindClearPosition",
       "source": "FIELD/MAKYURI_HEYA/FIELD_PROBE_SCENE.C"
     },
     "resource_39c:02004f90": {
@@ -14901,15 +14937,15 @@
       "source": "FIELD/KORIMA_HASHI/BRANCHING_FORMATION.C"
     },
     "resource_391:02000030": {
-      "name": "CalculateFixedPointPositionDistance",
+      "name": "FixedPoint_Distance",
       "source": "FIELD/KORIMA_HASHI/BRANCHING_FORMATION.C"
     },
     "resource_391:0200006c": {
-      "name": "find_actor_at_fixed_point_position",
+      "name": "StagedActor_FindAtTile",
       "source": "FIELD/KORIMA_HASHI/BRANCHING_FORMATION.C"
     },
     "resource_391:02000244": {
-      "name": "fill_grid_attribute_rectangle",
+      "name": "StagedActor_FillGridAttributeRectangle",
       "source": "FIELD/KORIMA_HASHI/BRANCHING_FORMATION.C"
     },
     "resource_391:02000a60": {
@@ -14933,7 +14969,7 @@
       "source": "FIELD/KORIMA_HASHI/BRANCHING_FORMATION.C"
     },
     "resource_391:02000474": {
-      "name": "FindStagedActorProbePosition",
+      "name": "StagedActor_FindClearPosition",
       "source": "FIELD/KORIMA_HASHI/BRANCHING_FORMATION.C"
     },
     "resource_391:02002768": {
@@ -14973,7 +15009,7 @@
       "source": "FIELD/KORIMA_HASHI/BRANCHING_FORMATION.C"
     },
     "resource_391:020002a8": {
-      "name": "SceneActor_ResetMotionWhenAheadBlocked",
+      "name": "StagedActor_StopBlockedMotion",
       "source": "FIELD/KORIMA_HASHI/BRANCHING_FORMATION.C"
     },
     "resource_391:020009dc": {
@@ -14981,7 +15017,7 @@
       "source": "FIELD/KORIMA_HASHI/BRANCHING_FORMATION.C"
     },
     "resource_391:020000c4": {
-      "name": "StagedActor_PushActorAhead",
+      "name": "StagedActor_AdvancePair",
       "source": "FIELD/KORIMA_HASHI/BRANCHING_FORMATION.C"
     },
     "resource_391:02000c14": {
@@ -15002,15 +15038,15 @@
       "source": "FIELD/KORIMA_HASHI/BRANCHING_FORMATION_MOVE_AND_REDRAW.C"
     },
     "resource_389:02000030": {
-      "name": "Func_02000030",
+      "name": "FixedPoint_Distance",
       "source": "FIELD/GOMA_HASHIRA/STAGED_PLACEMENT.C"
     },
     "resource_389:0200006c": {
-      "name": "Func_0200006c",
+      "name": "StagedActor_FindAtTile",
       "source": "FIELD/GOMA_HASHIRA/STAGED_PLACEMENT.C"
     },
     "resource_389:02000244": {
-      "name": "Func_02000244",
+      "name": "StagedActor_FillGridAttributeRectangle",
       "source": "FIELD/GOMA_HASHIRA/STAGED_PLACEMENT.C"
     },
     "resource_389:02000b58": {
@@ -15042,7 +15078,7 @@
       "source": "FIELD/GOMA_HASHIRA/STAGED_PLACEMENT.C"
     },
     "resource_389:020000c4": {
-      "name": "StagedActor_AdvanceActorPair",
+      "name": "StagedActor_AdvancePair",
       "source": "FIELD/GOMA_HASHIRA/STAGED_PLACEMENT.C"
     },
     "resource_389:02000a00": {
@@ -15058,7 +15094,7 @@
       "source": "FIELD/GOMA_HASHIRA/STAGED_PLACEMENT.C"
     },
     "resource_389:020002a8": {
-      "name": "StagedActor_ResetMotionIfBlockedAhead",
+      "name": "StagedActor_StopBlockedMotion",
       "source": "FIELD/GOMA_HASHIRA/STAGED_PLACEMENT.C"
     },
     "resource_389:02000b5c": {
@@ -15094,7 +15130,7 @@
       "source": "FIELD/GOMA_HASHIRA/STAGED_PLACEMENT.C"
     },
     "resource_389:02000608": {
-      "name": "Func_02000608",
+      "name": "SceneActor_MoveAndRedraw",
       "source": "FIELD/GOMA_HASHIRA/STAGED_PLACEMENT.C"
     },
     "resource_39b:02000030": {
@@ -15106,24 +15142,27 @@
       "source": "FIELD/MAKYURI_IRIGUCHI/STAGED_EFFECT.C"
     },
     "resource_39b:02000314": {
+      "name": "FixedPoint_Distance",
       "source": "FIELD/MAKYURI_IRIGUCHI/STAGED_EFFECT.C"
     },
     "resource_39b:02000350": {
+      "name": "StagedActor_FindAtTile",
       "source": "FIELD/MAKYURI_IRIGUCHI/STAGED_EFFECT.C"
     },
     "resource_39b:020003a8": {
-      "name": "AdvanceStagedActorPair",
+      "name": "StagedActor_AdvancePair",
       "source": "FIELD/MAKYURI_IRIGUCHI/STAGED_EFFECT.C"
     },
     "resource_39b:02000528": {
+      "name": "StagedActor_FillGridAttributeRectangle",
       "source": "FIELD/MAKYURI_IRIGUCHI/STAGED_EFFECT.C"
     },
     "resource_39b:0200058c": {
-      "name": "stop_blocked_actor_motion",
+      "name": "StagedActor_StopBlockedMotion",
       "source": "FIELD/MAKYURI_IRIGUCHI/STAGED_EFFECT.C"
     },
     "resource_39b:02000758": {
-      "name": "find_clear_actor_position",
+      "name": "StagedActor_FindClearPosition",
       "source": "FIELD/MAKYURI_IRIGUCHI/STAGED_EFFECT.C"
     },
     "resource_39b:02000ed0": {
@@ -15266,24 +15305,27 @@
       "name": "FieldScene_RunScene39bSequenceA"
     },
     "resource_3b2:02000030": {
+      "name": "FixedPoint_Distance",
       "source": "FIELD/TAKARA_SHIMA/ISLAND_AND_CAVES.C"
     },
     "resource_3b2:0200006c": {
+      "name": "StagedActor_FindAtTile",
       "source": "FIELD/TAKARA_SHIMA/ISLAND_AND_CAVES.C"
     },
     "resource_3b2:020000c4": {
-      "name": "AdvanceStagedActorPair",
+      "name": "StagedActor_AdvancePair",
       "source": "FIELD/TAKARA_SHIMA/ISLAND_AND_CAVES.C"
     },
     "resource_3b2:02000244": {
+      "name": "StagedActor_FillGridAttributeRectangle",
       "source": "FIELD/TAKARA_SHIMA/ISLAND_AND_CAVES.C"
     },
     "resource_3b2:020002a8": {
-      "name": "StopBlockedActorMotion",
+      "name": "StagedActor_StopBlockedMotion",
       "source": "FIELD/TAKARA_SHIMA/ISLAND_AND_CAVES.C"
     },
     "resource_3b2:02000474": {
-      "name": "FindClearActorPosition",
+      "name": "StagedActor_FindClearPosition",
       "source": "FIELD/TAKARA_SHIMA/ISLAND_AND_CAVES.C"
     },
     "resource_3b2:020009dc": {
@@ -15592,19 +15634,28 @@
       "name": "SpawnConfiguredEffect",
       "source": "FIELD/TAKARA_HASHIRA/STAGED_NAV.C"
     },
-    "resource_3b3:02000314": "FIELD/TAKARA_HASHIRA/STAGED_NAV.C",
-    "resource_3b3:02000350": "FIELD/TAKARA_HASHIRA/STAGED_NAV.C",
-    "resource_3b3:020003a8": {
-      "name": "AdvanceStagedActorPair",
+    "resource_3b3:02000314": {
+      "name": "FixedPoint_Distance",
       "source": "FIELD/TAKARA_HASHIRA/STAGED_NAV.C"
     },
-    "resource_3b3:02000528": "FIELD/TAKARA_HASHIRA/STAGED_NAV.C",
+    "resource_3b3:02000350": {
+      "name": "StagedActor_FindAtTile",
+      "source": "FIELD/TAKARA_HASHIRA/STAGED_NAV.C"
+    },
+    "resource_3b3:020003a8": {
+      "name": "StagedActor_AdvancePair",
+      "source": "FIELD/TAKARA_HASHIRA/STAGED_NAV.C"
+    },
+    "resource_3b3:02000528": {
+      "name": "StagedActor_FillGridAttributeRectangle",
+      "source": "FIELD/TAKARA_HASHIRA/STAGED_NAV.C"
+    },
     "resource_3b3:0200058c": {
-      "name": "stop_blocked_actor_motion",
+      "name": "StagedActor_StopBlockedMotion",
       "source": "FIELD/TAKARA_HASHIRA/STAGED_NAV.C"
     },
     "resource_3b3:02000758": {
-      "name": "find_clear_actor_position",
+      "name": "StagedActor_FindClearPosition",
       "source": "FIELD/TAKARA_HASHIRA/STAGED_NAV.C"
     },
     "resource_3b3:02002230": {
@@ -15756,9 +15807,18 @@
       "call_via": "02003622",
       "source": "FIELD/TAKARA_HASHIRA/STAGED_NAV.C"
     },
-    "resource_3c4:02000030": "FIELD/BABI_CHIKA/MAP_INIT.C",
-    "resource_3c4:0200006c": "FIELD/BABI_CHIKA/MAP_INIT.C",
-    "resource_3c4:02000244": "FIELD/BABI_CHIKA/MAP_INIT.C",
+    "resource_3c4:02000030": {
+      "name": "FixedPoint_Distance",
+      "source": "FIELD/BABI_CHIKA/MAP_INIT.C"
+    },
+    "resource_3c4:0200006c": {
+      "name": "StagedActor_FindAtTile",
+      "source": "FIELD/BABI_CHIKA/MAP_INIT.C"
+    },
+    "resource_3c4:02000244": {
+      "name": "StagedActor_FillGridAttributeRectangle",
+      "source": "FIELD/BABI_CHIKA/MAP_INIT.C"
+    },
     "resource_3c4:02001068": {
       "name": "advance_effect_motion",
       "source": "FIELD/BABI_CHIKA/MAP_INIT.C"
@@ -15880,7 +15940,7 @@
       "source": "FIELD/BABI_CHIKA/MAP_INIT.C"
     },
     "resource_3c4:020002a8": {
-      "name": "SceneActor_CheckAheadTileAndStop",
+      "name": "StagedActor_StopBlockedMotion",
       "source": "FIELD/BABI_CHIKA/MAP_INIT.C"
     },
     "resource_3c4:020009dc": "FIELD/BABI_CHIKA/MAP_INIT.C",
@@ -15917,7 +15977,7 @@
       "source": "FIELD/BABI_CHIKA/MAP_INIT.C"
     },
     "resource_3c4:020000c4": {
-      "name": "StagedActor_AdvanceActorPair",
+      "name": "StagedActor_AdvancePair",
       "source": "FIELD/BABI_CHIKA/MAP_INIT.C"
     },
     "resource_3c4:020013b4": {
@@ -17009,9 +17069,18 @@
       "name": "FieldScene_RunScene39aSequenceA",
       "source": "FIELD/COMMON/IMIRU_FUCHIN/TRANSITION.C"
     },
-    "resource_39f:02000030": "FIELD/MOGORU_MORI/WAYPOINT.C",
-    "resource_39f:0200006c": "FIELD/MOGORU_MORI/WAYPOINT.C",
-    "resource_39f:02000244": "FIELD/MOGORU_MORI/WAYPOINT.C",
+    "resource_39f:02000030": {
+      "name": "FixedPoint_Distance",
+      "source": "FIELD/MOGORU_MORI/WAYPOINT.C"
+    },
+    "resource_39f:0200006c": {
+      "name": "StagedActor_FindAtTile",
+      "source": "FIELD/MOGORU_MORI/WAYPOINT.C"
+    },
+    "resource_39f:02000244": {
+      "name": "StagedActor_FillGridAttributeRectangle",
+      "source": "FIELD/MOGORU_MORI/WAYPOINT.C"
+    },
     "resource_39f:02002ba4": {
       "name": "update_orbiting_effect",
       "source": "FIELD/MOGORU_MORI/WAYPOINT.C"
@@ -17093,7 +17162,7 @@
       "source": "FIELD/MOGORU_MORI/WAYPOINT.C"
     },
     "resource_39f:020000c4": {
-      "name": "StagedActor_AdvanceActorPair",
+      "name": "StagedActor_AdvancePair",
       "source": "FIELD/MOGORU_MORI/WAYPOINT.C"
     },
     "resource_39f:02001454": {
@@ -17117,7 +17186,7 @@
       "source": "FIELD/MOGORU_MORI/WAYPOINT.C"
     },
     "resource_39f:020002a8": {
-      "name": "StagedActor_ResetMotionIfBlockedAhead",
+      "name": "StagedActor_StopBlockedMotion",
       "source": "FIELD/MOGORU_MORI/WAYPOINT.C"
     },
     "resource_39f:020009dc": "FIELD/MOGORU_MORI/WAYPOINT.C",
@@ -17186,9 +17255,18 @@
       "call_via": "0200363e",
       "source": "FIELD/MOGORU_MORI/WAYPOINT.C"
     },
-    "resource_3b4:02000030": "FIELD/TAKARA_ASHIBA/STAGED_STEP.C",
-    "resource_3b4:0200006c": "FIELD/TAKARA_ASHIBA/STAGED_STEP.C",
-    "resource_3b4:02000244": "FIELD/TAKARA_ASHIBA/STAGED_STEP.C",
+    "resource_3b4:02000030": {
+      "name": "FixedPoint_Distance",
+      "source": "FIELD/TAKARA_ASHIBA/STAGED_STEP.C"
+    },
+    "resource_3b4:0200006c": {
+      "name": "StagedActor_FindAtTile",
+      "source": "FIELD/TAKARA_ASHIBA/STAGED_STEP.C"
+    },
+    "resource_3b4:02000244": {
+      "name": "StagedActor_FillGridAttributeRectangle",
+      "source": "FIELD/TAKARA_ASHIBA/STAGED_STEP.C"
+    },
     "resource_3b4:020009ec": {
       "name": "Resource3b4_EmptyHookA",
       "source": "FIELD/TAKARA_ASHIBA/STAGED_STEP.C"
@@ -17214,7 +17292,7 @@
       "source": "FIELD/TAKARA_ASHIBA/STAGED_STEP.C"
     },
     "resource_3b4:020000c4": {
-      "name": "StagedActor_AdvanceActorPair",
+      "name": "StagedActor_AdvancePair",
       "source": "FIELD/TAKARA_ASHIBA/STAGED_STEP.C"
     },
     "resource_3b4:02000a50": {
@@ -17286,7 +17364,7 @@
       "source": "FIELD/TAKARA_ASHIBA/STAGED_STEP.C"
     },
     "resource_3b4:020002a8": {
-      "name": "SceneActor_CheckAheadTileAndStop",
+      "name": "StagedActor_StopBlockedMotion",
       "source": "FIELD/TAKARA_ASHIBA/STAGED_STEP.C"
     },
     "resource_3b4:02001c5c": {
@@ -17478,9 +17556,18 @@
       "call_via": "02002d8a",
       "source": "FIELD/TAKARA_ASHIBA/STAGED_STEP.C"
     },
-    "resource_3c5:02000030": "FIELD/BABI_IRIGUCHI/BRANCHING_EVENT.C",
-    "resource_3c5:0200006c": "FIELD/BABI_IRIGUCHI/BRANCHING_EVENT.C",
-    "resource_3c5:02000244": "FIELD/BABI_IRIGUCHI/BRANCHING_EVENT.C",
+    "resource_3c5:02000030": {
+      "name": "FixedPoint_Distance",
+      "source": "FIELD/BABI_IRIGUCHI/BRANCHING_EVENT.C"
+    },
+    "resource_3c5:0200006c": {
+      "name": "StagedActor_FindAtTile",
+      "source": "FIELD/BABI_IRIGUCHI/BRANCHING_EVENT.C"
+    },
+    "resource_3c5:02000244": {
+      "name": "StagedActor_FillGridAttributeRectangle",
+      "source": "FIELD/BABI_IRIGUCHI/BRANCHING_EVENT.C"
+    },
     "resource_3c5:02000cf0": {
       "name": "advance_effect_motion",
       "source": "FIELD/BABI_IRIGUCHI/BRANCHING_EVENT.C"
@@ -17574,7 +17661,7 @@
       "source": "FIELD/BABI_IRIGUCHI/BRANCHING_EVENT.C"
     },
     "resource_3c5:020002a8": {
-      "name": "SceneActor_ResetMotionWhenAheadBlocked",
+      "name": "StagedActor_StopBlockedMotion",
       "source": "FIELD/BABI_IRIGUCHI/BRANCHING_EVENT.C"
     },
     "resource_3c5:020009dc": "FIELD/BABI_IRIGUCHI/BRANCHING_EVENT.C",
@@ -17591,7 +17678,7 @@
       "source": "FIELD/BABI_IRIGUCHI/BRANCHING_EVENT.C"
     },
     "resource_3c5:020000c4": {
-      "name": "StagedActor_PushActorAhead",
+      "name": "StagedActor_AdvancePair",
       "source": "FIELD/BABI_IRIGUCHI/BRANCHING_EVENT.C"
     },
     "resource_3c5:02001214": {
@@ -17786,37 +17873,39 @@
       "source": "FIELD/RUNPA_JO/FORTRESS.C"
     },
     "resource_3bf:02000030": {
-      "name": "CalculateFixedPointPositionDistance",
+      "name": "FixedPoint_Distance",
       "source": "FIELD/RUNPA_JO/FORTRESS.C"
     },
     "resource_3bf:0200006c": {
+      "name": "StagedActor_FindAtTile",
       "source": "FIELD/RUNPA_JO/FORTRESS.C"
     },
     "resource_3bf:020000c4": {
-      "name": "AdvanceStagedActorPair",
+      "name": "StagedActor_AdvancePair",
       "source": "FIELD/RUNPA_JO/FORTRESS.C"
     },
     "resource_3bf:02000244": {
+      "name": "StagedActor_FillGridAttributeRectangle",
       "source": "FIELD/RUNPA_JO/FORTRESS.C"
     },
     "resource_3bf:020002a8": {
-      "name": "StopBlockedActorMotion",
+      "name": "StagedActor_StopBlockedMotion",
       "source": "FIELD/RUNPA_JO/FORTRESS.C"
     },
     "resource_3bf:0200034c": {
       "name": "FieldScene_FindActorRegion",
-      "source": "FIELD/RUNPA_JO/FIND_ACTOR_REGION.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3bf:020008c0": {
       "name": "FieldScene_RedrawActorFootprint",
-      "source": "FIELD/RUNPA_JO/REDRAW_ACTOR_FOOTPRINT.C"
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3bf:02000d54": {
       "name": "FieldScene_SetPositionPairs",
       "source": "FIELD/RUNPA_JO/SET_POSITION_PAIRS.C"
     },
     "resource_3bf:02000474": {
-      "name": "FindClearActorPosition",
+      "name": "StagedActor_FindClearPosition",
       "source": "FIELD/RUNPA_JO/FORTRESS.C"
     },
     "resource_3bf:020009dc": {
@@ -18360,6 +18449,134 @@
     "resource_3bf:02004da0": {
       "name": "FieldScene_DispatchActorUpdate",
       "source": "FIELD/RUNPA_JO/FORTRESS.C"
+    },
+    "resource_389:0200034c": {
+      "name": "FieldScene_FindActorRegion",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+    },
+    "resource_373:0200034c": {
+      "name": "FieldScene_FindActorRegion",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+    },
+    "resource_3a6:02000630": {
+      "name": "FieldScene_FindActorRegion",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+    },
+    "resource_39b:02000630": {
+      "name": "FieldScene_FindActorRegion",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+    },
+    "resource_3b4:0200034c": {
+      "name": "FieldScene_FindActorRegion",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+    },
+    "resource_39c:02000630": {
+      "name": "FieldScene_FindActorRegion",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+    },
+    "resource_391:0200034c": {
+      "name": "FieldScene_FindActorRegion",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+    },
+    "resource_3c5:0200034c": {
+      "name": "FieldScene_FindActorRegion",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+    },
+    "resource_3c4:0200034c": {
+      "name": "FieldScene_FindActorRegion",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+    },
+    "resource_39f:0200034c": {
+      "name": "FieldScene_FindActorRegion",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+    },
+    "resource_392:0200034c": {
+      "name": "FieldScene_FindActorRegion",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+    },
+    "resource_3bd:0200034c": {
+      "name": "FieldScene_FindActorRegion",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+    },
+    "resource_3b2:0200034c": {
+      "name": "FieldScene_FindActorRegion",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+    },
+    "resource_3b3:02000630": {
+      "name": "FieldScene_FindActorRegion",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+    },
+    "resource_3be:02000630": {
+      "name": "FieldScene_FindActorRegion",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+    },
+    "resource_393:0200034c": {
+      "name": "FieldScene_FindActorRegion",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+    },
+    "resource_389:020008c0": {
+      "name": "FieldScene_RedrawActorFootprint",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+    },
+    "resource_373:020008c0": {
+      "name": "FieldScene_RedrawActorFootprint",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+    },
+    "resource_3a6:02000ba4": {
+      "name": "FieldScene_RedrawActorFootprint",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+    },
+    "resource_39b:02000ba4": {
+      "name": "FieldScene_RedrawActorFootprint",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+    },
+    "resource_3b4:020008c0": {
+      "name": "FieldScene_RedrawActorFootprint",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+    },
+    "resource_39c:02000ba4": {
+      "name": "FieldScene_RedrawActorFootprint",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+    },
+    "resource_391:020008c0": {
+      "name": "FieldScene_RedrawActorFootprint",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+    },
+    "resource_3c5:020008c0": {
+      "name": "FieldScene_RedrawActorFootprint",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+    },
+    "resource_3c4:020008c0": {
+      "name": "FieldScene_RedrawActorFootprint",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+    },
+    "resource_39f:020008c0": {
+      "name": "FieldScene_RedrawActorFootprint",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+    },
+    "resource_392:020008c0": {
+      "name": "FieldScene_RedrawActorFootprint",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+    },
+    "resource_3bd:020008c0": {
+      "name": "FieldScene_RedrawActorFootprint",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+    },
+    "resource_3b2:020008c0": {
+      "name": "FieldScene_RedrawActorFootprint",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+    },
+    "resource_3b3:02000ba4": {
+      "name": "FieldScene_RedrawActorFootprint",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+    },
+    "resource_3be:02000ba4": {
+      "name": "FieldScene_RedrawActorFootprint",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+    },
+    "resource_393:020008c0": {
+      "name": "FieldScene_RedrawActorFootprint",
+      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3a0:02000408": {
       "name": "SceneActor_UpdateTracking",

@@ -6,9 +6,9 @@
 void *StagedActorPairScene_SpawnPrimaryEffect(s32 x, s32 y, s32 z, s32 kind);
 void *StagedActorPairScene_SpawnSecondaryEffect(s32 x, s32 y, s32 z, s32 kind);
 void StagedActorPairScene_SpawnConfiguredEffect();
-void StagedActorPairScene_AdvancePair(void);
-s32 StagedActorPairScene_StopBlockedMotion();
-s32 StagedActorPairScene_FindClearPosition(s32 *search);
+void StagedActor_AdvancePair(void);
+s32 StagedActor_StopBlockedMotion();
+s32 StagedActor_FindClearPosition(s32 *search);
 s32 StagedActorPairScene_GetVariantData(void);
 s32 StagedActorPairScene_GetInitialValue(void);
 void StagedActorPairScene_RunStep(void);

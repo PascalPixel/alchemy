@@ -1416,7 +1416,7 @@ fn lost_age_tiles(tree: &SourceTree) -> Vec<Tile> {
     let rest = bytes(&subtract(&[Span::new(ROM_BASE, ROM_BASE + rom)], &covered));
     if rest > 0 {
         tiles.push(Tile {
-            label: "The Lost Age ROM · unclassified".into(),
+            label: "Not yet classified".into(),
             bytes: rest,
             categories: [0, 0, rest, 0, 0, 0],
             // Inside its game folder, so games/ stays the whole picture.

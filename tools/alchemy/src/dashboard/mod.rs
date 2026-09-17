@@ -680,11 +680,11 @@ mod tests {
         assert!(!STYLES.contains(".music-player"));
     }
     #[test]
-    fn dashboard_serves_no_font_and_styles_labels_with_system_monospace() {
+    fn dashboard_serves_no_font_and_styles_labels_like_the_figure() {
         assert_eq!(response("/weyard.otf").status, 404);
         assert!(!STYLES.contains("@font-face"));
         assert!(!STYLES.contains("url("));
-        assert!(STYLES.contains("16px/20px ui-monospace"));
+        assert!(STYLES.contains("13px/20px -apple-system"));
     }
     #[test]
     fn navigation_rejects_invalid_paths() {

@@ -146,13 +146,8 @@ fn directories(tiles: Vec<Tile>, base: &str) -> Vec<Tile> {
     out
 }
 fn source_name(source: &str) -> &str {
-    match source.trim_end_matches('/') {
-        _ => source
-            .trim_end_matches('/')
-            .rsplit('/')
-            .next()
-            .unwrap_or(source),
-    }
+    let trimmed = source.trim_end_matches('/');
+    trimmed.rsplit('/').next().unwrap_or(trimmed)
 }
 
 fn draw_tiles(

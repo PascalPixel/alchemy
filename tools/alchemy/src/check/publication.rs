@@ -4,6 +4,7 @@
 use psynergy::assets::image::{indexed_png, PNG_SIGNATURE};
 use psynergy::assets::midi::{midi_events, EventBody, MidiEvent};
 use psynergy::assets::wav::wav_pcm8;
+use std::collections::BTreeSet;
 use std::io::{BufRead, BufReader, Read, Write};
 use std::path::Path;
 use std::process::{Command, ExitCode, Stdio};
@@ -19,9 +20,12 @@ pub(crate) const PRESENTATION_EXTENSIONS: &[&str] = &[
     "mov",
 ];
 const BACKUP_EXTENSIONS: &[&str] = &["bak", "orig", "rej", "swp"];
-/// Prose formats; CONTRIBUTING is the only guide and README the only introduction.
+/// Prose formats. README introduces, TODO holds open work, and AGENTS with the
+/// topic files its index names holds every rule; CLAUDE is a link to AGENTS.
 const DOCUMENT_EXTENSIONS: &[&str] = &["adoc", "asciidoc", "markdown", "md", "mdx", "rst", "txt"];
-const OWNED_DOCUMENTS: &[&str] = &["README.md", "CONTRIBUTING.md", "AGENTS.md", "CLAUDE.md"];
+const OWNED_DOCUMENTS: &[&str] = &["README.md", "TODO.md", "AGENTS.md", "CLAUDE.md"];
+/// The directory of topic files AGENTS.md indexes.
+const TOPIC_DIRECTORY: &str = ".agents/";
 /// Code a game without an asset manifest may track under its asset roots.
 const MANIFESTLESS_EXTENSIONS: &[&str] = &["c", "h", "inc", "gitkeep"];
 /// Tooling metadata under `games/<game>/`; every other directory is an asset root.
@@ -204,8 +208,11 @@ fn publication_path_reason(path: &str) -> Option<&'static str> {
         return Some("editor or merge backup");
     }
     // A rename or copy lands here too: every document path is judged as new.
-    if listed(suffix, DOCUMENT_EXTENSIONS) && !OWNED_DOCUMENTS.contains(&normalized.as_str()) {
-        return Some("separate document: use CONTRIBUTING.md");
+    if listed(suffix, DOCUMENT_EXTENSIONS)
+        && !OWNED_DOCUMENTS.contains(&normalized.as_str())
+        && !topic_document(&normalized)
+    {
+        return Some("separate document: rules belong in AGENTS.md or a topic file it indexes");
     }
     if directories
         .iter()
@@ -314,9 +321,34 @@ fn conflict_marker_reason(path: &str, data: &[u8]) -> Option<String> {
         "unresolved conflict marker at line {line}; resolve the merge before committing"
     ))
 }
+/// Whether a path names a topic file: one uppercase `.agents/NAME.md`.
+fn topic_document(path: &str) -> bool {
+    path.strip_prefix(TOPIC_DIRECTORY)
+        .and_then(|leaf| leaf.strip_suffix(".md"))
+        .is_some_and(|stem| {
+            !stem.is_empty() && stem.bytes().all(|b| b.is_ascii_uppercase() || b == b'_')
+        })
+}
+/// The topic files AGENTS.md links from its index.
+fn indexed_topics(root: &Path) -> BTreeSet<String> {
+    let index = std::fs::read_to_string(root.join("AGENTS.md")).unwrap_or_default();
+    index
+        .split(&format!("]({TOPIC_DIRECTORY}"))
+        .skip(1)
+        .filter_map(|rest| rest.split_once(')'))
+        .map(|(leaf, _)| format!("{TOPIC_DIRECTORY}{leaf}"))
+        .filter(|path| topic_document(path))
+        .collect()
+}
 fn check_documents(root: &Path) -> Result<(), String> {
+    let topics = indexed_topics(root);
     let mut pending = vec![root.to_path_buf()];
     let mut rejected = Vec::new();
+    for topic in &topics {
+        if !root.join(topic).is_file() {
+            rejected.push(format!("{topic} (indexed by AGENTS.md but missing)"));
+        }
+    }
     while let Some(directory) = pending.pop() {
         for entry in std::fs::read_dir(&directory).map_err(|e| e.to_string())? {
             let entry = entry.map_err(|e| e.to_string())?;
@@ -339,20 +371,16 @@ fn check_documents(root: &Path) -> Result<(), String> {
                 .map_err(|e| e.to_string())?
                 .to_string_lossy();
             if !listed(extension(&relative), DOCUMENT_EXTENSIONS)
-                || matches!(relative.as_ref(), "README.md" | "CONTRIBUTING.md")
+                || matches!(relative.as_ref(), "README.md" | "TODO.md" | "AGENTS.md")
+                || topics.contains(relative.as_ref())
             {
                 continue;
             }
-            if matches!(relative.as_ref(), "AGENTS.md" | "CLAUDE.md") {
-                let pointer = std::fs::read_to_string(&path).unwrap_or_default();
-                if kind.is_symlink()
-                    || matches!(
-                        pointer.trim(),
-                        "@CONTRIBUTING.md" | "See [CONTRIBUTING.md](CONTRIBUTING.md)."
-                    )
-                {
-                    continue;
-                }
+            if relative == "CLAUDE.md"
+                && kind.is_symlink()
+                && std::fs::read_link(&path).is_ok_and(|target| target == Path::new("AGENTS.md"))
+            {
+                continue;
             }
             rejected.push(relative.into_owned());
         }
@@ -2289,7 +2317,7 @@ fn text_fixtures() -> Vec<Fixture> {
             true,
             patch,
         ),
-        ("CONTRIBUTING.md", text(headerless), true, patch),
+        ("AGENTS.md", text(headerless), true, patch),
         ("tools/alchemy/src/compiler.rs", text(context), true, patch),
         (
             "games/THE BROKEN SEAL/SRC/SYSTEM/BUILD.INC",
@@ -2298,7 +2326,7 @@ fn text_fixtures() -> Vec<Fixture> {
             patch,
         ),
         (
-            "CONTRIBUTING.md",
+            "AGENTS.md",
             text(format!(
                 "Code whose license this repository cannot carry stays in the {} submodules; {}{} marks a hunk.\n",
                 "licensed", "@", "@"
@@ -2538,6 +2566,9 @@ fn self_test(root: &Path) -> Result<(), String> {
         "games/THE BROKEN SEAL/PREVIEW/title.png",
         "games/THE BROKEN SEAL/asm/080000c0.s~",
         "docs/README.md",
+        "CONTRIBUTING.md",
+        ".agents/notes.md",
+        ".agents/DEEP/TOPIC.md",
         "GUIDE.markdown",
         "tools/alchemy/NOTES.RST",
         "games/THE BROKEN SEAL/recon/plan.adoc",
@@ -2549,7 +2580,9 @@ fn self_test(root: &Path) -> Result<(), String> {
     for path in [
         "src/main.c",
         "README.md",
-        "CONTRIBUTING.md",
+        "AGENTS.md",
+        "TODO.md",
+        ".agents/RECOVERY.md",
         "games/THE BROKEN SEAL/asm/080000c0.s",
         "games/THE BROKEN SEAL/PREVIEW/TBS-EN-ROM.SVG",
         "games/THE BROKEN SEAL/SOUND/SEQUENCE/THEME.mid",
@@ -2598,11 +2631,11 @@ fn self_test(root: &Path) -> Result<(), String> {
             b"  .incbin \"x\"\n",
             None,
         ) == Some("committed incbin payload")
-        && conflict_marker_reason("CONTRIBUTING.md", b"a\n<<<<<<< HEAD\nb\n").is_some()
-        && conflict_marker_reason("CONTRIBUTING.md", b"a\n>>>>>>> topic\n").is_some()
-        && publication_data_reason("CONTRIBUTING.md", b"x\n<<<<<<< HEAD\n", None).is_none()
-        && conflict_marker_reason("CONTRIBUTING.md", b"Title\n=======\n\nbody\n").is_none()
-        && conflict_marker_reason("CONTRIBUTING.md", b"see <<<<<<<HEAD in the output\n").is_none()
+        && conflict_marker_reason("AGENTS.md", b"a\n<<<<<<< HEAD\nb\n").is_some()
+        && conflict_marker_reason("AGENTS.md", b"a\n>>>>>>> topic\n").is_some()
+        && publication_data_reason("AGENTS.md", b"x\n<<<<<<< HEAD\n", None).is_none()
+        && conflict_marker_reason("AGENTS.md", b"Title\n=======\n\nbody\n").is_none()
+        && conflict_marker_reason("AGENTS.md", b"see <<<<<<<HEAD in the output\n").is_none()
         && conflict_marker_reason("games/THE BROKEN SEAL/PREVIEW/x.png", b"<<<<<<< HEAD\n")
             .is_none();
     if !hygiene_holds {
@@ -2707,12 +2740,20 @@ mod tests {
         );
     }
     #[test]
-    fn documents_include_ignored_output_and_allow_only_agent_pointers() {
+    fn documents_include_ignored_output_and_allow_only_indexed_topics() {
         let root = std::env::temp_dir().join(format!("alchemy-documents-{}", std::process::id()));
         std::fs::create_dir_all(root.join("out")).unwrap();
+        std::fs::create_dir_all(root.join(".agents")).unwrap();
         std::fs::write(root.join(".gitignore"), "out/\n").unwrap();
-        std::fs::write(root.join("CONTRIBUTING.md"), "guide").unwrap();
-        std::fs::write(root.join("AGENTS.md"), "@CONTRIBUTING.md\n").unwrap();
+        std::fs::write(root.join("README.md"), "introduction").unwrap();
+        std::fs::write(root.join("TODO.md"), "open work").unwrap();
+        std::fs::write(
+            root.join("AGENTS.md"),
+            "| [RECOVERY](.agents/RECOVERY.md) | Recovery | Matching |\n",
+        )
+        .unwrap();
+        std::fs::write(root.join(".agents/RECOVERY.md"), "rules").unwrap();
+        std::os::unix::fs::symlink("AGENTS.md", root.join("CLAUDE.md")).unwrap();
         std::fs::create_dir_all(root.join("out/compiler/gcc")).unwrap();
         std::fs::write(root.join("out/compiler/gcc/toplev.c"), "compiler source").unwrap();
         std::fs::write(root.join("out/compiler/gcc/thumb.md"), "(define_insn)").unwrap();
@@ -2725,12 +2766,23 @@ mod tests {
             "out/verdict.md",
             "out/score.txt",
             "out/plan.rst",
-            "AGENTS.md",
+            "CONTRIBUTING.md",
+            ".agents/UNLISTED.md",
         ] {
             std::fs::write(root.join(name), "another guide").unwrap();
             assert!(check_documents(&root).unwrap_err().contains(name));
             std::fs::remove_file(root.join(name)).unwrap();
         }
+        // CLAUDE.md is only ever the link to AGENTS.md.
+        std::fs::remove_file(root.join("CLAUDE.md")).unwrap();
+        std::fs::write(root.join("CLAUDE.md"), "a second guide").unwrap();
+        assert!(check_documents(&root).unwrap_err().contains("CLAUDE.md"));
+        std::fs::remove_file(root.join("CLAUDE.md")).unwrap();
+        // Every topic the index names must exist.
+        std::fs::remove_file(root.join(".agents/RECOVERY.md")).unwrap();
+        assert!(check_documents(&root)
+            .unwrap_err()
+            .contains(".agents/RECOVERY.md (indexed by AGENTS.md but missing)"));
         std::fs::remove_dir_all(root).unwrap();
     }
     #[test]

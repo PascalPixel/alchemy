@@ -37,7 +37,6 @@ void Func_080792fc(s32, u8);
 void Func_08077428(s32);
 void Owner_RefreshDerivedData(s32);
 
-#define Owner_InitRecords Func_08078ee8
 void Owner_InitRecords(void)
 {
     struct OwnerRecordState *state;

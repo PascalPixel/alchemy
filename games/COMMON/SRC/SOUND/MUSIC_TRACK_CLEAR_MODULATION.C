@@ -1,6 +1,4 @@
 #include "TYPES.H"
-#include "SCENE.H"
-#include "AUDIO_ENGINE.H"
 
 /* audio/music/track/clear_modulation.c */
 struct MusicTrackChannelState {

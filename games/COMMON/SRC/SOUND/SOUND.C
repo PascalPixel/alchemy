@@ -23,10 +23,10 @@ void Audio_Initialize(void)
     u16 count;
     s32 i;
 
-    Bios_CpuSet((void *)((u32)Sound_Mixer & ~1), (void *)0x03007000, 0x04000100);
+    Bios_CpuSet((void *)((u32)Sound_Mixer & ~1), AUDIO_MIXER_DESTINATION, 0x04000100);
     AudioEngine_Initialize(&Sound_Work);
     CgbAudio_Initialize(Sound_CgbNotes);
-    AudioEngine_SetMode(0x0097F800);
+    AudioEngine_SetMode(AUDIO_INITIAL_MODE);
     count = (u32)&Sound_PlayerCount;
     for (i = 0; i < count; i++) {
         struct SoundPlayer *player = Sound_PlayerSlots[i].player;

@@ -1,0 +1,7 @@
+#ifndef TLA_AUDIO_ENGINE_H
+#define TLA_AUDIO_ENGINE_H
+
+#include "AUDIO_ENGINE_SYMBOLS.H"
+#include "../../COMMON/INCLUDE/SOUND/AUDIO_ENGINE_TYPES.H"
+
+#endif

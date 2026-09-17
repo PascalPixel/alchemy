@@ -2,8 +2,8 @@
 
 use crate::compiler::canonical_json::canonical_json;
 use crate::overlay::assembly::{
-    build_overlay_source, executable_spans, main_executable_spans, trusted_overlay_spans,
-    ExecutableSpan, OVERLAY_BASE, ROM_BASE,
+    adjacent_prologue_spans, build_overlay_source, compiler_idiom_spans, executable_spans,
+    main_executable_spans, trusted_overlay_spans, ExecutableSpan, OVERLAY_BASE, ROM_BASE,
 };
 use crate::overlay::listing_rows;
 use crate::overlay::rom::CanonicalRom;
@@ -526,6 +526,9 @@ fn report(root: &Path, target: DecompTarget) -> Result<Value, String> {
             (temporary.path(), "decoder-generated-source")
         };
         let mut spans = source_spans(source, &stream.decoded, &id)?;
+        let prologues = adjacent_prologue_spans(&stream.decoded, OVERLAY_BASE, &spans);
+        spans.extend(prologues);
+        spans.extend(compiler_idiom_spans(&stream.decoded, OVERLAY_BASE));
         if let Some(runtime) = &runtime {
             for link in runtime.links.iter().filter(|link| link.image == id) {
                 let linked = crate::compiler::runtime::build(root, link)?;
@@ -540,7 +543,10 @@ fn report(root: &Path, target: DecompTarget) -> Result<Value, String> {
         let generated = build_overlay_source(&stream.decoded, OVERLAY_BASE)?;
         let generated_file = NamedTempFile::new().map_err(|error| error.to_string())?;
         std::fs::write(generated_file.path(), generated).map_err(|error| error.to_string())?;
-        let generated_spans = source_spans(generated_file.path(), &stream.decoded, &id)?;
+        let mut generated_spans = source_spans(generated_file.path(), &stream.decoded, &id)?;
+        let prologues = adjacent_prologue_spans(&stream.decoded, OVERLAY_BASE, &generated_spans);
+        generated_spans.extend(prologues);
+        generated_spans.extend(compiler_idiom_spans(&stream.decoded, OVERLAY_BASE));
         let generated_executable = union_bytes(&generated_spans);
         let trusted_spans =
             trusted_overlay_spans(&stream.decoded, OVERLAY_BASE, target.overlay_entry_veneers)?;

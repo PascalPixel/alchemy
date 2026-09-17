@@ -10,17 +10,6 @@
 #define CreateOverlayObject Func_0200078e
 #define SetOverlayObjectMode Func_020007c8
 #define SetOverlayObjectSlot Func_02000838
-#define EffectDescriptorTable Data_0200880c
-#define GetPartyEffect Func_02000882
-#define SpawnEffect Func_02000860
-#define SetEffectVariant Func_0200086a
-#define SetEffectDescriptor Func_02000884
-#define SetEffectMode Func_0200096e
-#define ScaleEffectDeltaFromAccumulated Func_02000928
-#define ScaleEffectDeltaFromOrigin Func_02000940
-#define ScaleEffectVerticalDelta Func_0200094e
-#define SetEffectCallbackMode Func_02000984
-#define SetEffectCallbackArgument Func_02000994
 
 #include "CONFIGURED_EFFECT_SPAWN.H"
 
@@ -204,12 +193,6 @@ void SceneEffect_UpdateMotion(union MotionWork *work)
     work->fields.accum_y += work->fields.rate_y;
     record = work->fields.record;
     record[15] += work->fields.angle_step;
-}
-
-void SceneEffect_SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
-                           u32 flags, const struct ConfiguredEffectOptions *options)
-{
-#include "CONFIGURED_EFFECT_SPAWN_BODY.INC"
 }
 
 s32 SceneData_GetTable8818OrTable88d8(void)

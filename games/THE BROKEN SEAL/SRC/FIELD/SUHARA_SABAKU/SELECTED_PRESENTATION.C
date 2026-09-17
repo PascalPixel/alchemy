@@ -16,21 +16,6 @@ void Func_0200137c(void *, s32);
 
 #include "TYPES.H"
 
-#define EffectDescriptorTable Data_02009424
-#define GetPartyEffect Func_020013ea
-#define SpawnEffect Func_020013a8
-#define SetEffectVariant Func_020013b2
-#define SetEffectDescriptor Func_020013cc
-#define SetEffectMode Func_0200150e
-#define ScaleEffectDeltaFromAccumulated Func_02001468
-#define ScaleEffectDeltaFromOrigin Func_02001480
-#define ScaleEffectVerticalDelta Func_0200148e
-#define SetEffectCallbackMode Func_020014cc
-#define SetEffectCallbackArgument Func_020014dc
-#define SpawnConfiguredEffect Func_0200013c
-
-#include "CONFIGURED_EFFECT_SPAWN.H"
-
 /*
  * Complete selected-actor presentation/progress synchronizer.  It derives the
  * actor presentation from the shared phase word, applies the state-one scene
@@ -424,12 +409,6 @@ void *OverlayObject_CreateAndInitialize(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 void *OverlayObject_CreateConfigured(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT_BODY.INC"
-}
-
-void SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
-                           u32 flags, const struct ConfiguredEffectOptions *options)
-{
-#include "CONFIGURED_EFFECT_SPAWN_BODY.INC"
 }
 
 void SceneState_SendRequest15With45(void)

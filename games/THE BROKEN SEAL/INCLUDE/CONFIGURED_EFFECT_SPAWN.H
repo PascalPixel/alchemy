@@ -52,21 +52,4 @@ struct ConfiguredEffectOptions {
     u32 callback;
 };
 
-struct EffectDescriptor {
-    s32 pad00[3];
-    s32 duration;
-};
-
-extern struct EffectDescriptor *EffectDescriptorTable[];
-struct Effect *GetPartyEffect();
-struct Effect *SpawnEffect();
-void SetEffectVariant();
-void SetEffectDescriptor();
-void SetEffectMode();
-s32 ScaleEffectDeltaFromAccumulated();
-s32 ScaleEffectDeltaFromOrigin();
-s32 ScaleEffectVerticalDelta();
-void SetEffectCallbackMode();
-void SetEffectCallbackArgument();
-
 #endif

@@ -4,20 +4,8 @@
 #define CreateOverlayObject Func_02001dae
 #define SetOverlayObjectMode Func_02001e10
 #define SetOverlayObjectSlot Func_02001eb8
-#define EffectDescriptorTable Data_0200a120
-#define GetPartyEffect Func_02001ed2
-#define SpawnEffect Func_02001e80
-#define SetEffectVariant Func_02001e8a
-#define SetEffectDescriptor Func_02001ea4
-#define SetEffectMode Func_02001fee
-#define ScaleEffectDeltaFromAccumulated Func_02001f00
-#define ScaleEffectDeltaFromOrigin Func_02001f18
-#define ScaleEffectVerticalDelta Func_02001f26
-#define SetEffectCallbackMode Func_02001fa4
-#define SetEffectCallbackArgument Func_02001fb4
 #define OverlayObject_PrepareObject Func_02000048
 #define OverlayObject_CreateConfiguredObject Func_020000a0
-#define SceneEffect_SpawnConfiguredEffect Func_0200013c
 #define FieldScene_ApplyActor13Values3And3 Func_02000314
 #define OverlayObject_WaitUntilField12BelowLimit Func_02000324
 #define SceneData_SelectTableByScene59To5c Func_020003ac
@@ -33,7 +21,6 @@
 #define SceneState_SetHalfwordB030 Func_02001c78
 
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
-#include "CONFIGURED_EFFECT_SPAWN.H"
 
 extern u8 Value_00000059;
 extern u8 Value_0000005a;
@@ -193,12 +180,6 @@ void *OverlayObject_PrepareObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT_BODY.INC"
-}
-
-void SceneEffect_SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
-                           u32 flags, const struct ConfiguredEffectOptions *options)
-{
-#include "CONFIGURED_EFFECT_SPAWN_BODY.INC"
 }
 
 void FieldScene_ApplyActor13Values3And3(void) { Func_02002152(13, 3, 3); }

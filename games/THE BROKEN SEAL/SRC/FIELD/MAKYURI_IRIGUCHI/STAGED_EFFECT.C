@@ -17,19 +17,7 @@
 #define OverlayObject_RampWords24And28Over16Frames Func_02001c60
 #define OverlayObject_AdvanceScaleCounter Func_02001c88
 #define OverlayObject_ReleasePublishedAttachment Func_020023b8
-#define EffectDescriptorTable Data_0200a814
-#define GetPartyEffect Func_0200264a
-#define SpawnEffect Func_020025d0
-#define SetEffectVariant Func_020025da
-#define SetEffectDescriptor Func_020025f4
-#define SetEffectMode Func_02002776
-#define ScaleEffectDeltaFromAccumulated Func_02002658
-#define ScaleEffectDeltaFromOrigin Func_02002670
-#define ScaleEffectVerticalDelta Func_0200267e
-#define SetEffectCallbackMode Func_020026f4
-#define SetEffectCallbackArgument Func_02002704
 #define F(base, type, off) (*(type *)((u8 *)(base) + (off)))
-#define SpawnConfiguredEffect Func_0200013c
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #define FieldScene_RunScene39b_02000cc0 Func_02000cc0
 #define FieldScene_RunScene39b_02000f48 Func_02000f48
@@ -57,7 +45,6 @@
 #define SceneEffect_AdvanceAnchoredRiseFrame Func_02001c20
 
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
-#include "CONFIGURED_EFFECT_SPAWN.H"
 #include "STAGED_ACTOR.H"
 
 /* Shared 22-byte head leaf proved identical for this overlay family. */
@@ -403,12 +390,6 @@ void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg
  * current-object cell: a pointer read once, then dereferenced to reach the
  * live record.
  */
-void SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
-                           u32 flags, const struct ConfiguredEffectOptions *options)
-{
-#include "CONFIGURED_EFFECT_SPAWN_BODY.INC"
-}
-
 
 s32 FieldScene_RunScene39b_02000cc0(s32 a0)
 {

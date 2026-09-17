@@ -7,18 +7,6 @@
 #define SetOverlayObjectSlot Func_02001df0
 #define OverlayObject_CreateConfigured Func_02000048
 #define OverlayObject_CreateConfiguredB Func_020000a0
-#define EffectDescriptorTable Data_02009f60
-#define GetPartyEffect Func_02001e1a
-#define SpawnEffect Func_02001dc8
-#define SetEffectVariant Func_02001dd2
-#define SetEffectDescriptor Func_02001dec
-#define SetEffectMode Func_02001f26
-#define ScaleEffectDeltaFromAccumulated Func_02001e90
-#define ScaleEffectDeltaFromOrigin Func_02001ea8
-#define ScaleEffectVerticalDelta Func_02001eb6
-#define SetEffectCallbackMode Func_02001eec
-#define SetEffectCallbackArgument Func_02001efc
-#define SpawnConfiguredEffect Func_0200013c
 #define SceneState_SetValues8_3_4 Func_02000cc0
 #define SceneActor_WaitActorDescent Func_02000cd0
 #define SceneActor_FaceActorZero Func_02000cf8
@@ -61,7 +49,6 @@
 #define ActorPresentation_AdvanceActorElevenStates Func_02001bfc
 
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
-#include "CONFIGURED_EFFECT_SPAWN.H"
 #include "STAGED_ACTOR.H"
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
 
@@ -418,14 +405,6 @@ void *OverlayObject_CreateConfigured(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 void *OverlayObject_CreateConfiguredB(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT_BODY.INC"
-}
-
-void SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
-                           u32 flags, const struct ConfiguredEffectOptions *options)
-{
-    extern s32 SceneStateWords[];
-
-#include "CONFIGURED_EFFECT_SPAWN_BODY.INC"
 }
 
 

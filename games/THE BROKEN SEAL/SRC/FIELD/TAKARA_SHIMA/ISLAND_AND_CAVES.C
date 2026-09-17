@@ -28,7 +28,6 @@
 #define InitializeEscapeSceneActors Func_0200191c
 #define SpawnMode14Effect Func_020009f4
 #define SpawnMode15Effect Func_02000a4c
-#define SpawnConfiguredSceneEffect Func_02000ae8
 #define SpawnRadialEffectBurst Func_02000e00
 #define OverlayObject_IntegrateVelocities Func_02000ab0
 #define SelectPrimarySceneData Func_02000cc4
@@ -195,58 +194,6 @@ struct S_020009dc {
     s32 f10;
     u8 pad14[15];
     u8 f23;
-};
-
-struct Sprite_020009f4 {
-    u8 pad00[9];
-    u8 flags9;
-    u8 pad0a[20];
-    u16 angle;
-    u8 pad20[6];
-    u8 state26;
-};
-
-struct Effect_020009f4 {
-    u8 pad00[24];
-    s32 accum18;
-    s32 accum1c;
-    u8 pad20[3];
-    u8 flatla3;
-    u8 pad24[12];
-    s32 rate30;
-    s32 rate34;
-    u8 pad38[12];
-    s32 velocity_x;
-    s32 velocity_y;
-    s32 velocity_z;
-    struct Sprite_020009f4 *sprite;
-    u8 pad54;
-    u8 mode55;
-    u8 pad56[14];
-    u16 step64;
-    u8 pad66[6];
-    u32 callback;
-};
-
-struct Options {
-    u8 mode_bits;
-    u8 pad01[3];
-    s32 mode;
-    s32 accum18;
-    s32 accum1c;
-    s32 target30;
-    s32 target34;
-    s16 kind;
-    u16 pad1a;
-    s32 callback_arg;
-    u16 angle;
-    u16 step;
-    u32 callback;
-};
-
-struct Descriptor {
-    s32 pad00[3];
-    s32 duration;
 };
 
 struct SceneObject {
@@ -426,7 +373,6 @@ typedef struct OrbitingSceneObject {
 } OrbitingSceneObject;
 
 extern u8 Data_0200b2bc[];
-extern struct Descriptor *Data_0200b2d4[];
 extern u8 Value_00000071;
 extern u8 Value_00000072;
 extern u8 Value_0000007b;
@@ -542,16 +488,6 @@ void Func_02003a7c(u8 *object, s32 mode);
 u8 *Func_02003a66(s32 kind, s32 x, s32 y, s32 z);
 void Func_02003ac0(u8 *object, s32 mode);
 void Func_02003b58(u8 *object, s32 mode);
-struct Effect *Func_02003b92();
-struct Effect *Func_02003b38();
-void Func_02003b42();
-void Func_02003b5c();
-void Func_02003c8e();
-s32 Func_02003bd8();
-s32 Func_02003bf0();
-s32 Func_02003bfe();
-void Func_02003c5c();
-void Func_02003c6c();
 struct SceneObject *Func_02003e96(void);
 s32 Func_02003df8(s32);
 s32 Func_02003dfc(s32);
@@ -1096,140 +1032,6 @@ void OverlayObject_IntegrateVelocities(union FieldObject *object)
     object->effect.scale_x += object->effect.scale_rate_x;
     object->effect.scale_y += object->effect.scale_rate_y;
     object->effect.sprite->rotation += object->effect.spin;
-}
-
-/* Creates the effect record and returns it, or 0 on failure. */
-
-/* Relocated IWRAM helper: turns a distance and a descriptor duration into a
- * per-frame step. */
-void SpawnConfiguredSceneEffect(s32 x, s32 y,
-                   s32 z, s32 vx, s32 vy, s32 vz, u32 flags,
-                   const struct Options *options)
-{
-    u32 table_offset;
-    struct Effect_020009f4 *party;
-    u32 copied_bits;
-    s32 flag_mask;
-    u32 block_bits;
-    struct Effect_020009f4 *effect;
-    struct Sprite_020009f4 *block;
-    struct Sprite_020009f4 *mode_block;
-    u32 option_bits;
-    u16 *tag;
-    s32 duration;
-    s32 first_delta;
-    s32 accumulated;
-    party = Func_02003b92(0);
-
-    /* 128 << 13.  With that bit set and an options block present the effect's
-     * kind comes from the options rather than from the default 222. */
-    if ((flags & 0x100000) != 0 && options != 0) {
-        effect = Func_02003b38(options->kind, x, y, z);
-    } else {
-        effect = Func_02003b38(222, x, y, z);
-    }
-    if (effect == 0) return;
-
-    block = effect->sprite;
-    mode_block = block;
-
-    Func_02003b42(effect, (flags + 1) & 15);
-    table_offset = (flags & 15) << 2;
-    Func_02003b5c(effect, Data_0200b2d4[table_offset >> 2]);
-
-    effect->mode55 = 0;
-    block->state26 = 0;
-
-    /* 0x02008ab1 is Func_02000ab0 with the Thumb bit: the per-frame
-     * integrator. */
-    effect->callback = 0x02008ab1;
-
-    effect->velocity_x = vx;
-    x = 3;
-    effect->velocity_y = vy;
-    effect->velocity_z = vz;
-
-    /* Bits 2 and 3 of the effect's mode byte are copied from the party's. */
-    copied_bits = party->sprite->flags9 & 12;
-    block_bits = *(volatile u8 *)&block->flags9;
-    flag_mask = ~12;
-    block->flags9 = (u8)((block_bits & flag_mask) | copied_bits);
-
-    effect->rate30 = 0;
-    effect->rate34 = 0;
-    effect->step64 = 0;
-    tag = &effect->step64;
-
-    /* Everything below is optional detail: the whole block is skipped unless
-     * some high flag bit is set and an options record was supplied. */
-    if ((flags & 0xffff0000) == 0 || options == 0) return;
-
-    if ((flags & 0x10000) != 0) {                   /* 128 << 9 */
-        Func_02003c8e(effect, options->mode);
-    }
-
-    if ((flags & 0x20000) != 0) {                   /* 128 << 10 */
-        effect->flatla3 &= 0xfe;
-        option_bits = *(const u8 *)options & x;
-        block->flags9 = (u8)((*((const u8 *)mode_block + 9) & flag_mask)
-                             | (option_bits << 2));
-    }
-
-    if ((flags & 0x80000) != 0) {                   /* 128 << 12 */
-        effect->accum18 = options->accum18;
-        effect->accum1c = options->accum1c;
-    }
-
-    if ((flags & 0x40000) != 0) {                   /* 128 << 11 */
-        const struct Descriptor *descriptor =
-            Data_0200b2d4[table_offset >> 2];
-        s32 delta;
-
-        /* The 0x80000 test is the same register the previous block left live:
-         * with a destination supplied the step is measured from it, otherwise
-         * the target is biased by -1.0 in 16.16. */
-        if ((flags & 0x80000) != 0) {
-            first_delta = *(volatile const s32 *)&options->target30;
-            accumulated = *(volatile const s32 *)&effect->accum18;
-            first_delta -= accumulated;
-            effect->rate30 = Func_02003bd8(first_delta,
-                                           descriptor->duration);
-            delta = options->target34;
-            duration = descriptor->duration;
-            delta -= effect->accum1c;
-        } else {
-            first_delta = options->target30;
-            first_delta += (s32)0xffff0000;
-            effect->rate30 = Func_02003bf0(first_delta,
-                                           descriptor->duration);
-            delta = options->target34;
-            duration = descriptor->duration;
-            delta += (s32)0xffff0000;
-        }
-
-        /* Only the FIRST call is per-arm.  The `b.n 0x02000c4c` at the end of
-         * the first arm joins both arms onto the single second call site, so
-         * the second delta is computed in each arm and the call is spelled
-         * once. */
-        effect->rate34 = Func_02003bfe(delta, duration);
-    }
-
-    if ((flags & 0x200000) != 0) {                  /* 128 << 14 */
-        Func_02003c5c(effect, 1);
-        Func_02003c6c(effect, options->callback_arg);
-    }
-
-    if ((flags & 0x400000) != 0) {                  /* 128 << 15 */
-        block->angle = options->angle;
-    }
-
-    if ((flags & 0x800000) != 0) {                  /* 128 << 16 */
-        *tag = options->step;
-    }
-
-    if ((flags & 0x1000000) != 0) {                 /* 128 << 17 */
-        effect->callback = options->callback;
-    }
 }
 
 /* Deliberate no-op callback. */

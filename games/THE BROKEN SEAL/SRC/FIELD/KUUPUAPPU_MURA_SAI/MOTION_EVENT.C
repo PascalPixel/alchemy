@@ -13,17 +13,6 @@
 #define OverlayObject_CreateConfigured Func_02000048
 #define OverlayObject_CreateConfiguredObjectB Func_020000a0
 #define SceneEffect_UpdateMotion Func_02000104
-#define EffectDescriptorTable Data_0200929c
-#define GetPartyEffect Func_0200125e
-#define SpawnEffect Func_02001204
-#define SetEffectVariant Func_0200120e
-#define SetEffectDescriptor Func_02001228
-#define SetEffectMode Func_0200137a
-#define ScaleEffectDeltaFromAccumulated Func_020012d4
-#define ScaleEffectDeltaFromOrigin Func_020012ec
-#define ScaleEffectVerticalDelta Func_020012fa
-#define SetEffectCallbackMode Func_02001328
-#define SetEffectCallbackArgument Func_02001338
 #define SceneDialogue_RunActorFifteenDialogue Func_02000864
 #define SceneDialogue_RunActorFourteenFlagDialogue Func_0200058c
 #define CalculateFixedPointPositionDistance Func_02000314
@@ -68,12 +57,10 @@
 #define FieldScene_SetupWithDescriptor97AE Func_02000bf8
 #define SceneState_SetFlag200AndConfigureRegion55_26 Func_02000d24
 #define SceneState_SetFlag947AndValue29dc Func_02000f00
-#define SpawnConfiguredEffect Func_0200013c
 #define FieldScene_RunScene385SequenceA Func_020008a8
 #define SceneSetup_InitializeActorsAndFlags Func_02000f30
 
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
-#include "CONFIGURED_EFFECT_SPAWN.H"
 
 /* Shared 22-byte head leaf proved identical for this overlay family. */
 struct EffectRecord {
@@ -688,14 +675,6 @@ void SceneEffect_UpdateMotion(union MotionWork *work)
     work->fields.accum_y += work->fields.rate_y;
     record = work->fields.record;
     record[15] += work->fields.angle_step;
-}
-
-void SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
-                           u32 flags, const struct ConfiguredEffectOptions *options)
-{
-    extern u8 Data_03001ebc[];
-
-#include "CONFIGURED_EFFECT_SPAWN_BODY.INC"
 }
 
 s32 Func_02000314(s32 *first_position, s32 *second_position)

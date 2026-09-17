@@ -42,18 +42,6 @@
 #define SceneState_ApplyRectsByFlag844 Func_02000f58
 #define FieldScene_RunFourActorEncounter Func_02000918
 #define SceneEffect_RegisterPaletteFadeCallback Func_0200184c
-#define EffectDescriptorTable Data_02009da8
-#define GetPartyEffect Func_02001c56
-#define SpawnEffect Func_02001bf4
-#define SetEffectVariant Func_02001bfe
-#define SetEffectDescriptor Func_02001c18
-#define SetEffectMode Func_02001d62
-#define ScaleEffectDeltaFromAccumulated Func_02001c8c
-#define ScaleEffectDeltaFromOrigin Func_02001ca4
-#define ScaleEffectVerticalDelta Func_02001cb2
-#define SetEffectCallbackMode Func_02001d18
-#define SetEffectCallbackArgument Func_02001d28
-#define SpawnConfiguredEffect Func_0200013c
 
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
 #include "CONFIGURED_EFFECT_SPAWN.H"
@@ -395,12 +383,6 @@ void *OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 kind)
 void *OverlayObject_CreateConfigured(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT_BODY.INC"
-}
-
-void SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
-                           u32 flags, const struct ConfiguredEffectOptions *options)
-{
-#include "CONFIGURED_EFFECT_SPAWN_BODY.INC"
 }
 
 void *SceneData_GetTablea5cc(void)

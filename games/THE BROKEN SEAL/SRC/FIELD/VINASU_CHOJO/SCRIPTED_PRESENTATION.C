@@ -16,18 +16,6 @@
 #define OverlayObject_CreateAndInitialize Func_02000048
 #define SceneEffect_UpdateObjectByFrameParity Func_020020dc
 #define SceneEffect_AdvanceGatedRiseCounter Func_020059f0
-#define EffectDescriptorTable Data_0200dfb8
-#define GetPartyEffect Func_02005eaa
-#define SpawnEffect Func_02005df0
-#define SetEffectVariant Func_02005dfa
-#define SetEffectDescriptor Func_02005e14
-#define SetEffectMode Func_02006006
-#define ScaleEffectDeltaFromAccumulated Func_02005e68
-#define ScaleEffectDeltaFromOrigin Func_02005e80
-#define ScaleEffectVerticalDelta Func_02005e8e
-#define SetEffectCallbackMode Func_02005f14
-#define SetEffectCallbackArgument Func_02005f24
-#define SceneEffect_SpawnConfigured Func_0200013c
 #define SceneData_GetTablee3d4 Func_02000464
 #define SceneData_ReturnZero Func_0200046c
 #define SceneData_GetTablee464 Func_02000470
@@ -59,7 +47,6 @@
 #define FieldScene_RunMultiActorPresentation Func_02003e9c
 
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
-#include "CONFIGURED_EFFECT_SPAWN.H"
 
 typedef struct {
     u8 filler0[9];
@@ -631,12 +618,6 @@ void *OverlayObject_CreateAndInitialize(s32 x, s32 y, s32 z, s32 kind)
 void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT_BODY.INC"
-}
-
-void SceneEffect_SpawnConfigured(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
-                           u32 flags, const struct ConfiguredEffectOptions *options)
-{
-#include "CONFIGURED_EFFECT_SPAWN_BODY.INC"
 }
 
 s32 OverlayObject_StepScaleByCounter(Spr *s)

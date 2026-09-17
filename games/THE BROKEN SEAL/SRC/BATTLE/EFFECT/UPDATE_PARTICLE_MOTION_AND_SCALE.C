@@ -1,22 +1,16 @@
 #include "TYPES.H"
-#include "SCENE.H"
+#include "FIELD_EFFECT.H"
 
-/* battle/effects/particles/update_motion_and_scale.c */
-s32 FixedPoint_Ratio(s32, s32);
-
-void ParticleEffect_UpdateMotionAndScale(void *arg0)
+void ParticleEffect_UpdateMotionAndScale(union FieldObject *object)
 {
-    u8 *a = arg0;
-    s32 a44 = *(volatile s32 *)(a + 0x44);
-    s32 a4c;
+    struct FieldEffect *effect = &object->effect;
 
-    *(volatile s32 *)(a + 0x08) += a44;
-    *(volatile s32 *)(a + 0x0C) += *(s32 *)(a + 0x48);
-    a4c = *(s32 *)(a + 0x4C);
-    *(volatile s32 *)(a + 0x10) += a4c;
-    *(volatile s32 *)(a + 0x44) = a44 - FixedPoint_Ratio(a44, 0x12);
-    *(volatile s32 *)(a + 0x4C) = a4c - a4c / 16;
-    *(volatile s32 *)(a + 0x18) += *(s32 *)(a + 0x30);
-    *(volatile s32 *)(a + 0x1C) += *(s32 *)(a + 0x34);
-    *(volatile u16 *)(*(u8 **)(a + 0x50) + 0x1E) += *(u16 *)(a + 0x64);
+    effect->x += effect->velocity_x;
+    effect->y += effect->velocity_y;
+    effect->z += effect->velocity_z;
+    effect->velocity_x -= effect->velocity_x / 18;
+    effect->velocity_z -= effect->velocity_z / 16;
+    effect->scale_x += effect->scale_rate_x;
+    effect->scale_y += effect->scale_rate_y;
+    effect->sprite->rotation += effect->spin;
 }

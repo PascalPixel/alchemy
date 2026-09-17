@@ -72447,7 +72447,12 @@
       "game": "tbs",
       "source": "games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/UPDATE_PARTICLE_MOTION_AND_SCALE.C",
       "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {},
+      "absolute_symbols": {
+        "__divsi3": {
+          "address": "0x080022ec",
+          "kind": "thumb"
+        }
+      },
       "local_symbols": [],
       "owners": [
         {
@@ -169945,7 +169950,16 @@
       "source": "games/THE BROKEN SEAL/SRC/MENU/ABILITY/OWNER_ENTRIES.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
-      "absolute_symbols": {},
+      "absolute_symbols": {
+        "__divsi3": {
+          "address": "0x080022ec",
+          "kind": "thumb"
+        },
+        "__modsi3": {
+          "address": "0x080022fc",
+          "kind": "thumb"
+        }
+      },
       "local_symbols": [],
       "owners": [
         {
@@ -169961,6 +169975,31 @@
         {
           "address": "0x080a1c2c",
           "extent": 64,
+          "state": "exact-c"
+        }
+      ]
+    },
+    {
+      "id": "item-menu-position-owner-entry",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/ITEM/POSITION_OWNER_ENTRY.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {
+        "__divsi3": {
+          "address": "0x080022ec",
+          "kind": "thumb"
+        },
+        "__modsi3": {
+          "address": "0x080022fc",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080a1c6c",
+          "extent": 68,
           "state": "exact-c"
         }
       ]

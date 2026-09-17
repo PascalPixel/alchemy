@@ -1129,23 +1129,21 @@ s32 SceneData_SelectTableByFlag9a7(void)
     return 0x02009900;
 }
 
-void SceneActor_SetupActorForTable9638(s32 a0)
+void SceneActor_SetupActorForTable9638(s32 actor)
 {
-    extern u8 Data_03001ebc[];
     void Func_02001686();
 
-    u32 i;
-    s32 record;
+    struct FieldActor *object;
 
-    record = Func_020015ce();
-    *(volatile s32 *)(record + 24) = 0x10000;
-    record = Value1(Func_020015da, a0);
-    *(volatile s32 *)(record + 28) = 0x10000;
+    object = (struct FieldActor *)Func_020015ce(actor);
+    object->scale_x = 0x10000;
+    object = (struct FieldActor *)Value1(Func_020015da, actor);
+    object->scale_y = 0x10000;
     Call1(Func_0200165a, 0x26af);
-    Func_02001672(a0, 0);
-    Call3(Func_02001686, a0, 0xc000, 0);
+    Func_02001672(actor, 0);
+    Call3(Func_02001686, actor, 0xc000, 0);
     Func_020015d4(20);
-    Func_02001614(a0, 0x2009638);
+    Func_02001614(actor, 0x2009638);
 }
 
 void SceneActor_UpdateObjectWithCue28be(s32 obj)
@@ -1608,16 +1606,11 @@ void FieldScene_RunSecondarySequence(void)
     SCENE_STEP += 1;
     Func_02002326(242, 0);
     BattleRuntime_WaitIfModeZero_63_020007c4(10);
-    /* Clear bit 0 of the flag byte at offset 90 of the record, then set it
-     * back through a second record accessor. */
-    *(u8 *)(Scene_GetRecord_2(22) + 90) &= 254;
+    /* Clear bit 0 of the actor flag byte, then set it back through a second
+     * record accessor. */
+    ((struct FieldActor *)Scene_GetRecord_2(22))->unknown_5a &= ~1;
     ObjectMotion_CommitPositionAndActivate_6(22, 0, -16);
-    {
-        u8 *record = Scene_GetRecord_3(22);
-        u8 value = *(volatile u8 *)&record[90];
-
-        record[90] = (u8)(value | 1);
-    }
+    ((struct FieldActor *)Scene_GetRecord_3(22))->unknown_5a |= 1;
     ObjectMotion_ArmCallback_15_020007c4(22, 0x4100, 0);
     BattleRuntime_WaitIfModeZero_64_020007c4(30);
     BattleRuntime_WaitIfModeZero_65_020007c4(10);

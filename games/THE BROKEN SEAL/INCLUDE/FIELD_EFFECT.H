@@ -36,7 +36,8 @@ struct FieldEffect {
     u8 collision_flags;
     u8 unknown_5a[0x0a];
     u16 spin;
-    u8 unknown_66[6];
+    u8 unknown_66[2];
+    s32 countdown;
     void (*update)(union FieldObject *object);
 };
 
@@ -44,6 +45,7 @@ LAYOUT_OFFSET_GUARD(FieldEffect_ScaleRateX, struct FieldEffect, scale_rate_x, 0x
 LAYOUT_OFFSET_GUARD(FieldEffect_VelocityX, struct FieldEffect, velocity_x, 0x44);
 LAYOUT_OFFSET_GUARD(FieldEffect_Sprite, struct FieldEffect, sprite, 0x50);
 LAYOUT_OFFSET_GUARD(FieldEffect_Spin, struct FieldEffect, spin, 0x64);
+LAYOUT_OFFSET_GUARD(FieldEffect_Countdown, struct FieldEffect, countdown, 0x68);
 LAYOUT_OFFSET_GUARD(FieldEffect_Update, struct FieldEffect, update, 0x6c);
 
 /* One object record, seen as the actor or the effect it holds. */

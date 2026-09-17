@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "FIELD_EFFECT.H"
 
 #define OverlayObject_UpdateWobbleByCounter Func_02000030
 #define NULL ((void *)0)
@@ -1563,11 +1564,10 @@ void SceneDialogue_ShowLine1573Or155A(void)
 
 void FieldScene_RunScene399_02000a3c(void)
 {
-    u32 i;
-    s32 record;
+    struct FieldActor *leader;
 
-    record = Func_02002c8a(0);
-    if ((u32)((*(volatile u16 *)(record + 6) + 0x5fff) << 16) <= 0x3ffe0000) {
+    leader = (struct FieldActor *)Func_02002c8a(0);
+    if ((u16)(leader->facing + 0x5fff) <= 0x3ffe) {
         Func_02002e38(4, 16);
     } else {
         Func_02002c8e();
@@ -1586,10 +1586,10 @@ void FieldScene_RunScene399_02000a3c(void)
 
 void FieldScene_RunScene399_02000abc(void)
 {
-    s32 record;
+    struct FieldActor *leader;
 
-    record = Func_02002d0a_a(0);
-    if ((u32)((*(volatile u16 *)(record + 6) + 0x5fff) << 16) <= 0x3ffe0000) {
+    leader = (struct FieldActor *)Func_02002d0a_a(0);
+    if ((u16)(leader->facing + 0x5fff) <= 0x3ffe) {
         Func_02002d04();
         if (Value1(Func_02002cea, 0x82d) == 0) {
             Call1_02000abc(Func_02002de4, 0x1553);
@@ -1603,16 +1603,13 @@ void FieldScene_RunScene399_02000abc(void)
         if (Value1(Func_02002d18, 0x881) != 0) {
             Call1_02000abc(Func_02002e20, 0x1671);
             Func_02002e30_a(19, 0);
+        } else if (Value1(Func_02002d26, 3) != 0) {
+            Call1_02000abc(Func_02002e20, 0x1572);
+            Func_02002e30_a(19, 0);
         } else {
-            record = Value1(Func_02002d26, 3);
-            if (record != 0) {
-                Call1_02000abc(Func_02002e20, 0x1572);
-                Func_02002e30_a(19, 0);
-            } else {
-                Call1_02000abc(Func_02002e30_b, 0x1554);
-                (void)Value2(Func_02002e50, 19, 0);
-                Call3(Func_02002e64, 19, 0x3000, 10);
-            }
+            Call1_02000abc(Func_02002e30_b, 0x1554);
+            (void)Value2(Func_02002e50, 19, 0);
+            Call3(Func_02002e64, 19, 0x3000, 10);
         }
         Func_02002d80();
     }
@@ -1865,73 +1862,68 @@ void SceneActor_ResetActorAndCenterOffsets(struct Work_399 *work)
     work->f28 = 0x8000;
 }
 
-void FieldScene_RunSupplementalSequenceTwo(s32 a0)
+void FieldScene_RunSupplementalSequenceTwo(union FieldObject *object)
 {
-    s32 remaining;
-
-    *(volatile s32 *)(a0 + 8) += (*(s16 *)(a0 + 100) << 8);
-    *(volatile s32 *)(a0 + 12) += 0x8000;
-    *(volatile s32 *)(a0 + 24) += 0x7ae;
-    *(volatile s32 *)(a0 + 28) += 0x7ae;
-    *(volatile u16 *)(a0 + 100) += 2;
-    remaining = *(volatile s32 *)(a0 + 104) - 1;
-    *(volatile s32 *)(a0 + 104) = remaining;
-    if (remaining == 0) {
-        Func_02003948();
+    object->effect.x += (s16)object->effect.spin << 8;
+    object->effect.y += 0x8000;
+    object->effect.scale_x += 0x7ae;
+    object->effect.scale_y += 0x7ae;
+    object->effect.spin += 2;
+    if (--object->effect.countdown == 0) {
+        Func_02003948(object);
     }
 }
 
 void FieldScene_RunScene399SequenceA(void)
 {
-    u32 i;
-    s32 rec7;
-    s32 record;
-    s32 base6_3001e40;
+    extern u32 Data_03001e40;
+    u32 *frame;
+    union FieldObject *object;
 
-    base6_3001e40 = 0x3001e40;
-    if (Value2_02001794(Func_02003906, *(volatile s32 *)base6_3001e40, 60) == 0) {
-        rec7 = Value4(Func_02003968, 222, 0x1cf0000, 0, 0x1240000);
-        if (rec7 != 0) {
-            Func_02002ebe();
-            *(volatile s32 *)(rec7 + 104) = 60;
-            *(volatile s32 *)(rec7 + 108) = 0x200974d;
-            Func_0200396a(rec7, 5);
+    frame = &Data_03001e40;
+    if (Value2_02001794(Func_02003906, *frame, 60) == 0) {
+        object = (union FieldObject *)Value4(Func_02003968, 222, 0x1cf0000, 0, 0x1240000);
+        if (object != NULL) {
+            Func_02002ebe(object);
+            object->effect.countdown = 60;
+            object->effect.update = FieldScene_RunSupplementalSequenceTwo;
+            Func_0200396a(object, 5);
         }
     }
-    if (Value2_02001794(Func_0200393c, (*(volatile s32 *)base6_3001e40 + 30), 60) == 0) {
-        rec7 = Value4(Func_020039a2, 222, 0x1400000, 0x200000, 0x1640000);
-        if (rec7 != 0) {
-            Func_02002ef8();
-            *(volatile s32 *)(rec7 + 104) = 60;
-            *(volatile s32 *)(rec7 + 108) = 0x200974d;
-            Func_020039a4(rec7, 5);
+    if (Value2_02001794(Func_0200393c, *frame + 30, 60) == 0) {
+        object = (union FieldObject *)Value4(Func_020039a2, 222, 0x1400000, 0x200000, 0x1640000);
+        if (object != NULL) {
+            Func_02002ef8(object);
+            object->effect.countdown = 60;
+            object->effect.update = FieldScene_RunSupplementalSequenceTwo;
+            Func_020039a4(object, 5);
         }
     }
-    if (Value2_02001794(Func_02003976, (*(volatile s32 *)base6_3001e40 + 10), 60) == 0) {
-        rec7 = Value4(Func_020039da, 222, 0x760000, 0, 0x460000);
-        if (rec7 != 0) {
-            Func_02002f30();
-            *(volatile s32 *)(rec7 + 104) = 60;
-            *(volatile s32 *)(rec7 + 108) = 0x200974d;
-            Func_020039dc(rec7, 5);
+    if (Value2_02001794(Func_02003976, *frame + 10, 60) == 0) {
+        object = (union FieldObject *)Value4(Func_020039da, 222, 0x760000, 0, 0x460000);
+        if (object != NULL) {
+            Func_02002f30(object);
+            object->effect.countdown = 60;
+            object->effect.update = FieldScene_RunSupplementalSequenceTwo;
+            Func_020039dc(object, 5);
         }
     }
-    if (Value2_02001794(Func_020039ae, (*(volatile s32 *)base6_3001e40 + 50), 60) == 0) {
-        rec7 = Value4(Func_02003a12, 222, 0x1560000, 0, 0x7c0000);
-        if (rec7 != 0) {
-            Func_02002f68();
-            *(volatile s32 *)(rec7 + 104) = 60;
-            *(volatile s32 *)(rec7 + 108) = 0x200974d;
-            Func_02003a14(rec7, 5);
+    if (Value2_02001794(Func_020039ae, *frame + 50, 60) == 0) {
+        object = (union FieldObject *)Value4(Func_02003a12, 222, 0x1560000, 0, 0x7c0000);
+        if (object != NULL) {
+            Func_02002f68(object);
+            object->effect.countdown = 60;
+            object->effect.update = FieldScene_RunSupplementalSequenceTwo;
+            Func_02003a14(object, 5);
         }
     }
-    if (Value2_02001794(Func_020039e6, (*(volatile s32 *)base6_3001e40 + 80), 60) == 0) {
-        rec7 = Value4(Func_02003a48, 222, 0x1af0000, 0, 0xab0000);
-        if (rec7 != 0) {
-            Func_02002f9e();
-            *(volatile s32 *)(rec7 + 104) = 60;
-            *(volatile s32 *)(rec7 + 108) = 0x200974d;
-            Func_02003a4a(rec7, 5);
+    if (Value2_02001794(Func_020039e6, *frame + 80, 60) == 0) {
+        object = (union FieldObject *)Value4(Func_02003a48, 222, 0x1af0000, 0, 0xab0000);
+        if (object != NULL) {
+            Func_02002f9e(object);
+            object->effect.countdown = 60;
+            object->effect.update = FieldScene_RunSupplementalSequenceTwo;
+            Func_02003a4a(object, 5);
         }
     }
 }
@@ -2031,9 +2023,8 @@ void FieldScene_RunThreeActorChoreography(void)
 {
     s32 Func_02003e8c();
 
-    u32 i;
-    s32 record;
-    u8 *work;
+    struct FieldActor *leader;
+    struct EventWork *work;
 
     BattleRuntime_Reset_1_020019e8();
     ObjectMotion_ArmCallback_1_020019e8(3, 0xa000, 0);
@@ -2043,18 +2034,16 @@ void FieldScene_RunThreeActorChoreography(void)
     *(u8 *)(RuntimeBlock_GetOffset1e0Pointer_1() + 85) = 0;
     ObjectMotion_SetSpeedLimitAndAcceleration_1(0xcccc, 0x1999);
     ObjectMotion_PlaceWithinCameraBounds_1(0x2b20000, 0, 0xa40000, 1);
-    /* Set the scene phase word (offset 0x1c0) and a related word at
-     * offset 0x1c8 of the shared scene work record. */
-    work = *(u8 *volatile *)Data_03001ebc;
-    *(volatile s32 *)((work + 0x1c0)) = 0x100;
-    *(volatile s32 *)((work + 0x1c8)) = 48;
+    work = *(struct EventWork **)Data_03001ebc;
+    work->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    work->transition_frames = 48;
     BattleRuntime_WaitIfModeZero_1_020019e8();
     ObjectMotion_CommitCurrentPositionAndActivate_1(0);
     Object_SetModeById_1_020019e8(0, 1);
     ObjectMotion_SetSpeedParameters_2(3, 0x9999, 0x4ccc);
-    record = Scene_GetRecord_1_020019e8(0);
-    if (record != 0) {
-        ObjectMotion_SetHorizontalPositionWithTerrain_1(3, *(volatile s32 *)(record + 8), *(volatile s32 *)(record + 16));
+    leader = (struct FieldActor *)Scene_GetRecord_1_020019e8(0);
+    if (leader != NULL) {
+        ObjectMotion_SetHorizontalPositionWithTerrain_1(3, leader->x.fixed, leader->z.fixed);
     }
     ObjectMotion_SetPositionAndReset_1(3, 0x2a1, 183);
     ObjectMotion_ArmCallback_2_020019e8(3, 0xc000, 0);
@@ -2167,8 +2156,7 @@ void FieldScene_RunThreeActorChoreography(void)
     ObjectMotion_SetPositionAndReset_4(20, 0x284, 166);
     BattleRuntime_WaitIfModeZero_21(1);
     *(u8 *)(Scene_GetRecord_5(20) + ACTOR_FLAGS_OFFSET_020019e8) |= 1;
-    /* Advance the scene phase word to its next value. */
-    *(s32 *)((*(u8 *volatile *)Data_03001ebc + 0x1c0)) = 0x209;
+    (*(struct EventWork **)Data_03001ebc)->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     GameFlag_Set_1_020019e8(0x82e);
     GameFlag_Clear_1(0x82d);
     BattleRuntime_ScheduleShoulderButtonModeUpdate_1_020019e8();

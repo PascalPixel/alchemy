@@ -2,8 +2,10 @@
 @ リンカが遠距離処理へ到達するために生成する。Cでは表現不能。
 .syntax unified
 	.thumb
+	.global Audio_PlayCue
 	.global Func_080f9010
 	.thumb_func
+Audio_PlayCue:
 Func_080f9010:
 	ldr	r4, [pc, #0]
 	bx	r4

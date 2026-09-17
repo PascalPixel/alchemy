@@ -2,8 +2,10 @@
 @ リンカが遠距離処理へ到達するために生成する。Cでは表現不能。
 .syntax unified
 	.thumb
+	.global Object_SetMode
 	.global Func_08009080
 	.thumb_func
+Object_SetMode:
 Func_08009080:
 	ldr	r4, [pc, #0]
 	bx	r4

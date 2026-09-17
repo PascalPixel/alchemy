@@ -2,8 +2,10 @@
 @ リンカが遠距離処理へ到達するために生成する。Cでは表現不能。
 .syntax unified
 	.thumb
+	.global Object_CommitPosition
 	.global Func_08009158
 	.thumb_func
+Object_CommitPosition:
 Func_08009158:
 	ldr	r4, [pc, #0]
 	bx	r4

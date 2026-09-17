@@ -10,18 +10,6 @@
 #define OverlayObject_CreateConfiguredObject Func_020000a0
 #define OverlayObject_WaitUntilSettledAndReset Func_02000d78
 #define OverlayObject_SetCallbackAndMode2 Func_02002694
-#define EffectDescriptorTable Data_0200ad58
-#define GetPartyEffect Func_02002c7a
-#define SpawnEffect Func_02002bf8
-#define SetEffectVariant Func_02002c02
-#define SetEffectDescriptor Func_02002c1c
-#define SetEffectMode Func_02002d86
-#define ScaleEffectDeltaFromAccumulated Func_02002ca8
-#define ScaleEffectDeltaFromOrigin Func_02002cc0
-#define ScaleEffectVerticalDelta Func_02002cce
-#define SetEffectCallbackMode Func_02002d1c
-#define SetEffectCallbackArgument Func_02002d2c
-#define SpawnConfiguredEffect Func_0200013c
 #define SceneActor_ApplyPlacementQueryAndTag Func_02000ec8
 #define SceneActor_ApplyPlacementQuery Func_02000f58
 #define BattleRuntime_Reset_1(args...) Func_0200426e(args)
@@ -80,7 +68,6 @@
 #define FieldScene_RunSingleStep Func_02002034
 
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
-#include "CONFIGURED_EFFECT_SPAWN.H"
 #include "STAGED_ACTOR.H"
 
 /* Shared 22-byte head leaf proved identical for this overlay family. */
@@ -535,12 +522,6 @@ void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg
  * are not established. On success the values thread unchanged into the two
  * finishing calls in that shape; on failure the object is left untouched.
  */
-void SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
-                           u32 flags, const struct ConfiguredEffectOptions *options)
-{
-#include "CONFIGURED_EFFECT_SPAWN_BODY.INC"
-}
-
 
 /*
  * Wait at most sixty polls for the object's +12 to reach its +20, then clear

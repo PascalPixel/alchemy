@@ -1158,25 +1158,6 @@ void Func_020037e8(void *, s32);
 
 #include "TYPES.H"
 
-#define EffectDescriptorTable Data_0200b92c
-#define GetPartyEffect Func_0200384e
-#define SpawnEffect Func_020037f4
-#define SetEffectVariant Func_020037fe
-#define SetEffectDescriptor Func_02003818
-#define SetEffectMode Func_0200397a
-#define ScaleEffectDeltaFromAccumulated Func_020038a4
-#define ScaleEffectDeltaFromOrigin Func_020038bc
-#define ScaleEffectVerticalDelta Func_020038ca
-#define SetEffectCallbackMode Func_02003918
-#define SetEffectCallbackArgument Func_02003928
-#define SceneEffect_SpawnConfigured Func_0200013c
-
-#include "CONFIGURED_EFFECT_SPAWN.H"
-
-
-
-#include "TYPES.H"
-
 #define SceneData_GetTableB938 Func_02000314
 extern u8 Data_0200b938[];
 
@@ -1610,12 +1591,6 @@ void OverlayObject_ApplyVelocity(union Slot *object)
     object[7].w += object[13].w;
     record = (u16 *)object[20].p;
     record[15] += object[25].h[0];
-}
-
-void SceneEffect_SpawnConfigured(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
-                           u32 flags, const struct ConfiguredEffectOptions *options)
-{
-#include "CONFIGURED_EFFECT_SPAWN_BODY.INC"
 }
 
 void *SceneData_GetTableB938(void)

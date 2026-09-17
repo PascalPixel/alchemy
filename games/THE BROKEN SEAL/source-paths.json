@@ -3291,8 +3291,7 @@
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_385:0200013c": {
-      "name": "SpawnConfiguredEffect",
-      "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
+      "name": "SpawnConfiguredEffect"
     },
     "resource_385:02000314": {
       "name": "CalculateFixedPointPositionDistance",
@@ -3323,8 +3322,7 @@
       "source": "FIELD/GOMA_IRIGUCHI/DEPTH.C"
     },
     "resource_387:0200013c": {
-      "name": "SpawnConfiguredEffect",
-      "source": "FIELD/GOMA_IRIGUCHI/DEPTH.C"
+      "name": "SpawnConfiguredEffect"
     },
     "resource_38e:02000974": {
       "name": "InitializeOrbitingSceneEntity",
@@ -3407,8 +3405,7 @@
       "source": "FIELD/COMMON/SHIAN_JIIN/TEMPLE_ROOMS.C"
     },
     "resource_39e:0200013c": {
-      "name": "SpawnEffect",
-      "source": "FIELD/COMMON/SHIAN_JIIN/TEMPLE_ROOMS.C"
+      "name": "SpawnEffect"
     },
     "resource_39e:02000314": {
       "name": "StopXianActor",
@@ -3443,8 +3440,7 @@
       "source": "FIELD/SHIAN_MURA/SPAWN_SEQUENCE.C"
     },
     "resource_3a0:0200013c": {
-      "name": "Effect_SpawnConfigured",
-      "source": "FIELD/SHIAN_MURA/SPAWN_SEQUENCE.C"
+      "name": "Effect_SpawnConfigured"
     },
     "resource_3a0:02000314": {
       "name": "Effect_RequestFixedEffect",
@@ -6382,8 +6378,7 @@
       "source": "FIELD/IMIRU_MURA/FLAGGED_CHOREOGRAPHY.C"
     },
     "resource_3c9:0200013c": {
-      "name": "Effect_SpawnConfigured",
-      "source": "FIELD/VINASU_CHOJO/SCRIPTED_PRESENTATION.C"
+      "name": "Effect_SpawnConfigured"
     },
     "resource_38e:020008e8": {
       "name": "Scene_SetupWithDescriptor8BD4",
@@ -6410,8 +6405,7 @@
       "source": "FIELD/GOMA_IRIGUCHI/DEPTH.C"
     },
     "resource_3c8:02000118": {
-      "name": "SceneEffect_SpawnConfigured",
-      "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
+      "name": "SceneEffect_SpawnConfigured"
     },
     "resource_3c8:02000b08": {
       "name": "SceneEffect_SpawnNineRadialEffects",
@@ -7279,8 +7273,7 @@
       "source": "FIELD/KORASHIAMU_IRIGUCHI/STATUS_DISPATCH.C"
     },
     "resource_3a1:0200013c": {
-      "name": "Effect_SpawnConfiguredEffect",
-      "source": "FIELD/SHIAN_HEYA/FLAGGED_OBJECT.C"
+      "name": "Effect_SpawnConfiguredEffect"
     },
     "resource_390:0200012c": {
       "name": "Scene_RunActor18MessageBranch",
@@ -8415,8 +8408,7 @@
       "source": "FIELD/SORU_FUNKA/EXTENDED_EFFECT.C"
     },
     "resource_380:0200013c": {
-      "name": "Overlay380_SpawnConfiguredEffect",
-      "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
+      "name": "Overlay380_SpawnConfiguredEffect"
     },
     "resource_3c9:02000714": {
       "name": "SceneData_GetTableE6ec",
@@ -11588,8 +11580,7 @@
       "source": "FIELD/GOMA_SUIRO/BURST.C"
     },
     "resource_38a:0200013c": {
-      "name": "SceneEffect_SpawnConfiguredEffect",
-      "source": "FIELD/GOMA_SUIRO/BURST.C"
+      "name": "SceneEffect_SpawnConfiguredEffect"
     },
     "resource_38a:02000314": {
       "name": "SceneData_GetTable8818OrTable88d8",
@@ -11997,8 +11988,7 @@
       "source": "FIELD/KUUPUAPPU_MURA/ACTOR_PRESENTATION.C"
     },
     "resource_382:0200013c": {
-      "name": "SceneEffect_SpawnConfiguredEffect",
-      "source": "FIELD/KUUPUAPPU_MURA/ACTOR_PRESENTATION.C"
+      "name": "SceneEffect_SpawnConfiguredEffect"
     },
     "resource_382:02000314": {
       "name": "SceneActor_UpdateProximityToLeader",
@@ -12535,8 +12525,7 @@
       "source": "FIELD/MAKYURI_CHOJO/AERIE.C"
     },
     "resource_39d:0200013c": {
-      "name": "SceneEffect_SpawnConfigured",
-      "source": "FIELD/MAKYURI_CHOJO/AERIE.C"
+      "name": "SceneEffect_SpawnConfigured"
     },
     "resource_39d:0200056c": {
       "name": "FieldScene_RunFourActorPresentation",
@@ -12806,8 +12795,7 @@
     },
     "resource_3a6:02000030": "FIELD/HAIDIA_DOU/STAGED_PAIR_REGION.C",
     "resource_3a6:0200013c": {
-      "name": "SpawnConfiguredEffect",
-      "source": "FIELD/HAIDIA_DOU/STAGED_PAIR_REGION.C"
+      "name": "SpawnConfiguredEffect"
     },
     "resource_3a6:02000314": {
       "name": "FixedPoint_Distance",
@@ -13492,8 +13480,7 @@
       "source": "FIELD/KARAGORU_DOU/STAGED_PAIR.C"
     },
     "resource_3be:0200013c": {
-      "name": "StagedActorPairScene_SpawnConfiguredEffect",
-      "source": "FIELD/KARAGORU_DOU/STAGED_PAIR.C"
+      "name": "StagedActorPairScene_SpawnConfiguredEffect"
     },
     "resource_3be:02000314": {
       "name": "FixedPoint_Distance",
@@ -13607,8 +13594,7 @@
     },
     "resource_39c:02000030": "FIELD/MAKYURI_HEYA/FIELD_PROBE_SCENE.C",
     "resource_39c:0200013c": {
-      "name": "BattleEffect_SpawnConfigured",
-      "source": "FIELD/MAKYURI_HEYA/FIELD_PROBE_SCENE.C"
+      "name": "BattleEffect_SpawnConfigured"
     },
     "resource_39c:02000314": {
       "name": "FixedPoint_Distance",
@@ -13960,8 +13946,7 @@
       "source": "FIELD/TORETO_HEYA/FOUR_ENCOUNTER.C"
     },
     "resource_396:0200013c": {
-      "name": "SpawnConfiguredEffect",
-      "source": "FIELD/TORETO_HEYA/FOUR_ENCOUNTER.C"
+      "name": "SpawnConfiguredEffect"
     },
     "resource_396:0200185c": {
       "name": "advance_effect_motion",
@@ -14104,8 +14089,7 @@
       "source": "FIELD/SUHARA_SABAKU/SELECTED_PRESENTATION.C"
     },
     "resource_3c0:0200013c": {
-      "name": "SpawnConfiguredEffect",
-      "source": "FIELD/SUHARA_SABAKU/SELECTED_PRESENTATION.C"
+      "name": "SpawnConfiguredEffect"
     },
     "resource_3c0:02000400": {
       "name": "sync_selected_actor_progress",
@@ -15135,8 +15119,7 @@
       "source": "FIELD/MAKYURI_IRIGUCHI/STAGED_EFFECT.C"
     },
     "resource_39b:0200013c": {
-      "name": "SpawnConfiguredEffect",
-      "source": "FIELD/MAKYURI_IRIGUCHI/STAGED_EFFECT.C"
+      "name": "SpawnConfiguredEffect"
     },
     "resource_39b:02000314": {
       "name": "FixedPoint_Distance",
@@ -15338,8 +15321,7 @@
       "source": "FIELD/TAKARA_SHIMA/ISLAND_AND_CAVES.C"
     },
     "resource_3b2:02000ae8": {
-      "name": "SpawnConfiguredSceneEffect",
-      "source": "FIELD/TAKARA_SHIMA/ISLAND_AND_CAVES.C"
+      "name": "SpawnConfiguredSceneEffect"
     },
     "resource_3b2:02000cc0": {
       "name": "NoOpEffectCallback",
@@ -15628,8 +15610,7 @@
     },
     "resource_3b3:02000030": "FIELD/TAKARA_HASHIRA/STAGED_NAV.C",
     "resource_3b3:0200013c": {
-      "name": "SpawnConfiguredEffect",
-      "source": "FIELD/TAKARA_HASHIRA/STAGED_NAV.C"
+      "name": "SpawnConfiguredEffect"
     },
     "resource_3b3:02000314": {
       "name": "FixedPoint_Distance",
@@ -15958,8 +15939,7 @@
       "source": "FIELD/BABI_CHIKA/MAP_INIT.C"
     },
     "resource_3c4:02000ae8": {
-      "name": "SceneEffect_SpawnConfiguredEffect",
-      "source": "FIELD/BABI_CHIKA/MAP_INIT.C"
+      "name": "SceneEffect_SpawnConfiguredEffect"
     },
     "resource_3c4:02001970": {
       "name": "SceneDialogue_RunFlag982Or983Dialogue",
@@ -17204,8 +17184,7 @@
       "source": "FIELD/MOGORU_MORI/WAYPOINT.C"
     },
     "resource_39f:02000ae8": {
-      "name": "SceneEffect_SpawnConfigured",
-      "source": "FIELD/MOGORU_MORI/WAYPOINT.C"
+      "name": "SceneEffect_SpawnConfigured"
     },
     "resource_39f:02001880": {
       "name": "SceneActor_RunActorFourteenFourWaypointMotion",
@@ -17634,8 +17613,7 @@
       "source": "FIELD/BABI_IRIGUCHI/BRANCHING_EVENT.C"
     },
     "resource_3c5:02000ae8": {
-      "name": "SceneEffect_SpawnConfiguredEffect",
-      "source": "FIELD/BABI_IRIGUCHI/BRANCHING_EVENT.C"
+      "name": "SceneEffect_SpawnConfiguredEffect"
     },
     "resource_3c5:020011fc": {
       "name": "FieldScene_RunStep15",
@@ -17757,8 +17735,7 @@
       "source": "FIELD/RAMAKAN_SABAKU/SELECTED_ACTOR_SCENE_ID_SELECTED_ACTOR_SCENE.C"
     },
     "resource_3a5:0200013c": {
-      "name": "SceneEffect_SpawnConfiguredEffect",
-      "source": "FIELD/RAMAKAN_SABAKU/SELECTED_ACTOR_SCENE_ID_SELECTED_ACTOR_SCENE.C"
+      "name": "SceneEffect_SpawnConfiguredEffect"
     },
     "resource_3a5:02000324": {
       "name": "OverlayObject_WaitUntilField12BelowLimit",

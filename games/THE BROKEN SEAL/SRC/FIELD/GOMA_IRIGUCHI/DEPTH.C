@@ -15,18 +15,6 @@
 #define OverlayObject_CreateConfiguredObject Func_020000a0
 #define OverlayObject_TurnStateByEighth Func_02000da8
 #define OverlayObject_WaitForHeight Func_02000db8
-#define EffectDescriptorTable Data_020092dc
-#define GetPartyEffect Func_020012a2
-#define SpawnEffect Func_02001238
-#define SetEffectVariant Func_02001242
-#define SetEffectDescriptor Func_0200125c
-#define SetEffectMode Func_020013d6
-#define ScaleEffectDeltaFromAccumulated Func_02001300
-#define ScaleEffectDeltaFromOrigin Func_02001318
-#define ScaleEffectVerticalDelta Func_02001326
-#define SetEffectCallbackMode Func_0200135c
-#define SetEffectCallbackArgument Func_0200136c
-#define SpawnConfiguredEffect Func_0200013c
 #define Overlay387_ConfigureActorEightAtDepth Func_02000d04
 #define FieldScene_RequestAndWaitFrames Func_02000314
 #define SceneData_GetTable92f8 Func_0200032c
@@ -44,7 +32,6 @@
 #define SceneActor_ApplyValueAndMatchingSlots Func_02000f8c
 
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
-#include "CONFIGURED_EFFECT_SPAWN.H"
 
 /* Shared 22-byte head leaf proved identical for this overlay family. */
 struct EffectRecord {
@@ -390,12 +377,6 @@ void *OverlayObject_PrepareObject(s32 first, s32 second, s32 third, s32 fourth)
 void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT_BODY.INC"
-}
-
-void SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
-                           u32 flags, const struct ConfiguredEffectOptions *options)
-{
-#include "CONFIGURED_EFFECT_SPAWN_BODY.INC"
 }
 
 /*

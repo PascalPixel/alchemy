@@ -5,18 +5,6 @@
 #define OverlayObject_IntegrateVelocities Func_02000ab0
 #define OverlayObject_ApplyField100 Func_02000d6c
 #define OverlayObject_ApplyZero Func_02000d80
-#define ConfigurableEffectDescriptors Data_0200b058
-#define GetPrimaryEffectRecord Func_020038c6
-#define SpawnConfiguredEffectObject Func_02003864
-#define SetConfiguredEffectVariant Func_0200386e
-#define ApplyConfiguredEffectDescriptor Func_02003888
-#define SetConfiguredEffectLink Func_020039f2
-#define ComputeConfiguredEffectRateFromDelta Func_0200390c
-#define ComputeConfiguredEffectRateFromOffset Func_02003924
-#define ComputeConfiguredEffectSecondRate Func_02003932
-#define SetConfiguredEffectCallbackMode Func_02003988
-#define ApplyConfiguredEffectCallbackArgument Func_02003998
-#define SceneEffect_SpawnConfigured Func_02000ae8
 #define SceneState_SetValue18Mode2 Func_02000cc0
 #define SceneState_ApplyCrossRectsAroundActor11 Func_02001520
 #define SceneActor_TryRunSlotZeroMoveStep Func_02000cd0
@@ -75,7 +63,6 @@
 
 #include "FIELD_EFFECT.H"
 #include "STAGED_ACTOR.H"
-#include "SPAWN_CONFIGURED_EFFECT.H"
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
 
 
@@ -777,12 +764,6 @@ void OverlayObject_IntegrateVelocities(union FieldObject *object)
     object->effect.scale_x += object->effect.scale_rate_x;
     object->effect.scale_y += object->effect.scale_rate_y;
     object->effect.sprite->rotation += object->effect.spin;
-}
-
-void SceneEffect_SpawnConfigured(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
-                           u32 flags, const struct Options *options)
-{
-#include "SPAWN_CONFIGURED_EFFECT_BODY.INC"
 }
 
 /* Three sites of the record accessor, so three names. */

@@ -10,18 +10,7 @@
 #define CreateOverlayObject Func_020019ea
 #define SetOverlayObjectMode Func_02001a34
 #define SetOverlayObjectSlot Func_02001b2c
-#define EffectDescriptorTable Data_02009bb4
 #define SceneDialogue_RunActor13FlaggedLine      Func_02000cc4
-#define GetPartyEffect Func_02001b3e
-#define SpawnEffect Func_02001abc
-#define SetEffectVariant Func_02001ac6
-#define SetEffectDescriptor Func_02001ae0
-#define SetEffectMode Func_02001c62
-#define ScaleEffectDeltaFromAccumulated Func_02001b7c
-#define ScaleEffectDeltaFromOrigin Func_02001b94
-#define ScaleEffectVerticalDelta Func_02001ba2
-#define SetEffectCallbackMode Func_02001be0
-#define SetEffectCallbackArgument Func_02001bf0
 #define BeginSceneStep    Func_02002680
 #define SceneFlagIsClear  Func_02002656
 #define PlaySceneCueA     Func_02002728
@@ -32,7 +21,6 @@
 #define EffectMotion_GetVerticalDecay Func_020030a0
 #define SceneEffect_SetEffectRecordMode Func_02000030
 #define OverlayObject_CreateConfiguredObject Func_020000a0
-#define SceneEffect_SpawnConfiguredEffect Func_0200013c
 #define SceneActor_UpdateProximityToLeader Func_02000314
 #define ActorPresentation_UpdateEntityFromLeader Func_020003ac
 #define SceneData_GetScriptTable Func_02000418
@@ -89,8 +77,6 @@
 #define SceneActor_ApplyActorZeroThenWait Func_02001724
 #define SceneActor_ApplyActorCueThenWait Func_0200173c
 #define SceneEffect_UpdateMotionWithDamping Func_02001754
-
-#include "CONFIGURED_EFFECT_SPAWN.H"
 
 struct EffectRecord {
     u8 pad[9];
@@ -571,12 +557,6 @@ void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg
         return result;
     }
     return NULL;
-}
-
-void SceneEffect_SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
-                           u32 flags, const struct ConfiguredEffectOptions *options)
-{
-#include "CONFIGURED_EFFECT_SPAWN_BODY.INC"
 }
 
 /*

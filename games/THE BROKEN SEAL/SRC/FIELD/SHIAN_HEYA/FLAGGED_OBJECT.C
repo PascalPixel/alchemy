@@ -8,7 +8,6 @@
 #define OverlayObject_SpawnWithMode14 Func_02000048
 #define OverlayObject_CreateConfigured Func_020000a0
 #define OverlayObject_IntegrateVelocities Func_02000104
-#define SceneEffect_SpawnConfiguredEffect Func_0200013c
 #define SceneData_GetTable8778 Func_02000314
 #define SceneData_ReturnZero Func_0200031c
 #define SceneData_GetTable8868 Func_02000320
@@ -36,59 +35,6 @@ union Slot {
     void *p;
 };
 
-struct Sprite {
-    u8 pad00[9];
-    u8 flags9;
-    u8 pad0a[20];
-    u16 angle;
-    u8 pad20[6];
-    u8 state26;
-};
-
-struct Effect {
-    u8 pad00[24];
-    s32 accum18;
-    s32 accum1c;
-    u8 pad20[3];
-    u8 flatla3;
-    u8 pad24[12];
-    s32 rate30;
-    s32 rate34;
-    u8 pad38[12];
-    s32 velocity_x;
-    s32 velocity_y;
-    s32 velocity_z;
-    struct Sprite *sprite;
-    u8 pad54;
-    u8 mode55;
-    u8 pad56[14];
-    u16 step64;
-    u8 pad66[6];
-    u32 callback;
-};
-
-struct Options {
-    u8 mode_bits;
-    u8 pad01[3];
-    s32 mode;
-    s32 accum18;
-    s32 accum1c;
-    s32 target30;
-    s32 target34;
-    s16 kind;
-    u16 pad1a;
-    s32 callback_arg;
-    u16 angle;
-    u16 step;
-    u32 callback;
-};
-
-struct Descriptor {
-    s32 pad00[3];
-    s32 dur;
-};
-
-extern struct Descriptor *Data_0200876c[];
 extern u8 Data_02008778[];
 extern u8 Data_02008868[];
 extern s16 Data_02000240[];
@@ -105,16 +51,6 @@ void Func_02000714(void *, s32);
 void *Func_020006de(s32, s32, s32, s32);
 void Func_02000710(void *, s32);
 void Func_02000770(void *, s32);
-struct Effect *Func_020007d2(s32 slot);
-struct Effect *Func_020007b0(s32 kind, s32 x, s32 y, s32 z);
-void Func_020007ba(struct Effect *effect, s32 mode);
-void Func_020007d4(struct Effect *effect, struct Descriptor *desc);
-void Func_020008a6(struct Effect *effect, s32 mode);
-s32 Func_02000890(s32 delta, s32 dur);
-s32 Func_020008a8(s32 delta, s32 dur);
-s32 Func_020008b6(s32 delta, s32 dur);
-void Func_020008d4(struct Effect *effect, s32 mode);
-void Func_020008e4(struct Effect *effect, s32 callback_arg);
 void Func_020009b0(void *);
 u16 *Func_020009d6(s32);
 void Func_020009c4(void);
@@ -163,13 +99,6 @@ s32 Func_02000678(s32, s32, s32, s32);
 void Func_02000c3e(s32);
 void Func_02000c76(s32, s32);
 
-/*
- * resource_3a1 configurable spawn/copy owner at 0x0200013c. The code ends
- * with the unwind at 0x02000306; its three-word pool occupies
- * 0x02000308-0x02000313. This is the same compiler-witnessed source family
- * as the exact resource_380/resource_39c/resource_3c9 owners, with this
- * overlay's own import veneers and descriptor table.
- */
 void OverlayObject_SetEntryField(void *arg0, s32 arg1)
 {
     Object_02000030 *obj = *(Object_02000030 **)((u8 *)arg0 + 0x50);
@@ -238,116 +167,6 @@ void OverlayObject_IntegrateVelocities(void *arg0)
     s[7].w += s[13].w;
     obj = (union Slot *)s[20].p;
     obj[7].h[1] += s[25].h[0];
-}
-
-void SceneEffect_SpawnConfiguredEffect(s32 x, s32 y, s32 z, s32 vx, s32 vy, s32 vz,
-                   u32 flags, const struct Options *opt)
-{
-    u32 off;
-    struct Effect *party;
-    u32 bits;
-    s32 fmask;
-    u32 bbits;
-    struct Effect *effect;
-    struct Sprite *block;
-    struct Sprite *mblock;
-    u32 obits;
-    u16 *tag;
-    s32 dur;
-    s32 d1;
-    s32 acc;
-
-    party = Func_020007d2(0);
-    if ((flags & 0x100000) != 0 && opt != 0) {
-        effect = Func_020007b0(opt->kind, x, y, z);
-    } else {
-        effect = Func_020007b0(222, x, y, z);
-    }
-    if (effect == 0)
-        return;
-
-    block = effect->sprite;
-    mblock = block;
-
-    Func_020007ba(effect, (flags + 1) & 15);
-    off = (flags & 15) << 2;
-    Func_020007d4(effect, Data_0200876c[off >> 2]);
-
-    effect->mode55 = 0;
-    block->state26 = 0;
-    effect->callback = 0x02008105;
-
-    effect->velocity_x = vx;
-    x = 3;
-    effect->velocity_y = vy;
-    effect->velocity_z = vz;
-
-    bits = party->sprite->flags9 & 12;
-    bbits = *(volatile u8 *)&block->flags9;
-    fmask = ~12;
-    block->flags9 = (u8)((bbits & fmask) | bits);
-
-    effect->rate30 = 0;
-    effect->rate34 = 0;
-    effect->step64 = 0;
-    tag = &effect->step64;
-
-    if ((flags & 0xffff0000) == 0 || opt == 0)
-        return;
-
-    if ((flags & 0x10000) != 0)
-        Func_020008a6(effect, opt->mode);
-
-    if ((flags & 0x20000) != 0) {
-        effect->flatla3 &= 0xfe;
-        obits = *(const u8 *)opt & x;
-        block->flags9 = (u8)((*((const u8 *)mblock + 9) & fmask)
-                             | (obits << 2));
-    }
-
-    if ((flags & 0x80000) != 0) {
-        effect->accum18 = opt->accum18;
-        effect->accum1c = opt->accum1c;
-    }
-
-    if ((flags & 0x40000) != 0) {
-        const struct Descriptor *desc =
-            Data_0200876c[off >> 2];
-        s32 delta;
-
-        if ((flags & 0x80000) != 0) {
-            d1 = *(volatile const s32 *)&opt->target30;
-            acc = *(volatile const s32 *)&effect->accum18;
-            d1 -= acc;
-            effect->rate30 = Func_02000890(d1,
-                                           desc->dur);
-            delta = opt->target34;
-            dur = desc->dur;
-            delta -= effect->accum1c;
-        } else {
-            d1 = opt->target30;
-            d1 += (s32)0xffff0000;
-            effect->rate30 = Func_020008a8(d1,
-                                           desc->dur);
-            delta = opt->target34;
-            dur = desc->dur;
-            delta += (s32)0xffff0000;
-        }
-
-        effect->rate34 = Func_020008b6(delta, dur);
-    }
-
-    if ((flags & 0x200000) != 0) {
-        Func_020008d4(effect, 1);
-        Func_020008e4(effect, opt->callback_arg);
-    }
-
-    if ((flags & 0x400000) != 0)
-        block->angle = opt->angle;
-    if ((flags & 0x800000) != 0)
-        *tag = opt->step;
-    if ((flags & 0x1000000) != 0)
-        effect->callback = opt->callback;
 }
 
 s32 SceneData_GetTable8778(void)

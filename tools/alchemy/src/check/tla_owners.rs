@@ -1,9 +1,10 @@
 //! The Lost Age half of the exact-source contract. Every owner the TLA register
-//! names with a source scores byte-exact against the TLA ROM over its audited
+//! names with a source, directly or through a declared unit, scores byte-exact
+//! against the TLA ROM over its audited
 //! extent, and every shared source under `games/COMMON/SRC` is one of them, so
 //! a shared file cannot drift from the second game unnoticed.
 //!
-//! A main-image owner's extent is its interval in the TLA executable
+//! A main-image owner's extent is declared by its unit, inside the executable
 //! inventory. An overlay owner's extent is its reviewed span in
 //! `games/THE LOST AGE/semantic/regions.json`; its retained listing must hold
 //! an `AlchemyC_` placeholder of exactly that span, and the listing assembled
@@ -23,7 +24,7 @@ use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 const USAGE: &str = "usage: alchemy check tla-owners ROM";
-/// The TLA executable inventory whose main intervals audit each owner's extent.
+/// The TLA executable inventory containing the declared main-owner extents.
 const INVENTORY: &str = "games/THE LOST AGE/metrics/executable.json";
 
 pub(super) fn entry(arguments: &[String]) -> ExitCode {
@@ -80,13 +81,13 @@ fn inventory_ranges(text: &str) -> Result<Vec<(u32, u32)>, String> {
     Ok(ranges)
 }
 
-/// Every owner the register gives a source, with its audited extent: a main
-/// owner's inventory interval or an overlay owner's reviewed span. An owner
+/// Every sourced owner, including named unit members: a main owner's complete
+/// declared extent or an overlay owner's reviewed span. An owner
 /// without one, or a shared source no owner compiles, fails.
 fn scored_owners(
     root: &Path,
     register: &SourcePaths,
-    unit_extents: &BTreeMap<SourceOwner, usize>,
+    unit_extents: &BTreeMap<SourceOwner, (usize, PathBuf)>,
     executable: &[(u32, u32)],
     reviewed: &BTreeMap<SourceOwner, usize>,
     shared: &BTreeSet<PathBuf>,
@@ -94,13 +95,17 @@ fn scored_owners(
     let mut owners = Vec::new();
     let mut unscored = shared.clone();
     for owner in register.registered_owners() {
-        let Some(path) = register.mapped_source_path(owner) else {
+        let Some(path) = register.mapped_source_path(owner).or_else(|| {
+            unit_extents
+                .get(&owner)
+                .map(|(_, source)| root.join(source))
+        }) else {
             continue;
         };
         let extent = if owner.is_main() {
             let extent = unit_extents
                 .get(&owner)
-                .copied()
+                .map(|(extent, _)| *extent)
                 .ok_or_else(|| format!("{}: no translation-unit owner extent", owner.id()))?;
             let end = u32::try_from(extent)
                 .ok()
@@ -250,10 +255,14 @@ fn check(root: &Path, rom: &Path) -> Result<String, String> {
         .filter_map(|owner| {
             let unit = units.unit_for_game_owner("tla", owner)?;
             let extent = unit
-                .owners_in("main")
-                .find(|member| member.address == owner.address())?
+                .owners
+                .iter()
+                .find(|member| {
+                    member.address == owner.address()
+                        && member.state == crate::compiler::translation_units::OwnerState::ExactC
+                })?
                 .extent;
-            Some((owner, extent))
+            Some((owner, (extent, unit.source.clone())))
         })
         .collect::<BTreeMap<_, _>>();
     let owners = scored_owners(
@@ -271,17 +280,45 @@ fn check(root: &Path, rom: &Path) -> Result<String, String> {
         let canonical = CanonicalRom::from_file(rom, production_target(CompilerTarget::Tla))?;
         mismatches.extend(overlay_mismatches(root, &canonical, &overlays)?);
     }
+    let mut compiled_units = BTreeMap::<String, String>::new();
     for scored in main {
         let mut options = crate::score::cli::Options::tbs(scored.source.clone());
         options.target = CompilerTarget::Tla;
         options.rom = Some(rom.to_string_lossy().into_owned());
         options.owner = Some(scored.owner.address());
         options.size = Some(scored.extent);
+        options.work = Some(format!("out/tla-en/owners/{}", scored.owner.address_stem()));
         if let Some(unit) = units.unit_for_game_owner("tla", scored.owner) {
             options.configuration.absolute_symbols = unit.canonical_symbols()?;
+            options.unit = Some(unit.id.clone());
+            options.work = Some(format!("out/tla-en/owners/{}", unit.id));
+            options.precompiled_object = compiled_units.get(&unit.id).cloned();
+            if options.precompiled_object.is_none()
+                && unit.owners[0].address != scored.owner.address()
+            {
+                return Err(format!(
+                    "{}: first declared member is not being verified",
+                    unit.id
+                ));
+            }
         }
-        options.work = Some(format!("out/tla-en/owners/{}", scored.owner.address_stem()));
         let rendered = crate::score::render::render(root, &options)?;
+        if let Some(unit) = units.unit_for_game_owner("tla", scored.owner) {
+            if !compiled_units.contains_key(&unit.id) {
+                let object = root
+                    .join(options.work.as_ref().unwrap())
+                    .join(format!("{}.o", scored.owner.address_stem()));
+                let layout = crate::score::validate_layout(unit, &object, scored.owner.address())?;
+                if !layout.is_empty() {
+                    return Err(format!(
+                        "{}: unit layout differs: {}",
+                        unit.id,
+                        layout.join(", ")
+                    ));
+                }
+                compiled_units.insert(unit.id.clone(), object.to_string_lossy().into_owned());
+            }
+        }
         if crate::score::exact_mismatch(&rendered) {
             mismatches.push(format!(
                 "{} {} differs in {} halfwords",
@@ -357,7 +394,10 @@ mod tests {
         let register = SourcePaths::load_for_game(root.path(), "tla").unwrap();
         let shared = shared_sources(root.path()).unwrap();
         let owner = SourceOwner::Main(0x081c_2a3c);
-        let extents = BTreeMap::from([(owner, 80)]);
+        let extents = BTreeMap::from([(
+            owner,
+            (80, PathBuf::from("games/COMMON/SRC/SOUND/CHANNEL_MUTE.C")),
+        )]);
         let ranges = [(0x081c_0000, 0x081c_4000)];
         let owners = scored_owners(
             root.path(),
@@ -407,6 +447,34 @@ mod tests {
         )
         .unwrap_err();
         assert!(error.contains("SOUND/ORPHAN.C"), "{error}");
+    }
+
+    #[test]
+    fn named_unit_members_without_repeated_source_paths_are_checked() {
+        let source = "games/COMMON/SRC/SOUND/CHANNEL_MUTE.C";
+        let register = r#"{"format":3,"owners":{
+            "main:081c2a3c":{"name":"Cgb_ChannelMute","source":"../../COMMON/SRC/SOUND/CHANNEL_MUTE.C"},
+            "main:081c2a8c":{"name":"Cgb_ChannelReset"}
+        }}"#;
+        let root = fixture(register, &[source]);
+        let register = SourcePaths::load_for_game(root.path(), "tla").unwrap();
+        let members = BTreeMap::from([
+            (SourceOwner::Main(0x081c2a3c), (80, PathBuf::from(source))),
+            (SourceOwner::Main(0x081c2a8c), (12, PathBuf::from(source))),
+        ]);
+        let owners = scored_owners(
+            root.path(),
+            &register,
+            &members,
+            &[(0x081c0000, 0x081c4000)],
+            &BTreeMap::new(),
+            &BTreeSet::from([PathBuf::from(source)]),
+        )
+        .unwrap();
+        assert_eq!(owners.len(), 2);
+        assert_eq!(owners[1].owner, SourceOwner::Main(0x081c2a8c));
+        assert_eq!(owners[1].source, source);
+        assert_eq!(owners[1].extent, 12);
     }
 
     #[test]

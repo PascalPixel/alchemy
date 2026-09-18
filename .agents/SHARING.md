@@ -66,7 +66,8 @@ production ROM gate, and for TLA `alchemy check tla-owners roms/tla-en.gba`,
 which `make verify` runs whenever that ROM is present. Shared interfaces live
 once under `games/COMMON/INCLUDE/<module>/` and contain declarations only;
 each game includes them through its own `INCLUDE`. It scores every TLA
-main-image owner the register gives a source over its interval in
+main-image owner with a source, including every named member of a declared
+unit, over its complete unit extent inside
 `games/THE LOST AGE/metrics/executable.json`, and every TLA overlay
 owner over its reviewed span from the listing that places it, and refuses a
 shared C file no TLA owner compiles. Each game's `source-paths.json` registers it

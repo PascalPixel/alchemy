@@ -170507,6 +170507,110 @@
               "extent": 54
             }
           }
+        },
+        "resource_382": {
+          "owners": {
+            "Effect_Move": {
+              "address": "0x02000104",
+              "extent": 54
+            }
+          }
+        },
+        "resource_387": {
+          "owners": {
+            "Effect_Move": {
+              "address": "0x02000104",
+              "extent": 54
+            }
+          }
+        },
+        "resource_396": {
+          "owners": {
+            "Effect_Move": {
+              "address": "0x02000104",
+              "extent": 54
+            }
+          }
+        },
+        "resource_39b": {
+          "owners": {
+            "Effect_Move": {
+              "address": "0x02000104",
+              "extent": 54
+            }
+          }
+        },
+        "resource_39c": {
+          "owners": {
+            "Effect_Move": {
+              "address": "0x02000104",
+              "extent": 54
+            }
+          }
+        },
+        "resource_39e": {
+          "owners": {
+            "Effect_Move": {
+              "address": "0x02000104",
+              "extent": 54
+            }
+          }
+        },
+        "resource_3a0": {
+          "owners": {
+            "Effect_Move": {
+              "address": "0x02000104",
+              "extent": 54
+            }
+          }
+        },
+        "resource_3a5": {
+          "owners": {
+            "Effect_Move": {
+              "address": "0x02000104",
+              "extent": 54
+            }
+          }
+        },
+        "resource_3a6": {
+          "owners": {
+            "Effect_Move": {
+              "address": "0x02000104",
+              "extent": 54
+            }
+          }
+        },
+        "resource_3b3": {
+          "owners": {
+            "Effect_Move": {
+              "address": "0x02000104",
+              "extent": 54
+            }
+          }
+        },
+        "resource_3be": {
+          "owners": {
+            "Effect_Move": {
+              "address": "0x02000104",
+              "extent": 54
+            }
+          }
+        },
+        "resource_3c0": {
+          "owners": {
+            "Effect_Move": {
+              "address": "0x02000104",
+              "extent": 54
+            }
+          }
+        },
+        "resource_3c9": {
+          "owners": {
+            "Effect_Move": {
+              "address": "0x02000104",
+              "extent": 54
+            }
+          }
         }
       }
     }

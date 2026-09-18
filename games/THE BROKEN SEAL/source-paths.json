@@ -18669,6 +18669,58 @@
     "resource_3c6:0200120c": {
       "name": "Scene_Initialize",
       "source": "FIELD/RARIBERO_MACHI/FLAGGED_CUE.C"
+    },
+    "resource_382:02000104": {
+      "name": "Effect_Move",
+      "source": "FIELD/COMMON/EFFECT/MOVE.C"
+    },
+    "resource_387:02000104": {
+      "name": "Effect_Move",
+      "source": "FIELD/COMMON/EFFECT/MOVE.C"
+    },
+    "resource_396:02000104": {
+      "name": "Effect_Move",
+      "source": "FIELD/COMMON/EFFECT/MOVE.C"
+    },
+    "resource_39b:02000104": {
+      "name": "Effect_Move",
+      "source": "FIELD/COMMON/EFFECT/MOVE.C"
+    },
+    "resource_39c:02000104": {
+      "name": "Effect_Move",
+      "source": "FIELD/COMMON/EFFECT/MOVE.C"
+    },
+    "resource_39e:02000104": {
+      "name": "Effect_Move",
+      "source": "FIELD/COMMON/EFFECT/MOVE.C"
+    },
+    "resource_3a0:02000104": {
+      "name": "Effect_Move",
+      "source": "FIELD/COMMON/EFFECT/MOVE.C"
+    },
+    "resource_3a5:02000104": {
+      "name": "Effect_Move",
+      "source": "FIELD/COMMON/EFFECT/MOVE.C"
+    },
+    "resource_3a6:02000104": {
+      "name": "Effect_Move",
+      "source": "FIELD/COMMON/EFFECT/MOVE.C"
+    },
+    "resource_3b3:02000104": {
+      "name": "Effect_Move",
+      "source": "FIELD/COMMON/EFFECT/MOVE.C"
+    },
+    "resource_3be:02000104": {
+      "name": "Effect_Move",
+      "source": "FIELD/COMMON/EFFECT/MOVE.C"
+    },
+    "resource_3c0:02000104": {
+      "name": "Effect_Move",
+      "source": "FIELD/COMMON/EFFECT/MOVE.C"
+    },
+    "resource_3c9:02000104": {
+      "name": "Effect_Move",
+      "source": "FIELD/COMMON/EFFECT/MOVE.C"
     }
   }
 }

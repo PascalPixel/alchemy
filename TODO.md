@@ -30,6 +30,18 @@ and 1,043,350 across all 114 overlays. Grow verified source coverage against
 that fixed inventory; its denominator is not a claim of a complete TLA build.
 Credit only ranges meeting [COMPLETION](.agents/COMPLETION.md).
 
+- Close the field-script operand module at `08025b58–08026320` using TBS's
+  `FIELD/COMMON/SCRIPT/OPERANDS.C`. A bounded cross-game probe reproduced
+  38 complete functions (1,820 bytes); three 2-halfword scheduling differences
+  remain at `08025bb4` (46 bytes), `08025c5c` (46), and `08025f9c` (52).
+  The three dispatchers bind their handler table to `0802f2dc`, independently
+  read from their reference literal pools. Five ordinary source hypotheses
+  did not close the scheduling differences; do not repeat them or change
+  compiler flags. Swapped comparison operands, explicit loaded temporaries,
+  direct Boolean assignment, in-place input narrowing, and switch dispatch
+  were tested. Candidate and results are under `out/field-operands-*`.
+  Nothing from this probe is adopted or credited yet.
+
 ### Alchemy builds, Psynergy reads
 
 The law in [TOOLING](.agents/TOOLING.md). Psynergy still holds operations that

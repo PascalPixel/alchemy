@@ -1446,6 +1446,21 @@
           "address": "0x0802d23c",
           "extent": 10,
           "state": "exact-c"
+        },
+        {
+          "address": "0x0802d248",
+          "extent": 32,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0802d268",
+          "extent": 32,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0802d288",
+          "extent": 40,
+          "state": "exact-c"
         }
       ],
       "overlay": null

@@ -9,4 +9,9 @@ enum {
     CURVE_FULL_STEPS = 16,
 };
 
+s32 Curve_GetFirstSampleA(const s8 *samples);
+s32 Curve_LerpTwoSamples(const s8 *samples, s32 position);
+s32 Curve_LerpTwoSamplesB(const s8 *samples, s32 unused, s32 position);
+s32 Curve_StepAtSummedPosition(const s8 *samples, s32 start, s32 end);
+
 #endif

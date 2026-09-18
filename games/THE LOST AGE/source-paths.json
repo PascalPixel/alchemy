@@ -485,6 +485,15 @@
     "main:0802d23c": {
       "name": "Curve_GetFirstSampleA",
       "source": "LIB/CURVE.C"
+    },
+    "main:0802d248": {
+      "name": "Curve_LerpTwoSamples"
+    },
+    "main:0802d268": {
+      "name": "Curve_LerpTwoSamplesB"
+    },
+    "main:0802d288": {
+      "name": "Curve_StepAtSummedPosition"
     }
   }
 }

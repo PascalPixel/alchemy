@@ -22,7 +22,7 @@ with `make progress`; do not maintain a second score in this task list.
 Parked for a stronger model. Agents must not burn a 10-minute window here.
 
 - `main:081c342c` Audio_EmptyCallback (2 B) — scores exact with `--size 2`, but lies outside audited main executable ranges in metrics/executable.json; bounce until ranges include it.
-- `main:0802d246` Curve_LerpTwoSamples family — TBS body matches except Thumb epilogue (`pop {pc}` vs `pop {r1}; bx r1`); needs TLA-specific spelling.
+- `main:0802d2b0` Curve_StepAtDifferencePosition (48 B) — scheduling-floor on TLA; bounce. (LerpTwoSamples / LerpTwoSamplesB / StepAtSummedPosition adopted via TLA `pop {pc}` spelling.)
 
 - `main:080fa514` (72 B), `main:08092878` (172 B) — still non-exact.
 - `resource_3bd:020013f8` (6220 B) — scheduling-floor, 2 halfwords.

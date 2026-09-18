@@ -494,6 +494,14 @@
     },
     "main:0802d288": {
       "name": "Curve_StepAtSummedPosition"
+    },
+    "main:08023f14": {
+      "name": "Script_ClearByte54",
+      "source": "FIELD/COMMON/SCRIPT/OPERANDS_CLEAR_BYTE54.C"
+    },
+    "main:08023f28": {
+      "name": "Script_SetByte54",
+      "source": "FIELD/COMMON/SCRIPT/OPERANDS_SET_BYTE54.C"
     }
   }
 }

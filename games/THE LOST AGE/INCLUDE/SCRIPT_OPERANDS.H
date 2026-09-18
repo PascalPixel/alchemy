@@ -73,4 +73,7 @@ typedef char ScriptOperands_size[
 
 #undef SCRIPT_OPERANDS_OFFSET
 
+s32 Script_ClearByte54(struct ScriptOperands *work);
+s32 Script_SetByte54(struct ScriptOperands *work);
+
 #endif

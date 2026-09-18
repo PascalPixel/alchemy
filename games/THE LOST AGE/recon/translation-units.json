@@ -1480,6 +1480,38 @@
         }
       ],
       "overlay": null
+    },
+    {
+      "id": "tla-script-operands-clear-byte54",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS_CLEAR_BYTE54.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x08023f14",
+          "extent": 18,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-script-operands-set-byte54",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS_SET_BYTE54.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x08023f28",
+          "extent": 18,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
     }
   ]
 }

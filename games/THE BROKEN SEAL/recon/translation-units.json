@@ -14137,11 +14137,6 @@
           "state": "exact-c"
         },
         {
-          "address": "0x02000104",
-          "extent": 54,
-          "state": "exact-c"
-        },
-        {
           "address": "0x02000314",
           "extent": 8,
           "state": "exact-c"
@@ -27225,11 +27220,6 @@
           "state": "exact-c"
         },
         {
-          "address": "0x02000104",
-          "extent": 56,
-          "state": "exact-c"
-        },
-        {
           "address": "0x02000314",
           "extent": 60,
           "state": "exact-c"
@@ -34427,11 +34417,6 @@
         {
           "address": "0x020000a0",
           "extent": 98,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x02000104",
-          "extent": 54,
           "state": "exact-c"
         },
         {
@@ -76765,11 +76750,6 @@
           "state": "exact-c"
         },
         {
-          "address": "0x02000104",
-          "extent": 56,
-          "state": "exact-c"
-        },
-        {
           "address": "0x02000314",
           "extent": 48,
           "state": "exact-c"
@@ -82064,11 +82044,6 @@
           "address": "0x020000a0",
           "extent": 98,
           "state": "exact-c"
-        },
-        {
-          "address": "0x02000104",
-          "extent": 54,
-          "state": "exact-c"
         }
       ],
       "compiler_gaps": [
@@ -82079,10 +82054,6 @@
         {
           "start": "0x0200009e",
           "end": "0x020000a0"
-        },
-        {
-          "start": "0x02000102",
-          "end": "0x02000104"
         }
       ],
       "data": {
@@ -92153,11 +92124,6 @@
         {
           "address": "0x020000a0",
           "extent": 98,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x02000104",
-          "extent": 54,
           "state": "exact-c"
         },
         {
@@ -109462,14 +109428,31 @@
       "source": "games/COMMON/SRC/SOUND/PCM_KEY_TO_FREQUENCY.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
-        "Audio_UmulHigh32": {"address": "0x080f95e0", "kind": "thumb"},
-        "Sound_PcmFrequencySteps": {"address": "0x080fb8e4", "kind": "data"},
-        "Sound_PcmPitchCodes": {"address": "0x080fb830", "kind": "data"}
+        "Audio_UmulHigh32": {
+          "address": "0x080f95e0",
+          "kind": "thumb"
+        },
+        "Sound_PcmFrequencySteps": {
+          "address": "0x080fb8e4",
+          "kind": "data"
+        },
+        "Sound_PcmPitchCodes": {
+          "address": "0x080fb830",
+          "kind": "data"
+        }
       },
       "local_symbols": [],
       "owners": [
-        {"address": "0x080fa1fc", "extent": 100, "state": "exact-c"},
-        {"address": "0x080fa260", "extent": 2, "state": "exact-c"}
+        {
+          "address": "0x080fa1fc",
+          "extent": 100,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080fa260",
+          "extent": 2,
+          "state": "exact-c"
+        }
       ],
       "overlay": null
     },
@@ -109479,12 +109462,22 @@
       "source": "games/COMMON/SRC/SOUND/MUSIC_TRACK_DISPATCH_STREAM_COMMAND.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
-        "Runtime_InvokeWorkEntryWithArgs": {"address": "0x080072ec", "kind": "thumb"},
-        "Sound_ExtendedCommandTable": {"address": "0x080fba48", "kind": "data"}
+        "Runtime_InvokeWorkEntryWithArgs": {
+          "address": "0x080072ec",
+          "kind": "thumb"
+        },
+        "Sound_ExtendedCommandTable": {
+          "address": "0x080fba48",
+          "kind": "data"
+        }
       },
       "local_symbols": [],
       "owners": [
-        {"address": "0x080fb670", "extent": 32, "state": "exact-c"}
+        {
+          "address": "0x080fb670",
+          "extent": 32,
+          "state": "exact-c"
+        }
       ],
       "overlay": null
     },
@@ -109494,11 +109487,18 @@
       "source": "games/COMMON/SRC/SOUND/INITIALIZE_CGB.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
-        "Sound_CommandTable": {"address": "0x02004000", "kind": "data"}
+        "Sound_CommandTable": {
+          "address": "0x02004000",
+          "kind": "data"
+        }
       },
       "local_symbols": [],
       "owners": [
-        {"address": "0x080fa55c", "extent": 280, "state": "exact-c"}
+        {
+          "address": "0x080fa55c",
+          "extent": 280,
+          "state": "exact-c"
+        }
       ],
       "overlay": null
     },
@@ -109508,14 +109508,38 @@
       "source": "games/COMMON/SRC/SOUND/SOUND.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
-        "MusicPlayer_BeginFadeOut": {"address": "0x080fa280", "kind": "thumb"},
-        "Sound_CgbNotes": {"address": "0x02004090", "kind": "data"},
-        "Sound_Mixer": {"address": "0x080f9674", "kind": "thumb"},
-        "Sound_PlayerCount": {"address": "0x00000008", "kind": "data"},
-        "Sound_PlayerSlots": {"address": "0x080fc624", "kind": "data"},
-        "Sound_SongTable": {"address": "0x080fc684", "kind": "data"},
-        "Sound_Work": {"address": "0x02003050", "kind": "data"},
-        "Sound_WorkBytes": {"address": "0x02004350", "kind": "data"}
+        "MusicPlayer_BeginFadeOut": {
+          "address": "0x080fa280",
+          "kind": "thumb"
+        },
+        "Sound_CgbNotes": {
+          "address": "0x02004090",
+          "kind": "data"
+        },
+        "Sound_Mixer": {
+          "address": "0x080f9674",
+          "kind": "thumb"
+        },
+        "Sound_PlayerCount": {
+          "address": "0x00000008",
+          "kind": "data"
+        },
+        "Sound_PlayerSlots": {
+          "address": "0x080fc624",
+          "kind": "data"
+        },
+        "Sound_SongTable": {
+          "address": "0x080fc684",
+          "kind": "data"
+        },
+        "Sound_Work": {
+          "address": "0x02003050",
+          "kind": "data"
+        },
+        "Sound_WorkBytes": {
+          "address": "0x02004350",
+          "kind": "data"
+        }
       },
       "local_symbols": [],
       "owners": [
@@ -125185,11 +125209,6 @@
           "state": "exact-c"
         },
         {
-          "address": "0x02000ab0",
-          "extent": 54,
-          "state": "exact-c"
-        },
-        {
           "address": "0x02000cc0",
           "extent": 14,
           "state": "exact-c"
@@ -138568,11 +138587,6 @@
           "state": "exact-c"
         },
         {
-          "address": "0x02000ab0",
-          "extent": 54,
-          "state": "exact-c"
-        },
-        {
           "address": "0x02000cc0",
           "extent": 14,
           "state": "exact-c"
@@ -145078,11 +145092,6 @@
         {
           "address": "0x02000a4c",
           "extent": 98,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x02000ab0",
-          "extent": 54,
           "state": "exact-c"
         },
         {
@@ -151935,11 +151944,6 @@
         {
           "address": "0x02000a4c",
           "extent": 98,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x02000ab0",
-          "extent": 54,
           "state": "exact-c"
         },
         {
@@ -160194,11 +160198,6 @@
         {
           "address": "0x02000098",
           "extent": 72,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x020000e0",
-          "extent": 54,
           "state": "exact-c"
         },
         {
@@ -170412,6 +170411,104 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "effect-move",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3ab",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x02000104",
+          "extent": 54,
+          "state": "exact-c"
+        }
+      ],
+      "instances": {
+        "resource_380": {
+          "owners": {
+            "Effect_Move": {
+              "address": "0x02000104",
+              "extent": 54
+            }
+          }
+        },
+        "resource_385": {
+          "owners": {
+            "Effect_Move": {
+              "address": "0x02000104",
+              "extent": 54
+            }
+          }
+        },
+        "resource_38a": {
+          "owners": {
+            "Effect_Move": {
+              "address": "0x02000104",
+              "extent": 54
+            }
+          }
+        },
+        "resource_39d": {
+          "owners": {
+            "Effect_Move": {
+              "address": "0x02000104",
+              "extent": 54
+            }
+          }
+        },
+        "resource_39f": {
+          "owners": {
+            "Effect_Move": {
+              "address": "0x02000ab0",
+              "extent": 54
+            }
+          }
+        },
+        "resource_3a1": {
+          "owners": {
+            "Effect_Move": {
+              "address": "0x02000104",
+              "extent": 54
+            }
+          }
+        },
+        "resource_3b2": {
+          "owners": {
+            "Effect_Move": {
+              "address": "0x02000ab0",
+              "extent": 54
+            }
+          }
+        },
+        "resource_3c4": {
+          "owners": {
+            "Effect_Move": {
+              "address": "0x02000ab0",
+              "extent": 54
+            }
+          }
+        },
+        "resource_3c5": {
+          "owners": {
+            "Effect_Move": {
+              "address": "0x02000ab0",
+              "extent": 54
+            }
+          }
+        },
+        "resource_3c8": {
+          "owners": {
+            "Effect_Move": {
+              "address": "0x020000e0",
+              "extent": 54
+            }
+          }
+        }
+      }
     }
   ]
 }

@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
+#define OverlayObject_IntegrateVelocities Effect_Move
 
 #define NULL ((void *)0)
 #define RunOverlayObjectCommand0 Func_02004e8c
@@ -1033,16 +1034,6 @@ void *OverlayObject_PrepareObjectWithCommand15(s32 arg0, s32 arg1, s32 arg2, s32
         return object;
     }
     return 0;
-}
-
-void OverlayObject_IntegrateVelocities(union FieldObject *object)
-{
-    object->effect.x += object->effect.velocity_x;
-    object->effect.y += object->effect.velocity_y;
-    object->effect.z += object->effect.velocity_z;
-    object->effect.scale_x += object->effect.scale_rate_x;
-    object->effect.scale_y += object->effect.scale_rate_y;
-    object->effect.sprite->rotation += object->effect.spin;
 }
 
 s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b)

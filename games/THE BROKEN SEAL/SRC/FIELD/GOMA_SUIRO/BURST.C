@@ -161,7 +161,8 @@ void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg
     return NULL;
 }
 
-#define SceneEffect_UpdateMotion Func_02000104
+void Effect_Move(void *object);
+#define SceneEffect_UpdateMotion Effect_Move
 
 /* The object is accessed through word fields and a linked record. Keep the
  * shared storage view so the record load follows the position stores. */
@@ -182,18 +183,6 @@ union MotionWork {
     u8 bytes[102];
 };
 
-void SceneEffect_UpdateMotion(union MotionWork *work)
-{
-    u16 *record;
-
-    work->fields.x += work->fields.velocity_x;
-    work->fields.y += work->fields.velocity_y;
-    work->fields.z += work->fields.velocity_z;
-    work->fields.accum_x += work->fields.rate_x;
-    work->fields.accum_y += work->fields.rate_y;
-    record = work->fields.record;
-    record[15] += work->fields.angle_step;
-}
 
 s32 SceneData_GetTable8818OrTable88d8(void)
 {

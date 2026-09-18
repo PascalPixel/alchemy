@@ -14,7 +14,8 @@
 #define OverlayObject_SetHandleFlagBits2And3 Func_02000030
 #define OverlayObject_CreateConfiguredObject Func_020000a0
 #define UpdateOverlayObjectAngle Func_02000314
-#define SceneEffect_UpdateMotion Func_02000104
+void Effect_Move(void *object);
+#define SceneEffect_UpdateMotion Effect_Move
 #define SceneData_GetTableCd88 Func_0200036c
 #define SceneData_ReturnZero Func_02000374
 #define SceneData_GetTableCDB8 Func_02000378
@@ -1557,17 +1558,6 @@ void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT_BODY.INC"
 }
 
-void SceneEffect_UpdateMotion(union MotionWork *work)
-{
-    u16 *record;
-    work->fields.x += work->fields.velocity_x;
-    work->fields.y += work->fields.velocity_y;
-    work->fields.z += work->fields.velocity_z;
-    work->fields.accum_x += work->fields.rate_x;
-    work->fields.accum_y += work->fields.rate_y;
-    record = work->fields.record;
-    record[15] += work->fields.angle_step;
-}
 
 s32 UpdateOverlayObjectAngle(struct OverlayObject *object)
 {

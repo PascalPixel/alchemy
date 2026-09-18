@@ -7,7 +7,8 @@
 #define OverlayObject_SetEntryField Func_02000030
 #define OverlayObject_SpawnWithMode14 Func_02000048
 #define OverlayObject_CreateConfigured Func_020000a0
-#define OverlayObject_IntegrateVelocities Func_02000104
+void Effect_Move(void *object);
+#define OverlayObject_IntegrateVelocities Effect_Move
 #define SceneData_GetTable8778 Func_02000314
 #define SceneData_ReturnZero Func_0200031c
 #define SceneData_GetTable8868 Func_02000320
@@ -153,20 +154,6 @@ void *OverlayObject_CreateConfigured(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
         return ret;
     }
     return NULL;
-}
-
-void OverlayObject_IntegrateVelocities(void *arg0)
-{
-    union Slot *s = (union Slot *)arg0;
-    union Slot *obj;
-
-    s[2].w += s[17].w;
-    s[3].w += s[18].w;
-    s[4].w += s[19].w;
-    s[6].w += s[12].w;
-    s[7].w += s[13].w;
-    obj = (union Slot *)s[20].p;
-    obj[7].h[1] += s[25].h[0];
 }
 
 s32 SceneData_GetTable8778(void)

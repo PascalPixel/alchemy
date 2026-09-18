@@ -3,7 +3,7 @@
   "owners": {
     "resource_3ab:02000104": {
       "name": "Effect_Move",
-      "source": "FIELD/RUNPA_MURA/EFFECT.C"
+      "source": "FIELD/COMMON/EFFECT/MOVE.C"
     },
     "resource_3ab:020007f4": {
       "name": "EastGuard_MindRead",
@@ -71,8 +71,8 @@
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_385:02000104": {
-      "name": "Effect_UpdateMotion",
-      "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
+      "name": "Effect_Move",
+      "source": "FIELD/COMMON/EFFECT/MOVE.C"
     },
     "resource_3aa:02001494": {
       "name": "Scene_RunPartySequence",
@@ -6833,8 +6833,8 @@
       "source": "FIELD/VINASU_CHOJO/SCRIPTED_PRESENTATION.C"
     },
     "resource_3c8:020000e0": {
-      "name": "OverlayObject_IntegrateVelocities",
-      "source": "FIELD/VINASU_HEYA/ENTRY_SETUP.C"
+      "name": "Effect_Move",
+      "source": "FIELD/COMMON/EFFECT/MOVE.C"
     },
     "resource_3b1:020008a8": {
       "name": "Dialogue_ShowLine1E19Or1D50",
@@ -9075,8 +9075,8 @@
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_3a1:02000104": {
-      "name": "OvObj_IntegrateVelocities",
-      "source": "FIELD/SHIAN_HEYA/FLAGGED_OBJECT.C"
+      "name": "Effect_Move",
+      "source": "FIELD/COMMON/EFFECT/MOVE.C"
     },
     "resource_36f:02000030": {
       "name": "FunctionHead_02000030",
@@ -10887,8 +10887,8 @@
       "source": "FIELD/HAIDIA_HEYA/TIMED_EVENTS.C"
     },
     "resource_380:02000104": {
-      "name": "Effect_UpdateMotion",
-      "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
+      "name": "Effect_Move",
+      "source": "FIELD/COMMON/EFFECT/MOVE.C"
     },
     "resource_399:02000f90": {
       "name": "Scene_RunPrimaryScriptChoreography",
@@ -11572,8 +11572,8 @@
       "source": "FIELD/GOMA_SUIRO/BURST.C"
     },
     "resource_38a:02000104": {
-      "name": "SceneEffect_UpdateMotion",
-      "source": "FIELD/GOMA_SUIRO/BURST.C"
+      "name": "Effect_Move",
+      "source": "FIELD/COMMON/EFFECT/MOVE.C"
     },
     "resource_38a:020004c4": {
       "name": "SceneEffect_RotateRecord",
@@ -12501,8 +12501,8 @@
       "source": "FIELD/MAKYURI_CHOJO/AERIE.C"
     },
     "resource_39d:02000104": {
-      "name": "OverlayObject_ApplyVelocity",
-      "source": "FIELD/MAKYURI_CHOJO/AERIE.C"
+      "name": "Effect_Move",
+      "source": "FIELD/COMMON/EFFECT/MOVE.C"
     },
     "resource_39d:02000030": {
       "name": "SetOverlayObjectRecordField1",
@@ -15600,8 +15600,8 @@
       "source": "FIELD/TAKARA_SHIMA/ISLAND_AND_CAVES.C"
     },
     "resource_3b2:02000ab0": {
-      "name": "OverlayObject_IntegrateVelocities",
-      "source": "FIELD/TAKARA_SHIMA/ISLAND_AND_CAVES.C"
+      "name": "Effect_Move",
+      "source": "FIELD/COMMON/EFFECT/MOVE.C"
     },
     "resource_3b2:02001214": {
       "name": "FieldScene_RunScene3b2SequenceA",
@@ -16041,8 +16041,8 @@
       "source": "FIELD/BABI_CHIKA/MAP_INIT.C"
     },
     "resource_3c4:02000ab0": {
-      "name": "OverlayObject_IntegrateVelocities",
-      "source": "FIELD/BABI_CHIKA/MAP_INIT.C"
+      "name": "Effect_Move",
+      "source": "FIELD/COMMON/EFFECT/MOVE.C"
     },
     "resource_3c4:02001744": {
       "name": "FieldScene_RunSupplementalSequenceOne",
@@ -17223,8 +17223,8 @@
       "source": "FIELD/MOGORU_MORI/WAYPOINT.C"
     },
     "resource_39f:02000ab0": {
-      "name": "OverlayObject_IntegrateVelocities",
-      "source": "FIELD/MOGORU_MORI/WAYPOINT.C"
+      "name": "Effect_Move",
+      "source": "FIELD/COMMON/EFFECT/MOVE.C"
     },
     "resource_39f:02001d04": {
       "name": "FieldScene_RunScene39fSequenceA",
@@ -17689,8 +17689,8 @@
       "source": "FIELD/BABI_IRIGUCHI/BRANCHING_EVENT.C"
     },
     "resource_3c5:02000ab0": {
-      "name": "OverlayObject_IntegrateVelocities",
-      "source": "FIELD/BABI_IRIGUCHI/BRANCHING_EVENT.C"
+      "name": "Effect_Move",
+      "source": "FIELD/COMMON/EFFECT/MOVE.C"
     },
     "resource_3c5:02000eac": {
       "name": "FieldScene_RunScene3c5SequenceA",

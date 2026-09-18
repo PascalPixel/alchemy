@@ -1,0 +1,835 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 830 1475.5555555555557" width="830" height="1475.5555555555557" shape-rendering="crispEdges" role="img" aria-label="ROM contents box tree">
+<metadata data-shared="[]" data-usage-revision="bf21a9e8fbc5a384"/>
+<rect x="0" y="0" width="830" height="1475.5555555555557" fill="#1f7f93"/>
+<title>Alchemy</title>
+<style>.label{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;fill:#fff;text-shadow:1px 1px 0 #000;}</style>
+<svg x="8" y="0" width="718" height="30" overflow="hidden"><text class="label" x="0" y="22">Alchemy</text></svg>
+<text class="label" x="822" y="22" text-anchor="end">16,777,216</text>
+<rect x="4" y="32" width="822" height="1407.5555555555557" fill="#fff"/>
+<g aria-label="0x080000c0–0x08010000: 65,344 bytes · Unknown · 0x080000c0" data-node="leaf" data-kind="file" data-bytes="65344" data-address="0x080000c0">
+<title>0x080000c0–0x08010000: 65,344 bytes · Unknown · 0x080000c0</title>
+<rect x="4.5" y="32.49999999999999" width="81.72478447796647" height="53.47378326609749" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x08010000–0x080132cc: 13,004 bytes · Unknown · 0x08010000" data-node="leaf" data-kind="file" data-bytes="13004" data-address="0x08010000">
+<title>0x08010000–0x080132cc: 13,004 bytes · Unknown · 0x08010000</title>
+<rect x="4.5" y="86.97378326609748" width="28.37505335427226" height="29.529223871274528" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x080132d0–0x08016d5c: 14,988 bytes · Unknown · 0x080132d0" data-node="leaf" data-kind="file" data-bytes="14988" data-address="0x080132d0">
+<title>0x080132d0–0x08016d5c: 14,988 bytes · Unknown · 0x080132d0</title>
+<rect x="4.5" y="117.50300713737201" width="28.37505335427226" height="34.187019946375166" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x08016d7c–0x08016db4: 56 bytes · Unknown · 0x08016d7c" data-node="leaf" data-kind="file" data-bytes="56" data-address="0x08016d7c">
+<title>0x08016d7c–0x08016db4: 56 bytes · Unknown · 0x08016d7c</title>
+<rect x="4.119272258399017" y="152.30929934214618" width="0.2385445167980346" height="7.8562543072679905" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x08016dd0–0x08017b10: 3,392 bytes · Unknown · 0x08016dd0" data-node="leaf" data-kind="file" data-bytes="3392" data-address="0x08016dd0">
+<title>0x08016dd0–0x08017b10: 3,392 bytes · Unknown · 0x08016dd0</title>
+<rect x="4.977089033596069" y="152.69002708374717" width="27.89796432067619" height="7.094798824066025" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x08017cd0–0x08020000: 33,584 bytes · Unknown · 0x08017cd0" data-node="leaf" data-kind="file" data-bytes="33584" data-address="0x08017cd0">
+<title>0x08017cd0–0x08020000: 33,584 bytes · Unknown · 0x08017cd0</title>
+<rect x="33.87505335427226" y="86.97378326609748" width="52.349731123694205" height="42.41278557056708" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x08020000–0x08024c50: 19,536 bytes · Unknown · 0x08020000" data-node="leaf" data-kind="file" data-bytes="19536" data-address="0x08020000">
+<title>0x08020000–0x08024c50: 19,536 bytes · Unknown · 0x08020000</title>
+<rect x="33.87505335427226" y="130.38656883666457" width="43.32047742951565" height="29.398257071148635" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x08024c6e–0x08024ed4: 614 bytes · Unknown · 0x08024c6e" data-node="leaf" data-kind="file" data-bytes="614" data-address="0x08024c6e">
+<title>0x08024c6e–0x08024ed4: 614 bytes · Unknown · 0x08024c6e</title>
+<rect x="78.19553078378792" y="130.38656883666457" width="8.029253694178557" height="3.6895803622324785" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x08024ede–0x08025b58: 3,194 bytes · Unknown · 0x08024ede" data-node="leaf" data-kind="file" data-bytes="3194" data-address="0x08024ede">
+<title>0x08024ede–0x08025b58: 3,194 bytes · Unknown · 0x08024ede</title>
+<rect x="78.19553078378792" y="135.07614919889704" width="8.029253694178557" height="23.394983187248428" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x08025b82–0x08025b84: 2 bytes · Unknown · 0x08025b82" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08025b82">
+<title>0x08025b82–0x08025b84: 2 bytes · Unknown · 0x08025b82</title>
+<rect x="77.72177861429425" y="158.9973802166518" width="0.05249566101266603" height="1.261197860655064" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x08025bb4–0x08025be4: 48 bytes · Unknown · 0x08025bb4" data-node="leaf" data-kind="file" data-bytes="48" data-address="0x08025bb4">
+<title>0x08025bb4–0x08025be4: 48 bytes · Unknown · 0x08025bb4</title>
+<rect x="78.12894548623018" y="159.2995557665624" width="1.8629449677741041" height="0.6568467608338651" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x08025c5c–0x08025c8c: 48 bytes · Unknown · 0x08025c5c" data-node="leaf" data-kind="file" data-bytes="48" data-address="0x08025c5c">
+<title>0x08025c5c–0x08025c8c: 48 bytes · Unknown · 0x08025c5c</title>
+<rect x="80.64873721483815" y="159.2995557665624" width="1.8629449677741046" height="0.6568467608338651" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x08025ee6–0x08025ee8: 2 bytes · Unknown · 0x08025ee6" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08025ee6">
+<title>0x08025ee6–0x08025ee8: 2 bytes · Unknown · 0x08025ee6</title>
+<rect x="82.91884905454819" y="159.04987587766448" width="0.15748698303799813" height="0.2804108575179119" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x08025f22–0x08025f24: 2 bytes · Unknown · 0x08025f22" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08025f22">
+<title>0x08025f22–0x08025f24: 2 bytes · Unknown · 0x08025f22</title>
+<rect x="82.91884905454819" y="159.48777371822038" width="0.15748698303799813" height="0.28041085751791195" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x08025f5e–0x08025f60: 2 bytes · Unknown · 0x08025f5e" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08025f5e">
+<title>0x08025f5e–0x08025f60: 2 bytes · Unknown · 0x08025f5e</title>
+<rect x="82.91884905454819" y="159.9256715587763" width="0.15748698303799813" height="0.28041085751791195" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x08025f9a–0x08025fd0: 54 bytes · Unknown · 0x08025f9a" data-node="leaf" data-kind="file" data-bytes="54" data-address="0x08025f9a">
+<title>0x08025f9a–0x08025fd0: 54 bytes · Unknown · 0x08025f9a</title>
+<rect x="83.48350290952212" y="159.2995557665624" width="2.1779189338501004" height="0.6568467608338651" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x0802600a–0x0802600c: 2 bytes · Unknown · 0x0802600a" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0802600a">
+<title>0x0802600a–0x0802600c: 2 bytes · Unknown · 0x0802600a</title>
+<rect x="86.05109016163726" y="159.0323773239936" width="0.12248987569622079" height="0.4405216335899493" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x08026046–0x08026048: 2 bytes · Unknown · 0x08026046" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08026046">
+<title>0x08026046–0x08026048: 2 bytes · Unknown · 0x08026046</title>
+<rect x="86.30520141384235" y="159.04150882480624" width="0.3492066254633407" height="0.1407528773215425" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x08026082–0x08026084: 2 bytes · Unknown · 0x08026082" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08026082">
+<title>0x08026082–0x08026084: 2 bytes · Unknown · 0x08026082</title>
+<rect x="86.30520141384235" y="159.32301457944934" width="0.3492066254633407" height="0.1407528773215425" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x080260be–0x080260c0: 2 bytes · Unknown · 0x080260be" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x080260be">
+<title>0x080260be–0x080260c0: 2 bytes · Unknown · 0x080260be</title>
+<rect x="86.08171263056131" y="159.62601130220384" width="0.1837348135443312" height="0.19160619264644885" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x080260fa–0x080260fc: 2 bytes · Unknown · 0x080260fa" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x080260fa">
+<title>0x080260fa–0x080260fc: 2 bytes · Unknown · 0x080260fa</title>
+<rect x="86.44918225764998" y="159.62601130220384" width="0.1837348135443312" height="0.19160619264644885" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x0802623a–0x0802623c: 2 bytes · Unknown · 0x0802623a" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x0802623a">
+<title>0x0802623a–0x0802623c: 2 bytes · Unknown · 0x0802623a</title>
+<rect x="86.08171263056131" y="160.00135230839462" width="0.1837348135443312" height="0.19160619264644885" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x08026276–0x08026278: 2 bytes · Unknown · 0x08026276" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x08026276">
+<title>0x08026276–0x08026278: 2 bytes · Unknown · 0x08026276</title>
+<rect x="86.44918225764998" y="160.00135230839462" width="0.1837348135443312" height="0.19160619264644885" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x08026320–0x0802d23c: 28,444 bytes · Unknown · 0x08026320" data-node="leaf" data-kind="file" data-bytes="28444" data-address="0x08026320">
+<title>0x08026320–0x0802d23c: 28,444 bytes · Unknown · 0x08026320</title>
+<rect x="87.22478447796647" y="32.5" width="68.20753326269273" height="27.34358409747604" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x0802d246–0x0802f380: 8,506 bytes · Unknown · 0x0802d246" data-node="leaf" data-kind="file" data-bytes="8506" data-address="0x0802d246">
+<title>0x0802d246–0x0802f380: 8,506 bytes · Unknown · 0x0802d246</title>
+<rect x="156.4323177406592" y="32.5" width="19.69607924105135" height="27.34358409747604" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x08030310–0x08040000: 64,752 bytes · Unknown · 0x08030310" data-node="leaf" data-kind="file" data-bytes="64752" data-address="0x08030310">
+<title>0x08030310–0x08040000: 64,752 bytes · Unknown · 0x08030310</title>
+<rect x="87.22478447796647" y="60.84358409747603" width="88.90361250374409" height="48.66992577753094" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x08040000–0x08050000: 65,536 bytes · Unknown · 0x08040000" data-node="leaf" data-kind="file" data-bytes="65536" data-address="0x08040000">
+<title>0x08040000–0x08050000: 65,536 bytes · Unknown · 0x08040000</title>
+<rect x="87.22478447796647" y="110.51350987500697" width="88.90361250374409" height="49.27131603280622" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x08050000–0x0805f914: 63,764 bytes · Unknown · 0x08050000" data-node="leaf" data-kind="file" data-bytes="63764" data-address="0x08050000">
+<title>0x08050000–0x0805f914: 63,764 bytes · Unknown · 0x08050000</title>
+<rect x="177.12839698171055" y="32.49999999999999" width="76.24182100884748" height="55.9299124682552" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x080aa0dc–0x080b0000: 24,356 bytes · Unknown · 0x080aa0dc" data-node="leaf" data-kind="file" data-bytes="24356" data-address="0x080aa0dc">
+<title>0x080aa0dc–0x080b0000: 24,356 bytes · Unknown · 0x080aa0dc</title>
+<rect x="254.37021799055805" y="32.49999999999999" width="28.504137012914654" height="55.9299124682552" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x080b0000–0x080c0000: 65,536 bytes · Unknown · 0x080b0000" data-node="leaf" data-kind="file" data-bytes="65536" data-address="0x080b0000">
+<title>0x080b0000–0x080c0000: 65,536 bytes · Unknown · 0x080b0000</title>
+<rect x="177.12839698171055" y="89.4299124682552" width="62.3393371080889" height="70.354913439558" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x080c0000–0x080caf70: 44,912 bytes · Unknown · 0x080c0000" data-node="leaf" data-kind="file" data-bytes="44912" data-address="0x080c0000">
+<title>0x080c0000–0x080caf70: 44,912 bytes · Unknown · 0x080c0000</title>
+<rect x="240.46773408979945" y="89.4299124682552" width="42.40662091367324" height="70.354913439558" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x080cafc4–0x080d0000: 20,540 bytes · Unknown · 0x080cafc4" data-node="leaf" data-kind="file" data-bytes="20540" data-address="0x080cafc4">
+<title>0x080cafc4–0x080d0000: 20,540 bytes · Unknown · 0x080cafc4</title>
+<rect x="283.8743550034727" y="32.50000000000001" width="26.408405071249316" height="50.6813847928528" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x080d0000–0x080e0000: 65,536 bytes · Unknown · 0x080d0000" data-node="leaf" data-kind="file" data-bytes="65536" data-address="0x080d0000">
+<title>0x080d0000–0x080e0000: 65,536 bytes · Unknown · 0x080d0000</title>
+<rect x="311.28276007472203" y="32.50000000000001" width="86.45069302577386" height="50.6813847928528" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x080e0000–0x080ef4a4: 62,628 bytes · Unknown · 0x080e0000" data-node="leaf" data-kind="file" data-bytes="62628" data-address="0x080e0000">
+<title>0x080e0000–0x080ef4a4: 62,628 bytes · Unknown · 0x080e0000</title>
+<rect x="283.8743550034727" y="84.18138479285281" width="55.38164343193792" height="75.60344111496039" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x080ef81c–0x080f0000: 2,020 bytes · Unknown · 0x080ef81c" data-node="leaf" data-kind="file" data-bytes="2020" data-address="0x080ef81c">
+<title>0x080ef81c–0x080f0000: 2,020 bytes · Unknown · 0x080ef81c</title>
+<rect x="340.2559984354106" y="84.18138479285281" width="13.626604559617661" height="8.524130033321327" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x080f0000–0x080f17a8: 6,056 bytes · Unknown · 0x080f0000" data-node="leaf" data-kind="file" data-bytes="6056" data-address="0x080f0000">
+<title>0x080f0000–0x080f17a8: 6,056 bytes · Unknown · 0x080f0000</title>
+<rect x="354.88260299502826" y="84.18138479285281" width="42.8508501054676" height="8.524130033321327" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x080f21d0–0x08100000: 56,880 bytes · Unknown · 0x080f21d0" data-node="leaf" data-kind="file" data-bytes="56880" data-address="0x080f21d0">
+<title>0x080f21d0–0x08100000: 56,880 bytes · Unknown · 0x080f21d0</title>
+<rect x="340.2559984354106" y="93.70551482617414" width="57.47745466508526" height="66.07931108163906" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x08100000–0x08110000: 65,536 bytes · Unknown · 0x08100000" data-node="leaf" data-kind="file" data-bytes="65536" data-address="0x08100000">
+<title>0x08100000–0x08110000: 65,536 bytes · Unknown · 0x08100000</title>
+<rect x="398.73345310049586" y="32.5" width="104.69230346653343" height="41.76160863593773" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x08110000–0x08120000: 65,536 bytes · Unknown · 0x08110000" data-node="leaf" data-kind="file" data-bytes="65536" data-address="0x08110000">
+<title>0x08110000–0x08120000: 65,536 bytes · Unknown · 0x08110000</title>
+<rect x="398.73345310049586" y="75.26160863593773" width="51.846151733266716" height="84.52321727187547" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x08120000–0x08130000: 65,536 bytes · Unknown · 0x08120000" data-node="leaf" data-kind="file" data-bytes="65536" data-address="0x08120000">
+<title>0x08120000–0x08130000: 65,536 bytes · Unknown · 0x08120000</title>
+<rect x="451.5796048337626" y="75.26160863593773" width="51.846151733266716" height="84.52321727187547" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x08130000–0x08140000: 65,536 bytes · Unknown · 0x08130000" data-node="leaf" data-kind="file" data-bytes="65536" data-address="0x08130000">
+<title>0x08130000–0x08140000: 65,536 bytes · Unknown · 0x08130000</title>
+<rect x="504.4257565670293" y="32.5" width="104.69230346653343" height="41.76160863593773" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x08140000–0x08150000: 65,536 bytes · Unknown · 0x08140000" data-node="leaf" data-kind="file" data-bytes="65536" data-address="0x08140000">
+<title>0x08140000–0x08150000: 65,536 bytes · Unknown · 0x08140000</title>
+<rect x="504.4257565670293" y="75.26160863593773" width="51.846151733266716" height="84.52321727187547" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x08150000–0x08160000: 65,536 bytes · Unknown · 0x08150000" data-node="leaf" data-kind="file" data-bytes="65536" data-address="0x08150000">
+<title>0x08150000–0x08160000: 65,536 bytes · Unknown · 0x08150000</title>
+<rect x="557.271908300296" y="75.26160863593773" width="51.846151733266716" height="84.52321727187547" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x08160000–0x08170000: 65,536 bytes · Unknown · 0x08160000" data-node="leaf" data-kind="file" data-bytes="65536" data-address="0x08160000">
+<title>0x08160000–0x08170000: 65,536 bytes · Unknown · 0x08160000</title>
+<rect x="610.1180600335628" y="32.5" width="104.69230346653342" height="41.76160863593773" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x08170000–0x08180000: 65,536 bytes · Unknown · 0x08170000" data-node="leaf" data-kind="file" data-bytes="65536" data-address="0x08170000">
+<title>0x08170000–0x08180000: 65,536 bytes · Unknown · 0x08170000</title>
+<rect x="610.1180600335628" y="75.26160863593773" width="51.84615173326671" height="84.52321727187547" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x08180000–0x08190000: 65,536 bytes · Unknown · 0x08180000" data-node="leaf" data-kind="file" data-bytes="65536" data-address="0x08180000">
+<title>0x08180000–0x08190000: 65,536 bytes · Unknown · 0x08180000</title>
+<rect x="662.9642117668295" y="75.26160863593773" width="51.84615173326671" height="84.52321727187547" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x08190000–0x081a0000: 65,536 bytes · Unknown · 0x08190000" data-node="leaf" data-kind="file" data-bytes="65536" data-address="0x08190000">
+<title>0x08190000–0x081a0000: 65,536 bytes · Unknown · 0x08190000</title>
+<rect x="715.8103635000962" y="32.50000000000001" width="109.68963649990386" height="39.831039468366065" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x081a0000–0x081b0000: 65,536 bytes · Unknown · 0x081a0000" data-node="leaf" data-kind="file" data-bytes="65536" data-address="0x081a0000">
+<title>0x081a0000–0x081b0000: 65,536 bytes · Unknown · 0x081a0000</title>
+<rect x="715.8103635000962" y="73.33103946836607" width="50.67955671989128" height="86.45378643944713" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x081b0000–0x081c0000: 65,536 bytes · Unknown · 0x081b0000" data-node="leaf" data-kind="file" data-bytes="65536" data-address="0x081b0000">
+<title>0x081b0000–0x081c0000: 65,536 bytes · Unknown · 0x081b0000</title>
+<rect x="767.4899202199874" y="73.33103946836607" width="58.010079780012575" height="75.58984589608198" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x081c0000–0x081c1e98: 7,832 bytes · Unknown · 0x081c0000" data-node="leaf" data-kind="file" data-bytes="7832" data-address="0x081c0000">
+<title>0x081c0000–0x081c1e98: 7,832 bytes · Unknown · 0x081c0000</title>
+<rect x="767.4899202199874" y="149.92088536444805" width="48.71675396267841" height="9.863940543365146" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x081c1efe–0x081c1f3c: 62 bytes · Unknown · 0x081c1efe" data-node="leaf" data-kind="file" data-bytes="62" data-address="0x081c1efe">
+<title>0x081c1efe–0x081c1f3c: 62 bytes · Unknown · 0x081c1efe</title>
+<rect x="817.1816005452174" y="149.89581172699954" width="1.3008746212826543" height="0.9498527251029636" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x081c1fbe–0x081c1fc0: 2 bytes · Unknown · 0x081c1fbe" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x081c1fbe">
+<title>0x081c1fbe–0x081c1fc0: 2 bytes · Unknown · 0x081c1fbe</title>
+<rect x="818.9937035830254" y="149.45718741842202" width="0.07260410794792316" height="0.8772486171550404" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x081c212a–0x081c212c: 2 bytes · Unknown · 0x081c212a" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x081c212a">
+<title>0x081c212a–0x081c212c: 2 bytes · Unknown · 0x081c212a</title>
+<rect x="818.9937035830254" y="150.407040143525" width="0.07260410794792316" height="0.8772486171550404" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x081c2166–0x081c21f8: 146 bytes · Unknown · 0x081c2166" data-node="leaf" data-kind="file" data-bytes="146" data-address="0x081c2166">
+<title>0x081c2166–0x081c21f8: 146 bytes · Unknown · 0x081c2166</title>
+<rect x="819.5775361074989" y="149.89581172699954" width="4.350247155095427" height="0.9498527251029636" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x081c2310–0x081c233c: 44 bytes · Unknown · 0x081c2310" data-node="leaf" data-kind="file" data-bytes="44" data-address="0x081c2310">
+<title>0x081c2310–0x081c233c: 44 bytes · Unknown · 0x081c2310</title>
+<rect x="824.8020322188594" y="149.82020795816163" width="0.7986451874271552" height="1.101060262778772" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x081c2af4–0x081c2f68: 1,140 bytes · Unknown · 0x081c2af4" data-node="leaf" data-kind="file" data-bytes="1140" data-address="0x081c2af4">
+<title>0x081c2af4–0x081c2f68: 1,140 bytes · Unknown · 0x081c2af4</title>
+<rect x="817.2066741826659" y="151.82059081465397" width="7.770191582583566" height="7.96423509315922" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x081c30ca–0x081c30cc: 2 bytes · Unknown · 0x081c30ca" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x081c30ca">
+<title>0x081c30ca–0x081c30cc: 2 bytes · Unknown · 0x081c30ca</title>
+<rect x="825.5427792585815" y="151.38650430798603" width="0.3913072480864921" height="0.13182698666410617" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x081c332c–0x081c3340: 20 bytes · Unknown · 0x081c332c" data-node="leaf" data-kind="file" data-bytes="20" data-address="0x081c332c">
+<title>0x081c332c–0x081c3340: 20 bytes · Unknown · 0x081c332c</title>
+<rect x="825.6076493239372" y="151.71502834666984" width="0.26156711737529914" height="2.3749726159068243" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x081c3388–0x081c33b0: 40 bytes · Unknown · 0x081c3388" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x081c3388">
+<title>0x081c3388–0x081c33b0: 40 bytes · Unknown · 0x081c3388</title>
+<rect x="825.6076493239372" y="154.35156807995196" width="0.26156711737529914" height="5.011512349188947" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x081c33c2–0x081c33c4: 2 bytes · Unknown · 0x081c33c2" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x081c33c2">
+<title>0x081c33c2–0x081c33c4: 2 bytes · Unknown · 0x081c33c2</title>
+<rect x="825.5427792585815" y="159.5597774811606" width="0.3913072480864921" height="0.1318269866641062" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x081c33d6–0x081c33d8: 2 bytes · Unknown · 0x081c33d6" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x081c33d6">
+<title>0x081c33d6–0x081c33d8: 2 bytes · Unknown · 0x081c33d6</title>
+<rect x="825.5427792585815" y="159.82343145448883" width="0.3913072480864921" height="0.1318269866641062" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="0x081c33ea–0x081c33ec: 2 bytes · Unknown · 0x081c33ea" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x081c33ea">
+<title>0x081c33ea–0x081c33ec: 2 bytes · Unknown · 0x081c33ea</title>
+<rect x="825.5427792585815" y="160.08708542781704" width="0.3913072480864921" height="0.1318269866641062" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="Unclassified ROM data: 15,194,024 bytes · Unknown" data-node="leaf" data-kind="file" data-bytes="15194024">
+<title>Unclassified ROM data: 15,194,024 bytes · Unknown</title>
+<rect x="4.5" y="160.78482590781323" width="821" height="1273.730735566881" style="fill:#d9d9d4"/>
+</g>
+<g aria-label="games: 54,114 bytes · Unknown, C · 2 items" data-node="container" data-kind="folder" data-bytes="54114" data-source="games/">
+<title>games: 54,114 bytes · Unknown, C · 2 items</title>
+<rect class="container-frame" x="4" y="1435.0155614746943" width="822" height="4.539994080861334" fill="#1f7f93"/>
+<path class="bevel-light" d="M4 1439.5555555555557 V1435.0155614746943 H826" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M4 1439.5555555555557 H826 V1435.0155614746943" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="COMMON: 3,676 bytes · C · 1 items" data-node="container" data-kind="folder" data-bytes="3676" data-source="games/COMMON/">
+<title>COMMON: 3,676 bytes · C · 1 items</title>
+<rect class="container-frame" x="5.134998520215333" y="1436.1505599949096" width="55.684804133484434" height="2.269997040430667" fill="#1f7f93"/>
+<path class="bevel-light" d="M5.134998520215333 1438.4205570353402 V1436.1505599949096 H60.81980265369977" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M5.134998520215333 1438.4205570353402 H60.81980265369977 V1436.1505599949096" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="SRC: 3,676 bytes · C · 1 items" data-node="container" data-kind="folder" data-bytes="3676" data-source="games/COMMON/SRC/">
+<title>SRC: 3,676 bytes · C · 1 items</title>
+<rect class="container-frame" x="5.702497780323" y="1436.7180592550174" width="54.5498056132691" height="1.1349985202153334" fill="#1f7f93"/>
+<path class="bevel-light" d="M5.702497780323 1437.8530577752326 V1436.7180592550174 H60.2523033935921" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M5.702497780323 1437.8530577752326 H60.2523033935921 V1436.7180592550174" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="SOUND: 3,676 bytes · C · 24 items" data-node="container" data-kind="folder" data-bytes="3676" data-source="games/COMMON/SRC/SOUND/">
+<title>SOUND: 3,676 bytes · C · 24 items</title>
+<rect class="container-frame" x="5.9862474103768335" y="1437.0018088850711" width="53.982306353161434" height="0.5674992601076667" fill="#1f7f93"/>
+<path class="bevel-light" d="M5.9862474103768335 1437.5693081451789 V1437.0018088850711 H59.96855376353827" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M5.9862474103768335 1437.5693081451789 H59.96855376353827 V1437.0018088850711" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="0x081c2640–0x081c267c: 60 bytes · C · 0x081c2640" data-node="leaf" data-kind="file" data-bytes="60" data-address="0x081c2640" data-source="games/COMMON/SRC/SOUND/AUDIO_ENGINE_RESUME_DIRECT_SOUND.C">
+<title>0x081c2640–0x081c267c: 60 bytes · C · 0x081c2640</title>
+<rect x="6.1990596329172085" y="1437.2146211076115" width="0.7345978191913792" height="0.14187481502691668" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c2a3c–0x081c2a8c: 80 bytes · C · 0x081c2a3c" data-node="leaf" data-kind="file" data-bytes="80" data-address="0x081c2a3c" data-source="games/COMMON/SRC/SOUND/CGB_CHANNEL_MUTE.C">
+<title>0x081c2a3c–0x081c2a8c: 80 bytes · C · 0x081c2a3c</title>
+<rect x="7.075532267135505" y="1437.2146211076115" width="1.0267553639308113" height="0.14187481502691668" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c2994–0x081c2a3c: 168 bytes · C · 0x081c2994" data-node="leaf" data-kind="file" data-bytes="168" data-address="0x081c2994" data-source="games/COMMON/SRC/SOUND/CGB_KEY_TO_FREQUENCY.C">
+<title>0x081c2994–0x081c2a3c: 168 bytes · C · 0x081c2994</title>
+<rect x="8.244162446093233" y="1437.2146211076115" width="2.312248560784312" height="0.14187481502691668" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c2a8c–0x081c2af4: 104 bytes · C · 0x081c2a8c" data-node="leaf" data-kind="file" data-bytes="104" data-address="0x081c2a8c" data-source="games/COMMON/SRC/SOUND/CGB_NOTE_UPDATE_PAN_ENVELOPE.C">
+<title>0x081c2a8c–0x081c2af4: 104 bytes · C · 0x081c2a8c</title>
+<rect x="10.698285821904461" y="1437.2146211076115" width="1.3773444176181293" height="0.14187481502691668" style="fill:#326b7d"/>
+</g>
+<g aria-label="ENGINE_INITIALIZE.C: 772 bytes · C · 5 items" data-node="container" data-kind="file" data-bytes="772" data-source="games/COMMON/SRC/SOUND/ENGINE_INITIALIZE.C">
+<title>ENGINE_INITIALIZE.C: 772 bytes · C · 5 items</title>
+<rect class="container-frame" x="12.146567647036049" y="1437.143683700098" width="11.277281226942074" height="0.28374963005383336" fill="#1f7f93"/>
+<path class="bevel-light" d="M12.146567647036049 1437.4274333301519 V1437.143683700098 H23.423848873978123" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M12.146567647036049 1437.4274333301519 H23.423848873978123 V1437.143683700098" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="0x081c233c–0x081c2434: 248 bytes · C · 0x081c233c" data-node="leaf" data-kind="file" data-bytes="248" data-address="0x081c233c" data-source="games/COMMON/SRC/SOUND/ENGINE_INITIALIZE.C">
+<title>0x081c233c–0x081c2434: 248 bytes · C · 0x081c233c</title>
+<rect x="12.252973758306236" y="1437.2500898113683" width="3.506239781806437" height="0.07093740751345834" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c2434–0x081c24d8: 164 bytes · C · 0x081c2434" data-node="leaf" data-kind="file" data-bytes="164" data-address="0x081c2434" data-source="games/COMMON/SRC/SOUND/ENGINE_INITIALIZE.C">
+<title>0x081c2434–0x081c24d8: 164 bytes · C · 0x081c2434</title>
+<rect x="15.830150947626132" y="1437.2500898113683" width="2.294615249940021" height="0.07093740751345834" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c24d8–0x081c2570: 152 bytes · C · 0x081c24d8" data-node="leaf" data-kind="file" data-bytes="152" data-address="0x081c24d8" data-source="games/COMMON/SRC/SOUND/ENGINE_INITIALIZE.C">
+<title>0x081c24d8–0x081c2570: 152 bytes · C · 0x081c24d8</title>
+<rect x="18.195703605079608" y="1437.2500898113683" width="2.1215260311019613" height="0.07093740751345834" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c2570–0x081c25c4: 84 bytes · C · 0x081c2570" data-node="leaf" data-kind="file" data-bytes="84" data-address="0x081c2570" data-source="games/COMMON/SRC/SOUND/ENGINE_INITIALIZE.C">
+<title>0x081c2570–0x081c25c4: 84 bytes · C · 0x081c2570</title>
+<rect x="20.388167043695027" y="1437.2500898113683" width="1.1406871243529575" height="0.07093740751345834" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c25c4–0x081c2640: 124 bytes · C · 0x081c25c4" data-node="leaf" data-kind="file" data-bytes="124" data-address="0x081c25c4" data-source="games/COMMON/SRC/SOUND/ENGINE_INITIALIZE.C">
+<title>0x081c25c4–0x081c2640: 124 bytes · C · 0x081c25c4</title>
+<rect x="21.599791575561447" y="1437.2500898113683" width="1.717651187146489" height="0.07093740751345834" style="fill:#326b7d"/>
+</g>
+</g>
+<g aria-label="0x081c21f8–0x081c2310: 280 bytes · C · 0x081c21f8" data-node="leaf" data-kind="file" data-bytes="280" data-address="0x081c21f8" data-source="games/COMMON/SRC/SOUND/INITIALIZE_CGB.C">
+<title>0x081c21f8–0x081c2310: 280 bytes · C · 0x081c21f8</title>
+<rect x="23.49478628149158" y="1437.2146211076115" width="3.948330811325132" height="0.14187481502691668" style="fill:#326b7d"/>
+</g>
+<g aria-label="MUSIC_PLAYER.C: 412 bytes · C · 3 items" data-node="container" data-kind="file" data-bytes="412" data-source="games/COMMON/SRC/SOUND/MUSIC_PLAYER.C">
+<title>MUSIC_PLAYER.C: 412 bytes · C · 3 items</title>
+<rect class="container-frame" x="27.51405450033017" y="1437.143683700098" width="6.0184454216323005" height="0.28374963005383336" fill="#1f7f93"/>
+<path class="bevel-light" d="M27.51405450033017 1437.4274333301519 V1437.143683700098 H33.53249992196247" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M27.51405450033017 1437.4274333301519 H33.53249992196247 V1437.143683700098" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="0x081c267c–0x081c26f4: 120 bytes · C · 0x081c267c" data-node="leaf" data-kind="file" data-bytes="120" data-address="0x081c267c" data-source="games/COMMON/SRC/SOUND/MUSIC_PLAYER.C">
+<title>0x081c267c–0x081c26f4: 120 bytes · C · 0x081c267c</title>
+<rect x="27.620460611600357" y="1437.2500898113683" width="1.6406850992648088" height="0.07093740751345834" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c26f4–0x081c27d8: 228 bytes · C · 0x081c26f4" data-node="leaf" data-kind="file" data-bytes="228" data-address="0x081c26f4" data-source="games/COMMON/SRC/SOUND/MUSIC_PLAYER.C">
+<title>0x081c26f4–0x081c27d8: 228 bytes · C · 0x081c26f4</title>
+<rect x="29.332083118378627" y="1437.2500898113683" width="3.181145355365249" height="0.07093740751345834" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c27d8–0x081c2818: 64 bytes · C · 0x081c27d8" data-node="leaf" data-kind="file" data-bytes="64" data-address="0x081c27d8" data-source="games/COMMON/SRC/SOUND/MUSIC_PLAYER.C">
+<title>0x081c27d8–0x081c2818: 64 bytes · C · 0x081c27d8</title>
+<rect x="32.58416588125733" y="1437.2500898113683" width="0.8419279294349504" height="0.07093740751345834" style="fill:#326b7d"/>
+</g>
+</g>
+<g aria-label="0x081c3140–0x081c31b4: 116 bytes · C · 0x081c3140" data-node="leaf" data-kind="file" data-bytes="116" data-address="0x081c3140" data-source="games/COMMON/SRC/SOUND/MUSIC_PLAYER_SET_LFO_SPEED.C">
+<title>0x081c3140–0x081c31b4: 116 bytes · C · 0x081c3140</title>
+<rect x="33.60343732947592" y="1437.2146211076115" width="1.552638944461789" height="0.14187481502691668" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c30cc–0x081c3140: 116 bytes · C · 0x081c30cc" data-node="leaf" data-kind="file" data-bytes="116" data-address="0x081c30cc" data-source="games/COMMON/SRC/SOUND/MUSIC_PLAYER_SET_MODULATION_DEPTH.C">
+<title>0x081c30cc–0x081c3140: 116 bytes · C · 0x081c30cc</title>
+<rect x="35.29795108896464" y="1437.2146211076115" width="1.552638944461789" height="0.14187481502691668" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c3044–0x081c30ac: 104 bytes · C · 0x081c3044" data-node="leaf" data-kind="file" data-bytes="104" data-address="0x081c3044" data-source="games/COMMON/SRC/SOUND/MUSIC_PLAYER_SET_PAN.C">
+<title>0x081c3044–0x081c30ac: 104 bytes · C · 0x081c3044</title>
+<rect x="36.99246484845334" y="1437.2146211076115" width="1.37734441761813" height="0.14187481502691668" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c2fd0–0x081c3044: 116 bytes · C · 0x081c2fd0" data-node="leaf" data-kind="file" data-bytes="116" data-address="0x081c2fd0" data-source="games/COMMON/SRC/SOUND/MUSIC_PLAYER_SET_PITCH.C">
+<title>0x081c2fd0–0x081c3044: 116 bytes · C · 0x081c2fd0</title>
+<rect x="38.511684081098394" y="1437.2146211076115" width="1.552638944461789" height="0.14187481502691668" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c2f68–0x081c2fd0: 104 bytes · C · 0x081c2f68" data-node="leaf" data-kind="file" data-bytes="104" data-address="0x081c2f68" data-source="games/COMMON/SRC/SOUND/MUSIC_PLAYER_SET_VOLUME.C">
+<title>0x081c2f68–0x081c2fd0: 104 bytes · C · 0x081c2f68</title>
+<rect x="40.206197840587095" y="1437.2146211076115" width="1.37734441761813" height="0.14187481502691668" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c2818–0x081c28e0: 200 bytes · C · 0x081c2818" data-node="leaf" data-kind="file" data-bytes="200" data-address="0x081c2818" data-source="games/COMMON/SRC/SOUND/MUSIC_PLAYER_STEP_FADE.C">
+<title>0x081c2818–0x081c28e0: 200 bytes · C · 0x081c2818</title>
+<rect x="41.72541707323214" y="1437.2146211076115" width="2.779700632367404" height="0.14187481502691668" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c28e0–0x081c2994: 180 bytes · C · 0x081c28e0" data-node="leaf" data-kind="file" data-bytes="180" data-address="0x081c28e0" data-source="games/COMMON/SRC/SOUND/MUSIC_TRACK_CALC_OUTPUT.C">
+<title>0x081c28e0–0x081c2994: 180 bytes · C · 0x081c28e0</title>
+<rect x="44.646992520626455" y="1437.2146211076115" width="2.4875430876279716" height="0.14187481502691668" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c30ac–0x081c30ca: 30 bytes · C · 0x081c30ac" data-node="leaf" data-kind="file" data-bytes="30" data-address="0x081c30ac" data-source="games/COMMON/SRC/SOUND/MUSIC_TRACK_CLEAR_MODULATION.C">
+<title>0x081c30ac–0x081c30ca: 30 bytes · C · 0x081c30ac</title>
+<rect x="47.27641042328135" y="1437.2146211076115" width="0.29636150208223133" height="0.14187481502691668" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c330c–0x081c332c: 32 bytes · C · 0x081c330c" data-node="leaf" data-kind="file" data-bytes="32" data-address="0x081c330c" data-source="games/COMMON/SRC/SOUND/MUSIC_TRACK_DISPATCH_STREAM_COMMAND.C">
+<title>0x081c330c–0x081c332c: 32 bytes · C · 0x081c330c</title>
+<rect x="47.71464674039049" y="1437.2146211076115" width="0.32557725655617453" height="0.14187481502691668" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c3340–0x081c3388: 72 bytes · C · 0x081c3340" data-node="leaf" data-kind="file" data-bytes="72" data-address="0x081c3340" data-source="games/COMMON/SRC/SOUND/MUSIC_TRACK_READ_VOICE_TARGET.C">
+<title>0x081c3340–0x081c3388: 72 bytes · C · 0x081c3340</title>
+<rect x="48.18209881197359" y="1437.2146211076115" width="0.9098923460350385" height="0.14187481502691668" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c33f8–0x081c3404: 12 bytes · C · 0x081c33f8" data-node="leaf" data-kind="file" data-bytes="12" data-address="0x081c33f8" data-source="games/COMMON/SRC/SOUND/MUSIC_TRACK_SET_TAIL_LENGTH.C">
+<title>0x081c33f8–0x081c3404: 12 bytes · C · 0x081c33f8</title>
+<rect x="49.206752197232994" y="1437.187507331809" width="0.08764726342182962" height="0.19610236663200376" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c33ec–0x081c33f8: 12 bytes · C · 0x081c33ec" data-node="leaf" data-kind="file" data-bytes="12" data-address="0x081c33ec" data-source="games/COMMON/SRC/SOUND/MUSIC_TRACK_SET_TAIL_LEVEL.C">
+<title>0x081c33ec–0x081c33f8: 12 bytes · C · 0x081c33ec</title>
+<rect x="49.38204672407665" y="1437.187507331809" width="0.08764726342182962" height="0.19610236663200376" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c33b0–0x081c33c2: 18 bytes · C · 0x081c33b0" data-node="leaf" data-kind="file" data-bytes="18" data-address="0x081c33b0" data-source="games/COMMON/SRC/SOUND/MUSIC_TRACK_SET_VOICE_DECAY.C">
+<title>0x081c33b0–0x081c33c2: 18 bytes · C · 0x081c33b0</title>
+<rect x="49.57925306677577" y="1437.2094191476644" width="0.1314708951327444" height="0.15227873492108895" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c33d8–0x081c33ea: 18 bytes · C · 0x081c33d8" data-node="leaf" data-kind="file" data-bytes="18" data-address="0x081c33d8" data-source="games/COMMON/SRC/SOUND/MUSIC_TRACK_SET_VOICE_RELEASE.C">
+<title>0x081c33d8–0x081c33ea: 18 bytes · C · 0x081c33d8</title>
+<rect x="49.84219485704126" y="1437.2094191476644" width="0.13147089513274443" height="0.15227873492108893" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c33c4–0x081c33d6: 18 bytes · C · 0x081c33c4" data-node="leaf" data-kind="file" data-bytes="18" data-address="0x081c33c4" data-source="games/COMMON/SRC/SOUND/MUSIC_TRACK_SET_VOICE_SUSTAIN.C">
+<title>0x081c33c4–0x081c33d6: 18 bytes · C · 0x081c33c4</title>
+<rect x="50.10513664730674" y="1437.2094191476644" width="0.13147089513274443" height="0.15227873492108893" style="fill:#326b7d"/>
+</g>
+<g aria-label="PCM_KEY_TO_FREQUENCY.C: 102 bytes · C · 2 items" data-node="container" data-kind="file" data-bytes="102" data-source="games/COMMON/SRC/SOUND/PCM_KEY_TO_FREQUENCY.C">
+<title>PCM_KEY_TO_FREQUENCY.C: 102 bytes · C · 2 items</title>
+<rect class="container-frame" x="50.30234299000587" y="1437.143683700098" width="1.4900034781711033" height="0.28374963005383336" fill="#1f7f93"/>
+<path class="bevel-light" d="M50.30234299000587 1437.4274333301519 V1437.143683700098 H51.79234646817697" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M50.30234299000587 1437.4274333301519 H51.79234646817697 V1437.143683700098" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="0x081c1e98–0x081c1efc: 100 bytes · C · 0x081c1e98" data-node="leaf" data-kind="file" data-bytes="100" data-address="0x081c1e98" data-source="games/COMMON/SRC/SOUND/PCM_KEY_TO_FREQUENCY.C">
+<title>0x081c1e98–0x081c1efc: 100 bytes · C · 0x081c1e98</title>
+<rect x="50.40874910127605" y="1437.2500898113683" width="1.25075736027496" height="0.07093740751345834" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c1efc–0x081c1efe: 2 bytes · C · 0x081c1efc" data-node="leaf" data-kind="file" data-bytes="2" data-address="0x081c1efc" data-source="games/COMMON/SRC/SOUND/PCM_KEY_TO_FREQUENCY.C">
+<title>0x081c1efc–0x081c1efe: 2 bytes · C · 0x081c1efc</title>
+<rect x="51.70158363914668" y="1437.2212295814504" width="0.013216947677884172" height="0.1286578673490325" style="fill:#326b7d"/>
+</g>
+</g>
+<g aria-label="SOUND.C: 550 bytes · C · 11 items" data-node="container" data-kind="file" data-bytes="550" data-source="games/COMMON/SRC/SOUND/SOUND.C">
+<title>SOUND.C: 550 bytes · C · 11 items</title>
+<rect class="container-frame" x="51.79234646817697" y="1437.143683700098" width="8.034332480334381" height="0.28374963005383336" fill="#1f7f93"/>
+<path class="bevel-light" d="M51.79234646817697 1437.4274333301519 V1437.143683700098 H59.82667894851136" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M51.79234646817697 1437.4274333301519 H59.82667894851136 V1437.143683700098" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="0x081c1f3c–0x081c1fb4: 120 bytes · C · 0x081c1f3c" data-node="leaf" data-kind="file" data-bytes="120" data-address="0x081c1f3c" data-source="games/COMMON/SRC/SOUND/SOUND.C">
+<title>0x081c1f3c–0x081c1fb4: 120 bytes · C · 0x081c1f3c</title>
+<rect x="51.898752579447155" y="1437.2500898113683" width="1.651053355826352" height="0.07093740751345834" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c1fb4–0x081c1fbe: 10 bytes · C · 0x081c1fb4" data-node="leaf" data-kind="file" data-bytes="10" data-address="0x081c1fb4" data-source="games/COMMON/SRC/SOUND/SOUND.C">
+<title>0x081c1fb4–0x081c1fbe: 10 bytes · C · 0x081c1fb4</title>
+<rect x="53.620743342786966" y="1437.2500898113683" width="0.0725618227648592" height="0.07093740751345834" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c1fc0–0x081c1fec: 44 bytes · C · 0x081c1fc0" data-node="leaf" data-kind="file" data-bytes="44" data-address="0x081c1fc0" data-source="games/COMMON/SRC/SOUND/SOUND.C">
+<title>0x081c1fc0–0x081c1fec: 44 bytes · C · 0x081c1fc0</title>
+<rect x="53.76424257306528" y="1437.2500898113683" width="0.5604592057111388" height="0.07093740751345834" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c1fec–0x081c2038: 76 bytes · C · 0x081c1fec" data-node="leaf" data-kind="file" data-bytes="76" data-address="0x081c1fec" data-source="games/COMMON/SRC/SOUND/SOUND.C">
+<title>0x081c1fec–0x081c2038: 76 bytes · C · 0x081c1fec</title>
+<rect x="54.395639186289884" y="1437.2500898113683" width="1.0196567426017549" height="0.07093740751345834" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c2038–0x081c208c: 84 bytes · C · 0x081c2038" data-node="leaf" data-kind="file" data-bytes="84" data-address="0x081c2038" data-source="games/COMMON/SRC/SOUND/SOUND.C">
+<title>0x081c2038–0x081c208c: 84 bytes · C · 0x081c2038</title>
+<rect x="55.48623333640509" y="1437.2500898113683" width="1.1344561268244089" height="0.07093740751345834" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c208c–0x081c20c0: 52 bytes · C · 0x081c208c" data-node="leaf" data-kind="file" data-bytes="52" data-address="0x081c208c" data-source="games/COMMON/SRC/SOUND/SOUND.C">
+<title>0x081c208c–0x081c20c0: 52 bytes · C · 0x081c208c</title>
+<rect x="56.69162687074296" y="1437.2500898113683" width="0.6752585899337928" height="0.07093740751345834" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c20c0–0x081c20f4: 52 bytes · C · 0x081c20c0" data-node="leaf" data-kind="file" data-bytes="52" data-address="0x081c20c0" data-source="games/COMMON/SRC/SOUND/SOUND.C">
+<title>0x081c20c0–0x081c20f4: 52 bytes · C · 0x081c20c0</title>
+<rect x="57.43782286819021" y="1437.2500898113683" width="0.675258589933793" height="0.07093740751345834" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c20f4–0x081c2120: 44 bytes · C · 0x081c20f4" data-node="leaf" data-kind="file" data-bytes="44" data-address="0x081c20f4" data-source="games/COMMON/SRC/SOUND/SOUND.C">
+<title>0x081c20f4–0x081c2120: 44 bytes · C · 0x081c20f4</title>
+<rect x="58.18401886563746" y="1437.2500898113683" width="0.5604592057111389" height="0.07093740751345834" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c2120–0x081c212a: 10 bytes · C · 0x081c2120" data-node="leaf" data-kind="file" data-bytes="10" data-address="0x081c2120" data-source="games/COMMON/SRC/SOUND/SOUND.C">
+<title>0x081c2120–0x081c212a: 10 bytes · C · 0x081c2120</title>
+<rect x="58.81541547886206" y="1437.2500898113683" width="0.07256182276485923" height="0.07093740751345834" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c212c–0x081c2158: 44 bytes · C · 0x081c212c" data-node="leaf" data-kind="file" data-bytes="44" data-address="0x081c212c" data-source="games/COMMON/SRC/SOUND/SOUND.C">
+<title>0x081c212c–0x081c2158: 44 bytes · C · 0x081c212c</title>
+<rect x="58.95891470914038" y="1437.2500898113683" width="0.5604592057111388" height="0.07093740751345834" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x081c2158–0x081c2166: 14 bytes · C · 0x081c2158" data-node="leaf" data-kind="file" data-bytes="14" data-address="0x081c2158" data-source="games/COMMON/SRC/SOUND/SOUND.C">
+<title>0x081c2158–0x081c2166: 14 bytes · C · 0x081c2158</title>
+<rect x="59.590311322364975" y="1437.2500898113683" width="0.12996151487618623" height="0.07093740751345834" style="fill:#326b7d"/>
+</g>
+</g>
+</g>
+</g>
+</g>
+<g aria-label="THE LOST AGE: 50,438 bytes · Unknown, C · 1 items" data-node="container" data-kind="folder" data-bytes="50438" data-source="games/THE LOST AGE/">
+<title>THE LOST AGE: 50,438 bytes · Unknown, C · 1 items</title>
+<rect class="container-frame" x="60.81980265369977" y="1436.1505599949096" width="764.0451988260849" height="2.269997040430667" fill="#1f7f93"/>
+<path class="bevel-light" d="M60.81980265369977 1438.4205570353402 V1436.1505599949096 H824.8650014797846" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M60.81980265369977 1438.4205570353402 H824.8650014797846 V1436.1505599949096" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="SRC: 50,438 bytes · Unknown, C · 7 items" data-node="container" data-kind="folder" data-bytes="50438" data-source="games/THE LOST AGE/SRC/">
+<title>SRC: 50,438 bytes · Unknown, C · 7 items</title>
+<rect class="container-frame" x="61.387301913807434" y="1436.7180592550174" width="762.9102003058695" height="1.1349985202153334" fill="#1f7f93"/>
+<path class="bevel-light" d="M61.387301913807434 1437.8530577752326 V1436.7180592550174 H824.2975022196769" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M61.387301913807434 1437.8530577752326 H824.2975022196769 V1436.7180592550174" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="BATTLE: 84 bytes · C · 1 items" data-node="container" data-kind="folder" data-bytes="84" data-source="games/THE LOST AGE/SRC/BATTLE/">
+<title>BATTLE: 84 bytes · C · 1 items</title>
+<rect class="container-frame" x="61.67105154386127" y="1437.0018088850711" width="1.269613919819263" height="0.5674992601076667" fill="#1f7f93"/>
+<path class="bevel-light" d="M61.67105154386127 1437.5693081451789 V1437.0018088850711 H62.94066546368053" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M61.67105154386127 1437.5693081451789 H62.94066546368053 V1437.0018088850711" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="EFFECT: 84 bytes · C · 1 items" data-node="container" data-kind="folder" data-bytes="84" data-source="games/THE LOST AGE/SRC/BATTLE/EFFECT/">
+<title>EFFECT: 84 bytes · C · 1 items</title>
+<rect class="container-frame" x="61.812926358888184" y="1437.143683700098" width="0.9858642897654297" height="0.28374963005383336" fill="#1f7f93"/>
+<path class="bevel-light" d="M61.812926358888184 1437.4274333301519 V1437.143683700098 H62.798790648653615" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M61.812926358888184 1437.4274333301519 H62.798790648653615 V1437.143683700098" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="0x080caf70–0x080cafc4: 84 bytes · C · 0x080caf70" data-node="leaf" data-kind="file" data-bytes="84" data-address="0x080caf70" data-source="games/THE LOST AGE/SRC/BATTLE/EFFECT/COUNTERS_RESET.C">
+<title>0x080caf70–0x080cafc4: 84 bytes · C · 0x080caf70</title>
+<rect x="61.91933247015837" y="1437.2500898113683" width="0.7730520672250547" height="0.07093740751345834" style="fill:#326b7d"/>
+</g>
+</g>
+</g>
+<g aria-label="FIELD: 42,496 bytes · Unknown, C · 8 items" data-node="container" data-kind="folder" data-bytes="42496" data-source="games/THE LOST AGE/SRC/FIELD/">
+<title>FIELD: 42,496 bytes · Unknown, C · 8 items</title>
+<rect class="container-frame" x="62.94066546368053" y="1437.0018088850711" width="642.3037278171358" height="0.5674992601076667" fill="#1f7f93"/>
+<path class="bevel-light" d="M62.94066546368053 1437.5693081451789 V1437.0018088850711 H705.2443932808163" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M62.94066546368053 1437.5693081451789 H705.2443932808163 V1437.0018088850711" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="COMMON: 1,860 bytes · C · 1 items" data-node="container" data-kind="folder" data-bytes="1860" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/">
+<title>COMMON: 1,860 bytes · C · 1 items</title>
+<rect class="container-frame" x="63.08254027870745" y="1437.143683700098" width="28.100460265153718" height="0.28374963005383336" fill="#1f7f93"/>
+<path class="bevel-light" d="M63.08254027870745 1437.4274333301519 V1437.143683700098 H91.18300054386117" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M63.08254027870745 1437.4274333301519 H91.18300054386117 V1437.143683700098" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="SCRIPT: 1,860 bytes · C · 3 items" data-node="container" data-kind="folder" data-bytes="1860" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/">
+<title>SCRIPT: 1,860 bytes · C · 3 items</title>
+<rect class="container-frame" x="63.15347768622091" y="1437.2146211076115" width="27.9585854501268" height="0.14187481502691668" fill="#1f7f93"/>
+<path class="bevel-light" d="M63.15347768622091 1437.3564959226385 V1437.2146211076115 H91.11206313634771" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M63.15347768622091 1437.3564959226385 H91.11206313634771 V1437.2146211076115" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="0x08024c50–0x08024c6e: 30 bytes · C · 0x08024c50" data-node="leaf" data-kind="file" data-bytes="30" data-address="0x08024c50" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/INTERPRETER_CONTROL.C">
+<title>0x08024c50–0x08024c6e: 30 bytes · C · 0x08024c50</title>
+<rect x="63.206680741856005" y="1437.2678241632466" width="0.4143320711241312" height="0.03546870375672917" style="fill:#326b7d"/>
+</g>
+<g aria-label="OPERANDS.C: 1,820 bytes · C · 38 items" data-node="container" data-kind="file" data-bytes="1820" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>OPERANDS.C: 1,820 bytes · C · 38 items</title>
+<rect class="container-frame" x="63.6387471648585" y="1437.2500898113683" width="27.28791367610553" height="0.07093740751345834" fill="#1f7f93"/>
+<path class="bevel-light" d="M63.6387471648585 1437.3210272188817 V1437.2500898113683 H90.92666084096403" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M63.6387471648585 1437.3210272188817 H90.92666084096403 V1437.2500898113683" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="0x08025b58–0x08025b82: 42 bytes · C · 0x08025b58" data-node="leaf" data-kind="file" data-bytes="42" data-address="0x08025b58" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x08025b58–0x08025b82: 42 bytes · C · 0x08025b58</title>
+<rect x="63.66534869267605" y="1437.2766913391858" width="0.6111682244066078" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08025b84–0x08025bb4: 48 bytes · C · 0x08025b84" data-node="leaf" data-kind="file" data-bytes="48" data-address="0x08025b84" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x08025b84–0x08025bb4: 48 bytes · C · 0x08025b84</title>
+<rect x="64.29425126896103" y="1437.2766913391858" width="0.7010114495901751" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08025be4–0x08025c0c: 40 bytes · C · 0x08025be4" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x08025be4" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x08025be4–0x08025c0c: 40 bytes · C · 0x08025be4</title>
+<rect x="65.01299707042958" y="1437.2766913391858" width="0.5812204826787519" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08025c0c–0x08025c34: 40 bytes · C · 0x08025c0c" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x08025c0c" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x08025c0c–0x08025c34: 40 bytes · C · 0x08025c0c</title>
+<rect x="65.6119519049867" y="1437.2766913391858" width="0.5812204826787519" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08025c34–0x08025c5c: 40 bytes · C · 0x08025c34" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x08025c34" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x08025c34–0x08025c5c: 40 bytes · C · 0x08025c34</title>
+<rect x="66.2109067395438" y="1437.2766913391858" width="0.5812204826787518" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08025c8c–0x08025cb4: 40 bytes · C · 0x08025c8c" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x08025c8c" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x08025c8c–0x08025cb4: 40 bytes · C · 0x08025c8c</title>
+<rect x="66.80986157410092" y="1437.2766913391858" width="0.5812204826787519" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08025cb4–0x08025cdc: 40 bytes · C · 0x08025cb4" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x08025cb4" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x08025cb4–0x08025cdc: 40 bytes · C · 0x08025cb4</title>
+<rect x="67.40881640865804" y="1437.2766913391858" width="0.5812204826787519" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08025cdc–0x08025d04: 40 bytes · C · 0x08025cdc" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x08025cdc" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x08025cdc–0x08025d04: 40 bytes · C · 0x08025cdc</title>
+<rect x="68.00777124321515" y="1437.2766913391858" width="0.5812204826787518" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08025d04–0x08025d2c: 40 bytes · C · 0x08025d04" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x08025d04" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x08025d04–0x08025d2c: 40 bytes · C · 0x08025d04</title>
+<rect x="68.60672607777227" y="1437.2766913391858" width="0.5812204826787519" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08025d2c–0x08025d54: 40 bytes · C · 0x08025d2c" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x08025d2c" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x08025d2c–0x08025d54: 40 bytes · C · 0x08025d2c</title>
+<rect x="69.20568091232938" y="1437.2766913391858" width="0.5812204826787519" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08025d54–0x08025d7c: 40 bytes · C · 0x08025d54" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x08025d54" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x08025d54–0x08025d7c: 40 bytes · C · 0x08025d54</title>
+<rect x="69.8046357468865" y="1437.2766913391858" width="0.5812204826787519" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08025d7c–0x08025da4: 40 bytes · C · 0x08025d7c" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x08025d7c" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x08025d7c–0x08025da4: 40 bytes · C · 0x08025d7c</title>
+<rect x="70.40359058144362" y="1437.2766913391858" width="0.5812204826787519" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08025da4–0x08025dcc: 40 bytes · C · 0x08025da4" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x08025da4" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x08025da4–0x08025dcc: 40 bytes · C · 0x08025da4</title>
+<rect x="71.00254541600074" y="1437.2766913391858" width="0.5812204826787518" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08025dcc–0x08025df4: 40 bytes · C · 0x08025dcc" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x08025dcc" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x08025dcc–0x08025df4: 40 bytes · C · 0x08025dcc</title>
+<rect x="71.60150025055786" y="1437.2766913391858" width="0.5812204826787519" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08025df4–0x08025e1c: 40 bytes · C · 0x08025df4" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x08025df4" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x08025df4–0x08025e1c: 40 bytes · C · 0x08025df4</title>
+<rect x="72.20045508511498" y="1437.2766913391858" width="0.5812204826787519" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08025e1c–0x08025e44: 40 bytes · C · 0x08025e1c" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x08025e1c" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x08025e1c–0x08025e44: 40 bytes · C · 0x08025e1c</title>
+<rect x="72.79940991967209" y="1437.2766913391858" width="0.5812204826787519" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08025e44–0x08025e6c: 40 bytes · C · 0x08025e44" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x08025e44" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x08025e44–0x08025e6c: 40 bytes · C · 0x08025e44</title>
+<rect x="73.3983647542292" y="1437.2766913391858" width="0.5812204826787519" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08025e6c–0x08025e94: 40 bytes · C · 0x08025e6c" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x08025e6c" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x08025e6c–0x08025e94: 40 bytes · C · 0x08025e6c</title>
+<rect x="73.99731958878633" y="1437.2766913391858" width="0.5812204826787519" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08025e94–0x08025ebc: 40 bytes · C · 0x08025e94" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x08025e94" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x08025e94–0x08025ebc: 40 bytes · C · 0x08025e94</title>
+<rect x="74.59627442334343" y="1437.2766913391858" width="0.5812204826787517" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08025ebc–0x08025ee6: 42 bytes · C · 0x08025ebc" data-node="leaf" data-kind="file" data-bytes="42" data-address="0x08025ebc" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x08025ebc–0x08025ee6: 42 bytes · C · 0x08025ebc</title>
+<rect x="75.19522925790055" y="1437.2766913391858" width="0.6111682244066076" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08025ee8–0x08025f22: 58 bytes · C · 0x08025ee8" data-node="leaf" data-kind="file" data-bytes="58" data-address="0x08025ee8" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x08025ee8–0x08025f22: 58 bytes · C · 0x08025ee8</title>
+<rect x="75.82413183418552" y="1437.2766913391858" width="0.8507501582294542" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08025f24–0x08025f5e: 58 bytes · C · 0x08025f24" data-node="leaf" data-kind="file" data-bytes="58" data-address="0x08025f24" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x08025f24–0x08025f5e: 58 bytes · C · 0x08025f24</title>
+<rect x="76.69261634429334" y="1437.2766913391858" width="0.8507501582294542" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08025f60–0x08025f9a: 58 bytes · C · 0x08025f60" data-node="leaf" data-kind="file" data-bytes="58" data-address="0x08025f60" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x08025f60–0x08025f9a: 58 bytes · C · 0x08025f60</title>
+<rect x="77.56110085440116" y="1437.2766913391858" width="0.8507501582294542" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08025fd0–0x0802600a: 58 bytes · C · 0x08025fd0" data-node="leaf" data-kind="file" data-bytes="58" data-address="0x08025fd0" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x08025fd0–0x0802600a: 58 bytes · C · 0x08025fd0</title>
+<rect x="78.42958536450898" y="1437.2766913391858" width="0.8507501582294542" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x0802600c–0x08026046: 58 bytes · C · 0x0802600c" data-node="leaf" data-kind="file" data-bytes="58" data-address="0x0802600c" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x0802600c–0x08026046: 58 bytes · C · 0x0802600c</title>
+<rect x="79.2980698746168" y="1437.2766913391858" width="0.8507501582294542" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08026048–0x08026082: 58 bytes · C · 0x08026048" data-node="leaf" data-kind="file" data-bytes="58" data-address="0x08026048" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x08026048–0x08026082: 58 bytes · C · 0x08026048</title>
+<rect x="80.16655438472462" y="1437.2766913391858" width="0.8507501582294543" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08026084–0x080260be: 58 bytes · C · 0x08026084" data-node="leaf" data-kind="file" data-bytes="58" data-address="0x08026084" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x08026084–0x080260be: 58 bytes · C · 0x08026084</title>
+<rect x="81.03503889483244" y="1437.2766913391858" width="0.8507501582294543" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x080260c0–0x080260fa: 58 bytes · C · 0x080260c0" data-node="leaf" data-kind="file" data-bytes="58" data-address="0x080260c0" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x080260c0–0x080260fa: 58 bytes · C · 0x080260c0</title>
+<rect x="81.90352340494026" y="1437.2766913391858" width="0.8507501582294542" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x080260fc–0x08026138: 60 bytes · C · 0x080260fc" data-node="leaf" data-kind="file" data-bytes="60" data-address="0x080260fc" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x080260fc–0x08026138: 60 bytes · C · 0x080260fc</title>
+<rect x="82.77200791504808" y="1437.2766913391858" width="0.88069789995731" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08026138–0x08026174: 60 bytes · C · 0x08026138" data-node="leaf" data-kind="file" data-bytes="60" data-address="0x08026138" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x08026138–0x08026174: 60 bytes · C · 0x08026138</title>
+<rect x="83.67044016688375" y="1437.2766913391858" width="0.88069789995731" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08026174–0x080261b0: 60 bytes · C · 0x08026174" data-node="leaf" data-kind="file" data-bytes="60" data-address="0x08026174" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x08026174–0x080261b0: 60 bytes · C · 0x08026174</title>
+<rect x="84.56887241871942" y="1437.2766913391858" width="0.8806978999573098" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x080261b0–0x080261d8: 40 bytes · C · 0x080261b0" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x080261b0" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x080261b0–0x080261d8: 40 bytes · C · 0x080261b0</title>
+<rect x="85.4673046705551" y="1437.2766913391858" width="0.5812204826787518" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x080261d8–0x08026200: 40 bytes · C · 0x080261d8" data-node="leaf" data-kind="file" data-bytes="40" data-address="0x080261d8" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x080261d8–0x08026200: 40 bytes · C · 0x080261d8</title>
+<rect x="86.06625950511221" y="1437.2766913391858" width="0.5812204826787518" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08026200–0x0802623a: 58 bytes · C · 0x08026200" data-node="leaf" data-kind="file" data-bytes="58" data-address="0x08026200" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x08026200–0x0802623a: 58 bytes · C · 0x08026200</title>
+<rect x="86.66521433966933" y="1437.2766913391858" width="0.8507501582294542" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x0802623c–0x08026276: 58 bytes · C · 0x0802623c" data-node="leaf" data-kind="file" data-bytes="58" data-address="0x0802623c" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x0802623c–0x08026276: 58 bytes · C · 0x0802623c</title>
+<rect x="87.53369884977715" y="1437.2766913391858" width="0.8507501582294542" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08026278–0x080262b0: 56 bytes · C · 0x08026278" data-node="leaf" data-kind="file" data-bytes="56" data-address="0x08026278" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x08026278–0x080262b0: 56 bytes · C · 0x08026278</title>
+<rect x="88.40218335988497" y="1437.2766913391858" width="0.8208024165015984" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x080262b0–0x080262e8: 56 bytes · C · 0x080262b0" data-node="leaf" data-kind="file" data-bytes="56" data-address="0x080262b0" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x080262b0–0x080262e8: 56 bytes · C · 0x080262b0</title>
+<rect x="89.24072012826494" y="1437.2766913391858" width="0.8208024165015985" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x080262e8–0x08026320: 56 bytes · C · 0x080262e8" data-node="leaf" data-kind="file" data-bytes="56" data-address="0x080262e8" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C">
+<title>0x080262e8–0x08026320: 56 bytes · C · 0x080262e8</title>
+<rect x="90.0792568966449" y="1437.2766913391858" width="0.8208024165015985" height="0.017734351878364585" style="fill:#326b7d"/>
+</g>
+</g>
+<g aria-label="0x08024ed4–0x08024ede: 10 bytes · C · 0x08024ed4" data-node="leaf" data-kind="file" data-bytes="10" data-address="0x08024ed4" data-source="games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/SKIP_COMMAND.C">
+<title>0x08024ed4–0x08024ede: 10 bytes · C · 0x08024ed4</title>
+<rect x="90.94439519284239" y="1437.2678241632466" width="0.11446488787022524" height="0.03546870375672917" style="fill:#326b7d"/>
+</g>
+</g>
+</g>
+<g aria-label="DAIRA_HEYA: 2,868 bytes · Unknown · 1 items" data-node="container" data-kind="folder" data-bytes="2868" data-source="games/THE LOST AGE/SRC/FIELD/DAIRA_HEYA/">
+<title>DAIRA_HEYA: 2,868 bytes · Unknown · 1 items</title>
+<rect class="container-frame" x="91.18300054386117" y="1437.143683700098" width="43.329096795946704" height="0.28374963005383336" fill="#1f7f93"/>
+<path class="bevel-light" d="M91.18300054386117 1437.4274333301519 V1437.143683700098 H134.51209733980787" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M91.18300054386117 1437.4274333301519 H134.51209733980787 V1437.143683700098" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="DAIRA_HEYA: 2,868 bytes · Unknown · 0x08ed1b90" data-node="leaf" data-kind="folder" data-bytes="2868" data-address="0x08ed1b90" data-source="games/THE LOST AGE/SRC/FIELD/DAIRA_HEYA/">
+<title>DAIRA_HEYA: 2,868 bytes · Unknown · 0x08ed1b90</title>
+<rect x="91.28940665513136" y="1437.2500898113683" width="43.11628457340633" height="0.07093740751345834" style="fill:#d9d9d4"/>
+</g>
+</g>
+<g aria-label="DAIRA_MURA: 2,508 bytes · Unknown · 1 items" data-node="container" data-kind="folder" data-bytes="2508" data-source="games/THE LOST AGE/SRC/FIELD/DAIRA_MURA/">
+<title>DAIRA_MURA: 2,508 bytes · Unknown · 1 items</title>
+<rect class="container-frame" x="134.51209733980787" y="1437.143683700098" width="37.890298034949204" height="0.28374963005383336" fill="#1f7f93"/>
+<path class="bevel-light" d="M134.51209733980787 1437.4274333301519 V1437.143683700098 H172.40239537475708" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M134.51209733980787 1437.4274333301519 H172.40239537475708 V1437.143683700098" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="DAIRA_MURA: 2,508 bytes · Unknown · 0x08ed11c4" data-node="leaf" data-kind="folder" data-bytes="2508" data-address="0x08ed11c4" data-source="games/THE LOST AGE/SRC/FIELD/DAIRA_MURA/">
+<title>DAIRA_MURA: 2,508 bytes · Unknown · 0x08ed11c4</title>
+<rect x="134.61850345107806" y="1437.2500898113683" width="37.67748581240883" height="0.07093740751345834" style="fill:#d9d9d4"/>
+</g>
+</g>
+<g aria-label="IDEJIMA: 6,240 bytes · Unknown, C · 1 items" data-node="container" data-kind="folder" data-bytes="6240" data-source="games/THE LOST AGE/SRC/FIELD/IDEJIMA/">
+<title>IDEJIMA: 6,240 bytes · Unknown, C · 1 items</title>
+<rect class="container-frame" x="172.40239537475708" y="1437.143683700098" width="94.2725118572899" height="0.28374963005383336" fill="#1f7f93"/>
+<path class="bevel-light" d="M172.40239537475708 1437.4274333301519 V1437.143683700098 H266.67490723204696" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M172.40239537475708 1437.4274333301519 H266.67490723204696 V1437.143683700098" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="IDEJIMA: 6,240 bytes · Unknown, C · 0x08ecf964" data-node="leaf" data-kind="folder" data-bytes="6240" data-address="0x08ecf964" data-source="games/THE LOST AGE/SRC/FIELD/IDEJIMA/">
+<title>IDEJIMA: 6,240 bytes · Unknown, C · 0x08ecf964</title>
+<rect x="172.50880148602727" y="1437.2517723011617" width="94.05969963474952" height="0.06925491771986991" style="fill:#d9d9d4"/>
+<rect x="172.50880148602727" y="1437.250089811368" width="94.05969963474952" height="0.0016824897935884349" style="fill:#326b7d"/>
+</g>
+</g>
+<g aria-label="SUHARA_GATE: 1,992 bytes · Unknown · 1 items" data-node="container" data-kind="folder" data-bytes="1992" data-source="games/THE LOST AGE/SRC/FIELD/SUHARA_GATE/">
+<title>SUHARA_GATE: 1,992 bytes · Unknown · 1 items</title>
+<rect class="container-frame" x="266.67490723204696" y="1437.143683700098" width="30.094686477519474" height="0.28374963005383336" fill="#1f7f93"/>
+<path class="bevel-light" d="M266.67490723204696 1437.4274333301519 V1437.143683700098 H296.76959370956644" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M266.67490723204696 1437.4274333301519 H296.76959370956644 V1437.143683700098" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="SUHARA_GATE: 1,992 bytes · Unknown · 0x08ecf19c" data-node="leaf" data-kind="folder" data-bytes="1992" data-address="0x08ecf19c" data-source="games/THE LOST AGE/SRC/FIELD/SUHARA_GATE/">
+<title>SUHARA_GATE: 1,992 bytes · Unknown · 0x08ecf19c</title>
+<rect x="266.78131334331715" y="1437.2500898113683" width="29.8818742549791" height="0.07093740751345834" style="fill:#d9d9d4"/>
+</g>
+</g>
+<g aria-label="VINASU_CHOJO: 4,536 bytes · Unknown, C · 1 items" data-node="container" data-kind="folder" data-bytes="4536" data-source="games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/">
+<title>VINASU_CHOJO: 4,536 bytes · Unknown, C · 1 items</title>
+<rect class="container-frame" x="296.76959370956644" y="1437.143683700098" width="68.52886438856844" height="0.28374963005383336" fill="#1f7f93"/>
+<path class="bevel-light" d="M296.76959370956644 1437.4274333301519 V1437.143683700098 H365.29845809813486" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M296.76959370956644 1437.4274333301519 H365.29845809813486 V1437.143683700098" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="VINASU_CHOJO: 4,536 bytes · Unknown, C · 0x08ecdfe4" data-node="leaf" data-kind="folder" data-bytes="4536" data-address="0x08ecdfe4" data-source="games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/">
+<title>VINASU_CHOJO: 4,536 bytes · Unknown, C · 0x08ecdfe4</title>
+<rect x="296.8759998208366" y="1437.2557666806204" width="68.31605216602806" height="0.06526053826138925" style="fill:#d9d9d4"/>
+<rect x="296.8759998208366" y="1437.2500898113683" width="68.31605216602806" height="0.005676869252069086" style="fill:#326b7d"/>
+</g>
+</g>
+<g aria-label="VINASU_IRIGUCHI: 6,636 bytes · Unknown, C · 1 items" data-node="container" data-kind="folder" data-bytes="6636" data-source="games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/">
+<title>VINASU_IRIGUCHI: 6,636 bytes · Unknown, C · 1 items</title>
+<rect class="container-frame" x="365.29845809813486" y="1437.143683700098" width="100.25519049438712" height="0.28374963005383336" fill="#1f7f93"/>
+<path class="bevel-light" d="M365.29845809813486 1437.4274333301519 V1437.143683700098 H465.553648592522" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M365.29845809813486 1437.4274333301519 H465.553648592522 V1437.143683700098" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="VINASU_IRIGUCHI: 6,636 bytes · Unknown, C · 0x08ecc5f8" data-node="leaf" data-kind="folder" data-bytes="6636" data-address="0x08ecc5f8" data-source="games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/">
+<title>VINASU_IRIGUCHI: 6,636 bytes · Unknown, C · 0x08ecc5f8</title>
+<rect x="365.40486420940505" y="1437.2506563699274" width="100.04237827184674" height="0.07037084895435447" style="fill:#d9d9d4"/>
+<rect x="365.40486420940505" y="1437.2500898113683" width="100.04237827184674" height="0.0005665585591038716" style="fill:#326b7d"/>
+</g>
+</g>
+<g aria-label="WORLD_MAP: 15,856 bytes · Unknown · 1 items" data-node="container" data-kind="folder" data-bytes="15856" data-source="games/THE LOST AGE/SRC/FIELD/WORLD_MAP/">
+<title>WORLD_MAP: 15,856 bytes · Unknown · 1 items</title>
+<rect class="container-frame" x="465.553648592522" y="1437.143683700098" width="239.5488698732674" height="0.28374963005383336" fill="#1f7f93"/>
+<path class="bevel-light" d="M465.553648592522 1437.4274333301519 V1437.143683700098 H705.1025184657894" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M465.553648592522 1437.4274333301519 H705.1025184657894 V1437.143683700098" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="WORLD_MAP: 15,856 bytes · Unknown · 0x08ec5a18" data-node="leaf" data-kind="folder" data-bytes="15856" data-address="0x08ec5a18" data-source="games/THE LOST AGE/SRC/FIELD/WORLD_MAP/">
+<title>WORLD_MAP: 15,856 bytes · Unknown · 0x08ec5a18</title>
+<rect x="465.6600547037922" y="1437.2500898113683" width="239.336057650727" height="0.07093740751345834" style="fill:#d9d9d4"/>
+</g>
+</g>
+</g>
+<g aria-label="GAME: 60 bytes · C · 1 items" data-node="container" data-kind="folder" data-bytes="60" data-source="games/THE LOST AGE/SRC/GAME/">
+<title>GAME: 60 bytes · C · 1 items</title>
+<rect class="container-frame" x="705.2443932808163" y="1437.0018088850711" width="0.9068670855851877" height="0.5674992601076667" fill="#1f7f93"/>
+<path class="bevel-light" d="M705.2443932808163 1437.5693081451789 V1437.0018088850711 H706.1512603664015" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M705.2443932808163 1437.5693081451789 H706.1512603664015 V1437.0018088850711" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="FLAGS: 60 bytes · C · 3 items" data-node="container" data-kind="folder" data-bytes="60" data-source="games/THE LOST AGE/SRC/GAME/FLAGS/">
+<title>FLAGS: 60 bytes · C · 3 items</title>
+<rect class="container-frame" x="705.3862680958432" y="1437.143683700098" width="0.6231174555313543" height="0.28374963005383336" fill="#1f7f93"/>
+<path class="bevel-light" d="M705.3862680958432 1437.4274333301519 V1437.143683700098 H706.0093855513745" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M705.3862680958432 1437.4274333301519 H706.0093855513745 V1437.143683700098" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="0x08016d5c–0x08016d6c: 16 bytes · C · 0x08016d5c" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x08016d5c" data-source="games/THE LOST AGE/SRC/GAME/FLAGS/GET_BYTE.C">
+<title>0x08016d5c–0x08016d6c: 16 bytes · C · 0x08016d5c</title>
+<rect x="705.489288346057" y="1437.2467039503117" width="0.06416568540059168" height="0.077709129626325" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08016db4–0x08016dd0: 28 bytes · C · 0x08016db4" data-node="leaf" data-kind="file" data-bytes="28" data-address="0x08016db4" data-source="games/THE LOST AGE/SRC/GAME/FLAGS/GET_NIBBLE.C">
+<title>0x08016db4–0x08016dd0: 28 bytes · C · 0x08016db4</title>
+<rect x="705.6210055779146" y="1437.2500898113683" width="0.15364249138861255" height="0.07093740751345834" style="fill:#326b7d"/>
+</g>
+<g aria-label="0x08016d6c–0x08016d7c: 16 bytes · C · 0x08016d6c" data-node="leaf" data-kind="file" data-bytes="16" data-address="0x08016d6c" data-source="games/THE LOST AGE/SRC/GAME/FLAGS/SET_BYTE.C">
+<title>0x08016d6c–0x08016d7c: 16 bytes · C · 0x08016d6c</title>
+<rect x="705.8421996157604" y="1437.2467039503117" width="0.06416568540059168" height="0.077709129626325" style="fill:#326b7d"/>
+</g>
+</g>
+</g>
+<g aria-label="LIB: 10 bytes · C · 1 items" data-node="container" data-kind="folder" data-bytes="10" data-source="games/THE LOST AGE/SRC/LIB/">
+<title>LIB: 10 bytes · C · 1 items</title>
+<rect class="container-frame" x="706.1512603664015" y="1437.0018088850711" width="0.15114451426419806" height="0.5674992601076667" fill="#1f7f93"/>
+<path class="bevel-light" d="M706.1512603664015 1437.5693081451789 V1437.0018088850711 H706.3024048806657" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M706.1512603664015 1437.5693081451789 H706.3024048806657 V1437.0018088850711" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="0x0802d23c–0x0802d246: 10 bytes · C · 0x0802d23c" data-node="leaf" data-kind="file" data-bytes="10" data-address="0x0802d23c" data-source="games/THE LOST AGE/SRC/LIB/CURVE.C">
+<title>0x0802d23c–0x0802d246: 10 bytes · C · 0x0802d23c</title>
+<rect x="706.2079395592506" y="1437.0584880779202" width="0.037786128566049515" height="0.45414087440951817" style="fill:#326b7d"/>
+</g>
+</g>
+<g aria-label="MENU: 7,440 bytes · Unknown · 1 items" data-node="container" data-kind="folder" data-bytes="7440" data-source="games/THE LOST AGE/SRC/MENU/">
+<title>MENU: 7,440 bytes · Unknown · 1 items</title>
+<rect class="container-frame" x="706.3024048806657" y="1437.0018088850711" width="112.45151861256329" height="0.5674992601076667" fill="#1f7f93"/>
+<path class="bevel-light" d="M706.3024048806657 1437.5693081451789 V1437.0018088850711 H818.753923493229" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M706.3024048806657 1437.5693081451789 H818.753923493229 V1437.0018088850711" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="CLEAR: 7,440 bytes · Unknown · 1 items" data-node="container" data-kind="folder" data-bytes="7440" data-source="games/THE LOST AGE/SRC/MENU/CLEAR/">
+<title>CLEAR: 7,440 bytes · Unknown · 1 items</title>
+<rect class="container-frame" x="706.4442796956926" y="1437.143683700098" width="112.16776898250946" height="0.28374963005383336" fill="#1f7f93"/>
+<path class="bevel-light" d="M706.4442796956926 1437.4274333301519 V1437.143683700098 H818.612048678202" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M706.4442796956926 1437.4274333301519 H818.612048678202 V1437.143683700098" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="CLEAR: 7,440 bytes · Unknown · 0x08ec3d08" data-node="leaf" data-kind="folder" data-bytes="7440" data-address="0x08ec3d08" data-source="games/THE LOST AGE/SRC/MENU/CLEAR/">
+<title>CLEAR: 7,440 bytes · Unknown · 0x08ec3d08</title>
+<rect x="706.5506858069627" y="1437.2500898113683" width="111.95495675996908" height="0.07093740751345833" style="fill:#d9d9d4"/>
+</g>
+</g>
+</g>
+<g aria-label="SOUND: 344 bytes · C · 1 items" data-node="container" data-kind="folder" data-bytes="344" data-source="games/THE LOST AGE/SRC/SOUND/">
+<title>SOUND: 344 bytes · C · 1 items</title>
+<rect class="container-frame" x="818.753923493229" y="1437.0018088850711" width="5.19937129068842" height="0.5674992601076667" fill="#1f7f93"/>
+<path class="bevel-light" d="M818.753923493229 1437.5693081451789 V1437.0018088850711 H823.9532947839174" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M818.753923493229 1437.5693081451789 H823.9532947839174 V1437.0018088850711" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="0x081c31b4–0x081c330c: 344 bytes · C · 0x081c31b4" data-node="leaf" data-kind="file" data-bytes="344" data-address="0x081c31b4" data-source="games/THE LOST AGE/SRC/SOUND/MUSIC_TRACK_OPERATE_WORK_BYTE.C">
+<title>0x081c31b4–0x081c330c: 344 bytes · C · 0x081c31b4</title>
+<rect x="818.9667357157693" y="1437.2146211076115" width="4.77374684560767" height="0.14187481502691668" style="fill:#326b7d"/>
+</g>
+</g>
+<g aria-label="SYSTEM: 4 bytes · C · 1 items" data-node="container" data-kind="folder" data-bytes="4" data-source="games/THE LOST AGE/SRC/SYSTEM/">
+<title>SYSTEM: 4 bytes · C · 1 items</title>
+<rect class="container-frame" x="823.9532947839174" y="1437.0018088850711" width="0.06045780570567949" height="0.5674992601076667" fill="#1f7f93"/>
+<path class="bevel-light" d="M823.9532947839174 1437.5693081451789 V1437.0018088850711 H824.0137525896231" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M823.9532947839174 1437.5693081451789 H824.0137525896231 V1437.0018088850711" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<g aria-label="0x080132cc–0x080132d0: 4 bytes · C · 0x080132cc" data-node="leaf" data-kind="file" data-bytes="4" data-address="0x080132cc" data-source="games/THE LOST AGE/SRC/SYSTEM/CONSTANT_ZERO_RESULT.C">
+<title>0x080132cc–0x080132d0: 4 bytes · C · 0x080132cc</title>
+<rect x="823.9759664610569" y="1437.0244805622108" width="0.015114451426419873" height="0.5221559058284071" style="fill:#326b7d"/>
+</g>
+</g>
+</g>
+</g>
+</g>
+<rect x="8" y="1451.5555555555557" width="16" height="16" style="fill:#d9d9d4"/>
+<text class="label legend-label" x="28" y="1459.5555555555557" dominant-baseline="middle">Unknown 100.0%</text>
+<rect x="144" y="1451.5555555555557" width="16" height="16" style="fill:#326b7d"/>
+<text class="label legend-label" x="164" y="1459.5555555555557" dominant-baseline="middle">C 0.0%</text>
+<g class="chart-frame" pointer-events="none">
+<path class="bevel-light" d="M0.5 1475.0555555555557 V0.5 H829.5" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+<path class="bevel-dark" d="M0.5 1475.0555555555557 H829.5 V0.5" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
+</g></svg>

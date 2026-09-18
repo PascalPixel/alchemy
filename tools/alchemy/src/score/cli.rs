@@ -185,7 +185,7 @@ fn default_work(root: &Path, source: &str) -> String {
                     .all(|c| c.is_ascii_alphanumeric() || matches!(c, '_' | '-'))
         })
         .unwrap_or("candidate");
-    root.join("scratch/score")
+    root.join("out/score")
         .join(stem)
         .to_string_lossy()
         .into_owned()

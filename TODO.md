@@ -11,17 +11,27 @@ that finishes it.
 Reach 60% of the fixed executable inventory. Read the current verified count
 with `make progress`; do not maintain a second score in this task list.
 
-- Recheck and adopt what the stopped recovery run found. Exact:
-  `main:080fa514` (72 bytes) and `main:08092878` (172 bytes). Exact at 54 bytes
-  each: `resource_39e:02000104` and `resource_3c9:02000104`, the `Effect_Move`
-  family; eleven more copies differ by one halfword, so the family wants one
-  shared source with instances.
-- Rebuild coverage with `make coverage`, then rank unresolved owners from it,
-  twins of exact owners first.
-- Recount the owners still parked because their only match needed a
-  scheduling trick. The five overlay copies of `0809a65c` still hold a
-  `do { } while (0)` barrier. `SpawnConfiguredEffect` (23 copies) stays a
-  recorded compiler gap unless new evidence reopens it.
+- On `cursor/tbs-to-60`, `Effect_Move` is adopted. Agents: if an owner is not
+  exact inside a 10-minute window, park it under Stubborn and switch.
+
+### Stubborn (hard-pass later)
+
+- Prefer never-drafted TLA regions over near-miss halfword floors.
+
+
+Parked for a stronger model. Agents must not burn a 10-minute window here.
+
+- `main:081c342c` Audio_EmptyCallback (2 B) — scores exact with `--size 2`, but lies outside audited main executable ranges in metrics/executable.json; bounce until ranges include it.
+- `main:0802d246` Curve_LerpTwoSamples family — TBS body matches except Thumb epilogue (`pop {pc}` vs `pop {r1}; bx r1`); needs TLA-specific spelling.
+
+- `main:080fa514` (72 B), `main:08092878` (172 B) — still non-exact.
+- `resource_3bd:020013f8` (6220 B) — scheduling-floor, 2 halfwords.
+- Overlay `0809a65c` `do{}while(0)` copies; `SpawnConfiguredEffect` compiler gap.
+- Recorded `copy_versus_rematerialise` / `instruction-selection` walls — stop.
+- TLA Venus `resource_64d:02000510` — lifter repair required (see below).
+- TLA field-operand floors `08025bb4` / `08025c5c` / `08025f9c` — already parked.
+- TLA `script-interpreter-control` beyond `main:08024c50` — layout/bindings
+  differ from TBS; do not thrash WaitForEvent at wrong addresses.
 
 ### Reconstruct The Lost Age
 
@@ -29,6 +39,26 @@ The executable inventory covers 2,578,466 bytes: 1,535,116 in the main image
 and 1,043,350 across all 114 overlays. Grow verified source coverage against
 that fixed inventory; its denominator is not a claim of a complete TLA build.
 Credit only ranges meeting [COMPLETION](.agents/COMPLETION.md).
+
+- Field-script operands at `08025b58–08026320`: 38 exact owners (1,820 bytes)
+  adopted as `tla-script-operands` from `FIELD/COMMON/SCRIPT/OPERANDS.C`.
+  Three 2-halfword scheduling floors remain uncredited at `08025bb4` (46),
+  `08025c5c` (46), and `08025f9c` (52); do not repeat the five parked source
+  hypotheses or change compiler flags. They stay in the C for layout only.
+
+- Venus approach event `resource_64d:02000510` has a reviewed 5,404-byte extent.
+  Its loaded reference ends at `02009a2c`, including the last literal. The
+  private candidate at `out/tla-en/overlay-64d-scene/SCENE.C` scores 5,360
+  emitted bytes, 2,293 differing halfwords and 285 aligned wrong instructions;
+  no bytes adopted. Calls were bound from reference sites, not candidate
+  offsets. Repair the lifter before repeating this scene family: a fresh
+  `psynergy decompile` duplicates actor lookups, appends two spurious calls
+  after the event-end call, and introduces `volatile` on ordinary actor RAM
+  (`tools/psynergy/src/lift.rs` byte-mask emission). The private candidate
+  removes those errors. Its first remaining mismatch is constant 257 loaded
+  from a pool versus `mov 2; add 255`; the existing compiler synthesizes such
+  constants during reload, so equivalent constant spellings are not a new
+  search axis. Compiler, flags and credit remain unchanged.
 
 ### Alchemy builds, Psynergy reads
 

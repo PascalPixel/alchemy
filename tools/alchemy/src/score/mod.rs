@@ -26,7 +26,6 @@ use crate::compiler::{
     symbols::overlay_call_via_base,
     translation_units::{TranslationUnit, TranslationUnits},
 };
-use crate::overlay::rom::canonical_overlay;
 use std::path::Path;
 use std::process::Command;
 pub fn entry(arguments: &[String]) {
@@ -70,22 +69,31 @@ fn run(mut options: crate::score::cli::Options) -> Result<String, String> {
     if options.instance.is_some() || options.all_instances {
         return score_instances(&unit, &options);
     }
+    if let Some(address) = options.owner {
+        if !unit.owners.iter().any(|owner| owner.address == address) {
+            return Err(format!("{id} does not declare 0x{address:08x}"));
+        }
+    }
     if let Some(overlay) = unit.overlay.clone() {
-        if options.owner.is_none() && unit.exact() {
+        if unit.exact() && options.patch.is_none() && !options.asm && !options.allocator_order {
             let work = options.work.as_ref().map(|work| root().join(work));
-            return score_overlay_unit(&unit, &overlay, work.as_deref());
+            return score_overlay_unit(&unit, &overlay, work.as_deref(), options.owner);
         }
     }
     options.source = unit.source.to_string_lossy().into_owned();
     options.configuration.absolute_symbols = unit.canonical_symbols()?;
-    let default_work = format!("scratch/score/{id}");
+    let default_work = format!("out/score/{id}");
     let work = options.work.clone().unwrap_or(default_work);
     let work = root().join(work).to_string_lossy().into_owned();
     options.work = Some(work.clone());
     if let Some(overlay) = &unit.overlay {
         options.overlay = Some(overlay.clone());
         options.configuration.call_via_base = Some(overlay_call_via_base(overlay));
-        let reference = canonical_overlay(root(), overlay)?;
+        let reference = crate::overlay::rom::canonical_overlay_for(
+            root(),
+            crate::overlay::owners::production_target(options.target),
+            overlay,
+        )?;
         let path = Path::new(&work).join(format!(
             "reference-{}.bin",
             crate::compiler::sha256::hex(&reference)
@@ -95,11 +103,6 @@ fn run(mut options: crate::score::cli::Options) -> Result<String, String> {
         options.rom = Some(path.to_string_lossy().into_owned());
     }
     let selected_owner = options.owner;
-    if let Some(address) = selected_owner {
-        if !unit.owners.iter().any(|owner| owner.address == address) {
-            return Err(format!("{id} does not declare 0x{address:08x}"));
-        }
-    }
     let mut output = String::new();
     let mut layout_mismatches = Vec::new();
     let exact_unit = unit.exact();
@@ -164,8 +167,9 @@ fn score_overlay_unit(
     unit: &TranslationUnit,
     overlay: &str,
     work: Option<&Path>,
+    first: Option<u32>,
 ) -> Result<String, String> {
-    let (output, mismatches) = score_overlay_image(unit, overlay, None, work, false, None)?;
+    let (output, mismatches) = score_overlay_image(unit, overlay, None, work, false, first)?;
     if !mismatches.is_empty() && unit.exact() {
         return Err(format!(
             "{output}translation unit {} has byte mismatches in {}",
@@ -377,6 +381,21 @@ fn fail(message: &str) -> ! {
 mod tests {
     use super::*;
     #[test]
+    fn lost_age_selected_overlay_member_still_uses_the_complete_unit() {
+        if !root().join("roms/tla-en.gba").is_file() {
+            return;
+        }
+        let mut options = crate::score::cli::Options::tbs(String::new());
+        options.target = crate::compiler::routing::CompilerTarget::Tla;
+        options.unit = Some("venus-lighthouse-approach-scene".into());
+        options.owner = Some(0x02000038);
+        options.work = Some("out/tla-en/score-unit-route-test".into());
+        let output = run(options).unwrap();
+        assert_eq!(output.matches("differing_halfwords=0").count(), 7);
+        assert!(output.starts_with("scope=translation-unit\nowner=0x02000038\n"));
+    }
+
+    #[test]
     fn score_unit_all_instances_reports_every_owner_including_alignment_halfword() {
         use crate::compiler::translation_units::fixture::Repository;
         use crate::overlay::compile::Compiled;
@@ -523,7 +542,8 @@ mod tests {
         assert!(!exact_mismatch(&output(0)));
         assert!(exact_mismatch(&output(1)));
         let repository = std::env::temp_dir().join(format!("diff-no-rom-{}", std::process::id()));
-        let error = canonical_overlay(&repository, "resource_36f").unwrap_err();
+        let error =
+            crate::overlay::rom::canonical_overlay(&repository, "resource_36f").unwrap_err();
         assert!(error.contains("roms/tbs-en.gba"));
         let work = root().join("out/diff-unit-test");
         let _ = std::fs::remove_dir_all(&work);

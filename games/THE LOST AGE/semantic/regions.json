@@ -2,6 +2,12 @@
   "format": 1,
   "manual_regions": [
     {
+      "overlay": "resource_64d",
+      "entry": "0x02000510",
+      "span_bytes": 5404,
+      "evidence": "Reviewed in the canonical tla-en loaded overlay: entry 0x02008510 saves r5-r11 and lr; its control flow returns at 0x02009a26, the final referenced 0x00013333 literal occupies 0x02009a28-0x02009a2b, and the next independent owner begins with push {r5, lr} at 0x02009a2c. Resource coordinates subtract the loader's 0x8000 offset. This boundary review grants no C or retained-assembly credit."
+    },
+    {
       "overlay": "resource_64e",
       "entry": "0x02000038",
       "span_bytes": 70,

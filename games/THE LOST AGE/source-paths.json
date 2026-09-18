@@ -502,6 +502,30 @@
     "main:08023f28": {
       "name": "Script_SetByte54",
       "source": "FIELD/COMMON/SCRIPT/OPERANDS_SET_BYTE54.C"
+    },
+    "main:0802471c": {
+      "name": "Object_SetPositionAndResetMotion",
+      "source": "FIELD/COMMON/OBJECT/MOTION_SET_POSITION_AND_RESET_MOTION.C"
+    },
+    "main:081201b4": {
+      "name": "Battle_SetRuntimeFlagBit0",
+      "source": "BATTLE/EVENT_QUEUE_SET_FLAG_BIT0.C"
+    },
+    "main:08015768": {
+      "name": "Camera_StoreSceneParameters",
+      "source": "GRAPHICS/CAMERA_STORE_SCENE_PARAMETERS.C"
+    },
+    "main:0803d4bc": {
+      "name": "Ui_CountIconTableEntries",
+      "source": "GRAPHICS/ICON/COUNT_TABLE_ENTRIES.C"
+    },
+    "main:0803d4d0": {
+      "name": "Ui_CountSecondTableEntries",
+      "source": "GRAPHICS/WINDOW/COUNT_SECOND_TABLE_ENTRIES.C"
+    },
+    "main:080b0288": {
+      "name": "Owner_GetRecordStride84",
+      "source": "GAME/CHARACTER/GET_RECORD_STRIDE84.C"
     }
   }
 }

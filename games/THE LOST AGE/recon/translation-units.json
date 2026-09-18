@@ -1512,6 +1512,125 @@
         }
       ],
       "overlay": null
+    },
+    {
+      "id": "tla-object-set-position-and-reset-motion",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/MOTION_SET_POSITION_AND_RESET_MOTION.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0802471c",
+          "extent": 26,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-battle-set-runtime-flag-bit0",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/BATTLE/EVENT_QUEUE_SET_FLAG_BIT0.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x081201b4",
+          "extent": 16,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-camera-store-scene-parameters",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/CAMERA_STORE_SCENE_PARAMETERS.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x08015768",
+          "extent": 16,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-ui-count-icon-table-entries",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/ICON/COUNT_TABLE_ENTRIES.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "Data_0804f124": {
+          "address": "0x0804f124",
+          "kind": "data"
+        },
+        "Data_0804eb58": {
+          "address": "0x0804eb58",
+          "kind": "data"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0803d4bc",
+          "extent": 20,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-ui-count-second-table-entries",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/GRAPHICS/WINDOW/COUNT_SECOND_TABLE_ENTRIES.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "Data_08054e24": {
+          "address": "0x08054e24",
+          "kind": "data"
+        },
+        "Data_08054a14": {
+          "address": "0x08054a14",
+          "kind": "data"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0803d4d0",
+          "extent": 20,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-owner-get-record-stride84",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/GAME/CHARACTER/GET_RECORD_STRIDE84.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "Data_080c15f4": {
+          "address": "0x080c15f4",
+          "kind": "data"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080b0288",
+          "extent": 16,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
     }
   ]
 }

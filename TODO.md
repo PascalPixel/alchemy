@@ -15,6 +15,9 @@ with `make progress`; do not maintain a second score in this task list.
   exact inside a 10-minute window, park it under Stubborn and switch.
 
 ### Stubborn (hard-pass later)
+- `main:080ebe94` EffectSlot_SetPosition (18 B) — 1 halfword off; bounce.
+- `main:08013300` Resource_GetTableEntry (12 B) — instruction-selection wall; bounce.
+
 
 - Prefer never-drafted TLA regions over near-miss halfword floors.
 

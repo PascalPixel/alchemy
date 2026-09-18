@@ -10,7 +10,13 @@
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
-      "owners": [{"address": "0x081c2640", "extent": 60, "state": "exact-c"}],
+      "owners": [
+        {
+          "address": "0x081c2640",
+          "extent": 60,
+          "state": "exact-c"
+        }
+      ],
       "overlay": null
     },
     {
@@ -20,7 +26,13 @@
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
-      "owners": [{"address": "0x081c28e0", "extent": 180, "state": "exact-c"}],
+      "owners": [
+        {
+          "address": "0x081c28e0",
+          "extent": 180,
+          "state": "exact-c"
+        }
+      ],
       "overlay": null
     },
     {
@@ -30,7 +42,13 @@
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
-      "owners": [{"address": "0x081c2a3c", "extent": 80, "state": "exact-c"}],
+      "owners": [
+        {
+          "address": "0x081c2a3c",
+          "extent": 80,
+          "state": "exact-c"
+        }
+      ],
       "overlay": null
     },
     {
@@ -40,7 +58,13 @@
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
-      "owners": [{"address": "0x081c2a8c", "extent": 104, "state": "exact-c"}],
+      "owners": [
+        {
+          "address": "0x081c2a8c",
+          "extent": 104,
+          "state": "exact-c"
+        }
+      ],
       "overlay": null
     },
     {
@@ -50,7 +74,13 @@
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
-      "owners": [{"address": "0x081c2f68", "extent": 104, "state": "exact-c"}],
+      "owners": [
+        {
+          "address": "0x081c2f68",
+          "extent": 104,
+          "state": "exact-c"
+        }
+      ],
       "overlay": null
     },
     {
@@ -60,7 +90,13 @@
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
-      "owners": [{"address": "0x081c2fd0", "extent": 116, "state": "exact-c"}],
+      "owners": [
+        {
+          "address": "0x081c2fd0",
+          "extent": 116,
+          "state": "exact-c"
+        }
+      ],
       "overlay": null
     },
     {
@@ -70,7 +106,13 @@
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
-      "owners": [{"address": "0x081c3044", "extent": 104, "state": "exact-c"}],
+      "owners": [
+        {
+          "address": "0x081c3044",
+          "extent": 104,
+          "state": "exact-c"
+        }
+      ],
       "overlay": null
     },
     {
@@ -80,7 +122,13 @@
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
-      "owners": [{"address": "0x081c3340", "extent": 72, "state": "exact-c"}],
+      "owners": [
+        {
+          "address": "0x081c3340",
+          "extent": 72,
+          "state": "exact-c"
+        }
+      ],
       "overlay": null
     },
     {
@@ -91,7 +139,11 @@
       "absolute_symbols": {},
       "local_symbols": [],
       "owners": [
-        {"address": "0x080132cc", "extent": 4, "state": "exact-c"}
+        {
+          "address": "0x080132cc",
+          "extent": 4,
+          "state": "exact-c"
+        }
       ],
       "overlay": null
     },
@@ -101,11 +153,18 @@
       "source": "games/THE LOST AGE/SRC/GAME/FLAGS/GET_BYTE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
-        "GameFlagBytes": {"address": "0x02000040", "kind": "data"}
+        "GameFlagBytes": {
+          "address": "0x02000040",
+          "kind": "data"
+        }
       },
       "local_symbols": [],
       "owners": [
-        {"address": "0x08016d5c", "extent": 16, "state": "exact-c"}
+        {
+          "address": "0x08016d5c",
+          "extent": 16,
+          "state": "exact-c"
+        }
       ],
       "overlay": null
     },
@@ -114,9 +173,20 @@
       "game": "tla",
       "source": "games/THE LOST AGE/SRC/GAME/FLAGS/SET_BYTE.C",
       "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {"GameFlagBytes": {"address": "0x02000040", "kind": "data"}},
+      "absolute_symbols": {
+        "GameFlagBytes": {
+          "address": "0x02000040",
+          "kind": "data"
+        }
+      },
       "local_symbols": [],
-      "owners": [{"address": "0x08016d6c", "extent": 16, "state": "exact-c"}],
+      "owners": [
+        {
+          "address": "0x08016d6c",
+          "extent": 16,
+          "state": "exact-c"
+        }
+      ],
       "overlay": null
     },
     {
@@ -124,9 +194,20 @@
       "game": "tla",
       "source": "games/THE LOST AGE/SRC/GAME/FLAGS/GET_NIBBLE.C",
       "compiler_route": "canonical-gcc296",
-      "absolute_symbols": {"GameFlagBytes": {"address": "0x02000040", "kind": "data"}},
+      "absolute_symbols": {
+        "GameFlagBytes": {
+          "address": "0x02000040",
+          "kind": "data"
+        }
+      },
       "local_symbols": [],
-      "owners": [{"address": "0x08016db4", "extent": 28, "state": "exact-c"}],
+      "owners": [
+        {
+          "address": "0x08016db4",
+          "extent": 28,
+          "state": "exact-c"
+        }
+      ],
       "overlay": null
     },
     {
@@ -137,7 +218,11 @@
       "absolute_symbols": {},
       "local_symbols": [],
       "owners": [
-        {"address": "0x080caf70", "extent": 84, "state": "exact-c"}
+        {
+          "address": "0x080caf70",
+          "extent": 84,
+          "state": "exact-c"
+        }
       ],
       "overlay": null
     },
@@ -147,14 +232,31 @@
       "source": "games/COMMON/SRC/SOUND/PCM_KEY_TO_FREQUENCY.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
-        "Audio_UmulHigh32": {"address": "0x081c127c", "kind": "thumb"},
-        "Sound_PcmFrequencySteps": {"address": "0x081c3580", "kind": "data"},
-        "Sound_PcmPitchCodes": {"address": "0x081c34cc", "kind": "data"}
+        "Audio_UmulHigh32": {
+          "address": "0x081c127c",
+          "kind": "thumb"
+        },
+        "Sound_PcmFrequencySteps": {
+          "address": "0x081c3580",
+          "kind": "data"
+        },
+        "Sound_PcmPitchCodes": {
+          "address": "0x081c34cc",
+          "kind": "data"
+        }
       },
       "local_symbols": [],
       "owners": [
-        {"address": "0x081c1e98", "extent": 100, "state": "exact-c"},
-        {"address": "0x081c1efc", "extent": 2, "state": "exact-c"}
+        {
+          "address": "0x081c1e98",
+          "extent": 100,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c1efc",
+          "extent": 2,
+          "state": "exact-c"
+        }
       ],
       "overlay": null
     },
@@ -164,12 +266,22 @@
       "source": "games/COMMON/SRC/SOUND/MUSIC_TRACK_DISPATCH_STREAM_COMMAND.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
-        "Runtime_InvokeWorkEntryWithArgs": {"address": "0x08017880", "kind": "thumb"},
-        "Sound_ExtendedCommandTable": {"address": "0x081c36e4", "kind": "data"}
+        "Runtime_InvokeWorkEntryWithArgs": {
+          "address": "0x08017880",
+          "kind": "thumb"
+        },
+        "Sound_ExtendedCommandTable": {
+          "address": "0x081c36e4",
+          "kind": "data"
+        }
       },
       "local_symbols": [],
       "owners": [
-        {"address": "0x081c330c", "extent": 32, "state": "exact-c"}
+        {
+          "address": "0x081c330c",
+          "extent": 32,
+          "state": "exact-c"
+        }
       ],
       "overlay": null
     },
@@ -179,25 +291,74 @@
       "source": "games/COMMON/SRC/SOUND/INITIALIZE_CGB.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
-        "AudioEngine_SetPcmRate": {"address": "0x081c2434", "kind": "thumb"},
-        "Bios_CpuSet": {"address": "0x08016df8", "kind": "thumb"},
-        "CgbAudio_Update": {"address": "0x081c2af4", "kind": "thumb"},
-        "CgbChannel_Mute": {"address": "0x081c2a3c", "kind": "thumb"},
-        "Cgb_KeyToFrequency": {"address": "0x081c2994", "kind": "thumb"},
-        "MusicPlayer_StepFade": {"address": "0x081c2818", "kind": "thumb"},
-        "MusicTrack_CalcOutput": {"address": "0x081c28e0", "kind": "thumb"},
-        "MusicTrack_DispatchStreamCommand": {"address": "0x081c330c", "kind": "thumb"},
-        "MusicTrack_OperateWorkByte": {"address": "0x081c31b4", "kind": "thumb"},
-        "MusicTrack_ReleaseKey": {"address": "0x081c1e08", "kind": "thumb"},
-        "MusicTrack_SetLfoSpeedFromCommand": {"address": "0x081c1e70", "kind": "thumb"},
-        "MusicTrack_SetModulationFromCommand": {"address": "0x081c1e84", "kind": "thumb"},
-        "MusicTrack_Stop": {"address": "0x081c1b94", "kind": "thumb"},
-        "Sound_CommandTable": {"address": "0x02006800", "kind": "data"},
-        "Value_00000000": {"address": "0x00000000", "kind": "data"}
+        "AudioEngine_SetPcmRate": {
+          "address": "0x081c2434",
+          "kind": "thumb"
+        },
+        "Bios_CpuSet": {
+          "address": "0x08016df8",
+          "kind": "thumb"
+        },
+        "CgbAudio_Update": {
+          "address": "0x081c2af4",
+          "kind": "thumb"
+        },
+        "CgbChannel_Mute": {
+          "address": "0x081c2a3c",
+          "kind": "thumb"
+        },
+        "Cgb_KeyToFrequency": {
+          "address": "0x081c2994",
+          "kind": "thumb"
+        },
+        "MusicPlayer_StepFade": {
+          "address": "0x081c2818",
+          "kind": "thumb"
+        },
+        "MusicTrack_CalcOutput": {
+          "address": "0x081c28e0",
+          "kind": "thumb"
+        },
+        "MusicTrack_DispatchStreamCommand": {
+          "address": "0x081c330c",
+          "kind": "thumb"
+        },
+        "MusicTrack_OperateWorkByte": {
+          "address": "0x081c31b4",
+          "kind": "thumb"
+        },
+        "MusicTrack_ReleaseKey": {
+          "address": "0x081c1e08",
+          "kind": "thumb"
+        },
+        "MusicTrack_SetLfoSpeedFromCommand": {
+          "address": "0x081c1e70",
+          "kind": "thumb"
+        },
+        "MusicTrack_SetModulationFromCommand": {
+          "address": "0x081c1e84",
+          "kind": "thumb"
+        },
+        "MusicTrack_Stop": {
+          "address": "0x081c1b94",
+          "kind": "thumb"
+        },
+        "Sound_CommandTable": {
+          "address": "0x02006800",
+          "kind": "data"
+        },
+        "Value_00000000": {
+          "address": "0x00000000",
+          "kind": "data"
+        }
       },
       "local_symbols": [],
       "owners": [
-        {"address": "0x081c21f8", "extent": 280, "state": "exact-c"}
+        {
+          "address": "0x081c21f8",
+          "extent": 280,
+          "state": "exact-c"
+        }
       ],
       "overlay": null
     },
@@ -207,37 +368,132 @@
       "source": "games/COMMON/SRC/SOUND/SOUND.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
-        "AudioEngine_Initialize": {"address": "0x081c233c", "kind": "thumb"},
-        "AudioEngine_RunMixerTick": {"address": "0x081c128c", "kind": "thumb"},
-        "AudioEngine_SetMode": {"address": "0x081c24d8", "kind": "thumb"},
-        "Audio_ResumePlayer": {"address": "0x081c1f00", "kind": "thumb"},
-        "Bios_CpuSet": {"address": "0x08016df8", "kind": "thumb"},
-        "CgbAudio_Initialize": {"address": "0x081c21f8", "kind": "thumb"},
-        "MusicPlayer_BeginFadeOut": {"address": "0x081c1f1c", "kind": "thumb"},
-        "MusicPlayer_Initialize": {"address": "0x081c267c", "kind": "thumb"},
-        "MusicPlayer_StartSong": {"address": "0x081c26f4", "kind": "thumb"},
-        "MusicPlayer_Stop": {"address": "0x081c27d8", "kind": "thumb"},
-        "Sound_CgbNotes": {"address": "0x02006890", "kind": "data"},
-        "Sound_Mixer": {"address": "0x081c1310", "kind": "thumb"},
-        "Sound_PlayerCount": {"address": "0x00000008", "kind": "data"},
-        "Sound_PlayerSlots": {"address": "0x081c44d0", "kind": "data"},
-        "Sound_SongTable": {"address": "0x081c4530", "kind": "data"},
-        "Sound_Work": {"address": "0x02005850", "kind": "data"},
-        "Sound_WorkBytes": {"address": "0x02006b50", "kind": "data"}
+        "AudioEngine_Initialize": {
+          "address": "0x081c233c",
+          "kind": "thumb"
+        },
+        "AudioEngine_RunMixerTick": {
+          "address": "0x081c128c",
+          "kind": "thumb"
+        },
+        "AudioEngine_SetMode": {
+          "address": "0x081c24d8",
+          "kind": "thumb"
+        },
+        "Audio_ResumePlayer": {
+          "address": "0x081c1f00",
+          "kind": "thumb"
+        },
+        "Bios_CpuSet": {
+          "address": "0x08016df8",
+          "kind": "thumb"
+        },
+        "CgbAudio_Initialize": {
+          "address": "0x081c21f8",
+          "kind": "thumb"
+        },
+        "MusicPlayer_BeginFadeOut": {
+          "address": "0x081c1f1c",
+          "kind": "thumb"
+        },
+        "MusicPlayer_Initialize": {
+          "address": "0x081c267c",
+          "kind": "thumb"
+        },
+        "MusicPlayer_StartSong": {
+          "address": "0x081c26f4",
+          "kind": "thumb"
+        },
+        "MusicPlayer_Stop": {
+          "address": "0x081c27d8",
+          "kind": "thumb"
+        },
+        "Sound_CgbNotes": {
+          "address": "0x02006890",
+          "kind": "data"
+        },
+        "Sound_Mixer": {
+          "address": "0x081c1310",
+          "kind": "thumb"
+        },
+        "Sound_PlayerCount": {
+          "address": "0x00000008",
+          "kind": "data"
+        },
+        "Sound_PlayerSlots": {
+          "address": "0x081c44d0",
+          "kind": "data"
+        },
+        "Sound_SongTable": {
+          "address": "0x081c4530",
+          "kind": "data"
+        },
+        "Sound_Work": {
+          "address": "0x02005850",
+          "kind": "data"
+        },
+        "Sound_WorkBytes": {
+          "address": "0x02006b50",
+          "kind": "data"
+        }
       },
       "local_symbols": [],
       "owners": [
-        {"address": "0x081c1f3c", "extent": 120, "state": "exact-c"},
-        {"address": "0x081c1fb4", "extent": 10, "state": "exact-c"},
-        {"address": "0x081c1fc0", "extent": 44, "state": "exact-c"},
-        {"address": "0x081c1fec", "extent": 76, "state": "exact-c"},
-        {"address": "0x081c2038", "extent": 84, "state": "exact-c"},
-        {"address": "0x081c208c", "extent": 52, "state": "exact-c"},
-        {"address": "0x081c20c0", "extent": 52, "state": "exact-c"},
-        {"address": "0x081c20f4", "extent": 44, "state": "exact-c"},
-        {"address": "0x081c2120", "extent": 10, "state": "exact-c"},
-        {"address": "0x081c212c", "extent": 44, "state": "exact-c"},
-        {"address": "0x081c2158", "extent": 14, "state": "exact-c"}
+        {
+          "address": "0x081c1f3c",
+          "extent": 120,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c1fb4",
+          "extent": 10,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c1fc0",
+          "extent": 44,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c1fec",
+          "extent": 76,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c2038",
+          "extent": 84,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c208c",
+          "extent": 52,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c20c0",
+          "extent": 52,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c20f4",
+          "extent": 44,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c2120",
+          "extent": 10,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c212c",
+          "extent": 44,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c2158",
+          "extent": 14,
+          "state": "exact-c"
+        }
       ],
       "overlay": null
     },
@@ -247,23 +503,70 @@
       "source": "games/COMMON/SRC/SOUND/ENGINE_INITIALIZE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
-        "AudioEngine_ResumeDirectSound": {"address": "0x081c2640", "kind": "thumb"},
-        "Audio_EmptyCallback": {"address": "0x081c342c", "kind": "thumb"},
-        "Bios_CpuSet": {"address": "0x08016df8", "kind": "thumb"},
-        "Math_Div": {"address": "0x08002054", "kind": "thumb"},
-        "MusicTrack_HandleNote": {"address": "0x081c07a2", "kind": "thumb"},
-        "Sound_CommandTable": {"address": "0x02006800", "kind": "data"},
-        "Sound_FrameLengths": {"address": "0x081c35b0", "kind": "data"},
-        "Sound_LoadCommandTable": {"address": "0x081c171c", "kind": "thumb"}
-        ,"_call_via_r1": {"address": "0x0801787c", "kind": "thumb"}
+        "AudioEngine_ResumeDirectSound": {
+          "address": "0x081c2640",
+          "kind": "thumb"
+        },
+        "Audio_EmptyCallback": {
+          "address": "0x081c342c",
+          "kind": "thumb"
+        },
+        "Bios_CpuSet": {
+          "address": "0x08016df8",
+          "kind": "thumb"
+        },
+        "Math_Div": {
+          "address": "0x08002054",
+          "kind": "thumb"
+        },
+        "MusicTrack_HandleNote": {
+          "address": "0x081c07a2",
+          "kind": "thumb"
+        },
+        "Sound_CommandTable": {
+          "address": "0x02006800",
+          "kind": "data"
+        },
+        "Sound_FrameLengths": {
+          "address": "0x081c35b0",
+          "kind": "data"
+        },
+        "Sound_LoadCommandTable": {
+          "address": "0x081c171c",
+          "kind": "thumb"
+        },
+        "_call_via_r1": {
+          "address": "0x0801787c",
+          "kind": "thumb"
+        }
       },
       "local_symbols": [],
       "owners": [
-        {"address": "0x081c233c", "extent": 248, "state": "exact-c"},
-        {"address": "0x081c2434", "extent": 164, "state": "exact-c"},
-        {"address": "0x081c24d8", "extent": 152, "state": "exact-c"},
-        {"address": "0x081c2570", "extent": 84, "state": "exact-c"},
-        {"address": "0x081c25c4", "extent": 124, "state": "exact-c"}
+        {
+          "address": "0x081c233c",
+          "extent": 248,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c2434",
+          "extent": 164,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c24d8",
+          "extent": 152,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c2570",
+          "extent": 84,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c25c4",
+          "extent": 124,
+          "state": "exact-c"
+        }
       ],
       "overlay": null
     },
@@ -273,16 +576,40 @@
       "source": "games/COMMON/SRC/SOUND/MUSIC_PLAYER.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
-        "AudioCommand_InvokeSlot35": {"address": "0x081c2328", "kind": "thumb"},
-        "MusicPlayer_Tick": {"address": "0x081c09d0", "kind": "thumb"},
-        "MusicTrack_Stop": {"address": "0x081c1b94", "kind": "thumb"},
-        "AudioEngine_SetMode": {"address": "0x081c24d8", "kind": "thumb"}
+        "AudioCommand_InvokeSlot35": {
+          "address": "0x081c2328",
+          "kind": "thumb"
+        },
+        "MusicPlayer_Tick": {
+          "address": "0x081c09d0",
+          "kind": "thumb"
+        },
+        "MusicTrack_Stop": {
+          "address": "0x081c1b94",
+          "kind": "thumb"
+        },
+        "AudioEngine_SetMode": {
+          "address": "0x081c24d8",
+          "kind": "thumb"
+        }
       },
       "local_symbols": [],
       "owners": [
-        {"address": "0x081c267c", "extent": 120, "state": "exact-c"},
-        {"address": "0x081c26f4", "extent": 228, "state": "exact-c"},
-        {"address": "0x081c27d8", "extent": 64, "state": "exact-c"}
+        {
+          "address": "0x081c267c",
+          "extent": 120,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c26f4",
+          "extent": 228,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x081c27d8",
+          "extent": 64,
+          "state": "exact-c"
+        }
       ],
       "overlay": null
     },
@@ -292,10 +619,19 @@
       "source": "games/COMMON/SRC/SOUND/MUSIC_PLAYER_STEP_FADE.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
-        "MusicTrack_Stop": {"address": "0x081c1b94", "kind": "thumb"}
+        "MusicTrack_Stop": {
+          "address": "0x081c1b94",
+          "kind": "thumb"
+        }
       },
       "local_symbols": [],
-      "owners": [{"address": "0x081c2818", "extent": 200, "state": "exact-c"}],
+      "owners": [
+        {
+          "address": "0x081c2818",
+          "extent": 200,
+          "state": "exact-c"
+        }
+      ],
       "overlay": null
     },
     {
@@ -304,12 +640,27 @@
       "source": "games/COMMON/SRC/SOUND/CGB_KEY_TO_FREQUENCY.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
-        "Sound_CgbPitchCodes": {"address": "0x081c35c8", "kind": "data"},
-        "Sound_CgbFrequencySteps": {"address": "0x081c364c", "kind": "data"},
-        "Sound_NoisePitchCodes": {"address": "0x081c3664", "kind": "data"}
+        "Sound_CgbPitchCodes": {
+          "address": "0x081c35c8",
+          "kind": "data"
+        },
+        "Sound_CgbFrequencySteps": {
+          "address": "0x081c364c",
+          "kind": "data"
+        },
+        "Sound_NoisePitchCodes": {
+          "address": "0x081c3664",
+          "kind": "data"
+        }
       },
       "local_symbols": [],
-      "owners": [{"address": "0x081c2994", "extent": 168, "state": "exact-c"}],
+      "owners": [
+        {
+          "address": "0x081c2994",
+          "extent": 168,
+          "state": "exact-c"
+        }
+      ],
       "overlay": null
     },
     {
@@ -318,10 +669,19 @@
       "source": "games/COMMON/SRC/SOUND/MUSIC_PLAYER_SET_MODULATION_DEPTH.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
-        "MusicTrack_ClearModulation": {"address": "0x081c30ac", "kind": "thumb"}
+        "MusicTrack_ClearModulation": {
+          "address": "0x081c30ac",
+          "kind": "thumb"
+        }
       },
       "local_symbols": [],
-      "owners": [{"address": "0x081c30cc", "extent": 116, "state": "exact-c"}],
+      "owners": [
+        {
+          "address": "0x081c30cc",
+          "extent": 116,
+          "state": "exact-c"
+        }
+      ],
       "overlay": null
     },
     {
@@ -330,10 +690,19 @@
       "source": "games/COMMON/SRC/SOUND/MUSIC_PLAYER_SET_LFO_SPEED.C",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
-        "MusicTrack_ClearModulation": {"address": "0x081c30ac", "kind": "thumb"}
+        "MusicTrack_ClearModulation": {
+          "address": "0x081c30ac",
+          "kind": "thumb"
+        }
       },
       "local_symbols": [],
-      "owners": [{"address": "0x081c3140", "extent": 116, "state": "exact-c"}],
+      "owners": [
+        {
+          "address": "0x081c3140",
+          "extent": 116,
+          "state": "exact-c"
+        }
+      ],
       "overlay": null
     },
     {
@@ -343,7 +712,13 @@
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
-      "owners": [{"address": "0x081c30ac", "extent": 30, "state": "exact-c"}],
+      "owners": [
+        {
+          "address": "0x081c30ac",
+          "extent": 30,
+          "state": "exact-c"
+        }
+      ],
       "overlay": null
     },
     {
@@ -353,7 +728,13 @@
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
-      "owners": [{"address": "0x081c33b0", "extent": 18, "state": "exact-c"}],
+      "owners": [
+        {
+          "address": "0x081c33b0",
+          "extent": 18,
+          "state": "exact-c"
+        }
+      ],
       "overlay": null
     },
     {
@@ -363,7 +744,13 @@
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
-      "owners": [{"address": "0x081c33c4", "extent": 18, "state": "exact-c"}],
+      "owners": [
+        {
+          "address": "0x081c33c4",
+          "extent": 18,
+          "state": "exact-c"
+        }
+      ],
       "overlay": null
     },
     {
@@ -373,7 +760,13 @@
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
-      "owners": [{"address": "0x081c33d8", "extent": 18, "state": "exact-c"}],
+      "owners": [
+        {
+          "address": "0x081c33d8",
+          "extent": 18,
+          "state": "exact-c"
+        }
+      ],
       "overlay": null
     },
     {
@@ -383,7 +776,13 @@
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
-      "owners": [{"address": "0x081c33ec", "extent": 12, "state": "exact-c"}],
+      "owners": [
+        {
+          "address": "0x081c33ec",
+          "extent": 12,
+          "state": "exact-c"
+        }
+      ],
       "overlay": null
     },
     {
@@ -393,7 +792,13 @@
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {},
       "local_symbols": [],
-      "owners": [{"address": "0x081c33f8", "extent": 12, "state": "exact-c"}],
+      "owners": [
+        {
+          "address": "0x081c33f8",
+          "extent": 12,
+          "state": "exact-c"
+        }
+      ],
       "overlay": null
     },
     {
@@ -806,6 +1211,212 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "tla-script-operands",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/OPERANDS.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "Data_0802f2dc": {
+          "address": "0x0802f2dc",
+          "kind": "data"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x08025b58",
+          "extent": 42,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025b84",
+          "extent": 48,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025be4",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025c0c",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025c34",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025c8c",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025cb4",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025cdc",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025d04",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025d2c",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025d54",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025d7c",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025da4",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025dcc",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025df4",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025e1c",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025e44",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025e6c",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025e94",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025ebc",
+          "extent": 42,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025ee8",
+          "extent": 58,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025f24",
+          "extent": 58,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025f60",
+          "extent": 58,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08025fd0",
+          "extent": 58,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0802600c",
+          "extent": 58,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08026048",
+          "extent": 58,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08026084",
+          "extent": 58,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080260c0",
+          "extent": 58,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080260fc",
+          "extent": 60,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08026138",
+          "extent": 60,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08026174",
+          "extent": 60,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080261b0",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080261d8",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08026200",
+          "extent": 58,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0802623c",
+          "extent": 58,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08026278",
+          "extent": 56,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080262b0",
+          "extent": 56,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080262e8",
+          "extent": 56,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
     }
   ]
 }

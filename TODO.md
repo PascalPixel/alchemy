@@ -30,17 +30,11 @@ and 1,043,350 across all 114 overlays. Grow verified source coverage against
 that fixed inventory; its denominator is not a claim of a complete TLA build.
 Credit only ranges meeting [COMPLETION](.agents/COMPLETION.md).
 
-- Close the field-script operand module at `08025b58–08026320` using TBS's
-  `FIELD/COMMON/SCRIPT/OPERANDS.C`. A bounded cross-game probe reproduced
-  38 complete functions (1,820 bytes); three 2-halfword scheduling differences
-  remain at `08025bb4` (46 bytes), `08025c5c` (46), and `08025f9c` (52).
-  The three dispatchers bind their handler table to `0802f2dc`, independently
-  read from their reference literal pools. Five ordinary source hypotheses
-  did not close the scheduling differences; do not repeat them or change
-  compiler flags. Swapped comparison operands, explicit loaded temporaries,
-  direct Boolean assignment, in-place input narrowing, and switch dispatch
-  were tested. Candidate and results are under `out/field-operands-*`.
-  Nothing from this probe is adopted or credited yet.
+- Field-script operands at `08025b58–08026320`: 38 exact owners (1,820 bytes)
+  adopted as `tla-script-operands` from `FIELD/COMMON/SCRIPT/OPERANDS.C`.
+  Three 2-halfword scheduling floors remain uncredited at `08025bb4` (46),
+  `08025c5c` (46), and `08025f9c` (52); do not repeat the five parked source
+  hypotheses or change compiler flags. They stay in the C for layout only.
 
 - Venus approach event `resource_64d:02000510` has a reviewed 5,404-byte extent.
   Its loaded reference ends at `02009a2c`, including the last literal. The

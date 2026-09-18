@@ -1,9 +1,15 @@
 {
   "format": 3,
   "owners": {
-    "resource_64d:020026f4": {"name": "Scene_CreateSpriteField"},
-    "main:080dc244": {"name": "Field_BeginPaletteTransition"},
-    "resource_64d:02000510": {"name": "Scene_PlayApproachEvent"},
+    "resource_64d:020026f4": {
+      "name": "Scene_CreateSpriteField"
+    },
+    "main:080dc244": {
+      "name": "Field_BeginPaletteTransition"
+    },
+    "resource_64d:02000510": {
+      "name": "Scene_PlayApproachEvent"
+    },
     "main:08016d5c": {
       "name": "GameFlag_GetByte",
       "source": "GAME/FLAGS/GET_BYTE.C"
@@ -352,6 +358,121 @@
     "resource_64d:02000308": {
       "name": "Scene_PrepareMap",
       "source": "FIELD/VINASU_IRIGUCHI/ENTRANCE.C"
+    },
+    "main:08025b58": {
+      "name": "Script_SetOrCompareAddress",
+      "source": "FIELD/COMMON/SCRIPT/OPERANDS.C"
+    },
+    "main:08025b84": {
+      "name": "Script_SetOrCompareCursor"
+    },
+    "main:08025be4": {
+      "name": "Script_SetOrCompareWord08"
+    },
+    "main:08025c0c": {
+      "name": "Script_SetOrCompareWord0c"
+    },
+    "main:08025c34": {
+      "name": "Script_SetOrCompareWord10"
+    },
+    "main:08025c8c": {
+      "name": "Script_SetOrCompareWord18"
+    },
+    "main:08025cb4": {
+      "name": "Script_SetOrCompareWord1c"
+    },
+    "main:08025cdc": {
+      "name": "Script_SetOrCompareWord24"
+    },
+    "main:08025d04": {
+      "name": "Script_SetOrCompareWord28"
+    },
+    "main:08025d2c": {
+      "name": "Script_SetOrCompareWord2c"
+    },
+    "main:08025d54": {
+      "name": "Script_SetOrCompareWord30"
+    },
+    "main:08025d7c": {
+      "name": "Script_SetOrCompareWord34"
+    },
+    "main:08025da4": {
+      "name": "Script_SetOrCompareWord38"
+    },
+    "main:08025dcc": {
+      "name": "Script_SetOrCompareWord3c"
+    },
+    "main:08025df4": {
+      "name": "Script_SetOrCompareWord40"
+    },
+    "main:08025e1c": {
+      "name": "Script_SetOrCompareWord44"
+    },
+    "main:08025e44": {
+      "name": "Script_SetOrCompareWord48"
+    },
+    "main:08025e6c": {
+      "name": "Script_SetOrCompareWord14"
+    },
+    "main:08025e94": {
+      "name": "Script_SetOrCompareWord4c"
+    },
+    "main:08025ebc": {
+      "name": "Script_SetOrCompareAddress50"
+    },
+    "main:08025ee8": {
+      "name": "Script_SetOrCompareByte54"
+    },
+    "main:08025f24": {
+      "name": "Script_SetOrCompareByte55"
+    },
+    "main:08025f60": {
+      "name": "Script_SetOrCompareByte56"
+    },
+    "main:08025fd0": {
+      "name": "Script_SetOrCompareByte58"
+    },
+    "main:0802600c": {
+      "name": "Script_SetOrCompareByte59"
+    },
+    "main:08026048": {
+      "name": "Script_SetOrCompareByte5a"
+    },
+    "main:08026084": {
+      "name": "Script_SetOrCompareByte5b"
+    },
+    "main:080260c0": {
+      "name": "Script_SetOrCompareByte5d"
+    },
+    "main:080260fc": {
+      "name": "Script_SetOrCompareHalfword5e"
+    },
+    "main:08026138": {
+      "name": "Script_SetOrCompareSignedHalfword64"
+    },
+    "main:08026174": {
+      "name": "Script_SetOrCompareSignedHalfword66"
+    },
+    "main:080261b0": {
+      "name": "Script_SetOrCompareWord68"
+    },
+    "main:080261d8": {
+      "name": "Script_SetOrCompareWord6c"
+    },
+    "main:08026200": {
+      "name": "Script_SetOrCompareByte62"
+    },
+    "main:0802623c": {
+      "name": "Script_SetOrCompareByte63"
+    },
+    "main:08026278": {
+      "name": "Script_ApplyOperandSet"
+    },
+    "main:080262b0": {
+      "name": "Script_ApplyOperandAdd"
+    },
+    "main:080262e8": {
+      "name": "Script_ApplyOperandCompare"
     }
   }
 }

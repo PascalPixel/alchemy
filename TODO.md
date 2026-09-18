@@ -42,6 +42,20 @@ Credit only ranges meeting [COMPLETION](.agents/COMPLETION.md).
   were tested. Candidate and results are under `out/field-operands-*`.
   Nothing from this probe is adopted or credited yet.
 
+- Venus approach event `resource_64d:02000510` has a reviewed 5,404-byte extent.
+  Its loaded reference ends at `02009a2c`, including the last literal. The
+  private candidate at `out/tla-en/overlay-64d-scene/SCENE.C` scores 5,360
+  emitted bytes, 2,293 differing halfwords and 285 aligned wrong instructions;
+  no bytes adopted. Calls were bound from reference sites, not candidate
+  offsets. Repair the lifter before repeating this scene family: a fresh
+  `psynergy decompile` duplicates actor lookups, appends two spurious calls
+  after the event-end call, and introduces `volatile` on ordinary actor RAM
+  (`tools/psynergy/src/lift.rs` byte-mask emission). The private candidate
+  removes those errors. Its first remaining mismatch is constant 257 loaded
+  from a pool versus `mov 2; add 255`; the existing compiler synthesizes such
+  constants during reload, so equivalent constant spellings are not a new
+  search axis. Compiler, flags and credit remain unchanged.
+
 ### Alchemy builds, Psynergy reads
 
 The law in [TOOLING](.agents/TOOLING.md). Psynergy still holds operations that

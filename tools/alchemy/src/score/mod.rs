@@ -327,7 +327,7 @@ pub(crate) fn exact_mismatch(output: &RenderOutput) -> bool {
                 .stdout
                 .contains("\nclass=exact wrong_instructions=0\n"))
 }
-fn validate_layout(
+pub(crate) fn validate_layout(
     unit: &TranslationUnit,
     object: &Path,
     base: u32,

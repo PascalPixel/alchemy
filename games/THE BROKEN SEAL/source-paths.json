@@ -10317,11 +10317,11 @@
       "source": "FIELD/KUUPUAPPU_HEYA/PROMPT.C"
     },
     "resource_385:020009f8": {
-      "name": "Scene_RunScene385",
+      "name": "FieldScene_RunScene385_020009f8",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_385:02000d84": {
-      "name": "Scene_RunScene385",
+      "name": "FieldScene_RunScene385_02000d84",
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_386:0200011c": {

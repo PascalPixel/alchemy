@@ -11,17 +11,30 @@ that finishes it.
 Reach 60% of the fixed executable inventory. Read the current verified count
 with `make progress`; do not maintain a second score in this task list.
 
-- Recheck and adopt what the stopped recovery run found. Exact:
-  `main:080fa514` (72 bytes) and `main:08092878` (172 bytes). Exact at 54 bytes
-  each: `resource_39e:02000104` and `resource_3c9:02000104`, the `Effect_Move`
-  family; eleven more copies differ by one halfword, so the family wants one
-  shared source with instances.
+- `Effect_Move` shared unit is adopted on `cursor/tbs-to-60` (24 overlay
+  instances). Keep taking fresh twins / named-no-source owners that score
+  exact quickly; if not exact inside a 10-minute window, park under Stubborn
+  and switch owners.
 - Rebuild coverage with `make coverage`, then rank unresolved owners from it,
   twins of exact owners first.
-- Recount the owners still parked because their only match needed a
-  scheduling trick. The five overlay copies of `0809a65c` still hold a
-  `do { } while (0)` barrier. `SpawnConfiguredEffect` (23 copies) stays a
-  recorded compiler gap unless new evidence reopens it.
+
+### Stubborn (hard-pass later)
+
+Parked for a stronger model. Agents must not burn a 10-minute window here.
+
+- `resource_382:02001090` ActorDraw_SetupActorSceneCells twin (172 B) — equivalent to `resource_385:02000c1c`, but instance must place every `actor-motion-event-scene` member; bounce until full resource_382 map exists.
+- `main:080fa514` (72 B) — still many differing halfwords (not exact).
+- `main:08092878` (172 B) — still many differing halfwords (not exact).
+- `resource_3bd:020013f8` FieldScene_RunExtendedActorPresentation (6220 B) —
+  scheduling-floor, 2 halfwords (arg load order for `Func_02003d20(0,1)`);
+  no established repair.
+- Overlay copies of `0809a65c` with `do { } while (0)` barriers; leave parked.
+- `SpawnConfiguredEffect` (23 copies) — recorded compiler gap.
+- `main:0800383c`–`main:08003a3c` family (~129 B each) — scheduling-floor, 2 halfwords each; bounce.
+- Allocation / instruction-selection walls already labeled
+  `copy_versus_rematerialise` or `instruction-selection` (e.g.
+  `main:080b6d30`, `main:080b6e7c`, `resource_380:02004260`,
+  `resource_3af:02001db0`) — do not respell.
 
 ### Reconstruct The Lost Age
 

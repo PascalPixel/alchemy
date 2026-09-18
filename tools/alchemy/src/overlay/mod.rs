@@ -278,7 +278,7 @@ pub fn placeholder_lines(stem: &str, span: i64, aliases: &[InternalAlias]) -> Ve
 fn audit_intervals(root: &Path, overlay: &str) -> Result<Option<Vec<AuditInterval>>, String> {
     let path = root
         .join("games/THE BROKEN SEAL/metrics")
-        .join("tbs-en-executable.json");
+        .join("executable.json");
     if !path.exists() {
         return Ok(None);
     }

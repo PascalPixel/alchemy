@@ -67,7 +67,7 @@ which `make verify` runs whenever that ROM is present. Shared interfaces live
 once under `games/COMMON/INCLUDE/<module>/` and contain declarations only;
 each game includes them through its own `INCLUDE`. It scores every TLA
 main-image owner the register gives a source over its interval in
-`games/THE LOST AGE/metrics/tla-en-executable.json`, and every TLA overlay
+`games/THE LOST AGE/metrics/executable.json`, and every TLA overlay
 owner over its reviewed span from the listing that places it, and refuses a
 shared C file no TLA owner compiles. Each game's `source-paths.json` registers it
 as `../../COMMON/SRC/<module>/<FILE>.C` with that game's owner and name, and

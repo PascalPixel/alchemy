@@ -21,7 +21,27 @@ executable audit is incomplete has no denominator: its DONE is pending, shown as
 `?` in the commit prefix and "pending" in the README, never estimated.
 `make progress` prints both games with their four parts.
 
-Permanent assembly is the coverage map's retained-assembly category, not every
+Each game has exactly one committed scoring authority at
+`games/<game>/metrics/executable.json`. Its state is `pending`, `audited` or
+`verified`; `pending` never produces a numeric score. A numeric denominator
+requires a complete main-image audit and every declared overlay, with each
+overlay's executable intervals and their excluded complement accounting for
+its complete decoded image, with both byte totals checked. Candidate audits
+live under ignored `out/`, carry state
+`candidate`, and cannot drive ☀️, ⚓️, the README or the dashboard.
+
+Successful source verification writes `out/<target>/reports/verified-code.json`:
+the ROM hash, build-input fingerprint, and credited image ranges with source
+and category. TBS's complete production build produces it; TLA's owner check
+produces it without claiming a complete TLA rebuild. Changed code, headers,
+bindings, compiler inputs or reference ROM invalidate the receipt. The scorer
+unions its ranges separately in each image against the fixed inventory and
+counts C before assembly. COMMON attribution partitions those bytes; it never
+duplicates them. The dashboard, README and commit prefix consume that score.
+Rendering tiles cannot create credit. DONE and exact-C percentages are named
+separately in the same report. Reading a score never runs a build or audit.
+
+Permanent assembly is the reviewed retained-assembly category, not every
 unresolved function temporarily assembled to make the ROM build. Compiler
 runtime built from the licensed containers counts in that category as
 explained, as pret counts linked libgcc; bytes restored from the ROM as a private input never

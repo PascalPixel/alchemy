@@ -16,7 +16,7 @@ use std::{
 use walkdir::WalkDir;
 const STYLES: &str = include_str!("style.css");
 const TREES: [(&str, &str); 1] = [("rom", "ROM contents")];
-const COVERAGE_DIRS: [&str; 15] = [
+const COVERAGE_DIRS: &[&str] = &[
     "games/THE BROKEN SEAL/locations.tsv",
     "games/THE BROKEN SEAL/raw",
     "games/THE BROKEN SEAL/SOURCE.JSON",
@@ -26,12 +26,15 @@ const COVERAGE_DIRS: [&str; 15] = [
     "games/THE BROKEN SEAL/metrics",
     "games/THE BROKEN SEAL/semantic",
     "games/THE BROKEN SEAL/SRC",
+    "games/THE BROKEN SEAL/INCLUDE",
+    "games/COMMON",
     "games/THE BROKEN SEAL/source-paths.json",
     "games/THE BROKEN SEAL/recon",
     "games/THE BROKEN SEAL/project.json",
     "games/THE LOST AGE",
     "games/THE LOST AGE/PROJECT.JSON",
     "out/tbs-en/reports",
+    "out/tla-en/reports/verified-code.json",
 ];
 fn page_version() -> String {
     svg_cache_version(STYLES)
@@ -128,18 +131,33 @@ fn live_from(document: Value, trees: Vec<(&'static str, String)>) -> Result<Live
         .collect::<Vec<_>>()
         .join("-");
     let n = |key| document_number(&document, key).unwrap_or(0.0);
-    let executable = n(&["executable_bytes"]);
-    let proven_c = n(&["categories", "proven_c", "bytes"]);
-    let proven_asm = n(&["categories", "proven_asm", "bytes"]);
+    let done = document
+        .get("done")
+        .cloned()
+        .map(serde_json::from_value::<crate::coverage::progress::GameDone>)
+        .transpose()
+        .map_err(|e| e.to_string())?;
     let summary = json!({
-        "executableBytes": number(executable),
-        "provenCBytes": number(proven_c),
+        "games": document.get("games").and_then(Value::as_object)
+            .into_iter().flatten().map(|(target, score)| {
+                let done: crate::coverage::progress::GameDone =
+                    serde_json::from_value(score.clone()).map_err(|e| e.to_string())?;
+                Ok((target.clone(), json!({
+                    "doneBytes": done.bytes(), "executableBytes": done.executable,
+                    "donePercent": done.percent(),
+                    "exactCBytes": done.common_c + done.game_c,
+                    "permanentAssemblyBytes": done.common_asm + done.game_asm,
+                    "parts": done
+                })))
+            }).collect::<Result<Map<String, Value>, String>>()?,
+        "executableBytes": done.map(|d| d.executable),
+        "provenCBytes": done.map(|d| d.common_c + d.game_c),
         "provenCPercent": number(n(&["categories", "proven_c", "percent_of_executable"])),
         "draftCBytes": number(n(&["categories", "draft_c", "bytes"])),
         "draftCPercent": number(n(&["categories", "draft_c", "percent_of_executable"])),
-        "provenAsmBytes": number(proven_asm),
-        "doneBytes": number(crate::coverage::jsnum::done_bytes(proven_c as i64, proven_asm as i64) as f64),
-        "donePercent": number(crate::coverage::jsnum::done_percent(proven_c as i64, proven_asm as i64, executable as i64)),
+        "provenAsmBytes": done.map(|d| d.common_asm + d.game_asm),
+        "doneBytes": done.map(|d| d.bytes()),
+        "donePercent": done.map(|d| number(d.percent())),
         "historicalTargets": 12, "fullTargets": 1, "compileOnlyTargets": 11
     });
     Ok(Live {
@@ -602,7 +620,8 @@ mod tests {
     #[test]
     fn summary_comes_only_from_coverage_document() {
         let live = live_from(
-            json!({"executable_bytes":1000,"categories":{
+            json!({"done":{"executable":1000,"common_c":0,"game_c":400,
+                "common_asm":0,"game_asm":100},"executable_bytes":1000,"categories":{
                 "proven_c":{"bytes":400,"percent_of_executable":40},
                 "proven_asm":{"bytes":100},"draft_c":{"bytes":200,"percent_of_executable":20}
             }}),
@@ -615,6 +634,18 @@ mod tests {
         assert_eq!(live.summary["draftCBytes"], 200);
         assert!(live.summary.get("correspondenceAvailable").is_none());
         assert!(live.summary.get("tbsJaSources").is_none());
+    }
+
+    #[test]
+    fn old_map_without_a_verified_score_does_not_invent_done() {
+        let live = live_from(
+            json!({"executable_bytes":1000,
+            "categories":{"proven_c":{"bytes":1000}}}),
+            Vec::new(),
+        )
+        .unwrap();
+        assert!(live.summary["donePercent"].is_null());
+        assert!(live.summary["doneBytes"].is_null());
     }
 
     #[test]

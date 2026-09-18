@@ -4,6 +4,7 @@ pub(crate) mod jsnum;
 pub(crate) mod model;
 pub(crate) mod pipeline;
 pub(crate) mod progress;
+pub(crate) mod proof;
 pub(crate) mod tree;
 
 use self::boxtree::{box_tree_path, render_box_trees, svg_cache_version, BOX_TREES};
@@ -124,9 +125,8 @@ fn summary(doc: &Value) -> Result<String, String> {
     if !executable.is_finite() || !proven_asm.is_finite() {
         return Err("coverage map lacks executable totals".into());
     }
-    let done = crate::coverage::jsnum::done_bytes(proven_c as i64, proven_asm as i64);
-    let percent =
-        crate::coverage::jsnum::done_percent(proven_c as i64, proven_asm as i64, executable as i64);
+    let score: GameDone = serde_json::from_value(doc["done"].clone())
+        .map_err(|e| format!("coverage has no verified score: {e}"))?;
     Ok(format!(
         "target={} rom={} executable={} proven_c={} ({}%) draft_c={} ({}%) proven_asm={} done={} ({}%) draft_source={}",
         get(doc, "target").and_then(Value::as_str).unwrap_or("undefined"),
@@ -137,8 +137,8 @@ fn summary(doc: &Value) -> Result<String, String> {
         commas(draft_c as i64),
         number(field(doc, &["categories", "draft_c", "percent_of_executable"])),
         commas(proven_asm as i64),
-        commas(done),
-        number(percent),
+        commas(score.bytes()),
+        number(score.percent()),
         get(get(doc, "provenance").unwrap_or(&Value::Null), "draft_source").and_then(Value::as_str).unwrap_or("undefined")
     ))
 }

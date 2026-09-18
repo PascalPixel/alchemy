@@ -13,6 +13,7 @@ use std::{
 };
 type SpanMap = BTreeMap<String, Vec<Span>>;
 type OwnerMap = BTreeMap<String, Vec<Owner>>;
+const OVERLAY_BASE: i64 = 0x0200_0000;
 
 fn mapped<'a, T>(map: &'a BTreeMap<String, Vec<T>>, id: &str) -> &'a [T] {
     map.get(id).map(Vec::as_slice).unwrap_or(&[])
@@ -29,13 +30,6 @@ pub struct CoverageMap {
     pub document: Value,
     pub rom_areas: Vec<Area>,
     pub executable_areas: Vec<Area>,
-}
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct ProgressTally {
-    pub main_exact: i64,
-    pub main_executable: i64,
-    pub overlay_exact: i64,
-    pub overlay_executable: i64,
 }
 pub fn rom_size(target: &str) -> Result<i64, String> {
     match target {
@@ -201,6 +195,20 @@ fn overlay_ids_for(tree: &SourceTree, directory: &str) -> Vec<(String, String)> 
     names
 }
 fn exact_main(tree: &SourceTree, target: &str, executable: &[Span]) -> Result<Vec<Span>, String> {
+    if target == "tla-en" {
+        let proof = read_json(tree, &format!("out/{target}/reports/verified-code.json"))?;
+        let spans = array(&proof, "credits")
+            .iter()
+            .filter(|row| text(row, "image") == "main" && text(row, "kind") == "c")
+            .map(|row| {
+                Ok(Span::new(
+                    integer(row, "start").ok_or("credit start missing")?,
+                    integer(row, "end").ok_or("credit end missing")?,
+                ))
+            })
+            .collect::<Result<Vec<_>, String>>()?;
+        return exact_spans(spans, executable, "main");
+    }
     let path = format!("out/{target}/full/claimed/manifest.json");
     let value = read_json(tree, &path)?;
     let mut spans = Vec::new();
@@ -240,7 +248,19 @@ fn validated_executable(value: &Value) -> Result<Vec<Span>, String> {
     let id = text(value, "id");
     let expected = integer(value, "executable_bytes")
         .ok_or_else(|| "executable inventory has a non-integer byte count".to_string())?;
-    let mut spans: Vec<_> = regions(value).into_iter().map(|row| row.span).collect();
+    let mut spans = value["intervals"]
+        .as_array()
+        .ok_or_else(|| format!("{id} has no executable intervals"))?
+        .iter()
+        .map(|row| {
+            let start = integer(row, "start").ok_or("executable interval start is invalid")?;
+            let end = integer(row, "end").ok_or("executable interval end is invalid")?;
+            if start < 0 || end <= start {
+                return Err("invalid executable interval".to_string());
+            }
+            Ok(Span::new(start, end))
+        })
+        .collect::<Result<Vec<_>, String>>()?;
     spans.sort_by_key(|span| (span.start, span.end));
     if spans.windows(2).any(|pair| pair[1].start < pair[0].end) {
         return Err(format!("{id} has overlapping executable intervals"));
@@ -253,6 +273,18 @@ fn validated_executable(value: &Value) -> Result<Vec<Span>, String> {
         ));
     }
     if let Some(decoded) = integer(value, "decoded_bytes") {
+        if decoded <= 0 || decoded > 0x40000 {
+            return Err(format!("{id} invalid decoded image size"));
+        }
+        let image = Span::new(OVERLAY_BASE, OVERLAY_BASE + decoded);
+        if spans
+            .iter()
+            .any(|span| span.start < image.start || span.end > image.end)
+        {
+            return Err(format!(
+                "{id} executable interval lies outside its decoded image"
+            ));
+        }
         if integer(value, "excluded_bytes") != Some(decoded - expected) {
             return Err(format!("{id} decoded byte classification is incomplete"));
         }
@@ -260,56 +292,61 @@ fn validated_executable(value: &Value) -> Result<Vec<Span>, String> {
     Ok(spans)
 }
 
-/// Exact/executable totals without constructing treemaps, asset bands, or
-/// semantic-candidate coverage. Progress reporting and commit hooks use this
-/// narrow view of the same audited intervals and exact-owner model.
-pub fn progress_tally(options: &BuildOptions) -> Result<ProgressTally, String> {
-    let game =
-        crate::compiler::routing::game_directory(options.target.split('-').next().unwrap_or("tbs"));
-    let inventory = read_json(
-        options.exact,
-        &format!("games/{game}/metrics/{}-executable.json", options.target),
-    )?;
-    if integer(&inventory, "format") != Some(1)
-        || text(&inventory, "metric") != "full-c-byte-share"
-        || text(&inventory, "target") != options.target
+pub(super) fn validated_inventory(
+    inventory: &Value,
+    target: &str,
+) -> Result<(Vec<Span>, SpanMap), String> {
+    if integer(inventory, "format") != Some(1)
+        || text(inventory, "metric") != "full-c-byte-share"
+        || text(inventory, "target") != target
     {
         return Err("unsupported executable inventory format or target".into());
+    }
+    let state = text(inventory, "state");
+    if !matches!(state.as_str(), "pending" | "audited" | "verified") {
+        return Err("executable inventory has invalid state".into());
+    }
+    let audit = text(inventory, "audit");
+    if (state == "pending" && audit != "incomplete") || (state != "pending" && audit != "complete")
+    {
+        return Err("executable inventory state and audit disagree".into());
     }
     let main_node = inventory
         .get("main")
         .ok_or("executable inventory has no main")?;
-    if text(&inventory, "audit") != "complete" || text(main_node, "audit") != "complete" {
+    if state == "pending" || text(main_node, "audit") != "complete" {
         return Err(format!(
-            "Full-C Byte Share withheld: {} executable audit is incomplete",
-            options.target
+            "Full-C Byte Share withheld: {target} executable audit is incomplete"
         ));
     }
     let main = validated_executable(main_node)?;
     let mut overlays = SpanMap::new();
-    for node in array(&inventory, "overlays") {
+    let overlay_nodes = array(inventory, "overlays");
+    let overlay_count =
+        integer(inventory, "overlay_count").ok_or("executable inventory has no overlay_count")?;
+    if overlay_count != overlay_nodes.len() as i64 {
+        return Err(format!(
+            "executable inventory overlay count is stale: {overlay_count} != {}",
+            overlay_nodes.len()
+        ));
+    }
+    for node in overlay_nodes {
         let id = text(node, "id");
+        if id.is_empty() || overlays.contains_key(&id) {
+            return Err("executable inventory has an empty or duplicate overlay id".into());
+        }
         if text(node, "audit") != "complete" {
             return Err(format!("Full-C Byte Share withheld: {id} is incomplete"));
         }
         overlays.insert(id, validated_executable(node)?);
     }
     let executable = bytes(&main) + mapped_bytes(&overlays);
-    if integer(&inventory, "total_union_bytes") != Some(executable) {
+    if integer(inventory, "total_union_bytes") != Some(executable) {
         return Err("executable inventory total is stale".into());
     }
-    let exact_main = exact_main(options.exact, &options.target, &main)?;
-    let target = crate::targets::decomp_target(Some(&options.target))?;
-    let overlay_dir = target.overlay_dir();
-    let pairs = overlay_ids_for(options.exact, &overlay_dir);
-    let (_, exact_overlays) = exact_overlay_for(options.exact, &target, &pairs, &overlays)?;
-    Ok(ProgressTally {
-        main_exact: bytes(&exact_main),
-        main_executable: bytes(&main),
-        overlay_exact: mapped_bytes(&exact_overlays),
-        overlay_executable: mapped_bytes(&overlays),
-    })
+    Ok((main, overlays))
 }
+
 fn candidate_main(
     tree: &SourceTree,
     target: &DecompTarget,
@@ -1455,7 +1492,7 @@ fn component_children(region: &Value, data: &[Span]) -> Vec<Tile> {
 /// The Lost Age ROM by source. The executable audit separates code that still
 /// lives as assembly from cartridge data; only independently exact intervals
 /// earn C credit. Empty until its asset manifest has been built.
-fn lost_age_tiles(tree: &SourceTree) -> Vec<Tile> {
+fn lost_age_tiles(tree: &SourceTree, credits: &[super::proof::Credit]) -> Vec<Tile> {
     let Some(manifest) = json(tree, "out/tla-en/assets/manifest.json") else {
         return Vec::new();
     };
@@ -1468,20 +1505,14 @@ fn lost_age_tiles(tree: &SourceTree) -> Vec<Tile> {
         *covered = normalize(covered);
         bytes(&spans)
     };
-    if let Some(metrics) = json(tree, "games/THE LOST AGE/metrics/tla-en-executable.json") {
-        let intervals = metrics.pointer("/main/intervals").and_then(Value::as_array);
-        for interval in intervals.into_iter().flatten() {
-            let (Some(start), Some(end)) = (integer(interval, "start"), integer(interval, "end"))
-            else {
-                continue;
-            };
-            let evidence = text(interval, "evidence");
-            let Some((source, _)) = evidence
-                .split_once(':')
-                .filter(|(source, _)| source.to_ascii_uppercase().ends_with(".C"))
-            else {
-                continue;
-            };
+    let inventory = json(tree, "games/THE LOST AGE/metrics/executable.json").unwrap_or(Value::Null);
+    let executable: Vec<Span> = regions(&inventory["main"])
+        .into_iter()
+        .map(|region| region.span)
+        .collect();
+    for credit in credits.iter().filter(|credit| credit.image == "main") {
+        for span in intersect(&[Span::new(credit.start, credit.end)], &executable) {
+            let (start, end, source) = (span.start, span.end, credit.source.as_str());
             let actual = claim(start, end, &mut covered);
             if actual == 0 {
                 continue;
@@ -1492,16 +1523,20 @@ fn lost_age_tiles(tree: &SourceTree) -> Vec<Tile> {
                     source.rsplit('/').next().unwrap_or(source)
                 ),
                 bytes: actual,
-                categories: [actual, 0, 0, 0, 0, 0],
+                categories: if credit.kind == "c" {
+                    [actual, 0, 0, 0, 0, 0]
+                } else {
+                    [0, 0, 0, 0, actual, 0]
+                },
                 address: Some(start),
                 source: Some(source.into()),
                 ..Tile::default()
             });
         }
     }
-    if let Some(audit) = json(tree, "out/tla-en/reports/executable-audit-candidate.json") {
+    if !inventory.is_null() {
         let mut main_assembly = 0;
-        for interval in array(&audit["main"], "intervals") {
+        for interval in array(&inventory["main"], "intervals") {
             let (Some(start), Some(end)) = (integer(interval, "start"), integer(interval, "end"))
             else {
                 continue;
@@ -1522,7 +1557,7 @@ fn lost_age_tiles(tree: &SourceTree) -> Vec<Tile> {
                 ..Tile::default()
             });
         }
-        for overlay in array(&audit, "overlays") {
+        for overlay in array(&inventory, "overlays") {
             let (Some(start), Some(end)) =
                 (integer(overlay, "rom_start"), integer(overlay, "rom_end"))
             else {
@@ -1799,14 +1834,9 @@ pub fn classify(options: &BuildOptions) -> Result<Classification, String> {
     let game = crate::compiler::routing::game_directory(target.compiler.as_str());
     let inventory = read_json(
         options.exact,
-        &format!("games/{game}/metrics/{}-executable.json", options.target),
+        &format!("games/{game}/metrics/executable.json"),
     )?;
-    if text(&inventory, "audit") != "complete" {
-        return Err(format!(
-            "{} executable audit is incomplete; coverage map withheld",
-            options.target
-        ));
-    }
+    validated_inventory(&inventory, &options.target)?;
     let main = regions(&inventory["main"]);
     let main_exec = normalize(&main.iter().map(|r| r.span).collect::<Vec<_>>());
     let mut overlay_exec = SpanMap::new();
@@ -1888,7 +1918,89 @@ pub fn classify(options: &BuildOptions) -> Result<Classification, String> {
         draft_sources: candidate_main_sources + candidate_overlay_sources,
     })
 }
+
+/// Called only after the complete production image has compared byte-exact.
+/// Preserve verified source attribution before presentation constructs tiles.
+pub fn verified_credits(options: &BuildOptions) -> Result<Vec<super::proof::Credit>, String> {
+    let classified = classify(options)?;
+    let mut credits = Vec::new();
+    for (category, ranges, stage) in [
+        ("c", &classified.exact_main, "claimed"),
+        ("assembly", &classified.retained_main, "asm"),
+    ] {
+        let manifest = read_json(
+            options.exact,
+            &format!("out/{}/full/{stage}/manifest.json", options.target),
+        )?;
+        let mut covered = Vec::new();
+        for region in array(&manifest, "regions") {
+            let (Some(start), Some(size)) = (integer(region, "address"), integer(region, "size"))
+            else {
+                continue;
+            };
+            for span in intersect(&[Span::new(start, start + size)], ranges) {
+                covered.push(span);
+                credits.push(super::proof::Credit {
+                    image: "main".into(),
+                    start: span.start,
+                    end: span.end,
+                    source: text(region, "source"),
+                    kind: category.into(),
+                });
+            }
+        }
+        if bytes(&normalize(&covered)) != bytes(ranges) {
+            return Err("main credit has no build source".into());
+        }
+    }
+    for (id, owners) in classified.owners {
+        for owner in owners {
+            for span in owner.spans {
+                credits.push(super::proof::Credit {
+                    image: id.clone(),
+                    start: span.start,
+                    end: span.end,
+                    source: owner.source.clone(),
+                    kind: "c".into(),
+                });
+            }
+        }
+    }
+    let target = crate::targets::decomp_target(Some(&options.target))?;
+    for (id, spans) in classified.retained_overlay {
+        for span in spans {
+            credits.push(super::proof::Credit {
+                source: target.overlay_assembly(&id),
+                image: id.clone(),
+                start: span.start,
+                end: span.end,
+                kind: "assembly".into(),
+            });
+        }
+    }
+    Ok(credits)
+}
 pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String> {
+    let root = match options.exact {
+        SourceTree::Work { root, .. } => root,
+        SourceTree::Ref { .. } => {
+            return Err("historical coverage needs verification in that checkout; today's build receipt cannot score another revision".into());
+        }
+    };
+    let done = super::progress::measured(root, &options.target)?
+        .ok_or("coverage requires a complete executable inventory")?;
+    let mut game_scores = Map::new();
+    game_scores.insert(options.target.clone(), serde_json::to_value(done).unwrap());
+    if options.target == "tbs-en" {
+        game_scores.insert(
+            "tla-en".into(),
+            serde_json::to_value(
+                super::progress::measured(root, "tla-en")?
+                    .ok_or("combined coverage requires TLA's executable inventory")?,
+            )
+            .unwrap(),
+        );
+    }
     let rom = rom_size(&options.target)?;
     let target = crate::targets::decomp_target(Some(&options.target))?;
     let Classification {
@@ -1919,6 +2031,13 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
     let semantic_overlay_bytes = mapped_bytes(&semantic_overlay);
     let semantic_bytes = bytes(&semantic_main) + semantic_overlay_bytes;
     let mut main_sources = Vec::new();
+    if let SourceTree::Work { root, .. } = options.exact {
+        for credit in super::proof::read(root, &options.target)?.credits {
+            if credit.image == "main" {
+                main_sources.push((Span::new(credit.start, credit.end), credit.source));
+            }
+        }
+    }
     for path in [
         format!("out/{}/full/claimed/manifest.json", options.target),
         format!("out/{}/full/asm/manifest.json", options.target),
@@ -2038,10 +2157,14 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
     // games/ holds both ROMs; The Lost Age joins the contents tree beside The
     // Broken Seal without entering its DONE totals.
     if options.target == "tbs-en" {
+        let SourceTree::Work { root, .. } = options.exact else {
+            return Err("combined coverage requires current source verification".into());
+        };
+        let receipt = super::proof::read(root, "tla-en")?;
         rom_areas.push(area(
             "rom-lost-age",
             "The Lost Age ROM",
-            lost_age_tiles(options.exact),
+            lost_age_tiles(options.exact, &receipt.credits),
         ));
     }
     let executable = bytes(&main_exec) + mapped_bytes(&overlay_exec);
@@ -2054,9 +2177,20 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
         .map(|area| area.categories[Category::DraftAsm as usize])
         .sum::<i64>();
     let assembly = executable - exact_bytes - semantic_bytes - draft_assembly - retained;
+    if done.executable != executable
+        || done.common_c + done.game_c != exact_bytes
+        || done.common_asm + done.game_asm != retained
+    {
+        return Err(
+            "coverage categories disagree with verified build credit; regenerate the build receipt"
+                .into(),
+        );
+    }
     let document = json!({
         "format": 1,
         "kind": "golden-sun-rom-coverage-map",
+        "done": done,
+        "games": game_scores,
         "target": options.target,
         "derivation": "tracked-evidence-v1",
         "rom_bytes": rom,
@@ -2112,6 +2246,70 @@ mod tests {
     use super::*;
     use serde_json::json;
     use std::collections::BTreeMap;
+
+    fn inventory_fixture() -> Value {
+        json!({
+            "format": 1,
+            "metric": "full-c-byte-share",
+            "target": "tla-en",
+            "state": "audited",
+            "audit": "complete",
+            "total_union_bytes": 8,
+            "overlay_count": 1,
+            "main": {
+                "id": "main", "audit": "complete", "executable_bytes": 4,
+                "intervals": [{"start": 0x08000100, "end": 0x08000104}]
+            },
+            "overlays": [{
+                "id": "resource_test", "audit": "complete", "decoded_bytes": 8,
+                "executable_bytes": 4, "excluded_bytes": 4,
+                "intervals": [{"start": 0x02000000, "end": 0x02000004}]
+            }]
+        })
+    }
+
+    #[test]
+    fn executable_inventory_requires_a_complete_partition_before_scoring() {
+        let inventory = inventory_fixture();
+        let (main, overlays) = validated_inventory(&inventory, "tla-en").unwrap();
+        assert_eq!(bytes(&main), 4);
+        assert_eq!(mapped_bytes(&overlays), 4);
+
+        let mut pending = inventory.clone();
+        pending["state"] = json!("pending");
+        pending["audit"] = json!("incomplete");
+        assert!(validated_inventory(&pending, "tla-en")
+            .unwrap_err()
+            .contains("withheld"));
+
+        let mut contradictory = inventory.clone();
+        contradictory["state"] = json!("pending");
+        assert!(validated_inventory(&contradictory, "tla-en")
+            .unwrap_err()
+            .contains("state and audit disagree"));
+
+        let mut missing_overlay = inventory.clone();
+        missing_overlay["overlay_count"] = json!(2);
+        assert!(validated_inventory(&missing_overlay, "tla-en")
+            .unwrap_err()
+            .contains("overlay count"));
+
+        let mut unpartitioned = inventory;
+        unpartitioned["overlays"][0]["excluded_bytes"] = json!(3);
+        assert!(validated_inventory(&unpartitioned, "tla-en")
+            .unwrap_err()
+            .contains("classification is incomplete"));
+    }
+
+    #[test]
+    fn malformed_audit_ranges_are_not_silently_dropped() {
+        let mut inventory = inventory_fixture();
+        inventory["main"]["intervals"]
+            .as_array_mut()
+            .unwrap()
+            .push(json!({"start": 12, "end": 8}));
+        assert!(validated_inventory(&inventory, "tla-en").is_err());
+    }
 
     #[test]
     fn component_files_use_physical_build_extents_and_preserve_clipping() {
@@ -2231,11 +2429,7 @@ mod tests {
             );
         }
         let rom = [Span::new(0x0800_0000, 0x0880_0000)];
-        let inventory = read_json(
-            &tree,
-            "games/THE BROKEN SEAL/metrics/tbs-en-executable.json",
-        )
-        .unwrap();
+        let inventory = read_json(&tree, "games/THE BROKEN SEAL/metrics/executable.json").unwrap();
         let overlays = array(&inventory, "overlays")
             .iter()
             .map(|node| {
@@ -2401,14 +2595,25 @@ mod tests {
             }),
         );
         write(
-            "games/THE LOST AGE/metrics/tla-en-executable.json",
+            "games/THE LOST AGE/metrics/executable.json",
             json!({"main": {"intervals": [{
-                "start": 0x08000100, "end": 0x08000108,
-                "evidence": "games/COMMON/SRC/SOUND/TEST.C:exact"
-            }]}}),
+                "start": 0x08000100, "end": 0x08000120
+            }]}, "overlays": [{
+                "id": "resource_649", "rom_start": 0x08001000,
+                "rom_end": 0x08001100
+            }]}),
         );
         let tree = crate::coverage::tree::work_tree_at(root.path().to_path_buf());
-        let tiles = lost_age_tiles(&tree);
+        let tiles = lost_age_tiles(
+            &tree,
+            &[crate::coverage::proof::Credit {
+                image: "main".into(),
+                start: 0x08000100,
+                end: 0x08000108,
+                source: "games/COMMON/SRC/SOUND/TEST.C".into(),
+                kind: "c".into(),
+            }],
+        );
         let totals = tiles.iter().fold([0; 6], |mut totals, tile| {
             for (total, bytes) in totals.iter_mut().zip(tile.categories) {
                 *total += bytes;

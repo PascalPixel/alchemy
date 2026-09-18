@@ -277,12 +277,10 @@ edition-builds: correspondence
 edition-builds-check: correspondence-check
 	@printf 'cross-edition edition-build audit ok\n'
 
-coverage: full-rom-check $(if $(wildcard roms/tla-en.gba),tla-assets-check) | $(REPORT_DIR)
-	$(if $(wildcard roms/tla-en.gba),$(COMPILER) coverage audit --target tla-en --output out/tla-en/reports/executable-audit-candidate.json)
+coverage: | $(REPORT_DIR)
 	$(CHECK) coverage --write
 
-coverage-check: full-rom-check $(if $(wildcard roms/tla-en.gba),tla-assets-check)
-	$(if $(wildcard roms/tla-en.gba),$(COMPILER) coverage audit --target tla-en --output out/tla-en/reports/executable-audit-candidate.json)
+coverage-check:
 	$(CHECK) coverage --check
 
 core-retained-check:
@@ -435,7 +433,7 @@ review-images-check: source-tracking-check
 	$(ASSETS) --review-images out/tbs-en/graphics-review
 
 verify: toolchain-check native-format-check index-sync-check publication-tree-check plan-tails-check overlay-data-check source-tracking-check review-images-check $(if $(wildcard roms/tla-en.gba),tla-assets-check tla-owners-check) corpus-check language-check register-shrink-check lint-production tooling-size tooling-index-check \
-	strict-tu-check check-owners core-retained-check coverage-check showcase-check siblings-check | $(REPORT_DIR)
+	strict-tu-check check-owners core-retained-check full-rom-check coverage-check showcase-check siblings-check | $(REPORT_DIR)
 	@tree=$$(git write-tree) || exit; \
 	printf '%s\n' "$$tree" > $(VERIFIED_TREE).tmp; \
 	mv $(VERIFIED_TREE).tmp $(VERIFIED_TREE); \

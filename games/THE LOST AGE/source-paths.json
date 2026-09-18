@@ -1,6 +1,9 @@
 {
   "format": 3,
   "owners": {
+    "resource_64d:020026f4": {"name": "Scene_CreateSpriteField"},
+    "main:080dc244": {"name": "Field_BeginPaletteTransition"},
+    "resource_64d:02000510": {"name": "Scene_PlayApproachEvent"},
     "main:08016d5c": {
       "name": "GameFlag_GetByte",
       "source": "GAME/FLAGS/GET_BYTE.C"

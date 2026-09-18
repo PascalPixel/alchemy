@@ -8,6 +8,10 @@ that finishes it.
 
 ### ☀️ 60%
 
+- Prefer never-drafted unknown; when that pool is too small for 60%, first-try
+  non-Stubborn draft_c / overlay virgin. Skip Far veneers and asm-manifest
+  owners (C there does not raise DONE). Bounce at 10 minutes.
+
 Reach 60% of the fixed executable inventory. Read the current verified count
 with `make progress`; do not maintain a second score in this task list.
 
@@ -22,6 +26,9 @@ with `make progress`; do not maintain a second score in this task list.
 
 Parked for a stronger model. Agents must not burn a 10-minute window here.
 
+- `main:08021e28` (32 B) — scheduling-floor, 2 halfwords; bounce.
+- `main:08029274` (80 B) — scheduling-floor, 2 halfwords; bounce.
+- `main:080a9d3c` (72 B) — instruction-selection wall; bounce.
 - `resource_382:02001090` ActorDraw_SetupActorSceneCells twin (172 B) — equivalent to `resource_385:02000c1c`, but instance must place every `actor-motion-event-scene` member; bounce until full resource_382 map exists.
 - `main:080fa514` (72 B) — still many differing halfwords (not exact).
 - `main:08092878` (172 B) — still many differing halfwords (not exact).

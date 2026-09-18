@@ -1433,6 +1433,38 @@
         }
       ],
       "overlay": null
+    },
+    {
+      "id": "tla-math-curve",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/LIB/CURVE.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x0802d23c",
+          "extent": 10,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-script-skip-command",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/SKIP_COMMAND.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x08024ed4",
+          "extent": 10,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
     }
   ]
 }

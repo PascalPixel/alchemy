@@ -477,6 +477,14 @@
     "main:08024c50": {
       "name": "Script_StoreLookupResult",
       "source": "FIELD/COMMON/SCRIPT/INTERPRETER_CONTROL.C"
+    },
+    "main:08024ed4": {
+      "name": "Script_SkipCommand",
+      "source": "FIELD/COMMON/SCRIPT/SKIP_COMMAND.C"
+    },
+    "main:0802d23c": {
+      "name": "Curve_GetFirstSampleA",
+      "source": "LIB/CURVE.C"
     }
   }
 }

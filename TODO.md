@@ -16,7 +16,13 @@ with `make progress`; do not maintain a second score in this task list.
 
 ### Stubborn (hard-pass later)
 
+- Prefer never-drafted TLA regions over near-miss halfword floors.
+
+
 Parked for a stronger model. Agents must not burn a 10-minute window here.
+
+- `main:081c342c` Audio_EmptyCallback (2 B) — scores exact with `--size 2`, but lies outside audited main executable ranges in metrics/executable.json; bounce until ranges include it.
+- `main:0802d246` Curve_LerpTwoSamples family — TBS body matches except Thumb epilogue (`pop {pc}` vs `pop {r1}; bx r1`); needs TLA-specific spelling.
 
 - `main:080fa514` (72 B), `main:08092878` (172 B) — still non-exact.
 - `resource_3bd:020013f8` (6220 B) — scheduling-floor, 2 halfwords.

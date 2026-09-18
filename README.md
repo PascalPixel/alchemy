@@ -8,7 +8,7 @@ The two games share much of the same code, so Alchemy recovers them side by side
 
 ## Status: ☀️ 55.96% · ⚓️ 0.27%
 
-![ROM contents](<games/THE BROKEN SEAL/PREVIEW/TBS-EN-ROM.SVG?v=3a7b0ed170338ff5>)
+![ROM contents](<games/THE BROKEN SEAL/PREVIEW/TBS-EN-ROM.SVG?v=fe99223188136122>)
 
 **DONE** measures recovered code: byte-exact C and evidenced permanent
 assembly, divided by each game's audited executable bytes. ☀️ is The Broken

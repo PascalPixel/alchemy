@@ -1417,6 +1417,22 @@
         }
       ],
       "overlay": null
+    },
+    {
+      "id": "tla-script-interpreter-control",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/FIELD/COMMON/SCRIPT/INTERPRETER_CONTROL.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x08024c50",
+          "extent": 30,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
     }
   ]
 }

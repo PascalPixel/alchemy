@@ -473,6 +473,10 @@
     },
     "main:080262e8": {
       "name": "Script_ApplyOperandCompare"
+    },
+    "main:08024c50": {
+      "name": "Script_StoreLookupResult",
+      "source": "FIELD/COMMON/SCRIPT/INTERPRETER_CONTROL.C"
     }
   }
 }

@@ -11,17 +11,21 @@ that finishes it.
 Reach 60% of the fixed executable inventory. Read the current verified count
 with `make progress`; do not maintain a second score in this task list.
 
-- Recheck and adopt what the stopped recovery run found. Exact:
-  `main:080fa514` (72 bytes) and `main:08092878` (172 bytes). Exact at 54 bytes
-  each: `resource_39e:02000104` and `resource_3c9:02000104`, the `Effect_Move`
-  family; eleven more copies differ by one halfword, so the family wants one
-  shared source with instances.
-- Rebuild coverage with `make coverage`, then rank unresolved owners from it,
-  twins of exact owners first.
-- Recount the owners still parked because their only match needed a
-  scheduling trick. The five overlay copies of `0809a65c` still hold a
-  `do { } while (0)` barrier. `SpawnConfiguredEffect` (23 copies) stays a
-  recorded compiler gap unless new evidence reopens it.
+- On `cursor/tbs-to-60`, `Effect_Move` is adopted. Agents: if an owner is not
+  exact inside a 10-minute window, park it under Stubborn and switch.
+
+### Stubborn (hard-pass later)
+
+Parked for a stronger model. Agents must not burn a 10-minute window here.
+
+- `main:080fa514` (72 B), `main:08092878` (172 B) — still non-exact.
+- `resource_3bd:020013f8` (6220 B) — scheduling-floor, 2 halfwords.
+- Overlay `0809a65c` `do{}while(0)` copies; `SpawnConfiguredEffect` compiler gap.
+- Recorded `copy_versus_rematerialise` / `instruction-selection` walls — stop.
+- TLA Venus `resource_64d:02000510` — lifter repair required (see below).
+- TLA field-operand floors `08025bb4` / `08025c5c` / `08025f9c` — already parked.
+- TLA `script-interpreter-control` beyond `main:08024c50` — layout/bindings
+  differ from TBS; do not thrash WaitForEvent at wrong addresses.
 
 ### Reconstruct The Lost Age
 

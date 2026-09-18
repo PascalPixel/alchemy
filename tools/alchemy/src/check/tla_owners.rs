@@ -24,7 +24,7 @@ use std::process::ExitCode;
 
 const USAGE: &str = "usage: alchemy check tla-owners ROM";
 /// The TLA executable inventory whose main intervals audit each owner's extent.
-const INVENTORY: &str = "games/THE LOST AGE/metrics/tla-en-executable.json";
+const INVENTORY: &str = "games/THE LOST AGE/metrics/executable.json";
 
 pub(super) fn entry(arguments: &[String]) -> ExitCode {
     let [rom] = arguments else {
@@ -234,6 +234,7 @@ fn overlay_mismatches(
 }
 
 fn check(root: &Path, rom: &Path) -> Result<String, String> {
+    let progress_inputs = crate::coverage::proof::identity(root, "tla-en")?;
     if !rom.is_file() {
         return Err(format!("{}: TLA ROM not found", rom.display()));
     }
@@ -296,6 +297,23 @@ fn check(root: &Path, rom: &Path) -> Result<String, String> {
             mismatches.join("\n")
         ));
     }
+    let credits = owners
+        .iter()
+        .map(|owner| crate::coverage::proof::Credit {
+            image: owner.owner.overlay_id().unwrap_or_else(|| "main".into()),
+            start: i64::from(owner.owner.address()),
+            end: i64::from(owner.owner.address()) + owner.extent as i64,
+            source: owner.source.clone(),
+            kind: "c".into(),
+        })
+        .collect();
+    crate::coverage::proof::write(
+        root,
+        "tla-en",
+        &std::fs::read(rom).map_err(|e| e.to_string())?,
+        &progress_inputs,
+        credits,
+    )?;
     Ok(format!(
         "tla owners ok: {} exact owners ({} overlay), {} shared sources",
         owners.len(),

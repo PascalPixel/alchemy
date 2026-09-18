@@ -1203,6 +1203,7 @@ fn place_regions(
 }
 pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, String> {
     let target = target_for(options.target);
+    let progress_inputs = crate::coverage::proof::identity(root, target.id.as_str())?;
     if target.build_support != BuildSupport::Full {
         return Err(format!("{} is compile-only; run `make {}` until its edition link map, assembly, and assets are reconstructed", target.id, target.id));
     }
@@ -1438,6 +1439,24 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
         "output":if options.source_only { Value::Null } else { json!(options.output) },
     });
     write_canonical(&sidecar_path(&output, "json")?, &report)?;
+    // Coverage's source readers use the canonical stage locations. A custom
+    // build must not certify unrelated manifests left in those locations.
+    let defaults = defaults(target.id);
+    let canonical_progress = rooted(root, &options.claimed_output)
+        == rooted(root, &defaults.claimed_output)
+        && rooted(root, &options.asm_output) == rooted(root, &defaults.asm_output)
+        && rooted(root, &options.output) == rooted(root, &defaults.output);
+    if let Some(rom) = rom.as_ref().filter(|_| canonical_progress) {
+        let tree = crate::coverage::tree::work_tree_at(root.to_path_buf());
+        let credits = crate::coverage::pipeline::verified_credits(
+            &crate::coverage::pipeline::BuildOptions {
+                target: target.id.to_string(),
+                exact: &tree,
+                recon: None,
+            },
+        )?;
+        crate::coverage::proof::write(root, target.id.as_str(), rom, &progress_inputs, credits)?;
+    }
     Ok(format!(
         "{} regions={} code={} asm={} assets={} source_bytes={} unowned_bytes={} asm_c_debt_bytes={} asm_retained_structural_bytes={} source_owned={} byte_identical={}{}",
         if options.source_only { "source_only=True" } else { "identical=True" },

@@ -55,8 +55,8 @@ responsibilities in another wrapper or registry.
 | `alchemy bootstrap` | Build and install a missing compiler toolchain from pinned sources. `--check` validates without building; `--build` rebuilds; `--from BUNDLE` imports an admitted distribution. |
 | `alchemy build` | `compilers`, `asm`, `claimed`, `full`/`rom`, `assets` and `allocator`. Compiler source builds do not install a distribution. The allocator stage generates canonical GCC dumps for Psynergy inspection. `assets --network` draws map networks and assembles worlds ([ASSETS](ASSETS.md)). |
 | `alchemy verify` | Run the staged repository's verification contract. |
-| `alchemy coverage` | Rebuild and publish project coverage. `audit --target TARGET` inventories every ROM resource-directory pointer, physical spans only for byte-reproduced compressed streams, candidate executable overlay spans from canonical streams and assembler source-line evidence, and the bounded main image as the exact complement of ROM-verified asset regions. Raw pointers are hierarchical and never treated as file extents. `--calibrate` must reproduce the completed TBS audit before any executable method can become authoritative. |
-| `alchemy check` | `publication`, `commit-progress`, `source-tracking`, `owners`, `tla-owners`, `retained`, `coverage`, `integrate`, `no-asm`, `plan-tails`, `overlay-data`, `progress`, `routes`, `showcase` and `siblings`: repository contracts, not portable file operations. |
+| `alchemy coverage` | Rebuild and publish project coverage. `audit --target TARGET` inventories every ROM resource-directory pointer, physical spans only for byte-reproduced compressed streams, candidate executable overlay spans from canonical streams and assembler source-line evidence, and the bounded main image as the exact complement of ROM-verified asset regions. Raw pointers are hierarchical and never treated as file extents. `--calibrate` must reproduce the completed TBS audit before any executable method can become authoritative. The audit writes a candidate under `out/`; it never edits the committed scoring manifest. |
+| `alchemy check` | `publication`, `commit-progress`, `source-tracking`, `owners`, `tla-owners`, `retained`, `coverage`, `integrate`, `no-asm`, `plan-tails`, `overlay-data`, `progress`, `routes`, `showcase` and `siblings`: repository contracts, not portable file operations. `progress` combines the canonical executable inventory with the current verified build receipt ([COMPLETION](COMPLETION.md)); `--json` reports DONE and exact C separately, and `--write-report` writes that same result under `out/`. |
 | `alchemy cross-edition` | Compare reviewed owner correspondence across Golden Sun editions. |
 | `alchemy overlay` | `adopt`, `park`, `audit` and `export`: Golden Sun loader, resource integration and byte-identical retained-source export. |
 | `alchemy dashboard` | Serve project coverage. |
@@ -97,6 +97,13 @@ silently discarded. Engine headers and loop metadata stay in asset manifests.
 Thumb is code, not a music format. Keep format names portable and directional.
 
 ## Dashboard and progress figure
+
+`make coverage` and `make coverage-check` read existing verified build receipts;
+they do not run a build or an executable audit. If source verification is stale,
+run the relevant build or owner check first. `make verify` still requires the
+full production build. Executable audits are explicit operations, not a side
+effect of rendering progress. Historical refs require their own checked-out,
+verified inputs; a current receipt cannot score a different revision.
 
 The dashboard at `http://127.0.0.1:4650/` shows one full-window ROM tree of
 files and folders, the same hierarchy as the README's progress figure; it has

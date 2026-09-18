@@ -11,6 +11,11 @@ const TARGET: &str = r"\b(b|bl|beq|bne|bcs|bcc|bmi|bpl|bvs|bvc|bhi|bls|bge|blt|b
 const ERRLINE: &str = r":(\d+): Error:";
 type Row = (i64, String);
 
+struct Reachability {
+    instructions: BTreeMap<i64, i64>,
+    tables: BTreeSet<i64>,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ExecutableSpan {
     pub start: i64,
@@ -203,6 +208,16 @@ mod tests {
         image[0x24..0x26].copy_from_slice(&0x0089u16.to_le_bytes());
         let spans = trusted_overlay_spans(&image, OVERLAY_BASE, 1).unwrap();
         assert!(!spans.iter().any(|span| span.start == OVERLAY_BASE + 0x50));
+
+        // The comparison reads the unscaled source, not necessarily the
+        // destination of lsl (cmp r0; lsl r3, r0, #2).
+        image[0x20..0x22].copy_from_slice(&0x2801u16.to_le_bytes());
+        image[0x24..0x26].copy_from_slice(&0x0083u16.to_le_bytes());
+        let spans = overlay_flow_spans(&image, OVERLAY_BASE, 1, true).unwrap();
+        assert!(spans.iter().any(|span| span.start == OVERLAY_BASE + 0x50));
+        assert!(spans.iter().any(|span| span.kind == "jump_table"
+            && span.start == OVERLAY_BASE + 0x40
+            && span.end == OVERLAY_BASE + 0x48));
     }
 
     #[test]
@@ -289,7 +304,7 @@ fn reachable(
     follow_calls: bool,
     sweep: bool,
     follow_switches: bool,
-) -> BTreeMap<i64, i64> {
+) -> Reachability {
     let length = input.len() as i64;
     let read_u16 = |offset: i64| -> i64 {
         let at = offset as usize;
@@ -395,14 +410,14 @@ fn reachable(
                         && scaled_amount == 2
                         && load_table & 0xf800 == 0x4800
                         && target_load_register == target_register
-                        && scaled_destination == scaled_source
+                        && scaled_destination != loaded_table_register
                         && ((first_address_register == loaded_table_register
                             && second_address_register == scaled_destination)
                             || (second_address_register == loaded_table_register
                                 && first_address_register == scaled_destination));
                     let limit = preceding
                         .iter()
-                        .find(|(_, h)| h & 0xf800 == 0x2800 && ((h >> 8) & 7) == scaled_destination)
+                        .find(|(_, h)| h & 0xf800 == 0x2800 && ((h >> 8) & 7) == scaled_source)
                         .map(|(_, h)| (h & 0xff) + 1);
                     let table = exact_tail
                         .then(|| {
@@ -535,7 +550,10 @@ fn reachable(
             None => break,
         }
     }
-    instructions
+    Reachability {
+        instructions,
+        tables,
+    }
 }
 
 /// Conservatively inventory the executable bytes proved by the same decoder
@@ -557,7 +575,7 @@ pub fn executable_spans(input: &[u8], base: i64) -> Result<Vec<ExecutableSpan>, 
             pointers.push(target);
         }
     }
-    let instructions = reachable(input, base, &pointers, true, true, false, false);
+    let instructions = reachable(input, base, &pointers, true, true, false, false).instructions;
     let read_u16 = |address: i64| {
         let at = (address - base) as usize;
         input[at] as i64 | ((input[at + 1] as i64) << 8)
@@ -638,6 +656,17 @@ pub fn trusted_overlay_spans(
     base: i64,
     entry_veneers: usize,
 ) -> Result<Vec<ExecutableSpan>, String> {
+    overlay_flow_spans(input, base, entry_veneers, false)
+}
+
+/// Executable-image accounting includes compiler-owned jump tables, just as
+/// it includes literal pools and a matched function's complete linked extent.
+pub fn overlay_flow_spans(
+    input: &[u8],
+    base: i64,
+    entry_veneers: usize,
+    include_tables: bool,
+) -> Result<Vec<ExecutableSpan>, String> {
     if input.len() < entry_veneers * 8 {
         return Err("overlay is shorter than its entry veneer table".into());
     }
@@ -662,8 +691,40 @@ pub fn trusted_overlay_spans(
         }
         seeds.push(target);
     }
-    let instructions = reachable(input, base, &seeds, false, true, false, true);
-    spans_from_instructions(input, base, instructions)
+    let flow = reachable(input, base, &seeds, false, true, false, true);
+    let mut spans = spans_from_instructions(input, base, flow.instructions)?;
+    if include_tables {
+        let mut tables: Vec<ExecutableSpan> = Vec::new();
+        for address in flow.tables {
+            if let Some(last) = tables.last_mut() {
+                if last.end == address {
+                    last.end += 1;
+                    continue;
+                }
+            }
+            tables.push(ExecutableSpan {
+                start: address,
+                end: address + 1,
+                kind: "jump_table",
+            });
+        }
+        for table in &tables {
+            // The compiler aligns an inline table after mov pc, rN.
+            if table.start >= base + 4 {
+                let offset = (table.start - base) as usize;
+                let half = |at: usize| u16::from_le_bytes([input[at], input[at + 1]]);
+                if half(offset - 2) == 0 && half(offset - 4) & 0xff87 == 0x4687 {
+                    spans.push(ExecutableSpan {
+                        start: table.start - 2,
+                        end: table.start,
+                        kind: "executable_alignment",
+                    });
+                }
+            }
+        }
+        spans.extend(tables);
+    }
+    Ok(spans)
 }
 
 /// Candidate main-image inventory seeded only by direct call destinations
@@ -718,7 +779,7 @@ pub fn main_executable_spans(input: &[u8], base: i64) -> Result<Vec<ExecutableSp
         false,
         false,
     );
-    spans_from_instructions(input, base, instructions)
+    spans_from_instructions(input, base, instructions.instructions)
 }
 
 fn spans_from_instructions(
@@ -792,7 +853,7 @@ fn build_source(input: &[u8], base: i64, seeds: &[i64], sweep: bool) -> Result<S
         return Err("overlay has an odd byte length".to_string());
     }
     let rows = objdump_rows(decoded, base)?;
-    let instructions = reachable(decoded, base, seeds, true, sweep, sweep, sweep);
+    let instructions = reachable(decoded, base, seeds, true, sweep, sweep, sweep).instructions;
     let mut covered: BTreeSet<i64> = BTreeSet::new();
     for (address, size) in &instructions {
         for byte in *address..*address + *size {

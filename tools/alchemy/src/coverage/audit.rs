@@ -3,7 +3,8 @@
 use crate::compiler::canonical_json::canonical_json;
 use crate::overlay::assembly::{
     adjacent_prologue_spans, build_overlay_source, compiler_idiom_spans, executable_spans,
-    main_executable_spans, trusted_overlay_spans, ExecutableSpan, OVERLAY_BASE, ROM_BASE,
+    main_executable_spans, overlay_flow_spans, trusted_overlay_spans, ExecutableSpan, OVERLAY_BASE,
+    ROM_BASE,
 };
 use crate::overlay::listing_rows;
 use crate::overlay::rom::CanonicalRom;
@@ -222,7 +223,7 @@ fn source_spans(source: &Path, image: &[u8], overlay: &str) -> Result<Vec<Execut
             continue;
         };
         if matches!(
-            mnemonic,
+            mnemonic.trim_end_matches(".n").trim_end_matches(".w"),
             "b" | "beq"
                 | "bne"
                 | "bcs"
@@ -237,6 +238,8 @@ fn source_spans(source: &Path, image: &[u8], overlay: &str) -> Result<Vec<Execut
                 | "blt"
                 | "bgt"
                 | "ble"
+                | "bhs"
+                | "blo"
         ) {
             let label = operand.trim().trim_end_matches(',');
             if label.starts_with('.') {
@@ -328,7 +331,9 @@ fn source_spans(source: &Path, image: &[u8], overlay: &str) -> Result<Vec<Execut
         let address = OVERLAY_BASE + offset as i64;
         if image[offset..offset + 4] == [0x00, 0x4c, 0x20, 0x47] {
             let target = u32::from_le_bytes(image[offset + 4..offset + 8].try_into().unwrap());
-            if target & 1 != 0 && matches!(target >> 24, 0x02 | 0x08 | 0x09) {
+            // bx selects ARM or Thumb from bit zero. Even IWRAM targets are
+            // real ARM import veneers, not data to omit from the image.
+            if matches!(target >> 24, 0x02 | 0x03 | 0x08 | 0x09) {
                 spans.push(ExecutableSpan {
                     start: address,
                     end: address + 8,
@@ -539,7 +544,6 @@ fn report(root: &Path, target: DecompTarget) -> Result<Value, String> {
                 });
             }
         }
-        let executable = union_bytes(&spans);
         let generated = build_overlay_source(&stream.decoded, OVERLAY_BASE)?;
         let generated_file = NamedTempFile::new().map_err(|error| error.to_string())?;
         std::fs::write(generated_file.path(), generated).map_err(|error| error.to_string())?;
@@ -557,6 +561,19 @@ fn report(root: &Path, target: DecompTarget) -> Result<Value, String> {
                 .cloned()
                 .collect::<Vec<_>>(),
         );
+        // A maintained raw listing may still spell a real routine as numeric
+        // directives. Conversely, it can contain exact C the prologue sweep
+        // cannot discover. Follow entry/call/switch evidence independently of
+        // those spellings, and keep every method's diagnostic ranges below.
+        let flow = overlay_flow_spans(
+            &stream.decoded,
+            OVERLAY_BASE,
+            target.overlay_entry_veneers,
+            true,
+        )?;
+        spans.extend(generated_spans.iter().cloned());
+        spans.extend(flow);
+        let executable = union_bytes(&spans);
         let decoded = stream.decoded.len() as u64;
         let encoded = (stream.end - stream.start) as u64;
         decoded_total += decoded;
@@ -595,11 +612,7 @@ fn report(root: &Path, target: DecompTarget) -> Result<Value, String> {
     // inventories code reached from Thumb prologues and in-image veneers.
     // Calibration against TBS below measures what this method still misses
     // before TLA is ever allowed to publish a complete audit.
-    let metric_path = root.join(format!(
-        "{}/metrics/{}-executable.json",
-        target.game_dir(),
-        target.id
-    ));
+    let metric_path = root.join(format!("{}/metrics/executable.json", target.game_dir()));
     let metric: Value = serde_json::from_slice(
         &std::fs::read(&metric_path)
             .map_err(|error| format!("{}: {error}", metric_path.display()))?,
@@ -631,6 +644,7 @@ fn report(root: &Path, target: DecompTarget) -> Result<Value, String> {
     Ok(json!({
         "format": "alchemy-executable-audit-v1",
         "target": target.id.as_str(),
+        "state": "candidate",
         "scope": "code-overlays",
         "audit": "candidate",
         "resources": resource_rows,
@@ -683,7 +697,7 @@ fn report(root: &Path, target: DecompTarget) -> Result<Value, String> {
 }
 
 fn calibrate(root: &Path, document: &Value) -> Result<String, String> {
-    let path = root.join("games/THE BROKEN SEAL/metrics/tbs-en-executable.json");
+    let path = root.join("games/THE BROKEN SEAL/metrics/executable.json");
     let expected: ExpectedReport = serde_json::from_slice(
         &std::fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?,
     )
@@ -931,7 +945,7 @@ pub fn run(root: &Path, arguments: &[String]) -> Result<String, String> {
 
 #[cfg(test)]
 mod tests {
-    use super::{difference_ranges, intersection_bytes, union_bytes};
+    use super::{difference_ranges, intersection_bytes, source_spans, union_bytes};
     use crate::overlay::assembly::ExecutableSpan;
 
     #[test]
@@ -970,5 +984,30 @@ mod tests {
             difference_ranges(&[(0, 20)], &[(2, 4), (8, 12), (10, 16)]),
             vec![(0, 2), (4, 8), (16, 20)]
         );
+    }
+
+    #[test]
+    fn narrow_branch_target_recovers_an_instruction_after_a_literal_pool() {
+        let file = tempfile::NamedTempFile::new().unwrap();
+        std::fs::write(file.path(), ".syntax unified\n.thumb\nldr r0, [pc, #0]\nb.n .L_next\n.4byte 0xffffffff\n.L_next:\n.2byte 0x2800\nmovs r0, #1\nbx lr\n").unwrap();
+        let image = [
+            0x00, 0x48, 0x01, 0xe0, 0xff, 0xff, 0xff, 0xff, 0x00, 0x28, 0x01, 0x20, 0x70, 0x47,
+        ];
+        let spans = source_spans(file.path(), &image, "synthetic").unwrap();
+        assert_eq!(union_bytes(&spans), 14);
+    }
+
+    #[test]
+    fn fixed_veneer_can_enter_arm_iwram_code() {
+        let file = tempfile::NamedTempFile::new().unwrap();
+        std::fs::write(
+            file.path(),
+            ".syntax unified\n.thumb\n.4byte 0x47204c00\n.4byte 0x03000000\n",
+        )
+        .unwrap();
+        let image = [0x00, 0x4c, 0x20, 0x47, 0x00, 0x00, 0x00, 0x03];
+        let spans = source_spans(file.path(), &image, "synthetic").unwrap();
+        assert_eq!(union_bytes(&spans), 8);
+        assert_eq!(spans[0].kind, "veneer");
     }
 }

@@ -40,10 +40,11 @@ like a palette bug and are what the game draws.
 | Open work | `TODO.md` |
 
 Historical scores and dossiers are leads, not current facts. A report older
-than the commits it describes is not evidence: `make coverage` rebuilds
-production coverage before anything is measured or ranked from it, and it does
-not rescore drafts. Do not edit derived reports or treat old experiment
-outputs as build inputs.
+than the commits it describes is not evidence. Source verification produces
+fingerprinted receipts; `make coverage` reads those receipts and refuses stale
+credit without silently rebuilding or rescoring drafts. See
+[COMPLETION](COMPLETION.md) for the scoring authority. Do not edit derived
+reports or treat old experiment outputs as build inputs.
 
 A score that improves is not evidence that a change is correct, and a
 boundary tested only with the tools available when it was found is weaker

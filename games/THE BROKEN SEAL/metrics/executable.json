@@ -2,9 +2,12 @@
   "format": 1,
   "metric": "full-c-byte-share",
   "target": "tbs-en",
+  "rom_sha256": "c14f1151897e8d73f25ffdd67e21eebb6dc57973ff2458872ee89fa9060aaca1",
+  "state": "verified",
   "derivation": "full-c-progress-v1",
   "audit": "complete",
-  "total_union_bytes": 1356928,
+  "overlay_count": 96,
+  "total_union_bytes": 1367562,
   "main": {
     "id": "main",
     "executable_bytes": 549142,
@@ -5358,8 +5361,8 @@
     {
       "id": "resource_370",
       "decoded_bytes": 5914,
-      "executable_bytes": 5316,
-      "excluded_bytes": 598,
+      "executable_bytes": 5332,
+      "excluded_bytes": 582,
       "audit": "complete",
       "intervals": [
         {
@@ -5615,6 +5618,12 @@
           "evidence": "resource_370_overlay.s:2405:verified-C-placeholder"
         },
         {
+          "start": 33559316,
+          "end": 33559332,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33559332,
           "end": 33559764,
           "kind": "veneer",
@@ -5631,8 +5640,8 @@
     {
       "id": "resource_371",
       "decoded_bytes": 26524,
-      "executable_bytes": 17026,
-      "excluded_bytes": 9498,
+      "executable_bytes": 17730,
+      "excluded_bytes": 8794,
       "audit": "complete",
       "intervals": [
         {
@@ -5696,10 +5705,22 @@
           "evidence": "literal pool referenced by BL-reached raw-halfword leaf"
         },
         {
+          "start": 33555184,
+          "end": 33555220,
+          "kind": "thumb",
+          "evidence": "complete linked exact-C owner, full-ROM byte comparison: games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/ACTOR_TRANSFER.C"
+        },
+        {
           "start": 33555220,
           "end": 33555890,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
+        },
+        {
+          "start": 33555890,
+          "end": 33555894,
+          "kind": "thumb",
+          "evidence": "complete linked exact-C owner, full-ROM byte comparison: games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/ACTOR_TRANSFER.C"
         },
         {
           "start": 33555894,
@@ -5708,10 +5729,22 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33556018,
+          "end": 33556022,
+          "kind": "thumb",
+          "evidence": "complete linked exact-C owner, full-ROM byte comparison: games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/ACTOR_TRANSFER.C"
+        },
+        {
           "start": 33556022,
           "end": 33556080,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
+        },
+        {
+          "start": 33556080,
+          "end": 33556084,
+          "kind": "thumb",
+          "evidence": "complete linked exact-C owner, full-ROM byte comparison: games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/ACTOR_TRANSFER.C"
         },
         {
           "start": 33556084,
@@ -5732,6 +5765,18 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33556424,
+          "end": 33556744,
+          "kind": "jump_table",
+          "evidence": "bounded GCC switch table: compared source register, scaled index, indexed load and mov-pc dispatch; every destination is inside this image"
+        },
+        {
+          "start": 33556744,
+          "end": 33557016,
+          "kind": "thumb",
+          "evidence": "Thumb control flow reached from loader entry veneers through calls, branches and validated GCC switch destinations"
+        },
+        {
           "start": 33557016,
           "end": 33557044,
           "kind": "thumb",
@@ -5742,6 +5787,12 @@
           "end": 33557084,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+        },
+        {
+          "start": 33557084,
+          "end": 33557132,
+          "kind": "literal_pool",
+          "evidence": "four-byte PC-relative literal referenced by an entry/call/switch-reachable Thumb instruction"
         },
         {
           "start": 33557132,
@@ -6410,6 +6461,12 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
+          "start": 33571188,
+          "end": 33571204,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33571204,
           "end": 33572012,
           "kind": "veneer",
@@ -6564,8 +6621,8 @@
     {
       "id": "resource_372",
       "decoded_bytes": 22520,
-      "executable_bytes": 18538,
-      "excluded_bytes": 3982,
+      "executable_bytes": 18546,
+      "excluded_bytes": 3974,
       "audit": "complete",
       "intervals": [
         {
@@ -7211,6 +7268,12 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33572404,
+          "end": 33572412,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33572412,
           "end": 33573052,
           "kind": "veneer",
@@ -7227,8 +7290,8 @@
     {
       "id": "resource_373",
       "decoded_bytes": 30764,
-      "executable_bytes": 24968,
-      "excluded_bytes": 5796,
+      "executable_bytes": 24976,
+      "excluded_bytes": 5788,
       "audit": "complete",
       "intervals": [
         {
@@ -8012,6 +8075,12 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
+          "start": 33578628,
+          "end": 33578636,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33578636,
           "end": 33579348,
           "kind": "veneer",
@@ -8034,8 +8103,8 @@
     {
       "id": "resource_374",
       "decoded_bytes": 16084,
-      "executable_bytes": 10316,
-      "excluded_bytes": 5768,
+      "executable_bytes": 10324,
+      "excluded_bytes": 5760,
       "audit": "complete",
       "intervals": [
         {
@@ -8453,6 +8522,12 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33564132,
+          "end": 33564140,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33564140,
           "end": 33564756,
           "kind": "veneer",
@@ -8664,8 +8739,8 @@
     {
       "id": "resource_376",
       "decoded_bytes": 8800,
-      "executable_bytes": 4852,
-      "excluded_bytes": 3948,
+      "executable_bytes": 4860,
+      "excluded_bytes": 3940,
       "audit": "complete",
       "intervals": [
         {
@@ -8849,6 +8924,12 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
+          "start": 33558852,
+          "end": 33558860,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33558860,
           "end": 33559292,
           "kind": "veneer",
@@ -8865,8 +8946,8 @@
     {
       "id": "resource_377",
       "decoded_bytes": 11548,
-      "executable_bytes": 6828,
-      "excluded_bytes": 4720,
+      "executable_bytes": 6836,
+      "excluded_bytes": 4712,
       "audit": "complete",
       "intervals": [
         {
@@ -9260,6 +9341,12 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33560588,
+          "end": 33560596,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33560596,
           "end": 33561268,
           "kind": "veneer",
@@ -9276,8 +9363,8 @@
     {
       "id": "resource_378",
       "decoded_bytes": 16784,
-      "executable_bytes": 13934,
-      "excluded_bytes": 2850,
+      "executable_bytes": 14144,
+      "excluded_bytes": 2640,
       "audit": "complete",
       "intervals": [
         {
@@ -9323,6 +9410,18 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33555980,
+          "end": 33556084,
+          "kind": "jump_table",
+          "evidence": "bounded GCC switch table: compared source register, scaled index, indexed load and mov-pc dispatch; every destination is inside this image"
+        },
+        {
+          "start": 33556084,
+          "end": 33556166,
+          "kind": "thumb",
+          "evidence": "Thumb control flow reached from loader entry veneers through calls, branches and validated GCC switch destinations"
+        },
+        {
           "start": 33556166,
           "end": 33556172,
           "kind": "thumb",
@@ -9333,6 +9432,12 @@
           "end": 33556184,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+        },
+        {
+          "start": 33556184,
+          "end": 33556200,
+          "kind": "literal_pool",
+          "evidence": "four-byte PC-relative literal referenced by an entry/call/switch-reachable Thumb instruction"
         },
         {
           "start": 33556200,
@@ -9651,6 +9756,12 @@
           "end": 33568032,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
+        },
+        {
+          "start": 33568032,
+          "end": 33568040,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
         },
         {
           "start": 33568040,
@@ -10860,8 +10971,8 @@
     {
       "id": "resource_380",
       "decoded_bytes": 20880,
-      "executable_bytes": 19212,
-      "excluded_bytes": 1668,
+      "executable_bytes": 19228,
+      "excluded_bytes": 1652,
       "audit": "complete",
       "intervals": [
         {
@@ -11279,6 +11390,12 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
+          "start": 33572948,
+          "end": 33572964,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33572964,
           "end": 33573660,
           "kind": "veneer",
@@ -11295,8 +11412,8 @@
     {
       "id": "resource_381",
       "decoded_bytes": 15032,
-      "executable_bytes": 13568,
-      "excluded_bytes": 1464,
+      "executable_bytes": 13584,
+      "excluded_bytes": 1448,
       "audit": "complete",
       "intervals": [
         {
@@ -11690,6 +11807,12 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
+          "start": 33567700,
+          "end": 33567716,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33567716,
           "end": 33568300,
           "kind": "veneer",
@@ -11706,8 +11829,8 @@
     {
       "id": "resource_382",
       "decoded_bytes": 10484,
-      "executable_bytes": 6908,
-      "excluded_bytes": 3576,
+      "executable_bytes": 6924,
+      "excluded_bytes": 3560,
       "audit": "complete",
       "intervals": [
         {
@@ -12167,6 +12290,12 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
+          "start": 33560832,
+          "end": 33560848,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33560848,
           "end": 33561296,
           "kind": "veneer",
@@ -12189,8 +12318,8 @@
     {
       "id": "resource_383",
       "decoded_bytes": 25848,
-      "executable_bytes": 18698,
-      "excluded_bytes": 7150,
+      "executable_bytes": 19728,
+      "excluded_bytes": 6120,
       "audit": "complete",
       "intervals": [
         {
@@ -12470,16 +12599,52 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33564548,
+          "end": 33564600,
+          "kind": "jump_table",
+          "evidence": "bounded GCC switch table: compared source register, scaled index, indexed load and mov-pc dispatch; every destination is inside this image"
+        },
+        {
+          "start": 33564600,
+          "end": 33565426,
+          "kind": "thumb",
+          "evidence": "Thumb control flow reached from loader entry veneers through calls, branches and validated GCC switch destinations"
+        },
+        {
+          "start": 33565426,
+          "end": 33565428,
+          "kind": "executable_alignment",
+          "evidence": "two-byte zero padding between executable regions or before an inline compiler switch table"
+        },
+        {
           "start": 33565428,
           "end": 33565440,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
+          "start": 33565440,
+          "end": 33565484,
+          "kind": "literal_pool",
+          "evidence": "four-byte PC-relative literal referenced by an entry/call/switch-reachable Thumb instruction"
+        },
+        {
+          "start": 33565484,
+          "end": 33565586,
+          "kind": "thumb",
+          "evidence": "Thumb control flow reached from loader entry veneers through calls, branches and validated GCC switch destinations"
+        },
+        {
           "start": 33565586,
           "end": 33565596,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
+        },
+        {
+          "start": 33565596,
+          "end": 33565600,
+          "kind": "literal_pool",
+          "evidence": "four-byte PC-relative literal referenced by an entry/call/switch-reachable Thumb instruction"
         },
         {
           "start": 33565600,
@@ -12783,8 +12948,8 @@
     {
       "id": "resource_385",
       "decoded_bytes": 6720,
-      "executable_bytes": 4588,
-      "excluded_bytes": 2132,
+      "executable_bytes": 4596,
+      "excluded_bytes": 2124,
       "audit": "complete",
       "intervals": [
         {
@@ -13142,6 +13307,12 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
+          "start": 33558616,
+          "end": 33558624,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33558624,
           "end": 33558968,
           "kind": "veneer",
@@ -13245,8 +13416,8 @@
     {
       "id": "resource_387",
       "decoded_bytes": 5376,
-      "executable_bytes": 4652,
-      "excluded_bytes": 724,
+      "executable_bytes": 4660,
+      "excluded_bytes": 716,
       "audit": "complete",
       "intervals": [
         {
@@ -13506,6 +13677,12 @@
           "end": 33558660,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
+        },
+        {
+          "start": 33558660,
+          "end": 33558668,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
         },
         {
           "start": 33558668,
@@ -13794,8 +13971,8 @@
     {
       "id": "resource_38a",
       "decoded_bytes": 2580,
-      "executable_bytes": 1884,
-      "excluded_bytes": 696,
+      "executable_bytes": 1892,
+      "excluded_bytes": 688,
       "audit": "complete",
       "intervals": [
         {
@@ -13917,6 +14094,12 @@
           "end": 33556140,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+        },
+        {
+          "start": 33556140,
+          "end": 33556148,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
         },
         {
           "start": 33556148,
@@ -15360,8 +15543,8 @@
     {
       "id": "resource_392",
       "decoded_bytes": 4260,
-      "executable_bytes": 3776,
-      "excluded_bytes": 484,
+      "executable_bytes": 3784,
+      "excluded_bytes": 476,
       "audit": "complete",
       "intervals": [
         {
@@ -15491,6 +15674,12 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
+          "start": 33557900,
+          "end": 33557908,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33557908,
           "end": 33558156,
           "kind": "veneer",
@@ -15513,8 +15702,8 @@
     {
       "id": "resource_393",
       "decoded_bytes": 4308,
-      "executable_bytes": 3848,
-      "excluded_bytes": 460,
+      "executable_bytes": 3856,
+      "excluded_bytes": 452,
       "audit": "complete",
       "intervals": [
         {
@@ -15620,6 +15809,12 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
+          "start": 33558044,
+          "end": 33558052,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33558052,
           "end": 33558228,
           "kind": "veneer",
@@ -15642,8 +15837,8 @@
     {
       "id": "resource_394",
       "decoded_bytes": 4792,
-      "executable_bytes": 4372,
-      "excluded_bytes": 420,
+      "executable_bytes": 4380,
+      "excluded_bytes": 412,
       "audit": "complete",
       "intervals": [
         {
@@ -15869,6 +16064,12 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
+          "start": 33558516,
+          "end": 33558524,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33558524,
           "end": 33558812,
           "kind": "veneer",
@@ -15885,8 +16086,8 @@
     {
       "id": "resource_395",
       "decoded_bytes": 7612,
-      "executable_bytes": 5982,
-      "excluded_bytes": 1630,
+      "executable_bytes": 5998,
+      "excluded_bytes": 1614,
       "audit": "complete",
       "intervals": [
         {
@@ -16130,6 +16331,12 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
+          "start": 33560824,
+          "end": 33560840,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33560840,
           "end": 33561272,
           "kind": "veneer",
@@ -16146,8 +16353,8 @@
     {
       "id": "resource_396",
       "decoded_bytes": 11708,
-      "executable_bytes": 6096,
-      "excluded_bytes": 5612,
+      "executable_bytes": 6472,
+      "excluded_bytes": 5236,
       "audit": "complete",
       "intervals": [
         {
@@ -16355,6 +16562,18 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33559604,
+          "end": 33559656,
+          "kind": "jump_table",
+          "evidence": "bounded GCC switch table: compared source register, scaled index, indexed load and mov-pc dispatch; every destination is inside this image"
+        },
+        {
+          "start": 33559656,
+          "end": 33559964,
+          "kind": "thumb",
+          "evidence": "Thumb control flow reached from loader entry veneers through calls, branches and validated GCC switch destinations"
+        },
+        {
           "start": 33559964,
           "end": 33559974,
           "kind": "thumb",
@@ -16443,6 +16662,12 @@
           "end": 33561104,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+        },
+        {
+          "start": 33561104,
+          "end": 33561120,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
         },
         {
           "start": 33561120,
@@ -16719,8 +16944,8 @@
     {
       "id": "resource_399",
       "decoded_bytes": 12780,
-      "executable_bytes": 8980,
-      "excluded_bytes": 3800,
+      "executable_bytes": 8988,
+      "excluded_bytes": 3792,
       "audit": "complete",
       "intervals": [
         {
@@ -17078,6 +17303,12 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
+          "start": 33562984,
+          "end": 33562992,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33562992,
           "end": 33563632,
           "kind": "veneer",
@@ -17094,8 +17325,8 @@
     {
       "id": "resource_39a",
       "decoded_bytes": 13096,
-      "executable_bytes": 9232,
-      "excluded_bytes": 3864,
+      "executable_bytes": 9240,
+      "excluded_bytes": 3856,
       "audit": "complete",
       "intervals": [
         {
@@ -17393,6 +17624,12 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
+          "start": 33563224,
+          "end": 33563232,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33563232,
           "end": 33563672,
           "kind": "veneer",
@@ -17409,8 +17646,8 @@
     {
       "id": "resource_39b",
       "decoded_bytes": 12284,
-      "executable_bytes": 9610,
-      "excluded_bytes": 2674,
+      "executable_bytes": 9758,
+      "excluded_bytes": 2526,
       "audit": "complete",
       "intervals": [
         {
@@ -17810,6 +18047,18 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33559398,
+          "end": 33559400,
+          "kind": "executable_alignment",
+          "evidence": "two-byte zero padding between executable regions or before an inline compiler switch table"
+        },
+        {
+          "start": 33559400,
+          "end": 33559524,
+          "kind": "jump_table",
+          "evidence": "bounded GCC switch table: compared source register, scaled index, indexed load and mov-pc dispatch; every destination is inside this image"
+        },
+        {
           "start": 33559524,
           "end": 33560228,
           "kind": "thumb",
@@ -17832,6 +18081,18 @@
           "end": 33560362,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
+        },
+        {
+          "start": 33560362,
+          "end": 33560364,
+          "kind": "executable_alignment",
+          "evidence": "two-byte zero padding between executable regions or before an inline compiler switch table"
+        },
+        {
+          "start": 33560364,
+          "end": 33560368,
+          "kind": "literal_pool",
+          "evidence": "four-byte PC-relative literal referenced by an entry/call/switch-reachable Thumb instruction"
         },
         {
           "start": 33560368,
@@ -18026,6 +18287,12 @@
           "evidence": "resource_39b_overlay.s:3966:verified-C-placeholder"
         },
         {
+          "start": 33563612,
+          "end": 33563628,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33563628,
           "end": 33564188,
           "kind": "veneer",
@@ -18048,8 +18315,8 @@
     {
       "id": "resource_39c",
       "decoded_bytes": 28696,
-      "executable_bytes": 24308,
-      "excluded_bytes": 4388,
+      "executable_bytes": 24332,
+      "excluded_bytes": 4364,
       "audit": "complete",
       "intervals": [
         {
@@ -19031,6 +19298,12 @@
           "evidence": "resource_39c_overlay.s:8756:verified-C-placeholder"
         },
         {
+          "start": 33577324,
+          "end": 33577340,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33577340,
           "end": 33578092,
           "kind": "veneer",
@@ -19047,6 +19320,12 @@
           "end": 33582374,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
+        },
+        {
+          "start": 33582374,
+          "end": 33582376,
+          "kind": "thumb",
+          "evidence": "Thumb control flow reached from loader entry veneers through calls, branches and validated GCC switch destinations"
         },
         {
           "start": 33582376,
@@ -19169,6 +19448,12 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33582686,
+          "end": 33582688,
+          "kind": "thumb",
+          "evidence": "Thumb control flow reached from loader entry veneers through calls, branches and validated GCC switch destinations"
+        },
+        {
           "start": 33582688,
           "end": 33582690,
           "kind": "thumb",
@@ -19283,6 +19568,12 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33583062,
+          "end": 33583064,
+          "kind": "thumb",
+          "evidence": "Thumb control flow reached from loader entry veneers through calls, branches and validated GCC switch destinations"
+        },
+        {
           "start": 33583064,
           "end": 33583086,
           "kind": "thumb",
@@ -19293,6 +19584,12 @@
           "end": 33583094,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
+        },
+        {
+          "start": 33583094,
+          "end": 33583096,
+          "kind": "thumb",
+          "evidence": "Thumb control flow reached from loader entry veneers through calls, branches and validated GCC switch destinations"
         },
         {
           "start": 33583096,
@@ -19335,8 +19632,8 @@
     {
       "id": "resource_39d",
       "decoded_bytes": 15488,
-      "executable_bytes": 14454,
-      "excluded_bytes": 1034,
+      "executable_bytes": 14468,
+      "excluded_bytes": 1020,
       "audit": "complete",
       "intervals": [
         {
@@ -19640,6 +19937,12 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33566148,
+          "end": 33566152,
+          "kind": "thumb",
+          "evidence": "complete linked exact-C owner, full-ROM byte comparison: games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/AERIE.C"
+        },
+        {
           "start": 33566152,
           "end": 33566172,
           "kind": "literal_pool",
@@ -19784,6 +20087,18 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33568294,
+          "end": 33568296,
+          "kind": "executable_alignment",
+          "evidence": "two-byte zero padding between executable regions or before an inline compiler switch table"
+        },
+        {
+          "start": 33568296,
+          "end": 33568304,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33568304,
           "end": 33568840,
           "kind": "veneer",
@@ -19806,8 +20121,8 @@
     {
       "id": "resource_39e",
       "decoded_bytes": 21008,
-      "executable_bytes": 17788,
-      "excluded_bytes": 3220,
+      "executable_bytes": 17796,
+      "excluded_bytes": 3212,
       "audit": "complete",
       "intervals": [
         {
@@ -20267,6 +20582,12 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33571644,
+          "end": 33571652,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33571652,
           "end": 33572228,
           "kind": "veneer",
@@ -20283,8 +20604,8 @@
     {
       "id": "resource_39f",
       "decoded_bytes": 15916,
-      "executable_bytes": 11288,
-      "excluded_bytes": 4628,
+      "executable_bytes": 12024,
+      "excluded_bytes": 3892,
       "audit": "complete",
       "intervals": [
         {
@@ -20594,10 +20915,22 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33564846,
+          "end": 33565026,
+          "kind": "thumb",
+          "evidence": "complete linked exact-C owner, full-ROM byte comparison: games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/SCENE_ENTRY_HOOK.C"
+        },
+        {
           "start": 33565026,
           "end": 33565038,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
+        },
+        {
+          "start": 33565038,
+          "end": 33565526,
+          "kind": "thumb",
+          "evidence": "complete linked exact-C owner, full-ROM byte comparison: games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/SCENE_ENTRY_HOOK.C"
         },
         {
           "start": 33565526,
@@ -20610,6 +20943,12 @@
           "end": 33565544,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+        },
+        {
+          "start": 33565544,
+          "end": 33565604,
+          "kind": "thumb",
+          "evidence": "complete linked exact-C owner, full-ROM byte comparison: games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/SCENE_ENTRY_HOOK.C"
         },
         {
           "start": 33565604,
@@ -20636,6 +20975,12 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
+          "start": 33565924,
+          "end": 33565932,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33565932,
           "end": 33566396,
           "kind": "veneer",
@@ -20658,8 +21003,8 @@
     {
       "id": "resource_3a0",
       "decoded_bytes": 7576,
-      "executable_bytes": 5362,
-      "excluded_bytes": 2214,
+      "executable_bytes": 5372,
+      "excluded_bytes": 2204,
       "audit": "complete",
       "intervals": [
         {
@@ -20915,6 +21260,18 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33559342,
+          "end": 33559344,
+          "kind": "executable_alignment",
+          "evidence": "two-byte zero padding between executable regions or before an inline compiler switch table"
+        },
+        {
+          "start": 33559344,
+          "end": 33559352,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33559352,
           "end": 33559744,
           "kind": "veneer",
@@ -20937,8 +21294,8 @@
     {
       "id": "resource_3a1",
       "decoded_bytes": 3572,
-      "executable_bytes": 1724,
-      "excluded_bytes": 1848,
+      "executable_bytes": 1732,
+      "excluded_bytes": 1840,
       "audit": "complete",
       "intervals": [
         {
@@ -21000,6 +21357,12 @@
           "end": 33555988,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
+        },
+        {
+          "start": 33555988,
+          "end": 33555996,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
         },
         {
           "start": 33555996,
@@ -21384,8 +21747,8 @@
     {
       "id": "resource_3a4",
       "decoded_bytes": 21048,
-      "executable_bytes": 15814,
-      "excluded_bytes": 5234,
+      "executable_bytes": 15822,
+      "excluded_bytes": 5226,
       "audit": "complete",
       "intervals": [
         {
@@ -22115,6 +22478,12 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33569392,
+          "end": 33569400,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33569400,
           "end": 33570088,
           "kind": "veneer",
@@ -22227,8 +22596,8 @@
     {
       "id": "resource_3a5",
       "decoded_bytes": 9922,
-      "executable_bytes": 9126,
-      "excluded_bytes": 796,
+      "executable_bytes": 9136,
+      "excluded_bytes": 786,
       "audit": "complete",
       "intervals": [
         {
@@ -22586,6 +22955,12 @@
           "evidence": "resource_3a5_overlay.s:3109:verified-C-placeholder"
         },
         {
+          "start": 33561732,
+          "end": 33561740,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33561740,
           "end": 33562188,
           "kind": "veneer",
@@ -22602,6 +22977,12 @@
           "end": 33562882,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
+        },
+        {
+          "start": 33562882,
+          "end": 33562884,
+          "kind": "thumb",
+          "evidence": "Thumb control flow reached from loader entry veneers through calls, branches and validated GCC switch destinations"
         },
         {
           "start": 33562884,
@@ -23046,8 +23427,8 @@
     {
       "id": "resource_3a6",
       "decoded_bytes": 9872,
-      "executable_bytes": 7276,
-      "excluded_bytes": 2596,
+      "executable_bytes": 7584,
+      "excluded_bytes": 2288,
       "audit": "complete",
       "intervals": [
         {
@@ -23429,6 +23810,24 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33561014,
+          "end": 33561016,
+          "kind": "executable_alignment",
+          "evidence": "two-byte zero padding between executable regions or before an inline compiler switch table"
+        },
+        {
+          "start": 33561016,
+          "end": 33561056,
+          "kind": "jump_table",
+          "evidence": "bounded GCC switch table: compared source register, scaled index, indexed load and mov-pc dispatch; every destination is inside this image"
+        },
+        {
+          "start": 33561056,
+          "end": 33561292,
+          "kind": "thumb",
+          "evidence": "Thumb control flow reached from loader entry veneers through calls, branches and validated GCC switch destinations"
+        },
+        {
           "start": 33561292,
           "end": 33561550,
           "kind": "thumb",
@@ -23447,6 +23846,12 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
+          "start": 33561564,
+          "end": 33561584,
+          "kind": "literal_pool",
+          "evidence": "four-byte PC-relative literal referenced by an entry/call/switch-reachable Thumb instruction"
+        },
+        {
           "start": 33561584,
           "end": 33561596,
           "kind": "literal_pool",
@@ -23457,6 +23862,18 @@
           "end": 33561618,
           "kind": "thumb",
           "evidence": "resource_3a6_overlay.s:3083:verified-C-placeholder"
+        },
+        {
+          "start": 33561618,
+          "end": 33561620,
+          "kind": "executable_alignment",
+          "evidence": "two-byte zero padding between executable regions or before an inline compiler switch table"
+        },
+        {
+          "start": 33561620,
+          "end": 33561628,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
         },
         {
           "start": 33561628,
@@ -23481,8 +23898,8 @@
     {
       "id": "resource_3a7",
       "decoded_bytes": 8756,
-      "executable_bytes": 5848,
-      "excluded_bytes": 2908,
+      "executable_bytes": 5864,
+      "excluded_bytes": 2892,
       "audit": "complete",
       "intervals": [
         {
@@ -23694,6 +24111,12 @@
           "end": 33558624,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+        },
+        {
+          "start": 33558624,
+          "end": 33558640,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
         },
         {
           "start": 33558640,
@@ -24495,8 +24918,8 @@
     {
       "id": "resource_3ab",
       "decoded_bytes": 9552,
-      "executable_bytes": 6960,
-      "excluded_bytes": 2592,
+      "executable_bytes": 6968,
+      "excluded_bytes": 2584,
       "audit": "complete",
       "intervals": [
         {
@@ -24912,6 +25335,12 @@
           "end": 33560856,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+        },
+        {
+          "start": 33560856,
+          "end": 33560864,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
         },
         {
           "start": 33560864,
@@ -25431,8 +25860,8 @@
     {
       "id": "resource_3af",
       "decoded_bytes": 23340,
-      "executable_bytes": 15740,
-      "excluded_bytes": 7600,
+      "executable_bytes": 16194,
+      "excluded_bytes": 7146,
       "audit": "complete",
       "intervals": [
         {
@@ -25712,6 +26141,24 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33559830,
+          "end": 33559832,
+          "kind": "executable_alignment",
+          "evidence": "two-byte zero padding between executable regions or before an inline compiler switch table"
+        },
+        {
+          "start": 33559832,
+          "end": 33559896,
+          "kind": "jump_table",
+          "evidence": "bounded GCC switch table: compared source register, scaled index, indexed load and mov-pc dispatch; every destination is inside this image"
+        },
+        {
+          "start": 33559896,
+          "end": 33560016,
+          "kind": "thumb",
+          "evidence": "Thumb control flow reached from loader entry veneers through calls, branches and validated GCC switch destinations"
+        },
+        {
           "start": 33560016,
           "end": 33560126,
           "kind": "thumb",
@@ -25970,6 +26417,18 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33566424,
+          "end": 33566508,
+          "kind": "jump_table",
+          "evidence": "bounded GCC switch table: compared source register, scaled index, indexed load and mov-pc dispatch; every destination is inside this image"
+        },
+        {
+          "start": 33566508,
+          "end": 33566648,
+          "kind": "thumb",
+          "evidence": "Thumb control flow reached from loader entry veneers through calls, branches and validated GCC switch destinations"
+        },
+        {
           "start": 33566648,
           "end": 33566986,
           "kind": "thumb",
@@ -25986,6 +26445,12 @@
           "end": 33567004,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+        },
+        {
+          "start": 33567004,
+          "end": 33567040,
+          "kind": "literal_pool",
+          "evidence": "four-byte PC-relative literal referenced by an entry/call/switch-reachable Thumb instruction"
         },
         {
           "start": 33567040,
@@ -26102,6 +26567,12 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33571412,
+          "end": 33571420,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33571420,
           "end": 33571940,
           "kind": "veneer",
@@ -26118,8 +26589,8 @@
     {
       "id": "resource_3b0",
       "decoded_bytes": 6428,
-      "executable_bytes": 4636,
-      "excluded_bytes": 1792,
+      "executable_bytes": 4884,
+      "excluded_bytes": 1544,
       "audit": "complete",
       "intervals": [
         {
@@ -26201,6 +26672,18 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33555168,
+          "end": 33555224,
+          "kind": "jump_table",
+          "evidence": "bounded GCC switch table: compared source register, scaled index, indexed load and mov-pc dispatch; every destination is inside this image"
+        },
+        {
+          "start": 33555224,
+          "end": 33555408,
+          "kind": "thumb",
+          "evidence": "Thumb control flow reached from loader entry veneers through calls, branches and validated GCC switch destinations"
+        },
+        {
           "start": 33555408,
           "end": 33555416,
           "kind": "thumb",
@@ -26211,6 +26694,12 @@
           "end": 33555460,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+        },
+        {
+          "start": 33555460,
+          "end": 33555468,
+          "kind": "literal_pool",
+          "evidence": "four-byte PC-relative literal referenced by an entry/call/switch-reachable Thumb instruction"
         },
         {
           "start": 33555468,
@@ -26361,8 +26850,8 @@
     {
       "id": "resource_3b1",
       "decoded_bytes": 32644,
-      "executable_bytes": 22910,
-      "excluded_bytes": 9734,
+      "executable_bytes": 25918,
+      "excluded_bytes": 6726,
       "audit": "complete",
       "intervals": [
         {
@@ -26432,6 +26921,24 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33555354,
+          "end": 33555356,
+          "kind": "executable_alignment",
+          "evidence": "two-byte zero padding between executable regions or before an inline compiler switch table"
+        },
+        {
+          "start": 33555356,
+          "end": 33555452,
+          "kind": "jump_table",
+          "evidence": "bounded GCC switch table: compared source register, scaled index, indexed load and mov-pc dispatch; every destination is inside this image"
+        },
+        {
+          "start": 33555452,
+          "end": 33555722,
+          "kind": "thumb",
+          "evidence": "Thumb control flow reached from loader entry veneers through calls, branches and validated GCC switch destinations"
+        },
+        {
           "start": 33555722,
           "end": 33555728,
           "kind": "thumb",
@@ -26442,6 +26949,12 @@
           "end": 33555736,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+        },
+        {
+          "start": 33555736,
+          "end": 33555784,
+          "kind": "literal_pool",
+          "evidence": "four-byte PC-relative literal referenced by an entry/call/switch-reachable Thumb instruction"
         },
         {
           "start": 33555784,
@@ -26684,10 +27197,40 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33566758,
+          "end": 33566760,
+          "kind": "executable_alignment",
+          "evidence": "two-byte zero padding between executable regions or before an inline compiler switch table"
+        },
+        {
+          "start": 33566760,
+          "end": 33566856,
+          "kind": "jump_table",
+          "evidence": "bounded GCC switch table: compared source register, scaled index, indexed load and mov-pc dispatch; every destination is inside this image"
+        },
+        {
+          "start": 33566856,
+          "end": 33566934,
+          "kind": "thumb",
+          "evidence": "Thumb control flow reached from loader entry veneers through calls, branches and validated GCC switch destinations"
+        },
+        {
           "start": 33566934,
           "end": 33566960,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
+        },
+        {
+          "start": 33566960,
+          "end": 33567080,
+          "kind": "jump_table",
+          "evidence": "bounded GCC switch table: compared source register, scaled index, indexed load and mov-pc dispatch; every destination is inside this image"
+        },
+        {
+          "start": 33567080,
+          "end": 33567520,
+          "kind": "thumb",
+          "evidence": "Thumb control flow reached from loader entry veneers through calls, branches and validated GCC switch destinations"
         },
         {
           "start": 33567520,
@@ -26702,10 +27245,22 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
+          "start": 33567540,
+          "end": 33567552,
+          "kind": "literal_pool",
+          "evidence": "four-byte PC-relative literal referenced by an entry/call/switch-reachable Thumb instruction"
+        },
+        {
           "start": 33567552,
           "end": 33567556,
           "kind": "literal_pool",
           "evidence": "resource_3b1_overlay.s:4955:pc-relative-literal"
+        },
+        {
+          "start": 33567556,
+          "end": 33567588,
+          "kind": "literal_pool",
+          "evidence": "four-byte PC-relative literal referenced by an entry/call/switch-reachable Thumb instruction"
         },
         {
           "start": 33567588,
@@ -26948,6 +27503,18 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33572832,
+          "end": 33572868,
+          "kind": "jump_table",
+          "evidence": "bounded GCC switch table: compared source register, scaled index, indexed load and mov-pc dispatch; every destination is inside this image"
+        },
+        {
+          "start": 33572868,
+          "end": 33572962,
+          "kind": "thumb",
+          "evidence": "Thumb control flow reached from loader entry veneers through calls, branches and validated GCC switch destinations"
+        },
+        {
           "start": 33572962,
           "end": 33572968,
           "kind": "thumb",
@@ -26990,16 +27557,34 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33573124,
+          "end": 33574072,
+          "kind": "thumb",
+          "evidence": "complete linked exact-C owner, full-ROM byte comparison: games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
+        },
+        {
           "start": 33574072,
           "end": 33574076,
           "kind": "literal_pool",
           "evidence": "resource_3b1_overlay.s:6896:pc-relative-literal"
         },
         {
+          "start": 33574076,
+          "end": 33574748,
+          "kind": "thumb",
+          "evidence": "complete linked exact-C owner, full-ROM byte comparison: games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
+        },
+        {
           "start": 33574748,
           "end": 33574762,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
+        },
+        {
+          "start": 33574762,
+          "end": 33574824,
+          "kind": "thumb",
+          "evidence": "complete linked exact-C owner, full-ROM byte comparison: games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C"
         },
         {
           "start": 33574824,
@@ -27150,8 +27735,8 @@
     {
       "id": "resource_3b2",
       "decoded_bytes": 15796,
-      "executable_bytes": 12526,
-      "excluded_bytes": 3270,
+      "executable_bytes": 12534,
+      "excluded_bytes": 3262,
       "audit": "complete",
       "intervals": [
         {
@@ -27599,6 +28184,12 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
+          "start": 33566640,
+          "end": 33566648,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33566648,
           "end": 33567008,
           "kind": "veneer",
@@ -27621,8 +28212,8 @@
     {
       "id": "resource_3b3",
       "decoded_bytes": 14028,
-      "executable_bytes": 11248,
-      "excluded_bytes": 2780,
+      "executable_bytes": 11256,
+      "excluded_bytes": 2772,
       "audit": "complete",
       "intervals": [
         {
@@ -28218,6 +28809,12 @@
           "end": 33565228,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+        },
+        {
+          "start": 33565228,
+          "end": 33565236,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
         },
         {
           "start": 33565236,
@@ -29409,8 +30006,8 @@
     {
       "id": "resource_3b7",
       "decoded_bytes": 8298,
-      "executable_bytes": 6648,
-      "excluded_bytes": 1650,
+      "executable_bytes": 6664,
+      "excluded_bytes": 1634,
       "audit": "complete",
       "intervals": [
         {
@@ -29604,6 +30201,12 @@
           "end": 33560660,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+        },
+        {
+          "start": 33560660,
+          "end": 33560676,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
         },
         {
           "start": 33560676,
@@ -30051,8 +30654,8 @@
     {
       "id": "resource_3b9",
       "decoded_bytes": 16824,
-      "executable_bytes": 11276,
-      "excluded_bytes": 5548,
+      "executable_bytes": 11580,
+      "excluded_bytes": 5244,
       "audit": "complete",
       "intervals": [
         {
@@ -30066,6 +30669,18 @@
           "end": 33554604,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
+        },
+        {
+          "start": 33554604,
+          "end": 33554868,
+          "kind": "jump_table",
+          "evidence": "bounded GCC switch table: compared source register, scaled index, indexed load and mov-pc dispatch; every destination is inside this image"
+        },
+        {
+          "start": 33554868,
+          "end": 33554888,
+          "kind": "thumb",
+          "evidence": "Thumb control flow reached from loader entry veneers through calls, branches and validated GCC switch destinations"
         },
         {
           "start": 33554888,
@@ -30086,10 +30701,22 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
+          "start": 33554952,
+          "end": 33554956,
+          "kind": "literal_pool",
+          "evidence": "four-byte PC-relative literal referenced by an entry/call/switch-reachable Thumb instruction"
+        },
+        {
           "start": 33554956,
           "end": 33554960,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
+        },
+        {
+          "start": 33554960,
+          "end": 33554962,
+          "kind": "literal_pool",
+          "evidence": "four-byte PC-relative literal referenced by an entry/call/switch-reachable Thumb instruction"
         },
         {
           "start": 33554962,
@@ -30098,10 +30725,22 @@
           "evidence": "resource_3b9_overlay.s:1041:canonical-instruction"
         },
         {
+          "start": 33554964,
+          "end": 33554966,
+          "kind": "literal_pool",
+          "evidence": "four-byte PC-relative literal referenced by an entry/call/switch-reachable Thumb instruction"
+        },
+        {
           "start": 33554966,
           "end": 33554968,
           "kind": "thumb",
           "evidence": "resource_3b9_overlay.s:1043:canonical-instruction"
+        },
+        {
+          "start": 33554968,
+          "end": 33554970,
+          "kind": "literal_pool",
+          "evidence": "four-byte PC-relative literal referenced by an entry/call/switch-reachable Thumb instruction"
         },
         {
           "start": 33554970,
@@ -30110,10 +30749,22 @@
           "evidence": "resource_3b9_overlay.s:1045:canonical-instruction"
         },
         {
+          "start": 33554972,
+          "end": 33554974,
+          "kind": "literal_pool",
+          "evidence": "four-byte PC-relative literal referenced by an entry/call/switch-reachable Thumb instruction"
+        },
+        {
           "start": 33554974,
           "end": 33554980,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
+        },
+        {
+          "start": 33554980,
+          "end": 33554982,
+          "kind": "literal_pool",
+          "evidence": "four-byte PC-relative literal referenced by an entry/call/switch-reachable Thumb instruction"
         },
         {
           "start": 33554982,
@@ -30122,16 +30773,34 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33554988,
+          "end": 33554990,
+          "kind": "literal_pool",
+          "evidence": "four-byte PC-relative literal referenced by an entry/call/switch-reachable Thumb instruction"
+        },
+        {
           "start": 33554990,
           "end": 33554992,
           "kind": "thumb",
           "evidence": "resource_3b9_overlay.s:1055:canonical-instruction"
         },
         {
+          "start": 33554992,
+          "end": 33554994,
+          "kind": "literal_pool",
+          "evidence": "four-byte PC-relative literal referenced by an entry/call/switch-reachable Thumb instruction"
+        },
+        {
           "start": 33554994,
           "end": 33554996,
           "kind": "thumb",
           "evidence": "resource_3b9_overlay.s:1057:canonical-instruction"
+        },
+        {
+          "start": 33554996,
+          "end": 33554998,
+          "kind": "literal_pool",
+          "evidence": "four-byte PC-relative literal referenced by an entry/call/switch-reachable Thumb instruction"
         },
         {
           "start": 33554998,
@@ -30498,8 +31167,8 @@
     {
       "id": "resource_3ba",
       "decoded_bytes": 18256,
-      "executable_bytes": 15638,
-      "excluded_bytes": 2618,
+      "executable_bytes": 15940,
+      "excluded_bytes": 2316,
       "audit": "complete",
       "intervals": [
         {
@@ -30605,6 +31274,24 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33557594,
+          "end": 33557596,
+          "kind": "executable_alignment",
+          "evidence": "two-byte zero padding between executable regions or before an inline compiler switch table"
+        },
+        {
+          "start": 33557596,
+          "end": 33557616,
+          "kind": "jump_table",
+          "evidence": "bounded GCC switch table: compared source register, scaled index, indexed load and mov-pc dispatch; every destination is inside this image"
+        },
+        {
+          "start": 33557616,
+          "end": 33557876,
+          "kind": "thumb",
+          "evidence": "Thumb control flow reached from loader entry veneers through calls, branches and validated GCC switch destinations"
+        },
+        {
           "start": 33557876,
           "end": 33557894,
           "kind": "thumb",
@@ -30621,6 +31308,12 @@
           "end": 33557932,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+        },
+        {
+          "start": 33557932,
+          "end": 33557944,
+          "kind": "literal_pool",
+          "evidence": "four-byte PC-relative literal referenced by an entry/call/switch-reachable Thumb instruction"
         },
         {
           "start": 33557944,
@@ -31073,6 +31766,12 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33569536,
+          "end": 33569544,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33569544,
           "end": 33570312,
           "kind": "veneer",
@@ -31095,8 +31794,8 @@
     {
       "id": "resource_3bb",
       "decoded_bytes": 19440,
-      "executable_bytes": 16286,
-      "excluded_bytes": 3154,
+      "executable_bytes": 16576,
+      "excluded_bytes": 2864,
       "audit": "complete",
       "intervals": [
         {
@@ -31304,16 +32003,40 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33558406,
+          "end": 33558408,
+          "kind": "executable_alignment",
+          "evidence": "two-byte zero padding between executable regions or before an inline compiler switch table"
+        },
+        {
+          "start": 33558408,
+          "end": 33558428,
+          "kind": "jump_table",
+          "evidence": "bounded GCC switch table: compared source register, scaled index, indexed load and mov-pc dispatch; every destination is inside this image"
+        },
+        {
           "start": 33558428,
           "end": 33558472,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
+          "start": 33558472,
+          "end": 33558720,
+          "kind": "thumb",
+          "evidence": "Thumb control flow reached from loader entry veneers through calls, branches and validated GCC switch destinations"
+        },
+        {
           "start": 33558720,
           "end": 33558736,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
+        },
+        {
+          "start": 33558736,
+          "end": 33558748,
+          "kind": "literal_pool",
+          "evidence": "four-byte PC-relative literal referenced by an entry/call/switch-reachable Thumb instruction"
         },
         {
           "start": 33558748,
@@ -31898,6 +32621,12 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33570200,
+          "end": 33570208,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33570208,
           "end": 33571008,
           "kind": "veneer",
@@ -31914,8 +32643,8 @@
     {
       "id": "resource_3bc",
       "decoded_bytes": 23416,
-      "executable_bytes": 19098,
-      "excluded_bytes": 4318,
+      "executable_bytes": 19436,
+      "excluded_bytes": 3980,
       "audit": "complete",
       "intervals": [
         {
@@ -32147,6 +32876,12 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33559070,
+          "end": 33559376,
+          "kind": "thumb",
+          "evidence": "complete linked exact-C owner, full-ROM byte comparison: games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/LOG_ROLLING_SETUP.C"
+        },
+        {
           "start": 33559376,
           "end": 33559394,
           "kind": "thumb",
@@ -32163,6 +32898,12 @@
           "end": 33559404,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+        },
+        {
+          "start": 33559404,
+          "end": 33559420,
+          "kind": "thumb",
+          "evidence": "complete linked exact-C owner, full-ROM byte comparison: games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/LOG_ROLLING_SETUP.C"
         },
         {
           "start": 33559420,
@@ -32789,6 +33530,12 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
+          "start": 33572912,
+          "end": 33572928,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33572928,
           "end": 33573808,
           "kind": "veneer",
@@ -32811,8 +33558,8 @@
     {
       "id": "resource_3bd",
       "decoded_bytes": 18692,
-      "executable_bytes": 16358,
-      "excluded_bytes": 2334,
+      "executable_bytes": 16390,
+      "excluded_bytes": 2302,
       "audit": "complete",
       "intervals": [
         {
@@ -32820,6 +33567,12 @@
           "end": 33554464,
           "kind": "veneer",
           "evidence": "resource_3bd_overlay.s:fixed-ldr-bx-veneer"
+        },
+        {
+          "start": 33554464,
+          "end": 33554468,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
         },
         {
           "start": 33554468,
@@ -33188,6 +33941,12 @@
           "evidence": "resource_3bd_overlay.s:reference-uses-thumb-multiple-transfer"
         },
         {
+          "start": 33568968,
+          "end": 33568972,
+          "kind": "thumb",
+          "evidence": "Thumb control flow reached from loader entry veneers through calls, branches and validated GCC switch destinations"
+        },
+        {
           "start": 33568972,
           "end": 33569206,
           "kind": "thumb",
@@ -33240,6 +33999,12 @@
           "end": 33569768,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+        },
+        {
+          "start": 33569768,
+          "end": 33569792,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
         },
         {
           "start": 33569792,
@@ -33474,8 +34239,8 @@
     {
       "id": "resource_3be",
       "decoded_bytes": 7572,
-      "executable_bytes": 5648,
-      "excluded_bytes": 1924,
+      "executable_bytes": 5656,
+      "excluded_bytes": 1916,
       "audit": "complete",
       "intervals": [
         {
@@ -33855,6 +34620,12 @@
           "end": 33559684,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+        },
+        {
+          "start": 33559684,
+          "end": 33559692,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
         },
         {
           "start": 33559692,
@@ -34878,8 +35649,8 @@
     {
       "id": "resource_3c0",
       "decoded_bytes": 6656,
-      "executable_bytes": 4980,
-      "excluded_bytes": 1676,
+      "executable_bytes": 4988,
+      "excluded_bytes": 1668,
       "audit": "complete",
       "intervals": [
         {
@@ -35153,6 +35924,12 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
+          "start": 33559020,
+          "end": 33559028,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33559028,
           "end": 33559420,
           "kind": "veneer",
@@ -35226,8 +36003,8 @@
     {
       "id": "resource_3c2",
       "decoded_bytes": 5068,
-      "executable_bytes": 3122,
-      "excluded_bytes": 1946,
+      "executable_bytes": 3132,
+      "excluded_bytes": 1936,
       "audit": "complete",
       "intervals": [
         {
@@ -35261,6 +36038,12 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33554676,
+          "end": 33554680,
+          "kind": "thumb",
+          "evidence": "complete linked exact-C owner, full-ROM byte comparison: games/THE BROKEN SEAL/SRC/FIELD/SUHARA_HEYA/RECORD_SETUP.C"
+        },
+        {
           "start": 33554680,
           "end": 33554688,
           "kind": "literal_pool",
@@ -35289,6 +36072,12 @@
           "end": 33554782,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
+        },
+        {
+          "start": 33554782,
+          "end": 33554788,
+          "kind": "thumb",
+          "evidence": "complete linked exact-C owner, full-ROM byte comparison: games/THE BROKEN SEAL/SRC/FIELD/SUHARA_HEYA/RECORD_SETUP.C"
         },
         {
           "start": 33554788,
@@ -35490,8 +36279,8 @@
     {
       "id": "resource_3c4",
       "decoded_bytes": 16764,
-      "executable_bytes": 10200,
-      "excluded_bytes": 6564,
+      "executable_bytes": 11678,
+      "excluded_bytes": 5086,
       "audit": "complete",
       "intervals": [
         {
@@ -36023,16 +36812,76 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33565256,
+          "end": 33565328,
+          "kind": "jump_table",
+          "evidence": "bounded GCC switch table: compared source register, scaled index, indexed load and mov-pc dispatch; every destination is inside this image"
+        },
+        {
+          "start": 33565328,
+          "end": 33565578,
+          "kind": "thumb",
+          "evidence": "Thumb control flow reached from loader entry veneers through calls, branches and validated GCC switch destinations"
+        },
+        {
+          "start": 33565578,
+          "end": 33565580,
+          "kind": "executable_alignment",
+          "evidence": "two-byte zero padding between executable regions or before an inline compiler switch table"
+        },
+        {
+          "start": 33565580,
+          "end": 33565584,
+          "kind": "literal_pool",
+          "evidence": "four-byte PC-relative literal referenced by an entry/call/switch-reachable Thumb instruction"
+        },
+        {
           "start": 33565588,
           "end": 33565592,
           "kind": "literal_pool",
           "evidence": "resource_3c4_overlay.s:3269:pc-relative-literal"
         },
         {
+          "start": 33565592,
+          "end": 33565612,
+          "kind": "literal_pool",
+          "evidence": "four-byte PC-relative literal referenced by an entry/call/switch-reachable Thumb instruction"
+        },
+        {
+          "start": 33565612,
+          "end": 33565836,
+          "kind": "thumb",
+          "evidence": "Thumb control flow reached from loader entry veneers through calls, branches and validated GCC switch destinations"
+        },
+        {
+          "start": 33565836,
+          "end": 33565848,
+          "kind": "literal_pool",
+          "evidence": "four-byte PC-relative literal referenced by an entry/call/switch-reachable Thumb instruction"
+        },
+        {
+          "start": 33565848,
+          "end": 33566682,
+          "kind": "thumb",
+          "evidence": "Thumb control flow reached from loader entry veneers through calls, branches and validated GCC switch destinations"
+        },
+        {
           "start": 33566682,
           "end": 33566696,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
+        },
+        {
+          "start": 33566696,
+          "end": 33566740,
+          "kind": "literal_pool",
+          "evidence": "four-byte PC-relative literal referenced by an entry/call/switch-reachable Thumb instruction"
+        },
+        {
+          "start": 33566740,
+          "end": 33566756,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
         },
         {
           "start": 33566756,
@@ -36057,8 +36906,8 @@
     {
       "id": "resource_3c5",
       "decoded_bytes": 15604,
-      "executable_bytes": 12014,
-      "excluded_bytes": 3590,
+      "executable_bytes": 12244,
+      "excluded_bytes": 3360,
       "audit": "complete",
       "intervals": [
         {
@@ -36470,10 +37319,34 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33565338,
+          "end": 33565340,
+          "kind": "executable_alignment",
+          "evidence": "two-byte zero padding between executable regions or before an inline compiler switch table"
+        },
+        {
+          "start": 33565340,
+          "end": 33565372,
+          "kind": "jump_table",
+          "evidence": "bounded GCC switch table: compared source register, scaled index, indexed load and mov-pc dispatch; every destination is inside this image"
+        },
+        {
+          "start": 33565372,
+          "end": 33565426,
+          "kind": "thumb",
+          "evidence": "Thumb control flow reached from loader entry veneers through calls, branches and validated GCC switch destinations"
+        },
+        {
           "start": 33565426,
           "end": 33565436,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
+        },
+        {
+          "start": 33565436,
+          "end": 33565566,
+          "kind": "thumb",
+          "evidence": "Thumb control flow reached from loader entry veneers through calls, branches and validated GCC switch destinations"
         },
         {
           "start": 33565566,
@@ -36494,10 +37367,22 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
+          "start": 33566036,
+          "end": 33566040,
+          "kind": "literal_pool",
+          "evidence": "four-byte PC-relative literal referenced by an entry/call/switch-reachable Thumb instruction"
+        },
+        {
           "start": 33566040,
           "end": 33566072,
           "kind": "literal_pool",
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
+        },
+        {
+          "start": 33566072,
+          "end": 33566080,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
         },
         {
           "start": 33566080,
@@ -36741,8 +37626,8 @@
     {
       "id": "resource_3c7",
       "decoded_bytes": 8616,
-      "executable_bytes": 4862,
-      "excluded_bytes": 3754,
+      "executable_bytes": 4880,
+      "excluded_bytes": 3736,
       "audit": "complete",
       "intervals": [
         {
@@ -36818,6 +37703,12 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33554874,
+          "end": 33554880,
+          "kind": "thumb",
+          "evidence": "complete linked exact-C owner, full-ROM byte comparison: games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_HEYA/FACING_BRANCH.C"
+        },
+        {
           "start": 33554880,
           "end": 33554888,
           "kind": "literal_pool",
@@ -36846,6 +37737,12 @@
           "end": 33554982,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
+        },
+        {
+          "start": 33554982,
+          "end": 33554988,
+          "kind": "thumb",
+          "evidence": "complete linked exact-C owner, full-ROM byte comparison: games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_HEYA/ALTERNATE_FACING_BRANCH.C"
         },
         {
           "start": 33554988,
@@ -36906,6 +37803,12 @@
           "end": 33555194,
           "kind": "thumb",
           "evidence": "adjacent audited thumb spans; see namespace evidence"
+        },
+        {
+          "start": 33555194,
+          "end": 33555200,
+          "kind": "thumb",
+          "evidence": "complete linked exact-C owner, full-ROM byte comparison: games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_HEYA/FACING_CUE_BRANCH.C"
         },
         {
           "start": 33555200,
@@ -37026,8 +37929,8 @@
     {
       "id": "resource_3c8",
       "decoded_bytes": 30732,
-      "executable_bytes": 20528,
-      "excluded_bytes": 10204,
+      "executable_bytes": 20540,
+      "excluded_bytes": 10192,
       "audit": "complete",
       "intervals": [
         {
@@ -37409,6 +38312,12 @@
           "evidence": "adjacent audited thumb spans; see namespace evidence"
         },
         {
+          "start": 33566262,
+          "end": 33566266,
+          "kind": "thumb",
+          "evidence": "Thumb control flow reached from loader entry veneers through calls, branches and validated GCC switch destinations"
+        },
+        {
           "start": 33566266,
           "end": 33566394,
           "kind": "thumb",
@@ -37727,6 +38636,12 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
+          "start": 33574300,
+          "end": 33574308,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33574308,
           "end": 33574916,
           "kind": "veneer",
@@ -37749,8 +38664,8 @@
     {
       "id": "resource_3c9",
       "decoded_bytes": 26464,
-      "executable_bytes": 23788,
-      "excluded_bytes": 2676,
+      "executable_bytes": 23804,
+      "excluded_bytes": 2660,
       "audit": "complete",
       "intervals": [
         {
@@ -38534,6 +39449,12 @@
           "evidence": "resource_3c9_overlay.s:10347:pc-relative-literal"
         },
         {
+          "start": 33577964,
+          "end": 33577980,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33577980,
           "end": 33578708,
           "kind": "veneer",
@@ -38556,8 +39477,8 @@
     {
       "id": "resource_3ca",
       "decoded_bytes": 6904,
-      "executable_bytes": 4756,
-      "excluded_bytes": 2148,
+      "executable_bytes": 4764,
+      "excluded_bytes": 2140,
       "audit": "complete",
       "intervals": [
         {
@@ -38843,6 +39764,12 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
+          "start": 33559316,
+          "end": 33559324,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33559324,
           "end": 33559724,
           "kind": "veneer",
@@ -38859,8 +39786,8 @@
     {
       "id": "resource_3cb",
       "decoded_bytes": 8012,
-      "executable_bytes": 6424,
-      "excluded_bytes": 1588,
+      "executable_bytes": 6440,
+      "excluded_bytes": 1572,
       "audit": "complete",
       "intervals": [
         {
@@ -39164,6 +40091,12 @@
           "evidence": "adjacent audited literal_pool spans; see namespace evidence"
         },
         {
+          "start": 33560324,
+          "end": 33560340,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33560340,
           "end": 33560812,
           "kind": "veneer",
@@ -39267,8 +40200,8 @@
     {
       "id": "resource_3cd",
       "decoded_bytes": 2768,
-      "executable_bytes": 2246,
-      "excluded_bytes": 522,
+      "executable_bytes": 2256,
+      "excluded_bytes": 512,
       "audit": "complete",
       "intervals": [
         {
@@ -39344,6 +40277,18 @@
           "evidence": "resource_3cd_overlay.s:730:verified-C-placeholder"
         },
         {
+          "start": 33556446,
+          "end": 33556448,
+          "kind": "executable_alignment",
+          "evidence": "two-byte zero padding between executable regions or before an inline compiler switch table"
+        },
+        {
+          "start": 33556448,
+          "end": 33556456,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
+        },
+        {
           "start": 33556456,
           "end": 33556688,
           "kind": "veneer",
@@ -39360,8 +40305,8 @@
     {
       "id": "resource_3ce",
       "decoded_bytes": 5772,
-      "executable_bytes": 4774,
-      "excluded_bytes": 998,
+      "executable_bytes": 4784,
+      "excluded_bytes": 988,
       "audit": "complete",
       "intervals": [
         {
@@ -39525,6 +40470,18 @@
           "end": 33558918,
           "kind": "thumb",
           "evidence": "resource_3ce_overlay.s:1447:verified-C-placeholder"
+        },
+        {
+          "start": 33558918,
+          "end": 33558920,
+          "kind": "executable_alignment",
+          "evidence": "two-byte zero padding between executable regions or before an inline compiler switch table"
+        },
+        {
+          "start": 33558920,
+          "end": 33558928,
+          "kind": "veneer",
+          "evidence": "fixed ldr r4, [pc]; bx r4 import/entry sequence, including even ARM/IWRAM targets"
         },
         {
           "start": 33558928,

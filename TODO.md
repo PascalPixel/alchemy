@@ -8,8 +8,8 @@ that finishes it.
 
 ### ☀️ 60%
 
-☀️ is 56.19%: 761,772 of 1,355,730 executable bytes. 60% is 813,438 bytes,
-51,666 more.
+Reach 60% of the fixed executable inventory. Read the current verified count
+with `make progress`; do not maintain a second score in this task list.
 
 - Recheck and adopt what the stopped recovery run found. Exact:
   `main:080fa514` (72 bytes) and `main:08092878` (172 bytes). Exact at 54 bytes
@@ -23,15 +23,12 @@ that finishes it.
   `do { } while (0)` barrier. `SpawnConfiguredEffect` (23 copies) stays a
   recorded compiler gap unless new evidence reopens it.
 
-### Classify The Lost Age
+### Reconstruct The Lost Age
 
-Most of _The Lost Age_'s ROM is still unclassified: it has 824 bytes of matched
-main-image C, eight overlay listings for its opening scenes and its extracted
-assets, but no main-image disassembly and no executable audit. Audit its
-executable map, produce assembly listings where the build needs them, and
-credit only ranges that meet the retained-assembly evidence standard in
-[COMPLETION](.agents/COMPLETION.md); everything else stays unresolved. The
-audit gives ⚓️ its denominator, so it stops being pending.
+The executable inventory covers 2,578,466 bytes: 1,535,116 in the main image
+and 1,043,350 across all 114 overlays. Grow verified source coverage against
+that fixed inventory; its denominator is not a claim of a complete TLA build.
+Credit only ranges meeting [COMPLETION](.agents/COMPLETION.md).
 
 ### Alchemy builds, Psynergy reads
 

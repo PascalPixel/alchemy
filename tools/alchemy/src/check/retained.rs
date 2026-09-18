@@ -162,7 +162,7 @@ fn stale(output: &Path, source: &Path) -> Result<(), String> {
     }
 }
 fn audit(root: &Path) -> Result<Audit, String> {
-    let inventory_path = root.join("games/THE BROKEN SEAL/metrics/tbs-en-executable.json");
+    let inventory_path = root.join("games/THE BROKEN SEAL/metrics/executable.json");
     let asm_path = root.join("out/tbs-en/full/asm/manifest.json");
     let claimed_path = root.join("out/tbs-en/full/claimed/manifest.json");
     stale(

@@ -26,6 +26,7 @@ with `make progress`; do not maintain a second score in this task list.
 
 Parked for a stronger model. Agents must not burn a 10-minute window here.
 
+- `main:080f9a30` SoundNote_Detach (30 B) — retired-from-C allocation wall (note stays in r0; next reg reused for zero); raw already documents no ordinary C spelling.
 - `main:08021e28` (32 B) — scheduling-floor, 2 halfwords; bounce.
 - `main:08029274` (80 B) — scheduling-floor, 2 halfwords; bounce.
 - `main:080a9d3c` (72 B) — instruction-selection wall; bounce.

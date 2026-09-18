@@ -1,9 +1,19 @@
 #include "TYPES.H"
 #include "FIXED_MATH.H"
 
-#define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
+struct ObjectPairPosition {
+    u8 unknown_00[6];
+    s16 angle;
+    s32 x;
+    s32 y;
+    s32 z;
+};
 
-void ObjectLink_RotatePairToward(void *source, void *target)
+s32 ArcTan2(s32, s32);
+s32 WaitFrames(s32);
+
+void ObjectLink_RotatePairToward(struct ObjectPairPosition *source,
+                                 struct ObjectPairPosition *target)
 {
     s32 source_angle_delta;
     s32 target_angle_delta;
@@ -15,13 +25,11 @@ void ObjectLink_RotatePairToward(void *source, void *target)
     u32 source_angle_target;
 
     if (source != 0 && target != 0) {
-        source_angle_target = (u16)ArcTan2(
-            FIELD(target, s32 *, 0x10) - FIELD(source, s32 *, 0x10),
-            FIELD(target, s32 *, 8) - FIELD(source, s32 *, 8));
+        source_angle_target = (u16)ArcTan2(target->z - source->z, target->x - source->x);
         target_angle = source_angle_target + 0x8000;
         counter = 0;
 loop:
-        source_angle = FIELD(source, u16 *, 6);
+        source_angle = source->angle;
         source_angle_delta = (s16)(source_angle_target - source_angle);
         remaining = 2;
         if (source_angle_delta != 0) {
@@ -29,19 +37,19 @@ loop:
                 source_angle_delta = 0x1000;
             if (source_angle_delta < -0x1000)
                 source_angle_delta = -0x1000;
-            FIELD(source, u16 *, 6) = source_angle + source_angle_delta;
+            source->angle = source_angle + source_angle_delta;
         } else {
             remaining = 1;
         }
 
-        target_angle_current = FIELD(target, u16 *, 6);
+        target_angle_current = target->angle;
         target_angle_delta = (s16)(target_angle - target_angle_current);
         if (target_angle_delta != 0) {
             if (target_angle_delta > 0x1000)
                 target_angle_delta = 0x1000;
             if (target_angle_delta < -0x1000)
                 target_angle_delta = -0x1000;
-            FIELD(target, u16 *, 6) = target_angle_current + target_angle_delta;
+            target->angle = target_angle_current + target_angle_delta;
         } else {
             remaining--;
         }

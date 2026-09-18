@@ -70,6 +70,12 @@ generation and reading as above. Historical dossiers keep their original
 command transcripts; they are not instructions to resurrect aliases. No retired
 TypeScript entry points or invented family or wave commands.
 
+Overlay scoring selects the game explicitly: `alchemy score RESOURCE:ADDRESS
+--target tla` reads TLA's register, reviewed boundaries and canonical English
+ROM; omit `--target` for TBS. Arbitrary `--rom` overrides cannot substitute a
+different reference. Selecting a member of an exact overlay unit still verifies
+the complete unit. Default score work directories are under ignored `out/score/`.
+
 For another GBA game, carry portable decoding, comparison, bounded recovery and
 compiler invocation plus its minimal build integration, not Golden Sun
 ownership, asset offsets or agent machinery.

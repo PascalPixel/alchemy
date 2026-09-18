@@ -1,13 +1,11 @@
 use crate::compiler::{
+    routing::CompilerTarget,
     source_paths::{SourceOwner, SourcePaths},
     symbols::overlay_call_via_base,
     translation_units::{resolve_overlay_span, TranslationUnits},
 };
 use crate::overlay::compile::compile_overlay_c;
-use crate::overlay::{
-    park::{placeholder_span, truth_window},
-    retained_source,
-};
+use crate::overlay::park::{placeholder_span, truth_window};
 use crate::score::{
     cli::{options_of, ParseOutcome, USAGE},
     render::render,
@@ -49,6 +47,9 @@ fn retained_fragment_span(
     (span < complete).then_some(span)
 }
 pub(crate) fn resolve(root: &Path, target: &str) -> Result<SourceOwner, String> {
+    resolve_for(root, target, CompilerTarget::Tbs)
+}
+fn resolve_for(root: &Path, target: &str, game: CompilerTarget) -> Result<SourceOwner, String> {
     if target.contains(':') {
         let owner = SourceOwner::parse_argument(target)?;
         owner
@@ -66,7 +67,7 @@ pub(crate) fn resolve(root: &Path, target: &str) -> Result<SourceOwner, String> 
             .ok_or_else(|| format!("{target}: not an overlay owner"))?;
         return Ok(owner);
     }
-    let owner = SourcePaths::load(root)?
+    let owner = SourcePaths::load_for_game(root, game.as_str())?
         .owner_for_path(Path::new(target))?
         .ok_or_else(|| format!("{target}: not a mapped overlay source"))?;
     owner
@@ -74,8 +75,20 @@ pub(crate) fn resolve(root: &Path, target: &str) -> Result<SourceOwner, String> 
         .ok_or_else(|| format!("{target}: not an overlay source"))?;
     Ok(owner)
 }
-fn source_for(root: &Path, paths: &SourcePaths, owner: SourceOwner) -> Result<PathBuf, String> {
-    let candidates = [paths.source_path(owner), retained_source(root, owner)];
+fn source_for(
+    root: &Path,
+    paths: &SourcePaths,
+    owner: SourceOwner,
+    game: CompilerTarget,
+) -> Result<PathBuf, String> {
+    let candidates = [
+        paths.source_path(owner),
+        root.join(format!(
+            "games/{}/recon/en/overlays/{}.c",
+            game.directory(),
+            owner.legacy_stem()
+        )),
+    ];
     candidates
         .into_iter()
         .find(|candidate| candidate.exists())
@@ -89,10 +102,10 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     if options.unit.is_some() {
         return Err("score complete translation units with alchemy score --unit ID".into());
     }
-    if options.target != crate::compiler::routing::CompilerTarget::Tbs
-        || argv.iter().any(|arg| arg == "--rom")
-    {
-        return Err("overlay scoring currently requires the canonical TBS reference".into());
+    if argv.iter().any(|arg| arg == "--rom") {
+        return Err(
+            "overlay scoring requires the selected game's canonical reference; omit --rom".into(),
+        );
     }
     if let Some((output, exact)) = score_instance_owner(root, &options)? {
         println!("reference_from=rom representation=loader-runtime container_roundtrip=required");
@@ -101,12 +114,13 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
     }
     let owner = match (options.owner, options.overlay.as_deref()) {
         (Some(address), Some(overlay)) => SourceOwner::parse(&format!("{overlay}:{address:08x}")),
-        _ => resolve(root, &options.source),
+        _ => resolve_for(root, &options.source, options.target),
     };
+    let game = options.target;
     let rendered = render_options(root, options)?;
     println!("reference_from=rom representation=loader-runtime container_roundtrip=required");
     print!("{}", rendered.stdout);
-    if let Ok(owner) = owner {
+    if let (CompilerTarget::Tbs, Ok(owner)) = (game, owner) {
         print!(
             "{}",
             crate::score::cli::siblings_line(root, owner, rendered.reference_length)
@@ -128,8 +142,8 @@ fn score_instance_owner(
         return Ok(None);
     };
     let owner = SourceOwner::parse(&format!("{overlay}:{address:08x}"))?;
-    let units = TranslationUnits::load(root)?;
-    let Some(unit) = units.unit_for_game_owner("tbs", owner) else {
+    let units = TranslationUnits::load_game(root, options.target)?;
+    let Some(unit) = units.unit_for_game_owner(options.target.as_str(), owner) else {
         return Ok(None);
     };
     let Some(member) = unit.instance_owner(overlay, address) else {
@@ -192,21 +206,26 @@ pub(crate) fn render_options(
             .ok_or("expected a resource-qualified overlay owner")?;
         SourceOwner::parse_argument(&format!("{overlay}:{address:08x}"))?
     } else {
-        resolve(root, &target)?
+        resolve_for(root, &target, options.target)?
     };
     let overlay = resolved.overlay_id().expect("resolved overlay owner");
     let address = i64::from(resolved.address());
-    let paths = SourcePaths::load(root)?;
+    let game = crate::overlay::owners::production_target(options.target);
+    let paths = SourcePaths::load_for_game(root, options.target.as_str())?;
     let installed = if paths
         .mapped_source_path(resolved)
         .is_some_and(|path| path.is_file())
     {
-        placeholder_span(root, resolved)?.and_then(|span| usize::try_from(span).ok())
+        let listing = root.join(game.overlay_assembly(&overlay));
+        let text = std::fs::read_to_string(&listing)
+            .map_err(|error| format!("{}: {error}", listing.display()))?;
+        crate::overlay::park::placeholder_block(&text.lines().collect::<Vec<_>>(), address)
+            .and_then(|row| usize::try_from(row.span).ok())
     } else {
         None
     };
     let span = resolve_overlay_span(
-        &crate::overlay::reviewed_spans(root)?,
+        &crate::overlay::owners::reviewed_spans(root, game)?,
         resolved,
         installed,
         options.size,
@@ -217,13 +236,19 @@ pub(crate) fn render_options(
             .canonicalize()
             .map_err(|error| format!("{}: {error}", explicit.display()))?
     } else {
-        source_for(root, &paths, resolved)?
+        source_for(root, &paths, resolved, options.target)?
     };
-    let work = tempdir().map_err(|error| error.to_string())?;
-    let reference = work.path().join("reference.bin");
-    let image = crate::overlay::rom::canonical_overlay(root, &overlay)?;
+    let work = root.join(
+        options
+            .work
+            .as_deref()
+            .ok_or("overlay score needs a work directory")?,
+    );
+    std::fs::create_dir_all(&work).map_err(|error| error.to_string())?;
+    let reference = work.join("reference-overlay.bin");
+    let image = crate::overlay::rom::canonical_overlay_for(root, game, &overlay)?;
     std::fs::write(&reference, image).map_err(|error| error.to_string())?;
-    let units = TranslationUnits::load(root)?;
+    let units = TranslationUnits::load_game(root, options.target)?;
     options.source = source.to_string_lossy().into_owned();
     options.configuration.call_via_base = Some(
         paths
@@ -232,7 +257,7 @@ pub(crate) fn render_options(
             .unwrap_or_else(|| overlay_call_via_base(&overlay)),
     );
     options.configuration.overlay_extent = Some(span);
-    if let Some(unit) = units.unit_for_game_owner("tbs", resolved) {
+    if let Some(unit) = units.unit_for_game_owner(options.target.as_str(), resolved) {
         if unit.instance_owner(&overlay, resolved.address()).is_some() {
             return Err(format!(
                 "{} is an instance owner of unit {}; score it through its unit with alchemy score --unit {} --instance {overlay}",
@@ -247,7 +272,33 @@ pub(crate) fn render_options(
     options.owner = Some(address as u32);
     options.overlay = Some(overlay);
     options.size = Some(span);
-    render(root, &options)
+    let mut rendered = render(root, &options)?;
+    if options.target == CompilerTarget::Tla {
+        let next = if crate::score::exact_mismatch(&rendered) {
+            format!(
+                "next=alchemy score {:?} --target tla --owner {} --size {span} --work {:?} --first",
+                options.source,
+                resolved.id(),
+                work
+            )
+        } else {
+            format!("next=alchemy overlay adopt {} --source {:?} --span {span} --target tla-en (complete-owner and production verification still required)", resolved.id(), options.source)
+        };
+        rendered.stdout = rendered
+            .stdout
+            .lines()
+            .map(|line| {
+                if line.starts_with("next=") {
+                    next.as_str()
+                } else {
+                    line
+                }
+            })
+            .collect::<Vec<_>>()
+            .join("\n")
+            + "\n";
+    }
+    Ok(rendered)
 }
 pub fn audit_corpus(root: &Path) -> Result<i32, String> {
     let directory = root.join("games/THE BROKEN SEAL/recon/en/overlays");
@@ -351,6 +402,59 @@ pub fn audit_corpus(root: &Path) -> Result<i32, String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn lost_age_scores_its_registered_source_and_reviewed_extent() {
+        let root = crate::compiler::routing::root();
+        if !root.join("roms/tla-en.gba").is_file() {
+            return;
+        }
+        let args = [
+            "resource_64d:02000038",
+            "--target",
+            "tla",
+            "--work",
+            "out/tla-en/score-route-test",
+        ]
+        .map(str::to_owned);
+        let ParseOutcome::Options(options) = options_of(root, &args).unwrap() else {
+            panic!("expected options");
+        };
+        let result = render_options(root, options).unwrap();
+        assert_eq!(
+            (
+                result.candidate_length,
+                result.reference_length,
+                result.differing_halfwords
+            ),
+            (8, 8, 0)
+        );
+        assert!(result.stdout.contains("--target tla-en"));
+        let args = ["resource_64d:02000038", "--target", "tla", "--size", "6"].map(str::to_owned);
+        assert!(run(root, &args)
+            .unwrap_err()
+            .contains("complete installed extent 8"));
+    }
+
+    #[test]
+    fn lost_age_rejects_unreviewed_extents_and_reference_overrides() {
+        let root = crate::compiler::routing::root();
+        let args = ["resource_64d:02000000", "--target", "tla", "--size", "56"].map(str::to_owned);
+        assert!(run(root, &args)
+            .unwrap_err()
+            .contains("no reviewed complete owner boundary"));
+        let args = [
+            "resource_64d:02000038",
+            "--target",
+            "tla",
+            "--rom",
+            "roms/tbs-en.gba",
+        ]
+        .map(str::to_owned);
+        assert!(run(root, &args)
+            .unwrap_err()
+            .contains("selected game's canonical reference"));
+    }
+
     #[test]
     fn explicit_score_span_cannot_override_a_pool_head_or_owner_extent() {
         let root = crate::compiler::routing::root();

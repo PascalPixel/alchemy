@@ -1,4 +1,5 @@
 //! Executable-byte audit derived from canonical ROM images.
+pub(crate) mod index;
 
 use crate::compiler::canonical_json::canonical_json;
 use crate::overlay::assembly::{
@@ -15,7 +16,7 @@ use std::path::{Path, PathBuf};
 use tempfile::NamedTempFile;
 
 const USAGE: &str =
-    "usage: alchemy coverage audit --target tbs-en|tla-en [--output out/...json] [--calibrate]";
+    "usage: alchemy coverage audit --target tbs-en|tla-en [--output out/...json] [--calibrate] [--data]";
 
 #[derive(Default)]
 struct Options {
@@ -23,6 +24,7 @@ struct Options {
     output: Option<PathBuf>,
     calibrate: bool,
     help: bool,
+    data: bool,
 }
 
 #[derive(Deserialize)]
@@ -65,6 +67,7 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
                 options.output = arguments.get(index).map(PathBuf::from);
             }
             "--calibrate" => options.calibrate = true,
+            "--data" => options.data = true,
             "-h" | "--help" => options.help = true,
             argument => return Err(format!("unrecognized argument {argument:?}\n{USAGE}")),
         }
@@ -912,6 +915,12 @@ pub fn run(root: &Path, arguments: &[String]) -> Result<String, String> {
         return Ok(USAGE.into());
     }
     let target = decomp_target(options.target.as_deref())?;
+    if options.data {
+        if options.calibrate || options.output.is_some() {
+            return Err("--data writes out/<target>/reports/rom-index.json; cannot combine with --calibrate or --output".into());
+        }
+        return index::run(root, target);
+    }
     if options.calibrate && target.id.as_str() != "tbs-en" {
         return Err("--calibrate is the TBS completed-audit gate; use --target tbs-en".into());
     }

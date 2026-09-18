@@ -78,8 +78,9 @@ pub enum Category {
     ProvenAsm,
     AssetData,
 }
+pub const UNIDENTIFIED: &str = "Unidentified";
 pub const CATEGORIES: [(Category, &str, &str); 6] = [
-    (Category::Unknown, "unknown", "Unknown"),
+    (Category::Unknown, "unknown", UNIDENTIFIED),
     (Category::DraftAsm, "draft_asm", "Assembly"),
     (Category::DraftC, "draft_c", "Drafted"),
     (Category::ProvenAsm, "proven_asm", "Assembly"),

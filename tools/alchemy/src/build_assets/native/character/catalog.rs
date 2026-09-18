@@ -227,6 +227,17 @@ pub(in crate::build_assets::native) fn frame(
     width: usize,
     height: usize,
 ) -> Result<Vec<u8>, String> {
+    read_frame(rom, game, codec, pointer, width, height).map(|(pixels, _)| pixels)
+}
+
+fn read_frame(
+    rom: &[u8],
+    game: CompilerTarget,
+    codec: u8,
+    pointer: usize,
+    width: usize,
+    height: usize,
+) -> Result<(Vec<u8>, usize), String> {
     let start = pointer
         .checked_sub(ROM_BASE)
         .filter(|start| *start < rom.len())
@@ -242,35 +253,25 @@ pub(in crate::build_assets::native) fn frame(
     let name =
         frame_codec(game, codec).ok_or_else(|| format!("frame codec {codec} is unregistered"))?;
     let lz = |e: psynergy::assets::AssetError| format!("frame {pointer:#x}: {e}");
-    let pixels = match name {
+    let (pixels, consumed) = match name {
         "zero-skip" => {
             let end = rom[start..]
                 .iter()
                 .position(|byte| *byte == 0)
                 .ok_or("zero-skip frame lacks terminator")?;
-            skipped(&rom[start..=start + end])?
+            (skipped(&rom[start..=start + end])?, end + 1)
         }
-        "golden-sun-general-lz/zero-skip" => skipped(
-            &psynergy::assets::lz::decode_general(rom, start, rom.len(), 0x10000)
-                .map_err(lz)?
-                .0,
-        )?,
-        "golden-sun-arena-lz/zero-skip" => skipped(
-            &psynergy::assets::lz::decode_arena(rom, start)
-                .map_err(lz)?
-                .0,
-        )?,
+        "golden-sun-general-lz/zero-skip" => {
+            let (bytes, size) =
+                crate::build_assets::derive_index::tagged_extent(rom, start, rom.len())?;
+            (skipped(&bytes)?, size)
+        }
+        "golden-sun-arena-lz/zero-skip" => {
+            let (bytes, size, _) = psynergy::assets::lz::decode_arena(rom, start).map_err(lz)?;
+            (skipped(&bytes)?, size)
+        }
         // The tag byte selects the stream: 0 general, 1 palette, 2 MTF4.
-        _ => {
-            match rom[start] {
-                0 => psynergy::assets::lz::decode_general(rom, start, rom.len(), size as u64),
-                1 => psynergy::assets::lz::decode_palette(rom, start + 1, rom.len(), size as u64),
-                2 => psynergy::assets::lz::decode_mtf4_lz(rom, start, rom.len(), size as u64),
-                tag => return Err(format!("frame {pointer:#x} LZ tag {tag} is unregistered")),
-            }
-            .map_err(lz)?
-            .0
-        }
+        _ => crate::build_assets::derive_index::tagged_extent(rom, start, rom.len())?,
     };
     if pixels.len() != size
         || pixels
@@ -279,7 +280,47 @@ pub(in crate::build_assets::native) fn frame(
     {
         return Err(format!("frame {pointer:#x} extent or indices differ"));
     }
-    Ok(pixels)
+    Ok((pixels, consumed))
+}
+
+/// Metadata only: catalog consumers establish sprite roles; successful frame
+/// decoding establishes extents, not reconstructed-source or DONE credit.
+pub(in crate::build_assets) fn inventory(
+    rom: &[u8],
+    target: &DecompTarget,
+) -> Result<(Vec<Value>, Vec<Value>), String> {
+    let catalog = catalog(target)?;
+    let descriptors = catalog.descriptors(rom)?;
+    let directories = catalog.directories(rom, &descriptors)?;
+    let mut rows = vec![
+        json!({"start":catalog.table,"end":catalog.table + catalog.count * DESCRIPTOR_SIZE,"kind":"record-table","label":"Sprite descriptors","evidence":"runtime character descriptor lookup"}),
+    ];
+    let mut failures = vec![];
+    let mut seen = BTreeSet::new();
+    for descriptor in descriptors {
+        if descriptor.animation_count > 0 {
+            rows.push(json!({"start":descriptor.animation_table,"end":descriptor.animation_table + descriptor.animation_count * 4,"kind":"pointer-table","label":"Sprite animation directory","evidence":format!("descriptor {}", descriptor.id)}));
+        }
+        let Some(slots) = directories.get(&descriptor.frame_directory) else {
+            continue;
+        };
+        rows.push(json!({"start":descriptor.frame_directory,"end":descriptor.frame_directory + slots.len() * 4,"kind":"pointer-table","label":"Sprite frame directory","evidence":format!("descriptor {}", descriptor.id)}));
+        for &pointer in slots {
+            if !seen.insert((
+                pointer,
+                descriptor.frame_codec,
+                descriptor.width,
+                descriptor.height,
+            )) {
+                continue;
+            }
+            match read_frame(rom, catalog.game, descriptor.frame_codec, pointer, descriptor.width, descriptor.height) {
+                Ok((_, size)) => rows.push(json!({"start":pointer,"end":pointer+size,"kind":"golden-sun-static-sprite-series","label":"Sprite frame","evidence":format!("descriptor {}, codec {}, {}x{} decoded pixels",descriptor.id,descriptor.frame_codec,descriptor.width,descriptor.height)})),
+                Err(error) => failures.push(json!({"address":pointer,"descriptor":descriptor.id,"reason":error})),
+            }
+        }
+    }
+    Ok((rows, failures))
 }
 
 /// A sheet of `columns` frames per row, frames in directory order.

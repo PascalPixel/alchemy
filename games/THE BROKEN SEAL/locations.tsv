@@ -1,7 +1,7 @@
 # TBS English overlay identities derived from the ROM location-name resolver, not source filenames.
 # Scene indices 0..200: 08029094 bounds the selector; 0808ab48 loads record[scene].resource_id from 0809f1a8.
 # Name rules: 0808a5d0 -> 0808b158 scans 0809ddd8 in order. Bit 15 selects scene instead of group; low 15 bits select entry or 0x7fff wildcard.
-# Menu_DrawSelectionRow adds 0x99b to the matched result. Message IDs refer to assets/text/message_archive.json.
+# Menu_DrawSelectionRow adds 0x99b to the matched result. Message IDs refer to TEXT/MESSAGE_ARCHIVE.JSON.
 # All matching entry-specific titles are included; reachability of every entry was not tested in an emulator. No-match title-screen fallback is excluded.
 # English display names are identification evidence, not proposed Japanese source filenames. Scene indices are not graphics-map indices.
 # Existing source names are not evidence: resource_39d is Mercury Lighthouse, 3b2 Crossbone Isle, and 3bf Lunpa Fortress; 39e is shared Fuchin/Xian/Lama interior code.

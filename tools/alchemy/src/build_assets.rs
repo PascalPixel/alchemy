@@ -1,6 +1,7 @@
 //! Native entry point for the asset build stage.
 mod compression_plan;
 mod derive_index;
+pub(crate) use derive_index::{live_scene, network::live_family};
 mod gba_header;
 mod native;
 use crate::compiler::build_io::relative;
@@ -33,6 +34,162 @@ use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--target TARGET] [--manifest MANIFEST] [-o OUTPUT] [rom] | --compact-plans PLAN | --derive-plans PLAN | --review-images OUTPUT [--update-baseline | --target TARGET] | --audit-characters OUTPUT [--target TARGET] | --extract-sources ROM [--target TARGET] | --extract-missing-sources ROM [--target TARGET] | --derive-index ROM --target TARGET --scenes N[=NAME],... [-o OUTPUT] [--stage DIR] [--preview DIR] | --network ROM --target TARGET -o DIR [--from WORLD_MAP_EXIT | --scenes LIST] [--mark SCENE] [--packed] | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
 const ROM_BASE: usize = 0x0800_0000;
+pub(crate) fn identified_regions(
+    root: &Path,
+    rom: &[u8],
+    target: &crate::targets::DecompTarget,
+) -> Result<(Vec<Value>, Vec<Value>), String> {
+    let (mut rows, mut failures) = native::character_inventory(rom, target)?;
+    let (field, issues) = derive_index::inventory(root, rom, target)?;
+    rows.extend(field);
+    failures.extend(issues);
+    rows.extend(sound_inventory(root, rom, target)?);
+    Ok((rows, failures))
+}
+
+fn sound_inventory(
+    root: &Path,
+    rom: &[u8],
+    target: &crate::targets::DecompTarget,
+) -> Result<Vec<Value>, String> {
+    let registry = format!("{}/recon/translation-units.json", target.game_dir());
+    let units = json(&root.join(&registry))?;
+    let units = units
+        .as_array()
+        .or_else(|| units["units"].as_array())
+        .ok_or("unit registry has no units")?;
+    let symbol = units
+        .iter()
+        .find_map(|u| u["absolute_symbols"]["Sound_SongTable"].get("address"));
+    let Some(symbol) = symbol else {
+        return Ok(vec![]);
+    };
+    let table = number(symbol, "song table")?
+        .checked_sub(ROM_BASE)
+        .ok_or("song table outside ROM")?;
+    let word = |offset: usize| -> Option<usize> {
+        Some(u32::from_le_bytes(rom.get(offset..offset.checked_add(4)?)?.try_into().ok()?) as usize)
+    };
+    let pointer = |offset: usize| -> Option<usize> {
+        word(offset)?
+            .checked_sub(ROM_BASE)
+            .filter(|p| *p < rom.len())
+    };
+    let mut rows = vec![];
+    let mut banks = BTreeSet::new();
+    // SongEntry and SequenceHeader are the structures consumed by the shared
+    // byte-exact Sound and MusicPlayer units. Stop at the first invalid entry.
+    for slot in 0..2048 {
+        let at = table + slot * 8;
+        let Some(header) = pointer(at) else { break };
+        let Some(&tracks) = rom.get(header) else {
+            break;
+        };
+        let Some(entry) = rom.get(at..at + 8) else {
+            break;
+        };
+        if u16::from_le_bytes([entry[4], entry[5]]) >= 8 || tracks > 16 {
+            break;
+        }
+        let size = 8 + usize::from(tracks) * 4;
+        if header + size > rom.len() {
+            break;
+        }
+        if (0..usize::from(tracks)).any(|i| pointer(header + 8 + i * 4).is_none()) {
+            break;
+        }
+        rows.push(serde_json::json!({"start":ROM_BASE+at,"end":ROM_BASE+at+8,"kind":"record-table","label":"Sound selection table","evidence":registry}));
+        rows.push(serde_json::json!({"start":ROM_BASE+header,"end":ROM_BASE+header+size,"kind":"record-table","label":"Music sequence header","evidence":format!("Sound_SongTable entry {slot}; SequenceHeader")}));
+        if let Some(bank) = pointer(header + 4) {
+            banks.insert(bank);
+        }
+    }
+    let mut pending = banks.into_iter().collect::<Vec<_>>();
+    let mut visited = BTreeSet::new();
+    while let Some(bank) = pending.pop() {
+        if !visited.insert(bank) {
+            continue;
+        }
+        for voice in 0..128 {
+            let at = bank + voice * 12;
+            let Some(record) = rom.get(at..at + 12) else {
+                continue;
+            };
+            let kind = record[0];
+            if !matches!(kind, 0 | 1 | 2 | 3 | 4 | 8 | 9 | 10 | 11 | 12 | 64 | 128) {
+                continue;
+            }
+            let Some(target) = pointer(at + 4) else {
+                continue;
+            };
+            if matches!(kind, 64 | 128) {
+                pending.push(target);
+                continue;
+            }
+            if !matches!(kind, 0 | 8) {
+                continue;
+            }
+            let (Some(control), Some(frequency), Some(loop_start), Some(last)) = (
+                word(target),
+                word(target + 4),
+                word(target + 8),
+                word(target + 12),
+            ) else {
+                continue;
+            };
+            let Some(end) = target
+                .checked_add(17)
+                .and_then(|n| n.checked_add(last))
+                .filter(|end| *end <= rom.len())
+            else {
+                continue;
+            };
+            if control & 0x3fffffff != 0
+                || frequency == 0
+                || frequency > 192000 * 1024
+                || (control & 0xc0000000 != 0 && loop_start > last)
+            {
+                continue;
+            }
+            rows.push(serde_json::json!({"start":ROM_BASE+target,"end":ROM_BASE+end,"kind":"golden-sun-pcm-wave","label":"PCM sample","evidence":format!("SequenceHeader voice bank 0x{:08x}, voice {voice}; 16-byte wave header and {} samples",ROM_BASE+bank,last+1)}));
+        }
+    }
+    Ok(rows)
+}
+
+#[test]
+fn sound_index_follows_registered_voices_and_checks_sample_extents() {
+    let root = tempfile::tempdir().unwrap();
+    let target = crate::targets::decomp_target(Some("tla-en")).unwrap();
+    let registry = root.path().join(format!("{}/recon", target.game_dir()));
+    fs::create_dir_all(&registry).unwrap();
+    fs::write(
+        registry.join("translation-units.json"),
+        r#"{"units":[{"absolute_symbols":{"Sound_SongTable":{"address":"0x08000100"}}}]}"#,
+    )
+    .unwrap();
+    let mut rom = vec![0u8; 0x1100];
+    for (at, value) in [
+        (0x100, 0x08000200u32),
+        (0x204, 0x08000300),
+        (0x304, 0x08001000),
+        (0x1004, 8192000),
+        (0x100c, 9),
+    ] {
+        rom[at..at + 4].copy_from_slice(&value.to_le_bytes());
+    }
+    let sample = |rom: &[u8]| {
+        sound_inventory(root.path(), rom, &target)
+            .unwrap()
+            .into_iter()
+            .find(|r| r["kind"] == "golden-sun-pcm-wave")
+    };
+    let row = sample(&rom).unwrap();
+    assert_eq!(row["start"], 0x08001000);
+    assert_eq!(row["end"], 0x0800101a);
+    rom[0x100c..0x1010].copy_from_slice(&0xffffu32.to_le_bytes());
+    assert!(sample(&rom).is_none());
+}
 fn repository_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -5156,14 +5313,14 @@ fn build_options_follow_the_target_and_explicit_paths_override_it() {
     assert_eq!(tla.rom, "roms/tla-en.gba");
     assert_eq!(
         tla.manifest,
-        root.join("games/THE LOST AGE/SRC/SYSTEM/RESOURCE.JSON")
+        root.join("games/THE LOST AGE/recon/assets.json")
     );
     assert_eq!(tla.output, root.join("out/tla-en/assets"));
     let tbs = parse_build_options(&arguments(&["-o", "out/x", "roms/a.gba"]), root).unwrap();
     assert_eq!(tbs.rom, "roms/a.gba");
     assert_eq!(
         tbs.manifest,
-        root.join("games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE.JSON")
+        root.join("games/THE BROKEN SEAL/recon/assets.json")
     );
     assert_eq!(tbs.output, root.join("out/x"));
     assert!(parse_build_options(&arguments(&["--target=tla"]), root).is_err());
@@ -5183,12 +5340,6 @@ fn stamp_files(
         .follow_links(true)
         .into_iter()
         .filter_entry(|entry| {
-            if native::games()
-                .iter()
-                .any(|game| entry.path() == root.join(game.game_dir()).join("PREVIEW"))
-            {
-                return false; // Coverage figures are outputs, never ROM asset inputs.
-            }
             entry.depth() == 0
                 || !entry.file_type().is_dir()
                 || !matches!(
@@ -5348,7 +5499,7 @@ fn asset_stamp_tracks_sound_and_included_overlay_sources() {
     ] {
         fs::create_dir_all(root.join("games/THE BROKEN SEAL").join(name)).unwrap();
     }
-    let manifest = root.join("games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE.JSON");
+    let manifest = root.join("games/THE BROKEN SEAL/recon/assets.json");
     let sound = root.join("games/THE BROKEN SEAL/SOUND/SEQUENCE/SEQUENCES.TSV");
     let header = root.join("games/THE BROKEN SEAL/SRC/shared.h");
     let unit = root.join("games/THE BROKEN SEAL/recon/translation-units.json");
@@ -5400,12 +5551,7 @@ fn asset_stamp_tracks_sound_and_included_overlay_sources() {
     )
     .unwrap();
     assert_eq!(previous, stamp().unwrap());
-    fs::create_dir_all(root.join("games/THE BROKEN SEAL/PREVIEW")).unwrap();
-    fs::write(
-        root.join("games/THE BROKEN SEAL/PREVIEW/coverage.svg"),
-        "generated",
-    )
-    .unwrap();
+    fs::write(root.join("PROGRESS.svg"), "generated").unwrap();
     assert_eq!(previous, stamp().unwrap());
     fs::write(
         root.join("games/THE BROKEN SEAL/SRC/palette.json"),
@@ -5422,7 +5568,7 @@ fn material_audit_reports_only_game_material_no_build_read() {
     let root = directory.path();
     let game = native::broken_seal();
     let game = game.index.strip_suffix("/SOURCE.JSON").unwrap();
-    let manifest = root.join(format!("{game}/SRC/SYSTEM/RESOURCE.JSON"));
+    let manifest = root.join(format!("{game}/recon/assets.json"));
     let git = |args: &[&str]| {
         let output = std::process::Command::new("git")
             .args(args)
@@ -5433,7 +5579,7 @@ fn material_audit_reports_only_game_material_no_build_read() {
     };
     git(&["init", "--quiet"]);
     for name in [
-        "SRC/SYSTEM/RESOURCE.JSON",
+        "recon/assets.json",
         "SRC/A.JSON",
         "SRC/B.JSON",
         "SRC/X.C",

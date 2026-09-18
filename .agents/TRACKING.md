@@ -18,7 +18,7 @@ it. Ask three questions of every file, generated files included:
 | --- | --- |
 | Reconstructed C, headers and raw code listings | `SRC/**/*.C`, `INCLUDE/*.H`, `raw/*.s` |
 | Names, addresses, sizes and hashes | `source-paths.json`, `SOURCE.JSON` |
-| Assets the build reads, in editable form | indexed PNG, WAV, MIDI and message JSON reached from `SRC/SYSTEM/RESOURCE.JSON` |
+| Assets the build reads, in editable form | indexed PNG, WAV, MIDI and message JSON reached from `recon/assets.json` |
 | Encoder settings without payload bytes | `COMPRESSION.JSON` |
 
 | May not be tracked | Do this instead |
@@ -64,7 +64,8 @@ document rule in [AGENTS.md](../AGENTS.md), ignored files included.
 
 Each game's asset build fails when a tracked file under `games/<game>/` is
 neither read by that build nor named by its review plan, unless it is code,
-`recon`, `semantic` or `metrics` metadata, an `asm` registry, a name registry
-or the coverage figure. Source tracking fails on previews, fonts and exports
+`recon`, `semantic` or `metrics` metadata, an `asm` registry, or a name
+registry. The README coverage figure lives at root `PROGRESS.svg`, outside
+the game inputs. Source tracking fails on previews, fonts and exports
 anywhere under `games/`, and on extracted inputs no `SOURCE.JSON` registers,
 ignored or not.

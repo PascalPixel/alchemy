@@ -45,6 +45,13 @@ several separately compiled overlays, and distinct overlay address spaces are
 never merged because they share a location. Remove empty directories left by
 moves.
 
+Both games keep their resource directory beside its loader in
+`SRC/SYSTEM/RESOURCE/DIRECTORY.JSON`; the field scene selector and location-name
+rules live in `SRC/FIELD/COMMON/SCENE_TABLE.JSON` and `NAME_RULES.JSON`.
+The build's asset layout belongs in `recon/assets.json`, not in `SRC/SYSTEM`:
+it is reconstruction metadata, not game runtime source. Unreconstructed ROM
+data has no source-file owner and must not be drawn as bytes of that manifest.
+
 `locations.tsv` keeps the ROM-backed English location assignment of all 96 TBS
 overlays; its header records the scene table, location rules and message
 selection the engine uses, and the debug scene label is message
@@ -83,7 +90,7 @@ belong in metadata, not folder labels. These are working names, not recovered
 historical directory names.
 
 Native game names use uppercase folders, basenames and extensions throughout
-`SRC`, `INCLUDE`, `SOUND`, `TEXT`, `PREVIEW` and `SOURCE.JSON`: `.C`, `.H`,
+`SRC`, `INCLUDE`, `SOUND`, `TEXT` and `SOURCE.JSON`: `.C`, `.H`,
 `.JSON`, `.PNG`, `.BIN`, `.MID`, `.WAV` and `.TSV`. Repository and tooling
 registries keep their established spellings. Uppercase is a project
 convention, not a recovered historical spelling.

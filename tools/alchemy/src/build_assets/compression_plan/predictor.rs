@@ -406,7 +406,7 @@ fn collect(
 /// Derive from native source components, then compare every whole asset before writing.
 pub(in crate::build_assets) fn derive(root: &Path, path: &Path) -> Result<(), String> {
     let name = root_relative(root, path)?;
-    let manifest = json(&root.join("games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE.JSON"))?;
+    let manifest = json(&root.join("games/THE BROKEN SEAL/recon/assets.json"))?;
     let mut original_ctx = Context::new(root);
     let mut entries = manifest["regions"].as_array().cloned().unwrap_or_default();
     expand_closure_packages(&mut original_ctx, &manifest, &mut entries)?;

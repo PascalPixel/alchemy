@@ -24,7 +24,7 @@ struct Region {
 }
 
 /// The edition whose ROM a game's retained overlay assembly reproduces: the
-/// one its `SRC/SYSTEM/RESOURCE.JSON` addresses. Other editions are compiled
+/// one its `recon/assets.json` addresses. Other editions are compiled
 /// against it, never adopted from it.
 pub fn production_target(game: CompilerTarget) -> DecompTarget {
     target_for(match game {

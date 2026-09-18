@@ -32,7 +32,7 @@ const SOUND_TYPES: [(&str, &str); 5] = [
     ("SFX", "#f29b91"),
     ("PCM samples", "#efbb82"),
     ("Tables", "#9aa4c2"),
-    (UNIDENTIFIED, UNKNOWN),
+    ("Sound sequences", "#a8d4bc"),
 ];
 /// Sound assets are the sequence and PCM kinds plus every table described
 /// under the sound directory (engine data, the sound table, residual headers).
@@ -86,6 +86,7 @@ fn content_style(tile: &Tile) -> (&'static str, &'static str) {
         return ("Maps", "#b5cc82");
     }
     match kind {
+        "golden-sun-thumb-overlay" => ("Code overlays", "#78afb7"),
         "gba-tilemap16" => ("Tile maps", "#b5cc82"),
         "mixed-data" | "components" => ("Mixed data", "#c4b4b7"),
         "golden-sun-general-lz" | "golden-sun-kind2-lz" => ("Compressed data", "#c4b4b7"),
@@ -978,6 +979,17 @@ mod tests {
             assert_eq!(sound_type(&tile), expected);
         }
         assert_ne!(SOUND_TYPES[0].1, SOUND_TYPES[1].1);
+    }
+
+    #[test]
+    fn every_tbs_rom_index_kind_has_an_identified_content_type() {
+        for kind in ["golden-sun-sound-sequence", "golden-sun-thumb-overlay"] {
+            let tile = Tile {
+                group: Some(kind.into()),
+                ..Tile::default()
+            };
+            assert_ne!(content_style(&tile).0, super::UNIDENTIFIED, "{kind}");
+        }
     }
 
     #[test]

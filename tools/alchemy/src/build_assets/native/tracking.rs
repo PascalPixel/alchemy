@@ -55,7 +55,7 @@ fn private_sources_cannot_collide_on_case_insensitive_filesystems() {
 }
 /// A preview, sprite animation, converted font, player audio or README
 /// picture under `games/`: the publication gate's presentation types, anything
-/// but the coverage SVG under `PREVIEW`, and README pictures. Tools write these
+/// under `PREVIEW`, and README pictures. Tools write these
 /// into ignored `out/` or nowhere; ignoring them in place still leaves
 /// presentation material in a game tree.
 fn presentation_file(path: &str) -> bool {
@@ -74,7 +74,7 @@ fn presentation_file(path: &str) -> bool {
         .get(..6)
         .is_some_and(|stem| stem.eq_ignore_ascii_case("README"));
     listed(suffix, crate::check::PRESENTATION_EXTENSIONS)
-        || (preview && !suffix.eq_ignore_ascii_case("svg"))
+        || preview
         || (readme && listed(suffix, &["png", "svg"]))
 }
 /// A path of the shape `alchemy build assets --extract-sources` writes: pixel
@@ -414,14 +414,17 @@ fn private_inputs_require_registration_ignoring_and_nonpublication() {
     let tbs = "games/THE BROKEN SEAL";
     let set = |names: &[String]| names.iter().cloned().collect::<BTreeSet<_>>();
     let tile = format!("{tbs}/SRC/GRAPHICS/TILE/X.INDEXED.PNG");
-    let figure = format!("{tbs}/PREVIEW/TBS-EN-ROM.SVG");
     let sheet = format!("{tbs}/SRC/GRAPHICS/CHARACTER/CHAR_ROBIN.PNG");
-    let inputs = set(&[tile.clone(), figure.clone(), sheet.clone()]);
-    let published = set(&[tile.clone(), figure.clone()]);
+    let inputs = set(&[tile.clone(), sheet.clone()]);
+    let published = set(&[tile.clone()]);
     let registered = set(&[sheet.clone()]);
     classify(&inputs, &published, &registered, &registered).unwrap();
     for (name, fragment) in [
         (format!("{tbs}/PREVIEW/X.GIF"), "presentation material"),
+        (
+            format!("{tbs}/PREVIEW/OLD-ROM.SVG"),
+            "presentation material",
+        ),
         (format!("{tbs}/PREVIEW/TITLE.png"), "presentation material"),
         (format!("{tbs}/README.PNG"), "presentation material"),
         (format!("{tbs}/TOOLS/Weyard.otf"), "presentation material"),

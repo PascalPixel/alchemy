@@ -1,4 +1,6 @@
-//! Live coverage only.
+//! Local source, coverage and asset debugging views.
+mod maps;
+mod media;
 use super::http::{self, root, Response};
 use crate::coverage::{
     boxtree::{render_box_trees, svg_cache_version, BOX_TREES},
@@ -87,9 +89,7 @@ fn cached() -> Result<Live, String> {
     let trees = BOX_TREES
         .iter()
         .map(|name| {
-            let path = root()
-                .join("games/THE BROKEN SEAL/PREVIEW")
-                .join(format!("tbs-en-{name}.svg").to_ascii_uppercase());
+            let path = crate::coverage::boxtree::box_tree_path("tbs-en", name);
             std::fs::read_to_string(&path)
                 .map(|svg| (*name, svg))
                 .map_err(|error| format!("{}: {error}", path.display()))
@@ -338,7 +338,16 @@ fn reveal(path: &str) -> Response {
         format!("<!doctype html><style>body{{margin:0;background:#1f7f93;color:white;font:14px monospace}}</style>{}", crate::coverage::boxtree::esc(&message)))
 }
 fn response(path: &str) -> Response {
+    if let Some(response) = maps::response(path) {
+        return response;
+    }
+    if let Some(response) = media::response(path) {
+        return response;
+    }
     if path == "/"
+        || path == "/rom"
+        || path.starts_with("/rom/")
+        || path.starts_with("/file/")
         || path.starts_with("/view/")
         || path.starts_with("/inspect/")
         || path.starts_with("/shared/")
@@ -471,6 +480,9 @@ impl Watcher {
         for p in [
             "out/tbs-en/full/asm/manifest.json",
             "out/tbs-en/full/assets/manifest.json",
+            "out/tla-en/assets/manifest.json",
+            "out/tbs-en/reports/rom-index.json",
+            "out/tla-en/reports/rom-index.json",
             "out/decomp/diagnose/.revision",
         ]
         .iter()
@@ -507,6 +519,13 @@ impl Watcher {
 }
 
 fn page(path: &str) -> Response {
+    let file = path
+        .strip_prefix("/file/")
+        .and_then(crate::coverage::boxtree::decode_folder)
+        .map(|s| s.trim_end_matches('/').to_string());
+    if path.starts_with("/file/") && file.is_none() {
+        return http::not_found();
+    }
     let (encoded, selected, shared) = if let Some(path) = path.strip_prefix("/inspect/") {
         let Some((address, folder)) = path.split_once('/') else {
             return http::not_found();
@@ -520,15 +539,32 @@ fn page(path: &str) -> Response {
     } else {
         (path.strip_prefix("/view/").unwrap_or(""), None, false)
     };
-    let Some(folder) = crate::coverage::boxtree::decode_folder(encoded) else {
+    let Some(mut folder) = crate::coverage::boxtree::decode_folder(encoded) else {
         return http::not_found();
     };
-    let content = state(|s| {
-        s.coverage
-            .as_ref()
-            .and_then(|live| live.map.as_ref())
-            .map(|map| crate::coverage::boxtree::html_page(map, &folder, selected, shared))
-    });
+    if let Some(file) = &file {
+        folder = file
+            .rsplit_once('/')
+            .map_or(String::new(), |(dir, _)| format!("{dir}/"));
+    }
+    let content = if path == "/rom" || path.starts_with("/rom/") {
+        Some(crate::coverage::boxtree::rom_page(
+            path.strip_prefix("/rom/").unwrap_or("tla-en"),
+        ))
+    } else {
+        state(|s| {
+            s.coverage
+                .as_ref()
+                .and_then(|live| live.map.as_ref())
+                .map(|map| {
+                    if selected.is_some() {
+                        crate::coverage::boxtree::html_page(map, &folder, selected, shared)
+                    } else {
+                        crate::coverage::boxtree::file_page(map, &folder, file.as_deref(), shared)
+                    }
+                })
+        })
+    };
     let (refresh, content) = match content {
         Some(Some(content)) => ("", content),
         Some(None) => return http::not_found(),
@@ -537,8 +573,43 @@ fn page(path: &str) -> Response {
             "<main class=\"loading\">Reading ROM coverage…</main>".into(),
         ),
     };
-    let mut response=Response::new(200,"OK",Some("text/html; charset=utf-8"),"no-store",format!("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">{refresh}<title>Alchemy</title><style>{STYLES}</style></head><body>{content}</body></html>"));
-    response.headers.push(("Content-Security-Policy","default-src 'self'; script-src 'none'; style-src 'self' 'unsafe-inline'; font-src 'self'; object-src 'none'; base-uri 'none'".into()));
+    document(path, &format!("{refresh}{content}"))
+}
+fn document(path: &str, content: &str) -> Response {
+    let active = if path.starts_with("/rom") {
+        "ROM coverage"
+    } else if path.starts_with("/music") {
+        "Music"
+    } else if path.starts_with("/maps") {
+        "Maps"
+    } else {
+        "Files"
+    };
+    let tabs = [
+        ("/", "Files"),
+        ("/rom", "ROM coverage"),
+        ("/music", "Music"),
+        ("/maps", "Maps"),
+    ]
+    .into_iter()
+    .map(|(url, name)| {
+        format!(
+            "<a href=\"{url}\"{}>{name}</a>",
+            if active == name {
+                " aria-current=\"page\""
+            } else {
+                ""
+            }
+        )
+    })
+    .collect::<String>();
+    let mut response=Response::new(200,"OK",Some("text/html; charset=utf-8"),"no-store",format!("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Alchemy · {active}</title><style>{STYLES}</style></head><body><nav class=\"tabs\" aria-label=\"Views\">{tabs}</nav>{content}</body></html>"));
+    let scripts = if path == "/maps" || path.starts_with("/maps/") {
+        "'self'"
+    } else {
+        "'none'"
+    };
+    response.headers.push(("Content-Security-Policy",format!("default-src 'self'; script-src {scripts}; style-src 'self' 'unsafe-inline'; font-src 'self'; object-src 'none'; base-uri 'none'")));
     response
 }
 pub fn entry(args: &[String]) -> Result<(), String> {
@@ -690,7 +761,7 @@ mod tests {
     }
 
     #[test]
-    fn dashboard_has_no_playback_routes_or_client() {
+    fn dashboard_rejects_retired_playback_routes_and_needs_no_client_script() {
         assert_eq!(response("/").status, 200);
         for path in [
             "/music/catalog",
@@ -716,6 +787,8 @@ mod tests {
         assert!(!STYLES.contains("@font-face"));
         assert!(!STYLES.contains("url("));
         assert!(STYLES.contains("13px/20px -apple-system"));
+        assert!(STYLES.contains("header,.legend,.folder-label,.leaf-label { font:inherit; line-height:16px; text-shadow:1px 1px #000; }"));
+        assert_eq!(STYLES.matches("text-shadow:").count(), 1);
     }
     #[test]
     fn navigation_rejects_invalid_paths() {

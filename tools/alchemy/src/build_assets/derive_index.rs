@@ -150,6 +150,168 @@ struct Stream {
     plan: Value,
     decoded: Vec<u8>,
 }
+
+/// Exact stored extent, excluding decoder read-ahead and inter-resource gaps.
+pub(super) fn tagged_extent(
+    rom: &[u8],
+    start: usize,
+    end: usize,
+) -> Result<(Vec<u8>, usize), String> {
+    let (decoded, encoded) = match rom.get(start) {
+        Some(0) => {
+            let (data, _, tokens) =
+                psynergy::assets::lz::decode_general_trace(rom, start, end, DECODED_LIMIT)
+                    .map_err(|e| e.to_string())?;
+            let encoded =
+                psynergy::assets::lz::encode_general(&data, &tokens).map_err(|e| e.to_string())?;
+            (data, encoded)
+        }
+        Some(1) => {
+            let (data, _, groups) =
+                psynergy::assets::lz::decode_palette_trace(rom, start + 1, end, DECODED_LIMIT)
+                    .map_err(|e| e.to_string())?;
+            let mut encoded = vec![1];
+            encoded.extend(
+                psynergy::assets::lz::encode_palette(&data, &groups).map_err(|e| e.to_string())?,
+            );
+            (data, encoded)
+        }
+        Some(2) => {
+            let (data, tokens) = trace_mtf4(rom, start, end)?;
+            let encoded =
+                psynergy::assets::lz::encode_mtf4_lz(&data, &tokens).map_err(|e| e.to_string())?;
+            (data, encoded)
+        }
+        _ => return Err("stream has no supported compression tag".into()),
+    };
+    if rom.get(start..start + encoded.len()) != Some(encoded.as_slice())
+        || start + encoded.len() > end
+    {
+        return Err("stream does not reproduce its physical encoding".into());
+    }
+    Ok((decoded, encoded.len()))
+}
+
+pub(super) fn inventory(
+    root: &Path,
+    rom: &[u8],
+    target: &DecompTarget,
+) -> Result<(Vec<Value>, Vec<Value>), String> {
+    let tables = field_tables(target)?;
+    let directory = Directory::read(rom)?;
+    let scene_path = format!("{}/FIELD/COMMON/SCENE_TABLE.JSON", target.source_dir);
+    let scenes = json(&root.join(&scene_path))?;
+    let count = scenes["segments"][0]["records"]
+        .as_array()
+        .ok_or("missing scene records")?
+        .len();
+    let mut roles = BTreeMap::<usize, (&str, usize)>::new();
+    for index in 0..count {
+        let load = u16_at(rom, tables.scenes - ROM_BASE + index * 8 + 4)? as usize;
+        for slot in 0..6 {
+            let id =
+                u16_at(rom, tables.loads - ROM_BASE + load * 12 + slot * 2)? as usize + tables.bias;
+            let kind = match slot {
+                0 => "golden-sun-map-container",
+                1 => "bgr555-banks",
+                _ => "gba-4bpp-tiles",
+            };
+            roles.entry(id).or_insert((kind, load));
+        }
+    }
+    let mut rows = vec![];
+    let mut failures = vec![];
+    for (id, (kind, load)) in roles {
+        let result = (|| -> Result<Vec<(usize, usize, &str)>, String> {
+            let (base, size) = directory.resource(id)?;
+            if kind != "golden-sun-map-container" {
+                let (data, size) = tagged_extent(rom, base, base + size)?;
+                if (kind == "bgr555-banks" && (data.is_empty() || data.len() % 32 != 0))
+                    || (kind == "gba-4bpp-tiles" && data.len() != TILE_BANK)
+                {
+                    return Err("decoded field resource has wrong dimensions".into());
+                }
+                return Ok(vec![(base, size, kind)]);
+            }
+            let slots = component_slots(target);
+            let header = 0x24 + slots * 4;
+            let offsets = (0..slots)
+                .map(|k| u32_at(rom, base + 0x24 + k * 4).map(|n| n as usize))
+                .collect::<Result<Vec<_>, _>>()?;
+            if offsets[0] != header
+                || offsets
+                    .iter()
+                    .any(|o| *o != 0 && (*o < header || *o >= size))
+            {
+                return Err("invalid map component directory".into());
+            }
+            let mut spans = vec![(base, header, kind)];
+            for offset in offsets.into_iter().filter(|o| *o != 0) {
+                let (_, length) = tagged_extent(rom, base + offset, base + size)?;
+                spans.push((base + offset, length, kind));
+            }
+            Ok(spans)
+        })();
+        match result {
+            Ok(spans) => {
+                for (start, size, kind) in spans {
+                    rows.push(json!({"start":start + ROM_BASE,"end":start + ROM_BASE + size,"kind":kind,"label":match kind {"bgr555-banks"=>"Field palette","gba-4bpp-tiles"=>"Field tiles",_=>"Map component"},"resource":format!("{id:03x}"),"evidence":format!("field load record {load}, resource {id:03x}; decoded and re-encoded extent")}));
+                }
+            }
+            Err(error) => failures.push(json!({"resource":format!("{id:03x}"),"reason":error})),
+        }
+    }
+    // Try only layouts already reconstructed in the sibling game's index.
+    // Exact re-encoding up to the next directory pointer establishes a format
+    // match, not the image's scene or purpose.
+    let sibling = json(&root.join("games/THE BROKEN SEAL/SOURCE.JSON"))?;
+    let layouts = sibling["private_inputs"]
+        .as_array()
+        .ok_or("missing private input index")?
+        .iter()
+        .filter(|r| r["kind"] == "still-atlas")
+        .filter_map(|r| {
+            Some((
+                r["width"].as_u64()? as usize,
+                r["height"].as_u64()? as usize,
+                r["palette_entries"].as_u64()? as usize,
+            ))
+        })
+        .collect::<BTreeSet<_>>();
+    for id in 0..directory.offsets.len() {
+        let (start, size) = directory.resource(id)?;
+        if size > 0x10000 {
+            continue;
+        }
+        for &(width, height, colors) in &layouts {
+            let palette = colors * 2;
+            if size <= palette
+                || rom[start..start + palette]
+                    .chunks_exact(2)
+                    .any(|c| c[1] & 0x80 != 0)
+            {
+                continue;
+            }
+            let body = &rom[start + palette..start + size];
+            let Ok(pixels) = psynergy::assets::compression::decode_delta7(body, width * height)
+            else {
+                continue;
+            };
+            let Ok(encoded) = psynergy::assets::compression::encode_delta7(&pixels) else {
+                continue;
+            };
+            if encoded.len() > body.len()
+                || body.len() - encoded.len() > 3
+                || body[..encoded.len()] != encoded
+            {
+                continue;
+            }
+            rows.push(json!({"start":start+ROM_BASE,"end":start+ROM_BASE+palette+encoded.len(),"kind":"golden-sun-delta7-still","label":"Indexed still image","resource":format!("{id:03x}"),"evidence":format!("{width}x{height} delta7 pixels and {colors} BGR555 colours; sibling layout, exact re-encoding to directory boundary; scene not established")}));
+            break;
+        }
+    }
+    Ok((rows, failures))
+}
 fn general_tokens(tokens: &[GeneralToken]) -> Value {
     let mut rows: Vec<Value> = Vec::new();
     let mut literals = 0u32;
@@ -1085,8 +1247,74 @@ pub(in crate::build_assets) fn render_field(map: &FieldMap) -> Result<FieldRende
     })
 }
 
+/// Live transport: u32 JSON-header length, header, then indexed layer planes.
+/// Never persisted or published; the same decoder also feeds image exports.
+pub(crate) fn live_scene(root: &Path, target: &str, scene: usize) -> Result<Vec<u8>, String> {
+    let target = decomp_target(Some(target))?;
+    let paths = NativePaths::of(&target);
+    let index = json(&root.join(&paths.index))?;
+    let scenes = json(
+        &root
+            .join(target.source_dir)
+            .join("FIELD/COMMON/SCENE_TABLE.JSON"),
+    )?;
+    if !scenes["segments"][0]["records"]
+        .as_array()
+        .is_some_and(|rows| scene < rows.len())
+    {
+        return Err("Scene is not in the maintained scene index".into());
+    }
+    let rom = fs::read(root.join(target.rom)).map_err(|e| e.to_string())?;
+    if index["reference_sha256"] != sha256::hex(&rom) {
+        return Err("ROM differs from SOURCE.JSON checksum".into());
+    }
+    let mut deriver = Deriver {
+        rom: &rom,
+        directory: Directory::read(&rom)?,
+        target,
+        paths,
+        index: None,
+        staged: Staged::default(),
+        seen: BTreeSet::new(),
+        chr_banks: BTreeMap::new(),
+        output: Output {
+            scenes: vec![],
+            layouts: vec![],
+            regions: vec![],
+            bindings: vec![],
+            private_inputs: vec![],
+            previews: vec![],
+        },
+    };
+    deriver.scene(&SceneRequest {
+        index: scene,
+        name: None,
+    })?;
+    let preview = deriver
+        .output
+        .previews
+        .first()
+        .ok_or("Scene has no supported field map")?;
+    let (field, colors) = decoded_field(&deriver, preview)?;
+    let blend = network::blend(
+        &deriver,
+        usize::from_str_radix(&preview.container, 16).map_err(|e| e.to_string())?,
+    );
+    let header = json!({"format":1,"scene":scene,"container":preview.container,"width":field.width,"height":field.height,"unresolved":field.unresolved,"palettes":colors,"order":field.order(),"blend":blend.map(|b|json!({"control":b.control,"alpha":b.alpha})),"layers":field.layers.iter().map(|l|json!({"bg":l.bg,"priority":l.priority,"charblock":l.charblock,"opaque":l.opaque})).collect::<Vec<_>>()});
+    let json = serde_json::to_vec(&header).map_err(|e| e.to_string())?;
+    let mut bytes = (json.len() as u32).to_le_bytes().to_vec();
+    bytes.extend(json);
+    for layer in field.layers {
+        bytes.extend(layer.pixels)
+    }
+    Ok(bytes)
+}
+
 /// Review image: the composited layers over the loaded palette's backdrop.
-fn render(deriver: &Deriver, preview: &Preview) -> Result<Vec<u8>, String> {
+fn decoded_field(
+    deriver: &Deriver,
+    preview: &Preview,
+) -> Result<(FieldRender, Vec<Vec<u16>>), String> {
     let staged = &deriver.staged;
     let binary = &staged.binaries[&preview.map];
     let unpacked = preview.tiles[..3]
@@ -1112,6 +1340,11 @@ fn render(deriver: &Deriver, preview: &Preview) -> Result<Vec<u8>, String> {
         .iter()
         .map(|bank| staged.banks[*bank].clone())
         .collect::<Vec<_>>();
+    Ok((field, colors))
+}
+
+fn render(deriver: &Deriver, preview: &Preview) -> Result<Vec<u8>, String> {
+    let (field, colors) = decoded_field(deriver, preview)?;
     let mut rgba = Vec::with_capacity(field.width * field.height * 4);
     for value in field.composite() {
         let color = colors

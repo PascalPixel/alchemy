@@ -221,10 +221,10 @@ fn update_readme(
     }
     for (id, svg) in trees {
         let version = svg_cache_version(svg);
-        let needle = format!(
-            "games/THE BROKEN SEAL/PREVIEW/{}",
-            format!("{target}-{id}.svg").to_ascii_uppercase()
-        );
+        if target != "tbs-en" || *id != "rom" {
+            continue;
+        }
+        let needle = "PROGRESS.svg";
         if let Some(pos) = out.find(&needle) {
             let end = pos + needle.len();
             let rest = &out[end..];
@@ -283,9 +283,9 @@ mod tests {
         );
         assert!(updated.contains("## Status: ☀️ 59.00% · ⚓️ pending"));
         assert!(!updated.contains("52% DONE"));
-        let image = "![ROM contents](<games/THE BROKEN SEAL/PREVIEW/TBS-EN-ROM.SVG?v=old>)";
+        let image = "![ROM contents](<PROGRESS.svg?v=old>)";
         let updated = update_readme(image, "tbs-en", &map, &[("rom", "<svg/>".into())], &status);
-        assert!(updated.starts_with("![ROM contents](<games/THE BROKEN SEAL/"));
+        assert!(updated.starts_with("![ROM contents](<PROGRESS.svg?v="));
         assert!(updated.ends_with(">)"));
         assert!(!updated.contains("v=old"));
     }

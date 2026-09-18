@@ -1,5 +1,6 @@
 use super::model::{
     area, bytes, intersect, normalize, subtract, Area, Category, Span, Tile, CATEGORIES,
+    UNIDENTIFIED,
 };
 #[cfg(test)]
 use crate::compiler::source_paths::SOURCE_PATHS_MANIFEST;
@@ -1058,7 +1059,7 @@ fn overlay_tiles(
             semantic,
         ),
         (
-            "Unknown",
+            UNIDENTIFIED,
             subtract(
                 executable,
                 &[
@@ -1207,9 +1208,9 @@ fn streams(tree: &SourceTree, target: &DecompTarget) -> Vec<Stream> {
 }
 fn shared_map_assets(tree: &SourceTree, areas: &[Area]) -> Result<Value, String> {
     let read = |path| json(tree, path).ok_or_else(|| format!("missing Atlas input: {path}"));
-    let scenes = read("games/THE BROKEN SEAL/SRC/BATTLE/BATTLE_EFFECT_TAIL.JSON")?;
+    let scenes = read("games/THE BROKEN SEAL/SRC/FIELD/COMMON/SCENE_TABLE.JSON")?;
     let maps = read("games/THE BROKEN SEAL/SRC/FIELD/COMMON/LOAD_TABLE.JSON")?;
-    let directory = read("games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE_DIRECTORY.JSON")?;
+    let directory = read("games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/DIRECTORY.JSON")?;
     let locations = tree
         .read("games/THE BROKEN SEAL/locations.tsv")
         .ok_or("missing Atlas locations")?;
@@ -1218,7 +1219,7 @@ fn shared_map_assets(tree: &SourceTree, areas: &[Area]) -> Result<Value, String>
         .find(|row| text(row, "address") == "0x0809f1a8")
         .ok_or("missing Atlas scene table")?;
     let mut users: BTreeMap<i64, BTreeSet<String>> = BTreeMap::new();
-    // The loader indexes 201 scene records; the historical field name is effect_id.
+    // The loader indexes 201 scene records into the map loading table.
     for scene in array(scenes, "records").iter().take(201) {
         let resource = integer(scene, "resource_id").ok_or("invalid scene resource")?;
         let Some(area) = atlas_source(
@@ -1230,7 +1231,7 @@ fn shared_map_assets(tree: &SourceTree, areas: &[Area]) -> Result<Value, String>
         };
         let map = array(&maps, "records")
             .iter()
-            .find(|row| integer(row, "map_index") == integer(scene, "effect_id"))
+            .find(|row| integer(row, "map_index") == integer(scene, "map_index"))
             .ok_or("scene has no map loading record")?;
         for field in array(&maps, "fields") {
             let index = field
@@ -1593,7 +1594,7 @@ fn lost_age_tiles(tree: &SourceTree, credits: &[super::proof::Credit]) -> Vec<Ti
         let source = array(region, "sources")
             .first()
             .and_then(Value::as_str)
-            .unwrap_or("games/THE LOST AGE/SRC/SYSTEM/RESOURCE.JSON");
+            .unwrap_or("games/THE LOST AGE/");
         tiles.push(Tile {
             label: format!(
                 "{} · {} · 0x{:08x}",
@@ -1609,7 +1610,29 @@ fn lost_age_tiles(tree: &SourceTree, credits: &[super::proof::Credit]) -> Vec<Ti
             ..Tile::default()
         });
     }
-    if let Some(audit) = json(tree, "out/tla-en/reports/executable-audit-candidate.json") {
+    if let Some(index) = super::audit::index::current(tree, "tla-en") {
+        let mut groups: BTreeMap<String, Tile> = BTreeMap::new();
+        for row in array(&index, "regions") {
+            let (Some(start), Some(end)) = (integer(row, "start"), integer(row, "end")) else {
+                continue;
+            };
+            let actual = claim(start, end, &mut covered);
+            if actual == 0 {
+                continue;
+            }
+            let kind = text(row, "kind");
+            let tile = groups.entry(kind.clone()).or_insert_with(|| Tile {
+                label: text(row, "label"),
+                group: Some(format!("indexed-{kind}")),
+                // These bytes have an identity, but no reconstructed file yet.
+                source: Some("games/THE LOST AGE/".into()),
+                ..Tile::default()
+            });
+            tile.bytes += actual;
+            tile.categories[5] += actual;
+        }
+        tiles.extend(groups.into_values());
+    } else if let Some(audit) = json(tree, "out/tla-en/reports/executable-audit-candidate.json") {
         for resource in array(&audit, "resources") {
             if text(resource, "role") != "data-resource" {
                 continue;
@@ -1628,9 +1651,9 @@ fn lost_age_tiles(tree: &SourceTree, credits: &[super::proof::Credit]) -> Vec<Ti
                 label: format!("{id} · compressed data resource"),
                 bytes: actual,
                 categories: [0, 0, 0, 0, 0, actual],
-                group: Some("compressed-data-resource".into()),
+                group: Some("unreconstructed-data".into()),
                 address: Some(start),
-                source: Some("games/THE LOST AGE/SRC/SYSTEM/RESOURCE.JSON".into()),
+                source: Some("games/THE LOST AGE/".into()),
                 ..Tile::default()
             });
         }
@@ -1638,11 +1661,12 @@ fn lost_age_tiles(tree: &SourceTree, credits: &[super::proof::Credit]) -> Vec<Ti
     let rest = bytes(&subtract(&[Span::new(ROM_BASE, ROM_BASE + rom)], &covered));
     if rest > 0 {
         tiles.push(Tile {
-            label: "Cartridge data".into(),
+            label: UNIDENTIFIED.into(),
             bytes: rest,
             categories: [0, 0, 0, 0, 0, rest],
-            // Inside its game folder, so games/ stays the whole picture.
-            source: Some("games/THE LOST AGE/SRC/SYSTEM/RESOURCE.JSON".into()),
+            group: Some("unreconstructed-data".into()),
+            // Keep cartridge bytes inside their game, without inventing a file owner.
+            source: Some("games/THE LOST AGE/".into()),
             ..Tile::default()
         });
     }
@@ -1654,7 +1678,7 @@ fn asset_tiles(tree: &SourceTree, target: &DecompTarget, data: &[Span], rom: i64
         &format!("{}/full/assets/manifest.json", target.output_dir),
     ) else {
         return vec![Tile {
-            label: "Unclassified ROM data".into(),
+            label: UNIDENTIFIED.into(),
             bytes: bytes(data),
             categories: [0, 0, bytes(data), 0, 0, 0],
             ..Tile::default()
@@ -1733,7 +1757,7 @@ fn asset_tiles(tree: &SourceTree, target: &DecompTarget, data: &[Span], rom: i64
     }
     if groups.is_empty() {
         return vec![Tile {
-            label: format!("Unclassified ROM data · {rom} bytes"),
+            label: format!("{UNIDENTIFIED} · {rom} bytes"),
             bytes: bytes(data),
             categories: [0, 0, bytes(data), 0, 0, 0],
             ..Tile::default()
@@ -1751,7 +1775,7 @@ fn asset_tiles(tree: &SourceTree, target: &DecompTarget, data: &[Span], rom: i64
         .collect();
     for gap in subtract(data, &covered) {
         result.push(Tile {
-            label: format!("Unclassified ROM data · 0x{:08x}", gap.start),
+            label: format!("{UNIDENTIFIED} · 0x{:08x}", gap.start),
             bytes: gap.bytes(),
             categories: [0, 0, gap.bytes(), 0, 0, 0],
             group: Some("unclassified".into()),
@@ -2346,10 +2370,10 @@ mod tests {
             "resource_3a0\tXian\t\t\t\t\tSRC/FIELD/XIAN\n".into(),
         );
         write(
-            "games/THE BROKEN SEAL/SRC/BATTLE/BATTLE_EFFECT_TAIL.JSON",
+            "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SCENE_TABLE.JSON",
             json!({"segments":[{
-                "address":"0x0809f1a8", "records":[{"resource_id":928,"effect_id":7},
-                    {"resource_id":928,"effect_id":7}, {"resource_id":999,"effect_id":99}]
+                "address":"0x0809f1a8", "records":[{"resource_id":928,"map_index":7},
+                    {"resource_id":928,"map_index":7}, {"resource_id":999,"map_index":99}]
             }]})
             .to_string(),
         );
@@ -2360,7 +2384,7 @@ mod tests {
             .to_string(),
         );
         write(
-            "games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE_DIRECTORY.JSON",
+            "games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/DIRECTORY.JSON",
             json!({"slots":["0x08001000","0x08002000"]}).to_string(),
         );
         let tiles = [
@@ -2386,7 +2410,7 @@ mod tests {
         );
         assert_eq!(areas[0].bytes, 64);
         write(
-            "games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE_DIRECTORY.JSON",
+            "games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/DIRECTORY.JSON",
             json!({"slots":[]}).to_string(),
         );
         assert!(shared_map_assets(&tree, &areas).is_err());
@@ -2624,6 +2648,17 @@ mod tests {
         assert_eq!(totals[Category::ProvenC as usize], 8);
         assert_eq!(totals[Category::DraftAsm as usize], 24 + 0x100);
         assert_eq!(totals[Category::AssetData as usize], 0x1000000 - 32 - 0x100);
+        assert!(tiles.iter().all(|tile| !tile
+            .source
+            .as_deref()
+            .unwrap_or("")
+            .ends_with("assets.json")));
+        let pending = tiles
+            .iter()
+            .find(|tile| tile.label == "Unidentified")
+            .unwrap();
+        assert_eq!(pending.source.as_deref(), Some("games/THE LOST AGE/"));
+        assert_eq!(pending.group.as_deref(), Some("unreconstructed-data"));
     }
 
     #[test]

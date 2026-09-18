@@ -490,15 +490,43 @@
     },
     {
       "address": "0x0809c610",
-      "size": "0x1ebe",
+      "size": "0x17c8",
       "kind": "typed-table",
-      "source": "games/THE BROKEN SEAL/SRC/BATTLE/BATTLE_EFFECT_RULES.JSON"
+      "source": "games/THE BROKEN SEAL/SRC/BATTLE/BATTLE_EFFECT_RULES.JSON",
+      "pointer": "/tables/before"
+    },
+    {
+      "address": "0x0809ddd8",
+      "size": "0x400",
+      "kind": "typed-table",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/NAME_RULES.JSON"
+    },
+    {
+      "address": "0x0809e1d8",
+      "size": "0x2f6",
+      "kind": "typed-table",
+      "source": "games/THE BROKEN SEAL/SRC/BATTLE/BATTLE_EFFECT_RULES.JSON",
+      "pointer": "/tables/after"
     },
     {
       "address": "0x0809e680",
-      "size": "0x18d8",
+      "size": "0xb28",
       "kind": "typed-table",
-      "source": "games/THE BROKEN SEAL/SRC/BATTLE/BATTLE_EFFECT_TAIL.JSON"
+      "source": "games/THE BROKEN SEAL/SRC/BATTLE/BATTLE_EFFECT_TAIL.JSON",
+      "pointer": "/tables/before"
+    },
+    {
+      "address": "0x0809f1a8",
+      "size": "0x668",
+      "kind": "typed-table",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SCENE_TABLE.JSON"
+    },
+    {
+      "address": "0x0809f810",
+      "size": "0x748",
+      "kind": "typed-table",
+      "source": "games/THE BROKEN SEAL/SRC/BATTLE/BATTLE_EFFECT_TAIL.JSON",
+      "pointer": "/tables/after"
     },
     {
       "address": "0x080a0107",
@@ -696,7 +724,7 @@
       "address": "0x08320000",
       "size": "0xfa0",
       "kind": "pointer-table",
-      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE_DIRECTORY.JSON"
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/DIRECTORY.JSON"
     },
     {
       "address": "0x08320fa0",

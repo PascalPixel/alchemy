@@ -91,7 +91,7 @@ const PRODUCTS: [(CompilerTarget, u64, &str, &str, &str, usize); 2] = [
         0x0080_0000,
         "games/THE BROKEN SEAL/SRC",
         "games/THE BROKEN SEAL/raw",
-        "games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE.JSON",
+        "games/THE BROKEN SEAL/recon/assets.json",
         6,
     ),
     (
@@ -99,7 +99,7 @@ const PRODUCTS: [(CompilerTarget, u64, &str, &str, &str, usize); 2] = [
         0x0100_0000,
         "games/THE LOST AGE/SRC",
         "games/THE LOST AGE/raw",
-        "games/THE LOST AGE/SRC/SYSTEM/RESOURCE.JSON",
+        "games/THE LOST AGE/recon/assets.json",
         7,
     ),
 ];
@@ -197,6 +197,13 @@ mod tests {
         );
         assert_eq!(tla.overlay_entry_veneers, 7);
         assert_eq!(target_for(DEFAULT_TARGET).overlay_entry_veneers, 6);
+        for id in [DecompTargetId::TbsEn, DecompTargetId::TlaEn] {
+            let target = target_for(id);
+            assert_eq!(
+                target.asset_manifest,
+                format!("{}/recon/assets.json", target.game_dir())
+            );
+        }
     }
     #[test]
     fn registry_covers_isolated_targets() {

@@ -549,11 +549,11 @@ fn decode_tagged(rom: &[u8], start: usize, end: usize) -> Result<Vec<u8>, String
 /// container's blend animation (The Broken Seal slot 4, The Lost Age slot 5,
 /// after the extra layer).
 #[derive(Clone, Copy)]
-struct Blend {
-    control: u16,
-    alpha: u16,
+pub(super) struct Blend {
+    pub(super) control: u16,
+    pub(super) alpha: u16,
 }
-fn blend(deriver: &Deriver, container: usize) -> Option<Blend> {
+pub(super) fn blend(deriver: &Deriver, container: usize) -> Option<Blend> {
     let (base, size) = deriver.directory.resource(container).ok()?;
     let slots = component_slots(&deriver.target);
     let offsets = (0..slots)
@@ -592,31 +592,7 @@ fn picture(
     preview: &Preview,
     blend: Option<Blend>,
 ) -> Result<(Image, Vec<[usize; 3]>), String> {
-    let staged = &deriver.staged;
-    let binary = &staged.binaries[&preview.map];
-    let unpacked = preview.tiles[..3]
-        .iter()
-        .map(|(source, offset)| {
-            staged.tiles[source][offset * 32..offset * 32 + TILE_BANK]
-                .iter()
-                .flat_map(|byte| [byte & 15, byte >> 4])
-                .collect::<Vec<u8>>()
-        })
-        .collect::<Vec<_>>();
-    let field = render_field(&FieldMap {
-        parameters: &preview.parameters,
-        origins: preview.origins,
-        grid: &binary[preview.grid_offset..preview.grid_offset + 65536],
-        metatiles: &binary
-            [preview.metatile_offset..preview.metatile_offset + preview.metatile_length],
-        charblocks: [&unpacked[0], &unpacked[1], &unpacked[2]],
-        palettes: preview.banks.len(),
-    })?;
-    let colors = preview
-        .banks
-        .iter()
-        .map(|bank| staged.banks[*bank].clone())
-        .collect::<Vec<_>>();
+    let (field, colors) = decoded_field(deriver, preview)?;
     let first = |bg: usize| blend.is_some_and(|b| b.control >> bg & 1 == 1);
     let second = |bg: usize| blend.is_some_and(|b| b.control >> (8 + bg) & 1 == 1);
     let mut order = (0..field.layers.len()).collect::<Vec<_>>();
@@ -2775,6 +2751,103 @@ renderer.setAnimationLoop(() => renderer.render(scene, camera));
 
 const USAGE: &str =
     "usage: alchemy build assets --network ROM --target TARGET -o DIR [--from WORLD_MAP_EXIT | --scenes LIST] [--mark SCENE] [--packed | --world] [--expand]";
+
+/// Live dashboard transport: a JSON header, the fully annotated overview PNG,
+/// then the RGBA pixels of each cut room. Nothing is written to disk. The
+/// browser uses the overview for the routed door graph and the room planes for
+/// the interactive stacked-world view.
+pub(crate) fn live_family(root: &Path, target: &str, scene: usize) -> Result<Vec<u8>, String> {
+    let target = decomp_target(Some(target))?;
+    let paths = NativePaths::of(&target);
+    let index = json(&root.join(&paths.index))?;
+    let rom = fs::read(root.join(target.rom)).map_err(|e| e.to_string())?;
+    if index["reference_sha256"] != sha256::hex(&rom) {
+        return Err("ROM differs from SOURCE.JSON checksum".into());
+    }
+    let mut deriver = Deriver {
+        rom: &rom,
+        directory: Directory::read(&rom)?,
+        target,
+        paths,
+        index: None,
+        staged: Staged::default(),
+        seen: BTreeSet::new(),
+        chr_banks: BTreeMap::new(),
+        output: Output {
+            scenes: vec![],
+            layouts: vec![],
+            regions: vec![],
+            bindings: vec![],
+            private_inputs: vec![],
+            previews: vec![],
+        },
+    };
+    let scope = Some(BTreeSet::from([scene]));
+    let mut overview_family =
+        Family::gather(&mut deriver, (scene, -1), Vec::new(), scope.clone(), true);
+    if overview_family.members.is_empty() {
+        return Err(format!("scene {scene} has no connected rooms"));
+    }
+    overview_family.mark = Some(scene);
+    overview_family.place();
+    let overview = overview_family.draw(None).png()?;
+
+    let world_record = scene_record(&deriver, WORLD_MAP)?;
+    let world_overlay = Overlay::read(
+        &rom,
+        &deriver.directory,
+        world_record.overlay,
+        scene_address(&deriver.target),
+    )?;
+    let mut family = Family::gather(&mut deriver, (scene, -1), Vec::new(), scope, true);
+    family.world = true;
+    family.packed = true;
+    family.assemble(&entrances(&world_overlay, WORLD_MAP)?);
+
+    let mut pixels = Vec::new();
+    let rooms = family
+        .rooms
+        .iter()
+        .enumerate()
+        .filter_map(|(room, value)| -> Option<Result<Value, String>> {
+            let (x, z) = value.position.filter(|_| family.members.contains(&room))?;
+            let image = match value.image.png() {
+                Ok(image) => image,
+                Err(error) => return Some(Err(error)),
+            };
+            let offset = pixels.len();
+            pixels.extend_from_slice(&image);
+            Some(Ok(json!({
+                "room": room,
+                "container": resource_name(family.maps[value.map].container),
+                "scenes": family.maps[value.map].scenes,
+                "x": x,
+                "z": z,
+                "floor": (value.level != i64::MIN).then_some(value.level),
+                "z_index": value.z_index,
+                "width": value.image.width,
+                "height": value.image.height,
+                "offset": offset,
+                "bytes": image.len(),
+                "encoding": "png",
+            })))
+        })
+        .collect::<Result<Vec<_>, _>>()?;
+    let header = json!({
+        "format": 1,
+        "target": deriver.target.id.as_str(),
+        "scene": scene,
+        "overview_bytes": overview.len(),
+        "rooms": rooms,
+        "report": family.report(),
+    });
+    let header = serde_json::to_vec(&header).map_err(|e| e.to_string())?;
+    let mut output = (header.len() as u32).to_le_bytes().to_vec();
+    output.extend(header);
+    output.extend(overview);
+    output.extend(pixels);
+    Ok(output)
+}
 
 pub(in crate::build_assets) fn run(root: &Path, arguments: &[String]) -> Result<(), String> {
     let (mut rom_path, mut target, mut output, mut from, mut mark, mut scenes) =

@@ -43,7 +43,7 @@
       "address": "0x08680000",
       "size": "0x2000",
       "kind": "pointer-table",
-      "source": "games/THE LOST AGE/SRC/SYSTEM/RESOURCE_DIRECTORY.JSON"
+      "source": "games/THE LOST AGE/SRC/SYSTEM/RESOURCE/DIRECTORY.JSON"
     }
   ]
 }

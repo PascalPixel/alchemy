@@ -59,7 +59,7 @@ responsibilities in another wrapper or registry.
 | `alchemy check` | `publication`, `commit-progress`, `source-tracking`, `owners`, `tla-owners`, `retained`, `coverage`, `integrate`, `no-asm`, `plan-tails`, `overlay-data`, `progress`, `routes`, `showcase` and `siblings`: repository contracts, not portable file operations. `progress` combines the canonical executable inventory with the current verified build receipt ([COMPLETION](COMPLETION.md)); `--json` reports DONE and exact C separately, and `--write-report` writes that same result under `out/`. |
 | `alchemy cross-edition` | Compare reviewed owner correspondence across Golden Sun editions. |
 | `alchemy overlay` | `adopt`, `park`, `audit` and `export`: Golden Sun loader, resource integration and byte-identical retained-source export. |
-| `alchemy dashboard` | Serve project coverage. |
+| `alchemy dashboard` | Serve Files, ROM coverage, Music and Maps debugging tabs locally. |
 | `alchemy format` | Format native JSON; `--check` gates formatting and uppercase names. |
 
 Retired entry points are rejected, not forwarded: `alchemy decompile`,
@@ -104,6 +104,14 @@ Thumb is code, not a music format. Keep format names portable and directional.
 
 ## Dashboard and progress figure
 
+`alchemy coverage audit --target tbs-en|tla-en --data` writes the complete
+physical byte index to `out/<target>/reports/rom-index.json`. It reuses the
+audited executable ranges, built assets, sprite catalog, field loaders and
+sound bindings; format matches record their evidence and unresolved ranges
+remain explicit. Every byte appears exactly once. Identification is not asset
+reconstruction or DONE credit. Coverage uses the index only while its input
+hashes match; the dashboard watches it. No reference bytes enter this report.
+
 `make coverage` and `make coverage-check` read existing verified build receipts;
 they do not run a build or an executable audit. If source verification is stale,
 run the relevant build or owner check first. `make verify` still requires the
@@ -111,9 +119,27 @@ full production build. Executable audits are explicit operations, not a side
 effect of rendering progress. Historical refs require their own checked-out,
 verified inputs; a current receipt cannot score a different revision.
 
-The dashboard at `http://127.0.0.1:4650/` shows one full-window ROM tree of
-files and folders, the same hierarchy as the README's progress figure; it has
-no music player. Click a folder to open it and use Back to return. Addresses
+The dashboard at `http://127.0.0.1:4650/` separates Files from ROM coverage.
+Files shows each actual file under `games/` once, weighted by disk size; clicking
+a file lists its recorded ROM regions without inventing additional files.
+ROM coverage (`/rom/tbs-en` and `/rom/tla-en`) shows physical cartridge ranges
+in address order, weighted by stored ROM bytes, with content colours and an
+identification percentage. Recognizing compression alone does not identify its
+payload. Identification never grants DONE credit. Music auditions recovered
+MIDI with the game's recovered voice banks and WAV samples; its bounded
+60-second synthesis is explicitly approximate, not an emulation or sound
+fidelity proof. Missing instruments refuse playback rather than substituting
+General MIDI; referenced PCM missing from editable WAV sources is read privately
+from the checksum-verified local ROM, never granted source credit. Maps selects
+indexed field scenes and decodes them afresh from the checksum-verified local
+ROM through the same Rust assembler as map exports. Connected rooms uses the
+maintained room cuts, routed door graph and labels; stacked floors uses the
+assembler's world positions and levels; scene layers provides pan, zoom, layer
+toggles, palette selection and pixel inspection. Actors, animation and
+script-dependent scrolling are not simulated. No saved map renders feed the
+viewer. Private room pictures and indexed layer planes are served only locally,
+never tracked. Neither debug view serves arbitrary filesystem paths.
+Click a folder to open it and use Back to return. Addresses
 belong in hover details, not tile captions. Labels in both use one 13px system
 sans-serif font that does not scale with the layout. No game font is served or
 embedded. The Lost Age executable audit separates code still represented as
@@ -125,12 +151,13 @@ proved. This display classification never grants DONE credit by itself.
 service keeps the binary it started with, so restart it after any tooling merge
 or it computes DONE under the old rules. Rust renders the dashboard and handles
 folder navigation, file details and shared-resource links through HTML
-requests. It serves no JavaScript, and its content security policy forbids
-scripts. HTML forms can reveal a source in Finder through same-origin POST.
+requests. Only Maps loads a same-origin browser module (JavaScript-compatible
+TypeScript) for canvas interaction; all other pages forbid scripts. No remote
+scripts or fonts are loaded. HTML forms can reveal a source in Finder through same-origin POST.
 
-The figure keeps a 9:16 frame and the dashboard fills its window; both count
-represented ROM bytes once while keeping the executable-only DONE denominator,
-and show both games under `games/` by their real folder names. An area's shared
+Root `PROGRESS.svg` is the README's 9:16 ROM-weighted source overview; the dashboard
+fills its window. Disk sizes, physical ROM coverage and executable-only DONE
+are separate measurements, never interchangeable denominators. An area's shared
 files link map resources to their existing source folders without adding
 tiles or bytes; these links derive from the scene selector, map-load table,
 resource directory and Atlas destinations and do not inventory every non-map

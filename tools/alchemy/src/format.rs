@@ -2,7 +2,7 @@ use crate::compiler::{canonical_json::canonical_json, routing::root};
 use serde_json::Value;
 use std::path::Path;
 
-pub const NATIVE_ROOTS: [&str; 12] = [
+pub const NATIVE_ROOTS: [&str; 11] = [
     "games/COMMON/SRC",
     "games/THE LOST AGE/SRC",
     "games/THE LOST AGE/INCLUDE",
@@ -13,7 +13,6 @@ pub const NATIVE_ROOTS: [&str; 12] = [
     "games/THE BROKEN SEAL/INCLUDE",
     "games/THE BROKEN SEAL/SOUND",
     "games/THE BROKEN SEAL/TEXT",
-    "games/THE BROKEN SEAL/PREVIEW",
     "games/THE BROKEN SEAL/SOURCE.JSON",
 ];
 

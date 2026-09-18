@@ -124,7 +124,7 @@ sorted filenames, dimensions, pixel indices and resolved RGBA, independent of
 PNG compression. Deliberate presentation changes need visual review before
 `--review-images OUTPUT --update-baseline`.
 
-`PREVIEW` holds only the generated coverage figure, which carries repository
+Root `PROGRESS.svg` holds the README coverage figure, which carries repository
 names and measurements and embeds no font, image, sound or bytes from the game.
 Every other preview, render, animation, font or sheet made from game material
 goes under `out/<target>/previews` or another stable directory in `out/` and is

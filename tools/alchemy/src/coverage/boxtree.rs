@@ -1,8 +1,8 @@
 use super::jsnum::commas;
-use crate::coverage::model::{treemap, Category, Rect, Tile};
+use crate::coverage::model::{treemap, Category, Rect, Tile, UNIDENTIFIED};
 
 const DISPLAY_CATEGORIES: [(Category, &str); 5] = [
-    (Category::Unknown, "Unknown"),
+    (Category::Unknown, UNIDENTIFIED),
     (Category::DraftC, "Drafted"),
     (Category::ProvenAsm, "Assembly"),
     (Category::ProvenC, "C"),
@@ -22,6 +22,7 @@ use crate::coverage::tree::root;
 use sha1::{Digest, Sha1};
 mod html;
 pub use html::{decode_folder, page as html_page};
+pub use html::{file_page, rom_page};
 
 pub const BOX_TREES: [&str; 1] = ["rom"];
 const CHART_BACKGROUND: &str = "#1f7f93";
@@ -31,7 +32,7 @@ const SOUND_TYPES: [(&str, &str); 5] = [
     ("SFX", "#f29b91"),
     ("PCM samples", "#efbb82"),
     ("Tables", "#9aa4c2"),
-    ("Unclassified", UNKNOWN),
+    (UNIDENTIFIED, UNKNOWN),
 ];
 /// Sound assets are the sequence and PCM kinds plus every table described
 /// under the sound directory (engine data, the sound table, residual headers).
@@ -39,10 +40,10 @@ fn is_sound(tile: &Tile) -> bool {
     matches!(
         tile.group.as_deref(),
         Some("golden-sun-sound-sequence" | "golden-sun-pcm-wave")
-    ) || tile
-        .source
-        .as_deref()
-        .is_some_and(|source| source.starts_with("games/THE BROKEN SEAL/SOUND/"))
+    ) || tile.source.as_deref().is_some_and(|source| {
+        source.starts_with("games/THE BROKEN SEAL/SOUND/")
+            || source.starts_with("games/THE LOST AGE/SOUND/")
+    })
 }
 fn sound_type(tile: &Tile) -> usize {
     match (tile.group.as_deref(), tile.subgroup.as_deref()) {
@@ -55,8 +56,25 @@ fn sound_type(tile: &Tile) -> usize {
     }
 }
 fn content_style(tile: &Tile) -> (&'static str, &'static str) {
-    let kind = tile.group.as_deref().unwrap_or("");
+    let group = tile.group.as_deref().unwrap_or("");
+    if let Some(extension) = group.strip_prefix("file:") {
+        return match extension {
+            "c" => ("C", "#f0c57d"),
+            "h" | "inc" => ("Headers", "#eadb83"),
+            "s" => ("Assembly", "#78afb7"),
+            "png" => ("Images", "#8fb7ec"),
+            "wav" => ("Audio", "#efbb82"),
+            "mid" => ("Music", "#81d6b2"),
+            "json" | "tsv" => ("Metadata", "#9aa4c2"),
+            "bin" => ("Binary inputs", "#b5cc82"),
+            _ => ("Other files", UNKNOWN),
+        };
+    }
+    let kind = group.strip_prefix("indexed-").unwrap_or(group);
     let source = tile.source.as_deref().unwrap_or("");
+    if kind == "golden-sun-pcm-wave" {
+        return SOUND_TYPES[2];
+    }
     if is_sound(tile) || kind.contains("sound") || kind.contains("audio") || kind.contains("music")
     {
         return SOUND_TYPES[sound_type(tile)];
@@ -68,7 +86,16 @@ fn content_style(tile: &Tile) -> (&'static str, &'static str) {
         return ("Maps", "#b5cc82");
     }
     match kind {
+        "gba-tilemap16" => ("Tile maps", "#b5cc82"),
+        "mixed-data" | "components" => ("Mixed data", "#c4b4b7"),
+        "golden-sun-general-lz" | "golden-sun-kind2-lz" => ("Compressed data", "#c4b4b7"),
+        "u8-array" | "s8-array" | "le-u16-array" | "le-u32-array" | "be-s16-array" => {
+            ("Tables", "#9aa4c2")
+        }
+        "1bpp-tiles" | "1bpp-rows" => ("Images", "#8fb7ec"),
         "golden-sun-static-sprite-series" => ("Sprite sheets", "#b5a0de"),
+        "gba-4bpp-tiles" | "gba-8bpp-tiles" | "golden-sun-delta7-still" => ("Images", "#8fb7ec"),
+        "compressed-resource" => ("Compressed data", "#c4b4b7"),
         "gba-palette" | "gba-palette-rgba" | "bgr555-banks" => ("Palettes", "#e8a6d3"),
         "golden-sun-kana-glyph-bank" | "golden-sun-namae-nyuuryoku" => ("Fonts", "#eadb83"),
         "golden-sun-message-archive" | "golden-sun-staff-roll" => ("Text", "#85cbd2"),
@@ -76,7 +103,45 @@ fn content_style(tile: &Tile) -> (&'static str, &'static str) {
             ("Fonts", "#eadb83")
         }
         _ if source.to_ascii_lowercase().ends_with(".png") => ("Images", "#8fb7ec"),
-        _ => ("Other data", "#bda995"),
+        "typed-table" | "record-table" | "pointer-table" => ("Tables", "#9aa4c2"),
+        "gba-cartridge-header-standard-fields" => ("ROM header", "#eadb83"),
+        "byte-fill" => ("Padding", "#bda995"),
+        _ => (UNIDENTIFIED, UNKNOWN),
+    }
+}
+fn asset_note(tile: &Tile, verification: Option<&str>) -> &'static str {
+    if tile
+        .group
+        .as_deref()
+        .is_some_and(|kind| kind.starts_with("indexed-"))
+    {
+        return " · ROM index: format evidence only; no reconstructed source or DONE credit";
+    }
+    if tile.group.as_deref() == Some("unreconstructed-data") {
+        return " · No reconstructed source; not asset-build verified";
+    }
+    match verification {
+        Some("rom") => " · Last asset build: ROM bytes matched; appearance not verified",
+        Some("source_only") => " · Last asset build: not compared with ROM",
+        _ => " · Asset verification unavailable",
+    }
+}
+
+#[test]
+fn indexed_formats_have_colors_without_claiming_reconstructed_assets() {
+    for (kind, name) in [
+        ("golden-sun-pcm-wave", "PCM samples"),
+        ("gba-4bpp-tiles", "Images"),
+        ("golden-sun-map-container", "Maps"),
+        ("golden-sun-static-sprite-series", "Sprite sheets"),
+    ] {
+        let tile = Tile {
+            group: Some(format!("indexed-{kind}")),
+            ..Tile::default()
+        };
+        assert_eq!(content_style(&tile).0, name);
+        assert!(!asset_note(&tile, Some("rom")).contains("ROM bytes matched"));
+        assert!(asset_note(&tile, Some("rom")).contains("no reconstructed source"));
     }
 }
 fn leaves<'a>(tiles: &[&'a Tile]) -> Vec<&'a Tile> {
@@ -90,6 +155,37 @@ fn leaves<'a>(tiles: &[&'a Tile]) -> Vec<&'a Tile> {
             }
         })
         .collect()
+}
+/// One vocabulary, palette and byte total for the HTML and README legends.
+fn legend_items(tiles: &[&Tile]) -> Vec<(&'static str, &'static str, i64)> {
+    let tiles = leaves(tiles);
+    let mut items = Vec::new();
+    for (category, name) in DISPLAY_CATEGORIES {
+        if category == Category::AssetData {
+            continue;
+        }
+        let bytes = tiles
+            .iter()
+            .map(|tile| display_bytes(&tile.categories, category))
+            .sum();
+        if bytes > 0 {
+            items.push((name, color(category), bytes));
+        }
+    }
+    let mut data = std::collections::BTreeMap::new();
+    for tile in tiles {
+        if tile.categories[Category::AssetData as usize] == tile.bytes {
+            *data.entry(content_style(tile)).or_insert(0) += tile.bytes;
+        }
+    }
+    for ((name, swatch), bytes) in data {
+        if let Some(item) = items.iter_mut().find(|item| item.0 == name) {
+            item.2 += bytes;
+        } else {
+            items.push((name, swatch, bytes));
+        }
+    }
+    items
 }
 // Keep single-child directories: their path is part of the displayed hierarchy.
 fn directories(tiles: Vec<Tile>, base: &str) -> Vec<Tile> {
@@ -111,6 +207,11 @@ fn directories(tiles: Vec<Tile>, base: &str) -> Vec<Tile> {
             continue;
         };
         let relative = source.strip_prefix(base).unwrap_or(source);
+        if relative.is_empty() {
+            // Bytes assigned only to this real directory have no file owner.
+            out.push(tile);
+            continue;
+        }
         if let Some((folder, _)) = relative.split_once('/') {
             folders
                 .entry(format!("{base}{folder}/"))
@@ -162,10 +263,11 @@ fn draw_tiles(
         let tile = tiles[placed.index];
         let rect = placed.rect;
         let container = !tile.children.is_empty();
-        let folder = tile
-            .source
-            .as_deref()
-            .is_some_and(|source| source.ends_with('/'));
+        let folder = container
+            && tile
+                .source
+                .as_deref()
+                .is_some_and(|source| source.ends_with('/'));
         let address = tile
             .address
             .map(|a| format!(" data-address=\"0x{a:08x}\""))
@@ -186,11 +288,7 @@ fn draw_tiles(
             .collect::<Vec<_>>()
             .join(", ");
         if !folder && tile.categories[Category::AssetData as usize] == tile.bytes {
-            status.push_str(match asset_verification {
-                Some("rom") => " · Last asset build: ROM bytes matched; appearance not verified",
-                Some("source_only") => " · Last asset build: not compared with ROM",
-                _ => " · Asset verification unavailable",
-            });
+            status.push_str(asset_note(tile, asset_verification));
         }
         let label = format!(
             "{}: {} bytes · {}{}{}",
@@ -251,9 +349,19 @@ fn draw_tiles(
                 ));
             }
         }
-        let name = tile.source.as_deref().map(source_name).unwrap_or("");
+        let name = match tile.source.as_deref() {
+            Some(source) if !source.ends_with('/') || container => source_name(source),
+            Some(_) => &tile.label,
+            None => "",
+        };
         let caption = caption(name, body, folder).filter(|(_, bounds)| {
-            (tile.source.is_none() || tile.source.as_deref() != parent_source)
+            (tile.source.is_none()
+                || tile.source.as_deref() != parent_source
+                || (!container
+                    && tile
+                        .source
+                        .as_deref()
+                        .is_some_and(|path| path.ends_with('/'))))
                 && !reserved.iter().any(|r| {
                     bounds.x < r.x + r.width
                         && bounds.x + bounds.width > r.x
@@ -386,16 +494,18 @@ pub(crate) fn esc(value: &str) -> String {
         .replace('>', "&gt;")
         .replace('"', "&quot;")
 }
-fn fill(category: Category) -> String {
-    let color = match category {
+fn color(category: Category) -> &'static str {
+    match category {
         Category::Unknown => UNKNOWN,
         Category::DraftAsm => "#b4ccd2",
         Category::DraftC => "#96c8c9",
         Category::ProvenAsm => "#6cafb2",
         Category::ProvenC => "#326b7d",
         Category::AssetData => "#92a8ac",
-    };
-    format!("fill:{color}")
+    }
+}
+fn fill(category: Category) -> String {
+    format!("fill:{}", color(category))
 }
 fn tree_tiles(map: &CoverageMap) -> Vec<&Tile> {
     map.rom_areas
@@ -436,36 +546,12 @@ pub fn svg_sized(tree: &str, map: &CoverageMap, width: f64, height: f64, folder:
         let location = source_name(folder);
         identity.map_or_else(|| location.into(), |id| format!("{id} · {location}"))
     };
-    let mut legend = Vec::new();
-    for (category, name) in DISPLAY_CATEGORIES {
-        if category == Category::AssetData {
-            continue;
-        }
-        let bytes: i64 = tiles
-            .iter()
-            .map(|tile| display_bytes(&tile.categories, category))
-            .sum();
-        if bytes > 0 {
-            legend.push((name, fill(category), bytes));
-        }
-    }
-    let mut totals = std::collections::BTreeMap::new();
-    for tile in leaves(&tiles) {
-        if tile.categories[Category::AssetData as usize] == tile.bytes {
-            *totals.entry(content_style(tile)).or_insert(0_i64) += tile.bytes;
-        }
-    }
-    legend.extend(
-        totals
-            .into_iter()
-            .map(|((name, color), bytes)| (name, format!("fill:{color}"), bytes)),
-    );
     let displayed_bytes: i64 = tiles.iter().map(|tile| tile.bytes).sum();
-    let labels: Vec<_> = legend
+    let labels: Vec<_> = legend_items(&tiles)
         .into_iter()
         .map(|(name, color, bytes)| {
             let percent = 100.0 * bytes as f64 / displayed_bytes.max(1) as f64;
-            (format!("{name} {percent:.1}%"), color)
+            (format!("{name} {percent:.1}%"), format!("fill:{color}"))
         })
         .collect();
     let mut row_width = 8.0;
@@ -576,9 +662,11 @@ fn content_version_uses_standard_sha1_prefix() {
     assert_eq!(svg_cache_version("abc"), "a9993e364706816a");
 }
 pub fn box_tree_path(target: &str, tree: &str) -> std::path::PathBuf {
-    root()
-        .join("games/THE BROKEN SEAL/PREVIEW")
-        .join(format!("{target}-{tree}.svg").to_ascii_uppercase())
+    if target == "tbs-en" && tree == "rom" {
+        root().join("PROGRESS.svg")
+    } else {
+        root().join(format!("out/{target}/reports/{tree}.svg"))
+    }
 }
 
 #[cfg(test)]
@@ -632,7 +720,7 @@ mod tests {
             }],
         };
         let rendered = super::svg_at("rom", &map, 540.0, "");
-        assert!(rendered.contains("Unknown, Drafted, Assembly, C"));
+        assert!(rendered.contains("Unidentified, Drafted, Assembly, C"));
         assert!(!rendered.contains("Proven ASM"));
         assert!(!rendered.contains("Draft ASM"));
     }
@@ -718,6 +806,51 @@ mod tests {
     }
 
     #[test]
+    fn unreconstructed_data_has_no_fictitious_file_or_extra_folder() {
+        let pending = Tile {
+            label: "Unidentified".into(),
+            source: Some("games/THE LOST AGE/".into()),
+            group: Some("unreconstructed-data".into()),
+            bytes: 100,
+            categories: [0, 0, 0, 0, 0, 100],
+            ..Tile::default()
+        };
+        let file = Tile {
+            label: "DIRECTORY.JSON".into(),
+            source: Some("games/THE LOST AGE/SRC/SYSTEM/RESOURCE/DIRECTORY.JSON".into()),
+            bytes: 20,
+            categories: [0, 0, 0, 0, 0, 20],
+            ..Tile::default()
+        };
+        let grouped = directories(vec![pending.clone(), file], "");
+        let game = &grouped[0].children[0];
+        assert_eq!(game.source.as_deref(), Some("games/THE LOST AGE/"));
+        assert_eq!(game.bytes, 120);
+        assert_eq!(game.children.len(), 2);
+        assert_eq!(game.children[0].label, "Unidentified");
+        assert!(game.children[0].children.is_empty());
+        let mut out = Vec::new();
+        draw_tiles(
+            &mut out,
+            &[&pending],
+            Rect {
+                x: 0.0,
+                y: 0.0,
+                width: 400.0,
+                height: 200.0,
+            },
+            None,
+            &[],
+            Some("rom"),
+        );
+        let rendered = out.join("\n");
+        assert!(rendered.contains("Unidentified"));
+        assert!(rendered.contains("not asset-build verified"));
+        assert!(!rendered.contains("ROM bytes matched"));
+        assert!(!rendered.contains("data-kind=\"folder\""));
+    }
+
+    #[test]
     fn folders_have_one_pixel_bevels_and_files_have_only_fitting_centered_labels() {
         let tile = Tile {
             source: Some("sound/wave.wav".into()),
@@ -779,6 +912,61 @@ mod tests {
         assert_ne!(sprites.1, maps.1);
         assert_ne!(maps.1, content_style(&tile).1);
     }
+    #[test]
+    fn unidentified_has_one_shared_legend_entry_and_tables_have_a_type() {
+        let tile = |bytes, categories, group: &str| Tile {
+            bytes,
+            categories,
+            group: Some(group.into()),
+            ..Tile::default()
+        };
+        let tiles = vec![
+            tile(10, [0, 0, 10, 0, 0, 0], ""),
+            tile(20, [0, 0, 0, 0, 0, 20], "unreconstructed-data"),
+            tile(70, [0, 0, 0, 0, 0, 70], "typed-table"),
+        ];
+        assert_eq!(
+            super::legend_items(&tiles.iter().collect::<Vec<_>>()),
+            vec![
+                ("Unidentified", super::UNKNOWN, 30),
+                ("Tables", "#9aa4c2", 70),
+            ]
+        );
+        for kind in [
+            "",
+            "unreconstructed-data",
+            "unclassified",
+            "new-unknown-format",
+        ] {
+            assert_eq!(
+                content_style(&tile(1, [0, 0, 0, 0, 0, 1], kind)),
+                ("Unidentified", super::UNKNOWN)
+            );
+        }
+        let map = CoverageMap {
+            document: Value::Null,
+            rom_areas: vec![Area {
+                tiles,
+                ..Area::default()
+            }],
+            executable_areas: vec![],
+        };
+        let svg = svg("rom", &map, 540.0);
+        assert_eq!(svg.matches("Unidentified 30.0%").count(), 1);
+        assert!(svg.contains("Tables 70.0%"));
+        let html = super::html_page(&map, "", None, false).unwrap();
+        let footer = html.split("<footer").nth(1).unwrap();
+        assert_eq!(footer.matches(">Unidentified</span>").count(), 1);
+        for obsolete in [
+            "Unknown",
+            "Unclassified",
+            "Unreconstructed data",
+            "Other data",
+        ] {
+            assert!(!footer.contains(obsolete), "{obsolete}");
+        }
+    }
+
     #[test]
     fn midi_sequence_roles_get_distinct_colors() {
         let mut tile = Tile {
@@ -882,7 +1070,7 @@ mod tests {
             assert!(chart.contains("fill:#fff;text-shadow:1px 1px 0 #000;"));
         }
         assert!(!rendered.contains("DONE"));
-        let unknown = rendered.find("Unknown 25.0%").unwrap();
+        let unknown = rendered.find("Unidentified 25.0%").unwrap();
         let draft_c = rendered.find("Drafted 10.0%").unwrap();
         let proven_asm = rendered.find("Assembly 40.0%").unwrap();
         let proven_c = rendered.find("C 25.0%").unwrap();
@@ -898,7 +1086,7 @@ mod tests {
         assert!(rendered.contains("legend-label"));
         assert!(rendered.contains("data-address=\"0x080bbb0c\""));
         assert!(rendered.contains(
-            "<title>owner: 100 bytes · Unknown, Drafted, Assembly, C · 0x080bbb0c</title>"
+            "<title>owner: 100 bytes · Unidentified, Drafted, Assembly, C · 0x080bbb0c</title>"
         ));
         assert!(!rendered.contains(">owner</tspan>"));
         assert!(!rendered.contains(">0x080bbb0c</tspan>"));

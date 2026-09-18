@@ -223,9 +223,10 @@ fn publication_path_reason(path: &str) -> Option<&'static str> {
     if directories
         .iter()
         .any(|directory| directory.eq_ignore_ascii_case("preview"))
-        && !suffix.eq_ignore_ascii_case("svg")
     {
-        return Some("PREVIEW holds only the generated coverage figure SVG");
+        return Some(
+            "PREVIEW material belongs under ignored out/; the README figure is root PROGRESS.svg",
+        );
     }
     let report_name = leaf
         .split(['.', '_', '-'])
@@ -1169,7 +1170,7 @@ fn manifest_games<'a>(paths: impl IntoIterator<Item = &'a str>) -> Vec<String> {
         .into_iter()
         .filter_map(
             |path| match path.split('/').collect::<Vec<_>>().as_slice() {
-                ["games", game, "SRC", "SYSTEM", "RESOURCE.JSON"] => Some(game.to_string()),
+                ["games", game, "recon", "assets.json"] => Some(game.to_string()),
                 _ => None,
             },
         )
@@ -1217,7 +1218,7 @@ fn manifestless_reason(path: &str, manifests: &[String]) -> Option<&'static str>
     let manifested = path.starts_with("games/") && manifests.iter().any(|known| known == game);
     let code = listed(extension(path), MANIFESTLESS_EXTENSIONS);
     (!code && !manifested)
-        .then_some("game material without a consuming asset manifest (SRC/SYSTEM/RESOURCE.JSON)")
+        .then_some("game material without a consuming asset manifest (recon/assets.json)")
 }
 fn byte_dump(message: &str) -> bool {
     let bytes = message.as_bytes();
@@ -2368,7 +2369,7 @@ fn text_fixtures() -> Vec<Fixture> {
     let uri = Some("data URI");
     vec![
         (
-            "games/THE BROKEN SEAL/PREVIEW/TBS-EN-ROM.SVG",
+            "PROGRESS.svg",
             svg_uri,
             true,
             uri,
@@ -2537,7 +2538,7 @@ fn text_fixtures() -> Vec<Fixture> {
             None,
         ),
         (
-            "games/THE BROKEN SEAL/PREVIEW/TBS-EN-ROM.SVG",
+            "PROGRESS.svg",
             svg,
             true,
             None,
@@ -2746,7 +2747,7 @@ fn json_fixtures() -> Vec<Fixture> {
         (RUNTIME, table(vec![fill]), true, dump),
         (RUNTIME, table(vec![envelope]), true, None),
         (
-            "games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE.JSON",
+            "games/THE BROKEN SEAL/recon/assets.json",
             document(package),
             true,
             dump,
@@ -2834,10 +2835,10 @@ fn self_test(root: &Path) -> Result<(), String> {
         "TODO.md",
         ".agents/RECOVERY.md",
         "games/THE BROKEN SEAL/raw/080000c0.s",
-        "games/THE BROKEN SEAL/PREVIEW/TBS-EN-ROM.SVG",
+        "PROGRESS.svg",
         "games/THE BROKEN SEAL/SOUND/SEQUENCE/THEME.mid",
         "games/THE BROKEN SEAL/SOUND/SAMPLE/WAVE.wav",
-        "games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE.JSON",
+        "games/THE BROKEN SEAL/recon/assets.json",
         "tools/compare-roms/src/main.rs",
         "tools/alchemy/src/build_full.rs",
         "games/THE BROKEN SEAL/SRC/SYSTEM/BUILD_STAMP.JSON",
@@ -3204,12 +3205,12 @@ mod tests {
         let inputs = commit(
             root,
             &[
-                ("games/X/SRC/SYSTEM/RESOURCE.JSON", b"{}\n".to_vec()),
+                ("games/X/recon/assets.json", b"{}\n".to_vec()),
                 ("games/X/SRC/GRAPHICS/TILE/A.4BPP.PNG", indexed_fixture(4)),
                 ("games/X/SOUND/SEQUENCE/A.MID", midi.clone()),
                 ("games/X/SRC/MAIN.C", b"void main(void) {}\n".to_vec()),
                 ("games/Y/SRC/MAIN.C", b"void main(void) {}\n".to_vec()),
-                ("games/X/PREVIEW/X-ROM.SVG", b"<svg/>\n".to_vec()),
+                ("PROGRESS.svg", b"<svg/>\n".to_vec()),
                 ("tools/Cargo.lock", b"checksum = \"00ff\"\n".to_vec()),
             ],
         );

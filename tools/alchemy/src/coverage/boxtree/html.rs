@@ -39,40 +39,10 @@ fn parent(folder: &str) -> &str {
         .rsplit_once('/')
         .map_or("", |(parent, _)| &folder[..parent.len() + 1])
 }
-fn color(category: Category) -> &'static str {
-    match category {
-        Category::Unknown => "#d9d9d4",
-        Category::DraftC => "#96c8c9",
-        Category::DraftAsm | Category::ProvenAsm => "#6cafb2",
-        Category::ProvenC => "#326b7d",
-        _ => "#bda995",
-    }
-}
 fn legend(entries: &[Tile]) -> String {
-    let leaves = leaves(&entries.iter().collect::<Vec<_>>());
-    let mut items = Vec::new();
-    for (category, name) in DISPLAY_CATEGORIES {
-        if category == Category::AssetData {
-            continue;
-        }
-        if leaves
-            .iter()
-            .any(|tile| display_bytes(&tile.categories, category) > 0)
-        {
-            items.push((name, color(category)));
-        }
-    }
-    let mut data = std::collections::BTreeMap::new();
-    for tile in leaves {
-        if tile.categories[Category::AssetData as usize] == tile.bytes {
-            let style = content_style(tile);
-            data.insert(style.0, style.1);
-        }
-    }
-    items.extend(data);
-    items
+    legend_items(&entries.iter().collect::<Vec<_>>())
         .into_iter()
-        .map(|(name, swatch)| format!("<span style=\"--swatch:{swatch}\">{}</span>", esc(name)))
+        .map(|(name, swatch, _)| format!("<span style=\"--swatch:{swatch}\">{}</span>", esc(name)))
         .collect::<Vec<_>>()
         .join("")
 }
@@ -106,12 +76,14 @@ fn tiles(
         } else {
             source_name(source)
         };
-        let note = if tile.categories[Category::AssetData as usize] == tile.bytes && !directory {
-            match verification {
-                "rom" => " · Last asset build: ROM bytes matched; appearance not verified",
-                "source_only" => " · Last asset build: not compared with ROM",
-                _ => " · Asset verification unavailable",
-            }
+        let file = tile
+            .group
+            .as_deref()
+            .is_some_and(|g| g.starts_with("file:"));
+        let note = if file {
+            " on disk"
+        } else if tile.categories[Category::AssetData as usize] == tile.bytes && !directory {
+            asset_note(tile, Some(verification))
         } else {
             ""
         };
@@ -149,6 +121,8 @@ fn tiles(
         }
         let href = if directory {
             Some(url(source))
+        } else if file {
+            Some(format!("/file/{}", encode(&format!("{source}/"))))
         } else {
             tile.address
                 .map(|a| format!("/inspect/{a:x}/{}", encode(folder)))
@@ -209,6 +183,213 @@ fn reveal_form(source: &str) -> String {
     let path: String = source.bytes().map(|b| format!("%{b:02X}")).collect();
     format!("<form method=\"post\" action=\"/reveal/{path}\" target=\"reveal-result\"><button type=\"submit\">Show in Finder</button></form>")
 }
+
+#[test]
+fn disk_view_has_one_tile_per_real_file() {
+    let temp = tempfile::tempdir().unwrap();
+    let dir = temp.path().join("games/test");
+    std::fs::create_dir_all(&dir).unwrap();
+    std::fs::write(dir.join("MAP.BIN"), [0u8; 123]).unwrap();
+    let tiles = disk_tiles(temp.path());
+    assert_eq!(tiles.len(), 1);
+    assert_eq!(tiles[0].bytes, 123);
+    assert_eq!(tiles[0].source.as_deref(), Some("games/test/MAP.BIN"));
+    assert_eq!(tiles[0].address, None);
+}
+
+fn disk_tiles(repository: &std::path::Path) -> Vec<Tile> {
+    walkdir::WalkDir::new(repository.join("games"))
+        .follow_links(false)
+        .into_iter()
+        .filter_map(Result::ok)
+        .filter(|e| e.file_type().is_file())
+        .filter_map(|entry| {
+            let bytes = i64::try_from(entry.metadata().ok()?.len()).ok()?;
+            if bytes == 0 {
+                return None;
+            }
+            let source = entry
+                .path()
+                .strip_prefix(repository)
+                .ok()?
+                .to_str()?
+                .to_string();
+            let extension = entry
+                .path()
+                .extension()
+                .and_then(|e| e.to_str())
+                .unwrap_or("")
+                .to_ascii_lowercase();
+            Some(Tile {
+                label: entry.file_name().to_string_lossy().into(),
+                bytes,
+                categories: [0, 0, 0, 0, 0, bytes],
+                source: Some(source),
+                group: Some(format!("file:{extension}")),
+                ..Tile::default()
+            })
+        })
+        .collect()
+}
+
+pub fn file_page(
+    map: &CoverageMap,
+    folder: &str,
+    selected: Option<&str>,
+    shared: bool,
+) -> Option<String> {
+    let files = disk_tiles(&root());
+    let chosen = match selected {
+        Some(path) => Some(files.iter().find(|t| t.source.as_deref() == Some(path))?),
+        None => None,
+    };
+    let mut document = map.document.clone();
+    document["view"] = serde_json::json!("files");
+    let disk = CoverageMap {
+        document,
+        rom_areas: vec![crate::coverage::model::area(
+            "files",
+            "Files",
+            files.clone(),
+        )],
+        executable_areas: vec![],
+    };
+    let mut html = page(&disk, folder, None, shared)?;
+    if let Some(file) = chosen {
+        let path = file.source.as_deref()?;
+        let mut details=format!("<aside><a href=\"{}\">Close</a><h2>{}</h2><p>{} bytes on disk. ROM regions below are separate build outputs, not additional files.</p>{}",url(folder),esc(path),commas(file.bytes),reveal_form(path));
+        let mut regions = std::collections::BTreeMap::new();
+        let target = if path.starts_with("games/THE LOST AGE/") {
+            "tla-en"
+        } else {
+            "tbs-en"
+        };
+        let index =
+            crate::coverage::audit::index::current(&crate::coverage::tree::work_tree(), target);
+        for tile in leaves(&tree_tiles(map))
+            .into_iter()
+            .filter(|t| t.source.as_deref() == Some(path))
+        {
+            if let Some(address) = tile.address {
+                let kind = index
+                    .as_ref()
+                    .and_then(|i| i["regions"].as_array())
+                    .and_then(|rs| rs.iter().find(|r| r["start"].as_i64() == Some(address)))
+                    .and_then(|r| r["kind"].as_str());
+                let style = kind
+                    .map(|k| {
+                        content_style(&Tile {
+                            group: Some(k.into()),
+                            ..Tile::default()
+                        })
+                    })
+                    .unwrap_or_else(|| content_style(tile));
+                regions.insert((address, tile.bytes), style.0);
+            }
+        }
+        for ((address, bytes), kind) in &regions {
+            details.push_str(&format!(
+                "<p>0x{address:08x} · {} stored ROM bytes · {}</p>",
+                commas(*bytes),
+                esc(kind)
+            ));
+        }
+        if regions.is_empty() {
+            details.push_str("<p>No direct ROM-region attribution recorded for this file.</p>");
+        }
+        details.push_str("</aside><iframe name=\"reveal-result\" class=\"action-result\" title=\"Finder action result\"></iframe>");
+        html = html.replace("</main>", &format!("{details}</main>"));
+    }
+    Some(html)
+}
+
+pub fn rom_page(target: &str) -> Option<String> {
+    if !matches!(target, "tbs-en" | "tla-en") {
+        return None;
+    }
+    let tree = crate::coverage::tree::work_tree();
+    let mut html=format!("<main class=\"rom-view\"><header><span>Alchemy</span><a class=\"refresh\" href=\"/rom/{target}\">Refresh</a></header><section class=\"rom-content\"><nav aria-label=\"Game\"><a href=\"/rom/tbs-en\">The Broken Seal</a> · <a href=\"/rom/tla-en\">The Lost Age</a></nav>");
+    let Some(index) = crate::coverage::audit::index::current(&tree, target) else {
+        html.push_str("<p>The ROM identification index is absent or stale. Rebuild it with alchemy coverage audit --target TARGET --data.</p></section></main>");
+        return Some(html);
+    };
+    let size = index["rom_bytes"].as_i64()?;
+    let rows = index["regions"].as_array()?;
+    let unresolved = rows
+        .iter()
+        .filter(|r| {
+            let kind = r["kind"].as_str().unwrap_or("unresolved-data");
+            let unknown_style = !matches!(kind, "executable" | "encoded-overlay")
+                && content_style(&Tile {
+                    group: Some(kind.into()),
+                    ..Tile::default()
+                })
+                .0 == UNIDENTIFIED;
+            unknown_style
+                || matches!(
+                    r["kind"].as_str(),
+                    Some(
+                        "unresolved-data"
+                            | "compressed-resource"
+                            | "golden-sun-general-lz"
+                            | "golden-sun-kind2-lz"
+                    )
+                )
+        })
+        .map(|r| r["bytes"].as_i64().unwrap_or(0))
+        .sum::<i64>();
+    html.push_str(&format!("<h2>{} · English ROM</h2><p>Identified format: {:.2}% · {} / {} cartridge bytes</p><p>Address order, left to right then down. Each row is 256 KiB. Colours show content, not reconstruction. Identification does not count toward ☀️ / ⚓️ DONE.</p><div class=\"rom-address-map\" role=\"img\" aria-label=\"ROM address map\">",if target=="tbs-en" {"The Broken Seal"}else{"The Lost Age"},100.0*(size-unresolved) as f64/size as f64,commas(size-unresolved),commas(size)));
+    let row_bytes = 256 * 1024i64;
+    let row_count = (size + row_bytes - 1) / row_bytes;
+    let mut totals = std::collections::BTreeMap::<(&str, &str), i64>::new();
+    for row in rows {
+        let start = row["start"].as_i64()?;
+        let end = row["end"].as_i64()?;
+        let kind = row["kind"].as_str()?;
+        let (label, color) = match kind {
+            "executable" => ("Code", "#f0c57d"),
+            "encoded-overlay" => ("Code overlays", "#78afb7"),
+            "unresolved-data" => ("Not yet identified", UNKNOWN),
+            _ => content_style(&Tile {
+                group: Some(kind.into()),
+                source: row["sources"][0].as_str().map(String::from),
+                ..Tile::default()
+            }),
+        };
+        *totals.entry((label, color)).or_default() += end - start;
+        let mut cursor = start - 0x08000000;
+        while cursor < end - 0x08000000 {
+            let line = cursor / row_bytes;
+            let stop = ((line + 1) * row_bytes).min(end - 0x08000000);
+            let title = format!(
+                "0x{start:08x}–0x{end:08x} · {} ROM bytes · {label} · {}",
+                commas(end - start),
+                row["evidence"].as_str().unwrap_or("")
+            );
+            html.push_str(&format!("<span title=\"{}\" style=\"left:{}%;top:{}%;width:{}%;height:{}%;background:{color}\"></span>",esc(&title),(cursor%row_bytes) as f64/row_bytes as f64*100.0,line as f64/row_count as f64*100.0,(stop-cursor) as f64/row_bytes as f64*100.0,100.0/row_count as f64));
+            cursor = stop;
+        }
+    }
+    html.push_str("</div><p>0x08000000 → cartridge end. Hover a region for its address, size and evidence.</p><details><summary>Content totals</summary><ul>");
+    for ((label, _), bytes) in &totals {
+        html.push_str(&format!(
+            "<li>{}: {} bytes ({:.2}%)</li>",
+            esc(label),
+            commas(*bytes),
+            *bytes as f64 / size as f64 * 100.0
+        ));
+    }
+    html.push_str("</ul></details></section><footer class=\"legend\" aria-label=\"ROM content types\" tabindex=\"0\">");
+    for ((label, color), bytes) in totals {
+        html.push_str(&format!(
+            "<span style=\"--swatch:{color}\">{} {:.1}%</span>",
+            esc(label),
+            bytes as f64 / size as f64 * 100.0
+        ));
+    }
+    html.push_str("</footer></main>");
+    Some(html)
+}
 pub fn page(
     map: &CoverageMap,
     folder: &str,
@@ -234,7 +415,11 @@ pub fn page(
     let nested = directories(entries, folder);
     let verification = map.document["asset_verification"].as_str().unwrap_or("");
     let heading: String = if folder.is_empty() {
-        "Alchemy".into()
+        if map.document["view"] == "files" {
+            "Files · disk size".into()
+        } else {
+            "Alchemy".into()
+        }
     } else {
         source_name(folder).into()
     };
@@ -246,7 +431,8 @@ pub fn page(
             url(parent(folder))
         )
     };
-    let mut out=format!("<main><header>{back}<span>{}</span><a class=\"refresh\" href=\"{}\">Refresh</a></header><section class=\"chart\" aria-label=\"ROM contents\">",esc(&heading),url(folder));
+    let files = map.document["view"] == "files";
+    let mut out=format!("<main><header>{back}<span>{}</span><a class=\"refresh\" href=\"{}\">Refresh</a></header><section class=\"chart\" aria-label=\"{}\">",esc(&heading),url(folder),if files {"Repository files · area is size on disk"} else {"ROM contents"});
     let mut widths = std::collections::BTreeSet::new();
     tiles(
         &mut out,
@@ -312,7 +498,9 @@ pub fn page(
         }
         out.push_str("</aside>");
     }
-    out.push_str(&format!("<footer class=\"legend\">{legend}</footer>"));
+    out.push_str(&format!(
+        "<footer class=\"legend\" aria-label=\"File types\" tabindex=\"0\">{legend}</footer>"
+    ));
     if shared || selected.is_some() {
         out.push_str("<iframe name=\"reveal-result\" class=\"action-result\" title=\"Finder action result\"></iframe>");
     }

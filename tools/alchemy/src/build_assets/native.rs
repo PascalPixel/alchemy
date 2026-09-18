@@ -1,5 +1,6 @@
 use super::*;
 mod character;
+pub(super) use character::inventory as character_inventory;
 mod frame;
 mod graphics;
 mod identity;

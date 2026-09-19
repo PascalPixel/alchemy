@@ -119,7 +119,12 @@ like when it is done, then carry that standard to every module.
   emit 288 bytes. The other eight staged-actor members remain exact in all
   17 images.
 - Close the village's recorded 472-byte `Effect_Spawn` compiler gap using
-  ordinary C, without volatile fields or scheduler helpers.
+  ordinary C, without volatile fields or scheduler helpers. The complete
+  four-halfword draft is kept in
+  `games/THE BROKEN SEAL/recon/en/overlays/resource_3ab_c_0200013c.c`;
+  removing the accumulator local, splitting both loads into temporaries and
+  viewing the options as homogeneous union slots leave the same two `sched2`
+  load-pair reversals.
 
 ## Maps and the 3D world
 

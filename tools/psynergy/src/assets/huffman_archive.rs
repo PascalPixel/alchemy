@@ -11,6 +11,7 @@ pub struct HuffmanArchive {
     pub bytes: Vec<u8>,
     pub offset_table: u32,
     pub messages: u32,
+    pub context_directory: u32,
     pub directory: u32,
     pub contexts: usize,
 }
@@ -137,25 +138,37 @@ pub fn encode_huffman_archive(
     let contexts = derive_contexts(symbol_count, banks)?;
     let mut bytes = Vec::new();
     let mut offsets = Vec::new();
-    for context in contexts.iter() {
+    let mut model_bases = Vec::new();
+    let mut group_start = 0;
+    for (index, context) in contexts.iter().enumerate() {
+        if index % 256 == 0 {
+            group_start = bytes.len();
+            model_bases.push(base + group_start as u32);
+        }
         let Some(context) = context else {
             offsets.extend(0x8000u16.to_le_bytes());
             continue;
         };
         let leaves = pack_leaves(&context.leaves);
-        let offset = u16::try_from(bytes.len() + leaves.len())
+        let offset = u16::try_from(bytes.len() + leaves.len() - group_start)
             .map_err(|_| AssetError("context model exceeds its offset table".into()))?;
         offsets.extend(offset.to_le_bytes());
         bytes.extend(leaves);
         bytes.extend(pack_bits(&context.tree));
+    }
+    if (base as usize + bytes.len()) % 2 != 0 {
+        bytes.push(0);
     }
     let offset_table = base + bytes.len() as u32;
     bytes.extend(offsets);
     while (base as usize + bytes.len()) % 4 != 0 {
         bytes.push(0);
     }
-    bytes.extend(base.to_le_bytes());
-    bytes.extend(offset_table.to_le_bytes());
+    let context_directory = base + bytes.len() as u32;
+    for (group, model_base) in model_bases.iter().enumerate() {
+        bytes.extend(model_base.to_le_bytes());
+        bytes.extend((offset_table + group as u32 * 512).to_le_bytes());
+    }
     let messages = base + bytes.len() as u32;
     let mut address = messages;
     let mut directory = Vec::new();
@@ -200,6 +213,7 @@ pub fn encode_huffman_archive(
         bytes,
         offset_table,
         messages,
+        context_directory,
         directory: address,
         contexts: contexts.iter().flatten().count(),
     })
@@ -218,9 +232,10 @@ fn huffman_archive_packs_model_payloads_and_directory() {
     // Context 2: single leaf 0, tree "1".
     expected.extend([0x00, 0x00, 0b1]);
     // Offsets point at each tree; the table is padded to a word boundary.
-    expected.extend([3, 0, 7, 0, 10, 0, 0, 0, 0]);
+    expected.push(0);
+    expected.extend([3, 0, 7, 0, 10, 0, 0, 0]);
     expected.extend(0x1000u32.to_le_bytes());
-    expected.extend(0x100bu32.to_le_bytes());
+    expected.extend(0x100cu32.to_le_bytes());
     // Bank 0: "1 1 end" is 0, 0, 1 -> 0b100; the empty message has length 0.
     expected.extend([0b100, 1, 0]);
     // Bank 1: "2 end" is 1 then the empty single-leaf path.
@@ -230,7 +245,7 @@ fn huffman_archive_packs_model_payloads_and_directory() {
     expected.extend(0x101fu32.to_le_bytes());
     expected.extend(0x1020u32.to_le_bytes());
     assert_eq!(archive.bytes, expected);
-    assert_eq!(archive.offset_table, 0x100b);
+    assert_eq!(archive.offset_table, 0x100c);
     assert_eq!(archive.messages, 0x101c);
     assert_eq!(archive.directory, 0x1021);
     assert_eq!(archive.contexts, 3);
@@ -244,4 +259,21 @@ fn huffman_archive_packs_model_payloads_and_directory() {
     let long = encode_huffman_archive(0x1000, 2, &[vec![Some(vec![1; 2041])]]).unwrap();
     let end = long.bytes.len() - 8;
     assert_eq!(long.bytes[end - 2..end], [0xff, 0x01]);
+}
+
+#[test]
+fn grouped_contexts_round_trip_symbols_above_255() {
+    let banks = vec![vec![Some(vec![1, 256, 299, 256]), None]];
+    let archive = encode_huffman_archive(0x1000, 300, &banks).unwrap();
+    assert_eq!(archive.messages - archive.context_directory, 16);
+    let mut reader = MessageReader::new(
+        &archive.bytes,
+        0x1000,
+        archive.context_directory,
+        archive.directory,
+        300,
+    )
+    .unwrap();
+    assert_eq!(reader.message(0).unwrap().symbols, banks[0][0]);
+    assert_eq!(reader.message(1).unwrap().symbols, None);
 }

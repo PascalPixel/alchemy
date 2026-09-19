@@ -59,7 +59,7 @@ responsibilities in another wrapper or registry.
 | `alchemy check` | `publication`, `commit-progress`, `source-tracking`, `owners`, `tla-owners`, `retained`, `coverage`, `integrate`, `no-asm`, `plan-tails`, `overlay-data`, `progress`, `routes`, `showcase` and `siblings`: repository contracts, not portable file operations. `progress` combines the canonical executable inventory with the current verified build receipt ([COMPLETION](COMPLETION.md)); `--json` reports DONE and exact C separately, and `--write-report` writes that same result under `out/`. |
 | `alchemy cross-edition` | Compare reviewed owner correspondence across Golden Sun editions. |
 | `alchemy overlay` | `adopt`, `park`, `audit` and `export`: Golden Sun loader, resource integration and byte-identical retained-source export. |
-| `alchemy dashboard` | Serve Files, ROM coverage, Music and Maps debugging tabs locally. |
+| `alchemy dashboard` | Serve Files, ROM coverage, Music, Maps and six-edition Text debugging tabs locally. |
 | `alchemy format` | Format native JSON; `--check` gates formatting and uppercase names. |
 
 Retired entry points are rejected, not forwarded: `alchemy decompile`,
@@ -104,13 +104,19 @@ Thumb is code, not a music format. Keep format names portable and directional.
 
 ## Dashboard and progress figure
 
-`alchemy coverage audit --target tbs-en|tla-en --data` writes the complete
-physical byte index to `out/<target>/reports/rom-index.json`. It reuses the
-audited executable ranges, built assets, sprite catalog, field loaders and
-sound bindings; format matches record their evidence and unresolved ranges
-remain explicit. Every byte appears exactly once. Identification is not asset
-reconstruction or DONE credit. Coverage uses the index only while its input
-hashes match; the dashboard watches it. No reference bytes enter this report.
+`alchemy coverage audit --target TARGET --data` writes one complete physical
+byte index to `out/<target>/reports/rom-index.json`; `--all --data` refreshes
+all twelve, canonical English editions first. Canonical indexes reuse audited
+executable ranges, built assets, sprite catalogs, field loaders and sound
+bindings. Other editions inherit a content kind only over unique,
+byte-verified correspondence with their game's canonical index; their local
+resource reader independently records reproducible compressed storage, and
+everything else remains unresolved. Every byte appears exactly once.
+Each edition's message directory is independently decoded and re-encoded;
+only a complete byte-identical archive contributes its localized text extent.
+Identification is not asset reconstruction or DONE credit. Coverage uses an
+index only while its recorded inputs match; the dashboard watches every
+target. No reference bytes enter these reports.
 
 `make coverage` and `make coverage-check` read existing verified build receipts;
 they do not run a build or an executable audit. If source verification is stale,
@@ -122,7 +128,7 @@ verified inputs; a current receipt cannot score a different revision.
 The dashboard at `http://127.0.0.1:4650/` separates Files from ROM coverage.
 Files shows each actual file under `games/` once, weighted by disk size; clicking
 a file lists its recorded ROM regions without inventing additional files.
-ROM coverage (`/rom/tbs-en` and `/rom/tla-en`) shows physical cartridge ranges
+ROM coverage (`/roms/tbs-en` and `/roms/tla-en`) shows physical cartridge ranges
 in address order, weighted by stored ROM bytes, with content colours and an
 identification percentage. Recognizing compression alone does not identify its
 payload. Identification never grants DONE credit. Music auditions recovered
@@ -139,6 +145,19 @@ toggles, palette selection and pixel inspection. Actors, animation and
 script-dependent scrolling are not simulated. No saved map renders feed the
 viewer. Private room pictures and indexed layer planes are served only locally,
 never tracked. Neither debug view serves arbitrary filesystem paths.
+Text compares one message key across the six shipped editions of either game,
+256 keys at a time, reading the build's `TEXT/<LANGUAGE>.PO` catalogs.
+`alchemy build assets --extract-text [TARGET]` reconstructs those editable
+catalogs from checksum-registered local ROMs and refuses a non-exact round trip.
+`alchemy build assets --verify-text [TARGET]` rebuilds and compares only those
+archives; omit TARGET to check all twelve. Outputs and individual verification
+receipts stay under `out/<target>/text/`. The normal asset build also rebuilds
+the six catalogs named by its manifest's `edition_catalogs`; reading text alone
+does not count as a build consumer. Layouts and ROM identities live in each
+game's `recon/text.json`. Unmapped Japanese glyphs remain explicit glyph tokens,
+not guessed Unicode. Editions can
+intentionally repurpose a numeric key; the viewer reports the physical archive
+key rather than inventing semantic correspondence.
 Click a folder to open it and use Back to return. Addresses
 belong in hover details, not tile captions. Labels in both use one 13px system
 sans-serif font that does not scale with the layout. No game font is served or

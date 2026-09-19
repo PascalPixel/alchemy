@@ -4,6 +4,7 @@ pub mod huffman_archive;
 pub mod image;
 pub mod lz;
 pub mod midi;
+pub mod po;
 pub mod text;
 pub mod wav;
 

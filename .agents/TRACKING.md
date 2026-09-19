@@ -18,7 +18,7 @@ it. Ask three questions of every file, generated files included:
 | --- | --- |
 | Reconstructed C, headers and raw code listings | `SRC/**/*.C`, `INCLUDE/*.H`, `raw/*.s` |
 | Names, addresses, sizes and hashes | `source-paths.json`, `SOURCE.JSON` |
-| Assets the build reads, in editable form | indexed PNG, WAV, MIDI and message JSON reached from `recon/assets.json` |
+| Assets the build reads, in editable form | indexed PNG, WAV, MIDI and message PO catalogs reached from `recon/assets.json` |
 | Encoder settings without payload bytes | `COMPRESSION.JSON` |
 
 | May not be tracked | Do this instead |

@@ -20,6 +20,15 @@ Runtime tables whose structure is understood become typed C in the unit that
 reads them ([SOURCE](SOURCE.md), the Lunpa standard), and editable media stay
 PNG, WAV and MIDI.
 
+Localized message source uses UTF-8 GNU gettext PO in `TEXT/<LANGUAGE>.PO`.
+The numeric message key is `msgid`, its editable text is `msgstr`, and
+`msgctxt "message"` identifies the archive. Named brace commands preserve
+runtime controls; unknown glyphs remain explicit tokens. Matching numeric keys
+across editions is not proof of matching meaning. The shared encoder derives
+Huffman models, character-group headers, message lengths and directories from
+the source. Each game's asset build rebuilds its six message archives; exact
+text-archive verification does not imply a complete regional ROM build.
+
 ## Where inputs live
 
 Editable assets belong beside their owner in the game's `SRC`; there is no

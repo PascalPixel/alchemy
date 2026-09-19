@@ -24,6 +24,7 @@ mod scaffold;
 mod score;
 mod siblings;
 mod targets;
+mod text_catalog;
 
 const USAGE: &str = "usage: alchemy <command> [args]\n\
   bootstrap             install or validate the persistent compiler toolchain\n\

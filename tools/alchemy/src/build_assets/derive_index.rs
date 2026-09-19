@@ -159,12 +159,27 @@ pub(crate) fn tagged_extent(
 ) -> Result<(Vec<u8>, usize), String> {
     let (decoded, encoded) = match rom.get(start) {
         Some(0) => {
-            let (data, _, tokens) =
-                psynergy::assets::lz::decode_general_trace(rom, start, end, DECODED_LIMIT)
-                    .map_err(|e| e.to_string())?;
-            let encoded =
-                psynergy::assets::lz::encode_general(&data, &tokens).map_err(|e| e.to_string())?;
-            (data, encoded)
+            [0usize, 0x1000]
+                .into_iter()
+                .find_map(|prefill| {
+                    let (data, _, tokens) =
+                        psynergy::assets::lz::decode_general_prefill_trace(
+                            rom,
+                            start,
+                            end,
+                            DECODED_LIMIT,
+                            prefill,
+                            1,
+                        )
+                        .ok()?;
+                    let encoded = psynergy::assets::lz::encode_general_prefill(
+                        &data, &tokens, prefill, 1,
+                    )
+                    .ok()?;
+                    (rom.get(start..start + encoded.len()) == Some(encoded.as_slice()))
+                        .then_some((data, encoded))
+                })
+                .ok_or("general stream does not decode and re-encode with an empty or 4 KB zero dictionary")?
         }
         Some(1) => {
             let (data, _, groups) =
@@ -188,6 +203,27 @@ pub(crate) fn tagged_extent(
         || start + encoded.len() > end
     {
         return Err("stream does not reproduce its physical encoding".into());
+    }
+    Ok((decoded, encoded.len()))
+}
+
+/// Exact extent of the engine's untagged byte-LZ stream. The ARM reader at
+/// 0x0800165c uses the same flag groups, copy fields and terminator as tagged
+/// kind 1, but several system loaders pass it the resource start directly.
+fn untagged_byte_lz_extent(
+    rom: &[u8],
+    start: usize,
+    end: usize,
+) -> Result<(Vec<u8>, usize), String> {
+    let (decoded, _, groups) =
+        psynergy::assets::lz::decode_palette_trace(rom, start, end, DECODED_LIMIT)
+            .map_err(|error| error.to_string())?;
+    let encoded = psynergy::assets::lz::encode_palette(&decoded, &groups)
+        .map_err(|error| error.to_string())?;
+    if rom.get(start..start + encoded.len()) != Some(encoded.as_slice())
+        || start + encoded.len() > end
+    {
+        return Err("untagged byte-LZ stream does not reproduce its physical encoding".into());
     }
     Ok((decoded, encoded.len()))
 }
@@ -265,7 +301,7 @@ pub(super) fn inventory(
     // Exact re-encoding up to the next directory pointer establishes a format
     // match, not the image's scene or purpose.
     let sibling = json(&root.join("games/THE BROKEN SEAL/SOURCE.JSON"))?;
-    let layouts = sibling["private_inputs"]
+    let sibling_layouts = sibling["private_inputs"]
         .as_array()
         .ok_or("missing private input index")?
         .iter()
@@ -278,6 +314,13 @@ pub(super) fn inventory(
             ))
         })
         .collect::<BTreeSet<_>>();
+    let mut layouts = sibling_layouts.clone();
+    // TLA resources 070-078 continue TBS's exact 256x120, 128-colour still
+    // family. The following resources retain the palette and delta7 grammar
+    // with exactly twice that pixel count before the family changes to raw
+    // tiles at 081.
+    layouts.insert((256, 240, 128));
+    let mut still_anchors = BTreeSet::new();
     for id in 0..directory.offsets.len() {
         let (start, size) = directory.resource(id)?;
         if size > 0x10000 {
@@ -306,9 +349,380 @@ pub(super) fn inventory(
             {
                 continue;
             }
-            rows.push(json!({"start":start+ROM_BASE,"end":start+ROM_BASE+palette+encoded.len(),"kind":"golden-sun-delta7-still","label":"Indexed still image","resource":format!("{id:03x}"),"evidence":format!("{width}x{height} delta7 pixels and {colors} BGR555 colours; sibling layout, exact re-encoding to directory boundary; scene not established")}));
+            let source = if sibling_layouts.contains(&(width, height, colors)) {
+                "sibling layout"
+            } else {
+                "adjacent exact still family and doubled 256x120 canvas"
+            };
+            rows.push(json!({"start":start+ROM_BASE,"end":start+ROM_BASE+palette+encoded.len(),"kind":"golden-sun-delta7-still","label":"Indexed still image","resource":format!("{id:03x}"),"evidence":format!("{width}x{height} delta7 pixels and {colors} BGR555 colours; {source}, exact re-encoding to directory boundary; scene not established")}));
+            still_anchors.insert(id);
             break;
         }
+    }
+    // Localized and sequel-only stills need not share dimensions with an
+    // already reconstructed image. Extend only through the uninterrupted
+    // physical family around exact re-encoding anchors: every member begins
+    // with the same complete 128-colour BGR555 palette, and the run stops at
+    // the first resource which violates that invariant.
+    if !still_anchors.is_empty() {
+        let belongs = |id: usize| {
+            directory.resource(id).is_ok_and(|(start, size)| {
+                size > 256
+                    && rom.get(start..start + 256).is_some_and(|palette| {
+                        palette.chunks_exact(2).all(|word| word[1] & 0x80 == 0)
+                    })
+            })
+        };
+        let mut claimed = BTreeSet::new();
+        for anchor in still_anchors.iter().copied() {
+            if claimed.contains(&anchor) {
+                continue;
+            }
+            let mut first = anchor;
+            let mut last = anchor;
+            while first > 0 && belongs(first - 1) {
+                first -= 1;
+            }
+            while last + 1 < directory.offsets.len() && belongs(last + 1) {
+                last += 1;
+            }
+            let anchors = still_anchors.range(first..=last).count();
+            for id in first..=last {
+                claimed.insert(id);
+                let (start, size) = directory.resource(id)?;
+                rows.push(json!({
+                    "start":start+ROM_BASE,
+                    "end":start+ROM_BASE+size,
+                    "kind":"golden-sun-delta7-still",
+                    "label":"Indexed still-image resource",
+                    "resource":format!("{id:03x}"),
+                    "evidence":format!("uninterrupted 128-colour still family {first:03x}-{last:03x}, anchored by {anchors} exact delta7 re-encodings; individual layout not asserted")
+                }));
+            }
+        }
+    }
+    // Some system resources are directories of independently delta-coded
+    // 16-bit tilemaps. The first offset is also the complete directory size;
+    // accepting the package requires every offset to increase and every
+    // member to decode and re-encode byte for byte within its boundary.
+    for id in 0..directory.offsets.len() {
+        let (start, size) = directory.resource(id)?;
+        let Ok(first) = u32_at(rom, start).map(|value| value as usize) else {
+            continue;
+        };
+        if first < 8 || first > size || first % 4 != 0 || first / 4 > 512 {
+            continue;
+        }
+        let count = first / 4;
+        let offsets = (0..count)
+            .map(|index| u32_at(rom, start + index * 4).map(|value| value as usize))
+            .collect::<Result<Vec<_>, _>>()?;
+        if offsets[0] != first
+            || offsets.iter().any(|offset| *offset >= size)
+            || offsets.windows(2).any(|pair| pair[0] >= pair[1])
+        {
+            continue;
+        }
+        let mut members = vec![];
+        for (member, offset) in offsets.iter().copied().enumerate() {
+            let end = offsets.get(member + 1).copied().unwrap_or(size);
+            let stored = &rom[start + offset..start + end];
+            let exact = (0..=3).find_map(|tail| {
+                if stored.len() <= tail
+                    || stored[stored.len() - tail..].iter().any(|byte| *byte != 0)
+                {
+                    return None;
+                }
+                let encoded = &stored[..stored.len() - tail];
+                let decoded = psynergy::assets::compression::decode_tilemap_delta(encoded).ok()?;
+                (psynergy::assets::compression::encode_tilemap_delta(&decoded, encoded[0]).ok()?
+                    == encoded)
+                    .then_some(encoded.len())
+            });
+            let Some(encoded) = exact else {
+                members.clear();
+                break;
+            };
+            members.push((start + offset, encoded));
+        }
+        if members.len() != count {
+            continue;
+        }
+        rows.push(json!({"start":start+ROM_BASE,"end":start+ROM_BASE+first,"kind":"record-table","label":"Tilemap resource directory","resource":format!("{id:03x}"),"evidence":format!("{count} increasing offsets; first offset equals directory size")}));
+        for (member, (address, encoded)) in members.into_iter().enumerate() {
+            rows.push(json!({"start":address+ROM_BASE,"end":address+ROM_BASE+encoded,"kind":"gba-tilemap16","label":"Delta-coded tilemap","resource":format!("{id:03x}"),"evidence":format!("tilemap bundle member {member}; exact decode and mode-preserving re-encode within the next offset")}));
+        }
+    }
+    // Portrait resources begin with a u16 offset directory. Empty character
+    // slots are zero; every populated member is one 16-colour palette followed
+    // by an independently terminated MTF4 32x32 image. The runtime portrait
+    // loader selects the u16 offset, DMA-copies 32 palette bytes, then gives
+    // member+32 to the portrait reader. Require every member to round-trip.
+    for id in 0..directory.offsets.len() {
+        let (start, size) = directory.resource(id)?;
+        let first = usize::from(u16_at(rom, start)?);
+        if first < 4 || first > size || first % 2 != 0 || first / 2 > 512 {
+            continue;
+        }
+        let slots = first / 2;
+        let offsets = (0..slots)
+            .map(|slot| u16_at(rom, start + slot * 2).map(usize::from))
+            .collect::<Result<Vec<_>, _>>()?;
+        let populated = offsets
+            .iter()
+            .copied()
+            .filter(|offset| *offset != 0)
+            .collect::<Vec<_>>();
+        if populated.len() < 2
+            || populated[0] != first
+            || populated.iter().any(|offset| *offset >= size)
+            || populated.windows(2).any(|pair| pair[0] >= pair[1])
+        {
+            continue;
+        }
+        let mut members = Vec::new();
+        for (member, offset) in populated.iter().copied().enumerate() {
+            let end = populated.get(member + 1).copied().unwrap_or(size);
+            if end < offset + 34
+                || rom[start + offset..start + offset + 32]
+                    .chunks_exact(2)
+                    .any(|word| word[1] & 0x80 != 0)
+            {
+                members.clear();
+                break;
+            }
+            let stored = &rom[start + offset + 32..start + end];
+            let Ok(pixels) = psynergy::assets::compression::decode_mtf4(stored, 32 * 32) else {
+                members.clear();
+                break;
+            };
+            let Ok(encoded) = psynergy::assets::compression::encode_mtf4(&pixels) else {
+                members.clear();
+                break;
+            };
+            if encoded.len() > stored.len()
+                || stored[..encoded.len()] != encoded
+                || stored[encoded.len()..].len() > 3
+                || stored[encoded.len()..].iter().any(|byte| *byte != 0)
+            {
+                members.clear();
+                break;
+            }
+            members.push((offset, encoded.len(), stored.len() - encoded.len()));
+        }
+        if members.len() != populated.len() {
+            continue;
+        }
+        rows.push(json!({
+            "start":start+ROM_BASE,
+            "end":start+ROM_BASE+first,
+            "kind":"record-table",
+            "label":"Portrait offset directory",
+            "resource":format!("{id:03x}"),
+            "evidence":format!("{slots} u16 slots; {} increasing populated offsets; first offset equals directory size",populated.len())
+        }));
+        for (member, (offset, encoded, padding)) in members.into_iter().enumerate() {
+            let palette = start + offset;
+            let pixels = palette + 32;
+            rows.push(json!({"start":palette+ROM_BASE,"end":pixels+ROM_BASE,"kind":"bgr555-banks","label":"Portrait palette","resource":format!("{id:03x}"),"evidence":format!("portrait member {member}; 16 complete BGR555 entries selected independently by its offset") }));
+            rows.push(json!({"start":pixels+ROM_BASE,"end":pixels+ROM_BASE+encoded,"kind":"gba-4bpp-tiles","label":"MTF4 portrait","resource":format!("{id:03x}"),"evidence":format!("portrait member {member}; exactly 1024 four-bit pixels and exact MTF4 re-encoding") }));
+            if padding != 0 {
+                rows.push(json!({"start":pixels+ROM_BASE+encoded,"end":pixels+ROM_BASE+encoded+padding,"kind":"byte-fill","label":"Portrait alignment","resource":format!("{id:03x}"),"evidence":"one-to-three zero bytes between exact portrait members"}));
+            }
+        }
+    }
+    // UI and still packages place a BGR555 palette directly before one tagged
+    // pixel stream. Infer neither the picture dimensions nor its runtime role:
+    // the palette domain and the stream's exact inverse establish only the
+    // stored palette-plus-pixels format.
+    for id in 0..directory.offsets.len() {
+        let (start, size) = directory.resource(id)?;
+        for colors in [16usize, 32, 64, 128, 192, 224, 240, 256] {
+            let palette = colors * 2;
+            if size <= palette + 4
+                || rom[start..start + palette]
+                    .chunks_exact(2)
+                    .any(|word| word[1] & 0x80 != 0)
+            {
+                continue;
+            }
+            let Ok((pixels, encoded)) = tagged_extent(rom, start + palette, start + size) else {
+                continue;
+            };
+            let tail = size - palette - encoded;
+            // The bit reader refills whole words and may consume up to three
+            // nonzero bytes beyond the encoder's end marker. The tail pass
+            // below records those bytes explicitly as bounded lookahead.
+            if pixels.is_empty() || tail > 3 {
+                continue;
+            }
+            let tag = rom[start + palette];
+            let kind = if tag != 0 || pixels.iter().all(|pixel| *pixel < 16) {
+                "gba-4bpp-tiles"
+            } else {
+                "gba-8bpp-tiles"
+            };
+            rows.push(json!({"start":start+ROM_BASE,"end":start+ROM_BASE+palette,"kind":"bgr555-banks","label":"Indexed graphics palette","resource":format!("{id:03x}"),"evidence":format!("{colors} complete BGR555 entries preceding an exact tagged pixel stream")}));
+            rows.push(json!({"start":start+ROM_BASE+palette,"end":start+ROM_BASE+palette+encoded,"kind":kind,"label":"Tagged indexed graphics","resource":format!("{id:03x}"),"evidence":format!("tag {tag}; {} decoded indices; exact re-encoding to resource boundary",pixels.len())}));
+            break;
+        }
+    }
+    // A second untagged image package used by adjacent resources keeps a
+    // 240-entry BGR555 palette before a shared raw 8bpp image prologue. Two
+    // consecutive packages must agree on that prologue; a lone palette-like
+    // prefix is not sufficient evidence for raw pixels.
+    let raw8 = (0..directory.offsets.len())
+        .filter_map(|id| {
+            let (start, size) = directory.resource(id).ok()?;
+            (size > 512
+                && rom[start..start + 480]
+                    .chunks_exact(2)
+                    .all(|word| word[1] & 0x80 == 0))
+            .then_some((id, start, size))
+        })
+        .collect::<Vec<_>>();
+    for pair in raw8.windows(2) {
+        if pair[1].0 != pair[0].0 + 1
+            || rom[pair[0].1 + 480..pair[0].1 + 512] != rom[pair[1].1 + 480..pair[1].1 + 512]
+        {
+            continue;
+        }
+        for &(id, start, size) in pair {
+            rows.push(json!({"start":start+ROM_BASE,"end":start+ROM_BASE+480,"kind":"bgr555-banks","label":"Raw indexed-image palette","resource":format!("{id:03x}"),"evidence":"240 valid BGR555 entries; adjacent package has the same raw pixel prologue"}));
+            rows.push(json!({"start":start+ROM_BASE+480,"end":start+ROM_BASE+size,"kind":"gba-8bpp-tiles","label":"Raw indexed graphics","resource":format!("{id:03x}"),"evidence":"adjacent 240-colour package has the same 32-byte raw pixel prologue"}));
+        }
+    }
+    // Some raw 8bpp siblings share the palette itself rather than a pixel
+    // prologue. Require two consecutive resources to share a complete large
+    // engine palette (128, 224, 240 or 256 colours) before their bodies split.
+    for id in 0..directory.offsets.len().saturating_sub(1) {
+        let (left, left_size) = directory.resource(id)?;
+        let (right, right_size) = directory.resource(id + 1)?;
+        let common = rom[left..left + left_size]
+            .iter()
+            .zip(&rom[right..right + right_size])
+            .take_while(|(a, b)| a == b)
+            .count();
+        let palette = [512usize, 480, 448, 256].into_iter().find(|bytes| {
+            common >= *bytes
+                && left_size > *bytes
+                && right_size > *bytes
+                && rom[left..left + *bytes]
+                    .chunks_exact(2)
+                    .all(|word| word[1] & 0x80 == 0)
+        });
+        let Some(palette) = palette else { continue };
+        for (resource, start, size) in [(id, left, left_size), (id + 1, right, right_size)] {
+            rows.push(json!({"start":start+ROM_BASE,"end":start+ROM_BASE+palette,"kind":"bgr555-banks","label":"Shared indexed-image palette","resource":format!("{resource:03x}"),"evidence":format!("{} exact BGR555 colours shared by two consecutive resources",palette/2)}));
+            rows.push(json!({"start":start+ROM_BASE+palette,"end":start+ROM_BASE+size,"kind":"gba-8bpp-tiles","label":"Raw indexed graphics","resource":format!("{resource:03x}"),"evidence":format!("body follows a shared {}-colour engine palette",palette/2)}));
+        }
+    }
+    // Tag 2 is the engine's MTF4 pixel codec, so unlike a generic LZ stream it
+    // identifies its payload as four-bit indexed graphics without a consumer.
+    for id in 0..directory.offsets.len() {
+        let (start, size) = directory.resource(id)?;
+        if rom[start] != 2 {
+            continue;
+        }
+        let Ok((pixels, encoded)) = tagged_extent(rom, start, start + size) else {
+            continue;
+        };
+        let tail = size - encoded;
+        if pixels.is_empty() || tail > 3 {
+            continue;
+        }
+        rows.push(json!({"start":start+ROM_BASE,"end":start+ROM_BASE+encoded,"kind":"gba-4bpp-tiles","label":"MTF4 indexed graphics","resource":format!("{id:03x}"),"evidence":format!("tag 2; {} packed 4bpp bytes; exact re-encoding with at most three bounded lookahead bytes",pixels.len())}));
+    }
+    // TLA's early system loader at 0x081a6b90 establishes one indexed-image
+    // family independently of byte shape. It copies resource 01b whole to BG
+    // palette RAM; 01c-01f are mutually selected pictures decoded through the
+    // untagged byte-LZ wrapper at 0x0801591c into the same 0x3000-byte buffer.
+    // Resource 01a is the sibling form: a 16-colour palette followed by that
+    // same stream, with the two parts sent to palette RAM and 0x02010000.
+    if matches!(target.id, DecompTargetId::TlaEn) {
+        let (start, size) = directory.resource(0x01a)?;
+        if size > 32
+            && rom[start..start + 32]
+                .chunks_exact(2)
+                .all(|word| word[1] & 0x80 == 0)
+        {
+            if let Ok((pixels, encoded)) = untagged_byte_lz_extent(rom, start + 32, start + size) {
+                if !pixels.is_empty() && size - 32 - encoded <= 3 {
+                    rows.push(json!({"start":start+ROM_BASE,"end":start+ROM_BASE+32,"kind":"bgr555-banks","label":"System image palette","resource":"01a","evidence":"loader 0x081a6edc skips 32 bytes before byte-LZ decode and 0x081a70a6 copies those 16 BGR555 colours to palette RAM"}));
+                    rows.push(json!({"start":start+ROM_BASE+32,"end":start+ROM_BASE+32+encoded,"kind":"gba-4bpp-tiles","label":"System indexed graphics","resource":"01a","evidence":format!("loader-selected graphics beside a 16-colour palette; {} decoded bytes; exact untagged byte-LZ re-encoding",pixels.len())}));
+                }
+            }
+        }
+
+        let (palette, palette_size) = directory.resource(0x01b)?;
+        if palette_size == 512
+            && rom[palette..palette + palette_size]
+                .chunks_exact(2)
+                .all(|word| word[1] & 0x80 == 0)
+        {
+            rows.push(json!({"start":palette+ROM_BASE,"end":palette+ROM_BASE+palette_size,"kind":"bgr555-banks","label":"System image palette","resource":"01b","evidence":"loader 0x081a6bf4 copies all 256 BGR555 entries directly to BG palette RAM"}));
+        }
+        for id in 0x01c..=0x01f {
+            let (start, size) = directory.resource(id)?;
+            let Ok((pixels, encoded)) = untagged_byte_lz_extent(rom, start, start + size) else {
+                continue;
+            };
+            if pixels.len() != 0x3000 || size - encoded > 3 {
+                continue;
+            }
+            rows.push(json!({"start":start+ROM_BASE,"end":start+ROM_BASE+encoded,"kind":"gba-8bpp-tiles","label":"System indexed graphics","resource":format!("{id:03x}"),"evidence":"loader family 0x081a6c0e-0x081a6e68 selects resources 01c-01f beside the 256-colour resource 01b and decodes exactly 0x3000 bytes through 0x0801591c; exact untagged byte-LZ re-encoding"}));
+        }
+    }
+
+    // Exact encoders stop at the end marker, while the decoder's word reader
+    // can consume up to three lookahead bytes before the next resource. Once
+    // a resource has an identified payload, retain nonzero lookahead as that
+    // payload's storage and zero lookahead as alignment. An unowned tail or
+    // an internal gap remains unidentified.
+    for id in 0..directory.offsets.len() {
+        let resource = resource_name(id);
+        let last = rows
+            .iter()
+            .filter(|row| row["resource"].as_str() == Some(&resource))
+            .filter_map(|row| row["end"].as_u64().map(|end| (end, row)))
+            .max_by_key(|(end, _)| *end);
+        let Some((end, last)) = last else { continue };
+        let Some(end) = usize::try_from(end)
+            .ok()
+            .and_then(|address| address.checked_sub(ROM_BASE))
+        else {
+            continue;
+        };
+        let (start, size) = directory.resource(id)?;
+        let boundary = start + size;
+        let tail = boundary.saturating_sub(end);
+        if !(1..=3).contains(&tail) {
+            continue;
+        }
+        let Some(bytes) = rom.get(end..boundary) else {
+            continue;
+        };
+        let zeros = bytes.iter().all(|byte| *byte == 0);
+        let kind = if zeros {
+            "byte-fill"
+        } else {
+            last["kind"].as_str().unwrap_or("unresolved-data")
+        };
+        if kind == "unresolved-data" {
+            continue;
+        }
+        rows.push(json!({
+            "start":end+ROM_BASE,
+            "end":boundary+ROM_BASE,
+            "kind":kind,
+            "label":if zeros {"Resource alignment"} else {"Compression lookahead"},
+            "resource":resource,
+            "evidence":if zeros {
+                "one-to-three zero bytes after an exactly identified resource payload, ending at the next directory pointer"
+            } else {
+                "one-to-three bounded bytes read past an exactly decoded and re-encoded stream before the next directory pointer; inherits the stream payload type"
+            }
+        }));
     }
     Ok((rows, failures))
 }
@@ -1520,6 +1934,25 @@ pub(super) fn run(root: &Path, arguments: &[String]) -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn tagged_general_stream_accepts_zero_dictionary_and_excludes_read_ahead() {
+        let decoded = [0, 0, 1];
+        let tokens = [
+            GeneralToken::Copy {
+                length: 2,
+                distance: 1,
+            },
+            GeneralToken::Literal(1),
+        ];
+        let mut stored =
+            psynergy::assets::lz::encode_general_prefill(&decoded, &tokens, 0x1000, 1).unwrap();
+        let encoded = stored.len();
+        stored.push(0x39);
+        assert_eq!(
+            tagged_extent(&stored, 0, stored.len()).unwrap(),
+            (decoded.to_vec(), encoded)
+        );
+    }
     #[test]
     fn previews_stages_and_rows_are_refused_outside_out_before_reading_the_rom() {
         let directory = tempfile::tempdir().unwrap();

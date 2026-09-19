@@ -1,6 +1,7 @@
 //! Local source, coverage and asset debugging views.
 mod maps;
 mod media;
+mod text;
 use super::http::{self, root, Response};
 use crate::coverage::{
     boxtree::{render_box_trees, svg_cache_version, BOX_TREES},
@@ -344,9 +345,23 @@ fn response(path: &str) -> Response {
     if let Some(response) = media::response(path) {
         return response;
     }
+    if let Some(content) = text::page(path) {
+        return match content {
+            Ok(content) => document(path, &content),
+            Err(error) => Response::new(
+                404,
+                "Not Found",
+                Some("text/plain; charset=utf-8"),
+                "no-store",
+                error.into_bytes(),
+            ),
+        };
+    }
     if path == "/"
         || path == "/rom"
         || path.starts_with("/rom/")
+        || path == "/roms"
+        || path.starts_with("/roms/")
         || path.starts_with("/file/")
         || path.starts_with("/view/")
         || path.starts_with("/inspect/")
@@ -481,14 +496,16 @@ impl Watcher {
             "out/tbs-en/full/asm/manifest.json",
             "out/tbs-en/full/assets/manifest.json",
             "out/tla-en/assets/manifest.json",
-            "out/tbs-en/reports/rom-index.json",
-            "out/tla-en/reports/rom-index.json",
             "out/decomp/diagnose/.revision",
         ]
         .iter()
         .map(|p| r.join(p))
         {
             coverage.push((p.clone(), fingerprint(&p)))
+        }
+        for id in crate::targets::TARGET_IDS {
+            let p = r.join(format!("out/{}/reports/rom-index.json", id.as_str()));
+            coverage.push((p.clone(), fingerprint(&p)));
         }
         Self {
             coverage,
@@ -547,10 +564,12 @@ fn page(path: &str) -> Response {
             .rsplit_once('/')
             .map_or(String::new(), |(dir, _)| format!("{dir}/"));
     }
-    let content = if path == "/rom" || path.starts_with("/rom/") {
-        Some(crate::coverage::boxtree::rom_page(
-            path.strip_prefix("/rom/").unwrap_or("tla-en"),
-        ))
+    let rom_target = path
+        .strip_prefix("/roms/")
+        .or_else(|| path.strip_prefix("/rom/"))
+        .or_else(|| matches!(path, "/roms" | "/rom").then_some("tla-en"));
+    let content = if let Some(target) = rom_target {
+        Some(crate::coverage::boxtree::rom_page(target))
     } else {
         state(|s| {
             s.coverage
@@ -582,14 +601,17 @@ fn document(path: &str, content: &str) -> Response {
         "Music"
     } else if path.starts_with("/maps") {
         "Maps"
+    } else if path.starts_with("/text") {
+        "Text"
     } else {
         "Files"
     };
     let tabs = [
         ("/", "Files"),
-        ("/rom", "ROM coverage"),
+        ("/roms", "ROM coverage"),
         ("/music", "Music"),
         ("/maps", "Maps"),
+        ("/text", "Text"),
     ]
     .into_iter()
     .map(|(url, name)| {
@@ -780,6 +802,23 @@ mod tests {
             .any(|(key, value)| *key == "Content-Security-Policy"
                 && value.contains("script-src 'none'")));
         assert!(!STYLES.contains(".music-player"));
+    }
+    #[test]
+    fn rom_coverage_always_lists_all_twelve_registered_targets() {
+        let page = response("/roms");
+        assert_eq!(page.status, 200);
+        let html = String::from_utf8(page.body).unwrap();
+        assert!(
+            html.len() < 2_000_000,
+            "ROM overview must remain browser-sized"
+        );
+        assert_eq!(html.matches("<article class=\"rom-target").count(), 12);
+        for id in crate::targets::TARGET_IDS {
+            assert!(html.contains(&format!("href=\"/roms/{}\"", id.as_str())));
+        }
+        assert!(html.contains("Not audited") || html.contains("%"));
+        assert_eq!(response("/rom").status, 200);
+        assert_eq!(response("/rom/tbs-en").status, 200);
     }
     #[test]
     fn dashboard_serves_no_font_and_styles_labels_like_the_figure() {

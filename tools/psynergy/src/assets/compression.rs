@@ -316,6 +316,37 @@ pub fn encode_tilemap_delta(entries: &[u8], mode: u8) -> Result<Vec<u8>, AssetEr
     Ok(output)
 }
 
+/// Decode the three tilemap storage modes accepted by `encode_tilemap_delta`.
+pub fn decode_tilemap_delta(bytes: &[u8]) -> Result<Vec<u8>, AssetError> {
+    let (&mode, body) = bytes
+        .split_first()
+        .ok_or_else(|| AssetError("tilemap delta stream is empty".into()))?;
+    if mode > 2 || body.is_empty() || body.len() % 2 != 0 {
+        return Err(AssetError(
+            "tilemap delta requires mode 0, 1 or 2 and whole 16-bit entries".into(),
+        ));
+    }
+    let count = body.len() / 2;
+    let coded = if mode == 1 {
+        (0..count)
+            .map(|index| u16::from(body[index]) << 8 | u16::from(body[count + index]))
+            .collect::<Vec<_>>()
+    } else {
+        body.chunks_exact(2)
+            .map(|entry| u16::from_le_bytes([entry[0], entry[1]]))
+            .collect::<Vec<_>>()
+    };
+    let mut previous = 0u16;
+    Ok(coded
+        .into_iter()
+        .flat_map(|coded| {
+            let value = if mode == 0 { coded } else { coded ^ previous };
+            previous = value;
+            value.to_le_bytes()
+        })
+        .collect())
+}
+
 pub fn delta7_image(
     image: &[u8],
     width: usize,
@@ -391,6 +422,12 @@ fn compression_checks_pixel_domains_and_padding() {
     assert!(encode_tilemap_delta(&entries, 3).is_err());
     assert!(encode_tilemap_delta(&entries[..3], 0).is_err());
     assert!(encode_tilemap_delta(&[], 0).is_err());
+    for mode in 0..=2 {
+        let encoded = encode_tilemap_delta(&entries, mode).unwrap();
+        assert_eq!(decode_tilemap_delta(&encoded).unwrap(), entries);
+    }
+    assert!(decode_tilemap_delta(&[]).is_err());
+    assert!(decode_tilemap_delta(&[3, 0, 0]).is_err());
     assert_eq!(encode_zero_skip(&[]).unwrap(), [0]);
     assert_eq!(
         encode_zero_skip(&[1, 0, 0, 0, 2, 0, 0]).unwrap(),

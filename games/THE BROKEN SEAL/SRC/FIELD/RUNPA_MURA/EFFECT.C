@@ -55,15 +55,6 @@ struct FieldEffect *Effect_Create(s32 x, s32 y, s32 z, s32 type)
     return NULL;
 }
 
-void Effect_Move(union FieldObject *object)
-{
-    object->effect.x += object->effect.velocity_x;
-    object->effect.y += object->effect.velocity_y;
-    object->effect.z += object->effect.velocity_z;
-    object->effect.scale_x += object->effect.scale_rate_x;
-    object->effect.scale_y += object->effect.scale_rate_y;
-    object->effect.sprite->rotation += object->effect.spin;
-}
 
 /*
  * The motion scripts a spawn chooses from. Each holds the effect for its

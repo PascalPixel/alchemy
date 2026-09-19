@@ -53,6 +53,7 @@
 #define SceneData_SelectTableB91cByRuntimeSelector Func_020027a0
 
 #include "FIELD_EFFECT.H"
+#define OverlayObject_IntegrateVelocities Effect_Move
 #include "STAGED_ACTOR.H"
 #include "SPAWN_CONFIGURED_EFFECT.H"
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
@@ -1028,16 +1029,6 @@ u8 *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z, s32 kind)
         result = 0;
     }
     return result;
-}
-
-void OverlayObject_IntegrateVelocities(union FieldObject *object)
-{
-    object->effect.x += object->effect.velocity_x;
-    object->effect.y += object->effect.velocity_y;
-    object->effect.z += object->effect.velocity_z;
-    object->effect.scale_x += object->effect.scale_rate_x;
-    object->effect.scale_y += object->effect.scale_rate_y;
-    object->effect.sprite->rotation += object->effect.spin;
 }
 
 void SceneState_SetValue8Mode66(void)

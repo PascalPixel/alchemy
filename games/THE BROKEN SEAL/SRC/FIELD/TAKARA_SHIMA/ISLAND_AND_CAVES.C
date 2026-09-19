@@ -83,6 +83,7 @@
 
 #include "STAGED_ACTOR.H"
 #include "FIELD_EFFECT.H"
+#define OverlayObject_IntegrateVelocities Effect_Move
 
 /* Integrate position, velocity, rate and sprite angle for one scene effect.
    Signed division preserves decay toward zero for negative Z velocity. */
@@ -1022,16 +1023,6 @@ u8 *SpawnMode15Effect(s32 x, s32 y, s32 z, s32 kind)
         return object;
     }
     return 0;
-}
-
-void OverlayObject_IntegrateVelocities(union FieldObject *object)
-{
-    object->effect.x += object->effect.velocity_x;
-    object->effect.y += object->effect.velocity_y;
-    object->effect.z += object->effect.velocity_z;
-    object->effect.scale_x += object->effect.scale_rate_x;
-    object->effect.scale_y += object->effect.scale_rate_y;
-    object->effect.sprite->rotation += object->effect.spin;
 }
 
 /* Deliberate no-op callback. */

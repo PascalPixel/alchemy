@@ -68,7 +68,8 @@ AlchemyC_020000a0:
 	.space 0x62
 	.2byte 0x0000
 AlchemyC_02000104:
-	.space 0x38
+	.space 0x36
+	.2byte 0x0000
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

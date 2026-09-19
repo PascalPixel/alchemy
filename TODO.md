@@ -8,20 +8,63 @@ that finishes it.
 
 ### ☀️ 60%
 
+- Prefer never-drafted unknown; when that pool is too small for 60%, first-try
+  non-Stubborn draft_c / overlay virgin. Skip Far veneers and asm-manifest
+  owners (C there does not raise DONE). Bounce at 10 minutes.
+
 Reach 60% of the fixed executable inventory. Read the current verified count
 with `make progress`; do not maintain a second score in this task list.
 
-- Recheck and adopt what the stopped recovery run found. Exact:
-  `main:080fa514` (72 bytes) and `main:08092878` (172 bytes). Exact at 54 bytes
-  each: `resource_39e:02000104` and `resource_3c9:02000104`, the `Effect_Move`
-  family; eleven more copies differ by one halfword, so the family wants one
-  shared source with instances.
+- On `cursor/tbs-to-60`, `Effect_Move` is adopted. Agents: if an owner is not
+  exact inside a 10-minute window, park it under Stubborn and switch.
+### Stubborn
+- `main:08016f38` FlashTimerIntr (36 B) / `main:08016f5c` SetFlashTimerIntr (56 B) — TLA game gcc 2.96 emits push{lr}/pop{pc} for branched volatile body; ROM is leaf bx lr. TBS twin is on AGBCC_SOURCES (main:080069a4); TLA addresses not yet in TLA_AGBCC_SOURCES. Needs user-authorized agbcc family membership; bounce.
+ (hard-pass later)
+- `main:08017500` RunFlashEraseVerifier (24 B) — TLA route emits inline `mov lr,r1`+0xF800 / `pop {pc}` vs TBS-inherited `bl _call_via_r1` / `pop {r1}; bx r1` (instruction-selection / interwork route wall); bounce.
+- `main:081c0f70` Audio_SetWorkPairB (20 B) — allocation-uncovered (ldr/str via r2/r0 vs r3); bounce. Twin `main:081c0fac` same class.
+- `main:081c332c` Runtime_CallWorkEntryWithArgs (20 B) — TLA emits pop {pc} vs ref pop {r0}; bx r0; bounce.
+- `main:081c0fd0` AudioCommand_GetStateByte (12 B) — allocation-uncovered (ldrb via r0 vs r3); bounce.
+- `main:0802d400` Curve_LookupSampleByTableReversed (20 B) — scheduling-floor (ldr/lsls order); bounce.
+- `main:080ebe94` EffectSlot_SetPosition (18 B) — 1 halfword off; bounce.
+- `main:08013300` Resource_GetTableEntry (12 B) — instruction-selection wall; bounce.
+- Prefer never-drafted TLA regions over near-miss halfword floors.
+Parked for a stronger model. Agents must not burn a 10-minute window here.
+- `main:081c342c` Audio_EmptyCallback (2 B) — scores exact with `--size 2`, but lies outside audited main executable ranges in metrics/executable.json; bounce until ranges include it.
+- `main:0802d2b0` Curve_StepAtDifferencePosition (48 B) — scheduling-floor on TLA; bounce. (LerpTwoSamples / LerpTwoSamplesB / StepAtSummedPosition adopted via TLA `pop {pc}` spelling.)
+- `main:080fa514` (72 B), `main:08092878` (172 B) — still non-exact.
+- `resource_3bd:020013f8` (6220 B) — scheduling-floor, 2 halfwords.
+- Overlay `0809a65c` `do{}while(0)` copies; `SpawnConfiguredEffect` compiler gap.
+- `main:080f9f6c` (512 B, TBS) — surveyed-unmeasured never-drafted; first-try draft does not compile; bounce.
+- `main:0808f498` (148 B) — surveyed-unmeasured gap-continuation; first-try draft compiles but many differing halfwords (not exact); bounce.
+- `main:08097c3c` (836 B) — surveyed-unmeasured never-drafted `compiler_output`; first-try psynergy draft fails to compile (subscripted non-pointer); bounce.
+- Recorded `copy_versus_rematerialise` / `instruction-selection` walls — stop.
+- TLA Venus `resource_64d:02000510` — lifter repair required (see below).
+- TLA field-operand floors `08025bb4` / `08025c5c` / `08025f9c` — already parked.
+- TLA `script-interpreter-control` beyond `main:08024c50` — layout/bindings
+  differ from TBS; do not thrash WaitForEvent at wrong addresses.
+- `Effect_Move` shared unit is adopted on `cursor/tbs-to-60` (24 overlay
+  instances). Keep taking fresh twins / named-no-source owners that score
+  exact quickly; if not exact inside a 10-minute window, park under Stubborn
+  and switch owners.
 - Rebuild coverage with `make coverage`, then rank unresolved owners from it,
   twins of exact owners first.
-- Recount the owners still parked because their only match needed a
-  scheduling trick. The five overlay copies of `0809a65c` still hold a
-  `do { } while (0)` barrier. `SpawnConfiguredEffect` (23 copies) stays a
-  recorded compiler gap unless new evidence reopens it.
+- `main:080f9a30` SoundNote_Detach (30 B) — retired-from-C allocation wall (note stays in r0; next reg reused for zero); raw already documents no ordinary C spelling.
+- `main:08021e28` (32 B) — scheduling-floor, 2 halfwords; bounce.
+- `main:08029274` (80 B) — scheduling-floor, 2 halfwords; bounce.
+- `main:080a9d3c` (72 B) — instruction-selection wall; bounce.
+- `resource_382:02001090` ActorDraw_SetupActorSceneCells twin (172 B) — equivalent to `resource_385:02000c1c`, but instance must place every `actor-motion-event-scene` member; bounce until full resource_382 map exists.
+- `main:080fa514` (72 B) — still many differing halfwords (not exact).
+- `main:08092878` (172 B) — still many differing halfwords (not exact).
+- `resource_3bd:020013f8` FieldScene_RunExtendedActorPresentation (6220 B) —
+  scheduling-floor, 2 halfwords (arg load order for `Func_02003d20(0,1)`);
+  no established repair.
+- Overlay copies of `0809a65c` with `do { } while (0)` barriers; leave parked.
+- `SpawnConfiguredEffect` (23 copies) — recorded compiler gap.
+- `main:0800383c`–`main:08003a3c` family (~129 B each) — scheduling-floor, 2 halfwords each; bounce.
+- Allocation / instruction-selection walls already labeled
+  `copy_versus_rematerialise` or `instruction-selection` (e.g.
+  `main:080b6d30`, `main:080b6e7c`, `resource_380:02004260`,
+  `resource_3af:02001db0`) — do not respell.
 
 ### Reconstruct The Lost Age
 
@@ -30,17 +73,11 @@ and 1,043,350 across all 114 overlays. Grow verified source coverage against
 that fixed inventory; its denominator is not a claim of a complete TLA build.
 Credit only ranges meeting [COMPLETION](.agents/COMPLETION.md).
 
-- Close the field-script operand module at `08025b58–08026320` using TBS's
-  `FIELD/COMMON/SCRIPT/OPERANDS.C`. A bounded cross-game probe reproduced
-  38 complete functions (1,820 bytes); three 2-halfword scheduling differences
-  remain at `08025bb4` (46 bytes), `08025c5c` (46), and `08025f9c` (52).
-  The three dispatchers bind their handler table to `0802f2dc`, independently
-  read from their reference literal pools. Five ordinary source hypotheses
-  did not close the scheduling differences; do not repeat them or change
-  compiler flags. Swapped comparison operands, explicit loaded temporaries,
-  direct Boolean assignment, in-place input narrowing, and switch dispatch
-  were tested. Candidate and results are under `out/field-operands-*`.
-  Nothing from this probe is adopted or credited yet.
+- Field-script operands at `08025b58–08026320`: 38 exact owners (1,820 bytes)
+  adopted as `tla-script-operands` from `FIELD/COMMON/SCRIPT/OPERANDS.C`.
+  Three 2-halfword scheduling floors remain uncredited at `08025bb4` (46),
+  `08025c5c` (46), and `08025f9c` (52); do not repeat the five parked source
+  hypotheses or change compiler flags. They stay in the C for layout only.
 
 - Venus approach event `resource_64d:02000510` has a reviewed 5,404-byte extent.
   Its loaded reference ends at `02009a2c`, including the last literal. The

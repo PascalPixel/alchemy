@@ -66,7 +66,7 @@ void Func_080cd52c(void);
 void Func_080d6888(s32 set, s32 object, s32 group, s32 slot, s32 value);
 void Func_080e0524(s32 id, void *dst, s32 arg2, s32 arg3);
 void Func_080e3908(void *ent, s32 arg1, s32 arg2);
-void Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
+s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 void Func_080f9010(s32 id);
 
 /* Only the m2c spellings this draft actually uses. */

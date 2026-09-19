@@ -47,6 +47,12 @@ another's. `alchemy score --unit <unit-id> --all-instances` proves every owner
 in every image; parking one member of an instance parks that whole instance. A
 unit whose `data` record links its tables into one listing has no instances.
 
+An exact overlay unit may also declare a `main` instance. It must provide its
+own explicit imports, every registered member placement and the same shared
+source; no overlay-address fallback or overlay compiler gaps enter that link.
+Main-image compilation and verification use those placements. Undeclared
+main/overlay source sharing remains an error.
+
 Run `alchemy inspect <owner> --siblings` before and after adopting any owner.
 Every binding-equivalent twin it lists joins the same translation unit as an
 instance in the same batch; `alchemy adopt`, `alchemy overlay adopt` and

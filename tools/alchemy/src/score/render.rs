@@ -14,7 +14,7 @@ use crate::score::{
     triage::{classify, classify_with_topology},
 };
 use psynergy::compare::{
-    differing_offsets,
+    differing_offsets, edit_distance,
     insns::{align_streams, gas_function_insns},
     topology::{self, Comparison},
 };
@@ -464,6 +464,17 @@ fn render_bytes(
     let playbook = residual.class.playbook().unwrap_or("smart-queue");
     let next = residual.class.next_command();
     let mut out = format!("candidate={} reference={} differing_halfwords={}\ncompile={compile}\ntopology={}\nclass={class} wrong_instructions={wrong}\ntriage={class} playbook={playbook}\nnext={next}\n", actual.len(), expected.len(), differing.len(), topology.summary());
+    let edits = edit_distance(&actual, &expected, 2);
+    let units = actual.len().max(expected.len()).div_ceil(2);
+    let similarity = if units == 0 {
+        1.0
+    } else {
+        1.0 - edits as f64 / units as f64
+    };
+    out.push_str(&format!(
+        "binary_similarity={:.6}% halfword_edits={edits} comparison_halfwords={units}\n",
+        similarity * 100.0
+    ));
     for hint in &residual.facts.repair_hints {
         out.push_str(&format!(
             "repair_hint={} playbook={} detail={}\n",

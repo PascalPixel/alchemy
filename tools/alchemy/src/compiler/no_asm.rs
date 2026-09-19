@@ -2,11 +2,67 @@
 
 use crate::compiler::plan::direct_preprocessor_command;
 use regex::{Captures, Regex};
+use sha2::{Digest, Sha256};
 use std::fs;
 use std::io;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::sync::OnceLock;
+
+// The reviewed DMA body is the sole C assembly construct admitted here. Its
+// identity includes register constraints, instructions, operands and clobbers.
+// Compiler flags and ordinary caller C remain subject to the existing policy.
+const DMA_HEADER: &str = "games/THE BROKEN SEAL/INCLUDE/DMA.H";
+const DMA_SOURCE: &str = include_str!(concat!(
+    env!("CARGO_MANIFEST_DIR"),
+    "/../../games/THE BROKEN SEAL/INCLUDE/DMA.H"
+));
+const DMA_BODY_SHA256: &str = "dcc93030ed9f2fc601341bc4a7f350aff8ff772625e707c246004d800cfc8fcc";
+
+fn source_tokens(text: &str) -> Vec<regex::Match<'_>> {
+    static TOKENS: OnceLock<Regex> = OnceLock::new();
+    regex(&TOKENS, r#"(?ms)//[^\n]*|/\*.*?\*/|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[A-Za-z_][A-Za-z0-9_]*|[0-9]+|[^\s]"#)
+        .find_iter(text)
+        .filter(|token| !token.as_str().starts_with("//") && !token.as_str().starts_with("/*"))
+        .collect()
+}
+
+fn dma_body() -> Option<&'static [String]> {
+    static BODY: OnceLock<Option<Vec<String>>> = OnceLock::new();
+    BODY.get_or_init(|| {
+        let start = DMA_SOURCE.find("static __inline__")?;
+        let end = DMA_SOURCE.rfind('}')? + 1;
+        let tokens: Vec<String> = source_tokens(&DMA_SOURCE[start..end])
+            .iter()
+            .map(|token| token.as_str().to_owned())
+            .collect();
+        let hash = format!("{:x}", Sha256::digest(tokens.join("\n").as_bytes()));
+        (hash == DMA_BODY_SHA256).then_some(tokens)
+    })
+    .as_deref()
+}
+
+fn mask_dma_body(text: &str) -> String {
+    let Some(body) = dma_body() else {
+        return text.into();
+    };
+    let tokens = source_tokens(text);
+    let mut bytes = text.as_bytes().to_vec();
+    for window in tokens.windows(body.len()) {
+        if window
+            .iter()
+            .zip(body)
+            .all(|(token, expected)| token.as_str() == expected)
+        {
+            for byte in &mut bytes[window[0].start()..window[window.len() - 1].end()] {
+                if *byte != b'\n' {
+                    *byte = b' ';
+                }
+            }
+        }
+    }
+    String::from_utf8(bytes).expect("only complete DMA token spans are masked")
+}
 
 const ABI: &str = "naked interrupt interrupt_handler isr long_call short_call pcs target target_clones regparm stdcall fastcall";
 
@@ -53,8 +109,17 @@ fn forbidden(word: &str, attribute: bool) -> Option<String> {
 }
 
 pub fn find_forbidden(file: &str, text: &str) -> Vec<Finding> {
+    scan_forbidden(file, text, Path::new(file).ends_with(DMA_HEADER))
+}
+
+fn scan_forbidden(file: &str, text: &str, admit_dma: bool) -> Vec<Finding> {
     static TOKENS: OnceLock<Regex> = OnceLock::new();
-    let code = code_only(text);
+    let text = if admit_dma {
+        mask_dma_body(text)
+    } else {
+        text.into()
+    };
+    let code = code_only(&text);
     let mut findings = Vec::new();
     let (mut depth, mut pending, mut line, mut end) = (0usize, false, 1usize, 0usize);
     for matched in regex(&TOKENS, r"[A-Za-z_][A-Za-z0-9_]*|[()]").find_iter(&code) {
@@ -111,7 +176,7 @@ pub fn find_named_source_tool_leaks(file: &str, text: &str) -> Vec<Finding> {
 }
 
 pub fn find_preprocessed(label: &str, text: &str) -> Vec<Finding> {
-    let mut findings = find_forbidden(label, text);
+    let mut findings = scan_forbidden(label, text, true);
     for item in &mut findings {
         let marker = text
             .lines()
@@ -174,7 +239,7 @@ pub fn expanded_forbidden(root: &Path, source: &Path) -> Result<String, String> 
         return Err(format!("{program} failed: {}", detail.trim()));
     }
     let text = fs::read_to_string(&output).map_err(|error| error.to_string())?;
-    Ok(find_forbidden(&output.to_string_lossy(), &text)
+    Ok(find_preprocessed(&output.to_string_lossy(), &text)
         .into_iter()
         .map(|finding| format!("{}:{}:expanded", finding.token, finding.line))
         .collect::<Vec<_>>()
@@ -235,6 +300,36 @@ pub fn self_test() -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn reviewed_dma_is_admitted_only_as_the_complete_shared_body() {
+        assert!(dma_body().is_some());
+        assert!(find_forbidden(DMA_HEADER, DMA_SOURCE).is_empty());
+        assert!(!find_forbidden("caller.c", DMA_SOURCE).is_empty());
+        assert!(find_preprocessed("expanded", DMA_SOURCE).is_empty());
+        for changed in [
+            DMA_SOURCE.replace("stmia", "ldmia"),
+            DMA_SOURCE.replace("r0", "r4"),
+            DMA_SOURCE.replace("#12", "#8"),
+            DMA_SOURCE.replace("\"memory\", \"cc\"", "\"memory\""),
+            DMA_SOURCE.replace("register u32 src", "volatile register u32 src"),
+        ] {
+            assert!(!find_forbidden(DMA_HEADER, &changed).is_empty());
+            assert!(!find_preprocessed("expanded", &changed).is_empty());
+        }
+    }
+
+    #[test]
+    fn dma_admission_does_not_hide_extra_assembly_or_abi_attributes() {
+        let extra = format!(
+            "{}\nvoid f(void) {{ __asm__(\"nop\"); }}\nvoid g(void) __attribute__((naked));",
+            DMA_SOURCE
+        );
+        assert_eq!(find_forbidden(DMA_HEADER, &extra).len(), 2);
+        assert_eq!(find_preprocessed("expanded", &extra).len(), 2);
+        let standalone = "register unsigned int src __asm__(\"r0\");";
+        assert_eq!(find_preprocessed("expanded", standalone).len(), 1);
+    }
 
     #[test]
     fn raw_escape_hatches() {

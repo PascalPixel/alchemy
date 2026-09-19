@@ -19,6 +19,8 @@ struct GameState {
     u8 unknown_000[0x1e0];
     s16 scene;
     s16 entrance;
+    u8 unknown_1e4[0x67];
+    u8 battle_rule_24b;
 };
 
 extern struct GameState gGameState;

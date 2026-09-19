@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "DMA.H"
 
 #define VramBlock_LoadCached Func_08003fa4
 
@@ -7,54 +8,44 @@ struct VramBlockCacheEntry {
     u16 offset;
 };
 
-struct DmaChannelVram {
-    const void *source;
-    void *destination;
-    u32 control;
-};
+extern struct VramBlockCacheEntry Data_03001b10[];
 
 s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source)
 {
     struct VramBlockCacheEntry *entries =
-        (struct VramBlockCacheEntry *)0x03001b10;
-    volatile struct DmaChannelVram *dma =
-        (volatile struct DmaChannelVram *)0x040000d4;
+        Data_03001b10;
     struct VramBlockCacheEntry *entry;
     s32 offset;
-
-    if (slot > 95 || size > 0x2000) {
-        return 0;
-    }
+    void *destination;
 
     entry = &entries[slot];
+    if (slot > 95)
+        return 0;
+    if (size > 0x2000)
+        return 0;
     if (entry->size > 16) {
-        if (entry->size == size) {
-            offset = entry->offset;
-        } else {
+        if (entry->size != size) {
             Func_08003f3c(slot);
             offset = Func_08003e58(slot, size);
+        } else {
+            offset = entry->offset;
         }
     } else {
         offset = Func_08003e58(slot, size);
     }
 
-    if (offset == -1) {
-        return 0;
-    }
-
-    entry->size = size;
-    entry->offset = offset;
-    if (source != 0) {
-        void *destination = (void *)(0x06010000 + offset);
-
-        if (source == (const void *)-1) {
-            Func_080072f0(destination, size, source, 0x03000164);
-        } else {
-            dma->source = source;
-            dma->destination = destination;
-            dma->control = (size >> 2) | 0x84000000;
+    if (offset != -1) {
+        destination = (void *)(0x06010000 + offset);
+        entry->size = size;
+        entry->offset = offset;
+        if (source != 0) {
+            if (source == (const void *)-1) {
+                ((void (*)(void *, u32))0x03000164)(destination, size);
+            } else {
+                Dma_Set(source, destination, (size >> 2) | 0x84000000, (volatile u32 *)0x040000d4);
+            }
         }
+        return (u32)offset >> 5;
     }
-
-    return (u32)offset >> 5;
+    return 0;
 }

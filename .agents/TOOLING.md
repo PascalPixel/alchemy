@@ -48,7 +48,7 @@ responsibilities in another wrapper or registry.
 | --- | --- |
 | `alchemy extract` | Resolve an owner and extract its reference bytes under ignored `out/`. |
 | `alchemy inspect` | Resolve project call sites and symbols; `--asm` adds annotated owner disassembly; `--siblings` lists relocation-masked twins across images with status and binding equivalence. |
-| `alchemy score` | Compile a candidate or whole declared unit with the approved route and compare its complete owner, including bindings and overlay serialization; `--unit ID --instance IMAGE \| --all-instances` scores unit instances. It prints the scored owner's twin count. |
+| `alchemy score` | Compile a candidate or whole declared unit with the approved route and compare its complete owner, including bindings and overlay serialization; `--unit ID --instance IMAGE \| --all-instances` scores unit instances, including explicitly declared main-image placements. It prints the scored owner's twin count and aligned halfword binary similarity (see [COMPLETION](COMPLETION.md)). |
 | `alchemy match` | Resolve an owner, obtain a decoder-named repair, then compile and score bounded Psynergy alternatives under project policy. `--acceptance-test` checks the five catalog fixtures. |
 | `alchemy adopt` | Verify and install a standalone overlay candidate; main integration uses `alchemy check integrate`. |
 | `alchemy unit` | `scaffold` declares a main unit; `flatten` consolidates a verified overlay under project ownership. |
@@ -69,6 +69,11 @@ disassembly is `alchemy inspect OWNER --asm`; the old `alchemy diff` is
 generation and reading as above. Historical dossiers keep their original
 command transcripts; they are not instructions to resurrect aliases. No retired
 TypeScript entry points or invented family or wave commands.
+
+The TLA owner check also rebuilds every overlay with credited retained assembly,
+including those without C owners, and records assembly credit only after the
+complete overlay equals its canonical ROM image. It does not claim a complete
+TLA ROM rebuild.
 
 Overlay scoring selects the game explicitly: `alchemy score RESOURCE:ADDRESS
 --target tla` reads TLA's register, reviewed boundaries and canonical English

@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "FIELD_EVENT.H"
 
 #define FieldScene_RunScene37aSequenceH Func_02001ca8
 
@@ -54,8 +54,8 @@ void Func_020048f6();
 void Func_020048f6_a();
 void Func_020048fe();
 void Func_02004900();
-u8 * Func_02004902();
-u8 * Func_02004902_a();
+struct FieldActor *Func_02004902();
+void Func_02004902_a();
 void Func_0200490e();
 void Func_0200491e();
 void Func_0200491e_a();
@@ -74,7 +74,7 @@ void Func_020049cc();
 void Func_020049de();
 void Func_020049e4();
 void Func_020049f2();
-s32 Func_020049fc();
+struct FieldActor *Func_020049fc();
 void Func_020049fe();
 void Func_02004a06();
 void Func_02004a2a();
@@ -132,12 +132,12 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 void FieldScene_RunScene37aSequenceH(void)
 {
     u32 i;
-    u8 *rec8;
+    struct FieldActor *actor;
     s32 record;
     s32 base5_8010;
     s32 base5_0;
     s32 v5;
-    u8 *p7;
+    struct FieldSprite *sprite;
 
     if (Value1(Func_02004668, 0x811) == 0) {
     } else {
@@ -200,30 +200,30 @@ void FieldScene_RunScene37aSequenceH(void)
         Func_02004966(base5_8010, 0);
         Func_0200492e(0, 3);
         Func_020048dc(60);
-        rec8 = Func_02004902(0);
+        actor = Func_02004902(0);
         Call2(Func_020049b4, 0x9999, 0x1333);
         Call4(Func_020049cc, 0x11f0000, -1, 0x720000, 1);
         Call3(Func_02004948, 0, 0x120, 120);
         Func_0200490e(20);
         Call3(Func_020049c2, 0, 0xc000, 20);
         Call3(Func_0200494c, 0, 0x4ccc, 0x2666);
-        rec8[90] &= 254;
-        rec8[85] = 0;
+        actor->unknown_5a &= 254;
+        actor->motion_flags = 0;
         Func_02004a66(201);
         Call2(Func_020049c8, 0, 0x100);
-        p7 = *(s32 *)((s32)rec8 + 80);
+        sprite = actor->sprite;
         base5_0 = 0;
-        p7[38] = 0;
+        sprite->flags = 0;
         do {
-            *(s32 *)((s32)rec8 + 12) += 0x3333;
-            Call1((void (*)())Func_02004902_a, 1);
+            actor->y.fixed += 0x3333;
+            Call1(Func_02004902_a, 1);
             base5_0++;
         } while (base5_0 != 120);
         v5 = 0;
         Func_02004a94(190);
         do {
-            *(s32 *)((s32)rec8 + 12) += 0x1999;
-            *(s32 *)((s32)p7 + 24) += -0x400;
+            actor->y.fixed += 0x1999;
+            sprite->scale += -0x400;
             Func_02004926(1);
             v5++;
         } while (v5 != 60);
@@ -235,31 +235,31 @@ void FieldScene_RunScene37aSequenceH(void)
         Func_020049c0(20);
         Call3(Func_02004a74, 16, 0xc000, 20);
         Call3(Func_020049fe, 16, 0x4ccc, 0x2666);
-        rec8 = Value1(Func_020049fc, 16);
+        actor = Func_020049fc(16);
         base5_0 = 0;
-        rec8[90] &= 254;
-        rec8[85] = 0;
+        actor->unknown_5a &= 254;
+        actor->motion_flags = 0;
         Func_02004b20(201);
         Call2(Func_02004a82, 16, 0x100);
-        p7 = *(s32 *)((s32)rec8 + 80);
-        p7[38] = 0;
+        sprite = actor->sprite;
+        sprite->flags = 0;
         do {
-            *(s32 *)((s32)rec8 + 12) += 0x3333;
+            actor->y.fixed += 0x3333;
             Func_020049ba(1);
             base5_0++;
         } while (base5_0 != 120);
         v5 = 0;
         Func_02004b4c(190);
         do {
-            *(s32 *)((s32)rec8 + 12) += 0x1999;
-            *(s32 *)((s32)p7 + 24) += -0x400;
+            actor->y.fixed += 0x1999;
+            sprite->scale += -0x400;
             Func_020049de(1);
             v5++;
         } while (v5 != 60);
         Func_02004a9c(16, 0, 0);
         Func_02004a52(80);
-        *(s32 *)((*(s32 *)0x03001ebc + 0x1c0)) = 0x203;
-        *(s32 *)((*(s32 *)0x03001ebc + 0x1c8)) = 24;
+        *(s32 *)((*(u8 **)0x03001ebc + 0x1c0)) = 0x203;
+        *(s32 *)((*(u8 **)0x03001ebc + 0x1c8)) = 24;
         Func_02004bb4();
         Func_02004bc0();
         Func_02004ba0(0, 0);

@@ -1,41 +1,40 @@
-#include "AUDIO_ENGINE_SYMBOLS.H"
-#include "TYPES.H"
+#include "AUDIO_ENGINE.H"
 
 #define MusicPlayer_ResetActiveTracks Func_080fa514
 
-void AudioCommand_InvokeSlot35(u8 *track);
+void AudioCommand_InvokeSlot35(void *block);
 
 static __inline__ s32 masked_track_status(s32 mask, s32 status)
 {
     return mask & status;
 }
 
-void MusicPlayer_ResetActiveTracks(u8 *player)
+void MusicPlayer_ResetActiveTracks(struct SoundPlayer *player)
 {
-    s32 count = player[8];
-    u8 *track = *(u8 **)(player + 44);
+    s32 count = player->track_count;
+    struct SoundTrack *track = player->tracks;
 
     if (count > 0) {
         s32 active_mask = 0x80;
 
         do {
             register s32 playing_mask;
-            s32 status = track[0];
+            s32 status = track->flags;
 
             if (masked_track_status(active_mask, status) != 0) {
                 playing_mask = 0x40;
 
                 if (masked_track_status(playing_mask, status) != 0) {
                     AudioCommand_InvokeSlot35(track);
-                    track[0] = active_mask;
-                    track[15] = 2;
-                    track[19] = playing_mask;
-                    track[25] = 22;
-                    track[36] = 1;
+                    track->flags = active_mask;
+                    track->bend_range = 2;
+                    track->volume_scale = playing_mask;
+                    track->lfo_speed = 22;
+                    track->voice.kind = 1;
                 }
             }
             count--;
-            track += 80;
+            track++;
         } while (count > 0);
     }
 }

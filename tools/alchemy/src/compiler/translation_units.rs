@@ -21,7 +21,14 @@ struct ReviewedRegion {
     span_bytes: usize,
 }
 pub fn reviewed_overlay_spans(root: &Path) -> Result<BTreeMap<SourceOwner, usize>, String> {
-    let path = root.join("games/THE BROKEN SEAL/semantic/regions.json");
+    reviewed_overlay_spans_for_game(root, "games/THE BROKEN SEAL")
+}
+
+pub fn reviewed_overlay_spans_for_game(
+    root: &Path,
+    game_dir: &str,
+) -> Result<BTreeMap<SourceOwner, usize>, String> {
+    let path = root.join(game_dir).join("semantic/regions.json");
     let document: ReviewedRegions = crate::compiler::build_io::read_json(path)?;
     let mut spans = BTreeMap::new();
     for region in document.manual_regions {
@@ -291,7 +298,15 @@ impl TranslationUnit {
     /// An instance links this exact object into another overlay: it places
     /// every member once, registered under the member's name, at its
     /// canonical extent or that extent plus one trailing alignment halfword.
+    #[cfg(test)]
     fn validate_instances(&self, names: &SourcePaths) -> Result<(), String> {
+        self.validate_instances_with_neighbors(names, &BTreeMap::new())
+    }
+    fn validate_instances_with_neighbors(
+        &self,
+        names: &SourcePaths,
+        neighbors: &BTreeMap<String, BTreeSet<u32>>,
+    ) -> Result<(), String> {
         if self.instances.is_empty() {
             return Ok(());
         }
@@ -318,13 +333,21 @@ impl TranslationUnit {
             ));
         }
         for (image, instance) in &self.instances {
-            if image == "main" {
+            if image == "main"
+                && (!instance.compiler_gaps.is_empty()
+                    || self
+                        .absolute_symbols
+                        .keys()
+                        .any(|name| !instance.absolute_symbols.contains_key(name)))
+            {
                 return Err(format!(
-                    "{}: main-image instances are not supported yet",
+                    "{}: main instance needs explicit imports and no overlay compiler gaps",
                     self.id
                 ));
             }
-            if image == self.image() || SourceOwner::parse(&format!("{image}:02000000")).is_err() {
+            if image == self.image()
+                || (image != "main" && SourceOwner::parse(&format!("{image}:02000000")).is_err())
+            {
                 return Err(format!(
                     "{}: instance {image:?} is not another overlay resource",
                     self.id
@@ -381,7 +404,12 @@ impl TranslationUnit {
                 .map(|member| (member.address, member.extent))
                 .collect::<Vec<_>>();
             owners.sort_unstable();
-            validate_compiler_gaps(&self.id, &owners, &instance.compiler_gaps)?;
+            validate_compiler_gaps(
+                &self.id,
+                &owners,
+                &instance.compiler_gaps,
+                neighbors.get(image).unwrap_or(&BTreeSet::new()),
+            )?;
             for member in self.members_in(image) {
                 let owner = self.source_owner(image, member.address)?;
                 if names.registered_name(owner) != Some(member.name) {
@@ -559,6 +587,44 @@ impl TranslationUnit {
     pub fn exact(&self) -> bool {
         self.exact_owner_count() == self.owners.len()
     }
+    /// Place the shared source in the main image using the existing main
+    /// compiler and linker. Overlay addresses never fall back into this link.
+    pub fn main_placement(&self) -> Result<Option<Self>, String> {
+        if self.overlay.is_none() {
+            return Ok(Some(self.clone()));
+        }
+        let Some(instance) = self.instance("main") else {
+            return Ok(None);
+        };
+        let mut placed = self.clone();
+        for owner in &mut placed.owners {
+            let member = instance.owners.get(&owner.canonical_name).ok_or_else(|| {
+                format!(
+                    "{}: main instance is missing {}",
+                    self.id, owner.canonical_name
+                )
+            })?;
+            owner.address = member.address;
+            owner.extent = member.extent;
+        }
+        for symbol in &mut placed.local_symbols {
+            let member = instance.owners.get(&symbol.canonical_name).ok_or_else(|| {
+                format!(
+                    "{}: main instance is missing {}",
+                    self.id, symbol.canonical_name
+                )
+            })?;
+            symbol.address = member.address;
+            symbol.extent = member.extent;
+        }
+        placed.overlay = None;
+        placed.absolute_symbols = instance.absolute_symbols.clone();
+        placed.editions = instance.editions.clone();
+        placed.compiler_gaps.clear();
+        placed.data = None;
+        placed.instances.clear();
+        Ok(Some(placed))
+    }
     pub fn exact_owner_count(&self) -> usize {
         self.owners
             .iter()
@@ -681,6 +747,25 @@ impl TranslationUnits {
         let mut claimed = BTreeSet::new();
         let mut main_aliases = BTreeSet::new();
         let mut registers = BTreeMap::new();
+        // Complete validation below still checks every declaration and its
+        // production source. This index only lets adjacent exact units share
+        // a compiler-requested alignment boundary.
+        let mut neighbors: BTreeMap<String, BTreeSet<u32>> = BTreeMap::new();
+        for unit in &document.units {
+            if !unit.exact() {
+                continue;
+            }
+            neighbors
+                .entry(unit.image().to_owned())
+                .or_default()
+                .extend(unit.owners.iter().map(|owner| owner.address));
+            for (image, instance) in &unit.instances {
+                neighbors
+                    .entry(image.clone())
+                    .or_default()
+                    .extend(instance.owners.values().map(|owner| owner.address));
+            }
+        }
         for unit in &mut document.units {
             if !unit_id(&unit.id)
                 || !ids.insert(&unit.id)
@@ -791,12 +876,17 @@ impl TranslationUnits {
                 .iter()
                 .map(|owner| (owner.address, owner.extent))
                 .collect::<Vec<_>>();
-            validate_compiler_gaps(&unit.id, &owners, &unit.compiler_gaps)?;
+            validate_compiler_gaps(
+                &unit.id,
+                &owners,
+                &unit.compiler_gaps,
+                neighbors.get(unit.image()).unwrap_or(&BTreeSet::new()),
+            )?;
             if let Some(data) = unit.data {
                 validate_unit_data(unit, data)?;
             }
             unit.validate_absolute_symbols(unit.image(), &unit.absolute_symbols, names)?;
-            unit.validate_instances(names)?;
+            unit.validate_instances_with_neighbors(names, &neighbors)?;
             unit.validate_editions()?;
             for image in unit.instances.keys() {
                 for member in unit.owners_in(image) {
@@ -877,12 +967,14 @@ fn validate_compiler_gaps(
     unit: &str,
     owners: &[(u32, usize)],
     gaps: &[CompilerGap],
+    neighbors: &BTreeSet<u32>,
 ) -> Result<(), String> {
     let mut starts = BTreeSet::new();
     for gap in gaps {
-        let adjacent = owners.windows(2).any(|pair| {
-            pair[0].0.checked_add(pair[0].1 as u32) == Some(gap.start) && pair[1].0 == gap.end
-        });
+        let adjacent = owners
+            .iter()
+            .any(|owner| owner.0.checked_add(owner.1 as u32) == Some(gap.start))
+            && (owners.iter().any(|owner| owner.0 == gap.end) || neighbors.contains(&gap.end));
         if !adjacent
             || gap.end.checked_sub(gap.start) != Some(2)
             || gap.end & 3 != 0
@@ -969,6 +1061,26 @@ fn validate_production_state(
         }
     }
     for image in unit.instances.keys() {
+        if image == "main" {
+            for member in unit.owners_in(image) {
+                let owner = unit.source_owner(image, member.address)?;
+                if names.mapped_source_path(owner).as_deref() != Some(source)
+                    || root
+                        .join("games")
+                        .join(crate::compiler::routing::game_directory(&unit.game))
+                        .join("raw")
+                        .join(format!("{:08x}.s", member.address))
+                        .is_file()
+                {
+                    return Err(format!(
+                        "{}: {} main instance disagrees with production C ownership",
+                        unit.id,
+                        owner.id()
+                    ));
+                }
+            }
+            continue;
+        }
         let placeholders = overlay_placeholders(root, &unit.game, image)
             .map_err(|error| format!("{}: instance {image}: {error}", unit.id))?;
         if let Some(member) = unit
@@ -1013,7 +1125,13 @@ fn validate_production_state(
         })
         .transpose()?;
     let reviewed = if retained_overlay_candidate {
-        reviewed_overlay_spans(root)?
+        reviewed_overlay_spans_for_game(
+            root,
+            &format!(
+                "games/{}",
+                crate::compiler::routing::game_directory(&unit.game)
+            ),
+        )?
     } else {
         BTreeMap::new()
     };
@@ -1267,6 +1385,83 @@ mod tests {
     use super::*;
     use serde_json::json;
     #[test]
+    fn main_instance_keeps_one_source_and_requires_its_own_imports_and_ownership() {
+        let repository = Repository::new();
+        let mut unit = staged_actor();
+        unit["instances"]["main"] = json!({
+            "owners": {
+                FIND: {"address":"0x08010000", "extent":296},
+                REDRAW: {"address":"0x08010574", "extent":284}
+            },
+            "absolute_symbols": {TABLE: {"address":"0x08020000", "kind":"data"}}
+        });
+        for (address, name) in [("main:08010000", FIND), ("main:08010574", REDRAW)] {
+            repository.record(address, json!({"name":name,"source":STAGED_ACTOR}));
+        }
+        repository.units(json!([unit.clone()]));
+        let loaded = repository.load().unwrap().units.remove(0);
+        let main = loaded.main_placement().unwrap().unwrap();
+        assert_eq!(main.source, loaded.source);
+        assert_eq!(main.image(), "main");
+        assert_eq!(main.owners[0].address, 0x08010000);
+        assert_eq!(main.owners[1].extent, 284);
+        assert_eq!(main.absolute_symbols[TABLE].address, 0x08020000);
+        assert!(main.instances.is_empty());
+        unit["instances"]["main"]["absolute_symbols"] = json!({});
+        repository.units(json!([unit.clone()]));
+        assert!(repository
+            .load()
+            .unwrap_err()
+            .contains("main instance needs explicit imports"));
+        unit["instances"]["main"]["absolute_symbols"] =
+            json!({TABLE: {"address":"0x08020000", "kind":"data"}});
+        repository.units(json!([unit.clone()]));
+        repository.write("games/THE BROKEN SEAL/raw/08010000.s", "retained");
+        assert!(repository
+            .load()
+            .unwrap_err()
+            .contains("main instance disagrees with production C ownership"));
+        std::fs::remove_file(
+            repository
+                .0
+                .path()
+                .join("games/THE BROKEN SEAL/raw/08010000.s"),
+        )
+        .unwrap();
+        repository.record(
+            "main:08010000",
+            json!({"name":"WrongMember","source":STAGED_ACTOR}),
+        );
+        assert!(repository
+            .load()
+            .unwrap_err()
+            .contains("without one exact unit declaring every named placement"));
+    }
+
+    #[test]
+    fn compiler_fill_can_end_at_another_exact_unit_but_not_an_unknown_owner() {
+        let owners = [(0x02000104, 54)];
+        let gaps = [CompilerGap {
+            start: 0x0200013a,
+            end: 0x0200013c,
+        }];
+        assert!(validate_compiler_gaps("effect-move", &owners, &gaps, &BTreeSet::new()).is_err());
+        assert!(validate_compiler_gaps(
+            "effect-move",
+            &owners,
+            &gaps,
+            &BTreeSet::from([0x0200013c])
+        )
+        .is_ok());
+        assert!(validate_compiler_gaps(
+            "effect-move",
+            &[(0x02000104, 52)],
+            &gaps,
+            &BTreeSet::from([0x0200013c])
+        )
+        .is_err());
+    }
+    #[test]
     fn each_game_manifest_declares_only_its_own_units() {
         let work = tempfile::tempdir().unwrap();
         let empty = TranslationUnits::load_game(work.path(), CompilerTarget::Tla).unwrap();
@@ -1509,7 +1704,7 @@ mod tests {
                     "instance \"resource_38\" is not another overlay resource",
                     |unit| copy_instance(unit, "resource_38"),
                 ),
-                ("main-image instances are not supported yet", |unit| {
+                ("main instance needs explicit imports", |unit| {
                     copy_instance(unit, "main")
                 }),
                 ("main-image units cannot have instances yet", |unit| {

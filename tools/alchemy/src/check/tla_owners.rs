@@ -183,12 +183,16 @@ fn overlay_mismatches(
     root: &Path,
     rom: &CanonicalRom,
     owners: &[&ScoredOwner],
+    assembly_images: &[String],
 ) -> Result<Vec<String>, String> {
     let target = production_target(CompilerTarget::Tla);
     let mut by_overlay = BTreeMap::<String, Vec<&ScoredOwner>>::new();
     for scored in owners {
         let overlay = scored.owner.overlay_id().expect("overlay owner");
         by_overlay.entry(overlay).or_default().push(scored);
+    }
+    for image in assembly_images {
+        by_overlay.entry(image.clone()).or_default();
     }
     let mut mismatches = Vec::new();
     for (overlay, members) in by_overlay {
@@ -276,9 +280,22 @@ fn check(root: &Path, rom: &Path) -> Result<String, String> {
     let (main, overlays): (Vec<&ScoredOwner>, Vec<&ScoredOwner>) =
         owners.iter().partition(|scored| scored.owner.is_main());
     let mut mismatches = Vec::new();
-    if !overlays.is_empty() {
+    let tree = crate::coverage::tree::work_tree_at(root.to_path_buf());
+    let assembly = crate::coverage::pipeline::classify(&crate::coverage::pipeline::BuildOptions {
+        target: "tla-en".into(),
+        exact: &tree,
+        recon: None,
+    })?
+    .retained_overlay;
+    let assembly_images = assembly.keys().cloned().collect::<Vec<_>>();
+    if !overlays.is_empty() || !assembly_images.is_empty() {
         let canonical = CanonicalRom::from_file(rom, production_target(CompilerTarget::Tla))?;
-        mismatches.extend(overlay_mismatches(root, &canonical, &overlays)?);
+        mismatches.extend(overlay_mismatches(
+            root,
+            &canonical,
+            &overlays,
+            &assembly_images,
+        )?);
     }
     let mut compiled_units = BTreeMap::<String, String>::new();
     for scored in main {
@@ -334,7 +351,7 @@ fn check(root: &Path, rom: &Path) -> Result<String, String> {
             mismatches.join("\n")
         ));
     }
-    let credits = owners
+    let mut credits: Vec<_> = owners
         .iter()
         .map(|owner| crate::coverage::proof::Credit {
             image: owner.owner.overlay_id().unwrap_or_else(|| "main".into()),
@@ -344,6 +361,18 @@ fn check(root: &Path, rom: &Path) -> Result<String, String> {
             kind: "c".into(),
         })
         .collect();
+    let target = production_target(CompilerTarget::Tla);
+    for (image, spans) in assembly {
+        for span in spans {
+            credits.push(crate::coverage::proof::Credit {
+                source: target.overlay_assembly(&image),
+                image: image.clone(),
+                start: span.start,
+                end: span.end,
+                kind: "assembly".into(),
+            });
+        }
+    }
     crate::coverage::proof::write(
         root,
         "tla-en",
@@ -513,6 +542,35 @@ mod tests {
                 extent: 8,
             }]
         );
+    }
+
+    #[test]
+    fn assembly_only_overlays_cannot_escape_the_complete_image_check() {
+        let root = crate::compiler::routing::root();
+        let path = root.join("roms/tla-en.gba");
+        if !path.is_file() {
+            return;
+        }
+        crate::compiler::routing::prefer_installed_binutils();
+        let target = production_target(CompilerTarget::Tla);
+        let rom = CanonicalRom::from_file(&path, target).unwrap();
+        let image = "resource_653";
+        let reference = rom.overlay(image).unwrap();
+        let temp = tempfile::tempdir().unwrap();
+        let listing = temp.path().join(target.overlay_assembly(image));
+        std::fs::create_dir_all(listing.parent().unwrap()).unwrap();
+        std::fs::write(
+            &listing,
+            format!(".syntax unified\n.thumb\n.space {}\n", reference.len()),
+        )
+        .unwrap();
+        let mismatches = overlay_mismatches(temp.path(), &rom, &[], &[image.into()]).unwrap();
+        assert_eq!(
+            mismatches,
+            ["resource_653 differs from the ROM outside its C owners"]
+        );
+        std::fs::remove_file(listing).unwrap();
+        assert!(overlay_mismatches(temp.path(), &rom, &[], &[image.into()]).is_err());
     }
 
     #[test]

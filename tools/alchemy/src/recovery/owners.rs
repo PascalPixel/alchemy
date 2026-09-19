@@ -101,18 +101,11 @@ fn reviewed_spans(
     root: &Path,
     target: DecompTarget,
 ) -> Result<std::collections::BTreeMap<SourceOwner, usize>, String> {
-    use crate::compiler::routing::CompilerTarget;
     let register = root.join(target.game_dir()).join("semantic/regions.json");
-    match target.compiler {
-        CompilerTarget::Tbs => crate::compiler::translation_units::reviewed_overlay_spans(root),
-        CompilerTarget::Tla if !register.is_file() => Ok(Default::default()),
-        CompilerTarget::Tla => Err(format!(
-            "{}: reviewed regions of {} are not read yet; \
-             translation_units::reviewed_overlay_spans must take the game directory",
-            register.display(),
-            target.id
-        )),
+    if !register.is_file() {
+        return Ok(Default::default());
     }
+    crate::compiler::translation_units::reviewed_overlay_spans_for_game(root, target.game_dir())
 }
 
 /// `span_for` against one registered target's reviewed register and retained assembly.

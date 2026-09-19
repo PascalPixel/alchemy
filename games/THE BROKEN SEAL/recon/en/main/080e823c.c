@@ -96,7 +96,7 @@ void Func_080dbb24(s32 a, s32 b, s32 c);
 void *Func_08009030(s32 id);
 s32 Func_080022fc(s32 a, s32 b);
 void Func_08009020(void *object, s32 value);
-void Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
+s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 void Func_080030f8(s32 frames);
 void Func_080b5040(s32 a, s32 b, s32 c);
 void Func_080e0524(s32 id, void *dest, s32 a, s32 b);

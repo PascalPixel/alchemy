@@ -29,7 +29,6 @@ void Effect_Move(void *object);
 #define SceneData_GetTable95A0 Func_020004a4
 #define SceneData_GetTable95D8 Func_020004ac
 #define SceneData_GetTable97dc Func_02000f28
-#define ActorPresentation_SetupActorSceneCells Func_02000c1c
 #define ActorPresentation_RunActorModeOneThenZero Func_020004b4
 #define ActorPresentation_RunActor13AcceptanceDialogue Func_020007d4
 #define ActorPresentation_SetupActorEighteenAt312_304 Func_02000af0
@@ -1172,32 +1171,6 @@ void FieldScene_SetupWithDescriptor97AE(void)
     Func_02001692(120, 144, 10);
 }
 
-void ActorPresentation_SetupActorSceneCells(void)
-{
-    extern struct SceneWork_02000e90 *Data_03001ebc;
-
-    struct SceneActor_02000c1c *actor = Func_02001d28(0);
-    struct Presentation_02000c1c *record = actor->presentation;
-    u8 flags;
-
-    Func_02001de4(188);
-    Func_02001cd6(42, 33, 34, 16, 2, 2);
-    Func_02001ce6(42, 35, 36, 16, 2, 2);
-    Func_02001d3c(4);
-    Func_02001cfc(40, 33, 34, 16, 2, 2);
-    Func_02001d0c(40, 35, 36, 16, 2, 2);
-    Func_02001d62(4);
-    {
-        s32 mode = 3;
-        s32 value = 16;
-        Func_02001d30(33, 21, 2, 2, mode, value);
-    }
-    actor->state_23 &= ~1;
-    flags = record->flags;
-    flags |= 12;
-    record->flags = flags;
-    Func_02001738(64, 272, 11);
-}
 
 void ActorPresentation_SetupActorZeroForSceneTwelve(void)
 {

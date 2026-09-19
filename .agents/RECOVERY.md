@@ -121,6 +121,10 @@ Facts residuals have taught us:
   normalize branch targets out of the diff before comparing.
 - **An inert construct is a claim the compiler never supported.** A cast,
   store or block that changes nothing in the output is removed, not kept.
+- **Shared assembly tails can come from separate source branches.** Do not
+  pre-merge a common tail merely because it is shared in the final listing.
+  GCC may schedule each branch before a later pass merges them; source-level
+  merging changes that scheduling context. Compare the relevant pass dumps.
 - **Ordinary spellings first.** Signed `/` and `%` are ordinary C: GCC emits
   `__divsi3` and `__modsi3` calls, which the unit's `absolute_symbols` and the
   production link bind to the runtime veneers. A variable initialized to a
@@ -204,9 +208,11 @@ Consolidate related functions when the resulting compilation context is proven.
 Use `alchemy unit flatten --help` for complete-overlay consolidation.
 Compiler-generated inter-function alignment may be declared in an exact
 overlay unit's `compiler_gaps` as a two-byte `start`/`end` range between
-adjacent exact owners. The admitted assembler must emit those bytes in the
-preceding function section, and verification must compare them with the
-loaded reference before coverage counts them. Keep function extents unchanged;
+adjacent exact owners, including owners in separate units. Preserve the
+compiler-requested section alignment; the admitted assembler or native linker
+must emit the gap in the preceding function section, and verification must
+compare those emitted bytes with the loaded reference before coverage counts
+them. Never manufacture fill from reference bytes. Keep function extents unchanged;
 compiler fill is not handwritten or library assembly. Keep genuine assembly
 and data separate. Do not trade byte equality for tidiness or delay productive
 recovery for unrelated folder cleanup.

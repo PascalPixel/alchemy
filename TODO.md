@@ -117,8 +117,11 @@ like when it is done, then carry that standard to every module.
   four-halfword draft is kept in
   `games/THE BROKEN SEAL/recon/en/overlays/resource_3ab_c_0200013c.c`;
   removing the accumulator local, splitting both loads into temporaries and
-  viewing the options as homogeneous union slots leave the same two `sched2`
-  load-pair reversals.
+  viewing both records through fixed-point unions, using C89 `register`
+  declarations and fully prototyping the rate helpers leave the same two
+  `sched2` load-pair reversals. Hoisting target X, inline delta helpers and
+  algebraic subtraction forms regress. The three rate calls are distinct
+  overlay imports, so replacing them with `/` is not the original source.
 
 ## Maps and the 3D world
 

@@ -9,18 +9,18 @@ use crate::overlay::assembly::{
 };
 use crate::overlay::listing_rows;
 use crate::overlay::rom::CanonicalRom;
-use crate::targets::{decomp_target, DecompTarget};
+use crate::targets::{decomp_target, target_for, DecompTarget, DecompTargetId, TARGET_IDS};
 use serde::Deserialize;
 use serde_json::{json, Value};
 use std::path::{Path, PathBuf};
 use tempfile::NamedTempFile;
 
-const USAGE: &str =
-    "usage: alchemy coverage audit --target tbs-en|tla-en [--output out/...json] [--calibrate] [--data]";
+const USAGE: &str = "usage: alchemy coverage audit (--target TARGET | --all) [--output out/...json] [--calibrate] [--data]";
 
 #[derive(Default)]
 struct Options {
     target: Option<String>,
+    all: bool,
     output: Option<PathBuf>,
     calibrate: bool,
     help: bool,
@@ -66,6 +66,7 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
                 index += 1;
                 options.output = arguments.get(index).map(PathBuf::from);
             }
+            "--all" => options.all = true,
             "--calibrate" => options.calibrate = true,
             "--data" => options.data = true,
             "-h" | "--help" => options.help = true,
@@ -73,8 +74,8 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
         }
         index += 1;
     }
-    if options.target.is_none() && !options.help {
-        return Err(format!("missing --target\n{USAGE}"));
+    if !options.help && options.target.is_some() == options.all {
+        return Err(format!("choose exactly one of --target or --all\n{USAGE}"));
     }
     Ok(options)
 }
@@ -347,15 +348,21 @@ fn source_spans(source: &Path, image: &[u8], overlay: &str) -> Result<Vec<Execut
     }
     let half = |address: i64| {
         let offset = (address - OVERLAY_BASE) as usize;
-        u16::from_le_bytes([image[offset], image[offset + 1]])
+        image
+            .get(offset..offset + 2)
+            .map(|bytes| u16::from_le_bytes(bytes.try_into().unwrap()))
     };
     let callers = spans.clone();
     let mut leaves = std::collections::BTreeSet::new();
     for caller in callers.iter().filter(|span| span.kind == "thumb") {
         let mut at = caller.start;
         while at + 4 <= caller.end {
-            let high = half(at) as i32;
-            let low = half(at + 2) as i32;
+            let Some(high) = half(at).map(i32::from) else {
+                break;
+            };
+            let Some(low) = half(at + 2).map(i32::from) else {
+                break;
+            };
             if high & 0xf800 == 0xf000 && low & 0xf800 == 0xf800 {
                 let upper = high & 0x07ff;
                 let signed = if upper >= 0x0400 {
@@ -379,7 +386,9 @@ fn source_spans(source: &Path, image: &[u8], overlay: &str) -> Result<Vec<Execut
         let mut at = start;
         let mut pools = Vec::new();
         while at < start + 128 && directives.contains(&at) {
-            let instruction = half(at);
+            let Some(instruction) = half(at) else {
+                break;
+            };
             if instruction & 0xf800 == 0x4800 {
                 pools.push(((at + 4) & !3) + i64::from((instruction & 0xff) << 2));
             }
@@ -429,7 +438,9 @@ fn source_spans(source: &Path, image: &[u8], overlay: &str) -> Result<Vec<Execut
         }
         let mut at = start;
         while at < start + 128 && directives.contains(&at) {
-            let instruction = half(at);
+            let Some(instruction) = half(at) else {
+                break;
+            };
             at += 2;
             if instruction == 0x4770 {
                 spans.push(ExecutableSpan {
@@ -458,7 +469,7 @@ fn source_spans(source: &Path, image: &[u8], overlay: &str) -> Result<Vec<Execut
     }
     for pair in union.windows(2) {
         if pair[1].0 - pair[0].1 == 2
-            && (half(pair[0].1) == 0 || branch_targets.contains(&pair[0].1))
+            && (half(pair[0].1) == Some(0) || branch_targets.contains(&pair[0].1))
         {
             spans.push(ExecutableSpan {
                 start: pair[0].1,
@@ -914,6 +925,22 @@ pub fn run(root: &Path, arguments: &[String]) -> Result<String, String> {
     if options.help {
         return Ok(USAGE.into());
     }
+    if options.all {
+        if !options.data || options.calibrate || options.output.is_some() {
+            return Err(format!(
+                "--all requires --data and accepts no other mode\n{USAGE}"
+            ));
+        }
+        let canonical = [DecompTargetId::TbsEn, DecompTargetId::TlaEn];
+        let mut reports = Vec::with_capacity(TARGET_IDS.len());
+        for id in canonical
+            .into_iter()
+            .chain(TARGET_IDS.into_iter().filter(|id| !canonical.contains(id)))
+        {
+            reports.push(index::run(root, target_for(id))?);
+        }
+        return Ok(reports.join("\n"));
+    }
     let target = decomp_target(options.target.as_deref())?;
     if options.data {
         if options.calibrate || options.output.is_some() {
@@ -954,8 +981,16 @@ pub fn run(root: &Path, arguments: &[String]) -> Result<String, String> {
 
 #[cfg(test)]
 mod tests {
-    use super::{difference_ranges, intersection_bytes, source_spans, union_bytes};
+    use super::{difference_ranges, intersection_bytes, parse, source_spans, union_bytes};
     use crate::overlay::assembly::ExecutableSpan;
+
+    #[test]
+    fn all_data_is_the_single_twelve_target_entry_point() {
+        let options = parse(&["--all".into(), "--data".into()]).unwrap();
+        assert!(options.all && options.data && options.target.is_none());
+        assert!(parse(&["--all".into(), "--target".into(), "tbs-en".into()]).is_err());
+        assert!(parse(&["--data".into()]).is_err());
+    }
 
     #[test]
     fn overlapping_kinds_are_counted_once() {

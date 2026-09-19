@@ -6,6 +6,26 @@ that finishes it.
 
 ## Now
 
+### Twelve-edition build readiness
+
+- ROM identification, executable DONE and whole-ROM reconstruction are separate
+  measurements. All twelve have physical indexes; only TBS EN currently has a
+  supported full-ROM build. The other eleven remain compile-only, explicitly
+  rejected by `alchemy build full`. Do not remove that guard before exact builds.
+- Text source is `TEXT/{JA,EN,DE,ES,FR,IT}.PO` for each game. Rebuild all twelve
+  message archives with `alchemy build assets --verify-text`; rebuild the indexes
+  with `alchemy coverage audit --all --data`. Their layout/checksum authority is
+  `recon/text.json`, not the coverage report. No copied compressed bytes are used.
+- Finish edition-local identification of the remaining regional data. Exact
+  byte correspondence and decoding are evidence; generic compression recognition
+  is not a payload type. Do not rerun a broad AI scan as a substitute for readers.
+- Complete the eleven edition link layouts, code/assembly bindings and regional
+  asset manifests. Preserve shared source; isolate actual measured differences.
+  A complete ROM may legitimately still contain reconstructed assembly.
+- Add each full build to the existing target gate only after comparison of the
+  complete image succeeds. The final milestone is twelve independently exact
+  ROMs, not twelve successful compilation commands or 100% identified bytes.
+
 ### ☀️ 60%
 
 - Prefer never-drafted unknown; when that pool is too small for 60%, first-try

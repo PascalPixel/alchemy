@@ -143,7 +143,7 @@ fn edition(target: &DecompTarget) -> Edition {
         CompilerTarget::Tbs => Edition {
             english: DecompTargetId::TbsEn,
             japanese: DecompTargetId::TbsJa,
-            archive: "games/THE BROKEN SEAL/TEXT/MESSAGE_ARCHIVE.JSON",
+            archive: "games/THE BROKEN SEAL/TEXT/EN.PO",
             catalog_source: Some("games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/CATALOG.JSON"),
             character_dir: Some("games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER"),
             japanese_contexts: 0x0803_bb68,
@@ -155,7 +155,7 @@ fn edition(target: &DecompTarget) -> Edition {
         CompilerTarget::Tla => Edition {
             english: DecompTargetId::TlaEn,
             japanese: DecompTargetId::TlaJa,
-            archive: "games/THE LOST AGE/TEXT/MESSAGE_ARCHIVE.JSON",
+            archive: "games/THE LOST AGE/TEXT/EN.PO",
             catalog_source: None,
             character_dir: None,
             japanese_contexts: 0x0806_4c3c,
@@ -240,47 +240,33 @@ pub fn audit(root: &Path, arguments: &[String]) -> Result<(), String> {
     let japanese_target = target_for(edition.japanese);
     let english = fs::read(root.join(english_target.rom)).map_err(|e| e.to_string())?;
     let japanese = fs::read(root.join(japanese_target.rom)).map_err(|e| e.to_string())?;
-    let archive = json(&root.join(edition.archive))?;
+    let archive = crate::text_catalog::read_source(&root.join(edition.archive))?;
     let mut reader = MessageReader::new(
         &english,
         ROM_BASE as u32,
-        (address(&archive["message_address"])? - 8) as u32,
-        address(&archive["directory_address"])? as u32,
-        address(&archive["symbol_count"])?,
+        archive.contexts as u32,
+        archive.directory as u32,
+        archive.symbol_count,
     )
     .map_err(|e| e.to_string())?;
-    let commands = archive["commands"]
-        .as_object()
-        .ok_or("message commands missing")?;
     let mut count = 0;
     let mut english_names = BTreeMap::new();
-    for (bank, messages) in archive["banks"]
-        .as_array()
-        .ok_or("message banks missing")?
-        .iter()
-        .enumerate()
-    {
-        for (row, value) in messages
-            .as_array()
-            .ok_or("message bank missing")?
-            .iter()
-            .enumerate()
-        {
-            let expected = message_symbols(
-                value,
-                commands,
-                archive["glyphs"].as_object(),
-                address(&archive["symbol_count"])?,
-            )?;
+    for (bank, messages) in archive.banks.iter().enumerate() {
+        for (row, expected) in messages.iter().enumerate() {
             if reader
                 .message(bank * 256 + row)
                 .map_err(|e| e.to_string())?
                 .symbols
-                != expected
+                != *expected
             {
                 return Err("English inverse message decoding differs from source archive".into());
             }
-            english_names.insert(bank * 256 + row, value.clone());
+            english_names.insert(
+                bank * 256 + row,
+                expected
+                    .as_ref()
+                    .map(|symbols| crate::text_catalog::symbols_text(symbols, None)),
+            );
             count += 1;
         }
     }

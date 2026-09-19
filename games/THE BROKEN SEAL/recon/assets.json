@@ -1,5 +1,13 @@
 {
   "format": 1,
+  "edition_catalogs": [
+    "games/THE BROKEN SEAL/TEXT/JA.PO",
+    "games/THE BROKEN SEAL/TEXT/EN.PO",
+    "games/THE BROKEN SEAL/TEXT/DE.PO",
+    "games/THE BROKEN SEAL/TEXT/ES.PO",
+    "games/THE BROKEN SEAL/TEXT/FR.PO",
+    "games/THE BROKEN SEAL/TEXT/IT.PO"
+  ],
   "series": [
     {"kind": "golden-sun-sound-sequence-series", "index": "games/THE BROKEN SEAL/SOUND/SEQUENCE/SEQUENCES.TSV"},
     {"kind": "golden-sun-pcm-wave-series", "index": "games/THE BROKEN SEAL/SOUND/SAMPLE/SAMPLES.TSV"},
@@ -460,7 +468,7 @@
       "address": "0x08037464",
       "size": "0x3c3a4",
       "kind": "golden-sun-message-archive",
-      "source": "games/THE BROKEN SEAL/TEXT/MESSAGE_ARCHIVE.JSON"
+      "source": "games/THE BROKEN SEAL/TEXT/EN.PO"
     },
     {
       "address": "0x08073812",

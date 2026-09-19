@@ -304,79 +304,156 @@ pub fn file_page(
 }
 
 pub fn rom_page(target: &str) -> Option<String> {
-    if !matches!(target, "tbs-en" | "tla-en") {
-        return None;
-    }
+    let selected = crate::targets::parse_decomp_target(target).ok()?;
     let tree = crate::coverage::tree::work_tree();
-    let mut html=format!("<main class=\"rom-view\"><header><span>Alchemy</span><a class=\"refresh\" href=\"/rom/{target}\">Refresh</a></header><section class=\"rom-content\"><nav aria-label=\"Game\"><a href=\"/rom/tbs-en\">The Broken Seal</a> · <a href=\"/rom/tla-en\">The Lost Age</a></nav>");
-    let Some(index) = crate::coverage::audit::index::current(&tree, target) else {
-        html.push_str("<p>The ROM identification index is absent or stale. Rebuild it with alchemy coverage audit --target TARGET --data.</p></section></main>");
-        return Some(html);
-    };
-    let size = index["rom_bytes"].as_i64()?;
-    let rows = index["regions"].as_array()?;
-    let unresolved = rows
-        .iter()
-        .filter(|r| {
-            let kind = r["kind"].as_str().unwrap_or("unresolved-data");
-            let unknown_style = !matches!(kind, "executable" | "encoded-overlay")
-                && content_style(&Tile {
-                    group: Some(kind.into()),
-                    ..Tile::default()
-                })
-                .0 == UNIDENTIFIED;
-            unknown_style
-                || matches!(
-                    r["kind"].as_str(),
-                    Some(
-                        "unresolved-data"
-                            | "compressed-resource"
-                            | "golden-sun-general-lz"
-                            | "golden-sun-kind2-lz"
-                    )
-                )
-        })
-        .map(|r| r["bytes"].as_i64().unwrap_or(0))
-        .sum::<i64>();
-    html.push_str(&format!("<h2>{} · English ROM</h2><p>Identified format: {:.2}% · {} / {} cartridge bytes</p><p>Address order, left to right then down. Each row is 256 KiB. Colours show content, not reconstruction. Identification does not count toward ☀️ / ⚓️ DONE.</p><div class=\"rom-address-map\" role=\"img\" aria-label=\"ROM address map\">",if target=="tbs-en" {"The Broken Seal"}else{"The Lost Age"},100.0*(size-unresolved) as f64/size as f64,commas(size-unresolved),commas(size)));
-    let row_bytes = 256 * 1024i64;
-    let row_count = (size + row_bytes - 1) / row_bytes;
+    let mut html = String::from(
+        "<main class=\"rom-view\"><header><span>ROM coverage</span><a class=\"refresh\" href=\"/roms\">Refresh</a></header><section class=\"rom-content\"><p>Twelve physical cartridge indexes, in address order. Colours identify content; they do not grant ☀️ / ⚓️ DONE credit.</p><div class=\"rom-targets\">",
+    );
     let mut totals = std::collections::BTreeMap::<(&str, &str), i64>::new();
-    for row in rows {
-        let start = row["start"].as_i64()?;
-        let end = row["end"].as_i64()?;
-        let kind = row["kind"].as_str()?;
-        let (label, color) = match kind {
-            "executable" => ("Code", "#f0c57d"),
-            "encoded-overlay" => ("Code overlays", "#78afb7"),
-            "unresolved-data" => ("Not yet identified", UNKNOWN),
-            _ => content_style(&Tile {
+    let mut available_bytes = 0i64;
+    let unidentified = |row: &serde_json::Value| {
+        let kind = row["kind"].as_str().unwrap_or("unresolved-data");
+        let unknown_style = !matches!(kind, "executable" | "encoded-overlay")
+            && content_style(&Tile {
                 group: Some(kind.into()),
-                source: row["sources"][0].as_str().map(String::from),
                 ..Tile::default()
-            }),
+            })
+            .0 == UNIDENTIFIED;
+        unknown_style
+            || matches!(
+                kind,
+                "unresolved-data"
+                    | "compressed-resource"
+                    | "golden-sun-general-lz"
+                    | "golden-sun-kind2-lz"
+            )
+    };
+    for id in crate::targets::TARGET_IDS {
+        let name = id.as_str();
+        let game = if name.starts_with("tbs-") {
+            "The Broken Seal"
+        } else {
+            "The Lost Age"
         };
-        *totals.entry((label, color)).or_default() += end - start;
-        let mut cursor = start - 0x08000000;
-        while cursor < end - 0x08000000 {
-            let line = cursor / row_bytes;
-            let stop = ((line + 1) * row_bytes).min(end - 0x08000000);
-            let title = format!(
-                "0x{start:08x}–0x{end:08x} · {} ROM bytes · {label} · {}",
-                commas(end - start),
-                row["evidence"].as_str().unwrap_or("")
-            );
-            html.push_str(&format!("<span title=\"{}\" style=\"left:{}%;top:{}%;width:{}%;height:{}%;background:{color}\"></span>",esc(&title),(cursor%row_bytes) as f64/row_bytes as f64*100.0,line as f64/row_count as f64*100.0,(stop-cursor) as f64/row_bytes as f64*100.0,100.0/row_count as f64));
-            cursor = stop;
+        let edition = name
+            .rsplit_once('-')
+            .map(|(_, edition)| edition.to_ascii_uppercase())
+            .unwrap_or_default();
+        let available = crate::coverage::audit::index::available(&tree, name);
+        let active = id == selected;
+        html.push_str(&format!(
+            "<article class=\"rom-target{}\"><a class=\"rom-target-label\" href=\"/roms/{name}\"{}><strong>{}</strong><span>{edition}</span></a>",
+            if active { " selected" } else { "" },
+            if active { " aria-current=\"page\"" } else { "" },
+            esc(game),
+        ));
+        let Some((index, current)) = available else {
+            html.push_str(&format!("<div class=\"rom-linear-bar unavailable\" role=\"img\" aria-label=\"{game} {edition}: audit not generated\"><span title=\"Audit not generated for {name}\" style=\"left:0;width:100%;background:{UNKNOWN}\"></span></div><span class=\"rom-target-status\">Not audited</span></article>"));
+            continue;
+        };
+        let size = index["rom_bytes"].as_i64()?;
+        available_bytes += size;
+        let rows = index["regions"].as_array()?;
+        let unresolved = rows
+            .iter()
+            .filter(|row| unidentified(row))
+            .map(|row| row["bytes"].as_i64().unwrap_or(0))
+            .sum::<i64>();
+        let identified = size - unresolved;
+        html.push_str(&format!(
+            "<div class=\"rom-linear-bar\" role=\"img\" aria-label=\"{game} {edition}: {:.2}% identified\">",
+            100.0 * identified as f64 / size as f64
+        ));
+        let mut display = Vec::<(i64, i64, &'static str, &'static str)>::new();
+        for row in rows {
+            let start = row["start"].as_i64()?;
+            let end = row["end"].as_i64()?;
+            let kind = row["kind"].as_str()?;
+            let (label, color) = match kind {
+                "executable" => ("Code", "#f0c57d"),
+                "encoded-overlay" => ("Code overlays", "#78afb7"),
+                "unresolved-data" => ("Not yet identified", UNKNOWN),
+                _ => content_style(&Tile {
+                    group: Some(kind.into()),
+                    source: row["sources"][0].as_str().map(String::from),
+                    ..Tile::default()
+                }),
+            };
+            *totals.entry((label, color)).or_default() += end - start;
+            if let Some(last) = display
+                .last_mut()
+                .filter(|last| last.1 == start && last.2 == label && last.3 == color)
+            {
+                last.1 = end;
+            } else {
+                display.push((start, end, label, color));
+            }
         }
+        // A cartridge audit can contain tens of thousands of exact intervals.
+        // The overview is at most a few thousand CSS pixels wide, so emitting
+        // every interval produced multi-megabyte HTML that browsers could not
+        // paint. Reduce only the display to one dominant type per pixel-sized
+        // bucket; the audit and the totals above retain every exact interval.
+        let source = display;
+        let mut display = Vec::<(i64, i64, &'static str, &'static str)>::new();
+        let buckets = 512i64;
+        let mut cursor = 0usize;
+        for bucket in 0..buckets {
+            let start = 0x0800_0000 + size * bucket / buckets;
+            let end = 0x0800_0000 + size * (bucket + 1) / buckets;
+            while cursor < source.len() && source[cursor].1 <= start {
+                cursor += 1;
+            }
+            let mut weights =
+                std::collections::BTreeMap::<(&'static str, &'static str), i64>::new();
+            let mut row = cursor;
+            while row < source.len() && source[row].0 < end {
+                let (region_start, region_end, label, color) = source[row];
+                let overlap = region_end.min(end) - region_start.max(start);
+                if overlap > 0 {
+                    *weights.entry((label, color)).or_default() += overlap;
+                }
+                row += 1;
+            }
+            let (label, color) = weights
+                .into_iter()
+                .max_by_key(|(_, bytes)| *bytes)
+                .map(|(style, _)| style)
+                .unwrap_or((UNIDENTIFIED, UNKNOWN));
+            if let Some(last) = display
+                .last_mut()
+                .filter(|last| last.1 == start && last.2 == label && last.3 == color)
+            {
+                last.1 = end;
+            } else {
+                display.push((start, end, label, color));
+            }
+        }
+        for (start, end, label, color) in display {
+            let title = format!(
+                "0x{start:08x}–0x{end:08x} · {} ROM bytes · {label}",
+                commas(end - start)
+            );
+            html.push_str(&format!(
+                "<span title=\"{}\" style=\"left:{}%;width:{}%;background:{color}\"></span>",
+                esc(&title),
+                (start - 0x08000000) as f64 / size as f64 * 100.0,
+                (end - start) as f64 / size as f64 * 100.0,
+            ));
+        }
+        html.push_str(&format!(
+            "</div><span class=\"rom-target-status{}\">{:.2}%{}</span></article>",
+            if current { "" } else { " stale" },
+            100.0 * identified as f64 / size as f64,
+            if current { "" } else { " · stale" },
+        ));
     }
-    html.push_str("</div><p>0x08000000 → cartridge end. Hover a region for its address, size and evidence.</p><details><summary>Content totals</summary><ul>");
+    html.push_str("</div><p>Each bar runs from 0x08000000 to that cartridge's end. Hover a segment for its address, size and evidence. “Stale” preserves the last generated view while the strict verifier waits for a fresh audit.</p><details><summary>Available content totals</summary><ul>");
     for ((label, _), bytes) in &totals {
         html.push_str(&format!(
-            "<li>{}: {} bytes ({:.2}%)</li>",
+            "<li>{}: {} indexed bytes across available audits</li>",
             esc(label),
-            commas(*bytes),
-            *bytes as f64 / size as f64 * 100.0
+            commas(*bytes)
         ));
     }
     html.push_str("</ul></details></section><footer class=\"legend\" aria-label=\"ROM content types\" tabindex=\"0\">");
@@ -384,7 +461,7 @@ pub fn rom_page(target: &str) -> Option<String> {
         html.push_str(&format!(
             "<span style=\"--swatch:{color}\">{} {:.1}%</span>",
             esc(label),
-            bytes as f64 / size as f64 * 100.0
+            bytes as f64 / available_bytes.max(1) as f64 * 100.0
         ));
     }
     html.push_str("</footer></main>");

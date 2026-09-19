@@ -1,0 +1,69 @@
+[
+  {
+    "target": "tla-ja",
+    "language": "ja",
+    "rom": "roms/tla-ja.gba",
+    "output": "games/THE LOST AGE/TEXT/JA.PO",
+    "contexts": 134630460,
+    "directory": 134860608,
+    "japanese": true,
+    "characters": " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[¥]^_`abcdefghijklmnopqrstuvwxyz{|}~�������をぁぃぅぇぉゃゅょっ�あいうえおかきくけこさしすせそ�。｢｣、・ヲァィゥェォャュョッーアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン゙゚たちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわん��神殿後名前黄金太陽開封印失時代力手武器長剣発動呪使水火風地毒見宝石中炎船海氷道具灯台運光様目下山男女土大上玉気左右入口岩天空防母行北戦出品同以死木像人先島陸小村寺高原町遺跡東西南古屋頂通信世界錬文明者年日士兄「」生知方売客商子主王父一官白茶×説分今立川伝森○…足夜買門冬雪月民宮春多草床正店星城外絵心闘体",
+    "character_evidence": {
+      "source": "Japanese ROM font glyphs; single-byte records have a 2-byte advance and 12 bitmap rows, extended glyphs have 12 bitmap rows. Duplicate glyphs retain explicit tokens for lossless encoding.",
+      "single_byte_font": "0x0805a8cc",
+      "extended_font": "0x0805bf8c",
+      "first_symbol": 32
+    },
+    "rom_sha256": "19dd48b74726f323cd829e226b60aa1b373c51fb2e840804efe2d2dc2891a890"
+  },
+  {
+    "target": "tla-en",
+    "language": "en",
+    "rom": "roms/tla-en.gba",
+    "output": "games/THE LOST AGE/TEXT/EN.PO",
+    "contexts": 134614064,
+    "directory": 134913876,
+    "japanese": false,
+    "rom_sha256": "4199d82f845edf3e2e92f3783bca00190b5bc102d7c8aa339b951de280b1e6cc"
+  },
+  {
+    "target": "tla-de",
+    "language": "de",
+    "rom": "roms/tla-de.gba",
+    "output": "games/THE LOST AGE/TEXT/DE.PO",
+    "contexts": 134615076,
+    "directory": 134967500,
+    "japanese": false,
+    "rom_sha256": "993cfc34b6b28f6a9bfb135dc04023ee2b64693841ce90ab89536b97fbb4afed"
+  },
+  {
+    "target": "tla-es",
+    "language": "es",
+    "rom": "roms/tla-es.gba",
+    "output": "games/THE LOST AGE/TEXT/ES.PO",
+    "contexts": 134614800,
+    "directory": 134909504,
+    "japanese": false,
+    "rom_sha256": "c6bb68229971c36febe8bdf5081a4aa658c5c5417a2f4d3c7e0c3762c3ecb18a"
+  },
+  {
+    "target": "tla-fr",
+    "language": "fr",
+    "rom": "roms/tla-fr.gba",
+    "output": "games/THE LOST AGE/TEXT/FR.PO",
+    "contexts": 134614792,
+    "directory": 134909016,
+    "japanese": false,
+    "rom_sha256": "8f9a854618332d4a2886170a03ab0b10624d1202ea8562dabf0002807f7b56a8"
+  },
+  {
+    "target": "tla-it",
+    "language": "it",
+    "rom": "roms/tla-it.gba",
+    "output": "games/THE LOST AGE/TEXT/IT.PO",
+    "contexts": 134614060,
+    "directory": 134885276,
+    "japanese": false,
+    "rom_sha256": "7f3fbb2ee3e493784e63069899b5a53cf79742cb1a64560094c570b0ed3a05c2"
+  }
+]

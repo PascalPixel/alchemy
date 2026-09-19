@@ -32,7 +32,7 @@ use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
-const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--target TARGET] [--manifest MANIFEST] [-o OUTPUT] [rom] | --compact-plans PLAN | --derive-plans PLAN | --review-images OUTPUT [--update-baseline | --target TARGET] | --audit-characters OUTPUT [--target TARGET] | --extract-sources ROM [--target TARGET] | --extract-missing-sources ROM [--target TARGET] | --derive-index ROM --target TARGET --scenes N[=NAME],... [-o OUTPUT] [--stage DIR] [--preview DIR] | --network ROM --target TARGET -o DIR [--from WORLD_MAP_EXIT | --scenes LIST] [--mark SCENE] [--packed] | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
+const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--target TARGET] [--manifest MANIFEST] [-o OUTPUT] [rom] | --extract-text [TARGET] | --verify-text [TARGET] | --compact-plans PLAN | --derive-plans PLAN | --review-images OUTPUT [--update-baseline | --target TARGET] | --audit-characters OUTPUT [--target TARGET] | --extract-sources ROM [--target TARGET] | --extract-missing-sources ROM [--target TARGET] | --derive-index ROM --target TARGET --scenes N[=NAME],... [-o OUTPUT] [--stage DIR] [--preview DIR] | --network ROM --target TARGET -o DIR [--from WORLD_MAP_EXIT | --scenes LIST] [--mark SCENE] [--packed] | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
 const ROM_BASE: usize = 0x0800_0000;
 pub(crate) fn identified_regions(
     root: &Path,
@@ -77,6 +77,7 @@ fn sound_inventory(
     };
     let mut rows = vec![];
     let mut banks = BTreeSet::new();
+    let mut sequences = BTreeMap::<usize, (usize, Vec<usize>)>::new();
     // SongEntry and SequenceHeader are the structures consumed by the shared
     // byte-exact Sound and MusicPlayer units. Stop at the first invalid entry.
     for slot in 0..2048 {
@@ -100,9 +101,36 @@ fn sound_inventory(
         }
         rows.push(serde_json::json!({"start":ROM_BASE+at,"end":ROM_BASE+at+8,"kind":"record-table","label":"Sound selection table","evidence":registry}));
         rows.push(serde_json::json!({"start":ROM_BASE+header,"end":ROM_BASE+header+size,"kind":"record-table","label":"Music sequence header","evidence":format!("Sound_SongTable entry {slot}; SequenceHeader")}));
+        sequences.entry(header).or_insert_with(|| {
+            (
+                size,
+                (0..usize::from(tracks))
+                    .filter_map(|index| pointer(header + 8 + index * 4))
+                    .collect(),
+            )
+        });
         if let Some(bank) = pointer(header + 4) {
             banks.insert(bank);
         }
+    }
+    let sequence_headers = sequences.keys().copied().collect::<Vec<_>>();
+    for pair in sequence_headers.windows(2) {
+        let (header, next) = (pair[0], pair[1]);
+        let (size, _) = &sequences[&header];
+        let (_, tracks) = &sequences[&next];
+        let Some(start) = tracks.iter().copied().min() else {
+            continue;
+        };
+        if start < header + size || tracks.iter().any(|track| *track >= next) {
+            continue;
+        }
+        rows.push(serde_json::json!({
+            "start":ROM_BASE+start,
+            "end":ROM_BASE+next,
+            "kind":"golden-sun-sound-sequence",
+            "label":"Music sequence tracks",
+            "evidence":format!("SequenceHeader at 0x{:08x}: every track pointer lies after the preceding physical header at 0x{:08x} and before this owning header",ROM_BASE+next,ROM_BASE+header)
+        }));
     }
     let mut pending = banks.into_iter().collect::<Vec<_>>();
     let mut visited = BTreeSet::new();
@@ -115,6 +143,9 @@ fn sound_inventory(
             let Some(record) = rom.get(at..at + 12) else {
                 continue;
             };
+            if record.iter().all(|byte| *byte == 0) {
+                continue;
+            }
             let kind = record[0];
             if !matches!(kind, 0 | 1 | 2 | 3 | 4 | 8 | 9 | 10 | 11 | 12 | 64 | 128) {
                 continue;
@@ -122,6 +153,13 @@ fn sound_inventory(
             let Some(target) = pointer(at + 4) else {
                 continue;
             };
+            rows.push(serde_json::json!({
+                "start":ROM_BASE+at,
+                "end":ROM_BASE+at+12,
+                "kind":"golden-sun-sound-voice",
+                "label":"Sound voice record",
+                "evidence":format!("SequenceHeader voice bank 0x{:08x}, voice {voice}; recognized voice kind {kind} and in-ROM target",ROM_BASE+bank)
+            }));
             if matches!(kind, 64 | 128) {
                 pending.push(target);
                 continue;
@@ -187,6 +225,13 @@ fn sound_index_follows_registered_voices_and_checks_sample_extents() {
     let row = sample(&rom).unwrap();
     assert_eq!(row["start"], 0x08001000);
     assert_eq!(row["end"], 0x0800101a);
+    let voices = sound_inventory(root.path(), &rom, &target)
+        .unwrap()
+        .into_iter()
+        .filter(|row| row["kind"] == "golden-sun-sound-voice")
+        .collect::<Vec<_>>();
+    assert_eq!(voices.len(), 1);
+    assert_eq!(voices[0]["start"], 0x08000300);
     rom[0x100c..0x1010].copy_from_slice(&0xffffu32.to_le_bytes());
     assert!(sample(&rom).is_none());
 }
@@ -5111,6 +5156,31 @@ fn build_entry_native_tail(
             ))
         }
         "golden-sun-message-archive" => {
+            if entry_source.to_ascii_lowercase().ends_with(".po") {
+                let source = crate::text_catalog::read_source(&source_path(entry_source)?)?;
+                if source.address != address
+                    || source.size != number(&entry["size"], "archive size")?
+                {
+                    return Err("message catalog identity differs".into());
+                }
+                let base = u32::try_from(address).map_err(|_| "archive address exceeds u32")?;
+                let archive = psynergy::assets::huffman_archive::encode_huffman_archive(
+                    base,
+                    source.symbol_count,
+                    &source.banks,
+                )
+                .map_err(|error| error.to_string())?;
+                if archive.context_directory != source.contexts as u32
+                    || archive.directory != source.directory as u32
+                {
+                    return Err("message catalog pointers differ from its archive headers".into());
+                }
+                return Ok((
+                    archive.bytes,
+                    vec![entry_source.to_string()],
+                    serde_json::json!({"banks":source.banks.len(),"messages":source.banks.iter().map(Vec::len).sum::<usize>(),"contexts":archive.contexts}),
+                ));
+            }
             let document = json(&source_path(entry_source)?)?;
             if document["format"] != 2
                 || document["kind"] != kind
@@ -5418,6 +5488,7 @@ fn stage_stamp_with_signature(
     for game in native::games() {
         names.push(native::NativePaths::of(&game).index);
         names.push(format!("{}/recon/translation-units.json", game.game_dir()));
+        names.push(format!("{}/recon/text.json", game.game_dir()));
     }
     for name in names {
         let path = root.join(&name);
@@ -5431,6 +5502,23 @@ fn stage_stamp_with_signature(
     for (relative, path) in files {
         let bytes = fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?;
         stamp_record(&mut stream, &relative, &bytes);
+    }
+    if !source_only {
+        let document = json(manifest)?;
+        for catalog in document["edition_catalogs"]
+            .as_array()
+            .into_iter()
+            .flatten()
+        {
+            let name = json_string(catalog, "edition catalog")?;
+            let spec = crate::text_catalog::ARCHIVES
+                .iter()
+                .find(|spec| spec.output == name)
+                .ok_or("unregistered edition catalog")?;
+            let bytes =
+                fs::read(root.join(spec.rom)).map_err(|error| format!("{}: {error}", spec.rom))?;
+            stamp_record(&mut stream, spec.rom, &bytes);
+        }
     }
     stamp_record(
         &mut stream,
@@ -5652,6 +5740,15 @@ fn reusable_asset_manifest(
         return None;
     }
     let regions = manifest.get("regions")?.as_array()?;
+    if let Some(archives) = manifest.get("text_archives") {
+        if archives
+            .as_array()?
+            .iter()
+            .any(|archive| !output_matches(archive))
+        {
+            return None;
+        }
+    }
     if regions.is_empty() {
         return None;
     }
@@ -5762,6 +5859,20 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
         }
     }
     let mut ctx = Context::new(&root);
+    let edition_catalogs = manifest
+        .get("edition_catalogs")
+        .and_then(Value::as_array)
+        .cloned()
+        .unwrap_or_default();
+    let mut text_archives = Vec::new();
+    for catalog in &edition_catalogs {
+        let name = json_string(catalog, "edition catalog")?;
+        text_archives.push(crate::text_catalog::build_source(
+            &root,
+            &ctx.source(name)?,
+            options.source_only,
+        )?);
+    }
     let mut entries = manifest
         .get("regions")
         .and_then(Value::as_array)
@@ -5778,7 +5889,10 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
     });
     let mut previous_end = ROM_BASE;
     let mut regions = Vec::new();
-    let mut all_sources = Vec::<String>::new();
+    let mut all_sources = edition_catalogs
+        .iter()
+        .map(|catalog| json_string(catalog, "edition catalog").map(str::to_string))
+        .collect::<Result<Vec<_>, _>>()?;
     for entry in &entries {
         let address = number(&entry["address"], "asset address")?;
         let size = number(&entry["size"], "asset size")?;
@@ -5863,6 +5977,7 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
         "rom_size": rom_size,
         "verification": if options.source_only { "source_only" } else { "rom" },
         "asset_bytes": asset_bytes,
+        "text_archives": text_archives,
         "inputs": inputs,
         "regions": regions,
     });
@@ -5878,6 +5993,26 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
     Ok(())
 }
 fn run(arguments: Vec<String>) -> Result<ExitCode, String> {
+    if arguments.first().map(String::as_str) == Some("--verify-text") {
+        if arguments.len() > 2 {
+            return Err(USAGE.into());
+        }
+        println!(
+            "{}",
+            crate::text_catalog::verify(&repository_root(), arguments.get(1).map(String::as_str))?
+        );
+        return Ok(ExitCode::SUCCESS);
+    }
+    if arguments.first().map(String::as_str) == Some("--extract-text") {
+        if arguments.len() > 2 {
+            return Err(USAGE.into());
+        }
+        println!(
+            "{}",
+            crate::text_catalog::extract(&repository_root(), arguments.get(1).map(String::as_str))?
+        );
+        return Ok(ExitCode::SUCCESS);
+    }
     if arguments.first().map(String::as_str) == Some("--derive-plans") {
         if arguments.len() != 2 {
             return Err(USAGE.into());

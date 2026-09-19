@@ -1,5 +1,13 @@
 {
   "format": 1,
+  "edition_catalogs": [
+    "games/THE LOST AGE/TEXT/JA.PO",
+    "games/THE LOST AGE/TEXT/EN.PO",
+    "games/THE LOST AGE/TEXT/DE.PO",
+    "games/THE LOST AGE/TEXT/ES.PO",
+    "games/THE LOST AGE/TEXT/FR.PO",
+    "games/THE LOST AGE/TEXT/IT.PO"
+  ],
   "series": [
     {
       "kind": "golden-sun-thumb-overlay-series",
@@ -25,7 +33,7 @@
       "address": "0x0805f914",
       "size": "0x4a7c8",
       "kind": "golden-sun-message-archive",
-      "source": "games/THE LOST AGE/TEXT/MESSAGE_ARCHIVE.JSON"
+      "source": "games/THE LOST AGE/TEXT/EN.PO"
     },
     {
       "address": "0x080ef4a4",

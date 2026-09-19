@@ -1,0 +1,69 @@
+[
+  {
+    "target": "tbs-ja",
+    "language": "ja",
+    "rom": "roms/tbs-ja.gba",
+    "output": "games/THE BROKEN SEAL/TEXT/JA.PO",
+    "contexts": 134462312,
+    "directory": 134660160,
+    "japanese": true,
+    "characters": " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[¥]^_`abcdefghijklmnopqrstuvwxyz{|}~�������をぁぃぅぇぉゃゅょっ�あいうえおかきくけこさしすせそ�。｢｣、・ヲァィゥェォャュョッーアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン゙゚たちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわん��神殿名前中武器長剣発動呪使水火風地毒見宝石町行炎船海氷道具島男女力土大上玉山気目入口岩天空防母北戦手出下品同死木像以宮村東南森西灯台寺分先遺跡立人方時様主者陸説明士世光知伝金売客商屋子×年兄川官錬日民父冬古代夜雪春「」草原黄文○",
+    "character_evidence": {
+      "source": "Japanese ROM font glyphs; single-byte records have a 2-byte advance and 12 bitmap rows, extended glyphs have 12 bitmap rows. Duplicate glyphs retain explicit tokens for lossless encoding.",
+      "single_byte_font": "0x08032470",
+      "extended_font": "0x08033b30",
+      "first_symbol": 32
+    },
+    "rom_sha256": "088bedae4bad8b67e87ff10035a898d3639f3182d486fe5a5d113bab223e0a26"
+  },
+  {
+    "target": "tbs-en",
+    "language": "en",
+    "rom": "roms/tbs-en.gba",
+    "output": "games/THE BROKEN SEAL/TEXT/EN.PO",
+    "contexts": 134448172,
+    "directory": 134690488,
+    "japanese": false,
+    "rom_sha256": "c14f1151897e8d73f25ffdd67e21eebb6dc57973ff2458872ee89fa9060aaca1"
+  },
+  {
+    "target": "tbs-de",
+    "language": "de",
+    "rom": "roms/tbs-de.gba",
+    "output": "games/THE BROKEN SEAL/TEXT/DE.PO",
+    "contexts": 134444200,
+    "directory": 134719000,
+    "japanese": false,
+    "rom_sha256": "d7a61803600a002bc80be8063a7d8d281bc77c2261cfb812cea552d3f95f3dd1"
+  },
+  {
+    "target": "tbs-es",
+    "language": "es",
+    "rom": "roms/tbs-es.gba",
+    "output": "games/THE BROKEN SEAL/TEXT/ES.PO",
+    "contexts": 134445188,
+    "directory": 134689296,
+    "japanese": false,
+    "rom_sha256": "c067f04d05a65677eca3b8e3609a6ef9b86898604ef252ccf54c2b41d49f2eb8"
+  },
+  {
+    "target": "tbs-fr",
+    "language": "fr",
+    "rom": "roms/tbs-fr.gba",
+    "output": "games/THE BROKEN SEAL/TEXT/FR.PO",
+    "contexts": 134444596,
+    "directory": 134691092,
+    "japanese": false,
+    "rom_sha256": "5eb59f508c25548fb0ef72911cc75a81867f16b0ef8fca2a22cb6d026a862cd8"
+  },
+  {
+    "target": "tbs-it",
+    "language": "it",
+    "rom": "roms/tbs-it.gba",
+    "output": "games/THE BROKEN SEAL/TEXT/IT.PO",
+    "contexts": 134448388,
+    "directory": 134687520,
+    "japanese": false,
+    "rom_sha256": "fc6ef60c1c271de7352be610eb4dca29ab5edea1e4b33f05a548a65f522a452d"
+  }
+]

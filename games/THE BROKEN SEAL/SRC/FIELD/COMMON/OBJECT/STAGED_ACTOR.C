@@ -33,6 +33,7 @@ static __inline__ void Scene_Call6(
 {
     func(x, z, width, height, dst_x, dst_z);
 }
+
 /* Called through this helper, not directly: the copied arguments keep the
  * argument order the reference schedules. */
 static __inline__ void ConfigureStagedActorMotion(
@@ -496,4 +497,60 @@ void SceneActor_MoveAndRedraw(StagedActorMovementRequest request)
                                                horizontal_extent, vertical_extent, 0);
     }
     BattleFx_PlayQueuedSound();
+}
+
+s32 FieldScene_RedrawActorFootprint(s32 id)
+{
+    s32 *work = (s32 *)gCam;
+    struct StagedActor *actor = Object_GetById(id);
+    struct StagedActorProbe probe;
+    u32 idx = 0;
+    s32 offset;
+    s32 width;
+    s32 height;
+    s32 x0;
+    s32 x1;
+    s32 z0;
+    s32 z1;
+    s32 dst_z;
+
+    for (idx = 0; idx <= 5; idx++) {
+        if (*STAGED_ACTOR_PROBE_DETAILS(actor)->unknown_28 == StagedActor_FootprintKinds[idx]) {
+            probe.footprint_index = idx;
+            break;
+        }
+        probe.footprint_index = 7;
+    }
+
+    if ((u32)probe.footprint_index > 6)
+        return 0;
+    probe.position_x = actor->x.value;
+    probe.position_y = actor->y;
+    probe.position_z = actor->z.value;
+    offset = probe.footprint_index * 4;
+    z0 = StagedActor_FootprintBounds[offset + 1];
+    if (z0 < 0)
+        z0 = -z0;
+    z1 = StagedActor_FootprintBounds[offset + 3];
+    if (z1 < 0)
+        z1 = -z1;
+    height = (z0 + z1) >> 4;
+    x0 = StagedActor_FootprintBounds[offset];
+    if (x0 < 0)
+        x0 = -x0;
+    x1 = StagedActor_FootprintBounds[offset + 2];
+    if (x1 < 0)
+        x1 = -x1;
+    width = (x0 + x1) >> 4;
+    probe.position_x += StagedActor_FootprintBounds[offset] << 16;
+    probe.position_z += StagedActor_FootprintBounds[offset + 1] << 16;
+    probe.position_x >>= 20;
+    probe.position_z >>= 20;
+    idx = work[0x13c / 4] >> 20;
+    dst_z = work[0x140 / 4] >> 20;
+    Scene_Call6(Map_CopyCellAttributeRect, probe.position_x, probe.position_z,
+        width, height, idx + probe.position_x, dst_z + probe.position_z);
+    StagedActor_FillGridAttributeRectangle(0, probe.position_x, probe.position_z, width, height, 255);
+    StagedActor_FillGridAttributeRectangle(2, probe.position_x, probe.position_z, width, height, 255);
+    return 1;
 }

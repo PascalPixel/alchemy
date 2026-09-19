@@ -1125,7 +1125,8 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 #define SetOverlayObjectSlot Func_02003844
 #define SetOverlayObjectRecordField1 Func_02000030
 #define OverlayObject_CreateConfiguredObject Func_020000a0
-#define OverlayObject_ApplyVelocity Func_02000104
+void Effect_Move(union Slot *object);
+#define OverlayObject_ApplyVelocity Effect_Move
 
 #include "OVERLAY_OBJECT.H"
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
@@ -1578,19 +1579,6 @@ void *OverlayObject_PrepareSpawnedObject(s32 first, s32 second, s32 third, s32 f
 void *OverlayObject_CreateConfiguredObject(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT_BODY.INC"
-}
-
-void OverlayObject_ApplyVelocity(union Slot *object)
-{
-    u16 *record;
-
-    object[2].w += object[17].w;
-    object[3].w += object[18].w;
-    object[4].w += object[19].w;
-    object[6].w += object[12].w;
-    object[7].w += object[13].w;
-    record = (u16 *)object[20].p;
-    record[15] += object[25].h[0];
 }
 
 void *SceneData_GetTableB938(void)

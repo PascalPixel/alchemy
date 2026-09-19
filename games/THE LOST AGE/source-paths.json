@@ -1,9 +1,15 @@
 {
   "format": 3,
   "owners": {
-    "resource_64d:020026f4": {"name": "Scene_CreateSpriteField"},
-    "main:080dc244": {"name": "Field_BeginPaletteTransition"},
-    "resource_64d:02000510": {"name": "Scene_PlayApproachEvent"},
+    "resource_64d:020026f4": {
+      "name": "Scene_CreateSpriteField"
+    },
+    "main:080dc244": {
+      "name": "Field_BeginPaletteTransition"
+    },
+    "resource_64d:02000510": {
+      "name": "Scene_PlayApproachEvent"
+    },
     "main:08016d5c": {
       "name": "GameFlag_GetByte",
       "source": "GAME/FLAGS/GET_BYTE.C"
@@ -352,6 +358,210 @@
     "resource_64d:02000308": {
       "name": "Scene_PrepareMap",
       "source": "FIELD/VINASU_IRIGUCHI/ENTRANCE.C"
+    },
+    "main:08025b58": {
+      "name": "Script_SetOrCompareAddress",
+      "source": "FIELD/COMMON/SCRIPT/OPERANDS.C"
+    },
+    "main:08025b84": {
+      "name": "Script_SetOrCompareCursor"
+    },
+    "main:08025be4": {
+      "name": "Script_SetOrCompareWord08"
+    },
+    "main:08025c0c": {
+      "name": "Script_SetOrCompareWord0c"
+    },
+    "main:08025c34": {
+      "name": "Script_SetOrCompareWord10"
+    },
+    "main:08025c8c": {
+      "name": "Script_SetOrCompareWord18"
+    },
+    "main:08025cb4": {
+      "name": "Script_SetOrCompareWord1c"
+    },
+    "main:08025cdc": {
+      "name": "Script_SetOrCompareWord24"
+    },
+    "main:08025d04": {
+      "name": "Script_SetOrCompareWord28"
+    },
+    "main:08025d2c": {
+      "name": "Script_SetOrCompareWord2c"
+    },
+    "main:08025d54": {
+      "name": "Script_SetOrCompareWord30"
+    },
+    "main:08025d7c": {
+      "name": "Script_SetOrCompareWord34"
+    },
+    "main:08025da4": {
+      "name": "Script_SetOrCompareWord38"
+    },
+    "main:08025dcc": {
+      "name": "Script_SetOrCompareWord3c"
+    },
+    "main:08025df4": {
+      "name": "Script_SetOrCompareWord40"
+    },
+    "main:08025e1c": {
+      "name": "Script_SetOrCompareWord44"
+    },
+    "main:08025e44": {
+      "name": "Script_SetOrCompareWord48"
+    },
+    "main:08025e6c": {
+      "name": "Script_SetOrCompareWord14"
+    },
+    "main:08025e94": {
+      "name": "Script_SetOrCompareWord4c"
+    },
+    "main:08025ebc": {
+      "name": "Script_SetOrCompareAddress50"
+    },
+    "main:08025ee8": {
+      "name": "Script_SetOrCompareByte54"
+    },
+    "main:08025f24": {
+      "name": "Script_SetOrCompareByte55"
+    },
+    "main:08025f60": {
+      "name": "Script_SetOrCompareByte56"
+    },
+    "main:08025fd0": {
+      "name": "Script_SetOrCompareByte58"
+    },
+    "main:0802600c": {
+      "name": "Script_SetOrCompareByte59"
+    },
+    "main:08026048": {
+      "name": "Script_SetOrCompareByte5a"
+    },
+    "main:08026084": {
+      "name": "Script_SetOrCompareByte5b"
+    },
+    "main:080260c0": {
+      "name": "Script_SetOrCompareByte5d"
+    },
+    "main:080260fc": {
+      "name": "Script_SetOrCompareHalfword5e"
+    },
+    "main:08026138": {
+      "name": "Script_SetOrCompareSignedHalfword64"
+    },
+    "main:08026174": {
+      "name": "Script_SetOrCompareSignedHalfword66"
+    },
+    "main:080261b0": {
+      "name": "Script_SetOrCompareWord68"
+    },
+    "main:080261d8": {
+      "name": "Script_SetOrCompareWord6c"
+    },
+    "main:08026200": {
+      "name": "Script_SetOrCompareByte62"
+    },
+    "main:0802623c": {
+      "name": "Script_SetOrCompareByte63"
+    },
+    "main:08026278": {
+      "name": "Script_ApplyOperandSet"
+    },
+    "main:080262b0": {
+      "name": "Script_ApplyOperandAdd"
+    },
+    "main:080262e8": {
+      "name": "Script_ApplyOperandCompare"
+    },
+    "main:08024c50": {
+      "name": "Script_StoreLookupResult",
+      "source": "FIELD/COMMON/SCRIPT/INTERPRETER_CONTROL.C"
+    },
+    "main:08024ed4": {
+      "name": "Script_SkipCommand",
+      "source": "FIELD/COMMON/SCRIPT/SKIP_COMMAND.C"
+    },
+    "main:0802d23c": {
+      "name": "Curve_GetFirstSampleA",
+      "source": "LIB/CURVE.C"
+    },
+    "main:0802d248": {
+      "name": "Curve_LerpTwoSamples"
+    },
+    "main:0802d268": {
+      "name": "Curve_LerpTwoSamplesB"
+    },
+    "main:0802d288": {
+      "name": "Curve_StepAtSummedPosition"
+    },
+    "main:08023f14": {
+      "name": "Script_ClearByte54",
+      "source": "FIELD/COMMON/SCRIPT/OPERANDS_CLEAR_BYTE54.C"
+    },
+    "main:08023f28": {
+      "name": "Script_SetByte54",
+      "source": "FIELD/COMMON/SCRIPT/OPERANDS_SET_BYTE54.C"
+    },
+    "main:0802471c": {
+      "name": "Object_SetPositionAndResetMotion",
+      "source": "FIELD/COMMON/OBJECT/MOTION_SET_POSITION_AND_RESET_MOTION.C"
+    },
+    "main:081201b4": {
+      "name": "Battle_SetRuntimeFlagBit0",
+      "source": "BATTLE/EVENT_QUEUE_SET_FLAG_BIT0.C"
+    },
+    "main:08015768": {
+      "name": "Camera_StoreSceneParameters",
+      "source": "GRAPHICS/CAMERA_STORE_SCENE_PARAMETERS.C"
+    },
+    "main:0803d4bc": {
+      "name": "Ui_CountIconTableEntries",
+      "source": "GRAPHICS/ICON/COUNT_TABLE_ENTRIES.C"
+    },
+    "main:0803d4d0": {
+      "name": "Ui_CountSecondTableEntries",
+      "source": "GRAPHICS/WINDOW/COUNT_SECOND_TABLE_ENTRIES.C"
+    },
+    "main:080b0288": {
+      "name": "Owner_GetRecordStride84",
+      "source": "GAME/CHARACTER/GET_RECORD_STRIDE84.C"
+    },
+    "main:0802d3ec": {
+      "name": "Curve_LookupSampleByTable",
+      "source": "LIB/CURVE_LOOKUP.C"
+    },
+    "main:080d74f0": {
+      "name": "ObjectMotion_MoveHalfwayTowardTarget",
+      "source": "FIELD/COMMON/OBJECT/MOTION_MOVE_HALFWAY_TOWARD_TARGET.C"
+    },
+    "main:080d870c": {
+      "name": "ObjectMotion_MoveHalfwayTowardTargetCopy",
+      "source": "FIELD/COMMON/OBJECT/MOTION_MOVE_HALFWAY_TOWARD_TARGET_COPY.C"
+    },
+    "main:0811b16c": {
+      "name": "BattlePlacement_GetStepPair",
+      "source": "BATTLE/PLACEMENT/GET_STEP_PAIR.C"
+    },
+    "main:080c9920": {
+      "name": "BattleFx_GetResourceGroup",
+      "source": "BATTLE/EFFECT/DATA_GET_RESOURCE_GROUP.C"
+    },
+    "main:08024ddc": {
+      "name": "Script_LoadMainScript",
+      "source": "FIELD/COMMON/SCRIPT/LOAD_MAIN_SCRIPT.C"
+    },
+    "main:081a1288": {
+      "name": "SceneState_SetHalfwordB030",
+      "source": "SYSTEM/SCENE_STATE_SET_HALFWORD.C"
+    },
+    "main:08013300": {
+      "name": "Resource_GetTableEntry",
+      "source": "SYSTEM/RESOURCE/TABLE_ENTRY.C"
+    },
+    "main:080ebe94": {
+      "name": "EffectSlot_SetPosition",
+      "source": "BATTLE/EFFECT/SLOT_SET_POSITION.C"
     }
   }
 }

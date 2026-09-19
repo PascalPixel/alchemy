@@ -1,7 +1,7 @@
 //! Native entry point for the asset build stage.
 mod compression_plan;
 mod derive_index;
-pub(crate) use derive_index::{live_scene, network::live_family};
+pub(crate) use derive_index::{live_scene, network::live_family, tagged_extent};
 mod gba_header;
 mod native;
 use crate::compiler::build_io::relative;

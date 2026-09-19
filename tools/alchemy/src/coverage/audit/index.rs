@@ -3,7 +3,7 @@ use crate::compiler::{canonical_json::canonical_json, sha256};
 use crate::coverage::model::{normalize, subtract, Span};
 use crate::coverage::tree::SourceTree;
 use crate::overlay::rom::CanonicalRom;
-use crate::targets::DecompTarget;
+use crate::targets::{target_for, DecompTarget, DecompTargetId};
 use serde_json::{json, Value};
 use std::{collections::BTreeMap, path::Path};
 
@@ -15,6 +15,15 @@ fn span(row: &Value) -> Option<Span> {
     Some(Span::new(row["start"].as_i64()?, row["end"].as_i64()?))
 }
 fn payload_kind(region: &Value) -> &str {
+    if region["sources"].as_array().is_some_and(|sources| {
+        sources.iter().any(|source| {
+            source
+                .as_str()
+                .is_some_and(|path| path.contains("/GRAPHICS/CHARACTER/"))
+        })
+    }) {
+        return "golden-sun-character-graphics";
+    }
     if let Some(parts) = region["details"]["components"].as_array() {
         if parts.len() == 1 {
             return payload_kind(&parts[0]);
@@ -45,6 +54,114 @@ fn claim(
     covered.push(extent);
     *covered = normalize(covered);
     Ok(())
+}
+
+fn cross_game_resource_twins(
+    root: &Path,
+    rom: &CanonicalRom,
+    target: DecompTarget,
+) -> Result<Vec<Value>, String> {
+    if target.id != DecompTargetId::TlaEn {
+        return Ok(vec![]);
+    }
+    let tbs_target = target_for(DecompTargetId::TbsEn);
+    let tbs_rom = CanonicalRom::load_target(root, tbs_target)?;
+    let index_path = format!("{}/reports/rom-index.json", tbs_target.output_dir);
+    let tree = crate::coverage::tree::work_tree_at(root.to_path_buf());
+    let index = current(&tree, "tbs-en")
+        .ok_or("TBS ROM index is absent or stale; audit tbs-en before transferring twins")?;
+    if index["rom_sha256"] != sha256::hex(tbs_rom.bytes()) {
+        return Err("TBS ROM index is stale; audit tbs-en before transferring twins".into());
+    }
+    let mut kinds = BTreeMap::<String, Option<String>>::new();
+    for row in index["regions"]
+        .as_array()
+        .ok_or("TBS ROM index lacks regions")?
+    {
+        let kind = payload_kind(row);
+        if matches!(
+            kind,
+            "unresolved-data"
+                | "compressed-resource"
+                | "golden-sun-general-lz"
+                | "golden-sun-kind2-lz"
+        ) {
+            continue;
+        }
+        let Some(extent) = span(row) else { continue };
+        let start = (extent.start - 0x0800_0000) as usize;
+        let end = (extent.end - 0x0800_0000) as usize;
+        let Ok((decoded, _)) = crate::build_assets::tagged_extent(tbs_rom.bytes(), start, end)
+        else {
+            continue;
+        };
+        let digest = sha256::hex(&decoded);
+        kinds
+            .entry(digest)
+            .and_modify(|found| {
+                if found.as_deref() != Some(kind) {
+                    *found = None;
+                }
+            })
+            .or_insert_with(|| Some(kind.into()));
+    }
+    let mut rows = vec![];
+    let mut character_anchors = vec![];
+    for id in 0..rom.resource_count() {
+        let Ok(stream) = rom.stream(id) else { continue };
+        let digest = sha256::hex(&stream.decoded);
+        let Some(Some(kind)) = kinds.get(&digest) else {
+            continue;
+        };
+        if kind == "golden-sun-character-graphics" {
+            character_anchors.push(id);
+        }
+        let encoded = stream.encoded()?;
+        rows.push(json!({
+            "start":0x0800_0000 + stream.start as i64,
+            "end":0x0800_0000 + (stream.start + encoded.len()) as i64,
+            "kind":kind,
+            "label":"Shared TBS/TLA resource payload",
+            "resource":format!("{id:03x}"),
+            "evidence":format!("decoded payload byte-identical to one uniquely typed by the current TBS ROM index ({digest}); {index_path}")
+        }));
+    }
+    if character_anchors.len() >= 16 {
+        character_anchors.sort_unstable();
+        let anchors = character_anchors
+            .iter()
+            .copied()
+            .collect::<std::collections::BTreeSet<_>>();
+        let belongs = |id: usize| {
+            rom.stream(id).is_ok_and(|stream| {
+                stream.tag() == 0 && stream.encoded().is_ok_and(|encoded| encoded.len() >= 1024)
+            })
+        };
+        let mut first = character_anchors[0];
+        while first > 0 && belongs(first - 1) {
+            first -= 1;
+        }
+        let mut last = *character_anchors.last().unwrap();
+        while last + 1 < rom.resource_count() && belongs(last + 1) {
+            last += 1;
+        }
+        for id in first..=last {
+            if anchors.contains(&id) {
+                continue;
+            }
+            let stream = rom.stream(id)?;
+            let encoded = stream.encoded()?;
+            rows.push(json!({
+                "start":0x0800_0000 + stream.start as i64,
+                "end":0x0800_0000 + (stream.start + encoded.len()) as i64,
+                "kind":"golden-sun-character-graphics",
+                "label":"TLA character graphics resource",
+                "resource":format!("{id:03x}"),
+                "evidence":format!("uninterrupted general-LZ resource family {first:03x}–{last:03x}, anchored by {} byte-identical TBS character-graphics payloads; family stops at codec/size boundary",character_anchors.len())
+            }));
+        }
+    }
+    Ok(rows)
 }
 pub(crate) fn current(tree: &SourceTree, target: &str) -> Option<Value> {
     let doc: Value =
@@ -128,6 +245,9 @@ pub(super) fn run(root: &Path, target: DecompTarget) -> Result<String, String> {
     for row in identified {
         claim(&row, &mut covered, &mut rows, limit)?;
     }
+    for row in cross_game_resource_twins(root, &rom, target)? {
+        claim(&row, &mut covered, &mut rows, limit)?;
+    }
     // Directory decodes establish compression, not content type.
     for id in 0..rom.resource_count() {
         let Ok(stream) = rom.stream(id) else { continue };
@@ -207,6 +327,15 @@ pub(super) fn run(root: &Path, target: DecompTarget) -> Result<String, String> {
             )),
         );
     }
+    if target.id == DecompTargetId::TlaEn {
+        let path = "out/tbs-en/reports/rom-index.json";
+        inputs.insert(
+            path.into(),
+            json!(sha256::hex(
+                &std::fs::read(root.join(path)).map_err(|e| e.to_string())?
+            )),
+        );
+    }
     let doc = json!({"format":"alchemy-rom-index-v1","target":target.id.as_str(),"rom_sha256":hash,"rom_bytes":rom.bytes().len(),"inputs":inputs,"summary":summary,"regions":rows,"unresolved_readers":failures});
     let path = root.join(target.output_dir).join("reports/rom-index.json");
     std::fs::create_dir_all(path.parent().unwrap()).map_err(|e| e.to_string())?;
@@ -227,6 +356,15 @@ fn unresolved_row(start: i64, end: i64) -> Value {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn reconstructed_character_sources_own_the_payload_kind_not_the_codec() {
+        let row = json!({
+            "kind":"components",
+            "sources":["games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/CHAR_ROBIN.PNG"],
+            "details":{"components":[{"kind":"golden-sun-general-lz"}]}
+        });
+        assert_eq!(payload_kind(&row), "golden-sun-character-graphics");
+    }
     #[test]
     fn changed_inputs_invalidate_the_index() {
         let dir = tempfile::tempdir().unwrap();

@@ -94,7 +94,9 @@ fn content_style(tile: &Tile) -> (&'static str, &'static str) {
             ("Tables", "#9aa4c2")
         }
         "1bpp-tiles" | "1bpp-rows" => ("Images", "#8fb7ec"),
-        "golden-sun-static-sprite-series" => ("Sprite sheets", "#b5a0de"),
+        "golden-sun-static-sprite-series" | "golden-sun-character-graphics" | "zero-skip-bytes" => {
+            ("Sprite sheets", "#b5a0de")
+        }
         "gba-4bpp-tiles" | "gba-8bpp-tiles" | "golden-sun-delta7-still" => ("Images", "#8fb7ec"),
         "compressed-resource" => ("Compressed data", "#c4b4b7"),
         "gba-palette" | "gba-palette-rgba" | "bgr555-banks" => ("Palettes", "#e8a6d3"),
@@ -982,8 +984,13 @@ mod tests {
     }
 
     #[test]
-    fn every_tbs_rom_index_kind_has_an_identified_content_type() {
-        for kind in ["golden-sun-sound-sequence", "golden-sun-thumb-overlay"] {
+    fn known_rom_index_formats_have_identified_content_types() {
+        for kind in [
+            "golden-sun-sound-sequence",
+            "golden-sun-thumb-overlay",
+            "golden-sun-character-graphics",
+            "zero-skip-bytes",
+        ] {
             let tile = Tile {
                 group: Some(kind.into()),
                 ..Tile::default()

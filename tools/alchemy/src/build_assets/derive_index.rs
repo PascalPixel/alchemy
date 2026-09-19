@@ -152,7 +152,7 @@ struct Stream {
 }
 
 /// Exact stored extent, excluding decoder read-ahead and inter-resource gaps.
-pub(super) fn tagged_extent(
+pub(crate) fn tagged_extent(
     rom: &[u8],
     start: usize,
     end: usize,

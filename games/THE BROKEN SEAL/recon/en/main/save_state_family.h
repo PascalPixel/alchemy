@@ -2,6 +2,7 @@
 #define GUARD_SAVE_STATE_FAMILY_H
 
 #include "TYPES.H"
+#include "DMA.H"
 #include "FIXED_MATH.H"
 #include "FLASH.H"
 #include "GLOBAL_CELLS.H"
@@ -42,15 +43,15 @@ struct SaveWorkspace {
 #define SAVE_HEADER_TEMPLATE ((const struct SaveSlotHeader *)0x080079b8)
 #define SAVE_SIGNATURE ((const u8 *)0x080079b0)
 
-#define START_DMA(source_, destination_, control_) do { \
-    DMA3->source = (u32)(source_); \
-    DMA3->destination = (u32)(destination_); \
-    DMA3->control = (control_); \
-} while (0)
+#define START_DMA(source_, destination_, control_) \
+    Dma_Set((const void *)(source_), (void *)(destination_), (control_), (volatile u32 *)0x040000d4)
 
-#define WAIT_DMA() do { \
-    while ((DMA3->control & DMA3_BUSY) != 0) {} \
-} while (0)
+static __inline__ void WaitDma(struct DmaRegisters volatile *channel)
+{
+    while ((channel->control & DMA3_BUSY) != 0) {}
+}
+
+#define WAIT_DMA() WaitDma(DMA3)
 
 void *Func_080048f4(s32 kind, s32 size);
 s32 Func_080030f8(s32 frames);

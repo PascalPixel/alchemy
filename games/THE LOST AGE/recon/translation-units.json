@@ -1775,6 +1775,963 @@
         }
       ],
       "overlay": null
+    },
+    {
+      "id": "candidate-resource-64d-020026f4",
+      "game": "tla",
+      "source": "games/THE LOST AGE/recon/en/overlays/resource_64d_c_020026f4.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_64d",
+      "absolute_symbols": {
+        "Func_0200a7ec": {
+          "address": "0x0200a7ec",
+          "kind": "thumb"
+        },
+        "Func_0200a814": {
+          "address": "0x0200a814",
+          "kind": "thumb"
+        },
+        "Func_0200a824": {
+          "address": "0x0200a824",
+          "kind": "thumb"
+        },
+        "Func_0200a834": {
+          "address": "0x0200a834",
+          "kind": "thumb"
+        },
+        "Func_0200a83c": {
+          "address": "0x0200a83c",
+          "kind": "thumb"
+        },
+        "Func_0200a844": {
+          "address": "0x0200a844",
+          "kind": "thumb"
+        },
+        "Func_0200aa0c": {
+          "address": "0x0200aa0c",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x020026f4",
+          "extent": 188,
+          "state": "retained-assembly"
+        }
+      ]
+    },
+    {
+      "id": "candidate-resource-64d-02000510",
+      "game": "tla",
+      "source": "games/THE LOST AGE/recon/en/overlays/resource_64d_c_02000510.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_64d",
+      "absolute_symbols": {
+        "Func_020023a4": {
+          "address": "0x0200a3a4",
+          "kind": "thumb"
+        },
+        "Func_020026f4": {
+          "address": "0x0200a6f4",
+          "kind": "thumb"
+        },
+        "Func_020027b0": {
+          "address": "0x0200a7b0",
+          "kind": "thumb"
+        },
+        "Func_02002854": {
+          "address": "0x0200a854",
+          "kind": "thumb"
+        },
+        "Func_020028ac": {
+          "address": "0x0200a8ac",
+          "kind": "thumb"
+        },
+        "Func_020028b4": {
+          "address": "0x0200a8b4",
+          "kind": "thumb"
+        },
+        "Func_020028bc": {
+          "address": "0x0200a8bc",
+          "kind": "thumb"
+        },
+        "Func_020028c4": {
+          "address": "0x0200a8c4",
+          "kind": "thumb"
+        },
+        "Func_020028cc": {
+          "address": "0x0200a8cc",
+          "kind": "thumb"
+        },
+        "Func_020028d4": {
+          "address": "0x0200a8d4",
+          "kind": "thumb"
+        },
+        "Func_020028dc": {
+          "address": "0x0200a8dc",
+          "kind": "thumb"
+        },
+        "Func_020028e4": {
+          "address": "0x0200a8e4",
+          "kind": "thumb"
+        },
+        "Func_020028ec": {
+          "address": "0x0200a8ec",
+          "kind": "thumb"
+        },
+        "Func_020028f4": {
+          "address": "0x0200a8f4",
+          "kind": "thumb"
+        },
+        "Func_020028fc": {
+          "address": "0x0200a8fc",
+          "kind": "thumb"
+        },
+        "Func_02002904": {
+          "address": "0x0200a904",
+          "kind": "thumb"
+        },
+        "Func_0200290c": {
+          "address": "0x0200a90c",
+          "kind": "thumb"
+        },
+        "Func_02002914": {
+          "address": "0x0200a914",
+          "kind": "thumb"
+        },
+        "Func_0200291c": {
+          "address": "0x0200a91c",
+          "kind": "thumb"
+        },
+        "Func_02002924": {
+          "address": "0x0200a924",
+          "kind": "thumb"
+        },
+        "Func_0200292c": {
+          "address": "0x0200a92c",
+          "kind": "thumb"
+        },
+        "Func_02002934": {
+          "address": "0x0200a934",
+          "kind": "thumb"
+        },
+        "Func_0200293c": {
+          "address": "0x0200a93c",
+          "kind": "thumb"
+        },
+        "Func_02002944": {
+          "address": "0x0200a944",
+          "kind": "thumb"
+        },
+        "Func_0200294c": {
+          "address": "0x0200a94c",
+          "kind": "thumb"
+        },
+        "Func_02002954": {
+          "address": "0x0200a954",
+          "kind": "thumb"
+        },
+        "Func_0200295c": {
+          "address": "0x0200a95c",
+          "kind": "thumb"
+        },
+        "Func_02002964": {
+          "address": "0x0200a964",
+          "kind": "thumb"
+        },
+        "Func_0200296c": {
+          "address": "0x0200a96c",
+          "kind": "thumb"
+        },
+        "Func_02002974": {
+          "address": "0x0200a974",
+          "kind": "thumb"
+        },
+        "Func_02002984": {
+          "address": "0x0200a984",
+          "kind": "thumb"
+        },
+        "Func_0200298c": {
+          "address": "0x0200a98c",
+          "kind": "thumb"
+        },
+        "Func_02002994": {
+          "address": "0x0200a994",
+          "kind": "thumb"
+        },
+        "Func_020029cc": {
+          "address": "0x0200a9cc",
+          "kind": "thumb"
+        },
+        "Func_020029d4": {
+          "address": "0x0200a9d4",
+          "kind": "thumb"
+        },
+        "Func_020029e4": {
+          "address": "0x0200a9e4",
+          "kind": "thumb"
+        },
+        "Func_02002a34": {
+          "address": "0x0200aa34",
+          "kind": "thumb"
+        },
+        "Func_02002a3c": {
+          "address": "0x0200aa3c",
+          "kind": "thumb"
+        },
+        "Func_02002a44": {
+          "address": "0x0200aa44",
+          "kind": "thumb"
+        },
+        "Func_02002a4c": {
+          "address": "0x0200aa4c",
+          "kind": "thumb"
+        },
+        "Func_02002a54": {
+          "address": "0x0200aa54",
+          "kind": "thumb"
+        },
+        "Func_02002a5c": {
+          "address": "0x0200aa5c",
+          "kind": "thumb"
+        },
+        "Func_02002a64": {
+          "address": "0x0200aa64",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x02000510",
+          "extent": 5404,
+          "state": "retained-assembly"
+        }
+      ]
+    },
+    {
+      "id": "tla-object-dispatch",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/DISPATCH.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "Animation_ApplyChildArgument": {
+          "address": "0x08022b04",
+          "kind": "thumb"
+        },
+        "Animation_ApplyChildValue": {
+          "address": "0x08022bac",
+          "kind": "thumb"
+        },
+        "InitializeAnimationObjects": {
+          "address": "0x080228e0",
+          "kind": "thumb"
+        },
+        "ResourceMetadata_Register": {
+          "address": "0x080229ac",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080233d0",
+          "extent": 62,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08023410",
+          "extent": 62,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08023450",
+          "extent": 96,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080234b0",
+          "extent": 26,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080234cc",
+          "extent": 36,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080234f0",
+          "extent": 32,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-object-by-id",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/BY_ID.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "ObjectTable_Get": {
+          "address": "0x080cad84",
+          "kind": "thumb"
+        },
+        "Object_ResetMotion": {
+          "address": "0x08020138",
+          "kind": "thumb"
+        },
+        "Object_SetPosition": {
+          "address": "0x08020148",
+          "kind": "thumb"
+        },
+        "Object_CommitPosition": {
+          "address": "0x08020150",
+          "kind": "thumb"
+        },
+        "Object_SetMode": {
+          "address": "0x08020090",
+          "kind": "thumb"
+        },
+        "Object_SetAction": {
+          "address": "0x08020098",
+          "kind": "thumb"
+        },
+        "Object_SetCallback": {
+          "address": "0x080200a8",
+          "kind": "thumb"
+        },
+        "Object_RefreshSelector": {
+          "address": "0x08020140",
+          "kind": "thumb"
+        },
+        "Object_SetActionCallback": {
+          "address": "0x080d4b0c",
+          "kind": "thumb"
+        },
+        "ObjectMotion_SetActionVariant": {
+          "address": "0x080d3888",
+          "kind": "thumb"
+        },
+        "Object_LinkedMotionScript": {
+          "address": "0x080f3780",
+          "kind": "data"
+        },
+        "Object_OffsetMotionScript": {
+          "address": "0x080f32d0",
+          "kind": "data"
+        }
+      },
+      "local_symbols": [
+        {
+          "address": "0x080d2de4",
+          "extent": 54
+        },
+        {
+          "address": "0x080d2f48",
+          "extent": 128
+        }
+      ],
+      "owners": [
+        {
+          "address": "0x080d2d84",
+          "extent": 14,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080d2d94",
+          "extent": 20,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080d2da8",
+          "extent": 32,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080d2dc8",
+          "extent": 28,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080d2e1c",
+          "extent": 36,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080d2e40",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080d2e50",
+          "extent": 40,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080d2e78",
+          "extent": 42,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080d2ea4",
+          "extent": 48,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080d2ed4",
+          "extent": 50,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080d2f08",
+          "extent": 64,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080d2fc8",
+          "extent": 50,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080d2ffc",
+          "extent": 64,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080d303c",
+          "extent": 52,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-object-motion-events",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/MOTION_EVENTS.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "ObjectTable_Get": {
+          "address": "0x080cad84",
+          "kind": "thumb"
+        },
+        "Object_SetMode": {
+          "address": "0x08020090",
+          "kind": "thumb"
+        },
+        "Object_SetCallback": {
+          "address": "0x080200a8",
+          "kind": "thumb"
+        },
+        "Object_RefreshSelector": {
+          "address": "0x08020140",
+          "kind": "thumb"
+        },
+        "ObjectMotion_WaitForAnimationChange": {
+          "address": "0x080d3268",
+          "kind": "thumb"
+        },
+        "Battle_WaitMode0": {
+          "address": "0x080d2240",
+          "kind": "thumb"
+        },
+        "Audio_PlayCue": {
+          "address": "0x081c0010",
+          "kind": "thumb"
+        },
+        "Object_VariantMotionScripts": {
+          "address": "0x080f06d8",
+          "kind": "data"
+        },
+        "Object_SetModeById": {
+          "address": "0x080d3240",
+          "kind": "thumb"
+        },
+        "Object_RefreshSelectorById": {
+          "address": "0x080d2e40",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [
+        {
+          "address": "0x080d3300",
+          "extent": 44
+        }
+      ],
+      "owners": [
+        {
+          "address": "0x080d32b8",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080d32c8",
+          "extent": 56,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080d332c",
+          "extent": 16,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-object-child-state",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/FIELD/COMMON/OBJECT/CHILD_STATE.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "ObjectDispatch_Initialize": {
+          "address": "0x080233a8",
+          "kind": "thumb"
+        },
+        "Animation_ApplyChildValuesToRecord": {
+          "address": "0x080227b0",
+          "kind": "thumb"
+        },
+        "WaitFrames": {
+          "address": "0x08013560",
+          "kind": "thumb"
+        },
+        "ObjectDispatch_Table4": {
+          "address": "0x0802f1d0",
+          "kind": "data"
+        },
+        "ObjectDispatch_Table6": {
+          "address": "0x0802f200",
+          "kind": "data"
+        }
+      },
+      "local_symbols": [
+        {
+          "address": "0x08023634",
+          "extent": 48
+        },
+        {
+          "address": "0x08023680",
+          "extent": 38
+        },
+        {
+          "address": "0x080236a8",
+          "extent": 38
+        }
+      ],
+      "owners": [
+        {
+          "address": "0x080235f8",
+          "extent": 16,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08023608",
+          "extent": 44,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08023664",
+          "extent": 26,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080236d0",
+          "extent": 24,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-staged-actor",
+      "game": "tla",
+      "source": "games/THE LOST AGE/recon/en/overlays/resource_64e_c_02000314.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_64e",
+      "absolute_symbols": {
+        "gGameState": {
+          "address": "0x2000240",
+          "kind": "data"
+        },
+        "StagedActor_DirectionSteps": {
+          "address": "0x2009d8c",
+          "kind": "data"
+        },
+        "WaitFrames": {
+          "address": "0x2009b04",
+          "kind": "thumb"
+        },
+        "Object_SetMode": {
+          "address": "0x2009b2c",
+          "kind": "thumb"
+        },
+        "Object_SetPosition": {
+          "address": "0x2009b44",
+          "kind": "thumb"
+        },
+        "Object_CommitPosition": {
+          "address": "0x2009b4c",
+          "kind": "thumb"
+        },
+        "Object_CheckMovementCollision": {
+          "address": "0x2009b64",
+          "kind": "thumb"
+        },
+        "BattleFx_PlayQueuedSound": {
+          "address": "0x2009cbc",
+          "kind": "thumb"
+        },
+        "Audio_PlayCue": {
+          "address": "0x2009cdc",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x02000314",
+          "extent": 56,
+          "state": "retained-assembly"
+        },
+        {
+          "address": "0x0200034c",
+          "extent": 64,
+          "state": "retained-assembly"
+        },
+        {
+          "address": "0x0200038c",
+          "extent": 388,
+          "state": "retained-assembly"
+        },
+        {
+          "address": "0x02000510",
+          "extent": 92,
+          "state": "retained-assembly"
+        }
+      ]
+    },
+    {
+      "id": "tla-djinn-management",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/GAME/DJINN/MANAGEMENT.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "OwnerState_Get": {
+          "address": "0x8016ca4",
+          "kind": "thumb"
+        },
+        "GameFlag_Test": {
+          "address": "0x8016ce4",
+          "kind": "thumb"
+        },
+        "GameFlag_Set": {
+          "address": "0x8016cfc",
+          "kind": "thumb"
+        },
+        "Party_CountActiveOwners": {
+          "address": "0x80afdbc",
+          "kind": "thumb"
+        },
+        "Trade_GetOfferState": {
+          "address": "0x80ad348",
+          "kind": "thumb"
+        },
+        "Owner_RefreshDerivedData": {
+          "address": "0x80b0298",
+          "kind": "thumb"
+        },
+        "gPartyState": {
+          "address": "0x2000240",
+          "kind": "data"
+        },
+        "Djinn_Definitions": {
+          "address": "0x80c6bb0",
+          "kind": "data"
+        }
+      },
+      "local_symbols": [
+        {
+          "address": "0x080b0ab8",
+          "extent": 192
+        },
+        {
+          "address": "0x080b0b78",
+          "extent": 62
+        },
+        {
+          "address": "0x080b0bb8",
+          "extent": 190
+        },
+        {
+          "address": "0x080b0c9c",
+          "extent": 102
+        },
+        {
+          "address": "0x080b0d04",
+          "extent": 84
+        },
+        {
+          "address": "0x080b0d58",
+          "extent": 172
+        }
+      ],
+      "owners": [
+        {
+          "address": "0x080b0a94",
+          "extent": 36,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b0c78",
+          "extent": 34,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b0e04",
+          "extent": 58,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b0e40",
+          "extent": 178,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b0ef4",
+          "extent": 90,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b0f50",
+          "extent": 10,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-inventory-items",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/GAME/INVENTORY/ITEMS.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "OwnerState_Get": {
+          "address": "0x8016ca4",
+          "kind": "thumb"
+        },
+        "Party_ListActiveOwners": {
+          "address": "0x80afe78",
+          "kind": "thumb"
+        },
+        "Item_GetDirect": {
+          "address": "0x80aec04",
+          "kind": "thumb"
+        },
+        "gPartyState": {
+          "address": "0x2000240",
+          "kind": "data"
+        }
+      },
+      "local_symbols": [
+        {
+          "address": "0x080aed6c",
+          "extent": 140
+        }
+      ],
+      "owners": [
+        {
+          "address": "0x080aecc8",
+          "extent": 36,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080aecec",
+          "extent": 76,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080aed38",
+          "extent": 50,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080aedf8",
+          "extent": 72,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-inventory-find",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/GAME/INVENTORY/FIND.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "OwnerState_Get": {
+          "address": "0x8016ca4",
+          "kind": "thumb"
+        },
+        "Party_ListActiveOwners": {
+          "address": "0x80afe78",
+          "kind": "thumb"
+        },
+        "gPartyState": {
+          "address": "0x2000240",
+          "kind": "data"
+        },
+        "Inventory_Find": {
+          "address": "0x080aee98",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080aeec8",
+          "extent": 108,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-inventory-equipped",
+      "game": "tla",
+      "source": "games/THE LOST AGE/SRC/GAME/INVENTORY/EQUIPPED.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "OwnerState_Get": {
+          "address": "0x8016ca4",
+          "kind": "thumb"
+        },
+        "Item_GetDirect": {
+          "address": "0x80aec04",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [
+        {
+          "address": "0x080af094",
+          "extent": 80
+        }
+      ],
+      "owners": [
+        {
+          "address": "0x080af008",
+          "extent": 76,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080af054",
+          "extent": 62,
+          "state": "exact-c"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-idejima-actor-sequence",
+      "game": "tla",
+      "source": "games/THE LOST AGE/recon/en/overlays/resource_650_c_02000d14.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_650",
+      "absolute_symbols": {
+        "Func_0200b138": {
+          "address": "0x0200b138",
+          "kind": "thumb"
+        },
+        "Func_0200b158": {
+          "address": "0x0200b158",
+          "kind": "thumb"
+        },
+        "Func_0200b1b0": {
+          "address": "0x0200b1b0",
+          "kind": "thumb"
+        },
+        "Func_0200b1b8": {
+          "address": "0x0200b1b8",
+          "kind": "thumb"
+        },
+        "Func_0200b1c0": {
+          "address": "0x0200b1c0",
+          "kind": "thumb"
+        },
+        "Func_0200b1d0": {
+          "address": "0x0200b1d0",
+          "kind": "thumb"
+        },
+        "Func_0200b220": {
+          "address": "0x0200b220",
+          "kind": "thumb"
+        },
+        "Func_0200b288": {
+          "address": "0x0200b288",
+          "kind": "thumb"
+        },
+        "Func_0200b290": {
+          "address": "0x0200b290",
+          "kind": "thumb"
+        },
+        "Func_0200b2a0": {
+          "address": "0x0200b2a0",
+          "kind": "thumb"
+        },
+        "Func_0200b2a8": {
+          "address": "0x0200b2a8",
+          "kind": "thumb"
+        },
+        "Func_0200b2b0": {
+          "address": "0x0200b2b0",
+          "kind": "thumb"
+        },
+        "Func_0200b2c0": {
+          "address": "0x0200b2c0",
+          "kind": "thumb"
+        },
+        "Func_0200b2c8": {
+          "address": "0x0200b2c8",
+          "kind": "thumb"
+        },
+        "Func_0200b2d0": {
+          "address": "0x0200b2d0",
+          "kind": "thumb"
+        },
+        "Func_0200b2d8": {
+          "address": "0x0200b2d8",
+          "kind": "thumb"
+        },
+        "Func_0200b310": {
+          "address": "0x0200b310",
+          "kind": "thumb"
+        },
+        "Func_0200b320": {
+          "address": "0x0200b320",
+          "kind": "thumb"
+        },
+        "gPartyState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "gActorExitScript": {
+          "address": "0x0200b7c4",
+          "kind": "data"
+        },
+        "ObjectMotion_CopyPosition": {
+          "address": "0x0200b238",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x02000d14",
+          "extent": 2088,
+          "state": "retained-assembly"
+        }
+      ]
     }
   ]
 }

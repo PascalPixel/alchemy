@@ -1,4 +1,266 @@
 {
   "format": 1,
-  "regions": []
+  "regions": [
+    {
+      "overlay": "resource_64b",
+      "start": "0x2000000",
+      "end": "0x2000038",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Maintained explicit target list emits 7 fixed eight-byte veneers at the audited bank extent. Complete overlay verification is required before any receipt credit.",
+        "The macro reconstructs the fixed linkage interface; no claim about original authorship, handwritten game functions or a complete TLA ROM rebuild."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC",
+        "source": "games/THE LOST AGE/SRC/FIELD/WORLD_MAP/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_64b",
+      "start": "0x2004a58",
+      "end": "0x2004e38",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Maintained explicit target list emits 124 fixed eight-byte veneers at the audited bank extent. Complete overlay verification is required before any receipt credit.",
+        "The macro reconstructs the fixed linkage interface; no claim about original authorship, handwritten game functions or a complete TLA ROM rebuild."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC",
+        "source": "games/THE LOST AGE/SRC/FIELD/WORLD_MAP/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_64d",
+      "start": "0x2000000",
+      "end": "0x2000038",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Maintained explicit target list emits 7 fixed eight-byte veneers at the audited bank extent. Complete overlay verification is required before any receipt credit.",
+        "The macro reconstructs the fixed linkage interface; no claim about original authorship, handwritten game functions or a complete TLA ROM rebuild."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC",
+        "source": "games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_64d",
+      "start": "0x20027dc",
+      "end": "0x2002a6c",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Maintained explicit target list emits 82 fixed eight-byte veneers at the audited bank extent. Complete overlay verification is required before any receipt credit.",
+        "The macro reconstructs the fixed linkage interface; no claim about original authorship, handwritten game functions or a complete TLA ROM rebuild."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC",
+        "source": "games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_64e",
+      "start": "0x2000000",
+      "end": "0x2000038",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Maintained explicit target list emits 7 fixed eight-byte veneers at the audited bank extent. Complete overlay verification is required before any receipt credit.",
+        "The macro reconstructs the fixed linkage interface; no claim about original authorship, handwritten game functions or a complete TLA ROM rebuild."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC",
+        "source": "games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_64e",
+      "start": "0x2001afc",
+      "end": "0x2001ce4",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Maintained explicit target list emits 61 fixed eight-byte veneers at the audited bank extent. Complete overlay verification is required before any receipt credit.",
+        "The macro reconstructs the fixed linkage interface; no claim about original authorship, handwritten game functions or a complete TLA ROM rebuild."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC",
+        "source": "games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_64f",
+      "start": "0x2000000",
+      "end": "0x2000038",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Maintained explicit target list emits 7 fixed eight-byte veneers at the audited bank extent. Complete overlay verification is required before any receipt credit.",
+        "The macro reconstructs the fixed linkage interface; no claim about original authorship, handwritten game functions or a complete TLA ROM rebuild."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC",
+        "source": "games/THE LOST AGE/SRC/FIELD/SUHARA_GATE/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_64f",
+      "start": "0x2000958",
+      "end": "0x2000aa8",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Maintained explicit target list emits 42 fixed eight-byte veneers at the audited bank extent. Complete overlay verification is required before any receipt credit.",
+        "The macro reconstructs the fixed linkage interface; no claim about original authorship, handwritten game functions or a complete TLA ROM rebuild."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC",
+        "source": "games/THE LOST AGE/SRC/FIELD/SUHARA_GATE/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_650",
+      "start": "0x2000000",
+      "end": "0x2000038",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Maintained explicit target list emits 7 fixed eight-byte veneers at the audited bank extent. Complete overlay verification is required before any receipt credit.",
+        "The macro reconstructs the fixed linkage interface; no claim about original authorship, handwritten game functions or a complete TLA ROM rebuild."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC",
+        "source": "games/THE LOST AGE/SRC/FIELD/IDEJIMA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_650",
+      "start": "0x2003138",
+      "end": "0x2003330",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Maintained explicit target list emits 63 fixed eight-byte veneers at the audited bank extent. Complete overlay verification is required before any receipt credit.",
+        "The macro reconstructs the fixed linkage interface; no claim about original authorship, handwritten game functions or a complete TLA ROM rebuild."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC",
+        "source": "games/THE LOST AGE/SRC/FIELD/IDEJIMA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_651",
+      "start": "0x2000000",
+      "end": "0x2000038",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Maintained explicit target list emits 7 fixed eight-byte veneers at the audited bank extent. Complete overlay verification is required before any receipt credit.",
+        "The macro reconstructs the fixed linkage interface; no claim about original authorship, handwritten game functions or a complete TLA ROM rebuild."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC",
+        "source": "games/THE LOST AGE/SRC/FIELD/DAIRA_MURA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_651",
+      "start": "0x2000c38",
+      "end": "0x2000d80",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Maintained explicit target list emits 41 fixed eight-byte veneers at the audited bank extent. Complete overlay verification is required before any receipt credit.",
+        "The macro reconstructs the fixed linkage interface; no claim about original authorship, handwritten game functions or a complete TLA ROM rebuild."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC",
+        "source": "games/THE LOST AGE/SRC/FIELD/DAIRA_MURA/IMPORT.INC"
+      }
+    },
+    {
+      "overlay": "resource_652",
+      "start": "0x2000000",
+      "end": "0x2000038",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Maintained explicit target list emits 7 fixed eight-byte veneers at the audited bank extent. Complete overlay verification is required before any receipt credit.",
+        "The macro reconstructs the fixed linkage interface; no claim about original authorship, handwritten game functions or a complete TLA ROM rebuild."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC",
+        "source": "games/THE LOST AGE/SRC/FIELD/DAIRA_HEYA/ENTRY.INC"
+      }
+    },
+    {
+      "overlay": "resource_652",
+      "start": "0x2000c7c",
+      "end": "0x2000e04",
+      "kind": "veneer",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "Maintained explicit target list emits 49 fixed eight-byte veneers at the audited bank extent. Complete overlay verification is required before any receipt credit.",
+        "The macro reconstructs the fixed linkage interface; no claim about original authorship, handwritten game functions or a complete TLA ROM rebuild."
+      ],
+      "provenance": {
+        "credit": "reconstructed_veneer",
+        "proof": "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC",
+        "source": "games/THE LOST AGE/SRC/FIELD/DAIRA_HEYA/IMPORT.INC"
+      }
+    }
+  ],
+  "verification": {
+    "measured": "2026-09-19",
+    "target": "tla-en",
+    "scope": "Seven maintained opening-area overlay entry and import banks",
+    "banks": 14,
+    "complete_overlays": 7,
+    "credited_bytes": 4088,
+    "new_exact_c_bytes": 0,
+    "existing_exact_c_owners": 142,
+    "inventory_extent_changed": false,
+    "method": "Rebuild each complete credited overlay from its maintained listing and compiled C placeholders; compare every byte with the checksum-verified canonical ROM overlay before writing the coverage receipt.",
+    "jev": {
+      "model": "jev-1.13.0",
+      "decision": "proceed",
+      "confidence": 0.75,
+      "latency_ms": 704,
+      "usage": {
+        "input_tokens": 916,
+        "output_tokens": 49
+      },
+      "disposition": "All seven complete overlays reproduced; the verifier now requires the same check for assembly-only overlays before issuing credit."
+    }
+  }
 }

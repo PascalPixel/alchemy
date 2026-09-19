@@ -16,6 +16,16 @@
 
 #define BytePtr(p) ((u8 *)(p))
 
+#ifndef BATTLE_COMMAND_VALUE
+#define BATTLE_COMMAND_VALUE (*cmd)
+#endif
+
+#ifdef BATTLE_ACTION_POWER_SHARED
+#define BATTLE_DAMAGE_POWER apwr
+#else
+#define BATTLE_DAMAGE_POWER dmg
+#endif
+
 /* 属性テーブルはユニット+36 の s16 対。威力テーブルは +72。 */
 struct AffinityPair {
     s16 low;
@@ -39,7 +49,7 @@ struct AffinityPair {
 
 #ifndef BATTLE_DAMAGE_KO_CONDITION
 #define BATTLE_DAMAGE_KO_CONDITION(cur, dmg)                                 \
-    (BattleFlag_Test(366) != 0 && *cmd == 6 && (cur) > (dmg))
+    (BattleFlag_Test(366) != 0 && BATTLE_COMMAND_VALUE == 6 && (cur) > (dmg))
 #define BATTLE_AFTER_DAMAGE(cur)
 #endif
 
@@ -84,7 +94,7 @@ struct AffinityPair {
 
 #ifndef BATTLE_POWER_BONUS
 #define BATTLE_POWER_BONUS(dmg)                                              \
-    if (*cmd == 6) {                                                        \
+    if (BATTLE_COMMAND_VALUE == 6) {                                       \
         s32 item;                                                           \
                                                                              \
         item = action_id - 380;                                             \
@@ -473,7 +483,7 @@ s32 BATTLE_RESOLVE_OWNER(struct BattlePlan *plan, s32 slot)
     struct BattleUnit *target;
     s32 n;
     s32 value;
-#ifdef BATTLE_AFFINITY_CARRIER
+#ifdef BATTLE_SUMMON_BLOCK
     s32 affi;
 #endif
     s32 dmg;
@@ -516,11 +526,7 @@ s32 BATTLE_RESOLVE_OWNER(struct BattlePlan *plan, s32 slot)
     /* 属性相性。テーブルを二方向に走査して符号を決める。 */
     if (range != 4) {
         s16 *tbl;
-#ifndef BATTLE_AFFINITY_CARRIER
         s32 i;
-#else
-#define i affi
-#endif
 
         value = ELEM_AT(target, range);
         tbl = (s16 *)((u8 *)target + 36);
@@ -554,15 +560,12 @@ s32 BATTLE_RESOLVE_OWNER(struct BattlePlan *plan, s32 slot)
         }
         if (i == 4)
             affinity = 1;
-#ifdef BATTLE_AFFINITY_CARRIER
-#undef i
-#endif
     }
 
     /* 攻撃力。元素武器でなければ 100。 */
     if ((u32)plan->range_index <= 3) {
         BATTLE_SET_COMMAND();
-        if (*cmd != 2) {
+        if (BATTLE_COMMAND_VALUE != 2) {
             s32 off;
 
             off = plan->range_index * 4 + 72;
@@ -724,6 +727,9 @@ after_power:
         && (target->hp != 0 || BattleEffect_Classify(action->effect) != 0)) {
         s32 pp;
         s32 cur;
+#ifdef BATTLE_ACTION_POWER_SHARED
+        s32 apwr;
+#endif
 
         /*
          * -1 PPダメージ(別系)  1 HP回復  2 HPダメージ  3/4 武器攻撃
@@ -735,7 +741,9 @@ after_power:
         case BATTLE_DAMAGE_WEAPON_SCALED:
         {
             s32 def;
+#ifndef BATTLE_ACTION_POWER_SHARED
             s32 apwr;
+#endif
 
             if (BATTLE_DAMAGE_BLOCKED())
                 break;
@@ -788,7 +796,7 @@ after_power:
                             dmg = 1;
                     }
                 }
-                if (BattleFlag_Test(366) != 0 && *cmd == 5
+                if (BattleFlag_Test(366) != 0 && BATTLE_COMMAND_VALUE == 5
                     && BATTLE_ATTACK_HP <= dmg) {
                     dmg = BATTLE_ATTACK_HP - 1;
                 }
@@ -837,8 +845,8 @@ after_power:
                 off = off + 72;
                 bonus = power - ((s16 *)((u8 *)target + off))[1];
             }
-            dmg = action->power;
-            dmg = Battle_CalcPower(dmg, bonus, 256);
+            BATTLE_DAMAGE_POWER = action->power;
+            dmg = Battle_CalcPower(BATTLE_DAMAGE_POWER, bonus, 256);
             dmg = Math_Div(dmg * PpLossFalloff[offset], 100);
             dmg *= adjust;
             APPLY_GUARD();
@@ -873,8 +881,8 @@ after_power:
                 break;
             cur = target->hp;
             BATTLE_HP_HEAL_GATE(cur);
-            dmg = action->power;
-            dmg = Battle_CalcRestore(dmg, range == 4 ? 100 : power, 256);
+            BATTLE_DAMAGE_POWER = action->power;
+            dmg = Battle_CalcRestore(BATTLE_DAMAGE_POWER, range == 4 ? 100 : power, 256);
             dmg = Math_Div(dmg * HpHealFalloff[offset], 100);
             dmg *= adjust;
             dmg += BattleRandom_Next() & 3;
@@ -904,8 +912,8 @@ after_power:
                 break;
             pp = target->pp;
             TAKE_BONUS();
-            dmg = action->power;
-            dmg = Battle_CalcPower(dmg, bonus, 256);
+            BATTLE_DAMAGE_POWER = action->power;
+            dmg = Battle_CalcPower(BATTLE_DAMAGE_POWER, bonus, 256);
             dmg = Math_Div(dmg * PpDmgFalloff[offset], 100);
             dmg *= adjust;
             APPLY_GUARD();
@@ -944,9 +952,9 @@ after_power:
                 TAKE_BONUS();
                 if (BATTLE_DAMAGE_ROUND == 0)
                     bonus = 0;
-                dmg = action->power;
-                BATTLE_POWER_BONUS(dmg);
-                dmg = Battle_CalcPower(dmg, bonus, 256);
+                BATTLE_DAMAGE_POWER = action->power;
+                BATTLE_POWER_BONUS(BATTLE_DAMAGE_POWER);
+                dmg = Battle_CalcPower(BATTLE_DAMAGE_POWER, bonus, 256);
                 dmg *= adjust;
                 switch (nibble & 15) {
                 case 5:
@@ -1008,8 +1016,8 @@ after_power:
             if (action->power == 0)
                 break;
             pp = target->pp;
-            dmg = action->power;
-            dmg = Battle_CalcRestore(dmg, range == 4 ? 100 : power, 256);
+            BATTLE_DAMAGE_POWER = action->power;
+            dmg = Battle_CalcRestore(BATTLE_DAMAGE_POWER, range == 4 ? 100 : power, 256);
             dmg = Math_Div(dmg * PpHealFalloff[offset], 100);
             dmg *= adjust;
             pp += dmg;
@@ -1037,15 +1045,21 @@ pp_store:
             break;
 
         case BATTLE_DAMAGE_HP_POWER:
-            if (hit != 0) {
+#ifdef BATTLE_HP_POWER_GUARD_FIRST
             if (BATTLE_DAMAGE_BLOCKED())
                 break;
+#endif
+            if (hit != 0) {
+#ifndef BATTLE_HP_POWER_GUARD_FIRST
+            if (BATTLE_DAMAGE_BLOCKED())
+                break;
+#endif
             if (action->power == 0)
                 break;
             cur = target->hp;
             TAKE_BONUS();
-            dmg = action->power;
-            dmg = Battle_CalcPower(dmg, bonus, 256);
+            BATTLE_DAMAGE_POWER = action->power;
+            dmg = Battle_CalcPower(BATTLE_DAMAGE_POWER, bonus, 256);
             dmg *= adjust;
             dmg = Math_Div(dmg * HpDmgFalloff[offset], 100);
             APPLY_GUARD();

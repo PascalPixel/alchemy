@@ -81,7 +81,7 @@ enum EffectSpawnFlags {
 };
 
 struct EffectOptions {
-    u8 priority;
+    s32 priority;
     s32 palette;
     s32 start_scale_x;
     s32 start_scale_y;

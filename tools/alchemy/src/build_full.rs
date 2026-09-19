@@ -975,7 +975,11 @@ fn validate_translation_units(
     let main = units
         .units
         .iter()
-        .filter(|unit| unit.game == "tbs" && unit.overlay.is_none())
+        .filter(|unit| unit.game == "tbs")
+        .map(crate::compiler::translation_units::TranslationUnit::main_placement)
+        .collect::<Result<Vec<_>, _>>()?
+        .into_iter()
+        .flatten()
         .collect::<Vec<_>>();
     let expected = main.iter().map(|unit| {
         let exact = unit.exact_owner_count();

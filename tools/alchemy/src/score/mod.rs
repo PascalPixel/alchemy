@@ -45,7 +45,7 @@ pub fn entry(arguments: &[String]) {
         Err(error) => fail(&error),
     }
 }
-fn run(mut options: crate::score::cli::Options) -> Result<String, String> {
+fn run(options: crate::score::cli::Options) -> Result<String, String> {
     let Some(id) = options.unit.clone() else {
         let output = render(root(), &options)?;
         let twins = options.owner.map_or(String::new(), |address| {
@@ -69,6 +69,13 @@ fn run(mut options: crate::score::cli::Options) -> Result<String, String> {
     if options.instance.is_some() || options.all_instances {
         return score_instances(&unit, &options);
     }
+    score_unit(&unit, options)
+}
+fn score_unit(
+    unit: &TranslationUnit,
+    mut options: crate::score::cli::Options,
+) -> Result<String, String> {
+    let id = &unit.id;
     if let Some(address) = options.owner {
         if !unit.owners.iter().any(|owner| owner.address == address) {
             return Err(format!("{id} does not declare 0x{address:08x}"));
@@ -206,6 +213,18 @@ fn score_instances(
     };
     let work = options.work.as_ref().map(|work| root().join(work));
     report_images(unit, &images, |image| {
+        if image == "main" {
+            let placed = unit.main_placement()?.ok_or("missing main instance")?;
+            let mut options = options.clone();
+            options.instance = None;
+            options.all_instances = false;
+            options.owner = None;
+            options.work = work
+                .as_ref()
+                .map(|work| work.join("main").to_string_lossy().into_owned());
+            return score_unit(&placed, options)
+                .map(|output| (format!("image=main\n{output}"), Vec::new()));
+        }
         let work = work.as_ref().map(|work| work.join(image));
         score_overlay_image(unit, image, None, work.as_deref(), true, None)
     })

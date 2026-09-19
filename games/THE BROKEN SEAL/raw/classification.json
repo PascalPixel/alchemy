@@ -2702,8 +2702,8 @@
         "no_four_register_thumb_transfer_template_and_movstrqi_is_copy_only_arm_md_5084_arm_c_9478",
         "inline_dma_kick_or_fill_macro_in_c_bodies_not_handwritten_functions_no_cross_product_identity"
       ],
-      "expected_files": 169,
-      "expected_bytes": 65476,
+      "expected_files": 154,
+      "expected_bytes": 64496,
       "matcher": "thumb_standalone_wide_transfer",
       "provenance": {
         "scanned": "2026-09-10",
@@ -2765,6 +2765,86 @@
           ],
           "gate": "no compiler change needed; no_asm::find_forbidden flags any asm token raw and preprocessed on score/integrate/cross-edition, so admitting one shared header is a path-scoped tooling exemption, not yet done",
           "next": "Splat writes the header (games/THE BROKEN SEAL/include) and first ten bodies; tooling exemption for that one path; then score"
+        },
+        "reconstruction_2026_09_19": {
+          "source": "games/THE BROKEN SEAL/INCLUDE/DMA.H",
+          "construct": "Static inline Dma_Set binds the channel to r3 before source/destination/control to r0/r1/r2, then emits the shared STMIA and base restore. All four register operands are inputs: STMIA followed by the restore preserves their values. Memory and condition codes are clobbered; no caller register control, compiler change or output patch.",
+          "authorization": "Existing class_ruling admits the shared macro header evidenced by all296 fixed-register kick sites. Internal register bindings reconstruct its interface, rather than forcing allocation in arbitrary caller C.",
+          "admission": "The existing raw and expanded ordinary-source checks recognize only the complete token-pinned shared Dma_Set body; changed instructions, registers, restore, clobbers, extra assembly and ABI attributes remain rejected.",
+          "witnesses": [
+            {
+              "owner": "main:08004838",
+              "bytes": 32
+            },
+            {
+              "owner": "main:08004a28",
+              "bytes": 28
+            },
+            {
+              "owner": "main:08004a44",
+              "bytes": 24
+            }
+          ],
+          "score": "All three independent complete callers, including alignment and pools, compile byte-identically under the unchanged canonical route and pass main integration.",
+          "remaining": "The historical169-file65476-byte class is not blanket credit. Every remaining complete C body must separately match and pass production verification. Fill macros are not admitted by this change.",
+          "negative_probes": [
+            {
+              "owner": "main:0800bc48",
+              "bytes": 40,
+              "differing_halfwords": 9
+            },
+            {
+              "owner": "main:0809bb34",
+              "bytes": 48,
+              "differing_halfwords": 5
+            }
+          ],
+          "negative_result": "The same helper explains the two DMA instructions in stack-zero callers but does not yet reproduce their stack-address store and operand setup. No per-caller register or assembly variant admitted.",
+          "jev": "Previously unavailable (transport_or_invalid_response); no access change or retry.",
+          "consecutive_probe": {
+            "owner": "main:080a22f4",
+            "candidate_bytes": 40,
+            "reference_bytes": 48,
+            "differing_halfwords": 7,
+            "result": "Channel is reused correctly; GCC derives the second source/control from earlier constants instead of loading separate literals. This already-credited handwritten leaf is not converted or used to alter the shared primitive."
+          },
+          "additional_callers": [
+            {
+              "owner": "main:080c0184",
+              "bytes": 56,
+              "source": "SRC/BATTLE/PRESENTATION/UPLOAD_TILE_VARIANT.C"
+            },
+            {
+              "owner": "main:080049e8",
+              "bytes": 64,
+              "source": "SRC/GRAPHICS/SAVE_TRANSFER_WORK_ONCE.C"
+            },
+            {
+              "owner": "main:080251d4",
+              "bytes": 44,
+              "source": "SRC/GRAPHICS/VRAM/COPY_TILE.C"
+            }
+          ],
+          "stack_callers": {
+            "owners": [
+              "main:080052f4",
+              "main:0800543c",
+              "main:08005490",
+              "main:080054e4",
+              "main:08005534",
+              "main:08005584",
+              "main:080055d8",
+              "main:0800562c",
+              "main:0800567c"
+            ],
+            "bytes": 732,
+            "source": "Ordinary stack VLAs, unchanged DMA primitive, typed indirect calls; nine complete owner comparisons exact in two declared modules.",
+            "heap_negative": {
+              "owner": "main:08005340",
+              "bytes": 84,
+              "differing_halfwords": 6
+            }
+          }
         }
       }
     },

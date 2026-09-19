@@ -64,7 +64,7 @@ void Func_080cd594(s32 mode);
 void Func_080e0524(void *resource_id, void *destination, s32 upper, s32 palette);
 void Func_080c9048(void);
 s32 Func_08004458(void);
-void Func_080ed408(s32, s32, s32, s32, s32);
+s32 Func_080ed408(s32, s32, s32, s32, s32);
 s32 Func_080041d8(void (*callback)(void), s32 interval);
 void Func_080cd260(void);
 void Func_080b50e8(s32 value);

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "DMA.H"
 
 #define Blit_BuildRoutine Func_080ed408
 
@@ -53,66 +54,9 @@
  * db20/db84, dc08/dc48, Data_080eefa4/efdc) are, or what the individual
  * flag bits mean.  They are left as raw addresses and raw bit tests.
  *
- * Measured state (alchemy score --owner 080ed408): candidate 1612 bytes
- * against a 1648-byte reference, 779 differing halfwords, 1086 wrong
- * instructions.  Every reference operation is present, in reference order,
- * and the template walk is proved: the 97 `src` words this file consumes
- * are exactly Data_080ede48 - Data_080edcc4, which is what the reference's
- * own return value checks.  The single BL (Runtime_AllocateHeapBlock) and
- * both u16 Data_080ef034 loads land on their reference instructions.
- *
- * The whole residual is one unreproduced code shape, repeated at every one
- * of the reference's twenty store-multiple DMA sites (this file spells
- * twenty-two, because the reference merges the shared tails of the mode 1
- * and mode 2 arms).  The reference writes the three DMA3 words as
- *
- *     adds r0, r6, #0 / adds r1, r5, #0 / ldr r2, <control>
- *     stmia r3!, {r0, r1, r2} / subs r3, #12
- *
- * -- a store-multiple into hard registers r0, r1, r2 with the Thumb-forced
- * writeback undone afterwards.  Ordinary C on this route emits three plain
- * `str rN, [base, #k]` instead.  Five spellings have been measured:
- *   - this struct-record assignment: 1612 bytes / 779 differing;
- *   - a `u32 *` with DMA3[0..2] index stores: 1696 / 817 (worse: the index
- *     form also costs the reference's `adds r5,#12` pointer bumps);
- *   - the same record qualified `volatile`: 1616 / 781, and the merge the
- *     reference performs is itself proof the original stores were not
- *     volatile-qualified;
- *   - mirroring the emit code's inner if/else in the word budget so the
- *     reference's unfolded `adds #2 / adds #2 / adds #5` survives: folded
- *     back to `adds #9`, no change;
- *   - three post-increment stores through a local `u32 *p = 0x040000D4`
- *     (the shape that produces `stmia rB!, {rV}` elsewhere in this
- *     function): 1672 / 802, the worst of the five.
- * A 12-byte stack record was ruled out without measuring: the reference
- * frame is 16 bytes and all four words are accounted for (three saved
- * emit positions plus the spilled `b`), so the stored values come from
- * registers, not memory.  Because that idiom pins one low register for the
- * DMA base here, this candidate has one fewer low register to spend and
- * parks `a`/`flags` in r7/r6 where the reference uses r9/r8 and spills `b`
- * to [sp, #12]; that allocation difference, not structure, is what the
- * remaining diff hunks show.
- *
- * The other known small divergence is the shape of the six `mode` decision
- * trees: GCC balances three case nodes onto pivot 2 here, while the
- * reference walks them 1 -> 2 -> 3 unbalanced.  Worth about two halfwords
- * per switch and not resolved.
- *
- * A third, smaller divergence, also unresolved: in the word budget the
- * reference keeps `adds #2 / adds #2 / adds #5` in three separate blocks
- * and re-tests `flags & 1` instead of turning the two `flags & 1` guards
- * into one if/else, which is what GCC does here.
  */
 
-typedef struct DmaChannel {
-    const void *src;
-    void *dst;
-    u32 cnt;
-} DmaChannel;
-
-/* DMA3 source/destination/control, written as one three-word record.  The
-   control word is enable | 32-bit unit | word count. */
-#define DMA3 (*(DmaChannel *)0x040000D4)
+/* DMA enable, 32-bit transfer width and word count. */
 #define DMA_WORDS(n) (0x84000000 | (n))
 
 /* ARM branch displacement folded into an already-assembled template word. */
@@ -252,37 +196,27 @@ s32 Blit_BuildRoutine(s32 id, s32 a, s32 b, s32 flags, u32 mode)
     src = Data_080edcc4;
 
     /* Entry sequence. */
-    DMA3.src = src;
-    DMA3.dst = dst;
-    DMA3.cnt = DMA_WORDS(3);
+    Dma_Set(src, dst, DMA_WORDS(3), (volatile u32 *)0x040000d4);
     dst += 3;
     src += 3;
     if (mode == 3) {
-        DMA3.src = Data_080edcb8;
-        DMA3.dst = dst;
-        DMA3.cnt = DMA_WORDS(3);
+        Dma_Set(Data_080edcb8, dst, DMA_WORDS(3), (volatile u32 *)0x040000d4);
         dst += 3;
     }
 
     /* Source-format prologue: one of four variants, or a single word. */
     if ((flags & 12) == 4) {
-        DMA3.src = src;
-        DMA3.dst = dst;
-        DMA3.cnt = DMA_WORDS(3);
+        Dma_Set(src, dst, DMA_WORDS(3), (volatile u32 *)0x040000d4);
         dst += 3;
     }
     src += 3;
     if ((flags & 12) == 8) {
-        DMA3.src = src;
-        DMA3.dst = dst;
-        DMA3.cnt = DMA_WORDS(4);
+        Dma_Set(src, dst, DMA_WORDS(4), (volatile u32 *)0x040000d4);
         dst += 4;
     }
     src += 4;
     if ((flags & 12) == 12) {
-        DMA3.src = src;
-        DMA3.dst = dst;
-        DMA3.cnt = DMA_WORDS(3);
+        Dma_Set(src, dst, DMA_WORDS(3), (volatile u32 *)0x040000d4);
         dst += 3;
     }
     src += 3;
@@ -332,9 +266,7 @@ s32 Blit_BuildRoutine(s32 id, s32 a, s32 b, s32 flags, u32 mode)
     br_b = dst;
     *dst++ = *src++;
 
-    DMA3.src = src;
-    DMA3.dst = dst;
-    DMA3.cnt = DMA_WORDS(6);
+    Dma_Set(src, dst, DMA_WORDS(6), (volatile u32 *)0x040000d4);
     dst += 6;
     src += 6;
 
@@ -344,9 +276,7 @@ s32 Blit_BuildRoutine(s32 id, s32 a, s32 b, s32 flags, u32 mode)
     }
     src += 1;
 
-    DMA3.src = src;
-    DMA3.dst = dst;
-    DMA3.cnt = DMA_WORDS(5);
+    Dma_Set(src, dst, DMA_WORDS(5), (volatile u32 *)0x040000d4);
     dst += 5;
     src += 5;
 
@@ -372,27 +302,19 @@ s32 Blit_BuildRoutine(s32 id, s32 a, s32 b, s32 flags, u32 mode)
     mark = dst;
     switch (mode) {
     case 1:
-        DMA3.src = (flags & 4) != 0 ? Data_080edb10 : Data_080edb00;
-        DMA3.dst = dst;
-        DMA3.cnt = DMA_WORDS(4);
+        Dma_Set((flags & 4) != 0 ? Data_080edb10 : Data_080edb00, dst, DMA_WORDS(4), (volatile u32 *)0x040000d4);
         dst += 4;
         break;
     case 2:
-        DMA3.src = (flags & 4) != 0 ? Data_080edbf8 : Data_080edbe8;
-        DMA3.dst = dst;
-        DMA3.cnt = DMA_WORDS(4);
+        Dma_Set((flags & 4) != 0 ? Data_080edbf8 : Data_080edbe8, dst, DMA_WORDS(4), (volatile u32 *)0x040000d4);
         dst += 4;
         break;
     case 3:
-        DMA3.src = (flags & 4) != 0 ? Data_080edca0 : Data_080edc88;
-        DMA3.dst = dst;
-        DMA3.cnt = DMA_WORDS(6);
+        Dma_Set((flags & 4) != 0 ? Data_080edca0 : Data_080edc88, dst, DMA_WORDS(6), (volatile u32 *)0x040000d4);
         dst += 6;
         break;
     default:
-        DMA3.src = (flags & 4) != 0 ? Data_080edaf0 : Data_080edaf8;
-        DMA3.dst = dst;
-        DMA3.cnt = DMA_WORDS(2);
+        Dma_Set((flags & 4) != 0 ? Data_080edaf0 : Data_080edaf8, dst, DMA_WORDS(2), (volatile u32 *)0x040000d4);
         dst += 2;
         break;
     }
@@ -417,36 +339,24 @@ s32 Blit_BuildRoutine(s32 id, s32 a, s32 b, s32 flags, u32 mode)
     mark_g = dst;
     switch (mode) {
     case 1:
-        DMA3.src = (flags & 4) != 0 ? Data_080edb84 : Data_080edb20;
-        DMA3.dst = dst;
-        DMA3.cnt = DMA_WORDS(25);
+        Dma_Set((flags & 4) != 0 ? Data_080edb84 : Data_080edb20, dst, DMA_WORDS(25), (volatile u32 *)0x040000d4);
         dst += 25;
         break;
     case 2:
-        DMA3.src = (flags & 4) != 0 ? Data_080edc48 : Data_080edc08;
-        DMA3.dst = dst;
-        DMA3.cnt = DMA_WORDS(16);
+        Dma_Set((flags & 4) != 0 ? Data_080edc48 : Data_080edc08, dst, DMA_WORDS(16), (volatile u32 *)0x040000d4);
         dst += 16;
-        DMA3.src = (flags & 4) != 0 ? Data_080edc48 : Data_080edc08;
-        DMA3.dst = dst;
-        DMA3.cnt = DMA_WORDS(16);
+        Dma_Set((flags & 4) != 0 ? Data_080edc48 : Data_080edc08, dst, DMA_WORDS(16), (volatile u32 *)0x040000d4);
         dst += 16;
         break;
     case 3:
-        DMA3.src = (flags & 4) != 0 ? Data_080eefdc : Data_080eefa4;
-        DMA3.dst = dst;
-        DMA3.cnt = DMA_WORDS(14);
+        Dma_Set((flags & 4) != 0 ? Data_080eefdc : Data_080eefa4, dst, DMA_WORDS(14), (volatile u32 *)0x040000d4);
         dst += 14;
-        DMA3.src = (flags & 4) != 0 ? Data_080eefdc : Data_080eefa4;
-        DMA3.dst = dst;
-        DMA3.cnt = DMA_WORDS(14);
+        Dma_Set((flags & 4) != 0 ? Data_080eefdc : Data_080eefa4, dst, DMA_WORDS(14), (volatile u32 *)0x040000d4);
         dst += 14;
         break;
     default:
         for (i = 0; i <= 7; i++) {
-            DMA3.src = (flags & 4) != 0 ? Data_080edaf0 : Data_080edaf8;
-            DMA3.dst = dst;
-            DMA3.cnt = DMA_WORDS(2);
+            Dma_Set((flags & 4) != 0 ? Data_080edaf0 : Data_080edaf8, dst, DMA_WORDS(2), (volatile u32 *)0x040000d4);
             dst += 2;
         }
         break;
@@ -475,27 +385,19 @@ s32 Blit_BuildRoutine(s32 id, s32 a, s32 b, s32 flags, u32 mode)
     mark = dst;
     switch (mode) {
     case 1:
-        DMA3.src = (flags & 4) != 0 ? Data_080edb10 : Data_080edb00;
-        DMA3.dst = dst;
-        DMA3.cnt = DMA_WORDS(4);
+        Dma_Set((flags & 4) != 0 ? Data_080edb10 : Data_080edb00, dst, DMA_WORDS(4), (volatile u32 *)0x040000d4);
         dst += 4;
         break;
     case 2:
-        DMA3.src = (flags & 4) != 0 ? Data_080edbf8 : Data_080edbe8;
-        DMA3.dst = dst;
-        DMA3.cnt = DMA_WORDS(4);
+        Dma_Set((flags & 4) != 0 ? Data_080edbf8 : Data_080edbe8, dst, DMA_WORDS(4), (volatile u32 *)0x040000d4);
         dst += 4;
         break;
     case 3:
-        DMA3.src = (flags & 4) != 0 ? Data_080edca0 : Data_080edc88;
-        DMA3.dst = dst;
-        DMA3.cnt = DMA_WORDS(6);
+        Dma_Set((flags & 4) != 0 ? Data_080edca0 : Data_080edc88, dst, DMA_WORDS(6), (volatile u32 *)0x040000d4);
         dst += 6;
         break;
     default:
-        DMA3.src = (flags & 4) != 0 ? Data_080edaf0 : Data_080edaf8;
-        DMA3.dst = dst;
-        DMA3.cnt = DMA_WORDS(2);
+        Dma_Set((flags & 4) != 0 ? Data_080edaf0 : Data_080edaf8, dst, DMA_WORDS(2), (volatile u32 *)0x040000d4);
         dst += 2;
         break;
     }
@@ -506,9 +408,7 @@ s32 Blit_BuildRoutine(s32 id, s32 a, s32 b, s32 flags, u32 mode)
     dst++;
     *fix |= BRANCH_OFFSET(fix, dst);
 
-    DMA3.src = src;
-    DMA3.dst = dst;
-    DMA3.cnt = DMA_WORDS(3);
+    Dma_Set(src, dst, DMA_WORDS(3), (volatile u32 *)0x040000d4);
     dst += 3;
     src += 3;
 

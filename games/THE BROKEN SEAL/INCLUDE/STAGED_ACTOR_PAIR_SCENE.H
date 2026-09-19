@@ -13,6 +13,7 @@ void StagedActorPairScene_RunUpdate(void);
 void StagedActorPairScene_NoopActorCallback(void);
 void StagedActorPairScene_RotateActorPart(u8 *actor);
 void StagedActorPairScene_WaitForHeight();
+void StagedActorPairScene_RunSpinningLeap(s32 id);
 void StagedActorPairScene_NoopSceneCallback(void);
 void StagedActorPairScene_RunActorTwelveCommand(void);
 

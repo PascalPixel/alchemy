@@ -654,7 +654,8 @@
         {
           "start": 33554432,
           "end": 33554488,
-          "kind": "veneer"
+          "kind": "veneer",
+          "evidence": "games/THE LOST AGE/SRC/FIELD/WORLD_MAP/ENTRY.INC: fixed eight-byte overlay_veneer entries; complete overlay compared with canonical TLA ROM by tla-owners"
         },
         {
           "start": 33554488,
@@ -1929,7 +1930,8 @@
         {
           "start": 33573464,
           "end": 33574456,
-          "kind": "veneer"
+          "kind": "veneer",
+          "evidence": "games/THE LOST AGE/SRC/FIELD/WORLD_MAP/IMPORT.INC: fixed eight-byte overlay_veneer entries; complete overlay compared with canonical TLA ROM by tla-owners"
         },
         {
           "start": 33575614,
@@ -4478,7 +4480,8 @@
         {
           "start": 33554432,
           "end": 33554488,
-          "kind": "veneer"
+          "kind": "veneer",
+          "evidence": "games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/ENTRY.INC: fixed eight-byte overlay_veneer entries; complete overlay compared with canonical TLA ROM by tla-owners"
         },
         {
           "start": 33554488,
@@ -4783,7 +4786,8 @@
         {
           "start": 33564636,
           "end": 33565292,
-          "kind": "veneer"
+          "kind": "veneer",
+          "evidence": "games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/IMPORT.INC: fixed eight-byte overlay_veneer entries; complete overlay compared with canonical TLA ROM by tla-owners"
         }
       ]
     },
@@ -4800,7 +4804,8 @@
         {
           "start": 33554432,
           "end": 33554488,
-          "kind": "veneer"
+          "kind": "veneer",
+          "evidence": "games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/ENTRY.INC: fixed eight-byte overlay_veneer entries; complete overlay compared with canonical TLA ROM by tla-owners"
         },
         {
           "start": 33554488,
@@ -5045,7 +5050,8 @@
         {
           "start": 33561340,
           "end": 33561828,
-          "kind": "veneer"
+          "kind": "veneer",
+          "evidence": "games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/IMPORT.INC: fixed eight-byte overlay_veneer entries; complete overlay compared with canonical TLA ROM by tla-owners"
         }
       ]
     },
@@ -5062,7 +5068,8 @@
         {
           "start": 33554432,
           "end": 33554488,
-          "kind": "veneer"
+          "kind": "veneer",
+          "evidence": "games/THE LOST AGE/SRC/FIELD/SUHARA_GATE/ENTRY.INC: fixed eight-byte overlay_veneer entries; complete overlay compared with canonical TLA ROM by tla-owners"
         },
         {
           "start": 33554488,
@@ -5282,7 +5289,8 @@
         {
           "start": 33556824,
           "end": 33557160,
-          "kind": "veneer"
+          "kind": "veneer",
+          "evidence": "games/THE LOST AGE/SRC/FIELD/SUHARA_GATE/IMPORT.INC: fixed eight-byte overlay_veneer entries; complete overlay compared with canonical TLA ROM by tla-owners"
         }
       ]
     },
@@ -5299,7 +5307,8 @@
         {
           "start": 33554432,
           "end": 33554488,
-          "kind": "veneer"
+          "kind": "veneer",
+          "evidence": "games/THE LOST AGE/SRC/FIELD/IDEJIMA/ENTRY.INC: fixed eight-byte overlay_veneer entries; complete overlay compared with canonical TLA ROM by tla-owners"
         },
         {
           "start": 33554488,
@@ -5714,7 +5723,8 @@
         {
           "start": 33567032,
           "end": 33567536,
-          "kind": "veneer"
+          "kind": "veneer",
+          "evidence": "games/THE LOST AGE/SRC/FIELD/IDEJIMA/IMPORT.INC: fixed eight-byte overlay_veneer entries; complete overlay compared with canonical TLA ROM by tla-owners"
         }
       ]
     },
@@ -5731,7 +5741,8 @@
         {
           "start": 33554432,
           "end": 33554488,
-          "kind": "veneer"
+          "kind": "veneer",
+          "evidence": "games/THE LOST AGE/SRC/FIELD/DAIRA_MURA/ENTRY.INC: fixed eight-byte overlay_veneer entries; complete overlay compared with canonical TLA ROM by tla-owners"
         },
         {
           "start": 33554488,
@@ -6016,7 +6027,8 @@
         {
           "start": 33557560,
           "end": 33557888,
-          "kind": "veneer"
+          "kind": "veneer",
+          "evidence": "games/THE LOST AGE/SRC/FIELD/DAIRA_MURA/IMPORT.INC: fixed eight-byte overlay_veneer entries; complete overlay compared with canonical TLA ROM by tla-owners"
         }
       ]
     },
@@ -6033,7 +6045,8 @@
         {
           "start": 33554432,
           "end": 33554488,
-          "kind": "veneer"
+          "kind": "veneer",
+          "evidence": "games/THE LOST AGE/SRC/FIELD/DAIRA_HEYA/ENTRY.INC: fixed eight-byte overlay_veneer entries; complete overlay compared with canonical TLA ROM by tla-owners"
         },
         {
           "start": 33554488,
@@ -6488,7 +6501,8 @@
         {
           "start": 33557628,
           "end": 33558020,
-          "kind": "veneer"
+          "kind": "veneer",
+          "evidence": "games/THE LOST AGE/SRC/FIELD/DAIRA_HEYA/IMPORT.INC: fixed eight-byte overlay_veneer entries; complete overlay compared with canonical TLA ROM by tla-owners"
         }
       ]
     },

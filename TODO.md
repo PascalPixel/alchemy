@@ -8,6 +8,13 @@ that finishes it.
 
 ### Twelve-edition build readiness
 
+- Repair TLA compile-only module declarations: `tla-script-operands` lists 38
+  exact owners while `OPERANDS.C` also defines three unresolved named helpers.
+  The claimed builder now reads the selected game manifest; `make targets`
+  passes all six TBS editions and stops on this incomplete TLA module contract.
+  Preserve existing exact-owner verification and declare complete module
+  membership without crediting the unresolved helpers.
+
 - ROM identification, executable DONE and whole-ROM reconstruction are separate
   measurements. All twelve have physical indexes; only TBS EN currently has a
   supported full-ROM build. The other eleven remain compile-only, explicitly
@@ -26,6 +33,74 @@ that finishes it.
   complete image succeeds. The final milestone is twelve independently exact
   ROMs, not twelve successful compilation commands or 100% identified bytes.
 
+### ☀️ 75%
+
+- Maximize newly verified DONE bytes per hour across the whole TBS executable,
+  including integration and verification time. Rank coherent main and overlay
+  families together; prefer fixes that can propagate to unresolved siblings.
+  Better draft similarity alone contributes zero. Close exhausted local axes
+  and select the next family from current evidence.
+- Recover the C bodies around the reviewed DMA primitive in `INCLUDE/DMA.H`.
+  Verified callers now include graphics copies, Kolima palette transfers and
+  stack-resident ARM-routine wrappers. The remaining multi-transfer family
+  must match owner by owner. Compare coherent
+  DMA-copy, stack-zero initialization and checksum work against other families. Keep
+  the single shared primitive unchanged; fill macros remain unadmitted.
+  The six-owner save unit now uses that primitive and ordinary completion
+  polling; all remain drafts. The checksum reader has one differing halfword
+  (address copy versus reload); park that local mismatch. Reconstruct fill
+  buffer initialization and the summary loop before more spelling searches.
+  The VRAM cache loader now has matching control flow and four entry-setup
+  differences; park that local allocation search. The rendering generator
+  uses the shared primitive but still needs its common size-budget/emission
+  structure recovered; DMA alone does not explain that owner.
+  The heap-resident decompressor caller now has a complete DMA-based draft,
+  with six scheduling differences; park that residual. Stack-based wrappers
+  match through ordinary variable-length arrays and typed indirect calls.
+- Do not repeat exact-twin sweeps without changed inputs: the September 19
+  census found no uncredited exact twins among 4,235 scanned owners. Main
+  program recovery is necessary; completing the remaining overlays alone
+  cannot reach 75%.
+
+### Draft TBS broadly, then tighten
+
+- Recover complete, readable TBS C across coherent modules before pursuing local
+  register or scheduling residuals. Repair missing behavior, calls, types and
+  owner boundaries first; keep scored drafts and unresolved questions in owner
+  dossiers. Revisit related drafts together as shared interfaces improve.
+- Track draft coverage and structural/byte agreement separately from verified
+  DONE. An approximate 80% matching target is a diagnostic milestone, never
+  permission to omit behavior or claim partial owners as complete.
+- Aggregate fresh owner binary similarities over the potential C inventory,
+  weighted by audited reference bytes. Exact C contributes one, missing drafts
+  zero; distinguish unscored or stale drafts from absent drafts. Keep this
+  separate from DONE. The owner scorer now supplies halfword edit distance and
+  its denominator; no corpus-wide partial percentage is measured yet.
+- Audit the no-registered-draft inventory against surviving and retired source
+  before treating it as never drafted. Salvage only complete, behaviorally
+  credible C; regenerate misleading drafts from the reference. Existing draft
+  coverage is a source census, not a semantic quality certificate.
+- World-map display sequence `resource_371:020039fc` now has a complete
+  1,300-byte owner and readable scored C. Recover the common transfer-queue
+  interface before tightening its allocation and pool differences.
+
+- World-map trigger group `resource_371:020024a8`, `02002768`, `020027dc`
+  has 884 bytes of complete scored drafts in `world_map_actor_events.c`.
+  Preserve the corrected 64-call sequence; tighten table-loop representation
+  and call signatures with related modules, without per-owner last-mile sweeps.
+
+- World-map actor effects `resource_371:0200384c` and `02004058` have
+  complete typed drafts with matching topology and call order. Leave their
+  constant/allocation residuals for a family pass. The orbit callback
+  `resource_371:020001c4` (140 bytes) now has an arithmetic C draft: the
+  existing IWRAM source proves its Q16 multiply, but the ip-return call
+  remains nonexact and uncovered by the topology analyzer.
+
+- Korima Bridge `resource_391:02002974` now has a complete 356-byte typed
+  falling-effect draft with equal topology and 93.82% binary similarity. Its
+  early zero lifetime remains nonexact; the bounded control-flow tests are in
+  the dossier. Related `resource_38f:020027ac` has distinct bindings.
+
 ### ☀️ 60%
 
 - Prefer never-drafted unknown; when that pool is too small for 60%, first-try
@@ -38,6 +113,13 @@ with `make progress`; do not maintain a second score in this task list.
 - On `cursor/tbs-to-60`, `Effect_Move` is adopted. Agents: if an owner is not
   exact inside a 10-minute window, park it under Stubborn and switch.
 ### Stubborn
+
+- `main:080f9f6c` (512 B) — surveyed-unmeasured never-drafted `compiler_output`; first-try psynergy draft fails to compile (`while (? > ?)` / shadowing); bounce.
+- `main:0801c9c8` (78 B) — surveyed-unmeasured gap-continuation; first-try draft compiles but 40 differing halfwords (`copy_versus_rematerialise` / wrong `+10` field offsets); bounce.
+- `main:080e53f4` (136 B) — surveyed-unmeasured gap-continuation; reference disassembles as data (`lsrs #32` / `strb` island), first-try structural-topology; bounce.
+- `main:0808d9a4` (1044 B) — surveyed-unmeasured never-drafted `compiler_output`; first-try 436 differing halfwords / structural-topology; bounce.
+- `main:0800fd5c` (320 B) — surveyed-unmeasured gap-continuation (real Thumb); first-try 156 differing halfwords (`copy_versus_rematerialise` wall); bounce.
+- `resource_39b:02002030` FieldScene_RunScene39bSequenceA (832 B) — draft-boundary-review / never-had-C; first-try psynergy draft fails to compile (subscripted non-pointer); bounce.
 - `main:08016f38` FlashTimerIntr (36 B) / `main:08016f5c` SetFlashTimerIntr (56 B) — TLA game gcc 2.96 emits push{lr}/pop{pc} for branched volatile body; ROM is leaf bx lr. TBS twin is on AGBCC_SOURCES (main:080069a4); TLA addresses not yet in TLA_AGBCC_SOURCES. Needs user-authorized agbcc family membership; bounce.
  (hard-pass later)
 - `main:08017500` RunFlashEraseVerifier (24 B) — TLA route emits inline `mov lr,r1`+0xF800 / `pop {pc}` vs TBS-inherited `bl _call_via_r1` / `pop {r1}; bx r1` (instruction-selection / interwork route wall); bounce.
@@ -72,7 +154,6 @@ Parked for a stronger model. Agents must not burn a 10-minute window here.
 - `main:08021e28` (32 B) — scheduling-floor, 2 halfwords; bounce.
 - `main:08029274` (80 B) — scheduling-floor, 2 halfwords; bounce.
 - `main:080a9d3c` (72 B) — instruction-selection wall; bounce.
-- `resource_382:02001090` ActorDraw_SetupActorSceneCells twin (172 B) — equivalent to `resource_385:02000c1c`, but instance must place every `actor-motion-event-scene` member; bounce until full resource_382 map exists.
 - `main:080fa514` (72 B) — still many differing halfwords (not exact).
 - `main:08092878` (172 B) — still many differing halfwords (not exact).
 - `resource_3bd:020013f8` FieldScene_RunExtendedActorPresentation (6220 B) —
@@ -88,10 +169,44 @@ Parked for a stronger model. Agents must not burn a 10-minute window here.
 
 ### Reconstruct The Lost Age
 
+- Twenty-eight further overlay exports reproduce their complete images and compressed streams, but add 27,578 raw integer values. Keep them private until their data and C are reconstructed; the existing raw-data ceiling must not grow. Results and owners are in TLA `recon/en/dossiers.json`.
+- Correct the existing `DAIRA` source prefix to `DERI` in one verified path migration: Japanese message `0xe62` says デリィ. Japanese location rules use message base `0xe5a`, two higher than English `0xe58`; do not reuse English message IDs for names.
+
 The executable inventory covers 2,578,466 bytes: 1,535,116 in the main image
 and 1,043,350 across all 114 overlays. Grow verified source coverage against
 that fixed inventory; its denominator is not a claim of a complete TLA build.
 Credit only ranges meeting [COMPLETION](.agents/COMPLETION.md).
+
+- Continue the TBS transfer toward 25% with complete modules, ranked by new
+  verified bytes per hour. Object dispatch, by-ID motion, child state and
+  motion events now contribute 27 additional exact owners (1,068 bytes).
+  Their complete extents and parked neighbors are in TLA's EN dossiers.
+- Inventory and Djinn management add another 13 exact owners (886 bytes).
+  Six Djinn neighbors remain uncredited because of scheduling differences;
+  four inventory neighbors materialize `0x1ff` or `0x7ff` from literal pools
+  where the reference synthesizes the constants. Existing `-mgs2` handles
+  synthesis only during reload, as one indivisible output instruction, while
+  `080b0ab8` interleaves another instruction inside its three-instruction
+  synthesis. Pascal approved a bounded shared-lowering experiment on September
+  19. Post-reload splitting matches that complete 192-byte owner and preserves
+  all 140 exact TLA game owners; broader early synthesis matches Inventory_Add
+  but regresses two exact message functions. Neither experimental compiler is
+  installed. Results and the isolated licensed checkout are recorded in the
+  `main:080b0ab8` dossier. Keep one game-wide option set.
+- Make TLA `08120454` (8,300 bytes) byte-exact using TBS `080bbb0c`
+  (6,332 exact bytes) as its control. Direct command access, shared raw action
+  power, separate loop-counter lifetimes, saved-state field access, guard
+  order and healing reads now explain more of the reference. The approved
+  compiler emits 8,300 bytes / 3,618 differing halfwords; the isolated general
+  constant experiment emits 8,288 / 3,369. Neither is exact. Continue from its
+  EN dossier; compiler alternatives use one game-wide configuration, and
+  existing small matches are evidence rather than a veto. No new credit.
+- TLA staged actors at `resource_64e:02000314–0200056c`: the four-owner
+  candidate reuses TBS's staged-actor module with reviewed TLA layout and
+  binding changes. None is exact: shift scheduling, loop-invariant hoisting,
+  constant sharing and map-pointer allocation remain. Two hypotheses yielded
+  no adoption; do not repeat them. The 18-overlay anchor survey supplies
+  leads only, not proven siblings. See `tla-staged-actor` and its EN dossiers.
 
 - Field-script operands at `08025b58–08026320`: 38 exact owners (1,820 bytes)
   adopted as `tla-script-operands` from `FIELD/COMMON/SCRIPT/OPERANDS.C`.
@@ -132,25 +247,6 @@ roll and title screens are out of scope.
 Grow the Lunpa showcase until it shows what the whole repository will look
 like when it is done, then carry that standard to every module.
 
-- Close the village's recorded 472-byte `Effect_Spawn` compiler gap using
-  ordinary C, without volatile fields or scheduler helpers. The complete
-  four-halfword draft is kept in
-  `games/THE BROKEN SEAL/recon/en/overlays/resource_3ab_c_0200013c.c`;
-  removing the accumulator local, splitting both loads into temporaries and
-  viewing both records through fixed-point unions, using C89 `register`
-  declarations and fully prototyping the rate helpers leave the same two
-  `sched2` load-pair reversals. Hoisting target X, inline delta helpers and
-  algebraic subtraction forms regress. The three rate calls are distinct
-  overlay imports, so replacing them with `/` is not the original source. A
-  minimal scale branch emits the reference target-before-current order; adding
-  only the later script block reverses it, locating the break at the options
-  pointer's cross-call lifetime rather than the subtraction. Block-scoped
-  locals and a whole-scale inline helper keep the four-halfword floor. A local
-  target/current aggregate preserves the required order but changes three
-  register instructions. Jev 1.13 abstained from choosing a source model and
-  ranked scoped lifetimes as the least-uncertain bounded probe; that probe was
-  neutral.
-
 ## Maps and the 3D world
 
 - Raise rooms into 3D from their walking maps or boundaries. _The Lost Age_
@@ -167,6 +263,9 @@ like when it is done, then carry that standard to every module.
 
 - Rebuild all twelve target ROMs byte-identically from a clean checkout. Only
   the TBS English production gate exists today.
+- Repair the existing TLA compile-target binding failure: `make targets` stops
+  at TLA JA `GET_BYTE.C` with unsupported external `GameFlagBytes`. The six
+  TBS compile targets and TLA English owner verification pass.
 - Prove Japanese correspondence before calling English source shared, and
   measure _The Lost Age_'s own behavior rather than counting one recovery
   twelve times.
@@ -180,9 +279,13 @@ like when it is done, then carry that standard to every module.
 - Identify music titles; never number them by guess.
 - Move area-exclusive maps and graphics beside their code once their consumers
   establish ownership.
+- Debug item menu `resource_3ce:02000cf4` now has a complete 532-byte typed draft in `recon/en/overlays/debug_item_menu.c`. Resolve the DMA register-transfer source form and loop block order before further matching; ordinary aggregate and direct-field models were measured, neither exact. The separate two-byte alignment at `02001186` remains unresolved.
+- Raribero facing dialogue `resource_3c7:020000c8` is one 148-byte function, not two code islands. Its flag literal at `02000150..02000154` is missing from the executable inventory; reconcile that audit gap before claiming full-overlay completion. The adjacent 236-byte pose sequence is now exact.
 - Close the unknown executable gaps that block whole-overlay completion.
 - Admit compiler bundle builds on hosts other than Apple Silicon macOS.
 
 ## At 100%
 
 Open Alchemy to outside contributions.
+
+- World-map entry `resource_371:020006ec` (928 B): complete switch draft in `recon/en/overlays/world_map_entry.c` scores 920 B / 284 differing halfwords. Verify callee prototypes, state-field addressing, and the two small pool constants before continuing; no credit. The owner dossier records the complete residual.

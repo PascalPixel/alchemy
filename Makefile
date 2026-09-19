@@ -43,7 +43,7 @@ OVERLAY_CORRESPONDENCE_UNRESOLVED_MAX := 38
 # Raw .byte/.2byte/.4byte/.word values (aliases included, one per operand) in
 # games/*/raw/overlays/*_overlay.s. The total may only fall: lower this number
 # when listing data becomes typed tables or private inputs; never raise it.
-OVERLAY_DATA_DIRECTIVES_MAX := 77508
+OVERLAY_DATA_DIRECTIVES_MAX := 75014
 HISTORICAL_TARGETS := tbs-ja tbs-en tbs-de tbs-es tbs-fr tbs-it \
 	tla-ja tla-en tla-de tla-es tla-fr tla-it
 CANDIDATE_SINGLE_OWNERS := \

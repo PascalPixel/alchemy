@@ -8,6 +8,12 @@
       "evidence": "Reviewed in the canonical tla-en loaded overlay: entry 0x02008510 saves r5-r11 and lr; its control flow returns at 0x02009a26, the final referenced 0x00013333 literal occupies 0x02009a28-0x02009a2b, and the next independent owner begins with push {r5, lr} at 0x02009a2c. Resource coordinates subtract the loader's 0x8000 offset. This boundary review grants no C or retained-assembly credit."
     },
     {
+      "overlay": "resource_64d",
+      "entry": "0x020026f4",
+      "span_bytes": 188,
+      "evidence": "Reviewed in the canonical tla-en loaded overlay: entry 0x0200a6f4 saves r5-r8, r10 and lr; the sole loop returns through the matching unwind at 0x0200a79e-0x0200a7a6; its two referenced literal words occupy 0x0200a7a8-0x0200a7af; and the next independent owner begins with push {r5, lr} at 0x0200a7b0. Resource coordinates subtract the loader's 0x8000 offset. This boundary review grants no C or retained-assembly credit."
+    },
+    {
       "overlay": "resource_64e",
       "entry": "0x02000038",
       "span_bytes": 70,
@@ -210,6 +216,36 @@
       "entry": "0x02000308",
       "span_bytes": 4,
       "evidence": "Complete owner in the decoded tla-en image, reached through loader entry 6: its return and literal pool end 4 bytes in, at the next owner 0x0200030c. Byte-exact C from FIELD/VINASU_IRIGUCHI/ENTRANCE.C."
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x02000314",
+      "span_bytes": 56,
+      "evidence": "Reviewed loaded tla-en reference control flow and pools for FixedPoint_Distance; independent next function starts at resource 0x200034c. TBS staged-actor sibling establishes role; target changes include fixed IWRAM fields, 64 actor slots, party leader selection and 56-byte map-layer stride. Boundary evidence only, not C credit."
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x0200034c",
+      "span_bytes": 64,
+      "evidence": "Reviewed loaded tla-en reference control flow and pools for StagedActor_FindAtTile; independent next function starts at resource 0x200038c. TBS staged-actor sibling establishes role; target changes include fixed IWRAM fields, 64 actor slots, party leader selection and 56-byte map-layer stride. Boundary evidence only, not C credit."
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x0200038c",
+      "span_bytes": 388,
+      "evidence": "Reviewed loaded tla-en reference control flow and pools for StagedActor_AdvancePair; independent next function starts at resource 0x2000510. TBS staged-actor sibling establishes role; target changes include fixed IWRAM fields, 64 actor slots, party leader selection and 56-byte map-layer stride. Boundary evidence only, not C credit."
+    },
+    {
+      "overlay": "resource_64e",
+      "entry": "0x02000510",
+      "span_bytes": 92,
+      "evidence": "Reviewed loaded tla-en reference control flow and pools for StagedActor_FillGridAttributeRectangle; independent next function starts at resource 0x200056c. TBS staged-actor sibling establishes role; target changes include fixed IWRAM fields, 64 actor slots, party leader selection and 56-byte map-layer stride. Boundary evidence only, not C credit."
+    },
+    {
+      "overlay": "resource_650",
+      "entry": "0x02000d14",
+      "span_bytes": 2088,
+      "evidence": "Reviewed canonical tla-en loaded image: independent entry at 02008d14 saves r5 and lr; every scene branch rejoins the sequence and reaches the matching return at 02009534. Final referenced literal occupies 02009538-0200953b; independently verified ScanlineWave_Reset starts at 0200953c. Owner includes all embedded pools and alignment through that final literal. No C credit."
     }
   ]
 }

@@ -1330,78 +1330,14 @@ AlchemyC_02000e64:
 	.space 0x68
 AlchemyC_02000ecc:
 	.space 0x68
-	.4byte 0x4b044a03
-	.4byte 0x49046810
-	.4byte 0xc3074a04
-	.4byte 0x47703b0c
-	.4byte 0x03001ed0
-	.4byte 0x040000d4
-	.4byte 0x020092d0
-	.4byte 0x840000e0
-	.4byte 0x4b044a03
-	.4byte 0x49046810
-	.4byte 0xc3074a04
-	.4byte 0x47703b0c
-	.4byte 0x03001ed0
-	.4byte 0x040000d4
-	.4byte 0x020099d0
-	.2byte 0x00e0
-	.2byte 0x8400
-	push	{lr}
-	ldr	r3, [pc, #44]
-	ldr	r4, [r3, #0]
-	movs	r0, #160
-	ldr	r3, [pc, #40]
-	lsls	r0, r0, #19
-	adds	r1, r4, #0
-	ldr	r2, [pc, #40]
-	stmia	r3!, {r0, r1, r2}
-	subs	r3, #12
-	movs	r2, #224
-	lsls	r2, r2, #1
-	adds	r1, r4, r2
-	ldr	r0, [pc, #32]
-	ldr	r2, [pc, #24]
-	stmia	r3!, {r0, r1, r2}
-	subs	r3, #12
-	movs	r0, #128
-	lsls	r0, r0, #9
-	movs	r1, #0
-	bl	sub_020020aa
-	pop	{r0}
-	bx	r0
-	.4byte 0x03001ed0
-	.4byte 0x040000d4
-	.4byte 0x84000070
-	.2byte 0x0200
-	.2byte 0x0500
-	push	{lr}
-	ldr	r3, [pc, #40]
-	ldr	r1, [r3, #0]
-	cmp	r0, #0
-	beq.n	.L_02000fc4
-	ldr	r3, [pc, #36]
-	ldr	r0, [pc, #36]
-	b.n	.L_02000fc8
-.L_02000fc4:
-	ldr	r3, [pc, #28]
-	ldr	r0, [pc, #36]
-.L_02000fc8:
-	ldr	r2, [pc, #36]
-	stmia	r3!, {r0, r1, r2}
-	subs	r3, #12
-	movs	r0, #128
-	lsls	r0, r0, #9
-	movs	r1, #0
-	bl	sub_020020da
-	bl	sub_02001f4e
-	pop	{r0}
-	bx	r0
-	.4byte 0x03001ed0
-	.4byte 0x040000d4
-	.4byte 0x020099d0
-	.4byte 0x020092d0
-	.4byte 0x840000e0
+AlchemyC_02000f34:
+	.space 32
+AlchemyC_02000f54:
+	.space 32
+AlchemyC_02000f74:
+	.space 64
+AlchemyC_02000fb4:
+	.space 64
 .include "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MAGARI/IMPORT.INC"
 	.4byte 0x000b00cd
 	.4byte 0x00010009

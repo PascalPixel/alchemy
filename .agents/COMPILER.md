@@ -46,6 +46,16 @@ Camelot used (a construct the approved compiler provably cannot emit, recurring
 across otherwise compiler-shaped C bodies), never per function and never to
 steer the compiler.
 
+The reviewed `Dma_Set` body in `games/THE BROKEN SEAL/INCLUDE/DMA.H`
+implements the fixed register interface of the recurring DMA construct. Its
+internal register bindings belong to that evidenced assembly interface; they
+do not authorize fixed registers in callers or other C. The ordinary-source
+gate admits only the complete token-pinned shared body, including its
+instructions, operands and clobbers, and still checks every surrounding raw
+and preprocessed token. Changing the header does not silently expand that
+admission. The evidence and remaining family live in the
+`thumb_multiple_transfer_module` record in `raw/classification.json`.
+
 ## The toolchain
 
 The approved bundle uses GNU GAS 2.10 for compiler output and unit slices,

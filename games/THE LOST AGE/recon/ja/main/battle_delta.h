@@ -12,6 +12,26 @@
 
 #define BATTLE_SECOND_ACTOR
 #define BATTLE_REFRAIN_TURNS 5
+#define BATTLE_EVENT_PUSH_RESULT void
+
+#define gGameState Data_02000240
+#include "../../../INCLUDE/FIELD_SCENE.H"
+
+/* Semantic names introduced in the TBS body retain the callee correspondence
+ * below; expand through those edition-specific bindings. */
+#define Actor_GetObject Func_080b7dd0
+#define Actor_Place Func_080b6f44
+#define Actor_Commit Func_080b6c90
+#define Actor_ListSlots Func_080b6ae0
+#define Actor_ResetMotionAtAnchor Func_080b8000
+#define BattleFormation_SelectRandomAvailableMember Func_080c1fa8
+#define Runtime_BumpAllocate Func_08004938
+#define Summon_ClassValid Func_080b6cdc
+#define Summon_FindSlot Func_080b7514
+#define Summon_Refresh Func_080b7548
+#define Summon_ResetCharge Func_080c1f50
+#define Summon_TakeCharge Func_080c1df4
+#define Sys_SetMode Func_08015130
 
 /* Retarget the first shared semantic callees before the TBS headers expand
  * them through TBS owner symbols.  These bindings were measured at identical
@@ -236,7 +256,7 @@ struct BattleWorkPage {
 #define BATTLE_OFFSET_LATE
 #define BATTLE_ACTION_ID_EARLY
 #define BATTLE_NARROW_TARGET_ID
-#define BATTLE_AFFINITY_CARRIER
+#define BATTLE_ACTION_POWER_SHARED
 #define BATTLE_SURVIVES_KO() (Func_081203a8(target_id) != 0)
 #define BATTLE_KO_TAIL()                                                   \
     {                                                                      \
@@ -254,11 +274,11 @@ struct BattleWorkPage {
         }                                                                  \
     }
 #define BATTLE_DAMAGE_KO_CONDITION(cur, dmg)                                \
-    ((*(u8 *)0x0200048b == 6                                               \
-      || (BattleFlag_Test(366) != 0 && *cmd == 6))                         \
+    ((gGameState.battle_rule_24b == 6                                      \
+      || (BattleFlag_Test(366) != 0 && BATTLE_COMMAND_VALUE == 6))                         \
      && (cur) > (dmg))
 #define BATTLE_AFTER_DAMAGE(cur)                                           \
-    if (*(u8 *)0x0200048b == 6)                                           \
+    if (gGameState.battle_rule_24b == 6)                                   \
         (cur) = 0
 #define BATTLE_SCALE_DEFENSE()                                            \
     if (half != 0) {                                                      \
@@ -299,6 +319,7 @@ struct BattleWorkPage {
         }                                                                 \
     }
 #define BATTLE_DAMAGE_BLOCKED() (target->guard_level == 4)
+#define BATTLE_HP_POWER_GUARD_FIRST
 #define BATTLE_GUARD_VALUE(target) ((target)->guard_level)
 #define BATTLE_EVIL_SPIRIT_ACTIVE()                                        \
     (action_id != 0x193 && actor->evil_spirit != 0)
@@ -307,7 +328,7 @@ struct BattleWorkPage {
  * decision-tree balance; folding it into default changes the emitted tree. */
 #define BATTLE_POWER_BONUS(dmg)                                             \
     if (action_id == 0x2ab || action_id == 0x2a1 || action_id == 0x2d4      \
-        || *cmd == 6 || *cmd == 10) {                                      \
+        || BATTLE_COMMAND_VALUE == 6 || BATTLE_COMMAND_VALUE == 10) {                                      \
         s32 rate;                                                          \
                                                                              \
         rate = 0;                                                          \
@@ -400,6 +421,7 @@ struct BattleWorkPage {
 #define BATTLE_PLAN_COMMAND(plan) ((plan)->command)
 #define BATTLE_PLAN_PENDING(plan) ((plan)->pending_amount_60)
 #define BATTLE_SET_COMMAND()
+#define BATTLE_COMMAND_VALUE BATTLE_PLAN_COMMAND(plan)
 
 /* TLA reserves element zero of each target array for its second actor. */
 #define BATTLE_PLAN_LOADS()                                                  \
@@ -435,110 +457,39 @@ struct BattleWorkPage {
     ((void (*)(void *, const void *, s32))0x03000730)(                       \
         (copy), (target), (size))
 
-#define BATTLE_AFTER_COPY()                                                   \
-    {                                                                         \
-        s32 state;                                                            \
-                                                                              \
-        cmd = &BATTLE_PLAN_COMMAND(plan);                                     \
-        state = *(u16 *)((u8 *)target + 0x14a);                               \
-        if (state < 0x65)                                                     \
-            goto tla_state_guard;                                             \
-        {                                                                     \
-            if (state > 0x67) {                                               \
-                if (state == 0xdd) {                                          \
-                    if (*cmd == 1                                             \
-                        && ((u32)(actor_id ^ target_id) >> 7) != 0) {          \
-                        BattleEvent_Push(11, target_id);                       \
-                        BattleEvent_Push(0, target_id);                        \
-                        BattleEvent_Push(4, 0xcb5);                            \
-                        goto done;                                             \
-                    }                                                          \
-                    goto tla_state_guard;                                     \
-                }                                                              \
-                cmd = &BATTLE_PLAN_COMMAND(plan);                             \
-                goto tla_state_guard;                                         \
-            }                                                                  \
-            if (action_id != 0x23d) {                                         \
-                if (((u8 *)work)[0x868] != 0) {                               \
-                    if (((u32)(actor_id ^ target_id) >> 7) != 0) {            \
-                        BattleEvent_Push(11, target_id);                       \
-                        BattleEvent_Push(0, target_id);                        \
-                        BattleEvent_Push(4, 0xcb4);                            \
-                        cmd = &BATTLE_PLAN_COMMAND(plan);                      \
-                        goto done;                                            \
-                    }                                                          \
-                    cmd = &BATTLE_PLAN_COMMAND(plan);                          \
-                    goto tla_state_guard;                                     \
-                }                                                              \
-                cmd = &BATTLE_PLAN_COMMAND(plan);                              \
-                goto tla_state_guard;                                         \
-            }                                                                  \
-            cmd = &BATTLE_PLAN_COMMAND(plan);                                  \
-            goto tla_state_guard;                                             \
-        }                                                                      \
-    tla_state_guard:                                                          \
-        if (target->guard_level == 4) {                                       \
-            if (((u32)(actor_id ^ target_id) >> 7) != 0) {                    \
-                BattleEvent_Push(11, target_id);                              \
-                BattleEvent_Push(0, target_id);                               \
-                BattleEvent_Push(4, 0xcab);                                   \
-                goto done;                                                    \
-            }                                                                 \
-        }                                                                     \
-    }
-
-#undef BATTLE_AFTER_COPY
-#define BATTLE_AFTER_COPY()                                                   \
-    {                                                                         \
-        s32 state;                                                            \
-                                                                              \
-        state = *(u16 *)((u8 *)target + 0x14a);                               \
-        cmd = &BATTLE_PLAN_COMMAND(plan);                                     \
-        switch (state) {                                                      \
-        case 0xdd:                                                            \
-            cmd = &BATTLE_PLAN_COMMAND(plan);                                 \
-            if (*cmd == 1                                                     \
-                && ((u32)(actor_id ^ target_id) >> 7) != 0) {                 \
-                BattleEvent_Push(11, target_id);                              \
-                BattleEvent_Push(0, target_id);                               \
-                BattleEvent_Push(4, 0xcb5);                                   \
-                goto done;                                                    \
-            }                                                                \
-            break;                                                           \
-        case 0x65:                                                            \
-        case 0x66:                                                            \
-        case 0x67:                                                            \
-            if (action_id != 0x23d) {                                         \
-                if (((u8 *)work)[0x868] != 0) {                               \
-                    if (((u32)(actor_id ^ target_id) >> 7) != 0) {            \
-                        BattleEvent_Push(11, target_id);                       \
-                        BattleEvent_Push(0, target_id);                        \
-                        BattleEvent_Push(4, 0xcb4);                            \
-                        cmd = &BATTLE_PLAN_COMMAND(plan);                      \
-                        goto done;                                             \
-                    }                                                          \
-                    cmd = &BATTLE_PLAN_COMMAND(plan);                          \
-                    goto tla_state_guard;                                     \
-                }                                                              \
-                cmd = &BATTLE_PLAN_COMMAND(plan);                              \
-                goto tla_state_guard;                                         \
-            }                                                                \
-            cmd = &BATTLE_PLAN_COMMAND(plan);                                  \
-            goto tla_state_guard;                                             \
-        default:                                                             \
-            cmd = &BATTLE_PLAN_COMMAND(plan);                                 \
-            break;                                                           \
-        }                                                                     \
-    tla_state_guard:                                                          \
-        if (target->guard_level == 4) {                                       \
-            if (((u32)(actor_id ^ target_id) >> 7) != 0) {                    \
-                BattleEvent_Push(11, target_id);                              \
-                BattleEvent_Push(0, target_id);                               \
-                BattleEvent_Push(4, 0xcab);                                   \
-                goto done;                                                    \
-            }                                                                 \
-        }                                                                     \
-    }
+#define BATTLE_AFTER_COPY()                                                 \
+{                                                                           \
+    s32 state = *(u16 *)((u8 *)target + 0x14a);                             \
+    switch (state) {                                                        \
+    case 0xdd:                                                              \
+        if (BATTLE_COMMAND_VALUE == 1 &&                                    \
+            ((u32)(actor_id ^ target_id) >> 7) != 0) {                      \
+            BattleEvent_Push(11, target_id);                                \
+            BattleEvent_Push(0, target_id);                                 \
+            BattleEvent_Push(4, 0xcb5);                                     \
+            goto done;                                                      \
+        }                                                                   \
+        break;                                                              \
+    case 0x65:                                                              \
+    case 0x66:                                                              \
+    case 0x67:                                                              \
+        if (action_id != 0x23d && ((u8 *)work)[0x868] != 0 &&               \
+            ((u32)(actor_id ^ target_id) >> 7) != 0) {                      \
+            BattleEvent_Push(11, target_id);                                \
+            BattleEvent_Push(0, target_id);                                 \
+            BattleEvent_Push(4, 0xcb4);                                     \
+            goto done;                                                      \
+        }                                                                   \
+        break;                                                              \
+    }                                                                       \
+    if (target->guard_level == 4 &&                                         \
+        ((u32)(actor_id ^ target_id) >> 7) != 0) {                          \
+        BattleEvent_Push(11, target_id);                                    \
+        BattleEvent_Push(0, target_id);                                     \
+        BattleEvent_Push(4, 0xcab);                                         \
+        goto done;                                                          \
+    }                                                                       \
+}
 
 #define BATTLE_BEFORE_HIT()                                                    \
     {                                                                         \
@@ -552,149 +503,155 @@ struct BattleWorkPage {
 
 /* Effects 50/51 retain the original summon path.  Effects 86/87 add the
  * random and queued summon sources used by the sequel. */
-#define BATTLE_SUMMON_BLOCK()                                                \
-    {                                                                        \
-        if ((u8)(action->effect + 206) <= 1 || action->effect == 0x56        \
-            || action->effect == 0x57) {                                     \
-            s32 st;                                                          \
-            s32 rec;                                                         \
-            s32 state_save;                                                  \
-            s32 cursor;                                                      \
-            s32 msg;                                                         \
-            u8 efx;                                                          \
-                                                                             \
-            state_save = (s32)((u8 *)actor + 0x14a);                         \
-            st = *(u16 *)state_save;                                         \
-            /* GCC sinks this constant past the call; its earlier lifetime   \
-             * keeps affi, st, and state_save in their shared carriers. */    \
-            affi = -1;                                                       \
-            rec = Summon_FindSlot();                                         \
-            efx = action->effect;                                            \
-            if (efx == EFX_STANDBY_WORK) {                                   \
-                st = Summon_ClassId(*(s32 *)work);                            \
-            } else if (efx == 0x56) {                                        \
-                if (*(u16 *)state_save == 0xa4)                              \
-                    st = (BattleRandom_Next() & 3) + 0x17a;                  \
-                else                                                         \
-                    st = 0x51;                                               \
-            } else if (efx == 0x57) {                                        \
-                if (((s8 *)work)[0x56b] != 0) {                              \
-                    s32 qi;                                                  \
-                                                                             \
-                    qi = ((s8 *)work)[0x56a];                                \
-                    st = *(u16 *)((u8 *)work + 0x564 + qi * 2);              \
-                    affi = ((u8 *)work)[0x568 + qi];                          \
-                } else                                                       \
-                    hit = 0;                                                 \
-            }                                                                \
-            if (hit != 0 && Summon_ClassValid(st) != 0 && rec >= 0) {        \
-                if (affi == -1) {                                            \
-                    affi = Summon_TakeCharge(st, 1);                          \
-                    if (affi & 0x8000)                                       \
-                        Summon_ResetCharge(st);                               \
-                }                                                            \
-                BattleUnit_Assign(rec, st, affi & 0x7fff);                   \
-                if (action->effect == 0x57) {                                \
-                    s32 qi;                                                  \
-                                                                             \
-                    ((u8 *)work)[0x56b]--;                                   \
-                    qi = ((s8 *)work)[0x56a] + 1;                            \
+#define BATTLE_SUMMON_BLOCK()                                               \
+    {                                                                       \
+        if ((u8)(action->effect + 206) <= 1 || action->effect == 0x56       \
+            || action->effect == 0x57) {                                    \
+            s32 st;                                                         \
+            s32 rec;                                                        \
+            s32 state_save;                                                 \
+            s32 cursor;                                                     \
+            s32 msg;                                                        \
+            u8 efx;                                                         \
+                                                                            \
+            state_save = (s32)((u8 *)actor + 0x14a);                        \
+            st = *(u16 *)state_save;                                        \
+            /* GCC sinks this constant past the call; its earlier lifetime  \
+             * keeps affi, st, and state_save in their shared carriers. */  \
+            affi = -1;                                                      \
+            rec = Summon_FindSlot();                                        \
+            efx = action->effect;                                           \
+            if (efx == EFX_STANDBY_WORK) {                                  \
+                st = Summon_ClassId(*(s32 *)work);                          \
+            } else if (efx == 0x56) {                                       \
+                if (*(u16 *)state_save == 0xa4)                             \
+                    st = (BattleRandom_Next() & 3) + 0x17a;                 \
+                else                                                        \
+                    st = 0x51;                                              \
+            } else if (efx == 0x57) {                                       \
+                if (((s8 *)work)[0x56b] != 0) {                             \
+                    s32 qi;                                                 \
+                    s32 state_offset;                                       \
+                    s32 charge_offset;                                      \
+                                                                            \
+                    qi = ((s8 *)work)[0x56a];                               \
+                    state_offset = 0x564 + qi * 2;                          \
+                    st = *(u16 *)((u8 *)work + state_offset);               \
+                    charge_offset = 0x568 + qi;                             \
+                    affi = ((u8 *)work)[charge_offset];                     \
+                } else                                                      \
+                    hit = 0;                                                \
+            }                                                               \
+            if (hit != 0 && Summon_ClassValid(st) != 0 && rec >= 0) {       \
+                if (affi == -1) {                                           \
+                    affi = Summon_TakeCharge(st, 1);                        \
+                    if (affi & 0x8000)                                      \
+                        Summon_ResetCharge(st);                             \
+                }                                                           \
+                BattleUnit_Assign(rec, st, affi & 0x7fff);                  \
+                if (action->effect == 0x57) {                               \
+                    s32 qi;                                                 \
+                                                                            \
+                    ((s8 *)work)[0x56b]--;                                  \
+                    qi = ((s8 *)work)[0x56a] + 1;                           \
                     ((s8 *)work)[0x56a] =                                   \
-                        qi - (((s32)(qi + ((u32)qi >> 31)) >> 1) * 2);       \
-                }                                                            \
-                if (*(u16 *)((u8 *)actor + 0x14a) == 0xa4) {                 \
-                    Func_081203c8((u8 *)work + 0x66, rec);                    \
-                } else {                                                     \
-                    affi = (s32)((u8 *)work + 2);                            \
-                    {                                                        \
-                        s32 off;                                             \
-                        s32 i;                                               \
-                        s32 j;                                               \
-                                                                             \
-                        off = 100;                                           \
-                        i = 0;                                               \
-                        state_save = 0;                                      \
-                        if (*(s16 *)((u8 *)affi + off) == 254) {             \
-                            *(s16 *)((u8 *)affi + off) = rec;                \
-                        } else {                                             \
-                            s32 woff;                                        \
-                            s32 next;                                        \
-                                                                             \
-                            j = 0;                                           \
-                            woff = 100;                                      \
-                            for (;;) {                                       \
-                                cursor = j + 100;                            \
-                                n = *(s16 *)(cursor + affi);                 \
-                                if (n == 255) {                              \
-                                    *(s16 *)(affi + cursor) = rec;           \
-                                    next = state_save + 102;                 \
-                                    *(s16 *)(affi + next) = n;               \
-                                    break;                                   \
-                                }                                            \
-                                i++;                                         \
-                                next = j + 2;                                \
-                                j = next;                                    \
-                                if (i > 5)                                   \
-                                    break;                                   \
-                                state_save = next;                           \
-                                woff = next + 100;                           \
+                        qi - (((s32)(qi + ((u32)qi >> 31)) >> 1) * 2);      \
+                }                                                           \
+                if (*(u16 *)((u8 *)actor + 0x14a) == 0xa4) {                \
+                    Func_081203c8((u8 *)work + 0x66, rec);                  \
+                } else {                                                    \
+                    s16 *slots;                                             \
+                    slots = (s16 *)((u8 *)work + 2);                        \
+                    {                                                       \
+                        s32 off;                                            \
+                        s32 i;                                              \
+                        s32 j;                                              \
+                                                                            \
+                        off = 100;                                          \
+                        i = 0;                                              \
+                        state_save = 0;                                     \
+                        if (*(s16 *)((u8 *)slots + off) == 254) {           \
+                            *(s16 *)((u8 *)slots + off) = rec;              \
+                        } else {                                            \
+                            s32 woff;                                       \
+                            s32 next;                                       \
+                                                                            \
+                            j = 0;                                          \
+                            woff = 100;                                     \
+                            for (;;) {                                      \
+                                affi = (s32)slots;                          \
+                                cursor = j + 100;                           \
+                                n = *(s16 *)(cursor + affi);                \
+                                if (n == 255) {                             \
+                                    *(s16 *)(affi + cursor) = rec;          \
+                                    next = state_save + 102;                \
+                                    *(s16 *)((u8 *)affi + next) = n;        \
+                                    break;                                  \
+                                }                                           \
+                                i++;                                        \
+                                next = j + 2;                               \
+                                j = next;                                   \
+                                if (i > 5)                                  \
+                                    break;                                  \
+                                state_save = next;                          \
+                                woff = next + 100;                          \
                                 if (*(s16 *)(woff + affi) == 254) {         \
-                                    *(s16 *)(woff + affi) = rec;             \
-                                    break;                                   \
-                                }                                            \
-                            }                                                \
-                        }                                                    \
-                    }                                                        \
-                }                                                            \
-                Summon_Refresh();                                            \
-                {                                                            \
-                    s32 x;                                                   \
-                    s32 y;                                                   \
-                                                                             \
-                    cursor = (s32)Actor_GetObject(rec);                       \
-                    x = *(s32 *)(cursor + 12);                               \
-                    if (x < 0)                                               \
-                        x += 0xffff;                                         \
-                    y = *(s32 *)(cursor + 16);                               \
-                    x >>= 16;                                                \
-                    if (y < 0)                                               \
-                        y += 0xffff;                                         \
-                    y >>= 16;                                                \
-                    Actor_Place((void *)cursor, rec, x, y);                  \
-                }                                                            \
-                Actor_Commit();                                              \
-                {                                                            \
-                    s32 listed;                                              \
-                                                                             \
-                    listed = Actor_ListSlots(saved);                          \
-                    if (listed > 0) {                                        \
-                        u16 *q;                                              \
-                                                                             \
-                        q = (u16 *)saved;                                    \
-                        count = listed;                                      \
-                        do {                                                 \
+                                    *(s16 *)(woff + affi) = rec;            \
+                                    break;                                  \
+                                }                                           \
+                            }                                               \
+                        }                                                   \
+                    }                                                       \
+                }                                                           \
+                Summon_Refresh();                                           \
+                {                                                           \
+                    s32 x;                                                  \
+                    s32 y;                                                  \
+                                                                            \
+                    cursor = (s32)Actor_GetObject(rec);                     \
+                    x = *(s32 *)(cursor + 12);                              \
+                    if (x < 0)                                              \
+                        x += 0xffff;                                        \
+                    y = *(s32 *)(cursor + 16);                              \
+                    x >>= 16;                                               \
+                    if (y < 0)                                              \
+                        y += 0xffff;                                        \
+                    y >>= 16;                                               \
+                    Actor_Place((void *)cursor, rec, x, y);                 \
+                }                                                           \
+                Actor_Commit();                                             \
+                {                                                           \
+                    s32 listed;                                             \
+                                                                            \
+                    listed = Actor_ListSlots(saved);                        \
+                    if (listed > 0) {                                       \
+                        u16 *q;                                             \
+                                                                            \
+                        q = (u16 *)saved;                                   \
+                        count = listed;                                     \
+                        do {                                                \
                             Actor_ResetMotionAtAnchor(*q++);                \
-                            count--;                                         \
-                        } while (count != 0);                                \
-                    }                                                        \
-                }                                                            \
-                BattleEvent_Push(BATTLE_EVENT_UNIT, rec);                    \
-                if (action->effect == 0x57) {                                \
-                    msg = 0xd64;                                              \
-                    goto tla_summon_msg;                                      \
-                } else if (action_id != 0x1f7) {                             \
-                    BattleEvent_Push(BATTLE_EVENT_TEXT, 0xd56);              \
-                } else {                                                     \
-                    BattleEvent_Push(BATTLE_EVENT_TEXT, 0xd54);              \
-                }                                                            \
-            } else if (action_id == 0x1f7) {                                 \
-                msg = 0xd55;                                                  \
-            tla_summon_msg:                                                   \
-                BattleEvent_Push(BATTLE_EVENT_TEXT, msg);                    \
-            } else {                                                         \
-                BattleEvent_Push(BATTLE_EVENT_TEXT, 0xd57);                  \
-            }                                                                \
-        }                                                                     \
+                            count--;                                        \
+                        } while (count != 0);                               \
+                    }                                                       \
+                }                                                           \
+                BattleEvent_Push(BATTLE_EVENT_UNIT, rec);                   \
+                if (action->effect == 0x57) {                               \
+                    msg = 0xd64;                                            \
+                    goto tla_summon_msg;                                    \
+                } else if (action_id != 0x1f7) {                            \
+                    BattleEvent_Push(BATTLE_EVENT_TEXT, 0xd56);             \
+                } else {                                                    \
+                    BattleEvent_Push(BATTLE_EVENT_TEXT, 0xd54);             \
+                }                                                           \
+            } else if (action_id == 0x1f7) {                                \
+                msg = 0xd55;                                                \
+            tla_summon_msg:                                                 \
+                BattleEvent_Push(BATTLE_EVENT_TEXT, msg);                   \
+            } else {                                                        \
+                BattleEvent_Push(BATTLE_EVENT_TEXT, 0xd57);                 \
+            }                                                               \
+        }                                                                   \
     }
 
 #define BATTLE_HIT_PREP()
@@ -766,8 +723,9 @@ struct BattleWorkPage {
     case 0x4c:
 #define BATTLE_HEAL_PREP(old, heal, maxu, maxv, stat_ptr)                  \
     {                                                                      \
-        (old) = *(u16 *)&target->hp;                                       \
-        (heal) = *(s16 *)&target->hp;                                      \
+        (stat_ptr) = (u16 *)&target->hp;                                   \
+        (old) = *(stat_ptr)--;                                            \
+        (heal) = *(s16 *)((stat_ptr) + 1);                                \
         if (action->effect == 0x4c) {                                      \
             (maxv) = *(s16 *)&target->max_hp;                              \
             (maxu) = *(u16 *)&target->max_hp;                              \
@@ -780,7 +738,7 @@ struct BattleWorkPage {
             (maxu) = *(u16 *)&target->max_hp;                              \
             (heal) += (s16)(maxu) / 2;                                     \
         } else {                                                           \
-            (stat_ptr) = (u16 *)&target->max_hp;                           \
+            (stat_ptr)--;                                                \
             (maxu) = *(stat_ptr)--;                                        \
             (maxv) = *(s16 *)(stat_ptr + 1);                               \
             if (action->effect == EFX_HEAL_60)                             \
@@ -815,52 +773,44 @@ struct BattleWorkPage {
         (heal) += inc;                                                      \
     }
 
-#define BATTLE_PP_RESTORE_BODY()                                           \
-    {                                                                      \
-        s32 heal;                                                         \
-        s32 old;                                                          \
-        s32 maxu;                                                         \
-        s32 inc;                                                          \
-        s32 maxv;                                                         \
-        s32 effect;                                                       \
-                                                                           \
-        effect = action->effect;                                          \
-        heal = target->pp;                                                \
-        old = *(u16 *)&target->pp;                                        \
-        if (effect == 0x4d) {                                             \
-            maxv = *(s16 *)((u8 *)target + 54);                           \
-            maxu = *(u16 *)((u8 *)target + 54);                           \
-            inc = (s16)Math_Div(maxv, 10);                                \
-        } else {                                                          \
-            s32 numerator;                                                \
-            s32 denominator;                                              \
-                                                                           \
-            maxv = *(s16 *)((u8 *)target + 54);                           \
-            maxu = *(u16 *)((u8 *)target + 54);                           \
-            if (effect == 0x4e) {                                         \
-                numerator = maxv * 3;                                     \
-                denominator = 10;                                         \
-            } else {                                                       \
-                numerator = maxv * 7;                                     \
-                denominator = 100;                                        \
-            }                                                              \
-            inc = Math_Div(numerator, denominator);                        \
-        }                                                                 \
-        heal += inc;                                                      \
-        if (heal > (s16)maxu)                                             \
-            heal = (s16)maxu;                                             \
-        tmp = heal - (s16)old;                                            \
-        if (tmp == 0 && nibble != 11)                                     \
-            break;                                                        \
-        if (heal == (s16)maxu)                                            \
-            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_PP_FULL);             \
-        else {                                                            \
-            BattleEvent_Push(BATTLE_EVENT_VALUE, tmp);                    \
-            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_PP_RECOVER);          \
-        }                                                                 \
-        target->pp = (s16)heal;                                           \
-        BattleUnit_UpdateRatios(target_id);                               \
-        break;                                                            \
+#define BATTLE_PP_RESTORE_BODY()                                            \
+    {                                                                       \
+        s32 heal;                                                           \
+        s32 old;                                                            \
+        s32 maxu;                                                           \
+        s32 maxv;                                                           \
+        s32 effect;                                                         \
+                                                                            \
+        effect = action->effect;                                            \
+        heal = target->pp;                                                  \
+        old = *(u16 *)&target->pp;                                          \
+        if (effect == 0x4d) {                                               \
+            maxv = *(s16 *)((u8 *)target + 54);                             \
+            maxu = *(u16 *)((u8 *)target + 54);                             \
+            heal += (s16)Math_Div(maxv, 10);                                \
+        } else if (effect == 0x4e) {                                        \
+            maxv = target->max_pp;                                          \
+            maxu = *(u16 *)&target->max_pp;                                 \
+            heal += Math_Div(maxv * 3, 10);                                 \
+        } else {                                                            \
+            maxv = target->max_pp;                                          \
+            maxu = *(u16 *)&target->max_pp;                                 \
+            heal += Math_Div(maxv * 7, 100);                                \
+        }                                                                   \
+        if (heal > (s16)maxu)                                               \
+            heal = (s16)maxu;                                               \
+        tmp = heal - (s16)old;                                              \
+        if (tmp == 0 && nibble != 11)                                       \
+            break;                                                          \
+        if (heal == (s16)maxu)                                              \
+            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_PP_FULL);               \
+        else {                                                              \
+            BattleEvent_Push(BATTLE_EVENT_VALUE, tmp);                      \
+            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_PP_RECOVER);            \
+        }                                                                   \
+        target->pp = (s16)heal;                                             \
+        BattleUnit_UpdateRatios(target_id);                                 \
+        break;                                                              \
     }
 
 #define BATTLE_REVIVE_CASES                                                \
@@ -960,7 +910,7 @@ struct BattleWorkPage {
 
 #define BATTLE_DONE_PREP()                                                \
     {                                                                      \
-        if (*cmd != 9 && *(s8 *)((u8 *)target + 0x143) != 0                \
+        if (BATTLE_COMMAND_VALUE != 9 && *(s8 *)((u8 *)target + 0x143) != 0                \
             && action->target_mode == 1 && target->hp != 0) {             \
             *(s32 *)((u8 *)work + 0x858) = target_id;                      \
             *(s32 *)((u8 *)work + 0x85c) = actor_id;                       \

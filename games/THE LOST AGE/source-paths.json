@@ -562,6 +562,263 @@
     "main:080ebe94": {
       "name": "EffectSlot_SetPosition",
       "source": "BATTLE/EFFECT/SLOT_SET_POSITION.C"
+    },
+    "main:080233a8": {
+      "name": "ObjectDispatch_Initialize"
+    },
+    "main:080233d0": {
+      "name": "ObjectDispatch_ApplyArgumentToChildren",
+      "source": "FIELD/COMMON/OBJECT/DISPATCH.C"
+    },
+    "main:08023410": {
+      "name": "ObjectDispatch_ApplyValueToChildren"
+    },
+    "main:08023450": {
+      "name": "ObjectDispatch_ApplyPairToChildren"
+    },
+    "main:080234b0": {
+      "name": "ObjectDispatch_SetChildField12"
+    },
+    "main:080234cc": {
+      "name": "Animation_SetIndexAndInitObjects"
+    },
+    "main:080234f0": {
+      "name": "ObjectDispatch_RegisterChildMetadata"
+    },
+    "main:080d2d84": {
+      "name": "Object_GetById",
+      "source": "FIELD/COMMON/OBJECT/BY_ID.C"
+    },
+    "main:080d2d94": {
+      "name": "ObjectMotion_SetSpeedParameters"
+    },
+    "main:080d2da8": {
+      "name": "ObjectMotion_EnableActionAndSetCallback"
+    },
+    "main:080d2dc8": {
+      "name": "ObjectMotion_EnableActionAndResetMotion"
+    },
+    "main:080d2e1c": {
+      "name": "Object_LinkObjectAndSetCallback"
+    },
+    "main:080d2e40": {
+      "name": "Object_RefreshSelectorById"
+    },
+    "main:080d2e50": {
+      "name": "Object_SetActionCallbackAndRefreshById"
+    },
+    "main:080d2e78": {
+      "name": "ObjectMotion_ResetAndSetPosition"
+    },
+    "main:080d2ea4": {
+      "name": "ObjectMotion_SetPositionAndCommit"
+    },
+    "main:080d2ed4": {
+      "name": "ObjectMotion_ResetAndSetPositionInMode2"
+    },
+    "main:080d2f08": {
+      "name": "ObjectMotion_SetPositionAndReset"
+    },
+    "main:080d2f48": {
+      "name": "ObjectMotion_SnapHeadingAndOffset"
+    },
+    "main:080d2fc8": {
+      "name": "ObjectMotion_OffsetPositionAndResetMotion"
+    },
+    "main:080d2ffc": {
+      "name": "ObjectMotion_OffsetPositionAndReset"
+    },
+    "main:080d303c": {
+      "name": "ObjectMotion_CommitPositionAndActivate"
+    },
+    "main:080d30fc": {
+      "name": "ObjectMotion_CommitCurrentPositionAndActivate"
+    },
+    "main:080d3240": {
+      "name": "Object_SetModeById"
+    },
+    "main:080d3254": {
+      "name": "Object_SetActionById"
+    },
+    "main:080d32b8": {
+      "name": "Motion_SetModeAndWaitAnimation",
+      "source": "FIELD/COMMON/OBJECT/MOTION_EVENTS.C"
+    },
+    "main:080d32c8": {
+      "name": "ObjectMotion_Launch"
+    },
+    "main:080d3300": {
+      "name": "ObjectMotion_SetVariantCallback"
+    },
+    "main:080d332c": {
+      "name": "Motion_SetVarCbAndRefresh"
+    },
+    "main:080d2de4": {
+      "name": "ObjectMotion_ResetTargetsAndVelocity"
+    },
+    "main:080d4bc4": {
+      "name": "Object_FindNearestFacingTarget"
+    },
+    "main:080235f8": {
+      "name": "ObjectDispatch_InitFromTable6",
+      "source": "FIELD/COMMON/OBJECT/CHILD_STATE.C"
+    },
+    "main:08023608": {
+      "name": "ObjectDispatch_InitFromTable4WithArgument"
+    },
+    "main:08023634": {
+      "name": "ObjectDispatch_WaitForCommandEnd"
+    },
+    "main:08023664": {
+      "name": "ObjectDispatch_SetSingleChildField1a"
+    },
+    "main:08023680": {
+      "name": "Animation_SetStateFlags"
+    },
+    "main:080236a8": {
+      "name": "Animation_SetDisplayFlag"
+    },
+    "main:080236d0": {
+      "name": "Animation_ApplyChildValues"
+    },
+    "resource_64e:02000314": {
+      "name": "FixedPoint_Distance"
+    },
+    "resource_64e:0200034c": {
+      "name": "StagedActor_FindAtTile"
+    },
+    "resource_64e:0200038c": {
+      "name": "StagedActor_AdvancePair"
+    },
+    "resource_64e:02000510": {
+      "name": "StagedActor_FillGridAttributeRectangle"
+    },
+    "main:080b0a94": {
+      "name": "Djinn_GetDefinition",
+      "source": "GAME/DJINN/MANAGEMENT.C"
+    },
+    "main:080b0ab8": {
+      "name": "Djinn_AddToLeastLoadedOwner"
+    },
+    "main:080b0b78": {
+      "name": "Djinn_AddToOwner"
+    },
+    "main:080b0bb8": {
+      "name": "Trade_CanOfferDjinn"
+    },
+    "main:080b0c78": {
+      "name": "Djinn_IsActive"
+    },
+    "main:080b0c9c": {
+      "name": "Djinn_Activate"
+    },
+    "main:080b0d04": {
+      "name": "Djinn_Deactivate"
+    },
+    "main:080b0d58": {
+      "name": "Trade_RemoveOffer"
+    },
+    "main:080b0e04": {
+      "name": "Trade_AddOffer"
+    },
+    "main:080b0e40": {
+      "name": "Djinn_Transfer"
+    },
+    "main:080b0ef4": {
+      "name": "Trade_CountPendingOffers"
+    },
+    "main:080b0f50": {
+      "name": "Djinn_GetDefinitionHeader"
+    },
+    "main:080b0f5c": {
+      "name": "Owner_SumDjinnCounts"
+    },
+    "main:080b0f9c": {
+      "name": "Party_SumDjinnCounts"
+    },
+    "main:080aeca4": {
+      "name": "Inventory_GetQuantity"
+    },
+    "main:080aecc8": {
+      "name": "Inventory_Count",
+      "source": "GAME/INVENTORY/ITEMS.C"
+    },
+    "main:080aecec": {
+      "name": "PartyInventory_HasSpace"
+    },
+    "main:080aed38": {
+      "name": "PartyInventory_CountFreeSlots"
+    },
+    "main:080aed6c": {
+      "name": "Inventory_Add"
+    },
+    "main:080aedf8": {
+      "name": "PartyInventory_Add"
+    },
+    "main:080aee98": {
+      "name": "Inventory_Find"
+    },
+    "main:080aeec8": {
+      "name": "PartyInventory_FindOwner",
+      "source": "GAME/INVENTORY/FIND.C"
+    },
+    "main:080af008": {
+      "name": "Inventory_FindEquipped",
+      "source": "GAME/INVENTORY/EQUIPPED.C"
+    },
+    "main:080af054": {
+      "name": "Inventory_GetEquippedDefinition"
+    },
+    "main:080af094": {
+      "name": "Inventory_GetEquippedItem"
+    },
+    "main:08041fa4": {
+      "name": "UiText_DrawResource"
+    },
+    "main:08042010": {
+      "name": "UiText_DrawCharacterAtOffset"
+    },
+    "main:080420a8": {
+      "name": "UiText_DrawString"
+    },
+    "main:080420fc": {
+      "name": "UiText_DrawStringAtOffset"
+    },
+    "main:08042188": {
+      "name": "UiText_DrawStringInWindow"
+    },
+    "main:080421e4": {
+      "name": "UiText_DrawNumber"
+    },
+    "main:08042214": {
+      "name": "UiText_DrawNumberAtOffset"
+    },
+    "main:08042244": {
+      "name": "UiText_DrawNumberInWindow"
+    },
+    "main:08042274": {
+      "name": "UiText_DrawPrefixedNumberAtOffset"
+    },
+    "resource_650:02000d14": {
+      "name": "Scene_RunActorConversation"
+    },
+    "main:0804d484": {
+      "name": "Menu_LayoutResourceEntries"
+    },
+    "main:0804d4f8": {
+      "name": "Menu_SelectTopEntry"
+    },
+    "main:0804d570": {
+      "name": "Menu_AnimateSelectionToEntry"
+    },
+    "main:0804d5ac": {
+      "name": "Menu_SelectSaveSlotAction"
+    },
+    "main:0804d678": {
+      "name": "Menu_DrawModeLabel"
+    },
+    "main:0804d754": {
+      "name": "Menu_DrawModeIndicator"
     }
   }
 }

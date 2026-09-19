@@ -61,6 +61,15 @@ actual localization differences and TLA behavior; do not count one recovery
 twelve times. Assets must rebuild from maintained inputs, and final source
 must be organized into evidenced modules with shared interfaces.
 
+## Draft similarity
+
+The owner scorer reports binary similarity as one minus unit-cost halfword edit
+distance divided by the larger candidate/reference halfword count. Insertions,
+deletions and substitutions each cost one; a partial trailing halfword retains
+its actual length. Two empty outputs compare equal but establish no owner
+coverage. Only identical complete bytes have zero edits. Similarity includes
+literal pools and does not establish behavior, source quality or DONE credit.
+
 ## Retained assembly
 
 Overlay assembly credit is per reviewed range. Apart from the fixed overlay
@@ -89,7 +98,7 @@ hand-authored machine interface.
 
 Pascal authorizes DONE credit for reconstructed fixed overlay veneers. Use the
 shared `overlay_veneer` assembly macro in
-`games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC`, preserving each target word and
+`games/<game>/SRC/SYSTEM/OVERLAY.INC`, preserving each target word and
 bank position. Verified entry and import lists live in the overlay's existing
 Japanese-named `SRC` directory as `ENTRY.INC` and `IMPORT.INC`; retained
 assembly includes them at their original positions. Each credited record uses

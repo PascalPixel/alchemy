@@ -388,8 +388,8 @@
     {
       "overlay": "resource_371",
       "entry": "0x020039fc",
-      "span_bytes": 1296,
-      "evidence": "admitted whole-owner semantic reconstruction; DERIVED span - no row in out/decomp/overlays.json. Control-flow walk from the push {r5,r6,r7,lr} prologue at 0x020039fc to the single matching high-register unwind pop {r3,r5,r6,r7}/mov r8,r3/.../pop {r0}/bx r0 at 0x02003efc-0x02003f0b; no bl resolves inside the body and there is no mov pc,rN dispatch. 1,154 instruction bytes plus six interior literal pools totalling 142 bytes (0x02003b32, 0x02003bb2, 0x02003bfa, 0x02003cfc, 0x02003e80, 0x02003ed8); the trailing pool from 0x02003f0c is excluded. Link base confirmed by two odd pool words, 0x0200b8fd -> prologue 0x020038fc and 0x0200b95d -> prologue 0x0200395c."
+      "span_bytes": 1300,
+      "evidence": "Complete entry through high-register unwind at 0x02003efc-0x02003f0a and final referenced literal at 0x02003f0c. The ldr r0 at 0x02003ef6 reads that pool word for the final flag-setting call. The former 1296-byte extent incorrectly excluded it; next independent owner starts at 0x02003f10. Existing assembly evidence already spans all 1300 bytes. admitted whole-owner semantic reconstruction; DERIVED span - no row in out/decomp/overlays.json. Control-flow walk from the push {r5,r6,r7,lr} prologue at 0x020039fc to the single matching high-register unwind pop {r3,r5,r6,r7}/mov r8,r3/.../pop {r0}/bx r0 at 0x02003efc-0x02003f0b; no bl resolves inside the body and there is no mov pc,rN dispatch. The owner includes the directly referenced final pool word 0x00000101 at 0x02003f0c, loaded at 0x02003ef6 for the final call at 0x02003ef8; the next owner starts at 0x02003f10. Link base confirmed by two odd pool words, 0x0200b8fd -> prologue 0x020038fc and 0x0200b95d -> prologue 0x0200395c."
     },
     {
       "overlay": "resource_371",

@@ -58,9 +58,99 @@ pub fn differing_offsets(actual: &[u8], expected: &[u8], width: usize) -> BTreeS
         .collect()
 }
 
+/// Unit-cost insertions, deletions and substitutions over fixed-width byte units.
+/// Partial trailing units retain their length. This measures binary similarity,
+/// not instruction equivalence or behavior; zero edits means identical bytes.
+pub fn edit_distance(actual: &[u8], expected: &[u8], width: usize) -> usize {
+    assert!(width != 0, "comparison unit width must be nonzero");
+    let mut left: Vec<_> = actual.chunks(width).collect();
+    let mut right: Vec<_> = expected.chunks(width).collect();
+    let prefix = left.iter().zip(&right).take_while(|(a, b)| a == b).count();
+    let suffix = left[prefix..]
+        .iter()
+        .rev()
+        .zip(right[prefix..].iter().rev())
+        .take_while(|(a, b)| a == b)
+        .count();
+    left.truncate(left.len() - suffix);
+    right.truncate(right.len() - suffix);
+    let (mut left, mut right) = (&left[prefix..], &right[prefix..]);
+    if left.len() < right.len() {
+        std::mem::swap(&mut left, &mut right);
+    }
+    if right.is_empty() {
+        return left.len();
+    }
+    // One row bounds workspace; equal ends never enter the quadratic loop.
+    let mut row: Vec<_> = (0..=right.len()).collect();
+    for (i, a) in left.iter().enumerate() {
+        let mut diagonal = row[0];
+        row[0] = i + 1;
+        for (j, b) in right.iter().enumerate() {
+            let previous = row[j + 1];
+            row[j + 1] = (diagonal + usize::from(a != b))
+                .min(row[j] + 1)
+                .min(previous + 1);
+            diagonal = previous;
+        }
+    }
+    row[right.len()]
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn edit_distance_handles_shifts_and_partial_units() {
+        assert_eq!(edit_distance(&[], &[], 2), 0);
+        assert_eq!(edit_distance(&[1, 2, 3], &[1, 2, 3], 2), 0);
+        assert_eq!(edit_distance(&[1, 2, 3], &[1, 2, 3, 0], 2), 1);
+        assert_eq!(edit_distance(&[1, 2, 3, 4], &[9, 9, 1, 2, 3, 4], 2), 1);
+        assert_eq!(edit_distance(&[1, 2, 3, 4], &[5, 6, 7, 8], 2), 2);
+        assert_eq!(edit_distance(&[], &[1, 2, 3], 2), 2);
+        assert_eq!(edit_distance(&[1, 2, 3], &[], 2), 2);
+    }
+    #[test]
+    fn edit_distance_matches_exhaustive_edit_paths() {
+        fn oracle(a: &[&[u8]], b: &[&[u8]]) -> usize {
+            if a.is_empty() {
+                return b.len();
+            }
+            if b.is_empty() {
+                return a.len();
+            }
+            (usize::from(a[0] != b[0]) + oracle(&a[1..], &b[1..]))
+                .min(1 + oracle(&a[1..], b))
+                .min(1 + oracle(a, &b[1..]))
+        }
+        let sequences: Vec<Vec<u8>> = (0..=4)
+            .flat_map(|len| {
+                (0..1 << len).map(move |bits| (0..len).map(|i| ((bits >> i) & 1) as u8).collect())
+            })
+            .collect();
+        for width in 1..=4 {
+            for a in &sequences {
+                for b in &sequences {
+                    let distance = edit_distance(a, b, width);
+                    assert_eq!(
+                        distance,
+                        oracle(
+                            &a.chunks(width).collect::<Vec<_>>(),
+                            &b.chunks(width).collect::<Vec<_>>()
+                        )
+                    );
+                    assert_eq!(distance, edit_distance(b, a, width));
+                    assert_eq!(distance == 0, a == b);
+                    assert!(distance <= a.len().max(b.len()).div_ceil(width));
+                }
+            }
+        }
+    }
+    #[test]
+    #[should_panic(expected = "width must be nonzero")]
+    fn edit_distance_rejects_zero_width() {
+        edit_distance(&[], &[], 0);
+    }
     #[test]
     fn alignment_preserves_every_index_and_maximizes_weight() {
         fn best(left: &[String], right: &[String]) -> usize {

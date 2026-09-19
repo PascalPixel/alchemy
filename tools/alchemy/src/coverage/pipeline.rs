@@ -561,9 +561,7 @@ fn exact_overlay_for(
                     let preceding = list.iter().any(|owner| {
                         owner.source == source && owner.spans.iter().any(|span| span.end == start)
                     });
-                    let following = list
-                        .iter()
-                        .any(|owner| owner.source == source && owner.entry == end);
+                    let following = list.iter().any(|owner| owner.entry == end);
                     let span = Span::new(start, end);
                     if end - start != 2
                         || end & 3 != 0

@@ -176,6 +176,7 @@ impl SourcePaths {
         Self::parse_for_game(repository, game, &text)
             .map_err(|error| format!("{}: {error}", path.display()))
     }
+    #[cfg(test)]
     pub fn parse(repository: &Path, text: &str) -> Result<Self, String> {
         Self::parse_for_game(repository, "tbs", text)
     }
@@ -252,9 +253,18 @@ impl SourcePaths {
                     path.display()
                 ));
             }
-            if owners.iter().any(|owner| owner.is_main()) {
+            if owners.iter().any(|owner| owner.is_main())
+                && !declared_main_sharing(
+                    repository,
+                    game,
+                    &source_directory,
+                    path,
+                    owners,
+                    &records,
+                )
+            {
                 return Err(format!(
-                    "{} is shared by main-image and overlay owners; translation-unit instances cover overlay images only",
+                    "{} is shared by main-image and overlay owners without one exact unit declaring every named placement",
                     path.display()
                 ));
             }
@@ -690,6 +700,71 @@ fn game_paths(game: &str) -> Result<(PathBuf, PathBuf), String> {
 }
 /// Several images at several addresses: one module linked into each image,
 /// rather than one image's unit or related overlays loaded at one address.
+/// Main/overlay sharing is admitted only by one explicit, exact composition
+/// contract. Full unit validation and byte verification still follow.
+fn declared_main_sharing(
+    repository: &Path,
+    game: &str,
+    source_directory: &Path,
+    path: &Path,
+    owners: &[SourceOwner],
+    records: &BTreeMap<SourceOwner, SourceRecord>,
+) -> bool {
+    use crate::compiler::{routing::CompilerTarget, translation_units::TranslationUnits};
+    let target = match game {
+        "tbs" => CompilerTarget::Tbs,
+        "tla" => CompilerTarget::Tla,
+        _ => return false,
+    };
+    let Ok(declared) = TranslationUnits::declared_game(repository, target) else {
+        return false;
+    };
+    let expected = owners.iter().copied().collect::<BTreeSet<_>>();
+    let matching = declared
+        .units
+        .iter()
+        .filter(|unit| {
+            if unit.game != game
+                || unit.source != source_directory.join(path)
+                || unit.overlay.is_none()
+                || !unit.exact()
+                || unit.instance("main").is_none()
+                || !unit.local_symbols.is_empty()
+            {
+                return false;
+            }
+            let mut placed = BTreeSet::new();
+            for member in &unit.owners {
+                let Ok(owner) = unit.source_owner(unit.image(), member.address) else {
+                    return false;
+                };
+                let Some(record) = records.get(&owner).filter(|record| record.named) else {
+                    return false;
+                };
+                placed.insert(owner);
+                for (image, instance) in &unit.instances {
+                    let Some(member) = instance.owners.get(&record.name) else {
+                        return false;
+                    };
+                    let Ok(owner) = unit.source_owner(image, member.address) else {
+                        return false;
+                    };
+                    if records
+                        .get(&owner)
+                        .is_none_or(|other| !other.named || other.name != record.name)
+                        || instance.owners.len() != unit.owners.len()
+                    {
+                        return false;
+                    }
+                    placed.insert(owner);
+                }
+            }
+            placed == expected
+        })
+        .count();
+    matching == 1
+}
+
 fn links_module(owners: &[SourceOwner]) -> bool {
     owners
         .iter()
@@ -1099,7 +1174,7 @@ mod tests {
         .is_ok());
     }
     #[test]
-    fn main_and_overlay_sharing_is_rejected_before_main_instances() {
+    fn undeclared_main_and_overlay_sharing_is_rejected() {
         let particle = r#"{"name":"BattleEffect_CreateRadialParticle","source":"BATTLE/EFFECT/RADIAL_PARTICLE.C"}"#;
         let error = register(&[
             ("main:0809a484", particle),

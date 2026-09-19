@@ -4,7 +4,7 @@
 //! by the corresponding hand-written assembly at the same ROM address.
 //! `--apply` performs the move and cleanup only after that proof.
 use crate::candidate::{verify_candidate_owned_routed, CandidateCompilerConfiguration, ROM_BASE};
-use crate::compiler::no_asm::{find_forbidden, source_files};
+use crate::compiler::no_asm::{find_forbidden, find_preprocessed, source_files};
 use crate::compiler::plan::direct_preprocessor_command;
 use crate::compiler::routing::{root, CompilerTarget};
 use crate::compiler::source_paths::{SourceOwner, SourcePaths};
@@ -240,7 +240,7 @@ fn run_pipeline(directory: &str, apply: bool) -> Result<PipelineReport, String> 
                 let expanded = fs::read_to_string(&preprocessed)
                     .map_err(|error| format!("{}: {error}", preprocessed.display()))?;
                 if forbidden.is_empty() {
-                    forbidden = find_forbidden(&preprocessed.to_string_lossy(), &expanded)
+                    forbidden = find_preprocessed(&preprocessed.to_string_lossy(), &expanded)
                         .into_iter()
                         .map(|finding| format!("{} after preprocessing", finding.token))
                         .collect::<Vec<_>>()

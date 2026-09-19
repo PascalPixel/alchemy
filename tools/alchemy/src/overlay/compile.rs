@@ -603,12 +603,29 @@ fn compile_overlay_unit(
             )?)
         }
     };
+    // Only the image's own reference can prove separately owned alignment.
+    let english = edition.is_none_or(|edition| edition == "en");
+    let gaps = match placement {
+        None => unit.compiler_gaps_in(image),
+        Some(_) if instance && english => unit.compiler_gaps_in(image),
+        Some(_) => &[],
+    };
     let script = at("ld");
     let mut text = String::from("SECTIONS\n{\n");
-    for (address, symbol, _) in &placed {
+    for (address, symbol, extent) in &placed {
+        let (_, size) = symbol_span(&listing, symbol)?;
+        let aligned = size < *extent
+            || gaps
+                .iter()
+                .any(|gap| address.checked_add(*extent as u32) == Some(gap.start));
+        let alignment = if aligned {
+            format!(" . = ALIGN(ALIGNOF(.text.{symbol}));")
+        } else {
+            String::new()
+        };
         let address = address + overlay::RUNTIME_BASE - overlay::RESOURCE_BASE;
         text.push_str(&format!(
-            "  .text.{symbol} 0x{address:08x} : {{ *(.text.{symbol}) }}\n"
+            "  .text.{symbol} 0x{address:08x} : {{ *(.text.{symbol}){alignment} }}\n"
         ));
     }
     if let Some(address) = data_address {
@@ -654,7 +671,6 @@ fn compile_overlay_unit(
     let main = overlay::main_image(CompilerTarget::Tbs)?;
     // Register addresses are English, so only an English instance can bind
     // names in its own image; other editions rely on pairing alone.
-    let english = edition.is_none_or(|edition| edition == "en");
     let mut declared = match instance && english {
         true => unit.declared_symbols(image).cloned().unwrap_or_default(),
         false => BTreeMap::new(),
@@ -697,12 +713,6 @@ fn compile_overlay_unit(
         reference,
         &calls,
     )?;
-    // Fill is verified where the image's own reference is the one linked.
-    let gaps = match placement {
-        None => unit.compiler_gaps_in(image),
-        Some(_) if instance && english => unit.compiler_gaps_in(image),
-        Some(_) => &[],
-    };
     let mut compiled = Vec::new();
     for (address, symbol, extent) in &placed {
         let piece = at(&format!("{symbol}.bin"));
@@ -729,10 +739,8 @@ fn compile_overlay_unit(
             verify_compiler_gap(&data, *extent, &loaded_reference, offset, gap_len)
                 .map_err(|error| format!("{}: {error} at {:08x}", unit.id, gap.start))?;
         }
-        // The assembler rounds a section up to its alignment; a function of
-        // an odd number of halfwords carries two bytes of fill past its
-        // declared extent, and the image's own alignment halfword owns that
-        // slot. Only a shorter section is a real mismatch.
+        // Separately declared alignment belongs to the gap, not the function.
+        // It was compared above before extracting the unchanged owner extent.
         if data.len() > *extent {
             data.truncate(*extent);
         }
@@ -1138,15 +1146,9 @@ fn section_functions(
             }
             break;
         }
-        // The alignment directive before a function pads the previous
-        // function's section, as it padded the previous function when the
-        // compiler laid the file out; the new section opens after it.
-        let at = if lines[start].trim().starts_with(".align") {
-            start + 1
-        } else {
-            start
-        };
-        inserts.push((at, format!("\t.section\t.text.{label},\"ax\",%progbits")));
+        // Keep the compiler's alignment on the function's own section so
+        // the linker can preserve it when placing independently owned ranges.
+        inserts.push((start, format!("\t.section\t.text.{label},\"ax\",%progbits")));
     }
     if inserts.len() != symbols.len() {
         return Err(format!(
@@ -1912,6 +1914,59 @@ mod source_activation_tests {
         assert!(section_functions(assembly, &["Func_02000030"], false).is_err());
         let writable = assembly.replace(".section .rodata", ".data");
         assert!(section_functions(&writable, &["Func_02000030"], true).is_err());
+    }
+    #[test]
+    fn sectioning_preserves_native_linker_alignment() {
+        let assembly = "\t.thumb\n.text\n\t.align\t2\n\t.global\tFirst\n\t.thumb_func\nFirst:\n\tbx\tlr\n\t.align\t2\n\t.global\tLast\n\t.thumb_func\nLast:\n\tbx\tlr\n\t.section .rodata\n\t.align\t2\n\t.word\t1\n";
+        let split = section_functions(assembly, &["First", "Last"], true).unwrap();
+        let work = tempfile::tempdir_in(root().join("out")).unwrap();
+        let mut bytes = Vec::new();
+        for (name, source, script) in [
+            ("whole", assembly, "SECTIONS { .text 0x02008000 : { *(.text*) } .rodata : { *(.rodata) } }"),
+            ("split", split.as_str(), "SECTIONS { .text.First 0x02008000 : { *(.text.First) . = ALIGN(ALIGNOF(.text.First)); } .text.Last 0x02008004 : { *(.text.Last) . = ALIGN(ALIGNOF(.text.Last)); } .rodata : { *(.rodata) } }"),
+        ] {
+            let input = work.path().join(format!("{name}.s"));
+            let object = work.path().join(format!("{name}.o"));
+            let binary = work.path().join(format!("{name}.bin"));
+            let linker_script = work.path().join(format!("{name}.ld"));
+            let elf = work.path().join(format!("{name}.elf"));
+            fs::write(&input, source).unwrap();
+            fs::write(&linker_script, script).unwrap();
+            psynergy::process::run(
+                &crate::compiler::routing::compiler_assembly_command(
+                    input.to_str().unwrap(),
+                    object.to_str().unwrap(),
+                ),
+                work.path(),
+            )
+            .unwrap();
+            psynergy::process::run(
+                &[
+                    crate::compiler::routing::binutils_prefix().join("bin/arm-none-eabi-ld").to_string_lossy().into_owned(),
+                    "-T".into(), linker_script.to_string_lossy().into_owned(),
+                    "-o".into(), elf.to_string_lossy().into_owned(),
+                    object.to_string_lossy().into_owned(),
+                ], work.path(),
+            ).unwrap();
+            psynergy::process::run(
+                &[
+                    crate::compiler::routing::binutils_prefix()
+                        .join("bin/arm-none-eabi-objcopy")
+                        .to_string_lossy()
+                        .into_owned(),
+                    "-O".into(),
+                    "binary".into(),
+                    elf.to_string_lossy().into_owned(),
+                    binary.to_string_lossy().into_owned(),
+                ],
+                work.path(),
+            )
+            .unwrap();
+            bytes.push(fs::read(binary).unwrap());
+        }
+        assert_eq!(bytes[0].len(), 12);
+        assert_eq!(bytes[1], bytes[0]);
+        verify_compiler_gap(&bytes[1][4..], 2, &bytes[0], 6, 2).unwrap();
     }
     #[test]
     fn only_explicit_overlay_placeholders_activate_exact_c() {

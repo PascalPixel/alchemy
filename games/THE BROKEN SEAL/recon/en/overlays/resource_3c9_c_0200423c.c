@@ -5,6 +5,8 @@
 extern u8 Data_0200e088[];
 extern u8 Data_0200e0d0[];
 extern u8 Data_0200e0f4[];
+extern u8 Data_00000000[];
+extern u8 Data_00000002[];
 void Func_0200a11a();
 void Func_0200a122();
 void Func_02009f22();
@@ -158,7 +160,9 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 void FieldScene_RunActorTransition(void)
 {
     s32 zero;
-    u8 *actor;
+    u8 *actor26;
+    u8 *actor27;
+    u8 *actor28;
     u8 *record;
     u8 *action_start;
     s32 none;
@@ -209,37 +213,37 @@ void FieldScene_RunActorTransition(void)
     Call2(Func_0200a1a0, 26, 7);
     record = Func_0200a10e(26);
     Func_0200a074(record, 0);
-    actor = Func_0200a11a_a(26);
-    *(s32 *)(actor + 28) = -0x10000;
+    actor26 = Func_0200a11a_a(26);
+    *(s32 *)(actor26 + 28) = -0x10000;
     record = Pointer1(Func_0200a128, 24);
-    *(s32 *)(actor + 24) = *(s32 *)(record + 24);
+    *(s32 *)(actor26 + 24) = *(s32 *)(record + 24);
     none = 0;
-    actor[85] = none;
-    *(s32 *)(actor + 8) = 0x1300000;
-    *(s32 *)(actor + 12) = -0x200000;
-    *(s32 *)(actor + 16) = 0x600000;
+    actor26[85] = none;
+    *(s32 *)(actor26 + 8) = 0x1300000;
+    *(s32 *)(actor26 + 12) = -0x200000;
+    *(s32 *)(actor26 + 16) = 0x600000;
     Func_0200a1ea(27, 7);
     record = Func_0200a158(27);
     Func_0200a0be(record, 0);
-    actor = Func_0200a164(27);
-    *(s32 *)(actor + 28) = -0x10000;
+    actor27 = Func_0200a164(27);
+    *(s32 *)(actor27 + 28) = -0x10000;
     record = Pointer1(Func_0200a170, 24);
-    *(s32 *)(actor + 24) = *(s32 *)(record + 24);
-    actor[85] = none;
-    *(s32 *)(actor + 8) = 0x1300000;
-    *(s32 *)(actor + 12) = none;
-    *(s32 *)(actor + 16) = 0x600000;
+    *(s32 *)(actor27 + 24) = *(s32 *)(record + 24);
+    actor27[85] = none;
+    *(s32 *)(actor27 + 8) = 0x1300000;
+    *(s32 *)(actor27 + 12) = none;
+    *(s32 *)(actor27 + 16) = 0x600000;
     Func_0200a226(28, 7);
     record = Func_0200a194(28);
     Func_0200a0fa(record, 0);
-    actor = Func_0200a1a0_a(28);
-    *(s32 *)(actor + 28) = -0x10000;
+    actor28 = Func_0200a1a0_a(28);
+    *(s32 *)(actor28 + 28) = -0x10000;
     record = Pointer1(Func_0200a1ac, 24);
-    *(s32 *)(actor + 24) = *(s32 *)(record + 24);
-    actor[85] = none;
-    *(s32 *)(actor + 8) = 0x1300000;
-    *(s32 *)(actor + 12) = 0x200000;
-    *(s32 *)(actor + 16) = 0x600000;
+    *(s32 *)(actor28 + 24) = *(s32 *)(record + 24);
+    actor28[85] = none;
+    *(s32 *)(actor28 + 8) = 0x1300000;
+    *(s32 *)(actor28 + 12) = 0x200000;
+    *(s32 *)(actor28 + 16) = 0x600000;
     Call6(Func_0200a120, 102, 4, 74, 4, 18, 23);
     Call6(Func_0200a134, 39, 72, 11, 72, 16, 21);
     Call6(Func_0200a152, 19, 6, 3, 7, 22, 6);
@@ -333,7 +337,7 @@ void FieldScene_RunActorTransition(void)
 
         *(u16 *)(record + 6) = shown;
     }
-    zero = 0;
+    zero = (u16)(u32)Data_00000000;
     record = Pointer1(Func_0200a4e8, 1);
     record[98] = zero;
     *(u8 *)((record + 98) + 1) = 1;
@@ -352,7 +356,7 @@ void FieldScene_RunActorTransition(void)
         *(u16 *)(record + 6) = shown;
     }
     *(s32 *)(record + 76) = *(s32 *)(record + 12);
-    record = Pointer1(Func_0200a522, 3);
+    record = Func_0200a522(3);
     record[98] = zero;
     *(u8 *)((record + 98) + 1) = 1;
     {
@@ -384,7 +388,7 @@ void FieldScene_RunActorTransition(void)
     Func_0200a5a0(30);
     Call1(Func_0200a590, 0x11a);
     Func_0200a73c();
-    Func_0200a6dc(2, 91);
+    Func_0200a6dc((s32)Data_00000002, 91);
     *(u16 *)0x05000000 = 0x7fff;
     *(s32 *)((*(s32 *)0x03001ebc + 0x1c8)) = 1;
     Func_0200a73e();

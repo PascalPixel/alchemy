@@ -1488,6 +1488,17 @@ fn check_staged(root: &Path) -> Result<(), String> {
     )?;
     let (anything, changes) = raw_changes(&output)?;
     if !anything {
+        // A normal merge may join histories whose file changes already landed.
+        // There is still a publishable tree to inspect; scan it in full.
+        if git(
+            root,
+            &["rev-parse", "--verify", "MERGE_HEAD"],
+            "pending merge",
+        )
+        .is_ok()
+        {
+            return check_tree(root, None);
+        }
         return Err("publication gate scanned nothing: no staged change to inspect".to_string());
     }
     let manifests = manifests_of(root, None)?;
@@ -2959,6 +2970,27 @@ pub(super) fn entry(arguments: &[String]) -> ExitCode {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn history_only_merges_scan_the_whole_tree() {
+        for (file, permitted) in [("README.md", true), ("UNOWNED.md", false)] {
+            let directory = tempfile::tempdir().unwrap();
+            let root = directory.path();
+            let run = |args: &[&str]| git(root, args, "merge fixture").unwrap();
+            run(&["init", "-b", "main"]);
+            run(&["config", "user.name", "Fixture"]);
+            run(&["config", "user.email", "fixture@example.invalid"]);
+            std::fs::write(root.join(file), "Project introduction.\n").unwrap();
+            run(&["add", "--", file]);
+            run(&["commit", "-m", "Initial tree"]);
+            assert!(check_staged(root).unwrap_err().contains("no staged change"));
+            run(&["checkout", "-b", "side"]);
+            run(&["commit", "--allow-empty", "-m", "Separate history"]);
+            run(&["checkout", "main"]);
+            run(&["merge", "--no-ff", "--no-commit", "side"]);
+            assert_eq!(check_staged(root).is_ok(), permitted);
+        }
+    }
+
     #[test]
     fn git_records_name_new_paths_and_flag_gitlinks() {
         let raw = b":100644 100644 a b M\0kept.c\0\

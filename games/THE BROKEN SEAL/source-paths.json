@@ -56,7 +56,7 @@
     },
     "resource_385:02000c1c": {
       "name": "ActorDraw_SetupActorSceneCells",
-      "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
+      "source": "FIELD/KUUPUAPPU_MURA/SCENE_CELLS.C"
     },
     "resource_385:02000350": {
       "name": "Actor_UpdateProximity",
@@ -706,7 +706,8 @@
       "name": "BattleMotion_ProjectConditionalPosition"
     },
     "main:080c0184": {
-      "name": "BattlePresentation_UploadTileVariant"
+      "name": "BattlePresentation_UploadTileVariant",
+      "source": "BATTLE/PRESENTATION/UPLOAD_TILE_VARIANT.C"
     },
     "main:080c0eb8": {
       "name": "BattlePresentation_InitializeTransitionEntries"
@@ -1656,7 +1657,8 @@
       "source": "BATTLE/EFFECT/PARTICLES.C"
     },
     "main:0809a484": {
-      "name": "BattleEffect_CreateRadialParticle"
+      "name": "Effect_Spawn",
+      "source": "FIELD/COMMON/EFFECT/SPAWN.C"
     },
     "main:0809abb4": {
       "name": "BattleEffect_RunFallbackObjectTransition"
@@ -3295,7 +3297,8 @@
       "source": "FIELD/KUUPUAPPU_MURA_SAI/MOTION_EVENT.C"
     },
     "resource_385:0200013c": {
-      "name": "SpawnConfiguredEffect"
+      "name": "Effect_Spawn",
+      "source": "FIELD/COMMON/EFFECT/SPAWN.C"
     },
     "resource_385:02000314": {
       "name": "CalculateFixedPointPositionDistance",
@@ -3326,7 +3329,8 @@
       "source": "FIELD/GOMA_IRIGUCHI/DEPTH.C"
     },
     "resource_387:0200013c": {
-      "name": "SpawnConfiguredEffect"
+      "name": "Effect_Spawn",
+      "source": "FIELD/COMMON/EFFECT/SPAWN.C"
     },
     "resource_38e:02000974": {
       "name": "InitializeOrbitingSceneEntity",
@@ -3409,7 +3413,8 @@
       "source": "FIELD/COMMON/SHIAN_JIIN/TEMPLE_ROOMS.C"
     },
     "resource_39e:0200013c": {
-      "name": "SpawnEffect"
+      "name": "Effect_Spawn",
+      "source": "FIELD/COMMON/EFFECT/SPAWN.C"
     },
     "resource_39e:02000314": {
       "name": "StopXianActor",
@@ -3444,7 +3449,8 @@
       "source": "FIELD/SHIAN_MURA/SPAWN_SEQUENCE.C"
     },
     "resource_3a0:0200013c": {
-      "name": "Effect_SpawnConfigured"
+      "name": "Effect_Spawn",
+      "source": "FIELD/COMMON/EFFECT/SPAWN.C"
     },
     "resource_3a0:02000314": {
       "name": "Effect_RequestFixedEffect",
@@ -6382,7 +6388,8 @@
       "source": "FIELD/IMIRU_MURA/FLAGGED_CHOREOGRAPHY.C"
     },
     "resource_3c9:0200013c": {
-      "name": "Effect_SpawnConfigured"
+      "name": "Effect_Spawn",
+      "source": "FIELD/COMMON/EFFECT/SPAWN.C"
     },
     "resource_38e:020008e8": {
       "name": "Scene_SetupWithDescriptor8BD4",
@@ -6409,7 +6416,8 @@
       "source": "FIELD/GOMA_IRIGUCHI/DEPTH.C"
     },
     "resource_3c8:02000118": {
-      "name": "SceneEffect_SpawnConfigured"
+      "name": "Effect_Spawn",
+      "source": "FIELD/COMMON/EFFECT/SPAWN.C"
     },
     "resource_3c8:02000b08": {
       "name": "SceneEffect_SpawnNineRadialEffects",
@@ -7277,7 +7285,8 @@
       "source": "FIELD/KORASHIAMU_IRIGUCHI/STATUS_DISPATCH.C"
     },
     "resource_3a1:0200013c": {
-      "name": "Effect_SpawnConfiguredEffect"
+      "name": "Effect_Spawn",
+      "source": "FIELD/COMMON/EFFECT/SPAWN.C"
     },
     "resource_390:0200012c": {
       "name": "Scene_RunActor18MessageBranch",
@@ -8412,7 +8421,8 @@
       "source": "FIELD/SORU_FUNKA/EXTENDED_EFFECT.C"
     },
     "resource_380:0200013c": {
-      "name": "Overlay380_SpawnConfiguredEffect"
+      "name": "Effect_Spawn",
+      "source": "FIELD/COMMON/EFFECT/SPAWN.C"
     },
     "resource_3c9:02000714": {
       "name": "SceneData_GetTableE6ec",
@@ -9782,7 +9792,8 @@
       "source": "MENU/SHOP/ITEM_SELECTION.C"
     },
     "main:08004838": {
-      "name": "PaletteDma_LoadBlock"
+      "name": "PaletteDma_LoadBlock",
+      "source": "GRAPHICS/PALETTE/LOAD_BLOCK.C"
     },
     "main:0800bc48": {
       "name": "ResourceMetadata_ClearRecord"
@@ -11584,7 +11595,8 @@
       "source": "FIELD/GOMA_SUIRO/BURST.C"
     },
     "resource_38a:0200013c": {
-      "name": "SceneEffect_SpawnConfiguredEffect"
+      "name": "Effect_Spawn",
+      "source": "FIELD/COMMON/EFFECT/SPAWN.C"
     },
     "resource_38a:02000314": {
       "name": "SceneData_GetTable8818OrTable88d8",
@@ -11992,7 +12004,8 @@
       "source": "FIELD/KUUPUAPPU_MURA/ACTOR_PRESENTATION.C"
     },
     "resource_382:0200013c": {
-      "name": "SceneEffect_SpawnConfiguredEffect"
+      "name": "Effect_Spawn",
+      "source": "FIELD/COMMON/EFFECT/SPAWN.C"
     },
     "resource_382:02000314": {
       "name": "SceneActor_UpdateProximityToLeader",
@@ -12529,7 +12542,8 @@
       "source": "FIELD/MAKYURI_CHOJO/AERIE.C"
     },
     "resource_39d:0200013c": {
-      "name": "SceneEffect_SpawnConfigured"
+      "name": "Effect_Spawn",
+      "source": "FIELD/COMMON/EFFECT/SPAWN.C"
     },
     "resource_39d:0200056c": {
       "name": "FieldScene_RunFourActorPresentation",
@@ -12799,7 +12813,8 @@
     },
     "resource_3a6:02000030": "FIELD/HAIDIA_DOU/STAGED_PAIR_REGION.C",
     "resource_3a6:0200013c": {
-      "name": "SpawnConfiguredEffect"
+      "name": "Effect_Spawn",
+      "source": "FIELD/COMMON/EFFECT/SPAWN.C"
     },
     "resource_3a6:02000314": {
       "name": "FixedPoint_Distance",
@@ -13484,7 +13499,8 @@
       "source": "FIELD/KARAGORU_DOU/STAGED_PAIR.C"
     },
     "resource_3be:0200013c": {
-      "name": "StagedActorPairScene_SpawnConfiguredEffect"
+      "name": "Effect_Spawn",
+      "source": "FIELD/COMMON/EFFECT/SPAWN.C"
     },
     "resource_3be:02000314": {
       "name": "FixedPoint_Distance",
@@ -13598,7 +13614,8 @@
     },
     "resource_39c:02000030": "FIELD/MAKYURI_HEYA/FIELD_PROBE_SCENE.C",
     "resource_39c:0200013c": {
-      "name": "BattleEffect_SpawnConfigured"
+      "name": "Effect_Spawn",
+      "source": "FIELD/COMMON/EFFECT/SPAWN.C"
     },
     "resource_39c:02000314": {
       "name": "FixedPoint_Distance",
@@ -13950,7 +13967,8 @@
       "source": "FIELD/TORETO_HEYA/FOUR_ENCOUNTER.C"
     },
     "resource_396:0200013c": {
-      "name": "SpawnConfiguredEffect"
+      "name": "Effect_Spawn",
+      "source": "FIELD/COMMON/EFFECT/SPAWN.C"
     },
     "resource_396:0200185c": {
       "name": "advance_effect_motion",
@@ -14093,7 +14111,8 @@
       "source": "FIELD/SUHARA_SABAKU/SELECTED_PRESENTATION.C"
     },
     "resource_3c0:0200013c": {
-      "name": "SpawnConfiguredEffect"
+      "name": "Effect_Spawn",
+      "source": "FIELD/COMMON/EFFECT/SPAWN.C"
     },
     "resource_3c0:02000400": {
       "name": "sync_selected_actor_progress",
@@ -14634,7 +14653,8 @@
       "source": "FIELD/RUNPA_MURA/EFFECT.C"
     },
     "resource_3ab:0200013c": {
-      "name": "Effect_Spawn"
+      "name": "Effect_Spawn",
+      "source": "FIELD/COMMON/EFFECT/SPAWN.C"
     },
     "resource_3ab:020017d8": {
       "name": "FloatingNut_Update",
@@ -15123,7 +15143,8 @@
       "source": "FIELD/MAKYURI_IRIGUCHI/STAGED_EFFECT.C"
     },
     "resource_39b:0200013c": {
-      "name": "SpawnConfiguredEffect"
+      "name": "Effect_Spawn",
+      "source": "FIELD/COMMON/EFFECT/SPAWN.C"
     },
     "resource_39b:02000314": {
       "name": "FixedPoint_Distance",
@@ -15325,7 +15346,8 @@
       "source": "FIELD/TAKARA_SHIMA/ISLAND_AND_CAVES.C"
     },
     "resource_3b2:02000ae8": {
-      "name": "SpawnConfiguredSceneEffect"
+      "name": "Effect_Spawn",
+      "source": "FIELD/COMMON/EFFECT/SPAWN.C"
     },
     "resource_3b2:02000cc0": {
       "name": "NoOpEffectCallback",
@@ -15614,7 +15636,8 @@
     },
     "resource_3b3:02000030": "FIELD/TAKARA_HASHIRA/STAGED_NAV.C",
     "resource_3b3:0200013c": {
-      "name": "SpawnConfiguredEffect"
+      "name": "Effect_Spawn",
+      "source": "FIELD/COMMON/EFFECT/SPAWN.C"
     },
     "resource_3b3:02000314": {
       "name": "FixedPoint_Distance",
@@ -15943,7 +15966,8 @@
       "source": "FIELD/BABI_CHIKA/MAP_INIT.C"
     },
     "resource_3c4:02000ae8": {
-      "name": "SceneEffect_SpawnConfiguredEffect"
+      "name": "Effect_Spawn",
+      "source": "FIELD/COMMON/EFFECT/SPAWN.C"
     },
     "resource_3c4:02001970": {
       "name": "SceneDialogue_RunFlag982Or983Dialogue",
@@ -17188,7 +17212,8 @@
       "source": "FIELD/MOGORU_MORI/WAYPOINT.C"
     },
     "resource_39f:02000ae8": {
-      "name": "SceneEffect_SpawnConfigured"
+      "name": "Effect_Spawn",
+      "source": "FIELD/COMMON/EFFECT/SPAWN.C"
     },
     "resource_39f:02001880": {
       "name": "SceneActor_RunActorFourteenFourWaypointMotion",
@@ -17617,7 +17642,8 @@
       "source": "FIELD/BABI_IRIGUCHI/BRANCHING_EVENT.C"
     },
     "resource_3c5:02000ae8": {
-      "name": "SceneEffect_SpawnConfiguredEffect"
+      "name": "Effect_Spawn",
+      "source": "FIELD/COMMON/EFFECT/SPAWN.C"
     },
     "resource_3c5:020011fc": {
       "name": "FieldScene_RunStep15",
@@ -17739,7 +17765,8 @@
       "source": "FIELD/RAMAKAN_SABAKU/SELECTED_ACTOR_SCENE_ID_SELECTED_ACTOR_SCENE.C"
     },
     "resource_3a5:0200013c": {
-      "name": "SceneEffect_SpawnConfiguredEffect"
+      "name": "Effect_Spawn",
+      "source": "FIELD/COMMON/EFFECT/SPAWN.C"
     },
     "resource_3a5:02000324": {
       "name": "OverlayObject_WaitUntilField12BelowLimit",
@@ -18721,6 +18748,154 @@
     "resource_3c9:02000104": {
       "name": "Effect_Move",
       "source": "FIELD/COMMON/EFFECT/MOVE.C"
+    },
+    "resource_382:02001090": {
+      "name": "ActorDraw_SetupActorSceneCells",
+      "source": "FIELD/KUUPUAPPU_MURA/SCENE_CELLS.C"
+    },
+    "resource_371:020006ec": {
+      "name": "WorldMap_EnterScene"
+    },
+    "resource_371:020024a8": {
+      "name": "WorldMap_RunActorSequence"
+    },
+    "resource_371:02002768": {
+      "name": "WorldMap_PrepareTriggerActor"
+    },
+    "resource_371:020027dc": {
+      "name": "WorldMap_RestoreExitTrigger"
+    },
+    "resource_371:0200384c": {
+      "name": "WorldMap_RaiseActors"
+    },
+    "resource_371:02004058": {
+      "name": "WorldMap_CreateLinkedEffects"
+    },
+    "resource_371:020001c4": {
+      "name": "WorldMap_UpdateOrbitActor"
+    },
+    "resource_391:02002974": {
+      "name": "FieldScene_UpdateFallingEffect"
+    },
+    "resource_3be:020011f8": {
+      "name": "StagedActorPairScene_RunSpinningLeap",
+      "source": "FIELD/KARAGORU_DOU/SPINNING_LEAP.C"
+    },
+    "resource_3ce:02000cf4": {
+      "name": "DebugMenu_SelectItem"
+    },
+    "resource_3c7:02000308": {
+      "name": "RariberoScene_PlayPoseSequence",
+      "source": "FIELD/RARIBERO_HEYA/POSE_SEQUENCE.C"
+    },
+    "main:08004a28": {
+      "name": "Graphics_SaveTransferWork",
+      "source": "GRAPHICS/SAVE_TRANSFER_WORK.C"
+    },
+    "main:08004a44": {
+      "name": "Graphics_LoadTransferWork",
+      "source": "GRAPHICS/LOAD_TRANSFER_WORK.C"
+    },
+    "resource_392:02000b8c": {
+      "name": "KorimaPalette_SaveFirst",
+      "source": "FIELD/COMMON/KORIMA/PALETTE.C"
+    },
+    "resource_392:02000bac": {
+      "name": "KorimaPalette_SaveSecond",
+      "source": "FIELD/COMMON/KORIMA/PALETTE.C"
+    },
+    "resource_392:02000bcc": {
+      "name": "KorimaPalette_Capture",
+      "source": "FIELD/COMMON/KORIMA/PALETTE.C"
+    },
+    "resource_392:02000c0c": {
+      "name": "KorimaPalette_Restore",
+      "source": "FIELD/COMMON/KORIMA/PALETTE.C"
+    },
+    "resource_393:02000d5c": {
+      "name": "KorimaPalette_SaveFirst",
+      "source": "FIELD/COMMON/KORIMA/PALETTE.C"
+    },
+    "resource_393:02000d7c": {
+      "name": "KorimaPalette_SaveSecond",
+      "source": "FIELD/COMMON/KORIMA/PALETTE.C"
+    },
+    "resource_393:02000d9c": {
+      "name": "KorimaPalette_Capture",
+      "source": "FIELD/COMMON/KORIMA/PALETTE.C"
+    },
+    "resource_393:02000ddc": {
+      "name": "KorimaPalette_Restore",
+      "source": "FIELD/COMMON/KORIMA/PALETTE.C"
+    },
+    "resource_394:02000f34": {
+      "name": "KorimaPalette_SaveFirst",
+      "source": "FIELD/COMMON/KORIMA/PALETTE.C"
+    },
+    "resource_394:02000f54": {
+      "name": "KorimaPalette_SaveSecond",
+      "source": "FIELD/COMMON/KORIMA/PALETTE.C"
+    },
+    "resource_394:02000f74": {
+      "name": "KorimaPalette_Capture",
+      "source": "FIELD/COMMON/KORIMA/PALETTE.C"
+    },
+    "resource_394:02000fb4": {
+      "name": "KorimaPalette_Restore",
+      "source": "FIELD/COMMON/KORIMA/PALETTE.C"
+    },
+    "resource_395:02001838": {
+      "name": "KorimaPalette_SaveFirst",
+      "source": "FIELD/COMMON/KORIMA/PALETTE.C"
+    },
+    "resource_395:02001858": {
+      "name": "KorimaPalette_SaveSecond",
+      "source": "FIELD/COMMON/KORIMA/PALETTE.C"
+    },
+    "resource_395:02001878": {
+      "name": "KorimaPalette_Capture",
+      "source": "FIELD/COMMON/KORIMA/PALETTE.C"
+    },
+    "resource_395:020018b8": {
+      "name": "KorimaPalette_Restore",
+      "source": "FIELD/COMMON/KORIMA/PALETTE.C"
+    },
+    "main:080049e8": {
+      "name": "Graphics_SaveTransferWorkOnce",
+      "source": "GRAPHICS/SAVE_TRANSFER_WORK_ONCE.C"
+    },
+    "main:080251d4": {
+      "name": "Vram_CopyTile",
+      "source": "GRAPHICS/VRAM/COPY_TILE.C"
+    },
+    "main:080052f4": {
+      "name": "Resource_DecompressHalfwords",
+      "source": "SYSTEM/RESOURCE/DECOMPRESS_HALFWORDS.C"
+    },
+    "main:0800543c": {
+      "name": "ColorBuffer_BackupAndBrighten",
+      "source": "GRAPHICS/COLOR/BACKUP_ADJUST.C"
+    },
+    "main:08005490": {
+      "name": "ColorBuffer_BackupAndDarken"
+    },
+    "main:080054e4": {
+      "name": "ColorBuffer_BackupAndScaleThreeQuarters"
+    },
+    "main:08005534": {
+      "name": "ColorBuffer_BackupAndHalve"
+    },
+    "main:08005584": {
+      "name": "ColorBuffer_BackupAndBrightenPartial"
+    },
+    "main:080055d8": {
+      "name": "ColorBuffer_BackupAndDarkenPartial"
+    },
+    "main:0800562c": {
+      "name": "ColorBuffer_BackupAndScaleNonzeroThreeQuarters"
+    },
+    "main:0800567c": {
+      "name": "ColorBuffer_BackupAndHalveNonzero"
     }
   }
 }

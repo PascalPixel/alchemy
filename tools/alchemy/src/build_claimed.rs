@@ -206,12 +206,12 @@ fn module_contract(
             ));
         }
         return unit
-            .symbols()
-            .map(|(address, _, extent)| {
+            .members_in("main")
+            .map(|member| {
                 Ok((
-                    unit.source_owner(unit.image(), address)?.legacy_name(),
-                    address,
-                    extent,
+                    unit.source_owner("main", member.address)?.legacy_name(),
+                    member.address,
+                    member.extent,
                 ))
             })
             .collect();
@@ -747,7 +747,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     if sources.is_empty() {
         return Err("no reconstructed sources".into());
     }
-    let units = TranslationUnits::load(Path::new(root))?;
+    let units = TranslationUnits::load_game(Path::new(root), target.compiler)?;
     let contracts = sources
         .iter()
         .map(|source| module_contract(Path::new(root), game, source, &units))
@@ -776,7 +776,11 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     let declared_units = units
         .units
         .iter()
-        .filter(|unit| unit.game == game && unit.overlay.is_none())
+        .filter(|unit| unit.game == game)
+        .map(TranslationUnit::main_placement)
+        .collect::<Result<Vec<_>>>()?
+        .into_iter()
+        .flatten()
         .collect::<Vec<_>>();
     let unit_ids = declared_units
         .iter()
@@ -813,7 +817,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     }
     let mut unit_compiles = Vec::new();
     let mut unit_imports = Vec::new();
-    for unit in declared_units {
+    for unit in &declared_units {
         let mixed = !unit.exact();
         let work = if mixed {
             object_dir.join("tu").join(&unit.id)

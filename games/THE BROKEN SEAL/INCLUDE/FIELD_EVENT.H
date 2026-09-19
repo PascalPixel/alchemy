@@ -291,6 +291,7 @@ void Engine_MapCopyCells(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x
 void Engine_MapCopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x,
                                   s32 dest_y);
 void Engine_MapRedraw(void);
+void Engine_WorkSetValuesIfNonNegative(s32 first, s32 second, s32 third);
 s32 Engine_GameFlagIsSet(s32 flag);
 s32 Engine_GameFlagSet(s32 flag);
 void Engine_GameFlagClear(s32 flag);
@@ -566,6 +567,11 @@ static inline void Map_CopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 h
 static inline void Map_Redraw(void)
 {
     Engine_MapRedraw();
+}
+
+static inline void Work_SetValuesIfNonNegative(s32 first, s32 second, s32 third)
+{
+    Engine_WorkSetValuesIfNonNegative(first, second, third);
 }
 
 static inline s32 GameFlag_IsSet(s32 flag)

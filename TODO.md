@@ -121,7 +121,15 @@ like when it is done, then carry that standard to every module.
   declarations and fully prototyping the rate helpers leave the same two
   `sched2` load-pair reversals. Hoisting target X, inline delta helpers and
   algebraic subtraction forms regress. The three rate calls are distinct
-  overlay imports, so replacing them with `/` is not the original source.
+  overlay imports, so replacing them with `/` is not the original source. A
+  minimal scale branch emits the reference target-before-current order; adding
+  only the later script block reverses it, locating the break at the options
+  pointer's cross-call lifetime rather than the subtraction. Block-scoped
+  locals and a whole-scale inline helper keep the four-halfword floor. A local
+  target/current aggregate preserves the required order but changes three
+  register instructions. Jev 1.13 abstained from choosing a source model and
+  ranked scoped lifetimes as the least-uncertain bounded probe; that probe was
+  neutral.
 
 ## Maps and the 3D world
 

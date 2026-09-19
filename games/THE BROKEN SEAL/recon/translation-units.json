@@ -93,11 +93,6 @@
           "address": "0x02000608",
           "extent": 696,
           "state": "exact-c"
-        },
-        {
-          "address": "0x020008c0",
-          "extent": 284,
-          "state": "exact-c"
         }
       ],
       "instances": {
@@ -134,10 +129,6 @@
             "SceneActor_MoveAndRedraw": {
               "address": "0x02000608",
               "extent": 696
-            },
-            "FieldScene_RedrawActorFootprint": {
-              "address": "0x020008c0",
-              "extent": 284
             }
           }
         },
@@ -174,10 +165,6 @@
             "SceneActor_MoveAndRedraw": {
               "address": "0x02000608",
               "extent": 696
-            },
-            "FieldScene_RedrawActorFootprint": {
-              "address": "0x020008c0",
-              "extent": 284
             }
           }
         },
@@ -214,10 +201,6 @@
             "SceneActor_MoveAndRedraw": {
               "address": "0x02000608",
               "extent": 696
-            },
-            "FieldScene_RedrawActorFootprint": {
-              "address": "0x020008c0",
-              "extent": 284
             }
           }
         },
@@ -254,10 +237,6 @@
             "SceneActor_MoveAndRedraw": {
               "address": "0x02000608",
               "extent": 696
-            },
-            "FieldScene_RedrawActorFootprint": {
-              "address": "0x020008c0",
-              "extent": 284
             }
           }
         },
@@ -294,10 +273,6 @@
             "SceneActor_MoveAndRedraw": {
               "address": "0x02000608",
               "extent": 696
-            },
-            "FieldScene_RedrawActorFootprint": {
-              "address": "0x020008c0",
-              "extent": 284
             }
           }
         },
@@ -334,10 +309,6 @@
             "SceneActor_MoveAndRedraw": {
               "address": "0x020008ec",
               "extent": 696
-            },
-            "FieldScene_RedrawActorFootprint": {
-              "address": "0x02000ba4",
-              "extent": 284
             }
           }
         },
@@ -374,10 +345,6 @@
             "SceneActor_MoveAndRedraw": {
               "address": "0x020008ec",
               "extent": 696
-            },
-            "FieldScene_RedrawActorFootprint": {
-              "address": "0x02000ba4",
-              "extent": 284
             }
           }
         },
@@ -414,10 +381,6 @@
             "SceneActor_MoveAndRedraw": {
               "address": "0x02000608",
               "extent": 696
-            },
-            "FieldScene_RedrawActorFootprint": {
-              "address": "0x020008c0",
-              "extent": 284
             }
           }
         },
@@ -454,10 +417,6 @@
             "SceneActor_MoveAndRedraw": {
               "address": "0x020008ec",
               "extent": 696
-            },
-            "FieldScene_RedrawActorFootprint": {
-              "address": "0x02000ba4",
-              "extent": 284
             }
           }
         },
@@ -494,10 +453,6 @@
             "SceneActor_MoveAndRedraw": {
               "address": "0x02000608",
               "extent": 696
-            },
-            "FieldScene_RedrawActorFootprint": {
-              "address": "0x020008c0",
-              "extent": 284
             }
           }
         },
@@ -534,10 +489,6 @@
             "SceneActor_MoveAndRedraw": {
               "address": "0x020008ec",
               "extent": 696
-            },
-            "FieldScene_RedrawActorFootprint": {
-              "address": "0x02000ba4",
-              "extent": 284
             }
           }
         },
@@ -574,10 +525,6 @@
             "SceneActor_MoveAndRedraw": {
               "address": "0x02000608",
               "extent": 696
-            },
-            "FieldScene_RedrawActorFootprint": {
-              "address": "0x020008c0",
-              "extent": 284
             }
           }
         },
@@ -614,10 +561,6 @@
             "SceneActor_MoveAndRedraw": {
               "address": "0x02000608",
               "extent": 696
-            },
-            "FieldScene_RedrawActorFootprint": {
-              "address": "0x020008c0",
-              "extent": 284
             }
           }
         },
@@ -654,10 +597,6 @@
             "SceneActor_MoveAndRedraw": {
               "address": "0x020008ec",
               "extent": 696
-            },
-            "FieldScene_RedrawActorFootprint": {
-              "address": "0x02000ba4",
-              "extent": 284
             }
           }
         },
@@ -694,10 +633,6 @@
             "SceneActor_MoveAndRedraw": {
               "address": "0x02000608",
               "extent": 696
-            },
-            "FieldScene_RedrawActorFootprint": {
-              "address": "0x020008c0",
-              "extent": 284
             }
           }
         },
@@ -734,10 +669,6 @@
             "SceneActor_MoveAndRedraw": {
               "address": "0x02000608",
               "extent": 696
-            },
-            "FieldScene_RedrawActorFootprint": {
-              "address": "0x020008c0",
-              "extent": 284
             }
           }
         }
@@ -170613,6 +170544,39 @@
           }
         }
       }
+    },
+    {
+      "id": "staged-actor-footprint",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/recon/en/overlays/resource_3bf_c_020008c0.c",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3bf",
+      "absolute_symbols": {
+        "StagedActor_DirectionSteps": {
+          "address": "0x0200ded8",
+          "kind": "data"
+        },
+        "StagedActor_FootprintBounds": {
+          "address": "0x0200df30",
+          "kind": "data"
+        },
+        "StagedActor_FootprintKinds": {
+          "address": "0x0200df18",
+          "kind": "data"
+        },
+        "StagedActor_FillGridAttributeRectangle": {
+          "address": "0x02008244",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x020008c0",
+          "extent": 284,
+          "state": "retained-assembly"
+        }
+      ]
     }
   ]
 }

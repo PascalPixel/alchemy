@@ -112,6 +112,15 @@ roll and title screens are out of scope.
 Grow the Lunpa showcase until it shows what the whole repository will look
 like when it is done, then carry that standard to every module.
 
+- Recover the 284-byte footprint redraw without the unused pointer reset.
+  Its 17 copies are withdrawn from C credit; the ordinary draft is kept in
+  `games/THE BROKEN SEAL/recon/en/overlays/resource_3bf_c_020008c0.c`.
+  Both the direct index store and the real store through the search pointer
+  emit 288 bytes. The other eight staged-actor members remain exact in all
+  17 images.
+- Close the village's recorded 472-byte `Effect_Spawn` compiler gap using
+  ordinary C, without volatile fields or scheduler helpers.
+
 ## Maps and the 3D world
 
 - Raise rooms into 3D from their walking maps or boundaries. _The Lost Age_

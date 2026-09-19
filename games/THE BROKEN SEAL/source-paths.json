@@ -17875,8 +17875,7 @@
       "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_3bf:020008c0": {
-      "name": "FieldScene_RedrawActorFootprint",
-      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+      "name": "FieldScene_RedrawActorFootprint"
     },
     "resource_3bf:02000d54": {
       "name": "FieldScene_SetPositionPairs",
@@ -18493,68 +18492,52 @@
       "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
     },
     "resource_389:020008c0": {
-      "name": "FieldScene_RedrawActorFootprint",
-      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+      "name": "FieldScene_RedrawActorFootprint"
     },
     "resource_373:020008c0": {
-      "name": "FieldScene_RedrawActorFootprint",
-      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+      "name": "FieldScene_RedrawActorFootprint"
     },
     "resource_3a6:02000ba4": {
-      "name": "FieldScene_RedrawActorFootprint",
-      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+      "name": "FieldScene_RedrawActorFootprint"
     },
     "resource_39b:02000ba4": {
-      "name": "FieldScene_RedrawActorFootprint",
-      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+      "name": "FieldScene_RedrawActorFootprint"
     },
     "resource_3b4:020008c0": {
-      "name": "FieldScene_RedrawActorFootprint",
-      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+      "name": "FieldScene_RedrawActorFootprint"
     },
     "resource_39c:02000ba4": {
-      "name": "FieldScene_RedrawActorFootprint",
-      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+      "name": "FieldScene_RedrawActorFootprint"
     },
     "resource_391:020008c0": {
-      "name": "FieldScene_RedrawActorFootprint",
-      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+      "name": "FieldScene_RedrawActorFootprint"
     },
     "resource_3c5:020008c0": {
-      "name": "FieldScene_RedrawActorFootprint",
-      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+      "name": "FieldScene_RedrawActorFootprint"
     },
     "resource_3c4:020008c0": {
-      "name": "FieldScene_RedrawActorFootprint",
-      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+      "name": "FieldScene_RedrawActorFootprint"
     },
     "resource_39f:020008c0": {
-      "name": "FieldScene_RedrawActorFootprint",
-      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+      "name": "FieldScene_RedrawActorFootprint"
     },
     "resource_392:020008c0": {
-      "name": "FieldScene_RedrawActorFootprint",
-      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+      "name": "FieldScene_RedrawActorFootprint"
     },
     "resource_3bd:020008c0": {
-      "name": "FieldScene_RedrawActorFootprint",
-      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+      "name": "FieldScene_RedrawActorFootprint"
     },
     "resource_3b2:020008c0": {
-      "name": "FieldScene_RedrawActorFootprint",
-      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+      "name": "FieldScene_RedrawActorFootprint"
     },
     "resource_3b3:02000ba4": {
-      "name": "FieldScene_RedrawActorFootprint",
-      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+      "name": "FieldScene_RedrawActorFootprint"
     },
     "resource_3be:02000ba4": {
-      "name": "FieldScene_RedrawActorFootprint",
-      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+      "name": "FieldScene_RedrawActorFootprint"
     },
     "resource_393:020008c0": {
-      "name": "FieldScene_RedrawActorFootprint",
-      "source": "FIELD/COMMON/OBJECT/STAGED_ACTOR.C"
+      "name": "FieldScene_RedrawActorFootprint"
     },
     "resource_3a0:02000408": {
       "name": "SceneActor_UpdateTracking",

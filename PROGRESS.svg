@@ -3128,10 +3128,10 @@
 <path class="bevel-dark" d="M67.34350406298564 177.7186131757784 H95.70105217783453 V131.01730658480383" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="3bd: 9,572 bytes · Unidentified, Drafted, Assembly, C · 0x087e3e08" data-node="leaf" data-kind="file" data-bytes="9572" data-address="0x087e3e08" data-source="games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/">
 <title>3bd: 9,572 bytes · Unidentified, Drafted, Assembly, C · 0x087e3e08</title>
-<rect x="69.84350406298564" y="142.22537867001338" width="23.357548114848875" height="0.9550007179003299" style="fill:#d9d9d4"/>
-<rect x="69.84350406298564" y="137.4594607110203" width="23.357548114848875" height="4.765917958993085" style="fill:#96c8c9"/>
-<rect x="69.84350406298564" y="137.03243607711772" width="23.357548114848875" height="0.42702463390257883" style="fill:#6cafb2"/>
-<rect x="69.84350406298564" y="133.51730658480383" width="23.357548114848875" height="3.5151294923138994" style="fill:#326b7d"/>
+<rect x="69.84350406298564" y="142.3929580771714" width="23.357548114848875" height="0.787421310742344" style="fill:#d9d9d4"/>
+<rect x="69.84350406298564" y="137.62704011817831" width="23.357548114848875" height="4.765917958993085" style="fill:#96c8c9"/>
+<rect x="69.84350406298564" y="137.20001548427572" width="23.357548114848875" height="0.42702463390257883" style="fill:#6cafb2"/>
+<rect x="69.84350406298564" y="133.51730658480383" width="23.357548114848875" height="3.6827088994718853" style="fill:#326b7d"/>
 </g>
 <g aria-label="ARUTAMIRA_DOU.BIN: 26,784 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 12 items" data-node="container" data-kind="file" data-bytes="26784" data-source="games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/ARUTAMIRA_DOU.BIN">
 <title>ARUTAMIRA_DOU.BIN: 26,784 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 12 items</title>
@@ -3759,10 +3759,10 @@
 <path class="bevel-dark" d="M118.63422114242425 206.36625109575047 H145.16622741396242 V177.7186131757784" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="3c4: 9,300 bytes · Unidentified, Drafted, Assembly, C · 0x087ed0a0" data-node="leaf" data-kind="file" data-bytes="9300" data-address="0x087ed0a0" data-source="games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/">
 <title>3c4: 9,300 bytes · Unidentified, Drafted, Assembly, C · 0x087ed0a0</title>
-<rect x="121.13422114242425" y="186.9153809759727" width="21.53200627153818" height="2.7224609568847997" style="fill:#d9d9d4"/>
-<rect x="121.13422114242425" y="186.82625278988422" width="21.53200627153818" height="0.08912818608849048" style="fill:#96c8c9"/>
-<rect x="121.13422114242425" y="186.4160605698179" width="21.53200627153818" height="0.4101922200663482" style="fill:#6cafb2"/>
-<rect x="121.13422114242425" y="180.21861317577842" width="21.53200627153818" height="6.197447394039469" style="fill:#326b7d"/>
+<rect x="121.13422114242425" y="187.14427836297267" width="21.53200627153818" height="2.493563569884813" style="fill:#d9d9d4"/>
+<rect x="121.13422114242425" y="187.05515017688418" width="21.53200627153818" height="0.08912818608849048" style="fill:#96c8c9"/>
+<rect x="121.13422114242425" y="186.64495795681785" width="21.53200627153818" height="0.4101922200663482" style="fill:#6cafb2"/>
+<rect x="121.13422114242425" y="180.2186131757784" width="21.53200627153818" height="6.426344781039456" style="fill:#326b7d"/>
 </g>
 <g aria-label="BABI_CHIKA.BIN: 11,184 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 4 items" data-node="container" data-kind="file" data-bytes="11184" data-source="games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/BABI_CHIKA.BIN">
 <title>BABI_CHIKA.BIN: 11,184 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 4 items</title>
@@ -3915,10 +3915,10 @@
 <path class="bevel-dark" d="M67.34350406298564 263.27834387603815 H99.43038435012733 V239.20686147491847" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="3c5: 8,088 bytes · Unidentified, Drafted, Assembly, C · 0x087ef4f4" data-node="leaf" data-kind="file" data-bytes="8088" data-address="0x087ef4f4" data-source="games/THE BROKEN SEAL/SRC/FIELD/BABI_IRIGUCHI/">
 <title>3c5: 8,088 bytes · Unidentified, Drafted, Assembly, C · 0x087ef4f4</title>
-<rect x="69.84350406298564" y="259.134819737366" width="9.161329744247718" height="1.64352413867216" style="fill:#d9d9d4"/>
-<rect x="69.84350406298564" y="257.20126192716344" width="9.161329744247718" height="1.933557810202541" style="fill:#96c8c9"/>
-<rect x="69.84350406298564" y="256.19911306211947" width="9.161329744247718" height="1.002148865044" style="fill:#6cafb2"/>
-<rect x="69.84350406298564" y="241.70686147491847" width="9.161329744247718" height="14.492251587200997" style="fill:#326b7d"/>
+<rect x="69.84350406298564" y="259.5781232353149" width="9.161329744247718" height="1.2002206407232847" style="fill:#d9d9d4"/>
+<rect x="69.84350406298564" y="257.6445654251123" width="9.161329744247718" height="1.933557810202541" style="fill:#96c8c9"/>
+<rect x="69.84350406298564" y="256.64241656006834" width="9.161329744247718" height="1.002148865044" style="fill:#6cafb2"/>
+<rect x="69.84350406298564" y="241.70686147491847" width="9.161329744247718" height="14.935555085149872" style="fill:#326b7d"/>
 </g>
 <g aria-label="BABI_IRIGUCHI.BIN: 13,432 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 6 items" data-node="container" data-kind="file" data-bytes="13432" data-source="games/THE BROKEN SEAL/SRC/FIELD/BABI_IRIGUCHI/BABI_IRIGUCHI.BIN">
 <title>BABI_IRIGUCHI.BIN: 13,432 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 6 items</title>
@@ -6564,9 +6564,9 @@
 <path class="bevel-dark" d="M187.60645848114876 261.4637056607653 H230.77033282802387 V254.02623936021592" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="389: 4,124 bytes · Unidentified, Assembly, C · 0x08799abc" data-node="leaf" data-kind="file" data-bytes="4124" data-address="0x08799abc" data-source="games/THE BROKEN SEAL/SRC/FIELD/GOMA_HASHIRA/">
 <title>389: 4,124 bytes · Unidentified, Assembly, C · 0x08799abc</title>
-<rect x="189.9658250562861" y="258.77010103829787" width="16.506646824664237" height="0.3342380473300827" style="fill:#d9d9d4"/>
-<rect x="189.9658250562861" y="258.53277224729425" width="16.506646824664237" height="0.23732879100360907" style="fill:#6cafb2"/>
-<rect x="189.9658250562861" y="256.3856059353533" width="16.506646824664237" height="2.1471663119409854" style="fill:#326b7d"/>
+<rect x="189.9658250562861" y="258.9111798196167" width="16.506646824664237" height="0.19315926601127067" style="fill:#d9d9d4"/>
+<rect x="189.9658250562861" y="258.67385102861306" width="16.506646824664237" height="0.23732879100360907" style="fill:#6cafb2"/>
+<rect x="189.9658250562861" y="256.3856059353533" width="16.506646824664237" height="2.2882450932597975" style="fill:#326b7d"/>
 </g>
 <g aria-label="GOMA_HASHIRA.BIN: 4,744 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 2 items" data-node="container" data-kind="file" data-bytes="4744" data-source="games/THE BROKEN SEAL/SRC/FIELD/GOMA_HASHIRA/GOMA_HASHIRA.BIN">
 <title>GOMA_HASHIRA.BIN: 4,744 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 2 items</title>
@@ -6890,10 +6890,10 @@
 <path class="bevel-dark" d="M230.77033282802384 213.33785568805644 H268.82257967205476 V191.36213794611274" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="3a6: 5,880 bytes · Unidentified, Drafted, Assembly, C · 0x087bdeb0" data-node="leaf" data-kind="file" data-bytes="5880" data-address="0x087bdeb0" data-source="games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_DOU/">
 <title>3a6: 5,880 bytes · Unidentified, Drafted, Assembly, C · 0x087bdeb0</title>
-<rect x="233.27033282802384" y="204.80108259308972" width="7.272484359729873" height="6.0367730949667155" style="fill:#d9d9d4"/>
-<rect x="233.27033282802384" y="204.7866474589554" width="7.272484359729873" height="0.014435134134305869" style="fill:#96c8c9"/>
-<rect x="233.27033282802384" y="203.8108323914763" width="7.272484359729873" height="0.975815067479077" style="fill:#6cafb2"/>
-<rect x="233.27033282802384" y="193.8621379461127" width="7.272484359729873" height="9.948694445363605" style="fill:#326b7d"/>
+<rect x="233.27033282802384" y="205.43622849499917" width="7.272484359729873" height="5.401627193057257" style="fill:#d9d9d4"/>
+<rect x="233.27033282802384" y="205.42179336086485" width="7.272484359729873" height="0.014435134134305869" style="fill:#96c8c9"/>
+<rect x="233.27033282802384" y="204.44597829338576" width="7.272484359729873" height="0.975815067479077" style="fill:#6cafb2"/>
+<rect x="233.27033282802384" y="193.8621379461127" width="7.272484359729873" height="10.583840347273066" style="fill:#326b7d"/>
 </g>
 <g aria-label="HAIDIA_DOU.BIN: 16,928 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 6 items" data-node="container" data-kind="file" data-bytes="16928" data-source="games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_DOU/HAIDIA_DOU.BIN">
 <title>HAIDIA_DOU.BIN: 16,928 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 6 items</title>
@@ -7129,10 +7129,10 @@
 <path class="bevel-dark" d="M271.4197665744816 213.33785568805644 H285.2911900391217 V175.85833899301997" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="373: 15,048 bytes · Unidentified, Drafted, Assembly, C · 0x08780898" data-node="leaf" data-kind="file" data-bytes="15048" data-address="0x08780898" data-source="games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/">
 <title>373: 15,048 bytes · Unidentified, Drafted, Assembly, C · 0x08780898</title>
-<rect x="273.9197665744816" y="208.42261252074212" width="8.871423464640078" height="2.4152431673143155" style="fill:#d9d9d4"/>
-<rect x="273.9197665744816" y="201.03442899820692" width="8.871423464640078" height="7.388183522535212" style="fill:#96c8c9"/>
-<rect x="273.9197665744816" y="199.96818223801634" width="8.871423464640078" height="1.0662467601905916" style="fill:#6cafb2"/>
-<rect x="273.9197665744816" y="178.35833899301997" width="8.871423464640078" height="21.609843244996362" style="fill:#326b7d"/>
+<rect x="273.9197665744816" y="208.79169793773116" width="8.871423464640078" height="2.0461577503252646" style="fill:#d9d9d4"/>
+<rect x="273.9197665744816" y="201.40351441519596" width="8.871423464640078" height="7.388183522535212" style="fill:#96c8c9"/>
+<rect x="273.9197665744816" y="200.33726765500538" width="8.871423464640078" height="1.0662467601905916" style="fill:#6cafb2"/>
+<rect x="273.9197665744816" y="178.35833899301997" width="8.871423464640078" height="21.97892866198541" style="fill:#326b7d"/>
 </g>
 </g>
 <g aria-label="HAIDIA_SUKURETA: 40,284 bytes · Unidentified, Drafted, Assembly, C, Data · 4 items" data-node="container" data-kind="folder" data-bytes="40284" data-source="games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_SUKURETA/">
@@ -7308,10 +7308,10 @@
 <path class="bevel-dark" d="M230.77033282802384 276.1170770897099 H269.2623587496625 V256.0224126618788" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="3be: 4,616 bytes · Unidentified, Drafted, Assembly, C · 0x087e636c" data-node="leaf" data-kind="file" data-bytes="4616" data-address="0x087e636c" data-source="games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/">
 <title>3be: 4,616 bytes · Unidentified, Drafted, Assembly, C · 0x087e636c</title>
-<rect x="233.27033282802384" y="270.5039660552005" width="6.111630858240305" height="3.1131110345093562" style="fill:#d9d9d4"/>
-<rect x="233.27033282802384" y="270.4974259059684" width="6.111630858240305" height="0.0065401492321625135" style="fill:#96c8c9"/>
-<rect x="233.27033282802384" y="269.31365889494697" width="6.111630858240305" height="1.183767011021415" style="fill:#6cafb2"/>
-<rect x="233.27033282802384" y="258.52241266187883" width="6.111630858240305" height="10.791246233068147" style="fill:#326b7d"/>
+<rect x="233.27033282802384" y="271.2626233661314" width="6.111630858240305" height="2.354453723578505" style="fill:#d9d9d4"/>
+<rect x="233.27033282802384" y="271.25608321689924" width="6.111630858240305" height="0.0065401492321625135" style="fill:#96c8c9"/>
+<rect x="233.27033282802384" y="270.0723162058778" width="6.111630858240305" height="1.183767011021415" style="fill:#6cafb2"/>
+<rect x="233.27033282802384" y="258.52241266187883" width="6.111630858240305" height="11.549903543999" style="fill:#326b7d"/>
 </g>
 <g aria-label="KARAGORU_DOU.BIN: 16,540 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 6 items" data-node="container" data-kind="file" data-bytes="16540" data-source="games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/KARAGORU_DOU.BIN">
 <title>KARAGORU_DOU.BIN: 16,540 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 6 items</title>
@@ -7857,9 +7857,9 @@
 <path class="bevel-dark" d="M291.26438508909513 274.9560513046987 H322.42545524709357 V254.16523890888493" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="391: 6,980 bytes · Unidentified, Assembly, C · 0x087a04ac" data-node="leaf" data-kind="file" data-bytes="6980" data-address="0x087a04ac" data-source="games/THE BROKEN SEAL/SRC/FIELD/KORIMA_HASHI/">
 <title>391: 6,980 bytes · Unidentified, Assembly, C · 0x087a04ac</title>
-<rect x="293.76438508909513" y="271.5737566292879" width="9.110082642002402" height="0.8822946754107966" style="fill:#d9d9d4"/>
-<rect x="293.76438508909513" y="270.85208483068266" width="9.110082642002402" height="0.7216717986052413" style="fill:#6cafb2"/>
-<rect x="293.76438508909513" y="256.66523890888493" width="9.110082642002402" height="14.186845921797707" style="fill:#326b7d"/>
+<rect x="293.76438508909513" y="271.9606089100449" width="9.110082642002402" height="0.49544239465375506" style="fill:#d9d9d4"/>
+<rect x="293.76438508909513" y="271.23893711143967" width="9.110082642002402" height="0.7216717986052413" style="fill:#6cafb2"/>
+<rect x="293.76438508909513" y="256.66523890888493" width="9.110082642002402" height="14.57369820255475" style="fill:#326b7d"/>
 </g>
 <g aria-label="KORIMA_HASHI.BIN: 9,460 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 2 items" data-node="container" data-kind="file" data-bytes="9460" data-source="games/THE BROKEN SEAL/SRC/FIELD/KORIMA_HASHI/KORIMA_HASHI.BIN">
 <title>KORIMA_HASHI.BIN: 9,460 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 2 items</title>
@@ -7965,10 +7965,10 @@
 <path class="bevel-dark" d="M308.57150940112933 301.7694582469107 H322.42545524709357 V274.9560513046987" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="392: 3,072 bytes · Unidentified, Drafted, Assembly, C · 0x087a1ff0" data-node="leaf" data-kind="file" data-bytes="3072" data-address="0x087a1ff0" data-source="games/THE BROKEN SEAL/SRC/FIELD/KORIMA_HIROBA/">
 <title>392: 3,072 bytes · Unidentified, Drafted, Assembly, C · 0x087a1ff0</title>
-<rect x="311.07150940112933" y="282.4047525812793" width="8.853945845964237" height="0.5694149926228802" style="fill:#d9d9d4"/>
-<rect x="311.07150940112933" y="282.2646441603816" width="8.853945845964237" height="0.1401084208977434" style="fill:#96c8c9"/>
-<rect x="311.07150940112933" y="281.7455244983374" width="8.853945845964237" height="0.519119662044203" style="fill:#6cafb2"/>
-<rect x="311.07150940112933" y="277.45605130469875" width="8.853945845964237" height="4.289473193638606" style="fill:#326b7d"/>
+<rect x="311.07150940112933" y="282.81968905855337" width="8.853945845964237" height="0.154478515348794" style="fill:#d9d9d4"/>
+<rect x="311.07150940112933" y="282.67958063765565" width="8.853945845964237" height="0.1401084208977434" style="fill:#96c8c9"/>
+<rect x="311.07150940112933" y="282.16046097561144" width="8.853945845964237" height="0.519119662044203" style="fill:#6cafb2"/>
+<rect x="311.07150940112933" y="277.45605130469875" width="8.853945845964237" height="4.704409670912692" style="fill:#326b7d"/>
 </g>
 <g aria-label="KORIMA_HIROBA.BIN: 7,564 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 2 items" data-node="container" data-kind="file" data-bytes="7564" data-source="games/THE BROKEN SEAL/SRC/FIELD/KORIMA_HIROBA/KORIMA_HIROBA.BIN">
 <title>KORIMA_HIROBA.BIN: 7,564 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 2 items</title>
@@ -8018,9 +8018,9 @@
 <path class="bevel-dark" d="M67.34350406298564 337.8199186719216 H77.49054345313274 V301.76945824691074" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="393: 3,072 bytes · Unidentified, Assembly, C · 0x087a2bf0" data-node="leaf" data-kind="file" data-bytes="3072" data-address="0x087a2bf0" data-source="games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KAWA/">
 <title>393: 3,072 bytes · Unidentified, Assembly, C · 0x087a2bf0</title>
-<rect x="69.84350406298564" y="311.5257795475101" width="5.147039390147098" height="1.0427922643452503" style="fill:#d9d9d4"/>
-<rect x="69.84350406298564" y="310.91523278133906" width="5.147039390147098" height="0.6105467661710532" style="fill:#6cafb2"/>
-<rect x="69.84350406298564" y="304.2694582469108" width="5.147039390147098" height="6.645774534428278" style="fill:#326b7d"/>
+<rect x="69.84350406298564" y="312.13632631368114" width="5.147039390147098" height="0.432245498174197" style="fill:#d9d9d4"/>
+<rect x="69.84350406298564" y="311.52577954751007" width="5.147039390147098" height="0.6105467661710532" style="fill:#6cafb2"/>
+<rect x="69.84350406298564" y="304.26945824691074" width="5.147039390147098" height="7.256321300599332" style="fill:#326b7d"/>
 </g>
 <g aria-label="KORIMA_KAWA.BIN: 7,152 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 2 items" data-node="container" data-kind="file" data-bytes="7152" data-source="games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KAWA/KORIMA_KAWA.BIN">
 <title>KORIMA_KAWA.BIN: 7,152 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 2 items</title>
@@ -8745,10 +8745,10 @@
 <path class="bevel-dark" d="M67.34350406298564 460.1973555363946 H104.44737491001948 V416.55648239863115" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="39c: 16,680 bytes · Unidentified, Drafted, Assembly, C · 0x087ac2d8" data-node="leaf" data-kind="file" data-bytes="16680" data-address="0x087ac2d8" data-source="games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/">
 <title>39c: 16,680 bytes · Unidentified, Drafted, Assembly, C · 0x087ac2d8</title>
-<rect x="69.84350406298564" y="428.58801129534316" width="32.10387084703384" height="3.576386182614915" style="fill:#d9d9d4"/>
-<rect x="69.84350406298564" y="425.1797962054726" width="32.10387084703384" height="3.408215089870553" style="fill:#96c8c9"/>
-<rect x="69.84350406298564" y="424.7161469310839" width="32.10387084703384" height="0.46364927438866177" style="fill:#6cafb2"/>
-<rect x="69.84350406298564" y="419.05648239863115" width="32.10387084703384" height="5.6596645324527834" style="fill:#326b7d"/>
+<rect x="69.84350406298564" y="428.7412513097597" width="32.10387084703384" height="3.4231461681983233" style="fill:#d9d9d4"/>
+<rect x="69.84350406298564" y="425.33303621988915" width="32.10387084703384" height="3.408215089870553" style="fill:#96c8c9"/>
+<rect x="69.84350406298564" y="424.8693869455005" width="32.10387084703384" height="0.46364927438866177" style="fill:#6cafb2"/>
+<rect x="69.84350406298564" y="419.0564823986311" width="32.10387084703384" height="5.812904546869375" style="fill:#326b7d"/>
 </g>
 <g aria-label="MAKYURI_HEYA.BIN: 27,072 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 8 items" data-node="container" data-kind="file" data-bytes="27072" data-source="games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/MAKYURI_HEYA.BIN">
 <title>MAKYURI_HEYA.BIN: 27,072 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 8 items</title>
@@ -8882,10 +8882,10 @@
 <path class="bevel-dark" d="M67.34350406298564 473.71757141845325 H104.44737491001948 V460.1973555363946" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="39b: 7,848 bytes · Unidentified, Drafted, Assembly, C · 0x087aa430" data-node="leaf" data-kind="file" data-bytes="7848" data-address="0x087aa430" data-source="games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/">
 <title>39b: 7,848 bytes · Unidentified, Drafted, Assembly, C · 0x087aa430</title>
-<rect x="69.84350406298564" y="468.2298504567528" width="16.89250539996705" height="2.987720961700485" style="fill:#d9d9d4"/>
-<rect x="69.84350406298564" y="467.01391750722354" width="16.89250539996705" height="1.215932949529267" style="fill:#96c8c9"/>
-<rect x="69.84350406298564" y="466.43092108410104" width="16.89250539996705" height="0.5829964231225147" style="fill:#6cafb2"/>
-<rect x="69.84350406298564" y="462.69735553639464" width="16.89250539996705" height="3.7335655477063834" style="fill:#326b7d"/>
+<rect x="69.84350406298564" y="468.4773796643355" width="16.89250539996705" height="2.7401917541177414" style="fill:#d9d9d4"/>
+<rect x="69.84350406298564" y="467.26144671480625" width="16.89250539996705" height="1.215932949529267" style="fill:#96c8c9"/>
+<rect x="69.84350406298564" y="466.67845029168376" width="16.89250539996705" height="0.5829964231225147" style="fill:#6cafb2"/>
+<rect x="69.84350406298564" y="462.69735553639464" width="16.89250539996705" height="3.9810947552891274" style="fill:#326b7d"/>
 </g>
 <g aria-label="MAKYURI_IRIGUCHI.BIN: 5,932 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 2 items" data-node="container" data-kind="file" data-bytes="5932" data-source="games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/MAKYURI_IRIGUCHI.BIN">
 <title>MAKYURI_IRIGUCHI.BIN: 5,932 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 2 items</title>
@@ -8935,9 +8935,9 @@
 <path class="bevel-dark" d="M104.44737491001948 473.7175714184532 H140.29699040696437 V386.12296064317627" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="39f: 8,464 bytes · Unidentified, Assembly, C · 0x087b4558" data-node="leaf" data-kind="file" data-bytes="8464" data-address="0x087b4558" data-source="games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/">
 <title>39f: 8,464 bytes · Unidentified, Assembly, C · 0x087b4558</title>
-<rect x="106.94737491001948" y="394.1978534019465" width="30.849615496944885" height="1.2095633606016172" style="fill:#d9d9d4"/>
-<rect x="106.94737491001948" y="393.8748222327467" width="30.849615496944885" height="0.3230311691997692" style="fill:#6cafb2"/>
-<rect x="106.94737491001948" y="388.6229606431762" width="30.849615496944885" height="5.251861589570441" style="fill:#326b7d"/>
+<rect x="106.94737491001948" y="394.3581666372814" width="30.849615496944885" height="1.049250125266744" style="fill:#d9d9d4"/>
+<rect x="106.94737491001948" y="394.0351354680816" width="30.849615496944885" height="0.3230311691997692" style="fill:#6cafb2"/>
+<rect x="106.94737491001948" y="388.62296064317627" width="30.849615496944885" height="5.412174824905314" style="fill:#326b7d"/>
 </g>
 <g aria-label="MOGORU_MORI.BIN: 56,288 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 8 items" data-node="container" data-kind="file" data-bytes="56288" data-source="games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/MOGORU_MORI.BIN">
 <title>MOGORU_MORI.BIN: 56,288 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 8 items</title>
@@ -9371,16 +9371,15 @@
 </g>
 </g>
 </g>
-<g aria-label="RUNPA_JO: 46,096 bytes · Drafted, Assembly, C, Data · 3 items" data-node="container" data-kind="folder" data-bytes="46096" data-source="games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/">
-<title>RUNPA_JO: 46,096 bytes · Drafted, Assembly, C, Data · 3 items</title>
+<g aria-label="RUNPA_JO: 46,096 bytes · Assembly, C, Data · 3 items" data-node="container" data-kind="folder" data-bytes="46096" data-source="games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/">
+<title>RUNPA_JO: 46,096 bytes · Assembly, C, Data · 3 items</title>
 <rect class="container-frame" x="140.29699040696437" y="443.49933179641187" width="52.70238989902055" height="30.218239622041356" fill="#1f7f93"/>
 <path class="bevel-light" d="M140.29699040696437 473.71757141845325 V443.49933179641187 H192.99938030598491" fill="none" stroke="#c9e1dc" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <path class="bevel-dark" d="M140.29699040696437 473.71757141845325 H192.99938030598491 V443.49933179641187" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
-<g aria-label="3bf: 14,772 bytes · Drafted, Assembly, C · 0x087e7574" data-node="leaf" data-kind="file" data-bytes="14772" data-address="0x087e7574" data-source="games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/">
-<title>3bf: 14,772 bytes · Drafted, Assembly, C · 0x087e7574</title>
-<rect x="142.79699040696437" y="470.9222318940413" width="14.607247995234545" height="0.2953395244119384" style="fill:#96c8c9"/>
-<rect x="142.79699040696437" y="468.3973350350514" width="14.607247995234545" height="2.5248968589899246" style="fill:#6cafb2"/>
-<rect x="142.79699040696437" y="445.9993317964119" width="14.607247995234545" height="22.398003238639493" style="fill:#326b7d"/>
+<g aria-label="3bf: 14,772 bytes · Assembly, C · 0x087e7574" data-node="leaf" data-kind="file" data-bytes="14772" data-address="0x087e7574" data-source="games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/">
+<title>3bf: 14,772 bytes · Assembly, C · 0x087e7574</title>
+<rect x="142.79699040696437" y="468.69096739458234" width="14.607247995234545" height="2.5266040238709184" style="fill:#6cafb2"/>
+<rect x="142.79699040696437" y="445.9993317964119" width="14.607247995234545" height="22.69163559817044" style="fill:#326b7d"/>
 </g>
 <g aria-label="RUNPA_JO.BIN: 29,516 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 8 items" data-node="container" data-kind="file" data-bytes="29516" data-source="games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/RUNPA_JO.BIN">
 <title>RUNPA_JO.BIN: 29,516 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 8 items</title>
@@ -10574,10 +10573,10 @@
 <path class="bevel-dark" d="M192.99938030598491 410.72649463844454 H217.4276410382269 V382.71755934013095" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="3b4: 6,676 bytes · Unidentified, Drafted, Assembly, C · 0x087d30e0" data-node="leaf" data-kind="file" data-bytes="6676" data-address="0x087d30e0" data-source="games/THE BROKEN SEAL/SRC/FIELD/TAKARA_ASHIBA/">
 <title>3b4: 6,676 bytes · Unidentified, Drafted, Assembly, C · 0x087d30e0</title>
-<rect x="195.49938030598491" y="391.19114393707923" width="19.428260732242" height="1.1199142947676088" style="fill:#d9d9d4"/>
-<rect x="195.49938030598491" y="391.01370021105816" width="19.428260732242" height="0.17744372602105377" style="fill:#96c8c9"/>
-<rect x="195.49938030598491" y="390.62693664056917" width="19.428260732242" height="0.38676357048900345" style="fill:#6cafb2"/>
-<rect x="195.49938030598491" y="385.21755934013095" width="19.428260732242" height="5.409377300438233" style="fill:#326b7d"/>
+<rect x="195.49938030598491" y="391.40152631882876" width="19.428260732242" height="0.909531913018096" style="fill:#d9d9d4"/>
+<rect x="195.49938030598491" y="391.2240825928077" width="19.428260732242" height="0.17744372602105377" style="fill:#96c8c9"/>
+<rect x="195.49938030598491" y="390.8373190223187" width="19.428260732242" height="0.38676357048900345" style="fill:#6cafb2"/>
+<rect x="195.49938030598491" y="385.21755934013095" width="19.428260732242" height="5.619759682187745" style="fill:#326b7d"/>
 </g>
 <g aria-label="TAKARA_ASHIBA.BIN: 11,588 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 4 items" data-node="container" data-kind="file" data-bytes="11588" data-source="games/THE BROKEN SEAL/SRC/FIELD/TAKARA_ASHIBA/TAKARA_ASHIBA.BIN">
 <title>TAKARA_ASHIBA.BIN: 11,588 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 4 items</title>
@@ -10651,10 +10650,10 @@
 <path class="bevel-dark" d="M217.4276410382269 410.72649463844454 H256.08063933682996 V382.71755934013095" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="3b3: 8,792 bytes · Unidentified, Drafted, Assembly, C · 0x087d0e88" data-node="leaf" data-kind="file" data-bytes="8792" data-address="0x087d0e88" data-source="games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/">
 <title>3b3: 8,792 bytes · Unidentified, Drafted, Assembly, C · 0x087d0e88</title>
-<rect x="219.9276410382269" y="398.99884383523096" width="8.722656402901396" height="9.227650803213578" style="fill:#d9d9d4"/>
-<rect x="219.9276410382269" y="398.30009659630355" width="8.722656402901396" height="0.6987472389274036" style="fill:#96c8c9"/>
-<rect x="219.9276410382269" y="397.2768375310578" width="8.722656402901396" height="1.0232590652457485" style="fill:#6cafb2"/>
-<rect x="219.9276410382269" y="385.21755934013095" width="8.722656402901396" height="12.059278190926877" style="fill:#326b7d"/>
+<rect x="219.9276410382269" y="399.5798246855751" width="8.722656402901396" height="8.646669952869445" style="fill:#d9d9d4"/>
+<rect x="219.9276410382269" y="398.8810774466477" width="8.722656402901396" height="0.6987472389274036" style="fill:#96c8c9"/>
+<rect x="219.9276410382269" y="397.85781838140196" width="8.722656402901396" height="1.0232590652457485" style="fill:#6cafb2"/>
+<rect x="219.9276410382269" y="385.21755934013095" width="8.722656402901396" height="12.64025904127101" style="fill:#326b7d"/>
 </g>
 <g aria-label="TAKARA_HASHIRA.BIN: 20,340 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 8 items" data-node="container" data-kind="file" data-bytes="20340" data-source="games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/TAKARA_HASHIRA.BIN">
 <title>TAKARA_HASHIRA.BIN: 20,340 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 8 items</title>
@@ -10784,10 +10783,10 @@
 <path class="bevel-dark" d="M192.99938030598491 473.71757141845325 H219.3371716552457 V410.72649463844454" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="3b2: 8,476 bytes · Unidentified, Drafted, Assembly, C · 0x087ced6c" data-node="leaf" data-kind="file" data-bytes="8476" data-address="0x087ced6c" data-source="games/THE BROKEN SEAL/SRC/FIELD/TAKARA_SHIMA/">
 <title>3b2: 8,476 bytes · Unidentified, Drafted, Assembly, C · 0x087ced6c</title>
-<rect x="195.49938030598491" y="421.0887548105729" width="21.337791349260776" height="1.5502422599281374" style="fill:#d9d9d4"/>
-<rect x="195.49938030598491" y="420.9443912763389" width="21.337791349260776" height="0.1443635342339956" style="fill:#96c8c9"/>
-<rect x="195.49938030598491" y="420.5934768392778" width="21.337791349260776" height="0.350914437061097" style="fill:#6cafb2"/>
-<rect x="195.49938030598491" y="413.22649463844454" width="21.337791349260776" height="7.3669822008332835" style="fill:#326b7d"/>
+<rect x="195.49938030598491" y="421.30196864574924" width="21.337791349260776" height="1.3370284247517745" style="fill:#d9d9d4"/>
+<rect x="195.49938030598491" y="421.15760511151524" width="21.337791349260776" height="0.1443635342339956" style="fill:#96c8c9"/>
+<rect x="195.49938030598491" y="420.80669067445416" width="21.337791349260776" height="0.350914437061097" style="fill:#6cafb2"/>
+<rect x="195.49938030598491" y="413.22649463844454" width="21.337791349260776" height="7.580196036009646" style="fill:#326b7d"/>
 </g>
 <g aria-label="TAKARA_SHIMA.BIN: 37,500 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 10 items" data-node="container" data-kind="file" data-bytes="37500" data-source="games/THE BROKEN SEAL/SRC/FIELD/TAKARA_SHIMA/TAKARA_SHIMA.BIN">
 <title>TAKARA_SHIMA.BIN: 37,500 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 10 items</title>

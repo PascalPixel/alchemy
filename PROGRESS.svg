@@ -8463,10 +8463,10 @@
 <path class="bevel-dark" d="M146.65883876477062 356.6250878322011 H193.03019280321456 V323.3599567860008" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="3bc: 13,536 bytes · Unidentified, Drafted, Assembly, C · 0x087e0928" data-node="leaf" data-kind="file" data-bytes="13536" data-address="0x087e0928" data-source="games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/">
 <title>3bc: 13,536 bytes · Unidentified, Drafted, Assembly, C · 0x087e0928</title>
-<rect x="149.15883876477062" y="341.84180430136524" width="18.30284315404833" height="2.493708720690987" style="fill:#d9d9d4"/>
-<rect x="149.15883876477062" y="338.1728995169003" width="18.30284315404833" height="3.6689047844649" style="fill:#96c8c9"/>
-<rect x="149.15883876477062" y="337.2188204825473" width="18.30284315404833" height="0.9540790343530376" style="fill:#6cafb2"/>
-<rect x="149.15883876477062" y="325.85995678600085" width="18.30284315404833" height="11.358863696546464" style="fill:#326b7d"/>
+<rect x="149.15883876477062" y="341.8431692212999" width="18.30284315404833" height="2.49234380075629" style="fill:#d9d9d4"/>
+<rect x="149.15883876477062" y="338.6219581754155" width="18.30284315404833" height="3.2212110458843615" style="fill:#96c8c9"/>
+<rect x="149.15883876477062" y="337.6678791410625" width="18.30284315404833" height="0.9540790343530376" style="fill:#6cafb2"/>
+<rect x="149.15883876477062" y="325.8599567860008" width="18.30284315404833" height="11.8079223550617" style="fill:#326b7d"/>
 </g>
 <g aria-label="KOROSSEO_MARUTA.BIN: 6,044 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 2 items" data-node="container" data-kind="file" data-bytes="6044" data-source="games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/KOROSSEO_MARUTA.BIN">
 <title>KOROSSEO_MARUTA.BIN: 6,044 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 2 items</title>

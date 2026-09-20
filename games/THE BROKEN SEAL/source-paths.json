@@ -16707,7 +16707,8 @@
       "name": "FieldScene_ArrangeFourActors"
     },
     "resource_3bc:02001c20": {
-      "name": "FieldScene_RunDualArrivalSequence"
+      "name": "FieldScene_RunDualArrivalSequence",
+      "source": "FIELD/KOROSSEO_MARUTA/ARRIVAL.C"
     },
     "resource_3bc:02001df8": {
       "name": "FieldScene_RunSecondArrivalSequence",

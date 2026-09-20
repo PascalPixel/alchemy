@@ -974,15 +974,8 @@ AlchemyC_02000f58:
 	.4byte 0x00000101
 	.4byte 0xff600000
 	.4byte 0x0000002d
-	.4byte 0x20a04a04
-	.4byte 0x4b046811
-	.4byte 0x4a0404c0
-	.4byte 0x3b0cc307
-	.4byte 0x00004770
-	.4byte 0x03001ed0
-	.4byte 0x040000d4
-	.2byte 0x0070
-	.2byte 0x8400
+AlchemyC_02001224:
+	.space 0x20
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9

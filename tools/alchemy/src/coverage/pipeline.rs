@@ -236,7 +236,7 @@ fn exact_spans(mut spans: Vec<Span>, executable: &[Span], id: &str) -> Result<Ve
     }
     if spans
         .iter()
-        .any(|span| intersect(&[*span], executable).is_empty())
+        .any(|span| bytes(&intersect(&[*span], executable)) != span.bytes())
     {
         return Err(format!(
             "{id} C ownership is outside audited executable intervals"
@@ -527,9 +527,11 @@ fn exact_overlay_for(
                     .replace('\\', "/");
                 if !tree.read(&path).is_some_and(|source| canonical(&source)) {
                     owner.spans.clear();
+                } else {
+                    owner.spans =
+                        exact_spans(owner.spans, mapped(executable, id), &source_owner.id())?;
                 }
                 owner.source = path;
-                owner.spans = intersect(&owner.spans, mapped(executable, id));
                 Ok(owner)
             })
             .collect::<Result<Vec<_>, _>>()?
@@ -2595,6 +2597,45 @@ mod tests {
     }
 
     #[test]
+    fn exact_overlay_ownership_requires_full_audit_containment() {
+        let root = tempfile::tempdir().unwrap();
+        let write = |path: &str, text: &str| {
+            let path = root.path().join(path);
+            std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+            std::fs::write(path, text).unwrap();
+        };
+        write(
+            "games/THE LOST AGE/source-paths.json",
+            &json!({"format": 3, "owners": {
+                "resource_64a:02000100": "FIELD/TEST.C"
+            }})
+            .to_string(),
+        );
+        write(
+            "games/THE LOST AGE/SRC/FIELD/TEST.C",
+            "void Test(void) {}\n",
+        );
+        write(
+            "games/THE LOST AGE/raw/overlays/resource_64a_overlay.s",
+            "AlchemyC_02000100:\n\t.space 0x20\n",
+        );
+        let tree = crate::coverage::tree::work_tree_at(root.path().to_path_buf());
+        let target = crate::targets::decomp_target(Some("tla-en")).unwrap();
+        let executable = SpanMap::from([(
+            "resource_64a".into(),
+            vec![Span::new(0x0200_0100, 0x0200_0110)],
+        )]);
+        let pairs = overlay_ids_for(&tree, &target.overlay_dir());
+        let error = exact_overlay_for(&tree, &target, &pairs, &executable).unwrap_err();
+        assert!(
+            error.contains(
+                "resource_64a:02000100 C ownership is outside audited executable intervals"
+            ),
+            "{error}"
+        );
+    }
+
+    #[test]
     fn lost_age_rom_tree_classifies_audited_code_and_remaining_data() {
         let root = tempfile::tempdir().unwrap();
         let write = |path: &str, value: Value| {
@@ -2900,6 +2941,7 @@ mod tests {
         let executable = [Span::new(10, 20)];
         assert!(exact_spans(vec![Span::new(10, 16), Span::new(14, 18)], &executable, "x").is_err());
         assert!(exact_spans(vec![Span::new(0, 4)], &executable, "x").is_err());
+        assert!(exact_spans(vec![Span::new(16, 24)], &executable, "x").is_err());
         let missing = SourceTree::Work {
             id: "fixture".into(),
             root: std::env::temp_dir()

@@ -18972,6 +18972,30 @@
     "resource_3b4:020017ac": {
       "name": "SceneState_TriggerColumnNineteen",
       "source": "FIELD/TAKARA_ASHIBA/STAGED_STEP.C"
+    },
+    "main:08004858": {
+      "name": "Runtime_InitializeHeap",
+      "source": "SYSTEM/MEMORY/INITIALIZE_HEAP.C"
+    },
+    "main:08004a5c": {
+      "name": "Graphics_RestoreTransferWork",
+      "source": "GRAPHICS/RESTORE_TRANSFER_WORK.C"
+    },
+    "main:080a1090": {
+      "name": "UiWindow_InitializeWork",
+      "source": "GRAPHICS/WINDOW/INITIALIZE_WORK.C"
+    },
+    "main:0800bdd4": {
+      "name": "ResourceObject_Release",
+      "source": "SYSTEM/RESOURCE/RELEASE_OBJECT.C"
+    },
+    "main:0800c0f4": {
+      "name": "ObjectDispatch_Release",
+      "source": "FIELD/COMMON/OBJECT/DISPATCH_RELEASE.C"
+    },
+    "main:08097868": {
+      "name": "BattleFx_ArmBg0HBlankDma",
+      "source": "BATTLE/EFFECT/ARM_BG0_HBLANK_DMA.C"
     }
   }
 }

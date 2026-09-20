@@ -12,13 +12,11 @@ extern struct VramBlockCacheEntry Data_03001b10[];
 
 s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source)
 {
-    struct VramBlockCacheEntry *entries =
-        Data_03001b10;
     struct VramBlockCacheEntry *entry;
     s32 offset;
     void *destination;
 
-    entry = &entries[slot];
+    entry = &Data_03001b10[slot];
     if (slot > 95)
         return 0;
     if (size > 0x2000)

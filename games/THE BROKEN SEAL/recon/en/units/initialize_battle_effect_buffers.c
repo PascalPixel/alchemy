@@ -1,45 +1,22 @@
-#include "TYPES.H"
-
-struct BattleEffectDmaTransfer {
-    u32 source;
-    u32 destination;
-    u32 control;
-};
+#include "DMA.H"
 
 void *Func_080048f4(s32, s32);
 void Func_08090a5c(s32, s32, s32, s32);
-void Func_080041d8(void (*)(void), s32);
+s32 Func_080041d8(void (*)(void), s32);
 
 #define BattleFx_InitializeBuffers Func_08091174
 
 void BattleFx_InitializeBuffers(void)
 {
-    s32 operation;
-    s32 zero;
-    u32 descriptor_value;
-    u32 third_destination;
+    volatile s32 zero;
     void *buffer;
-    s32 *dma_source;
-    volatile struct BattleEffectDmaTransfer *dma;
 
     buffer = Func_080048f4(0x20, 0x2a04);
-    dma_source = &zero;
-    *dma_source = 0;
-    dma = (volatile struct BattleEffectDmaTransfer *)0x040000d4;
-    *dma = (struct BattleEffectDmaTransfer){
-        (u32)dma_source, (u32)buffer, 0x85000a81
-    };
-    descriptor_value = 0x84000070;
-    *dma = (struct BattleEffectDmaTransfer){
-        0x05000000, (u32)buffer, descriptor_value
-    };
-    descriptor_value = 0x1c0;
-    third_destination = (u32)buffer + descriptor_value;
-    descriptor_value = 0x84000070;
-    *dma = (struct BattleEffectDmaTransfer){
-        0x05000200, third_destination, descriptor_value
-    };
+    zero = 0;
+    Dma_Set(&zero, buffer, 0x85000a81, (volatile u32 *)0x040000d4);
+    Dma_Set((void *)0x05000000, buffer, 0x84000070, (volatile u32 *)0x040000d4);
+    Dma_Set((void *)0x05000200, (u8 *)buffer + 0x1c0, 0x84000070,
+            (volatile u32 *)0x040000d4);
     Func_08090a5c(0x10000, (s32)buffer, (s32)buffer + 0xe00, 0);
-    operation = 0xc8f;
-    Func_080041d8((void (*)(void))0x080908e1, operation);
+    Func_080041d8((void (*)(void))0x080908e1, 0xc8f);
 }

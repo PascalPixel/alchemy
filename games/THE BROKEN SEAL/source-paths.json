@@ -18935,6 +18935,30 @@
     "resource_370:02000d74": {
       "name": "SaveMenu_FillTileBlock",
       "source": "MENU/CLEAR/FILL_TILE_BLOCK.C"
+    },
+    "main:0809bb34": {
+      "name": "BattleFx_ClearOwnedSlot",
+      "source": "BATTLE/EFFECT/CLEAR_OWNED_SLOT.C"
+    },
+    "main:080284dc": {
+      "name": "AffineEffect_InitializeWork",
+      "source": "GRAPHICS/AFFINE/INITIALIZE_WORK.C"
+    },
+    "main:080958a8": {
+      "name": "BattleFx_InitializeSlots",
+      "source": "BATTLE/EFFECT/INITIALIZE_SLOTS.C"
+    },
+    "main:0801d980": {
+      "name": "Menu_InitializeSelectedWorkspace",
+      "source": "MENU/INITIALIZE_SELECTED_WORKSPACE.C"
+    },
+    "main:080170c4": {
+      "name": "Memory_FillHalfwordsDma",
+      "source": "SYSTEM/MEMORY/FILL_HALFWORDS_DMA.C"
+    },
+    "main:080c08a8": {
+      "name": "BattlePresentation_InitializeWorkAndResetState",
+      "source": "BATTLE/PRESENTATION/INITIALIZE_WORK_AND_RESET_STATE.C"
     }
   }
 }

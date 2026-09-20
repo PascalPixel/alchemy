@@ -1,8 +1,5 @@
 //! Native entry point for the asset build stage.
 mod compression_plan;
-pub(crate) use compression_plan::{
-    checked_plan as checked_compression_plan, materialize as materialize_compression_plan,
-};
 mod derive_index;
 pub(crate) use derive_index::{live_scene, network::live_family, tagged_extent};
 mod gba_header;
@@ -2757,6 +2754,9 @@ fn select_plan<'a>(document: &'a Value, entry: &Value) -> Result<&'a Value, Stri
 /// stream in its container for codecs whose copies read from them.
 fn encode_lz_stream(decoded: &[u8], plan: &Value, arena: &[u8]) -> Result<Vec<u8>, String> {
     let codec = json_string(&plan["codec"], "codec")?;
+    if codec == "golden-sun-overlay-lz" {
+        return encode_overlay_stream(decoded);
+    }
     if decoded.len() != number(&plan["decoded_size"], "decoded_size")? {
         return Err("decoded components do not match plan size".to_string());
     }
@@ -2835,6 +2835,30 @@ fn encode_lz_stream(decoded: &[u8], plan: &Value, arena: &[u8]) -> Result<Vec<u8
     }
     Ok(built)
 }
+
+/// Overlay streams select the smaller of the two encodings, palette on ties.
+/// Legacy sidecars are explicit exceptions; this path consumes no saved choices.
+pub(crate) fn encode_overlay_stream(decoded: &[u8]) -> Result<Vec<u8>, String> {
+    let general = encode_lz_stream(
+        decoded,
+        &serde_json::json!({
+            "codec":"golden-sun-general-lz", "decoded_size":decoded.len()
+        }),
+        &[],
+    )?;
+    let palette = encode_lz_stream(
+        decoded,
+        &serde_json::json!({
+            "codec":"golden-sun-tagged-palette-lz", "decoded_size":decoded.len(), "tag":1
+        }),
+        &[],
+    )?;
+    Ok(if palette.len() <= general.len() {
+        palette
+    } else {
+        general
+    })
+}
 /// Build an LZ entry: its components are concatenated and encoded with the
 /// selected plan. A plan array describes a sequence of streams: stream `i`
 /// encodes the components with atlas frame `i` selected, is padded to
@@ -2848,9 +2872,20 @@ fn build_general_lz_cached(
     entry: &Value,
 ) -> Result<(Vec<u8>, Vec<String>, Value), String> {
     let root = &ctx.root;
-    let plan_name = json_string(&entry["plan"], "general-LZ plan")?;
-    let plan_path = root_path(root, plan_name)?;
-    let plan_document = ctx.document(&plan_path)?;
+    let plan_name = entry
+        .get("plan")
+        .map(|value| json_string(value, "general-LZ plan"))
+        .transpose()?;
+    let plan_document = match plan_name {
+        Some(name) => ctx.document(&root_path(root, name)?)?,
+        None if entry["components"].as_array().is_some_and(|components| {
+            components.len() == 1 && components[0]["kind"] == "golden-sun-thumb-overlay"
+        }) =>
+        {
+            std::rc::Rc::new(serde_json::json!({"codec":"golden-sun-overlay-lz"}))
+        }
+        None => return Err("only overlay streams may omit their compression plan".into()),
+    };
     let plan = select_plan(&plan_document, entry)?;
     let component_document = entry
         .get("components_source")
@@ -2918,7 +2953,9 @@ fn build_general_lz_cached(
         stream.resize(stream.len().div_ceil(alignment) * alignment, 0);
         built.extend(stream);
     }
-    sources.push(plan_name.to_string());
+    if let Some(name) = plan_name {
+        sources.push(name.to_string());
+    }
     if let Some(source) = compression_plan::table_source(&plan_document) {
         sources.push(source.to_string());
     }
@@ -3223,8 +3260,12 @@ fn expand_series(
                         None => "games/THE BROKEN SEAL/raw/overlays/resource_",
                     };
                     let directory = format!("{prefix}{name}");
-                    entries
-                        .push(serde_json::json!({"address":tuple[1],"size":tuple[2],"kind":"golden-sun-general-lz","plan":format!("{directory}_stream.lz.json"),"components":[{"kind":"golden-sun-thumb-overlay","size":tuple[3],"source":format!("{directory}_overlay.s"),"base":series.get("base")}] }));
+                    let mut entry = serde_json::json!({"address":tuple[1],"size":tuple[2],"kind":"golden-sun-general-lz","components":[{"kind":"golden-sun-thumb-overlay","size":tuple[3],"source":format!("{directory}_overlay.s"),"base":series.get("base")}] });
+                    let exception = format!("{directory}_stream.lz.json");
+                    if root_path(&ctx.root, &exception)?.exists() {
+                        entry["plan"] = Value::String(exception);
+                    }
+                    entries.push(entry);
                 }
             }
             "golden-sun-map-component-series" => {
@@ -3460,6 +3501,29 @@ fn series_values<'a>(value: &'a Value, key: &str) -> Result<&'a Vec<Value>, Stri
         .and_then(Value::as_array)
         .ok_or_else(|| format!("{key} is missing or is not an array"))
 }
+#[test]
+fn overlay_series_uses_automatic_compression_unless_an_exception_exists() {
+    let directory = tempfile::tempdir().unwrap();
+    let mut ctx = Context::new(directory.path());
+    let manifest = serde_json::json!({"series":[{
+        "kind":"golden-sun-thumb-overlay-series", "source_prefix":"overlay/resource_",
+        "resources":[["001", "0x08000000", 8, 16]]
+    }]});
+    let mut entries = Vec::new();
+    expand_series(&mut ctx, &manifest, &mut entries).unwrap();
+    assert!(entries[0].get("plan").is_none());
+    fs::create_dir(directory.path().join("overlay")).unwrap();
+    fs::write(
+        directory.path().join("overlay/resource_001_stream.lz.json"),
+        "{}",
+    )
+    .unwrap();
+    entries.clear();
+    expand_series(&mut ctx, &manifest, &mut entries).unwrap();
+    assert_eq!(entries[0]["plan"], "overlay/resource_001_stream.lz.json");
+    assert!(build_general_lz_cached(&ctx, &serde_json::json!({"components":[]})).is_err());
+}
+
 #[test]
 fn sound_series_use_only_the_canonical_tables() {
     let directory = tempfile::tempdir().unwrap();

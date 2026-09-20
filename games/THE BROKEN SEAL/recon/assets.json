@@ -72,7 +72,6 @@
       "address": "0x087fcd20",
       "size": "0x799",
       "kind": "golden-sun-general-lz",
-      "plan": "games/THE BROKEN SEAL/raw/overlays/resource_3ce_stream.lz.json",
       "selection": {
         "table": "0x0809f1a8",
         "record_index": 200,

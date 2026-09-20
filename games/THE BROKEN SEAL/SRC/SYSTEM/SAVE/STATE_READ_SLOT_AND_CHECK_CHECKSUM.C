@@ -3,27 +3,7 @@
 #include "FLASH.H"
 #include "GLOBAL_CELLS.H"
 
-struct SaveSlotHeader {
-    u8 signature[7];
-    u8 record_id;
-    u16 checksum;
-    u16 sequence;
-    u8 reserved[4];
-};
-
-struct SaveWorkspace {
-    u8 occupied[16];
-    u8 record_id[16];
-    u16 sequence[16];
-    union {
-        struct {
-            struct SaveSlotHeader header;
-            u8 payload[0xff0];
-        } record;
-        u8 bytes[0x1000];
-    } slot;
-    u8 summary[3][64];
-};
+#include "SAVE_STATE.H"
 
 struct DmaChannel {
     u32 source;

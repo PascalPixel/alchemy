@@ -232,7 +232,7 @@ s32 Modulo(s32 numerator, s32 denominator);
 s32 Func_08002322(s32 angle);
 s32 UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
 void UiWork_Finalize(s32 work, s32 release);
-void UiText_DrawCharacter(s32 text, s32 work, s32 x, s32 y);
+void UiText_DrawCharacterAtOffset(s32 text, s32 work, s32 x, s32 y);
 void UiText_DrawStringAtOffset(s32 text, s32 work, s32 x, s32 y);
 void UiText_DrawNumberInWindow(s32 value, s32 digits, s32 work, s32 x, s32 y);
 #define UiWork_SetParamNibble Func_0801e71c
@@ -539,7 +539,7 @@ step_back:
             /* 0x080267e8: b sub_08026a6a when the condition is absent. */
             if (unit->poison == 0)
                 goto done;
-            UiText_DrawCharacter(0x8A4, infoWin, 0, 0);
+            UiText_DrawCharacterAtOffset(0x8A4, infoWin, 0, 0);
             /* 0x080267f6: b sub_08026b8c. */
             goto frame_tail;
         case 4:
@@ -565,19 +565,19 @@ step_back:
             infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
             count = 0;
             if (unit->delusion != 0) {
-                UiText_DrawCharacter(0x8A5, infoWin, 0, 0);
+                UiText_DrawCharacterAtOffset(0x8A5, infoWin, 0, 0);
                 count = 1;
             }
             if (unit->stun != 0) {
-                UiText_DrawCharacter(0x8A6, infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset(0x8A6, infoWin, 0, count * 8);
                 count++;
             }
             if (unit->sleep != 0) {
-                UiText_DrawCharacter(0x8A7, infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset(0x8A7, infoWin, 0, count * 8);
                 count++;
             }
             if (unit->psy_seal != 0) {
-                UiText_DrawCharacter(0x8A8, infoWin, 0, count * 8);
+                UiText_DrawCharacterAtOffset(0x8A8, infoWin, 0, count * 8);
                 count++;
             }
             /* 0x080268cc is the owner's last test; the death-count line is
@@ -591,7 +591,7 @@ step_back:
             /* 0x080267ae: b sub_08026a6a when the unit is still standing. */
             if (unit->hp != 0)
                 goto done;
-            UiText_DrawCharacter(0x8AB, infoWin, 0, 0);
+            UiText_DrawCharacterAtOffset(0x8AB, infoWin, 0, 0);
             /* Shares case 3's tail at 0x080267f6: b sub_08026b8c. */
             goto frame_tail;
         case 6:

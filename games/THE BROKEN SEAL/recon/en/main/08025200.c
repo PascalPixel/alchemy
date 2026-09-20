@@ -87,7 +87,7 @@ void UiWork_Finalize(struct UiWindowWork *win, s32 mode);
 void RenderOutput_RedrawSavedRect(struct UiWindowWork *win);
 void Ui_FillVramBlockPattern(void);
 void UiWork_SetParamNibble(s32 value);
-void UiText_DrawCharacter(s32 glyph, struct UiWindowWork *win, s32 width,
+void UiText_DrawCharacterAtOffset(s32 glyph, struct UiWindowWork *win, s32 width,
                           s32 y);
 s32 Resource_LoadKind26EntryToBuffer(s32 entry, s32 handle);
 void UiWindow_SetTilemapEntry(struct UiWindowWork *win, s32 tile, s32 col,
@@ -207,7 +207,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *tbl, s32 cnt)
                         } else if ((*entry & 0x400) != 0) {
                             UiWork_SetParamNibble(2);
                         }
-                        UiText_DrawCharacter((*entry & 0x1FF) + 0x182,
+                        UiText_DrawCharacterAtOffset((*entry & 0x1FF) + 0x182,
                                              win_list, 16, n * 16);
                         UiWork_SetParamNibble(15);
                         handle = *slotp++;

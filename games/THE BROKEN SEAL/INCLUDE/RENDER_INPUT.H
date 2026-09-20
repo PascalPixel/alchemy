@@ -22,6 +22,8 @@ typedef char RenderInput_x_offset[
 void UiWindow_CopyTilemapRegion(const struct RenderInput *window, const void *source);
 void UiWindow_SetTileAttributeRect(const struct RenderInput *window,
     s32 x, s32 y, s32 width, s32 height, u32 field);
+s32 Ui_CreateOutputFromResourceSlot(
+    struct RenderInput *window, s32 x, s32 y, s32 resource);
 
 /* 描画登録1件。+0x18の下位10bitは表番号として扱う。 */
 union RenderTableValue {

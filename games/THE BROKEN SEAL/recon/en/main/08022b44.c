@@ -36,7 +36,6 @@ struct BattleUnitRecord {
 #define UiWork_SetParamNibble Func_0801e71c
 #define UiWindow_SetTilemapEntry Func_08019000
 #define UiWindow_DrawThreeTileColumn Func_080218dc
-#define Ui_CreateOutputFromResourceSlot Func_08022a38
 #define UiText_FormatNumberToHalfwords Func_080228bc
 
 void Func_08002df0(void *block);
@@ -48,8 +47,6 @@ void UiWindow_SetTilemapEntry(
     struct RenderInput *win, s32 tile, s32 x, s32 y, s32 flags);
 void UiWindow_DrawThreeTileColumn(
     struct RenderInput *win, s32 x, s32 y, s32 tile, s32 flags);
-void Ui_CreateOutputFromResourceSlot(
-    struct RenderInput *win, s32 arg1, s32 arg2, s32 resource);
 struct PreviewSprite {
     u32 unknown;
     union {
@@ -78,7 +75,7 @@ struct AbilityData *Ability_GetData(s32 code);
 void BattleUnit_Recalculate(s32 owner);
 struct RenderInput *UiWindow_Create(s32 x, s32 y, s32 w, s32 h, s32 style);
 void UiWork_Finalize(struct RenderInput *win, s32 mode);
-void UiText_DrawCharacter(s32 message, struct RenderInput *win, s32 x, s32 y);
+void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *win, s32 x, s32 y);
 void UiText_DrawNumberInWindow(
     s32 value, s32 digits, struct RenderInput *win, s32 x, s32 y);
 
@@ -165,12 +162,12 @@ struct RenderInput *Ui_ShowAbilityChangePreview(
 
     if (page == 0) {
         /* Stat labels down the left edge, then the pre-change column. */
-        UiText_DrawCharacter(0x8ae, win, 0, 8);
-        UiText_DrawCharacter(0x8af, win, 0, 16);
-        UiText_DrawCharacter(0x8b0, win, 0, 24);
-        UiText_DrawCharacter(0x8b1, win, 0, 32);
-        UiText_DrawCharacter(0x8b2, win, 0, 40);
-        UiText_DrawCharacter(0x8b3, win, 0, 48);
+        UiText_DrawCharacterAtOffset(0x8ae, win, 0, 8);
+        UiText_DrawCharacterAtOffset(0x8af, win, 0, 16);
+        UiText_DrawCharacterAtOffset(0x8b0, win, 0, 24);
+        UiText_DrawCharacterAtOffset(0x8b1, win, 0, 32);
+        UiText_DrawCharacterAtOffset(0x8b2, win, 0, 40);
+        UiText_DrawCharacterAtOffset(0x8b3, win, 0, 48);
 
         oldHp = snap->hp;
         UiText_FormatNumberToHalfwords(buf, oldHp);
@@ -193,7 +190,7 @@ struct RenderInput *Ui_ShowAbilityChangePreview(
         Func_0801e41c(win, 0, 8, 19, 8);
         if (gained != 0 || lost != 0)
             UiWork_SetParamNibble(2);
-        UiText_DrawCharacter(0x8ad, win, 24, 64);
+        UiText_DrawCharacterAtOffset(0x8ad, win, 24, 64);
         UiWork_SetParamNibble(15);
     }
 
@@ -224,7 +221,7 @@ struct RenderInput *Ui_ShowAbilityChangePreview(
             else
                 UiWork_SetParamNibble(15);
 
-            UiText_DrawCharacter(0x333 + (list[i] & 0x3fff), win, 16, n * 16);
+            UiText_DrawCharacterAtOffset(0x333 + (list[i] & 0x3fff), win, 16, n * 16);
             UiWindow_SetTilemapEntry(win, 0xf01f, 11, n * 2, 0);
             UiWindow_SetTilemapEntry(win, 0xf01e, 12, n * 2, 0);
             UiText_DrawNumberInWindow(
@@ -233,16 +230,16 @@ struct RenderInput *Ui_ShowAbilityChangePreview(
 
         if (gained != 0) {
             UiWork_SetParamNibble(4);
-            UiText_DrawCharacter(0xba2, win, 32, 80);
+            UiText_DrawCharacterAtOffset(0xba2, win, 32, 80);
             marks = 1;
         }
         if (lost != 0) {
             UiWork_SetParamNibble(2);
-            UiText_DrawCharacter(0xba3, win, 32, marks * 8 + 80);
+            UiText_DrawCharacterAtOffset(0xba3, win, 32, marks * 8 + 80);
             marks++;
         }
         if (marks == 0)
-            UiText_DrawCharacter(0xba8, win, 32, 80);
+            UiText_DrawCharacterAtOffset(0xba8, win, 32, 80);
         UiWork_SetParamNibble(15);
         UiWork_SetParamNibble(15);
         Func_0801e41c(win, 0, 10, 19, 10);
@@ -250,8 +247,8 @@ struct RenderInput *Ui_ShowAbilityChangePreview(
 
     if (page == 0) {
         /* Post-change column, with an arrow beside every cell that moved. */
-        UiText_DrawCharacter(0x741 + snap->element, win, 0, 0);
-        UiText_DrawCharacter(0x741 + unit->element, win, 80, 0);
+        UiText_DrawCharacterAtOffset(0x741 + snap->element, win, 0, 0);
+        UiText_DrawCharacterAtOffset(0x741 + unit->element, win, 80, 0);
         if (snap->element != unit->element)
             UiWindow_SetTilemapEntry(win, 0xf728, 9, 0, page);
         else

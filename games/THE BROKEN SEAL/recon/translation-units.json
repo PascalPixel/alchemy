@@ -130132,6 +130132,18 @@
         "Func_0200a5e0": {
           "address": "0x0200a5e0",
           "kind": "thumb"
+        },
+        "Engine_GetTriggerActor": {
+          "address": "0x0200a540",
+          "kind": "thumb"
+        },
+        "Engine_TestTriggerFlag": {
+          "address": "0x0200a508",
+          "kind": "thumb"
+        },
+        "Engine_SetTriggerFlag": {
+          "address": "0x0200a510",
+          "kind": "thumb"
         }
       },
       "local_symbols": [],
@@ -130287,6 +130299,11 @@
           "state": "exact-c"
         },
         {
+          "address": "0x0200141c",
+          "extent": 128,
+          "state": "exact-c"
+        },
+        {
           "address": "0x0200149c",
           "extent": 144,
           "state": "exact-c"
@@ -130314,6 +130331,11 @@
         {
           "address": "0x020015f0",
           "extent": 164,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x020017ac",
+          "extent": 140,
           "state": "exact-c"
         },
         {
@@ -173755,6 +173777,67 @@
           "state": "exact-c"
         }
       ]
+    },
+    {
+      "id": "display-scroll-initialize-hblank",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/SCROLL_INITIALIZE_HBLANK_DMA.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_3ca",
+      "absolute_symbols": {
+        "Engine_AllocateBlock": {
+          "address": "0x02009344",
+          "kind": "thumb"
+        },
+        "Engine_ScheduleCallback": {
+          "address": "0x02009324",
+          "kind": "thumb"
+        },
+        "Engine_ArmScrollDma": {
+          "address": "0x02008f30",
+          "kind": "thumb"
+        },
+        "Engine_BuildScrollPage": {
+          "address": "0x02008f80",
+          "kind": "thumb"
+        }
+      },
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x020010d4",
+          "extent": 180,
+          "state": "exact-c"
+        }
+      ],
+      "instances": {
+        "main": {
+          "owners": {
+            "DisplayScroll_InitializeHBlankDma": {
+              "address": "0x08094730",
+              "extent": 180
+            }
+          },
+          "absolute_symbols": {
+            "Engine_AllocateBlock": {
+              "address": "0x080048f4",
+              "kind": "thumb"
+            },
+            "Engine_ScheduleCallback": {
+              "address": "0x080041d8",
+              "kind": "thumb"
+            },
+            "Engine_ArmScrollDma": {
+              "address": "0x080944ec",
+              "kind": "thumb"
+            },
+            "Engine_BuildScrollPage": {
+              "address": "0x08094544",
+              "kind": "thumb"
+            }
+          }
+        }
+      }
     }
   ]
 }

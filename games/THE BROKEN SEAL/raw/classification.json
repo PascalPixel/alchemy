@@ -4362,8 +4362,8 @@
         "no_four_register_thumb_transfer_template_and_movstrqi_is_copy_only_arm_md_5084_arm_c_9478",
         "inline_dma_kick_or_fill_macro_in_c_bodies_not_handwritten_functions_no_cross_product_identity"
       ],
-      "expected_files": 135,
-      "expected_bytes": 62568,
+      "expected_files": 134,
+      "expected_bytes": 62388,
       "matcher": "thumb_standalone_wide_transfer",
       "provenance": {
         "scanned": "2026-09-10",

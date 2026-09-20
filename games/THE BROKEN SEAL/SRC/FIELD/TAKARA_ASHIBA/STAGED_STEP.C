@@ -1090,6 +1090,15 @@ void FieldScene_RunStep12ValueEeb(void)
     Func_0200a510(0xEEB);
 }
 
+s32 *Engine_GetTriggerActor(s32 slot);
+s32 Engine_TestTriggerFlag(s32 flag);
+void Engine_SetTriggerFlag(s32 flag);
+
+static __inline__ void SceneState_StoreStep(s16 *field, s32 step)
+{
+    *field = step;
+}
+
 void FieldScene_RunSupplementalSequenceOne(void)
 {
     extern u8 Data_03001ebc[];
@@ -1115,6 +1124,23 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Func_02003970(8);
     Func_02003934();
     Call1(Func_02003924, 0x220);
+}
+
+void SceneState_TriggerColumnTen(void)
+{
+    extern u8 *Data_03001ebc;
+    extern s16 Data_02000240[];
+    s32 *pos = Engine_GetTriggerActor(0);
+    s32 x = pos[2] / 0x100000;
+    s32 z = pos[4] / 0x100000;
+    u8 *work = Data_03001ebc;
+
+    if (Value1(Engine_TestTriggerFlag, 0x220) == 0 &&
+        Data_02000240[0x24c / 2] == 0 && Data_02000240[0x24a / 2] != 9 &&
+        x == 10 && (u32)(z - 16) <= 2) {
+        Call1(Engine_SetTriggerFlag, 0x220);
+        SceneState_StoreStep((s16 *)(work + 386), 92);
+    }
 }
 
 void FieldScene_RunScene3b4SequenceA(void)
@@ -1213,6 +1239,23 @@ void FieldScene_RunPrimarySequence(void)
         Func_02003be4(10);
         Func_02003b9a(10);
         Func_02003bae();
+    }
+}
+
+void SceneState_TriggerColumnNineteen(void)
+{
+    extern u8 *Data_03001ebc;
+    extern s16 Data_02000240[];
+    s32 *pos = Engine_GetTriggerActor(0);
+    s32 x = pos[2] / 0x100000;
+    s32 z = pos[4] / 0x100000;
+    u8 *work = Data_03001ebc;
+    s16 *state = Data_02000240;
+
+    if (state[0x24a / 2] != 12 && Value1(Engine_TestTriggerFlag, 0x220) == 0 &&
+        state[0x24c / 2] == 0 && x == 19 && (u32)(z - 15) <= 1) {
+        Call1(Engine_SetTriggerFlag, 0x220);
+        SceneState_StoreStep((s16 *)(work + 386), 96);
     }
 }
 

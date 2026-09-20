@@ -672,7 +672,8 @@
       "name": "DisplayScroll_BuildAndSwapHBlankPage"
     },
     "main:08094730": {
-      "name": "DisplayScroll_InitializeHBlankDma"
+      "name": "DisplayScroll_InitializeHBlankDma",
+      "source": "GRAPHICS/DISPLAY/SCROLL_INITIALIZE_HBLANK_DMA.C"
     },
     "main:080947e4": {
       "name": "DisplayScroll_DisarmHBlankDma",
@@ -18959,6 +18960,18 @@
     "main:080c08a8": {
       "name": "BattlePresentation_InitializeWorkAndResetState",
       "source": "BATTLE/PRESENTATION/INITIALIZE_WORK_AND_RESET_STATE.C"
+    },
+    "resource_3ca:020010d4": {
+      "name": "DisplayScroll_InitializeHBlankDma",
+      "source": "GRAPHICS/DISPLAY/SCROLL_INITIALIZE_HBLANK_DMA.C"
+    },
+    "resource_3b4:0200141c": {
+      "name": "SceneState_TriggerColumnTen",
+      "source": "FIELD/TAKARA_ASHIBA/STAGED_STEP.C"
+    },
+    "resource_3b4:020017ac": {
+      "name": "SceneState_TriggerColumnNineteen",
+      "source": "FIELD/TAKARA_ASHIBA/STAGED_STEP.C"
     }
   }
 }

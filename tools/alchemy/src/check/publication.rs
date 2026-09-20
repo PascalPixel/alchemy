@@ -20,12 +20,12 @@ pub(crate) const PRESENTATION_EXTENSIONS: &[&str] = &[
     "mov",
 ];
 const BACKUP_EXTENSIONS: &[&str] = &["bak", "orig", "rej", "swp"];
-/// Prose formats. README introduces, TODO holds open work, and AGENTS with the
-/// topic files its index names holds every rule; CLAUDE is a link to AGENTS.
-const DOCUMENT_EXTENSIONS: &[&str] = &["adoc", "asciidoc", "markdown", "md", "mdx", "rst", "txt"];
-const OWNED_DOCUMENTS: &[&str] = &["README.md", "TODO.md", "AGENTS.md", "CLAUDE.md"];
-/// The directory of topic files AGENTS.md indexes.
-const TOPIC_DIRECTORY: &str = ".agents/";
+/// The only two owned prose documents, including ignored output.
+const DOCUMENT_EXTENSIONS: &[&str] = &[
+    "adoc", "asciidoc", "markdown", "md", "mdown", "mkdn", "mdx", "rdoc", "rest", "rst", "text",
+    "txt",
+];
+const OWNED_DOCUMENTS: &[&str] = &["README.md", "AGENTS.md"];
 /// Code a game without an asset manifest may track under its asset roots.
 const MANIFESTLESS_EXTENSIONS: &[&str] = &["c", "h", "inc", "gitkeep"];
 /// Tooling metadata under `games/<game>/`; every other directory is an asset root.
@@ -214,11 +214,10 @@ fn publication_path_reason(path: &str) -> Option<&'static str> {
         return Some("editor or merge backup");
     }
     // A rename or copy lands here too: every document path is judged as new.
-    if listed(suffix, DOCUMENT_EXTENSIONS)
-        && !OWNED_DOCUMENTS.contains(&normalized.as_str())
-        && !topic_document(&normalized)
-    {
-        return Some("separate document: rules belong in AGENTS.md or a topic file it indexes");
+    if listed(suffix, DOCUMENT_EXTENSIONS) && !OWNED_DOCUMENTS.contains(&normalized.as_str()) {
+        return Some(
+            "separate document: working knowledge belongs in AGENTS.md; README.md is public",
+        );
     }
     if directories
         .iter()
@@ -328,47 +327,42 @@ fn conflict_marker_reason(path: &str, data: &[u8]) -> Option<String> {
         "unresolved conflict marker at line {line}; resolve the merge before committing"
     ))
 }
-/// Whether a path names a topic file: one uppercase `.agents/NAME.md`.
-fn topic_document(path: &str) -> bool {
-    path.strip_prefix(TOPIC_DIRECTORY)
-        .and_then(|leaf| leaf.strip_suffix(".md"))
-        .is_some_and(|stem| {
-            !stem.is_empty() && stem.bytes().all(|b| b.is_ascii_uppercase() || b == b'_')
+/// Preserve licensed dependencies only in their established source locations.
+/// A nested Git checkout elsewhere must not hide project notes from the gate.
+fn upstream_documents(root: &Path, path: &Path) -> bool {
+    if APPROVED_GITLINKS.iter().any(|name| path == root.join(name)) {
+        return true;
+    }
+    if !path.starts_with(root.join("out/compilers")) {
+        return false;
+    }
+    path.join("gcc/toplev.c").is_file()
+        || ["binutils-2.10", "binutils-2.33.1"].iter().any(|name| {
+            path == root.join("out/compilers/sources").join(name)
+                && path.join("configure").is_file()
+                && path.join("gas").is_dir()
+                && path.join("bfd").is_dir()
         })
 }
-/// The topic files AGENTS.md links from its index.
-fn indexed_topics(root: &Path) -> BTreeSet<String> {
-    let index = std::fs::read_to_string(root.join("AGENTS.md")).unwrap_or_default();
-    index
-        .split(&format!("]({TOPIC_DIRECTORY}"))
-        .skip(1)
-        .filter_map(|rest| rest.split_once(')'))
-        .map(|(leaf, _)| format!("{TOPIC_DIRECTORY}{leaf}"))
-        .filter(|path| topic_document(path))
-        .collect()
+/// These are raw .text section bytes produced by score/allocator.rs, not notes.
+fn allocator_section(path: &Path) -> bool {
+    path.parent()
+        .and_then(Path::file_name)
+        .is_some_and(|name| name == "allocator-order")
+        && path
+            .file_name()
+            .is_some_and(|name| name == "normal.text" || name == "diagnostic.text")
 }
 fn check_documents(root: &Path) -> Result<(), String> {
-    let topics = indexed_topics(root);
     let mut pending = vec![root.to_path_buf()];
     let mut rejected = Vec::new();
-    for topic in &topics {
-        if !root.join(topic).is_file() {
-            rejected.push(format!("{topic} (indexed by AGENTS.md but missing)"));
-        }
-    }
     while let Some(directory) = pending.pop() {
         for entry in std::fs::read_dir(&directory).map_err(|e| e.to_string())? {
             let entry = entry.map_err(|e| e.to_string())?;
             let path = entry.path();
             let kind = entry.file_type().map_err(|e| e.to_string())?;
             if kind.is_dir() {
-                // External decompiler and compiler distributions are source inputs,
-                // and a nested checkout owns its own documents.
-                if entry.file_name() != ".git"
-                    && path != root.join("m2c")
-                    && !path.join(".git").exists()
-                    && !path.join("gcc/toplev.c").is_file()
-                {
+                if entry.file_name() != ".git" && !upstream_documents(root, &path) {
                     pending.push(path);
                 }
                 continue;
@@ -378,14 +372,8 @@ fn check_documents(root: &Path) -> Result<(), String> {
                 .map_err(|e| e.to_string())?
                 .to_string_lossy();
             if !listed(extension(&relative), DOCUMENT_EXTENSIONS)
-                || matches!(relative.as_ref(), "README.md" | "TODO.md" | "AGENTS.md")
-                || topics.contains(relative.as_ref())
-            {
-                continue;
-            }
-            if relative == "CLAUDE.md"
-                && kind.is_symlink()
-                && std::fs::read_link(&path).is_ok_and(|target| target == Path::new("AGENTS.md"))
+                || (matches!(relative.as_ref(), "README.md" | "AGENTS.md") && kind.is_file())
+                || (relative.starts_with("out/") && allocator_section(&path))
             {
                 continue;
             }
@@ -2829,6 +2817,9 @@ fn self_test(root: &Path) -> Result<(), String> {
         "games/THE BROKEN SEAL/raw/080000c0.s~",
         "docs/README.md",
         "CONTRIBUTING.md",
+        "CLAUDE.md",
+        "TODO.md",
+        ".agents/RECOVERY.md",
         ".agents/notes.md",
         ".agents/DEEP/TOPIC.md",
         "GUIDE.markdown",
@@ -2843,8 +2834,6 @@ fn self_test(root: &Path) -> Result<(), String> {
         "src/main.c",
         "README.md",
         "AGENTS.md",
-        "TODO.md",
-        ".agents/RECOVERY.md",
         "games/THE BROKEN SEAL/raw/080000c0.s",
         "PROGRESS.svg",
         "games/THE BROKEN SEAL/SOUND/SEQUENCE/THEME.mid",
@@ -3050,50 +3039,76 @@ mod tests {
         assert!(publication_path_reason("tools/reverse-gcc296/src/main.rs").is_none());
     }
     #[test]
-    fn documents_include_ignored_output_and_allow_only_indexed_topics() {
-        let root = std::env::temp_dir().join(format!("alchemy-documents-{}", std::process::id()));
-        std::fs::create_dir_all(root.join("out")).unwrap();
-        std::fs::create_dir_all(root.join(".agents")).unwrap();
+    fn documents_have_two_owners_even_in_ignored_or_nested_checkouts() {
+        let temp = tempfile::tempdir().unwrap();
+        let root = temp.path();
+        for dir in [
+            "out",
+            ".agents",
+            "worktrees/scene",
+            "out/compilers/experiment/gcc",
+            "out/compilers/sources/binutils-2.10/gas",
+            "out/compilers/sources/binutils-2.10/bfd",
+            "out/allocator-order",
+            "agscc",
+        ] {
+            std::fs::create_dir_all(root.join(dir)).unwrap();
+        }
         std::fs::write(root.join(".gitignore"), "out/\n").unwrap();
-        std::fs::write(root.join("README.md"), "introduction").unwrap();
-        std::fs::write(root.join("TODO.md"), "open work").unwrap();
+        std::fs::write(root.join("README.md"), "public introduction").unwrap();
+        std::fs::write(root.join("AGENTS.md"), "all working guidance").unwrap();
+        std::fs::write(root.join("agscc/README.md"), "upstream").unwrap();
         std::fs::write(
-            root.join("AGENTS.md"),
-            "| [RECOVERY](.agents/RECOVERY.md) | Recovery | Matching |\n",
+            root.join("out/compilers/experiment/gcc/toplev.c"),
+            "upstream",
         )
         .unwrap();
-        std::fs::write(root.join(".agents/RECOVERY.md"), "rules").unwrap();
-        std::os::unix::fs::symlink("AGENTS.md", root.join("CLAUDE.md")).unwrap();
-        std::fs::create_dir_all(root.join("out/compiler/gcc")).unwrap();
-        std::fs::write(root.join("out/compiler/gcc/toplev.c"), "compiler source").unwrap();
-        std::fs::write(root.join("out/compiler/gcc/thumb.md"), "(define_insn)").unwrap();
-        std::fs::create_dir_all(root.join("worktrees/scene")).unwrap();
+        std::fs::write(
+            root.join("out/compilers/experiment/gcc/thumb.md"),
+            "(define_insn)",
+        )
+        .unwrap();
+        std::fs::write(
+            root.join("out/compilers/sources/binutils-2.10/configure"),
+            "upstream",
+        )
+        .unwrap();
+        std::fs::write(
+            root.join("out/compilers/sources/binutils-2.10/README.md"),
+            "upstream",
+        )
+        .unwrap();
+        std::fs::write(root.join("out/allocator-order/normal.text"), [0u8, 1]).unwrap();
         std::fs::write(root.join("worktrees/scene/.git"), "gitdir: ../../.git\n").unwrap();
-        std::fs::write(root.join("worktrees/scene/README.md"), "its own").unwrap();
-        std::fs::write(root.join("worktrees/scene/score.txt"), "its own").unwrap();
-        assert!(check_documents(&root).is_ok());
+        assert!(check_documents(root).is_ok());
         for name in [
             "out/verdict.md",
-            "out/score.txt",
+            "out/score.TXT",
             "out/plan.rst",
+            "out/notes.text",
+            "out/notes.mdown",
+            "out/notes.rest",
+            "out/notes.adoc",
+            "out/compilers/notes.md",
+            "TODO.md",
             "CONTRIBUTING.md",
-            ".agents/UNLISTED.md",
+            ".agents/RECOVERY.md",
+            "worktrees/scene/README.md",
+            "worktrees/scene/score.txt",
         ] {
             std::fs::write(root.join(name), "another guide").unwrap();
-            assert!(check_documents(&root).unwrap_err().contains(name));
+            assert!(check_documents(root).unwrap_err().contains(name), "{name}");
             std::fs::remove_file(root.join(name)).unwrap();
         }
-        // CLAUDE.md is only ever the link to AGENTS.md.
+        // An extra document symlink must not bypass the same path policy.
+        std::os::unix::fs::symlink("../AGENTS.md", root.join("out/alias.md")).unwrap();
+        assert!(check_documents(root).unwrap_err().contains("out/alias.md"));
+        std::fs::remove_file(root.join("out/alias.md")).unwrap();
+        std::fs::write(root.join("CLAUDE.md"), "a competing guide").unwrap();
+        assert!(check_documents(root).unwrap_err().contains("CLAUDE.md"));
         std::fs::remove_file(root.join("CLAUDE.md")).unwrap();
-        std::fs::write(root.join("CLAUDE.md"), "a second guide").unwrap();
-        assert!(check_documents(&root).unwrap_err().contains("CLAUDE.md"));
-        std::fs::remove_file(root.join("CLAUDE.md")).unwrap();
-        // Every topic the index names must exist.
-        std::fs::remove_file(root.join(".agents/RECOVERY.md")).unwrap();
-        assert!(check_documents(&root)
-            .unwrap_err()
-            .contains(".agents/RECOVERY.md (indexed by AGENTS.md but missing)"));
-        std::fs::remove_dir_all(root).unwrap();
+        std::os::unix::fs::symlink("AGENTS.md", root.join("CLAUDE.md")).unwrap();
+        assert!(check_documents(root).unwrap_err().contains("CLAUDE.md"));
     }
     #[test]
     fn json_byte_dumps_need_the_named_values_of_a_typed_table() {

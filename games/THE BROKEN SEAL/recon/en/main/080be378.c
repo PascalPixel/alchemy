@@ -51,8 +51,8 @@ extern s32 Func_080bd3c8(s16 id);
 extern s32 Func_08077178(s16 id, u8 a, u8 b, u8 c, s32 mode);
 
 /*
- * Literal-pool constants, resolved from ground truth per CONTRIBUTING.md's
- * "Split functions" note: assembled games/THE BROKEN SEAL/raw/080be378.s and
+ * Literal-pool constants, resolved from ground truth per AGENTS.md's
+ * "Completion and measurement" note: assembled games/THE BROKEN SEAL/raw/080be378.s and
  * games/THE BROKEN SEAL/raw/080be76c.s standalone (both already 4-byte aligned at their
  * real load address, no parity padding needed), objdumped the result, and
  * for every `ldr rN, [pc, #imm]` whose target lands past the file's own

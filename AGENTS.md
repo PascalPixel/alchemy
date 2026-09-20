@@ -1,75 +1,771 @@
 # Alchemy
 
-Alchemy reconstructs _Golden Sun_ (**TBS**, _The Broken Seal_) and _Golden Sun:
-The Lost Age_ (**TLA**) as ordinary, readable C and editable assets that rebuild
-the shipped games byte for byte. It follows a documented clean-room policy
-modelled on long-running decompilations such as pret's, and records where each
-file comes from. It takes no outside contributions until it reaches 100%.
+Alchemy reconstructs Golden Sun: **The Broken Seal (TBS)** and **The Lost Age
+(TLA)** as readable C and editable assets that rebuild the shipped games byte
+for byte. Japanese releases are the source editions; localizations are measured
+differences. Build IDs use `tbs` and `tla`; the physical roots are
+`games/THE BROKEN SEAL` and `games/THE LOST AGE`. Only TBS English currently
+has a complete production ROM gate. Twelve successful compilation checks do
+not mean twelve rebuilt ROMs. Outside contributions open at 100%.
 
-Use `tbs` and `tla` in paths and target names. Japanese releases are the source
-editions; localizations are measured differences. The production gate requires
-a complete byte-identical TBS English build. Passing it does not mean all code
-is C or that all twelve target ROMs have been rebuilt.
+Read this file in full. It is the **only working guide**, including priorities,
+recovery methods, constraints and tooling. `README.md` introduces the project
+publicly. There are no topic documents or separate task lists.
 
-This file is the index of every rule. Read it whole, then read the topic files
-the index below names before working in their domain.
-
-## The two directives
+## Two directives
 
 1. **Never commit anything a pret-style decompilation would not publish.** The
-   test in [TRACKING](.agents/TRACKING.md) decides every file. This directive
-   outranks everything else, including the goal.
-2. **Reconstruct the source Camelot most likely wrote and had on their disk**:
-   files, folders, names, types, macros and build. Where the evidence says
-   Camelot wrote C, we write C; where it says a shared macro with inline
-   assembly, a hand-written `.s`, or a generated table with its writer and
-   reader, we write that. DONE measures how much of the executable image such
-   source explains.
+   publication rules below outrank every goal and percentage.
+2. **Reconstruct the source Camelot most likely had on disk:** coherent files,
+   names, types, macros, assembly and generated tables with their readers and
+   writers. Matching bytes are necessary; a trick that happens to match is not
+   reconstructed source. Our names and layout are hypotheses, not lost originals.
 
-Every rule in the topic files follows from these two and is kept because it
-saved us from a specific mistake. When a rule and the evidence about what
-Camelot wrote disagree, the evidence wins and the rule is repaired; evidence
-never overrides directive 1.
+Evidence can correct a reconstruction rule, never waive the publication rule.
+A refusing tool or failed gate names a problem to fix, not a route around it.
 
-## Always
+## One home for knowledge
 
-- **Documents.** `README.md` introduces Alchemy, `TODO.md` holds open work, and
-  this file with the topic files below holds every rule. `CLAUDE.md` is a
-  symlink to this file. No other Markdown, plain-text, reStructuredText or
-  AsciiDoc file may exist anywhere in the checkout, ignored `out/` and scratch
-  included, and no prose guide hides inside JSON. A new domain is a new row
-  here and its file under `.agents/`, in one commit. `make verify` enforces
-  this. Upstream material keeps its own documents: the `agbcc` and `agscc`
-  submodules and the compiler and binutils sources bootstrap downloads are
-  exempt, and are never deleted or rewritten to satisfy this rule.
-- **One home per rule.** State a rule in the one topic file that owns it and
-  link to it from anywhere else. Code constraints live beside the code, owner
-  results in the evidence records.
-- **Output under `out/`.** Scores, work directories, reports and drafts go under
-  ignored `out/`, never loose in the checkout root.
-- **Scripts** are TypeScript on Bun or Rust, never Python or shell scripts. The
-  only shell is the minimal `alchemy` and `psynergy` launchers and the Git
-  hooks in `.hooks/`, each a few lines that immediately run the Rust tooling;
-  keep them that way. Check [TOOLING](.agents/TOOLING.md) before writing a
-  script.
-- **Commits.** Stage explicit paths, never everything; run `make verify` on the
-  staged tree; start the subject with the prefix `make progress-subject`
-  prints. See [BUILD](.agents/BUILD.md).
-- **Refusals are answers.** A failing gate, a refusing tool or a denied
-  permission names a problem to fix, never one to route around.
+Only root `AGENTS.md` and `README.md` may be prose documents. Claude also reads
+AGENTS.md; `CLAUDE.md` is retired, including symlinks. No other Markdown,
+plain-text, reStructuredText, AsciiDoc or equivalent notes may exist anywhere
+in the checkout, **including ignored `out/`, scratch and nested worktrees**.
+Do not evade this by renaming prose to `.json`, `.log`, `.ts` or an extensionless
+file. Do not create TODOs, handoff documents, plans, reports-as-guides, local
+AGENTS files or a replacement memory directory. `alchemy check publication --documents` enforces
+the file-format rule; `make verify` includes it.
 
-## Topics
+Upstream compiler and assembler source retains its own documents and GCC
+machine descriptions. The approved `agbcc` and `agscc` submodules and actual
+compiler/binutils source trees under `out/compilers/` are exempt; an arbitrary
+nested `.git` directory is not. Never delete licensed upstream material to make
+the document check pass. Binary section dumps are build output, not prose.
 
-| File | Owns | Read before |
-| --- | --- | --- |
-| [TRACKING](.agents/TRACKING.md) | What may be tracked, private inputs, licensed code, the publication gate | Adding or generating any file |
-| [EVIDENCE](.agents/EVIDENCE.md) | The clean room, admissible sources, the authority for each fact | Using any information that is not in this repository |
-| [RECOVERY](.agents/RECOVERY.md) | Choosing owners, the short loop, residuals, extents and bindings, integration | Any decompilation or matching work |
-| [COMPLETION](.agents/COMPLETION.md) | Exact C, DONE, retained assembly, veneer credit | Claiming, crediting or reporting progress |
-| [COMPILER](.agents/COMPILER.md) | agscc and agbcc, routes and flags, forbidden tricks, compiler gaps | Touching a compiler or route, or when a match resists ordinary C |
-| [SHARING](.agents/SHARING.md) | Editions, unit instances and twins, source shared by both games | Code used by more than one image, edition or game |
-| [SOURCE](.agents/SOURCE.md) | Source layout, names, the Lunpa showcase standard | Naming, moving, creating or polishing source |
-| [ASSETS](.agents/ASSETS.md) | Asset inputs and formats, compression, maps and the world assembly | Asset, map, image, sound or text work |
-| [WORKING](.agents/WORKING.md) | Bounded batches, durable results, waves, deadlines, authority | Starting a batch of work |
-| [BUILD](.agents/BUILD.md) | Setup, bootstrap, gates, commits and pushing | Building, verifying, committing or pushing |
-| [TOOLING](.agents/TOOLING.md) | Every tool and command, the Alchemy and Psynergy boundary, the dashboard | Writing, changing or running any tool or script |
+| Fact | One maintained home |
+| --- | --- |
+| General methods, rules and open priorities | This file; replace obsolete guidance instead of appending competing rules |
+| Owner names and source paths | Each game's `source-paths.json` |
+| Types, declarations and behavior | Maintained C and headers |
+| Unit membership, instances, extents and bindings | Existing translation-unit manifests and boundary registries |
+| Owner-specific experiments, negative results and next hypothesis | Existing `recon/en/dossiers.json` entry, with game-qualified identity |
+| Current verified credit | Fingerprinted build receipts, generated into stable target report directories |
+| Temporary compiler diagnostics | Disposable work directories under `out/` |
+
+A dossier is an evidence record, not another project guide. Record the candidate,
+complete extent, command, compiler identity, result, rejected hypotheses and
+specific evidence needed to reopen. Preserve useful negative findings; avoid
+copied transcripts and a second score registry. Old scores are leads, never
+current verification. Code constraints belong beside their code, not in a
+new document. Repair references and validators when an owner moves.
+
+## Recovery: verified bytes per hour
+
+Optimize **new verified exact-C bytes per hour across the whole game**, including
+integration and verification time. Report DONE separately. A filename cleanup,
+new draft, better similarity, source consolidation or changed accounting is not
+new exact C. Converting credited assembly to C raises exact C but may not raise
+DONE. Do not use the rounded commit prefix to measure C progress.
+
+### Select a bounded family
+
+1. Read fresh ownership and coverage. Rank the **100 largest unresolved complete
+   functions**, including those without drafts, excluding already exact C and
+   positively evidenced permanent assembly. Main and overlays compete together.
+   A coverage fragment is not automatically a complete function.
+2. Follow their dependencies into our exact C: read callees, callers, shared
+   headers, verified siblings and unit context. Group candidates by a supported
+   shared interface or residual cause, then choose the best bounded family by
+   expected new C per hour. Size alone is not a probability of success.
+3. Consolidate only the declarations, types or shared routines that this family
+   needs. Verify exact callees remain exact, then repair unresolved callers.
+   Humanization must directly serve recovery, not become a cleanup campaign.
+4. Record the selected owners, complete extents, baseline, evidence, budget and
+   finishing check in their existing records. Prefer families large enough to
+   matter; small related owners can collectively beat one stubborn giant.
+5. After closing a representative, test every applicable sibling with its own
+   constants, call bindings, layout and complete byte comparison. An empty twin
+   sweep is closed until its inputs change. Do not repeat broad censuses blindly.
+
+Use Jev for probabilities over a genuinely large candidate collection when it
+is available, using compact non-payload features. Pascal authorizes sending
+that material without another permission request. Its rankings are advice, not
+proof, compiler authority or adoption. Do not send ROM/reference bytes or
+credentials. If unavailable, record that once and use measured evidence; do
+not spend the batch repeatedly rediscovering access or inventing probabilities.
+
+### What the productive history actually showed
+
+The July 30–31 historical ledger records 79,558 added C bytes in 24 hours, but
+that includes merged work and compiler routes subsequently retired. On August
+17 (`3cec47862`), 103,548 credited C bytes were withdrawn after a build audit;
+on September 4 (`579b71488`), removing per-file routes withdrew 33,720 more.
+Never restore those shortcuts to recreate an old rate. Historical counters
+have gaps and changed policy; they are not a certified all-time ranking or a
+measure of agent token efficiency.
+
+The September 3–5 scene wave combined batch lifting, complete function discovery,
+correct pool/alignment boundaries and verified twins. `b85a4081d` adopted 60
+functions from previously unregistered stretches: lack of a draft was a search
+opportunity, not evidence that code was intrinsically hard. Reuse the existing
+lifter and fix demonstrated recurring defects; do not build a second one.
+
+On September 10, saved counters rose from 592,372 to 631,946 exact-C bytes in
+11 hours 20 minutes. Five large owners supplied 27,628 bytes. These commits
+preserve the useful evidence:
+
+| Evidence | Transferable technique |
+| --- | --- |
+| `29cc444ed`, 7,356-byte scene | Symbol addresses, direct calls, correct live values and direct guard reads removed a small size error that had displaced thousands of halfwords. |
+| `1d5852f4a`, two owners / 12,632 bytes | One corrected source store order removed 25 differing halfwords. Smaller intermediate scores had been compensating edits, not correct source. |
+| `886891632`, 4,092-byte scene | Two pointer locals were one reused variable. Preserving its lifetime explained the reference's scratch-register copies. Merging every pointer was wrong. |
+| `b19cf9bb8`, 3,548-byte scene | Previously recorded findings, including those from failed owners, corrected call return types and closed a different large owner. |
+
+The lesson is to recover one true cause and apply it where its preconditions
+hold. A lower mismatch count alone does not establish that a change is true.
+
+### Short loop
+
+Read each command's help before scripting around it. Scripts are TypeScript on
+Bun or Rust, never Python or shell scripts. Only the minimal root launchers and
+Git hooks use shell to enter the Rust tooling.
+
+```sh
+./alchemy inspect <owner> --asm
+./alchemy inspect <owner> --siblings
+./alchemy extract <owner> --out out/work/reference.bin
+./psynergy decompile out/work/reference.bin --base <runtime-base> --entry <entry> --span <complete-bytes> --out out/work/candidate.c
+./alchemy score out/work/candidate.c --owner <owner> --align --first
+./alchemy score --unit <unit-id> --first
+```
+
+Extraction prints the loaded runtime base, entry and span; use those, not resource
+offsets. Reference bytes remain private. The decompiler takes explicit files,
+not game owner identities; resolve its symbols, types and control flow before
+scoring. Extraction and decompilation refuse to overwrite outputs.
+
+Keep one canonical candidate. Change one evidenced hypothesis, compile the
+object or declared unit, inspect the full residual and preserve only supported
+changes. Shared headers, manifests and staging have one editor at a time.
+Use existing unit declarations; `alchemy unit scaffold tbs <id> <start> <end>`
+creates a main unit when needed. Preserve function order and exact neighbors.
+Declare retained members explicitly without granting C credit. A guessed unit
+is a hypothesis about original context, not historical proof.
+
+After **five unsuccessful source hypotheses**, park with a concrete residual
+or hand off that evidence. Two bounded searches with no new structural fact
+close that axis. A missing prototype, corrected boundary, improved tool or
+verified sibling can reopen it; another equivalent spelling cannot. Do not
+turn a historical “stubborn” label into a permanent ban or compiler verdict.
+
+When a nearly exact draft has trapped the search, step back: build a small
+ordinary-C scaffold that reproduces a bounded local invariant, then restore one
+coherent section at a time until it breaks. That identifies missing context.
+Partial witnesses stay private and earn no whole-owner credit; never shrink
+an owner to make a witness exact.
+
+### Read the cause, not the score
+
+| Residual | First evidence to inspect |
+| --- | --- |
+| Extent or binding | Complete function, pools, entry alignment, continuations and actual runtime targets |
+| Control flow or missing effects | Branches, loops, switches, calls and guards against reference and exact siblings |
+| Type or access width | Proven structs, offsets, signedness, pointer returns and aggregate interfaces |
+| Allocation or scheduling | Correct lifetimes, aliasing, reused locals, dependencies and compiler pass dumps |
+| Literal pools or constants | Symbol versus integer meaning, access width, real shared constant lifetimes and pool reach |
+
+- A small insertion shifts every later halfword. Use aligned instruction diffs
+  and normalize branch targets diagnostically; never normalize acceptance bytes.
+- Under the observed GCC 2.96 route, void versus value-returning calls can
+  reverse argument setup order. Treat that as a prototype hypothesis, verify
+  it against the callee and siblings, and discard an unused result normally.
+  Do not change return types purely to steer scheduling.
+- Reconstruct which values are genuinely shared and which are distinct. A
+  pointer live after an offset calculation explains a copy; splitting or merging
+  every local by style destroys that evidence. Source store order need not
+  equal final instruction order. Compiler passes can schedule separate branches
+  before merging their common tail; do not pre-merge it reflexively in C.
+- Use established structs and shared modules before recreating offsets. Exact
+  callee bodies can prove access widths, signedness and missing arguments; DMA
+  is one shared primitive inside ordinary C, not a reason to mark callers ASM.
+- Signed division and remainder use ordinary `/` and `%` with the proper runtime
+  binding. Verify the actual veneer target; a legacy helper name can misstate
+  signedness. Typed indirect calls express call-via interfaces even when a
+  direct call happens to match.
+- GCC nested functions can explain an inherited Thumb `r9` static chain. Read
+  the enclosing function and capture layout before declaring a helper assembly
+  or inventing a global parameter. Definition position and local lifetimes can
+  explain capture offsets. Compile the real enclosing context; only separately
+  verified complete helpers may gain credit while a parent remains retained.
+- Stack-resident routine wrappers can be ordinary variable-length arrays and
+  typed indirect calls. Use only context proved by the reference and exact
+  examples, not padding or fixed-register locals.
+- Remove inert casts, stores and blocks. Do not keep tricks that improve a
+  number without explaining behavior or compiler context.
+
+Use `alchemy score ... --allocator-order`, then `alchemy build allocator <owner>`
+and `psynergy inspect allocator <dump-directory>` for actual GCC decisions.
+Creation, CSE, combine, allocation, reload and scheduling dumps outrank guessed
+register stories. Router `next=` and `repair_hint=` are guarded experiment
+suggestions. The existing `recon/compiler-repair-patterns.json` catalog needs
+preconditions, regression fixtures and a real closure for each generalized
+operation. Manual recovery does not require another catalog entry.
+
+### Integrate and end the batch
+
+Overlay owners use `alchemy adopt <resource>:<address> --source FILE`; main
+owners use registered source paths and `alchemy check integrate <directory>
+--apply`. Both prove the whole owner before retiring assembly. Shared units
+must verify every affected linked C member from the shared object; explicitly
+retained holes remain uncredited. Use `alchemy unit flatten --help` for verified
+overlay consolidation, not independent adoption of overlapping members.
+
+Close with starting/ending exact-C bytes, net new C, DONE separately, accepted
+owners, parked causes, elapsed time and checks actually run. Zero adoption is a
+negative result, not permission to expand an identical search. At a deadline,
+stop launching work, preserve candidates, finish or revert experiments and verify
+accepted changes. Commit a coherent verified batch before another wave; there
+is no minimum percentage gain for a commit. Never lower acceptance to hit a goal.
+
+## Disposable output, durable results
+
+`out/` is **not memory or a source corpus**. Existing stable target directories
+hold generated builds, caches, receipts and previews. Temporary experiments
+use one bounded work directory per active batch; reuse it instead of creating
+one directory per source spelling. No new tracking service, queue database,
+scoreboard framework, prose archive or experiment index.
+
+Before ending a batch:
+
+1. Put complete useful nonexact C in the game's existing `recon/en/main`,
+   `recon/en/overlays` or declared unit source, registered in the owner's dossier.
+   Keep accepted C in `SRC`. Never leave the only useful candidate in `out/`.
+2. Distill owner findings into that dossier and reusable discoveries into the
+   relevant paragraph here. Keep exact extent, commands, evidence and negative
+   results, not every transient diagnostic or speculative interpretation.
+3. Remove the batch's throwaway candidates, scripts, copies and reports after
+   their useful results have durable homes. Retain only reproducible diagnostics
+   needed by a specific active question. Remove landed branches and worktrees;
+   `main` is the only branch left behind.
+
+Clean only known-owned scratch. Do not wipe another active task's work or unique
+candidate, move notes outside the checkout to evade this rule, or rename notes
+as logs. Genuine raw tool logs, structured machine reports and binary sections
+are allowed output, not standing guidance. `make clean` removes generated output
+and preserves maintained inputs, ROMs and installed compilers. Inspect its scope
+and active work first; a cache is rebuildable, a sole draft needs preservation.
+
+## Publication and evidence
+
+Ask of every tracked file, generated or not: is it code, tooling, non-payload
+metadata/documentation, or an editable game asset **actually consumed by that
+game's byte-identical build**? If neither, it cannot be tracked. Raw code
+listings are permitted reconstructed source; ROMs, fragments, extracted binaries,
+objects, ELFs, reference-containing patches, integer/hex/base64 byte dumps,
+previews, screenshots, converted fonts, animations and player exports are not.
+Never transmit those private reference bytes or fill unfinished code from them.
+Keep compiler, assembler, linker and runtime-library source or patches in their
+own licensed repositories, not this unlicensed repository. No leaks or SDK code.
+Runtime objects such as libgcc soft-float and `_call_via_rN` are built from the
+approved licensed containers using `recon/compiler-runtime.json`, never copied
+or reconstructed into this repository as C, assembly or data.
+
+Admissible sources: locally held ROMs, independent reconstruction here, decoded
+data, verified calls/relocations, and public language, hardware, compiler and
+format documentation. Never inspect another Golden Sun reconstruction's code,
+symbols, types, comments or conclusions. The sole exception is the credited
+Tarpman/Karathan compiler-and-flags identification. Unrelated projects can teach
+methodology, never supply target-specific facts. Melee's duplicate-family and
+typed-module approaches are examples, not Golden Sun source. Verify suspect
+visual behavior in an emulator rather than guessing from extracted pictures.
+
+`alchemy check publication --tree` enforces mechanical publication restrictions,
+including license markers, patches, foreign gitlinks, embedded media and raw
+JSON byte streams outside named typed `values`. Passing it is not permission.
+Only `agbcc` and `agscc` gitlinks are admitted. Asset builds reject unconsumed
+tracked game inputs; source tracking rejects previews and unregistered private
+inputs. A typed table comes from its consumer, not a renamed byte dump.
+
+## Completion and measurement
+
+Exact C is ordinary production C reproducing the **complete linked extent**
+under the approved route with zero differing bytes. Size, plausible behavior,
+similarity and isolated fragments are not proof. Include literal pools and
+follow shared epilogues, continuations, live registers and long branches. Never
+shorten expected bounds to fit a candidate. Reviewed main owners can be scored
+with `--size <complete-bytes>`; overlay sizes must equal the boundary resolver.
+Overlay code loads at `0x02008000`: resource offsets are not runtime addresses.
+Require inverse serialization and load round trips; BL-shaped literal data can
+also be rewritten by the loader. Bind from reference sites, not candidate offsets.
+
+**DONE = exact C + evidenced permanent assembly**, divided by audited executable
+bytes, separately for TBS ☀️ and TLA ⚓️. Report shared/game C and shared/game ASM
+parts, count each image range once, C before ASM. Common source does not duplicate
+credit within a game. Drafts, unknown code and private ROM-restored input earn
+nothing. Assembly-to-C conversions can leave DONE unchanged.
+
+Each game's `metrics/executable.json` is its sole committed denominator. A
+complete audit accounts for the main image and every overlay's executable
+intervals and excluded complement. Pending audits yield `?`, never estimates;
+new candidate audits remain under `out/` and cannot affect displayed scores.
+`out/<target>/reports/verified-code.json` records ROM hash, input fingerprint,
+source, category and credited ranges. TBS's full build produces its receipt;
+TLA's owner check produces its receipt without claiming a full ROM. Changed
+inputs invalidate it. Coverage, dashboard, README and prefixes read these same
+receipts; rendering cannot create credit. Current receipts cannot score old refs.
+
+Owner binary similarity is one minus unit-cost halfword edit distance divided
+by the larger halfword count, including pools. It is diagnostic, not semantic
+quality. Corpus similarity, if measured, must weight complete owners by reference
+bytes, count exact C as one and absent drafts as zero, and distinguish stale or
+unscored drafts from absent drafts. No corpus-wide partial percentage is currently
+established. Executable DONE, physical-ROM identification and full-ROM rebuilding
+are separate denominators and claims.
+
+### Assembly credit
+
+Unsuccessful searches, compiler non-emission, repeated scripts, register walls
+and large functions do not prove handwritten assembly. Retained ranges need
+positive `library` or `handwritten` provenance, evidence and nonempty proof or
+object identity, with byte comparison. Each range is reviewed independently;
+other ranges of its kind inherit nothing. `structured_scene_module` is a draft
+scene, not the retired `generated_call_script_module`. Classification stays in
+the existing main and overlay registries. Only Pascal changes credit standards.
+
+Pascal's specific exception: fixed overlay veneers reconstructed with the shared
+`SRC/SYSTEM/OVERLAY.INC` macro and per-overlay `ENTRY.INC`/`IMPORT.INC` lists.
+Credit requires kind `veneer`, confidence `proven`, provenance credit
+`reconstructed_veneer`, the macro proof path, complete aligned eight-byte entries
+inside audited veneer ranges, and exact overlay/ROM reproduction. This proves
+assembly linkage reconstruction, not whether Camelot used a macro or generator.
+
+## Compiler integrity
+
+Game code uses the approved GCC 2.96 route; evidenced prebuilt-library families
+have fixed provenance-based routes. Commands live in
+`tools/alchemy/src/compiler/routing.rs`. Both games use the same bundle; TLA
+alone enables the approved `-mgs2` lowering moved into licensed `agscc` on
+September 13. This is reconstructed lowering, not recovered historical source.
+
+Apart from that TLA exception, modifications to agscc must restore historical
+stock Red Hat GCC 2.96. Diagnostic/host changes also need Pascal's approval,
+specific release/source evidence and fidelity proof. Only Pascal authorizes
+pins, executable hashes, family routes or output transformations. A better
+score, determinism, version string or approved pin does not supply provenance.
+
+No per-function flags/routes, invented flags, fixed-register C locals, empty
+barriers, forced scheduling, output patches or selected lucky runs. No volatile
+ordinary RAM, dummy/duplicate/overwritten stores or `do { } while (0)` barriers.
+Withdraw a trick-dependent match, preserve its dossier, and leave uncredited
+assembly rather than protect the percentage. Volatile is justified for I/O,
+video/palette memory and genuinely interrupt-shared state.
+
+Inline assembly is allowed only in an evidenced shared macro implementing a
+recurring machine interface the approved compiler cannot emit, never a per-owner
+scheduling patch. The token-pinned `Dma_Set` in TBS `INCLUDE/DMA.H` is admitted
+with its full instruction/operand/clobber contract. Its internal registers do
+not authorize caller register forcing. Do not change it or admit fill macros
+silently; `raw/classification.json` owns its family evidence.
+
+GNU GAS 2.10 assembles compiler output and unit slices, including alignment;
+modern binutils handles retained syntax and linking under the recorded ABI.
+Never suppress ABI errors. Cache identity includes the executable bundle.
+Uppercase `.C` is explicitly C, never inferred as C++. Compiler-emitted two-byte
+overlay alignment gaps may be declared as `compiler_gaps` only between adjacent
+exact owners and compared from actual emitted sections. Do not synthesize fill
+from the ROM or alter owner extents to count it.
+
+## Source and shared interfaces
+
+Keep a shallow module tree, not one file per function or a generic SHARED bucket.
+Area actors, dialogue and events stay with their separately loaded area module;
+one location can own several overlays and their address spaces never merge.
+`locations.tsv` and runtime map/resource evidence own placement. Japanese ROM
+names supply uppercase short romaji prefixes repeated for sorting, plus one area
+word: `RUNPA_DOU`, `RUNPA_JO`, `HAIDIA_MURA`, `HAIDIA_HEYA`. Use evidenced `MURA`,
+`MACHI`, `HEYA`, `DOU`, or `SAI` for a return scene. Record decoded labels and
+abbreviations in existing evidence. No resource codes, addresses, ordinal names,
+codenames, invented geography or English localization names as folder labels.
+Remove empty folders after moves; do not create empty symmetry between games.
+
+| SRC directory | Responsibility |
+| --- | --- |
+| SYSTEM | Startup, scheduling, memory, input, save, link, resource loading and overlay mechanics |
+| LIB | Game support/math; compiler runtime stays in its licensed container |
+| GRAPHICS | Display, palette, animation, tiles, text, windows and icons |
+| SOUND | Audio runtime, separate from sound assets |
+| GAME | Character, party, inventory, abilities, Djinn and flags |
+| FIELD/COMMON | Shared field engine, maps, camera, objects, events and scripts |
+| FIELD/location | A distinct loadable area and its exclusive assets |
+| FIELD/COMMON/locations | Distinct loadable modules serving several evidenced places |
+| BATTLE, MENU, DEBUG | Their game responsibilities |
+
+Native `SRC`, `INCLUDE`, `SOUND`, `TEXT` names use uppercase ASCII basenames and
+extensions. Registries retain established spelling. Use `Subsystem_VerbObject`,
+short `pos`, `cnt`, `tbl`, `buf`, `work` locals and ordinary C89, preserving bugs.
+Unknown fields stay explicit offsets or `unk`; `pad` means proved padding.
+Names are reading aids, not historical claims. Shared declarations/types have
+one header owner; do not duplicate declarations per caller or invent struct
+meaning to improve a score. Engine calls use registered names; bindings retain
+addresses. Legacy `Func_`, `Data_`, `Value_` names are forbidden in instanced
+sources/includes and migrated COMMON/LIB code.
+
+Resource directories live beside loaders at `SRC/SYSTEM/RESOURCE/DIRECTORY.JSON`;
+field selectors and naming rules live at `SRC/FIELD/COMMON/SCENE_TABLE.JSON` and
+`NAME_RULES.JSON`. Asset layout is `recon/assets.json`, not runtime source.
+Classification and provisional-source records stay outside SRC. Retained overlay
+listings and compression recipes live in `raw/overlays`, battle listings in
+`raw/battle`. `OVERLAY_DATA_DIRECTIVES_MAX` must not grow.
+
+### The Lunpa standard
+
+Read `SRC/FIELD/COMMON/KUUPUAPPU_RUNPA` and `RUNPA_SUHARA` as the finished-module
+examples. Names follow messages, call sites and consumers; types and symbolic
+IDs replace raw addresses and arithmetic. Keep coherent responsibility-based
+files and header prototypes, no alias defines, per-file bindings, BODY.INC
+wrappers or variant scaffolding. `FIELD_EVENT.H` services bind through named
+Engine entry points and reproduce the separate argument loads; bindings from
+the unit win over legacy aliases. Do not impose these wrappers on another
+function without checking its actual call interface.
+
+Typed const tables and consumer-derived macros live with their readers; a unit's
+`data` record links rodata through `AlchemyData_<address>`. Listings keep veneer
+includes, placeholders and alignment. Unexplained data stays on the explicit
+`recon/showcase.json` allowlist and is reported. Comments describe the game;
+register/pool/compiler reasoning belongs in dossiers. Rescore every affected
+unit and keep overlay audit clean. `alchemy check showcase` enforces registered
+folders and their headers; never unregister a folder to pass it.
+
+### Editions, instances and both games
+
+TBS editions share source. `INCLUDE/VERSION.H` selects exactly one of
+`TBS_EDITION_JA`, `EN`, `DE`, `ES`, `FR`, `IT`; English is production default.
+Only measured code changes justify conditionals or source variants. Keep text
+and relocated addresses in assets/bindings, never copied language source trees.
+Optional unit `editions` declare complete reviewed owner addresses/extents,
+variants and explicit symbols where sites change. Candidate lengths and offsets
+cannot invent these facts. `alchemy cross-edition --edition-build OUTPUT OWNER`
+proves the selected complete owner; `--all-overlays --edition-build` checks every
+member of shared units for six editions. Failed editions fail the command.
+
+A module linked into multiple images is one source unit with `instances`, each
+with every member's complete placement and explicit differing bindings, gaps
+and editions. Each member calls the same main target or its instance's named
+member; do not substitute address macros. `alchemy score --unit ID --all-instances`
+proves the family. Parking a member parks that instance. Units with linked
+`data` have no instances. A `main` instance needs its own imports/placements,
+without overlay fallbacks or gaps. Check siblings before and after adoption;
+all binding-equivalent twins join the unit in the same batch. The adoption gates
+and `make verify` enforce that; JA/TLA similarity leads remain uncredited.
+
+Source shared by both games lives once in `games/COMMON/SRC/<module>` only after
+both independently compile it exact. Declarations live in
+`games/COMMON/INCLUDE/<module>`, included through each game's INCLUDE. Registers
+use `../../COMMON/SRC/...`; each game retains its own compiler route, placements
+and ROM. TLA `alchemy check tla-owners roms/tla-en.gba` verifies complete main and
+overlay owners and full overlays carrying assembly credit; it does not rebuild
+all TLA. Its missing consumers or one game's missing registration fail sharing.
+Only nested .C/.H belong under COMMON. Prove Japanese and cross-game correspondence
+before making sharing claims; assets need their own evidence.
+
+## Assets and local viewers
+
+Track editable inputs only when their build consumes them. Runtime tables with
+known consumers become typed C. JSON owns reconstruction registries/layouts,
+PNG pixels, WAV samples, MIDI sequences and UTF-8 PO localized text; do not add
+formats just to rename metadata. Encoders derive whatever they can: layouts are
+caller data, not hard-coded Golden Sun logic inside portable codecs.
+
+Area-exclusive assets follow proved consumers. Shared maps live in FIELD/COMMON,
+shared tiles/palettes in GRAPHICS/COMMON, character banks in GRAPHICS/CHARACTER,
+glyphs in GRAPHICS/FONT and mixed UI banks in GRAPHICS/TILE. Sound assets use
+SOUND/{SEQUENCE,SAMPLE,INSTRUMENT}, audio runtime uses SRC/SOUND, and messages
+use TEXT. No generic ASSETS tree. Confirm character names from Japanese messages
+and runtime descriptors before `CHAR_<ROMAJI>.PNG` or `BATTLE_<ROMAJI>.PNG`;
+unproven/shared banks remain CHAR_COMMON.PNG / COMMON.JSON. Palette indices and
+all 16 palette bits are preserved. Frame order and runtime association outrank
+visual resemblance. The glyph table is 224 records of two-byte advance plus 15
+two-byte bitmap rows, not 7,168 bytes of undifferentiated pixels.
+
+`SOURCE.JSON` owns checksummed private map/graphics inputs, even when named PNG
+or JSON. `alchemy build assets --extract-sources ROM [--target tla-en]` restores
+them from the registered local ROM; `--extract-missing-sources ROM` installs only
+absent inputs. Ordinary builds restore missing private sources, then encode and
+compare; `--source-only` builds without ROM access. This is not permission for
+fallback code or guessed blank map edges. ROM_HEADER.JSON omits the cartridge
+logo, whose BIN remains private. Byte equality proves storage, not image geometry,
+colors or behavior; verify consumers or emulate before rearranging artwork.
+
+Compression plans retain decisions, not copied literal streams. The shared
+COMPRESSION.TOKENS table, predictor and bounded exceptions describe unresolved
+encoder choices. `--compact-plans PLAN` and `--derive-plans PLAN` verify exact
+inverse/encoded output before writing. At most three trailing `lookahead` bytes
+are admitted; `make plan-tails-check` enforces it. Retire derivable recipes.
+
+TEXT/{JA,EN,DE,ES,FR,IT}.PO uses numeric msgid, editable msgstr and context
+`message`. Named commands and explicit unknown glyph tokens preserve controls.
+The encoder derives Huffman models, lengths and directories; equal keys need
+not mean equal text across editions. `--extract-text [TARGET]` reconstructs exact
+catalogs; `--verify-text [TARGET]` rebuilds archives. `recon/text.json` owns layout
+and identity. Archive equality does not claim a regional ROM build.
+
+GRAPHICS/REVIEW.JSON owns identification. `--review-images OUTPUT` regenerates
+private sheets; `make review-images-check` checks sorted names, dimensions,
+indices and RGBA independently of PNG compression. Deliberate presentation
+changes require visual review before `--update-baseline`. All previews remain
+under stable ignored output directories, never tracked or published. Root
+PROGRESS.svg is the sole public coverage figure: 830-wide viewBox, 9:16 aspect,
+repository names/measurements only, no embedded game font, image or sound.
+
+The local dashboard at 127.0.0.1:4650 separates actual Files (disk bytes), ROM
+coverage (physical cartridge bytes), Music, Maps and Text. Coverage uses complete
+physical indexes from `alchemy coverage audit --target TARGET --data` or `--all
+--data`; unique verified correspondence transfers kind labels across editions,
+compression recognition alone does not. Every physical byte appears once.
+Audits are explicit, calibrated against TBS, write candidate reports and never
+silently replace the committed executable inventory. Current inputs invalidate
+stale reports. The dashboard watches inputs, not its executable: restart after
+tooling changes with `make dashboard-restart`.
+
+Music playback is bounded, approximate synthesis, not fidelity proof; missing
+instruments refuse rather than substitute General MIDI. Text compares build PO
+catalogs by physical key. Maps decode from the checksummed ROM through the shared
+assembler, not saved renders; actors, animation and script scrolling are not
+simulated. Same-origin routes do not expose arbitrary paths. Only Maps uses a
+local browser module; other pages prohibit scripts, remote scripts/fonts are
+never loaded. Labels use fixed 13px system text and addresses stay in details.
+
+`alchemy build assets --network ROM --target TARGET -o OUTPUT --scenes LIST
+--expand --world` follows exits and assembles rooms until story-dependent exits
+or world boundaries. Cyan A tiles cut packed rooms; palette variants can be
+story states. Rooms meet door arrivals, world-map direction positions places,
+stairs separate floors by three metres (16 pixels/metre), and contained rooms
+draw below their containing place. Outputs and 3D viewers contain game pictures
+and stay local/private. Picture appearance alone cannot prove placement.
+
+## Tooling index
+
+Prefer existing commands. There are two hosts and two crates; every immediate
+tool directory must appear here, enforced by `make tooling-index-check`.
+**Alchemy builds, Psynergy reads:** Alchemy owns game policy, paths, state,
+compilation, encoding, linking and verification. Psynergy owns portable reading,
+decoding, analysis and comparison over explicit input. No game-default ROMs,
+owners or compiler routes in Psynergy, no aliases exposing an operation in both.
+
+| Tool | Responsibility |
+| --- | --- |
+| [alchemy](tools/alchemy/) | Golden Sun command dispatch, twelve-target registry, owner lookup and extraction, source adoption, scene integration, compiler routes and provenance, candidate compilation, bindings, translation units, residual classification, matching catalog, overlay loading, serialization, assembly and audits, ROM stages, asset manifests, map networks, coverage, publication checks and dashboard. Its `compiler`, `recovery`, `score`, `matching`, `overlay`, `coverage` and asset and build modules are project integration. |
+| [psynergy](tools/psynergy/) | Portable Thumb and objdump decoding, lifetime analysis, C recovery, normalization and alignment, structural and byte comparison, relocation-masked twin search, bounded C repair enumeration, GCC allocation-dump reading, format conversion, explicit subprocess execution, atomic writes, transactional cache storage, and image, MIDI, WAV, text, pixel, Huffman and LZ codecs. Callers supply addresses, symbols, paths, keys, formats and layouts; no Golden Sun owners, default ROMs or compiler routes. |
+
+| Portable command | Responsibility |
+| --- | --- |
+| `psynergy decompile` | Recover draft C from an image with explicit base, entry and span; optional name and output. |
+| `psynergy disassemble` | Read reachable Thumb instructions in the same explicit image window; no owner lookup or game symbol annotations. |
+| `psynergy diff` | Compare two supplied binary files, including length differences; `--width 1\|2\|4` sets the comparison unit. Exit 0 means equal bytes, 1 differences, 2 invalid input. No compilation or relocation. |
+| `psynergy repair` | Enumerate one or two caller-named, guarded source repairs. Report the finite space; `--choice N` emits one alternative, optionally to `--out FILE`. No scoring, compiler selection or adoption. |
+| `psynergy inspect allocator` | Read existing `.rtl`, `.lreg` and `.greg` GCC dumps from an explicit directory; no compiler invocation. |
+| `psynergy convert` | Convert files using the directional formats below. No ROM offsets, engine headers or asset manifests. |
+
+| Golden Sun command | Responsibility |
+| --- | --- |
+| `alchemy extract` | Resolve an owner and extract its reference bytes under ignored `out/`. |
+| `alchemy inspect` | Resolve project call sites and symbols; `--asm` adds annotated owner disassembly; `--siblings` lists relocation-masked twins across images with status and binding equivalence. |
+| `alchemy score` | Compile a candidate or whole declared unit with the approved route and compare its complete owner, including bindings and overlay serialization; `--unit ID --instance IMAGE \| --all-instances` scores unit instances, including explicitly declared main-image placements. It prints the scored owner's twin count and aligned halfword binary similarity (see [Completion](#completion-and-measurement)). |
+| `alchemy match` | Resolve an owner, obtain a decoder-named repair, then compile and score bounded Psynergy alternatives under project policy. `--acceptance-test` checks the five catalog fixtures. |
+| `alchemy adopt` | Verify and install a standalone overlay candidate; main integration uses `alchemy check integrate`. |
+| `alchemy unit` | `scaffold` declares a main unit; `flatten` consolidates a verified overlay under project ownership. |
+| `alchemy bootstrap` | Build and install a missing compiler toolchain from pinned sources. `--check` validates without building; `--build` rebuilds; `--from BUNDLE` imports an admitted distribution. |
+| `alchemy build` | `compilers`, `asm`, `claimed`, `full`/`rom`, `assets` and `allocator`. Compiler source builds do not install a distribution. The allocator stage generates canonical GCC dumps for Psynergy inspection. `assets --network` draws map networks and assembles worlds ([Assets](#assets-and-local-viewers)). |
+| `alchemy verify` | Run the staged repository's verification contract. |
+| `alchemy coverage` | Rebuild and publish project coverage. `audit --target TARGET` inventories every ROM resource-directory pointer, physical spans only for byte-reproduced compressed streams, candidate executable overlay spans from canonical streams and assembler source-line evidence, and the bounded main image as the exact complement of ROM-verified asset regions. Raw pointers are hierarchical and never treated as file extents. `--calibrate` must reproduce the completed TBS audit before any executable method can become authoritative. The audit writes a candidate under `out/`; it never edits the committed scoring manifest. |
+| `alchemy check` | `publication`, `commit-progress`, `source-tracking`, `owners`, `tla-owners`, `retained`, `coverage`, `integrate`, `no-asm`, `plan-tails`, `overlay-data`, `progress`, `routes`, `showcase` and `siblings`: repository contracts, not portable file operations. `progress` combines the canonical executable inventory with the current verified build receipt ([Completion](#completion-and-measurement)); `--json` reports DONE and exact C separately, and `--write-report` writes that same result under `out/`. |
+| `alchemy cross-edition` | Compare reviewed owner correspondence across Golden Sun editions. |
+| `alchemy overlay` | `adopt`, `park`, `audit` and `export`: Golden Sun loader, resource integration and byte-identical retained-source export. |
+| `alchemy dashboard` | Serve Files, ROM coverage, Music, Maps and six-edition Text debugging tabs locally. |
+| `alchemy format` | Format native JSON; `--check` gates formatting and uppercase names. |
+
+Retired entry points are rejected, not forwarded. Use Psynergy for `decompile`,
+`disassemble`, `diff`, `repair` and `convert`; annotated owner disassembly is
+`alchemy inspect OWNER --asm`. Historical dossier commands are transcripts,
+not instructions to resurrect aliases. `alchemy score --target tla` selects
+TLA explicitly; arbitrary ROM overrides cannot substitute a reference. Scoring
+one exact unit member still verifies the unit. Default work lives in out/score.
+
+Portable tooling is capped at 100,000 Rust/TypeScript/JavaScript/CSS lines by
+`make tooling-size`. Only Pascal can change scope or ceiling. New machinery
+must fix a demonstrated recurring blocker, reuse/replace existing code, and
+prove a conversion with regression coverage. Do not hide growth in wrappers.
+`alchemy format` preserves JSON values, field order and boundaries using the
+native two-space/120-column style and packed short tuples.
+
+`psynergy convert FORMAT INPUT OUTPUT` supports decode-lz, words2bin, pairs2bin,
+tilemap2bin, png2bpp4, bpp42png, png2bpp8, bpp82png, png2bgr555, wav2pcm8 and
+pcm82wav. Bpp is tile-major, palettes little-endian BGR555, PCM8 signed; reverse
+tiles need palette/tiles-wide, PCM-to-WAV needs rate, WAV input is mono 8-bit.
+Invalid ranges, transparency and overwrites refuse. Engine headers stay in game
+manifests. Encoding/repair operations still crossing the builds/reads boundary
+are open work below, not permission to invent a third host.
+
+## Build, verify and commit
+
+Install Rust and Ninja, supply checksum-approved ROMs under ignored `roms/`,
+initialize submodules in the main checkout and install hooks:
+
+```sh
+git submodule update --init
+git config core.hooksPath .hooks
+make compiler-source-check
+make bootstrap
+./alchemy --help
+./psynergy --help
+```
+
+Bootstrap builds pinned agscc/agbcc and checksum-pinned official GNU binutils
+2.10 and 2.33.1, retaining upstream source untouched under out/compilers.
+It installs six hash-checked executables under tools/compilers and native modern
+binutils under tools/binutils; the launcher sets PATH and builds tooling offline.
+`bootstrap --check` validates, `--build` builds, `make bootstrap BUNDLE=PATH`
+imports an admitted distribution. It refuses different existing installations
+and never admits hashes. `make compiler-sources` builds without installing or
+admitting binaries. A source build is not necessarily an approved distribution;
+new hashes/hosts still need Pascal's authorization and reproduction evidence.
+Worktrees can link the main checkout's roms and complete tools/compilers.
+
+Use narrow scores/builds while iterating: build-claimed, build-asm, build-assets,
+overlay-check and check-owners. Full assets, coverage and twelve-edition checks
+are not part of every source spelling. Before committing, stage explicit paths:
+
+```sh
+git diff --cached --check
+make verify
+make progress-subject
+```
+
+The index/worktree must agree. Verify rejects unstaged tracked changes and
+untracked files, and checks the staged source, full TBS EN ROM, overlays,
+units/instances, owners, siblings, ordinary C, compiler provenance, documents
+and tracked publication. It does not rescore all drafts or rebuild twelve ROMs.
+`make verify-clean` deletes generated output and runs the gate from scratch.
+
+| Changed surface | Additional check |
+| --- | --- |
+| Ownership, labels, coverage | `make coverage` |
+| Rust tooling or dashboard | `make test` |
+| Shared edition/preprocessor logic | `make targets` (compile-only) |
+| Assembly classification | `make classification-check` |
+| Candidate-corpus policy | `make candidate-corpus-check` |
+| Tooling or documents | `make tooling-index-check` |
+
+Coverage reads current verified receipts; rebuild stale source evidence first.
+Use `make audit` for exhaustive release/compiler/ownership checks and
+`make reports` to regenerate analysis, not in each edit loop. Report a known
+unrelated gate failure honestly; never reset unrelated work or bypass it.
+
+Commit subjects start with `make progress-subject`'s exact prefix, and agent
+commits include their Co-Authored-By trailer. The hook requires the verified
+staged tree. Push only when Pascal asks, only main, after coverage, verify and
+(tooling changes) tests pass on the committed tree. The pre-push publication
+gate checks outgoing history. No unrequested history rewrite, compiler/route/hash
+change, credit-standard change or tooling-ceiling increase.
+
+## Open work
+
+Maintain priorities here, not another checklist. Remove completed items and
+update invalidated facts in the same change. Detailed owner experiments stay in
+their existing game-specific dossiers. Never preserve an old blanket “bounce”
+list as authority over improved evidence or a different game at the same address.
+
+### TBS recovery
+
+- Pursue the active percentage goal through the ranked largest unresolved
+  functions and their exact dependencies, using the recovery loop above. Read
+  the current count with `make progress`; no second manually maintained total.
+  Main recovery is required; the remaining overlays alone cannot reach 75%.
+- Finish credible complete drafts across coherent modules, then tighten them by
+  shared causes. Missing drafts count as uncovered, but audit retired/surviving
+  C before claiming a function was never drafted. Discard misleading drafts,
+  salvage supported behavior, and do not chase local scheduling before fixing
+  structure, types, boundaries and calls. Draft coverage is not quality proof.
+- Use the reviewed DMA primitive for surrounding C. Remaining save/checksum,
+  zero initialization, rendering generation and decompressor callers need their
+  own structure/lifetimes recovered. Fill macros are unadmitted. Save checksum
+  and heap-decompressor local residual searches are parked in their dossiers;
+  the VRAM cache and DMA unit context is now available as evidence to callers.
+- September 19's exact-twin census found no uncredited matches among 4,235 scanned
+  owners; reopen only after source, membership, bindings or inventory changes.
+- September 20 nested-function recoveries prove particle helpers (200 bytes),
+  tile helpers (168) and link helpers (464) through real enclosing contexts.
+  Enclosing parents remain retained. Reuse shared VRAM/render/battle types and
+  verify unsigned runtime targets before revisiting their callers. Preview and
+  target-selection nested helpers remain scored drafts, not adopted C.
+- Continue world-map module recovery at resource_371:020039fc, 020024a8,
+  02002768, 020027dc, 0200384c, 02004058, 020001c4 and 020006ec from their
+  complete drafts/dossiers: transfer-queue interface, table loops, prototypes,
+  field access and ip-return/Q16 multiply context precede allocation searches.
+- Revisit Korima Bridge resource_391:02002974 only with new early-zero lifetime
+  evidence; resource_38f:020027ac has different bindings. Debug item menu
+  resource_3ce:02000cf4 needs DMA source form and loop order; alignment at
+  02001186 remains unresolved. Raribero resource_3c7:020000c8 is one 148-byte
+  owner with a missing audited literal at 02000150..02000154; repair the audit
+  before claiming complete overlay recovery.
+- Recorded floors such as resource_3bd:020013f8, the SpawnConfiguredEffect
+  family, and main allocation/scheduling residuals require new evidence, not
+  repeated spelling searches. Check their dossiers and current source: past
+  classifications and stale names are not proof of impossibility.
+- Extend the Lunpa source standard along these dependency paths. Remove legacy
+  address names from remaining COMMON/LIB interfaces as verified callers migrate.
+
+### TLA and twelve editions
+
+- Repair the compile-only TLA script-operand unit contract: 38 exact owners are
+  declared but OPERANDS.C defines three additional unresolved named helpers.
+  Declare full membership without crediting those helpers. Earlier GET_BYTE.C /
+  GameFlagBytes binding failures are historical leads; rerun to identify the
+  current first failure rather than keeping competing diagnoses.
+- Only TBS EN supports full-ROM build. Preserve guards on the other eleven
+  targets until each has complete edition link layouts, source/assembly bindings
+  and regional asset manifests and an independently byte-identical full image.
+  All twelve physical indexes and exact text archives are separate achievements.
+- Grow TLA through complete verified shared modules and its own fixed executable
+  inventory. Keep the existing object/motion, inventory and Djinn recoveries;
+  small scheduling floors remain uncredited in their dossiers. Do not inherit
+  TBS compiler-family membership from a name or address resemblance.
+- Pascal approved a bounded TLA shared constant-lowering experiment on September
+  19. The isolated compiler work and evidence for main:080b0ab8 live in that
+  dossier; no experimental compiler is installed. Broader synthesis regressed
+  exact message owners; keep one game-wide option set and existing controls.
+- Continue TLA main:08120454 using exact TBS main:080bbb0c as its control.
+  Reconstruct command access, field layouts, raw power, counter lifetimes and
+  guards; neither the approved nor experimental candidate is exact. Detailed
+  scores belong to the TLA dossier, not this priority list.
+- TLA staged actors resource_64e:02000314–0200056c remain nonexact shared-module
+  candidates; two hypotheses failed and an 18-overlay survey supplies leads only.
+  Field operands 08025bb4, 08025c5c, 08025f9c remain scheduling floors. Do not
+  repeat their five failed hypotheses or treat layout-only C as credit.
+- Venus resource_64d:02000510 has its complete 5,404-byte draft maintained at
+  recon/en/overlays/resource_64d_c_02000510.c. Fix the lifter's
+  duplicated lookups, extra end calls and volatile actor RAM before repeating
+  this family. The first constant-synthesis mismatch is not fixed by equivalent
+  integer spellings. Its dossier records loaded bounds and bindings.
+- Keep 28 further overlay exports private: their raw integer payloads do not
+  become publishable because the complete images reproduce. Their owners/results
+  are in TLA dossiers. Correct DAIRA to DERI using Japanese message 0xe62 in a
+  verified migration; Japanese place-name base 0xe5a differs from English 0xe58.
+- Finish edition-local data identification and Japanese correspondence from
+  actual readers and byte proofs, not broad AI guesses or copied source trees.
+
+### Remaining project work
+
+- Complete the Alchemy-builds/Psynergy-reads boundary for encoders and source
+  repair operations still in Psynergy, updating callers and this tooling index.
+- Close unknown executable gaps, reduce raw overlay data directives, derive
+  remaining compression lookahead/recipes, identify music titles from evidence,
+  and place exclusive assets with proved consumers. Admit other compiler hosts
+  through the existing evidence/approval process.
+- Map viewer: derive TBS walking/collision boundaries, add story-state and
+  within-floor draw-order controls, resolve the twelve Anemos/Atteka inlet links
+  offset by 16–80 pixels and scene 239's warp semantics, and assemble remaining
+  world families. No guessed geometry promoted as fact.
+- A future demo intercuts the end of TBS with the start of TLA. First make every
+  required scene exact in both ROMs; staff rolls and title screens are excluded.
+- At 100%: twelve independently exact clean builds, evidenced source sharing,
+  maintained editable assets and coherent modules; then open contributions.

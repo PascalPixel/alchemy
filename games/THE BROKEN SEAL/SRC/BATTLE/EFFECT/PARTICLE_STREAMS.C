@@ -40,6 +40,7 @@ void **Func_080b5098(s32);
 void Func_080cd594(s32);
 void Func_080d6888(s32, s32, s32, s32, s32);
 void Func_080f9010(s32);
+#define Audio_PlayCue Func_080f9010
 void Func_080c9048(void);
 void Func_080041d8(s32, s32);
 void Func_080cd104(s32, s32);
@@ -258,7 +259,7 @@ s32 BattleEffect_RunParticleStreams(s32 arg0, s32 arg1)
         (*(s32 *)((u8 *)(temp_r2_46) + (0x28))) = 0xA0000;
         (*(s32 *)((u8 *)(temp_r2_46) + (0x48))) = 0x91EB;
         Func_080d6888((*(s32 *)((u8 *)((*(void **)((u8 *)(*sp3C) + (0x7828)))) + (8))), -1, 2, -1, 0);
-        Func_080f9010(0x91);
+        Audio_PlayCue(0x91);
         sp40 = sp4C;
         if ((*(s32 *)((u8 *)((*(void **)((u8 *)(*sp3C) + (0x7828)))) + (4))) != 1) {
             sp40 = -1;
@@ -439,7 +440,7 @@ loop_47:
 block_56:
         if (var_fp_590 == 0) {
             sp8 = temp_r4_611;
-            Func_080f9010(0x8D);
+            Audio_PlayCue(0x8D);
         }
         var_r8_649 = 0;
         do {
@@ -695,10 +696,10 @@ loop_121:
         Func_080e727c(2, 2, 2);
     }
     if (var_fp_1329 == 0) {
-        Func_080f9010(0x9C);
+        Audio_PlayCue(0x9C);
     }
     if (var_fp_1329 == 0x28) {
-        Func_080f9010(0x91);
+        Audio_PlayCue(0x91);
     }
     if (var_fp_1329 == 0x30) {
         if (sp4C == 1) {

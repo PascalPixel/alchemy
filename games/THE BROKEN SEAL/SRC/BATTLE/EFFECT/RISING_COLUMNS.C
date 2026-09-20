@@ -26,6 +26,7 @@ void Func_080e396c(s32, s32 *);
 s32 Func_080ed408(s32, s32, s32, s32, s32);
 void Func_080041d8(s32, s32);
 void Func_080f9010(s32);
+#define Audio_PlayCue Func_080f9010
 void Func_080d6888(s32, s32, s32, s32, s32);
 s32 Func_080022fc(s32, s32);
 void Func_080e155c(s32, s32);
@@ -80,7 +81,7 @@ void BattleEffect_RunRisingColumns(Effect *effect)
     frame = 0;
     do {
         if (frame == 32) {
-            Func_080f9010(143);
+            Audio_PlayCue(143);
             for (i = 0; i != WORK_EFFECT->count; i++)
                 Func_080d6888(WORK_EFFECT->actors[i], 7, 5, i, 16);
         }

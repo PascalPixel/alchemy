@@ -98,6 +98,7 @@ void Func_080bb928(struct BattlePlaybackState *state, s32 value);
 void Func_080c24f0(s32 actor_id, s32 mode);
 s32 Func_080c2368(s32 class_id);
 void Func_080f9010(s32 sound_id);
+#define Audio_PlayCue Func_080f9010
 
 
 #define REG_DISPCNT_SUB (*(volatile u32 *)0x03001e40)
@@ -162,7 +163,7 @@ void BattleEvent_Playback(void)
 
                     switch (state->events.opcodes[event_index]) {
                     case BATTLE_EVENT_SOUND:
-                        Func_080f9010(state->events.operands[event_index]);
+                        Audio_PlayCue(state->events.operands[event_index]);
                         break;
                     case BATTLE_EVENT_SCRIPT_UPDATE:
                         Func_080bb928(
@@ -214,7 +215,7 @@ void BattleEvent_Playback(void)
                         struct BattleObjectSlot *slot;
 
                         if (state->animation_timer > 0)
-                            Func_080f9010(state->animation_timer);
+                            Audio_PlayCue(state->animation_timer);
                         state->actor_id = state->events.operands[event_index];
                         slot = GetBattleObjectSlot(
                             state->events.operands[event_index]);
@@ -340,7 +341,7 @@ void BattleEvent_Playback(void)
                 || (BATTLE_INPUT_2 & 0x303)
                 || ((u32)(FRAME_COUNTER - state->timer) > 10
                     && (BATTLE_INPUT & 0x303))) {
-                Func_080f9010(0x6f);
+                Audio_PlayCue(0x6f);
                 state->phase = 2;
                 state->timer = 0;
                 continue;
@@ -396,7 +397,7 @@ void BattleEvent_Playback(void)
                         sound--;
                         if (sound < 0)
                             sound = 0;
-                        Func_080f9010(sound + 0x92);
+                        Audio_PlayCue(sound + 0x92);
                     }
                     state->timer = 0x400;
                 }
@@ -409,7 +410,7 @@ void BattleEvent_Playback(void)
                     sound = Func_080c2368(
                         BattleUnit_Get(state->actor_id)->class_id);
                     if (sound >= 0)
-                        Func_080f9010(sound + 0x92);
+                        Audio_PlayCue(sound + 0x92);
                 }
                 if (state->timer >= 0x400) {
                     s32 step;

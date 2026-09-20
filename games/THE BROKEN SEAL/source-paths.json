@@ -19035,6 +19035,9 @@
     },
     "main:080b9604": {
       "name": "BattleLink_ReceiveActions"
+    },
+    "main:080be18c": {
+      "name": "BattleCommand_SelectTargets"
     }
   }
 }

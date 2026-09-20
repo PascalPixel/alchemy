@@ -6743,6 +6743,11 @@
       "local_symbols": [],
       "owners": [
         {
+          "address": "0x080be18c",
+          "extent": 492,
+          "state": "retained-assembly"
+        },
+        {
           "address": "0x080be378",
           "extent": 1012,
           "state": "retained-assembly"

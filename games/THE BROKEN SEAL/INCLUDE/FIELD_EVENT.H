@@ -272,6 +272,7 @@ void Engine_ActorWalkTo(s32 actor, s32 x, s32 z);
 void Engine_ActorWalkBy(s32 actor, s32 dx, s32 dz);
 void Engine_ActorWaitForMove(s32 actor);
 void Engine_ActorFaceDirection(s32 actor, s32 facing, s32 frames);
+void Engine_ActorTurnToAngle(s32 actor, s32 angle, s32 frames);
 void Engine_ActorFaceActor(s32 actor, s32 target, s32 frames);
 void Engine_ActorFaceEachOther(s32 actor, s32 other, s32 frames);
 void Engine_ActorSetAnimation(s32 actor, s32 animation);
@@ -468,6 +469,11 @@ static inline void Actor_WaitForMove(s32 actor)
 static inline void Actor_FaceDirection(s32 actor, s32 facing, s32 frames)
 {
     Engine_ActorFaceDirection(actor, facing, frames);
+}
+
+static inline void Actor_TurnToAngle(s32 actor, s32 angle, s32 frames)
+{
+    Engine_ActorTurnToAngle(actor, angle, frames);
 }
 
 static inline void Actor_FaceActor(s32 actor, s32 target, s32 frames)

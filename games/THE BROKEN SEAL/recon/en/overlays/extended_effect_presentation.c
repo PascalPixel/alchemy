@@ -1,4 +1,6 @@
 #include "TYPES.H"
+#include "OBJECT_RUNTIME.H"
+#include "FIELD_EVENT.H"
 
 #define Scene_RunExtendedEffectPresentation Func_02001410
 
@@ -124,16 +126,17 @@ void Scene_RunExtendedEffectPresentation(void)
 {
     u8 *work;
     u8 *effect;
-    u8 *actor0;
+    struct ObjectRuntime *actor0;
     u8 *actor15;
     u8 *textureBuffer;
-    u8 *actor1;
+    struct ObjectRuntime *actor1;
     u8 *record;
     s32 step;
     s32 frame;
     s32 flags;
     s32 horizontalStep;
-    s32 actor0Sprite;
+    struct FieldSprite *actor0Sprite;
+    struct FieldSprite *actor1Sprite;
     s32 prompt;
     s32 zero;
     s32 delay;
@@ -185,15 +188,16 @@ void Scene_RunExtendedEffectPresentation(void)
     Call2(Func_020035ec, 0x10000, 0);
     Func_020035f4(40);
     Func_020034cc(40);
-    actor0 = Pointer1(Func_020034ec, 0);
-    actor1 = Pointer1(Func_020034ec, 1);
+    actor0 = (struct ObjectRuntime *)Pointer1(Func_020034ec, 0);
+    actor1 = (struct ObjectRuntime *)Pointer1(Func_020034ec, 1);
     horizontalStep = 0x6000;
-    actor0Sprite = *(s32 *)(actor0 + 80);
+    actor0Sprite = actor0->animation;
+    actor1Sprite = actor1->animation;
     do {
-        *(u16 *)(actor0Sprite + 30) += 0x100;
-        *(u16 *)((s32)*(u8 **)(actor1 + 80) + 30) += -256;
-        *(s32 *)(actor0 + 8) += horizontalStep;
-        *(s32 *)(actor1 + 8) = (*(s32 *)(actor1 + 8) - horizontalStep);
+        actor0Sprite->rotation += 0x100;
+        actor1Sprite->rotation -= 0x100;
+        actor0->x += horizontalStep;
+        actor1->x -= horizontalStep;
         Func_020033e4(1);
         frame = (frame + 1);
     } while ((u32)frame <= 19);

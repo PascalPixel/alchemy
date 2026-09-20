@@ -41,25 +41,23 @@
         "codec": "golden-sun-general-lz",
         "decoded_size": 9,
         "encoded_size": 8,
-        "tokens": [["l", 3], ["c", 6, 2]],
+        "tilemap_length": 8,
         "lookahead": "",
         "component": "map-metatiles-2x2",
         "transform_mode": 0,
         "metatiles": 1,
         "tilemap_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",
-        "tilemap_offset": 362464,
-        "tilemap_length": 8
+        "tilemap_offset": 362464
       },
       "descriptors": {
         "format": 1,
         "codec": "golden-sun-general-lz",
         "decoded_size": 4,
         "encoded_size": 8,
-        "tokens": [["l", 1], ["c", 3, 1]],
+        "records": [[0, 0, 0, 0]],
         "lookahead": "0000",
         "component": "map-descriptors-4byte",
-        "record_size": 4,
-        "records": [[0, 0, 0, 0]]
+        "record_size": 4
       },
       "sparse_cells": {
         "format": 1,
@@ -126,25 +124,23 @@
         "codec": "golden-sun-general-lz",
         "decoded_size": 9,
         "encoded_size": 8,
-        "tokens": [["l", 3], ["c", 6, 2]],
+        "tilemap_length": 8,
         "lookahead": "",
         "component": "map-metatiles-2x2",
         "transform_mode": 0,
         "metatiles": 1,
         "tilemap_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",
-        "tilemap_offset": 362464,
-        "tilemap_length": 8
+        "tilemap_offset": 362464
       },
       "descriptors": {
         "format": 1,
         "codec": "golden-sun-general-lz",
         "decoded_size": 4,
         "encoded_size": 8,
-        "tokens": [["l", 1], ["c", 3, 1]],
+        "records": [[0, 0, 0, 0]],
         "lookahead": "0000",
         "component": "map-descriptors-4byte",
-        "record_size": 4,
-        "records": [[0, 0, 0, 0]]
+        "record_size": 4
       },
       "sparse_cells": {
         "format": 1,
@@ -211,25 +207,23 @@
         "codec": "golden-sun-general-lz",
         "decoded_size": 9,
         "encoded_size": 8,
-        "tokens": [["l", 3], ["c", 6, 2]],
+        "tilemap_length": 8,
         "lookahead": "",
         "component": "map-metatiles-2x2",
         "transform_mode": 0,
         "metatiles": 1,
         "tilemap_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",
-        "tilemap_offset": 362464,
-        "tilemap_length": 8
+        "tilemap_offset": 362464
       },
       "descriptors": {
         "format": 1,
         "codec": "golden-sun-general-lz",
         "decoded_size": 4,
         "encoded_size": 8,
-        "tokens": [["l", 1], ["c", 3, 1]],
+        "records": [[0, 0, 0, 0]],
         "lookahead": "0000",
         "component": "map-descriptors-4byte",
-        "record_size": 4,
-        "records": [[0, 0, 0, 0]]
+        "record_size": 4
       },
       "sparse_cells": {
         "format": 1,
@@ -296,25 +290,23 @@
         "codec": "golden-sun-general-lz",
         "decoded_size": 9,
         "encoded_size": 8,
-        "tokens": [["l", 3], ["c", 6, 2]],
+        "tilemap_length": 8,
         "lookahead": "",
         "component": "map-metatiles-2x2",
         "transform_mode": 0,
         "metatiles": 1,
         "tilemap_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",
-        "tilemap_offset": 362464,
-        "tilemap_length": 8
+        "tilemap_offset": 362464
       },
       "descriptors": {
         "format": 1,
         "codec": "golden-sun-general-lz",
         "decoded_size": 4,
         "encoded_size": 8,
-        "tokens": [["l", 1], ["c", 3, 1]],
+        "records": [[0, 0, 0, 0]],
         "lookahead": "0000",
         "component": "map-descriptors-4byte",
-        "record_size": 4,
-        "records": [[0, 0, 0, 0]]
+        "record_size": 4
       },
       "sparse_cells": {
         "format": 1,
@@ -381,25 +373,23 @@
         "codec": "golden-sun-general-lz",
         "decoded_size": 9,
         "encoded_size": 8,
-        "tokens": [["l", 3], ["c", 6, 2]],
+        "tilemap_length": 8,
         "lookahead": "",
         "component": "map-metatiles-2x2",
         "transform_mode": 0,
         "metatiles": 1,
         "tilemap_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",
-        "tilemap_offset": 362464,
-        "tilemap_length": 8
+        "tilemap_offset": 362464
       },
       "descriptors": {
         "format": 1,
         "codec": "golden-sun-general-lz",
         "decoded_size": 4,
         "encoded_size": 8,
-        "tokens": [["l", 1], ["c", 3, 1]],
+        "records": [[0, 0, 0, 0]],
         "lookahead": "0000",
         "component": "map-descriptors-4byte",
-        "record_size": 4,
-        "records": [[0, 0, 0, 0]]
+        "record_size": 4
       },
       "sparse_cells": {
         "format": 1,
@@ -466,25 +456,23 @@
         "codec": "golden-sun-general-lz",
         "decoded_size": 9,
         "encoded_size": 8,
-        "tokens": [["l", 3], ["c", 6, 2]],
+        "tilemap_length": 8,
         "lookahead": "",
         "component": "map-metatiles-2x2",
         "transform_mode": 0,
         "metatiles": 1,
         "tilemap_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",
-        "tilemap_offset": 362464,
-        "tilemap_length": 8
+        "tilemap_offset": 362464
       },
       "descriptors": {
         "format": 1,
         "codec": "golden-sun-general-lz",
         "decoded_size": 4,
         "encoded_size": 8,
-        "tokens": [["l", 1], ["c", 3, 1]],
+        "records": [[0, 0, 0, 0]],
         "lookahead": "0000",
         "component": "map-descriptors-4byte",
-        "record_size": 4,
-        "records": [[0, 0, 0, 0]]
+        "record_size": 4
       },
       "sparse_cells": {
         "format": 1,
@@ -551,25 +539,23 @@
         "codec": "golden-sun-general-lz",
         "decoded_size": 9,
         "encoded_size": 8,
-        "tokens": [["l", 3], ["c", 6, 2]],
+        "tilemap_length": 8,
         "lookahead": "",
         "component": "map-metatiles-2x2",
         "transform_mode": 0,
         "metatiles": 1,
         "tilemap_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",
-        "tilemap_offset": 362464,
-        "tilemap_length": 8
+        "tilemap_offset": 362464
       },
       "descriptors": {
         "format": 1,
         "codec": "golden-sun-general-lz",
         "decoded_size": 4,
         "encoded_size": 8,
-        "tokens": [["l", 1], ["c", 3, 1]],
+        "records": [[0, 0, 0, 0]],
         "lookahead": "0000",
         "component": "map-descriptors-4byte",
-        "record_size": 4,
-        "records": [[0, 0, 0, 0]]
+        "record_size": 4
       },
       "sparse_cells": {
         "format": 1,
@@ -636,25 +622,23 @@
         "codec": "golden-sun-general-lz",
         "decoded_size": 9,
         "encoded_size": 8,
-        "tokens": [["l", 3], ["c", 6, 2]],
+        "tilemap_length": 8,
         "lookahead": "",
         "component": "map-metatiles-2x2",
         "transform_mode": 0,
         "metatiles": 1,
         "tilemap_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",
-        "tilemap_offset": 362464,
-        "tilemap_length": 8
+        "tilemap_offset": 362464
       },
       "descriptors": {
         "format": 1,
         "codec": "golden-sun-general-lz",
         "decoded_size": 4,
         "encoded_size": 8,
-        "tokens": [["l", 1], ["c", 3, 1]],
+        "records": [[0, 0, 0, 0]],
         "lookahead": "0000",
         "component": "map-descriptors-4byte",
-        "record_size": 4,
-        "records": [[0, 0, 0, 0]]
+        "record_size": 4
       },
       "sparse_cells": {
         "format": 1,

@@ -81547,7 +81547,7 @@
     {
       "id": "retained-scene-extended-actor-presentation-3bd",
       "game": "tbs",
-      "source": "games/THE BROKEN SEAL/recon/en/overlays/extended_actor_presentation.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/ACTOR_PRESENTATION.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bd",
       "absolute_symbols": {
@@ -81748,7 +81748,7 @@
         {
           "address": "0x020013f8",
           "extent": 6220,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -82088,7 +82088,7 @@
     {
       "id": "retained-overlay-39c-02004a08",
       "game": "tbs",
-      "source": "games/THE BROKEN SEAL/recon/en/overlays/resource_39c_c_02004a08.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/PARTY.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39c",
       "absolute_symbols": {
@@ -82155,6 +82155,34 @@
         "Func_0200a754_a": {
           "address": "0x0200db8c",
           "kind": "thumb"
+        },
+        "LinkedMessage_MercuryDialogue": {
+          "address": "0x00001591",
+          "kind": "data"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200dad4",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x0200dadc",
+          "kind": "thumb"
+        },
+        "Engine_ActorShowEmote": {
+          "address": "0x0200dba4",
+          "kind": "thumb"
+        },
+        "Engine_ActorTurnToAngle": {
+          "address": "0x0200db94",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessageAndWait": {
+          "address": "0x0200db8c",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200da1c",
+          "kind": "thumb"
         }
       },
       "local_symbols": [],
@@ -82162,7 +82190,7 @@
         {
           "address": "0x02004a08",
           "extent": 608,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },

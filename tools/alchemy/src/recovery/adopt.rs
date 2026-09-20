@@ -233,10 +233,14 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
         }
         retired.iter().map(|o| o.legacy_stem()).collect()
     };
-    let drafts: Vec<PathBuf> = stems
+    let mut drafts: Vec<PathBuf> = stems
         .iter()
         .map(|stem| root.join(format!("games/THE BROKEN SEAL/recon/en/overlays/{stem}.c")))
         .collect();
+    let (unit_document, _) = read_json(&units)?;
+    drafts.extend(registered_drafts(root, &unit_document, &overlay, entry));
+    drafts.sort();
+    drafts.dedup();
     let mut watched = vec![
         manifest.clone(),
         assembly.clone(),
@@ -435,11 +439,16 @@ fn register_adoption(
     // are still required by the installed C. A unit owning bytes outside
     // this adoption must be split before it can move.
     let mut removed_drafts = Vec::new();
-    for (stem, draft) in stems.iter().zip(drafts) {
+    for draft in drafts {
         if draft.exists() {
             std::fs::remove_file(draft).map_err(|e| format!("{}: {e}", draft.display()))?;
-            removed_drafts.push(format!("games/THE BROKEN SEAL/recon/en/overlays/{stem}.c"));
-            report.push(format!("draft removed: {stem}"));
+            let relative = draft
+                .strip_prefix(root)
+                .map_err(|e| e.to_string())?
+                .to_string_lossy()
+                .into_owned();
+            report.push(format!("draft removed: {relative}"));
+            removed_drafts.push(relative);
         }
     }
     if !removed_drafts.is_empty() {
@@ -610,6 +619,26 @@ pub fn repeatable(root: &Path, source: &Path, owner: &str, span: u32) -> Result<
     ))
 }
 
+fn registered_drafts(root: &Path, document: &Value, overlay: &str, entry: u32) -> Vec<PathBuf> {
+    document["units"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .filter_map(|unit| {
+            let source = unit["source"].as_str()?;
+            let owns_entry = unit["owners"].as_array()?.iter().any(|owner| {
+                owner["address"].as_str().and_then(|address| {
+                    u32::from_str_radix(address.trim_start_matches("0x"), 16).ok()
+                }) == Some(entry)
+            });
+            (unit["overlay"].as_str() == Some(overlay)
+                && source.starts_with("games/THE BROKEN SEAL/recon/en/overlays/")
+                && owns_entry)
+                .then(|| root.join(source))
+        })
+        .collect()
+}
+
 fn adopt_unit_source(unit: &mut Value, root: &Path, destination: &Path) -> Result<(), String> {
     unit["source"] = Value::String(
         destination
@@ -629,6 +658,21 @@ fn adopt_unit_source(unit: &mut Value, root: &Path, destination: &Path) -> Resul
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn named_draft_lookup_is_overlay_qualified() {
+        let document = serde_json::json!({"units": [
+            {"overlay":"resource_3bd", "source":"games/THE BROKEN SEAL/recon/en/overlays/named.c", "owners":[{"address":"0x020013f8"}]},
+            {"overlay":"resource_3bf", "source":"games/THE BROKEN SEAL/recon/en/overlays/other.c", "owners":[{"address":"0x020013f8"}]},
+            {"overlay":"resource_3bd", "source":"games/THE BROKEN SEAL/SRC/FIELD/EXACT.C", "owners":[{"address":"0x020013f8"}]}
+        ]});
+        assert_eq!(
+            registered_drafts(Path::new("/repo"), &document, "resource_3bd", 0x020013f8),
+            vec![PathBuf::from(
+                "/repo/games/THE BROKEN SEAL/recon/en/overlays/named.c"
+            )]
+        );
+    }
 
     #[test]
     fn adopted_unit_keeps_absolute_bindings() {

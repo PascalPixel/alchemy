@@ -13361,7 +13361,8 @@
       "source": "FIELD/TOREBI_MACHI/PROXIMITY.C"
     },
     "resource_3bd:020013f8": {
-      "name": "FieldScene_RunExtendedActorPresentation"
+      "name": "FieldScene_RunExtendedActorPresentation",
+      "source": "FIELD/ARUTAMIRA_DOU/ACTOR_PRESENTATION.C"
     },
     "resource_3bd:02000030": {
       "name": "FixedPoint_Distance",
@@ -13846,7 +13847,8 @@
       "source": "FIELD/MAKYURI_HEYA/FIELD_PROBE_SCENE.C"
     },
     "resource_39c:02004a08": {
-      "name": "FieldScene_RunActorCoordinateDialogueSequence"
+      "name": "FieldScene_RunActorCoordinateDialogueSequence",
+      "source": "FIELD/MAKYURI_HEYA/PARTY.C"
     },
     "resource_39c:02002684": {
       "name": "FieldScene_RunActorThreeBranchSequence",

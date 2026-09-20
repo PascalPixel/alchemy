@@ -4,5 +4,6 @@
 #include "TYPES.H"
 
 s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order);
+s32 Scheduler_RemoveCallback(u32 callback);
 
 #endif

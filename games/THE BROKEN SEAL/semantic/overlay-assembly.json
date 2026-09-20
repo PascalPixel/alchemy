@@ -28,18 +28,6 @@
       ]
     },
     {
-      "overlay": "resource_3bd",
-      "start": "0x020013f8",
-      "end": "0x02002c44",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "Complete 6220-byte function independently checked from entry frame through sole return and trailing literal pool; former retained fragments are not separate owners.",
-        "Ordinary C reconstruction has original-site runtime call bindings and remains unverified until the complete linked owner is byte-exact. No original-assembly or compiler-impossibility claim."
-      ]
-    },
-    {
       "overlay": "resource_38b",
       "start": "0x02000db4",
       "end": "0x02000ed8",
@@ -1740,19 +1728,6 @@
         "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
         "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
         "games/THE BROKEN SEAL/recon/en/dossiers.json#resource_3b1:02004254"
-      ]
-    },
-    {
-      "overlay": "resource_39c",
-      "start": "0x02004a08",
-      "end": "0x02004c68",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
-        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
-        "games/THE BROKEN SEAL/recon/en/dossiers.json#resource_39c:02004a08"
       ]
     },
     {

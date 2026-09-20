@@ -41,25 +41,23 @@
         "codec": "golden-sun-general-lz",
         "decoded_size": 9,
         "encoded_size": 8,
-        "tokens": [["l", 3], ["c", 6, 2]],
+        "tilemap_length": 8,
         "lookahead": "",
         "component": "map-metatiles-2x2",
         "transform_mode": 0,
         "metatiles": 1,
         "tilemap_source": "games/THE LOST AGE/SRC/FIELD/COMMON/MAP.BIN",
-        "tilemap_offset": 65536,
-        "tilemap_length": 8
+        "tilemap_offset": 65536
       },
       "descriptors": {
         "format": 1,
         "codec": "golden-sun-general-lz",
         "decoded_size": 4,
         "encoded_size": 8,
-        "tokens": [["l", 1], ["c", 3, 1]],
+        "records": [[0, 0, 0, 0]],
         "lookahead": "0000",
         "component": "map-descriptors-4byte",
-        "record_size": 4,
-        "records": [[0, 0, 0, 0]]
+        "record_size": 4
       },
       "grid_source": "games/THE LOST AGE/SRC/FIELD/COMMON/MAP.BIN",
       "grid_offset": 0,
@@ -72,67 +70,14 @@
         "codec": "golden-sun-tagged-palette-lz",
         "decoded_size": 16384,
         "encoded_size": 196,
-        "tokens": [
-          [
-            "g",
-            [
-              ["l"], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1],
-              ["c", 272, 1]
-            ]
-          ],
-          [
-            "g",
-            [
-              ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1],
-              ["c", 272, 1]
-            ]
-          ],
-          [
-            "g",
-            [
-              ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1],
-              ["c", 272, 1]
-            ]
-          ],
-          [
-            "g",
-            [
-              ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1],
-              ["c", 272, 1]
-            ]
-          ],
-          [
-            "g",
-            [
-              ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1],
-              ["c", 272, 1]
-            ]
-          ],
-          [
-            "g",
-            [
-              ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1],
-              ["c", 272, 1]
-            ]
-          ],
-          [
-            "g",
-            [
-              ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1],
-              ["c", 272, 1]
-            ]
-          ],
-          ["g", [["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 272, 1], ["c", 63, 1], ["e"]]]
-        ],
-        "lookahead": "00",
-        "tag": 1
+        "tag": 1,
+        "lookahead": "00"
       },
       "component6": {
         "format": 1,
         "codec": "golden-sun-general-lz",
         "decoded_size": 13,
         "encoded_size": 16,
-        "tokens": [["l", 6], ["c", 2, 1], ["l", 1], ["c", 4, 1]],
         "lookahead": "000000"
       }
     }

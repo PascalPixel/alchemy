@@ -1,6 +1,11 @@
 #include "TYPES.H"
 
-/* Shared 22-byte head leaf proved identical for this overlay family. */
+/*
+ * Ramakan desert: set the mode on the selected actor's effect record. The
+ * 22-byte head of the record is proved identical for this overlay family, so
+ * the mode bitfield lands at offset 9.
+ */
+
 struct EffectRecord {
     u8 pad[9];
     u8 flags_lo : 2;
@@ -14,6 +19,7 @@ struct EffectWork {
 };
 
 #define SetEffectRecordMode Func_02000030
+
 void SetEffectRecordMode(struct EffectWork *work, s32 mode)
 {
     work->record->mode = mode;

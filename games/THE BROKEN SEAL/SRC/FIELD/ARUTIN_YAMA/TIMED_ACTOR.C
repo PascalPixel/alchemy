@@ -1,4 +1,12 @@
 #include "TYPES.H"
+
+/*
+ * Arutin mountain: a timed actor that bobs toward the ground. While a delay
+ * is pending it counts down; with no vertical velocity it sinks one step per
+ * tick and settles on the ground (firing the landing cue on first contact);
+ * when the timer lapses it reactivates and starts the fall.
+ */
+
 #define SceneMotion_UpdateTimedActor Func_02001770
 struct SceneMotion {
     u8 unk_00[12]; s32 y; u8 unk_10[4]; s32 ground;

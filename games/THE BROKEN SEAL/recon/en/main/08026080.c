@@ -1,122 +1,7 @@
 #include "TYPES.H"
 
-/*
- * Battle target-selection cursor - leading region.
- *
- * The registered owner main:08026080 is the first 2138 bytes (0x08026080 ..
- * 0x080268d9) of a single 3584-byte routine that runs the whole "pick a
- * combatant" interaction.  Its tail is registered separately as
- * main:0802691c ("Continuation_0802691c", the kind==6 condition window) and
- * main:08026b44 (the name blit, the per-target sprite pass, the pad read and
- * the epilogue).  The three extents are contiguous apart from the 66-byte
- * literal pool at 0x080268da..0x0802691b, which no owner currently claims:
- * one prologue at 0x0802608e ("sub sp, #324"), one epilogue at 0x08026e60,
- * and one loop whose only back edge is the long branch at 0x08026e22.
- *
- * This draft covers ONLY the registered owner, and the owner extent is not
- * altered to fit.  The reference leaves the extent in two distinguishable
- * ways, drafted differently:
- *   - 0x08026a5a / 0x08026a64 / 0x08026a6a / 0x08026a72 / 0x08026a84 reach
- *     main:0802691c, and the kind==6 jump-table slot reaches 0x0802691c
- *     directly.  These are drafted as "goto done" - they leave the region.
- *   - 0x08026b8c and 0x08026b96, in main:08026b44, are the frame loop's own
- *     tail; six reference branches target them and control comes back round.
- *     These are drafted as the labels "frame_tail" and "frame_end" at the
- *     bottom of the loop, so the loop keeps its back edge.  See the boundary
- *     compromises below for what that costs.
- *
- * What the covered region does:
- *   - loads the cursor sprite resource, biases the session slide offset for
- *     the requested side, and clears the six cursor tracking slots;
- *   - builds the selectable id list from the runtime record at 0x03001E74
- *     (first list at +0x58 for mode 2, the caller's single id for mode 4,
- *     second list at +0x66 otherwise), terminated by 0xFF;
- *   - for mode 2 with a condition kind, scans the list for the first unit
- *     that actually has that condition and prefers it;
- *   - resolves the preferred id to a list index, defaulting to the middle,
- *     and steps backwards past 0xFE holes and (flag 0x16C, mode 1) dead units;
- *   - opens the 30x4 caption window and enters the per-frame loop;
- *   - each frame places the cursor sprite over the current candidate with a
- *     half-step smoothing filter and a sine wobble, builds the affine matrix,
- *     and - when the redraw bit is set - retints the highlighted id list and
- *     opens the per-kind information window (HP, PP, and the poison /
- *     status / downed / stun-list variants).
- *
- * Uncertain / unresolved:
- *   - Func_080b50b8 / Func_080b50e0 have no project names yet; the first
- *     resolves a unit id to a 12-byte screen position, the second re-tints a
- *     0xFF-terminated id list.
- *   - The 0x03001E74 record is only known here through its two s16 id lists
- *     at 0x58 and 0x66; everything before them stays unnamed.
- *   - The message ids (0x8A3..0x8AC) and the string pointers 0x080373DC /
- *     0x080373E0 / 0x080373E4 are kept as literals; the project has no
- *     symbol for them yet.
- *   - The status-byte offsets inside BattleUnit past 0x137 are the previous
- *     draft's reading of the reference's pool constants; only 0x138 and
- *     0x13C are directly evidenced (they are built with shifts, not pool
- *     loads).
- *
- * Boundary compromises, all documented rather than hidden:
- *   - "redraw &= ~1" (reference 0x08026b8c) is real and is kept, although it
- *     sits two bytes past the owner, because six branches inside the owner
- *     target it and without it redraw folds to the constant 0xFFFF.
- *   - "if (pending != 0)" (reference 0x08026b96) is a real test with an
- *     invented consequence.  In the reference neither arm ends the loop:
- *     pending != 0 falls into the per-target sprite pass at 0x08026b9e and
- *     pending == 0 skips to the pad read at 0x08026cdc, both in
- *     main:08026b44, and the loop is closed by the long branch at
- *     0x08026e22.  An owner-scoped draft has no reachable loop exit, so this
- *     test is spelled as the exit.  That inversion is the one place where
- *     this draft asserts control flow the reference does not have.
- *   - kind == 6 keeps its jump-table slot (the table still emits seven
- *     entries) but its body is main:0802691c, so it is drafted as an
- *     immediate exit.
- *   - The last three instructions of the owner (the message-id load for the
- *     death-count line, which is consumed by the call at 0x08026a5a) have no
- *     representation here: the call they feed is outside the owner, so the
- *     dead load cannot be spelled without inventing a use.
- *   - "entries" is declared as six elements because the reference's frame
- *     reserves sp+236..sp+308 for it (ids begins at sp+308 and the frame ends
- *     at sp+324), but only entries[0] is touched inside this owner; the rest
- *     are written by the per-target sprite pass in main:08026b44.  It is the
- *     one aggregate here that is sized from the frame map rather than from
- *     accesses in the covered code.
- *
- * Measured with the approved route (agbcc/GCC 2.96) against the registered
- * 2138-byte owner, by "alchemy score ... --owner 08026080":
- *
- *     candidate=2224 (104.0%)  differing_halfwords=1074
- *     wrong_instructions=1139  topology=different
- *
- * Residual, honestly stated: frame layout, not control flow.  The reference
- * allocates 324 bytes because the complete routine also needs the name buffer
- * (30 bytes), the two extra ScreenPos temporaries (24) and the spill slots the
- * pad-reading tail uses - roughly 80 bytes that this owner-scoped draft has no
- * honest use for.  The candidate therefore allocates 244, and every one of the
- * function's many sp-relative operands is displaced, which is what the
- * halfword aggregate is counting.  It also changes register pressure: the
- * reference keeps cnt, the ids base and the runtime pointer in stack slots
- * (sp+64, sp+28, sp+76) where the candidate can afford registers.  Neither can
- * be closed without either drafting past the owner boundary or declaring
- * locals with no use in the covered code, and both are refused.
- *
- * Source hypotheses tested and retained: the shared 0x03001E74 globals record
- * (above); the do-while shape of the two id-copy loops (the reference stores
- * the element, advances, and only then tests the NEXT one - a top-tested
- * while emits a second signed load per iteration); the unsigned spread/kind
- * parameters (the reference dispatches both switches with bhi/bls and walks
- * the spread loop with bcc/bcs); unsigned Data_03001e40 (0x080263ae is
- * "lsrs", not "asrs"); and the frame-tail labels described above, which
- * lowered the halfword aggregate from 1094 to 1074 and raised
- * wrong_instructions from 1128 to 1139 - kept because the six reference
- * branches to 0x08026b8c are real and the previous shape discarded them.
- *
- * Verified against the reference for this draft: the seven-entry jump table
- * at 0x0802667c (targets 0x080266c8, 0x0802671e, 0x080267b4, 0x080267f8,
- * 0x08026780, 0x0802691c, 0x08026698); the pool constants 0x03001E74,
- * 0x0000FFFF, 0xFF0000FF, 0x00000131, 0x00000141, 0x000003FF and 0x0000FC00;
- * and the frame map efx sp+88, pos sp+152, selSlot sp+164, selIds sp+172,
- * markPos sp+200, tbl sp+212, entries sp+236, ids sp+308.
+/* Select a combatant, display its condition and animate the target markers.
+ * Confirmation returns an encoded side/index; cancellation returns -1.
  */
 
 #define BattleTarget_RunSelection Func_08026080
@@ -181,7 +66,8 @@ struct SessionState {
 };
 
 struct BattleUnit {
-    u8 unknown_000[0x34];
+    u8 name[14];
+    u8 unknown_00e[0x26];
     s16 max_hp;                  /* 0x034 */
     s16 max_pp;                  /* 0x036 */
     s16 hp;                      /* 0x038 */
@@ -242,21 +128,34 @@ struct BattleUnit *BattleUnit_Get(s32 id);
 s32 BattleFlag_Test(s32 flag);
 void Func_080b50b8(s32 id, struct ScreenPos *out);
 void Func_080b50e0(u16 *ids, s32 highlight);
+void Func_0801965c(s32 message, u16 *text, s32 limit);
+s32 UiText_GetWideStringWidth(u16 *text);
+void Func_08017aa4(u16 *text, s32 work, s32 x, s32 y);
+void Ui_ClearVramBlock(void);
+void Resource_ResetEntry(s32 slot);
+void WaitFrames(s32 frames);
+void Audio_PlayCue(s32 cue);
+extern volatile u32 Data_03001c94;
+extern volatile u32 Data_03001b04;
 
 s32 Func_08026080(s32 preferred, s32 mode, u32 spread, u32 kind)
 {
+    u16 ids[8];
     struct DisplayEntry entries[6];
     struct CursorSlot tbl[6];
     struct ScreenPos markPos;
-    struct ScreenPos pos;
-    struct Effect efx;
-    u16 ids[8];
     u16 selIds[14];
     u8 selSlot[8];
+    struct ScreenPos pos;
+    u16 name[15];
+    struct ScreenPos namePos;
+    struct ScreenPos targetPos;
+    struct Effect efx;
 
     struct BattleRuntime *runtime;
     struct BattleUnit *unit;
     struct CursorSlot *slot;
+    struct DisplayEntry *entry;
     s16 *src;
     s32 sel;
     s32 slotId;
@@ -277,6 +176,10 @@ s32 Func_08026080(s32 preferred, s32 mode, u32 spread, u32 kind)
     s32 nx;
     s32 ny;
     s32 y;
+    s32 width;
+    s32 pressed;
+    s32 repeat;
+    s32 result;
 
     runtime = Data_03001e74.runtime;
     cnt = 0;
@@ -454,7 +357,6 @@ step_back:
         efx.angle = 0;
         matrix = AffineMatrix_BuildForEffect(&efx);
 
-        /* 0x0802650a: b sub_08026b96 - skips the redraw clear only. */
         if ((redraw & 1) == 0)
             goto frame_end;
 
@@ -494,10 +396,8 @@ step_back:
         selIds[cnt] = 0xFF;
         Func_080b50e0(selIds, 1);
 
-        /* 0x08026630: b sub_08026a84 - the name blit is main:08026b44. */
         if (ids[cursor] > 7)
-            goto done;
-        /* 0x08026638 / 0x08026640: b sub_08026b8c - the frame tail. */
+            goto draw_name;
         if (spread == 0xFF)
             goto frame_tail;
         if (kind == 0)
@@ -509,6 +409,15 @@ step_back:
             UiWork_Finalize(infoWin, 1);
 
         switch (kind) {
+        case 7:
+            column = pos.x / 8 - 4;
+            if (pos.x / 8 + 4 > 29)
+                column = 22;
+            infoWin = UiWindow_Create(column, 8, 9, 3, 6);
+            UiWork_SetParamNibble(2);
+            UiText_DrawCharacterAtOffset(0x8AC, infoWin, 0, 0);
+            UiWork_SetParamNibble(15);
+            goto frame_tail;
         case 1:
             column = pos.x / 8 - 7;
             if (pos.x / 8 + 6 > 29)
@@ -518,7 +427,6 @@ step_back:
             UiText_DrawNumberInWindow(unit->hp, 4, infoWin, 16, 0);
             UiText_DrawStringAtOffset(0x080373E0, infoWin, 48, 0);
             UiText_DrawNumberInWindow(unit->max_hp, 4, infoWin, 56, 0);
-            /* 0x0802677e: b sub_08026b8c. */
             goto frame_tail;
         case 2:
             column = pos.x / 8 - 7;
@@ -529,16 +437,23 @@ step_back:
             UiText_DrawNumberInWindow(unit->pp, 4, infoWin, 16, 0);
             UiText_DrawStringAtOffset(0x080373E0, infoWin, 48, 0);
             UiText_DrawNumberInWindow(unit->max_pp, 4, infoWin, 56, 0);
-            /* Shares case 1's tail at 0x0802677e: b sub_08026b8c. */
+            goto frame_tail;
+        case 5:
+            column = pos.x / 8 - 7;
+            if (pos.x / 8 + 5 > 29)
+                column = 18;
+            infoWin = UiWindow_Create(column, 8, 12, 3, 6);
+            if (unit->hp != 0)
+                goto no_condition;
+            UiText_DrawCharacterAtOffset(0x8AB, infoWin, 0, 0);
             goto frame_tail;
         case 3:
             column = pos.x / 8 - 7;
             if (pos.x / 8 + 5 > 29)
                 column = 18;
             infoWin = UiWindow_Create(column, 8, 12, 3, 6);
-            /* 0x080267e8: b sub_08026a6a when the condition is absent. */
             if (unit->poison == 0)
-                goto done;
+                goto no_condition;
             UiText_DrawCharacterAtOffset(0x8A4, infoWin, 0, 0);
             /* 0x080267f6: b sub_08026b8c. */
             goto frame_tail;
@@ -580,51 +495,213 @@ step_back:
                 UiText_DrawCharacterAtOffset(0x8A8, infoWin, 0, count * 8);
                 count++;
             }
-            /* 0x080268cc is the owner's last test; the death-count line is
-             * drawn by the shared tail at 0x08026a5a. */
-            goto done;
-        case 5:
-            column = pos.x / 8 - 7;
-            if (pos.x / 8 + 5 > 29)
-                column = 18;
-            infoWin = UiWindow_Create(column, 8, 12, 3, 6);
-            /* 0x080267ae: b sub_08026a6a when the unit is still standing. */
-            if (unit->hp != 0)
-                goto done;
-            UiText_DrawCharacterAtOffset(0x8AB, infoWin, 0, 0);
-            /* Shares case 3's tail at 0x080267f6: b sub_08026b8c. */
+            if (unit->death_count != 0) {
+                UiText_DrawCharacterAtOffset(0x8A9, infoWin, 0, count * 8);
+                count++;
+            }
+            if (count == 0)
+                goto no_condition;
             goto frame_tail;
         case 6:
-            /* Jump-table slot 5 targets 0x0802691c: main:0802691c. */
-            goto done;
-        case 7:
-            column = pos.x / 8 - 4;
-            if (pos.x / 8 + 4 > 29)
-                column = 22;
-            infoWin = UiWindow_Create(column, 8, 9, 3, 6);
-            UiWork_SetParamNibble(2);
-            /* 0x080266c6: b sub_08026a72 with the 0x8AC message id in r0. */
-            goto done;
+            count = 0;
+            if (unit->poison != 0)
+                count = 1;
+            if (unit->delusion != 0)
+                count++;
+            if (unit->stun != 0)
+                count++;
+            if (unit->sleep != 0)
+                count++;
+            if (unit->psy_seal != 0)
+                count++;
+            if (unit->death_count != 0)
+                count++;
+            if (unit->evil_spirit != 0)
+                count++;
+            if (count == 0)
+                count = 1;
+            rows = 9 - count;
+            if (rows <= 3)
+                rows = 4;
+            column = pos.x / 8 - 7;
+            if (pos.x / 8 + 9 > 29)
+                column = 14;
+            infoWin = UiWindow_Create(column, rows, 16, count + 2, 6);
+            count = 0;
+            if (unit->poison != 0) {
+                UiText_DrawCharacterAtOffset(0x8A4, infoWin, 0, 0);
+                count = 1;
+            }
+            if (unit->delusion != 0) {
+                UiText_DrawCharacterAtOffset(0x8A5, infoWin, 0, count * 8);
+                count++;
+            }
+            if (unit->stun != 0) {
+                UiText_DrawCharacterAtOffset(0x8A6, infoWin, 0, count * 8);
+                count++;
+            }
+            if (unit->sleep != 0) {
+                UiText_DrawCharacterAtOffset(0x8A7, infoWin, 0, count * 8);
+                count++;
+            }
+            if (unit->psy_seal != 0) {
+                UiText_DrawCharacterAtOffset(0x8A8, infoWin, 0, count * 8);
+                count++;
+            }
+            if (unit->death_count != 0) {
+                UiText_DrawCharacterAtOffset(0x8A9, infoWin, 0, count * 8);
+                count++;
+            }
+            if (unit->evil_spirit != 0) {
+                UiText_DrawCharacterAtOffset(0x8AA, infoWin, 0, count * 8);
+                count++;
+            }
+            if (count == 0)
+                goto no_condition;
+            goto frame_tail;
         default:
-            /* 0x08026670: kind - 1 outside 0..6 falls to the frame tail. */
             break;
         }
+        goto frame_tail;
+
+no_condition:
+        UiWork_SetParamNibble(2);
+        UiText_DrawCharacterAtOffset(0x8A3, infoWin, 0, 0);
+        UiWork_SetParamNibble(15);
+        goto frame_tail;
+
+draw_name:
+        if (spread == 0xFF)
+            goto frame_tail;
+        unit = BattleUnit_Get(ids[cursor]);
+        Func_080b50b8(ids[cursor], &namePos);
+        namePos.y += Func_08002322(Data_03001e40 << 12) / 32768;
+        if (unit->class_id == 125 || unit->class_id == 122) {
+            i = 0x80E;
+            if (unit->class_id == 125)
+                i++;
+            Func_0801965c(i, name, 14);
+        } else {
+            for (i = 0; i <= 13; ) {
+                j = unit->name[i];
+                name[i] = j;
+                i++;
+                if (j == 0)
+                    break;
+            }
+            name[i] = 0;
+        }
+        width = UiText_GetWideStringWidth(name);
+        namePos.x -= width / 2;
+        namePos.x -= 8;
+        if (namePos.x + width > 224)
+            namePos.x = 224 - width;
+        if (namePos.x < 0)
+            namePos.x = 0;
+        Ui_ClearVramBlock();
+        Func_08017aa4(name, window, namePos.x, 4);
 
 frame_tail:
-        /* 0x08026b8c, in main:08026b44. */
         redraw &= ~1;
 frame_end:
-        /* 0x08026b96, in main:08026b44.  In the reference this test does not
-         * end the loop at all: pending != 0 continues into the per-target
-         * sprite pass and pending == 0 skips ahead to the pad read at
-         * 0x08026cdc, and the only back edge is the long branch at
-         * 0x08026e22.  Both destinations and the back edge are outside this
-         * owner, so an owner-scoped draft has to invent a loop exit here; the
-         * test itself is real, its consequence is not. */
-        if (pending != 0)
-            goto done;
+        if (pending != 0) {
+            entry = entries + 1;
+            for (i = 1; i < cnt; i++, entry++) {
+                slot = &tbl[selSlot[i]];
+                Func_080b50b8(selIds[i], &targetPos);
+                targetPos.y += Func_08002322(Data_03001e40 << 12) / 32768;
+                *entry = entries[0];
+                if (slot->flags & 1) {
+                    targetPos.x = (targetPos.x + slot->x) / 2;
+                    targetPos.y = (targetPos.y + slot->y) / 2;
+                    slot->x = targetPos.x;
+                    slot->y = targetPos.y;
+                } else {
+                    targetPos.x = entry->x;
+                    targetPos.y = entry->y + 8;
+                    slot->flags = 1;
+                    slot->x = targetPos.x;
+                    slot->y = targetPos.y;
+                }
+                entry->gfx_mode = 1;
+                entry->x = targetPos.x - 8;
+                entry->y = targetPos.y - 12;
+                if (spread == 0xFF)
+                    entry->object_mode = 0;
+                else
+                    entry->object_mode = 1;
+                entry->matrix = matrix;
+                Runtime_PushSlotEntry(entry, 240);
+            }
+        }
+
+        pressed = Data_03001c94;
+        repeat = Data_03001b04;
+        if (Data_03001e74.session->auto_enabled != 0) {
+            pressed = 0;
+            repeat = 0;
+            if (Data_03001e74.session->auto_delay == 0) {
+                Data_03001e74.session->auto_delay = 60;
+                pressed = 1;
+                repeat = 1;
+            } else {
+                Data_03001e74.session->auto_delay--;
+            }
+        }
+        if (pressed & 1) {
+            sel = ids[cursor];
+            redraw = 0;
+            result = -1;
+            for (i = 0; i <= 5 && runtime->first_ids[i] != 0xFF; i++) {
+                if (runtime->first_ids[i] == sel) {
+                    result = 0x100 | i;
+                    break;
+                }
+            }
+            if (result < 0) {
+                for (i = 0; i <= 5 && runtime->second_ids[i] != 0xFF; i++) {
+                    if (runtime->second_ids[i] == sel) {
+                        result = 0x180 | i;
+                        break;
+                    }
+                }
+            }
+            cursor = result;
+        } else if (spread != 0xFF) {
+            if (repeat & 0x90) {
+                Audio_PlayCue(111);
+                do {
+                    cursor++;
+                    cursor = Modulo(cursor, total);
+                } while (ids[cursor] == 0xFE);
+                redraw |= 1;
+            }
+            if (repeat & 0x60) {
+                Audio_PlayCue(111);
+                do {
+                    cursor = cursor + total - 1;
+                    cursor = Modulo(cursor, total);
+                } while (ids[cursor] == 0xFE);
+                redraw |= 1;
+            }
+        }
+        if (Data_03001e74.session->timer == 0 || (pressed & 2)) {
+            Audio_PlayCue(113);
+            cursor = -1;
+            break;
+        }
+        WaitFrames(1);
+        if (redraw == 0)
+            break;
     }
 
-done:
+    WaitFrames(1);
+    Resource_ResetEntry(slotId);
+    if (infoWin != 0)
+        UiWork_Finalize(infoWin, 1);
+    UiWork_Finalize(window, 1);
+    Func_080b50e0(ids, 0);
+    Data_03001e74.session->slide_offset = 0;
+    WaitFrames(1);
     return cursor;
 }

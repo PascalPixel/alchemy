@@ -24,4 +24,7 @@ LAYOUT_OFFSET_GUARD(
 
 struct B5Context *Func_080b5098(s32);
 
+void ObjectGroup_UpdateMembers(s32 set_id, s32 object_value, s32 group_value,
+    s32 state_slot, s32 state_value);
+
 #endif

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "B5_CONTEXT.H"
 
 /*
  * Battle-presentation effect recovered from callback-table entry 49. It
@@ -341,7 +342,7 @@ block_35:
     if (frame == 0x53) {
         M2C_FIELD(work, s32 *, 0x77A8) = 8;
         draw_width = 8;
-        Func_080d6888(M2C_FIELD(*state_slot, s16 *, 0x24), 7, 5, 0);
+        ObjectGroup_UpdateMembers(M2C_FIELD(*state_slot, s16 *, 0x24), 7, 5, 0, 8);
         Func_080b5088(M2C_FIELD(*state_slot, s16 *, 0x24), 1);
     }
     if (frame > 0x53) {
@@ -392,7 +393,7 @@ block_35:
     if (frame == 0x32) {
         M2C_FIELD(work, s32 *, 0x77A8) = 0xC;
         draw_width = 8;
-        Func_080d6888(M2C_FIELD(*state_slot, s16 *, 0x24), 7, 5, 0);
+        ObjectGroup_UpdateMembers(M2C_FIELD(*state_slot, s16 *, 0x24), 7, 5, 0, 8);
     }
     if (frame > 0x31) {
         var_r7_778 = 0;

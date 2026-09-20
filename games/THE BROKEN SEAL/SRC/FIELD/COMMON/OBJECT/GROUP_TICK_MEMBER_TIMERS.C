@@ -1,8 +1,7 @@
-#include "TYPES.H"
+#include "B5_CONTEXT.H"
 
 /* object/group/tick_member_timers.c */
 extern u8 *gIw;
-s32 ObjectGroup_UpdateMembers(s32 value, s32 a, s32 b, s32 c, s32 d);
 
 void ObjectGroup_TickMemberTimers(void)
 {

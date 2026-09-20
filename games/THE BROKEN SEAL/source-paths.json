@@ -19028,6 +19028,13 @@
     },
     "main:08016018": {
       "name": "UiWork_Initialize"
+    },
+    "main:080b9554": {
+      "name": "BattleLink_SendActions",
+      "source": "BATTLE/PRESENTATION/LINK_ACTIONS.C"
+    },
+    "main:080b9604": {
+      "name": "BattleLink_ReceiveActions"
     }
   }
 }

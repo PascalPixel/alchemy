@@ -173903,6 +173903,31 @@
           "state": "retained-assembly"
         }
       ]
+    },
+    {
+      "id": "battle-link-actions",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/LINK_ACTIONS.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080b9554",
+          "extent": 176,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b9604",
+          "extent": 288,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080b9724",
+          "extent": 400,
+          "state": "retained-assembly"
+        }
+      ]
     }
   ]
 }

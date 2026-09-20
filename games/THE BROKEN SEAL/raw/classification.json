@@ -551,8 +551,8 @@
         "gcc296_thumb_nested_functions_can_carry_static_chain_in_r9",
         "remaining_owners_require_individual_context_review"
       ],
-      "expected_files": 12,
-      "expected_bytes": 5532,
+      "expected_files": 10,
+      "expected_bytes": 5068,
       "files": [
         "0801a7f4",
         "08022a7c",
@@ -562,8 +562,6 @@
         "080a5788",
         "080a96d8",
         "080b5368",
-        "080b9554",
-        "080b9604",
         "080be18c",
         "080c0be4"
       ]

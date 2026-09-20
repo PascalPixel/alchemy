@@ -82,7 +82,7 @@ struct DmaChannel {
 void *Runtime_AllocateBlock(s32, s32);
 void Resource_InitializeTable(void);
 void Scheduler_ResetTaskTable(void);
-void Scheduler_AddOrUpdateCallback(s32, s32);
+s32 Scheduler_AddOrUpdateCallback(s32, s32);
 void Func_08004858(void);
 void Blend_SetDarkenTarget0(s32);
 void Func_080030f8(s32);

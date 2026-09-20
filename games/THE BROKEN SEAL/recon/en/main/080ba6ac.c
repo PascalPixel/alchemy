@@ -21,7 +21,7 @@ struct AbilityInfo { u8 reserved_00[12]; u8 kind; };
 extern s32 *Data_03001f00;
 extern u8 *Data_03001e74;
 s32 WaitFrames(s32);
-void Func_080041d8(void *, s32);
+s32 Func_080041d8(void *, s32);
 void Func_08009080(s32, s32);
 void Func_08009088(s32, s32);
 u8 *Func_08077008(s16);

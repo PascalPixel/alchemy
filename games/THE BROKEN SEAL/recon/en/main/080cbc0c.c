@@ -55,7 +55,7 @@ typedef void (*BlitFn)(void *dst, const void *src, s32 x, s32 y, s32 w, s32 h);
 void *Func_080048b0(s32 id, s32 size);
 void Func_08002dd8(s32 id);
 void Func_080030f8(s32 arg0);
-void Func_080041d8(s32 entry, s32 arg1);
+s32 Func_080041d8(s32 entry, s32 arg1);
 void Func_08004278(s32 entry);
 s32 Func_08004458(void);
 void Func_080b5028(s32 a, s32 b, s32 c, s32 d);

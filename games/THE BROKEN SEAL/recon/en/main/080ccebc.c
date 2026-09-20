@@ -9,7 +9,7 @@ typedef void (*DrawRectangleFn)(
     void *destination, const void *source, s32 x, s32 y, s32 width, s32 height);
 s32 Func_080cdbc0(void);
 void Func_080e0524(s32, s32, s32, s32);
-void Func_080041d8(s32, s32);
+s32 Func_080041d8(s32, s32);
 void Func_08004278(s32);
 s32 Func_080ed408(s32, s32, s32, s32, s32);
 void Func_080f9010(s32);

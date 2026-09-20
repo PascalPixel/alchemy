@@ -90,7 +90,7 @@ void **Func_080b5098(s32 member_id);
 void Func_080e3980(s32 member_id, s32 *out);
 void Func_080e396c(s32 member_id, s32 *out);
 u32 Func_08004458(void);
-void Func_080041d8(void *callback, s32 interval);
+s32 Func_080041d8(void *callback, s32 interval);
 s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 s32 Func_080022ec(s32 numerator, s32 denominator);
 s32 Func_080022fc(s32 numerator, s32 denominator);

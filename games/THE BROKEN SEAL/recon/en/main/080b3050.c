@@ -17,7 +17,7 @@ void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 sound_id);
 
 void Func_080b0840(s32 address);
-void Func_080041d8(void (*callback)(void), s32 flags);
+s32 Func_080041d8(void (*callback)(void), s32 flags);
 void Func_0808a528(struct Effect_080b2f4c *effect, s32 mode, s32 x, s32 z);
 void Func_0808a520(
     struct Effect_080b2f4c *effect,

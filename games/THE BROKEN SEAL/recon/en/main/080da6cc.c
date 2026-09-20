@@ -62,7 +62,7 @@ s32 Func_080b5070(s32 member_id);
 u32 Func_08004458(void);
 s32 Func_08002322(s32 angle);
 s32 Func_0800231c(s32 angle);
-void Func_080041d8(void *callback, s32 interval);
+s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 void Func_080b50e8(s32 id);
 void Func_080b5028(s32 a, s32 b, s32 c, s32 d);

@@ -169,7 +169,7 @@ void Func_080e0524(s32 id, void *target, s32 flag_a, s32 flag_b); /* load_and_de
 void *Func_08002f40(s32 id);                                      /* get */
 void Func_080030f8(s32 frames);
 void Func_080e396c(s32 source, s32 *out);        /* apply_step_and_y_offset */
-void Func_080041d8(s32 callback, s32 interval);  /* Scheduler_AddOrUpdateCallback */
+s32 Func_080041d8(s32 callback, s32 interval);  /* Scheduler_AddOrUpdateCallback */
 struct Member **Func_080b5098(s32 member);
 u32 Func_08004458(void);                         /* random_16 */
 void Func_080b5078(s32 a, s32 member, s32 c, s32 d);

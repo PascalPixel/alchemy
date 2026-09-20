@@ -56,7 +56,7 @@ void Func_080cd594(s32 mode);
 void *Func_08002f40(s32 id);
 u32 Func_08005340(const void *source, void *destination);
 s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
-void Func_080041d8(void *callback, s32 interval);
+s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 void Func_080049ac(void);
 void Func_080051d8(s32 a, s32 b);

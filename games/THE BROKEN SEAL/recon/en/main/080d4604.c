@@ -111,7 +111,7 @@ s32 Func_08004458(void);
 s32 Func_08002322(s32 angle);
 s32 Func_0800231c(s32 angle);
 s32 Func_080022ec(s32 numerator, s32 denominator);
-void Func_080041d8(void *callback, s32 interval);
+s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 void Func_080b50e8(s32 id);
 void Func_080f9010(s32 id);

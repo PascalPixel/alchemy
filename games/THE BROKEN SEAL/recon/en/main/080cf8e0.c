@@ -170,7 +170,7 @@ void *Func_08002f40(s32 resource_id);   /* "get" in alchemy inspect */
 u32 Func_08005340(const void *source, void *destination);
 struct ActorObject **Func_080b5098(s32 member_id);
 s32 Func_080ed408(s32 resource_id, s32 a, s32 b, s32 c, s32 d);
-void Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
+s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
 void Func_080f9010(s32 cue);
 void Render_ResetTransformState(void);

@@ -37,7 +37,7 @@ extern u8 Value_0000007a;
 void Func_080cd594(s32);
 void Func_080e0524(s32, void *, s32, s32);
 s32 Func_080ed408(s32, s32, s32, s32, s32);
-void Func_080041d8(s32, s32);
+s32 Func_080041d8(s32, s32);
 u32 Func_08004458(void);
 void Func_080f9010(s32);
 void Func_080b50e8(s32);

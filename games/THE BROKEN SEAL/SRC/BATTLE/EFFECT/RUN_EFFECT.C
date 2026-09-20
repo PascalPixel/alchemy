@@ -35,7 +35,7 @@ void RunBattleEffect05(void);
 void BattleFx_RunOrbitingParticles(void);
 void RunBattleEffect07(void);
 void RunBattleEffect08(void);
-void RunBattleEffect10(void);
+void BattleFx_RunFlashingCallbackSequence(void);
 void RunBattleEffect11(void);
 void BattleFx_RunBurstParticles(void);
 void RunBattleEffect13(void);
@@ -122,7 +122,7 @@ void BattleFx_Run(void)
         RunBattleEffect08();
         return;
     case 10:
-        RunBattleEffect10();
+        BattleFx_RunFlashingCallbackSequence();
         return;
     case 15:
         BattleFx_RunEffect15();
@@ -193,7 +193,7 @@ void BattleFx_DispatchRequestKind(void)
         RunBattleEffect08();
         break;
     case 10:
-        RunBattleEffect10();
+        BattleFx_RunFlashingCallbackSequence();
         break;
     case 15:
         BattleFx_RunEffect15();

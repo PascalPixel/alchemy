@@ -1,7 +1,7 @@
 #include "TYPES.H"
 
 void Func_080040e8(void);
-void Func_080041d8(s32 target, s32 duration);
+s32 Func_080041d8(s32 target, s32 duration);
 void Func_080f037c(s32 addr);
 void Func_080f0254(s32 arg);
 void Func_080f0678(void);

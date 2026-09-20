@@ -9410,7 +9410,8 @@
       "name": "RunBattleEffect03"
     },
     "main:08099838": {
-      "name": "RunBattleEffect10"
+      "name": "BattleFx_RunFlashingCallbackSequence",
+      "source": "BATTLE/EFFECT/FLASHING_CALLBACK_SEQUENCE.C"
     },
     "main:080999f0": {
       "name": "RunBattleEffect05"

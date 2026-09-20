@@ -37,7 +37,7 @@ void Func_080cef64(s32 flag, DrawRectangleFn *out_pair);
 void **Func_080b5098(s32 member_id);
 s32 Func_080b5070(s32 member_id);
 u32 Func_08004458(void);
-void Func_080041d8(void *callback, s32 interval);
+s32 Func_080041d8(void *callback, s32 interval);
 void Func_080f9010(s32 id);
 void Func_080b50e8(s32 id);
 void Func_080049ac(void);

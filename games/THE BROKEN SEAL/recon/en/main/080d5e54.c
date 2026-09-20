@@ -130,7 +130,7 @@ s32 Func_08002322(s32 angle);
 s32 Func_0800231c(s32 angle);
 s32 Func_080022ec(s32 value, s32 divisor);
 s32 Func_080022fc(s32 value, s32 divisor);
-void Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
+s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
 void Render_ResetTransformState(void);
 void Func_080049e8(void);

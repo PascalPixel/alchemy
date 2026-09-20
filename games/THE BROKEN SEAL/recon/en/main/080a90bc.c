@@ -7,7 +7,7 @@ void Func_08004278(s32 a);
 void Func_080a33d4(struct ShopRuntime *shop, s32 window);
 void Func_08015080(s32 icon_id, s32 window, s32 x, s32 y);
 void Func_080f9010(s32 message);
-void Func_080041d8(s32 a, s32 b);
+s32 Func_080041d8(s32 a, s32 b);
 s32 Func_080a8f40(s32 a, s32 b, s32 c);
 s32 Func_080a8d34(s32 a, s32 b, s32 c);
 void Func_080030f8(s32 frames);

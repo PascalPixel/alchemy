@@ -160,7 +160,7 @@ s32 Func_080c1ffc(s32 value);
 void Func_080030f8(s32 frames);
 s32 Func_080770e0(s32 id);
 void BattleParty_AssignMemberSlots(void);
-void Scheduler_AddOrUpdateCallback(s32 callback, s32 order);
+s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order);
 void Func_080f9010(s32 cue);
 void Func_080037d4(s32 value);
 void BattleParty_CollectUnitList(void);

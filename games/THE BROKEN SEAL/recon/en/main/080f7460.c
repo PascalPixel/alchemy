@@ -141,7 +141,7 @@ void Func_08015080(s32 text, void *window, s32 x, s32 y);
 void Func_080f6148(void);
 void Func_080f61e8(s32 id);
 void Func_080f62b8(s32 a, s32 b, s32 c, s32 d, s32 e);
-void Func_080041d8(void *callback, s32 interval);
+s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 void Func_08002dd8(s32 id);
 void Func_080030f8(s32 frames);

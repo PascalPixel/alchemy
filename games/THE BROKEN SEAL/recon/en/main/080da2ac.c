@@ -32,7 +32,7 @@ void Func_080cd594(s32 mode);
 void Func_080e0524(s32 effect_id, void *target, s32 flag_a, s32 flag_b);
 void Func_080072f0(void *dest, void *src, s32 size, WordCopyFn copier);
 s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
-void Func_080041d8(void *callback, s32 interval);
+s32 Func_080041d8(void *callback, s32 interval);
 void Func_080f9010(s32 id);
 void Func_080049ac(void);
 void Func_080051d8(s32 a, s32 b);

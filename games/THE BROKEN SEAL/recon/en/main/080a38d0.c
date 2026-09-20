@@ -4,7 +4,7 @@ extern u8 *Data_03001f2c;
 void WindowBounds_Set(s32, s32, s32, s32, s32);
 void UiWindow_Commit(s32);
 s32 Runtime_GetObject(s32);
-void ScheduleCallbackAfterFrames(s32, s32);
+s32 ScheduleCallbackAfterFrames(s32, s32);
 s32 Modulo(s32, s32);
 s32 Func_080a3d6c(s32);
 s32 Func_080a3d9c(s32, s32);

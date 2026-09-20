@@ -36,7 +36,7 @@ void Func_080f9010(s32 sound_id);
 s32 Resource_ResetEntry(u32 resource_index);
 void Func_08015018(s32 window, s32 flag);
 void Func_080a19a0(void);
-void Func_080041d8(const void *callback, s32 order);
+s32 Func_080041d8(const void *callback, s32 order);
 
 s32 Func_080ab314(void)
 {

@@ -121,7 +121,7 @@ void Func_080cd594(s32 mode);
 void Func_080e0524(void *resource_id, void *destination, s32 upper, s32 palette);
 void BattleFx_FetchRectangleBlitters(s32 alternate, u32 *output);
 s32 Func_08004458(void);
-void Func_080041d8(void *callback, s32 interval);
+s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 void Func_080b50e8(s32 value);
 void Func_080049ac(void);

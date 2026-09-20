@@ -2,6 +2,7 @@
 
 s32 Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
 void Func_08002dd8(s32);
+#define Runtime_ReleaseHeapBlock Func_08002dd8
 void Func_080e823c(s32 *);
 void Func_080d2d98(s32 *);
 void Func_080eb754(s32 *);
@@ -64,7 +65,7 @@ void BattleFx_InitializeMode(s32 *arg0)
         }
     }
 
-    Func_08002dd8(40);
-    Func_08002dd8(39);
-    Func_08002dd8(41);
+    Runtime_ReleaseHeapBlock(40);
+    Runtime_ReleaseHeapBlock(39);
+    Runtime_ReleaseHeapBlock(41);
 }

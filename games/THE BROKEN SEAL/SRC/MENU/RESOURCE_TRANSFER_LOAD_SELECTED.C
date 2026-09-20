@@ -33,6 +33,7 @@ void Func_080053e8(void *source, void *destination);
 u16 Func_08004080(void);
 u16 Resource_CopyData(s32 handle, s32 size, void *buffer);
 void Func_08002dd8(s32 owner);
+#define Runtime_ReleaseHeapBlock Func_08002dd8
 
 void Menu_LoadSelectedResource(void)
 {
@@ -68,5 +69,5 @@ void Menu_LoadSelectedResource(void)
     transfer->x = 40;
     transfer->y = 40;
     transfer->width = 240;
-    Func_08002dd8(17);
+    Runtime_ReleaseHeapBlock(17);
 }

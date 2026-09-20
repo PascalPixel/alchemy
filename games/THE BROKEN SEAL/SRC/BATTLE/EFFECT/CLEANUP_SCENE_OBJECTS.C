@@ -46,6 +46,7 @@ void Func_08004278(u32 callback);
 void Func_08003f3c(s32 handle);
 void Func_0809202c(void);
 void Func_08002dd8(s32 asset_id);
+#define Runtime_ReleaseHeapBlock Func_08002dd8
 
 #define BattleEffect_CleanupSceneObjects Func_08097194
 
@@ -109,6 +110,6 @@ void BattleEffect_CleanupSceneObjects(void)
         if (scene->scene_mode != 8)
             runtime->restore_requested = 1;
         Func_0809202c();
-        Func_08002dd8(0x38);
+        Runtime_ReleaseHeapBlock(0x38);
     }
 }

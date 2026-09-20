@@ -25,6 +25,7 @@ s32 Ability_GetData(s32 flags);
 void Func_08015278(s32 screen_handle);
 void Func_080a34c0(void);
 void Func_08002dd8(s32 kind);
+#define Runtime_ReleaseHeapBlock Func_08002dd8
 void Func_08015410(s32 x, s32 y, s32 width, s32 height);
 void Func_0808a548(void);
 
@@ -68,7 +69,7 @@ s32 Menu_OpenConfirmPrompt(void)
     FIELD(FIELD(&Data_03001e68, void *, 0x24), u8, 0xea6) = 1;
     Func_080a34c0();
     Func_08015408(0, 0, 30, 20);
-    Func_08002dd8(0x37);
+    Runtime_ReleaseHeapBlock(0x37);
     Data_03001e68->suspended = 0;
     WaitFrames(1);
     Func_08015410(0, 0, 30, 20);

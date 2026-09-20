@@ -11,7 +11,7 @@
  * 080d9fc8): same heap_cache=(void**)0x03001EEC / cursor / work / canvas
  * prologue, same the +0x7828 field=object republish, same
  * Func_080cd594(0)/Func_080041d8(0x080CD261,0x480)/Func_08004278(0x080CD261)/
- * Func_08002dd8(id)/Func_080cdbc0() bracket, and the same
+ * Runtime_ReleaseHeapBlock(id)/Func_080cdbc0() bracket, and the same
  * Func_080cef64(flag, DrawRectangleFn callbacks[2]) two-word blit-routine
  * resolver already established in games/THE BROKEN SEAL/recon/en/main/080e01e4.c.
  *
@@ -79,6 +79,7 @@ void Func_080cd52c(void);
 void Func_080030f8(s32 frames);
 void Func_08004278(void *callback);
 void Func_08002dd8(s32 id);
+#define Runtime_ReleaseHeapBlock Func_08002dd8
 void Func_080cdbc0(void);
 
 void BattleFx_RunParticleReveal(void *object)
@@ -213,7 +214,7 @@ void BattleFx_RunParticleReveal(void *object)
     }
 
     Func_08004278((void *)0x080CD261);
-    Func_08002dd8(0x2F);
-    Func_08002dd8(0x2E);
+    Runtime_ReleaseHeapBlock(0x2F);
+    Runtime_ReleaseHeapBlock(0x2E);
     Func_080cdbc0();
 }

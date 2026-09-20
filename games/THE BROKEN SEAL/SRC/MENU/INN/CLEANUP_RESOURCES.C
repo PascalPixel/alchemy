@@ -1,6 +1,7 @@
 #include "INN_RUNTIME.H"
 
 s32 Func_08002dd8(s32);
+#define Runtime_ReleaseHeapBlock Func_08002dd8
 s32 Resource_ResetEntry(u16);
 s32 ScheduleCallback(s32);
 s32 UiWork_FinalizePending();
@@ -19,5 +20,5 @@ void Inn_Cleanup(void)
     Resource_ResetEntry(state->resource_entries[3]);
     Resource_ResetEntry(state->resource_entries[4]);
     Resource_ResetEntry(state->resource_entries[5]);
-    Func_08002dd8(0x37);
+    Runtime_ReleaseHeapBlock(0x37);
 }

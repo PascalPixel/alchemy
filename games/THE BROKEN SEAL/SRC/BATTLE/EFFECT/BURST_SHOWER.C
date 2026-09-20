@@ -47,6 +47,7 @@ void Func_080e155c(s32, s32);
 void Func_080cd52c(void);
 void Func_080030f8(s32);
 void Func_08002dd8(s32);
+#define Runtime_ReleaseHeapBlock Func_08002dd8
 s32 Func_080cdbc0(void);
 
 /* The caller's effect state, republished at work + 0x7828. */
@@ -317,7 +318,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
     } while (frame != 64);
 
     Func_08004278(0x080CD261);
-    Func_08002dd8(47);
-    Func_08002dd8(46);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
     Func_080cdbc0();
 }

@@ -33,6 +33,7 @@ s32 Func_0800231c(s32 angle);
 void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Func_080030f8(s32 frames);
 void Func_08002dd8(s32 id);
+#define Runtime_ReleaseHeapBlock Func_08002dd8
 s32 Func_080cdbc0(void);
 
 /*
@@ -166,7 +167,7 @@ void BattleFx_RunMemberOrbit(void *object)
     }
     Func_08004278((void *)0x080CD261);
     Func_08004278((void *)0x080DBB9D);
-    Func_08002dd8(47);
-    Func_08002dd8(46);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
     Func_080cdbc0();
 }

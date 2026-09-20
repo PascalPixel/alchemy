@@ -1,6 +1,7 @@
 #include "TYPES.H"
 
 void *Func_08002dd8(s32);
+#define Runtime_ReleaseHeapBlock Func_08002dd8
 s32 Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 void *Func_080e3aa0(s32 *);
@@ -28,7 +29,7 @@ void BattleFx_DispatchByIdRange(s32 *arg0)
   {
     Func_080e3aa0(arg0);
   }
-  Func_08002dd8(0x28);
-  Func_08002dd8(0x27);
-  Func_08002dd8(0x29);
+  Runtime_ReleaseHeapBlock(0x28);
+  Runtime_ReleaseHeapBlock(0x27);
+  Runtime_ReleaseHeapBlock(0x29);
 }

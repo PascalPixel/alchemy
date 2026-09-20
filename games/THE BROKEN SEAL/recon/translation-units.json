@@ -12362,6 +12362,10 @@
           "address": "0x0200906c",
           "kind": "thumb"
         },
+        "Func_02001394": {
+          "address": "0x02009014",
+          "kind": "thumb"
+        },
         "Func_0200139e": {
           "address": "0x02009074",
           "kind": "thumb"
@@ -12528,6 +12532,11 @@
         {
           "address": "0x02000194",
           "extent": 472,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0200036c",
+          "extent": 84,
           "state": "exact-c"
         },
         {

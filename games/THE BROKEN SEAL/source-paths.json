@@ -5728,6 +5728,10 @@
       "name": "Scene_RunActor17MessageBranch",
       "source": "FIELD/KORIMA_HEYA/ENTRY_LAYOUT.C"
     },
+    "resource_394:0200036c": {
+      "name": "State_UpdateScrollRegistersWithPreset",
+      "source": "FIELD/KORIMA_MAGARI/PRESET_LAYOUT.C"
+    },
     "resource_394:020003c0": {
       "name": "State_CopyPresetA0d0WithOffsetB0",
       "source": "FIELD/KORIMA_MAGARI/PRESET_LAYOUT.C"

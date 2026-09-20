@@ -8134,10 +8134,10 @@
 <path class="bevel-dark" d="M67.34350406298564 386.14707207728793 H76.87877994423226 V337.8557853348098" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="394: 2,944 bytes · Unidentified, Drafted, Assembly, C · 0x087a37f0" data-node="leaf" data-kind="file" data-bytes="2944" data-address="0x087a37f0" data-source="games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MAGARI/">
 <title>394: 2,944 bytes · Unidentified, Drafted, Assembly, C · 0x087a37f0</title>
-<rect x="69.84350406298564" y="346.14676245080113" width="4.535275881246614" height="2.992452368541639" style="fill:#d9d9d4"/>
-<rect x="69.84350406298564" y="344.12991519144504" width="4.535275881246614" height="2.0168472593560796" style="fill:#96c8c9"/>
-<rect x="69.84350406298564" y="343.44072626110295" width="4.535275881246614" height="0.6891889303420923" style="fill:#6cafb2"/>
-<rect x="69.84350406298564" y="340.35578533480975" width="4.535275881246614" height="3.084940926293175" style="fill:#326b7d"/>
+<rect x="69.84350406298564" y="346.3138385551265" width="4.535275881246614" height="2.8253762642162834" style="fill:#d9d9d4"/>
+<rect x="69.84350406298564" y="344.2969912957704" width="4.535275881246614" height="2.0168472593560796" style="fill:#96c8c9"/>
+<rect x="69.84350406298564" y="343.6078023654283" width="4.535275881246614" height="0.6891889303420923" style="fill:#6cafb2"/>
+<rect x="69.84350406298564" y="340.3557853348098" width="4.535275881246614" height="3.2520170306185308" style="fill:#326b7d"/>
 </g>
 <g aria-label="KORIMA_MAGARI.BIN: 9,752 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 2 items" data-node="container" data-kind="file" data-bytes="9752" data-source="games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MAGARI/KORIMA_MAGARI.BIN">
 <title>KORIMA_MAGARI.BIN: 9,752 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 2 items</title>

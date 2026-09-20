@@ -22,6 +22,8 @@ extern s16 *gOv2;
 extern u16 *gOv3;
 extern u8 gUnk[];
 
+u32 Func_02001394(void);
+
 /*
  * The eight-byte owner at 0x02000030 includes its one pool word, which holds
  * the returned table address 0x02009170.
@@ -203,6 +205,28 @@ void Scene_RepaintBoardRecords(void)
     }
 
     SceneData_unk22_3();
+}
+
+void State_UpdateScrollRegistersWithPreset(void)
+{
+    u16 line;
+    u32 *source;
+    volatile u32 *destination;
+
+    line = *(volatile u16 *)0x04000006;
+    source = (u32 *)0x03001ad4;
+    destination = (volatile u32 *)0x04000014;
+
+    if (line == 227 || line <= 52) {
+        if (((Func_02001394() * 100) >> 16) < *(u32 *)0x0200a0dc) {
+            source = (u32 *)0x0200a0d0;
+        }
+    }
+
+    *destination = *source++;
+    destination = (volatile u32 *)0x04000018;
+    *destination++ = *source++;
+    *destination = *source;
 }
 
 void State_CopyPresetA0d0WithOffsetB0(void)

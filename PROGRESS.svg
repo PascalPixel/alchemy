@@ -18207,10 +18207,10 @@
 <path class="bevel-dark" d="M747.3966051370105 198.0545941748208 H750.7231718788928 V172.62153047811208" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="370: 4,576 bytes · Unidentified, Drafted, Assembly, C · 0x087795e8" data-node="leaf" data-kind="file" data-bytes="4576" data-address="0x087795e8" data-source="games/THE BROKEN SEAL/SRC/MENU/CLEAR/">
 <title>370: 4,576 bytes · Unidentified, Drafted, Assembly, C · 0x087795e8</title>
-<rect x="748.6440676652163" y="191.3182195375404" width="0.831641685470565" height="5.488912109074572" style="fill:#d9d9d4"/>
-<rect x="748.6440676652163" y="176.48562508023295" width="0.831641685470565" height="14.832594457307449" style="fill:#96c8c9"/>
-<rect x="748.6440676652163" y="174.35021269807243" width="0.831641685470565" height="2.135412382160518" style="fill:#6cafb2"/>
-<rect x="748.6440676652163" y="173.86899300631794" width="0.831641685470565" height="0.481219691754483" style="fill:#326b7d"/>
+<rect x="748.6440676652163" y="191.79442652417242" width="0.831641685470565" height="5.01270512244253" style="fill:#d9d9d4"/>
+<rect x="748.6440676652163" y="176.961832066865" width="0.831641685470565" height="14.832594457307449" style="fill:#96c8c9"/>
+<rect x="748.6440676652163" y="174.82641968470446" width="0.831641685470565" height="2.135412382160518" style="fill:#6cafb2"/>
+<rect x="748.6440676652163" y="173.86899300631794" width="0.831641685470565" height="0.9574266783865233" style="fill:#326b7d"/>
 </g>
 </g>
 <g aria-label="EQUIPMENT: 220 bytes · C · 2 items" data-node="container" data-kind="folder" data-bytes="220" data-source="games/THE BROKEN SEAL/SRC/MENU/EQUIPMENT/">

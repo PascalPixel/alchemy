@@ -2,9 +2,9 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global Func_08016018
+	.global UiWork_Initialize
 	.thumb_func
-Func_08016018:
+UiWork_Initialize:
 	push	{r5, r6, lr}
 	mov	r6, r9
 	push	{r6}

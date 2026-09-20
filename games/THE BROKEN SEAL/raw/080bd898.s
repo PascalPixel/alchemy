@@ -2,9 +2,9 @@
 @ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global Func_080bd898
+	.global BattleEvent_Playback
 	.thumb_func
-Func_080bd898:
+BattleEvent_Playback:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

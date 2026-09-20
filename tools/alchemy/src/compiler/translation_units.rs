@@ -1094,7 +1094,7 @@ fn validate_production_state(
             ));
         }
     }
-    let requires_direct = unit.overlay.is_none() && !unit.exact();
+    let requires_direct = unit.overlay.is_none() && !unit.exact() && !grouped;
     let direct_includes = if requires_direct {
         let parent = source.parent().unwrap_or(root);
         let text = std::fs::read_to_string(source)
@@ -1991,6 +1991,26 @@ mod tests {
         assert!(resolve(leaf, None, Some(8)).is_err());
         assert!(resolve(leaf, Some(0), None).is_err());
         assert!(resolve(leaf, Some(usize::MAX), None).is_err());
+    }
+    #[test]
+    fn mixed_grouped_main_preserves_exact_and_retained_ownership() {
+        let root = crate::compiler::routing::root();
+        let manifest = TranslationUnits::load(root).unwrap();
+        let names = SourcePaths::load_for_game(root, "tbs").unwrap();
+        let unit = manifest.unit("battle-particle-streams").unwrap();
+        let source = root.join(&unit.source);
+        assert!(!unit.exact());
+        assert!(validate_production_state(root, unit, &source, true, &names).is_ok());
+        // An enclosing retained body must not acquire credit merely because
+        // the same compilation contains exact nested functions.
+        let mut invalid = unit.clone();
+        invalid.owners[2].state = OwnerState::ExactC;
+        assert!(validate_production_state(root, &invalid, &source, true, &names).is_err());
+        invalid = unit.clone();
+        invalid.owners[1].state = OwnerState::RetainedAssembly;
+        assert!(validate_production_state(root, &invalid, &source, true, &names).is_err());
+        // Separate-source mixed units still require their direct includes.
+        assert!(validate_production_state(root, unit, &source, false, &names).is_err());
     }
     #[test]
     fn loads_typed_main_and_overlay_units() {

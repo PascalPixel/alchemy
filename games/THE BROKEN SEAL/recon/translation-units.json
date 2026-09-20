@@ -173838,6 +173838,31 @@
           }
         }
       }
+    },
+    {
+      "id": "battle-particle-streams",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PARTICLE_STREAMS.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080e7338",
+          "extent": 102,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080e73a0",
+          "extent": 98,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080e7404",
+          "extent": 3640,
+          "state": "retained-assembly"
+        }
+      ]
     }
   ]
 }

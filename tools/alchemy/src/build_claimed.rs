@@ -198,13 +198,7 @@ fn module_contract(
     let Some(unit) = units.unit_for_game_owner(game, source.owner) else {
         return Ok(Vec::new());
     };
-    if root.join(&unit.source) == source.path {
-        if !unit.exact() {
-            return Err(format!(
-                "{}: grouped production C must be wholly exact",
-                unit.id
-            ));
-        }
+    if root.join(&unit.source) == source.path && unit.exact() {
         return unit
             .members_in("main")
             .map(|member| {
@@ -403,21 +397,36 @@ fn externals_assembly(
 }
 fn unit_slice(root: &str, unit: &TranslationUnit, owner: u32, object: &str) -> Result<String> {
     let symbol = format!("Func_{owner:08x}");
+    let listing = run(&strings(&["arm-none-eabi-nm", "-S", object]), root)?;
+    let fields = crate::compiler::symbols::function_symbol_fields(&listing, &symbol)
+        .ok_or_else(|| format!("{object}: missing or ambiguous compiler function {symbol}"))?;
+    let emitted_symbol = fields[3];
+    let nested = emitted_symbol != symbol;
     let emitted = std::fs::read_to_string(Path::new(object).with_extension("s"))
         .map_err(|error| format!("{object}: {error}"))?;
+    let opening = if nested {
+        format!("\t.type\t {emitted_symbol},function")
+    } else {
+        format!("\t.global\t{symbol}")
+    };
     let body = &emitted[emitted
-        .find(&format!("\t.global\t{symbol}"))
+        .find(&opening)
         .ok_or_else(|| format!("{object}: missing compiler-emitted {symbol}"))?..];
     let finish = body
-        .find(&format!("\t.size\t {symbol},"))
+        .find(&format!("\t.size\t {emitted_symbol},"))
         .and_then(|start| body[start..].find('\n').map(|size| start + size + 1))
         .ok_or_else(|| format!("{object}: missing compiler-emitted size for {symbol}"))?;
     let body = &body[..finish];
-    if body.matches("\t.global\tFunc_").count() != 1 {
+    if body.matches("\t.global\tFunc_").count() != usize::from(!nested) {
         return Err(format!("{object}: {symbol} slice spans another owner"));
     }
     let symbols = unit.canonical_symbols()?;
     let mut out = ".code 16\n.text\n".to_string();
+    if nested {
+        out.push_str(&format!(
+            ".global {symbol}\n.type {symbol},function\n.thumb_func\n{symbol}:\n"
+        ));
+    }
     for (name, value) in symbols.iter().filter(|(name, _)| *name != &symbol) {
         // Keep external calls relocatable until the slice has its load address.
         if value.kind == AbsoluteSymbolKind::Thumb && external_symbol(name, CALL_VIA_BASE).is_some()
@@ -441,6 +450,9 @@ fn unit_slice(root: &str, unit: &TranslationUnit, owner: u32, object: &str) -> R
         out.push_str(&binding(&name, u64::from(address), true));
     }
     out.push_str(body);
+    if nested {
+        out.push_str(&format!(".size {symbol}, .-{symbol}\n"));
+    }
     Ok(out)
 }
 
@@ -638,10 +650,28 @@ pub fn compile_source_for_owner(
         &crate::compiler::routing::compiler_assembly_command(&assembly, &object),
         root,
     )?;
-    let defined = last_fields(&run(
+    let mut defined = last_fields(&run(
         &strings(&["arm-none-eabi-nm", "-g", "--defined-only", &object]),
         root,
     )?);
+    let listing = run(&strings(&["arm-none-eabi-nm", "-S", &object]), root)?;
+    for line in listing.lines() {
+        let fields = line.split_whitespace().collect::<Vec<_>>();
+        if fields.len() != 4 || fields[2] != "t" {
+            continue;
+        }
+        if let Some(base) = crate::compiler::symbols::nested_function_base(fields[3]) {
+            if function_name(base) {
+                if crate::compiler::symbols::function_symbol_fields(&listing, base).is_none()
+                    || defined.iter().any(|name| name == base)
+                {
+                    return Err(format!("{object}: ambiguous nested owner {base}"));
+                }
+                defined.push(base.to_string());
+            }
+        }
+    }
+    defined.sort();
     let expected = format!("Func_{name}");
     if !defined.iter().any(|s| s == &expected) || defined.iter().any(|s| !function_name(s)) {
         return Err(format!(
@@ -743,11 +773,37 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     }
     let game = target.compiler.as_str();
     let source_paths = SourcePaths::load_for_game(Path::new(root), game)?;
-    let sources = source_paths.main_sources()?;
+    let mut sources = source_paths.main_sources()?;
     if sources.is_empty() {
         return Err("no reconstructed sources".into());
     }
     let units = TranslationUnits::load_game(Path::new(root), target.compiler)?;
+    // A grouped main unit can retain its enclosing function while adopting
+    // complete nested functions. Each exact member still links independently.
+    for unit in units
+        .units
+        .iter()
+        .filter(|unit| unit.overlay.is_none() && !unit.exact())
+    {
+        let path = Path::new(root).join(&unit.source);
+        if !sources.iter().any(|source| source.path == path) {
+            continue;
+        }
+        for member in unit
+            .owners
+            .iter()
+            .filter(|member| member.state == OwnerState::ExactC)
+        {
+            let owner = unit.source_owner("main", member.address)?;
+            if !sources.iter().any(|source| source.owner == owner) {
+                sources.push(SourceFile {
+                    owner,
+                    path: path.clone(),
+                });
+            }
+        }
+    }
+    sources.sort_by_key(|source| source.owner.address());
     let contracts = sources
         .iter()
         .map(|source| module_contract(Path::new(root), game, source, &units))

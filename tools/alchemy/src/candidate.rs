@@ -290,9 +290,7 @@ pub fn link_candidate_owned_routed_with_object(
     let object_symbols = run(&["arm-none-eabi-nm", "-S", &object], cwd)?;
     let (symbol, object_fields) = [&canonical_symbol, &short_symbol]
         .into_iter()
-        .find_map(|symbol| {
-            symbol_fields(&object_symbols, symbol).map(|fields| (symbol.as_str(), fields))
-        })
+        .find_map(|symbol| symbol_fields(&object_symbols, symbol).map(|fields| (fields[3], fields)))
         .ok_or_else(|| format!("missing object symbol: {canonical_symbol}"))?;
     let owner_section_offset = parse_hex(
         object_fields
@@ -318,7 +316,9 @@ pub fn link_candidate_owned_routed_with_object(
         .absolute_symbols
         .keys()
         .filter(|name| **name != canonical_symbol && **name != short_symbol)
-        .filter(|name| symbol_fields(&object_symbols, name).is_some())
+        .filter(|name| {
+            symbol_fields(&object_symbols, name).is_some_and(|fields| fields[3] == name.as_str())
+        })
         .collect::<Vec<_>>();
     let link_object = if peers.is_empty() {
         &object
@@ -471,16 +471,7 @@ pub fn link_candidate_owned_routed_with_object(
     Ok(actual)
 }
 fn symbol_fields<'a>(listing: &'a str, symbol: &str) -> Option<Vec<&'a str>> {
-    listing
-        .lines()
-        .map(|line| line.split_whitespace().collect::<Vec<_>>())
-        .find(|fields| {
-            fields.len() == 4
-                && fields[3] == symbol
-                && fields[2] != "U"
-                && u64::from_str_radix(fields[0], 16).is_ok()
-                && u64::from_str_radix(fields[1], 16).is_ok()
-        })
+    crate::compiler::symbols::function_symbol_fields(listing, symbol)
 }
 fn absolute_symbol_directive(kind: AbsoluteSymbolKind) -> &'static str {
     if kind == AbsoluteSymbolKind::Thumb {

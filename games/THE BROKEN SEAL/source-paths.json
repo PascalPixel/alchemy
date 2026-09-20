@@ -19004,6 +19004,16 @@
     "main:080160fc": {
       "name": "UiWork_UploadDirtyBlocks",
       "source": "GRAPHICS/RENDER/UPLOAD_DIRTY_BLOCKS.C"
+    },
+    "main:080e7338": {
+      "name": "ParticleStream_AddPrimary",
+      "source": "BATTLE/EFFECT/PARTICLE_STREAMS.C"
+    },
+    "main:080e73a0": {
+      "name": "ParticleStream_AddSecondary"
+    },
+    "main:080e7404": {
+      "name": "BattleEffect_RunParticleStreams"
     }
   }
 }

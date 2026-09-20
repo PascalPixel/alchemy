@@ -132,7 +132,7 @@ void Func_08002dd8(s32 id);
 s32 Func_080022ec(s32 numerator, s32 denominator);
 s32 Func_08002322(s32 angle);
 /* Scheduler_AddOrUpdateCallback */
-void Func_080041d8(void *callback, s32 interval);
+s32 Func_080041d8(void *callback, s32 interval);
 /* Scheduler_RemoveCallback */
 void Func_08004278(void *callback);
 /* random_16 */

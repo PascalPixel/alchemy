@@ -89,7 +89,7 @@ extern u16 Data_080eeef8[];
 
 void Func_080cd594(s32 mode);
 void Func_080c9048(void);
-void Func_080041d8(void *callback, s32 interval);
+s32 Func_080041d8(void *callback, s32 interval);
 void Func_080cd104(s32 a, s32 b);
 void Func_080d6750(void *object);
 void Func_080dbb24(s32 a, s32 b, s32 c);

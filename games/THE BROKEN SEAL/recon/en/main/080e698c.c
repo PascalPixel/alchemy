@@ -50,7 +50,7 @@ s32 Func_080072ec(s32 a, s32 b, s32 target);
 void Func_08009140(void *object);
 void Func_08009150(void *object, s32 x, s32 y, s32 z);
 void Func_08009080(void *object, s32 mode);
-void Func_080041d8(void *callback, s32 interval);
+s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 void Func_080e3980(s32 member_id, void *screen);
 void Func_080b50e8(s32 id);

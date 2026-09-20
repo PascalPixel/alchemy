@@ -106,7 +106,7 @@ void Func_08002dd8(s32 kind);
 void *Func_08002f40(s32 id);
 void Func_080030f8(s32 frames);
 /* Scheduler_AddOrUpdateCallback */
-void Func_080041d8(void *callback, s32 interval);
+s32 Func_080041d8(void *callback, s32 interval);
 /* Scheduler_RemoveCallback */
 void Func_08004278(void *callback);
 /* random_16 */

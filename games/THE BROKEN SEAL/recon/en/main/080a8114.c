@@ -17,7 +17,7 @@ void Func_08015270(s32);
 void Func_08015278(s32);
 void Func_08015080(s32, s32, s32, s32);
 void Func_08015068(s32, s32, s32, s32, s32);
-void Func_080041d8(const void *, s32);
+s32 Func_080041d8(const void *, s32);
 void Func_080a1804(void *, s32);
 void Func_080a9d84(void);
 void Func_080a847c(s32, s32, u8 *, s32);

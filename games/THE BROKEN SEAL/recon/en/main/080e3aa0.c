@@ -213,7 +213,7 @@ void Func_080030f8(s32 frames);                      /* WaitFrames */
 s32 Func_080022ec(s32 numerator, s32 denominator);   /* FixedPoint_Ratio */
 void Func_08002dd8(s32 id);                          /* Runtime_ReleaseHeapBlock */
 void *Func_08002f40(s32 id);                         /* get */
-void Func_080041d8(s32 callback, s32 interval);      /* Scheduler_AddOrUpdateCallback */
+s32 Func_080041d8(s32 callback, s32 interval);      /* Scheduler_AddOrUpdateCallback */
 void Func_08004278(s32 callback);                    /* Scheduler_RemoveCallback */
 u32 Func_08004458(void);                             /* random_16 */
 void Func_080049ac(void);                            /* Render_ResetTransformState */

@@ -168,7 +168,7 @@ s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 void Func_080e0524(s32 id, void *target, s32 flag_a, s32 flag_b);  /* load_and_decompress */
 void *Func_08002f40(s32 id);                                       /* get */
 void Func_080072f0(void *dest, const void *src, s32 count, CopyFn copier);
-void Func_080041d8(void *callback, s32 interval);                  /* Scheduler_AddOrUpdateCallback */
+s32 Func_080041d8(void *callback, s32 interval);                  /* Scheduler_AddOrUpdateCallback */
 struct Member **Func_080b5098(s32 member);
 u32 Func_08004458(void);                                           /* random_16 */
 void Func_08009088(struct Member *member, s32 mode);

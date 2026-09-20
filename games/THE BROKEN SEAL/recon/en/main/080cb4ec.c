@@ -33,7 +33,7 @@ s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 void Resource_LoadAndDecompress(
     void *resource_id, void *destination, s32 destination_offset,
     s32 copy_palette);
-void Func_080041d8(s32 callback, s32 interval);
+s32 Func_080041d8(s32 callback, s32 interval);
 void Func_08004278(s32 callback);
 void Func_080f9010(s32 cue);
 void EffectPosition_ApplyStepAndYOffset(

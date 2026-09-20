@@ -152,7 +152,7 @@ void Func_080cd594(s32 mode);
 s32 Func_080ed408(s32, s32, s32, s32, s32);
 u8 *Func_08002f40(s32 resource_id);
 void Func_08005340(const void *source, void *destination);
-void Func_080041d8(void (*callback)(void), s32 interval);
+s32 Func_080041d8(void (*callback)(void), s32 interval);
 void Func_08004278(void (*callback)(void));
 void Func_080cd260(void);
 s32 Func_08004458(void);

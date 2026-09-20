@@ -4,7 +4,7 @@ extern void Func_080030f8(s32);
 extern s32 Func_08003f3c(s32);
 extern s32 Func_08003fa4(s32, s32, const void *);
 extern s16 Func_08004080(void);
-extern void Func_080041d8(const void *, s32);
+extern s32 Func_080041d8(const void *, s32);
 extern void Func_08004278(const void *);
 extern void Func_080091e0(void *, s32);
 extern void Func_08009240(void *, s32);

@@ -20,7 +20,7 @@ typedef void (*DrawRectangleFn)(
 void Func_080cd594(s32 mode);
 void Func_080cef64(s32 flag, DrawRectangleFn *out_callbacks);
 void Func_080e0524(s32 effect_id, void *target, s32 flag_a, s32 flag_b);
-void Func_080041d8(void *callback, s32 interval);
+s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 void Func_08002dd8(s32 id);
 s32 Func_080cdbc0(void);

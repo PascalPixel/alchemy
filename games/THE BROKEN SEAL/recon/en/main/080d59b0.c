@@ -24,7 +24,7 @@ extern u8 Value_000000a8;
 void Func_080cd594(s32 mode);
 void Func_080e0524(s32 effect_id, void *work, s32 flag_a, s32 flag_b);
 s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
-void Func_080041d8(void *callback, s32 interval);
+s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 void Func_08002dd8(s32 id);
 s32 Func_080cdbc0(void);

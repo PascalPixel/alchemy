@@ -64,7 +64,7 @@ void Func_08005340(void *a, void *b);
 void Func_08009080(void *member_ptr, s32 a);
 void Func_08009088(void *member_ptr, s32 a);
 s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
-void Func_080041d8(void *callback, s32 interval);
+s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 void **Func_080b5098(s32 member_id);
 s32 Func_080022ec(s32 a, s32 b);

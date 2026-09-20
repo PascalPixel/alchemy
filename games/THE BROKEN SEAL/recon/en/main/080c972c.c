@@ -59,7 +59,7 @@ void Func_080cd594(s32 mode);
 void Func_080e0524(s32 resource_id, void *destination, s32 flag_a, s32 flag_b);
 void Func_080c9048(void);
 s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
-void Func_080041d8(void *callback, s32 interval);
+s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 u32 Func_08004458(void);
 void Func_080b50e8(s32 cue);

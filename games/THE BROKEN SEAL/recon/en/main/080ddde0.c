@@ -14,7 +14,7 @@ typedef void (*FillWordsFn)(void *dest, s32 size, u32 fill);
 void Func_080cd594(s32 mode);
 s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 void Func_080e0524(s32 resource_id, void *destination, s32 destination_offset, s32 copy_palette);
-void Func_080041d8(void *callback, s32 interval);
+s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 void Func_08002dd8(s32 id);
 s32 Func_080cdbc0(void);

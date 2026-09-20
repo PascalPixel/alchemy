@@ -14,7 +14,7 @@ s32 Func_0808e4b4(s32 value, s32 count, s32 *result);
 void Func_08096b28(s32 handle, void *entry, s32 result);
 void Func_080f9010(s32 cue);
 void Func_0808f32c(void);
-void Func_080041d8(const void *callback, s32 delay);
+s32 Func_080041d8(const void *callback, s32 delay);
 void Func_080982dc(void);
 
 #define RunBattleEffect08 Func_080983a0

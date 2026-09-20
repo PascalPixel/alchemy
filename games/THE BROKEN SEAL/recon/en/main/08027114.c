@@ -175,7 +175,7 @@ s32 Resource_LoadKind26EntryToBuffer(s32 id, s32 handle);
 void Graphics_ExpandVramTilesByColorTable(s32 destination);
 void Link_DrawShiftedTilePair(s32 destination);
 void Menu_BuildLocalizedPatternTiles(void);
-void Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 period);
+s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 period);
 void Scheduler_RemoveCallback(void (*callback)(void));
 void UpdateLinkSessionCountdown(void);
 void Battle_DrawPartyPanelsWithEmptyList(void);

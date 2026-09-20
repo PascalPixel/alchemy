@@ -2,30 +2,16 @@
 
 /*
  * Full source-shape draft for the effect sequence at 0x080e7404.
+ * Aggregate names and the current helper declarations remain provisional.
  *
- * Aggregate names remain provisional.  Byte-offset accesses are retained
- * where the repository does not yet provide an evidence-backed structure.
- *
- * Two reference shapes in this owner are outside what the approved
- * compiler can emit from C, so this draft is a near reconstruction and
- * not a candidate for byte identity:
- *
- *   1. Both DMA descriptor writes to 0x040000d4 are one standalone
- *      three-register Thumb store multiple (`stmia r3!, {r0, r1, r2}`
- *      followed by a dead `subs r3, #12`).  gcc 2.96's Thumb backend
- *      emits multi-register transfers only from movmem8b/movmem12b, and
- *      those always print an immediately adjacent `ldmia` before the
- *      `stmia` (arm.c thumb_output_move_mem_multiple, arm.md movmem12b);
- *      the generic store_multiple patterns are TARGET_ARM only.  This
- *      draft writes the three descriptor words separately instead.
- *
- *   2. Before each `Func_080e7338` call the reference loads r9 with the
- *      frame top (`add r2, sp, #284; mov r9, r2`) and never reads r9
- *      again in this owner.  Func_080e7338 reads r9 on entry and
- *      dereferences r9 - 136, which is this frame's work-pointer slot,
- *      so r9 is an implicit register argument.  Func_080e7338 is already
- *      classified as a hidden_register_context_module; the caller side of
- *      that contract is equally inexpressible without a register pin.
+ * The two DMA sequences have the admitted Dma_Set interface. The helper at
+ * 0x080e7338 uses GCC's Thumb nested-function context register, r9. A nested
+ * C particle allocator capturing the work pointer reproduces its complete
+ * 102-byte body when defined before the remaining vector declarations.
+ * The older claim that either interface ruled out a C reconstruction was
+ * incorrect. Recover the enclosing local layout and declare the nested
+ * helpers together before attempting complete-unit adoption. This draft
+ * still spells the old external helper call and separate DMA stores.
  */
 #define M2C_FIELD(expr, type_ptr, offset) \
     (*(type_ptr)((u8 *)(expr) + (offset)))

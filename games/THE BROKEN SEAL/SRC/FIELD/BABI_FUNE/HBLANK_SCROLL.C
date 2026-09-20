@@ -1,5 +1,11 @@
 #include "DMA.H"
 
+/*
+ * Babi Fune: arm the BG3 hblank scroll DMA. It copies the scroll line for the
+ * current page into the hblank DMA source, clears the DMA enable and done
+ * bits in the status register, and fires a single 32-bit transfer.
+ */
+
 struct DisplayScrollState {
     u8 padding000[0xf00];
     u8 page;

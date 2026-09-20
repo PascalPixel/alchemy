@@ -1,4 +1,12 @@
 #include "TYPES.H"
+
+/*
+ * Makyuri aerie: initialize the actor's motion. It computes the actor's
+ * tile-aligned position from its angle, and if the motion check passes it
+ * arms the motion fields, clears the active flag, and queues the start-up
+ * cues before restoring the saved flags.
+ */
+
 #define SceneActor_InitializeMotion Func_02000928
 struct SceneActor {
     u8 unk_00[6]; u16 angle; s32 x,y,z; u8 unk_14[20];

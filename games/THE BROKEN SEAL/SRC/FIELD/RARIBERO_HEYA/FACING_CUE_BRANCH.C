@@ -1,5 +1,11 @@
 #include "TYPES.H"
 
+/*
+ * Raribero house: a face-toward cue branch. If the party faces the door
+ * (north) the cue line plays; otherwise a flag picks one of the two default
+ * lines.
+ */
+
 #define Dialogue_HandleFacingCueBranch Func_0200029c
 
 u16 *Func_020014b8(s32);
@@ -12,8 +18,8 @@ void Func_0200157e(s32, s32);
 
 void Dialogue_HandleFacingCueBranch(s32 no)
 {
-    u16 facing = (Func_020014b8(0)[3] + 0x2000) & ~0x3fff;
-    if (facing == 0xc000) {
+    u16 party_facing = (Func_020014b8(0)[3] + 0x2000) & ~0x3fff;
+    if (party_facing == 0xc000) {
         Func_020015c6(11, no);
     } else if (Func_020014ac(0x9a7)) {
         Func_02001556(0x28f6);

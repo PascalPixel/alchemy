@@ -14,6 +14,65 @@ pub struct ExternalSymbol {
     pub thumb: bool,
 }
 
+/// GCC gives an out-of-line nested function a local numeric suffix.
+pub fn nested_function_base(name: &str) -> Option<&str> {
+    let (base, suffix) = name.rsplit_once('.')?;
+    (!suffix.is_empty() && suffix.bytes().all(|byte| byte.is_ascii_digit())).then_some(base)
+}
+
+/// Resolve one sized code symbol, refusing ambiguous nested definitions.
+pub fn function_symbol_fields<'a>(listing: &'a str, name: &str) -> Option<Vec<&'a str>> {
+    let candidates = listing
+        .lines()
+        .map(|line| line.split_whitespace().collect::<Vec<_>>())
+        .filter(|fields| {
+            fields.len() == 4
+                && matches!(fields[2], "T" | "t")
+                && u64::from_str_radix(fields[0], 16).is_ok()
+                && u64::from_str_radix(fields[1], 16).is_ok()
+        })
+        .collect::<Vec<_>>();
+    let matches = candidates
+        .into_iter()
+        .filter(|fields| fields[3] == name || nested_function_base(fields[3]) == Some(name))
+        .collect::<Vec<_>>();
+    let first = matches.first()?;
+    if matches.len() == 1 {
+        return Some(first.clone());
+    }
+    // Materializing a local owner exports an alias of that same body.
+    if matches.iter().all(|fields| fields[..2] == first[..2]) {
+        return matches.iter().find(|fields| fields[3] == name).cloned();
+    }
+    None
+}
+
+#[cfg(test)]
+mod nested_tests {
+    use super::*;
+
+    #[test]
+    fn nested_code_resolution_is_unique_and_sized() {
+        let listing = "00000000 00000066 t Func_080e7338.0\n00000068 00000062 t Func_080e73a0.1\n";
+        assert_eq!(
+            function_symbol_fields(listing, "Func_080e7338").unwrap()[3],
+            "Func_080e7338.0"
+        );
+        let duplicate = format!("{listing}00000100 00000066 t Func_080e7338.2\n");
+        assert!(function_symbol_fields(&duplicate, "Func_080e7338").is_none());
+        let alias = format!("{listing}00000000 00000066 T Func_080e7338\n");
+        assert_eq!(
+            function_symbol_fields(&alias, "Func_080e7338").unwrap()[3],
+            "Func_080e7338"
+        );
+        assert!(
+            function_symbol_fields("00000000 00000066 D Func_080e7338.0\n", "Func_080e7338")
+                .is_none()
+        );
+        assert!(nested_function_base("Func_080e7338.constprop").is_none());
+    }
+}
+
 pub fn symbol_is_thumb(name: &str) -> bool {
     name.starts_with("Func_") || name.starts_with("_call_via_")
 }

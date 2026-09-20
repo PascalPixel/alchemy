@@ -374,18 +374,12 @@ pub(crate) fn validate_layout(
         let offset = address
             .checked_sub(base)
             .ok_or_else(|| format!("{} precedes its translation unit", owner.id()))?;
-        let found = rows.lines().any(|row| {
-            let fields: Vec<_> = row.split_whitespace().collect();
-            fields
-                .first()
-                .and_then(|field| u32::from_str_radix(field, 16).ok())
-                == Some(offset)
-                && fields
-                    .get(1)
-                    .and_then(|field| usize::from_str_radix(field, 16).ok())
-                    == Some(extent)
-                && fields.last() == Some(&symbol.as_str())
-        });
+        let found = crate::compiler::symbols::function_symbol_fields(&rows, &symbol).is_some_and(
+            |fields| {
+                u32::from_str_radix(fields[0], 16).ok() == Some(offset)
+                    && usize::from_str_radix(fields[1], 16).ok() == Some(extent)
+            },
+        );
         if !found {
             mismatches.push(owner.id());
         }

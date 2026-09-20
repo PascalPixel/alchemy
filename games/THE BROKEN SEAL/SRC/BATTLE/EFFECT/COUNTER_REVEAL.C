@@ -47,6 +47,7 @@ s32 Func_080041d8(s32 callback, s32 order);
 void Func_08004278(void *callback);
 void Func_080030f8(s32 frames);
 void Func_08002dd8(s32 id);
+#define Runtime_ReleaseHeapBlock Func_08002dd8
 s32 Func_080cdbc0(void);
 void **Func_080b5098(s32 member_id);
 void Func_080e396c(s32 member_id, void *out);
@@ -266,7 +267,7 @@ void BattleFx_RunCounterReveal(void *object)
     Func_08004278((void *)0x080CD261);
     Func_08004278((void *)0x080DBB9D);
     Func_080b5040(1, (*(u16 *)((u8 *)(Data_03001e74) + (0x648))), 24);
-    Func_08002dd8(47);
-    Func_08002dd8(46);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
     Func_080cdbc0();
 }

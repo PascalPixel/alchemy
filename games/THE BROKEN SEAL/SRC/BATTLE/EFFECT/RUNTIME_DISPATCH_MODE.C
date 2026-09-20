@@ -5,6 +5,7 @@ typedef void (*Callback)(s32 *);
 
 s32 Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
 void Func_08002dd8(s32);
+#define Runtime_ReleaseHeapBlock Func_08002dd8
 extern Callback Data_080ee2b4[];
 
 void BattleFx_DispatchMode(s32 *state)
@@ -24,7 +25,7 @@ void BattleFx_DispatchMode(s32 *state)
     else
         Data_080ee2b4[index - 1](state);
 
-    Func_08002dd8(40);
-    Func_08002dd8(39);
-    Func_08002dd8(41);
+    Runtime_ReleaseHeapBlock(40);
+    Runtime_ReleaseHeapBlock(39);
+    Runtime_ReleaseHeapBlock(41);
 }

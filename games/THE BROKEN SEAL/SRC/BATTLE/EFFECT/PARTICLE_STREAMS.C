@@ -61,6 +61,7 @@ void Func_08004c6c(s32);
 void Func_08004c1c(s32);
 void Func_080e3944(const void *, void *);
 void Func_08002dd8(s32);
+#define Runtime_ReleaseHeapBlock Func_08002dd8
 void Func_080d67dc(void);
 void Func_080e727c(s32, s32, s32);
 void Func_08009038(s32);
@@ -633,7 +634,7 @@ loop_84:
     Func_08004278(0x080CD359);
     Data_03001ad0.unk04 = (u16) sp38;
     Data_03001ad0.unk06 = (u16) sp34;
-    Func_08002dd8(0x2E);
+    Runtime_ReleaseHeapBlock(0x2E);
     Func_080d67dc();
     (*(s16 *)((u8 *)((void *)0x04000020) + (0))) = 0x80;
     *(s32 *)0x04000028 = 0;
@@ -842,7 +843,7 @@ loop_121:
         goto loop_121;
     }
     Func_08004278(0x080CD261);
-    Func_08002dd8(0x2E);
+    Runtime_ReleaseHeapBlock(0x2E);
     if (sp4C == 0) {
         Func_08009038((*(s32 *)((u8 *)(*sp3C) + (0x77D8))));
     }

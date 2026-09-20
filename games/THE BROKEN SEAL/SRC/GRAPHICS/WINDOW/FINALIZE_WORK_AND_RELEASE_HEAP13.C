@@ -8,6 +8,7 @@ s32 UiWork_IsIdle(void *arg0);
 void WaitFrames(s32);
 s32 Resource_ResetEntry(u32 index);
 void Func_08002dd8(s32);
+#define Runtime_ReleaseHeapBlock Func_08002dd8
 
 void Ui_FinalizeWorkAndReleaseHeap13(void)
 {
@@ -28,5 +29,5 @@ void Ui_FinalizeWorkAndReleaseHeap13(void)
         p = (u16 *)((u8 *)p + 2);
         Resource_ResetEntry(*p);
     }
-    Func_08002dd8(0x13);
+    Runtime_ReleaseHeapBlock(0x13);
 }

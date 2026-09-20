@@ -60,6 +60,7 @@ extern struct MenuObjectControl *Data_03001e68;
 
 struct CharacterSelectorState *Runtime_AllocateHeapBlock(s32, s32);
 void Func_08002dd8(s32);
+#define Runtime_ReleaseHeapBlock Func_08002dd8
 void WaitFrames(s32);
 void Func_08015278(s32);
 void Func_08015408(s32, s32, s32, s32);
@@ -100,6 +101,6 @@ s32 Menu_OpenCharacterSelector(void)
     InventoryMenu_CloseWindows();
     Data_03001e68->suspended = 0;
     WaitFrames(1);
-    Func_08002dd8(55);
+    Runtime_ReleaseHeapBlock(55);
     return result;
 }

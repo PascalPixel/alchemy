@@ -5,6 +5,7 @@
 void ScheduleCallback(void *);
 void Func_0809bb34(struct EffectSlot *);
 void Func_08002dd8(s32);
+#define Runtime_ReleaseHeapBlock Func_08002dd8
 void WaitFrames(s32);
 extern u8 Data_08095885;
 
@@ -25,7 +26,7 @@ void BattleFx_ClearActiveSlotsAndScheduleUpdates(void)
         if (slot->active != 0)
             Func_0809bb34(slot);
     }
-    Func_08002dd8(56);
+    Runtime_ReleaseHeapBlock(56);
     WaitFrames(1);
 }
 

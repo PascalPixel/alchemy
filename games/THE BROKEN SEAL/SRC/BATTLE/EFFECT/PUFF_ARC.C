@@ -28,6 +28,7 @@ void Func_080d6888(s32, s32, s32, s32, s32);
 void Func_080cd52c(void);
 void Func_080030f8(s32);
 void Func_08002dd8(s32);
+#define Runtime_ReleaseHeapBlock Func_08002dd8
 void Func_08004278(s32);
 s32 Func_080cdbc0(void);
 
@@ -190,7 +191,7 @@ void BattleFx_RunPuffArc(Efx *efx)
         Func_080030f8(1);
         frame += 1;
     } while (frame != 80);
-    Func_08002dd8(46);
+    Runtime_ReleaseHeapBlock(46);
     Func_08004278(0x080CD261);
     Func_080cdbc0();
 }

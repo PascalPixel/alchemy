@@ -16,6 +16,7 @@ extern s32 Func_0801a5a4(T *, s32);
 extern s32 Func_08004080(void);
 extern s32 Resource_CopyData(s32, s32, u8 *);
 extern s32 Func_08002dd8(s32);
+#define Runtime_ReleaseHeapBlock Func_08002dd8
 extern s32 Data_08029a10[];
 extern s32 Data_08029e00[];
 
@@ -36,5 +37,5 @@ void Ui_BuildPairedPatternsToSlot(s32 no0, s32 no1, s32 *slot, s32 *ret, s32 fla
         *slot = Func_08004080();
     }
     *ret = Resource_CopyData(*slot, 0x80, &work->f400);
-    Func_08002dd8(0x11);
+    Runtime_ReleaseHeapBlock(0x11);
 }

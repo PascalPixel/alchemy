@@ -1,74 +1,11 @@
-#include "TYPES.H"
+#include "RENDER_INPUT.H"
 
-/*
- * Ability change preview panel (owner main:08022b44, 1588 bytes).
- *
- * Called from the battle ability picker (main:08023e70, which already
- * declares this owner as
- *   struct UiWindow *Func_08022b44(struct UiWindow *win, s32 owner,
- *                                  u32 code, s32 sel, s32 *count);
- * ) to show what toggling one Djinn/ability entry would do to the acting
- * unit.  The panel is rebuilt from scratch on every call: an existing
- * window is finalized, a new one is created, the unit record is snapshotted,
- * the pending change is applied for real, the new record is measured against
- * the snapshot, and the snapshot is copied back so the unit is left
- * untouched.  The freshly created window is returned; 0 means the window
- * could not be created and nothing else was done.
- *
- * `code` is the picker's packed table code: bits 8..11 select the grid
- * column and bits 0..7 the row inside it, which is exactly how
- * Func_08077208 / Func_080771b8 / Func_080771b0 are addressed here.  The
- * reference extracts the column with `asrs`, so the parameter is signed here
- * even though the picker hands it over as u32.
- *
- * `page` is both an input and a working value.  Page 0 draws the stat
- * comparison (old column, new column, up/down arrows and the element
- * glyphs); pages 1..n draw five list rows each.  The page count is written
- * back through `pageCount`, and an out-of-range request is clamped to the
- * last page before anything is drawn.
- *
- * Uncertain, and left as raw offsets rather than guessed: the unit record is
- * only modelled where this screen reads it (the six stat cells at 0x38..0x42,
- * the 0x58 grid block handed to Func_080228e4 and the element byte at 0x129);
- * the 332-byte snapshot extent is the size the two Func_080072f0 calls use.
- * Func_080228e4's two out-parameters are named for what the drawing code does
- * with them - one lights the "gained" marker, the other the "lost" marker.
- *
- * Known residual, stated rather than papered over, and measured rather than
- * guessed.  The control-flow topology of this draft is equal to the reference
- * and the trailing literal pool matches word for word, but the reference
- * reaches the window through a frame cell instead of holding it in a
- * register: it computes `add r4, sp, #72` once, keeps that address in sl, and
- * then spells every use as `mov rX, sl` + `ldr rY, [rX]` (36 sites).  Before
- * each of the six Func_08022a7c calls it also sets r9 - the Thumb static
- * chain register - to the frame top, and Func_08022a7c reads the window back
- * out of chain-4, which is exactly that frame cell.  That is the signature of
- * a GNU C nested function declared inside this function; the project owns
- * 0x08022a7c as its own module (asm/08022a7c.s, classified
- * hidden_register_context_module) and no caller anywhere else in the image
- * references it.
- *
- * The approved route cannot emit a static chain without redefining that owner
- * here, so this draft calls it as an ordinary function and holds the window
- * directly.  Everything the reference does is still present; the cost is the
- * 100 bytes of that idiom (36 x 2 for the double indirections, 4 for the cell
- * address, 6 x 4 for the chain setups), against which the freed registers buy
- * about 12 bytes back elsewhere.  1500 candidate bytes against 1588 is that
- * difference and nothing else - no branch, call, store or argument is missing.
+/* Preview a pending ability change, then restore the original unit record.
+ * The nested arrow renderer captures this panel's window.
  */
 
 /* The IWRAM block-copy routine Func_080072f0 is asked to drive. */
 #define VRAM_COPY_PROC 0x03001388
-
-/* Window handle as the neighbouring battle menus already model it. */
-struct UiWindow {
-    s32 field_00;
-    s32 field_04;
-    u16 field_08;
-    u16 field_0a;
-    u16 field_0c;
-    u16 field_0e;
-};
 
 /* Ability table entry returned by Ability_GetData. */
 struct AbilityData {
@@ -104,16 +41,29 @@ struct BattleUnitRecord {
 
 void Func_08002df0(void *block);
 void Func_080072f0(void *dst, const void *src, s32 size, s32 proc);
-void Func_08017c8c(s16 *text, struct UiWindow *win, s32 x, s32 y);
-void Func_0801e41c(struct UiWindow *win, s32 x, s32 y, s32 w, s32 h);
+void Func_08017c8c(s16 *text, struct RenderInput *win, s32 x, s32 y);
+void Func_0801e41c(struct RenderInput *win, s32 x, s32 y, s32 w, s32 h);
 void UiWork_SetParamNibble(s32 nibble);
 void UiWindow_SetTilemapEntry(
-    struct UiWindow *win, s32 tile, s32 x, s32 y, s32 flags);
+    struct RenderInput *win, s32 tile, s32 x, s32 y, s32 flags);
 void UiWindow_DrawThreeTileColumn(
-    struct UiWindow *win, s32 x, s32 y, s32 tile, s32 flags);
+    struct RenderInput *win, s32 x, s32 y, s32 tile, s32 flags);
 void Ui_CreateOutputFromResourceSlot(
-    struct UiWindow *win, s32 arg1, s32 arg2, s32 resource);
-void Func_08022a7c(s32 x, s32 y, s32 rising);
+    struct RenderInput *win, s32 arg1, s32 arg2, s32 resource);
+struct PreviewSprite {
+    u32 unknown;
+    union {
+        u32 word;
+        struct { unsigned y:8; unsigned flags:8; unsigned x:9; unsigned high:7; } bits;
+    } attributes;
+    union RenderTableValue tile;
+};
+struct RenderOutput *Func_08015e8c(void);
+s32 Func_080040b4(s32);
+s32 Func_080040d0(s32, const void *);
+void Func_08016584(struct RenderInput *, struct RenderOutput *);
+extern u8 Data_080313a4[];
+extern u8 Data_08031424[];
 s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value);
 s32 Func_080228e4(u8 *oldGrid, u8 *newGrid, u16 *out, s32 *gained, s32 *lost);
 s32 Func_08077208(s32 owner, s32 col, s32 row);
@@ -126,16 +76,16 @@ void *Runtime_BumpAllocateAlternatePool(s32 size);
 struct BattleUnitRecord *Runtime_GetObject(s32 owner);
 struct AbilityData *Ability_GetData(s32 code);
 void BattleUnit_Recalculate(s32 owner);
-struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 w, s32 h, s32 style);
-void UiWork_Finalize(struct UiWindow *win, s32 mode);
-void UiText_DrawCharacter(s32 message, struct UiWindow *win, s32 x, s32 y);
+struct RenderInput *UiWindow_Create(s32 x, s32 y, s32 w, s32 h, s32 style);
+void UiWork_Finalize(struct RenderInput *win, s32 mode);
+void UiText_DrawCharacter(s32 message, struct RenderInput *win, s32 x, s32 y);
 void UiText_DrawNumberInWindow(
-    s32 value, s32 digits, struct UiWindow *win, s32 x, s32 y);
+    s32 value, s32 digits, struct RenderInput *win, s32 x, s32 y);
 
 #define Ui_ShowAbilityChangePreview Func_08022b44
 
-struct UiWindow *Ui_ShowAbilityChangePreview(
-    struct UiWindow *win, s32 owner, s32 code, s32 page, s32 *pageCount)
+struct RenderInput *Ui_ShowAbilityChangePreview(
+    struct RenderInput *win, s32 owner, s32 code, s32 page, s32 *pageCount)
 {
     struct BattleUnitRecord *unit;
     struct BattleUnitRecord *snap;
@@ -159,6 +109,28 @@ struct UiWindow *Ui_ShowAbilityChangePreview(
     s32 oldAtk;
     s32 oldDef;
     s32 oldAgi;
+
+
+    void Func_08022a7c(s32 x, s32 y, s32 rising)
+    {
+        struct RenderOutput *output = Func_08015e8c();
+        struct PreviewSprite *entry;
+        if (output) {
+            output->one5 = 1;
+            output->one4 = 1;
+            output->index = Func_080040b4(128);
+            output->sentinel = 240;
+            output->x = 120;
+            output->y = 120;
+            entry = (struct PreviewSprite *)((u8 *)output + 16);
+            entry->attributes.word = 0x40000400;
+            entry->tile.value = 0;
+            entry->attributes.bits.x = win->x * 8 + x;
+            entry->attributes.bits.y = win->y * 8 + y;
+            entry->tile.bits.index = Func_080040d0((u8)output->index, rising ? Data_080313a4 : Data_08031424);
+            Func_08016584(win, output);
+        }
+    }
 
     unit = Runtime_GetObject(owner);
     if (win != 0)

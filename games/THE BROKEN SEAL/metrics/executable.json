@@ -7,7 +7,7 @@
   "derivation": "full-c-progress-v1",
   "audit": "complete",
   "overlay_count": 96,
-  "total_union_bytes": 1367562,
+  "total_union_bytes": 1367642,
   "main": {
     "id": "main",
     "executable_bytes": 549142,
@@ -39477,8 +39477,8 @@
     {
       "id": "resource_3ca",
       "decoded_bytes": 6904,
-      "executable_bytes": 4764,
-      "excluded_bytes": 2140,
+      "executable_bytes": 4844,
+      "excluded_bytes": 2060,
       "audit": "complete",
       "intervals": [
         {
@@ -39696,6 +39696,12 @@
           "end": 33558320,
           "kind": "literal_pool",
           "evidence": "resource_3ca_overlay.s:1716:pc-relative-literal"
+        },
+        {
+          "start": 33558320,
+          "end": 33558400,
+          "kind": "thumb",
+          "evidence": "resource_3ca_overlay.s:1708:verified-C-placeholder"
         },
         {
           "start": 33558400,

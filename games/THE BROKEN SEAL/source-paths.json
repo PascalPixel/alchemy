@@ -18907,6 +18907,14 @@
     },
     "main:0800567c": {
       "name": "ColorBuffer_BackupAndHalveNonzero"
+    },
+    "resource_3ca:02000f30": {
+      "name": "BabiFune_ArmBg3HBlankDma",
+      "source": "FIELD/BABI_FUNE/HBLANK_SCROLL.C"
+    },
+    "resource_396:02001224": {
+      "name": "ToretoPalette_CaptureBank",
+      "source": "FIELD/TORETO_HEYA/PALETTE.C"
     }
   }
 }

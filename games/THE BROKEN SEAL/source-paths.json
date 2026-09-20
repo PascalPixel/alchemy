@@ -5186,7 +5186,8 @@
       "source": "MENU/SHOP/EFFECT_RESET.C"
     },
     "main:080b606c": {
-      "name": "Text_CopyFiveCharsPaddingUnderscore"
+      "name": "Text_CopyFiveCharsPaddingUnderscore",
+      "source": "GRAPHICS/TEXT/FORMAT_NAME.C"
     },
     "main:080b63b0": {
       "name": "Battle_ApplyValueToWork2224",

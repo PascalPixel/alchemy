@@ -38,6 +38,7 @@ void Func_08009098(
     const void *configuration);
 void Func_08009080(struct BattleEffectLinkedObject *object, s32 mode);
 void Func_080f9010(s32 cue);
+#define Audio_PlayCue Func_080f9010
 void Func_0809163c(s32 state);
 void Func_0809376c(void);
 extern const u8 Data_0809fc2c[];
@@ -50,7 +51,7 @@ void BattleFx_SpawnLinked(
     struct BattleEffectResource *resource;
 
     if ((flags & 0xff) == 6) {
-        Func_080f9010(110);
+        Audio_PlayCue(110);
     }
 
     resource = ObjectTable_Get(resource_id);

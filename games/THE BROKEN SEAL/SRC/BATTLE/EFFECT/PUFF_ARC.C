@@ -23,6 +23,7 @@ s32 Func_08002322(s32);
 s32 Func_0800231c(s32);
 void Func_080041d8(s32, s32);
 void Func_080f9010(s32);
+#define Audio_PlayCue Func_080f9010
 void Func_080b50e8(s32);
 void Func_080d6888(s32, s32, s32, s32, s32);
 void Func_080cd52c(void);
@@ -142,7 +143,7 @@ void BattleFx_RunPuffArc(Efx *efx)
         *(s32 *)(work + 0x7784) = 50;
     }
     Func_080041d8(0x080CD261, 0x480);
-    Func_080f9010(0x88);
+    Audio_PlayCue(0x88);
     frame = 0;
     do {
         if (frame == 24) {

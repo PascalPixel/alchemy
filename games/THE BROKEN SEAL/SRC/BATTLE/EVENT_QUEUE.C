@@ -76,6 +76,7 @@ void Func_080151c8(u32);
 void Func_080bb65c(void);
 void Func_08015118(void);
 void Func_080f9010(u32);
+#define Audio_PlayCue Func_080f9010
 void Func_080babdc(u32, u32, u32);
 void Func_080c24f0(u32, u32);
 void Func_080bb588(u32);
@@ -112,7 +113,7 @@ u32 BattleEv_DispatchQueued(void)
             Func_08015118();
             break;
         case 8:
-            if (runtime->pending_sound_id > 0) Func_080f9010(runtime->pending_sound_id);
+            if (runtime->pending_sound_id > 0) Audio_PlayCue(runtime->pending_sound_id);
             Func_080babdc(queue->operands[i], 0, 0);
             break;
         case 9:

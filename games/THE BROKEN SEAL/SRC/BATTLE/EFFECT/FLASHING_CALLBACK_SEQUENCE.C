@@ -5,6 +5,7 @@ extern s16 Data_02000240[];
 
 void *Func_0808ba1c(u32);
 void Func_080f9010(s32);
+#define Audio_PlayCue Func_080f9010
 void Func_08009080(void *, s32);
 void Func_080030f8(s32);
 void Func_08099738(void);
@@ -28,7 +29,7 @@ void BattleFx_RunFlashingCallbackSequence(void)
     u32 cycle;
     void (*callback)(void);
 
-    Func_080f9010(0x82);
+    Audio_PlayCue(0x82);
     Func_08009080(object, 0);
     *(void **)(object + 108) = 0;
     cycle = 0;

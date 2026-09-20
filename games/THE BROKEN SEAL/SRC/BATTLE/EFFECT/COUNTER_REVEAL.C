@@ -55,6 +55,7 @@ s32 Func_08002322(s32 angle);
 s32 Func_0800231c(s32 angle);
 void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Func_080f9010(s32 cue);
+#define Audio_PlayCue Func_080f9010
 void Func_08009150(void *object, s32 a, s32 b, s32 c);
 void Func_080b5040(s32 a, s32 b, s32 c);
 
@@ -127,7 +128,7 @@ void BattleFx_RunCounterReveal(void *object)
         screen_x = (curve[0] >> 16) + ((Func_08002322(spin) << 4) >> 16) + 48;
         screen_y = (curve[1] >> 16) + ((Func_0800231c(spin) << 2) >> 16) + 16;
         if (frame == 88) {
-            Func_080f9010(134);
+            Audio_PlayCue(134);
         }
         if (frame == 32) {
             if ((*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4))) == 1) {

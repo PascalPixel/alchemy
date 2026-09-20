@@ -15,6 +15,7 @@
 #define ActorPresentation_SetSceneCell58AndMarkActorEight Func_02001a48
 #define ActorPresentation_RepaintCellsAtActorsElevenAndTwelve Func_02001df8
 #define SceneActor_PublishMarkerBySlotZeroHeight Func_02001edc
+#define FieldScene_DispatchByRuntimeSelector Func_02001f78
 #define RuntimeSelectorTable Data_02000240
 #define PrimaryRuntimeSelector Value_00000075
 #define SecondaryRuntimeSelector Value_00000076
@@ -1621,6 +1622,30 @@ void SceneActor_PublishMarkerBySlotZeroHeight(void)
     }
 
     ((u8 *)Func_020044a8(12))[35] = marker;
+}
+
+void FieldScene_RunScene3b4_02002188(void);
+void FieldScene_RunScene3b4_02002290(void);
+void FieldScene_RunScene3b4_02002334(void);
+
+s32 FieldScene_DispatchByRuntimeSelector(void)
+{
+    extern u8 Data_03001ebc[];
+
+    u8 *base;
+
+    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = 0x204;
+    base = RuntimeSelectorTable;
+    if (*(s16 *)(base + 0x1c0) == (s32)&PrimaryRuntimeSelector) {
+        FieldScene_RunScene3b4_02002188();
+    }
+    if (*(s16 *)(base + 0x1c0) == (s32)&SecondaryRuntimeSelector) {
+        FieldScene_RunScene3b4_02002290();
+    }
+    if (*(s16 *)(base + 0x1c0) == (s32)&TertiaryRuntimeSelector) {
+        FieldScene_RunScene3b4_02002334();
+    }
+    return 0;
 }
 
 void FieldScene_RunScene3b4_02002188(void)

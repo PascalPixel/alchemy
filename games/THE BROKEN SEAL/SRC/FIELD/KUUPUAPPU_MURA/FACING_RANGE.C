@@ -1,6 +1,27 @@
 #include "TYPES.H"
+
+/*
+ * Whether an actor should turn toward a target: the target is within range
+ * (or a forced check), and it lies in the actor's facing half of the full
+ * circle. A hit activates the actor and queues the face-toward motion; a miss
+ * deactivates it and queues the fall-back motion.
+ *
+ * The local SceneActor layout is this overlay's own copy of the field actor
+ * record (facing at 0x08, x/y/z words at 0x0C, active byte at 0x5B). It is
+ * not the shared STAGED_ACTOR.H type: the offsets here are what the reference
+ * reads, so the spelling is kept as-is.
+ */
+
 #define SceneActor_CheckFacingAndRange Func_02001674
-struct SceneActor { u8 unk_00[6]; u16 facing; s32 x, y, z; u8 unk_14[0x47]; u8 active; };
+
+struct SceneActor {
+    u8 unk_00[6];
+    u16 facing;
+    s32 x, y, z;
+    u8 unk_14[0x47];
+    u8 active;
+};
+
 extern s32 Func_02002cd4(s32 *, s32 *);
 extern s32 Func_02002fd8(s32, s32);
 extern void Func_0200301e(struct SceneActor *, s32);

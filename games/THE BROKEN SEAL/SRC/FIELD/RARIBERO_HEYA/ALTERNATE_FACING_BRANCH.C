@@ -1,5 +1,11 @@
 #include "TYPES.H"
 
+/*
+ * Raribero house: choose which dialogue branch to play. If the party faces
+ * the door (north) the alternate line for this door runs; otherwise a flag
+ * decides between the two default lines.
+ */
+
 #define Dialogue_HandleAlternateFacingBranch Func_020001c8
 
 u16 *Func_020013e4(s32);
@@ -12,8 +18,8 @@ void Func_020014aa(s32, s32);
 
 void Dialogue_HandleAlternateFacingBranch(s32 no)
 {
-    u16 facing = (Func_020013e4(0)[3] + 0x2000) & ~0x3fff;
-    if (facing == 0xc000) {
+    u16 party_facing = (Func_020013e4(0)[3] + 0x2000) & ~0x3fff;
+    if (party_facing == 0xc000) {
         Func_020014e2(34, no);
     } else if (Func_020013d8(0x9a7)) {
         Func_02001482(0x28f4);

@@ -86330,6 +86330,10 @@
           "address": "0x02009e34",
           "kind": "thumb"
         },
+        "Func_0200218e": {
+          "address": "0x02009d4c",
+          "kind": "thumb"
+        },
         "Func_020021e6": {
           "address": "0x02009d44",
           "kind": "thumb"
@@ -86590,6 +86594,11 @@
         {
           "address": "0x02000414",
           "extent": 8,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0200041c",
+          "extent": 124,
           "state": "exact-c"
         },
         {

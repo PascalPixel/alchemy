@@ -17755,6 +17755,10 @@
       "name": "SceneData_GetTablea36c",
       "source": "FIELD/RAMAKAN_SABAKU/SELECTED_ACTOR_SCENE_ID_SELECTED_ACTOR_SCENE.C"
     },
+    "resource_3a5:0200041c": {
+      "name": "SceneData_SelectTableBySceneId",
+      "source": "FIELD/RAMAKAN_SABAKU/SELECTED_ACTOR_SCENE_ID_SELECTED_ACTOR_SCENE.C"
+    },
     "resource_3a5:02000410": {
       "name": "SceneData_ReturnZero",
       "source": "FIELD/RAMAKAN_SABAKU/SELECTED_ACTOR_SCENE_ID_SELECTED_ACTOR_SCENE.C"

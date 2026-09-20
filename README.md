@@ -8,7 +8,7 @@ The two games share much of the same code, so Alchemy recovers them side by side
 
 ## Status: ☀️ 57.43% · ⚓️ 0.52%
 
-![ROM contents](<PROGRESS.svg?v=385cb3527365bb5d>)
+![ROM contents](<PROGRESS.svg?v=b43d311a2e623fbb>)
 
 **DONE** measures recovered code: byte-exact C and evidenced permanent
 assembly, divided by each game's audited executable bytes. ☀️ is The Broken

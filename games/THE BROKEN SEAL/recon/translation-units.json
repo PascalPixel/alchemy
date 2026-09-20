@@ -76437,26 +76437,6 @@
           "address": "0x080056cc",
           "extent": 322,
           "state": "retained-assembly"
-        },
-        {
-          "address": "0x08005920",
-          "extent": 344,
-          "state": "retained-assembly"
-        },
-        {
-          "address": "0x08005a78",
-          "extent": 72,
-          "state": "retained-assembly"
-        },
-        {
-          "address": "0x08005b64",
-          "extent": 164,
-          "state": "retained-assembly"
-        },
-        {
-          "address": "0x08005c68",
-          "extent": 144,
-          "state": "retained-assembly"
         }
       ],
       "overlay": null

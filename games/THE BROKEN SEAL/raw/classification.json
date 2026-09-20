@@ -209,7 +209,25 @@
         "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six TLA editions and all six TBS editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto.",
         "proof": "Two halves, both checked per subregion in subregion_credit: the decompressor, word-copy kernel, irq handler table and audio work-area tables are byte-identical in all six TLA editions (twelve-ROM scan); the irq entry, math kernels, division routine, mixer and wave helpers are ARM-instruction-set bodies with mrs/msr that the compiler cannot emit under -mthumb (arm.c:8806-8830; no msr/mrs template in arm.md), TBS-only, hand-coded kernels in a file of named entries and comments; the division routine matches no agscc libgcc member.",
         "credit_decision_kind_level": "Beans 2026-09-10: kind-level credit, records not split; credit=library names both halves, subregion_credit stays for the record.",
-        "object": "vendor object not named; credited on cross-product identity and compiler impossibility"
+        "object": "vendor object not named; credited on cross-product identity and compiler impossibility",
+        "range_credits": [
+          {
+            "source": "games/THE BROKEN SEAL/raw/08000770.s",
+            "address": 134219632,
+            "size": 5120,
+            "evidence": [
+              "startup_copy_to_iwram",
+              "arm_irq_entry",
+              "scheduled_math_and_clear_kernels",
+              "compiler_runtime_division",
+              "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+              "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility",
+              "no_msr_mrs_template_arm_md"
+            ],
+            "credit": "library",
+            "object": "vendor object not named; credited on cross-product identity and compiler impossibility"
+          }
+        ]
       }
     },
     {
@@ -238,7 +256,24 @@
         "credit_bytes": "28 bytes",
         "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six TLA editions and all six TBS editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto.",
         "proof": "28 ARM bytes byte-identical in all six TLA editions (arm.c:8806-8830 for the ARM body); checked by the twelve-ROM scan in cross_rom.",
-        "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+        "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)",
+        "range_credits": [
+          {
+            "source": "games/THE BROKEN SEAL/raw/08007994.s",
+            "address": 134248852,
+            "size": 28,
+            "evidence": [
+              "dma_copy_to_stack",
+              "arm_instruction_set",
+              "indirect_call_through_relocated_entry",
+              "signed_q16_three_term_dot_product",
+              "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+              "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility"
+            ],
+            "credit": "library",
+            "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+          }
+        ]
       }
     },
     {
@@ -285,7 +320,35 @@
         "credit_rule": "Pascal's ruling (via Beans, 2026-09-10): DONE means what is most likely the original code; handwritten credit requires (1) provably not from any tool we have, cited, (2) no library match in the twelve-ROM and assembled-libgcc scan, (3) a recognisable hand-coded idiom rather than a regular table, and the retained .s must read as source Camelot would have written.",
         "file_check": "08006864.s rewritten as source: named entries Func_08006864 (svc 11, CpuSet) and Func_0800686a (r0=0, svc 25); byte-identical build",
         "credit_basis": "16 bytes: (1) no swi template in arm.md; (2) two-instruction wrappers, trivially identical across games; (3) BIOS call wrappers, a hand idiom",
-        "proof": "No swi template exists in arm.md (Kiki 2026-09-10), two-instruction BIOS call wrappers; file check in file_check after the rewrite to named entries."
+        "proof": "No swi template exists in arm.md (Kiki 2026-09-10), two-instruction BIOS call wrappers; file check in file_check after the rewrite to named entries.",
+        "range_credits": [
+          {
+            "source": "games/THE BROKEN SEAL/raw/08006864.s",
+            "address": 134244452,
+            "size": 10,
+            "evidence": [
+              "fixed_software_interrupt_instruction",
+              "no_swi_template_arm_md",
+              "tla_identical_trivially_short",
+              "handwritten_credit_after_file_rewrite_named_entries"
+            ],
+            "credit": "handwritten",
+            "proof": "No swi template exists in arm.md (Kiki 2026-09-10), two-instruction BIOS call wrappers; file check in file_check after the rewrite to named entries."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/08006870.s",
+            "address": 134244464,
+            "size": 6,
+            "evidence": [
+              "fixed_software_interrupt_instruction",
+              "no_swi_template_arm_md",
+              "tla_identical_trivially_short",
+              "handwritten_credit_after_file_rewrite_named_entries"
+            ],
+            "credit": "handwritten",
+            "proof": "No swi template exists in arm.md (Kiki 2026-09-10), two-instruction BIOS call wrappers; file check in file_check after the rewrite to named entries."
+          }
+        ]
       }
     },
     {
@@ -341,7 +404,43 @@
         "credit_bytes": "954 bytes",
         "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six TLA editions and all six TBS editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto.",
         "proof": "Both regions byte-identical in all six TLA editions and a single-function Thumb/ARM mode switch the route cannot express (arm.c:8806-8830); checked by the twelve-ROM scan in cross_rom.",
-        "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+        "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)",
+        "range_credits": [
+          {
+            "source": "games/THE BROKEN SEAL/raw/080f9674.s",
+            "address": 135239284,
+            "size": 932,
+            "evidence": [
+              "iwram_copy_payload",
+              "mixed_thumb_arm_audio_mixer",
+              "unrolled_64_byte_clear",
+              "single_function_switches_thumb_to_arm_and_back",
+              "approved_ordinary_c_route_has_one_instruction_set_per_function",
+              "byte_exact_reconstruction",
+              "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+              "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility"
+            ],
+            "credit": "library",
+            "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/080f9a18.s",
+            "address": 135240216,
+            "size": 22,
+            "evidence": [
+              "iwram_copy_payload",
+              "mixed_thumb_arm_audio_mixer",
+              "unrolled_64_byte_clear",
+              "single_function_switches_thumb_to_arm_and_back",
+              "approved_ordinary_c_route_has_one_instruction_set_per_function",
+              "byte_exact_reconstruction",
+              "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+              "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility"
+            ],
+            "credit": "library",
+            "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+          }
+        ]
       }
     },
     {
@@ -419,7 +518,24 @@
         "credit_bytes": "64 bytes (080f9a80)",
         "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six TLA editions and all six TBS editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto.",
         "proof": "080f9a80 pool-masked identical in all six TLA editions; checked by the twelve-ROM scan in cross_rom.",
-        "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+        "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)",
+        "range_credits": [
+          {
+            "source": "games/THE BROKEN SEAL/raw/080f9a80.s",
+            "address": 135240320,
+            "size": 64,
+            "evidence": [
+              "manual_return_address_preserved_in_ip",
+              "direct_bl_clobbers_lr",
+              "no_lr_stack_save",
+              "approved_compiler_call_prologue_mismatch",
+              "byte_exact_reconstruction",
+              "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility"
+            ],
+            "credit": "library",
+            "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+          }
+        ]
       }
     },
     {
@@ -548,7 +664,25 @@
         "credit_bytes": "132 bytes (080f95f0)",
         "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six TLA editions and all six TBS editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto.",
         "proof": "080f95f0 pool-masked identical in all six TLA editions; checked by the twelve-ROM scan in cross_rom.",
-        "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+        "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)",
+        "range_credits": [
+          {
+            "source": "games/THE BROKEN SEAL/raw/080f95f0.s",
+            "address": 135239152,
+            "size": 132,
+            "evidence": [
+              "conditional_prologue_after_guard",
+              "manual_high_register_and_stack_frame_contract",
+              "tail_branch_to_iwram_without_link",
+              "iwram_target_restores_caller_frame",
+              "approved_compiler_cannot_express_contract",
+              "byte_exact_reconstruction",
+              "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility"
+            ],
+            "credit": "library",
+            "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+          }
+        ]
       }
     },
     {
@@ -624,7 +758,135 @@
           "file_check": "080155d0.s: an ARM glyph blitter (character code, x, y, bold flag; 4-bit pixels masked into VRAM tiles at 0x06002500 from the font tables at 0x080370d4 and 0x08032224); header and seven block comments added, instruction and data lines untouched, byte-identical build"
         },
         "proof": "Three regions byte-identical and three pool-masked identical in all six TLA editions, ARM bodies under -mthumb (arm.c:8806-8830); checked by the twelve-ROM scan in cross_rom; the TBS-only region 080155d0 is credited handwritten on the same citation plus its file check.",
-        "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+        "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)",
+        "range_credits": [
+          {
+            "source": "games/THE BROKEN SEAL/raw/relocated_arm_helpers/08015430.s",
+            "address": 134304816,
+            "size": 320,
+            "evidence": [
+              "arm_instruction_set",
+              "approved_compiler_thumb_only",
+              "contiguous_seven_region_bank",
+              "consumer_call_references",
+              "byte_exact_reconstruction",
+              "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+              "byte_identical_in_all_six_tla_editions_3_regions_pool_masked_3_regions_vendor_object_unidentified",
+              "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility",
+              "tbs_only_region_080155d0_handwritten_credit_after_comment_pass"
+            ],
+            "credit": "library",
+            "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/relocated_arm_helpers/08015570.s",
+            "address": 134305136,
+            "size": 96,
+            "evidence": [
+              "arm_instruction_set",
+              "approved_compiler_thumb_only",
+              "contiguous_seven_region_bank",
+              "consumer_call_references",
+              "byte_exact_reconstruction",
+              "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+              "byte_identical_in_all_six_tla_editions_3_regions_pool_masked_3_regions_vendor_object_unidentified",
+              "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility",
+              "tbs_only_region_080155d0_handwritten_credit_after_comment_pass"
+            ],
+            "credit": "library",
+            "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/relocated_arm_helpers/080155d0.s",
+            "address": 134305232,
+            "size": 792,
+            "evidence": [
+              "arm_instruction_set",
+              "approved_compiler_thumb_only",
+              "contiguous_seven_region_bank",
+              "consumer_call_references",
+              "byte_exact_reconstruction",
+              "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+              "byte_identical_in_all_six_tla_editions_3_regions_pool_masked_3_regions_vendor_object_unidentified",
+              "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility",
+              "tbs_only_region_080155d0_handwritten_credit_after_comment_pass"
+            ],
+            "credit": "handwritten",
+            "proof": "Three regions byte-identical and three pool-masked identical in all six TLA editions, ARM bodies under -mthumb (arm.c:8806-8830); checked by the twelve-ROM scan in cross_rom; the TBS-only region 080155d0 is credited handwritten on the same citation plus its file check."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/relocated_arm_helpers/080158e8.s",
+            "address": 134306024,
+            "size": 532,
+            "evidence": [
+              "arm_instruction_set",
+              "approved_compiler_thumb_only",
+              "contiguous_seven_region_bank",
+              "consumer_call_references",
+              "byte_exact_reconstruction",
+              "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+              "byte_identical_in_all_six_tla_editions_3_regions_pool_masked_3_regions_vendor_object_unidentified",
+              "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility",
+              "tbs_only_region_080155d0_handwritten_credit_after_comment_pass"
+            ],
+            "credit": "library",
+            "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/relocated_arm_helpers/08015afc.s",
+            "address": 134306556,
+            "size": 632,
+            "evidence": [
+              "arm_instruction_set",
+              "approved_compiler_thumb_only",
+              "contiguous_seven_region_bank",
+              "consumer_call_references",
+              "byte_exact_reconstruction",
+              "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+              "byte_identical_in_all_six_tla_editions_3_regions_pool_masked_3_regions_vendor_object_unidentified",
+              "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility",
+              "tbs_only_region_080155d0_handwritten_credit_after_comment_pass"
+            ],
+            "credit": "library",
+            "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/relocated_arm_helpers/08015d74.s",
+            "address": 134307188,
+            "size": 156,
+            "evidence": [
+              "arm_instruction_set",
+              "approved_compiler_thumb_only",
+              "contiguous_seven_region_bank",
+              "consumer_call_references",
+              "byte_exact_reconstruction",
+              "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+              "byte_identical_in_all_six_tla_editions_3_regions_pool_masked_3_regions_vendor_object_unidentified",
+              "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility",
+              "tbs_only_region_080155d0_handwritten_credit_after_comment_pass"
+            ],
+            "credit": "library",
+            "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/relocated_arm_helpers/08015e10.s",
+            "address": 134307344,
+            "size": 124,
+            "evidence": [
+              "arm_instruction_set",
+              "approved_compiler_thumb_only",
+              "contiguous_seven_region_bank",
+              "consumer_call_references",
+              "byte_exact_reconstruction",
+              "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+              "byte_identical_in_all_six_tla_editions_3_regions_pool_masked_3_regions_vendor_object_unidentified",
+              "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility",
+              "tbs_only_region_080155d0_handwritten_credit_after_comment_pass"
+            ],
+            "credit": "library",
+            "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+          }
+        ]
       }
     },
     {
@@ -654,7 +916,27 @@
         "credit_basis": "68 bytes: (1) ARM body under -mthumb (arm.c:8806-8830) and no msr/mrs template anywhere in arm.md; (2) TBS-only; (3) supervisor/system mode switch, stack pointers and IRQ vector install",
         "credit_rule": "Pascal's ruling (via Beans, 2026-09-10): DONE means what is most likely the original code; handwritten credit requires (1) provably not from any tool we have, cited, (2) no library match in the twelve-ROM and assembled-libgcc scan, (3) a recognisable hand-coded idiom rather than a regular table, and the retained .s must read as source Camelot would have written.",
         "file_check": "executable_gaps/080003c0.s: Entry_080003c0, mnemonics, four pool words; reads as source",
-        "proof": "ARM body under -mthumb (arm.c:8806-8830) with msr CPSR_fc that no arm.md template prints, TBS-only in the twelve-ROM scan, a startup mode switch and stack setup; file check in file_check."
+        "proof": "ARM body under -mthumb (arm.c:8806-8830) with msr CPSR_fc that no arm.md template prints, TBS-only in the twelve-ROM scan, a startup mode switch and stack setup; file check in file_check.",
+        "range_credits": [
+          {
+            "source": "games/THE BROKEN SEAL/raw/executable_gaps/080003c0.s",
+            "address": 134218688,
+            "size": 68,
+            "evidence": [
+              "gba_header_branch_target",
+              "arm_cpu_mode_switch",
+              "fixed_irq_and_system_stack_setup",
+              "approved_compiler_thumb_only",
+              "byte_exact_reconstruction",
+              "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+              "no_msr_mrs_template_arm_md",
+              "tbs_only_no_library_match",
+              "startup_mode_switch_and_stack_setup_hand_idiom"
+            ],
+            "credit": "handwritten",
+            "proof": "ARM body under -mthumb (arm.c:8806-8830) with msr CPSR_fc that no arm.md template prints, TBS-only in the twelve-ROM scan, a startup mode switch and stack setup; file check in file_check."
+          }
+        ]
       }
     },
     {
@@ -731,7 +1013,24 @@
         "credit_bytes": "64 bytes (080fa16c)",
         "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six TLA editions and all six TBS editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto.",
         "proof": "080fa16c byte-identical in all six TLA editions; checked by the twelve-ROM scan in cross_rom.",
-        "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+        "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)",
+        "range_credits": [
+          {
+            "source": "games/THE BROKEN SEAL/raw/080fa16c.s",
+            "address": 135242092,
+            "size": 64,
+            "evidence": [
+              "conditional_branch_or_loop",
+              "bare_bx_lr_return",
+              "no_lr_save",
+              "approved_compiler_prologue_mismatch",
+              "byte_exact_reconstruction",
+              "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility"
+            ],
+            "credit": "library",
+            "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+          }
+        ]
       }
     },
     {
@@ -758,7 +1057,24 @@
         "credit_bytes": "28 bytes (080f9ae0)",
         "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six TLA editions and all six TBS editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto.",
         "proof": "28 bytes byte-identical in all six TLA editions; checked by the twelve-ROM scan in cross_rom.",
-        "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+        "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)",
+        "range_credits": [
+          {
+            "source": "games/THE BROKEN SEAL/raw/080f9ae0.s",
+            "address": 135240416,
+            "size": 28,
+            "evidence": [
+              "external_transfers_are_b_not_bl",
+              "incoming_lr_is_preserved_without_stack_save",
+              "approved_compiler_emits_linked_calls",
+              "inline_assembly_and_register_pins_disallowed",
+              "byte_exact_reconstruction",
+              "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility"
+            ],
+            "credit": "library",
+            "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+          }
+        ]
       }
     },
     {
@@ -1579,7 +1895,37 @@
         "credit_bytes": "692 bytes",
         "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six TLA editions and all six TBS editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto.",
         "proof": "080f9c44 byte-identical and 080f9c90 pool-masked identical in all six TLA editions; checked by the twelve-ROM scan in cross_rom.",
-        "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+        "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)",
+        "range_credits": [
+          {
+            "source": "games/THE BROKEN SEAL/raw/080f9c44.s",
+            "address": 135240772,
+            "size": 76,
+            "evidence": [
+              "bl_call_target",
+              "function_pointer_target",
+              "fallthrough_continuation",
+              "cross_function_literal_pool",
+              "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility"
+            ],
+            "credit": "library",
+            "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/080f9c90.s",
+            "address": 135240848,
+            "size": 616,
+            "evidence": [
+              "bl_call_target",
+              "function_pointer_target",
+              "fallthrough_continuation",
+              "cross_function_literal_pool",
+              "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility"
+            ],
+            "credit": "library",
+            "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+          }
+        ]
       }
     },
     {
@@ -1679,7 +2025,51 @@
         "credit_rule": "Pascal's ruling (via Beans, 2026-09-10): DONE means what is most likely the original code; handwritten credit requires (1) provably not from any tool we have, cited, (2) no library match in the twelve-ROM and assembled-libgcc scan, (3) a recognisable hand-coded idiom rather than a regular table, and the retained .s must read as source Camelot would have written.",
         "credit_basis": "568 bytes: (1) Kiki: every Thumb conditional branch is cbranchsi4 (arm.md:5152-5202) over a comparison; no Thumb pattern exposes a shift's carry to a branch; (2) identical across TBS editions only, no TLA or libgcc match; (3) carry-driven branching into a 128-entry quarter-sine table with mirror and negate",
         "file_check": "0800230c.s / 0800231c.s: mnemonics, named entry symbols, .L_index/.L_return labels, the table as .hword rows under Data_08002344; reads as source",
-        "proof": "No Thumb template branches on a shift-set carry (cbranchsi4 arm.md:5152-5202, Kiki 2026-09-10), no TLA or libgcc match in the twelve-ROM scan, and a hand-coded quarter-sine lookup with mirror and negate; file check in file_check."
+        "proof": "No Thumb template branches on a shift-set carry (cbranchsi4 arm.md:5152-5202, Kiki 2026-09-10), no TLA or libgcc match in the twelve-ROM scan, and a hand-coded quarter-sine lookup with mirror and negate; file check in file_check.",
+        "range_credits": [
+          {
+            "source": "games/THE BROKEN SEAL/raw/0800230c.s",
+            "address": 134226700,
+            "size": 16,
+            "evidence": [
+              "carry_driven_branching",
+              "shared_helper_entry",
+              "pc_relative_lookup_table",
+              "quarter_sine_values_match_rounded_formula",
+              "reference_materializes_the_inline_table_with_thumb_add_register_pc_immediate",
+              "approved_non_pic_thumb_route_has_no_local_label_address_materialization_pattern",
+              "gcc_2_96_movaddr_is_target_arm_only_and_thumb_pc_add_address_pattern_requires_pic",
+              "generic_thumb_addsi3_cannot_allocate_pc_as_an_ordinary_c_operand",
+              "byte_exact_reconstruction",
+              "no_thumb_branch_on_shift_carry_cbranchsi4_arm_md_5152_5202",
+              "tbs_only_no_library_match",
+              "carry_driven_sine_table_lookup_hand_idiom"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb template branches on a shift-set carry (cbranchsi4 arm.md:5152-5202, Kiki 2026-09-10), no TLA or libgcc match in the twelve-ROM scan, and a hand-coded quarter-sine lookup with mirror and negate; file check in file_check."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/0800231c.s",
+            "address": 134226716,
+            "size": 552,
+            "evidence": [
+              "carry_driven_branching",
+              "shared_helper_entry",
+              "pc_relative_lookup_table",
+              "quarter_sine_values_match_rounded_formula",
+              "reference_materializes_the_inline_table_with_thumb_add_register_pc_immediate",
+              "approved_non_pic_thumb_route_has_no_local_label_address_materialization_pattern",
+              "gcc_2_96_movaddr_is_target_arm_only_and_thumb_pc_add_address_pattern_requires_pic",
+              "generic_thumb_addsi3_cannot_allocate_pc_as_an_ordinary_c_operand",
+              "byte_exact_reconstruction",
+              "no_thumb_branch_on_shift_carry_cbranchsi4_arm_md_5152_5202",
+              "tbs_only_no_library_match",
+              "carry_driven_sine_table_lookup_hand_idiom"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb template branches on a shift-set carry (cbranchsi4 arm.md:5152-5202, Kiki 2026-09-10), no TLA or libgcc match in the twelve-ROM scan, and a hand-coded quarter-sine lookup with mirror and negate; file check in file_check."
+          }
+        ]
       }
     },
     {
@@ -1707,7 +2097,23 @@
         "credit_bytes": "16 bytes",
         "credit_decision": "Beans (merge lane), 2026-09-10: byte-identical at one offset in all six TLA editions and all six TBS editions, ARM-mode bodies the compiler provably cannot emit under -mthumb (arm.c 8806-8830), is a shared vendor library by any test short of holding the SDK; vendor object not named; credited on cross-product identity and compiler impossibility. Pascal can veto.",
         "proof": "16 bytes with an ARM umull byte-identical in all six TLA editions (arm.c:8806-8830); checked by the twelve-ROM scan in cross_rom.",
-        "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+        "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)",
+        "range_credits": [
+          {
+            "source": "games/THE BROKEN SEAL/raw/080f95e0.s",
+            "address": 135239136,
+            "size": 16,
+            "evidence": [
+              "thumb_to_arm_pc_switch",
+              "single_umull_high_word",
+              "approved_compiler_is_thumb_only",
+              "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+              "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility"
+            ],
+            "credit": "library",
+            "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+          }
+        ]
       }
     },
     {
@@ -1869,7 +2275,230 @@
           "credit": "handwritten"
         },
         "proof": "Nine regions byte-identical and one pool-masked identical at one offset in all six TLA editions, and ARM instruction bodies the compiler cannot emit under -mthumb (arm.c:8806-8830); checked by the twelve-ROM scan recorded in cross_rom.",
-        "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+        "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)",
+        "range_credits": [
+          {
+            "source": "games/THE BROKEN SEAL/raw/08002544.s",
+            "address": 134227268,
+            "size": 708,
+            "evidence": [
+              "caller_copy_source_and_size_boundaries",
+              "arm_instruction_set",
+              "approved_compiler_thumb_only",
+              "byte_exact_reconstruction",
+              "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+              "byte_identical_in_all_six_tla_editions_9_of_13_regions_vendor_object_unidentified",
+              "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility",
+              "tbs_only_regions_handwritten_credit_tla_identical_regions_library_credit"
+            ],
+            "credit": "library",
+            "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/08002808.s",
+            "address": 134227976,
+            "size": 1260,
+            "evidence": [
+              "caller_copy_source_and_size_boundaries",
+              "arm_instruction_set",
+              "approved_compiler_thumb_only",
+              "byte_exact_reconstruction",
+              "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+              "byte_identical_in_all_six_tla_editions_9_of_13_regions_vendor_object_unidentified",
+              "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility",
+              "tbs_only_regions_handwritten_credit_tla_identical_regions_library_credit"
+            ],
+            "credit": "library",
+            "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/08002cf4.s",
+            "address": 134229236,
+            "size": 104,
+            "evidence": [
+              "caller_copy_source_and_size_boundaries",
+              "arm_instruction_set",
+              "approved_compiler_thumb_only",
+              "byte_exact_reconstruction",
+              "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+              "byte_identical_in_all_six_tla_editions_9_of_13_regions_vendor_object_unidentified",
+              "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility",
+              "tbs_only_regions_handwritten_credit_tla_identical_regions_library_credit"
+            ],
+            "credit": "library",
+            "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/08002d5c.s",
+            "address": 134229340,
+            "size": 124,
+            "evidence": [
+              "caller_copy_source_and_size_boundaries",
+              "arm_instruction_set",
+              "approved_compiler_thumb_only",
+              "byte_exact_reconstruction",
+              "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+              "byte_identical_in_all_six_tla_editions_9_of_13_regions_vendor_object_unidentified",
+              "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility",
+              "tbs_only_regions_handwritten_credit_tla_identical_regions_library_credit"
+            ],
+            "credit": "library",
+            "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/08009bb8.s",
+            "address": 134257592,
+            "size": 708,
+            "evidence": [
+              "caller_copy_source_and_size_boundaries",
+              "arm_instruction_set",
+              "approved_compiler_thumb_only",
+              "byte_exact_reconstruction",
+              "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+              "byte_identical_in_all_six_tla_editions_9_of_13_regions_vendor_object_unidentified",
+              "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility",
+              "tbs_only_regions_handwritten_credit_tla_identical_regions_library_credit"
+            ],
+            "credit": "library",
+            "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/08009e7c.s",
+            "address": 134258300,
+            "size": 636,
+            "evidence": [
+              "caller_copy_source_and_size_boundaries",
+              "arm_instruction_set",
+              "approved_compiler_thumb_only",
+              "byte_exact_reconstruction",
+              "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+              "byte_identical_in_all_six_tla_editions_9_of_13_regions_vendor_object_unidentified",
+              "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility",
+              "tbs_only_regions_handwritten_credit_tla_identical_regions_library_credit"
+            ],
+            "credit": "handwritten",
+            "proof": "Nine regions byte-identical and one pool-masked identical at one offset in all six TLA editions, and ARM instruction bodies the compiler cannot emit under -mthumb (arm.c:8806-8830); checked by the twelve-ROM scan recorded in cross_rom."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/0800a0f8.s",
+            "address": 134258936,
+            "size": 644,
+            "evidence": [
+              "caller_copy_source_and_size_boundaries",
+              "arm_instruction_set",
+              "approved_compiler_thumb_only",
+              "byte_exact_reconstruction",
+              "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+              "byte_identical_in_all_six_tla_editions_9_of_13_regions_vendor_object_unidentified",
+              "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility",
+              "tbs_only_regions_handwritten_credit_tla_identical_regions_library_credit"
+            ],
+            "credit": "handwritten",
+            "proof": "Nine regions byte-identical and one pool-masked identical at one offset in all six TLA editions, and ARM instruction bodies the compiler cannot emit under -mthumb (arm.c:8806-8830); checked by the twelve-ROM scan recorded in cross_rom."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/0800a37c.s",
+            "address": 134259580,
+            "size": 156,
+            "evidence": [
+              "caller_copy_source_and_size_boundaries",
+              "arm_instruction_set",
+              "approved_compiler_thumb_only",
+              "byte_exact_reconstruction",
+              "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+              "byte_identical_in_all_six_tla_editions_9_of_13_regions_vendor_object_unidentified",
+              "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility",
+              "tbs_only_regions_handwritten_credit_tla_identical_regions_library_credit"
+            ],
+            "credit": "library",
+            "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/0800a418.s",
+            "address": 134259736,
+            "size": 124,
+            "evidence": [
+              "caller_copy_source_and_size_boundaries",
+              "arm_instruction_set",
+              "approved_compiler_thumb_only",
+              "byte_exact_reconstruction",
+              "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+              "byte_identical_in_all_six_tla_editions_9_of_13_regions_vendor_object_unidentified",
+              "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility",
+              "tbs_only_regions_handwritten_credit_tla_identical_regions_library_credit"
+            ],
+            "credit": "library",
+            "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/0800a494.s",
+            "address": 134259860,
+            "size": 1256,
+            "evidence": [
+              "caller_copy_source_and_size_boundaries",
+              "arm_instruction_set",
+              "approved_compiler_thumb_only",
+              "byte_exact_reconstruction",
+              "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+              "byte_identical_in_all_six_tla_editions_9_of_13_regions_vendor_object_unidentified",
+              "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility",
+              "tbs_only_regions_handwritten_credit_tla_identical_regions_library_credit"
+            ],
+            "credit": "handwritten",
+            "proof": "Nine regions byte-identical and one pool-masked identical at one offset in all six TLA editions, and ARM instruction bodies the compiler cannot emit under -mthumb (arm.c:8806-8830); checked by the twelve-ROM scan recorded in cross_rom."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/veneer_island_residual/080b5138.s",
+            "address": 134959416,
+            "size": 204,
+            "evidence": [
+              "caller_copy_source_and_size_boundaries",
+              "arm_instruction_set",
+              "approved_compiler_thumb_only",
+              "byte_exact_reconstruction",
+              "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+              "byte_identical_in_all_six_tla_editions_9_of_13_regions_vendor_object_unidentified",
+              "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility",
+              "tbs_only_regions_handwritten_credit_tla_identical_regions_library_credit"
+            ],
+            "credit": "library",
+            "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/veneer_island_residual/080b520c.s",
+            "address": 134959628,
+            "size": 12,
+            "evidence": [
+              "caller_copy_source_and_size_boundaries",
+              "arm_instruction_set",
+              "approved_compiler_thumb_only",
+              "byte_exact_reconstruction",
+              "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+              "byte_identical_in_all_six_tla_editions_9_of_13_regions_vendor_object_unidentified",
+              "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility",
+              "tbs_only_regions_handwritten_credit_tla_identical_regions_library_credit"
+            ],
+            "credit": "library",
+            "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/veneer_island_residual/080b5258.s",
+            "address": 134959704,
+            "size": 272,
+            "evidence": [
+              "caller_copy_source_and_size_boundaries",
+              "arm_instruction_set",
+              "approved_compiler_thumb_only",
+              "byte_exact_reconstruction",
+              "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
+              "byte_identical_in_all_six_tla_editions_9_of_13_regions_vendor_object_unidentified",
+              "credited_as_library_vendor_object_not_named_on_cross_product_identity_and_compiler_impossibility",
+              "tbs_only_regions_handwritten_credit_tla_identical_regions_library_credit"
+            ],
+            "credit": "library",
+            "object": "vendor object not named; credited on cross-product identity in all six TLA editions and compiler impossibility (arm.c:8806-8830)"
+          }
+        ]
       }
     },
     {
@@ -1968,7 +2597,27 @@
         "credit_rule": "Pascal's ruling (via Beans, 2026-09-10): DONE means what is most likely the original code; handwritten credit requires (1) provably not from any tool we have, cited, (2) no library match in the twelve-ROM and assembled-libgcc scan, (3) a recognisable hand-coded idiom rather than a regular table, and the retained .s must read as source Camelot would have written.",
         "credit_basis": "48 bytes: (1) Kiki A: no Thumb template prints a writeback stmia of ldr-loaded registers; (2) TBS editions only; (3) two DMA register kicks with the base restored, a leaf of nothing else",
         "file_check": "080a22f4.s: named symbol, mnemonics, six pool words; reads as source",
-        "proof": "No Thumb template prints a writeback stmia of ldr-loaded registers (arm.md:5111-5141, arm.c:9425-9465), TBS editions only in the twelve-ROM scan, a leaf of two DMA register kicks; file check in file_check."
+        "proof": "No Thumb template prints a writeback stmia of ldr-loaded registers (arm.md:5111-5141, arm.c:9425-9465), TBS editions only in the twelve-ROM scan, a leaf of two DMA register kicks; file check in file_check.",
+        "range_credits": [
+          {
+            "source": "games/THE BROKEN SEAL/raw/080a22f4.s",
+            "address": 134882036,
+            "size": 48,
+            "evidence": [
+              "grouped_store_requires_three_wide_register_staging",
+              "volatile_program_order_forbids_staging",
+              "nonvolatile_first_kick_dead_store_eliminated",
+              "three_backend_stmia_negative",
+              "family_argument_evacuation_fixed_register_signature",
+              "approved_compiler_cannot_emit_reference_store_group_without_forbidden_register_constraints",
+              "byte_exact_reconstruction",
+              "no_thumb_stmia_producer_beyond_movmem_arm_md_5111_5141_arm_c_9425_9465",
+              "tbs_only_no_library_match"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb template prints a writeback stmia of ldr-loaded registers (arm.md:5111-5141, arm.c:9425-9465), TBS editions only in the twelve-ROM scan, a leaf of two DMA register kicks; file check in file_check."
+          }
+        ]
       }
     },
     {
@@ -2068,7 +2717,959 @@
         "note": "no cross-product identity; callers of the IWRAM kernels at 0x03000118/0x0300013c through mov ip,pc; bx r4",
         "credit_rule": "Beans (merge lane), 2026-09-10, under Pascal's ruling: executable ROM code the approved compiler provably cannot have emitted has no origin other than hand or library, so its most likely original form is the .s; credited when the file reads as source.",
         "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only.",
-        "file_check": "2026-09-10, all 50 files: named entry symbols, a header stating the job and why it stays assembly, block comments naming the IWRAM kernel each ip-linked call reaches (IwramMulQ16ReturnIp 0x03000118, IwramRatioMulQ14 0x0300013c, IwramSqrt 0x030001d8, IwramSignedDivide 0x03000380, IwramUnsignedDivide 0x030003f0, IwramTransformVector 0x03000250, IwramTransformMatrix 0x030002c0, IwramClearWords 0x03000164, IwramCopyWords 0x03001388); instruction and data lines untouched; byte-identical builds at each of seven batches (commits 36bf02e33 .. this one). One region, 0800ee14, is a continuation fragment without an entry and is headed as such."
+        "file_check": "2026-09-10, all 50 files: named entry symbols, a header stating the job and why it stays assembly, block comments naming the IWRAM kernel each ip-linked call reaches (IwramMulQ16ReturnIp 0x03000118, IwramRatioMulQ14 0x0300013c, IwramSqrt 0x030001d8, IwramSignedDivide 0x03000380, IwramUnsignedDivide 0x030003f0, IwramTransformVector 0x03000250, IwramTransformMatrix 0x030002c0, IwramClearWords 0x03000164, IwramCopyWords 0x03001388); instruction and data lines untouched; byte-identical builds at each of seven batches (commits 36bf02e33 .. this one). One region, 0800ee14, is a continuation fragment without an entry and is headed as such.",
+        "range_credits": [
+          {
+            "source": "games/THE BROKEN SEAL/raw/0800447c.s",
+            "address": 134235260,
+            "size": 84,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/08004ab0.s",
+            "address": 134236848,
+            "size": 292,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/08004d2c.s",
+            "address": 134237484,
+            "size": 296,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/08004e54.s",
+            "address": 134237780,
+            "size": 400,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/08004fe4.s",
+            "address": 134238180,
+            "size": 500,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/08005268.s",
+            "address": 134238824,
+            "size": 140,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/0800b388.s",
+            "address": 134263688,
+            "size": 762,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/0800c62c.s",
+            "address": 134268460,
+            "size": 592,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/0800cacc.s",
+            "address": 134269644,
+            "size": 1636,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/0800d14c.s",
+            "address": 134271308,
+            "size": 440,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/0800d340.s",
+            "address": 134271808,
+            "size": 788,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/0800daf0.s",
+            "address": 134273776,
+            "size": 492,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/0800dd70.s",
+            "address": 134274416,
+            "size": 404,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/0800df04.s",
+            "address": 134274820,
+            "size": 796,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/0800ee14.s",
+            "address": 134278676,
+            "size": 936,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/0800f2f8.s",
+            "address": 134279928,
+            "size": 1252,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/0800fb38.s",
+            "address": 134282040,
+            "size": 548,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/08010000.s",
+            "address": 134283264,
+            "size": 560,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/08010230.s",
+            "address": 134283824,
+            "size": 500,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/080111b4.s",
+            "address": 134287796,
+            "size": 560,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/080123f4.s",
+            "address": 134292468,
+            "size": 292,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/0801cbd4.s",
+            "address": 134335444,
+            "size": 124,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/0801cc50.s",
+            "address": 134335568,
+            "size": 112,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/0808ae74.s",
+            "address": 134786676,
+            "size": 440,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/0808b3ec.s",
+            "address": 134788076,
+            "size": 608,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/0808bec0.s",
+            "address": 134790848,
+            "size": 1052,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/08090a5c.s",
+            "address": 134810204,
+            "size": 1816,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/080935d4.s",
+            "address": 134821332,
+            "size": 204,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/08093c00.s",
+            "address": 134822912,
+            "size": 552,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/08094544.s",
+            "address": 134825284,
+            "size": 492,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/080979a4.s",
+            "address": 134838692,
+            "size": 108,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/08097a10.s",
+            "address": 134838800,
+            "size": 68,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/080982dc.s",
+            "address": 134841052,
+            "size": 196,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/080992f0.s",
+            "address": 134845168,
+            "size": 80,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/080993b0.s",
+            "address": 134845360,
+            "size": 272,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/0809a738.s",
+            "address": 134850360,
+            "size": 188,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/0809a7f4.s",
+            "address": 134850548,
+            "size": 156,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/0809b86c.s",
+            "address": 134854764,
+            "size": 136,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/0809b8f4.s",
+            "address": 134854900,
+            "size": 320,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/080ad6d4.s",
+            "address": 134928084,
+            "size": 3104,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/080b7b6c.s",
+            "address": 134970220,
+            "size": 612,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/080b7f20.s",
+            "address": 134971168,
+            "size": 80,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/080b81c8.s",
+            "address": 134971848,
+            "size": 96,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/080b845c.s",
+            "address": 134972508,
+            "size": 100,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/080b84c0.s",
+            "address": 134972608,
+            "size": 112,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/080c0a24.s",
+            "address": 135006756,
+            "size": 448,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/080c11ec.s",
+            "address": 135008748,
+            "size": 588,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/080c1470.s",
+            "address": 135009392,
+            "size": 608,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/080e3994.s",
+            "address": 135149972,
+            "size": 128,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/080f3078.s",
+            "address": 135213176,
+            "size": 1796,
+            "evidence": [
+              "reference_uses_mov_ip_pc_then_bx_register_as_an_inline_call",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "0800ee14_mov_ip_pc_at_0800f1b8_then_bx_r4_at_0800f1ba",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "no_cross_product_identity",
+              "handwritten_credit_after_source_form_pass_all_50_files"
+            ],
+            "credit": "handwritten",
+            "proof": "No Thumb call template prints mov ip,pc; the only pc-into-ip the compiler emits is the ARM-mode interfacearm entry stub (arm.c:9073), an entry sequence, not a call; every Thumb call is bl or bl _call_via_rN (arm.md:5905-5936). Zero cross-product identity: none of the 50 regions matches any TLA edition exact or pool-masked in the twelve-ROM scan (cross_rom); 14 are identical across TBS editions only, the rest TBS-en only."
+          }
+        ]
       }
     },
     {
@@ -2120,7 +3721,66 @@
         "credit": "handwritten",
         "credit_rule": "Beans (merge lane), 2026-09-10, under Pascal's ruling: executable ROM code the approved compiler provably cannot have emitted has no origin other than hand or library; credited when the file reads as source.",
         "proof": "Same construct as iwram_ip_link_call_module: no Thumb call template prints mov ip,pc (arm.c:9073; bl / bl _call_via_rN only, arm.md:5905-5936); the three regions (080e1acc, 080e1df8, 080e21e8) match no TLA edition exact or pool-masked in the twelve-ROM scan.",
-        "file_check": "2026-09-10: three continuation regions of the branch-connected owner 0x080e15e8..0x080e2538, each headed as a region of that owner with what it does and why it stays assembly, block comments at the stage labels, .set externs kept; instruction and data lines untouched; byte-identical build."
+        "file_check": "2026-09-10: three continuation regions of the branch-connected owner 0x080e15e8..0x080e2538, each headed as a region of that owner with what it does and why it stays assembly, block comments at the stage labels, .set externs kept; instruction and data lines untouched; byte-identical build.",
+        "range_credits": [
+          {
+            "source": "games/THE BROKEN SEAL/raw/080e1acc.s",
+            "address": 135142092,
+            "size": 734,
+            "evidence": [
+              "single_branch_connected_owner_080e15e8_through_080e2538_with_live_parent_stack_and_high_register_state",
+              "owner_continuation_080e17c4_uses_mov_ip_pc_then_bx_r7_at_080e19f8_080e19fa_and_again_at_080e1a10_080e1a12",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "only_the_three_still_unresolved_mixed_fragments_are_retained_here",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "handwritten_credit_after_source_form_pass_3_regions"
+            ],
+            "credit": "handwritten",
+            "proof": "Same construct as iwram_ip_link_call_module: no Thumb call template prints mov ip,pc (arm.c:9073; bl / bl _call_via_rN only, arm.md:5905-5936); the three regions (080e1acc, 080e1df8, 080e21e8) match no TLA edition exact or pool-masked in the twelve-ROM scan."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/080e1df8.s",
+            "address": 135142904,
+            "size": 950,
+            "evidence": [
+              "single_branch_connected_owner_080e15e8_through_080e2538_with_live_parent_stack_and_high_register_state",
+              "owner_continuation_080e17c4_uses_mov_ip_pc_then_bx_r7_at_080e19f8_080e19fa_and_again_at_080e1a10_080e1a12",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "only_the_three_still_unresolved_mixed_fragments_are_retained_here",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "handwritten_credit_after_source_form_pass_3_regions"
+            ],
+            "credit": "handwritten",
+            "proof": "Same construct as iwram_ip_link_call_module: no Thumb call template prints mov ip,pc (arm.c:9073; bl / bl _call_via_rN only, arm.md:5905-5936); the three regions (080e1acc, 080e1df8, 080e21e8) match no TLA edition exact or pool-masked in the twelve-ROM scan."
+          },
+          {
+            "source": "games/THE BROKEN SEAL/raw/080e21e8.s",
+            "address": 135143912,
+            "size": 786,
+            "evidence": [
+              "single_branch_connected_owner_080e15e8_through_080e2538_with_live_parent_stack_and_high_register_state",
+              "owner_continuation_080e17c4_uses_mov_ip_pc_then_bx_r7_at_080e19f8_080e19fa_and_again_at_080e1a10_080e1a12",
+              "callee_returns_through_ip_instead_of_the_thumb_c_call_link_register",
+              "approved_thumb_call_indirect_patterns_emit_bl_call_via_register_thunks",
+              "approved_compiler_has_no_ip_linked_calling_convention",
+              "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+              "only_the_three_still_unresolved_mixed_fragments_are_retained_here",
+              "byte_exact_reconstruction",
+              "no_thumb_call_prints_mov_ip_pc_arm_c_9073_only_arm_entry_stub",
+              "handwritten_credit_after_source_form_pass_3_regions"
+            ],
+            "credit": "handwritten",
+            "proof": "Same construct as iwram_ip_link_call_module: no Thumb call template prints mov ip,pc (arm.c:9073; bl / bl _call_via_rN only, arm.md:5905-5936); the three regions (080e1acc, 080e1df8, 080e21e8) match no TLA edition exact or pool-masked in the twelve-ROM scan."
+          }
+        ]
       }
     },
     {
@@ -2702,8 +4362,8 @@
         "no_four_register_thumb_transfer_template_and_movstrqi_is_copy_only_arm_md_5084_arm_c_9478",
         "inline_dma_kick_or_fill_macro_in_c_bodies_not_handwritten_functions_no_cross_product_identity"
       ],
-      "expected_files": 145,
-      "expected_bytes": 63632,
+      "expected_files": 141,
+      "expected_bytes": 62908,
       "matcher": "thumb_standalone_wide_transfer",
       "provenance": {
         "scanned": "2026-09-10",
@@ -2812,10 +4472,10 @@
             "decision": "proceed",
             "confidence": 0.49,
             "probabilities": {
-              "finished": 0.0,
+              "finished": 0,
               "inspect": 0.38,
               "proceed": 0.62,
-              "stop_axis": 0.0
+              "stop_axis": 0
             },
             "latency_ms": 645,
             "usage": {
@@ -2843,16 +4503,16 @@
               "bytes": 64,
               "source": "SRC/GRAPHICS/SAVE_TRANSFER_WORK_ONCE.C"
             },
-        {
-          "owner": "main:080251d4",
-          "bytes": 44,
-          "source": "SRC/GRAPHICS/VRAM/COPY_TILE.C"
-        },
-        {
-          "owner": "main:080058ac",
-          "bytes": 88,
-          "source": "SRC/SYSTEM/SAVE/STATE_READ_SLOT_AND_CHECK_CHECKSUM.C"
-        }
+            {
+              "owner": "main:080251d4",
+              "bytes": 44,
+              "source": "SRC/GRAPHICS/VRAM/COPY_TILE.C"
+            },
+            {
+              "owner": "main:080058ac",
+              "bytes": 88,
+              "source": "SRC/SYSTEM/SAVE/STATE_READ_SLOT_AND_CHECK_CHECKSUM.C"
+            }
           ],
           "stack_callers": {
             "owners": [

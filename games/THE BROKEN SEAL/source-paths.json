@@ -727,16 +727,20 @@
       "source": "SYSTEM/SAVE/STATE_READ_SLOT_AND_CHECK_CHECKSUM.C"
     },
     "main:08005920": {
-      "name": "SaveState_WriteRecord"
+      "name": "SaveState_WriteRecord",
+      "source": "SYSTEM/SAVE/WRITE_RECORD.C"
     },
     "main:08005a78": {
-      "name": "SaveState_ReadRecordPayload"
+      "name": "SaveState_ReadRecordPayload",
+      "source": "SYSTEM/SAVE/READ_RECORD_PAYLOAD.C"
     },
     "main:08005b64": {
-      "name": "SaveState_InvalidateSlot"
+      "name": "SaveState_InvalidateSlot",
+      "source": "SYSTEM/SAVE/INVALIDATE_SLOT.C"
     },
     "main:08005c68": {
-      "name": "SaveState_LoadSummaryRecords"
+      "name": "SaveState_LoadSummaryRecords",
+      "source": "SYSTEM/SAVE/LOAD_SUMMARY_RECORDS.C"
     },
     "main:08005d10": {
       "name": "SerialRuntime_Initialize"

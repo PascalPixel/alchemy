@@ -687,23 +687,22 @@ fn assembly_credit(entry: &Value) -> bool {
         && (!text(provenance, "proof").trim().is_empty()
             || !text(provenance, "object").trim().is_empty())
 }
-fn credited_kinds(classification: &Value) -> BTreeSet<String> {
-    // `groups` is an array of kind entries; an object of entries reads the same.
-    let groups: Vec<Value> = match &classification["groups"] {
-        Value::Array(entries) => entries.clone(),
-        Value::Object(map) => map.values().cloned().collect(),
-        _ => Vec::new(),
-    };
-    array(classification, "structural")
-        .iter()
-        .chain(groups.iter())
-        .filter(|entry| assembly_credit(entry))
-        .map(|entry| text(entry, "kind"))
-        .collect()
+/// Main assembly can only be credited by its own range provenance emitted by
+/// the assembler, never by its classification kind.
+fn manifest_assembly_credit(region: &Value) -> bool {
+    let provenance = &region["provenance"];
+    matches!(
+        text(provenance, "credit").as_str(),
+        "library" | "handwritten"
+    ) && !text(region, "source").trim().is_empty()
+        && array(provenance, "evidence")
+            .iter()
+            .any(|item| item.as_str().is_some_and(|item| !item.trim().is_empty()))
+        && (!text(provenance, "proof").trim().is_empty()
+            || !text(provenance, "object").trim().is_empty())
 }
-/// Withdrawn, draft, and credited main assembly: credited spans are the
-/// proven regions whose kind the register credits, and they leave the
-/// withdrawn list so they are counted once.
+/// Withdrawn, draft, and credited main assembly. Credited spans are proven
+/// manifest rows with their own validated range provenance.
 #[cfg(test)]
 fn main_assembly_classification(tree: &SourceTree) -> (Vec<Span>, Vec<Span>, Vec<Span>) {
     let target = crate::targets::target_for(crate::targets::DEFAULT_TARGET);
@@ -716,12 +715,6 @@ fn main_assembly_classification_for(
     let mut proven = Vec::new();
     let mut draft = Vec::new();
     let mut credited = Vec::new();
-    let credited_kinds = json(
-        tree,
-        &format!("{}/raw/classification.json", target.game_dir()),
-    )
-    .map(|document| credited_kinds(&document))
-    .unwrap_or_default();
     if let Some(value) = json(
         tree,
         &format!("{}/full/asm/manifest.json", target.output_dir),
@@ -752,7 +745,7 @@ fn main_assembly_classification_for(
                     let span = Span::new(address, address + size);
                     if text(region, "confidence") != "proven" {
                         draft.push(span);
-                    } else if credited_kinds.contains(&kind) {
+                    } else if manifest_assembly_credit(region) {
                         credited.push(span);
                     } else {
                         proven.push(span);
@@ -2420,38 +2413,83 @@ mod tests {
         json!({"format": 1, "regions": regions})
     }
     #[test]
-    fn only_library_credit_with_evidence_and_proof_is_credited() {
-        let entry = |kind: &str, credit: &str, evidence: Value, proof: &str| json!({"kind": kind, "evidence": evidence, "provenance": {"credit": credit, "proof": proof}});
-        let document = json!({
-            "structural": [entry("thunks", "library", json!(["lib1funcs_asm_950_990"]), "byte identical")],
-            "groups": [
-                entry("bare_label", "library", json!([]), "byte identical"),
-                entry("no_proof", "library", json!(["tag"]), ""),
-                entry("pending", "library_pending_identification", json!(["tag"]), "x"),
-                entry("hand", "handwritten", json!(["tag"]), "x"),
-                entry("bare_hand", "handwritten", json!([]), "x"),
-                entry("grouped", "library", json!(["tag"]), "x")
-            ]
-        });
-        let credited = credited_kinds(&document);
-        assert_eq!(
-            credited.into_iter().collect::<Vec<_>>(),
-            ["grouped", "hand", "thunks"]
+    fn main_assembly_credit_requires_manifest_range_provenance() {
+        let directory = tempfile::tempdir().unwrap();
+        let write = |path: &str, value: Value| {
+            let path = directory.path().join(path);
+            std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+            std::fs::write(path, serde_json::to_vec(&value).unwrap()).unwrap();
+        };
+        let row = |address, provenance| {
+            json!({
+                "source": format!("games/THE BROKEN SEAL/raw/{address:08x}.s"),
+                "address": address,
+                "size": 8,
+                "kind": "legacy_group_credit",
+                "retention": "keep_asm",
+                "confidence": "proven",
+                "evidence": "group classification",
+                "provenance": provenance
+            })
+        };
+        write(
+            "games/THE BROKEN SEAL/raw/classification.json",
+            json!({"groups": [{
+                "kind": "legacy_group_credit",
+                "provenance": {"credit": "library", "proof": "legacy group proof"}
+            }]}),
         );
+        write(
+            "out/tbs-en/full/asm/manifest.json",
+            json!({"regions": [
+                row(0x08000100, json!({
+                    "credit": "library",
+                    "evidence": ["per-range identity"],
+                    "proof": "twelve-ROM comparison"
+                })),
+                row(0x08000120, Value::Null),
+                row(0x08000140, json!({
+                    "credit": "library",
+                    "evidence": [""],
+                    "proof": "twelve-ROM comparison"
+                })),
+                row(0x08000160, json!({
+                    "credit": "library",
+                    "evidence": ["per-range identity"]
+                })),
+                row(0x08000180, json!({
+                    "credit": "handwritten",
+                    "evidence": ["per-range handwritten idiom"],
+                    "object": "named source object"
+                }))
+            ]}),
+        );
+        let tree = crate::coverage::tree::work_tree_at(directory.path().into());
+        let (proven, draft, credited) = main_assembly_classification(&tree);
+        assert!(draft.is_empty());
+        assert_eq!(
+            credited,
+            [
+                Span::new(0x0800_0100, 0x0800_0108),
+                Span::new(0x0800_0180, 0x0800_0188)
+            ]
+        );
+        assert_eq!(
+            proven,
+            [
+                Span::new(0x0800_0120, 0x0800_0128),
+                Span::new(0x0800_0140, 0x0800_0148),
+                Span::new(0x0800_0160, 0x0800_0168)
+            ]
+        );
+    }
+
+    #[test]
+    fn runtime_credit_stays_separate_from_range_credits() {
         // No tracked assembly carries the compiler runtime: the call_via bank
         // at 0x080072e4 is a container-built link, credited exactly where the
-        // built manifest placed it, and retained credited spans never overlap.
+        // built manifest placed it.
         let tree = crate::coverage::tree::work_tree();
-        let live = json(&tree, "games/THE BROKEN SEAL/raw/classification.json").unwrap();
-        assert!(!credited_kinds(&live).contains("runtime_thunk_bundle"));
-        let (_, _, credited) = main_assembly_classification(&tree);
-        assert!(!credited.iter().any(|span| span.start == 0x0800_72e4));
-        for pair in credited.windows(2) {
-            assert!(
-                pair[0].end <= pair[1].start,
-                "overlapping credited spans: {pair:?}"
-            );
-        }
         let rom = [Span::new(0x0800_0000, 0x0880_0000)];
         let inventory = read_json(&tree, "games/THE BROKEN SEAL/metrics/executable.json").unwrap();
         let overlays = array(&inventory, "overlays")

@@ -8,17 +8,14 @@ void Func_0800479c(void);
 struct RenderInput *Func_080162d4(s32, s32, s32, s32, s32);
 s32 Func_08019d2c(s32);
 s32 Func_08019da8(s32,s32,s32,s32);
-void Func_080209d0(struct RenderInput *, const void *);
 void Func_0801e41c(struct RenderInput *,s32,s32,s32,s32);
 void Func_08020b64(struct RenderInput *,u8 *);
 s32 Func_08004080(void);
 s32 Func_08003fa4(u32,u32,const void *);
-struct RenderOutput *Func_0801eadc(s32,s32,struct RenderInput *,s32,s32);
 void Func_080b0038(struct ShopCursor *,s32,s32);
 s32 Func_08020b14(u8 *);
 void Func_08016478(struct RenderInput *);
 void Func_080030f8(s32);
-void Func_08020a60(struct RenderInput *,s32,s32,s32,s32,u32);
 void Func_080b0030(struct ShopCursor *,s32,s32,s32);
 void Func_080b0020(struct ShopCursor *);
 void Func_080b0028(struct ShopCursor *);
@@ -50,7 +47,7 @@ s32 Func_08020bd8(s32 entry)
     window = Func_080162d4(3,6,24,9,2);
     label = Func_080162d4(8,3,8,3,2);
     Func_08019da8(Func_08019d2c(entry),0,3,1);
-    Func_080209d0(window,(void *)0x08073864);
+    UiWindow_CopyTilemapRegion(window,(void *)0x08073864);
     Func_0801e41c(window,18,0,18,7);
     work[0xea3] = text_dirty;
     text[0] = result;
@@ -70,14 +67,14 @@ s32 Func_08020bd8(s32 entry)
     row = 5;
     if(slot <= 95) {
         Func_08003fa4(slot,128,(void *)0x080310a4);
-        output = Func_0801eadc(slot,0x40000000,window,0,0);
+        output = RenderOutput_Create(slot,0x40000000,window,0,0);
         cursor.anchor = (struct ShopCursorAnchor *)output;
         Func_080b0038(&cursor,window->x * 8 + 140,window->y * 8 + 52);
     }
     slot = Func_08004080();
     if(slot <= 95) {
         Func_08003fa4(slot,128,(void *)0x080317e4);
-        output = Func_0801eadc(slot,0x40000000,window,0,0);
+        output = RenderOutput_Create(slot,0x40000000,window,0,0);
         caret.anchor = (struct ShopCursorAnchor *)output;
         output->sentinel = 255;
         ((u8 *)output)[25] &= -13;
@@ -92,9 +89,9 @@ s32 Func_08020bd8(s32 entry)
             if(row == 4) width = 3;
             if(row == 5) width = 3;
         }
-        Func_08020a60(window,column,row,width,1,14);
+        UiWindow_SetTileAttributeRect(window,column,row,width,1,14);
         Func_080030f8(1);
-        Func_08020a60(window,column,row,width,1,15);
+        UiWindow_SetTileAttributeRect(window,column,row,width,1,15);
         if(cursor_dirty) {
             cursor_dirty = 0;
             Func_080b0030(&cursor,(window->x+column)*8-7,(window->y+row)*8+15,3);

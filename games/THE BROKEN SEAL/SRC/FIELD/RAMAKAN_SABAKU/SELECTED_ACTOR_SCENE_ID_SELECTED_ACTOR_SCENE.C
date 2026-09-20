@@ -11,6 +11,7 @@
 #define SceneData_SelectTableByScene59To5c Func_020003ac
 #define SceneData_ReturnZero Func_02000410
 #define SceneData_GetTablea36c Func_02000414
+#define SceneData_SelectTableBySceneId Func_0200041c
 #define FieldScene_RunFlags8B2And8B3Steps Func_02000498
 #define SceneData_GetTableA500 Func_020004dc
 #define FieldScene_RunScene3a5_02000c38 Func_02000c38
@@ -27,6 +28,10 @@ extern u8 Value_0000005a;
 extern u8 Value_0000005b;
 extern u8 Value_0000005c;
 extern u8 Data_0200a174[];
+extern u8 Data_0200a3b0[];
+extern u8 Data_0200a3c8[];
+extern u8 Data_0200a410[];
+extern u8 Data_0200a4b8[];
 extern u8 Data_0200a1d4[];
 extern u8 Data_0200a234[];
 extern u8 Data_0200a2dc[];
@@ -39,6 +44,7 @@ void Func_02001db4(void *, s32);
 void Func_02001dcc(void *, s32);
 void Func_02001e5c(void *, s32);
 void Func_02002152();
+void Func_0200218e(s32);
 void Func_02001fc0();
 s32 Func_020021e6();
 s32 Func_020021f0();
@@ -229,6 +235,27 @@ s32 SceneData_ReturnZero(void)
 void *SceneData_GetTablea36c(void)
 {
     return (void *)0x0200a36c;
+}
+
+s32 SceneData_SelectTableBySceneId(void)
+{
+    extern s16 Data_02000240[];
+
+    if (Data_02000240[224] == (s32)&Value_0000005b) {
+        if (Data_02000240[225] == 5) {
+            Func_0200218e(0x90a);
+        }
+    }
+    if (Data_02000240[224] == (s32)&Value_00000059) {
+        return (s32)Data_0200a3c8;
+    }
+    if (Data_02000240[224] == (s32)&Value_0000005a) {
+        return (s32)Data_0200a410;
+    }
+    if (Data_02000240[224] == (s32)&Value_0000005b) {
+        return (s32)Data_0200a4b8;
+    }
+    return (s32)Data_0200a3b0;
 }
 
 void FieldScene_RunFlags8B2And8B3Steps(void)

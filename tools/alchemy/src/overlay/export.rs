@@ -195,10 +195,13 @@ fn plan_document(stream: &Stream, compressed: &[u8]) -> Result<Value, String> {
             stream.resource
         ));
     }
-    let lookahead: String = compressed[body.len()..]
-        .iter()
-        .map(|byte| format!("{byte:02x}"))
-        .collect();
+    if compressed.len() != body.len() {
+        return Err(format!(
+            "resource {:03x}: packing is not recovered; copying trailing reference bytes is forbidden",
+            stream.resource
+        ));
+    }
+    let lookahead = String::new();
     let decoded_size = format!("0x{:x}", stream.decoded.len());
     let mut document = match &stream.trace {
         Trace::General(tokens) => json!({
@@ -231,7 +234,7 @@ fn plan_document(stream: &Stream, compressed: &[u8]) -> Result<Value, String> {
             .expect("plan is an object")
             .remove("lookahead");
     }
-    Ok(document)
+    crate::build_assets::checked_compression_plan(&stream.decoded, &document)
 }
 
 fn general_token(token: &GeneralToken) -> Value {
@@ -269,7 +272,8 @@ fn encode_document(decoded: &[u8], plan: &Value) -> Result<Vec<u8>, String> {
             .and_then(|value| u32::try_from(value).ok())
             .ok_or_else(malformed)
     };
-    let tokens = plan["tokens"].as_array().ok_or_else(malformed)?;
+    let controls = crate::build_assets::materialize_compression_plan(decoded, plan, &[])?;
+    let tokens = controls.as_array().ok_or_else(malformed)?;
     if plan["decoded_size"] != format!("0x{:x}", decoded.len()) {
         return Err("stream plan decoded_size differs".into());
     }
@@ -358,7 +362,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn plan_documents_rebuild_both_encodings_with_lookahead() {
+    fn plan_documents_require_derived_controls_and_refuse_padding_replay() {
         let decoded = b"ABABABAB".to_vec();
         for trace in [
             Trace::General(vec![
@@ -387,10 +391,13 @@ mod tests {
                 trace,
             };
             let mut compressed = stream.encoded().unwrap();
-            compressed.extend([0xaa, 0xbb]);
             let plan = plan_document(&stream, &compressed).unwrap();
-            assert_eq!(plan["lookahead"], "aabb");
+            assert_eq!(plan["lookahead"], "");
             assert_eq!(encode_document(&decoded, &plan).unwrap(), compressed);
+            compressed.extend([0xaa, 0xbb]);
+            assert!(plan_document(&stream, &compressed)
+                .unwrap_err()
+                .contains("copying trailing reference bytes is forbidden"));
             let mut damaged = plan.clone();
             damaged["decoded_size"] = json!("0x9");
             assert!(encode_document(&decoded, &damaged).is_err());

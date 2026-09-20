@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_STEP.H"
 #include "MOTION_OBJECT.H"
 typedef void (*RectangleBlit)(s32, s32, s32, s32, s32, s32);
@@ -9,8 +10,6 @@ s32 Func_0800231c();
 s32 Func_08002322();
 void Func_08002dd8();
 void Func_080030f8();
-s32 Func_080041d8();
-void Func_08004278();
 u32 Func_08004458(void);
 void Func_080049ac();
 void Func_08004bd4();
@@ -36,9 +35,6 @@ void Func_080dea70();
 void Func_080df9d0();
 void Func_080e0524(s32 resource_id, void *destination, s32 skip_palette, s32 copy_palette);
 s32 Func_080e155c();
-void Func_080e38b8(struct EffectStep *step, s32 damping, s32 gravity);
-s32 Func_080e3944(s32 position, void *output);
-void Func_080e396c(s32 actor_id, void *output);
 void Func_080e46f0();
 
 s32 Func_080ed408();
@@ -78,7 +74,6 @@ void Func_080e47b8(s32 a0, s32 a1)
     s32 base5_2014000;
     s32 v11;
     s32 base5_3001f0c;
-    s32 base7_0;
     s32 base6_3001e50;
     s32 base7_80eede2;
     s32 v1;
@@ -224,11 +219,11 @@ void Func_080e47b8(s32 a0, s32 a1)
         v3 = 50;
     }
     *(s32 *)((work + 0x7784)) = v3;
-    Func_080041d8(0x80cd261, 0x480);
+    Scheduler_AddOrUpdateCallback(0x80cd261, 0x480);
     source_screen = (s32)source_pos;
-    Func_080e396c(*(s16 *)(*(s32 *)((work + 0x7828)) + 36), (s32)source_pos);
+    EffectPosition_ApplyStepAndYOffset(*(s16 *)(*(s32 *)((work + 0x7828)) + 36), (struct EffectPosition *)source_pos);
     target_screen = (s32)target_pos;
-    Func_080e396c(*(s32 *)(*(s32 *)((work + 0x7828)) + 8), (s32)target_pos);
+    EffectPosition_ApplyStepAndYOffset(*(s32 *)(*(s32 *)((work + 0x7828)) + 8), (struct EffectPosition *)target_pos);
     draw_pair = (s32)blitters;
     Func_080cef64(*(s32 *)(*(s32 *)((work + 0x7828)) + 4), blitters);
     *(s32 *)((work + 0x77b4)) = 24;
@@ -269,7 +264,7 @@ void Func_080e47b8(s32 a0, s32 a1)
     target_actor->velocity_z = 0;
     target_actor->acceleration = 0;
     target_actor->vertical_motion_strength = 0;
-    Func_080e396c(*(s32 *)(*(s32 *)((work + 0x7828)) + 8), target_screen);
+    EffectPosition_ApplyStepAndYOffset(*(s32 *)(*(s32 *)((work + 0x7828)) + 8), (struct EffectPosition *)target_screen);
     *(s32 *)(target_screen) = (((s32)(*(s32 *)(target_screen)) / 2));
     Func_080f9010(212);
     frame = 0;
@@ -289,7 +284,7 @@ void Func_080e47b8(s32 a0, s32 a1)
                 Func_08004bd4(*(s32 *)(v6 + 12));
                 Func_08004c1c(*(s32 *)(v6 + 16));
                 v5 = spark_screen;
-                Func_080e3944(v6, v5);
+                EffectPosition_ApplyBaseAndYOffset(v6, (struct EffectPosition *)v5);
                 *(s32 *)(v5) = ((((s32)(*(s32 *)(v5)) / 2)) + *(s32 *)(target_screen));
                 if (kind <= 7) {
                     v3 = ((*(s32 *)(v5 + 4) + *(s32 *)(target_screen + 4)) - 8);
@@ -325,7 +320,7 @@ void Func_080e47b8(s32 a0, s32 a1)
         if (p5b <= 63) {
             Func_080049ac();
             Func_080051d8(matrix, (matrix + 12));
-            Func_080e3944(moving_pos, p8b);
+            EffectPosition_ApplyBaseAndYOffset((s32)moving_pos, (struct EffectPosition *)p8b);
             v2 = (((s32)(*(s32 *)p8b) / 2));
             *(s32 *)p8b = (((s32)(*(s32 *)p8b) / 2));
             p4 = (u8 *)blitters[0];
@@ -391,8 +386,8 @@ void Func_080e47b8(s32 a0, s32 a1)
         ((void (*)(s32, u32))0x03000164)(0x6004000, 0x4000);
         ((void (*)(s32, u32))0x03000164)(canvas, 0x4000);
         *(s32 *)(*(s32 *)((work + 0x7828)) + 28) = 0;
-        Func_08004278(0x80cd4b5);
-        Func_08004278(0x80cd261);
+        Scheduler_RemoveCallback(0x80cd4b5);
+        Scheduler_RemoveCallback(0x80cd261);
         Func_08002dd8(47);
         Func_08002dd8(46);
         Func_08009080((s32)target_actor, 3);
@@ -419,8 +414,8 @@ void Func_080e47b8(s32 a0, s32 a1)
         ((void (*)(s32, u32))0x03000164)(0x6004000, 0x4000);
         ((void (*)(s32, u32))0x03000164)(canvas, 0x4000);
         *(s32 *)(*(s32 *)((work + 0x7828)) + 28) = 0;
-        Func_08004278(0x80cd4b5);
-        Func_08004278(0x80cd261);
+        Scheduler_RemoveCallback(0x80cd4b5);
+        Scheduler_RemoveCallback(0x80cd261);
         Func_08002dd8(47);
         Func_08002dd8(46);
         *(s32 *)(command + 24) = 3;
@@ -557,7 +552,7 @@ void Func_080e47b8(s32 a0, s32 a1)
             }
         }
     }
-    Func_080041d8(0x80dbb9d, 0x480);
+    Scheduler_AddOrUpdateCallback(0x80dbb9d, 0x480);
     L_080e5264:;
     kind_from_four = (kind - 4);
     if ((u32)kind_from_four > 2) {
@@ -642,7 +637,7 @@ void Func_080e47b8(s32 a0, s32 a1)
         }
     }
     if (frame <= 2) {
-        Func_080e396c(*(s32 *)(*(s32 *)((work + 0x7828)) + 8), target_screen);
+        EffectPosition_ApplyStepAndYOffset(*(s32 *)(*(s32 *)((work + 0x7828)) + 8), (struct EffectPosition *)target_screen);
         *(s32 *)(target_screen) = (((s32)(*(s32 *)(target_screen)) / 2));
         *(s32 *)(target_screen + 4) += 16;
         v5 = 0x7828;
@@ -738,14 +733,14 @@ void Func_080e47b8(s32 a0, s32 a1)
                         if (life > 0) {
                             s32 size;
 
-                            Func_080e3944((s32)step, screen);
+                            EffectPosition_ApplyBaseAndYOffset((s32)step, (struct EffectPosition *)screen);
                             size = (life >> 4) + 1;
                             screen[0] /= 2;
                             ((RectangleBlit)blitters[index & 1])(canvas,
                                 sprites + ((u16 *)0x080ede48)[size - 1],
                                 screen[0] - size / 2, screen[1] - size,
                                 size, size * 2);
-                            Func_080e38b8(step, 60, -0x1000);
+                            EffectStep_AdvanceWithGravity3D(step, 60, -0x1000);
                             step->variant--;
                         }
                     }
@@ -800,13 +795,13 @@ void Func_080e47b8(s32 a0, s32 a1)
                 if (step->variant >= 0) {
                     s32 size = (n & 1) + 6;
 
-                    Func_080e3944((s32)step, screen);
+                    EffectPosition_ApplyBaseAndYOffset((s32)step, (struct EffectPosition *)screen);
                     screen[0] >>= 1;
                     ((RectangleBlit)blitters[0])(canvas,
                         sprites + ((u16 *)0x080ede48)[size - 1],
                         screen[0] - (u32)size / 2, screen[1] - size,
                         size, size * 2);
-                    Func_080e38b8(step, 62, 0);
+                    EffectStep_AdvanceWithGravity3D(step, 62, 0);
                     if (frame > n + 22) {
                         s32 dx = (target->x - step->x) >> 8;
                         s32 dy = (target->y + height - step->y) >> 8;
@@ -906,31 +901,26 @@ void Func_080e47b8(s32 a0, s32 a1)
         if (frame <= 1) {
             goto L_080e5ab6;
         }
-        none = 0;
-        base7_0 = 0;
-        v6 = 255;
-        v5 = (work + 0x7080);
-        v10 = none;
-        do {
-            if (*(s32 *)(v5 + 24) == 0) {
-                *(s32 *)(v5) = source_actor->x;
-                *(s32 *)(v5 + 4) = 0x140000;
-                *(s32 *)(v5 + 8) = source_actor->z;
-                record = Func_08004458();
-                *(s32 *)(v5 + 12) = (((record & 255) - 127) << 12);
-                record = Func_08004458();
-                *(s32 *)(v5 + 16) = (((record & 255) - 64) << 10);
-                record = Func_08004458();
-                *(s32 *)(v5 + 20) = (((record & 255) - 127) << 12);
-                base7_0 = (base7_0 + 1);
-                *(s32 *)(v5 + 24) = ((((s32)(v10) / 2)) + 32);
-                if (base7_0 == 4) {
-                    goto L_080e5ab6;
+        {
+            struct EffectStep *step = (struct EffectStep *)(work + 0x7080);
+            s32 emitted = 0;
+            s32 n;
+
+            for (n = 0; n != 64; n++, step++) {
+                if (step->variant == 0) {
+                    step->x = source_actor->x;
+                    step->y = 0x140000;
+                    step->z = source_actor->z;
+                    step->velocity_x = ((Func_08004458() & 255) - 127) << 12;
+                    step->velocity_y = ((Func_08004458() & 255) - 64) << 10;
+                    step->velocity_z = ((Func_08004458() & 255) - 127) << 12;
+                    emitted++;
+                    step->variant = n / 2 + 32;
+                    if (emitted == 4)
+                        break;
                 }
             }
-            v10 = (v10 + 1);
-            v5 = (v5 + 28);
-        } while (v10 != 64);
+        }
         goto L_080e5ab6;
     }
     if (kind == 31) {
@@ -986,12 +976,12 @@ void Func_080e47b8(s32 a0, s32 a1)
                 if (age <= 11) {
                     s32 image = age / 2;
 
-                    Func_080e3944((s32)step, screen);
+                    EffectPosition_ApplyBaseAndYOffset((s32)step, (struct EffectPosition *)screen);
                     screen[0] /= 2;
                     ((RectangleBlit)blitters[0])(canvas,
                         0x02010000 + (image << 11),
                         screen[0] - 16, screen[1] - 32, 32, 64);
-                    Func_080e38b8(step, 60, 0x1000);
+                    EffectStep_AdvanceWithGravity3D(step, 60, 0x1000);
                     step->variant++;
                 }
             }
@@ -1148,7 +1138,7 @@ void Func_080e47b8(s32 a0, s32 a1)
                             Func_080049ac();
                             Func_08004bd4(step->velocity_x);
                             Func_08004c1c(step->velocity_y);
-                            Func_080e3944((s32)step, screen);
+                            EffectPosition_ApplyBaseAndYOffset((s32)step, (struct EffectPosition *)screen);
                             screen[0] = screen[0] / 2 + origin[0] / 2;
                             screen[1] += origin[1] + 32;
                             ((RectangleBlit)blitters[1])(canvas,
@@ -1203,12 +1193,12 @@ void Func_080e47b8(s32 a0, s32 a1)
                             for (n = 0; n != 16; n++, step++) {
                                 s32 image = Func_080022fc(n, 3);
 
-                                Func_080e3944((s32)step, screen);
+                                EffectPosition_ApplyBaseAndYOffset((s32)step, (struct EffectPosition *)screen);
                                 screen[0] /= 2;
                                 ((RectangleBlit)blitters[n & 1])(canvas,
                                     0x02010000 + image * 576,
                                     screen[0] - 12, screen[1] - 12, 24, 24);
-                                Func_080e38b8(step, 60, 1 << ((n & 3) + 11));
+                                EffectStep_AdvanceWithGravity3D(step, 60, 1 << ((n & 3) + 11));
                                 step->variant++;
                             }
                         }
@@ -1225,15 +1215,15 @@ void Func_080e47b8(s32 a0, s32 a1)
                                     if (age <= 23) {
                                         s32 image = age / 4;
 
-                                        Func_080e3944((s32)step, screen);
+                                        EffectPosition_ApplyBaseAndYOffset((s32)step, (struct EffectPosition *)screen);
                                         screen[0] /= 2;
                                         ((RectangleBlit)blitters[n & 1])(canvas,
                                             0x02010000 + image * 1152,
                                             screen[0] - 12, screen[1] - 24, 24, 48);
                                         if (kind == 25)
-                                            Func_080e38b8(step, 60, 0x400);
+                                            EffectStep_AdvanceWithGravity3D(step, 60, 0x400);
                                         else
-                                            Func_080e38b8(step, 60, 0x1000);
+                                            EffectStep_AdvanceWithGravity3D(step, 60, 0x1000);
                                         step->variant++;
                                     }
                                 }
@@ -1247,7 +1237,7 @@ void Func_080e47b8(s32 a0, s32 a1)
     L_080e640e:;
     if (kind <= 7) {
         if (frame <= 5) {
-            Func_080e3944(position, projected);
+            EffectPosition_ApplyBaseAndYOffset(position, (struct EffectPosition *)projected);
             v2 = (((s32)(*(s32 *)(projected)) / 2));
             *(s32 *)(projected) = (((s32)(*(s32 *)(projected)) / 2));
             p4 = *(s32 *)(draw_pair + 4);
@@ -1324,8 +1314,8 @@ void Func_080e47b8(s32 a0, s32 a1)
         ((void (*)(s32, u32))0x03000164)(0x6004000, 0x4000);
         ((void (*)(s32, u32))0x03000164)(canvas, 0x4000);
         *(s32 *)(*(s32 *)((work + 0x7828)) + 28) = 0;
-        Func_08004278(0x80cd4b5);
-        Func_08004278(0x80cd261);
+        Scheduler_RemoveCallback(0x80cd4b5);
+        Scheduler_RemoveCallback(0x80cd261);
         Func_08002dd8(47);
         Func_08002dd8(46);
         Func_080d9ac4(command);
@@ -1341,9 +1331,9 @@ void Func_080e47b8(s32 a0, s32 a1)
                 }
             }
         }
-        Func_08004278(0x80dbb9d);
+        Scheduler_RemoveCallback(0x80dbb9d);
         L_080e65e2:;
-        Func_08004278(0x80cd261);
+        Scheduler_RemoveCallback(0x80cd261);
         Func_08002dd8(47);
         Func_08002dd8(46);
         Func_080cdbc0();

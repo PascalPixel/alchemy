@@ -24,6 +24,56 @@ publicly. There are no topic documents or separate task lists.
 Evidence can correct a reconstruction rule, never waive the publication rule.
 A refusing tool or failed gate names a problem to fix, not a route around it.
 
+## AI cheating
+
+An agent cheats when it records the expected answer or changes the test instead
+of reconstructing the mechanism. Byte equality alone cannot distinguish those
+approaches. A smaller exception file, a clever name, or a green gate does not
+make an answer table an implementation.
+
+Confirmed examples include the binary COMPRESSION.TOKENS table, hash-selected
+recipes in GRAPHICS/COMMON/COMPRESSION.JSON, and the former explicit compression
+token lists under TLA WORLD_MAP.JSON's `chunks`. Splitting saved encoding choices
+among short JSON arrays does not make them editable map source. Audit these by
+their readers and writers, not just file extension or individual array length.
+The publication gate rejects known JSON compression token arrays, packed-table
+references, nonempty predictor exceptions and captured trailing padding at any
+nesting depth, subject only to the temporary frozen-debt exception below.
+Input-derived compression settings remain valid. This check covers the known
+recipe schemas; it does not certify that arbitrary differently encoded data is
+honest. The larger source-and-consumer audit still applies.
+
+For the weekly wrap, Pascal explicitly permits existing compression debt at
+commit `d08ee3a28fc92afe15c6215d0997a05659395f1c`. The publication gate admits
+only unchanged answers at the same file and JSON position, and the identical
+COMPRESSION.TOKENS file. It rejects new, changed or relocated answers and fails
+closed if the checkpoint is unavailable. Removing answers or replacing them
+with input-derived settings is allowed. This temporary exception grants no
+recovery credit; remove it and the legacy readers when the encoder and packer
+are recovered. Do not compact, expand or disguise the retained debt.
+
+- Do not replay compression tokens, retain per-resource encoding overrides, or
+  copy unexplained padding to make a compressor match. Retire `.lz.json` plans
+  by recovering the encoder and packer. Moving their contents into manifests,
+  source constants, binary tables, caches or generated files is the same cheat.
+- Do not invent compiler switches, accumulate per-function flag combinations,
+  patch generated output, or select a lucky compilation. The approved compiler
+  contract belongs in [Compiler integrity](#compiler-integrity).
+- Do not special-case an owner, input hash, ROM address, byte offset or expected
+  output to close a mismatch. A general rule needs evidence for its mechanism
+  and checks on inputs beyond the example that suggested it.
+- Do not shrink extents, relabel unexplained assembly, restore reference bytes,
+  weaken gates or alter accounting to claim progress. The authority for credit
+  is [Completion](#completion-and-measurement), not the desired percentage.
+
+Expected output bytes may be an independent test oracle, never an encoder input
+or production fallback. Source-built inputs must determine the output without a
+reference ROM or recorded decisions. Historical buffer reuse, if demonstrated,
+must be reproduced from real build inputs and their order; seeding a buffer with
+captured bytes is not recovery. Existing recipes are unresolved reconstruction
+debt, not permission to add more. Do not claim their removal until the actual
+replacement passes the complete build. Name remaining failures honestly.
+
 ## One home for knowledge
 
 Only root `AGENTS.md` and `README.md` may be prose documents. Claude also reads
@@ -70,18 +120,24 @@ DONE. Do not use the rounded commit prefix to measure C progress.
 
 1. Read fresh ownership and coverage. Rank the **100 largest unresolved complete
    functions**, including those without drafts, excluding already exact C and
-   positively evidenced permanent assembly. Main and overlays compete together.
+   positively evidenced permanent assembly. Work only on that list's functions
+   of **at least 5,000 bytes**. Main and overlays compete together.
+   Pascal reaffirmed this minimum after the inventory showed only six currently
+   known unresolved functions above it. Keep it until Pascal changes it; do not
+   lower it automatically to reach the percentage goal.
    A coverage fragment is not automatically a complete function.
 2. Follow their dependencies into our exact C: read callees, callers, shared
    headers, verified siblings and unit context. Group candidates by a supported
    shared interface or residual cause, then choose the best bounded family by
    expected new C per hour. Size alone is not a probability of success.
-3. Consolidate only the declarations, types or shared routines that this family
-   needs. Verify exact callees remain exact, then repair unresolved callers.
-   Humanization must directly serve recovery, not become a cleanup campaign.
+3. Smaller-function work is limited to humanizing and building needed dependencies
+   from the existing byte-exact C corpus. Consolidate only the declarations,
+   types or shared routines that the selected large functions need. Verify exact
+   callees remain exact, then repair unresolved callers. Do not pursue small
+   unresolved functions or independent cleanup campaigns.
 4. Record the selected owners, complete extents, baseline, evidence, budget and
-   finishing check in their existing records. Prefer families large enough to
-   matter; small related owners can collectively beat one stubborn giant.
+   finishing check in their existing records. Dependency work serves the selected
+   large owners; it does not create a separate small-function recovery queue.
 5. After closing a representative, test every applicable sibling with its own
    constants, call bindings, layout and complete byte comparison. An empty twin
    sweep is closed until its inputs change. Do not repeat broad censuses blindly.
@@ -151,17 +207,76 @@ creates a main unit when needed. Preserve function order and exact neighbors.
 Declare retained members explicitly without granting C credit. A guessed unit
 is a hypothesis about original context, not historical proof.
 
-After **five unsuccessful source hypotheses**, park with a concrete residual
+After **three source attempts per function**, park with a concrete residual
 or hand off that evidence. Two bounded searches with no new structural fact
 close that axis. A missing prototype, corrected boundary, improved tool or
 verified sibling can reopen it; another equivalent spelling cannot. Do not
 turn a historical “stubborn” label into a permanent ban or compiler verdict.
 
-When a nearly exact draft has trapped the search, step back: build a small
-ordinary-C scaffold that reproduces a bounded local invariant, then restore one
-coherent section at a time until it breaks. That identifies missing context.
-Partial witnesses stay private and earn no whole-owner credit; never shrink
-an owner to make a witness exact.
+### How to do final closure
+
+Differing halfwords help us get close; they do not measure how close the source
+model is to a solution. A two-halfword residual can remain impossible within
+the current reconstruction. Do not keep polishing that reconstruction merely
+because it has the best score. Nor does failure of the permuter, or an explanation
+of the compiler's decision, prove that the original behavior cannot be emitted.
+
+#### Reverse construction
+
+When repeated local repairs stall, work in reverse:
+
+1. Name the exact detail that must survive compilation: an argument-load order,
+   access width, pointer lifetime, branch shape or other observed behavior.
+2. Start afresh with a minimal mockup or scaffold. An assembly reference or
+   assembly-backed diagnostic base can isolate the surrounding machinery while
+   the smallest relevant C passes through the approved compiler. First make
+   that compiled C reproduce the difficult detail; copying it into inline
+   assembly does not establish that the compiler can emit it.
+3. Keep that working detail as the local acceptance check. Add the surrounding
+   C back in coherent pieces, checking after each addition. The first piece
+   that breaks it identifies the context to investigate: declarations, types,
+   lifetimes, control flow, aliasing or translation-unit structure.
+4. Repair that context and continue outward to the complete function. Accept
+   a temporarily worse whole-function halfword score when the experiment
+   establishes a supported source fact. Getting farther away numerically can
+   be necessary to reach exactness.
+
+This is a different investigation from permuting the stuck draft, not permission
+to reset attempt budgets or run an unlimited search. State the bounded hypothesis
+and record the witness, first breaking addition and result in the existing owner
+dossier. Preserve this method and its heading when consolidating these docs.
+
+Mockups, dummy scaffolding and diagnostic assembly stay private under the active
+`out/` batch and earn no completion credit. They must not become artificial
+production constraints, forced registers, barriers, fake declarations or byte
+patches. Final acceptance still requires credible reconstructed source and the
+complete linked owner to match, followed by the production gate. Never shorten
+the owner to turn a local witness into a claimed match.
+
+Verified case: `resource_3bd:020013f8` matched all 6,220 bytes in 30 fresh
+compilations and passed the full TBS English ROM comparison. A minimal camera
+call sequence emitted the required argument order; adding both the later wait
+and motion calls reversed it during scheduling. Rebuilding that context exposed
+the boundary supplied by `Camera_MoveToActorAndWait`. Ordinary wrappers did not
+fix it, and a real loop boundary fixed the local order but broke the full owner.
+The macro was admitted by Pascal's explicit exception recorded below; this
+result proves its compilation behavior, not that Camelot wrote that macro.
+
+Keep additional proven closure methods under their own named headings here.
+Each needs a reproducible witness, the source context it repairs, a complete
+verified owner and its limits. A local scheduling success alone is not a proven
+closure method.
+
+#### Linked identities
+
+When a retained value names an edition-dependent message or asset, test its
+existing linked-symbol representation before treating it as a plain integer.
+In Mercury Lighthouse `resource_39c:02004a08`, the message-base symbol restored
+the shared lifetime and reduced 90 aligned halfword edits to 17. Proven typed
+actor, dialogue and map interfaces closed the remaining edits; all 608 bytes
+matched in 30 fresh compilations and the complete TBS English ROM matched.
+This uses the established Lunpa linking convention, not a general license to
+turn arbitrary constants into symbols. Verify the identity, consumer and binding.
 
 ### Read the cause, not the score
 
@@ -223,8 +338,11 @@ Close with starting/ending exact-C bytes, net new C, DONE separately, accepted
 owners, parked causes, elapsed time and checks actually run. Zero adoption is a
 negative result, not permission to expand an identical search. At a deadline,
 stop launching work, preserve candidates, finish or revert experiments and verify
-accepted changes. Commit a coherent verified batch before another wave; there
-is no minimum percentage gain for a commit. Never lower acceptance to hit a goal.
+accepted changes. Accumulate verified work until DONE has increased by at least
+**one full percentage point since the previous commit**, then commit. Compare
+unrounded verified credit against the same audited denominator, not rounded
+commit prefixes. Do not make smaller progress or documentation-only commits.
+Never lower acceptance to hit a goal.
 
 ## Disposable output, durable results
 
@@ -352,9 +470,21 @@ specific release/source evidence and fidelity proof. Only Pascal authorizes
 pins, executable hashes, family routes or output transformations. A better
 score, determinism, version string or approved pin does not supply provenance.
 
+The September 20 aliasing probe compiled the 20 largest maintained exact-C source
+files by source-file bytes under identical TBS flags, then added only
+`-fno-strict-aliasing`. All compiled; seven changed generated assembly, including
+store scheduling in FUNE_HEYA/EXTENDED_CHOREOGRAPHY.C. This was a diagnostic
+source comparison, not a linked production-route validation. GCC 2.96 enables
+strict aliasing at `-O2`; disabling it is not a neutral matching aid. Investigate
+proven object views and direct union accesses before considering a global change.
+
 No per-function flags/routes, invented flags, fixed-register C locals, empty
 barriers, forced scheduling, output patches or selected lucky runs. No volatile
 ordinary RAM, dummy/duplicate/overwritten stores or `do { } while (0)` barriers.
+Pascal's explicit exception on September 20 admits the existing
+`Camera_MoveToActorAndWait` two-call macro for `resource_3bd:020013f8`.
+Its complete byte match does not establish historical macro provenance. This
+exception does not authorize other scheduling barriers.
 Withdraw a trick-dependent match, preserve its dossier, and leave uncredited
 assembly rather than protect the percentage. Volatile is justified for I/O,
 video/palette memory and genuinely interrupt-shared state.
@@ -365,6 +495,15 @@ scheduling patch. The token-pinned `Dma_Set` in TBS `INCLUDE/DMA.H` is admitted
 with its full instruction/operand/clobber contract. Its internal registers do
 not authorize caller register forcing. Do not change it or admit fill macros
 silently; `raw/classification.json` owns its family evidence.
+
+Track these three reconstructed primitives for review closer to 100%; do not
+silently generalize their exceptions or mistake them for recovered original text:
+
+| Primitive | Maintained home | Evidence and later review |
+| --- | --- | --- |
+| `Dma_Set` | TBS `INCLUDE/DMA.H` | Shared inline assembly; 296 fixed-register kick sites recorded in `raw/classification.json`. Revisit its interface without weakening exactness. |
+| `overlay_veneer` | TBS `SRC/SYSTEM/OVERLAY.INC` | Reconstructs fixed linkage stubs under the specific veneer-credit exception. Original macro versus generator remains unknown. |
+| `Camera_MoveToActorAndWait` | TBS `SRC/FIELD/ARUTAMIRA_DOU/ACTOR_PRESENTATION.C` | Explicitly authorized two-call `do/while(0)` macro. Its scheduling effect closes the complete 6,220-byte owner; historical provenance remains unproven. Revisit ordinary-C alternatives near completion; owner experiments live in `recon/en/dossiers.json`. |
 
 GNU GAS 2.10 assembles compiler output and unit slices, including alignment;
 modern binutils handles retained syntax and linking under the recorded ABI.
@@ -415,6 +554,101 @@ field selectors and naming rules live at `SRC/FIELD/COMMON/SCENE_TABLE.JSON` and
 Classification and provisional-source records stay outside SRC. Retained overlay
 listings and compression recipes live in `raw/overlays`, battle listings in
 `raw/battle`. `OVERLAY_DATA_DIRECTIVES_MAX` must not grow.
+
+The LZSS compressor reconstruction is incomplete. Nearest longest matches,
+one-byte lazy matching, and windows of 4,123 bytes for general LZ and 4,092 for
+palette LZ reproduce 96/96 Japanese TBS stream bodies, 95/96 in each of its five
+Western editions, and 113/114 in both Japanese and English TLA. General LZ
+applies the replacement once per stream; palette LZ can repeat it. Choosing the
+smaller encoding, palette on ties, selects the observed codec in all 804 tested
+streams. These are compression comparisons, not full builds or new exact C.
+
+Western TBS resource 3b4 first disagrees at decoded offset 12,092: a two-byte
+copy at distance 4,125; another occurs at 12,104. Widening the general window
+from 4,123 through 4,128 never closes it and regresses other overlays. TLA
+resource 6ae instead rejects the predicted lazy replacement at offset 14,204:
+the ROM uses copies of lengths 2 and 2, whereas the model emits a literal and
+a length-3 copy. Do not patch either location. The latter is not a distance-limit
+failure and needs the actual lazy-matching decision recovered.
+At that alternative position, the nearest matching pair already extends to
+three bytes (distance 66); 65 of 70 pair candidates extend to three bytes.
+A simple nearest-first search-depth cap cannot suppress that alternative.
+
+The broader twelve-ROM general-LZ check also finds TBS resource e2 / TLA 1b2:
+at decoded offset 7,804 of 8,192, the ROM uses length 3 at distance 4,124.
+Allowing the full distance range in the last 512-byte input block explains
+this and Western TBS 3b4, and matches all 280 eligible English TBS resources.
+It is rejected: in every TLA edition it breaks previously exact resources 22e
+and 232, selecting distances 4,128 and 4,127 at offsets 12,633 and 12,447.
+Do not install that final-block heuristic or tune its cutoff to these examples.
+The runtime decoder has no reserved-code escape explaining the disputed long
+distances. First lazy replacements have different lengths across overlays, so
+a single rewind length does not explain the common window limit either.
+
+Packing is separate. A diagnostic replay of preceding physical resources into
+one reused buffer explains the padding of 91/96 English TBS overlays, including
+55/60 with nonempty padding. Five disagree (370, 376, 37b, 37d, 3c7). Replaying
+only earlier overlay bodies explains 88/96. These comparisons used reference
+bodies as an oracle; they do not establish a source-built packer. No captured
+buffer seed, padding table or resource-specific branch is admitted. Recover
+file write lengths and buffer lifetime before removing the legacy plans; their
+compact predictor form was bookkeeping reduction, not complete recovery. See
+[AI cheating](#ai-cheating).
+
+A follow-up packing probe compared only resources with a forward next pointer:
+95 TBS overlays per edition and 113 English TLA overlays. Replaying preceding
+physical resources and then each selected stream body explained 90/95 in both
+Japanese and English TBS and 113/113 in English TLA. The same five TBS resources
+failed in both editions. Writing both candidate codecs into that buffer before
+the selected body regressed to 35/95 English TBS, 21/95 Japanese TBS and 25/113
+TLA; reversing their order did not help. Separate codec buffers scored 71/95,
+62/95 and 90/113 respectively. Two- or four-byte zero flushes, with or without
+the tag included in alignment, also regressed. These are rejected packing
+models, not production options. The probe used oracle bodies to isolate packing;
+even the perfect TLA padding comparison does not prove a source-built packer.
+
+TLA world-map recovery independently regenerated all 1,079 chunk bodies and
+37 of 38 associated resource bodies from maintained input with the same LZSS
+compressor. Their 1,116 explicit token lists are removed; absent `tokens` means
+ordinary compression from input, not a lookup or fallback. Resource 1b2 remains
+unresolved at the already documented distance-4,124 discrepancy. Existing
+nonempty padding records remain explicit debt, including three zero bytes after
+the final chunk; do not call this complete world-map packing recovery.
+The following TLA direct-asset sweep removed 79 further stored control records
+across eight area/shared-graphics files after complete region comparisons.
+Three shared-graphics candidates remained one byte shorter than their declared
+streams; their existing recipes were retained, without adding padding or another
+override. Resume from these failures and the remaining recipes, not the already
+removed controls. The temporary migration code was removed.
+
+Tag-2 tile graphics use greedy copies and update their nibble move-to-front
+table only for literals. Input-derived controls match 267/270 English TBS and
+482/485 English TLA directory streams. The six failures use long-distance
+copies near the input end; applying general LZ's lazy rule regresses this codec.
+Automatic tag-2 encoding and a further maintained-input sweep removed 1,341
+control fields (1,307 TBS, 34 TLA) across 88 files: 1,017 stored decisions and
+324 empty predictor settings. Complete asset builds still
+reproduce 2,575 TBS regions and 1,381 TLA regions. Remaining padding and recipes
+are not recovered by those removals; the temporary exception in AI cheating
+governs that retained debt.
+
+Arena animation compression needs its own parser recovered. A ten-bank,
+458-compressed-frame probe found only 28 exact frames with oldest-first greedy
+matching, 87 with strictly-longer one-byte lazy matching and 10 when lazy ties
+also defer. Nearest-first ties regress; a four-byte minimum is disproved by
+actual three-byte copies. Global minimum-payload parsing agrees with the
+reference cost in only 316 frames, or 322 when restricted to longest matches;
+the other reference frames cost one to three more bytes. Neither optimizer is
+an exact compressor. A short diagnostic also rejected advancing the dictionary
+scan by the previous match length. These probes used existing arena bodies to
+isolate parsing, not as an admitted encoder input. Do not install these models
+or preserve new exceptions; recover the remaining dictionary/parser behavior.
+
+The September 20 public-source search found later reconstructions, not Camelot's
+original compressor: romhack/GoldenSunCompression uses different window and
+lazy-match rules, and gamemasterplc/camelotgcdatatool uses Yaz0-style parsing for
+the later GameCube format. Standard GBA LZ as implemented by pret/gbagfx has a
+different header and copy encoding. None establishes a drop-in exact encoder.
 
 ### The Lunpa standard
 
@@ -495,11 +729,21 @@ fallback code or guessed blank map edges. ROM_HEADER.JSON omits the cartridge
 logo, whose BIN remains private. Byte equality proves storage, not image geometry,
 colors or behavior; verify consumers or emulate before rearranging artwork.
 
-Compression plans retain decisions, not copied literal streams. The shared
-COMPRESSION.TOKENS table, predictor and bounded exceptions describe unresolved
-encoder choices. `--compact-plans PLAN` and `--derive-plans PLAN` verify exact
-inverse/encoded output before writing. At most three trailing `lookahead` bytes
-are admitted; `make plan-tails-check` enforces it. Retire derivable recipes.
+Legacy compression plans and COMPRESSION.TOKENS record unresolved encoder
+choices. They are debt governed by [AI cheating](#ai-cheating), not an accepted
+end-state asset format. The former `--compact-plans` and `--derive-plans` commands
+are removed: packing recorded answers into a binary table or predictor exceptions
+did not recover compression. Recognizing the COMPRESSION.TOKENS record format
+never justified publishing its answers. Only the frozen-debt exception in
+AI cheating temporarily permits the unchanged table. Its legacy
+reader remains a build dependency pending recovery, not an approved end state.
+Overlay export and asset-index generation now refuse encoder mismatches,
+unsupported compressors and trailing reference padding. The former fallback
+that manufactured predictor exceptions or retained explicit tokens is removed.
+An export refusal is an honest recovery gap; do not restore that fallback or
+write its answer by another route. Existing recipes still need removal.
+Replace the remaining plans, exporters and readers with the actual compressor
+and packer. The three-byte trailing-padding check does not prove recovery.
 
 TEXT/{JA,EN,DE,ES,FR,IT}.PO uses numeric msgid, editable msgstr and context
 `message`. Named commands and explicit unknown glyph tokens preserve controls.

@@ -1,5 +1,8 @@
 //! Native entry point for the asset build stage.
 mod compression_plan;
+pub(crate) use compression_plan::{
+    checked_plan as checked_compression_plan, materialize as materialize_compression_plan,
+};
 mod derive_index;
 pub(crate) use derive_index::{live_scene, network::live_family, tagged_extent};
 mod gba_header;
@@ -16,7 +19,6 @@ use crate::compiler::source_paths::{SourcePaths, SOURCE_PATHS_MANIFEST};
 use crate::generated_files::{prune_files, unconsumed_tracked_material};
 use crate::overlay::compile::assemble_overlay;
 use crate::overlay::source::OverlaySource;
-pub(crate) use compression_plan::well_formed_table;
 use gba_header::{build_gba_header_component, read_gba_header_source};
 use psynergy::assets::lz::{PaletteGroup, PaletteOperation};
 use psynergy::assets::text::import_tilemap;
@@ -32,7 +34,7 @@ use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
-const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--target TARGET] [--manifest MANIFEST] [-o OUTPUT] [rom] | --extract-text [TARGET] | --verify-text [TARGET] | --compact-plans PLAN | --derive-plans PLAN | --review-images OUTPUT [--update-baseline | --target TARGET] | --audit-characters OUTPUT [--target TARGET] | --extract-sources ROM [--target TARGET] | --extract-missing-sources ROM [--target TARGET] | --derive-index ROM --target TARGET --scenes N[=NAME],... [-o OUTPUT] [--stage DIR] [--preview DIR] | --network ROM --target TARGET -o DIR [--from WORLD_MAP_EXIT | --scenes LIST] [--mark SCENE] [--packed] | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
+const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--target TARGET] [--manifest MANIFEST] [-o OUTPUT] [rom] | --extract-text [TARGET] | --verify-text [TARGET] | --review-images OUTPUT [--update-baseline | --target TARGET] | --audit-characters OUTPUT [--target TARGET] | --extract-sources ROM [--target TARGET] | --extract-missing-sources ROM [--target TARGET] | --derive-index ROM --target TARGET --scenes N[=NAME],... [-o OUTPUT] [--stage DIR] [--preview DIR] | --network ROM --target TARGET -o DIR [--from WORLD_MAP_EXIT | --scenes LIST] [--mark SCENE] [--packed] | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
 const ROM_BASE: usize = 0x0800_0000;
 pub(crate) fn identified_regions(
     root: &Path,
@@ -6011,22 +6013,6 @@ fn run(arguments: Vec<String>) -> Result<ExitCode, String> {
             "{}",
             crate::text_catalog::extract(&repository_root(), arguments.get(1).map(String::as_str))?
         );
-        return Ok(ExitCode::SUCCESS);
-    }
-    if arguments.first().map(String::as_str) == Some("--derive-plans") {
-        if arguments.len() != 2 {
-            return Err(USAGE.into());
-        }
-        let root = repository_root();
-        compression_plan::derive(&root, &root_path(&root, &arguments[1])?)?;
-        return Ok(ExitCode::SUCCESS);
-    }
-    if arguments.first().map(String::as_str) == Some("--compact-plans") {
-        if arguments.len() != 2 {
-            return Err(USAGE.into());
-        }
-        let root = repository_root();
-        compression_plan::repack(&root, &root_path(&root, &arguments[1])?)?;
         return Ok(ExitCode::SUCCESS);
     }
     if arguments.first().map(String::as_str) == Some("--review-images") {

@@ -20,6 +20,10 @@ struct EffectPosition {
     s32 y;
 };
 
+void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping, s32 gravity);
+s32 EffectPosition_ApplyBaseAndYOffset(s32 id, struct EffectPosition *position);
+void EffectPosition_ApplyStepAndYOffset(s32 id, struct EffectPosition *position);
+
 #define EFFECT_STEP_OFFSET(field) \
     ((u32)&(((struct EffectStep *)0)->field))
 

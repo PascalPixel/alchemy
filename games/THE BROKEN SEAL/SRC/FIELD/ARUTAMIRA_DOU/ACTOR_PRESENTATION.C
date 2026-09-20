@@ -42,12 +42,12 @@ void Func_02003de0();
 void Func_02003dc0();
 void Func_02003dd8();
 void Func_02003d90();
-void Func_02003da0();
+void Func_02003da0(void);
 void Func_02003e50();
 void Func_02003cd8();
 void Func_02003ce0();
 void Func_02003ce8();
-void Func_02003da8();
+void Func_02003da8(s32 object_id, s32 use_setter);
 void Func_02003cf0();
 void Func_02003df0();
 void Func_02003cb8();
@@ -86,6 +86,9 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
     f(a0, a1, a2, a3);
 }
+
+#define Camera_MoveToActorAndWait(actor, pan) \
+    do { Func_02003da8((actor), (pan)); Func_02003da0(); } while (0)
 
 void FieldScene_RunExtendedActorPresentation(void)
 {
@@ -787,20 +790,7 @@ void FieldScene_RunExtendedActorPresentation(void)
         control = 0xc04;
         *(volatile u16 *)0x04000052 = control;
     }
-    /*
-     * RESIDUAL, TWO HALFWORDS. The reference materialises this call's first
-     * argument before its second; the draft emits them the other way round.
-     * Both argument insns tie on scheduling priority and on class relative to
-     * the last scheduled insn, so the post-reload list scheduler breaks the
-     * tie on dependent count, and the second argument register carries one
-     * extra dependence: nothing writes it between the following two calls, so
-     * the later call still depends on it, while the first argument register is
-     * rewritten in between. No spelling of this call, of its argument
-     * temporaries, of the preceding register writes, or of the declaration
-     * order changes that count. Not adopted.
-     */
-    Func_02003da8(0, 1);
-    Func_02003da0();
+    Camera_MoveToActorAndWait(0, 1);
     Func_02003ca8(10);
     Func_02003d40(1, 2);
     Func_02003ca8(20);

@@ -960,9 +960,9 @@ fn trace_stream(rom: &[u8], start: usize, span: usize) -> Result<Stream, String>
     }
     Ok(Stream { plan, decoded })
 }
-/// Plans in the shared compression document use the predictor spelling.
+/// Export only controls independently reproduced by the compressor.
 fn shared_plan(stream: &Stream) -> Result<Value, String> {
-    compression_plan::compact_plan(&stream.decoded, &stream.plan)
+    compression_plan::checked_plan(&stream.decoded, &stream.plan)
 }
 
 struct SceneRequest {

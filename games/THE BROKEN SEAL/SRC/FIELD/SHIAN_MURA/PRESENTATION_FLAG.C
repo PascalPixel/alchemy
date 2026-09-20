@@ -1,6 +1,17 @@
 #include "TYPES.H"
 
+/*
+ * Shian village: toggle the presentation flag on actor 20. While the scene
+ * counter has passed the threshold the flag is set; otherwise it is cleared.
+ *
+ * The local SceneState and Actor layouts are this overlay's own copies of the
+ * scene counter record and the field actor record (presentation_flags at
+ * 0x24). The offsets here are what the reference reads, so the spelling is
+ * kept as-is.
+ */
+
 #define Actor_UpdatePresentationFlag Func_02000324
+
 struct SceneState { u8 unk_00[14]; s16 field_0e; };
 struct Actor { u8 unk_00[35]; u8 presentation_flags; };
 struct SceneState *Func_020016fa(s32);

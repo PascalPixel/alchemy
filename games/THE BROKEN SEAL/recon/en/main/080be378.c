@@ -1,38 +1,15 @@
+#ifndef ALCHEMY_BATTLE_COMMAND_DRAFT
+#define ALCHEMY_BATTLE_COMMAND_DRAFT
+
 #include "TYPES.H"
+#include "BATTLE_COMMAND.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
 
-/*
- * Split function reconstructed as one whole owner per CONTRIBUTING.md's
- * "Split functions" section. Real entry/prologue at 0x080be378, real
- * epilogue at the tail of games/THE BROKEN SEAL/raw/080bef88.s (0x080bf1e8), spanning
- * 3696 bytes across games/THE BROKEN SEAL/raw/{080be378,080be76c,080beb08,080bef88}.s.
- * See games/THE BROKEN SEAL/recon/en/dossiers.json#main:080be378 for the full map.
- *
- * All `bl sub_080bec5c` / `bl sub_080bec8a` / `bl sub_080bee00` / `bl
- * sub_080bf1d6` / `bl sub_080bf1d4` cross-region transfers in the retained
- * assembly are modeled here as plain `goto` to labels inside this same
- * function: per CONTRIBUTING.md's "Split functions" note, "the inter-region
- * veneers are the compiler's own long-branch mechanism and fall out of
- * compiling the function whole" -- Thumb's short branch range is exceeded by
- * a 3.7KB function, so the assembler encodes some of this function's own
- * internal jumps as long-branch `bl` sequences that never actually return
- * (confirmed directly: e.g. the tier==99 case body's final instruction is
- * `bl sub_080bf1d4` immediately followed by the file's literal pool -- there
- * is no valid return site, so it cannot be a real call).
- *
- * Field layout for the request/target/actor pointers is not evidenced
- * beyond the byte offsets actually dereferenced, so all three are kept as
- * raw byte pointers with `field_<offset>` style access rather than a guessed
- * struct, per Cleanroom's "use names no more specific than the evidence"
- * rule. Several `ldr rN, [pc, #imm]` literal-pool loads (status-flag byte
- * offsets on the actor, and UI text-resource pointers) have not been
- * resolved to concrete values in this pass; they are represented by named
- * placeholders below and flagged as pending halfword-stage work -- this
- * draft targets complete *structure* first, per the task's own priority.
+/* Build the battle plan for a command. The nested target selector shares
+ * the current request, actor, turn order and output plan with this routine.
+ * This draft is incomplete; production retains the full assembly owner.
  */
 
-extern void *Func_08077008(s16 id);              /* Runtime_GetObject */
-extern void *Func_08077080(s16 id);              /* Ability_GetData */
 extern s32 Func_080b9a44(s16 arg0);
 extern void Func_080bdfec(void);                 /* BattleEventRuntime_Reset */
 extern void Func_08015118(void);
@@ -50,16 +27,12 @@ extern void *Func_080b7dd0(s16 id);              /* GetBattleObjectSlot */
 extern void Func_08009080(void *obj, s32 mode);  /* Object_SetMode */
 extern void Func_08009088(void *obj, s32 action);/* Object_SetAction */
 extern void Func_080f9010(s32 cue);              /* Audio_PlayCue */
-extern void Func_080bbabc(s32 kind, s32 value);
 extern void Func_080bd808(s32 phase);            /* BattleEventRuntime_SchedulePhase */
 extern void Func_080be02c(void);                 /* BattleEventRuntime_WaitForReady */
 extern void Func_080c1798(s16 id, s8 a, s32 mode, s32 arg3);
-extern void Func_08077010(s16 id);               /* BattleUnit_Recalculate */
 extern void Func_080c10e8(s32 a, s32 b);
 extern void Func_080030f8(s32 frames);           /* WaitFrames */
-extern s32 Func_080be18c(s16 abilityId);
-extern void *Func_08077018(u16 itemId);          /* Item_GetData */
-extern s32 Func_08077128(s16 id);
+extern struct BattleTurnOrder *Data_03001e74;
 extern s16 Func_08077160(void *actor);   /* was declared (s16 id)->void; ground
                                            * truth (this pass) shows it takes
                                            * actor and its r0 return value is
@@ -74,7 +47,6 @@ extern void Func_080bb65c(void);
 extern void Func_080bf1d4(void); /* unreachable; long-branch veneer target only, never a real call site */
 extern void Func_080022ec(s32 a, s32 b);         /* FixedPoint_Ratio */
 extern void Func_080772f8(s16 id);
-extern s32 Func_080772b8(u8 value);
 extern s32 Func_080bd3c8(s16 id);
 extern s32 Func_08077178(s16 id, u8 a, u8 b, u8 c, s32 mode);
 
@@ -151,9 +123,12 @@ extern s32 Func_08077178(s16 id, u8 a, u8 b, u8 c, s32 mode);
 #define TEXT_TIER6_MSG          ((void *)0x83f)  /* 2111; L_080bec90/tier==6 tail */
 #define TEXT_TIER5_STATUS_MSG   ((void *)0x814)  /* 2068; L_080beea8 status message */
 
-void Func_080be378(u8 *req, u8 *tgt)
+s32 Func_080be378(struct BattleCommandRequest *request, struct BattlePlan *plan)
 {
+    u8 *req = (u8 *)request;
+    u8 *tgt = (u8 *)plan;
     void *actor;
+    struct BattleTurnOrder *battle;
     s32 targetPowerBase;
     s16 tier;
     s16 abilityId;      /* r11 in most case bodies */
@@ -166,7 +141,70 @@ void Func_080be378(u8 *req, u8 *tgt)
     s32 t0, t1, t2, t3;
     s32 lookupResult;
 
+
+    s32 Func_080be18c(s32 id)
+    {
+        struct BattleAction *action = Func_08077080(id);
+        s32 kind = action->target_mode;
+        s32 allow_dead = 0;
+        s32 count, allies, enemies, center, first, last, index, unit;
+        switch (action->effect) {
+        case 5: case 56: case 57: allow_dead = 1; break;
+        }
+        switch (kind) {
+        case 0:
+            plan->target_offsets[0] = kind;
+            plan->target_count = 1;
+            plan->target_adjustments[0] = 1;
+            plan->target_ids[0] = targetPowerBase;
+            break;
+        case 4:
+            plan->target_offsets[0] = 0;
+            plan->target_count = 1;
+            plan->target_adjustments[0] = 1;
+            plan->target_ids[0] = targetPowerBase;
+            break;
+        default:
+            count = 0;
+            for (allies=0; battle->normal[allies] != 255; allies++);
+            for (enemies=0; battle->mirrored[enemies] != 255; enemies++);
+            center = *(u16 *)(req+10) & 15;
+            first = center - *(s16 *)(req+12) + 1;
+            last = center + *(s16 *)(req+12) - 1;
+            for(index=first; index<=last; index++) {
+                if(index < 0) continue;
+                if (*(u16 *)(req+10) & 128) {
+                    if(index >= enemies) continue;
+                    unit = battle->mirrored[index];
+                    if(unit == 254) continue;
+                    if(!allow_dead && *(s16 *)((u8 *)Func_08077008(unit)+56) == 0) continue;
+                    plan->target_adjustments[count] = 1;
+                    plan->target_offsets[count] = index-center;
+                    plan->target_ids[count] = unit;
+                    count++;
+                } else {
+                    if(index >= allies) continue;
+                    unit = battle->normal[index];
+                    if(unit == 254) continue;
+                    if(!allow_dead && *(s16 *)((u8 *)Func_08077008(unit)+56) == 0) continue;
+                    plan->target_adjustments[count] = 1;
+                    plan->target_offsets[count] = index-center;
+                    plan->target_ids[count] = unit;
+                    count++;
+                }
+            }
+            plan->target_count = count;
+            if(count <= 0) {
+                Func_08015120(*(s16 *)req,1);
+                Func_080151c8((void *)0x816);
+                if (*(s8 *)((u8 *)actor+0x12b) == 0) ((u8 *)actor)[0x12b] = 1;
+                return -1;
+            }
+        }
+    }
+
     actor = Func_08077008(*(s16 *)(req + 0));
+    battle = Data_03001e74;
     targetPowerBase = Func_080b9a44(*(s16 *)(req + 10));
     Func_080bdfec();
 
@@ -877,3 +915,5 @@ L_080bf1d6_shared:
 L_080bee00:
     goto L_080befb4_tail;
 }
+
+#endif

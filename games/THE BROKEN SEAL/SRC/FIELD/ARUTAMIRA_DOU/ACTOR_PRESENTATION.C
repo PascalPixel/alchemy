@@ -88,7 +88,7 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 }
 
 #define Camera_MoveToActorAndWait(actor, pan) \
-    do { Func_02003da8((actor), (pan)); Func_02003da0(); } while (0)
+    SCHEDULING_CHEAT(Func_02003da8((actor), (pan)); Func_02003da0();)
 
 void FieldScene_RunExtendedActorPresentation(void)
 {

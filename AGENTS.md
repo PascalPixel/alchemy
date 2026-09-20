@@ -481,10 +481,19 @@ proven object views and direct union accesses before considering a global change
 No per-function flags/routes, invented flags, fixed-register C locals, empty
 barriers, forced scheduling, output patches or selected lucky runs. No volatile
 ordinary RAM, dummy/duplicate/overwritten stores or `do { } while (0)` barriers.
-Pascal's explicit exception on September 20 admits the existing
-`Camera_MoveToActorAndWait` two-call macro for `resource_3bd:020013f8`.
-Its complete byte match does not establish historical macro provenance. This
-exception does not authorize other scheduling barriers.
+Pascal's explicit cleanup exception on September 20 standardizes the existing
+five `do/while(0)` workarounds as `SCHEDULING_CHEAT(statement)` in TBS
+`INCLUDE/TYPES.H`. Its uses are the camera two-call wrapper in
+ARUTAMIRA_DOU/ACTOR_PRESENTATION, WINDOW/RUNTIME_SET_PARAM_NIBBLE,
+OBJECT/GROUP_STORE_OBJECT_AND_RUN_STEP7, OBJECT/WAIT_TWELVE_FRAMES_THEN_SET_FIELD18,
+and the existing loop in BATTLE/EFFECT/SCHEDULE_RATIO_TRANSITION. This names
+existing debt; it does not prove historical source or authorize more sites.
+Keep the macro expansion unchanged while standardizing; revisit ordinary C
+when resolving these explicit exceptions. The camera owner covers 6,220 bytes;
+the three single-statement owners cover 144 bytes, and the loop belongs to a
+280-byte unit. The separate Data_02009b85 call identity in
+HAIDIA_SUKURETA/PROGRESS_ACTOR remains a binding-review exception (1,728-byte
+owner), not a reason to run another matching search during this cleanup.
 Withdraw a trick-dependent match, preserve its dossier, and leave uncredited
 assembly rather than protect the percentage. Volatile is justified for I/O,
 video/palette memory and genuinely interrupt-shared state.
@@ -503,7 +512,7 @@ silently generalize their exceptions or mistake them for recovered original text
 | --- | --- | --- |
 | `Dma_Set` | TBS `INCLUDE/DMA.H` | Shared inline assembly; 296 fixed-register kick sites recorded in `raw/classification.json`. Revisit its interface without weakening exactness. |
 | `overlay_veneer` | TBS `SRC/SYSTEM/OVERLAY.INC` | Reconstructs fixed linkage stubs under the specific veneer-credit exception. Original macro versus generator remains unknown. |
-| `Camera_MoveToActorAndWait` | TBS `SRC/FIELD/ARUTAMIRA_DOU/ACTOR_PRESENTATION.C` | Explicitly authorized two-call `do/while(0)` macro. Its scheduling effect closes the complete 6,220-byte owner; historical provenance remains unproven. Revisit ordinary-C alternatives near completion; owner experiments live in `recon/en/dossiers.json`. |
+| `SCHEDULING_CHEAT` | TBS `INCLUDE/TYPES.H` | Explicit temporary scheduling workaround at the five sites listed above. `Camera_MoveToActorAndWait` uses it for the two-call sequence; historical provenance remains unproven. |
 
 GNU GAS 2.10 assembles compiler output and unit slices, including alignment;
 modern binutils handles retained syntax and linking under the recorded ABI.
@@ -562,6 +571,14 @@ Western editions, and 113/114 in both Japanese and English TLA. General LZ
 applies the replacement once per stream; palette LZ can repeat it. Choosing the
 smaller encoding, palette on ties, selects the observed codec in all 804 tested
 streams. These are compression comparisons, not full builds or new exact C.
+
+Overlay compression now defaults to input-derived general/palette encoding,
+choosing the smaller result and palette on ties. An existing `_stream.lz.json`
+sidecar is a visible temporary exception, not a required file for every overlay.
+New overlay exports require automatic byte equality and write no sidecar.
+The cleanup targets the 38 sidecars with no captured padding (36 TBS, two TLA);
+the remaining 66 retain their old answers under the frozen-debt rule above.
+Do not move their padding or tokens into the series manifest to delete a file.
 
 Western TBS resource 3b4 first disagrees at decoded offset 12,092: a two-byte
 copy at distance 4,125; another occurs at 12,104. Widening the general window

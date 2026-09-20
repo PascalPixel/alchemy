@@ -1,4 +1,4 @@
-//! Ratchet for the showcase standard in .agents/SOURCE.md: every registered
+//! Ratchet for the showcase standard in AGENTS.md: every registered
 //! module folder, the headers it includes and its overlay listing must stay
 //! free of the reconstruction scaffolding the standard retires.
 use regex::Regex;

@@ -3,7 +3,7 @@
 /*
  * Split function: head 080dd9c0, continuation 080dda3c, terminal region
  * (call-graph-reached, contains the real epilogue) 080ddb34. Reconstructed
- * as one C function per CONTRIBUTING.md "Split functions". Span 0x080dd9c0
+ * as one C function per AGENTS.md "Completion and measurement". Span 0x080dd9c0
  * .. 0x080ddde0 (1056 bytes).
  *
  * Family: the 0x03001eec "battle work" / heap_cache subsystem documented in

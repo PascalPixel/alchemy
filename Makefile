@@ -308,7 +308,7 @@ plan-tails-check:
 overlay-data-check:
 	$(CHECK) overlay-data --max $(OVERLAY_DATA_DIRECTIVES_MAX)
 
-# Registered showcase folders must not regress; see "The Lunpa standard" in .agents/SOURCE.md.
+# Registered showcase folders must not regress; see "The Lunpa standard" in AGENTS.md.
 showcase-check:
 	$(CHECK) showcase
 
@@ -368,7 +368,7 @@ tooling-index-check:
 	{ find tools -mindepth 2 -maxdepth 2 -name Cargo.toml -print | sed 's#tools/##;s#/Cargo.toml##'; \
 	  find tools -mindepth 2 -maxdepth 2 -type f \( -name '*.ts' -o -name '*.js' -o -name '*.py' -o -name '*.sh' \) -print | sed 's#tools/##;s#/[^/]*$$##'; \
 	} | sort -u > "$$actual"; \
-	awk -F '[()]' '/^## Tooling index/ { inside=1; next } /^## / { inside=0 } inside && /^\| \[/ { sub(/^\.\.\/tools\//, "", $$2); sub(/\/$$/, "", $$2); print $$2 }' .agents/TOOLING.md | sort > "$$indexed"; \
+	awk -F '[()]' '/^## Tooling index/ { inside=1; next } /^## / { inside=0 } inside && /^\| \[/ { sub(/^tools\//, "", $$2); sub(/\/$$/, "", $$2); print $$2 }' AGENTS.md | sort > "$$indexed"; \
 	uniq -d "$$indexed" > "$$duplicates"; \
 	test ! -s "$$duplicates" || { printf 'tooling index duplicates:\n'; cat "$$duplicates"; exit 1; }; \
 	diff -u "$$actual" "$$indexed"; \

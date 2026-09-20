@@ -20,7 +20,7 @@ functions are checked individually; it does not yet have a complete ROM build.
 
 Alchemy is not a remake, a mod, an emulator or a download of the games, and you
 need your own copy of the games to build it. Build instructions are in
-[AGENTS.md](AGENTS.md), and what is left to do is in [TODO.md](TODO.md).
+[AGENTS.md](AGENTS.md), which also holds the recovery methods and remaining work.
 
 ## Clean room
 

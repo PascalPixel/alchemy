@@ -4,7 +4,7 @@
  * Draft for the battle-presentation sub-effect split function at
  * 0x080d0ee0 (Region_080d0ee0 + Fragment_080d12a8, 1136 bytes total).
  *
- * Reconstructed as one C source per CONTRIBUTING.md "Split functions":
+ * Reconstructed as one C source per AGENTS.md "Completion and measurement":
  * Fragment_080d12a8's own header identifies it as the parent's terminal
  * fragment, and no other owner in the corpus references it, so the two
  * regions are a private two-member cluster with one true prologue and

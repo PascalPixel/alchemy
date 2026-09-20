@@ -76430,11 +76430,6 @@
           "state": "retained-assembly"
         },
         {
-          "address": "0x080058ac",
-          "extent": 88,
-          "state": "retained-assembly"
-        },
-        {
           "address": "0x08005920",
           "extent": 344,
           "state": "retained-assembly"

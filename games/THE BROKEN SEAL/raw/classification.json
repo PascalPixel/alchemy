@@ -2702,8 +2702,8 @@
         "no_four_register_thumb_transfer_template_and_movstrqi_is_copy_only_arm_md_5084_arm_c_9478",
         "inline_dma_kick_or_fill_macro_in_c_bodies_not_handwritten_functions_no_cross_product_identity"
       ],
-      "expected_files": 146,
-      "expected_bytes": 63720,
+      "expected_files": 145,
+      "expected_bytes": 63632,
       "matcher": "thumb_standalone_wide_transfer",
       "provenance": {
         "scanned": "2026-09-10",
@@ -2843,11 +2843,16 @@
               "bytes": 64,
               "source": "SRC/GRAPHICS/SAVE_TRANSFER_WORK_ONCE.C"
             },
-            {
-              "owner": "main:080251d4",
-              "bytes": 44,
-              "source": "SRC/GRAPHICS/VRAM/COPY_TILE.C"
-            }
+        {
+          "owner": "main:080251d4",
+          "bytes": 44,
+          "source": "SRC/GRAPHICS/VRAM/COPY_TILE.C"
+        },
+        {
+          "owner": "main:080058ac",
+          "bytes": 88,
+          "source": "SRC/SYSTEM/SAVE/STATE_READ_SLOT_AND_CHECK_CHECKSUM.C"
+        }
           ],
           "stack_callers": {
             "owners": [

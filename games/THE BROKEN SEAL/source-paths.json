@@ -723,7 +723,8 @@
       "name": "SaveState_InitializeWorkspace"
     },
     "main:080058ac": {
-      "name": "SaveState_ReadSlotAndCheckChecksum"
+      "name": "SaveState_ReadSlotAndCheckChecksum",
+      "source": "SYSTEM/SAVE/STATE_READ_SLOT_AND_CHECK_CHECKSUM.C"
     },
     "main:08005920": {
       "name": "SaveState_WriteRecord"

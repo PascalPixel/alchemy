@@ -2702,8 +2702,8 @@
         "no_four_register_thumb_transfer_template_and_movstrqi_is_copy_only_arm_md_5084_arm_c_9478",
         "inline_dma_kick_or_fill_macro_in_c_bodies_not_handwritten_functions_no_cross_product_identity"
       ],
-      "expected_files": 154,
-      "expected_bytes": 64496,
+      "expected_files": 146,
+      "expected_bytes": 63720,
       "matcher": "thumb_standalone_wide_transfer",
       "provenance": {
         "scanned": "2026-09-10",
@@ -2789,18 +2789,42 @@
           "remaining": "The historical169-file65476-byte class is not blanket credit. Every remaining complete C body must separately match and pass production verification. Fill macros are not admitted by this change.",
           "negative_probes": [
             {
-              "owner": "main:0800bc48",
-              "bytes": 40,
-              "differing_halfwords": 9
-            },
-            {
               "owner": "main:0809bb34",
               "bytes": 48,
               "differing_halfwords": 5
             }
           ],
-          "negative_result": "The same helper explains the two DMA instructions in stack-zero callers but does not yet reproduce their stack-address store and operand setup. No per-caller register or assembly variant admitted.",
-          "jev": "Previously unavailable (transport_or_invalid_response); no access change or retry.",
+          "negative_result": "The shared helper does not by itself reproduce every stack-source caller's operand setup. No per-caller register or assembly variant is admitted.",
+          "volatile_source_closures_2026_09_20": {
+            "source_fact": "A local word read by DMA is volatile because the channel observes memory independently of the C abstract machine; volatile source storage preserves the required stack-store order.",
+            "owners": [
+              "main:0800bc48",
+              "main:0808fecc",
+              "main:08090824",
+              "main:08091174",
+              "main:080f377c"
+            ],
+            "complete_bytes": 420,
+            "validation": "Each complete owner scores zero differing halfwords through its declared production translation unit."
+          },
+          "jev": {
+            "model": "jev-1.13.0",
+            "decision": "proceed",
+            "confidence": 0.49,
+            "probabilities": {
+              "finished": 0.0,
+              "inspect": 0.38,
+              "proceed": 0.62,
+              "stop_axis": 0.0
+            },
+            "latency_ms": 645,
+            "usage": {
+              "input_tokens": 1070,
+              "output_tokens": 49
+            },
+            "scope": "2026-09-20 next bounded exact-C wave toward 60% DONE, including the complete 7832-byte main owner 080f4168..080f6000.",
+            "disposition": "Proceed only with the existing finite full-owner reconstruction pass; zero-difference complete-owner scoring remains mandatory."
+          },
           "consecutive_probe": {
             "owner": "main:080a22f4",
             "candidate_bytes": 40,

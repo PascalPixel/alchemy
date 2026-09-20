@@ -657,13 +657,16 @@
       "name": "Scheduler_DisableOverlayCallbacks"
     },
     "main:08090824": {
-      "name": "DisplayTransition_InitializeState"
+      "name": "DisplayTransition_InitializeState",
+      "source": "GRAPHICS/DISPLAY/TRANSITION_INITIALIZE_STATE.C"
     },
     "main:08091174": {
-      "name": "BattleEffect_InitializeBuffers"
+      "name": "BattleEffect_InitializeBuffers",
+      "source": "BATTLE/EFFECT/INITIALIZE_BUFFERS.C"
     },
     "main:080944ec": {
-      "name": "DisplayScroll_ArmHBlankDma"
+      "name": "DisplayScroll_ArmHBlankDma",
+      "source": "GRAPHICS/DISPLAY/SCROLL_ARM_HBLANK_DMA.C"
     },
     "main:08094544": {
       "name": "DisplayScroll_BuildAndSwapHBlankPage"
@@ -713,7 +716,8 @@
       "name": "BattlePresentation_InitializeTransitionEntries"
     },
     "main:080f377c": {
-      "name": "TitlePalette_InitializeBuffers"
+      "name": "TitlePalette_InitializeBuffers",
+      "source": "GRAPHICS/PALETTE/TITLE_INITIALIZE_BUFFERS.C"
     },
     "main:080056cc": {
       "name": "SaveState_InitializeWorkspace"
@@ -743,7 +747,8 @@
       "name": "SerialRuntime_PollStatus"
     },
     "main:080060e8": {
-      "name": "SerialRuntime_PrepareSendPacket"
+      "name": "SerialRuntime_PrepareSendPacket",
+      "source": "SYSTEM/LINK/SERIAL_PREPARE_SEND_PACKET.C"
     },
     "main:0800615c": {
       "name": "SerialRuntime_CollectReceivedPayloads"
@@ -9415,7 +9420,8 @@
       "name": "LiteralPool_0809b7e4"
     },
     "main:08003fa4": {
-      "name": "VramBlock_LoadCached"
+      "name": "VramBlock_LoadCached",
+      "source": "GRAPHICS/VRAM/LOAD_CACHED.C"
     },
     "main:08097384": {
       "name": "BattleEffect_InitializeSharedScene"
@@ -9466,7 +9472,8 @@
       "name": "DisplayTransition_InitializeBattleEffectState"
     },
     "main:0808fecc": {
-      "name": "DisplayTransition_AllocateAndClearState"
+      "name": "DisplayTransition_AllocateAndClearState",
+      "source": "GRAPHICS/DISPLAY/TRANSITION_ALLOCATE_CLEAR_STATE.C"
     },
     "main:080b60a0": {
       "name": "BattlePres_WaitSync",
@@ -9796,7 +9803,8 @@
       "source": "GRAPHICS/PALETTE/LOAD_BLOCK.C"
     },
     "main:0800bc48": {
-      "name": "ResourceMetadata_ClearRecord"
+      "name": "ResourceMetadata_ClearRecord",
+      "source": "SYSTEM/RESOURCE/CLEAR_METADATA_RECORD.C"
     },
     "main:08077394": {
       "name": "Owner_GetState"

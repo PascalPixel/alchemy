@@ -6614,7 +6614,7 @@
     {
       "id": "unit-0800bc48",
       "game": "tbs",
-      "source": "games/THE BROKEN SEAL/recon/en/units/unit-0800bc48.c",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/CLEAR_METADATA_RECORD.C",
       "compiler_route": "canonical-gcc296",
       "overlay": null,
       "absolute_symbols": {},
@@ -6623,7 +6623,7 @@
         {
           "address": "0x0800bc48",
           "extent": 40,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -6661,11 +6661,22 @@
           "address": "0x0808feb0",
           "extent": 28,
           "state": "exact-c"
-        },
+        }
+      ]
+    },
+    {
+      "id": "display-transition-allocate-clear-state",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/TRANSITION_ALLOCATE_CLEAR_STATE.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": null,
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
         {
           "address": "0x0808fecc",
           "extent": 48,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -76364,7 +76375,7 @@
         {
           "address": "0x080060e8",
           "extent": 116,
-          "state": "retained-assembly"
+          "state": "exact-c"
         },
         {
           "address": "0x0800615c",

@@ -1,11 +1,5 @@
 #include "DMA.H"
 
-struct DisplayTransitionDmaTransfer {
-    const void *source;
-    void *destination;
-    u32 control;
-};
-
 struct DisplayTransitionState {
     u8 data[0x528];
     s16 value;

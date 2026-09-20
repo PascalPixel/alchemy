@@ -10560,10 +10560,10 @@
 <path class="bevel-dark" d="M193.0302071993538 410.7446184544057 H217.4644608657211 V382.74249952683783" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="3b4: 6,676 bytes · Unidentified, Drafted, Assembly, C · 0x087d30e0" data-node="leaf" data-kind="file" data-bytes="6676" data-address="0x087d30e0" data-source="games/THE BROKEN SEAL/SRC/FIELD/TAKARA_ASHIBA/">
 <title>3b4: 6,676 bytes · Unidentified, Drafted, Assembly, C · 0x087d30e0</title>
-<rect x="195.5302071993538" y="391.4478315583146" width="19.434253666367287" height="0.8858690370167018" style="fill:#d9d9d4"/>
-<rect x="195.5302071993538" y="391.27044531229325" width="19.434253666367287" height="0.17738624602132996" style="fill:#96c8c9"/>
-<rect x="195.5302071993538" y="390.88380702755217" width="19.434253666367287" height="0.38663828474110246" style="fill:#6cafb2"/>
-<rect x="195.5302071993538" y="385.2424995268379" width="19.434253666367287" height="5.641307500714272" style="fill:#326b7d"/>
+<rect x="195.5302071993538" y="391.51899849534107" width="19.434253666367287" height="0.8147020999901801" style="fill:#d9d9d4"/>
+<rect x="195.5302071993538" y="391.3416122493197" width="19.434253666367287" height="0.17738624602132996" style="fill:#96c8c9"/>
+<rect x="195.5302071993538" y="390.95497396457864" width="19.434253666367287" height="0.38663828474110246" style="fill:#6cafb2"/>
+<rect x="195.5302071993538" y="385.24249952683783" width="19.434253666367287" height="5.712474437740794" style="fill:#326b7d"/>
 </g>
 <g aria-label="TAKARA_ASHIBA.BIN: 11,588 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 4 items" data-node="container" data-kind="file" data-bytes="11588" data-source="games/THE BROKEN SEAL/SRC/FIELD/TAKARA_ASHIBA/TAKARA_ASHIBA.BIN">
 <title>TAKARA_ASHIBA.BIN: 11,588 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 4 items</title>

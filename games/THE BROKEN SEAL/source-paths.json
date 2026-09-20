@@ -17407,6 +17407,10 @@
       "name": "SceneActor_PublishMarkerBySlotZeroHeight",
       "source": "FIELD/TAKARA_ASHIBA/STAGED_STEP.C"
     },
+    "resource_3b4:02001f78": {
+      "name": "FieldScene_DispatchByRuntimeSelector",
+      "source": "FIELD/TAKARA_ASHIBA/STAGED_STEP.C"
+    },
     "resource_3b4:02001108": {
       "name": "FieldScene_RunIndexedStep0",
       "source": "FIELD/TAKARA_ASHIBA/STAGED_STEP.C"

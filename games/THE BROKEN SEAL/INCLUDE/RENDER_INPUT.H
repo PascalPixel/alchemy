@@ -4,10 +4,24 @@
 #include "TYPES.H"
 
 struct RenderInput {
-    u8 unknown_00[12];
+    u8 unknown_00[8];
+    u16 width;
+    u16 height;
     u16 x;
     u16 y;
 };
+
+typedef char RenderInput_size[sizeof(struct RenderInput) == 0x10 ? 1 : -1];
+typedef char RenderInput_width_offset[
+    (u32)&(((struct RenderInput *)0)->width) == 8 ? 1 : -1
+];
+typedef char RenderInput_x_offset[
+    (u32)&(((struct RenderInput *)0)->x) == 12 ? 1 : -1
+];
+
+void UiWindow_CopyTilemapRegion(const struct RenderInput *window, const void *source);
+void UiWindow_SetTileAttributeRect(const struct RenderInput *window,
+    s32 x, s32 y, s32 width, s32 height, u32 field);
 
 /* 描画登録1件。+0x18の下位10bitは表番号として扱う。 */
 union RenderTableValue {

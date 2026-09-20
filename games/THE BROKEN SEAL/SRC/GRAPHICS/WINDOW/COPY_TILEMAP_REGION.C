@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RENDER_INPUT.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
@@ -8,17 +9,9 @@
 /* ui/window/copy_tilemap_region.c */
 extern u8 *gIw;
 
-struct UiWindowTilemapRegion {
-    u8 padding0[8];
-    u16 width;
-    u16 height;
-    u16 x;
-    u16 y;
-};
-
 s16 *Runtime_BumpAllocateAlternatePool(s32 size);
 
-void UiWindow_CopyTilemapRegion(const struct UiWindowTilemapRegion *window, const void *source)
+void UiWindow_CopyTilemapRegion(const struct RenderInput *window, const void *source)
 {
     s16 *mirror = (s16 *)gIw;
     s16 *buffer = Runtime_BumpAllocateAlternatePool(0x300);
@@ -48,20 +41,7 @@ void UiWindow_CopyTilemapRegion(const struct UiWindowTilemapRegion *window, cons
 }
 
 /* ui/window/set_tile_attribute_rect.c */
-struct UiWindowGeometry {
-    u8 padding[12];
-    u16 x;
-    u16 y;
-};
-
-typedef char UiWindowGeometry_size[
-    sizeof(struct UiWindowGeometry) == 0x10 ? 1 : -1
-];
-typedef char UiWindowGeometry_x_offset[
-    (u32)&(((struct UiWindowGeometry *)0)->x) == 0x0c ? 1 : -1
-];
-
-void UiWindow_SetTileAttributeRect(const struct UiWindowGeometry *window,
+void UiWindow_SetTileAttributeRect(const struct RenderInput *window,
     s32 x, s32 y, s32 width, s32 height, u32 field) {
     u8 *base = *(u8 **)ADDR_03001E8C;
 

@@ -1846,6 +1846,29 @@ pub struct Classification {
     pub semantic_overlay: SpanMap,
     draft_sources: usize,
 }
+/// Classify assembly to verify before a build receipt exists. This does not
+/// grant credit: the caller must compare every returned image with its ROM.
+pub(crate) fn overlay_assembly_to_verify(
+    tree: &SourceTree,
+    target: &DecompTarget,
+) -> Result<SpanMap, String> {
+    let game = crate::compiler::routing::game_directory(target.compiler.as_str());
+    let inventory = read_json(tree, &format!("games/{game}/metrics/executable.json"))?;
+    let (main_exec, overlay_exec) = validated_inventory(&inventory, target.id.as_str())?;
+    let overlay_regions = array(&inventory, "overlays")
+        .iter()
+        .map(|node| (text(node, "id"), regions(node)))
+        .collect();
+    let (_, _, mut retained) =
+        overlay_assembly_classification_for(tree, target, &overlay_regions, &overlay_exec)?;
+    let (_, runtime) = runtime_credit_for(tree, target, &main_exec, &overlay_exec)?;
+    for (id, spans) in runtime {
+        let entry = retained.entry(id).or_default();
+        *entry = normalize(&[entry.clone(), spans].concat());
+    }
+    Ok(retained)
+}
+
 pub fn classify(options: &BuildOptions) -> Result<Classification, String> {
     let target = crate::targets::decomp_target(Some(&options.target))?;
     let game = crate::compiler::routing::game_directory(target.compiler.as_str());
@@ -2411,6 +2434,56 @@ mod tests {
 
     fn classification(regions: Value) -> Value {
         json!({"format": 1, "regions": regions})
+    }
+    #[test]
+    fn lost_age_assembly_verification_does_not_require_its_output_receipt() {
+        let directory = tempfile::tempdir().unwrap();
+        let write = |path: &str, value: Value| {
+            let path = directory.path().join(path);
+            std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+            std::fs::write(path, serde_json::to_vec(&value).unwrap()).unwrap();
+        };
+        write(
+            "games/THE LOST AGE/metrics/executable.json",
+            json!({
+                "format":1, "metric":"full-c-byte-share", "target":"tla-en",
+                "state":"verified", "audit":"complete", "overlay_count":1,
+                "total_union_bytes":32,
+                "main":{"id":"main", "audit":"complete", "executable_bytes":0, "intervals":[]},
+                "overlays":[{"id":"resource_test", "audit":"complete", "executable_bytes":32,
+                    "intervals":[{"start":0x02000120, "end":0x02000140, "kind":"thumb"}]}]
+            }),
+        );
+        let mut row = region(
+            "0x02000120",
+            "0x02000140",
+            "proven",
+            json!(["fixture proof"]),
+        );
+        row["provenance"] = json!({"credit":"handwritten", "proof":"fixture"});
+        write(
+            "games/THE LOST AGE/semantic/overlay-assembly.json",
+            classification(json!([row])),
+        );
+        let tree = crate::coverage::tree::work_tree_at(directory.path().to_path_buf());
+        let target = crate::targets::decomp_target(Some("tla-en")).unwrap();
+        let expected = SpanMap::from([(
+            "resource_test".into(),
+            vec![Span::new(0x02000120, 0x02000140)],
+        )]);
+        assert_eq!(
+            overlay_assembly_to_verify(&tree, &target).unwrap(),
+            expected
+        );
+        // A previous receipt must not influence which assembly is verified.
+        write(
+            "out/tla-en/reports/verified-code.json",
+            json!({"credits":[]}),
+        );
+        assert_eq!(
+            overlay_assembly_to_verify(&tree, &target).unwrap(),
+            expected
+        );
     }
     #[test]
     fn main_assembly_credit_requires_manifest_range_provenance() {

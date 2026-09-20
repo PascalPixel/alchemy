@@ -281,12 +281,10 @@ fn check(root: &Path, rom: &Path) -> Result<String, String> {
         owners.iter().partition(|scored| scored.owner.is_main());
     let mut mismatches = Vec::new();
     let tree = crate::coverage::tree::work_tree_at(root.to_path_buf());
-    let assembly = crate::coverage::pipeline::classify(&crate::coverage::pipeline::BuildOptions {
-        target: "tla-en".into(),
-        exact: &tree,
-        recon: None,
-    })?
-    .retained_overlay;
+    let assembly = crate::coverage::pipeline::overlay_assembly_to_verify(
+        &tree,
+        &production_target(CompilerTarget::Tla),
+    )?;
     let assembly_images = assembly.keys().cloned().collect::<Vec<_>>();
     if !overlays.is_empty() || !assembly_images.is_empty() {
         let canonical = CanonicalRom::from_file(rom, production_target(CompilerTarget::Tla))?;

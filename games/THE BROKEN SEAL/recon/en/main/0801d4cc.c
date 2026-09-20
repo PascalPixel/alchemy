@@ -24,7 +24,7 @@ void RenderResource_LoadFrame(s32, s32, s32);
 s32 FixedPoint_Ratio(s32, s32);
 void Func_080b0030(void *, s32, s32, s32);
 void Func_080164d4(struct RenderInput *, s32, s32, s32, s32);
-void UiText_DrawCharacter(s32, void *, u32, u32);
+void UiText_DrawCharacterAtOffset(s32, void *, u32, u32);
 void Func_0801ccc0(s32, s32);
 void Func_080216b4(void *);
 void UiWork_Finalize(void *, s32);
@@ -133,15 +133,15 @@ loop_1:
 
         dest = FIELD(base, s8, 0x596) + 0xC0A;
         Func_080164d4(icon, 0xA0, 0x28, 0xC8, 0x30);
-        UiText_DrawCharacter(dest, icon, 0xA0, 0x28);
+        UiText_DrawCharacterAtOffset(dest, icon, 0xA0, 0x28);
 
         dest = FIELD(base, s8, 0x597) + 0xC10;
         Func_080164d4(icon, 0xA0, 0x40, 0xB8, 0x48);
-        UiText_DrawCharacter(dest, icon, 0xA0, 0x40);
+        UiText_DrawCharacterAtOffset(dest, icon, 0xA0, 0x40);
 
         dest = *p598 + 0xC13;
         Func_080164d4(icon, 0xA0, 0x58, 0xB8, 0x60);
-        UiText_DrawCharacter(dest, icon, 0xA0, 0x58);
+        UiText_DrawCharacterAtOffset(dest, icon, 0xA0, 0x58);
 
         Func_0801ccc0(*pA, *pB);
 

@@ -137,7 +137,7 @@ s32 Func_0801965c(s32 key, u16 *destination, u32 capacity);
 void UiWork_PushValueSlot(s32 value, s32 slot);
 void UiWindow_MarkVisibleTileAttributes(void);
 void Func_0801e41c(struct UiWindow *window, s32 x, s32 y, s32 width, s32 height);
-void UiText_DrawCharacter(s32 id, struct UiWindow *window, s32 x, s32 y);
+void UiText_DrawCharacterAtOffset(s32 id, struct UiWindow *window, s32 x, s32 y);
 void UiText_DrawStringAtOffset(
     const u8 *text, struct UiWindow *window, s32 x, s32 y);
 void UiText_DrawNumberInWindow(
@@ -425,7 +425,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                 UiText_DrawStringAtOffset(object, winMain, 0, 0);
                 UiText_DrawStringAtOffset(Data_080373d8, winMain, 56, 0);
                 UiText_DrawNumberInWindow(object[15], 2, winMain, 72, 0);
-                UiText_DrawCharacter((s32)&Value_000008ba, winMain, 0, 8);
+                UiText_DrawCharacterAtOffset((s32)&Value_000008ba, winMain, 0, 8);
                 UiText_DrawNumberInWindow(
                     M2C_FIELD(object, s32 *, 0x124), 8, winMain, 40, 8);
 
@@ -442,26 +442,26 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                 UiText_DrawNumberInWindow(
                     M2C_FIELD(object, s16 *, 0x36), 4, winMain, 96, 32);
 
-                UiText_DrawCharacter((s32)&Value_000008ba - 10, winMain, 136, 16);
+                UiText_DrawCharacterAtOffset((s32)&Value_000008ba - 10, winMain, 136, 16);
                 UiText_DrawNumberInWindow(
                     M2C_FIELD(object, u16 *, 0x3C), 3, winMain, 184, 16);
-                UiText_DrawCharacter((s32)&Value_000008ba - 9, winMain, 136, 24);
+                UiText_DrawCharacterAtOffset((s32)&Value_000008ba - 9, winMain, 136, 24);
                 UiText_DrawNumberInWindow(
                     M2C_FIELD(object, u16 *, 0x3E), 3, winMain, 184, 24);
-                UiText_DrawCharacter((s32)&Value_000008ba - 8, winMain, 136, 32);
+                UiText_DrawCharacterAtOffset((s32)&Value_000008ba - 8, winMain, 136, 32);
                 UiText_DrawNumberInWindow(
                     M2C_FIELD(object, u16 *, 0x40), 3, winMain, 184, 32);
-                UiText_DrawCharacter((s32)&Value_000008ba - 7, winMain, 136, 40);
+                UiText_DrawCharacterAtOffset((s32)&Value_000008ba - 7, winMain, 136, 40);
                 UiText_DrawNumberInWindow(object[0x42], 3, winMain, 184, 40);
 
-                UiText_DrawCharacter(
+                UiText_DrawCharacterAtOffset(
                     (s32)&Value_00000741 + object[0x129], winMain, 0, 48);
                 if (extended != 0) {
-                    UiText_DrawCharacter((s32)&Value_000008ba - 1, winMain, 0, 72);
+                    UiText_DrawCharacterAtOffset((s32)&Value_000008ba - 1, winMain, 0, 72);
                 }
-                UiText_DrawCharacter((s32)&Value_000008ba - 5, winMain, 0, 80);
-                UiText_DrawCharacter((s32)&Value_000008ba - 4, winMain, 0, 88);
-                UiText_DrawCharacter((s32)&Value_000008ba - 3, winMain, 0, 96);
+                UiText_DrawCharacterAtOffset((s32)&Value_000008ba - 5, winMain, 0, 80);
+                UiText_DrawCharacterAtOffset((s32)&Value_000008ba - 4, winMain, 0, 88);
+                UiText_DrawCharacterAtOffset((s32)&Value_000008ba - 3, winMain, 0, 96);
 
                 for (i = 0; i <= 3; i++) {
                     if (extended != 0) {
@@ -634,7 +634,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                     } else {
                         code = (s32)&Value_000008be;
                     }
-                    UiText_DrawCharacter(code, winMain, 112, 0);
+                    UiText_DrawCharacterAtOffset(code, winMain, 112, 0);
                 }
             }
 

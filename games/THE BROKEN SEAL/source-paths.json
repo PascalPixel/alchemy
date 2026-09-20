@@ -18996,6 +18996,14 @@
     "main:08097868": {
       "name": "BattleFx_ArmBg0HBlankDma",
       "source": "BATTLE/EFFECT/ARM_BG0_HBLANK_DMA.C"
+    },
+    "main:080907b0": {
+      "name": "DisplayTransition_FillTilemapAndSolidTile",
+      "source": "GRAPHICS/DISPLAY/TRANSITION_FILL_TILEMAP.C"
+    },
+    "main:080160fc": {
+      "name": "UiWork_UploadDirtyBlocks",
+      "source": "GRAPHICS/RENDER/UPLOAD_DIRTY_BLOCKS.C"
     }
   }
 }

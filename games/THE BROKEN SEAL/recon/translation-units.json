@@ -173863,6 +173863,46 @@
           "state": "retained-assembly"
         }
       ]
+    },
+    {
+      "id": "battle-event-playback",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/EVENT_PLAYBACK.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x080bd850",
+          "extent": 72,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080bd898",
+          "extent": 1876,
+          "state": "retained-assembly"
+        }
+      ]
+    },
+    {
+      "id": "ui-work-initialize",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/INITIALIZE.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {},
+      "local_symbols": [],
+      "owners": [
+        {
+          "address": "0x08015fb8",
+          "extent": 96,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08016018",
+          "extent": 228,
+          "state": "retained-assembly"
+        }
+      ]
     }
   ]
 }

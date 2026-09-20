@@ -6,9 +6,9 @@ In Golden Sun, lighting the four Elemental Lighthouses releases Alchemy upon the
 
 The two games share much of the same code, so Alchemy recovers them side by side.
 
-## Status: ☀️ 57.45% · ⚓️ 0.52%
+## Status: ☀️ 57.46% · ⚓️ 0.52%
 
-![ROM contents](<PROGRESS.svg?v=fd51540dad38c0a1>)
+![ROM contents](<PROGRESS.svg?v=e2250c9e2419c3db>)
 
 **DONE** measures recovered code: byte-exact C and evidenced permanent
 assembly, divided by each game's audited executable bytes. ☀️ is The Broken

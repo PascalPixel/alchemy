@@ -19014,6 +19014,20 @@
     },
     "main:080e7404": {
       "name": "BattleEffect_RunParticleStreams"
+    },
+    "main:080bd850": {
+      "name": "BattleEvent_ClearRecordTiles",
+      "source": "BATTLE/PRESENTATION/EVENT_PLAYBACK.C"
+    },
+    "main:080bd898": {
+      "name": "BattleEvent_Playback"
+    },
+    "main:08015fb8": {
+      "name": "UiWork_CopyTileTail",
+      "source": "GRAPHICS/RENDER/INITIALIZE.C"
+    },
+    "main:08016018": {
+      "name": "UiWork_Initialize"
     }
   }
 }

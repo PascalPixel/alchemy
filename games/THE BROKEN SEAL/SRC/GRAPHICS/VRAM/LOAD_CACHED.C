@@ -1,14 +1,8 @@
-#include "TYPES.H"
+#include "VRAM_BLOCK.H"
 #include "DMA.H"
 
 #define VramBlock_LoadCached Func_08003fa4
 
-struct VramBlockCacheEntry {
-    u16 size;
-    u16 offset;
-};
-
-extern struct VramBlockCacheEntry Data_03001b10[];
 
 s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source)
 {

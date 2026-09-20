@@ -546,15 +546,14 @@
       "evidence": [
         "callee_saved_registers_carry_implicit_context",
         "ordinary_arguments_remain_in_standard_abi_registers",
-        "approved_compiler_cannot_express_hidden_register_abi",
         "register_pins_disallowed",
         "byte_exact_reconstruction",
-        "args_r0_r3_only_arm_h_858_871_1434_r4_call_used"
+        "gcc296_thumb_nested_functions_can_carry_static_chain_in_r9",
+        "remaining_owners_require_individual_context_review"
       ],
-      "expected_files": 14,
-      "expected_bytes": 5700,
+      "expected_files": 12,
+      "expected_bytes": 5532,
       "files": [
-        "08015fb8",
         "0801a7f4",
         "08022a7c",
         "0808f32c",
@@ -565,7 +564,6 @@
         "080b5368",
         "080b9554",
         "080b9604",
-        "080bd850",
         "080be18c",
         "080c0be4"
       ]
@@ -580,10 +578,10 @@
         "callee_consumes_incoming_context_before_defining_that_register",
         "ordinary_arguments_remain_in_standard_abi_registers",
         "no_c_parameter_carries_the_hidden_context",
-        "approved_compiler_cannot_express_hidden_register_call_contract",
         "register_pins_inline_assembly_and_compiler_modification_disallowed",
         "byte_exact_reconstruction",
-        "args_r0_r3_only_arm_h_858_871_1434_r4_call_used"
+        "gcc296_thumb_nested_functions_can_carry_static_chain_in_r9",
+        "remaining_owners_require_individual_context_review"
       ],
       "expected_files": 5,
       "expected_bytes": 4540,

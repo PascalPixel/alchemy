@@ -33,20 +33,25 @@ void BattleFx_FetchRectangleBlitters(s32, u32 *);
 void Func_080e0524(s32, void *, s32, s32);
 void *Func_08002f40(s32);
 void Func_080041d8(s32, s32);
+#define Scheduler_AddOrUpdateCallback Func_080041d8
 void Func_08004278(s32);
+#define Scheduler_RemoveCallback Func_08004278
 void Func_080e3958(s32, s32 *);
 void Func_080e396c(s32, s32 *);
 s32 Func_080022ec(s32, s32);
 s32 Func_080022fc(s32, s32);
 s32 Func_08004458(void);
+#define Random16 Func_08004458
 void Func_080f9010(s32);
 #define Audio_PlayCue Func_080f9010
 void Func_080b5088(s32, s32);
 void Func_080b50e8(s32);
 void Func_080d6888(s32, s32, s32, s32, s32);
+#define ObjectGroup_UpdateMembers Func_080d6888
 void Func_080e155c(s32, s32);
 void Func_080cd52c(void);
 void Func_080030f8(s32);
+#define WaitFrames Func_080030f8
 void Func_08002dd8(s32);
 #define Runtime_ReleaseHeapBlock Func_08002dd8
 s32 Func_080cdbc0(void);
@@ -167,7 +172,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
         *(s32 *)(work + 0x7780) = 2;
         *(s32 *)(work + 0x7784) = 75;
     }
-    Func_080041d8(0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
 
     for (i = 0; i != 64; i++) {
         SPARKS[i].tick = -1;
@@ -235,8 +240,8 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
                     pos[0] - 70, pos[1] - 32, 72, 62);
             }
         } else {
-            aim[0] = (seat[pick][0] + (Func_08004458() & 31)) - 16;
-            aim[1] = (seat[pick][1] + (Func_08004458() & 63)) - 16;
+            aim[0] = (seat[pick][0] + (Random16() & 31)) - 16;
+            aim[1] = (seat[pick][1] + (Random16() & 63)) - 16;
             if (frame <= 47) {
                 /* The original uses half the vertical fixed-point scale for x. */
                 SPARKS[frame].x = pos[0] << 15;
@@ -289,7 +294,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
             while (i != WORK_EFX->cnt) {
                 if ((frame >= (i * 4) + 2) && ((frame & 7) == i)) {
                     *(s32 *)(work + 0x77A8) = 8;
-                    Func_080d6888(WORK_EFX->actors[i], 7, 5, i, 4);
+                    ObjectGroup_UpdateMembers(WORK_EFX->actors[i], 7, 5, i, 4);
                 }
                 i += 1;
             }
@@ -299,9 +304,9 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
                 if ((frame >= (i * 4) + 16) && ((frame & 7) == i)) {
                     *(s32 *)(work + 0x77A8) = 8;
                     if (mode == 6) {
-                        Func_080d6888(WORK_EFX->actors[i], 14, 5, i, 4);
+                        ObjectGroup_UpdateMembers(WORK_EFX->actors[i], 14, 5, i, 4);
                     } else {
-                        Func_080d6888(WORK_EFX->actors[i], 7, 5, i, 4);
+                        ObjectGroup_UpdateMembers(WORK_EFX->actors[i], 7, 5, i, 4);
                     }
                     Func_080b5088(WORK_EFX->actors[i], 4);
                 }
@@ -314,11 +319,11 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
             Func_080cd52c();
         }
         *(s32 *)(work + 0x7824) = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
         frame += 1;
     } while (frame != 64);
 
-    Func_08004278(0x080CD261);
+    Scheduler_RemoveCallback(0x080CD261);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     Func_080cdbc0();

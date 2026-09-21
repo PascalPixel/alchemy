@@ -111,7 +111,7 @@ void BattleFx_UpdateRadialLaunch(struct EffectSlot *effect)
             effect->state--;
     } else if (state == 2) {
         if (EffectSlot_HasReachedTarget(effect) == 0)
-            Func_0809bb34(effect);
+            BattleFx_ClearOwnedSlot(effect);
     }
 }
 
@@ -129,6 +129,7 @@ void Func_080916b0(void);
 void Func_080933f8(s32, s32, s32, s32);
 void Func_08097384(void);
 void Func_080030f8(s32);
+#define WaitFrames Func_080030f8
 void Func_08092adc(s32, s32, s32);
 void Func_080f9010(s32);
 void Func_08009080(void *, s32);
@@ -157,19 +158,19 @@ void BattleFx_RunEffect15(void)
     Func_080916b0();
     Func_080933f8(-1, -1, -1, 0);
     Func_08097384();
-    Func_080030f8(10);
+    WaitFrames(10);
     Func_08092adc(*(s16 *)(scene + 24), 0x4000, 0);
-    Func_080030f8(30);
+    WaitFrames(30);
     *(void (**)(void))(main_object + 108) = Func_08096b88;
     Func_080f9010(0x83);
     Func_08009080(main_object, 28);
-    Func_080030f8(40);
+    WaitFrames(40);
     Func_080f9010(0xdc);
     Func_08009240(main_object, 0);
     Func_08009080(main_object, 3);
     *(void (**)(void))(main_object + 108) = (void (*)(void))BattleFx_UpdateSpinAngle;
     effect->timer = 0;
-    Func_080030f8(70);
+    WaitFrames(70);
     Func_080091e0(main_object, 0);
     *(u8 *)(main_object + 85) = 0;
     *(void (**)(void))(main_object + 108) = (void (*)(void))BattleFx_UpdateDescendingObject;
@@ -191,10 +192,10 @@ void BattleFx_RunEffect15(void)
         *(s32 *)(particle + 44) = speed;
         *(s32 *)(particle + 40) = speed;
         index++;
-        Func_080030f8(1);
+        WaitFrames(1);
         particle += 72;
     } while (index <= 23);
-    Func_080030f8(70);
+    WaitFrames(70);
     index = 0;
     entry = scene;
     stopped = 2;
@@ -206,7 +207,7 @@ void BattleFx_RunEffect15(void)
         index++;
         entry += 72;
     } while (index <= 23);
-    Func_080030f8(40);
+    WaitFrames(40);
     Func_0809748c();
-    Func_080030f8(10);
+    WaitFrames(10);
 }

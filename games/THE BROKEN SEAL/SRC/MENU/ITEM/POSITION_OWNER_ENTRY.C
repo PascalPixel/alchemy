@@ -10,5 +10,5 @@ void ItemMenu_PosOwner(struct Object080a1c **slot, s32 index,
     object = *slot;
     object->y = index / columns * 16 + origin_y;
     object->x = index % columns * 24 + origin_x;
-    Func_080a17c4(object);
+    UiIcon_PrepareObject(object);
 }

@@ -165,6 +165,7 @@ extern struct ActionDescriptor *Func_0808d394(s32);
 extern struct BattleActionObject *Func_08092054(s32);
 extern s32 Func_080915dc(s32);
 extern u32 Func_08004458(void);
+#define Random16 Func_08004458
 extern void Func_080916b0(void);
 extern void Func_08092b94(s32);
 extern void Func_08092f84(s32, s32);
@@ -203,7 +204,7 @@ s32 BattleFx_RunDescriptorAction(s32 id)
             }
             if (descriptor->result >= 0x10000) {
                 s32 index = Func_080915dc(id);
-                u32 random = Func_08004458();
+                u32 random = Random16();
                 s32 message =
                     0x0e0b + index * 2 + (random * 2 >> 16);
                 Func_080916b0();

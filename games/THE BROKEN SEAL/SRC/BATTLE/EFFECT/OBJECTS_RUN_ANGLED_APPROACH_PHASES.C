@@ -32,6 +32,7 @@ void Func_0800447c(s32, s32, struct Vec *);
 struct Target *Func_08092054(s32);
 void Func_080974d8(struct Vec *);
 void Func_0809bb34(struct Actor *);
+#define BattleFx_ClearOwnedSlot Func_0809bb34
 
 void Func_08095938(struct Actor *actor)
 {
@@ -72,7 +73,7 @@ void Func_08095938(struct Actor *actor)
             actor->phase += 1;
         }
     } else if (actor->phase == 4) {
-        Func_0809bb34(actor);
+        BattleFx_ClearOwnedSlot(actor);
     }
     pos.x = actor->x;
     pos.z = actor->z;

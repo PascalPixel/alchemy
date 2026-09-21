@@ -10,7 +10,7 @@
  * 080ce85c) and games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PUFF_ARC.C (owner
  * 080d9fc8): same heap_cache=(void**)0x03001EEC / cursor / work / canvas
  * prologue, same the +0x7828 field=object republish, same
- * Func_080cd594(0)/Func_080041d8(0x080CD261,0x480)/Func_08004278(0x080CD261)/
+ * Func_080cd594(0)/Scheduler_AddOrUpdateCallback(0x080CD261,0x480)/Scheduler_RemoveCallback(0x080CD261)/
  * Runtime_ReleaseHeapBlock(id)/Func_080cdbc0() bracket, and the same
  * Func_080cef64(flag, DrawRectangleFn callbacks[2]) two-word blit-routine
  * resolver already established in games/THE BROKEN SEAL/recon/en/main/080e01e4.c.
@@ -66,18 +66,23 @@ void Func_080de2f8(void *object, s32 a, s32 b, s32 c, s32 *out_a, s32 *out_b);
 void Func_080cef64(s32 flag, DrawRectangleFn *out_callbacks);
 void Func_080e0524(s32 effect_id, void *target, s32 flag_a, s32 flag_b);
 void Func_080041d8(void *callback, s32 interval);
+#define Scheduler_AddOrUpdateCallback Func_080041d8
 void Func_080e3980(s16 a, s32 *out_pair);
 u32 Func_08004458(void);
+#define Random16 Func_08004458
 s32 Func_08002322(s32 angle);
 s32 Func_0800231c(s32 angle);
 void Func_080e38b8(void *particle, s32 a, s32 b);
 void Func_080b50e8(s32 id);
 void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+#define ObjectGroup_UpdateMembers Func_080d6888
 void Func_080b5088(s32 member_id, s32 b);
 void Func_080e155c(s32 a, s32 b);
 void Func_080cd52c(void);
 void Func_080030f8(s32 frames);
+#define WaitFrames Func_080030f8
 void Func_08004278(void *callback);
+#define Scheduler_RemoveCallback Func_08004278
 void Func_08002dd8(s32 id);
 #define Runtime_ReleaseHeapBlock Func_08002dd8
 void Func_080cdbc0(void);
@@ -117,7 +122,7 @@ void BattleFx_RunParticleReveal(void *object)
 
         interval = 0x480;
         callback = (void *)0x080CD261;
-        Func_080041d8(callback, interval);
+        Scheduler_AddOrUpdateCallback(callback, interval);
     }
     Func_080e3980(
         (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))), spawn);
@@ -126,16 +131,16 @@ void BattleFx_RunParticleReveal(void *object)
         s32 angle;
         s32 amp;
 
-        angle = (Func_08004458() & 0x7FFF) + 0x4000;
-        amp = (Func_08004458() & 0x1FF) + 0x80;
+        angle = (Random16() & 0x7FFF) + 0x4000;
+        amp = (Random16() & 0x1FF) + 0x80;
         PARTICLE_POOL[i].x =
-            ((spawn[0] / 2 + (Func_08004458() & 0xF)) - 8) << 16;
+            ((spawn[0] / 2 + (Random16() & 0xF)) - 8) << 16;
         PARTICLE_POOL[i].y = (spawn[1] + 8) << 16;
         PARTICLE_POOL[i].vx = (Func_08002322(angle) * amp) >> 9;
         PARTICLE_POOL[i].vy = (Func_0800231c(angle) * amp) >> 6;
-        PARTICLE_POOL[i].rot = Func_08004458() & 0x7F;
-        PARTICLE_POOL[i].unk14 = Func_08004458() & 0x7F;
-        PARTICLE_POOL[i].unk18 = (Func_08004458() & 0xF) + 32;
+        PARTICLE_POOL[i].rot = Random16() & 0x7F;
+        PARTICLE_POOL[i].unk14 = Random16() & 0x7F;
+        PARTICLE_POOL[i].unk18 = (Random16() & 0xF) + 32;
     }
 
     for (frame = 0; frame != 64; frame++) {
@@ -184,7 +189,7 @@ void BattleFx_RunParticleReveal(void *object)
         if (frame == 8) {
             (*(s32 *)((u8 *)(work) + (0x77A8))) = frame;
             Func_080b50e8(0x86);
-            Func_080d6888(
+            ObjectGroup_UpdateMembers(
                 (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))),
                 7, 5, 0, 16);
             Func_080b5088(
@@ -210,10 +215,10 @@ void BattleFx_RunParticleReveal(void *object)
         Func_080e155c(4, 8);
         Func_080cd52c();
         (*(s32 *)((u8 *)(work) + (0x7824))) = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
     }
 
-    Func_08004278((void *)0x080CD261);
+    Scheduler_RemoveCallback((void *)0x080CD261);
     Runtime_ReleaseHeapBlock(0x2F);
     Runtime_ReleaseHeapBlock(0x2E);
     Func_080cdbc0();

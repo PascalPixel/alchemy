@@ -9,7 +9,7 @@ void BattleEv_RunWait(s32 action)
     s32 resolved_action;
     u32 frames = 0;
 
-    Func_080030f8(1);
+    WaitFrames(1);
     resolved_action = Func_08092ba8(action);
     if (action <= 7) {
         s32 masked_action = action & 0x0fff;
@@ -22,7 +22,7 @@ void BattleEv_RunWait(s32 action)
 
     if (*(s32 *)(runtime + 0x1cc) == 0) {
         while (Func_08015050(wait_token) == 0) {
-            Func_080030f8(1);
+            WaitFrames(1);
             frames++;
             if (frames > 600 ||
                 ((Data_03001ae8 & 4) && (Data_03001ae8 & 0x100) &&
@@ -32,5 +32,5 @@ void BattleEv_RunWait(s32 action)
         }
     }
 
-    Func_080030f8(1);
+    WaitFrames(1);
 }

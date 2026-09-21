@@ -70,6 +70,7 @@ void *RenderOutput_CreateFromResource(
 }
 
 s32 Func_08004080(void);
+#define find_free_slot Func_08004080
 s32 Func_0801a2a4(s32 arg0, s32 arg1, s32 arg2);
 void *RenderOutput_CreateLoaded(
     s32 arg0,
@@ -81,7 +82,7 @@ void *RenderOutput_CreateLoaded(
     s32 no;
     void *result;
 
-    no = Func_08004080();
+    no = find_free_slot();
     result = NULL;
     if (no != 0x60) {
         Func_0801a2a4(arg0, arg1, no);
@@ -101,7 +102,7 @@ void *RenderOutput_CreateWithTransform(
     s32 unused;
     u8 *result;
 
-    count = Func_08004080();
+    count = find_free_slot();
     if (count == 0x60) {
         return NULL;
     }
@@ -121,7 +122,7 @@ void *RenderOutput_CreateFromTable(
     s32 slot;
     void *output;
 
-    slot = Func_08004080();
+    slot = find_free_slot();
     output = NULL;
     if (slot != 0x60) {
         RenderResource_LoadTableEntry(table_entry, 0, (void *)slot);

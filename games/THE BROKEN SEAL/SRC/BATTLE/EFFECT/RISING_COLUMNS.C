@@ -25,14 +25,18 @@ void Func_080e0524(s32, void *, s32, s32);
 void Func_080e396c(s32, s32 *);
 s32 Func_080ed408(s32, s32, s32, s32, s32);
 void Func_080041d8(s32, s32);
+#define Scheduler_AddOrUpdateCallback Func_080041d8
 void Func_080f9010(s32);
 #define Audio_PlayCue Func_080f9010
 void Func_080d6888(s32, s32, s32, s32, s32);
+#define ObjectGroup_UpdateMembers Func_080d6888
 s32 Func_080022fc(s32, s32);
 void Func_080e155c(s32, s32);
 void Func_080cd52c(void);
 void Func_080030f8(s32);
+#define WaitFrames Func_080030f8
 void Func_08004278(s32);
+#define Scheduler_RemoveCallback Func_08004278
 void Func_08002dd8(s32);
 #define Runtime_ReleaseHeapBlock Func_08002dd8
 s32 Func_080cdbc0(void);
@@ -77,13 +81,13 @@ void BattleEffect_RunRisingColumns(Effect *effect)
     } while (i != 16);
     *(s32 *)(work + 0x7780) = 1;
     *(s32 *)(work + 0x7784) = 0;
-    Func_080041d8(0x080cd261, 0x480);
+    Scheduler_AddOrUpdateCallback(0x080cd261, 0x480);
     frame = 0;
     do {
         if (frame == 32) {
             Audio_PlayCue(143);
             for (i = 0; i != WORK_EFFECT->count; i++)
-                Func_080d6888(WORK_EFFECT->actors[i], 7, 5, i, 16);
+                ObjectGroup_UpdateMembers(WORK_EFFECT->actors[i], 7, 5, i, 16);
         }
         i = 0;
         column = (Column *)(work + 0x7080);
@@ -109,10 +113,10 @@ void BattleEffect_RunRisingColumns(Effect *effect)
         Func_080e155c(4, 4);
         Func_080cd52c();
         *(s32 *)(work + 0x7824) = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
         frame++;
     } while (frame != 70);
-    Func_08004278(0x080cd261);
+    Scheduler_RemoveCallback(0x080cd261);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     Func_080cdbc0();

@@ -14,6 +14,7 @@ typedef struct {
 extern s32 Runtime_AllocateHeapBlock(s32 no0, s32 no1);
 extern s32 Func_0801a5a4(T *, s32);
 extern s32 Func_08004080(void);
+#define find_free_slot Func_08004080
 extern s32 Resource_CopyData(s32, s32, u8 *);
 extern s32 Func_08002dd8(s32);
 #define Runtime_ReleaseHeapBlock Func_08002dd8
@@ -34,7 +35,7 @@ void Ui_BuildPairedPatternsToSlot(s32 no0, s32 no1, s32 *slot, s32 *ret, s32 fla
     work->f602 = 2;
     Func_0801a5a4(work, 1);
     if (flag == 0) {
-        *slot = Func_08004080();
+        *slot = find_free_slot();
     }
     *ret = Resource_CopyData(*slot, 0x80, &work->f400);
     Runtime_ReleaseHeapBlock(0x11);

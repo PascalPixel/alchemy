@@ -36,6 +36,7 @@ void ItemMenu_DrawMsg(s32 unused, s32 message)
 
 
 void Func_080a17c4(void *icon);
+#define UiIcon_PrepareObject Func_080a17c4
 
 void Menu_HideEmptyEntryIcons(const u16 *items)
 {
@@ -44,7 +45,7 @@ void Menu_HideEmptyEntryIcons(const u16 *items)
 
     for (slot = 0; slot < 32; slot++) {
         if (items[slot] == 0) {
-            Func_080a17c4(menu->entry_icons[slot]);
+            UiIcon_PrepareObject(menu->entry_icons[slot]);
             menu->entry_icons[slot]->state = 13;
         }
     }

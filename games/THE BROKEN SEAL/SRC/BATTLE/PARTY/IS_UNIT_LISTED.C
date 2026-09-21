@@ -1,6 +1,7 @@
 #include "TYPES.H"
 
 s32 Func_080b6c08(s32, u16 *);
+#define BattleParty_ListActorIds Func_080b6c08
 
 u32 BattleParty_IsUnitListed(u32 arg0)
 {
@@ -13,7 +14,7 @@ u32 BattleParty_IsUnitListed(u32 arg0)
     if (arg0 > 7) {
         count = 2;
     }
-    total = Func_080b6c08(count, values);
+    total = BattleParty_ListActorIds(count, values);
 
     for (i = 0; i < total; i++) {
         if (values[i] == arg0) {

@@ -8,6 +8,7 @@ void Func_080f9010(s32);
 #define Audio_PlayCue Func_080f9010
 void Func_08009080(void *, s32);
 void Func_080030f8(s32);
+#define WaitFrames Func_080030f8
 void Func_08099738(void);
 void Func_08099678(void);
 
@@ -37,10 +38,10 @@ void BattleFx_RunFlashingCallbackSequence(void)
         entry[5] = 7;
         record->flag_a = 1;
         record->flag_b = 2;
-        Func_080030f8(2);
+        WaitFrames(2);
         record->flag_a = 1;
         record->flag_b = 0;
-        Func_080030f8(2);
+        WaitFrames(2);
         cycle++;
     } while (cycle <= 9);
     cycle = 0;

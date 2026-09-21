@@ -6,6 +6,7 @@
 s32 FixedPoint_Ratio(s32, s32);
 s32 Modulo(s32, s32);
 void Func_080a17c4(void *arg0);
+#define UiIcon_PrepareObject Func_080a17c4
 
 void Menu_PlaceEntryObjectInGrid(struct Object080a9bd8 *obj, s32 index,
     s32 origin_x, s32 origin_y, s32 phase) {
@@ -19,5 +20,5 @@ void Menu_PlaceEntryObjectInGrid(struct Object080a9bd8 *obj, s32 index,
         (s16)((FixedPoint_Ratio(no, phase) * 0x10) + origin_y);
     obj->x =
         (s16)((Modulo(no, phase) * 0x10) + origin_x);
-    Func_080a17c4(obj);
+    UiIcon_PrepareObject(obj);
 }

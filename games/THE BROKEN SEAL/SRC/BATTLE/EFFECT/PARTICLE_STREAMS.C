@@ -39,18 +39,23 @@ void *Func_08009030(s32);
 void **Func_080b5098(s32);
 void Func_080cd594(s32);
 void Func_080d6888(s32, s32, s32, s32, s32);
+#define ObjectGroup_UpdateMembers Func_080d6888
 void Func_080f9010(s32);
 #define Audio_PlayCue Func_080f9010
 void Func_080c9048(void);
 void Func_080041d8(s32, s32);
+#define Scheduler_AddOrUpdateCallback Func_080041d8
 void Func_080cd104(s32, s32);
 void Func_08004278(s32);
+#define Scheduler_RemoveCallback Func_08004278
 void Func_08009020(void *, s32);
 void Func_080dbb24(s32, s32, s32);
 void Func_080e0524(s32, void *, s32, s32);
 void *Func_08002f40(s32);
 void Func_080030f8(s32);
+#define WaitFrames Func_080030f8
 s32 Func_08004458(void);
+#define Random16 Func_08004458
 void Func_080d6750(s32);
 s32 Func_080ed408(s32, s32, s32, s32, s32);
 void Func_08009008(s32, void *, void *, s32);
@@ -258,7 +263,7 @@ s32 BattleEffect_RunParticleStreams(s32 arg0, s32 arg1)
         temp_r2_46 = *Func_080b5098((*(s32 *)((u8 *)((*(void **)((u8 *)(*sp3C) + (0x7828)))) + (8))));
         (*(s32 *)((u8 *)(temp_r2_46) + (0x28))) = 0xA0000;
         (*(s32 *)((u8 *)(temp_r2_46) + (0x48))) = 0x91EB;
-        Func_080d6888((*(s32 *)((u8 *)((*(void **)((u8 *)(*sp3C) + (0x7828)))) + (8))), -1, 2, -1, 0);
+        ObjectGroup_UpdateMembers((*(s32 *)((u8 *)((*(void **)((u8 *)(*sp3C) + (0x7828)))) + (8))), -1, 2, -1, 0);
         Audio_PlayCue(0x91);
         sp40 = sp4C;
         if ((*(s32 *)((u8 *)((*(void **)((u8 *)(*sp3C) + (0x7828)))) + (4))) != 1) {
@@ -271,9 +276,9 @@ s32 BattleEffect_RunParticleStreams(s32 arg0, s32 arg1)
     (*(s16 *)((u8 *)((void *)0x05000000) + (0))) = 0;
     (*(s16 *)((u8 *)((void *)0x05000000) + (2))) = 0;
     (*(s32 *)((u8 *)(*sp3C) + (0x7780))) = 0;
-    Func_080041d8(0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
     Func_080cd104(0, 0);
-    Func_08004278(0x080CD261);
+    Scheduler_RemoveCallback(0x080CD261);
     if (sp4C == 1) {
         var_r5_135 = 0x77D8;
         var_r6_136 = 0x1E3;
@@ -303,7 +308,7 @@ s32 BattleEffect_RunParticleStreams(s32 arg0, s32 arg1)
     Dma_Set(sp98 + 128, (void *)0x02010000, 0x85002000, (volatile u32 *)0x040000d4);
     ((WordCopy)0x03001388)(
         (void *)0x06008000, (void *)0x02010000, 0x7800);
-    Func_080030f8(1);
+    WaitFrames(1);
     (*(s16 *)((u8 *)((void *)0x04000050) + (0))) = 0;
     (*(s16 *)((u8 *)((void *)0x04000020) + (0))) = 0x100;
     (*(s16 *)((u8 *)((void *)0x0400000A) + (0))) = 0x1F80;
@@ -311,19 +316,19 @@ s32 BattleEffect_RunParticleStreams(s32 arg0, s32 arg1)
     var_r8_233 = 0;
     var_sl_235 = (s16 *)0x05000100;
     do {
-        temp_r6_269 = Func_08004458();
-        temp_r5_271 = Func_08004458();
+        temp_r6_269 = Random16();
+        temp_r5_271 = Random16();
         var_r8_233 += 1;
-        *var_sl_235 = (((Func_08004458() & 0xF) + 0x10) << 0xA) | (((temp_r5_271 & 0xF) + 0x10) << 5) | ((temp_r6_269 & 0xF) + 0x10);
+        *var_sl_235 = (((Random16() & 0xF) + 0x10) << 0xA) | (((temp_r5_271 & 0xF) + 0x10) << 5) | ((temp_r6_269 & 0xF) + 0x10);
         var_sl_235 += 1;
     } while (var_r8_233 != 0x3F);
     *(s32 *)(sp98 + 128) = 0;
     Dma_Set(sp98 + 128, draw_destination, 0x85001000, (volatile u32 *)0x040000d4);
     var_r8_303 = 0;
     do {
-        temp_r6_310 = Func_08004458() & 0x7F;
-        temp_r5_314 = Func_08004458() & 0x7F;
-        temp_r1_319 = (0x3F & Func_08004458()) + 0x40;
+        temp_r6_310 = Random16() & 0x7F;
+        temp_r5_314 = Random16() & 0x7F;
+        temp_r1_319 = (0x3F & Random16()) + 0x40;
         var_r3_320 = temp_r5_314;
         if (temp_r5_314 < 0) {
             var_r3_320 = temp_r5_314 + 7;
@@ -348,11 +353,11 @@ s32 BattleEffect_RunParticleStreams(s32 arg0, s32 arg1)
     (*(s32 *)((u8 *)(temp_r2_365) + (0x7794))) = 2;
     (*(s32 *)((u8 *)(temp_r2_365) + (0x7798))) = (s32) (sp40 << 7);
     (*(s32 *)((u8 *)(temp_r2_365) + (0x779C))) = var_r8_303;
-    Func_080041d8(0x080C9139, 0x4FF);
-    Func_080041d8(0x080CD359, 0x480);
+    Scheduler_AddOrUpdateCallback(0x080C9139, 0x4FF);
+    Scheduler_AddOrUpdateCallback(0x080CD359, 0x480);
     var_r5_398 = sp98;
     do {
-        *var_r5_398 = Func_08004458() & 0x3F;
+        *var_r5_398 = Random16() & 0x3F;
         var_r5_398 += 1;
     } while (var_r5_398 != sp98 + 128);
     var_r6_408 = 0;
@@ -390,7 +395,7 @@ loop_33:
             } while (var_r5_410 != var_r6_408);
         }
         (*(s32 *)((u8 *)(*sp3C) + (0x7824))) = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
     } while (var_r6_408 <= 0xBF);
     (*(s16 *)((u8 *)((void *)0x04000050) + (0))) = 0x3F42;
     (*(s16 *)((u8 *)((void *)0x04000050) + (2))) = 0x1010;
@@ -405,7 +410,7 @@ loop_33:
     temp_r2_553 = *sp3C;
     (*(s32 *)((u8 *)(temp_r2_553) + (0x7780))) = 3;
     (*(s32 *)((u8 *)(temp_r2_553) + (0x7784))) = 0x02020202;
-    Func_080041d8(0x080E72E1, 0x4FE);
+    Scheduler_AddOrUpdateCallback(0x080E72E1, 0x4FE);
     var_r8_570 = 0;
     var_r3_572 = *sp3C + 0x7098;
     do {
@@ -516,7 +521,7 @@ loop_84:
         temp_r3_835 = *sp3C + var_r2_830;
         temp_r5_837 = temp_r3_835 + 0x7080;
         if ((*(s32 *)((u8 *)(temp_r5_837) + (0x18))) == -1) {
-            temp_r1_848 = (0x7FFF & Func_08004458()) + 0x4000;
+            temp_r1_848 = (0x7FFF & Random16()) + 0x4000;
             (*(s32 *)((u8 *)(temp_r5_837) + (0x18))) = 0;
             spC = temp_r1_848;
             var_r3_859 = Func_08002322(temp_r1_848) * 0x1E;
@@ -619,7 +624,7 @@ loop_84:
             var_r6_1060 += 0x1C;
         } while (var_r8_1058 != 0x20);
         (*(s32 *)((u8 *)(*sp28) + (0x7824))) = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
         sp10 += 0x100;
         temp_r2_1122 = *sp28;
         var_fp_590 += 1;
@@ -628,11 +633,11 @@ loop_84:
             goto loop_47;
         }
     }
-    Func_080030f8(1);
+    WaitFrames(1);
     (*(s32 *)((u8 *)(sp30) + (0x10))) = 0;
-    Func_08004278(0x080C9139);
-    Func_08004278(0x080E72E1);
-    Func_08004278(0x080CD359);
+    Scheduler_RemoveCallback(0x080C9139);
+    Scheduler_RemoveCallback(0x080E72E1);
+    Scheduler_RemoveCallback(0x080CD359);
     Data_03001ad0.unk04 = (u16) sp38;
     Data_03001ad0.unk06 = (u16) sp34;
     Runtime_ReleaseHeapBlock(0x2E);
@@ -649,9 +654,9 @@ loop_84:
     var_r6_1223 = 0;
     do {
         temp_r5_1230 = *sp3C + var_r6_1223 + 0x7080;
-        (*(s32 *)((u8 *)(temp_r5_1230) + (0))) = (s32) (Func_08004458() & 0x7F);
+        (*(s32 *)((u8 *)(temp_r5_1230) + (0))) = (s32) (Random16() & 0x7F);
         var_r8_1221 += 1;
-        (*(s32 *)((u8 *)(temp_r5_1230) + (4))) = (s32) ((Func_08004458() & 0x7F) + 0x7F);
+        (*(s32 *)((u8 *)(temp_r5_1230) + (4))) = (s32) ((Random16() & 0x7F) + 0x7F);
         var_r6_1223 += 0x1C;
     } while (var_r8_1221 != 0x20);
     var_r5_1245 = (void *)0x02010000;
@@ -660,10 +665,10 @@ loop_84:
         (*(s32 *)((u8 *)(var_r5_1245) + (0))) = 0;
         (*(s32 *)((u8 *)(var_r5_1245) + (4))) = 0;
         (*(s32 *)((u8 *)(var_r5_1245) + (8))) = 0;
-        (*(s32 *)((u8 *)(var_r5_1245) + (0xC))) = (s32) (((Func_08004458() & 0xFF) - 0x7F) << 0xC);
-        (*(s32 *)((u8 *)(var_r5_1245) + (0x10))) = (s32) ((Func_08004458() & 0xFF) << 0xB);
+        (*(s32 *)((u8 *)(var_r5_1245) + (0xC))) = (s32) (((Random16() & 0xFF) - 0x7F) << 0xC);
+        (*(s32 *)((u8 *)(var_r5_1245) + (0x10))) = (s32) ((Random16() & 0xFF) << 0xB);
         var_r8_1246 += 1;
-        (*(s32 *)((u8 *)(var_r5_1245) + (0x14))) = (s32) (((Func_08004458() & 0xFF) - 0x7F) << 0xC);
+        (*(s32 *)((u8 *)(var_r5_1245) + (0x14))) = (s32) (((Random16() & 0xFF) - 0x7F) << 0xC);
         (*(s32 *)((u8 *)(var_r5_1245) + (0x18))) = 0;
         var_r5_1245 += 0x1C;
     } while (var_r8_1246 != 0x80);
@@ -673,17 +678,17 @@ loop_84:
         (*(s32 *)((u8 *)(var_r5_1275) + (0))) = 0;
         (*(s32 *)((u8 *)(var_r5_1275) + (4))) = 0;
         (*(s32 *)((u8 *)(var_r5_1275) + (8))) = 0;
-        (*(s32 *)((u8 *)(var_r5_1275) + (0xC))) = (s32) (((Func_08004458() & 0xFF) - 0x80) << 0xD);
-        (*(s32 *)((u8 *)(var_r5_1275) + (0x10))) = (s32) ((Func_08004458() & 0xFF) << 0xB);
+        (*(s32 *)((u8 *)(var_r5_1275) + (0xC))) = (s32) (((Random16() & 0xFF) - 0x80) << 0xD);
+        (*(s32 *)((u8 *)(var_r5_1275) + (0x10))) = (s32) ((Random16() & 0xFF) << 0xB);
         var_r8_1276 += 1;
-        (*(s32 *)((u8 *)(var_r5_1275) + (0x14))) = (s32) (((Func_08004458() & 0xFF) - 0x80) << 0xD);
+        (*(s32 *)((u8 *)(var_r5_1275) + (0x14))) = (s32) (((Random16() & 0xFF) - 0x80) << 0xD);
         (*(s32 *)((u8 *)(var_r5_1275) + (0x18))) = 0;
         var_r5_1275 += 0x1C;
     } while (var_r8_1276 != 0x200);
     temp_r2_1307 = *sp3C;
     (*(s32 *)((u8 *)(temp_r2_1307) + (0x7780))) = 1;
     (*(s32 *)((u8 *)(temp_r2_1307) + (0x7784))) = 0x10101010;
-    Func_080041d8(0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
     sp20 = sp3C;
     sp1C = sp50;
     sp14 = 0x1D000;
@@ -744,9 +749,9 @@ loop_121:
                 (*(s32 *)((u8 *)(var_r7_1383) + (0))) = 0;
                 (*(s32 *)((u8 *)(var_r7_1383) + (8))) = 0;
                 (*(s32 *)((u8 *)(var_r7_1383) + (4))) = 0x140000;
-                (*(s32 *)((u8 *)(var_r7_1383) + (0xC))) = (s32) (((Func_08004458() & 0x3F) - 0x20) << 0xF);
-                (*(s32 *)((u8 *)(var_r7_1383) + (0x10))) = (s32) ((Func_08004458() & 0x3F) << 0xD);
-                (*(s32 *)((u8 *)(var_r7_1383) + (0x14))) = (s32) (((Func_08004458() & 0x3F) - 0x20) << 0xF);
+                (*(s32 *)((u8 *)(var_r7_1383) + (0xC))) = (s32) (((Random16() & 0x3F) - 0x20) << 0xF);
+                (*(s32 *)((u8 *)(var_r7_1383) + (0x10))) = (s32) ((Random16() & 0x3F) << 0xD);
+                (*(s32 *)((u8 *)(var_r7_1383) + (0x14))) = (s32) (((Random16() & 0x3F) - 0x20) << 0xF);
             }
         }
         var_r8_1386 += 1;
@@ -799,9 +804,9 @@ loop_121:
             if (temp_r3_1597 == 0xE) {
                 (*(s32 *)((u8 *)(var_r7_1551) + (4))) = 0x140000;
                 (*(s32 *)((u8 *)(var_r7_1551) + (0))) = 0;
-                (*(s32 *)((u8 *)(var_r7_1551) + (8))) = (s32) (((Func_08004458() & 0xFF) - 0x7F) << 0x10);
+                (*(s32 *)((u8 *)(var_r7_1551) + (8))) = (s32) (((Random16() & 0xFF) - 0x7F) << 0x10);
                 (*(s32 *)((u8 *)(var_r7_1551) + (0xC))) = 0;
-                (*(s32 *)((u8 *)(var_r7_1551) + (0x10))) = (s32) ((Func_08004458() & 0xFF) << 0xB);
+                (*(s32 *)((u8 *)(var_r7_1551) + (0x10))) = (s32) ((Random16() & 0xFF) << 0xB);
                 (*(s32 *)((u8 *)(var_r7_1551) + (0x14))) = 0;
                 (*(u32 *)((u8 *)(var_r7_1551) + (0x18))) = 0U;
             } else {
@@ -837,13 +842,13 @@ loop_121:
     (*(s32 *)((u8 *)(*sp20) + (0x77A8))) = 1;
     Func_080e155c(8, 8);
     (*(s32 *)((u8 *)(*sp20) + (0x7824))) = 1;
-    Func_080030f8(1);
+    WaitFrames(1);
     var_fp_1329 += 1;
     sp14 += 0x100;
     if (var_fp_1329 != 0x36) {
         goto loop_121;
     }
-    Func_08004278(0x080CD261);
+    Scheduler_RemoveCallback(0x080CD261);
     Runtime_ReleaseHeapBlock(0x2E);
     if (sp4C == 0) {
         Func_08009038((*(s32 *)((u8 *)(*sp3C) + (0x77D8))));

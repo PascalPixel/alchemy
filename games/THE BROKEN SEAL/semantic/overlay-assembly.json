@@ -2340,7 +2340,7 @@
       "overlay": "resource_36f",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2358,7 +2358,7 @@
       "overlay": "resource_36f",
       "start": "0x02000538",
       "end": "0x020005f8",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2376,7 +2376,7 @@
       "overlay": "resource_370",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2394,7 +2394,7 @@
       "overlay": "resource_370",
       "start": "0x02001314",
       "end": "0x020014d4",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2412,7 +2412,7 @@
       "overlay": "resource_371",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2430,7 +2430,7 @@
       "overlay": "resource_371",
       "start": "0x02004174",
       "end": "0x020044ac",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2448,7 +2448,7 @@
       "overlay": "resource_372",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2466,7 +2466,7 @@
       "overlay": "resource_372",
       "start": "0x02004634",
       "end": "0x020048bc",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2484,7 +2484,7 @@
       "overlay": "resource_373",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2502,7 +2502,7 @@
       "overlay": "resource_373",
       "start": "0x02005e84",
       "end": "0x02006154",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2520,7 +2520,7 @@
       "overlay": "resource_374",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2538,7 +2538,7 @@
       "overlay": "resource_374",
       "start": "0x020025e4",
       "end": "0x02002854",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2556,7 +2556,7 @@
       "overlay": "resource_375",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2574,7 +2574,7 @@
       "overlay": "resource_375",
       "start": "0x02001a4c",
       "end": "0x02001bdc",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2592,7 +2592,7 @@
       "overlay": "resource_376",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2610,7 +2610,7 @@
       "overlay": "resource_376",
       "start": "0x02001144",
       "end": "0x020012fc",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2628,7 +2628,7 @@
       "overlay": "resource_377",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2646,7 +2646,7 @@
       "overlay": "resource_377",
       "start": "0x0200180c",
       "end": "0x02001ab4",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2664,7 +2664,7 @@
       "overlay": "resource_378",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2682,7 +2682,7 @@
       "overlay": "resource_378",
       "start": "0x02003520",
       "end": "0x02003740",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2700,7 +2700,7 @@
       "overlay": "resource_379",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2718,7 +2718,7 @@
       "overlay": "resource_379",
       "start": "0x02000ab8",
       "end": "0x02000c00",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2736,7 +2736,7 @@
       "overlay": "resource_37a",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2754,7 +2754,7 @@
       "overlay": "resource_37a",
       "start": "0x0200296c",
       "end": "0x02002afc",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2772,7 +2772,7 @@
       "overlay": "resource_37b",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2790,7 +2790,7 @@
       "overlay": "resource_37b",
       "start": "0x020023bc",
       "end": "0x0200256c",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2808,7 +2808,7 @@
       "overlay": "resource_37c",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2826,7 +2826,7 @@
       "overlay": "resource_37c",
       "start": "0x020000a0",
       "end": "0x020000c8",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2844,7 +2844,7 @@
       "overlay": "resource_37d",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2862,7 +2862,7 @@
       "overlay": "resource_37d",
       "start": "0x020000a0",
       "end": "0x020000c0",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2880,7 +2880,7 @@
       "overlay": "resource_37e",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2898,7 +2898,7 @@
       "overlay": "resource_37e",
       "start": "0x020000a0",
       "end": "0x020000c0",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2916,7 +2916,7 @@
       "overlay": "resource_37f",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2934,7 +2934,7 @@
       "overlay": "resource_37f",
       "start": "0x02001b24",
       "end": "0x02001cd4",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2952,7 +2952,7 @@
       "overlay": "resource_380",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2970,7 +2970,7 @@
       "overlay": "resource_380",
       "start": "0x02004854",
       "end": "0x02004b1c",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -2988,7 +2988,7 @@
       "overlay": "resource_381",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3006,7 +3006,7 @@
       "overlay": "resource_381",
       "start": "0x020033d4",
       "end": "0x0200362c",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3024,7 +3024,7 @@
       "overlay": "resource_382",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3042,7 +3042,7 @@
       "overlay": "resource_382",
       "start": "0x02001900",
       "end": "0x02001ad0",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3060,7 +3060,7 @@
       "overlay": "resource_383",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3078,7 +3078,7 @@
       "overlay": "resource_383",
       "start": "0x02004c6c",
       "end": "0x02004f2c",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3096,7 +3096,7 @@
       "overlay": "resource_384",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3114,7 +3114,7 @@
       "overlay": "resource_384",
       "start": "0x02000260",
       "end": "0x020002d0",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3132,7 +3132,7 @@
       "overlay": "resource_385",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3150,7 +3150,7 @@
       "overlay": "resource_385",
       "start": "0x02001058",
       "end": "0x020011b8",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3168,7 +3168,7 @@
       "overlay": "resource_386",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3186,7 +3186,7 @@
       "overlay": "resource_386",
       "start": "0x020005dc",
       "end": "0x020006dc",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3204,7 +3204,7 @@
       "overlay": "resource_387",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3222,7 +3222,7 @@
       "overlay": "resource_387",
       "start": "0x02001084",
       "end": "0x02001234",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3240,7 +3240,7 @@
       "overlay": "resource_388",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3258,7 +3258,7 @@
       "overlay": "resource_388",
       "start": "0x020000d8",
       "end": "0x02000108",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3276,7 +3276,7 @@
       "overlay": "resource_389",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3294,7 +3294,7 @@
       "overlay": "resource_389",
       "start": "0x020013a8",
       "end": "0x02001518",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3312,7 +3312,7 @@
       "overlay": "resource_38a",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3330,7 +3330,7 @@
       "overlay": "resource_38a",
       "start": "0x020006ac",
       "end": "0x02000764",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3348,7 +3348,7 @@
       "overlay": "resource_38b",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3366,7 +3366,7 @@
       "overlay": "resource_38b",
       "start": "0x02001018",
       "end": "0x020011c0",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3384,7 +3384,7 @@
       "overlay": "resource_38c",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3402,7 +3402,7 @@
       "overlay": "resource_38c",
       "start": "0x02000500",
       "end": "0x02000598",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3420,7 +3420,7 @@
       "overlay": "resource_38d",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3438,7 +3438,7 @@
       "overlay": "resource_38d",
       "start": "0x02002408",
       "end": "0x020025c0",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3456,7 +3456,7 @@
       "overlay": "resource_38e",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3474,7 +3474,7 @@
       "overlay": "resource_38e",
       "start": "0x02000a4c",
       "end": "0x02000bd4",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3492,7 +3492,7 @@
       "overlay": "resource_38f",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3510,7 +3510,7 @@
       "overlay": "resource_38f",
       "start": "0x0200299c",
       "end": "0x02002bd4",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3528,7 +3528,7 @@
       "overlay": "resource_390",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3546,7 +3546,7 @@
       "overlay": "resource_390",
       "start": "0x020002b8",
       "end": "0x02000318",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3564,7 +3564,7 @@
       "overlay": "resource_391",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3582,7 +3582,7 @@
       "overlay": "resource_391",
       "start": "0x02002b84",
       "end": "0x02002d2c",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3600,7 +3600,7 @@
       "overlay": "resource_392",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3618,7 +3618,7 @@
       "overlay": "resource_392",
       "start": "0x02000d8c",
       "end": "0x02000e8c",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3636,7 +3636,7 @@
       "overlay": "resource_393",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3654,7 +3654,7 @@
       "overlay": "resource_393",
       "start": "0x02000e1c",
       "end": "0x02000ed4",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3672,7 +3672,7 @@
       "overlay": "resource_394",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3690,7 +3690,7 @@
       "overlay": "resource_394",
       "start": "0x02000ff4",
       "end": "0x0200111c",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3708,7 +3708,7 @@
       "overlay": "resource_395",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3726,7 +3726,7 @@
       "overlay": "resource_395",
       "start": "0x020018f8",
       "end": "0x02001ab8",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3744,7 +3744,7 @@
       "overlay": "resource_396",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3762,7 +3762,7 @@
       "overlay": "resource_396",
       "start": "0x02001a10",
       "end": "0x02001c00",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3780,7 +3780,7 @@
       "overlay": "resource_397",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3798,7 +3798,7 @@
       "overlay": "resource_397",
       "start": "0x02000304",
       "end": "0x0200035c",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3816,7 +3816,7 @@
       "overlay": "resource_398",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3834,7 +3834,7 @@
       "overlay": "resource_398",
       "start": "0x02000908",
       "end": "0x020009b0",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3852,7 +3852,7 @@
       "overlay": "resource_399",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3870,7 +3870,7 @@
       "overlay": "resource_399",
       "start": "0x02002168",
       "end": "0x020023f0",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3888,7 +3888,7 @@
       "overlay": "resource_39a",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3906,7 +3906,7 @@
       "overlay": "resource_39a",
       "start": "0x02002258",
       "end": "0x02002418",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3924,7 +3924,7 @@
       "overlay": "resource_39b",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3942,7 +3942,7 @@
       "overlay": "resource_39b",
       "start": "0x020023dc",
       "end": "0x0200261c",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3960,7 +3960,7 @@
       "overlay": "resource_39c",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3978,7 +3978,7 @@
       "overlay": "resource_39c",
       "start": "0x0200596c",
       "end": "0x02005c6c",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -3996,7 +3996,7 @@
       "overlay": "resource_39d",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4014,7 +4014,7 @@
       "overlay": "resource_39d",
       "start": "0x02003628",
       "end": "0x02003848",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4032,7 +4032,7 @@
       "overlay": "resource_39e",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4050,7 +4050,7 @@
       "overlay": "resource_39e",
       "start": "0x0200433c",
       "end": "0x02004584",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4068,7 +4068,7 @@
       "overlay": "resource_39f",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4086,7 +4086,7 @@
       "overlay": "resource_39f",
       "start": "0x02002ce4",
       "end": "0x02002ebc",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4104,7 +4104,7 @@
       "overlay": "resource_3a0",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4122,7 +4122,7 @@
       "overlay": "resource_3a0",
       "start": "0x02001330",
       "end": "0x020014c0",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4140,7 +4140,7 @@
       "overlay": "resource_3a1",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4158,7 +4158,7 @@
       "overlay": "resource_3a1",
       "start": "0x02000614",
       "end": "0x020006c4",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4176,7 +4176,7 @@
       "overlay": "resource_3a2",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4194,7 +4194,7 @@
       "overlay": "resource_3a2",
       "start": "0x02001498",
       "end": "0x02001620",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4212,7 +4212,7 @@
       "overlay": "resource_3a3",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4230,7 +4230,7 @@
       "overlay": "resource_3a3",
       "start": "0x02000e20",
       "end": "0x02000fc8",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4248,7 +4248,7 @@
       "overlay": "resource_3a4",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4266,7 +4266,7 @@
       "overlay": "resource_3a4",
       "start": "0x02003a70",
       "end": "0x02003d28",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4284,7 +4284,7 @@
       "overlay": "resource_3a5",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4302,7 +4302,7 @@
       "overlay": "resource_3a5",
       "start": "0x02001c84",
       "end": "0x02001e4c",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4320,7 +4320,7 @@
       "overlay": "resource_3a6",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4338,7 +4338,7 @@
       "overlay": "resource_3a6",
       "start": "0x02001c14",
       "end": "0x02001d64",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4356,7 +4356,7 @@
       "overlay": "resource_3a7",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4374,7 +4374,7 @@
       "overlay": "resource_3a7",
       "start": "0x02001060",
       "end": "0x02001158",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4392,7 +4392,7 @@
       "overlay": "resource_3a8",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4410,7 +4410,7 @@
       "overlay": "resource_3a8",
       "start": "0x02003b14",
       "end": "0x02003d84",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4428,7 +4428,7 @@
       "overlay": "resource_3a9",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4446,7 +4446,7 @@
       "overlay": "resource_3a9",
       "start": "0x020003e8",
       "end": "0x020004a0",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4464,7 +4464,7 @@
       "overlay": "resource_3aa",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4482,7 +4482,7 @@
       "overlay": "resource_3aa",
       "start": "0x02001a34",
       "end": "0x02001b94",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4500,7 +4500,7 @@
       "overlay": "resource_3ab",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4518,7 +4518,7 @@
       "overlay": "resource_3ab",
       "start": "0x02001918",
       "end": "0x02001b38",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4537,7 +4537,7 @@
       "overlay": "resource_3ac",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4555,7 +4555,7 @@
       "overlay": "resource_3ac",
       "start": "0x02000490",
       "end": "0x020004f8",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4573,7 +4573,7 @@
       "overlay": "resource_3ad",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4591,7 +4591,7 @@
       "overlay": "resource_3ad",
       "start": "0x02001ad4",
       "end": "0x02001c34",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4609,7 +4609,7 @@
       "overlay": "resource_3ae",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4627,7 +4627,7 @@
       "overlay": "resource_3ae",
       "start": "0x02001500",
       "end": "0x020016b8",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4645,7 +4645,7 @@
       "overlay": "resource_3af",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4663,7 +4663,7 @@
       "overlay": "resource_3af",
       "start": "0x02004254",
       "end": "0x02004464",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4681,7 +4681,7 @@
       "overlay": "resource_3b0",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4699,7 +4699,7 @@
       "overlay": "resource_3b0",
       "start": "0x020011b4",
       "end": "0x02001314",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4717,7 +4717,7 @@
       "overlay": "resource_3b1",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4735,7 +4735,7 @@
       "overlay": "resource_3b1",
       "start": "0x02006420",
       "end": "0x02006668",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4753,7 +4753,7 @@
       "overlay": "resource_3b2",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4771,7 +4771,7 @@
       "overlay": "resource_3b2",
       "start": "0x02002fb0",
       "end": "0x02003120",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4789,7 +4789,7 @@
       "overlay": "resource_3b3",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4807,7 +4807,7 @@
       "overlay": "resource_3b3",
       "start": "0x02002a2c",
       "end": "0x02002bbc",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4825,7 +4825,7 @@
       "overlay": "resource_3b4",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4843,7 +4843,7 @@
       "overlay": "resource_3b4",
       "start": "0x02002468",
       "end": "0x02002608",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4861,7 +4861,7 @@
       "overlay": "resource_3b5",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4879,7 +4879,7 @@
       "overlay": "resource_3b5",
       "start": "0x02000cfc",
       "end": "0x02000e6c",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4897,7 +4897,7 @@
       "overlay": "resource_3b6",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4915,7 +4915,7 @@
       "overlay": "resource_3b6",
       "start": "0x02000998",
       "end": "0x02000a90",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4933,7 +4933,7 @@
       "overlay": "resource_3b7",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4951,7 +4951,7 @@
       "overlay": "resource_3b7",
       "start": "0x02001854",
       "end": "0x020019cc",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4969,7 +4969,7 @@
       "overlay": "resource_3b8",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -4987,7 +4987,7 @@
       "overlay": "resource_3b8",
       "start": "0x02004340",
       "end": "0x02004550",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5005,7 +5005,7 @@
       "overlay": "resource_3b9",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5023,7 +5023,7 @@
       "overlay": "resource_3b9",
       "start": "0x02002b8c",
       "end": "0x02002d3c",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5041,7 +5041,7 @@
       "overlay": "resource_3ba",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5059,7 +5059,7 @@
       "overlay": "resource_3ba",
       "start": "0x02003b00",
       "end": "0x02003e08",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5077,7 +5077,7 @@
       "overlay": "resource_3bb",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5095,7 +5095,7 @@
       "overlay": "resource_3bb",
       "start": "0x02003d98",
       "end": "0x020040c0",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5113,7 +5113,7 @@
       "overlay": "resource_3bc",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5131,7 +5131,7 @@
       "overlay": "resource_3bc",
       "start": "0x02004830",
       "end": "0x02004bb0",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5149,7 +5149,7 @@
       "overlay": "resource_3bd",
       "start": "0x02000000",
       "end": "0x02000020",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5167,7 +5167,7 @@
       "overlay": "resource_3bd",
       "start": "0x02003be8",
       "end": "0x02003e78",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5185,7 +5185,7 @@
       "overlay": "resource_3be",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5203,7 +5203,7 @@
       "overlay": "resource_3be",
       "start": "0x02001484",
       "end": "0x020015dc",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5221,7 +5221,7 @@
       "overlay": "resource_3bf",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5239,7 +5239,7 @@
       "overlay": "resource_3bf",
       "start": "0x02005588",
       "end": "0x020057b0",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5257,7 +5257,7 @@
       "overlay": "resource_3c0",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5275,7 +5275,7 @@
       "overlay": "resource_3c0",
       "start": "0x020011ec",
       "end": "0x0200137c",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5293,7 +5293,7 @@
       "overlay": "resource_3c1",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5311,7 +5311,7 @@
       "overlay": "resource_3c1",
       "start": "0x02000288",
       "end": "0x020002f0",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5329,7 +5329,7 @@
       "overlay": "resource_3c2",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5347,7 +5347,7 @@
       "overlay": "resource_3c2",
       "start": "0x02000b34",
       "end": "0x02000c3c",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5365,7 +5365,7 @@
       "overlay": "resource_3c3",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5383,7 +5383,7 @@
       "overlay": "resource_3c3",
       "start": "0x0200085c",
       "end": "0x02000974",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5401,7 +5401,7 @@
       "overlay": "resource_3c4",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5419,7 +5419,7 @@
       "overlay": "resource_3c4",
       "start": "0x02003014",
       "end": "0x020031b4",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5437,7 +5437,7 @@
       "overlay": "resource_3c5",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5455,7 +5455,7 @@
       "overlay": "resource_3c5",
       "start": "0x02002d78",
       "end": "0x02002f98",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5473,7 +5473,7 @@
       "overlay": "resource_3c6",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5491,7 +5491,7 @@
       "overlay": "resource_3c6",
       "start": "0x020014d8",
       "end": "0x02001638",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5509,7 +5509,7 @@
       "overlay": "resource_3c7",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5527,7 +5527,7 @@
       "overlay": "resource_3c7",
       "start": "0x020011dc",
       "end": "0x02001314",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5545,7 +5545,7 @@
       "overlay": "resource_3c8",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5563,7 +5563,7 @@
       "overlay": "resource_3c8",
       "start": "0x02004d9c",
       "end": "0x02005004",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5581,7 +5581,7 @@
       "overlay": "resource_3c9",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5599,7 +5599,7 @@
       "overlay": "resource_3c9",
       "start": "0x02005bec",
       "end": "0x02005ed4",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5617,7 +5617,7 @@
       "overlay": "resource_3ca",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5635,7 +5635,7 @@
       "overlay": "resource_3ca",
       "start": "0x02001314",
       "end": "0x020014ac",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5653,7 +5653,7 @@
       "overlay": "resource_3cb",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5671,7 +5671,7 @@
       "overlay": "resource_3cb",
       "start": "0x02001704",
       "end": "0x020018ec",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5689,7 +5689,7 @@
       "overlay": "resource_3cc",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5707,7 +5707,7 @@
       "overlay": "resource_3cc",
       "start": "0x020000b8",
       "end": "0x020000c8",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5725,7 +5725,7 @@
       "overlay": "resource_3cd",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5743,7 +5743,7 @@
       "overlay": "resource_3cd",
       "start": "0x020007e0",
       "end": "0x020008d0",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5761,7 +5761,7 @@
       "overlay": "resource_3ce",
       "start": "0x02000000",
       "end": "0x02000030",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -5779,7 +5779,7 @@
       "overlay": "resource_3ce",
       "start": "0x02001188",
       "end": "0x020012b0",
-      "kind": "veneer",
+      "kind": "overlay_trampoline",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [

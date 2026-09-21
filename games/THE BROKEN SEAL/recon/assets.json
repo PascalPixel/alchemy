@@ -117,21 +117,21 @@
       "address": "0x080b5204",
       "size": "0x08",
       "kind": "le-u32-array",
-      "source": "games/THE BROKEN SEAL/raw/veneer_island_residual/index.json",
+      "source": "games/THE BROKEN SEAL/raw/080b5138.json",
       "pointer": "/gaps/0/sections/1/values"
     },
     {
       "address": "0x080b5218",
       "size": "0x20",
       "kind": "le-u32-array",
-      "source": "games/THE BROKEN SEAL/raw/veneer_island_residual/index.json",
+      "source": "games/THE BROKEN SEAL/raw/080b5138.json",
       "pointer": "/gaps/0/sections/3/values"
     },
     {
       "address": "0x080b5238",
       "size": "0x20",
       "kind": "le-u32-array",
-      "source": "games/THE BROKEN SEAL/raw/veneer_island_residual/index.json",
+      "source": "games/THE BROKEN SEAL/raw/080b5138.json",
       "pointer": "/gaps/0/sections/4/values"
     },
     {

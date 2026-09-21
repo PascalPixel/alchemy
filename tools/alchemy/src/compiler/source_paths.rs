@@ -148,6 +148,7 @@ pub struct SourceFile {
 #[derive(Clone, Debug)]
 struct SourceRecord {
     name: String,
+    is_owner: bool,
     /// The register named this owner, rather than the file name standing in.
     named: bool,
     path: Option<PathBuf>,
@@ -230,6 +231,7 @@ impl SourcePaths {
                     owner,
                     SourceRecord {
                         name,
+                        is_owner: true,
                         named: explicit_name.is_some(),
                         path: source.clone(),
                         call_via,
@@ -241,6 +243,33 @@ impl SourcePaths {
             }
             if let Some(path) = source {
                 by_path.entry(path).or_default().push(owner);
+            }
+        }
+        if let Some(symbols) = value.get("symbols") {
+            let symbols = symbols.as_object().ok_or("symbols must be an object")?;
+            for (id, value) in symbols {
+                let owner = SourceOwner::parse(id)?;
+                let name = value
+                    .as_str()
+                    .ok_or_else(|| format!("{id}: symbol name must be a string"))?;
+                if !c_identifier(name) {
+                    return Err(format!("{id}: symbol name {name:?} is not a C identifier"));
+                }
+                if records
+                    .insert(
+                        owner,
+                        SourceRecord {
+                            name: name.to_owned(),
+                            is_owner: false,
+                            named: true,
+                            path: None,
+                            call_via: None,
+                        },
+                    )
+                    .is_some()
+                {
+                    return Err(format!("duplicate source identity {id}"));
+                }
             }
         }
         for (path, owners) in &by_path {
@@ -430,7 +459,10 @@ impl SourcePaths {
         owners
     }
     pub fn registered_owners(&self) -> impl Iterator<Item = SourceOwner> + '_ {
-        self.records.keys().copied()
+        self.records
+            .iter()
+            .filter(|(_, record)| record.is_owner)
+            .map(|(owner, _)| *owner)
     }
     /// Destination for a new exact-source adoption. Legacy fallback is
     /// intentionally excluded: new writes must never recreate the flat,

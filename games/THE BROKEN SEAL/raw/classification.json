@@ -11,27 +11,22 @@
   },
   "structural": [
     {
-      "kind": "linker_veneer",
+      "kind": "unresolved_trampoline_table",
       "origin": "unidentified_build_step",
       "retention": "keep_asm",
       "confidence": "proven",
       "evidence": [
-        "fixed_ldr_r4_bx_r4_literal",
-        "not_gcc296_thumb_tail_jump_arm_md_6047_6055",
-        "not_ld_2_10_stub_elf32_arm_h_311_343_1324_1395",
-        "callers_reach_targets_by_in_range_bl_entry_point_table_generator_unidentified",
-        "reconstruction_task_table_data_writer_and_reader_not_a_label"
+        "fixed_eight_byte_entries",
+        "ldr_r4_bx_r4_target_word"
       ],
-      "expected_files": 608,
+      "expected_files": 13,
       "expected_bytes": 4864,
       "provenance": {
         "scanned": "2026-09-10",
         "cross_rom": "259 of 608 entries byte-identical across TBS editions only; one 8-byte chance hit in TLA",
-        "verdict": "not_toolchain_origin_unidentified",
+        "verdict": "origin_unidentified",
         "credit": "none_until_reconstructed",
-        "reason": "provably not GCC 2.96 Thumb output and provably not a GNU ld 2.10 stub (Kiki, battle-loop lane, 2026-09-10: arm.md:6047-6055 sibcall expanders are TARGET_ARM only, Thumb calls are bl _call_via_rN; binutils 2.10 bfd/elf32-arm.h:311-343 stubs use r12 or bx pc;nop;b, R_ARM_THM_PC22 overflow at :1324-1395 returns bfd_reloc_overflow); callers reach the targets by plain bl within range, so these are an entry-point table from an unidentified build step; not proven handwritten; whether a regenerable table counts as done is Pascal's pending question",
-        "previous_origin": "linker",
-        "reconstruction_task": "Pascal 2026-09-10: if Camelot had table data and a way to encode and read it, we make the same source — the data, the writer, the reader. 608 stable eight-byte entry points (ldr r4,[pc]; bx r4; .word target|1), reached by plain in-range bl from callers, provably not ld 2.10 and not GCC 2.96; a build step or hand-maintained table. Stays uncredited until that source form exists and the build regenerates the 4,864 bytes."
+        "reason": "Thirteen unresolved fixed-width tables containing 608 eight-byte entries. Each entry is ldr r4, bx r4 and a Thumb target word. The producing build step is unidentified, so the tables remain uncredited reconstruction debt."
       }
     },
     {
@@ -140,7 +135,7 @@
       "confidence": "proven",
       "evidence": [
         "fixed_width_dispatch_entries",
-        "refused_data_table_reconstruction_shape_like_linker_veneer"
+        "refused_data_table_reconstruction_shape_like_unresolved_trampoline_table"
       ],
       "expected_files": 1,
       "expected_bytes": 768,
@@ -926,7 +921,7 @@
         },
         "verdict": "not_toolchain_origin_unidentified",
         "credit": "none",
-        "reason": "same citations as linker_veneer; the target is an IWRAM address, not a section symbol, so not a linker stub either; origin compiler_runtime is unsupported",
+        "reason": "the target is an IWRAM address rather than a section symbol; the producing build step remains unidentified",
         "previous_origin": "compiler_runtime"
       }
     },

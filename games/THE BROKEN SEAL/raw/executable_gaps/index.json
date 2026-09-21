@@ -646,7 +646,7 @@
           "kind": "veneer",
           "classification": "unused",
           "target": "0x0800b389",
-          "source": "08009010.s"
+          "source": "../trampoline_tables/08009000.s"
         },
         {
           "address": "0x08009018",
@@ -654,7 +654,7 @@
           "kind": "veneer",
           "classification": "unused",
           "target": "0x0800b7c1",
-          "source": "08009018.s"
+          "source": "../trampoline_tables/08009000.s"
         }
       ]
     },
@@ -668,7 +668,7 @@
           "kind": "veneer",
           "classification": "unused",
           "target": "0x0800bacd",
-          "source": "08009028.s"
+          "source": "../trampoline_tables/08009000.s"
         }
       ]
     },
@@ -682,7 +682,7 @@
           "kind": "veneer",
           "classification": "unused",
           "target": "0x0800b075",
-          "source": "08009040.s"
+          "source": "../trampoline_tables/08009000.s"
         }
       ]
     },
@@ -696,7 +696,7 @@
           "kind": "veneer",
           "classification": "unused",
           "target": "0x0800b9a5",
-          "source": "08009058.s"
+          "source": "../trampoline_tables/08009000.s"
         }
       ]
     },
@@ -710,7 +710,7 @@
           "kind": "veneer",
           "classification": "unused",
           "target": "0x0800b869",
-          "source": "08009068.s"
+          "source": "../trampoline_tables/08009000.s"
         }
       ]
     },
@@ -724,7 +724,7 @@
           "kind": "veneer",
           "classification": "unused",
           "target": "0x0800c389",
-          "source": "08009090.s"
+          "source": "../trampoline_tables/08009000.s"
         }
       ]
     },
@@ -738,7 +738,7 @@
           "kind": "veneer",
           "classification": "unused",
           "target": "0x0800c0cd",
-          "source": "080090c0.s"
+          "source": "../trampoline_tables/08009000.s"
         }
       ]
     },
@@ -752,7 +752,7 @@
           "kind": "veneer",
           "classification": "unused",
           "target": "0x0800c3ed",
-          "source": "080090d8.s"
+          "source": "../trampoline_tables/08009000.s"
         }
       ]
     },
@@ -766,7 +766,7 @@
           "kind": "veneer",
           "classification": "unused",
           "target": "0x0800c455",
-          "source": "080090e8.s"
+          "source": "../trampoline_tables/08009000.s"
         }
       ]
     },
@@ -780,7 +780,7 @@
           "kind": "veneer",
           "classification": "unused",
           "target": "0x08010231",
-          "source": "08009120.s"
+          "source": "../trampoline_tables/08009000.s"
         }
       ]
     },
@@ -794,7 +794,7 @@
           "kind": "veneer",
           "classification": "unused",
           "target": "0x0800bfa5",
-          "source": "08009160.s"
+          "source": "../trampoline_tables/08009000.s"
         },
         {
           "address": "0x08009168",
@@ -802,7 +802,7 @@
           "kind": "veneer",
           "classification": "unused",
           "target": "0x080111b5",
-          "source": "08009168.s"
+          "source": "../trampoline_tables/08009000.s"
         },
         {
           "address": "0x08009170",
@@ -810,7 +810,7 @@
           "kind": "veneer",
           "classification": "referenced",
           "target": "0x0801173d",
-          "source": "08009170.s"
+          "source": "../trampoline_tables/08009000.s"
         },
         {
           "address": "0x08009178",
@@ -818,7 +818,7 @@
           "kind": "veneer",
           "classification": "referenced",
           "target": "0x08010561",
-          "source": "08009178.s"
+          "source": "../trampoline_tables/08009000.s"
         },
         {
           "address": "0x08009180",
@@ -826,7 +826,7 @@
           "kind": "veneer",
           "classification": "referenced",
           "target": "0x08010425",
-          "source": "08009180.s"
+          "source": "../trampoline_tables/08009000.s"
         },
         {
           "address": "0x08009188",
@@ -834,7 +834,7 @@
           "kind": "veneer",
           "classification": "referenced",
           "target": "0x080118a9",
-          "source": "08009188.s"
+          "source": "../trampoline_tables/08009000.s"
         },
         {
           "address": "0x08009190",
@@ -842,7 +842,7 @@
           "kind": "veneer",
           "classification": "referenced",
           "target": "0x080118c1",
-          "source": "08009190.s"
+          "source": "../trampoline_tables/08009000.s"
         },
         {
           "address": "0x08009198",
@@ -850,7 +850,7 @@
           "kind": "veneer",
           "classification": "referenced",
           "target": "0x08011af1",
-          "source": "08009198.s"
+          "source": "../trampoline_tables/08009000.s"
         },
         {
           "address": "0x080091a0",
@@ -858,7 +858,7 @@
           "kind": "veneer",
           "classification": "referenced",
           "target": "0x08011ae1",
-          "source": "080091a0.s"
+          "source": "../trampoline_tables/08009000.s"
         }
       ]
     },
@@ -872,7 +872,7 @@
           "kind": "veneer",
           "classification": "referenced",
           "target": "0x080105d5",
-          "source": "080091b8.s"
+          "source": "../trampoline_tables/08009000.s"
         },
         {
           "address": "0x080091c0",
@@ -880,7 +880,7 @@
           "kind": "veneer",
           "classification": "referenced",
           "target": "0x08010705",
-          "source": "080091c0.s"
+          "source": "../trampoline_tables/08009000.s"
         },
         {
           "address": "0x080091c8",
@@ -888,7 +888,7 @@
           "kind": "veneer",
           "classification": "referenced",
           "target": "0x08010789",
-          "source": "080091c8.s"
+          "source": "../trampoline_tables/08009000.s"
         },
         {
           "address": "0x080091d0",
@@ -896,7 +896,7 @@
           "kind": "veneer",
           "classification": "referenced",
           "target": "0x08010d49",
-          "source": "080091d0.s"
+          "source": "../trampoline_tables/08009000.s"
         }
       ]
     },
@@ -910,7 +910,7 @@
           "kind": "veneer",
           "classification": "referenced",
           "target": "0x0800c549",
-          "source": "080091e8.s"
+          "source": "../trampoline_tables/08009000.s"
         }
       ]
     },
@@ -924,7 +924,7 @@
           "kind": "veneer",
           "classification": "referenced",
           "target": "0x08012351",
-          "source": "080091f8.s"
+          "source": "../trampoline_tables/08009000.s"
         },
         {
           "address": "0x08009200",
@@ -932,7 +932,7 @@
           "kind": "veneer",
           "classification": "unused",
           "target": "0x0800c409",
-          "source": "08009200.s"
+          "source": "../trampoline_tables/08009000.s"
         },
         {
           "address": "0x08009208",
@@ -940,7 +940,7 @@
           "kind": "veneer",
           "classification": "referenced",
           "target": "0x0800c5b5",
-          "source": "08009208.s"
+          "source": "../trampoline_tables/08009000.s"
         },
         {
           "address": "0x08009210",
@@ -948,7 +948,7 @@
           "kind": "veneer",
           "classification": "referenced",
           "target": "0x0800c5fd",
-          "source": "08009210.s"
+          "source": "../trampoline_tables/08009000.s"
         },
         {
           "address": "0x08009218",
@@ -956,7 +956,7 @@
           "kind": "veneer",
           "classification": "unused",
           "target": "0x0800c571",
-          "source": "08009218.s"
+          "source": "../trampoline_tables/08009000.s"
         }
       ]
     },
@@ -970,7 +970,7 @@
           "kind": "veneer",
           "classification": "referenced",
           "target": "0x080108c5",
-          "source": "08009258.s"
+          "source": "../trampoline_tables/08009000.s"
         }
       ]
     },
@@ -984,7 +984,7 @@
           "kind": "veneer",
           "classification": "referenced",
           "target": "0x08012079",
-          "source": "08009278.s"
+          "source": "../trampoline_tables/08009000.s"
         }
       ]
     },
@@ -1701,7 +1701,7 @@
           "address": "0x080f9000",
           "size": 8,
           "kind": "thumb",
-          "source": "080f9000.s",
+          "source": "../trampoline_tables/080f9000.s",
           "instruction_bytes": 4,
           "literal_words": 1,
           "undefined_words": 0

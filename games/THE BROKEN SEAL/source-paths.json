@@ -9845,27 +9845,6 @@
     "main:08002dd8": {
       "name": "Runtime_ReleaseHeapBlock"
     },
-    "main:08009098": {
-      "name": "ObjectDispatch_InitializeFar"
-    },
-    "main:080090c8": {
-      "name": "Object_CreateFar"
-    },
-    "main:08015090": {
-      "name": "UiText_DrawStringAtOffsetFar"
-    },
-    "main:08015098": {
-      "name": "UiText_DrawStringInWindowFar"
-    },
-    "main:080150a8": {
-      "name": "UiText_DrawNumberAtOffsetFar"
-    },
-    "main:08015250": {
-      "name": "ItemIcon_LoadTilesFar"
-    },
-    "main:08015280": {
-      "name": "UiWindow_SetTilemapEntryFar"
-    },
     "main:08077428": {
       "name": "Owner_RecalculateStats"
     },
@@ -18648,21 +18627,6 @@
     "main:080030f8": {
       "name": "WaitFrames"
     },
-    "main:08009080": {
-      "name": "Object_SetMode"
-    },
-    "main:08009150": {
-      "name": "Object_SetPosition"
-    },
-    "main:08009158": {
-      "name": "Object_CommitPosition"
-    },
-    "main:080091d8": {
-      "name": "Object_CheckMovementCollision"
-    },
-    "main:080f9010": {
-      "name": "Audio_PlayCue"
-    },
     "main:08019d2c": {
       "name": "Localization_LookupEntryId",
       "source": "GRAPHICS/WINDOW/LOOKUP_ENTRY_ID.C"
@@ -19041,5 +19005,19 @@
     "main:080be18c": {
       "name": "BattleCommand_SelectTargets"
     }
+  },
+  "symbols": {
+    "main:08009098": "ObjectDispatch_InitializeFar",
+    "main:080090c8": "Object_CreateFar",
+    "main:08015090": "UiText_DrawStringAtOffsetFar",
+    "main:08015098": "UiText_DrawStringInWindowFar",
+    "main:080150a8": "UiText_DrawNumberAtOffsetFar",
+    "main:08015250": "ItemIcon_LoadTilesFar",
+    "main:08015280": "UiWindow_SetTilemapEntryFar",
+    "main:08009080": "Object_SetMode",
+    "main:08009150": "Object_SetPosition",
+    "main:08009158": "Object_CommitPosition",
+    "main:080091d8": "Object_CheckMovementCollision",
+    "main:080f9010": "Audio_PlayCue"
   }
 }

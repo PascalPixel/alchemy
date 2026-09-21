@@ -452,11 +452,19 @@ other ranges of its kind inherit nothing. `structured_scene_module` is a draft
 scene, not the retired `generated_call_script_module`. Classification stays in
 the existing main and overlay registries. Only Pascal changes credit standards.
 
-Pascal's specific exception: fixed overlay veneers reconstructed with the shared
+Main-ROM fixed eight-byte `ldr r4; bx r4; target` tables are
+`unresolved_trampoline_table` owners from an `unidentified_build_step`. The 608
+entries form thirteen contiguous tables under `raw/trampoline_tables`; they have
+zero assembly credit. Their byte shape proves neither linker, macro, generator
+nor handwritten origin. Human names for callable entries are symbols inside the
+table, not independent owners. Recover table membership and ordering from real
+source relationships before replacing these temporary structured sources.
+
+Pascal's specific exception: fixed overlay trampolines reconstructed with the shared
 `SRC/SYSTEM/OVERLAY.INC` macro and per-overlay `ENTRY.INC`/`IMPORT.INC` lists.
-Credit requires kind `veneer`, confidence `proven`, provenance credit
+Credit requires kind `overlay_trampoline`, confidence `proven`, provenance credit
 `reconstructed_veneer`, the macro proof path, complete aligned eight-byte entries
-inside audited veneer ranges, and exact overlay/ROM reproduction. This proves
+inside audited trampoline ranges, and exact overlay/ROM reproduction. This proves
 assembly linkage reconstruction, not whether Camelot used a macro or generator.
 
 ## Compiler integrity

@@ -384,11 +384,14 @@ fn explicit_classifications(
     }
     Ok(result)
 }
-fn long_call_veneer(data: &[u8]) -> bool {
-    data.len() == 8
-        && u16::from_le_bytes([data[0], data[1]]) == 0x4c00
-        && u16::from_le_bytes([data[2], data[3]]) == 0x4720
-        && u32::from_le_bytes([data[4], data[5], data[6], data[7]]) & 1 != 0
+fn unresolved_trampoline_table(data: &[u8]) -> bool {
+    !data.is_empty()
+        && data.len() % 8 == 0
+        && data.chunks_exact(8).all(|entry| {
+            u16::from_le_bytes([entry[0], entry[1]]) == 0x4c00
+                && u16::from_le_bytes([entry[2], entry[3]]) == 0x4720
+                && u32::from_le_bytes([entry[4], entry[5], entry[6], entry[7]]) & 1 != 0
+        })
 }
 fn alignment_padding(data: &[u8]) -> bool {
     data == [0, 0]
@@ -406,8 +409,11 @@ fn classify(
     if let Some(fixed) = explicit.get(name) {
         return Ok(fixed.classification());
     }
-    let structural = if long_call_veneer(data) {
-        Some(("linker_veneer", "missing linker veneer classification"))
+    let structural = if unresolved_trampoline_table(data) {
+        Some((
+            "unresolved_trampoline_table",
+            "missing unresolved trampoline-table classification",
+        ))
     } else if alignment_padding(data) {
         Some((
             "alignment_padding",
@@ -726,6 +732,13 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
         }
         let name = stem(source);
         let category = classify(&name, &built.data, &source_text, &classification, &explicit)?;
+        if category.kind == "unresolved_trampoline_table"
+            && source.parent() != Some(asm.join("trampoline_tables").as_path())
+        {
+            return Err(format!(
+                "{source_name}: unresolved trampoline tables belong in raw/trampoline_tables"
+            ));
+        }
         let count = counts.entry(category.kind.clone()).or_default();
         count.files += 1;
         count.bytes += built.data.len();

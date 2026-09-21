@@ -46,7 +46,7 @@
         "start": 134226668,
         "end": 134226700,
         "kind": "veneer",
-        "evidence_ref": "e4"
+        "evidence": "games/THE BROKEN SEAL/raw/080022ec.s:iwram_runtime_veneer"
       },
       {
         "start": 134226700,
@@ -531,7 +531,7 @@
       {
         "start": 134254592,
         "end": 134255288,
-        "kind": "veneer",
+        "kind": "unresolved_trampoline_table",
         "evidence_ref": "e4"
       },
       {
@@ -1437,7 +1437,7 @@
       {
         "start": 134303744,
         "end": 134304816,
-        "kind": "veneer",
+        "kind": "unresolved_trampoline_table",
         "evidence_ref": "e4"
       },
       {
@@ -2187,7 +2187,7 @@
       {
         "start": 134705152,
         "end": 134705952,
-        "kind": "veneer",
+        "kind": "unresolved_trampoline_table",
         "evidence_ref": "e4"
       },
       {
@@ -2487,7 +2487,7 @@
       {
         "start": 134782976,
         "end": 134784504,
-        "kind": "veneer",
+        "kind": "unresolved_trampoline_table",
         "evidence_ref": "e4"
       },
       {
@@ -3369,7 +3369,7 @@
       {
         "start": 134877184,
         "end": 134877264,
-        "kind": "veneer",
+        "kind": "unresolved_trampoline_table",
         "evidence_ref": "e4"
       },
       {
@@ -3729,7 +3729,7 @@
       {
         "start": 134938624,
         "end": 134938736,
-        "kind": "veneer",
+        "kind": "unresolved_trampoline_table",
         "evidence_ref": "e4"
       },
       {
@@ -3789,26 +3789,26 @@
       {
         "start": 134959104,
         "end": 134959416,
-        "kind": "veneer",
+        "kind": "unresolved_trampoline_table",
         "evidence_ref": "e4"
       },
       {
         "start": 134959416,
         "end": 134959620,
         "kind": "arm",
-        "evidence": "games/THE BROKEN SEAL/raw/veneer_island_residual/080b5138.s:relocated_arm_runtime_module"
+        "evidence": "games/THE BROKEN SEAL/raw/080b5138.s:relocated_arm_runtime_module"
       },
       {
         "start": 134959628,
         "end": 134959640,
         "kind": "arm",
-        "evidence": "games/THE BROKEN SEAL/raw/veneer_island_residual/080b520c.s:relocated_arm_runtime_module"
+        "evidence": "games/THE BROKEN SEAL/raw/080b520c.s:relocated_arm_runtime_module"
       },
       {
         "start": 134959704,
         "end": 134959976,
         "kind": "arm",
-        "evidence": "games/THE BROKEN SEAL/raw/veneer_island_residual/080b5258.s:relocated_arm_runtime_module"
+        "evidence": "games/THE BROKEN SEAL/raw/080b5258.s:relocated_arm_runtime_module"
       },
       {
         "start": 134959976,
@@ -4377,7 +4377,7 @@
       {
         "start": 135041024,
         "end": 135041096,
-        "kind": "veneer",
+        "kind": "unresolved_trampoline_table",
         "evidence_ref": "e4"
       },
       {
@@ -4725,7 +4725,7 @@
       {
         "start": 135208960,
         "end": 135209000,
-        "kind": "veneer",
+        "kind": "unresolved_trampoline_table",
         "evidence_ref": "e4"
       },
       {
@@ -4779,8 +4779,8 @@
       {
         "start": 135217152,
         "end": 135217160,
-        "kind": "veneer",
-        "evidence": "games/THE BROKEN SEAL/raw/080f4000.s:linker_veneer"
+        "kind": "unresolved_trampoline_table",
+        "evidence": "games/THE BROKEN SEAL/raw/trampoline_tables/080f4000.s:unresolved_trampoline_table"
       },
       {
         "start": 135217160,
@@ -4809,8 +4809,8 @@
       {
         "start": 135225344,
         "end": 135225352,
-        "kind": "veneer",
-        "evidence": "games/THE BROKEN SEAL/raw/080f6000.s:linker_veneer"
+        "kind": "unresolved_trampoline_table",
+        "evidence": "games/THE BROKEN SEAL/raw/trampoline_tables/080f6000.s:unresolved_trampoline_table"
       },
       {
         "start": 135225352,
@@ -4821,7 +4821,7 @@
       {
         "start": 135237632,
         "end": 135237760,
-        "kind": "veneer",
+        "kind": "unresolved_trampoline_table",
         "evidence_ref": "e4"
       },
       {
@@ -5223,8 +5223,8 @@
       {
         "start": 135811072,
         "end": 135811080,
-        "kind": "veneer",
-        "evidence": "games/THE BROKEN SEAL/raw/08185000.s:linker_veneer"
+        "kind": "unresolved_trampoline_table",
+        "evidence": "games/THE BROKEN SEAL/raw/trampoline_tables/08185000.s:unresolved_trampoline_table"
       },
       {
         "start": 135811080,
@@ -40412,7 +40412,7 @@
     "e1": "adjacent audited literal_pool spans; see namespace evidence",
     "e2": "adjacent audited structural spans; see namespace evidence",
     "e3": "adjacent audited thumb spans; see namespace evidence",
-    "e4": "adjacent audited veneer spans; see namespace evidence",
+    "e4": "adjacent audited unresolved trampoline-table spans; see namespace evidence",
     "e5": "BL-reached bounded raw-halfword leaf",
     "e6": "bounded GCC switch table: compared source register, scaled index, indexed load and mov-pc dispatch; every destination is inside this image",
     "e7": "Complete 3304-byte scene entry; all selector arms and 257 loader-resolved calls audited",

@@ -5,6 +5,7 @@
 struct ItemDefinition *Func_08077018(s32);
 s32 Func_0808a490(s32);
 void *Func_08077080(s32);
+#define BattleAction_Get Func_08077080
 s32 Func_08077218(s32, s32);
 
 s32 Item_ClassifyUseMode(s32 owner, s32 itemId)
@@ -21,7 +22,7 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId)
     }
 
     {
-        void *abilityData = Func_08077080(FIELD_AT_OFFSET(itemData, u16, 40) & 0x3fff);
+        void *abilityData = BattleAction_Get(FIELD_AT_OFFSET(itemData, u16, 40) & 0x3fff);
 
         if (FIELD_AT_OFFSET(itemData, u16, 40) != 0) {
             if (FIELD_AT_OFFSET(itemData, u8, 2) != 0) {

@@ -2,6 +2,7 @@
 #include "BATTLE_EFFECT_RUNTIME.H"
 
 u8 *Func_08077080(s32);
+#define BattleAction_Get Func_08077080
 void *Func_0808ba1c(u32);
 #define ObjectTable_Get Func_0808ba1c
 
@@ -52,7 +53,7 @@ s32 BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result)
             GameFlag_IsConditionActive(event->action_id) != 0 &&
             (has_reference == 0 ||
              (u16)(high_value - reference + 0x17ff) <= 0x2ffe) &&
-            ((struct BattleEffectCharacter *)(void *)Func_08077080(
+            ((struct BattleEffectCharacter *)(void *)BattleAction_Get(
                 ((u8 *)&event->flags)[1]))->group == group &&
             (ignore_flags ||
              (event->flags & 0x7000000f) == requested_flags)) {

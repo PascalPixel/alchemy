@@ -21,6 +21,7 @@ extern u8 Value_00000920;
  * pointer is cast to the local action-definition view below.
  */
 u8 *Func_08077080(s32);
+#define BattleAction_Get Func_08077080
 /*
  * Returns void * because callers view the same record through different
  * structs; each casts the shared pointer to its own view locally.
@@ -68,7 +69,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
     s32 cost;
     s32 status;
 
-    targetMode = ((struct BattleActionDefinition *)(void *)Func_08077080(actionId))->target_mode;
+    targetMode = ((struct BattleActionDefinition *)(void *)BattleAction_Get(actionId))->target_mode;
     actor = (encodedAction >> 10) & 15;
     Func_0808ba1c(Data_02000240.object_id);
     specialResult = 0;
@@ -106,7 +107,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
     if (encodedAction & 0x2000) return BattleFx_ExecutePackedAbilityEffect(encodedAction);
 
     if (actor <= 7) {
-        cost = ((struct BattleActionDefinition *)(void *)Func_08077080(actionId))->pp_cost;
+        cost = ((struct BattleActionDefinition *)(void *)BattleAction_Get(actionId))->pp_cost;
         if (((struct BattleUnitRecord *)Func_08077008(actor))->pp < cost) {
             Func_08015120(actor, 1); Func_08015120(actionId, 4); Func_08015040(0x91e, 1);
             if (specialResult)runtime->result_code = 0;

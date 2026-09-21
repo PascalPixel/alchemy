@@ -682,8 +682,24 @@ fn runtime_credit_for(
 #[cfg(test)]
 const OVERLAY_VENEER_MACRO: &str = "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC";
 
-/// Proven retained and draft main assembly. Generic range classifications do
-/// not establish authorship or library identity and therefore earn no credit.
+fn maintained_assembly_credit(region: &Value, target: &DecompTarget) -> bool {
+    let source = text(region, "source");
+    let provenance = &region["provenance"];
+    let source_root = format!("{}/SRC/", target.game_dir());
+    source.starts_with(&source_root)
+        && matches!(
+            text(provenance, "credit").as_str(),
+            "handwritten" | "library"
+        )
+        && array(provenance, "evidence")
+            .iter()
+            .any(|item| item.as_str().is_some_and(|item| !item.trim().is_empty()))
+        && (!text(provenance, "proof").trim().is_empty()
+            || !text(provenance, "object").trim().is_empty())
+}
+
+/// Proven retained and draft main assembly. Only byte-verified maintained
+/// source with its own authorship or library provenance earns completion credit.
 #[cfg(test)]
 fn main_assembly_classification(tree: &SourceTree) -> (Vec<Span>, Vec<Span>, Vec<Span>) {
     let target = crate::targets::target_for(crate::targets::DEFAULT_TARGET);
@@ -695,7 +711,7 @@ fn main_assembly_classification_for(
 ) -> (Vec<Span>, Vec<Span>, Vec<Span>) {
     let mut proven = Vec::new();
     let mut draft = Vec::new();
-    let credited = Vec::new();
+    let mut credited = Vec::new();
     if let Some(value) = json(
         tree,
         &format!("{}/full/asm/manifest.json", target.output_dir),
@@ -726,6 +742,8 @@ fn main_assembly_classification_for(
                     let span = Span::new(address, address + size);
                     if text(region, "confidence") != "proven" {
                         draft.push(span);
+                    } else if maintained_assembly_credit(region, target) {
+                        credited.push(span);
                     } else {
                         proven.push(span);
                     }

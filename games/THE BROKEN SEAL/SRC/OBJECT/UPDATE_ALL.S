@@ -1,8 +1,9 @@
-@ 呼出側の転送元と転送長により境界を確定した再配置アーム処理。
-@ 承認済みコンパイラはサム専用のため構造化アセンブリで保持する。
+@ 活動中のオブジェクトを走査し、命令表、位置、速度と連結状態を更新する。
 .syntax unified
 	.arm
+	.global Object_UpdateAll
 	.global Func_0800a494
+Object_UpdateAll:
 Func_0800a494:
 	push	{r5, r6, r7, r8, r9, sl, lr}
 	mov	r2, #0

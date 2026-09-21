@@ -149,7 +149,9 @@ mod tests {
     use psynergy::compare::topology::{compare, compare_symbols, Comparison};
     #[test]
     fn live_arm_owner_fails_closed() {
-        let source = include_str!("../../../../games/THE BROKEN SEAL/raw/08002d5c.s");
+        let source = include_str!(
+            "../../../../games/THE BROKEN SEAL/SRC/GRAPHICS/COMPRESSION/PATCH_THUMB_BRANCH.S"
+        );
         assert!(matches!(
             compare(source, source, "Func_08002d5c"),
             Comparison::Uncovered(reason) if reason == "candidate-arm-mode"

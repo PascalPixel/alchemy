@@ -492,14 +492,10 @@ proven object views and direct union accesses before considering a global change
 No per-function flags/routes, invented flags, fixed-register C locals, empty
 barriers, forced scheduling, output patches or selected lucky runs. No volatile
 ordinary RAM, dummy/duplicate/overwritten stores or `do { } while (0)` barriers.
-Pascal's explicit cleanup exception on September 20 standardizes the remaining
-three `do/while(0)` workarounds as `SCHEDULING_CHEAT(statement)` in TBS
-`INCLUDE/TYPES.H`. They are OBJECT/GROUP_STORE_OBJECT_AND_RUN_STEP7,
-OBJECT/WAIT_TWELVE_FRAMES_THEN_SET_FIELD18 and the 92-byte wait-loop owner in
-BATTLE/EFFECT/SCHEDULE_RATIO_TRANSITION, covering 208 bytes. This names
-existing debt; it does not prove historical source or authorize more sites.
-Keep the macro expansion unchanged until ordinary C closes those owners. The
-former WINDOW/RUNTIME_SET_PARAM_NIBBLE site compiles exactly as ordinary C. The
+Scheduling-dependent C is withdrawn and retained as an ordinary draft while
+the exact bytes return to uncredited assembly; never preserve a match through
+a statement wrapper. The former WINDOW/RUNTIME_SET_PARAM_NIBBLE site compiles
+exactly as ordinary C. The
 6,220-byte ARUTAMIRA_DOU camera owner
 is retained assembly with its readable C parked after ordinary C remained two
 halfwords away. The separate Data_02009b85 call identity in
@@ -516,14 +512,13 @@ with its full instruction/operand/clobber contract. Its internal registers do
 not authorize caller register forcing. Do not change it or admit fill macros
 silently; `raw/classification.json` owns its family evidence.
 
-Track these three reconstructed primitives for review closer to 100%; do not
+Track these two reconstructed primitives for review closer to 100%; do not
 silently generalize their exceptions or mistake them for recovered original text:
 
 | Primitive | Maintained home | Evidence and later review |
 | --- | --- | --- |
 | `Dma_Set` | TBS `INCLUDE/DMA.H` | Shared inline assembly; 296 fixed-register kick sites recorded in `raw/classification.json`. Revisit its interface without weakening exactness. |
 | `overlay_veneer` | TBS `SRC/SYSTEM/OVERLAY.INC` | Reconstructs fixed linkage stubs under the specific veneer-credit exception. Original macro versus generator remains unknown. |
-| `SCHEDULING_CHEAT` | TBS `INCLUDE/TYPES.H` | Explicit temporary scheduling workaround at the three 208-byte owners listed above; historical provenance remains unproven. |
 
 GNU GAS 2.10 assembles compiler output and unit slices, including alignment;
 modern binutils handles retained syntax and linking under the recorded ABI.

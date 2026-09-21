@@ -12,5 +12,5 @@ void ObjectGroup_StoreObjectAndRunStep7(void *obj)
   *((void **)(((u8 *)state) + 0x7828)) = obj;
   Obj_Do(0);
   Obj_SetRect(obj, 7, (*((s32 *)(((u8 *)(*((void **)(((u8 *)state) + 0x7828)))) + 4))) ^ 1, 0, &out0, &out1);
- SCHEDULING_CHEAT(Obj_Check(););
+  Obj_Check();
 }

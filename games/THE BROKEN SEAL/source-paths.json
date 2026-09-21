@@ -4833,8 +4833,7 @@
       "source": "FIELD/COMMON/MAP/SET_WORK_FOUR_VALUES.C"
     },
     "main:080936a0": {
-      "name": "BattleFx_ScheduleRatioTransition",
-      "source": "BATTLE/EFFECT/SCHEDULE_RATIO_TRANSITION.C"
+      "name": "BattleFx_ScheduleRatioTransition"
     },
     "main:08093710": {
       "name": "Event_WaitForDisplayField358Clear"
@@ -5647,8 +5646,7 @@
       "source": "BATTLE/EFFECT/DISPATCH_BY_ID_RANGE.C"
     },
     "main:080e6948": {
-      "name": "ObjectGroup_StoreObjectAndRunStep7",
-      "source": "FIELD/COMMON/OBJECT/GROUP_STORE_OBJECT_AND_RUN_STEP7.C"
+      "name": "ObjectGroup_StoreObjectAndRunStep7"
     },
     "main:080ec0e0": {
       "name": "Graphics_ResetBg2Pa",
@@ -5663,8 +5661,7 @@
       "source": "BATTLE/EFFECT/WAIT_THEN_SET_FIELD.C"
     },
     "main:080eceac": {
-      "name": "Object_WaitTwelveFramesThenSetField18",
-      "source": "FIELD/COMMON/OBJECT/WAIT_TWELVE_FRAMES_THEN_SET_FIELD18.C"
+      "name": "Object_WaitTwelveFramesThenSetField18"
     },
     "main:080ecedc": {
       "name": "BattleFx_RunRevealColumnMode1",

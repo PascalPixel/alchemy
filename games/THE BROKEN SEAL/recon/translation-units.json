@@ -74379,20 +74379,6 @@
       "overlay": null
     },
     {
-      "id": "object-group-store-object-and-run-step7",
-      "game": "tbs",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/GROUP_STORE_OBJECT_AND_RUN_STEP7.C",
-      "compiler_route": "canonical-gcc296",
-      "owners": [
-        {
-          "address": "0x080e6948",
-          "extent": 68,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
       "id": "battle-effects-runtime-initialize-default-mode",
       "game": "tbs",
       "source": "games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUNTIME_INITIALIZE_DEFAULT_MODE.C",
@@ -75112,30 +75098,6 @@
         {
           "address": "0x08093570",
           "extent": 64,
-          "state": "exact-c"
-        }
-      ],
-      "overlay": null
-    },
-    {
-      "id": "battle-effects-schedule-ratio-transition",
-      "game": "tbs",
-      "source": "games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SCHEDULE_RATIO_TRANSITION.C",
-      "compiler_route": "canonical-gcc296",
-      "owners": [
-        {
-          "address": "0x080936a0",
-          "extent": 112,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x08093710",
-          "extent": 92,
-          "state": "exact-c"
-        },
-        {
-          "address": "0x0809376c",
-          "extent": 76,
           "state": "exact-c"
         }
       ],

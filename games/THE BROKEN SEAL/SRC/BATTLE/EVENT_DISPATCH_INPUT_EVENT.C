@@ -12,6 +12,7 @@ struct GlobalData_0808d8f0 {
 
 extern void *Data_03001ebc;
 extern u8 Data_02000240;
+#define PARTY_STATE Data_02000240
 extern volatile u32 Data_03001ae8;
 
 void Func_08092708(s32, s32, s32);
@@ -25,7 +26,7 @@ void Func_08093fa0(void);
 s32 Battle_DispatchInputEvent(s32 event)
 {
     struct RuntimeState_0808d8f0 *state = (struct RuntimeState_0808d8f0 *)Data_03001ebc;
-    s32 selected_object = ((struct GlobalData_0808d8f0 *)&Data_02000240)->selected_object;
+    s32 selected_object = ((struct GlobalData_0808d8f0 *)&PARTY_STATE)->selected_object;
 
     switch (event) {
     case 0xFC:

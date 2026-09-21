@@ -2,6 +2,7 @@
 #include "OBJECT_LOOKUP.H"
 
 extern struct EventPairWork1d6 Data_02000240;
+#define PARTY_STATE Data_02000240
 extern u8 Value_00000021;
 u16 Func_0808b05c(s32 arg0, s32 arg1);
 #define BattleFx_GetWeightedResult Func_0808b05c
@@ -17,8 +18,8 @@ void BattleFx_SetWeightedResult(s32 arg0, s32 arg1)
 
     runtime->value_17c = BattleFx_GetWeightedResult(first, second);
     if (first == 98 && second == 0)
-        Data_02000240.special = (u16)(s32)&Value_00000021;
+        PARTY_STATE.special = (u16)(s32)&Value_00000021;
     if (runtime->mode_19e == 3)
-        BattleFx_LookupResult((u8 *)ObjectTable_Get(Data_02000240.object_id) + 8);
+        BattleFx_LookupResult((u8 *)ObjectTable_Get(PARTY_STATE.object_id) + 8);
     Func_0808b320(first, second);
 }

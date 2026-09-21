@@ -4,6 +4,7 @@
 s32 Object_GetById(u32);
 
 extern s32 Data_02000240[];
+#define PARTY_STATE Data_02000240
 extern u8 Data_03001ebc[];
 
 void BattleFx_UpdateObjectVisibilityBounds(void)
@@ -17,7 +18,7 @@ void BattleFx_UpdateObjectVisibilityBounds(void)
     s32 bottom;
     u32 id;
 
-    object = Data_02000240[125];
+    object = PARTY_STATE[125];
     Object_GetById(object);
     object = *(s32 *)(*(u8 **)Data_03001ebc + 480);
     x = *(s32 *)(object + 8);

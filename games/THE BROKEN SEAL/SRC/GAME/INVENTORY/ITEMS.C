@@ -37,7 +37,7 @@ s32 PartyInventory_HasSpace(void)
     s32 owner_index;
     s16 *owner_cursor;
 
-    if (Inventory_Count(Data_02000240.current_owner) != 15)
+    if (Inventory_Count(PARTY_STATE.current_owner) != 15)
         return 1;
     owner_count = Party_ListActiveOwners(owners);
     owner_cursor = owners;
@@ -160,8 +160,8 @@ s32 PartyInventory_FindOwner(s32 item_id)
     s16 *owner_cursor;
     s16 owner;
 
-    if (Inventory_Find(Data_02000240.current_owner, item_id) != -1)
-        return Data_02000240.current_owner;
+    if (Inventory_Find(PARTY_STATE.current_owner, item_id) != -1)
+        return PARTY_STATE.current_owner;
     owner_count = Party_ListActiveOwners(owners);
     owner_cursor = owners;
     owner_index = 0;

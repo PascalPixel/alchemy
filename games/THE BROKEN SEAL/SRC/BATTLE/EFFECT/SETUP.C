@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
+#define PARTY_STATE Data_02000240
 
 s32 Func_080042c8(u32 callback);
 #define Scheduler_EnableCallbacks Func_080042c8
@@ -53,7 +54,7 @@ s32 BattleFx_GetResourceId(u32 id)
 {
     u8 value;
 
-    if (Data_02000240.enabled_20a == 0 ||
+    if (PARTY_STATE.enabled_20a == 0 ||
         (value = BattleFx_FindDefinition(id)->value) == 0xFF) {
         return 0;
     }
@@ -102,14 +103,14 @@ void Battle_InitializeRenderObject(void)
 {
     struct BattleRenderObject *object;
 
-    object = ObjectTable_Get(Data_02000240.object_id);
+    object = ObjectTable_Get(PARTY_STATE.object_id);
     object->unknown_30 = 0x10000;
     object->unknown_34 = 0x8000;
     object->unknown_38 = 0x80000000;
     object->unknown_40 = 0x80000000;
     object->unknown_24 = 0;
     object->unknown_2c = 0;
-    if (Data_02000240.mode_1f2 == 1) {
+    if (PARTY_STATE.mode_1f2 == 1) {
         Object_SetMode((s32)object, 0xC);
         return;
     }
@@ -143,7 +144,7 @@ void Battle_Reset(void)
         runtime->unknown_1de = -1;
         ScheduleCallbackAfterFrames((const void *)Battle_UpdateModeFromShoulderButtons, 0xC80);
         GameFlag_Clear(0x132);
-        runtime->object_id = Data_02000240.object_id;
+        runtime->object_id = PARTY_STATE.object_id;
         runtime->unknown_1f8 = zero;
     }
 }

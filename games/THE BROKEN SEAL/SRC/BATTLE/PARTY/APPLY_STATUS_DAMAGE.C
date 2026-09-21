@@ -1,6 +1,7 @@
 #include "TYPES.H"
 
 extern u8 Data_02000240[];
+#define PARTY_STATE Data_02000240
 
 s32 Func_08077148(void);
 u8 *Runtime_GetObject(s32);
@@ -23,7 +24,7 @@ s32 BattleParty_ApplyStatusDamage(void)
         s32 remaining;
 
         offset <<= 1;
-        entry = Data_02000240 + offset;
+        entry = PARTY_STATE + offset;
         remaining = count;
 
         do {

@@ -2,6 +2,7 @@
 #include "GLOBAL_CELLS.H"
 
 extern u8 Data_02000240;
+#define PARTY_STATE Data_02000240
 
 s32 Func_08092c40(s32);
 s32 Func_08091c7c(void *, s32);
@@ -16,7 +17,7 @@ s32 BattleEventRuntime_ProcessAction(s32 object_id, s32 action_id)
     u8 *global_table;
 
     Func_08092c40(object_id);
-    global_table = &Data_02000240;
+    global_table = &PARTY_STATE;
     result = Inventory_PromptAndSetObjectMode(*(void **)(global_table + 500), 0);
     if (result == 0) {
         BattleEv_RunWait(object_id, action_id);

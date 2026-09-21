@@ -23,13 +23,11 @@
  * same offset serves more than one purpose across phases (points[i].field_10
  * is an angle in the frame <= 159 pass and a velocity in the later ones).
  *
- * Residual: structure, extents and call arguments track the reference, but
- * register allocation does not.  The reference keeps three loop counters in
- * r9/sl/fp where this draft spills them, and its twenty-four spill slots are
- * assigned in a different order, so nearly every sp-relative access reads as
- * a difference even where the surrounding instructions agree.  The candidate
- * also carries a few extra induction variables in the four-panel loop and
- * places its literal pools at different points.
+ * Residual: the shared cell-window base and callback-load order now match the
+ * reference prologue. The candidate still allocates 380 stack bytes where the
+ * reference uses 356, so later local lifetimes and block topology remain wrong.
+ * Reopen with a concrete array, lifetime or control-flow fact rather than trying
+ * to force the reference registers.
  *
  * Uncertain / preserved oddities, all present in the reference:
  *   - the points[] reset loop calls Func_08004458 twice and discards the
@@ -225,18 +223,18 @@ void Func_080d1714(struct EffectArgument *argument)
     struct Placement place;
     struct ScalePair scale;
 
-    cells = &Data_03001eec[1];
+    cells = Data_03001eec;
     draw_destination = cells[0];
     view = *(void **)((u8 *)cells - 112);
     runtime = cells[-1];
     graphics = (u8 *)cells[1];
-    draw_rectangle = (DrawRectangle)cells[6];
-    draw_rectangle_alt = (DrawRectangle)cells[7];
     runtime->argument = argument;
 
     Func_080cd594(0);
     Func_080ed408(46, 7, 7, 3, 2);
+    draw_rectangle = (DrawRectangle)cells[6];
     Func_080ed408(47, 7, 7, 3, 3);
+    draw_rectangle_alt = (DrawRectangle)cells[7];
 
     tbl = Func_08002f40((s32)Data_00000082);
     ((WordCopy)0x03001388)((void *)0x05000000, tbl, 0x80);

@@ -104,8 +104,8 @@ s32 BattleEffect_RunParticleStreams(s32 arg0, s32 arg1)
     void **sp20;
     s32 sp24;
     void **sp28;
-    void *sp2C;
     void *sp30;
+    void *sp2C;
     s32 sp34;
     s32 sp38;
     void **sp3C;

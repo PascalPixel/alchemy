@@ -178,8 +178,8 @@ s32 Func_080dea70(void *object, s32 kind)
     facing = *(s32 *)((s8 *)heap_cache - 108);
     extra_target = heap_cache[2];
     cooldown = 0;
-    variant = M2C_FIELD(object, s32 *, 24);
     STATE = object;
+    variant = M2C_FIELD(object, s32 *, 24);
 
     if (kind == 10) {
         Func_080cd594(0);

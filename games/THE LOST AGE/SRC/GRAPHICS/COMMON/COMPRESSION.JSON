@@ -974,8 +974,7 @@
     "format": 1,
     "codec": "golden-sun-general-lz",
     "decoded_size": 448,
-    "encoded_size": 368,
-    "lookahead": ""
+    "encoded_size": 368
   },
   "8620ab7bbfa881679747207024b13db66223a835bf472d730cbe67de27ec8e1d": {
     "format": 1,
@@ -1046,8 +1045,7 @@
     "codec": "golden-sun-tagged-palette-lz",
     "decoded_size": 65536,
     "encoded_size": 4184,
-    "tag": 1,
-    "lookahead": ""
+    "tag": 1
   },
   "a2e291f4cb91862cfde310dff8a5eac5d2cef9ed474cf27d97e1d738f8b2ac93": {
     "format": 1,
@@ -1069,8 +1067,7 @@
       "tile_height": 8,
       "columns": 32,
       "rows": 16
-    },
-    "lookahead": ""
+    }
   },
   "7f6cb3bb521f049e99b4b9caa6433f2f2e5a186f496cee09f4d9f0f4156d1520": {
     "format": 1,
@@ -1101,8 +1098,7 @@
       "tile_height": 8,
       "columns": 32,
       "rows": 16
-    },
-    "lookahead": ""
+    }
   },
   "75abf2e5fcfe149cf81c06204762e60eb4dfa0494eec33ff47d2700798616cf0": {
     "format": 1,
@@ -1148,8 +1144,7 @@
       "tile_height": 8,
       "columns": 32,
       "rows": 16
-    },
-    "lookahead": ""
+    }
   },
   "6f5e479fff3bb3372ac69015b2a0f18ee78e2a9c9b4bbeaa886e6e3eacfbb3a1": {
     "format": 1,
@@ -1333,7 +1328,6 @@
         [57103, ["l"]]
       ]
     },
-    "lookahead": "",
     "tag": 1
   },
   "9f6a807d9f43a59cdc4fc317688bf7441e5f10739f4b255780dc9d0687cc1dc7": {
@@ -1483,8 +1477,7 @@
     "format": 1,
     "codec": "golden-sun-general-lz",
     "decoded_size": 448,
-    "encoded_size": 376,
-    "lookahead": ""
+    "encoded_size": 376
   },
   "049a96d643c58a1710bfb262b19fd27d3c71e39193d3c32669dca32fe629eeda": {
     "format": 1,
@@ -1499,8 +1492,7 @@
       "tile_height": 8,
       "columns": 32,
       "rows": 16
-    },
-    "lookahead": ""
+    }
   },
   "7b52f86c0713143594a2a71ec2770bd14058a894eda25731966147e554afca3f": {
     "format": 1,
@@ -1531,8 +1523,7 @@
       "tile_height": 8,
       "columns": 32,
       "rows": 16
-    },
-    "lookahead": ""
+    }
   },
   "9316b616ae0e5f503a4824cfe9e16ea2a16bd5244176402c5f10142cbae91a13": {
     "format": 1,
@@ -1547,8 +1538,7 @@
       "tile_height": 8,
       "columns": 32,
       "rows": 16
-    },
-    "lookahead": ""
+    }
   },
   "31b8513347b843ed40691fe9f953e54ec5a5a6badb18e395afdc3ae9573fe7aa": {
     "format": 1,
@@ -1689,8 +1679,7 @@
       "tile_height": 8,
       "columns": 32,
       "rows": 16
-    },
-    "lookahead": ""
+    }
   },
   "bfd43a7646017048c7f04159235d61593c893de7d498d3df50eae867d6445f20": {
     "format": 1,

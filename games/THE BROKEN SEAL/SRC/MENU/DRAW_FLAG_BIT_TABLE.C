@@ -6,6 +6,7 @@ void Func_0801e940(s32 text, s32 window, s32 x, s32 y);
 #define UiText_DrawStringInWindow Func_0801e940
 void Func_08029274(s32 value, s32 width, s32 buf);
 s32 Func_080770c0(s32 flag);
+#define BattleFlag_Test Func_080770c0
 
 void Menu_DrawFlagBitTable(s32 window, s32 start_flag)
 {
@@ -32,7 +33,7 @@ void Menu_DrawFlagBitTable(s32 window, s32 start_flag)
         UiText_DrawStringInWindow(0x08037428, window, 32, y);
 
         for (i = 0; i < 16; i++) {
-            s32 val = Func_080770c0(flag);
+            s32 val = BattleFlag_Test(flag);
             bits[i] = (val != 0) + 48;
             flag++;
         }

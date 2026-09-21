@@ -16,6 +16,7 @@ void Func_080a22f4(void);
 void Func_080030f8(s32);
 #define WaitFrames Func_080030f8
 s32 Func_080770c0(s32);
+#define BattleFlag_Test Func_080770c0
 s32 Func_080022fc(s32, s32);
 void Func_080a4924(s32, s32);
 s32 Func_08015270(s32);
@@ -63,7 +64,7 @@ adjust:
     WaitFrames(1);
 
 check_exit:
-    if (Func_080770c0(336) != 0)
+    if (BattleFlag_Test(336) != 0)
         goto done;
 
     if (changed != 0) {

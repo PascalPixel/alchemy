@@ -25,6 +25,6 @@ s32 BattleEventRuntime_WaitForReady(void)
             WaitFrames(1U);
         } while (FIELD_AT_OFFSET(runtime, s32 *, 0x800) != 4);
     }
-    ScheduleCallback((void *)Func_080bd898);
+    ScheduleCallback((void *)BattleEvent_Playback);
     return BattleEventRuntime_Reset();
 }

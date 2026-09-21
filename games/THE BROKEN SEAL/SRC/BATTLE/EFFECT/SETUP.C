@@ -126,7 +126,6 @@ void Func_08091660(void);
 void Func_0808e118(void);
 #define Battle_ResetEffectCounter Func_0808e118
 void ScheduleCallbackAfterFrames(const void *, s32);
-void Func_080915ec(void);
 u32 GameFlag_Clear(s32);
 
 void Battle_Reset(void)
@@ -147,7 +146,7 @@ void Battle_Reset(void)
         runtime->unknown_1da = 0xFFFF;
         runtime->unknown_1dc = -1;
         runtime->unknown_1de = -1;
-        ScheduleCallbackAfterFrames((const void *)Func_080915ec, 0xC80);
+        ScheduleCallbackAfterFrames((const void *)Battle_UpdateModeFromShoulderButtons, 0xC80);
         GameFlag_Clear(0x132);
         runtime->object_id = Data_02000240.object_id;
         runtime->unknown_1f8 = zero;

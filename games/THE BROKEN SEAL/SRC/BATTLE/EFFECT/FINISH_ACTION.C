@@ -11,7 +11,7 @@ void Func_0809335c(s32 value, s32 enabled);
 
 void BattleFx_FinishAction(void)
 {
-    ScheduleCallback((u32)Func_080915ec);
+    ScheduleCallback((u32)Battle_UpdateModeFromShoulderButtons);
     Object_AttachWorkTargetToObject(Data_02000240.value, 1);
     Func_080772f0();
 }

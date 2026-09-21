@@ -14,5 +14,5 @@ s32 BattleEventRuntime_SchedulePhase(s32 parameter)
     runtime->value_808 = parameter;
     runtime->phase = 2;
     runtime->flag_655 = 0;
-    return ScheduleCallbackAfterFrames((s32)Func_080bd898, 0xC80);
+    return ScheduleCallbackAfterFrames((s32)BattleEvent_Playback, 0xC80);
 }

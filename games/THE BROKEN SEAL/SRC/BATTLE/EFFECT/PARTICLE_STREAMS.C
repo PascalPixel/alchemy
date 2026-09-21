@@ -64,6 +64,7 @@ void Func_08009008(s32, void *, void *, s32);
 s32 Func_08002322(s32);
 s32 Func_0800231c(s32);
 void Func_080049ac(void);
+#define Render_ResetTransformState Func_080049ac
 void Func_08004cb4(void *);
 void Func_08004c6c(s32);
 void Func_08004c1c(s32);
@@ -547,7 +548,7 @@ loop_84:
         sp60[0] = 0;
         sp60[1] = 0;
         sp60[2] = 0x02000000;
-        Func_080049ac();
+        Render_ResetTransformState();
         Func_08004cb4(sp60);
         Func_08004c6c(0x800);
         Func_08004c1c(sp10);
@@ -717,7 +718,7 @@ loop_121:
         }
         Func_080b50e8(0x86);
     }
-    Func_080049ac();
+    Render_ResetTransformState();
     Func_080051d8(temp_r5_1334, temp_r5_1334 + 0xC);
     var_r7_1383 = (u8 *)0x02010E00;
     var_r8_1386 = 0;

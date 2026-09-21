@@ -8,6 +8,7 @@
 extern struct PartyState gCell;
 void Func_08079374(s32 flag);
 s32 Func_08079358(s32 flag);
+#define GameFlag_SetBit Func_08079358
 
 /* game_flags/refresh_lure_cap.c */
 void GameFlag_RefreshLureCap(void)
@@ -34,7 +35,7 @@ void GameFlag_RefreshLureCap(void)
                     kind = *record;
                     record += 4;
                     if (kind == 27) {
-                        Func_08079358(0x167);
+                        GameFlag_SetBit(0x167);
                     }
                 }
             }

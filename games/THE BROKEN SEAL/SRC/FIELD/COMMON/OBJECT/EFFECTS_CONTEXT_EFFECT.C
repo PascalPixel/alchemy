@@ -141,6 +141,7 @@ void Func_08094380(s32 arg0);
 void Func_080933f8(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 void Audio_PlayCue(s32);
 void Func_0809163c(s32 arg0);
+#define Battle_WaitMode0 Func_0809163c
 void Func_0809335c(s32 arg0, s32 arg1);
 
 s32 ObjectEffect_RunPendingFlagEvent(void)
@@ -176,7 +177,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void)
                 Audio_PlayCue(159);
                 *(s32 *)((u8 *)obj + 12) = *(s32 *)((u8 *)obj + 20);
                 Object_SetMode(obj, 22);
-                Func_0809163c(15);
+                Battle_WaitMode0(15);
                 Func_0809335c(id, 1);
                 result = 3;
             }

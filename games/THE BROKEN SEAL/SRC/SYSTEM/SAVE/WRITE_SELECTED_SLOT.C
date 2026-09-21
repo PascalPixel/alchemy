@@ -25,6 +25,7 @@ void Func_080f9010(u8 mode);
 void Func_0801f818(void);
 void Func_0808a5b0(void);
 s32 Func_08005920(s32 a, void *b);
+#define SaveState_WriteRecord Func_08005920
 void Func_08005cf8(void);
 #define SaveState_ReleaseWorkspace Func_08005cf8
 
@@ -67,8 +68,8 @@ s32 Save_WriteSelectedSlot(void)
             }
             Func_0801f818();
             Func_0808a5b0();
-            flag = Func_08005920(slot, Data_02000000);
-            flag |= Func_08005920(slot + 3, Data_02000000 + 0x1000);
+            flag = SaveState_WriteRecord(slot, Data_02000000);
+            flag |= SaveState_WriteRecord(slot + 3, Data_02000000 + 0x1000);
             Func_08019a54();
             if (flag != 0) {
                 UiText_ShowPositionedMessageAndWait((s32)Value_0000000b, 1);

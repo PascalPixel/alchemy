@@ -7,9 +7,12 @@ void UiWindow_Commit(s32 window);
 void Func_08015070(s32 window, s32 x, s32 width, s32 height, s32 style);
 void UiText_DrawAt(s32 message, s32 window, s32 x, s32 y);
 void Func_080a2324(s32 page_size, s32 first_entry, s32 window, s32 x, s32 y);
+#define Menu_SetPageIcons Func_080a2324
 void Func_080a21b0(s32 window, s32 count, s32 page_size, s32 page, s32 style);
+#define Menu_DrawPageIndicator Func_080a21b0
 s32 UiPalette_SetColor(s32 color);
 void Func_080150a8(s32 value, s32 digits, s32 layer, s32 x, s32 y);
+#define UiText_DrawNumberAtOffsetFar Func_080150a8
 struct BattleUnit *Func_08077008(s32 owner);
 struct BattleAction *Ability_GetData(s32 action);
 extern u8 Value_00000333;
@@ -41,8 +44,8 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
         visible_count = 5;
     }
 
-    Func_080a2324(5, first_entry, window, 0x70, 0x22);
-    Func_080a21b0(window, state->entry_count, 5, state->page, 15);
+    Menu_SetPageIcons(5, first_entry, window, 0x70, 0x22);
+    Menu_DrawPageIndicator(window, state->entry_count, 5, state->page, 15);
     UiText_DrawAt(0xaed, window, 0x60, 0);
 
     row = 0;
@@ -63,7 +66,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
             UiText_DrawAt(
                 (0x3fff & *(const u16 *)(cursor + (s32)menu)) + (s32)&Value_00000333,
                 window, 16, row * 16 + 8);
-            Func_080150a8(ability->pp_cost, 2, window, 104, row * 16 + 8);
+            UiText_DrawNumberAtOffsetFar(ability->pp_cost, 2, window, 104, row * 16 + 8);
             UiPalette_SetColor(15);
 
             row++;

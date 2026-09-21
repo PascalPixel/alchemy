@@ -6,6 +6,7 @@ void Func_0801e8b0(void *, s32, s32, s32);
 void Func_0801e940(s32, s32, s32, s32);
 void Func_0801e9d4(s32, s32, s32, s32, s32);
 void Func_0801e7c0(s32, s32, s32, s32);
+#define UiText_DrawCharacterAtOffset Func_0801e7c0
 s32 Func_0801f680(s32, void *);
 void Func_0801ea08(s32, s32, s32, s32, s32);
 extern u8 Value_00000009;
@@ -32,11 +33,11 @@ void StatusMenu_DrawCharacterSummary(s32 surface, u8 *st)
         extra = 0;
         Func_0801e940((s32)StatusPanelLayout, surface, 72, 0);
         Func_0801e9d4(st[28], 2, surface, 80, extra);
-        Func_0801e7c0(st[29] + (s32)&ClassNameMessageBase, surface, 0, 16);
-        Func_0801e7c0((s32)&StatusLabelMessage, surface, 0, 32);
+        UiText_DrawCharacterAtOffset(st[29] + (s32)&ClassNameMessageBase, surface, 0, 16);
+        UiText_DrawCharacterAtOffset((s32)&StatusLabelMessage, surface, 0, 32);
         Func_0801e940(Func_0801f680(*(s32 *)(st + 32), buf), surface, 48, 40);
         extra = 48;
         Func_0801ea08(*(s32 *)(st + 36), 6, surface, 0, extra);
-        Func_0801e7c0(0xc88, surface, 48, 48);
+        UiText_DrawCharacterAtOffset(0xc88, surface, 48, 48);
     }
 }

@@ -5,6 +5,7 @@ extern struct EventPairWork1d6 Data_02000240;
 extern u8 Value_00000021;
 u16 Func_0808b05c(s32 arg0, s32 arg1);
 s32 Func_0808adf0(void *arg0);
+#define BattleFx_LookupResult Func_0808adf0
 void Func_0808b320(s32, s32);
 
 void BattleFx_SetWeightedResult(s32 arg0, s32 arg1)
@@ -17,6 +18,6 @@ void BattleFx_SetWeightedResult(s32 arg0, s32 arg1)
     if (first == 98 && second == 0)
         Data_02000240.special = (u16)(s32)&Value_00000021;
     if (runtime->mode_19e == 3)
-        Func_0808adf0((u8 *)ObjectTable_Get(Data_02000240.object_id) + 8);
+        BattleFx_LookupResult((u8 *)ObjectTable_Get(Data_02000240.object_id) + 8);
     Func_0808b320(first, second);
 }

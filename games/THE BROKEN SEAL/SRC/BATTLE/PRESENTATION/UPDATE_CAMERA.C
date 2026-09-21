@@ -40,6 +40,7 @@ struct LinkWork {
 #define REG_SIOCNT (*(volatile u32 *)0x04000128)
 
 void Func_080049ac(void);
+#define Render_ResetTransformState Func_080049ac
 void Func_08004cb4(void *);
 void Func_08004c1c(s32);
 void Func_08004bd4(s32);
@@ -83,7 +84,7 @@ void Func_080b5864(void)
         pos = state->field1c;
     }
 
-    Func_080049ac();
+    Render_ResetTransformState();
     Func_08004cb4(pos);
     Func_08004c1c((s16)state->field36);
     Func_08004bd4((s16)state->field34);

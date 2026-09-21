@@ -4,6 +4,7 @@
 extern s32 Data_02000240[];
 int Func_080958e4();
 int Func_08092adc();
+#define ObjectMotion_ArmCallback Func_08092adc
 int Func_08092560();
 
 void BattleFx_FinishHeavyImpact(s32 arg)
@@ -81,7 +82,7 @@ void BattleFx_FinishHeavyImpact(s32 arg)
     }
     while (0);
     WaitFrames(0x3C);
-    Func_08092adc(Data_02000240[125], 0x4000, 0);
+    ObjectMotion_ArmCallback(Data_02000240[125], 0x4000, 0);
     WaitFrames(0x14);
     Object_SetMode(Object_GetById(Data_02000240[125]), 0x1C);
     WaitFrames(0x28);

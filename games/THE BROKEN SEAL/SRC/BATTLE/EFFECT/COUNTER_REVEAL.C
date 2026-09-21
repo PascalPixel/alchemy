@@ -55,6 +55,7 @@ void Func_08002dd8(s32 id);
 s32 Func_080cdbc0(void);
 void **Func_080b5098(s32 member_id);
 void Func_080e396c(s32 member_id, void *out);
+#define EffectPosition_ApplyStepAndYOffset Func_080e396c
 s32 Func_08002322(s32 angle);
 s32 Func_0800231c(s32 angle);
 void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
@@ -149,7 +150,7 @@ void BattleFx_RunCounterReveal(void *object)
             draw_enabled = 1;
         }
         if (frame == 64) {
-            Func_080e396c(
+            EffectPosition_ApplyStepAndYOffset(
                 (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))),
                 pos);
             if ((*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4))) == 1) {

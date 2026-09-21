@@ -24,6 +24,7 @@ void Func_080de2f8(void *, s32, s32, s32, s32 *, s32 *);
 void Func_080e0524(s32, void *, s32, s32);
 #define Resource_LoadAndDecompress Func_080e0524
 void Func_080e396c(s32, s32 *);
+#define EffectPosition_ApplyStepAndYOffset Func_080e396c
 s32 Func_080ed408(s32, s32, s32, s32, s32);
 void Func_080041d8(s32, s32);
 #define Scheduler_AddOrUpdateCallback Func_080041d8
@@ -66,8 +67,8 @@ void BattleEffect_RunRisingColumns(Effect *effect)
     *(s16 *)0x04000020 = 0x100;
     *(s16 *)0x04000050 = 0;
     Resource_LoadAndDecompress((s32)&Value_000000a6, work, 1, 1);
-    Func_080e396c(WORK_EFFECT->actors[0], first);
-    Func_080e396c(WORK_EFFECT->actors[WORK_EFFECT->count - 1], last);
+    EffectPosition_ApplyStepAndYOffset(WORK_EFFECT->actors[0], first);
+    EffectPosition_ApplyStepAndYOffset(WORK_EFFECT->actors[WORK_EFFECT->count - 1], last);
     middle = first[0];
     middle += (last[0] - middle) / 2;
     first[0] = middle;

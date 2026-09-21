@@ -8,6 +8,7 @@
 
 u8 *Ability_GetData(s32);
 s32 Func_0808e4b4(s32, s32, void *);
+#define BattleFx_FindMatchingEvent Func_0808e4b4
 void Func_08096fb0(s32, s32);
 void Func_080970f8(s32, s32);
 s32 Func_08096b28(void *, s32, s32);
@@ -28,8 +29,8 @@ s32 BattleFx_ExecutePackedAbilityEffect(s32 packed)
     mode = ((u32)packed >> 10) & 0xF;
     object = Ability_GetData(index)[0xC];
     ObjectTable_Get(Data_02000240.object_id);
-    first = (void *)Func_0808e4b4(0x30000005, object, &output);
-    second = (void *)Func_0808e4b4(0x20000005, object, &output);
+    first = (void *)BattleFx_FindMatchingEvent(0x30000005, object, &output);
+    second = (void *)BattleFx_FindMatchingEvent(0x20000005, object, &output);
     Func_08096fb0(index, 0);
     Func_080970f8(Data_02000240.object_id, output);
     Func_08096b28(first, mode, output);

@@ -7,6 +7,7 @@ extern void Func_080a17c4(void *icon);
 #define UiIcon_PrepareObject Func_080a17c4
 extern s32 Runtime_GetObject(s32);
 extern void Func_08015090(s32, void *, s32, s32);
+#define UiText_DrawStringAtOffsetFar Func_08015090
 extern void UiText_DrawAt(s32, void *, s32, s32);
 
 void ItemMenu_DrawItemHead(void)
@@ -19,7 +20,7 @@ void ItemMenu_DrawItemHead(void)
     menu->selected_item_icon->x = 112;
     menu->selected_item_icon->y = 8;
     UiIcon_PrepareObject(menu->selected_item_icon);
-    Func_08015090(
+    UiText_DrawStringAtOffsetFar(
         Runtime_GetObject(menu->item_owner),
         (void *)menu->message_window,
         16,

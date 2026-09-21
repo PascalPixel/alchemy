@@ -20,6 +20,7 @@ extern u8 Data_0000001f;
 
 void RenderOutput_PrepareForRedraw(void *work);
 void Func_0801e7c0(s32 resource_id, void *work, s32 x, s32 y);
+#define UiText_DrawCharacterAtOffset Func_0801e7c0
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 sound_id);
 
@@ -59,7 +60,7 @@ s32 Menu_SelectResource(s32 start, s32 goal)
         } else {
             resource_id = state->resource_ids[state->selection] + (s32)&Data_0000001f;
         }
-        Func_0801e7c0(resource_id, state->work, 0, 0);
+        UiText_DrawCharacterAtOffset(resource_id, state->work, 0, 0);
 
         cur = state->selection;
         tbl = Data_080373ef;

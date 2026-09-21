@@ -167,8 +167,10 @@ extern s32 Func_080915dc(s32);
 extern u32 Func_08004458(void);
 #define Random16 Func_08004458
 extern void Func_080916b0(void);
+#define Battle_Reset Func_080916b0
 extern void Func_08092b94(s32);
 extern void Func_08092f84(s32, s32);
+#define BattleEv_RunWait Func_08092f84
 extern void Func_08091750(void);
 extern void Func_08009088(struct BattleActionObject *, s32);
 extern void Func_08092848(s32, s32, s32);
@@ -177,6 +179,7 @@ extern void Func_08091660(void);
 #define Battle_InitializeRenderObject Func_08091660
 extern void Func_08093a6c(struct BattleActionObject *, void *);
 extern void Func_08009098(struct BattleActionObject *, void *);
+#define ObjectDispatch_InitializeFar Func_08009098
 extern void Func_0809ade8(s32);
 extern u8 Data_02000240;
 
@@ -208,9 +211,9 @@ s32 BattleFx_RunDescriptorAction(s32 id)
                 u32 random = Random16();
                 s32 message =
                     0x0e0b + index * 2 + (random * 2 >> 16);
-                Func_080916b0();
+                Battle_Reset();
                 Func_08092b94(message);
-                Func_08092f84(id, 0);
+                BattleEv_RunWait(id, 0);
                 Func_08091750();
                 goto finish;
             }
@@ -247,9 +250,9 @@ run_descriptor:
     }
     if (descriptor->result < 0x10000) {
         Func_08015058(used_fallback);
-        Func_080916b0();
+        Battle_Reset();
         Func_08092b94(descriptor->result);
-        Func_08092f84(id, 0);
+        BattleEv_RunWait(id, 0);
         Func_08091750();
     } else {
         typedef void (*EffectRunner)(s32);
@@ -267,7 +270,7 @@ run_descriptor:
                 Func_08093a6c(object, (void *)0x0809ff40);
             } else if (action->mode == 1) {
                 object->saved_value = saved_value;
-                Func_08009098(object, (void *)0x0809fc1c);
+                ObjectDispatch_InitializeFar(object, (void *)0x0809fc1c);
             }
         }
         object->busy_5b = 0;
@@ -300,9 +303,9 @@ s32 BattleFx_RunKind6DescriptorAction(s32 arg0)
         val = *(s32 **)((u8 *)p + 8);
         if (val != 0) {
             if (val < 0x10000) {
-                Func_080916b0();
+                Battle_Reset();
                 Func_08092b94(*(s32 **)((u8 *)p + 8));
-                Func_08092f84(-1, 0);
+                BattleEv_RunWait(-1, 0);
                 ret = 0;
                 Func_08091750();
             } else {
@@ -345,9 +348,9 @@ s32 BattleAction_RunDescriptor(s32 arg0)
             work->limit = 0;
         }
         if (desc->result < 0x10000) {
-            Func_080916b0();
+            Battle_Reset();
             Func_08092b94(desc->result);
-            Func_08092f84(-1, 0);
+            BattleEv_RunWait(-1, 0);
             ret = 0;
             Func_08091750();
         } else {

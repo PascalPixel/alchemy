@@ -32,6 +32,7 @@ struct TradeOfferTable {
 
 s32 Djinn_AddToOwner(s32 owner, s32 index, s32 bit);
 u32 Func_08079358(u32 flag);
+#define GameFlag_SetBit Func_08079358
 u8 *Trade_GetOfferState(s32 which);
 u32 *Trade_AddOffer(u32 owner, u32 index, u32 bit);
 s32 Trade_RemoveOffer(s32 owner, s32 index, s32 bit);
@@ -95,7 +96,7 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, u8 *state)
 
     Djinn_AddToOwner(best_no, index, (s32)(u32)state);
     Trade_AddOffer((u32)best_no, (u32)index, (u32)state);
-    Func_08079358((u32)entry);
+    GameFlag_SetBit((u32)entry);
     return best_no;
 }
 

@@ -40,6 +40,7 @@ void Func_08004278(s32);
 #define Scheduler_RemoveCallback Func_08004278
 void Func_080e3958(s32, s32 *);
 void Func_080e396c(s32, s32 *);
+#define EffectPosition_ApplyStepAndYOffset Func_080e396c
 s32 Func_080022ec(s32, s32);
 s32 Func_080022fc(s32, s32);
 s32 Func_08004458(void);
@@ -207,7 +208,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
 
     i = 0;
     while (i != WORK_EFX->cnt) {
-        Func_080e396c(WORK_EFX->actors[i], seat[i]);
+        EffectPosition_ApplyStepAndYOffset(WORK_EFX->actors[i], seat[i]);
         i += 1;
     }
 

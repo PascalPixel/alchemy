@@ -8,6 +8,7 @@ struct BattleEffectScene {
 extern struct BattleEffectScene *Data_03001f30;
 
 void Func_08097384(void);
+#define BattleEffect_InitializeSharedScene Func_08097384
 void *Func_08098070(void *object);
 void Func_08098184(void *object);
 void Func_08009080(void *object, s32 mode);
@@ -26,7 +27,7 @@ void BattleFx_RunItemBreakSequence(void)
     object = scene->main_object;
 
     do {
-        Func_08097384();
+        BattleEffect_InitializeSharedScene();
     } while (0);
     object = Func_08098070(object);
     Func_08098184(object);

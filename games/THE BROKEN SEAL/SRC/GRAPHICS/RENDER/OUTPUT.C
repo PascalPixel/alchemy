@@ -72,6 +72,7 @@ void *RenderOutput_CreateFromResource(
 s32 Func_08004080(void);
 #define find_free_slot Func_08004080
 s32 Func_0801a2a4(s32 arg0, s32 arg1, s32 arg2);
+#define UiIcon_CopyResourceToSlot Func_0801a2a4
 void *RenderOutput_CreateLoaded(
     s32 arg0,
     s32 arg1,
@@ -85,7 +86,7 @@ void *RenderOutput_CreateLoaded(
     no = find_free_slot();
     result = NULL;
     if (no != 0x60) {
-        Func_0801a2a4(arg0, arg1, no);
+        UiIcon_CopyResourceToSlot(arg0, arg1, no);
         result = RenderOutput_Create(no, 0x40000000, arg2, arg3, arg4);
     }
     return result;

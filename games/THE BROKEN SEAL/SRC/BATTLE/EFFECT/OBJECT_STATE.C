@@ -1,11 +1,12 @@
 #include "TYPES.H"
 
 s32 Func_0808e4b4(s32, s32, void *);
+#define BattleFx_FindMatchingEvent Func_0808e4b4
 
 s32 BattleFx_HasMatchingEvent5(s32 effectId)
 {
     s32 local;
-    s32 result = Func_0808e4b4(0x70000005, (u16)effectId, &local);
+    s32 result = BattleFx_FindMatchingEvent(0x70000005, (u16)effectId, &local);
     return (u32)((-result) | result) >> 31;
 }
 

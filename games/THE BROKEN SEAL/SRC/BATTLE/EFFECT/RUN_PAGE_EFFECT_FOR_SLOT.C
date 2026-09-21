@@ -12,6 +12,7 @@ s32 GameFlag_IsSet(s32);
 void GameFlag_Set(void *);
 s32 Func_08077288(s32, void *);
 void Func_080916b0(void);
+#define Battle_Reset Func_080916b0
 void Func_0808c44c(void);
 void Func_0808b8e8(void);
 void Func_08096140(s32);
@@ -37,7 +38,7 @@ void BattleFx_RunPageEffectForSlot(s32 slot, s32 page, void *entries)
     }
 
     if (selection >= 0) {
-        Func_080916b0();
+        Battle_Reset();
         Func_0808c44c();
         if (slot != -1) {
             if (state->mode == 3)

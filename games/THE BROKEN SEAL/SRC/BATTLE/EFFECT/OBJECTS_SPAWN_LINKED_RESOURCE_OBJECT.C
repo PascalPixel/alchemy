@@ -35,6 +35,7 @@ struct BattleEffectLinkedObject *Func_080090c8(
     s32 y,
     s32 z);
 void Func_08009098(
+#define ObjectDispatch_InitializeFar Func_08009098
     struct BattleEffectLinkedObject *object,
     const void *configuration);
 void Func_08009080(struct BattleEffectLinkedObject *object, s32 mode);
@@ -42,6 +43,7 @@ void Func_08009080(struct BattleEffectLinkedObject *object, s32 mode);
 void Func_080f9010(s32 cue);
 #define Audio_PlayCue Func_080f9010
 void Func_0809163c(s32 state);
+#define Battle_WaitMode0 Func_0809163c
 void Func_0809376c(void);
 extern const u8 Data_0809fc2c[];
 
@@ -62,7 +64,7 @@ void BattleFx_SpawnLinked(
             Object_CreateFar(21, resource->x, resource->y, resource->z);
 
         if (object != 0) {
-            Func_08009098(object, Data_0809fc2c);
+            ObjectDispatch_InitializeFar(object, Data_0809fc2c);
             Object_SetMode(object, flags & 15);
             object->value_55 = 0;
             object->counter = 0;
@@ -93,6 +95,6 @@ void BattleFx_SpawnLinked(
                 object->visual->flags = clear_mask;
             }
         }
-        Func_0809163c(state);
+        Battle_WaitMode0(state);
     }
 }

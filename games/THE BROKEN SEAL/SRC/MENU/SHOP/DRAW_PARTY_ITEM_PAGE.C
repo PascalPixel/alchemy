@@ -7,10 +7,13 @@ extern u8 Data_03001f2c[];
 void Func_08015068();
 void Func_08015080();
 void Func_08015090();
+#define UiText_DrawStringAtOffsetFar Func_08015090
 void Func_080150b0();
 s32 Func_08077008();
 void Func_080a21b0();
+#define Menu_DrawPageIndicator Func_080a21b0
 void Func_080a2324();
+#define Menu_SetPageIcons Func_080a2324
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -49,8 +52,8 @@ s32 Func_080a9598(s32 a0, s32 a1, s32 a2)
     if ((u32)p10 > 5) {
         v10 = 5;
     }
-    Func_080a2324(5, p8, a0, 119, 52);
-    Func_080a21b0(a0, *(s32 *)(a2 + 20), 5, *(s32 *)(a2 + 8), 28);
+    Menu_SetPageIcons(5, p8, a0, 119, 52);
+    Menu_DrawPageIndicator(a0, *(s32 *)(a2 + 20), 5, *(s32 *)(a2 + 8), 28);
     if (*(u8 *)((0x218 + p9)) == 0) {
         Call4(Func_08015080, 0xad7, a0, 120, 8);
         v6 = r10;
@@ -70,7 +73,7 @@ s32 Func_080a9598(s32 a0, s32 a1, s32 a2)
             v6 = base6_0;
         }
     }
-    Func_08015090(rec5, a0, 40, 0);
+    UiText_DrawStringAtOffsetFar(rec5, a0, 40, 0);
     base5_af7 = (s32)Data_00000af7;
     Func_08015080(base5_af7, a0, 32, 16);
     Func_08015080((base5_af7 + 1), a0, 32, 24);

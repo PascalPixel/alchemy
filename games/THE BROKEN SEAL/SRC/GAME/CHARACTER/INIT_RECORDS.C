@@ -35,6 +35,7 @@ extern u8 Value_00000066;
 void Func_08015020(s32, u16 *);
 void Func_080792fc(s32, u8);
 void Func_08077428(s32);
+#define Owner_RecalculateStats Func_08077428
 void Owner_RefreshDerivedData(s32);
 
 void Owner_InitRecords(void)
@@ -84,7 +85,7 @@ void Owner_InitRecords(void)
                 state->pp_ratio = 0x4000;
                 state->hp_ratio = 0x4000;
                 Func_080792fc(*remote, tmpl->unknown_096);
-                Func_08077428(*remote);
+                Owner_RecalculateStats(*remote);
             }
             remote++;
         } while (*remote != -1);

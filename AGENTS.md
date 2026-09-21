@@ -97,13 +97,17 @@ the document check pass. Binary section dumps are build output, not prose.
 | Owner names and source paths | Each game's `source-paths.json` |
 | Types, declarations and behavior | Maintained C and headers |
 | Unit membership, instances, extents and bindings | Existing translation-unit manifests and boundary registries |
-| Current owner classification, extent, source and measured score | Existing `recon/en/dossiers.json` entry, with game-qualified identity |
+| Current unresolved or retained owner classification, extent, source and measured score | Existing `recon/en/dossiers.json` entry, with game-qualified identity |
+| Exact-C owner extent, source and credit | Production translation unit or source path plus the fingerprinted build receipt; do not duplicate it in dossiers |
 | Current verified credit | Fingerprinted build receipts, generated into stable target report directories |
 | Temporary compiler diagnostics | Disposable work directories under `out/` |
 
-A dossier is a compact current registry, not a laboratory notebook. Keep the
-owner's classification, complete extent, maintained source, retention state and
-latest measured score. Dated attempts, command transcripts, temporary paths,
+A dossier is a compact registry of current reconstruction debt, not a laboratory
+notebook or a second exact-owner index. Keep unresolved and retained owners'
+classification, complete extent, maintained source, retention state and latest
+measured score. Remove a dossier record when production promotes the complete
+owner to exact C; production ownership and receipts then become authoritative.
+Dated attempts, command transcripts, temporary paths,
 model responses, rejected-spelling lists and superseded theories are
 **baaaaaaad**: they turn JSON into hidden scratch memory and make later agents
 optimize against stale stories. Reusable findings belong in the owning code or

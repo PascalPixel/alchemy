@@ -28,7 +28,7 @@ s32 Func_08005920(s32 record_id, void *source)
     START_DMA(&header, &work->slot.record.header, 0x84000004);
     WAIT_DMA();
 
-    if (Func_08005868(slot) != 0)
+    if (SaveState_WriteWorkspaceSlot(slot) != 0)
         return 1;
     if (current <= 15 && SaveState_InvalidateSlot(current) != 0)
         return 1;
@@ -37,7 +37,7 @@ s32 Func_08005920(s32 record_id, void *source)
         header.sequence = 1;
         START_DMA(&header, &work->slot.record.header, 0x84000004);
         WAIT_DMA();
-        if (Func_08005868(current) != 0)
+        if (SaveState_WriteWorkspaceSlot(current) != 0)
             return 1;
         if (SaveState_InvalidateSlot(slot) != 0)
             return 1;

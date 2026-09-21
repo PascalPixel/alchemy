@@ -128,6 +128,7 @@ extern u8 Data_02000240[];
 void Func_080916b0(void);
 #define Battle_Reset Func_080916b0
 void Func_080933f8(s32, s32, s32, s32);
+#define place_within_camera_bounds Func_080933f8
 void Func_08097384(void);
 #define BattleEffect_InitializeSharedScene Func_08097384
 void Func_080030f8(s32);
@@ -143,6 +144,7 @@ void Func_0809ba90(void *, s32, s32, s32);
 u32 Func_08004458(void);
 void Func_08009248(void *, s32);
 void Func_0809748c(void);
+#define BattleFx_PrepareBufferInterpolation Func_0809748c
 void Func_08096b88(void);
 
 
@@ -160,7 +162,7 @@ void BattleFx_RunEffect15(void)
     u32 index;
 
     Battle_Reset();
-    Func_080933f8(-1, -1, -1, 0);
+    place_within_camera_bounds(-1, -1, -1, 0);
     BattleEffect_InitializeSharedScene();
     WaitFrames(10);
     ObjectMotion_ArmCallback(*(s16 *)(scene + 24), 0x4000, 0);
@@ -212,6 +214,6 @@ void BattleFx_RunEffect15(void)
         entry += 72;
     } while (index <= 23);
     WaitFrames(40);
-    Func_0809748c();
+    BattleFx_PrepareBufferInterpolation();
     WaitFrames(10);
 }

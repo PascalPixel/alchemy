@@ -2,13 +2,14 @@
 #include "INVENTORY_MENU.H"
 
 void Func_080a9cbc(void);
+#define ItemMenu_PosCategory Func_080a9cbc
 
 void ItemMenu_OpenCategory(s32 owner_id)
 {
     struct InventoryMenuState *menu;
 
     menu = Data_03001f2c;
-    Func_080a9cbc();
+    ItemMenu_PosCategory();
     UiWindow_Commit(menu->item_window);
     InventoryMenu_DrawCategoryItems(menu->item_window, owner_id, 0);
 }

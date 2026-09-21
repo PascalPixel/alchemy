@@ -18,6 +18,7 @@ void Func_08092adc(s32 arg0, s32 arg1, s32 arg2);
 void Func_08092624(void *, s32);
 void Object_CommitPosition(void *);
 void Func_0809202c(void);
+#define BattleFx_PlayQueuedSound Func_0809202c
 
 void BattleFx_RunRisingObjectSequence(s32 sequence_arg, s32 mode_or_frame, s32 optional_action)
 {
@@ -74,6 +75,6 @@ wait_for_target_y:
             }
         }
         WaitFrames(2);
-        Func_0809202c();
+        BattleFx_PlayQueuedSound();
     }
 }

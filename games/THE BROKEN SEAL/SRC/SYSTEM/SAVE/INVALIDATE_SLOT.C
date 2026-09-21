@@ -17,7 +17,7 @@ s32 Func_08005b64(s32 index)
     header.sequence = 0;
     START_DMA(&header, &work->slot.record.header, 0x84000004);
     WAIT_DMA();
-    if (Func_08005868(index) != 0)
+    if (SaveState_WriteWorkspaceSlot(index) != 0)
         return 1;
     work->occupied[index] = 0;
     work->record_id[index] = 0x10;

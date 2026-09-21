@@ -30,6 +30,7 @@ extern s32 Data_02000240[];
 
 void Func_0800447c(s32, s32, struct Vec *);
 struct Target *Func_08092054(s32);
+#define Object_GetById Func_08092054
 void Func_080974d8(struct Vec *);
 void Func_0809bb34(struct Actor *);
 #define BattleFx_ClearOwnedSlot Func_0809bb34
@@ -39,7 +40,7 @@ void Func_08095938(struct Actor *actor)
     struct Target *target;
     struct Vec pos;
 
-    target = Func_08092054(Data_02000240[125]);
+    target = Object_GetById(Data_02000240[125]);
     if (actor->phase == 0) {
         actor->yaw += 1;
         actor->pitch += 1;

@@ -7,6 +7,7 @@
 
 extern struct PartyState gCell;
 void Func_08079374(s32 flag);
+#define GameFlag_ClearBit Func_08079374
 s32 Func_08079358(s32 flag);
 #define GameFlag_SetBit Func_08079358
 
@@ -16,7 +17,7 @@ void GameFlag_RefreshLureCap(void)
     s32 count;
     s32 n;
 
-    Func_08079374(0x167);
+    GameFlag_ClearBit(0x167);
     count = Party_CountActiveOwners();
     for (n = 0; n < count; n++) {
         struct OwnerInventoryState *owner;

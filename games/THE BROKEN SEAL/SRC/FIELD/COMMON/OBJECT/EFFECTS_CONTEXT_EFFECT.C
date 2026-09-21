@@ -139,10 +139,12 @@ s32 GameFlag_IsSet(s32);
 void GameFlag_Clear(s32);
 void Func_08094380(s32 arg0);
 void Func_080933f8(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+#define place_within_camera_bounds Func_080933f8
 void Audio_PlayCue(s32);
 void Func_0809163c(s32 arg0);
 #define Battle_WaitMode0 Func_0809163c
 void Func_0809335c(s32 arg0, s32 arg1);
+#define Object_AttachWorkTargetToObject Func_0809335c
 
 s32 ObjectEffect_RunPendingFlagEvent(void)
 {
@@ -169,7 +171,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void)
                 id = Data_02000240[125];
                 obj = ObjectTable_Get(id);
                 *(s32 *)((u8 *)obj + 12) += 0x00a00000;
-                Func_080933f8(-1, -1, -1, 0);
+                place_within_camera_bounds(-1, -1, -1, 0);
                 while (*(s32 *)((u8 *)obj + 12) + *(s32 *)((u8 *)obj + 40) >
                        *(s32 *)((u8 *)obj + 20)) {
                     WaitFrames(1);
@@ -178,7 +180,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void)
                 *(s32 *)((u8 *)obj + 12) = *(s32 *)((u8 *)obj + 20);
                 Object_SetMode(obj, 22);
                 Battle_WaitMode0(15);
-                Func_0809335c(id, 1);
+                Object_AttachWorkTargetToObject(id, 1);
                 result = 3;
             }
         }

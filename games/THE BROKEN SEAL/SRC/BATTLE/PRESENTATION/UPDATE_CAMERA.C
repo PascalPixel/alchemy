@@ -42,7 +42,9 @@ struct LinkWork {
 void Func_080049ac(void);
 #define Render_ResetTransformState Func_080049ac
 void Func_08004cb4(void *);
+#define SceneTransform_ApplyPosition Func_08004cb4
 void Func_08004c1c(s32);
+#define SceneTransform_ApplyYaw Func_08004c1c
 void Func_08004bd4(s32);
 void Func_080c0a24(u32, u32, s32, s32, u32);
 
@@ -85,8 +87,8 @@ void Func_080b5864(void)
     }
 
     Render_ResetTransformState();
-    Func_08004cb4(pos);
-    Func_08004c1c((s16)state->field36);
+    SceneTransform_ApplyPosition(pos);
+    SceneTransform_ApplyYaw((s16)state->field36);
     Func_08004bd4((s16)state->field34);
 
     local.first = 0;

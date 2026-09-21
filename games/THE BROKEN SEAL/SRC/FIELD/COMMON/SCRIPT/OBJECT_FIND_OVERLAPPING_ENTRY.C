@@ -2,6 +2,7 @@
 #include "GLOBAL_CELLS.H"
 
 s32 Func_0800eba0(s32 *a, s32 arg1, s32 *b, s32 arg3);
+#define Runtime_CheckRadiusOverlap Func_0800eba0
 
 struct ScriptObjectEntry *ScriptObject_FindOverlappingEntry(
     struct ScriptObjectEntry *object, s32 *values)
@@ -17,7 +18,7 @@ struct ScriptObjectEntry *ScriptObject_FindOverlappingEntry(
 loop_1:
     if (entry->data != NULL && (1 & *flags) && entry != object) {
         tmp = index;
-        if (Func_0800eba0(entry->values_08, entry->value_20 - 2,
+        if (Runtime_CheckRadiusOverlap(entry->values_08, entry->value_20 - 2,
                           values, object->value_20 - 2) >= 0) {
             return entry;
         }

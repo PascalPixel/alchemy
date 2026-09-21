@@ -7,6 +7,7 @@ struct BattleActorDefinition {
 
 struct BattleActorDefinition *Func_08077008(s32 actor_id);
 s32 Func_080c23c0(u8 class_id);
+#define Summon_IsEntryFlagged Func_080c23c0
 
 void Summon_LayoutPositions(u16 *actor_ids, s32 count, s32 *x_positions, s32 *z_positions)
 {
@@ -24,7 +25,7 @@ void Summon_LayoutPositions(u16 *actor_ids, s32 count, s32 *x_positions, s32 *z_
             spacing = 25;
             if ((u16)(actor_ids[index] - 254) > 1) {
                 actor = Func_08077008(actor_ids[index]);
-                spacing = Func_080c23c0(actor->class_id) ? 27 : 38;
+                spacing = Summon_IsEntryFlagged(actor->class_id) ? 27 : 38;
                 if (actor->class_id == 148 || actor->class_id == 121) {
                     x_positions[index] = -50;
                 }
@@ -36,7 +37,7 @@ void Summon_LayoutPositions(u16 *actor_ids, s32 count, s32 *x_positions, s32 *z_
         if ((u16)(actor_ids[index] - 254) > 1) {
             struct BattleActorDefinition *actor = Func_08077008(actor_ids[index]);
 
-            spacing = Func_080c23c0(actor->class_id) ? 27 : 38;
+            spacing = Summon_IsEntryFlagged(actor->class_id) ? 27 : 38;
         }
         z -= spacing / 2;
     }

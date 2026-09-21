@@ -33,10 +33,12 @@ extern s8 Data_080373f7[];
 
 s32 Func_08077290(s32);
 void *Func_080284dc(void);
+#define AffineEffect_InitializeWork Func_080284dc
 void Menu_AppendResourceEntry(s32 arg0);
 void Func_08028808(s32, s32, s32);
 s32 Func_08028574(s32);
 void Func_0802851c(void);
+#define Menu_EndResourceSelection Func_0802851c
 
 static __inline__ s32 TblGet(s8 *tbl, s32 index)
 {
@@ -63,7 +65,7 @@ s32 Menu_SelectTopEntry(s32 sel)
         sel = 0;
     }
 
-    Func_080284dc();
+    AffineEffect_InitializeWork();
     Menu_AppendResourceEntry(1);
     if (group == 0) {
         Menu_AppendResourceEntry(15);
@@ -72,7 +74,7 @@ s32 Menu_SelectTopEntry(s32 sel)
     Menu_AppendResourceEntry(7);
     Func_08028808(17, SELECT_MENU_WIDTH, 0);
     ret = Func_08028574(sel);
-    Func_0802851c();
+    Menu_EndResourceSelection();
 
     if (ret >= 0) {
         ret = Data_080373f7[ret + ofs + 1];
@@ -88,14 +90,14 @@ void Func_0801c2e4(void);
 s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1)
 {
     Func_0801c2d0();
-    Func_080284dc();
+    AffineEffect_InitializeWork();
     Menu_AppendResourceEntry(1);
     Menu_AppendResourceEntry(0xF);
     Menu_AppendResourceEntry(2);
     Menu_AppendResourceEntry(7);
     Func_08028808(0x11, 7, 0);
     arg1 = Menu_SelectResource(arg0, arg1 - 1);
-    Func_0802851c();
+    Menu_EndResourceSelection();
     Func_0801c2e4();
     return arg1;
 }
@@ -128,7 +130,7 @@ s32 Menu_SelectSaveSlotAction(void)
     } else {
         initial = 1;
     }
-    Func_080284dc();
+    AffineEffect_InitializeWork();
     if ((group == 0) || (group == 3)) {
         Menu_AppendResourceEntry(0x15);
     }
@@ -147,7 +149,7 @@ s32 Menu_SelectSaveSlotAction(void)
     }
     Func_08028808(0x11, TYPE_MENU_WIDTH, 0);
     ret = Func_08028574(initial);
-    Func_0802851c();
+    Menu_EndResourceSelection();
     if (ret >= 0) {
         ret = Data_0803740f[ret + (group * 6)];
     }

@@ -2,6 +2,7 @@
 #include "GLOBAL_CELLS.H"
 
 s32 Func_080a1814(void *menu);
+#define UiMenu_CreateCursor Func_080a1814
 s32 InitializeEntryObjects(s32, s32, s32, s32, s32);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 struct PsynergyMenuIcon *Func_080a1778(s32, s32, s32);
@@ -19,7 +20,7 @@ void PsynergyMenu_CreateEntryGrid(void)
     struct PsynergyMenuIcon **output;
 
     menu = *(struct PsynergyMenuState **)ADDR_03001F2C;
-    window = Func_080a1814(menu);
+    window = UiMenu_CreateCursor(menu);
     InitializeEntryObjects(window, 2, 2, 8, 0);
 
     window = UiWindow_CreateFar(0, 5, 30, 15, 2);

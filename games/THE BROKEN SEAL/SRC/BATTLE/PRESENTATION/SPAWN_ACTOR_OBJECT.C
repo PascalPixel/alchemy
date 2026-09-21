@@ -46,6 +46,7 @@ s32 Func_080b6eb4(s32);
 s32 Func_080c2384(s32);
 s32 Func_080c23a0(s32);
 s32 Func_080044d0(s32, s32);
+#define ArcTan2 Func_080044d0
 extern const u8 Data_080c5938[];
 
 void Func_080b6f44(Actor *actor, s32 unit, s32 x, s32 y)
@@ -166,7 +167,7 @@ void Func_080b6f44(Actor *actor, s32 unit, s32 x, s32 y)
     row = y;
     if (row < 0)
         row += 7;
-    position = Func_080044d0(row >> 3, x) + 0x8000;
+    position = ArcTan2(row >> 3, x) + 0x8000;
     object->field_06 = position;
     object->field_59 = 3;
     object->field_55 = 2;

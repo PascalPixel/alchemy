@@ -4,6 +4,7 @@
 extern u8 Value_00000b24;
 
 extern void Func_080a9cbc(void);
+#define ItemMenu_PosCategory Func_080a9cbc
 extern void UiText_DrawAt(void *, s32, s32, s32);
 extern s32 Func_080a9aec(s32, void *);
 extern void WaitFrames(s32);
@@ -15,7 +16,7 @@ void ItemMenu_DrawCategory(s32 window, s32 owner_id, s32 mode)
     u8 *items;
 
     OwnerState_GetFar(owner_id);
-    Func_080a9cbc();
+    ItemMenu_PosCategory();
     InventoryMenu_HideAllItemIcons();
     UiText_DrawAt(&Value_00000b24, window, 0, 0);
     UiText_DrawAt(&Value_00000b24 + 1, window, 0, 32);

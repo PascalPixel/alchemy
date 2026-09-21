@@ -45,6 +45,7 @@ struct EffectObject {
 
 extern u32 Func_0808d458(s32 descriptor, s32 value);
 extern s32 Func_0808d428(s32 condition);
+#define GameFlag_IsConditionActive Func_0808d428
 extern struct EffectObject *Func_0808ba1c(s32 object);
 extern u8 Data_02000240;
 extern void *Data_03001ebc;
@@ -63,7 +64,7 @@ struct EffectDescriptor *BattleFx_FindDescriptor(s32 kind, s32 value)
     while (flags != -1) {
         if ((flags & 0xf) == kind && descriptor->value == value &&
             (Func_0808d458(flags, descriptor->result) != 0 ||
-             (Func_0808d428(descriptor->condition) != 0 &&
+             (GameFlag_IsConditionActive(descriptor->condition) != 0 &&
               (flags = descriptor->flags, 1)))) {
             s32 accepted = 0;
             s32 threshold = 12;
@@ -162,8 +163,11 @@ struct BattleActionObject {
 };
 
 extern struct ActionDescriptor *Func_0808d394(s32);
+#define BattleAction_FindDescriptor Func_0808d394
 extern struct BattleActionObject *Func_08092054(s32);
+#define Object_GetById Func_08092054
 extern s32 Func_080915dc(s32);
+#define BattleFx_GetFlags Func_080915dc
 extern u32 Func_08004458(void);
 #define Random16 Func_08004458
 extern void Func_080916b0(void);
@@ -172,12 +176,14 @@ extern void Func_08092b94(s32);
 extern void Func_08092f84(s32, s32);
 #define BattleEv_RunWait Func_08092f84
 extern void Func_08091750(void);
+#define BattleFx_FinishAction Func_08091750
 extern void Func_08009088(struct BattleActionObject *, s32);
 extern void Func_08092848(s32, s32, s32);
 extern void Func_08015058(s32);
 extern void Func_08091660(void);
 #define Battle_InitializeRenderObject Func_08091660
 extern void Func_08093a6c(struct BattleActionObject *, void *);
+#define ObjectMotion_SetActionCallback Func_08093a6c
 extern void Func_08009098(struct BattleActionObject *, void *);
 #define ObjectDispatch_InitializeFar Func_08009098
 extern void Func_0809ade8(s32);
@@ -186,9 +192,9 @@ extern u8 Data_02000240;
 s32 BattleFx_RunDescriptorAction(s32 id)
 {
     struct BattleEffectAction *action =
-        (struct BattleEffectAction *)Func_0808d394(id);
+        (struct BattleEffectAction *)BattleAction_FindDescriptor(id);
     s32 result = -1;
-    struct BattleActionObject *object = Func_08092054(id);
+    struct BattleActionObject *object = Object_GetById(id);
     struct EffectDescriptor *descriptor;
     s32 special = 0;
     u32 saved_value;
@@ -207,14 +213,14 @@ s32 BattleFx_RunDescriptorAction(s32 id)
                 return -1;
             }
             if (descriptor->result >= 0x10000) {
-                s32 index = Func_080915dc(id);
+                s32 index = BattleFx_GetFlags(id);
                 u32 random = Random16();
                 s32 message =
                     0x0e0b + index * 2 + (random * 2 >> 16);
                 Battle_Reset();
                 Func_08092b94(message);
                 BattleEv_RunWait(id, 0);
-                Func_08091750();
+                BattleFx_FinishAction();
                 goto finish;
             }
         }
@@ -238,7 +244,7 @@ run_descriptor:
             s32 object_index = 250;
             s32 *object_slot =
                 (s32 *)((s16 *)&Data_02000240 + object_index);
-            struct BattleActionObject *linked = Func_08092054(*object_slot);
+            struct BattleActionObject *linked = Object_GetById(*object_slot);
             *(void **)((u8 *)linked + 56) = *(void **)((u8 *)linked + 8);
             *(void **)((u8 *)linked + 60) = *(void **)((u8 *)linked + 12);
             *(void **)((u8 *)linked + 64) = *(void **)((u8 *)linked + 16);
@@ -253,7 +259,7 @@ run_descriptor:
         Battle_Reset();
         Func_08092b94(descriptor->result);
         BattleEv_RunWait(id, 0);
-        Func_08091750();
+        BattleFx_FinishAction();
     } else {
         typedef void (*EffectRunner)(s32);
         Battle_InitializeRenderObject();
@@ -265,9 +271,9 @@ run_descriptor:
                 s32 object_index = 250;
                 s32 object_id =
                     *(s32 *)((s16 *)&Data_02000240 + object_index);
-                object->linked_object = Func_08092054(object_id);
+                object->linked_object = Object_GetById(object_id);
                 object->flags_5a |= 1;
-                Func_08093a6c(object, (void *)0x0809ff40);
+                ObjectMotion_SetActionCallback(object, (void *)0x0809ff40);
             } else if (action->mode == 1) {
                 object->saved_value = saved_value;
                 ObjectDispatch_InitializeFar(object, (void *)0x0809fc1c);
@@ -307,7 +313,7 @@ s32 BattleFx_RunKind6DescriptorAction(s32 arg0)
                 Func_08092b94(*(s32 **)((u8 *)p + 8));
                 BattleEv_RunWait(-1, 0);
                 ret = 0;
-                Func_08091750();
+                BattleFx_FinishAction();
             } else {
                 ((void (*)(s32))val)(arg0);
                 ret = 0;
@@ -352,7 +358,7 @@ s32 BattleAction_RunDescriptor(s32 arg0)
             Func_08092b94(desc->result);
             BattleEv_RunWait(-1, 0);
             ret = 0;
-            Func_08091750();
+            BattleFx_FinishAction();
         } else {
             ((void (*)(s32))desc->result)(arg0);
             goto block_17;

@@ -74,6 +74,7 @@ u32 Func_08004458(void);
 s32 Func_08002322(s32 angle);
 s32 Func_0800231c(s32 angle);
 void Func_080e38b8(void *particle, s32 a, s32 b);
+#define EffectStep_AdvanceWithGravity3D Func_080e38b8
 void Func_080b50e8(s32 id);
 void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 #define ObjectGroup_UpdateMembers Func_080d6888
@@ -185,7 +186,7 @@ void BattleFx_RunParticleReveal(void *object)
                     (*(s16 *)((u8 *)(p) + (2))) - (w = Data_080eec5f[index]) / 2,
                     (*(s16 *)((u8 *)(p) + (6))) - (h = Data_080eec63[index]) / 2,
                     w, h);
-                Func_080e38b8(p, 0x3F, 0x1000);
+                EffectStep_AdvanceWithGravity3D(p, 0x3F, 0x1000);
             }
         }
 

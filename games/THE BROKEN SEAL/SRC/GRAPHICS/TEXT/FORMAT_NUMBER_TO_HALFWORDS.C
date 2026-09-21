@@ -4,6 +4,7 @@
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 void Func_08004620(s32 out);
+#define Text_FormatSignedDecimalToWork Func_08004620
 
 s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value)
 {
@@ -12,7 +13,7 @@ s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value)
     u8 *src;
 
     dst = out;
-    Func_08004620(value);
+    Text_FormatSignedDecimalToWork(value);
     src = (u8 *)ADDR_03001F70;
     n = 0xD;
     do {

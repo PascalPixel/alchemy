@@ -2,6 +2,7 @@
 
 s32 ScheduleCallbackAfterFrames(s32, s32);
 void Func_080bd898(void);
+#define BattleEvent_Playback Func_080bd898
 
 s32 BattleEventRuntime_SchedulePhase(s32 parameter)
 {

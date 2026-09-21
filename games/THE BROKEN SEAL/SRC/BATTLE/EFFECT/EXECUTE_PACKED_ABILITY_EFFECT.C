@@ -11,10 +11,13 @@ s32 Func_0808e4b4(s32, s32, void *);
 #define BattleFx_FindMatchingEvent Func_0808e4b4
 void Func_08096fb0(s32, s32);
 void Func_080970f8(s32, s32);
+#define BattleFx_SetupObjectPair Func_080970f8
 s32 Func_08096b28(void *, s32, s32);
+#define BattleFx_RunEventAction Func_08096b28
 void FieldEvent_RunTypeHandler(void);
 void EffectRuntime_StopCurrentObject(void);
 void Func_08097194(void);
+#define BattleEffect_CleanupSceneObjects Func_08097194
 
 s32 BattleFx_ExecutePackedAbilityEffect(s32 packed)
 {
@@ -32,11 +35,11 @@ s32 BattleFx_ExecutePackedAbilityEffect(s32 packed)
     first = (void *)BattleFx_FindMatchingEvent(0x30000005, object, &output);
     second = (void *)BattleFx_FindMatchingEvent(0x20000005, object, &output);
     Func_08096fb0(index, 0);
-    Func_080970f8(Data_02000240.object_id, output);
-    Func_08096b28(first, mode, output);
+    BattleFx_SetupObjectPair(Data_02000240.object_id, output);
+    BattleFx_RunEventAction(first, mode, output);
     FieldEvent_RunTypeHandler();
     EffectRuntime_StopCurrentObject();
-    Func_08096b28(second, mode, output);
-    Func_08097194();
+    BattleFx_RunEventAction(second, mode, output);
+    BattleEffect_CleanupSceneObjects();
     return 0;
 }

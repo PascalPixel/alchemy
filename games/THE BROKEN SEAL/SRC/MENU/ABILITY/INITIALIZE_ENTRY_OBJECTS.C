@@ -39,6 +39,7 @@ void *Func_08009030(s32 value);
 void Object_InitializeMode(void *object, s32 value);
 void ScheduleCallbackAfterFrames(void (*callback)(void), s32 value);
 void Func_080a19a0(void);
+#define Menu_UpdateEntryObjectTransforms Func_080a19a0
 
 void InitializeEntryObjects(void *source, s32 origin_x, s32 origin_y, s32 spacing)
 {

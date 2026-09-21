@@ -6,6 +6,7 @@
 
 s32 ScheduleCallbackAfterFrames(s32, s32);
 void Func_08097868(void);
+#define BattleFx_ArmBg0HBlankDma Func_08097868
 
 void Ui_FillBank15PaletteGrey(void)
 {

@@ -10,6 +10,7 @@ s32 Party_Check(s32);
 s32 Func_08079358(s32 flag);
 #define GameFlag_SetBit Func_08079358
 void Func_08079374(s32 flag);
+#define GameFlag_ClearBit Func_08079374
 
 void Party_SetFlag32AndRefreshMembers(void)
 {
@@ -43,12 +44,12 @@ void Party_ApplyStatePreset(void)
 {
     s32 id;
 
-    Func_08079374(32);
-    Func_08079374(33);
+    GameFlag_ClearBit(32);
+    GameFlag_ClearBit(33);
     GameFlag_SetBit(0x901);
     Owner_RefreshDerivedData(5);
     Party_Check(5);
-    Func_08079374(0x11b);
+    GameFlag_ClearBit(0x11b);
     GameFlag_SetBit(282);
 
     for (id = 0; id <= 1; id++) {

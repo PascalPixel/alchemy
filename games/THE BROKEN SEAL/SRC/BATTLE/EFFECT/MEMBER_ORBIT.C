@@ -30,8 +30,10 @@ void Func_08004278(void *callback);
 void Func_080049ac(void);
 #define Render_ResetTransformState Func_080049ac
 void Func_080051d8(s32 a, s32 b);
+#define Graphics_PrepareTransferInIwramWork Func_080051d8
 void **Func_080b5098(s32 member_id);
 void Func_080e3944(void *source, void *screen);
+#define EffectPosition_ApplyBaseAndYOffset Func_080e3944
 s32 Func_08002322(s32 angle);
 s32 Func_0800231c(s32 angle);
 void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
@@ -123,7 +125,7 @@ void BattleFx_RunMemberOrbit(void *object)
             }
         }
         Render_ResetTransformState();
-        Func_080051d8(facing, facing + 12);
+        Graphics_PrepareTransferInIwramWork(facing, facing + 12);
         member = 0;
         if (FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828), s32 *, 20) != 0) {
             record_slot = record;
@@ -147,7 +149,7 @@ void BattleFx_RunMemberOrbit(void *object)
                     record_slot[0] = FIELD_AT_OFFSET(member_object, s32 *, 8);
                     record_slot[1] = 0x280000;
                     record_slot[2] = FIELD_AT_OFFSET(member_object, s32 *, 16);
-                    Func_080e3944(record_slot, screen);
+                    EffectPosition_ApplyBaseAndYOffset(record_slot, screen);
                     for (i = 0; i != 4; i++) {
                         s32 x;
                         s32 y;

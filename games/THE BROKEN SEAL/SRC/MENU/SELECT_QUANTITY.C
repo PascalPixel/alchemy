@@ -7,6 +7,7 @@ extern struct InventoryMenuState *Data_03001f2c;
 extern volatile s32 Data_03001b04;
 extern volatile u32 Data_03001c94;
 void Func_080a19a0(void);
+#define Menu_UpdateEntryObjectTransforms Func_080a19a0
 
 s32 Func_08015010(s32, s32, s32, s32, s32);
 void Func_08004278(void (*callback)(void));

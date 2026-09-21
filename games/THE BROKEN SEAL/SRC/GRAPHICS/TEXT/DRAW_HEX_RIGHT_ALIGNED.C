@@ -12,5 +12,5 @@ void Text_DrawHexRightAligned(u32 value, s32 width)
         count = 8;
     }
     Func_080045f0(value);
-    Func_080046c4((const u8 *)(ADDR_03001F78 - count));
+    Runtime_WriteDebugTextTiles((const u8 *)(ADDR_03001F78 - count));
 }

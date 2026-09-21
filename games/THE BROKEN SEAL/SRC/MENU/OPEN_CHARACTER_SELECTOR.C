@@ -67,6 +67,7 @@ void Func_08015408(s32, s32, s32, s32);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 s32 Func_08077158(const u16 *);
 void Func_080a1090(s32);
+#define UiWindow_InitializeWork Func_080a1090
 void Func_080a8034(s32, s32, s32, s32);
 s32 Func_080a7440(void);
 
@@ -85,7 +86,7 @@ s32 Menu_OpenCharacterSelector(void)
     Data_03001e68->suspended = 1;
     Func_08015408(0, 0, 30, 20);
     WaitFrames(1);
-    Func_080a1090(0);
+    UiWindow_InitializeWork(0);
 
     state->character_count =
         (u8)Func_08077158(state->character_ids);

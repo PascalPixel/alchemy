@@ -18,6 +18,7 @@ void Func_080152b8(u16 *selection);
 void BattleMotion_SetRecordChildValues(void *object, s32 value);
 void WaitFrames(s32 frames);
 s32 Func_080b6cd0(s32 id);
+#define BattleMotion_GetSlotField14 Func_080b6cd0
 void Func_08015130(s32 mode);
 
 void BattleMotion_RunValueSequence(s32 id)
@@ -42,7 +43,7 @@ void BattleMotion_RunValueSequence(s32 id)
 
         sel[0] = id;
         Func_080152b8(sel);
-        BattleMotion_SetRecordChildValues(GetBattleObjectSlot(id)->object, Func_080b6cd0(id));
+        BattleMotion_SetRecordChildValues(GetBattleObjectSlot(id)->object, BattleMotion_GetSlotField14(id));
         WaitFrames(2);
         remaining--;
     } while (remaining >= 0);

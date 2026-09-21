@@ -1,6 +1,7 @@
 #include "SAVE_STATE.H"
 
 u32 Func_08005a78(s32 record_id, void *destination)
+#define SaveState_ReadRecordPayload Func_08005a78
 {
     struct SaveWorkspace *work;
     u32 index;

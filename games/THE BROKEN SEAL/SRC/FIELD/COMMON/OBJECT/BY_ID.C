@@ -16,6 +16,7 @@ void Object_CommitPosition(struct ObjectRuntime *);
 void Object_SetMode(struct ObjectRuntime *, s32);
 void Func_08009148(struct ObjectRuntime *);
 void Func_08093a6c(struct ObjectRuntime *, s32);
+#define ObjectMotion_SetActionCallback Func_08093a6c
 
 struct ObjectRuntime *Object_GetById(u32 object_id)
 {
@@ -44,7 +45,7 @@ void ObjectMotion_EnableActionAndSetCallback(u32 object_id, s32 action)
         s32 value = 1;
         value |= object->action_flags;
         object->action_flags = value;
-        Func_08093a6c(object, action);
+        ObjectMotion_SetActionCallback(object, action);
     }
 }
 
@@ -68,7 +69,7 @@ void Object_LinkObjectAndSetCallback(u32 object_id, u32 linked_object_id)
 
     if (object != NULL) {
         object->linked_object = Object_GetById(linked_object_id);
-        Func_08093a6c(object, (s32)Data_0809ff40);
+        ObjectMotion_SetActionCallback(object, (s32)Data_0809ff40);
     }
 }
 
@@ -88,7 +89,7 @@ void Object_SetActionCallbackAndRefreshById(u32 object_id, s32 action)
         s32 value = 1;
         value |= object->action_flags;
         object->action_flags = value;
-        Func_08093a6c(object, action);
+        ObjectMotion_SetActionCallback(object, action);
         Func_08009148(object);
     }
 }

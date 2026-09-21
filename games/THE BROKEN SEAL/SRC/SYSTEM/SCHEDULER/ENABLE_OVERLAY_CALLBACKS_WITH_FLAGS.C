@@ -1,6 +1,7 @@
 #include "TYPES.H"
 
 s32 Func_0800430c(void);
+#define Scheduler_EnableUnmaskedOverlayCallbacks Func_0800430c
 s32 Func_08009290(void);
 s32 GameFlag_Set(s32 flag_no);
 

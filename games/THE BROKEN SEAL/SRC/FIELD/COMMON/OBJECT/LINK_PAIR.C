@@ -10,6 +10,7 @@ struct ObjectPairPosition {
 };
 
 s32 Func_080044d0(s32, s32);
+#define ArcTan2 Func_080044d0
 void Func_08092878(void *, void *);
 void Battle_WaitMode0(s32);
 
@@ -21,7 +22,7 @@ void ObjectMotion_SetAngleToward(s32 first_id, s32 second_id, s32 wait)
     first = ObjectTable_Get(first_id);
     second = ObjectTable_Get(second_id);
     if (first != 0 && second != 0) {
-        first->angle = Func_080044d0(second->z - first->z,
+        first->angle = ArcTan2(second->z - first->z,
             second->x - first->x);
         Battle_WaitMode0(wait);
     }

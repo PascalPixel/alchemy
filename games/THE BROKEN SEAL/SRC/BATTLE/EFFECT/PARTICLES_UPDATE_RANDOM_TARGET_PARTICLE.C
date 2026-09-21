@@ -13,6 +13,7 @@ struct EffectPositionSource {
 };
 
 extern s32 Data_02000240[];
+#define PARTY_STATE Data_02000240
 
 struct EffectPositionSource *Object_GetById(s32 id);
 u32 Random16(void);
@@ -30,7 +31,7 @@ void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect)
     s8 *state_pointer;
     s32 state;
 
-    source = Object_GetById(Data_02000240[125]);
+    source = Object_GetById(PARTY_STATE[125]);
     state_pointer = &effect->state;
     state = *state_pointer;
 

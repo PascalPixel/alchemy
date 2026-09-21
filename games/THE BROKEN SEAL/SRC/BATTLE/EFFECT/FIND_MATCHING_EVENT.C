@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
+#define PARTY_STATE Data_02000240
 
 u8 *Func_08077080(s32);
 #define BattleAction_Get Func_08077080
@@ -34,8 +35,8 @@ s32 BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result)
         (struct BattleEffectRuntime *)Data_03001ebc;
     struct BattleEffectEventRecord *event = runtime->events;
     s32 reference = ((struct BattleEffectValueRecord *)ObjectTable_Get(
-        Data_02000240.object_id))->value;
-    s32 selected = BattleEffect_SelectNearbyTargetObject(Data_02000240.object_id, group);
+        PARTY_STATE.object_id))->value;
+    s32 selected = BattleEffect_SelectNearbyTargetObject(PARTY_STATE.object_id, group);
     s32 alternate;
     s32 ignore_flags = 0;
 

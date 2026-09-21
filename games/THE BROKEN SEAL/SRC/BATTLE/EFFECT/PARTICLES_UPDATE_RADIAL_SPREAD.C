@@ -13,6 +13,7 @@ struct PositionSource_08096048 {
 };
 
 extern s32 Data_02000240[];
+#define PARTY_STATE Data_02000240
 extern u32 Data_03001800;
 
 s32 Object_GetById(u32);
@@ -31,7 +32,7 @@ void BattleFx_UpdateRadialSpread(struct EffectSlot *effect)
     u32 random;
 
     source = (struct PositionSource_08096048 *)
-        Object_GetById(Data_02000240[125]);
+        Object_GetById(PARTY_STATE[125]);
     state = effect->state;
 
     if (state == 0) {

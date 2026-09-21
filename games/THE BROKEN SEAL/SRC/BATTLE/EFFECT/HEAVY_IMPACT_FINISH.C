@@ -2,6 +2,7 @@
 #include "FIXED_MATH.H"
 
 extern s32 Data_02000240[];
+#define PARTY_STATE Data_02000240
 int Func_080958e4();
 #define BattleFx_ClearActiveSlotsAndScheduleUpdates Func_080958e4
 int Func_08092adc();
@@ -84,9 +85,9 @@ void BattleFx_FinishHeavyImpact(s32 arg)
     }
     while (0);
     WaitFrames(0x3C);
-    ObjectMotion_ArmCallback(Data_02000240[125], 0x4000, 0);
+    ObjectMotion_ArmCallback(PARTY_STATE[125], 0x4000, 0);
     WaitFrames(0x14);
-    Object_SetMode(Object_GetById(Data_02000240[125]), 0x1C);
+    Object_SetMode(Object_GetById(PARTY_STATE[125]), 0x1C);
     WaitFrames(0x28);
     Audio_PlayCue(0xA4);
     WaitFrames(0x64);

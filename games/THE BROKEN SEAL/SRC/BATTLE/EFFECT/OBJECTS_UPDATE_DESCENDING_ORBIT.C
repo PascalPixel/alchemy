@@ -17,6 +17,7 @@ struct Object08095fcc {
 };
 
 extern s32 Data_02000240[];
+#define PARTY_STATE Data_02000240
 
 s32 Object_GetById(u32);
 void RotateVectorByMagnitude(s32, s32, void *);
@@ -30,7 +31,7 @@ void BattleFx_UpdateDescendingOrbitObject(struct Object08095fcc *arg)
     s16 value;
     s32 y;
 
-    other = (struct Object08095fcc *)Object_GetById(Data_02000240[125]);
+    other = (struct Object08095fcc *)Object_GetById(PARTY_STATE[125]);
     raw = arg->timer - 1;
     arg->timer = raw;
     value = arg->timer;

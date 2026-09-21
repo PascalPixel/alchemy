@@ -2,6 +2,7 @@
 
 extern u8 *Data_03001ebc;
 extern s16 Data_02000240[];
+#define PARTY_STATE Data_02000240
 
 void *Func_0808ba1c(u32);
 #define ObjectTable_Get Func_0808ba1c
@@ -28,7 +29,7 @@ void BattleFx_RunFlashingCallbackSequence(void)
 {
     u8 *state = Data_03001ebc;
     s32 index = 250;
-    u8 *object = ObjectTable_Get(*(u32 *)&Data_02000240[index]);
+    u8 *object = ObjectTable_Get(*(u32 *)&PARTY_STATE[index]);
     EffectSprite *record = *(EffectSprite **)(object + 80);
     u8 *entry = *(u8 **)((u8 *)record + 40);
     u32 cycle;
@@ -55,7 +56,7 @@ void BattleFx_RunFlashingCallbackSequence(void)
     callback = Func_08099678;
     Scheduler_AddOrUpdateCallback((s32)callback, 0xc80);
     index = 147;
-    *(s16 *)&((s32 *)Data_02000240)[index] = 1;
+    *(s16 *)&((s32 *)PARTY_STATE)[index] = 1;
     callback();
     if (*(s16 *)(state + 382) == 0x2092) {
         run_tile_trigger_sequence();

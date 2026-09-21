@@ -26,6 +26,5 @@ typedef int bool;
 #define TRUE 1
 
 /* Temporary workaround; AGENTS.md records the admitted uses and removal. */
-#define SCHEDULING_CHEAT(statement) do { statement } while (0)
 
 #endif

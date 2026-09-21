@@ -239,28 +239,5 @@
         "source": "games/THE LOST AGE/SRC/FIELD/DAIRA_HEYA/IMPORT.INC"
       }
     }
-  ],
-  "verification": {
-    "measured": "2026-09-19",
-    "target": "tla-en",
-    "scope": "Seven maintained opening-area overlay entry and import banks",
-    "banks": 14,
-    "complete_overlays": 7,
-    "credited_bytes": 4088,
-    "new_exact_c_bytes": 0,
-    "existing_exact_c_owners": 142,
-    "inventory_extent_changed": false,
-    "method": "Rebuild each complete credited overlay from its maintained listing and compiled C placeholders; compare every byte with the checksum-verified canonical ROM overlay before writing the coverage receipt.",
-    "jev": {
-      "model": "jev-1.13.0",
-      "decision": "proceed",
-      "confidence": 0.75,
-      "latency_ms": 704,
-      "usage": {
-        "input_tokens": 916,
-        "output_tokens": 49
-      },
-      "disposition": "All seven complete overlays reproduced; the verifier now requires the same check for assembly-only overlays before issuing credit."
-    }
-  }
+  ]
 }

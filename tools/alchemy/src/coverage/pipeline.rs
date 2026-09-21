@@ -286,9 +286,6 @@ fn validated_executable(value: &Value) -> Result<Vec<Span>, String> {
                 "{id} executable interval lies outside its decoded image"
             ));
         }
-        if integer(value, "excluded_bytes") != Some(decoded - expected) {
-            return Err(format!("{id} decoded byte classification is incomplete"));
-        }
     }
     Ok(spans)
 }
@@ -2277,7 +2274,7 @@ mod tests {
             },
             "overlays": [{
                 "id": "resource_test", "audit": "complete", "decoded_bytes": 8,
-                "executable_bytes": 4, "excluded_bytes": 4,
+                "executable_bytes": 4,
                 "intervals": [{"start": 0x02000000, "end": 0x02000004}]
             }]
         })
@@ -2309,11 +2306,14 @@ mod tests {
             .unwrap_err()
             .contains("overlay count"));
 
-        let mut unpartitioned = inventory;
-        unpartitioned["overlays"][0]["excluded_bytes"] = json!(3);
-        assert!(validated_inventory(&unpartitioned, "tla-en")
+        let mut outside_decoded = inventory;
+        outside_decoded["overlays"][0]["executable_bytes"] = json!(12);
+        outside_decoded["overlays"][0]["intervals"] = json!([
+            {"start": 0x02000000, "end": 0x0200000c}
+        ]);
+        assert!(validated_inventory(&outside_decoded, "tla-en")
             .unwrap_err()
-            .contains("classification is incomplete"));
+            .contains("outside its decoded image"));
     }
 
     #[test]

@@ -4,7 +4,6 @@
   "target": "tla-en",
   "rom_sha256": "4199d82f845edf3e2e92f3783bca00190b5bc102d7c8aa339b951de280b1e6cc",
   "state": "audited",
-  "derivation": "full-c-progress-v1",
   "audit": "complete",
   "overlay_count": 114,
   "total_union_bytes": 2578466,
@@ -63,7 +62,6 @@
       "rom_start": 149698680,
       "rom_end": 149699848,
       "executable_bytes": 1612,
-      "excluded_bytes": 90,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -210,7 +208,6 @@
       "rom_start": 149699848,
       "rom_end": 149707288,
       "executable_bytes": 9232,
-      "excluded_bytes": 826,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -647,7 +644,6 @@
       "rom_start": 149707288,
       "rom_end": 149723144,
       "executable_bytes": 21566,
-      "excluded_bytes": 6058,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -3041,7 +3037,6 @@
       "rom_start": 149723144,
       "rom_end": 149734904,
       "executable_bytes": 9148,
-      "excluded_bytes": 6656,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -4473,7 +4468,6 @@
       "rom_start": 149734904,
       "rom_end": 149741540,
       "executable_bytes": 10352,
-      "excluded_bytes": 2016,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -4797,7 +4791,6 @@
       "rom_start": 149741540,
       "rom_end": 149746076,
       "executable_bytes": 7332,
-      "excluded_bytes": 2312,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -5061,7 +5054,6 @@
       "rom_start": 149746076,
       "rom_end": 149748068,
       "executable_bytes": 2728,
-      "excluded_bytes": 1836,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -5300,7 +5292,6 @@
       "rom_start": 149748068,
       "rom_end": 149754308,
       "executable_bytes": 13032,
-      "excluded_bytes": 1696,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -5734,7 +5725,6 @@
       "rom_start": 149754308,
       "rom_end": 149756816,
       "executable_bytes": 3456,
-      "excluded_bytes": 2960,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -6038,7 +6028,6 @@
       "rom_start": 149756816,
       "rom_end": 149759684,
       "executable_bytes": 3584,
-      "excluded_bytes": 3812,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -6512,7 +6501,6 @@
       "rom_start": 149759684,
       "rom_end": 149772540,
       "executable_bytes": 22186,
-      "excluded_bytes": 3050,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -8224,7 +8212,6 @@
       "rom_start": 149772540,
       "rom_end": 149781948,
       "executable_bytes": 14890,
-      "excluded_bytes": 4078,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -9251,7 +9238,6 @@
       "rom_start": 149781948,
       "rom_end": 149793636,
       "executable_bytes": 15810,
-      "excluded_bytes": 6326,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -10268,7 +10254,6 @@
       "rom_start": 149793636,
       "rom_end": 149801056,
       "executable_bytes": 11752,
-      "excluded_bytes": 4396,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -10975,7 +10960,6 @@
       "rom_start": 149801056,
       "rom_end": 149805476,
       "executable_bytes": 8412,
-      "excluded_bytes": 980,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -11367,7 +11351,6 @@
       "rom_start": 149805476,
       "rom_end": 149811116,
       "executable_bytes": 11416,
-      "excluded_bytes": 3996,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -11854,7 +11837,6 @@
       "rom_start": 149811116,
       "rom_end": 149816408,
       "executable_bytes": 7960,
-      "excluded_bytes": 5992,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -12261,7 +12243,6 @@
       "rom_start": 149816408,
       "rom_end": 149820064,
       "executable_bytes": 4636,
-      "excluded_bytes": 2564,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -12673,7 +12654,6 @@
       "rom_start": 149820064,
       "rom_end": 149820692,
       "executable_bytes": 840,
-      "excluded_bytes": 300,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -12775,7 +12755,6 @@
       "rom_start": 149820692,
       "rom_end": 149821176,
       "executable_bytes": 432,
-      "excluded_bytes": 388,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -12867,7 +12846,6 @@
       "rom_start": 149821176,
       "rom_end": 149822940,
       "executable_bytes": 1784,
-      "excluded_bytes": 3104,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -13044,7 +13022,6 @@
       "rom_start": 149822940,
       "rom_end": 149824332,
       "executable_bytes": 1620,
-      "excluded_bytes": 1608,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -13331,7 +13308,6 @@
       "rom_start": 149824332,
       "rom_end": 149833972,
       "executable_bytes": 21338,
-      "excluded_bytes": 4058,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -13908,7 +13884,6 @@
       "rom_start": 149833972,
       "rom_end": 149835800,
       "executable_bytes": 2236,
-      "excluded_bytes": 2040,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -14200,7 +14175,6 @@
       "rom_start": 149835800,
       "rom_end": 149848632,
       "executable_bytes": 14870,
-      "excluded_bytes": 7730,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -15247,7 +15221,6 @@
       "rom_start": 149848632,
       "rom_end": 149853944,
       "executable_bytes": 6498,
-      "excluded_bytes": 1638,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -15734,7 +15707,6 @@
       "rom_start": 149853944,
       "rom_end": 149864516,
       "executable_bytes": 15450,
-      "excluded_bytes": 2626,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -16726,7 +16698,6 @@
       "rom_start": 149864516,
       "rom_end": 149881240,
       "executable_bytes": 24124,
-      "excluded_bytes": 5536,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -18123,7 +18094,6 @@
       "rom_start": 149881240,
       "rom_end": 149886608,
       "executable_bytes": 7492,
-      "excluded_bytes": 7844,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -18500,7 +18470,6 @@
       "rom_start": 149886608,
       "rom_end": 149889320,
       "executable_bytes": 3044,
-      "excluded_bytes": 4212,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -18787,7 +18756,6 @@
       "rom_start": 149889320,
       "rom_end": 149892384,
       "executable_bytes": 5632,
-      "excluded_bytes": 1428,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -18974,7 +18942,6 @@
       "rom_start": 149892384,
       "rom_end": 149903012,
       "executable_bytes": 19526,
-      "excluded_bytes": 2706,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -19536,7 +19503,6 @@
       "rom_start": 149903012,
       "rom_end": 149908224,
       "executable_bytes": 12972,
-      "excluded_bytes": 1144,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -19738,7 +19704,6 @@
       "rom_start": 149908224,
       "rom_end": 149911724,
       "executable_bytes": 5608,
-      "excluded_bytes": 1528,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -19970,7 +19935,6 @@
       "rom_start": 149911724,
       "rom_end": 149916448,
       "executable_bytes": 4818,
-      "excluded_bytes": 2062,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -20257,7 +20221,6 @@
       "rom_start": 149916448,
       "rom_end": 149916920,
       "executable_bytes": 548,
-      "excluded_bytes": 448,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -20349,7 +20312,6 @@
       "rom_start": 149916920,
       "rom_end": 149918376,
       "executable_bytes": 1488,
-      "excluded_bytes": 2268,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -20601,7 +20563,6 @@
       "rom_start": 149918376,
       "rom_end": 149921100,
       "executable_bytes": 3722,
-      "excluded_bytes": 1926,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -21048,7 +21009,6 @@
       "rom_start": 149921100,
       "rom_end": 149924656,
       "executable_bytes": 4508,
-      "excluded_bytes": 3144,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -21415,7 +21375,6 @@
       "rom_start": 149924656,
       "rom_end": 149938832,
       "executable_bytes": 23334,
-      "excluded_bytes": 7710,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -22652,7 +22611,6 @@
       "rom_start": 149938832,
       "rom_end": 149955292,
       "executable_bytes": 22506,
-      "excluded_bytes": 6110,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -24059,7 +24017,6 @@
       "rom_start": 149955292,
       "rom_end": 149960132,
       "executable_bytes": 7960,
-      "excluded_bytes": 1572,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -24421,7 +24378,6 @@
       "rom_start": 149960132,
       "rom_end": 149962796,
       "executable_bytes": 4724,
-      "excluded_bytes": 1292,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -24793,7 +24749,6 @@
       "rom_start": 149962796,
       "rom_end": 149973848,
       "executable_bytes": 16282,
-      "excluded_bytes": 3946,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -25665,7 +25620,6 @@
       "rom_start": 149973848,
       "rom_end": 149977324,
       "executable_bytes": 4940,
-      "excluded_bytes": 1736,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -26142,7 +26096,6 @@
       "rom_start": 149977324,
       "rom_end": 149982904,
       "executable_bytes": 5722,
-      "excluded_bytes": 6494,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -26509,7 +26462,6 @@
       "rom_start": 149982904,
       "rom_end": 149984720,
       "executable_bytes": 2712,
-      "excluded_bytes": 1592,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -26886,7 +26838,6 @@
       "rom_start": 149984720,
       "rom_end": 149992636,
       "executable_bytes": 10434,
-      "excluded_bytes": 3378,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -27608,7 +27559,6 @@
       "rom_start": 149992636,
       "rom_end": 149999004,
       "executable_bytes": 7566,
-      "excluded_bytes": 3016,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -28300,7 +28250,6 @@
       "rom_start": 149999004,
       "rom_end": 149999272,
       "executable_bytes": 144,
-      "excluded_bytes": 388,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -28377,7 +28326,6 @@
       "rom_start": 149999272,
       "rom_end": 150007432,
       "executable_bytes": 10786,
-      "excluded_bytes": 2604,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -29089,7 +29037,6 @@
       "rom_start": 150007432,
       "rom_end": 150020596,
       "executable_bytes": 18040,
-      "excluded_bytes": 3316,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -32161,7 +32108,6 @@
       "rom_start": 150020596,
       "rom_end": 150025048,
       "executable_bytes": 8988,
-      "excluded_bytes": 4340,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -32528,7 +32474,6 @@
       "rom_start": 150025048,
       "rom_end": 150027744,
       "executable_bytes": 3600,
-      "excluded_bytes": 4094,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -32840,7 +32785,6 @@
       "rom_start": 150027744,
       "rom_end": 150031776,
       "executable_bytes": 5378,
-      "excluded_bytes": 1422,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -33202,7 +33146,6 @@
       "rom_start": 150031776,
       "rom_end": 150035116,
       "executable_bytes": 3868,
-      "excluded_bytes": 2376,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -33504,7 +33447,6 @@
       "rom_start": 150035116,
       "rom_end": 150049520,
       "executable_bytes": 20378,
-      "excluded_bytes": 5330,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -34671,7 +34613,6 @@
       "rom_start": 150049520,
       "rom_end": 150054840,
       "executable_bytes": 11192,
-      "excluded_bytes": 2668,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -34968,7 +34909,6 @@
       "rom_start": 150054840,
       "rom_end": 150055700,
       "executable_bytes": 392,
-      "excluded_bytes": 1588,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -35055,7 +34995,6 @@
       "rom_start": 150055700,
       "rom_end": 150055908,
       "executable_bytes": 192,
-      "excluded_bytes": 196,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -35132,7 +35071,6 @@
       "rom_start": 150055908,
       "rom_end": 150064092,
       "executable_bytes": 13876,
-      "excluded_bytes": 3428,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -35669,7 +35607,6 @@
       "rom_start": 150064092,
       "rom_end": 150072684,
       "executable_bytes": 11888,
-      "excluded_bytes": 4532,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -36191,7 +36128,6 @@
       "rom_start": 150072684,
       "rom_end": 150078540,
       "executable_bytes": 8076,
-      "excluded_bytes": 1522,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -36753,7 +36689,6 @@
       "rom_start": 150078540,
       "rom_end": 150079724,
       "executable_bytes": 1508,
-      "excluded_bytes": 836,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -36890,7 +36825,6 @@
       "rom_start": 150079724,
       "rom_end": 150080724,
       "executable_bytes": 1356,
-      "excluded_bytes": 276,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -37047,7 +36981,6 @@
       "rom_start": 150080724,
       "rom_end": 150083812,
       "executable_bytes": 6664,
-      "excluded_bytes": 576,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -37299,7 +37232,6 @@
       "rom_start": 150083812,
       "rom_end": 150088640,
       "executable_bytes": 7476,
-      "excluded_bytes": 2140,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -37651,7 +37583,6 @@
       "rom_start": 150088640,
       "rom_end": 150093288,
       "executable_bytes": 10540,
-      "excluded_bytes": 1220,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -37908,7 +37839,6 @@
       "rom_start": 150093288,
       "rom_end": 150100496,
       "executable_bytes": 8632,
-      "excluded_bytes": 3688,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -38485,7 +38415,6 @@
       "rom_start": 150100496,
       "rom_end": 150104072,
       "executable_bytes": 5128,
-      "excluded_bytes": 852,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -38727,7 +38656,6 @@
       "rom_start": 150104072,
       "rom_end": 150113400,
       "executable_bytes": 12578,
-      "excluded_bytes": 2986,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -39629,7 +39557,6 @@
       "rom_start": 150113400,
       "rom_end": 150119820,
       "executable_bytes": 8474,
-      "excluded_bytes": 2886,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -40326,7 +40253,6 @@
       "rom_start": 150119820,
       "rom_end": 150131280,
       "executable_bytes": 15336,
-      "excluded_bytes": 3772,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -41193,7 +41119,6 @@
       "rom_start": 150131280,
       "rom_end": 150146104,
       "executable_bytes": 20112,
-      "excluded_bytes": 6492,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -42445,7 +42370,6 @@
       "rom_start": 150146104,
       "rom_end": 150149148,
       "executable_bytes": 4400,
-      "excluded_bytes": 2344,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -42697,7 +42621,6 @@
       "rom_start": 150149148,
       "rom_end": 150160956,
       "executable_bytes": 17014,
-      "excluded_bytes": 7558,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -43674,7 +43597,6 @@
       "rom_start": 150160956,
       "rom_end": 150163800,
       "executable_bytes": 4632,
-      "excluded_bytes": 1060,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -43916,7 +43838,6 @@
       "rom_start": 150163800,
       "rom_end": 150176888,
       "executable_bytes": 19038,
-      "excluded_bytes": 6382,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -44948,7 +44869,6 @@
       "rom_start": 150176888,
       "rom_end": 150194376,
       "executable_bytes": 23038,
-      "excluded_bytes": 9258,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -46365,7 +46285,6 @@
       "rom_start": 150194376,
       "rom_end": 150200896,
       "executable_bytes": 6854,
-      "excluded_bytes": 1782,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -46892,7 +46811,6 @@
       "rom_start": 150200896,
       "rom_end": 150207800,
       "executable_bytes": 7386,
-      "excluded_bytes": 1746,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -47464,7 +47382,6 @@
       "rom_start": 150207800,
       "rom_end": 150214372,
       "executable_bytes": 6998,
-      "excluded_bytes": 1790,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -48016,7 +47933,6 @@
       "rom_start": 150214372,
       "rom_end": 150222308,
       "executable_bytes": 8794,
-      "excluded_bytes": 2306,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -48683,7 +48599,6 @@
       "rom_start": 150222308,
       "rom_end": 150230820,
       "executable_bytes": 9192,
-      "excluded_bytes": 2304,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -49310,7 +49225,6 @@
       "rom_start": 150230820,
       "rom_end": 150238164,
       "executable_bytes": 7826,
-      "excluded_bytes": 2182,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -49882,7 +49796,6 @@
       "rom_start": 150238164,
       "rom_end": 150247488,
       "executable_bytes": 10692,
-      "excluded_bytes": 2620,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -50609,7 +50522,6 @@
       "rom_start": 150247488,
       "rom_end": 150254280,
       "executable_bytes": 7038,
-      "excluded_bytes": 2150,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -51151,7 +51063,6 @@
       "rom_start": 150254280,
       "rom_end": 150263416,
       "executable_bytes": 11236,
-      "excluded_bytes": 2516,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -51888,7 +51799,6 @@
       "rom_start": 150263416,
       "rom_end": 150271700,
       "executable_bytes": 8772,
-      "excluded_bytes": 2152,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -52495,7 +52405,6 @@
       "rom_start": 150271700,
       "rom_end": 150278688,
       "executable_bytes": 7218,
-      "excluded_bytes": 2534,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -53067,7 +52976,6 @@
       "rom_start": 150278688,
       "rom_end": 150291672,
       "executable_bytes": 18480,
-      "excluded_bytes": 4620,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -53884,7 +53792,6 @@
       "rom_start": 150291672,
       "rom_end": 150300984,
       "executable_bytes": 9680,
-      "excluded_bytes": 3436,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -54546,7 +54453,6 @@
       "rom_start": 150300984,
       "rom_end": 150315228,
       "executable_bytes": 22418,
-      "excluded_bytes": 4746,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -55428,7 +55334,6 @@
       "rom_start": 150315228,
       "rom_end": 150319268,
       "executable_bytes": 5200,
-      "excluded_bytes": 2764,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -55800,7 +55705,6 @@
       "rom_start": 150319268,
       "rom_end": 150321336,
       "executable_bytes": 2908,
-      "excluded_bytes": 440,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -55987,7 +55891,6 @@
       "rom_start": 150321336,
       "rom_end": 150332960,
       "executable_bytes": 17898,
-      "excluded_bytes": 7354,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -56824,7 +56727,6 @@
       "rom_start": 150332960,
       "rom_end": 150336400,
       "executable_bytes": 4402,
-      "excluded_bytes": 1210,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -57211,7 +57113,6 @@
       "rom_start": 150336400,
       "rom_end": 150351768,
       "executable_bytes": 19762,
-      "excluded_bytes": 6982,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -58958,7 +58859,6 @@
       "rom_start": 150351768,
       "rom_end": 150363808,
       "executable_bytes": 17246,
-      "excluded_bytes": 2446,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -60110,7 +60010,6 @@
       "rom_start": 150363808,
       "rom_end": 150372628,
       "executable_bytes": 12776,
-      "excluded_bytes": 1840,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -61227,7 +61126,6 @@
       "rom_start": 150372628,
       "rom_end": 150390468,
       "executable_bytes": 22282,
-      "excluded_bytes": 6490,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -63399,7 +63297,6 @@
       "rom_start": 150390468,
       "rom_end": 150403588,
       "executable_bytes": 22256,
-      "excluded_bytes": 5228,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -64381,7 +64278,6 @@
       "rom_start": 150403588,
       "rom_end": 150407044,
       "executable_bytes": 4138,
-      "excluded_bytes": 2686,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -64723,7 +64619,6 @@
       "rom_start": 150407044,
       "rom_end": 150417464,
       "executable_bytes": 14734,
-      "excluded_bytes": 2726,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -66710,7 +66605,6 @@
       "rom_start": 150417464,
       "rom_end": 150423008,
       "executable_bytes": 3370,
-      "excluded_bytes": 4018,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -67017,7 +66911,6 @@
       "rom_start": 150423008,
       "rom_end": 150424080,
       "executable_bytes": 1560,
-      "excluded_bytes": 460,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -67154,7 +67047,6 @@
       "rom_start": 150424080,
       "rom_end": 150425444,
       "executable_bytes": 2164,
-      "excluded_bytes": 120,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -67311,7 +67203,6 @@
       "rom_start": 150425444,
       "rom_end": 150429108,
       "executable_bytes": 5474,
-      "excluded_bytes": 410,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -67573,7 +67464,6 @@
       "rom_start": 150429108,
       "rom_end": 150434204,
       "executable_bytes": 6868,
-      "excluded_bytes": 2020,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -68010,7 +67900,6 @@
       "rom_start": 150434204,
       "rom_end": 150434380,
       "executable_bytes": 196,
-      "excluded_bytes": 168,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -68077,7 +67966,6 @@
       "rom_start": 150434380,
       "rom_end": 150436284,
       "executable_bytes": 1842,
-      "excluded_bytes": 2434,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -68229,7 +68117,6 @@
       "rom_start": 150436284,
       "rom_end": 150439572,
       "executable_bytes": 3886,
-      "excluded_bytes": 2166,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -68636,7 +68523,6 @@
       "rom_start": 150439572,
       "rom_end": 150440876,
       "executable_bytes": 1538,
-      "excluded_bytes": 342,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
@@ -68828,7 +68714,6 @@
       "rom_start": 150440876,
       "rom_end": 150443590,
       "executable_bytes": 3708,
-      "excluded_bytes": 1216,
       "audit": "complete",
       "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [

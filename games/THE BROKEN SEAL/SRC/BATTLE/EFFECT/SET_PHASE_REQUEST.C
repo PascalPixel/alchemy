@@ -19,6 +19,7 @@ struct SharedData_08091f14 {
 
 extern struct RuntimeState_08091f14 *Data_03001ebc;
 extern struct SharedData_08091f14 Data_02000240;
+#define PARTY_STATE Data_02000240
 
 void Func_0809537c(s32 flags);
 s16 Func_0808b074(s32 value);
@@ -43,7 +44,7 @@ void BattleFx_SetPhaseRequest(s32 flags, s32 value)
     if (high == 0)
         Func_0809537c(flags);
 
-    shared = &Data_02000240;
+    shared = &PARTY_STATE;
     shared->request = (value + 0x12c) | high;
     state->value = BattleFx_GetPhaseResult(value);
     if (state->mode == 3) {

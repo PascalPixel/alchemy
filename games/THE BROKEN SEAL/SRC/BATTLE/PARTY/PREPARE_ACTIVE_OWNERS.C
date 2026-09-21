@@ -28,7 +28,7 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners)
         count = limit;
 
     for (index = 0; index < count; index++) {
-        s32 owner = Data_02000240.active_owners[index];
+        s32 owner = PARTY_STATE.active_owners[index];
 
         if (owners != 0)
             *owners++ = owner;

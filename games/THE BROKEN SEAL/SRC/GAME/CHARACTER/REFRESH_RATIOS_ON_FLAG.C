@@ -24,7 +24,7 @@ void Owner_RefreshRatiosOnFlag(void)
 
     count = Party_CountActiveOwners();
     for (n = 0; n < count; n++) {
-        ownerId = Data_02000240.active_owners[n];
+        ownerId = PARTY_STATE.active_owners[n];
         group = Data_0807a828[ownerId];
         doRefresh = 0;
         if (group == 0) {

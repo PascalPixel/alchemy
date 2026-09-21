@@ -50,6 +50,7 @@ unsigned char BattleFx_GetPhaseResult(s32 phase_index)
 }
 
 extern s16 Data_02000240[];
+#define PARTY_STATE Data_02000240
 
 struct SceneInteractionEntry {
     s16 id;
@@ -66,9 +67,9 @@ s32 GameFlag_IsSet(s32 flag);
 void Scene_ResolveInteractionResult(void)
 {
     s16 result = 18;
-    s16 progress = Data_02000240[224];
-    s16 sub = Data_02000240[225];
-    s16 alt = Data_02000240[230];
+    s16 progress = PARTY_STATE[224];
+    s16 sub = PARTY_STATE[225];
+    s16 alt = PARTY_STATE[230];
     const struct SceneInteractionEntry *entry = Data_0809d9f0;
 
     for (; entry->id != -1; entry++) {
@@ -99,5 +100,5 @@ void Scene_ResolveInteractionResult(void)
         }
     }
 
-    Data_02000240[248] = result;
+    PARTY_STATE[248] = result;
 }

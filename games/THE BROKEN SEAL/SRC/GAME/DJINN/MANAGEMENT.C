@@ -64,7 +64,7 @@ s32 Djinn_AddToLeastLoadedOwner(s32 index, u8 *state)
     if (best_no < result) {
         s32 off = 252;
 
-        owners = (u8 *)&Data_02000240 + off * 2;
+        owners = (u8 *)&PARTY_STATE + off * 2;
         count = result;
         do {
             u8 *p = OwnerState_Get(*owners);

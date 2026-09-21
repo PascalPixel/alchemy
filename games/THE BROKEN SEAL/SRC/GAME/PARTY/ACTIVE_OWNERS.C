@@ -26,10 +26,10 @@ s32 Party_AddActiveOwner(s32 value)
     GameFlag_SetBit(value);
     index = 0;
     while (index < count) {
-        if (Data_02000240.active_owners[index] == value)
+        if (PARTY_STATE.active_owners[index] == value)
             return count;
         index++;
     }
-    Data_02000240.active_owners[index] = value;
+    PARTY_STATE.active_owners[index] = value;
     return count + 1;
 }

@@ -11,7 +11,7 @@ s32 Party_ListActiveOwners(s16 *owners)
         index = 0;
         if (count != 0) {
             do {
-                *owners++ = Data_02000240.active_owners[index];
+                *owners++ = PARTY_STATE.active_owners[index];
                 index++;
             } while (index != count);
         }

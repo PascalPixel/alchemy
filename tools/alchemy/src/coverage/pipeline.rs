@@ -872,7 +872,7 @@ fn overlay_assembly_classification_document_for(
                 .map(|region| region.span)
                 .collect::<Vec<_>>();
             if text(row, "confidence") != "proven"
-                || text(row, "kind") != "veneer"
+                || text(row, "kind") != "overlay_trampoline"
                 || text(&row["provenance"], "proof") != veneer_macro
                 || !text(&row["provenance"], "source").starts_with(&format!("{source_dir}/"))
                 || span.start % 4 != 0
@@ -880,7 +880,7 @@ fn overlay_assembly_classification_document_for(
                 || bytes(&intersect(&[span], &veneer_spans)) != span.bytes()
             {
                 return Err(format!(
-                    "assembly classification {index} has invalid reconstructed veneer credit"
+                    "assembly classification {index} has invalid reconstructed overlay-trampoline credit"
                 ));
             }
             credited.entry(overlay).or_default().push(span);
@@ -2448,7 +2448,7 @@ mod tests {
             "proven",
             json!(["fixture proof"]),
         );
-        row["kind"] = json!("veneer");
+        row["kind"] = json!("overlay_trampoline");
         row["provenance"] = json!({
             "credit":"reconstructed_veneer",
             "proof":"games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC",
@@ -3174,7 +3174,7 @@ mod tests {
             "proven",
             json!(["verified fixed linkage"]),
         );
-        row["kind"] = json!("veneer");
+        row["kind"] = json!("overlay_trampoline");
         row["provenance"] = json!({"credit":"reconstructed_veneer", "proof":OVERLAY_VENEER_MACRO,
             "source":"games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/IMPORT.INC"});
         let inventory = BTreeMap::from([(

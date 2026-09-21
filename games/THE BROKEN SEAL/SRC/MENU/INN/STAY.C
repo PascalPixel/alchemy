@@ -63,6 +63,7 @@ struct InnObject {
 };
 
 extern struct InnGlobalState Data_02000240;
+#define PARTY_STATE Data_02000240
 extern char Value_00000d1c;
 
 void Func_080b010c(void);
@@ -133,7 +134,7 @@ s32 Inn_CheckIn(s32 mode, s32 object_id)
         UiMessage_ShowAndWait(message_base
             + (INN_MESSAGE_GOODBYE - INN_MESSAGE_WELCOME));
         UiWindow_Close(state->window, 2);
-    } else if ((u32)amount > Data_02000240.limit) {
+    } else if ((u32)amount > PARTY_STATE.limit) {
         UiMessage_ShowAndWait(message_base
             + (INN_MESSAGE_NOT_ENOUGH_COINS - INN_MESSAGE_WELCOME));
         UiWindow_Close(state->window, 2);

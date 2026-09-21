@@ -21,6 +21,7 @@ extern char Value_0000000c;
 extern char Data_02000000;
 extern s16 Data_02002004;
 extern struct State_080208e4 Data_02000240;
+#define PARTY_STATE Data_02000240
 extern s32 Data_03001c9c;
 extern u8 Data_03001d08;
 extern s16 Data_03001d24;
@@ -50,8 +51,8 @@ s32 SaveState_LoadRecordIntoWork(s32 arg)
                 UiText_ShowPositionedMessageAndWait((s32)&Value_0000000c, 1);
                 ret = -2;
             } else {
-                Data_03001c9c = Data_02000240.value;
-                Data_03001d08 = ((u8 *)&Data_02000240)[0x22a];
+                Data_03001c9c = PARTY_STATE.value;
+                Data_03001d08 = ((u8 *)&PARTY_STATE)[0x22a];
                 Data_03001d24 = 0;
                 Data_02002004 = value;
             }

@@ -165,6 +165,7 @@ struct MenuModeLabelState {
 
 extern void Func_080164d4(void *, s32, s32, s32, s32);
 extern void Func_0801e7c0(s32, void *, s32, s32);
+#define UiText_DrawCharacterAtOffset Func_0801e7c0
 
 void Menu_DrawModeLabel(void)
 {
@@ -183,12 +184,12 @@ void Menu_DrawModeLabel(void)
             {
                 s32 text = 0xc7b;
 
-                Func_0801e7c0(text, state->window, 18, 40);
-                Func_0801e7c0(text + 1, state->window, 18, 48);
-                Func_0801e7c0(text + 2, state->window, 18, 56);
-                Func_0801e7c0(text + 3, state->window, 18, 64);
+                UiText_DrawCharacterAtOffset(text, state->window, 18, 40);
+                UiText_DrawCharacterAtOffset(text + 1, state->window, 18, 48);
+                UiText_DrawCharacterAtOffset(text + 2, state->window, 18, 56);
+                UiText_DrawCharacterAtOffset(text + 3, state->window, 18, 64);
                 text += 4;
-                Func_0801e7c0(text, state->window, 18, 72);
+                UiText_DrawCharacterAtOffset(text, state->window, 18, 72);
                 goto done;
             }
         }
@@ -196,10 +197,10 @@ void Menu_DrawModeLabel(void)
         {
             s32 text = 0xc7b;
 
-            Func_0801e7c0(text, state->window, 18, 40);
-            Func_0801e7c0(text + 1, state->window, 18, 48);
+            UiText_DrawCharacterAtOffset(text, state->window, 18, 40);
+            UiText_DrawCharacterAtOffset(text + 1, state->window, 18, 48);
             text += 2;
-            Func_0801e7c0(text, state->window, 18, 56);
+            UiText_DrawCharacterAtOffset(text, state->window, 18, 56);
             goto done;
         }
 
@@ -207,8 +208,8 @@ mode_other:
         {
             s32 text = 0xc7b;
 
-            Func_0801e7c0(text++, state->window, 18, 40);
-            Func_0801e7c0(text, state->window, 18, 48);
+            UiText_DrawCharacterAtOffset(text++, state->window, 18, 40);
+            UiText_DrawCharacterAtOffset(text, state->window, 18, 48);
         }
 done:
 ;

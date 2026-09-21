@@ -8,11 +8,12 @@
 void Owner_RefreshDerivedData(s32 arg0);
 s32 Party_Check(s32);
 s32 Func_08079358(s32 flag);
+#define GameFlag_SetBit Func_08079358
 void Func_08079374(s32 flag);
 
 void Party_SetFlag32AndRefreshMembers(void)
 {
-    Func_08079358(0x20);
+    GameFlag_SetBit(0x20);
     Owner_RefreshDerivedData(0);
     Owner_RefreshDerivedData(1);
     Owner_RefreshDerivedData(5);
@@ -44,11 +45,11 @@ void Party_ApplyStatePreset(void)
 
     Func_08079374(32);
     Func_08079374(33);
-    Func_08079358(0x901);
+    GameFlag_SetBit(0x901);
     Owner_RefreshDerivedData(5);
     Party_Check(5);
     Func_08079374(0x11b);
-    Func_08079358(282);
+    GameFlag_SetBit(282);
 
     for (id = 0; id <= 1; id++) {
         struct OwnerWork *unit = (struct OwnerWork *)OwnerState_Get(id);

@@ -38,6 +38,7 @@ typedef struct {
 Object *Func_080090c8(s32, s32, s32);
 #define Object_CreateFar Func_080090c8
 void Func_08009098(Object *, const void *);
+#define ObjectDispatch_InitializeFar Func_08009098
 Unit *Func_08077008(s32);
 s32 Func_08077078(Unit *, s32);
 s32 Func_080b6d30(s32);
@@ -176,5 +177,5 @@ void Func_080b6f44(Actor *actor, s32 unit, s32 x, s32 y)
         object->field_18 = 0x10000;
         object->field_1c = 0x10000;
     }
-    Func_08009098(object, Data_080c5938);
+    ObjectDispatch_InitializeFar(object, Data_080c5938);
 }

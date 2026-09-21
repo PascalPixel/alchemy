@@ -17,6 +17,7 @@ void Func_080a1028(s32 window, s32 column, s32 row, s32 height, s32 flags);
 void Func_080a1030(void);
 void Func_080b010c(void);
 void Func_080b0204(void);
+#define Inn_Cleanup Func_080b0204
 void Func_080b0a20(struct ShopCursor *cursor, s32 target_x, s32 target_y);
 s32 Func_080b362c(s32 unit_id);
 s32 Func_08077248(s32 unit_id);
@@ -110,7 +111,7 @@ done:
     UiWindow_Close(list_window, 2);
     UiWindow_Close(shop->item_window, 2);
     WaitFrames(1);
-    Func_080b0204();
+    Inn_Cleanup();
     return result;
 }
 

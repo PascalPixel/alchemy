@@ -23,6 +23,7 @@ struct EffectChild {
 extern struct BattleEffectScene *Data_03001f30;
 
 void Func_08097384(void);
+#define BattleEffect_InitializeSharedScene Func_08097384
 void *SpawnItemBreakEffectMode3(s32 x, s32 y, s32 z, s32 angle);
 void Object_SetCallback(void *object, const void *callback);
 void WaitFrames(s32 frames);
@@ -55,7 +56,7 @@ void BattleEffect_RunTargetedItemBreak(void)
     if (child == 0)
         return;
 
-    Func_08097384();
+    BattleEffect_InitializeSharedScene();
     *(void **)((u8 *)main_object + 0x68) = child;
     Object_SetCallback(main_object, (const void *)0x0809f0bc);
 

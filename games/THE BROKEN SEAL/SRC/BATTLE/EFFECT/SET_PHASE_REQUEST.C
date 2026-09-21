@@ -23,6 +23,7 @@ extern struct SharedData_08091f14 Data_02000240;
 void Func_0809537c(s32 flags);
 s16 Func_0808b074(s32 value);
 s32 Func_0808adf0(void *object);
+#define BattleFx_LookupResult Func_0808adf0
 void *ObjectTable_Get(u32 object);
 /* Object table: 192 pointers at Data_03001ebc + 0x14 (object/table/get.c). */
 #define ObjectTable_Get Func_0808ba1c
@@ -47,7 +48,7 @@ void BattleFx_SetPhaseRequest(s32 flags, s32 value)
     if (state->mode == 3) {
         void *object = ObjectTable_Get(shared->object);
 
-        Func_0808adf0((u8 *)object + 8);
+        BattleFx_LookupResult((u8 *)object + 8);
     }
     Func_0808b320(0, 0);
 }

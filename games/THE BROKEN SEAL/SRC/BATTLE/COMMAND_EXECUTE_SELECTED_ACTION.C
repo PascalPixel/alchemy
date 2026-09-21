@@ -39,6 +39,7 @@ void Func_08077120(s32, s32);
  * Results are cast back to struct BattleTargetCandidate * here.
  */
 s32 Func_0808e4b4(s32, s32, void *);
+#define BattleFx_FindMatchingEvent Func_0808e4b4
 void Func_080770c8(s32); s32 Func_0808df1c(s32, s32); void Func_0808b8e8(void);
 void Func_08096fb0(s32, s32); void Func_080970f8(s32, s32); void Func_0809728c(void);
 /*
@@ -109,9 +110,9 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
         Func_08077120(actor, -cost);
     }
 
-    primary = (struct BattleTargetCandidate *)Func_0808e4b4(0x10000005, targetMode, &targetId);
-    secondary = (struct BattleTargetCandidate *)Func_0808e4b4(5, targetMode, &targetId);
-    tertiary = (struct BattleTargetCandidate *)Func_0808e4b4(0x50000005, targetMode, &targetId);
+    primary = (struct BattleTargetCandidate *)BattleFx_FindMatchingEvent(0x10000005, targetMode, &targetId);
+    secondary = (struct BattleTargetCandidate *)BattleFx_FindMatchingEvent(5, targetMode, &targetId);
+    tertiary = (struct BattleTargetCandidate *)BattleFx_FindMatchingEvent(0x50000005, targetMode, &targetId);
     targetId = -1;
     Func_080770c8(0x140); Func_080770c8(0x141);
     if (primary || secondary || tertiary) {

@@ -13,11 +13,12 @@ s32 EffectRuntime_LookupByTableEntry(u32 index)
 }
 
 s32 Func_0808adf0(void *);
+#define BattleFx_LookupResult Func_0808adf0
 s32 Func_0808ae74(s32, s32);
 
 s32 BattleFx_ApplyLookupResult(s32 arg0, s32 arg1)
 {
-    return Func_0808ae74(Func_0808adf0((void *)arg0), arg1);
+    return Func_0808ae74(BattleFx_LookupResult((void *)arg0), arg1);
 }
 
 extern u16 Data_0809c610[];

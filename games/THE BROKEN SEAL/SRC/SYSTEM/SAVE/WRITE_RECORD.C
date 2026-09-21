@@ -1,6 +1,7 @@
 #include "SAVE_STATE.H"
 
 s32 Func_08005920(s32 record_id, void *source)
+#define SaveState_WriteRecord Func_08005920
 {
     struct SaveWorkspace *work;
     struct SaveSlotHeader header;
@@ -29,7 +30,7 @@ s32 Func_08005920(s32 record_id, void *source)
 
     if (Func_08005868(slot) != 0)
         return 1;
-    if (current <= 15 && Func_08005b64(current) != 0)
+    if (current <= 15 && SaveState_InvalidateSlot(current) != 0)
         return 1;
 
     if (header.sequence > 0xfde8) {
@@ -38,7 +39,7 @@ s32 Func_08005920(s32 record_id, void *source)
         WAIT_DMA();
         if (Func_08005868(current) != 0)
             return 1;
-        if (Func_08005b64(slot) != 0)
+        if (SaveState_InvalidateSlot(slot) != 0)
             return 1;
         slot = current;
     }

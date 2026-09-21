@@ -3,6 +3,7 @@
 u32 Func_08005b24(s32);
 #define SaveState_FindLatestSlot Func_08005b24
 s32 Func_08005b64(s32);
+#define SaveState_InvalidateSlot Func_08005b64
 
 u32 SaveState_DeleteRecord(s32 record_id)
 {
@@ -13,6 +14,6 @@ u32 SaveState_DeleteRecord(s32 record_id)
     if (index > 0xFU) {
         return 1U;
     }
-    deletion_result = Func_08005b64(index);
+    deletion_result = SaveState_InvalidateSlot(index);
     return (u32)((0 - deletion_result) | deletion_result) >> 0x1F;
 }

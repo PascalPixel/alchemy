@@ -126,11 +126,14 @@ struct EffectObject {
 extern u8 Data_02000240[];
 
 void Func_080916b0(void);
+#define Battle_Reset Func_080916b0
 void Func_080933f8(s32, s32, s32, s32);
 void Func_08097384(void);
+#define BattleEffect_InitializeSharedScene Func_08097384
 void Func_080030f8(s32);
 #define WaitFrames Func_080030f8
 void Func_08092adc(s32, s32, s32);
+#define ObjectMotion_ArmCallback Func_08092adc
 void Func_080f9010(s32);
 void Func_08009080(void *, s32);
 #define Object_SetMode Func_08009080
@@ -156,11 +159,11 @@ void BattleFx_RunEffect15(void)
     u8 stopped;
     u32 index;
 
-    Func_080916b0();
+    Battle_Reset();
     Func_080933f8(-1, -1, -1, 0);
-    Func_08097384();
+    BattleEffect_InitializeSharedScene();
     WaitFrames(10);
-    Func_08092adc(*(s16 *)(scene + 24), 0x4000, 0);
+    ObjectMotion_ArmCallback(*(s16 *)(scene + 24), 0x4000, 0);
     WaitFrames(30);
     *(void (**)(void))(main_object + 108) = Func_08096b88;
     Func_080f9010(0x83);

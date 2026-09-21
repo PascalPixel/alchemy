@@ -24,7 +24,7 @@ void Menu_CreateWindowAndEntryObjects(s32 resource)
     created = 0;
     handle = state->handle;
     if (handle == 0) {
-        created = Func_080a10d0(&state->handle, 0, 5, 0x1E, 0xF, 2);
+        created = UiWindow_UpdateOrCreate(&state->handle, 0, 5, 0x1E, 0xF, 2);
         handle = state->handle;
     }
     if (created != 0) {

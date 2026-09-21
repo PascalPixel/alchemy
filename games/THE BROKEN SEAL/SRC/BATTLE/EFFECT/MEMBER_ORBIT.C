@@ -28,6 +28,7 @@ void Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 #define Scheduler_RemoveCallback Func_08004278
 void Func_080049ac(void);
+#define Render_ResetTransformState Func_080049ac
 void Func_080051d8(s32 a, s32 b);
 void **Func_080b5098(s32 member_id);
 void Func_080e3944(void *source, void *screen);
@@ -121,7 +122,7 @@ void BattleFx_RunMemberOrbit(void *object)
                 angle += 1024;
             }
         }
-        Func_080049ac();
+        Render_ResetTransformState();
         Func_080051d8(facing, facing + 12);
         member = 0;
         if (FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828), s32 *, 20) != 0) {

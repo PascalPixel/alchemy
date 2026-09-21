@@ -4,6 +4,7 @@
 s32 Func_080056cc(void);
 #define SaveState_InitializeWorkspace Func_080056cc
 s32 Func_08005920(s32, void *);
+#define SaveState_WriteRecord Func_08005920
 void Func_0801776c(s32, s32);
 #define UiText_ShowPositionedMessageAndWait Func_0801776c
 void Func_0801f818(void);
@@ -32,10 +33,10 @@ s16 SaveState_WriteCurrentSlotPair(void)
             void *base = &Data_02000000;
             s32 next;
 
-            found = Func_08005920(*(s16 *)0x02002004, base);
+            found = SaveState_WriteRecord(*(s16 *)0x02002004, base);
             next = *(s16 *)0x02002004;
             base = (char *)base + 0x1000;
-            found |= Func_08005920(next + 3, base);
+            found |= SaveState_WriteRecord(next + 3, base);
             if (found != 0) {
                 UiText_ShowPositionedMessageAndWait((s32)&Value_0000000b, 1);
                 error = 3;
@@ -63,9 +64,9 @@ s32 SaveState_WriteSlotPair(s32 arg0)
     } else {
         void *base = &Data_02000000;
 
-        found = Func_08005920(arg0, base);
+        found = SaveState_WriteRecord(arg0, base);
         base = (char *)base + 0x1000;
-        found |= Func_08005920(arg0 + 3, base);
+        found |= SaveState_WriteRecord(arg0 + 3, base);
         if (found != 0) {
             UiText_ShowPositionedMessageAndWait((s32)&Value_0000000b, 1);
             result = -3;

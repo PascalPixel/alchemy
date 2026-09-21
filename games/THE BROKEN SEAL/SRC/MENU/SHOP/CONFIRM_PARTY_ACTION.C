@@ -14,6 +14,7 @@ void Func_080b0a20(struct ShopCursor *cursor, s32 target_x, s32 target_y);
 void Func_080b28d4(s32 message);
 void Func_080b010c(void);
 void Func_080b0204(void);
+#define Inn_Cleanup Func_080b0204
 s32 Func_080b280c(void);
 void Func_080b2b10(void);
 s32 Func_08015388(s32 prev);
@@ -91,6 +92,6 @@ s32 Shop_ConfirmAct(s32 unit_id)
     Func_080b28d4(0xd23);
     UiWindow_Close(shop->money_window, 2);
     UiWindow_Close(list_window, 2);
-    Func_080b0204();
+    Inn_Cleanup();
     return 0;
 }

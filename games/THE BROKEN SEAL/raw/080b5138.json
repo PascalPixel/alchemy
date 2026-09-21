@@ -14,7 +14,7 @@
           "address": "0x080b5138",
           "size": 204,
           "kind": "arm",
-          "source": "080b5138.s",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/MODEL/DECODE.S",
           "instruction_bytes": 204,
           "literal_words": 0,
           "undefined_words": 0
@@ -31,7 +31,7 @@
           "address": "0x080b520c",
           "size": 12,
           "kind": "arm",
-          "source": "080b520c.s",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/MODEL/BIT_DISPATCH.S",
           "instruction_bytes": 12,
           "literal_words": 0,
           "undefined_words": 0
@@ -56,7 +56,7 @@
           "address": "0x080b5258",
           "size": 272,
           "kind": "arm",
-          "source": "080b5258.s",
+          "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/MODEL/BIT_COMMANDS.S",
           "instruction_bytes": 272,
           "literal_words": 0,
           "undefined_words": 0

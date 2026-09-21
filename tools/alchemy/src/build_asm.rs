@@ -91,6 +91,14 @@ struct Classification {
 struct ClassificationProvenance {
     #[serde(default)]
     range_credits: Vec<Value>,
+    #[serde(default)]
+    credit: String,
+    #[serde(default)]
+    proof: String,
+    #[serde(default)]
+    object: String,
+    #[serde(default)]
+    evidence: Vec<String>,
 }
 #[derive(Debug, Clone, Deserialize)]
 struct ClassificationRule {
@@ -262,18 +270,14 @@ fn load_layout(root: &Path, asm_dir: &str) -> Result<BTreeMap<String, Placement>
         if result.contains_key(&item.source) {
             return Err(format!("{manifest}: invalid or duplicate source"));
         }
-        let inferred = u64::from_str_radix(&stem(Path::new(&item.source)), 16)
-            .map_err(|_| format!("{}: invalid address", item.source))?;
-        let address = match item.address.as_ref() {
-            Some(value) => integer(value, &item.source)?,
-            None => inferred,
+        let inferred = u64::from_str_radix(&stem(Path::new(&item.source)), 16).ok();
+        let address = match (item.address.as_ref(), inferred) {
+            (Some(value), _) => integer(value, &item.source)?,
+            (None, Some(value)) => value,
+            (None, None) => {
+                return Err(format!("{}: named source requires an address", item.source))
+            }
         };
-        if address != inferred {
-            return Err(format!(
-                "{}: load address differs from filename",
-                item.source
-            ));
-        }
         let run_address = integer(&item.run_address, &item.source)?;
         result.insert(
             item.source,
@@ -506,11 +510,19 @@ fn build_region(
     output_dir: &Path,
     cache: &SqliteCache,
     run_address: Option<u64>,
+    load_address: Option<u64>,
     binutils: &[(String, String)],
 ) -> Result<BuiltRegion, String> {
-    let name = stem(source);
-    let address = u64::from_str_radix(&name, 16)
-        .map_err(|_| format!("{}: invalid assembly filename", source.display()))?;
+    let source_stem = stem(source);
+    let address = load_address
+        .or_else(|| u64::from_str_radix(&source_stem, 16).ok())
+        .ok_or_else(|| {
+            format!(
+                "{}: named source requires a manifest address",
+                source.display()
+            )
+        })?;
+    let name = format!("{address:08x}");
     let linked_address = run_address.unwrap_or(address);
     let object = output_dir.join(format!("{name}.o"));
     let elf = output_dir.join(format!("{name}.elf"));
@@ -622,7 +634,7 @@ fn region_value(
     built: &BuiltRegion,
     category: &Classification,
 ) -> Value {
-    json!({
+    let mut value = json!({
         "address":built.address,
         "run_address":built.run_address,
         "size":built.data.len(),
@@ -633,7 +645,16 @@ fn region_value(
         "retention":category.retention,
         "confidence":category.confidence,
         "evidence":category.evidence.join(","),
-    })
+    });
+    if !category.provenance.credit.is_empty() {
+        value["provenance"] = json!({
+            "credit": category.provenance.credit,
+            "proof": category.provenance.proof,
+            "object": category.provenance.object,
+            "evidence": category.provenance.evidence,
+        });
+    }
+    value
 }
 pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, String> {
     let rom = if options.source_only {
@@ -646,16 +667,29 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
     std::fs::create_dir_all(&output).map_err(|error| format!("{}: {error}", output.display()))?;
     let asm = root.join(&options.asm_dir);
     let mut sources = assembly_sources(&asm)?;
+    let layout = load_layout(root, &options.asm_dir)?;
+    for source in layout.keys() {
+        let path = rooted(root, source);
+        if !sources.contains(&path) {
+            sources.push(path);
+        }
+    }
+    sources.sort();
     // These packages are assembled through the asset manifest, with their own
     // placement and compression. They are not standalone main-image regions.
     sources.retain(|source| {
         !source.starts_with(asm.join("overlays")) && !source.starts_with(asm.join("battle"))
     });
-    let mut stems = BTreeSet::new();
+    let mut addresses = BTreeSet::new();
     for source in &sources {
-        let name = stem(source);
-        if !stems.insert(name.clone()) {
-            return Err(format!("duplicate assembly source stem: {name}"));
+        let source_name = relative(root, source);
+        let address = layout
+            .get(&source_name)
+            .map(|placement| placement.address)
+            .or_else(|| u64::from_str_radix(&stem(source), 16).ok())
+            .ok_or_else(|| format!("{source_name}: named source requires a manifest address"))?;
+        if !addresses.insert(address) {
+            return Err(format!("duplicate assembly load address: 0x{address:08x}"));
         }
     }
     if let Some(selected) = options.source.as_deref() {
@@ -668,7 +702,6 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
     if sources.is_empty() {
         return Err("no reconstructed assembly sources".into());
     }
-    let layout = load_layout(root, &options.asm_dir)?;
     let classification_path = asm.join("classification.json");
     let classification = load_classification(&classification_path)?;
     let explicit = explicit_classifications(&classification)?;
@@ -700,6 +733,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
             &output,
             &cache,
             placement.map(|item| item.run_address),
+            placement.map(|item| item.address),
             &binutils,
         )
         .map_err(|error| format!("{source_name}: {error}"))?;
@@ -730,7 +764,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
                 ));
             }
         }
-        let name = stem(source);
+        let name = format!("{:08x}", built.address);
         let category = classify(&name, &built.data, &source_text, &classification, &explicit)?;
         if category.kind == "unresolved_trampoline_table"
             && source.parent() != Some(asm.join("trampoline_tables").as_path())

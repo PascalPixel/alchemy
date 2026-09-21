@@ -1,8 +1,9 @@
-@ 呼出側の転送元と転送長により境界を確定した再配置アーム処理。
-@ 承認済みコンパイラはサム専用のため構造化アセンブリで保持する。
+@ マップセルとタイル表を走査し、変換後の画面行を半語単位で描画する。
 .syntax unified
 	.arm
+	.global TileMap_DrawRows
 	.global Func_08009e7c
+TileMap_DrawRows:
 Func_08009e7c:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	mov	r4, #10485760

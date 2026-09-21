@@ -50,15 +50,15 @@
   ],
   "groups": [
     {
-      "kind": "relocated_iwram_payload",
-      "origin": "mixed_deliberate_and_compiler_runtime_assembly",
+      "kind": "iwram_runtime",
+      "origin": "program_or_library_assembly",
       "retention": "keep_asm",
       "confidence": "proven",
       "evidence": [
         "startup_copy_to_iwram",
         "arm_irq_entry",
         "scheduled_math_and_clear_kernels",
-        "compiler_runtime_division",
+        "hand_implemented_division",
         "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
         "no_msr_mrs_template_arm_md"
       ],
@@ -88,8 +88,17 @@
             "bytes": 5120
           }
         },
-        "verdict": "mixed",
-        "credit": "none",
+        "verdict": "coherent_startup_copied_assembly_module",
+        "credit": "handwritten",
+        "proof": "This complete contiguous module is copied to IWRAM at startup and exposes named ARM/Thumb entries for IRQ dispatch, fixed-point math, clearing, transforms, division, decompression, audio mixing and copying. Its ARM bodies, CPU-status operations, manual mode switches and computed instruction dispatch cannot be emitted by the approved Thumb route; the division entries do not match the approved compiler runtime.",
+        "evidence": [
+          "startup_copy_to_iwram",
+          "complete_named_entry_set",
+          "arm_irq_and_cpu_status_control",
+          "manual_thumb_arm_audio_bridge",
+          "computed_clear_dispatch",
+          "byte_exact_reconstruction"
+        ],
         "subregions": {
           "division_runtime": "NOT agscc libgcc: assembled _udivsi3/_divsi3/_umodsi3/_modsi3 in ARM and Thumb builds; no match, longest common prefix 5 bytes at 0x08000af0; authorship compiler_vendor is unsupported",
           "decompressor": "byte-identical in all six TLA editions at 0x08000c50",
@@ -102,7 +111,7 @@
           "scheduled_math_clear_and_transform_kernels": "no TLA identity",
           "irq_entry": "no TLA identity"
         },
-        "reason": "Retained assembly without machine-verifiable named object identity or positive handwritten authorship evidence."
+        "reason": "Shared decompression, word-copy and audio portions may come from a common library; they remain part of the one source-level IWRAM payload used by the game."
       }
     },
     {
@@ -167,9 +176,13 @@
       ],
       "provenance": {
         "scanned": "2026-09-10",
-        "credit": "none",
-        "file_check": "08006864.s rewritten as source: named entries Func_08006864 (svc 11, CpuSet) and Func_0800686a (r0=0, svc 25); byte-identical build",
-        "reason": "Retained assembly without machine-verifiable named object identity or positive handwritten authorship evidence."
+        "credit": "handwritten",
+        "proof": "The approved GCC 2.96 machine description has no software-interrupt instruction pattern. These complete wrappers directly issue fixed GBA BIOS calls and are reproduced byte-identically from maintained assembly source.",
+        "evidence": [
+          "fixed_software_interrupt_instruction",
+          "no_swi_template_arm_md",
+          "complete_named_bios_wrappers"
+        ]
       }
     },
     {
@@ -216,9 +229,16 @@
             "bytes": 0
           }
         },
-        "verdict": "cross_product_identical_vendor_unidentified",
-        "credit": "none",
-        "reason": "Retained assembly without machine-verifiable named object identity or positive handwritten authorship evidence."
+        "verdict": "cross_product_identical_sound_driver_assembly",
+        "credit": "library",
+        "object": "TBS/TLA common sound-driver mixer and clear-buffer module",
+        "proof": "Both complete routines are byte-identical in every TLA edition. The mixer changes from Thumb to a 572-byte ARM body inside one function and the clear routine is a manually unrolled multi-register store kernel, forms the approved compiler route cannot emit.",
+        "evidence": [
+          "byte_identical_in_all_six_tla_editions",
+          "mixed_thumb_arm_audio_mixer",
+          "single_function_switches_thumb_to_arm_and_back",
+          "unrolled_multi_register_clear"
+        ]
       }
     },
     {
@@ -422,18 +442,17 @@
       "evidence": [
         "arm_instruction_set",
         "approved_compiler_thumb_only",
-        "contiguous_seven_region_bank",
+        "adjacent_vendor_helper_bank",
         "consumer_call_references",
         "byte_exact_reconstruction",
         "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
         "byte_identical_in_all_six_tla_editions_3_regions_pool_masked_3_regions_vendor_object_unidentified"
       ],
-      "expected_files": 7,
-      "expected_bytes": 2652,
+      "expected_files": 6,
+      "expected_bytes": 1860,
       "files": [
         "08015430",
         "08015570",
-        "080155d0",
         "080158e8",
         "08015afc",
         "08015d74",
@@ -443,8 +462,8 @@
         "scanned": "2026-09-10",
         "cross_rom": {
           "method": "exact byte search of each region in the other eleven ROMs (tbs de/es/fr/it/ja, tla en/ja/de/es/fr/it), then pool-masked search (words in 0x02/0x03/0x08/0x09 spaces wildcarded) in the six TLA editions",
-          "regions": 7,
-          "bytes": 2652,
+          "regions": 6,
+          "bytes": 1860,
           "tla_exact": {
             "regions": 3,
             "bytes": 912,
@@ -470,16 +489,42 @@
         },
         "verdict": "not_compiler_cross_product_shared_vendor_unidentified",
         "credit": "none",
-        "reason": "Retained assembly without machine-verifiable named object identity or positive handwritten authorship evidence.",
         "citations": [
           "Kiki (battle-loop lane), 2026-09-10: arm.c output_thumb_prologue guarded by is_called_in_ARM_mode at arm.c:8806-8830 (attribute :3745/:3762/:8676) is the only ARM-mode output under -mthumb: the two-instruction interfacearm stub orr ip,pc,#1; bx ip"
         ],
-        "handwritten": {
-          "rule": "Pascal's ruling (via Beans, 2026-09-10): DONE means what is most likely the original code; handwritten credit requires (1) provably not from any tool we have, cited, (2) no library match in the twelve-ROM and assembled-libgcc scan, (3) a recognisable hand-coded idiom rather than a regular table, and the retained .s must read as source Camelot would have written.",
-          "regions": "080155d0 792 bytes is the only TBS-only region",
-          "credit": "handwritten",
-          "file_check": "080155d0.s: an ARM glyph blitter (character code, x, y, bold flag; 4-bit pixels masked into VRAM tiles at 0x06002500 from the font tables at 0x080370d4 and 0x08032224); header and seven block comments added, instruction and data lines untouched, byte-identical build"
-        }
+        "reason": "Six cross-game ARM helpers remain likely unidentified vendor assembly."
+      }
+    },
+    {
+      "kind": "font_glyph_blitter",
+      "origin": "program_assembly",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "arm_instruction_set",
+        "approved_compiler_thumb_only",
+        "conditional_execution_and_mla_pixel_kernel",
+        "direct_4bpp_vram_masking",
+        "complete_callable_boundary",
+        "byte_exact_reconstruction",
+        "tbs_only_no_library_match"
+      ],
+      "expected_files": 1,
+      "expected_bytes": 792,
+      "files": [
+        "080155d0"
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "credit": "handwritten",
+        "proof": "This complete TBS-only ARM glyph blitter uses conditional execution, MLA address formation and hand-scheduled 4-bit VRAM masking. The approved Thumb route cannot emit its ARM body, and the twelve-ROM and assembled-runtime scan found no library match.",
+        "evidence": [
+          "arm_instruction_set",
+          "conditional_execution_and_mla_pixel_kernel",
+          "direct_4bpp_vram_masking",
+          "complete_callable_boundary",
+          "tbs_only_no_library_match"
+        ]
       }
     },
     {
@@ -505,9 +550,15 @@
       ],
       "provenance": {
         "scanned": "2026-09-10",
-        "credit": "none",
-        "file_check": "executable_gaps/080003c0.s: Entry_080003c0, mnemonics, four pool words; reads as source",
-        "reason": "Retained assembly without machine-verifiable named object identity or positive handwritten authorship evidence."
+        "credit": "handwritten",
+        "proof": "The GBA header enters this complete ARM routine. It changes privileged CPU modes with MSR, installs the IRQ and system stacks, records the interrupt entry, and transfers to Thumb startup. The approved Thumb compiler has no MSR/MRS pattern and cannot emit this startup contract.",
+        "evidence": [
+          "gba_header_branch_target",
+          "arm_cpu_mode_switch",
+          "fixed_irq_and_system_stack_setup",
+          "no_msr_mrs_template_arm_md",
+          "tbs_only_no_library_match"
+        ]
       }
     },
     {
@@ -944,17 +995,22 @@
         "tbs_only_no_library_match",
         "carry_driven_sine_table_lookup_hand_idiom"
       ],
-      "expected_files": 2,
+      "expected_files": 1,
       "expected_bytes": 568,
       "files": [
-        "0800230c",
-        "0800231c"
+        "0800230c"
       ],
       "provenance": {
         "scanned": "2026-09-10",
-        "credit": "none",
-        "file_check": "0800230c.s / 0800231c.s: mnemonics, named entry symbols, .L_index/.L_return labels, the table as .hword rows under Data_08002344; reads as source",
-        "reason": "Retained assembly without machine-verifiable named object identity or positive handwritten authorship evidence."
+        "credit": "handwritten",
+        "proof": "This complete TBS-only trigonometry module uses carry-driven branches and a PC-derived inline quarter-sine table. GCC 2.96 Thumb has neither the carry-branch pattern nor non-PIC local PC-address materialization needed to emit it, and the complete module has no library match.",
+        "evidence": [
+          "carry_driven_branching",
+          "pc_relative_lookup_table",
+          "no_thumb_branch_on_shift_carry_cbranchsi4_arm_md_5152_5202",
+          "approved_non_pic_thumb_route_cannot_materialize_local_pc_table",
+          "tbs_only_no_library_match"
+        ]
       }
     },
     {
@@ -975,8 +1031,14 @@
       ],
       "provenance": {
         "scanned": "2026-09-10",
-        "credit": "none",
-        "reason": "Retained assembly without machine-verifiable named object identity or positive handwritten authorship evidence."
+        "credit": "library",
+        "object": "sound-driver unsigned high-word multiply helper",
+        "proof": "This complete helper deliberately enters ARM state from Thumb to execute UMULL and returns its high word. The approved Thumb compiler route cannot emit that mixed-mode body.",
+        "evidence": [
+          "thumb_to_arm_pc_switch",
+          "single_umull_high_word",
+          "complete_callable_boundary"
+        ]
       }
     },
     {
@@ -992,19 +1054,16 @@
         "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
         "byte_identical_in_all_six_tla_editions_9_of_13_regions_vendor_object_unidentified"
       ],
-      "expected_files": 13,
-      "expected_bytes": 6208,
+      "expected_files": 10,
+      "expected_bytes": 3672,
       "files": [
         "08002544",
         "08002808",
         "08002cf4",
         "08002d5c",
         "08009bb8",
-        "08009e7c",
-        "0800a0f8",
         "0800a37c",
         "0800a418",
-        "0800a494",
         "080b5138",
         "080b520c",
         "080b5258"
@@ -1013,8 +1072,8 @@
         "scanned": "2026-09-10",
         "cross_rom": {
           "method": "exact byte search of each region in the other eleven ROMs (tbs de/es/fr/it/ja, tla en/ja/de/es/fr/it), then pool-masked search (words in 0x02/0x03/0x08/0x09 spaces wildcarded) in the six TLA editions",
-          "regions": 13,
-          "bytes": 6208,
+          "regions": 10,
+          "bytes": 3672,
           "tla_exact": {
             "regions": 9,
             "bytes": 2964,
@@ -1038,19 +1097,55 @@
             ]
           },
           "tbs_editions_only": {
-            "regions": 2,
-            "bytes": 1280
+            "regions": 0,
+            "bytes": 0
           }
         },
-        "verdict": "not_compiler_cross_product_shared_vendor_unidentified",
-        "credit": "none",
-        "reason": "Retained assembly without machine-verifiable named object identity or positive handwritten authorship evidence.",
-        "handwritten": {
-          "rule": "Pascal's ruling (via Beans, 2026-09-10): DONE means what is most likely the original code; handwritten credit requires (1) provably not from any tool we have, cited, (2) no library match in the twelve-ROM and assembled-libgcc scan, (3) a recognisable hand-coded idiom rather than a regular table, and the retained .s must read as source Camelot would have written.",
-          "regions": "08009e7c 636, 0800a0f8 644, 0800a494 1256 (2,536 bytes): ARM bodies (arm.c:8806-8830), no TLA or libgcc match, hand-coded copy/transform kernels with labelled loops",
-          "file_check": "mnemonics with labels and entry symbols, 0-7 pool words each, two comments each; reads as source",
-          "credit": "handwritten"
-        }
+        "verdict": "cross_product_shared_library_assembly",
+        "credit": "library",
+        "object": "TBS/TLA common ARM graphics and runtime kernel bank",
+        "proof": "All ten complete ARM routines have corresponding code in every TLA edition: nine are byte-identical and one differs only in relocated words. Their ARM bodies, computed PC dispatch and branch-patching operations cannot be emitted by the approved Thumb compiler route.",
+        "evidence": [
+          "nine_regions_byte_identical_in_all_six_tla_editions",
+          "one_region_pool_masked_identical_in_all_six_tla_editions",
+          "arm_instruction_set",
+          "computed_pc_dispatch",
+          "complete_callable_boundaries"
+        ]
+      }
+    },
+    {
+      "kind": "relocated_game_arm_kernel",
+      "origin": "program_assembly",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "caller_copy_source_and_size_boundaries",
+        "arm_instruction_set",
+        "approved_compiler_thumb_only",
+        "hand_scheduled_tile_transform_and_object_loops",
+        "complete_callable_boundaries",
+        "byte_exact_reconstruction",
+        "no_tla_or_assembled_runtime_match"
+      ],
+      "expected_files": 3,
+      "expected_bytes": 2536,
+      "files": [
+        "08009e7c",
+        "0800a0f8",
+        "0800a494"
+      ],
+      "provenance": {
+        "scanned": "2026-09-10",
+        "credit": "handwritten",
+        "proof": "These three complete ARM kernels are copied for fast execution and implement hand-scheduled tile drawing, fixed-point vertex transformation and object dispatch loops. The approved Thumb route cannot emit their ARM bodies, and the twelve-ROM and assembled-runtime scan found no matching library members.",
+        "evidence": [
+          "caller_copy_source_and_size_boundaries",
+          "arm_instruction_set",
+          "hand_scheduled_tile_transform_and_object_loops",
+          "complete_callable_boundaries",
+          "no_tla_or_assembled_runtime_match"
+        ]
       }
     },
     {

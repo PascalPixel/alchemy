@@ -237,7 +237,7 @@
           "end": "0x08013724",
           "source_state": "typed_values_pending",
           "consumers": [
-            "games/THE BROKEN SEAL/raw/0800a494.s", "games/THE BROKEN SEAL/raw/0800cacc.s", "src/0800e9a0.c",
+            "games/THE BROKEN SEAL/SRC/OBJECT/UPDATE_ALL.S", "games/THE BROKEN SEAL/raw/0800cacc.s", "src/0800e9a0.c",
             "src/0800e9dc.c", "src/0800ea18.c"
           ],
           "element": "thumb-pointer",

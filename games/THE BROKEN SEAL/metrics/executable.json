@@ -22,7 +22,7 @@
         "start": 134218688,
         "end": 134218756,
         "kind": "arm",
-        "evidence": "games/THE BROKEN SEAL/raw/executable_gaps/080003c0.s:gba_arm_entry"
+        "evidence": "games/THE BROKEN SEAL/SRC/SYSTEM/STARTUP/ENTRY.S:gba_arm_entry"
       },
       {
         "start": 134218756,
@@ -40,7 +40,7 @@
         "start": 134219632,
         "end": 134224752,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/raw/08000770.s:relocated_iwram_payload"
+        "evidence": "games/THE BROKEN SEAL/SRC/SYSTEM/IWRAM/RUNTIME.S:iwram_runtime"
       },
       {
         "start": 134226668,
@@ -442,7 +442,7 @@
         "start": 134244452,
         "end": 134244462,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/raw/08006864.s:bios_wrapper"
+        "evidence": "games/THE BROKEN SEAL/SRC/SYSTEM/BIOS/CPU_SET.S:bios_wrapper"
       },
       {
         "start": 134244462,
@@ -454,7 +454,7 @@
         "start": 134244464,
         "end": 134244470,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/raw/08006870.s:bios_wrapper"
+        "evidence": "games/THE BROKEN SEAL/SRC/SYSTEM/BIOS/SOUND_VSYNC_ON.S:bios_wrapper"
       },
       {
         "start": 134244470,
@@ -3796,19 +3796,19 @@
         "start": 134959416,
         "end": 134959620,
         "kind": "arm",
-        "evidence": "games/THE BROKEN SEAL/raw/080b5138.s:relocated_arm_runtime_module"
+        "evidence": "games/THE BROKEN SEAL/SRC/GRAPHICS/MODEL/DECODE.S:relocated_arm_runtime_module"
       },
       {
         "start": 134959628,
         "end": 134959640,
         "kind": "arm",
-        "evidence": "games/THE BROKEN SEAL/raw/080b520c.s:relocated_arm_runtime_module"
+        "evidence": "games/THE BROKEN SEAL/SRC/GRAPHICS/MODEL/BIT_DISPATCH.S:relocated_arm_runtime_module"
       },
       {
         "start": 134959704,
         "end": 134959976,
         "kind": "arm",
-        "evidence": "games/THE BROKEN SEAL/raw/080b5258.s:relocated_arm_runtime_module"
+        "evidence": "games/THE BROKEN SEAL/SRC/GRAPHICS/MODEL/BIT_COMMANDS.S:relocated_arm_runtime_module"
       },
       {
         "start": 134959976,

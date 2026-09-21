@@ -1,8 +1,9 @@
-@ 呼出側の転送元と転送長により境界を確定した再配置アーム処理。
-@ 承認済みコンパイラはサム専用のため構造化アセンブリで保持する。
+@ 回転値を共有し、描画頂点一六〇個の座標と奥行きを固定小数点で更新する。
 .syntax unified
 	.arm
+	.global Transform_UpdateVertices
 	.global Func_0800a0f8
+Transform_UpdateVertices:
 Func_0800a0f8:
 	push	{r5, r6, r7, r8, r9, sl, lr}
 	mov	r5, r1

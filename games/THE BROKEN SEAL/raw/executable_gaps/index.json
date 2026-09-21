@@ -14,7 +14,7 @@
           "address": "0x080003c0",
           "size": 68,
           "kind": "arm",
-          "source": "080003c0.s",
+          "source": "games/THE BROKEN SEAL/SRC/SYSTEM/STARTUP/ENTRY.S",
           "instruction_bytes": 52,
           "literal_words": 4,
           "undefined_words": 0

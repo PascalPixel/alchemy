@@ -2,14 +2,114 @@
   "format": 1,
   "regions": [
     {
-      "source": "games/THE BROKEN SEAL/raw/08000770.s",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/STARTUP/ENTRY.S",
+      "address": "0x080003c0",
+      "run_address": "0x080003c0"
+    },
+    {
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/IWRAM/RUNTIME.S",
       "address": "0x08000770",
       "run_address": "0x03000000"
     },
     {
-      "source": "games/THE BROKEN SEAL/raw/080f9674.s",
+      "source": "games/THE BROKEN SEAL/SRC/MATH/TRIG.S",
+      "address": "0x0800230c",
+      "run_address": "0x0800230c"
+    },
+    {
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMPRESSION/DECODE_01.S",
+      "address": "0x08002544",
+      "run_address": "0x08002544"
+    },
+    {
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMPRESSION/DECODE_2.S",
+      "address": "0x08002808",
+      "run_address": "0x08002808"
+    },
+    {
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMPRESSION/EXECUTE_TRANSFER.S",
+      "address": "0x08002cf4",
+      "run_address": "0x08002cf4"
+    },
+    {
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/COMPRESSION/PATCH_THUMB_BRANCH.S",
+      "address": "0x08002d5c",
+      "run_address": "0x08002d5c"
+    },
+    {
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/BIOS/CPU_SET.S",
+      "address": "0x08006864",
+      "run_address": "0x08006864"
+    },
+    {
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/BIOS/SOUND_VSYNC_ON.S",
+      "address": "0x08006870",
+      "run_address": "0x08006870"
+    },
+    {
+      "source": "games/THE BROKEN SEAL/SRC/TEXT/DECODE.S",
+      "address": "0x08009bb8",
+      "run_address": "0x08009bb8"
+    },
+    {
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/DRAW_MAP.S",
+      "address": "0x08009e7c",
+      "run_address": "0x08009e7c"
+    },
+    {
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/TRANSFORM/UPDATE_VERTICES.S",
+      "address": "0x0800a0f8",
+      "run_address": "0x0800a0f8"
+    },
+    {
+      "source": "games/THE BROKEN SEAL/SRC/OBJECT/UPDATE_ALL.S",
+      "address": "0x0800a494",
+      "run_address": "0x0800a494"
+    },
+    {
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/CONVERT_MAP.S",
+      "address": "0x0800a37c",
+      "run_address": "0x0800a37c"
+    },
+    {
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/COPY_STRIDED.S",
+      "address": "0x0800a418",
+      "run_address": "0x0800a418"
+    },
+    {
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/MODEL/DECODE.S",
+      "address": "0x080b5138",
+      "run_address": "0x080b5138"
+    },
+    {
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/MODEL/BIT_DISPATCH.S",
+      "address": "0x080b520c",
+      "run_address": "0x080b520c"
+    },
+    {
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/MODEL/BIT_COMMANDS.S",
+      "address": "0x080b5258",
+      "run_address": "0x080b5258"
+    },
+    {
+      "source": "games/THE BROKEN SEAL/SRC/GRAPHICS/FONT/DRAW_GLYPH.S",
+      "address": "0x080155d0",
+      "run_address": "0x080155d0"
+    },
+    {
+      "source": "games/THE BROKEN SEAL/SRC/SOUND/DRIVER/UMUL_HIGH.S",
+      "address": "0x080f95e0",
+      "run_address": "0x080f95e0"
+    },
+    {
+      "source": "games/THE BROKEN SEAL/SRC/SOUND/DRIVER/MIXER.S",
       "address": "0x080f9674",
       "run_address": "0x03007000"
+    },
+    {
+      "source": "games/THE BROKEN SEAL/SRC/SOUND/DRIVER/CLEAR_BUFFER.S",
+      "address": "0x080f9a18",
+      "run_address": "0x080f9a18"
     }
   ]
 }

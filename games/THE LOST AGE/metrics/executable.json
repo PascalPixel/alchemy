@@ -16,37 +16,37 @@
         "start": 134217920,
         "end": 134314768,
         "kind": "asset_complement",
-        "evidence": "alchemy coverage audit: canonical ROM minus byte-reproduced asset regions; method calibrated exactly against TBS"
+        "evidence_ref": "e0"
       },
       {
         "start": 134315216,
         "end": 134411136,
         "kind": "asset_complement",
-        "evidence": "alchemy coverage audit: canonical ROM minus byte-reproduced asset regions; method calibrated exactly against TBS"
+        "evidence_ref": "e0"
       },
       {
         "start": 134415120,
         "end": 134609172,
         "kind": "asset_complement",
-        "evidence": "alchemy coverage audit: canonical ROM minus byte-reproduced asset regions; method calibrated exactly against TBS"
+        "evidence_ref": "e0"
       },
       {
         "start": 134914268,
         "end": 135197860,
         "kind": "asset_complement",
-        "evidence": "alchemy coverage audit: canonical ROM minus byte-reproduced asset regions; method calibrated exactly against TBS"
+        "evidence_ref": "e0"
       },
       {
         "start": 135198748,
         "end": 135206824,
         "kind": "asset_complement",
-        "evidence": "alchemy coverage audit: canonical ROM minus byte-reproduced asset regions; method calibrated exactly against TBS"
+        "evidence_ref": "e0"
       },
       {
         "start": 135209424,
         "end": 136066052,
         "kind": "asset_complement",
-        "evidence": "alchemy coverage audit: canonical ROM minus byte-reproduced asset regions; method calibrated exactly against TBS"
+        "evidence_ref": "e0"
       }
     ],
     "evidence": [
@@ -63,7 +63,6 @@
       "rom_end": 149699848,
       "executable_bytes": 1612,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -200,7 +199,8 @@
           "end": 33556044,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_64a",
@@ -209,7 +209,6 @@
       "rom_end": 149707288,
       "executable_bytes": 9232,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -636,7 +635,8 @@
           "end": 33563664,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_64b",
@@ -645,7 +645,6 @@
       "rom_end": 149723144,
       "executable_bytes": 21566,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -3029,7 +3028,8 @@
           "end": 33582046,
           "kind": "thumb"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_64c",
@@ -3038,7 +3038,6 @@
       "rom_end": 149734904,
       "executable_bytes": 9148,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -4460,7 +4459,8 @@
           "end": 33568444,
           "kind": "literal_pool"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_64d",
@@ -4469,7 +4469,6 @@
       "rom_end": 149741540,
       "executable_bytes": 10352,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -4783,7 +4782,8 @@
           "kind": "veneer",
           "evidence": "games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/IMPORT.INC: fixed eight-byte overlay_veneer entries; complete overlay compared with canonical TLA ROM by tla-owners"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_64e",
@@ -4792,7 +4792,6 @@
       "rom_end": 149746076,
       "executable_bytes": 7332,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -5046,7 +5045,8 @@
           "kind": "veneer",
           "evidence": "games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/IMPORT.INC: fixed eight-byte overlay_veneer entries; complete overlay compared with canonical TLA ROM by tla-owners"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_64f",
@@ -5055,7 +5055,6 @@
       "rom_end": 149748068,
       "executable_bytes": 2728,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -5284,7 +5283,8 @@
           "kind": "veneer",
           "evidence": "games/THE LOST AGE/SRC/FIELD/SUHARA_GATE/IMPORT.INC: fixed eight-byte overlay_veneer entries; complete overlay compared with canonical TLA ROM by tla-owners"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_650",
@@ -5293,7 +5293,6 @@
       "rom_end": 149754308,
       "executable_bytes": 13032,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -5717,7 +5716,8 @@
           "kind": "veneer",
           "evidence": "games/THE LOST AGE/SRC/FIELD/IDEJIMA/IMPORT.INC: fixed eight-byte overlay_veneer entries; complete overlay compared with canonical TLA ROM by tla-owners"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_651",
@@ -5726,7 +5726,6 @@
       "rom_end": 149756816,
       "executable_bytes": 3456,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -6020,7 +6019,8 @@
           "kind": "veneer",
           "evidence": "games/THE LOST AGE/SRC/FIELD/DAIRA_MURA/IMPORT.INC: fixed eight-byte overlay_veneer entries; complete overlay compared with canonical TLA ROM by tla-owners"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_652",
@@ -6029,7 +6029,6 @@
       "rom_end": 149759684,
       "executable_bytes": 3584,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -6493,7 +6492,8 @@
           "kind": "veneer",
           "evidence": "games/THE LOST AGE/SRC/FIELD/DAIRA_HEYA/IMPORT.INC: fixed eight-byte overlay_veneer entries; complete overlay compared with canonical TLA ROM by tla-owners"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_653",
@@ -6502,7 +6502,6 @@
       "rom_end": 149772540,
       "executable_bytes": 22186,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -8204,7 +8203,8 @@
           "end": 33579656,
           "kind": "thumb"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_654",
@@ -8213,7 +8213,6 @@
       "rom_end": 149781948,
       "executable_bytes": 14890,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -9230,7 +9229,8 @@
           "end": 33569616,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_655",
@@ -9239,7 +9239,6 @@
       "rom_end": 149793636,
       "executable_bytes": 15810,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -10246,7 +10245,8 @@
           "end": 33570304,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_656",
@@ -10255,7 +10255,6 @@
       "rom_end": 149801056,
       "executable_bytes": 11752,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -10952,7 +10951,8 @@
           "end": 33566184,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_657",
@@ -10961,7 +10961,6 @@
       "rom_end": 149805476,
       "executable_bytes": 8412,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -11343,7 +11342,8 @@
           "end": 33562844,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_658",
@@ -11352,7 +11352,6 @@
       "rom_end": 149811116,
       "executable_bytes": 11416,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -11829,7 +11828,8 @@
           "end": 33565848,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_659",
@@ -11838,7 +11838,6 @@
       "rom_end": 149816408,
       "executable_bytes": 7960,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -12235,7 +12234,8 @@
           "end": 33562392,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_65a",
@@ -12244,7 +12244,6 @@
       "rom_end": 149820064,
       "executable_bytes": 4636,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -12646,7 +12645,8 @@
           "end": 33559068,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_65b",
@@ -12655,7 +12655,6 @@
       "rom_end": 149820692,
       "executable_bytes": 840,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -12747,7 +12746,8 @@
           "end": 33555272,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_65c",
@@ -12756,7 +12756,6 @@
       "rom_end": 149821176,
       "executable_bytes": 432,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -12838,7 +12837,8 @@
           "end": 33554864,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_65d",
@@ -12847,7 +12847,6 @@
       "rom_end": 149822940,
       "executable_bytes": 1784,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -13014,7 +13013,8 @@
           "end": 33556216,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_65e",
@@ -13023,7 +13023,6 @@
       "rom_end": 149824332,
       "executable_bytes": 1620,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -13300,7 +13299,8 @@
           "end": 33556052,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_65f",
@@ -13309,7 +13309,6 @@
       "rom_end": 149833972,
       "executable_bytes": 21338,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -13876,7 +13875,8 @@
           "end": 33575836,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_660",
@@ -13885,7 +13885,6 @@
       "rom_end": 149835800,
       "executable_bytes": 2236,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -14167,7 +14166,8 @@
           "end": 33556668,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_661",
@@ -14176,7 +14176,6 @@
       "rom_end": 149848632,
       "executable_bytes": 14870,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -15213,7 +15212,8 @@
           "end": 33571328,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_662",
@@ -15222,7 +15222,6 @@
       "rom_end": 149853944,
       "executable_bytes": 6498,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -15699,7 +15698,8 @@
           "end": 33560936,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_663",
@@ -15708,7 +15708,6 @@
       "rom_end": 149864516,
       "executable_bytes": 15450,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -16690,7 +16689,8 @@
           "end": 33570016,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_664",
@@ -16699,7 +16699,6 @@
       "rom_end": 149881240,
       "executable_bytes": 24124,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -18086,7 +18085,8 @@
           "end": 33578908,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_665",
@@ -18095,7 +18095,6 @@
       "rom_end": 149886608,
       "executable_bytes": 7492,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -18462,7 +18461,8 @@
           "end": 33561940,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_666",
@@ -18471,7 +18471,6 @@
       "rom_end": 149889320,
       "executable_bytes": 3044,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -18748,7 +18747,8 @@
           "end": 33557476,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_667",
@@ -18757,7 +18757,6 @@
       "rom_end": 149892384,
       "executable_bytes": 5632,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -18934,7 +18933,8 @@
           "end": 33560064,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_668",
@@ -18943,7 +18943,6 @@
       "rom_end": 149903012,
       "executable_bytes": 19526,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -19495,7 +19494,8 @@
           "end": 33574052,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_669",
@@ -19504,7 +19504,6 @@
       "rom_end": 149908224,
       "executable_bytes": 12972,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -19696,7 +19695,8 @@
           "end": 33567408,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_66a",
@@ -19705,7 +19705,6 @@
       "rom_end": 149911724,
       "executable_bytes": 5608,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -19927,7 +19926,8 @@
           "end": 33560072,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_66b",
@@ -19936,7 +19936,6 @@
       "rom_end": 149916448,
       "executable_bytes": 4818,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -20213,7 +20212,8 @@
           "end": 33559332,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_66c",
@@ -20222,7 +20222,6 @@
       "rom_end": 149916920,
       "executable_bytes": 548,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -20304,7 +20303,8 @@
           "end": 33554980,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_66d",
@@ -20313,7 +20313,6 @@
       "rom_end": 149918376,
       "executable_bytes": 1488,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -20555,7 +20554,8 @@
           "end": 33555964,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_66e",
@@ -20564,7 +20564,6 @@
       "rom_end": 149921100,
       "executable_bytes": 3722,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -21001,7 +21000,8 @@
           "end": 33558960,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_66f",
@@ -21010,7 +21010,6 @@
       "rom_end": 149924656,
       "executable_bytes": 4508,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -21367,7 +21366,8 @@
           "end": 33558948,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_670",
@@ -21376,7 +21376,6 @@
       "rom_end": 149938832,
       "executable_bytes": 23334,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -22603,7 +22602,8 @@
           "end": 33578148,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_671",
@@ -22612,7 +22612,6 @@
       "rom_end": 149955292,
       "executable_bytes": 22506,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -24009,7 +24008,8 @@
           "end": 33577052,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_672",
@@ -24018,7 +24018,6 @@
       "rom_end": 149960132,
       "executable_bytes": 7960,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -24370,7 +24369,8 @@
           "end": 33562392,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_673",
@@ -24379,7 +24379,6 @@
       "rom_end": 149962796,
       "executable_bytes": 4724,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -24741,7 +24740,8 @@
           "end": 33559180,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_674",
@@ -24750,7 +24750,6 @@
       "rom_end": 149973848,
       "executable_bytes": 16282,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -25612,7 +25611,8 @@
           "end": 33570820,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_675",
@@ -25621,7 +25621,6 @@
       "rom_end": 149977324,
       "executable_bytes": 4940,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -26088,7 +26087,8 @@
           "end": 33559372,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_676",
@@ -26097,7 +26097,6 @@
       "rom_end": 149982904,
       "executable_bytes": 5722,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -26454,7 +26453,8 @@
           "end": 33564072,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_677",
@@ -26463,7 +26463,6 @@
       "rom_end": 149984720,
       "executable_bytes": 2712,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -26830,7 +26829,8 @@
           "end": 33557144,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_678",
@@ -26839,7 +26839,6 @@
       "rom_end": 149992636,
       "executable_bytes": 10434,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -27551,7 +27550,8 @@
           "end": 33565112,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_679",
@@ -27560,7 +27560,6 @@
       "rom_end": 149999004,
       "executable_bytes": 7566,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -28242,7 +28241,8 @@
           "end": 33562164,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_67a",
@@ -28251,7 +28251,6 @@
       "rom_end": 149999272,
       "executable_bytes": 144,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -28318,7 +28317,8 @@
           "end": 33554576,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_67b",
@@ -28327,7 +28327,6 @@
       "rom_end": 150007432,
       "executable_bytes": 10786,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -29029,7 +29028,8 @@
           "end": 33565304,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_67c",
@@ -29038,7 +29038,6 @@
       "rom_end": 150020596,
       "executable_bytes": 18040,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -32100,7 +32099,8 @@
           "end": 33575788,
           "kind": "thumb"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_67d",
@@ -32109,7 +32109,6 @@
       "rom_end": 150025048,
       "executable_bytes": 8988,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -32466,7 +32465,8 @@
           "end": 33563428,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_67e",
@@ -32475,7 +32475,6 @@
       "rom_end": 150027744,
       "executable_bytes": 3600,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -32777,7 +32776,8 @@
           "end": 33558032,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_67f",
@@ -32786,7 +32786,6 @@
       "rom_end": 150031776,
       "executable_bytes": 5378,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -33138,7 +33137,8 @@
           "end": 33559872,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_680",
@@ -33147,7 +33147,6 @@
       "rom_end": 150035116,
       "executable_bytes": 3868,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -33439,7 +33438,8 @@
           "end": 33558316,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_681",
@@ -33448,7 +33448,6 @@
       "rom_end": 150049520,
       "executable_bytes": 20378,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -34605,7 +34604,8 @@
           "end": 33574940,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_682",
@@ -34614,7 +34614,6 @@
       "rom_end": 150054840,
       "executable_bytes": 11192,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -34901,7 +34900,8 @@
           "end": 33565644,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_683",
@@ -34910,7 +34910,6 @@
       "rom_end": 150055700,
       "executable_bytes": 392,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -34987,7 +34986,8 @@
           "end": 33554824,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_684",
@@ -34996,7 +34996,6 @@
       "rom_end": 150055908,
       "executable_bytes": 192,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -35063,7 +35062,8 @@
           "end": 33554624,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_685",
@@ -35072,7 +35072,6 @@
       "rom_end": 150064092,
       "executable_bytes": 13876,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -35599,7 +35598,8 @@
           "end": 33568308,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_686",
@@ -35608,7 +35608,6 @@
       "rom_end": 150072684,
       "executable_bytes": 11888,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -36120,7 +36119,8 @@
           "end": 33566452,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_687",
@@ -36129,7 +36129,6 @@
       "rom_end": 150078540,
       "executable_bytes": 8076,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -36681,7 +36680,8 @@
           "end": 33562716,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_688",
@@ -36690,7 +36690,6 @@
       "rom_end": 150079724,
       "executable_bytes": 1508,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -36817,7 +36816,8 @@
           "end": 33555940,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_689",
@@ -36826,7 +36826,6 @@
       "rom_end": 150080724,
       "executable_bytes": 1356,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -36973,7 +36972,8 @@
           "end": 33555788,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_68a",
@@ -36982,7 +36982,6 @@
       "rom_end": 150083812,
       "executable_bytes": 6664,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -37224,7 +37223,8 @@
           "end": 33561140,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_68b",
@@ -37233,7 +37233,6 @@
       "rom_end": 150088640,
       "executable_bytes": 7476,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -37575,7 +37574,8 @@
           "end": 33561988,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_68c",
@@ -37584,7 +37584,6 @@
       "rom_end": 150093288,
       "executable_bytes": 10540,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -37831,7 +37830,8 @@
           "end": 33564972,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_68d",
@@ -37840,7 +37840,6 @@
       "rom_end": 150100496,
       "executable_bytes": 8632,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -38407,7 +38406,8 @@
           "end": 33566692,
           "kind": "literal_pool"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_68e",
@@ -38416,7 +38416,6 @@
       "rom_end": 150104072,
       "executable_bytes": 5128,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -38648,7 +38647,8 @@
           "end": 33559568,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_68f",
@@ -38657,7 +38657,6 @@
       "rom_end": 150113400,
       "executable_bytes": 12578,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -39549,7 +39548,8 @@
           "end": 33567152,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_690",
@@ -39558,7 +39558,6 @@
       "rom_end": 150119820,
       "executable_bytes": 8474,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -40245,7 +40244,8 @@
           "end": 33563064,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_691",
@@ -40254,7 +40254,6 @@
       "rom_end": 150131280,
       "executable_bytes": 15336,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -41111,7 +41110,8 @@
           "end": 33569884,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_692",
@@ -41120,7 +41120,6 @@
       "rom_end": 150146104,
       "executable_bytes": 20112,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -42362,7 +42361,8 @@
           "end": 33574712,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_693",
@@ -42371,7 +42371,6 @@
       "rom_end": 150149148,
       "executable_bytes": 4400,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -42613,7 +42612,8 @@
           "end": 33558832,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_694",
@@ -42622,7 +42622,6 @@
       "rom_end": 150160956,
       "executable_bytes": 17014,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -43589,7 +43588,8 @@
           "end": 33571516,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_695",
@@ -43598,7 +43598,6 @@
       "rom_end": 150163800,
       "executable_bytes": 4632,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -43830,7 +43829,8 @@
           "end": 33559064,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_696",
@@ -43839,7 +43839,6 @@
       "rom_end": 150176888,
       "executable_bytes": 19038,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -44861,7 +44860,8 @@
           "end": 33573540,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_697",
@@ -44870,7 +44870,6 @@
       "rom_end": 150194376,
       "executable_bytes": 23038,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -46277,7 +46276,8 @@
           "end": 33579862,
           "kind": "thumb"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_698",
@@ -46286,7 +46286,6 @@
       "rom_end": 150200896,
       "executable_bytes": 6854,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -46803,7 +46802,8 @@
           "end": 33561420,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_699",
@@ -46812,7 +46812,6 @@
       "rom_end": 150207800,
       "executable_bytes": 7386,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -47374,7 +47373,8 @@
           "end": 33561940,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_69a",
@@ -47383,7 +47383,6 @@
       "rom_end": 150214372,
       "executable_bytes": 6998,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -47925,7 +47924,8 @@
           "end": 33561564,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_69b",
@@ -47934,7 +47934,6 @@
       "rom_end": 150222308,
       "executable_bytes": 8794,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -48591,7 +48590,8 @@
           "end": 33563444,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_69c",
@@ -48600,7 +48600,6 @@
       "rom_end": 150230820,
       "executable_bytes": 9192,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -49217,7 +49216,8 @@
           "end": 33563768,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_69d",
@@ -49226,7 +49226,6 @@
       "rom_end": 150238164,
       "executable_bytes": 7826,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -49788,7 +49787,8 @@
           "end": 33562384,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_69e",
@@ -49797,7 +49797,6 @@
       "rom_end": 150247488,
       "executable_bytes": 10692,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -50514,7 +50513,8 @@
           "end": 33565256,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_69f",
@@ -50523,7 +50523,6 @@
       "rom_end": 150254280,
       "executable_bytes": 7038,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -51055,7 +51054,8 @@
           "end": 33561588,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_6a0",
@@ -51064,7 +51064,6 @@
       "rom_end": 150263416,
       "executable_bytes": 11236,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -51791,7 +51790,8 @@
           "end": 33565796,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_6a1",
@@ -51800,7 +51800,6 @@
       "rom_end": 150271700,
       "executable_bytes": 8772,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -52397,7 +52396,8 @@
           "end": 33563344,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_6a2",
@@ -52406,7 +52406,6 @@
       "rom_end": 150278688,
       "executable_bytes": 7218,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -52968,7 +52967,8 @@
           "end": 33561768,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_6a3",
@@ -52977,7 +52977,6 @@
       "rom_end": 150291672,
       "executable_bytes": 18480,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -53784,7 +53783,8 @@
           "end": 33573324,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_6a4",
@@ -53793,7 +53793,6 @@
       "rom_end": 150300984,
       "executable_bytes": 9680,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -54445,7 +54444,8 @@
           "end": 33565552,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_6a5",
@@ -54454,7 +54454,6 @@
       "rom_end": 150315228,
       "executable_bytes": 22418,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -55326,7 +55325,8 @@
           "end": 33577468,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_6a6",
@@ -55335,7 +55335,6 @@
       "rom_end": 150319268,
       "executable_bytes": 5200,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -55697,7 +55696,8 @@
           "end": 33559632,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_6a7",
@@ -55706,7 +55706,6 @@
       "rom_end": 150321336,
       "executable_bytes": 2908,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -55883,7 +55882,8 @@
           "end": 33557344,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_6a8",
@@ -55892,7 +55892,6 @@
       "rom_end": 150332960,
       "executable_bytes": 17898,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -56719,7 +56718,8 @@
           "end": 33572420,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_6a9",
@@ -56728,7 +56728,6 @@
       "rom_end": 150336400,
       "executable_bytes": 4402,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -57105,7 +57104,8 @@
           "end": 33558892,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_6aa",
@@ -57114,7 +57114,6 @@
       "rom_end": 150351768,
       "executable_bytes": 19762,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -58851,7 +58850,8 @@
           "end": 33574376,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_6ab",
@@ -58860,7 +58860,6 @@
       "rom_end": 150363808,
       "executable_bytes": 17246,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -60002,7 +60001,8 @@
           "end": 33571956,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_6ac",
@@ -60011,7 +60011,6 @@
       "rom_end": 150372628,
       "executable_bytes": 12776,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -61118,7 +61117,8 @@
           "end": 33567432,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_6ad",
@@ -61127,7 +61127,6 @@
       "rom_end": 150390468,
       "executable_bytes": 22282,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -63289,7 +63288,8 @@
           "end": 33579412,
           "kind": "thumb"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_6ae",
@@ -63298,7 +63298,6 @@
       "rom_end": 150403588,
       "executable_bytes": 22256,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -64270,7 +64269,8 @@
           "end": 33576932,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_6af",
@@ -64279,7 +64279,6 @@
       "rom_end": 150407044,
       "executable_bytes": 4138,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -64611,7 +64610,8 @@
           "end": 33558644,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_6b0",
@@ -64620,7 +64620,6 @@
       "rom_end": 150417464,
       "executable_bytes": 14734,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -66597,7 +66596,8 @@
           "end": 33571892,
           "kind": "thumb"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_6b1",
@@ -66606,7 +66606,6 @@
       "rom_end": 150423008,
       "executable_bytes": 3370,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -66903,7 +66902,8 @@
           "end": 33557868,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_6b2",
@@ -66912,7 +66912,6 @@
       "rom_end": 150424080,
       "executable_bytes": 1560,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -67039,7 +67038,8 @@
           "end": 33555992,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_6b3",
@@ -67048,7 +67048,6 @@
       "rom_end": 150425444,
       "executable_bytes": 2164,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -67195,7 +67194,8 @@
           "end": 33556596,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_6b4",
@@ -67204,7 +67204,6 @@
       "rom_end": 150429108,
       "executable_bytes": 5474,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -67456,7 +67455,8 @@
           "end": 33559964,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_6b5",
@@ -67465,7 +67465,6 @@
       "rom_end": 150434204,
       "executable_bytes": 6868,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -67892,7 +67891,8 @@
           "end": 33561316,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_6b6",
@@ -67901,7 +67901,6 @@
       "rom_end": 150434380,
       "executable_bytes": 196,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -67958,7 +67957,8 @@
           "end": 33554628,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_6b7",
@@ -67967,7 +67967,6 @@
       "rom_end": 150436284,
       "executable_bytes": 1842,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -68109,7 +68108,8 @@
           "end": 33556292,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_6b8",
@@ -68118,7 +68118,6 @@
       "rom_end": 150439572,
       "executable_bytes": 3886,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -68515,7 +68514,8 @@
           "end": 33558340,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_6b9",
@@ -68524,7 +68524,6 @@
       "rom_end": 150440876,
       "executable_bytes": 1538,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -68706,7 +68705,8 @@
           "end": 33555976,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     },
     {
       "id": "resource_6ba",
@@ -68715,7 +68715,6 @@
       "rom_end": 150443590,
       "executable_bytes": 3708,
       "audit": "complete",
-      "evidence": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays.",
       "intervals": [
         {
           "start": 33554432,
@@ -68992,10 +68991,15 @@
           "end": 33558144,
           "kind": "veneer"
         }
-      ]
+      ],
+      "evidence_ref": "e1"
     }
   ],
   "caveats": [
     "Executable-image inventory, including function-owned literal pools and switch tables; excluded bytes are the complement within each decoded overlay. This denominator does not claim that TLA has a complete source rebuild. Exact C and permanent assembly credit require current source-verification receipts."
-  ]
+  ],
+  "evidence": {
+    "e0": "alchemy coverage audit: canonical ROM minus byte-reproduced asset regions; method calibrated exactly against TBS",
+    "e1": "Canonical decoded image reassembles byte-identically; retained/generated instruction spans and loader-entry/call/branch/switch reachability, referenced pools, fixed veneers and compiler table alignment. Classifier calibrated at zero extra and zero missed bytes across all 96 corrected TBS overlays."
+  }
 }

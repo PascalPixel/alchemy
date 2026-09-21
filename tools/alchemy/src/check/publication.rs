@@ -2565,12 +2565,6 @@ fn text_fixtures() -> Vec<Fixture> {
             true,
             manifest,
         ),
-        (
-            "games/THE LOST AGE/recon/en/main/08120454.json",
-            empty(),
-            false,
-            None,
-        ),
         ("tools/alchemy/src/logo.rs", logo_include, true, include),
         ("tools/alchemy/src/header.rs", header_include, true, include),
         (

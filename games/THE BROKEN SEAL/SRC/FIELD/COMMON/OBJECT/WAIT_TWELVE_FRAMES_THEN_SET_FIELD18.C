@@ -16,7 +16,7 @@ struct Object080eceac {
 void Object_WaitTwelveFramesThenSetField18(struct Object080eceac *obj)
 {
   Func_080b5078(obj->field_08, obj->field_24, 0x18, 0x73333);
- do { WaitFrames(0xC); } while (0);
+ SCHEDULING_CHEAT(WaitFrames(0xC););
   obj->field_18 = 3;
   Func_080d4604(obj, 2);
 }

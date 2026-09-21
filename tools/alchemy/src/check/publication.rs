@@ -34,8 +34,6 @@ const METADATA_DIRECTORIES: &[&str] = &["metrics", "preview", "recon", "semantic
 const DATA_TABLE_EXTENSIONS: &[&str] = &["json", "tsv"];
 /// The licensed compiler submodules whose commits `make compiler-source-check` pins.
 const APPROVED_GITLINKS: &[&str] = &["agbcc", "agscc"];
-/// The one compression control table a game's `SRC` may track.
-const TOKEN_TABLE: &str = "GRAPHICS/COMMON/COMPRESSION.TOKENS";
 const FONT_TABLES: &[&[u8]] = &[
     b"BASE", b"CFF ", b"COLR", b"CPAL", b"DSIG", b"EBDT", b"EBLC", b"FFTM", b"GDEF", b"GPOS",
     b"GSUB", b"LTSH", b"OS/2", b"STAT", b"SVG ", b"VDMX", b"cmap", b"cvt ", b"fpgm", b"gasp",
@@ -649,8 +647,6 @@ fn binary_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Option<&'stati
                 .is_some_and(|logo| contains(&pixels, logo))
                 .then_some(LOGO_REASON),
         },
-        ("SRC", "tokens") if rest == TOKEN_TABLE => (!crate::build_assets::well_formed_table(data))
-            .then_some("compression control table is not ALCHTOK1 followed by complete records"),
         ("SOUND", "wav") => wav_pcm8(data)
             .is_err()
             .then_some("WAV is not a canonical mono 8-bit PCM build input"),
@@ -931,6 +927,55 @@ fn copied_bytes<'a>(
         _ => false,
     }
 }
+/// Saved compression decisions remain answers when nested, split into short
+/// arrays, or addressed through a separate binary table.
+// Pascal temporarily admitted the already committed compression debt while
+// recovery continues. This checkpoint freezes it; it is not a growing allowlist.
+const LEGACY_COMPRESSION_BASELINE: &str = "d08ee3a28fc92afe15c6215d0997a05659395f1c";
+const LEGACY_COMPRESSION_TABLE: &str =
+    "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.TOKENS";
+const COMPRESSION_ANSWER_REASON: &str =
+    "stored compression decisions or padding: recover the encoder and packer";
+
+fn computed_controls(tokens: &serde_json::Value) -> bool {
+    matches!(tokens["predictor"].as_str(), Some("lzss" | "greedy-lz-v1"))
+        && tokens["exceptions"].as_array().is_some_and(Vec::is_empty)
+}
+
+fn compression_answers(value: &serde_json::Value, inherited_lz: bool) -> bool {
+    use serde_json::Value;
+    match value {
+        Value::Object(object) => {
+            if object
+                .get("token_table")
+                .is_some_and(|table| table["format"] == "alchemy-lz-controls-v1")
+            {
+                return true;
+            }
+            let lz = object
+                .get("codec")
+                .or_else(|| object.get("recipe_codec"))
+                .and_then(Value::as_str)
+                .map_or(inherited_lz, |codec| codec.contains("-lz"));
+            if lz {
+                if object.get("lookahead").is_some_and(|padding| padding != "") {
+                    return true;
+                }
+                if let Some(tokens) = object.get("tokens") {
+                    // New compressors normally omit controls altogether.
+                    if !computed_controls(tokens) {
+                        return true;
+                    }
+                }
+            }
+            object.values().any(|child| compression_answers(child, lz))
+        }
+        Value::Array(rows) => rows
+            .iter()
+            .any(|child| compression_answers(child, inherited_lz)),
+        _ => false,
+    }
+}
 /// Byte dumps stored as JSON numbers, which the text measures cannot see
 /// inside game data tables: decoded streams, residual regions, hash-keyed
 /// stream maps and any other long flat byte array without a typed table.
@@ -941,7 +986,92 @@ fn json_byte_dump_reason(path: &str, text: &str) -> Option<&'static str> {
     let Ok(document) = serde_json::from_str::<serde_json::Value>(text) else {
         return Some(JSON_UNPARSED_REASON);
     };
+    if compression_answers(&document, false) {
+        return Some(COMPRESSION_ANSWER_REASON);
+    }
     copied_bytes(&document, None, &mut Vec::new(), false).then_some(JSON_BYTE_DUMP_REASON)
+}
+
+/// Remove only frozen legacy fields from the document used for further checks.
+/// Real build inputs stay unchanged; unrelated payloads still fail publication.
+fn legacy_compression_projection(
+    before: &serde_json::Value,
+    after: &mut serde_json::Value,
+    old_codec: &str,
+    new_codec: &str,
+) -> bool {
+    use serde_json::Value;
+    match after {
+        Value::Object(object) => {
+            let new_codec = object
+                .get("codec")
+                .or_else(|| object.get("recipe_codec"))
+                .and_then(Value::as_str)
+                .unwrap_or(new_codec)
+                .to_string();
+            let old_codec = before
+                .get("codec")
+                .or_else(|| before.get("recipe_codec"))
+                .and_then(Value::as_str)
+                .unwrap_or(old_codec);
+            for key in ["token_table", "tokens", "lookahead"] {
+                let Some(value) = object.get(key) else {
+                    continue;
+                };
+                let debt = match key {
+                    "token_table" => value["format"] == "alchemy-lz-controls-v1",
+                    "tokens" => new_codec.contains("-lz") && !computed_controls(value),
+                    "lookahead" => new_codec.contains("-lz") && value != "",
+                    _ => false,
+                };
+                if debt {
+                    if before.get(key) != Some(value)
+                        || (key != "token_table" && old_codec != new_codec)
+                    {
+                        return false;
+                    }
+                    object.remove(key);
+                }
+            }
+            object.iter_mut().all(|(key, value)| {
+                legacy_compression_projection(&before[key], value, old_codec, &new_codec)
+            })
+        }
+        Value::Array(rows) => rows.iter_mut().enumerate().all(|(index, value)| {
+            legacy_compression_projection(&before[index], value, old_codec, new_codec)
+        }),
+        _ => true,
+    }
+}
+
+fn publication_data_reason_with_legacy(
+    root: &Path,
+    path: &str,
+    data: &[u8],
+    logo: Option<&[u8]>,
+) -> Option<&'static str> {
+    let reason = publication_data_reason(path, data, logo)?;
+    if reason != COMPRESSION_ANSWER_REASON && path != LEGACY_COMPRESSION_TABLE {
+        return Some(reason);
+    }
+    let object = format!("{LEGACY_COMPRESSION_BASELINE}:{path}");
+    let Ok(before) = git(root, &["show", &object], "frozen compression debt") else {
+        return Some(reason);
+    };
+    if path == LEGACY_COMPRESSION_TABLE {
+        return (data != before).then_some(reason);
+    }
+    let (Ok(before), Ok(mut after)) = (
+        serde_json::from_slice::<serde_json::Value>(&before),
+        serde_json::from_slice::<serde_json::Value>(data),
+    ) else {
+        return Some(reason);
+    };
+    if !legacy_compression_projection(&before, &mut after, "", "") {
+        return Some(reason);
+    }
+    let cleaned = serde_json::to_vec(&after).expect("JSON value serializes");
+    publication_data_reason(path, &cleaned, logo)
 }
 fn blocked_include(literal: &str, bytes: bool) -> bool {
     let literal = literal.replace('\\', "/");
@@ -1384,8 +1514,8 @@ fn scan(root: &Path, entries: Vec<Entry>, conflicts: bool) -> Result<(), String>
     let objects = readable.iter().map(|entry| entry.object.clone()).collect();
     blobs(root, objects, |index, data| {
         let entry = &readable[index];
-        let reason =
-            publication_data_reason(&entry.path, data, logo.as_deref()).map(str::to_string);
+        let reason = publication_data_reason_with_legacy(root, &entry.path, data, logo.as_deref())
+            .map(str::to_string);
         let reason = reason.or_else(|| {
             conflicts
                 .then(|| conflict_marker_reason(&entry.path, data))
@@ -2198,7 +2328,7 @@ fn binary_fixtures() -> Vec<Fixture> {
             "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.TOKENS",
             garbled,
             true,
-            Some("compression control table"),
+            unregistered,
         ),
         (
             "games/THE BROKEN SEAL/SRC/GRAPHICS/FONT/LOCALIZATION_GLYPHS_0020_00FF.1BPP.PNG",
@@ -2252,7 +2382,7 @@ fn binary_fixtures() -> Vec<Fixture> {
             "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.TOKENS",
             table,
             true,
-            None,
+            unregistered,
         ),
     ]
 }
@@ -3142,6 +3272,61 @@ mod tests {
     fn every_publication_rule_rejects_its_fixture_and_accepts_build_inputs() {
         check_fixtures().unwrap();
         self_test(crate::compiler::routing::root()).unwrap();
+    }
+    #[test]
+    fn frozen_compression_debt_allows_removal_but_not_changed_answers() {
+        use serde_json::json;
+        let before =
+            json!({"codec":"golden-sun-kind2-lz","frames":[{"tokens":[2,[2,4]],"lookahead":"00"}]});
+        for mut after in [
+            before.clone(),
+            json!({"codec":"golden-sun-kind2-lz","frames":[{}]}),
+            json!({"codec":"golden-sun-kind2-lz","frames":[{"tokens":{"predictor":"lzss","exceptions":[]}}]}),
+        ] {
+            assert!(legacy_compression_projection(&before, &mut after, "", ""));
+            assert!(!compression_answers(&after, false));
+        }
+        for mut after in [
+            json!({"codec":"golden-sun-kind2-lz","frames":[{"tokens":[3,[2,4]]}]}),
+            json!({"codec":"golden-sun-kind2-lz","frames":[{"lookahead":"01"}]}),
+            json!({"codec":"golden-sun-general-lz","frames":[{"tokens":[2,[2,4]]}]}),
+            json!({"codec":"golden-sun-kind2-lz","frames":[{}, {"tokens":[2,[2,4]]}]}),
+        ] {
+            assert!(!legacy_compression_projection(&before, &mut after, "", ""));
+        }
+    }
+    #[test]
+    fn compression_answers_are_rejected_independently_of_names_and_size() {
+        use serde_json::json;
+        let codec = "golden-sun-palette-lz";
+        for plan in [
+            json!({"codec":codec,"tokens":[["g",[["l"],["e"]]]]}),
+            json!({"codec":codec,"tokens":{"predictor":"greedy-lz-v1","exceptions":[[1,["c",2,1]]]}}),
+            json!({"codec":codec,"tokens":{"offset":8,"size":2,"count":1}}),
+            json!({"codec":codec,"lookahead":"00"}),
+            json!({"recipe_codec":"golden-sun-arena-lz","recipes":{"bank":[{"tokens":[["l",1]]}]}}),
+            json!({"token_table":{"format":"alchemy-lz-controls-v1","source":"renamed.bin"}}),
+        ] {
+            let nested = json!({"arbitrary":{"items":[plan]}}).to_string();
+            for path in [
+                "games/X/SRC/WORLD.JSON",
+                "games/X/recon/small.json",
+                "tools/renamed.json",
+            ] {
+                assert!(json_byte_dump_reason(path, &nested)
+                    .unwrap()
+                    .contains("stored compression decisions"));
+            }
+        }
+        for plan in [
+            json!({"codec":codec,"decoded_size":1024,"encoded_size":100}),
+            json!({"codec":codec,"tokens":{"predictor":"lzss","exceptions":[]}}),
+            json!({"codec":codec,"tokens":{"predictor":"greedy-lz-v1","exceptions":[]}}),
+            json!({"codec":codec,"lookahead":""}),
+            json!({"codec":"language-parser","tokens":["identifier","semicolon"]}),
+        ] {
+            assert!(json_byte_dump_reason("games/X/SRC/INPUT.JSON", &plan.to_string()).is_none());
+        }
     }
     #[test]
     fn encoded_measures_whole_texts_and_spares_identifiers_and_digests() {

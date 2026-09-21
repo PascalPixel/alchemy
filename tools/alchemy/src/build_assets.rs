@@ -16,7 +16,6 @@ use crate::compiler::source_paths::{SourcePaths, SOURCE_PATHS_MANIFEST};
 use crate::generated_files::{prune_files, unconsumed_tracked_material};
 use crate::overlay::compile::assemble_overlay;
 use crate::overlay::source::OverlaySource;
-pub(crate) use compression_plan::well_formed_table;
 use gba_header::{build_gba_header_component, read_gba_header_source};
 use psynergy::assets::lz::{PaletteGroup, PaletteOperation};
 use psynergy::assets::text::import_tilemap;
@@ -32,7 +31,7 @@ use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
-const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--target TARGET] [--manifest MANIFEST] [-o OUTPUT] [rom] | --extract-text [TARGET] | --verify-text [TARGET] | --compact-plans PLAN | --derive-plans PLAN | --review-images OUTPUT [--update-baseline | --target TARGET] | --audit-characters OUTPUT [--target TARGET] | --extract-sources ROM [--target TARGET] | --extract-missing-sources ROM [--target TARGET] | --derive-index ROM --target TARGET --scenes N[=NAME],... [-o OUTPUT] [--stage DIR] [--preview DIR] | --network ROM --target TARGET -o DIR [--from WORLD_MAP_EXIT | --scenes LIST] [--mark SCENE] [--packed] | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
+const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--target TARGET] [--manifest MANIFEST] [-o OUTPUT] [rom] | --extract-text [TARGET] | --verify-text [TARGET] | --review-images OUTPUT [--update-baseline | --target TARGET] | --audit-characters OUTPUT [--target TARGET] | --extract-sources ROM [--target TARGET] | --extract-missing-sources ROM [--target TARGET] | --derive-index ROM --target TARGET --scenes N[=NAME],... [-o OUTPUT] [--stage DIR] [--preview DIR] | --network ROM --target TARGET -o DIR [--from WORLD_MAP_EXIT | --scenes LIST] [--mark SCENE] [--packed] | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
 const ROM_BASE: usize = 0x0800_0000;
 pub(crate) fn identified_regions(
     root: &Path,
@@ -2755,6 +2754,9 @@ fn select_plan<'a>(document: &'a Value, entry: &Value) -> Result<&'a Value, Stri
 /// stream in its container for codecs whose copies read from them.
 fn encode_lz_stream(decoded: &[u8], plan: &Value, arena: &[u8]) -> Result<Vec<u8>, String> {
     let codec = json_string(&plan["codec"], "codec")?;
+    if codec == "golden-sun-overlay-lz" {
+        return encode_overlay_stream(decoded);
+    }
     if decoded.len() != number(&plan["decoded_size"], "decoded_size")? {
         return Err("decoded components do not match plan size".to_string());
     }
@@ -2833,6 +2835,30 @@ fn encode_lz_stream(decoded: &[u8], plan: &Value, arena: &[u8]) -> Result<Vec<u8
     }
     Ok(built)
 }
+
+/// Overlay streams select the smaller of the two encodings, palette on ties.
+/// Legacy sidecars are explicit exceptions; this path consumes no saved choices.
+pub(crate) fn encode_overlay_stream(decoded: &[u8]) -> Result<Vec<u8>, String> {
+    let general = encode_lz_stream(
+        decoded,
+        &serde_json::json!({
+            "codec":"golden-sun-general-lz", "decoded_size":decoded.len()
+        }),
+        &[],
+    )?;
+    let palette = encode_lz_stream(
+        decoded,
+        &serde_json::json!({
+            "codec":"golden-sun-tagged-palette-lz", "decoded_size":decoded.len(), "tag":1
+        }),
+        &[],
+    )?;
+    Ok(if palette.len() <= general.len() {
+        palette
+    } else {
+        general
+    })
+}
 /// Build an LZ entry: its components are concatenated and encoded with the
 /// selected plan. A plan array describes a sequence of streams: stream `i`
 /// encodes the components with atlas frame `i` selected, is padded to
@@ -2846,9 +2872,20 @@ fn build_general_lz_cached(
     entry: &Value,
 ) -> Result<(Vec<u8>, Vec<String>, Value), String> {
     let root = &ctx.root;
-    let plan_name = json_string(&entry["plan"], "general-LZ plan")?;
-    let plan_path = root_path(root, plan_name)?;
-    let plan_document = ctx.document(&plan_path)?;
+    let plan_name = entry
+        .get("plan")
+        .map(|value| json_string(value, "general-LZ plan"))
+        .transpose()?;
+    let plan_document = match plan_name {
+        Some(name) => ctx.document(&root_path(root, name)?)?,
+        None if entry["components"].as_array().is_some_and(|components| {
+            components.len() == 1 && components[0]["kind"] == "golden-sun-thumb-overlay"
+        }) =>
+        {
+            std::rc::Rc::new(serde_json::json!({"codec":"golden-sun-overlay-lz"}))
+        }
+        None => return Err("only overlay streams may omit their compression plan".into()),
+    };
     let plan = select_plan(&plan_document, entry)?;
     let component_document = entry
         .get("components_source")
@@ -2916,7 +2953,9 @@ fn build_general_lz_cached(
         stream.resize(stream.len().div_ceil(alignment) * alignment, 0);
         built.extend(stream);
     }
-    sources.push(plan_name.to_string());
+    if let Some(name) = plan_name {
+        sources.push(name.to_string());
+    }
     if let Some(source) = compression_plan::table_source(&plan_document) {
         sources.push(source.to_string());
     }
@@ -3221,8 +3260,12 @@ fn expand_series(
                         None => "games/THE BROKEN SEAL/raw/overlays/resource_",
                     };
                     let directory = format!("{prefix}{name}");
-                    entries
-                        .push(serde_json::json!({"address":tuple[1],"size":tuple[2],"kind":"golden-sun-general-lz","plan":format!("{directory}_stream.lz.json"),"components":[{"kind":"golden-sun-thumb-overlay","size":tuple[3],"source":format!("{directory}_overlay.s"),"base":series.get("base")}] }));
+                    let mut entry = serde_json::json!({"address":tuple[1],"size":tuple[2],"kind":"golden-sun-general-lz","components":[{"kind":"golden-sun-thumb-overlay","size":tuple[3],"source":format!("{directory}_overlay.s"),"base":series.get("base")}] });
+                    let exception = format!("{directory}_stream.lz.json");
+                    if root_path(&ctx.root, &exception)?.exists() {
+                        entry["plan"] = Value::String(exception);
+                    }
+                    entries.push(entry);
                 }
             }
             "golden-sun-map-component-series" => {
@@ -3458,6 +3501,29 @@ fn series_values<'a>(value: &'a Value, key: &str) -> Result<&'a Vec<Value>, Stri
         .and_then(Value::as_array)
         .ok_or_else(|| format!("{key} is missing or is not an array"))
 }
+#[test]
+fn overlay_series_uses_automatic_compression_unless_an_exception_exists() {
+    let directory = tempfile::tempdir().unwrap();
+    let mut ctx = Context::new(directory.path());
+    let manifest = serde_json::json!({"series":[{
+        "kind":"golden-sun-thumb-overlay-series", "source_prefix":"overlay/resource_",
+        "resources":[["001", "0x08000000", 8, 16]]
+    }]});
+    let mut entries = Vec::new();
+    expand_series(&mut ctx, &manifest, &mut entries).unwrap();
+    assert!(entries[0].get("plan").is_none());
+    fs::create_dir(directory.path().join("overlay")).unwrap();
+    fs::write(
+        directory.path().join("overlay/resource_001_stream.lz.json"),
+        "{}",
+    )
+    .unwrap();
+    entries.clear();
+    expand_series(&mut ctx, &manifest, &mut entries).unwrap();
+    assert_eq!(entries[0]["plan"], "overlay/resource_001_stream.lz.json");
+    assert!(build_general_lz_cached(&ctx, &serde_json::json!({"components":[]})).is_err());
+}
+
 #[test]
 fn sound_series_use_only_the_canonical_tables() {
     let directory = tempfile::tempdir().unwrap();
@@ -6011,22 +6077,6 @@ fn run(arguments: Vec<String>) -> Result<ExitCode, String> {
             "{}",
             crate::text_catalog::extract(&repository_root(), arguments.get(1).map(String::as_str))?
         );
-        return Ok(ExitCode::SUCCESS);
-    }
-    if arguments.first().map(String::as_str) == Some("--derive-plans") {
-        if arguments.len() != 2 {
-            return Err(USAGE.into());
-        }
-        let root = repository_root();
-        compression_plan::derive(&root, &root_path(&root, &arguments[1])?)?;
-        return Ok(ExitCode::SUCCESS);
-    }
-    if arguments.first().map(String::as_str) == Some("--compact-plans") {
-        if arguments.len() != 2 {
-            return Err(USAGE.into());
-        }
-        let root = repository_root();
-        compression_plan::repack(&root, &root_path(&root, &arguments[1])?)?;
         return Ok(ExitCode::SUCCESS);
     }
     if arguments.first().map(String::as_str) == Some("--review-images") {

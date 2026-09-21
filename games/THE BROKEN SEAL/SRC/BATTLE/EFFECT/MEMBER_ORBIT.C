@@ -35,7 +35,9 @@ void **Func_080b5098(s32 member_id);
 void Func_080e3944(void *source, void *screen);
 #define EffectPosition_ApplyBaseAndYOffset Func_080e3944
 s32 Func_08002322(s32 angle);
+#define Engine_MathSin Func_08002322
 s32 Func_0800231c(s32 angle);
+#define Engine_MathCos Func_0800231c
 void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 #define ObjectGroup_UpdateMembers Func_080d6888
 void Func_080030f8(s32 frames);
@@ -113,14 +115,14 @@ void BattleFx_RunMemberOrbit(void *object)
 
             for (i = 0, ceiling = 0x80000, angle = frame << 10;
                     i != 160; i++) {
-                *scanline++ = (ceiling - (Func_08002322(angle) << 3)) >> 10;
+                *scanline++ = (ceiling - (Engine_MathSin(angle) << 3)) >> 10;
                 angle += 1024;
             }
         } else {
             s32 angle;
 
             for (i = 0, angle = frame << 10; i != 160; i++) {
-                *scanline++ = ((Func_08002322(angle) << 3) >> 10) - 0x7000;
+                *scanline++ = ((Engine_MathSin(angle) << 3) >> 10) - 0x7000;
                 angle += 1024;
             }
         }
@@ -156,9 +158,9 @@ void BattleFx_RunMemberOrbit(void *object)
                         s32 slot;
 
                         spin = (frame << 9) + (i << 14);
-                        x = (screen[0] + ((Func_08002322(spin) << 4) >> 16))
+                        x = (screen[0] + ((Engine_MathSin(spin) << 4) >> 16))
                             + y_offset;
-                        y = screen[1] + ((Func_0800231c(spin) << 4) >> 16);
+                        y = screen[1] + ((Engine_MathCos(spin) << 4) >> 16);
                         slot = frame / 16;
                         ((DrawRectangleFn)rectangle_slot[slot & 1])(
                             canvas,

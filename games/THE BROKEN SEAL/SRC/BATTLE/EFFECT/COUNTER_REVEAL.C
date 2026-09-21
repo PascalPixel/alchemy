@@ -57,7 +57,9 @@ void **Func_080b5098(s32 member_id);
 void Func_080e396c(s32 member_id, void *out);
 #define EffectPosition_ApplyStepAndYOffset Func_080e396c
 s32 Func_08002322(s32 angle);
+#define Engine_MathSin Func_08002322
 s32 Func_0800231c(s32 angle);
+#define Engine_MathCos Func_0800231c
 void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 #define ObjectGroup_UpdateMembers Func_080d6888
 void Func_080f9010(s32 cue);
@@ -132,8 +134,8 @@ void BattleFx_RunCounterReveal(void *object)
         s32 *scanline;
 
         spin = frame << 9;
-        screen_x = (curve[0] >> 16) + ((Func_08002322(spin) << 4) >> 16) + 48;
-        screen_y = (curve[1] >> 16) + ((Func_0800231c(spin) << 2) >> 16) + 16;
+        screen_x = (curve[0] >> 16) + ((Engine_MathSin(spin) << 4) >> 16) + 48;
+        screen_y = (curve[1] >> 16) + ((Engine_MathCos(spin) << 2) >> 16) + 16;
         if (frame == 88) {
             Audio_PlayCue(134);
         }
@@ -191,7 +193,7 @@ void BattleFx_RunCounterReveal(void *object)
         angle = frame << 11;
         for (; i != 160; i++) {
             *scanline++ =
-                row_base - ((Func_08002322(angle) * amp) >> 10);
+                row_base - ((Engine_MathSin(angle) * amp) >> 10);
             angle += 0x800;
         }
         if (draw_enabled != 0) {

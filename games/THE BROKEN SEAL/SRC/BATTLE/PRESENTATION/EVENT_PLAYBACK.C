@@ -81,6 +81,7 @@ s32 Func_080040d0(s32 index, s32 table);
 #define Resource_GetBuffer Func_080040d0
 s32 Func_080022fc(s32 numerator, s32 denominator);
 s32 Func_08002322(s32 angle);
+#define Engine_MathSin Func_08002322
 void Func_08009020(void *record, s32 animation);
 void Func_08009080(void *object, s32 animation);
 #define Object_SetMode Func_08009080
@@ -344,7 +345,7 @@ void BattleEvent_Playback(void)
                 (*(u16 *)(entry + 6) & 0xfe00)
                 | (display_x & 0x1ff);
 
-            wave = Func_08002322(REG_DISPCNT_SUB << 12);
+            wave = Engine_MathSin(REG_DISPCNT_SUB << 12);
             if (wave < 0)
                 wave += 0x7fff;
             entry[4] = (viewport->scroll_y >> 8)

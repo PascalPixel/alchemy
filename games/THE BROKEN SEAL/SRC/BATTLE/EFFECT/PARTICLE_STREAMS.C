@@ -64,7 +64,9 @@ void Func_080d6750(s32);
 s32 Func_080ed408(s32, s32, s32, s32, s32);
 void Func_08009008(s32, void *, void *, s32);
 s32 Func_08002322(s32);
+#define Engine_MathSin Func_08002322
 s32 Func_0800231c(s32);
+#define Engine_MathCos Func_0800231c
 void Func_080049ac(void);
 #define Render_ResetTransformState Func_080049ac
 void Func_08004cb4(void *);
@@ -535,12 +537,12 @@ loop_84:
             temp_r1_848 = (0x7FFF & Random16()) + 0x4000;
             (*(s32 *)((u8 *)(temp_r5_837) + (0x18))) = 0;
             spC = temp_r1_848;
-            var_r3_859 = Func_08002322(temp_r1_848) * 0x1E;
+            var_r3_859 = Engine_MathSin(temp_r1_848) * 0x1E;
             if (var_r3_859 < 0) {
                 var_r3_859 += 0xFFFF;
             }
             (*(s32 *)((u8 *)(temp_r3_835) + (0x7080))) = (s32) (((var_r7_718 + 0x60) << 0x10) + ((var_r3_859 >> 0x10) * var_r6_763));
-            var_r3_875 = Func_0800231c(temp_r1_848) * 0x1E;
+            var_r3_875 = Engine_MathCos(temp_r1_848) * 0x1E;
             if (var_r3_875 < 0) {
                 var_r3_875 += 0xFFFF;
             }

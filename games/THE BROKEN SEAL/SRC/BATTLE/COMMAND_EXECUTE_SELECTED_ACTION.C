@@ -28,6 +28,7 @@ u8 *Func_08077080(s32);
 void *Func_08077008(s32);
 void *Func_0808ba1c(s32);
 void Func_08091660(void); void Func_080770d0(s32); s32 Func_080770c0(s32);
+#define BattleFlag_Test Func_080770c0
 #define Battle_InitializeRenderObject Func_08091660
 void Func_08015120(s32, s32); void Func_08015040(s32, s32);
 s32 Func_08091d84(s32); void Func_08015140(void);
@@ -75,7 +76,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
     Func_080770d0(0x145);
     if (actor == 15) actor = 0;
 
-    if (Func_080770c0(0x17e)) {
+    if (BattleFlag_Test(0x17e)) {
         Func_08015120(actor, 1); Func_08015120(actionId, 4); Func_08015040(0x91f, 1);
         return 0;
     }
@@ -84,7 +85,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
         return 0;
     }
     if (actionId == 0x95) {
-        if (Func_080770c0(0x144)) {
+        if (BattleFlag_Test(0x144)) {
             Func_08015120(actor, 1); Func_08015120(0x95, 4); Func_08015040(0x921, 1);
             return 0;
         }
@@ -130,11 +131,11 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
     Func_08096fb0(actionId, 0); runtime->resolving_action = 1;
     BattleFx_SetupObjectPair(Data_02000240.object_id, targetId); Func_0809728c();
     BattleFx_RunEventAction(primary, actor, targetId);
-    if (Func_080770c0(0x140)) {
-        if (Func_080770c0(0x141)) BattleFx_DispatchRequestKind(); else Func_08096810();
+    if (BattleFlag_Test(0x140)) {
+        if (BattleFlag_Test(0x141)) BattleFx_DispatchRequestKind(); else Func_08096810();
     }
     EffectRuntime_StopCurrentObject(); BattleFx_RunEventAction(secondary, actor, targetId);
-    if (Func_080770c0(0x140)) BattleFx_ClearChildValueOnMismatch();
+    if (BattleFlag_Test(0x140)) BattleFx_ClearChildValueOnMismatch();
     Func_080770d0(0x140); Func_080770d0(0x141); runtime->resolving_action = 0;
     BattleEffect_CleanupSceneObjects();
     if (runtime->battle_mode == 3) Func_0808b98c();

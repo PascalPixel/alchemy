@@ -3,12 +3,13 @@
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 s32 Modulo(s32, s32);
 extern u8 Data_02000240[];
+#define PARTY_STATE Data_02000240
 extern u8 Data_08036750[];
 void GraphicsPalette_SetTintChannelsFromCounters(void *work)
 {
     s16 phase; s32 bias; s32 c2, c0, c1;
-    phase = Modulo(Data_02000240[0x205] + 0xC, 0x18) * 4;
-    bias = Data_02000240[0x206] - 7;
+    phase = Modulo(PARTY_STATE[0x205] + 0xC, 0x18) * 4;
+    bias = PARTY_STATE[0x206] - 7;
     c0 = Data_08036750[(s16)Modulo(phase, 0x60)];
     c1 = Data_08036750[Modulo(phase + 0x20, 0x60)];
     c2 = Data_08036750[Modulo(phase + 0x40, 0x60)];

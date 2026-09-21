@@ -13,6 +13,7 @@ s32 UiWork_IsIdle(struct Work *work);
 void WaitFrames(s32 frames);
 
 extern s32 Data_02000240[];
+#define PARTY_STATE Data_02000240
 
 #define UiText_ShowPositionedMessageAndWait Func_0801776c
 
@@ -61,7 +62,7 @@ void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags)
     {
         s32 dy;
 
-        Func_0808a278(Data_02000240[125], pos);
+        Func_0808a278(PARTY_STATE[125], pos);
         dy = pos[1] >> 3;
         if (dy > 9)
         {

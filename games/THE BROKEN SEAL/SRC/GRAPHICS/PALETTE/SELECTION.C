@@ -1,6 +1,7 @@
 #include "TYPES.H"
 
 extern u8 Data_02000240[];
+#define PARTY_STATE Data_02000240
 
 void GraphicsPalette_DecrementSelectionWrap(void *base)
 {
@@ -44,15 +45,15 @@ void GraphicsPalette_DecrementSelectedCounter(s32 work)
     switch (sel) {
     case 0:
         off = 0x20C;
-        p = &Data_02000240[off];
+        p = &PARTY_STATE[off];
         break;
     case 1:
         off = 0x205;
-        p = &Data_02000240[off];
+        p = &PARTY_STATE[off];
         break;
     case 2:
         off = 0x206;
-        p = &Data_02000240[off];
+        p = &PARTY_STATE[off];
         break;
     default:
         return;
@@ -72,21 +73,21 @@ void GraphicsPalette_AdjustSelectionCounter(s32 arg0)
     switch (sel) {
     case 0:
         off = 0x20C;
-        sp = &Data_02000240[off];
+        sp = &PARTY_STATE[off];
         if (*sp <= 1) {
             break;
         }
         return;
     case 1:
         off = 0x205;
-        sp = &Data_02000240[off];
+        sp = &PARTY_STATE[off];
         if (*sp <= 23) {
             break;
         }
         return;
     case 2:
         off = 0x206;
-        sp = &Data_02000240[off];
+        sp = &PARTY_STATE[off];
         if (*sp <= 14) {
             break;
         }

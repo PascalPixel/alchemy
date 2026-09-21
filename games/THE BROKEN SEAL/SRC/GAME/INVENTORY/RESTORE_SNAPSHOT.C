@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "OWNER_STATE.H"
 #include "PSYNERGY_MENU.H"
+#define PARTY_STATE Data_02000240
 
 #define INVENTORY_SNAPSHOT_SENTINEL 0x6774
 
@@ -35,10 +36,10 @@ void InventorySnapshot_Restore(void)
             owner++;
         } while (owner <= 3);
 
-        Data_02000240.psynergy_shortcuts[0] = *source++;
-        Data_02000240.psynergy_shortcuts[1] = *source++;
-        *(u16 *)((u8 *)&Data_02000240 + 0x1f8) = *source++;
-        *(u16 *)((u8 *)&Data_02000240 + 0x1fa) = *source;
+        PARTY_STATE.psynergy_shortcuts[0] = *source++;
+        PARTY_STATE.psynergy_shortcuts[1] = *source++;
+        *(u16 *)((u8 *)&PARTY_STATE + 0x1f8) = *source++;
+        *(u16 *)((u8 *)&PARTY_STATE + 0x1fa) = *source;
         source = Data_02001078;
         *source = 0;
         GameFlag_ClearBit(0x952);

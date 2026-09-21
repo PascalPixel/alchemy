@@ -7,6 +7,7 @@ extern void Func_08097868(void);
 #define BattleFx_ArmBg0HBlankDma Func_08097868
 extern s32 Func_08015360(s32, s32);
 extern u8 Data_02000240[];
+#define PARTY_STATE Data_02000240
 
 void Ui_SetBank15PaletteAndClearRenderMode(void)
 {
@@ -18,6 +19,6 @@ void Ui_SetBank15PaletteAndClearRenderMode(void)
     *(s16 *)0x050001E6 = 0;
     *(volatile s16 *)0x050001F6 = 0x294A;
     *(volatile s16 *)0x050001F8 = 0x5294;
-    Func_08015360(Data_02000240[0x205], Data_02000240[0x206]);
+    Func_08015360(PARTY_STATE[0x205], PARTY_STATE[0x206]);
     *((u8 *)work + RENDER_MODE_OFS) = 0;
 }

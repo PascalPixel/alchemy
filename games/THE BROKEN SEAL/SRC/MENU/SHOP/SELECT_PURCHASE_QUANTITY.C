@@ -13,6 +13,7 @@ extern void Func_080b04dc(s32);
 #define UiMessage_ShowAndWait Func_080b04dc
 extern s32 Item_FindSlot(s32, s32);
 extern s32 Func_080022f4(s32, s32);
+#define Math_Mod Func_080022f4
 extern s32 Ability_GetMaximum(s32, s32);
 extern s32 Func_080b1614(s32, s32, s32);
 
@@ -42,7 +43,7 @@ s32 Shop_SelBuyNum(s32 unit_id, s32 item_id)
 
         chance = 30;
         if (item->price != 0)
-            chance = Func_080022f4(SHOP_PARTY_STATE.money, item->price);
+            chance = Math_Mod(SHOP_PARTY_STATE.money, item->price);
 
         if (shop->party_action == 2) {
             maximum = Ability_GetMaximum(item_id, 0);

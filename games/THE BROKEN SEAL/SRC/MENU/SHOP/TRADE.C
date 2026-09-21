@@ -46,6 +46,7 @@ void Shop_BuyDone(s32 unit_id, s32 item_id, s32 quantity)
 
 
 s32 Func_08077218(s32 unit_id, s32 item_id);
+#define Item_CanOwnerEquip Func_08077218
 s32 Func_08077228(s32 unit_id, u8 kind);
 void Func_08077050(s32 unit_id, s32 slot);
 void Func_08015120(u32 unit_id, u32 mode);
@@ -76,7 +77,7 @@ s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
     if (unit->inventory[slot] & 0x200)
         return 0;
 
-    if (Func_08077218(unit_id, item_id) == 0)
+    if (Item_CanOwnerEquip(unit_id, item_id) == 0)
         return 0;
 
     replaced = Func_08077228(unit_id, info->type);

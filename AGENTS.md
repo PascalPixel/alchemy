@@ -97,16 +97,19 @@ the document check pass. Binary section dumps are build output, not prose.
 | Owner names and source paths | Each game's `source-paths.json` |
 | Types, declarations and behavior | Maintained C and headers |
 | Unit membership, instances, extents and bindings | Existing translation-unit manifests and boundary registries |
-| Owner-specific experiments, negative results and next hypothesis | Existing `recon/en/dossiers.json` entry, with game-qualified identity |
+| Current owner classification, extent, source and measured score | Existing `recon/en/dossiers.json` entry, with game-qualified identity |
 | Current verified credit | Fingerprinted build receipts, generated into stable target report directories |
 | Temporary compiler diagnostics | Disposable work directories under `out/` |
 
-A dossier is an evidence record, not another project guide. Record the candidate,
-complete extent, command, compiler identity, result, rejected hypotheses and
-specific evidence needed to reopen. Preserve useful negative findings; avoid
-copied transcripts and a second score registry. Old scores are leads, never
-current verification. Code constraints belong beside their code, not in a
-new document. Repair references and validators when an owner moves.
+A dossier is a compact current registry, not a laboratory notebook. Keep the
+owner's classification, complete extent, maintained source, retention state and
+latest measured score. Dated attempts, command transcripts, temporary paths,
+model responses, rejected-spelling lists and superseded theories are
+**baaaaaaad**: they turn JSON into hidden scratch memory and make later agents
+optimize against stale stories. Reusable findings belong in the owning code or
+the single relevant rule here; temporary diagnostics stay disposable under
+`out/`. Old scores are leads, never current verification. Repair references and
+validators when an owner moves.
 
 ## Recovery: verified bytes per hour
 
@@ -135,9 +138,9 @@ DONE. Do not use the rounded commit prefix to measure C progress.
    types or shared routines that the selected large functions need. Verify exact
    callees remain exact, then repair unresolved callers. Do not pursue small
    unresolved functions or independent cleanup campaigns.
-4. Record the selected owners, complete extents, baseline, evidence, budget and
-   finishing check in their existing records. Dependency work serves the selected
-   large owners; it does not create a separate small-function recovery queue.
+4. Keep each selected owner's current extent, source, classification and latest
+   score in its dossier. The bounded work plan is temporary; dependency work
+   serves the selected large owners and does not create another recovery queue.
 5. After closing a representative, test every applicable sibling with its own
    constants, call bindings, layout and complete byte comparison. An empty twin
    sweep is closed until its inputs change. Do not repeat broad censuses blindly.
@@ -242,9 +245,9 @@ When repeated local repairs stall, work in reverse:
    be necessary to reach exactness.
 
 This is a different investigation from permuting the stuck draft, not permission
-to reset attempt budgets or run an unlimited search. State the bounded hypothesis
-and record the witness, first breaking addition and result in the existing owner
-dossier. Preserve this method and its heading when consolidating these docs.
+to reset attempt budgets or run an unlimited search. Keep the witness and first
+breaking addition in the active bounded workspace. Put any reusable source fact
+in the source, type or rule it corrects, then discard the diagnostic.
 
 Mockups, dummy scaffolding and diagnostic assembly stay private under the active
 `out/` batch and earn no completion credit. They must not become artificial
@@ -355,11 +358,12 @@ scoreboard framework, prose archive or experiment index.
 Before ending a batch:
 
 1. Put complete useful nonexact C in the game's existing `recon/en/main`,
-   `recon/en/overlays` or declared unit source, registered in the owner's dossier.
-   Keep accepted C in `SRC`. Never leave the only useful candidate in `out/`.
-2. Distill owner findings into that dossier and reusable discoveries into the
-   relevant paragraph here. Keep exact extent, commands, evidence and negative
-   results, not every transient diagnostic or speculative interpretation.
+   `recon/en/overlays` or declared unit source, with its current source and score
+   in the dossier. Keep accepted C in `SRC`. Never leave the only useful candidate
+   in `out/`.
+2. Update the dossier's current classification, extent, source and score. Put
+   durable behavior in maintained C and types, and a reusable method in its one
+   paragraph here. Do not preserve commands, attempt history or rejected guesses.
 3. Remove the batch's throwaway candidates, scripts, copies and reports after
    their useful results have durable homes. Retain only reproducible diagnostics
    needed by a specific active question. Remove landed branches and worktrees;
@@ -494,8 +498,8 @@ the three single-statement owners cover 144 bytes, and the loop belongs to a
 280-byte unit. The separate Data_02009b85 call identity in
 HAIDIA_SUKURETA/PROGRESS_ACTOR remains a binding-review exception (1,728-byte
 owner), not a reason to run another matching search during this cleanup.
-Withdraw a trick-dependent match, preserve its dossier, and leave uncredited
-assembly rather than protect the percentage. Volatile is justified for I/O,
+Withdraw a trick-dependent match, mark its current state as retained assembly,
+and leave it uncredited rather than protect the percentage. Volatile is justified for I/O,
 video/palette memory and genuinely interrupt-shared state.
 
 Inline assembly is allowed only in an evidenced shared macro implementing a
@@ -681,10 +685,11 @@ function without checking its actual call interface.
 Typed const tables and consumer-derived macros live with their readers; a unit's
 `data` record links rodata through `AlchemyData_<address>`. Listings keep veneer
 includes, placeholders and alignment. Unexplained data stays on the explicit
-`recon/showcase.json` allowlist and is reported. Comments describe the game;
-register/pool/compiler reasoning belongs in dossiers. Rescore every affected
-unit and keep overlay audit clean. `alchemy check showcase` enforces registered
-folders and their headers; never unregister a folder to pass it.
+`recon/showcase.json` allowlist and is reported. Comments describe the game.
+Temporary register, pool and compiler reasoning stays in the bounded workspace;
+only facts that correct maintained source or this guide survive. Rescore every
+affected unit and keep overlay audit clean. `alchemy check showcase` enforces
+registered folders and their headers; never unregister a folder to pass it.
 
 ### Editions, instances and both games
 
@@ -846,7 +851,7 @@ owners or compiler routes in Psynergy, no aliases exposing an operation in both.
 
 Retired entry points are rejected, not forwarded. Use Psynergy for `decompile`,
 `disassemble`, `diff`, `repair` and `convert`; annotated owner disassembly is
-`alchemy inspect OWNER --asm`. Historical dossier commands are transcripts,
+`alchemy inspect OWNER --asm`. Old commands and logs are disposable diagnostics,
 not instructions to resurrect aliases. `alchemy score --target tla` selects
 TLA explicitly; arbitrary ROM overrides cannot substitute a reference. Scoring
 one exact unit member still verifies the unit. Default work lives in out/score.
@@ -931,9 +936,9 @@ change, credit-standard change or tooling-ceiling increase.
 ## Open work
 
 Maintain priorities here, not another checklist. Remove completed items and
-update invalidated facts in the same change. Detailed owner experiments stay in
-their existing game-specific dossiers. Never preserve an old blanket “bounce”
-list as authority over improved evidence or a different game at the same address.
+update invalidated facts in the same change. Dossiers hold only each owner's
+current state; detailed experiments are disposable. Never preserve an old blanket
+“bounce” list as authority over improved evidence or another game at the same address.
 
 ### TBS recovery
 
@@ -949,8 +954,8 @@ list as authority over improved evidence or a different game at the same address
 - Use the reviewed DMA primitive for surrounding C. Remaining save/checksum,
   zero initialization, rendering generation and decompressor callers need their
   own structure/lifetimes recovered. Fill macros are unadmitted. Save checksum
-  and heap-decompressor local residual searches are parked in their dossiers;
-  the VRAM cache and DMA unit context is now available as evidence to callers.
+  and heap-decompressor residual searches are parked until new evidence appears;
+  the VRAM cache and DMA unit context is available to callers.
 - September 19's exact-twin census found no uncredited matches among 4,235 scanned
   owners; reopen only after source, membership, bindings or inventory changes.
 - September 20 nested-function recoveries prove particle helpers (200 bytes),
@@ -960,7 +965,7 @@ list as authority over improved evidence or a different game at the same address
   target-selection nested helpers remain scored drafts, not adopted C.
 - Continue world-map module recovery at resource_371:020039fc, 020024a8,
   02002768, 020027dc, 0200384c, 02004058, 020001c4 and 020006ec from their
-  complete drafts/dossiers: transfer-queue interface, table loops, prototypes,
+  maintained drafts and interfaces: transfer-queue behavior, table loops, prototypes,
   field access and ip-return/Q16 multiply context precede allocation searches.
 - Revisit Korima Bridge resource_391:02002974 only with new early-zero lifetime
   evidence; resource_38f:020027ac has different bindings. Debug item menu
@@ -970,7 +975,7 @@ list as authority over improved evidence or a different game at the same address
   before claiming complete overlay recovery.
 - Recorded floors such as resource_3bd:020013f8, the SpawnConfiguredEffect
   family, and main allocation/scheduling residuals require new evidence, not
-  repeated spelling searches. Check their dossiers and current source: past
+  repeated spelling searches. Check current source and fresh scores: past
   classifications and stale names are not proof of impossibility.
 - Extend the Lunpa source standard along these dependency paths. Remove legacy
   address names from remaining COMMON/LIB interfaces as verified callers migrate.
@@ -988,16 +993,15 @@ list as authority over improved evidence or a different game at the same address
   All twelve physical indexes and exact text archives are separate achievements.
 - Grow TLA through complete verified shared modules and its own fixed executable
   inventory. Keep the existing object/motion, inventory and Djinn recoveries;
-  small scheduling floors remain uncredited in their dossiers. Do not inherit
+  small scheduling floors remain uncredited. Do not inherit
   TBS compiler-family membership from a name or address resemblance.
 - Pascal approved a bounded TLA shared constant-lowering experiment on September
-  19. The isolated compiler work and evidence for main:080b0ab8 live in that
-  dossier; no experimental compiler is installed. Broader synthesis regressed
-  exact message owners; keep one game-wide option set and existing controls.
+  19. It ended without installing an experimental compiler. Broader synthesis
+  regressed exact message owners; keep one game-wide option set and existing controls.
 - Continue TLA main:08120454 using exact TBS main:080bbb0c as its control.
   Reconstruct command access, field layouts, raw power, counter lifetimes and
-  guards; neither the approved nor experimental candidate is exact. Detailed
-  scores belong to the TLA dossier, not this priority list.
+  guards; neither the approved nor experimental candidate is exact. Measure it
+  afresh instead of preserving a history of intermediate scores.
 - TLA staged actors resource_64e:02000314–0200056c remain nonexact shared-module
   candidates; two hypotheses failed and an 18-overlay survey supplies leads only.
   Field operands 08025bb4, 08025c5c, 08025f9c remain scheduling floors. Do not
@@ -1006,10 +1010,10 @@ list as authority over improved evidence or a different game at the same address
   recon/en/overlays/resource_64d_c_02000510.c. Fix the lifter's
   duplicated lookups, extra end calls and volatile actor RAM before repeating
   this family. The first constant-synthesis mismatch is not fixed by equivalent
-  integer spellings. Its dossier records loaded bounds and bindings.
+  integer spellings.
 - Keep 28 further overlay exports private: their raw integer payloads do not
   become publishable because the complete images reproduce. Their owners/results
-  are in TLA dossiers. Correct DAIRA to DERI using Japanese message 0xe62 in a
+  have current entries in the TLA registry. Correct DAIRA to DERI using Japanese message 0xe62 in a
   verified migration; Japanese place-name base 0xe5a differs from English 0xe58.
 - Finish edition-local data identification and Japanese correspondence from
   actual readers and byte proofs, not broad AI guesses or copied source trees.

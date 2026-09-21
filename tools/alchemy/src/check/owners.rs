@@ -14,6 +14,16 @@ fn json(path: &Path) -> Result<Value, String> {
     crate::compiler::build_io::read_json(path)
 }
 
+fn compact_scalar(value: &Value) -> bool {
+    match value {
+        Value::Null | Value::Bool(_) | Value::Number(_) => true,
+        Value::String(value) => {
+            value.len() <= 256 && !value.contains('\n') && !value.contains('\r')
+        }
+        Value::Array(_) | Value::Object(_) => false,
+    }
+}
+
 fn exact(root: &Path) -> Result<HashSet<String>, String> {
     let paths = SourcePaths::load(root)?;
     paths.validate_tree()?;
@@ -262,20 +272,124 @@ fn validate_drafts(root: &Path, exact: &HashSet<String>) -> Result<usize, String
 }
 
 fn validate_reconstruction_records(root: &Path) -> Result<(), String> {
-    let path = root.join("games/THE BROKEN SEAL/recon/en/dossiers.json");
-    let registry = json(&path)?;
-    if registry.get("format").and_then(Value::as_u64) != Some(1) {
-        return Err(format!("{} has an unsupported format", path.display()));
-    }
-    let records = registry
-        .get("records")
-        .and_then(Value::as_object)
-        .ok_or_else(|| format!("{} has no records", path.display()))?;
-    for (owner, record) in records {
-        SourceOwner::parse(owner).map_err(|error| format!("{owner}: {error}"))?;
-        for duplicate in ["owner", "semantic_name"] {
-            if record.get(duplicate).is_some() {
-                return Err(format!("{owner} repeats {duplicate}; owner identity comes from the registry key and names from games/THE BROKEN SEAL/source-paths.json"));
+    const RECORD_FIELDS: &[&str] = &[
+        "schema_version",
+        "namespace",
+        "address",
+        "status",
+        "measured",
+        "span_bytes",
+        "owner_bytes",
+        "executable_owner_bytes",
+        "executable_mapped_bytes",
+        "candidate_bytes",
+        "differing_halfwords",
+        "wrong_instructions",
+        "source",
+        "translation_unit",
+        "retention",
+        "classification",
+        "resolved_asm_classification",
+        "kind",
+        "score",
+    ];
+    const SCORE_FIELDS: &[&str] = &[
+        "class",
+        "measured",
+        "candidate_bytes",
+        "reference_bytes",
+        "differing_halfwords",
+        "wrong_instructions",
+        "owner_halfwords",
+        "unit_halfwords",
+        "route",
+        "compiler_route",
+        "compiler_revision",
+    ];
+    const CLASSIFICATION_FIELDS: &[&str] = &["kind", "retention", "confidence"];
+    for relative in [
+        "games/THE BROKEN SEAL/recon/en/dossiers.json",
+        "games/THE LOST AGE/recon/en/dossiers.json",
+    ] {
+        let path = root.join(relative);
+        let registry = json(&path)?;
+        let registry_object = registry
+            .as_object()
+            .ok_or_else(|| format!("{} must be an object", path.display()))?;
+        if registry_object
+            .keys()
+            .any(|field| !["format", "records"].contains(&field.as_str()))
+        {
+            return Err(format!(
+                "{} contains scratch history outside its records",
+                path.display()
+            ));
+        }
+        if registry.get("format").and_then(Value::as_u64) != Some(1) {
+            return Err(format!("{} has an unsupported format", path.display()));
+        }
+        let records = registry
+            .get("records")
+            .and_then(Value::as_object)
+            .ok_or_else(|| format!("{} has no records", path.display()))?;
+        for (owner, record) in records {
+            SourceOwner::parse(owner).map_err(|error| format!("{owner}: {error}"))?;
+            let object = record
+                .as_object()
+                .ok_or_else(|| format!("{owner}: dossier record must be an object"))?;
+            if object.is_empty() {
+                return Err(format!("{owner}: empty dossier record has no current fact"));
+            }
+            if !["status", "classification", "retention", "score"]
+                .iter()
+                .any(|field| object.contains_key(*field))
+            {
+                return Err(format!(
+                    "{owner}: dossier record has an extent but no current state"
+                ));
+            }
+            for (field, value) in object {
+                if !RECORD_FIELDS.contains(&field.as_str()) {
+                    return Err(format!(
+                        "{owner}: dossier field {field} is scratch history; keep only the current classification, extent, source and score"
+                    ));
+                }
+                let nested_fields = match field.as_str() {
+                    "score" => Some(SCORE_FIELDS),
+                    "resolved_asm_classification" => Some(CLASSIFICATION_FIELDS),
+                    _ => None,
+                };
+                if let Some(allowed) = nested_fields {
+                    let nested = value
+                        .as_object()
+                        .ok_or_else(|| format!("{owner}: {field} must be an object"))?;
+                    if nested.is_empty() {
+                        return Err(format!("{owner}: {field} has no current value"));
+                    }
+                    for (nested_field, nested_value) in nested {
+                        if !allowed.contains(&nested_field.as_str()) {
+                            return Err(format!(
+                                "{owner}: {field} field {nested_field} is scratch history"
+                            ));
+                        }
+                        if !compact_scalar(nested_value) {
+                            return Err(format!(
+                                "{owner}: {field} field {nested_field} must be one short current value"
+                            ));
+                        }
+                    }
+                } else if !compact_scalar(value) {
+                    return Err(format!(
+                        "{owner}: dossier field {field} must be one short current value"
+                    ));
+                }
+            }
+            for duplicate in ["owner", "semantic_name"] {
+                if record.get(duplicate).is_some() {
+                    return Err(format!(
+                        "{owner} repeats {duplicate}; owner identity comes from the registry key"
+                    ));
+                }
             }
         }
     }

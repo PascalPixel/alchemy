@@ -123,12 +123,11 @@ DONE. Do not use the rounded commit prefix to measure C progress.
 
 1. Read fresh ownership and coverage. Rank the **100 largest unresolved complete
    functions**, including those without drafts, excluding already exact C and
-   positively evidenced permanent assembly. Work only on that list's functions
-   of **at least 5,000 bytes**. Main and overlays compete together.
-   Pascal reaffirmed this minimum after the inventory showed only six currently
-   known unresolved functions above it. Keep it until Pascal changes it; do not
-   lower it automatically to reach the percentage goal.
-   A coverage fragment is not automatically a complete function.
+   positively evidenced permanent assembly. Work from largest to smallest; there
+   is no minimum size cutoff. Main and overlays compete together. Size determines
+   priority, while dependency evidence and expected verified bytes per hour decide
+   which bounded family to attempt at each step. A coverage fragment is not
+   automatically a complete function.
 2. Follow their dependencies into our exact C: read callees, callers, shared
    headers, verified siblings and unit context. Group candidates by a supported
    shared interface or residual cause, then choose the best bounded family by

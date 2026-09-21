@@ -29,16 +29,10 @@
  *     1 psynergy, 2 item, 3 defend, 15 summon, 16 djinn, everything else
  *     falls straight through to the commit tail.
  *
- * Known residual, stated rather than papered over: the reference sets r9 --
- * the ARM static chain -- to the frame top immediately before calling
- * 0x080270ac and 0x080270d8, and keeps the countdown-state pointer behind a
- * pointer to its own stack slot.  Both are the signature of GNU C nested
- * functions declared inside this function; the project already owns those two
- * nested bodies as separate sources (battle/draw_party_panels_with_empty_list.c
- * and ui/text/draw/draw_localized_resource_80d.c), so this draft calls them as
- * ordinary functions and holds the state pointer directly.  That drops the
- * two static-chain setups and turns roughly thirty double indirections into
- * single loads.
+ * The two local helpers are reconstructed as GNU C nested functions. This restores
+ * the reference frame size and its r9 static-chain setup. The remaining
+ * residual is structural: local lifetimes and later block topology still
+ * differ, so this remains a measured draft rather than credited C.
  */
 
 typedef s32 M2C_UNK;
@@ -201,6 +195,8 @@ s32 Item_ClassifyUseAbility(s32 actor, s32 item);
 s32 Region_08026080(s32 actor, s32 a, s32 b, s32 kind);
 s32 random_16(void);
 void Func_08018efc(struct UiWindowWork *win, s32 id, s32 pos, s32 arg3, s32 arg4);
+s32 Ui_Place(s32, s16 *, s32);
+s32 Ui_SetMode(s16 *, s32, s32, s32);
 s32 Func_08021e6c(s32 mode);
 void Func_0802281c(u16 *header);
 void Func_08023178(void *block, s32 handle, s32 actor);
@@ -260,6 +256,21 @@ s32 Battle_CollectPartyCommands(struct BattleCommandEntry *out, u16 *in, s32 cou
     u32 *word;
     u8 *byte;
     s32 res;
+
+    void DrawPartyPanels(void)
+    {
+        u16 data[2];
+        data[0] = 0xff;
+        Func_0802281c(data);
+        Func_080b50e0(data, 1);
+    }
+
+    s32 DrawLocalizedResource(void)
+    {
+        s16 data[64];
+        Ui_Place(0x80d, data, 0x34);
+        return Ui_SetMode(data, state->displayHandle, 0, 4);
+    }
 
     aux = 256;
     kind = 0;
@@ -334,7 +345,7 @@ handshake_done:
     Scheduler_AddOrUpdateCallback(UpdateLinkSessionCountdown, 3200);
 
     for (;;) {
-        Battle_DrawPartyPanelsWithEmptyList();
+        DrawPartyPanels();
         state->entryActive[2] = 0;
         state->actorId = -1;
         state->hintCount = 0;
@@ -873,7 +884,7 @@ finish:
         if (state->displayHandle == 0 && link->paused == 0) {
             state->displayHandle = (s32)UiWindow_Create(0, 16, 30, 4, 42);
             Ui_FillVramBlockPattern();
-            UiText_DrawLocalizedResource80d();
+            DrawLocalizedResource();
         } else {
             state->displayHandle = 0;
         }

@@ -15,6 +15,10 @@
  * `pos[mode]` is that row's index; three small ROM tables translate the
  * live cursor into the highlighted cell and the description entry id.
  *
+ * The render-base and screen-work pointers are fields of one global runtime
+ * block rooted at 0x03001E8C. Keeping that relationship lets GCC reuse the
+ * base address for the +0xA8 screen field, as the reference does.
+ *
  * Uncertain: the exact roles of the owner-record bytes at 0x130..0x147 that
  * feed the status icon strip are only known by the icon code each one emits,
  * so they stay spelled as raw offsets. The 12-byte render entries are
@@ -38,9 +42,7 @@
 #define KEY_STATE (*(u32 *)0x03001B04)
 #define RENDER_FLAGS (*(u32 *)0x03001E40)
 #define SYSTEM_FLAGS (*(u32 *)0x03001C94)
-#define RENDER_BASE (*(u8 **)0x03001E8C)
 #define SESSION_WORK (*(u8 **)0x03001E74)
-#define SCREEN_WORK (*(struct UiScreenWork **)0x03001F34)
 #define SLOT_TABLE ((struct UiSlotRecord *)0x03001B10)
 
 /* Render list entry pushed through Runtime_PushSlotEntry. */
@@ -86,6 +88,14 @@ struct UiScreenWork {
     s32 busy;    /* 0x48 */
     s32 running; /* 0x4c */
 };
+
+struct UiRuntimeGlobals {
+    u8 *renderBase;
+    u8 unknown_04[0xa4];
+    struct UiScreenWork *screen;
+};
+
+#define UI_GLOBALS (*(struct UiRuntimeGlobals *)0x03001E8C)
 
 /* Cursor state for the three selectable rows. */
 struct StatusCursor {
@@ -192,14 +202,14 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
     u8 *saved;
     struct UiObjEntry *p;
 
-    base = RENDER_BASE;
+    base = UI_GLOBALS.renderBase;
     idx = -1;
     redraw = 1;
     handleFrame = Resource_LoadIntoFreeSlot(0x200);
     cnt = 0;
     extended = Func_08077290(-1);
 
-    screen = SCREEN_WORK;
+    screen = UI_GLOBALS.screen;
     screen->busy = 1;
     if (screen->work != NULL) {
         UiWork_Finalize(screen->work, 1);
@@ -725,7 +735,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
             p++;
         }
 
-        if (SCREEN_WORK->running == 0) {
+        if (UI_GLOBALS.screen->running == 0) {
             break;
         }
         if ((SYSTEM_FLAGS & 2) != 0) {
@@ -765,7 +775,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
     UiWork_Finalize(winMain, 1);
     UiWork_Finalize(winDesc, 1);
     Func_0801f200(SESSION_WORK[65]);
-    SCREEN_WORK->busy = 0;
+    UI_GLOBALS.screen->busy = 0;
     WaitFrames(1);
     return 0;
 }

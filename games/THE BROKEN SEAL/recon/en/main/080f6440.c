@@ -16,15 +16,12 @@
  * The duplicated "state = 20" in both arms of the coin test at the end of
  * the payout branch is reproduced as the reference emits it.
  *
- * Residual: every block here follows the reference, but the reference holds
- * the work pointer in r7 while this source makes the register allocator put
- * it in r8.  That one difference costs a register move at nearly every field
- * access, stops the object writes from using the [work, offset] register
- * form, and lets the compiler tail-merge the five-way stores in the last
- * loop that the reference keeps apart with one induction variable each.  It
- * is an allocation outcome, not a control-flow or type disagreement; no
- * evidenced source spelling found so far moves the pointer back to a low
- * register. */
+ * Residual: the compiler reports different branch shapes throughout this
+ * draft, so the remaining mismatch is structural rather than a bare register
+ * allocation problem. The opening globals are linked through Data_03001f04:
+ * the heap-cache pointer is the word 24 bytes before it, matching the reference
+ * base reuse. Separate display and DMA register lifetimes also improve the
+ * result. Reopen only with a new control-flow, type or lifetime fact. */
 
 #define ReelGame_RunFrame Func_080f6440
 
@@ -92,6 +89,8 @@ typedef struct {
     s32 bounce;    /* +24 */
 } ReelSpark;
 
+extern ReelWork *Data_03001f04;
+
 void ReelGame_RunFrame(void)
 {
     ReelWork *work;
@@ -114,8 +113,8 @@ void ReelGame_RunFrame(void)
     u32 i;
     u32 j;
 
-    work = *(ReelWork **)0x03001f04;
-    heap = *(u8 **)0x03001eec;
+    work = Data_03001f04;
+    heap = *(u8 **)((u8 *)&Data_03001f04 - 24);
     blend = 0x400;
     oam = 0;
 
@@ -177,9 +176,11 @@ void ReelGame_RunFrame(void)
                 Func_080f9010(113);
             }
         }
-        reg = (u16 *)0x04000050;
-        *reg++ = 0x3fd0;
-        *reg = 0x0010;
+{
+            volatile u16 *blendReg = (volatile u16 *)0x04000050;
+            blendReg[0] = 0x3fd0;
+            blendReg[1] = 0x0010;
+        }
         if ((work->pressed & 1) == 0)
             goto build_objects;
         work->state = 1;
@@ -285,9 +286,11 @@ void ReelGame_RunFrame(void)
         work->state = 3;
         Func_080f9010(93);
         work->timer = 0;
-        reg = (u16 *)0x04000050;
-        *reg++ = 0x3f44;
-        *reg = 0x1010;
+{
+            volatile u16 *blendReg = (volatile u16 *)0x04000050;
+            blendReg[0] = 0x3f44;
+            blendReg[1] = 0x1010;
+        }
         *(s32 *)(heap + 0x7780) = 2;
         *(s32 *)(heap + 0x7784) = 75;
         goto build_objects;
@@ -574,8 +577,10 @@ build_objects:
         oam += 1;
     }
 
-    dst = (u32 *)0x040000d4;
-    dst[0] = (u32)work->obj;
-    dst[1] = 0x07000000;
-    dst[2] = (oam * 2) | 0x84000000;
+{
+        u32 *oamDma = (u32 *)0x040000d4;
+        oamDma[0] = (u32)work->obj;
+        oamDma[1] = 0x07000000;
+        oamDma[2] = (oam * 2) | 0x84000000;
+    }
 }

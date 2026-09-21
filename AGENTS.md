@@ -324,9 +324,8 @@ Use `alchemy score ... --allocator-order`, then `alchemy build allocator <owner>
 and `psynergy inspect allocator <dump-directory>` for actual GCC decisions.
 Creation, CSE, combine, allocation, reload and scheduling dumps outrank guessed
 register stories. Router `next=` and `repair_hint=` are guarded experiment
-suggestions. The existing `recon/compiler-repair-patterns.json` catalog needs
-preconditions, regression fixtures and a real closure for each generalized
-operation. Manual recovery does not require another catalog entry.
+suggestions. Matching operations live with their implementation and regression
+fixtures; do not recreate a separate repair catalog or experiment history.
 
 ### Integrate and end the batch
 
@@ -564,8 +563,9 @@ sources/includes and migrated COMMON/LIB code.
 Resource directories live beside loaders at `SRC/SYSTEM/RESOURCE/DIRECTORY.JSON`;
 field selectors and naming rules live at `SRC/FIELD/COMMON/SCENE_TABLE.JSON` and
 `NAME_RULES.JSON`. Asset layout is `recon/assets.json`, not runtime source.
-Classification and provisional-source records stay outside SRC. Retained overlay
-listings and compression recipes live in `raw/overlays`, battle listings in
+Current classification belongs in the owner dossiers; do not create separate
+provisional, sealed or unmatchable registries. Retained overlay listings and
+compression recipes live in `raw/overlays`, battle listings in
 `raw/battle`. `OVERLAY_DATA_DIRECTIVES_MAX` must not grow.
 
 The LZSS compressor reconstruction is incomplete. Nearest longest matches,

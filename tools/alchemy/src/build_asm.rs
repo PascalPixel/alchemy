@@ -90,30 +90,7 @@ struct Classification {
 #[derive(Debug, Clone, Default, Deserialize)]
 struct ClassificationProvenance {
     #[serde(default)]
-    range_credits: Vec<RangeCredit>,
-}
-#[derive(Debug, Clone, Deserialize)]
-struct RangeCredit {
-    #[serde(default)]
-    source: String,
-    #[serde(default)]
-    address: Value,
-    #[serde(default)]
-    size: Value,
-    #[serde(default)]
-    evidence: Vec<String>,
-    #[serde(default)]
-    credit: String,
-    #[serde(default)]
-    proof: String,
-    #[serde(default)]
-    object: String,
-}
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
-struct RangeCreditKey {
-    source: String,
-    address: u64,
-    size: u64,
+    range_credits: Vec<Value>,
 }
 #[derive(Debug, Clone, Deserialize)]
 struct ClassificationRule {
@@ -313,30 +290,6 @@ fn load_classification(path: &Path) -> Result<ClassificationConfig, String> {
     validate_classification(&config)?;
     Ok(config)
 }
-fn range_credit_key(credit: &RangeCredit, label: &str) -> Result<RangeCreditKey, String> {
-    if credit.source.trim().is_empty() {
-        return Err(format!("{label}: range credit has no source"));
-    }
-    let address = integer(&credit.address, &format!("{label}: range credit address"))?;
-    let size = integer(&credit.size, &format!("{label}: range credit size"))?;
-    if size == 0 {
-        return Err(format!("{label}: range credit has empty size"));
-    }
-    if credit.evidence.is_empty() || credit.evidence.iter().any(|item| item.trim().is_empty()) {
-        return Err(format!("{label}: range credit lacks evidence"));
-    }
-    if !matches!(credit.credit.as_str(), "library" | "handwritten") {
-        return Err(format!("{label}: range credit has invalid credit"));
-    }
-    if credit.proof.trim().is_empty() && credit.object.trim().is_empty() {
-        return Err(format!("{label}: range credit lacks proof or object"));
-    }
-    Ok(RangeCreditKey {
-        source: credit.source.clone(),
-        address,
-        size,
-    })
-}
 fn validate_classification(config: &ClassificationConfig) -> Result<(), String> {
     if config.format != 1 {
         return Err(format!(
@@ -361,7 +314,6 @@ fn validate_classification(config: &ClassificationConfig) -> Result<(), String> 
             ));
         }
     }
-    let mut credited = BTreeSet::new();
     for rule in &config.groups {
         match (rule.files.as_deref(), rule.matcher.as_deref()) {
             (Some(files), None) if !files.is_empty() => {}
@@ -373,11 +325,11 @@ fn validate_classification(config: &ClassificationConfig) -> Result<(), String> 
                 ))
             }
         }
-        for credit in &rule.provenance.range_credits {
-            let key = range_credit_key(credit, &rule.kind)?;
-            if !credited.insert(key) {
-                return Err(format!("{}: duplicate range credit", rule.kind));
-            }
+        if !rule.provenance.range_credits.is_empty() {
+            return Err(format!(
+                "{}: generic assembly range credit is unsupported; retain the assembly without DONE credit",
+                rule.kind
+            ));
         }
     }
     Ok(())
@@ -663,9 +615,8 @@ fn region_value(
     source: &str,
     built: &BuiltRegion,
     category: &Classification,
-    range_credit: Option<&RangeCredit>,
 ) -> Value {
-    let mut region = json!({
+    json!({
         "address":built.address,
         "run_address":built.run_address,
         "size":built.data.len(),
@@ -676,78 +627,7 @@ fn region_value(
         "retention":category.retention,
         "confidence":category.confidence,
         "evidence":category.evidence.join(","),
-    });
-    if let Some(credit) = range_credit {
-        region["provenance"] = range_credit_provenance(credit);
-    }
-    region
-}
-fn range_credit_for<'a>(
-    category: &'a Classification,
-    source: &str,
-    built: &BuiltRegion,
-) -> Result<Option<&'a RangeCredit>, String> {
-    let key = RangeCreditKey {
-        source: source.into(),
-        address: built.address,
-        size: built.data.len() as u64,
-    };
-    for credit in &category.provenance.range_credits {
-        if range_credit_key(credit, &category.kind)? == key {
-            return Ok(Some(credit));
-        }
-    }
-    Ok(None)
-}
-fn range_credit_provenance(credit: &RangeCredit) -> Value {
-    let mut provenance = json!({
-        "credit": credit.credit,
-        "evidence": credit.evidence,
-    });
-    if !credit.proof.trim().is_empty() {
-        provenance["proof"] = credit.proof.clone().into();
-    }
-    if !credit.object.trim().is_empty() {
-        provenance["object"] = credit.object.clone().into();
-    }
-    provenance
-}
-fn validate_range_credit_rows(
-    config: &ClassificationConfig,
-    regions: &[(u64, Value)],
-    sources: &BTreeSet<String>,
-    complete: bool,
-) -> Result<(), String> {
-    for group in &config.groups {
-        for credit in &group.provenance.range_credits {
-            let key = range_credit_key(credit, &group.kind)?;
-            if !complete && !sources.contains(&key.source) {
-                continue;
-            }
-            let matches = regions
-                .iter()
-                .map(|(_, region)| region)
-                .filter(|region| {
-                    region["source"].as_str() == Some(key.source.as_str())
-                        && region["address"].as_u64() == Some(key.address)
-                        && region["size"].as_u64() == Some(key.size)
-                })
-                .collect::<Vec<_>>();
-            if matches.len() != 1 {
-                return Err(format!(
-                    "{}: range credit does not name exactly one emitted manifest row",
-                    group.kind
-                ));
-            }
-            if matches[0]["provenance"] != range_credit_provenance(credit) {
-                return Err(format!(
-                    "{}: range credit does not match its classified manifest row",
-                    group.kind
-                ));
-            }
-        }
-    }
-    Ok(())
+    })
 }
 pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, String> {
     let rom = if options.source_only {
@@ -846,14 +726,13 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
         }
         let name = stem(source);
         let category = classify(&name, &built.data, &source_text, &classification, &explicit)?;
-        let range_credit = range_credit_for(&category, &source_name, &built)?;
         let count = counts.entry(category.kind.clone()).or_default();
         count.files += 1;
         count.bytes += built.data.len();
         found.insert(name);
         regions.push((
             built.address,
-            region_value(&output, &source_name, &built, &category, range_credit),
+            region_value(&output, &source_name, &built, &category),
         ));
     }
     let runtime_game = Path::new(runtime::REGISTRY).starts_with(
@@ -894,7 +773,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
             };
             regions.push((
                 address,
-                region_value(&output, runtime::REGISTRY, &built, &category, None),
+                region_value(&output, runtime::REGISTRY, &built, &category),
             ));
         }
     }
@@ -926,13 +805,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
             };
             regions.push((
                 address,
-                region_value(
-                    &output,
-                    &relative(root, &alignment_path),
-                    &built,
-                    &category,
-                    None,
-                ),
+                region_value(&output, &relative(root, &alignment_path), &built, &category),
             ));
         }
     }
@@ -953,12 +826,6 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
         }
         validate_counts(&classification, &counts)?;
     }
-    validate_range_credit_rows(
-        &classification,
-        &regions,
-        &source_names,
-        options.source.is_none(),
-    )?;
     let document = json!({
         "format":1,
         "rom_base":ROM_BASE,
@@ -986,7 +853,6 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
 mod tests {
     use super::*;
     use serde_json::json;
-    use std::{collections::BTreeSet, path::Path};
 
     fn range_credit_config(range_credits: Value) -> ClassificationConfig {
         serde_json::from_value(json!({
@@ -1014,128 +880,31 @@ mod tests {
         .unwrap()
     }
 
-    fn range_credit() -> Value {
-        json!({
-            "source": "games/THE BROKEN SEAL/raw/08000100.s",
-            "address": "0x08000100",
-            "size": 8,
-            "evidence": ["per-range library identity"],
-            "credit": "library",
-            "proof": "twelve-ROM comparison"
-        })
-    }
-
     #[test]
-    fn range_credit_is_emitted_only_for_its_exact_manifest_row() {
-        let config = range_credit_config(json!([range_credit()]));
-        validate_classification(&config).unwrap();
-        let category = config.groups[0].classification();
-        let built = BuiltRegion {
-            address: 0x0800_0100,
-            run_address: 0x0800_0100,
-            data: vec![0; 8],
-        };
-        let source = "games/THE BROKEN SEAL/raw/08000100.s";
-        let credit = range_credit_for(&category, source, &built).unwrap();
-        let row = region_value(Path::new("out"), source, &built, &category, credit);
-        assert_eq!(
-            row["provenance"],
+    fn generic_range_credit_is_rejected_regardless_of_narrative() {
+        for provenance in [
             json!({
+                "source": "games/THE BROKEN SEAL/raw/08000100.s",
+                "address": "0x08000100",
+                "size": 8,
+                "evidence": ["cross-product identity"],
+                "credit": "handwritten",
+                "proof": "compiler cannot emit this spelling"
+            }),
+            json!({
+                "source": "games/THE BROKEN SEAL/raw/08000100.s",
+                "address": "0x08000100",
+                "size": 8,
+                "evidence": ["cross-product identity"],
                 "credit": "library",
-                "evidence": ["per-range library identity"],
-                "proof": "twelve-ROM comparison"
-            })
-        );
-        assert!(
-            range_credit_for(&category, "games/THE BROKEN SEAL/raw/08000108.s", &built)
-                .unwrap()
-                .is_none()
-        );
-        let different_address = BuiltRegion {
-            address: 0x0800_0108,
-            ..built.clone()
-        };
-        assert!(range_credit_for(&category, source, &different_address)
-            .unwrap()
-            .is_none());
-        let different_size = BuiltRegion {
-            data: vec![0; 4],
-            ..built
-        };
-        assert!(range_credit_for(&category, source, &different_size)
-            .unwrap()
-            .is_none());
-
-        let regions = vec![(0x0800_0100, row)];
-        let sources = BTreeSet::from([source.into()]);
-        validate_range_credit_rows(&config, &regions, &sources, true).unwrap();
-    }
-
-    #[test]
-    fn range_credit_validation_rejects_invalid_or_unbound_records() {
-        let mut duplicate = range_credit_config(json!([range_credit(), range_credit()]));
-        assert!(validate_classification(&duplicate)
-            .unwrap_err()
-            .contains("duplicate range credit"));
-
-        duplicate.groups[0].provenance.range_credits[1].address = json!(0x0800_0108);
-        duplicate.groups[0].provenance.range_credits[1].credit = "not-credit".into();
-        assert!(validate_classification(&duplicate)
-            .unwrap_err()
-            .contains("invalid credit"));
-
-        let config = range_credit_config(json!([range_credit()]));
-        let sources = BTreeSet::from(["games/THE BROKEN SEAL/raw/08000100.s".into()]);
-        let rows = vec![(
-            0x0800_0100,
-            json!({
-                "source": "games/THE BROKEN SEAL/raw/08000100.s",
-                "address": 0x08000100,
-                "size": 4
+                "object": "vendor object not named"
             }),
-        )];
-        assert!(validate_range_credit_rows(&config, &rows, &sources, true)
-            .unwrap_err()
-            .contains("exactly one emitted manifest row"));
-
-        let rows = vec![(
-            0x0800_0100,
-            json!({
-                "source": "games/THE BROKEN SEAL/raw/08000100.s",
-                "address": 0x08000100,
-                "size": 8
-            }),
-        )];
-        assert!(validate_range_credit_rows(&config, &rows, &sources, true)
-            .unwrap_err()
-            .contains("classified manifest row"));
-    }
-
-    #[test]
-    fn selected_source_validates_only_its_range_credits() {
-        let mut other = range_credit();
-        other["source"] = "games/THE BROKEN SEAL/raw/08000108.s".into();
-        other["address"] = json!(0x0800_0108);
-        let config = range_credit_config(json!([range_credit(), other]));
-        validate_classification(&config).unwrap();
-        let category = config.groups[0].classification();
-        let built = BuiltRegion {
-            address: 0x0800_0100,
-            run_address: 0x0800_0100,
-            data: vec![0; 8],
-        };
-        let source = "games/THE BROKEN SEAL/raw/08000100.s";
-        let row = region_value(
-            Path::new("out"),
-            source,
-            &built,
-            &category,
-            range_credit_for(&category, source, &built).unwrap(),
-        );
-        let rows = vec![(built.address, row)];
-        let sources = BTreeSet::from([source.into()]);
-        validate_range_credit_rows(&config, &rows, &sources, false).unwrap();
-        assert!(validate_range_credit_rows(&config, &rows, &sources, true).is_err());
+        ] {
+            let error =
+                validate_classification(&range_credit_config(json!([provenance]))).unwrap_err();
+            assert!(error.contains("generic assembly range credit is unsupported"));
+        }
+        validate_classification(&range_credit_config(json!([]))).unwrap();
     }
 
     #[test]

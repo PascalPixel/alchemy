@@ -3260,7 +3260,7 @@ fn expand_series(
                         None => "games/THE BROKEN SEAL/raw/overlays/resource_",
                     };
                     let directory = format!("{prefix}{name}");
-                    let mut entry = serde_json::json!({"address":tuple[1],"size":tuple[2],"kind":"golden-sun-general-lz","components":[{"kind":"golden-sun-thumb-overlay","size":tuple[3],"source":format!("{directory}_overlay.s"),"base":series.get("base")}] });
+                    let mut entry = serde_json::json!({"address":tuple[1],"size":tuple[2],"kind":"golden-sun-general-lz","stream_alignment":4,"components":[{"kind":"golden-sun-thumb-overlay","size":tuple[3],"source":format!("{directory}_overlay.s"),"base":series.get("base")}] });
                     let exception = format!("{directory}_stream.lz.json");
                     if root_path(&ctx.root, &exception)?.exists() {
                         entry["plan"] = Value::String(exception);
@@ -3502,7 +3502,7 @@ fn series_values<'a>(value: &'a Value, key: &str) -> Result<&'a Vec<Value>, Stri
         .ok_or_else(|| format!("{key} is missing or is not an array"))
 }
 #[test]
-fn overlay_series_uses_automatic_compression_unless_an_exception_exists() {
+fn overlay_series_uses_four_byte_alignment_and_automatic_compression() {
     let directory = tempfile::tempdir().unwrap();
     let mut ctx = Context::new(directory.path());
     let manifest = serde_json::json!({"series":[{
@@ -3511,6 +3511,7 @@ fn overlay_series_uses_automatic_compression_unless_an_exception_exists() {
     }]});
     let mut entries = Vec::new();
     expand_series(&mut ctx, &manifest, &mut entries).unwrap();
+    assert_eq!(entries[0]["stream_alignment"], 4);
     assert!(entries[0].get("plan").is_none());
     fs::create_dir(directory.path().join("overlay")).unwrap();
     fs::write(
@@ -3520,6 +3521,7 @@ fn overlay_series_uses_automatic_compression_unless_an_exception_exists() {
     .unwrap();
     entries.clear();
     expand_series(&mut ctx, &manifest, &mut entries).unwrap();
+    assert_eq!(entries[0]["stream_alignment"], 4);
     assert_eq!(entries[0]["plan"], "overlay/resource_001_stream.lz.json");
     assert!(build_general_lz_cached(&ctx, &serde_json::json!({"components":[]})).is_err());
 }

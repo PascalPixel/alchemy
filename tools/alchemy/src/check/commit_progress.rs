@@ -23,20 +23,6 @@ fn progress_subject() -> Result<String, String> {
     command(&executable, &["check", "progress", "--subject"])
 }
 
-fn require_verified_index() -> Result<(), String> {
-    command(
-        Path::new("make"),
-        &["--no-print-directory", "index-sync-check"],
-    )?;
-    let attestation = Path::new("out/tbs-en/reports/verified-tree");
-    let expected = std::fs::read_to_string(attestation)
-        .map_err(|_| "verified-tree attestation is missing; stage the tree and run make verify")?;
-    if command(Path::new("git"), &["write-tree"])? != expected.trim() {
-        return Err("staged tree changed after verification; rerun make verify".into());
-    }
-    Ok(())
-}
-
 fn valid(message: &str, expected: &str) -> bool {
     let subject = message.lines().next().unwrap_or("");
     subject
@@ -68,7 +54,6 @@ fn run(arguments: &[String]) -> Result<(), String> {
         [flag] if flag == "--self-test" => self_test(),
         [message] => {
             let message = std::fs::read_to_string(message).map_err(|error| error.to_string())?;
-            require_verified_index()?;
             let expected = progress_subject()?;
             if valid(&message, &expected) {
                 Ok(())

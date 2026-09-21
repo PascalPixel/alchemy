@@ -35,7 +35,6 @@ FULL_REPORT = out/$(TARGET)/full/rebuilt.json
 FULL_ROM = out/$(TARGET)/full/rebuilt.gba
 OWNER_INVENTORY = out/$(TARGET)/full/rebuilt.owner-inventory.json
 REPORT_DIR = out/$(TARGET)/reports
-VERIFIED_TREE = $(REPORT_DIR)/verified-tree
 MAIN_CORRESPONDENCE_MATCHED_MIN := 1393
 MAIN_CORRESPONDENCE_UNRESOLVED_MAX := 44
 OVERLAY_CORRESPONDENCE_MATCHED_MIN := 2562
@@ -376,25 +375,24 @@ tooling-index-check:
 
 # The registers are session state that a bare `git checkout -- <file>` can
 # silently reset to the last commit, orphaning every source adopted since.
-# `make verified-restore` puts games/<target> back to the last verified tree
-# instead; `register-shrink-check` refuses a verify whose owner register has
-# fewer entries than that tree unless RETIRE=1 says the shrink is deliberate.
+# `make verified-restore` puts games/<target> back to HEAD; every commit runs
+# the full verification gate. `register-shrink-check` refuses a verify whose
+# owner register has fewer entries than HEAD unless RETIRE=1 says the shrink
+# is deliberate.
 verified-restore:
-	@set -eu; tree=$$(cat $(VERIFIED_TREE)); \
-	git cat-file -e "$$tree" || { printf 'no verified tree object: %s\n' "$$tree"; exit 1; }; \
+	@set -eu; tree=$$(git rev-parse 'HEAD^{tree}'); \
 	git checkout "$$tree" -- "games/$(TARGET_GAME_DIR)"; \
 	git diff --cached --name-only -z --diff-filter=A "$$tree" -- "games/$(TARGET_GAME_DIR)" | xargs -0 -r git rm -q -f --cached; \
 	git diff --name-only -z --diff-filter=A "$$tree" -- "games/$(TARGET_GAME_DIR)" | xargs -0 -r rm -f; \
-	printf 'games/%s restored to verified tree %s\n' '$(TARGET_GAME_DIR)' "$$tree"
+	printf 'games/%s restored to HEAD tree %s\n' '$(TARGET_GAME_DIR)' "$$tree"
 
 register-shrink-check:
-	@set -eu; test -s $(VERIFIED_TREE) || { printf 'register shrink check: no verified tree yet\n'; exit 0; }; \
-	tree=$$(cat $(VERIFIED_TREE)); \
+	@set -eu; tree=$$(git rev-parse 'HEAD^{tree}'); \
 	git cat-file -e "$$tree:games/$(TARGET_GAME_DIR)/source-paths.json" 2>/dev/null || { printf 'register shrink check: previous tree lacks the register\n'; exit 0; }; \
 	before=$$(git cat-file -p "$$tree:games/$(TARGET_GAME_DIR)/source-paths.json" | grep -c '^    "'); \
 	after=$$(git show ":games/$(TARGET_GAME_DIR)/source-paths.json" | grep -c '^    "'); \
 	if [ "$$after" -lt "$$before" ] && [ "$${RETIRE:-0}" != "1" ]; then \
-		printf 'owner register shrank from %s to %s entries since verified tree %s; a retirement must say RETIRE=1, anything else is a wipe\n' "$$before" "$$after" "$$tree"; exit 1; fi; \
+		printf 'owner register shrank from %s to %s entries since HEAD tree %s; a retirement must say RETIRE=1, anything else is a wipe\n' "$$before" "$$after" "$$tree"; exit 1; fi; \
 	printf 'register shrink check ok: %s -> %s owners\n' "$$before" "$$after"
 
 # Tooling and dashboard behavior are Rust.
@@ -433,11 +431,7 @@ review-images-check: source-tracking-check
 	$(ASSETS) --review-images out/tbs-en/graphics-review
 
 verify: toolchain-check native-format-check index-sync-check publication-tree-check plan-tails-check overlay-data-check source-tracking-check review-images-check $(if $(wildcard roms/tla-en.gba),tla-assets-check tla-owners-check) corpus-check language-check register-shrink-check lint-production tooling-size tooling-index-check \
-	strict-tu-check check-owners core-retained-check full-rom-check coverage-check showcase-check siblings-check | $(REPORT_DIR)
-	@tree=$$(git write-tree) || exit; \
-	printf '%s\n' "$$tree" > $(VERIFIED_TREE).tmp; \
-	mv $(VERIFIED_TREE).tmp $(VERIFIED_TREE); \
-	printf 'verified staged tree: %s\n' "$$tree"
+	strict-tu-check check-owners core-retained-check full-rom-check coverage-check showcase-check siblings-check
 
 audit: verify test targets classification-check candidate-corpus-check \
 	correspondence-check progress-report coverage-check
@@ -487,8 +481,8 @@ compiler-source-check:
 		  agscc) approved=f2095030ce7fa3b8991a5b5bdbe32a1860c6fa34;; \
 		esac; \
 		test "$$(git rev-parse :$$repo)" = "$$approved" || { printf '%s gitlink is not approved\n' "$$repo"; exit 1; }; \
-		test "$$(git -C "$$repo" rev-parse HEAD)" = "$$approved" || { printf '%s checkout is not approved\n' "$$repo"; exit 1; }; \
-		state=$$(git -C "$$repo" status --porcelain --untracked-files=all -- . ':(exclude,glob)**/.DS_Store'); \
+		test "$$(env -u GIT_INDEX_FILE git -C "$$repo" rev-parse HEAD)" = "$$approved" || { printf '%s checkout is not approved\n' "$$repo"; exit 1; }; \
+		state=$$(env -u GIT_INDEX_FILE git -C "$$repo" status --porcelain --untracked-files=all -- . ':(exclude,glob)**/.DS_Store'); \
 		test -z "$$state" || { printf '%s compiler source is dirty\n' "$$repo"; exit 1; }; \
 	done
 	@printf 'compiler sources match approved submodules\n'

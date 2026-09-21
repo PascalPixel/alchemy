@@ -38,8 +38,8 @@
         "two_byte_zero_alignment",
         "refused_assembler_padding"
       ],
-      "expected_files": 207,
-      "expected_bytes": 414,
+      "expected_files": 199,
+      "expected_bytes": 398,
       "provenance": {
         "scanned": "2026-09-10",
         "verdict": "assembler_padding",
@@ -133,8 +133,14 @@
       ],
       "provenance": {
         "scanned": "2026-09-10",
-        "credit": "none",
-        "reason": "Retained assembly without machine-verifiable named object identity or positive handwritten authorship evidence."
+        "credit": "handwritten",
+        "proof": "This complete seven-instruction ARM kernel is copied to the caller's stack and invoked indirectly to compute a signed three-term Q16 dot product. Its SMULL/SMLAL body and execute-from-stack contract cannot be emitted by the approved Thumb route.",
+        "evidence": [
+          "dma_copy_to_stack",
+          "arm_instruction_set",
+          "signed_q16_three_term_dot_product",
+          "complete_callable_boundary"
+        ]
       }
     },
     {
@@ -242,80 +248,6 @@
       }
     },
     {
-      "kind": "nonstandard_thumb_call_module",
-      "origin": "program_or_library_runtime",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "manual_return_address_preserved_in_ip",
-        "direct_bl_clobbers_lr",
-        "no_lr_stack_save",
-        "approved_compiler_call_prologue_mismatch",
-        "byte_exact_reconstruction"
-      ],
-      "expected_files": 15,
-      "expected_bytes": 348,
-      "files": [
-        "080f9a80",
-        "080f9b40",
-        "080f9b4c",
-        "080f9b60",
-        "080f9b74",
-        "080f9ba4",
-        "080f9bb8",
-        "080f9bcc",
-        "080f9be0",
-        "080f9bf4",
-        "080f9c00",
-        "080f9c18",
-        "080f9c2c",
-        "080fa1d4",
-        "080fa1e8"
-      ],
-      "provenance": {
-        "scanned": "2026-09-10",
-        "cross_rom": {
-          "method": "exact byte search of each region in the other eleven ROMs (tbs de/es/fr/it/ja, tla en/ja/de/es/fr/it), then pool-masked search (words in 0x02/0x03/0x08/0x09 spaces wildcarded) in the six TLA editions",
-          "regions": 15,
-          "bytes": 348,
-          "tla_exact": {
-            "regions": 14,
-            "bytes": 284,
-            "addresses": [
-              "80f9b40->81c17dc",
-              "80f9b4c->81c17e8",
-              "80f9b60->81c17fc",
-              "80f9b74->81c1810",
-              "80f9ba4->81c1840",
-              "80f9bb8->81c1854",
-              "80f9bcc->81c1868",
-              "80f9be0->81c187c",
-              "80f9bf4->81c1890",
-              "80f9c00->81c189c",
-              "80f9c18->81c18b4",
-              "80f9c2c->81c18c8",
-              "80fa1d4->81c0400",
-              "80fa1e8->81c0414"
-            ]
-          },
-          "tla_masked": {
-            "regions": 1,
-            "bytes": 64,
-            "addresses": [
-              "80f9a80->81c171c"
-            ]
-          },
-          "tbs_editions_only": {
-            "regions": 0,
-            "bytes": 0
-          }
-        },
-        "verdict": "mostly_tbs_editions_only",
-        "credit": "none",
-        "reason": "Retained assembly without machine-verifiable named object identity or positive handwritten authorship evidence."
-      }
-    },
-    {
       "kind": "hidden_register_context_module",
       "origin": "program_or_library_runtime",
       "retention": "keep_structured_asm",
@@ -370,7 +302,7 @@
     },
     {
       "kind": "implicit_callee_saved_input_module",
-      "origin": "program_or_library_runtime",
+      "origin": "program_assembly",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
@@ -385,53 +317,18 @@
       "expected_bytes": 120,
       "files": [
         "0808b320"
-      ]
-    },
-    {
-      "kind": "custom_iwram_frame_entry_module",
-      "origin": "program_or_library_runtime",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "conditional_prologue_after_guard",
-        "manual_high_register_and_stack_frame_contract",
-        "tail_branch_to_iwram_without_link",
-        "iwram_target_restores_caller_frame",
-        "approved_compiler_cannot_express_contract",
-        "byte_exact_reconstruction"
-      ],
-      "expected_files": 2,
-      "expected_bytes": 220,
-      "files": [
-        "0800070c",
-        "080f95f0"
       ],
       "provenance": {
-        "scanned": "2026-09-10",
-        "cross_rom": {
-          "method": "exact byte search of each region in the other eleven ROMs (tbs de/es/fr/it/ja, tla en/ja/de/es/fr/it), then pool-masked search (words in 0x02/0x03/0x08/0x09 spaces wildcarded) in the six TLA editions",
-          "regions": 2,
-          "bytes": 220,
-          "tla_exact": {
-            "regions": 0,
-            "bytes": 0,
-            "addresses": []
-          },
-          "tla_masked": {
-            "regions": 1,
-            "bytes": 132,
-            "addresses": [
-              "80f95f0->81c128c"
-            ]
-          },
-          "tbs_editions_only": {
-            "regions": 1,
-            "bytes": 88
-          }
-        },
-        "verdict": "one_region_cross_product_masked_identical",
-        "credit": "none",
-        "reason": "Retained assembly without machine-verifiable named object identity or positive handwritten authorship evidence."
+        "scanned": "2026-09-21",
+        "credit": "handwritten",
+        "proof": "The complete helper consumes a fallback value from incoming r6 without any ABI parameter or local definition. Its callers deliberately keep that battle result live in r6 across the call; GCC 2.96 nested functions use r9 for their static chain and cannot express this r6 interface.",
+        "evidence": [
+          "incoming_r6_is_semantic_input",
+          "callers_keep_battle_result_live_in_r6",
+          "no_abi_parameter_or_local_definition",
+          "approved_compiler_cannot_emit_interface",
+          "complete_callable_boundary"
+        ]
       }
     },
     {
@@ -487,12 +384,20 @@
             "bytes": 0
           }
         },
-        "verdict": "not_compiler_cross_product_shared_vendor_unidentified",
-        "credit": "none",
+        "verdict": "cross_product_shared_library_assembly",
+        "credit": "library",
+        "object": "TBS/TLA common ARM text and tile kernel bank",
         "citations": [
           "Kiki (battle-loop lane), 2026-09-10: arm.c output_thumb_prologue guarded by is_called_in_ARM_mode at arm.c:8806-8830 (attribute :3745/:3762/:8676) is the only ARM-mode output under -mthumb: the two-instruction interfacearm stub orr ip,pc,#1; bx ip"
         ],
-        "reason": "Six cross-game ARM helpers remain likely unidentified vendor assembly."
+        "proof": "All six complete ARM helpers have corresponding code in every TLA edition: three are byte-identical and three differ only in relocated words. Their ARM bodies, computed dispatch and bitstream kernels cannot be emitted by the approved Thumb compiler route.",
+        "evidence": [
+          "three_regions_byte_identical_in_all_six_tla_editions",
+          "three_regions_pool_masked_identical_in_all_six_tla_editions",
+          "arm_instruction_set",
+          "temporary_executable_copy_consumers",
+          "complete_callable_boundaries"
+        ]
       }
     },
     {
@@ -563,8 +468,8 @@
     },
     {
       "kind": "iwram_code_records",
-      "origin": "unknown",
-      "retention": "keep_asm",
+      "origin": "program_or_library_assembly",
+      "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
         "five_fixed_38_word_arm_records",
@@ -578,10 +483,16 @@
         "08000404"
       ],
       "provenance": {
-        "scanned": "2026-09-16",
-        "verdict": "arm_code_formerly_stored_as_u32_records",
-        "credit": "none",
-        "reason": "760 bytes of ARM instructions previously registered as five 38-word u32 records. Func_080037d4 copies record r0 (0-4) by DMA transfer to IWRAM 0x03000bd8; each record branches to its own end or runs through it, nop-padded, and the last keeps 132 bytes after its branch. The source reconstructs the instructions; no authorship evidence is claimed."
+        "scanned": "2026-09-21",
+        "verdict": "sound_driver_resampler_kernel_assembly",
+        "credit": "library",
+        "object": "five fixed-size ARM sound resampler kernels copied to IWRAM",
+        "proof": "The selector copies one of five equal 152-byte ARM instruction records to IWRAM. Each record implements a register-only packed-sample transform and uses deliberate branch-to-end and NOP padding to preserve the fixed DMA record size.",
+        "evidence": [
+          "five_fixed_152_byte_arm_records",
+          "dma_copy_to_iwram",
+          "deliberate_branch_and_nop_padding"
+        ]
       }
     },
     {
@@ -596,26 +507,21 @@
         "approved_compiler_prologue_mismatch",
         "byte_exact_reconstruction"
       ],
-      "expected_files": 4,
-      "expected_bytes": 148,
+      "expected_files": 1,
+      "expected_bytes": 64,
       "files": [
-        "080006fc",
-        "080f9afc",
-        "080f9f3c",
         "080fa16c"
       ],
       "provenance": {
         "scanned": "2026-09-10",
         "cross_rom": {
           "method": "exact byte search of each region in the other eleven ROMs (tbs de/es/fr/it/ja, tla en/ja/de/es/fr/it), then pool-masked search (words in 0x02/0x03/0x08/0x09 spaces wildcarded) in the six TLA editions",
-          "regions": 4,
-          "bytes": 148,
+          "regions": 1,
+          "bytes": 64,
           "tla_exact": {
-            "regions": 3,
-            "bytes": 132,
+            "regions": 1,
+            "bytes": 64,
             "addresses": [
-              "80f9afc->81c1798",
-              "80f9f3c->81c1bd8",
               "80fa16c->81c0398"
             ]
           },
@@ -625,58 +531,14 @@
             "addresses": []
           },
           "tbs_editions_only": {
-            "regions": 1,
-            "bytes": 16
+            "regions": 0,
+            "bytes": 0
           }
         },
         "verdict": "mostly_tbs_editions_only",
         "credit": "none",
         "reason": "Retained assembly without machine-verifiable named object identity or positive handwritten authorship evidence."
       }
-    },
-    {
-      "kind": "link_free_continuation_dispatcher",
-      "origin": "program_or_library_runtime",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "external_transfers_are_b_not_bl",
-        "incoming_lr_is_preserved_without_stack_save",
-        "approved_compiler_emits_linked_calls",
-        "inline_assembly_and_register_pins_disallowed",
-        "byte_exact_reconstruction"
-      ],
-      "expected_files": 1,
-      "expected_bytes": 28,
-      "files": [
-        "080f9ae0"
-      ],
-      "provenance": {
-        "scanned": "2026-09-10",
-        "credit": "none",
-        "reason": "Retained assembly without machine-verifiable named object identity or positive handwritten authorship evidence."
-      }
-    },
-    {
-      "kind": "shared_stack_continuation_module",
-      "origin": "program_or_library_runtime",
-      "retention": "keep_structured_asm",
-      "confidence": "proven",
-      "evidence": [
-        "branches_into_post_prologue_interior_entry",
-        "continuation_consumes_callers_live_stack_frame",
-        "private_result_register_is_r3",
-        "call_clobbered_ip_is_live_across_private_call",
-        "approved_compiler_c_abi_cannot_express_contract",
-        "inline_assembly_and_register_pins_disallowed",
-        "byte_exact_reconstruction"
-      ],
-      "expected_files": 2,
-      "expected_bytes": 80,
-      "files": [
-        "080f9ac0",
-        "080f9b10"
-      ]
     },
     {
       "kind": "mixed_region",
@@ -884,96 +746,57 @@
       ]
     },
     {
-      "kind": "shared_literal_function_module",
-      "origin": "unknown",
+      "kind": "sound_driver_update_assembly",
+      "origin": "program_or_library_assembly",
       "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "bl_call_target",
-        "function_pointer_target",
-        "fallthrough_continuation",
-        "cross_function_literal_pool"
+        "cross_function_literal_pool",
+        "private_r3_call_return_thunk",
+        "manual_full_register_frame",
+        "single_contiguous_translation_unit",
+        "byte_exact_reconstruction"
       ],
-      "expected_files": 2,
+      "expected_files": 1,
       "expected_bytes": 692,
       "files": [
-        "080f9c44",
-        "080f9c90"
+        "080f9c44"
       ],
       "provenance": {
-        "scanned": "2026-09-10",
-        "cross_rom": {
-          "method": "exact byte search of each region in the other eleven ROMs (tbs de/es/fr/it/ja, tla en/ja/de/es/fr/it), then pool-masked search (words in 0x02/0x03/0x08/0x09 spaces wildcarded) in the six TLA editions",
-          "regions": 2,
-          "bytes": 692,
-          "tla_exact": {
-            "regions": 1,
-            "bytes": 76,
-            "addresses": [
-              "80f9c44->81c18e0"
-            ]
-          },
-          "tla_masked": {
-            "regions": 1,
-            "bytes": 616,
-            "addresses": [
-              "80f9c90->81c192c"
-            ]
-          },
-          "tbs_editions_only": {
-            "regions": 0,
-            "bytes": 0
-          }
-        },
-        "verdict": "cross_product_identical_vendor_unidentified",
-        "credit": "none",
-        "reason": "Retained assembly without machine-verifiable named object identity or positive handwritten authorship evidence."
+        "scanned": "2026-09-21",
+        "credit": "library",
+        "object": "TBS sound driver update and timer module",
+        "proof": "The timer routine loads hardware constants from the update routine’s trailing pool, proving one contiguous source unit. The update routine builds and restores a private full-register frame and dispatches indirect calls through a local r3 return thunk, conventions ordinary C cannot express.",
+        "evidence": [
+          "cross_function_literal_pool",
+          "private_r3_call_return_thunk",
+          "manual_full_register_frame",
+          "complete_contiguous_module"
+        ]
       }
     },
     {
       "kind": "iwram_runtime_veneer",
-      "origin": "unidentified_build_step",
-      "retention": "keep_asm",
+      "origin": "program_or_library_assembly",
+      "retention": "keep_structured_asm",
       "confidence": "proven",
       "evidence": [
-        "fixed_ldr_r3_bx_r3_iwram_target",
-        "not_gcc296_thumb_tail_jump_arm_md_6047_6055",
-        "not_ld_2_10_stub_elf32_arm_h_311_343_1324_1395",
-        "target_is_iwram_address_not_section_symbol"
+        "four_contiguous_eight_byte_entries",
+        "shared_ldr_bx_literal_shape",
+        "targets_named_iwram_division_routines",
+        "approved_compiler_and_linker_do_not_emit_shape",
+        "byte_exact_reconstruction"
       ],
-      "expected_files": 4,
+      "expected_files": 1,
       "expected_bytes": 32,
       "files": [
-        "080022ec",
-        "080022f4",
-        "080022fc",
-        "08002304"
+        "080022ec"
       ],
       "provenance": {
-        "scanned": "2026-09-10",
-        "cross_rom": {
-          "method": "exact byte search of each region in the other eleven ROMs (tbs de/es/fr/it/ja, tla en/ja/de/es/fr/it), then pool-masked search (words in 0x02/0x03/0x08/0x09 spaces wildcarded) in the six TLA editions",
-          "regions": 4,
-          "bytes": 32,
-          "tla_exact": {
-            "regions": 0,
-            "bytes": 0,
-            "addresses": []
-          },
-          "tla_masked": {
-            "regions": 0,
-            "bytes": 0,
-            "addresses": []
-          },
-          "tbs_editions_only": {
-            "regions": 4,
-            "bytes": 32
-          }
-        },
-        "verdict": "not_toolchain_origin_unidentified",
+        "scanned": "2026-09-21",
+        "verdict": "reconstructed_iwram_entry_macro_uncredited",
         "credit": "none",
-        "reason": "the target is an IWRAM address rather than a section symbol; the producing build step remains unidentified",
-        "previous_origin": "compiler_runtime"
+        "reason": "The repeated source macro is reconstructed and its targets are named, but no independent evidence yet distinguishes a handwritten macro from another Camelot build-time producer."
       }
     },
     {
@@ -2475,6 +2298,126 @@
       "files": [
         "080114a0"
       ]
+    },
+    {
+      "kind": "sound_driver_frame_entry_assembly",
+      "origin": "program_or_library_assembly",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "conditional_prologue_after_guard",
+        "manual_high_register_and_stack_frame_contract",
+        "tail_branch_to_iwram_without_link",
+        "iwram_target_restores_caller_frame",
+        "approved_compiler_cannot_express_contract",
+        "byte_exact_reconstruction"
+      ],
+      "expected_files": 2,
+      "expected_bytes": 236,
+      "files": [
+        "080006fc",
+        "080f95f0"
+      ],
+      "provenance": {
+        "scanned": "2026-09-21",
+        "verdict": "sound_driver_library_frame_entries",
+        "credit": "library",
+        "object": "TBS sound driver guarded ROM-to-IWRAM frame-entry routines",
+        "proof": "The guard and entry form one contiguous routine at 0x080006fc; both entries construct a private high-register and stack frame then tail-branch into IWRAM code that restores it. The 132-byte mixer entry is pool-masked identical in TLA.",
+        "evidence": [
+          "private_high_register_stack_frame",
+          "tail_branch_to_iwram",
+          "iwram_restores_frame"
+        ]
+      }
+    },
+    {
+      "kind": "sound_sequence_command_assembly",
+      "origin": "program_or_library_assembly",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "contiguous_command_interpreter",
+        "manual_return_address_preserved_in_ip",
+        "shared_stack_private_continuations",
+        "tail_branches_without_link",
+        "cross_product_identity",
+        "byte_exact_reconstruction"
+      ],
+      "expected_files": 1,
+      "expected_bytes": 452,
+      "files": [
+        "080f9a80"
+      ],
+      "provenance": {
+        "scanned": "2026-09-21",
+        "verdict": "cross_product_sound_driver_library_assembly",
+        "credit": "library",
+        "object": "TBS/TLA common sound sequence command interpreter",
+        "proof": "The complete contiguous module uses private continuation entries, live caller stack state, ip-held return addresses and tail branches that the C ABI cannot express; its command bodies correspond across TBS and TLA.",
+        "evidence": [
+          "manual_ip_return_address",
+          "shared_stack_continuations",
+          "cross_product_identity"
+        ]
+      }
+    },
+    {
+      "kind": "sound_driver_private_context_assembly",
+      "origin": "program_or_library_assembly",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "implicit_r4_r5_inputs",
+        "no_c_abi_parameters",
+        "cross_product_identity",
+        "byte_exact_reconstruction"
+      ],
+      "expected_files": 1,
+      "expected_bytes": 48,
+      "files": [
+        "080f9f3c"
+      ],
+      "provenance": {
+        "scanned": "2026-09-21",
+        "verdict": "cross_product_sound_driver_library_assembly",
+        "credit": "library",
+        "object": "TBS/TLA common sound driver stereo-volume helper",
+        "proof": "The helper consumes note and track pointers from the caller's live r4/r5 context without ABI parameters, returns directly, and is byte-identical in TLA.",
+        "evidence": [
+          "implicit_r4_r5_context",
+          "cross_product_identity"
+        ]
+      }
+    },
+    {
+      "kind": "sound_driver_private_return_assembly",
+      "origin": "program_or_library_assembly",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "manual_return_address_preserved_in_ip",
+        "private_r3_result_contract",
+        "cross_product_identity",
+        "byte_exact_reconstruction"
+      ],
+      "expected_files": 1,
+      "expected_bytes": 40,
+      "files": [
+        "080fa1d4"
+      ],
+      "provenance": {
+        "scanned": "2026-09-21",
+        "verdict": "cross_product_sound_driver_library_assembly",
+        "credit": "library",
+        "object": "TBS/TLA common sound command-byte setters",
+        "proof": "Both setters preserve their return address in ip across calls and consume the reader's private r3 result rather than the C ABI return register; both are byte-identical in TLA.",
+        "evidence": [
+          "manual_ip_return_address",
+          "private_r3_result_contract",
+          "cross_product_identity"
+        ]
+      }
     }
   ]
 }

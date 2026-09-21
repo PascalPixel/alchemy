@@ -2,8 +2,8 @@
 @ 呼出し側が六個の成分を渡し、上位と下位を丸めず結合する。
 .syntax unified
 	.arm
-	.global RelocatedQ16DotProduct_08007994
-RelocatedQ16DotProduct_08007994:
+	.global RelocatedQ16DotProduct
+RelocatedQ16DotProduct:
 	smull	r12, r0, r1, r0
 	smlal	r12, r0, r2, r3
 	ldmia	sp, {r2, r3}

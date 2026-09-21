@@ -9365,7 +9365,7 @@
       "name": "IwramIrqMain"
     },
     "main:08007994": {
-      "name": "RelocatedQ16DotProduct_08007994"
+      "name": "RelocatedQ16DotProduct"
     },
     "main:0800ebec": {
       "name": "FunctionHead_0800ebec"

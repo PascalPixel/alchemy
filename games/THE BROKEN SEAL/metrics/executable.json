@@ -28,13 +28,13 @@
         "start": 134218756,
         "end": 134219516,
         "kind": "arm",
-        "evidence": "games/THE BROKEN SEAL/raw/executable_gaps/08000404.s:iwram_code_records"
+        "evidence": "games/THE BROKEN SEAL/SRC/SOUND/DRIVER/RESAMPLER_KERNELS.S:iwram_code_records"
       },
       {
         "start": 134219516,
         "end": 134219620,
         "kind": "structural",
-        "evidence_ref": "e2"
+        "evidence": "games/THE BROKEN SEAL/SRC/SOUND/DRIVER/CHANNEL_UPDATE_ENTRY.S:sound_driver_frame_entry_assembly"
       },
       {
         "start": 134219632,
@@ -46,7 +46,7 @@
         "start": 134226668,
         "end": 134226700,
         "kind": "veneer",
-        "evidence": "games/THE BROKEN SEAL/raw/080022ec.s:iwram_runtime_veneer"
+        "evidence": "games/THE BROKEN SEAL/SRC/SYSTEM/IWRAM/DIVISION_ENTRY.S:iwram_runtime_veneer"
       },
       {
         "start": 134226700,
@@ -526,7 +526,7 @@
         "start": 134248852,
         "end": 134248880,
         "kind": "arm",
-        "evidence": "games/THE BROKEN SEAL/raw/08007994.s:relocated_stack_arm_kernel"
+        "evidence": "games/THE BROKEN SEAL/SRC/GRAPHICS/AFFINE/Q16_DOT_PRODUCT.S:relocated_stack_arm_kernel"
       },
       {
         "start": 134254592,
@@ -2512,7 +2512,7 @@
         "start": 134787872,
         "end": 134787992,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/raw/0808b320.s:implicit_callee_saved_input_module"
+        "evidence": "games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/STORE_MAPPED_RESULT.S:implicit_callee_saved_input_module"
       },
       {
         "start": 134787992,
@@ -4880,6 +4880,18 @@
       },
       {
         "start": 135239136,
+        "end": 135239152,
+        "kind": "structural",
+        "evidence_ref": "e2"
+      },
+      {
+        "start": 135239152,
+        "end": 135239284,
+        "kind": "structural",
+        "evidence": "games/THE BROKEN SEAL/SRC/SOUND/DRIVER/MIXER_ENTRY.S:sound_driver_frame_entry_assembly"
+      },
+      {
+        "start": 135239284,
         "end": 135240238,
         "kind": "structural",
         "evidence_ref": "e2"
@@ -4904,81 +4916,15 @@
       },
       {
         "start": 135240320,
-        "end": 135240522,
+        "end": 135240772,
         "kind": "structural",
-        "evidence_ref": "e2"
+        "evidence": "games/THE BROKEN SEAL/SRC/SOUND/DRIVER/SEQUENCE_COMMANDS.S:sound_sequence_command_assembly"
       },
       {
-        "start": 135240522,
-        "end": 135240524,
-        "kind": "executable_alignment",
-        "evidence_ref": "e20"
-      },
-      {
-        "start": 135240524,
-        "end": 135240562,
-        "kind": "structural",
-        "evidence_ref": "e2"
-      },
-      {
-        "start": 135240562,
-        "end": 135240564,
-        "kind": "executable_alignment",
-        "evidence_ref": "e20"
-      },
-      {
-        "start": 135240564,
-        "end": 135240610,
-        "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/raw/080f9b74.s:nonstandard_thumb_call_module"
-      },
-      {
-        "start": 135240610,
-        "end": 135240612,
-        "kind": "executable_alignment",
-        "evidence_ref": "e20"
-      },
-      {
-        "start": 135240612,
-        "end": 135240630,
-        "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/raw/080f9ba4.s:nonstandard_thumb_call_module"
-      },
-      {
-        "start": 135240630,
-        "end": 135240632,
-        "kind": "executable_alignment",
-        "evidence_ref": "e20"
-      },
-      {
-        "start": 135240632,
-        "end": 135240690,
-        "kind": "structural",
-        "evidence_ref": "e2"
-      },
-      {
-        "start": 135240690,
-        "end": 135240692,
-        "kind": "executable_alignment",
-        "evidence_ref": "e20"
-      },
-      {
-        "start": 135240692,
-        "end": 135240702,
-        "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/raw/080f9bf4.s:nonstandard_thumb_call_module"
-      },
-      {
-        "start": 135240702,
-        "end": 135240704,
-        "kind": "executable_alignment",
-        "evidence_ref": "e20"
-      },
-      {
-        "start": 135240704,
+        "start": 135240772,
         "end": 135241464,
         "kind": "structural",
-        "evidence_ref": "e2"
+        "evidence": "games/THE BROKEN SEAL/SRC/SOUND/DRIVER/UPDATE.S:sound_driver_update_assembly"
       },
       {
         "start": 135241464,
@@ -4990,7 +4936,7 @@
         "start": 135241532,
         "end": 135241580,
         "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/raw/080f9f3c.s:nonstandard_thumb_branch_module"
+        "evidence": "games/THE BROKEN SEAL/SRC/SOUND/DRIVER/CALCULATE_STEREO_VOLUME.S:sound_driver_private_context_assembly"
       },
       {
         "start": 135241580,
@@ -5030,27 +4976,9 @@
       },
       {
         "start": 135242196,
-        "end": 135242214,
-        "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/raw/080fa1d4.s:nonstandard_thumb_call_module"
-      },
-      {
-        "start": 135242214,
-        "end": 135242216,
-        "kind": "executable_alignment",
-        "evidence_ref": "e20"
-      },
-      {
-        "start": 135242216,
-        "end": 135242234,
-        "kind": "structural",
-        "evidence": "games/THE BROKEN SEAL/raw/080fa1e8.s:nonstandard_thumb_call_module"
-      },
-      {
-        "start": 135242234,
         "end": 135242236,
-        "kind": "executable_alignment",
-        "evidence_ref": "e20"
+        "kind": "structural",
+        "evidence": "games/THE BROKEN SEAL/SRC/SOUND/DRIVER/COMMAND_BYTE_SETTERS.S:sound_driver_private_return_assembly"
       },
       {
         "start": 135242236,

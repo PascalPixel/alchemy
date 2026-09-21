@@ -1,96 +1,8 @@
 #include "TYPES.H"
 #include "TBS_EDITION.H"
+#include "DMA.H"
 
-/*
- * Menu_RunOwnerSelectionLoop (main:08020244, 1408 bytes).
- *
- * Modal "pick one of the three owner slots" loop shared by the menus that
- * need a target owner.  The caller supplies the slot to start on and a mode
- * code that selects which slots may be chosen:
- *
- *   mode 0  every slot, no filtering and no wrap search at all
- *   mode 1  slot must be present and its field_31 flag must be clear
- *   mode 4  slot must be present and its field_32 flag must be set
- *   mode 5  slot must be present and its field_31 flag must be set
- *   other   slot must simply be present
- *
- * On entry the requested slot is clamped to zero and then advanced forward
- * (at most three steps, so it wraps once) until it satisfies the mode's
- * predicate; if no slot does, the loop returns -2 without releasing the
- * block it just took from pool 55.  That leak is in the reference and is
- * preserved.
- *
- * The body draws a three-row roster into one wide window, then, every time
- * `redraw` is set, refreshes the three detail windows for the current slot:
- * the status summary (StatusMenu_DrawCharacterSummary), the object row
- * (ObjectPlacement_CreateGroup) and, only when the slot has a non-zero
- * element count total, the four-number row.  Up/Down step the selection
- * backwards/forwards through the acceptable slots, B cancels with -1 and A
- * accepts with the slot index.
- *
- * Evidence and open points, all from games/THE BROKEN SEAL/raw/08020244.s and the
- * project's already-recovered callees:
- *   - The 0x40-byte entry stride and the field offsets below are fixed by
- *     the callees that receive the slot record: UiText_DrawFourNumbersInRow
- *     reads four signed bytes at +0x28, ObjectPlacement_CreateGroup reads
- *     kinds[4] at +0x2c and a variant at +0x33, and
- *     StatusMenu_DrawCharacterSummary reads +0x10 (name), +0x1c, +0x1d,
- *     +0x20 and +0x24.  The remaining names are roles, not history.
- *   - The four literal-pool words 0, 1, 3 and 2 that select the "slot is
- *     not selectable" message cannot be plain integers: GCC would have
- *     emitted `movs`.  They are relocated message ids, so they use the
- *     project's Value_<hex> spelling.
- *   - 0x03001F1C and 0x03001E8C are spelled as plain addresses rather than
- *     through global_cells.h because the reference derives the second from
- *     the first with `subs r3, #144`, and only an integer constant folds
- *     that way; two relocated symbols cannot.  This draft does not actually
- *     reproduce the fold either - it emits two separate pool words - so the
- *     spelling is a hypothesis about the original source, not a byte win.
- *     Measured both ways: the global_cells.h ADDR_ form gives 1392 bytes and
- *     684 differing halfwords against the 1396 / 682 kept here, so the
- *     integer form is retained only by that two-halfword margin and either
- *     spelling leaves these two cells EN-specific.
- *   - Data_02000240 is the party-state block; bytes 0x205/0x206 sit past
- *     the extent party_state.h currently guards, so the block is taken as a
- *     byte array here rather than through that header.
- *   - The DMA3 zero-fill of the freshly taken block is the known
- *     "lone stmia" residual already documented for Func_0800bc48 and its
- *     siblings: no ordinary C on this route emits the unpaired grouped
- *     store, so three field assignments are the closest honest rendering.
- *
- * Measured state of this draft: candidate 1396 bytes against a 1408-byte
- * reference, 682 differing halfwords, 650 wrong instructions.  Every
- * reference branch, loop, switch-on-mode, call, argument and store is
- * represented.  Inside the roster loop the per-entry probes agree exactly:
- * the biased slot pointer (ldrb [r5, #0]), ldrh [r5, #26], ldr [r5, #4]
- * against ldr [r5, #28], and the mode-5 `movs r3, #21 / ldrsb r3, [r5, r3]`
- * guard.  The loop as a whole does not agree: the reference carries the row
- * offset in fp and the unbiased entry pointer in a stack slot, while this
- * draft carries two entry pointers in low registers and the row offset on
- * the stack, and the shared message draw is laid out after the four tests
- * instead of before them.
- *
- * The residual is one global allocation disagreement, not missing code.
- * The reference keeps the workspace pointer in r7, a low register, so every
- * per-slot probe is a single "ldrb rD, [r7, rIndex]"; this draft's workspace
- * pointer lands in r9, so the same probes must first materialise
- * "base + slot * 0x40" in a low register, which then becomes a common
- * subexpression, turns the three-step wrap searches into pointer induction
- * variables and pushes the row counter into r4 with a spill around every
- * call. Five spellings were tried against that: a live table pointer, the
- * byte-indexed form used here, struct-pointer and pointer-plus-index forms
- * for the +0x30 flag bytes, and array versus dereference forms for the
- * signed count bytes. They move the aggregate between 682 and 689 differing
- * halfwords without changing which register holds the workspace pointer, so
- * the axis is closed here rather than searched further.
- *
- * Two smaller residuals are independent of that and are also not missing
- * code: the DMA3 zero-fill emits three plain stores where the reference
- * emits the unpaired `stmia r3!, {r0, r1, r2}` / `subs r3, #12` pair (the
- * known lone-stmia residual), and the B-cancel block that plays cue 113 and
- * sets -1 is laid out at the end of this draft where the reference places it
- * ahead of the body, just after the -2 early return.
- */
+/* Runs the three-member menu used to choose a party member. */
 
 #define Menu_RunOwnerSelectionLoop Func_08020244
 
@@ -103,12 +15,6 @@
 #define Scheduler_ScheduleCallbackAAfterFrames Func_0801fd84
 #define Scheduler_ScheduleCallbackA Func_0801fd98
 #define Runtime_ReleaseHeapBlock Func_08002dd8
-
-typedef struct DmaTransfer {
-    const void *source;
-    void *destination;
-    u32 control;
-} DmaTransfer;
 
 /* One selectable owner slot; three of them live at workspace + 0x1040. */
 struct MenuOwnerEntry {
@@ -178,7 +84,6 @@ void RenderOutput_RedrawSavedRect(void *win);
 s32 Menu_RunOwnerSelectionLoop(s32 idx, s32 mode)
 {
     struct MenuOwnerEntry *e;
-    DmaTransfer *dma;
     u8 *base;
     u8 *render;
     void *work;
@@ -265,10 +170,7 @@ s32 Menu_RunOwnerSelectionLoop(s32 idx, s32 mode)
 
 ready:
     zero = 0;
-    dma = (DmaTransfer *)0x040000D4;
-    dma->source = &zero;
-    dma->destination = work;
-    dma->control = 0x8500029C;
+    Dma_Set(&zero, work, 0x8500029C, (volatile u32 *)0x040000D4);
     Scheduler_ScheduleCallbackAAfterFrames();
 
     win = UiWindow_Create(1, 2, 28, 7, 2);

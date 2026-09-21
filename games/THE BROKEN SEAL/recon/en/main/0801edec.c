@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "DMA.H"
 #include "video_dma_family.h"
 
 extern u8 *Data_03001e8c;
@@ -14,18 +15,11 @@ void Func_0801edec(void *argument)
 
     if (routine == 0) {
         u16 fill = 0xe0e0;
-        struct DmaChannel *dma = (struct DmaChannel *)0x040000d4;
-
-        dma->source = &fill;
-        dma->destination = argument;
-        dma->control = 0x810000a0;
+        Dma_Set(&fill, argument, 0x810000a0, (volatile u32 *)0x040000d4);
     } else {
         void *buf = (void *)Func_08004938(0x214);
-        struct DmaChannel *dma = (struct DmaChannel *)0x040000d4;
-
-        dma->source = (const void *)0x080158e8;
-        dma->destination = buf;
-        dma->control = (0x214 >> 2) | 0x84000000;
+        Dma_Set((const void *)0x080158e8, buf, (0x214 >> 2) | 0x84000000,
+                (volatile u32 *)0x040000d4);
 
         ((Routine)routine)(argument);
         Func_08002df0(buf);

@@ -1,14 +1,10 @@
 #include "FIELD_EVENT.H"
 #include "INVENTORY.H"
-struct ItemDefinition;
-struct ItemDefinition *Engine_DebugGetItem(s32 item);
+#include "DMA.H"
 #include "TEXT_RENDER_RUNTIME.H"
 
-struct DmaTransfer {
-    const void *source;
-    void *destination;
-    u32 control;
-};
+struct ItemDefinition;
+struct ItemDefinition *Engine_DebugGetItem(s32 item);
 
 extern u8 gDebugItemPrompt[];
 extern u8 gDebugItemCapacityLabel[];
@@ -31,7 +27,6 @@ void DebugMenu_SelectItem(void)
 {
     struct TextRenderWork *window;
     struct TextRenderWork *details;
-    volatile struct DmaTransfer *dma = (volatile struct DmaTransfer *)0x040000d4;
     s32 item;
     s32 redraw;
     s32 index;
@@ -41,12 +36,10 @@ void DebugMenu_SelectItem(void)
     details = Engine_DebugCreateWindow(0, 8, 13, 10, 2);
     item = 1;
     redraw = 1;
-    dma->source = (const void *)0x05000200;
-    dma->destination = (void *)0x050001c0;
-    dma->control = 0x80000010;
-    dma->source = (const void *)0x050001e8;
-    dma->destination = (void *)0x050001dc;
-    dma->control = 0x80000001;
+    Dma_Set((const void *)0x05000200, (void *)0x050001c0, 0x80000010,
+            (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)0x050001e8, (void *)0x050001dc, 0x80000001,
+            (volatile u32 *)0x040000d4);
     for (;;) {
         Engine_TaskWait(1);
         if (redraw) {

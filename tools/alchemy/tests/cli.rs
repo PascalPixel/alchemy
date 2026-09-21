@@ -41,6 +41,26 @@ fn retired_portable_entry_points_are_not_aliases() {
 }
 
 #[test]
+fn compression_recipe_writers_are_retired() {
+    let help = command()
+        .args(["build", "assets", "--help"])
+        .output()
+        .unwrap();
+    assert!(help.status.success());
+    for flag in ["--compact-plans", "--derive-plans"] {
+        assert!(!String::from_utf8_lossy(&help.stdout).contains(flag));
+        let output = command()
+            .args(["build", "assets", flag, "missing-plan.json"])
+            .output()
+            .unwrap();
+        assert!(
+            !output.status.success(),
+            "{flag} must not generate stored answers"
+        );
+    }
+}
+
+#[test]
 fn project_build_stages_remain_discoverable() {
     for stage in [
         "compilers",

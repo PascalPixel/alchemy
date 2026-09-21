@@ -1,64 +1,9 @@
 #include "TYPES.H"
+#include "DMA.H"
 
-/*
- * Battle-presentation scene at main:080ea0d8 (5756 bytes, the largest owner
- * in the 0x03001eec "battle work" family).  The single argument is the effect
- * state pointer, stored at work + 0x7828 exactly like every other member of
- * that family -- see games/THE BROKEN SEAL/recon/en/main/080e2538.c, 080e7404.c,
- * 080eb754.c and 080e823c.c for the shared prologue, the Value_XXXXXXXX
- * effect-id idiom and the Data_080ede48 sprite-cell table this owner reuses.
- *
- * The owner runs two self-contained animation passes, each one frame per
- * iteration, with Func_080030f8(1) as the frame barrier:
- *
- *   pass 1 (frames 0..159, cancellable from frame 5 through 0x03001b04)
- *     seeds two 128-entry particle tables at 0x02010000 / 0x02010e00, clamps
- *     eight progressively darker copies of a 770-byte ramp into work+0x2710,
- *     pushes a palette through the 0x03001388 IWRAM block copier, then per
- *     frame draws a 64-entry ring of billboards, steps sixteen scene objects
- *     down a receding grid, and from frame 116 onward blits a four-corner
- *     panel plus a growing 128-sample ring of sprites.
- *
- *   pass 2 (frames 0..319) rebuilds the 120x120 byte canvas at `work`, runs a
- *     cue/skip state machine (skipping forward to 150 / 214 / 280 when the
- *     player presses through), draws the staged sprite sheets, rasterises
- *     `rings` concentric Bresenham ellipses into that canvas, blits it whole
- *     through the second draw routine, and finally rains sixteen particles
- *     from work + 0x7080.
- *
- * `Func_080072f0`, `Func_080072f4`, `Func_080072f8`, `Func_08007308` and
- * `Func_0800730c` are NOT real callees: they are the r3/r4/r5/r9/sl entries of
- * the `_call_via_rN` trampoline bundle at games/THE BROKEN SEAL/raw/080072e4.s
- * (0x080072e4 + 4*N).  Every one of those `bl` sites is an indirect call
- * through whatever function pointer the compiler happened to place in that
- * register.  Here they are only ever the two rectangle blitters that
- * Func_080ed408(46, ...) and Func_080ed408(47, ...) publish into
- * heap_cache[7] (0x03001f08) and heap_cache[8] (0x03001f0c), and the fixed
- * IWRAM block routines at 0x03001388 and 0x03000168.  This draft therefore
- * spells the r4/r5/r9/sl sites as ordinary indirect calls through
- * `DrawRectangleFn` locals and keeps the established
- * `Func_080072f0(dest, a, b, routine)` spelling for the r3 site, the same
- * reading already adopted in games/THE BROKEN SEAL/recon/en/main/080e2538.c,
- * 080e08c0.c and 0801faa8.c.
- *
- * Known-deliberate oddities preserved from the reference rather than
- * "corrected":
- *   - the first particle seed writes field_10 twice and never writes the
- *     value it computed for the middle slot (0x080ea2ae/0x080ea2be);
- *   - the per-frame billboard block guarded by `frame < 0` in pass 1 and the
- *     party-member cue guarded by `frame > 319` in pass 2 can never run at
- *     runtime (pass 2 stops at 320 immediately after the increment), but the
- *     reference emits both in full, so both are kept;
- *   - the deferred-register queue disables interrupts by storing 0x208 (its
- *     own register address) into REG_IME rather than 0;
- *   - `(v * 8) / 8` in the ellipse rasteriser is a real signed round-toward-
- *     zero division the reference computes, not an identity to fold away.
- *
- * Uncertain: the roles of heap_cache[2] and heap_cache[5], the layout beyond
- * the fields touched here of the 28-byte particle record and of the two
- * Func_08009008 argument records, and whether the pool-loaded small constants
- * spelled `&Value_XXXXXXXX` below are link-time ids (the family precedent) or
- * plain literals the compiler chose to pool.
+/* Two-stage battle presentation: a particle field and receding grid, followed
+ * by sprite-sheet animation, concentric ellipses and falling particles.
+ * Each pass advances once per frame and handles the player skip input.
  */
 
 typedef void (*DrawRectangleFn)(
@@ -77,24 +22,9 @@ typedef struct {
 } Particle;
 
 /* Argument records handed to Func_08009008. */
-typedef struct {
-    s32 x;
-    s32 y;
-    s32 z;
-    s32 field_0c;
-} PlaceWork;
+typedef s32 PlaceWork[4];
 
-typedef struct {
-    s32 field_00;
-    s32 field_04;
-} ScalePair;
-
-typedef struct {
-    s32 field_00;
-    s32 field_04;
-    s32 field_08;
-    s32 field_0c;
-} ScaleWork;
+typedef s32 ScalePair[2];
 
 /* Three-word scene vector used by the effect-step helpers. */
 typedef struct {
@@ -103,32 +33,7 @@ typedef struct {
     s32 z;
 } Vec3;
 
-/* DMA3 as three consecutive words; the reference merges the writes into one
-   stmia, which the Thumb backend has no pattern for (see the analysis in
-   games/THE BROKEN SEAL/recon/en/main/08004838.c).  Three ordinary stores is the closest
-   ordinary C reaches. */
-struct DmaChannel {
-    const void *src;
-    void *dst;
-    u32 ctrl;
-};
 
-extern char Value_00000000;
-extern char Value_00000036;
-extern char Value_0000003a;
-extern char Value_0000003b;
-extern char Value_0000003e;
-extern char Value_00000064;
-extern char Value_00000065;
-extern char Value_00000067;
-extern char Value_00000070;
-extern char Value_00000073;
-extern char Value_00000080;
-extern char Value_000000bb;
-extern char Value_000000ce;
-extern char Value_00000100;
-extern char Value_03000168;
-extern char Value_03001388;
 
 extern const u16 Data_080ede48[];
 extern const ScalePair Data_080edad0;
@@ -162,8 +67,6 @@ void Func_08004c1c(s32 angle);
 void Func_08004c6c(s32 angle);
 /* Graphics_PrepareTransferInIwramWork */
 void Func_080051d8(void *work, void *out);
-/* _call_via_r3 thunk, games/THE BROKEN SEAL/raw/080072e4.s */
-void Func_080072f0(void *dest, s32 arg1, s32 arg2, void *routine);
 void Func_08009008(void *object, PlaceWork *place, void *scale, s32 flag);
 void Func_08009020(void *object, s32 order);
 void *Func_08009030(s32 id);
@@ -205,8 +108,8 @@ void Func_080f9010(s32 id);
         s32 cnt;                                                              \
         u32 *entry;                                                           \
                                                                               \
-        saved = *(u16 *)0x04000208;                                           \
-        *(u16 *)0x04000208 = 0x208;                                           \
+        saved = *(volatile u16 *)0x04000208;                                           \
+        *(volatile u16 *)0x04000208 = 0x208;                                           \
         cnt = *(u16 *)0x02002090;                                             \
         if (cnt <= 31) {                                                      \
             entry = (u32 *)((u8 *)0x02002090 + cnt * 12 + 4);                 \
@@ -215,7 +118,7 @@ void Func_080f9010(s32 id);
             *entry++ = (u32)(reg);                                            \
             *entry = (u32)(mode);                                             \
         }                                                                     \
-        *(u16 *)0x04000208 = saved;                                           \
+        *(volatile u16 *)0x04000208 = saved;                                           \
     } while (0)
 
 void Func_080ea0d8(void *object)
@@ -226,7 +129,7 @@ void Func_080ea0d8(void *object)
     void *ctrl;
     void *ramp;
     void *iwram;
-    struct DmaChannel *dma;
+    volatile u32 *dma;
     DrawRectangleFn draw;
     DrawRectangleFn draw2;
     Particle *dust;
@@ -264,17 +167,17 @@ void Func_080ea0d8(void *object)
     ctrl = heap[5];
     ramp = heap[2];
     iwram = *(void **)0x03001E80;
-    dma = (struct DmaChannel *)0x040000D4;
+    dma = (volatile u32 *)0x040000D4;
     dust = (Particle *)0x02010000;
     spark = (Particle *)0x02010E00;
     rain = (Particle *)((u8 *)work + 0x7080);
 
     *(void **)((u8 *)work + 0x7828) = object;
     Func_080cd594(128 << 6);
-    *(u16 *)0x04000020 = (s32)&Value_00000100;
+    *(volatile u16 *)0x04000020 = 0x100;
     Func_080c9048();
-    *(u16 *)0x05000000 = (s32)&Value_00000000;
-    *(u16 *)0x05000002 = (s32)&Value_00000000;
+    *(volatile u16 *)0x05000000 = 0x0;
+    *(volatile u16 *)0x05000002 = 0x0;
     Func_080ed408(46, 7, 7, 3, 3);
     draw = (DrawRectangleFn)heap[7];
     WORK_S32(0x7780) = 0;
@@ -284,24 +187,24 @@ void Func_080ea0d8(void *object)
     Func_080dbb24(16, 0x17E, 1);
     *(s32 *)0x03001CF0 = 240;
     Func_080030f8(1);
-    Func_080b5040(1, (s32)&Value_0000003b, 0);
+    Func_080b5040(1, 0x3b, 0);
     *(s32 *)((u8 *)ctrl + 16) = 1;
     *(u16 *)0x03001AD4 = 0;
     Func_080cd104(0, 1);
-    *(u16 *)0x04000000 = 0x7741;
-    *(u16 *)0x04000020 = (s32)&Value_00000080;
-    *(u16 *)0x04000052 = 0x1010;
-    *(u16 *)0x04000050 = 0x3F44;
+    *(volatile u16 *)0x04000000 = 0x7741;
+    *(volatile u16 *)0x04000020 = 0x80;
+    *(volatile u16 *)0x04000052 = 0x1010;
+    *(volatile u16 *)0x04000050 = 0x3F44;
 
     depth = (s32)0xFFC00000;
     zoom = 128 << 12;
     near = 0xFFFF;
     far = 0;
 
-    Func_080e0524((s32)&Value_000000bb, work, 1, 1);
-    Func_080e0524((s32)&Value_00000067, (u8 *)work + 0x600, 0, 0);
-    Func_080e0524((s32)&Value_000000ce, (u8 *)work + 0x95C, 1, 0);
-    Func_080e0524((s32)&Value_00000073, ramp, 0, 0);
+    Func_080e0524(0xbb, work, 1, 1);
+    Func_080e0524(0x67, (u8 *)work + 0x600, 0, 0);
+    Func_080e0524(0xce, (u8 *)work + 0x95C, 1, 0);
+    Func_080e0524(0x73, ramp, 0, 0);
 
     /* Eight progressively darker clamped copies of the 770-byte ramp. */
     lim = 64;
@@ -334,8 +237,8 @@ void Func_080ea0d8(void *object)
         lim -= 7;
     } while (i != 8);
 
-    Func_080072f0((void *)0x05000000,
-        (s32)Func_08002f40((s32)&Value_00000064), 128, &Value_03001388);
+    ((void (*)(void *, const void *, s32))0x03001388)(
+        (void *)0x05000000, Func_08002f40(0x64), 128);
 
     i = 0;
     do {
@@ -362,7 +265,7 @@ void Func_080ea0d8(void *object)
 
     WORK_S32(0x7780) = 2;
     WORK_S32(0x7784) = 50;
-    *(u16 *)0x0400000C = 0x784;
+    *(volatile u16 *)0x0400000C = 0x784;
 
     span = -1424;
     frame = 0;
@@ -373,7 +276,7 @@ void Func_080ea0d8(void *object)
         ScalePair pair;
 
         if (frame == 143) {
-            Func_080072f0(canvas, 128 << 7, 0x2A2A2A2A, &Value_03000168);
+            ((void (*)(void *, s32, u32))0x03000168)(canvas, 128 << 7, 0x2A2A2A2A);
             Func_080f9010(145);
         }
         if (frame == 80) {
@@ -459,13 +362,13 @@ void Func_080ea0d8(void *object)
             i++;
         } while (i != 64);
 
-        pair = Data_080edad0;
-        place.field_0c = 0;
-        place.y = 0;
+        __builtin_memcpy(pair, Data_080edad0, sizeof(pair));
+        place[3] = 0;
+        place[1] = 0;
         i = 0;
         do {
-            place.x = ((i % 4) << 21) + (152 << 15);
-            place.z = ((i / 4) << 21) + depth;
+            place[0] = ((i % 4) << 21) + (152 << 15);
+            place[2] = ((i / 4) << 21) + depth;
             Func_08009008(WORK_OBJ(i), &place, &pair, 0);
             i++;
         } while (i != 16);
@@ -594,7 +497,7 @@ void Func_080ea0d8(void *object)
     } while (frame != 160
         && (frame <= 4 || (*(s32 *)0x03001B04 & 3) == 0));
 
-    Func_080072f0(canvas, 128 << 7, 0, &Value_03000168);
+    ((void (*)(void *, s32, u32))0x03000168)(canvas, 128 << 7, 0);
 
     i = 0;
     do {
@@ -619,7 +522,7 @@ void Func_080ea0d8(void *object)
     Func_08002dd8(46);
     Func_080ed408(46, 7, 7, 3, 2);
     draw = (DrawRectangleFn)heap[7];
-    Func_080e0524((s32)&Value_00000064, (u8 *)work + (128 << 7), 1, 1);
+    Func_080e0524(0x64, (u8 *)work + (128 << 7), 1, 1);
 
     {
         u8 *p;
@@ -642,15 +545,13 @@ void Func_080ea0d8(void *object)
 
     WORK_S32(0x77B4) = 0;
     WORK_S32(0x77B8) = 0;
-    Func_080b5040(1, (s32)&Value_0000003e, 0);
-    *(u16 *)0x04000020 = (s32)&Value_00000100;
-    *(u32 *)0x04000028 = -15360;
-    *(u16 *)0x0400000C = 0x784;
+    Func_080b5040(1, 0x3e, 0);
+    *(volatile u16 *)0x04000020 = 0x100;
+    *(volatile u32 *)0x04000028 = -15360;
+    *(volatile u16 *)0x0400000C = 0x784;
 
     fill = 0;
-    dma->src = &fill;
-    dma->dst = canvas;
-    dma->ctrl = 0x85001000;
+    Dma_Set(&fill, canvas, 0x85001000, dma);
 
     cx = 60;
     cy = 44;
@@ -662,9 +563,7 @@ void Func_080ea0d8(void *object)
     WORK_S32(0x7784) = 75;
 
     fill = 0;
-    dma->src = &fill;
-    dma->dst = work;
-    dma->ctrl = 0x85000E10;
+    Dma_Set(&fill, work, 0x85000E10, dma);
 
     frame = 0;
     do {
@@ -690,7 +589,7 @@ void Func_080ea0d8(void *object)
                 frame = 150;
                 QUEUE_REGISTER_WRITE(0x80, 0x04000020, 128 << 10);
                 QUEUE_REGISTER_WRITE(0, 0x04000028, 192 << 10);
-                Func_080e0524((s32)&Value_00000070,
+                Func_080e0524(0x70,
                     (u8 *)work + (128 << 7), 1, 0);
             } else if (frame >= 155 && frame <= 213) {
                 frame = 214;
@@ -703,12 +602,10 @@ void Func_080ea0d8(void *object)
             QUEUE_REGISTER_WRITE(0x80, 0x04000020, 128 << 10);
             QUEUE_REGISTER_WRITE(0, 0x04000028, 192 << 10);
             fill = 0;
-            dma->src = &fill;
-            dma->dst = canvas;
-            dma->ctrl = 0x85001000;
-            Func_080e0524((s32)&Value_00000070,
+            Dma_Set(&fill, canvas, 0x85001000, dma);
+            Func_080e0524(0x70,
                 (u8 *)work + (128 << 7), 1, 0);
-            Func_080e0524((s32)&Value_00000065,
+            Func_080e0524(0x65,
                 (u8 *)work + (192 << 7), 0, 0);
         }
 
@@ -726,13 +623,11 @@ void Func_080ea0d8(void *object)
 
         if (frame == 69) {
             fill = 0x3F3F3F3F;
-            dma->src = &fill;
-            dma->dst = canvas;
-            dma->ctrl = 0x85001000;
+            Dma_Set(&fill, canvas, 0x85001000, dma);
         }
 
         if (frame == 70) {
-            Func_080b5038(1, (s32)&Value_0000003e, 7);
+            Func_080b5038(1, 0x3e, 7);
         }
 
         if (frame == 150) {
@@ -742,26 +637,18 @@ void Func_080ea0d8(void *object)
             fill = 0;
             rings = 4;
             squash = 8;
-            dma->src = &fill;
-            dma->dst = work;
-            dma->ctrl = 0x85000E10;
+            Dma_Set(&fill, work, 0x85000E10, dma);
             fill = 0x3F3F3F3F;
-            dma->src = &fill;
-            dma->dst = canvas;
-            dma->ctrl = 0x85001000;
-            Func_080b5040(1, (s32)&Value_00000036, 0);
+            Dma_Set(&fill, canvas, 0x85001000, dma);
+            Func_080b5040(1, 0x36, 0);
         }
 
         if (frame == 214) {
             fill = 0;
-            dma->src = &fill;
-            dma->dst = work;
-            dma->ctrl = 0x85000E10;
+            Dma_Set(&fill, work, 0x85000E10, dma);
             fill = 0x3F3F3F3F;
-            dma->src = &fill;
-            dma->dst = canvas;
-            dma->ctrl = 0x85001000;
-            Func_080b5040(1, (s32)&Value_0000003a, 0);
+            Dma_Set(&fill, canvas, 0x85001000, dma);
+            Func_080b5040(1, 0x3a, 0);
 
             i = 0;
             do {
@@ -777,14 +664,10 @@ void Func_080ea0d8(void *object)
         if (frame == 140 * 2) {
             Func_080d67dc();
             fill = 0;
-            dma->src = &fill;
-            dma->dst = work;
-            dma->ctrl = 0x85000E10;
+            Dma_Set(&fill, work, 0x85000E10, dma);
             fill = 0x01010101;
-            dma->src = &fill;
-            dma->dst = canvas;
-            dma->ctrl = 0x85001000;
-            *(u16 *)0x04000052 = 0x1010;
+            Dma_Set(&fill, canvas, 0x85001000, dma);
+            *(volatile u16 *)0x04000052 = 0x1010;
             *(s32 *)((u8 *)ctrl + 16) = 0;
 
             i = 0;
@@ -834,9 +717,7 @@ void Func_080ea0d8(void *object)
 
         if (frame == 182) {
             fill = 0x3F3F3F3F;
-            dma->src = &fill;
-            dma->dst = canvas;
-            dma->ctrl = 0x85001000;
+            Dma_Set(&fill, canvas, 0x85001000, dma);
         }
 
         if (frame <= 63) {
@@ -1068,9 +949,7 @@ void Func_080ea0d8(void *object)
 
         if (frame == 238) {
             fill = 0x3F3F3F3F;
-            dma->src = &fill;
-            dma->dst = canvas;
-            dma->ctrl = 0x85001000;
+            Dma_Set(&fill, canvas, 0x85001000, dma);
         }
 
         if (frame >= 214 && frame <= 279) {
@@ -1085,10 +964,10 @@ void Func_080ea0d8(void *object)
 
         if (frame > 213) {
             PlaceWork place2;
-            ScaleWork scale;
+            ScalePair scale;
 
-            place2.field_0c = 0;
-            place2.y = 0;
+            place2[3] = 0;
+            place2[1] = 0;
             i = 0;
             do {
                 if (rain[i].field_18 != 0) {
@@ -1098,10 +977,11 @@ void Func_080ea0d8(void *object)
                     if (z <= 2047) {
                         z = 128 << 4;
                     }
-                    scale.field_04 = z;
-                    place2.y = 255 << 16;
-                    place2.x = rain[i].field_00;
-                    place2.z = rain[i].field_04 + (255 << 16);
+                    scale[0] = z;
+                    scale[1] = z;
+                    place2[1] = 255 << 16;
+                    place2[0] = rain[i].field_00;
+                    place2[2] = rain[i].field_04 + (255 << 16);
                     Func_08009008(WORK_OBJ(i), &place2, &scale, 0);
                     rain[i].field_04 -= rain[i].field_10;
                     if (rain[i].field_04 <= 0xFFFFF) {

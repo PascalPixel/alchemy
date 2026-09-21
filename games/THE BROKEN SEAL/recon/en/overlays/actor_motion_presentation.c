@@ -1,15 +1,6 @@
-#include "TYPES.H"
+#include "FIELD_EVENT.H"
 
-struct SceneWork {
-    u8 unknown_000[0x1c0];
-    s32 request;
-    u8 unknown_1c4[4];
-    s32 setup;
-    u8 unknown_1cc[12];
-    u16 step;
-};
-
-extern struct SceneWork *Data_03001ebc;
+extern struct EventWork *Data_03001ebc;
 extern u8 Data_0200e590[];
 extern u8 Data_0200e5cc[];
 extern u8 Data_0200e614[];
@@ -596,8 +587,8 @@ void FieldScene_RunActorMotionPresentation(void)
     script = (s32)Data_0200e590;
     Func_020076f4(0, script);
     Func_02004b66(23, 2, 1);
-    Data_03001ebc->request = none;
-    Data_03001ebc->setup = 32;
+    Data_03001ebc->start_transition = none;
+    Data_03001ebc->transition_frames = 32;
     Func_0200782c();
     Call3(Func_02007722, 5, 0x8000, 0x4000);
     Call3(Func_02007730, 1, 0x8000, 0x4000);
@@ -720,7 +711,7 @@ void FieldScene_RunActorMotionPresentation(void)
     Func_02007b30(20);
     Value2(Func_02007c10, 21, 0);
     if (Func_02007b68(0, 0) == 0) {
-        Data_03001ebc->step += 1;
+        Data_03001ebc->message += 1;
     }
     Func_02007bf4_a(21, 4);
     Func_02007b62(20);
@@ -735,7 +726,7 @@ void FieldScene_RunActorMotionPresentation(void)
     Call3(Func_02007cac, 21, 0x5000, 30);
     Value2(Func_02007c94, 21, 0);
     if (Func_02007bec(0, 0) == 1) {
-        Data_03001ebc->step += 1;
+        Data_03001ebc->message += 1;
     }
     Func_02007bde(20);
     Func_02007cd0(21, 0, 20);
@@ -881,7 +872,7 @@ void FieldScene_RunActorMotionPresentation(void)
     Value2(Func_0200821c, 21, 0);
     clear = 0;
     if (Func_02008176(0, 0) == 1) {
-        Data_03001ebc->step += 1;
+        Data_03001ebc->message += 1;
     }
     Func_02008168(40);
     Func_0200825a(21, 0, 20);

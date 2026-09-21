@@ -59,7 +59,7 @@ void Event_WaitForDisplayField358Clear(void)
     cnt = 0;
     if ((*((s16 *)(((u8 *)work) + 0x358))) != 0)
     {
- do { loop_3: WaitFrames(1); cnt += 1; if (cnt <= 0x12B) { if ((*((s16 *)((p = (u8 *)work) + 0x358))) != 0) { goto loop_3; } } } while (0);
+ SCHEDULING_CHEAT(loop_3: WaitFrames(1); cnt += 1; if (cnt <= 0x12B) { if ((*((s16 *)((p = (u8 *)work) + 0x358))) != 0) { goto loop_3; } });
     }
   }
 }

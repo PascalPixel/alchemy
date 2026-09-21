@@ -4,13 +4,17 @@
 typedef s32 (*KeyCallbackFn)(void);
 extern u8 Data_03001d34;
 extern u8 Data_03001a20[];
+
+/* The scheduler's retained globals (defined in the scheduler unit). */
+#define gSchedulerTaskCount Data_03001d34
+#define gSchedulerTaskTable Data_03001a20
 void Runtime_InvokeCallbacksByKey(s32 arg0)
 {
     s32 key = arg0;
-    u8 *p = Data_03001a20;
+    u8 *p = gSchedulerTaskTable;
     s32 i;
     key = key >> 8;
-    if (Data_03001d34 == 1) {
+    if (gSchedulerTaskCount == 1) {
         i = 0x15;
         p -= 8;
 loop:

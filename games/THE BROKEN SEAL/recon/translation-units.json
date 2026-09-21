@@ -81547,7 +81547,7 @@
     {
       "id": "retained-scene-extended-actor-presentation-3bd",
       "game": "tbs",
-      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/ACTOR_PRESENTATION.C",
+      "source": "games/THE BROKEN SEAL/recon/en/overlays/resource_3bd_c_020013f8.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3bd",
       "absolute_symbols": {
@@ -81748,7 +81748,7 @@
         {
           "address": "0x020013f8",
           "extent": 6220,
-          "state": "exact-c"
+          "state": "retained-assembly"
         }
       ]
     },

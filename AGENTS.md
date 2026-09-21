@@ -485,17 +485,17 @@ proven object views and direct union accesses before considering a global change
 No per-function flags/routes, invented flags, fixed-register C locals, empty
 barriers, forced scheduling, output patches or selected lucky runs. No volatile
 ordinary RAM, dummy/duplicate/overwritten stores or `do { } while (0)` barriers.
-Pascal's explicit cleanup exception on September 20 standardizes the existing
-five `do/while(0)` workarounds as `SCHEDULING_CHEAT(statement)` in TBS
-`INCLUDE/TYPES.H`. Its uses are the camera two-call wrapper in
-ARUTAMIRA_DOU/ACTOR_PRESENTATION, WINDOW/RUNTIME_SET_PARAM_NIBBLE,
-OBJECT/GROUP_STORE_OBJECT_AND_RUN_STEP7, OBJECT/WAIT_TWELVE_FRAMES_THEN_SET_FIELD18,
-and the existing loop in BATTLE/EFFECT/SCHEDULE_RATIO_TRANSITION. This names
+Pascal's explicit cleanup exception on September 20 standardizes the remaining
+three `do/while(0)` workarounds as `SCHEDULING_CHEAT(statement)` in TBS
+`INCLUDE/TYPES.H`. They are OBJECT/GROUP_STORE_OBJECT_AND_RUN_STEP7,
+OBJECT/WAIT_TWELVE_FRAMES_THEN_SET_FIELD18 and the 92-byte wait-loop owner in
+BATTLE/EFFECT/SCHEDULE_RATIO_TRANSITION, covering 208 bytes. This names
 existing debt; it does not prove historical source or authorize more sites.
-Keep the macro expansion unchanged while standardizing; revisit ordinary C
-when resolving these explicit exceptions. The camera owner covers 6,220 bytes;
-the three single-statement owners cover 144 bytes, and the loop belongs to a
-280-byte unit. The separate Data_02009b85 call identity in
+Keep the macro expansion unchanged until ordinary C closes those owners. The
+former WINDOW/RUNTIME_SET_PARAM_NIBBLE site compiles exactly as ordinary C. The
+6,220-byte ARUTAMIRA_DOU camera owner
+is retained assembly with its readable C parked after ordinary C remained two
+halfwords away. The separate Data_02009b85 call identity in
 HAIDIA_SUKURETA/PROGRESS_ACTOR remains a binding-review exception (1,728-byte
 owner), not a reason to run another matching search during this cleanup.
 Withdraw a trick-dependent match, mark its current state as retained assembly,
@@ -516,7 +516,7 @@ silently generalize their exceptions or mistake them for recovered original text
 | --- | --- | --- |
 | `Dma_Set` | TBS `INCLUDE/DMA.H` | Shared inline assembly; 296 fixed-register kick sites recorded in `raw/classification.json`. Revisit its interface without weakening exactness. |
 | `overlay_veneer` | TBS `SRC/SYSTEM/OVERLAY.INC` | Reconstructs fixed linkage stubs under the specific veneer-credit exception. Original macro versus generator remains unknown. |
-| `SCHEDULING_CHEAT` | TBS `INCLUDE/TYPES.H` | Explicit temporary scheduling workaround at the five sites listed above. `Camera_MoveToActorAndWait` uses it for the two-call sequence; historical provenance remains unproven. |
+| `SCHEDULING_CHEAT` | TBS `INCLUDE/TYPES.H` | Explicit temporary scheduling workaround at the three 208-byte owners listed above; historical provenance remains unproven. |
 
 GNU GAS 2.10 assembles compiler output and unit slices, including alignment;
 modern binutils handles retained syntax and linking under the recorded ABI.

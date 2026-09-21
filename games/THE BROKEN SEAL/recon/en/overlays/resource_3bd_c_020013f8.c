@@ -87,9 +87,6 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-#define Camera_MoveToActorAndWait(actor, pan) \
-    SCHEDULING_CHEAT(Func_02003da8((actor), (pan)); Func_02003da0();)
-
 void FieldScene_RunExtendedActorPresentation(void)
 {
     s32 render_work;
@@ -790,7 +787,8 @@ void FieldScene_RunExtendedActorPresentation(void)
         control = 0xc04;
         *(volatile u16 *)0x04000052 = control;
     }
-    Camera_MoveToActorAndWait(0, 1);
+    Func_02003da8(0, 1);
+    Func_02003da0();
     Func_02003ca8(10);
     Func_02003d40(1, 2);
     Func_02003ca8(20);

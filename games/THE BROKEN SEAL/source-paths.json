@@ -13361,8 +13361,7 @@
       "source": "FIELD/TOREBI_MACHI/PROXIMITY.C"
     },
     "resource_3bd:020013f8": {
-      "name": "FieldScene_RunExtendedActorPresentation",
-      "source": "FIELD/ARUTAMIRA_DOU/ACTOR_PRESENTATION.C"
+      "name": "FieldScene_RunExtendedActorPresentation"
     },
     "resource_3bd:02000030": {
       "name": "FixedPoint_Distance",

@@ -3187,10 +3187,10 @@
 <path class="bevel-dark" d="M67.34350406298564 177.89793079412527 H95.70949708629884 V131.2114475159525" fill="none" stroke="#103840" stroke-width="1" vector-effect="non-scaling-stroke"/>
 <g aria-label="3bd: 9,572 bytes · Unidentified, Drafted, Assembly, C · 0x087e3e08" data-node="leaf" data-kind="file" data-bytes="9572" data-address="0x087e3e08" data-source="games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/">
 <title>3bd: 9,572 bytes · Unidentified, Drafted, Assembly, C · 0x087e3e08</title>
-<rect x="69.84350406298564" y="142.60186336685925" width="23.365993023313194" height="0.7689553777969295" style="fill:#d9d9d4"/>
-<rect x="69.84350406298564" y="141.5029232009526" width="23.365993023313194" height="1.0989401659066353" style="fill:#96c8c9"/>
-<rect x="69.84350406298564" y="141.06193435568062" width="23.365993023313194" height="0.4409888452719923" style="fill:#6cafb2"/>
-<rect x="69.84350406298564" y="133.7114475159525" width="23.365993023313194" height="7.350486839728128" style="fill:#326b7d"/>
+<rect x="69.84350406298564" y="142.60085423906688" width="23.365993023313194" height="0.7699645055893138" style="fill:#d9d9d4"/>
+<rect x="69.84350406298564" y="137.83676193122002" width="23.365993023313194" height="4.764092307846855" style="fill:#96c8c9"/>
+<rect x="69.84350406298564" y="137.39577308594804" width="23.365993023313194" height="0.4409888452719923" style="fill:#6cafb2"/>
+<rect x="69.84350406298564" y="133.7114475159525" width="23.365993023313194" height="3.684325569995524" style="fill:#326b7d"/>
 </g>
 <g aria-label="ARUTAMIRA_DOU.BIN: 26,784 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 12 items" data-node="container" data-kind="file" data-bytes="26784" data-source="games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/ARUTAMIRA_DOU.BIN">
 <title>ARUTAMIRA_DOU.BIN: 26,784 bytes · Compressed data · Last asset build: ROM bytes matched; appearance not verified · 12 items</title>

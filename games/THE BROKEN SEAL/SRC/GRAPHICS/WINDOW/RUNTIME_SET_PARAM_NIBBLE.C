@@ -8,5 +8,5 @@ void UiWork_SetParamNibble(s32 param)
   void *work;
   work = *((void **)ADDR_03001E8C);
   val = (s16)(param & 0xF);
- SCHEDULING_CHEAT(*((s16 *)(work + RENDER_PARAM_OFS)) = val;);
+  *((s16 *)(work + RENDER_PARAM_OFS)) = val;
 }

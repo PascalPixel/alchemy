@@ -1,65 +1,9 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+#include "DMA.H"
 #include "video_dma_family.h"
 
-/*
- * Composite animation frame builder at 0x0800aa0c.
- *
- * One object owns up to four animation entries.  Each entry runs a small
- * byte script (opcode + argument pairs) that selects a frame, then a
- * direction table turns the caller's 16-bit heading into a frame offset.
- * When any entry changed frame the object is redrawn: a scratch buffer of
- * width*height bytes is composed from the entries in priority order,
- * optionally outlined, and handed to the IWRAM-resident upload routine
- * that writes it into VRAM at 0x06010000 + tile*32.
- *
- * Provenance notes for the reader:
- *   - The routine copied into heap block 52 is the ROM span
- *     0x08009bb8..0x08009d9c.  The reference computes the DMA word count
- *     from the two addresses at run time, so the extents are kept as two
- *     symbols rather than one folded constant.
- *   - Heap slots live in the table at 0x03001e50 indexed by block id
- *     (Runtime_ReleaseHeapBlock uses the same table); slot 52 is
- *     0x03001e50+208 and slot 53 is 0x03001e50+212.  The reference reaches
- *     slot 52 through the 0x03001e68 cell it already had in a register and
- *     slot 53 through the 0x03001e50 base, so both spellings are kept.
- *   - 0x03000164 and 0x030005c0 are IWRAM routines called through function
- *     pointers, the way games/THE BROKEN SEAL/src/ui/render/clear_vram_block.c calls
- *     0x03000168.  The 0x03000164 call sites here set only r0 and r1, so
- *     the typedef takes destination and length; other owners pass a third
- *     fill value, which is not invented back into this one.
- *   - 0x080072f0 and 0x080072f4 are the __call_via_r3 / __call_via_r4
- *     veneers, not callees; agbcc emits them for the indirect calls above.
- *
- *   - The block size reaches the allocator from the pool, not as an
- *     immediate, so it is spelled as an absolute-address symbol the way
- *     other owners spell resource constants.
- *
- * Uncertain: the meaning of entry kinds 7 and 9..87 (they fall to the
- * "no direction table" default), and whether the entry array is really
- * capped at four - the reference's sort scratch only holds four keys, so
- * a fifth live entry would overrun it.
- *
- * Residual, measured rather than guessed.  The reference frame is 56 bytes:
- * twelve spill words plus the eight-byte sort scratch.  This spelling needs
- * sixty, because GCC strength-reduces the sort's "order[n]" into a pointer
- * induction variable and therefore spills the scratch base as a thirteenth
- * word, where the reference rematerialises "add r5, sp, #48" inside the
- * loop and carries only a byte offset.  That one extra word moves every
- * later sp-relative operand and is the largest single contributor to the
- * differing halfwords.  Three smaller allocation residuals remain: the
- * reference splits the slot-53 address into symbol plus 212 where this
- * folds it into one pool word; it keeps the pooled 32-bit 0xfffffc00 mask
- * where this narrows to movs #252 / lsls #8; and it writes the three DMA
- * registers with one "stmia r3!, {r0, r1, r2}" where three plain stores
- * come out here.  The block structure, both jump tables, every call and
- * every store are in place, so the residual is allocation, not topology.
- *
- * Negative results, so they are not retried: spelling the DMA write as an
- * aggregate assignment to a struct at 0x040000d4 (frame grows to 72 bytes,
- * markedly worse), the while-form insertion sort, giving the scratch array
- * block scope inside the redraw, and writing the tile mask as ~0x3ff.
- */
+/* Builds and uploads one composite animation frame. */
 
 #define Animation_ComposeObjectFrame Func_0800aa0c
 #define Animation_SetWorkEntry Func_0800b9f4
@@ -137,7 +81,6 @@ s32 Animation_ComposeObjectFrame(struct AnimationObject *obj, s16 dir)
 {
     struct AnimationEntry *e;
     struct ComposeContext *ctx;
-    struct DmaChannel *dma;
     void *block;
     u8 *script;
     u8 *buf;
@@ -175,11 +118,9 @@ s32 Animation_ComposeObjectFrame(struct AnimationObject *obj, s16 dir)
     draw = *(DrawFn *)&Data_03001e68_a[184];
     if (draw == 0) {
         block = (void *)Runtime_AllocateHeapBlock(52, (s32)Data_000002c4);
-        dma = (struct DmaChannel *)0x040000d4;
-        dma->source = Data_08009bb8;
-        dma->destination = block;
-        dma->control =
-            (((u32)Data_08009d9c - (u32)Data_08009bb8) >> 2) | 0x84000000;
+        Dma_Set(Data_08009bb8, block,
+                (((u32)Data_08009d9c - (u32)Data_08009bb8) >> 2) | 0x84000000,
+                (volatile u32 *)0x040000d4);
         draw = *(DrawFn *)&Data_03001e68_a[184];
         held = 0;
     }

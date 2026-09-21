@@ -20167,9 +20167,9 @@
 <title>0x08003a7c–0x08003adc: 96 bytes · Unidentified · 0x08003a7c</title>
 <rect x="769.1448106361972" y="256.23267976754704" width="0.8380435778387235" height="1.1029079471093262" style="fill:#d9d9d4"/>
 </g>
-<g aria-label="0x08003e10–0x08003e58: 72 bytes · Unidentified · 0x08003e10" data-node="leaf" data-kind="file" data-bytes="72" data-address="0x08003e10" data-source="games/THE BROKEN SEAL/raw/08003e10.s">
-<title>0x08003e10–0x08003e58: 72 bytes · Unidentified · 0x08003e10</title>
-<rect x="770.6989604200392" y="254.81677471241287" width="1.459037931537103" height="0.5941688341677703" style="fill:#d9d9d4"/>
+<g aria-label="0x08003e10–0x08003e58: 72 bytes · Drafted · 0x08003e10" data-node="leaf" data-kind="file" data-bytes="72" data-address="0x08003e10" data-source="games/THE BROKEN SEAL/raw/08003e10.s">
+<title>0x08003e10–0x08003e58: 72 bytes · Drafted · 0x08003e10</title>
+<rect x="770.6989604200392" y="254.81677471241287" width="1.459037931537103" height="0.5941688341677703" style="fill:#96c8c9"/>
 </g>
 <g aria-label="0x08003e58–0x08003ed4: 124 bytes · Drafted · 0x08003e58" data-node="leaf" data-kind="file" data-bytes="124" data-address="0x08003e58" data-source="games/THE BROKEN SEAL/raw/08003e58.s">
 <title>0x08003e58–0x08003ed4: 124 bytes · Drafted · 0x08003e58</title>
@@ -20783,9 +20783,9 @@
 <title>0x0801e41c–0x0801e71c: 768 bytes · Unidentified · 0x0801e41c</title>
 <rect x="796.9607512025976" y="264.4048538571991" width="2.7559655040187656" height="5.929145472240687" style="fill:#d9d9d4"/>
 </g>
-<g aria-label="0x0801edec–0x0801ee68: 124 bytes · Unidentified · 0x0801edec" data-node="leaf" data-kind="file" data-bytes="124" data-address="0x0801edec" data-source="games/THE BROKEN SEAL/raw/0801edec.s">
-<title>0x0801edec–0x0801ee68: 124 bytes · Unidentified · 0x0801edec</title>
-<rect x="800.4893099929609" y="264.1774471435436" width="3.308590532996933" height="0.5451865726889881" style="fill:#d9d9d4"/>
+<g aria-label="0x0801edec–0x0801ee68: 124 bytes · Drafted · 0x0801edec" data-node="leaf" data-kind="file" data-bytes="124" data-address="0x0801edec" data-source="games/THE BROKEN SEAL/raw/0801edec.s">
+<title>0x0801edec–0x0801ee68: 124 bytes · Drafted · 0x0801edec</title>
+<rect x="800.4893099929609" y="264.1774471435436" width="3.308590532996933" height="0.5451865726889881" style="fill:#96c8c9"/>
 </g>
 <g aria-label="0x0801ef68–0x0801f088: 288 bytes · Unidentified · 0x0801ef68" data-node="leaf" data-kind="file" data-bytes="288" data-address="0x0801ef68" data-source="games/THE BROKEN SEAL/raw/0801ef68.s">
 <title>0x0801ef68–0x0801f088: 288 bytes · Unidentified · 0x0801ef68</title>
@@ -21099,9 +21099,9 @@
 <title>0x0808f52c–0x0808fe38: 2,316 bytes · Drafted · 0x0808f52c</title>
 <rect x="775.9335604682719" y="306.0722932538769" width="11.068557560247045" height="5.503142086077076" style="fill:#96c8c9"/>
 </g>
-<g aria-label="0x0808fe38–0x0808feb0: 120 bytes · Unidentified · 0x0808fe38" data-node="leaf" data-kind="file" data-bytes="120" data-address="0x0808fe38" data-source="games/THE BROKEN SEAL/raw/0808fe38.s">
-<title>0x0808fe38–0x0808feb0: 120 bytes · Unidentified · 0x0808fe38</title>
-<rect x="775.6362190224299" y="312.278093894112" width="4.611131516124052" height="0.4053171083159851" style="fill:#d9d9d4"/>
+<g aria-label="0x0808fe38–0x0808feb0: 120 bytes · Drafted · 0x0808fe38" data-node="leaf" data-kind="file" data-bytes="120" data-address="0x0808fe38" data-source="games/THE BROKEN SEAL/raw/0808fe38.s">
+<title>0x0808fe38–0x0808feb0: 120 bytes · Drafted · 0x0808fe38</title>
+<rect x="775.6362190224299" y="312.278093894112" width="4.611131516124052" height="0.4053171083159851" style="fill:#96c8c9"/>
 </g>
 <g aria-label="0808fefc.s: 708 bytes · Unidentified · 2 items" data-node="container" data-kind="file" data-bytes="708" data-source="games/THE BROKEN SEAL/raw/0808fefc.s">
 <title>0808fefc.s: 708 bytes · Unidentified · 2 items</title>
@@ -21803,9 +21803,9 @@
 <title>0x080b84c0–0x080b8530: 112 bytes · Unidentified · 0x080b84c0</title>
 <rect x="811.7491981626349" y="355.4383249447552" width="3.070510764639039" height="0.5274397905186475" style="fill:#d9d9d4"/>
 </g>
-<g aria-label="0x080b8574–0x080b86ec: 376 bytes · Unidentified · 0x080b8574" data-node="leaf" data-kind="file" data-bytes="376" data-address="0x080b8574" data-source="games/THE BROKEN SEAL/raw/080b8574.s">
-<title>0x080b8574–0x080b86ec: 376 bytes · Unidentified · 0x080b8574</title>
-<rect x="811.9854782673756" y="356.7294846305332" width="2.5979505551576865" height="2.541381450625204" style="fill:#d9d9d4"/>
+<g aria-label="0x080b8574–0x080b86ec: 376 bytes · Drafted · 0x080b8574" data-node="leaf" data-kind="file" data-bytes="376" data-address="0x080b8574" data-source="games/THE BROKEN SEAL/raw/080b8574.s">
+<title>0x080b8574–0x080b86ec: 376 bytes · Drafted · 0x080b8574</title>
+<rect x="811.9854782673756" y="356.7294846305332" width="2.5979505551576865" height="2.541381450625204" style="fill:#96c8c9"/>
 </g>
 <g aria-label="0x080b88d0–0x080b8b48: 632 bytes · Unidentified · 0x080b88d0" data-node="leaf" data-kind="file" data-bytes="632" data-address="0x080b88d0" data-source="games/THE BROKEN SEAL/raw/080b88d0.s">
 <title>0x080b88d0–0x080b8b48: 632 bytes · Unidentified · 0x080b88d0</title>
@@ -21927,9 +21927,9 @@
 <title>0x080c0700–0x080c0774: 116 bytes · Unidentified · 0x080c0700</title>
 <rect x="779.1236607978258" y="371.3306560422186" width="1.1072831353174095" height="0.9536727174958105" style="fill:#d9d9d4"/>
 </g>
-<g aria-label="0x080c0774–0x080c08a8: 308 bytes · Unidentified · 0x080c0774" data-node="leaf" data-kind="file" data-bytes="308" data-address="0x080c0774" data-source="games/THE BROKEN SEAL/raw/080c0774.s">
-<title>0x080c0774–0x080c08a8: 308 bytes · Unidentified · 0x080c0774</title>
-<rect x="779.1468244390778" y="373.2611651184623" width="1.06095585281322" height="4.06433098256396" style="fill:#d9d9d4"/>
+<g aria-label="0x080c0774–0x080c08a8: 308 bytes · Drafted · 0x080c0774" data-node="leaf" data-kind="file" data-bytes="308" data-address="0x080c0774" data-source="games/THE BROKEN SEAL/raw/080c0774.s">
+<title>0x080c0774–0x080c08a8: 308 bytes · Drafted · 0x080c0774</title>
+<rect x="779.1468244390778" y="373.2611651184623" width="1.06095585281322" height="4.06433098256396" style="fill:#96c8c9"/>
 </g>
 <g aria-label="0x080c08ec–0x080c0a24: 312 bytes · Unidentified · 0x080c08ec" data-node="leaf" data-kind="file" data-bytes="312" data-address="0x080c08ec" data-source="games/THE BROKEN SEAL/raw/080c08ec.s">
 <title>0x080c08ec–0x080c0a24: 312 bytes · Unidentified · 0x080c08ec</title>

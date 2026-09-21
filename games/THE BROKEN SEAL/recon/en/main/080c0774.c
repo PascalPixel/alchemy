@@ -1,18 +1,11 @@
 #include "TYPES.H"
+#include "DMA.H"
 
 #define BattlePres_ConfigurePaletteFade Func_080c0774
-
-struct DmaChannel3 {
-    const void *source;
-    void *destination;
-    u32 control;
-};
 
 void BattlePres_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
 {
     s32 *transition = *(s32 **)0x03001f00;
-    volatile struct DmaChannel3 *dma =
-        (volatile struct DmaChannel3 *)0x040000d4;
     u8 *battle;
 
     (void)value;
@@ -37,16 +30,14 @@ void BattlePres_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
         *(u16 *)0x04000208 = interrupt_enable;
     }
 
-    dma->source = (void *)0x05000200;
-    dma->destination = (void *)0x050000a0;
-    dma->control = 0x80000010;
+    Dma_Set((void *)0x05000200, (void *)0x050000a0, 0x80000010,
+            (volatile u32 *)0x040000d4);
     *(u16 *)0x050000bc = *(u16 *)0x050001e8;
 
     if (fade == 0x80) {
         battle = *(u8 **)0x03001e74;
-        dma->source = battle + 0x544;
-        dma->destination = (void *)0x050000c0;
-        dma->control = 0x80000080;
+        Dma_Set(battle + 0x544, (void *)0x050000c0, 0x80000080,
+                (volatile u32 *)0x040000d4);
     } else if (fade != 0) {
         u16 *source;
         u16 *destination = (u16 *)0x050000c0;

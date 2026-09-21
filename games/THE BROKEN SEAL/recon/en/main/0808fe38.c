@@ -1,23 +1,15 @@
 #include "TYPES.H"
+#include "DMA.H"
 
 #define DisplayTransition_InitializeState Func_0808fe38
 
-struct DmaChannelEffect {
-    const void *source;
-    void *destination;
-    u32 control;
-};
-
 void DisplayTransition_InitializeState(s16 mode)
 {
-    volatile struct DmaChannelEffect *dma =
-        (volatile struct DmaChannelEffect *)0x040000d4;
     u8 *pool = Func_080048f4(31, 0x540);
     s32 zero = 0;
 
-    dma->source = &zero;
-    dma->destination = pool;
-    dma->control = 0x85000150;
+    Dma_Set((const void *)&zero, pool, 0x85000150,
+            (volatile u32 *)0x040000d4);
     *(s16 *)(pool + 0x528) = mode;
     *(s16 *)(pool + 0x52a) = 0;
     *(s16 *)(pool + 0x534) = 0x3f3f;

@@ -1,4 +1,5 @@
 #include "video_dma_family.h"
+#include "DMA.H"
 
 #define Runtime_CopyAndCallRoutine Func_08003e10
 
@@ -12,14 +13,11 @@ extern u8 LoadedRuntime_Size[];
 
 void Runtime_CopyAndCallRoutine(void *argument)
 {
-    struct DmaChannel *dma;
     u32 size = (u32)LoadedRuntime_Size;
     LoadedRoutine routine = (LoadedRoutine)Func_08004938(size);
 
-    dma = (struct DmaChannel *)0x040000d4;
-    dma->source = (const void *)0x08001dc8;
-    dma->destination = (void *)routine;
-    dma->control = (size >> 2) | 0x84000000;
+    Dma_Set((const void *)0x08001dc8, (void *)routine,
+            (size >> 2) | 0x84000000, (volatile u32 *)0x040000d4);
     routine(argument);
     Func_08002df0((void *)routine);
 }

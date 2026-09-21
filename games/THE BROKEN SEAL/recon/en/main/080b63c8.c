@@ -1,77 +1,7 @@
-/*
- * Battle entry point.  Allocates the encounter work blocks, plays the opening
- * presentation, then runs the round loop until the encounter resolves and
- * returns the outcome word.
- *
- * Shape recovered from the reference at 0x080b63c8 (1688 bytes):
- *
- *   - Eight tagged blocks come from the bump allocator Func_080048f4.  Four
- *     of the pointers are kept (76-byte scene, 0x82c-byte encounter work,
- *     0x7c8-byte transfer buffer, 32-byte timer) and a fifth 12-byte block is
- *     kept only long enough to be cleared; the 0x280, 0xe00 and 0x600 blocks
- *     are allocated for their side effect alone.
- *   - The 76-byte scene block, the 0x82c-byte encounter work block and the
- *     12-byte block are cleared with three DMA3 fixed-source 32-bit fills
- *     whose word counts are exactly the block sizes.
- *   - The round loop re-arms the frame callback at 0x080b7739, clears the
- *     twenty sixteen-byte action slots at +0x2ec of the work block, rebuilds
- *     them, and replays them one at a time.
- *   - Five exits with distinct return values: the outcome word at +0x538 after
- *     a normal or aborted round, -1 when the player side has no living unit
- *     left, and 0x3e7 when a replayed entry reports 1.
- *
- * VENEER NOTE.  0x080072f0 is not a function: it is the GCC `__call_via_r3`
- * entry of the veneer bank that starts at 0x080072e4.  Both `bl 0x080072f0`
- * sites in this owner are indirect calls through r3 to the relocated IWRAM
- * routine at 0x03000164, and the pool load that reads like dead code is the
- * callee load.  This owner reaches it with two arguments - destination and
- * byte count - so it is spelled here as a typed indirect call, which is the
- * form the boundary rules ask for.  The register the compiler picks, and
- * therefore the veneer entry, is a byte-exact question this draft does not
- * settle; it happens to pick r3 here.
- *
- * DMA3 SPELLING.  Each fill is three ordinary field stores through the shared
- * `struct DmaChannel` of video_dma_family.h.  The reference emits them as one
- * `stmia r3!, {r0, r1, r2}` plus a compensating `subs r3, #12`; this route
- * cannot.  That is the already-investigated DMA3 "lone stmia" residual
- * recorded on Func_08004838 (08004838.c): the approved Thumb backend has no
- * pattern or peephole that groups three independently computed registers into
- * one store-multiple, so no ordinary source spelling reproduces it.  An
- * earlier revision of this draft walked a `u32 *` with post-increment and a
- * compensating `-= 3` to chase the writeback form; that was transcribed
- * assembly, it did not produce the grouped store either, and its claim that
- * struct-field stores broke topology equality is wrong - measured here, the
- * struct form keeps topology=equal and lowers differing halfwords from 790 to
- * 771.  Those three unreproducible foldings are most of the 20-byte shortfall.
- *
- * RESIDUAL (measured, not guessed).  candidate 1668 bytes against reference
- * 1688 (98.8%), topology equal, 360 wrong instructions, 771 differing
- * halfwords.  Every reference `bl` agrees in target and position, and every
- * substituted instruction carries the same mnemonic as its reference
- * counterpart - the differences are operands only.  Control flow, call
- * arguments, access widths, signedness and the pool constants agree.  What is
- * left is register allocation and address-carrier choice: the reference holds
- * the work block in r8 and the acting unit id in sl where this draft holds
- * them the other way round, its return value sits in r7 rather than r5, and it
- * keeps `&work->field_41`, `&work->field_44` and `&work->field_45` alive in
- * r9/[sp,#4]/fp where this draft re-derives them from plain member access.
- * The reference also reserves 68 bytes of stack where this draft needs 20; 48
- * of those bytes are never touched by any reference instruction, so what the
- * original source declared there is not recoverable from the reference alone.
- *
- * UNCERTAIN.  The flag ids passed to Func_080770c0 (0x16a, 0x16c, 0x16e) and
- * the cue and string ids stay numeric because nothing in the corpus names
- * them.  Func_08003f3c and Func_080b5b14 keep address spellings because the
- * project's labels for them (`reset_entry`, `reserved_no_op`) are shared
- * generic names, not unique external symbols.  Work-block fields keep
- * offset-based names except where a neighbouring recovered owner already fixes
- * the meaning: +0x2ec is the action slot array that
- * BattlePres_RunAction consumes as `s16 *`, and halfword 0 of a slot
- * is the acting unit id.  `actions[36]` spans +0x2ec to the next evidenced
- * field; only the first twenty slots are ever cleared or replayed here.
- */
+/* Allocates battle work, plays the opening, and runs rounds to completion. */
 
 #include "video_dma_family.h"
+#include "DMA.H"
 
 struct BattleTimerWork {
     s32 value;                  /* 0x00 */
@@ -138,8 +68,8 @@ struct BattleEncounterWork {
 #define DMA_FILL32 0x85000000
 
 #define Dma3Fill(dma, cell, dest, bytes)                                      \
-    ((cell) = 0, (dma)->source = &(cell), (dma)->destination = (dest),        \
-     (dma)->control = DMA_FILL32 | ((bytes) >> 2))
+    ((cell) = 0, Dma_Set(&(cell), (dest), DMA_FILL32 | ((bytes) >> 2),        \
+                         (volatile u32 *)(dma)))
 
 extern u8 Data_02000240[];
 
@@ -218,11 +148,11 @@ void Runtime_ReleaseHeapBlock10(void);
 
 s32 Battle_RunEncounter(s32 arg)
 {
+    struct DmaChannel *dma;
     struct BattleSceneWork *scene;
     struct BattleSceneVector *cam;
     struct BattleEncounterWork *work;
     struct BattleTimerWork *timer;
-    struct DmaChannel *dma;
     u8 *buf;
     u8 *src;
     u8 *dst;

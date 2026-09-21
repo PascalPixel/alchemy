@@ -9,6 +9,7 @@ extern u8 Data_03001cd4;
 extern u16 Data_03001cf8;
 
 s32 Func_080022ec(s32 numerator, s32 denominator);
+#define Math_Div Func_080022ec
 
 void BlendTransition_Update(void)
 {
@@ -36,7 +37,7 @@ void BlendTransition_Update(void)
             level = Data_03001ca8;
             delta = Data_03001aec - Data_03001ca8;
             step = *remaining;
-            level += Func_080022ec(delta * step, Data_03001c98);
+            level += Math_Div(delta * step, Data_03001c98);
             *(volatile u16 *)0x04000054 = level;
             if (*remaining == 0)
                 Data_03001c98 = 0;

@@ -43,6 +43,7 @@ void Func_080e3958(s32, s32 *);
 void Func_080e396c(s32, s32 *);
 #define EffectPosition_ApplyStepAndYOffset Func_080e396c
 s32 Func_080022ec(s32, s32);
+#define Math_Div Func_080022ec
 s32 Func_080022fc(s32, s32);
 s32 Func_08004458(void);
 #define Random16 Func_08004458
@@ -203,7 +204,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
         }
     }
     if (mode == 5) {
-        pos[0] = Func_080022ec(pos[0], 3);
+        pos[0] = Math_Div(pos[0], 3);
         *(s16 *)0x04000020 = 85;
     }
 
@@ -235,13 +236,13 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
             if (WORK_EFX->side == 1) {
                 ((DrawRectangle)blit[0])(dst,
                     SHEET
-                        + ((Func_080022fc(Func_080022ec(frame, 3), 3) * 9)
+                        + ((Func_080022fc(Math_Div(frame, 3), 3) * 9)
                             << 9),
                     pos[0] - 2, pos[1] - 32, 72, 62);
             } else {
                 ((DrawRectangle)blit[0])(dst,
                     SHEET
-                        + ((Func_080022fc(Func_080022ec(frame, 3), 3) * 9)
+                        + ((Func_080022fc(Math_Div(frame, 3), 3) * 9)
                             << 9),
                     pos[0] - 70, pos[1] - 32, 72, 62);
             }

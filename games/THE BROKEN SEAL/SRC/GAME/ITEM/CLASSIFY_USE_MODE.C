@@ -7,6 +7,7 @@ s32 Func_0808a490(s32);
 void *Func_08077080(s32);
 #define BattleAction_Get Func_08077080
 s32 Func_08077218(s32, s32);
+#define Item_CanOwnerEquip Func_08077218
 
 s32 Item_ClassifyUseMode(s32 owner, s32 itemId)
 {
@@ -27,7 +28,7 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId)
         if (FIELD_AT_OFFSET(itemData, u16, 40) != 0) {
             if (FIELD_AT_OFFSET(itemData, u8, 2) != 0) {
                 if (FIELD_AT_OFFSET(itemData, u8, 12) != 3) {
-                    if (Func_08077218(owner, masked) != 0) {
+                    if (Item_CanOwnerEquip(owner, masked) != 0) {
                         result = 1;
                     }
                 }

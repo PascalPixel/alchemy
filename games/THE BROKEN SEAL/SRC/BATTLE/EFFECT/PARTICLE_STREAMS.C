@@ -88,6 +88,7 @@ void Func_080051d8(s32, s32);
 void Func_080e38b8(void *, s32, s32);
 #define EffectStep_AdvanceWithGravity3D Func_080e38b8
 s32 Func_080022ec(s32, s32);
+#define Math_Div Func_080022ec
 void Func_080e155c(s32, s32);
 #define Camera_ApplyShake Func_080e155c
 s32 Func_080cdbc0(void);
@@ -797,7 +798,7 @@ loop_121:
     var_r7_1551 = (u8 *)0x02010000;
     var_r8_1552 = 0;
     do {
-        if ((Func_080022ec(var_r8_1552, 3) < sp24) && ((s32) (*(s32 *)((u8 *)(var_r7_1551) + (4))) >= 0)) {
+        if ((Math_Div(var_r8_1552, 3) < sp24) && ((s32) (*(s32 *)((u8 *)(var_r7_1551) + (4))) >= 0)) {
             EffectPosition_ApplyBaseAndYOffset(var_r7_1551, sp60);
             temp_r6_1570 = (s32) sp60[0] >> 1;
             sp60[0] = temp_r6_1570;

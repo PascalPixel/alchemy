@@ -11,11 +11,14 @@ struct ShopCursorAnchor *Func_080150c8(
     s32 x,
     s32 y);
 void Func_080b0a20(struct ShopCursor *cursor, s32 target_x, s32 target_y);
+#define ShopCursor_SetPositionImmediate Func_080b0a20
 void Func_080b28d4(s32 message);
+#define UiMessage_ShowResolvedAndWait Func_080b28d4
 void Func_080b010c(void);
 void Func_080b0204(void);
 #define Inn_Cleanup Func_080b0204
 s32 Func_080b280c(void);
+#define Shop_CountUnits Func_080b280c
 void Func_080b2b10(void);
 s32 Func_08015388(s32 prev);
 void UiWindow_Close(s32 window, s32 style);
@@ -59,9 +62,9 @@ s32 Shop_ConfirmAct(s32 unit_id)
         0);
     cursor_anchor->kind = 1;
     cursor_anchor->unknown_00[4] = 0;
-    Func_080b0a20(&shop->cursor, -32, 112);
+    ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
     shop->cursor.anchor = cursor_anchor;
-    Func_080b28d4(0xd21);
+    UiMessage_ShowResolvedAndWait(0xd21);
 
     shop->money_window = UiWindow_CreateFar(16, 11, 12, 4, 2);
     Shop_DrawMoney();
@@ -77,19 +80,19 @@ s32 Shop_ConfirmAct(s32 unit_id)
             s32 message = base;
 
             base = 0;
-            Func_080b28d4(message);
-            if (Func_080b280c() == 0) {
-                Func_080b28d4(message + 1);
+            UiMessage_ShowResolvedAndWait(message);
+            if (Shop_CountUnits() == 0) {
+                UiMessage_ShowResolvedAndWait(message + 1);
             } else {
                 Func_080b2b10();
             }
         }
         shop->party_action = 0;
-        Func_080b0a20(&shop->cursor, -32, 112);
-        Func_080b28d4(0xd22);
+        ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
+        UiMessage_ShowResolvedAndWait(0xd22);
     }
 
-    Func_080b28d4(0xd23);
+    UiMessage_ShowResolvedAndWait(0xd23);
     UiWindow_Close(shop->money_window, 2);
     UiWindow_Close(list_window, 2);
     Inn_Cleanup();

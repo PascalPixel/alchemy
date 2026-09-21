@@ -2,6 +2,7 @@
 #include "GLOBAL_CELLS.H"
 
 s32 Func_0808e5d8(s32);
+#define BattleFx_ExecutePackedAbilityEffect Func_0808e5d8
 void Battle_ResetEffectCounter(void)
 {
   void *runtime;
@@ -15,6 +16,6 @@ void Battle_ResetEffectCounter(void)
   *((s16 *)counter) = zero;
   if ((*((s16 *)(((u8 *)runtime) + 0xCB8))) != 0)
   {
-    Func_0808e5d8(0x2090);
+    BattleFx_ExecutePackedAbilityEffect(0x2090);
   }
 }

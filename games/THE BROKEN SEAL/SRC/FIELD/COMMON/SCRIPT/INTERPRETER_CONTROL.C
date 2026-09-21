@@ -17,6 +17,7 @@ s32 Script_StoreLookupResult(struct ScriptInterpreter *interpreter)
 }
 
 s32 Func_0800ca98(void *);
+#define Object_IsTargetUnset Func_0800ca98
 
 s32 Script_WaitForEvent(struct ScriptInterpreter *interpreter)
 {
@@ -24,7 +25,7 @@ s32 Script_WaitForEvent(struct ScriptInterpreter *interpreter)
         interpreter->delay = 0;
         goto block_3;
     }
-    if (Func_0800ca98(interpreter)!= 0) {
+    if (Object_IsTargetUnset(interpreter)!= 0) {
 block_3:
         interpreter->cursor = (u16)interpreter->cursor + 1;
         return 1;

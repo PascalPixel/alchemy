@@ -50,6 +50,7 @@ void Func_08077050(s32 unit_id, s32 slot);
 void Func_08015120(u32 unit_id, u32 mode);
 void Func_080b04dc(s32 message);
 s32 Func_080b0634(s32 value);
+#define UiMessage_ShowChoice Func_080b0634
 void Func_080b1dec(s32 value, s32 unit_id);
 void Func_080f9010(s32 cue);
 void Func_08015140(void);
@@ -87,7 +88,7 @@ s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
 
     Func_08015120(unit_id, 1);
     Func_080b04dc((s32)&Value_00000ca2);
-    if (Func_080b0634(0) != 0)
+    if (UiMessage_ShowChoice(0) != 0)
         return 0;
 
     Func_08077050(unit_id, slot);

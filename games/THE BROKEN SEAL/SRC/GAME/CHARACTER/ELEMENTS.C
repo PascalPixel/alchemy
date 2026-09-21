@@ -9,6 +9,7 @@ struct OwnerBonusValues {
 };
 
 struct OwnerBonusValues *Func_08078ed8(s32);
+#define Owner_GetRecordStride180 Func_08078ed8
 
 s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4])
 {
@@ -37,7 +38,7 @@ s32 Owner_GetDigitValues(s32 record, const u8 *source, s32 output[4])
 
         if (record <= 7) {
             for (i = 0; i <= 3; i++) {
-                *output += Func_08078ed8(record)->values[144 + i];
+                *output += Owner_GetRecordStride180(record)->values[144 + i];
                 output++;
             }
         }

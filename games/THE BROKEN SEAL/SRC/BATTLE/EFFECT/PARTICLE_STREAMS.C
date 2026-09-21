@@ -66,9 +66,12 @@ s32 Func_0800231c(s32);
 void Func_080049ac(void);
 #define Render_ResetTransformState Func_080049ac
 void Func_08004cb4(void *);
+#define SceneTransform_ApplyPosition Func_08004cb4
 void Func_08004c6c(s32);
 void Func_08004c1c(s32);
+#define SceneTransform_ApplyYaw Func_08004c1c
 void Func_080e3944(const void *, void *);
+#define EffectPosition_ApplyBaseAndYOffset Func_080e3944
 void Func_08002dd8(s32);
 #define Runtime_ReleaseHeapBlock Func_08002dd8
 void Func_080d67dc(void);
@@ -77,7 +80,9 @@ void Func_08009038(s32);
 void Func_080b5118(void);
 void Func_080b50e8(s32);
 void Func_080051d8(s32, s32);
+#define Graphics_PrepareTransferInIwramWork Func_080051d8
 void Func_080e38b8(void *, s32, s32);
+#define EffectStep_AdvanceWithGravity3D Func_080e38b8
 s32 Func_080022ec(s32, s32);
 void Func_080e155c(s32, s32);
 #define Camera_ApplyShake Func_080e155c
@@ -549,9 +554,9 @@ loop_84:
         sp60[1] = 0;
         sp60[2] = 0x02000000;
         Render_ResetTransformState();
-        Func_08004cb4(sp60);
+        SceneTransform_ApplyPosition(sp60);
         Func_08004c6c(0x800);
-        Func_08004c1c(sp10);
+        SceneTransform_ApplyYaw(sp10);
         var_r7_911 = (void *)0x080EEE76;
         var_r8_912 = 0;
         do {
@@ -566,7 +571,7 @@ loop_84:
                 + (s32) ((u32) temp_r3_916 >> 0x1F)) >> 1) << 0x10);
             sp78[2] = (s32) ((((temp_r3_926 >> 0x10)
                 + (s32) ((u32) temp_r3_926 >> 0x1F)) >> 1) << 0x10);
-            Func_080e3944(sp78, sp6C);
+            EffectPosition_ApplyBaseAndYOffset(sp78, sp6C);
             temp_r2_941 = ((s16 *)sp6C)[1];
             sp6C[0] = (s32) (temp_r2_941 + 0x80);
             temp_r3_946 = ((s16 *)sp6C)[3];
@@ -719,12 +724,12 @@ loop_121:
         Func_080b50e8(0x86);
     }
     Render_ResetTransformState();
-    Func_080051d8(temp_r5_1334, temp_r5_1334 + 0xC);
+    Graphics_PrepareTransferInIwramWork(temp_r5_1334, temp_r5_1334 + 0xC);
     var_r7_1383 = (u8 *)0x02010E00;
     var_r8_1386 = 0;
     do {
         if ((s32) (*(s32 *)((u8 *)(var_r7_1383) + (4))) >= 0) {
-            Func_080e3944(var_r7_1383, sp60);
+            EffectPosition_ApplyBaseAndYOffset(var_r7_1383, sp60);
             var_r2_1397 = sp60[2];
             sp60[0] = (s32) ((s32) sp60[0] >> 1);
             if (var_r2_1397 <= 0x9F) {
@@ -748,7 +753,7 @@ loop_121:
                     - ((s32)(temp_r0_1420 + (temp_r0_1420 >> 0x1F)) >> 1),
                 sp60[1] - temp_r0_1420,
                 temp_r0_1420, temp_r5_1422);
-            Func_080e38b8(var_r7_1383, 0x40, 0xFFFFE000);
+            EffectStep_AdvanceWithGravity3D(var_r7_1383, 0x40, 0xFFFFE000);
             if ((s32) (*(s32 *)((u8 *)(var_r7_1383) + (4))) <= 0x140000) {
                 (*(s32 *)((u8 *)(var_r7_1383) + (0))) = 0;
                 (*(s32 *)((u8 *)(var_r7_1383) + (8))) = 0;
@@ -789,7 +794,7 @@ loop_121:
     var_r8_1552 = 0;
     do {
         if ((Func_080022ec(var_r8_1552, 3) < sp24) && ((s32) (*(s32 *)((u8 *)(var_r7_1551) + (4))) >= 0)) {
-            Func_080e3944(var_r7_1551, sp60);
+            EffectPosition_ApplyBaseAndYOffset(var_r7_1551, sp60);
             temp_r6_1570 = (s32) sp60[0] >> 1;
             sp60[0] = temp_r6_1570;
             temp_r2_1572 = (*(u32 *)((u8 *)(var_r7_1551) + (0x18)));
@@ -814,7 +819,7 @@ loop_121:
                 (*(s32 *)((u8 *)(var_r7_1551) + (0x14))) = 0;
                 (*(u32 *)((u8 *)(var_r7_1551) + (0x18))) = 0U;
             } else {
-                Func_080e38b8(var_r7_1551, 0x40, 1);
+                EffectStep_AdvanceWithGravity3D(var_r7_1551, 0x40, 1);
             }
         }
         var_r8_1552 += 1;

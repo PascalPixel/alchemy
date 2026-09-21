@@ -3,6 +3,7 @@
 s32 Func_080b6c08(s32, s16 *);
 #define BattleParty_ListActorIds Func_080b6c08
 void Func_080c0f98(s32, s32);
+#define BattlePres_SetActorRecordMode Func_080c0f98
 
 void BattlePres_ClearAllActorRecordModes(void)
 {
@@ -11,5 +12,5 @@ void BattlePres_ClearAllActorRecordModes(void)
     s32 index;
 
     for (index = 0; index < count; index++)
-        Func_080c0f98(values[index], 0);
+        BattlePres_SetActorRecordMode(values[index], 0);
 }

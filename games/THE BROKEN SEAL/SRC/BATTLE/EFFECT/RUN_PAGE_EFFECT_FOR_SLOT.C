@@ -15,6 +15,7 @@ void Func_080916b0(void);
 #define Battle_Reset Func_080916b0
 void Func_0808c44c(void);
 void Func_0808b8e8(void);
+#define BattleEffect_ClearOutOfBoundsObjects Func_0808b8e8
 void Func_08096140(s32);
 void Func_080965a8(s32);
 void Func_08095dd0(s32);
@@ -23,6 +24,7 @@ void Func_0808b98c(void);
 void Func_08015358(s32, s32, void *);
 void Func_0808c4c0(void);
 void Func_08091750(void);
+#define BattleFx_FinishAction Func_08091750
 
 void BattleFx_RunPageEffectForSlot(s32 slot, s32 page, void *entries)
 {
@@ -42,7 +44,7 @@ void BattleFx_RunPageEffectForSlot(s32 slot, s32 page, void *entries)
         Func_0808c44c();
         if (slot != -1) {
             if (state->mode == 3)
-                Func_0808b8e8();
+                BattleEffect_ClearOutOfBoundsObjects();
 
             if (page == 0)
                 Func_08096140(slot);
@@ -60,6 +62,6 @@ void BattleFx_RunPageEffectForSlot(s32 slot, s32 page, void *entries)
 
         Func_08015358(selection, page, entries);
         Func_0808c4c0();
-        Func_08091750();
+        BattleFx_FinishAction();
     }
 }

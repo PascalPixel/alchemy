@@ -10,6 +10,7 @@ void UiText_DrawQuantity(s32, s32);
 void UiText_ShowMessageAndWait(s32);
 void Func_08015218(void);
 void Func_080bb65c(void);
+#define BattlePresentation_WaitForAdvance Func_080bb65c
 
 void BattleIntro_AnnounceEncounter(s32 enemy_count)
 {
@@ -32,7 +33,7 @@ void BattleIntro_AnnounceEncounter(s32 enemy_count)
             else
                 UiText_ShowMessageAndWait((s32)&Value_00000810);
             announced++;
-            Func_080bb65c();
+            BattlePresentation_WaitForAdvance();
         } while (announced != enemy_count);
     }
 
@@ -41,11 +42,11 @@ void BattleIntro_AnnounceEncounter(s32 enemy_count)
         Func_08015118();
         UiText_DrawQuantity(0, 1);
         UiText_ShowMessageAndWait((s32)&Value_00000812);
-        Func_080bb65c();
+        BattlePresentation_WaitForAdvance();
     } else if (battle_state[69] == BATTLE_ENCOUNTER_ENEMIES_FIRST) {
         Func_08015118();
         UiText_DrawQuantity(0, 1);
         UiText_ShowMessageAndWait((s32)&Value_00000813);
-        Func_080bb65c();
+        BattlePresentation_WaitForAdvance();
     }
 }

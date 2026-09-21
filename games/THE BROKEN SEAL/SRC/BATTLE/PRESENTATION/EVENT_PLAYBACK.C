@@ -88,12 +88,16 @@ void Func_08015130(s32 mode);
 void Func_080151d0(void);
 void Func_080152b8(u16 *selection);
 void Func_080b78e4(s32 actor_id, void *slot);
+#define BattleUnit_BuildStatusFlags Func_080b78e4
 s32 Func_080b6cd0(s32 actor_id);
+#define BattleMotion_GetSlotField14 Func_080b6cd0
 void Func_080b7aac(s32 actor_id);
+#define BattlePres_SetActorModeAndAction Func_080b7aac
 s32 Func_080b7e60(s32 actor_id);
 void Func_080ba918(void *object, s32 value);
 void Func_080bac6c(s32 actor_id);
 void Func_080bb588(s32 actor_id);
+#define BattleActor_ResetRuntimeFields Func_080bb588
 void Func_080bb8e8(s32 actor_id);
 void Func_080bb928(struct BattlePlaybackState *state, s32 value);
 void Func_080c24f0(s32 actor_id, s32 mode);
@@ -235,7 +239,7 @@ void BattleEvent_Playback(void)
                         Func_080c24f0(
                             state->events.operands[event_index],
                             state->actor_mode);
-                        Func_080bb588(state->actor_id);
+                        BattleActor_ResetRuntimeFields(state->actor_id);
                         unit = BattleUnit_Get(state->actor_id);
                         record_index = 0;
                         while ((record = GetMotionRecord(
@@ -261,7 +265,7 @@ void BattleEvent_Playback(void)
                     {
                         struct BattleObjectSlot *slot;
 
-                        Func_080b78e4(
+                        BattleUnit_BuildStatusFlags(
                             state->events.operands[event_index],
                             GetBattleObjectSlot(
                                 state->events.operands[event_index]));
@@ -269,9 +273,9 @@ void BattleEvent_Playback(void)
                             state->events.operands[event_index]);
                         Func_080ba918(
                             slot->object,
-                            Func_080b6cd0(
+                            BattleMotion_GetSlotField14(
                                 state->events.operands[event_index]));
-                        Func_080b7aac(
+                        BattlePres_SetActorModeAndAction(
                             state->events.operands[event_index]);
                         break;
                     }
@@ -361,7 +365,7 @@ void BattleEvent_Playback(void)
                     slot = GetBattleObjectSlot(state->actor_id);
                     Func_080ba918(
                         slot->object,
-                        Func_080b6cd0(state->actor_id));
+                        BattleMotion_GetSlotField14(state->actor_id));
                 } else {
                     struct BattleObjectSlot *slot;
 

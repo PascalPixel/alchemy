@@ -11,9 +11,11 @@ void Func_080b2da8(s32 unit_id, s32 mode);
 void Func_080b2e30(s32 enabled, s32 selected);
 void Func_080b2ed8(s32 target, s32 selection);
 void Func_080b28d4(s32 message);
+#define UiMessage_ShowResolvedAndWait Func_080b28d4
 void Func_080b2928(s32 message);
 s32 Func_080b0664(s32 arg0);
 s32 Func_080b280c(void);
+#define Shop_CountUnits Func_080b280c
 void Func_080b3050(s32 member);
 s32 Func_08077230(s32 amount);
 void Func_080a1028(s32, s32, s32, s32, s32);
@@ -44,7 +46,7 @@ s32 Sanctum_RunPartyService(void)
     price_window = 0;
     redraw = 1;
     kind = shop->party_action;
-    Func_080b28d4(0xd26);
+    UiMessage_ShowResolvedAndWait(0xd26);
 
     list_window = UiWindow_CreateFar(1, 12, 13, 3, 2);
     shop->cursor.anchor->kind = 4;
@@ -66,7 +68,7 @@ s32 Sanctum_RunPartyService(void)
     for (;;) {
         if (retry != 0) {
             retry = 0;
-            Func_080b28d4(0xd26);
+            UiMessage_ShowResolvedAndWait(0xd26);
             redraw = 1;
             selection = 0;
             while (selection < shop->party_member_count) {
@@ -99,7 +101,7 @@ s32 Sanctum_RunPartyService(void)
             UiText_DrawQuantity(unit_id, 1);
             UiText_DrawQuantity(price, 5);
             message = (s32)&Value_00000d27;
-            Func_080b28d4(message);
+            UiMessage_ShowResolvedAndWait(message);
             if (Func_080b0664(0) != 0) {
                 Func_080b2928(message + 2);
                 retry = 1;
@@ -112,15 +114,15 @@ s32 Sanctum_RunPartyService(void)
                 continue;
             }
             UiText_DrawQuantity(unit_id, 1);
-            Func_080b28d4(message + 3);
+            UiMessage_ShowResolvedAndWait(message + 3);
             UiWork_FinalizePending();
             Func_080b2da8(unit_id, kind);
             Func_080b3050(selection);
             Func_08077230(-price);
             Shop_DrawMoney();
             UiText_DrawQuantity(unit_id, 1);
-            Func_080b28d4(message + 4);
-            if (Func_080b280c() != 0) {
+            UiMessage_ShowResolvedAndWait(message + 4);
+            if (Shop_CountUnits() != 0) {
                 retry = 1;
                 continue;
             }

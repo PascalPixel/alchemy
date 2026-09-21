@@ -15,6 +15,7 @@ void Func_08009080(void *object, s32 mode);
 #define Object_SetMode Func_08009080
 void WaitFrames(s32 frames);
 void Func_0809748c(void);
+#define BattleFx_PrepareBufferInterpolation Func_0809748c
 void UpdateRisingParticleBurst(void *object);
 
 void BattleFx_RunItemBreakSequence(void)
@@ -35,6 +36,6 @@ void BattleFx_RunItemBreakSequence(void)
         Object_SetMode(object, 4);
         WaitFrames(30);
     }
-    Func_0809748c();
+    BattleFx_PrepareBufferInterpolation();
     UpdateRisingParticleBurst(object);
 }

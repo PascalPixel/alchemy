@@ -33,6 +33,7 @@ void Func_08015120(s32, s32); void Func_08015040(s32, s32);
 s32 Func_08091d84(s32); void Func_08015140(void);
 /* Takes an s32 to match the definition of the packed effect argument. */
 s32 Func_0808e5d8(s32);
+#define BattleFx_ExecutePackedAbilityEffect Func_0808e5d8
 void Func_08077120(s32, s32);
 /*
  * Matches the shared prototype: s32-returning, with a void * out parameter.
@@ -40,14 +41,15 @@ void Func_08077120(s32, s32);
  */
 s32 Func_0808e4b4(s32, s32, void *);
 #define BattleFx_FindMatchingEvent Func_0808e4b4
-void Func_080770c8(s32); s32 Func_0808df1c(s32, s32); void Func_0808b8e8(void);
-void Func_08096fb0(s32, s32); void Func_080970f8(s32, s32); void Func_0809728c(void);
+void Func_080770c8(s32); s32 BattleEffect_SelectNearbyTargetObject(s32, s32); void BattleEffect_ClearOutOfBoundsObjects(void);
+void Func_08096fb0(s32, s32); void BattleFx_SetupObjectPair(s32, s32); void Func_0809728c(void);
 /*
  * Returns s32 to match the shared prototype, although every call site
  * discards the value.
  */
 s32 Func_08096b28(void *, s32, s32); void Func_08096960(void); void Func_08096810(void);
-void Func_08097174(void); void Func_08096ab0(void); void Func_08097194(void); void Func_0808b98c(void);
+#define BattleFx_RunEventAction Func_08096b28
+void Func_08097174(void); void Func_08096ab0(void); void BattleEffect_CleanupSceneObjects(void); void Func_0808b98c(void);
 
 s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
 {
@@ -98,7 +100,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
         runtime->result_code = 999;
         specialResult = 1;
     }
-    if (encodedAction & 0x2000) return Func_0808e5d8(encodedAction);
+    if (encodedAction & 0x2000) return BattleFx_ExecutePackedAbilityEffect(encodedAction);
 
     if (actor <= 7) {
         cost = ((struct BattleActionDefinition *)(void *)Func_08077080(actionId))->pp_cost;
@@ -116,23 +118,23 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
     targetId = -1;
     Func_080770c8(0x140); Func_080770c8(0x141);
     if (primary || secondary || tertiary) {
-        targetId = Func_0808df1c(Data_02000240.object_id, targetMode);
+        targetId = BattleEffect_SelectNearbyTargetObject(Data_02000240.object_id, targetMode);
         if (secondary && (secondary->flags & 0x400)) {
             Func_080770d0(0x140); Func_080770d0(0x141);
         }
     } else Func_080770d0(0x141);
 
-    if (runtime->battle_mode == 3) Func_0808b8e8();
+    if (runtime->battle_mode == 3) BattleEffect_ClearOutOfBoundsObjects();
     Func_08096fb0(actionId, 0); runtime->resolving_action = 1;
-    Func_080970f8(Data_02000240.object_id, targetId); Func_0809728c();
-    Func_08096b28(primary, actor, targetId);
+    BattleFx_SetupObjectPair(Data_02000240.object_id, targetId); Func_0809728c();
+    BattleFx_RunEventAction(primary, actor, targetId);
     if (Func_080770c0(0x140)) {
         if (Func_080770c0(0x141)) Func_08096960(); else Func_08096810();
     }
-    Func_08097174(); Func_08096b28(secondary, actor, targetId);
+    Func_08097174(); BattleFx_RunEventAction(secondary, actor, targetId);
     if (Func_080770c0(0x140)) Func_08096ab0();
     Func_080770d0(0x140); Func_080770d0(0x141); runtime->resolving_action = 0;
-    Func_08097194();
+    BattleEffect_CleanupSceneObjects();
     if (runtime->battle_mode == 3) Func_0808b98c();
     return 0;
 }

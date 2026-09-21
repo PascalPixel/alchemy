@@ -13,6 +13,7 @@ s32 Runtime_AllocateHeapBlock(s32 kind, s32 size);
 void Func_08015408(s32 x, s32 y, s32 width, s32 height);
 void WaitFrames(s32 frames);
 void Func_080a1090(s32 unused);
+#define UiWindow_InitializeWork Func_080a1090
 s32 Func_08077158(const u16 *ids);
 void Func_080a3354(s32, s32, s32, s32);
 s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
@@ -48,7 +49,7 @@ s32 Menu_OpenConfirmPrompt(void)
     Data_03001e68->suspended = 1;
     Func_08015408(0, 0, 30, 20);
     WaitFrames(1);
-    Func_080a1090(0);
+    UiWindow_InitializeWork(0);
     FIELD(state, u8, 0x219) = (u8)Func_08077158((const u16 *)((u8 *)state + 0x208));
     Func_080a3354(0, 3, 0, 7);
     FIELD(state, s32, 0x10c) = UiWindow_CreateFar(13, 0, 17, 3, 2);

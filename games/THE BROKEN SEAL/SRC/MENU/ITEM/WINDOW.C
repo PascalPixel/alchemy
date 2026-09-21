@@ -8,6 +8,7 @@ extern u8 Data_080af228;
 
 void UiNumber_DrawAt(s32, s32, s32, s32, s32);
 void Func_08015098(u8 *, s32, s32, s32);
+#define UiText_DrawStringInWindowFar Func_08015098
 
 void ItemMenu_DrawStat(
     s32 delta, s32 unused, s32 window, s32 x, s32 y)
@@ -32,10 +33,10 @@ void ItemMenu_DrawStat(
         digits = 3;
     }
     if (delta > 0) {
-        Func_08015098(
+        UiText_DrawStringInWindowFar(
             &InventoryMenu_IncreaseGlyph, window, x - digits * 8 + 16, y);
     } else {
-        Func_08015098(
+        UiText_DrawStringInWindowFar(
             &InventoryMenu_DecreaseGlyph, window, x - digits * 8 + 16, y);
     }
 }

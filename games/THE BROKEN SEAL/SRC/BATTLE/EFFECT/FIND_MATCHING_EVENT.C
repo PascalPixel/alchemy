@@ -32,7 +32,7 @@ s32 BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result)
     struct BattleEffectEventRecord *event = runtime->events;
     s32 reference = ((struct BattleEffectValueRecord *)Func_0808ba1c(
         Data_02000240.object_id))->value;
-    s32 selected = Func_0808df1c(Data_02000240.object_id, group);
+    s32 selected = BattleEffect_SelectNearbyTargetObject(Data_02000240.object_id, group);
     s32 alternate;
     s32 ignore_flags = 0;
 
@@ -47,7 +47,7 @@ s32 BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result)
         s32 low_value = event->metadata & 0xff;
 
         if ((event->flags & 0x0f) == 5 &&
-            Func_0808d428(event->action_id) != 0 &&
+            GameFlag_IsConditionActive(event->action_id) != 0 &&
             (has_reference == 0 ||
              (u16)(high_value - reference + 0x17ff) <= 0x2ffe) &&
             ((struct BattleEffectCharacter *)(void *)Func_08077080(

@@ -17,7 +17,7 @@ s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source)
         return 0;
     if (entry->size > 16) {
         if (entry->size != size) {
-            Func_08003f3c(slot);
+            Resource_ResetEntry(slot);
             offset = Func_08003e58(slot, size);
         } else {
             offset = entry->offset;

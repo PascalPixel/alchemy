@@ -15,6 +15,7 @@ struct State080a8034 {
 };
 
 s32 Func_080a1814(void *);
+#define UiMenu_CreateCursor Func_080a1814
 s32 InitializeEntryObjects(s32, s32, s32, s32, s32);
 
 void Menu_InitSelectorCursorAndEntries(void)
@@ -22,7 +23,7 @@ void Menu_InitSelectorCursorAndEntries(void)
     struct State080a8034 *state;
 
     state = *(struct State080a8034 **)ADDR_03001F2C;
-    InitializeEntryObjects(Func_080a1814(state), 2, 2, 8, 0);
+    InitializeEntryObjects(UiMenu_CreateCursor(state), 2, 2, 8, 0);
     state->field_28 = 0;
     state->field_24 = 0;
     state->field_2c = 0;

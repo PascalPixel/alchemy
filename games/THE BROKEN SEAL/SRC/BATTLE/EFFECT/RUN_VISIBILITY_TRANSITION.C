@@ -3,6 +3,7 @@
 
 s32 WaitFrames(s32);
 s32 Func_0800430c(void);
+#define Scheduler_EnableUnmaskedOverlayCallbacks Func_0800430c
 s32 Func_080043e0(void);
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 void Func_08091660(void);
@@ -14,7 +15,7 @@ void BattleFx_RunVisibilityTransition(void)
 {
   if ((*(s16 *)(((u8 *)Runtime_AllocateBlock(0x1B, 0xCCC)) + 0x19E)) == 3)
   {
-    Func_0800430c();
+    Scheduler_EnableUnmaskedOverlayCallbacks();
     Func_0809c314();
     Battle_InitializeRenderObject();
     Func_080936a0(0x9D89, 6);

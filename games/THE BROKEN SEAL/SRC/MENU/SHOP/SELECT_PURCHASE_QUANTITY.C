@@ -10,6 +10,7 @@
 
 extern u8 Value_00000ca0;
 extern void Func_080b04dc(s32);
+#define UiMessage_ShowAndWait Func_080b04dc
 extern s32 Item_FindSlot(s32, s32);
 extern s32 Func_080022f4(s32, s32);
 extern s32 Ability_GetMaximum(s32, s32);
@@ -31,7 +32,7 @@ s32 Shop_SelBuyNum(s32 unit_id, s32 item_id)
     item = Item_Get(item_id);
     result = 1;
     if (item->flags & 0x10) {
-        Func_080b04dc((s32)&Value_00000ca0);
+        UiMessage_ShowAndWait((s32)&Value_00000ca0);
         slot = Item_FindSlot(unit_id, item_id);
         if (slot != -1) {
             quantity = (unit->inventory[slot] >> 11) + 1;

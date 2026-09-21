@@ -14,7 +14,7 @@ void BattleEv_RunWait(s32 action)
     if (action <= 7) {
         s32 masked_action = action & 0x0fff;
 
-        if (Func_0808d394(masked_action) == 0) {
+        if (BattleAction_FindDescriptor(masked_action) == 0) {
             resolved_action = masked_action;
         }
     }

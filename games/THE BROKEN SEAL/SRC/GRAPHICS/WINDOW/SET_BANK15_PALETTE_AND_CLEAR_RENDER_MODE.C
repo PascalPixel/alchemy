@@ -4,6 +4,7 @@
 
 extern void ScheduleCallback(s32);
 extern void Func_08097868(void);
+#define BattleFx_ArmBg0HBlankDma Func_08097868
 extern s32 Func_08015360(s32, s32);
 extern u8 Data_02000240[];
 

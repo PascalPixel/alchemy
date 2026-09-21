@@ -14,6 +14,7 @@ void Func_0801776c(s32, s32);
 #define UiText_ShowPositionedMessageAndWait Func_0801776c
 s32 Func_08020244(s16, s32);
 s32 Func_08005a78(s32, void *);
+#define SaveState_ReadRecordPayload Func_08005a78
 
 extern char Value_0000000a;
 extern char Value_0000000c;
@@ -42,9 +43,9 @@ s32 SaveState_LoadRecordIntoWork(s32 arg)
         } else {
             void *base = &Data_02000000;
 
-            err = Func_08005a78(value, base);
+            err = SaveState_ReadRecordPayload(value, base);
             base = (char *)base + 0x1000;
-            err |= Func_08005a78(value + 3, base);
+            err |= SaveState_ReadRecordPayload(value + 3, base);
             if (err != 0) {
                 UiText_ShowPositionedMessageAndWait((s32)&Value_0000000c, 1);
                 ret = -2;

@@ -2,6 +2,7 @@
 #include "GLOBAL_CELLS.H"
 
 void Func_08004620(s32);
+#define Text_FormatSignedDecimalToWork Func_08004620
 
 void Text_DrawSignedDecimalRightAligned(s32 value, s32 width)
 {
@@ -11,6 +12,6 @@ void Text_DrawSignedDecimalRightAligned(s32 value, s32 width)
     if ((u32)(count - 1) > 9U) {
         count = 0xA;
     }
-    Func_08004620(value);
-    Func_080046c4((const u8 *)(ADDR_03001F7A - count));
+    Text_FormatSignedDecimalToWork(value);
+    Runtime_WriteDebugTextTiles((const u8 *)(ADDR_03001F7A - count));
 }

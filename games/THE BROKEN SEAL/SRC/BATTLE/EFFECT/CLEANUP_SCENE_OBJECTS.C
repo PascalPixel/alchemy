@@ -46,7 +46,9 @@ void WaitFrames(s32 frames);
 void Func_08004278(u32 callback);
 #define Scheduler_RemoveCallback Func_08004278
 void Func_08003f3c(s32 handle);
+#define Resource_ResetEntry Func_08003f3c
 void Func_0809202c(void);
+#define BattleFx_PlayQueuedSound Func_0809202c
 void Func_08002dd8(s32 asset_id);
 #define Runtime_ReleaseHeapBlock Func_08002dd8
 
@@ -105,13 +107,13 @@ void BattleEffect_CleanupSceneObjects(void)
 
         runtime->teardown_state = 0;
         Scheduler_RemoveCallback(0x08096f8d);
-        Func_08003f3c(scene->audio_handle);
+        Resource_ResetEntry(scene->audio_handle);
         position->x = scene->x;
         position->y = scene->y;
         position->z = scene->z;
         if (scene->scene_mode != 8)
             runtime->restore_requested = 1;
-        Func_0809202c();
+        BattleFx_PlayQueuedSound();
         Runtime_ReleaseHeapBlock(0x38);
     }
 }

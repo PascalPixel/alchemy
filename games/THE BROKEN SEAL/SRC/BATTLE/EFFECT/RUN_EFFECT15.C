@@ -136,6 +136,7 @@ void Func_080030f8(s32);
 void Func_08092adc(s32, s32, s32);
 #define ObjectMotion_ArmCallback Func_08092adc
 void Func_080f9010(s32);
+#define Audio_PlayCue Func_080f9010
 void Func_08009080(void *, s32);
 #define Object_SetMode Func_08009080
 void Func_08009240(void *, s32);
@@ -169,10 +170,10 @@ void BattleFx_RunEffect15(void)
     ObjectMotion_ArmCallback(*(s16 *)(scene + 24), 0x4000, 0);
     WaitFrames(30);
     *(void (**)(void))(main_object + 108) = Func_08096b88;
-    Func_080f9010(0x83);
+    Audio_PlayCue(0x83);
     Object_SetMode(main_object, 28);
     WaitFrames(40);
-    Func_080f9010(0xdc);
+    Audio_PlayCue(0xdc);
     Func_08009240(main_object, 0);
     Object_SetMode(main_object, 3);
     *(void (**)(void))(main_object + 108) = (void (*)(void))BattleFx_UpdateSpinAngle;

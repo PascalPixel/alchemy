@@ -26,7 +26,7 @@ extern const s32 Data_08073854[4];
 struct RuntimeObject *Func_08009030(s32);
 void Object_InitializeMode(struct RuntimeObject *, s32);
 void ScheduleCallbackAfterFrames(s32, s32);
-void Func_080200cc(void);
+void Menu_UpdateSecondObjectRowPositions(void);
 
 void Menu_SpawnFourObjectsAtOrigin(struct PlacementOrigin *origin, s32 x, s32 y)
 {
@@ -48,7 +48,7 @@ void Menu_SpawnFourObjectsAtOrigin(struct PlacementOrigin *origin, s32 x, s32 y)
             state->y[i] = (origin->y + y) * 8 + 0x10;
         }
 
-        ScheduleCallbackAfterFrames((s32)Func_080200cc, 200 << 4);
+        ScheduleCallbackAfterFrames((s32)Menu_UpdateSecondObjectRowPositions, 200 << 4);
     }
 }
 
@@ -63,7 +63,7 @@ void Menu_ClearSecondObjectRowAndScheduleUpdate(void)
     s32 zero;
     s32 count;
 
-    ScheduleCallback((s32)Func_080200cc);
+    ScheduleCallback((s32)Menu_UpdateSecondObjectRowPositions);
     zero = 0;
     offset *= 4;
     count = 3;

@@ -19,7 +19,9 @@ u32 SaveState_FindFreeSummarySlot(void)
 
 
 s32 Func_080056cc(void);
+#define SaveState_InitializeWorkspace Func_080056cc
 s32 Func_08005c68(void);
+#define SaveState_LoadSummaryRecords Func_08005c68
 
 s32 SaveState_CountRecordsExcludingFlagged(s32 flag)
 {
@@ -27,10 +29,10 @@ s32 SaveState_CountRecordsExcludingFlagged(s32 flag)
     s32 cnt;
     s8 *p;
 
-    if (Func_080056cc() != 0) {
+    if (SaveState_InitializeWorkspace() != 0) {
         cnt = -9;
     } else {
-        cnt = Func_08005c68();
+        cnt = SaveState_LoadSummaryRecords();
         if (flag != 0) {
             p = (s8 *)(*(s32 *)ADDR_03001F1C + 0x1070);
             for (i = 0; i < 3; i++) {
@@ -39,7 +41,7 @@ s32 SaveState_CountRecordsExcludingFlagged(s32 flag)
             }
         }
     }
-    Func_08005cf8();
+    SaveState_ReleaseWorkspace();
     return cnt;
 }
 
@@ -52,14 +54,14 @@ s32 SaveState_ScanRecordFlags(void)
     s32 cnt;
     s32 ret;
 
-    err = Func_080056cc();
+    err = SaveState_InitializeWorkspace();
     cnt = 0;
     ret = -9;
     if (err == 0) {
         s32 i;
         s8 *p;
 
-        ret = Func_08005c68();
+        ret = SaveState_LoadSummaryRecords();
         p = (s8 *)(*(s32 *)ADDR_03001F1C + 0x1070);
         *(s16 *)0x02002010 = 0;
         Data_0200200c = 0;
@@ -77,7 +79,7 @@ s32 SaveState_ScanRecordFlags(void)
             *(s16 *)0x02002010 = 0;
         }
     }
-    Func_08005cf8();
+    SaveState_ReleaseWorkspace();
     if (ret != 0 && cnt == ret) {
         return ret + 100;
     }

@@ -7,6 +7,7 @@ void *Func_0808ba1c(u32);
 void Func_080f9010(s32);
 #define Audio_PlayCue Func_080f9010
 void Func_08009080(void *, s32);
+#define Object_SetMode Func_08009080
 void Func_080030f8(s32);
 #define WaitFrames Func_080030f8
 void Func_08099738(void);
@@ -31,7 +32,7 @@ void BattleFx_RunFlashingCallbackSequence(void)
     void (*callback)(void);
 
     Audio_PlayCue(0x82);
-    Func_08009080(object, 0);
+    Object_SetMode(object, 0);
     *(void **)(object + 108) = 0;
     cycle = 0;
     do {

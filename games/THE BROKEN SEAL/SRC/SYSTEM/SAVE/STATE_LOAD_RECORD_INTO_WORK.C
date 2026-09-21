@@ -7,8 +7,11 @@ struct State_080208e4 {
 };
 
 s32 Func_080056cc(void);
+#define SaveState_InitializeWorkspace Func_080056cc
 void Func_08005c68(void);
+#define SaveState_LoadSummaryRecords Func_08005c68
 void Func_0801776c(s32, s32);
+#define UiText_ShowPositionedMessageAndWait Func_0801776c
 s32 Func_08020244(s16, s32);
 s32 Func_08005a78(s32, void *);
 
@@ -24,15 +27,15 @@ extern s16 Data_03001d24;
 s32 SaveState_LoadRecordIntoWork(s32 arg)
 {
     s32 ret = 0;
-    s32 err = Func_080056cc();
+    s32 err = SaveState_InitializeWorkspace();
 
     if (err != 0) {
-        Func_0801776c((s32)&Value_0000000a, 1);
+        UiText_ShowPositionedMessageAndWait((s32)&Value_0000000a, 1);
         ret = -9;
     } else {
         s32 value;
 
-        Func_08005c68();
+        SaveState_LoadSummaryRecords();
         value = Func_08020244(Data_02002004, arg);
         if (value == -1) {
             ret = value;
@@ -43,7 +46,7 @@ s32 SaveState_LoadRecordIntoWork(s32 arg)
             base = (char *)base + 0x1000;
             err |= Func_08005a78(value + 3, base);
             if (err != 0) {
-                Func_0801776c((s32)&Value_0000000c, 1);
+                UiText_ShowPositionedMessageAndWait((s32)&Value_0000000c, 1);
                 ret = -2;
             } else {
                 Data_03001c9c = Data_02000240.value;
@@ -53,6 +56,6 @@ s32 SaveState_LoadRecordIntoWork(s32 arg)
             }
         }
     }
-    Func_08005cf8();
+    SaveState_ReleaseWorkspace();
     return ret;
 }

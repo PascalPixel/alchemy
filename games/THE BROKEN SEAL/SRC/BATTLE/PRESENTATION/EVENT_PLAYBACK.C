@@ -79,6 +79,7 @@ s32 Func_080022fc(s32 numerator, s32 denominator);
 s32 Func_08002322(s32 angle);
 void Func_08009020(void *record, s32 animation);
 void Func_08009080(void *object, s32 animation);
+#define Object_SetMode Func_08009080
 void Func_080090f8(void *record, s32 frame);
 s32 Func_08015048(void);
 void Func_08015118(void);
@@ -219,7 +220,7 @@ void BattleEvent_Playback(void)
                         state->actor_id = state->events.operands[event_index];
                         slot = GetBattleObjectSlot(
                             state->events.operands[event_index]);
-                        Func_08009080(slot->object, 5);
+                        Object_SetMode(slot->object, 5);
                         state->phase = 10;
                         state->timer = 0;
                         break;

@@ -12,7 +12,7 @@ s32 Func_08005920(s32 record_id, void *source)
     zero = 0;
     START_DMA(&zero, &work->slot, 0x85000400);
     WAIT_DMA();
-    current = Func_08005b24(record_id);
+    current = SaveState_FindLatestSlot(record_id);
     slot = Func_08005810(record_id);
     if (slot > 15)
         return 1;

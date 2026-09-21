@@ -6,7 +6,7 @@ u32 Func_08005a78(s32 record_id, void *destination)
     u32 index;
 
     work = SAVE_WORKSPACE;
-    index = Func_08005b24(record_id);
+    index = SaveState_FindLatestSlot(record_id);
     if (index > 15)
         return 1;
     Func_080058ac(index);

@@ -31,7 +31,9 @@ void Func_080cd594(s32);
 s32 Func_080ed408(s32, s32, s32, s32, s32);
 void BattleFx_FetchRectangleBlitters(s32, u32 *);
 void Func_080e0524(s32, void *, s32, s32);
+#define Resource_LoadAndDecompress Func_080e0524
 void *Func_08002f40(s32);
+#define Resource_GetTableEntry Func_08002f40
 void Func_080041d8(s32, s32);
 #define Scheduler_AddOrUpdateCallback Func_080041d8
 void Func_08004278(s32);
@@ -49,7 +51,9 @@ void Func_080b50e8(s32);
 void Func_080d6888(s32, s32, s32, s32, s32);
 #define ObjectGroup_UpdateMembers Func_080d6888
 void Func_080e155c(s32, s32);
+#define Camera_ApplyShake Func_080e155c
 void Func_080cd52c(void);
+#define ObjectGroup_TickMemberTimers Func_080cd52c
 void Func_080030f8(s32);
 #define WaitFrames Func_080030f8
 void Func_08002dd8(s32);
@@ -127,14 +131,14 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
         BattleFx_FetchRectangleBlitters(WORK_EFX->side, (u32 *)blit);
     }
 
-    Func_080e0524((s32)&Value_000000ce, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_000000ce, work, 1, 0);
     if (mode == 5) {
-        Func_080e0524((s32)&Value_0000005a, SHEET, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_0000005a, SHEET, 1, 1);
     } else if (mode == 7) {
-        Func_080e0524((s32)&Value_00000054, SHEET, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_00000054, SHEET, 1, 1);
     } else {
-        Func_080e0524((s32)&Value_0000007d, SHEET, 1, 1);
-        Func_080e0524((s32)&Value_00000073, aux, 0, 0);
+        Resource_LoadAndDecompress((s32)&Value_0000007d, SHEET, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_00000073, aux, 0, 0);
         if (mode == 6) {
             for (i = 0, pal = (u16 *)0x05000000; i != 64; i++) {
                 lum = i / 4;
@@ -161,7 +165,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
                 id = (s32)&Value_0000008d;
                 break;
             }
-            CopyPalette((CopyWords)0x03001388, (void *)0x05000000, Func_08002f40(id), 128);
+            CopyPalette((CopyWords)0x03001388, (void *)0x05000000, Resource_GetTableEntry(id), 128);
         }
     }
 
@@ -314,9 +318,9 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
             }
         }
 
-        Func_080e155c(4, 4);
+        Camera_ApplyShake(4, 4);
         if (mode != 6) {
-            Func_080cd52c();
+            ObjectGroup_TickMemberTimers();
         }
         *(s32 *)(work + 0x7824) = 1;
         WaitFrames(1);

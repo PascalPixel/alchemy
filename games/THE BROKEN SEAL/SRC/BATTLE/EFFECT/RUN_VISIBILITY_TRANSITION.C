@@ -6,6 +6,7 @@ s32 Func_0800430c(void);
 s32 Func_080043e0(void);
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 void Func_08091660(void);
+#define Battle_InitializeRenderObject Func_08091660
 void Func_080936a0(s32, s32);
 void Func_0809c314(void);
 
@@ -15,7 +16,7 @@ void BattleFx_RunVisibilityTransition(void)
   {
     Func_0800430c();
     Func_0809c314();
-    Func_08091660();
+    Battle_InitializeRenderObject();
     Func_080936a0(0x9D89, 6);
     if ((*((volatile u32 *) ADDR_03001AE8)) & 0x200)
     {

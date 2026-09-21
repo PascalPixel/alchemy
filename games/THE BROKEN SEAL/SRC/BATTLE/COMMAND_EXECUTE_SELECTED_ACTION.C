@@ -28,6 +28,7 @@ u8 *Func_08077080(s32);
 void *Func_08077008(s32);
 void *Func_0808ba1c(s32);
 void Func_08091660(void); void Func_080770d0(s32); s32 Func_080770c0(s32);
+#define Battle_InitializeRenderObject Func_08091660
 void Func_08015120(s32, s32); void Func_08015040(s32, s32);
 s32 Func_08091d84(s32); void Func_08015140(void);
 /* Takes an s32 to match the definition of the packed effect argument. */
@@ -65,7 +66,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
     actor = (encodedAction >> 10) & 15;
     Func_0808ba1c(Data_02000240.object_id);
     specialResult = 0;
-    Func_08091660();
+    Battle_InitializeRenderObject();
     Func_080770d0(0x145);
     if (actor == 15) actor = 0;
 

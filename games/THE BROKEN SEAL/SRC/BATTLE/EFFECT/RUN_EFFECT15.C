@@ -133,6 +133,7 @@ void Func_080030f8(s32);
 void Func_08092adc(s32, s32, s32);
 void Func_080f9010(s32);
 void Func_08009080(void *, s32);
+#define Object_SetMode Func_08009080
 void Func_08009240(void *, s32);
 void Func_080091e0(void *, s32);
 void Func_0809ba90(void *, s32, s32, s32);
@@ -163,11 +164,11 @@ void BattleFx_RunEffect15(void)
     WaitFrames(30);
     *(void (**)(void))(main_object + 108) = Func_08096b88;
     Func_080f9010(0x83);
-    Func_08009080(main_object, 28);
+    Object_SetMode(main_object, 28);
     WaitFrames(40);
     Func_080f9010(0xdc);
     Func_08009240(main_object, 0);
-    Func_08009080(main_object, 3);
+    Object_SetMode(main_object, 3);
     *(void (**)(void))(main_object + 108) = (void (*)(void))BattleFx_UpdateSpinAngle;
     effect->timer = 0;
     WaitFrames(70);

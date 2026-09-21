@@ -3,10 +3,12 @@
 extern s32 Func_08004080(void);
 #define find_free_slot Func_08004080
 extern void Func_08019ee4(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4);
+#define Ui_BuildPairedPatternsToSlot Func_08019ee4
 extern s32 Func_0801a2a4(s32 arg0, s32 arg1, s32 arg2);
 extern s32 Func_0801a2ec(s32 arg0, s32 arg1, s32 arg2);
 extern s32 Func_0801a32c(u32 value, s32 unused, void *destination);
 extern void Func_0801a3d0(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
+#define Ability_LoadGlyph Func_0801a3d0
 
 s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option)
 {
@@ -22,7 +24,7 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option)
     switch (mode) {
     case 1:
     case 6:
-        Func_08019ee4(value, option, &result, &output, 1);
+        Ui_BuildPairedPatternsToSlot(value, option, &result, &output, 1);
         break;
     case 2:
         Func_0801a2a4(value, 58, result);
@@ -31,7 +33,7 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option)
         Func_0801a2a4(value, 42, result);
         break;
     case 4:
-        Func_0801a3d0(value, option, (s32)&result, (s32)&output, 1);
+        Ability_LoadGlyph(value, option, (s32)&result, (s32)&output, 1);
         break;
     case 8:
         Func_0801a2ec(value, 0, result);

@@ -11,6 +11,7 @@ void Func_08097384(void);
 void *Func_08098070(void *object);
 void Func_08098184(void *object);
 void Func_08009080(void *object, s32 mode);
+#define Object_SetMode Func_08009080
 void WaitFrames(s32 frames);
 void Func_0809748c(void);
 void UpdateRisingParticleBurst(void *object);
@@ -30,7 +31,7 @@ void BattleFx_RunItemBreakSequence(void)
     object = Func_08098070(object);
     Func_08098184(object);
     if (object != 0) {
-        Func_08009080(object, 4);
+        Object_SetMode(object, 4);
         WaitFrames(30);
     }
     Func_0809748c();

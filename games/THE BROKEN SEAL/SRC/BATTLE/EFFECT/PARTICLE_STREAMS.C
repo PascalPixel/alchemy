@@ -51,7 +51,9 @@ void Func_08004278(s32);
 void Func_08009020(void *, s32);
 void Func_080dbb24(s32, s32, s32);
 void Func_080e0524(s32, void *, s32, s32);
+#define Resource_LoadAndDecompress Func_080e0524
 void *Func_08002f40(s32);
+#define Resource_GetTableEntry Func_08002f40
 void Func_080030f8(s32);
 #define WaitFrames Func_080030f8
 s32 Func_08004458(void);
@@ -77,6 +79,7 @@ void Func_080051d8(s32, s32);
 void Func_080e38b8(void *, s32, s32);
 s32 Func_080022ec(s32, s32);
 void Func_080e155c(s32, s32);
+#define Camera_ApplyShake Func_080e155c
 s32 Func_080cdbc0(void);
 
 s32 BattleEffect_RunParticleStreams(s32 arg0, s32 arg1)
@@ -299,10 +302,10 @@ s32 BattleEffect_RunParticleStreams(s32 arg0, s32 arg1)
     } else {
         Func_080dbb24(1, 0x17D, 3);
     }
-    Func_080e0524(0xc1, *sp3C, 1, 1);
+    Resource_LoadAndDecompress(0xc1, *sp3C, 1, 1);
     if (sp4C == 1) {
         ((WordCopy)0x03001388)(
-            (void *)0x05000000, (void *)Func_08002f40(0xc4), 0x80);
+            (void *)0x05000000, (void *)Resource_GetTableEntry(0xc4), 0x80);
     }
     *(s32 *)(sp98 + 128) = 0x01010101;
     Dma_Set(sp98 + 128, (void *)0x02010000, 0x85002000, (volatile u32 *)0x040000d4);
@@ -649,7 +652,7 @@ loop_84:
     (*(s16 *)((u8 *)((void *)0x04000020) + (-0x14))) = 0x2784;
     Func_080ed408(0x2E, 7, 7, 3, 2);
     draw_rectangle = (DrawRectangle) Data_03001e50[46];
-    Func_080e0524(0xc0, *sp3C, 1, 0);
+    Resource_LoadAndDecompress(0xc0, *sp3C, 1, 0);
     var_r8_1221 = 0;
     var_r6_1223 = 0;
     do {
@@ -840,7 +843,7 @@ loop_121:
         Func_08009008((*(s32 *)((u8 *)(*sp3C) + (0x77D8))), sp18, sp1C, 0);
     }
     (*(s32 *)((u8 *)(*sp20) + (0x77A8))) = 1;
-    Func_080e155c(8, 8);
+    Camera_ApplyShake(8, 8);
     (*(s32 *)((u8 *)(*sp20) + (0x7824))) = 1;
     WaitFrames(1);
     var_fp_1329 += 1;

@@ -22,6 +22,7 @@ extern u8 Value_000000a6;
 void Func_080cd594(s32);
 void Func_080de2f8(void *, s32, s32, s32, s32 *, s32 *);
 void Func_080e0524(s32, void *, s32, s32);
+#define Resource_LoadAndDecompress Func_080e0524
 void Func_080e396c(s32, s32 *);
 s32 Func_080ed408(s32, s32, s32, s32, s32);
 void Func_080041d8(s32, s32);
@@ -32,7 +33,9 @@ void Func_080d6888(s32, s32, s32, s32, s32);
 #define ObjectGroup_UpdateMembers Func_080d6888
 s32 Func_080022fc(s32, s32);
 void Func_080e155c(s32, s32);
+#define Camera_ApplyShake Func_080e155c
 void Func_080cd52c(void);
+#define ObjectGroup_TickMemberTimers Func_080cd52c
 void Func_080030f8(s32);
 #define WaitFrames Func_080030f8
 void Func_08004278(s32);
@@ -62,7 +65,7 @@ void BattleEffect_RunRisingColumns(Effect *effect)
     Func_080cd594(1);
     *(s16 *)0x04000020 = 0x100;
     *(s16 *)0x04000050 = 0;
-    Func_080e0524((s32)&Value_000000a6, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_000000a6, work, 1, 1);
     Func_080e396c(WORK_EFFECT->actors[0], first);
     Func_080e396c(WORK_EFFECT->actors[WORK_EFFECT->count - 1], last);
     middle = first[0];
@@ -110,8 +113,8 @@ void BattleEffect_RunRisingColumns(Effect *effect)
             i++;
             column++;
         } while (i != 16);
-        Func_080e155c(4, 4);
-        Func_080cd52c();
+        Camera_ApplyShake(4, 4);
+        ObjectGroup_TickMemberTimers();
         *(s32 *)(work + 0x7824) = 1;
         WaitFrames(1);
         frame++;

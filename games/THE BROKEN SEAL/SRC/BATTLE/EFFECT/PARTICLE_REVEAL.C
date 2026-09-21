@@ -65,6 +65,7 @@ void Func_080cd594(s32 mode);
 void Func_080de2f8(void *object, s32 a, s32 b, s32 c, s32 *out_a, s32 *out_b);
 void Func_080cef64(s32 flag, DrawRectangleFn *out_callbacks);
 void Func_080e0524(s32 effect_id, void *target, s32 flag_a, s32 flag_b);
+#define Resource_LoadAndDecompress Func_080e0524
 void Func_080041d8(void *callback, s32 interval);
 #define Scheduler_AddOrUpdateCallback Func_080041d8
 void Func_080e3980(s16 a, s32 *out_pair);
@@ -78,7 +79,9 @@ void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 #define ObjectGroup_UpdateMembers Func_080d6888
 void Func_080b5088(s32 member_id, s32 b);
 void Func_080e155c(s32 a, s32 b);
+#define Camera_ApplyShake Func_080e155c
 void Func_080cd52c(void);
+#define ObjectGroup_TickMemberTimers Func_080cd52c
 void Func_080030f8(s32 frames);
 #define WaitFrames Func_080030f8
 void Func_08004278(void *callback);
@@ -113,7 +116,7 @@ void BattleFx_RunParticleReveal(void *object)
         &screen_x, &screen_y);
     Func_080cef64(
         (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4))), routine);
-    Func_080e0524((s32)&Value_0000006e, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_0000006e, work, 1, 1);
     (*(s32 *)((u8 *)(work) + (0x7780))) = 2;
     (*(s32 *)((u8 *)(work) + (0x7784))) = 75;
     {
@@ -148,8 +151,8 @@ void BattleFx_RunParticleReveal(void *object)
             (*(s16 *)((u8 *)((void *)0x04000052) + (0))) = (64 - frame) | 0x1000;
         }
         if (frame == 1) {
-            Func_080e0524((s32)&Value_000000b8, (u8 *)work + 0x400, 1, 1);
-            Func_080e0524((s32)&Value_00000092, (u8 *)work + 0x65C0, 1, 0);
+            Resource_LoadAndDecompress((s32)&Value_000000b8, (u8 *)work + 0x400, 1, 1);
+            Resource_LoadAndDecompress((s32)&Value_00000092, (u8 *)work + 0x65C0, 1, 0);
         }
 
         if ((*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x1C))) == 1) {
@@ -212,8 +215,8 @@ void BattleFx_RunParticleReveal(void *object)
             }
         }
 
-        Func_080e155c(4, 8);
-        Func_080cd52c();
+        Camera_ApplyShake(4, 8);
+        ObjectGroup_TickMemberTimers();
         (*(s32 *)((u8 *)(work) + (0x7824))) = 1;
         WaitFrames(1);
     }

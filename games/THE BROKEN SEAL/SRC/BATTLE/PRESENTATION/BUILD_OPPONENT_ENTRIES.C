@@ -1,6 +1,7 @@
 #include "TYPES.H"
 
 s32 Func_080b6b40(s32 side, u16 *out_units);
+#define BattleParty_ListLivingUnits Func_080b6b40
 u32 Func_08004458(void);
 #define Random16 Func_08004458
 u8 *Func_08077008(s32 unit_id);
@@ -29,7 +30,7 @@ s32 BattlePres_BuildOpponentEntries(
         return 0;
     }
 
-    unit_count = Func_080b6b40(2, unit_ids);
+    unit_count = BattleParty_ListLivingUnits(2, unit_ids);
     if (unit_count == 0) {
         return 0;
     }

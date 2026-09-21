@@ -25,7 +25,9 @@ struct ItemOwner *Runtime_GetObject(s32);
 struct ItemData *Item_GetData(s32);
 u8 Func_08077058(s32, s32);
 u32 Func_080a3ddc(struct ItemOwner *, u16 *, s32);
+#define ItemMenu_Collect Func_080a3ddc
 s32 Func_080a9f10(s32, s32, s32, s32);
+#define BattleEffect_ApplyToTargets Func_080a9f10
 
 s32 Item_Use(s32 slot, s32 owner_id, s32 target_id)
 {
@@ -39,7 +41,7 @@ s32 Item_Use(s32 slot, s32 owner_id, s32 target_id)
     work = Data_03001f2c;
     item_id = 0x1ff & owner->items[slot];
     item = Item_GetData(item_id);
-    result = Func_080a9f10(
+    result = BattleEffect_ApplyToTargets(
         0x3fff & item->use_ability,
         owner_id,
         target_id,
@@ -49,7 +51,7 @@ s32 Item_Use(s32 slot, s32 owner_id, s32 target_id)
         if (item->kind == 1) {
             Func_08077058(owner_id, slot);
             work->entry_count =
-                Func_080a3ddc(owner, work->entries, 0);
+                ItemMenu_Collect(owner, work->entries, 0);
         }
         if (item->kind == 4) {
             if (item_id == 0xb8)

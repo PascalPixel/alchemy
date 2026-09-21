@@ -37,7 +37,7 @@ s32 BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result)
     s32 ignore_flags = 0;
 
     *(s32 *)result = selected;
-    alternate = Func_0808bd24();
+    alternate = GetFocusedObjectCollision();
     if (requested_flags == 0x70000005)
         ignore_flags = 1;
 

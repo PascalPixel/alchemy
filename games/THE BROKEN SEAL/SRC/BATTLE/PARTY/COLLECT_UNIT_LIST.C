@@ -4,7 +4,9 @@ extern u8 *Data_03001e74;
 extern s8 Data_080c2a10[];
 
 s32 Func_080b6a60(u16 *out);
+#define BattleParty_PrepareActiveOwners Func_080b6a60
 s32 Func_080b6ae0(u16 *out);
+#define BattleParty_ListPresentEnemies Func_080b6ae0
 
 void BattleParty_CollectUnitList(void)
 {
@@ -19,14 +21,14 @@ void BattleParty_CollectUnitList(void)
     u16 *out;
 
     state = Data_03001e74;
-    count = Func_080b6a60(buf);
+    count = BattleParty_PrepareActiveOwners(buf);
     for (i = 0; i < count; i++) {
         *(u16 *)(state + 88 + i * 2) = buf[i];
     }
     offset = count * 2 + 88;
     *(u16 *)(state + offset) = 0xFF;
 
-    count = Func_080b6ae0(buf);
+    count = BattleParty_ListPresentEnemies(buf);
     kind = state[66];
     if (kind >= 0) {
         if (kind <= 1) {

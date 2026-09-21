@@ -26,6 +26,7 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 }
 
 s32 Func_080a9598(s32 a0, s32 a1, s32 a2)
+#define Shop_DrawItemPage Func_080a9598
 {
     u32 i;
     s32 p10;

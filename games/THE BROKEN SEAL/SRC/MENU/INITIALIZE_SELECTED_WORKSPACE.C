@@ -4,6 +4,7 @@ void *Func_080048f4(s32, s32);
 s32 Func_080041d8(void (*)(void), s32);
 #define Scheduler_AddOrUpdateCallback Func_080041d8
 void Func_0801d94c(void);
+#define Menu_RunSelectedWorkspaceEntry Func_0801d94c
 void Menu_InitializeSelectedWorkspace(void)
 {
     void *work;

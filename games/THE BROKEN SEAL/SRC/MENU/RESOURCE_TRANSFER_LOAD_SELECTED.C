@@ -28,6 +28,7 @@ extern u8 *Data_03001e98;
 extern u8 Value_000000f1;
 
 struct SelectionNode_0801c188 *Func_0801b36c(void *state);
+#define NodeChain_GetNodeAtCount Func_0801b36c
 struct ResourceBuffer_0801c188 *Runtime_AllocateHeapBlock(s32 owner, s32 size);
 void Func_080053e8(void *source, void *destination);
 u16 Func_08004080(void);
@@ -39,7 +40,7 @@ void Func_08002dd8(s32 owner);
 void Menu_LoadSelectedResource(void)
 {
     u8 *state = Data_03001e98;
-    struct SelectionNode_0801c188 *selection = Func_0801b36c(state);
+    struct SelectionNode_0801c188 *selection = NodeChain_GetNodeAtCount(state);
     struct TransferState_0801c188 *transfer;
     struct ResourceBuffer_0801c188 *buffer;
     u8 *tbl;

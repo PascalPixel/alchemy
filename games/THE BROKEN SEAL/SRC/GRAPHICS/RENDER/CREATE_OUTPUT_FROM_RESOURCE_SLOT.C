@@ -6,6 +6,7 @@
 s32 Func_08004080();
 #define find_free_slot Func_08004080
 s32 Func_08021b30(s32 input, s32 arg1);
+#define Resource_LoadIndexedEntryToBuffer Func_08021b30
 
 s32 Ui_CreateOutputFromResourceSlot(
     struct RenderInput *input,
@@ -17,7 +18,7 @@ s32 Ui_CreateOutputFromResourceSlot(
 
     slot = find_free_slot();
     if (slot != 0x60) {
-        Func_08021b30(resource, slot);
-        Func_0801eadc(slot, 0x40000000, input, arg1, arg2);
+        Resource_LoadIndexedEntryToBuffer(resource, slot);
+        RenderOutput_Create(slot, 0x40000000, input, arg1, arg2);
     }
 }

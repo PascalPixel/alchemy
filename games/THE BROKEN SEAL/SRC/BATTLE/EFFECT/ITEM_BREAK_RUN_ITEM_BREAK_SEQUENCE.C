@@ -10,7 +10,9 @@ extern struct BattleEffectScene *Data_03001f30;
 void Func_08097384(void);
 #define BattleEffect_InitializeSharedScene Func_08097384
 void *Func_08098070(void *object);
+#define BattleFx_StartItemBreak Func_08098070
 void Func_08098184(void *object);
+#define BattleFx_SnapScaleToFull Func_08098184
 void Func_08009080(void *object, s32 mode);
 #define Object_SetMode Func_08009080
 void WaitFrames(s32 frames);
@@ -30,8 +32,8 @@ void BattleFx_RunItemBreakSequence(void)
     do {
         BattleEffect_InitializeSharedScene();
     } while (0);
-    object = Func_08098070(object);
-    Func_08098184(object);
+    object = BattleFx_StartItemBreak(object);
+    BattleFx_SnapScaleToFull(object);
     if (object != 0) {
         Object_SetMode(object, 4);
         WaitFrames(30);

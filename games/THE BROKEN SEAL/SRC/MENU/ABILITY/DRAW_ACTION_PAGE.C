@@ -57,7 +57,7 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused, const struct MenuResult 
 
             if (ability->pp_cost > owner->pp) {
                 UiPalette_SetColor(2);
-            } else if (Func_080a735c(0x3fff & *(const u16 *)(cursor + (s32)menu)) != 0) {
+            } else if (PsynergyMenu_IsActionRestricted(0x3fff & *(const u16 *)(cursor + (s32)menu)) != 0) {
                 UiPalette_SetColor(4);
             } else {
                 UiPalette_SetColor(15);

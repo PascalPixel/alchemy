@@ -3,6 +3,7 @@
 void *Owner_GetState(s32);
 void Func_08078bf0(s32);
 s32 Func_080792c4(s32, s32);
+#define Owner_GetValueIfLevelThresholdReached Func_080792c4
 
 s32 OwnerAction_Add(s32 state_index, s32 value)
 {

@@ -16,6 +16,7 @@ void Object_SetPosition(void *, s32, s32, s32);
 void Func_08092adc(s32 arg0, s32 arg1, s32 arg2);
 #define ObjectMotion_ArmCallback Func_08092adc
 void Func_08092624(void *, s32);
+#define BattleFx_SpawnBurstParticle Func_08092624
 void Object_CommitPosition(void *);
 void Func_0809202c(void);
 #define BattleFx_PlayQueuedSound Func_0809202c
@@ -54,7 +55,7 @@ void BattleFx_RunRisingObjectSequence(s32 sequence_arg, s32 mode_or_frame, s32 o
             OBJECT_MIRRORED_Y(object) = next_y;
             WaitFrames(1);
             if ((optional_action != -1) && (mode_or_frame & 1)) {
-                Func_08092624(object, optional_action);
+                BattleFx_SpawnBurstParticle(object, optional_action);
             }
             mode_or_frame++;
         } while ((u32)mode_or_frame <= 0xD);

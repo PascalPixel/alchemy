@@ -146,6 +146,7 @@ void Func_08009248(void *, s32);
 void Func_0809748c(void);
 #define BattleFx_PrepareBufferInterpolation Func_0809748c
 void Func_08096b88(void);
+#define apply_random_child_values Func_08096b88
 
 
 

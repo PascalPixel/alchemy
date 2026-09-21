@@ -63,6 +63,7 @@ void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Func_080f9010(s32 cue);
 #define Audio_PlayCue Func_080f9010
 void Func_08009150(void *object, s32 a, s32 b, s32 c);
+#define Object_SetPosition Func_08009150
 void Func_080b5040(s32 a, s32 b, s32 c);
 
 #define BattleFx_RunCounterReveal Func_080cfef4
@@ -258,7 +259,7 @@ void BattleFx_RunCounterReveal(void *object)
             (*(s32 *)((u8 *)(member_object) + (0x48))) = 0;
             (*(s8 *)((u8 *)(member_object) + (0x5A))) = 0;
             (*(s8 *)((u8 *)(member_object) + (0x58))) = 0;
-            Func_08009150(member_object,
+            Object_SetPosition(member_object,
                 (*(s32 *)((u8 *)(member_object) + (8))) << 1, 0,
                 (*(s32 *)((u8 *)(member_object) + (16))));
             ObjectGroup_UpdateMembers(

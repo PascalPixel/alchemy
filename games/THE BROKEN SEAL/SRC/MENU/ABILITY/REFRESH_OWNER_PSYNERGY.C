@@ -3,6 +3,7 @@
 #include "PSYNERGY_MENU.H"
 
 void Func_080a1bdc(s32 x, s32 y, s32 spacing);
+#define PsynergyMenu_RefreshOwnerEntries Func_080a1bdc
 void UiText_DrawAt(s32 message, s32 *, s32 x, s32 y);
 
 void PsynergyMenu_RefreshOwnerPsynergy(s32 owner_id)
@@ -17,7 +18,7 @@ void PsynergyMenu_RefreshOwnerPsynergy(s32 owner_id)
     menu->psynergy_count =
         PsynergyMenu_CollectActions(owner, psynergies, 2);
     UiWindow_Commit(menu->psynergy_window);
-    Func_080a1bdc(0x6c, 0x20, 8);
+    PsynergyMenu_RefreshOwnerEntries(0x6c, 0x20, 8);
     PsynergyMenu_DrawPsynergyIcons(psynergies);
     if (menu->psynergy_count == 0) {
         UiText_DrawAt(

@@ -6,6 +6,7 @@ s32 Func_080a1814(void *menu);
 s32 InitializeEntryObjects(s32, s32, s32, s32, s32);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 struct PsynergyMenuIcon *Func_080a1778(s32, s32, s32);
+#define UiIcon_CreateWithResourceVariant Func_080a1778
 void *Func_080150d8(s32, s32, s32, s32, s32, s32);
 struct PsynergyMenuIcon *Func_080150d0(s32, s32, s32, s32, s32);
 
@@ -30,7 +31,7 @@ void PsynergyMenu_CreateEntryGrid(void)
     menu->column_count = 8;
     menu->row_count = 2;
 
-    cursor = Func_080a1778(window, 0, 4);
+    cursor = UiIcon_CreateWithResourceVariant(window, 0, 4);
     cursor->state = 13;
     menu->entry_grid_cursor = cursor;
     Func_080150d8(0, 0, 0, window, 0, 0);

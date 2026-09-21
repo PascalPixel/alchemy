@@ -5,6 +5,7 @@ extern struct EventValueWork Data_02000240;
 void ScheduleCallback(u32);
 void Func_080772f0(void);
 void Func_080915ec(void);
+#define Battle_UpdateModeFromShoulderButtons Func_080915ec
 void Func_0809335c(s32 value, s32 enabled);
 #define Object_AttachWorkTargetToObject Func_0809335c
 

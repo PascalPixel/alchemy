@@ -124,6 +124,7 @@ void Battle_InitializeRenderObject(void)
 void Func_08015208(void);
 void Func_08091660(void);
 void Func_0808e118(void);
+#define Battle_ResetEffectCounter Func_0808e118
 void ScheduleCallbackAfterFrames(const void *, s32);
 void Func_080915ec(void);
 u32 GameFlag_Clear(s32);
@@ -135,7 +136,7 @@ void Battle_Reset(void)
     Func_08015208();
     Func_08091660();
     if (runtime->unknown_cb6 != 0) {
-        Func_0808e118();
+        Battle_ResetEffectCounter();
     }
     {
         s32 zero = 0;

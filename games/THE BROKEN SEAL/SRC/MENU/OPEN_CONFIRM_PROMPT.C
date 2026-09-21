@@ -16,15 +16,18 @@ void Func_080a1090(s32 unused);
 #define UiWindow_InitializeWork Func_080a1090
 s32 Func_08077158(const u16 *ids);
 void Func_080a3354(s32, s32, s32, s32);
+#define ItemMenu_Init Func_080a3354
 s32 UiWindow_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void Func_080a2144(s32 index);
 void Func_08015418(s32 addr);
 void Menu_CancelSoundReset(void);
 s32 Func_080a5cc0(s32 *, s32 *, s32 *);
+#define Menu_ResolveSelectedAction Func_080a5cc0
 void Menu_EnsureCancelSound(void);
 s32 Ability_GetData(s32 flags);
 void Func_08015278(s32 screen_handle);
 void Func_080a34c0(void);
+#define ItemMenu_Close Func_080a34c0
 void Func_08002dd8(s32 kind);
 #define Runtime_ReleaseHeapBlock Func_08002dd8
 void Func_08015410(s32 x, s32 y, s32 width, s32 height);
@@ -51,12 +54,12 @@ s32 Menu_OpenConfirmPrompt(void)
     WaitFrames(1);
     UiWindow_InitializeWork(0);
     FIELD(state, u8, 0x219) = (u8)Func_08077158((const u16 *)((u8 *)state + 0x208));
-    Func_080a3354(0, 3, 0, 7);
+    ItemMenu_Init(0, 3, 0, 7);
     FIELD(state, s32, 0x10c) = UiWindow_CreateFar(13, 0, 17, 3, 2);
     Func_080a2144(14);
     Func_08015418(0x06002500);
     Menu_CancelSoundReset();
-    result = Func_080a5cc0(
+    result = Menu_ResolveSelectedAction(
         &high, &unused, &low);
     Menu_EnsureCancelSound();
     if (result == 1) {
@@ -68,7 +71,7 @@ s32 Menu_OpenConfirmPrompt(void)
     }
     Func_08015278(FIELD(state, s32, 0x24));
     FIELD(FIELD(&Data_03001e68, void *, 0x24), u8, 0xea6) = 1;
-    Func_080a34c0();
+    ItemMenu_Close();
     Func_08015408(0, 0, 30, 20);
     Runtime_ReleaseHeapBlock(0x37);
     Data_03001e68->suspended = 0;

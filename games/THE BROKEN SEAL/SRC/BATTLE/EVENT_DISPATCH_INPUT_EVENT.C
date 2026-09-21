@@ -15,9 +15,12 @@ extern u8 Data_02000240;
 extern volatile u32 Data_03001ae8;
 
 void Func_08092708(s32, s32, s32);
+#define BattleFx_RunRisingObjectSequence Func_08092708
 void Func_08093c00(void);
 void Func_08093e28(void);
+#define FieldEffect_UpdateGridPlacement Func_08093e28
 void Func_08093fa0(void);
+#define battle_owner_69 Func_08093fa0
 
 s32 Battle_DispatchInputEvent(s32 event)
 {
@@ -27,7 +30,7 @@ s32 Battle_DispatchInputEvent(s32 event)
     switch (event) {
     case 0xFC:
         if (state->delay > 12 && (Data_03001ae8 & 0x80)) {
-            Func_08092708(selected_object, 6, 0);
+            BattleFx_RunRisingObjectSequence(selected_object, 6, 0);
             state->delay = 0;
         }
         break;
@@ -41,9 +44,9 @@ s32 Battle_DispatchInputEvent(s32 event)
     case 0xFD:
         if (state->delay > 12) {
             if (Data_03001ae8 & 0x80) {
-                Func_08093e28();
+                FieldEffect_UpdateGridPlacement();
             } else if (Data_03001ae8 & 0x40) {
-                Func_08093fa0();
+                battle_owner_69();
             }
             state->delay = 0;
         }

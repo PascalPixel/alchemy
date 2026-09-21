@@ -26,6 +26,7 @@ void Func_080041d8(const void *, s32);
 void Func_08015408(s32, s32, s32, s32);
 
 s32 Func_080a4800(s32 value)
+#define Menu_SelectQuantity Func_080a4800
 {
     s32 changed = 1;
     u8 *menu = (u8 *)Data_03001f2c;

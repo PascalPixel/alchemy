@@ -14,7 +14,7 @@ s32 Func_08005920(s32 record_id, void *source)
     START_DMA(&zero, &work->slot, 0x85000400);
     WAIT_DMA();
     current = SaveState_FindLatestSlot(record_id);
-    slot = Func_08005810(record_id);
+    slot = SaveState_SelectWriteSlot(record_id);
     if (slot > 15)
         return 1;
 
@@ -23,8 +23,8 @@ s32 Func_08005920(s32 record_id, void *source)
     START_DMA(SAVE_HEADER_TEMPLATE, &header, 0x84000002);
     WAIT_DMA();
     header.record_id = record_id;
-    header.checksum = Func_08005ae0();
-    header.sequence = Func_08005c2c(record_id) + 1;
+    header.checksum = SaveState_ChecksumWorkspace();
+    header.sequence = SaveState_GetLatestSequence(record_id) + 1;
     START_DMA(&header, &work->slot.record.header, 0x84000004);
     WAIT_DMA();
 

@@ -6,6 +6,7 @@
 #define COMMAND_AVAILABLE 1
 
 s32 Func_080a46b4(s32 owner, s32 item);
+#define Item_ClassifyUseMode Func_080a46b4
 s32 Func_0808a490(s32 item);
 
 void ItemMenu_BuildCmd(s8 *command_states)
@@ -24,7 +25,7 @@ void ItemMenu_BuildCmd(s8 *command_states)
         command_states[1] = COMMAND_AVAILABLE;
     }
 
-    if (Func_080a46b4(menu->item_owner, menu->selected_item) != -1)
+    if (Item_ClassifyUseMode(menu->item_owner, menu->selected_item) != -1)
         command_states[0] = COMMAND_AVAILABLE;
     else
         command_states[0] = COMMAND_DISABLED;

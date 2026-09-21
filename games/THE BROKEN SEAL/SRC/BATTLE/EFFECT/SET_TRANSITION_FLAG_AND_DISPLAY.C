@@ -9,6 +9,7 @@
 
 s32 WaitFrames(s32);
 void Func_0800387c(u32 first, u32 second);
+#define QueueIoWriteDelay2 Func_0800387c
 void Func_080b5038(s32, u16, s32);
 void BattleFx_SetTransitionFlagAndDisplay(void)
 {
@@ -21,7 +22,7 @@ void BattleFx_SetTransitionFlagAndDisplay(void)
   state = *((u8 **)(TRANSITION_CELL_ADDR - 0x8C));
   *flag = 1;
   transfer = 0x1541;
-  Func_0800387c(0x04000000, transfer);
+  QueueIoWriteDelay2(0x04000000, transfer);
   one = 1;
   WaitFrames(one);
   Func_080b5038(2, *((u16 *)(state + 0x648)), 0);

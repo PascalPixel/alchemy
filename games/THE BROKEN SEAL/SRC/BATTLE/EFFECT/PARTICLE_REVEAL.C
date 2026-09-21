@@ -12,7 +12,7 @@
  * prologue, same the +0x7828 field=object republish, same
  * Func_080cd594(0)/Scheduler_AddOrUpdateCallback(0x080CD261,0x480)/Scheduler_RemoveCallback(0x080CD261)/
  * Runtime_ReleaseHeapBlock(id)/Func_080cdbc0() bracket, and the same
- * Func_080cef64(flag, DrawRectangleFn callbacks[2]) two-word blit-routine
+ * BattleFx_FetchRectangleBlitters(flag, DrawRectangleFn callbacks[2]) two-word blit-routine
  * resolver already established in games/THE BROKEN SEAL/recon/en/main/080e01e4.c.
  *
  * Unlike member_orbit's single 64-frame per-member sprite loop, this owner
@@ -64,11 +64,13 @@ extern u16 Data_080eec68[];
 void Func_080cd594(s32 mode);
 void Func_080de2f8(void *object, s32 a, s32 b, s32 c, s32 *out_a, s32 *out_b);
 void Func_080cef64(s32 flag, DrawRectangleFn *out_callbacks);
+#define BattleFx_FetchRectangleBlitters Func_080cef64
 void Func_080e0524(s32 effect_id, void *target, s32 flag_a, s32 flag_b);
 #define Resource_LoadAndDecompress Func_080e0524
 void Func_080041d8(void *callback, s32 interval);
 #define Scheduler_AddOrUpdateCallback Func_080041d8
 void Func_080e3980(s16 a, s32 *out_pair);
+#define EffectPosition_ApplyAlternateStepAndYOffset Func_080e3980
 u32 Func_08004458(void);
 #define Random16 Func_08004458
 s32 Func_08002322(s32 angle);
@@ -115,7 +117,7 @@ void BattleFx_RunParticleReveal(void *object)
     Func_080de2f8(object, 1,
         (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4))), 2,
         &screen_x, &screen_y);
-    Func_080cef64(
+    BattleFx_FetchRectangleBlitters(
         (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4))), routine);
     Resource_LoadAndDecompress((s32)&Value_0000006e, work, 1, 1);
     (*(s32 *)((u8 *)(work) + (0x7780))) = 2;
@@ -128,7 +130,7 @@ void BattleFx_RunParticleReveal(void *object)
         callback = (void *)0x080CD261;
         Scheduler_AddOrUpdateCallback(callback, interval);
     }
-    Func_080e3980(
+    EffectPosition_ApplyAlternateStepAndYOffset(
         (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))), spawn);
 
     for (i = 0; i != PARTICLE_COUNT; i++) {

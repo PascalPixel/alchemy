@@ -10,7 +10,7 @@ void BattleEv_RunWait(s32 action)
     u32 frames = 0;
 
     WaitFrames(1);
-    resolved_action = Func_08092ba8(action);
+    resolved_action = ObjectTable_ReadActiveValue(action);
     if (action <= 7) {
         s32 masked_action = action & 0x0fff;
 

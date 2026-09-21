@@ -58,6 +58,7 @@ block_18:
 }
 
 s32 Func_08079ad8(s32 arg0);
+#define Owner_GetRecordStride84 Func_08079ad8
 
 s32 BattleTarget_IsWeakToEffect(const u8 *state, s32 effect_id)
 {
@@ -87,7 +88,7 @@ first_loop:
 
     offset = 0x129;
     field = state + offset;
-    entries = Func_08079ad8(*field) + 0x50;
+    entries = Owner_GetRecordStride84(*field) + 0x50;
     entry_index = 0;
 second_loop:
     battle_value = *entries++;

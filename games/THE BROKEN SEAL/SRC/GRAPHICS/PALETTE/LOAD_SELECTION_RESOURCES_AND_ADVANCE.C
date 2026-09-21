@@ -10,6 +10,7 @@ void Func_080b0020(void *);
 void Func_080b0028(void *);
 s32 Resource_CopyData(s32, s32, s32);
 void Func_080217a4(void *);
+#define Ui_ApplyTableScaleToObject Func_080217a4
 
 void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
 {
@@ -54,7 +55,7 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
         adj = ((s8 *)base)[adj];
         idx += adj;
         off = 0x5D4 + idx * 4;
-        Func_080217a4(*(void **)((u8 *)base + off));
+        Ui_ApplyTableScaleToObject(*(void **)((u8 *)base + off));
     }
     FIELD(base, u16, 0x57C)++;
 }

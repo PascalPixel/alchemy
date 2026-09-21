@@ -5,6 +5,7 @@ extern u8 Data_02000240;
 
 s32 Func_08092c40(s32);
 s32 Func_08091c7c(void *, s32);
+#define Inventory_PromptAndSetObjectMode Func_08091c7c
 void Func_08092f84(s32, s32);
 #define BattleEv_RunWait Func_08092f84
 
@@ -16,7 +17,7 @@ s32 BattleEventRuntime_ProcessAction(s32 object_id, s32 action_id)
 
     Func_08092c40(object_id);
     global_table = &Data_02000240;
-    result = Func_08091c7c(*(void **)(global_table + 500), 0);
+    result = Inventory_PromptAndSetObjectMode(*(void **)(global_table + 500), 0);
     if (result == 0) {
         BattleEv_RunWait(object_id, action_id);
         runtime = *(u8 **)ADDR_03001EBC;

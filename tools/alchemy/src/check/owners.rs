@@ -97,132 +97,6 @@ fn audited(root: &Path) -> Result<HashSet<String>, String> {
     Ok(stems)
 }
 
-fn validate_unmatchable(
-    root: &Path,
-    exact: &HashSet<String>,
-    audited: &HashSet<String>,
-) -> Result<usize, String> {
-    let document = json(&root.join("games/THE BROKEN SEAL/semantic/unmatchable.json"))?;
-    let rows = document
-        .get("unmatchable")
-        .and_then(Value::as_array)
-        .ok_or("games/THE BROKEN SEAL/semantic/unmatchable.json has no unmatchable array")?;
-    let mut seen = HashSet::new();
-    for row in rows {
-        let owner = row
-            .get("owner")
-            .and_then(Value::as_str)
-            .ok_or("unmatchable owner missing")?;
-        if !seen.insert(owner) {
-            return Err(format!("{owner} is listed twice"));
-        }
-        if exact.contains(owner) {
-            return Err(format!(
-                "{owner} is byte-exact; remove its unmatchable entry"
-            ));
-        }
-        if !audited.contains(owner) {
-            return Err(format!("{owner} is not an audited owner"));
-        }
-        if row
-            .get("floor_halfwords")
-            .and_then(Value::as_u64)
-            .unwrap_or(0)
-            == 0
-        {
-            return Err(format!("{owner} has no positive floor"));
-        }
-        let axes = row
-            .get("axes")
-            .and_then(Value::as_array)
-            .ok_or_else(|| format!("{owner} has no axes"))?;
-        for required in ["compiler", "shape"] {
-            if !axes.iter().any(|axis| axis.as_str() == Some(required)) {
-                return Err(format!("{owner} has not exhausted the {required} axis"));
-            }
-        }
-        if row
-            .get("reason")
-            .and_then(Value::as_str)
-            .unwrap_or("")
-            .trim()
-            .is_empty()
-        {
-            return Err(format!("{owner} has no reason"));
-        }
-    }
-    Ok(rows.len())
-}
-
-fn validate_provisional(root: &Path, exact: &HashSet<String>) -> Result<usize, String> {
-    let document = json(&root.join("games/THE BROKEN SEAL/semantic/provisional-source.json"))?;
-    let rows = document
-        .get("provisional")
-        .and_then(Value::as_array)
-        .ok_or("games/THE BROKEN SEAL/semantic/provisional-source.json has no provisional array")?;
-    for row in rows {
-        let owner = row
-            .get("owner")
-            .and_then(Value::as_str)
-            .ok_or("provisional owner missing")?;
-        if !exact.contains(owner) {
-            return Err(format!(
-                "{owner} is provisional but not in games/THE BROKEN SEAL/SRC/"
-            ));
-        }
-        if row
-            .get("reason")
-            .and_then(Value::as_str)
-            .unwrap_or("")
-            .trim()
-            .is_empty()
-        {
-            return Err(format!("{owner} has no provisional reason"));
-        }
-    }
-    Ok(rows.len())
-}
-
-fn validate_sealed(root: &Path, exact: &HashSet<String>) -> Result<usize, String> {
-    let document = json(&root.join("games/THE BROKEN SEAL/semantic/sealed.json"))?;
-    let rows = document
-        .get("sealed")
-        .and_then(Value::as_array)
-        .ok_or("games/THE BROKEN SEAL/semantic/sealed.json has no sealed array")?;
-    let mut seen = HashSet::new();
-    for row in rows {
-        let owner = row
-            .get("owner")
-            .and_then(Value::as_str)
-            .ok_or("sealed owner missing")?;
-        if owner.len() != 8 || !owner.bytes().all(|byte| byte.is_ascii_hexdigit()) {
-            return Err(format!("{owner} is not an 8-hex main owner"));
-        }
-        if !seen.insert(owner) {
-            return Err(format!("{owner} is sealed twice"));
-        }
-        if exact.contains(owner) {
-            return Err(format!("{owner} has exact C; remove its seal"));
-        }
-        if !root
-            .join(format!("games/THE BROKEN SEAL/raw/{owner}.s"))
-            .is_file()
-        {
-            return Err(format!("{owner} is sealed but has no retained assembly"));
-        }
-        if row
-            .get("reason")
-            .and_then(Value::as_str)
-            .unwrap_or("")
-            .trim()
-            .is_empty()
-        {
-            return Err(format!("{owner} has no sealed reason"));
-        }
-    }
-    Ok(rows.len())
-}
-
 fn validate_drafts(root: &Path, exact: &HashSet<String>) -> Result<usize, String> {
     let directory = root.join("draft");
     let Ok(entries) = std::fs::read_dir(directory) else {
@@ -396,26 +270,15 @@ fn validate_reconstruction_records(root: &Path) -> Result<(), String> {
     Ok(())
 }
 
-fn validate() -> Result<(usize, usize, usize, usize, usize, usize, usize), String> {
+fn validate() -> Result<(usize, usize, usize, usize), String> {
     let root = root();
     let exact = exact(&root)?;
     let shared = SourcePaths::validate_shared_sources(&root)?;
     let names = validate_registered_main_symbols(&root)?;
     let audited = audited(&root)?;
-    let unmatchable = validate_unmatchable(&root, &exact, &audited)?;
-    let provisional = validate_provisional(&root, &exact)?;
-    let sealed = validate_sealed(&root, &exact)?;
     let drafts = validate_drafts(&root, &exact)?;
     validate_reconstruction_records(&root)?;
-    Ok((
-        unmatchable,
-        provisional,
-        sealed,
-        drafts,
-        audited.len(),
-        names,
-        shared,
-    ))
+    Ok((drafts, audited.len(), names, shared))
 }
 
 pub(super) fn entry(arguments: &[String]) -> ExitCode {
@@ -431,8 +294,8 @@ pub(super) fn entry(arguments: &[String]) -> ExitCode {
         return ExitCode::from(2);
     }
     match validate() {
-        Ok((unmatchable, provisional, sealed, drafts, audited, names, shared)) => {
-            println!("owner registers ok: {unmatchable} unmatchable, {provisional} provisional, {sealed} sealed, {drafts} drafts, {audited} audited, {names} named main assembly owners, {shared} shared sources");
+        Ok((drafts, audited, names, shared)) => {
+            println!("owner registers ok: {drafts} drafts, {audited} audited, {names} named main assembly owners, {shared} shared sources");
             ExitCode::SUCCESS
         }
         Err(error) => {

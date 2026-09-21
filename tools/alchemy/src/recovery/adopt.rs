@@ -215,7 +215,6 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
     let manifest = root.join("games/THE BROKEN SEAL/source-paths.json");
     let assembly = root.join("games/THE BROKEN SEAL/semantic/overlay-assembly.json");
     let dossiers = root.join("games/THE BROKEN SEAL/recon/en/dossiers.json");
-    let unmatchable = root.join("games/THE BROKEN SEAL/semantic/unmatchable.json");
     let units = root.join("games/THE BROKEN SEAL/recon/translation-units.json");
     let overlay_source: PathBuf = root.join(format!(
         "games/THE BROKEN SEAL/raw/overlays/{overlay}_overlay.s"
@@ -245,7 +244,6 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
         manifest.clone(),
         assembly.clone(),
         dossiers.clone(),
-        unmatchable.clone(),
         units.clone(),
         overlay_source.clone(),
     ];
@@ -268,7 +266,6 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
             manifest: &manifest,
             assembly: &assembly,
             dossiers: &dossiers,
-            unmatchable: &unmatchable,
             units: &units,
             overlay_source: &overlay_source,
             drafts: &drafts,
@@ -312,7 +309,6 @@ struct Registration<'a> {
     manifest: &'a Path,
     assembly: &'a Path,
     dossiers: &'a Path,
-    unmatchable: &'a Path,
     units: &'a Path,
     overlay_source: &'a Path,
     drafts: &'a [PathBuf],
@@ -339,7 +335,6 @@ fn register_adoption(
         manifest,
         assembly,
         dossiers,
-        unmatchable,
         units,
         overlay_source,
         drafts,
@@ -414,24 +409,6 @@ fn register_adoption(
         if removed > 0 {
             report.push(format!("dossiers removed: {removed}"));
             write_json(dossiers, &records, false, newline)?;
-        }
-    }
-
-    let stems: Vec<String> = retired.iter().map(|o| o.legacy_stem()).collect();
-    let (mut withdrawn, _) = read_json(unmatchable)?;
-    if let Some(list) = withdrawn
-        .get_mut("unmatchable")
-        .and_then(Value::as_array_mut)
-    {
-        let before = list.len();
-        list.retain(|entry| {
-            !entry["owner"]
-                .as_str()
-                .is_some_and(|o| stems.iter().any(|s| s == o))
-        });
-        if list.len() != before {
-            report.push("unmatchable entry removed".to_string());
-            write_json(unmatchable, &withdrawn, true, true)?;
         }
     }
 
@@ -518,7 +495,6 @@ fn register_adoption(
         manifest,
         assembly,
         dossiers,
-        unmatchable,
         units,
         overlay_source,
     ]

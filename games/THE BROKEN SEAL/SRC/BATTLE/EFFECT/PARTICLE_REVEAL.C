@@ -74,7 +74,9 @@ void Func_080e3980(s16 a, s32 *out_pair);
 u32 Func_08004458(void);
 #define Random16 Func_08004458
 s32 Func_08002322(s32 angle);
+#define Engine_MathSin Func_08002322
 s32 Func_0800231c(s32 angle);
+#define Engine_MathCos Func_0800231c
 void Func_080e38b8(void *particle, s32 a, s32 b);
 #define EffectStep_AdvanceWithGravity3D Func_080e38b8
 void Func_080b50e8(s32 id);
@@ -142,8 +144,8 @@ void BattleFx_RunParticleReveal(void *object)
         PARTICLE_POOL[i].x =
             ((spawn[0] / 2 + (Random16() & 0xF)) - 8) << 16;
         PARTICLE_POOL[i].y = (spawn[1] + 8) << 16;
-        PARTICLE_POOL[i].vx = (Func_08002322(angle) * amp) >> 9;
-        PARTICLE_POOL[i].vy = (Func_0800231c(angle) * amp) >> 6;
+        PARTICLE_POOL[i].vx = (Engine_MathSin(angle) * amp) >> 9;
+        PARTICLE_POOL[i].vy = (Engine_MathCos(angle) * amp) >> 6;
         PARTICLE_POOL[i].rot = Random16() & 0x7F;
         PARTICLE_POOL[i].unk14 = Random16() & 0x7F;
         PARTICLE_POOL[i].unk18 = (Random16() & 0xF) + 32;
@@ -164,9 +166,9 @@ void BattleFx_RunParticleReveal(void *object)
             s32 y;
 
             orbit_angle = frame << 11;
-            x = (((-Func_08002322(orbit_angle)) << 2) >> 16)
+            x = (((-Engine_MathSin(orbit_angle)) << 2) >> 16)
                 + screen_x / 2 - 10;
-            y = ((Func_0800231c(orbit_angle) << 1) >> 16) + screen_y - 22;
+            y = ((Engine_MathCos(orbit_angle) << 1) >> 16) + screen_y - 22;
             if (frame > 0x45) {
                 y = (y - frame * 2) + 0x8A;
             }

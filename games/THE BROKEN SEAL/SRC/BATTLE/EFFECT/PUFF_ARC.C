@@ -21,7 +21,9 @@ void Func_080e0524(s32, void *, s32, s32);
 #define Resource_LoadAndDecompress Func_080e0524
 s32 Func_080ed408(s32, s32, s32, s32, s32);
 s32 Func_08002322(s32);
+#define Engine_MathSin Func_08002322
 s32 Func_0800231c(s32);
+#define Engine_MathCos Func_0800231c
 void Func_080041d8(s32, s32);
 #define Scheduler_AddOrUpdateCallback Func_080041d8
 void Func_080f9010(s32);
@@ -134,8 +136,8 @@ void BattleFx_RunPuffArc(Efx *efx)
     tick = 0;
     puff = (Puff *)(work + 0x7080);
     do {
-        puff->x = ((sign *((Func_08002322(ang) << 5) >> 16)) + org) + 20;
-        puff->y = ((Func_0800231c(ang) << 4) >> 16) + 40;
+        puff->x = ((sign *((Engine_MathSin(ang) << 5) >> 16)) + org) + 20;
+        puff->y = ((Engine_MathCos(ang) << 4) >> 16) + 40;
         puff->tick = tick;
         ang += 0x1000;
         tick -= 4;

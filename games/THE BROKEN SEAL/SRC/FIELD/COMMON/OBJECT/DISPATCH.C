@@ -3,7 +3,9 @@
 #include "SCENE.H"
 
 s32 Func_0800ba30(void *, s32);
+#define AnimationObjects_SelectAnimation Func_0800ba30
 void Func_0800baf8(void *, s32);
+#define AnimationObjects_SetField15OnActive Func_0800baf8
 
 void ObjectDispatch_Initialize(struct DispatchObject *object, u32 value)
 {
@@ -27,7 +29,7 @@ void ObjectDispatch_ApplyArgumentToChildren(void *raw_object, s32 argument)
     if (object != 0) {
         switch (object->kind & 0xf) {
         case 1:
-            Func_0800ba30(object->target.child, argument);
+            AnimationObjects_SelectAnimation(object->target.child, argument);
             break;
         case 2:
             items = object->target.children;
@@ -35,7 +37,7 @@ void ObjectDispatch_ApplyArgumentToChildren(void *raw_object, s32 argument)
             do {
                 item = *items++;
                 if (item != 0) {
-                    Func_0800ba30(item, argument);
+                    AnimationObjects_SelectAnimation(item, argument);
                 }
                 count--;
             } while (count >= 0);
@@ -53,7 +55,7 @@ void ObjectDispatch_ApplyValueToChildren(struct DispatchObject *object, s32 valu
     if (object != 0) {
         switch (object->kind & 0xf) {
         case 1:
-            Func_0800baf8(object->target.child, value);
+            AnimationObjects_SetField15OnActive(object->target.child, value);
             return;
         case 2:
             children = object->target.children;
@@ -61,7 +63,7 @@ void ObjectDispatch_ApplyValueToChildren(struct DispatchObject *object, s32 valu
             do {
                 child = *children++;
                 if (child != 0)
-                    Func_0800baf8(child, value);
+                    AnimationObjects_SetField15OnActive(child, value);
                 count--;
             } while (count >= 0);
             break;
@@ -78,16 +80,16 @@ void ObjectDispatch_ApplyPairToChildren(void *arg0, s32 arg1, s32 arg2)
     if (arg0 != 0) {
         switch (*((u8 *)arg0 + 84) & 15) {
         case 1:
-            Func_0800ba30(*(void **)((u8 *)arg0 + 80), arg1);
-            Func_0800baf8(*(void **)((u8 *)arg0 + 80), arg2);
+            AnimationObjects_SelectAnimation(*(void **)((u8 *)arg0 + 80), arg1);
+            AnimationObjects_SetField15OnActive(*(void **)((u8 *)arg0 + 80), arg2);
             break;
         case 2:
             items = *(void ***)((u8 *)arg0 + 80);
             for (count = 3; count >= 0; count--) {
                 item = *items++;
                 if (item != 0) {
-                    Func_0800ba30(item, arg1);
-                    Func_0800baf8(item, arg2);
+                    AnimationObjects_SelectAnimation(item, arg1);
+                    AnimationObjects_SetField15OnActive(item, arg2);
                 }
             }
             break;
@@ -228,11 +230,12 @@ void Animation_SetStateField1dBit1(u8 *obj, u32 v)
 }
 
 s32 Func_0800b684(s32);
+#define ObjectGroup_SetChildValueUnlessFifteen Func_0800b684
 
 void Animation_ApplyChildValues(void *obj)
 {
     if ((obj != NULL) && (FIELD_AT_OFFSET(obj, u8 *, 0x54) == 1)) {
-        Func_0800b684(FIELD_AT_OFFSET(obj, s32 *, 0x50));
+        ObjectGroup_SetChildValueUnlessFifteen(FIELD_AT_OFFSET(obj, s32 *, 0x50));
     }
 }
 

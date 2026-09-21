@@ -6,6 +6,7 @@ void Func_0800d14c(void *, s32, s32, s32);
 u16 ArcTan2(s32, s32);
 
 void Func_0800d130(struct ScriptInterpreter *, s32, s32, s32);
+#define Object_SetPositionAndResetMotion Func_0800d130
 
 s32 Script_SetPositionAndResetMotion(struct ScriptInterpreter *interpreter)
 {
@@ -21,7 +22,7 @@ s32 Script_SetPositionAndResetMotion(struct ScriptInterpreter *interpreter)
     second = *argument;
     argument++;
     third = *argument;
-    Func_0800d130(interpreter, first, second, third);
+    Object_SetPositionAndResetMotion(interpreter, first, second, third);
     interpreter->cursor = (u16)interpreter->cursor + 4;
     return 1;
 }

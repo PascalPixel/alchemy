@@ -84,12 +84,14 @@ s32 Menu_SelectTopEntry(s32 sel)
 }
 
 void Func_0801c2d0(void);
+#define UiWindow_OpenMode1AndWaitFrame Func_0801c2d0
 s32 Menu_SelectResource(s32, s32);
 void Func_0801c2e4(void);
+#define UiWork_CloseAndRelease Func_0801c2e4
 
 s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1)
 {
-    Func_0801c2d0();
+    UiWindow_OpenMode1AndWaitFrame();
     AffineEffect_InitializeWork();
     Menu_AppendResourceEntry(1);
     Menu_AppendResourceEntry(0xF);
@@ -98,11 +100,12 @@ s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1)
     Func_08028808(0x11, 7, 0);
     arg1 = Menu_SelectResource(arg0, arg1 - 1);
     Menu_EndResourceSelection();
-    Func_0801c2e4();
+    UiWork_CloseAndRelease();
     return arg1;
 }
 
 extern s32 Func_0801f77c(void);
+#define SaveState_ScanRecordFlags Func_0801f77c
 extern s8 Data_0803740f[];
 
 s32 Menu_SelectSaveSlotAction(void)
@@ -114,7 +117,7 @@ s32 Menu_SelectSaveSlotAction(void)
 
     group = 0;
     initial = 0;
-    type = Func_0801f77c();
+    type = SaveState_ScanRecordFlags();
     if (type < 0) {
         return -1;
     }

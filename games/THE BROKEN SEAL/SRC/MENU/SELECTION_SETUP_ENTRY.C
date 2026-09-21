@@ -35,6 +35,7 @@ struct ListNode {
 void Func_08019ee4(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4);
 #define Ui_BuildPairedPatternsToSlot Func_08019ee4
 void Func_08019fcc(u32 glyph, s32 includeBase, s32 *sourceIndex,
+#define UiIcon_BuildItemIconTiles Func_08019fcc
                    s32 *result, s32 reuseSource);
 void Func_0801a3d0(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 #define Ability_LoadGlyph Func_0801a3d0
@@ -52,6 +53,7 @@ extern u8 Value_00000333;
  * literal cannot produce 0x1f here.
  */
 void Func_0801bd98(u32 kind, s32 base, struct ListNode *node, s32 reuse)
+#define MenuSelection_SetupEntry Func_0801bd98
 {
     s32 src;
     s32 tile;
@@ -68,7 +70,7 @@ void Func_0801bd98(u32 kind, s32 base, struct ListNode *node, s32 reuse)
     case 2:
         if (reuse != 0)
             src = node->src;
-        Func_08019fcc(base, 1, &src, &tile, reuse);
+        UiIcon_BuildItemIconTiles(base, 1, &src, &tile, reuse);
         node->end = base + (s32)&Value_00000182;
         break;
     case 4:

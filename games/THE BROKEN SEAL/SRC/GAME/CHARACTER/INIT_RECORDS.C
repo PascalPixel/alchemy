@@ -34,6 +34,7 @@ extern u8 Value_00000066;
 
 void Func_08015020(s32, u16 *);
 void Func_080792fc(s32, u8);
+#define Party_AdvanceOwnerCountToTarget Func_080792fc
 void Func_08077428(s32);
 #define Owner_RecalculateStats Func_08077428
 void Owner_RefreshDerivedData(s32);
@@ -84,7 +85,7 @@ void Owner_InitRecords(void)
                 Owner_RefreshDerivedData(*remote);
                 state->pp_ratio = 0x4000;
                 state->hp_ratio = 0x4000;
-                Func_080792fc(*remote, tmpl->unknown_096);
+                Party_AdvanceOwnerCountToTarget(*remote, tmpl->unknown_096);
                 Owner_RecalculateStats(*remote);
             }
             remote++;

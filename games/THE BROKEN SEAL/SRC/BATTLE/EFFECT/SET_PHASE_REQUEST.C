@@ -22,6 +22,7 @@ extern struct SharedData_08091f14 Data_02000240;
 
 void Func_0809537c(s32 flags);
 s16 Func_0808b074(s32 value);
+#define BattleFx_GetPhaseResult Func_0808b074
 s32 Func_0808adf0(void *object);
 #define BattleFx_LookupResult Func_0808adf0
 void *ObjectTable_Get(u32 object);
@@ -44,7 +45,7 @@ void BattleFx_SetPhaseRequest(s32 flags, s32 value)
 
     shared = &Data_02000240;
     shared->request = (value + 0x12c) | high;
-    state->value = Func_0808b074(value);
+    state->value = BattleFx_GetPhaseResult(value);
     if (state->mode == 3) {
         void *object = ObjectTable_Get(shared->object);
 

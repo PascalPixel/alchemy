@@ -103,7 +103,9 @@ void Audio_SetWorkPairA(u16 primary, u16 secondary)
 }
 
 void Func_080fa458(void);
+#define Audio_StopAllPlayers Func_080fa458
 void Func_080fa490(void);
+#define Audio_ResumeAllPlayers Func_080fa490
 s32 WaitFrames(s32);
 
 u8 AudioCommand_GetStateByte(void)
@@ -113,12 +115,12 @@ u8 AudioCommand_GetStateByte(void)
 
 void AudioCommand_StopAllPlayers(void)
 {
-    Func_080fa458();
+    Audio_StopAllPlayers();
 }
 
 void AudioCommand_ResumeAllPlayers(void)
 {
-    Func_080fa490();
+    Audio_ResumeAllPlayers();
 }
 
 void AudioCommand_UpdateToggleMask(u32 command)

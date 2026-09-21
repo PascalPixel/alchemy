@@ -42,14 +42,19 @@ void Func_08009098(Object *, const void *);
 Unit *Func_08077008(s32);
 s32 Func_08077078(Unit *, s32);
 s32 Func_080b6d30(s32);
+#define SummonSlot_RegisterActorSprites Func_080b6d30
 s32 Func_080b6eb4(s32);
+#define BattleUnit_LookupWeaponValueByClass Func_080b6eb4
 s32 Func_080c2384(s32);
+#define Summon_GetEntryValue Func_080c2384
 s32 Func_080c23a0(s32);
+#define Summon_GetEntryFlag1Field Func_080c23a0
 s32 Func_080044d0(s32, s32);
 #define ArcTan2 Func_080044d0
 extern const u8 Data_080c5938[];
 
 void Func_080b6f44(Actor *actor, s32 unit, s32 x, s32 y)
+#define BattlePresentation_SpawnActorObject Func_080b6f44
 {
     s32 fixed_x;
     s32 fixed_y;
@@ -68,12 +73,12 @@ void Func_080b6f44(Actor *actor, s32 unit, s32 x, s32 y)
     object = Object_CreateFar(0xf000, fixed_x, 0);
     unit_record = Func_08077008(unit);
     actor_flag = 0;
-    existing_sprite = Func_080b6d30(unit);
+    existing_sprite = SummonSlot_RegisterActorSprites(unit);
 
     if (unit_record->kind == 0) {
-        sprite = Func_080c2384(unit_record->class_id);
+        sprite = Summon_GetEntryValue(unit_record->class_id);
         if (existing_sprite == 0)
-            actor_flag = Func_080c23a0(unit_record->class_id);
+            actor_flag = Summon_GetEntryFlag1Field(unit_record->class_id);
         else
             sprite = existing_sprite;
     } else {
@@ -143,7 +148,7 @@ void Func_080b6f44(Actor *actor, s32 unit, s32 x, s32 y)
     actor->y = fixed_y;
     actor->flag = actor_flag;
     actor->sprite = sprite;
-    anim = Func_080b6eb4(unit);
+    anim = BattleUnit_LookupWeaponValueByClass(unit);
     actor->field_08 = 0;
     actor->field_20 = 0;
     actor->field_24 = 0;

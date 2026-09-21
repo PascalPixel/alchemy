@@ -17,9 +17,12 @@ s32 Func_08020244(s16 a, s32 b);
 void Func_0801776c(s32 msg, s32 mode);
 #define UiText_ShowPositionedMessageAndWait Func_0801776c
 s32 Func_08017364(void);
+#define UiWork_IsComplete Func_08017364
 void WaitFrames(s32 frames);
 s32 Func_08028df4(s32 a, s32 b, s32 c, s32 d);
+#define Menu_RunConfirmSelection Func_08028df4
 void Func_08019a54(void);
+#define UiWork_FinalizePendingCore Func_08019a54
 void Func_080f9010(u8 mode);
 #define Audio_PlayCue Func_080f9010
 void Func_0801f818(void);
@@ -51,26 +54,26 @@ s32 Save_WriteSelectedSlot(void)
             s32 off = (slot << 6) + 0x105c;
             if (base[off] != 0) {
                 UiText_ShowPositionedMessageAndWait((s32)Value_00000014, 13);
-                while (Func_08017364() == 0) {
+                while (UiWork_IsComplete() == 0) {
                     WaitFrames(1);
                 }
-                if (Func_08028df4(1, 0, 0, 1) != 0) {
-                    Func_08019a54();
+                if (Menu_RunConfirmSelection(1, 0, 0, 1) != 0) {
+                    UiWork_FinalizePendingCore();
                     goto skip;
                 }
-                Func_08019a54();
+                UiWork_FinalizePendingCore();
             }
             Data_02002004 = slot;
             Audio_PlayCue(85);
             UiText_ShowPositionedMessageAndWait((s32)Value_0000001a, 13);
-            while (Func_08017364() == 0) {
+            while (UiWork_IsComplete() == 0) {
                 WaitFrames(1);
             }
             Func_0801f818();
             Func_0808a5b0();
             flag = SaveState_WriteRecord(slot, Data_02000000);
             flag |= SaveState_WriteRecord(slot + 3, Data_02000000 + 0x1000);
-            Func_08019a54();
+            UiWork_FinalizePendingCore();
             if (flag != 0) {
                 UiText_ShowPositionedMessageAndWait((s32)Value_0000000b, 1);
                 result = -3;

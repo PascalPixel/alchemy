@@ -11,7 +11,9 @@ void Func_08009080(void *, s32);
 void Func_080030f8(s32);
 #define WaitFrames Func_080030f8
 void Func_08099738(void);
+#define run_tile_trigger_sequence Func_08099738
 void Func_08099678(void);
+#define check_object_tile Func_08099678
 
 #define BattleFx_RunFlashingCallbackSequence Func_08099838
 
@@ -55,7 +57,7 @@ void BattleFx_RunFlashingCallbackSequence(void)
     *(s16 *)&((s32 *)Data_02000240)[index] = 1;
     callback();
     if (*(s16 *)(state + 382) == 0x2092) {
-        Func_08099738();
+        run_tile_trigger_sequence();
         *(s16 *)(state + 382) = cycle;
     }
 }

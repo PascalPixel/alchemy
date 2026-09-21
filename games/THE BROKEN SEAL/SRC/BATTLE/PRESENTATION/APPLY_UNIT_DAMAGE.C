@@ -22,6 +22,7 @@ void Func_08015118(void);
 void Func_08015120(s32 value, s32 mode);
 void Func_080151c8(s32 message_id);
 void Func_080b8ec4(s32 unit_id);
+#define BattleMotion_SetMode5AndActivateSlot Func_080b8ec4
 
 /* Takes damage from a unit's HP, stopping at zero, and reports it with the
  * unit posed in mode 5: an optional opening line (a bitter blow for units 0
@@ -67,7 +68,7 @@ void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_messag
         Func_08015120(unit_id, 1);
     }
 
-    Func_080b8ec4(unit_id);
+    BattleMotion_SetMode5AndActivateSlot(unit_id);
     if (unit_id <= 7) {
         if (character->hp <= 0) {
             Func_08015120(unit_id, 1);

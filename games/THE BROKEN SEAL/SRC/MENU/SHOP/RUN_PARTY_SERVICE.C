@@ -6,14 +6,21 @@
 void UiText_DrawQuantity(s32 value, s32 slot);
 void UiWindow_Close(s32 window, s32 style);
 s32 Func_080b27b0(s32 unit_id, s32 kind);
+#define Shop_CanServe Func_080b27b0
 s32 Func_080b2778(s32 unit_id, s32 kind);
+#define Shop_ServicePrice Func_080b2778
 void Func_080b2da8(s32 unit_id, s32 mode);
+#define BattleUnit_ResetStateByMode Func_080b2da8
 void Func_080b2e30(s32 enabled, s32 selected);
+#define Shop_HiliteUnit Func_080b2e30
 void Func_080b2ed8(s32 target, s32 selection);
+#define Shop_DrawSelMsg Func_080b2ed8
 void Func_080b28d4(s32 message);
 #define UiMessage_ShowResolvedAndWait Func_080b28d4
 void Func_080b2928(s32 message);
+#define UiMessage_ShowResolvedAndRestoreState Func_080b2928
 s32 Func_080b0664(s32 arg0);
+#define UiMessage_ShowChoiceVariant Func_080b0664
 s32 Func_080b280c(void);
 #define Shop_CountUnits Func_080b280c
 void Func_080b3050(s32 member);
@@ -59,7 +66,7 @@ s32 Sanctum_RunPartyService(void)
     retry = 0;
     while (selection < shop->party_member_count) {
         unit_id = shop->party_member_ids[selection];
-        if (Func_080b27b0(unit_id, kind) != 0)
+        if (Shop_CanServe(unit_id, kind) != 0)
             break;
         selection++;
     }
@@ -73,7 +80,7 @@ s32 Sanctum_RunPartyService(void)
             selection = 0;
             while (selection < shop->party_member_count) {
                 unit_id = shop->party_member_ids[selection];
-                if (Func_080b27b0(unit_id, kind) != 0)
+                if (Shop_CanServe(unit_id, kind) != 0)
                     break;
                 selection++;
             }
@@ -87,14 +94,14 @@ s32 Sanctum_RunPartyService(void)
             unit_id = shop->party_member_ids[selection];
             Shop_PlaceCursor((void *)list_window, selection * 24 - 12, 0);
             shop->mode = 3;
-            Func_080b2e30(list_window, selection);
-            Func_080b2ed8(price_window, unit_id);
+            Shop_HiliteUnit(list_window, selection);
+            Shop_DrawSelMsg(price_window, unit_id);
         }
 
         if ((*(volatile u32 *)ADDR_03001C94 & 1) != 0) {
             WaitFrames(1);
-            price = Func_080b2778(unit_id, kind);
-            if (Func_080b27b0(unit_id, kind) == 0) {
+            price = Shop_ServicePrice(unit_id, kind);
+            if (Shop_CanServe(unit_id, kind) == 0) {
                 Audio_PlayCue(SOUND_MENU_CANCEL);
                 continue;
             }
@@ -102,21 +109,21 @@ s32 Sanctum_RunPartyService(void)
             UiText_DrawQuantity(price, 5);
             message = (s32)&Value_00000d27;
             UiMessage_ShowResolvedAndWait(message);
-            if (Func_080b0664(0) != 0) {
-                Func_080b2928(message + 2);
+            if (UiMessage_ShowChoiceVariant(0) != 0) {
+                UiMessage_ShowResolvedAndRestoreState(message + 2);
                 retry = 1;
                 continue;
             }
             if ((u32)price > (u32)SHOP_PARTY_STATE.money) {
                 Audio_PlayCue(SOUND_MENU_CANCEL);
-                Func_080b2928(message + 1);
+                UiMessage_ShowResolvedAndRestoreState(message + 1);
                 retry = 1;
                 continue;
             }
             UiText_DrawQuantity(unit_id, 1);
             UiMessage_ShowResolvedAndWait(message + 3);
             UiWork_FinalizePending();
-            Func_080b2da8(unit_id, kind);
+            BattleUnit_ResetStateByMode(unit_id, kind);
             Func_080b3050(selection);
             Func_08077230(-price);
             Shop_DrawMoney();

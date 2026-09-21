@@ -50,6 +50,7 @@ void Func_08004278(s32);
 #define Scheduler_RemoveCallback Func_08004278
 void Func_08009020(void *, s32);
 void Func_080dbb24(s32, s32, s32);
+#define BattleFx_SpawnObjects Func_080dbb24
 void Func_080e0524(s32, void *, s32, s32);
 #define Resource_LoadAndDecompress Func_080e0524
 void *Func_08002f40(s32);
@@ -59,6 +60,7 @@ void Func_080030f8(s32);
 s32 Func_08004458(void);
 #define Random16 Func_08004458
 void Func_080d6750(s32);
+#define BattleFx_SelectLivingTargets Func_080d6750
 s32 Func_080ed408(s32, s32, s32, s32, s32);
 void Func_08009008(s32, void *, void *, s32);
 s32 Func_08002322(s32);
@@ -306,7 +308,7 @@ s32 BattleEffect_RunParticleStreams(s32 arg0, s32 arg1)
             var_r6_136 += 0x2001;
         } while (var_r8_137 != 2);
     } else {
-        Func_080dbb24(1, 0x17D, 3);
+        BattleFx_SpawnObjects(1, 0x17D, 3);
     }
     Resource_LoadAndDecompress(0xc1, *sp3C, 1, 1);
     if (sp4C == 1) {
@@ -354,7 +356,7 @@ s32 BattleEffect_RunParticleStreams(s32 arg0, s32 arg1)
     ((WordCopy)0x03001388)(
         (void *)0x06004000, draw_destination, 0x4000);
     Data_03001ce0.unk10 = 0xF0;
-    Func_080d6750((*(s32 *)((u8 *)(*sp3C) + (0x7828))));
+    BattleFx_SelectLivingTargets((*(s32 *)((u8 *)(*sp3C) + (0x7828))));
     temp_r2_365 = *sp3C;
     (*(s32 *)((u8 *)(temp_r2_365) + (0x77D0))) = 0;
     (*(s32 *)((u8 *)(temp_r2_365) + (0x77D4))) = 0;

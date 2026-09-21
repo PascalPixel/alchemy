@@ -4,13 +4,17 @@ void Func_08016478(void);
 #define RenderOutput_PrepareForRedraw Func_08016478
 void Func_0801e41c(s32, s32, s32, s32, s32);
 void Func_0801e8b0(void *, s32, s32, s32);
+#define UiText_DrawStringAtOffset Func_0801e8b0
 void Func_0801e940(s32, s32, s32, s32);
 #define UiText_DrawStringInWindow Func_0801e940
 void Func_0801e9d4(s32, s32, s32, s32, s32);
+#define UiText_DrawNumberAtOffset Func_0801e9d4
 void Func_0801e7c0(s32, s32, s32, s32);
 #define UiText_DrawCharacterAtOffset Func_0801e7c0
 s32 Func_0801f680(s32, void *);
+#define Text_FormatPlayTime Func_0801f680
 void Func_0801ea08(s32, s32, s32, s32, s32);
+#define UiText_DrawNumberInWindow Func_0801ea08
 extern u8 Value_00000009;
 extern u8 Value_00000741;
 extern u8 Data_080371e0[];
@@ -31,15 +35,15 @@ void StatusMenu_DrawCharacterSummary(s32 surface, u8 *st)
     if (surface != 0) {
         RenderOutput_PrepareForRedraw();
         Func_0801e41c(surface, 0, 4, 13, 4);
-        Func_0801e8b0(st + 16, surface, 0, 0);
+        UiText_DrawStringAtOffset(st + 16, surface, 0, 0);
         extra = 0;
         UiText_DrawStringInWindow((s32)StatusPanelLayout, surface, 72, 0);
-        Func_0801e9d4(st[28], 2, surface, 80, extra);
+        UiText_DrawNumberAtOffset(st[28], 2, surface, 80, extra);
         UiText_DrawCharacterAtOffset(st[29] + (s32)&ClassNameMessageBase, surface, 0, 16);
         UiText_DrawCharacterAtOffset((s32)&StatusLabelMessage, surface, 0, 32);
-        UiText_DrawStringInWindow(Func_0801f680(*(s32 *)(st + 32), buf), surface, 48, 40);
+        UiText_DrawStringInWindow(Text_FormatPlayTime(*(s32 *)(st + 32), buf), surface, 48, 40);
         extra = 48;
-        Func_0801ea08(*(s32 *)(st + 36), 6, surface, 0, extra);
+        UiText_DrawNumberInWindow(*(s32 *)(st + 36), 6, surface, 0, extra);
         UiText_DrawCharacterAtOffset(0xc88, surface, 48, 48);
     }
 }

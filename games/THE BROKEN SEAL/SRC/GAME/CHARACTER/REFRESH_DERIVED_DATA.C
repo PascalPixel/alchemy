@@ -11,6 +11,7 @@ struct OwnerDerivedState {
 void *Owner_GetState(s32);
 s32 Func_08078bf0(s32);
 u32 Func_080798e0(s32, void *);
+#define Owner_BuildDigitTiles Func_080798e0
 s8 Func_080799b0(u8, const u8 *);
 
 void Owner_RefreshDerivedData(s32 owner_no)
@@ -19,5 +20,5 @@ void Owner_RefreshDerivedData(s32 owner_no)
 
     owner->value_129 = Func_080799b0(owner->value_128, owner->values_f8);
     Func_08078bf0(owner_no);
-    Func_080798e0(owner_no, owner->data_024);
+    Owner_BuildDigitTiles(owner_no, owner->data_024);
 }

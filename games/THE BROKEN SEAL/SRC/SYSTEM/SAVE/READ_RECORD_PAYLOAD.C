@@ -10,7 +10,7 @@ u32 Func_08005a78(s32 record_id, void *destination)
     index = SaveState_FindLatestSlot(record_id);
     if (index > 15)
         return 1;
-    Func_080058ac(index);
+    SaveState_ReadSlotAndCheckChecksum(index);
     START_DMA(work->slot.record.payload, destination, 0x840003fc);
     WAIT_DMA();
     return 0;

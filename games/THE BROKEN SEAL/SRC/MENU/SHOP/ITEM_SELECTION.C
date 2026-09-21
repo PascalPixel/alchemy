@@ -272,6 +272,7 @@ void *Func_08077008(s32);
 void Func_08015270(s32);
 void Func_08015080(s32, s32, s32, s32);
 s32 Func_080b19cc(s32);
+#define Shop_SalePrice Func_080b19cc
 void Func_080150b0(s32, s32, s32, s32, s32);
 
 void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)

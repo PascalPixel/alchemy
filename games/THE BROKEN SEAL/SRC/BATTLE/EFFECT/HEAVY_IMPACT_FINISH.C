@@ -3,9 +3,11 @@
 
 extern s32 Data_02000240[];
 int Func_080958e4();
+#define BattleFx_ClearActiveSlotsAndScheduleUpdates Func_080958e4
 int Func_08092adc();
 #define ObjectMotion_ArmCallback Func_08092adc
 int Func_08092560();
+#define ObjectMotion_Launch Func_08092560
 
 void BattleFx_FinishHeavyImpact(s32 arg)
 {
@@ -32,26 +34,26 @@ void BattleFx_FinishHeavyImpact(s32 arg)
         {
             return;
         }
-        Func_080958a8();
+        BattleFx_InitializeSlots();
         base = (*((s32 *)0x03001F30));
         Func_080b0048(0x20118C);
         Audio_PlayCue(0xAD);
-        Func_080925cc(id, 1);
+        Motion_SetVarCbAndRefresh(id, 1);
     }
     while (0);
     Audio_PlayCue(0xAE);
-    Func_080925cc(id, 1);
+    Motion_SetVarCbAndRefresh(id, 1);
     /* A second boundary gives the third repeated call its observed order. */
     do
     {
         Audio_PlayCue(0xAF);
-        Func_080925cc(id, 1);
+        Motion_SetVarCbAndRefresh(id, 1);
         WaitFrames(0x14);
         Audio_PlayCue(0x8C);
         (*((s32 *)(((s8 *)ctx) + 0x6C))) = 0x0809592D;
         WaitFrames(0x28);
         Audio_PlayCue(0x99);
-        Func_08092560(id, 0xC, 0x16);
+        ObjectMotion_Launch(id, 0xC, 0x16);
         pos.x = ((s32)(*((s32 *)(((s8 *)ctx) + 8))));
         pos.y = ((s32)(*((s32 *)(((s8 *)ctx) + 0xC))));
         pos.z = ((s32)(*((s32 *)(zptr = (((s8 *)ctx) + 0x10)))));
@@ -89,5 +91,5 @@ void BattleFx_FinishHeavyImpact(s32 arg)
     Audio_PlayCue(0xA4);
     WaitFrames(0x64);
     Func_080b0050();
-    Func_080958e4();
+    BattleFx_ClearActiveSlotsAndScheduleUpdates();
 }

@@ -20,6 +20,7 @@ void Func_080b0204(void);
 s32 Func_080b280c(void);
 #define Shop_CountUnits Func_080b280c
 void Func_080b2b10(void);
+#define Sanctum_RunPartyService Func_080b2b10
 s32 Func_08015388(s32 prev);
 void UiWindow_Close(s32 window, s32 style);
 
@@ -84,7 +85,7 @@ s32 Shop_ConfirmAct(s32 unit_id)
             if (Shop_CountUnits() == 0) {
                 UiMessage_ShowResolvedAndWait(message + 1);
             } else {
-                Func_080b2b10();
+                Sanctum_RunPartyService();
             }
         }
         shop->party_action = 0;

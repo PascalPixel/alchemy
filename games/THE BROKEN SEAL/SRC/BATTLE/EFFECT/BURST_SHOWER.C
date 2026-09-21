@@ -39,6 +39,7 @@ void Func_080041d8(s32, s32);
 void Func_08004278(s32);
 #define Scheduler_RemoveCallback Func_08004278
 void Func_080e3958(s32, s32 *);
+#define EffectPosition_ApplyAnimationAndYOffset Func_080e3958
 void Func_080e396c(s32, s32 *);
 #define EffectPosition_ApplyStepAndYOffset Func_080e396c
 s32 Func_080022ec(s32, s32);
@@ -183,7 +184,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
         SPARKS[i].tick = -1;
     }
 
-    Func_080e3958(WORK_EFX->actor, pos);
+    EffectPosition_ApplyAnimationAndYOffset(WORK_EFX->actor, pos);
     if (mode == 3) {
         pos[1] -= 16;
     }

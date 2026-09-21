@@ -45,6 +45,7 @@ void Func_080f9010(s32 cue);
 void Func_0809163c(s32 state);
 #define Battle_WaitMode0 Func_0809163c
 void Func_0809376c(void);
+#define BattleFx_CopyLinkedObjectPosition Func_0809376c
 extern const u8 Data_0809fc2c[];
 
 void BattleFx_SpawnLinked(

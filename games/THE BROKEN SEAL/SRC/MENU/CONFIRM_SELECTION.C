@@ -8,6 +8,7 @@ void Menu_AppendResourceEntry(s32 arg0);
 s32 Func_08028808(s32, s32, s32);
 extern u8 Data_00000024[];
 void Func_080288a8(s32 a0, s32 a1, s32 a2, s32 a3);
+#define Menu_LayoutResourceEntries Func_080288a8
 
 s32 Menu_SelectEntry11To14(s32 arg0)
 {
@@ -76,7 +77,7 @@ s32 Menu_RunConfirmSelectionAt(s32 arg0, s32 arg1, s32 arg2)
     AffineEffect_InitializeWork();
     Menu_AppendResourceEntry(5);
     Menu_AppendResourceEntry(6);
-    Func_080288a8(arg0, arg1, 3, p);
+    Menu_LayoutResourceEntries(arg0, arg1, 3, p);
     ret = Func_08028574(ret);
     Menu_EndResourceSelection();
     if (ret == -1) {

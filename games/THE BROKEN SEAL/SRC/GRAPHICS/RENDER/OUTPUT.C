@@ -53,6 +53,7 @@ struct RenderOutput *RenderOutput_Create(
 }
 
 s32 Func_0801bc34(s32 mode, s32 value);
+#define Resource_LoadByMode Func_0801bc34
 void *RenderOutput_CreateFromResource(
     s32 arg0,
     s32 arg1,
@@ -62,7 +63,7 @@ void *RenderOutput_CreateFromResource(
 {
     s32 no;
 
-    no = Func_0801bc34(arg0, arg1);
+    no = Resource_LoadByMode(arg0, arg1);
     if (no < 0) {
         return NULL;
     }

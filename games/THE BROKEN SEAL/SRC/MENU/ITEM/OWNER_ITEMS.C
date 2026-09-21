@@ -53,6 +53,7 @@ void ItemMenu_DrawIcons(u16 *items, s32 style)
 
 void UiWindow_Commit(s32 window);
 void Func_080a1cb0(s32 mode);
+#define ItemMenu_RefreshEntry Func_080a1cb0
 void UiText_DrawAt(s32 message, s32 window, s32 x, s32 y);
 
 void ItemMenu_RefreshOwner(s32 owner_id, s32 mode)
@@ -66,7 +67,7 @@ void ItemMenu_RefreshOwner(s32 owner_id, s32 mode)
     items = menu->items;
     menu->item_count = InventoryMenu_CollectItems(owner, items, 0);
     UiWindow_Commit(menu->item_window);
-    Func_080a1cb0(mode);
+    ItemMenu_RefreshEntry(mode);
     InventoryMenu_DrawItemIcons(items, 0);
     if (InventoryMenu_CountItems(owner_id) == 0)
         UiText_DrawAt(

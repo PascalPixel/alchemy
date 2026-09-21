@@ -7,6 +7,7 @@ void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
 void *Func_080e3aa0(s32 *);
 void *Func_080e40a4(s32 *);
 void *Func_080e47b8(s32 *);
+#define FunctionHead_080e47b8 Func_080e47b8
 void BattleFx_DispatchByIdRange(s32 *arg0)
 {
   s32 no;
@@ -20,7 +21,7 @@ void BattleFx_DispatchByIdRange(s32 *arg0)
   tmp = no - 0x64;
   if (((u32)tmp) <= 0x23U)
   {
-    Func_080e47b8(arg0);
+    FunctionHead_080e47b8(arg0);
   } else
     if (no > 0xC7)
   {

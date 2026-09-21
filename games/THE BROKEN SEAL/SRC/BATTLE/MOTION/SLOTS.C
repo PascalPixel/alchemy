@@ -68,10 +68,11 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object)
 }
 
 s32 Func_080b6e30();
+#define BattleMotion_ReleaseObjectSlotByValue Func_080b6e30
 s32 ActivateBattleObjectSlot(s32 object_id)
 {
   struct BattleObjectSlot *slot;
-  Func_080b6e30();
+  BattleMotion_ReleaseObjectSlotByValue();
   slot = GetBattleObjectSlot(object_id);
   slot->active = 1;
   return 0;

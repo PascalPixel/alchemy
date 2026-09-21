@@ -3,6 +3,7 @@
 
 s32 Func_080f3078(s32, void *, void *, s32);
 void Func_080f2ebc(s16 *, s16 *, s16 *, s32);
+#define Graphics_InterpolatePaletteBuffers Func_080f2ebc
 
 struct PaletteInterpolationState {
     u8 unknown_0000[0x400];
@@ -46,6 +47,6 @@ void Graphics_UpdatePaletteInterpolation(s32 value)
     if (state != NULL) {
         state->value = value;
         state->zero = 0;
-        Func_080f2ebc(state->first, state->second, state->output, value);
+        Graphics_InterpolatePaletteBuffers(state->first, state->second, state->output, value);
     }
 }

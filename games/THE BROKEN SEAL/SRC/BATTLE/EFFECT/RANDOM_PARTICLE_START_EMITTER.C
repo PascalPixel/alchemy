@@ -57,6 +57,7 @@ s32 VramBlock_LoadCached(u32 slot, u32 size, const void *src);
 void Runtime_ReleaseHeapBlock(s32 kind);
 void EmitRandomParticleEffect(void);
 void Func_0808f28c(const void *src);
+#define BattleFx_SpawnRandomParticleAtPosition Func_0808f28c
 
 #define EfxWork Data_03001ebc
 #define EmitterData Data_0809e6c0

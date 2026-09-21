@@ -13,6 +13,7 @@ extern struct MapTileWindow_08010d48 *Data_03001e70;
 s32 Func_080108e4(s32 layer, s32 x, s32 y, s32 tile, s32 update);
 
 void Func_08010d48(s32 x, s32 y, s32 px, s32 py)
+#define Map_SetWindowCellTile Func_08010d48
 {
     struct MapTileWindow_08010d48 *window;
     s32 *position;

@@ -173,12 +173,14 @@ extern u32 Func_08004458(void);
 extern void Func_080916b0(void);
 #define Battle_Reset Func_080916b0
 extern void Func_08092b94(s32);
+#define Event_SetValue1d8 Func_08092b94
 extern void Func_08092f84(s32, s32);
 #define BattleEv_RunWait Func_08092f84
 extern void Func_08091750(void);
 #define BattleFx_FinishAction Func_08091750
 extern void Func_08009088(struct BattleActionObject *, s32);
 extern void Func_08092848(s32, s32, s32);
+#define Object_LinkPair Func_08092848
 extern void Func_08015058(s32);
 extern void Func_08091660(void);
 #define Battle_InitializeRenderObject Func_08091660
@@ -187,6 +189,7 @@ extern void Func_08093a6c(struct BattleActionObject *, void *);
 extern void Func_08009098(struct BattleActionObject *, void *);
 #define ObjectDispatch_InitializeFar Func_08009098
 extern void Func_0809ade8(s32);
+#define BattleFx_ResumeObject Func_0809ade8
 extern u8 Data_02000240;
 
 s32 BattleFx_RunDescriptorAction(s32 id)
@@ -218,7 +221,7 @@ s32 BattleFx_RunDescriptorAction(s32 id)
                 s32 message =
                     0x0e0b + index * 2 + (random * 2 >> 16);
                 Battle_Reset();
-                Func_08092b94(message);
+                Event_SetValue1d8(message);
                 BattleEv_RunWait(id, 0);
                 BattleFx_FinishAction();
                 goto finish;
@@ -251,13 +254,13 @@ run_descriptor:
             *(s32 *)((u8 *)linked + 36) = 0;
             *(s32 *)((u8 *)linked + 40) = 0;
             *(s32 *)((u8 *)linked + 44) = 0;
-            Func_08092848(id, *object_slot, 0);
+            Object_LinkPair(id, *object_slot, 0);
         }
     }
     if (descriptor->result < 0x10000) {
         Func_08015058(used_fallback);
         Battle_Reset();
-        Func_08092b94(descriptor->result);
+        Event_SetValue1d8(descriptor->result);
         BattleEv_RunWait(id, 0);
         BattleFx_FinishAction();
     } else {
@@ -288,7 +291,7 @@ finish:
         s32 finish_selected_offset = 0x24a;
         s16 *selected =
             (s16 *)((u8 *)&Data_02000240 + finish_selected_offset);
-        Func_0809ade8(*selected);
+        BattleFx_ResumeObject(*selected);
         cleared_selection = 0xffff;
         *selected = cleared_selection;
     }
@@ -310,7 +313,7 @@ s32 BattleFx_RunKind6DescriptorAction(s32 arg0)
         if (val != 0) {
             if (val < 0x10000) {
                 Battle_Reset();
-                Func_08092b94(*(s32 **)((u8 *)p + 8));
+                Event_SetValue1d8(*(s32 **)((u8 *)p + 8));
                 BattleEv_RunWait(-1, 0);
                 ret = 0;
                 BattleFx_FinishAction();
@@ -336,7 +339,9 @@ typedef struct {
 
 void Audio_PlayCue(s32);
 void Func_08094354(void);
+#define ObjectEffect_BeginContextEffect26 Func_08094354
 void Func_08094368(void);
+#define ObjectEffect_BeginContextEffect25 Func_08094368
 
 s32 BattleAction_RunDescriptor(s32 arg0)
 {
@@ -355,7 +360,7 @@ s32 BattleAction_RunDescriptor(s32 arg0)
         }
         if (desc->result < 0x10000) {
             Battle_Reset();
-            Func_08092b94(desc->result);
+            Event_SetValue1d8(desc->result);
             BattleEv_RunWait(-1, 0);
             ret = 0;
             BattleFx_FinishAction();
@@ -369,8 +374,8 @@ s32 BattleAction_RunDescriptor(s32 arg0)
             kind = desc2->flags & 0x30;
             switch (kind) {
             case 0: Audio_PlayCue(0x7B); break;
-            case 32: Audio_PlayCue(0x80); Func_08094354(); break;
-            case 48: Audio_PlayCue(0x81); Func_08094368(); break;
+            case 32: Audio_PlayCue(0x80); ObjectEffect_BeginContextEffect26(); break;
+            case 48: Audio_PlayCue(0x81); ObjectEffect_BeginContextEffect25(); break;
             }
             work->queued_result = (s16)desc2->result;
 block_17:

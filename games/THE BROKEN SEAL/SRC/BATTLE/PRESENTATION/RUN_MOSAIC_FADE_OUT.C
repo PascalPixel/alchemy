@@ -2,6 +2,7 @@
 #include "TYPES.H"
 
 void Func_08003b70(s32 arg0);
+#define Blend_SetDarkenTarget16 Func_08003b70
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
@@ -28,7 +29,7 @@ s32 BattlePres_RunMosaicFadeOut(void)
     reg += 0x21;
     *reg = 0x3eee;
 
-    Func_08003b70(16);
+    Blend_SetDarkenTarget16(16);
     for (i = 0; i <= 15; i++) {
         Rand();
         Rand();

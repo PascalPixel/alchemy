@@ -10,9 +10,12 @@ struct State_0801c304 {
 extern struct State_0801c304 *Data_03001e98;
 void Func_0801a7f4(u32);
 void Func_0801b228(void);
+#define Menu_SetupSelectionBothSides Func_0801b228
 void Func_0801b010(u32, u32);
+#define Menu_OpenSelectionWindow Func_0801b010
 void Resource_ScheduleOwnerResetDelayed(void);
 u32 Func_0801b424(u32);
+#define Menu_WaitForSelectionInput Func_0801b424
 void Resource_ResetOwnerEntries(void);
 
 u32 Menu_RunSelectionForValue(u32 value)
@@ -24,10 +27,10 @@ u32 Menu_RunSelectionForValue(u32 value)
     state->value = value;
     state->active = 1;
     Func_0801a7f4(value);
-    Func_0801b228();
-    Func_0801b010(0, 5);
+    Menu_SetupSelectionBothSides();
+    Menu_OpenSelectionWindow(0, 5);
     Resource_ScheduleOwnerResetDelayed();
-    result = Func_0801b424(1);
+    result = Menu_WaitForSelectionInput(1);
     Resource_ResetOwnerEntries();
     return result;
 }

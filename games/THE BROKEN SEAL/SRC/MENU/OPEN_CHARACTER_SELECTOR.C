@@ -69,7 +69,9 @@ s32 Func_08077158(const u16 *);
 void Func_080a1090(s32);
 #define UiWindow_InitializeWork Func_080a1090
 void Func_080a8034(s32, s32, s32, s32);
+#define Menu_InitSelectorCursorAndEntries Func_080a8034
 s32 Func_080a7440(void);
+#define CharacterSelector_Run Func_080a7440
 
 /*
  * Open the compact character selector, run its blocking interaction body,
@@ -90,13 +92,13 @@ s32 Menu_OpenCharacterSelector(void)
 
     state->character_count =
         (u8)Func_08077158(state->character_ids);
-    Func_080a8034(0, 3, 0, 7);
+    Menu_InitSelectorCursorAndEntries(0, 3, 0, 7);
     state->selector_window = UiWindow_CreateFar(13, 0, 17, 5, 2);
     for (index = 0; index < ROW_CNT; index++)
         state->row_positions[index] = 30;
     state->flags = 3;
 
-    result = Func_080a7440();
+    result = CharacterSelector_Run();
 
     Func_08015278(state->screen_handle);
     InventoryMenu_CloseWindows();

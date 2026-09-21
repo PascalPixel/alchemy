@@ -10,6 +10,7 @@ s32 Func_08077228(s32, u8);
 s32 Func_08077230(s32);
 s32 Func_08077298(s16);
 void Func_080b0574(s32 message);
+#define UiMessage_ShowAndRestoreState Func_080b0574
 void Audio_PlayCue(s32);
 extern char Value_00000ca1;
 
@@ -34,7 +35,7 @@ void Shop_BuyDone(s32 unit_id, s32 item_id, s32 quantity)
             Shop_DrawMoney();
         } while (remaining != 0);
     }
-    Func_080b0574((s32)&Value_00000ca1);
+    UiMessage_ShowAndRestoreState((s32)&Value_00000ca1);
     if (Shop_ConfirmEquipItem(unit_id, added_slot) != 0) {
         Shop_SellReplacedItem(unit_id, replaced_slot);
     }
@@ -105,7 +106,7 @@ s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
         }
     }
 
-    Func_080b0574((s32)&Value_00000ca3);
+    UiMessage_ShowAndRestoreState((s32)&Value_00000ca3);
     return 1;
 }
 
@@ -176,6 +177,7 @@ void Func_080a1028(s32, s32, s32, s32, s32);
 void Func_080a1030(void);
 s32 Func_080b1bd0(s32);
 void Func_080b211c(s32);
+#define Shop_SelRepair Func_080b211c
 
 /*
  * Keep an actor-selection menu active while dispatching the chosen actor into
@@ -222,7 +224,7 @@ s32 Shop_PickUnit(void)
                 if (shop->party_action == 1)
                     Func_080b1bd0(unit_id);
                 else
-                    Func_080b211c(unit_id);
+                    Shop_SelRepair(unit_id);
                 shop->cursor.anchor->kind = 4;
                 shop->mode = 12;
                 redraw = 1;

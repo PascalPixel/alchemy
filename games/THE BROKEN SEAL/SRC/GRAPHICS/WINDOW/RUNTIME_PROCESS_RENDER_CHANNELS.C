@@ -7,6 +7,7 @@ struct Work;
 void UiWork_Finalize(struct Work *, s32);
 s32 Func_080168f4(void *);
 void Func_08019854(void *);
+#define UiWork_AdvanceChannelTransition Func_08019854
 
 void UiWork_ProcessRenderChannels(void)
 {
@@ -27,7 +28,7 @@ void UiWork_ProcessRenderChannels(void)
                 s32 kind;
 
                 if (pending != 0) {
-                    Func_08019854(channel);
+                    UiWork_AdvanceChannelTransition(channel);
                 } else {
                     kind = Func_080168f4(channel);
                     switch (kind) {

@@ -20,8 +20,10 @@ void Func_0800447c(s32, s32, struct Vec *);
 s32 Func_080091a8(s32, s32, s32);
 struct Object *Func_0808ba1c(s32);
 s32 Func_0808d48c(s32, s32);
+#define BattleFx_FindDescriptor Func_0808d48c
 
 s32 Func_0808ce74(void)
+#define Object_GetTriggerTileAheadOfCurrent Func_0808ce74
 {
     u8 *state;
     u8 *map;
@@ -54,7 +56,7 @@ s32 Func_0808ce74(void)
             if (height >= obj->pos.y && height <= obj->pos.y + 0x400000) {
                 result = kind;
             }
-        } else if (Func_0808d48c(3, kind) != 0) {
+        } else if (BattleFx_FindDescriptor(3, kind) != 0) {
             result = kind;
         }
     }

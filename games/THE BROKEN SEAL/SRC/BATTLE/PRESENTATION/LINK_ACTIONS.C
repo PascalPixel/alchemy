@@ -31,7 +31,7 @@ s32 BattlePresentation_AppendLinkedActions(
     u8 *battle = *(u8 **)0x03001e74;
     s32 result = 0;
     s32 allocation_size = Func_080022f4(count * 16 + 19, 20) * 20;
-    struct BattleLinkedActionState *state = Func_08004970(40);
+    struct BattleLinkedActionState *state = Runtime_BumpAllocateAlternatePool(40);
     s32 index;
 
 
@@ -152,8 +152,8 @@ s32 BattlePresentation_AppendLinkedActions(
     }
 
 fail:
-    Func_0800651c();
-    Func_08006358();
+    BattleLink_ResetTransferState();
+    SerialRuntime_RemoveIrqHandlers();
     Func_08002df0(state);
     return -1;
 }

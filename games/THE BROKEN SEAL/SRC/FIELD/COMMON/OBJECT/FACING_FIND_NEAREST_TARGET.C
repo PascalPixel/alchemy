@@ -23,6 +23,7 @@ struct FacingEntry {
 s32 ArcTan2(s32, s32);
 
 struct FacingEntry *Func_08093af8(struct FacingEntry *self, s32 id)
+#define Object_FindNearestFacingTarget Func_08093af8
 {
     struct FacingEntry *entry;
     struct FacingEntry *found;

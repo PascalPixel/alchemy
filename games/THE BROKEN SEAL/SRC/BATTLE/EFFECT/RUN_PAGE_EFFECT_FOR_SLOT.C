@@ -14,15 +14,19 @@ s32 Func_08077288(s32, void *);
 void Func_080916b0(void);
 #define Battle_Reset Func_080916b0
 void Func_0808c44c(void);
+#define Battle_SetObjectFlag5bWhenMode3 Func_0808c44c
 void Func_0808b8e8(void);
 #define BattleEffect_ClearOutOfBoundsObjects Func_0808b8e8
 void Func_08096140(s32);
 void Func_080965a8(s32);
 void Func_08095dd0(s32);
+#define BattleEffect_RunPhasedRadialParticleSequence Func_08095dd0
 void Func_08095a44(s32);
+#define BattleFx_FinishHeavyImpact Func_08095a44
 void Func_0808b98c(void);
 void Func_08015358(s32, s32, void *);
 void Func_0808c4c0(void);
+#define Battle_ClearObjectFlag5bWhenMode3 Func_0808c4c0
 void Func_08091750(void);
 #define BattleFx_FinishAction Func_08091750
 
@@ -41,7 +45,7 @@ void BattleFx_RunPageEffectForSlot(s32 slot, s32 page, void *entries)
 
     if (selection >= 0) {
         Battle_Reset();
-        Func_0808c44c();
+        Battle_SetObjectFlag5bWhenMode3();
         if (slot != -1) {
             if (state->mode == 3)
                 BattleEffect_ClearOutOfBoundsObjects();
@@ -51,9 +55,9 @@ void BattleFx_RunPageEffectForSlot(s32 slot, s32 page, void *entries)
             else if (page == 1)
                 Func_080965a8(slot);
             else if (page == 2)
-                Func_08095dd0(slot);
+                BattleEffect_RunPhasedRadialParticleSequence(slot);
             else if (page == 3)
-                Func_08095a44(slot);
+                BattleFx_FinishHeavyImpact(slot);
 
             state->slots[slot] = 0;
             if (state->mode == 3)
@@ -61,7 +65,7 @@ void BattleFx_RunPageEffectForSlot(s32 slot, s32 page, void *entries)
         }
 
         Func_08015358(selection, page, entries);
-        Func_0808c4c0();
+        Battle_ClearObjectFlag5bWhenMode3();
         BattleFx_FinishAction();
     }
 }

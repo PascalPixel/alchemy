@@ -46,9 +46,11 @@ void Func_08004cb4(void *);
 void Func_08004c1c(s32);
 #define SceneTransform_ApplyYaw Func_08004c1c
 void Func_08004bd4(s32);
+#define SceneTransform_ApplyPitch Func_08004bd4
 void Func_080c0a24(u32, u32, s32, s32, u32);
 
 void Func_080b5864(void)
+#define BattlePresentation_UpdateCamera Func_080b5864
 {
     void **slot = (void **)ADDR_03001E80;
     struct SceneCameraState *state = slot[0];
@@ -89,7 +91,7 @@ void Func_080b5864(void)
     Render_ResetTransformState();
     SceneTransform_ApplyPosition(pos);
     SceneTransform_ApplyYaw((s16)state->field36);
-    Func_08004bd4((s16)state->field34);
+    SceneTransform_ApplyPitch((s16)state->field34);
 
     local.first = 0;
     local.second = 0;

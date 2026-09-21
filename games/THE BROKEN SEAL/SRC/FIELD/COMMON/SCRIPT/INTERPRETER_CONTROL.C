@@ -5,6 +5,7 @@ s32 GameFlag_Set(s32);
 void GameFlag_Clear(s32);
 void ObjectDispatch_ApplyArgumentToChildren(void *, s32);
 void Func_0800c0f4(void);
+#define ObjectDispatch_Release Func_0800c0f4
 s32 Audio_PlayCue(s32);
 
 s32 Script_StoreLookupResult(struct ScriptInterpreter *interpreter)
@@ -200,7 +201,7 @@ s32 Script_ApplyObjectArgument(struct ScriptInterpreter *interpreter)
 
 s32 ObjectDispatch_RunHookAndReturnZero(void)
 {
-    Func_0800c0f4();
+    ObjectDispatch_Release();
     return 0;
 }
 

@@ -36,6 +36,7 @@ void Func_0809bb34(struct Actor *);
 #define BattleFx_ClearOwnedSlot Func_0809bb34
 
 void Func_08095938(struct Actor *actor)
+#define BattleFx_RunAngledApproachPhases Func_08095938
 {
     struct Target *target;
     struct Vec pos;

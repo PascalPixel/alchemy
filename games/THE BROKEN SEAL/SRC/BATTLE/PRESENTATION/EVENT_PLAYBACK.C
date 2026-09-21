@@ -72,9 +72,13 @@ typedef char BattlePlaybackRuntime_State[
     (u32)&((struct BattlePlaybackRuntime *)0)->playback == 0x6b8 ? 1 : -1];
 
 void Func_080039fc(s32 reg, s32 value);
+#define QueueIoWriteDelay10 Func_080039fc
 void Func_0800393c(s32 reg, s32 value);
+#define QueueIoWriteDelay6 Func_0800393c
 void Func_08003dec(void *entry, s32 slot);
+#define Runtime_PushSlotEntry Func_08003dec
 s32 Func_080040d0(s32 index, s32 table);
+#define Resource_GetBuffer Func_080040d0
 s32 Func_080022fc(s32 numerator, s32 denominator);
 s32 Func_08002322(s32 angle);
 void Func_08009020(void *record, s32 animation);
@@ -94,14 +98,18 @@ s32 Func_080b6cd0(s32 actor_id);
 void Func_080b7aac(s32 actor_id);
 #define BattlePres_SetActorModeAndAction Func_080b7aac
 s32 Func_080b7e60(s32 actor_id);
+#define ActivateBattleObjectSlot Func_080b7e60
 void Func_080ba918(void *object, s32 value);
 void Func_080bac6c(s32 actor_id);
 void Func_080bb588(s32 actor_id);
 #define BattleActor_ResetRuntimeFields Func_080bb588
 void Func_080bb8e8(s32 actor_id);
+#define BattleActor_DestroyTemporaryObject Func_080bb8e8
 void Func_080bb928(struct BattlePlaybackState *state, s32 value);
+#define Battle_SetRuntimeFlagBit0 Func_080bb928
 void Func_080c24f0(s32 actor_id, s32 mode);
 s32 Func_080c2368(s32 class_id);
+#define Summon_GetEntryByte3Kind Func_080c2368
 void Func_080f9010(s32 sound_id);
 #define Audio_PlayCue Func_080f9010
 
@@ -144,7 +152,7 @@ void BattleEvent_Playback(void)
                 state->events.count = 0;
                 state->event_index = 0;
                 state->timer = 0;
-                Func_080bbb0c(
+                Battle_ResolveTargetAction(
                     &runtime->plan,
                     state->events.target_index);
                 state->events.target_index++;
@@ -171,7 +179,7 @@ void BattleEvent_Playback(void)
                         Audio_PlayCue(state->events.operands[event_index]);
                         break;
                     case BATTLE_EVENT_SCRIPT_UPDATE:
-                        Func_080bb928(
+                        Battle_SetRuntimeFlagBit0(
                             state,
                             state->events.operands[event_index]);
                         break;
@@ -213,7 +221,7 @@ void BattleEvent_Playback(void)
                         Func_08015118();
                         break;
                     case BATTLE_EVENT_ACTOR_EFFECT:
-                        Func_080bb8e8(state->events.operands[event_index]);
+                        BattleActor_DestroyTemporaryObject(state->events.operands[event_index]);
                         break;
                     case BATTLE_EVENT_ACTOR_BEGIN:
                     {
@@ -323,13 +331,13 @@ void BattleEvent_Playback(void)
                 state->display_source = runtime->plan.outcome;
 
             Func_08015118();
-            Func_080039fc(0x0400004a, 4);
-            Func_0800393c(0x0400004a, 0x10);
+            QueueIoWriteDelay10(0x0400004a, 4);
+            QueueIoWriteDelay6(0x0400004a, 0x10);
             *(u32 *)(entry + 4) = 0xa000;
             *(u32 *)(entry + 8) = display_x;
             *(u16 *)(entry + 8) =
                 (*(u16 *)(entry + 8) & 0xfc00)
-                | (Func_080040d0(state->display_source, table) & 0x3ff);
+                | (Resource_GetBuffer(state->display_source, table) & 0x3ff);
             display_x = context->tile_x * 8
                 + (viewport->scroll_x >> 8) + 4;
             *(u16 *)(entry + 6) =
@@ -352,7 +360,7 @@ void BattleEvent_Playback(void)
                 continue;
             }
 
-            Func_08003dec(entry, 0xf0);
+            Runtime_PushSlotEntry(entry, 0xf0);
             return;
         }
 
@@ -396,7 +404,7 @@ void BattleEvent_Playback(void)
                 if (timer == 0 && state->actor_mode != 0) {
                     s32 sound;
 
-                    sound = Func_080c2368(
+                    sound = Summon_GetEntryByte3Kind(
                         BattleUnit_Get(state->actor_id)->class_id);
                     if (sound >= 0) {
                         sound--;
@@ -412,7 +420,7 @@ void BattleEvent_Playback(void)
                 if (state->timer == 0) {
                     s32 sound;
 
-                    sound = Func_080c2368(
+                    sound = Summon_GetEntryByte3Kind(
                         BattleUnit_Get(state->actor_id)->class_id);
                     if (sound >= 0)
                         Audio_PlayCue(sound + 0x92);
@@ -478,7 +486,7 @@ void BattleEvent_Playback(void)
                             remaining--;
                         } while (remaining != 0);
                     }
-                    Func_080b7e60(state->actor_id);
+                    ActivateBattleObjectSlot(state->actor_id);
                     state->phase = 2;
                     state->timer = 0;
                     return;

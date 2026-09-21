@@ -23,8 +23,10 @@ struct MetadataRecord {
 };
 
 s32 Func_0800bbc0(s32);
+#define AnimationObject_Allocate Func_0800bbc0
 struct MetadataRecord *Func_08185000(s32);
 void Func_0800bc48(void *);
+#define ResourceMetadata_ClearRecord Func_0800bc48
 
 s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id)
 {
@@ -45,7 +47,7 @@ s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id)
     }
     if (index == 4)
         return -1;
-    value = Func_0800bbc0(id);
+    value = AnimationObject_Allocate(id);
     if (value == 0)
         return 0;
     state->slots[index] = value;
@@ -73,7 +75,7 @@ void ResourceMetadata_Unregister(struct MetadataSlotState *state, s32 handle)
     u32 slot_offset;
 
     if (state != NULL && handle != 0) {
-        Func_0800bc48((void *)handle);
+        ResourceMetadata_ClearRecord((void *)handle);
         slot_index = 0;
         if (handle != state->slots[0]) {
             slot_cursor = state->slots;
@@ -118,7 +120,7 @@ void ResourceMetadata_ReleaseSlot(u8 *rec, u32 no)
         off = no * 4 + 0x28;
         v = *(void **)(rec + off);
         if (v != NULL) {
-            Func_0800bc48(v);
+            ResourceMetadata_ClearRecord(v);
             *(void **)(rec + off) = NULL;
             i = no + 1;
             cnt = 0;

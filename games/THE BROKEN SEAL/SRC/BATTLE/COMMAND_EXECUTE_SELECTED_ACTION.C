@@ -31,6 +31,7 @@ void Func_08091660(void); void Func_080770d0(s32); s32 Func_080770c0(s32);
 #define Battle_InitializeRenderObject Func_08091660
 void Func_08015120(s32, s32); void Func_08015040(s32, s32);
 s32 Func_08091d84(s32); void Func_08015140(void);
+#define Object_CallSpawnRoutineAtOrigin Func_08091d84
 /* Takes an s32 to match the definition of the packed effect argument. */
 s32 Func_0808e5d8(s32);
 #define BattleFx_ExecutePackedAbilityEffect Func_0808e5d8
@@ -47,9 +48,10 @@ void Func_08096fb0(s32, s32); void BattleFx_SetupObjectPair(s32, s32); void Func
  * Returns s32 to match the shared prototype, although every call site
  * discards the value.
  */
-s32 Func_08096b28(void *, s32, s32); void Func_08096960(void); void Func_08096810(void);
+s32 Func_08096b28(void *, s32, s32); void BattleFx_DispatchRequestKind(void); void Func_08096810(void);
 #define BattleFx_RunEventAction Func_08096b28
-void Func_08097174(void); void Func_08096ab0(void); void BattleEffect_CleanupSceneObjects(void); void Func_0808b98c(void);
+void Func_08097174(void); void BattleFx_ClearChildValueOnMismatch(void); void BattleEffect_CleanupSceneObjects(void); void Func_0808b98c(void);
+#define EffectRuntime_StopCurrentObject Func_08097174
 
 s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
 {
@@ -87,7 +89,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
             return 0;
         }
         Func_08015120(0x95, 4); Func_08015040((s32)&Value_00000920, 13);
-        status = Func_08091d84(1); Func_08015140();
+        status = Object_CallSpawnRoutineAtOrigin(1); Func_08015140();
         if (status != 0) return 0;
         {
             u16 *work = (u16 *)&Data_02000240;
@@ -129,10 +131,10 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
     BattleFx_SetupObjectPair(Data_02000240.object_id, targetId); Func_0809728c();
     BattleFx_RunEventAction(primary, actor, targetId);
     if (Func_080770c0(0x140)) {
-        if (Func_080770c0(0x141)) Func_08096960(); else Func_08096810();
+        if (Func_080770c0(0x141)) BattleFx_DispatchRequestKind(); else Func_08096810();
     }
-    Func_08097174(); BattleFx_RunEventAction(secondary, actor, targetId);
-    if (Func_080770c0(0x140)) Func_08096ab0();
+    EffectRuntime_StopCurrentObject(); BattleFx_RunEventAction(secondary, actor, targetId);
+    if (Func_080770c0(0x140)) BattleFx_ClearChildValueOnMismatch();
     Func_080770d0(0x140); Func_080770d0(0x141); runtime->resolving_action = 0;
     BattleEffect_CleanupSceneObjects();
     if (runtime->battle_mode == 3) Func_0808b98c();

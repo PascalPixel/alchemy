@@ -79,16 +79,19 @@ void Func_08015118(void);
 void Func_080f9010(u32);
 #define Audio_PlayCue Func_080f9010
 void Func_080babdc(u32, u32, u32);
+#define BattleMotion_RunValueSequence Func_080babdc
 void Func_080c24f0(u32, u32);
 void Func_080bb588(u32);
 #define BattleActor_ResetRuntimeFields Func_080bb588
 void Func_080bace8(u32);
+#define BattleMotion_InitializeActorRecords Func_080bace8
 void Func_08015130(u32);
 void Func_080b78e4(u32, u32);
 #define BattleUnit_BuildStatusFlags Func_080b78e4
 void Func_080b7aac(u32);
 #define BattlePres_SetActorModeAndAction Func_080b7aac
 u32 Func_080bdfec(void);
+#define BattleEventRuntime_Reset Func_080bdfec
 
 u32 BattleEv_DispatchQueued(void)
 {
@@ -118,7 +121,7 @@ u32 BattleEv_DispatchQueued(void)
             break;
         case 8:
             if (runtime->pending_sound_id > 0) Audio_PlayCue(runtime->pending_sound_id);
-            Func_080babdc(queue->operands[i], 0, 0);
+            BattleMotion_RunValueSequence(queue->operands[i], 0, 0);
             break;
         case 9:
         {
@@ -126,7 +129,7 @@ u32 BattleEv_DispatchQueued(void)
             u32 auxiliary = runtime->actor_auxiliary;
             Func_080c24f0(FIELD(queue, u32, operand_offset), auxiliary);
             BattleActor_ResetRuntimeFields(FIELD(queue, u32, operand_offset));
-            Func_080bace8(FIELD(queue, u32, operand_offset));
+            BattleMotion_InitializeActorRecords(FIELD(queue, u32, operand_offset));
             break;
         }
         case 10: Func_08015130(Data_03001e74[65]); break;

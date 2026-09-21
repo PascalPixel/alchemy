@@ -68,14 +68,24 @@ struct Region {
     kind: String,
     evidence: String,
 }
-fn regions(value: &Value) -> Vec<Region> {
+fn regions(value: &Value, evidence: Option<&Map<String, Value>>) -> Vec<Region> {
     array(value, "intervals")
         .iter()
         .filter_map(|item| {
+            let evidence = item
+                .get("evidence")
+                .and_then(Value::as_str)
+                .or_else(|| {
+                    item.get("evidence_ref")
+                        .and_then(Value::as_str)
+                        .and_then(|key| evidence?.get(key))
+                        .and_then(Value::as_str)
+                })
+                .unwrap_or("");
             Some(Region {
                 span: Span::new(integer(item, "start")?, integer(item, "end")?),
                 kind: text(item, "kind"),
-                evidence: text(item, "evidence"),
+                evidence: evidence.into(),
             })
         })
         .filter(|r| r.span.end > r.span.start)
@@ -1472,7 +1482,8 @@ fn lost_age_tiles(tree: &SourceTree, credits: &[super::proof::Credit]) -> Vec<Ti
         bytes(&spans)
     };
     let inventory = json(tree, "games/THE LOST AGE/metrics/executable.json").unwrap_or(Value::Null);
-    let executable: Vec<Span> = regions(&inventory["main"])
+    let evidence = inventory.get("evidence").and_then(Value::as_object);
+    let executable: Vec<Span> = regions(&inventory["main"], evidence)
         .into_iter()
         .map(|region| region.span)
         .collect();
@@ -1827,9 +1838,10 @@ pub(crate) fn overlay_assembly_to_verify(
     let game = crate::compiler::routing::game_directory(target.compiler.as_str());
     let inventory = read_json(tree, &format!("games/{game}/metrics/executable.json"))?;
     let (main_exec, overlay_exec) = validated_inventory(&inventory, target.id.as_str())?;
+    let evidence = inventory.get("evidence").and_then(Value::as_object);
     let overlay_regions = array(&inventory, "overlays")
         .iter()
-        .map(|node| (text(node, "id"), regions(node)))
+        .map(|node| (text(node, "id"), regions(node, evidence)))
         .collect();
     let (_, _, mut retained) =
         overlay_assembly_classification_for(tree, target, &overlay_regions, &overlay_exec)?;
@@ -1849,13 +1861,14 @@ pub fn classify(options: &BuildOptions) -> Result<Classification, String> {
         &format!("games/{game}/metrics/executable.json"),
     )?;
     validated_inventory(&inventory, &options.target)?;
-    let main = regions(&inventory["main"]);
+    let evidence = inventory.get("evidence").and_then(Value::as_object);
+    let main = regions(&inventory["main"], evidence);
     let main_exec = normalize(&main.iter().map(|r| r.span).collect::<Vec<_>>());
     let mut overlay_exec = SpanMap::new();
     let mut overlay_regions = BTreeMap::new();
     for node in array(&inventory, "overlays") {
         let id = text(node, "id");
-        let rows = regions(node);
+        let rows = regions(node, evidence);
         overlay_exec.insert(
             id.clone(),
             normalize(&rows.iter().map(|r| r.span).collect::<Vec<_>>()),

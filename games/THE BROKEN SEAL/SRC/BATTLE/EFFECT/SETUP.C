@@ -2,19 +2,21 @@
 #include "BATTLE_EFFECT_RUNTIME.H"
 
 s32 Func_080042c8(u32 callback);
+#define Scheduler_EnableCallbacks Func_080042c8
 void Func_080912b8(void);
 
 void Object_EnableEffectSpawnCallback(void)
 {
-    Func_080042c8((u32)Func_080912b8);
+    Scheduler_EnableCallbacks((u32)Func_080912b8);
 }
 
 s32 Func_0800439c(u32 callback);
+#define Scheduler_DisableCallbacks Func_0800439c
 void Func_080912b8(void);
 
 void Object_DisableEffectSpawnCallback(void)
 {
-    Func_0800439c((u32)Func_080912b8);
+    Scheduler_DisableCallbacks((u32)Func_080912b8);
 }
 
 extern struct BattleEffectEntry Data_0809e9f0[];

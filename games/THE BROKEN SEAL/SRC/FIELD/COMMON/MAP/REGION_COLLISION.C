@@ -108,6 +108,7 @@ extern struct MapRegionServices Data_02008000;
 s32 GameFlag_IsConditionActive(s32 condition);
 void Audio_PlayCue(s32 sound_id);
 void Func_08091660(void);
+#define Battle_InitializeRenderObject Func_08091660
 
 #define REGION_FIXED(value) ((s32)((u32)(s32)(value) << 16))
 
@@ -150,7 +151,7 @@ loop:
             z < REGION_FIXED(max_z)) {
             runtime->value_170 = (u16)selected_value;
             Audio_PlayCue(123);
-            Func_08091660();
+            Battle_InitializeRenderObject();
             return;
         }
         runtime = Data_03001ebc;

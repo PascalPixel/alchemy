@@ -29,6 +29,7 @@ struct BattleEffectLinkedObject {
 };
 
 struct BattleEffectLinkedObject *Func_080090c8(
+#define Object_CreateFar Func_080090c8
     s32 kind,
     s32 x,
     s32 y,
@@ -37,6 +38,7 @@ void Func_08009098(
     struct BattleEffectLinkedObject *object,
     const void *configuration);
 void Func_08009080(struct BattleEffectLinkedObject *object, s32 mode);
+#define Object_SetMode Func_08009080
 void Func_080f9010(s32 cue);
 #define Audio_PlayCue Func_080f9010
 void Func_0809163c(s32 state);
@@ -57,11 +59,11 @@ void BattleFx_SpawnLinked(
     resource = ObjectTable_Get(resource_id);
     if (resource != 0) {
         struct BattleEffectLinkedObject *object =
-            Func_080090c8(21, resource->x, resource->y, resource->z);
+            Object_CreateFar(21, resource->x, resource->y, resource->z);
 
         if (object != 0) {
             Func_08009098(object, Data_0809fc2c);
-            Func_08009080(object, flags & 15);
+            Object_SetMode(object, flags & 15);
             object->value_55 = 0;
             object->counter = 0;
             object->resource_id = resource_id;

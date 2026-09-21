@@ -33,6 +33,7 @@ s32 Resource_LoadKind26EntryToBuffer(s32 resource, s32 index)
 }
 
 void Func_0801a3d0(s32, s32, s32 *, s32 *, s32);
+#define Ability_LoadGlyph Func_0801a3d0
 
 s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index)
 {
@@ -43,7 +44,7 @@ s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index)
 
     work = Runtime_AllocateBlock(0x11, 0x608);
     cur = index;
-    Func_0801a3d0(resource, 0, &cur, &out, 1);
+    Ability_LoadGlyph(resource, 0, &cur, &out, 1);
     ret = Resource_GetBuffer(index, (s32)(work + 0x400));
     Runtime_ReleaseHeapBlock(0x11);
     return ret;

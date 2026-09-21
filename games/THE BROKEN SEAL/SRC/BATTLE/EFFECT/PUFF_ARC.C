@@ -18,6 +18,7 @@ extern u8 Value_000000b4;
 
 void Func_080cd594(s32);
 void Func_080e0524(s32, void *, s32, s32);
+#define Resource_LoadAndDecompress Func_080e0524
 s32 Func_080ed408(s32, s32, s32, s32, s32);
 s32 Func_08002322(s32);
 s32 Func_0800231c(s32);
@@ -29,6 +30,7 @@ void Func_080b50e8(s32);
 void Func_080d6888(s32, s32, s32, s32, s32);
 #define ObjectGroup_UpdateMembers Func_080d6888
 void Func_080cd52c(void);
+#define ObjectGroup_TickMemberTimers Func_080cd52c
 void Func_080030f8(s32);
 #define WaitFrames Func_080030f8
 void Func_08002dd8(s32);
@@ -117,7 +119,7 @@ void BattleFx_RunPuffArc(Efx *efx)
     Func_080cd594(0);
     *(s16 *)0x04000050 = 0x3F46;
     *(s16 *)0x04000052 = 0x100E;
-    Func_080e0524((s32)&Value_000000b4, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_000000b4, work, 1, 1);
     Func_080ed408(46, 7, 7, 3, 3);
     draw = (DrawRectangle)cache[46 - 39];
     if (WORK_EFX->actors[0] > 127) {
@@ -191,7 +193,7 @@ void BattleFx_RunPuffArc(Efx *efx)
             }
             i += 1;
         }
-        Func_080cd52c();
+        ObjectGroup_TickMemberTimers();
         *(s32 *)(work + 0x7824) = 1;
         WaitFrames(1);
         frame += 1;

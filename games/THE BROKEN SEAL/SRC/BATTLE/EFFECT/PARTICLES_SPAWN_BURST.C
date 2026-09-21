@@ -29,6 +29,7 @@ struct Object_08092624 {
 };
 
 extern struct Object_08092624 *Func_080090c8(s32, s32, s32, s32);
+#define Object_CreateFar Func_080090c8
 extern s32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
@@ -46,7 +47,7 @@ void BattleFx_SpawnBurstParticle(struct Object_08092624 *source, s32 optional)
     struct Child_08092624 *child;
     s32 value;
 
-    object = Func_080090c8(222, source->x, source->y, source->z);
+    object = Object_CreateFar(222, source->x, source->y, source->z);
     if (object != 0) {
         child = object->child;
         switch (Rand() & 1) {

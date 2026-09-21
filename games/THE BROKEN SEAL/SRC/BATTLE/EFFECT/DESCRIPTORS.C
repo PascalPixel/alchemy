@@ -174,6 +174,7 @@ extern void Func_08009088(struct BattleActionObject *, s32);
 extern void Func_08092848(s32, s32, s32);
 extern void Func_08015058(s32);
 extern void Func_08091660(void);
+#define Battle_InitializeRenderObject Func_08091660
 extern void Func_08093a6c(struct BattleActionObject *, void *);
 extern void Func_08009098(struct BattleActionObject *, void *);
 extern void Func_0809ade8(s32);
@@ -252,7 +253,7 @@ run_descriptor:
         Func_08091750();
     } else {
         typedef void (*EffectRunner)(s32);
-        Func_08091660();
+        Battle_InitializeRenderObject();
         ((EffectRunner)descriptor->result)(id);
     }
     if (!special) {

@@ -41,6 +41,7 @@ extern u8 Data_080ee11a[];
 
 s32 Func_080cdb24(s32 mode);
 void *Func_08002f40(s32 id);
+#define Resource_GetTableEntry Func_08002f40
 u32 Func_08005340(const void *source, void *destination);
 s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 s32 Func_080041d8(s32 callback, s32 order);
@@ -94,12 +95,12 @@ void BattleFx_RunCounterReveal(void *object)
     Func_080cdb24(0);
     (*(s16 *)((u8 *)((void *)0x04000020) + (0))) = 0x100;
     (*(s16 *)((u8 *)((void *)0x04000020) + (0x32))) = 0x1010;
-    palette = Func_08002f40((s32)&Value_000000ab);
+    palette = Resource_GetTableEntry((s32)&Value_000000ab);
     status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
     palette = (u8 *)palette + 128;
     status = Func_08005340(palette, work);
     sprite_vram = (void *)0x02010000;
-    palette = Func_08002f40((s32)&Value_000000ac);
+    palette = Resource_GetTableEntry((s32)&Value_000000ac);
     palette = (u8 *)palette + 128;
     status = Func_08005340(palette, sprite_vram);
     status = Func_080ed408(46, 7, 7, 3, 1);

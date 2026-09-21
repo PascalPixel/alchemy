@@ -238,6 +238,7 @@ void Animation_ApplyChildValues(void *obj)
 
 s32 WaitFrames(s32);
 s32 Func_080042c8(u32 value);
+#define Scheduler_EnableCallbacks Func_080042c8
 s32 Func_0808a330(s32, s32);
 s32 Func_0808a348(s32);
 void Func_0800c62c(void);
@@ -245,8 +246,8 @@ void Func_0800c880(void);
 
 void Graphics_EnableObjLayerAndCallbacks(void)
 {
-    Func_080042c8((u32)Func_0800c62c);
-    Func_080042c8((u32)Func_0800c880);
+    Scheduler_EnableCallbacks((u32)Func_0800c62c);
+    Scheduler_EnableCallbacks((u32)Func_0800c880);
     Func_0808a330(0x10000, 1);
     Func_0808a348(1);
     WaitFrames(1);
@@ -254,12 +255,13 @@ void Graphics_EnableObjLayerAndCallbacks(void)
 }
 
 s32 Func_0800439c(u32 value);
+#define Scheduler_DisableCallbacks Func_0800439c
 void Func_0800c62c(void);
 void Func_0800c880(void);
 
 void ObjectDispatch_StopCallbacksAndHideLayers(void)
 {
-    Func_0800439c((u32)Func_0800c62c);
-    Func_0800439c((u32)Func_0800c880);
+    Scheduler_DisableCallbacks((u32)Func_0800c62c);
+    Scheduler_DisableCallbacks((u32)Func_0800c880);
     *(u16 *)0x04000000 &= 0xE1FF;
 }

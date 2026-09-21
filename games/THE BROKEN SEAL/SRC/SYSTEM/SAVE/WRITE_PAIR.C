@@ -2,8 +2,10 @@
 #include "RUNTIME_INTERFACES.H"
 
 s32 Func_080056cc(void);
+#define SaveState_InitializeWorkspace Func_080056cc
 s32 Func_08005920(s32, void *);
 void Func_0801776c(s32, s32);
+#define UiText_ShowPositionedMessageAndWait Func_0801776c
 void Func_0801f818(void);
 extern char Data_02000000;
 extern char Value_0000000a;
@@ -19,9 +21,9 @@ s16 SaveState_WriteCurrentSlotPair(void)
     result = 0;
     value = *(s16 *)0x02002004;
     if (value != -1) {
-        found = Func_080056cc();
+        found = SaveState_InitializeWorkspace();
         if (found != 0) {
-            Func_0801776c((s32)&Value_0000000a, 1);
+            UiText_ShowPositionedMessageAndWait((s32)&Value_0000000a, 1);
             error = 9;
             goto set_error;
         }
@@ -35,13 +37,13 @@ s16 SaveState_WriteCurrentSlotPair(void)
             base = (char *)base + 0x1000;
             found |= Func_08005920(next + 3, base);
             if (found != 0) {
-                Func_0801776c((s32)&Value_0000000b, 1);
+                UiText_ShowPositionedMessageAndWait((s32)&Value_0000000b, 1);
                 error = 3;
 set_error:
                 result = 0 - error;
             }
         }
-        Func_08005cf8();
+        SaveState_ReleaseWorkspace();
         value = result;
     }
     return value;
@@ -54,9 +56,9 @@ s32 SaveState_WriteSlotPair(s32 arg0)
     s32 found;
     s16 result = 0;
 
-    found = Func_080056cc();
+    found = SaveState_InitializeWorkspace();
     if (found != 0) {
-        Func_0801776c((s32)&Value_0000000a, 1);
+        UiText_ShowPositionedMessageAndWait((s32)&Value_0000000a, 1);
         result = -9;
     } else {
         void *base = &Data_02000000;
@@ -65,10 +67,10 @@ s32 SaveState_WriteSlotPair(s32 arg0)
         base = (char *)base + 0x1000;
         found |= Func_08005920(arg0 + 3, base);
         if (found != 0) {
-            Func_0801776c((s32)&Value_0000000b, 1);
+            UiText_ShowPositionedMessageAndWait((s32)&Value_0000000b, 1);
             result = -3;
         }
     }
-    Func_08005cf8();
+    SaveState_ReleaseWorkspace();
     return result;
 }

@@ -36,6 +36,7 @@ typedef struct {
 } Object;
 
 Object *Func_080090c8(s32, s32, s32);
+#define Object_CreateFar Func_080090c8
 void Func_08009098(Object *, const void *);
 Unit *Func_08077008(s32);
 s32 Func_08077078(Unit *, s32);
@@ -62,7 +63,7 @@ void Func_080b6f44(Actor *actor, s32 unit, s32 x, s32 y)
 
     fixed_x = x << 16;
     fixed_y = y << 16;
-    object = Func_080090c8(0xf000, fixed_x, 0);
+    object = Object_CreateFar(0xf000, fixed_x, 0);
     unit_record = Func_08077008(unit);
     actor_flag = 0;
     existing_sprite = Func_080b6d30(unit);

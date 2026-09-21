@@ -2,6 +2,7 @@
 #include "GLOBAL_CELLS.H"
 
 struct ObjectRuntime *Func_080090c8(s32, s32, s32, s32);
+#define Object_CreateFar Func_080090c8
 void Object_Destroy(struct ObjectRuntime *);
 void Func_080091e0(struct ObjectRuntime *, s32);
 void Object_SetMode(struct ObjectRuntime *, s32);
@@ -15,7 +16,7 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z)
     u8 *child;
     u8 flag;
 
-    object = Func_080090c8(kind, x, y, z);
+    object = Object_CreateFar(kind, x, y, z);
     if (object != NULL) {
         if (object->animation_kind == 0) {
             Object_Destroy(object);

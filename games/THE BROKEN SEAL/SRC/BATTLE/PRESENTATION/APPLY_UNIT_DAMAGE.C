@@ -16,6 +16,7 @@ struct BattleMotionSlot {
 struct CharacterRuntimeRecord *Func_08077008(s32 unit_id);
 struct BattleMotionSlot *Func_080b7dd0(s32 unit_id);
 void Func_08009080(void *actor, s32 mode);
+#define Object_SetMode Func_08009080
 void Func_08015130(s32 mode);
 void Func_08015118(void);
 void Func_08015120(s32 value, s32 mode);
@@ -47,7 +48,7 @@ void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_messag
         character->hp = 0;
 
     slot = GetBattleObjectSlot(unit_id);
-    Func_08009080(slot->actor, 5);
+    Object_SetMode(slot->actor, 5);
     Func_08015130(0);
     Func_08015118();
 
@@ -78,5 +79,5 @@ void BattlePresentation_ApplyUnitDamage(u32 unit_id, s32 damage, s32 show_messag
     }
 
     slot = GetBattleObjectSlot(unit_id);
-    Func_08009080(slot->actor, 1);
+    Object_SetMode(slot->actor, 1);
 }

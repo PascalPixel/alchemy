@@ -17,6 +17,7 @@ struct MenuResourceList {
 
 extern u8 Data_0000001f;
 void Func_08019ee4(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4);
+#define Ui_BuildPairedPatternsToSlot Func_08019ee4
 
 void Menu_ReloadNodeResource(struct MenuResourceList *state, u32 index)
 {
@@ -32,7 +33,7 @@ void Menu_ReloadNodeResource(struct MenuResourceList *state, u32 index)
         u32 first = node->base - (u32)&Data_0000001f;
 
         value = node->value;
-        Func_08019ee4(first, 0, &value, &output, 1);
+        Ui_BuildPairedPatternsToSlot(first, 0, &value, &output, 1);
     }
 }
 
@@ -56,7 +57,7 @@ void Menu_LoadSelectionNodeResource(struct MenuResourceList *state, u32 index)
         u32 id = node->base - (u32)&Data_0000001f;
 
         value = node->value;
-        Func_08019ee4(id, 0, &value, &res, 1);
+        Ui_BuildPairedPatternsToSlot(id, 0, &value, &res, 1);
         Menu_LoadSelectedResource();
     }
 }

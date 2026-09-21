@@ -20,6 +20,7 @@ extern u8 Value_000000af;
 
 void Func_080cd594(s32 mode);
 void *Func_08002f40(s32 id);
+#define Resource_GetTableEntry Func_08002f40
 u32 Func_08005340(const void *source, void *destination);
 s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 void Func_080041d8(void *callback, s32 interval);
@@ -73,7 +74,7 @@ void BattleFx_RunMemberOrbit(void *object)
     FIELD_AT_OFFSET(work, void **, 0x7828) = object;
     Func_080cd594(0);
     FIELD_AT_OFFSET((void *)0x04000020, s16 *, 0) = 0x100;
-    palette = Func_08002f40((s32)&Value_000000af);
+    palette = Resource_GetTableEntry((s32)&Value_000000af);
     status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
     status = Func_08005340((u8 *)palette + 128, work);
     status = Func_080ed408(46, 7, 7, 3, 2);

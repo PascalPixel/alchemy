@@ -1,6 +1,7 @@
 #include "SAVE_STATE.H"
 
 s32 Func_08005c68(void)
+#define SaveState_LoadSummaryRecords Func_08005c68
 {
     struct SaveWorkspace *work;
     u8 *summary;
@@ -17,12 +18,12 @@ s32 Func_08005c68(void)
 
         zero = 0;
         START_DMA(&zero, summary, 0x85000010);
-        index = Func_08005b24(group);
+        index = SaveState_FindLatestSlot(group);
         if (index <= 15) {
             ReadFlash((u16)index, 0, summary, 64);
             count++;
         }
-        index = Func_08005b24(group + 3);
+        index = SaveState_FindLatestSlot(group + 3);
         if (index <= 15)
             ReadFlash((u16)index, 0x110, summary + 56, 4);
         else

@@ -48,6 +48,7 @@ extern s32 Func_0808d428(s32 condition);
 #define GameFlag_IsConditionActive Func_0808d428
 extern struct EffectObject *Func_0808ba1c(s32 object);
 extern u8 Data_02000240;
+#define PARTY_STATE Data_02000240
 extern void *Data_03001ebc;
 
 struct EffectDescriptor *BattleFx_FindDescriptor(s32 kind, s32 value)
@@ -58,7 +59,7 @@ struct EffectDescriptor *BattleFx_FindDescriptor(s32 kind, s32 value)
     s32 state_index = 250;
     s32 flags;
     u32 reference =
-        Func_0808ba1c(*(u32 *)((s16 *)&Data_02000240 + state_index))->reference;
+        Func_0808ba1c(*(u32 *)((s16 *)&PARTY_STATE + state_index))->reference;
 
     flags = descriptor->flags;
     while (flags != -1) {
@@ -130,7 +131,7 @@ struct EffectDescriptor *Func_0808d48c(s32, s32);
 s32 BattleFx_FindDescriptorWithOverride(s32 arg0)
 {
     struct EffectDescriptor *result = BattleFx_FindDescriptor(0, arg0);
-    s32 value = ((struct EffectSelectionWork *)&Data_02000240)->value;
+    s32 value = ((struct EffectSelectionWork *)&PARTY_STATE)->value;
 
     if (value == arg0) {
         struct EffectDescriptor *next = BattleFx_LookupDescriptorByKind(7, value);
@@ -208,7 +209,7 @@ s32 BattleFx_RunDescriptorAction(s32 id)
     s32 used_fallback = 0;
     s32 selected_offset = 0x24a;
 
-    if (*(s16 *)((u8 *)&Data_02000240 + selected_offset) == id) {
+    if (*(s16 *)((u8 *)&PARTY_STATE + selected_offset) == id) {
         special = 1;
         descriptor = (struct EffectDescriptor *)BattleFx_FindDescriptor(7, id);
         if (descriptor == 0) {
@@ -248,7 +249,7 @@ run_descriptor:
         if (shifted_mode <= (1 << 24) || shifted_mode == (3 << 24)) {
             s32 object_index = 250;
             s32 *object_slot =
-                (s32 *)((s16 *)&Data_02000240 + object_index);
+                (s32 *)((s16 *)&PARTY_STATE + object_index);
             struct BattleActionObject *linked = Object_GetById(*object_slot);
             *(void **)((u8 *)linked + 56) = *(void **)((u8 *)linked + 8);
             *(void **)((u8 *)linked + 60) = *(void **)((u8 *)linked + 12);
@@ -275,7 +276,7 @@ run_descriptor:
             if (action->mode == 3) {
                 s32 object_index = 250;
                 s32 object_id =
-                    *(s32 *)((s16 *)&Data_02000240 + object_index);
+                    *(s32 *)((s16 *)&PARTY_STATE + object_index);
                 object->linked_object = Object_GetById(object_id);
                 object->flags_5a |= 1;
                 ObjectMotion_SetActionCallback(object, (void *)0x0809ff40);
@@ -292,7 +293,7 @@ finish:
     if (special) {
         s32 finish_selected_offset = 0x24a;
         s16 *selected =
-            (s16 *)((u8 *)&Data_02000240 + finish_selected_offset);
+            (s16 *)((u8 *)&PARTY_STATE + finish_selected_offset);
         BattleFx_ResumeObject(*selected);
         cleared_selection = 0xffff;
         *selected = cleared_selection;

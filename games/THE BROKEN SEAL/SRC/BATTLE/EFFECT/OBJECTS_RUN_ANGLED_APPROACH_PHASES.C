@@ -27,6 +27,7 @@ struct Target {
 };
 
 extern s32 Data_02000240[];
+#define PARTY_STATE Data_02000240
 
 void Func_0800447c(s32, s32, struct Vec *);
 struct Target *Func_08092054(s32);
@@ -41,7 +42,7 @@ void Func_08095938(struct Actor *actor)
     struct Target *target;
     struct Vec pos;
 
-    target = Object_GetById(Data_02000240[125]);
+    target = Object_GetById(PARTY_STATE[125]);
     if (actor->phase == 0) {
         actor->yaw += 1;
         actor->pitch += 1;

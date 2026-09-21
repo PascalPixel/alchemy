@@ -12,6 +12,7 @@ struct GlobalState {
 };
 
 extern struct GlobalState Data_02000240;
+#define PARTY_STATE Data_02000240
 
 void BattleEffect_PauseObject(s32 arg0)
 {
@@ -20,12 +21,12 @@ void BattleEffect_PauseObject(s32 arg0)
 
     object = ObjectTable_Get(arg0);
     if (object != NULL) {
-        Data_02000240.saved_callback = *(u32 *)(object + 0x6C);
-        Data_02000240.saved_byte = 0;
+        PARTY_STATE.saved_callback = *(u32 *)(object + 0x6C);
+        PARTY_STATE.saved_byte = 0;
         if (object[0x54] == 1) {
             entry = *(u8 **)(*(u8 **)(object + 0x50) + 0x28);
             if (entry != NULL) {
-                Data_02000240.saved_byte = entry[5];
+                PARTY_STATE.saved_byte = entry[5];
             }
         }
         *(u32 *)(object + 0x6C) = (u32)Func_0809ad71;

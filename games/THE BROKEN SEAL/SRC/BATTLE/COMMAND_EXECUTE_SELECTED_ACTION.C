@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
+#define PARTY_STATE Data_02000240
 
 struct BattleActionDefinition { u8 pad00[9]; u8 pp_cost; u8 pad0a[2]; u8 target_mode; };
 struct BattleUnitRecord { u8 pad00[58]; s16 pp; };
@@ -71,7 +72,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
 
     targetMode = ((struct BattleActionDefinition *)(void *)BattleAction_Get(actionId))->target_mode;
     actor = (encodedAction >> 10) & 15;
-    Func_0808ba1c(Data_02000240.object_id);
+    Func_0808ba1c(PARTY_STATE.object_id);
     specialResult = 0;
     Battle_InitializeRenderObject();
     Func_080770d0(0x145);
@@ -94,7 +95,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
         status = Object_CallSpawnRoutineAtOrigin(1); Func_08015140();
         if (status != 0) return 0;
         {
-            u16 *work = (u16 *)&Data_02000240;
+            u16 *work = (u16 *)&PARTY_STATE;
             s32 a, b;
             a = work[288];
             work[224] = a;
@@ -122,7 +123,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
     targetId = -1;
     Func_080770c8(0x140); Func_080770c8(0x141);
     if (primary || secondary || tertiary) {
-        targetId = BattleEffect_SelectNearbyTargetObject(Data_02000240.object_id, targetMode);
+        targetId = BattleEffect_SelectNearbyTargetObject(PARTY_STATE.object_id, targetMode);
         if (secondary && (secondary->flags & 0x400)) {
             Func_080770d0(0x140); Func_080770d0(0x141);
         }
@@ -130,7 +131,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
 
     if (runtime->battle_mode == 3) BattleEffect_ClearOutOfBoundsObjects();
     Func_08096fb0(actionId, 0); runtime->resolving_action = 1;
-    BattleFx_SetupObjectPair(Data_02000240.object_id, targetId); Func_0809728c();
+    BattleFx_SetupObjectPair(PARTY_STATE.object_id, targetId); Func_0809728c();
     BattleFx_RunEventAction(primary, actor, targetId);
     if (BattleFlag_Test(0x140)) {
         if (BattleFlag_Test(0x141)) BattleFx_DispatchRequestKind(); else Func_08096810();

@@ -1,6 +1,7 @@
 #include "EFFECT_RUNTIME.H"
 #include "OBJECT_LOOKUP.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
+#define PARTY_STATE Data_02000240
 
 /* Data_02000240 is struct BattleWork (battle_effect_runtime.h); its
  * object_id field sits at the same 0x1f4 offset this owner reads as
@@ -31,11 +32,11 @@ s32 BattleFx_ExecutePackedAbilityEffect(s32 packed)
     index = packed & 0x3FF;
     mode = ((u32)packed >> 10) & 0xF;
     object = Ability_GetData(index)[0xC];
-    ObjectTable_Get(Data_02000240.object_id);
+    ObjectTable_Get(PARTY_STATE.object_id);
     first = (void *)BattleFx_FindMatchingEvent(0x30000005, object, &output);
     second = (void *)BattleFx_FindMatchingEvent(0x20000005, object, &output);
     Func_08096fb0(index, 0);
-    BattleFx_SetupObjectPair(Data_02000240.object_id, output);
+    BattleFx_SetupObjectPair(PARTY_STATE.object_id, output);
     BattleFx_RunEventAction(first, mode, output);
     FieldEvent_RunTypeHandler();
     EffectRuntime_StopCurrentObject();

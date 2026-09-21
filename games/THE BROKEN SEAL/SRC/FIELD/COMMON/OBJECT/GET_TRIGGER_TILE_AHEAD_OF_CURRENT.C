@@ -19,6 +19,7 @@ extern s32 Data_02000240[];
 void Func_0800447c(s32, s32, struct Vec *);
 s32 Func_080091a8(s32, s32, s32);
 struct Object *Func_0808ba1c(s32);
+#define ObjectTable_Get Func_0808ba1c
 s32 Func_0808d48c(s32, s32);
 #define BattleFx_FindDescriptor Func_0808d48c
 
@@ -36,7 +37,7 @@ s32 Func_0808ce74(void)
     s32 result;
 
     result = 0;
-    obj = Func_0808ba1c(Data_02000240[125]);
+    obj = ObjectTable_Get(Data_02000240[125]);
     state = *(u8 **)0x03001ebc;
     map = *(u8 **)0x03001e70;
     if (obj != 0) {

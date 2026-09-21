@@ -49,25 +49,20 @@ s32 BattleFx_GetAnimationValue(void)
     return *object->animation->value_28;
 }
 
-struct BattleEffectEntry *Func_08091560(u32 id);
-
 s32 BattleFx_GetResourceId(u32 id)
 {
     u8 value;
 
     if (Data_02000240.enabled_20a == 0 ||
-        (value = Func_08091560(id)->value) == 0xFF) {
+        (value = BattleFx_FindDefinition(id)->value) == 0xFF) {
         return 0;
     }
     return value + 0x100;
 }
 
-struct BattleEffectEntry *Func_08091560(u32 id);
-s32 Func_08091584(void);
-
 u8 BattleFx_GetFlags(void)
 {
-    return Func_08091560(Func_08091584())->flags;
+    return BattleFx_FindDefinition(BattleFx_GetAnimationValue())->flags;
 }
 
 extern volatile u8 Data_03001f54;

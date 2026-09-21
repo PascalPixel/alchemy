@@ -2,6 +2,8 @@
 #include "BATTLE_EFFECT_RUNTIME.H"
 
 u8 *Func_08077080(s32);
+void *Func_0808ba1c(u32);
+#define ObjectTable_Get Func_0808ba1c
 
 struct BattleEffectEventRecord {
     s32 flags;
@@ -30,7 +32,7 @@ s32 BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result)
     struct BattleEffectRuntime *runtime =
         (struct BattleEffectRuntime *)Data_03001ebc;
     struct BattleEffectEventRecord *event = runtime->events;
-    s32 reference = ((struct BattleEffectValueRecord *)Func_0808ba1c(
+    s32 reference = ((struct BattleEffectValueRecord *)ObjectTable_Get(
         Data_02000240.object_id))->value;
     s32 selected = BattleEffect_SelectNearbyTargetObject(Data_02000240.object_id, group);
     s32 alternate;

@@ -4,6 +4,7 @@ extern u8 *Data_03001ebc;
 extern s16 Data_02000240[];
 
 void *Func_0808ba1c(u32);
+#define ObjectTable_Get Func_0808ba1c
 void Func_080f9010(s32);
 #define Audio_PlayCue Func_080f9010
 void Func_08009080(void *, s32);
@@ -27,7 +28,7 @@ void BattleFx_RunFlashingCallbackSequence(void)
 {
     u8 *state = Data_03001ebc;
     s32 index = 250;
-    u8 *object = Func_0808ba1c(*(u32 *)&Data_02000240[index]);
+    u8 *object = ObjectTable_Get(*(u32 *)&Data_02000240[index]);
     EffectSprite *record = *(EffectSprite **)(object + 80);
     u8 *entry = *(u8 **)((u8 *)record + 40);
     u32 cycle;

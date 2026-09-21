@@ -123,8 +123,9 @@ struct EffectSelectionWork {
 };
 
 extern u8 Data_02000240;
+/* The shared runtime descriptor lookup; distinct from the local BattleFx_FindDescriptor. */
 struct EffectDescriptor *Func_0808d48c(s32, s32);
-#define BattleFx_FindDescriptor Func_0808d48c
+#define BattleFx_LookupDescriptorByKind Func_0808d48c
 
 s32 BattleFx_FindDescriptorWithOverride(s32 arg0)
 {
@@ -132,7 +133,7 @@ s32 BattleFx_FindDescriptorWithOverride(s32 arg0)
     s32 value = ((struct EffectSelectionWork *)&Data_02000240)->value;
 
     if (value == arg0) {
-        struct EffectDescriptor *next = BattleFx_FindDescriptor(7, value);
+        struct EffectDescriptor *next = BattleFx_LookupDescriptorByKind(7, value);
 
         if (next != 0) {
             return (s32)next;
@@ -307,7 +308,7 @@ s32 BattleFx_RunKind6DescriptorAction(s32 arg0)
     s32 ret;
     void *p;
 
-    p = BattleFx_FindDescriptor(6, arg0);
+    p = BattleFx_LookupDescriptorByKind(6, arg0);
     ret = -1;
     if (p != NULL) {
         val = *(s32 **)((u8 *)p + 8);
@@ -352,7 +353,7 @@ s32 BattleAction_RunDescriptor(s32 arg0)
     s32 ret;
     EffectDescriptorWorkView *work;
 
-    desc = (EffectDescriptorWorkView *)BattleFx_FindDescriptor(2, arg0);
+    desc = (EffectDescriptorWorkView *)BattleFx_LookupDescriptorByKind(2, arg0);
     ret = -1;
     work = *(EffectDescriptorWorkView **)0x03001ebc;
     if ((desc != 0) && (desc->result != 0)) {
@@ -370,7 +371,7 @@ s32 BattleAction_RunDescriptor(s32 arg0)
             goto block_17;
         }
     } else {
-        desc2 = (EffectDescriptorWorkView *)BattleFx_FindDescriptor(1, arg0);
+        desc2 = (EffectDescriptorWorkView *)BattleFx_LookupDescriptorByKind(1, arg0);
         if (desc2 != 0) {
             kind = desc2->flags & 0x30;
             switch (kind) {

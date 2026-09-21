@@ -675,34 +675,8 @@ fn runtime_credit_for(
 #[cfg(test)]
 const OVERLAY_VENEER_MACRO: &str = "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC";
 
-/// Original assembly credit requires evidence and a proof or object.
-fn assembly_credit(entry: &Value) -> bool {
-    let provenance = &entry["provenance"];
-    matches!(
-        text(provenance, "credit").as_str(),
-        "library" | "handwritten"
-    ) && array(entry, "evidence")
-        .iter()
-        .any(|item| item.as_str().is_some_and(|s| !s.trim().is_empty()))
-        && (!text(provenance, "proof").trim().is_empty()
-            || !text(provenance, "object").trim().is_empty())
-}
-/// Main assembly can only be credited by its own range provenance emitted by
-/// the assembler, never by its classification kind.
-fn manifest_assembly_credit(region: &Value) -> bool {
-    let provenance = &region["provenance"];
-    matches!(
-        text(provenance, "credit").as_str(),
-        "library" | "handwritten"
-    ) && !text(region, "source").trim().is_empty()
-        && array(provenance, "evidence")
-            .iter()
-            .any(|item| item.as_str().is_some_and(|item| !item.trim().is_empty()))
-        && (!text(provenance, "proof").trim().is_empty()
-            || !text(provenance, "object").trim().is_empty())
-}
-/// Withdrawn, draft, and credited main assembly. Credited spans are proven
-/// manifest rows with their own validated range provenance.
+/// Proven retained and draft main assembly. Generic range classifications do
+/// not establish authorship or library identity and therefore earn no credit.
 #[cfg(test)]
 fn main_assembly_classification(tree: &SourceTree) -> (Vec<Span>, Vec<Span>, Vec<Span>) {
     let target = crate::targets::target_for(crate::targets::DEFAULT_TARGET);
@@ -714,7 +688,7 @@ fn main_assembly_classification_for(
 ) -> (Vec<Span>, Vec<Span>, Vec<Span>) {
     let mut proven = Vec::new();
     let mut draft = Vec::new();
-    let mut credited = Vec::new();
+    let credited = Vec::new();
     if let Some(value) = json(
         tree,
         &format!("{}/full/asm/manifest.json", target.output_dir),
@@ -745,8 +719,6 @@ fn main_assembly_classification_for(
                     let span = Span::new(address, address + size);
                     if text(region, "confidence") != "proven" {
                         draft.push(span);
-                    } else if manifest_assembly_credit(region) {
-                        credited.push(span);
                     } else {
                         proven.push(span);
                     }
@@ -885,7 +857,8 @@ fn overlay_assembly_classification_document_for(
                 "assembly classification {index} promotes a scene reconstruction without compiler-impossibility proof"
             ));
         }
-        if text(&row["provenance"], "credit") == "reconstructed_veneer" {
+        let credit = text(&row["provenance"], "credit");
+        if credit == "reconstructed_veneer" {
             let veneer_spans = mapped(inventory, &overlay)
                 .iter()
                 .filter(|region| region.kind == "veneer" && !region.evidence.trim().is_empty())
@@ -904,8 +877,10 @@ fn overlay_assembly_classification_document_for(
                 ));
             }
             credited.entry(overlay).or_default().push(span);
-        } else if text(row, "confidence") == "proven" && assembly_credit(row) {
-            credited.entry(overlay).or_default().push(span);
+        } else if !credit.is_empty() {
+            return Err(format!(
+                "assembly classification {index} requests unsupported generic assembly credit"
+            ));
         } else if text(row, "confidence") == "proven" {
             proven.entry(overlay).or_default().push(span);
         } else {
@@ -2451,7 +2426,7 @@ mod tests {
                 "total_union_bytes":32,
                 "main":{"id":"main", "audit":"complete", "executable_bytes":0, "intervals":[]},
                 "overlays":[{"id":"resource_test", "audit":"complete", "executable_bytes":32,
-                    "intervals":[{"start":0x02000120, "end":0x02000140, "kind":"thumb"}]}]
+                    "intervals":[{"start":0x02000120, "end":0x02000140, "kind":"veneer", "evidence":"fixture"}]}]
             }),
         );
         let mut row = region(
@@ -2460,7 +2435,20 @@ mod tests {
             "proven",
             json!(["fixture proof"]),
         );
-        row["provenance"] = json!({"credit":"handwritten", "proof":"fixture"});
+        row["kind"] = json!("veneer");
+        row["provenance"] = json!({
+            "credit":"reconstructed_veneer",
+            "proof":"games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC",
+            "source":"games/THE LOST AGE/SRC/FIELD/TEST/ENTRY.INC"
+        });
+        write(
+            "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC",
+            json!("fixture"),
+        );
+        write(
+            "games/THE LOST AGE/SRC/FIELD/TEST/ENTRY.INC",
+            json!("fixture"),
+        );
         write(
             "games/THE LOST AGE/semantic/overlay-assembly.json",
             classification(json!([row])),
@@ -2486,7 +2474,7 @@ mod tests {
         );
     }
     #[test]
-    fn main_assembly_credit_requires_manifest_range_provenance() {
+    fn generic_main_assembly_provenance_earns_no_credit() {
         let directory = tempfile::tempdir().unwrap();
         let write = |path: &str, value: Value| {
             let path = directory.path().join(path);
@@ -2540,19 +2528,15 @@ mod tests {
         let tree = crate::coverage::tree::work_tree_at(directory.path().into());
         let (proven, draft, credited) = main_assembly_classification(&tree);
         assert!(draft.is_empty());
-        assert_eq!(
-            credited,
-            [
-                Span::new(0x0800_0100, 0x0800_0108),
-                Span::new(0x0800_0180, 0x0800_0188)
-            ]
-        );
+        assert!(credited.is_empty());
         assert_eq!(
             proven,
             [
+                Span::new(0x0800_0100, 0x0800_0108),
                 Span::new(0x0800_0120, 0x0800_0128),
                 Span::new(0x0800_0140, 0x0800_0148),
-                Span::new(0x0800_0160, 0x0800_0168)
+                Span::new(0x0800_0160, 0x0800_0168),
+                Span::new(0x0800_0180, 0x0800_0188)
             ]
         );
     }
@@ -3198,7 +3182,6 @@ mod tests {
             credited["resource_test"],
             vec![Span::new(0x0200_0120, 0x0200_0140)]
         );
-        assert!(!assembly_credit(&row));
         for (key, value) in [
             ("kind", json!("structured_scene_module")),
             ("confidence", json!("strong")),
@@ -3224,7 +3207,7 @@ mod tests {
     }
 
     #[test]
-    fn overlay_credit_requires_proven_range_and_its_own_provenance() {
+    fn generic_overlay_credit_is_rejected() {
         let mut library = region(
             "0x02000120",
             "0x02000140",
@@ -3246,27 +3229,23 @@ mod tests {
         bare["start"] = json!("0x02000180");
         bare["end"] = json!("0x020001a0");
         bare["provenance"] = json!({"credit":"library"});
-        let (withdrawn, draft, credited) = overlay_assembly_classification_document(
-            &classification(json!([library, uncredited, strong, bare])),
+        let error = overlay_assembly_classification_document(
+            &classification(json!([library])),
             &no_inventory(),
             &executable(),
         )
-        .unwrap();
-        assert_eq!(
-            credited["resource_test"],
-            vec![Span::new(0x0200_0120, 0x0200_0140)]
-        );
-        assert_eq!(
-            draft["resource_test"],
-            vec![Span::new(0x0200_0160, 0x0200_0180)]
-        );
-        assert_eq!(
-            withdrawn["resource_test"],
-            vec![
-                Span::new(0x0200_0140, 0x0200_0160),
-                Span::new(0x0200_0180, 0x0200_01a0)
-            ]
-        );
+        .unwrap_err();
+        assert!(error.contains("unsupported generic assembly credit"));
+
+        for mut row in [uncredited, strong, bare] {
+            row["provenance"] = Value::Null;
+            assert!(overlay_assembly_classification_document(
+                &classification(json!([row])),
+                &no_inventory(),
+                &executable(),
+            )
+            .is_ok());
+        }
     }
     #[test]
     fn rejects_assembly_classification_outside_inventory() {

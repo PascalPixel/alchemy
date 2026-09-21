@@ -61,6 +61,7 @@ pub fn identity(root: &Path, target: &str) -> Result<String, String> {
         "recon/compiler-runtime.json",
         "raw/classification.json",
         "semantic/overlay-assembly.json",
+        "metrics/executable.json",
     ] {
         let path = format!("{}/{suffix}", game.game_dir());
         if root.join(&path).is_file() {
@@ -71,6 +72,7 @@ pub fn identity(root: &Path, target: &str) -> Result<String, String> {
     for directory in [
         "tools/alchemy/src/overlay",
         "tools/alchemy/src/score",
+        "tools/alchemy/src/coverage",
         "tools/psynergy/src",
     ] {
         collect(root, &root.join(directory), &mut files)?;
@@ -84,8 +86,6 @@ pub fn identity(root: &Path, target: &str) -> Result<String, String> {
         "tools/alchemy/src/targets.rs",
         "tools/alchemy/src/check/tla_owners.rs",
         "tools/alchemy/src/overlay/compile.rs",
-        "tools/alchemy/src/coverage/proof.rs",
-        "tools/alchemy/src/coverage/pipeline.rs",
         "tools/alchemy/src/candidate.rs",
     ] {
         if root.join(path).is_file() {
@@ -178,5 +178,29 @@ mod tests {
         let before = identity(root.path(), "tla-en").unwrap();
         std::fs::write(&plan, "{\"start\":32}").unwrap();
         assert_ne!(before, identity(root.path(), "tla-en").unwrap());
+    }
+
+    #[test]
+    fn changed_executable_inventory_invalidates_build_identity() {
+        let root = tempfile::tempdir().unwrap();
+        let metrics = root
+            .path()
+            .join("games/THE BROKEN SEAL/metrics/executable.json");
+        std::fs::create_dir_all(metrics.parent().unwrap()).unwrap();
+        std::fs::write(&metrics, "{\"total_union_bytes\":8}").unwrap();
+        let before = identity(root.path(), "tbs-en").unwrap();
+        std::fs::write(&metrics, "{\"total_union_bytes\":16}").unwrap();
+        assert_ne!(before, identity(root.path(), "tbs-en").unwrap());
+    }
+
+    #[test]
+    fn changed_coverage_calculator_invalidates_build_identity() {
+        let root = tempfile::tempdir().unwrap();
+        let calculator = root.path().join("tools/alchemy/src/coverage/progress.rs");
+        std::fs::create_dir_all(calculator.parent().unwrap()).unwrap();
+        std::fs::write(&calculator, "fn tally() -> u64 { 8 }").unwrap();
+        let before = identity(root.path(), "tbs-en").unwrap();
+        std::fs::write(&calculator, "fn tally() -> u64 { 16 }").unwrap();
+        assert_ne!(before, identity(root.path(), "tbs-en").unwrap());
     }
 }

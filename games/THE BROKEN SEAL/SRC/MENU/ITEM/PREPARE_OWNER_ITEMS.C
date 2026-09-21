@@ -5,6 +5,7 @@ void Func_080a1ac0(s32, s32);
 s32 Runtime_GetObject(s32);
 s32 Func_080a35f8(void *, void *);
 void Func_080a17c4(void *icon);
+#define UiIcon_PrepareObject Func_080a17c4
 void WaitFrames(s32);
 
 s32 ItemMenu_PrepOwner(s32 party_slot)
@@ -37,7 +38,7 @@ s32 ItemMenu_PrepOwner(s32 party_slot)
     result = Func_080a35f8(menu + 0x208, (void *)offset);
     {
         s32 cursor_offset = party_slot * 4 + 20;
-        Func_080a17c4(*(s32 *)(menu + cursor_offset));
+        UiIcon_PrepareObject(*(s32 *)(menu + cursor_offset));
     }
     WaitFrames(1);
     return result;

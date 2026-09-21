@@ -23,7 +23,9 @@ void *Func_08002f40(s32 id);
 u32 Func_08005340(const void *source, void *destination);
 s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 void Func_080041d8(void *callback, s32 interval);
+#define Scheduler_AddOrUpdateCallback Func_080041d8
 void Func_08004278(void *callback);
+#define Scheduler_RemoveCallback Func_08004278
 void Func_080049ac(void);
 void Func_080051d8(s32 a, s32 b);
 void **Func_080b5098(s32 member_id);
@@ -31,7 +33,9 @@ void Func_080e3944(void *source, void *screen);
 s32 Func_08002322(s32 angle);
 s32 Func_0800231c(s32 angle);
 void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+#define ObjectGroup_UpdateMembers Func_080d6888
 void Func_080030f8(s32 frames);
+#define WaitFrames Func_080030f8
 void Func_08002dd8(s32 id);
 #define Runtime_ReleaseHeapBlock Func_08002dd8
 s32 Func_080cdbc0(void);
@@ -78,10 +82,10 @@ void BattleFx_RunMemberOrbit(void *object)
     rect2 = heap_cache[8];
     rectangle_slot = rectangle;
     rectangle_slot[1] = rect2;
-    Func_080041d8((void *)0x080DBB9D, 0x480);
+    Scheduler_AddOrUpdateCallback((void *)0x080DBB9D, 0x480);
     FIELD_AT_OFFSET(work, s32 *, 0x7780) = 2;
     FIELD_AT_OFFSET(work, s32 *, 0x7784) = 50;
-    Func_080041d8((void *)0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
     if (FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828), s32 *, 4) == 1) {
         FIELD_AT_OFFSET((void *)0x04000028, s32 *, 0) = -0x6800;
         y_offset = -112;
@@ -133,7 +137,7 @@ void BattleFx_RunMemberOrbit(void *object)
                     s32 spin;
 
                     if (frame == (member * 16) + 32) {
-                        Func_080d6888(
+                        ObjectGroup_UpdateMembers(
                             FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828),
                                 s16 *, id_ofs),
                             0, 5, -1, 0);
@@ -163,10 +167,10 @@ void BattleFx_RunMemberOrbit(void *object)
             }
         }
         FIELD_AT_OFFSET(work, s32 *, 0x7824) = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
     }
-    Func_08004278((void *)0x080CD261);
-    Func_08004278((void *)0x080DBB9D);
+    Scheduler_RemoveCallback((void *)0x080CD261);
+    Scheduler_RemoveCallback((void *)0x080DBB9D);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     Func_080cdbc0();

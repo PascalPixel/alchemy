@@ -68,6 +68,6 @@ void BattleFx_UpdateRadialSpread(struct EffectSlot *effect)
             effect->state--;
     } else if (state == 2) {
         if (EffectSlot_HasReachedTarget(effect) == 0)
-            Func_0809bb34(effect);
+            BattleFx_ClearOwnedSlot(effect);
     }
 }

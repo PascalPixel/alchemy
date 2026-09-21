@@ -2,6 +2,7 @@
 
 s32 Func_080b6b40(s32 side, u16 *out_units);
 u32 Func_08004458(void);
+#define Random16 Func_08004458
 u8 *Func_08077008(s32 unit_id);
 void Func_080bd424(void *entry, s32 arg1);
 
@@ -34,15 +35,15 @@ s32 BattlePres_BuildOpponentEntries(
     }
 
     for (i = 31; i >= 0; i--) {
-        u32 first = (u32)(unit_count *Func_08004458()) >> 16;
-        u32 second = (u32)(unit_count *Func_08004458()) >> 16;
+        u32 first = (u32)(unit_count *Random16()) >> 16;
+        u32 second = (u32)(unit_count *Random16()) >> 16;
         s32 swap = unit_ids[first];
         unit_ids[first] = unit_ids[second];
         unit_ids[second] = swap;
     }
 
     if (battle[0x45] == 2) {
-        s32 limit = ((u32)(Func_08004458() * 5) >> 16) + 1;
+        s32 limit = ((u32)(Random16() * 5) >> 16) + 1;
 
         if (limit <= 1) {
             limit = 2;

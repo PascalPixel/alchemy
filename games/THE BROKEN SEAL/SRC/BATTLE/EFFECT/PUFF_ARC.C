@@ -22,15 +22,19 @@ s32 Func_080ed408(s32, s32, s32, s32, s32);
 s32 Func_08002322(s32);
 s32 Func_0800231c(s32);
 void Func_080041d8(s32, s32);
+#define Scheduler_AddOrUpdateCallback Func_080041d8
 void Func_080f9010(s32);
 #define Audio_PlayCue Func_080f9010
 void Func_080b50e8(s32);
 void Func_080d6888(s32, s32, s32, s32, s32);
+#define ObjectGroup_UpdateMembers Func_080d6888
 void Func_080cd52c(void);
 void Func_080030f8(s32);
+#define WaitFrames Func_080030f8
 void Func_08002dd8(s32);
 #define Runtime_ReleaseHeapBlock Func_08002dd8
 void Func_08004278(s32);
+#define Scheduler_RemoveCallback Func_08004278
 s32 Func_080cdbc0(void);
 
 /* Six animation cells, one entry each: width, height, vertical bias, and the
@@ -142,7 +146,7 @@ void BattleFx_RunPuffArc(Efx *efx)
     } else {
         *(s32 *)(work + 0x7784) = 50;
     }
-    Func_080041d8(0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
     Audio_PlayCue(0x88);
     frame = 0;
     do {
@@ -183,16 +187,16 @@ void BattleFx_RunPuffArc(Efx *efx)
         i = 0;
         while (i != WORK_EFX->cnt) {
             if (frame == (i * 8) + 16) {
-                Func_080d6888(WORK_EFX->actors[i], 10, 5, i, 12);
+                ObjectGroup_UpdateMembers(WORK_EFX->actors[i], 10, 5, i, 12);
             }
             i += 1;
         }
         Func_080cd52c();
         *(s32 *)(work + 0x7824) = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
         frame += 1;
     } while (frame != 80);
     Runtime_ReleaseHeapBlock(46);
-    Func_08004278(0x080CD261);
+    Scheduler_RemoveCallback(0x080CD261);
     Func_080cdbc0();
 }

@@ -9,6 +9,7 @@ void Object_InitializeMode(void *, s32);
 void Func_080ad40c(void);
 s32 ScheduleCallbackAfterFrames(void (*)(void), s32);
 void Func_08004278(void (*)(void));
+#define Scheduler_RemoveCallback Func_08004278
 
 void FourObjectMotion_InitializeBottomRow(void)
 {
@@ -85,5 +86,5 @@ void FourObjectMotion_ClearSlotsAndScheduleAlt(void)
         }
         index++;
     } while (index < 4);
-    Func_08004278(Func_080ad40c);
+    Scheduler_RemoveCallback(Func_080ad40c);
 }

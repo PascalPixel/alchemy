@@ -4,6 +4,7 @@
 
 void ScheduleCallback(void *);
 void Func_0809bb34(struct EffectSlot *);
+#define BattleFx_ClearOwnedSlot Func_0809bb34
 void Func_08002dd8(s32);
 #define Runtime_ReleaseHeapBlock Func_08002dd8
 void WaitFrames(s32);
@@ -24,7 +25,7 @@ void BattleFx_ClearActiveSlotsAndScheduleUpdates(void)
     for (i = 0; i < 24; i++) {
         slot = &scene->slots[i];
         if (slot->active != 0)
-            Func_0809bb34(slot);
+            BattleFx_ClearOwnedSlot(slot);
     }
     Runtime_ReleaseHeapBlock(56);
     WaitFrames(1);

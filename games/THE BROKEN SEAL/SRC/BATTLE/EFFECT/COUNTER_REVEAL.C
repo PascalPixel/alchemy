@@ -44,8 +44,11 @@ void *Func_08002f40(s32 id);
 u32 Func_08005340(const void *source, void *destination);
 s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 s32 Func_080041d8(s32 callback, s32 order);
+#define Scheduler_AddOrUpdateCallback Func_080041d8
 void Func_08004278(void *callback);
+#define Scheduler_RemoveCallback Func_08004278
 void Func_080030f8(s32 frames);
+#define WaitFrames Func_080030f8
 void Func_08002dd8(s32 id);
 #define Runtime_ReleaseHeapBlock Func_08002dd8
 s32 Func_080cdbc0(void);
@@ -54,6 +57,7 @@ void Func_080e396c(s32 member_id, void *out);
 s32 Func_08002322(s32 angle);
 s32 Func_0800231c(s32 angle);
 void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+#define ObjectGroup_UpdateMembers Func_080d6888
 void Func_080f9010(s32 cue);
 #define Audio_PlayCue Func_080f9010
 void Func_08009150(void *object, s32 a, s32 b, s32 c);
@@ -103,10 +107,10 @@ void BattleFx_RunCounterReveal(void *object)
     status = Func_080ed408(47, 7, 7, 7, 1);
     second_rectangle = heap_cache[8];
     rectangle[1] = second_rectangle;
-    Func_080041d8(0x080DBB9D, 0x480);
+    Scheduler_AddOrUpdateCallback(0x080DBB9D, 0x480);
     (*(s32 *)((u8 *)(work) + (0x7780))) = 1;
     (*(s32 *)((u8 *)(work) + (0x7784))) = zero_val;
-    Func_080041d8(0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
     draw_enabled = 1;
     if ((*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4))) == 1) {
         curve[0] = -0x500000;
@@ -255,7 +259,7 @@ void BattleFx_RunCounterReveal(void *object)
             Func_08009150(member_object,
                 (*(s32 *)((u8 *)(member_object) + (8))) << 1, 0,
                 (*(s32 *)((u8 *)(member_object) + (16))));
-            Func_080d6888(
+            ObjectGroup_UpdateMembers(
                 (*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))), -1,
                 5, -1, 0);
         }
@@ -263,10 +267,10 @@ void BattleFx_RunCounterReveal(void *object)
             (*(s32 *)((u8 *)(*Func_080b5098((*(s16 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x24))))) + (0x48))) = 0xAB85;
         }
         (*(s32 *)((u8 *)(work) + (0x7824))) = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
     }
-    Func_08004278((void *)0x080CD261);
-    Func_08004278((void *)0x080DBB9D);
+    Scheduler_RemoveCallback((void *)0x080CD261);
+    Scheduler_RemoveCallback((void *)0x080DBB9D);
     Func_080b5040(1, (*(u16 *)((u8 *)(Data_03001e74) + (0x648))), 24);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);

@@ -77,6 +77,6 @@ void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect)
             effect->callback_delay = 6;
         }
     } else if (state == 3) {
-        Func_0809bb34(effect);
+        BattleFx_ClearOwnedSlot(effect);
     }
 }

@@ -41,8 +41,10 @@ struct BattleObjectSlot {
 #define BATTLE_OBJECT_SLOTS (*(struct BattleObjectSlot **)0x03001e64)
 
 void Func_0809bb34(struct BattleEffectSceneObject *object);
+#define BattleFx_ClearOwnedSlot Func_0809bb34
 void WaitFrames(s32 frames);
 void Func_08004278(u32 callback);
+#define Scheduler_RemoveCallback Func_08004278
 void Func_08003f3c(s32 handle);
 void Func_0809202c(void);
 void Func_08002dd8(s32 asset_id);
@@ -67,7 +69,7 @@ void BattleEffect_CleanupSceneObjects(void)
     for (remaining = 0; remaining < 24; remaining++) {
         scene_object = &scene->objects[remaining];
         if (scene_object->active != 0)
-            Func_0809bb34(scene_object);
+            BattleFx_ClearOwnedSlot(scene_object);
     }
 
     if (runtime->teardown_blocked == 0) {
@@ -102,7 +104,7 @@ void BattleEffect_CleanupSceneObjects(void)
         } while (active != 0 && waited <= 29);
 
         runtime->teardown_state = 0;
-        Func_08004278(0x08096f8d);
+        Scheduler_RemoveCallback(0x08096f8d);
         Func_08003f3c(scene->audio_handle);
         position->x = scene->x;
         position->y = scene->y;

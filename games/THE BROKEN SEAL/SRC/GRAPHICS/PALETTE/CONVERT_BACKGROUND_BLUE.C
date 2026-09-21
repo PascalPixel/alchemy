@@ -14,7 +14,9 @@ static __inline__ void CopyWords(WordCopy copy, void *destination,
 extern u8 Data_03001e50[];
 #define PIXEL_BUFFER ((u8 *)0x02010000)
 void Func_080030f8(s32);
+#define WaitFrames Func_080030f8
 u32 Func_08004458(void);
+#define Random16 Func_08004458
 
 void Graphics_ConvertBackgroundToBlueRamp(void)
 {
@@ -39,7 +41,7 @@ void Graphics_ConvertBackgroundToBlueRamp(void)
     delay_mask = 63;
     p = delays;
     do {
-        *p++ = Func_08004458() & delay_mask;
+        *p++ = Random16() & delay_mask;
     } while (p != delays + 256);
     row = 0;
     i = 0;
@@ -68,7 +70,7 @@ next_pixel:
             row++;
         }
         ((WordCopy)0x03001388)((void *)0x06008000, PIXEL_BUFFER, 0x7800);
-        Func_080030f8(1);
+        WaitFrames(1);
         if (end > 248) break;
         i++;
     } while (i != 27);
@@ -86,5 +88,5 @@ next_pixel:
         i++;
     } while (i != 0x7800);
     CopyWords((WordCopy)0x03001388, (void *)0x06008000, PIXEL_BUFFER, 0x7800);
-    Func_080030f8(1);
+    WaitFrames(1);
 }

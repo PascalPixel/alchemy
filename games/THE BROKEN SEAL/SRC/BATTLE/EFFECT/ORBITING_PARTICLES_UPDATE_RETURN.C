@@ -57,5 +57,5 @@ next_state:
     }
 
     if (state == 3 && EffectSlot_HasReachedTarget(effect) == 0)
-        Func_0809bb34(effect);
+        BattleFx_ClearOwnedSlot(effect);
 }

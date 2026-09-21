@@ -5,6 +5,7 @@ extern u8 Value_00000075;
 
 void Func_08015270(s32);
 void Func_080030f8(s32);
+#define WaitFrames Func_080030f8
 void Func_08015080(s32, s32, s32, s32);
 s32 Func_080a2268(s32, s32, s32, s32, s32, s32);
 
@@ -23,7 +24,7 @@ s32 ItemMenu_DrawItemDetailPage(s32 arg0, s32 arg1, void *state)
     *(s32 *)(state + 24) = combined;
 
     Func_08015270(*(s32 *)(menu + 44));
-    Func_080030f8(1);
+    WaitFrames(1);
 
     combined = *(s32 *)(state + 24);
     off = combined * 2 + 456;
@@ -42,6 +43,6 @@ s32 ItemMenu_DrawItemDetailPage(s32 arg0, s32 arg1, void *state)
         row++;
     } while (row <= 4);
 
-    Func_080030f8(1);
+    WaitFrames(1);
     return 1;
 }

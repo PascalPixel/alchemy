@@ -22,6 +22,7 @@ LAYOUT_SIZE_GUARD(State_080a9d84_size, struct State_080a9d84, 328);
 
 extern struct State_080a9d84 *Data_03001f2c;
 void Func_080a17c4(void *obj);
+#define UiIcon_PrepareObject Func_080a17c4
 
 void ItemMenu_ResetCategory(void)
 {
@@ -35,7 +36,7 @@ void ItemMenu_ResetCategory(void)
             object->value1 = 248;
             object->value2 = 168;
             object->flag = 240;
-            Func_080a17c4(object);
+            UiIcon_PrepareObject(object);
         }
     }
 }

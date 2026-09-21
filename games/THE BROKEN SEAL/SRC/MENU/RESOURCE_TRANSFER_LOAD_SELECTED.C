@@ -31,6 +31,7 @@ struct SelectionNode_0801c188 *Func_0801b36c(void *state);
 struct ResourceBuffer_0801c188 *Runtime_AllocateHeapBlock(s32 owner, s32 size);
 void Func_080053e8(void *source, void *destination);
 u16 Func_08004080(void);
+#define find_free_slot Func_08004080
 u16 Resource_CopyData(s32 handle, s32 size, void *buffer);
 void Func_08002dd8(s32 owner);
 #define Runtime_ReleaseHeapBlock Func_08002dd8
@@ -61,7 +62,7 @@ void Menu_LoadSelectedResource(void)
     Func_080053e8(resource, buffer);
 
     if (transfer->active == 0)
-        transfer->handle = Func_08004080();
+        transfer->handle = find_free_slot();
     transfer->transfer_id =
         Resource_CopyData(transfer->handle, 0x400, buffer);
     transfer->active = 1;

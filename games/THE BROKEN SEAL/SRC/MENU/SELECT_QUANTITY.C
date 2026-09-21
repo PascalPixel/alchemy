@@ -10,8 +10,10 @@ void Func_080a19a0(void);
 
 s32 Func_08015010(s32, s32, s32, s32, s32);
 void Func_08004278(void (*callback)(void));
+#define Scheduler_RemoveCallback Func_08004278
 void Func_080a22f4(void);
 void Func_080030f8(s32);
+#define WaitFrames Func_080030f8
 s32 Func_080770c0(s32);
 s32 Func_080022fc(s32, s32);
 void Func_080a4924(s32, s32);
@@ -19,6 +21,7 @@ s32 Func_08015270(s32);
 void Func_08015018(s32, s32);
 void Func_080a2144(s32);
 void Func_080041d8(const void *, s32);
+#define Scheduler_AddOrUpdateCallback Func_080041d8
 void Func_08015408(s32, s32, s32, s32);
 
 s32 Func_080a4800(s32 value)
@@ -31,14 +34,14 @@ s32 Func_080a4800(s32 value)
 
     confirmState[5] = 13;
     window = Func_08015010(0, 0, 30, 10, 2);
-    Func_08004278(Func_080a19a0);
+    Scheduler_RemoveCallback(Func_080a19a0);
 
     {
         u8 *iconState = MENU_SUBOBJECT(menu, 380);
         iconState[5] = 13;
     }
     Func_080a22f4();
-    Func_080030f8(1);
+    WaitFrames(1);
 
     goto check_exit;
 
@@ -55,7 +58,7 @@ adjust:
             changed = 1;
         }
     }
-    Func_080030f8(1);
+    WaitFrames(1);
 
 check_exit:
     if (Func_080770c0(336) != 0)
@@ -81,14 +84,14 @@ check_exit:
 
 done:
     Func_08015270(window);
-    Func_080030f8(1);
+    WaitFrames(1);
     Func_08015018(window, 1);
     Func_08015270(*(s32 *)(menu + 16));
     Func_080a2144(14);
     {
         s32 delay = 0xc80;
 
-        Func_080041d8((const void *)Func_080a19a0, delay);
+        Scheduler_AddOrUpdateCallback((const void *)Func_080a19a0, delay);
     }
 
     {

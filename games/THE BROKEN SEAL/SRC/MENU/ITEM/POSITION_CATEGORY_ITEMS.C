@@ -20,6 +20,7 @@ LAYOUT_SIZE_GUARD(State_080a9cbc_size, struct State_080a9cbc, 200);
 
 extern struct State_080a9cbc *Data_03001f2c;
 void Func_080a17c4(void *obj);
+#define UiIcon_PrepareObject Func_080a17c4
 
 void ItemMenu_PosCategory(void)
 {
@@ -35,7 +36,7 @@ void ItemMenu_PosCategory(void)
         if (object != 0) {
             object->value1 = value1;
             object->value2 = value2;
-            Func_080a17c4(object);
+            UiIcon_PrepareObject(object);
         }
         remaining--;
     } while (remaining >= 0);

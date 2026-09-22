@@ -1201,7 +1201,7 @@ void FieldScene_RunSupplementalSequenceTwo(void)
             UiText_DrawMessage_1(byte_pair_addr, 1);
             BattleRuntime_WaitIfModeZero_2(20);
             Audio_PlayCue_2(183);
-            Func_02001fe8(122, 20, 120, 30, 1, 2);
+            Call6(Func_02001fe8, 122, 20, 120, 30, 1, 2);
             Call6(Func_02002004, 122, 20, 1, 2, 120, 30);
             Call0(Func_02001fe8_a);
             Value3(Func_02002030, 65536, 65536, 65536);

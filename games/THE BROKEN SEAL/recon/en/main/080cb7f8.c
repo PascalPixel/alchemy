@@ -157,7 +157,7 @@ void Func_080cb7f8(s32 a0)
     *(s32 *)((0x7780 + r9)) = 2;
     *(s32 *)((0x7784 + r9)) = 75;
     Value2(Func_080041d8, 0x80cd261, 0x480);
-    ((void (*)())BattleEffect_LoadWork)(46, 7, 7, 3);
+    BattleEffect_LoadWork(46, 7, 7, 3, 3);
     slot28 = *(s32 *)0x03001f08;
     v3 = (*(s32 *)(*(s32 *)((0x7828 + r9)) + 24) + 1);
     *(s32 *)(*(s32 *)((0x7828 + r9)) + 24) += 1;

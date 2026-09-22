@@ -1,11 +1,10 @@
-@ 回転行列の生成、積の多い版 (スタック 56 バイト)。三軸の sin, cos から Q16 積を
-@ 組み、IwramTransformMatrix (0x030002c0) に読み込ませる。
-@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
-	.global Func_08004e54
-	.thumb_func
-Func_08004e54:
+	.set sub_0800231c, 0x0800231c
+	.set sub_08002322, 0x08002322
+	.set sub_080072f0, 0x080072f0
+	.global Overlay_08004e54
+Overlay_08004e54:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -18,30 +17,28 @@ Func_08004e54:
 	str	r2, [sp, #0]
 	adds	r5, r0, #0
 	ldr	r0, [r5, #0]
-@ 三軸それぞれの sin と cos。
-	bl	Func_08002322
+	bl	sub_08002322
 	mov	sl, r0
 	ldr	r0, [r5, #0]
-	bl	Func_0800231c
+	bl	sub_0800231c
 	mov	r9, r0
 	ldr	r0, [r5, #4]
-	bl	Func_08002322
+	bl	sub_08002322
 	mov	r8, r0
 	ldr	r0, [r5, #4]
-	bl	Func_0800231c
+	bl	sub_0800231c
 	mov	fp, r0
 	ldr	r0, [r5, #8]
-	bl	Func_08002322
+	bl	sub_08002322
 	adds	r6, r0, #0
 	ldr	r0, [r5, #8]
-	bl	Func_0800231c
+	bl	sub_0800231c
 	ldr	r2, [sp, #0]
 	mov	lr, r0
 	ldr	r7, [r2, #0]
 	ldr	r3, [pc, #316]
 	mov	r0, fp
 	mov	r1, lr
-@ 以降の各 ip 呼出しは IwramMulQ16ReturnIp による Q16 積。
 	mov	ip, pc
 	bx	r3
 	adds	r1, r0, #0
@@ -186,8 +183,7 @@ Func_08004e54:
 	adds	r0, r5, #0
 	str	r3, [r5, #44]
 	ldr	r3, [pc, #28]
-@ IwramTransformMatrix へ渡す。
-	bl	Func_080072f0
+	bl	sub_080072f0
 	add	sp, #56
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3
@@ -199,4 +195,3 @@ Func_08004e54:
 	bx	r0
 	movs	r0, r0
 	.4byte 0x03000118
-	.4byte 0x030002c0

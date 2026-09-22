@@ -420,7 +420,7 @@
 	.set sub_02002492, 0x02002492
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_HEYA/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_HEYA/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x12
 	.2byte 0x0000
@@ -497,14 +497,196 @@ AlchemyC_02000084:
 	.4byte 0x000028f0
 	.2byte 0x26e3
 	.2byte 0x0000
-AlchemyC_0200015c:
-	.space 0x6c
-AlchemyC_020001c8:
-	.space 0x6c
-AlchemyC_02000234:
-	.space 0x68
-AlchemyC_0200029c:
-	.space 0x6c
+	push	{r5, lr}
+	adds	r5, r0, #0
+	movs	r0, #0
+	bl	sub_02001378
+	movs	r2, #128
+	ldrh	r3, [r0, #6]
+	lsls	r2, r2, #6
+	adds	r3, r3, r2
+	ldr	r2, [pc, #24]
+	ands	r3, r2
+	movs	r2, #192
+	lsls	r3, r3, #16
+	lsls	r2, r2, #24
+	cmp	r3, r2
+	bne.n	.L_0200018c
+	movs	r0, #33
+	adds	r1, r5, #0
+	bl	sub_02001476
+	b.n	.L_020001b4
+	.2byte 0x0000
+	.2byte 0xc000
+	.2byte 0xffff
+.L_0200018c:
+	.2byte 0x480b
+	bl	sub_0200136c
+	cmp	r0, #0
+	beq.n	.L_020001a6
+	ldr	r0, [pc, #40]
+	bl	sub_02001416
+	adds	r0, r5, #0
+	movs	r1, #0
+	bl	sub_0200142e
+	b.n	.L_020001b4
+.L_020001a6:
+	ldr	r0, [pc, #28]
+	bl	sub_02001426
+	adds	r0, r5, #0
+	movs	r1, #0
+	bl	sub_0200143e
+.L_020001b4:
+	pop	{r5}
+	pop	{r0}
+	bx	r0
+	.2byte 0x0000
+	.4byte 0x000009a7
+	.4byte 0x000028f2
+	.2byte 0x26e7
+	.2byte 0x0000
+	push	{r5, lr}
+	adds	r5, r0, #0
+	movs	r0, #0
+	bl	sub_020013e4
+	movs	r2, #128
+	ldrh	r3, [r0, #6]
+	lsls	r2, r2, #6
+	adds	r3, r3, r2
+	ldr	r2, [pc, #24]
+	ands	r3, r2
+	movs	r2, #192
+	lsls	r3, r3, #16
+	lsls	r2, r2, #24
+	cmp	r3, r2
+	bne.n	.L_020001f8
+	movs	r0, #34
+	adds	r1, r5, #0
+	bl	sub_020014e2
+	b.n	.L_02000220
+	.2byte 0x0000
+	.2byte 0xc000
+	.2byte 0xffff
+.L_020001f8:
+	.2byte 0x480b
+	bl	sub_020013d8
+	cmp	r0, #0
+	beq.n	.L_02000212
+	ldr	r0, [pc, #40]
+	bl	sub_02001482
+	adds	r0, r5, #0
+	movs	r1, #0
+	bl	sub_0200149a
+	b.n	.L_02000220
+.L_02000212:
+	ldr	r0, [pc, #28]
+	bl	sub_02001492
+	adds	r0, r5, #0
+	movs	r1, #0
+	bl	sub_020014aa
+.L_02000220:
+	pop	{r5}
+	pop	{r0}
+	bx	r0
+	.2byte 0x0000
+	.4byte 0x000009a7
+	.4byte 0x000028f4
+	.2byte 0x26e9
+	.2byte 0x0000
+	push	{r5, lr}
+	adds	r5, r0, #0
+	movs	r0, #0
+	bl	sub_02001450
+	movs	r2, #128
+	ldrh	r3, [r0, #6]
+	lsls	r2, r2, #6
+	adds	r3, r3, r2
+	ldr	r2, [pc, #48]
+	ands	r3, r2
+	movs	r2, #192
+	lsls	r3, r3, #16
+	lsls	r2, r2, #24
+	cmp	r3, r2
+	bne.n	.L_0200025c
+	adds	r0, r5, #0
+	bl	sub_02001554
+	b.n	.L_02000292
+.L_0200025c:
+	ldr	r0, [pc, #28]
+	bl	sub_0200143c
+	cmp	r0, #0
+	beq.n	.L_02000284
+	ldr	r0, [pc, #24]
+	bl	sub_020014e6
+	adds	r0, r5, #0
+	movs	r1, #0
+	bl	sub_020014fe
+	b.n	.L_02000292
+	.2byte 0x0000
+	.4byte 0xffffc000
+	.4byte 0x000009a7
+	.2byte 0x28fc
+	.2byte 0x0000
+.L_02000284:
+	ldr	r0, [pc, #16]
+	bl	sub_02001504
+	adds	r0, r5, #0
+	movs	r1, #0
+	bl	sub_0200151c
+.L_02000292:
+	pop	{r5}
+	pop	{r0}
+	bx	r0
+	.2byte 0x26f6
+	.2byte 0x0000
+	push	{r5, lr}
+	adds	r5, r0, #0
+	movs	r0, #0
+	bl	sub_020014b8
+	movs	r2, #128
+	ldrh	r3, [r0, #6]
+	lsls	r2, r2, #6
+	adds	r3, r3, r2
+	ldr	r2, [pc, #24]
+	ands	r3, r2
+	movs	r2, #192
+	lsls	r3, r3, #16
+	lsls	r2, r2, #24
+	cmp	r3, r2
+	bne.n	.L_020002cc
+	movs	r0, #11
+	adds	r1, r5, #0
+	bl	sub_020015c6
+	b.n	.L_020002f4
+	.2byte 0x0000
+	.2byte 0xc000
+	.2byte 0xffff
+.L_020002cc:
+	.2byte 0x480b
+	bl	sub_020014ac
+	cmp	r0, #0
+	beq.n	.L_020002e6
+	ldr	r0, [pc, #40]
+	bl	sub_02001556
+	adds	r0, r5, #0
+	movs	r1, #0
+	bl	sub_0200156e
+	b.n	.L_020002f4
+.L_020002e6:
+	ldr	r0, [pc, #28]
+	bl	sub_02001566
+	adds	r0, r5, #0
+	movs	r1, #0
+	bl	sub_0200157e
+.L_020002f4:
+	pop	{r5}
+	pop	{r0}
+	bx	r0
+	.2byte 0x0000
+	.4byte 0x000009a7
+	.4byte 0x000028f6
+	.2byte 0x26eb
+	.2byte 0x0000
 AlchemyC_02000308:
 	.space 0xec
 AlchemyC_020003f4:
@@ -521,7 +703,7 @@ AlchemyC_02000eec:
 	.space 0x160
 AlchemyC_0200104c:
 	.space 0x190
-.include "games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_HEYA/IMPORT.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_HEYA/IMPORT.INC"
 	.4byte 0x00000015
 	.4byte 0x0000001e
 	.4byte 0x00000081

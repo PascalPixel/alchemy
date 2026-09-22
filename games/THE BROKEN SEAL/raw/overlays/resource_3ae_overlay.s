@@ -416,12 +416,11 @@
 	.set sub_02002b7c, 0x02002b7c
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KAREI_TOREBI/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KAREI_TOREBI/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x10
 AlchemyC_02000040:
 	.space 0x54
-
 AlchemyC_02000094:
 	.space 0x4
 AlchemyC_02000098:
@@ -636,10 +635,18 @@ AlchemyC_02000b68:
 AlchemyC_02000ba0:
 	.space 0x2a0
 AlchemyC_02000e40:
-	.space 0x616
+	.space 0x324
+.L_02001164:
+	.space 0x98
+.L_020011fc:
+	.space 0x188
+.L_02001384:
+	.space 0xd2
 .L_02001456:
-	.space 0xaa
-.include "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KAREI_TOREBI/IMPORT.INC"
+	.space 0x3a
+.L_02001490:
+	.space 0x70
+	.include "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KAREI_TOREBI/IMPORT.INC"
 	.4byte 0x00540062
 	.4byte 0x00020002
 	.4byte 0x00620005

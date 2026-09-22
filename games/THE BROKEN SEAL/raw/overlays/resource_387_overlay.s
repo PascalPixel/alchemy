@@ -289,7 +289,7 @@
 	.set sub_02002182, 0x02002182
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/GOMA_IRIGUCHI/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/GOMA_IRIGUCHI/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x16
 	.2byte 0x0000
@@ -323,7 +323,6 @@ AlchemyC_0200043c:
 	.space 0x90
 AlchemyC_020004cc:
 	.space 0x2
-	.2byte 0x0000
 AlchemyC_020004d0:
 	.space 0x2
 	.2byte 0x0000
@@ -839,7 +838,7 @@ AlchemyC_02000f8c:
 	pop	{r5, r6, r7}
 	pop	{r0}
 	bx	r0
-.include "games/THE BROKEN SEAL/SRC/FIELD/GOMA_IRIGUCHI/IMPORT.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/GOMA_IRIGUCHI/IMPORT.INC"
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c

@@ -270,7 +270,7 @@
 	.set sub_0200165e, 0x0200165e
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_HEYA/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_HEYA/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x8
 AlchemyC_02000038:
@@ -295,7 +295,7 @@ AlchemyC_02000a54:
 	.space 0x24
 AlchemyC_02000a78:
 	.space 0xbc
-.include "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_HEYA/IMPORT.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_HEYA/IMPORT.INC"
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095

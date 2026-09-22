@@ -46,7 +46,6 @@ pub fn identity(root: &Path, target: &str) -> Result<String, String> {
     for folder in [
         format!("{}/SRC", game.game_dir()),
         format!("{}/INCLUDE", game.game_dir()),
-        format!("{}/raw", game.game_dir()),
         format!("{}/semantic", game.game_dir()),
         "games/COMMON/SRC".into(),
         "games/COMMON/INCLUDE".into(),
@@ -59,9 +58,7 @@ pub fn identity(root: &Path, target: &str) -> Result<String, String> {
         "PROJECT.JSON",
         "recon/translation-units.json",
         "recon/compiler-runtime.json",
-        "raw/classification.json",
         "semantic/overlay-assembly.json",
-        "metrics/executable.json",
     ] {
         let path = format!("{}/{suffix}", game.game_dir());
         if root.join(&path).is_file() {
@@ -77,8 +74,8 @@ pub fn identity(root: &Path, target: &str) -> Result<String, String> {
     ] {
         collect(root, &root.join(directory), &mut files)?;
     }
-    collect(root, &root.join("tools/compilers"), &mut files)?;
-    collect(root, &root.join("tools/binutils/bin"), &mut files)?;
+    collect(root, &root.join("tools/out/compilers"), &mut files)?;
+    collect(root, &root.join("tools/out/binutils/bin"), &mut files)?;
     for path in [
         "tools/alchemy/src/build_claimed.rs",
         "tools/alchemy/src/build_asm.rs",
@@ -169,7 +166,7 @@ mod tests {
     }
 
     #[test]
-    fn changed_overlay_plan_invalidates_build_identity() {
+    fn generated_raw_does_not_invalidate_c_identity() {
         let root = tempfile::tempdir().unwrap();
         let raw = root.path().join("games/THE LOST AGE/raw/overlays");
         std::fs::create_dir_all(&raw).unwrap();
@@ -177,20 +174,18 @@ mod tests {
         std::fs::write(&plan, "{}").unwrap();
         let before = identity(root.path(), "tla-en").unwrap();
         std::fs::write(&plan, "{\"start\":32}").unwrap();
-        assert_ne!(before, identity(root.path(), "tla-en").unwrap());
+        assert_eq!(before, identity(root.path(), "tla-en").unwrap());
     }
 
     #[test]
-    fn changed_executable_inventory_invalidates_build_identity() {
+    fn generated_executable_inventory_does_not_invalidate_build_identity() {
         let root = tempfile::tempdir().unwrap();
-        let metrics = root
-            .path()
-            .join("games/THE BROKEN SEAL/metrics/executable.json");
+        let metrics = root.path().join("out/tbs-en/reports/executable.json");
         std::fs::create_dir_all(metrics.parent().unwrap()).unwrap();
         std::fs::write(&metrics, "{\"total_union_bytes\":8}").unwrap();
         let before = identity(root.path(), "tbs-en").unwrap();
         std::fs::write(&metrics, "{\"total_union_bytes\":16}").unwrap();
-        assert_ne!(before, identity(root.path(), "tbs-en").unwrap());
+        assert_eq!(before, identity(root.path(), "tbs-en").unwrap());
     }
 
     #[test]

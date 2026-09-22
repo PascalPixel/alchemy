@@ -788,7 +788,7 @@
 	.set sub_02005168, 0x02005168
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/ENTRY.INC"
+	.include "games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/ENTRY.INC"
 AlchemyC_02000038:
 	.space 0x8
 AlchemyC_02000040:
@@ -861,7 +861,8 @@ AlchemyC_0200009c:
 	mov	r8, r3
 	pop	{r5, r6, r7, pc}
 	.2byte 0x0000
-	.4byte 0x0200809d
+	.2byte 0x809d
+	.2byte 0x0200
 AlchemyC_02000120:
 	.space 0x8
 	push	{r5, r6, lr}
@@ -1067,7 +1068,8 @@ AlchemyC_02000120:
 	movs	r0, #0
 	pop	{r5, r6, pc}
 	.4byte 0x02000240
-	.4byte 0x00000004
+	.2byte 0x0004
+	.2byte 0x0000
 AlchemyC_02000308:
 	.space 0x4
 	push	{r5, r6, lr}
@@ -4889,7 +4891,7 @@ AlchemyC_02000308:
 	bl	sub_02004ff0
 	pop	{r5, pc}
 	.4byte 0x0200a58d
-.include "games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/IMPORT.INC"
+	.include "games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/IMPORT.INC"
 	.4byte 0xc13c0100
 	.4byte 0xb9d2cf52
 	.4byte 0x13465bb3
@@ -5063,5 +5065,207 @@ AlchemyC_02000308:
 	.4byte 0xa3f2ef0e
 	.4byte 0xf09a5f2b
 	.4byte 0x00003efe
-.include "games/THE LOST AGE/SRC/FIELD/COMMON/FIELD_TABLE.INC"
-.include "games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/FIELD_DATA.INC"
+	.4byte 0xffff0000
+	.4byte 0x000000ac
+	.4byte 0x40000095
+	.4byte 0xffff0000
+	.4byte 0xffffffff
+	.4byte 0x0000ffff
+	.4byte 0xffff0009
+	.4byte 0x00000178
+	.4byte 0x40000068
+	.4byte 0xffff0000
+	.4byte 0xffffffff
+	.4byte 0x0000ffff
+	.4byte 0xffff000a
+	.4byte 0x00000178
+	.4byte 0x400000e8
+	.4byte 0xffff0000
+	.4byte 0xffffffff
+	.4byte 0x0000ffff
+	.4byte 0xffff000b
+	.4byte 0x00000180
+	.4byte 0x40000188
+	.4byte 0xffff0000
+	.4byte 0xffffffff
+	.4byte 0x0000ffff
+	.4byte 0xffff000c
+	.4byte 0x00000070
+	.4byte 0x40000110
+	.4byte 0xffff0000
+	.4byte 0xffffffff
+	.4byte 0x0000ffff
+	.4byte 0xffff005a
+	.4byte 0x00000178
+	.4byte 0x40000068
+	.4byte 0xffff0000
+	.4byte 0xffffffff
+	.4byte 0x0000ffff
+	.4byte 0xffff0062
+	.4byte 0x00000180
+	.4byte 0x400000a8
+	.4byte 0xffff0000
+	.4byte 0xffffffff
+	.4byte 0x0000ffff
+	.4byte 0xffff0063
+	.4byte 0x00000048
+	.4byte 0x80000108
+	.4byte 0xffff0000
+	.4byte 0xffffffff
+	.4byte 0x0000ffff
+	.4byte 0x0000ffff
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000004
+	.4byte 0x00105006
+	.4byte 0x00201005
+	.4byte 0x000001ff
+	.4byte 0xffff0038
+	.4byte 0x00000001
+	.4byte 0x00080000
+	.4byte 0x00000000
+	.4byte 0x00080000
+	.4byte 0x0002c000
+	.4byte 0xffff0039
+	.4byte 0x00000001
+	.4byte 0x00080000
+	.4byte 0x00000000
+	.4byte 0x00080000
+	.4byte 0x0002c000
+	.4byte 0xffff005c
+	.4byte 0x00000001
+	.4byte 0x01600000
+	.4byte 0x00000000
+	.4byte 0x00b00000
+	.4byte 0x00020000
+	.4byte 0xffff005c
+	.4byte 0x00000001
+	.4byte 0x01a00000
+	.4byte 0x00000000
+	.4byte 0x00980000
+	.4byte 0x00028000
+	.4byte 0xffff00e8
+	.4byte 0x00000001
+	.4byte 0x01a80000
+	.4byte 0x00000000
+	.4byte 0x01980000
+	.4byte 0x0002a000
+	.4byte 0xffff00e8
+	.4byte 0x00000001
+	.4byte 0x01b80000
+	.4byte 0x00000000
+	.4byte 0x01980000
+	.4byte 0x0002a000
+	.4byte 0xffff00e8
+	.4byte 0x00000001
+	.4byte 0x01a80000
+	.4byte 0x00000000
+	.4byte 0x01a80000
+	.4byte 0x0002a000
+	.4byte 0xffff00e8
+	.4byte 0x00000001
+	.4byte 0x01b80000
+	.4byte 0x00000000
+	.4byte 0x01b80000
+	.4byte 0x0002a000
+	.4byte 0xffff00e8
+	.4byte 0x00000001
+	.4byte 0x01c80000
+	.4byte 0x00000000
+	.4byte 0x01980000
+	.4byte 0x0002a000
+	.4byte 0xffff00bb
+	.4byte 0x00000001
+	.4byte 0x01480000
+	.4byte 0x00000000
+	.4byte 0x01980000
+	.4byte 0x0002e000
+	.4byte 0xffff00c3
+	.4byte 0x00000001
+	.4byte 0x01380000
+	.4byte 0x00000000
+	.4byte 0x01980000
+	.4byte 0x0002e000
+	.4byte 0xffff00bb
+	.4byte 0x00000001
+	.4byte 0x01480000
+	.4byte 0x00000000
+	.4byte 0x01a80000
+	.4byte 0x0002e000
+	.4byte 0xffff00c3
+	.4byte 0x00000001
+	.4byte 0x01380000
+	.4byte 0x00000000
+	.4byte 0x01b80000
+	.4byte 0x0002e000
+	.4byte 0xffff00bb
+	.4byte 0x00000001
+	.4byte 0x01280000
+	.4byte 0x00000000
+	.4byte 0x01980000
+	.4byte 0x0002e000
+	.4byte 0xffff005d
+	.4byte 0x00000001
+	.4byte 0x00180000
+	.4byte 0x00000000
+	.4byte 0x01080000
+	.4byte 0x00028000
+	.4byte 0x0000ffff
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000001
+	.4byte 0xffff0001
+	.4byte 0x00000001
+	.4byte 0x00000001
+	.4byte 0xffff0002
+	.4byte 0x00000002
+	.4byte 0x00000002
+	.4byte 0x08920009
+	.4byte 0x02008441
+	.4byte 0x00000002
+	.4byte 0x0890000a
+	.4byte 0x02008511
+	.4byte 0x00000002
+	.4byte 0x0893000b
+	.4byte 0x02009a2d
+	.4byte 0x00000002
+	.4byte 0xffff000c
+	.4byte 0x02009bb1
+	.4byte 0x00000000
+	.4byte 0xffff0016
+	.4byte 0x00001608
+	.4byte 0x00000000
+	.4byte 0xffff000e
+	.4byte 0x02008055
+	.4byte 0x00000000
+	.4byte 0xffff000f
+	.4byte 0x020080c9
+	.4byte 0xffffffff
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000001
+	.4byte 0x00000000
+	.4byte 0x00000001
+	.4byte 0x00000027
+	.4byte 0x00000002
+	.4byte 0x00000000
+	.4byte 0x00000004
+	.4byte 0x00000016
+	.4byte 0x0000001a
+	.4byte 0x00000003
+	.4byte 0x00000016
+	.4byte 0x0000000d
+	.4byte 0x00000000
+	.4byte 0x00000000
+	.4byte 0x00000001
+	.4byte 0x00000011
+	.4byte 0x00000001
+	.4byte 0x00000000
+	.4byte 0x00000001
+	.4byte 0x00000026

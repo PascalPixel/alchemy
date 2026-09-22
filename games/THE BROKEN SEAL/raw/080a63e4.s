@@ -1,10 +1,20 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global Func_080a63e4
-	.thumb_func
-Func_080a63e4:
+	.set sub_080022fc, 0x080022fc
+	.set sub_080030f8, 0x080030f8
+	.set sub_08015080, 0x08015080
+	.set sub_08015270, 0x08015270
+	.set sub_08077008, 0x08077008
+	.set sub_080770c0, 0x080770c0
+	.set sub_080770d0, 0x080770d0
+	.set sub_080a112c, 0x080a112c
+	.set sub_080a17c4, 0x080a17c4
+	.set sub_080a1804, 0x080a1804
+	.set sub_080a1a40, 0x080a1a40
+	.set sub_080a1ac0, 0x080a1ac0
+	.set sub_080f9010, 0x080f9010
+	.global Overlay_080a63e4
+Overlay_080a63e4:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -34,7 +44,7 @@ Func_080a63e4:
 	lsls	r3, r3, #1
 	adds	r3, r3, r2
 	ldrh	r0, [r6, r3]
-	bl	Func_08077008
+	bl	sub_08077008
 	mov	r3, r8
 	lsls	r3, r3, #1
 	mov	sl, r3
@@ -43,20 +53,21 @@ Func_080a63e4:
 	lsls	r0, r0, #3
 	subs	r0, #10
 	movs	r1, #16
-	bl	Func_080a1ac0
-	b.n	.L0
+	bl	sub_080a1ac0
+	b.n	.L_080a6582
 	.4byte 0x03001f2c
-	.4byte 0x00000219
-.L10:
+	.2byte 0x0219
+	.2byte 0x0000
+.L_080a6440:
 	mov	r1, r9
 	cmp	r1, #0
-	beq.n	.L1
+	beq.n	.L_080a6500
 	mov	r0, r8
 	movs	r2, #0
 	mov	r1, fp
 	add	r0, fp
 	mov	r9, r2
-	bl	Func_080022fc
+	bl	sub_080022fc
 	mov	r8, r0
 	mov	r3, r8
 	lsls	r3, r3, #1
@@ -65,7 +76,7 @@ Func_080a63e4:
 	lsls	r7, r7, #2
 	add	r7, sl
 	ldrh	r0, [r6, r7]
-	bl	Func_08077008
+	bl	sub_08077008
 	ldr	r3, [r6, #16]
 	mov	r1, sl
 	ldrh	r2, [r3, #12]
@@ -86,29 +97,30 @@ Func_080a63e4:
 	strh	r3, [r5, #22]
 	ldr	r1, [sp, #8]
 	cmp	r1, #0
-	bne.n	.L2
-	b.n	.L3
+	bne.n	.L_080a6506
+	b.n	.L_080a64a0
 	.4byte 0x0000ffff
 	.4byte 0x000001ff
-	.4byte 0xfffffe00
-.L3:
+	.2byte 0xfe00
+	.2byte 0xffff
+.L_080a64a0:
 	ldr	r0, [r6, #36]
 	ldrh	r1, [r6, r7]
 	movs	r2, #0
 	movs	r3, #0
-	bl	Func_080a112c
+	bl	sub_080a112c
 	adds	r0, r6, #0
 	ldrh	r1, [r6, r7]
-	bl	Func_080a1804
+	bl	sub_080a1804
 	ldr	r0, [pc, #64]
-	bl	Func_080770c0
+	bl	sub_080770c0
 	cmp	r0, #0
-	bne.n	.L4
+	bne.n	.L_080a64ea
 	ldr	r2, [sp, #0]
 	cmp	r2, #0
-	bne.n	.L4
+	bne.n	.L_080a64ea
 	ldr	r0, [r6, #44]
-	bl	Func_08015270
+	bl	sub_08015270
 	movs	r1, #188
 	lsls	r1, r1, #1
 	adds	r3, r6, r1
@@ -120,103 +132,104 @@ Func_080a63e4:
 	adds	r0, r0, r3
 	ldr	r1, [r6, #44]
 	movs	r3, #0
-	bl	Func_08015080
+	bl	sub_08015080
 	movs	r2, #1
 	str	r2, [sp, #0]
-	b.n	.L2
-.L4:
+	b.n	.L_080a6506
+.L_080a64ea:
 	ldr	r0, [pc, #12]
-	bl	Func_080770d0
-	b.n	.L2
+	bl	sub_080770d0
+	b.n	.L_080a6506
 	movs	r0, r0
 	.4byte 0x00003fff
 	.4byte 0x00000151
-	.4byte 0x0000053a
-.L1:
+	.2byte 0x053a
+	.2byte 0x0000
+.L_080a6500:
 	mov	r3, r8
 	lsls	r3, r3, #1
 	mov	sl, r3
-.L2:
+.L_080a6506:
 	mov	r0, sl
 	add	r0, r8
 	lsls	r0, r0, #3
 	movs	r1, #16
 	subs	r0, #10
-	bl	Func_080a1a40
+	bl	sub_080a1a40
 	movs	r0, #1
-	bl	Func_080030f8
+	bl	sub_080030f8
 	ldr	r1, [pc, #188]
 	ldr	r3, [r1, #0]
 	movs	r2, #1
 	ands	r3, r2
 	cmp	r3, #0
-	beq.n	.L5
+	beq.n	.L_080a6538
 	movs	r0, #112
-	bl	Func_080f9010
+	bl	sub_080f9010
 	movs	r3, #130
 	lsls	r3, r3, #2
 	add	r3, sl
 	ldrh	r3, [r6, r3]
 	str	r3, [sp, #4]
-	b.n	.L6
-.L5:
+	b.n	.L_080a6596
+.L_080a6538:
 	ldr	r3, [r1, #0]
 	movs	r2, #2
 	ands	r3, r2
 	cmp	r3, #0
-	beq.n	.L7
+	beq.n	.L_080a6550
 	movs	r0, #113
-	bl	Func_080f9010
+	bl	sub_080f9010
 	movs	r1, #1
 	negs	r1, r1
 	str	r1, [sp, #4]
-	b.n	.L6
-.L7:
+	b.n	.L_080a6596
+.L_080a6550:
 	ldr	r5, [pc, #136]
 	ldr	r3, [r5, #0]
 	movs	r2, #32
 	ands	r3, r2
 	cmp	r3, #0
-	beq.n	.L8
+	beq.n	.L_080a656c
 	movs	r0, #111
-	bl	Func_080f9010
+	bl	sub_080f9010
 	movs	r2, #1
 	negs	r2, r2
 	movs	r3, #1
 	add	r8, r2
 	mov	r9, r3
-.L8:
+.L_080a656c:
 	ldr	r3, [r5, #0]
 	movs	r2, #16
 	ands	r3, r2
 	cmp	r3, #0
-	beq.n	.L0
+	beq.n	.L_080a6582
 	movs	r0, #111
-	bl	Func_080f9010
+	bl	sub_080f9010
 	movs	r1, #1
 	add	r8, r1
 	mov	r9, r1
-.L0:
+.L_080a6582:
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	Func_080770c0
+	bl	sub_080770c0
 	cmp	r0, #0
-	bne.n	.L9
-	b.n	.L10
-.L9:
+	bne.n	.L_080a6590
+	b.n	.L_080a6440
+.L_080a6590:
 	mov	r2, r8
 	lsls	r2, r2, #1
 	mov	sl, r2
-.L6:
+.L_080a6596:
 	ldr	r5, [r6, #24]
 	mov	r3, r8
 	strb	r3, [r6, #29]
 	adds	r0, r5, #0
-	bl	Func_080a17c4
+	bl	sub_080a17c4
 	movs	r3, #13
 	strb	r3, [r5, #5]
 	movs	r0, #1
-	bl	Func_080030f8
+	bl	sub_080030f8
 	mov	r1, r8
 	movs	r2, #130
 	strb	r1, [r6, #29]

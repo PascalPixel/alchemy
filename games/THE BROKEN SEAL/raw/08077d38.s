@@ -1,10 +1,10 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global Func_08077d38
-	.thumb_func
-Func_08077d38:
+	.set sub_08077cb8, 0x08077cb8
+	.set sub_08078ee8, 0x08078ee8
+	.set sub_0807961c, 0x0807961c
+	.global Overlay_08077d38
+Overlay_08077d38:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
@@ -28,11 +28,11 @@ Func_08077d38:
 	movs	r3, #128
 	ldr	r2, [pc, #136]
 	lsls	r3, r3, #24
-.L0:
+.L_08077d66:
 	ldr	r4, [r2, #8]
 	ands	r4, r3
 	cmp	r4, #0
-	bne.n	.L0
+	bne.n	.L_08077d66
 	str	r4, [r5, #0]
 	ldr	r3, [pc, #120]
 	adds	r0, r5, #0
@@ -54,7 +54,7 @@ Func_08077d38:
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	str	r4, [sp, #0]
-	bl	Func_08078ee8
+	bl	sub_08078ee8
 	ldr	r7, [pc, #80]
 	movs	r3, #132
 	lsls	r3, r3, #2
@@ -90,7 +90,7 @@ Func_08077d38:
 	strh	r3, [r2, #0]
 	movs	r2, #135
 	lsls	r2, r2, #2
-	b.n	.L1
+	b.n	.L_08077e18
 	.4byte 0x00000000
 	.4byte 0x00000004
 	.4byte 0x040000d4
@@ -103,8 +103,9 @@ Func_08077d38:
 	.4byte 0x02000500
 	.4byte 0x85000298
 	.4byte 0x00000212
-	.4byte 0x00000216
-.L1:
+	.2byte 0x0216
+	.2byte 0x0000
+.L_08077e18:
 	adds	r3, r7, r2
 	strh	r1, [r3, #0]
 	movs	r1, #136
@@ -119,7 +120,7 @@ Func_08077d38:
 	adds	r3, r7, r1
 	str	r4, [r3, #0]
 	movs	r0, #0
-	bl	Func_0807961c
+	bl	sub_0807961c
 	movs	r2, #131
 	ldr	r4, [sp, #0]
 	ldr	r5, [pc, #56]
@@ -142,20 +143,21 @@ Func_08077d38:
 	adds	r3, r7, r1
 	strb	r6, [r3, #0]
 	str	r4, [r7, #0]
-	bl	Func_08077cb8
+	bl	sub_08077cb8
 	movs	r2, #174
 	lsls	r2, r2, #2
 	adds	r3, r7, r2
 	str	r0, [r3, #0]
 	ldr	r4, [sp, #0]
 	ldr	r3, [pc, #16]
-	b.n	.L2
+	b.n	.L_08077e88
 	movs	r0, r0
 	.4byte 0x00000001
 	.4byte 0x00000008
 	.4byte 0x0000020a
-	.4byte 0x03001c9c
-.L2:
+	.2byte 0x1c9c
+	.2byte 0x0300
+.L_08077e88:
 	str	r4, [r3, #0]
 	ldr	r3, [pc, #88]
 	mov	r1, sl
@@ -198,7 +200,7 @@ Func_08077d38:
 	adds	r3, r7, r1
 	adds	r1, #1
 	strb	r2, [r3, #0]
-	b.n	.L3
+	b.n	.L_08077f00
 	movs	r0, r0
 	.4byte 0xffffffff
 	.4byte 0x03001d08
@@ -207,8 +209,9 @@ Func_08077d38:
 	.4byte 0x02002004
 	.4byte 0x0000011d
 	.4byte 0x0000011f
-	.4byte 0x00000121
-.L3:
+	.2byte 0x0121
+	.2byte 0x0000
+.L_08077f00:
 	adds	r3, r7, r1
 	strb	r2, [r3, #0]
 	movs	r2, #147

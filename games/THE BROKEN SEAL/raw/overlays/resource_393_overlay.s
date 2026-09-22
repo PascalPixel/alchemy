@@ -2,7 +2,6 @@
 .include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
 	.set sub_02000342, 0x02000342
-	.set sub_02000bf0, 0x02000bf0
 	.set sub_02000e7a, 0x02000e7a
 	.set sub_02000e90, 0x02000e90
 	.set sub_02000f40, 0x02000f40
@@ -96,7 +95,7 @@
 	.set sub_02001cb2, 0x02001cb2
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KAWA/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KAWA/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x3c
 AlchemyC_0200006c:
@@ -112,9 +111,13 @@ AlchemyC_0200034c:
 AlchemyC_02000474:
 	.space 0x194
 AlchemyC_02000608:
-	.space 0x2b8
+	.space 0x1d6
+.L_020007de:
+	.space 0xe2
 AlchemyC_020008c0:
-	.space 0x11c
+	.space 0x42
+.L_02000902:
+	.space 0xda
 AlchemyC_020009dc:
 	.space 0x8
 AlchemyC_020009e4:
@@ -135,6 +138,7 @@ AlchemyC_02000aac:
 	.space 0xd8
 AlchemyC_02000ba4:
 	.space 0x4c
+.L_02000bf0:
 AlchemyC_02000bf0:
 	.space 0x8
 AlchemyC_02000bf8:
@@ -142,20 +146,35 @@ AlchemyC_02000bf8:
 .L_02000c02:
 	.space 0x8a
 AlchemyC_02000c8c:
-	.space 0x68
+	.space 0x40
+.L_02000ccc:
+	.space 0x28
 AlchemyC_02000cf4:
 	.space 0x68
 AlchemyC_02000d5c:
-	.space 32
+	.space 0x20
 AlchemyC_02000d7c:
-	.space 32
+	.space 0x20
 AlchemyC_02000d9c:
-	.space 64
+	.space 0x40
 AlchemyC_02000ddc:
-	.space 64
-.include "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KAWA/IMPORT.INC"
-AlchemyRuntime_02000ed4:
-	.space 0x3c
+	.space 0x40
+	.include "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KAWA/IMPORT.INC"
+	.4byte 0x46c04700
+	.4byte 0x46c04708
+	.4byte 0x46c04710
+	.4byte 0x46c04718
+	.4byte 0x46c04720
+	.4byte 0x46c04728
+	.4byte 0x46c04730
+	.4byte 0x46c04738
+	.4byte 0x46c04740
+	.4byte 0x46c04748
+	.4byte 0x46c04750
+	.4byte 0x46c04758
+	.4byte 0x46c04760
+	.4byte 0x46c04768
+	.4byte 0x46c04770
 	.4byte 0x00100000
 	.4byte 0x00100000
 	.4byte 0x00100000

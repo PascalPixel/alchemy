@@ -11,12 +11,13 @@ use serde_json::json;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 
-pub const USAGE: &str = "usage: alchemy overlay export RESOURCE... [--target GAME-EDITION] [--output DIR]\n       alchemy overlay export --list [--target GAME-EDITION]\nWrites resource_XXX_overlay.s without a compression sidecar (default DIR: the target's raw/overlays)\nand prints each recon/assets.json thumb-overlay series tuple [id, address, size, decoded_size].\n--list prints every resource whose decoded image has the target's entry-veneer shape.";
+pub const USAGE: &str = "usage: alchemy overlay export RESOURCE... [--target GAME-EDITION] [--output DIR]\n       alchemy overlay export --all [--target GAME-EDITION] [--output DIR]\n       alchemy overlay export --list [--target GAME-EDITION]\nWrites resource_XXX_overlay.s without a compression sidecar (default DIR: the target's raw/overlays)\nand prints each recon/assets.json thumb-overlay series tuple [id, address, size, decoded_size].\n--all discovers and exports every code overlay using the host's available cores.\n--list prints every resource whose decoded image has the target's entry-veneer shape.";
 
 struct Options {
     target: DecompTarget,
     output: Option<PathBuf>,
     list: bool,
+    all: bool,
     resources: Vec<String>,
 }
 
@@ -25,6 +26,7 @@ fn parse(argv: &[String]) -> Result<Options, String> {
         target: decomp_target(None)?,
         output: None,
         list: false,
+        all: false,
         resources: Vec::new(),
     };
     let mut arguments = argv.iter();
@@ -39,11 +41,15 @@ fn parse(argv: &[String]) -> Result<Options, String> {
             "--target" => options.target = decomp_target(Some(&value("--target")?))?,
             "--output" => options.output = Some(PathBuf::from(value("--output")?)),
             "--list" => options.list = true,
+            "--all" => options.all = true,
             other if other.starts_with("--") => return Err(format!("unknown flag {other}")),
             other => options.resources.push(other.to_string()),
         }
     }
-    if options.list != options.resources.is_empty() {
+    let modes = usize::from(options.list)
+        + usize::from(options.all)
+        + usize::from(!options.resources.is_empty());
+    if modes != 1 {
         return Err(USAGE.into());
     }
     Ok(options)
@@ -67,20 +73,63 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
         }
         return Ok(0);
     }
+    let names = if options.all {
+        rom.overlay_resources(options.target.overlay_entry_veneers)
+            .into_iter()
+            .map(|resource| format!("resource_{resource:03x}"))
+            .collect::<Vec<_>>()
+    } else {
+        options.resources.clone()
+    };
     let directory = match &options.output {
         Some(path) if path.is_absolute() => path.clone(),
         Some(path) => root.join(path),
         None => root.join(options.target.overlay_dir()),
     };
-    for name in &options.resources {
-        let exported = export(root, &rom, options.target, name)?;
-        std::fs::create_dir_all(&directory)
-            .map_err(|error| format!("{}: {error}", directory.display()))?;
+    let workers = crate::parallel::workers(names.len());
+    eprintln!("exporting {} overlays with {workers} workers", names.len());
+    let next = std::sync::atomic::AtomicUsize::new(0);
+    let results = std::sync::Mutex::new(Vec::with_capacity(names.len()));
+    std::thread::scope(|scope| {
+        for _ in 0..workers {
+            let next = &next;
+            let results = &results;
+            let names = &names;
+            let rom = &rom;
+            scope.spawn(move || loop {
+                let index = next.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                let Some(name) = names.get(index) else { break };
+                results
+                    .lock()
+                    .unwrap()
+                    .push((index, export(root, rom, options.target, name)));
+            });
+        }
+    });
+    let mut results = results.into_inner().unwrap();
+    results.sort_by_key(|(index, _)| *index);
+    let exported = results
+        .into_iter()
+        .map(|(_, result)| result)
+        .collect::<Result<Vec<_>, _>>()?;
+    let destinations = exported
+        .iter()
+        .map(|item| {
+            let overlay = format!("resource_{:03x}", item.stream.resource);
+            directory.join(format!("{overlay}_overlay.s"))
+        })
+        .collect::<Vec<_>>();
+    if let Some(path) = destinations.iter().find(|path| path.exists()) {
+        return Err(format!(
+            "{} already exists; export writes a fresh corpus only",
+            path.display()
+        ));
+    }
+    std::fs::create_dir_all(&directory)
+        .map_err(|error| format!("{}: {error}", directory.display()))?;
+    for (exported, destination) in exported.into_iter().zip(destinations) {
         let overlay = format!("resource_{:03x}", exported.stream.resource);
-        write_new(
-            &directory.join(format!("{overlay}_overlay.s")),
-            exported.source.as_bytes(),
-        )?;
+        write_new(&destination, exported.source.as_bytes())?;
         if let Some(note) = exported.note {
             eprintln!("{overlay}: {note}");
         }
@@ -215,6 +264,9 @@ mod tests {
         let arguments = |items: &[&str]| items.iter().map(|s| s.to_string()).collect::<Vec<_>>();
         assert!(parse(&arguments(&[])).is_err());
         assert!(parse(&arguments(&["--list", "resource_649"])).is_err());
+        assert!(parse(&arguments(&["--all", "resource_649"])).is_err());
+        assert!(parse(&arguments(&["--all", "--list"])).is_err());
+        assert!(parse(&arguments(&["--all"])).unwrap().all);
         let options = parse(&arguments(&["resource_649", "--target", "tla-en"])).unwrap();
         assert_eq!(options.target.overlay_entry_veneers, 7);
         assert_eq!(options.resources, ["resource_649"]);

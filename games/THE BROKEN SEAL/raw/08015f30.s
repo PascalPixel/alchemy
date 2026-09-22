@@ -1,15 +1,17 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global Func_08015f30
-	.thumb_func
-Func_08015f30:
+	.set sub_080041d8, 0x080041d8
+	.set sub_080048f4, 0x080048f4
+	.set sub_08015ef4, 0x08015ef4
+	.set sub_080173f4, 0x080173f4
+	.set sub_08019d0c, 0x08019d0c
+	.global Overlay_08015f30
+Overlay_08015f30:
 	push	{r5, lr}
 	ldr	r1, [pc, #96]
 	movs	r0, #15
 	sub	sp, #4
-	bl	Func_080048f4
+	bl	sub_080048f4
 	movs	r3, #0
 	adds	r4, r0, #0
 	mov	r5, sp
@@ -39,13 +41,13 @@ Func_08015f30:
 	ldr	r3, [pc, #36]
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
-	bl	Func_08015ef4
-	bl	Func_08019d0c
+	bl	sub_08015ef4
+	bl	sub_08019d0c
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #48]
-	bl	Func_080041d8
-	bl	Func_080173f4
+	bl	sub_080041d8
+	bl	sub_080173f4
 	add	sp, #4
 	pop	{r5}
 	pop	{r0}

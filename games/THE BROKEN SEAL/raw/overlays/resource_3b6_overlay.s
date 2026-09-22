@@ -201,7 +201,7 @@
 	.set sub_020013ca, 0x020013ca
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_HEYA/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_HEYA/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x8
 AlchemyC_02000038:
@@ -246,7 +246,7 @@ AlchemyC_020008cc:
 	.space 0x50
 AlchemyC_0200091c:
 	.space 0x7c
-.include "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_HEYA/IMPORT.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_HEYA/IMPORT.INC"
 	.4byte 0x00000015
 	.4byte 0x00000009
 	.4byte 0x00010000

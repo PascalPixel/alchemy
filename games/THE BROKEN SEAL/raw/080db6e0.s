@@ -1,10 +1,30 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global RunParticleFieldEffect
-	.thumb_func
-RunParticleFieldEffect:
+	.set sub_080022ec, 0x080022ec
+	.set sub_08002dd8, 0x08002dd8
+	.set sub_08002f40, 0x08002f40
+	.set sub_080030f8, 0x080030f8
+	.set sub_080041d8, 0x080041d8
+	.set sub_08004278, 0x08004278
+	.set sub_08004458, 0x08004458
+	.set sub_080049ac, 0x080049ac
+	.set sub_080051d8, 0x080051d8
+	.set sub_080072f0, 0x080072f0
+	.set sub_080072f4, 0x080072f4
+	.set sub_080b5088, 0x080b5088
+	.set sub_080b50e8, 0x080b50e8
+	.set sub_080cd52c, 0x080cd52c
+	.set sub_080cd594, 0x080cd594
+	.set sub_080cdbc0, 0x080cdbc0
+	.set sub_080d6888, 0x080d6888
+	.set sub_080e0524, 0x080e0524
+	.set sub_080e155c, 0x080e155c
+	.set sub_080e38b8, 0x080e38b8
+	.set sub_080e3944, 0x080e3944
+	.set sub_080ed408, 0x080ed408
+	.set sub_080f9010, 0x080f9010
+	.global Overlay_080db6e0
+Overlay_080db6e0:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -23,20 +43,20 @@ RunParticleFieldEffect:
 	str	r3, [sp, #36]
 	str	r0, [r5, #0]
 	movs	r0, #1
-	bl	Func_080cd594
+	bl	sub_080cd594
 	movs	r2, #1
 	ldr	r0, [pc, #816]
 	mov	r1, sl
 	movs	r3, #0
-	bl	Func_080e0524
+	bl	sub_080e0524
 	ldr	r2, [sp, #40]
 	cmp	r2, #1
-	bne.n	.L0
+	bne.n	.L_080db744
 	movs	r3, #0
 	movs	r0, #160
 	mov	r8, r3
 	lsls	r0, r0, #19
-.L1:
+.L_080db722:
 	mov	r4, r8
 	lsrs	r3, r4, #31
 	add	r3, r8
@@ -51,22 +71,22 @@ RunParticleFieldEffect:
 	mov	r2, r8
 	adds	r0, #2
 	cmp	r2, #64
-	bne.n	.L1
+	bne.n	.L_080db722
 	str	r1, [sp, #24]
-	b.n	.L2
-.L0:
+	b.n	.L_080db75e
+.L_080db744:
 	ldr	r0, [pc, #760]
-	bl	Func_08002f40
+	bl	sub_08002f40
 	adds	r1, r0, #0
 	movs	r0, #160
 	ldr	r3, [pc, #756]
 	lsls	r0, r0, #19
 	movs	r2, #128
-	bl	Func_080072f0
+	bl	sub_080072f0
 	ldr	r3, [r5, #0]
 	ldr	r3, [r3, #24]
 	str	r3, [sp, #24]
-.L2:
+.L_080db75e:
 	movs	r5, #225
 	movs	r3, #0
 	lsls	r5, r5, #7
@@ -74,33 +94,33 @@ RunParticleFieldEffect:
 	movs	r7, #0
 	movs	r6, #63
 	add	r5, sl
-.L5:
+.L_080db76c:
 	ldr	r3, [pc, #712]
 	add	r3, sl
 	ldr	r3, [r3, #0]
 	ldr	r3, [r3, #4]
 	cmp	r3, #1
-	bne.n	.L3
+	bne.n	.L_080db77e
 	movs	r3, #200
 	lsls	r3, r3, #14
-	b.n	.L4
-.L3:
+	b.n	.L_080db780
+.L_080db77e:
 	ldr	r3, [pc, #712]
-.L4:
+.L_080db780:
 	str	r3, [r5, #0]
 	str	r7, [r5, #4]
 	str	r7, [r5, #8]
-	bl	Func_08004458
+	bl	sub_08004458
 	ands	r0, r6
 	subs	r0, #32
 	lsls	r0, r0, #13
 	str	r0, [r5, #12]
-	bl	Func_08004458
+	bl	sub_08004458
 	ands	r0, r6
 	adds	r0, #16
 	lsls	r0, r0, #12
 	str	r0, [r5, #16]
-	bl	Func_08004458
+	bl	sub_08004458
 	ands	r0, r6
 	subs	r0, #32
 	movs	r4, #1
@@ -111,40 +131,40 @@ RunParticleFieldEffect:
 	str	r7, [r5, #24]
 	adds	r5, #28
 	cmp	r0, #32
-	bne.n	.L5
+	bne.n	.L_080db76c
 	movs	r1, #0
 	ldr	r5, [pc, #656]
 	mov	r8, r1
 	movs	r6, #0
 	movs	r7, #63
-.L8:
+.L_080db7c2:
 	ldr	r3, [pc, #628]
 	add	r3, sl
 	ldr	r3, [r3, #0]
 	ldr	r3, [r3, #4]
 	cmp	r3, #1
-	bne.n	.L6
+	bne.n	.L_080db7d4
 	movs	r3, #200
 	lsls	r3, r3, #14
-	b.n	.L7
-.L6:
+	b.n	.L_080db7d6
+.L_080db7d4:
 	ldr	r3, [pc, #624]
-.L7:
+.L_080db7d6:
 	str	r3, [r5, #0]
 	str	r6, [r5, #4]
 	str	r6, [r5, #8]
-	bl	Func_08004458
+	bl	sub_08004458
 	ands	r0, r7
 	subs	r0, #32
 	lsls	r0, r0, #13
 	str	r0, [r5, #12]
-	bl	Func_08004458
+	bl	sub_08004458
 	movs	r3, #31
 	ands	r3, r0
 	adds	r3, #8
 	lsls	r3, r3, #13
 	str	r3, [r5, #16]
-	bl	Func_08004458
+	bl	sub_08004458
 	ands	r0, r7
 	subs	r0, #32
 	movs	r2, #1
@@ -156,14 +176,14 @@ RunParticleFieldEffect:
 	str	r6, [r5, #24]
 	adds	r5, #28
 	cmp	r8, r3
-	bne.n	.L8
+	bne.n	.L_080db7c2
 	movs	r5, #2
 	movs	r1, #7
 	movs	r2, #7
 	movs	r3, #3
 	movs	r0, #46
 	str	r5, [sp, #0]
-	bl	Func_080ed408
+	bl	sub_080ed408
 	ldr	r3, [pc, #556]
 	adds	r3, #184
 	ldr	r3, [r3, #0]
@@ -179,7 +199,7 @@ RunParticleFieldEffect:
 	str	r3, [r2, #0]
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #536]
-	bl	Func_080041d8
+	bl	sub_080041d8
 	ldr	r1, [sp, #24]
 	ldr	r3, [sp, #24]
 	lsls	r1, r1, #1
@@ -191,29 +211,29 @@ RunParticleFieldEffect:
 	movs	r4, #0
 	mov	r9, r4
 	cmp	r3, #0
-	bne.n	.L9
-	b.n	.L10
-.L9:
+	bne.n	.L_080db85e
+	b.n	.L_080dbaf0
+.L_080db85e:
 	adds	r4, r2, #0
 	adds	r4, #1
 	str	r2, [sp, #16]
 	str	r4, [sp, #8]
 	str	r1, [sp, #20]
 	mov	fp, r0
-.L31:
+.L_080db86a:
 	ldr	r3, [pc, #500]
 	ldr	r5, [r3, #0]
-	bl	Func_080049ac
+	bl	sub_080049ac
 	adds	r1, r5, #0
 	adds	r0, r5, #0
 	adds	r1, #12
-	bl	Func_080051d8
+	bl	sub_080051d8
 	mov	r0, r9
 	cmp	r0, #2
-	bne.n	.L11
+	bne.n	.L_080db888
 	movs	r0, #144
-	bl	Func_080f9010
-.L11:
+	bl	sub_080f9010
+.L_080db888:
 	ldr	r1, [sp, #12]
 	ldr	r2, [sp, #24]
 	ldr	r6, [pc, #460]
@@ -222,24 +242,24 @@ RunParticleFieldEffect:
 	ldrb	r3, [r6, r3]
 	subs	r3, #48
 	cmp	r9, r3
-	bne.n	.L12
+	bne.n	.L_080db8a0
 	movs	r0, #133
-	bl	Func_080b50e8
-.L12:
+	bl	sub_080b50e8
+.L_080db8a0:
 	movs	r3, #0
 	mov	r8, r3
 	ldrb	r3, [r6, r5]
 	cmp	r3, #0
-	beq.n	.L13
+	beq.n	.L_080db94e
 	ldr	r6, [pc, #416]
-.L18:
+.L_080db8ac:
 	ldr	r3, [r6, #4]
 	cmp	r3, #0
-	blt.n	.L14
+	blt.n	.L_080db93e
 	add	r5, sp, #44
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	Func_080e3944
+	bl	sub_080e3944
 	ldr	r2, [r5, #0]
 	ldr	r3, [pc, #376]
 	asrs	r2, r2, #1
@@ -253,23 +273,23 @@ RunParticleFieldEffect:
 	str	r2, [r5, #0]
 	ldr	r2, [r5, #8]
 	cmp	r2, #159
-	bgt.n	.L15
+	bgt.n	.L_080db8de
 	movs	r3, #160
 	str	r3, [r5, #8]
 	movs	r2, #160
-.L15:
+.L_080db8de:
 	ldr	r3, [pc, #388]
 	cmp	r2, r3
-	ble.n	.L16
+	ble.n	.L_080db8e8
 	str	r3, [r5, #8]
 	adds	r2, r3, #0
-.L16:
+.L_080db8e8:
 	adds	r3, r2, #0
 	subs	r3, #160
 	cmp	r3, #0
-	bge.n	.L17
+	bge.n	.L_080db8f2
 	adds	r3, #63
-.L17:
+.L_080db8f2:
 	asrs	r3, r3, #6
 	movs	r0, #9
 	subs	r0, r0, r3
@@ -301,12 +321,12 @@ RunParticleFieldEffect:
 	str	r4, [sp, #4]
 	ldr	r0, [sp, #36]
 	ldr	r4, [sp, #28]
-	bl	Func_080072f4
+	bl	sub_080072f4
 	adds	r0, r6, #0
 	movs	r1, #64
 	ldr	r2, [pc, #304]
-	bl	Func_080e38b8
-.L14:
+	bl	sub_080e38b8
+.L_080db93e:
 	ldr	r2, [sp, #16]
 	mov	r1, fp
 	movs	r0, #1
@@ -314,31 +334,31 @@ RunParticleFieldEffect:
 	add	r8, r0
 	adds	r6, #28
 	cmp	r8, r3
-	bne.n	.L18
-.L13:
+	bne.n	.L_080db8ac
+.L_080db94e:
 	mov	r3, r9
 	cmp	r3, #2
-	ble.n	.L19
+	ble.n	.L_080db9e4
 	ldr	r0, [sp, #8]
 	mov	r2, fp
 	ldrb	r3, [r2, r0]
 	movs	r4, #0
 	mov	r8, r4
 	cmp	r3, #0
-	beq.n	.L19
+	beq.n	.L_080db9e4
 	movs	r6, #225
 	lsls	r6, r6, #7
 	add	r6, sl
-.L23:
+.L_080db968:
 	cmp	r8, r9
-	bge.n	.L20
+	bge.n	.L_080db9d6
 	ldr	r3, [r6, #4]
 	cmp	r3, #0
-	blt.n	.L20
+	blt.n	.L_080db9d6
 	add	r5, sp, #44
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	Func_080e3944
+	bl	sub_080e3944
 	ldr	r2, [r5, #0]
 	ldr	r3, [pc, #184]
 	asrs	r2, r2, #1
@@ -353,9 +373,9 @@ RunParticleFieldEffect:
 	str	r7, [r5, #0]
 	ldr	r0, [r6, #24]
 	cmp	r0, #20
-	bhi.n	.L21
+	bhi.n	.L_080db9c2
 	movs	r1, #3
-	bl	Func_080022ec
+	bl	sub_080022ec
 	ldr	r3, [pc, #204]
 	lsls	r0, r0, #1
 	ldrh	r1, [r3, r0]
@@ -370,31 +390,31 @@ RunParticleFieldEffect:
 	add	r1, sl
 	ldr	r0, [sp, #36]
 	ldr	r4, [sp, #28]
-	bl	Func_080072f4
+	bl	sub_080072f4
 	ldr	r0, [r6, #24]
-.L21:
+.L_080db9c2:
 	cmp	r0, #20
-	bgt.n	.L22
+	bgt.n	.L_080db9ca
 	adds	r3, r0, #1
 	str	r3, [r6, #24]
-.L22:
+.L_080db9ca:
 	ldr	r2, [pc, #160]
 	adds	r0, r6, #0
 	movs	r1, #64
-	bl	Func_080e38b8
+	bl	sub_080e38b8
 	ldr	r2, [pc, #132]
-.L20:
+.L_080db9d6:
 	ldr	r1, [sp, #8]
 	movs	r0, #1
 	ldrb	r3, [r2, r1]
 	add	r8, r0
 	adds	r6, #28
 	cmp	r8, r3
-	bne.n	.L23
-.L19:
+	bne.n	.L_080db968
+.L_080db9e4:
 	ldr	r2, [sp, #40]
 	cmp	r2, #0
-	bne.n	.L24
+	bne.n	.L_080dba78
 	ldr	r2, [pc, #76]
 	movs	r3, #0
 	add	r2, sl
@@ -402,14 +422,14 @@ RunParticleFieldEffect:
 	ldr	r3, [r2, #0]
 	ldr	r3, [r3, #20]
 	cmp	r3, #0
-	beq.n	.L25
+	beq.n	.L_080dbab8
 	adds	r5, r2, #0
 	movs	r6, #36
-.L27:
+.L_080db9fe:
 	mov	r3, r8
 	adds	r3, #6
 	cmp	r9, r3
-	bne.n	.L26
+	bne.n	.L_080dba22
 	ldr	r3, [r5, #0]
 	ldrsh	r0, [r3, r6]
 	movs	r3, #10
@@ -417,20 +437,20 @@ RunParticleFieldEffect:
 	str	r3, [sp, #0]
 	movs	r2, #5
 	mov	r3, r8
-	bl	Func_080d6888
+	bl	sub_080d6888
 	ldr	r3, [r5, #0]
 	ldrsh	r0, [r3, r6]
 	movs	r1, #2
-	bl	Func_080b5088
-.L26:
+	bl	sub_080b5088
+.L_080dba22:
 	ldr	r3, [r5, #0]
 	movs	r2, #1
 	ldr	r3, [r3, #20]
 	add	r8, r2
 	adds	r6, #2
 	cmp	r8, r3
-	bne.n	.L27
-	b.n	.L25
+	bne.n	.L_080db9fe
+	b.n	.L_080dbab8
 	movs	r0, r0
 	.4byte 0x03001eec
 	.4byte 0x00007828
@@ -448,8 +468,9 @@ RunParticleFieldEffect:
 	.4byte 0x080ede48
 	.4byte 0xffffe000
 	.4byte 0x080eeaec
-	.4byte 0x080eeafa
-.L24:
+	.2byte 0xeafa
+	.2byte 0x080e
+.L_080dba78:
 	ldr	r2, [pc, #152]
 	movs	r3, #0
 	mov	r4, sl
@@ -457,13 +478,13 @@ RunParticleFieldEffect:
 	ldr	r3, [r4, r2]
 	ldr	r3, [r3, #20]
 	cmp	r3, #0
-	beq.n	.L25
+	beq.n	.L_080dbab8
 	movs	r5, #36
-.L29:
+.L_080dba8a:
 	mov	r3, r8
 	adds	r3, #6
 	cmp	r9, r3
-	bne.n	.L28
+	bne.n	.L_080dbaa6
 	mov	r0, sl
 	ldr	r3, [r0, r2]
 	ldrsh	r0, [r3, r5]
@@ -472,8 +493,8 @@ RunParticleFieldEffect:
 	movs	r1, #7
 	movs	r2, #5
 	mov	r3, r8
-	bl	Func_080d6888
-.L28:
+	bl	sub_080d6888
+.L_080dbaa6:
 	movs	r2, #1
 	add	r8, r2
 	ldr	r2, [pc, #104]
@@ -482,40 +503,40 @@ RunParticleFieldEffect:
 	ldr	r3, [r3, #20]
 	adds	r5, #2
 	cmp	r8, r3
-	bne.n	.L29
-.L25:
+	bne.n	.L_080dba8a
+.L_080dbab8:
 	mov	r0, r9
 	cmp	r0, #2
-	bne.n	.L30
+	bne.n	.L_080dbac6
 	ldr	r2, [pc, #88]
 	movs	r3, #6
 	add	r2, sl
 	str	r3, [r2, #0]
-.L30:
+.L_080dbac6:
 	movs	r1, #16
 	movs	r0, #16
-	bl	Func_080e155c
-	bl	Func_080cd52c
+	bl	sub_080e155c
+	bl	sub_080cd52c
 	ldr	r3, [pc, #72]
 	movs	r2, #1
 	add	r3, sl
 	str	r2, [r3, #0]
 	movs	r0, #1
-	bl	Func_080030f8
+	bl	sub_080030f8
 	ldr	r4, [sp, #20]
 	mov	r2, fp
 	movs	r1, #1
 	ldrb	r3, [r2, r4]
 	add	r9, r1
 	cmp	r9, r3
-	beq.n	.L10
-	b.n	.L31
-.L10:
+	beq.n	.L_080dbaf0
+	b.n	.L_080db86a
+.L_080dbaf0:
 	ldr	r0, [pc, #44]
-	bl	Func_08004278
+	bl	sub_08004278
 	movs	r0, #46
-	bl	Func_08002dd8
-	bl	Func_080cdbc0
+	bl	sub_08002dd8
+	bl	sub_080cdbc0
 	add	sp, #56
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

@@ -1,17 +1,13 @@
-@ Retired from C: the registered source did not reproduce these bytes
-@ under the family's flags. Disassembled from the audited extent at
-@ 0x080fb6ec (18 bytes); the draft C stays in games/THE BROKEN SEAL/recon/en/main/.
 .syntax unified
 	.thumb
-	.global Func_080fb6ec
-	.thumb_func
-Func_080fb6ec:
-	ldr	r0, [r1, #64]	@ 0x40
+	.global Overlay_080fb6ec
+Overlay_080fb6ec:
+	ldr	r0, [r1, #64]
 	ldrb	r2, [r0, #0]
 	adds	r0, r1, #0
-	adds	r0, #36	@ 0x24
+	adds	r0, #36
 	strb	r2, [r0, #0]
-	ldr	r0, [r1, #64]	@ 0x40
+	ldr	r0, [r1, #64]
 	adds	r0, #1
-	str	r0, [r1, #64]	@ 0x40
+	str	r0, [r1, #64]
 	bx	lr

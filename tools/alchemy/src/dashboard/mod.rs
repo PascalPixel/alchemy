@@ -158,8 +158,7 @@ fn live_from(document: Value, trees: Vec<(&'static str, String)>) -> Result<Live
         "draftCPercent": number(n(&["categories", "draft_c", "percent_of_executable"])),
         "provenAsmBytes": done.map(|d| d.common_asm + d.game_asm),
         "doneBytes": done.map(|d| d.bytes()),
-        "donePercent": done.map(|d| number(d.percent())),
-        "historicalTargets": 12, "fullTargets": 1, "compileOnlyTargets": 11
+        "donePercent": done.map(|d| number(d.percent()))
     });
     Ok(Live {
         revision,

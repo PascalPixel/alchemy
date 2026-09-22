@@ -1,6 +1,6 @@
 mod cli;
 
-use psynergy::{compare, decode, lift, repair, unit};
+use psynergy::{assembly, compare, decode, discovery, lift, repair, unit};
 use std::fs::{self, OpenOptions};
 use std::io::Write;
 use std::path::PathBuf;
@@ -9,6 +9,8 @@ use std::process::ExitCode;
 const USAGE: &str = "usage: psynergy <command> [args]\n\
   decompile INPUT       recover draft C from an explicit Thumb image\n\
   disassemble INPUT     decode a bounded Thumb image\n\
+  reconstruct-asm INPUT emit standalone ARMv4T assembly for a bounded Thumb extent\n\
+  discover INPUT        discover ARM/Thumb functions, pools and jump tables in a GBA image\n\
   diff ACTUAL EXPECTED  compare bytes without compiling or resolving owners\n\
   repair SOURCE         enumerate or emit a named C repair\n\
   inspect allocator DIR read existing GCC allocation dumps\n\
@@ -16,7 +18,8 @@ const USAGE: &str = "usage: psynergy <command> [args]\n\
   decode-lz INPUT       decode one tagged LZ stream at --offset\n\
 No default ROM, project registry, compiler route, or adoption authority.";
 const CODE_USAGE: &str = "usage: psynergy decompile INPUT --base ADDRESS --entry ADDRESS --span BYTES [--name NAME] [--out FILE]\n\
-       psynergy disassemble INPUT --base ADDRESS --entry ADDRESS --span BYTES [--out FILE]";
+       psynergy disassemble INPUT --base ADDRESS --entry ADDRESS --span BYTES [--out FILE]\n\
+       psynergy reconstruct-asm INPUT --base ADDRESS --entry ADDRESS --span BYTES [--out FILE]";
 const DIFF_USAGE: &str = "usage: psynergy diff ACTUAL EXPECTED [--width 1|2|4]\nExit status: 0 identical, 1 different, 2 invalid input. No compilation or relocation.";
 const REPAIR_USAGE: &str = "usage: psynergy repair SOURCE --repair OPERATION [OPERANDS] [--repair OPERATION [OPERANDS]] [--choice N] [--out FILE]\n\
 Without --choice, report the finite search space. --choice 0 is the original source.\n\
@@ -32,6 +35,7 @@ Operations (one or two per plan):\n\
   mirror-relational-guards\n\
 Repairs require caller evidence; emitted C is not compiled, scored, or adopted.";
 const INSPECT_USAGE: &str = "usage: psynergy inspect allocator DIR\nReads one .rtl, .lreg and .greg dump from DIR; does not run a compiler.";
+const DISCOVER_USAGE: &str = "usage: psynergy discover INPUT [--details] [--out FILE]\nRuns fixed-point ARMv4T discovery over an explicit GBA image at 0x08000000.";
 const KEYWORDS: &[&str] = &[
     "auto", "break", "case", "char", "const", "continue", "default", "do", "double", "else",
     "enum", "extern", "float", "for", "goto", "if", "inline", "int", "long", "register",
@@ -123,7 +127,7 @@ fn code(command: &str, arguments: &[String]) -> Result<String, String> {
     entry
         .checked_add(span)
         .ok_or_else(|| "--entry plus --span overflows 32-bit address space".to_string())?;
-    if command == "disassemble" && name.is_some() {
+    if command != "decompile" && name.is_some() {
         return Err("--name applies only to decompile".into());
     }
     let name = name.unwrap_or_else(|| "Function".to_string());
@@ -147,11 +151,13 @@ fn code(command: &str, arguments: &[String]) -> Result<String, String> {
         let symbols = |_: u32, _: lift::ReferenceKind| None;
         let (body, tables) = unit::bodies(&instructions, &symbols);
         unit::compose(entry, &name, &body, &tables)
-    } else {
+    } else if command == "disassemble" {
         instructions
             .iter()
             .map(|ins| format!("{:08x}: {}\n", ins.addr, ins.text))
             .collect()
+    } else {
+        assembly::thumb_source(&image, base, entry, span)?
     };
     output(source, out)
 }
@@ -297,6 +303,54 @@ fn repair(arguments: &[String]) -> Result<String, String> {
     }
 }
 
+fn discover(arguments: &[String]) -> Result<String, String> {
+    let input = arguments.first().ok_or(DISCOVER_USAGE)?;
+    let mut details = false;
+    let mut out = None;
+    let mut index = 1;
+    while index < arguments.len() {
+        match arguments[index].as_str() {
+            "--details" if !details => details = true,
+            "--out" if out.is_none() => {
+                index += 1;
+                out = Some(PathBuf::from(
+                    arguments.get(index).ok_or("--out needs a path")?,
+                ));
+            }
+            flag => {
+                return Err(format!(
+                    "unknown or repeated option {flag}\n{DISCOVER_USAGE}"
+                ))
+            }
+        }
+        index += 1;
+    }
+    let image = fs::read(input).map_err(|error| format!("{input}: {error}"))?;
+    let mut found = discovery::Discovery::new(&image, discovery::ROM_BASE);
+    let entry = found.run();
+    let report = format!(
+        "{}\n",
+        discovery::json::canonical_json(&found.report(entry, details))
+    );
+    let summary = format!(
+        "functions={} instructions={} calls={} external_calls={} unresolved={} jump_tables={} conflicts={}\n",
+        found.function_count(),
+        found.instructions.len(),
+        found.call_count(),
+        found.external_call_count(),
+        found.unresolved.len(),
+        found.jump_tables.len(),
+        found.conflicts.len(),
+    );
+    match out {
+        Some(path) => {
+            output(report, Some(path))?;
+            Ok(summary)
+        }
+        None => Ok(report),
+    }
+}
+
 fn main() -> ExitCode {
     let arguments: Vec<String> = std::env::args().skip(1).collect();
     if arguments.is_empty() || arguments == ["--help"] || arguments == ["-h"] {
@@ -311,8 +365,12 @@ fn main() -> ExitCode {
     let rest = &arguments[1..];
     let help = rest == ["--help"] || rest == ["-h"];
     let result = match command {
-        "decompile" | "disassemble" if help => Ok((CODE_USAGE.into(), 0)),
-        "decompile" | "disassemble" => code(command, rest).map(|text| (text, 0)),
+        "decompile" | "disassemble" | "reconstruct-asm" if help => Ok((CODE_USAGE.into(), 0)),
+        "decompile" | "disassemble" | "reconstruct-asm" => {
+            code(command, rest).map(|text| (text, 0))
+        }
+        "discover" if help => Ok((DISCOVER_USAGE.into(), 0)),
+        "discover" => discover(rest).map(|text| (text, 0)),
         "diff" if help => Ok((DIFF_USAGE.into(), 0)),
         "diff" => diff(rest),
         "repair" if help => Ok((REPAIR_USAGE.into(), 0)),

@@ -1,106 +1,387 @@
-@ ROM先頭ディスパッチスタブ表。サム用の固定入口から
-@ 別領域へロードされるコードからROM内処理を呼ぶ。再生成コマンド：
+.syntax unified
 	.thumb
-
-	.macro dispatch target
-	ldr r4, 1f
-	bx r4
-1:	.4byte \target
-	.endm
-
-	dispatch Func_080030f8 + 1
-	dispatch Func_080040e8 + 1
-	dispatch Func_080041d8 + 1
-	dispatch Func_08004278 + 1
-	dispatch Func_080042c8 + 1
-	dispatch Func_0800439c + 1
-	dispatch Func_08004420 + 1
-	dispatch Func_08004458 + 1
-	dispatch Func_080044d0 + 1
-	dispatch Func_080045a4 + 1
-	dispatch Func_080045d4 + 1
-	dispatch Func_08002322 + 1
-	dispatch Func_0800231c + 1
-	dispatch Func_0800447c + 1
-	dispatch Func_0800307c + 1
-	dispatch Func_08004858 + 1
-	dispatch Func_080048b0 + 1
-	dispatch Func_080048f4 + 1
-	dispatch Func_08002dd8 + 1
-	dispatch Func_0800488c + 1
-	dispatch Func_080048a0 + 1
-	dispatch Func_08004938 + 1
-	dispatch Func_08004970 + 1
-	dispatch Func_08002df0 + 1
-	dispatch Func_080046c4 + 1
-	dispatch Func_08004718 + 1
-	dispatch Func_0800473c + 1
-	dispatch Func_08004698 + 1
-	dispatch Func_080053e8 + 1
-	dispatch Func_08005340 + 1
-	dispatch Func_0800403c + 1
-	dispatch Func_08003f3c + 1
-	dispatch Func_08003f78 + 1
-	dispatch Func_08003fa4 + 1
-	dispatch Func_08004080 + 1
-	dispatch Func_08004760 + 1
-	dispatch Func_08003d28 + 1
-	dispatch Func_08003dec + 1
-	dispatch Func_0800479c + 1
-	dispatch Func_08004838 + 1
-	dispatch Func_080049ac + 1
-	dispatch Func_08004a94 + 1
-	dispatch Func_080049e8 + 1
-	dispatch Func_08004a5c + 1
-	dispatch Func_08004ab0 + 1
-	dispatch Func_08004bd4 + 1
-	dispatch Func_08004c1c + 1
-	dispatch Func_08004c6c + 1
-	dispatch Func_08004cb4 + 1
-	dispatch Func_08004cf0 + 1
-	dispatch Func_08004d2c + 1
-	dispatch Func_08004e54 + 1
-	dispatch Func_080051d8 + 1
-	dispatch Func_08005268 + 1
-	dispatch Func_08005208 + 1
-	dispatch Func_08005258 + 1
-	dispatch Func_08002f10 + 1
-	dispatch Func_08002f0c + 1
-	dispatch Func_08002f40 + 1
-	dispatch Func_08002f3c + 1
-	dispatch Func_08002fb0 + 1
-	dispatch Func_08003b70 + 1
-	dispatch Func_08003bb4 + 1
-	dispatch Func_08003bf8 + 1
-	dispatch Func_08003c3c + 1
-	dispatch Func_08003c80 + 1
-	dispatch Func_08003ce0 + 1
-	dispatch Func_08002ef8 + 1
-	dispatch Func_08002efc + 1
-	dispatch Func_08002f00 + 1
-	dispatch Func_08002f04 + 1
-	dispatch Func_08002f08 + 1
-	dispatch Func_08005d10 + 1
-	dispatch Func_08005ee0 + 1
-	dispatch Func_0800383c + 1
-	dispatch Func_0800387c + 1
-	dispatch Func_080038bc + 1
-	dispatch Func_080038fc + 1
-	dispatch Func_0800393c + 1
-	dispatch Func_0800397c + 1
-	dispatch Func_080039bc + 1
-	dispatch Func_080039fc + 1
-	dispatch Func_08003a3c + 1
-	dispatch Func_0800352c + 1
-	dispatch Func_080051e8 + 1
-	dispatch Func_08006384 + 1
-	dispatch Func_08006358 + 1
-	dispatch Func_080037d4 + 1
-	dispatch Func_080063bc + 1
-	dispatch Func_08006408 + 1
-	dispatch Func_08006458 + 1
-	dispatch Func_08006488 + 1
-	dispatch Func_080064b8 + 1
-	dispatch Func_080064f4 + 1
-	dispatch Func_0800655c + 1
-	dispatch Func_08004358 + 1
+	.global Overlay_080000c0
+Overlay_080000c0:
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x30f9
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x40e9
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x41d9
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x4279
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x42c9
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x439d
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x4421
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x4459
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x44d1
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x45a5
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x45d5
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x2323
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x231d
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x447d
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x307d
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x4859
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x48b1
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x48f5
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x2dd9
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x488d
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x48a1
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x4939
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x4971
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x2df1
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x46c5
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x4719
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x473d
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x4699
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x53e9
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x5341
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x403d
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x3f3d
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x3f79
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x3fa5
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x4081
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x4761
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x3d29
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x3ded
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x479d
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x4839
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x49ad
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x4a95
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x49e9
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x4a5d
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x4ab1
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x4bd5
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x4c1d
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x4c6d
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x4cb5
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x4cf1
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x4d2d
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x4e55
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x51d9
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x5269
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x5209
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x5259
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x2f11
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x2f0d
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x2f41
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x2f3d
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x2fb1
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x3b71
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x3bb5
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x3bf9
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x3c3d
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x3c81
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x3ce1
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x2ef9
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x2efd
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x2f01
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x2f05
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x2f09
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x5d11
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x5ee1
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x383d
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x387d
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x38bd
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x38fd
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x393d
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x397d
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x39bd
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x39fd
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x3a3d
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x352d
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x51e9
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x6385
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x6359
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x37d5
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x63bd
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x6409
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x6459
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x6489
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x64b9
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x64f5
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x655d
+	.2byte 0x0800
+	ldr	r4, [pc, #0]
+	bx	r4
+	.4byte 0x08004359

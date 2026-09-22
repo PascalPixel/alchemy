@@ -456,7 +456,7 @@
 	.set sub_0200298e, 0x0200298e
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/COMMON/YAMA_RAMA/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/COMMON/YAMA_RAMA/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x22
 	.2byte 0x0000
@@ -465,7 +465,6 @@ AlchemyC_02000054:
 	.2byte 0x0000
 AlchemyC_0200007c:
 	.space 0x30
-
 AlchemyC_020000ac:
 	.space 0x4
 AlchemyC_020000b0:
@@ -835,7 +834,7 @@ AlchemyC_02001180:
 	.4byte 0x02009730
 	.4byte 0xffff0000
 	.4byte 0x000008b1
-.include "games/THE BROKEN SEAL/SRC/FIELD/COMMON/YAMA_RAMA/IMPORT.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/COMMON/YAMA_RAMA/IMPORT.INC"
 	.4byte 0x00000022
 	.4byte 0x02008031
 	.4byte 0x00000010

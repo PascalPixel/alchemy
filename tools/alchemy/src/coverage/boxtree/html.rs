@@ -130,8 +130,16 @@ fn tiles(
         let minimum = (label_width(name) + 8.0).ceil().max(72.0) as usize;
         if let Some(href) = href {
             widths.insert(minimum);
+            let size = file
+                .then(|| {
+                    format!(
+                        "<small class=\"file-size\">{} bytes</small>",
+                        commas(tile.bytes)
+                    )
+                })
+                .unwrap_or_default();
             out.push_str(&format!(
-                "<a class=\"{} label-w{minimum}\" href=\"{href}\" aria-label=\"{}\"><span>{}</span></a>",
+                "<a class=\"{} label-w{minimum}\" href=\"{href}\" aria-label=\"{}\"><span>{}</span>{size}</a>",
                 if directory {
                     "folder-label"
                 } else {
@@ -197,7 +205,7 @@ fn disk_view_has_one_tile_per_real_file() {
     assert_eq!(tiles[0].address, None);
 }
 
-fn disk_tiles(repository: &std::path::Path) -> Vec<Tile> {
+pub(super) fn disk_tiles(repository: &std::path::Path) -> Vec<Tile> {
     walkdir::WalkDir::new(repository.join("games"))
         .follow_links(false)
         .into_iter()
@@ -370,8 +378,8 @@ pub fn rom_page(target: &str) -> Option<String> {
             let end = row["end"].as_i64()?;
             let kind = row["kind"].as_str()?;
             let (label, color) = match kind {
-                "executable" => ("Code", "#f0c57d"),
-                "encoded-overlay" => ("Code overlays", "#78afb7"),
+                "executable" => ("C", C_RED),
+                "encoded-overlay" => ("Assembly", UNKNOWN),
                 "unresolved-data" => ("Not yet identified", UNKNOWN),
                 _ => content_style(&Tile {
                     group: Some(kind.into()),
@@ -529,7 +537,7 @@ pub fn page(
     out.push_str("<style>");
     // A folder's name bar opens exactly when its name fits, under one query.
     for width in widths {
-        out.push_str(&format!("@container (min-width:{width}px) and (min-height:24px){{.label-w{width} span{{visibility:visible}}.label-w{width}~.area.headed{{top:16px}}}}"));
+        out.push_str(&format!("@container (min-width:{width}px) and (min-height:24px){{.label-w{width}>span{{visibility:visible}}.label-w{width}~.area.headed{{top:16px}}}}@container (min-width:{width}px) and (min-height:40px){{.label-w{width}>.file-size{{visibility:visible}}}}"));
     }
     out.push_str("</style>");
     if let Some(items) = map.document["shared_map_assets"][folder]
@@ -621,6 +629,8 @@ fn rust_viewer_links_folders_details_and_shared_sources_without_scripts() {
     };
     let root = page(&map, "", None, false).unwrap();
     assert!(root.contains("href=\"/view/"));
+    assert!(root.contains("<span>games</span>"));
+    assert!(!root.contains("<small class=\"file-size\">1,024 bytes</small>"));
     assert!(root.contains("/inspect/8001000/"));
     let selected = page(&map, folder, Some(0x8001000), false).unwrap();
     assert!(selected.contains("method=\"post\""));

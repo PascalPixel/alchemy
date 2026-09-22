@@ -1,10 +1,7 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global Func_0800655c
-	.thumb_func
-Func_0800655c:
+	.global Overlay_0800655c
+Overlay_0800655c:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
@@ -28,29 +25,30 @@ Func_0800655c:
 	mov	r8, r1
 	ldr	r6, [pc, #44]
 	cmp	r3, #3
-	beq.n	.L0
-	b.n	.L1
-.L0:
+	beq.n	.L_0800658e
+	b.n	.L_0800676e
+.L_0800658e:
 	ldr	r7, [pc, #40]
 	ldr	r5, [r7, #0]
 	cmp	r5, #0
-	bne.n	.L2
-	b.n	.L3
-.L2:
+	bne.n	.L_08006598
+	b.n	.L_0800669a
+.L_08006598:
 	ldrb	r3, [r6, #2]
 	cmp	r3, #1
-	beq.n	.L4
-	b.n	.L5
-.L4:
-	b.n	.L6
+	beq.n	.L_080065a0
+	b.n	.L_08006696
+.L_080065a0:
+	b.n	.L_080065bc
 	movs	r0, r0
 	.4byte 0x00000001
 	.4byte 0x04000128
 	.4byte 0x02002020
 	.4byte 0x03001f64
 	.4byte 0x02002220
-	.4byte 0x020023ac
-.L6:
+	.2byte 0x23ac
+	.2byte 0x0200
+.L_080065bc:
 	mov	r2, ip
 	ldrb	r3, [r2, #3]
 	movs	r1, #128
@@ -58,7 +56,7 @@ Func_0800655c:
 	lsls	r3, r3, #24
 	lsls	r1, r1, #17
 	cmp	r3, r1
-	bhi.n	.L5
+	bhi.n	.L_08006696
 	ldr	r0, [pc, #424]
 	movs	r2, #127
 	mov	lr, r2
@@ -68,7 +66,7 @@ Func_0800655c:
 	mov	r3, lr
 	ands	r3, r1
 	cmp	r2, r3
-	bne.n	.L7
+	bne.n	.L_08006650
 	movs	r1, #0
 	mov	lr, r1
 	mov	r2, lr
@@ -76,11 +74,11 @@ Func_0800655c:
 	mov	r3, ip
 	ldrb	r4, [r3, #3]
 	cmp	r4, #1
-	beq.n	.L8
+	beq.n	.L_080065f6
 	cmp	r4, #2
-	beq.n	.L9
-	b.n	.L10
-.L8:
+	beq.n	.L_08006622
+	b.n	.L_08006642
+.L_080065f6:
 	mov	r0, ip
 	ldr	r3, [pc, #384]
 	adds	r0, #4
@@ -102,8 +100,8 @@ Func_0800655c:
 	adds	r2, r1, #0
 	orrs	r3, r2
 	strb	r3, [r6, #1]
-	b.n	.L10
-.L9:
+	b.n	.L_08006642
+.L_08006622:
 	mov	r0, ip
 	ldr	r3, [pc, #340]
 	adds	r0, #4
@@ -120,71 +118,71 @@ Func_0800655c:
 	strb	r4, [r6, #2]
 	strb	r2, [r6, #1]
 	strb	r3, [r6, #0]
-.L10:
+.L_08006642:
 	ldr	r3, [pc, #308]
 	ldrb	r2, [r3, #0]
 	movs	r1, #127
 	adds	r2, #1
 	ands	r2, r1
 	strb	r2, [r3, #0]
-	b.n	.L3
-.L7:
+	b.n	.L_0800669a
+.L_08006650:
 	ldrb	r2, [r0, #0]
 	movs	r4, #128
 	adds	r3, r4, #0
 	ands	r3, r2
 	movs	r1, #128
 	cmp	r3, #0
-	beq.n	.L11
+	beq.n	.L_08006688
 	ldrb	r1, [r6, #0]
 	adds	r3, r4, #0
 	ands	r3, r1
 	lsls	r3, r3, #24
 	lsrs	r2, r3, #24
 	cmp	r2, #0
-	beq.n	.L12
+	beq.n	.L_08006672
 	mov	r1, r8
 	strb	r1, [r6, #0]
-	b.n	.L3
-.L12:
+	b.n	.L_0800669a
+.L_08006672:
 	lsls	r3, r1, #24
 	movs	r1, #128
 	lsls	r1, r1, #17
 	cmp	r3, r1
-	bne.n	.L3
+	bne.n	.L_0800669a
 	strb	r2, [r6, #0]
 	ldrb	r2, [r0, #0]
 	mov	r3, lr
 	ands	r3, r2
 	strb	r3, [r0, #0]
-	b.n	.L3
-.L11:
+	b.n	.L_0800669a
+.L_08006688:
 	ldrb	r3, [r0, #0]
 	orrs	r3, r1
 	strb	r3, [r6, #0]
 	ldrb	r3, [r0, #0]
 	orrs	r3, r1
 	strb	r3, [r0, #0]
-	b.n	.L3
-.L5:
+	b.n	.L_0800669a
+.L_08006696:
 	movs	r3, #0
 	strb	r3, [r6, #0]
-.L3:
+.L_0800669a:
 	ldr	r7, [pc, #236]
 	ldr	r0, [r7, #0]
 	cmp	r0, #0
-	beq.n	.L13
+	beq.n	.L_08006748
 	mov	r2, ip
 	ldrb	r2, [r2, #2]
 	mov	lr, r2
 	cmp	r2, #1
-	bne.n	.L14
+	bne.n	.L_0800672e
 	mov	r3, ip
 	ldrb	r2, [r3, #0]
 	movs	r3, #128
 	ands	r3, r2
 	cmp	r3, #0
-	beq.n	.L15
+	beq.n	.L_080066e4
 	ldr	r5, [pc, #188]
 	mov	r2, ip
 	ldrb	r1, [r5, #0]
@@ -207,11 +205,11 @@ Func_0800655c:
 	ldrb	r3, [r5, #0]
 	ands	r4, r3
 	strb	r4, [r5, #0]
-.L15:
+.L_080066e4:
 	ldr	r4, [pc, #164]
 	ldrh	r3, [r4, #0]
 	cmp	r3, #0
-	beq.n	.L14
+	beq.n	.L_0800672e
 	ldr	r3, [pc, #140]
 	ldr	r0, [r7, #0]
 	adds	r1, r6, #4
@@ -224,16 +222,16 @@ Func_0800655c:
 	strh	r3, [r4, #0]
 	ldrh	r3, [r4, #0]
 	cmp	r3, #0
-	beq.n	.L16
+	beq.n	.L_0800670e
 	mov	r2, lr
 	ldr	r3, [pc, #108]
 	strb	r2, [r6, #3]
-	b.n	.L17
-.L16:
+	b.n	.L_08006714
+.L_0800670e:
 	movs	r3, #2
 	strb	r3, [r6, #3]
 	ldr	r3, [pc, #100]
-.L17:
+.L_08006714:
 	ldrb	r2, [r3, #0]
 	movs	r3, #127
 	ands	r3, r2
@@ -247,43 +245,43 @@ Func_0800655c:
 	adds	r2, #1
 	ands	r2, r1
 	strb	r2, [r3, #0]
-.L14:
+.L_0800672e:
 	ldrb	r3, [r6, #3]
 	cmp	r3, #2
-	bne.n	.L13
+	bne.n	.L_08006748
 	mov	r1, ip
 	ldrb	r3, [r1, #2]
 	cmp	r3, #2
-	bne.n	.L13
+	bne.n	.L_08006748
 	ldr	r2, [pc, #72]
 	movs	r3, #0
 	str	r3, [r2, #0]
 	strb	r3, [r6, #3]
 	movs	r3, #1
 	strb	r3, [r6, #0]
-.L13:
+.L_08006748:
 	ldrb	r3, [r6, #2]
 	cmp	r3, #2
-	bne.n	.L18
+	bne.n	.L_0800675e
 	mov	r2, ip
 	ldrb	r3, [r2, #3]
 	cmp	r3, #2
-	beq.n	.L1
+	beq.n	.L_0800676e
 	ldr	r2, [pc, #60]
 	movs	r3, #0
 	str	r3, [r2, #0]
-	b.n	.L19
-.L18:
+	b.n	.L_0800676c
+.L_0800675e:
 	movs	r3, #0
 	strb	r3, [r6, #2]
 	ldr	r3, [pc, #48]
 	ldr	r3, [r3, #0]
 	cmp	r3, #0
-	beq.n	.L1
+	beq.n	.L_0800676e
 	movs	r3, #1
-.L19:
+.L_0800676c:
 	strb	r3, [r6, #2]
-.L1:
+.L_0800676e:
 	pop	{r3}
 	mov	r8, r3
 	pop	{r5, r6, r7}

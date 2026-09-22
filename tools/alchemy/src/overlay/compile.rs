@@ -1685,6 +1685,7 @@ pub fn assemble_overlay(source: &OverlaySource, base: i64) -> Result<Vec<u8>, St
     let display = source.to_display_string();
     let overlay = source.overlay_id().unwrap_or_default();
     let mut occupied: std::collections::BTreeSet<usize> = std::collections::BTreeSet::new();
+    let mut placeholder_failures = Vec::new();
     // Compiler runtime windows take bytes built from the licensed container.
     let listing = source.read_text().map_err(|error| error.to_string())?;
     let game = match source {
@@ -1722,13 +1723,22 @@ pub fn assemble_overlay(source: &OverlaySource, base: i64) -> Result<Vec<u8>, St
             }
             occupied.insert(byte);
             if *existing != 0 {
-                return Err(format!(
+                let failure = format!(
                     "overlay C placeholder is not zero at 0x{}",
                     hex(base + byte as i64, 8)
-                ));
+                );
+                eprintln!("diagnostic {failure}");
+                placeholder_failures.push(failure);
             }
         }
         result[offset..offset + compiled.data.len()].copy_from_slice(&compiled.data);
+    }
+    if !placeholder_failures.is_empty() {
+        return Err(format!(
+            "{display}: {} overlay C placeholder failure(s):\n  {}",
+            placeholder_failures.len(),
+            placeholder_failures.join("\n  ")
+        ));
     }
     Ok(result)
 }

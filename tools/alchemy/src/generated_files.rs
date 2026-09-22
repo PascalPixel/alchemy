@@ -6,9 +6,6 @@ use std::process::Command;
 
 /// Source code a game tree tracks beside its material; builds compile it.
 const CODE_EXTENSIONS: &[&str] = &["c", "h", "inc", "s"];
-/// Tooling metadata directories under `games/<game>/`: reconstruction notes,
-/// semantic maps and measurements never feed a ROM build.
-const METADATA_DIRECTORIES: &[&str] = &["metrics", "recon", "semantic"];
 /// Game-root registries of owner names, addresses and locations.
 const GAME_REGISTRIES: &[&str] = &["locations.tsv", "project.json", "source-paths.json"];
 
@@ -71,12 +68,6 @@ fn carries_no_game_data(game_relative: &str) -> bool {
     match components.as_slice() {
         // Code the builds compile.
         _ if leaf == ".gitkeep" || is(suffix, CODE_EXTENSIONS) => true,
-        // Recon notes, semantic maps and measurements.
-        [directory, _, ..] if is(directory, METADATA_DIRECTORIES) => true,
-        // Assembly listings' source registries; overlay streams are material.
-        [raw, area, ..] if raw.eq_ignore_ascii_case("raw") => {
-            !area.eq_ignore_ascii_case("overlays") && is(suffix, &["json"])
-        }
         // Owner names, addresses and locations.
         [registry] => is(registry, GAME_REGISTRIES),
         _ => false,
@@ -139,7 +130,6 @@ fn only_game_material_needs_a_consumer_and_exemptions_are_categories() {
         "games/X/recon/en/dossiers.json",
         "games/X/semantic/regions.json",
         "games/X/metrics/x-en-executable.json",
-        "PROGRESS.svg",
         "games/X/PREVIEW/TITLE.PNG",
         "games/X/source-paths.json",
         "games/X/PROJECT.JSON",
@@ -161,7 +151,12 @@ fn only_game_material_needs_a_consumer_and_exemptions_are_categories() {
         unconsumed_material(tracked, game, &consumed),
         [
             "games/X/SRC/B.JSON",
+            "games/X/raw/manifest.json",
+            "games/X/raw/islands/0800a000/index.json",
             "games/X/raw/islands/TABLE.TSV",
+            "games/X/recon/en/dossiers.json",
+            "games/X/semantic/regions.json",
+            "games/X/metrics/x-en-executable.json",
             "games/X/PREVIEW/TITLE.PNG",
             "games/X/TEXT/MESSAGE_ARCHIVE.JSON",
             "games/X/SOUND/SEQUENCE/A.MID",

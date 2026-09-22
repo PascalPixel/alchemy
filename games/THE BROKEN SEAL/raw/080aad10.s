@@ -1,10 +1,15 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global Func_080aad10
-	.thumb_func
-Func_080aad10:
+	.set sub_080030f8, 0x080030f8
+	.set sub_080045e8, 0x080045e8
+	.set sub_080072f8, 0x080072f8
+	.set sub_080072fc, 0x080072fc
+	.set sub_080153d8, 0x080153d8
+	.set sub_080a10d0, 0x080a10d0
+	.set sub_080aac84, 0x080aac84
+	.set sub_080aafb8, 0x080aafb8
+	.global Overlay_080aad10
+Overlay_080aad10:
 	push	{r5, r6, lr}
 	mov	r6, r8
 	push	{r6}
@@ -24,38 +29,38 @@ Func_080aad10:
 	movs	r3, #30
 	movs	r2, #5
 	adds	r0, #48
-	bl	Func_080a10d0
+	bl	sub_080a10d0
 	movs	r0, #1
-	bl	Func_080030f8
+	bl	sub_080030f8
 	mov	r0, r8
 	movs	r2, #128
 	ldr	r6, [pc, #136]
 	ldr	r1, [pc, #140]
 	lsls	r2, r2, #6
 	adds	r0, #168
-	bl	Func_080072fc
+	bl	sub_080072fc
 	ldr	r0, [pc, #132]
 	ldr	r1, [pc, #136]
 	add	r0, r8
 	movs	r2, #128
-	bl	Func_080072fc
+	bl	sub_080072fc
 	movs	r1, #128
 	ldr	r5, [pc, #128]
 	lsls	r1, r1, #6
 	ldr	r2, [pc, #128]
 	ldr	r0, [pc, #108]
-	bl	Func_080072f8
+	bl	sub_080072f8
 	movs	r1, #128
 	ldr	r2, [pc, #120]
 	ldr	r0, [pc, #108]
-	bl	Func_080072f8
+	bl	sub_080072f8
 	ldr	r0, [pc, #116]
-	bl	Func_080153d8
+	bl	sub_080153d8
 	ldr	r1, [pc, #116]
 	movs	r2, #32
 	ldr	r0, [pc, #116]
-	bl	Func_080072fc
-	bl	Func_080045e8
+	bl	sub_080072fc
+	bl	sub_080045e8
 	ldr	r3, [pc, #108]
 	ldr	r1, [pc, #112]
 	ldr	r2, [pc, #112]
@@ -72,7 +77,7 @@ Func_080aad10:
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	movs	r0, #8
-	bl	Func_080aac84
+	bl	sub_080aac84
 	ldrh	r3, [r5, #0]
 	ldr	r2, [pc, #96]
 	strh	r3, [r2, #0]
@@ -80,7 +85,7 @@ Func_080aad10:
 	subs	r2, #32
 	strh	r3, [r2, #0]
 	mov	r0, r8
-	bl	Func_080aafb8
+	bl	sub_080aafb8
 	add	sp, #8
 	pop	{r3}
 	mov	r8, r3

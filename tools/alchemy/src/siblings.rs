@@ -1343,7 +1343,6 @@ pub fn inspect(root: &Path, owner: &str, near: bool, output: Option<&Path>) -> R
         .owner(site)
         .map(|found| found.extent)
         .or_else(|| model.reviewed.get(&site).copied())
-        .or_else(|| dossier_extent(root, owner))
         .ok_or_else(|| format!("{}: no registered or reviewed complete extent", owner.id()))?;
     let body = Body::read(&model.images, site.0, site.1, extent).ok_or_else(|| {
         format!(
@@ -1442,25 +1441,6 @@ pub fn inspect(root: &Path, owner: &str, near: bool, output: Option<&Path>) -> R
     output.map_or(Ok(()), |path| write_json(path, &document))
 }
 
-/// Draft owners do not necessarily belong in the production source register
-/// yet. Their dossier may still supply a complete boundary when its audited
-/// executable mapping covers that exact span. Requiring those values to agree
-/// rejects envelopes over discontinuous fragments and stale size notes.
-fn dossier_extent(root: &Path, owner: SourceOwner) -> Option<usize> {
-    let path = root.join("games/THE BROKEN SEAL/recon/en/dossiers.json");
-    let document: Value = serde_json::from_slice(&std::fs::read(path).ok()?).ok()?;
-    dossier_extent_in(&document, &owner.id())
-}
-
-fn dossier_extent_in(document: &Value, owner: &str) -> Option<usize> {
-    let record = &document["records"][owner];
-    let span = record["span_bytes"]
-        .as_u64()
-        .or_else(|| record["owner_bytes"].as_u64())?;
-    let mapped = record["executable_mapped_bytes"].as_u64()?;
-    (span > 0 && span == mapped).then(|| span as usize)
-}
-
 /// The adoption hook over the production model; see `Model::guard`.
 pub fn guard(root: &Path, installing: &[(SourceOwner, usize)]) -> Result<Vec<String>, String> {
     let edition = Edition::load(root, TARGET)?;
@@ -1491,20 +1471,6 @@ mod tests {
 
     const TWIN: u32 = 0x0200_8100;
     const IMPORT: u32 = 0x0200_83f8;
-
-    #[test]
-    fn dossier_extent_requires_a_complete_executable_mapping() {
-        let complete = json!({"records":{"main:08010000":{
-            "span_bytes": 512, "owner_bytes": 512, "executable_mapped_bytes": 512
-        }}});
-        assert_eq!(dossier_extent_in(&complete, "main:08010000"), Some(512));
-
-        let envelope = json!({"records":{"main:08010000":{
-            "owner_bytes": 512, "executable_mapped_bytes": 480
-        }}});
-        assert_eq!(dossier_extent_in(&envelope, "main:08010000"), None);
-        assert_eq!(dossier_extent_in(&complete, "main:08020000"), None);
-    }
 
     /// A `bl` pair at `site` reaching `target`.
     fn bl(site: u32, target: u32) -> [u8; 4] {

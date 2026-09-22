@@ -1,10 +1,13 @@
-@ 呼出しグラフで未到達だったコード間隙関数の再構築サム逆アセンブル。
-@ 探索では未到達。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global Func_0801be80
-	.thumb_func
-Func_0801be80:
+	.set sub_080030f8, 0x080030f8
+	.set sub_08003f3c, 0x08003f3c
+	.set sub_0801a910, 0x0801a910
+	.set sub_0801b9a8, 0x0801b9a8
+	.set sub_0801ba34, 0x0801ba34
+	.set sub_0801c21c, 0x0801c21c
+	.global Overlay_0801be80
+Overlay_0801be80:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9
@@ -24,17 +27,17 @@ Func_0801be80:
 	mov	r8, r0
 	adds	r0, r5, #0
 	mov	r9, r2
-	bl	Func_0801ba34
+	bl	sub_0801ba34
 	mov	r0, sl
 	ldrh	r1, [r0, #0]
 	adds	r0, r5, #0
-	bl	Func_0801b9a8
+	bl	sub_0801b9a8
 	ldr	r1, [pc, #328]
 	movs	r3, #33
 	adds	r2, r5, r1
 	strh	r3, [r2, #0]
 	movs	r0, #1
-	bl	Func_080030f8
+	bl	sub_080030f8
 	ldr	r2, [pc, #320]
 	ldr	r0, [pc, #320]
 	movs	r7, #0
@@ -44,27 +47,27 @@ Func_0801be80:
 	strh	r7, [r3, #0]
 	adds	r3, r5, r0
 	strh	r7, [r3, #0]
-	bl	Func_0801c21c
+	bl	sub_0801c21c
 	movs	r1, #210
 	lsls	r1, r1, #2
 	adds	r3, r5, r1
 	ldr	r6, [r3, #0]
 	cmp	r6, #0
-	beq.n	.L0
+	beq.n	.L_0801befc
 	mov	r2, sl
 	ldrh	r3, [r2, #0]
 	cmp	r3, #0
-	beq.n	.L0
-.L1:
+	beq.n	.L_0801befc
+.L_0801beec:
 	ldr	r6, [r6, #4]
 	movs	r3, #1
 	add	r8, r3
 	cmp	r6, #0
-	beq.n	.L0
+	beq.n	.L_0801befc
 	ldrh	r3, [r2, #0]
 	cmp	r3, r8
-	bne.n	.L1
-.L0:
+	bne.n	.L_0801beec
+.L_0801befc:
 	ldrh	r3, [r6, #16]
 	strh	r3, [r6, #28]
 	ldrh	r3, [r6, #18]
@@ -74,10 +77,10 @@ Func_0801be80:
 	adds	r3, r5, r0
 	ldr	r7, [r3, #0]
 	cmp	r7, #0
-	beq.n	.L2
-.L4:
+	beq.n	.L_0801bf2c
+.L_0801bf10:
 	cmp	r7, r6
-	beq.n	.L3
+	beq.n	.L_0801bf26
 	ldrh	r3, [r6, #16]
 	strh	r3, [r7, #24]
 	movs	r0, #16
@@ -87,33 +90,33 @@ Func_0801be80:
 	subs	r3, r3, r2
 	asrs	r3, r3, #1
 	strh	r3, [r7, #20]
-.L3:
+.L_0801bf26:
 	ldr	r7, [r7, #4]
 	cmp	r7, #0
-	bne.n	.L4
-.L2:
+	bne.n	.L_0801bf10
+.L_0801bf2c:
 	movs	r0, #2
-	bl	Func_080030f8
+	bl	sub_080030f8
 	movs	r1, #210
 	lsls	r1, r1, #2
 	adds	r3, r5, r1
 	ldr	r7, [r3, #0]
 	cmp	r7, #0
-	beq.n	.L5
+	beq.n	.L_0801bf56
 	movs	r2, #0
 	mov	r8, r2
-.L7:
+.L_0801bf42:
 	cmp	r7, r6
-	beq.n	.L6
+	beq.n	.L_0801bf50
 	ldrh	r0, [r7, #12]
-	bl	Func_08003f3c
+	bl	sub_08003f3c
 	mov	r3, r8
 	strh	r3, [r7, #10]
-.L6:
+.L_0801bf50:
 	ldr	r7, [r7, #4]
 	cmp	r7, #0
-	bne.n	.L7
-.L5:
+	bne.n	.L_0801bf42
+.L_0801bf56:
 	movs	r0, #210
 	lsls	r0, r0, #2
 	adds	r3, r5, r0
@@ -130,8 +133,8 @@ Func_0801be80:
 	movs	r2, #0
 	mov	r8, r2
 	cmp	r7, #0
-	beq.n	.L8
-.L9:
+	beq.n	.L_0801bf88
+.L_0801bf78:
 	ldrh	r3, [r6, #24]
 	adds	r3, #16
 	strh	r3, [r6, #24]
@@ -139,8 +142,8 @@ Func_0801be80:
 	movs	r3, #1
 	add	r8, r3
 	cmp	r7, #0
-	bne.n	.L9
-.L8:
+	bne.n	.L_0801bf78
+.L_0801bf88:
 	mov	r0, r8
 	lsls	r1, r0, #1
 	movs	r3, #233
@@ -177,9 +180,9 @@ Func_0801be80:
 	orrs	r3, r2
 	strh	r3, [r1, #0]
 	movs	r0, #2
-	bl	Func_080030f8
+	bl	sub_080030f8
 	movs	r0, #1
-	bl	Func_0801a910
+	bl	sub_0801a910
 	ldrh	r3, [r6, #10]
 	adds	r7, r0, #0
 	strh	r3, [r7, #10]
@@ -193,15 +196,16 @@ Func_0801be80:
 	strh	r3, [r7, #14]
 	ldrh	r2, [r6, #16]
 	strh	r2, [r7, #16]
-	b.n	.L10
+	b.n	.L_0801c010
 	movs	r0, r0
 	.4byte 0x00000080
 	.4byte 0x0000039e
 	.4byte 0x000003a2
 	.4byte 0x000002e2
 	.4byte 0x000002fa
-	.4byte 0x0000039a
-.L10:
+	.2byte 0x039a
+	.2byte 0x0000
+.L_0801c010:
 	ldrh	r3, [r6, #18]
 	strh	r2, [r7, #24]
 	strh	r3, [r7, #18]
@@ -262,26 +266,26 @@ Func_0801be80:
 	adds	r0, r5, r1
 	ldr	r3, [r0, #0]
 	cmp	r3, #0
-	beq.n	.L11
+	beq.n	.L_0801c0a4
 	adds	r6, r3, #0
 	ldr	r2, [r6, #4]
 	cmp	r2, #0
-	beq.n	.L12
-.L13:
+	beq.n	.L_0801c09c
+.L_0801c092:
 	adds	r6, r2, #0
 	ldr	r3, [r6, #4]
 	adds	r2, r3, #0
 	cmp	r3, #0
-	bne.n	.L13
-.L12:
+	bne.n	.L_0801c092
+.L_0801c09c:
 	movs	r3, #0
 	str	r7, [r6, #4]
 	str	r6, [r7, #0]
-	b.n	.L14
-.L11:
+	b.n	.L_0801c0a8
+.L_0801c0a4:
 	str	r7, [r0, #0]
 	str	r3, [r7, #0]
-.L14:
+.L_0801c0a8:
 	str	r3, [r7, #4]
 	mov	r0, r9
 	pop	{r3, r5, r6}

@@ -10,7 +10,6 @@ use crate::score::{
     cli::{options_of, ParseOutcome, USAGE},
     render::render,
 };
-use serde_json::Value;
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 use tempfile::tempdir;
@@ -36,15 +35,6 @@ fn nonowner_relationship(
             _ => None,
         }
     })
-}
-fn retained_fragment_span(
-    retention: Option<&str>,
-    span: Option<u64>,
-    complete: usize,
-) -> Option<usize> {
-    retention?.starts_with("keep_").then_some(())?;
-    let span = usize::try_from(span?).ok().filter(|span| *span > 0)?;
-    (span < complete).then_some(span)
 }
 pub(crate) fn resolve(root: &Path, target: &str) -> Result<SourceOwner, String> {
     resolve_for(root, target, CompilerTarget::Tbs)
@@ -318,13 +308,8 @@ pub fn audit_corpus(root: &Path) -> Result<i32, String> {
     }
     let paths = SourcePaths::load(root)?;
     let reviewed = crate::overlay::reviewed_spans(root)?;
-    let dossiers: Value = serde_json::from_slice(
-        &std::fs::read(root.join("games/THE BROKEN SEAL/recon/en/dossiers.json"))
-            .map_err(|error| error.to_string())?,
-    )
-    .map_err(|error| error.to_string())?;
-    // registered, nonowner, installed, nonexact, ordinary, nonordinary, exact-unmapped, placeholders, unregistered, parked
-    let mut count = [0usize; 10];
+    // registered, nonowner, installed, nonexact, ordinary, nonordinary, exact-unmapped, placeholders, unregistered
+    let mut count = [0usize; 9];
     for source in &sources {
         let target = resolve(root, &source.to_string_lossy())?;
         let overlay = target.overlay_id().expect("resolved overlay owner");
@@ -361,23 +346,6 @@ pub fn audit_corpus(root: &Path) -> Result<i32, String> {
             println!("installed-owner\t{}", target.id());
             continue;
         }
-        if placeholder.is_none() {
-            let dossier = &dossiers["records"][target.id()];
-            let candidate_span = dossier["span_bytes"]
-                .as_u64()
-                .or_else(|| dossier["owner_bytes"].as_u64());
-            if let Some(fragment) =
-                retained_fragment_span(dossier["retention"].as_str(), candidate_span, span as usize)
-            {
-                count[9] += 1;
-                println!(
-                    "unverified-retained-fragment\t{}\tfragment_span={}\tcomplete_span={span}",
-                    target.id(),
-                    fragment
-                );
-                continue;
-            }
-        }
         let (reference, _) = truth_window(root, target, span)?;
         let work = tempdir().map_err(|error| error.to_string())?;
         if compile_overlay_c(source, work.path(), &overlay, span as usize, None, &[])?.data
@@ -396,7 +364,7 @@ pub fn audit_corpus(root: &Path) -> Result<i32, String> {
         };
         println!("exact-retained\t{}\t{class}", target.id());
     }
-    println!("overlay-corpus sources={} registered_owners={} placeholder_spans={} audited_nonowners={} installed_owners={} nonexact={} exact_retained_ordinary={} exact_retained_nonordinary={} exact_unmapped={} unregistered_candidates={} unverified_retained_fragments={}", sources.len(), count[0], count[7], count[1], count[2], count[3], count[4], count[5], count[6], count[8], count[9]);
+    println!("overlay-corpus sources={} registered_owners={} placeholder_spans={} audited_nonowners={} installed_owners={} nonexact={} exact_retained_ordinary={} exact_retained_nonordinary={} exact_unmapped={} unregistered_candidates={}", sources.len(), count[0], count[7], count[1], count[2], count[3], count[4], count[5], count[6], count[8]);
     Ok(i32::from(count[4..7].iter().sum::<usize>() != 0))
 }
 #[cfg(test)]
@@ -495,18 +463,5 @@ mod tests {
         ]
         .into_iter()
         .all(|(kind, entry)| relation(kind, entry).is_none()));
-    }
-    #[test]
-    fn only_shorter_retained_spans_are_fragments() {
-        for (retention, span, expected) in [
-            (Some("keep_structured_asm"), Some(12), Some(12)),
-            (Some("keep_structured_asm"), Some(16), None),
-            (Some("keep_structured_asm"), Some(20), None),
-            (None, Some(12), None),
-            (Some("measured-draft"), Some(12), None),
-            (Some("keep_structured_asm"), None, None),
-        ] {
-            assert_eq!(retained_fragment_span(retention, span, 16), expected);
-        }
     }
 }

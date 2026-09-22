@@ -253,10 +253,9 @@
 	.set sub_02001d8e, 0x02001d8e
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_MURA/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_MURA/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x40
-
 AlchemyC_02000070:
 	.space 0x4
 AlchemyC_02000074:
@@ -296,7 +295,11 @@ AlchemyC_02000524:
 AlchemyC_020006a4:
 	.space 0x4c
 AlchemyC_020006f0:
-	.space 0xc8
+	.space 0x42
+.L_02000732:
+	.space 0x76
+.L_020007a8:
+	.space 0x10
 AlchemyC_020007b8:
 	.space 0x94
 AlchemyC_0200084c:
@@ -315,7 +318,7 @@ AlchemyC_02000d08:
 	.space 0x50
 AlchemyC_02000d58:
 	.space 0xc8
-.include "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_MURA/IMPORT.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_MURA/IMPORT.INC"
 	.4byte 0x00000016
 	.4byte 0x0000001e
 	.4byte 0x00000080

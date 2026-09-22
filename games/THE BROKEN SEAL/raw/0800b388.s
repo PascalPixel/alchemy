@@ -1,14 +1,12 @@
-@ 役者の絵の組み立て。Func_08005268 で投影し、画面 (-32..272, -32..208) の外なら
-@ Func_08003f78 で絵を返す。縮尺は投影の尺度 × obj[24] を IwramMulQ16 で (旗 +29 bit1 は
-@ そのまま)、幅高さ (+32/+33) と傾き (+34/+35) を IwramMulQ16 で掛けて 0x1f800 に抑える。拡大や
-@ 倍寸なら Func_08003d28 で回転枠を取り、属性語を組んで Func_08003dec で OAM に書く。
-@ +38 bit0 なら影の絵も同じ手順で置く。
-@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
-	.global Func_0800b388
-	.thumb_func
-Func_0800b388:
+	.set sub_08003d28, 0x08003d28
+	.set sub_08003dec, 0x08003dec
+	.set sub_08003f78, 0x08003f78
+	.set sub_08005268, 0x08005268
+	.set sub_0800aa0c, 0x0800aa0c
+	.global Overlay_0800b388
+Overlay_0800b388:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -28,61 +26,59 @@ Func_0800b388:
 	ldrsh	r3, [r3, r2]
 	adds	r7, r0, #0
 	cmp	r3, #0
-	beq.n	.L0
-	b.n	.L1
-.L0:
+	beq.n	.L_0800b3b2
+	b.n	.L_0800b658
+.L_0800b3b2:
 	add	r3, sp, #32
 	mov	sl, r3
 	mov	r1, sl
 	ldr	r0, [sp, #20]
-@ 投影と画面範囲。
-	bl	Func_08005268
+	bl	sub_08005268
 	mov	r1, sl
 	ldr	r3, [r1, #8]
 	adds	r5, r0, #0
 	cmp	r3, #0
-	bne.n	.L2
-	b.n	.L1
-.L2:
+	bne.n	.L_0800b3ca
+	b.n	.L_0800b658
+.L_0800b3ca:
 	movs	r2, #32
 	ldr	r3, [r1, #0]
 	negs	r2, r2
 	cmp	r3, r2
-	bge.n	.L3
-	b.n	.L1
-.L3:
+	bge.n	.L_0800b3d6
+	b.n	.L_0800b658
+.L_0800b3d6:
 	movs	r1, #136
 	lsls	r1, r1, #1
 	cmp	r3, r1
-	ble.n	.L4
-	b.n	.L1
-.L4:
+	ble.n	.L_0800b3e0
+	b.n	.L_0800b658
+.L_0800b3e0:
 	mov	r1, sl
 	ldr	r3, [r1, #4]
 	cmp	r3, r2
-	bge.n	.L5
-	b.n	.L1
-.L5:
+	bge.n	.L_0800b3ea
+	b.n	.L_0800b658
+.L_0800b3ea:
 	cmp	r3, #208
-	ble.n	.L6
-	b.n	.L1
-.L6:
+	ble.n	.L_0800b3f0
+	b.n	.L_0800b658
+.L_0800b3f0:
 	ldrb	r2, [r7, #29]
 	movs	r3, #2
 	ands	r3, r2
 	cmp	r3, #0
-	beq.n	.L7
+	beq.n	.L_0800b3fe
 	ldr	r5, [r7, #24]
-	b.n	.L8
-@ IwramMulQ16ReturnIp: 尺度 × obj[24]。
-.L7:
+	b.n	.L_0800b40a
+.L_0800b3fe:
 	ldr	r3, [pc, #308]
 	adds	r0, r5, #0
 	ldr	r1, [r7, #24]
 	mov	ip, pc
 	bx	r3
 	adds	r5, r0, #0
-.L8:
+.L_0800b40a:
 	adds	r3, r7, #0
 	adds	r3, #32
 	ldrb	r3, [r3, #0]
@@ -99,8 +95,7 @@ Func_0800b388:
 	adds	r0, r7, #0
 	mov	r9, r2
 	str	r3, [sp, #4]
-@ 絵の番号。幅高さ × 縮尺 (IwramMulQ16ReturnIp)。
-	bl	Func_0800aa0c
+	bl	sub_0800aa0c
 	movs	r1, #128
 	lsls	r1, r1, #3
 	ldr	r3, [pc, #260]
@@ -125,16 +120,16 @@ Func_0800b388:
 	ldr	r3, [pc, #224]
 	mov	lr, r0
 	cmp	r5, r3
-	ble.n	.L9
+	ble.n	.L_0800b464
 	movs	r5, #252
 	lsls	r5, r5, #9
-.L9:
+.L_0800b464:
 	cmp	lr, r3
-	ble.n	.L10
+	ble.n	.L_0800b46e
 	movs	r1, #252
 	lsls	r1, r1, #9
 	mov	lr, r1
-.L10:
+.L_0800b46e:
 	adds	r3, r7, #0
 	adds	r3, #34
 	movs	r0, #0
@@ -158,11 +153,10 @@ Func_0800b388:
 	lsls	r3, r3, #9
 	negs	r6, r0
 	cmp	r5, r3
-	bgt.n	.L11
+	bgt.n	.L_0800b4a2
 	cmp	lr, r3
-	ble.n	.L12
-@ 拡大か倍寸: 回転枠。
-.L11:
+	ble.n	.L_0800b4b8
+.L_0800b4a2:
 	ldr	r2, [sp, #8]
 	movs	r3, #3
 	mov	r1, fp
@@ -173,21 +167,21 @@ Func_0800b388:
 	mov	fp, r1
 	str	r2, [sp, #8]
 	str	r3, [sp, #4]
-	b.n	.L13
-.L12:
+	b.n	.L_0800b4ca
+.L_0800b4b8:
 	cmp	r5, r3
-	bne.n	.L13
+	bne.n	.L_0800b4ca
 	ldrh	r3, [r7, #30]
 	cmp	r3, #0
-	bne.n	.L13
+	bne.n	.L_0800b4ca
 	cmp	lr, r5
-	bne.n	.L13
+	bne.n	.L_0800b4ca
 	movs	r1, #0
 	str	r1, [sp, #0]
-.L13:
+.L_0800b4ca:
 	ldr	r2, [sp, #0]
 	cmp	r2, #0
-	beq.n	.L14
+	beq.n	.L_0800b520
 	add	r0, sp, #24
 	ldr	r2, [r0, #4]
 	ldr	r1, [pc, #104]
@@ -203,7 +197,7 @@ Func_0800b388:
 	ldr	r3, [sp, #12]
 	str	r4, [sp, #24]
 	cmp	r3, #0
-	beq.n	.L15
+	beq.n	.L_0800b506
 	ldrh	r3, [r0, #0]
 	negs	r3, r3
 	adds	r2, r1, #0
@@ -215,7 +209,7 @@ Func_0800b388:
 	negs	r1, r1
 	str	r2, [sp, #24]
 	mov	r8, r1
-.L15:
+.L_0800b506:
 	mov	r2, lr
 	lsls	r3, r2, #8
 	ldr	r1, [pc, #56]
@@ -225,28 +219,28 @@ Func_0800b388:
 	ands	r2, r1
 	orrs	r2, r3
 	str	r2, [sp, #24]
-	bl	Func_08003d28
+	bl	sub_08003d28
 	adds	r5, r0, #0
-	b.n	.L16
-.L14:
+	b.n	.L_0800b54a
+.L_0800b520:
 	ldr	r3, [sp, #12]
 	cmp	r3, #0
-	beq.n	.L17
+	beq.n	.L_0800b548
 	mov	r1, r8
 	negs	r1, r1
 	movs	r5, #8
 	mov	r8, r1
-	b.n	.L16
+	b.n	.L_0800b54a
 	.4byte 0x03001e68
 	.4byte 0x03000118
 	.4byte 0xfffff800
 	.4byte 0x0001f7ff
 	.4byte 0xffff0000
-	.4byte 0x0000ffff
-.L17:
+	.2byte 0xffff
+	.2byte 0x0000
+.L_0800b548:
 	movs	r5, #0
-@ 属性語を組む。
-.L16:
+.L_0800b54a:
 	mov	r3, sl
 	ldr	r2, [r3, #0]
 	mov	r1, fp
@@ -280,16 +274,17 @@ Func_0800b388:
 	negs	r3, r3
 	lsls	r2, r2, #1
 	ands	r3, r1
-	b.n	.L18
+	b.n	.L_0800b598
 	movs	r0, r0
 	.4byte 0x000001ff
-	.4byte 0xfffffe00
-.L18:
+	.2byte 0xfe00
+	.2byte 0xffff
+.L_0800b598:
 	orrs	r3, r2
 	strb	r3, [r7, #7]
 	ldr	r3, [sp, #88]
 	cmp	r3, #0
-	bne.n	.L19
+	bne.n	.L_0800b5c4
 	mov	r1, sl
 	ldr	r3, [r1, #8]
 	movs	r2, #128
@@ -301,25 +296,24 @@ Func_0800b388:
 	adds	r1, r2, #0
 	adds	r1, #128
 	cmp	r1, #0
-	bgt.n	.L20
+	bgt.n	.L_0800b5bc
 	movs	r1, #1
-.L20:
+.L_0800b5bc:
 	adds	r0, r7, #0
-	bl	Func_08003dec
-	b.n	.L21
-.L19:
+	bl	sub_08003dec
+	b.n	.L_0800b5cc
+.L_0800b5c4:
 	adds	r0, r7, #0
 	ldr	r1, [sp, #88]
-	bl	Func_08003dec
-@ 影の絵。
-.L21:
+	bl	sub_08003dec
+.L_0800b5cc:
 	adds	r3, r7, #0
 	adds	r3, #38
 	ldrb	r2, [r3, #0]
 	movs	r3, #1
 	ands	r3, r2
 	cmp	r3, #0
-	beq.n	.L22
+	beq.n	.L_0800b670
 	ldr	r2, [sp, #20]
 	ldr	r3, [r2, #0]
 	add	r0, sp, #44
@@ -329,7 +323,7 @@ Func_0800b388:
 	ldr	r3, [r2, #8]
 	mov	r1, sl
 	str	r3, [r0, #8]
-	bl	Func_08005268
+	bl	sub_08005268
 	mov	r3, sl
 	ldr	r1, [sp, #4]
 	ldr	r2, [r3, #0]
@@ -363,37 +357,37 @@ Func_0800b388:
 	movs	r3, #63
 	negs	r3, r3
 	lsls	r1, r5, #1
-	b.n	.L23
+	b.n	.L_0800b63c
 	.4byte 0x000001ff
-	.4byte 0xfffffe00
-.L23:
+	.2byte 0xfe00
+	.2byte 0xffff
+.L_0800b63c:
 	ands	r3, r2
 	orrs	r3, r1
 	strb	r3, [r0, #7]
 	ldr	r3, [sp, #88]
 	cmp	r3, #0
-	bne.n	.L24
+	bne.n	.L_0800b650
 	movs	r1, #0
-	bl	Func_08003dec
-	b.n	.L22
-.L24:
+	bl	sub_08003dec
+	b.n	.L_0800b670
+.L_0800b650:
 	ldr	r1, [sp, #88]
-	bl	Func_08003dec
-	b.n	.L22
-@ 画面外: 絵を返す。
-.L1:
+	bl	sub_08003dec
+	b.n	.L_0800b670
+.L_0800b658:
 	ldrb	r2, [r7, #29]
 	movs	r5, #1
 	adds	r3, r5, #0
 	ands	r3, r2
 	cmp	r3, #0
-	bne.n	.L22
+	bne.n	.L_0800b670
 	ldrb	r0, [r7, #28]
-	bl	Func_08003f78
+	bl	sub_08003f78
 	adds	r3, r7, #0
 	adds	r3, #37
 	strb	r5, [r3, #0]
-.L22:
+.L_0800b670:
 	add	sp, #56
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

@@ -1,10 +1,9 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global Func_080175c0
-	.thumb_func
-Func_080175c0:
+	.set sub_080165d8, 0x080165d8
+	.set sub_08018038, 0x08018038
+	.global Overlay_080175c0
+Overlay_080175c0:
 	push	{r5, r6, r7, lr}
 	ldr	r3, [pc, #84]
 	ldr	r2, [pc, #84]
@@ -19,7 +18,7 @@ Func_080175c0:
 	adds	r0, r1, #0
 	movs	r1, #1
 	sub	sp, #16
-	bl	Func_08018038
+	bl	sub_08018038
 	movs	r2, #235
 	adds	r1, r0, #0
 	lsls	r3, r1, #1
@@ -28,22 +27,22 @@ Func_080175c0:
 	ldrh	r3, [r5, r3]
 	movs	r0, #0
 	cmp	r3, #0
-	beq.n	.L0
+	beq.n	.L_08017610
 	cmp	r7, #0
-	beq.n	.L0
+	beq.n	.L_08017610
 	movs	r3, #1
 	str	r3, [sp, #4]
 	adds	r0, r7, #0
 	movs	r2, #0
 	movs	r3, #0
 	str	r6, [sp, #0]
-	bl	Func_080165d8
+	bl	sub_080165d8
 	adds	r6, r0, #0
 	movs	r0, #0
 	cmp	r6, #0
-	beq.n	.L0
+	beq.n	.L_08017610
 	adds	r0, r6, #0
-.L0:
+.L_08017610:
 	add	sp, #16
 	pop	{r5, r6, r7}
 	pop	{r1}

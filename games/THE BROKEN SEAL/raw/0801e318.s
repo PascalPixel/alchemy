@@ -1,12 +1,7 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global UiWindow_MarkVisibleTileAttributes
-	.global Func_0801e318
-	.thumb_func
-UiWindow_MarkVisibleTileAttributes:
-Func_0801e318:
+	.global Overlay_0801e318
+Overlay_0801e318:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9
@@ -21,10 +16,10 @@ Func_0801e318:
 	ldrb	r7, [r3, #0]
 	adds	r4, r5, #0
 	movs	r6, #20
-.L4:
+.L_0801e334:
 	mov	r3, r9
 	cmp	r3, #0
-	beq.n	.L0
+	beq.n	.L_0801e384
 	ldr	r2, [pc, #128]
 	ldr	r3, [pc, #128]
 	mov	sl, r2
@@ -34,7 +29,7 @@ Func_0801e318:
 	mov	r0, r9
 	mov	lr, r2
 	mov	ip, r3
-.L3:
+.L_0801e34c:
 	ldrh	r3, [r4, #0]
 	mov	r1, sl
 	ands	r1, r3
@@ -42,14 +37,14 @@ Func_0801e318:
 	subs	r3, #128
 	adds	r4, #2
 	cmp	r3, #127
-	bls.n	.L1
+	bls.n	.L_0801e368
 	cmp	r7, #0
-	beq.n	.L2
+	beq.n	.L_0801e37e
 	cmp	r1, r8
-	bls.n	.L2
+	bls.n	.L_0801e37e
 	cmp	r1, lr
-	bhi.n	.L2
-.L1:
+	bhi.n	.L_0801e37e
+.L_0801e368:
 	mov	r2, ip
 	ands	r1, r2
 	movs	r3, #128
@@ -61,29 +56,29 @@ Func_0801e318:
 	movs	r2, #2
 	orrs	r3, r2
 	strb	r3, [r5, r1]
-.L2:
+.L_0801e37e:
 	subs	r0, #1
 	cmp	r0, #0
-	bne.n	.L3
-.L0:
+	bne.n	.L_0801e34c
+.L_0801e384:
 	subs	r6, #1
 	cmp	r6, #0
-	bne.n	.L4
+	bne.n	.L_0801e334
 	movs	r3, #218
 	lsls	r3, r3, #4
 	movs	r1, #0
 	movs	r6, #255
 	adds	r2, r5, r3
-.L6:
+.L_0801e394:
 	ldrb	r3, [r2, #0]
 	cmp	r3, #1
-	bne.n	.L5
+	bne.n	.L_0801e39c
 	strb	r1, [r2, #0]
-.L5:
+.L_0801e39c:
 	subs	r6, #1
 	adds	r2, #1
 	cmp	r6, #0
-	bge.n	.L6
+	bge.n	.L_0801e394
 	pop	{r3, r5, r6}
 	mov	r8, r3
 	mov	r9, r5

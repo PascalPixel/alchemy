@@ -1754,7 +1754,7 @@
 	.set sub_0200bcb6, 0x0200bcb6
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x3c
 AlchemyC_0200006c:
@@ -1770,9 +1770,13 @@ AlchemyC_0200034c:
 AlchemyC_02000474:
 	.space 0x194
 AlchemyC_02000608:
-	.space 0x2b8
+	.space 0x1d6
+.L_020007de:
+	.space 0xe2
 AlchemyC_020008c0:
-	.space 0x11c
+	.space 0x42
+.L_02000902:
+	.space 0xda
 AlchemyC_020009dc:
 	.space 0x8
 AlchemyC_020009e4:
@@ -4499,7 +4503,11 @@ AlchemyC_020034c8:
 .L_020039cc:
 	.space 0x5e4
 AlchemyC_02003fb0:
-	.space 0xbb6
+	.space 0x56a
+.L_0200451a:
+	.space 0xf8
+.L_02004612:
+	.space 0x554
 .L_02004b66:
 	.space 0xa2e
 AlchemyC_02005594:
@@ -4897,9 +4905,22 @@ AlchemyC_02005d14:
 	bx	r0
 	.4byte 0x0200dd15
 	.4byte 0x0200dcc5
-.include "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/IMPORT.INC"
-AlchemyRuntime_02006154:
-	.space 0x3c
+	.include "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/IMPORT.INC"
+	.4byte 0x46c04700
+	.4byte 0x46c04708
+	.4byte 0x46c04710
+	.4byte 0x46c04718
+	.4byte 0x46c04720
+	.4byte 0x46c04728
+	.4byte 0x46c04730
+	.4byte 0x46c04738
+	.4byte 0x46c04740
+	.4byte 0x46c04748
+	.4byte 0x46c04750
+	.4byte 0x46c04758
+	.4byte 0x46c04760
+	.4byte 0x46c04768
+	.4byte 0x46c04770
 	.4byte 0x00100000
 	.4byte 0x00100000
 	.4byte 0x00100000

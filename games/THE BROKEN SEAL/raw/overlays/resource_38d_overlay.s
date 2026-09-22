@@ -774,7 +774,7 @@
 	.set sub_02004918, 0x02004918
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_KYUDEN/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_KYUDEN/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x58
 AlchemyC_02000088:
@@ -1107,7 +1107,15 @@ AlchemyC_020005f4:
 	.2byte 0x0000
 	.2byte 0xfffc
 AlchemyC_020008c0:
-	.space 0x73c
+	.space 0x8
+.L_020008c8:
+	.space 0xa8
+.L_02000970:
+	.space 0x2c
+.L_0200099c:
+	.space 0x2c
+.L_020009c8:
+	.space 0x634
 .L_02000ffc:
 	.space 0x7a0
 AlchemyC_0200179c:
@@ -1356,7 +1364,7 @@ AlchemyC_020019b0:
 	.4byte 0x0000026e
 	.4byte 0x0000012f
 	.4byte 0x00000202
-.include "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_KYUDEN/IMPORT.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_KYUDEN/IMPORT.INC"
 	.4byte 0x00000022
 	.4byte 0x02008031
 	.4byte 0x0000000c

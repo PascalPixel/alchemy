@@ -1,10 +1,9 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global Func_0808ace0
-	.thumb_func
-Func_0808ace0:
+	.set sub_080770c0, 0x080770c0
+	.set sub_0808b25c, 0x0808b25c
+	.global Overlay_0808ace0
+Overlay_0808ace0:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -37,41 +36,41 @@ Func_0808ace0:
 	movs	r7, #0
 	str	r3, [sp, #4]
 	cmp	r0, #0
-	beq.n	.L0
+	beq.n	.L_0808ad80
 	movs	r1, #1
 	movs	r4, #0
 	ldrsh	r3, [r5, r4]
 	negs	r1, r1
 	ldrh	r2, [r5, #0]
 	cmp	r3, r1
-	beq.n	.L0
+	beq.n	.L_0808ad80
 	mov	r8, r1
 	ldr	r1, [pc, #180]
-.L4:
+.L_0808ad34:
 	lsls	r3, r2, #16
 	asrs	r3, r3, #16
 	cmp	r3, fp
-	bne.n	.L1
+	bne.n	.L_0808ad74
 	movs	r0, #2
 	ldrsh	r3, [r5, r0]
 	cmp	r3, r8
-	beq.n	.L2
+	beq.n	.L_0808ad48
 	cmp	r3, r9
-	bne.n	.L1
-.L2:
+	bne.n	.L_0808ad74
+.L_0808ad48:
 	ldrh	r0, [r5, #4]
 	adds	r3, r1, #0
 	ands	r3, r0
 	cmp	r3, r1
-	beq.n	.L3
+	beq.n	.L_0808ad62
 	lsls	r0, r0, #17
 	asrs	r0, r0, #17
 	str	r1, [sp, #0]
-	bl	Func_080770c0
+	bl	sub_080770c0
 	ldr	r1, [sp, #0]
 	cmp	r0, #0
-	bne.n	.L1
-.L3:
+	bne.n	.L_0808ad74
+.L_0808ad62:
 	ldrb	r3, [r5, #5]
 	lsls	r3, r3, #24
 	asrs	r3, r3, #31
@@ -80,32 +79,32 @@ Func_0808ace0:
 	movs	r1, #6
 	ldrsh	r7, [r5, r1]
 	str	r3, [sp, #4]
-	b.n	.L0
-.L1:
+	b.n	.L_0808ad80
+.L_0808ad74:
 	adds	r5, #8
 	movs	r4, #0
 	ldrsh	r3, [r5, r4]
 	ldrh	r2, [r5, #0]
 	cmp	r3, r8
-	bne.n	.L4
-.L0:
+	bne.n	.L_0808ad34
+.L_0808ad80:
 	movs	r3, #0
 	strb	r3, [r6, #0]
 	adds	r6, #1
 	movs	r3, #0
-.L6:
+.L_0808ad88:
 	strb	r7, [r6, #0]
 	adds	r6, #1
 	cmp	r7, #0
-	beq.n	.L5
+	beq.n	.L_0808ad92
 	adds	r7, #1
-.L5:
+.L_0808ad92:
 	adds	r3, #1
 	cmp	r3, #6
-	bls.n	.L6
+	bls.n	.L_0808ad88
 	ldr	r0, [sp, #4]
 	cmp	r0, #0
-	beq.n	.L7
+	beq.n	.L_0808adb0
 	ldr	r0, [pc, #76]
 	movs	r2, #208
 	add	r0, sl
@@ -115,7 +114,7 @@ Func_0808ace0:
 	movs	r1, #0
 	strb	r3, [r2, #0]
 	strb	r1, [r0, #0]
-.L7:
+.L_0808adb0:
 	movs	r2, #212
 	lsls	r2, r2, #1
 	add	r2, sl
@@ -127,7 +126,7 @@ Func_0808ace0:
 	add	r2, sl
 	lsls	r3, r3, #13
 	str	r3, [r2, #0]
-	bl	Func_0808b25c
+	bl	sub_0808b25c
 	add	sp, #8
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

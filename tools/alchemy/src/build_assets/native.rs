@@ -600,7 +600,7 @@ pub fn extract_missing(root: &Path, rom_path: &Path, target: &DecompTarget) -> R
         .ok_or("missing private inputs")?
     {
         let source = json_string(&input["source"], "private source")?;
-        if !root_path(root, source)?.exists() {
+        if !root.join("out/private").join(source).exists() && !root.join(source).exists() {
             missing.insert(source.to_string());
         }
     }
@@ -654,9 +654,9 @@ pub fn extract_missing(root: &Path, rom_path: &Path, target: &DecompTarget) -> R
     extract(stage.path(), rom_path, target)?;
     for name in &missing {
         let bytes = std::fs::read(root_path(stage.path(), name)?).map_err(|e| e.to_string())?;
-        create_missing(&root_path(root, name)?, &bytes)?;
+        create_missing(&root.join("out/private").join(name), &bytes)?;
     }
-    println!("restored missing private source files: {}", missing.len());
+    println!("restored private cache files: {}", missing.len());
     Ok(())
 }
 

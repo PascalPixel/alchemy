@@ -247,11 +247,11 @@
 	.set sub_02002632, 0x02002632
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x8
-AlchemyC_02000038:
-	.space 0x4
+	movs	r0, #0
+	bx	lr
 AlchemyC_0200003c:
 	.space 0x8
 AlchemyC_02000044:
@@ -1705,8 +1705,27 @@ AlchemyC_02000414:
 	pop	{r1}
 	bx	r1
 	.4byte 0xffa60000
-AlchemyC_02000f30:
-	.space 0x50
+	.4byte 0x22f04b0d
+	.4byte 0x01126818
+	.4byte 0x781a1883
+	.4byte 0x1a9b0113
+	.4byte 0x18c001db
+	.4byte 0x4a0a4b09
+	.4byte 0x4022895c
+	.4byte 0x4a09815a
+	.4byte 0x4022895c
+	.4byte 0x4908815a
+	.4byte 0xc804895a
+	.4byte 0x4a07600a
+	.4byte 0x3b0cc307
+	.4byte 0x00004770
+	.4byte 0x03001ed8
+	.4byte 0x040000b0
+	.4byte 0x0000c5ff
+	.4byte 0x00007fff
+	.4byte 0x0400001c
+	.2byte 0x0001
+	.2byte 0xa660
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -1988,7 +2007,7 @@ AlchemyC_02001188:
 	.4byte 0x85000040
 	.4byte 0x02009c18
 	.4byte 0x020091c5
-.include "games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/IMPORT.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/IMPORT.INC"
 	.4byte 0x69c05860
 	.4byte 0x69c07f20
 	.4byte 0x48005860

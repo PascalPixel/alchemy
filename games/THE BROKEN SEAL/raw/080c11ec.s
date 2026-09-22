@@ -1,14 +1,13 @@
-@ 粒子と尾の描画。記録 0x03001e50 の 16 粒子 (28 バイト、+0x11c0) は寿命 +24 がある間、
-@ 速さ (Func_080045d4) が 0xfff を超えれば IwramRatioMulQ14 で正規化し、各軸に減衰 (v>>7) と
-@ IwramMulQ16 の重力を加えて進む。粒子数 +0x13bc が 24 以下なら乱数の角度と半径 (IwramMulQ16 の
-@ cos, sin) で新しく出す。粒子は Func_08007310 で 0x080c3620/0x080c3604 の絵、3 本の尾 (+0x1380)
-@ は 0x080c3628 の絵で描く。最後に計数を進めて +0x13c0 を立てる。
-@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
-	.global Func_080c11ec
-	.thumb_func
-Func_080c11ec:
+	.set sub_0800231c, 0x0800231c
+	.set sub_08002322, 0x08002322
+	.set sub_08004458, 0x08004458
+	.set sub_080045d4, 0x080045d4
+	.set sub_080072f0, 0x080072f0
+	.set sub_08007310, 0x08007310
+	.global Overlay_080c11ec
+Overlay_080c11ec:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -43,11 +42,10 @@ Func_080c11ec:
 	str	r2, [sp, #8]
 	mov	r9, r3
 	add	r7, sl
-@ 粒子ループ。
-.L12:
+.L_080c1230:
 	ldr	r0, [r7, #24]
 	cmp	r0, #0
-	beq.n	.L0
+	beq.n	.L_080c12b4
 	ldr	r3, [r7, #0]
 	asrs	r3, r3, #8
 	adds	r0, r3, #0
@@ -64,19 +62,18 @@ Func_080c11ec:
 	muls	r2, r3
 	adds	r3, r2, #0
 	adds	r0, r0, r3
-	bl	Func_080045d4
+	bl	sub_080045d4
 	ldr	r3, [pc, #452]
 	cmp	r0, r3
-	bgt.n	.L1
+	bgt.n	.L_080c1266
 	movs	r3, #0
 	str	r3, [r7, #24]
-	b.n	.L2
-.L1:
+	b.n	.L_080c12ae
+.L_080c1266:
 	movs	r1, #128
 	ldr	r3, [pc, #440]
 	lsls	r1, r1, #9
-@ IwramRatioMulQ14 (0x0300013c): 0x10000 / 速さ。
-	bl	Func_080072f0
+	bl	sub_080072f0
 	ldr	r3, [r7, #24]
 	subs	r3, #1
 	movs	r2, #2
@@ -85,8 +82,7 @@ Func_080c11ec:
 	mov	r8, r0
 	adds	r5, r7, #0
 	mov	lr, r2
-@ 軸ごと: IwramMulQ16ReturnIp で速度を縮め、重力を加える。
-.L3:
+.L_080c1280:
 	ldr	r4, [r5, #0]
 	negs	r0, r4
 	asrs	r0, r0, #8
@@ -109,35 +105,34 @@ Func_080c11ec:
 	mov	r2, lr
 	stmia	r5!, {r4}
 	cmp	r2, #0
-	bge.n	.L3
-.L2:
+	bge.n	.L_080c1280
+.L_080c12ae:
 	ldr	r0, [r7, #24]
 	cmp	r0, #0
-	bne.n	.L4
-@ 発生: 乱数の角度と半径。
-.L0:
+	bne.n	.L_080c1348
+.L_080c12b4:
 	ldr	r3, [pc, #368]
 	add	r3, sl
 	ldr	r3, [r3, #0]
 	cmp	r3, #24
-	bgt.n	.L5
-	bl	Func_08004458
+	bgt.n	.L_080c1344
+	bl	sub_08004458
 	adds	r5, r0, #0
-	bl	Func_08004458
+	bl	sub_08004458
 	movs	r3, #128
 	lsls	r3, r3, #9
 	adds	r3, r3, r0
 	lsrs	r6, r3, #1
 	adds	r0, r5, #0
 	mov	r8, r3
-	bl	Func_0800231c
+	bl	sub_0800231c
 	adds	r1, r6, #0
 	movs	r0, r0
 	mov	ip, pc
 	bx	r9
 	str	r0, [r7, #0]
 	adds	r0, r5, #0
-	bl	Func_08002322
+	bl	sub_08002322
 	adds	r1, r6, #0
 	movs	r0, r0
 	mov	ip, pc
@@ -148,19 +143,19 @@ Func_080c11ec:
 	ands	r3, r1
 	str	r0, [r7, #4]
 	cmp	r3, #0
-	beq.n	.L6
+	beq.n	.L_080c1302
 	negs	r3, r2
 	str	r3, [r7, #0]
-.L6:
+.L_080c1302:
 	ldr	r2, [r7, #4]
 	adds	r3, r2, #0
 	ands	r3, r1
 	cmp	r3, #0
-	beq.n	.L7
+	beq.n	.L_080c1310
 	negs	r3, r2
 	str	r3, [r7, #4]
-.L7:
-	bl	Func_08004458
+.L_080c1310:
+	bl	sub_08004458
 	movs	r2, #128
 	lsls	r2, r2, #8
 	adds	r0, r0, r2
@@ -185,11 +180,10 @@ Func_080c11ec:
 	str	r1, [r7, #12]
 	str	r3, [r7, #24]
 	adds	r0, r3, #0
-.L5:
+.L_080c1344:
 	cmp	r0, #0
-	beq.n	.L8
-@ 描画: 大きさの段 0..6。
-.L4:
+	beq.n	.L_080c1384
+.L_080c1348:
 	ldr	r3, [r7, #0]
 	asrs	r3, r3, #10
 	adds	r5, r3, #0
@@ -200,14 +194,14 @@ Func_080c11ec:
 	adds	r5, #64
 	adds	r4, #64
 	cmp	r6, #0
-	bge.n	.L9
+	bge.n	.L_080c1362
 	movs	r6, #0
-	b.n	.L10
-.L9:
+	b.n	.L_080c1368
+.L_080c1362:
 	cmp	r6, #6
-	ble.n	.L10
+	ble.n	.L_080c1368
 	movs	r6, #6
-.L10:
+.L_080c1368:
 	ldr	r3, [pc, #192]
 	ldr	r2, [pc, #196]
 	ldrb	r0, [r3, r6]
@@ -220,16 +214,16 @@ Func_080c11ec:
 	add	r1, sl
 	subs	r3, r4, r3
 	ldr	r0, [sp, #12]
-	bl	Func_08007310
-.L8:
+	bl	sub_08007310
+.L_080c1384:
 	ldr	r3, [sp, #8]
 	subs	r3, #1
 	adds	r7, #28
 	str	r3, [sp, #8]
 	cmp	r3, #0
-	blt.n	.L11
-	b.n	.L12
-.L11:
+	blt.n	.L_080c1392
+	b.n	.L_080c1230
+.L_080c1392:
 	ldr	r3, [pc, #132]
 	adds	r3, #188
 	ldr	r3, [r3, #0]
@@ -238,8 +232,7 @@ Func_080c11ec:
 	mov	fp, r3
 	add	r5, sl
 	movs	r7, #2
-@ 尾ループ。
-.L15:
+.L_080c13a2:
 	ldr	r1, [r5, #0]
 	ldr	r3, [r5, #8]
 	ldr	r2, [r5, #4]
@@ -253,14 +246,14 @@ Func_080c11ec:
 	asrs	r6, r2, #10
 	adds	r2, r1, #0
 	cmp	r1, #0
-	bge.n	.L13
+	bge.n	.L_080c13c0
 	adds	r2, r1, #7
-.L13:
+.L_080c13c0:
 	asrs	r2, r2, #3
 	movs	r3, #3
 	subs	r0, r3, r2
 	cmp	r0, #0
-	blt.n	.L14
+	blt.n	.L_080c13ea
 	adds	r3, r1, #1
 	str	r3, [r5, #16]
 	ldr	r2, [pc, #100]
@@ -275,12 +268,12 @@ Func_080c11ec:
 	adds	r2, #48
 	adds	r3, #48
 	ldr	r0, [sp, #12]
-	bl	Func_08007310
-.L14:
+	bl	sub_08007310
+.L_080c13ea:
 	subs	r7, #1
 	adds	r5, #20
 	cmp	r7, #0
-	bge.n	.L15
+	bge.n	.L_080c13a2
 	ldr	r2, [pc, #52]
 	add	r2, sl
 	ldr	r3, [r2, #0]

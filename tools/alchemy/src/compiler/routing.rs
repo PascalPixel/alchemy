@@ -21,11 +21,11 @@ pub fn root() -> &'static Path {
     })
 }
 pub fn bundle() -> PathBuf {
-    root().join("tools/compilers")
+    root().join("tools/out/compilers")
 }
 /// Native `arm-none-eabi` binutils built by bootstrap; ignored like the compilers.
 pub fn binutils_prefix() -> PathBuf {
-    root().join("tools/binutils")
+    root().join("tools/out/binutils")
 }
 /// Put the installed binutils first on `PATH` for every child process, so the
 /// build never depends on system packages or an emulated host toolchain.
@@ -236,9 +236,9 @@ mod target_tests {
     use super::*;
     #[test]
     fn installed_binutils_lead_path_once() {
-        let first = Path::new("/repo/tools/binutils/bin");
+        let first = Path::new("/repo/tools/out/binutils/bin");
         let current =
-            std::env::join_paths(["/usr/local/bin", "/repo/tools/binutils/bin", "/usr/bin"])
+            std::env::join_paths(["/usr/local/bin", "/repo/tools/out/binutils/bin", "/usr/bin"])
                 .unwrap();
         let path = path_with_first(first, &current).unwrap();
         let entries: Vec<PathBuf> = std::env::split_paths(&path).collect();

@@ -14,9 +14,10 @@ const MODERN_BINUTILS_SHA256: &str =
 const MODERN_BINUTILS_TOOLS: [&str; 5] = ["as", "ld", "nm", "objcopy", "objdump"];
 const MODERN_BINUTILS_CFLAGS: &str = "-O2 -Wno-implicit-function-declaration -Wno-int-conversion -Wno-incompatible-function-pointer-types -Wno-deprecated-non-prototype";
 const GAS_CFLAGS: &str = "-O2 -std=gnu89 -D_POSIX_C_SOURCE=200809L -DNSIG=32 -Wno-implicit-int -Wno-implicit-function-declaration -Wno-int-conversion -Wno-incompatible-pointer-types -fcommon";
-const USAGE: &str = "usage: alchemy bootstrap [--check | --build | --from BUNDLE]\nBuild and install missing compiler dependencies from pinned sources.\n--check validates without building; --build rebuilds source dependencies.\n--from installs an already admitted distribution.\nInstalled executables live in tools/compilers; temporary build work lives in out/.";
+const USAGE: &str = "usage: alchemy bootstrap [--check | --build | --binutils | --from BUNDLE]\nBuild and install missing compiler dependencies from pinned sources.\n--check validates without building; --build rebuilds source dependencies.\n--binutils installs only the pinned native assembler and linker tools.\n--from installs an already admitted distribution.\nInstalled executables live in tools/out/compilers; temporary build work lives in tools/out/compiler-build/.";
 
 pub fn run(args: &[String]) -> Result<(), String> {
+    let mut compiler_ready = true;
     match args {
         [] if !bundle().exists() => {
             build_from_sources()?;
@@ -25,6 +26,10 @@ pub fn run(args: &[String]) -> Result<(), String> {
         [flag] if flag == "--build" => {
             build_from_sources()?;
             ensure_binutils()?;
+        }
+        [flag] if flag == "--binutils" => {
+            ensure_binutils()?;
+            compiler_ready = false;
         }
         _ if args.is_empty() || args == ["--check"] => {
             if args.is_empty() {
@@ -48,7 +53,11 @@ pub fn run(args: &[String]) -> Result<(), String> {
         }
         _ => return Err(USAGE.into()),
     }
-    println!("compiler toolchain ready: {}", bundle().display());
+    if compiler_ready {
+        println!("compiler toolchain ready: {}", bundle().display());
+    } else {
+        println!("binutils ready: {}", binutils_prefix().display());
+    }
     Ok(())
 }
 
@@ -81,7 +90,9 @@ fn execute(command: &mut Command, log: &fs::File, label: &str) -> Result<(), Str
     } else {
         Err(format!(
             "{label} failed; see {}",
-            root().join("out/compilers/build/bootstrap.log").display()
+            root()
+                .join("tools/out/compiler-build/build/bootstrap.log")
+                .display()
         ))
     }
 }
@@ -105,7 +116,7 @@ fn build_from_sources() -> Result<(), String> {
         return Err("source bootstrap is currently admitted only for Apple Silicon macOS".into());
     }
     with_install_lock(|| {
-        let toolchain = root().join("out/compilers");
+        let toolchain = root().join("tools/out/compiler-build");
         let build = toolchain.join("build");
         let sources = toolchain.join("sources");
         fs::create_dir_all(&build).map_err(|e| e.to_string())?;
@@ -222,7 +233,7 @@ fn ensure_binutils() -> Result<(), String> {
 
 fn build_binutils(prefix: &Path) -> Result<(), String> {
     with_install_lock(|| {
-        let toolchain = root().join("out/compilers");
+        let toolchain = root().join("tools/out/compiler-build");
         let build = toolchain.join("build");
         let sources = toolchain.join("sources");
         fs::create_dir_all(&build).map_err(|e| e.to_string())?;

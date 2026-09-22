@@ -25,7 +25,7 @@ use std::process::ExitCode;
 
 const USAGE: &str = "usage: alchemy check tla-owners ROM";
 /// The TLA executable inventory containing the declared main-owner extents.
-const INVENTORY: &str = "games/THE LOST AGE/metrics/executable.json";
+const INVENTORY: &str = "out/tla-en/reports/executable.json";
 
 pub(super) fn entry(arguments: &[String]) -> ExitCode {
     let [rom] = arguments else {

@@ -1,12 +1,10 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global BattleEffect_InitializeSharedScene
-	.global Func_08097384
-	.thumb_func
-BattleEffect_InitializeSharedScene:
-Func_08097384:
+	.set sub_080770c0, 0x080770c0
+	.set sub_08091200, 0x08091200
+	.set sub_08091254, 0x08091254
+	.global Overlay_08097384
+Overlay_08097384:
 	push	{r5, lr}
 	ldr	r3, [pc, #208]
 	movs	r2, #154
@@ -25,7 +23,7 @@ Func_08097384:
 	movs	r2, #0
 	ldrsh	r3, [r3, r2]
 	cmp	r3, #0
-	bne.n	.L0
+	bne.n	.L_080973bc
 	movs	r2, #224
 	lsls	r2, r2, #4
 	adds	r0, r5, r2
@@ -35,7 +33,7 @@ Func_08097384:
 	ldr	r2, [pc, #172]
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
-.L0:
+.L_080973bc:
 	movs	r2, #224
 	lsls	r2, r2, #4
 	adds	r0, r5, r2
@@ -52,63 +50,63 @@ Func_08097384:
 	lsls	r0, r0, #1
 	movs	r3, #7
 	ands	r5, r3
-	bl	Func_080770c0
+	bl	sub_080770c0
 	cmp	r0, #0
-	beq.n	.L1
+	beq.n	.L_080973e6
 	movs	r5, #0
-.L1:
+.L_080973e6:
 	ldr	r0, [pc, #144]
-	bl	Func_080770c0
+	bl	sub_080770c0
 	cmp	r0, #0
-	beq.n	.L2
+	beq.n	.L_080973f2
 	movs	r5, #1
-.L2:
+.L_080973f2:
 	movs	r0, #165
 	lsls	r0, r0, #1
-	bl	Func_080770c0
+	bl	sub_080770c0
 	cmp	r0, #0
-	beq.n	.L3
+	beq.n	.L_08097400
 	movs	r5, #2
-.L3:
+.L_08097400:
 	ldr	r0, [pc, #120]
-	bl	Func_080770c0
+	bl	sub_080770c0
 	cmp	r0, #0
-	beq.n	.L4
+	beq.n	.L_0809740c
 	movs	r5, #3
-.L4:
+.L_0809740c:
 	movs	r0, #166
 	lsls	r0, r0, #1
-	bl	Func_080770c0
+	bl	sub_080770c0
 	cmp	r0, #0
-	beq.n	.L5
+	beq.n	.L_0809741a
 	movs	r5, #4
-.L5:
+.L_0809741a:
 	ldr	r0, [pc, #100]
-	bl	Func_080770c0
+	bl	sub_080770c0
 	cmp	r0, #0
-	beq.n	.L6
+	beq.n	.L_08097426
 	movs	r5, #5
-.L6:
+.L_08097426:
 	movs	r0, #167
 	lsls	r0, r0, #1
-	bl	Func_080770c0
+	bl	sub_080770c0
 	cmp	r0, #0
-	beq.n	.L7
+	beq.n	.L_08097434
 	movs	r5, #6
-.L7:
+.L_08097434:
 	ldr	r0, [pc, #76]
-	bl	Func_080770c0
+	bl	sub_080770c0
 	cmp	r0, #0
-	beq.n	.L8
+	beq.n	.L_08097440
 	movs	r5, #7
-.L8:
+.L_08097440:
 	ldr	r3, [pc, #68]
 	lsls	r2, r5, #2
 	ldr	r0, [r3, r2]
 	movs	r1, #1
-	bl	Func_08091200
+	bl	sub_08091200
 	movs	r0, #8
-	bl	Func_08091254
+	bl	sub_08091254
 	pop	{r5}
 	pop	{r0}
 	bx	r0

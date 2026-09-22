@@ -1,17 +1,13 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global Render_ResetTransformState
-	.global Func_080049ac
-	.thumb_func
-Render_ResetTransformState:
-Func_080049ac:
+	.set sub_080048f4, 0x080048f4
+	.global Overlay_080049ac
+Overlay_080049ac:
 	push	{r5, lr}
 	movs	r1, #48
 	movs	r0, #2
 	ldr	r5, [pc, #40]
-	bl	Func_080048f4
+	bl	sub_080048f4
 	ldr	r2, [pc, #36]
 	movs	r3, #0
 	str	r3, [r2, #0]

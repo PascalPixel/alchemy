@@ -1,28 +1,31 @@
-@ Retired from C: the registered source did not reproduce these bytes
-@ under the family's flags. Disassembled from the audited extent at
-@ 0x080981b0 (228 bytes); the draft C stays in games/THE BROKEN SEAL/recon/en/main/.
 .syntax unified
 	.thumb
-	.global Func_080981b0
-	.thumb_func
-Func_080981b0:
+	.set sub_080030f8, 0x080030f8
+	.set sub_08004458, 0x08004458
+	.set sub_08009098, 0x08009098
+	.set sub_080090d0, 0x080090d0
+	.set sub_08096bec, 0x08096bec
+	.set sub_08096c80, 0x08096c80
+	.set sub_080f9010, 0x080f9010
+	.global Overlay_080981b0
+Overlay_080981b0:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
 	push	{r6, r7}
 	adds	r7, r0, #0
-	movs	r0, #154	@ 0x9a
-	bl	Func_080f9010
-	ldr	r5, [pc, #192]	@ (0x8098284)
+	movs	r0, #154
+	bl	sub_080f9010
+	ldr	r5, [pc, #192]
 	movs	r2, #30
 	mov	r8, r2
 .L_080981c6:
 	ldr	r3, [r7, #12]
-	movs	r2, #128	@ 0x80
+	movs	r2, #128
 	lsls	r2, r2, #9
 	adds	r3, r3, r2
 	str	r3, [r7, #12]
-	movs	r2, #128	@ 0x80
+	movs	r2, #128
 	ldrh	r3, [r7, #6]
 	lsls	r2, r2, #6
 	adds	r3, r3, r2
@@ -34,14 +37,14 @@ Func_080981b0:
 	adds	r3, r3, r5
 	str	r3, [r7, #28]
 	movs	r0, #1
-	bl	Func_080030f8
+	bl	sub_080030f8
 	movs	r3, #1
 	negs	r3, r3
 	add	r8, r3
 	mov	r2, r8
 	cmp	r2, #0
 	bge.n	.L_080981c6
-	movs	r2, #128	@ 0x80
+	movs	r2, #128
 	movs	r3, #7
 	lsls	r2, r2, #9
 	mov	r8, r3
@@ -50,41 +53,41 @@ Func_080981b0:
 	ldr	r1, [r7, #8]
 	ldr	r2, [r7, #12]
 	ldr	r3, [r7, #16]
-	ldr	r0, [pc, #124]	@ (0x8098288)
-	bl	Func_08096c80
+	ldr	r0, [pc, #124]
+	bl	sub_08096c80
 	adds	r6, r0, #0
 	cmp	r6, #0
 	beq.n	.L_0809825e
-	ldr	r1, [pc, #116]	@ (0x809828c)
-	bl	Func_08009098
-	bl	Func_08004458
+	ldr	r1, [pc, #116]
+	bl	sub_08009098
+	bl	sub_08004458
 	mov	r3, sl
 	adds	r2, r6, #0
-	adds	r2, #85	@ 0x55
-	str	r3, [r6, #52]	@ 0x34
+	adds	r2, #85
+	str	r3, [r6, #52]
 	add	r0, sl
 	movs	r3, #2
-	str	r0, [r6, #48]	@ 0x30
+	str	r0, [r6, #48]
 	strb	r3, [r2, #0]
-	ldr	r3, [pc, #96]	@ (0x8098290)
-	str	r3, [r6, #72]	@ 0x48
-	bl	Func_08004458
+	ldr	r3, [pc, #96]
+	str	r3, [r6, #72]
+	bl	sub_08004458
 	adds	r5, r0, #0
-	bl	Func_08004458
+	bl	sub_08004458
 	subs	r5, r5, r0
-	str	r5, [r6, #40]	@ 0x28
-	bl	Func_08004458
+	str	r5, [r6, #40]
+	bl	sub_08004458
 	lsls	r5, r0, #1
 	adds	r5, r5, r0
-	movs	r2, #128	@ 0x80
+	movs	r2, #128
 	lsls	r2, r2, #12
 	lsls	r5, r5, #3
 	adds	r5, r5, r2
-	bl	Func_08004458
+	bl	sub_08004458
 	adds	r1, r5, #0
 	adds	r2, r0, #0
 	adds	r0, r6, #0
-	bl	Func_08096bec
+	bl	sub_08096bec
 .L_0809825e:
 	movs	r3, #1
 	negs	r3, r3
@@ -92,10 +95,10 @@ Func_080981b0:
 	mov	r2, r8
 	cmp	r2, #0
 	bge.n	.L_08098202
-	movs	r0, #131	@ 0x83
-	bl	Func_080f9010
+	movs	r0, #131
+	bl	sub_080f9010
 	adds	r0, r7, #0
-	bl	Func_080090d0
+	bl	sub_080090d0
 	pop	{r3, r5}
 	mov	r8, r3
 	mov	sl, r5

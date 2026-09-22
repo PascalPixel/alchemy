@@ -1,13 +1,12 @@
-@ 配置探索。表 r6[0] の第 r6[4] 項から半径と最小距離を取り、乱数の距離と角度で
-@ 候補位置を最大 7 回作り、Func_0800d924 と Func_080120dc (前方 0x80000、角度 ±0x2000 の
-@ 副候補も) を通り、obj+100 からの距離が最小距離を超えれば Func_0800d14c で移動する。
-@ 7 回失敗すると向きを 0x8000 回し obj+94 に 1 を立てて 0 を返す。
-@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
-	.global Func_0800dd70
-	.thumb_func
-Func_0800dd70:
+	.set sub_08004458, 0x08004458
+	.set sub_0800447c, 0x0800447c
+	.set sub_0800d14c, 0x0800d14c
+	.set sub_0800d924, 0x0800d924
+	.set sub_080120dc, 0x080120dc
+	.global Overlay_0800dd70
+Overlay_0800dd70:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -29,10 +28,10 @@ Func_0800dd70:
 	ldr	r3, [r3, #0]
 	mov	fp, r5
 	cmp	r3, #0
-	bge.n	.L0
+	bge.n	.L_0800dda0
 	ldr	r0, [pc, #344]
 	adds	r3, r3, r0
-.L0:
+.L_0800dda0:
 	asrs	r3, r3, #16
 	adds	r5, r3, #0
 	muls	r5, r3
@@ -40,15 +39,14 @@ Func_0800dd70:
 	movs	r2, #0
 	str	r5, [sp, #0]
 	mov	r9, r2
-.L3:
+.L_0800ddae:
 	movs	r0, #1
 	add	r9, r0
 	mov	r2, r9
 	cmp	r2, #7
-	ble.n	.L1
-	b.n	.L2
-@ 候補: 距離 = 乱数 × 半径 (IwramMulQ16ReturnIp) + 基準、角度 = 向き + 乱数の差。
-.L1:
+	ble.n	.L_0800ddba
+	b.n	.L_0800debe
+.L_0800ddba:
 	ldr	r3, [r6, #8]
 	add	r7, sp, #20
 	str	r3, [r7, #0]
@@ -56,7 +54,7 @@ Func_0800dd70:
 	str	r3, [r7, #4]
 	ldr	r3, [r6, #16]
 	str	r3, [r7, #8]
-	bl	Func_08004458
+	bl	sub_08004458
 	ldr	r3, [pc, #300]
 	mov	r1, fp
 	mov	ip, pc
@@ -64,9 +62,9 @@ Func_0800dd70:
 	ldr	r3, [sp, #4]
 	adds	r3, r3, r0
 	mov	r8, r3
-	bl	Func_08004458
+	bl	sub_08004458
 	adds	r5, r0, #0
-	bl	Func_08004458
+	bl	sub_08004458
 	ldrh	r3, [r6, #6]
 	lsrs	r5, r5, #2
 	lsrs	r0, r0, #2
@@ -76,18 +74,17 @@ Func_0800dd70:
 	mov	r0, r8
 	mov	r1, sl
 	adds	r2, r7, #0
-	bl	Func_0800447c
+	bl	sub_0800447c
 	adds	r0, r6, #0
 	adds	r1, r7, #0
-@ 候補と二つの副候補を通行判定にかける。
-	bl	Func_0800d924
+	bl	sub_0800d924
 	cmp	r0, #0
-	bne.n	.L3
+	bne.n	.L_0800ddae
 	adds	r0, r6, #0
 	adds	r1, r7, #0
-	bl	Func_080120dc
+	bl	sub_080120dc
 	cmp	r0, #0
-	bne.n	.L3
+	bne.n	.L_0800ddae
 	movs	r5, #128
 	ldr	r3, [r6, #8]
 	lsls	r5, r5, #12
@@ -101,7 +98,7 @@ Func_0800dd70:
 	str	r3, [r5, #8]
 	mov	r1, sl
 	adds	r2, r5, #0
-	bl	Func_0800447c
+	bl	sub_0800447c
 	ldr	r3, [r6, #8]
 	str	r3, [r5, #0]
 	ldr	r3, [r6, #12]
@@ -113,12 +110,12 @@ Func_0800dd70:
 	mov	r0, r8
 	str	r3, [r5, #8]
 	adds	r2, r5, #0
-	bl	Func_0800447c
+	bl	sub_0800447c
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	Func_080120dc
+	bl	sub_080120dc
 	cmp	r0, #0
-	bne.n	.L3
+	bne.n	.L_0800ddae
 	ldr	r3, [r6, #8]
 	str	r3, [r5, #0]
 	ldr	r3, [r6, #12]
@@ -129,20 +126,19 @@ Func_0800dd70:
 	mov	r0, r8
 	str	r3, [r5, #8]
 	adds	r2, r5, #0
-	bl	Func_0800447c
+	bl	sub_0800447c
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	Func_080120dc
+	bl	sub_080120dc
 	cmp	r0, #0
-	bne.n	.L3
+	bne.n	.L_0800ddae
 	ldr	r3, [r7, #0]
 	adds	r1, r3, #0
 	cmp	r3, #0
-	bge.n	.L4
+	bge.n	.L_0800de86
 	ldr	r0, [pc, #116]
 	adds	r3, r3, r0
-@ obj+100/102 からの二乗距離が最小距離の二乗を超えるか。
-.L4:
+.L_0800de86:
 	adds	r2, r6, #0
 	adds	r2, #100
 	movs	r5, #0
@@ -152,10 +148,10 @@ Func_0800dd70:
 	ldr	r2, [r7, #8]
 	adds	r4, r2, #0
 	cmp	r2, #0
-	bge.n	.L5
+	bge.n	.L_0800de9e
 	ldr	r3, [pc, #92]
 	adds	r2, r2, r3
-.L5:
+.L_0800de9e:
 	adds	r3, r6, #0
 	adds	r3, #102
 	movs	r5, #0
@@ -170,10 +166,9 @@ Func_0800dd70:
 	adds	r3, r3, r2
 	ldr	r2, [sp, #0]
 	cmp	r3, r2
-	ble.n	.L6
-	b.n	.L3
-@ 失敗: 向きを反転し、再試行フラグを立てる。
-.L2:
+	ble.n	.L_0800ded4
+	b.n	.L_0800ddae
+.L_0800debe:
 	ldrh	r3, [r6, #6]
 	movs	r5, #128
 	lsls	r5, r5, #8
@@ -184,18 +179,17 @@ Func_0800dd70:
 	movs	r3, #1
 	strh	r3, [r2, #0]
 	movs	r0, #0
-	b.n	.L7
-@ 成功: 移動を始め、表の項を次へ進める。
-.L6:
+	b.n	.L_0800dee6
+.L_0800ded4:
 	adds	r0, r6, #0
 	adds	r3, r4, #0
 	ldr	r2, [r7, #4]
-	bl	Func_0800d14c
+	bl	sub_0800d14c
 	ldrh	r3, [r6, #4]
 	adds	r3, #4
 	strh	r3, [r6, #4]
 	movs	r0, #1
-.L7:
+.L_0800dee6:
 	add	sp, #32
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3
@@ -207,4 +201,3 @@ Func_0800dd70:
 	bx	r1
 	.4byte 0x0000ffff
 	.4byte 0x03000118
-	.4byte 0xffffe000

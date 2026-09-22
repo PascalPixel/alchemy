@@ -1643,7 +1643,7 @@
 	.set sub_0200b8f6, 0x0200b8f6
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x16
 	.2byte 0x0000
@@ -6567,7 +6567,11 @@ AlchemyC_02003bc8:
 .L_02003d2a:
 	.space 0x172
 AlchemyC_02003e9c:
-	.space 0x3a0
+	.space 0x224
+.L_020040c0:
+	.space 0x70
+.L_02004130:
+	.space 0x10c
 	push	{r5, r6, lr}
 	mov	r6, sl
 	mov	r5, r9
@@ -7260,7 +7264,39 @@ AlchemyC_02003e9c:
 	.2byte 0x1ebc
 	.2byte 0x0300
 AlchemyC_020048d8:
-	.space 0x250
+	.space 0x2
+.L_020048da:
+	.space 0x24
+.L_020048fe:
+	.space 0x4
+.L_02004902:
+	.space 0x24
+.L_02004926:
+	.space 0x6a
+.L_02004990:
+	.space 0x20
+.L_020049b0:
+	.space 0x20
+.L_020049d0:
+	.space 0x16
+.L_020049e6:
+	.space 0x18
+.L_020049fe:
+	.space 0x6
+.L_02004a04:
+	.space 0x12
+.L_02004a16:
+	.space 0xe
+.L_02004a24:
+	.space 0x10
+.L_02004a34:
+	.space 0xe
+.L_02004a42:
+	.space 0x18
+.L_02004a5a:
+	.space 0xe
+.L_02004a68:
+	.space 0xc0
 AlchemyC_02004b28:
 	.space 0xc4
 AlchemyC_02004bec:
@@ -7270,7 +7306,11 @@ AlchemyC_02004bec:
 .L_02004f8a:
 	.space 0x2c
 .L_02004fb6:
-	.space 0x6d2
+	.space 0x412
+.L_020053c8:
+	.space 0x64
+.L_0200542c:
+	.space 0x25c
 AlchemyC_02005688:
 	.space 0x18
 	push	{r5, r6, r7, lr}
@@ -7717,9 +7757,22 @@ AlchemyC_020059f0:
 	.2byte 0x0000
 AlchemyC_02005b90:
 	.space 0x5c
-.include "games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/IMPORT.INC"
-AlchemyRuntime_02005ed4:
-	.space 0x3c
+	.include "games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/IMPORT.INC"
+	.4byte 0x46c04700
+	.4byte 0x46c04708
+	.4byte 0x46c04710
+	.4byte 0x46c04718
+	.4byte 0x46c04720
+	.4byte 0x46c04728
+	.4byte 0x46c04730
+	.4byte 0x46c04738
+	.4byte 0x46c04740
+	.4byte 0x46c04748
+	.4byte 0x46c04750
+	.4byte 0x46c04758
+	.4byte 0x46c04760
+	.4byte 0x46c04768
+	.4byte 0x46c04770
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c

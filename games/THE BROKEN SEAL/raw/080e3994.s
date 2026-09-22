@@ -1,11 +1,13 @@
-@ 戦闘モーション: 0x03001e80 の記録から位置を組み立てて Func_08005268 で変換し、
-@ 係数 [sl+24] と (Func_080b5070 >> 17) を Q16 乗算して r1[4] から引く。戻り値 0。
-@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
-	.global Func_080e3994
-	.thumb_func
-Func_080e3994:
+	.set sub_080049ac, 0x080049ac
+	.set sub_080051d8, 0x080051d8
+	.set sub_08005268, 0x08005268
+	.set sub_080b5070, 0x080b5070
+	.set sub_080b5098, 0x080b5098
+	.set sub_080b50d8, 0x080b50d8
+	.global Overlay_080e3994
+Overlay_080e3994:
 	push	{r5, r6, lr}
 	mov	r6, sl
 	mov	r5, r9
@@ -17,36 +19,33 @@ Func_080e3994:
 	ldr	r6, [r3, #0]
 	mov	r8, r1
 	mov	r9, r0
-	bl	Func_080b5098
+	bl	sub_080b5098
 	ldr	r5, [r0, #0]
 	movs	r1, #0
 	adds	r0, r5, #0
-	bl	Func_080b50d8
+	bl	sub_080b50d8
 	mov	sl, r0
-	bl	Func_080049ac
+	bl	sub_080049ac
 	adds	r1, r6, #0
 	adds	r0, r6, #0
 	adds	r1, #12
 	adds	r5, #8
-@ 記録 +12 からの3語を位置へ写す。
-	bl	Func_080051d8
+	bl	sub_080051d8
 	mov	r1, r8
 	adds	r0, r5, #0
-	bl	Func_08005268
+	bl	sub_08005268
 	mov	r2, sl
 	ldr	r5, [pc, #56]
 	ldr	r1, [r2, #24]
-@ IwramMulQ16ReturnIp: 変換結果 × 係数。
 	mov	ip, pc
 	bx	r5
 	adds	r6, r0, #0
 	mov	r0, r9
-	bl	Func_080b5070
+	bl	sub_080b5070
 	adds	r1, r0, #0
 	asrs	r1, r1, #17
 	adds	r0, r6, #0
 	movs	r0, r0
-@ IwramMulQ16ReturnIp: × (Func_080b5070 >> 17)。
 	mov	ip, pc
 	bx	r5
 	mov	r2, r8

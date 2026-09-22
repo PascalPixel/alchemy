@@ -1,12 +1,7 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global UiWindow_SetTilemapEntry
-	.global Func_08019000
-	.thumb_func
-UiWindow_SetTilemapEntry:
-Func_08019000:
+	.global Overlay_08019000
+Overlay_08019000:
 	push	{r5, r6, r7, lr}
 	adds	r4, r3, #0
 	ldr	r3, [pc, #128]
@@ -19,36 +14,36 @@ Func_08019000:
 	ldr	r2, [sp, #16]
 	adds	r1, #1
 	cmp	r4, r3
-	bhi.n	.L0
+	bhi.n	.L_08019082
 	ldrh	r3, [r0, #8]
 	subs	r3, #1
 	cmp	r1, r3
-	bhi.n	.L0
+	bhi.n	.L_08019082
 	movs	r5, #240
 	lsls	r5, r5, #8
 	cmp	r2, #3
-	beq.n	.L1
+	beq.n	.L_08019042
 	cmp	r2, #3
-	bhi.n	.L2
+	bhi.n	.L_08019038
 	movs	r5, #224
 	lsls	r5, r5, #8
 	cmp	r2, #2
-	beq.n	.L1
-	b.n	.L3
-.L2:
+	beq.n	.L_08019042
+	b.n	.L_08019040
+.L_08019038:
 	movs	r5, #128
 	lsls	r5, r5, #5
 	cmp	r2, #4
-	beq.n	.L1
-.L3:
+	beq.n	.L_08019042
+.L_08019040:
 	movs	r5, #0
-.L1:
+.L_08019042:
 	cmp	r2, #1
-	beq.n	.L0
+	beq.n	.L_08019082
 	cmp	r2, #1
-	bcc.n	.L4
+	bcc.n	.L_0801906a
 	cmp	r2, #4
-	bhi.n	.L4
+	bhi.n	.L_0801906a
 	ldrh	r2, [r0, #14]
 	ldrh	r3, [r0, #12]
 	adds	r2, r2, r4
@@ -58,12 +53,12 @@ Func_08019000:
 	movs	r3, #160
 	lsls	r3, r3, #2
 	cmp	r0, r3
-	bcs.n	.L0
+	bcs.n	.L_08019082
 	lsls	r3, r0, #1
 	orrs	r5, r7
 	strh	r5, [r6, r3]
-	b.n	.L0
-.L4:
+	b.n	.L_08019082
+.L_0801906a:
 	ldrh	r2, [r0, #14]
 	ldrh	r3, [r0, #12]
 	adds	r2, r2, r4
@@ -73,10 +68,10 @@ Func_08019000:
 	movs	r3, #160
 	lsls	r3, r3, #2
 	cmp	r0, r3
-	bcs.n	.L0
+	bcs.n	.L_08019082
 	lsls	r3, r0, #1
 	strh	r7, [r6, r3]
-.L0:
+.L_08019082:
 	pop	{r5, r6, r7}
 	pop	{r0}
 	bx	r0

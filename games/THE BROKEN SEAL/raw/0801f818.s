@@ -1,10 +1,13 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global Func_0801f818
-	.thumb_func
-Func_0801f818:
+	.set sub_08077008, 0x08077008
+	.set sub_080770c0, 0x080770c0
+	.set sub_08077158, 0x08077158
+	.set sub_08077290, 0x08077290
+	.set sub_08077300, 0x08077300
+	.set sub_0808a5d0, 0x0808a5d0
+	.global Overlay_0801f818
+Overlay_0801f818:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
@@ -12,7 +15,7 @@ Func_0801f818:
 	ldr	r5, [pc, #356]
 	sub	sp, #28
 	mov	r8, r0
-	bl	Func_08077300
+	bl	sub_08077300
 	ldr	r2, [pc, #352]
 	ldr	r3, [pc, #352]
 	str	r0, [r2, #0]
@@ -32,21 +35,21 @@ Func_0801f818:
 	lsls	r1, r1, #1
 	adds	r2, r2, r1
 	ldr	r0, [r2, #0]
-	bl	Func_08077008
+	bl	sub_08077008
 	adds	r7, r5, #0
 	adds	r6, r0, #0
 	adds	r1, r5, #0
 	subs	r7, #16
 	adds	r2, r6, #0
 	movs	r5, #11
-.L0:
+.L_0801f860:
 	ldrb	r3, [r2, #0]
 	subs	r5, #1
 	strb	r3, [r1, #0]
 	adds	r2, #1
 	adds	r1, #1
 	cmp	r5, #0
-	bge.n	.L0
+	bge.n	.L_0801f860
 	ldrb	r3, [r6, #15]
 	ldr	r5, [pc, #280]
 	strb	r3, [r7, #28]
@@ -61,7 +64,7 @@ Func_0801f818:
 	adds	r3, r5, r2
 	movs	r2, #0
 	ldrsh	r1, [r3, r2]
-	bl	Func_0808a5d0
+	bl	sub_0808a5d0
 	strh	r0, [r7, #30]
 	ldr	r0, [pc, #268]
 	adds	r3, r6, r0
@@ -70,48 +73,48 @@ Func_0801f818:
 	ldr	r3, [r5, #16]
 	movs	r0, #0
 	str	r3, [r7, #36]
-	bl	Func_08077290
+	bl	sub_08077290
 	adds	r3, r7, #0
 	adds	r3, #40
 	strb	r0, [r3, #0]
 	movs	r0, #1
-	bl	Func_08077290
+	bl	sub_08077290
 	adds	r3, r7, #0
 	adds	r3, #41
 	strb	r0, [r3, #0]
 	movs	r0, #2
-	bl	Func_08077290
+	bl	sub_08077290
 	adds	r3, r7, #0
 	adds	r3, #42
 	strb	r0, [r3, #0]
 	movs	r0, #3
-	bl	Func_08077290
+	bl	sub_08077290
 	adds	r3, r7, #0
 	adds	r3, #43
 	mov	r6, sp
 	strb	r0, [r3, #0]
 	movs	r5, #0
 	adds	r0, r6, #0
-	bl	Func_08077158
+	bl	sub_08077158
 	ldrh	r3, [r6, r5]
 	cmp	r3, #255
-	beq.n	.L1
+	beq.n	.L_0801f8f8
 	adds	r1, r7, #0
 	adds	r0, r6, #0
 	adds	r1, #44
 	movs	r2, #0
-.L2:
+.L_0801f8e4:
 	ldrh	r3, [r2, r0]
 	adds	r5, #1
 	strb	r3, [r1, #0]
 	adds	r2, #2
 	adds	r1, #1
 	cmp	r5, #3
-	bgt.n	.L1
+	bgt.n	.L_0801f8f8
 	ldrh	r3, [r2, r6]
 	cmp	r3, #255
-	bne.n	.L2
-.L1:
+	bne.n	.L_0801f8e4
+.L_0801f8f8:
 	movs	r1, #1
 	adds	r2, r5, #0
 	negs	r1, r1
@@ -143,20 +146,20 @@ Func_0801f818:
 	strb	r0, [r3, #0]
 	movs	r5, #48
 	adds	r6, r3, #0
-.L4:
+.L_0801f936:
 	adds	r0, r5, #0
-	bl	Func_080770c0
+	bl	sub_080770c0
 	cmp	r0, #0
-	beq.n	.L3
+	beq.n	.L_0801f946
 	ldrb	r3, [r6, #0]
 	adds	r3, #1
 	strb	r3, [r6, #0]
-.L3:
+.L_0801f946:
 	adds	r5, #1
 	cmp	r5, #127
-	ble.n	.L4
+	ble.n	.L_0801f936
 	movs	r0, #32
-	bl	Func_080770c0
+	bl	sub_080770c0
 	negs	r3, r0
 	orrs	r3, r0
 	adds	r2, r7, #0
@@ -170,14 +173,14 @@ Func_0801f818:
 	movs	r5, #0
 	lsls	r1, r1, #2
 	strh	r3, [r7, #54]
-	b.n	.L5
-.L6:
+	b.n	.L_0801f974
+.L_0801f96e:
 	ldmia	r2!, {r3}
 	adds	r5, #1
 	add	r8, r3
-.L5:
+.L_0801f974:
 	cmp	r5, r1
-	blt.n	.L6
+	blt.n	.L_0801f96e
 	mov	r0, r8
 	str	r0, [r7, #60]
 	add	sp, #28

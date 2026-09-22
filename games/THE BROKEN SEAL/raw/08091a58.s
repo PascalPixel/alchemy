@@ -1,12 +1,19 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global PartyInventory_GiveItem
-	.global Func_08091a58
-	.thumb_func
-PartyInventory_GiveItem:
-Func_08091a58:
+	.set sub_08015040, 0x08015040
+	.set sub_08015120, 0x08015120
+	.set sub_08015140, 0x08015140
+	.set sub_08077008, 0x08077008
+	.set sub_08077018, 0x08077018
+	.set sub_08077020, 0x08077020
+	.set sub_08077030, 0x08077030
+	.set sub_08077240, 0x08077240
+	.set sub_080772b0, 0x080772b0
+	.set sub_08091d84, 0x08091d84
+	.set sub_080b0058, 0x080b0058
+	.set sub_080f9010, 0x080f9010
+	.global Overlay_08091a58
+Overlay_08091a58:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -25,170 +32,170 @@ Func_08091a58:
 	sub	sp, #12
 	str	r2, [sp, #0]
 	adds	r6, r0, #0
-	bl	Func_08077030
+	bl	sub_08077030
 	movs	r2, #1
 	mov	r8, r0
 	negs	r2, r2
 	cmp	r8, r2
-	beq.n	.L0
-	b.n	.L1
-.L0:
+	beq.n	.L_08091a8c
+	b.n	.L_08091baa
+.L_08091a8c:
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	Func_08015120
+	bl	sub_08015120
 	ldr	r0, [pc, #368]
 	movs	r1, #1
-	bl	Func_08015040
+	bl	sub_08015040
 	ldr	r0, [pc, #364]
 	movs	r1, #1
-	bl	Func_08015040
+	bl	sub_08015040
 	movs	r3, #8
 	movs	r2, #4
 	add	r3, sp
 	add	r2, sp
 	mov	r9, r3
 	mov	sl, r2
-.L4:
+.L_08091ab0:
 	ldr	r7, [pc, #348]
 	movs	r1, #1
 	adds	r0, r7, #0
-	bl	Func_08015040
+	bl	sub_08015040
 	mov	r0, r9
 	mov	r1, sl
-	bl	Func_080b0058
+	bl	sub_080b0058
 	movs	r3, #1
 	adds	r5, r0, #0
 	negs	r3, r3
 	cmp	r5, r3
-	bne.n	.L2
+	bne.n	.L_08091b34
 	adds	r0, r6, #0
-	bl	Func_08077018
+	bl	sub_08077018
 	ldrb	r2, [r0, #3]
 	movs	r3, #8
 	ands	r3, r2
 	cmp	r3, #0
-	beq.n	.L3
+	beq.n	.L_08091aee
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	Func_08015120
+	bl	sub_08015120
 	adds	r0, r7, #4
 	movs	r1, #1
-	bl	Func_08015040
-	b.n	.L4
-.L3:
+	bl	sub_08015040
+	b.n	.L_08091ab0
+.L_08091aee:
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	Func_08015120
+	bl	sub_08015120
 	adds	r0, r7, #1
 	movs	r1, #5
-	bl	Func_08015040
+	bl	sub_08015040
 	movs	r0, #1
-	bl	Func_08091d84
+	bl	sub_08091d84
 	adds	r5, r0, #0
-	bl	Func_08015140
+	bl	sub_08015140
 	cmp	r5, #0
-	bne.n	.L4
+	bne.n	.L_08091ab0
 	movs	r1, #1
 	adds	r0, r6, #0
-	bl	Func_08077240
+	bl	sub_08077240
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	Func_08015120
+	bl	sub_08015120
 	adds	r0, r7, #2
 	movs	r1, #1
-	bl	Func_08015040
+	bl	sub_08015040
 	movs	r3, #236
 	mov	r2, sp
 	lsls	r3, r3, #1
 	ldrh	r2, [r2, #0]
 	add	r3, fp
 	strh	r2, [r3, #0]
-	b.n	.L5
-.L2:
+	b.n	.L_08091bee
+.L_08091b34:
 	ldr	r0, [sp, #8]
-	bl	Func_08077008
+	bl	sub_08077008
 	ldr	r1, [sp, #4]
 	ldr	r0, [sp, #8]
-	bl	Func_08077020
+	bl	sub_08077020
 	cmp	r0, #0
-	ble.n	.L6
+	ble.n	.L_08091b56
 	adds	r5, r0, #0
-.L7:
+.L_08091b48:
 	ldr	r0, [sp, #8]
 	ldr	r1, [sp, #4]
 	subs	r5, #1
-	bl	Func_080772b0
+	bl	sub_080772b0
 	cmp	r5, #0
-	bne.n	.L7
-.L6:
+	bne.n	.L_08091b48
+.L_08091b56:
 	adds	r0, r6, #0
-	bl	Func_08077030
+	bl	sub_08077030
 	mov	r8, r0
 	movs	r0, #83
-	bl	Func_080f9010
+	bl	sub_080f9010
 	ldr	r3, [pc, #172]
 	movs	r2, #250
 	lsls	r2, r2, #1
 	adds	r3, r3, r2
 	ldr	r3, [r3, #0]
 	cmp	r8, r3
-	bne.n	.L8
+	bne.n	.L_08091b84
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	Func_08015120
+	bl	sub_08015120
 	ldr	r0, [pc, #140]
 	movs	r1, #3
-	bl	Func_08015040
-	b.n	.L9
-.L8:
+	bl	sub_08015040
+	b.n	.L_08091b9c
+.L_08091b84:
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	Func_08015120
+	bl	sub_08015120
 	mov	r0, r8
 	movs	r1, #1
-	bl	Func_08015120
+	bl	sub_08015120
 	ldr	r0, [pc, #128]
 	movs	r1, #3
-	bl	Func_08015040
-.L9:
+	bl	sub_08015040
+.L_08091b9c:
 	movs	r3, #236
 	mov	r2, sp
 	lsls	r3, r3, #1
 	ldrh	r2, [r2, #0]
 	add	r3, fp
 	strh	r2, [r3, #0]
-	b.n	.L5
-.L1:
+	b.n	.L_08091bee
+.L_08091baa:
 	movs	r0, #83
-	bl	Func_080f9010
+	bl	sub_080f9010
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	Func_08015120
+	bl	sub_08015120
 	ldr	r5, [pc, #76]
 	movs	r1, #3
 	adds	r0, r5, #0
-	bl	Func_08015040
+	bl	sub_08015040
 	ldr	r3, [pc, #80]
 	movs	r2, #250
 	lsls	r2, r2, #1
 	adds	r3, r3, r2
 	ldr	r3, [r3, #0]
 	cmp	r8, r3
-	beq.n	.L10
+	beq.n	.L_08091be8
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	Func_08015120
+	bl	sub_08015120
 	mov	r0, r8
 	movs	r1, #1
-	bl	Func_08015120
+	bl	sub_08015120
 	adds	r0, r5, #1
 	movs	r1, #3
-	bl	Func_08015040
-.L10:
+	bl	sub_08015040
+.L_08091be8:
 	mov	r3, sp
 	ldrh	r3, [r3, #0]
 	strh	r3, [r7, #0]
-.L5:
+.L_08091bee:
 	mov	r0, r8
 	add	sp, #12
 	pop	{r3, r5, r6, r7}

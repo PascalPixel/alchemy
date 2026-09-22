@@ -148,7 +148,7 @@ pub struct Score {
 
 /// Re-enter the unified executable, falling back to Cargo before installation.
 pub fn tool_command(root: &Path, group: &str) -> Command {
-    let built = root.join("out/cargo-target/release/alchemy");
+    let built = root.join("tools/out/cargo-target/release/alchemy");
     let mut command = if built.is_file() {
         Command::new(built)
     } else {

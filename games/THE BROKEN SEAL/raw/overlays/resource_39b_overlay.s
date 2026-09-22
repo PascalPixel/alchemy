@@ -298,7 +298,7 @@
 	.set sub_02004924, 0x02004924
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x16
 	.2byte 0x0000
@@ -324,11 +324,19 @@ AlchemyC_02000528:
 AlchemyC_0200058c:
 	.space 0xa4
 AlchemyC_02000630:
-	.space 0x128
+	.space 0x10e
+.L_0200073e:
+	.space 0x1a
 AlchemyC_02000758:
-	.space 0x194
+	.space 0x12
+.L_0200076a:
+	.space 0x2c
+.L_02000796:
+	.space 0x156
 AlchemyC_020008ec:
-	.space 0x2b8
+	.space 0x1e
+.L_0200090a:
+	.space 0x29a
 AlchemyC_02000ba4:
 	.space 0x11c
 AlchemyC_02000cc0:
@@ -2080,9 +2088,22 @@ AlchemyC_02001fe8:
 	.2byte 0x0200
 AlchemyC_020023b8:
 	.space 0x24
-.include "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/IMPORT.INC"
-AlchemyRuntime_0200261c:
-	.space 0x3c
+	.include "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/IMPORT.INC"
+	.4byte 0x46c04700
+	.4byte 0x46c04708
+	.4byte 0x46c04710
+	.4byte 0x46c04718
+	.4byte 0x46c04720
+	.4byte 0x46c04728
+	.4byte 0x46c04730
+	.4byte 0x46c04738
+	.4byte 0x46c04740
+	.4byte 0x46c04748
+	.4byte 0x46c04750
+	.4byte 0x46c04758
+	.4byte 0x46c04760
+	.4byte 0x46c04768
+	.4byte 0x46c04770
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c

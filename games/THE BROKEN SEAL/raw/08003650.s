@@ -1,10 +1,15 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global Func_08003650
-	.thumb_func
-Func_08003650:
+	.set sub_080006fc, 0x080006fc
+	.set sub_08003a7c, 0x08003a7c
+	.set sub_08003adc, 0x08003adc
+	.set sub_08004420, 0x08004420
+	.set sub_08006088, 0x08006088
+	.set sub_0800655c, 0x0800655c
+	.set sub_080072ec, 0x080072ec
+	.set sub_080f9018, 0x080f9018
+	.global Overlay_08003650
+Overlay_08003650:
 	push	{r5, lr}
 	ldr	r2, [pc, #184]
 	ldr	r3, [pc, #184]
@@ -19,24 +24,24 @@ Func_08003650:
 	ldr	r3, [pc, #176]
 	ldrh	r3, [r3, #0]
 	cmp	r3, #0
-	beq.n	.L0
+	beq.n	.L_0800367e
 	ldr	r0, [pc, #172]
 	ldr	r1, [pc, #172]
 	ldr	r5, [pc, #176]
-	bl	Func_08006088
+	bl	sub_08006088
 	strh	r0, [r5, #0]
-	bl	Func_0800655c
-.L0:
-	bl	Func_080f9018
-	bl	Func_08003adc
+	bl	sub_0800655c
+.L_0800367e:
+	bl	sub_080f9018
+	bl	sub_08003adc
 	ldr	r5, [pc, #160]
 	ldrb	r3, [r5, #0]
 	cmp	r3, #0
-	beq.n	.L1
+	beq.n	.L_080036bc
 	ldr	r3, [pc, #156]
 	ldrb	r3, [r3, #0]
 	cmp	r3, #0
-	beq.n	.L2
+	beq.n	.L_080036a8
 	ldr	r2, [pc, #152]
 	movs	r1, #224
 	adds	r2, #208
@@ -46,28 +51,28 @@ Func_08003650:
 	ldr	r2, [pc, #148]
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
-.L2:
+.L_080036a8:
 	ldr	r3, [pc, #136]
 	ldr	r0, [pc, #144]
 	ldr	r1, [pc, #144]
 	ldr	r2, [pc, #148]
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
-	bl	Func_08003a7c
+	bl	sub_08003a7c
 	movs	r3, #0
 	strb	r3, [r5, #0]
-.L1:
+.L_080036bc:
 	ldr	r1, [pc, #136]
 	ldr	r2, [r1, #0]
 	cmp	r2, #0
-	beq.n	.L3
+	beq.n	.L_080036cc
 	movs	r3, #0
 	str	r3, [r1, #0]
-	bl	Func_080072ec
-.L3:
+	bl	sub_080072ec
+.L_080036cc:
 	movs	r0, #144
 	lsls	r0, r0, #3
-	bl	Func_08004420
+	bl	sub_08004420
 	ldr	r3, [pc, #116]
 	ldrh	r2, [r3, #0]
 	ldr	r3, [pc, #44]
@@ -85,14 +90,14 @@ Func_08003650:
 	str	r3, [r1, #0]
 	str	r0, [r4, #0]
 	cmp	r0, #0
-	bne.n	.L4
+	bne.n	.L_08003768
 	ldr	r3, [pc, #96]
 	movs	r2, #19
 	str	r2, [r3, #0]
 	ldr	r3, [pc, #96]
 	ldr	r1, [pc, #96]
 	str	r0, [r3, #0]
-	b.n	.L5
+	b.n	.L_08003792
 	movs	r0, r0
 	.4byte 0x000003ff
 	.4byte 0x040000b0
@@ -117,8 +122,9 @@ Func_08003650:
 	.4byte 0x03001af8
 	.4byte 0x03001b00
 	.4byte 0x03001b04
-	.4byte 0x03001d0c
-.L4:
+	.2byte 0x1d0c
+	.2byte 0x0300
+.L_08003768:
 	ldr	r1, [pc, #76]
 	ldr	r2, [pc, #80]
 	ldr	r3, [r1, #0]
@@ -126,22 +132,22 @@ Func_08003650:
 	ldr	r2, [r4, #0]
 	ands	r2, r3
 	cmp	r2, #0
-	beq.n	.L6
+	beq.n	.L_08003786
 	ldr	r3, [pc, #68]
 	movs	r2, #1
 	negs	r2, r2
 	str	r2, [r3, #0]
 	ldr	r3, [pc, #64]
 	str	r0, [r3, #0]
-	b.n	.L5
-.L6:
+	b.n	.L_08003792
+.L_08003786:
 	ldr	r2, [pc, #56]
 	ldr	r3, [r2, #0]
 	cmp	r3, #0
-	ble.n	.L5
+	ble.n	.L_08003792
 	subs	r3, #1
 	str	r3, [r2, #0]
-.L5:
+.L_08003792:
 	str	r0, [r1, #0]
 	ldr	r2, [pc, #48]
 	ldr	r3, [r2, #0]
@@ -154,7 +160,7 @@ Func_08003650:
 	ldr	r2, [pc, #40]
 	ldr	r3, [pc, #12]
 	strh	r3, [r2, #0]
-	bl	Func_080006fc
+	bl	sub_080006fc
 	pop	{r5}
 	pop	{r0}
 	bx	r0
@@ -165,4 +171,28 @@ Func_08003650:
 	.4byte 0x03001b04
 	.4byte 0x03001800
 	.4byte 0x03001ccc
-	.4byte 0x03001d28
+	.2byte 0x1d28
+	.2byte 0x0300
+	push	{lr}
+	cmp	r0, #4
+	bls.n	.L_080037dc
+	movs	r0, #0
+.L_080037dc:
+	movs	r3, #152
+	adds	r2, r0, #0
+	muls	r2, r3
+	ldr	r0, [pc, #20]
+	ldr	r3, [pc, #20]
+	adds	r0, r2, r0
+	ldr	r1, [pc, #20]
+	ldr	r2, [pc, #24]
+	stmia	r3!, {r0, r1, r2}
+	subs	r3, #12
+	movs	r0, #0
+	pop	{r1}
+	bx	r1
+	movs	r0, r0
+	.4byte 0x08000404
+	.4byte 0x040000d4
+	.4byte 0x03000bd8
+	.4byte 0x84000026

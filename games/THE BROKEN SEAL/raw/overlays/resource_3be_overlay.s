@@ -186,7 +186,7 @@
 	.set sub_020029c2, 0x020029c2
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x16
 	.2byte 0x0000
@@ -212,11 +212,19 @@ AlchemyC_02000528:
 AlchemyC_0200058c:
 	.space 0xa4
 AlchemyC_02000630:
-	.space 0x128
+	.space 0x10e
+.L_0200073e:
+	.space 0x1a
 AlchemyC_02000758:
-	.space 0x194
+	.space 0x12
+.L_0200076a:
+	.space 0x2c
+.L_02000796:
+	.space 0x156
 AlchemyC_020008ec:
-	.space 0x2b8
+	.space 0x1e
+.L_0200090a:
+	.space 0x29a
 AlchemyC_02000ba4:
 	.space 0x11c
 AlchemyC_02000cc0:
@@ -228,7 +236,9 @@ AlchemyC_02000d18:
 AlchemyC_02000d20:
 	.space 0x68
 AlchemyC_02000d88:
-	.space 0x68
+	.space 0x1e
+.L_02000da6:
+	.space 0x4a
 AlchemyC_02000df0:
 	.space 0xda
 .L_02000eca:
@@ -271,9 +281,22 @@ AlchemyC_02001394:
 	.space 0xae
 .L_02001442:
 	.space 0x42
-.include "games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/IMPORT.INC"
-AlchemyRuntime_020015dc:
-	.space 0x3c
+	.include "games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/IMPORT.INC"
+	.4byte 0x46c04700
+	.4byte 0x46c04708
+	.4byte 0x46c04710
+	.4byte 0x46c04718
+	.4byte 0x46c04720
+	.4byte 0x46c04728
+	.4byte 0x46c04730
+	.4byte 0x46c04738
+	.4byte 0x46c04740
+	.4byte 0x46c04748
+	.4byte 0x46c04750
+	.4byte 0x46c04758
+	.4byte 0x46c04760
+	.4byte 0x46c04768
+	.4byte 0x46c04770
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c

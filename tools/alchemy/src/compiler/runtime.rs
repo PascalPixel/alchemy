@@ -292,7 +292,7 @@ fn configured(root: &Path) -> Result<PathBuf, String> {
         ]
         .concat(),
     );
-    let parent = root.join("out/compilers/runtime");
+    let parent = root.join("tools/out/compiler-build/runtime");
     let directory = parent.join(format!("configure-{}", &identity[..16]));
     if directory.join("tconfig.h").is_file() {
         return Ok(directory);
@@ -430,7 +430,7 @@ pub fn build(root: &Path, link: &Link) -> Result<Linked, String> {
     if let Some(linked) = memo().lock().unwrap().get(&memo_key) {
         return Ok(linked.clone());
     }
-    let parent = root.join("out/compilers/runtime");
+    let parent = root.join("tools/out/compiler-build/runtime");
     std::fs::create_dir_all(&parent).map_err(|error| format!("{}: {error}", parent.display()))?;
     let work = tempfile::Builder::new()
         .prefix(".link-")

@@ -190,7 +190,7 @@ pub(in crate::build_assets) fn check(root: &Path) -> Result<(), String> {
             }
             source_spelling(&mut spellings, name)?;
             private.insert(name.to_string());
-            if !restorable && !root.join(name).exists() {
+            if !restorable && !root_path(root, name)?.exists() {
                 continue;
             }
             if kind == "frame-atlas" {
@@ -198,7 +198,7 @@ pub(in crate::build_assets) fn check(root: &Path) -> Result<(), String> {
                 continue;
             }
             if kind == "palette-table" {
-                let doc = ctx.document(&root.join(name))?;
+                let doc = ctx.document(&root_path(root, name)?)?;
                 let values = doc
                     .pointer(json_string(&input["pointer"], "palette table pointer")?)
                     .ok_or("palette table absent")?;
@@ -232,7 +232,7 @@ pub(in crate::build_assets) fn check(root: &Path) -> Result<(), String> {
                 continue;
             }
             if matches!(kind, "palette" | "palette-raw" | "palette-buffer") {
-                let palette = ctx.document(&root.join(name))?;
+                let palette = ctx.document(&root_path(root, name)?)?;
                 let mut data = vec![];
                 for bank in input["banks"].as_array().ok_or("missing palette indices")? {
                     let values = palette["banks"]
@@ -255,7 +255,7 @@ pub(in crate::build_assets) fn check(root: &Path) -> Result<(), String> {
             }
             if kind == "bytes" {
                 if !bytes.contains_key(name) {
-                    let file = fs::read(root.join(name)).map_err(|e| {
+                    let file = fs::read(root_path(root, name)?).map_err(|e| {
                         format!("{name}: {e}; run alchemy build assets --extract-sources ROM")
                     })?;
                     bytes.insert(name.to_string(), file);
@@ -267,7 +267,7 @@ pub(in crate::build_assets) fn check(root: &Path) -> Result<(), String> {
                 continue;
             }
             if !bytes.contains_key(name) {
-                let file = fs::read(root.join(name)).map_err(|e| {
+                let file = fs::read(root_path(root, name)?).map_err(|e| {
                     format!("{name}: {e}; run alchemy build assets --extract-sources ROM")
                 })?;
                 let data = if kind == "tiles" {

@@ -358,19 +358,12 @@ pub(super) fn validated_inventory(
 fn candidate_main(
     tree: &SourceTree,
     target: &DecompTarget,
-    executable: &[Span],
+    _executable: &[Span],
 ) -> (Vec<Span>, usize) {
     let directory = format!("{}/recon/en/main", target.game_dir());
-    let dossiers = json(
-        tree,
-        &format!("{}/recon/en/dossiers.json", target.game_dir()),
-    )
-    .unwrap_or(Value::Null);
-    let records = dossiers.get("records").and_then(Value::as_object);
-    let mut spans = Vec::new();
     let mut sources = 0;
     for name in tree.list(&directory) {
-        let Some(stem) = name.strip_suffix(".c").or_else(|| name.strip_suffix(".C")) else {
+        let Some(_) = name.strip_suffix(".c").or_else(|| name.strip_suffix(".C")) else {
             continue;
         };
         if !tree
@@ -379,19 +372,9 @@ fn candidate_main(
         {
             continue;
         }
-        let Some(record) = records.and_then(|records| records.get(&format!("main:{stem}"))) else {
-            continue;
-        };
-        let Some(start) = hex(stem) else {
-            continue;
-        };
-        let Some(size) = integer(&record, "span_bytes") else {
-            continue;
-        };
         sources += 1;
-        spans.push(Span::new(start, start + size));
     }
-    (intersect(&normalize(&spans), executable), sources)
+    (Vec::new(), sources)
 }
 fn candidate_overlay(
     tree: &SourceTree,
@@ -399,12 +382,6 @@ fn candidate_overlay(
     executable: &SpanMap,
 ) -> (SpanMap, usize) {
     let directory = format!("{}/recon/en/overlays", target.game_dir());
-    let dossiers = json(
-        tree,
-        &format!("{}/recon/en/dossiers.json", target.game_dir()),
-    )
-    .unwrap_or(Value::Null);
-    let records = dossiers.get("records").and_then(Value::as_object);
     let reviewed = json(
         tree,
         &format!("{}/semantic/regions.json", target.game_dir()),
@@ -473,10 +450,7 @@ fn candidate_overlay(
         if !tree.read(&source).is_some_and(|source| canonical(&source)) {
             continue;
         }
-        let record_size = records
-            .and_then(|records| records.get(&format!("{id}:{address}")))
-            .and_then(|record| integer(record, "span_bytes"));
-        let Some(size) = record_size.or_else(|| extents.get(&(id.into(), entry)).copied()) else {
+        let Some(size) = extents.get(&(id.into(), entry)).copied() else {
             continue;
         };
         sources.insert(source);
@@ -1499,7 +1473,7 @@ fn lost_age_tiles(tree: &SourceTree, credits: &[super::proof::Credit]) -> Vec<Ti
         *covered = normalize(covered);
         bytes(&spans)
     };
-    let inventory = json(tree, "games/THE LOST AGE/metrics/executable.json").unwrap_or(Value::Null);
+    let inventory = json(tree, "out/tla-en/reports/executable.json").unwrap_or(Value::Null);
     let evidence = inventory.get("evidence").and_then(Value::as_object);
     let executable: Vec<Span> = regions(&inventory["main"], evidence)
         .into_iter()
@@ -1853,8 +1827,7 @@ pub(crate) fn overlay_assembly_to_verify(
     tree: &SourceTree,
     target: &DecompTarget,
 ) -> Result<SpanMap, String> {
-    let game = crate::compiler::routing::game_directory(target.compiler.as_str());
-    let inventory = read_json(tree, &format!("games/{game}/metrics/executable.json"))?;
+    let inventory = read_json(tree, &format!("out/{}/reports/executable.json", target.id))?;
     let (main_exec, overlay_exec) = validated_inventory(&inventory, target.id.as_str())?;
     let evidence = inventory.get("evidence").and_then(Value::as_object);
     let overlay_regions = array(&inventory, "overlays")
@@ -1873,10 +1846,9 @@ pub(crate) fn overlay_assembly_to_verify(
 
 pub fn classify(options: &BuildOptions) -> Result<Classification, String> {
     let target = crate::targets::decomp_target(Some(&options.target))?;
-    let game = crate::compiler::routing::game_directory(target.compiler.as_str());
     let inventory = read_json(
         options.exact,
-        &format!("games/{game}/metrics/executable.json"),
+        &format!("out/{}/reports/executable.json", target.id),
     )?;
     validated_inventory(&inventory, &options.target)?;
     let evidence = inventory.get("evidence").and_then(Value::as_object);
@@ -2265,7 +2237,6 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
             "proven_source": options.exact.id(),
             "draft_source": options.recon.map_or("absent", |tree| tree.id()),
             "draft_sources": draft_sources as i64,
-            "main_draft_census": format!("{}/recon/en/dossiers.json", target.game_dir()),
             "proven_assembly_standard": "handwritten-or-library-proven; audited-overlay-veneer-reconstruction; container-built-compiler-runtime",
             "credited_assembly_bytes": bytes(&retained_main) + mapped_bytes(&retained_overlay),
             "withdrawn_assembly_bytes": withdrawn_assembly,
@@ -2450,7 +2421,7 @@ mod tests {
             std::fs::write(path, serde_json::to_vec(&value).unwrap()).unwrap();
         };
         write(
-            "games/THE LOST AGE/metrics/executable.json",
+            "out/tla-en/reports/executable.json",
             json!({
                 "format":1, "metric":"full-c-byte-share", "target":"tla-en",
                 "state":"verified", "audit":"complete", "overlay_count":1,
@@ -2579,16 +2550,7 @@ mod tests {
         // built manifest placed it.
         let tree = crate::coverage::tree::work_tree();
         let rom = [Span::new(0x0800_0000, 0x0880_0000)];
-        let inventory = read_json(&tree, "games/THE BROKEN SEAL/metrics/executable.json").unwrap();
-        let overlays = array(&inventory, "overlays")
-            .iter()
-            .map(|node| {
-                (
-                    text(node, "id"),
-                    validated_executable(node).expect("audited overlay"),
-                )
-            })
-            .collect();
+        let overlays = BTreeMap::new();
         let (main, _) = runtime_credit(&tree, &rom, &overlays).unwrap();
         assert!(
             main.contains(&Span::new(0x0800_72e4, 0x0800_7320)),
@@ -2784,7 +2746,7 @@ mod tests {
             }),
         );
         write(
-            "games/THE LOST AGE/metrics/executable.json",
+            "out/tla-en/reports/executable.json",
             json!({"main": {"intervals": [{
                 "start": 0x08000100, "end": 0x08000120
             }]}, "overlays": [{
@@ -2931,7 +2893,7 @@ mod tests {
         );
     }
     #[test]
-    fn overlay_drafts_follow_units_with_legacy_filename_fallback() {
+    fn overlay_drafts_follow_declared_units() {
         let root = tempfile::tempdir().unwrap();
         let directory = "games/THE BROKEN SEAL/recon/en/overlays";
         let write = |path: &str, source: &str| {
@@ -2974,13 +2936,6 @@ mod tests {
             unit("missing", json!([owner("0x02000190", 0x10, "retained-assembly")])),
             unit("uncanonical", json!([owner("0x020001a0", 0x10, "retained-assembly")]))
         ]}).to_string());
-        write("games/THE BROKEN SEAL/recon/en/dossiers.json", &json!({"records": {
-            "resource_test:02000100": {"span_bytes": 0x20},
-            "resource_test:02000160": {"span_bytes": 0x20},
-            "resource_test:02000180": {"span_bytes": 0x10},
-            "resource_test:020001c0": {"span_bytes": 0x10},
-            "resource_test:020001e0": {"span_bytes": 0x10, "source": format!("{directory}/unregistered.c")}
-        }}).to_string());
         let tree = crate::coverage::tree::work_tree_at(root.path().to_path_buf());
         let expected = vec![
             Span::new(0x02000100, 0x02000140),
@@ -2997,20 +2952,8 @@ mod tests {
                 2
             )
         );
-        write(
-            &format!("{directory}/resource_test_c_020001c0.c"),
-            "void Legacy_Run(void) {}\n",
-        );
-        let (found, sources) = candidate_overlay(
-            &tree,
-            &crate::targets::target_for(crate::targets::DEFAULT_TARGET),
-            &executable(),
-        );
-        assert_eq!(sources, 3);
-        assert_eq!(
-            found["resource_test"],
-            [expected, vec![Span::new(0x020001c0, 0x020001d0)]].concat()
-        );
+        let found: BTreeMap<String, Vec<Span>> =
+            BTreeMap::from([("resource_test".into(), expected.clone())]);
         let tile = code_tile(
             String::new(),
             &executable()["resource_test"],
@@ -3022,7 +2965,7 @@ mod tests {
             None,
         );
         assert_eq!(tile.categories[Category::ProvenC as usize], 0x10);
-        assert_eq!(tile.categories[Category::DraftC as usize], 0x50);
+        assert_eq!(tile.categories[Category::DraftC as usize], 0x40);
     }
     #[test]
     fn sprite_series_exposes_packages_without_double_counting() {

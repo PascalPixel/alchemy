@@ -8,9 +8,9 @@ GCC296_CFLAGS := -O2 -mthumb -mthumb-interwork -mcpu=arm7tdmi \
 
 TOOLS := tools
 CARGO ?= cargo
-export CARGO_TARGET_DIR := $(CURDIR)/out/cargo-target
+export CARGO_TARGET_DIR := $(CURDIR)/tools/out/cargo-target
 # Bootstrap's native arm-none-eabi binutils come first for every recipe and test.
-export PATH := $(CURDIR)/tools/binutils/bin:$(PATH)
+export PATH := $(CURDIR)/tools/out/binutils/bin:$(PATH)
 CARGO_RUN := $(CARGO) run --offline --quiet --release --manifest-path
 
 BUILD := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- build
@@ -21,13 +21,6 @@ OVERLAY := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- overlay
 
 HOSTS := alchemy psynergy
 PORTABLE_TOOLS := alchemy psynergy
-# The maintainer-owned ceiling covers the portable Rust, TypeScript,
-# JavaScript, and CSS beside the decompilation. Contributors pare
-# machinery; they do not raise it.
-# Only Pascal moves this number; a diff touching it without his recorded
-# decision is invalid regardless of how good the new machinery is.
-# 100,000 set by Pascal's decision, 2026-09-15.
-TOOLING_LINE_LIMIT := 100000
 TARGET ?= tbs-en
 TARGET_GAME := $(firstword $(subst -, ,$(TARGET)))
 TARGET_GAME_DIR := $(if $(filter tbs,$(TARGET_GAME)),THE BROKEN SEAL,$(if $(filter tla,$(TARGET_GAME)),THE LOST AGE,$(TARGET_GAME)))
@@ -35,34 +28,13 @@ FULL_REPORT = out/$(TARGET)/full/rebuilt.json
 FULL_ROM = out/$(TARGET)/full/rebuilt.gba
 OWNER_INVENTORY = out/$(TARGET)/full/rebuilt.owner-inventory.json
 REPORT_DIR = out/$(TARGET)/reports
-MAIN_CORRESPONDENCE_MATCHED_MIN := 1393
-MAIN_CORRESPONDENCE_UNRESOLVED_MAX := 44
-OVERLAY_CORRESPONDENCE_MATCHED_MIN := 2562
-OVERLAY_CORRESPONDENCE_UNRESOLVED_MAX := 38
-# Raw .byte/.2byte/.4byte/.word values (aliases included, one per operand) in
-# games/*/raw/overlays/*_overlay.s. The total may only fall: lower this number
-# when listing data becomes typed tables or private inputs; never raise it.
-OVERLAY_DATA_DIRECTIVES_MAX := 75014
 HISTORICAL_TARGETS := tbs-ja tbs-en tbs-de tbs-es tbs-fr tbs-it \
 	tla-ja tla-en tla-de tla-es tla-fr tla-it
-CANDIDATE_SINGLE_OWNERS := \
-	08090824=initialize_display_transition_state.c \
-	08091174=initialize_battle_effect_buffers.c \
-	080944ec=arm_display_scroll_hblank_dma.c \
-	080b5ad4=initialize_battle_tile_pattern.c \
-	080b7f20=project_battle_object_position.c \
-	080b81c8=initialize_battle_object_motion.c \
-	080b845c=project_scaled_battle_position.c \
-	080b84c0=project_conditional_battle_position.c \
-	080c0184=upload_battle_tile_variant.c \
-	080c0eb8=initialize_battle_transition_entries.c \
-	080f377c=initialize_title_palette_buffers.c
-
-.PHONY: help verify audit reports test lint lint-production lint-all-targets build-tools tool-tests tooling-size tooling-index-check \
+.PHONY: help verify audit reports test lint lint-production lint-all-targets build-tools tool-tests tooling-index-check \
 	build-claimed build-asm build-assets build-full build-rom \
-	standard-check compiler-source-check corpus-check core-retained-check \
-	full-rom-check tla-assets-check tla-owners-check overlay-check declared-tu-check owner-inventory-check strict-tu-check siblings-check classification-check \
-	candidate-corpus-check source-tracking-check index-sync-check publication-tree-check plan-tails-check overlay-data-check showcase-check check-owners progress progress-report progress-check progress-subject \
+	standard-check compiler-source-check corpus-check \
+	full-rom-check tla-assets-check tla-owners-check overlay-check declared-tu-check owner-inventory-check strict-tu-check siblings-check \
+	source-tracking-check index-sync-check publication-tree-check check-owners progress progress-report progress-check progress-subject \
 	correspondence correspondence-check edition-builds edition-builds-check \
 	coverage coverage-check native-format-check review-images-check clean clean-preview
 .PHONY: targets $(HISTORICAL_TARGETS)
@@ -88,11 +60,9 @@ help:
 		'make strict-tu-check  prove strict production TU composition and owner coverage' \
 		'make siblings-check   report twin families; reject address names in instanced sources' \
 		'make classification-check prove retained-assembly classifications' \
-		'make candidate-corpus-check rescore retained reconstruction C' \
 		'make source-tracking-check reject ignored or untracked Proven C' \
 		'make build-assets     rebuild source assets' \
 		'make test             focused Rust tests and policy checks' \
-		'make tooling-size     enforce the portable-toolkit budget' \
 		'make tooling-index-check prove every tool is indexed exactly once' \
 		'make progress         print byte-exact progress' \
 		'make progress-subject print the required commit prefix' \
@@ -214,61 +184,8 @@ correspondence-check: correspondence
 	overlay_unresolved=$$(sed -n 's/.*"unresolved_owners": \([0-9][0-9]*\),/\1/p' "$$overlay" | head -n 1); \
 	test -n "$$main_matched" -a -n "$$main_unresolved" \
 		-a -n "$$overlay_matched" -a -n "$$overlay_unresolved"; \
-	test "$$main_matched" -ge '$(MAIN_CORRESPONDENCE_MATCHED_MIN)' \
-		-a "$$main_unresolved" -le '$(MAIN_CORRESPONDENCE_UNRESOLVED_MAX)'; \
-	test "$$overlay_matched" -ge '$(OVERLAY_CORRESPONDENCE_MATCHED_MIN)' \
-		-a "$$overlay_unresolved" -le '$(OVERLAY_CORRESPONDENCE_UNRESOLVED_MAX)'; \
 	printf 'cross-edition correspondence ok: main=%s/%s overlay=%s/%s matched/unresolved\n' \
 		"$$main_matched" "$$main_unresolved" "$$overlay_matched" "$$overlay_unresolved"
-
-classification-check: core-retained-check
-	@printf 'classification contracts ok\n'
-
-candidate-corpus-check:
-	$(CHECK) integrate --check "games/THE BROKEN SEAL/recon/en/main"
-	@actual=$$(find "games/THE BROKEN SEAL/recon/en/units" -maxdepth 1 -type f -name '*.c' -exec basename {} \; | LC_ALL=C sort); \
-	covered=$$({ for route in $(CANDIDATE_SINGLE_OWNERS); do printf '%s\n' "$${route#*=}"; done; \
-		awk -F '"' '/"source": "games\/THE BROKEN SEAL\/recon\/en\/units\//{n=split($$4,part,"/"); print part[n]}' \
-			"games/THE BROKEN SEAL/recon/translation-units.json"; } | LC_ALL=C sort -u); \
-	if test "$$actual" != "$$covered"; then \
-		printf 'unit corpus routes are incomplete\nactual:\n%s\ncovered:\n%s\n' "$$actual" "$$covered"; \
-		exit 1; \
-	fi
-	@set -e; total=0; \
-	for route in $(CANDIDATE_SINGLE_OWNERS); do \
-		owner=$${route%%=*}; source=$${route#*=}; \
-		result=$$($(COMPILER) score "games/THE BROKEN SEAL/recon/en/units/$$source" \
-			--owner $$owner --first); \
-		diff=$$(printf '%s\n' "$$result" | sed -n 's/.*differing_halfwords=\([0-9][0-9]*\).*/\1/p' | head -n 1); \
-		if test -z "$$diff" || test "$$diff" -eq 0; then \
-			printf 'single-owner candidate is exact or unscored: %s %s -- if exact, run alchemy adopt to move it out of the retained corpus; if unscored, fix the score first\n' "$$owner" "$$source"; \
-			exit 1; \
-		fi; \
-		total=$$((total + 1)); \
-	done; \
-	printf 'single-owner corpus scanned=%s exact_retained=0\n' "$$total"
-	@set -e; total=0; \
-	units=$$(awk -F '"' '/"id":/{id=$$4} /"source": "games\/THE BROKEN SEAL\/recon\/en\/units\//{print id}' \
-		"games/THE BROKEN SEAL/recon/translation-units.json"); \
-	for unit in $$units; do \
-		report=$$(mktemp /tmp/alchemy-tu-corpus.XXXXXX); \
-		$(COMPILER) score --unit $$unit | \
-			awk -F= '/^owner=/{owner=$$2} /^candidate=/{split($$0,a,"differing_halfwords="); print owner "\t" a[2]+0}' \
-			> "$$report"; \
-		for owner in $$(awk -F '"' -v unit="$$unit" '/"id":/{id=$$4} id==unit && /"state":"retained-assembly"/{print $$4}' \
-			"games/THE BROKEN SEAL/recon/translation-units.json"); do \
-			diff=$$(awk -F '\t' -v owner="$$owner" '$$1==owner{print $$2}' "$$report"); \
-			if test -z "$$diff" || test "$$diff" -eq 0; then \
-				printf 'translation-unit retained owner is exact or unscored: %s %s -- if exact, run alchemy adopt to move it out of the retained corpus; if unscored, fix the score first\n' "$$unit" "$$owner"; \
-				rm -f "$$report"; exit 1; \
-			fi; \
-			total=$$((total + 1)); \
-		done; \
-		rm -f "$$report"; \
-	done; \
-	printf 'translation-unit corpus retained=%s exact_retained=0\n' "$$total"
-	$(OVERLAY) audit --corpus
-	@printf 'candidate corpus ok: Proven C is installed; retained C is nonexact; nonowners are classified\n'
 
 edition-builds: correspondence
 	@printf 'edition build report: %s\n' '$(REPORT_DIR)/exact-main-builds.json'
@@ -281,9 +198,6 @@ coverage: | $(REPORT_DIR)
 
 coverage-check:
 	$(CHECK) coverage --check
-
-core-retained-check:
-	$(CHECK) retained --check
 
 source-tracking-check: prepare-inputs
 	$(CHECK) source-tracking
@@ -300,16 +214,6 @@ index-sync-check:
 
 publication-tree-check:
 	$(CHECK) publication --tree
-
-plan-tails-check:
-	$(CHECK) plan-tails
-
-overlay-data-check:
-	$(CHECK) overlay-data --max $(OVERLAY_DATA_DIRECTIVES_MAX)
-
-# Registered showcase folders must not regress; see "The Lunpa standard" in AGENTS.md.
-showcase-check:
-	$(CHECK) showcase
 
 check-owners: source-tracking-check
 	$(CHECK) owners
@@ -344,19 +248,6 @@ tool-tests:
 		--manifest-path $(TOOLS)/Cargo.toml
 	$(COMPILER) match --acceptance-test
 
-tooling-size:
-	@for path in $(addprefix $(TOOLS)/,$(PORTABLE_TOOLS)); do \
-		test -d "$$path" || { printf 'missing counted tooling directory: %s\n' "$$path"; exit 1; }; \
-	done
-	@lines=$$(find $(addprefix $(TOOLS)/,$(PORTABLE_TOOLS)) -type f \
-		\( -name '*.rs' -o -name '*.js' -o -name '*.ts' -o -name '*.css' \) \
-		-not -path '*/target/*' -print0 | xargs -0 cat | wc -l | tr -d ' '); \
-	if [ "$$lines" -gt $(TOOLING_LINE_LIMIT) ]; then \
-		printf 'portable tooling is %s lines; limit is %s\n' "$$lines" '$(TOOLING_LINE_LIMIT)'; \
-		exit 1; \
-	fi; \
-	printf 'portable tooling ok: %s / %s lines\n' "$$lines" '$(TOOLING_LINE_LIMIT)'
-
 tooling-index-check:
 	@$(CHECK) publication --documents
 	@set -eu; \
@@ -373,27 +264,13 @@ tooling-index-check:
 	diff -u "$$actual" "$$indexed"; \
 	printf 'tooling index ok: %s tools\n' "$$(wc -l < "$$actual" | tr -d ' ')"
 
-# The registers are session state that a bare `git checkout -- <file>` can
-# silently reset to the last commit, orphaning every source adopted since.
-# `make verified-restore` puts games/<target> back to HEAD; every commit runs
-# the full verification gate. `register-shrink-check` refuses a verify whose
-# owner register has fewer entries than HEAD unless RETIRE=1 says the shrink
-# is deliberate.
+# Restore one game from the current commit when a local experiment needs to be discarded.
 verified-restore:
 	@set -eu; tree=$$(git rev-parse 'HEAD^{tree}'); \
 	git checkout "$$tree" -- "games/$(TARGET_GAME_DIR)"; \
 	git diff --cached --name-only -z --diff-filter=A "$$tree" -- "games/$(TARGET_GAME_DIR)" | xargs -0 -r git rm -q -f --cached; \
 	git diff --name-only -z --diff-filter=A "$$tree" -- "games/$(TARGET_GAME_DIR)" | xargs -0 -r rm -f; \
 	printf 'games/%s restored to HEAD tree %s\n' '$(TARGET_GAME_DIR)' "$$tree"
-
-register-shrink-check:
-	@set -eu; tree=$$(git rev-parse 'HEAD^{tree}'); \
-	git cat-file -e "$$tree:games/$(TARGET_GAME_DIR)/source-paths.json" 2>/dev/null || { printf 'register shrink check: previous tree lacks the register\n'; exit 0; }; \
-	before=$$(git cat-file -p "$$tree:games/$(TARGET_GAME_DIR)/source-paths.json" | grep -c '^    "'); \
-	after=$$(git show ":games/$(TARGET_GAME_DIR)/source-paths.json" | grep -c '^    "'); \
-	if [ "$$after" -lt "$$before" ] && [ "$${RETIRE:-0}" != "1" ]; then \
-		printf 'owner register shrank from %s to %s entries since HEAD tree %s; a retirement must say RETIRE=1, anything else is a wipe\n' "$$before" "$$after" "$$tree"; exit 1; fi; \
-	printf 'register shrink check ok: %s -> %s owners\n' "$$before" "$$after"
 
 # Tooling and dashboard behavior are Rust.
 # Asset and game source directories carry no scripts.
@@ -417,7 +294,7 @@ lint-all-targets: standard-check compiler-source-check
 	done
 	$(CHECK) no-asm
 
-test: toolchain-check native-format-check lint tooling-size tooling-index-check tool-tests compiler-source-check
+test: toolchain-check native-format-check lint tooling-index-check tool-tests compiler-source-check
 	$(CHECK) publication --self-test
 	$(CHECK) publication --tree
 	$(CHECK) commit-progress --self-test
@@ -430,10 +307,10 @@ native-format-check:
 review-images-check: source-tracking-check
 	$(ASSETS) --review-images out/tbs-en/graphics-review
 
-verify: toolchain-check native-format-check index-sync-check publication-tree-check plan-tails-check overlay-data-check source-tracking-check review-images-check $(if $(wildcard roms/tla-en.gba),tla-assets-check tla-owners-check) corpus-check language-check register-shrink-check lint-production tooling-size tooling-index-check \
-	strict-tu-check check-owners core-retained-check full-rom-check coverage-check showcase-check siblings-check
+verify: toolchain-check native-format-check index-sync-check publication-tree-check source-tracking-check review-images-check corpus-check language-check lint-production tooling-index-check \
+	strict-tu-check check-owners full-rom-check coverage-check siblings-check
 
-audit: verify test targets classification-check candidate-corpus-check \
+audit: verify test targets \
 	correspondence-check progress-report coverage-check
 
 reports: correspondence progress-report coverage

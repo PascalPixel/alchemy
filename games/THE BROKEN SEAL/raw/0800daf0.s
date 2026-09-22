@@ -1,13 +1,10 @@
-@ 追従移動。obj+104 の対象の位置を 0x03001e70 の範囲 (+236..+248) に収め、obj+100 が
-@ 立てば即座に置く。それ以外は距離を IwramSqrt (0x030001d8) で測り (0x8000 未満は
-@ Q16 二乗和と Func_080045d4)、歩幅 obj[48] の範囲で IwramRatioMulQ14 (Func_08007310)
-@ と IwramMulQ16 で X, Z を寄せ、Y は差の 1/4 ずつ寄せる。obj[4] を進めて 1 を返す。
-@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
-	.global Func_0800daf0
-	.thumb_func
-Func_0800daf0:
+	.set sub_080045d4, 0x080045d4
+	.set sub_080072f0, 0x080072f0
+	.set sub_08007310, 0x08007310
+	.global Overlay_0800daf0
+Overlay_0800daf0:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -50,14 +47,14 @@ Func_0800daf0:
 	sub	sp, #8
 	strb	r3, [r2, #0]
 	cmp	r0, #0
-	bne.n	.L0
-	b.n	.L1
-.L0:
+	bne.n	.L_0800db48
+	b.n	.L_0800dca0
+.L_0800db48:
 	ldr	r3, [r0, #0]
 	cmp	r3, #0
-	bne.n	.L2
-	b.n	.L1
-.L2:
+	bne.n	.L_0800db50
+	b.n	.L_0800dca0
+.L_0800db50:
 	ldr	r3, [r0, #8]
 	ldr	r5, [r0, #12]
 	mov	fp, r3
@@ -69,49 +66,47 @@ Func_0800daf0:
 	str	r3, [r2, #56]
 	str	r3, [r2, #60]
 	str	r3, [r2, #64]
-@ 目標を範囲に収める。
 	cmp	fp, r7
-	bge.n	.L3
+	bge.n	.L_0800db6c
 	mov	fp, r7
-.L3:
+.L_0800db6c:
 	ldr	r3, [sp, #4]
 	cmp	r3, r6
-	bge.n	.L4
+	bge.n	.L_0800db74
 	str	r6, [sp, #4]
-.L4:
+.L_0800db74:
 	cmp	fp, r4
-	ble.n	.L5
+	ble.n	.L_0800db7a
 	mov	fp, r4
-.L5:
+.L_0800db7a:
 	ldr	r4, [sp, #4]
 	cmp	r4, r1
-	ble.n	.L6
+	ble.n	.L_0800db82
 	str	r1, [sp, #4]
-.L6:
+.L_0800db82:
 	mov	r3, r8
 	adds	r3, #100
 	movs	r2, #0
 	ldrsh	r3, [r3, r2]
 	cmp	r3, #0
-	beq.n	.L7
+	beq.n	.L_0800db9c
 	mov	r4, r8
 	mov	r3, fp
 	str	r3, [r4, #8]
 	str	r5, [r4, #12]
 	ldr	r5, [sp, #4]
 	str	r5, [r4, #16]
-	b.n	.L1
-@ 距離。
-.L7:
+	b.n	.L_0800dca0
+.L_0800db9c:
 	mov	r2, r8
 	ldr	r3, [r2, #8]
 	mov	r4, fp
 	subs	r0, r4, r3
 	cmp	r0, #0
-	bge.n	.L8
+	bge.n	.L_0800dbac
 	ldr	r2, [pc, #288]
 	adds	r0, r0, r2
-.L8:
+.L_0800dbac:
 	mov	r2, r8
 	ldr	r3, [r2, #16]
 	ldr	r4, [sp, #4]
@@ -119,10 +114,10 @@ Func_0800daf0:
 	mov	sl, r0
 	subs	r0, r4, r3
 	cmp	r0, #0
-	bge.n	.L9
+	bge.n	.L_0800dbc0
 	ldr	r2, [pc, #268]
 	adds	r0, r0, r2
-.L9:
+.L_0800dbc0:
 	asrs	r6, r0, #16
 	mov	r3, sl
 	mov	r0, sl
@@ -131,7 +126,7 @@ Func_0800daf0:
 	muls	r3, r6
 	adds	r0, r0, r3
 	ldr	r3, [pc, #256]
-	bl	Func_080072f0
+	bl	sub_080072f0
 	mov	r4, r8
 	ldr	r3, [r4, #8]
 	mov	r2, fp
@@ -147,12 +142,11 @@ Func_0800daf0:
 	mov	sl, r2
 	subs	r6, r4, r3
 	cmp	r7, r5
-	bge.n	.L10
+	bge.n	.L_0800dc16
 	ldr	r4, [pc, #220]
 	mov	r0, sl
 	mov	r1, sl
 	movs	r0, r0
-@ 距離 0x8000 未満: Q16 二乗和を IwramMulQ16ReturnIp で組んで Func_080045d4。
 	mov	ip, pc
 	bx	r4
 	adds	r3, r0, #0
@@ -163,40 +157,39 @@ Func_0800daf0:
 	bx	r4
 	adds	r3, r3, r0
 	adds	r0, r3, #0
-	bl	Func_080045d4
+	bl	sub_080045d4
 	adds	r7, r0, #0
-.L10:
+.L_0800dc16:
 	adds	r1, r7, #0
 	cmp	r7, #0
-	bge.n	.L11
+	bge.n	.L_0800dc1e
 	adds	r1, r7, #7
-.L11:
+.L_0800dc1e:
 	mov	r2, r8
 	ldr	r3, [r2, #48]
 	asrs	r5, r1, #3
 	cmp	r5, r3
-	ble.n	.L12
+	ble.n	.L_0800dc2a
 	adds	r5, r3, #0
-.L12:
+.L_0800dc2a:
 	movs	r3, #128
 	lsls	r3, r3, #7
 	cmp	r7, r3
-	bge.n	.L13
+	bge.n	.L_0800dc3e
 	mov	r5, r8
 	mov	r4, fp
 	str	r4, [r5, #8]
 	ldr	r2, [sp, #4]
 	str	r2, [r5, #16]
-	b.n	.L14
-@ 距離が歩幅を超えれば比率で縮める。
-.L13:
+	b.n	.L_0800dc7c
+.L_0800dc3e:
 	cmp	r7, r5
-	ble.n	.L15
+	ble.n	.L_0800dc6e
 	ldr	r3, [pc, #148]
 	mov	r1, sl
 	mov	fp, r3
 	adds	r0, r7, #0
-	bl	Func_08007310
+	bl	sub_08007310
 	ldr	r3, [pc, #132]
 	adds	r1, r5, #0
 	movs	r0, r0
@@ -206,13 +199,13 @@ Func_0800daf0:
 	str	r3, [sp, #0]
 	mov	sl, r0
 	adds	r0, r7, #0
-	bl	Func_08007310
+	bl	sub_08007310
 	adds	r1, r5, #0
 	ldr	r3, [sp, #0]
 	mov	ip, pc
 	bx	r3
 	adds	r6, r0, #0
-.L15:
+.L_0800dc6e:
 	mov	r4, r8
 	ldr	r3, [r4, #8]
 	add	r3, sl
@@ -220,30 +213,29 @@ Func_0800daf0:
 	ldr	r3, [r4, #16]
 	adds	r3, r3, r6
 	str	r3, [r4, #16]
-@ Y は差が 0x8000 を超えるとき 1/4 ずつ。
-.L14:
+.L_0800dc7c:
 	mov	r3, r9
 	cmp	r3, #0
-	bge.n	.L16
+	bge.n	.L_0800dc84
 	negs	r3, r3
-.L16:
+.L_0800dc84:
 	movs	r5, #128
 	lsls	r5, r5, #8
 	cmp	r3, r5
-	ble.n	.L17
+	ble.n	.L_0800dc98
 	mov	r3, r9
 	cmp	r3, #0
-	bge.n	.L18
+	bge.n	.L_0800dc94
 	adds	r3, #3
-.L18:
+.L_0800dc94:
 	asrs	r3, r3, #2
 	mov	r9, r3
-.L17:
+.L_0800dc98:
 	mov	r2, r8
 	ldr	r3, [r2, #12]
 	add	r3, r9
 	str	r3, [r2, #12]
-.L1:
+.L_0800dca0:
 	mov	r4, r8
 	ldrh	r3, [r4, #4]
 	mov	r5, r8

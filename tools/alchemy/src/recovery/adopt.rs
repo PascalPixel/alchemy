@@ -214,7 +214,6 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
     // to trip over.
     let manifest = root.join("games/THE BROKEN SEAL/source-paths.json");
     let assembly = root.join("games/THE BROKEN SEAL/semantic/overlay-assembly.json");
-    let dossiers = root.join("games/THE BROKEN SEAL/recon/en/dossiers.json");
     let units = root.join("games/THE BROKEN SEAL/recon/translation-units.json");
     let overlay_source: PathBuf = root.join(format!(
         "games/THE BROKEN SEAL/raw/overlays/{overlay}_overlay.s"
@@ -243,7 +242,6 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
     let mut watched = vec![
         manifest.clone(),
         assembly.clone(),
-        dossiers.clone(),
         units.clone(),
         overlay_source.clone(),
     ];
@@ -265,7 +263,6 @@ pub fn adopt(root: &Path, request: &Request) -> Result<Vec<String>, String> {
             destination: &destination,
             manifest: &manifest,
             assembly: &assembly,
-            dossiers: &dossiers,
             units: &units,
             overlay_source: &overlay_source,
             drafts: &drafts,
@@ -308,7 +305,6 @@ struct Registration<'a> {
     destination: &'a Path,
     manifest: &'a Path,
     assembly: &'a Path,
-    dossiers: &'a Path,
     units: &'a Path,
     overlay_source: &'a Path,
     drafts: &'a [PathBuf],
@@ -334,7 +330,6 @@ fn register_adoption(
         destination,
         manifest,
         assembly,
-        dossiers,
         units,
         overlay_source,
         drafts,
@@ -398,20 +393,6 @@ fn register_adoption(
         }
         write_json(manifest, &register, true, true)?;
     }
-    let (mut records, newline) = read_json(dossiers)?;
-    if let Some(map) = records.get_mut("records").and_then(Value::as_object_mut) {
-        let mut removed = 0;
-        for gone in &retired {
-            if map.shift_remove(&gone.id()).is_some() {
-                removed += 1;
-            }
-        }
-        if removed > 0 {
-            report.push(format!("dossiers removed: {removed}"));
-            write_json(dossiers, &records, false, newline)?;
-        }
-    }
-
     // Move a superseded draft's unit with its source: its absolute bindings
     // are still required by the installed C. A unit owning bytes outside
     // this adoption must be split before it can move.
@@ -490,17 +471,10 @@ fn register_adoption(
     );
     report.push(last);
 
-    let mut staged: Vec<String> = [
-        destination,
-        manifest,
-        assembly,
-        dossiers,
-        units,
-        overlay_source,
-    ]
-    .iter()
-    .map(|path| path.to_string_lossy().into_owned())
-    .collect();
+    let mut staged: Vec<String> = [destination, manifest, assembly, units, overlay_source]
+        .iter()
+        .map(|path| path.to_string_lossy().into_owned())
+        .collect();
     for path in drafts {
         let path = path.to_string_lossy().into_owned();
         let tracked = Command::new("git")

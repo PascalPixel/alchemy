@@ -1,22 +1,24 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global Func_08002fb0
-	.thumb_func
-Func_08002fb0:
+	.set sub_08002df0, 0x08002df0
+	.set sub_08002f40, 0x08002f40
+	.set sub_08004938, 0x08004938
+	.set sub_08005340, 0x08005340
+	.set sub_080072fc, 0x080072fc
+	.global Overlay_08002fb0
+Overlay_08002fb0:
 	push	{r5, r6, lr}
 	mov	r6, sl
 	mov	r5, r8
 	push	{r5, r6}
 	mov	r8, r1
-	bl	Func_08002f40
+	bl	sub_08002f40
 	mov	r1, r8
-	bl	Func_08005340
+	bl	sub_08005340
 	mov	sl, r0
 	ldr	r5, [pc, #52]
 	adds	r0, r5, #0
-	bl	Func_08004938
+	bl	sub_08004938
 	movs	r2, #132
 	adds	r6, r0, #0
 	lsrs	r5, r5, #2
@@ -29,9 +31,9 @@ Func_08002fb0:
 	subs	r3, #12
 	mov	r0, r8
 	mov	r1, sl
-	bl	Func_080072fc
+	bl	sub_080072fc
 	adds	r0, r6, #0
-	bl	Func_08002df0
+	bl	sub_08002df0
 	pop	{r3, r5}
 	mov	r8, r3
 	mov	sl, r5

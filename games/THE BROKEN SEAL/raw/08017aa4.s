@@ -1,10 +1,9 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global Func_08017aa4
-	.thumb_func
-Func_08017aa4:
+	.set sub_080173ac, 0x080173ac
+	.set sub_08018cac, 0x08018cac
+	.global Overlay_08017aa4
+Overlay_08017aa4:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9
@@ -22,9 +21,9 @@ Func_08017aa4:
 	movs	r4, #0
 	mov	r9, r3
 	cmp	r5, #0
-	beq.n	.L0
-	b.n	.L1
-.L0:
+	beq.n	.L_08017aca
+	b.n	.L_08017be6
+.L_08017aca:
 	ldr	r3, [pc, #36]
 	adds	r1, r6, r3
 	ldrh	r3, [r1, #0]
@@ -39,16 +38,17 @@ Func_08017aa4:
 	adds	r3, #1
 	ands	r3, r2
 	strh	r3, [r1, #0]
-	b.n	.L1
+	b.n	.L_08017be6
 	.4byte 0x000001ff
 	.4byte 0x03001e8c
-	.4byte 0x000012b2
-.L8:
+	.2byte 0x12b2
+	.2byte 0x0000
+.L_08017af4:
 	cmp	r4, #30
-	bhi.n	.L2
+	bhi.n	.L_08017b9a
 	subs	r1, r4, #3
 	cmp	r1, #26
-	bhi.n	.L1
+	bhi.n	.L_08017be6
 	ldr	r2, [pc, #264]
 	lsls	r3, r1, #2
 	ldr	r3, [r3, r2]
@@ -80,39 +80,40 @@ Func_08017aa4:
 	.4byte 0x08017be6
 	.4byte 0x08017be6
 	.4byte 0x08017b96
-	.4byte 0x08017b84
+	.2byte 0x7b84
+	.2byte 0x0801
 	ldr	r1, [pc, #148]
-	b.n	.L3
+	b.n	.L_08017b7e
 	ldr	r1, [pc, #148]
-	b.n	.L3
+	b.n	.L_08017b7e
 	ldr	r1, [pc, #148]
-.L3:
+.L_08017b7e:
 	ldrh	r2, [r5, #0]
 	adds	r3, r6, r1
 	strh	r2, [r3, #0]
-.L4:
+.L_08017b84:
 	adds	r5, #2
-	b.n	.L1
-	bl	Func_080173ac
-	b.n	.L1
+	b.n	.L_08017be6
+	bl	sub_080173ac
+	b.n	.L_08017be6
 	movs	r2, #15
 	mov	r7, r9
 	add	r8, r2
-	b.n	.L1
+	b.n	.L_08017be6
 	adds	r5, #2
-	b.n	.L4
-.L2:
+	b.n	.L_08017b84
+.L_08017b9a:
 	mov	r3, sl
 	ldrh	r2, [r3, #22]
 	movs	r3, #8
 	ands	r3, r2
 	cmp	r3, #0
-	bne.n	.L5
+	bne.n	.L_08017bd4
 	ldrh	r0, [r5, #0]
 	cmp	r4, #32
-	bls.n	.L5
+	bls.n	.L_08017bd4
 	cmp	r0, #32
-	bls.n	.L5
+	bls.n	.L_08017bd4
 	adds	r3, r4, #0
 	adds	r2, r0, #0
 	ldr	r1, [pc, #96]
@@ -127,30 +128,30 @@ Func_08017aa4:
 	lsls	r3, r3, #16
 	lsls	r1, r1, #12
 	cmp	r3, r1
-	bhi.n	.L5
+	bhi.n	.L_08017bd4
 	lsls	r3, r0, #8
 	orrs	r4, r3
 	adds	r5, #2
-.L5:
+.L_08017bd4:
 	movs	r3, #0
 	str	r3, [sp, #0]
 	adds	r2, r7, #0
 	mov	r0, sl
 	adds	r1, r4, #0
 	mov	r3, r8
-	bl	Func_08018cac
+	bl	sub_08018cac
 	adds	r7, r7, r0
-.L1:
+.L_08017be6:
 	ldrh	r4, [r5, #0]
 	adds	r5, #2
 	cmp	r4, #255
-	bls.n	.L6
+	bls.n	.L_08017bf0
 	movs	r4, #64
-.L6:
+.L_08017bf0:
 	cmp	r4, #0
-	beq.n	.L7
-	b.n	.L8
-.L7:
+	beq.n	.L_08017bf6
+	b.n	.L_08017af4
+.L_08017bf6:
 	add	sp, #4
 	pop	{r3, r5, r6}
 	mov	r8, r3

@@ -2,6 +2,7 @@
 @ ROM配置と実行配置を分離し、混在命令列をそのまま再構築する。
 .syntax unified
 	.thumb
+	.set AlchemyRunAddress, 0x03007000
 	.global Func_080f9674
 	.thumb_func
 Func_080f9674:

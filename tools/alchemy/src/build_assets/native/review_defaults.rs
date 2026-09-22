@@ -3,7 +3,7 @@ use super::*;
 const GRAPHICS: &str = "games/THE BROKEN SEAL/SRC/GRAPHICS";
 
 fn read(root: &Path, name: &str) -> Result<Value, String> {
-    serde_json::from_slice(&fs::read(root.join(name)).map_err(|e| e.to_string())?)
+    serde_json::from_slice(&fs::read(root_path(root, name)?).map_err(|e| e.to_string())?)
         .map_err(|e| e.to_string())
 }
 fn rectangle(input: &Value) -> Value {
@@ -94,8 +94,11 @@ pub(super) fn defaults(root: &Path, palettes: &mut Vec<Value>) -> Result<Vec<Val
         let (file, category, recipe, palette, transparent) = match kind {
             "tiles" => {
                 let png = psynergy::assets::image::indexed_png(
-                    &fs::read(root.join(native["source"].as_str().ok_or("missing tile source")?))
-                        .map_err(|e| e.to_string())?,
+                    &fs::read(root_path(
+                        root,
+                        native["source"].as_str().ok_or("missing tile source")?,
+                    )?)
+                    .map_err(|e| e.to_string())?,
                 )
                 .map_err(|e| e.to_string())?;
                 let cols = png.width as usize / 8;
@@ -256,7 +259,7 @@ pub(super) fn defaults(root: &Path, palettes: &mut Vec<Value>) -> Result<Vec<Val
             )
         };
         let png = psynergy::assets::image::indexed_png(
-            &fs::read(root.join(&path)).map_err(|e| e.to_string())?,
+            &fs::read(root_path(root, &path)?).map_err(|e| e.to_string())?,
         )
         .map_err(|e| e.to_string())?;
         sheet(

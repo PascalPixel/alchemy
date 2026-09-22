@@ -1,10 +1,9 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global Func_080912b8
-	.thumb_func
-Func_080912b8:
+	.set sub_08003dec, 0x08003dec
+	.set sub_080091a8, 0x080091a8
+	.global Overlay_080912b8
+Overlay_080912b8:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -28,9 +27,9 @@ Func_080912b8:
 	mov	r5, fp
 	ldr	r3, [r5, #24]
 	cmp	r3, #0
-	bne.n	.L0
-	b.n	.L1
-.L0:
+	bne.n	.L_080912ea
+	b.n	.L_08091480
+.L_080912ea:
 	ldr	r2, [r3, #16]
 	mov	sl, r2
 	movs	r2, #22
@@ -54,25 +53,25 @@ Func_080912b8:
 	adds	r1, r7, #0
 	mov	r0, r8
 	mov	r9, r3
-	bl	Func_080091a8
+	bl	sub_080091a8
 	movs	r2, #128
 	lsls	r2, r2, #14
 	asrs	r6, r0, #16
 	add	r2, sl
 	mov	r0, r8
 	adds	r1, r7, #0
-	bl	Func_080091a8
+	bl	sub_080091a8
 	asrs	r0, r0, #16
 	subs	r0, #16
 	cmp	r0, r6
-	ble.n	.L2
+	ble.n	.L_08091336
 	adds	r6, r0, #0
-.L2:
+.L_08091336:
 	cmp	r6, #0
-	ble.n	.L3
+	ble.n	.L_080913c8
 	ldr	r3, [sp, #0]
 	cmp	r6, r3
-	ble.n	.L3
+	ble.n	.L_080913c8
 	ldr	r3, [pc, #96]
 	movs	r1, #13
 	str	r3, [r5, #4]
@@ -110,7 +109,7 @@ Func_080912b8:
 	orrs	r3, r2
 	strh	r3, [r5, #6]
 	mov	r2, sl
-	b.n	.L4
+	b.n	.L_080913b0
 	.4byte 0x000003ff
 	.4byte 0x0000fff0
 	.4byte 0x000001ff
@@ -119,8 +118,9 @@ Func_080912b8:
 	.4byte 0xfff80000
 	.4byte 0x40000800
 	.4byte 0xfffffc00
-	.4byte 0xfffffe00
-.L4:
+	.2byte 0xfe00
+	.2byte 0xffff
+.L_080913b0:
 	ldr	r1, [sp, #4]
 	asrs	r3, r2, #16
 	movs	r2, #240
@@ -131,35 +131,35 @@ Func_080912b8:
 	strb	r3, [r5, #4]
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	Func_08003dec
-.L3:
+	bl	sub_08003dec
+.L_080913c8:
 	movs	r2, #128
 	lsls	r2, r2, #13
 	adds	r7, r7, r2
 	adds	r1, r7, #0
 	add	r2, sl
 	mov	r0, r8
-	bl	Func_080091a8
+	bl	sub_080091a8
 	movs	r2, #128
 	lsls	r2, r2, #14
 	asrs	r6, r0, #16
 	add	r2, sl
 	mov	r0, r8
 	adds	r1, r7, #0
-	bl	Func_080091a8
+	bl	sub_080091a8
 	asrs	r0, r0, #16
 	mov	r5, fp
 	subs	r0, #16
 	adds	r5, #12
 	cmp	r0, r6
-	ble.n	.L5
+	ble.n	.L_080913f6
 	adds	r6, r0, #0
-.L5:
+.L_080913f6:
 	cmp	r6, #0
-	ble.n	.L1
+	ble.n	.L_08091480
 	ldr	r2, [sp, #0]
 	cmp	r6, r2
-	ble.n	.L1
+	ble.n	.L_08091480
 	ldr	r3, [pc, #84]
 	movs	r2, #13
 	ldrb	r1, [r5, #9]
@@ -196,15 +196,16 @@ Func_080912b8:
 	ldr	r3, [pc, #28]
 	ands	r3, r1
 	orrs	r3, r2
-	b.n	.L6
+	b.n	.L_08091464
 	movs	r0, r0
 	.4byte 0x000003ff
 	.4byte 0x0000fff0
 	.4byte 0x000001ff
 	.4byte 0x40000800
 	.4byte 0xfffffc00
-	.4byte 0xfffffe00
-.L6:
+	.2byte 0xfe00
+	.2byte 0xffff
+.L_08091464:
 	mov	r1, sl
 	strh	r3, [r5, #6]
 	movs	r2, #240
@@ -217,8 +218,8 @@ Func_080912b8:
 	strb	r3, [r5, #4]
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	Func_08003dec
-.L1:
+	bl	sub_08003dec
+.L_08091480:
 	add	sp, #16
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

@@ -789,7 +789,7 @@
 	.set sub_02009b84, 0x02009b84
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x28
 AlchemyC_02000058:
@@ -824,11 +824,23 @@ AlchemyC_02000690:
 	.space 0xe
 	.2byte 0x0000
 AlchemyC_020006a0:
-	.space 0xb4
+	.space 0x46
+.L_020006e6:
+	.space 0x2c
+.L_02000712:
+	.space 0x2c
+.L_0200073e:
+	.space 0x16
 AlchemyC_02000754:
-	.space 0x84
+	.space 0x3a
+.L_0200078e:
+	.space 0x4a
 AlchemyC_020007d8:
-	.space 0xc8
+	.space 0x42
+.L_0200081a:
+	.space 0x38
+.L_02000852:
+	.space 0x4e
 AlchemyC_020008a0:
 	.space 0x18
 AlchemyC_020008b8:
@@ -877,7 +889,11 @@ AlchemyC_02000ff0:
 AlchemyC_02001024:
 	.space 0x24
 AlchemyC_02001048:
-	.space 0x84
+	.space 0x12
+.L_0200105a:
+	.space 0x3a
+.L_02001094:
+	.space 0x38
 AlchemyC_020010cc:
 	.space 0x84
 AlchemyC_02001150:
@@ -1096,7 +1112,9 @@ AlchemyC_0200196c:
 	.space 0x2e
 	.2byte 0x0000
 AlchemyC_0200199c:
-	.space 0x24
+	.space 0x8
+.L_020019a4:
+	.space 0x1c
 AlchemyC_020019c0:
 	.space 0x30
 AlchemyC_020019f0:
@@ -1108,7 +1126,9 @@ AlchemyC_02001a14:
 AlchemyC_02001a50:
 	.space 0x4c
 AlchemyC_02001a9c:
-	.space 0x54
+	.space 0x38
+.L_02001ad4:
+	.space 0x1c
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -1974,7 +1994,9 @@ AlchemyC_0200226c:
 	.space 0x36
 	.2byte 0x0000
 AlchemyC_020022a4:
-	.space 0x22
+	.space 0x1e
+.L_020022c2:
+	.space 0x4
 	.2byte 0x0000
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
@@ -3341,7 +3363,11 @@ AlchemyC_02002ee4:
 	.space 0x4a
 	.2byte 0x0000
 AlchemyC_02002f30:
-	.space 0x5c
+	.space 0xe
+.L_02002f3e:
+	.space 0x2a
+.L_02002f68:
+	.space 0x24
 AlchemyC_02002f8c:
 	.space 0x38
 .L_02002fc4:
@@ -5976,9 +6002,22 @@ AlchemyC_02004a2c:
 	.4byte 0x0200d164
 	.4byte 0x0200f78c
 	.4byte 0x0200f7ec
-.include "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/IMPORT.INC"
-AlchemyRuntime_02005004:
-	.space 0x3c
+	.include "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/IMPORT.INC"
+	.4byte 0x46c04700
+	.4byte 0x46c04708
+	.4byte 0x46c04710
+	.4byte 0x46c04718
+	.4byte 0x46c04720
+	.4byte 0x46c04728
+	.4byte 0x46c04730
+	.4byte 0x46c04738
+	.4byte 0x46c04740
+	.4byte 0x46c04748
+	.4byte 0x46c04750
+	.4byte 0x46c04758
+	.4byte 0x46c04760
+	.4byte 0x46c04768
+	.4byte 0x46c04770
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c

@@ -7,7 +7,7 @@ pub(crate) mod progress;
 pub(crate) mod proof;
 pub(crate) mod tree;
 
-use self::boxtree::{box_tree_path, render_box_trees, svg_cache_version, BOX_TREES};
+use self::boxtree::{box_tree_path, files_svg, render_box_trees, BOX_TREES};
 use crate::compiler::canonical_json::canonical_json;
 use crate::coverage::jsnum::{commas, number};
 use crate::coverage::pipeline::{build_coverage_map, BuildOptions, CoverageMap};
@@ -15,7 +15,7 @@ use crate::coverage::progress::{game_done, measured, GameDone};
 use crate::coverage::tree::{ref_tree, root, work_tree};
 use serde_json::Value;
 use std::path::{Path, PathBuf};
-const USAGE: &str = "usage: alchemy check coverage [--target tbs-en|tla-en] [--exact-ref <ref>|worktree] [--recon-ref <ref>|worktree|none] [--write|--check|--assembly-spans|--self-test]";
+const USAGE: &str = "usage: alchemy check coverage [--target tbs-en|tla-en] [--exact-ref <ref>|worktree] [--recon-ref <ref>|worktree|none] [--write|--check|--files|--assembly-spans|--self-test]";
 fn get<'a>(v: &'a Value, key: &str) -> Option<&'a Value> {
     v.as_object()?.get(key)
 }
@@ -51,6 +51,7 @@ struct Options {
     check: bool,
     assembly_spans: bool,
     self_test: bool,
+    files: bool,
     help: bool,
 }
 fn parse(argv: &[String]) -> Result<Options, String> {
@@ -91,6 +92,7 @@ fn parse(argv: &[String]) -> Result<Options, String> {
             "--check" => o.check = true,
             "--assembly-spans" => o.assembly_spans = true,
             "--self-test" => o.self_test = true,
+            "--files" => o.files = true,
             "-h" | "--help" => {
                 o.help = true;
                 break;
@@ -175,9 +177,9 @@ fn status_line(sun: Option<GameDone>, anchor: Option<GameDone>) -> String {
 }
 fn update_readme(
     text: &str,
-    target: &str,
+    _target: &str,
     map: &CoverageMap,
-    trees: &[(&'static str, String)],
+    _trees: &[(&'static str, String)],
     status: &str,
 ) -> String {
     let proven_c = field(&map.document, &["categories", "proven_c", "bytes"]);
@@ -217,20 +219,6 @@ fn update_readme(
                 proven_c * 100.0 / c_able
             };
             out.replace_range(value_start..value_start + end, &format!("{c_share:.1}"));
-        }
-    }
-    for (id, svg) in trees {
-        let version = svg_cache_version(svg);
-        if target != "tbs-en" || *id != "rom" {
-            continue;
-        }
-        let needle = "PROGRESS.svg";
-        if let Some(pos) = out.find(&needle) {
-            let end = pos + needle.len();
-            let rest = &out[end..];
-            let cut = rest.find(['>', ')']).unwrap_or(0);
-            let replacement = format!("{needle}?v={version}");
-            out.replace_range(pos..end + cut, &replacement);
         }
     }
     out
@@ -283,11 +271,6 @@ mod tests {
         );
         assert!(updated.contains("## Status: ☀️ 59.00% · ⚓️ pending"));
         assert!(!updated.contains("52% DONE"));
-        let image = "![ROM contents](<PROGRESS.svg?v=old>)";
-        let updated = update_readme(image, "tbs-en", &map, &[("rom", "<svg/>".into())], &status);
-        assert!(updated.starts_with("![ROM contents](<PROGRESS.svg?v="));
-        assert!(updated.ends_with(">)"));
-        assert!(!updated.contains("v=old"));
     }
 }
 fn run(argv: &[String]) -> Result<String, String> {
@@ -297,6 +280,26 @@ fn run(argv: &[String]) -> Result<String, String> {
     }
     if o.self_test {
         return Ok("self-test=ok coverage-map".into());
+    }
+    if o.files {
+        if o.exact.is_some() || o.recon.is_some() || o.assembly_spans {
+            return Err("--files accepts only --write or --check".into());
+        }
+        let rendered = files_svg(830.0);
+        let path = root().join("PROGRESS.svg");
+        if o.check {
+            if read(&path)? != rendered {
+                return Err(
+                    "README file-size figure is stale; run: alchemy coverage --files --write"
+                        .into(),
+                );
+            }
+        } else if o.write {
+            write(&path, &rendered)?;
+        } else {
+            return Err("--files requires --write or --check".into());
+        }
+        return Ok(format!("files={}", path.display()));
     }
     let exact = match o.exact.as_deref() {
         None | Some("worktree") => work_tree(),
@@ -352,6 +355,9 @@ fn run(argv: &[String]) -> Result<String, String> {
                 ));
             }
         }
+        if read(&root().join("PROGRESS.svg"))? != rendered[0].1 {
+            return Err("README file-size figure is stale; run: make coverage".into());
+        }
         let readme = read(&root().join("README.md"))?;
         if update_readme(&readme, &o.target, &map, &rendered, &status) != readme {
             return Err("README coverage values are stale; run: make coverage".into());
@@ -363,6 +369,7 @@ fn run(argv: &[String]) -> Result<String, String> {
         for (id, svg) in &rendered {
             write(&box_tree_path(&o.target, id), svg)?;
         }
+        write(&root().join("PROGRESS.svg"), &rendered[0].1)?;
         let readme = read(&root().join("README.md"))?;
         write(
             &root().join("README.md"),

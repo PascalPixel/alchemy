@@ -342,7 +342,7 @@ fn field_readers_reject_missing_null_and_wrong_types_without_defaulting() {
     );
 }
 fn root_path(root: &Path, name: &str) -> Result<PathBuf, String> {
-    let path = if Path::new(name).is_absolute() {
+    let mut path = if Path::new(name).is_absolute() {
         PathBuf::from(name)
     } else {
         root.join(name)
@@ -351,6 +351,12 @@ fn root_path(root: &Path, name: &str) -> Result<PathBuf, String> {
         return Err(format!(
             "asset source must stay inside the repository: {name}"
         ));
+    }
+    if !path.exists() && !Path::new(name).is_absolute() {
+        let cached = root.join("out/private").join(name);
+        if cached.exists() {
+            path = cached;
+        }
     }
     Ok(path)
 }
@@ -3015,6 +3021,16 @@ impl Context {
         self.opened.borrow_mut().insert(path.clone());
         Ok(path)
     }
+    fn resolved(&self, path: &Path) -> Result<PathBuf, String> {
+        if path.exists() {
+            return Ok(path.to_path_buf());
+        }
+        let relative = path.strip_prefix(&self.root).map_err(|e| e.to_string())?;
+        root_path(
+            &self.root,
+            relative.to_str().ok_or("asset path is not UTF-8")?,
+        )
+    }
     /// Repository-relative names of every input this build resolved or read.
     fn opened_names(&self) -> impl Iterator<Item = String> + '_ {
         let opened = self.opened.borrow().clone();
@@ -3026,29 +3042,27 @@ impl Context {
         &self,
         path: &Path,
     ) -> Result<std::rc::Rc<psynergy::assets::image::IndexedImage>, String> {
-        self.opened.borrow_mut().insert(path.to_path_buf());
-        if let Some(image) = self.images.borrow().get(path) {
+        let path = self.resolved(path)?;
+        self.opened.borrow_mut().insert(path.clone());
+        if let Some(image) = self.images.borrow().get(&path) {
             return Ok(image.clone());
         }
         let image = std::rc::Rc::new(
-            indexed_png(&fs::read(path).map_err(|e| e.to_string())?).map_err(|e| e.to_string())?,
+            indexed_png(&fs::read(&path).map_err(|e| e.to_string())?).map_err(|e| e.to_string())?,
         );
-        self.images
-            .borrow_mut()
-            .insert(path.to_path_buf(), image.clone());
+        self.images.borrow_mut().insert(path, image.clone());
         Ok(image)
     }
     fn document(&self, path: &Path) -> Result<std::rc::Rc<Value>, String> {
-        self.opened.borrow_mut().insert(path.to_path_buf());
-        if let Some(value) = self.documents.borrow().get(path) {
+        let path = self.resolved(path)?;
+        self.opened.borrow_mut().insert(path.clone());
+        if let Some(value) = self.documents.borrow().get(&path) {
             return Ok(value.clone());
         }
-        let mut document = json(path)?;
+        let mut document = json(&path)?;
         compression_plan::expand(&self.root, &mut document)?;
         let value = std::rc::Rc::new(document);
-        self.documents
-            .borrow_mut()
-            .insert(path.to_path_buf(), value.clone());
+        self.documents.borrow_mut().insert(path, value.clone());
         Ok(value)
     }
 }
@@ -3260,12 +3274,7 @@ fn expand_series(
                         None => "games/THE BROKEN SEAL/raw/overlays/resource_",
                     };
                     let directory = format!("{prefix}{name}");
-                    let mut entry = serde_json::json!({"address":tuple[1],"size":tuple[2],"kind":"golden-sun-general-lz","stream_alignment":4,"components":[{"kind":"golden-sun-thumb-overlay","size":tuple[3],"source":format!("{directory}_overlay.s"),"base":series.get("base")}] });
-                    let exception = format!("{directory}_stream.lz.json");
-                    if root_path(&ctx.root, &exception)?.exists() {
-                        entry["plan"] = Value::String(exception);
-                    }
-                    entries.push(entry);
+                    entries.push(serde_json::json!({"address":tuple[1],"size":tuple[2],"kind":"golden-sun-general-lz","stream_alignment":4,"components":[{"kind":"golden-sun-thumb-overlay","size":tuple[3],"source":format!("{directory}_overlay.s"),"base":series.get("base")}] }));
                 }
             }
             "golden-sun-map-component-series" => {
@@ -3522,7 +3531,7 @@ fn overlay_series_uses_four_byte_alignment_and_automatic_compression() {
     entries.clear();
     expand_series(&mut ctx, &manifest, &mut entries).unwrap();
     assert_eq!(entries[0]["stream_alignment"], 4);
-    assert_eq!(entries[0]["plan"], "overlay/resource_001_stream.lz.json");
+    assert!(entries[0].get("plan").is_none());
     assert!(build_general_lz_cached(&ctx, &serde_json::json!({"components":[]})).is_err());
 }
 
@@ -5707,8 +5716,6 @@ fn asset_stamp_tracks_sound_and_included_overlay_sources() {
     )
     .unwrap();
     assert_eq!(previous, stamp().unwrap());
-    fs::write(root.join("PROGRESS.svg"), "generated").unwrap();
-    assert_eq!(previous, stamp().unwrap());
     fs::write(
         root.join("games/THE BROKEN SEAL/SRC/palette.json"),
         "source",
@@ -5739,7 +5746,7 @@ fn material_audit_reports_only_game_material_no_build_read() {
         "SRC/A.JSON",
         "SRC/B.JSON",
         "SRC/X.C",
-        "recon/en/dossiers.json",
+        "source-paths.json",
     ] {
         let path = root.join(game).join(name);
         fs::create_dir_all(path.parent().unwrap()).unwrap();
@@ -5878,6 +5885,10 @@ fn audit_material_consumers(
         unconsumed.join("\n  ")
     ))
 }
+fn record_asset_failure(failures: &mut Vec<String>, failure: String) {
+    eprintln!("diagnostic {failure}");
+    failures.push(failure);
+}
 fn native_asset_main(arguments: &[String]) -> Result<(), String> {
     let root = repository_root();
     let options = parse_build_options(arguments, &root)?;
@@ -5957,6 +5968,7 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
     });
     let mut previous_end = ROM_BASE;
     let mut regions = Vec::new();
+    let mut failures = Vec::new();
     let mut all_sources = edition_catalogs
         .iter()
         .map(|catalog| json_string(catalog, "edition catalog").map(str::to_string))
@@ -5972,21 +5984,32 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
             return Err(format!("asset region outside ROM at 0x{address:08x}"));
         }
         previous_end = end;
-        let (built, source_names, details) = build_entry(&mut ctx, entry).map_err(|error| {
-            format!(
-                "asset at 0x{address:08x} ({}): {error}",
-                entry
-                    .get("kind")
-                    .and_then(Value::as_str)
-                    .unwrap_or("unknown")
-            )
-        })?;
+        let (built, source_names, details) = match build_entry(&mut ctx, entry) {
+            Ok(result) => result,
+            Err(error) => {
+                record_asset_failure(
+                    &mut failures,
+                    format!(
+                        "asset at 0x{address:08x} ({}): {error}",
+                        entry
+                            .get("kind")
+                            .and_then(Value::as_str)
+                            .unwrap_or("unknown")
+                    ),
+                );
+                continue;
+            }
+        };
         if built.len() != size {
-            return Err(format!(
-                "asset at 0x{address:08x}: built 0x{:x}, expected 0x{:x}",
-                built.len(),
-                size
-            ));
+            record_asset_failure(
+                &mut failures,
+                format!(
+                    "asset at 0x{address:08x}: built 0x{:x}, expected 0x{:x}",
+                    built.len(),
+                    size
+                ),
+            );
+            continue;
         }
         if let Some(rom) = rom.as_ref() {
             let start = address
@@ -5996,15 +6019,27 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
                 .get(start..start + size)
                 .ok_or("asset region lies beyond ROM")?;
             if built != expected {
-                return Err(format!("asset at 0x{address:08x}: encoded bytes differ"));
+                record_asset_failure(
+                    &mut failures,
+                    format!("asset at 0x{address:08x}: encoded bytes differ"),
+                );
+                continue;
             }
         }
-        let sources = closure_sources(&ctx, entry, source_names)?;
+        let sources = match closure_sources(&ctx, entry, source_names) {
+            Ok(sources) => sources,
+            Err(error) => {
+                record_asset_failure(&mut failures, format!("asset at 0x{address:08x}: {error}"));
+                continue;
+            }
+        };
         all_sources.extend(sources.iter().cloned());
         let output = options.output.join(format!("{address:08x}.bin"));
         let output_sha256 = sha256::hex(&built);
-        write_cache_entry_atomically(&output, &built)
-            .map_err(|error| format!("{}: {error}", output.display()))?;
+        if let Err(error) = write_cache_entry_atomically(&output, &built) {
+            record_asset_failure(&mut failures, format!("{}: {error}", output.display()));
+            continue;
+        }
         regions.push(serde_json::json!({
             "address": address,
             "size": size,
@@ -6017,6 +6052,22 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
             "details": details,
         }));
     }
+    let inputs = all_sources
+        .iter()
+        .map(|source| root_relative(&root, Path::new(source)).unwrap_or_else(|_| source.clone()))
+        .chain(ctx.opened_names())
+        .chain([relative(&root, &options.manifest)])
+        .collect::<BTreeSet<_>>();
+    if let Err(error) = audit_material_consumers(&root, &options.manifest, inputs.iter().cloned()) {
+        record_asset_failure(&mut failures, error);
+    }
+    if !failures.is_empty() {
+        return Err(format!(
+            "asset build found {} failure(s):\n  {}",
+            failures.len(),
+            failures.join("\n  ")
+        ));
+    }
     let keep = regions
         .iter()
         .filter_map(|region| {
@@ -6028,13 +6079,6 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
         .collect::<Vec<_>>();
     prune_files(&options.output, "*.bin", keep.iter())
         .map_err(|error| format!("asset output cleanup: {error}"))?;
-    let inputs = all_sources
-        .iter()
-        .map(|source| root_relative(&root, Path::new(source)).unwrap_or_else(|_| source.clone()))
-        .chain(ctx.opened_names())
-        .chain([relative(&root, &options.manifest)])
-        .collect::<BTreeSet<_>>();
-    audit_material_consumers(&root, &options.manifest, inputs.iter().cloned())?;
     let asset_bytes = regions
         .iter()
         .map(|region| number(&region["size"], "asset size").unwrap_or(0))

@@ -1085,7 +1085,7 @@
 	.set sub_02007694, 0x02007694
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x10
 AlchemyC_02000040:
@@ -1094,7 +1094,6 @@ AlchemyC_020000ac:
 	.space 0x40
 AlchemyC_020000ec:
 	.space 0x88
-
 AlchemyC_02000174:
 	.space 0x4
 AlchemyC_02000178:
@@ -1463,7 +1462,17 @@ AlchemyC_020026c0:
 .L_02002c6a:
 	.space 0x76
 .L_02002ce0:
-	.space 0x4a4
+	.space 0x44
+.L_02002d24:
+	.space 0x138
+.L_02002e5c:
+	.space 0x7c
+.L_02002ed8:
+	.space 0x58
+.L_02002f30:
+	.space 0x98
+.L_02002fc8:
+	.space 0x1bc
 AlchemyC_02003184:
 	.space 0x34
 AlchemyC_020031b8:
@@ -1486,7 +1495,7 @@ AlchemyC_020039d4:
 	.2byte 0x0000
 AlchemyC_02003a3c:
 	.space 0xd8
-.include "games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/IMPORT.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/IMPORT.INC"
 	.4byte 0x00100000
 	.4byte 0x00100000
 	.4byte 0x00100000

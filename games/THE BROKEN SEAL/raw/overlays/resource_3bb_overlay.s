@@ -744,7 +744,7 @@
 	.set sub_02007d6e, 0x02007d6e
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x8
 AlchemyC_02000038:
@@ -765,7 +765,9 @@ AlchemyC_020000b0:
 	.space 0xe
 	.2byte 0x0000
 AlchemyC_020000c0:
-	.space 0x8e
+	.space 0x54
+.L_02000114:
+	.space 0x3a
 	.2byte 0x0000
 AlchemyC_02000150:
 	.space 0x10
@@ -1277,11 +1279,20 @@ AlchemyC_020009b0:
 	bx	r0
 	.4byte 0x02000240
 	.4byte 0x0000022b
-	.4byte 0x00000090
+	.2byte 0x0090
+	.2byte 0x0000
 AlchemyC_02000b30:
 	.space 0x8
 AlchemyC_02000b38:
-	.space 0x9a
+	.space 0x2e
+.L_02000b66:
+	.space 0x14
+.L_02000b7a:
+	.space 0x14
+.L_02000b8e:
+	.space 0x28
+.L_02000bb6:
+	.space 0x1c
 	.2byte 0x0000
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
@@ -4684,9 +4695,13 @@ AlchemyC_02003b38:
 AlchemyC_02003b48:
 	.space 0x48
 AlchemyC_02003b90:
-	.space 0x98
+	.space 0x54
+.L_02003be4:
+	.space 0x44
 .L_02003c28:
-	.space 0x20
+	.space 0x1c
+.L_02003c44:
+	.space 0x4
 .L_02003c48:
 	.space 0x22
 .L_02003c6a:
@@ -4695,7 +4710,7 @@ AlchemyC_02003cf8:
 	.space 0x78
 .L_02003d70:
 	.space 0x28
-.include "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/IMPORT.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/IMPORT.INC"
 	.4byte 0x03030202
 	.4byte 0x20202000
 	.4byte 0x40404060

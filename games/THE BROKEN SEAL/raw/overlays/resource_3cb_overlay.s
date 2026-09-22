@@ -358,7 +358,7 @@
 	.set sub_02002f8a, 0x02002f8a
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x8
 AlchemyC_02000038:
@@ -2281,7 +2281,8 @@ AlchemyC_02000f88:
 	.2byte 0x0000
 	.4byte 0x02000240
 	.4byte 0x0000298a
-	.4byte 0x0000298b
+	.2byte 0x298b
+	.2byte 0x0000
 AlchemyC_020011b4:
 	.space 0x8
 AlchemyC_020011bc:
@@ -2741,9 +2742,22 @@ AlchemyC_02001294:
 	.4byte 0x00002929
 	.4byte 0x03001d08
 	.4byte 0x02008149
-.include "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/IMPORT.INC"
-AlchemyRuntime_020018ec:
-	.space 0x3c
+	.include "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/IMPORT.INC"
+	.4byte 0x46c04700
+	.4byte 0x46c04708
+	.4byte 0x46c04710
+	.4byte 0x46c04718
+	.4byte 0x46c04720
+	.4byte 0x46c04728
+	.4byte 0x46c04730
+	.4byte 0x46c04738
+	.4byte 0x46c04740
+	.4byte 0x46c04748
+	.4byte 0x46c04750
+	.4byte 0x46c04758
+	.4byte 0x46c04760
+	.4byte 0x46c04768
+	.4byte 0x46c04770
 	.4byte 0x434d4753
 	.4byte 0x33323130
 	.4byte 0x31434241

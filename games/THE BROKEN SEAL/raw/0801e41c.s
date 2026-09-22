@@ -1,10 +1,8 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global Func_0801e41c
-	.thumb_func
-Func_0801e41c:
+	.set sub_0801e260, 0x0801e260
+	.global Overlay_0801e41c
+Overlay_0801e41c:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9
@@ -19,19 +17,19 @@ Func_0801e41c:
 	ldr	r6, [sp, #28]
 	mov	r9, r3
 	cmp	r7, sl
-	beq.n	.L0
-	b.n	.L1
-.L0:
+	beq.n	.L_0801e43c
+	b.n	.L_0801e572
+.L_0801e43c:
 	cmp	r8, r6
-	bne.n	.L2
-	b.n	.L3
-.L2:
+	bne.n	.L_0801e442
+	b.n	.L_0801e6c2
+.L_0801e442:
 	cmp	r8, r6
-	bls.n	.L4
+	bls.n	.L_0801e44c
 	mov	r4, r8
 	mov	r8, r6
 	adds	r6, r4, #0
-.L4:
+.L_0801e44c:
 	ldrh	r0, [r5, #12]
 	ldrh	r1, [r5, #14]
 	mov	r2, r8
@@ -39,7 +37,7 @@ Func_0801e41c:
 	add	r0, sl
 	movs	r2, #1
 	add	r1, r8
-	bl	Func_0801e260
+	bl	sub_0801e260
 	ldrh	r3, [r5, #14]
 	ldrh	r2, [r5, #12]
 	add	r3, r8
@@ -51,16 +49,16 @@ Func_0801e41c:
 	mov	r4, r8
 	adds	r0, r3, r2
 	cmp	r4, r6
-	bls.n	.L5
-	b.n	.L3
-.L5:
+	bls.n	.L_0801e478
+	b.n	.L_0801e6c2
+.L_0801e478:
 	ldrh	r1, [r0, #0]
 	cmp	r4, r8
-	bne.n	.L6
+	bne.n	.L_0801e4d8
 	ldr	r2, [pc, #596]
 	adds	r3, r1, r2
 	cmp	r3, #15
-	bhi.n	.L7
+	bhi.n	.L_0801e564
 	ldr	r2, [pc, #592]
 	lsls	r3, r3, #2
 	ldr	r3, [r3, r2]
@@ -81,18 +79,19 @@ Func_0801e41c:
 	.4byte 0x0801e564
 	.4byte 0x0801e564
 	.4byte 0x0801e564
-	.4byte 0x0801e566
+	.2byte 0xe566
+	.2byte 0x0801
 	ldr	r1, [pc, #520]
-	b.n	.L8
+	b.n	.L_0801e566
 	ldr	r1, [pc, #520]
-	b.n	.L8
-.L6:
+	b.n	.L_0801e566
+.L_0801e4d8:
 	cmp	r4, r6
-	bne.n	.L9
+	bne.n	.L_0801e538
 	ldr	r2, [pc, #500]
 	adds	r3, r1, r2
 	cmp	r3, #16
-	bhi.n	.L7
+	bhi.n	.L_0801e564
 	ldr	r2, [pc, #508]
 	lsls	r3, r3, #2
 	ldr	r3, [r3, r2]
@@ -113,16 +112,17 @@ Func_0801e41c:
 	.4byte 0x0801e564
 	.4byte 0x0801e564
 	.4byte 0x0801e564
-	.4byte 0x0801e566
+	.2byte 0xe566
+	.2byte 0x0801
 	ldr	r1, [pc, #436]
-	b.n	.L8
+	b.n	.L_0801e566
 	ldr	r1, [pc, #436]
-	b.n	.L8
-.L9:
+	b.n	.L_0801e566
+.L_0801e538:
 	ldr	r2, [pc, #408]
 	adds	r3, r1, r2
 	cmp	r3, #5
-	bhi.n	.L7
+	bhi.n	.L_0801e564
 	ldr	r2, [pc, #428]
 	lsls	r3, r3, #2
 	ldr	r3, [r3, r2]
@@ -132,33 +132,34 @@ Func_0801e41c:
 	.4byte 0x0801e566
 	.4byte 0x0801e566
 	.4byte 0x0801e566
-	.4byte 0x0801e560
+	.2byte 0xe560
+	.2byte 0x0801
 	ldr	r1, [pc, #400]
-	b.n	.L8
-.L7:
+	b.n	.L_0801e566
+.L_0801e564:
 	ldr	r1, [pc, #400]
-.L8:
+.L_0801e566:
 	adds	r4, #1
 	strh	r1, [r0, #0]
 	adds	r0, #64
 	cmp	r4, r6
-	bls.n	.L5
-	b.n	.L3
-.L1:
+	bls.n	.L_0801e478
+	b.n	.L_0801e6c2
+.L_0801e572:
 	cmp	r8, r6
-	beq.n	.L10
-	b.n	.L3
-.L10:
+	beq.n	.L_0801e578
+	b.n	.L_0801e6c2
+.L_0801e578:
 	cmp	r7, sl
-	bne.n	.L11
-	b.n	.L3
-.L11:
+	bne.n	.L_0801e57e
+	b.n	.L_0801e6c2
+.L_0801e57e:
 	cmp	r7, sl
-	bls.n	.L12
+	bls.n	.L_0801e588
 	adds	r4, r7, #0
 	mov	r7, sl
 	mov	sl, r4
-.L12:
+.L_0801e588:
 	ldrh	r0, [r5, #12]
 	ldrh	r1, [r5, #14]
 	mov	r3, sl
@@ -166,7 +167,7 @@ Func_0801e41c:
 	adds	r0, r0, r7
 	movs	r3, #1
 	add	r1, r8
-	bl	Func_0801e260
+	bl	sub_0801e260
 	ldrh	r3, [r5, #14]
 	ldrh	r2, [r5, #12]
 	add	r3, r8
@@ -178,16 +179,16 @@ Func_0801e41c:
 	adds	r4, r7, #0
 	adds	r0, r3, r2
 	cmp	r4, sl
-	bls.n	.L13
-	b.n	.L3
-.L13:
+	bls.n	.L_0801e5b4
+	b.n	.L_0801e6c2
+.L_0801e5b4:
 	ldrh	r1, [r0, #0]
 	cmp	r4, r7
-	bne.n	.L14
+	bne.n	.L_0801e61c
 	ldr	r2, [pc, #280]
 	adds	r3, r1, r2
 	cmp	r3, #17
-	bhi.n	.L15
+	bhi.n	.L_0801e6b4
 	ldr	r2, [pc, #312]
 	lsls	r3, r3, #2
 	ldr	r3, [r3, r2]
@@ -210,18 +211,19 @@ Func_0801e41c:
 	.4byte 0x0801e6b4
 	.4byte 0x0801e6b4
 	.4byte 0x0801e6b4
-	.4byte 0x0801e6b6
+	.2byte 0xe6b6
+	.2byte 0x0801
 	ldr	r1, [pc, #232]
-	b.n	.L16
+	b.n	.L_0801e6b6
 	ldr	r1, [pc, #232]
-	b.n	.L16
-.L14:
+	b.n	.L_0801e6b6
+.L_0801e61c:
 	cmp	r4, sl
-	bne.n	.L17
+	bne.n	.L_0801e684
 	ldr	r2, [pc, #176]
 	adds	r3, r1, r2
 	cmp	r3, #18
-	bhi.n	.L15
+	bhi.n	.L_0801e6b4
 	ldr	r2, [pc, #220]
 	lsls	r3, r3, #2
 	ldr	r3, [r3, r2]
@@ -244,16 +246,17 @@ Func_0801e41c:
 	.4byte 0x0801e6b4
 	.4byte 0x0801e6b4
 	.4byte 0x0801e6b4
-	.4byte 0x0801e6b6
+	.2byte 0xe6b6
+	.2byte 0x0801
 	ldr	r1, [pc, #140]
-	b.n	.L16
+	b.n	.L_0801e6b6
 	ldr	r1, [pc, #140]
-	b.n	.L16
-.L17:
+	b.n	.L_0801e6b6
+.L_0801e684:
 	ldr	r2, [pc, #76]
 	adds	r3, r1, r2
 	cmp	r3, #6
-	bhi.n	.L15
+	bhi.n	.L_0801e6b4
 	ldr	r2, [pc, #132]
 	lsls	r3, r3, #2
 	ldr	r3, [r3, r2]
@@ -264,19 +267,20 @@ Func_0801e41c:
 	.4byte 0x0801e6b0
 	.4byte 0x0801e6b6
 	.4byte 0x0801e6b4
-	.4byte 0x0801e6b0
+	.2byte 0xe6b0
+	.2byte 0x0801
 	ldr	r1, [pc, #64]
-	b.n	.L16
-.L15:
+	b.n	.L_0801e6b6
+.L_0801e6b4:
 	ldr	r1, [pc, #96]
-.L16:
+.L_0801e6b6:
 	adds	r4, #1
 	strh	r1, [r0, #0]
 	adds	r0, #2
 	cmp	r4, sl
-	bhi.n	.L3
-	b.n	.L13
-.L3:
+	bhi.n	.L_0801e6c2
+	b.n	.L_0801e5b4
+.L_0801e6c2:
 	pop	{r3, r5, r6}
 	mov	r8, r3
 	mov	r9, r5

@@ -1097,7 +1097,7 @@
 	.set sub_02008344, 0x02008344
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x5c
 AlchemyC_0200008c:
@@ -1197,7 +1197,9 @@ AlchemyC_02000550:
 AlchemyC_02000560:
 	.space 0x10
 AlchemyC_02000570:
-	.space 0x10
+	.space 0x6
+.L_02000576:
+	.space 0xa
 AlchemyC_02000580:
 	.space 0x10
 AlchemyC_02000590:
@@ -3850,7 +3852,7 @@ AlchemyC_02004004:
 	bx	r0
 	.4byte 0x0200c005
 	.4byte 0x0200bfb5
-.include "games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/IMPORT.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/IMPORT.INC"
 	.4byte 0x7c1f7c1f
 	.4byte 0x20a21861
 	.4byte 0x45643503

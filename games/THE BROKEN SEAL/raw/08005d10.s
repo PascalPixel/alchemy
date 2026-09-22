@@ -1,12 +1,9 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global SerialRuntime_Initialize
-	.global Func_08005d10
-	.thumb_func
-SerialRuntime_Initialize:
-Func_08005d10:
+	.set sub_0800307c, 0x0800307c
+	.set sub_0800651c, 0x0800651c
+	.global Overlay_08005d10
+Overlay_08005d10:
 	push	{r5, r6, r7, lr}
 	ldr	r6, [pc, #68]
 	ldrh	r3, [r6, #0]
@@ -17,11 +14,11 @@ Func_08005d10:
 	movs	r0, #7
 	movs	r1, #0
 	adds	r2, r5, #0
-	bl	Func_0800307c
+	bl	sub_0800307c
 	movs	r0, #6
 	movs	r1, #0
 	adds	r2, r5, #0
-	bl	Func_0800307c
+	bl	sub_0800307c
 	ldr	r4, [pc, #32]
 	adds	r3, r6, #0
 	strh	r4, [r3, #0]
@@ -36,23 +33,24 @@ Func_08005d10:
 	adds	r3, r0, #0
 	ands	r3, r2
 	cmp	r3, #0
-	beq.n	.L0
+	beq.n	.L_08005d68
 	strh	r0, [r1, #0]
-	b.n	.L0
+	b.n	.L_08005d68
 	.4byte 0x00000000
 	.4byte 0x04000208
 	.4byte 0x08006241
 	.4byte 0x04000200
-	.4byte 0x0000ff3f
-.L0:
+	.2byte 0xff3f
+	.2byte 0x0000
+.L_08005d68:
 	ldrh	r2, [r1, #0]
 	movs	r0, #64
 	adds	r3, r0, #0
 	ands	r3, r2
 	cmp	r3, #0
-	beq.n	.L1
+	beq.n	.L_08005d76
 	strh	r0, [r1, #0]
-.L1:
+.L_08005d76:
 	ldr	r2, [pc, #64]
 	ldr	r3, [pc, #48]
 	ldr	r1, [pc, #64]
@@ -79,7 +77,7 @@ Func_08005d10:
 	mov	r1, ip
 	ldr	r3, [pc, #28]
 	ldr	r2, [pc, #28]
-	b.n	.L2
+	b.n	.L_08005dcc
 	.4byte 0x00008000
 	.4byte 0x00004003
 	.4byte 0x00000001
@@ -87,8 +85,9 @@ Func_08005d10:
 	.4byte 0x04000128
 	.4byte 0x02002240
 	.4byte 0x040000d4
-	.4byte 0x85000058
-.L2:
+	.2byte 0x0058
+	.2byte 0x8500
+.L_08005dcc:
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	movs	r3, #1
@@ -106,7 +105,7 @@ Func_08005d10:
 	adds	r2, #48
 	adds	r1, #160
 	movs	r0, #1
-.L3:
+.L_08005dee:
 	subs	r0, #1
 	str	r1, [r2, #0]
 	str	r3, [r2, #16]
@@ -116,7 +115,7 @@ Func_08005d10:
 	adds	r2, #4
 	adds	r1, #96
 	cmp	r0, #0
-	bge.n	.L3
+	bge.n	.L_08005dee
 	ldr	r5, [pc, #68]
 	movs	r0, #0
 	strh	r0, [r5, #0]
@@ -140,10 +139,10 @@ Func_08005d10:
 	str	r0, [r3, #0]
 	ldr	r3, [pc, #52]
 	strh	r0, [r3, #0]
-	bl	Func_0800651c
+	bl	sub_0800651c
 	strh	r7, [r5, #0]
 	add	sp, #4
-	b.n	.L4
+	b.n	.L_08005e68
 	movs	r0, r0
 	.4byte 0x00000080
 	.4byte 0x00000001
@@ -155,8 +154,9 @@ Func_08005d10:
 	.4byte 0x02002080
 	.4byte 0x02002008
 	.4byte 0x020023ac
-	.4byte 0x02002238
-.L4:
+	.2byte 0x2238
+	.2byte 0x0200
+.L_08005e68:
 	pop	{r5, r6, r7}
 	pop	{r0}
 	bx	r0

@@ -26,8 +26,9 @@ a:focus-visible,button:focus-visible { outline:2px solid #fff; outline-offset:-2
 .folder-label { position:absolute; display:block; top:0; left:2px; right:0; height:16px; white-space:nowrap; }
 .area { position:absolute; inset:2px; }
 .area.headed { top:2px; }
-.leaf-label { position:absolute; inset:0; display:flex; justify-content:center; align-items:center; }
+.leaf-label { position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; align-items:center; }
 .leaf-label span { max-width:100%; overflow:hidden; white-space:nowrap; }
+.file-size { font-size:11px; line-height:14px; visibility:hidden; }
 .folder-label span,.leaf-label span { visibility:hidden; }
 .tile:hover:not(:has(.tile:hover)) { border-color:#fff3ac; }
 .shared-link { position:absolute; bottom:28px; left:8px; padding:0 4px; background:var(--raised); }

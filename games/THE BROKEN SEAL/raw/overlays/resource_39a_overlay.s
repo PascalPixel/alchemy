@@ -524,7 +524,7 @@
 	.set sub_02004568, 0x02004568
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x10
 AlchemyC_02000040:
@@ -556,42 +556,80 @@ AlchemyC_020003b8:
 	.space 0x34
 .L_020003ec:
 AlchemyC_020003ec:
-	.space 0x40
+	.space 0xa
+.L_020003f6:
+	.space 0x36
 AlchemyC_0200042c:
-	.space 0x38
+	.space 0x4
+.L_02000430:
+	.space 0xa
+.L_0200043a:
+	.space 0x2a
 AlchemyC_02000464:
-	.space 0x58
+	.space 0x42
+.L_020004a6:
+	.space 0x16
 AlchemyC_020004bc:
-	.space 0x34
+	.space 0x20
+.L_020004dc:
+	.space 0x14
 AlchemyC_020004f0:
-	.space 0x38
+	.space 0x22
+.L_02000512:
+	.space 0x16
 AlchemyC_02000528:
 	.space 0x40
 AlchemyC_02000568:
-	.space 0x50
+	.space 0x16
+.L_0200057e:
+	.space 0x3a
 AlchemyC_020005b8:
-	.space 0x74
+	.space 0x46
+.L_020005fe:
+	.space 0x2e
 AlchemyC_0200062c:
-	.space 0x3c
+	.space 0x20
+.L_0200064c:
+	.space 0x1c
 AlchemyC_02000668:
-	.space 0x58
+	.space 0x1a
+.L_02000682:
+	.space 0x3e
 AlchemyC_020006c0:
-	.space 0x3c
+	.space 0x2
+.L_020006c2:
+	.space 0x3a
 .L_020006fc:
 AlchemyC_020006fc:
-	.space 0x38
+	.space 0xa
+.L_02000706:
+	.space 0xc
+.L_02000712:
+	.space 0x22
 AlchemyC_02000734:
 	.space 0x34
 AlchemyC_02000768:
 	.space 0x14
 .L_0200077c:
-	.space 0x74
+	.space 0x4e
+.L_020007ca:
+	.space 0x26
 AlchemyC_020007f0:
-	.space 0xdc
+	.space 0x2e
+.L_0200081e:
+	.space 0x40
+.L_0200085e:
+	.space 0x6e
 AlchemyC_020008cc:
-	.space 0x54
+	.space 0x3a
+.L_02000906:
+	.space 0x1a
 AlchemyC_02000920:
-	.space 0xb0
+	.space 0xe
+.L_0200092e:
+	.space 0x8a
+.L_020009b8:
+	.space 0x18
 AlchemyC_020009d0:
 	.space 0x40
 AlchemyC_02000a10:
@@ -599,9 +637,17 @@ AlchemyC_02000a10:
 AlchemyC_02000a60:
 	.space 0x54
 AlchemyC_02000ab4:
-	.space 0x50
+	.space 0x32
+.L_02000ae6:
+	.space 0x1e
 AlchemyC_02000b04:
-	.space 0xc4
+	.space 0x8
+.L_02000b0c:
+	.space 0x56
+.L_02000b62:
+	.space 0x3e
+.L_02000ba0:
+	.space 0x28
 AlchemyC_02000bc8:
 	.space 0x2c
 AlchemyC_02000bf4:
@@ -613,9 +659,13 @@ AlchemyC_02000c24:
 AlchemyC_02000c78:
 	.space 0x30
 AlchemyC_02000ca8:
-	.space 0x30
+	.space 0x4
+.L_02000cac:
+	.space 0x2c
 AlchemyC_02000cd8:
-	.space 0x30
+	.space 0x2
+.L_02000cda:
+	.space 0x2e
 AlchemyC_02000d08:
 	.space 0x30
 AlchemyC_02000d38:
@@ -643,11 +693,19 @@ AlchemyC_02000ec0:
 	.space 0x16
 	.2byte 0x0000
 AlchemyC_02000ed8:
-	.space 0x58
+	.space 0x26
+.L_02000efe:
+	.space 0x32
 AlchemyC_02000f30:
-	.space 0x9c
+	.space 0x6
+.L_02000f36:
+	.space 0x32
+.L_02000f68:
+	.space 0x64
 AlchemyC_02000fcc:
-	.space 0x2a
+	.space 0x6
+.L_02000fd2:
+	.space 0x24
 	.2byte 0x0000
 AlchemyC_02000ff8:
 	.space 0xa
@@ -659,11 +717,35 @@ AlchemyC_02001050:
 AlchemyC_02001154:
 	.space 0x178
 AlchemyC_020012cc:
-	.space 0x2dc
+	.space 0x10
+.L_020012dc:
+	.space 0x44
+.L_02001320:
+	.space 0x36
+.L_02001356:
+	.space 0x36
+.L_0200138c:
+	.space 0x6c
+.L_020013f8:
+	.space 0x13c
+.L_02001534:
+	.space 0x3c
+.L_02001570:
+	.space 0x38
 .L_020015a8:
 	.space 0x34
 AlchemyC_020015dc:
-	.space 0x130
+	.space 0x20
+.L_020015fc:
+	.space 0x3a
+.L_02001636:
+	.space 0x36
+.L_0200166c:
+	.space 0x40
+.L_020016ac:
+	.space 0x50
+.L_020016fc:
+	.space 0x10
 AlchemyC_0200170c:
 	.space 0x24
 AlchemyC_02001730:
@@ -671,7 +753,9 @@ AlchemyC_02001730:
 AlchemyC_02001750:
 	.space 0x58
 AlchemyC_020017a8:
-	.space 0x3c
+	.space 0x28
+.L_020017d0:
+	.space 0x14
 	push	{r5, r6, r7, lr}
 	sub	sp, #8
 	bl	sub_02003132
@@ -1016,7 +1100,9 @@ AlchemyC_02001ac0:
 AlchemyC_02001ad0:
 	.space 0x4c
 AlchemyC_02001b1c:
-	.space 0x80
+	.space 0x62
+.L_02001b7e:
+	.space 0x1e
 AlchemyC_02001b9c:
 	.space 0x40
 AlchemyC_02001bdc:
@@ -1271,7 +1357,9 @@ AlchemyC_02001c08:
 	.2byte 0x0001
 	.2byte 0x000d
 AlchemyC_02001e08:
-	.space 0xfc
+	.space 0x70
+.L_02001e78:
+	.space 0x8c
 AlchemyC_02001f04:
 	.space 0x1c
 AlchemyC_02001f20:
@@ -1279,7 +1367,9 @@ AlchemyC_02001f20:
 AlchemyC_02001f3c:
 	.space 0x1c
 AlchemyC_02001f58:
-	.space 0x40
+	.space 0x10
+.L_02001f68:
+	.space 0x30
 .L_02001f98:
 	.space 0x14
 	push	{lr}
@@ -1330,10 +1420,30 @@ AlchemyC_02001f58:
 	.2byte 0x3108
 	.2byte 0x0020
 AlchemyC_02002014:
-	.space 0x80
+	.space 0x6a
+.L_0200207e:
+	.space 0x16
 AlchemyC_02002094:
-	.space 0x1c4
-.include "games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/IMPORT.INC"
+	.space 0x8
+.L_0200209c:
+	.space 0x28
+.L_020020c4:
+	.space 0x20
+.L_020020e4:
+	.space 0x28
+.L_0200210c:
+	.space 0x20
+.L_0200212c:
+	.space 0x58
+.L_02002184:
+	.space 0x20
+.L_020021a4:
+	.space 0x28
+.L_020021cc:
+	.space 0x3c
+.L_02002208:
+	.space 0x50
+	.include "games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/IMPORT.INC"
 	.4byte 0x0200b268
 	.4byte 0x0200b2a8
 	.4byte 0x0200b2e8

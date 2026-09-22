@@ -1,14 +1,11 @@
-@ 役者の描画。DMA3 で 0x08009bb8 の ARM 核 (0x2c4 バイト) を Func_080048b0(52) の緩衝へ写し、
-@ 0x03001e70-12 の 64 役者 (112 バイトずつ) について、状態 +84 の下位 4 bit が 1 で視点からの
-@ 距離が範囲内なら、地図語から影と高さの旗を取り、obj[16], obj[20] に [r5+24] を IwramMulQ16 で
-@ 掛けた尺度と位置 3 語を組んで Func_0800b168 で描く。範囲外や非表示は Func_08003f78 で
-@ 絵を返し +37 に印を付ける。終わりに Func_08002dd8(52) で緩衝を返す。
-@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
-	.global Func_0800c62c
-	.thumb_func
-Func_0800c62c:
+	.set sub_08002dd8, 0x08002dd8
+	.set sub_08003f78, 0x08003f78
+	.set sub_080048b0, 0x080048b0
+	.set sub_0800b168, 0x0800b168
+	.global Overlay_0800c62c
+Overlay_0800c62c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -36,7 +33,7 @@ Func_0800c62c:
 	ldr	r5, [pc, #504]
 	movs	r0, #52
 	adds	r1, r5, #0
-	bl	Func_080048b0
+	bl	sub_080048b0
 	movs	r2, #132
 	lsrs	r5, r5, #2
 	lsls	r2, r2, #24
@@ -44,7 +41,6 @@ Func_0800c62c:
 	ldr	r3, [pc, #492]
 	ldr	r0, [pc, #492]
 	orrs	r2, r5
-@ DMA3: ARM 核を緩衝へ。
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	movs	r3, #0
@@ -62,50 +58,48 @@ Func_0800c62c:
 	mov	fp, r3
 	mov	r8, r0
 	adds	r7, #8
-@ 役者ループ。
-.L16:
+.L_0800c696:
 	mov	r1, sl
 	ldr	r3, [r1, #0]
 	cmp	r3, #0
-	bne.n	.L0
-	b.n	.L1
-.L0:
+	bne.n	.L_0800c6a0
+	b.n	.L_0800c822
+.L_0800c6a0:
 	ldr	r1, [r7, #0]
 	cmp	r1, #0
-	bne.n	.L2
+	bne.n	.L_0800c6ae
 	ldr	r3, [r7, #8]
 	cmp	r3, #0
-	bne.n	.L2
-	b.n	.L3
-.L2:
+	bne.n	.L_0800c6ae
+	b.n	.L_0800c7f8
+.L_0800c6ae:
 	mov	r2, r8
 	ldrb	r3, [r2, #0]
 	movs	r6, #15
 	ands	r6, r3
 	cmp	r6, #0
-	bne.n	.L4
-	b.n	.L1
-.L4:
+	bne.n	.L_0800c6bc
+	b.n	.L_0800c822
+.L_0800c6bc:
 	cmp	r6, #1
-	beq.n	.L5
-	b.n	.L1
-.L5:
+	beq.n	.L_0800c6c2
+	b.n	.L_0800c822
+.L_0800c6c2:
 	ldr	r0, [sp, #0]
 	movs	r4, #4
 	ldrsh	r3, [r0, r4]
 	cmp	r3, #0
-	beq.n	.L6
+	beq.n	.L_0800c6e0
 	ldrb	r3, [r2, #8]
 	cmp	r3, #0
-	bne.n	.L6
+	bne.n	.L_0800c6e0
 	ldr	r5, [r7, #72]
 	ldrb	r0, [r5, #28]
 	adds	r5, #37
-	bl	Func_08003f78
+	bl	sub_08003f78
 	strb	r6, [r5, #0]
-	b.n	.L1
-@ 距離の範囲判定。
-.L6:
+	b.n	.L_0800c822
+.L_0800c6e0:
 	ldr	r3, [sp, #4]
 	ldr	r0, [r7, #8]
 	ldr	r2, [sp, #8]
@@ -119,15 +113,15 @@ Func_0800c62c:
 	add	r3, r9
 	ldr	r5, [r7, #72]
 	cmp	r3, r4
-	bls.n	.L7
-	b.n	.L8
-.L7:
+	bls.n	.L_0800c6fe
+	b.n	.L_0800c7ea
+.L_0800c6fe:
 	ldr	r3, [pc, #368]
 	cmp	r2, r3
-	ble.n	.L8
+	ble.n	.L_0800c7ea
 	ldr	r4, [pc, #364]
 	cmp	r2, r4
-	bgt.n	.L8
+	bgt.n	.L_0800c7ea
 	ldrb	r3, [r7, #26]
 	movs	r2, #34
 	add	r2, sl
@@ -153,12 +147,12 @@ Func_0800c62c:
 	ands	r3, r2
 	mov	lr, r0
 	cmp	r3, #0
-	beq.n	.L9
+	beq.n	.L_0800c762
 	ldr	r4, [r1, #0]
 	lsls	r3, r4, #16
 	lsrs	r0, r3, #30
 	cmp	r0, #0
-	beq.n	.L10
+	beq.n	.L_0800c764
 	movs	r2, #13
 	ldrb	r1, [r5, #9]
 	negs	r2, r2
@@ -171,23 +165,21 @@ Func_0800c62c:
 	ands	r2, r3
 	orrs	r2, r0
 	strb	r2, [r5, #21]
-	b.n	.L10
-@ 地図語: 影 (bit 14-15) と高さ (bit 12-13)。
-.L9:
+	b.n	.L_0800c764
+.L_0800c762:
 	ldr	r4, [r1, #0]
-.L10:
+.L_0800c764:
 	lsls	r3, r4, #18
 	lsrs	r1, r3, #30
 	cmp	r1, #0
-	beq.n	.L11
+	beq.n	.L_0800c774
 	adds	r3, r1, #0
 	adds	r3, #255
 	mov	r1, ip
 	strb	r3, [r1, #0]
-.L11:
+.L_0800c774:
 	ldr	r0, [r7, #16]
 	ldr	r1, [r5, #24]
-@ IwramMulQ16ReturnIp: obj[16] × 尺度、obj[20] × 尺度。
 	mov	ip, pc
 	bx	fp
 	str	r0, [sp, #20]
@@ -213,7 +205,7 @@ Func_0800c62c:
 	movs	r3, #2
 	ands	r3, r0
 	cmp	r3, #0
-	beq.n	.L12
+	beq.n	.L_0800c7be
 	ldr	r3, [pc, #200]
 	adds	r2, r2, r3
 	str	r2, [r1, #4]
@@ -223,12 +215,11 @@ Func_0800c62c:
 	str	r3, [r1, #12]
 	mov	r4, lr
 	ldrb	r0, [r4, #0]
-@ 旗 2 / 4 で位置をずらす。
-.L12:
+.L_0800c7be:
 	movs	r3, #4
 	ands	r3, r0
 	cmp	r3, #0
-	beq.n	.L13
+	beq.n	.L_0800c7dc
 	ldr	r3, [r1, #4]
 	movs	r2, #160
 	lsls	r2, r2, #17
@@ -240,45 +231,44 @@ Func_0800c62c:
 	ldr	r3, [r1, #12]
 	adds	r3, r3, r2
 	str	r3, [r1, #12]
-.L13:
+.L_0800c7dc:
 	mov	r0, sl
 	ldrh	r3, [r0, #6]
 	mov	r2, ip
 	adds	r0, r5, #0
-	bl	Func_0800b168
-	b.n	.L1
-.L8:
+	bl	sub_0800b168
+	b.n	.L_0800c822
+.L_0800c7ea:
 	mov	r1, r8
 	ldrb	r3, [r1, #8]
 	cmp	r3, #0
-	bne.n	.L1
+	bne.n	.L_0800c822
 	ldrb	r2, [r5, #29]
 	movs	r6, #1
-	b.n	.L14
-.L3:
+	b.n	.L_0800c80e
+.L_0800c7f8:
 	mov	r2, r8
 	ldrb	r3, [r2, #0]
 	movs	r6, #15
 	ands	r6, r3
 	cmp	r6, #1
-	bne.n	.L1
+	bne.n	.L_0800c822
 	ldrb	r3, [r2, #8]
 	ldr	r5, [r7, #72]
 	cmp	r3, #0
-	bne.n	.L1
+	bne.n	.L_0800c822
 	ldrb	r2, [r5, #29]
-@ 非表示: 絵を返す。
-.L14:
+.L_0800c80e:
 	adds	r3, r6, #0
 	ands	r3, r2
 	cmp	r3, #0
-	bne.n	.L1
+	bne.n	.L_0800c822
 	ldrb	r0, [r5, #28]
-	bl	Func_08003f78
+	bl	sub_08003f78
 	adds	r3, r5, #0
 	adds	r3, #37
 	strb	r6, [r3, #0]
-.L1:
+.L_0800c822:
 	ldr	r3, [sp, #16]
 	movs	r4, #112
 	subs	r3, #1
@@ -287,11 +277,11 @@ Func_0800c62c:
 	adds	r7, #112
 	add	sl, r4
 	cmp	r3, #0
-	blt.n	.L15
-	b.n	.L16
-.L15:
+	blt.n	.L_0800c836
+	b.n	.L_0800c696
+.L_0800c836:
 	movs	r0, #52
-	bl	Func_08002dd8
+	bl	sub_08002dd8
 	add	sp, #80
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3
@@ -312,4 +302,3 @@ Func_0800c62c:
 	.4byte 0x012ffffe
 	.4byte 0xffe00000
 	.4byte 0x00dfffff
-	.4byte 0xfec00000

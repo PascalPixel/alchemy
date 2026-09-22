@@ -17,7 +17,7 @@ const BLOCKED_EXTENSIONS: &[&str] = &[
 pub(crate) const PRESENTATION_EXTENSIONS: &[&str] = &[
     "otf", "ttf", "ttc", "woff", "woff2", "eot", "fnt", "bdf", "pcf", "gif", "jpg", "jpeg", "webp",
     "bmp", "ico", "avif", "apng", "tif", "tiff", "mp3", "ogg", "flac", "m4a", "aac", "mp4", "webm",
-    "mov",
+    "mov", "svg",
 ];
 const BACKUP_EXTENSIONS: &[&str] = &["bak", "orig", "rej", "swp"];
 /// The only two owned prose documents, including ignored output.
@@ -205,7 +205,7 @@ fn publication_path_reason(path: &str) -> Option<&'static str> {
     if listed(suffix, BLOCKED_EXTENSIONS) {
         return Some("private or generated file type");
     }
-    if listed(suffix, PRESENTATION_EXTENSIONS) {
+    if listed(suffix, PRESENTATION_EXTENSIONS) && normalized != "PROGRESS.svg" {
         return Some("presentation material: pret commits only editable build inputs");
     }
     if listed(suffix, BACKUP_EXTENSIONS) || leaf.ends_with('~') {
@@ -331,12 +331,12 @@ fn upstream_documents(root: &Path, path: &Path) -> bool {
     if APPROVED_GITLINKS.iter().any(|name| path == root.join(name)) {
         return true;
     }
-    if !path.starts_with(root.join("out/compilers")) {
+    if !path.starts_with(root.join("tools/out/compiler-build")) {
         return false;
     }
     path.join("gcc/toplev.c").is_file()
         || ["binutils-2.10", "binutils-2.33.1"].iter().any(|name| {
-            path == root.join("out/compilers/sources").join(name)
+            path == root.join("tools/out/compiler-build/sources").join(name)
                 && path.join("configure").is_file()
                 && path.join("gas").is_dir()
                 && path.join("bfd").is_dir()

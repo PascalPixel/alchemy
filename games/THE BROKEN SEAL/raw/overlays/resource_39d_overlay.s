@@ -1110,7 +1110,7 @@
 	.set sub_02006d02, 0x02006d02
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x16
 	.2byte 0x0000
@@ -1354,8 +1354,100 @@ AlchemyC_02000890:
 	.space 0x3c
 AlchemyC_020008cc:
 	.space 0x5c
-AlchemyC_02000928:
-	.space 0xd4
+	push	{r5, r6, r7, lr}
+	mov	r7, r8
+	push	{r7}
+	movs	r0, #0
+	sub	sp, #12
+	bl	sub_02004024
+	adds	r5, r0, #0
+	ldrh	r1, [r5, #6]
+	movs	r3, #128
+	lsls	r3, r3, #5
+	adds	r1, r1, r3
+	adds	r7, r5, #0
+	movs	r3, #224
+	lsls	r3, r3, #8
+	adds	r7, #85
+	ands	r1, r3
+	ldrb	r3, [r7, #0]
+	ldr	r0, [pc, #168]
+	mov	r8, r3
+	ldr	r3, [r5, #8]
+	movs	r2, #128
+	lsls	r2, r2, #12
+	ands	r3, r0
+	mov	r6, sp
+	adds	r3, r3, r2
+	str	r3, [r6, #0]
+	ldr	r3, [r5, #12]
+	str	r3, [r6, #4]
+	ldr	r3, [r5, #16]
+	ands	r3, r0
+	movs	r0, #128
+	adds	r3, r3, r2
+	lsls	r0, r0, #14
+	adds	r2, r6, #0
+	str	r3, [r6, #8]
+	bl	sub_02003fca
+	adds	r0, r5, #0
+	adds	r1, r6, #0
+	bl	sub_02004002
+	cmp	r0, #0
+	bne.n	.L_020009ec
+	movs	r0, #148
+	lsls	r0, r0, #2
+	bl	sub_02004046
+	bl	.L_0200145a
+	movs	r1, #6
+	adds	r0, r5, #0
+	bl	sub_02003ff2
+	movs	r0, #6
+	bl	sub_02003fc8
+	movs	r0, #152
+	bl	sub_020041de
+	adds	r0, r5, #0
+	movs	r1, #7
+	bl	sub_02004006
+	movs	r3, #192
+	lsls	r3, r3, #10
+	str	r3, [r5, #48]
+	movs	r3, #128
+	lsls	r3, r3, #10
+	str	r3, [r5, #52]
+	movs	r3, #128
+	lsls	r3, r3, #11
+	str	r3, [r5, #40]
+	ldrb	r2, [r7, #0]
+	movs	r3, #126
+	ands	r3, r2
+	strb	r3, [r7, #0]
+	adds	r0, r5, #0
+	movs	r1, #0
+	bl	sub_02004058
+	movs	r3, #10
+	ldrsh	r2, [r6, r3]
+	movs	r3, #2
+	ldrsh	r1, [r6, r3]
+	movs	r0, #0
+	bl	sub_020040de
+	adds	r0, r5, #0
+	movs	r1, #6
+	bl	sub_0200403e
+	adds	r0, r5, #0
+	movs	r1, #1
+	bl	sub_02004076
+	mov	r3, r8
+	strb	r3, [r7, #0]
+.L_020009ec:
+	add	sp, #12
+	pop	{r3}
+	mov	r8, r3
+	pop	{r5, r6, r7}
+	pop	{r0}
+	bx	r0
+	.2byte 0x0000
+	.2byte 0xfff0
 AlchemyC_020009fc:
 	.space 0x46
 .L_02000a42:
@@ -1366,7 +1458,9 @@ AlchemyC_02000ad0:
 AlchemyC_02000b24:
 	.space 0x1fe
 .L_02000d22:
-	.space 0x738
+	.space 0x474
+.L_02001196:
+	.space 0x2c4
 .L_0200145a:
 	.space 0x696
 AlchemyC_02001af0:
@@ -1681,7 +1775,7 @@ AlchemyC_02002eb8:
 	.4byte 0xfff40000
 	.2byte 0x0000
 	.2byte 0xfffc
-	push	{r5, r6, lr}
+	.2byte 0xb560
 	ldr	r3, [pc, #64]
 	adds	r2, r1, #0
 	asrs	r2, r2, #20
@@ -2168,9 +2262,22 @@ AlchemyC_02003460:
 	pop	{r0}
 	bx	r0
 	.2byte 0x0000
-.include "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/IMPORT.INC"
-AlchemyRuntime_02003848:
-	.space 0x3c
+	.include "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/IMPORT.INC"
+	.4byte 0x46c04700
+	.4byte 0x46c04708
+	.4byte 0x46c04710
+	.4byte 0x46c04718
+	.4byte 0x46c04720
+	.4byte 0x46c04728
+	.4byte 0x46c04730
+	.4byte 0x46c04738
+	.4byte 0x46c04740
+	.4byte 0x46c04748
+	.4byte 0x46c04750
+	.4byte 0x46c04758
+	.4byte 0x46c04760
+	.4byte 0x46c04768
+	.4byte 0x46c04770
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c

@@ -1,12 +1,14 @@
-@ 効果の発生。obj+100 の角度計数が -1 でなければ、sin に 0x60000 を Q16 乗算した値で
-@ obj[8..16] を基準記録から置き、計数を +1 して ±32 に折り返す。Func_08002304 が 0 なら
-@ 位置を写し、乱数の大きさと角度で Func_0800447c を掛けて Func_08096c80 で新しい物を作る。
-@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
-	.global Func_080993b0
-	.thumb_func
-Func_080993b0:
+	.set sub_08002304, 0x08002304
+	.set sub_08002322, 0x08002322
+	.set sub_08004458, 0x08004458
+	.set sub_0800447c, 0x0800447c
+	.set sub_08009098, 0x08009098
+	.set sub_08009240, 0x08009240
+	.set sub_08096c80, 0x08096c80
+	.global Overlay_080993b0
+Overlay_080993b0:
 	push	{r5, r6, r7, lr}
 	adds	r5, r0, #0
 	ldr	r3, [pc, #236]
@@ -19,15 +21,13 @@ Func_080993b0:
 	negs	r3, r3
 	sub	sp, #12
 	cmp	r0, r3
-	beq.n	.L0
+	beq.n	.L_08099410
 	lsls	r0, r0, #10
-@ sin。
-	bl	Func_08002322
+	bl	sub_08002322
 	adds	r1, r0, #0
 	movs	r0, #192
 	ldr	r3, [pc, #208]
 	lsls	r0, r0, #11
-@ IwramMulQ16ReturnIp: 0x60000 × sin。
 	mov	ip, pc
 	bx	r3
 	ldr	r3, [r6, #4]
@@ -40,7 +40,6 @@ Func_080993b0:
 	str	r3, [r5, #12]
 	ldr	r3, [r6, #12]
 	str	r3, [r5, #16]
-@ 角度計数を進め、6bit 符号付きに丸める。
 	ldrh	r3, [r7, #0]
 	adds	r3, #1
 	strh	r3, [r7, #0]
@@ -50,22 +49,21 @@ Func_080993b0:
 	adds	r2, #64
 	adds	r3, r2, #0
 	cmp	r2, #0
-	bge.n	.L1
+	bge.n	.L_08099408
 	adds	r3, r1, #0
 	adds	r3, #127
-.L1:
+.L_08099408:
 	asrs	r3, r3, #6
 	lsls	r3, r3, #6
 	subs	r3, r2, r3
 	strh	r3, [r7, #0]
-@ 3 番の条件が成り立たないときだけ新しい物を出す。
-.L0:
+.L_08099410:
 	ldr	r3, [pc, #152]
 	movs	r1, #3
 	ldr	r0, [r3, #0]
-	bl	Func_08002304
+	bl	sub_08002304
 	cmp	r0, #0
-	bne.n	.L2
+	bne.n	.L_0809949c
 	ldr	r3, [r5, #8]
 	mov	r6, sp
 	str	r3, [r6, #0]
@@ -76,24 +74,23 @@ Func_080993b0:
 	str	r3, [r6, #4]
 	ldr	r3, [r5, #16]
 	str	r3, [r6, #8]
-	bl	Func_08004458
+	bl	sub_08004458
 	lsls	r5, r0, #1
 	adds	r5, r5, r0
-	bl	Func_08004458
+	bl	sub_08004458
 	lsls	r5, r5, #1
 	adds	r1, r0, #0
 	adds	r2, r6, #0
 	adds	r0, r5, #0
-	bl	Func_0800447c
+	bl	sub_0800447c
 	ldr	r0, [pc, #100]
 	ldr	r1, [r6, #0]
 	ldr	r2, [r6, #4]
 	ldr	r3, [r6, #8]
-@ 生成した物に継続関数と初期値を置く。
-	bl	Func_08096c80
+	bl	sub_08096c80
 	adds	r5, r0, #0
 	cmp	r5, #0
-	beq.n	.L2
+	beq.n	.L_0809949c
 	ldr	r3, [pc, #84]
 	str	r3, [r5, #108]
 	ldr	r3, [pc, #84]
@@ -106,7 +103,7 @@ Func_080993b0:
 	movs	r3, #229
 	lsls	r3, r3, #1
 	str	r3, [r5, #72]
-	bl	Func_08004458
+	bl	sub_08004458
 	adds	r3, r5, #0
 	lsrs	r0, r0, #9
 	adds	r3, #100
@@ -115,15 +112,15 @@ Func_080993b0:
 	adds	r0, r5, #0
 	str	r3, [r5, #56]
 	movs	r1, #9
-	bl	Func_08009240
+	bl	sub_08009240
 	adds	r2, r5, #0
 	adds	r2, #94
 	movs	r3, #72
 	strh	r3, [r2, #0]
 	ldr	r1, [pc, #36]
 	adds	r0, r5, #0
-	bl	Func_08009098
-.L2:
+	bl	sub_08009098
+.L_0809949c:
 	add	sp, #12
 	pop	{r5, r6, r7}
 	pop	{r0}

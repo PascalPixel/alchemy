@@ -1104,15 +1104,7 @@
 	.set sub_02007a2c, 0x02007a2c
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/ENTRY.INC"
-	.2byte 0x4c00
-	.2byte 0x4720
-	push	{r0, r3, r4, r7, lr}
-	lsls	r0, r0, #8
-	ldr	r4, [pc, #0]
-	bx	r4
-	.2byte 0x89f5
-	.2byte 0x0200
+	.include "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x3c
 AlchemyC_0200006c:
@@ -1128,9 +1120,13 @@ AlchemyC_0200034c:
 AlchemyC_02000474:
 	.space 0x194
 AlchemyC_02000608:
-	.space 0x2b8
+	.space 0x1d6
+.L_020007de:
+	.space 0xe2
 AlchemyC_020008c0:
-	.space 0x11c
+	.space 0x42
+.L_02000902:
+	.space 0xda
 AlchemyC_020009dc:
 	.space 0xe
 	.2byte 0x0000
@@ -4869,9 +4865,22 @@ AlchemyC_02003a30:
 	.4byte 0x00202108
 	.4byte 0x0200ba31
 	.4byte 0x0000e666
-.include "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/IMPORT.INC"
-AlchemyRuntime_02003e78:
-	.space 0x3c
+	.include "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/IMPORT.INC"
+	.4byte 0x46c04700
+	.4byte 0x46c04708
+	.4byte 0x46c04710
+	.4byte 0x46c04718
+	.4byte 0x46c04720
+	.4byte 0x46c04728
+	.4byte 0x46c04730
+	.4byte 0x46c04738
+	.4byte 0x46c04740
+	.4byte 0x46c04748
+	.4byte 0x46c04750
+	.4byte 0x46c04758
+	.4byte 0x46c04760
+	.4byte 0x46c04768
+	.4byte 0x46c04770
 	.4byte 0x00100000
 	.4byte 0x00100000
 	.4byte 0x00100000

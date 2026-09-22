@@ -1,4 +1,4 @@
-use crate::overlay::compile::{assemble_overlay, hex, spawn_raw, split_lines, strings};
+use crate::overlay::compile::{hex, spawn_raw, split_lines, strings};
 use crate::overlay::source::OverlaySource;
 use regex::Regex;
 use std::collections::{BTreeMap, BTreeSet};
@@ -54,49 +54,9 @@ pub fn adjacent_prologue_spans(
         .collect()
 }
 
-/// GCC's unframed five-pair object integrator. It is emitted without a stack
-/// frame, reached through data rather than a direct call in many field
-/// overlays, and therefore has neither of the ordinary discovery anchors.
-/// Match the complete instruction sequence (including its return) so nearby
-/// object tables cannot be promoted merely for resembling one load/store.
-pub fn compiler_idiom_spans(input: &[u8], base: i64) -> Vec<ExecutableSpan> {
-    const OBJECT_INTEGRATOR: [u16; 27] = [
-        0x6883, 0x6c42, 0x189b, 0x6083, 0x6c82, 0x68c3, 0x189b, 0x60c3, 0x6cc2, 0x6903, 0x189b,
-        0x6103, 0x6b02, 0x6983, 0x189b, 0x6183, 0x6b42, 0x69c3, 0x189b, 0x61c3, 0x6d01, 0x3064,
-        0x8bcb, 0x8802, 0x189b, 0x83cb, 0x4770,
-    ];
-    const STATUS_NIBBLE_UPDATE: [u16; 11] = [
-        0x6d00, 0x2303, 0x7a42, 0x4019, 0x230d, 0x425b, 0x0089, 0x4013, 0x430b, 0x7243, 0x4770,
-    ];
-    let bytes = OBJECT_INTEGRATOR
-        .iter()
-        .flat_map(|half| half.to_le_bytes())
-        .collect::<Vec<_>>();
-    let mut spans = input
-        .windows(bytes.len())
-        .enumerate()
-        .filter(|(offset, window)| offset % 2 == 0 && *window == bytes)
-        .map(|(offset, _)| ExecutableSpan {
-            start: base + offset as i64,
-            end: base + offset as i64 + bytes.len() as i64,
-            kind: "thumb",
-        })
-        .collect::<Vec<_>>();
-    let status_bytes = STATUS_NIBBLE_UPDATE
-        .iter()
-        .flat_map(|half| half.to_le_bytes())
-        .collect::<Vec<_>>();
-    spans.extend(
-        input
-            .windows(status_bytes.len())
-            .enumerate()
-            .filter(|(offset, window)| offset % 2 == 0 && *window == status_bytes)
-            .map(|(offset, _)| ExecutableSpan {
-                start: base + offset as i64,
-                end: base + offset as i64 + status_bytes.len() as i64,
-                kind: "thumb",
-            }),
-    );
+/// Find the stock GCC Thumb interworking bank from the sequence defined by
+/// GCC's licensed runtime source.
+pub fn compiler_runtime_spans(input: &[u8], base: i64) -> Vec<ExecutableSpan> {
     // Stock GCC 2.96's Thumb interworking bank is fifteen consecutive
     // `bx rN; nop` pairs, r0 through lr. It has no framed entry and is often
     // linked into an overlay without any in-image pointer to its first pair.
@@ -106,41 +66,16 @@ pub fn compiler_idiom_spans(input: &[u8], base: i64) -> Vec<ExecutableSpan> {
         .flat_map(|register| [0x4700 | (register << 3), 0x46c0])
         .flat_map(u16::to_le_bytes)
         .collect::<Vec<_>>();
-    spans.extend(
-        input
-            .windows(call_via.len())
-            .enumerate()
-            .filter(|(offset, window)| offset % 2 == 0 && *window == call_via)
-            .map(|(offset, _)| ExecutableSpan {
-                start: base + offset as i64,
-                end: base + offset as i64 + call_via.len() as i64,
-                kind: "compiler_runtime",
-            }),
-    );
-    let read_half = |offset: usize| u16::from_le_bytes([input[offset], input[offset + 1]]);
-    let functions = spans.clone();
-    for function in functions {
-        if function.kind != "thumb" {
-            continue;
-        }
-        let start = (function.start - base) as usize;
-        let end = (function.end - base) as usize;
-        if start >= 2 && read_half(start - 2) == 0 {
-            spans.push(ExecutableSpan {
-                start: function.start - 2,
-                end: function.start,
-                kind: "executable_alignment",
-            });
-        }
-        if end + 2 <= input.len() && read_half(end) == 0 {
-            spans.push(ExecutableSpan {
-                start: function.end,
-                end: function.end + 2,
-                kind: "executable_alignment",
-            });
-        }
-    }
-    spans
+    input
+        .windows(call_via.len())
+        .enumerate()
+        .filter(|(offset, window)| offset % 2 == 0 && *window == call_via)
+        .map(|(offset, _)| ExecutableSpan {
+            start: base + offset as i64,
+            end: base + offset as i64 + call_via.len() as i64,
+            kind: "compiler_runtime",
+        })
+        .collect()
 }
 
 #[cfg(test)]
@@ -172,7 +107,11 @@ mod tests {
             bytes.len() as i64
         );
         assert_eq!(
-            assemble_overlay(&OverlaySource::text(text), OVERLAY_BASE).unwrap(),
+            crate::overlay::compile::assemble_overlay_raw(
+                &OverlaySource::text(text),
+                OVERLAY_BASE,
+            )
+            .unwrap(),
             bytes
         );
     }
@@ -226,13 +165,13 @@ mod tests {
             .flat_map(|register| [0x4700 | (register << 3), 0x46c0])
             .flat_map(u16::to_le_bytes)
             .collect::<Vec<_>>();
-        let spans = compiler_idiom_spans(&bank, OVERLAY_BASE);
+        let spans = compiler_runtime_spans(&bank, OVERLAY_BASE);
         assert!(spans.iter().any(|span| {
             span.start == OVERLAY_BASE
                 && span.end == OVERLAY_BASE + 60
                 && span.kind == "compiler_runtime"
         }));
-        assert!(compiler_idiom_spans(&bank[..56], OVERLAY_BASE).is_empty());
+        assert!(compiler_runtime_spans(&bank[..56], OVERLAY_BASE).is_empty());
     }
 
     #[test]
@@ -963,7 +902,10 @@ fn build_source(input: &[u8], base: i64, seeds: &[i64], sweep: bool) -> Result<S
         let mut lines: Vec<String> = head.clone();
         lines.extend(body.iter().map(|row| row.2.clone()));
         let text = format!("{}\n", lines.join("\n"));
-        let built = match assemble_overlay(&OverlaySource::text(text.clone()), base) {
+        let built = match crate::overlay::compile::assemble_overlay_raw(
+            &OverlaySource::text(text.clone()),
+            base,
+        ) {
             Ok(built) => built,
             Err(error) => {
                 let Some(found) = error_line.captures(&error) else {

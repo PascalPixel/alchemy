@@ -1,23 +1,20 @@
-@ Retired from C: the registered source did not reproduce these bytes
-@ under the family's flags. Disassembled from the audited extent at
-@ 0x08006910 (148 bytes); the draft C stays in games/THE BROKEN SEAL/recon/en/main/.
 .syntax unified
 	.thumb
-	.global Func_08006910
-	.thumb_func
-Func_08006910:
+	.set sub_08006878, 0x08006878
+	.global Overlay_08006910
+Overlay_08006910:
 	push	{r4, lr}
-	ldr	r2, [pc, #28]	@ (0x8006930)
+	ldr	r2, [pc, #28]
 	ldrh	r0, [r2, #0]
-	ldr	r1, [pc, #28]	@ (0x8006934)
+	ldr	r1, [pc, #28]
 	ands	r0, r1
 	movs	r1, #3
 	orrs	r0, r1
 	strh	r0, [r2, #0]
-	bl	Func_08006878
+	bl	sub_08006878
 	lsls	r0, r0, #16
 	lsrs	r3, r0, #16
-	ldr	r2, [pc, #12]	@ (0x8006938)
+	ldr	r2, [pc, #12]
 	movs	r4, #1
 	b.n	.L_0800693e
 	movs	r0, r0
@@ -30,36 +27,36 @@ Func_08006910:
 .L_0800693e:
 	ldr	r1, [r2, #0]
 	adds	r0, r1, #0
-	adds	r0, #40	@ 0x28
+	adds	r0, #40
 	ldrb	r0, [r0, #0]
 	cmp	r0, #0
 	beq.n	.L_08006952
-	ldrh	r0, [r1, #40]	@ 0x28
+	ldrh	r0, [r1, #40]
 	cmp	r3, r0
 	bne.n	.L_0800693c
 	movs	r4, #0
 .L_08006952:
-	ldr	r1, [pc, #56]	@ (0x800698c)
+	ldr	r1, [pc, #56]
 	ldr	r0, [r2, #0]
 	ldr	r0, [r0, #0]
 	str	r0, [r1, #0]
-	ldr	r1, [pc, #52]	@ (0x8006990)
+	ldr	r1, [pc, #52]
 	ldr	r0, [r2, #0]
 	ldr	r0, [r0, #4]
 	str	r0, [r1, #0]
-	ldr	r1, [pc, #48]	@ (0x8006994)
+	ldr	r1, [pc, #48]
 	ldr	r0, [r2, #0]
 	ldr	r0, [r0, #8]
 	str	r0, [r1, #0]
-	ldr	r1, [pc, #44]	@ (0x8006998)
+	ldr	r1, [pc, #44]
 	ldr	r0, [r2, #0]
 	ldr	r0, [r0, #12]
 	str	r0, [r1, #0]
-	ldr	r1, [pc, #40]	@ (0x800699c)
+	ldr	r1, [pc, #40]
 	ldr	r0, [r2, #0]
 	ldr	r0, [r0, #16]
 	str	r0, [r1, #0]
-	ldr	r1, [pc, #36]	@ (0x80069a0)
+	ldr	r1, [pc, #36]
 	ldr	r0, [r2, #0]
 	adds	r0, #20
 	str	r0, [r1, #0]

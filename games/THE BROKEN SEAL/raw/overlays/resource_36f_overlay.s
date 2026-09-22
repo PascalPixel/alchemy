@@ -54,7 +54,7 @@
 	.set sub_020009f4, 0x020009f4
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/MENU/TITLE/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/GOMA_IKE/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x8
 AlchemyC_02000038:
@@ -479,7 +479,7 @@ AlchemyC_02000054:
 	.4byte 0x04000010
 	.4byte 0x84000004
 	.4byte 0x03001e70
-.include "games/THE BROKEN SEAL/SRC/MENU/TITLE/IMPORT.INC"
+	.include "games/THE BROKEN SEAL/SRC/MENU/TITLE/IMPORT.INC"
 	.4byte 0xffff0000
 	.4byte 0x00000000
 	.4byte 0x40000000

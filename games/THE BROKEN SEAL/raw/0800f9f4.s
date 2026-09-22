@@ -1,11 +1,7 @@
-@ Retired from C: the registered source did not reproduce these bytes
-@ under the family's flags. Disassembled from the audited extent at
-@ 0x0800f9f4 (152 bytes); the draft C stays in games/THE BROKEN SEAL/recon/en/main/.
 .syntax unified
 	.thumb
-	.global Func_0800f9f4
-	.thumb_func
-Func_0800f9f4:
+	.global Overlay_0800f9f4
+Overlay_0800f9f4:
 	push	{r5, r6, r7, lr}
 	subs	r3, r0, #1
 	lsrs	r2, r3, #31
@@ -13,11 +9,11 @@ Func_0800f9f4:
 	asrs	r4, r3, #1
 	movs	r3, #1
 	ands	r3, r0
-	ldr	r6, [pc, #124]	@ (0x800fa80)
-	ldr	r5, [pc, #124]	@ (0x800fa84)
+	ldr	r6, [pc, #124]
+	ldr	r5, [pc, #124]
 	cmp	r3, #0
 	beq.n	.L_0800fa7a
-	ldr	r3, [pc, #124]	@ (0x800fa88)
+	ldr	r3, [pc, #124]
 	ldrb	r3, [r3, #0]
 	cmp	r3, #1
 	beq.n	.L_0800fa38
@@ -44,7 +40,7 @@ Func_0800f9f4:
 	blt.n	.L_0800fa28
 	b.n	.L_0800fa7a
 .L_0800fa38:
-	ldr	r6, [pc, #68]	@ (0x800fa80)
+	ldr	r6, [pc, #68]
 	movs	r1, #0
 	movs	r7, #0
 	adds	r0, r4, r6

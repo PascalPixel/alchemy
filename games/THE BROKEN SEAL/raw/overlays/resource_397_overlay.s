@@ -18,7 +18,7 @@
 	.set sub_020005f8, 0x020005f8
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/TORETO_EDA/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/TORETO_EDA/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0xe
 	.2byte 0x0000
@@ -48,10 +48,18 @@ AlchemyC_02000118:
 AlchemyC_02000128:
 	.space 0x10
 AlchemyC_02000138:
-	.space 0x24
+	.space 0x4
+.L_0200013c:
+	.space 0x12
+.L_0200014e:
+	.space 0xe
 .L_0200015c:
 AlchemyC_0200015c:
-	.space 0x58
+	.space 0x12
+.L_0200016e:
+	.space 0xe
+.L_0200017c:
+	.space 0x38
 AlchemyC_020001b4:
 	.space 0x8
 AlchemyC_020001bc:
@@ -72,7 +80,7 @@ AlchemyC_020002a0:
 	.space 0x40
 AlchemyC_020002e0:
 	.space 0x24
-.include "games/THE BROKEN SEAL/SRC/FIELD/TORETO_EDA/IMPORT.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/TORETO_EDA/IMPORT.INC"
 	.4byte 0xffff0000
 	.4byte 0x00000064
 	.4byte 0x40000064

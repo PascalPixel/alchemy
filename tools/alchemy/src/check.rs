@@ -1,45 +1,16 @@
-use std::path::Path;
-use std::process::{Command, ExitCode};
+#[cfg(test)]
+use std::process::Command;
+use std::process::ExitCode;
 
 mod commit_progress;
 mod integrate;
 mod no_asm;
-mod overlay_data;
 mod owners;
-mod plan_tails;
 mod publication;
 pub(crate) use publication::PRESENTATION_EXTENSIONS;
-mod retained;
-mod showcase;
 mod tla_owners;
 
-const USAGE: &str = "usage: alchemy check <publication|commit-progress|source-tracking|owners|tla-owners|retained|coverage|integrate|no-asm|plan-tails|overlay-data|progress|routes|showcase|siblings> [args]";
-
-/// The tracked paths under `games/` that `keep` selects, with their worktree
-/// contents; `make verify` has already required the worktree to match the index.
-fn tracked_game_files(
-    root: &Path,
-    keep: impl Fn(&str) -> bool,
-) -> Result<Vec<(String, Vec<u8>)>, String> {
-    let listing = Command::new("git")
-        .arg("-C")
-        .arg(root)
-        .args(["ls-files", "-z", "--", "games"])
-        .output()
-        .map_err(|error| format!("git ls-files failed: {error}"))?;
-    if !listing.status.success() {
-        return Err(String::from_utf8_lossy(&listing.stderr).trim().into());
-    }
-    String::from_utf8_lossy(&listing.stdout)
-        .split('\0')
-        .filter(|path| !path.is_empty() && keep(path))
-        .map(|path| {
-            std::fs::read(root.join(path))
-                .map(|data| (path.to_string(), data))
-                .map_err(|error| format!("{path}: {error}"))
-        })
-        .collect()
-}
+const USAGE: &str = "usage: alchemy check <publication|commit-progress|source-tracking|owners|tla-owners|coverage|integrate|no-asm|progress|routes|siblings> [args]";
 
 /// Run a check body and report its error the way every check does.
 fn report(result: Result<(), String>) -> ExitCode {
@@ -110,21 +81,17 @@ pub fn entry(arguments: &[String]) -> ExitCode {
         "commit-progress" => commit_progress::entry(rest),
         "owners" => owners::entry(rest),
         "tla-owners" => tla_owners::entry(rest),
-        "retained" => retained::entry(rest),
         "coverage" => {
             crate::coverage::entry(rest);
             ExitCode::SUCCESS
         }
         "integrate" => integrate::entry(rest),
         "no-asm" => no_asm::entry(rest),
-        "plan-tails" => plan_tails::entry(rest),
-        "overlay-data" => overlay_data::entry(rest),
         "progress" => {
             crate::coverage::progress::entry(rest);
             ExitCode::SUCCESS
         }
         "routes" => routes(rest),
-        "showcase" => showcase::entry(rest),
         "siblings" => crate::siblings::check(rest),
         "-h" | "--help" => {
             println!("{USAGE}");

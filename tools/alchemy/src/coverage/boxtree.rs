@@ -24,13 +24,18 @@ mod html;
 pub use html::{decode_folder, page as html_page};
 pub use html::{file_page, rom_page};
 
-pub const BOX_TREES: [&str; 1] = ["rom"];
+pub const BOX_TREES: [&str; 1] = ["files"];
 const CHART_BACKGROUND: &str = "#1f7f93";
 const UNKNOWN: &str = "#d9d9d4";
+const TEXT_ORANGE: &str = "#e7a04f";
+const C_RED: &str = "#d85b5b";
+const DRAFT_C_PINK: &str = "#e8a6c8";
+const MIDI_GREEN: &str = "#63c78c";
+const WAV_PINE: &str = "#3f785e";
 const SOUND_TYPES: [(&str, &str); 5] = [
-    ("MIDI music", "#81d6b2"),
+    ("MIDI music", MIDI_GREEN),
     ("SFX", "#f29b91"),
-    ("PCM samples", "#efbb82"),
+    ("PCM samples", WAV_PINE),
     ("Tables", "#9aa4c2"),
     ("Sound sequences", "#a8d4bc"),
 ];
@@ -59,12 +64,13 @@ fn content_style(tile: &Tile) -> (&'static str, &'static str) {
     let group = tile.group.as_deref().unwrap_or("");
     if let Some(extension) = group.strip_prefix("file:") {
         return match extension {
-            "c" => ("C", "#f0c57d"),
+            "c" => ("C", C_RED),
             "h" | "inc" => ("Headers", "#eadb83"),
-            "s" => ("Assembly", "#78afb7"),
+            "s" => ("Assembly", UNKNOWN),
             "png" => ("Images", "#8fb7ec"),
-            "wav" => ("Audio", "#efbb82"),
-            "mid" => ("Music", "#81d6b2"),
+            "wav" => ("WAV audio", WAV_PINE),
+            "mid" => ("MIDI music", MIDI_GREEN),
+            "md" | "po" | "txt" => ("Text", TEXT_ORANGE),
             "json" | "tsv" => ("Metadata", "#9aa4c2"),
             "bin" => ("Binary inputs", "#b5cc82"),
             _ => ("Other files", UNKNOWN),
@@ -101,7 +107,7 @@ fn content_style(tile: &Tile) -> (&'static str, &'static str) {
         "compressed-resource" => ("Compressed data", "#c4b4b7"),
         "gba-palette" | "gba-palette-rgba" | "bgr555-banks" => ("Palettes", "#e8a6d3"),
         "golden-sun-kana-glyph-bank" | "golden-sun-namae-nyuuryoku" => ("Fonts", "#eadb83"),
-        "golden-sun-message-archive" | "golden-sun-staff-roll" => ("Text", "#85cbd2"),
+        "golden-sun-message-archive" | "golden-sun-staff-roll" => ("Text", TEXT_ORANGE),
         _ if source.contains("/fonts_") || source.contains("/GRAPHICS/FONT/") => {
             ("Fonts", "#eadb83")
         }
@@ -327,7 +333,8 @@ fn draw_tiles(
             width: rect.width - 2.0 * inset,
             height: rect.height - 2.0 * inset,
         };
-        if container {
+        let expanded = container && body.width >= 44.0 && body.height >= 34.0;
+        if expanded {
             out.push(format!("<rect class=\"container-frame\" x=\"{}\" y=\"{}\" width=\"{}\" height=\"{}\" fill=\"{CHART_BACKGROUND}\"/>", rect.x, rect.y, rect.width, rect.height));
             bevel(out, rect);
         } else if tile.categories[Category::AssetData as usize] == tile.bytes {
@@ -357,7 +364,7 @@ fn draw_tiles(
             Some(_) => &tile.label,
             None => "",
         };
-        let caption = caption(name, body, folder).filter(|(_, bounds)| {
+        let caption = caption(name, tile.bytes, body, folder).filter(|(_, bounds)| {
             (tile.source.is_none()
                 || tile.source.as_deref() != parent_source
                 || (!container
@@ -380,11 +387,14 @@ fn draw_tiles(
                 reserved.push(*bounds);
             }
         }
-        if caption.is_some() && folder {
-            body.y += 20.0;
-            body.height -= 20.0;
+        if let Some((_, bounds)) = &caption {
+            if folder && expanded {
+                let heading = bounds.height + 2.0;
+                body.y += heading;
+                body.height -= heading;
+            }
         }
-        if container {
+        if expanded {
             draw_tiles(
                 out,
                 &tile.children.iter().collect::<Vec<_>>(),
@@ -404,11 +414,12 @@ fn draw_tiles(
 /// One advance per character for 13px system sans labels, wide enough for
 /// the upper-case folder names; SF Pro capitals average about 8px.
 const LABEL_ADVANCE: f64 = 8.0;
+const FILE_LABEL_ADVANCE: f64 = 5.5;
 
 fn label_width(name: &str) -> f64 {
     name.chars().count() as f64 * LABEL_ADVANCE
 }
-fn caption(name: &str, body: Rect, folder: bool) -> Option<(String, Rect)> {
+fn caption(name: &str, bytes: i64, body: Rect, folder: bool) -> Option<(String, Rect)> {
     if folder {
         let width = label_width(name);
         if name.is_empty() || body.width < width + 4.0 || body.height < 20.0 {
@@ -420,10 +431,18 @@ fn caption(name: &str, body: Rect, folder: bool) -> Option<(String, Rect)> {
             width,
             height: 18.0,
         };
-        return Some((format!("<text class=\"label rectangle-label folder-label\" x=\"{}\" y=\"{}\" pointer-events=\"none\">{}</text>", bounds.x, body.y + 14.0, esc(name)), bounds));
+        return Some((
+            format!(
+                "<text class=\"label rectangle-label folder-label\" x=\"{}\" y=\"{}\" pointer-events=\"none\">{}</text>",
+                bounds.x,
+                body.y + 14.0,
+                esc(name)
+            ),
+            bounds,
+        ));
     }
-    let columns = ((body.width - 8.0) / LABEL_ADVANCE).max(0.0) as usize;
-    if columns == 0 || name.is_empty() || body.height < 28.0 || (!folder && body.width < 64.0) {
+    let columns = ((body.width - 4.0) / FILE_LABEL_ADVANCE).max(0.0) as usize;
+    if columns == 0 || name.is_empty() || body.height < 13.0 {
         return None;
     }
     let mut lines = Vec::new();
@@ -440,8 +459,15 @@ fn caption(name: &str, body: Rect, folder: bool) -> Option<(String, Rect)> {
     if !line.is_empty() {
         lines.push(line);
     }
+    let size = format!("{} bytes", commas(bytes));
+    if !folder
+        && size.chars().count() <= columns
+        && (lines.len() + 1) as f64 * 11.0 + 4.0 <= body.height
+    {
+        lines.push(size);
+    }
     let rows = lines.len();
-    if (folder && rows > 1) || rows as f64 * 18.0 + 8.0 > body.height {
+    if (folder && rows > 1) || rows as f64 * 11.0 + 4.0 > body.height {
         return None;
     }
     let width = lines
@@ -449,8 +475,8 @@ fn caption(name: &str, body: Rect, folder: bool) -> Option<(String, Rect)> {
         .map(|line| line.chars().count())
         .max()
         .unwrap_or(0) as f64
-        * LABEL_ADVANCE;
-    let height = rows as f64 * 18.0;
+        * FILE_LABEL_ADVANCE;
+    let height = rows as f64 * 11.0;
     let bounds = Rect {
         x: if folder {
             body.x + 2.0
@@ -475,7 +501,7 @@ fn caption(name: &str, body: Rect, folder: bool) -> Option<(String, Rect)> {
             .map(|(row, line)| {
                 format!(
                     "<tspan x=\"{x}\" y=\"{}\">{}</tspan>",
-                    bounds.y + row as f64 * 18.0 + 9.0,
+                    bounds.y + row as f64 * 11.0 + 5.5,
                     esc(line)
                 )
             })
@@ -500,10 +526,10 @@ pub(crate) fn esc(value: &str) -> String {
 fn color(category: Category) -> &'static str {
     match category {
         Category::Unknown => UNKNOWN,
-        Category::DraftAsm => "#b4ccd2",
-        Category::DraftC => "#96c8c9",
-        Category::ProvenAsm => "#6cafb2",
-        Category::ProvenC => "#326b7d",
+        Category::DraftAsm => UNKNOWN,
+        Category::DraftC => DRAFT_C_PINK,
+        Category::ProvenAsm => UNKNOWN,
+        Category::ProvenC => C_RED,
         Category::AssetData => "#92a8ac",
     }
 }
@@ -524,12 +550,22 @@ pub fn svg_at(tree: &str, map: &CoverageMap, width: f64, folder: &str) -> String
     svg_sized(tree, map, width, width * 16.0 / 9.0, folder)
 }
 pub fn svg_sized(tree: &str, map: &CoverageMap, width: f64, height: f64, folder: &str) -> String {
-    assert_eq!(tree, "rom", "only the unified ROM viewer is supported");
-    let shared = map.document["shared_map_assets"][folder]
-        .as_array()
-        .cloned()
-        .unwrap_or_default();
-    let tiles: Vec<_> = leaves(&tree_tiles(map))
+    assert!(matches!(tree, "rom" | "files"));
+    let disk = (tree == "files").then(|| html::disk_tiles(&root()));
+    let source_tiles = if let Some(disk) = &disk {
+        disk.iter().collect::<Vec<_>>()
+    } else {
+        leaves(&tree_tiles(map))
+    };
+    let shared = if tree == "files" {
+        Vec::new()
+    } else {
+        map.document["shared_map_assets"][folder]
+            .as_array()
+            .cloned()
+            .unwrap_or_default()
+    };
+    let tiles: Vec<_> = source_tiles
         .into_iter()
         .filter(|tile| {
             folder.is_empty()
@@ -539,12 +575,22 @@ pub fn svg_sized(tree: &str, map: &CoverageMap, width: f64, height: f64, folder:
                     .is_some_and(|source| source.starts_with(folder))
         })
         .collect();
-    let description = "ROM contents";
-    let identity = map.document["target"]
-        .as_str()
+    let description = if tree == "files" {
+        "Repository files; area is size on disk"
+    } else {
+        "ROM contents"
+    };
+    let identity = (tree == "rom")
+        .then(|| map.document["target"].as_str())
+        .flatten()
         .map(|target| target.replace('-', " ").to_uppercase());
     let title = if folder.is_empty() {
-        "Alchemy".into()
+        if tree == "files" {
+            "Alchemy files"
+        } else {
+            "Alchemy"
+        }
+        .into()
     } else {
         let location = source_name(folder);
         identity.map_or_else(|| location.into(), |id| format!("{id} · {location}"))
@@ -574,7 +620,7 @@ pub fn svg_sized(tree: &str, map: &CoverageMap, width: f64, height: f64, folder:
         height: height - 44.0 - rows as f64 * 24.0 - if shared.is_empty() { 0.0 } else { 24.0 },
     };
     let mut out = vec![format!("<title>{}</title>", esc(&title))];
-    out.push("<style>.label{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;fill:#fff;text-shadow:1px 1px 0 #000;}</style>".into());
+    out.push("<style>.label{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;fill:#fff;text-shadow:1px 1px 0 #000;}.rectangle-label.folder-label{font-size:11px}.rectangle-label.file-label{font-size:9px}</style>".into());
     out.push(format!(
         "<svg x=\"{}\" y=\"0\" width=\"{}\" height=\"30\" overflow=\"hidden\"><text class=\"label\" x=\"0\" y=\"22\">{}</text></svg>",
         if folder.is_empty() { 8 } else { 36 },
@@ -656,6 +702,14 @@ pub fn render_box_trees(map: &CoverageMap) -> Vec<(&'static str, String)> {
         .map(|tree| (*tree, svg(tree, map, 830.0)))
         .collect()
 }
+pub fn files_svg(width: f64) -> String {
+    let map = CoverageMap {
+        document: serde_json::json!({"view":"files"}),
+        rom_areas: Vec::new(),
+        executable_areas: Vec::new(),
+    };
+    svg("files", &map, width)
+}
 pub fn svg_cache_version(svg: &str) -> String {
     format!("{:x}", Sha1::digest(svg.as_bytes()))[..16].into()
 }
@@ -665,11 +719,7 @@ fn content_version_uses_standard_sha1_prefix() {
     assert_eq!(svg_cache_version("abc"), "a9993e364706816a");
 }
 pub fn box_tree_path(target: &str, tree: &str) -> std::path::PathBuf {
-    if target == "tbs-en" && tree == "rom" {
-        root().join("PROGRESS.svg")
-    } else {
-        root().join(format!("out/{target}/reports/{tree}.svg"))
-    }
+    root().join(format!("out/{target}/reports/{tree}.svg"))
 }
 
 #[cfg(test)]
@@ -682,13 +732,17 @@ mod tests {
             width: 28.0,
             height: 20.0,
         };
-        let (text, bounds) = super::caption("LIB", body, true).unwrap();
+        let (text, bounds) = super::caption("LIB", 100, body, true).unwrap();
         assert_eq!(bounds.width, 24.0);
         assert!(text.contains(">LIB</text>"));
-        assert_eq!(super::caption("WWW", body, true).unwrap().1.width, 24.0);
-        assert!(super::caption("LIBS", body, true).is_none());
+        assert_eq!(
+            super::caption("WWW", 100, body, true).unwrap().1.width,
+            24.0
+        );
+        assert!(super::caption("LIBS", 100, body, true).is_none());
         assert!(super::caption(
             "LIB",
+            100,
             super::Rect {
                 height: 19.0,
                 ..body
@@ -696,7 +750,7 @@ mod tests {
             true
         )
         .is_none());
-        assert!(super::caption("LIB", body, false).is_none());
+        assert!(super::caption("LIB", 100, body, false).is_some());
     }
     use super::{
         content_style, directories, draw_tiles, leaves, sound_type, svg, tree_tiles, BOX_TREES,
@@ -883,14 +937,14 @@ mod tests {
             assert_eq!(svg.matches("data-kind=\"folder\"").count(), 1);
             assert_eq!(
                 svg.matches("Last asset build: ROM bytes matched").count(),
-                2
+                if visible { 2 } else { 0 }
             );
-            assert!(svg.contains("class=\"bevel-light\""));
-            assert!(svg.contains("class=\"bevel-dark\""));
+            assert_eq!(svg.contains("class=\"bevel-light\""), visible);
+            assert_eq!(svg.contains("class=\"bevel-dark\""), visible);
             assert_eq!(
                 svg.matches("stroke-width=\"1\" vector-effect=\"non-scaling-stroke\"")
                     .count(),
-                2
+                if visible { 2 } else { 0 }
             );
             assert_eq!(svg.contains(">wave.wav</tspan>"), visible);
             assert_eq!(
@@ -914,6 +968,25 @@ mod tests {
         tile.group = Some("gba-palette".into());
         assert_ne!(sprites.1, maps.1);
         assert_ne!(maps.1, content_style(&tile).1);
+    }
+
+    #[test]
+    fn requested_file_palette_is_explicit() {
+        let tile = |extension: &str| Tile {
+            group: Some(format!("file:{extension}")),
+            ..Tile::default()
+        };
+        assert_eq!(content_style(&tile("s")), ("Assembly", super::UNKNOWN));
+        assert_eq!(content_style(&tile("c")), ("C", super::C_RED));
+        assert_eq!(content_style(&tile("po")), ("Text", super::TEXT_ORANGE));
+        assert_eq!(
+            content_style(&tile("mid")),
+            ("MIDI music", super::MIDI_GREEN)
+        );
+        assert_eq!(content_style(&tile("wav")), ("WAV audio", super::WAV_PINE));
+        assert_eq!(super::color(Category::DraftC), super::DRAFT_C_PINK);
+        assert_eq!(super::color(Category::ProvenAsm), super::UNKNOWN);
+        assert_eq!(super::color(Category::ProvenC), super::C_RED);
     }
     #[test]
     fn unidentified_has_one_shared_legend_entry_and_tables_have_a_type() {
@@ -1040,7 +1113,7 @@ mod tests {
                 },
             ],
         };
-        assert_eq!(BOX_TREES, ["rom"]);
+        assert_eq!(BOX_TREES, ["files"]);
         // Physical streams, not decoded executable owners, determine ROM area.
         assert_eq!(tree_tiles(&map).iter().map(|t| t.bytes).sum::<i64>(), 600);
         for width in [320.0, 540.0, 830.0] {

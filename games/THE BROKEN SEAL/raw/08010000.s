@@ -1,13 +1,10 @@
-@ 層の巻き取り位置の更新。記録 0x03001e70 の対象 (+0 の指す位置) を範囲 (+236..+248) に収め、
-@ +4/+8 の揺れがあれば乱数と IwramMulQ16 で加えつつ +12 の減衰を掛ける。3 層それぞれで
-@ 位置 × 層の縮尺 (+16/+20) に視差の積算 (+24..+36) を足し、16 タイル境界を跨いだら
-@ Func_0800ff54 (列) / Func_0800fec8 (行) でタイルを流し込み、0x03001ad0 の BG 偏りに書く。
-@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
-	.global Func_08010000
-	.thumb_func
-Func_08010000:
+	.set sub_08004458, 0x08004458
+	.set sub_0800fec8, 0x0800fec8
+	.set sub_0800ff54, 0x0800ff54
+	.global Overlay_08010000
+Overlay_08010000:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -24,9 +21,9 @@ Func_08010000:
 	sub	sp, #8
 	add	r4, r8
 	cmp	r1, #0
-	bne.n	.L0
-	b.n	.L1
-.L0:
+	bne.n	.L_08010024
+	b.n	.L_080101fe
+.L_08010024:
 	ldmia	r1!, {r3}
 	ldr	r2, [pc, #492]
 	adds	r7, r3, r2
@@ -62,37 +59,36 @@ Func_08010000:
 	subs	r3, r3, r5
 	adds	r3, r3, r2
 	cmp	r0, r1
-	ble.n	.L2
+	ble.n	.L_0801006e
 	adds	r1, r0, #0
-.L2:
+.L_0801006e:
 	cmp	lr, r3
-	ble.n	.L3
+	ble.n	.L_08010074
 	mov	r3, lr
-.L3:
+.L_08010074:
 	cmp	r7, r0
-	bge.n	.L4
+	bge.n	.L_0801007a
 	adds	r7, r0, #0
-.L4:
+.L_0801007a:
 	cmp	r7, r1
-	ble.n	.L5
+	ble.n	.L_08010080
 	adds	r7, r1, #0
-.L5:
+.L_08010080:
 	cmp	r6, lr
-	bge.n	.L6
+	bge.n	.L_08010086
 	mov	r6, lr
-.L6:
+.L_08010086:
 	cmp	r6, r3
-	ble.n	.L7
+	ble.n	.L_0801008c
 	adds	r6, r3, #0
-@ 横揺れ: 乱数の差 × 揺れ幅、揺れ幅 × 減衰 (IwramMulQ16ReturnIp)。
-.L7:
+.L_0801008c:
 	mov	r3, ip
 	cmp	r3, #0
-	beq.n	.L8
+	beq.n	.L_080100c4
 	str	r4, [sp, #0]
-	bl	Func_08004458
+	bl	sub_08004458
 	adds	r5, r0, #0
-	bl	Func_08004458
+	bl	sub_08004458
 	mov	r2, r8
 	ldr	r2, [r2, #4]
 	adds	r1, r0, #0
@@ -112,14 +108,13 @@ Func_08010000:
 	str	r0, [r3, #4]
 	ldr	r5, [r3, #8]
 	ldr	r4, [sp, #0]
-@ 縦揺れ、同様。
-.L8:
+.L_080100c4:
 	cmp	r5, #0
-	beq.n	.L9
+	beq.n	.L_080100fa
 	str	r4, [sp, #0]
-	bl	Func_08004458
+	bl	sub_08004458
 	adds	r5, r0, #0
-	bl	Func_08004458
+	bl	sub_08004458
 	mov	r2, r8
 	ldr	r2, [r2, #8]
 	adds	r1, r0, #0
@@ -139,7 +134,7 @@ Func_08010000:
 	mov	r3, r8
 	str	r0, [r3, #8]
 	ldr	r4, [sp, #0]
-.L9:
+.L_080100fa:
 	mov	r1, r8
 	adds	r1, #228
 	movs	r2, #232
@@ -152,8 +147,7 @@ Func_08010000:
 	mov	fp, r2
 	mov	sl, r3
 	mov	r9, r1
-@ 層ループ: 位置 × 縮尺 (IwramMulQ16ReturnIp)、視差の積算。
-.L20:
+.L_08010112:
 	ldr	r2, [sp, #4]
 	ldr	r1, [r4, #16]
 	ldr	r0, [r2, #0]
@@ -168,7 +162,7 @@ Func_08010000:
 	ldr	r2, [r4, #24]
 	adds	r6, r0, #0
 	cmp	r2, #0
-	beq.n	.L10
+	beq.n	.L_08010142
 	ldr	r3, [r4, #32]
 	adds	r3, r3, r2
 	adds	r7, r7, r3
@@ -178,10 +172,10 @@ Func_08010000:
 	lsls	r3, r3, #19
 	orrs	r3, r2
 	ands	r7, r3
-.L10:
+.L_08010142:
 	ldr	r2, [r4, #28]
 	cmp	r2, #0
-	beq.n	.L11
+	beq.n	.L_0801015a
 	ldr	r3, [r4, #36]
 	adds	r3, r3, r2
 	adds	r6, r6, r3
@@ -191,25 +185,25 @@ Func_08010000:
 	lsls	r3, r3, #19
 	orrs	r3, r2
 	ands	r6, r3
-.L11:
+.L_0801015a:
 	ldr	r3, [r4, #8]
 	adds	r7, r7, r3
 	ldr	r3, [r4, #12]
 	adds	r1, r7, #0
 	adds	r6, r6, r3
 	cmp	r7, #0
-	bge.n	.L12
+	bge.n	.L_0801016c
 	ldr	r2, [pc, #188]
 	adds	r1, r7, r2
-.L12:
+.L_0801016c:
 	asrs	r1, r1, #19
 	mov	r8, r1
 	adds	r2, r6, #0
 	cmp	r6, #0
-	bge.n	.L13
+	bge.n	.L_0801017a
 	ldr	r3, [pc, #176]
 	adds	r2, r6, r3
-.L13:
+.L_0801017a:
 	ldr	r1, [r4, #0]
 	asrs	r5, r2, #19
 	adds	r3, r1, #0
@@ -218,25 +212,24 @@ Func_08010000:
 	lsls	r2, r2, #12
 	ands	r3, r2
 	cmp	r3, #0
-	beq.n	.L14
+	beq.n	.L_080101aa
 	cmp	r1, r7
-	bge.n	.L15
+	bge.n	.L_0801019c
 	mov	r1, r8
 	adds	r1, #30
 	mov	r0, sl
 	adds	r2, r5, #0
 	str	r4, [sp, #0]
-	b.n	.L16
-.L15:
+	b.n	.L_080101a4
+.L_0801019c:
 	mov	r0, sl
 	mov	r1, r8
 	adds	r2, r5, #0
 	str	r4, [sp, #0]
-.L16:
-	bl	Func_0800ff54
+.L_080101a4:
+	bl	sub_0800ff54
 	ldr	r4, [sp, #0]
-@ 境界を跨いだ向きで列を流し込む。
-.L14:
+.L_080101aa:
 	ldr	r1, [r4, #4]
 	movs	r2, #128
 	adds	r3, r1, #0
@@ -244,25 +237,24 @@ Func_08010000:
 	lsls	r2, r2, #13
 	ands	r3, r2
 	cmp	r3, #0
-	beq.n	.L17
+	beq.n	.L_080101d8
 	cmp	r1, r6
-	bge.n	.L18
+	bge.n	.L_080101ca
 	adds	r2, r5, #0
 	adds	r2, #20
 	mov	r0, sl
 	mov	r1, r8
 	str	r4, [sp, #0]
-	b.n	.L19
-.L18:
+	b.n	.L_080101d2
+.L_080101ca:
 	mov	r0, sl
 	mov	r1, r8
 	adds	r2, r5, #0
 	str	r4, [sp, #0]
-.L19:
-	bl	Func_0800fec8
+.L_080101d2:
+	bl	sub_0800fec8
 	ldr	r4, [sp, #0]
-@ 行も同様。BG の偏りを書く。
-.L17:
+.L_080101d8:
 	mov	r1, sl
 	movs	r3, #3
 	subs	r3, r3, r1
@@ -280,9 +272,9 @@ Func_08010000:
 	str	r6, [r4, #4]
 	adds	r4, #48
 	cmp	r3, #2
-	bhi.n	.L1
-	b.n	.L20
-.L1:
+	bhi.n	.L_080101fe
+	b.n	.L_08010112
+.L_080101fe:
 	add	sp, #8
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3
@@ -298,5 +290,3 @@ Func_08010000:
 	.4byte 0xff100000
 	.4byte 0xff600000
 	.4byte 0x03000118
-	.4byte 0x0007ffff
-	.4byte 0x03001ad0

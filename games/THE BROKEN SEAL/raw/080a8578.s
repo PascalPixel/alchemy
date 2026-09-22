@@ -1,12 +1,14 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global StatusMenu_ShowOwnerProgressMessage
-	.global Func_080a8578
-	.set Func_080a8578, StatusMenu_ShowOwnerProgressMessage
-	.thumb_func
-StatusMenu_ShowOwnerProgressMessage:
+	.set sub_08002df0, 0x08002df0
+	.set sub_08004938, 0x08004938
+	.set sub_08015030, 0x08015030
+	.set sub_08015120, 0x08015120
+	.set sub_08015258, 0x08015258
+	.set sub_08077008, 0x08077008
+	.set sub_08077258, 0x08077258
+	.global Overlay_080a8578
+Overlay_080a8578:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
@@ -15,53 +17,53 @@ StatusMenu_ShowOwnerProgressMessage:
 	adds	r7, r1, #0
 	ldr	r3, [r3, #0]
 	cmp	r2, #0
-	bne.n	.L0
+	bne.n	.L_080a8590
 	cmp	r7, #3
-	ble.n	.L0
+	ble.n	.L_080a8590
 	adds	r7, #1
-.L0:
+.L_080a8590:
 	cmp	r7, #1
-	bne.n	.L1
+	bne.n	.L_080a85c4
 	ldr	r2, [pc, #100]
 	adds	r6, r3, r2
 	ldrb	r0, [r6, #0]
-	bl	Func_08077008
+	bl	sub_08077008
 	adds	r5, r0, #0
 	ldrb	r3, [r5, #15]
 	cmp	r3, #99
-	bne.n	.L2
+	bne.n	.L_080a85aa
 	movs	r7, #8
-	b.n	.L1
-.L2:
+	b.n	.L_080a85c4
+.L_080a85aa:
 	ldrb	r1, [r5, #15]
 	ldrb	r0, [r6, #0]
 	adds	r1, #1
-	bl	Func_08077258
+	bl	sub_08077258
 	movs	r2, #146
 	lsls	r2, r2, #1
 	adds	r3, r5, r2
 	ldr	r3, [r3, #0]
 	movs	r1, #5
 	subs	r0, r0, r3
-	bl	Func_08015120
-.L1:
+	bl	sub_08015120
+.L_080a85c4:
 	movs	r0, #128
 	lsls	r0, r0, #1
-	bl	Func_08004938
+	bl	sub_08004938
 	adds	r5, r0, #0
 	ldr	r0, [pc, #48]
 	adds	r1, r5, #0
 	adds	r0, r7, r0
 	movs	r2, #128
-	bl	Func_08015030
+	bl	sub_08015030
 	movs	r3, #1
 	adds	r0, r5, #0
 	negs	r3, r3
 	mov	r1, r8
 	movs	r2, #0
-	bl	Func_08015258
+	bl	sub_08015258
 	adds	r0, r5, #0
-	bl	Func_08002df0
+	bl	sub_08002df0
 	pop	{r3}
 	mov	r8, r3
 	pop	{r5, r6, r7}

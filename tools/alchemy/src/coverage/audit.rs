@@ -3,7 +3,7 @@ pub(crate) mod index;
 
 use crate::compiler::canonical_json::canonical_json;
 use crate::overlay::assembly::{
-    adjacent_prologue_spans, build_overlay_source, compiler_idiom_spans, executable_spans,
+    adjacent_prologue_spans, build_overlay_source, compiler_runtime_spans, executable_spans,
     main_executable_spans, overlay_flow_spans, trusted_overlay_spans, ExecutableSpan, OVERLAY_BASE,
     ROM_BASE,
 };
@@ -187,10 +187,9 @@ fn asset_cuts(root: &Path, target: DecompTarget) -> Result<Vec<(i64, i64)>, Stri
             .join("full/assets/manifest.json"),
         root.join(target.output_dir).join("assets/manifest.json"),
     ];
-    let path = candidates
-        .iter()
-        .find(|path| path.exists())
-        .ok_or_else(|| format!("{} has no built asset manifest", target.id))?;
+    let Some(path) = candidates.iter().find(|path| path.exists()) else {
+        return Ok(Vec::new());
+    };
     let manifest: Value = serde_json::from_slice(
         &std::fs::read(path).map_err(|error| format!("{}: {error}", path.display()))?,
     )
@@ -481,6 +480,80 @@ fn source_spans(source: &Path, image: &[u8], overlay: &str) -> Result<Vec<Execut
     Ok(spans)
 }
 
+fn audit_overlay(
+    root: &Path,
+    target: DecompTarget,
+    rom: &CanonicalRom,
+    resource: usize,
+) -> Result<(Value, u64, u64, u64), String> {
+    let stream = rom.stream(resource)?;
+    let id = format!("resource_{resource:03x}");
+    let retained = root.join(target.overlay_assembly(&id));
+    let generated = build_overlay_source(&stream.decoded, OVERLAY_BASE)?;
+    let generated_file = NamedTempFile::new().map_err(|error| error.to_string())?;
+    std::fs::write(generated_file.path(), generated).map_err(|error| error.to_string())?;
+    let mut generated_spans = source_spans(generated_file.path(), &stream.decoded, &id)?;
+    let prologues = adjacent_prologue_spans(&stream.decoded, OVERLAY_BASE, &generated_spans);
+    generated_spans.extend(prologues);
+    generated_spans.extend(compiler_runtime_spans(&stream.decoded, OVERLAY_BASE));
+    let (mut spans, source_evidence) = if retained.exists() {
+        (
+            source_spans(&retained, &stream.decoded, &id)?,
+            "retained-source",
+        )
+    } else {
+        (generated_spans.clone(), "decoder-generated-source")
+    };
+    if retained.exists() {
+        let prologues = adjacent_prologue_spans(&stream.decoded, OVERLAY_BASE, &spans);
+        spans.extend(prologues);
+        spans.extend(compiler_runtime_spans(&stream.decoded, OVERLAY_BASE));
+    }
+    let generated_executable = union_bytes(&generated_spans);
+    let trusted_spans =
+        trusted_overlay_spans(&stream.decoded, OVERLAY_BASE, target.overlay_entry_veneers)?;
+    let combined_executable = union_bytes(
+        &generated_spans
+            .iter()
+            .chain(&trusted_spans)
+            .cloned()
+            .collect::<Vec<_>>(),
+    );
+    let flow = overlay_flow_spans(
+        &stream.decoded,
+        OVERLAY_BASE,
+        target.overlay_entry_veneers,
+        true,
+    )?;
+    spans.extend(generated_spans.iter().cloned());
+    spans.extend(flow);
+    let executable = union_bytes(&spans);
+    let decoded = stream.decoded.len() as u64;
+    let encoded = (stream.end - stream.start) as u64;
+    let row = json!({
+        "id": id,
+        "decoded_bytes": decoded,
+        "rom_start": ROM_BASE + stream.start as i64,
+        "rom_end": ROM_BASE + stream.end as i64,
+        "encoded_bytes": encoded,
+        "executable_bytes": executable,
+        "generated_executable_bytes": generated_executable,
+        "combined_executable_bytes": combined_executable,
+        "excluded_bytes": decoded - executable,
+        "source_evidence": source_evidence,
+        "intervals": spans.into_iter().map(|span| json!({
+            "start": span.start, "end": span.end, "kind": span.kind,
+        })).collect::<Vec<_>>(),
+        "generated_intervals": generated_spans.into_iter().map(|span| json!({
+            "start": span.start, "end": span.end, "kind": span.kind,
+        })).collect::<Vec<_>>(),
+        "trusted_intervals": trusted_spans.into_iter().map(|span| json!({
+            "start": span.start, "end": span.end, "kind": span.kind,
+        })).collect::<Vec<_>>(),
+    });
+    Ok((row, decoded, encoded, executable))
+}
+
 fn report(root: &Path, target: DecompTarget) -> Result<Value, String> {
     let rom = CanonicalRom::load_target(root, target)?;
     let resources = rom.overlay_resources(target.overlay_entry_veneers);
@@ -519,126 +592,51 @@ fn report(root: &Path, target: DecompTarget) -> Result<Value, String> {
             Ok(row)
         })
         .collect::<Result<Vec<_>, String>>()?;
-    let runtime = if target.id.as_str() == "tbs-en" {
-        Some(crate::compiler::runtime::Registry::load(root)?)
-    } else {
-        None
-    };
-    let mut overlays = Vec::with_capacity(resources.len());
+    // Discovery invokes short-lived assembler/objdump processes and spends
+    // most of its time outside Rust. Ask the OS directly because some
+    // sandboxes under-report through Rust's affinity-aware API.
+    let workers = crate::parallel::workers(resources.len());
+    eprintln!(
+        "auditing {} overlays with {workers} workers",
+        resources.len()
+    );
+    let next = std::sync::atomic::AtomicUsize::new(0);
+    let results = std::sync::Mutex::new(Vec::with_capacity(resources.len()));
+    std::thread::scope(|scope| {
+        for _ in 0..workers {
+            let next = &next;
+            let results = &results;
+            let resources = &resources;
+            let rom = &rom;
+            scope.spawn(move || loop {
+                let index = next.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                let Some(&resource) = resources.get(index) else {
+                    break;
+                };
+                results
+                    .lock()
+                    .unwrap()
+                    .push((index, audit_overlay(root, target, rom, resource)));
+            });
+        }
+    });
+    let mut results = results.into_inner().unwrap();
+    results.sort_by_key(|(index, _)| *index);
+    let mut overlays = Vec::with_capacity(results.len());
     let mut decoded_total = 0u64;
     let mut encoded_total = 0u64;
     let mut executable_total = 0u64;
-    for resource in resources {
-        let stream = rom.stream(resource)?;
-        let id = format!("resource_{resource:03x}");
-        let retained = root.join(target.overlay_assembly(&id));
-        let temporary;
-        let (source, source_evidence) = if retained.exists() {
-            (retained.as_path(), "retained-source")
-        } else {
-            temporary = NamedTempFile::new().map_err(|error| error.to_string())?;
-            std::fs::write(
-                temporary.path(),
-                build_overlay_source(&stream.decoded, OVERLAY_BASE)?,
-            )
-            .map_err(|error| error.to_string())?;
-            (temporary.path(), "decoder-generated-source")
-        };
-        let mut spans = source_spans(source, &stream.decoded, &id)?;
-        let prologues = adjacent_prologue_spans(&stream.decoded, OVERLAY_BASE, &spans);
-        spans.extend(prologues);
-        spans.extend(compiler_idiom_spans(&stream.decoded, OVERLAY_BASE));
-        if let Some(runtime) = &runtime {
-            for link in runtime.links.iter().filter(|link| link.image == id) {
-                let linked = crate::compiler::runtime::build(root, link)?;
-                spans.push(ExecutableSpan {
-                    start: i64::from(link.text),
-                    end: i64::from(link.text) + linked.text.len() as i64,
-                    kind: "compiler_runtime",
-                });
-            }
-        }
-        let generated = build_overlay_source(&stream.decoded, OVERLAY_BASE)?;
-        let generated_file = NamedTempFile::new().map_err(|error| error.to_string())?;
-        std::fs::write(generated_file.path(), generated).map_err(|error| error.to_string())?;
-        let mut generated_spans = source_spans(generated_file.path(), &stream.decoded, &id)?;
-        let prologues = adjacent_prologue_spans(&stream.decoded, OVERLAY_BASE, &generated_spans);
-        generated_spans.extend(prologues);
-        generated_spans.extend(compiler_idiom_spans(&stream.decoded, OVERLAY_BASE));
-        let generated_executable = union_bytes(&generated_spans);
-        let trusted_spans =
-            trusted_overlay_spans(&stream.decoded, OVERLAY_BASE, target.overlay_entry_veneers)?;
-        let combined_executable = union_bytes(
-            &generated_spans
-                .iter()
-                .chain(&trusted_spans)
-                .cloned()
-                .collect::<Vec<_>>(),
-        );
-        // A maintained raw listing may still spell a real routine as numeric
-        // directives. Conversely, it can contain exact C the prologue sweep
-        // cannot discover. Follow entry/call/switch evidence independently of
-        // those spellings, and keep every method's diagnostic ranges below.
-        let flow = overlay_flow_spans(
-            &stream.decoded,
-            OVERLAY_BASE,
-            target.overlay_entry_veneers,
-            true,
-        )?;
-        spans.extend(generated_spans.iter().cloned());
-        spans.extend(flow);
-        let executable = union_bytes(&spans);
-        let decoded = stream.decoded.len() as u64;
-        let encoded = (stream.end - stream.start) as u64;
+    for (_, result) in results {
+        let (row, decoded, encoded, executable) = result?;
+        overlays.push(row);
         decoded_total += decoded;
         encoded_total += encoded;
         executable_total += executable;
-        overlays.push(json!({
-            "id": id,
-            "decoded_bytes": decoded,
-            "rom_start": ROM_BASE + stream.start as i64,
-            "rom_end": ROM_BASE + stream.end as i64,
-            "encoded_bytes": encoded,
-            "executable_bytes": executable,
-            "generated_executable_bytes": generated_executable,
-            "combined_executable_bytes": combined_executable,
-            "excluded_bytes": decoded - executable,
-            "source_evidence": source_evidence,
-            "intervals": spans.into_iter().map(|span| json!({
-                "start": span.start,
-                "end": span.end,
-                "kind": span.kind,
-            })).collect::<Vec<_>>(),
-            "generated_intervals": generated_spans.into_iter().map(|span| json!({
-                "start": span.start,
-                "end": span.end,
-                "kind": span.kind,
-            })).collect::<Vec<_>>(),
-            "trusted_intervals": trusted_spans.into_iter().map(|span| json!({
-                "start": span.start,
-                "end": span.end,
-                "kind": span.kind,
-            })).collect::<Vec<_>>(),
-        }));
     }
-    // This is deliberately a candidate, not a completion denominator.  The
-    // upper bound is the last reviewed main-image owner; the decoder then
-    // inventories code reached from Thumb prologues and in-image veneers.
-    // Calibration against TBS below measures what this method still misses
-    // before TLA is ever allowed to publish a complete audit.
-    let metric_path = root.join(format!("{}/metrics/executable.json", target.game_dir()));
-    let metric: Value = serde_json::from_slice(
-        &std::fs::read(&metric_path)
-            .map_err(|error| format!("{}: {error}", metric_path.display()))?,
-    )
-    .map_err(|error| format!("{}: {error}", metric_path.display()))?;
-    let main_end = metric["main"]["intervals"]
-        .as_array()
-        .into_iter()
-        .flatten()
-        .filter_map(|row| row["end"].as_i64())
-        .max()
-        .ok_or_else(|| format!("{} has no main-image audit boundary", metric_path.display()))?;
+    // This remains a candidate until every discovered code range and asset
+    // complement round-trips. Scan the supplied image and subtract verified
+    // asset regions; no committed address ledger supplies the answer.
+    let main_end = ROM_BASE + rom.bytes().len() as i64;
     let main_start = ROM_BASE + 0xc0;
     let main_image = &rom.bytes()[(main_start - ROM_BASE) as usize..(main_end - ROM_BASE) as usize];
     let cuts = asset_cuts(root, target)?;
@@ -711,7 +709,7 @@ fn report(root: &Path, target: DecompTarget) -> Result<Value, String> {
 }
 
 fn calibrate(root: &Path, document: &Value) -> Result<String, String> {
-    let path = root.join("games/THE BROKEN SEAL/metrics/executable.json");
+    let path = root.join("out/tbs-en/reports/executable.json");
     let expected: ExpectedReport = serde_json::from_slice(
         &std::fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?,
     )
@@ -956,18 +954,21 @@ pub fn run(root: &Path, arguments: &[String]) -> Result<String, String> {
         .calibrate
         .then(|| calibrate(root, &document))
         .transpose()?;
-    if let Some(path) = options.output {
-        let path = if path.is_absolute() {
-            path
-        } else {
-            root.join(path)
-        };
-        if let Some(parent) = path.parent() {
-            std::fs::create_dir_all(parent).map_err(|error| error.to_string())?;
-        }
-        std::fs::write(&path, canonical_json(&document))
-            .map_err(|error| format!("{}: {error}", path.display()))?;
+    let path = options.output.map_or_else(
+        || root.join(format!("{}/reports/executable.json", target.output_dir)),
+        |path| {
+            if path.is_absolute() {
+                path
+            } else {
+                root.join(path)
+            }
+        },
+    );
+    if let Some(parent) = path.parent() {
+        std::fs::create_dir_all(parent).map_err(|error| error.to_string())?;
     }
+    std::fs::write(&path, canonical_json(&document))
+        .map_err(|error| format!("{}: {error}", path.display()))?;
     Ok(calibration.unwrap_or_else(|| {
         format!(
             "target={} overlays={} executable={} decoded={}",

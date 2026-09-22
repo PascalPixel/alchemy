@@ -55,7 +55,7 @@ pub(crate) fn export(root: &Path, output: &Path, update_baseline: bool) -> Resul
     let mut source_plan = plan.clone();
     super::review_defaults::expand(root, &mut plan)?;
     let colors: Value = serde_json::from_slice(
-        &fs::read(root.join(broken_seal().colors)).map_err(|e| e.to_string())?,
+        &fs::read(root_path(root, &broken_seal().colors)?).map_err(|e| e.to_string())?,
     )
     .map_err(|e| e.to_string())?;
     let mut palettes = Vec::new();

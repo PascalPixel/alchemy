@@ -1,12 +1,10 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global BattlePresentation_ConfigurePaletteFade
-	.global Func_080c0774
-	.thumb_func
-BattlePresentation_ConfigurePaletteFade:
-Func_080c0774:
+	.set sub_080041d8, 0x080041d8
+	.set sub_080c0098, 0x080c0098
+	.set sub_080c00d8, 0x080c00d8
+	.global Overlay_080c0774
+Overlay_080c0774:
 	push	{r5, r6, r7, lr}
 	ldr	r3, [pc, #168]
 	ldr	r6, [r3, #0]
@@ -14,14 +12,14 @@ Func_080c0774:
 	adds	r7, r0, #0
 	adds	r5, r2, #0
 	cmp	r3, #0
-	bne.n	.L0
+	bne.n	.L_080c078c
 	ldr	r0, [pc, #156]
 	ldr	r1, [pc, #160]
-	bl	Func_080041d8
-.L0:
+	bl	sub_080041d8
+.L_080c078c:
 	str	r7, [r6, #8]
 	cmp	r7, #1
-	bne.n	.L1
+	bne.n	.L_080c07c0
 	ldr	r1, [pc, #152]
 	ldr	r0, [pc, #152]
 	ldrh	r3, [r0, #0]
@@ -29,7 +27,7 @@ Func_080c0774:
 	strh	r0, [r0, #0]
 	ldrh	r2, [r1, #0]
 	cmp	r2, #31
-	bgt.n	.L2
+	bgt.n	.L_080c07be
 	lsls	r3, r2, #1
 	adds	r3, r3, r2
 	lsls	r3, r3, #2
@@ -44,9 +42,9 @@ Func_080c0774:
 	movs	r2, #128
 	lsls	r2, r2, #10
 	str	r2, [r3, #0]
-.L2:
+.L_080c07be:
 	strh	r4, [r0, #0]
-.L1:
+.L_080c07c0:
 	ldr	r3, [pc, #120]
 	ldr	r0, [pc, #124]
 	ldr	r1, [pc, #124]
@@ -58,7 +56,7 @@ Func_080c0774:
 	ldrh	r2, [r2, #0]
 	strh	r2, [r3, #0]
 	cmp	r5, #128
-	bne.n	.L3
+	bne.n	.L_080c07ec
 	ldr	r3, [pc, #120]
 	ldr	r2, [pc, #124]
 	ldr	r0, [r3, #0]
@@ -68,10 +66,10 @@ Func_080c0774:
 	ldr	r2, [pc, #116]
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
-	b.n	.L4
-.L3:
+	b.n	.L_080c088e
+.L_080c07ec:
 	cmp	r5, #0
-	beq.n	.L4
+	beq.n	.L_080c088e
 	ldr	r3, [pc, #96]
 	ldr	r2, [pc, #100]
 	ldr	r3, [r3, #0]
@@ -81,7 +79,7 @@ Func_080c0774:
 	mov	ip, r2
 	movs	r6, #0
 	movs	r0, #0
-.L11:
+.L_080c0802:
 	mov	r2, ip
 	ldrh	r3, [r0, r2]
 	movs	r1, #31
@@ -92,9 +90,9 @@ Func_080c0774:
 	ands	r2, r7
 	ands	r3, r7
 	cmp	r1, r5
-	ble.n	.L5
+	ble.n	.L_080c0864
 	subs	r1, r1, r5
-	b.n	.L6
+	b.n	.L_080c0866
 	.4byte 0x0000001f
 	.4byte 0x03001f00
 	.4byte 0x080c0131
@@ -112,24 +110,25 @@ Func_080c0774:
 	.4byte 0x03001e74
 	.4byte 0x00000544
 	.4byte 0x80000080
-	.4byte 0x050000c0
-.L5:
+	.2byte 0x00c0
+	.2byte 0x0500
+.L_080c0864:
 	movs	r1, #0
-.L6:
+.L_080c0866:
 	cmp	r2, r5
-	ble.n	.L7
+	ble.n	.L_080c086e
 	subs	r2, r2, r5
-	b.n	.L8
-.L7:
+	b.n	.L_080c0870
+.L_080c086e:
 	movs	r2, #0
-.L8:
+.L_080c0870:
 	cmp	r3, r5
-	ble.n	.L9
+	ble.n	.L_080c0878
 	subs	r3, r3, r5
-	b.n	.L10
-.L9:
+	b.n	.L_080c087a
+.L_080c0878:
 	movs	r3, #0
-.L10:
+.L_080c087a:
 	lsls	r3, r3, #10
 	lsls	r2, r2, #5
 	orrs	r3, r2
@@ -139,12 +138,12 @@ Func_080c0774:
 	adds	r0, #2
 	adds	r4, #2
 	cmp	r6, #128
-	bne.n	.L11
-.L4:
+	bne.n	.L_080c0802
+.L_080c088e:
 	ldr	r0, [pc, #16]
-	bl	Func_080c0098
+	bl	sub_080c0098
 	ldr	r0, [pc, #12]
-	bl	Func_080c00d8
+	bl	sub_080c00d8
 	pop	{r5, r6, r7}
 	pop	{r0}
 	bx	r0

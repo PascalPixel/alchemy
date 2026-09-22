@@ -39,7 +39,7 @@
 	.set sub_0200058a, 0x0200058a
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_HEYA/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_HEYA/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x2a
 	.2byte 0x0000
@@ -52,7 +52,9 @@ AlchemyC_02000068:
 AlchemyC_02000070:
 	.space 0x2c
 AlchemyC_0200009c:
-	.space 0x48
+	.space 0x14
+.L_020000b0:
+	.space 0x34
 AlchemyC_020000e4:
 	.space 0x48
 AlchemyC_0200012c:
@@ -63,7 +65,7 @@ AlchemyC_020001bc:
 	.space 0x8
 AlchemyC_020001c4:
 	.space 0xf4
-.include "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_HEYA/IMPORT.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_HEYA/IMPORT.INC"
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095

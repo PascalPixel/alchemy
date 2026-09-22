@@ -38,24 +38,46 @@ among short JSON arrays does not make them editable map source. Audit these by
 their readers and writers, not just file extension or individual array length.
 The publication gate rejects known JSON compression token arrays, packed-table
 references, nonempty predictor exceptions and captured trailing padding at any
-nesting depth, subject only to the temporary frozen-debt exception below.
+nesting depth.
 Input-derived compression settings remain valid. This check covers the known
 recipe schemas; it does not certify that arbitrary differently encoded data is
 honest. The larger source-and-consumer audit still applies.
 
-For the weekly wrap, Pascal explicitly permits existing compression debt at
-commit `d08ee3a28fc92afe15c6215d0997a05659395f1c`. The publication gate admits
-only unchanged answers at the same file and JSON position, and the identical
+For cleanup, Pascal explicitly permits existing compression debt at commit
+`d08ee3a28fc92afe15c6215d0997a05659395f1c`. The publication gate admits only
+unchanged answers at the same file and JSON position, and the identical
 COMPRESSION.TOKENS file. It rejects new, changed or relocated answers and fails
 closed if the checkpoint is unavailable. Removing answers or replacing them
 with input-derived settings is allowed. This temporary exception grants no
 recovery credit; remove it and the legacy readers when the encoder and packer
 are recovered. Do not compact, expand or disguise the retained debt.
 
-- Do not replay compression tokens, retain per-resource encoding overrides, or
-  copy unexplained padding to make a compressor match. Retire `.lz.json` plans
-  by recovering the encoder and packer. Moving their contents into manifests,
-  source constants, binary tables, caches or generated files is the same cheat.
+**Temporary sync exception (Pascal, 2026-09-22).** Pascal has explicitly
+authorized retaining the frozen compression answers while this staged wave is
+synced to `origin`. This is an administrative exception, not recovered source:
+it may only preserve records already admitted by the checkpoint above, earns no
+DONE or exact-C credit, and must remain identifiable by that checkpoint and the
+publication-gate reason `stored compression decisions or padding`. Remove this
+paragraph's exception, the checkpoint allowlist, and every legacy reader as one
+change once the input-derived encoder and packer reproduce the complete TBS and
+TLA asset builds (including overlay body bytes, stream padding, and shared
+arena/buffer lifetime). A later exception needs Pascal's explicit authorization
+and a new dated marker; it must never be inferred from a failing build.
+
+**One-time sync gate waiver (Pascal, 2026-09-22).** Pascal also authorizes this
+single labeled sync while `make verify` remains red for the documented staged
+wave: automatic overlay compression/packing differs in 60 TBS assets, resource
+387 and resource 3ce contain nonzero overlay-C placeholders, and ten tracked
+TBS metadata inputs lack asset-manifest consumers. The sync commit and its
+push must say `pending` rather than claim a DONE percentage. This waiver grants
+no source, asset, exact-C, or DONE credit and expires when that commit reaches
+`origin`; restore the normal commit and pre-push gates before the next commit.
+
+- Do not add or move compression answers under this exception. Do not replay
+  tokens, retain new per-resource overrides, or copy unexplained padding to make
+  a compressor match. Retire `.lz.json` plans by recovering the encoder and
+  packer. Moving their contents into manifests, source constants, binary tables,
+  caches or generated files is the same cheat.
 - Do not invent compiler switches, accumulate per-function flag combinations,
   patch generated output, or select a lucky compilation. The approved compiler
   contract belongs in [Compiler integrity](#compiler-integrity).
@@ -87,7 +109,7 @@ the file-format rule; `make verify` includes it.
 
 Upstream compiler and assembler source retains its own documents and GCC
 machine descriptions. The approved `agbcc` and `agscc` submodules and actual
-compiler/binutils source trees under `out/compilers/` are exempt; an arbitrary
+compiler/binutils source trees under `tools/out/compiler-build/` are exempt; an arbitrary
 nested `.git` directory is not. Never delete licensed upstream material to make
 the document check pass. Binary section dumps are build output, not prose.
 
@@ -97,23 +119,14 @@ the document check pass. Binary section dumps are build output, not prose.
 | Owner names and source paths | Each game's `source-paths.json` |
 | Types, declarations and behavior | Maintained C and headers |
 | Unit membership, instances, extents and bindings | Existing translation-unit manifests and boundary registries |
-| Current unresolved or retained owner classification, extent, source and measured score | Existing `recon/en/dossiers.json` entry, with game-qualified identity |
-| Exact-C owner extent, source and credit | Production translation unit or source path plus the fingerprinted build receipt; do not duplicate it in dossiers |
+| Owner extent, source and classification | Production translation unit and source-path registry |
+| Exact-C owner credit | Fingerprinted build receipt |
 | Current verified credit | Fingerprinted build receipts, generated into stable target report directories |
 | Temporary compiler diagnostics | Disposable work directories under `out/` |
 
-A dossier is a compact registry of current reconstruction debt, not a laboratory
-notebook or a second exact-owner index. Keep unresolved and retained owners'
-classification, complete extent, maintained source, retention state and latest
-measured score. Remove a dossier record when production promotes the complete
-owner to exact C; production ownership and receipts then become authoritative.
-Dated attempts, command transcripts, temporary paths,
-model responses, rejected-spelling lists and superseded theories are
-**baaaaaaad**: they turn JSON into hidden scratch memory and make later agents
-optimize against stale stories. Reusable findings belong in the owning code or
-the single relevant rule here; temporary diagnostics stay disposable under
-`out/`. Old scores are leads, never current verification. Repair references and
-validators when an owner moves.
+Do not maintain owner dossiers, score histories or parallel classification
+indexes. Reusable facts belong in the owning code, types or the single relevant
+rule here; temporary diagnostics stay disposable under `out/`.
 
 ## Recovery: verified bytes per hour
 
@@ -343,11 +356,9 @@ Close with starting/ending exact-C bytes, net new C, DONE separately, accepted
 owners, parked causes, elapsed time and checks actually run. Zero adoption is a
 negative result, not permission to expand an identical search. At a deadline,
 stop launching work, preserve candidates, finish or revert experiments and verify
-accepted changes. Accumulate verified work until DONE has increased by at least
-**one full percentage point since the previous commit**, then commit. Compare
-unrounded verified credit against the same audited denominator, not rounded
-commit prefixes. Do not make smaller progress or documentation-only commits.
-Never lower acceptance to hit a goal.
+accepted changes. Commit coherent verified changes when they form a useful
+review point. Never lower acceptance or alter accounting to make a commit
+appear more productive.
 
 ## Disposable output, durable results
 
@@ -427,10 +438,10 @@ parts, count each image range once, C before ASM. Common source does not duplica
 credit within a game. Drafts, unknown code and private ROM-restored input earn
 nothing. Assembly-to-C conversions can leave DONE unchanged.
 
-Each game's `metrics/executable.json` is its sole committed denominator. A
-complete audit accounts for the main image and every overlay's executable
-intervals and excluded complement. Pending audits yield `?`, never estimates;
-new candidate audits remain under `out/` and cannot affect displayed scores.
+The executable denominator is generated from the ROM audit under `out/`, never
+maintained as a committed address ledger. A complete audit accounts for the main
+image and every overlay's executable intervals and excluded complement. Pending
+audits yield `?`, never estimates.
 `out/<target>/reports/verified-code.json` records ROM hash, input fingerprint,
 source, category and credited ranges. TBS's full build produces its receipt;
 TLA's owner check produces its receipt without claiming a full ROM. Changed
@@ -513,14 +524,14 @@ recurring machine interface the approved compiler cannot emit, never a per-owner
 scheduling patch. The token-pinned `Dma_Set` in TBS `INCLUDE/DMA.H` is admitted
 with its full instruction/operand/clobber contract. Its internal registers do
 not authorize caller register forcing. Do not change it or admit fill macros
-silently; `raw/classification.json` owns its family evidence.
+silently.
 
 Track these two reconstructed primitives for review closer to 100%; do not
 silently generalize their exceptions or mistake them for recovered original text:
 
 | Primitive | Maintained home | Evidence and later review |
 | --- | --- | --- |
-| `Dma_Set` | TBS `INCLUDE/DMA.H` | Shared inline assembly; 296 fixed-register kick sites recorded in `raw/classification.json`. Revisit its interface without weakening exactness. |
+| `Dma_Set` | TBS `INCLUDE/DMA.H` | Shared inline assembly used by the maintained C corpus. Revisit its interface without weakening exactness. |
 | `overlay_veneer` | TBS `SRC/SYSTEM/OVERLAY.INC` | Reconstructs fixed linkage stubs under the specific veneer-credit exception. Original macro versus generator remains unknown. |
 
 GNU GAS 2.10 assembles compiler output and unit slices, including alignment;
@@ -569,10 +580,10 @@ sources/includes and migrated COMMON/LIB code.
 Resource directories live beside loaders at `SRC/SYSTEM/RESOURCE/DIRECTORY.JSON`;
 field selectors and naming rules live at `SRC/FIELD/COMMON/SCENE_TABLE.JSON` and
 `NAME_RULES.JSON`. Asset layout is `recon/assets.json`, not runtime source.
-Current classification belongs in the owner dossiers; do not create separate
-provisional, sealed or unmatchable registries. Retained overlay listings and
-compression recipes live in `raw/overlays`, battle listings in
-`raw/battle`. `OVERLAY_DATA_DIRECTIVES_MAX` must not grow.
+Do not create provisional, sealed or unmatchable classification registries.
+Retained overlay listings live in `raw/overlays`; battle listings live in
+`raw/battle`. Generated raw listings may use ordinary assembler data directives;
+they are unresolved source and earn no C or DONE credit.
 
 The LZSS compressor reconstruction is incomplete. Nearest longest matches,
 one-byte lazy matching, and windows of 4,123 bytes for general LZ and 4,092 for
@@ -582,13 +593,9 @@ applies the replacement once per stream; palette LZ can repeat it. Choosing the
 smaller encoding, palette on ties, selects the observed codec in all 804 tested
 streams. These are compression comparisons, not full builds or new exact C.
 
-Overlay compression now defaults to input-derived general/palette encoding,
-choosing the smaller result and palette on ties. An existing `_stream.lz.json`
-sidecar is a visible temporary exception, not a required file for every overlay.
-New overlay exports require automatic byte equality and write no sidecar.
-The cleanup targets the 38 sidecars with no captured padding (36 TBS, two TLA);
-the remaining 66 retain their old answers under the frozen-debt rule above.
-Do not move their padding or tokens into the series manifest to delete a file.
+Overlay compression uses input-derived general/palette encoding, choosing the
+smaller result and palette on ties. Overlay exports require automatic byte
+equality and never read or write per-resource sidecars.
 
 Western TBS resource 3b4 first disagrees at decoded offset 12,092: a two-byte
 copy at distance 4,125; another occurs at 12,104. Widening the general window
@@ -690,12 +697,11 @@ function without checking its actual call interface.
 
 Typed const tables and consumer-derived macros live with their readers; a unit's
 `data` record links rodata through `AlchemyData_<address>`. Listings keep veneer
-includes, placeholders and alignment. Unexplained data stays on the explicit
-`recon/showcase.json` allowlist and is reported. Comments describe the game.
+includes, placeholders and alignment. Unexplained data stays in retained
+assembly without C credit. Comments describe the game.
 Temporary register, pool and compiler reasoning stays in the bounded workspace;
 only facts that correct maintained source or this guide survive. Rescore every
-affected unit and keep overlay audit clean. `alchemy check showcase` enforces
-registered folders and their headers; never unregister a folder to pass it.
+affected unit and keep overlay audit clean.
 
 ### Editions, instances and both games
 
@@ -757,21 +763,16 @@ fallback code or guessed blank map edges. ROM_HEADER.JSON omits the cartridge
 logo, whose BIN remains private. Byte equality proves storage, not image geometry,
 colors or behavior; verify consumers or emulate before rearranging artwork.
 
-Legacy compression plans and COMPRESSION.TOKENS record unresolved encoder
-choices. They are debt governed by [AI cheating](#ai-cheating), not an accepted
-end-state asset format. The former `--compact-plans` and `--derive-plans` commands
-are removed: packing recorded answers into a binary table or predictor exceptions
-did not recover compression. Recognizing the COMPRESSION.TOKENS record format
-never justified publishing its answers. Only the frozen-debt exception in
-AI cheating temporarily permits the unchanged table. Its legacy
-reader remains a build dependency pending recovery, not an approved end state.
+Legacy compression plans and COMPRESSION.TOKENS recorded unresolved encoder
+choices and are removed. The former `--compact-plans` and `--derive-plans`
+commands remain retired: packing recorded answers into a binary table or
+predictor exceptions did not recover compression.
 Overlay export and asset-index generation now refuse encoder mismatches,
 unsupported compressors and trailing reference padding. The former fallback
 that manufactured predictor exceptions or retained explicit tokens is removed.
 An export refusal is an honest recovery gap; do not restore that fallback or
-write its answer by another route. Existing recipes still need removal.
-Replace the remaining plans, exporters and readers with the actual compressor
-and packer. The three-byte trailing-padding check does not prove recovery.
+write its answer by another route. The three-byte trailing-padding check does
+not prove recovery.
 
 TEXT/{JA,EN,DE,ES,FR,IT}.PO uses numeric msgid, editable msgstr and context
 `message`. Named commands and explicit unknown glyph tokens preserve controls.
@@ -785,8 +786,9 @@ private sheets; `make review-images-check` checks sorted names, dimensions,
 indices and RGBA independently of PNG compression. Deliberate presentation
 changes require visual review before `--update-baseline`. All previews remain
 under stable ignored output directories, never tracked or published. Root
-PROGRESS.svg is the sole public coverage figure: 830-wide viewBox, 9:16 aspect,
-repository names/measurements only, no embedded game font, image or sound.
+PROGRESS.svg is the sole public repository-size figure: an 830-wide 9:16
+Spacemonger tree of actual files and folders, with no ROM-address or completion
+coverage and no embedded game font, image or sound.
 
 The local dashboard at 127.0.0.1:4650 separates actual Files (disk bytes), ROM
 coverage (physical cartridge bytes), Music, Maps and Text. Coverage uses complete
@@ -826,12 +828,14 @@ owners or compiler routes in Psynergy, no aliases exposing an operation in both.
 | Tool | Responsibility |
 | --- | --- |
 | [alchemy](tools/alchemy/) | Golden Sun command dispatch, twelve-target registry, owner lookup and extraction, source adoption, scene integration, compiler routes and provenance, candidate compilation, bindings, translation units, residual classification, matching catalog, overlay loading, serialization, assembly and audits, ROM stages, asset manifests, map networks, coverage, publication checks and dashboard. Its `compiler`, `recovery`, `score`, `matching`, `overlay`, `coverage` and asset and build modules are project integration. |
-| [psynergy](tools/psynergy/) | Portable Thumb and objdump decoding, lifetime analysis, C recovery, normalization and alignment, structural and byte comparison, relocation-masked twin search, bounded C repair enumeration, GCC allocation-dump reading, format conversion, explicit subprocess execution, atomic writes, transactional cache storage, and image, MIDI, WAV, text, pixel, Huffman and LZ codecs. Callers supply addresses, symbols, paths, keys, formats and layouts; no Golden Sun owners, default ROMs or compiler routes. |
+| [psynergy](tools/psynergy/) | Portable ARMv4T function, pool and jump-table discovery; Thumb decoding and assembly reconstruction; lifetime analysis, C recovery, normalization and alignment, structural and byte comparison, relocation-masked twin search, bounded C repair enumeration, GCC allocation-dump reading, format conversion, explicit subprocess execution, atomic writes, transactional cache storage, and image, MIDI, WAV, text, pixel, Huffman and LZ codecs. Callers supply images, addresses, symbols, paths, keys, formats and layouts; no Golden Sun owners, default ROMs or compiler routes. |
 
 | Portable command | Responsibility |
 | --- | --- |
 | `psynergy decompile` | Recover draft C from an image with explicit base, entry and span; optional name and output. |
 | `psynergy disassemble` | Read reachable Thumb instructions in the same explicit image window; no owner lookup or game symbol annotations. |
+| `psynergy discover` | Walk an explicit GBA image to a fixed point across ARM and Thumb flow, pointers, literal pools and jump tables; optionally write its canonical machine report. |
+| `psynergy reconstruct-asm` | Emit standalone ARMv4T assembly for an explicit complete Thumb extent, preserving reached instructions and in-extent data. |
 | `psynergy diff` | Compare two supplied binary files, including length differences; `--width 1\|2\|4` sets the comparison unit. Exit 0 means equal bytes, 1 differences, 2 invalid input. No compilation or relocation. |
 | `psynergy repair` | Enumerate one or two caller-named, guarded source repairs. Report the finite space; `--choice N` emits one alternative, optionally to `--out FILE`. No scoring, compiler selection or adoption. |
 | `psynergy inspect allocator` | Read existing `.rtl`, `.lreg` and `.greg` GCC dumps from an explicit directory; no compiler invocation. |
@@ -849,23 +853,22 @@ owners or compiler routes in Psynergy, no aliases exposing an operation in both.
 | `alchemy build` | `compilers`, `asm`, `claimed`, `full`/`rom`, `assets` and `allocator`. Compiler source builds do not install a distribution. The allocator stage generates canonical GCC dumps for Psynergy inspection. `assets --network` draws map networks and assembles worlds ([Assets](#assets-and-local-viewers)). |
 | `alchemy verify` | Run the staged repository's verification contract. |
 | `alchemy coverage` | Rebuild and publish project coverage. `audit --target TARGET` inventories every ROM resource-directory pointer, physical spans only for byte-reproduced compressed streams, candidate executable overlay spans from canonical streams and assembler source-line evidence, and the bounded main image as the exact complement of ROM-verified asset regions. Raw pointers are hierarchical and never treated as file extents. `--calibrate` must reproduce the completed TBS audit before any executable method can become authoritative. The audit writes a candidate under `out/`; it never edits the committed scoring manifest. |
-| `alchemy check` | `publication`, `commit-progress`, `source-tracking`, `owners`, `tla-owners`, `retained`, `coverage`, `integrate`, `no-asm`, `plan-tails`, `overlay-data`, `progress`, `routes`, `showcase` and `siblings`: repository contracts, not portable file operations. `progress` combines the canonical executable inventory with the current verified build receipt ([Completion](#completion-and-measurement)); `--json` reports DONE and exact C separately, and `--write-report` writes that same result under `out/`. |
+| `alchemy check` | `publication`, `commit-progress`, `source-tracking`, `owners`, `tla-owners`, `coverage`, `integrate`, `no-asm`, `progress`, `routes` and `siblings`: repository contracts, not portable file operations. `progress` combines the generated executable inventory with the current verified build receipt ([Completion](#completion-and-measurement)); `--json` reports DONE and exact C separately, and `--write-report` writes that same result under `out/`. |
 | `alchemy cross-edition` | Compare reviewed owner correspondence across Golden Sun editions. |
 | `alchemy overlay` | `adopt`, `park`, `audit` and `export`: Golden Sun loader, resource integration and byte-identical retained-source export. |
 | `alchemy dashboard` | Serve Files, ROM coverage, Music, Maps and six-edition Text debugging tabs locally. |
 | `alchemy format` | Format native JSON; `--check` gates formatting and uppercase names. |
 
 Retired entry points are rejected, not forwarded. Use Psynergy for `decompile`,
-`disassemble`, `diff`, `repair` and `convert`; annotated owner disassembly is
+`discover`, `reconstruct-asm`, `disassemble`, `diff`, `repair` and `convert`; annotated owner disassembly is
 `alchemy inspect OWNER --asm`. Old commands and logs are disposable diagnostics,
 not instructions to resurrect aliases. `alchemy score --target tla` selects
 TLA explicitly; arbitrary ROM overrides cannot substitute a reference. Scoring
 one exact unit member still verifies the unit. Default work lives in out/score.
 
-Portable tooling is capped at 100,000 Rust/TypeScript/JavaScript/CSS lines by
-`make tooling-size`. Only Pascal can change scope or ceiling. New machinery
-must fix a demonstrated recurring blocker, reuse/replace existing code, and
-prove a conversion with regression coverage. Do not hide growth in wrappers.
+New tooling must fix a demonstrated recurring blocker, reuse or replace existing
+code, and prove its behavior with regression coverage. Remove superseded
+machinery instead of controlling complexity with a historical line-count quota.
 `alchemy format` preserves JSON values, field order and boundaries using the
 native two-space/120-column style and packed short tuples.
 
@@ -892,15 +895,15 @@ make bootstrap
 ```
 
 Bootstrap builds pinned agscc/agbcc and checksum-pinned official GNU binutils
-2.10 and 2.33.1, retaining upstream source untouched under out/compilers.
-It installs six hash-checked executables under tools/compilers and native modern
-binutils under tools/binutils; the launcher sets PATH and builds tooling offline.
+2.10 and 2.33.1, retaining upstream source untouched under tools/out/compiler-build.
+It installs six hash-checked executables under tools/out/compilers and native modern
+binutils under tools/out/binutils; the launcher sets PATH and builds tooling offline.
 `bootstrap --check` validates, `--build` builds, `make bootstrap BUNDLE=PATH`
 imports an admitted distribution. It refuses different existing installations
 and never admits hashes. `make compiler-sources` builds without installing or
 admitting binaries. A source build is not necessarily an approved distribution;
 new hashes/hosts still need Pascal's authorization and reproduction evidence.
-Worktrees can link the main checkout's roms and complete tools/compilers.
+Worktrees can link the main checkout's roms and complete tools/out/compilers.
 
 Use narrow scores/builds while iterating: build-claimed, build-asm, build-assets,
 overlay-check and check-owners. Full assets, coverage and twelve-edition checks
@@ -924,7 +927,6 @@ and tracked publication. It does not rescore all drafts or rebuild twelve ROMs.
 | Rust tooling or dashboard | `make test` |
 | Shared edition/preprocessor logic | `make targets` (compile-only) |
 | Assembly classification | `make classification-check` |
-| Candidate-corpus policy | `make candidate-corpus-check` |
 | Tooling or documents | `make tooling-index-check` |
 
 Coverage reads current verified receipts; rebuild stale source evidence first.
@@ -937,7 +939,7 @@ commits include their Co-Authored-By trailer. The hook requires the verified
 staged tree. Push only when Pascal asks, only main, after coverage, verify and
 (tooling changes) tests pass on the committed tree. The pre-push publication
 gate checks outgoing history. No unrequested history rewrite, compiler/route/hash
-change, credit-standard change or tooling-ceiling increase.
+change or credit-standard change.
 
 ## Open work
 

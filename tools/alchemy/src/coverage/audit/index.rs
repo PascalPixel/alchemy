@@ -639,7 +639,7 @@ pub(super) fn run(root: &Path, target: DecompTarget) -> Result<String, String> {
     if source["reference_sha256"] != hash {
         return Err("ROM does not match SOURCE.JSON checksum".into());
     }
-    let inventory_path = format!("{game}/metrics/executable.json");
+    let inventory_path = format!("{}/reports/executable.json", target.output_dir);
     let inventory = read(root, &inventory_path)?;
     let asset_path = [
         format!("{}/full/assets/manifest.json", target.output_dir),

@@ -1,47 +1,45 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global Func_080d66cc
-	.thumb_func
-Func_080d66cc:
+	.global Overlay_080d66cc
+Overlay_080d66cc:
 	push	{r5, r6, lr}
 	ldr	r6, [pc, #44]
 	ldr	r5, [pc, #36]
 	ldr	r1, [pc, #44]
 	ldr	r4, [pc, #44]
 	movs	r0, #0
-.L4:
+.L_080d66d8:
 	adds	r3, r0, #0
 	subs	r3, #8
 	cmp	r3, #127
-	bhi.n	.L0
+	bhi.n	.L_080d6708
 	ldrh	r2, [r6, #0]
 	ldrb	r3, [r4, #0]
 	subs	r2, r2, r3
 	cmp	r2, #0
-	bge.n	.L1
+	bge.n	.L_080d66ec
 	movs	r2, #0
-.L1:
+.L_080d66ec:
 	cmp	r2, #240
-	ble.n	.L2
+	ble.n	.L_080d66f2
 	movs	r2, #240
-.L2:
+.L_080d66f2:
 	strh	r2, [r1, #0]
-	b.n	.L3
+	b.n	.L_080d670a
 	movs	r0, r0
 	.4byte 0x0000fff1
 	.4byte 0x02010000
 	.4byte 0x02010082
-	.4byte 0x0200fffa
-.L0:
+	.2byte 0xfffa
+	.2byte 0x0200
+.L_080d6708:
 	strh	r5, [r1, #0]
-.L3:
+.L_080d670a:
 	adds	r0, #1
 	adds	r1, #2
 	adds	r4, #1
 	cmp	r0, #160
-	bne.n	.L4
+	bne.n	.L_080d66d8
 	ldr	r3, [pc, #32]
 	ldr	r2, [pc, #36]
 	ldrh	r1, [r3, #10]

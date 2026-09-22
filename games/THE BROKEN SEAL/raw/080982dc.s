@@ -1,12 +1,8 @@
-@ 接近判定。場面記録 (0x03001ebc) の +0xcc0 が立てば +0xcba を減らし、対象物
-@ (Data_02000240[125]) との X 差を 0xd105 で Q16 乗算、Z 差 (obj[16]-obj[12]) と
-@ 二乗和が 3600 未満、または残数 0 のとき +0x17e に 0x2090 を書く。
-@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
-	.global Func_080982dc
-	.thumb_func
-Func_080982dc:
+	.set sub_0808ba1c, 0x0808ba1c
+	.global Overlay_080982dc
+Overlay_080982dc:
 	push	{r5, r6, lr}
 	ldr	r3, [pc, #156]
 	movs	r0, #250
@@ -15,8 +11,7 @@ Func_080982dc:
 	lsls	r0, r0, #1
 	adds	r3, r3, r0
 	ldr	r0, [r3, #0]
-@ 対象物の記録を取る。
-	bl	Func_0808ba1c
+	bl	sub_0808ba1c
 	movs	r1, #204
 	lsls	r1, r1, #4
 	adds	r3, r5, r1
@@ -24,32 +19,31 @@ Func_080982dc:
 	ldrsh	r3, [r3, r2]
 	adds	r4, r0, #0
 	cmp	r3, #0
-	beq.n	.L0
+	beq.n	.L_08098312
 	ldr	r3, [pc, #128]
 	adds	r2, r5, r3
 	movs	r0, #0
 	ldrsh	r3, [r2, r0]
 	ldrh	r1, [r2, #0]
 	cmp	r3, #0
-	beq.n	.L0
+	beq.n	.L_08098312
 	subs	r3, r1, #1
 	strh	r3, [r2, #0]
-.L0:
+.L_08098312:
 	ldr	r1, [pc, #116]
 	adds	r3, r5, r1
 	movs	r0, #0
 	ldrsh	r2, [r3, r0]
 	ldr	r0, [r4, #8]
 	cmp	r0, #0
-	bge.n	.L1
+	bge.n	.L_08098324
 	ldr	r1, [pc, #104]
 	adds	r0, r0, r1
-.L1:
+.L_08098324:
 	asrs	r0, r0, #16
 	ldr	r3, [pc, #104]
 	subs	r0, r2, r0
 	ldr	r1, [pc, #104]
-@ IwramMulQ16ReturnIp: X 差 × 0xd105。
 	mov	ip, pc
 	bx	r3
 	ldr	r2, [pc, #100]
@@ -61,14 +55,13 @@ Func_080982dc:
 	ldr	r3, [r4, #12]
 	subs	r0, r2, r3
 	cmp	r0, #0
-	bge.n	.L2
+	bge.n	.L_08098348
 	ldr	r2, [pc, #68]
 	adds	r0, r0, r2
-.L2:
+.L_08098348:
 	asrs	r3, r0, #16
 	subs	r3, r6, r3
 	adds	r0, r3, #0
-@ 二乗和と 3600 を比べる。
 	muls	r0, r3
 	adds	r2, r1, #0
 	muls	r2, r1
@@ -77,20 +70,20 @@ Func_080982dc:
 	adds	r2, r2, r3
 	lsls	r1, r1, #4
 	cmp	r2, r1
-	bge.n	.L3
+	bge.n	.L_0809836c
 	ldr	r2, [pc, #32]
 	adds	r3, r5, r2
 	movs	r0, #0
 	ldrsh	r3, [r3, r0]
 	cmp	r3, #0
-	bne.n	.L4
-.L3:
+	bne.n	.L_08098376
+.L_0809836c:
 	movs	r1, #191
 	lsls	r1, r1, #1
 	ldr	r3, [pc, #40]
 	adds	r2, r5, r1
 	strh	r3, [r2, #0]
-.L4:
+.L_08098376:
 	pop	{r5, r6}
 	pop	{r0}
 	bx	r0
@@ -101,5 +94,3 @@ Func_080982dc:
 	.4byte 0x0000ffff
 	.4byte 0x03000118
 	.4byte 0x0000d105
-	.4byte 0x00000cbe
-	.4byte 0x00002090

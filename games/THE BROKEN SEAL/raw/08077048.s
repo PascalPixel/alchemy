@@ -1,0 +1,23 @@
+.syntax unified
+	.thumb
+	.global Overlay_08077048
+Overlay_08077048:
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x89dd
+	.2byte 0x0807
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x8709
+	.2byte 0x0807
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x88c5
+	.2byte 0x0807
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x8a35
+	.2byte 0x0807
+	ldr	r4, [pc, #0]
+	bx	r4
+	.4byte 0x08078a61

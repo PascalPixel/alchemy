@@ -1,12 +1,7 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global QueueIoWriteDelay10
-	.global Func_080039fc
-	.thumb_func
-QueueIoWriteDelay10:
-Func_080039fc:
+	.global Overlay_080039fc
+Overlay_080039fc:
 	push	{r5, r6, lr}
 	ldr	r4, [pc, #52]
 	adds	r6, r0, #0
@@ -17,7 +12,7 @@ Func_080039fc:
 	strh	r1, [r1, #0]
 	ldrh	r2, [r4, #0]
 	cmp	r2, #31
-	bgt.n	.L0
+	bgt.n	.L_08003a2a
 	lsls	r3, r2, #1
 	adds	r3, r3, r2
 	lsls	r3, r3, #2
@@ -30,7 +25,7 @@ Func_080039fc:
 	movs	r2, #160
 	lsls	r2, r2, #12
 	str	r2, [r3, #0]
-.L0:
+.L_08003a2a:
 	strh	r5, [r1, #0]
 	pop	{r5, r6}
 	pop	{r0}

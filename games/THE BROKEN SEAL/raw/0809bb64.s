@@ -1,14 +1,19 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global Func_0809bb64
-	.thumb_func
-Func_0809bb64:
+	.set sub_08002df0, 0x08002df0
+	.set sub_08003fa4, 0x08003fa4
+	.set sub_08004080, 0x08004080
+	.set sub_08004970, 0x08004970
+	.set sub_08015010, 0x08015010
+	.set sub_080153b8, 0x080153b8
+	.set sub_080770c0, 0x080770c0
+	.set sub_08092054, 0x08092054
+	.global Overlay_0809bb64
+Overlay_0809bb64:
 	push	{r5, r6, r7, lr}
 	movs	r0, #32
 	sub	sp, #12
-	bl	Func_08004970
+	bl	sub_08004970
 	ldr	r7, [pc, #312]
 	adds	r1, r7, #0
 	adds	r1, #32
@@ -19,9 +24,9 @@ Func_0809bb64:
 	adds	r3, r3, r2
 	adds	r5, r0, #0
 	ldr	r0, [r3, #0]
-	bl	Func_08092054
+	bl	sub_08092054
 	adds	r6, r0, #0
-	bl	Func_08004080
+	bl	sub_08004080
 	movs	r3, #0
 	strh	r0, [r7, #0]
 	add	r0, sp, #8
@@ -64,14 +69,14 @@ Func_0809bb64:
 	movs	r1, #128
 	adds	r2, r5, #0
 	ldrh	r0, [r7, #0]
-	bl	Func_08003fa4
+	bl	sub_08003fa4
 	movs	r3, #128
 	lsls	r3, r3, #3
 	orrs	r0, r3
 	ldr	r3, [sp, #4]
 	movs	r2, #0
 	movs	r1, #0
-.L0:
+.L_0809bbf0:
 	str	r1, [r3, #0]
 	str	r1, [r3, #4]
 	str	r0, [r3, #8]
@@ -81,21 +86,21 @@ Func_0809bb64:
 	adds	r3, #12
 	str	r4, [sp, #4]
 	cmp	r2, #65
-	bls.n	.L0
+	bls.n	.L_0809bbf0
 	adds	r0, r5, #0
-	bl	Func_08002df0
+	bl	sub_08002df0
 	movs	r0, #142
 	lsls	r0, r0, #1
-	bl	Func_080770c0
+	bl	sub_080770c0
 	cmp	r0, #0
-	beq.n	.L1
+	beq.n	.L_0809bc22
 	movs	r3, #240
 	lsls	r3, r3, #15
 	str	r3, [r7, #4]
 	movs	r3, #160
 	lsls	r3, r3, #15
-	b.n	.L2
-.L1:
+	b.n	.L_0809bc56
+.L_0809bc22:
 	ldr	r2, [r6, #8]
 	movs	r1, #240
 	lsls	r1, r1, #24
@@ -105,10 +110,10 @@ Func_0809bb64:
 	subs	r3, r3, r2
 	lsls	r3, r3, #4
 	cmp	r3, #0
-	bge.n	.L3
+	bge.n	.L_0809bc3a
 	ldr	r2, [pc, #148]
 	adds	r3, r3, r2
-.L3:
+.L_0809bc3a:
 	asrs	r3, r3, #12
 	lsls	r3, r3, #16
 	str	r3, [r7, #4]
@@ -118,15 +123,15 @@ Func_0809bb64:
 	adds	r3, r3, r2
 	lsls	r0, r3, #5
 	cmp	r0, #0
-	bge.n	.L4
+	bge.n	.L_0809bc52
 	ldr	r4, [pc, #124]
 	adds	r0, r0, r4
-.L4:
+.L_0809bc52:
 	asrs	r3, r0, #12
 	lsls	r3, r3, #16
-.L2:
+.L_0809bc56:
 	str	r3, [r7, #8]
-	bl	Func_080153b8
+	bl	sub_080153b8
 	strh	r0, [r7, #2]
 	ldrh	r3, [r7, #2]
 	ldr	r2, [pc, #108]
@@ -139,7 +144,7 @@ Func_0809bb64:
 	movs	r2, #0
 	movs	r3, #0
 	movs	r0, #0
-	bl	Func_08015010
+	bl	sub_08015010
 	ldr	r3, [pc, #68]
 	strh	r3, [r7, #18]
 	adds	r3, #1

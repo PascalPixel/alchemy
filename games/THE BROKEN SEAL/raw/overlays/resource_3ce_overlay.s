@@ -446,7 +446,7 @@
 	.set sub_02002418, 0x02002418
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/DEBUG/MENU_TEST/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/DEBUG/MENU_TEST/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x8
 AlchemyC_02000038:
@@ -472,7 +472,9 @@ AlchemyC_02000198:
 AlchemyC_020001b8:
 	.space 0x20
 AlchemyC_020001d8:
-	.space 0x20
+	.space 0x10
+.L_020001e8:
+	.space 0x10
 AlchemyC_020001f8:
 	.space 0xc
 AlchemyC_02000204:
@@ -482,16 +484,19 @@ AlchemyC_02000208:
 	.space 0x12
 	.2byte 0x0000
 AlchemyC_0200021c:
-	.space 0xc
+	.space 0x4
+.L_02000220:
+	.space 0x8
 AlchemyC_02000228:
 	.space 0x2
-	.2byte 0x0000
 AlchemyC_0200022c:
 	.space 0x10
 AlchemyC_0200023c:
 	.space 0x8
 AlchemyC_02000244:
-	.space 0x58
+	.space 0x1c
+.L_02000260:
+	.space 0x3c
 AlchemyC_0200029c:
 	.space 0x626
 	.2byte 0x0000
@@ -749,7 +754,7 @@ AlchemyC_02001170:
 AlchemyC_0200117c:
 	.space 0xa
 	.2byte 0x0000
-.include "games/THE BROKEN SEAL/SRC/DEBUG/MENU_TEST/IMPORT.INC"
+	.include "games/THE BROKEN SEAL/SRC/DEBUG/MENU_TEST/IMPORT.INC"
 	.4byte 0x00500050
 	.4byte 0x00000000
 	.4byte 0x00000050

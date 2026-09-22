@@ -1,10 +1,11 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global Func_0809ba90
-	.thumb_func
-Func_0809ba90:
+	.set sub_08004458, 0x08004458
+	.set sub_08009030, 0x08009030
+	.set sub_0809ba5c, 0x0809ba5c
+	.set sub_0809ba70, 0x0809ba70
+	.global Overlay_0809ba90
+Overlay_0809ba90:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
@@ -23,20 +24,20 @@ Func_0809ba90:
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	adds	r0, r4, #0
-	bl	Func_08009030
+	bl	sub_08009030
 	str	r0, [r5, #0]
 	cmp	r0, #0
-	beq.n	.L0
+	beq.n	.L_0809bac8
 	ldrb	r2, [r0, #9]
 	movs	r3, #13
 	negs	r3, r3
 	ands	r3, r2
 	strb	r3, [r0, #9]
-.L0:
+.L_0809bac8:
 	adds	r1, r6, #0
 	adds	r0, r5, #0
 	adds	r2, r7, #0
-	bl	Func_0809ba5c
+	bl	sub_0809ba5c
 	movs	r3, #128
 	lsls	r3, r3, #10
 	str	r3, [r5, #32]
@@ -63,7 +64,7 @@ Func_0809ba90:
 	strb	r2, [r3, #0]
 	adds	r3, #1
 	strb	r2, [r3, #0]
-	bl	Func_08004458
+	bl	sub_08004458
 	adds	r3, r5, #0
 	adds	r3, #70
 	adds	r2, r5, #0
@@ -73,7 +74,7 @@ Func_0809ba90:
 	strb	r3, [r2, #0]
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	Func_0809ba70
+	bl	sub_0809ba70
 	add	sp, #4
 	pop	{r3}
 	mov	r8, r3

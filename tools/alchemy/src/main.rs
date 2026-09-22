@@ -19,6 +19,8 @@ mod generated_files;
 mod http;
 mod matching;
 mod overlay;
+mod parallel;
+mod raw;
 mod recovery;
 mod scaffold;
 mod score;
@@ -38,6 +40,7 @@ const USAGE: &str = "usage: alchemy <command> [args]\n\
   build                 build compilers, ROM stages, assets or allocator dumps\n\
   verify                verify the staged repository using the build contract\n\
   coverage              rebuild coverage; `coverage audit` inventories executable overlays\n\
+  raw                   inspect or rebuild ROM-derived unresolved assembly\n\
   dashboard             serve live coverage on localhost:4650\n\
   check                 run repository contract checks\n\
   format                format native game data and check uppercase filenames\n\
@@ -74,6 +77,7 @@ fn main() -> ExitCode {
             }),
         ),
         "coverage" => make_target(command, rest),
+        "raw" => result(raw::run(rest)),
         "check" => check::entry(rest),
         "format" => result(format::run(rest)),
         "overlay" => overlay::entry(rest),

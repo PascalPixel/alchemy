@@ -165,11 +165,10 @@ void Func_080ea0d8(void *object)
     work = cache_cursor[-1];
     ctrl = cache_cursor[4];
     ramp = cache_cursor[1];
-    iwram = *(void **)0x03001E80;
+    iwram = cache_cursor[-28];
     dma = (volatile u32 *)0x040000D4;
     dust = (Particle *)0x02010000;
     spark = (Particle *)0x02010E00;
-    rain = (Particle *)((u8 *)work + 0x7080);
 
     *(void **)((u8 *)work + 0x7828) = object;
     Func_080cd594(128 << 6);
@@ -649,6 +648,7 @@ void Func_080ea0d8(void *object)
             Dma_Set(&fill, canvas, 0x85001000, dma);
             Func_080b5040(1, 0x3a, 0);
 
+            rain = (Particle *)((u8 *)work + 0x7080);
             i = 0;
             do {
                 rain[i].field_00 = ((Func_08004458() & 63) + 32) << 16;

@@ -1,10 +1,39 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global BattleEvent_Playback
-	.thumb_func
-BattleEvent_Playback:
+	.set sub_080022fc, 0x080022fc
+	.set sub_08002322, 0x08002322
+	.set sub_0800393c, 0x0800393c
+	.set sub_080039fc, 0x080039fc
+	.set sub_08003dec, 0x08003dec
+	.set sub_080040d0, 0x080040d0
+	.set sub_08009020, 0x08009020
+	.set sub_08009080, 0x08009080
+	.set sub_080090f8, 0x080090f8
+	.set sub_08015048, 0x08015048
+	.set sub_08015118, 0x08015118
+	.set sub_08015120, 0x08015120
+	.set sub_08015130, 0x08015130
+	.set sub_080151d0, 0x080151d0
+	.set sub_080152b8, 0x080152b8
+	.set sub_08077008, 0x08077008
+	.set sub_080b6cd0, 0x080b6cd0
+	.set sub_080b78e4, 0x080b78e4
+	.set sub_080b7aac, 0x080b7aac
+	.set sub_080b7dd0, 0x080b7dd0
+	.set sub_080b7e60, 0x080b7e60
+	.set sub_080b7f70, 0x080b7f70
+	.set sub_080ba918, 0x080ba918
+	.set sub_080bac6c, 0x080bac6c
+	.set sub_080bb588, 0x080bb588
+	.set sub_080bb8e8, 0x080bb8e8
+	.set sub_080bb928, 0x080bb928
+	.set sub_080bbb0c, 0x080bbb0c
+	.set sub_080bd850, 0x080bd850
+	.set sub_080c2368, 0x080c2368
+	.set sub_080c24f0, 0x080c24f0
+	.set sub_080f9010, 0x080f9010
+	.global Overlay_080bd898
+Overlay_080bd898:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -24,19 +53,19 @@ BattleEvent_Playback:
 	adds	r3, r3, r2
 	ldr	r3, [r3, #0]
 	cmp	r3, #0
-	bne.n	.L0
-	b.n	.L1
-.L0:
+	bne.n	.L_080bd8c2
+	b.n	.L_080bdfb4
+.L_080bd8c2:
 	movs	r3, #164
 	lsls	r3, r3, #1
 	adds	r5, r7, r3
 	ldr	r3, [r5, #0]
 	cmp	r3, #4
-	bne.n	.L2
-	b.n	.L1
-.L2:
+	bne.n	.L_080bd8d0
+	b.n	.L_080bdfb4
+.L_080bd8d0:
 	cmp	r3, #1
-	bne.n	.L3
+	bne.n	.L_080bd91e
 	ldr	r2, [pc, #744]
 	movs	r4, #160
 	ldr	r1, [sp, #8]
@@ -47,7 +76,7 @@ BattleEvent_Playback:
 	ldrsb	r2, [r3, r2]
 	ldr	r3, [r6, #0]
 	cmp	r3, r2
-	bge.n	.L4
+	bge.n	.L_080bd918
 	adds	r4, #4
 	movs	r1, #166
 	movs	r2, #0
@@ -63,22 +92,22 @@ BattleEvent_Playback:
 	ldr	r2, [pc, #704]
 	adds	r0, r1, r2
 	ldr	r1, [r6, #0]
-	bl	Func_080bbb0c
+	bl	sub_080bbb0c
 	ldr	r3, [r6, #0]
 	adds	r3, #1
 	str	r3, [r6, #0]
 	movs	r3, #2
 	str	r3, [r5, #0]
-	b.n	.L0
-.L4:
+	b.n	.L_080bd8c2
+.L_080bd918:
 	movs	r3, #4
 	str	r3, [r5, #0]
-	b.n	.L0
-.L3:
+	b.n	.L_080bd8c2
+.L_080bd91e:
 	cmp	r3, #2
-	beq.n	.L5
-	b.n	.L6
-.L5:
+	beq.n	.L_080bd924
+	b.n	.L_080bdb7a
+.L_080bd924:
 	movs	r4, #166
 	movs	r1, #162
 	lsls	r4, r4, #1
@@ -88,26 +117,26 @@ BattleEvent_Playback:
 	ldr	r5, [r3, #0]
 	ldr	r3, [r2, #0]
 	cmp	r5, r3
-	blt.n	.L7
-	b.n	.L8
-.L7:
+	blt.n	.L_080bd93a
+	b.n	.L_080bdb66
+.L_080bd93a:
 	adds	r6, r5, #0
-.L21:
+.L_080bd93c:
 	movs	r3, #168
 	lsls	r3, r3, #1
 	adds	r2, r7, r3
 	ldr	r3, [r2, #0]
 	cmp	r3, #0
-	beq.n	.L9
+	beq.n	.L_080bd94e
 	subs	r3, #1
 	str	r3, [r2, #0]
-	b.n	.L1
-.L9:
+	b.n	.L_080bdfb4
+.L_080bd94e:
 	ldrb	r3, [r7, r6]
 	cmp	r3, #14
-	bls.n	.L10
-	b.n	.L11
-.L10:
+	bls.n	.L_080bd956
+	b.n	.L_080bdb3e
+.L_080bd956:
 	ldr	r2, [pc, #624]
 	lsls	r3, r3, #2
 	ldr	r3, [r3, r2]
@@ -127,92 +156,93 @@ BattleEvent_Playback:
 	.4byte 0x080bdb10
 	.4byte 0x080bda36
 	.4byte 0x080bd9a8
-	.4byte 0x080bd99c
+	.2byte 0xd99c
+	.2byte 0x080b
 	lsls	r3, r6, #2
 	adds	r3, #64
 	ldr	r0, [r7, r3]
-	bl	Func_080f9010
-	b.n	.L11
+	bl	sub_080f9010
+	b.n	.L_080bdb3e
 	lsls	r3, r6, #2
 	adds	r3, #64
 	ldr	r1, [r7, r3]
 	adds	r0, r7, #0
-	bl	Func_080bb928
-	b.n	.L11
+	bl	sub_080bb928
+	b.n	.L_080bdb3e
 	lsls	r3, r6, #2
 	adds	r3, #64
 	ldr	r0, [r7, r3]
 	movs	r1, #1
-	bl	Func_08015120
-	b.n	.L11
+	bl	sub_08015120
+	b.n	.L_080bdb3e
 	lsls	r3, r6, #2
 	adds	r3, #64
 	ldr	r0, [r7, r3]
 	movs	r1, #5
-	bl	Func_08015120
-	b.n	.L11
+	bl	sub_08015120
+	b.n	.L_080bdb3e
 	lsls	r3, r6, #2
 	adds	r3, #64
 	ldr	r0, [r7, r3]
 	ldr	r3, [pc, #496]
 	movs	r1, #2
-	b.n	.L12
+	b.n	.L_080bd9e8
 	lsls	r3, r6, #2
 	adds	r3, #64
 	ldr	r0, [r7, r3]
 	ldr	r3, [pc, #488]
 	movs	r1, #4
-.L12:
+.L_080bd9e8:
 	ands	r0, r3
-	bl	Func_08015120
-	b.n	.L11
+	bl	sub_08015120
+	b.n	.L_080bdb3e
 	ldr	r3, [pc, #480]
 	ldr	r2, [r3, #0]
 	movs	r3, #1
 	str	r3, [r2, #8]
-	b.n	.L11
+	b.n	.L_080bdb3e
 	lsls	r3, r6, #2
 	adds	r3, #64
 	ldr	r0, [r7, r3]
 	cmp	r0, #0
-	blt.n	.L13
-	bl	Func_080151d0
-.L13:
+	blt.n	.L_080bda08
+	bl	sub_080151d0
+.L_080bda08:
 	movs	r4, #164
 	lsls	r4, r4, #1
 	adds	r2, r7, r4
 	movs	r3, #3
 	str	r3, [r2, #0]
 	ldr	r2, [pc, #452]
-	b.n	.L14
+	b.n	.L_080bda7c
 	lsls	r3, r6, #2
 	adds	r3, #64
 	ldr	r0, [r7, r3]
 	cmp	r0, #0
-	blt.n	.L15
-	bl	Func_080151d0
-.L15:
+	blt.n	.L_080bda24
+	bl	sub_080151d0
+.L_080bda24:
 	movs	r1, #164
 	lsls	r1, r1, #1
 	adds	r2, r7, r1
 	movs	r3, #13
 	str	r3, [r2, #0]
-	b.n	.L11
-	bl	Func_08015118
-	b.n	.L11
+	b.n	.L_080bdb3e
+	bl	sub_08015118
+	b.n	.L_080bdb3e
 	lsls	r3, r6, #2
 	adds	r3, #64
 	ldr	r0, [r7, r3]
-	bl	Func_080bb8e8
-	b.n	.L11
+	bl	sub_080bb8e8
+	b.n	.L_080bdb3e
 	movs	r2, #180
 	lsls	r2, r2, #1
 	adds	r3, r7, r2
 	ldr	r0, [r3, #0]
 	cmp	r0, #0
-	ble.n	.L16
-	bl	Func_080f9010
-.L16:
+	ble.n	.L_080bda52
+	bl	sub_080f9010
+.L_080bda52:
 	movs	r3, #178
 	lsls	r3, r3, #1
 	adds	r2, r7, r3
@@ -220,10 +250,10 @@ BattleEvent_Playback:
 	adds	r3, #64
 	ldr	r0, [r7, r3]
 	str	r0, [r2, #0]
-	bl	Func_080b7dd0
+	bl	sub_080b7dd0
 	movs	r1, #5
 	ldr	r0, [r0, #0]
-	bl	Func_08009080
+	bl	sub_08009080
 	movs	r4, #164
 	lsls	r4, r4, #1
 	movs	r1, #168
@@ -232,10 +262,10 @@ BattleEvent_Playback:
 	lsls	r1, r1, #1
 	str	r3, [r2, #0]
 	adds	r2, r7, r1
-.L14:
+.L_080bda7c:
 	movs	r3, #0
 	str	r3, [r2, #0]
-	b.n	.L11
+	b.n	.L_080bdb3e
 	lsls	r3, r6, #2
 	adds	r3, #64
 	movs	r2, #178
@@ -247,46 +277,46 @@ BattleEvent_Playback:
 	str	r0, [r5, #0]
 	adds	r3, r7, r4
 	ldr	r1, [r3, #0]
-	bl	Func_080c24f0
+	bl	sub_080c24f0
 	ldr	r0, [r5, #0]
-	bl	Func_080bb588
+	bl	sub_080bb588
 	ldr	r0, [r5, #0]
-	bl	Func_08077008
+	bl	sub_08077008
 	movs	r5, #0
 	adds	r6, r0, #0
-	b.n	.L17
-.L20:
+	b.n	.L_080bdaca
+.L_080bdaae:
 	movs	r1, #149
 	lsls	r1, r1, #1
 	adds	r3, r6, r1
 	ldrb	r3, [r3, #0]
 	cmp	r3, #1
-	beq.n	.L18
+	beq.n	.L_080bdac2
 	movs	r1, #4
-	bl	Func_08009020
-	b.n	.L19
-.L18:
+	bl	sub_08009020
+	b.n	.L_080bdac8
+.L_080bdac2:
 	movs	r1, #5
-	bl	Func_08009020
-.L19:
+	bl	sub_08009020
+.L_080bdac8:
 	adds	r5, #1
-.L17:
+.L_080bdaca:
 	movs	r2, #178
 	lsls	r2, r2, #1
 	adds	r3, r7, r2
 	ldr	r0, [r3, #0]
-	bl	Func_080b7dd0
+	bl	sub_080b7dd0
 	adds	r1, r5, #0
 	ldr	r0, [r0, #0]
-	bl	Func_080b7f70
+	bl	sub_080b7f70
 	cmp	r0, #0
-	bne.n	.L20
+	bne.n	.L_080bdaae
 	movs	r4, #149
 	lsls	r4, r4, #1
 	adds	r3, r6, r4
 	ldrb	r3, [r3, #0]
 	cmp	r3, #1
-	bne.n	.L11
+	bne.n	.L_080bdb3e
 	movs	r1, #164
 	lsls	r1, r1, #1
 	adds	r3, r7, r1
@@ -296,31 +326,31 @@ BattleEvent_Playback:
 	lsls	r2, r2, #1
 	adds	r3, r7, r2
 	str	r0, [r3, #0]
-	b.n	.L11
+	b.n	.L_080bdb3e
 	ldr	r3, [pc, #184]
 	ldr	r3, [r3, #0]
 	adds	r3, #65
 	ldrb	r0, [r3, #0]
-	bl	Func_08015130
-	b.n	.L11
+	bl	sub_08015130
+	b.n	.L_080bdb3e
 	lsls	r5, r6, #2
 	adds	r5, #64
 	ldr	r0, [r7, r5]
-	bl	Func_080b7dd0
+	bl	sub_080b7dd0
 	adds	r1, r0, #0
 	ldr	r0, [r7, r5]
-	bl	Func_080b78e4
+	bl	sub_080b78e4
 	ldr	r0, [r7, r5]
-	bl	Func_080b7dd0
+	bl	sub_080b7dd0
 	adds	r6, r0, #0
 	ldr	r0, [r7, r5]
-	bl	Func_080b6cd0
+	bl	sub_080b6cd0
 	adds	r1, r0, #0
 	ldr	r0, [r6, #0]
-	bl	Func_080ba918
+	bl	sub_080ba918
 	ldr	r0, [r7, r5]
-	bl	Func_080b7aac
-.L11:
+	bl	sub_080b7aac
+.L_080bdb3e:
 	movs	r3, #166
 	lsls	r3, r3, #1
 	adds	r2, r7, r3
@@ -332,48 +362,48 @@ BattleEvent_Playback:
 	adds	r3, r7, r4
 	ldr	r3, [r3, #0]
 	cmp	r5, r3
-	bge.n	.L8
+	bge.n	.L_080bdb66
 	movs	r1, #164
 	lsls	r1, r1, #1
 	adds	r3, r7, r1
 	ldr	r3, [r3, #0]
 	adds	r6, r5, #0
 	cmp	r3, #2
-	bne.n	.L8
-	b.n	.L21
-.L8:
+	bne.n	.L_080bdb66
+	b.n	.L_080bd93c
+.L_080bdb66:
 	movs	r3, #164
 	lsls	r3, r3, #1
 	adds	r2, r7, r3
 	ldr	r3, [r2, #0]
 	cmp	r3, #2
-	beq.n	.L22
-	b.n	.L0
-.L22:
+	beq.n	.L_080bdb74
+	b.n	.L_080bd8c2
+.L_080bdb74:
 	movs	r3, #1
 	str	r3, [r2, #0]
-	b.n	.L0
-.L6:
+	b.n	.L_080bd8c2
+.L_080bdb7a:
 	cmp	r3, #3
-	beq.n	.L23
+	beq.n	.L_080bdb82
 	cmp	r3, #13
-	bne.n	.L24
-.L23:
-	bl	Func_08015048
+	bne.n	.L_080bdbe0
+.L_080bdb82:
+	bl	sub_08015048
 	cmp	r0, #0
-	bne.n	.L25
-	b.n	.L1
-.L25:
+	bne.n	.L_080bdb8c
+	b.n	.L_080bdfb4
+.L_080bdb8c:
 	ldr	r3, [r5, #0]
 	cmp	r3, #13
-	bne.n	.L26
+	bne.n	.L_080bdb9e
 	movs	r4, #168
 	movs	r3, #2
 	lsls	r4, r4, #1
 	str	r3, [r5, #0]
 	adds	r2, r7, r4
-	b.n	.L27
-.L26:
+	b.n	.L_080bdd1c
+.L_080bdb9e:
 	movs	r1, #176
 	movs	r3, #5
 	lsls	r1, r1, #1
@@ -387,7 +417,7 @@ BattleEvent_Playback:
 	ldr	r3, [pc, #40]
 	ldr	r3, [r3, #0]
 	str	r3, [r2, #0]
-	b.n	.L0
+	b.n	.L_080bd8c2
 	movs	r0, r0
 	.4byte 0x03001e74
 	.4byte 0x00000655
@@ -397,12 +427,13 @@ BattleEvent_Playback:
 	.4byte 0x00003fff
 	.4byte 0x03001ee4
 	.4byte 0x03001af8
-	.4byte 0x03001800
-.L24:
+	.2byte 0x1800
+	.2byte 0x0300
+.L_080bdbe0:
 	cmp	r3, #5
-	beq.n	.L28
-	b.n	.L29
-.L28:
+	beq.n	.L_080bdbe6
+	b.n	.L_080bdd2c
+.L_080bdbe6:
 	ldr	r2, [pc, #164]
 	ldr	r3, [r2, #0]
 	movs	r2, #7
@@ -431,19 +462,19 @@ BattleEvent_Playback:
 	negs	r4, r4
 	mov	r8, r1
 	cmp	r3, r4
-	bne.n	.L30
+	bne.n	.L_080bdc26
 	ldr	r1, [sp, #8]
 	ldr	r3, [r1, #84]
 	str	r3, [r6, #0]
-.L30:
+.L_080bdc26:
 	ldr	r5, [pc, #112]
-	bl	Func_08015118
+	bl	sub_08015118
 	adds	r0, r5, #0
 	movs	r1, #4
-	bl	Func_080039fc
+	bl	sub_080039fc
 	adds	r0, r5, #0
 	movs	r1, #16
-	bl	Func_0800393c
+	bl	sub_0800393c
 	movs	r3, #160
 	mov	r2, r9
 	lsls	r3, r3, #8
@@ -452,7 +483,7 @@ BattleEvent_Playback:
 	str	r3, [r2, #8]
 	mov	r1, sl
 	ldr	r0, [r6, #0]
-	bl	Func_080040d0
+	bl	sub_080040d0
 	ldr	r3, [pc, #48]
 	mov	r4, r9
 	ldrh	r2, [r4, #8]
@@ -478,7 +509,7 @@ BattleEvent_Playback:
 	ldrh	r2, [r3, #6]
 	ldr	r3, [pc, #32]
 	ands	r3, r2
-	b.n	.L31
+	b.n	.L_080bdca4
 	.4byte 0x000003ff
 	.4byte 0x000001ff
 	.4byte 0x03001e40
@@ -486,20 +517,21 @@ BattleEvent_Playback:
 	.4byte 0x03001ee4
 	.4byte 0x0400004a
 	.4byte 0xfffffc00
-	.4byte 0xfffffe00
-.L31:
+	.2byte 0xfe00
+	.2byte 0xffff
+.L_080bdca4:
 	orrs	r3, r1
 	ldr	r1, [pc, #800]
 	ldr	r0, [r1, #0]
 	mov	r4, r9
 	strh	r3, [r4, #6]
 	lsls	r0, r0, #12
-	bl	Func_08002322
+	bl	sub_08002322
 	cmp	r0, #0
-	bge.n	.L32
+	bge.n	.L_080bdcbc
 	ldr	r2, [pc, #784]
 	adds	r0, r0, r2
-.L32:
+.L_080bdcbc:
 	mov	r4, fp
 	ldrh	r3, [r4, #14]
 	ldr	r1, [sp, #4]
@@ -517,13 +549,13 @@ BattleEvent_Playback:
 	movs	r2, #2
 	ands	r3, r2
 	cmp	r3, #0
-	bne.n	.L33
+	bne.n	.L_080bdd06
 	ldr	r3, [pc, #752]
 	ldr	r1, [pc, #756]
 	ldr	r3, [r3, #0]
 	ands	r3, r1
 	cmp	r3, #0
-	bne.n	.L33
+	bne.n	.L_080bdd06
 	movs	r4, #168
 	ldr	r3, [pc, #748]
 	lsls	r4, r4, #1
@@ -532,14 +564,14 @@ BattleEvent_Playback:
 	ldr	r2, [r2, #0]
 	subs	r3, r3, r2
 	cmp	r3, #10
-	bls.n	.L34
+	bls.n	.L_080bdd22
 	ldr	r3, [r0, #0]
 	ands	r3, r1
 	cmp	r3, #0
-	beq.n	.L34
-.L33:
+	beq.n	.L_080bdd22
+.L_080bdd06:
 	movs	r0, #111
-	bl	Func_080f9010
+	bl	sub_080f9010
 	movs	r1, #164
 	lsls	r1, r1, #1
 	adds	r2, r7, r1
@@ -548,18 +580,18 @@ BattleEvent_Playback:
 	movs	r3, #168
 	lsls	r3, r3, #1
 	adds	r2, r7, r3
-.L27:
+.L_080bdd1c:
 	movs	r3, #0
 	str	r3, [r2, #0]
-	b.n	.L0
-.L34:
+	b.n	.L_080bd8c2
+.L_080bdd22:
 	mov	r0, r9
 	movs	r1, #240
-	bl	Func_08003dec
-	b.n	.L1
-.L29:
+	bl	sub_08003dec
+	b.n	.L_080bdfb4
+.L_080bdd2c:
 	cmp	r3, #10
-	bne.n	.L35
+	bne.n	.L_080bddb8
 	movs	r4, #168
 	lsls	r4, r4, #1
 	adds	r3, r7, r4
@@ -567,11 +599,11 @@ BattleEvent_Playback:
 	movs	r3, #1
 	ands	r3, r2
 	cmp	r3, #0
-	beq.n	.L36
+	beq.n	.L_080bdd96
 	movs	r3, #2
 	ands	r3, r2
 	cmp	r3, #0
-	beq.n	.L37
+	beq.n	.L_080bdd6e
 	add	r1, sp, #28
 	mov	r9, r1
 	mov	r2, r9
@@ -580,15 +612,15 @@ BattleEvent_Playback:
 	adds	r3, #101
 	adds	r5, r7, r3
 	ldr	r0, [r5, #0]
-	bl	Func_080b7dd0
+	bl	sub_080b7dd0
 	adds	r6, r0, #0
 	ldr	r0, [r5, #0]
-	bl	Func_080b6cd0
+	bl	sub_080b6cd0
 	adds	r1, r0, #0
 	ldr	r0, [r6, #0]
-	bl	Func_080ba918
-	b.n	.L38
-.L37:
+	bl	sub_080ba918
+	b.n	.L_080bdd90
+.L_080bdd6e:
 	movs	r1, #178
 	lsls	r1, r1, #1
 	movs	r4, #28
@@ -600,14 +632,14 @@ BattleEvent_Playback:
 	movs	r3, #255
 	strh	r0, [r2, #0]
 	strh	r3, [r4, #2]
-	bl	Func_080b7dd0
+	bl	sub_080b7dd0
 	movs	r1, #7
 	ldr	r0, [r0, #0]
-	bl	Func_080ba918
-.L38:
+	bl	sub_080ba918
+.L_080bdd90:
 	mov	r0, r9
-	bl	Func_080152b8
-.L36:
+	bl	sub_080152b8
+.L_080bdd96:
 	movs	r2, #168
 	lsls	r2, r2, #1
 	adds	r1, r7, r2
@@ -615,9 +647,9 @@ BattleEvent_Playback:
 	adds	r3, #1
 	str	r3, [r1, #0]
 	cmp	r3, #8
-	bgt.n	.L39
-	b.n	.L1
-.L39:
+	bgt.n	.L_080bdda8
+	b.n	.L_080bdfb4
+.L_080bdda8:
 	movs	r4, #164
 	lsls	r4, r4, #1
 	adds	r3, r7, r4
@@ -625,87 +657,87 @@ BattleEvent_Playback:
 	str	r2, [r3, #0]
 	movs	r3, #0
 	str	r3, [r1, #0]
-	b.n	.L0
-.L35:
+	b.n	.L_080bd8c2
+.L_080bddb8:
 	cmp	r3, #11
-	beq.n	.L40
-	b.n	.L0
-.L40:
+	beq.n	.L_080bddbe
+	b.n	.L_080bd8c2
+.L_080bddbe:
 	movs	r1, #168
 	lsls	r1, r1, #1
 	adds	r5, r7, r1
 	ldr	r3, [r5, #0]
 	cmp	r3, #0
-	beq.n	.L41
+	beq.n	.L_080bddd2
 	movs	r2, #128
 	lsls	r2, r2, #3
 	cmp	r3, r2
-	blt.n	.L42
-.L41:
+	blt.n	.L_080bdeca
+.L_080bddd2:
 	movs	r4, #6
 	mov	sl, r4
 	cmp	r3, #0
-	bne.n	.L43
+	bne.n	.L_080bde1c
 	movs	r1, #182
 	lsls	r1, r1, #1
 	adds	r3, r7, r1
 	ldr	r3, [r3, #0]
 	cmp	r3, #0
-	beq.n	.L43
+	beq.n	.L_080bde1c
 	movs	r2, #178
 	lsls	r2, r2, #1
 	adds	r3, r7, r2
 	ldr	r0, [r3, #0]
-	bl	Func_08077008
+	bl	sub_08077008
 	movs	r3, #148
 	lsls	r3, r3, #1
 	adds	r0, r0, r3
 	ldrb	r0, [r0, #0]
-	bl	Func_080c2368
+	bl	sub_080c2368
 	cmp	r0, #0
-	blt.n	.L44
+	blt.n	.L_080bde10
 	subs	r0, #1
 	cmp	r0, #0
-	bge.n	.L45
+	bge.n	.L_080bde0a
 	movs	r0, #0
-.L45:
+.L_080bde0a:
 	adds	r0, #146
-	bl	Func_080f9010
-.L44:
+	bl	sub_080f9010
+.L_080bde10:
 	movs	r4, #168
 	lsls	r4, r4, #1
 	movs	r3, #128
 	adds	r2, r7, r4
 	lsls	r3, r3, #3
 	str	r3, [r2, #0]
-.L43:
+.L_080bde1c:
 	movs	r1, #168
 	lsls	r1, r1, #1
 	adds	r2, r7, r1
 	ldr	r3, [r2, #0]
 	ldr	r4, [pc, #440]
 	cmp	r3, r4
-	ble.n	.L46
+	ble.n	.L_080bde2e
 	movs	r3, #0
 	str	r3, [r2, #0]
-.L46:
+.L_080bde2e:
 	cmp	r3, #0
-	bne.n	.L47
+	bne.n	.L_080bde54
 	movs	r1, #178
 	lsls	r1, r1, #1
 	adds	r3, r7, r1
 	ldr	r0, [r3, #0]
-	bl	Func_08077008
+	bl	sub_08077008
 	movs	r2, #148
 	lsls	r2, r2, #1
 	adds	r0, r0, r2
 	ldrb	r0, [r0, #0]
-	bl	Func_080c2368
+	bl	sub_080c2368
 	cmp	r0, #0
-	blt.n	.L47
+	blt.n	.L_080bde54
 	adds	r0, #146
-	bl	Func_080f9010
-.L47:
+	bl	sub_080f9010
+.L_080bde54:
 	movs	r4, #168
 	lsls	r4, r4, #1
 	adds	r3, r7, r4
@@ -713,23 +745,23 @@ BattleEvent_Playback:
 	ldr	r3, [r3, #0]
 	lsls	r1, r1, #3
 	cmp	r3, r1
-	blt.n	.L48
+	blt.n	.L_080bde7c
 	ldr	r2, [pc, #380]
 	adds	r0, r3, r2
 	cmp	r0, #0
-	bge.n	.L49
+	bge.n	.L_080bde70
 	ldr	r4, [pc, #376]
 	adds	r0, r3, r4
-.L49:
+.L_080bde70:
 	asrs	r0, r0, #3
 	movs	r1, #5
-	bl	Func_080022fc
+	bl	sub_080022fc
 	adds	r0, #1
 	mov	sl, r0
-.L48:
+.L_080bde7c:
 	mov	r1, sl
 	cmp	r1, #6
-	beq.n	.L50
+	beq.n	.L_080bde94
 	movs	r2, #168
 	lsls	r2, r2, #1
 	adds	r3, r7, r2
@@ -737,15 +769,15 @@ BattleEvent_Playback:
 	movs	r2, #7
 	ands	r3, r2
 	cmp	r3, #0
-	beq.n	.L50
-	b.n	.L51
-.L50:
+	beq.n	.L_080bde94
+	b.n	.L_080bdfa2
+.L_080bde94:
 	movs	r3, #255
 	movs	r6, #0
 	add	r5, sp, #12
 	mov	r8, r3
-	b.n	.L52
-.L53:
+	b.n	.L_080bdeb0
+.L_080bde9e:
 	ldr	r2, [r0, #40]
 	ldrb	r3, [r2, #22]
 	mov	r1, r8
@@ -755,53 +787,53 @@ BattleEvent_Playback:
 	strb	r4, [r2, #5]
 	strb	r3, [r2, #22]
 	adds	r6, #1
-.L52:
+.L_080bdeb0:
 	movs	r2, #178
 	lsls	r2, r2, #1
 	adds	r3, r7, r2
 	ldr	r0, [r3, #0]
-	bl	Func_080b7dd0
+	bl	sub_080b7dd0
 	adds	r1, r6, #0
 	ldr	r0, [r0, #0]
-	bl	Func_080b7f70
+	bl	sub_080b7f70
 	cmp	r0, #0
-	bne.n	.L53
-	b.n	.L51
-.L42:
+	bne.n	.L_080bde9e
+	b.n	.L_080bdfa2
+.L_080bdeca:
 	cmp	r3, #4
-	bne.n	.L54
+	bne.n	.L_080bdede
 	movs	r4, #178
 	lsls	r4, r4, #1
 	adds	r3, r7, r4
 	ldr	r0, [r3, #0]
-	bl	Func_080bac6c
+	bl	sub_080bac6c
 	ldr	r3, [r5, #0]
-	b.n	.L55
-.L54:
+	b.n	.L_080bdfb0
+.L_080bdede:
 	cmp	r3, #4
-	ble.n	.L55
+	ble.n	.L_080bdfb0
 	movs	r1, #178
 	lsls	r1, r1, #1
 	adds	r3, r7, r1
 	ldr	r0, [r3, #0]
-	bl	Func_080b7dd0
+	bl	sub_080b7dd0
 	movs	r3, #1
 	adds	r6, r0, #0
 	movs	r2, #0
 	add	r5, sp, #12
 	strh	r3, [r6, #42]
-	b.n	.L56
-.L57:
+	b.n	.L_080bdefe
+.L_080bdefa:
 	stmia	r5!, {r0}
 	adds	r2, #1
-.L56:
+.L_080bdefe:
 	adds	r1, r2, #0
 	ldr	r0, [r6, #0]
 	str	r2, [sp, #0]
-	bl	Func_080b7f70
+	bl	sub_080b7f70
 	ldr	r2, [sp, #0]
 	cmp	r0, #0
-	bne.n	.L57
+	bne.n	.L_080bdefa
 	movs	r4, #168
 	lsls	r4, r4, #1
 	adds	r3, r7, r4
@@ -812,26 +844,26 @@ BattleEvent_Playback:
 	adds	r1, r1, r3
 	mov	r8, r1
 	cmp	r1, #127
-	ble.n	.L58
+	ble.n	.L_080bdf60
 	cmp	r2, #0
-	ble.n	.L59
+	ble.n	.L_080bdf3e
 	add	r6, sp, #12
 	adds	r5, r2, #0
-.L60:
+.L_080bdf2c:
 	add	r2, sp, #44
 	ldmia	r6!, {r0}
 	mov	r9, r2
 	movs	r1, #0
 	subs	r5, #1
-	bl	Func_080bd850
+	bl	sub_080bd850
 	cmp	r5, #0
-	bne.n	.L60
-.L59:
+	bne.n	.L_080bdf2c
+.L_080bdf3e:
 	movs	r4, #178
 	lsls	r4, r4, #1
 	adds	r3, r7, r4
 	ldr	r0, [r3, #0]
-	bl	Func_080b7e60
+	bl	sub_080b7e60
 	movs	r1, #164
 	lsls	r1, r1, #1
 	adds	r2, r7, r1
@@ -842,10 +874,10 @@ BattleEvent_Playback:
 	adds	r2, r7, r3
 	movs	r3, #0
 	str	r3, [r2, #0]
-	b.n	.L1
-.L58:
+	b.n	.L_080bdfb4
+.L_080bdf60:
 	cmp	r2, #0
-	ble.n	.L51
+	ble.n	.L_080bdfa2
 	movs	r4, #19
 	movs	r1, #18
 	negs	r4, r4
@@ -858,34 +890,34 @@ BattleEvent_Playback:
 	mov	sl, r3
 	adds	r6, r2, #0
 	add	r5, sp, #12
-.L61:
+.L_080bdf7c:
 	ldr	r0, [r5, #0]
 	mov	r1, r8
-	bl	Func_080090f8
+	bl	sub_080090f8
 	ldr	r0, [r5, #0]
 	mov	r1, fp
-	bl	Func_080090f8
+	bl	sub_080090f8
 	ldr	r0, [r5, #0]
 	mov	r1, r9
-	bl	Func_080090f8
+	bl	sub_080090f8
 	subs	r6, #1
 	ldmia	r5!, {r0}
 	mov	r1, sl
-	bl	Func_080090f8
+	bl	sub_080090f8
 	cmp	r6, #0
-	bne.n	.L61
-.L51:
+	bne.n	.L_080bdf7c
+.L_080bdfa2:
 	movs	r3, #168
 	lsls	r3, r3, #1
 	adds	r2, r7, r3
 	ldr	r3, [r2, #0]
 	adds	r3, #1
 	str	r3, [r2, #0]
-	b.n	.L1
-.L55:
+	b.n	.L_080bdfb4
+.L_080bdfb0:
 	adds	r3, #1
 	str	r3, [r5, #0]
-.L1:
+.L_080bdfb4:
 	add	sp, #44
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

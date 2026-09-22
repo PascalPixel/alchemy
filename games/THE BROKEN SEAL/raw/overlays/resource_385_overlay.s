@@ -241,7 +241,7 @@
 	.set sub_02002138, 0x02002138
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_MURA_SAI/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_MURA_SAI/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x16
 	.2byte 0x0000
@@ -306,7 +306,9 @@ AlchemyC_02000864:
 AlchemyC_020008a8:
 	.space 0xc8
 AlchemyC_02000970:
-	.space 0x88
+	.space 0x66
+.L_020009d6:
+	.space 0x22
 AlchemyC_020009f8:
 	.space 0x88
 AlchemyC_02000a80:
@@ -324,7 +326,11 @@ AlchemyC_02000b9c:
 AlchemyC_02000bf8:
 	.space 0x24
 AlchemyC_02000c1c:
-	.space 0xac
+	.space 0x4
+.L_02000c20:
+	.space 0x80
+.L_02000ca0:
+	.space 0x28
 AlchemyC_02000cc8:
 	.space 0x1a
 .L_02000ce2:
@@ -355,9 +361,22 @@ AlchemyC_02000f28:
 	.space 0x8
 AlchemyC_02000f30:
 	.space 0x128
-.include "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_MURA_SAI/IMPORT.INC"
-AlchemyRuntime_020011b8:
-	.space 0x3c
+	.include "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_MURA_SAI/IMPORT.INC"
+	.4byte 0x46c04700
+	.4byte 0x46c04708
+	.4byte 0x46c04710
+	.4byte 0x46c04718
+	.4byte 0x46c04720
+	.4byte 0x46c04728
+	.4byte 0x46c04730
+	.4byte 0x46c04738
+	.4byte 0x46c04740
+	.4byte 0x46c04748
+	.4byte 0x46c04750
+	.4byte 0x46c04758
+	.4byte 0x46c04760
+	.4byte 0x46c04768
+	.4byte 0x46c04770
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c

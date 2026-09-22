@@ -469,7 +469,7 @@
 	.set sub_020049b6, 0x020049b6
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_ASHIBA/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_ASHIBA/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x3c
 AlchemyC_0200006c:
@@ -485,9 +485,13 @@ AlchemyC_0200034c:
 AlchemyC_02000474:
 	.space 0x194
 AlchemyC_02000608:
-	.space 0x2b8
+	.space 0x1d6
+.L_020007de:
+	.space 0xe2
 AlchemyC_020008c0:
-	.space 0x11c
+	.space 0x42
+.L_02000902:
+	.space 0xda
 AlchemyC_020009dc:
 	.space 0x10
 AlchemyC_020009ec:
@@ -939,7 +943,9 @@ AlchemyC_02001c5c:
 	.space 0xe
 	.2byte 0x0000
 AlchemyC_02001c6c:
-	.space 0x32
+	.space 0xc
+.L_02001c78:
+	.space 0x26
 	.2byte 0x0000
 AlchemyC_02001ca0:
 	.space 0x2a
@@ -1012,7 +1018,9 @@ AlchemyC_02001da0:
 	.space 0x56
 	.2byte 0x0000
 AlchemyC_02001df8:
-	.space 0x5c
+	.space 0x38
+.L_02001e30:
+	.space 0x24
 AlchemyC_02001e54:
 	.space 0xa
 	.2byte 0x0000
@@ -1031,7 +1039,11 @@ AlchemyC_02001e94:
 AlchemyC_02001ec0:
 	.space 0x1c
 AlchemyC_02001edc:
-	.space 0x9c
+	.space 0x50
+.L_02001f2c:
+	.space 0x20
+.L_02001f4c:
+	.space 0x2c
 AlchemyC_02001f78:
 	.space 0x60
 	push	{lr}
@@ -1198,14 +1210,35 @@ AlchemyC_02001f78:
 	pop	{r0}
 	bx	r0
 AlchemyC_02002188:
-	.space 0x108
+	.space 0x3e
+.L_020021c6:
+	.space 0xc
+.L_020021d2:
+	.space 0xc
+.L_020021de:
+	.space 0x3c
+.L_0200221a:
+	.space 0x76
 AlchemyC_02002290:
 	.space 0xa4
 AlchemyC_02002334:
 	.space 0x134
-.include "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_ASHIBA/IMPORT.INC"
-AlchemyRuntime_02002608:
-	.space 0x3c
+	.include "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_ASHIBA/IMPORT.INC"
+	.4byte 0x46c04700
+	.4byte 0x46c04708
+	.4byte 0x46c04710
+	.4byte 0x46c04718
+	.4byte 0x46c04720
+	.4byte 0x46c04728
+	.4byte 0x46c04730
+	.4byte 0x46c04738
+	.4byte 0x46c04740
+	.4byte 0x46c04748
+	.4byte 0x46c04750
+	.4byte 0x46c04758
+	.4byte 0x46c04760
+	.4byte 0x46c04768
+	.4byte 0x46c04770
 	.4byte 0x00100000
 	.4byte 0x00100000
 	.4byte 0x00100000

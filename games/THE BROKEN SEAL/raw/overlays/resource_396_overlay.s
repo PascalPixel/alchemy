@@ -310,7 +310,7 @@
 	.set sub_0200358c, 0x0200358c
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x16
 	.2byte 0x0000
@@ -800,7 +800,17 @@ AlchemyC_02000694:
 	.2byte 0x002d
 	.2byte 0x0000
 AlchemyC_02000918:
-	.space 0x640
+	.space 0x14
+.L_0200092c:
+	.space 0x1a
+.L_02000946:
+	.space 0x2a
+.L_02000970:
+	.space 0x18
+.L_02000988:
+	.space 0x1a
+.L_020009a2:
+	.space 0x5b6
 AlchemyC_02000f58:
 	.space 0xac
 	push	{r5, r6, r7, lr}
@@ -974,8 +984,15 @@ AlchemyC_02000f58:
 	.4byte 0x00000101
 	.4byte 0xff600000
 	.4byte 0x0000002d
-AlchemyC_02001224:
-	.space 0x20
+	.4byte 0x20a04a04
+	.4byte 0x4b046811
+	.4byte 0x4a0404c0
+	.4byte 0x3b0cc307
+	.4byte 0x00004770
+	.4byte 0x03001ed0
+	.4byte 0x040000d4
+	.2byte 0x0070
+	.2byte 0x8400
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9
@@ -1581,7 +1598,9 @@ AlchemyC_02001224:
 AlchemyC_0200184c:
 	.space 0x10
 AlchemyC_0200185c:
-	.space 0x5a
+	.space 0x28
+.L_02001884:
+	.space 0x32
 	.2byte 0x0000
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
@@ -1724,7 +1743,7 @@ AlchemyC_0200185c:
 	.4byte 0x01090001
 	.4byte 0x00000101
 	.4byte 0x0000e666
-.include "games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/IMPORT.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/IMPORT.INC"
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c

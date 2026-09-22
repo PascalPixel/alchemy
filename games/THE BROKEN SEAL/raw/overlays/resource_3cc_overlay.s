@@ -11,7 +11,7 @@
 	.set sub_0200015e, 0x0200015e
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/DEBUG/TEST_ROOMS/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/DEBUG/TEST_ROOMS/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x8
 AlchemyC_02000038:
@@ -36,7 +36,7 @@ AlchemyC_020000ac:
 	.space 0x8
 AlchemyC_020000b4:
 	.space 0x4
-.include "games/THE BROKEN SEAL/SRC/DEBUG/TEST_ROOMS/IMPORT.INC"
+	.include "games/THE BROKEN SEAL/SRC/DEBUG/TEST_ROOMS/IMPORT.INC"
 	.4byte 0x00500050
 	.4byte 0x00000000
 	.4byte 0x00000050

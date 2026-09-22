@@ -326,8 +326,26 @@ fn alu_mnemonic(op: Alu) -> &'static str {
 
 pub fn text_of(kind: &Kind) -> String {
     match kind {
-        Kind::Push { lr, .. } => format!("push {{{}}}", if *lr { "lr" } else { "" }),
-        Kind::Pop { pc, .. } => format!("pop {{{}}}", if *pc { "pc" } else { "" }),
+        Kind::Push { lr, list } => {
+            let mut registers = regs_of(*list);
+            if *lr {
+                if !registers.is_empty() {
+                    registers.push_str(", ");
+                }
+                registers.push_str("lr");
+            }
+            format!("push {{{registers}}}")
+        }
+        Kind::Pop { pc, list } => {
+            let mut registers = regs_of(*list);
+            if *pc {
+                if !registers.is_empty() {
+                    registers.push_str(", ");
+                }
+                registers.push_str("pc");
+            }
+            format!("pop {{{registers}}}")
+        }
         Kind::Bx(rm) => format!("bx {}", reg(*rm)),
         Kind::Nop => "nop".to_string(),
         Kind::MovImm { rd, imm } => format!("movs r{rd}, #{imm}"),
@@ -813,6 +831,24 @@ mod tests {
                 },
                 Kind::Bx(0),
             ]
+        );
+    }
+
+    #[test]
+    fn renders_complete_push_and_pop_register_lists() {
+        assert_eq!(
+            text_of(&Kind::Push {
+                lr: false,
+                list: 0xe0
+            }),
+            "push {r5, r6, r7}"
+        );
+        assert_eq!(
+            text_of(&Kind::Pop {
+                pc: true,
+                list: 0x30
+            }),
+            "pop {r4, r5, pc}"
         );
     }
 

@@ -1,13 +1,7 @@
-@ 検出済み関数の再構築サム逆アセンブル。ROM作成時の
-@ コンパイラは自由配布ツールで再現不能なため、アセンブリなしのC一致は
-@ 未達。build_asm.tsでROMとの一致を確認する。
 .syntax unified
 	.thumb
-	.global BattleLink_ResetTransferState
-	.global Func_0800651c
-	.thumb_func
-BattleLink_ResetTransferState:
-Func_0800651c:
+	.global Overlay_0800651c
+Overlay_0800651c:
 	ldr	r1, [pc, #36]
 	ldr	r0, [pc, #40]
 	ldrh	r4, [r0, #0]

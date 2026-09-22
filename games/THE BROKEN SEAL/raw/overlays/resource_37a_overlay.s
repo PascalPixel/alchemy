@@ -799,7 +799,7 @@
 	.set sub_020053ca, 0x020053ca
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/SORU_NICHIGETSU/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/SORU_NICHIGETSU/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x8
 AlchemyC_02000038:
@@ -852,9 +852,25 @@ AlchemyC_02001264:
 AlchemyC_02001380:
 	.space 0x190
 AlchemyC_02001510:
-	.space 0x280
+	.space 0x106
+.L_02001616:
+	.space 0x28
+.L_0200163e:
+	.space 0x28
+.L_02001666:
+	.space 0x28
+.L_0200168e:
+	.space 0x28
+.L_020016b6:
+	.space 0x20
+.L_020016d6:
+	.space 0xba
 AlchemyC_02001790:
-	.space 0xec
+	.space 0x10
+.L_020017a0:
+	.space 0x28
+.L_020017c8:
+	.space 0xb4
 .L_0200187c:
 	.space 0x28
 .L_020018a4:
@@ -872,7 +888,17 @@ AlchemyC_02001a58:
 .L_02001bca:
 	.space 0x1e
 AlchemyC_02001be8:
-	.space 0xc0
+	.space 0xa
+.L_02001bf2:
+	.space 0x28
+.L_02001c1a:
+	.space 0x28
+.L_02001c42:
+	.space 0x28
+.L_02001c6a:
+	.space 0x26
+.L_02001c90:
+	.space 0x18
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
@@ -2183,7 +2209,7 @@ AlchemyC_020025fc:
 	bx	r0
 AlchemyC_02002924:
 	.space 0x48
-.include "games/THE BROKEN SEAL/SRC/FIELD/SORU_NICHIGETSU/IMPORT.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/SORU_NICHIGETSU/IMPORT.INC"
 	.4byte 0xffff0000
 	.4byte 0x00000120
 	.4byte 0x4000009d

@@ -1417,7 +1417,7 @@
 	.set sub_02008e00, 0x02008e00
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x32
 	.2byte 0x0000
@@ -1459,12 +1459,18 @@ AlchemyC_02000240:
 AlchemyC_02000278:
 	.space 0x6c
 AlchemyC_020002e4:
-	.space 0x44
-AlchemyC_02000328:
 	.space 0x38
+.L_0200031c:
+	.space 0xc
+AlchemyC_02000328:
+	.space 0x24
+.L_0200034c:
+	.space 0x14
 .L_02000360:
 AlchemyC_02000360:
-	.space 0x38
+	.space 0x2c
+.L_0200038c:
+	.space 0xc
 AlchemyC_02000398:
 	.space 0x34
 AlchemyC_020003cc:
@@ -1472,7 +1478,11 @@ AlchemyC_020003cc:
 AlchemyC_02000400:
 	.space 0x34
 AlchemyC_02000434:
-	.space 0xe6
+	.space 0x40
+.L_02000474:
+	.space 0x38
+.L_020004ac:
+	.space 0x6e
 .L_0200051a:
 	.space 0x34
 .L_0200054e:
@@ -1923,7 +1933,9 @@ AlchemyC_020012f0:
 AlchemyC_02001498:
 	.space 0x74
 AlchemyC_0200150c:
-	.space 0xf4
+	.space 0x32
+.L_0200153e:
+	.space 0xc2
 AlchemyC_02001600:
 	.space 0x84
 AlchemyC_02001684:
@@ -3675,7 +3687,23 @@ AlchemyC_02003e48:
 AlchemyC_02003fb0:
 	.space 0x140
 AlchemyC_020040f0:
-	.space 0x144
+	.space 0xc6
+.L_020041b6:
+	.space 0xc
+.L_020041c2:
+	.space 0xc
+.L_020041ce:
+	.space 0xc
+.L_020041da:
+	.space 0xe
+.L_020041e8:
+	.space 0xc
+.L_020041f4:
+	.space 0xc
+.L_02004200:
+	.space 0xc
+.L_0200420c:
+	.space 0x28
 AlchemyC_02004234:
 	.space 0x44
 AlchemyC_02004278:
@@ -3858,7 +3886,7 @@ AlchemyC_020045fc:
 	.space 0x1c
 AlchemyC_02004618:
 	.space 0x1c
-.include "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/IMPORT.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/IMPORT.INC"
 	.4byte 0x00000007
 	.4byte 0x0000001c
 	.4byte 0x00000002

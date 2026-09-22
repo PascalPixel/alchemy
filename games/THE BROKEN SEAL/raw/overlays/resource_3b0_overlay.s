@@ -326,7 +326,7 @@
 	.set sub_0200238c, 0x0200238c
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HOBASHIRA/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HOBASHIRA/ENTRY.INC"
 	push	{r5, lr}
 	ldr	r3, [pc, #60]
 	ldr	r3, [r3, #0]
@@ -948,7 +948,7 @@ AlchemyC_02001130:
 	.space 0x2c
 AlchemyC_0200115c:
 	.space 0x58
-.include "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HOBASHIRA/IMPORT.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HOBASHIRA/IMPORT.INC"
 	.4byte 0x00000016
 	.4byte 0x00000009
 	.4byte 0x00000800

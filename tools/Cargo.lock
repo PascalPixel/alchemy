@@ -36,6 +36,7 @@ dependencies = [
  "encoding_rs",
  "fdeflate",
  "fs2",
+ "libc",
  "objdiff-core",
  "png",
  "psynergy",

@@ -1,21 +1,434 @@
 .syntax unified
 .include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
+	.set sub_02001446, 0x02001446
+	.set sub_020019d2, 0x020019d2
+	.set sub_02001a18, 0x02001a18
+	.set sub_02001a2a, 0x02001a2a
+	.set sub_02001a30, 0x02001a30
+	.set sub_02001a74, 0x02001a74
+	.set sub_02001af0, 0x02001af0
+	.set sub_02001afc, 0x02001afc
+	.set sub_02001b06, 0x02001b06
+	.set sub_02001b20, 0x02001b20
+	.set sub_02001b4c, 0x02001b4c
+	.set sub_02001b5e, 0x02001b5e
+	.set sub_02001b94, 0x02001b94
+	.set sub_02001bac, 0x02001bac
+	.set sub_02001bba, 0x02001bba
+	.set sub_02001c20, 0x02001c20
+	.set sub_02001c30, 0x02001c30
+	.set sub_02001c7c, 0x02001c7c
+	.set sub_02001c82, 0x02001c82
+	.set sub_02001d9c, 0x02001d9c
+	.set sub_02001da4, 0x02001da4
+	.set sub_02001da8, 0x02001da8
+	.set sub_02001dba, 0x02001dba
+	.set sub_02001dcc, 0x02001dcc
+	.set sub_02001dd0, 0x02001dd0
+	.set sub_02001dd4, 0x02001dd4
+	.set sub_02001de0, 0x02001de0
+	.set sub_02001dfc, 0x02001dfc
+	.set sub_02001e04, 0x02001e04
+	.set sub_02001e0e, 0x02001e0e
+	.set sub_02001e26, 0x02001e26
+	.set sub_02001e6e, 0x02001e6e
+	.set sub_02001e7e, 0x02001e7e
+	.set sub_02001e82, 0x02001e82
+	.set sub_02001e8a, 0x02001e8a
+	.set sub_02001e8e, 0x02001e8e
+	.set sub_02001e96, 0x02001e96
+	.set sub_02001ea4, 0x02001ea4
+	.set sub_02001eb0, 0x02001eb0
+	.set sub_02001ebc, 0x02001ebc
+	.set sub_02001ede, 0x02001ede
+	.set sub_02001eee, 0x02001eee
+	.set sub_02001ef0, 0x02001ef0
+	.set sub_02001efe, 0x02001efe
+	.set sub_02001f00, 0x02001f00
+	.set sub_02001f2c, 0x02001f2c
+	.set sub_02001f34, 0x02001f34
+	.set sub_02001f6e, 0x02001f6e
+	.set sub_02001f8e, 0x02001f8e
+	.set sub_02001f9a, 0x02001f9a
+	.set sub_02001f9c, 0x02001f9c
+	.set sub_02001fa8, 0x02001fa8
+	.set sub_02001fc2, 0x02001fc2
+	.set sub_02001fc8, 0x02001fc8
+	.set sub_02001fce, 0x02001fce
+	.set sub_02001fd4, 0x02001fd4
+	.set sub_02001fd6, 0x02001fd6
+	.set sub_02001fea, 0x02001fea
+	.set sub_02001ff8, 0x02001ff8
+	.set sub_02002000, 0x02002000
+	.set sub_02002042, 0x02002042
+	.set sub_02002046, 0x02002046
+	.set sub_0200204c, 0x0200204c
+	.set sub_02002050, 0x02002050
+	.set sub_02002072, 0x02002072
+	.set sub_02002078, 0x02002078
+	.set sub_02002080, 0x02002080
+	.set sub_0200208e, 0x0200208e
+	.set sub_02002098, 0x02002098
+	.set sub_020020a0, 0x020020a0
+	.set sub_020020bc, 0x020020bc
+	.set sub_020020cc, 0x020020cc
+	.set sub_020020d0, 0x020020d0
+	.set sub_0200211c, 0x0200211c
+	.set sub_0200212e, 0x0200212e
+	.set sub_02002142, 0x02002142
+	.set sub_02002148, 0x02002148
+	.set sub_0200214c, 0x0200214c
+	.set sub_02002190, 0x02002190
+	.set sub_020021b4, 0x020021b4
+	.set sub_020021ba, 0x020021ba
+	.set sub_020021be, 0x020021be
+	.set sub_020021c2, 0x020021c2
+	.set sub_020021c4, 0x020021c4
+	.set sub_020021de, 0x020021de
+	.set sub_020021e8, 0x020021e8
+	.set sub_020021f8, 0x020021f8
+	.set sub_02002200, 0x02002200
+	.set sub_02002208, 0x02002208
+	.set sub_02002228, 0x02002228
+	.set sub_0200222c, 0x0200222c
+	.set sub_02002242, 0x02002242
+	.set sub_02002248, 0x02002248
+	.set sub_02002256, 0x02002256
+	.set sub_02002262, 0x02002262
+	.set sub_02002268, 0x02002268
+	.set sub_02002282, 0x02002282
+	.set sub_02002288, 0x02002288
+	.set sub_02002292, 0x02002292
+	.set sub_0200229a, 0x0200229a
+	.set sub_020022aa, 0x020022aa
+	.set sub_020022b0, 0x020022b0
+	.set sub_020022be, 0x020022be
+	.set sub_020022ca, 0x020022ca
+	.set sub_020022d4, 0x020022d4
+	.set sub_020022de, 0x020022de
+	.set sub_020022fe, 0x020022fe
+	.set sub_02002308, 0x02002308
+	.set sub_02002310, 0x02002310
+	.set sub_0200231e, 0x0200231e
+	.set sub_02002326, 0x02002326
+	.set sub_0200233e, 0x0200233e
+	.set sub_02002346, 0x02002346
+	.set sub_0200235e, 0x0200235e
+	.set sub_02002366, 0x02002366
+	.set sub_02002372, 0x02002372
+	.set sub_0200238c, 0x0200238c
+	.set sub_0200239a, 0x0200239a
+	.set sub_020023a6, 0x020023a6
+	.set sub_020023aa, 0x020023aa
+	.set sub_020023b2, 0x020023b2
+	.set sub_020023b4, 0x020023b4
+	.set sub_020023be, 0x020023be
+	.set sub_020023c0, 0x020023c0
+	.set sub_020023c2, 0x020023c2
+	.set sub_020023d8, 0x020023d8
+	.set sub_020023fa, 0x020023fa
+	.set sub_02002406, 0x02002406
+	.set sub_02002418, 0x02002418
+	.set sub_02002420, 0x02002420
+	.set sub_02002438, 0x02002438
+	.set sub_02002456, 0x02002456
+	.set sub_0200247c, 0x0200247c
+	.set sub_0200249a, 0x0200249a
+	.set sub_0200249c, 0x0200249c
+	.set sub_020024aa, 0x020024aa
+	.set sub_020024b2, 0x020024b2
+	.set sub_020024c0, 0x020024c0
+	.set sub_020024c2, 0x020024c2
+	.set sub_020024c6, 0x020024c6
+	.set sub_020024c8, 0x020024c8
+	.set sub_020024ca, 0x020024ca
+	.set sub_020024e0, 0x020024e0
+	.set sub_020024f0, 0x020024f0
+	.set sub_02002510, 0x02002510
+	.set sub_02002518, 0x02002518
+	.set sub_02002528, 0x02002528
+	.set sub_0200252a, 0x0200252a
+	.set sub_02002530, 0x02002530
+	.set sub_02002532, 0x02002532
+	.set sub_02002544, 0x02002544
+	.set sub_02002554, 0x02002554
+	.set sub_02002560, 0x02002560
+	.set sub_02002574, 0x02002574
+	.set sub_0200257e, 0x0200257e
+	.set sub_02002582, 0x02002582
+	.set sub_0200258e, 0x0200258e
+	.set sub_0200259a, 0x0200259a
+	.set sub_020025a6, 0x020025a6
+	.set sub_020025c2, 0x020025c2
+	.set sub_020025c6, 0x020025c6
+	.set sub_020025c8, 0x020025c8
+	.set sub_020025d2, 0x020025d2
+	.set sub_020025d6, 0x020025d6
+	.set sub_020025e0, 0x020025e0
+	.set sub_020025e6, 0x020025e6
+	.set sub_0200260c, 0x0200260c
+	.set sub_0200261c, 0x0200261c
+	.set sub_0200262c, 0x0200262c
+	.set sub_02002636, 0x02002636
+	.set sub_02002638, 0x02002638
+	.set sub_02002644, 0x02002644
+	.set sub_0200264c, 0x0200264c
+	.set sub_02002660, 0x02002660
+	.set sub_02002662, 0x02002662
+	.set sub_02002676, 0x02002676
+	.set sub_02002686, 0x02002686
+	.set sub_0200268a, 0x0200268a
+	.set sub_02002690, 0x02002690
+	.set sub_02002692, 0x02002692
+	.set sub_020026a2, 0x020026a2
+	.set sub_020026aa, 0x020026aa
+	.set sub_020026b8, 0x020026b8
+	.set sub_020026c4, 0x020026c4
+	.set sub_020026c6, 0x020026c6
+	.set sub_020026c8, 0x020026c8
+	.set sub_020026d2, 0x020026d2
+	.set sub_020026da, 0x020026da
+	.set sub_020026e6, 0x020026e6
+	.set sub_020026fe, 0x020026fe
+	.set sub_02002702, 0x02002702
+	.set sub_0200270a, 0x0200270a
+	.set sub_02002712, 0x02002712
+	.set sub_02002716, 0x02002716
+	.set sub_0200272a, 0x0200272a
+	.set sub_0200273c, 0x0200273c
+	.set sub_02002740, 0x02002740
+	.set sub_02002752, 0x02002752
+	.set sub_02002764, 0x02002764
+	.set sub_02002776, 0x02002776
+	.set sub_0200277a, 0x0200277a
+	.set sub_0200278c, 0x0200278c
+	.set sub_0200279a, 0x0200279a
+	.set sub_0200279e, 0x0200279e
+	.set sub_020027b0, 0x020027b0
+	.set sub_020027b4, 0x020027b4
+	.set sub_020027ba, 0x020027ba
+	.set sub_020027c6, 0x020027c6
+	.set sub_020027ca, 0x020027ca
+	.set sub_020027cc, 0x020027cc
+	.set sub_020027d8, 0x020027d8
+	.set sub_020027e0, 0x020027e0
+	.set sub_020027ee, 0x020027ee
+	.set sub_02002800, 0x02002800
+	.set sub_02002812, 0x02002812
+	.set sub_02002854, 0x02002854
+	.set sub_0200285e, 0x0200285e
+	.set sub_02002890, 0x02002890
+	.set sub_020028a6, 0x020028a6
+	.set sub_020028bc, 0x020028bc
+	.set sub_020028f2, 0x020028f2
+	.set sub_02002904, 0x02002904
+	.set sub_0200290e, 0x0200290e
+	.set sub_02002916, 0x02002916
+	.set sub_02002918, 0x02002918
+	.set sub_0200291a, 0x0200291a
+	.set sub_02002934, 0x02002934
+	.set sub_02002936, 0x02002936
+	.set sub_0200293c, 0x0200293c
+	.set sub_02002946, 0x02002946
+	.set sub_02002958, 0x02002958
+	.set sub_0200295a, 0x0200295a
+	.set sub_0200296a, 0x0200296a
+	.set sub_02002972, 0x02002972
+	.set sub_02002974, 0x02002974
+	.set sub_0200297e, 0x0200297e
+	.set sub_020029a8, 0x020029a8
+	.set sub_020029ae, 0x020029ae
+	.set sub_020029b8, 0x020029b8
+	.set sub_020029c6, 0x020029c6
+	.set sub_020029c8, 0x020029c8
+	.set sub_020029ce, 0x020029ce
+	.set sub_020029ea, 0x020029ea
+	.set sub_02002a10, 0x02002a10
+	.set sub_02002a14, 0x02002a14
+	.set sub_02002a68, 0x02002a68
+	.set sub_02002a6e, 0x02002a6e
+	.set sub_02002a7c, 0x02002a7c
+	.set sub_02002a7e, 0x02002a7e
+	.set sub_02002a86, 0x02002a86
+	.set sub_02002a8a, 0x02002a8a
+	.set sub_02002a9e, 0x02002a9e
+	.set sub_02002aa0, 0x02002aa0
+	.set sub_02002ac0, 0x02002ac0
+	.set sub_02002ad2, 0x02002ad2
+	.set sub_02002ad8, 0x02002ad8
+	.set sub_02002ae8, 0x02002ae8
+	.set sub_02002b04, 0x02002b04
+	.set sub_02002b06, 0x02002b06
+	.set sub_02002b0c, 0x02002b0c
+	.set sub_02002b14, 0x02002b14
+	.set sub_02002b1e, 0x02002b1e
+	.set sub_02002b22, 0x02002b22
+	.set sub_02002b28, 0x02002b28
+	.set sub_02002b32, 0x02002b32
+	.set sub_02002b36, 0x02002b36
+	.set sub_02002b3c, 0x02002b3c
+	.set sub_02002b44, 0x02002b44
+	.set sub_02002b46, 0x02002b46
+	.set sub_02002b48, 0x02002b48
+	.set sub_02002b4c, 0x02002b4c
+	.set sub_02002b52, 0x02002b52
+	.set sub_02002b54, 0x02002b54
+	.set sub_02002b56, 0x02002b56
+	.set sub_02002b60, 0x02002b60
+	.set sub_02002b6c, 0x02002b6c
+	.set sub_02002b78, 0x02002b78
+	.set sub_02002b84, 0x02002b84
+	.set sub_02002b8e, 0x02002b8e
+	.set sub_02002b96, 0x02002b96
+	.set sub_02002b9c, 0x02002b9c
+	.set sub_02002ba2, 0x02002ba2
+	.set sub_02002baa, 0x02002baa
+	.set sub_02002bb0, 0x02002bb0
+	.set sub_02002bb2, 0x02002bb2
+	.set sub_02002be8, 0x02002be8
+	.set sub_02002bf2, 0x02002bf2
+	.set sub_02002bfa, 0x02002bfa
+	.set sub_02002c1c, 0x02002c1c
+	.set sub_02002c28, 0x02002c28
+	.set sub_02002c4a, 0x02002c4a
+	.set sub_02002cb0, 0x02002cb0
+	.set sub_02002cce, 0x02002cce
+	.set sub_02002cfe, 0x02002cfe
+	.set sub_02002d00, 0x02002d00
+	.set sub_02002d58, 0x02002d58
+	.set sub_02002d6e, 0x02002d6e
+	.set sub_02002d7c, 0x02002d7c
+	.set sub_02002d8a, 0x02002d8a
+	.set sub_02002d92, 0x02002d92
+	.set sub_02002d9c, 0x02002d9c
+	.set sub_02002da6, 0x02002da6
+	.set sub_02002db4, 0x02002db4
+	.set sub_02002dc0, 0x02002dc0
+	.set sub_02002dca, 0x02002dca
+	.set sub_02002dd6, 0x02002dd6
+	.set sub_02002ddc, 0x02002ddc
+	.set sub_02002de0, 0x02002de0
+	.set sub_02002de2, 0x02002de2
+	.set sub_02002de6, 0x02002de6
+	.set sub_02002df2, 0x02002df2
+	.set sub_02002dfe, 0x02002dfe
+	.set sub_02002e06, 0x02002e06
+	.set sub_02002e0a, 0x02002e0a
+	.set sub_02002e1a, 0x02002e1a
+	.set sub_02002e26, 0x02002e26
+	.set sub_02002e32, 0x02002e32
+	.set sub_02002e42, 0x02002e42
+	.set sub_02002e4e, 0x02002e4e
+	.set sub_02002e52, 0x02002e52
+	.set sub_02002e56, 0x02002e56
+	.set sub_02002e62, 0x02002e62
+	.set sub_02002e6e, 0x02002e6e
+	.set sub_02002e72, 0x02002e72
+	.set sub_02002e84, 0x02002e84
+	.set sub_02002e86, 0x02002e86
+	.set sub_02002e88, 0x02002e88
+	.set sub_02002e8e, 0x02002e8e
+	.set sub_02002e90, 0x02002e90
+	.set sub_02002e96, 0x02002e96
+	.set sub_02002ea8, 0x02002ea8
+	.set sub_02002eb0, 0x02002eb0
+	.set sub_02002ec4, 0x02002ec4
+	.set sub_02002ecc, 0x02002ecc
+	.set sub_02002edc, 0x02002edc
+	.set sub_02002ede, 0x02002ede
+	.set sub_02002ee0, 0x02002ee0
+	.set sub_02002ee6, 0x02002ee6
+	.set sub_02002f12, 0x02002f12
+	.set sub_02002f1c, 0x02002f1c
+	.set sub_02002f26, 0x02002f26
+	.set sub_02002f2c, 0x02002f2c
+	.set sub_02002f2e, 0x02002f2e
+	.set sub_02002f44, 0x02002f44
+	.set sub_02002f4a, 0x02002f4a
+	.set sub_02002f56, 0x02002f56
+	.set sub_02002f58, 0x02002f58
+	.set sub_02002f5e, 0x02002f5e
+	.set sub_02002f60, 0x02002f60
+	.set sub_02002f7a, 0x02002f7a
+	.set sub_02002f7e, 0x02002f7e
+	.set sub_02002f84, 0x02002f84
+	.set sub_02002f8a, 0x02002f8a
+	.set sub_02002f96, 0x02002f96
+	.set sub_02002fa0, 0x02002fa0
+	.set sub_02002fa2, 0x02002fa2
+	.set sub_02002fa8, 0x02002fa8
+	.set sub_02002fb2, 0x02002fb2
+	.set sub_02002fc0, 0x02002fc0
+	.set sub_02002fc8, 0x02002fc8
+	.set sub_02002fd4, 0x02002fd4
+	.set sub_02002fee, 0x02002fee
+	.set sub_0200300c, 0x0200300c
+	.set sub_02003022, 0x02003022
+	.set sub_0200302e, 0x0200302e
+	.set sub_02003032, 0x02003032
+	.set sub_02003040, 0x02003040
+	.set sub_02003042, 0x02003042
+	.set sub_02003044, 0x02003044
+	.set sub_02003048, 0x02003048
+	.set sub_02003050, 0x02003050
+	.set sub_02003052, 0x02003052
+	.set sub_02003058, 0x02003058
+	.set sub_02003060, 0x02003060
+	.set sub_02003062, 0x02003062
+	.set sub_02003064, 0x02003064
+	.set sub_02003070, 0x02003070
+	.set sub_02003076, 0x02003076
+	.set sub_0200307a, 0x0200307a
+	.set sub_02003082, 0x02003082
+	.set sub_0200308c, 0x0200308c
+	.set sub_02003094, 0x02003094
+	.set sub_020030a2, 0x020030a2
+	.set sub_020030ac, 0x020030ac
+	.set sub_020030ca, 0x020030ca
+	.set sub_020030d8, 0x020030d8
+	.set sub_020030da, 0x020030da
+	.set sub_020030e2, 0x020030e2
+	.set sub_020030e4, 0x020030e4
+	.set sub_020030ea, 0x020030ea
+	.set sub_020030fe, 0x020030fe
+	.set sub_02003100, 0x02003100
+	.set sub_02003110, 0x02003110
+	.set sub_02003116, 0x02003116
+	.set sub_0200311c, 0x0200311c
+	.set sub_02003122, 0x02003122
+	.set sub_02003128, 0x02003128
+	.set sub_0200312e, 0x0200312e
+	.set sub_02003134, 0x02003134
+	.set sub_02003138, 0x02003138
+	.set sub_0200313a, 0x0200313a
+	.set sub_02003140, 0x02003140
+	.set sub_02003146, 0x02003146
+	.set sub_02003150, 0x02003150
+	.set sub_02003152, 0x02003152
+	.set sub_02003156, 0x02003156
+	.set sub_02003214, 0x02003214
+	.set sub_02003216, 0x02003216
+	.set sub_0200323a, 0x0200323a
+	.set sub_0200323c, 0x0200323c
+	.set sub_0200324c, 0x0200324c
+	.set sub_02003254, 0x02003254
+	.set sub_02003284, 0x02003284
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_MURA/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_MURA/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x16
-	.balign 4, 0
+	.2byte 0x0000
 AlchemyC_02000048:
 	.space 0x56
-	.balign 4, 0
+	.2byte 0x0000
 AlchemyC_020000a0:
 	.space 0x62
-	.balign 4, 0
+	.2byte 0x0000
 AlchemyC_02000104:
 	.space 0x36
-	.balign 4, 0
+	.2byte 0x0000
 AlchemyC_0200013c:
 	.space 0x1d8
 AlchemyC_02000314:
@@ -32,7 +445,7 @@ AlchemyC_020003f4:
 	.space 0x74
 AlchemyC_02000468:
 	.space 0x32
-	.balign 4, 0
+	.2byte 0x0000
 AlchemyC_0200049c:
 	.space 0x154
 AlchemyC_020005f0:
@@ -77,7 +490,7 @@ AlchemyC_02000c74:
 	.space 0x94
 AlchemyC_02000d08:
 	.space 0xa
-	.balign 4, 0
+	.2byte 0x0000
 AlchemyC_02000d14:
 	.space 0x1c
 AlchemyC_02000d30:
@@ -102,15 +515,15 @@ AlchemyC_0200131c:
 	.space 0x2a0
 AlchemyC_020015bc:
 	.space 0xaa
-	.balign 4, 0
+	.2byte 0x0000
 AlchemyC_02001668:
 	.space 0x170
 AlchemyC_020017d8:
 	.space 0x66
-	.balign 4, 0
+	.2byte 0x0000
 AlchemyC_02001840:
 	.space 0xd8
-.include "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_MURA/IMPORT.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_MURA/IMPORT.INC"
 AlchemyData_02001b38:
 	.space 0xb4
 AlchemyData_02001bec:

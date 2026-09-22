@@ -28,13 +28,11 @@ pub fn entry(arguments: &[String]) -> Result<(), String> {
 }
 use crate::compiler::canonical_json::write_canonical;
 use crate::compiler::{
-    build_io::{argv, read, read_json, relative, rooted, text, write},
+    build_io::{argv, read, relative, rooted, text, write},
     bundle::host_executable_signature,
     runtime, sha256,
-    thumb::standalone_wide_transfer_lines,
 };
 use psynergy::cache::SqliteCache;
-use serde::Deserialize;
 use serde_json::{json, Value};
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
@@ -67,71 +65,20 @@ struct BuiltRegion {
     data: Vec<u8>,
 }
 #[derive(Debug, Clone)]
-struct Placement {
-    address: u64,
-    run_address: u64,
-}
-#[derive(Debug, Clone, Deserialize)]
-struct LayoutRegion {
-    source: String,
-    address: Option<Value>,
-    run_address: Value,
-}
-#[derive(Debug, Clone, Deserialize)]
 struct Classification {
     kind: String,
     origin: String,
     retention: String,
     confidence: String,
     evidence: Vec<String>,
-    #[serde(default)]
     provenance: ClassificationProvenance,
 }
-#[derive(Debug, Clone, Default, Deserialize)]
+#[derive(Debug, Clone, Default)]
 struct ClassificationProvenance {
-    #[serde(default)]
-    range_credits: Vec<Value>,
-    #[serde(default)]
     credit: String,
-    #[serde(default)]
     proof: String,
-    #[serde(default)]
     object: String,
-    #[serde(default)]
     evidence: Vec<String>,
-}
-#[derive(Debug, Clone, Deserialize)]
-struct ClassificationRule {
-    kind: String,
-    origin: String,
-    retention: String,
-    confidence: String,
-    evidence: Vec<String>,
-    expected_files: usize,
-    expected_bytes: usize,
-    files: Option<Vec<String>>,
-    matcher: Option<String>,
-    #[serde(default)]
-    provenance: ClassificationProvenance,
-}
-impl ClassificationRule {
-    fn classification(&self) -> Classification {
-        Classification {
-            kind: self.kind.clone(),
-            origin: self.origin.clone(),
-            retention: self.retention.clone(),
-            confidence: self.confidence.clone(),
-            evidence: self.evidence.clone(),
-            provenance: self.provenance.clone(),
-        }
-    }
-}
-#[derive(Debug, Clone, Deserialize)]
-struct ClassificationConfig {
-    format: u64,
-    default: Classification,
-    structural: Vec<ClassificationRule>,
-    groups: Vec<ClassificationRule>,
 }
 #[derive(Debug, Clone, Copy, Default)]
 struct Count {
@@ -237,227 +184,133 @@ fn assembly_sources(directory: &Path) -> Result<Vec<PathBuf>, String> {
     result.sort();
     Ok(result)
 }
-fn integer(value: &Value, name: &str) -> Result<u64, String> {
-    let parsed = match value {
-        Value::Number(number) => number.as_u64(),
-        Value::String(text) => text
-            .strip_prefix("0x")
-            .or_else(|| text.strip_prefix("0X"))
-            .map_or_else(
-                || text.parse::<u64>().ok(),
-                |digits| u64::from_str_radix(digits, 16).ok(),
-            ),
-        _ => None,
-    };
-    parsed
-        .filter(|value| *value <= u32::MAX as u64)
-        .ok_or_else(|| format!("{name}: invalid address"))
+
+#[derive(Clone, Debug)]
+pub(crate) struct MaintainedAssembly {
+    pub source: PathBuf,
+    pub load_address: u64,
+    pub run_address: u64,
 }
-fn load_layout(root: &Path, asm_dir: &str) -> Result<BTreeMap<String, Placement>, String> {
-    let manifest = format!("{asm_dir}/manifest.json");
-    let path = root.join(&manifest);
-    if !path.exists() {
-        return Ok(BTreeMap::new());
+
+fn source_address(line: &str) -> Option<u64> {
+    let label = line.trim().strip_suffix(':')?;
+    let suffix = label.rsplit_once('_')?.1;
+    (suffix.len() == 8 && suffix.starts_with("08"))
+        .then(|| u64::from_str_radix(suffix, 16).ok())
+        .flatten()
+}
+
+fn declared_address(text: &str, name: &str) -> Option<u64> {
+    text.lines().find_map(|line| {
+        let rest = line.trim().strip_prefix(".set")?.trim();
+        let (symbol, value) = rest.split_once(',')?;
+        (symbol.trim() == name)
+            .then(|| u64::from_str_radix(value.trim().trim_start_matches("0x"), 16).ok())
+            .flatten()
+    })
+}
+
+fn asset_assembly_sources(
+    root: &Path,
+    target: crate::targets::DecompTarget,
+) -> Result<BTreeSet<PathBuf>, String> {
+    let path = root.join(target.asset_manifest);
+    if !path.is_file() {
+        return Ok(BTreeSet::new());
     }
-    let value: Value = read_json(&path)?;
-    if value["format"].as_u64() != Some(1) || !value["regions"].is_array() {
-        return Err(format!("{manifest}: unsupported format"));
-    }
-    let regions: Vec<LayoutRegion> = serde_json::from_value(value["regions"].clone())
-        .map_err(|_| format!("{manifest}: unsupported format"))?;
-    let mut result = BTreeMap::new();
-    for item in regions {
-        if result.contains_key(&item.source) {
-            return Err(format!("{manifest}: invalid or duplicate source"));
-        }
-        let inferred = u64::from_str_radix(&stem(Path::new(&item.source)), 16).ok();
-        let address = match (item.address.as_ref(), inferred) {
-            (Some(value), _) => integer(value, &item.source)?,
-            (None, Some(value)) => value,
-            (None, None) => {
-                return Err(format!("{}: named source requires an address", item.source))
+    let value: Value =
+        serde_json::from_slice(&std::fs::read(&path).map_err(|error| error.to_string())?)
+            .map_err(|error| error.to_string())?;
+    fn collect(value: &Value, root: &Path, output: &mut BTreeSet<PathBuf>) {
+        match value {
+            Value::Object(object) => {
+                if let Some(source) = object.get("source").and_then(Value::as_str) {
+                    if source.ends_with(".S") {
+                        output.insert(root.join(source));
+                    }
+                }
+                for child in object.values() {
+                    collect(child, root, output);
+                }
             }
-        };
-        let run_address = integer(&item.run_address, &item.source)?;
-        result.insert(
-            item.source,
-            Placement {
-                address,
-                run_address,
-            },
-        );
-    }
-    Ok(result)
-}
-fn load_classification(path: &Path) -> Result<ClassificationConfig, String> {
-    let config: ClassificationConfig = read_json(path)?;
-    validate_classification(&config)?;
-    Ok(config)
-}
-fn validate_classification(config: &ClassificationConfig) -> Result<(), String> {
-    if config.format != 1 {
-        return Err(format!(
-            "unsupported assembly classification format: {}",
-            config.format
-        ));
-    }
-    if !config.default.provenance.range_credits.is_empty() {
-        return Err("default assembly classification cannot name range credits".into());
-    }
-    for rule in &config.structural {
-        if rule.files.is_some() || rule.matcher.is_some() {
-            return Err(format!(
-                "{}: structural rules cannot name sources",
-                rule.kind
-            ));
-        }
-        if !rule.provenance.range_credits.is_empty() {
-            return Err(format!(
-                "{}: structural rules cannot name range credits",
-                rule.kind
-            ));
-        }
-    }
-    for rule in &config.groups {
-        match (rule.files.as_deref(), rule.matcher.as_deref()) {
-            (Some(files), None) if !files.is_empty() => {}
-            (None, Some("thumb_standalone_wide_transfer")) => {}
-            _ => {
-                return Err(format!(
-                    "{}: invalid assembly classification rule",
-                    rule.kind
-                ))
+            Value::Array(array) => {
+                for child in array {
+                    collect(child, root, output);
+                }
             }
-        }
-        if !rule.provenance.range_credits.is_empty() {
-            return Err(format!(
-                "{}: generic assembly range credit is unsupported; retain the assembly without DONE credit",
-                rule.kind
-            ));
+            _ => {}
         }
     }
-    Ok(())
+    let mut output = BTreeSet::new();
+    collect(&value, root, &mut output);
+    Ok(output)
 }
-fn load_alignments(path: &Path) -> Result<Vec<(u64, Vec<u8>)>, String> {
-    let value: Value = read_json(path)?;
-    if value["format"].as_u64() != Some(1)
-        || value["kind"].as_str() != Some("thumb-function-alignment")
-        || value["width"].as_u64() != Some(2)
-        || value["value"].as_u64() != Some(0)
-        || !value["addresses"].is_array()
-    {
-        return Err("unsupported alignment source".into());
-    }
-    let mut found = BTreeSet::new();
-    let mut result = Vec::new();
-    for (index, item) in value["addresses"].as_array().unwrap().iter().enumerate() {
-        let text = item.as_str().unwrap_or("");
-        if text.len() != 10
-            || !text.starts_with("0x080")
-            || !text[2..].bytes().all(|byte| byte.is_ascii_hexdigit())
+
+pub(crate) fn maintained_assembly(
+    root: &Path,
+    target: crate::targets::DecompTarget,
+) -> Result<Vec<MaintainedAssembly>, String> {
+    let assets = asset_assembly_sources(root, target)?;
+    let mut modules = Vec::new();
+    for entry in walkdir::WalkDir::new(root.join(target.source_dir)) {
+        let entry = entry.map_err(|error| error.to_string())?;
+        let source = entry.path();
+        if !entry.file_type().is_file()
+            || source.extension().and_then(|value| value.to_str()) != Some("S")
+            || assets.contains(source)
         {
-            return Err(format!("alignment {index}: invalid address"));
+            continue;
         }
-        let address = u64::from_str_radix(&text[2..], 16)
-            .map_err(|_| format!("alignment {index}: invalid address"))?;
-        if address & 3 != 2 || !found.insert(address) {
-            return Err(format!("alignment {index}: invalid boundary"));
-        }
-        result.push((address, vec![0, 0]));
+        let text = std::fs::read_to_string(source).map_err(|error| error.to_string())?;
+        let labels = text
+            .lines()
+            .filter_map(source_address)
+            .collect::<BTreeSet<_>>();
+        let load_address = declared_address(&text, "AlchemyLoadAddress")
+            .or_else(|| labels.iter().next().copied())
+            .ok_or_else(|| {
+                format!(
+                    "{}: maintained assembly needs an address label or AlchemyLoadAddress",
+                    source.display()
+                )
+            })?;
+        let run_address = declared_address(&text, "AlchemyRunAddress").unwrap_or(load_address);
+        modules.push(MaintainedAssembly {
+            source: source.to_path_buf(),
+            load_address,
+            run_address,
+        });
     }
-    result.sort_by_key(|item| item.0);
-    Ok(result)
+    modules.sort_by_key(|module| module.load_address);
+    Ok(modules)
 }
-fn explicit_classifications(
-    config: &ClassificationConfig,
-) -> Result<BTreeMap<String, ClassificationRule>, String> {
-    let mut result = BTreeMap::new();
-    for group in &config.groups {
-        for name in group.files.as_deref().unwrap_or(&[]) {
-            if name.len() != 8
-                || !name
-                    .bytes()
-                    .all(|byte| byte.is_ascii_hexdigit() && !byte.is_ascii_uppercase())
-            {
-                return Err(format!("invalid classified assembly stem: {name}"));
-            }
-            if result.insert(name.clone(), group.clone()).is_some() {
-                return Err(format!("duplicate assembly classification: {name}"));
-            }
-        }
-    }
-    Ok(result)
-}
-fn unresolved_trampoline_table(data: &[u8]) -> bool {
-    !data.is_empty()
-        && data.len() % 8 == 0
-        && data.chunks_exact(8).all(|entry| {
-            u16::from_le_bytes([entry[0], entry[1]]) == 0x4c00
-                && u16::from_le_bytes([entry[2], entry[3]]) == 0x4720
-                && u32::from_le_bytes([entry[4], entry[5], entry[6], entry[7]]) & 1 != 0
+
+pub(crate) fn maintained_assembly_bytes(
+    root: &Path,
+    target: crate::targets::DecompTarget,
+) -> Result<Vec<(MaintainedAssembly, Vec<u8>)>, String> {
+    let modules = maintained_assembly(root, target)?;
+    let output = tempfile::tempdir().map_err(|error| error.to_string())?;
+    let cache = SqliteCache::open(&root.join("out/cache/asm-regions.sqlite3"))?;
+    let binutils = production_binutil_signatures()?;
+    modules
+        .into_iter()
+        .map(|module| {
+            let source = std::fs::read(&module.source)
+                .map_err(|error| format!("{}: {error}", module.source.display()))?;
+            let built = build_region(
+                root,
+                &module.source,
+                &source,
+                output.path(),
+                &cache,
+                Some(module.run_address),
+                Some(module.load_address),
+                &binutils,
+            )?;
+            Ok((module, built.data))
         })
-}
-fn alignment_padding(data: &[u8]) -> bool {
-    data == [0, 0]
-}
-fn thumb_standalone_wide_transfer(source: &str) -> bool {
-    !standalone_wide_transfer_lines(source).is_empty()
-}
-fn classify(
-    name: &str,
-    data: &[u8],
-    source: &str,
-    config: &ClassificationConfig,
-    explicit: &BTreeMap<String, ClassificationRule>,
-) -> Result<Classification, String> {
-    if let Some(fixed) = explicit.get(name) {
-        return Ok(fixed.classification());
-    }
-    let structural = if unresolved_trampoline_table(data) {
-        Some((
-            "unresolved_trampoline_table",
-            "missing unresolved trampoline-table classification",
-        ))
-    } else if alignment_padding(data) {
-        Some((
-            "alignment_padding",
-            "missing alignment padding classification",
-        ))
-    } else {
-        None
-    };
-    if let Some((kind, missing)) = structural {
-        return config
-            .structural
-            .iter()
-            .find(|rule| rule.kind == kind)
-            .map(ClassificationRule::classification)
-            .ok_or_else(|| missing.into());
-    }
-    if thumb_standalone_wide_transfer(source) {
-        return config
-            .groups
-            .iter()
-            .find(|rule| rule.matcher.as_deref() == Some("thumb_standalone_wide_transfer"))
-            .map(ClassificationRule::classification)
-            .ok_or_else(|| "missing Thumb multi-register classification".into());
-    }
-    Ok(config.default.clone())
-}
-fn validate_counts(
-    config: &ClassificationConfig,
-    counts: &BTreeMap<String, Count>,
-) -> Result<(), String> {
-    for rule in config.structural.iter().chain(&config.groups) {
-        let count = counts.get(&rule.kind).copied().unwrap_or_default();
-        if count.files != rule.expected_files || count.bytes != rule.expected_bytes {
-            return Err(format!(
-                "{}: expected {} files/{} bytes, got {} files/{} bytes",
-                rule.kind, rule.expected_files, rule.expected_bytes, count.files, count.bytes
-            ));
-        }
-    }
-    Ok(())
+        .collect()
 }
 const ASSEMBLY_BINUTILS: [&str; 4] = [
     "arm-none-eabi-as",
@@ -667,27 +520,36 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
     std::fs::create_dir_all(&output).map_err(|error| format!("{}: {error}", output.display()))?;
     let asm = root.join(&options.asm_dir);
     let mut sources = assembly_sources(&asm)?;
-    let layout = load_layout(root, &options.asm_dir)?;
-    for source in layout.keys() {
-        let path = rooted(root, source);
-        if !sources.contains(&path) {
-            sources.push(path);
-        }
-    }
     sources.sort();
     // These packages are assembled through the asset manifest, with their own
     // placement and compression. They are not standalone main-image regions.
     sources.retain(|source| {
         !source.starts_with(asm.join("overlays")) && !source.starts_with(asm.join("battle"))
     });
+    let target = match options.asm_dir.as_str() {
+        "games/THE BROKEN SEAL/raw" => {
+            crate::targets::target_for(crate::targets::DecompTargetId::TbsEn)
+        }
+        "games/THE LOST AGE/raw" => {
+            crate::targets::target_for(crate::targets::DecompTargetId::TlaEn)
+        }
+        _ => return Err(format!("unsupported assembly root {}", options.asm_dir)),
+    };
+    let maintained = maintained_assembly(root, target)?;
+    sources.extend(maintained.iter().map(|module| module.source.clone()));
+    sources.sort();
+    let maintained = maintained
+        .into_iter()
+        .map(|module| (module.source.clone(), module))
+        .collect::<BTreeMap<_, _>>();
     let mut addresses = BTreeSet::new();
     for source in &sources {
         let source_name = relative(root, source);
-        let address = layout
-            .get(&source_name)
-            .map(|placement| placement.address)
+        let address = maintained
+            .get(source)
+            .map(|module| module.load_address)
             .or_else(|| u64::from_str_radix(&stem(source), 16).ok())
-            .ok_or_else(|| format!("{source_name}: named source requires a manifest address"))?;
+            .ok_or_else(|| format!("{source_name}: raw source filename must be its ROM address"))?;
         if !addresses.insert(address) {
             return Err(format!("duplicate assembly load address: 0x{address:08x}"));
         }
@@ -702,46 +564,26 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
     if sources.is_empty() {
         return Err("no reconstructed assembly sources".into());
     }
-    let classification_path = asm.join("classification.json");
-    let classification = load_classification(&classification_path)?;
-    let explicit = explicit_classifications(&classification)?;
-    let source_names: BTreeSet<String> = sources
-        .iter()
-        .map(|source| relative(root, source))
-        .collect();
-    if options.source.is_none() {
-        for source in layout.keys() {
-            if !source_names.contains(source) {
-                return Err(format!("{source}: layout source not found"));
-            }
-        }
-    }
     let cache = SqliteCache::open(&root.join("out/cache/asm-regions.sqlite3"))?;
     let binutils = production_binutil_signatures()?;
-    let mut found = BTreeSet::new();
     let mut counts: BTreeMap<String, Count> = BTreeMap::new();
     let mut regions: Vec<(u64, Value)> = Vec::new();
     for source in &sources {
         let source_name = relative(root, source);
-        let placement = layout.get(&source_name);
         let source_text = std::fs::read_to_string(source)
             .map_err(|error| format!("{}: {error}", source.display()))?;
+        let module = maintained.get(source);
         let built = build_region(
             root,
             source,
             source_text.as_bytes(),
             &output,
             &cache,
-            placement.map(|item| item.run_address),
-            placement.map(|item| item.address),
+            module.map(|module| module.run_address),
+            module.map(|module| module.load_address),
             &binutils,
         )
         .map_err(|error| format!("{source_name}: {error}"))?;
-        if let Some(placement) = placement {
-            if placement.address != built.address {
-                return Err(format!("{source_name}: layout address differs"));
-            }
-        }
         let limit = rom
             .as_ref()
             .map_or(ROM_BASE + ROM_SIZE, |bytes| ROM_BASE + bytes.len() as u64);
@@ -764,19 +606,37 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
                 ));
             }
         }
-        let name = format!("{:08x}", built.address);
-        let category = classify(&name, &built.data, &source_text, &classification, &explicit)?;
-        if category.kind == "unresolved_trampoline_table"
-            && source.parent() != Some(asm.join("trampoline_tables").as_path())
-        {
-            return Err(format!(
-                "{source_name}: unresolved trampoline tables belong in raw/trampoline_tables"
-            ));
-        }
+        let category = Classification {
+            kind: if module.is_some() {
+                "maintained_assembly"
+            } else {
+                "raw_assembly"
+            }
+            .into(),
+            origin: if module.is_some() {
+                "source"
+            } else {
+                "unresolved"
+            }
+            .into(),
+            retention: if module.is_some() {
+                "keep_asm"
+            } else {
+                "c_candidate"
+            }
+            .into(),
+            confidence: if module.is_some() {
+                "verified"
+            } else {
+                "unknown"
+            }
+            .into(),
+            evidence: Vec::new(),
+            provenance: ClassificationProvenance::default(),
+        };
         let count = counts.entry(category.kind.clone()).or_default();
         count.files += 1;
         count.bytes += built.data.len();
-        found.insert(name);
         regions.push((
             built.address,
             region_value(&output, &source_name, &built, &category),
@@ -824,38 +684,6 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
             ));
         }
     }
-    if options.source.is_none() {
-        let alignment_path = asm.join("alignment.json");
-        let category = classification
-            .structural
-            .iter()
-            .find(|item| item.kind == "alignment_padding")
-            .map(ClassificationRule::classification)
-            .ok_or("missing alignment padding classification")?;
-        for (address, data) in load_alignments(&alignment_path)? {
-            let name = format!("{address:08x}");
-            let output_path = output.join(format!("{name}.bin"));
-            if let Some(rom) = rom.as_ref() {
-                let start = (address - ROM_BASE) as usize;
-                if data != rom[start..start + data.len()] {
-                    return Err(format!("{name}: alignment bytes differ"));
-                }
-            }
-            write(&output_path, &data)?;
-            let count = counts.entry(category.kind.clone()).or_default();
-            count.files += 1;
-            count.bytes += data.len();
-            let built = BuiltRegion {
-                address,
-                run_address: address,
-                data,
-            };
-            regions.push((
-                address,
-                region_value(&output, &relative(root, &alignment_path), &built, &category),
-            ));
-        }
-    }
     regions.sort_by_key(|item| item.0);
     let mut previous_end = 0u64;
     for (_, region) in &regions {
@@ -865,19 +693,10 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
         }
         previous_end = address + region["size"].as_u64().unwrap();
     }
-    if options.source.is_none() {
-        for name in explicit.keys() {
-            if !found.contains(name) {
-                return Err(format!("classified assembly source is missing: {name}.s"));
-            }
-        }
-        validate_counts(&classification, &counts)?;
-    }
     let document = json!({
         "format":1,
         "rom_base":ROM_BASE,
         "verification":if options.source_only { "source_only" } else { "rom" },
-        "classification":relative(root, &classification_path),
         "regions":regions.iter().map(|item| item.1.clone()).collect::<Vec<_>>(),
     });
     write_canonical(&output.join("manifest.json"), &document)?;
@@ -895,90 +714,4 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
         bytes,
         counts: counts_text,
     })
-}
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use serde_json::json;
-
-    fn range_credit_config(range_credits: Value) -> ClassificationConfig {
-        serde_json::from_value(json!({
-            "format": 1,
-            "default": {
-                "kind": "compiler_output",
-                "origin": "compiler",
-                "retention": "c_candidate",
-                "confidence": "likely",
-                "evidence": ["ordinary Thumb"]
-            },
-            "structural": [],
-            "groups": [{
-                "kind": "retained_library",
-                "origin": "library",
-                "retention": "keep_asm",
-                "confidence": "proven",
-                "evidence": ["group classification"],
-                "expected_files": 1,
-                "expected_bytes": 8,
-                "files": ["08000100"],
-                "provenance": {"range_credits": range_credits}
-            }]
-        }))
-        .unwrap()
-    }
-
-    #[test]
-    fn generic_range_credit_is_rejected_regardless_of_narrative() {
-        for provenance in [
-            json!({
-                "source": "games/THE BROKEN SEAL/raw/08000100.s",
-                "address": "0x08000100",
-                "size": 8,
-                "evidence": ["cross-product identity"],
-                "credit": "handwritten",
-                "proof": "compiler cannot emit this spelling"
-            }),
-            json!({
-                "source": "games/THE BROKEN SEAL/raw/08000100.s",
-                "address": "0x08000100",
-                "size": 8,
-                "evidence": ["cross-product identity"],
-                "credit": "library",
-                "object": "vendor object not named"
-            }),
-        ] {
-            let error =
-                validate_classification(&range_credit_config(json!([provenance]))).unwrap_err();
-            assert!(error.contains("generic assembly range credit is unsupported"));
-        }
-        validate_classification(&range_credit_config(json!([]))).unwrap();
-    }
-
-    #[test]
-    fn recognizes_only_standalone_wide_thumb_transfers() {
-        assert!(!thumb_standalone_wide_transfer("\tldmia\tr3!, {r2}\n"));
-        assert!(!thumb_standalone_wide_transfer("\tstmia\tr5!, {r0, r1}\n"));
-        assert!(thumb_standalone_wide_transfer(
-            "\tstmia\tr5!, {r0, r1, r2}\n"
-        ));
-        assert!(thumb_standalone_wide_transfer("\tldmia\tr3!, {r0-r3}\n"));
-        assert!(!thumb_standalone_wide_transfer(
-            "\tldmia\tr3!, {r0, r1, r2}\n\tstmia\tr4!, {r0-r2}\n"
-        ));
-    }
-    #[test]
-    fn ignores_comments_and_data() {
-        assert!(!thumb_standalone_wide_transfer(
-            "@ stmia r5!, {r0, r1, r2}\n"
-        ));
-        assert!(!thumb_standalone_wide_transfer(
-            "\t.ascii \"ldmia {r0, r1, r2}\"\n"
-        ));
-        assert!(thumb_standalone_wide_transfer(
-            ".L_copy: stmia r5!, {r0, r1, r2} @ targeted wide store\n"
-        ));
-        assert!(thumb_standalone_wide_transfer(
-            "\tldmia r3!, {r0-r2}\n.L_target:\n\tstmia r4!, {r0-r2}\n"
-        ));
-    }
 }

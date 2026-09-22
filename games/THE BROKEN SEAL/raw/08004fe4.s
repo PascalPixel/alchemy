@@ -1,13 +1,11 @@
-@ 視線行列の作成。始めに DMA3 で 0x08007994 の ARM 核をスタックへ写し (Func_080072f4 で
-@ 呼ぶ内積核)、視点 r0 から目標 r1 への向きを IwramSqrt (0x030001d8) と IwramUnsignedDivide
-@ (Func_08007310) で正規化し、IwramMulQ16 の積で右・上の軸を作って r2 の 12 語 (+ 平行移動 3 語)
-@ に書く。
-@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
-	.global Func_08004fe4
-	.thumb_func
-Func_08004fe4:
+	.set sub_080045d4, 0x080045d4
+	.set sub_080072f0, 0x080072f0
+	.set sub_080072f4, 0x080072f4
+	.set sub_08007310, 0x08007310
+	.global Overlay_08004fe4
+Overlay_08004fe4:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -26,7 +24,6 @@ Func_08004fe4:
 	ldr	r0, [pc, #448]
 	ldr	r1, [sp, #12]
 	ldr	r2, [pc, #448]
-@ DMA3: 0x08007994 の核 8 語をスタックへ。
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	ldr	r1, [sp, #32]
@@ -53,24 +50,21 @@ Func_08004fe4:
 	ldr	r4, [sp, #12]
 	adds	r2, r3, #0
 	adds	r0, r1, #0
-	bl	Func_080072f4
+	bl	sub_080072f4
 	ldr	r3, [pc, #392]
-@ 向きの長さ (IwramSqrt)。
-	bl	Func_080072f0
+	bl	sub_080072f0
 	adds	r1, r0, #0
 	ldr	r0, [pc, #388]
 	mov	fp, r0
 	movs	r0, #128
 	lsls	r0, r0, #24
-@ 逆数 (IwramUnsignedDivide, 0x030003f0)。
-	bl	Func_08007310
+	bl	sub_08007310
 	lsrs	r3, r0, #15
 	negs	r3, r3
 	ldr	r5, [pc, #376]
 	ldr	r0, [sp, #28]
 	adds	r1, r3, #0
 	movs	r0, r0
-@ 以降の ip 呼出しは IwramMulQ16ReturnIp: 正規化と外積。
 	mov	ip, pc
 	bx	r5
 	str	r0, [sp, #28]
@@ -97,15 +91,14 @@ Func_08004fe4:
 	lsls	r3, r3, #9
 	subs	r0, r3, r0
 	cmp	r0, #0
-	ble.n	.L0
-@ 水平成分の長さ。
-	bl	Func_080045d4
+	ble.n	.L_080050a6
+	bl	sub_080045d4
 	adds	r1, r0, #0
 	movs	r0, #128
 	lsls	r0, r0, #24
-	bl	Func_08007310
+	bl	sub_08007310
 	lsls	r3, r0, #1
-.L0:
+.L_080050a6:
 	ldr	r0, [sp, #20]
 	adds	r1, r3, #0
 	movs	r0, r0
@@ -149,12 +142,12 @@ Func_08004fe4:
 	adds	r2, r6, #0
 	ldr	r4, [sp, #12]
 	mov	r0, sl
-	bl	Func_080072f4
-	bl	Func_080045d4
+	bl	sub_080072f4
+	bl	sub_080045d4
 	adds	r1, r0, #0
 	movs	r0, #128
 	lsls	r0, r0, #24
-	bl	Func_08007310
+	bl	sub_08007310
 	lsls	r3, r0, #1
 	adds	r1, r3, #0
 	mov	r0, sl
@@ -182,7 +175,6 @@ Func_08004fe4:
 	ldr	r3, [sp, #16]
 	ldr	r5, [r2, #8]
 	mov	fp, r0
-@ 行列を書き出す。平行移動は内積核 (Func_080072f4) の符号反転。
 	mov	r4, r9
 	movs	r0, #0
 	mov	r1, r8
@@ -196,7 +188,7 @@ Func_08004fe4:
 	adds	r2, r5, #0
 	mov	r3, r8
 	mov	r0, fp
-	bl	Func_080072f4
+	bl	sub_080072f4
 	mov	r1, r9
 	mov	r2, sl
 	negs	r0, r0
@@ -211,7 +203,7 @@ Func_08004fe4:
 	mov	r1, sl
 	adds	r3, r6, #0
 	mov	r0, fp
-	bl	Func_080072f4
+	bl	sub_080072f4
 	mov	r1, r9
 	negs	r0, r0
 	str	r0, [r1, #40]
@@ -228,7 +220,7 @@ Func_08004fe4:
 	ldr	r3, [sp, #24]
 	ldr	r4, [sp, #12]
 	mov	r0, fp
-	bl	Func_080072f4
+	bl	sub_080072f4
 	mov	r1, r9
 	negs	r0, r0
 	str	r0, [r1, #44]

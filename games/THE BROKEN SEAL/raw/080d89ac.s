@@ -1,10 +1,38 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global BattleEffectA
-	.thumb_func
-BattleEffectA:
+	.set sub_080022ec, 0x080022ec
+	.set sub_080022fc, 0x080022fc
+	.set sub_0800231c, 0x0800231c
+	.set sub_08002322, 0x08002322
+	.set sub_08002dd8, 0x08002dd8
+	.set sub_08002f40, 0x08002f40
+	.set sub_080030f8, 0x080030f8
+	.set sub_080041d8, 0x080041d8
+	.set sub_08004278, 0x08004278
+	.set sub_08004458, 0x08004458
+	.set sub_080049ac, 0x080049ac
+	.set sub_08004bd4, 0x08004bd4
+	.set sub_08004c1c, 0x08004c1c
+	.set sub_08004c6c, 0x08004c6c
+	.set sub_08004cb4, 0x08004cb4
+	.set sub_080051d8, 0x080051d8
+	.set sub_08005340, 0x08005340
+	.set sub_080072f0, 0x080072f0
+	.set sub_080072f4, 0x080072f4
+	.set sub_080b5098, 0x080b5098
+	.set sub_080b50e8, 0x080b50e8
+	.set sub_080cd52c, 0x080cd52c
+	.set sub_080cd594, 0x080cd594
+	.set sub_080cdbc0, 0x080cdbc0
+	.set sub_080cef64, 0x080cef64
+	.set sub_080d6888, 0x080d6888
+	.set sub_080de2f8, 0x080de2f8
+	.set sub_080e0524, 0x080e0524
+	.set sub_080e3944, 0x080e3944
+	.set sub_080e396c, 0x080e396c
+	.set sub_080f9010, 0x080f9010
+	.global Overlay_080d89ac
+Overlay_080d89ac:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -29,11 +57,11 @@ BattleEffectA:
 	str	r1, [sp, #48]
 	movs	r0, #0
 	str	r6, [r5, #0]
-	bl	Func_080cd594
+	bl	sub_080cd594
 	ldr	r5, [r5, #0]
 	ldr	r3, [r5, #28]
 	cmp	r3, #1
-	bne.n	.L0
+	bne.n	.L_080d8a32
 	movs	r3, #6
 	mov	r0, sl
 	eors	r3, r0
@@ -43,10 +71,10 @@ BattleEffectA:
 	movs	r3, #2
 	subs	r1, r3, r1
 	cmp	r0, #6
-	beq.n	.L1
+	beq.n	.L_080d8a00
 	cmp	r0, #0
-	bne.n	.L2
-.L1:
+	bne.n	.L_080d8a14
+.L_080d8a00:
 	add	r3, sp, #88
 	ldr	r2, [r5, #4]
 	str	r3, [sp, #0]
@@ -54,9 +82,9 @@ BattleEffectA:
 	str	r3, [sp, #4]
 	adds	r0, r6, #0
 	movs	r3, #0
-	bl	Func_080de2f8
-	b.n	.L3
-.L2:
+	bl	sub_080de2f8
+	b.n	.L_080d8a26
+.L_080d8a14:
 	add	r3, sp, #88
 	ldr	r2, [r5, #4]
 	str	r3, [sp, #0]
@@ -64,18 +92,18 @@ BattleEffectA:
 	str	r3, [sp, #4]
 	adds	r0, r6, #0
 	movs	r3, #1
-	bl	Func_080de2f8
-.L3:
+	bl	sub_080de2f8
+.L_080d8a26:
 	ldr	r1, [sp, #72]
 	ldr	r2, [pc, #68]
 	adds	r3, r1, r2
 	ldr	r2, [r3, #0]
 	movs	r3, #0
 	str	r3, [r2, #24]
-.L0:
+.L_080d8a32:
 	mov	r3, sl
 	cmp	r3, #0
-	bne.n	.L4
+	bne.n	.L_080d8a78
 	ldr	r0, [sp, #72]
 	ldr	r1, [pc, #52]
 	adds	r3, r0, r1
@@ -84,7 +112,7 @@ BattleEffectA:
 	movs	r2, #36
 	ldrsh	r0, [r3, r2]
 	adds	r1, r5, #0
-	bl	Func_080e396c
+	bl	sub_080e396c
 	ldr	r2, [r5, #0]
 	movs	r3, #64
 	subs	r3, r3, r2
@@ -97,86 +125,87 @@ BattleEffectA:
 	strh	r3, [r2, #0]
 	movs	r3, #0
 	str	r3, [sp, #44]
-	b.n	.L5
+	b.n	.L_080d8a7c
 	movs	r0, r0
 	.4byte 0x00000100
 	.4byte 0x03001eec
 	.4byte 0x00007828
-	.4byte 0x04000028
-.L4:
+	.2byte 0x0028
+	.2byte 0x0400
+.L_080d8a78:
 	movs	r0, #1
 	str	r0, [sp, #44]
-.L5:
+.L_080d8a7c:
 	ldr	r1, [sp, #56]
 	ldr	r0, [pc, #836]
 	movs	r2, #0
 	movs	r3, #0
-	bl	Func_080e0524
+	bl	sub_080e0524
 	ldr	r0, [pc, #828]
 	ldr	r1, [sp, #72]
 	movs	r2, #0
 	movs	r3, #0
-	bl	Func_080e0524
+	bl	sub_080e0524
 	mov	r1, sl
 	cmp	r1, #1
-	bls.n	.L6
+	bls.n	.L_080d8aa6
 	cmp	r1, #3
-	beq.n	.L6
+	beq.n	.L_080d8aa6
 	cmp	r1, #4
-	beq.n	.L6
+	beq.n	.L_080d8aa6
 	cmp	r1, #5
-	bne.n	.L7
-.L6:
+	bne.n	.L_080d8abc
+.L_080d8aa6:
 	ldr	r2, [sp, #72]
 	ldr	r0, [pc, #800]
 	adds	r3, r2, r0
 	ldr	r3, [r3, #0]
 	ldr	r3, [r3, #24]
 	cmp	r3, #0
-	bne.n	.L8
+	bne.n	.L_080d8ab8
 	ldr	r0, [pc, #792]
-	b.n	.L9
-.L8:
+	b.n	.L_080d8ac8
+.L_080d8ab8:
 	ldr	r0, [pc, #792]
-	b.n	.L9
-.L7:
+	b.n	.L_080d8ac8
+.L_080d8abc:
 	mov	r1, sl
 	cmp	r1, #6
-	bne.n	.L10
+	bne.n	.L_080d8ac6
 	ldr	r0, [pc, #788]
-	b.n	.L9
-.L10:
+	b.n	.L_080d8ac8
+.L_080d8ac6:
 	ldr	r0, [pc, #788]
-.L9:
-	bl	Func_08002f40
+.L_080d8ac8:
+	bl	sub_08002f40
 	adds	r2, r0, #0
 	movs	r0, #160
 	adds	r1, r2, #0
 	ldr	r3, [pc, #780]
 	movs	r2, #128
 	lsls	r0, r0, #19
-	bl	Func_080072f0
+	bl	sub_080072f0
 	ldr	r2, [sp, #44]
 	cmp	r2, #0
-	bne.n	.L11
+	bne.n	.L_080d8af0
 	mov	r3, sl
 	cmp	r3, #6
-	bne.n	.L12
+	bne.n	.L_080d8aec
 	ldr	r0, [pc, #748]
-	b.n	.L13
-.L12:
+	b.n	.L_080d8afc
+.L_080d8aec:
 	ldr	r0, [pc, #756]
-	b.n	.L13
-.L11:
+	b.n	.L_080d8afc
+.L_080d8af0:
 	mov	r0, sl
 	cmp	r0, #6
-	bne.n	.L14
+	bne.n	.L_080d8afa
 	ldr	r0, [pc, #752]
-	b.n	.L13
-.L14:
+	b.n	.L_080d8afc
+.L_080d8afa:
 	ldr	r0, [pc, #752]
-.L13:
-	bl	Func_08002f40
+.L_080d8afc:
+	bl	sub_08002f40
 	adds	r2, r0, #0
 	ldr	r3, [sp, #72]
 	movs	r0, #128
@@ -184,7 +213,7 @@ BattleEffectA:
 	lsls	r0, r0, #5
 	adds	r1, r3, r0
 	adds	r0, r2, #0
-	bl	Func_08005340
+	bl	sub_08005340
 	ldr	r2, [pc, #696]
 	ldr	r1, [sp, #72]
 	adds	r3, r1, r2
@@ -194,30 +223,30 @@ BattleEffectA:
 	adds	r3, #76
 	adds	r1, r3, #0
 	str	r3, [sp, #40]
-	bl	Func_080cef64
+	bl	sub_080cef64
 	mov	r0, sl
 	cmp	r0, #0
-	beq.n	.L15
+	beq.n	.L_080d8b32
 	cmp	r0, #6
-	bne.n	.L16
-.L15:
+	bne.n	.L_080d8b82
+.L_080d8b32:
 	movs	r1, #0
 	ldr	r5, [pc, #696]
 	mov	r8, r1
 	movs	r6, #255
-.L17:
-	bl	Func_08004458
+.L_080d8b3a:
+	bl	sub_08004458
 	ands	r0, r6
 	subs	r0, #127
 	lsls	r0, r0, #15
 	str	r0, [r5, #0]
-	bl	Func_08004458
+	bl	sub_08004458
 	movs	r3, #127
 	ands	r3, r0
 	adds	r3, #64
 	lsls	r3, r3, #15
 	str	r3, [r5, #4]
-	bl	Func_08004458
+	bl	sub_08004458
 	movs	r3, #0
 	ands	r0, r6
 	str	r3, [r5, #24]
@@ -230,7 +259,7 @@ BattleEffectA:
 	str	r0, [r5, #8]
 	adds	r5, #28
 	cmp	r8, r3
-	bne.n	.L17
+	bne.n	.L_080d8b3a
 	ldr	r0, [sp, #72]
 	ldr	r1, [pc, #596]
 	adds	r3, r0, r1
@@ -238,27 +267,27 @@ BattleEffectA:
 	ldr	r3, [r3, #20]
 	lsls	r3, r3, #3
 	adds	r3, #88
-	b.n	.L18
-.L16:
+	b.n	.L_080d8cda
+.L_080d8b82:
 	mov	r2, sl
 	cmp	r2, #1
-	bne.n	.L19
+	bne.n	.L_080d8bd6
 	movs	r3, #0
 	ldr	r5, [pc, #612]
 	mov	r8, r3
 	movs	r6, #255
-.L20:
-	bl	Func_08004458
+.L_080d8b90:
+	bl	sub_08004458
 	ands	r0, r6
 	subs	r0, #127
 	lsls	r0, r0, #15
 	str	r0, [r5, #0]
-	bl	Func_08004458
+	bl	sub_08004458
 	ands	r0, r6
 	subs	r0, #127
 	lsls	r0, r0, #15
 	str	r0, [r5, #4]
-	bl	Func_08004458
+	bl	sub_08004458
 	ands	r0, r6
 	subs	r0, #127
 	lsls	r0, r0, #15
@@ -271,7 +300,7 @@ BattleEffectA:
 	str	r3, [r5, #24]
 	adds	r5, #28
 	cmp	r8, r1
-	bne.n	.L20
+	bne.n	.L_080d8b90
 	ldr	r2, [sp, #72]
 	ldr	r0, [pc, #512]
 	adds	r3, r2, r0
@@ -279,24 +308,24 @@ BattleEffectA:
 	ldr	r3, [r3, #20]
 	lsls	r3, r3, #3
 	adds	r3, #88
-	b.n	.L18
-.L19:
+	b.n	.L_080d8cda
+.L_080d8bd6:
 	mov	r1, sl
 	cmp	r1, #2
-	bne.n	.L21
+	bne.n	.L_080d8c42
 	movs	r2, #0
 	ldr	r7, [pc, #528]
 	mov	r8, r2
-.L22:
-	bl	Func_08004458
+.L_080d8be2:
+	bl	sub_08004458
 	ldr	r3, [pc, #524]
 	adds	r6, r0, #0
 	ands	r6, r3
-	bl	Func_08004458
+	bl	sub_08004458
 	movs	r5, #63
 	ands	r5, r0
 	adds	r0, r6, #0
-	bl	Func_08002322
+	bl	sub_08002322
 	adds	r5, #32
 	adds	r3, r5, #0
 	muls	r3, r0
@@ -304,11 +333,11 @@ BattleEffectA:
 	ldr	r3, [pc, #500]
 	adds	r0, r6, #0
 	str	r3, [r7, #4]
-	bl	Func_0800231c
+	bl	sub_0800231c
 	adds	r3, r5, #0
 	muls	r3, r0
 	str	r3, [r7, #8]
-	bl	Func_08004458
+	bl	sub_08004458
 	movs	r3, #31
 	ands	r3, r0
 	adds	r3, #32
@@ -322,7 +351,7 @@ BattleEffectA:
 	lsls	r0, r0, #2
 	adds	r7, #28
 	cmp	r8, r0
-	bne.n	.L22
+	bne.n	.L_080d8be2
 	ldr	r1, [sp, #72]
 	ldr	r2, [pc, #404]
 	adds	r3, r1, r2
@@ -330,27 +359,27 @@ BattleEffectA:
 	ldr	r3, [r3, #20]
 	lsls	r3, r3, #3
 	adds	r3, #88
-	b.n	.L18
-.L21:
+	b.n	.L_080d8cda
+.L_080d8c42:
 	mov	r3, sl
 	cmp	r3, #3
-	bne.n	.L23
+	bne.n	.L_080d8c8e
 	movs	r0, #0
 	ldr	r5, [pc, #420]
 	mov	r8, r0
 	movs	r6, #255
-.L24:
-	bl	Func_08004458
+.L_080d8c50:
+	bl	sub_08004458
 	ands	r0, r6
 	subs	r0, #127
 	lsls	r0, r0, #15
 	str	r0, [r5, #0]
-	bl	Func_08004458
+	bl	sub_08004458
 	ands	r0, r6
 	subs	r0, #127
 	lsls	r0, r0, #14
 	str	r0, [r5, #4]
-	bl	Func_08004458
+	bl	sub_08004458
 	ands	r0, r6
 	subs	r0, #127
 	movs	r1, #1
@@ -363,28 +392,28 @@ BattleEffectA:
 	str	r3, [r5, #24]
 	adds	r5, #28
 	cmp	r8, r2
-	bne.n	.L24
+	bne.n	.L_080d8c50
 	ldr	r0, [sp, #72]
 	ldr	r1, [pc, #320]
 	adds	r3, r0, r1
-	b.n	.L25
-.L23:
+	b.n	.L_080d8cd2
+.L_080d8c8e:
 	movs	r2, #0
 	ldr	r5, [pc, #348]
 	mov	r8, r2
 	movs	r6, #255
-.L26:
-	bl	Func_08004458
+.L_080d8c96:
+	bl	sub_08004458
 	ands	r0, r6
 	subs	r0, #127
 	lsls	r0, r0, #15
 	str	r0, [r5, #0]
-	bl	Func_08004458
+	bl	sub_08004458
 	ands	r0, r6
 	subs	r0, #127
 	lsls	r0, r0, #15
 	str	r0, [r5, #4]
-	bl	Func_08004458
+	bl	sub_08004458
 	ands	r0, r6
 	subs	r0, #127
 	lsls	r0, r0, #15
@@ -397,16 +426,16 @@ BattleEffectA:
 	lsls	r0, r0, #2
 	adds	r5, #28
 	cmp	r8, r0
-	bne.n	.L26
+	bne.n	.L_080d8c96
 	ldr	r1, [sp, #72]
 	ldr	r2, [pc, #252]
 	adds	r3, r1, r2
-.L25:
+.L_080d8cd2:
 	ldr	r3, [r3, #0]
 	ldr	r3, [r3, #20]
 	lsls	r3, r3, #3
 	adds	r3, #72
-.L18:
+.L_080d8cda:
 	str	r3, [sp, #64]
 	movs	r3, #64
 	ldr	r0, [sp, #72]
@@ -416,16 +445,16 @@ BattleEffectA:
 	ldr	r3, [r3, #0]
 	ldr	r3, [r3, #24]
 	cmp	r3, #0
-	bne.n	.L27
+	bne.n	.L_080d8cf4
 	movs	r2, #32
 	str	r2, [sp, #52]
-	b.n	.L28
-.L27:
+	b.n	.L_080d8cfc
+.L_080d8cf4:
 	cmp	r3, #2
-	bne.n	.L28
+	bne.n	.L_080d8cfc
 	movs	r3, #128
 	str	r3, [sp, #52]
-.L28:
+.L_080d8cfc:
 	ldr	r0, [sp, #72]
 	movs	r1, #239
 	lsls	r1, r1, #7
@@ -439,39 +468,39 @@ BattleEffectA:
 	lsls	r1, r1, #3
 	str	r3, [r2, #0]
 	ldr	r0, [pc, #232]
-	bl	Func_080041d8
+	bl	sub_080041d8
 	ldr	r1, [sp, #64]
 	movs	r0, #0
 	mov	fp, r0
 	cmp	r1, #0
-	bne.n	.L29
-	b.n	.L30
-.L29:
+	bne.n	.L_080d8d26
+	b.n	.L_080d913a
+.L_080d8d26:
 	str	r0, [sp, #12]
-.L67:
+.L_080d8d28:
 	ldr	r3, [pc, #216]
 	ldr	r3, [r3, #0]
 	mov	r2, fp
 	str	r3, [sp, #36]
 	cmp	r2, #40
-	bne.n	.L31
+	bne.n	.L_080d8d3a
 	movs	r0, #0
-	bl	Func_080b50e8
-.L31:
+	bl	sub_080b50e8
+.L_080d8d3a:
 	ldr	r0, [sp, #72]
 	ldr	r1, [pc, #140]
 	adds	r3, r0, r1
 	ldr	r3, [r3, #0]
 	ldr	r3, [r3, #28]
 	cmp	r3, #1
-	beq.n	.L32
-	b.n	.L33
-.L32:
+	beq.n	.L_080d8d4a
+	b.n	.L_080d8e80
+.L_080d8d4a:
 	ldr	r2, [sp, #44]
 	cmp	r2, #0
-	bne.n	.L34
+	bne.n	.L_080d8e08
 	ldr	r0, [sp, #12]
-	bl	Func_08002322
+	bl	sub_08002322
 	lsls	r3, r0, #2
 	adds	r3, r3, r0
 	ldr	r2, [sp, #88]
@@ -483,7 +512,7 @@ BattleEffectA:
 	subs	r3, #20
 	ldr	r0, [sp, #12]
 	mov	r8, r3
-	bl	Func_0800231c
+	bl	sub_0800231c
 	lsls	r0, r0, #2
 	ldr	r3, [sp, #84]
 	asrs	r0, r0, #16
@@ -492,12 +521,12 @@ BattleEffectA:
 	mov	r1, fp
 	subs	r5, #24
 	cmp	r1, #32
-	ble.n	.L35
+	ble.n	.L_080d8d8a
 	lsls	r3, r1, #1
 	subs	r3, r5, r3
 	adds	r5, r3, #0
 	adds	r5, #64
-.L35:
+.L_080d8d8a:
 	ldr	r2, [sp, #72]
 	movs	r3, #128
 	lsls	r3, r3, #5
@@ -510,10 +539,10 @@ BattleEffectA:
 	adds	r1, r7, #0
 	mov	r2, r8
 	adds	r3, r5, #0
-	bl	Func_080072f4
+	bl	sub_080072f4
 	mov	r0, fp
 	cmp	r0, #3
-	bgt.n	.L33
+	bgt.n	.L_080d8e80
 	ldr	r1, [sp, #40]
 	str	r6, [sp, #0]
 	str	r6, [sp, #4]
@@ -522,8 +551,8 @@ BattleEffectA:
 	mov	r2, r8
 	adds	r1, r7, #0
 	adds	r3, r5, #0
-	bl	Func_080072f4
-	b.n	.L33
+	bl	sub_080072f4
+	b.n	.L_080d8e80
 	movs	r0, r0
 	.4byte 0x00000073
 	.4byte 0x000000ba
@@ -541,10 +570,11 @@ BattleEffectA:
 	.4byte 0xffce0000
 	.4byte 0x00007784
 	.4byte 0x080cd261
-	.4byte 0x03001e80
-.L34:
+	.2byte 0x1e80
+	.2byte 0x0300
+.L_080d8e08:
 	ldr	r0, [sp, #12]
-	bl	Func_08002322
+	bl	sub_08002322
 	ldr	r3, [sp, #88]
 	lsls	r2, r0, #2
 	adds	r2, r2, r0
@@ -557,7 +587,7 @@ BattleEffectA:
 	subs	r2, #10
 	ldr	r0, [sp, #12]
 	mov	r9, r2
-	bl	Func_0800231c
+	bl	sub_0800231c
 	lsls	r0, r0, #2
 	ldr	r3, [sp, #84]
 	asrs	r0, r0, #16
@@ -566,12 +596,12 @@ BattleEffectA:
 	mov	r2, fp
 	subs	r5, #24
 	cmp	r2, #32
-	ble.n	.L36
+	ble.n	.L_080d8e44
 	lsls	r3, r2, #1
 	subs	r3, r5, r3
 	adds	r5, r3, #0
 	adds	r5, #64
-.L36:
+.L_080d8e44:
 	ldr	r3, [sp, #72]
 	movs	r0, #128
 	lsls	r0, r0, #5
@@ -586,10 +616,10 @@ BattleEffectA:
 	ldr	r0, [sp, #68]
 	adds	r1, r6, #0
 	adds	r3, r5, #0
-	bl	Func_080072f4
+	bl	sub_080072f4
 	mov	r2, fp
 	cmp	r2, #3
-	bgt.n	.L33
+	bgt.n	.L_080d8e80
 	mov	r3, r8
 	str	r3, [sp, #0]
 	ldr	r0, [sp, #40]
@@ -599,8 +629,8 @@ BattleEffectA:
 	mov	r2, r9
 	ldr	r0, [sp, #68]
 	adds	r3, r5, #0
-	bl	Func_080072f4
-.L33:
+	bl	sub_080072f4
+.L_080d8e80:
 	movs	r1, #0
 	str	r1, [sp, #60]
 	ldr	r2, [pc, #732]
@@ -608,9 +638,9 @@ BattleEffectA:
 	ldr	r3, [r0, r2]
 	ldr	r3, [r3, #20]
 	cmp	r3, #0
-	bne.n	.L37
-	b.n	.L38
-.L37:
+	bne.n	.L_080d8e92
+	b.n	.L_080d9110
+.L_080d8e92:
 	ldr	r1, [sp, #36]
 	mov	r3, sp
 	adds	r1, #12
@@ -624,21 +654,21 @@ BattleEffectA:
 	str	r0, [sp, #20]
 	str	r1, [sp, #16]
 	str	r3, [sp, #8]
-.L66:
+.L_080d8eac:
 	ldr	r0, [sp, #72]
 	adds	r6, r0, r2
 	ldr	r1, [sp, #16]
 	ldr	r3, [r6, #0]
 	ldrsh	r0, [r3, r1]
-	bl	Func_080b5098
+	bl	sub_080b5098
 	ldr	r3, [sp, #60]
 	lsls	r3, r3, #3
 	ldr	r5, [r0, #0]
 	mov	r9, r3
-	bl	Func_080049ac
+	bl	sub_080049ac
 	ldr	r0, [sp, #36]
 	ldr	r1, [sp, #32]
-	bl	Func_080051d8
+	bl	sub_080051d8
 	ldr	r3, [r5, #8]
 	ldr	r0, [sp, #28]
 	str	r3, [r0, #0]
@@ -648,18 +678,18 @@ BattleEffectA:
 	ldr	r3, [r5, #16]
 	str	r3, [r0, #8]
 	ldr	r0, [sp, #28]
-	bl	Func_08004cb4
+	bl	sub_08004cb4
 	mov	r3, r9
 	adds	r3, #20
 	cmp	fp, r3
-	bne.n	.L39
+	bne.n	.L_080d8ef2
 	movs	r0, #126
-	bl	Func_080f9010
-.L39:
+	bl	sub_080f9010
+.L_080d8ef2:
 	mov	r3, r9
 	adds	r3, #36
 	cmp	fp, r3
-	bne.n	.L40
+	bne.n	.L_080d8f10
 	ldr	r3, [r6, #0]
 	ldr	r1, [sp, #16]
 	ldrsh	r0, [r3, r1]
@@ -669,31 +699,31 @@ BattleEffectA:
 	movs	r1, #7
 	negs	r2, r2
 	ldr	r3, [sp, #60]
-	bl	Func_080d6888
-.L40:
+	bl	sub_080d6888
+.L_080d8f10:
 	cmp	fp, r9
-	bgt.n	.L41
-	b.n	.L42
-.L41:
+	bgt.n	.L_080d8f16
+	b.n	.L_080d90e4
+.L_080d8f16:
 	mov	r3, sl
 	cmp	r3, #0
-	beq.n	.L43
+	beq.n	.L_080d8f58
 	cmp	r3, #6
-	beq.n	.L43
+	beq.n	.L_080d8f58
 	mov	r0, sl
 	cmp	r0, #1
-	bne.n	.L44
+	bne.n	.L_080d8f38
 	mov	r1, fp
 	lsls	r5, r1, #9
 	adds	r0, r5, #0
-	bl	Func_08004bd4
+	bl	sub_08004bd4
 	adds	r0, r5, #0
-	bl	Func_08004c6c
-	b.n	.L45
-.L44:
+	bl	sub_08004c6c
+	b.n	.L_080d8f6c
+.L_080d8f38:
 	mov	r2, sl
 	cmp	r2, #2
-	bne.n	.L46
+	bne.n	.L_080d8f52
 	ldr	r3, [sp, #60]
 	lsls	r0, r3, #2
 	adds	r0, r0, r3
@@ -701,39 +731,39 @@ BattleEffectA:
 	mov	r1, fp
 	subs	r0, r1, r0
 	lsls	r0, r0, #9
-	bl	Func_08004c1c
-	b.n	.L45
-.L46:
+	bl	sub_08004c1c
+	b.n	.L_080d8f6c
+.L_080d8f52:
 	mov	r2, sl
 	cmp	r2, #3
-	bne.n	.L47
-.L43:
+	bne.n	.L_080d8f60
+.L_080d8f58:
 	ldr	r0, [sp, #20]
-	bl	Func_08004c1c
-	b.n	.L45
-.L47:
+	bl	sub_08004c1c
+	b.n	.L_080d8f6c
+.L_080d8f60:
 	ldr	r0, [sp, #20]
-	bl	Func_08004c1c
+	bl	sub_08004c1c
 	ldr	r0, [sp, #20]
-	bl	Func_08004bd4
-.L45:
+	bl	sub_08004bd4
+.L_080d8f6c:
 	ldr	r0, [sp, #52]
 	movs	r3, #0
 	mov	r8, r3
 	cmp	r0, #0
-	bne.n	.L48
-	b.n	.L42
-.L48:
+	bne.n	.L_080d8f78
+	b.n	.L_080d90e4
+.L_080d8f78:
 	mov	r1, sl
 	subs	r1, #3
 	ldr	r2, [sp, #8]
 	ldr	r3, [pc, #488]
 	str	r1, [sp, #24]
 	adds	r6, r2, r3
-.L65:
+.L_080d8f84:
 	ldr	r0, [sp, #24]
 	cmp	r0, #2
-	bhi.n	.L49
+	bhi.n	.L_080d8f9a
 	mov	r1, r8
 	lsrs	r3, r1, #31
 	add	r3, r8
@@ -741,26 +771,26 @@ BattleEffectA:
 	add	r3, r9
 	adds	r2, r3, #0
 	adds	r2, #32
-	b.n	.L50
-.L49:
+	b.n	.L_080d8f9e
+.L_080d8f9a:
 	movs	r2, #128
 	lsls	r2, r2, #9
-.L50:
+.L_080d8f9e:
 	mov	r3, r8
 	cmp	r3, #0
-	bge.n	.L51
+	bge.n	.L_080d8fa6
 	adds	r3, #3
-.L51:
+.L_080d8fa6:
 	asrs	r3, r3, #2
 	add	r3, r9
 	cmp	fp, r3
-	bgt.n	.L52
-	b.n	.L53
-.L52:
+	bgt.n	.L_080d8fb0
+	b.n	.L_080d90d6
+.L_080d8fb0:
 	cmp	fp, r2
-	blt.n	.L54
-	b.n	.L53
-.L54:
+	blt.n	.L_080d8fb6
+	b.n	.L_080d90d6
+.L_080d8fb6:
 	ldr	r3, [r6, #0]
 	asrs	r3, r3, #8
 	adds	r0, r3, #0
@@ -777,25 +807,25 @@ BattleEffectA:
 	adds	r3, r1, #0
 	adds	r0, r0, r3
 	ldr	r3, [pc, #404]
-	bl	Func_080072f0
+	bl	sub_080072f0
 	asrs	r7, r0, #9
 	cmp	r7, #0
-	beq.n	.L53
+	beq.n	.L_080d90d6
 	add	r5, sp, #104
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	Func_080e3944
+	bl	sub_080e3944
 	mov	r2, sl
 	cmp	r2, #0
-	bne.n	.L55
+	bne.n	.L_080d8ff8
 	ldr	r3, [r5, #0]
 	ldr	r0, [sp, #48]
 	adds	r3, r3, r0
-	b.n	.L56
-.L55:
+	b.n	.L_080d8ffc
+.L_080d8ff8:
 	ldr	r3, [r5, #0]
 	asrs	r3, r3, #1
-.L56:
+.L_080d8ffc:
 	str	r3, [r5, #0]
 	ldr	r3, [r5, #4]
 	adds	r3, #16
@@ -803,46 +833,46 @@ BattleEffectA:
 	ldr	r1, [pc, #360]
 	ldr	r3, [r5, #8]
 	cmp	r3, r1
-	bgt.n	.L57
+	bgt.n	.L_080d9012
 	movs	r3, #157
 	lsls	r3, r3, #1
 	str	r3, [r5, #8]
-.L57:
+.L_080d9012:
 	ldr	r2, [pc, #352]
 	cmp	r3, r2
-	ble.n	.L58
+	ble.n	.L_080d901c
 	str	r2, [r5, #8]
 	adds	r3, r2, #0
-.L58:
+.L_080d901c:
 	ldr	r0, [pc, #344]
 	adds	r2, r3, r0
 	cmp	r2, #0
-	bge.n	.L59
+	bge.n	.L_080d9028
 	adds	r2, r3, #0
 	subs	r2, #187
-.L59:
+.L_080d9028:
 	asrs	r2, r2, #7
 	movs	r3, #3
 	mov	r1, sl
 	subs	r4, r3, r2
 	cmp	r1, #0
-	bne.n	.L60
+	bne.n	.L_080d9044
 	mov	r2, r8
 	lsls	r0, r2, #2
 	add	r0, fp
 	movs	r1, #9
-	bl	Func_080022fc
+	bl	sub_080022fc
 	adds	r4, r0, #0
-	b.n	.L61
-.L60:
+	b.n	.L_080d9052
+.L_080d9044:
 	mov	r3, sl
 	cmp	r3, #3
-	beq.n	.L61
+	beq.n	.L_080d9052
 	cmp	r3, #4
-	beq.n	.L61
+	beq.n	.L_080d9052
 	cmp	r3, #5
-	bne.n	.L62
-.L61:
+	bne.n	.L_080d907a
+.L_080d9052:
 	ldr	r2, [pc, #296]
 	lsls	r3, r4, #1
 	ldrh	r1, [r2, r3]
@@ -860,9 +890,9 @@ BattleEffectA:
 	subs	r3, r3, r4
 	ldr	r4, [r0, #4]
 	ldr	r0, [sp, #68]
-	bl	Func_080072f4
-	b.n	.L63
-.L62:
+	bl	sub_080072f4
+	b.n	.L_080d90a2
+.L_080d907a:
 	lsls	r0, r4, #1
 	ldr	r2, [pc, #260]
 	subs	r3, r0, #2
@@ -881,41 +911,41 @@ BattleEffectA:
 	subs	r3, r3, r4
 	ldr	r4, [r0, #4]
 	ldr	r0, [sp, #68]
-	bl	Func_080072f4
-.L63:
+	bl	sub_080072f4
+.L_080d90a2:
 	mov	r1, sl
 	cmp	r1, #2
-	bls.n	.L64
+	bls.n	.L_080d90ac
 	cmp	r1, #6
-	bne.n	.L53
-.L64:
+	bne.n	.L_080d90d6
+.L_080d90ac:
 	ldr	r5, [r6, #0]
 	adds	r1, r7, #0
 	adds	r0, r5, #0
-	bl	Func_080022ec
+	bl	sub_080022ec
 	subs	r5, r5, r0
 	str	r5, [r6, #0]
 	ldr	r5, [r6, #4]
 	adds	r1, r7, #0
 	adds	r0, r5, #0
-	bl	Func_080022ec
+	bl	sub_080022ec
 	subs	r5, r5, r0
 	str	r5, [r6, #4]
 	ldr	r5, [r6, #8]
 	adds	r1, r7, #0
 	adds	r0, r5, #0
-	bl	Func_080022ec
+	bl	sub_080022ec
 	subs	r5, r5, r0
 	str	r5, [r6, #8]
-.L53:
+.L_080d90d6:
 	movs	r2, #1
 	ldr	r3, [sp, #52]
 	add	r8, r2
 	adds	r6, #28
 	cmp	r8, r3
-	beq.n	.L42
-	b.n	.L65
-.L42:
+	beq.n	.L_080d90e4
+	b.n	.L_080d8f84
+.L_080d90e4:
 	ldr	r0, [sp, #20]
 	ldr	r1, [pc, #160]
 	adds	r0, r0, r1
@@ -936,17 +966,17 @@ BattleEffectA:
 	ldr	r3, [r0, r2]
 	ldr	r3, [r3, #20]
 	cmp	r1, r3
-	beq.n	.L38
-	b.n	.L66
-.L38:
-	bl	Func_080cd52c
+	beq.n	.L_080d9110
+	b.n	.L_080d8eac
+.L_080d9110:
+	bl	sub_080cd52c
 	ldr	r3, [pc, #116]
 	ldr	r1, [sp, #72]
 	adds	r2, r1, r3
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	Func_080030f8
+	bl	sub_080030f8
 	movs	r1, #128
 	ldr	r0, [sp, #12]
 	lsls	r1, r1, #4
@@ -956,16 +986,16 @@ BattleEffectA:
 	add	fp, r2
 	str	r0, [sp, #12]
 	cmp	fp, r3
-	beq.n	.L30
-	b.n	.L67
-.L30:
+	beq.n	.L_080d913a
+	b.n	.L_080d8d28
+.L_080d913a:
 	ldr	r0, [pc, #84]
-	bl	Func_08004278
+	bl	sub_08004278
 	movs	r0, #47
-	bl	Func_08002dd8
+	bl	sub_08002dd8
 	movs	r0, #46
-	bl	Func_08002dd8
-	bl	Func_080cdbc0
+	bl	sub_08002dd8
+	bl	sub_080cdbc0
 	add	sp, #128
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

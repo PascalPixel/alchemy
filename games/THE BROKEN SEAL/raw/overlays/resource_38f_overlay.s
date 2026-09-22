@@ -813,7 +813,7 @@
 	.set sub_0200541c, 0x0200541c
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MURA/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MURA/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x20
 AlchemyC_02000050:
@@ -839,7 +839,9 @@ AlchemyC_02000230:
 AlchemyC_02000274:
 	.space 0x10
 AlchemyC_02000284:
-	.space 0x30
+	.space 0x1a
+.L_0200029e:
+	.space 0x16
 AlchemyC_020002b4:
 	.space 0x50
 	push	{r5, r6, r7, lr}
@@ -1213,7 +1215,9 @@ AlchemyC_020008ac:
 AlchemyC_020008d8:
 	.space 0x14
 AlchemyC_020008ec:
-	.space 0x1cbc
+	.space 0x78c
+.L_02001078:
+	.space 0x1530
 AlchemyC_020025a8:
 	.space 0x16
 	.2byte 0x0000
@@ -1507,7 +1511,7 @@ AlchemyC_020026a4:
 	.2byte 0x0200
 AlchemyC_02002910:
 	.space 0x8c
-.include "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MURA/IMPORT.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MURA/IMPORT.INC"
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003

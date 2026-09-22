@@ -12,6 +12,7 @@ const GAME: &[ExecutableDigests] = &[
         &[
             "701fbabb93c11e665550b5106f610169924315ea2be2136fb9e7b9261bfecf8b",
             "7303ec4e1b246415db0edaa888cd8d01550ca2752df825c41f9ec08e8814245f",
+            "4f63bf82c5f20c6cb02186f95b63617188efa67be6e58c02f9a39c89505daa49",
         ],
     ),
     (
@@ -19,6 +20,7 @@ const GAME: &[ExecutableDigests] = &[
         &[
             "affded82f0de6e12dac30857528cd9931e0568ce7f28fadc9f519718e2e75353",
             "4edb7644d5875f3524e40d4830653ab8a232e33984bf6a5700c783f19070887c",
+            "d54535b56093896a15df114b3dd55c77eb096dd4b269379b58a589c6f158a7be",
         ],
     ),
     (
@@ -26,6 +28,7 @@ const GAME: &[ExecutableDigests] = &[
         &[
             "d7638783dff6726bdf50a63fce1a8ca1c163d32976c285cdd94dfb2497c87ed8",
             "c54bbb4c4bc1b9eb79bbe4fdc85d75facd55fd77bb622288e77cf24d61f97214",
+            "35193e2e806e478896453a4d0e9d9f8f1ef0f2d5b474d2f6e6ff2fa1302a4eb2",
         ],
     ),
     (
@@ -33,6 +36,7 @@ const GAME: &[ExecutableDigests] = &[
         &[
             "2cc1e7ca0e33f55d3974df1818403f325f4adc64686eeb228d0f575b8a2f432d",
             "80cbeb50f7e0829a8e27e9492a3fcffb4c7ce6dedbe873464278414003469ee9",
+            "a3d3f0d19e0ab039abc0456cb4690f9a3cf1f5007032dc550dd09952169acdd7",
         ],
     ),
     (
@@ -40,6 +44,7 @@ const GAME: &[ExecutableDigests] = &[
         &[
             "de8c6568d5742acda7dff00acdfd501d50cb767770fb77fa6d688925bb7fec61",
             "d5d916a83c5ab6b3b109f772b6e9c51d0d4dbd5d7c5942ea8be75db1ff1c57c4",
+            "a1cd0b6ced43d691b731504ada7a5a2de728f624b4dbdf3c0f7409a277ba31b8",
         ],
     ),
 ];
@@ -75,6 +80,7 @@ pub static AGBCC_EXPECTED: &[HostDigests] = &[
             "97d346e67ab2751e6d2d4aa81a4b85da69ec35f4b61ead9c310256618420dff7",
             // Source-bootstrap rebuild of the same unmodified da598c1.
             "fc60e7c849af70814e944445142eda626d19ca694a2e1d4f27a1d1d7a0f7b3cd",
+            "3e9433bcfd37994d029389cf6c6ec11f7cba30e23e99f132e8f0220454f3cc32",
         ],
     ),
     ("darwin-x64", &[]),

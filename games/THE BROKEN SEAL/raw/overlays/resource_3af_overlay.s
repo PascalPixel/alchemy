@@ -1123,7 +1123,7 @@
 	.set sub_0200863e, 0x0200863e
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x84
 AlchemyC_020000b4:
@@ -2314,7 +2314,9 @@ AlchemyC_02001920:
 AlchemyC_02001a98:
 	.space 0xc0
 AlchemyC_02001b58:
-	.space 0xbc
+	.space 0xa8
+.L_02001c00:
+	.space 0x14
 AlchemyC_02001c14:
 	.space 0xf8
 AlchemyC_02001d0c:
@@ -4200,7 +4202,7 @@ AlchemyC_02003f30:
 	.space 0x2e8
 AlchemyC_02004218:
 	.space 0x3c
-.include "games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/IMPORT.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/IMPORT.INC"
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003

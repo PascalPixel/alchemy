@@ -1,37 +1,38 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global Func_0800bb20
-	.thumb_func
-Func_0800bb20:
+	.set sub_08003fa4, 0x08003fa4
+	.set sub_08004838, 0x08004838
+	.set sub_080048b0, 0x080048b0
+	.set sub_080048f4, 0x080048f4
+	.global Overlay_0800bb20
+Overlay_0800bb20:
 	push	{r5, r6, r7, lr}
 	sub	sp, #4
 	cmp	r0, #3
-	bne.n	.L0
+	bne.n	.L_0800bb40
 	movs	r1, #224
 	lsls	r1, r1, #4
 	movs	r0, #4
-	bl	Func_080048f4
+	bl	sub_080048f4
 	movs	r1, #192
 	adds	r7, r0, #0
 	lsls	r1, r1, #3
 	movs	r0, #3
-	bl	Func_080048f4
-	b.n	.L1
-.L0:
+	bl	sub_080048f4
+	b.n	.L_0800bb56
+.L_0800bb40:
 	movs	r1, #224
 	lsls	r1, r1, #4
 	movs	r0, #4
-	bl	Func_080048b0
+	bl	sub_080048b0
 	movs	r1, #192
 	adds	r7, r0, #0
 	lsls	r1, r1, #3
 	movs	r0, #3
-	bl	Func_080048b0
-.L1:
+	bl	sub_080048b0
+.L_0800bb56:
 	adds	r6, r0, #0
-	bl	Func_08004838
+	bl	sub_08004838
 	movs	r5, #0
 	mov	r4, sp
 	str	r5, [r4, #0]
@@ -50,11 +51,11 @@ Func_0800bb20:
 	ldr	r2, [pc, #56]
 	movs	r1, #128
 	movs	r0, #93
-	bl	Func_08003fa4
+	bl	sub_08003fa4
 	ldr	r5, [pc, #48]
 	movs	r0, #53
 	adds	r1, r5, #0
-	bl	Func_080048b0
+	bl	sub_080048b0
 	movs	r2, #132
 	lsrs	r5, r5, #2
 	lsls	r2, r2, #24

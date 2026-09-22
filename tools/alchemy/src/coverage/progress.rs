@@ -159,8 +159,8 @@ fn tally(
 /// A game's DONE, or `None` while its executable audit is incomplete and its
 /// denominator therefore unknown.
 pub fn measured(root: &Path, target: &str) -> Result<Option<GameDone>, String> {
-    let game = crate::targets::decomp_target(Some(target))?;
-    let path = root.join(format!("{}/metrics/executable.json", game.game_dir()));
+    crate::targets::decomp_target(Some(target))?;
+    let path = root.join(format!("out/{target}/reports/executable.json"));
     let inventory: Value =
         serde_json::from_slice(&std::fs::read(&path).map_err(|e| e.to_string())?)
             .map_err(|e| e.to_string())?;

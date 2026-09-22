@@ -1,10 +1,10 @@
-@ 呼出しグラフで未到達だったコード間隙関数の再構築サム逆アセンブル。
-@ 探索では未到達。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global Func_0800c004
-	.thumb_func
-Func_0800c004:
+	.set sub_080041d8, 0x080041d8
+	.set sub_080048f4, 0x080048f4
+	.set sub_0800bb20, 0x0800bb20
+	.global Overlay_0800c004
+Overlay_0800c004:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
@@ -12,15 +12,15 @@ Func_0800c004:
 	movs	r1, #92
 	movs	r0, #6
 	sub	sp, #4
-	bl	Func_080048f4
+	bl	sub_080048f4
 	movs	r1, #224
 	lsls	r1, r1, #5
 	mov	r8, r0
 	movs	r0, #5
-	bl	Func_080048f4
+	bl	sub_080048f4
 	adds	r6, r0, #0
 	adds	r0, r7, #0
-	bl	Func_0800bb20
+	bl	sub_0800bb20
 	movs	r5, #0
 	mov	r4, sp
 	str	r5, [r4, #0]
@@ -37,35 +37,35 @@ Func_0800c004:
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	cmp	r7, #4
-	bne.n	.L0
+	bne.n	.L_0800c056
 	ldr	r0, [pc, #88]
 	ldr	r1, [pc, #92]
-	bl	Func_080041d8
-	b.n	.L1
-.L0:
+	bl	sub_080041d8
+	b.n	.L_0800c05e
+.L_0800c056:
 	ldr	r0, [pc, #88]
 	ldr	r1, [pc, #80]
-	bl	Func_080041d8
-.L1:
+	bl	sub_080041d8
+.L_0800c05e:
 	subs	r3, r7, #3
 	cmp	r3, #1
-	bhi.n	.L2
+	bhi.n	.L_0800c070
 	movs	r1, #200
 	ldr	r0, [pc, #76]
 	lsls	r1, r1, #4
-	bl	Func_080041d8
-	b.n	.L3
-.L2:
+	bl	sub_080041d8
+	b.n	.L_0800c084
+.L_0800c070:
 	movs	r1, #200
 	ldr	r0, [pc, #68]
 	lsls	r1, r1, #4
-	bl	Func_080041d8
+	bl	sub_080041d8
 	ldr	r3, [pc, #64]
 	movs	r2, #0
 	str	r2, [r3, #0]
 	ldr	r3, [pc, #60]
 	str	r2, [r3, #0]
-.L3:
+.L_0800c084:
 	mov	r1, r8
 	movs	r2, #0
 	movs	r3, #15

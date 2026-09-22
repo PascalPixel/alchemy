@@ -99,6 +99,8 @@ fn help_is_available_at_both_entry_points() {
         vec!["--help"],
         vec!["decompile", "--help"],
         vec!["disassemble", "--help"],
+        vec!["reconstruct-asm", "--help"],
+        vec!["discover", "--help"],
         vec!["diff", "--help"],
         vec!["repair", "--help"],
         vec!["inspect", "--help"],
@@ -112,6 +114,34 @@ fn help_is_available_at_both_entry_points() {
         assert!(output.status.success());
         assert!(String::from_utf8_lossy(&output.stdout).contains("usage: psynergy"));
     }
+}
+
+#[test]
+fn reconstruct_asm_emits_reassemblable_source_shape() {
+    let dir = tempfile::tempdir().unwrap();
+    let input = write_image(dir.path());
+    let output = command(dir.path())
+        .args([
+            "reconstruct-asm",
+            input.to_str().unwrap(),
+            "--base",
+            "0x08000000",
+            "--entry",
+            "0x08000000",
+            "--span",
+            "12",
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let source = String::from_utf8(output.stdout).unwrap();
+    assert!(source.contains(".syntax unified"), "{source}");
+    assert!(source.contains("Func_08000000:"), "{source}");
+    assert!(source.contains(".4byte 0x08001000"), "{source}");
 }
 
 #[test]

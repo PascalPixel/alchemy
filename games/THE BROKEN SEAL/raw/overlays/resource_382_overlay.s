@@ -403,7 +403,7 @@
 	.set sub_020031b4, 0x020031b4
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_MURA/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_MURA/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x16
 	.2byte 0x0000
@@ -524,7 +524,11 @@ AlchemyC_02001010:
 AlchemyC_0200106c:
 	.space 0x24
 AlchemyC_02001090:
-	.space 0xac
+	.space 0x4
+.L_02001094:
+	.space 0x20
+.L_020010b4:
+	.space 0x88
 AlchemyC_0200113c:
 	.space 0x5c
 AlchemyC_02001198:
@@ -534,7 +538,13 @@ AlchemyC_020011b0:
 AlchemyC_02001238:
 	.space 0x88
 AlchemyC_020012c0:
-	.space 0xac
+	.space 0x2c
+.L_020012ec:
+	.space 0x3a
+.L_02001326:
+	.space 0x22
+.L_02001348:
+	.space 0x24
 	push	{r5, r6, r7, lr}
 	ldr	r0, [pc, #656]
 	sub	sp, #8
@@ -835,10 +845,100 @@ AlchemyC_020012c0:
 	.2byte 0x0000
 AlchemyC_02001638:
 	.space 0x3c
-AlchemyC_02001674:
-	.space 0xb0
+	push	{r5, r6, r7, lr}
+	mov	r7, fp
+	mov	r6, sl
+	mov	r5, r9
+	push	{r5, r6, r7}
+	mov	r7, r8
+	push	{r7}
+	adds	r6, r0, #0
+	mov	r8, r1
+	mov	r7, r8
+	adds	r5, r6, #0
+	adds	r7, #8
+.L_0200168c:
+	adds	r5, #8
+	mov	sl, r2
+	adds	r0, r7, #0
+	movs	r2, #0
+	adds	r1, r5, #0
+	mov	fp, r3
+	mov	r9, r2
+	bl	sub_02002cd4
+	cmp	r0, sl
+	blt.n	.L_020016a8
+	mov	r3, fp
+	cmp	r3, #0
+	beq.n	.L_020016fe
+.L_020016a8:
+	mov	r2, r8
+	ldr	r0, [r2, #16]
+	ldr	r3, [r6, #16]
+	ldr	r1, [r7, #0]
+	subs	r0, r0, r3
+	ldr	r3, [r5, #0]
+	subs	r1, r1, r3
+	bl	sub_02002fd8
+	ldr	r3, [pc, #100]
+	lsls	r0, r0, #16
+	movs	r2, #128
+	lsrs	r0, r0, #16
+	lsls	r2, r2, #5
+	adds	r4, r0, r3
+	adds	r1, r0, r2
+	movs	r3, #240
+	ldrh	r2, [r6, #6]
+	lsls	r3, r3, #8
+	ands	r4, r3
+	ands	r1, r3
+	ands	r0, r3
+	ands	r3, r2
+	cmp	r0, r3
+	beq.n	.L_020016e8
+	cmp	r1, r3
+	beq.n	.L_020016e8
+	cmp	r4, r3
+	beq.n	.L_020016e8
+	mov	r3, fp
+	cmp	r3, #0
+	beq.n	.L_0200170e
+.L_020016e8:
+	adds	r2, r6, #0
+	adds	r2, #91
+	movs	r3, #1
+.L_020016ee:
+	strb	r3, [r2, #0]
+	adds	r0, r6, #0
+	movs	r1, #1
+	bl	sub_0200301e
+	movs	r2, #1
+	mov	r9, r2
+	b.n	.L_0200170e
+.L_020016fe:
+	adds	r3, r6, #0
+	adds	r3, #91
+	mov	r2, r9
+	strb	r2, [r3, #0]
+	adds	r0, r6, #0
+	movs	r1, #2
+	bl	sub_02003034
+.L_0200170e:
+	mov	r0, r9
+	pop	{r3, r5, r6, r7}
+	mov	r8, r3
+	mov	r9, r5
+	mov	sl, r6
+	mov	fp, r7
+	pop	{r5, r6, r7}
+	pop	{r1}
+	bx	r1
+	.2byte 0xf002
+	.2byte 0xfb90
 AlchemyC_02001724:
-	.space 0x18
+	.space 0xa
+.L_0200172e:
+	.space 0xe
 AlchemyC_0200173c:
 	.space 0x18
 AlchemyC_02001754:
@@ -997,9 +1097,22 @@ AlchemyC_02001754:
 	.4byte 0xffffe667
 	.4byte 0x00001999
 	.4byte 0x02009755
-.include "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_MURA/IMPORT.INC"
-AlchemyRuntime_02001ad0:
-	.space 0x3c
+	.include "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_MURA/IMPORT.INC"
+	.4byte 0x46c04700
+	.4byte 0x46c04708
+	.4byte 0x46c04710
+	.4byte 0x46c04718
+	.4byte 0x46c04720
+	.4byte 0x46c04728
+	.4byte 0x46c04730
+	.4byte 0x46c04738
+	.4byte 0x46c04740
+	.4byte 0x46c04748
+	.4byte 0x46c04750
+	.4byte 0x46c04758
+	.4byte 0x46c04760
+	.4byte 0x46c04768
+	.4byte 0x46c04770
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c

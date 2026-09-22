@@ -467,7 +467,7 @@
 	.set sub_02005762, 0x02005762
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x3c
 AlchemyC_0200006c:
@@ -483,9 +483,13 @@ AlchemyC_0200034c:
 AlchemyC_02000474:
 	.space 0x194
 AlchemyC_02000608:
-	.space 0x2b8
+	.space 0x1d6
+.L_020007de:
+	.space 0xe2
 AlchemyC_020008c0:
-	.space 0x11c
+	.space 0x42
+.L_02000902:
+	.space 0xda
 AlchemyC_020009dc:
 	.space 0x16
 	.2byte 0x0000
@@ -503,7 +507,11 @@ AlchemyC_02000ab0:
 	.space 0x36
 	.2byte 0x0000
 AlchemyC_02000ae8:
-	.space 0x1d8
+	.space 0x108
+.L_02000bf0:
+	.space 0x12
+.L_02000c02:
+	.space 0xbe
 AlchemyC_02000cc0:
 	.space 0xe
 	.2byte 0x0000
@@ -825,7 +833,9 @@ AlchemyC_02001424:
 AlchemyC_02001458:
 	.space 0x54
 AlchemyC_020014ac:
-	.space 0x54
+	.space 0x28
+.L_020014d4:
+	.space 0x2c
 AlchemyC_02001500:
 	.space 0xe
 	.2byte 0x0000
@@ -842,7 +852,9 @@ AlchemyC_0200170c:
 	.space 0x36
 	.2byte 0x0000
 AlchemyC_02001744:
-	.space 0x1b4
+	.space 0x7c
+.L_020017c0:
+	.space 0x138
 AlchemyC_020018f8:
 	.space 0x16
 	.2byte 0x0000
@@ -1035,7 +1047,9 @@ AlchemyC_02001a98:
 AlchemyC_02001c2c:
 	.space 0xd8
 AlchemyC_02001d04:
-	.space 0x258
+	.space 0x2e
+.L_02001d32:
+	.space 0x22a
 AlchemyC_02001f5c:
 	.space 0x12
 	.2byte 0x0000
@@ -1045,15 +1059,25 @@ AlchemyC_02001fc4:
 	.space 0x16
 	.2byte 0x0000
 AlchemyC_02001fdc:
-	.space 0x62
+	.space 0x4c
+.L_02002028:
+	.space 0x10
+.L_02002038:
+	.space 0x6
 	.2byte 0x0000
 AlchemyC_02002040:
-	.space 0x62
+	.space 0x50
+.L_02002090:
+	.space 0x12
 	.2byte 0x0000
 AlchemyC_020020a4:
-	.space 0x3a
+	.space 0x2
+.L_020020a6:
+	.space 0x38
 .L_020020de:
-	.space 0x1fe
+	.space 0x38
+.L_02002116:
+	.space 0x1c6
 .L_020022dc:
 	.space 0x24
 AlchemyC_02002300:
@@ -1835,9 +1859,22 @@ AlchemyC_02002480:
 	.4byte 0x00000973
 	.4byte 0x02008e21
 	.4byte 0x00000984
-.include "games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/IMPORT.INC"
-AlchemyRuntime_020031b4:
-	.space 0x3c
+	.include "games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/IMPORT.INC"
+	.4byte 0x46c04700
+	.4byte 0x46c04708
+	.4byte 0x46c04710
+	.4byte 0x46c04718
+	.4byte 0x46c04720
+	.4byte 0x46c04728
+	.4byte 0x46c04730
+	.4byte 0x46c04738
+	.4byte 0x46c04740
+	.4byte 0x46c04748
+	.4byte 0x46c04750
+	.4byte 0x46c04758
+	.4byte 0x46c04760
+	.4byte 0x46c04768
+	.4byte 0x46c04770
 	.4byte 0x00100000
 	.4byte 0x00100000
 	.4byte 0x00100000

@@ -196,7 +196,7 @@
 	.set sub_020024e6, 0x020024e6
 	.global Overlay_02000000
 Overlay_02000000:
-.include "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/ENTRY.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/ENTRY.INC"
 AlchemyC_02000030:
 	.space 0x16
 	.2byte 0x0000
@@ -861,7 +861,13 @@ AlchemyC_02000b14:
 AlchemyC_02000ce4:
 	.space 0x40
 AlchemyC_02000d24:
-	.space 0xa4
+	.space 0x72
+.L_02000d96:
+	.space 0xc
+.L_02000da2:
+	.space 0xc
+.L_02000dae:
+	.space 0x1a
 AlchemyC_02000dc8:
 	.space 0x94
 AlchemyC_02000e5c:
@@ -1261,7 +1267,7 @@ AlchemyC_02000e5c:
 	.4byte 0x00003f42
 	.4byte 0x04000050
 	.4byte 0x04000052
-.include "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/IMPORT.INC"
+	.include "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/IMPORT.INC"
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c

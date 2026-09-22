@@ -1,5 +1,7 @@
 .syntax unified
 	.thumb
+	.global Func_080022ec
+Func_080022ec:
 
 	.set IwramSignedDivide, 0x03000380
 	.set IwramSignedRemainder, 0x030003ac

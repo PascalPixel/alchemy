@@ -1,10 +1,10 @@
-@ コード間隙関数の再構築サム逆アセンブル。範囲は
-@ 制御フロー走査で確定。build_asm.tsでバイト一致確認済み。
 .syntax unified
 	.thumb
-	.global Func_08096ddc
-	.thumb_func
-Func_08096ddc:
+	.set sub_08003f3c, 0x08003f3c
+	.set sub_08009020, 0x08009020
+	.set sub_080090c8, 0x080090c8
+	.global Overlay_08096ddc
+Overlay_08096ddc:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -25,17 +25,17 @@ Func_08096ddc:
 	movs	r7, #0
 	mov	r9, r2
 	mov	fp, r3
-.L2:
+.L_08096e04:
 	ldr	r1, [r6, #8]
 	ldr	r3, [r6, #16]
 	ldr	r2, [r6, #12]
 	movs	r0, #26
-	bl	Func_080090c8
+	bl	sub_080090c8
 	lsls	r3, r7, #2
 	mov	r1, r9
 	str	r0, [r3, r1]
 	cmp	r0, #0
-	beq.n	.L0
+	beq.n	.L_08096ebc
 	ldr	r3, [r6, #20]
 	str	r3, [r0, #20]
 	adds	r3, r0, #0
@@ -52,22 +52,23 @@ Func_08096ddc:
 	str	r3, [r0, #28]
 	str	r3, [r0, #24]
 	cmp	r5, #0
-	beq.n	.L0
-	b.n	.L1
+	beq.n	.L_08096ebc
+	b.n	.L_08096e4c
 	movs	r0, r0
 	.4byte 0x00000000
 	.4byte 0x03001f30
-	.4byte 0x00001999
-.L1:
+	.2byte 0x1999
+	.2byte 0x0000
+.L_08096e4c:
 	movs	r1, #0
 	adds	r0, r5, #0
-	bl	Func_08009020
+	bl	sub_08009020
 	adds	r3, r5, #0
 	adds	r3, #38
 	mov	r2, r8
 	strb	r2, [r3, #0]
 	ldrb	r0, [r5, #28]
-	bl	Func_08003f3c
+	bl	sub_08003f3c
 	mov	r3, sl
 	adds	r3, #70
 	ldrh	r3, [r3, #0]
@@ -107,14 +108,15 @@ Func_08096ddc:
 	ldr	r3, [r5, #40]
 	mov	r1, r8
 	strb	r1, [r3, #22]
-	b.n	.L0
+	b.n	.L_08096ebc
 	movs	r0, r0
 	.4byte 0xfffffc00
-	.4byte 0x03001b10
-.L0:
+	.2byte 0x1b10
+	.2byte 0x0300
+.L_08096ebc:
 	adds	r7, #1
 	cmp	r7, #1
-	ble.n	.L2
+	ble.n	.L_08096e04
 	ldr	r2, [sp, #4]
 	ldr	r3, [pc, #68]
 	ldr	r0, [r2, #80]

@@ -1,13 +1,7 @@
-@ 地図タイルの転送。視点 (r0, r1) を 0x03001e70 の範囲 (+236..+248) に収めて +228/+232 に
-@ 置き、3 層 (+256.. の有効旗) それぞれで IwramMulQ16 による層の縮尺と視差の積算
-@ (+24..+36) から先頭タイルを求め、0x02010000 / 0x02020000 の地図語から 0x06002800 の
-@ 面 (層ごと 0x800) へ 16 タイル × (22 または 32) 列を写す。
-@ mov ip,pc / bx でIWRAM核へ飛ぶ呼出し規約は C では表現不能なため、アセンブリとして保持する。
 .syntax unified
 	.thumb
-	.global Func_08010230
-	.thumb_func
-Func_08010230:
+	.global Overlay_08010230
+Overlay_08010230:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -33,34 +27,34 @@ Func_08010230:
 	ldr	r3, [r3, #0]
 	adds	r7, r7, r2
 	cmp	r7, r3
-	bge.n	.L0
+	bge.n	.L_08010266
 	adds	r7, r3, #0
-.L0:
+.L_08010266:
 	ldr	r3, [sp, #20]
 	adds	r3, #244
 	ldr	r3, [r3, #0]
 	ldr	r5, [pc, #404]
 	adds	r3, r3, r5
 	cmp	r7, r3
-	ble.n	.L1
+	ble.n	.L_08010276
 	adds	r7, r3, #0
-.L1:
+.L_08010276:
 	ldr	r3, [sp, #20]
 	adds	r3, #240
 	ldr	r3, [r3, #0]
 	cmp	r0, r3
-	bge.n	.L2
+	bge.n	.L_08010282
 	adds	r0, r3, #0
-.L2:
+.L_08010282:
 	ldr	r3, [sp, #20]
 	adds	r3, #248
 	ldr	r3, [r3, #0]
 	ldr	r1, [pc, #380]
 	adds	r3, r3, r1
 	cmp	r0, r3
-	ble.n	.L3
+	ble.n	.L_08010292
 	adds	r0, r3, #0
-.L3:
+.L_08010292:
 	ldr	r2, [sp, #20]
 	adds	r2, #228
 	str	r2, [sp, #16]
@@ -71,8 +65,7 @@ Func_08010230:
 	str	r3, [sp, #12]
 	str	r0, [r3, #0]
 	str	r5, [sp, #28]
-@ 層ループ。
-.L13:
+.L_080102a6:
 	ldr	r1, [sp, #28]
 	movs	r2, #128
 	lsls	r2, r2, #1
@@ -80,16 +73,15 @@ Func_08010230:
 	adds	r3, r1, r2
 	ldrb	r3, [r5, r3]
 	cmp	r3, #0
-	bne.n	.L4
-	b.n	.L5
-.L4:
+	bne.n	.L_080102b8
+	b.n	.L_080103da
+.L_080102b8:
 	ldr	r1, [sp, #16]
 	mov	r2, lr
 	ldr	r0, [r1, #0]
 	movs	r4, #22
 	ldr	r1, [r2, #16]
 	ldr	r3, [pc, #328]
-@ IwramMulQ16ReturnIp: X × 層の縮尺。
 	mov	ip, pc
 	bx	r3
 	ldr	r5, [sp, #12]
@@ -98,13 +90,12 @@ Func_08010230:
 	ldr	r1, [r2, #20]
 	ldr	r0, [r5, #0]
 	movs	r0, r0
-@ IwramMulQ16ReturnIp: Z × 層の縮尺。
 	mov	ip, pc
 	bx	r3
 	mov	r3, lr
 	ldr	r2, [r3, #24]
 	cmp	r2, #0
-	beq.n	.L6
+	beq.n	.L_080102f4
 	ldr	r3, [r3, #32]
 	mov	r5, lr
 	adds	r3, r3, r2
@@ -115,12 +106,11 @@ Func_08010230:
 	lsls	r3, r3, #19
 	orrs	r3, r1
 	ands	r7, r3
-@ 視差の積算とマスク。
-.L6:
+.L_080102f4:
 	mov	r3, lr
 	ldr	r2, [r3, #28]
 	cmp	r2, #0
-	beq.n	.L7
+	beq.n	.L_08010312
 	ldr	r3, [r3, #36]
 	mov	r5, lr
 	adds	r3, r3, r2
@@ -132,7 +122,7 @@ Func_08010230:
 	orrs	r3, r1
 	ands	r0, r3
 	movs	r4, #32
-.L7:
+.L_08010312:
 	mov	r2, lr
 	ldr	r3, [r2, #8]
 	adds	r7, r7, r3
@@ -142,17 +132,17 @@ Func_08010230:
 	add	lr, r3
 	adds	r1, r7, #0
 	cmp	r7, #0
-	bge.n	.L8
+	bge.n	.L_0801032a
 	ldr	r5, [pc, #232]
 	adds	r1, r7, r5
-.L8:
+.L_0801032a:
 	asrs	r7, r1, #19
 	adds	r2, r0, #0
 	cmp	r0, #0
-	bge.n	.L9
+	bge.n	.L_08010336
 	ldr	r3, [pc, #220]
 	adds	r2, r0, r3
-.L9:
+.L_08010336:
 	ldr	r5, [sp, #28]
 	lsls	r3, r5, #11
 	ldr	r5, [pc, #216]
@@ -173,7 +163,7 @@ Func_08010230:
 	str	r5, [sp, #24]
 	lsls	r5, r3, #5
 	cmp	r8, fp
-	bcs.n	.L5
+	bcs.n	.L_080103da
 	lsrs	r3, r1, #31
 	adds	r3, r7, r3
 	asrs	r3, r3, #1
@@ -182,8 +172,7 @@ Func_08010230:
 	movs	r3, #127
 	mov	r9, r3
 	mov	sl, r1
-@ 行ループ: 地図語からタイル番号を引き、VRAM の面へ 2 段ずつ書く。
-.L11:
+.L_08010370:
 	ldr	r4, [sp, #8]
 	mov	r2, r9
 	adds	r0, r7, #0
@@ -192,7 +181,7 @@ Func_08010230:
 	ands	r4, r2
 	ands	r0, r3
 	mov	ip, r1
-.L10:
+.L_08010380:
 	adds	r3, r6, r4
 	ldr	r2, [pc, #148]
 	lsls	r3, r3, #2
@@ -226,7 +215,7 @@ Func_08010230:
 	mov	r3, ip
 	ands	r0, r1
 	cmp	r3, #15
-	bls.n	.L10
+	bls.n	.L_08010380
 	movs	r3, #254
 	lsls	r3, r3, #6
 	adds	r6, #128
@@ -237,15 +226,15 @@ Func_08010230:
 	add	r8, r2
 	ands	r5, r3
 	cmp	r8, fp
-	bcc.n	.L11
-.L5:
+	bcc.n	.L_08010370
+.L_080103da:
 	ldr	r5, [sp, #28]
 	adds	r5, #1
 	str	r5, [sp, #28]
 	cmp	r5, #2
-	bhi.n	.L12
-	b.n	.L13
-.L12:
+	bhi.n	.L_080103e6
+	b.n	.L_080102a6
+.L_080103e6:
 	add	sp, #32
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3
@@ -261,8 +250,3 @@ Func_08010230:
 	.4byte 0xff100000
 	.4byte 0xff600000
 	.4byte 0x03000118
-	.4byte 0x0007ffff
-	.4byte 0x06002800
-	.4byte 0x02010000
-	.4byte 0x02020000
-	.4byte 0x02020004

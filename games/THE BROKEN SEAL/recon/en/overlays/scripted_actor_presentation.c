@@ -1,15 +1,9 @@
 #include "OBJECT_RUNTIME.H"
+#include "FIELD_EVENT.H"
 
 #define Scene_RunScriptedActorPresentation Func_020008b4
 
-struct SceneWork {
-    u8 unknown_000[0x1c0];
-    s32 request;
-    u8 unknown_1c4[0x14];
-    u16 step;
-};
-
-extern struct SceneWork *Data_03001ebc;
+extern struct EventWork *Data_03001ebc;
 extern u8 Data_0200dfc4[];
 u8 *Func_02006612();
 void Func_02006600();
@@ -546,7 +540,7 @@ void Scene_RunScriptedActorPresentation(void)
     Func_02001992(selector_a014);
     Func_02006eba(19, 4);
     Func_020019a0(0x2013);
-    Data_03001ebc->request = 0x202;
+    Data_03001ebc->start_transition = 0x202;
     Func_02006fba();
     Func_02006fc6();
     Call4(Func_02006f6e, 0x1f80000, -0x180000, 0xa80000, 0);
@@ -570,7 +564,7 @@ void Scene_RunScriptedActorPresentation(void)
     Func_02006fc2(2, 0x4000, 0);
     Call3(Func_02006fce, 3, 0x2000, 0);
     if (Value2(Func_02006f06, 0, 0) == 1) {
-        Data_03001ebc->step += 1;
+        Data_03001ebc->message += 1;
     }
     (Func_02006f06_a)(20);
     Func_02001a74(1);

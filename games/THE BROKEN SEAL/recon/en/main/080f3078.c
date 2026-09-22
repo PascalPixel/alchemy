@@ -1,4 +1,5 @@
 #include "video_dma_family.h"
+#include "IWRAM_CALL.H"
 
 /* games/THE BROKEN SEAL/INCLUDE/TYPES.H already aliases this owner; the identical
    definition is repeated here so the entry symbol is visible in this file. */
@@ -36,13 +37,8 @@
  * Known residuals against the reference, measured at 1796/1796 bytes and 766
  * differing halfwords:
  *
- *  - The three calls to 0x03000118 are reached in the reference by an inline
- *    `mov ip, pc` / `bx r3` pair, which leaves the return address in ip rather
- *    than lr. The approved route compiles an indirect call as `bl
- *    _call_via_r3`; both forms are two halfwords, so each of the three sites
- *    differs in both of them. This is a compiler-route difference, not a
- *    source spelling: a typed indirect call is the sanctioned model for a
- *    call-via slot, and no ordinary C reaches the inline form here.
+ *  - The three calls to 0x03000118 use the shared ip-linked interface in
+ *    IWRAM_CALL.H, matching the reference's `mov ip, pc` / `bx r3` contract.
  *  - The reference issues each DMA request as one three-word block store
  *    (`stmia r3!, {r0,r1,r2}` then `subs r3, #12`), where the shared
  *    StartDmaTransfer helper emits three separate word stores.
@@ -70,7 +66,6 @@ s32 Func_080022ec(s32 numerator, s32 denominator);
 #define Math_Div Func_080022ec
 
 typedef s32 (*DivideFunc)(s32 num, s32 den);
-typedef u32 (*BlendFunc)(s32 a, s32 b);
 
 extern const u16 Data_080f39ee[];
 extern const u16 Data_080f3a2e[];
@@ -83,7 +78,6 @@ extern const u16 Data_080f3a6e[];
 void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
 {
     DivideFunc divide;
-    BlendFunc blend;
     const u16 *tbl;
     u16 *out;
     u32 cnt;
@@ -291,7 +285,6 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
         }
     } else if ((mode & 0x400000) != 0) {
         divide = (DivideFunc)0x03000380;
-        blend = (BlendFunc)0x03000118;
         tint_r = mode & 31;
         tint_g = (mode >> 5) & 31;
         tint_b = (mode >> 10) & 31;
@@ -300,9 +293,9 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
             c = *src++;
             v = divide((((c & 31) + ((c >> 5) & 31) + ((c >> 10) & 31)) << 4),
                        tint_r + tint_g + tint_b);
-            r = blend(((tint_r * v) >> 4) << 16, (s32)(tint_r << 16) >> 4);
-            g = blend(((tint_g * v) >> 4) << 16, (s32)(tint_g << 16) >> 4);
-            b = blend(((tint_b * v) >> 4) << 16, (s32)(tint_b << 16) >> 4);
+            r = Iwram_MulQ16(((tint_r * v) >> 4) << 16, (s32)(tint_r << 16) >> 4);
+            g = Iwram_MulQ16(((tint_g * v) >> 4) << 16, (s32)(tint_g << 16) >> 4);
+            b = Iwram_MulQ16(((tint_b * v) >> 4) << 16, (s32)(tint_b << 16) >> 4);
             r = Graphics_ClampRgb555Channel((u32)r >> 16);
             g = Graphics_ClampRgb555Channel((u32)g >> 16);
             b = Graphics_ClampRgb555Channel((u32)b >> 16);

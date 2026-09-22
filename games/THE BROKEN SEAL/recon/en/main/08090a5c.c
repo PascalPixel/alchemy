@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 
 /*
  * main:08090a5c, 1816 bytes.
@@ -42,9 +43,8 @@
  *    veneer it uses for the divide, and it does so with the callee already in
  *    r3 - the same register the veneer form uses two instructions earlier in
  *    the same loop.  That sequence does not set lr, so it is not an ordinary
- *    Thumb indirect call; the source spelling that produces it is unknown and
- *    both tried spellings (a local function pointer, and a direct call through
- *    the cast literal) compile to the veneer.  Three call sites differ.
+ *    Thumb indirect call. IWRAM_CALL.H supplies that shared typed machine
+ *    interface for all three sites.
  *  - The DMA count in the mode < 0x8000 case is written "* 3 * 2 >> 1"
  *    because the reference literally multiplies (cnt - 1) by six and then
  *    shifts right by one: the shift is a basic block it shares with the
@@ -79,7 +79,6 @@
 #define PaletteEffect_BuildComponentTable Func_08090a5c
 
 typedef s32 (*SignedDivide)(s32 numerator, s32 denominator);
-typedef s32 (*ScaleFixed)(s32 value, s32 scale);
 
 s32 Func_080022ec(s32 numerator, s32 denominator);
 s32 BattleFx_ClampRgb555Channel(s32 value);
@@ -370,7 +369,6 @@ void PaletteEffect_BuildComponentTable(u32 mode, u16 *src, u16 *dst, s32 part)
     if ((mode & 0x400000) != 0) {
         /* Blend each entry towards a fixed colour, keeping its brightness. */
         SignedDivide divide;
-        ScaleFixed scale;
         u32 red;
         u32 green;
         u32 blue;
@@ -388,12 +386,11 @@ void PaletteEffect_BuildComponentTable(u32 mode, u16 *src, u16 *dst, s32 part)
             k = divide((s32)(((c & 31) + ((c >> 5) & 31) + ((c >> 10) & 31))
                              << 4),
                        (s32)(red + green + blue));
-            scale = (ScaleFixed)0x03000118;
-            rr = (u32)scale((s32)(((red * (u32)k) >> 4) << 16),
+            rr = (u32)Iwram_MulQ16((s32)(((red * (u32)k) >> 4) << 16),
                             (s32)(red << 16) >> 4);
-            gg = (u32)scale((s32)(((green * (u32)k) >> 4) << 16),
+            gg = (u32)Iwram_MulQ16((s32)(((green * (u32)k) >> 4) << 16),
                             (s32)(green << 16) >> 4);
-            bb = (u32)scale((s32)(((blue * (u32)k) >> 4) << 16),
+            bb = (u32)Iwram_MulQ16((s32)(((blue * (u32)k) >> 4) << 16),
                             (s32)(blue << 16) >> 4);
             rr = (u32)BattleFx_ClampRgb555Channel((s32)(rr >> 16));
             gg = (u32)BattleFx_ClampRgb555Channel((s32)(gg >> 16));

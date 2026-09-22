@@ -586,7 +586,8 @@
         "approved_gcc_2_96_thumb_si_sf_moves_emit_single_register_transfers_and_di_df_moves_emit_two_register_transfers_only_arm_md_3728_3751_3838_3853_4721_4734_4853_4870",
         "approved_gcc_2_96_thumb_movmem8b_movmem12b_emit_multi_register_transfers_only_as_immediately_adjacent_matching_ldmia_then_stmia_pairs_arm_md_5080_5141_arm_c_9425_9465",
         "approved_generic_multiple_transfer_patterns_are_target_arm_only_arm_md_4975_5078",
-        "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
+        "shared_03000118_ip_link_interface_reconstructed_in_fixed_math_header",
+        "other_ip_link_targets_remain_unreconstructed",
         "byte_exact_reconstruction",
         "no_thumb_stmia_producer_beyond_movmem_arm_md_5111_5141_arm_c_9425_9465"
       ],
@@ -1134,11 +1135,11 @@
             "bytes": 5522
           }
         },
-        "verdict": "not_compiler_no_cross_product_identity_not_proven_handwritten",
+        "verdict": "shared_03000118_call_interface_reconstructed_remaining_owners_unresolved",
         "credit": "none",
-        "note": "no cross-product identity; callers of the IWRAM kernels at 0x03000118/0x0300013c through mov ip,pc; bx r4",
+        "note": "IWRAM_CALL.H reconstructs the typed two-argument 0x03000118 call interface with its ip link; other kernels and surrounding owners remain unresolved",
         "file_check": "2026-09-10, all 50 files: named entry symbols, a header stating the job and why it stays assembly, block comments naming the IWRAM kernel each ip-linked call reaches (IwramMulQ16ReturnIp 0x03000118, IwramRatioMulQ14 0x0300013c, IwramSqrt 0x030001d8, IwramSignedDivide 0x03000380, IwramUnsignedDivide 0x030003f0, IwramTransformVector 0x03000250, IwramTransformMatrix 0x030002c0, IwramClearWords 0x03000164, IwramCopyWords 0x03001388); instruction and data lines untouched; byte-identical builds at each of seven batches (commits 36bf02e33 .. this one). One region, 0800ee14, is a continuation fragment without an entry and is headed as such.",
-        "reason": "Retained assembly without machine-verifiable named object identity or positive handwritten authorship evidence."
+        "reason": "The recurring 0x03000118 call sequence is now source-built, but the complete retained owners are not exact C and have no positive handwritten authorship evidence."
       }
     },
     {

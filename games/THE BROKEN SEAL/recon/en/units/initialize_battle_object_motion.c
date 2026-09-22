@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "MOTION_OBJECT.H"
-
-typedef s32 (*BattleFixedMultiply)(s32, s32);
+#include "IWRAM_CALL.H"
 
 void Object_SetMode(struct MotionObject *, s32);
 void Object_ResetMotion(struct MotionObject *);
@@ -22,8 +21,7 @@ void BattleMotion_InitializeObject(s32 id)
     object->auto_face_motion = 0;
     Object_ResetMotion(object);
     Object_SetPosition(object,
-                       ((BattleFixedMultiply)0x03000118)(slot->anchor_x,
-                                                         0x14ccc),
+                       Iwram_MulQ16(slot->anchor_x, 0x14ccc),
                        0, slot->anchor_z);
     Object_SetMode(object, 5);
 }

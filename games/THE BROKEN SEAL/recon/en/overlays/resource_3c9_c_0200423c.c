@@ -1,4 +1,7 @@
 #include "TYPES.H"
+#define Engine_EventWait Func_0200a038
+#define Engine_ObjectMotionArmCallback Func_0200a0ce
+#include "FIELD_EVENT.H"
 
 #define FieldScene_RunActorTransition Func_0200423c
 
@@ -160,9 +163,9 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 void FieldScene_RunActorTransition(void)
 {
     s32 zero;
-    u8 *actor26;
-    u8 *actor27;
-    u8 *actor28;
+    struct FieldActor *actor26;
+    struct FieldActor *actor27;
+    struct FieldActor *actor28;
     u8 *record;
     u8 *action_start;
     s32 none;
@@ -178,14 +181,14 @@ void FieldScene_RunActorTransition(void)
     Call3(Func_0200a0ba, 3, 0x100, 0);
     Call3(Func_0200a0c6, 21, 0x100, 0);
     Call3(Func_0200a0d2, 6, 0x100, 10);
-    Call3(Func_0200a0ce, 0, 0xa000, 0);
-    Call3(Func_0200a0da, 1, 0xa000, 0);
-    Call3(Func_0200a0e6, 2, 0xa000, 0);
-    Call3(Func_0200a0f2, 3, 0xa000, 0);
-    Call3(Func_0200a0fe, 21, 0xd000, 0);
-    Call3(Func_0200a10a, 6, 0xd000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 0, 0xa000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 1, 0xa000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 2, 0xa000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 3, 0xa000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 21, 0xd000, 0);
+    Call3(Engine_ObjectMotionArmCallback, 6, 0xd000, 0);
     Call3(Func_02009fc2, 0x20000, 0x20000, 0x10000);
-    Func_0200a038(10);
+    Engine_EventWait(10);
     Call3(Func_02009fd8, 0x10000, 0x10000, 0x10000);
     Call4(Func_0200a16a, 0x1300000, 0x200000, 0xb40000, 1);
     Func_0200a176();
@@ -214,36 +217,36 @@ void FieldScene_RunActorTransition(void)
     record = Func_0200a10e(26);
     Func_0200a074(record, 0);
     actor26 = Func_0200a11a_a(26);
-    *(s32 *)(actor26 + 28) = -0x10000;
+    actor26->scale_y = -0x10000;
     record = Pointer1(Func_0200a128, 24);
-    *(s32 *)(actor26 + 24) = *(s32 *)(record + 24);
+    actor26->scale_x = *(s32 *)(record + 24);
     none = 0;
-    actor26[85] = none;
-    *(s32 *)(actor26 + 8) = 0x1300000;
-    *(s32 *)(actor26 + 12) = -0x200000;
-    *(s32 *)(actor26 + 16) = 0x600000;
+    actor26->motion_flags = none;
+    actor26->x.fixed = 0x1300000;
+    actor26->y.fixed = -0x200000;
+    actor26->z.fixed = 0x600000;
     Func_0200a1ea(27, 7);
     record = Func_0200a158(27);
     Func_0200a0be(record, 0);
     actor27 = Func_0200a164(27);
-    *(s32 *)(actor27 + 28) = -0x10000;
+    actor27->scale_y = -0x10000;
     record = Pointer1(Func_0200a170, 24);
-    *(s32 *)(actor27 + 24) = *(s32 *)(record + 24);
-    actor27[85] = none;
-    *(s32 *)(actor27 + 8) = 0x1300000;
-    *(s32 *)(actor27 + 12) = none;
-    *(s32 *)(actor27 + 16) = 0x600000;
+    actor27->scale_x = *(s32 *)(record + 24);
+    actor27->motion_flags = none;
+    actor27->x.fixed = 0x1300000;
+    actor27->y.fixed = none;
+    actor27->z.fixed = 0x600000;
     Func_0200a226(28, 7);
     record = Func_0200a194(28);
     Func_0200a0fa(record, 0);
     actor28 = Func_0200a1a0_a(28);
-    *(s32 *)(actor28 + 28) = -0x10000;
+    actor28->scale_y = -0x10000;
     record = Pointer1(Func_0200a1ac, 24);
-    *(s32 *)(actor28 + 24) = *(s32 *)(record + 24);
-    actor28[85] = none;
-    *(s32 *)(actor28 + 8) = 0x1300000;
-    *(s32 *)(actor28 + 12) = 0x200000;
-    *(s32 *)(actor28 + 16) = 0x600000;
+    actor28->scale_x = *(s32 *)(record + 24);
+    actor28->motion_flags = none;
+    actor28->x.fixed = 0x1300000;
+    actor28->y.fixed = 0x200000;
+    actor28->z.fixed = 0x600000;
     Call6(Func_0200a120, 102, 4, 74, 4, 18, 23);
     Call6(Func_0200a134, 39, 72, 11, 72, 16, 21);
     Call6(Func_0200a152, 19, 6, 3, 7, 22, 6);
@@ -318,7 +321,7 @@ void FieldScene_RunActorTransition(void)
     Call1(Func_0200a2c8, 0x200b6d1);
     Func_0200a492(2, 2, 20);
     Func_02004f60(2);
-    Call3(Func_0200a4ec, 1, 0x6000, 20);
+    Call3(Engine_ObjectMotionArmCallback, 1, 0x6000, 20);
     Call2(Func_0200a50e, 1, 0x102);
     Func_0200a414(20);
     Func_0200a4c4(1, 2);

@@ -551,19 +551,15 @@ void FieldScene_RunActorMotionPresentation(void)
 {
     u8 *rec8;
     u8 *record;
-    u8 none;
-    s32 v5;
-    s32 base5_0;
+    s32 none;
     u8 *slot28;
     u32 savedSceneState;
     s32 script;
-    s32 clear;
 
     Func_020075aa();
     Call4(Func_020076e4, -1, -1, -1, 0);
     rec8 = Func_020076f8();
-    none = 0;
-    rec8[85] = none;
+    rec8[85] = 0;
     Call4(Func_02007704, 0x17f0000, 0xa00000, 0x36d0000, 0);
     Func_020075da(1);
     Func_0200753e();
@@ -574,7 +570,7 @@ void FieldScene_RunActorMotionPresentation(void)
     rec8 = Func_0200765e(0);
     slot28 = rec8 + 85;
     savedSceneState = rec8[85];
-    rec8[85] = none;
+    rec8[85] = 0;
     Call3(Func_020076d0, 0, 0x1970000, 0x2b20000);
     Call3(Func_020076de, 21, 0x1880000, 0x3800000);
     Call3(Func_020076ec, 1, 0x12a0000, 0x2e00000);
@@ -587,7 +583,7 @@ void FieldScene_RunActorMotionPresentation(void)
     script = (s32)Data_0200e590;
     Func_020076f4(0, script);
     Func_02004b66(23, 2, 1);
-    Data_03001ebc->start_transition = none;
+    Data_03001ebc->start_transition = 0;
     Data_03001ebc->transition_frames = 32;
     Func_0200782c();
     Call3(Func_02007722, 5, 0x8000, 0x4000);
@@ -870,7 +866,7 @@ void FieldScene_RunActorMotionPresentation(void)
     Func_020081ce(21, 4);
     Func_0200813c(10);
     Value2(Func_0200821c, 21, 0);
-    clear = 0;
+    none = 0;
     if (Func_02008176(0, 0) == 1) {
         Data_03001ebc->message += 1;
     }
@@ -885,26 +881,26 @@ void FieldScene_RunActorMotionPresentation(void)
     Func_0200825c(21, 3);
     Func_02008244_a(21, 7);
     Func_020081ba(5);
-    Call11(Func_020082dc, 21, 14, 2, 24, 2, 1, 10, 14, 4, 14, clear);
+    Call11(Func_020082dc, 21, 14, 2, 24, 2, 1, 10, 14, 4, 14, none);
     rec8 = Func_02008212_a(21);
     {
         u8 *part = *(u8 **)(rec8 + 80);
         u8 *flags = rec8 + 90;
         u8 value = *flags;
 
-        part[38] = clear;
+        part[38] = none;
         *flags = value & 254;
     }
     Call3(Func_0200823c, 21, 0x30000, 0x18000);
     Call3(Func_02008280, 21, 0x16c, 0x32f);
-    v5 = 0;
+    none = 0;
     Func_02008216(4);
     do {
         *(s32 *)((s32)rec8 + 16) += 0x18000;
         *(s32 *)((s32)rec8 + 28) += -0x1999;
-        v5 = (v5 + 1);
+        none = (none + 1);
         Func_02008232(1);
-    } while (v5 != 4);
+    } while (none != 4);
     Func_02008304(21, 0, 0);
     Call3(Func_020082c2, 1, 0x30000, 0x18000);
     Func_02008334(1, 6, 0);
@@ -928,12 +924,12 @@ void FieldScene_RunActorMotionPresentation(void)
     Func_020083dc(21, 8);
     *(s32 *)((s32)rec8 + 28) = 0x8000;
     Call3(Func_020083e6, 21, 0x16c0000, 0x32b0000);
-    base5_0 = 0;
+    none = 0;
     do {
         *(s32 *)((s32)rec8 + 28) += 0x1999;
-        base5_0 = (base5_0 + 1);
+        none = (none + 1);
         Func_02008370_a(1);
-    } while (base5_0 != 5);
+    } while (none != 5);
     Func_0200837a(60);
     Func_02008432(1, 2);
     Call3(Func_02008486, 1, 0x5000, 30);
@@ -1090,8 +1086,8 @@ void FieldScene_RunActorMotionPresentation(void)
     Call3(Func_02008a54, 0, 0xc000, 0);
     {
         u8 *record = Func_02008992(21);
-        v5 = 1 | record[90];
-        record[90] = v5;
+        none = 1 | record[90];
+        record[90] = none;
     }
     Func_02005d42(21, 6, 5, 0);
     Call3(Func_020089f0, 21, 0x175, 0x377);

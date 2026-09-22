@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFFECT_WORK.H"
 
 /*
  * Battle-presentation scene driver for the 0x03001EEC "battle work" subsystem,
@@ -160,15 +161,15 @@ void Func_080e823c(void *object)
     canvas = cursor[0];
     work = cursor[-1];
     sprite_sheet = cursor[1];
-    M2C_FIELD(work, void **, 0x7828) = object;
+    ((struct BattleEffectWork *)work)->effect = object;
     Func_080cd594(0);
     Func_080c9048();
     *(u16 *)0x05000000 = (u16)(s32)&Value_00000000;
     *(u16 *)0x05000002 = (u16)(s32)&Value_00000000;
-    M2C_FIELD(work, s32 *, 0x7780) = 0;
+    ((struct BattleEffectWork *)work)->transfer_mode = 0;
     Func_080041d8((void *)0x080CD261, 0x480);
     Func_080cd104(1, 0);
-    Func_080d6750(M2C_FIELD(work, void **, 0x7828));
+    Func_080d6750(((struct BattleEffectWork *)work)->effect);
     Func_080dbb24(9, 0x17B, 2);
 
     /* Six drawable objects into handles 9..14 of the work table. */
@@ -209,8 +210,8 @@ void Func_080e823c(void *object)
     *(u16 *)0x04000020 = 0x80;
     *(u16 *)0x04000052 = 0x1010;
     *(u16 *)0x04000050 = 0x3F44;
-    M2C_FIELD(work, s32 *, 0x7780) = 2;
-    M2C_FIELD(work, s32 *, 0x7784) = 50;
+    ((struct BattleEffectWork *)work)->transfer_mode = 2;
+    ((struct BattleEffectWork *)work)->transfer_value = 50;
 
     org.bg_x = 0xBC0000;
     org.bg_y = 0x5C0000;
@@ -403,23 +404,26 @@ void Func_080e823c(void *object)
 
             if (frame == 260) {
                 n = 0;
-                count = M2C_FIELD(
-                    M2C_FIELD(work, void **, 0x7828), s32 *, 0x14);
+                count = ((struct BattleEffectArgument *)
+                    ((struct BattleEffectWork *)work)->effect)->count;
                 if (count != 0) {
                     off = 36;
                     do {
                         Func_080b5088(
-                            M2C_FIELD(M2C_FIELD(work, void **, 0x7828),
-                                s16 *, off),
+                            ((struct BattleEffectArgument *)
+                                ((struct BattleEffectWork *)work)->effect)->actors[
+                                (off - 36) >> 1],
                             4);
                         Func_080d6888(
-                            M2C_FIELD(M2C_FIELD(work, void **, 0x7828),
-                                s16 *, off),
+                            ((struct BattleEffectArgument *)
+                                ((struct BattleEffectWork *)work)->effect)->actors[
+                                (off - 36) >> 1],
                             7, -1, n, 8);
                         n++;
                         off += 2;
-                    } while (n != M2C_FIELD(
-                        M2C_FIELD(work, void **, 0x7828), s32 *, 0x14));
+                    } while (n !=
+                        ((struct BattleEffectArgument *)
+                            ((struct BattleEffectWork *)work)->effect)->count);
                 }
                 M2C_FIELD(work, s32 *, 0x77A8) = 8;
                 if (frame == 260) {
@@ -460,7 +464,7 @@ void Func_080e823c(void *object)
 
             Func_080e155c(8, 8);
             Func_080cd52c();
-            M2C_FIELD(work, s32 *, 0x7824) = 1;
+            ((struct BattleEffectWork *)work)->transfer_pending = 1;
             Func_080030f8(1);
             frame++;
         } while (frame != 320 && (*(s32 *)0x03001B04 & 3) == 0);

@@ -64,19 +64,7 @@ void Func_08002dd8(s32);
 #define Runtime_ReleaseHeapBlock Func_08002dd8
 s32 Func_080cdbc0(void);
 
-/* The caller's effect state, republished at work + 0x7828. */
-typedef struct BattleEffectArgument {
-    s32 kind;
-    s32 side;
-    s32 actor;
-    s32 unk0C;
-    s32 unk10;
-    s32 cnt;
-    s32 variant;
-    s32 unk1C;
-    s32 unk20;
-    s16 actors[8];
-} Efx;
+typedef struct BattleEffectArgument Efx;
 
 /* One 28-byte record; the array starts at work + 0x7080.  x and y are
    16.16 fixed point and their integer halves are read directly. */
@@ -210,14 +198,14 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
     }
 
     i = 0;
-    while (i != WORK_EFX->cnt) {
+    while (i != WORK_EFX->count) {
         EffectPosition_ApplyStepAndYOffset(WORK_EFX->actors[i], seat[i]);
         i += 1;
     }
 
     frame = 0;
     do {
-        pick = Func_080022fc(frame, WORK_EFX->cnt);
+        pick = Func_080022fc(frame, WORK_EFX->count);
         if (frame == 4) {
             Audio_PlayCue(0x88);
         }
@@ -299,7 +287,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
 
         if (mode == 5) {
             i = 0;
-            while (i != WORK_EFX->cnt) {
+            while (i != WORK_EFX->count) {
                 if ((frame >= (i * 4) + 2) && ((frame & 7) == i)) {
                     *(s32 *)((u8 *)work + 0x77A8) = 8;
                     ObjectGroup_UpdateMembers(WORK_EFX->actors[i], 7, 5, i, 4);
@@ -308,7 +296,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
             }
         } else {
             i = 0;
-            while (i != WORK_EFX->cnt) {
+            while (i != WORK_EFX->count) {
                 if ((frame >= (i * 4) + 16) && ((frame & 7) == i)) {
                     *(s32 *)((u8 *)work + 0x77A8) = 8;
                     if (mode == 6) {

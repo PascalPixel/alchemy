@@ -20,27 +20,20 @@ void name(u32 address, u32 value) \
 { \
     volatile u16 *ime = &REG_IME; \
     struct IoWriteQueue *q = &gIoWriteQueue; \
-    do { \
-        u32 saved; \
-        \
-        saved = *ime; \
-        do { \
-            *ime = (u16)ime; \
-        } while (0); \
-        do { \
-            s32 cnt; \
-            \
-            cnt = q->count; \
-            if (cnt <= 31) { \
-                u32 *dst = (u32 *)((u8 *)q + cnt * 12 + 4); \
-                *dst++ = value; \
-                q->count = cnt + 1; \
-                *dst++ = address; \
-                *dst = (delay); \
-            } \
-        } while (0); \
-        *ime = saved; \
-    } while (0); \
+    u32 saved; \
+    s32 count; \
+    \
+    saved = *ime; \
+    *ime = (u16)ime; \
+    count = q->count; \
+    if (count <= 31) { \
+        u32 *destination = (u32 *)((u8 *)q + count * 12 + 4); \
+        *destination++ = value; \
+        q->count = count + 1; \
+        *destination++ = address; \
+        *destination = (delay); \
+    } \
+    *ime = saved; \
 }
 
 #endif

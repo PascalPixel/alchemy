@@ -81430,6 +81430,54 @@
         "Data_02000240": {
           "address": "0x02000240",
           "kind": "data"
+        },
+        "RuntimeSelectorTable": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200dab4",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200dabc",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200daac",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200dad4",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200db24",
+          "kind": "thumb"
+        },
+        "Engine_ActorTurnToAngle": {
+          "address": "0x0200db94",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellsTo": {
+          "address": "0x0200da04",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200da1c",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200da84",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200dc64",
+          "kind": "thumb"
         }
       },
       "owners": [
@@ -81569,6 +81617,50 @@
         },
         "Func_0200db64": {
           "address": "0x200db64",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200dab4",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200dabc",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200daac",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellsTo": {
+          "address": "0x0200da04",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200da84",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200dc64",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200db24",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x0200dadc",
+          "kind": "thumb"
+        },
+        "Engine_ActorTurnToAngle": {
+          "address": "0x0200db94",
+          "kind": "thumb"
+        },
+        "Engine_ActorShowEmote": {
+          "address": "0x0200dba4",
+          "kind": "thumb"
+        },
+        "Engine_ActorWaitForMove": {
+          "address": "0x0200db1c",
           "kind": "thumb"
         }
       },
@@ -81773,6 +81865,30 @@
         },
         "Func_02008870_a": {
           "address": "0x200daf4",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200daac",
+          "kind": "thumb"
+        },
+        "Engine_EventShowMessageAndWait": {
+          "address": "0x0200db8c",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200dad4",
+          "kind": "thumb"
+        },
+        "Engine_ActorTurnToAngle": {
+          "address": "0x0200db94",
+          "kind": "thumb"
+        },
+        "Engine_ActorWaitForMove": {
+          "address": "0x0200db1c",
           "kind": "thumb"
         }
       },
@@ -107655,6 +107771,58 @@
         },
         "Func_02006364_wrapper": {
           "address": "0x0200d458",
+          "kind": "thumb"
+        },
+        "RuntimeSelectorTable": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200dab4",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200dabc",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200daac",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200dad4",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200db24",
+          "kind": "thumb"
+        },
+        "Engine_ActorWaitForMove": {
+          "address": "0x0200db1c",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellsTo": {
+          "address": "0x0200da04",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200da1c",
+          "kind": "thumb"
+        },
+        "Engine_GameFlagIsSet": {
+          "address": "0x0200da84",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200dc64",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetDestinationOffset": {
+          "address": "0x0200db14",
           "kind": "thumb"
         }
       },

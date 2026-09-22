@@ -1,11 +1,14 @@
-#include "TYPES.H"
+#include "MAKYURI_HEYA.H"
 
 #define Scene_RunSelectorEntry Func_02003d20
-#define SCENE Data_02000240
+#define SCENE RuntimeSelectorTable
 #define WORD(p, offset) (*(s32 *)((u8 *)(p) + (offset)))
-#define WORK (*(u8 **)0x03001ebc)
+#define WORK MAKYURI_EVENT_WORK
 
-extern s16 Data_02000240[];
+extern u8 Value_00000036;
+extern u8 Value_00000037;
+extern u8 Value_00000038;
+extern u8 Value_00000039;
 void Func_02005a8c();
 void Func_02004fcc();
 void Func_02005c1c();
@@ -50,6 +53,12 @@ u8 *Func_02005bc4();
 void Func_02004c68();
 void Func_02005a0c();
 
+#define SetEffectRecordMode Func_02000030
+#define SceneEffect_SpawnParticleRowsByMode Func_02002030
+#define FieldScene_RunSupplementalSequenceOne Func_020017a8
+#define FieldScene_RunScene39b_02001208 Func_02003788
+#define FieldScene_RunPrimarySequence Func_02001db4
+
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
     f(a0, a1, a2, a3, a4, a5);
@@ -71,7 +80,7 @@ s32 Scene_RunSelectorEntry(void)
 
     Func_02005a8c(0x111);
     SCENE[289] = 11;
-    SCENE[288] = 0x39;
+    SCENE[288] = (s32)&Value_00000039;
     WORD(WORK, 0x1c0) = 0x204;
     *(volatile u16 *)0x04000050 = 0x3f40;
     *(volatile u16 *)0x04000052 = 0x1010;
@@ -82,7 +91,7 @@ s32 Scene_RunSelectorEntry(void)
     } else {
         Func_02000dfc();
     }
-    if (SCENE[224] == 0x36) {
+    if (SCENE[224] == (s32)&Value_00000036) {
         switch (SCENE[225]) {
         case 1:
         case 2:
@@ -96,7 +105,7 @@ s32 Scene_RunSelectorEntry(void)
             Func_02005c54(170);
             break;
         case 15:
-            Func_02000030(Func_02005ad4(0), 1);
+            SetEffectRecordMode(Func_02005ad4(0), 1);
             /* fall through */
         case 4:
             if (Func_02005a84(0x876)) {
@@ -110,13 +119,13 @@ s32 Scene_RunSelectorEntry(void)
                 Func_02005a94(0x312);
                 Func_02005a94(0x313);
             }
-            Func_02000030(Func_02005ad4(9), 1);
-            Func_02000030(Func_02005ad4(10), 1);
-            Func_02000030(Func_02005ad4(11), 1);
+            SetEffectRecordMode(Func_02005ad4(9), 1);
+            SetEffectRecordMode(Func_02005ad4(10), 1);
+            SetEffectRecordMode(Func_02005ad4(11), 1);
             Func_02000ba4(9);
             Func_02000ba4(10);
             Func_02000ba4(11);
-            Func_02000030(Func_02005ad4(12), 1);
+            SetEffectRecordMode(Func_02005ad4(12), 1);
             if (!Func_02005a84(0x310)) {
                 break;
             }
@@ -139,12 +148,12 @@ s32 Scene_RunSelectorEntry(void)
             break;
         }
     }
-    if (SCENE[224] == 0x37) {
+    if (SCENE[224] == (s32)&Value_00000037) {
         switch (SCENE[225]) {
         case 1:
         case 2:
-            Func_02000030(Func_02005ad4(8), 1);
-            Func_02000030(Func_02005ad4(9), 1);
+            SetEffectRecordMode(Func_02005ad4(8), 1);
+            SetEffectRecordMode(Func_02005ad4(9), 1);
             if (Func_02005a84(0x302)) {
                 Func_0200597c(1);
                 Func_02005c64(211);
@@ -182,9 +191,9 @@ s32 Scene_RunSelectorEntry(void)
         case 7:
         case 8:
         case 9:
-            Func_02000030(Func_02005ad4(10), 1);
+            SetEffectRecordMode(Func_02005ad4(10), 1);
             if (Func_02005a84(0x306)) {
-                Func_020017a8(0);
+                FieldScene_RunSupplementalSequenceOne(0);
                 Call6(Func_02005a1c, 42, 41, 4, 1, 42, 39);
                 Call6(Func_02005a1c, 42, 40, 4, 1, 42, 41);
                 Call3(Func_02005b24, 10, 176 << 18, 160 << 18);
@@ -192,17 +201,17 @@ s32 Scene_RunSelectorEntry(void)
             break;
         }
     }
-    if (SCENE[224] == 0x38) {
+    if (SCENE[224] == (s32)&Value_00000038) {
         switch (SCENE[225]) {
         case 4:
         case 5:
         case 6:
-            Func_02000030(Func_02005ad4(15), 1);
-            Func_02000030(Func_02005ad4(16), 1);
-            Func_02000030(Func_02005ad4(17), 1);
-            Func_02000030(Func_02005ad4(18), 1);
-            Func_02000030(Func_02005ad4(19), 1);
-            Func_02000030(Func_02005ad4(0), 1);
+            SetEffectRecordMode(Func_02005ad4(15), 1);
+            SetEffectRecordMode(Func_02005ad4(16), 1);
+            SetEffectRecordMode(Func_02005ad4(17), 1);
+            SetEffectRecordMode(Func_02005ad4(18), 1);
+            SetEffectRecordMode(Func_02005ad4(19), 1);
+            SetEffectRecordMode(Func_02005ad4(0), 1);
             x = 158 << 18;
             flag = 204 << 2;
             for (i = 0; i < 4; i++, x += 0x400000, flag += 2) {
@@ -230,7 +239,7 @@ s32 Scene_RunSelectorEntry(void)
             break;
         case 3:
         case 13:
-            Func_02003788();
+            FieldScene_RunScene39b_02001208();
             /* fall through */
         case 1:
         case 2:
@@ -262,21 +271,21 @@ s32 Scene_RunSelectorEntry(void)
             Func_0200597c(1);
             Call3(Func_02005b24, 10, 204 << 18, 152 << 18);
             Call3(Func_02005b24, 11, 194 << 18, 144 << 18);
-            Func_02000030(Func_02005ad4(0), 1);
-            Func_02002030(0);
-            Func_02001db4(1);
+            SetEffectRecordMode(Func_02005ad4(0), 1);
+            SceneEffect_SpawnParticleRowsByMode(0);
+            FieldScene_RunPrimarySequence(1);
             /* fall through */
         case 14:
             if (SCENE[225] == 14) {
                 Func_02005c64(211);
             }
-            Func_02000030(Func_02005ad4(9), 1);
+            SetEffectRecordMode(Func_02005ad4(9), 1);
             Func_02005b9c(10, 2);
             Func_02005ad4(10)[34] = 2;
-            Func_02000030(Func_02005ad4(11), 1);
-            Func_02000030(Func_02005ad4(12), 1);
-            Func_02000030(Func_02005ad4(13), 1);
-            Func_02000030(Func_02005ad4(14), 1);
+            SetEffectRecordMode(Func_02005ad4(11), 1);
+            SetEffectRecordMode(Func_02005ad4(12), 1);
+            SetEffectRecordMode(Func_02005ad4(13), 1);
+            SetEffectRecordMode(Func_02005ad4(14), 1);
             Func_02000ba4(10);
             Func_02000ba4(11);
             if (SCENE[225] != 14) {
@@ -289,21 +298,21 @@ s32 Scene_RunSelectorEntry(void)
                 Func_02005a94(0x31b);
                 break;
             }
-            Func_02002030(0);
+            SceneEffect_SpawnParticleRowsByMode(0);
             if (Func_02005a84(0x319)) {
-                Func_02001db4(2);
+                FieldScene_RunPrimarySequence(2);
                 if ((WORD(Func_02005ad4(9), 16) >> 20) == 44) {
                     Func_02005984(0x0200a2c5, 0xc80);
                 }
             } else if (Func_02005a84(0x31a)) {
-                Func_02001db4(1);
+                FieldScene_RunPrimarySequence(1);
             } else if (!Func_02005a84(0x31b)) {
-                Func_02001db4(0);
+                FieldScene_RunPrimarySequence(0);
             }
             break;
         case 15:
             Func_02005ab4();
-            Func_02000030(Func_02005ad4(8), 1);
+            SetEffectRecordMode(Func_02005ad4(8), 1);
             Func_02005b6c(0, 15);
             Func_02005a2c(Func_02005ad4(0), 0);
             WORD(Func_02005ad4(8), 12) = 0x900000;
@@ -317,7 +326,7 @@ s32 Scene_RunSelectorEntry(void)
             Func_02005c64(189);
             Func_02005aac(32);
             Func_02005c64(188);
-            Func_02000030(Func_02005ad4(8), 2);
+            SetEffectRecordMode(Func_02005ad4(8), 2);
             Func_02005a3c(0x30000, 0x30000, 0x10000);
             Func_02005a3c(-1, -1, 0xe666);
             Func_02005a44();
@@ -327,14 +336,14 @@ s32 Scene_RunSelectorEntry(void)
             break;
         }
     }
-    if (SCENE[224] == 0x39) {
+    if (SCENE[224] == (s32)&Value_00000039) {
         switch (SCENE[225]) {
         case 10:
             Func_02005984(0x0200adcd, 0xc80);
             if (Func_02005a84(0x109)) {
                 break;
             }
-            Func_02003788();
+            FieldScene_RunScene39b_02001208();
             Func_02005c54(170);
             Func_02005be4(0x10000, 0);
             Func_02005bdc(0x10003, 1);
@@ -363,7 +372,7 @@ s32 Scene_RunSelectorEntry(void)
             Call3(Func_02005b24, 10, 206 << 18, 150 << 18);
             Call6(Func_02005a1c, 116, 36, 3, 4, 52, 36);
             Func_02005ad4(10)[85] = flag;
-            Func_02000030(Func_02005ad4(10), 1);
+            SetEffectRecordMode(Func_02005ad4(10), 1);
             Func_02005ab4();
             Func_02005bb4(-1, -1, -1, 0);
             Func_02005bc4()[85] = flag;
@@ -375,7 +384,7 @@ s32 Scene_RunSelectorEntry(void)
             break;
         case 12:
             Func_02005aac(1);
-            Func_02000030(Func_02005ad4(0), 1);
+            SetEffectRecordMode(Func_02005ad4(0), 1);
             /* fall through */
         case 11:
             Call6(Func_02005a1c, 104, 34, 5, 4, 40, 34);
@@ -408,7 +417,7 @@ s32 Scene_RunSelectorEntry(void)
                     Call3(Func_02005b24, 3, 210 << 18, 158 << 18);
                     Call3(Func_02005b94, 3, 0xc000, 0);
                 }
-                Func_02000030(Func_02005ad4(3), 1);
+                SetEffectRecordMode(Func_02005ad4(3), 1);
                 Call6(Func_02005a04, 126, 35, 116, 35, 1, 2);
                 Func_02005984(0x0200a649, 0xc80);
             } else {
@@ -419,7 +428,7 @@ s32 Scene_RunSelectorEntry(void)
                 Func_02005aac(1);
             }
             Func_02005ad4(10)[85] = 0;
-            Func_02000030(Func_02005ad4(10), 1);
+            SetEffectRecordMode(Func_02005ad4(10), 1);
             break;
         }
     }

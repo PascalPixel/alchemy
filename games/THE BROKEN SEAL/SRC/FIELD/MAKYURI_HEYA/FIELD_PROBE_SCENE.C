@@ -1,5 +1,4 @@
-#include "TYPES.H"
-#include "FIELD_EFFECT.H"
+#include "MAKYURI_HEYA.H"
 
 void Func_020067e8_wrapper();
 

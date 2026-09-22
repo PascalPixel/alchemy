@@ -1,68 +1,6 @@
 #include "TYPES.H"
 
-/*
- * Sibling of the 0x03001eec "battle work" family (see
- * games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C, the adopted owner at
- * 0x080ce85c, family score 7889/10000, and the m2c-assisted dump at
- * out/family-transplants/main-080e6eac/m2c/080e6eac.c derived directly
- * from this owner's own retained bytes). Unlike the template, this owner
- * takes three arguments (object, x, y) instead of one, never republishes
- * the object pointer into work+0x7828, registers only a single periodic
- * callback (0x080CD261, not the pair 0x080DBB9D/0x080CD261), and drives
- * three independently-populated 28-byte "particle" record arrays (64 at
- * work+0x7080, 3 at work+0x772C, 64 at the fixed EWRAM base 0x02010000)
- * rather than a per-party-member sprite ring. Field offsets 0x7780,
- * 0x7784, 0x7824 match the already-recovered layout from that sibling and
- * from games/THE BROKEN SEAL/recon/en/main/080e7404.c. The two rectangle-blit
- * pointers are heap_cache[7]/heap_cache[8] (read right after the two
- * Func_080ed408(46,...)/Func_080ed408(47,...) calls, exactly like
- * member_orbit/run.c's rectangle_slot), called through the established
- * DrawRectangleFn cast; the tail VRAM-clear call goes through
- * _call_via_r3 (0x080072f0) via a raw ClearFn pointer cast, matching the
- * "reached with two arguments" case the veneer-audit note on
- * games/THE BROKEN SEAL/SRC/GRAPHICS/RESET_FRAME_STATE.C records for the same
- * 0x03000164 callee (r2 is not part of this call; it is dead/stale at
- * the call site in the retained bytes).
- *
- * KNOWN OPEN RESIDUAL (measured, not resolved): `canvas` (heap_cache[1],
- * used as `dest` at all four DrawRectangleFn call sites) is promoted to
- * r9 by this build and kept there for the whole function; the reference
- * instead spills it to a stack slot and reloads it at each call site,
- * using r9 only inside the 60-iteration array-C loop later (a hoisted
- * `Table_080ede48` base, `mov r9,r3` / `mov r0,r9` in
- * games/THE BROKEN SEAL/raw/080e6eac.s, confirmed to be the ONLY other r9 use in the
- * whole function via `grep r9`). Checked against gcc-2.96's actual
- * global-allocation priority formula (allocno_compare in
- * gcc/global.c: priority ~= log2(n_refs)*n_refs/live_length*size): a
- * short, dense live range (one loop's body) legitimately outscores a
- * long, sparse one (whole-function pointer used 4 times), which is
- * consistent with the reference preferring the table base over canvas
- * for the single spare high register once sl(work)/fp(the signed-halved
- * x argument) are taken. This build's `Table_080ede48` access is a
- * compile-time-constant address that gcc rematerializes via a fresh
- * pc-relative literal each iteration instead of ever competing for a
- * register (confirmed: hoisting it into its own `table` local here,
- * scoped to just the 60-iteration loop, changed zero candidate bytes),
- * so nothing here forces canvas out of r9. Tried and confirmed
- * ineffective: an explicit early `raw_x = x_arg;` copy before the
- * canvas read (folded away, byte-identical output); reordering the
- * struct-of-locals declaration to match the reference's inferred stack
- * order (byte-identical output); moving the canvas read after `aux`
- * instead of interleaved with the half_x computation (worse: 470 diff,
- * and breaks the otherwise-matching `ldmia r3!,{r0}` / early-canvas-read
- * prologue shape). Removing `canvas` as a named local and reading
- * M2C_FIELD((void*)0x03001EEC, void**, 4) fresh at each of the four call
- * sites also regresses (456 diff, class=unemittable): with no later use,
- * gcc drops the *cursor dereference (and the `ldmia`/`mov sl,r0`
- * sequence with it) entirely, which does not match the reference's
- * retained prologue either. Not attempted further: this is exactly the
- * shape of residual games/THE BROKEN SEAL/recon/en/dossiers.json#main:080a24d0 documents as
- * "insensitive to source-level respelling" for a whole-function
- * register-coloring tie-break, and per this repo's hard constraint
- * against hand-tuning register assignment, forcing canvas off r9 via an
- * artificial competing local (not reflecting a real semantic quantity)
- * was not attempted.
- */
+/* Runs the layered particle presentation over the shared battle-effect work buffers. */
 #define M2C_FIELD(expr, type_ptr, offset) \
     (*(type_ptr)((u8 *)(expr) + (offset)))
 
@@ -87,7 +25,7 @@ void Func_080e6d3c(void *object, s32 a, s32 b);
 #define Table_080eee66 ((u16 *)0x080EEE66)
 #define Table_080eee56 ((u8 *)0x080EEE56)
 #define Table_080eee5e ((u8 *)0x080EEE5E)
-#define Table_080ede48 ((u16 *)0x080EDE48)
+extern const u16 Data_080ede48[];
 
 void Func_080e6eac(void *object, s32 x_arg, s32 y_arg)
 {
@@ -238,7 +176,7 @@ void Func_080e6eac(void *object, s32 x_arg, s32 y_arg)
                         half = phase / 2;
                         ((DrawRectangleFn)rect1)(
                             canvas,
-                            (u8 *)aux + Table_080ede48[phase - 1],
+                            (u8 *)aux + Data_080ede48[phase - 1],
                             M2C_FIELD(record_cursor, s16 *, 2) - half,
                             M2C_FIELD(record_cursor, s16 *, 6) - phase,
                             phase, tile);
@@ -252,7 +190,7 @@ void Func_080e6eac(void *object, s32 x_arg, s32 y_arg)
             void *record_cursor;
             const u16 *table;
 
-            table = Table_080ede48;
+            table = Data_080ede48;
             record_cursor = (void *)0x02010000;
             for (i = 0; i != 60; i++) {
                 if (frame > 35) {

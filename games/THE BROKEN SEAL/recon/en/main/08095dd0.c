@@ -46,14 +46,10 @@ void BattleFx_RunPhasedRadialParticleSequence(s32 arg)
     WaitFrames(30);
     Motion_ArmCb(arg, 0x4000, 0);
     WaitFrames(20);
-    do {
-        Audio_PlayCue(173);
-        Func_080925cc(arg, 1);
-    } while (0);
-    do {
-        Audio_PlayCue(174);
-        Func_080925cc(arg, 1);
-    } while (0);
+    Audio_PlayCue(173);
+    Func_080925cc(arg, 1);
+    Audio_PlayCue(174);
+    Func_080925cc(arg, 1);
     Audio_PlayCue(175);
     Func_080925cc(arg, 1);
     WaitFrames(20);
@@ -75,11 +71,9 @@ void BattleFx_RunPhasedRadialParticleSequence(s32 arg)
         Func_0809ba90(slot, 284, position.x, position.z);
         EffectSlot_SetCallback(slot, (void *)0x08095c09);
         EffectSlot_SetObjectMode(slot, 7);
-        do {
-            object_pointer = slot;
-            value = *(s32 *)object_pointer;
-            Func_08009248(value, 10);
-        } while (0);
+        object_pointer = slot;
+        value = *(s32 *)object_pointer;
+        Func_08009248(value, 10);
         value = Func_080022f4(Random16(), 3) + 0x10000;
         *(s32 *)((u8 *)slot + 44) = value;
         *(s32 *)((u8 *)slot + 40) = value;

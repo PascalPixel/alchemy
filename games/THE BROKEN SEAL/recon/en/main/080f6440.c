@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "DMA.H"
 
 /* Per-frame driver for the five-reel symbol minigame.
  *
@@ -95,7 +96,6 @@ void ReelGame_RunFrame(void)
 {
     ReelWork *work;
     u8 *heap;
-    u32 *dst;
     volatile u16 *reg;
     u32 pad;
     s32 blend;
@@ -125,10 +125,8 @@ void ReelGame_RunFrame(void)
     reg[5] &= 0x7fff;
     reg[5];
 
-    dst = (u32 *)reg;
-    dst[0] = (u32)work->fade;
-    dst[1] = 0x04000054;
-    dst[2] = 0xa2600001;
+    Dma_Set(work->fade, (void *)0x04000054, 0xa2600001,
+            (volatile u32 *)0x040000b0);
 
     pad = *(volatile u32 *)0x03001ae8;
     work->pressed = (u16)pad & ~work->keys;
@@ -577,10 +575,6 @@ build_objects:
         oam += 1;
     }
 
-{
-        u32 *oamDma = (u32 *)0x040000d4;
-        oamDma[0] = (u32)work->obj;
-        oamDma[1] = 0x07000000;
-        oamDma[2] = (oam * 2) | 0x84000000;
-    }
+    Dma_Set(work->obj, (void *)0x07000000, (oam * 2) | 0x84000000,
+            (volatile u32 *)0x040000d4);
 }

@@ -37,8 +37,7 @@ struct Effect {
 };
 
 struct ConfiguredEffectOptions {
-    u8 mode_bits;
-    u8 pad01[3];
+    s32 mode_bits;
     s32 mode;
     s32 accum18;
     s32 accum1c;

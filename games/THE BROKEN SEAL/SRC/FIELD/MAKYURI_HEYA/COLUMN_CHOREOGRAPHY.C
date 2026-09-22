@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "MAKYURI_HEYA.H"
 
 #define FieldScene_RunColumnChoreography Func_020028b0
 
@@ -190,7 +190,7 @@ void FieldScene_RunColumnChoreography(void)
         Call1(Func_02008486, 0x157f);
         Value2(Func_02008496, 3, 0);
         if (Value2(Func_020083e6, 0, 0) == 0) {
-            *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+            *(u16 *)(MAKYURI_EVENT_WORK + 0x1d8) += 1;
             Func_020083e0(20);
             Func_02008470(3, 3);
             Func_020084d2(3, 0, 20);
@@ -198,7 +198,7 @@ void FieldScene_RunColumnChoreography(void)
             Func_020083fa(20);
             Func_0200848a(3, 4);
             Func_020084ec(3, 0, 20);
-            *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+            *(u16 *)(MAKYURI_EVENT_WORK + 0x1d8) += 1;
         }
         Call3(Func_02008520, 0, 0x100, 60);
         record = Func_02008456(1);
@@ -248,9 +248,9 @@ void FieldScene_RunColumnChoreography(void)
             Func_020085d0(20);
             Func_02008660(1, 3);
             Func_020086c2(1, 0, 20);
-            *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+            *(u16 *)(MAKYURI_EVENT_WORK + 0x1d8) += 1;
         } else {
-            *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+            *(u16 *)(MAKYURI_EVENT_WORK + 0x1d8) += 1;
             Func_02008624(20);
             Func_020086b4(1, 4);
             Func_02008716(1, 0, 20);

@@ -12,7 +12,7 @@ pub fn split_functions(ins: &[Ins]) -> Vec<(u32, Vec<Ins>)> {
     let mut current: Vec<Ins> = Vec::new();
     let mut returned = false;
     for x in ins {
-        let prologue = matches!(x.kind, Kind::Push { lr: true });
+        let prologue = matches!(x.kind, Kind::Push { lr: true, .. });
         if prologue && returned && !current.is_empty() {
             functions.push((current[0].addr, std::mem::take(&mut current)));
             returned = false;

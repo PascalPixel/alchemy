@@ -118,15 +118,15 @@ static inline void QueueRegisterWrite(u32 value, u32 address, u32 delay)
 
 void Func_080ea0d8(void *object)
 {
-    void **heap;
+    void **cache_cursor;
     void *canvas;
     void *work;
     void *ctrl;
+    DrawRectangleFn draw;
+    DrawRectangleFn draw2;
     void *ramp;
     void *iwram;
     volatile u32 *dma;
-    DrawRectangleFn draw;
-    DrawRectangleFn draw2;
     Particle *dust;
     Particle *spark;
     Particle *rain;
@@ -156,11 +156,11 @@ void Func_080ea0d8(void *object)
     s32 cy;
     s32 squash;
 
-    heap = (void **)0x03001EEC;
-    canvas = heap[1];
-    work = heap[0];
-    ctrl = heap[5];
-    ramp = heap[2];
+    cache_cursor = (void **)0x03001EF0;
+    canvas = cache_cursor[0];
+    work = cache_cursor[-1];
+    ctrl = cache_cursor[4];
+    ramp = cache_cursor[1];
     iwram = *(void **)0x03001E80;
     dma = (volatile u32 *)0x040000D4;
     dust = (Particle *)0x02010000;
@@ -174,7 +174,7 @@ void Func_080ea0d8(void *object)
     *(volatile u16 *)0x05000000 = 0x0;
     *(volatile u16 *)0x05000002 = 0x0;
     Func_080ed408(46, 7, 7, 3, 3);
-    draw = (DrawRectangleFn)heap[7];
+    draw = (DrawRectangleFn)cache_cursor[6];
     WORK_S32(0x7780) = 0;
     Func_080041d8((void *)0x080CD261, 0x480);
     Func_080cd104(0, 0);
@@ -411,22 +411,22 @@ void Func_080ea0d8(void *object)
 
             Func_080ed408(47, 7, 7, 3, 2);
             cell = (const u8 *)work + off;
-            draw2 = (DrawRectangleFn)heap[8];
+            draw2 = *(DrawRectangleFn *)0x03001F0C;
             draw2(canvas, cell, 60 - high, 80 - high * 2, high, high * 2);
             Func_08002dd8(47);
 
             Func_080ed408(47, 7, 7, 7, 2);
-            draw2 = (DrawRectangleFn)heap[8];
+            draw2 = *(DrawRectangleFn *)0x03001F0C;
             draw2(canvas, cell, 60, 80 - high * 2, high, high * 2);
             Func_08002dd8(47);
 
             Func_080ed408(47, 7, 7, 11, 2);
-            draw2 = (DrawRectangleFn)heap[8];
+            draw2 = *(DrawRectangleFn *)0x03001F0C;
             draw2(canvas, cell, 60 - high, 80, high, high * 2);
             Func_08002dd8(47);
 
             Func_080ed408(47, 7, 7, 15, 2);
-            draw2 = (DrawRectangleFn)heap[8];
+            draw2 = *(DrawRectangleFn *)0x03001F0C;
             draw2(canvas, cell, 60, 80, high, high * 2);
             Func_08002dd8(47);
 
@@ -453,12 +453,12 @@ void Func_080ea0d8(void *object)
 
             off = (frame << 4) - 2272;
             Func_080ed408(47, 7, 7, 3, 3);
-            draw2 = (DrawRectangleFn)heap[8];
+            draw2 = *(DrawRectangleFn *)0x03001F0C;
             draw2(canvas, work, 36, off, 24, 64);
             Func_08002dd8(47);
 
             Func_080ed408(47, 7, 7, 7, 3);
-            draw2 = (DrawRectangleFn)heap[8];
+            draw2 = *(DrawRectangleFn *)0x03001F0C;
             draw2(canvas, work, 60, off, 24, 64);
             Func_08002dd8(47);
 
@@ -470,7 +470,7 @@ void Func_080ea0d8(void *object)
                 cell = (const u8 *)work + idx * 770 + Data_080ede48[7]
                     + 10000;
                 Func_080ed408(47, 7, 7, 3, 2);
-                draw2 = (DrawRectangleFn)heap[8];
+                draw2 = *(DrawRectangleFn *)0x03001F0C;
                 i = 0;
                 do {
                     s32 angle;
@@ -516,7 +516,7 @@ void Func_080ea0d8(void *object)
 
     Func_08002dd8(46);
     Func_080ed408(46, 7, 7, 3, 2);
-    draw = (DrawRectangleFn)heap[7];
+    draw = *(DrawRectangleFn *)0x03001F08;
     Func_080e0524(0x64, (u8 *)work + (128 << 7), 1, 1);
 
     {
@@ -726,22 +726,22 @@ void Func_080ea0d8(void *object)
             top = frame - 28;
 
             Func_080ed408(47, 7, 7, 3, 2);
-            draw2 = (DrawRectangleFn)heap[8];
+            draw2 = *(DrawRectangleFn *)0x03001F0C;
             draw2(canvas, sheet, 36, top, 24, 24);
             Func_08002dd8(47);
 
             Func_080ed408(47, 7, 7, 7, 2);
-            draw2 = (DrawRectangleFn)heap[8];
+            draw2 = *(DrawRectangleFn *)0x03001F0C;
             draw2(canvas, sheet, 59, top, 24, 24);
             Func_08002dd8(47);
 
             Func_080ed408(47, 7, 7, 11, 2);
-            draw2 = (DrawRectangleFn)heap[8];
+            draw2 = *(DrawRectangleFn *)0x03001F0C;
             draw2(canvas, sheet, 36, top + 23, 24, 24);
             Func_08002dd8(47);
 
             Func_080ed408(47, 7, 7, 15, 2);
-            draw2 = (DrawRectangleFn)heap[8];
+            draw2 = *(DrawRectangleFn *)0x03001F0C;
             draw2(canvas, sheet, 59, top + 23, 24, 24);
             Func_08002dd8(47);
         }
@@ -913,7 +913,7 @@ void Func_080ea0d8(void *object)
         }
 
         Func_080ed408(47, 7, 7, 3, 3);
-        draw2 = (DrawRectangleFn)heap[8];
+        draw2 = *(DrawRectangleFn *)0x03001F0C;
         if (frame > 85) {
             draw2(canvas, work, 0, 0, 120, 120);
         }

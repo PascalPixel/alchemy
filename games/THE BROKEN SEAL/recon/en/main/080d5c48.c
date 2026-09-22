@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFX.H"
+#include "BATTLE_EFFECT_WORK.H"
 
 /*
  * Effect sequence at 0x080d5c48. Family-matched to puff_arc/run.c (0x080d9fc8,
@@ -25,8 +26,6 @@
  * direct call to a fictional Func_08007300.
  */
 
-typedef void (*DrawRectangle)(
-    void *, const void *, s32, s32, s32, s32);
 
 /* Heap-allocation cache: Data_03001e50[kind] holds kind's block address. */
 extern u8 Data_03001e50[];
@@ -40,7 +39,6 @@ s32 Func_080041d8(s32, s32);
 u32 Func_08004458(void);
 void Func_080f9010(s32);
 void Func_080b50e8(s32);
-void Func_080e396c(s32, s32 *);
 s32 Func_080022ec(s32, s32);
 s32 Func_080022fc(s32, s32);
 void Func_080030f8(s32);
@@ -61,22 +59,9 @@ typedef struct Puff {
 } Puff;
 
 /* The caller's effect state, republished at work + 0x7828. */
-typedef struct Efx {
-    s32 kind;
-    s32 side;
-    s32 actor;
-    s32 unk0C;
-    s32 unk10;
-    s32 cnt;
-    s32 layers;
-    s32 unk1C;
-    s32 unk20;
-    s16 actors[8];
-} Efx;
+#define WORK_EFX (*(struct BattleEffectArgument **)(work + 0x7828))
 
-#define WORK_EFX (*(Efx **)(work + 0x7828))
-
-void Func_080d5c48(Efx *efx)
+void Func_080d5c48(struct BattleEffectArgument *efx)
 {
     u32 *entry;
     u8 *work;
@@ -109,17 +94,17 @@ void Func_080d5c48(Efx *efx)
     draw = (DrawRectangle)entry[6];
     Func_080041d8(0x080CD261, 0x480);
     puff = (Puff *)(work + 0x7080);
-    for (i = 0; i != WORK_EFX->cnt; i++) {
+    for (i = 0; i != WORK_EFX->count; i++) {
         puff->tick = Func_08004458() & 63;
         puff++;
     }
     frame = 0;
-    while (frame != (WORK_EFX->cnt << 5) + 32) {
+    while (frame != (WORK_EFX->count << 5) + 32) {
         if (frame == 32) {
             Func_080b50e8(0);
         }
         cur = (Puff *)(work + 0x7080);
-        for (i = 0; i != WORK_EFX->cnt; i++) {
+        for (i = 0; i != WORK_EFX->count; i++) {
             base = i << 4;
             if (frame == base) {
                 Func_080f9010(143);

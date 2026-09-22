@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "DMA.H"
+#include "BATTLE_EFX.H"
 
 #define Scene_RunParticleSequence Func_080f7460
 
@@ -7,8 +8,6 @@
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 
 typedef volatile u16 vu16;
-typedef void (*DrawRectangleFn)(
-    void *dest, void *src, s32 x, s32 y, s32 width, s32 height);
 
 /* The 28-byte particle record already established in 080e0c84.c.  Only
    x, y, vx, vy and the countdown at +0x18 are touched here. */

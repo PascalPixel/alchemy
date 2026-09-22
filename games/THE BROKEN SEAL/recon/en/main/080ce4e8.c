@@ -7,8 +7,6 @@
 void **Func_080b5098(s32 member_id);
 typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
 typedef s32 (*MagnitudeFn)(s32 squared_distance);
-typedef void (*DrawRectangleFn)(
-    void *dest, const void *src, s32 x, s32 y, s32 width, s32 height);
 extern u8 Value_000000a9;
 extern u8 Value_000000bb;
 

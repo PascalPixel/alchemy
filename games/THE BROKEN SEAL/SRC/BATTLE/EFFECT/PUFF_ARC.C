@@ -1,14 +1,13 @@
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
+#include "CALLBACK_SCHEDULER.H"
 
 #define BattleFx_RunPuffArc Func_080d9fc8
 
 /* Six drawn arguments: destination, source cell, x, y, width, height.
    The reference calls it through the r4 bx bank, so it is an indirect
    call through the cached kind-46 entry rather than a fixed callee. */
-typedef void (*DrawRectangle)(
-    void *, const void *, s32, s32, s32, s32);
 
 /* Heap-allocation cache: Data_03001e50[kind] holds kind's block address.
    This owner reads kinds 39 (its work block), 40 and 46. */
@@ -23,8 +22,6 @@ s32 Func_08002322(s32);
 #define Engine_MathSin Func_08002322
 s32 Func_0800231c(s32);
 #define Engine_MathCos Func_0800231c
-void Func_080041d8(s32, s32);
-#define Scheduler_AddOrUpdateCallback Func_080041d8
 void Func_080f9010(s32);
 #define Audio_PlayCue Func_080f9010
 void Func_080b50e8(s32);
@@ -36,8 +33,6 @@ void Func_080030f8(s32);
 #define WaitFrames Func_080030f8
 void Func_08002dd8(s32);
 #define Runtime_ReleaseHeapBlock Func_08002dd8
-void Func_08004278(s32);
-#define Scheduler_RemoveCallback Func_08004278
 s32 Func_080cdbc0(void);
 
 /* Six animation cells, one entry each: width, height, vertical bias, and the
@@ -65,21 +60,7 @@ typedef struct Puff {
     s32 tick;
 } Puff;
 
-/* The caller's effect state, republished at work + 0x7828. */
-typedef struct Efx {
-    s32 kind;
-    s32 side;
-    s32 actor;
-    s32 unk0C;
-    s32 unk10;
-    s32 cnt;
-    s32 layers;
-    s32 unk1C;
-    s32 unk20;
-    s16 actors[8];
-} Efx;
-
-#define WORK_EFX ((Efx *)work->effect)
+#define WORK_EFX ((struct BattleEffectArgument *)work->effect)
 
 /*
  * Effect sequence at 0x080d9fc8.
@@ -94,7 +75,7 @@ typedef struct Efx {
  * Aggregate names remain provisional; byte offsets into the kind-39 work
  * block are retained where no evidence-backed structure exists yet.
  */
-void BattleFx_RunPuffArc(Efx *efx)
+void BattleFx_RunPuffArc(struct BattleEffectArgument *efx)
 {
     u32 *cache;
     u32 *entry;
@@ -144,7 +125,7 @@ void BattleFx_RunPuffArc(Efx *efx)
         puff++;
     } while (i != 9);
     work->transfer_mode = 2;
-    if (WORK_EFX->layers == 2) {
+    if (WORK_EFX->variant == 2) {
         work->transfer_value = 75;
     } else {
         work->transfer_value = 50;
@@ -170,13 +151,13 @@ void BattleFx_RunPuffArc(Efx *efx)
                     cur->x - ((wide = CELL_W[cell]) >> 1),
                     cur->y + CELL_DY[cell],
                     wide, CELL_H[cell]);
-                if (WORK_EFX->layers != 0) {
+                if (WORK_EFX->variant != 0) {
                     draw(dst, (u8 *)work + CELL_SRC[cell],
                         cur->x - ((wide = CELL_W[cell]) >> 1),
                         (cur->y + CELL_DY[cell]) - 16,
                         wide, CELL_H[cell]);
                 }
-                if (WORK_EFX->layers == 2) {
+                if (WORK_EFX->variant == 2) {
                     draw(dst, (u8 *)work + CELL_SRC[cell],
                         cur->x - ((wide = CELL_W[cell]) >> 1),
                         (cur->y + CELL_DY[cell]) - 32,
@@ -188,7 +169,7 @@ void BattleFx_RunPuffArc(Efx *efx)
             cur++;
         } while (i != 9);
         i = 0;
-        while (i != WORK_EFX->cnt) {
+        while (i != WORK_EFX->count) {
             if (frame == (i * 8) + 16) {
                 ObjectGroup_UpdateMembers(WORK_EFX->actors[i], 10, 5, i, 12);
             }

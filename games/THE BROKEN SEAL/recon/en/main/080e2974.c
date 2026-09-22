@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
+#include "CALLBACK_SCHEDULER.H"
 
 #define BattlePres_RunBurstScene Func_080e2974
 
@@ -170,7 +171,6 @@ void Resource_LoadAndDecompress(s32 id, void *target, s32 flag_a, s32 flag_b); /
 void *Func_08002f40(s32 id);                                      /* get */
 void Func_080030f8(s32 frames);
 void Func_080e396c(s32 source, s32 *out);        /* apply_step_and_y_offset */
-s32 Func_080041d8(s32 callback, s32 interval);  /* Scheduler_AddOrUpdateCallback */
 struct Member **Func_080b5098(s32 member);
 u32 Func_08004458(void);                         /* random_16 */
 void Func_080b5078(s32 a, s32 member, s32 c, s32 d);
@@ -185,7 +185,6 @@ void Func_080e3944(const void *source, s32 *out); /* apply_base_and_y_offset */
 void Func_080e38b8(void *particle, s32 a, s32 b); /* advance_with_gravity_3d */
 void Func_080e155c(s32 x, s32 y);                /* Camera_ApplyShake */
 void Func_080cd52c(void);                        /* ObjectGroup_TickMemberTimers */
-void Func_08004278(s32 callback);                /* Scheduler_RemoveCallback */
 void Func_080cdbc0(void);
 
 void BattlePres_RunBurstScene(void *object, s32 scene)

@@ -6,8 +6,6 @@
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 volatile int Func_080cd594(s32);
-typedef void (*DrawRectangleFn)(
-    void *destination, const void *source, s32 x, s32 y, s32 width, s32 height);
 s32 Func_080cdbc0(void);
 s32 Func_080041d8(s32, s32);
 void Func_08004278(s32);

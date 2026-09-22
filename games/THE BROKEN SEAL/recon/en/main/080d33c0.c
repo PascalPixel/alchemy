@@ -16,8 +16,6 @@ void **Func_080b5098(s32 member_id);
 void Func_080d6888(s32, s32, s32, s32, s32);
 extern u8 Value_000000cd;
 
-typedef void (*DrawRectangleFn)(
-    void *destination, const void *source, s32 x, s32 y, s32 width, s32 height);
 
 s32 Func_080d33c0(s32 actor) {
     s32 sp8;

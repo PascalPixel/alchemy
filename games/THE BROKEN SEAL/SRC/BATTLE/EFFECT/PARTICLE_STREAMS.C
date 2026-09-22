@@ -1,12 +1,11 @@
 #include "TYPES.H"
 #include "DMA.H"
 #include "BATTLE_EFX.H"
+#include "CALLBACK_SCHEDULER.H"
 
 /* Nested particle allocators capture this sequence's work block. */
 
 typedef void (*WordCopy)(void *, const void *, s32);
-typedef void (*DrawRectangle)(
-    void *, const void *, s32, s32, s32, s32);
 
 /* Heap-allocation cache: Data_03001e50[kind] holds kind's block address.
    This owner reads kinds 39 (its work block), 40 (the draw destination)
@@ -44,11 +43,7 @@ void Func_080d6888(s32, s32, s32, s32, s32);
 void Func_080f9010(s32);
 #define Audio_PlayCue Func_080f9010
 void Func_080c9048(void);
-void Func_080041d8(s32, s32);
-#define Scheduler_AddOrUpdateCallback Func_080041d8
 void Func_080cd104(s32, s32);
-void Func_08004278(s32);
-#define Scheduler_RemoveCallback Func_08004278
 void Func_08009020(void *, s32);
 void Func_080dbb24(s32, s32, s32);
 #define BattleFx_SpawnObjects Func_080dbb24

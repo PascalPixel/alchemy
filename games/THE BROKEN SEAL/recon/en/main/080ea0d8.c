@@ -1,14 +1,13 @@
 #include "TYPES.H"
 #include "DMA.H"
 #include "BATTLE_EFX.H"
+#include "CALLBACK_SCHEDULER.H"
 
 /* Two-stage battle presentation: a particle field and receding grid, followed
  * by sprite-sheet animation, concentric ellipses and falling particles.
  * Each pass advances once per frame and handles the player skip input.
  */
 
-typedef void (*DrawRectangleFn)(
-    void *dest, const void *src, s32 x, s32 y, s32 w, s32 h);
 
 /* 28-byte animation record, shared by the two fixed tables at 0x02010000 and
    0x02010e00 and by the sixteen-entry table at work + 0x7080. */
@@ -62,9 +61,7 @@ void Func_08002dd8(s32 kind);
 void *Func_08002f40(s32 id);
 void Func_080030f8(s32 frames);
 /* Scheduler_AddOrUpdateCallback */
-s32 Func_080041d8(void *callback, s32 interval);
 /* Scheduler_RemoveCallback */
-void Func_08004278(void *callback);
 /* Random16 */
 s32 Func_08004458(void);
 /* Render_ResetTransformState */

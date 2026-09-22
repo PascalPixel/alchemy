@@ -27,8 +27,6 @@
     (*(type_ptr)((u8 *)(expr) + (offset)))
 
 typedef void (*WordCopyFn)(void *dest, void *src, s32 size);
-typedef void (*DrawRectangleFn)(
-    void *dest, void *src, s32 x, s32 y, u32 w, s32 h);
 
 void Func_080cd594(s32 mode);
 void *Func_08002f40(s32 id);

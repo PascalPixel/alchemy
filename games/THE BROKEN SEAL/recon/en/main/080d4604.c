@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
+#include "BATTLE_EFFECT_WORK.H"
 
 #define BattleEffect_RunSparkGroups Func_080d4604
 
@@ -45,8 +46,6 @@
 
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 
-typedef void (*DrawRectangleFn)(
-    void *dest, void *src, s32 x, s32 y, s32 w, s32 h);
 typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
 typedef s32 (*FillWordsFn)(void *dest, s32 bytes, s32 value);
 
@@ -88,20 +87,7 @@ typedef struct Spark {
 
 extern Spark Data_02010000[];
 
-typedef struct Efx {
-    s32 unk00;
-    s32 side;    /* +4  */
-    s32 unk08;   /* +8  */
-    s32 unk0C;
-    s32 unk10;
-    s32 members; /* +20 */
-    s32 index;   /* +24, row index into Data_080ee262 */
-    s32 unk1C;
-    s32 unk20;
-    s16 actors[8]; /* +36 */
-} Efx;
-
-#define WORK_EFX (*(Efx **)((s8 *)work + 0x7828))
+#define WORK_EFX (*(struct BattleEffectArgument **)((s8 *)work + 0x7828))
 
 void Func_080cd594(s32 mode);
 void Func_080e396c(s32 source, s32 *out);
@@ -148,7 +134,7 @@ void BattleEffect_RunSparkGroups(void *object, s32 kind)
     work = *cursor++;
     canvas = *cursor;
     extra = heap_cache[2];
-    WORK_EFX = (Efx *)object;
+    WORK_EFX = (struct BattleEffectArgument *)object;
 
     if (kind == 0) {
         Func_080cd594(1);
@@ -160,7 +146,7 @@ void BattleEffect_RunSparkGroups(void *object, s32 kind)
         base_y = 64;
     } else {
         Func_080cd594(0);
-        Func_080e396c(WORK_EFX->unk08, pos);
+        Func_080e396c(WORK_EFX->actor, pos);
         base_x = pos[0] / 2;
         base_y = pos[1] + 48;
     }
@@ -186,7 +172,7 @@ void BattleEffect_RunSparkGroups(void *object, s32 kind)
     (void)status;
 
     group = 0;
-    if (Data_080ee262[WORK_EFX->index].groups != 0) {
+    if (Data_080ee262[WORK_EFX->variant].groups != 0) {
         ring_base = (s8 *)work;
         do {
             Spark *ring;
@@ -205,12 +191,12 @@ void BattleEffect_RunSparkGroups(void *object, s32 kind)
             }
 
             i = 0;
-            if (Data_080ee262[WORK_EFX->index].count != 0) {
+            if (Data_080ee262[WORK_EFX->variant].count != 0) {
                 s32 y_fixed;
 
                 y_fixed = base_y << 16;
                 do {
-                    Efx *efx;
+                    struct BattleEffectArgument *efx;
                     Spark *spark;
                     s32 magnitude;
                     s32 angle;
@@ -219,11 +205,11 @@ void BattleEffect_RunSparkGroups(void *object, s32 kind)
 
                     efx = WORK_EFX;
                     spark = &Data_02010000[
-                        Data_080ee262[efx->index].count * group + i];
+                        Data_080ee262[efx->variant].count * group + i];
                     magnitude = (Func_08004458() & 0x3FF) + 32;
                     angle = Func_08004458() & 0xFFFF;
                     efx = WORK_EFX;
-                    offset = Data_080ee262[efx->index].offset[group];
+                    offset = Data_080ee262[efx->variant].offset[group];
                     if (efx->side == 1) {
                         x = (base_x - offset) + 28;
                     } else {
@@ -235,12 +221,12 @@ void BattleEffect_RunSparkGroups(void *object, s32 kind)
                     spark->vy = -((magnitude * Func_0800231c(angle)) << 1) >> 6;
                     i++;
                     spark->timer = (Func_08004458() & 7) + 32;
-                } while (i != Data_080ee262[WORK_EFX->index].count);
+                } while (i != Data_080ee262[WORK_EFX->variant].count);
             }
 
             ring_base += 0x1C0;
             group++;
-        } while (group != Data_080ee262[WORK_EFX->index].groups);
+        } while (group != Data_080ee262[WORK_EFX->variant].groups);
     }
 
     M2C_FIELD(work, s32 *, 0x7780) = 2;
@@ -248,14 +234,14 @@ void BattleEffect_RunSparkGroups(void *object, s32 kind)
     Func_080041d8((void *)0x080CD261, 0x480);
 
     for (frame = 0;
-            frame != (Data_080ee262[WORK_EFX->index].groups << 3) + 56;
+            frame != (Data_080ee262[WORK_EFX->variant].groups << 3) + 56;
             frame++) {
         void *screen;
-        Efx *efx;
+        struct BattleEffectArgument *efx;
 
         screen = *(void **)0x03001E80;
         efx = WORK_EFX;
-        if (efx->index == 2 && frame <= 51) {
+        if (efx->variant == 2 && frame <= 51) {
             if (efx->side == 0) {
                 M2C_FIELD(screen, u16 *, 54) += 256;
             } else {
@@ -263,7 +249,7 @@ void BattleEffect_RunSparkGroups(void *object, s32 kind)
             }
         }
 
-        if (WORK_EFX->index == 3 && frame == 4) {
+        if (WORK_EFX->variant == 3 && frame == 4) {
             status = ((FillWordsFn)0x03000168)(canvas, 0x4000, 0x3F3F3F3F);
         }
 
@@ -281,7 +267,7 @@ void BattleEffect_RunSparkGroups(void *object, s32 kind)
         }
 
         group = 0;
-        if (Data_080ee262[WORK_EFX->index].groups != 0) {
+        if (Data_080ee262[WORK_EFX->variant].groups != 0) {
             ring_base = (s8 *)work;
             do {
                 s32 start;
@@ -295,7 +281,7 @@ void BattleEffect_RunSparkGroups(void *object, s32 kind)
                     s32 offset;
 
                     efx = WORK_EFX;
-                    offset = Data_080ee262[efx->index].offset[group];
+                    offset = Data_080ee262[efx->variant].offset[group];
                     if (efx->side == 1) {
                         rectangle[0](canvas, work, (base_x - offset) + 12,
                             base_y - 32, 32, 64);
@@ -317,7 +303,7 @@ void BattleEffect_RunSparkGroups(void *object, s32 kind)
 
                         y = M2C_FIELD(ring, s16 *, 6) + base_y;
                         efx = WORK_EFX;
-                        offset = Data_080ee262[efx->index].offset[group];
+                        offset = Data_080ee262[efx->variant].offset[group];
                         if (efx->side == 1) {
                             x = ((M2C_FIELD(ring, s16 *, 2) + base_x)
                                 - offset) + 28;
@@ -351,12 +337,12 @@ void BattleEffect_RunSparkGroups(void *object, s32 kind)
                         gravity = -0x1000;
                     }
                     i = 0;
-                    if (Data_080ee262[WORK_EFX->index].count != 0) {
+                    if (Data_080ee262[WORK_EFX->variant].count != 0) {
                         do {
                             Spark *spark;
 
                             spark = &Data_02010000[
-                                Data_080ee262[WORK_EFX->index].count * group
+                                Data_080ee262[WORK_EFX->variant].count * group
                                     + i];
                             if (spark->timer > 0) {
                                 s32 timer;
@@ -385,24 +371,24 @@ void BattleEffect_RunSparkGroups(void *object, s32 kind)
                                 }
                             }
                             i++;
-                        } while (i != Data_080ee262[WORK_EFX->index].count);
+                        } while (i != Data_080ee262[WORK_EFX->variant].count);
                     }
                 }
 
                 i = 0;
-                if (WORK_EFX->members != 0) {
+                if (WORK_EFX->count != 0) {
                     do {
                         if (frame == start + 6) {
                             Func_080d6888(WORK_EFX->actors[i], 7, 5, i, 10);
                             Func_080b5088(WORK_EFX->actors[i], 4);
                         }
                         i++;
-                    } while (i != WORK_EFX->members);
+                    } while (i != WORK_EFX->count);
                 }
 
                 ring_base += 0x1C0;
                 group++;
-            } while (group != Data_080ee262[WORK_EFX->index].groups);
+            } while (group != Data_080ee262[WORK_EFX->variant].groups);
         }
 
         Func_080e155c(16, 16);

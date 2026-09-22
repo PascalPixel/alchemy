@@ -36,8 +36,6 @@
 #define M2C_FIELD(expr, type_ptr, offset) \
     (*(type_ptr)((u8 *)(expr) + (offset)))
 
-typedef void (*DrawRectangleFn)(
-    void *dest, void *src, s32 x, s32 y, u32 w, s32 h);
 
 #define REG_BG2PA (*(volatile u16 *)0x04000020)
 #define REG_BLDCNT (*(volatile u16 *)0x04000050)

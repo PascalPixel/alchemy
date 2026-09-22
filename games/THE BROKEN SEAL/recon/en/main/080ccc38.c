@@ -26,7 +26,6 @@
 #define M2C_FIELD(expr, type_ptr, offset) \
     (*(type_ptr)((u8 *)(expr) + (offset)))
 
-typedef void (*DrawRectangleFn)(void *, const void *, s32, s32, s32, s32);
 typedef s32 (*WordCopyFn)(void *, const void *, s32);
 
 /* Value_ symbols carry a literal the reference loads from its pool rather

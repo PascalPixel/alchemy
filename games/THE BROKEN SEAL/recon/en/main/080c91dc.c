@@ -2,13 +2,6 @@
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 
-typedef void (*DrawRectangle)(
-    void *destination,
-    const void *source,
-    s32 x,
-    s32 y,
-    s32 width,
-    s32 height);
 
 struct EffectArgument {
     u8 unknown_00[4];

@@ -7,13 +7,6 @@ typedef void (*WordCopyFn)(void *dst, const void *src, s32 size);
 typedef s32 M2C_UNK;
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 
-typedef void (*DrawRectangleFn)(
-    void *destination,
-    const void *source,
-    s32 x,
-    s32 y,
-    s32 width,
-    s32 height);
 
 #define DRAW_RECTANGLE(destination, source, x, y) \
     draw_args[0]( \

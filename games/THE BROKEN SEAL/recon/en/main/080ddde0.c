@@ -8,8 +8,6 @@
 #define M2C_FIELD(expr, type_ptr, offset) \
     (*(type_ptr)((u8 *)(expr) + (offset)))
 
-typedef void (*DrawRectangleFn)(
-    void *dest, const void *src, s32 x, s32 y, u32 w, s32 h);
 typedef void (*FillWordsFn)(void *dest, s32 size, u32 fill);
 
 void Func_080cd594(s32 mode);

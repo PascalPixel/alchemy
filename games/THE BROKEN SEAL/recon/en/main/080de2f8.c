@@ -104,8 +104,6 @@
 
 typedef void (*WordCopyFn)(void *dest, const void *src, s32 words);
 typedef void (*FillFn)(void *dest, s32 size);
-typedef void (*DrawRectangleFn)(
-    void *dest, const void *src, s32 x, s32 y, s32 width, s32 height);
 
 void Func_080cd594(s32 mode);
 void *Func_08002f40(s32 resource_id);

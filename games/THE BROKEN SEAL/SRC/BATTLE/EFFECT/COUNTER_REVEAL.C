@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
+#include "CALLBACK_SCHEDULER.H"
 
 /*
  * Battle-presentation sub-effect at 0x080cfef4, structurally related to the
@@ -28,8 +29,6 @@
  * pointer, not a call to a real symbol at that address.
  */
 typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
-typedef void (*DrawRectangleFn)(
-    void *dest, const void *src, s32 x, s32 y, s32 width, s32 height);
 
 extern u8 Value_000000ab;
 extern u8 Value_000000ac;
@@ -44,10 +43,6 @@ s32 Func_080cdb24(s32 mode);
 void *Func_08002f40(s32 id);
 #define Resource_GetTableEntry Func_08002f40
 u32 Func_08005340(const void *source, void *destination);
-s32 Func_080041d8(s32 callback, s32 order);
-#define Scheduler_AddOrUpdateCallback Func_080041d8
-void Func_08004278(void *callback);
-#define Scheduler_RemoveCallback Func_08004278
 void Func_080030f8(s32 frames);
 #define WaitFrames Func_080030f8
 void Func_08002dd8(s32 id);

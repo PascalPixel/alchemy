@@ -45,8 +45,6 @@
     (*(type_ptr)((u8 *)(expr) + (offset)))
 
 typedef void (*WordCopyFn)(void *dest, void *src, s32 size);
-typedef void (*DrawRectangleFn)(
-    void *dest, void *src, s32 x, s32 y, u32 w, s32 h);
 
 typedef struct {
     s32 f00;

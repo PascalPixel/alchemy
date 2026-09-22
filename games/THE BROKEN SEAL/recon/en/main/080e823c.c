@@ -52,8 +52,6 @@
 #define M2C_FIELD(expr, type_ptr, offset) \
     (*(type_ptr)((u8 *)(expr) + (offset)))
 
-typedef void (*DrawRectangleFn)(
-    void *dest, const void *src, s32 x, s32 y, s32 width, s32 height);
 
 /* 28-byte record shared by work + 0x7080, work + 0x7128 and the 0x02010000
    pool.  Only the six words the owner touches are named. */

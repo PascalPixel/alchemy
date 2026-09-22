@@ -27,7 +27,6 @@ void Func_080de2f8();
 void Func_080e155c();
 s32 Func_080e3944();
 void Func_080e46f0();
-void BattleEffect_LoadWork();
 void Func_080f9010();
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -156,7 +155,7 @@ void Func_080e1040(s32 a0, s32 a1)
         if (*(s32 *)(*(s32 *)((0x7828 + p9)) + 4) == 1) {
             BattleEffect_LoadWork(47, 7, 7, 7, 3);
         } else {
-            BattleEffect_LoadWork(47, 7, 7, 3);
+            BattleEffect_LoadWork(47, 7, 7, 3, 2);
         }
         if (slot40 <= 3) {
             p4 = *(s32 *)0x03001f0c;

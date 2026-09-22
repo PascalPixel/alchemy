@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "DMA.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 
@@ -83,7 +84,6 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
 {
     u8 *work;
     u16 *entry;
-    u32 *dma;
     s32 buf;
     u32 start;
     u32 pos;
@@ -126,10 +126,9 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
         start = *(u16 *)(work + RENDER_ENTRY_START_OFS);
     } else {
         buf = Runtime_AllocateHeapBlock(TEXT_WORK_BLOCK, TEXT_WORK_SIZE);
-        dma = (u32 *)DMA3_REGS;
-        dma[0] = TEXT_TABLE_SRC;
-        dma[1] = (u32)buf;
-        dma[2] = DMA_ENABLE | (TEXT_WORK_SIZE >> 2);
+        Dma_Set((void *)TEXT_TABLE_SRC, buf,
+                DMA_ENABLE | (TEXT_WORK_SIZE >> 2),
+                (volatile u32 *)DMA3_REGS);
 
         Func_08019bac(st, script);
 

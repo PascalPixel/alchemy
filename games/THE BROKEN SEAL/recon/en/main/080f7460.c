@@ -1,75 +1,12 @@
 #include "TYPES.H"
+#include "DMA.H"
 
 #define Scene_RunParticleSequence Func_080f7460
 
-/*
- * Full source-shape draft for the standalone presentation sequence at
- * 0x080f7460.  It is entered from Runtime_BlankDisplayLoadValueAndRun
- * (games/THE BROKEN SEAL/SRC/SYSTEM/SCHEDULER/BLANK_DISPLAY_LOAD_VALUE_AND_RUN.C, owner
- * 080f6008) immediately after Audio_PlayCue(9), and it owns its whole
- * screen: it allocates its four blocks, builds two tilemaps and a tile
- * bank, seeds five 21-cell record entries, then runs a frame loop until
- * its state word reaches 10 and finally fades out and releases
- * everything it took.
- *
- * The owner is a confirmed member of the same "work block" family as
- * games/THE BROKEN SEAL/recon/en/main/080e0c84.c (BattleFx_RunParticleReveal)
- * and games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C: same
- * Data_03001e50 heap-cache indexed by allocation id, same 0x782c work
- * block with the per-frame `work[0x7824] = 1` republish, the same
- * 28-byte fixed-point particle record based at 0x02010000, and the same
- * two-entry DrawRectangleFn table called through the `_call_via_r4`
- * trampoline that annotates as `bl Func_080072f4`
- * (games/THE BROKEN SEAL/raw/080072e4.s, r4 slot at +0x10).
- *
- * What remains uncertain:
- *
- *   1. Every `DMA3_SRC/DST/CTRL` group is one standalone three-register
- *      Thumb store multiple in the reference (`stmia r3!, {r0, r1, r2}`
- *      plus a dead `subs r3, #12`).  As already recorded in
- *      games/THE BROKEN SEAL/recon/en/main/080e7404.c, gcc 2.96's Thumb backend
- *      emits multi-register transfers only from movmem8b/movmem12b and
- *      those always print an adjacent `ldmia` first, so this draft
- *      writes the three descriptor words separately.  That is the
- *      largest single source of the remaining difference.
- *
- *   2. The reference loads several constants that would fit an 8-bit
- *      `movs` immediate (12, 0x3f, 0x40, 0x41, 0x76, 0x8f, 0x91, 0x93,
- *      0xa0, 0xb4, 0xbf, 0xf0) out of its literal pool while spelling
- *      other small values as immediates.  They are written here with
- *      the project's established `(s32)&Value_XXXXXXXX` absolute-symbol
- *      idiom.  Whether each of them really is a linker constant, or an
- *      ordinary literal the compiler happened to pool, is not
- *      established; the window bounds 0xf0/0xa0 in particular read like
- *      plain screen dimensions, and the reference also pool-loads a
- *      plain zero at 0x080f74dc that this draft spells as a literal 0
- *      because doing so scores better.
- *
- *   3. The third argument of the first Func_080072f0 call is never set
- *      by the reference: r2 still holds the 0x02010000 tile scratch
- *      pointer that the preceding copy loop left there.  This draft
- *      passes that pointer explicitly, which is the only reading that
- *      makes the call well defined, at the cost of one extra pool load.
- *
- *   4. The owner never sets a return value, so it is spelled void here
- *      even though blank_display_load_value_and_run.c declares it s32.
- *
- * Aggregate names are provisional.  Byte-offset accesses are retained
- * where the repository does not yet provide an evidence-backed
- * structure.
- */
+/* Builds and presents the particle scene, then releases its work blocks. */
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 
 typedef volatile u16 vu16;
-typedef volatile u32 vu32;
-
-/* DMA channel 3.  One base register plus word offsets, which is the
-   nearest ordinary C gets to the reference's single store multiple. */
-#define DMA3 ((vu32 *)0x040000D4)
-#define DMA3_SRC DMA3[0]
-#define DMA3_DST DMA3[1]
-#define DMA3_CTRL DMA3[2]
-
 typedef void (*DrawRectangleFn)(
     void *dest, void *src, s32 x, s32 y, s32 width, s32 height);
 
@@ -216,9 +153,8 @@ void Scene_RunParticleSequence(void)
     Func_08005340(Func_08002f40((s32)&Value_00000076), sprites);
 
     resource = (u8 *)Func_08002f40((s32)&Value_0000003f);
-    DMA3_SRC = (u32)resource;
-    DMA3_DST = 0x05000140;
-    DMA3_CTRL = 0x84000008;
+    Dma_Set(resource, (void *)0x05000140, 0x84000008,
+        (volatile u32 *)0x040000d4);
     Func_08005340(resource + 32, tiles);
 
     /* Move the decompressed 8bpp tiles into the character block, leaving
@@ -228,9 +164,8 @@ void Scene_RunParticleSequence(void)
         source = tiles + ((row * 15) << 6);
         for (col = 0; col != 30; col++) {
             if (!(col >= 5 && col <= 24 && row > 2 && row <= 13)) {
-                DMA3_SRC = (u32)source;
-                DMA3_DST = 0x0600B500 + cnt;
-                DMA3_CTRL = 0x84000008;
+                Dma_Set(source, (void *)(0x0600B500 + cnt), 0x84000008,
+                    (volatile u32 *)0x040000d4);
                 cnt += 32;
             }
             source += 32;
@@ -285,29 +220,24 @@ void Scene_RunParticleSequence(void)
     M2C_FIELD(state, s32 *, 0xA8) = 0;
 
     resource = (u8 *)Func_08002f40((s32)&Value_0000008f);
-    DMA3_SRC = (u32)resource;
-    DMA3_DST = 0x05000000;
-    DMA3_CTRL = 0x84000020;
+    Dma_Set(resource, (void *)0x05000000, 0x84000020,
+        (volatile u32 *)0x040000d4);
     *(vu16 *)0x05000080 = 0x2F8B;
     *(vu16 *)0x05000082 = 0x5BF6;
 
     resource = (u8 *)Func_08002f40((s32)&Value_00000040);
-    DMA3_SRC = (u32)resource;
-    DMA3_DST = 0x05000200;
-    DMA3_CTRL = 0x84000078;
+    Dma_Set(resource, (void *)0x05000200, 0x84000078,
+        (volatile u32 *)0x040000d4);
     Func_08005340(resource + 480, tiles);
-    DMA3_SRC = (u32)tiles;
-    DMA3_DST = 0x06010000;
-    DMA3_CTRL = 0x84001B30;
+    Dma_Set(tiles, (void *)0x06010000, 0x84001B30,
+        (volatile u32 *)0x040000d4);
 
     resource = (u8 *)Func_08002f40((s32)&Value_00000041);
-    DMA3_SRC = (u32)resource;
-    DMA3_DST = 0x050003E0;
-    DMA3_CTRL = 0x84000008;
+    Dma_Set(resource, (void *)0x050003E0, 0x84000008,
+        (volatile u32 *)0x040000d4);
     Func_08005340(resource + 32, tiles);
-    DMA3_SRC = (u32)tiles;
-    DMA3_DST = 0x06016E00;
-    DMA3_CTRL = 0x84000480;
+    Dma_Set(tiles, (void *)0x06016E00, 0x84000480,
+        (volatile u32 *)0x040000d4);
     Func_08015000();
     Func_080f731c();
 
@@ -352,15 +282,12 @@ void Scene_RunParticleSequence(void)
     routine[1] = (DrawRectangleFn)Data_03001e50[47];
     Func_080072f0(canvas, 0x8000, 0, (void *)0x03000168);
 
-    DMA3_SRC = (u32)canvas;
-    DMA3_DST = 0x06003500;
-    DMA3_CTRL = 0x84002000;
-    DMA3_SRC = 0x05000000;
-    DMA3_DST = (u32)work;
-    DMA3_CTRL = 0x84000080;
-    DMA3_SRC = 0x05000200;
-    DMA3_DST = (u32)shade;
-    DMA3_CTRL = 0x84000080;
+    Dma_Set(canvas, (void *)0x06003500, 0x84002000,
+        (volatile u32 *)0x040000d4);
+    Dma_Set((void *)0x05000000, work, 0x84000080,
+        (volatile u32 *)0x040000d4);
+    Dma_Set((void *)0x05000200, shade, 0x84000080,
+        (volatile u32 *)0x040000d4);
     Func_080f6038(shade, (u16 *)0x05000200, 0, 256);
     Func_080f6038((u16 *)work, (u16 *)0x05000000, 0, 256);
     *(vu16 *)0x04000000 = 0x3740;

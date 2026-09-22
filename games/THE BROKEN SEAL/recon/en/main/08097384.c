@@ -1,26 +1,20 @@
 #include "TYPES.H"
+#include "DMA.H"
 
 #define BattleFx_InitializeSharedScene Func_08097384
 
 void BattleFx_InitializeSharedScene(void)
 {
-    volatile u32 *dma = (volatile u32 *)0x040000d4;
     u8 **state = (u8 **)0x03001ebc;
     u8 *scene = state[0];
     u8 *workspace = state[5];
     s32 selection = *(s32 *)0x03001e40 & 7;
 
-    dma[0] = (u32)(workspace + 0x1340);
-    dma[1] = (u32)(scene + 0x776);
-    dma[2] = 0x84000150;
+    Dma_Set(workspace + 0x1340, scene + 0x776, 0x84000150, (volatile u32 *)0x040000d4);
     if (*(s16 *)(scene + 0xcb8) == 0) {
-        dma[0] = (u32)(workspace + 0xe00);
-        dma[1] = (u32)(scene + 0x236);
-        dma[2] = 0x84000150;
+        Dma_Set(workspace + 0xe00, scene + 0x236, 0x84000150, (volatile u32 *)0x040000d4);
     }
-    dma[0] = (u32)(workspace + 0xe00);
-    dma[1] = (u32)(workspace + 0x380);
-    dma[2] = 0x840002a0;
+    Dma_Set(workspace + 0xe00, workspace + 0x380, 0x840002a0, (volatile u32 *)0x040000d4);
 
     if (Func_080770c0(0x148)) selection = 0;
     if (Func_080770c0(0x149)) selection = 1;

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "DMA.H"
 
 /*
  * Battle mode entry.  Allocates the 0xCCC-byte battle work block, brings the
@@ -147,7 +148,7 @@ extern volatile u8 Data_03001f54;
 
 s32 Func_0808c4f8(void)
 {
-    s32 zero;
+    volatile s32 zero;
     volatile u32 *dma;
     void *work;
     void *actor;
@@ -171,9 +172,7 @@ s32 Func_0808c4f8(void)
 
     zero = 0;
     dma = (volatile u32 *)0x040000D4;
-    dma[0] = (u32)&zero;
-    dma[1] = (u32)work;
-    dma[2] = 0x85000333;
+    Dma_Set(&zero, work, 0x85000333, dma);
 
     GameFlag_Clear(0x103);
 

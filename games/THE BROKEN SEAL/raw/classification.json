@@ -876,7 +876,7 @@
         "approved_compiler_thumb_only",
         "byte_exact_reconstruction",
         "arm_body_under_mthumb_only_interfacearm_stub_arm_c_8806_8830",
-        "byte_identical_in_all_six_tla_editions_9_of_13_regions_vendor_object_unidentified"
+        "byte_identical_in_all_six_tla_editions_9_of_10_regions_vendor_object_unidentified"
       ],
       "expected_files": 10,
       "expected_bytes": 3672,
@@ -2402,18 +2402,20 @@
         "cross_product_identity",
         "byte_exact_reconstruction"
       ],
-      "expected_files": 1,
-      "expected_bytes": 40,
+      "expected_files": 2,
+      "expected_bytes": 50,
       "files": [
+        "080fa1c8",
         "080fa1d4"
       ],
       "provenance": {
         "scanned": "2026-09-21",
         "verdict": "cross_product_sound_driver_library_assembly",
         "credit": "library",
-        "object": "TBS/TLA common sound command-byte setters",
-        "proof": "Both setters preserve their return address in ip across calls and consume the reader's private r3 result rather than the C ABI return register; both are byte-identical in TLA.",
+        "object": "TBS/TLA common sound command-byte reader and setters",
+        "proof": "The reader advances the track command pointer and returns the fetched byte in private r3, which both setters consume after preserving their return address in ip; the complete 52-byte reader/setter tail is byte-identical in TLA.",
         "evidence": [
+          "non_abi_r3_result_contract",
           "manual_ip_return_address",
           "private_r3_result_contract",
           "cross_product_identity"

@@ -4966,7 +4966,7 @@
         "start": 135242184,
         "end": 135242194,
         "kind": "thumb",
-        "evidence": "games/THE BROKEN SEAL/src/080fa1c8.c:byte-identical-claimed-C"
+        "evidence": "games/THE BROKEN SEAL/SRC/SOUND/DRIVER/COMMAND_BYTE_READER.S:sound_driver_private_return_assembly"
       },
       {
         "start": 135242194,

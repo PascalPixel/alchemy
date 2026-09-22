@@ -172,6 +172,11 @@
       "run_address": "0x080f9a18"
     },
     {
+      "source": "games/THE BROKEN SEAL/SRC/SOUND/DRIVER/COMMAND_BYTE_READER.S",
+      "address": "0x080fa1c8",
+      "run_address": "0x080fa1c8"
+    },
+    {
       "source": "games/THE BROKEN SEAL/SRC/SOUND/DRIVER/SEQUENCE_COMMANDS.S",
       "address": "0x080f9a80",
       "run_address": "0x080f9a80"

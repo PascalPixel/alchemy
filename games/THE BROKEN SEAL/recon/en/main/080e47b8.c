@@ -4,6 +4,29 @@
 #include "MOTION_OBJECT.H"
 typedef void (*RectangleBlit)(s32, s32, s32, s32, s32, s32);
 
+extern u8 Value_00000053;
+extern u8 Value_0000006f;
+extern u8 Value_00000073;
+extern u8 Value_00000079;
+extern u8 Value_0000007d;
+extern u8 Value_0000008e;
+extern u8 Value_00000090;
+extern u8 Value_00000092;
+extern u8 Value_00000094;
+extern u8 Value_00000096;
+extern u8 Value_00000099;
+extern u8 Value_0000009e;
+extern u8 Value_000000a9;
+extern u8 Value_000000ab;
+extern u8 Value_000000ac;
+extern u8 Value_000000ad;
+extern u8 Value_000000ae;
+extern u8 Value_000000b4;
+extern u8 Value_000000b8;
+extern u8 Value_000000c3;
+extern u8 Value_000000c4;
+extern u8 Value_000000ce;
+
 s32 Func_080022ec();
 s32 Func_080022fc();
 s32 Func_0800231c();
@@ -42,6 +65,8 @@ void Func_080f9010();
 
 void Func_080e47b8(s32 a0, s32 a1)
 {
+    void **heap_cache;
+    void **heap_cursor;
     s32 resource;
     s32 p10;
     s32 p10b;
@@ -112,56 +137,52 @@ void Func_080e47b8(s32 a0, s32 a1)
 
     kind = a1;
     command = a0;
-    v0 = *(s32 *)(0x3001eec);
-    work = v0;
-    canvas = *(s32 *)(0x3001eec + 4);
-    matrix = *(s32 *)0x03001e80;
-    sprites = *(s32 *)0x03001ef4;
+    heap_cache = (void **)0x03001eec;
+    heap_cursor = heap_cache;
+    work = (s32)*heap_cursor++;
+    canvas = (s32)*heap_cursor;
+    matrix = (s32)*(void **)((u8 *)heap_cache - 0x6c);
+    sprites = (s32)heap_cache[2];
     *(s32 *)((work + 0x7828)) = command;
-    switch (kind) {
-    case 8:
-    case 11:
-    case 32:
+    if (kind == 11 || kind == 8 || kind == 32) {
         Func_080cdb24(0);
-        goto L_080e4812;
-        break;
+    } else {
+        Func_080cd594(0);
     }
-    Func_080cd594(0);
-    L_080e4812:;
     *(volatile u16 *)0x04000052 = 0x1010;
-    Func_080e0524(0x73, sprites, 0, 0);
-    Func_080e0524(0x96, work, 1, 0);
-    Func_080e0524(0x99, 0x2010000, 1, 0);
-    Func_080df9d0(0x2010000, (work + 0x5100), 40, 0x120);
+    Func_080e0524((s32)&Value_00000073, sprites, 0, 0);
+    Func_080e0524((s32)&Value_00000096, work, 1, 0);
+    Func_080e0524((s32)&Value_00000099, (void *)0x02010000, 1, 0);
+    Func_080df9d0(0x02010000, (work + 0x5100), 40, 0x120);
     if (kind == 5 || kind == 23) {
-        resource = 0x7d;
+        resource = (s32)&Value_0000007d;
     } else if (kind == 12) {
-        resource = 0xa9;
+        resource = (s32)&Value_000000a9;
     } else if (kind == 6 || kind == 27) {
-        Func_080e0524(0xce, 0x02010000, 1, 0);
-        Func_080e0524(0xc4, 0x02010c56, 1, 0);
+        Func_080e0524((s32)&Value_000000ce, (void *)0x02010000, 1, 0);
+        Func_080e0524((s32)&Value_000000c4, (void *)0x02010c56, 1, 0);
         goto L_080e4912;
     } else if (kind == 31 || kind == 8) {
-        if (kind == 31) resource = 0x79;
-        else resource = 0xc3;
-        Func_080e0524(resource, 0x02010000, 1, 1);
+        if (kind == 31) resource = (s32)&Value_00000079;
+        else resource = (s32)&Value_000000c3;
+        Func_080e0524(resource, (void *)0x02010000, 1, 1);
         goto L_080e4912;
     } else if (kind == 14) {
-        resource = 0x6f;
+        resource = (s32)&Value_0000006f;
     } else if (kind == 30) {
-        resource = 0xce;
+        resource = (s32)&Value_000000ce;
     } else if (kind == 16) {
-        resource = 0xb8;
+        resource = (s32)&Value_000000b8;
     } else if (kind == 20) {
-        resource = 0xb4;
+        resource = (s32)&Value_000000b4;
     } else if ((u32)(kind - 33) <= 1) {
-        resource = 0x53;
+        resource = (s32)&Value_00000053;
     } else {
         if (kind != 11 && kind != 32)
-            Func_080e0524(0x9e, 0x02010000, 1, 0);
+            Func_080e0524((s32)&Value_0000009e, (void *)0x02010000, 1, 0);
         goto L_080e4912;
     }
-    Func_080e0524(resource, 0x02010000, 1, 0);
+    Func_080e0524(resource, (void *)0x02010000, 1, 0);
     L_080e4912:;
     switch (kind) {
     case 0:
@@ -174,7 +195,7 @@ void Func_080e47b8(s32 a0, s32 a1)
     case 12:
     case 13:
     case 33:
-        Func_080e0524(0x94, 0x02013c56, 1, 1);
+        Func_080e0524((s32)&Value_00000094, (void *)0x02013c56, 1, 1);
         break;
     case 1:
     case 6:
@@ -185,7 +206,7 @@ void Func_080e47b8(s32 a0, s32 a1)
     case 30:
     case 31:
     case 32:
-        Func_080e0524(0x90, 0x02013c56, 1, 1);
+        Func_080e0524((s32)&Value_00000090, (void *)0x02013c56, 1, 1);
         break;
     case 2:
     case 14:
@@ -194,7 +215,7 @@ void Func_080e47b8(s32 a0, s32 a1)
     case 17:
     case 18:
     case 19:
-        Func_080e0524(0x92, 0x02013c56, 1, 1);
+        Func_080e0524((s32)&Value_00000092, (void *)0x02013c56, 1, 1);
         break;
     case 3:
     case 5:
@@ -206,10 +227,10 @@ void Func_080e47b8(s32 a0, s32 a1)
     case 25:
     case 34:
     case 35:
-        Func_080e0524(0x8e, 0x02013c56, 1, 1);
+        Func_080e0524((s32)&Value_0000008e, (void *)0x02013c56, 1, 1);
         break;
     case 100:
-        Func_080e0524(0x92, 0x02013c56, 1, 1);
+        Func_080e0524((s32)&Value_00000092, (void *)0x02013c56, 1, 1);
         break;
     }
     *(s32 *)((work + 0x7780)) = 2;
@@ -472,13 +493,13 @@ void Func_080e47b8(s32 a0, s32 a1)
         } while (v10 != 32);
     }
     if (kind == 11) {
-        Func_080e0524(0xab, work, 1, 1);
-        Func_080e0524(0xac, 0x2010000, 1, 0);
+        Func_080e0524((s32)&Value_000000ab, work, 1, 1);
+        Func_080e0524((s32)&Value_000000ac, (void *)0x02010000, 1, 0);
         *(volatile u16 *)0x04000052 = 0xe10;
     }
     if (kind == 32) {
-        Func_080e0524(0xad, work, 1, 1);
-        Func_080e0524(0xae, 0x2010000, 1, 0);
+        Func_080e0524((s32)&Value_000000ad, work, 1, 1);
+        Func_080e0524((s32)&Value_000000ae, (void *)0x02010000, 1, 0);
         *(volatile u16 *)0x04000052 = 0xe10;
     }
     if (kind != 7) {

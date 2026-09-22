@@ -29,15 +29,11 @@
  * Reopen with a concrete array, lifetime or control-flow fact rather than trying
  * to force the reference registers.
  *
- * Uncertain / preserved oddities, all present in the reference:
- *   - the points[] reset loop calls Func_08004458 twice and discards the
- *     first result;
- *   - the spawn loop at Data_080ee16c[] writes field_10 twice, the second
- *     store overwriting the first;
- *   - the 512-entry Data_02010000 simulation sits inside the four-iteration
- *     Data_080ee16c[] loop, so it advances and draws four times per frame;
- *   - the two-word `scale` pair is copied from Data_080eda78 and then
- *     immediately overwritten with 0x10000 in both lanes.
+ * The points[] reset loop advances the shared RNG twice per point: the first
+ * result is intentionally discarded, but the call itself is observable in the
+ * following random sequence.  The later particle spawn uses only its final
+ * vertical velocity assignment; the earlier trigonometric value was an
+ * overwritten source-store artifact and is not retained here.
  */
 
 typedef void (*WordCopy)(void *destination, const void *source, s32 size);
@@ -130,9 +126,8 @@ struct EffectRuntime {
  */
 extern void *Data_03001eec[];
 extern struct SceneCameraObject Data_03001ce0;
-extern volatile u32 Data_03001b04;
+extern u32 Data_03001b04;
 extern struct Particle Data_02010000[];
-extern struct ScalePair Data_080eda78;
 extern u8 Data_0000003b[];
 extern u8 Data_00000073[];
 extern u8 Data_00000082[];
@@ -494,7 +489,6 @@ void Func_080d1714(struct EffectArgument *argument)
         }
 
         if (frame > 159) {
-            scale = Data_080eda78;
             if (frame - 160 <= 64)
                 size = 32;
             else
@@ -592,8 +586,6 @@ void Func_080d1714(struct EffectArgument *argument)
                             angle = Func_08004458() & 0xffff;
                             spark->field_0c =
                                 (speed * Func_08002322(angle)) >> 6;
-                            spark->field_10 =
-                                -(speed * Func_0800231c(angle)) >> 6;
                             spark->field_10 =
                                 ((Func_08004458() & 255) - 128) << 10;
                             spark->field_00 = 0;

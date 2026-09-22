@@ -26,15 +26,10 @@
  * Kinds 0/5/8 additionally run a 12-frame two-pass impact flare over the
  * first STATE->count*shots spark slots.
  *
- * Every `Func_080072f0` / `Func_080072f4` / `Func_080072f8` /
- * `Func_080072fc` / `Func_08007300` call site is an indirect call through
- * the value the reference loads into r3/r4/r5/r6/r7 immediately before the
- * `bl`, not a real callee: those five addresses are consecutive slots of
- * the `_call_via_rN` trampoline bank at games/THE BROKEN SEAL/raw/080072e4.s
- * (r3 at +0x0c, r4 at +0x10, r5 at +0x14, r6 at +0x18, r7 at +0x1c).
- * They are modelled here as ordinary calls through `draw_cb` /
- * `flash_cb` / the IWRAM word copier at 0x03001388, which is the same
- * treatment 080d85d0.c and 080e0c84.c already use.
+ * Every call-via-rN site is an indirect call through the value the reference
+ * loads into r3/r4/r5/r6/r7 immediately before the `bl`, not a game callee.
+ * The rectangle callbacks and the IWRAM word copier at 0x03001388 are
+ * therefore expressed through their typed function-pointer interfaces below.
  *
  * The two `bl` instructions at 0x080defe0 and 0x080df860 target addresses
  * inside this owner (0x080df864 and 0x080defea).  They are GAS's Thumb-1
@@ -86,7 +81,7 @@
     (*(type_ptr)((s8 *)(expr) + (offset)))
 #define STATE M2C_FIELD(work, void **, 0x7828)
 
-typedef void (*WordCopyFn)(void *dest, void *src, s32 size);
+typedef void (*WordCopyFn)(void *dest, const void *src, s32 size);
 typedef void (*DrawRectangleFn)(
     void *dest, void *src, s32 x, s32 y, s32 width, s32 height);
 
@@ -95,7 +90,6 @@ void Func_080de2f8(void *object, s32 a, s32 b, s32 c, s32 *out_x, s32 *out_y);
 s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 void Func_080e0524(s32 resource_id, void *target, s32 flag_a, s32 flag_b);
 void *Func_08002f40(s32 id);
-void Func_080072f0(void *dest, void *src, s32 size, WordCopyFn copier);
 s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 void Func_08002dd8(s32 id);
@@ -224,15 +218,13 @@ s32 Func_080dea70(void *object, s32 kind)
             Func_080e0524((s32) &Value_00000081, (s8 *)work + (128 << 5), 1, 1);
         }
         if (kind == 5) {
-            Func_080072f0((void *)(160 << 19),
-                Func_08002f40((s32) &Value_000000b9), 128,
-                (WordCopyFn) 0x03001388);
+            ((WordCopyFn)0x03001388)((void *)(160 << 19),
+                Func_08002f40((s32) &Value_000000b9), 128);
         }
         Func_080e0524((s32) &Value_000000c7, (s8 *)work + (128 << 6), 1, 0);
         if (kind == 5) {
-            Func_080072f0((void *)(160 << 19),
-                Func_08002f40((s32) &Value_000000b9), 128,
-                (WordCopyFn) 0x03001388);
+            ((WordCopyFn)0x03001388)((void *)(160 << 19),
+                Func_08002f40((s32) &Value_000000b9), 128);
         }
         M2C_FIELD(work, s32 *, 0x7780) = 2;
         M2C_FIELD(work, s32 *, 0x7784) = 75;
@@ -242,9 +234,8 @@ s32 Func_080dea70(void *object, s32 kind)
         M2C_FIELD(work, s32 *, 0x7780) = kind;
         M2C_FIELD(work, s32 *, 0x7784) = 0;
     } else if (kind == 2) {
-        Func_080072f0((void *)(160 << 19),
-            Func_08002f40((s32) &Value_0000007f), 128,
-            (WordCopyFn) 0x03001388);
+        ((WordCopyFn)0x03001388)((void *)(160 << 19),
+            Func_08002f40((s32) &Value_0000007f), 128);
         Func_080e0524((s32) &Value_0000005c, work, 0, 0);
         M2C_FIELD(work, s32 *, 0x7780) = kind;
         M2C_FIELD(work, s32 *, 0x7784) = 50;

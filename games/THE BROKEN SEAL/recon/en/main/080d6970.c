@@ -7,12 +7,10 @@
  * games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C and the drafts
  * games/THE BROKEN SEAL/recon/en/main/080e08c0.c, 080d82b0.c, 080e01e4.c and
  * 080e7404.c; the field offsets, the heap_cache/cursor prologue, the
- * Value_XXXXXXXX effect-id idiom and the Func_080072f4/Func_080072f0
- * trampoline calls all follow those files.  Func_080072f4 and
- * Func_080072f0 are not real callees: they are the r4 and r3 entries of
- * the _call_via_rN bundle at games/THE BROKEN SEAL/raw/080072e4.s, so every
- * Func_080072f4 site here is an indirect call through one of the two
- * generated rectangle-blit routines (heap kinds 46 and 47).
+ * Value_XXXXXXXX effect-id idiom and the _call_via_rN trampoline calls all
+ * follow those files.  The fill at 0x03000164 is called through its typed
+ * function-pointer interface below; the nearby 080072e4 runtime entry is a
+ * compiler veneer, not a game callee.
  *
  * The owner is one function.  The reference's `bl 0x080d6b76` at
  * 0x080d75de is a long unconditional jump, not a call: the 366-frame
@@ -42,7 +40,7 @@
 #define M2C_FIELD(expr, type_ptr, offset) \
     (*(type_ptr)((u8 *)(expr) + (offset)))
 
-typedef void (*WordCopyFn)(void *dest, s32 size, s32 value);
+typedef void (*FillFn)(void *dest, s32 size, s32 value);
 typedef void (*DrawRectangleFn)(
     void *dest, void *src, s32 x, s32 y, u32 w, u32 h);
 
@@ -54,7 +52,6 @@ s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 void Func_080d6750(void *object);
-void Func_080072f0(void *dest, s32 size, s32 value, WordCopyFn fill);
 void Func_080049ac(void);
 void Func_080051d8(s32 a, s32 b);
 void Func_080f9010(s32 id);
@@ -259,7 +256,7 @@ void Func_080d6970(void *object)
 
         facing = *(s32 *)0x03001E80;
         if ((*(s32 *)0x03001B04 & 3) != 0 && t > 190 && t <= 285) {
-            Func_080072f0(canvas, 0x4000, 3, (WordCopyFn)0x03000164);
+            ((FillFn)0x03000164)(canvas, 0x4000, 3);
             t = 286;
         }
         if (t == 224) {

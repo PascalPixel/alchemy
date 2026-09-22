@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFFECT_WORK.H"
 
 #define BattleEffect_RunRisingColumns Func_080dd77c
 
@@ -44,12 +45,12 @@ void Func_08004278(s32);
 void Func_08002dd8(s32);
 #define Runtime_ReleaseHeapBlock Func_08002dd8
 s32 Func_080cdbc0(void);
-#define WORK_EFFECT (*(Effect **)(work + 0x7828))
+#define WORK_EFFECT ((Effect *)work->effect)
 
 void BattleEffect_RunRisingColumns(Effect *effect)
 {
     u32 *cache, *entry;
-    u8 *work;
+    struct BattleEffectWork *work;
     void *dst;
     DrawRectangle draw[2];
     s32 origin_x, origin_y;
@@ -59,7 +60,7 @@ void BattleEffect_RunRisingColumns(Effect *effect)
 
     cache = (u32 *)(Data_03001e50 + 39 * 4);
     entry = cache;
-    work = (u8 *)*entry++;
+    work = (struct BattleEffectWork *)*entry++;
     dst = (void *)*entry;
     WORK_EFFECT = effect;
     Func_080de2f8(effect, 4, effect->side, 4, &origin_x, &origin_y);
@@ -77,14 +78,14 @@ void BattleEffect_RunRisingColumns(Effect *effect)
     draw[0] = (DrawRectangle)cache[7];
     Func_080ed408(47, 7, 7, 7, 1);
     draw[1] = (DrawRectangle)cache[8];
-    column = (Column *)(work + 0x7080);
+    column = (Column *)((u8 *)work + 0x7080);
     i = 0;
     do {
         column[i].x = Data_080eeb96[i] + 64;
         i++;
     } while (i != 16);
-    *(s32 *)(work + 0x7780) = 1;
-    *(s32 *)(work + 0x7784) = 0;
+    work->transfer_mode = 1;
+    work->transfer_value = 0;
     Scheduler_AddOrUpdateCallback(0x080cd261, 0x480);
     frame = 0;
     do {
@@ -94,10 +95,10 @@ void BattleEffect_RunRisingColumns(Effect *effect)
                 ObjectGroup_UpdateMembers(WORK_EFFECT->actors[i], 7, 5, i, 16);
         }
         i = 0;
-        column = (Column *)(work + 0x7080);
+        column = (Column *)((u8 *)work + 0x7080);
         do {
             if (frame == i * 4 + 5)
-                *(s32 *)(work + 0x77a8) = 2;
+                *(s32 *)((u8 *)work + 0x77a8) = 2;
             offset = i * 2;
             if (frame > offset + 4) {
                 cell = Func_080022fc(frame / 4 + i, 5);
@@ -108,7 +109,7 @@ void BattleEffect_RunRisingColumns(Effect *effect)
                     height = 160 - (frame - offset) * 4;
                 }
                 if (height > 0)
-                    draw[i & 1](dst, work + (cell << 10), column->x - 16,
+                    draw[i & 1](dst, (u8 *)work + (cell << 10), column->x - 16,
                         (i & 7) - height + 104, 32, height);
             }
             i++;
@@ -116,7 +117,7 @@ void BattleEffect_RunRisingColumns(Effect *effect)
         } while (i != 16);
         Camera_ApplyShake(4, 4);
         ObjectGroup_TickMemberTimers();
-        *(s32 *)(work + 0x7824) = 1;
+        work->transfer_pending = 1;
         WaitFrames(1);
         frame++;
     } while (frame != 70);

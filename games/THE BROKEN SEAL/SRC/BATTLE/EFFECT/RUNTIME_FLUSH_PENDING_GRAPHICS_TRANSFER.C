@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
+#include "BATTLE_EFFECT_WORK.H"
 
 typedef s32 (*WordCopyFn)(void *destination, const void *source, s32 size);
 
@@ -19,37 +20,37 @@ static __inline__ void FillWords(
 void BattleFx_FlushPendingGraphicsTransfer(void)
 {
     void **heap_cache;
-    u8 *work;
+    struct BattleEffectWork *work;
     void *source;
     s32 transfer_mode;
 
     heap_cache = (void **)0x03001eec;
     work = heap_cache[0];
     source = (void *)0x02010000;
-    if (*(s32 *)(work + 0x7824) != 1)
+    if (work->transfer_pending != 1)
         return;
 
-    transfer_mode = *(s32 *)(work + 0x7780);
+    transfer_mode = work->transfer_mode;
     switch (transfer_mode) {
     case 0:
         CopyWords((void *)0x06008000, source, 0x7800);
         break;
     case 1:
         CopyWords((void *)0x06008000, source, 0x7800);
-        FillWords(source, 0x7800, *(s32 *)(work + 0x7784));
+        FillWords(source, 0x7800, work->transfer_value);
         break;
     case 2:
-        if (*(s32 *)(work + 0x7784) == 50) {
+        if (work->transfer_value == 50) {
             Battle_Place(source, (void *)0x06008000, 0x7800);
         } else {
             Battle_unk2_3(source, (void *)0x06008000, 0x7800);
         }
         break;
     case 3:
-        Battle_SetMode(source, *(s32 *)(work + 0x7784),
+        Battle_SetMode(source, work->transfer_value,
             (void *)0x06008000, 0x7800);
         break;
     }
 
-    *(s32 *)(work + 0x7824) = 0;
+    work->transfer_pending = 0;
 }

@@ -43,6 +43,14 @@ extern const u16 Data_080eef3e[];
 extern const u8 Data_080eef4a[];
 extern const u8 Data_080eef50[];
 
+extern u8 Value_00000064;
+extern u8 Value_00000065;
+extern u8 Value_00000067;
+extern u8 Value_00000070;
+extern u8 Value_00000073;
+extern u8 Value_000000bb;
+extern u8 Value_000000ce;
+
 s32 Func_080022ec(s32 numerator, s32 denominator);
 s32 Func_080022fc(s32 a, s32 b);
 s32 Func_0800231c(s32 angle);
@@ -196,10 +204,10 @@ void Func_080ea0d8(void *object)
     near = 0xFFFF;
     far = 0;
 
-    Func_080e0524(0xbb, work, 1, 1);
-    Func_080e0524(0x67, (u8 *)work + 0x600, 0, 0);
-    Func_080e0524(0xce, (u8 *)work + 0x95C, 1, 0);
-    Func_080e0524(0x73, ramp, 0, 0);
+    Func_080e0524((s32)&Value_000000bb, work, 1, 1);
+    Func_080e0524((s32)&Value_00000067, (u8 *)work + 0x600, 0, 0);
+    Func_080e0524((s32)&Value_000000ce, (u8 *)work + 0x95C, 1, 0);
+    Func_080e0524((s32)&Value_00000073, ramp, 0, 0);
 
     /* Eight progressively darker clamped copies of the 770-byte ramp. */
     lim = 64;
@@ -233,7 +241,7 @@ void Func_080ea0d8(void *object)
     } while (i != 8);
 
     ((void (*)(void *, const void *, s32))0x03001388)(
-        (void *)0x05000000, Func_08002f40(0x64), 128);
+        (void *)0x05000000, Func_08002f40((s32)&Value_00000064), 128);
 
     i = 0;
     do {
@@ -517,7 +525,7 @@ void Func_080ea0d8(void *object)
     Func_08002dd8(46);
     Func_080ed408(46, 7, 7, 3, 2);
     draw = *(DrawRectangleFn *)0x03001F08;
-    Func_080e0524(0x64, (u8 *)work + (128 << 7), 1, 1);
+    Func_080e0524((s32)&Value_00000064, (u8 *)work + (128 << 7), 1, 1);
 
     {
         u8 *p;
@@ -584,7 +592,7 @@ void Func_080ea0d8(void *object)
                 frame = 150;
                 QueueRegisterWrite(0x80, 0x04000020, 128 << 10);
                 QueueRegisterWrite(0, 0x04000028, 192 << 10);
-                Func_080e0524(0x70,
+                Func_080e0524((s32)&Value_00000070,
                     (u8 *)work + (128 << 7), 1, 0);
             } else if (frame >= 155 && frame <= 213) {
                 frame = 214;
@@ -598,9 +606,9 @@ void Func_080ea0d8(void *object)
             QueueRegisterWrite(0, 0x04000028, 192 << 10);
             fill = 0;
             Dma_Set(&fill, canvas, 0x85001000, dma);
-            Func_080e0524(0x70,
+            Func_080e0524((s32)&Value_00000070,
                 (u8 *)work + (128 << 7), 1, 0);
-            Func_080e0524(0x65,
+            Func_080e0524((s32)&Value_00000065,
                 (u8 *)work + (192 << 7), 0, 0);
         }
 

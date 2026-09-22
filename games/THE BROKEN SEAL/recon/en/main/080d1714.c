@@ -128,10 +128,9 @@ extern void *Data_03001eec[];
 extern struct SceneCameraObject Data_03001ce0;
 extern u32 Data_03001b04;
 extern struct Particle Data_02010000[];
-extern u8 Data_0000003b[];
-extern u8 Data_00000073[];
-extern u8 Data_00000082[];
-extern u8 Data_00000088[];
+extern u8 Value_00000073;
+extern u8 Value_00000082;
+extern u8 Value_00000088;
 extern u16 Data_080ede48[];
 extern u8 Data_080ee15a[];
 extern u8 Data_080ee163[];
@@ -231,10 +230,10 @@ void Func_080d1714(struct EffectArgument *argument)
     Func_080ed408(47, 7, 7, 3, 3);
     draw_rectangle_alt = (DrawRectangle)cells[7];
 
-    tbl = Func_08002f40((s32)Data_00000082);
+    tbl = Func_08002f40((s32)&Value_00000082);
     ((WordCopy)0x03001388)((void *)0x05000000, tbl, 0x80);
     Func_08005340(tbl + 0x80, runtime);
-    Func_08005340(Func_08002f40((s32)Data_00000073), graphics);
+    Func_08005340(Func_08002f40((s32)&Value_00000073), graphics);
 
     runtime->display_mode = 2;
     runtime->display_value = 50;
@@ -434,12 +433,12 @@ void Func_080d1714(struct EffectArgument *argument)
         }
 
         if (frame == 160) {
-            Func_080b5040(1, (s32)Data_0000003b, 0);
-            Func_080b5038(1, (s32)Data_0000003b, 8);
+            Func_080b5040(1, 0x3b, 0);
+            Func_080b5038(1, 0x3b, 8);
             Func_080d6750(runtime->argument);
             Func_080dbb24(9, 376, 2);
 
-            tbl = Func_08002f40((s32)Data_00000088);
+            tbl = Func_08002f40((s32)&Value_00000088);
             ((WordCopy)0x03001388)((void *)0x05000000, tbl, 0x80);
             Func_08005340(tbl + 0x80, (u8 *)runtime + 0x3600);
 

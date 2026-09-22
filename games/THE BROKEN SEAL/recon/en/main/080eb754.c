@@ -1,4 +1,5 @@
 #include "shared-aggregates.h"
+#include "BATTLE_EFFECT_WORK.H"
 
 /*
  * Battle-presentation scene at 0x080eb754.
@@ -60,6 +61,9 @@
 
 /* Only the m2c spelling this draft actually uses. */
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
+#define EFFECT_ARGUMENT(work) \
+    ((struct BattleEffectArgument *) \
+        ((struct BattleEffectWork *)(work))->effect)
 
 #define SPARK_POOL 0x7080  /* 64 records inside the battle work block */
 #define OBJECT_LIST 0x77D8 /* nine attached presentation objects */
@@ -138,18 +142,18 @@ void Func_080eb754(s32 arg0) {
     dest = M2C_FIELD(&absolute_03001ef0, s32 *, 0);
     work = *(void **)0x03001EEC;
     sheet = absolute_03001ef0.field_0004;
-    M2C_FIELD(work, s32 *, 0x7828) = arg0;
+    ((struct BattleEffectWork *)work)->effect = (void *)arg0;
     Func_080cd594(0);
     Func_080c9048();
     absolute_0400000c.field_0000 = 0x784;
     M2C_FIELD((void *)0x05000000, s16 *, 0) = (s16) (s32) &Value_00000000;
     M2C_FIELD((void *)0x05000000, s16 *, 2) = (s16) (s32) &Value_00000000;
-    M2C_FIELD(work, s32 *, 0x7780) = 0;
+    ((struct BattleEffectWork *)work)->transfer_mode = 0;
     Func_080041d8(0x080CD261, 0x480);
     Func_080cd104(1, 0);
     Func_080dbb24(9, 0x175, 1);
     absolute_03001ce0.field_0010 = 0xF0;
-    Func_080d6750(M2C_FIELD(work, s32 *, 0x7828));
+    Func_080d6750(((struct BattleEffectWork *)work)->effect);
     absolute_04000048.field_0000 = 0x2737;
     *(u16 *)0x04000038 = (u16) (s32) &Value_000000ca;
     Func_080030f8(1);
@@ -166,8 +170,8 @@ void Func_080eb754(s32 arg0) {
     saved_row = (s32) absolute_03001ad0.field_0004;
     ctrl = M2C_FIELD(&absolute_03001ef0, void **, 0x10);
     shift = 0;
-    M2C_FIELD(work, s32 *, 0x7780) = 1;
-    M2C_FIELD(work, s32 *, 0x7784) = base_x;
+    ((struct BattleEffectWork *)work)->transfer_mode = 1;
+    ((struct BattleEffectWork *)work)->transfer_value = base_x;
     M2C_FIELD(ctrl, s32 *, 0x10) = 1;
 
     sp = (struct ScenePoint *)((s8 *)work + SPARK_POOL);
@@ -273,8 +277,8 @@ void Func_080eb754(s32 arg0) {
             }
         }
         if (frame == 0x18) {
-            M2C_FIELD(work, s32 *, 0x7780) = 2;
-            M2C_FIELD(work, s32 *, 0x7784) = 0x32;
+            ((struct BattleEffectWork *)work)->transfer_mode = 2;
+            ((struct BattleEffectWork *)work)->transfer_value = 0x32;
         }
         if (frame == 0x1C) {
             absolute_0400000c.field_0000 = 0x784;
@@ -328,7 +332,7 @@ void Func_080eb754(s32 arg0) {
         } else {
             absolute_03001ad0.field_0006 = 0x20;
         }
-        M2C_FIELD(work, s32 *, 0x7824) = 1;
+        ((struct BattleEffectWork *)work)->transfer_pending = 1;
         Func_080030f8(1);
     }
 
@@ -355,8 +359,8 @@ void Func_080eb754(s32 arg0) {
     for (k = 0; k != 0x140; k++) {
         SCENE_POOL[k].life = 0;
     }
-    M2C_FIELD(work, s32 *, 0x7780) = 2;
-    M2C_FIELD(work, s32 *, 0x7784) = 0x4B;
+    ((struct BattleEffectWork *)work)->transfer_mode = 2;
+    ((struct BattleEffectWork *)work)->transfer_value = 0x4B;
     absolute_0400000c.field_0000 = 0x784;
     absolute_0400000c.field_0046 = 0x1010;
     slide = 0xFFFFFE20;
@@ -403,13 +407,13 @@ void Func_080eb754(s32 arg0) {
             Func_080f9010(0x89);
         }
         m = 0;
-        if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x14) != 0) {
+        if (EFFECT_ARGUMENT(work)->count != 0) {
             pool_ofs = 0;
             slot = 0x24;
             do {
                 if (hit[m] == 0) {
                     Func_080e3980(
-                        M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, slot),
+                        EFFECT_ARGUMENT(work)->actors[(slot - 0x24) >> 1],
                         &mpos);
                     if ((s32) M2C_FIELD(&mpos, s32 *, 0) > row_y) {
                         hit[m] = 1;
@@ -426,14 +430,14 @@ void Func_080eb754(s32 arg0) {
                             sp++;
                         }
                         Func_080b5088(
-                            M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, slot), 1);
+                            EFFECT_ARGUMENT(work)->actors[(slot - 0x24) >> 1], 1);
                         Func_080f9010(0x86);
                     }
                 }
                 pool_ofs += 0x380;
                 slot += 2;
                 m += 1;
-            } while (m != M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x14));
+            } while (m != EFFECT_ARGUMENT(work)->count);
         }
         sp = SCENE_POOL;
         for (k = 0; k != 0xC0; k++) {
@@ -451,8 +455,8 @@ void Func_080eb754(s32 arg0) {
             Func_080f9010(0x88);
         }
         if (frame > 0x28) {
-            M2C_FIELD(work, s32 *, 0x7780) = 0;
-            M2C_FIELD(work, s32 *, 0x7784) = 0x4B;
+            ((struct BattleEffectWork *)work)->transfer_mode = 0;
+            ((struct BattleEffectWork *)work)->transfer_value = 0x4B;
             hi = -8;
             for (k = 0; k != 0x10; k++) {
                 blit(dest, (s8 *)work + (((Func_08004458() & 3) * 3) << 9),
@@ -461,24 +465,24 @@ void Func_080eb754(s32 arg0) {
             }
         }
         if (frame > 0x40) {
-            M2C_FIELD(work, s32 *, 0x7780) = 2;
+            ((struct BattleEffectWork *)work)->transfer_mode = 2;
         }
         if (frame == 0x3A) {
             m = 0;
-            if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x14) != 0) {
+            if (EFFECT_ARGUMENT(work)->count != 0) {
                 slot = 0x24;
                 do {
                     Func_080d6888(
-                        M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, slot),
+                        EFFECT_ARGUMENT(work)->actors[(slot - 0x24) >> 1],
                         0xE, 5, -1, 0);
                     m += 1;
                     slot += 2;
-                } while (m != M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x14));
+                } while (m != EFFECT_ARGUMENT(work)->count);
             }
         }
         Func_080e155c(8, 8);
         Func_080cd52c();
-        M2C_FIELD(work, s32 *, 0x7824) = 1;
+        ((struct BattleEffectWork *)work)->transfer_pending = 1;
         Func_080030f8(1);
         slide += 0xC;
     }

@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "CONFIGURED_EFFECT_SPAWN.H"
+#include "FIELD_EVENT.H"
 
 /* Resource-local call aliases are bound to loader runtime destinations by
  * this owner's translation unit.  The five selectors are signed halfwords
@@ -8,11 +9,11 @@
 struct Effect *Func_02000058(s32, s32, s32, s32);
 void Func_02000558(void);
 void Func_020007d8(void);
-void Func_0200094c(u8 *);
+void Func_0200094c(struct FieldActor *);
 void Func_020009c8(void);
 void Func_020018f8(void);
 void Func_020019c0(void);
-void Func_02001a14(u8 *);
+void Func_02001a14(struct FieldActor *);
 void Func_02001d48(void);
 void Func_02001f60(void);
 void Func_020022c8(s32);
@@ -28,12 +29,12 @@ void Func_02004e1c(s32, s32, s32, s32, s32, s32);
 void Func_02004e24(void);
 void Func_02004e2c(s32, s32, s32, s32, s32, s32);
 void Func_02004e34(s32, s32, s32, s32, s32, s32);
-void Func_02004e44(u8 *, s32);
+void Func_02004e44(struct FieldActor *, s32);
 s32 Func_02004e74(s32);
 void Func_02004e7c(s32);
 void Func_02004e84(s32);
 void Func_02004e8c(s32);
-u8 *Func_02004eac(s32);
+struct FieldActor *Func_02004eac(s32);
 void Func_02004ef4(s32, s32, s32);
 void Func_02004efc(s32, s32);
 void Func_02004f64(s32, s32);
@@ -67,14 +68,14 @@ static __inline__ void Scene_Call3(void (*func)(), s32 a0, s32 a1, s32 a2)
 #define Func_02004e2c(a,b,c,d,e,f) Scene_Call6(Func_02004e2c,a,b,c,d,e,f)
 #define Func_02004e34(a,b,c,d,e,f) Scene_Call6(Func_02004e34,a,b,c,d,e,f)
 
-#define WORD(p, n) (*(s32 *)((p) + (n)))
-#define HALF(p, n) (*(u16 *)((p) + (n)))
+#define WORD(p, n) (*(s32 *)((u8 *)(p) + (n)))
+#define HALF(p, n) (*(u16 *)((u8 *)(p) + (n)))
 #define SCENE Data_02000240
-#define WORK (*(u8 **)0x03001ebc)
+#define WORK (*(struct EventWork **)0x03001ebc)
 
 s32 Scene_RunEntrySetup(void)
 {
-    u8 *actor;
+    struct FieldActor *actor;
     u32 i;
     s32 x, z;
 
@@ -82,9 +83,9 @@ s32 Scene_RunEntrySetup(void)
     if (Func_02004e74(0x109))
         Func_02000558();
     Func_02004e7c(0x110);
-    WORD(WORK, 0x1c0) = 0x204;
+    WORK->start_transition = 0x204;
     if (SCENE[224] == (s32)&Value_000000b5) {
-        WORD(WORK, 0x1c0) = 0x100;
+        WORK->start_transition = 0x100;
         if (!Func_02004e74(0x981))
             Func_0200300c(8);
         else
@@ -147,7 +148,7 @@ s32 Scene_RunEntrySetup(void)
             if (Func_02004e74(0x987)) {
                 Func_02004ef4(12, 0x3680000, 0x580000);
                 actor = Func_02004eac(12);
-                WORD(actor, 12) = -0x180000;
+                actor->y.fixed = -0x180000;
                 WORD(actor, 60) = 0x80000000;
             }
             break;
@@ -168,10 +169,10 @@ s32 Scene_RunEntrySetup(void)
         case 9: case 10:
             actor = Func_02004eac(11);
             Func_020019c0();
-            if ((WORD(actor, 8) >> 20) == 8)
+            if ((actor->x.fixed >> 20) == 8)
                 Func_02001a14(actor);
             actor = Func_02004eac(12);
-            if ((WORD(actor, 8) >> 20) == 7)
+            if ((actor->x.fixed >> 20) == 7)
                 Func_02001a14(actor);
             Func_02000058(0xce0000, 0, 0x1c10000, 223);
             Func_02000058(0xd20000, 0, 0x1c10000, 223);
@@ -180,14 +181,14 @@ s32 Scene_RunEntrySetup(void)
             Func_02004fdc(0);
             Func_02004da4(2);
             actor = Func_02004eac(8);
-            actor[85] = 0;
-            WORD(actor, 108) = 0x020088c9;
+            actor->motion_flags = 0;
+            actor->update = 0x020088c9;
             actor = Func_02004eac(9);
-            actor[85] = 0;
-            WORD(actor, 108) = 0x020088c9;
+            actor->motion_flags = 0;
+            actor->update = 0x020088c9;
             actor = Func_02004eac(10);
-            actor[85] = 0;
-            WORD(actor, 108) = 0x020088c9;
+            actor->motion_flags = 0;
+            actor->update = 0x020088c9;
             Func_020018f8();
             break;
         case 11: case 12: case 13: case 14: case 15:
@@ -216,33 +217,33 @@ s32 Scene_RunEntrySetup(void)
             break;
         case 9: case 10:
             actor = Func_02004eac(8);
-            actor[85] = 0;
-            WORD(actor, 12) = 0;
+            actor->motion_flags = 0;
+            actor->y.fixed = 0;
             actor = Func_02004eac(9);
-            actor[85] = 0;
-            actor[89] = 0;
+            actor->motion_flags = 0;
+            actor->collision_flags = 0;
             if (Func_02004e74(0x301)) {
                 Func_02004da4(1);
                 Func_02004e1c(124, 41, 110, 41, 1, 2);
                 Func_02004e34(46, 41, 1, 1, 46, 42);
                 Func_02004ef4(9, 0x2e80000, 0x2d80000);
-                actor[85] = 0;
-                WORD(actor, 12) = -0x100000;
+                actor->motion_flags = 0;
+                actor->y.fixed = -0x100000;
                 Func_02004f64(9, 3);
-                actor[35] = 2;
+                actor->priority_flags = 2;
                 Func_02004e34(45, 45, 1, 1, 46, 45);
                 Func_02004efc(10, 7);
                 Func_02004f64(10, 1);
                 actor = Func_02004eac(10);
-                actor[89] = 0;
-                actor[35] = 2;
+                actor->collision_flags = 0;
+                actor->priority_flags = 2;
                 Func_02004ef4(10, 0x2e70000, 0x2b80000);
-                WORD(actor, 108) = 0x02008b99;
+                actor->update = 0x02008b99;
             }
             Func_02001d48();
             break;
         case 11:
-            WORD(WORK, 0x1c0) = 0x202;
+            WORK->start_transition = 0x202;
             WORD(Func_02004eac(0), 12) = -0x20000;
         case 7: case 8:
             Func_02004fec(170);
@@ -259,7 +260,7 @@ s32 Scene_RunEntrySetup(void)
             if (SCENE[225] == 11) {
                 Func_02004fc4();
                 Func_02004fd4();
-                WORD(WORK, 0x1c0) = 0x204;
+                WORK->start_transition = 0x204;
             }
             break;
         case 1:
@@ -294,11 +295,11 @@ s32 Scene_RunEntrySetup(void)
             goto play_cue;
         case 15: case 16:
             actor = Func_02004eac(8);
-            actor[85] = 0;
-            WORD(actor, 12) = 0;
-            Func_02004eac(9)[85] = 0;
-            Func_02004eac(10)[85] = 0;
-            Func_02004eac(11)[85] = 0;
+            actor->motion_flags = 0;
+            actor->y.fixed = 0;
+            Func_02004eac(9)->motion_flags = 0;
+            Func_02004eac(10)->motion_flags = 0;
+            Func_02004eac(11)->motion_flags = 0;
             if (Func_02004e74(0x304)) {
                 Func_02004da4(1);
                 Func_02004e1c(111, 59, 109, 37, 1, 2);
@@ -314,24 +315,24 @@ s32 Scene_RunEntrySetup(void)
                 }
                 Func_02004f64(9, 3);
                 actor = Func_02004eac(9);
-                WORD(actor, 12) = -0x100000;
-                actor[35] = 2;
+                actor->y.fixed = -0x100000;
+                actor->priority_flags = 2;
                 Func_02004f64(10, 3);
                 actor = Func_02004eac(10);
-                WORD(actor, 12) = -0x100000;
-                actor[35] = 2;
+                actor->y.fixed = -0x100000;
+                actor->priority_flags = 2;
                 Func_02004f64(11, 3);
                 actor = Func_02004eac(11);
-                WORD(actor, 12) = -0x100000;
-                actor[35] = 2;
+                actor->y.fixed = -0x100000;
+                actor->priority_flags = 2;
                 Func_02004efc(12, 7);
                 Func_02004e44(Func_02004eac(12), 0);
                 Func_02004f64(12, 1);
                 actor = Func_02004eac(12);
-                actor[89] = 0;
-                actor[35] = 2;
+                actor->collision_flags = 0;
+                actor->priority_flags = 2;
                 Func_02004ef4(12, 0x2d70000, 0x2780000);
-                WORD(actor, 108) = 0x02008b99;
+                actor->update = 0x02008b99;
             }
             Func_02001f60();
             break;
@@ -346,43 +347,43 @@ s32 Scene_RunEntrySetup(void)
                 Func_0200094c(Func_02004eac(0));
                 for (i = 0; i <= 3; i++) {
                     actor = Func_02004eac(i + 10);
-                    x = WORD(actor, 8) >> 20;
+                    x = actor->x.fixed >> 20;
                     if (x == 13) {
-                        z = WORD(actor, 16) >> 20;
+                        z = actor->z.fixed >> 20;
                         if (z == 7 && Func_02004e74(i + 0x200))
                             goto place_actor;
                     }
                 }
             } else {
                 actor = Func_02004eac(8);
-                actor[85] = 0;
-                WORD(actor, 12) = -0x300000;
-                actor[35] |= 2;
-                actor[89] &= 254;
-                HALF(actor, 100) = 3;
+                actor->motion_flags = 0;
+                actor->y.fixed = -0x300000;
+                actor->priority_flags |= 2;
+                actor->collision_flags &= 254;
+                actor->unknown_64 = 3;
                 Func_02004f64(8, 1);
                 actor = Func_02004eac(9);
-                actor[85] = 0;
-                WORD(actor, 12) = -0x300000;
-                actor[35] |= 2;
-                actor[89] &= 254;
-                HALF(actor, 100) = 3;
+                actor->motion_flags = 0;
+                actor->y.fixed = -0x300000;
+                actor->priority_flags |= 2;
+                actor->collision_flags &= 254;
+                actor->unknown_64 = 3;
                 Func_02004f64(9, 1);
                 actor = Func_02004eac(10);
-                actor[85] = 0;
-                HALF(actor, 100) = 0;
+                actor->motion_flags = 0;
+                actor->unknown_64 = 0;
                 Func_02004e44(Func_02004eac(10), 0);
                 actor = Func_02004eac(11);
-                actor[85] = 0;
-                HALF(actor, 100) = 0;
+                actor->motion_flags = 0;
+                actor->unknown_64 = 0;
                 Func_02004e44(Func_02004eac(11), 0);
                 actor = Func_02004eac(12);
-                actor[85] = 0;
-                HALF(actor, 100) = 0;
+                actor->motion_flags = 0;
+                actor->unknown_64 = 0;
                 Func_02004e44(Func_02004eac(12), 0);
                 actor = Func_02004eac(13);
-                actor[85] = 0;
-                HALF(actor, 100) = 0;
+                actor->motion_flags = 0;
+                actor->unknown_64 = 0;
                 Func_02004e44(Func_02004eac(13), 0);
             }
             break;
@@ -391,12 +392,12 @@ play_cue:
             Func_02004fec(170);
             goto done;
         case 18: case 19:
-            WORD(WORK, 0x1c0) = 0x202;
+            WORK->start_transition = 0x202;
             WORD(Func_02004eac(0), 12) = -0x20000;
         case 3: case 4: case 5: case 6: case 7: case 8: case 9:
         case 10: case 11: case 12: case 20:
-            Func_02004eac(20)[85] = 4;
-            Func_02004eac(20)[35] |= 2;
+            Func_02004eac(20)->motion_flags = 4;
+            Func_02004eac(20)->priority_flags |= 2;
             WORD(Func_02004eac(20), 12) = -0x108000;
             Func_02004e24();
             *(volatile u16 *)0x04000050 = 0;
@@ -420,59 +421,59 @@ play_cue:
             if ((u16)(SCENE[225] - 18) <= 1) {
                 Func_02004fc4();
                 Func_02004fd4();
-                WORD(WORK, 0x1c0) = 0x204;
+                WORK->start_transition = 0x204;
             }
             if ((u16)SCENE[225] == 20)
                 Func_02004a2c();
             break;
 place_actor:
-            actor[35] |= 2;
-            actor[89] = 0;
-            actor[85] = 0;
+            actor->priority_flags |= 2;
+            actor->collision_flags = 0;
+            actor->motion_flags = 0;
             Func_02004e34(4, 19, 1, 1, x, z);
             goto done;
         case 15: case 16:
             Func_02004da4(1);
             Func_02004dac(0x0200b051, 3200);
             actor = Func_02004eac(14);
-            actor[85] = 0;
-            WORD(actor, 12) = 0;
-            Func_02004eac(15)[85] = 0;
-            Func_02004eac(16)[85] = 0;
-            Func_02004eac(17)[85] = 0;
-            Func_02004eac(18)[85] = 0;
+            actor->motion_flags = 0;
+            actor->y.fixed = 0;
+            Func_02004eac(15)->motion_flags = 0;
+            Func_02004eac(16)->motion_flags = 0;
+            Func_02004eac(17)->motion_flags = 0;
+            Func_02004eac(18)->motion_flags = 0;
             if (Func_02004e74(0x308)) {
                 Func_02004da4(1);
                 Func_02004e1c(95, 56, 77, 35, 1, 2);
                 Func_02004e34(13, 35, 1, 1, 13, 36);
                 Func_02004ef4(15, 0x1080000, 0x2e80000);
                 actor = Func_02004eac(15);
-                WORD(actor, 12) = -0x100000;
-                actor[35] = 2;
+                actor->y.fixed = -0x100000;
+                actor->priority_flags = 2;
                 Func_02004f64(15, 3);
                 Func_02004ef4(16, 0xb80000, 0x2780000);
                 actor = Func_02004eac(16);
-                WORD(actor, 12) = -0x100000;
-                actor[35] = 2;
+                actor->y.fixed = -0x100000;
+                actor->priority_flags = 2;
                 Func_02004f64(16, 3);
                 Func_02004ef4(17, 0xe80000, 0x2b80000);
                 actor = Func_02004eac(17);
-                WORD(actor, 12) = -0x100000;
-                actor[35] = 2;
+                actor->y.fixed = -0x100000;
+                actor->priority_flags = 2;
                 Func_02004f64(17, 3);
                 Func_02004ef4(18, 0xb80000, 0x2980000);
                 actor = Func_02004eac(18);
-                WORD(actor, 12) = -0x100000;
-                actor[35] = 2;
+                actor->y.fixed = -0x100000;
+                actor->priority_flags = 2;
                 Func_02004f64(18, 3);
                 Func_02004efc(19, 7);
                 Func_02004e44(Func_02004eac(19), 0);
                 Func_02004f64(19, 1);
                 actor = Func_02004eac(19);
-                actor[89] = 0;
-                actor[35] = 2;
+                actor->collision_flags = 0;
+                actor->priority_flags = 2;
                 Func_02004ef4(19, 0xd70000, 0x2580000);
-                WORD(actor, 108) = 0x02008b99;
+                actor->update = 0x02008b99;
             }
             Func_02002b14();
             break;

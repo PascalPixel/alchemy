@@ -9,8 +9,8 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::sync::OnceLock;
 
-// The reviewed DMA body is the sole C assembly construct admitted here. Its
-// identity includes register constraints, instructions, operands and clobbers.
+// Reviewed shared machine-interface bodies are admitted only by exact token
+// identity, including constraints, instructions, operands and clobbers.
 // Compiler flags and ordinary caller C remain subject to the existing policy.
 const DMA_HEADER: &str = "games/THE BROKEN SEAL/INCLUDE/DMA.H";
 const DMA_SOURCE: &str = include_str!(concat!(
@@ -18,6 +18,13 @@ const DMA_SOURCE: &str = include_str!(concat!(
     "/../../games/THE BROKEN SEAL/INCLUDE/DMA.H"
 ));
 const DMA_BODY_SHA256: &str = "dcc93030ed9f2fc601341bc4a7f350aff8ff772625e707c246004d800cfc8fcc";
+const IWRAM_CALL_HEADER: &str = "games/THE BROKEN SEAL/INCLUDE/IWRAM_CALL.H";
+const IWRAM_CALL_SOURCE: &str = include_str!(concat!(
+    env!("CARGO_MANIFEST_DIR"),
+    "/../../games/THE BROKEN SEAL/INCLUDE/IWRAM_CALL.H"
+));
+const IWRAM_CALL_BODY_SHA256: &str =
+    "7559187463b1d55b694ea12985099336def34bcff43ba27978d91e78308c89fa";
 
 fn source_tokens(text: &str) -> Vec<regex::Match<'_>> {
     static TOKENS: OnceLock<Regex> = OnceLock::new();
@@ -62,6 +69,43 @@ fn mask_dma_body(text: &str) -> String {
         }
     }
     String::from_utf8(bytes).expect("only complete DMA token spans are masked")
+}
+
+fn iwram_call_body() -> Option<&'static [String]> {
+    static BODY: OnceLock<Option<Vec<String>>> = OnceLock::new();
+    BODY.get_or_init(|| {
+        let start = IWRAM_CALL_SOURCE.find("static __inline__")?;
+        let end = IWRAM_CALL_SOURCE.rfind('}')? + 1;
+        let tokens: Vec<String> = source_tokens(&IWRAM_CALL_SOURCE[start..end])
+            .iter()
+            .map(|token| token.as_str().to_owned())
+            .collect();
+        let hash = format!("{:x}", Sha256::digest(tokens.join("\n").as_bytes()));
+        (hash == IWRAM_CALL_BODY_SHA256).then_some(tokens)
+    })
+    .as_deref()
+}
+
+fn mask_iwram_call_body(text: &str) -> String {
+    let Some(body) = iwram_call_body() else {
+        return text.into();
+    };
+    let tokens = source_tokens(text);
+    let mut bytes = text.as_bytes().to_vec();
+    for window in tokens.windows(body.len()) {
+        if window
+            .iter()
+            .zip(body)
+            .all(|(token, expected)| token.as_str() == expected)
+        {
+            for byte in &mut bytes[window[0].start()..window[window.len() - 1].end()] {
+                if *byte != b'\n' {
+                    *byte = b' ';
+                }
+            }
+        }
+    }
+    String::from_utf8(bytes).expect("only complete fixed-math token spans are masked")
 }
 
 const ABI: &str = "naked interrupt interrupt_handler isr long_call short_call pcs target target_clones regparm stdcall fastcall";
@@ -109,7 +153,14 @@ fn forbidden(word: &str, attribute: bool) -> Option<String> {
 }
 
 pub fn find_forbidden(file: &str, text: &str) -> Vec<Finding> {
-    scan_forbidden(file, text, Path::new(file).ends_with(DMA_HEADER))
+    let text = if Path::new(file).ends_with(DMA_HEADER) {
+        mask_dma_body(text)
+    } else if Path::new(file).ends_with(IWRAM_CALL_HEADER) {
+        mask_iwram_call_body(text)
+    } else {
+        text.into()
+    };
+    scan_forbidden(file, &text, false)
 }
 
 fn scan_forbidden(file: &str, text: &str, admit_dma: bool) -> Vec<Finding> {
@@ -176,7 +227,8 @@ pub fn find_named_source_tool_leaks(file: &str, text: &str) -> Vec<Finding> {
 }
 
 pub fn find_preprocessed(label: &str, text: &str) -> Vec<Finding> {
-    let mut findings = scan_forbidden(label, text, true);
+    let text = mask_iwram_call_body(&mask_dma_body(text));
+    let mut findings = scan_forbidden(label, &text, false);
     for item in &mut findings {
         let marker = text
             .lines()
@@ -329,6 +381,22 @@ mod tests {
         assert_eq!(find_preprocessed("expanded", &extra).len(), 2);
         let standalone = "register unsigned int src __asm__(\"r0\");";
         assert_eq!(find_preprocessed("expanded", standalone).len(), 1);
+    }
+
+    #[test]
+    fn reviewed_iwram_call_is_admitted_only_as_the_complete_shared_body() {
+        assert!(iwram_call_body().is_some());
+        assert!(find_forbidden(IWRAM_CALL_HEADER, IWRAM_CALL_SOURCE).is_empty());
+        assert!(!find_forbidden("caller.c", IWRAM_CALL_SOURCE).is_empty());
+        assert!(find_preprocessed("expanded", IWRAM_CALL_SOURCE).is_empty());
+        for changed in [
+            IWRAM_CALL_SOURCE.replace("mov ip, pc", "mov lr, pc"),
+            IWRAM_CALL_SOURCE.replace("0x03000118", "0x0300011c"),
+            IWRAM_CALL_SOURCE.replace("\"r2\", \"ip\", \"cc\"", "\"r2\", \"ip\""),
+        ] {
+            assert!(!find_forbidden(IWRAM_CALL_HEADER, &changed).is_empty());
+            assert!(!find_preprocessed("expanded", &changed).is_empty());
+        }
     }
 
     #[test]

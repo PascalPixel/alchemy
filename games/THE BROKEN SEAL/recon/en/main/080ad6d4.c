@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+#include "IWRAM_CALL.H"
 
 /*
  * Modal owner-action comparison loop for the shared 0x03001f2c scene work.
@@ -20,10 +21,7 @@
  *    the file uses the FIELD_AT_OFFSET idiom of its exact sibling
  *    games/THE BROKEN SEAL/src/menu/sel/run_paired_entry_action.c instead of inventing a type.
  *  - the reference reaches the fixed IWRAM entry at 0x03000118 with the
- *    "mov ip, pc / bx rN" inline-call idiom, which the approved GCC 2.96 route
- *    has no way to emit. It is modelled here as an ordinary typed indirect
- *    call; that call site cannot be byte-exact under the approved route and is
- *    why the owner carries the iwram_ip_link_call_module classification.
+ *    "mov ip, pc / bx rN" interface supplied by IWRAM_CALL.H.
  *  - Func_080072f0/f4/f8 take a fixed IWRAM helper entry as their last
  *    argument (0x03001388 word copy, 0x03000168 word fill); the reference also
  *    materialises that constant before the three-argument variants, which this
@@ -42,8 +40,6 @@
 #define IWRAM_WORD_FILL 0x03000168
 
 /* The scaling entry the reference reaches through the ip-linked inline call. */
-typedef s32 (*IwramScaleFn)(s32, s32);
-#define IWRAM_SCALE ((IwramScaleFn)0x03000118)
 
 #define VRAM_STRIP 0x060052c0
 
@@ -481,7 +477,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
             s32 rise;
             s32 slide;
 
-            rise = -IWRAM_SCALE(16, Func_08002322(Modulo(step, 30) * 0x444));
+            rise = -Iwram_MulQ16(16, Func_08002322(Modulo(step, 30) * 0x444));
             if (rise < -6) {
                 rise = -6;
             }

@@ -2,6 +2,8 @@
 
 #define Scene_RunClosingSequence Func_02001348
 
+extern u8 Value_00000015[];
+
 /* AUDITED GENERATED SCENE SCRIPT for Scene_RunClosingSequence:
  * all 169 calls and arguments are represented in machine order. */
 
@@ -379,7 +381,7 @@ void Func_02001348(void)
     Func_02006754(10, 0);
     Call1(Func_02006652, 2132);
     *(s32 *)(*(u8 **)0x03001ebc + 448) = 512;
-    base = 21;
+    base = (s32)Value_00000015;
     Func_020067ca(base, 17);
     Func_020067da(base, 16);
     ((u8 *)Data_02000240)[555] = 3;

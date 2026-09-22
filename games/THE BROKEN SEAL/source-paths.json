@@ -13606,7 +13606,8 @@
       "name": "Scene_RunSelectorEntry"
     },
     "resource_39c:02002f68": {
-      "name": "FieldScene_RunRandomEffectActorSequence"
+      "name": "FieldScene_RunRandomEffectActorSequence",
+      "source": "FIELD/MAKYURI_HEYA/RANDOM_EFFECT_SEQUENCE.C"
     },
     "resource_39c:02000030": "FIELD/MAKYURI_HEYA/FIELD_PROBE_SCENE.C",
     "resource_39c:0200013c": {

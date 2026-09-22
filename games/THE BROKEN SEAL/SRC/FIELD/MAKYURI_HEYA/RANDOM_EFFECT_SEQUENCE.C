@@ -169,7 +169,7 @@ void FieldScene_RunRandomEffectActorSequence(void)
     do {
         s32 speed;
 
-        Map_CopyCellsTo(59, (12 - phase), 48, (12 - phase), 3, 1);
+        Call6(Map_CopyCellsTo, 59, (12 - phase), 48, (12 - phase), 3, 1);
         particle = 0;
         row_offset = (phase << 4);
         do {

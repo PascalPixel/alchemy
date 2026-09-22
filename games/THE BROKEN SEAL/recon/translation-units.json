@@ -81491,7 +81491,7 @@
     {
       "id": "candidate-resource-39c-02002f68",
       "game": "tbs",
-      "source": "games/THE BROKEN SEAL/recon/en/overlays/resource_39c_c_02002f68.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/RANDOM_EFFECT_SEQUENCE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_39c",
       "absolute_symbols": {
@@ -81668,7 +81668,7 @@
         {
           "address": "0x02002f68",
           "extent": 1616,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },

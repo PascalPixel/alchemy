@@ -1,5 +1,6 @@
 #include "shared-aggregates.h"
 #include "BATTLE_EFFECT_WORK.H"
+#include "EFFECT_STEP.H"
 
 /*
  * Battle-presentation scene at 0x080eb754.
@@ -98,17 +99,18 @@ extern u8 Value_000000ca;
 extern u8 Value_000000f0;
 
 void Func_080eb754(s32 arg0) {
+    void **cursor;
     u8 place[0x10];  /* object placement record, first loop */
-    u8 mpos[0x0C];  /* member position scratch */
+    struct EffectPosition mpos;
     u8 jit_buf[0x10];  /* per-column jitter, 16 entries */
     u8 hit_buf[14];    /* per-member "already emitted" flags */
     u8 place2[0x10];  /* object placement record, second loop */
     struct EffectPos pos1;
     struct EffectPos pos2;
-    s32 dest;
-    void *work;
+    void *dest;
+    struct BattleEffectWork *work;
     BlitRectFn blit;
-    u32 sheet;
+    u8 *sheet;
     s32 base_x;
     s32 grow;
     s32 saved_row;
@@ -139,28 +141,29 @@ void Func_080eb754(s32 arg0) {
     s32 *objs;
     struct ScenePoint *sp;
 
-    dest = M2C_FIELD(&absolute_03001ef0, s32 *, 0);
-    work = *(void **)0x03001EEC;
-    sheet = absolute_03001ef0.field_0004;
-    ((struct BattleEffectWork *)work)->effect = (void *)arg0;
+    cursor = (void **)0x03001EF0;
+    dest = cursor[0];
+    work = cursor[-1];
+    sheet = cursor[1];
+    work->effect = (void *)arg0;
     Func_080cd594(0);
     Func_080c9048();
     absolute_0400000c.field_0000 = 0x784;
     M2C_FIELD((void *)0x05000000, s16 *, 0) = (s16) (s32) &Value_00000000;
     M2C_FIELD((void *)0x05000000, s16 *, 2) = (s16) (s32) &Value_00000000;
-    ((struct BattleEffectWork *)work)->transfer_mode = 0;
+    work->transfer_mode = 0;
     Func_080041d8(0x080CD261, 0x480);
     Func_080cd104(1, 0);
     Func_080dbb24(9, 0x175, 1);
     absolute_03001ce0.field_0010 = 0xF0;
-    Func_080d6750(((struct BattleEffectWork *)work)->effect);
+    Func_080d6750(work->effect);
     absolute_04000048.field_0000 = 0x2737;
     *(u16 *)0x04000038 = (u16) (s32) &Value_000000ca;
     Func_080030f8(1);
     Func_080b5040(1, (s32) &Value_0000003a, 0);
     Func_080cd104(1, 1);
     Func_080e0524((s32) &Value_00000073, sheet, 0, 0);
-    Func_080e0524((s32) &Value_00000095, (u32) work, 1, 1);
+    Func_080e0524((s32) &Value_00000095, work, 1, 1);
     M2C_FIELD((void *)0x04000000, s16 *, 0) = 0x7741;
     M2C_FIELD((void *)0x04000000, s16 *, 0x20) = (s16) (s32) &Value_00000080;
     M2C_FIELD((void *)0x04000020, s16 *, 0x32) = 0x100E;
@@ -168,10 +171,10 @@ void Func_080eb754(s32 arg0) {
     base_x = 0;
     grow = 0;
     saved_row = (s32) absolute_03001ad0.field_0004;
-    ctrl = M2C_FIELD(&absolute_03001ef0, void **, 0x10);
+    ctrl = cursor[4];
     shift = 0;
-    ((struct BattleEffectWork *)work)->transfer_mode = 1;
-    ((struct BattleEffectWork *)work)->transfer_value = base_x;
+    work->transfer_mode = 1;
+    work->transfer_value = base_x;
     M2C_FIELD(ctrl, s32 *, 0x10) = 1;
 
     sp = (struct ScenePoint *)((s8 *)work + SPARK_POOL);

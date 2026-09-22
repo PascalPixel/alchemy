@@ -1,9 +1,14 @@
 #include "TYPES.H"
 
-#define Scene_RunScene374SequenceB Func_02001274
+#define FieldScene_RunGroupChoreography Func_02001274
 
-extern u8 Data_00000005[];
-extern u8 Data_02000240[];
+struct SceneWork {
+    u8 pad000[0x22b];
+    u8 area_state;
+};
+
+extern const u8 Data_00000005[];
+extern struct SceneWork Data_02000240;
 void Func_020035c2();
 s32 Func_02003600();
 s32 Func_020036de();
@@ -62,7 +67,7 @@ void Func_02003b84();
 void Func_02003b90();
 void Func_02003b92();
 void Func_02003b98();
-void Func_02003b9a();
+void Func_02003b9a(s32, s32, s32);
 void Func_02003ba0();
 void Func_02003ba6();
 void Func_02003ba8();
@@ -80,9 +85,9 @@ void Func_02003c1a();
 void Func_02003c1c();
 void Func_02003c84();
 void Func_02003c8e();
-s32 Func_02003d12();
+s32 Func_02003d12(const void *, s32);
 void Func_02003d1a();
-void Func_02003d22();
+void Func_02003d22(const void *, s32);
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -119,11 +124,14 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-void Scene_RunScene374SequenceB(void)
+/* Stages the two moving actors around actor 25, then advances the area's
+ * scene state after the final message and sound cue. */
+void FieldScene_RunGroupChoreography(void)
 {
-    u32 i;
     s32 record;
-    s32 base3_2000240;
+    s32 walk_speed;
+    s32 turn_speed;
+    s32 approach_speed;
 
     Func_020039d4(25, 15);
     record = Func_0200394a(25);
@@ -135,7 +143,8 @@ void Scene_RunScene374SequenceB(void)
     Call3(Func_02003a58, 24, 0x100, 40);
     Func_020039da(25, 0, 0);
     Call3(Func_02003a5e, 23, 0x5000, 0);
-    Func_020035c2(24, 0x5000, 40);
+    walk_speed = 0x5000;
+    Func_020035c2(24, walk_speed, 40);
     Call2(Func_02003a9a, 0x18000, 0x3000);
     Call4(Func_02003ab2, 0x590000, 0xb00000, 0x1390000, 1);
     Func_02003abe();
@@ -151,10 +160,10 @@ void Scene_RunScene374SequenceB(void)
     Call3(Func_02003a6a, 24, 124, 0x149);
     Func_02003a80(23);
     Func_02003a98(23, 1);
-    Func_02003b12(23, 0x5000, 0);
+    Func_02003b12(23, walk_speed, 0);
     Func_02003a98_a(24);
     Func_02003ab0(24, 1);
-    Value3(Func_02003b2a, 24, 0x5000, 0);
+    Value3(Func_02003b2a, 24, walk_speed, 0);
     Func_02003afa(25, 0);
     record = Func_02003a70(25);
     Func_02003a06(record, 1);
@@ -165,27 +174,34 @@ void Scene_RunScene374SequenceB(void)
     Func_02003b02(23, 3);
     Value2(Func_02003b54, 23, 0);
     Call3(Func_02003b90, 25, 0x101, 0);
-    Value3(Func_020036de, 0, 0xd000, 10);
+    approach_speed = 0xd000;
+    Value3(Func_020036de, 0, approach_speed, 10);
     Func_02003ac2(0, 0);
     Func_02003aa2(40);
     Func_02003ba6(23, 0, 0);
-    Value3(Func_02003704, 24, 0x8000, 20);
+    turn_speed = 0x8000;
+    Value3(Func_02003704, 24, turn_speed, 20);
     Func_02003b68(25, 2);
     Call2(Func_020036fc, 0x1019, 10);
-    Call3(Func_02003b9a, 0, 0x10019, 0x200ac00);
+    {
+        s32 event = 0x10019;
+        s32 placement = 0x200ac00;
+
+        Func_02003b9a(0, event, placement);
+    }
     Call3(Func_02003b4c, 25, 93, 0x169);
-    Value3(Func_02003732, 25, 0xd000, 40);
+    Value3(Func_02003732, 25, approach_speed, 40);
     Func_02003722(25, 20);
     Func_02003b44(0);
     Func_02003bf6(23, 0, 0);
-    Value3(Func_02003754, 24, 0x8000, 15);
+    Value3(Func_02003754, 24, turn_speed, 15);
     Func_02003b98(23, 3);
     Func_02003ba8(24, 3);
-    Func_02003c1a(23, 0x5000, 0);
-    Value3(Func_02003778, 24, 0x5000, 30);
+    Func_02003c1a(23, walk_speed, 0);
+    Value3(Func_02003778, 24, walk_speed, 30);
     Func_02003bc4(24, 4);
     Call2(Func_02003c1c, 0x2018, 0);
-    Func_02003792(0, 0xd000, 30);
+    Func_02003792(0, approach_speed, 30);
     Value3(Func_0200379e, 0, 0x4000, 40);
     Func_02003c02(23, 2);
     Func_02003bf2(23, 3);
@@ -200,10 +216,13 @@ void Scene_RunScene374SequenceB(void)
     Call2(Func_02003be8, 0, 0x200a998);
     Func_02003bae(6);
     Value2(Func_02003c0e, 25, 0x200a9f0);
-    base3_2000240 = (s32)Data_02000240;
-    *(u8 *)((base3_2000240 + 0x22b)) = 2;
-    Value2(Func_02003d12, (s32)Data_00000005, 19);
-    Func_02003d22((s32)Data_00000005, 19);
+    Data_02000240.area_state = 2;
+    {
+        const void *message = Data_00000005;
+
+        Func_02003d12(message, 19);
+        Func_02003d22(message, 19);
+    }
     Func_02003d1a(12, 4);
     Call1(Func_02003bca, 0x11a);
 }

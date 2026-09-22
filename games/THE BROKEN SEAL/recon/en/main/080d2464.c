@@ -83,20 +83,22 @@ void Func_080d2464(void *arg0, s32 arg1) {
     void *var_r5_673;
     void *var_r5_722;
     void *var_r5_982;
+    u8 *graphics_globals;
 
     sp38 = arg1;
-    sp34 = M2C_FIELD(&absolute_03001ef0, s32 *, 0);
-    sp30 = *(s32 *)0x03001E80;
-    temp_r3_25 = *(void **)0x03001EEC;
-    sp20 = absolute_03001ef0.field_0004;
+    graphics_globals = (u8 *)0x03001EF0;
+    sp34 = *(s32 *)graphics_globals;
+    sp30 = *(s32 *)(graphics_globals - 0x70);
+    temp_r3_25 = *(void **)(graphics_globals - 4);
+    sp20 = *(s32 *)(graphics_globals + 4);
     M2C_FIELD(temp_r3_25, void **, 0x7828) = arg0;
     Func_080cd594(0);
     *(s16 *)0x04000052 = 0x1010;
     *(s16 *)0x0400000C = 0x784;
     Func_080ed408(0x2E, 7, 7, 3, 2);
-    sp28 = absolute_03001ef0.field_0018;
+    sp28 = *(s32 *)(graphics_globals + 0x18);
     Func_080ed408(0x2F, 7, 7, 3, 3);
-    sp2C = absolute_03001ef0.field_001c;
+    sp2C = *(s32 *)(graphics_globals + 0x1C);
     temp_r0_59 = Func_08002f40(0x7D);
     copy((void *)0x05000000, temp_r0_59, 0x80);
     Func_08005340(temp_r0_59 + 0x80, temp_r3_25);

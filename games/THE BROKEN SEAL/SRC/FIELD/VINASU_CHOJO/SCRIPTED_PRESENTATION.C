@@ -154,9 +154,7 @@ s32 Func_02005f74(s32, s32);
 s32 Func_0200604c(void);
 s32 Func_0200605a(void);
 void *Func_02005cc6(s32, s32, s32, s32);
-void Func_02005d2c(void *, s32);
-void Func_02005d44(void *, s32);
-void Func_02005e74(void *, s32);
+void OverlayObject_SetValue1(void *, s32);
 void Func_02007dc4(s32, s32);
 void Func_02007dce(s32, s32);
 s32 Func_02007cf8(s32, s32);
@@ -607,9 +605,9 @@ void *OverlayObject_CreateAndInitialize(s32 x, s32 y, s32 z, s32 kind)
         obj[9] = mask;
         ret[0x55] = 0;
         ret[0x59] = 8;
-        Func_02005d2c(ret, 0);
-        Func_02005e74(ret, 14);
-        Func_02005d44(ret, 1);
+        SetOverlayObjectMode(ret, 0);
+        SetOverlayObjectSlot(ret, 14);
+        OverlayObject_SetValue1(ret, 1);
         return ret;
     }
     return NULL;

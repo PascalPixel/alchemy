@@ -344,6 +344,10 @@ void Engine_ColorBufferApplySource(s32 value, s32 mode);
 void Engine_ColorBufferApplyTarget(s32 value, s32 mode);
 void Engine_ColorBufferInterpolate(s32 frames);
 
+/* Loader-imported object-motion services shared by field-scene overlays. */
+s32 Engine_UiWorkWaitThenFinalizeCapacity(s32 first, s32 second);
+void Engine_ObjectMotionArmCallback(s32 actor, s32 angle, s32 frames);
+
 /* Holding the party still while an event plays; waits count frames. */
 static inline void Event_Begin(void)
 {

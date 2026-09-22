@@ -97,29 +97,24 @@ void Func_080f9010(s32 id);
 #define WORK_S32(off) (*(s32 *)((u8 *)work + (off)))
 #define WORK_OBJ(i) (((void **)((u8 *)work + 0x77D8))[i])
 
-/*
- * Push one deferred register write onto the 32-entry queue at 0x02002090
- * with interrupts masked.  Written as a macro because the reference inlines
- * the whole sequence at each of its four sites.
- */
-#define QUEUE_REGISTER_WRITE(value, reg, mode)                                \
-    do {                                                                      \
-        u16 saved;                                                            \
-        s32 cnt;                                                              \
-        u32 *entry;                                                           \
-                                                                              \
-        saved = *(volatile u16 *)0x04000208;                                           \
-        *(volatile u16 *)0x04000208 = 0x208;                                           \
-        cnt = *(u16 *)0x02002090;                                             \
-        if (cnt <= 31) {                                                      \
-            entry = (u32 *)((u8 *)0x02002090 + cnt * 12 + 4);                 \
-            *(u16 *)0x02002090 = cnt + 1;                                     \
-            *entry++ = (u32)(value);                                          \
-            *entry++ = (u32)(reg);                                            \
-            *entry = (u32)(mode);                                             \
-        }                                                                     \
-        *(volatile u16 *)0x04000208 = saved;                                           \
-    } while (0)
+static inline void QueueRegisterWrite(u32 value, u32 address, u32 delay)
+{
+    volatile u16 *ime = (volatile u16 *)0x04000208;
+    u16 saved = *ime;
+    s32 count;
+
+    *ime = (u16)ime;
+    count = *(u16 *)0x02002090;
+    if (count <= 31) {
+        u32 *destination = (u32 *)((u8 *)0x02002090 + count * 12 + 4);
+
+        *destination++ = value;
+        *(u16 *)0x02002090 = count + 1;
+        *destination++ = address;
+        *destination = delay;
+    }
+    *ime = saved;
+}
 
 void Func_080ea0d8(void *object)
 {
@@ -587,8 +582,8 @@ void Func_080ea0d8(void *object)
         if ((*(s32 *)0x03001B04 & 3) != 0) {
             if (frame >= 5 && frame <= 149) {
                 frame = 150;
-                QUEUE_REGISTER_WRITE(0x80, 0x04000020, 128 << 10);
-                QUEUE_REGISTER_WRITE(0, 0x04000028, 192 << 10);
+                QueueRegisterWrite(0x80, 0x04000020, 128 << 10);
+                QueueRegisterWrite(0, 0x04000028, 192 << 10);
                 Func_080e0524(0x70,
                     (u8 *)work + (128 << 7), 1, 0);
             } else if (frame >= 155 && frame <= 213) {
@@ -599,8 +594,8 @@ void Func_080ea0d8(void *object)
         }
 
         if (frame == 64) {
-            QUEUE_REGISTER_WRITE(0x80, 0x04000020, 128 << 10);
-            QUEUE_REGISTER_WRITE(0, 0x04000028, 192 << 10);
+            QueueRegisterWrite(0x80, 0x04000020, 128 << 10);
+            QueueRegisterWrite(0, 0x04000028, 192 << 10);
             fill = 0;
             Dma_Set(&fill, canvas, 0x85001000, dma);
             Func_080e0524(0x70,

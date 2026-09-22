@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "FIELD_EFFECT.H"
 
 #define Scene_RunScene3c8SequenceA Func_02002b14
 
@@ -10,19 +11,19 @@ void Func_0200797a();
 void Func_0200798e();
 void Func_020079be();
 void Func_020079c6();
-s32 Func_020079d8();
+struct FieldActor *Func_020079d8();
 void Func_020079da();
-u8 *Func_02007a10();
-u8 *Func_02007ab8();
+struct FieldActor *Func_02007a10();
+struct FieldActor *Func_02007ab8();
 void Func_02007af2();
 void Func_02007b14();
-u8 *Func_02007b20();
-u8 * Func_02007b54();
-u8 * Func_02007b54_a();
+struct FieldActor *Func_02007b20();
+struct FieldActor *Func_0808a080();
+void Func_080091c0();
 void Func_02007b72();
 void Func_02007bd0();
 s32 Func_02007bda();
-u8 *Func_02007bec();
+struct FieldActor *Func_02007bec();
 void Func_02007c00();
 s32 Func_02007c02();
 void Func_02007c08();
@@ -30,18 +31,18 @@ s32 Func_02007c1c();
 void Func_02007c20();
 void Func_02007c2e();
 void Func_02007c32();
-s32 Func_02007c4a();
-s32 Func_02007c52();
-s32 Func_02007c5a();
-u8 *Func_02007c62();
+struct FieldActor *Func_02007c4a();
+struct FieldActor *Func_02007c52();
+struct FieldActor *Func_02007c5a();
+struct FieldActor *Func_02007c62();
 void Func_02007c68();
 void Func_02007c7a();
 void Func_02007c8c();
 void Func_02007c90();
 void Func_02007cae();
 void Func_02007cce();
-void Func_02007ce8();
-void Func_02007ce8_a();
+void Func_080f9010();
+void Func_0808a010();
 void Func_02007cfe();
 void Func_02007d42();
 void Func_02007d60();
@@ -61,6 +62,11 @@ static __inline__ void Call1(void (*f)(), s32 a0)
 }
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
+{
+    return f(a0);
+}
+
+static __inline__ struct FieldActor *ActorValue1(struct FieldActor *(*f)(), s32 a0)
 {
     return f(a0);
 }
@@ -93,20 +99,17 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 void Scene_RunScene3c8SequenceA(void)
 {
     u32 i;
-    s32 p10;
     u8 *p11;
-    s32 p11b;
     u8 *p8;
     s32 p9;
-    s32 p9b;
-    u8 *rec2;
-    u8 *rec7;
+    struct FieldActor *rec2;
+    struct FieldActor *rec7;
     s32 rec8;
-    u8 *record;
-    s32 r10;
-    s32 r8;
+    struct FieldActor *record;
+    struct FieldActor *slot8;
     s32 base10_f;
     s32 base4_200d164;
+    s32 base6_0;
     u8 *v6;
     s32 v4;
     s32 v1;
@@ -114,19 +117,18 @@ void Scene_RunScene3c8SequenceA(void)
     s32 v0;
     s32 v7;
     s32 slot12;
-    s32 slot8;
 
-    base6_0 = r10;
+    base6_0 = 0;
     slot12 = 0;
-    record = Value1(Func_020079d8, 0);
-    slot8 = (s32)record;
+    slot8 = ActorValue1(Func_020079d8, 0);
+    record = slot8;
     Func_020079c6();
     Call6(Func_0200797a, 69, 48, 4, 2, 5, 48);
     Call6(Func_0200798e, 73, 37, 9, 13, 9, 37);
     base10_f = 15;
     L_02002b60:;
     rec2 = Func_02007a10(base10_f);
-    p11 = (s32)rec2 + 35;
+    p11 = (u8 *)rec2 + 35;
     if (*p11 != 2) {
         Call6(Func_020079be, 72, 48, 1, 1, (*(s32 *)((s32)rec2 + 8) >> 20), (*(s32 *)((s32)rec2 + 16) >> 20));
     } else {
@@ -170,7 +172,6 @@ void Scene_RunScene3c8SequenceA(void)
     }
     L_02002bf8:;
     if (v5 == 8) {
-        v7 = r8;
     } else {
         v6 = 15;
         for (;;) {
@@ -192,10 +193,9 @@ void Scene_RunScene3c8SequenceA(void)
         v5 = 8;
         L_02002c30:;
         if (v5 == 8) {
-            v7 = r8;
         } else {
-            p9 = ((u32)(*(u8 *)(*(s32 *)(slot8 + 80) + 9) << 28) >> 30);
-            if ((u32)(*(s32 *)(slot8 + 16) >> 20) <= *(s32 *)(0x0200d164 + ((v5 << 3) + 4))) {
+            p9 = ((u32)(*(u8 *)(*(s32 *)((u8 *)slot8 + 80) + 9) << 28) >> 30);
+            if ((u32)(*(s32 *)((u8 *)slot8 + 16) >> 20) <= *(s32 *)(0x0200d164 + ((v5 << 3) + 4))) {
                 record = Func_02002cfa(*(s32 *)((s32)rec2 + 8), *(s32 *)((s32)rec2 + 12), (*(s32 *)((s32)rec2 + 16) + -0x40000), 20);
                 slot12 = (s32)record;
                 Func_02007bd0(0, 3);
@@ -212,23 +212,23 @@ void Scene_RunScene3c8SequenceA(void)
                 }
                 v6 = i;
             }
-            record = Func_02007b54(base10_f);
+            record = Func_0808a080(base10_f);
             Func_02007af2((s32)record, 0);
             v6 = (s32)rec2;
-            rec2[34] = 0;
+            ((u8 *)rec2)[34] = 0;
             v6 = ((s32)v6 + 85);
             v6[0] = 3;
             *(s32 *)((s32)rec2 + 72) = 0x1999;
             *(s32 *)((s32)rec2 + 68) = 0;
             Call6(Func_02007b14, 6, 44, 1, 1, *(s32 *)(0x0200d164 + (v5 << 3)), *(s32 *)(0x0200d164 + ((v5 << 3) + 4)));
             Func_02003632((s32)rec2);
-            Func_02007ce8(188);
-            rec2[89] = 0;
+            Func_080f9010(188);
+            ((u8 *)rec2)[89] = 0;
             v6[0] = 0;
             *(s32 *)((s32)rec2 + 12) = -0x100000;
             Func_02007c68(base10_f, 3);
             *p11 = 2;
-            Call6((void (*)())Func_02007b54_a, 73, 48, 1, 1, *(s32 *)(0x0200d164 + (v5 << 3)), *(s32 *)(0x0200d164 + ((v5 << 3) + 4)));
+            Call6(Func_080091c0, 73, 48, 1, 1, *(s32 *)(0x0200d164 + (v5 << 3)), *(s32 *)(0x0200d164 + ((v5 << 3) + 4)));
             Func_02007c8c(0, p9);
             v6 = 15;
             *(u8 *)(Func_02007bda(0) + 35) |= 1;
@@ -250,13 +250,13 @@ void Scene_RunScene3c8SequenceA(void)
                 v7 = (v5 << 3);
                 goto L_02002ea8;
             }
-            rec2 = Value1(Func_02007c4a, 15);
-            rec7 = Value1(Func_02007c52, 16);
-            rec8 = Value1(Func_02007c5a, 17);
-            v6 = rec8;
+            rec2 = ActorValue1(Func_02007c4a, 15);
+            rec7 = ActorValue1(Func_02007c52, 16);
+            rec8 = (s32)ActorValue1(Func_02007c5a, 17);
+            v6 = (u8 *)rec8;
             record = Func_02007c62(18);
             v6 = ((s32)v6 + 35);
-            if (((((rec7[35] & rec2[35]) & v6[0]) & record[35]) & 2) != 0) {
+            if (((((((u8 *)rec7)[35] & ((u8 *)rec2)[35]) & v6[0]) & ((u8 *)record)[35]) & 2) != 0) {
                 Call2(Func_02007d60, 0x10000, 0x2000);
                 Func_02007d80(14, 1);
                 Func_02007d7c();
@@ -267,17 +267,17 @@ void Scene_RunScene3c8SequenceA(void)
                 Call4(Func_02007da2, 0xd80000, -1, 0x2780000, 1);
                 Func_02007c20((s32)v6);
                 Call2(Func_02007c08, (s32)v6, 0x200d7c8);
-                rec7 = Value3(Func_02003a94, 216, 0x2f8, 0x200dac8);
+                rec7 = (struct FieldActor *)Value3(Func_02003a94, 216, 0x2f8, 0x200dac8);
                 p8 = (s32)v6 + 99;
                 for (;;) {
                     if (!(*(s32 *)((s32)v6) != 0)) break;
                     L_02002e46:;
                     if (*p8 == 0) {
-                        if (rec7[99] == 0) {
+                        if (((u8 *)rec7)[99] == 0) {
                             goto L_02002e86;
                         }
                     }
-                    Func_02007ce8_a(30);
+                    Func_0808a010(30);
                     Call3(Func_02007c7a, 0x200dd3c, 77, 35);
                     Call6(Func_02007cae, 13, 35, 1, 1, 13, 36);
                     Call1(Func_02007cfe, 0x308);
@@ -300,8 +300,4 @@ void Scene_RunScene3c8SequenceA(void)
     }
     Func_02007d42();
     L_02002ea8:;
-    p9b = ((v5 << 3) + 4);
-    p10 = (s32)v6;
-    base10_f = p10;
-    p11b = v7;
 }

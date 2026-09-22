@@ -27,7 +27,6 @@ void Func_080de2f8(void *, s32, s32, s32, s32 *, s32 *);
 u8 *Func_08002f40(s32);
 void Func_08005340(const void *, void *);
 s32 Func_080041d8(s32, s32);
-void Func_080e396c(s32, s32 *);
 void Func_080f9010(s32);
 void Func_080b50e8(s32);
 void Func_080d40ec(s32, s32, s32, s32);
@@ -39,7 +38,6 @@ s32 Func_080ed408(s32, s32, s32, s32, s32);
 void **Func_080b5098(s32);
 void Func_080049ac(void);
 void Func_080051d8(const void *, const void *);
-void Func_080e3944(const void *, s32 *);
 void Func_08004cf0(const s32 *);
 void Func_08004c6c(s32);
 void Func_08004c1c(s32);
@@ -87,7 +85,8 @@ void Func_080d05fc(Effect *effect)
     *(s32 *)(work + 0x7780) = 3;
     *(s32 *)(work + 0x7784) = 0x04040404;
     Func_080041d8(0x080cd261, 0x480);
-    Func_080e396c(WORK_EFFECT->actors[0], anchor);
+    EffectPosition_ApplyStepAndYOffset(
+        WORK_EFFECT->actors[0], (struct EffectPosition *)anchor);
     shift = 64 - anchor[0];
     *(s32 *)0x04000028 = shift << 8;
     Func_080f9010(142);
@@ -122,7 +121,8 @@ void Func_080d05fc(Effect *effect)
                 Func_080049ac();
                 Func_080051d8(camera, camera + 12);
                 vector[0] = actor[2]; vector[1] = actor[3]; vector[2] = actor[4];
-                Func_080e3944(vector, screen);
+                EffectPosition_ApplyBaseAndYOffset(
+                    (s32)vector, (struct EffectPosition *)screen);
                 screen[0] = anchor[0] + shift;
                 screen[1] -= 24;
                 if (tick <= 67) {
@@ -140,7 +140,9 @@ void Func_080d05fc(Effect *effect)
                             Func_08004c1c(rotation);
                         }
                         Func_08004c6c(angle);
-                        Func_080e3944(Data_080ee128, vector);
+                        EffectPosition_ApplyBaseAndYOffset(
+                            (s32)Data_080ee128,
+                            (struct EffectPosition *)vector);
                         trail->x = vector[0] + screen[0];
                         trail->y = vector[1] + screen[1] + 16;
                         point++; angle += 0x5555; trail++;

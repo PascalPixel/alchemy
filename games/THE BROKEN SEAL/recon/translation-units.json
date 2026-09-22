@@ -1360,10 +1360,6 @@
           "address": "0x200ddb4",
           "kind": "thumb"
         },
-        "Func_02005e14": {
-          "address": "0x200de14",
-          "kind": "thumb"
-        },
         "Func_02005e24": {
           "address": "0x200de24",
           "kind": "thumb"
@@ -1382,10 +1378,6 @@
         },
         "Func_02005e2c": {
           "address": "0x200de2c",
-          "kind": "thumb"
-        },
-        "Func_02005d2c": {
-          "address": "0x200dd2c",
           "kind": "thumb"
         },
         "Func_02005bfc": {
@@ -1424,10 +1416,6 @@
           "address": "0x200ddfc",
           "kind": "thumb"
         },
-        "Func_02005d44": {
-          "address": "0x200dd44",
-          "kind": "thumb"
-        },
         "Func_02005cdc": {
           "address": "0x200dcdc",
           "kind": "thumb"
@@ -1460,10 +1448,6 @@
           "address": "0x200de6c",
           "kind": "thumb"
         },
-        "Func_02005e74": {
-          "address": "0x200de74",
-          "kind": "thumb"
-        },
         "Func_02005e64": {
           "address": "0x200de64",
           "kind": "thumb"
@@ -1482,6 +1466,22 @@
         },
         "Func_02002350": {
           "address": "0x0200a350",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200dd2c",
+          "kind": "thumb"
+        },
+        "Engine_UiWorkWaitThenFinalizeCapacity": {
+          "address": "0x0200dd44",
+          "kind": "thumb"
+        },
+        "Engine_ObjectMotionArmCallback": {
+          "address": "0x0200de14",
+          "kind": "thumb"
+        },
+        "Engine_Import0808a268": {
+          "address": "0x0200de74",
           "kind": "thumb"
         }
       },
@@ -71328,14 +71328,6 @@
           "address": "0x0200dc6c",
           "kind": "thumb"
         },
-        "Func_02005d2c": {
-          "address": "0x0200dcac",
-          "kind": "thumb"
-        },
-        "Func_02005d44": {
-          "address": "0x0200dcb4",
-          "kind": "thumb"
-        },
         "Func_02005d88": {
           "address": "0x0200dcac",
           "kind": "thumb"
@@ -71348,16 +71340,8 @@
           "address": "0x0200dc5c",
           "kind": "thumb"
         },
-        "Func_02005e14": {
-          "address": "0x0200dc64",
-          "kind": "thumb"
-        },
         "Func_02005e68": {
           "address": "0x0200dbec",
-          "kind": "thumb"
-        },
-        "Func_02005e74": {
-          "address": "0x0200ddec",
           "kind": "thumb"
         },
         "Func_02005e80": {
@@ -72419,6 +72403,10 @@
         "gEventWork": {
           "address": "0x03001ebc",
           "kind": "data"
+        },
+        "OverlayObject_SetValue1": {
+          "address": "0x0200dcb4",
+          "kind": "thumb"
         }
       },
       "owners": [

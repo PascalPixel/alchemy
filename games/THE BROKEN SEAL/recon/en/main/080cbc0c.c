@@ -1,3 +1,5 @@
+#include "BATTLE_EFFECT_WORK.H"
+#include "EFFECT_STEP.H"
 #include "shared-aggregates.h"
 
 extern u8 BattlePieceStartX[];
@@ -73,9 +75,9 @@ void Func_080f9010(s32 id);
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 
 void BattleFx_RunTileAndPaletteAnimation(void *arg0) {
-    struct M2cAggregate_absolute_02010000 *work;
-    struct M2cAggregate_absolute_02010000 *canvas;
-    struct M2cAggregate_absolute_02010000 *ent;
+    struct BattleEffectWork *work;
+    void *canvas;
+    struct EffectStep *ent;
     struct M2cAggregate_deref_absolute_03001e74_0 *sys;
     struct M2cAggregate_deref_absolute_03001e74_8c *ctl;
     ClearFn clr;
@@ -148,7 +150,7 @@ void BattleFx_RunTileAndPaletteAnimation(void *arg0) {
     Func_080048b0(0x29, 0x302);
     sys = absolute_03001e74.field_0000;
     ctl = absolute_03001e74.field_008c;
-    M2C_FIELD(work, void **, 0x7828) = arg0;
+    work->effect = arg0;
     Func_080cd508();
     ctl->field_000c = 1;
     absolute_03001ad0.field_0006 = 0x20;
@@ -209,8 +211,8 @@ void BattleFx_RunTileAndPaletteAnimation(void *arg0) {
     *(s16 *)0x04000052 = 0x1010;
     *(s16 *)0x04000050 = 0;
     Func_080e0524(0x44, work, 1, 1);
-    M2C_FIELD(work, s32 *, 0x7780) = 1;
-    M2C_FIELD(work, s32 *, 0x7784) = 0;
+    work->transfer_mode = 1;
+    work->transfer_value = 0;
     Func_080041d8(0x080CD261, 0x480);
     Func_080ed408(0x2E, 7, 7, 3, 1);
     draw0 = (BlitFn)absolute_03001e50.field_00b8;
@@ -220,20 +222,20 @@ void BattleFx_RunTileAndPaletteAnimation(void *arg0) {
     /* Seed the 0x21 pieces from the two byte tables of start coordinates. */
     rad = 0;
     tbly = BattlePieceStartY;
-    ent = (void *)((u8 *)work + 0x7080);
+    ent = (struct EffectStep *)((u8 *)work + 0x7080);
     tblx = BattlePieceStartX;
     cnt = 0;
     do {
         sx = *tblx << 0x10;
         sy = *tbly << 0x10;
-        M2C_FIELD(ent, s32 *, 0) = sx;
-        ent->field_0004 = sy;
+        ent->x = sx;
+        ent->y = sy;
         cnt += 1;
-        ent->field_000c = (u32) ((s32) (sx + 0xFFE00000) >> 2);
-        ent->field_0010 = (u32) ((s32) (sy + 0xFFC40000) >> 2);
+        ent->velocity_x = (u32) ((s32) (sx + 0xFFE00000) >> 2);
+        ent->velocity_y = (u32) ((s32) (sy + 0xFFC40000) >> 2);
         tblx += 1;
         tbly += 1;
-        ent = (void *)((u8 *)ent + 0x1C);
+        ent += 1;
     } while (cnt != 0x21);
 
     IWRAM_COPY(&absolute_02010000, (void *)0x06008000, 0x7800);
@@ -258,7 +260,7 @@ void BattleFx_RunTileAndPaletteAnimation(void *arg0) {
 
     fill((void *)0x050000C0, 0x100, 0x7FFF7FFF);
     Func_080f9010(0xD4);
-    Func_080d6888(M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 0x24),
+    Func_080d6888(((struct BattleEffectArgument *)work->effect)->actors[0],
                   7, 3, 0, 0x1E);
 
     frame = 0;
@@ -271,7 +273,7 @@ void BattleFx_RunTileAndPaletteAnimation(void *arg0) {
         }
         if (frame == 0x1C) {
             Func_080d6888(
-                M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 0x24),
+                ((struct BattleEffectArgument *)work->effect)->actors[0],
                 -1, 3, -1, 0);
         }
         if (frame == 0x20) {
@@ -438,18 +440,18 @@ void BattleFx_RunTileAndPaletteAnimation(void *arg0) {
 
         if (frame <= 0x32) {
             cnt = 0;
-            ent = (void *)((u8 *)work + 0x7080);
+            ent = (struct EffectStep *)((u8 *)work + 0x7080);
             do {
                 draw0(canvas,
-                      &work->unknown_0000[BattlePieceOffset[cnt]],
-                      M2C_FIELD(ent, s16 *, 2), M2C_FIELD(ent, s16 *, 6),
+                      (u8 *)work + BattlePieceOffset[cnt],
+                      *(s16 *)((u8 *)&ent->x + 2), *(s16 *)((u8 *)&ent->y + 2),
                       (s32) BattlePieceWidth[cnt],
                       (s32) BattlePieceHeight[cnt]);
                 if (frame > 3) {
                     Func_080e3908(ent, 0x40, 0x4000);
                 }
                 cnt += 1;
-                ent = (void *)((u8 *)ent + 0x1C);
+                ent += 1;
             } while (cnt != 0x21);
         }
 
@@ -478,49 +480,49 @@ void BattleFx_RunTileAndPaletteAnimation(void *arg0) {
             } while (cnt != 0x40);
             absolute_04000050.field_0000 = 0x3F44;
             cnt = 0;
-            ent = (void *)((u8 *)work + 0x7080);
+            ent = (struct EffectStep *)((u8 *)work + 0x7080);
             do {
-                M2C_FIELD(ent, s32 *, 0) =
+                ent->x =
                     (s32) (((Func_08004458() & 0x1F) + 0x20) << 0x10);
-                ent->field_0004 = ((Func_08004458() & 0x1F) + 0x50) << 0x10;
+                ent->y = ((Func_08004458() & 0x1F) + 0x50) << 0x10;
                 cnt += 1;
-                ent->field_000c =
+                ent->velocity_x =
                     ((0x1FF & Func_08004458()) + 0xFFFFFF00) << 0xC;
-                ent->field_0010 = 0;
-                ent->field_0018 = 0;
-                ent = (void *)((u8 *)ent + 0x1C);
+                ent->velocity_y = 0;
+                ent->variant = 0;
+                ent += 1;
             } while (cnt != 0x20);
-            M2C_FIELD(work, s32 *, 0x7780) = 2;
-            M2C_FIELD(work, s32 *, 0x7784) = 0x32;
+            work->transfer_mode = 2;
+            work->transfer_value = 0x32;
         }
 
         /* After frame 0x34 the pieces scatter, one released every four
            frames, each stepping through six 0x800-byte sprite phases. */
         if (frame > 0x34) {
             cnt = 0;
-            ent = (void *)((u8 *)work + 0x7080);
+            ent = (struct EffectStep *)((u8 *)work + 0x7080);
             do {
                 if (frame >= (cnt / 4) + 0x34) {
-                    span = ent->field_0018;
+                    span = ent->variant;
                     if ((s32) span <= 0x27) {
                         lvl = (s32) span / 4;
                         if (lvl > 5) {
                             lvl = 5;
                         }
                         draw1(canvas, (u8 *)work + (lvl << 0xB),
-                              M2C_FIELD(ent, s16 *, 2) - 0x10,
-                              M2C_FIELD(ent, s16 *, 6) - 0x20, 0x20, 0x40);
+                              *(s16 *)((u8 *)&ent->x + 2) - 0x10,
+                              *(s16 *)((u8 *)&ent->y + 2) - 0x20, 0x20, 0x40);
                         Func_080e3908(ent, 0x3C, 0xFFFFF000);
-                        ent->field_0018 += 1;
+                        ent->variant += 1;
                     }
                 }
                 cnt += 1;
-                ent = (void *)((u8 *)ent + 0x1C);
+                ent += 1;
             } while (cnt != 0x20);
         }
 
         Func_080cd52c();
-        M2C_FIELD(work, s32 *, 0x7824) = 1;
+        work->transfer_pending = 1;
         Func_080030f8(1);
         frame += 1;
     } while (frame != 0x80);
@@ -528,7 +530,7 @@ void BattleFx_RunTileAndPaletteAnimation(void *arg0) {
     Func_08002dd8(0x2F);
     Func_08002dd8(0x2E);
     Func_08004278(0x080CD261);
-    Func_080d6888(M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 0x24),
+    Func_080d6888(((struct BattleEffectArgument *)work->effect)->actors[0],
                   -1, 1, -1, 0);
     absolute_03001ad0.field_0004 = (u16) M2C_FIELD(work, s32 *, 0x77A0);
     absolute_03001ad0.field_0006 = 0x20;

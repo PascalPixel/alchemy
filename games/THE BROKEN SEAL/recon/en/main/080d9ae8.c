@@ -1,47 +1,6 @@
 #include "TYPES.H"
 
-/*
- * Draft for the battle-presentation sub-effect at 0x080d9ae8, named
- * RunPaletteRampEffect (games/THE BROKEN SEAL/source-paths.json) and called with
- * (effect, mode) from the four battle/effects/palette_ramp/mode_N.c
- * wrappers already adopted in this repository (mode in 0..3).
- *
- * Real callee set and constants match the 0x03001eec "battle work"
- * subsystem already partly recovered in games/THE BROKEN SEAL/recon/en/main/080e7404.c,
- * games/THE BROKEN SEAL/recon/en/main/080d82b0.c and games/THE BROKEN SEAL/recon/en/main/080dc1ec.c,
- * and the already-adopted games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C.
- * Field offsets (work+0x7780/0x7784/0x7824/0x7828, member+8/+16,
- * member-id halfword at effect+36+2*member) and the M2C_FIELD/WordCopyFn/
- * DrawRectangleFn conventions come from that evidence.
- *
- * Func_080cef64(flag, out_pair) is already adopted as
- * games/THE BROKEN SEAL/src/battle/effects/work/fetch_rectangle_blitters.c: it
- * unconditionally writes two draw-callback words (the kind-46 and kind-47
- * allocator-cache slots) into out_pair.  The two `bl Func_080072f4` sites
- * below are `_call_via_r4` (games/THE BROKEN SEAL/raw/080072e4.s, N=4 slot) -- indirect
- * calls through a DrawRectangleFn already loaded into r4 from the saved
- * out_pair pointer, not calls to a real function of that name; modeled the
- * same way games/THE BROKEN SEAL/recon/en/main/080dc1ec.c and 080e01e4.c already do.
- *
- * Reconstruction notes from the reference bytes:
- *  - The epilogue pops the return address into r0 ("pop {r0}; bx r0"), so the
- *    function returns void and the trailing Func_080cdbc0() call is a
- *    statement, not a "return".
- *  - The whole per-member body (the two Func_080049ac/Func_080051d8 passes,
- *    the local_frame == 24 sound cue and the particle burst loop) sits inside
- *    "if (local_frame > 0)": the reference branches straight to the member
- *    increment block when local_frame <= 0.
- *  - Func_08004cb4(rec) runs after the second Func_080049ac/Func_080051d8
- *    pair, not immediately after the rec[] stores.
- *  - particle[2] uses "frame % 4", not "(frame / 4) % 4".
- *  - The burst clamp is spelled "if (local_frame > 28) { ... } else burst = 0;"
- *    so the positive branch reuses the spilled "threshold" directly, matching
- *    the reference's "adds r3, r2, #0 / cmp r2, #0".
- *  - The scratch counters are shared the way the reference allocates them:
- *    one counter (outer) drives the ramp and the particle-burst loops, "frame"
- *    drives the particle-seed loop and the outer frame loop, and "member"
- *    drives the ramp inner loop and the member loop.
- */
+/* Runs the palette-ramp battle presentation for one effect mode. */
 #define M2C_FIELD(expr, type_ptr, offset) \
     (*(type_ptr)((u8 *)(expr) + (offset)))
 #define RunPaletteRampEffect Func_080d9ae8

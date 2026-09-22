@@ -17,16 +17,17 @@
       "confidence": "proven",
       "evidence": [
         "fixed_eight_byte_entries",
-        "ldr_r4_bx_r4_target_word"
+        "ldr_r4_bx_r4_target_word",
+        "external_calls_use_entry_while_same_region_calls_use_body"
       ],
       "expected_files": 13,
       "expected_bytes": 4864,
       "provenance": {
-        "scanned": "2026-09-10",
+        "scanned": "2026-09-22",
         "cross_rom": "259 of 608 entries byte-identical across TBS editions only; one 8-byte chance hit in TLA",
-        "verdict": "origin_unidentified",
+        "verdict": "module_export_table_mechanism_likely_ordering_unrecovered",
         "credit": "none_until_reconstructed",
-        "reason": "Thirteen unresolved fixed-width tables containing 608 eight-byte entries. Each entry is ldr r4, bx r4 and a Thumb target word. The producing build step is unidentified, so the tables remain uncredited reconstruction debt."
+        "reason": "Thirteen tables contain 608 fixed eight-byte tail-call entries. Of entries visible in retained call sites, 100 have calls to both entry and body; 72 show the entry used outside its code region while all direct body calls stay inside. This supports module export tables, but membership and ordering are not yet derived from real translation-unit inputs."
       }
     },
     {

@@ -91,11 +91,13 @@ void Func_080dc968(void *arg0) {
     void *temp_r2_844;
     void *temp_r3_447;
     void *temp_r5_449;
+    u8 *battle_globals;
 
-    sp38 = absolute_03001f00.field_0000;
-    sp34 = *(s32 *)0x03001EF0;
-    temp_r3_25 = *(u8 **)0x03001EEC;
-    sp24 = *(struct M2cAggregate_absolute_02010000 **)0x03001EF4;
+    battle_globals = (u8 *)0x03001F00;
+    sp38 = *(struct M2cAggregate_deref_absolute_03001f00_0 **)battle_globals;
+    sp34 = *(s32 *)(battle_globals - 0x10);
+    temp_r3_25 = *(u8 **)(battle_globals - 0x14);
+    sp24 = *(struct M2cAggregate_absolute_02010000 **)(battle_globals - 0x0C);
     sp20 = (s32) absolute_03001ad0.field_0004;
     M2C_FIELD(temp_r3_25, void **, 0x7828) = arg0;
     Func_080cd594(0x2000);
@@ -116,8 +118,8 @@ void Func_080dc968(void *arg0) {
     Func_080ed408(0x2E, 7, 7, 3, 2);
     sp0 = 3;
     Func_080ed408(0x2F, 7, 7, 3, 3);
-    draw_args[0] = (DrawRectangleFn)absolute_03001f00.field_0008;
-    draw_args[1] = (DrawRectangleFn)absolute_03001f00.field_000c;
+    draw_args[0] = (DrawRectangleFn)*(void **)(battle_globals + 8);
+    draw_args[1] = (DrawRectangleFn)*(void **)(battle_globals + 0x0C);
     absolute_03001ce0.field_0010 = 0xF0;
     Func_080030f8(1);
     Func_080b5040(1, 0x3B, 0);

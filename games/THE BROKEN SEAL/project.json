@@ -14,7 +14,6 @@
     "reconstruction": "games/THE BROKEN SEAL/recon",
     "semantic": "games/THE BROKEN SEAL/semantic"
   },
-  "cross_edition_calibration": "games/THE BROKEN SEAL/recon/cross-edition.json",
   "reports": {
     "directory": "out/tbs-en/reports",
     "refresh": "make reports"

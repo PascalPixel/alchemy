@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Battle-presentation sub-effect at 0x080cc5d8.  Family-matched to
@@ -17,7 +18,7 @@
  * kinds 39/40/41 back out of it (it made those blocks itself).
  *
  * Field offsets 0x7780/0x7784/0x7824/0x7828 and the Func_080cd594/
- * Func_080e0524/Func_080041d8/Func_08004278/Func_080ed408/Func_08002dd8/
+ * Resource_LoadAndDecompress/Func_080041d8/Func_08004278/BattleEffect_LoadWork/Func_08002dd8/
  * Func_080cdbc0/Func_080d6888 calling shapes follow the 0x03001eec "battle
  * work" subsystem already recovered in
  * games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C and
@@ -63,11 +64,9 @@ extern u8 Value_00000076;
 void *Func_080048b0(s32 kind, s32 size);
 void Func_080cd594(s32 mode);
 void *Func_08002f40(s32 id);
-void Func_080e0524(s32 effect_id, void *target, s32 flag_a, s32 flag_b);
 u32 Func_08004458(void);
 s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 void Func_080f9010(s32 id);
 void Func_080e396c(s32 source, void *screen);
 s32 Func_08002322(s32 angle);
@@ -108,8 +107,8 @@ void Func_080cc5d8(void *object)
     M2C_FIELD((void *)0x04000052, u16 *, 0) = 0x100c;
     M2C_FIELD((void *)0x04000020, u16 *, 0) = 0x100;
 
-    Func_080e0524((s32)&Value_00000045, work, 1, 0);
-    Func_080e0524((s32)&Value_00000076, trail_source, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000045, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000076, trail_source, 0, 0);
 
     switch (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0)) {
     case 0:
@@ -150,7 +149,7 @@ void Func_080cc5d8(void *object)
     callback_interval = 0x480;
     Func_080041d8((void *)0x080CD261, callback_interval);
 
-    status = Func_080ed408(46, 7, 7, 7, 3);
+    status = BattleEffect_LoadWork(46, 7, 7, 7, 3);
     rectangle[0] = (DrawRectangleFn)Data_03001e50[46];
     Func_080f9010(140);
 
@@ -185,7 +184,7 @@ void Func_080cc5d8(void *object)
                 s32 x;
                 s32 y;
 
-                status = Func_080ed408(47, 7, 7, Data_080ee060[i] | 3, 2);
+                status = BattleEffect_LoadWork(47, 7, 7, Data_080ee060[i] | 3, 2);
                 x = (s8)Data_080ee058[i] + 32;
                 y = (screen[1] + (s8)Data_080ee05c[i]) - 32;
                 rectangle[1] = (DrawRectangleFn)Data_03001e50[47];

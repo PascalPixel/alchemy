@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
+#include "BATTLE_EFX.H"
 
 #define BattleFx_RunPuffArc Func_080d9fc8
 
@@ -18,9 +19,6 @@ extern u8 Data_03001e50[];
 extern u8 Value_000000b4;
 
 void Func_080cd594(s32);
-void Func_080e0524(s32, void *, s32, s32);
-#define Resource_LoadAndDecompress Func_080e0524
-s32 Func_080ed408(s32, s32, s32, s32, s32);
 s32 Func_08002322(s32);
 #define Engine_MathSin Func_08002322
 s32 Func_0800231c(s32);
@@ -90,7 +88,7 @@ typedef struct Efx {
  * screen, then animated for eighty frames.  Each puff plays a six-cell
  * sequence, four frames per cell, staggered four frames apart, and is drawn
  * once, twice or three times depending on the layer count the caller set.
- * The rectangle blitter is the kind-46 block Func_080ed408 loads, so every
+ * The rectangle blitter is the kind-46 block BattleEffect_LoadWork loads, so every
  * draw goes through the entry cached in Data_03001e50[46].
  *
  * Aggregate names remain provisional; byte offsets into the kind-39 work
@@ -123,7 +121,7 @@ void BattleFx_RunPuffArc(Efx *efx)
     *(s16 *)0x04000050 = 0x3F46;
     *(s16 *)0x04000052 = 0x100E;
     Resource_LoadAndDecompress((s32)&Value_000000b4, work, 1, 1);
-    Func_080ed408(46, 7, 7, 3, 3);
+    BattleEffect_LoadWork(46, 7, 7, 3, 3);
     draw = (DrawRectangle)cache[46 - 39];
     if (WORK_EFX->actors[0] > 127) {
         org = 0;

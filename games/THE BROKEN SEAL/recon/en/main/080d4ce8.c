@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 typedef void (*DrawRectangle)(void *, const void *, s32, s32, s32, s32);
 typedef s32 (*CopyWords)(void *, const void *, s32);
@@ -19,8 +20,6 @@ extern s8 Data_080ee29d[];
 extern u16 Data_080ede48[];
 void Func_080cd594(s32);
 void *Func_08002f40(s32);
-void Func_080e0524(s32, void *, s32, s32);
-s32 Func_080ed408(s32, s32, s32, s32, s32);
 void **Func_080b5098(s32);
 s32 Func_08004458(void);
 s32 Func_080041d8(s32, s32);
@@ -73,8 +72,8 @@ void Func_080d4ce8(Effect *effect)
     EFFECT = effect;
     Func_080cd594(1);
     *(u16 *)0x04000052 = 0x1010;
-    Func_080e0524((s32)&Value_00000085, work, 1, 1);
-    Func_080e0524((s32)&Value_00000073, extra, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000085, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_00000073, extra, 0, 0);
     if (EFFECT->variant == 0) {
         palette = Func_08002f40((s32)&Value_00000086);
         status = ((CopyWords)0x03001388)((void *)0x05000000, palette, 128);
@@ -82,9 +81,9 @@ void Func_080d4ce8(Effect *effect)
         palette = Func_08002f40((s32)&Value_00000087);
         status = ((CopyWords)0x03001388)((void *)0x05000000, palette, 128);
     }
-    status = Func_080ed408(46, 7, 7, 3, 2);
+    status = BattleEffect_LoadWork(46, 7, 7, 3, 2);
     draw[0] = (DrawRectangle)Data_03001e50[46];
-    status = Func_080ed408(47, 7, 7, 7, 2);
+    status = BattleEffect_LoadWork(47, 7, 7, 7, 2);
     second = (DrawRectangle)Data_03001e50[47];
     draws = draw;
     draws[1] = second;

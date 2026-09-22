@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 #define BattlePres_RunRingAndSparkScene Func_080e40a4
 
@@ -53,7 +54,7 @@
  * function symbol: they are entries of the _call_via_rN trampoline bundle
  * at games/THE BROKEN SEAL/raw/080072e4.s, so they are spelled here as calls through
  * typed pointers - the IWRAM word copier at 0x03001388, the IWRAM clear
- * routine at 0x03000164, and the two blit routines Func_080ed408
+ * routine at 0x03000164, and the two blit routines BattleEffect_LoadWork
  * publishes into heap_cache[46] and heap_cache[47].
  *
  * The resource ids 0x49, 0x4A, 0x76 and 0x8E reach their calls through
@@ -164,8 +165,7 @@ struct Member {
 void Func_080b5030(s32 a, s32 b, s32 c);
 void Func_080030f8(s32 frames);
 void Func_080cdd58(void);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
-void Func_080e0524(s32 id, void *target, s32 flag_a, s32 flag_b);  /* load_and_decompress */
+void Resource_LoadAndDecompress(s32 id, void *target, s32 flag_a, s32 flag_b);  /* load_and_decompress */
 void *Func_08002f40(s32 id);                                       /* get */
 void Func_080072f0(void *dest, const void *src, s32 count, CopyFn copier);
 s32 Func_080041d8(void *callback, s32 interval);                  /* Scheduler_AddOrUpdateCallback */
@@ -240,11 +240,11 @@ void BattlePres_RunRingAndSparkScene(void *object)
     *(u16 *)0x0400000A = 0x1F80;
 
     if (M2C_FIELD(STATE, s32 *, 4) == 0) {
-        Func_080ed408(46, 7, 7, 3, 3);
-        Func_080ed408(47, 7, 7, 3, 2);
+        BattleEffect_LoadWork(46, 7, 7, 3, 3);
+        BattleEffect_LoadWork(47, 7, 7, 3, 2);
     } else {
-        Func_080ed408(46, 7, 7, 7, 3);
-        Func_080ed408(47, 7, 7, 7, 2);
+        BattleEffect_LoadWork(46, 7, 7, 7, 3);
+        BattleEffect_LoadWork(47, 7, 7, 7, 2);
     }
     blit[0] = (BlitFn)Data_03001e50[46];
     blit[1] = (BlitFn)Data_03001e50[47];
@@ -252,12 +252,12 @@ void BattlePres_RunRingAndSparkScene(void *object)
     Func_080b5030(
         M2C_FIELD(STATE, s32 *, 8), M2C_FIELD(STATE, s32 *, 12), 130);
     Func_080030f8(1);
-    Func_080e0524((s32)&Value_00000049, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000049, work, 1, 0);
 
     Func_080b5030(
         M2C_FIELD(STATE, s32 *, 8), M2C_FIELD(STATE, s32 *, 12), 130);
     Func_080030f8(1);
-    Func_080e0524((s32)&Value_0000004a, (void *)0x02010000, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_0000004a, (void *)0x02010000, 1, 1);
 
     if (M2C_FIELD(STATE, s32 *, 8) > 7) {
         Func_080072f0((void *)0x05000000,
@@ -267,7 +267,7 @@ void BattlePres_RunRingAndSparkScene(void *object)
     Func_080b5030(
         M2C_FIELD(STATE, s32 *, 8), M2C_FIELD(STATE, s32 *, 12), 130);
     Func_080030f8(1);
-    Func_080e0524((s32)&Value_00000076, sprite_src, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000076, sprite_src, 0, 0);
 
     Func_080b5030(
         M2C_FIELD(STATE, s32 *, 8), M2C_FIELD(STATE, s32 *, 12), 130);

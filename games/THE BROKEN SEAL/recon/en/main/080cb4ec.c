@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "EFFECT_STEP.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Battle-presentation sub-effect at 0x080cb4ec, part of the same
@@ -7,7 +8,7 @@
  * (0x080d9fc8, the closest structural template, score 8362/10000) and
  * games/THE BROKEN SEAL/src/battle/effects/member_orbit (0x080ce85c). This owner is
  * 780 bytes against the template's 644: it shares the template's overall
- * shape (WORK_EFX republish, Func_080cd594, two Func_080ed408 heap-kind
+ * shape (WORK_EFX republish, Func_080cd594, two BattleEffect_LoadWork heap-kind
  * loads, Resource_LoadAndDecompress, a fixed-length outer frame loop, the
  * Scheduler_AddOrUpdateCallback/RemoveCallback bracket at 0x080CD261, and
  * the Func_08002dd8(47)/Func_08002dd8(46) unload order also seen in
@@ -29,7 +30,6 @@ typedef void (*DrawRectangleFn)(
     void *dest, const void *src, s32 x, s32 y, s32 width, s32 height);
 
 void Func_080cd594(s32 mode);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 void Resource_LoadAndDecompress(
     void *resource_id, void *destination, s32 destination_offset,
     s32 copy_palette);
@@ -107,9 +107,9 @@ void Func_080cb4ec(Efx *efx)
     Func_080cd594(1);
     *(s16 *)0x04000020 = 0x0100;
     *(s16 *)0x04000052 = 0x1000;
-    Func_080ed408(46, 7, 7, 3, 1);
+    BattleEffect_LoadWork(46, 7, 7, 3, 1);
     rectangle[0] = heap_cache[7];
-    Func_080ed408(47, 7, 7, 7, 1);
+    BattleEffect_LoadWork(47, 7, 7, 7, 1);
     rectangle[1] = heap_cache[8];
     rectangle_slot = rectangle;
     Resource_LoadAndDecompress((void *)0x78, work, 1, 1);

@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "B5_CONTEXT.H"
 #include "MOTION_OBJECT.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Draft for the battle-presentation sub-effect at 0x080cb1a4.
@@ -10,7 +11,7 @@
  * but the real callee set and constants match the 0x03001eec "battle work"
  * subsystem documented there and in games/THE BROKEN SEAL/src/battle/effects/puff_arc/
  * run.c and games/THE BROKEN SEAL/recon/en/main/080e01e4.c: same Func_080cd594(mode) /
- * Func_080e0524((s32)&Value_XXXXXXXX, work, f, f) / work-offsets
+ * Resource_LoadAndDecompress((s32)&Value_XXXXXXXX, work, f, f) / work-offsets
  * 0x7780/0x7784/0x7824/0x7828 shape, the same 96-pass outer loop as
  * 080e01e4.c, and the same 0x7780=2 / 0x7784=75 pair as puff_arc's
  * WORK_EFX->layers==2 branch.
@@ -37,8 +38,6 @@ typedef void (*DrawRectangleFn)(
 extern u8 Value_0000007d;
 
 void Func_080cd594(s32 mode);
-void Func_080e0524(s32 effect_id, void *work, s32 flag_a, s32 flag_b);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 void Func_080049ac(void);
@@ -85,9 +84,9 @@ void Func_080cb1a4(void *object_param)
     canvas = *cursor;
     M2C_FIELD(work, void **, 0x7828) = object_param;
     Func_080cd594(0);
-    Func_080e0524((s32)&Value_0000007d, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_0000007d, work, 1, 1);
 
-    status = Func_080ed408(46, 7, 7, 3, 2);
+    status = BattleEffect_LoadWork(46, 7, 7, 3, 2);
     M2C_FIELD(work, s32 *, 0x7780) = 2;
     draw = (DrawRectangleFn)heap_cache[7];
     M2C_FIELD(work, s32 *, 0x7784) = 75;

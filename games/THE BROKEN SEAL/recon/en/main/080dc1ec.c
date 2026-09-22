@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Draft for the battle-presentation sub-effect at 0x080dc1ec.
@@ -17,7 +18,6 @@ typedef void (*DrawRectangleFn)(
     void *dest, void *src, s32 x, s32 y, u32 w, s32 h);
 
 void Func_080cd594(s32 mode);
-void Func_080e0524(s32 effect_id, void *work, s32 flag_a, s32 flag_b);
 void Func_080cef64(s32 flag, DrawRectangleFn *out_pair);
 u32 Func_08004458(void);
 s32 Func_080041d8(void *callback, s32 interval);
@@ -62,7 +62,7 @@ s32 Func_080dc1ec(void *object)
     draw_destination = *cursor;
     M2C_FIELD(work, s32 *, 0x7828) = (s32) object;
     Func_080cd594(0);
-    Func_080e0524((s32) &Value_0000008c, work, 1, 1);
+    Resource_LoadAndDecompress((s32) &Value_0000008c, work, 1, 1);
     Func_080cef64(
         M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4) ^ 1,
         callback_pair);

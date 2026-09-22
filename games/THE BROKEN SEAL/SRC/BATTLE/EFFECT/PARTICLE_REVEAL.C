@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 #define BattleFx_RunParticleReveal Func_080e0c84
 
@@ -29,7 +30,7 @@
  * +0x10, ip/r12 slot at +0x30). All such call sites here go through
  * `routine[]`, a two-entry DrawRectangleFn array Func_080cef64 fills.
  *
- * All three Func_080e0524 id arguments are loaded from the reference's
+ * All three Resource_LoadAndDecompress id arguments are loaded from the reference's
  * literal pool rather than built with a `movs` immediate, matching the
  * already-adopted Value_ idiom (puff_arc/run.c's Value_000000b4,
  * 080e01e4.c's Value_00000073/00000090/00000089): `(s32)&Value_XXXXXXXX`
@@ -65,8 +66,6 @@ void Func_080cd594(s32 mode);
 void Func_080de2f8(void *object, s32 a, s32 b, s32 c, s32 *out_a, s32 *out_b);
 void Func_080cef64(s32 flag, DrawRectangleFn *out_callbacks);
 #define BattleFx_FetchRectangleBlitters Func_080cef64
-void Func_080e0524(s32 effect_id, void *target, s32 flag_a, s32 flag_b);
-#define Resource_LoadAndDecompress Func_080e0524
 void Func_080041d8(void *callback, s32 interval);
 #define Scheduler_AddOrUpdateCallback Func_080041d8
 void Func_080e3980(s16 a, s32 *out_pair);

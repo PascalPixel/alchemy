@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Draft for the battle-presentation sub-effect at 0x080dfe2c.
@@ -11,7 +12,7 @@
  * set, field offsets, and control flow were recovered from its own retained
  * assembly, not transcribed from the assigned template. In particular the
  * heap_cache/cursor prologue, the M2C_FIELD field-offset idiom, the
- * DrawRectangleFn typedef, and the Func_080cef64/Func_080e0524/
+ * DrawRectangleFn typedef, and the Func_080cef64/Resource_LoadAndDecompress/
  * Func_080e3908/Func_080e155c/Func_080cd52c/Func_080030f8 calling shapes are
  * shared with 080e01e4.c and documented there; the 512-slot sentinel-init
  * loop at 0x02010018, the final 256-slot particle-scan draw (idx = (lifetime
@@ -38,7 +39,6 @@ typedef void (*DrawRectangleFn)(
 
 void Func_080cd594(s32 mode);
 void Func_080cef64(s32 flag, DrawRectangleFn *out_callbacks);
-void Func_080e0524(s32 effect_id, void *target, s32 flag_a, s32 flag_b);
 void Func_080dfddc(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
@@ -90,9 +90,9 @@ void Func_080dfe2c(void *object)
     Func_080cd594(0);
     callback_ptr = callbacks;
     Func_080cef64(0, callback_ptr);
-    Func_080e0524((s32)&Value_00000073, extra_target, 0, 0);
-    Func_080e0524((s32)&Value_00000092, work, 1, 0);
-    Func_080e0524((s32)&Value_0000006f, (void *)0x02010000, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_00000073, extra_target, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000092, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_0000006f, (void *)0x02010000, 1, 1);
     Func_080dfddc(0x02010000, (s32)((u8 *)work + 0x2A8), 17, 104);
     Func_080dfddc(0x020106E8, (s32)((u8 *)work + 0x990), 34, 65);
 

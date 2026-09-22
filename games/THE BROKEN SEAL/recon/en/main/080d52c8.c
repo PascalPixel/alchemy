@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Battle-presentation scene at main:080d52c8 (1768 bytes), a member of the
@@ -6,7 +7,7 @@
  * games/THE BROKEN SEAL/recon/en/main/080ca60c.c, 080ea0d8.c and 080d5c48.c.  The shared
  * prologue (work = heap[0], draw destination = heap[1], effect state
  * republished at work + 0x7828), the `Value_XXXXXXXX` pooled resource-id
- * idiom, the Func_080ed408(46/47, ...) blit-routine publication into
+ * idiom, the BattleEffect_LoadWork(46/47, ...) blit-routine publication into
  * Data_03001e50[] and the Data_080edebe/eca/ed0 decoration tables are all
  * reused from those owners unchanged.
  *
@@ -57,7 +58,7 @@
  *   - the reference keeps an extra un-reduced `i * 8` in its own stack slot
  *     beside the induction variable this draft leaves as the only copy;
  *   - the reference cross-jumps variant 5 into the default variant's shared
- *     Func_080e0524 tail and leaves variants 1 and 4 separate; this draft
+ *     Resource_LoadAndDecompress tail and leaves variants 1 and 4 separate; this draft
  *     does the opposite, which is where the eight missing bytes are.
  * Six source hypotheses were tried against these three; separating the
  * decoration angle from the ramp angle and loading the particle component
@@ -73,7 +74,7 @@ typedef s32 (*IntegerSqrtFn)(s32 value);
 typedef void (*DrawRectangleFn)(
     void *dest, const void *src, s32 x, s32 y, s32 width, s32 height);
 
-/* Heap-block cache: Data_03001e50[kind] holds the block Func_080ed408
+/* Heap-block cache: Data_03001e50[kind] holds the block BattleEffect_LoadWork
    published for that display kind. */
 extern void *Data_03001e50[];
 
@@ -132,14 +133,12 @@ s32 Func_080cdbc0(void);
 /* update_members */
 void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 /* load_and_decompress */
-void Func_080e0524(s32 resource_id, void *target, s32 flag_a, s32 flag_b);
 /* Camera_ApplyShake */
 void Func_080e155c(s32 a, s32 b);
 /* apply_base_and_y_offset */
 void Func_080e3944(const void *source, s32 *screen);
 /* apply_step_and_y_offset */
 void Func_080e396c(s32 member_id, s32 *screen);
-s32 Func_080ed408(s32 kind, s32 a, s32 b, s32 c, s32 d);
 void Func_080f9010(s32 cue);
 
 /* 28-byte animation record.  512 of them live at 0x02010000: eight groups of
@@ -212,7 +211,7 @@ void BattleEffect_RunParticleBurstScene(void *object, u32 kind)
     count = 16;
     WORK_EFX = (Efx *)object;
     Func_080cd594(0);
-    Func_080e0524((s32)&Value_0000009e, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_0000009e, work, 1, 1);
 
     if (kind == 0) {
         resource_id = (s32)&Value_000000a0;
@@ -226,25 +225,25 @@ void BattleEffect_RunParticleBurstScene(void *object, u32 kind)
         resource_id = (s32)&Value_000000bb;
     } else if (kind == 5) {
         resource_id = (s32)&Value_000000b7;
-        Func_080e0524(resource_id, work, 1, 0);
+        Resource_LoadAndDecompress(resource_id, work, 1, 0);
     } else if (kind == 7) {
         count = 24;
-        Func_080e0524((s32)&Value_000000b7, work, 1, 0);
+        Resource_LoadAndDecompress((s32)&Value_000000b7, work, 1, 0);
         resource_id = (s32)&Value_0000008d;
     } else {
         resource_id = (s32)&Value_000000cd;
         count = 32;
-        Func_080e0524(resource_id, work, 1, 0);
+        Resource_LoadAndDecompress(resource_id, work, 1, 0);
     }
 
     ((WordCopyFn)0x03001388)(
         (void *)0x05000000, Func_08002f40(resource_id), 128);
 
     if (kind == 4) {
-        Func_080e0524((s32)&Value_000000aa, work, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_000000aa, work, 1, 1);
     }
     if (kind == 3) {
-        Func_080e0524((s32)&Value_000000ce, (s8 *)work + (150 << 6), 1, 0);
+        Resource_LoadAndDecompress((s32)&Value_000000ce, (s8 *)work + (150 << 6), 1, 0);
     }
 
     p = (Particle *)0x02010000;
@@ -322,7 +321,7 @@ void BattleEffect_RunParticleBurstScene(void *object, u32 kind)
                             - (Data_080edeca[frame & 3] >> 1);
                         y = (base[1] - ((radius * Func_0800231c(seed)) >> 16))
                             - (Data_080eded0[frame & 3] >> 1);
-                        Func_080ed408(47, 7, 7,
+                        BattleEffect_LoadWork(47, 7, 7,
                             3 | Data_080ee2ae[Func_08004458() & 3], 2);
                         ((DrawRectangleFn)Data_03001e50[47])(destination,
                             ((s8 *)work + Data_080edebe[frame & 3])
@@ -334,9 +333,9 @@ void BattleEffect_RunParticleBurstScene(void *object, u32 kind)
                     } while (j != 2);
                 }
 
-                Func_080ed408(46, 7, 7, 3, 3);
+                BattleEffect_LoadWork(46, 7, 7, 3, 3);
                 blit[0] = (DrawRectangleFn)Data_03001e50[46];
-                Func_080ed408(47, 7, 7, 3, 2);
+                BattleEffect_LoadWork(47, 7, 7, 3, 2);
                 blit[1] = (DrawRectangleFn)Data_03001e50[47];
 
                 Func_080049ac();

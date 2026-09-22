@@ -1,4 +1,5 @@
 #include "types.h"
+#include "BATTLE_EFX.H"
 
 #define Func_080c9ca8 Func_080c9ca8
 
@@ -24,11 +25,10 @@ void Func_080cd52c();
 void Func_080cd594();
 void Func_080cdbc0();
 void Func_080d6888();
-void Func_080e0524();
 void Func_080e155c();
 void Func_080e38b8();
 void Func_080e3944();
-void Func_080ed408();
+void BattleEffect_LoadWork();
 void Func_080f9010();
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -116,17 +116,17 @@ void Func_080c9ca8(s32 a0, s32 a1)
     *(s32 *)((slot64 + 0x7828)) = a0;
     Func_080cd594(1);
     if (*(s32 *)(*(s32 *)((slot64 + 0x7828)) + 4) == 0) {
-        Func_080ed408(46, 7, 7, 11, 2);
+        BattleEffect_LoadWork(46, 7, 7, 11, 2);
         slot48 = *(s32 *)(base6_3001eec + 28);
     } else {
-        Func_080ed408(46, 7, 7, 15, 2);
+        BattleEffect_LoadWork(46, 7, 7, 15, 2);
         p4 = *(s32 *)(base6_3001eec + 28);
         slot48 = (s32)p4;
     }
-    Func_080ed408(47, 7, 7, 3, 2);
+    BattleEffect_LoadWork(47, 7, 7, 3, 2);
     p6 = *(s32 *)(base6_3001eec + 32);
     slot52 = (s32)p6;
-    Func_080e0524((s32)Data_00000058, slot64, 0, 0);
+    Resource_LoadAndDecompress((s32)Data_00000058, slot64, 0, 0);
     if ((u32)slot68 <= 4) {
     } else {
     }

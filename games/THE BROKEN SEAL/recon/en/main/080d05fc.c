@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "EFFECT_STEP.H"
+#include "BATTLE_EFX.H"
 
 /* Three projected trail points form a closed triangle. Each edge receives
  * 24 interpolated particles, followed by a split 24x48 image. The optional
@@ -34,7 +35,6 @@ s32 Func_08002322(s32);
 s32 Func_0800231c(s32);
 void Func_080cef64(s32, DrawRectangle *);
 void Func_08002dd8(s32);
-s32 Func_080ed408(s32, s32, s32, s32, s32);
 void **Func_080b5098(s32);
 void Func_080049ac(void);
 void Func_080051d8(const void *, const void *);
@@ -105,9 +105,9 @@ void Func_080d05fc(Effect *effect)
             Func_08002dd8(47);
             Func_08002dd8(46);
         }
-        Func_080ed408(46, 7, 7, 3, 2);
+        BattleEffect_LoadWork(46, 7, 7, 3, 2);
         draw[0] = (DrawRectangle)((u32 *)Data_03001e50)[46];
-        Func_080ed408(47, 7, 7, 7, 2);
+        BattleEffect_LoadWork(47, 7, 7, 7, 2);
         draw[1] = (DrawRectangle)((u32 *)Data_03001e50)[47];
         if (frame > 16 && (frame & 15) == 0)
             *(s32 *)(work + 0x7784) += 0x01010101;

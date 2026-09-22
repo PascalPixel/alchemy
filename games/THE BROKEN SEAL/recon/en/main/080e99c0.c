@@ -1,4 +1,5 @@
 #include "EFFECT_STEP.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Battle-presentation scene at main:080e99c0 (1816 bytes), another member of
@@ -7,7 +8,7 @@
  * that family -- see games/THE BROKEN SEAL/recon/en/main/080ea0d8.c (the immediate
  * neighbour and the closest sibling), 080e2538.c, 080e823c.c and 080eb754.c
  * for the shared prologue, the Value_XXXXXXXX effect-id idiom, the
- * heap[7]/heap[8] blitter publication through Func_080ed408 and the
+ * heap[7]/heap[8] blitter publication through BattleEffect_LoadWork and the
  * Data_080ede48 sprite-cell table this owner reuses.
  *
  * The owner is one 102-frame animation pass, one frame per iteration, with
@@ -46,8 +47,8 @@
  * trampoline bundle at games/THE BROKEN SEAL/raw/080072e4.s (0x080072e4 + 4*N), so every
  * one of those `bl` sites is an indirect call through whatever function
  * pointer the compiler placed in that register.  Here the r4/r6/r9 sites are
- * only ever the two rectangle blitters that Func_080ed408(46, ...) and
- * Func_080ed408(47, ...) publish into heap[7] (0x03001f08) and heap[8]
+ * only ever the two rectangle blitters that BattleEffect_LoadWork(46, ...) and
+ * BattleEffect_LoadWork(47, ...) publish into heap[7] (0x03001f08) and heap[8]
  * (0x03001f0c), so this draft spells them as ordinary indirect calls through
  * `DrawRectangleFn` locals -- the candidate emits its own `_call_via_rN`
  * veneers for them, through different registers than the reference chose.
@@ -153,7 +154,6 @@ s32 Func_080cdbc0(void);
 /* object/group/update_members.c */
 void Func_080d6888(s32 member, s32 b, s32 c, s32 d, s32 e);
 /* Resource_LoadAndDecompress */
-void Func_080e0524(s32 id, void *target, s32 flag_a, s32 flag_b);
 /* Camera_ApplyShake */
 void Func_080e155c(s32 a, s32 b);
 /* EffectStep_AdvanceWithGravity2D */
@@ -161,7 +161,6 @@ void Func_080e3908(struct EffectStep *step, s32 damping, s32 gravity);
 /* EffectPosition_ApplyAlternateStepAndYOffset */
 void Func_080e3980(s32 actor, struct EffectPosition *out);
 void Func_080e46f0(s32 id);
-s32 Func_080ed408(s32 kind, s32 a, s32 b, s32 c, s32 d);
 void Func_080f9010(s32 cue);
 
 void Func_080e99c0(void *object)
@@ -210,15 +209,15 @@ void Func_080e99c0(void *object)
         *(s16 *)((u8 *)(*(void **)((u8 *)work + 0x7828)) + 0x24), &pos);
     half = pos.x / 2;
 
-    Func_080ed408(46, 7, 7, 3, 2);
+    BattleEffect_LoadWork(46, 7, 7, 3, 2);
     draw = (DrawRectangleFn)heap[7];
-    Func_080ed408(47, 7, 7, 3, 1);
+    BattleEffect_LoadWork(47, 7, 7, 3, 1);
     draw2 = (DrawRectangleFn)heap[8];
 
-    Func_080e0524((s32)&Value_00000056, (u8 *)work + 20000, 1, 1);
-    Func_080e0524((s32)&Value_00000085, work, 1, 0);
-    Func_080e0524((s32)&Value_0000007d, (u8 *)work + (221 << 4), 1, 0);
-    Func_080e0524((s32)&Value_00000073, sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000056, (u8 *)work + 20000, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_00000085, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_0000007d, (u8 *)work + (221 << 4), 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000073, sheet, 0, 0);
 
     *(s32 *)((u8 *)work + (239 << 7)) = 2;
     *(s32 *)((u8 *)work + 0x7784) = 75;

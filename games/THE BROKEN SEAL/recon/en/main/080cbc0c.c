@@ -1,6 +1,7 @@
 #include "BATTLE_EFFECT_WORK.H"
 #include "EFFECT_STEP.H"
 #include "shared-aggregates.h"
+#include "BATTLE_EFX.H"
 
 extern u8 BattlePieceStartX[];
 extern u8 BattlePieceStartY[];
@@ -20,7 +21,7 @@ extern u16 BattlePieceOffset[];
  * runs 0x80 frames.  Each frame it fades the object palette towards the table
  * at sys+0x544, rasterizes a growing ring into the 8bpp work buffer at
  * 0x02010000 (tile-major, 256 px wide), blits 0x21 sprite pieces through the
- * two routines published by Func_080ed408, and finally releases everything.
+ * two routines published by BattleEffect_LoadWork, and finally releases everything.
  *
  * Still uncertain: the meaning of the 0x1c-byte particle records at
  * work+0x7080 (only offsets 0, 4, 0xc, 0x10 and 0x18 are touched here), the
@@ -36,7 +37,7 @@ extern u16 BattlePieceOffset[];
 typedef void (*ClearFn)(void *dst, s32 size);
 typedef void (*FillFn)(void *dst, s32 size, u32 value);
 typedef void (*CopyFn)(void *dst, const void *src, s32 size);
-/* Rectangle blitter published in absolute_03001e50 by Func_080ed408. */
+/* Rectangle blitter published in absolute_03001e50 by BattleEffect_LoadWork. */
 typedef void (*BlitFn)(void *dst, const void *src, s32 x, s32 y, s32 w, s32 h);
 
 #define IWRAM_CLEAR ((ClearFn)0x03000164)
@@ -66,9 +67,7 @@ void Func_080b5040(s32 a, s32 b, s32 c);
 void Func_080cd508(void);
 void Func_080cd52c(void);
 void Func_080d6888(s32 set, s32 object, s32 group, s32 slot, s32 value);
-void Func_080e0524(s32 id, void *dst, s32 arg2, s32 arg3);
 void Func_080e3908(void *ent, s32 arg1, s32 arg2);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 void Func_080f9010(s32 id);
 
 /* Only the m2c spellings this draft actually uses. */
@@ -210,13 +209,13 @@ void BattleFx_RunTileAndPaletteAnimation(void *arg0) {
 
     *(s16 *)0x04000052 = 0x1010;
     *(s16 *)0x04000050 = 0;
-    Func_080e0524(0x44, work, 1, 1);
+    Resource_LoadAndDecompress(0x44, work, 1, 1);
     work->transfer_mode = 1;
     work->transfer_value = 0;
     Func_080041d8(0x080CD261, 0x480);
-    Func_080ed408(0x2E, 7, 7, 3, 1);
+    BattleEffect_LoadWork(0x2E, 7, 7, 3, 1);
     draw0 = (BlitFn)absolute_03001e50.field_00b8;
-    Func_080ed408(0x2F, 7, 7, 3, 2);
+    BattleEffect_LoadWork(0x2F, 7, 7, 3, 2);
     draw1 = (BlitFn)absolute_03001e50.field_00bc;
 
     /* Seed the 0x21 pieces from the two byte tables of start coordinates. */
@@ -466,7 +465,7 @@ void BattleFx_RunTileAndPaletteAnimation(void *arg0) {
         }
 
         if (frame == 0x33) {
-            Func_080e0524(0x7D, work, 1, 0);
+            Resource_LoadAndDecompress(0x7D, work, 1, 0);
             pal = (s16 *)0x05000002;
             cnt = 1;
             do {

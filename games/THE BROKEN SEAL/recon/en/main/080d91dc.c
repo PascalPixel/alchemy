@@ -1,4 +1,5 @@
 #include "shared-aggregates.h"
+#include "BATTLE_EFX.H"
 
 typedef void (*WordCopyFn)(void *dst, const void *src, s32 size);
 typedef s32 (*IntegerSqrtFn)(s32 value);
@@ -120,10 +121,10 @@ void BattleEffectB(s32 arg0, s32 arg1) {
         sp50 = Func_080022ec(sp50 * 4, 5);
     }
     absolute_04000020.field_0000 = 0xCC;
-    Func_080e0524(0x76, sp44, 0, 0);
-    Func_080e0524(0xB7, sp44 + 0x60E, 1, 1);
+    Resource_LoadAndDecompress(0x76, sp44, 0, 0);
+    Resource_LoadAndDecompress(0xB7, sp44 + 0x60E, 1, 1);
     if (sp48 == 3 || sp48 == 5) {
-        Func_080e0524(0xB0, sp44 + 0x2B8E, 1, 1);
+        Resource_LoadAndDecompress(0xB0, sp44 + 0x2B8E, 1, 1);
         if (sp48 == 3) {
             var_r0_133 = 0x93;
         } else {
@@ -131,12 +132,12 @@ void BattleEffectB(s32 arg0, s32 arg1) {
         }
         ((WordCopyFn)0x03001388)((void *)0x05000000, Func_08002f40(var_r0_133), 0x80);
     } else if (sp48 == 4) {
-        Func_080e0524(0xA5, sp44 + 0x2B8E, 1, 1);
+        Resource_LoadAndDecompress(0xA5, sp44 + 0x2B8E, 1, 1);
     } else {
         if (sp48 == 0) {
-            Func_080e0524(0x9C, sp44 + 0x2B8E, 1, 0);
+            Resource_LoadAndDecompress(0x9C, sp44 + 0x2B8E, 1, 0);
         } else {
-            Func_080e0524(0x9B, sp44 + 0x2B8E, 1, 0);
+            Resource_LoadAndDecompress(0x9B, sp44 + 0x2B8E, 1, 0);
         }
         if (sp48 == 0) {
             var_r0_182 = 0x8D;
@@ -152,13 +153,13 @@ void BattleEffectB(s32 arg0, s32 arg1) {
     if (sp48 == 3) {
         var_r0_215 = 0x93;
         var_r1_216 = sp44 + 0x65C0;
-        Func_080e0524(var_r0_215, var_r1_216, 1, 0);
+        Resource_LoadAndDecompress(var_r0_215, var_r1_216, 1, 0);
     } else if (sp48 == 2 || sp48 == 4) {
         var_r0_215 = 0x8F;
         var_r1_216 = sp44 + 0x65C0;
-        Func_080e0524(var_r0_215, var_r1_216, 1, 0);
+        Resource_LoadAndDecompress(var_r0_215, var_r1_216, 1, 0);
     } else {
-        Func_080e0524(0x8D, sp44 + 0x65C0, 1, 0);
+        Resource_LoadAndDecompress(0x8D, sp44 + 0x65C0, 1, 0);
     }
     var_r5_244 = &absolute_02010000;
     var_sl_245 = 0;
@@ -205,10 +206,10 @@ loop_49:
             temp_r5_389 = 4 ^ sp2C;
             temp_r0_390 = ((s32) (Func_0800231c(temp_r5_369) * 4) >> 0x10) + sp4C;
             sp0 = (s32 *)2;
-            Func_080ed408(0x2E, 7, 7, temp_r5_389, 2);
+            BattleEffect_LoadWork(0x2E, 7, 7, temp_r5_389, 2);
             sp38 = M2C_FIELD(sp24, s32 *, 0x88);
             sp0 = (s32 *)3;
-            Func_080ed408(0x2F, 7, 7, temp_r5_389, 3);
+            BattleEffect_LoadWork(0x2F, 7, 7, temp_r5_389, 3);
             temp_r4_412 = *(s32 *)0x03001F0C;
             var_r7_414 = temp_r0_390 - 0x18;
             sp3C = temp_r4_412;
@@ -261,10 +262,10 @@ loop_60:
 
             } else {
                 sp0 = (s32 *)2;
-                Func_080ed408(0x2E, 7, 7, sp2C, 2);
+                BattleEffect_LoadWork(0x2E, 7, 7, sp2C, 2);
                 sp38 = *(s32 *)0x03001F08;
                 sp0 = (s32 *)3;
-                Func_080ed408(0x2F, 7, 7, sp2C, 3);
+                BattleEffect_LoadWork(0x2F, 7, 7, sp2C, 3);
                 sp3C = *(s32 *)0x03001F0C;
                 switch (sp48) {                     /* switch 5; irregular */
                 case 1:                             /* switch 5 */
@@ -344,7 +345,7 @@ loop_60:
                 }
                 temp_r5_769 = Func_080022fc(var_r3_760 >> 2, 6);
                 sp0 = (s32 *)2;
-                Func_080ed408(0x2E, 7, 7, sp2C, 2);
+                BattleEffect_LoadWork(0x2E, 7, 7, sp2C, 2);
                 sp0 = (s32 *)0x28;
                 sp4 = (s32 *)0x28;
                 sp38 = *(s32 *)0x03001F08;
@@ -364,7 +365,7 @@ loop_60:
                     }
                     temp_r5_826 = Func_080022fc(var_r3_817 >> 2, 7);
                     sp0 = (s32 *)2;
-                    Func_080ed408(0x2E, 7, 7, sp2C, 2);
+                    BattleEffect_LoadWork(0x2E, 7, 7, sp2C, 2);
                     sp0 = (s32 *)0x18;
                     sp4 = (s32 *)0x28;
                     sp38 = *(s32 *)0x03001F08;
@@ -386,7 +387,7 @@ block_112:
                     }
                     temp_r0_881 = Func_080022fc(var_r3_874 >> 2, 6);
                     sp0 = (s32 *)2;
-                    Func_080ed408(0x2E, 7, 7, sp2C, 2);
+                    BattleEffect_LoadWork(0x2E, 7, 7, sp2C, 2);
                     sp0 = (s32 *)0x20;
                     sp4 = (s32 *)0x40;
                     sp38 = *(s32 *)0x03001F08;
@@ -403,10 +404,10 @@ block_112:
                     temp_r0_927 = var_r9_478 - 0x50;
                     temp_r0_932 = Func_080022fc((s32) (temp_r0_927 + (temp_r0_927 >> 0x1F)) >> 1, 6);
                     sp0 = (s32 *)2;
-                    Func_080ed408(0x2E, 7, 7, sp2C, 2);
+                    BattleEffect_LoadWork(0x2E, 7, 7, sp2C, 2);
                     sp0 = (s32 *)2;
                     sp38 = *(s32 *)0x03001F08;
-                    Func_080ed408(0x2F, 7, 7, 8 | sp2C, 2);
+                    BattleEffect_LoadWork(0x2F, 7, 7, 8 | sp2C, 2);
                     temp_r5_961 = sp44 + (temp_r0_932 << 0xB) + 0x2B8E;
                     sp3C = *(s32 *)0x03001F0C;
                     sp0 = (s32 *)0x40;
@@ -430,7 +431,7 @@ block_112:
                     }
                     temp_r5_1031 = Func_080022fc(var_r3_1022 >> 2, 6);
                     sp0 = (s32 *)3;
-                    Func_080ed408(0x2E, 7, 7, sp2C, 3);
+                    BattleEffect_LoadWork(0x2E, 7, 7, sp2C, 3);
                     sp0 = (s32 *)0x28;
                     sp4 = (s32 *)0x28;
                     sp38 = *(s32 *)0x03001F08;

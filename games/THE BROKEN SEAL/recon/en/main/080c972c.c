@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Battle-presentation sub-effect at 0x080c972c, part of the 0x03001eec
@@ -23,7 +24,7 @@
  * `Func_080072f4` is not a real symbol: it is the r4 entry of the
  * _call_via_rN trampoline bundle at games/THE BROKEN SEAL/raw/080072e4.s
  * (0x080072e4 + 4*4), so every call through it is modeled as a direct call
- * through the DrawRectangleFn cached from Func_080ed408's heap slot
+ * through the DrawRectangleFn cached from BattleEffect_LoadWork's heap slot
  * (sp10/sp14 below, matching the reference's own sp+16/sp+20 spill slots),
  * as in puff_arc/run.c and games/THE BROKEN SEAL/recon/en/main/080ccc38.c.
  *
@@ -56,9 +57,7 @@ typedef void (*DrawRectangleFn)(
     void *dest, const void *src, s32 x, s32 y, s32 width, s32 height);
 
 void Func_080cd594(s32 mode);
-void Func_080e0524(s32 resource_id, void *destination, s32 flag_a, s32 flag_b);
 void Func_080c9048(void);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 u32 Func_08004458(void);
@@ -137,14 +136,14 @@ void Func_080c972c(void *object) {
     M2C_FIELD(temp_r1_17, void **, 0x7828) = object;
     Func_080cd594(0x2001);
     *(s16 *)0x04000020 = 0x100;
-    Func_080e0524((s32)&Value_000000cc, (u8 *)temp_r1_17 + 0x604, 1, 1);
-    Func_080e0524((s32)&Value_00000076, temp_r1_17, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_000000cc, (u8 *)temp_r1_17 + 0x604, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_00000076, temp_r1_17, 0, 0);
     Func_080c9048();
     *(s16 *)0x04000050 = 0x3F44;
     *(s16 *)0x04000048 = 0x3337;
-    Func_080ed408(0x2E, 7, 7, 2, 2);
+    BattleEffect_LoadWork(0x2E, 7, 7, 2, 2);
     sp10 = (DrawRectangleFn)heap_cache[7];
-    Func_080ed408(0x2F, 7, 7, 2, 3);
+    BattleEffect_LoadWork(0x2F, 7, 7, 2, 3);
     var_i = 0;
     sp14 = (DrawRectangleFn) heap_cache[8];
     var_r3_93 = (s32 *)0x02010158;

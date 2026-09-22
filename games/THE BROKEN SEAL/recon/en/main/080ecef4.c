@@ -1,13 +1,12 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+#include "BATTLE_EFX.H"
 
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 volatile int Func_080cd594(s32);
 s32 Func_080cdbc0(void);
-void Func_080e0524(s32, s32, s32, s32);
 void Func_08004278(s32);
-s32 Func_080ed408(s32, s32, s32, s32, s32);
 void Func_080f9010(s32);
 void Func_080030f8(s32);
 void Func_08002dd8(s32);
@@ -33,16 +32,16 @@ void Func_080ecef4(void *arg0, s32 mode)
     *(u16 *)ADDR_03001EEC = 0;
 
     if (mode == 0) {
-        Func_080e0524(0x4f, base, 1, 0);
+        Resource_LoadAndDecompress(0x4f, base, 1, 0);
         label = 0x50;
     } else if (mode == 1) {
-        Func_080e0524(0x4b, base, 1, 0);
+        Resource_LoadAndDecompress(0x4b, base, 1, 0);
         label = 0x4c;
     } else {
-        Func_080e0524(0x4d, base, 1, 0);
+        Resource_LoadAndDecompress(0x4d, base, 1, 0);
         label = 0x4e;
     }
-    Func_080e0524(label, base, 1, 1);
+    Resource_LoadAndDecompress(label, base, 1, 1);
 
     M2C_FIELD(base, s32 *, 0x77a8) = 1;
     M2C_FIELD(base, s32 *, 0x7784) = 0;
@@ -56,9 +55,9 @@ void Func_080ecef4(void *arg0, s32 mode)
     Func_080030f8(0x10);
 
     if (M2C_FIELD(M2C_FIELD(base, s32 *, 0x7824), s32 *, 4) == 1)
-        Func_080ed408(0x2e, 7, 7, 7, 0);
+        BattleEffect_LoadWork(0x2e, 7, 7, 7, 0);
     else
-        Func_080ed408(0x2e, 7, 7, 3, 0);
+        BattleEffect_LoadWork(0x2e, 7, 7, 3, 0);
 
     Func_080f9010(*(s32 *)ADDR_03001E50);
 

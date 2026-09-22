@@ -1671,175 +1671,26 @@
       "expected_bytes": 61716,
       "matcher": "thumb_standalone_wide_transfer",
       "provenance": {
-        "scanned": "2026-09-10",
-        "cross_rom": {
-          "method": "exact byte search of each region in the other eleven ROMs (tbs de/es/fr/it/ja, tla en/ja/de/es/fr/it), then pool-masked search (words in 0x02/0x03/0x08/0x09 spaces wildcarded) in the six TLA editions",
-          "regions": 169,
-          "bytes": 65476,
-          "tla_exact": {
-            "regions": 0,
-            "bytes": 0,
-            "addresses": []
-          },
-          "tla_masked": {
-            "regions": 0,
-            "bytes": 0,
-            "addresses": []
-          },
-          "tbs_editions_only": {
-            "regions": 74,
-            "bytes": 10310
-          }
-        },
-        "verdict": "refused_c_bodies_with_inline_dma_or_fill_macro",
         "credit": "none",
-        "construct": "160 of 169 regions (64,968 bytes) are C-shaped functions containing inline: ldr rA,=DMA register block (0x040000b0/bc/c8/d4 in the pool); ldr r1,=source; ldr r2,=destination or control; stmia rA!, {r0,r1,r2}; subs rA, #12 — the base is restored although it dies, which is the mark of a macro that cannot know whether its caller still needs the base. Three regions are 24-32 byte leaves that are only this kick. 8 regions are unrolled 4-register stmia fill runs (468 bytes), 1 mixed (40 bytes).",
-        "reading": "not handwritten functions and not a library: C bodies with an inline-asm DMA kick or fill the approved route cannot express; no cross-product identity (74 regions identical across TBS editions only, none in TLA)",
-        "refusal": "Kiki 2026-09-10: no Thumb template prints a writeback stmia of ldr-loaded registers or any four-register list (arm.md:3751/3850/4730/4870, movmem8b/12b :5111-5141 via thumb_output_move_mem_multiple arm.c:9425-9465, movstrqi :5084/9478 copy-only). 160 of 169 regions are C-shaped functions with an inline DMA kick, 8 are fill runs; no cross-product identity. Neither handwritten functions nor a library; the approved route disallows the inline assembly that produced them.",
-        "macro_forms": {
-          "measured": "2026-09-10 over the four multiple-transfer kinds (174 files, 320 sites)",
-          "dma_register_words_per_file": {
-            "0x040000b0": 9,
-            "0x040000d4": 156
+        "current_partition": {
+          "dma_kick": {
+            "regions": 118,
+            "bytes": 61248,
+            "form": "stmia r3!, {r0, r1, r2}; subs r3, #12"
           },
-          "kick": {
-            "sites": 296,
-            "form": "stmia r3!, {r0, r1, r2}\\n\\tsubs r3, #12",
-            "invariants": "base register r3 at all 296 sites; operand registers r0, r1, r2 at all 296 (source address, destination address, control word in that order = DMAxSAD/DAD/CNT); the base restore subs r3, #12 follows every site, including leaves where r3 then dies",
-            "operand_sources": "r3 = the DMA register block: a pool constant 0x040000b0/bc/c8/d4 (base set first at 168 sites, loaded earlier at the rest) or the same r3 reused after a previous kick (46 sites, i.e. consecutive kicks on one channel); r0/r1/r2 = any C expression: pool constants, adds, lsls, orrs, loads — the macro takes three values",
-            "reading": "one shared macro with three arguments and the DMA block as a fourth, its body binding the arguments to r0-r2 and the block to r3 (register-asm variables or explicit registers in the asm), emitting the stmia and the restore; the fixed r3 and the dead restore are what distinguish it from any compiler expansion"
-          },
-          "fill": {
-            "sites": 24,
-            "files": 8,
-            "form": "three consecutive stmia r0!, {r1, r2, r3, r4} after movs r1, #128; lsls r1, r1, #9; movs r2, #0; movs r3, #0; movs r4, #0",
-            "invariants": "writes {0x10000, 0, 0, 0} three times (48 bytes) at the address in r0 at every site; no restore",
-            "reading": "one shared macro (or inline) writing three 16-byte records of an identity value followed by three zeros; base r0, values r1-r4"
-          },
-          "distinct_forms": 2
-        },
-        "class_ruling": "Pascal 2026-09-10 (CONTRIBUTING on main): inline assembly is admitted as a shared macro header when the evidence shows Camelot used it; this class is C bodies around that header, a reconstruction task, not assembly credit.",
-        "cc1_probe_2026_09_10": {
-          "by": "Kiki",
-          "result": "approved TBS cc1 passes the macro through verbatim",
-          "macro": "asm volatile(\"stmia %0!, {%1,%2,%3}\\n\\tsub %0, #12\" :: \"r\"(blk),\"r\"(a),\"r\"(b),\"r\"(c) : \"memory\") with register locals asm(\"r0\"..\"r3\"); gas 2.10 wants sub, not subs",
-          "measured": "main:0800300c as C with the macro: 112/112 bytes, 10 wrong instructions, class instruction-selection; both kicks and the derived subs r3,#208 exact; residual is register choice and pool order, not the asm",
-          "notes": [
-            "halfword register stores of constants must come from int-typed locals (a reused zero local; value = 0xc3ff; REG = value), otherwise 2.96 pools them HImode via ldrh and dumps a mid-function pool",
-            "payload addresses as Data_ externs scored worse than plain constants here"
-          ],
-          "gate": "no compiler change needed; no_asm::find_forbidden flags any asm token raw and preprocessed on score/integrate/cross-edition, so admitting one shared header is a path-scoped tooling exemption, not yet done",
-          "next": "Splat writes the header (games/THE BROKEN SEAL/include) and first ten bodies; tooling exemption for that one path; then score"
-        },
-        "reconstruction_2026_09_19": {
-          "source": "games/THE BROKEN SEAL/INCLUDE/DMA.H",
-          "construct": "Static inline Dma_Set binds the channel to r3 before source/destination/control to r0/r1/r2, then emits the shared STMIA and base restore. All four register operands are inputs: STMIA followed by the restore preserves their values. Memory and condition codes are clobbered; no caller register control, compiler change or output patch.",
-          "authorization": "Existing class_ruling admits the shared macro header evidenced by all296 fixed-register kick sites. Internal register bindings reconstruct its interface, rather than forcing allocation in arbitrary caller C.",
-          "admission": "The existing raw and expanded ordinary-source checks recognize only the complete token-pinned shared Dma_Set body; changed instructions, registers, restore, clobbers, extra assembly and ABI attributes remain rejected.",
-          "witnesses": [
-            {
-              "owner": "main:08004838",
-              "bytes": 32
-            },
-            {
-              "owner": "main:08004a28",
-              "bytes": 28
-            },
-            {
-              "owner": "main:08004a44",
-              "bytes": 24
-            }
-          ],
-          "score": "All three independent complete callers, including alignment and pools, compile byte-identically under the unchanged canonical route and pass main integration.",
-          "remaining": "The historical169-file65476-byte class is not blanket credit. Every remaining complete C body must separately match and pass production verification. Fill macros are not admitted by this change.",
-          "negative_probes": [
-            {
-              "owner": "main:0809bb34",
-              "bytes": 48,
-              "differing_halfwords": 5
-            }
-          ],
-          "negative_result": "The shared helper does not by itself reproduce every stack-source caller's operand setup. No per-caller register or assembly variant is admitted.",
-          "volatile_source_closures_2026_09_20": {
-            "source_fact": "A local word read by DMA is volatile because the channel observes memory independently of the C abstract machine; volatile source storage preserves the required stack-store order.",
-            "owners": [
-              "main:0800bc48",
-              "main:0808fecc",
-              "main:08090824",
-              "main:08091174",
-              "main:080f377c"
-            ],
-            "complete_bytes": 420,
-            "validation": "Each complete owner scores zero differing halfwords through its declared production translation unit."
-          },
-          "jev": {
-            "model": "jev-1.13.0",
-            "decision": "proceed",
-            "confidence": 0.49,
-            "probabilities": {
-              "finished": 0,
-              "inspect": 0.38,
-              "proceed": 0.62,
-              "stop_axis": 0
-            },
-            "latency_ms": 645,
-            "usage": {
-              "input_tokens": 1070,
-              "output_tokens": 49
-            },
-            "scope": "2026-09-20 next bounded exact-C wave toward 60% DONE, including the complete 7832-byte main owner 080f4168..080f6000.",
-            "disposition": "Proceed only with the existing finite full-owner reconstruction pass; zero-difference complete-owner scoring remains mandatory."
-          },
-          "consecutive_probe": {
-            "owner": "main:080a22f4",
-            "candidate_bytes": 40,
-            "reference_bytes": 48,
-            "differing_halfwords": 7,
-            "result": "Channel is reused correctly; GCC derives the second source/control from earlier constants instead of loading separate literals. This already-credited handwritten leaf is not converted or used to alter the shared primitive."
-          },
-          "additional_callers": [
-            {
-              "owner": "main:080c0184",
-              "bytes": 56,
-              "source": "SRC/BATTLE/PRESENTATION/UPLOAD_TILE_VARIANT.C"
-            },
-            {
-              "owner": "main:080049e8",
-              "bytes": 64,
-              "source": "SRC/GRAPHICS/SAVE_TRANSFER_WORK_ONCE.C"
-            },
-            {
-              "owner": "main:080251d4",
-              "bytes": 44,
-              "source": "SRC/GRAPHICS/VRAM/COPY_TILE.C"
-            },
-            {
-              "owner": "main:080058ac",
-              "bytes": 88,
-              "source": "SRC/SYSTEM/SAVE/STATE_READ_SLOT_AND_CHECK_CHECKSUM.C"
-            }
-          ],
-          "stack_callers": {
-            "owners": [
-              "main:080052f4",
-              "main:0800543c",
-              "main:08005490",
-              "main:080054e4",
-              "main:08005534",
-              "main:08005584",
-              "main:080055d8",
-              "main:0800562c",
-              "main:0800567c"
-            ],
-            "bytes": 732,
-            "source": "Ordinary stack VLAs, unchanged DMA primitive, typed indirect calls; nine complete owner comparisons exact in two declared modules.",
-            "heap_negative": {
-              "owner": "main:08005340",
-              "bytes": 84,
-              "differing_halfwords": 6
-            }
+          "fill_run": {
+            "regions": 8,
+            "bytes": 468,
+            "form": "three stmia r0!, {r1, r2, r3, r4} stores"
           }
-        }
+        },
+        "compiler_evidence": "GCC 2.96 Thumb emits wide transfers only for two-word DI/DF moves or adjacent matching LDMIA/STMIA block-copy pairs; generic store-multiple patterns are ARM-only.",
+        "reconstruction": {
+          "source": "games/THE BROKEN SEAL/INCLUDE/DMA.H",
+          "interface": "Dma_Set binds channel/source/destination/control to r3/r0/r1/r2 and emits the recurring kick plus base restore.",
+          "validation": "Independent complete callers reproduce exactly through the canonical route; each remaining C body still requires complete-owner verification."
+        },
+        "remaining": "The DMA-kick regions are C candidates around the shared primitive. The distinct four-register fill runs remain unresolved and uncredited."
       }
     },
     {

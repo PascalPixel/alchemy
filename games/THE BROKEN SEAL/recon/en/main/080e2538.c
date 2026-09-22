@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Battle-presentation sub-effect at 0x080e2538.  Single argument is the
@@ -32,7 +33,7 @@
  * `_call_via_rN` trampoline bundle at games/THE BROKEN SEAL/raw/080072e4.s
  * (0x080072f4 == 0x080072e4 + 4*4), i.e. an indirect call through whatever
  * function pointer the compiler kept in r4 -- here the single blit routine
- * populated by `Func_080ed408(46, ...)` into heap_cache[7], already
+ * populated by `BattleEffect_LoadWork(46, ...)` into heap_cache[7], already
  * established as `DrawRectangleFn` by games/THE BROKEN SEAL/recon/en/main/080e01e4.c and
  * games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C.
  * games/THE BROKEN SEAL/recon/en/dossiers.json#main:080dc1ec's score.note has the full
@@ -68,8 +69,6 @@ extern const u8 Data_080eed0e[];
 extern const u16 Data_080eed1e[];
 
 void Func_080cd594(s32 mode);
-void Func_080e0524(s32 id, void *target, s32 flag_a, s32 flag_b);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 void Func_080e396c(s32 value, s32 *out);
 s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
@@ -110,8 +109,8 @@ void Func_080e2538(void *object)
     Func_080cd594(1);
     M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x100;
     M2C_FIELD((void *)0x04000020, s16 *, 0x30) = 0;
-    Func_080e0524((s32)&Value_0000008a, work, 1, 1);
-    Func_080ed408(46, 7, 7, 3, 1);
+    Resource_LoadAndDecompress((s32)&Value_0000008a, work, 1, 1);
+    BattleEffect_LoadWork(46, 7, 7, 3, 1);
     blit = (DrawRectangleFn)heap_cache[7];
 
     Func_080e396c(

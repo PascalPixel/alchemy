@@ -1,6 +1,14 @@
 #ifndef ALCHEMY_BATTLE_EFX_H
 #define ALCHEMY_BATTLE_EFX_H
 
+#include "TYPES.H"
+
+void Func_080e0524(s32 resource_id, void *target, s32 unpack, s32 wait);
+s32 Func_080ed408(s32 kind, s32 width, s32 height, s32 count, s32 mode);
+
+#define Resource_LoadAndDecompress Func_080e0524
+#define BattleEffect_LoadWork      Func_080ed408
+
 /* target_flags 下位4ビットのダメージ種別。 */
 enum {
     BATTLE_DAMAGE_PP_DIRECT = -1, /* PPへの直接ダメージ */

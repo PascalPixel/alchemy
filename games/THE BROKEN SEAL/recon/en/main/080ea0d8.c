@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "DMA.H"
+#include "BATTLE_EFX.H"
 
 /* Two-stage battle presentation: a particle field and receding grid, followed
  * by sprite-sheet animation, concentric ellipses and falling particles.
@@ -94,12 +95,10 @@ void Func_080d6888(s32 member, s32 b, s32 c, s32 d, s32 e);
 /* BattleFx_SpawnObjects */
 void Func_080dbb24(s32 a, s32 b, s32 c);
 /* Resource_LoadAndDecompress */
-void Func_080e0524(s32 id, void *target, s32 flag_a, s32 flag_b);
 /* EffectStep_AdvanceWithGravity3D */
 void Func_080e38b8(Particle *particle, s32 step, s32 gravity);
 /* EffectPosition_ApplyBaseAndYOffset */
 void Func_080e3944(const void *source, Vec3 *out);
-s32 Func_080ed408(s32 kind, s32 a, s32 b, s32 c, s32 d);
 void Func_080f9010(s32 id);
 
 #define WORK_S32(off) (*(s32 *)((u8 *)work + (off)))
@@ -181,7 +180,7 @@ void Func_080ea0d8(void *object)
     Func_080c9048();
     *(volatile u16 *)0x05000000 = 0x0;
     *(volatile u16 *)0x05000002 = 0x0;
-    Func_080ed408(46, 7, 7, 3, 3);
+    BattleEffect_LoadWork(46, 7, 7, 3, 3);
     draw = (DrawRectangleFn)cache_cursor[6];
     WORK_S32(0x7780) = 0;
     Func_080041d8((void *)0x080CD261, 0x480);
@@ -204,10 +203,10 @@ void Func_080ea0d8(void *object)
     near = 0xFFFF;
     far = 0;
 
-    Func_080e0524((s32)&Value_000000bb, work, 1, 1);
-    Func_080e0524((s32)&Value_00000067, (u8 *)work + 0x600, 0, 0);
-    Func_080e0524((s32)&Value_000000ce, (u8 *)work + 0x95C, 1, 0);
-    Func_080e0524((s32)&Value_00000073, ramp, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_000000bb, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_00000067, (u8 *)work + 0x600, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_000000ce, (u8 *)work + 0x95C, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000073, ramp, 0, 0);
 
     /* Eight progressively darker clamped copies of the 770-byte ramp. */
     lim = 64;
@@ -417,23 +416,23 @@ void Func_080ea0d8(void *object)
             high = Data_080eef28[idx];
             off = Data_080eef30[idx] + (192 << 3);
 
-            Func_080ed408(47, 7, 7, 3, 2);
+            BattleEffect_LoadWork(47, 7, 7, 3, 2);
             cell = (const u8 *)work + off;
             draw2 = *(DrawRectangleFn *)0x03001F0C;
             draw2(canvas, cell, 60 - high, 80 - high * 2, high, high * 2);
             Func_08002dd8(47);
 
-            Func_080ed408(47, 7, 7, 7, 2);
+            BattleEffect_LoadWork(47, 7, 7, 7, 2);
             draw2 = *(DrawRectangleFn *)0x03001F0C;
             draw2(canvas, cell, 60, 80 - high * 2, high, high * 2);
             Func_08002dd8(47);
 
-            Func_080ed408(47, 7, 7, 11, 2);
+            BattleEffect_LoadWork(47, 7, 7, 11, 2);
             draw2 = *(DrawRectangleFn *)0x03001F0C;
             draw2(canvas, cell, 60 - high, 80, high, high * 2);
             Func_08002dd8(47);
 
-            Func_080ed408(47, 7, 7, 15, 2);
+            BattleEffect_LoadWork(47, 7, 7, 15, 2);
             draw2 = *(DrawRectangleFn *)0x03001F0C;
             draw2(canvas, cell, 60, 80, high, high * 2);
             Func_08002dd8(47);
@@ -460,12 +459,12 @@ void Func_080ea0d8(void *object)
             s32 off;
 
             off = (frame << 4) - 2272;
-            Func_080ed408(47, 7, 7, 3, 3);
+            BattleEffect_LoadWork(47, 7, 7, 3, 3);
             draw2 = *(DrawRectangleFn *)0x03001F0C;
             draw2(canvas, work, 36, off, 24, 64);
             Func_08002dd8(47);
 
-            Func_080ed408(47, 7, 7, 7, 3);
+            BattleEffect_LoadWork(47, 7, 7, 7, 3);
             draw2 = *(DrawRectangleFn *)0x03001F0C;
             draw2(canvas, work, 60, off, 24, 64);
             Func_08002dd8(47);
@@ -477,7 +476,7 @@ void Func_080ea0d8(void *object)
 
                 cell = (const u8 *)work + idx * 770 + Data_080ede48[7]
                     + 10000;
-                Func_080ed408(47, 7, 7, 3, 2);
+                BattleEffect_LoadWork(47, 7, 7, 3, 2);
                 draw2 = *(DrawRectangleFn *)0x03001F0C;
                 i = 0;
                 do {
@@ -523,9 +522,9 @@ void Func_080ea0d8(void *object)
     } while (i != 16);
 
     Func_08002dd8(46);
-    Func_080ed408(46, 7, 7, 3, 2);
+    BattleEffect_LoadWork(46, 7, 7, 3, 2);
     draw = *(DrawRectangleFn *)0x03001F08;
-    Func_080e0524((s32)&Value_00000064, (u8 *)work + (128 << 7), 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_00000064, (u8 *)work + (128 << 7), 1, 1);
 
     {
         u8 *p;
@@ -592,7 +591,7 @@ void Func_080ea0d8(void *object)
                 frame = 150;
                 QueueRegisterWrite(0x80, 0x04000020, 128 << 10);
                 QueueRegisterWrite(0, 0x04000028, 192 << 10);
-                Func_080e0524((s32)&Value_00000070,
+                Resource_LoadAndDecompress((s32)&Value_00000070,
                     (u8 *)work + (128 << 7), 1, 0);
             } else if (frame >= 155 && frame <= 213) {
                 frame = 214;
@@ -606,9 +605,9 @@ void Func_080ea0d8(void *object)
             QueueRegisterWrite(0, 0x04000028, 192 << 10);
             fill = 0;
             Dma_Set(&fill, canvas, 0x85001000, dma);
-            Func_080e0524((s32)&Value_00000070,
+            Resource_LoadAndDecompress((s32)&Value_00000070,
                 (u8 *)work + (128 << 7), 1, 0);
-            Func_080e0524((s32)&Value_00000065,
+            Resource_LoadAndDecompress((s32)&Value_00000065,
                 (u8 *)work + (192 << 7), 0, 0);
         }
 
@@ -733,22 +732,22 @@ void Func_080ea0d8(void *object)
             }
             top = frame - 28;
 
-            Func_080ed408(47, 7, 7, 3, 2);
+            BattleEffect_LoadWork(47, 7, 7, 3, 2);
             draw2 = *(DrawRectangleFn *)0x03001F0C;
             draw2(canvas, sheet, 36, top, 24, 24);
             Func_08002dd8(47);
 
-            Func_080ed408(47, 7, 7, 7, 2);
+            BattleEffect_LoadWork(47, 7, 7, 7, 2);
             draw2 = *(DrawRectangleFn *)0x03001F0C;
             draw2(canvas, sheet, 59, top, 24, 24);
             Func_08002dd8(47);
 
-            Func_080ed408(47, 7, 7, 11, 2);
+            BattleEffect_LoadWork(47, 7, 7, 11, 2);
             draw2 = *(DrawRectangleFn *)0x03001F0C;
             draw2(canvas, sheet, 36, top + 23, 24, 24);
             Func_08002dd8(47);
 
-            Func_080ed408(47, 7, 7, 15, 2);
+            BattleEffect_LoadWork(47, 7, 7, 15, 2);
             draw2 = *(DrawRectangleFn *)0x03001F0C;
             draw2(canvas, sheet, 59, top + 23, 24, 24);
             Func_08002dd8(47);
@@ -920,7 +919,7 @@ void Func_080ea0d8(void *object)
             } while (i != 9);
         }
 
-        Func_080ed408(47, 7, 7, 3, 3);
+        BattleEffect_LoadWork(47, 7, 7, 3, 3);
         draw2 = *(DrawRectangleFn *)0x03001F0C;
         if (frame > 85) {
             draw2(canvas, work, 0, 0, 120, 120);

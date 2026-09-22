@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /* Runs the layered particle presentation over the shared battle-effect work buffers. */
 #define M2C_FIELD(expr, type_ptr, offset) \
@@ -8,8 +9,6 @@ typedef void (*DrawRectangleFn)(
     void *dest, const void *src, s32 x, s32 y, s32 width, s32 height);
 typedef void (*ClearFn)(void *dest, s32 size);
 
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
-void Func_080e0524(s32 id, void *target, s32 a, s32 b);
 s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 u32 Func_08004458(void);
@@ -53,14 +52,14 @@ void Func_080e6eac(void *object, s32 x_arg, s32 y_arg)
     M2C_FIELD((void *)0x04000020, s32 *, 8) = 0;
     M2C_FIELD((void *)0x04000050, s16 *, 0) = 0x3F46;
 
-    Func_080ed408(46, 7, 7, 3, 2);
+    BattleEffect_LoadWork(46, 7, 7, 3, 2);
     rect0 = heap_cache[7];
-    Func_080ed408(47, 7, 7, 3, 3);
+    BattleEffect_LoadWork(47, 7, 7, 3, 3);
     rect1 = heap_cache[8];
 
-    Func_080e0524(0x73, aux, 0, 0);
-    Func_080e0524(0x5E, work, 1, 0);
-    Func_080e0524(0x5F, (u8 *)work + 0x59D8, 0, 0);
+    Resource_LoadAndDecompress(0x73, aux, 0, 0);
+    Resource_LoadAndDecompress(0x5E, work, 1, 0);
+    Resource_LoadAndDecompress(0x5F, (u8 *)work + 0x59D8, 0, 0);
 
     M2C_FIELD(work, s32 *, 0x7780) = 2;
     M2C_FIELD(work, s32 *, 0x7784) = 50;

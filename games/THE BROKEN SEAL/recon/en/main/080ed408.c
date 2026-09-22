@@ -1,12 +1,13 @@
 #include "TYPES.H"
 #include "DMA.H"
+#include "BATTLE_EFX.H"
 
-#define Blit_BuildRoutine Func_080ed408
+#define Blit_BuildRoutine BattleEffect_LoadWork
 
 /*
  * Runtime code assembler at 0x080ed408 (1648 bytes, one function).
  *
- * Callers spell it Func_080ed408(id, 7, 7, flags, mode) -- see
+ * Callers spell it BattleEffect_LoadWork(id, 7, 7, flags, mode) -- see
  * games/THE BROKEN SEAL/recon/en/main/080c91dc.c, 080ca60c.c, 080cb1a4.c, 080ca1fc.c and
  * 080c972c.c, whose header already records that the routine this builds is
  * later fetched out of heap slot `id` and called through the

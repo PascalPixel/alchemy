@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "B5_CONTEXT.H"
 #include "EFFECT_STEP.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Battle-presentation sub-effect at 0x080ccc38.
@@ -10,7 +11,7 @@
  * (main:080ce85c): the same kind-39 "battle work" heap cache read directly
  * from 0x03001eec, the same caller-state pointer republished at
  * work + 0x7828, the same 0x04000020 BG2PA identity write, the same
- * kind-46 rectangle blitter fetched through Func_080ed408 and called
+ * kind-46 rectangle blitter fetched through BattleEffect_LoadWork and called
  * through the r4 trampoline slot (Func_080072f4 = 0x080072e4 + 0x10).
  * Despite the identical 644-byte length, the puff_arc template's body is
  * NOT a match here: this owner loads two resources (kind ids forced
@@ -36,8 +37,6 @@ extern u8 Value_00000072;
 extern u8 Value_000000a0;
 
 void Func_080cd594(s32);
-s32 Func_080ed408(s32, s32, s32, s32, s32);
-void Func_080e0524(s32, void *, s32, s32);
 void *Func_08002f40(s32);
 s32 Func_080041d8(s32, s32);
 void Func_080e396c(s32, struct EffectPosition *);
@@ -88,13 +87,13 @@ void Func_080ccc38(void *param0, s32 mode)
 
     tag = M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4);
     if (tag == 1) {
-        Func_080ed408(46, 7, 7, 3, tag);
+        BattleEffect_LoadWork(46, 7, 7, 3, tag);
     } else {
         tag = 1;
-        Func_080ed408(46, 7, 7, 7, tag);
+        BattleEffect_LoadWork(46, 7, 7, 7, tag);
     }
-    Func_080e0524((s32)&Value_00000071, work, 1, 1);
-    Func_080e0524((s32)&Value_00000072, (void *)0x02010000, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000071, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_00000072, (void *)0x02010000, 1, 0);
 
     if (mode == 0) {
         palette = Func_08002f40((s32)&Value_000000a0);

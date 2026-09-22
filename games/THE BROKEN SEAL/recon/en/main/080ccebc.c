@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "EFFECT_STEP.H"
+#include "BATTLE_EFX.H"
 
 #define M2C_FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
@@ -8,10 +9,8 @@ volatile int Func_080cd594(s32);
 typedef void (*DrawRectangleFn)(
     void *destination, const void *source, s32 x, s32 y, s32 width, s32 height);
 s32 Func_080cdbc0(void);
-void Func_080e0524(s32, s32, s32, s32);
 s32 Func_080041d8(s32, s32);
 void Func_08004278(s32);
-s32 Func_080ed408(s32, s32, s32, s32, s32);
 void Func_080f9010(s32);
 void Func_080030f8(s32);
 void Func_08002dd8(s32);
@@ -46,7 +45,7 @@ void Func_080ccebc(void *arg0)
     local1.x = mid;
 
     *(u16 *)0x04000028 = (64 - mid) << 8;
-    Func_080e0524(0x59, base, 1, 1);
+    Resource_LoadAndDecompress(0x59, base, 1, 1);
 
     M2C_FIELD(base, s32 *, 0x7780) = 1;
     M2C_FIELD(base, s32 *, 0x7784) = 0;
@@ -63,22 +62,22 @@ void Func_080ccebc(void *arg0)
         if (frame > 53)
             *(u16 *)0x04000028 |= (0x7c - (frame << 1)) | 0x1000;
 
-        Func_080ed408(0x2e, 7, 7, 3, flash);
+        BattleEffect_LoadWork(0x2e, 7, 7, 3, flash);
         (*(DrawRectangleFn *)0x03001F08)(
             second, (void *)base, 33, 41, shade, shade);
         Func_08002dd8(0x2e);
 
-        Func_080ed408(0x2e, 7, 7, 7, flash);
+        BattleEffect_LoadWork(0x2e, 7, 7, 7, flash);
         (*(DrawRectangleFn *)0x03001F08)(
             second, (void *)base, 64, 41, shade, shade);
         Func_08002dd8(0x2e);
 
-        Func_080ed408(0x2e, 7, 7, 11, flash);
+        BattleEffect_LoadWork(0x2e, 7, 7, 11, flash);
         (*(DrawRectangleFn *)0x03001F08)(
             second, (void *)base, 33, 72, shade, shade);
         Func_08002dd8(0x2e);
 
-        Func_080ed408(0x2e, 7, 7, 15, flash);
+        BattleEffect_LoadWork(0x2e, 7, 7, 15, flash);
         (*(DrawRectangleFn *)0x03001F08)(
             second, (void *)base, 64, 72, shade, shade);
         Func_08002dd8(0x2e);

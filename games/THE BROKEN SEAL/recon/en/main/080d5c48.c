@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "EFFECT_STEP.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Effect sequence at 0x080d5c48. Family-matched to puff_arc/run.c (0x080d9fc8,
@@ -35,8 +36,6 @@ extern u8 Data_03001e50[];
 extern u8 Value_0000007a;
 
 void Func_080cd594(s32);
-void Func_080e0524(s32, void *, s32, s32);
-s32 Func_080ed408(s32, s32, s32, s32, s32);
 s32 Func_080041d8(s32, s32);
 u32 Func_08004458(void);
 void Func_080f9010(s32);
@@ -100,11 +99,11 @@ void Func_080d5c48(Efx *efx)
     Func_080cd594(1);
     *(s16 *)0x04000020 = 0x100;
     *(s16 *)0x04000050 = 0;
-    Func_080e0524((s32)&Value_0000007a, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_0000007a, work, 1, 1);
     if (WORK_EFX->side == 1) {
         *(s32 *)0x04000028 = -0x7000;
     }
-    Func_080ed408(46, 7, 7, 3, 1);
+    BattleEffect_LoadWork(46, 7, 7, 3, 1);
     *(s32 *)(work + 0x7780) = 1;
     *(s32 *)(work + 0x7784) = 0;
     draw = (DrawRectangle)entry[6];

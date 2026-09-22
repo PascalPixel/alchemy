@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Battle-presentation sub-effect at 0x080dc454, in the same 0x03001eec
@@ -55,7 +56,6 @@ extern u8 Value_000000a9;
 void Func_080cd594(s32 mode);
 void *Func_08002f40(s32 id);
 u32 Func_08005340(const void *source, void *destination);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 void Func_080049ac(void);
@@ -96,7 +96,7 @@ void Func_080dc454(void)
     palette = Func_08002f40((s32)&Value_000000a9);
     status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
     status = Func_08005340((u8 *)palette + 128, work);
-    status = Func_080ed408(46, 7, 7, 3, 2);
+    status = BattleEffect_LoadWork(46, 7, 7, 3, 2);
     rect_fn = *(DrawRectangleFn *)((u8 *)heap_cache + 28);
     M2C_FIELD(work, s32 *, 0x7780) = 1;
     M2C_FIELD(work, s32 *, 0x7784) = 0;

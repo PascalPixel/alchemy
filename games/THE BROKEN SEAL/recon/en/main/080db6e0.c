@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Battle/overlay particle-field effect owner at 0x080db6e0.  The retained
@@ -25,7 +26,7 @@
  * family: its 128- and 512- record particle initializers at 0x02010000 /
  * 0x02010e00 (masked-RNG field 0xC/0x10/0x14 triples) are the same
  * structural shape as this owner's two initializer loops, and its
- * Func_080e38b8 / Func_080e0524 / Data_03001e50 / Data_080ede48 usages are
+ * Func_080e38b8 / Resource_LoadAndDecompress / Data_03001e50 / Data_080ede48 usages are
  * reused here verbatim.  Following that draft's own established style,
  * every temporary below is declared flat at the top of the function
  * (never in a nested block) so the compiler's size-class frame allocator
@@ -60,9 +61,7 @@ extern u8 Value_000000c0;
 extern u8 Value_00000096;
 
 void Func_080cd594(s32 mode);
-void Func_080e0524(s32 id, void *work, s32 a, s32 b);
 void *Func_08002f40(s32 id);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 void Func_08002dd8(s32 id);
@@ -122,7 +121,7 @@ void Func_080db6e0(void *object, s32 variant)
     canvas = *cursor;
     M2C_FIELD(work, void **, 0x7828) = object;
     Func_080cd594(1);
-    Func_080e0524((s32)&Value_000000c0, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_000000c0, work, 1, 0);
     if (variant == 1) {
         i = 0;
         pal = (s16 *)0x05000000;
@@ -180,7 +179,7 @@ void Func_080db6e0(void *object, s32 variant)
         M2C_FIELD(entry, s32 *, 24) = 0;
         entry = (u8 *)entry + 28;
     } while (i != 1024);
-    status = Func_080ed408(46, 7, 7, 3, 2);
+    status = BattleEffect_LoadWork(46, 7, 7, 3, 2);
     draw_rectangle = Data_03001e50[46];
     M2C_FIELD(work, s32 *, 0x7780) = 2;
     M2C_FIELD(work, s32 *, 0x7784) = 75;

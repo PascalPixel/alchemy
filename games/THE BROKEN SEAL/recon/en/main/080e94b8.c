@@ -1,4 +1,5 @@
 #include "types.h"
+#include "BATTLE_EFX.H"
 
 #define Func_080e94b8 Func_080e94b8
 
@@ -25,7 +26,6 @@ void Func_080cd594();
 void Func_080cdbc0();
 void Func_080cef64();
 void Func_080d6888();
-void Func_080e0524();
 void Func_080e155c();
 void Func_080e3908();
 void Func_080e46f0();
@@ -113,9 +113,9 @@ void Func_080e94b8(s32 a0)
     Func_080cef64(*(s32 *)(*(s32 *)((0x7828 + p11)) + 4));
     Value2(Func_08009080, slot28, 2);
     Value2(Func_08009088, slot28, 48);
-    Func_080e0524((s32)Data_00000055, p11, 1, 1);
-    Func_080e0524((s32)Data_0000007d, (0x2000 + p11), 1, 0);
-    Func_080e0524((s32)Data_00000073, slot32, 0, 0);
+    Resource_LoadAndDecompress((s32)Data_00000055, p11, 1, 1);
+    Resource_LoadAndDecompress((s32)Data_0000007d, (0x2000 + p11), 1, 0);
+    Resource_LoadAndDecompress((s32)Data_00000073, slot32, 0, 0);
     slot36 = 0;
     p9 = slot36;
     v8 = p11;

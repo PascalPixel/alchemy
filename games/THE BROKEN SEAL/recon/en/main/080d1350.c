@@ -1,6 +1,7 @@
 #include "B5_CONTEXT.H"
 #include "BATTLE_TYPES.H"
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 typedef void (*WordCopy)(void *destination, const void *source, s32 size);
 typedef void (*DrawRectangle)(
@@ -81,7 +82,6 @@ extern u8 Data_080ee158[];
 void Func_080cd594(s32 mode);
 void *Func_08002f40(s32 resource_id);
 void Func_08005340(const void *source, void *destination);
-s32 Func_080ed408(s32, s32, s32, s32, s32);
 s32 Func_080041d8(void (*callback)(void), s32 interval);
 void Func_080cd260(void);
 s32 Func_08004458(void);
@@ -139,7 +139,7 @@ void Func_080d1350(struct EffectArgument *argument)
         Func_08002f40((s32)Data_00000079),
         0x80);
     Func_08005340(Func_08002f40((s32)Data_00000073), graphics);
-    Func_080ed408(46, 7, 7, 3, 2);
+    BattleEffect_LoadWork(46, 7, 7, 3, 2);
 
     runtime->display_mode = 2;
     runtime->display_value = 50;

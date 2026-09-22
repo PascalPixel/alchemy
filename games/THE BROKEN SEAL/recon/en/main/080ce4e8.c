@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /* Only the m2c spellings this draft actually uses. */
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
@@ -59,9 +60,9 @@ s32 Func_080ce4e8(s32 actor) {
     Func_08005340(temp_r0_29 + 0x80, temp_sl_23);
     ((WordCopyFn)0x03001388)((void *)0x05000000,
         Func_08002f40((s32)&Value_000000bb), 0x80);
-    Func_080ed408(0x2E, 7, 7, 3, 2);
+    BattleEffect_LoadWork(0x2E, 7, 7, 3, 2);
     sp20 = *(u32 *)0x03001F08;
-    Func_080ed408(0x2F, 7, 7, 3, 3);
+    BattleEffect_LoadWork(0x2F, 7, 7, 3, 3);
     sp24 = *(u32 *)0x03001F0C;
     Func_080041d8(0x080DBB9D, 0x480);
     M2C_FIELD(temp_sl_23, s32 *, 0x7780) = 3;

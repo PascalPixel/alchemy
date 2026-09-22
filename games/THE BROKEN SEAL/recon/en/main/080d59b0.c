@@ -1,13 +1,14 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Draft for the battle-presentation sub-effect at 0x080d59b0.
  *
  * This owner was assigned from the orbiting_particles/run.c compiler-family
  * cluster (template-main-08099160), but its own callee set and constants
- * (Func_080cd594, Func_080e0524, Func_080041d8/Func_08004278 with the shared
+ * (Func_080cd594, Resource_LoadAndDecompress, Func_080041d8/Func_08004278 with the shared
  * 0x080CD261 callback and 0x480 interval, Func_08002dd8, Func_080cdbc0,
- * Func_080ed408, work-offsets 0x7780/0x7784/0x7824/0x7828) match the
+ * BattleEffect_LoadWork, work-offsets 0x7780/0x7784/0x7824/0x7828) match the
  * already-drafted 0x080e7404 "battle work" subsystem instead -- see that
  * owner's dossier and games/THE BROKEN SEAL/recon/en/main/080e7404.c, which is the
  * evidence source for the field/signature choices below.  Byte-offset
@@ -22,8 +23,6 @@ typedef void (*DrawRectangleFn)(
 extern u8 Value_000000a8;
 
 void Func_080cd594(s32 mode);
-void Func_080e0524(s32 effect_id, void *work, s32 flag_a, s32 flag_b);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 void Func_08002dd8(s32 id);
@@ -62,10 +61,10 @@ s32 Func_080d59b0(void *object)
     Func_080cd594(0);
     M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x0100;
     M2C_FIELD((void *)0x04000050, s16 *, 0) = 0;
-    Func_080e0524((s32)&Value_000000a8, work, 1, 1);
-    Func_080ed408(46, 7, 7, 3, 1);
+    Resource_LoadAndDecompress((s32)&Value_000000a8, work, 1, 1);
+    BattleEffect_LoadWork(46, 7, 7, 3, 1);
     callback_a = (DrawRectangleFn) heap_cache[7];
-    Func_080ed408(47, 7, 7, 15, 1);
+    BattleEffect_LoadWork(47, 7, 7, 15, 1);
     callback_b = (DrawRectangleFn) heap_cache[8];
 
     star = (u8 *)0x02010000;

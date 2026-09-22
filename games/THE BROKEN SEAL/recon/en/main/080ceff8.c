@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "EFFECT_STEP.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Battle-presentation sub-effect in the same 0x03001eec "battle work"
@@ -16,8 +17,8 @@
  * `Data_03001e50[46]` and `Data_03001e50[47]` are the same
  * "Data_03001e50[kind] holds kind's block address" heap-allocation cache
  * documented in games/THE BROKEN SEAL/recon/en/main/080e7404.c: this owner registers
- * two rectangle-blit routines through Func_080ed408(46, ...) and
- * Func_080ed408(47, ...) and then reads the resulting callbacks back out
+ * two rectangle-blit routines through BattleEffect_LoadWork(46, ...) and
+ * BattleEffect_LoadWork(47, ...) and then reads the resulting callbacks back out
  * of that cache by kind, exactly as 080e7404.c's own
  * `draw_rectangle = (DrawRectangle) Data_03001e50[46];` does.
  *
@@ -58,7 +59,6 @@ void Func_080cd594(s32 mode);
 void *Func_08002f40(s32 id);
 u32 Func_08005340(const void *source, void *destination);
 s32 Func_080022ec(s32 numerator, s32 denominator);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 s32 Func_080041d8(void *callback, s32 interval);
 void Func_080f9010(s32 value);
 void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
@@ -114,9 +114,9 @@ void Func_080ceff8(void *object, s32 mode)
             (Func_080022ec(-pos.x * 4, 5) + 64) << 8;
     }
 
-    Func_080ed408(46, 7, 7, 3, 2);
+    BattleEffect_LoadWork(46, 7, 7, 3, 2);
     draw_a = (DrawRectangle)Data_03001e50[46];
-    Func_080ed408(47, 7, 7, 7, 2);
+    BattleEffect_LoadWork(47, 7, 7, 7, 2);
     draw_b = (DrawRectangle)Data_03001e50[47];
 
     M2C_FIELD(work, s32 *, 0x7780) = 2;

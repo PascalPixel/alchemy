@@ -1,6 +1,7 @@
 #include "shared-aggregates.h"
 #include "BATTLE_EFFECT_WORK.H"
 #include "EFFECT_STEP.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Battle-presentation scene at 0x080eb754.
@@ -24,7 +25,7 @@
  *   Func_080041d8 Scheduler_AddOrUpdateCallback   Func_08004278 Scheduler_RemoveCallback
  *   Func_08004458 random_16                       Func_08002dd8 Runtime_ReleaseHeapBlock
  *   Func_080dbb24 BattleFx_SpawnObjects       Func_080d6750 BattleFx_SelectLivingTargets
- *   Func_080e0524 load_and_decompress             Func_080e3980 apply_alternate_step_and_y_offset
+ *   Resource_LoadAndDecompress load_and_decompress             Func_080e3980 apply_alternate_step_and_y_offset
  *   Func_080d6888 update_members                  Func_080e155c Camera_ApplyShake
  *   Func_080cd52c ObjectGroup_TickMemberTimers
  *
@@ -162,8 +163,8 @@ void Func_080eb754(s32 arg0) {
     Func_080030f8(1);
     Func_080b5040(1, (s32) &Value_0000003a, 0);
     Func_080cd104(1, 1);
-    Func_080e0524((s32) &Value_00000073, sheet, 0, 0);
-    Func_080e0524((s32) &Value_00000095, work, 1, 1);
+    Resource_LoadAndDecompress((s32) &Value_00000073, sheet, 0, 0);
+    Resource_LoadAndDecompress((s32) &Value_00000095, work, 1, 1);
     M2C_FIELD((void *)0x04000000, s16 *, 0) = 0x7741;
     M2C_FIELD((void *)0x04000000, s16 *, 0x20) = (s16) (s32) &Value_00000080;
     M2C_FIELD((void *)0x04000020, s16 *, 0x32) = 0x100E;
@@ -185,7 +186,7 @@ void Func_080eb754(s32 arg0) {
         sp[k].life = (s32) (Func_08002304(Func_08004458(), 0x30) + 2);
     }
 
-    Func_080ed408(0x2E, 7, 7, 3, 3);
+    BattleEffect_LoadWork(0x2E, 7, 7, 3, 3);
     blit = (BlitRectFn) absolute_03001e50.field_00b8;
     absolute_0400000c.field_0000 = 0x786;
 

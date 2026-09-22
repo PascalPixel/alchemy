@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Battle-presentation sub-effect at 0x080d85d0, from the 0x03001eec
@@ -41,10 +42,8 @@ typedef void (*DrawRectangleFn)(
     void *dest, void *src, s32 x, s32 y, s32 width, s32 height);
 
 void Func_080cd594(s32 mode);
-void Func_080e0524(s32 effect_id, void *target, s32 flag_a, s32 flag_b);
 void *Func_08002f40(s32 id);
 void Func_080072f0(void *dest, void *src, s32 size, WordCopyFn copier);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 void Func_08002dd8(s32 id);
@@ -96,7 +95,7 @@ s32 Func_080d85d0(void *object)
     STATE = object;
 
     Func_080cd594(1);
-    Func_080e0524((s32) &Value_00000073, extra_target, 0, 0);
+    Resource_LoadAndDecompress((s32) &Value_00000073, extra_target, 0, 0);
     if (variant) {
         palette = Func_08002f40((s32) &Value_000000c0);
     } else {
@@ -147,7 +146,7 @@ s32 Func_080d85d0(void *object)
         } while (member != M2C_FIELD(STATE, s32 *, 20));
     }
 
-    Func_080ed408(46, 7, 7, 3, 2);
+    BattleEffect_LoadWork(46, 7, 7, 3, 2);
     draw_rectangle_fn = (DrawRectangleFn) Data_03001e50[46];
     M2C_FIELD(work, s32 *, 0x7780) = 3;
     M2C_FIELD(work, s32 *, 0x7784) = 0x04040404;

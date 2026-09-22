@@ -1,4 +1,5 @@
 #include "types.h"
+#include "BATTLE_EFX.H"
 
 #define Function Func_080ce034
 
@@ -30,7 +31,6 @@ void Func_080cdbc0();
 void Func_080d6888();
 s32 Func_080e155c();
 void Func_080e3980();
-s32 Func_080ed408();
 void Func_080f9010();
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -117,9 +117,9 @@ void Function(s32 a0)
     rec7 = Value1(Func_08002f40, (s32)Data_0000007d);
     Call4(Func_080072f0, 0x5000000, rec7, 128, 0x3001388);
     Value2(Func_08005340, (rec7 + 128), slot36);
-    ((void (*)())Func_080ed408)(46, 7, 7, 3, 2);
+    ((void (*)())BattleEffect_LoadWork)(46, 7, 7, 3, 2);
     slot40 = *(s32 *)(base6_3001eec + 28);
-    ((void (*)())Func_080ed408)(47, 7, 7, 7, 2);
+    ((void (*)())BattleEffect_LoadWork)(47, 7, 7, 7, 2);
     slot8 = (r13 + 40);
     *(s32 *)(slot8 + 4) = *(s32 *)(base6_3001eec + 32);
     *(s32 *)((slot36 + 0x7780)) = 2;

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Draft for the battle-presentation sub-effect at 0x080d82b0.
@@ -18,10 +19,8 @@ typedef void (*DrawRectangleFn)(
     void *dest, void *src, s32 x, s32 y, u32 w, s32 h);
 
 void Func_080cd594(s32 mode);
-void Func_080e0524(s32 effect_id, void *target, s32 flag_a, s32 flag_b);
 void *Func_08002f40(s32 id);
 void Func_080072f0(void *dest, void *src, s32 size, WordCopyFn copier);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 void Func_080049ac(void);
 void Func_080051d8(s32 a, s32 b);
 void **Func_080b5098(s32 member_id);
@@ -72,11 +71,11 @@ s32 Func_080d82b0(void *object)
     facing = *(s32 *)((u8 *)heap_cache - 108);
     M2C_FIELD(work, void **, 0x7828) = object;
     Func_080cd594(1);
-    Func_080e0524(0x73, extra_target, 0, 0);
+    Resource_LoadAndDecompress(0x73, extra_target, 0, 0);
     Func_080072f0(
         (void *)(160 << 19), Func_08002f40(0xB9), 128,
         (WordCopyFn)0x03001388);
-    Func_080ed408(46, 7, 7, 3, 2);
+    BattleEffect_LoadWork(46, 7, 7, 3, 2);
     draw_rectangle_fn = *(DrawRectangleFn *)((u8 *)heap_cache + 28);
 
     pool_cursor = (s32 *)0x02010018;

@@ -1,4 +1,5 @@
 #include "shared-aggregates.h"
+#include "BATTLE_EFX.H"
 
 typedef void (*WordCopyFn)(void *dst, const void *src, s32 size);
 
@@ -110,14 +111,14 @@ void Func_080dc968(void *arg0) {
     Func_080cd104(0, 0);
     Func_080d6750(M2C_FIELD(temp_r3_25, void **, 0x7828));
     Func_080dbb24(9, 0x172, 1);
-    Func_080e0524(0x6A, temp_r3_25, 1, 1);
+    Resource_LoadAndDecompress(0x6A, temp_r3_25, 1, 1);
     ((WordCopyFn)0x03001388)((void *)0x05000000, Func_08002f40(0xA0), 0x80);
-    Func_080e0524(0x73, sp24, 0, 0);
+    Resource_LoadAndDecompress(0x73, sp24, 0, 0);
     sp30 = Func_08002f40(0xD2);
     sp0 = 2;
-    Func_080ed408(0x2E, 7, 7, 3, 2);
+    BattleEffect_LoadWork(0x2E, 7, 7, 3, 2);
     sp0 = 3;
-    Func_080ed408(0x2F, 7, 7, 3, 3);
+    BattleEffect_LoadWork(0x2F, 7, 7, 3, 3);
     draw_args[0] = (DrawRectangleFn)*(void **)(battle_globals + 8);
     draw_args[1] = (DrawRectangleFn)*(void **)(battle_globals + 0x0C);
     absolute_03001ce0.field_0010 = 0xF0;
@@ -354,7 +355,7 @@ block_36:
     } while (temp_r0_816 != 9);
     absolute_04000020.field_0000 = 0x80;
     *(u16 *)0x04000000 = 0x7741;
-    Func_080e0524(0xB4, &absolute_02010000, 1, 0);
+    Resource_LoadAndDecompress(0xB4, &absolute_02010000, 1, 0);
     sp2C = 0;
     var_r5_836 = temp_r3_25 + 0x7080;
     do {

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Battle-presentation sub-effect keyed off the shared 0x03001eec "battle
@@ -12,7 +13,7 @@
  *   - The palette resource id is loaded from a literal pool word 0xCE
  *     (Value_000000ce), not 0xAF, following the same absolute-link-time-
  *     constant idiom already established for Value_000000af.
- *   - The second Func_080ed408 call's third size argument is 7, not 15.
+ *   - The second BattleEffect_LoadWork call's third size argument is 7, not 15.
  *   - Only ONE finish-callback is ever registered (Func_080041d8 with
  *     0x080CD261): the template's separate 0x080DBB9D registration does not
  *     happen here at all.
@@ -44,7 +45,7 @@
  *     Func_080b5088(member_id,6) -- a callee the template never uses.
  *
  * The `status` bindings on the early calls are load-bearing for the same
- * reason documented in the template: they give the following Func_080ed408
+ * reason documented in the template: they give the following BattleEffect_LoadWork
  * argument setup an output dependency on r0, which is what places the
  * reference's `movs r0, #46` / `movs r0, #47` after r1-r3 in each call.
  */
@@ -61,7 +62,6 @@ extern u8 Value_000000ce;
 void Func_080cd594(s32 mode);
 void *Func_08002f40(s32 id);
 u32 Func_08005340(const void *source, void *destination);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 void Func_080030f8(s32 frames);
@@ -101,9 +101,9 @@ void Func_080d3854(void *object)
     palette = Func_08002f40((s32)&Value_000000ce);
     status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
     status = Func_08005340((u8 *)palette + 128, work);
-    status = Func_080ed408(46, 7, 7, 3, 2);
+    status = BattleEffect_LoadWork(46, 7, 7, 3, 2);
     rectangle[0] = heap_cache[7];
-    status = Func_080ed408(47, 7, 7, 7, 2);
+    status = BattleEffect_LoadWork(47, 7, 7, 7, 2);
     rectangle[1] = heap_cache[8];
     rectangle_slot = rectangle;
     frame = 0;

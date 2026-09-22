@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 #define FIELD(p, type, off) (*(type *)((u8 *)(p) + (off)))
 
@@ -12,8 +13,6 @@ extern u16 Data_080ede48[];
 extern u8 Value_00000073, Value_00000099, Value_000000bd;
 extern u8 Value_000000c2, Value_000000b9, Value_000000bb, Value_000000c0;
 void Func_080cd594(s32);
-s32 Func_080ed408(s32,s32,s32,s32,s32);
-void Func_080e0524(s32,void *,s32,s32);
 void Func_080df9d0(void *,void *,s32,s32);
 void *Func_08002f40(s32);
 s32 Func_080041d8(void *,s32);
@@ -53,18 +52,18 @@ void Func_080dfa48(void *object, s32 variant)
     FIELD(work, void *, 0x7828) = object;
     Func_080cd594(0);
     if (FIELD(FIELD(work, void *, 0x7828), s32, 4) == 0) {
-        Func_080ed408(46,7,7,3,2);
-        Func_080ed408(47,7,7,11,2);
+        BattleEffect_LoadWork(46,7,7,3,2);
+        BattleEffect_LoadWork(47,7,7,11,2);
     } else {
-        Func_080ed408(46,7,7,7,2);
-        Func_080ed408(47,7,7,15,2);
+        BattleEffect_LoadWork(46,7,7,7,2);
+        BattleEffect_LoadWork(47,7,7,15,2);
     }
     rectangle[0] = (DrawFn)((void **)0x03001e50)[46];
     rectangle[1] = (DrawFn)((void **)0x03001e50)[47];
-    Func_080e0524((s32)&Value_00000073, source, 0, 0);
-    Func_080e0524((s32)&Value_00000099, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000073, source, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000099, work, 1, 0);
     Func_080df9d0(work, (void *)0x02010000, 40, 288);
-    Func_080e0524((s32)&Value_000000bd, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_000000bd, work, 1, 1);
     switch (variant) {
     case 0: palette_id=(s32)&Value_000000c2; break;
     case 1: palette_id=(s32)&Value_000000b9; break;

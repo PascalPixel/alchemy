@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 #define FIELD(p, type, off) (*(type *)((u8 *)(p) + (off)))
 
@@ -21,8 +22,6 @@ extern u8 Value_000000c4;
 extern u8 Value_00000073;
 
 void Func_080cdb24(s32);
-s32 Func_080ed408(s32, s32, s32, s32, s32);
-void Func_080e0524(s32, void *, s32, s32);
 s32 Func_08004458(void);
 s32 Func_08002322(s32);
 s32 Func_0800231c(s32);
@@ -77,12 +76,12 @@ void Func_080db264(void *object)
     else
         *(volatile u16 *)0x04000020 = 0x100;
 
-    Func_080ed408(46, 7, 7, 3, 2);
+    BattleEffect_LoadWork(46, 7, 7, 3, 2);
     rectangles[0] = (DrawFn)((void **)0x03001e50)[46];
-    Func_080ed408(47, 7, 7, 7, 3);
+    BattleEffect_LoadWork(47, 7, 7, 7, 3);
     rectangles[1] = (DrawFn)((void **)0x03001e50)[47];
-    Func_080e0524((s32)&Value_000000c4, (u8 *)work + 0x60e, 1, 1);
-    Func_080e0524((s32)&Value_00000073, source, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_000000c4, (u8 *)work + 0x60e, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_00000073, source, 0, 0);
 
     if (FIELD(FIELD(work, void *, 0x7828), s32, 24) == 2) {
         if (FIELD(FIELD(work, void *, 0x7828), s32, 4) == 1)

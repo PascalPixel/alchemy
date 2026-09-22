@@ -1,5 +1,6 @@
 #include "BATTLE_PRESENTATION.H"
 #include "BATTLE_EFFECT_WORK.H"
+#include "BATTLE_EFX.H"
 
 #define BattleEffect_RunBurstShower Func_080dbc30
 
@@ -29,10 +30,7 @@ extern u8 Value_000000b9;
 extern u8 Value_000000ce;
 
 void Func_080cd594(s32);
-s32 Func_080ed408(s32, s32, s32, s32, s32);
 void BattleFx_FetchRectangleBlitters(s32, u32 *);
-void Func_080e0524(s32, void *, s32, s32);
-#define Resource_LoadAndDecompress Func_080e0524
 void *Func_08002f40(s32);
 #define Resource_GetTableEntry Func_08002f40
 void Func_080041d8(s32, s32);
@@ -115,9 +113,9 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
     *(s16 *)0x04000052 = 0x1010;
 
     if (mode == 7) {
-        Func_080ed408(46, 7, 7, 3, 2);
+        BattleEffect_LoadWork(46, 7, 7, 3, 2);
         blit[0] = (void *)cache[46 - 40];
-        Func_080ed408(47, 7, 7, 7, 2);
+        BattleEffect_LoadWork(47, 7, 7, 7, 2);
         blit[1] = (void *)cache[47 - 40];
     } else {
         BattleFx_FetchRectangleBlitters(WORK_EFX->side, (u32 *)blit);

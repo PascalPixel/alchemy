@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "DMA.H"
+#include "BATTLE_EFX.H"
 
 /* Nested particle allocators capture this sequence's work block. */
 
@@ -9,7 +10,7 @@ typedef void (*DrawRectangle)(
 
 /* Heap-allocation cache: Data_03001e50[kind] holds kind's block address.
    This owner reads kinds 39 (its work block), 40 (the draw destination)
-   and 46 (the rectangle entry Func_080ed408 loads), plus kind 44. */
+   and 46 (the rectangle entry BattleEffect_LoadWork loads), plus kind 44. */
 extern void *Data_03001e50[];
 
 /* Two IWRAM cells the reference addresses through one base register
@@ -51,8 +52,6 @@ void Func_08004278(s32);
 void Func_08009020(void *, s32);
 void Func_080dbb24(s32, s32, s32);
 #define BattleFx_SpawnObjects Func_080dbb24
-void Func_080e0524(s32, void *, s32, s32);
-#define Resource_LoadAndDecompress Func_080e0524
 void *Func_08002f40(s32);
 #define Resource_GetTableEntry Func_08002f40
 void Func_080030f8(s32);
@@ -61,7 +60,6 @@ s32 Func_08004458(void);
 #define Random16 Func_08004458
 void Func_080d6750(s32);
 #define BattleFx_SelectLivingTargets Func_080d6750
-s32 Func_080ed408(s32, s32, s32, s32, s32);
 void Func_08009008(s32, void *, void *, s32);
 s32 Func_08002322(s32);
 #define Engine_MathSin Func_08002322
@@ -419,7 +417,7 @@ loop_33:
     sp30 = display[0];
     Data_03001ad0.unk04 = 0U;
     Data_03001ad0.unk06 = 0x20U;
-    Func_080ed408(0x2E, 8, 7, 3, 2);
+    BattleEffect_LoadWork(0x2E, 8, 7, 3, 2);
     draw_rectangle = (DrawRectangle) display[2];
     temp_r2_553 = *sp3C;
     (*(s32 *)((u8 *)(temp_r2_553) + (0x7780))) = 3;
@@ -661,7 +659,7 @@ loop_84:
     (*(s32 *)((u8 *)((void *)0x04000020) + (0xC))) = 0xFFFFF000;
     (*(s16 *)((u8 *)((void *)0x04000020) + (0x32))) = 0x1010;
     (*(s16 *)((u8 *)((void *)0x04000020) + (-0x14))) = 0x2784;
-    Func_080ed408(0x2E, 7, 7, 3, 2);
+    BattleEffect_LoadWork(0x2E, 7, 7, 3, 2);
     draw_rectangle = (DrawRectangle) Data_03001e50[46];
     Resource_LoadAndDecompress(0xc0, *sp3C, 1, 0);
     var_r8_1221 = 0;

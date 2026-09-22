@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Draft for the battle-presentation sub-effect at 0x080ed104.
@@ -8,7 +9,7 @@
  * this owner's real callee set and constants instead match the already-drafted
  * 0x03001eec "battle work" subsystem documented in games/THE BROKEN SEAL/recon/en/main/
  * 080e7404.c, 080d59b0.c, 080d82b0.c, 080dc1ec.c and 080e01e4.c: identical
- * Func_080cd594(mode)/Func_080e0524(id,work,f,f)/Func_080041d8(cb,interval)/
+ * Func_080cd594(mode)/Resource_LoadAndDecompress(id,work,f,f)/Func_080041d8(cb,interval)/
  * Func_08004278(cb)/Func_08002dd8(id)/Func_080cdbc0() call shapes and the same
  * work-struct field offsets (0x7780/0x7784/0x77A8/0x7824/0x7828) relative to
  * the shared *(void **)0x03001EEC base. Unlike its siblings this owner does
@@ -38,7 +39,6 @@ typedef void (*DrawRectangleFn)(
     void *dest, void *src, s32 x, s32 y, u32 w, s32 h);
 
 void Func_080cd594(s32 mode);
-void Func_080e0524(s32 effect_id, void *target, s32 flag_a, s32 flag_b);
 void Func_080cef64(s32 flag, DrawRectangleFn *out_callbacks);
 s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
@@ -49,7 +49,6 @@ s32 Func_0800231c(s32 angle);
 void Func_080b50e8(s32 id);
 void Func_080b5088(s32 member_id, s32 flag);
 void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 s32 Func_080022ec(s32 numerator, s32 denominator);
 void Func_080e3908(void *particle, s32 count, s32 flags);
 void Func_080e155c(s32 a, s32 b);
@@ -88,9 +87,9 @@ void Func_080ed104(void *object)
     extra_target = heap_cache[2];
     Func_080cd594(0);
     M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x100;
-    Func_080e0524((s32) &Value_00000073, extra_target, 0, 0);
-    Func_080e0524((s32) &Value_00000051, work, 1, 1);
-    Func_080e0524((s32) &Value_000000c0, (u8 *)work + 0x460, 1, 0);
+    Resource_LoadAndDecompress((s32) &Value_00000073, extra_target, 0, 0);
+    Resource_LoadAndDecompress((s32) &Value_00000051, work, 1, 1);
+    Resource_LoadAndDecompress((s32) &Value_000000c0, (u8 *)work + 0x460, 1, 0);
 
     flag = M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4);
     Func_080cef64(flag, rect_fns);
@@ -157,9 +156,9 @@ void Func_080ed104(void *object)
                 bar_x = 50;
                 for (seg = 0; seg != 2; seg++) {
                     if (seg == 0) {
-                        Func_080ed408(46, 7, 7, 3, bar_style);
+                        BattleEffect_LoadWork(46, 7, 7, 3, bar_style);
                     } else {
-                        Func_080ed408(46, 7, 7, 7, bar_style);
+                        BattleEffect_LoadWork(46, 7, 7, 7, bar_style);
                     }
                     ((DrawRectangleFn) heap_cache[7])(
                         draw_destination, work,

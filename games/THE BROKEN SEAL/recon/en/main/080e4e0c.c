@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Region 0x080e4e0c .. 0x080e53f4 (1512 bytes), classified mixed_region.
@@ -146,7 +147,6 @@ void Func_080d4604(void *object, s32 mode);
 void Func_080d52a4(void *object);
 void Func_080dea70(void *object, s32 mode);
 /* load_and_decompress */
-void Func_080e0524(s32 resource_id, void *destination, s32 a, s32 b);
 /* apply_step_and_y_offset */
 void Func_080e396c(s32 value, s32 *step);
 
@@ -295,14 +295,14 @@ void Func_080e4e0c(
     }
 
     if (kind == 11) {
-        Func_080e0524((s32)&Value_000000ab, work, 1, 1);
-        Func_080e0524((s32)&Value_000000ac, (void *)0x02010000, 1, 0);
+        Resource_LoadAndDecompress((s32)&Value_000000ab, work, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_000000ac, (void *)0x02010000, 1, 0);
         REG_BLDALPHA = 0x0E10;
     }
 
     if (kind == 32) {
-        Func_080e0524((s32)&Value_000000ad, work, 1, 1);
-        Func_080e0524((s32)&Value_000000ae, (void *)0x02010000, 1, 0);
+        Resource_LoadAndDecompress((s32)&Value_000000ad, work, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_000000ae, (void *)0x02010000, 1, 0);
         REG_BLDALPHA = 0x0E10;
     }
 

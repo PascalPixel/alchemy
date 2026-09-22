@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Battle-presentation sub-effect at 0x080cfef4, structurally related to the
@@ -6,7 +7,7 @@
  * games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C (owner 080ce85c) and
  * games/THE BROKEN SEAL/recon/en/main/080e7404.c: same heap_cache/work/canvas prologue,
  * the same raw-offset field-access spelling, and the same
- * BG2-affine + rectangle-blit (Func_080ed408 heap kinds 46/47) setup.
+ * BG2-affine + rectangle-blit (BattleEffect_LoadWork heap kinds 46/47) setup.
  *
  * Unlike the member-orbit effect this owner drives a single fixed party
  * member (its slot index lives at object+0x24, not an iterated array from
@@ -43,7 +44,6 @@ s32 Func_080cdb24(s32 mode);
 void *Func_08002f40(s32 id);
 #define Resource_GetTableEntry Func_08002f40
 u32 Func_08005340(const void *source, void *destination);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 s32 Func_080041d8(s32 callback, s32 order);
 #define Scheduler_AddOrUpdateCallback Func_080041d8
 void Func_08004278(void *callback);
@@ -107,9 +107,9 @@ void BattleFx_RunCounterReveal(void *object)
     palette = Resource_GetTableEntry((s32)&Value_000000ac);
     palette = (u8 *)palette + 128;
     status = Func_08005340(palette, sprite_vram);
-    status = Func_080ed408(46, 7, 7, 3, 1);
+    status = BattleEffect_LoadWork(46, 7, 7, 3, 1);
     rectangle[0] = heap_cache[7];
-    status = Func_080ed408(47, 7, 7, 7, 1);
+    status = BattleEffect_LoadWork(47, 7, 7, 7, 1);
     second_rectangle = heap_cache[8];
     rectangle[1] = second_rectangle;
     Scheduler_AddOrUpdateCallback(0x080DBB9D, 0x480);

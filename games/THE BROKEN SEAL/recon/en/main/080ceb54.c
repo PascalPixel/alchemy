@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Draft for the battle-presentation sub-effect at 0x080ceb54.
@@ -19,7 +20,7 @@
  * count. Per Func_080cef64's already-recovered body
  * (games/THE BROKEN SEAL/src/battle/effects/work/fetch_rectangle_blitters.c) the function
  * unconditionally copies the kind-46/47 allocator-cache slot pair; this
- * owner never calls Func_080ed408 itself, so it is reading back whatever
+ * owner never calls BattleEffect_LoadWork itself, so it is reading back whatever
  * kind-46/47 slots a prior effect already populated.
  */
 #define M2C_FIELD(expr, type_ptr, offset) \

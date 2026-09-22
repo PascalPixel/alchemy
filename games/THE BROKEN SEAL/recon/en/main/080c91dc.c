@@ -1,5 +1,6 @@
 #include "BATTLE_TYPES.H"
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 typedef void (*DrawRectangle)(
     void *destination,
@@ -61,10 +62,8 @@ extern char Value_000000ba;
 extern char Value_0000027f;
 
 void Func_080cd594(s32 mode);
-void Func_080e0524(void *resource_id, void *destination, s32 upper, s32 palette);
 void Func_080c9048(void);
 s32 Func_08004458(void);
-s32 Func_080ed408(s32, s32, s32, s32, s32);
 s32 Func_080041d8(void (*callback)(void), s32 interval);
 void Func_080cd260(void);
 void Func_080b50e8(s32 value);
@@ -106,8 +105,8 @@ void Func_080c91dc(struct EffectArgument *argument)
 
     Func_080cd594(0x2001);
     *(u16 *)0x04000020 = 0x100;
-    Func_080e0524(&Value_000000b3, runtime, 1, 1);
-    Func_080e0524(&Value_000000ba, graphics, 0, 0);
+    Resource_LoadAndDecompress(&Value_000000b3, runtime, 1, 1);
+    Resource_LoadAndDecompress(&Value_000000ba, graphics, 0, 0);
     Func_080c9048();
     *(u16 *)0x04000050 = 0x3f44;
     *(u16 *)0x04000048 = 0x3337;
@@ -142,11 +141,11 @@ void Func_080c91dc(struct EffectArgument *argument)
     } while (particle_index != 32);
 
     if (runtime->argument->direction == 0) {
-        Func_080ed408(46, 7, 7, 2, 2);
-        Func_080ed408(47, 7, 7, 2, 3);
+        BattleEffect_LoadWork(46, 7, 7, 2, 2);
+        BattleEffect_LoadWork(47, 7, 7, 2, 3);
     } else {
-        Func_080ed408(46, 7, 7, 6, 2);
-        Func_080ed408(47, 7, 7, 6, 3);
+        BattleEffect_LoadWork(46, 7, 7, 6, 2);
+        BattleEffect_LoadWork(47, 7, 7, 6, 3);
     }
 
     rectangles[0] = Data_03001e50.rectangles[0];

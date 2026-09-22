@@ -2,6 +2,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_STEP.H"
 #include "MOTION_OBJECT.H"
+#include "BATTLE_EFX.H"
 typedef void (*RectangleBlit)(s32, s32, s32, s32, s32, s32);
 
 extern u8 Value_00000053;
@@ -56,11 +57,9 @@ void Func_080d6888(s32 set_id, s32 object_value, s32 group_value, s32 state_slot
 void Func_080d9ac4();
 void Func_080dea70();
 void Func_080df9d0();
-void Func_080e0524(s32 resource_id, void *destination, s32 skip_palette, s32 copy_palette);
 s32 Func_080e155c();
 void Func_080e46f0();
 
-s32 Func_080ed408();
 void Func_080f9010();
 
 void Func_080e47b8(s32 a0, s32 a1)
@@ -150,22 +149,22 @@ void Func_080e47b8(s32 a0, s32 a1)
         Func_080cd594(0);
     }
     *(volatile u16 *)0x04000052 = 0x1010;
-    Func_080e0524((s32)&Value_00000073, sprites, 0, 0);
-    Func_080e0524((s32)&Value_00000096, work, 1, 0);
-    Func_080e0524((s32)&Value_00000099, (void *)0x02010000, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000073, sprites, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000096, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000099, (void *)0x02010000, 1, 0);
     Func_080df9d0(0x02010000, (work + 0x5100), 40, 0x120);
     if (kind == 5 || kind == 23) {
         resource = (s32)&Value_0000007d;
     } else if (kind == 12) {
         resource = (s32)&Value_000000a9;
     } else if (kind == 6 || kind == 27) {
-        Func_080e0524((s32)&Value_000000ce, (void *)0x02010000, 1, 0);
-        Func_080e0524((s32)&Value_000000c4, (void *)0x02010c56, 1, 0);
+        Resource_LoadAndDecompress((s32)&Value_000000ce, (void *)0x02010000, 1, 0);
+        Resource_LoadAndDecompress((s32)&Value_000000c4, (void *)0x02010c56, 1, 0);
         goto L_080e4912;
     } else if (kind == 31 || kind == 8) {
         if (kind == 31) resource = (s32)&Value_00000079;
         else resource = (s32)&Value_000000c3;
-        Func_080e0524(resource, (void *)0x02010000, 1, 1);
+        Resource_LoadAndDecompress(resource, (void *)0x02010000, 1, 1);
         goto L_080e4912;
     } else if (kind == 14) {
         resource = (s32)&Value_0000006f;
@@ -179,10 +178,10 @@ void Func_080e47b8(s32 a0, s32 a1)
         resource = (s32)&Value_00000053;
     } else {
         if (kind != 11 && kind != 32)
-            Func_080e0524((s32)&Value_0000009e, (void *)0x02010000, 1, 0);
+            Resource_LoadAndDecompress((s32)&Value_0000009e, (void *)0x02010000, 1, 0);
         goto L_080e4912;
     }
-    Func_080e0524(resource, (void *)0x02010000, 1, 0);
+    Resource_LoadAndDecompress(resource, (void *)0x02010000, 1, 0);
     L_080e4912:;
     switch (kind) {
     case 0:
@@ -195,7 +194,7 @@ void Func_080e47b8(s32 a0, s32 a1)
     case 12:
     case 13:
     case 33:
-        Func_080e0524((s32)&Value_00000094, (void *)0x02013c56, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_00000094, (void *)0x02013c56, 1, 1);
         break;
     case 1:
     case 6:
@@ -206,7 +205,7 @@ void Func_080e47b8(s32 a0, s32 a1)
     case 30:
     case 31:
     case 32:
-        Func_080e0524((s32)&Value_00000090, (void *)0x02013c56, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_00000090, (void *)0x02013c56, 1, 1);
         break;
     case 2:
     case 14:
@@ -215,7 +214,7 @@ void Func_080e47b8(s32 a0, s32 a1)
     case 17:
     case 18:
     case 19:
-        Func_080e0524((s32)&Value_00000092, (void *)0x02013c56, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_00000092, (void *)0x02013c56, 1, 1);
         break;
     case 3:
     case 5:
@@ -227,10 +226,10 @@ void Func_080e47b8(s32 a0, s32 a1)
     case 25:
     case 34:
     case 35:
-        Func_080e0524((s32)&Value_0000008e, (void *)0x02013c56, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_0000008e, (void *)0x02013c56, 1, 1);
         break;
     case 100:
-        Func_080e0524((s32)&Value_00000092, (void *)0x02013c56, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_00000092, (void *)0x02013c56, 1, 1);
         break;
     }
     *(s32 *)((work + 0x7780)) = 2;
@@ -493,13 +492,13 @@ void Func_080e47b8(s32 a0, s32 a1)
         } while (v10 != 32);
     }
     if (kind == 11) {
-        Func_080e0524((s32)&Value_000000ab, work, 1, 1);
-        Func_080e0524((s32)&Value_000000ac, (void *)0x02010000, 1, 0);
+        Resource_LoadAndDecompress((s32)&Value_000000ab, work, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_000000ac, (void *)0x02010000, 1, 0);
         *(volatile u16 *)0x04000052 = 0xe10;
     }
     if (kind == 32) {
-        Func_080e0524((s32)&Value_000000ad, work, 1, 1);
-        Func_080e0524((s32)&Value_000000ae, (void *)0x02010000, 1, 0);
+        Resource_LoadAndDecompress((s32)&Value_000000ad, work, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_000000ae, (void *)0x02010000, 1, 0);
         *(volatile u16 *)0x04000052 = 0xe10;
     }
     if (kind != 7) {
@@ -875,7 +874,7 @@ void Func_080e47b8(s32 a0, s32 a1)
             Func_08002dd8(47);
             Func_08002dd8(46);
             record = Func_08004458();
-            Func_080ed408(47, 7, 7, (3 | *(u8 *)(0x080eedd0 + (record & 3))), 2);
+            BattleEffect_LoadWork(47, 7, 7, (3 | *(u8 *)(0x080eedd0 + (record & 3))), 2);
             p4 = *(s32 *)0x03001f0c;
             ((RectangleBlit)p4)(canvas, (*(u16 *)(0x080edebe + (s32)((s32)p8 << 1)) + 0x2010000), ((((rec8 << 3) >> 16) + (((s32)(*(s32 *)(source_screen)) / 2))) - (s32)((u32)*(u8 *)(0x080edeca + (s32)p8) >> 1)), ((((rec7 << 5) >> 16) - (s32)((u32)*(u8 *)(0x080eded0 + (s32)p8) >> 1)) + 56), *(u8 *)(0x080edeca + (s32)p8), *(u8 *)(0x080eded0 + (s32)p8));
             Func_08002dd8(47);
@@ -905,7 +904,7 @@ void Func_080e47b8(s32 a0, s32 a1)
                 v7 = (v7 - 104);
             } while (v7 > 104);
         }
-        Func_080ed408(47, 7, 7, 3, 2);
+        BattleEffect_LoadWork(47, 7, 7, 3, 2);
         p9 = (v11 + v7);
         p10b = (slot12 - 8);
         p4 = *(s32 *)0x03001f0c;
@@ -949,12 +948,12 @@ void Func_080e47b8(s32 a0, s32 a1)
         Func_08002dd8(46);
         if ((u32)(frame - 4) <= 19) {
             p5 = *(s32 *)(source_screen);
-            Func_080ed408(47, 7, 7, 3, 2);
+            BattleEffect_LoadWork(47, 7, 7, 3, 2);
             base6_3001e50 = 0x3001e50;
             p4 = *(s32 *)(base6_3001e50 + 188);
             ((RectangleBlit)p4)(canvas, 0x02010000, (((s32)(p5) / 2)) - 24, 48, 24, 48);
             Func_08002dd8(47);
-            Func_080ed408(47, 7, 7, 7, 2);
+            BattleEffect_LoadWork(47, 7, 7, 7, 2);
             p4 = *(s32 *)(base6_3001e50 + 188);
             ((RectangleBlit)p4)(canvas, 0x2010000, (((s32)(p5) / 2)), 48, 24, 48);
             Func_08002dd8(47);

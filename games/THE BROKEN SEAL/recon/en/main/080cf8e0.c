@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Battle-presentation sub-effect at 0x080cf8e0 (1556 bytes).  It belongs to
@@ -169,7 +170,6 @@ void Func_080cd594(s32 mode);
 void *Func_08002f40(s32 resource_id);   /* "get" in alchemy inspect */
 u32 Func_08005340(const void *source, void *destination);
 struct ActorObject **Func_080b5098(s32 member_id);
-s32 Func_080ed408(s32 resource_id, s32 a, s32 b, s32 c, s32 d);
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
 void Func_080f9010(s32 cue);
@@ -273,21 +273,21 @@ void BattleEffect_RunImpactBurst(struct EffectArgument *object, s32 variant)
         ((Shard *)0x02011C00)[i].frame = -1;
 
     if (object->direction == 0) {
-        Func_080ed408(46, 7, 7, 3, 2);
+        BattleEffect_LoadWork(46, 7, 7, 3, 2);
         state = Data_03001e50;
         rectangle[0] = *(void **)(state + 184);
         if (Data_080ee0b6[variant * 2] == 0)
-            Func_080ed408(47, 7, 7, 3, 3);
+            BattleEffect_LoadWork(47, 7, 7, 3, 3);
         else
-            Func_080ed408(47, 7, 7, 7, 2);
+            BattleEffect_LoadWork(47, 7, 7, 7, 2);
     } else {
-        Func_080ed408(46, 7, 7, 7, 2);
+        BattleEffect_LoadWork(46, 7, 7, 7, 2);
         state = Data_03001e50;
         rectangle[0] = *(void **)(state + 184);
         if (Data_080ee0b6[variant * 2] == 0)
-            Func_080ed408(47, 7, 7, 3, 3);
+            BattleEffect_LoadWork(47, 7, 7, 3, 3);
         else
-            Func_080ed408(47, 7, 7, 3, 2);
+            BattleEffect_LoadWork(47, 7, 7, 3, 2);
     }
     rectangle_slot = rectangle;
     rectangle_slot[1] = *(void **)(state + 188);

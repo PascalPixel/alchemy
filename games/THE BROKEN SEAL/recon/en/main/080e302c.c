@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Battle-presentation full-screen weather scene at 0x080e302c.  The single
@@ -36,7 +37,7 @@
  * games/THE BROKEN SEAL/raw/080072e4.s, four bytes per slot from base 0x080072e4, i.e.
  * indirect calls through whatever pointer the compiler kept in that slot.
  * Here they are exactly three distinct pointers: the IWRAM copy routine at
- * 0x03001388, and the two blit routines Func_080ed408 publishes into
+ * 0x03001388, and the two blit routines BattleEffect_LoadWork publishes into
  * heap_cache[7] / heap_cache[8] (0x03001f08 / 0x03001f0c, reached in the
  * reference through the 0x03001e50 base with +184 / +188, so they are spelled
  * that way here).  Modelling them as direct calls is what cost the previous
@@ -134,14 +135,12 @@ extern s8 Data_080eeda6[];
 extern u8 Data_080eedac[];
 
 void Func_080cd594(s32 mode);
-void Func_080e0524(s32 id, void *target, s32 flag_a, s32 flag_b);
 void *Func_08002f40(s32 id);
 void *Func_08009030(s32 kind);
 void Func_08009020(void *object, s32 index);
 void Func_08009008(
     void *object, struct Transform *transform, struct Pair *pair, s32 mode);
 void Func_08009038(void *object);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 u32 Func_08004458(void);
@@ -242,7 +241,7 @@ void Func_080e302c(void *object)
             + (M2C_FIELD(STATE, s32 *, 4) * 3)]
         << 8;
 
-    Func_080e0524((s32)&Value_0000007b, (void *)0x02010000, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_0000007b, (void *)0x02010000, 1, 0);
     ((CopyFn)0x03001388)(
         (void *)0x05000000, Func_08002f40((s32)&Value_0000007c), 0x80);
 
@@ -352,7 +351,7 @@ void Func_080e302c(void *object)
         h_tbl++;
     } while (w_tbl != tbl_end);
 
-    Func_080e0524((s32)&Value_00000073, sprite_src, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000073, sprite_src, 0, 0);
 
     /* Eleven scene objects, kept in work + 0x77d8. */
     slot = 0x77D8;
@@ -375,9 +374,9 @@ void Func_080e302c(void *object)
         slot += 4;
     } while (i != 0xB);
 
-    Func_080ed408(0x2E, 7, 7, 3, 2);
+    BattleEffect_LoadWork(0x2E, 7, 7, 3, 2);
     blit_a = (BlitFn)Data_03001e50[46];
-    Func_080ed408(0x2F, 7, 7, 7, 2);
+    BattleEffect_LoadWork(0x2F, 7, 7, 7, 2);
 
     reg = (u16 *)0x04000050;
     *reg++ = 0x3F46;

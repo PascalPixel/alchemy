@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Battle-presentation sub-effect at 0x080dc6bc, transplant-assigned from the
@@ -22,7 +23,7 @@
  * [member*8, member*8+40) is open, walks that member's six-particle group
  * (base index member*6 into the shared table) and draws each one through
  * one of two rectangle-callback function pointers cached from heap kinds 46
- * and 47 (Func_080ed408), selecting the callback and source-sprite-sheet
+ * and 47 (BattleEffect_LoadWork), selecting the callback and source-sprite-sheet
  * offset by whether it is the group's sixth (slot 5) particle or one of the
  * other five.
  *
@@ -59,9 +60,7 @@ extern u8 Value_0000006c;
 extern u8 Value_000000bb;
 
 void Func_080cd594(s32 mode);
-void Func_080e0524(s32 effect_id, void *target, s32 flag_a, s32 flag_b);
 void *Func_08002f40(s32 id);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 u32 Func_08004458(void);
 s32 Func_080022fc(s32 a, s32 b);
 s32 Func_08002322(s32 angle);
@@ -101,14 +100,14 @@ void Func_080dc6bc(void *object)
     draw_destination = *cursor;
     M2C_FIELD(work, void **, 0x7828) = object;
     Func_080cd594(0);
-    Func_080e0524((s32)&Value_0000009e, work, 1, 1);
-    Func_080e0524((s32)&Value_0000006c, (u8 *)work + 0x1B00, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_0000009e, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_0000006c, (u8 *)work + 0x1B00, 0, 0);
     palette = Func_08002f40((s32)&Value_000000bb);
     status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
 
-    status = Func_080ed408(46, 7, 7, 3, 3);
+    status = BattleEffect_LoadWork(46, 7, 7, 3, 3);
     rectangle_a = heap_cache[7];
-    status = Func_080ed408(47, 7, 7, 3, 2);
+    status = BattleEffect_LoadWork(47, 7, 7, 3, 2);
     rectangle_b = heap_cache[8];
 
     particle = (Particle *)((u8 *)work + 0x7080);

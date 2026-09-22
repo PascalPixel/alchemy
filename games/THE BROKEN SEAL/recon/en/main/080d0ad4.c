@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "EFFECT_STEP.H"
+#include "BATTLE_EFX.H"
 
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 
@@ -8,7 +9,6 @@ void *Func_08002f40(s32 resource);
 u32 Func_08005340(const void *source, void *destination);
 void **Func_080b5098(s32 member_id);
 void Func_080e396c(s32 member_id, struct EffectPosition *result);
-s32 Func_080ed408(s32 id, s32 width, s32 height, s32 mode, s32 variant);
 
 typedef void (*BattleEffectDrawFn)(
     void *destination,
@@ -124,9 +124,9 @@ loop_3:
             Func_080b5078(M2C_FIELD(temp_r3_135, s32 *, 8), M2C_FIELD(temp_r3_135, s16 *, 0x24), 0x10, 0);
         }
         Func_080d40ec(sp3C, 0xAAAB, 0x5555, 0);
-        Func_080ed408(0x2E, 7, 7, 3, 2);
+        BattleEffect_LoadWork(0x2E, 7, 7, 3, 2);
         sp34 = (BattleEffectDrawFn)Data_03001e50[46];
-        Func_080ed408(0x2F, 7, 7, 7, 2);
+        BattleEffect_LoadWork(0x2F, 7, 7, 7, 2);
         sp38 = (BattleEffectDrawFn)Data_03001e50[47];
         if ((sp3C > 0x10) && !(0xF & sp3C)) {
             M2C_FIELD(sp44, s32 *, 0x7784) = (s32) (M2C_FIELD(sp44, s32 *, 0x7784) + 0x01010101);

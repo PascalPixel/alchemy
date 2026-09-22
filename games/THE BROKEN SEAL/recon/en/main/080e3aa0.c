@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 #define BattlePres_RunBeamScene Func_080e3aa0
 
@@ -70,7 +71,7 @@
  * are entries of the `_call_via_rN` trampoline bundle at
  * games/THE BROKEN SEAL/raw/080072e4.s, i.e. indirect calls through whatever pointer
  * the compiler kept in r3 and r4.  Here they are the IWRAM copy routine
- * at 0x03001388 and the two blit entries Func_080ed408 publishes into
+ * at 0x03001388 and the two blit entries BattleEffect_LoadWork publishes into
  * heap_cache[46] and heap_cache[47], so they are spelled as calls through
  * typed pointers.
  *
@@ -228,11 +229,10 @@ void Func_080b50e8(s32 id);
 void Func_080c9048(void);
 void Func_080cdd14(void);   /* BattleFx_SetTransitionFlagAndDisplay */
 void Func_080cdd58(void);
-void Func_080e0524(s32 id, void *target, s32 flag_a, s32 flag_b); /* load_and_decompress */
+void Resource_LoadAndDecompress(s32 id, void *target, s32 flag_a, s32 flag_b); /* load_and_decompress */
 void Func_080e38b8(struct Spark *spark, s32 a, s32 b); /* advance_with_gravity_3d */
 void Func_080e3958(s32 value, s32 *out);             /* apply_animation_and_y_offset */
 void Func_080e396c(s32 value, s32 *out);             /* apply_step_and_y_offset */
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 
 void BattlePres_RunBeamScene(void *object)
 {
@@ -277,19 +277,19 @@ void BattlePres_RunBeamScene(void *object)
     /* Register the two rectangle blits for the beam body. */
     if (kind == 5) {
         if (M2C_FIELD(STATE, s32 *, 4) == 0) {
-            Func_080ed408(46, 7, 7, 11, 3);
-            Func_080ed408(47, 7, 7, 11, 2);
+            BattleEffect_LoadWork(46, 7, 7, 11, 3);
+            BattleEffect_LoadWork(47, 7, 7, 11, 2);
         } else {
-            Func_080ed408(46, 7, 7, 15, 3);
-            Func_080ed408(47, 7, 7, 15, 2);
+            BattleEffect_LoadWork(46, 7, 7, 15, 3);
+            BattleEffect_LoadWork(47, 7, 7, 15, 2);
         }
     } else {
         if (M2C_FIELD(STATE, s32 *, 4) == 0) {
-            Func_080ed408(46, 7, 7, 3, 3);
-            Func_080ed408(47, 7, 7, 3, 2);
+            BattleEffect_LoadWork(46, 7, 7, 3, 3);
+            BattleEffect_LoadWork(47, 7, 7, 3, 2);
         } else {
-            Func_080ed408(46, 7, 7, 7, 3);
-            Func_080ed408(47, 7, 7, 7, 2);
+            BattleEffect_LoadWork(46, 7, 7, 7, 3);
+            BattleEffect_LoadWork(47, 7, 7, 7, 2);
         }
     }
     blit[0] = (BlitFn)Data_03001e50[46];
@@ -298,18 +298,18 @@ void BattlePres_RunBeamScene(void *object)
 
     /* The beam graphic itself, one resource per scene selector. */
     if (kind == 4) {
-        Func_080e0524((s32)&Value_0000006b, work, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_0000006b, work, 1, 1);
     } else if (kind == 3) {
-        Func_080e0524((s32)&Value_000000c5, work, 0, 0);
+        Resource_LoadAndDecompress((s32)&Value_000000c5, work, 0, 0);
     } else {
         switch (kind) {
         case 0:
         case 1:
         case 5:
-            Func_080e0524((s32)&Value_000000b5, work, 1, 1);
+            Resource_LoadAndDecompress((s32)&Value_000000b5, work, 1, 1);
             break;
         case 2:
-            Func_080e0524((s32)&Value_000000b6, work, 1, 1);
+            Resource_LoadAndDecompress((s32)&Value_000000b6, work, 1, 1);
             break;
         }
     }
@@ -322,8 +322,8 @@ void BattlePres_RunBeamScene(void *object)
             Func_08002f40((s32)&Value_0000004a), 0x80);
     }
     Func_080030f8(1);
-    Func_080e0524((s32)&Value_00000076, sprite_src, 0, 0);
-    Func_080e0524((s32)&Value_00000099, (void *)0x02010000, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000076, sprite_src, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000099, (void *)0x02010000, 1, 0);
     M2C_FIELD(work, s32 *, 0x7780) = 2;
     M2C_FIELD(work, s32 *, 0x7784) = 50;
     Func_080041d8(0x080CD261, 0x480);

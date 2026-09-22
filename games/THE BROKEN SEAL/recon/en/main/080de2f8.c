@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 #define BattleEffect_RunSparkDescent Func_080de2f8
 
@@ -13,7 +14,7 @@
  * the same Func_080cd594(0) / Func_080041d8(0x080CD261, 0x480) /
  * Func_08004278(0x080CD261) / Func_08002dd8(46) bracket, and the same
  * Data_03001e50[46] / Data_03001e50[47] blit-callback slots that
- * Func_080ed408(id, ...) installs and Func_08002dd8(id) releases.
+ * BattleEffect_LoadWork(id, ...) installs and Func_08002dd8(id) releases.
  *
  * This owner is the callee 080dea70.c already declares as
  * `void Func_080de2f8(void *object, s32 a, s32 b, s32 c, s32 *out_x,
@@ -109,8 +110,6 @@ typedef void (*DrawRectangleFn)(
 void Func_080cd594(s32 mode);
 void *Func_08002f40(s32 resource_id);
 u32 Func_08005340(const void *source, void *destination);
-void Func_080e0524(s32 resource_id, void *destination, s32 a, s32 b);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 void **Func_080b5098(s32 member_id);
 u32 Func_08004458(void);
 s32 Func_08002322(s32 angle);
@@ -210,14 +209,14 @@ void BattleEffect_RunSparkDescent(
     palette = Func_08002f40(palette_id);
     ((WordCopyFn) 0x03001388)((void *)(160 << 19), palette, 128);
     Func_08005340((s8 *)palette + 128, work);
-    Func_080e0524((s32) &Value_00000073, extra_target, 0, 0);
+    Resource_LoadAndDecompress((s32) &Value_00000073, extra_target, 0, 0);
 
     if (mode == 1) {
-        Func_080ed408(46, 7, 7, 7, 3);
-        Func_080ed408(47, 7, 7, 7, 2);
+        BattleEffect_LoadWork(46, 7, 7, 7, 3);
+        BattleEffect_LoadWork(47, 7, 7, 7, 2);
     } else {
-        Func_080ed408(46, 7, 7, 3, 3);
-        Func_080ed408(47, 7, 7, 3, 2);
+        BattleEffect_LoadWork(46, 7, 7, 3, 3);
+        BattleEffect_LoadWork(47, 7, 7, 3, 2);
     }
     flash_cb = (DrawRectangleFn) Data_03001e50[47];
     draw_cb = (DrawRectangleFn) Data_03001e50[46];

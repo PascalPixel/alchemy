@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Battle-presentation scene driver for the 0x03001EEC "battle work" subsystem,
@@ -97,10 +98,8 @@ void Func_080dbb24(s32 a, s32 b, s32 c);
 void *Func_08009030(s32 id);
 s32 Func_080022fc(s32 a, s32 b);
 void Func_08009020(void *object, s32 value);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 void Func_080030f8(s32 frames);
 void Func_080b5040(s32 a, s32 b, s32 c);
-void Func_080e0524(s32 id, void *dest, s32 a, s32 b);
 s32 Func_08004458(void);
 void Func_080f9010(s32 id);
 void Func_08009008(s32 handle, const s32 *pos, const s32 *clip, s32 mode);
@@ -188,9 +187,9 @@ void Func_080e823c(void *object)
     }
 
     gfx = (u8 *)0x03001E50;
-    Func_080ed408(46, 7, 7, 3, 2);
+    BattleEffect_LoadWork(46, 7, 7, 3, 2);
     rectangle[0] = *(void **)(gfx + 184);
-    Func_080ed408(47, 7, 7, 3, 3);
+    BattleEffect_LoadWork(47, 7, 7, 3, 3);
     drawable = *(void **)(gfx + 188);
     rectangle_slot = rectangle;
     rectangle_slot[1] = drawable;
@@ -204,8 +203,8 @@ void Func_080e823c(void *object)
     Func_080030f8(1);
     Func_080b5040(1, (s32)&Value_0000003c, 0);
     Func_080cd104(1, 1);
-    Func_080e0524((s32)&Value_00000073, sprite_sheet, 0, 0);
-    Func_080e0524((s32)&Value_000000c0, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_00000073, sprite_sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_000000c0, work, 1, 1);
     *(u16 *)0x04000000 = 0x7741;
     *(u16 *)0x04000020 = 0x80;
     *(u16 *)0x04000052 = 0x1010;

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /* Runs the palette-ramp battle presentation for one effect mode. */
 #define M2C_FIELD(expr, type_ptr, offset) \
@@ -20,7 +21,6 @@ extern const u8 Data_080eea20[];
 extern const u8 Data_080eea2c[];
 
 void Func_080cd594(s32 mode);
-void Func_080e0524(s32 effect_id, void *target, s32 flag_a, s32 flag_b);
 void *Func_08002f40(s32 id);
 s32 Func_080041d8(s32 callback, s32 interval);
 void Func_08004278(s32 callback);
@@ -74,9 +74,9 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
     M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x100;
 
     if (mode == 0) {
-        Func_080e0524((s32) &Value_0000009c, work, 1, 1);
+        Resource_LoadAndDecompress((s32) &Value_0000009c, work, 1, 1);
     } else {
-        Func_080e0524((s32) &Value_0000009b, work, 1, 1);
+        Resource_LoadAndDecompress((s32) &Value_0000009b, work, 1, 1);
     }
 
     if (mode == 0) {
@@ -89,7 +89,7 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
     palette = Func_08002f40(palette_id);
     ((WordCopyFn) 0x03001388)((void *) 0x05000000, palette, 128);
 
-    Func_080e0524((s32) &Value_0000009d, (u8 *) work + 0x2580, 0, 0);
+    Resource_LoadAndDecompress((s32) &Value_0000009d, (u8 *) work + 0x2580, 0, 0);
 
     {
         s32 dst_offset;

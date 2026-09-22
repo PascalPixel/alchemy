@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Draft for the battle-presentation sub-effect at 0x080e698c.
@@ -42,7 +43,6 @@ typedef void (*DrawRectangleFn)(
     void *dest, const void *src, s32 x, s32 y, s32 width, s32 height);
 
 void Func_080cd594(s32 mode);
-void Func_080e0524(s32 effect_id, void *target, s32 flag_a, s32 flag_b);
 void Func_080cef64(s32 flag, DrawRectangleFn *out_pair);
 void **Func_080b5098(s32 member_id);
 s32 Func_080022ec(s32 numerator, s32 denominator);
@@ -105,9 +105,9 @@ s32 Func_080e698c(void *object)
     M2C_FIELD(work, void **, 0x7828) = object;
     Func_080cd594(0);
     M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x100;
-    Func_080e0524((s32)&Value_00000073, extra_target, 0, 0);
-    Func_080e0524((s32)&Value_00000061, work, 1, 1);
-    Func_080e0524((s32)&Value_0000006d, (u8 *)work + 0x3E80, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000073, extra_target, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000061, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_0000006d, (u8 *)work + 0x3E80, 1, 0);
     Func_080cef64(
         M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4), draw_pair);
 

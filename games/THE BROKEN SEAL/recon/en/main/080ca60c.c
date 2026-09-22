@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Battle-presentation sub-effect at 0x080ca60c, part of the 0x03001eec
@@ -17,7 +18,7 @@
  * mask enabling the per-frame passes, record[3] chooses the palette
  * resource, record[5] is a blit parameter and record[6] is the frame count.
  *
- * Setup opens the resources through Func_080e0524, copies a palette to
+ * Setup opens the resources through Resource_LoadAndDecompress, copies a palette to
  * 0x05000000 through the generic word-copy helper (Func_080072f0 taking the
  * 0x03001388 routine as a trailing callback argument -- Func_080072f0 is the
  * r3 slot of the _call_via_rN trampoline at games/THE BROKEN SEAL/raw/080072e4.s,
@@ -83,7 +84,6 @@ extern u8 Value_000000cc;
 extern u8 Value_000000ce;
 
 void Func_080cd594(s32 mode);
-void Func_080e0524(s32 effect_id, void *target, s32 flag_a, s32 flag_b);
 void *Func_08002f40(s32 id);
 void Func_080072f0(void *dest, void *src, s32 size, WordCopyFn copier);
 void **Func_080b5098(s32 member_id);
@@ -91,7 +91,6 @@ void Func_080e3980(s32 member_id, s32 *out);
 void Func_080e396c(s32 member_id, s32 *out);
 u32 Func_08004458(void);
 s32 Func_080041d8(void *callback, s32 interval);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 s32 Func_080022ec(s32 numerator, s32 denominator);
 s32 Func_080022fc(s32 numerator, s32 denominator);
 void Func_08002dd8(s32 id);
@@ -160,13 +159,13 @@ void Func_080ca60c(void *object, s32 kind)
 
     *(u16 *)0x04000052 = 0x1010;
 
-    Func_080e0524((s32)&Value_00000073, extra_target, 0, 0);
-    Func_080e0524((s32)&Value_000000ce, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000073, extra_target, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_000000ce, work, 1, 0);
 
     if (Data_080edf04[kind * 7] == 0) {
-        Func_080e0524((s32)&Value_000000c5, (s8 *)work + (200 << 4), 0, 0);
+        Resource_LoadAndDecompress((s32)&Value_000000c5, (s8 *)work + (200 << 4), 0, 0);
     } else {
-        Func_080e0524((s32)&Value_000000c6, (s8 *)work + (200 << 4), 0, 0);
+        Resource_LoadAndDecompress((s32)&Value_000000c6, (s8 *)work + (200 << 4), 0, 0);
     }
 
     switch (Data_080edf04[kind * 7 + 3]) {
@@ -193,7 +192,7 @@ void Func_080ca60c(void *object, s32 kind)
     Func_080072f0((void *)(160 << 19), Func_08002f40(palette_id), 128,
         (WordCopyFn)0x03001388);
 
-    Func_080e0524((s32)&Value_0000009e, (s8 *)work + (200 << 6), 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_0000009e, (s8 *)work + (200 << 6), 1, 0);
 
     n = 0;
     member_off = 36;
@@ -293,7 +292,7 @@ void Func_080ca60c(void *object, s32 kind)
 
                 if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4)
                         == 1) {
-                    Func_080ed408(46, 7, 7, 7, 2);
+                    BattleEffect_LoadWork(46, 7, 7, 7, 2);
                     ((DrawRectangleFn)Data_03001e50[46])(draw_destination,
                         (s8 *)work + Data_080edf64[cell],
                         ((base_pos[0] / 2) - (Data_080edf70[cell] >> 1)
@@ -301,7 +300,7 @@ void Func_080ca60c(void *object, s32 kind)
                         base_pos[1] - (Data_080edf5e[cell] >> 1),
                         Data_080edf58[cell], Data_080edf5e[cell]);
                 } else {
-                    Func_080ed408(46, 7, 7, 3, 2);
+                    BattleEffect_LoadWork(46, 7, 7, 3, 2);
                     ((DrawRectangleFn)Data_03001e50[46])(draw_destination,
                         (s8 *)work + Data_080edf64[cell],
                         ((base_pos[0] / 2) + (Data_080edf70[cell] >> 1)) - 8,
@@ -376,13 +375,13 @@ void Func_080ca60c(void *object, s32 kind)
                 idx = Data_080edf76[phase_index];
             }
 
-            Func_080ed408(46, 7, 7, 3, Data_080edf04[kind * 7 + 5]);
+            BattleEffect_LoadWork(46, 7, 7, 3, Data_080edf04[kind * 7 + 5]);
             ((DrawRectangleFn)Data_03001e50[46])(draw_destination,
                 ((s8 *)work + (200 << 4)) + (idx * 27) * 32,
                 (base_pos[0] / 2) - 18, 56, 18, 48);
             Func_08002dd8(46);
 
-            Func_080ed408(46, 7, 7, 7, Data_080edf04[kind * 7 + 5]);
+            BattleEffect_LoadWork(46, 7, 7, 7, Data_080edf04[kind * 7 + 5]);
             ((DrawRectangleFn)Data_03001e50[46])(draw_destination,
                 ((s8 *)work + (200 << 4)) + (idx * 27) * 32,
                 base_pos[0] / 2, 56, 18, 48);
@@ -453,7 +452,7 @@ void Func_080ca60c(void *object, s32 kind)
                     - (Data_080edeca[frame & 3] >> 1);
                 y = (base_pos[1] - ((radius * Func_0800231c(angle)) >> 17))
                     - (Data_080eded0[frame & 3] >> 1);
-                Func_080ed408(47, 7, 7,
+                BattleEffect_LoadWork(47, 7, 7,
                     3 | Data_080edf7b[Func_08004458() & 3], 3);
                 ((DrawRectangleFn)Data_03001e50[47])(draw_destination,
                     (s8 *)work + Data_080edebe[frame & 3], x, y,
@@ -466,9 +465,9 @@ void Func_080ca60c(void *object, s32 kind)
         Func_080049ac();
         Func_080051d8(facing, look_target);
 
-        Func_080ed408(46, 7, 7, 3, 2);
+        BattleEffect_LoadWork(46, 7, 7, 3, 2);
         blit[0] = (DrawRectangleFn)Data_03001e50[46];
-        Func_080ed408(47, 7, 7, 3, 2);
+        BattleEffect_LoadWork(47, 7, 7, 3, 2);
         blit[1] = (DrawRectangleFn)Data_03001e50[47];
 
         pass = 0;

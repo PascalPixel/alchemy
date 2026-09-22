@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "EFFECT_STEP.H"
+#include "BATTLE_EFX.H"
 
 #define BattleEffect_RunSparkTravel Func_080d5e54
 
@@ -82,7 +83,7 @@
  * psynergy inspect allocator), not another source spelling.
  *
  * Call targets carry the names "alchemy inspect" resolves and that the owner
- * register already holds.  The names it prints for Func_080e0524
+ * register already holds.  The names it prints for Resource_LoadAndDecompress
  * (load_and_decompress), Func_08004458 (random_16), Func_080d6888
  * (update_members), Func_080e3944 (apply_base_and_y_offset) and Func_080e38b8
  * (advance_with_gravity_3d) are not registered symbols, so those keep their
@@ -122,7 +123,6 @@ extern const u16 Data_080ede84[];
 extern const u8 Data_080ede96[];
 
 void Func_080cd594(s32 mode);
-void Func_080e0524(s32 id, void *target, s32 flag_a, s32 flag_b);
 void BattleFx_FetchRectangleBlitters(s32 alternate, void **output);
 void **Func_080b5098(s32 member_id);
 u32 Func_08004458(void);
@@ -190,8 +190,8 @@ s32 BattleEffect_RunSparkTravel(void *object)
     graphics = heap_cache[2];
     STATE = object;
     Func_080cd594(0);
-    Func_080e0524((s32) &Value_00000092, work, 1, 1);
-    Func_080e0524((s32) &Value_00000073, graphics, 0, 0);
+    Resource_LoadAndDecompress((s32) &Value_00000092, work, 1, 1);
+    Resource_LoadAndDecompress((s32) &Value_00000073, graphics, 0, 0);
     BattleFx_FetchRectangleBlitters(M2C_FIELD(STATE, s32 *, 4) ^ 1, blit);
     actor = *Func_080b5098(M2C_FIELD(STATE, s32 *, 8));
     goal = *Func_080b5098(M2C_FIELD(STATE, s16 *, 36));
@@ -331,7 +331,7 @@ s32 BattleEffect_RunSparkTravel(void *object)
         step++;
     } while (i != 512);
 
-    Func_080e0524((s32) &Value_000000ba, graphics, 0, 0);
+    Resource_LoadAndDecompress((s32) &Value_000000ba, graphics, 0, 0);
 
     if (M2C_FIELD(STATE, s32 *, 20) * 8 + 72 != 0) {
         frame = 0;

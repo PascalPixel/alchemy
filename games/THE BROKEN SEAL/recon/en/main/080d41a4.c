@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Battle-presentation sub-effect at 0x03001eec "battle work" subsystem
@@ -42,10 +43,8 @@ extern u16 Data_080ede48[];
 void Func_080cd594(s32 mode);
 void *Func_08002f40(s32 id);
 void Func_080072f0(s32 a, s32 b, s32 c, s32 target);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
-void Func_080e0524(s32 id, void *work, s32 a, s32 b);
 s32 Func_08004458(void);
 s32 Func_08002322(s32 angle);
 s32 Func_0800231c(s32 angle);
@@ -81,9 +80,9 @@ void Func_080d41a4(void *object)
     M2C_FIELD(work, void **, 0x7828) = object;
     Func_080cd594(1);
     *(u16 *)0x04000052 = 0x1010;
-    Func_080ed408(46, 7, 7, 3, 3);
+    BattleEffect_LoadWork(46, 7, 7, 3, 3);
     rectangle[0] = heap_cache[7];
-    Func_080ed408(47, 7, 7, 7, 2);
+    BattleEffect_LoadWork(47, 7, 7, 7, 2);
     {
         void *second_rectangle;
 
@@ -91,8 +90,8 @@ void Func_080d41a4(void *object)
         rectangle_slot = rectangle;
         rectangle_slot[1] = second_rectangle;
     }
-    Func_080e0524((s32)&Value_000000d1, work, 1, 1);
-    Func_080e0524((s32)&Value_00000073, sprite_sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_000000d1, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_00000073, sprite_sheet, 0, 0);
     if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x18) != 2) {
         void *palette = Func_08002f40((s32)&Value_00000060);
         Func_080072f0(0x05000000, (s32)palette, 128, 0x03001388);

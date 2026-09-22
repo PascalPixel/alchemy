@@ -1,5 +1,6 @@
 #include "shared-aggregates.h"
 #include "EFFECT_STEP.H"
+#include "BATTLE_EFX.H"
 
 /* Only the m2c spellings this draft actually uses. */
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
@@ -95,9 +96,9 @@ void Func_080d2464(void *arg0, s32 arg1) {
     Func_080cd594(0);
     *(s16 *)0x04000052 = 0x1010;
     *(s16 *)0x0400000C = 0x784;
-    Func_080ed408(0x2E, 7, 7, 3, 2);
+    BattleEffect_LoadWork(0x2E, 7, 7, 3, 2);
     sp28 = *(s32 *)(graphics_globals + 0x18);
-    Func_080ed408(0x2F, 7, 7, 3, 3);
+    BattleEffect_LoadWork(0x2F, 7, 7, 3, 3);
     sp2C = *(s32 *)(graphics_globals + 0x1C);
     temp_r0_59 = Func_08002f40(0x7D);
     copy((void *)0x05000000, temp_r0_59, 0x80);

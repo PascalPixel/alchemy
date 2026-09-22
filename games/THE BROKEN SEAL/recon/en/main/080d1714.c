@@ -1,6 +1,7 @@
 #include "B5_CONTEXT.H"
 #include "BATTLE_TYPES.H"
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Battle-presentation scene at 0x080d1714, a 400-frame sequence driven from
@@ -141,7 +142,6 @@ extern u8 Data_080ee17a[];
 extern u16 Data_080ee17e[];
 
 void Func_080cd594(s32 mode);
-s32 Func_080ed408(s32, s32, s32, s32, s32);
 u8 *Func_08002f40(s32 resource_id);
 void Func_08005340(const void *source, void *destination);
 s32 Func_080041d8(void (*callback)(void), s32 interval);
@@ -225,9 +225,9 @@ void Func_080d1714(struct EffectArgument *argument)
     runtime->argument = argument;
 
     Func_080cd594(0);
-    Func_080ed408(46, 7, 7, 3, 2);
+    BattleEffect_LoadWork(46, 7, 7, 3, 2);
     draw_rectangle = (DrawRectangle)cells[6];
-    Func_080ed408(47, 7, 7, 3, 3);
+    BattleEffect_LoadWork(47, 7, 7, 3, 3);
     draw_rectangle_alt = (DrawRectangle)cells[7];
 
     tbl = Func_08002f40((s32)&Value_00000082);

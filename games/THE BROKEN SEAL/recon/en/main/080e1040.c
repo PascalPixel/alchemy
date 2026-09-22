@@ -1,4 +1,5 @@
 #include "types.h"
+#include "BATTLE_EFX.H"
 
 #define Func_080e1040 Func_080e1040
 
@@ -23,11 +24,10 @@ void Func_080cd594();
 void Func_080cdbc0();
 void Func_080d6888();
 void Func_080de2f8();
-void Func_080e0524();
 void Func_080e155c();
 s32 Func_080e3944();
 void Func_080e46f0();
-void Func_080ed408();
+void BattleEffect_LoadWork();
 void Func_080f9010();
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -105,13 +105,13 @@ void Func_080e1040(s32 a0, s32 a1)
     Call6(Func_080de2f8, a0, 0, *(s32 *)(*(s32 *)((0x7828 + p9)) + 4), 2, slot56, slot52);
     *(u16 *)0x04000052 = 0x1010;
     if (*(s32 *)(*(s32 *)((0x7828 + p9)) + 4) == 1) {
-        Func_080ed408(46, 7, 7, 7, 2);
+        BattleEffect_LoadWork(46, 7, 7, 7, 2);
     } else {
-        Func_080ed408(46, 7, 7, 3, 2);
+        BattleEffect_LoadWork(46, 7, 7, 3, 2);
     }
     slot32 = *(s32 *)0x03001f08;
-    Func_080e0524((s32)Data_000000a7, p9, 1, 0);
-    Func_080e0524((s32)Data_00000094, (0x65c0 + p9), 1, 1);
+    Resource_LoadAndDecompress((s32)Data_000000a7, p9, 1, 0);
+    Resource_LoadAndDecompress((s32)Data_00000094, (0x65c0 + p9), 1, 1);
     *(s32 *)((0x7780 + p9)) = 2;
     *(s32 *)((0x7784 + p9)) = 75;
     Call2(Func_080041d8, 0x80cd261, 0x480);
@@ -154,9 +154,9 @@ void Func_080e1040(s32 a0, s32 a1)
             v5 = ((v5 - (slot40 << 1)) + 32);
         }
         if (*(s32 *)(*(s32 *)((0x7828 + p9)) + 4) == 1) {
-            Func_080ed408(47, 7, 7, 7, 3);
+            BattleEffect_LoadWork(47, 7, 7, 7, 3);
         } else {
-            Func_080ed408(47, 7, 7, 3);
+            BattleEffect_LoadWork(47, 7, 7, 3);
         }
         if (slot40 <= 3) {
             p4 = *(s32 *)0x03001f0c;
@@ -208,7 +208,7 @@ void Func_080e1040(s32 a0, s32 a1)
             v7 = (slot8 + 0x7400);
             v11 = none;
             do {
-                Func_080ed408(47, 7, 7, *(s32 *)(v7 + 16), 2);
+                BattleEffect_LoadWork(47, 7, 7, *(s32 *)(v7 + 16), 2);
                 slot36 = *(s32 *)0x03001f0c;
                 if ((4 & *(s32 *)(v7 + 16)) != 0) {
                     v3 = (((s32)((s32)p10 - *(u8 *)(0x080eec74 + *(s32 *)(v7 + 12))) - *(u8 *)(0x080eec98 + *(s32 *)(v7 + 12))) + 24);

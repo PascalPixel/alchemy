@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Draft for the battle-presentation sub-effect at 0x080e0564.
@@ -9,7 +10,7 @@
  * the same 0x03001eec "battle work" subsystem already partly recovered in
  * games/THE BROKEN SEAL/recon/en/main/080e7404.c, 080d59b0.c, 080d82b0.c, 080dc1ec.c and
  * 080e01e4.c.  This owner combines the template's direct/inline
- * Func_080ed408(46,...)/Func_080ed408(47,...) + heap_cache[7]/heap_cache[8]
+ * BattleEffect_LoadWork(46,...)/BattleEffect_LoadWork(47,...) + heap_cache[7]/heap_cache[8]
  * "rectangle" readback (rather than 080e01e4's Func_080cef64 helper) with
  * 080e01e4's 96-pass outer loop / 512-slot shared particle pool shape.
  *
@@ -20,7 +21,7 @@
  * either address in the retained assembly is an indirect call through
  * whatever DrawRectangleFn pointer the compiler most recently loaded into
  * that register -- here always one of the two "rectangle" pointers read
- * back from heap_cache[7]/heap_cache[8] right after the Func_080ed408 calls,
+ * back from heap_cache[7]/heap_cache[8] right after the BattleEffect_LoadWork calls,
  * matching the immediate `ldr r4,[sp,#28]` / `ldr r7,[sp,#24]` right before
  * each such `bl` in games/THE BROKEN SEAL/raw/080e0564.s.
  */
@@ -31,8 +32,6 @@ typedef void (*DrawRectangleFn)(
     void *dest, void *src, s32 x, s32 y, u32 w, s32 h);
 
 void Func_080cd594(s32 mode);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
-void Func_080e0524(s32 effect_id, void *target, s32 flag_a, s32 flag_b);
 s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 void Func_08002dd8(s32 id);
@@ -77,14 +76,14 @@ void Func_080e0564(void *object)
     Func_080cd594(0);
     M2C_FIELD((void *)0x04000052, s16 *, 0) = 0x1010;
 
-    Func_080ed408(46, 7, 7, 11, 2);
-    Func_080ed408(47, 7, 7, 3, 3);
+    BattleEffect_LoadWork(46, 7, 7, 11, 2);
+    BattleEffect_LoadWork(47, 7, 7, 3, 3);
     rectangle_a = heap_cache[7];
     rectangle_b = heap_cache[8];
 
-    Func_080e0524((s32) &Value_00000073, extra_target, 0, 0);
-    Func_080e0524((s32) &Value_00000094, work, 1, 1);
-    Func_080e0524((s32) &Value_0000006f, (u8 *) work + 0x2F8, 1, 0);
+    Resource_LoadAndDecompress((s32) &Value_00000073, extra_target, 0, 0);
+    Resource_LoadAndDecompress((s32) &Value_00000094, work, 1, 1);
+    Resource_LoadAndDecompress((s32) &Value_0000006f, (u8 *) work + 0x2F8, 1, 0);
 
     M2C_FIELD(work, s32 *, 0x7780) = 2;
     M2C_FIELD(work, s32 *, 0x7784) = 75;

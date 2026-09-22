@@ -1,4 +1,5 @@
 #include "shared-aggregates.h"
+#include "BATTLE_EFX.H"
 
 /* Only the m2c spellings this draft actually uses. */
 typedef s32 M2C_UNK;
@@ -126,8 +127,8 @@ void BattleEffectA(s32 arg0, u32 arg1) {
     } else {
         sp2C = 1;
     }
-    Func_080e0524(0x73, sp38, 0, 0);
-    Func_080e0524(0xBA, (u32) sp48, 0, 0);
+    Resource_LoadAndDecompress(0x73, sp38, 0, 0);
+    Resource_LoadAndDecompress(0xBA, (u32) sp48, 0, 0);
     if ((arg1 <= 1U) || (arg1 == 3) || (arg1 == 4) || (arg1 == 5)) {
         if (M2C_FIELD(M2C_FIELD(sp48, void **, 0x7828), s32 *, 0x18) == 0) {
             var_r0_141 = 0xB3;

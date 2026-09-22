@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Battle-presentation sub-effect at 0x080dd2c4, a sibling of
@@ -7,14 +8,14 @@
  * cursor, the same M2C_FIELD(expr,type_ptr,offset) struct-field convention,
  * the same "object" argument struct (field 4 a mode flag, field 0x14 the
  * member count, field 0x24 the per-member id array stride 2) and the same
- * DrawRectangleFn slot_pair[2] pair sourced from Func_080ed408(46,...)
- * / Func_080ed408(47,...).
+ * DrawRectangleFn slot_pair[2] pair sourced from BattleEffect_LoadWork(46,...)
+ * / BattleEffect_LoadWork(47,...).
  *
  * Two differences from that template drive the extra bytes here:
  *
  *   1. This owner takes a second argument (`arg1`, the retained assembly's
  *      `str r1, [sp, #44]` in the very first instruction) that selects
- *      between two literal-pool constants passed to Func_080e0524 and
+ *      between two literal-pool constants passed to Resource_LoadAndDecompress and
  *      between two parallel draw-table sets later on.  Both Value_ symbols
  *      follow the established spelling from Func_08002f40's callers: the
  *      reference loads 0x83 and 0x84 through the literal pool rather than
@@ -116,8 +117,6 @@ extern u8 Data_080eeb80[];
 extern u16 Data_080eeb88[];
 
 void Func_080cd594(s32 mode);
-void Func_080e0524(s32 id, void *work, s32 a, s32 b);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 s32 Func_08004458(void);
 s32 Func_080022fc(s32 a, s32 b);
 void Func_080b50e8(s32 id);
@@ -189,16 +188,16 @@ void Func_080dd2c4(void *object, s32 arg1)
     M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x100;
     M2C_FIELD((void *)0x04000020, s16 *, 0x30) = 0;
     if (mode == 1) {
-        Func_080e0524((s32)&Value_00000083, work, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_00000083, work, 1, 1);
     } else {
-        Func_080e0524((s32)&Value_00000084, work, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_00000084, work, 1, 1);
     }
     if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4) == 1) {
         *(s32 *)0x04000028 = 0xFFFF9000;
     }
-    status = Func_080ed408(46, 7, 7, 3, 1);
+    status = BattleEffect_LoadWork(46, 7, 7, 3, 1);
     rectangle[0] = Data_03001e50[46];
-    status = Func_080ed408(47, 7, 7, 7, 1);
+    status = BattleEffect_LoadWork(47, 7, 7, 7, 1);
     second_slot = Data_03001e50[47];
     slot_pair = rectangle;
     slot_pair[1] = second_slot;

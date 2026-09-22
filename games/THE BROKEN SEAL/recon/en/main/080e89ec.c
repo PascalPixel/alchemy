@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "B5_CONTEXT.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Battle-presentation effect recovered from callback-table entry 49. It
@@ -135,7 +136,7 @@ void BattleEffect_RunDualParticleStream(void *object) {
     M2C_FIELD(work, void **, 0x7828) = object;
     Func_080cd594(0);
     *(s16 *)0x04000052 = 0x1010;
-    Func_080e0524(0xC2, work, 1, 1);
+    Resource_LoadAndDecompress(0xC2, work, 1, 1);
     var_r7_47 = 1;
     var_r4_50 = work + 0x3A8;
     do {
@@ -160,9 +161,9 @@ loop_2:
         var_r7_47 += 1;
         var_r4_50 += 0x3A8;
     } while (var_r7_47 != 0x14);
-    Func_080e0524(0x73, (struct M2cAggregate_absolute_02010000 *) graphics, 0, 0);
-    Func_080e0524(0xB4, work + 0x3C00, 1, 1);
-    Func_080e0524(0x7D, &absolute_02010000, 1, 0);
+    Resource_LoadAndDecompress(0x73, (struct M2cAggregate_absolute_02010000 *) graphics, 0, 0);
+    Resource_LoadAndDecompress(0xB4, work + 0x3C00, 1, 1);
+    Resource_LoadAndDecompress(0x7D, &absolute_02010000, 1, 0);
     callback_ptr = callbacks;
     Func_080cef64(
         M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4),

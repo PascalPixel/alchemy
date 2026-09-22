@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Draft for the battle-presentation sub-effect at 0x080d6970.
@@ -47,8 +48,6 @@ typedef void (*DrawRectangleFn)(
 void Func_080dbb24(s32 count, s32 kind, s32 variant);
 u32 Func_08004458(void);
 void Func_080cd594(s32 mode);
-void Func_080e0524(s32 effect_id, void *target, s32 flag_a, s32 flag_b);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 void Func_080d6750(void *object);
@@ -168,13 +167,13 @@ void Func_080d6970(void *object)
     M2C_FIELD((void *)0x04000020, s16 *, 0) = (s16)(s32) &Value_00000100;
     M2C_FIELD((void *)0x04000020, s16 *, 0x30) = (s16)(s32) &Value_00000000;
 
-    Func_080e0524((s32) &Value_000000b2, work, 1, 1);
+    Resource_LoadAndDecompress((s32) &Value_000000b2, work, 1, 1);
     {
         s32 status;
 
-        status = Func_080ed408(46, 7, 7, 3, 1);
+        status = BattleEffect_LoadWork(46, 7, 7, 3, 1);
         rect[0] = (DrawRectangleFn)((void **)0x03001E50)[46];
-        status = Func_080ed408(47, 7, 7, 7, 1);
+        status = BattleEffect_LoadWork(47, 7, 7, 7, 1);
         rect_ptr = rect;
         rect_ptr[1] = (DrawRectangleFn)((void **)0x03001E50)[47];
     }
@@ -708,11 +707,11 @@ void Func_080d6970(void *object)
 
             Func_08002dd8(47);
             Func_08002dd8(46);
-            Func_080e0524((s32) &Value_00000098, work, 1, 0);
-            Func_080e0524((s32) &Value_000000c0, (u8 *)work + 0x1680, 1, 1);
-            status = Func_080ed408(46, 7, 7, 3, 2);
+            Resource_LoadAndDecompress((s32) &Value_00000098, work, 1, 0);
+            Resource_LoadAndDecompress((s32) &Value_000000c0, (u8 *)work + 0x1680, 1, 1);
+            status = BattleEffect_LoadWork(46, 7, 7, 3, 2);
             rect[0] = (DrawRectangleFn)((void **)0x03001E50)[46];
-            status = Func_080ed408(47, 7, 7, 7, 2);
+            status = BattleEffect_LoadWork(47, 7, 7, 7, 2);
             rect_ptr[1] = (DrawRectangleFn)((void **)0x03001E50)[47];
             M2C_FIELD((void *)0x04000050, s16 *, 0) = 0x3F46;
             M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x80;

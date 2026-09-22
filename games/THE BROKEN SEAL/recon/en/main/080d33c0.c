@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Semantic reconstruction of a battle presentation that seeds thirty moving
@@ -67,9 +68,9 @@ s32 Func_080d33c0(s32 actor) {
     temp_r0_28 = Func_08002f40((s32)&Value_000000cd);
     Func_080072f0(0x05000000, temp_r0_28, 0x80, 0x03001388);
     Func_08005340(temp_r0_28 + 0x80, temp_r7_17);
-    Func_080ed408(0x2E, 7, 7, 3, 2);
+    BattleEffect_LoadWork(0x2E, 7, 7, 3, 2);
     rectangle[0] = (DrawRectangleFn)heap_cache[7];
-    Func_080ed408(0x2F, 7, 7, 0xF, 2);
+    BattleEffect_LoadWork(0x2F, 7, 7, 0xF, 2);
     *(s16 *)0x04000052 = 0xF0F;
     rectangle[1] = (DrawRectangleFn)heap_cache[8];
     temp_r6_64 = *Func_080b5098(M2C_FIELD(*temp_r8_25, s32 *, 8));

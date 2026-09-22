@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Draft for the battle-presentation sub-effect split function at
@@ -15,7 +16,7 @@
  * This owner shares the 0x03001eec heap-cache / work-pointer idiom, the
  * Func_080cd594 / Func_080041d8+Func_08004278 (0x080CD261 callback,
  * 0x480 interval) / Func_08002dd8(47)+Func_08002dd8(46)+Func_080cdbc0
- * finalize idiom, and the Func_080ed408(46, 7, 7, 3, ...) call already
+ * finalize idiom, and the BattleEffect_LoadWork(46, 7, 7, 3, ...) call already
  * confirmed in 080d82b0.c and 080d59b0.c against the 0x080e7404 "battle
  * work" subsystem -- see those drafts and 080e7404.c for the evidence
  * behind the field/signature choices reused here. Byte-offset accesses
@@ -63,7 +64,6 @@ void Func_080072f0(void *dest, void *src, s32 size, WordCopyFn copier);
 void Func_08005340(void *a, void *b);
 void Func_08009080(void *member_ptr, s32 a);
 void Func_08009088(void *member_ptr, s32 a);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 void **Func_080b5098(s32 member_id);
@@ -146,7 +146,7 @@ s32 Func_080d0ee0(void *object)
 
     Func_08009080(member, 2);
     Func_08009088(member, 48);
-    Func_080ed408(46, 7, 7, 3, 2);
+    BattleEffect_LoadWork(46, 7, 7, 3, 2);
 
     M2C_FIELD(work, s32 *, 0x7780) = 2;
     draw_rectangle_fn = (DrawRectangleFn)heap_cache[7];

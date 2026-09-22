@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Battle-presentation sub-effect at 0x080dab74 (1776 bytes).  It belongs to
@@ -118,7 +119,6 @@ extern char Value_000000b8;
 extern char Value_000000ba;
 
 void Func_080cd594(s32 mode);
-void Func_080e0524(void *resource_id, void *destination, s32 upper, s32 palette);
 void BattleFx_FetchRectangleBlitters(s32 alternate, u32 *output);
 s32 Func_08004458(void);
 s32 Func_080041d8(void *callback, s32 interval);
@@ -166,8 +166,8 @@ void BattleEffect_RunRisingMotes(struct EffectArgument *object)
     work->argument = object;
     Func_080cd594(1);
     *(u16 *)0x04000020 = 0x100;
-    Func_080e0524(&Value_000000b8, work, 1, 1);
-    Func_080e0524(&Value_000000ba, graphics, 0, 0);
+    Resource_LoadAndDecompress(&Value_000000b8, work, 1, 1);
+    Resource_LoadAndDecompress(&Value_000000ba, graphics, 0, 0);
     rectangle_slot = rectangle;
     BattleFx_FetchRectangleBlitters(0, (u32 *)rectangle_slot);
 

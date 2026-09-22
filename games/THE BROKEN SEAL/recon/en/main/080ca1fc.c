@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Battle-presentation sub-effect at 0x080ca1fc, part of the 0x03001eec
@@ -39,8 +40,6 @@ extern u8 Value_0000007b;
 extern u8 Value_0000007c;
 
 void Func_080cd594(s32 mode);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
-void Func_080e0524(s32 effect_id, void *target, s32 flag_a, s32 flag_b);
 void *Func_08002f40(s32 id);
 void Func_080072f0(void *dest, void *src, s32 size, WordCopyFn copier);
 s32 Func_080041d8(void *callback, s32 interval);
@@ -97,12 +96,12 @@ void Func_080ca1fc(void *object, s32 mode)
         Func_080cd594(1);
     }
 
-    status = Func_080ed408(46, 7, 7, 3, 2);
+    status = BattleEffect_LoadWork(46, 7, 7, 3, 2);
     draw_rectangle_fn = (DrawRectangleFn)Data_03001e50[46];
-    status = Func_080ed408(47, 7, 7, 11, 2);
+    status = BattleEffect_LoadWork(47, 7, 7, 11, 2);
     second_blit_kind = Data_03001e50[47];
 
-    Func_080e0524((s32)&Value_00000073, extra_target, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000073, extra_target, 0, 0);
 
     Func_080072f0((void *)(160 << 19),
         Func_08002f40(mode == 0 ? (s32)&Value_0000007c : (s32)&Value_0000007b),

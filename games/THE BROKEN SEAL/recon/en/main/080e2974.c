@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 #define BattlePres_RunBurstScene Func_080e2974
 
@@ -51,7 +52,7 @@
  * games/THE BROKEN SEAL/raw/080072e4.s, i.e. indirect calls through whatever pointer
  * the compiler kept in that register.  Here they are the IWRAM copy
  * routine at 0x03001388, the IWRAM fill routine at 0x03000168, and the
- * two blit routines Func_080ed408 publishes into heap_cache[46] and
+ * two blit routines BattleEffect_LoadWork publishes into heap_cache[46] and
  * heap_cache[47], so they are spelled as calls through typed pointers.
  *
  * The resource ids 0x6B, 0x73, 0x8D, 0x99, 0xA0, 0xB4, 0xB5 and 0xB6
@@ -165,7 +166,7 @@ struct Member {
    the name `alchemy inspect` resolves for that target, where it has one. */
 void Func_080cd594(s32 mode);
 void Func_080de2f8(void *object, s32 a, s32 b, s32 c, s32 *out_a, s32 *out_b);
-void Func_080e0524(s32 id, void *target, s32 flag_a, s32 flag_b); /* load_and_decompress */
+void Resource_LoadAndDecompress(s32 id, void *target, s32 flag_a, s32 flag_b); /* load_and_decompress */
 void *Func_08002f40(s32 id);                                      /* get */
 void Func_080030f8(s32 frames);
 void Func_080e396c(s32 source, s32 *out);        /* apply_step_and_y_offset */
@@ -173,7 +174,6 @@ s32 Func_080041d8(s32 callback, s32 interval);  /* Scheduler_AddOrUpdateCallback
 struct Member **Func_080b5098(s32 member);
 u32 Func_08004458(void);                         /* random_16 */
 void Func_080b5078(s32 a, s32 member, s32 c, s32 d);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 void Func_080d6888(s32 member, s32 a, s32 b, s32 index, s32 e); /* update_members */
 void Func_080b5088(s32 member, s32 kind);
 void Func_080b50e8(s32 id);
@@ -228,8 +228,8 @@ void BattlePres_RunBurstScene(void *object, s32 scene)
         Func_080de2f8(
             object, 7, M2C_FIELD(STATE, s32 *, 4), 2, &out_a, &out_b);
     }
-    Func_080e0524((s32)&Value_00000073, sprite_src, 0, 0);
-    Func_080e0524((s32)&Value_00000099, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000073, sprite_src, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000099, work, 1, 0);
 
     /* 288 rows of forty source bytes folded onto twenty destination
        bytes each, at work + 0x5100. */
@@ -245,11 +245,11 @@ void BattlePres_RunBurstScene(void *object, s32 scene)
     } while (i != 288);
 
     if (Data_080eed3e[scene * 7] == 0) {
-        Func_080e0524((s32)&Value_000000b5, work, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_000000b5, work, 1, 1);
     } else {
-        Func_080e0524((s32)&Value_000000b6, work, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_000000b6, work, 1, 1);
     }
-    Func_080e0524((s32)&Value_0000006b, (void *)0x02015E00, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_0000006b, (void *)0x02015E00, 1, 0);
 
     switch (Data_080eed3e[scene * 7 + 1]) {
     case 0:
@@ -302,11 +302,11 @@ void BattlePres_RunBurstScene(void *object, s32 scene)
             Func_080e396c(M2C_FIELD(STATE, s32 *, 8), pos);
             pos[0] = pos[0] / 2;
             if (M2C_FIELD(STATE, s32 *, 4) == 0) {
-                Func_080ed408(46, 7, 7, 3, 2);
-                Func_080ed408(47, 7, 7, 11, 2);
+                BattleEffect_LoadWork(46, 7, 7, 3, 2);
+                BattleEffect_LoadWork(47, 7, 7, 11, 2);
             } else {
-                Func_080ed408(46, 7, 7, 7, 2);
-                Func_080ed408(47, 7, 7, 15, 2);
+                BattleEffect_LoadWork(46, 7, 7, 7, 2);
+                BattleEffect_LoadWork(47, 7, 7, 15, 2);
             }
             blit[0] = (BlitFn)Data_03001e50[46];
             blit[1] = (BlitFn)Data_03001e50[47];
@@ -379,8 +379,8 @@ void BattlePres_RunBurstScene(void *object, s32 scene)
             Func_08002dd8(46);
             Func_080049ac();
             Func_080051d8(xfer, (u8 *)xfer + 12);
-            Func_080ed408(46, 7, 7, 3, 3);
-            Func_080ed408(47, 7, 7, 3, 2);
+            BattleEffect_LoadWork(46, 7, 7, 3, 3);
+            BattleEffect_LoadWork(47, 7, 7, 3, 2);
             blit[0] = (BlitFn)Data_03001e50[46];
             blit[1] = (BlitFn)Data_03001e50[47];
 

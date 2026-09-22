@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Split function: head 080dd9c0, continuation 080dda3c, terminal region
@@ -44,9 +45,7 @@ typedef void (*DrawRectangleFn)(
 #define REG_BG2X (*(volatile u32 *)0x04000028)
 
 void Func_080cd594(s32 mode);
-void Func_080e0524(s32 resource_id, void *destination, s32 destination_offset, s32 copy_palette);
 extern u8 Value_0000007e;
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 void Func_08002dd8(s32 id);
@@ -79,7 +78,7 @@ extern const u8 Data_080eebb9[];  /* interpolation table C: signed per-step ampl
  * draw_cb_46/draw_cb_47 callback -- ground truth (games/THE BROKEN SEAL/raw/
  * 080ddb34.s) loads the pointer from the same stack slots the
  * continuation region (games/THE BROKEN SEAL/raw/080dda3c.s) spills them to right
- * after the Func_080ed408(46, ...) / Func_080ed408(47, ...) calls:
+ * after the BattleEffect_LoadWork(46, ...) / BattleEffect_LoadWork(47, ...) calls:
  * [sp,#36] is draw_cb_46, [sp,#40] is draw_cb_47. Each call site below is
  * rewritten as an indirect call through whichever of the two the ground
  * truth loads at that point.
@@ -121,7 +120,7 @@ void Func_080dd9c0(void *table_param)
     REG_BLDCNT = 0x0000;
     REG_BLDALPHA = 0x1010;
 
-    Func_080e0524((s32) &Value_0000007e, work, 1, 1);
+    Resource_LoadAndDecompress((s32) &Value_0000007e, work, 1, 1);
 
     table = M2C_FIELD(work, void **, 0x7828);
     if (M2C_FIELD(table, s32 *, 4) == 1) {
@@ -130,9 +129,9 @@ void Func_080dd9c0(void *table_param)
 
     /* ---- Continuation_080dda3c ---- */
 
-    status46 = Func_080ed408(46, 7, 7, 3, 1);
+    status46 = BattleEffect_LoadWork(46, 7, 7, 3, 1);
     draw_cb_46 = *(DrawRectangleFn *)((u8 *)heap_cache + 28);
-    status47 = Func_080ed408(47, 7, 7, 3, 1);
+    status47 = BattleEffect_LoadWork(47, 7, 7, 3, 1);
     draw_cb_47 = *(DrawRectangleFn *)((u8 *)heap_cache + 32);
     (void)status46;
     (void)status47;

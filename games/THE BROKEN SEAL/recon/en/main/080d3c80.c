@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Draft for the battle-presentation sub-effect at 0x080d3c80.
@@ -6,7 +7,7 @@
  * The family matcher assigned games/THE BROKEN SEAL/src/battle/effects/member_orbit/
  * run.c (owner 080ce85c) as the closest structural template, but this owner
  * shares only the 0x03001eec "battle work" prologue and callback-teardown
- * shape with it -- there is no palette/tile upload, no Func_080ed408, and no
+ * shape with it -- there is no palette/tile upload, no BattleEffect_LoadWork, and no
  * sine/cosine orbit math at all.  The real callee set and constants instead
  * match the same subsystem already recovered across games/THE BROKEN SEAL/recon/en/
  * main/080e7404.c, 080d59b0.c, 080d82b0.c, 080dc1ec.c and 080e01e4.c: a
@@ -37,7 +38,6 @@ typedef void (*DrawRectangleFn)(
     void *dest, void *src, s32 x, s32 y, u32 w, s32 h);
 
 void Func_080cd594(s32 mode);
-void Func_080e0524(s32 effect_id, void *target, s32 flag_a, s32 flag_b);
 void Func_080cef64(s32 flag, DrawRectangleFn *out_callbacks);
 s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
@@ -84,7 +84,7 @@ void Func_080d3c80(void *object)
     M2C_FIELD(work, void **, 0x7828) = object;
     Func_080cd594(0);
     M2C_FIELD((void *)0x04000052, s16 *, 0) = 0x1010;
-    Func_080e0524((s32) &Value_000000cf, work, 1, 1);
+    Resource_LoadAndDecompress((s32) &Value_000000cf, work, 1, 1);
     callback_ptr = callbacks;
     Func_080cef64(
         M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4), callback_ptr);

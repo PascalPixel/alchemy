@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 #define BattleEffect_RunMemberBeam Func_080cf2b8
 
@@ -17,7 +18,7 @@
  * then runs member_count * 16 + 116 frames.
  *
  * Each frame regenerates the kind-46/47 rectangle blitters through
- * Func_080ed408 (their block pointers are read back from the heap-block
+ * BattleEffect_LoadWork (their block pointers are read back from the heap-block
  * table at 0x03001e50, entries 46 and 47 -- the same table whose entries 39
  * and 40 are the work block and the canvas read here through 0x03001eec),
  * optionally draws the 40x40 orbiting sprite, then walks the listed party
@@ -90,7 +91,6 @@ s32 Func_08002322(s32 angle);
 s32 Func_0800231c(s32 angle);
 void BattleFx_FetchRectangleBlitters(s32 flag, void **pair);
 void Runtime_ReleaseHeapBlock(s32 id);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 void **Func_080b5098(s32 member_id);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
@@ -229,10 +229,10 @@ void BattleEffect_RunMemberBeam(void *object, s32 variant)
             Runtime_ReleaseHeapBlock(46);
         }
 
-        status = Func_080ed408(46, 7, 7, 3, 2);
+        status = BattleEffect_LoadWork(46, 7, 7, 3, 2);
         blocks = (u8 *)0x03001E50;
         rectangle[0] = *(void **)(blocks + 184);
-        status = Func_080ed408(47, 7, 7, 7, 2);
+        status = BattleEffect_LoadWork(47, 7, 7, 7, 2);
         rect[1] = *(void **)(blocks + 188);
 
         member = 0;

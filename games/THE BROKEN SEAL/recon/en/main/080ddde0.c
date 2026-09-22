@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /* Staggered member effects with falling particles and randomized sprite
  * bursts. Complete reference span: 080ddde0 through080de2f8, including
@@ -12,8 +13,6 @@ typedef void (*DrawRectangleFn)(
 typedef void (*FillWordsFn)(void *dest, s32 size, u32 fill);
 
 void Func_080cd594(s32 mode);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
-void Func_080e0524(s32 resource_id, void *destination, s32 destination_offset, s32 copy_palette);
 s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 void Func_08002dd8(s32 id);
@@ -68,12 +67,12 @@ void Func_080ddde0(void *table_param)
     M2C_FIELD(work, void **, 0x7828) = table_param;
 
     Func_080cd594(1);
-    (void) Func_080ed408(46, 7, 7, 3, 2);
+    (void) BattleEffect_LoadWork(46, 7, 7, 3, 2);
     draw_cb_46 = *(DrawRectangleFn *)((u8 *)heap_cache + 28);
 
-    Func_080e0524((s32)&Value_000000ce, work, 1, 0);
-    Func_080e0524((s32)&Value_000000c4, (u8 *)work + 0xc56, 1, 1);
-    Func_080e0524((s32) &Value_00000073, extra_target, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_000000ce, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_000000c4, (u8 *)work + 0xc56, 1, 1);
+    Resource_LoadAndDecompress((s32) &Value_00000073, extra_target, 0, 0);
 
     {
         s32 *slot;
@@ -199,7 +198,7 @@ void Func_080ddde0(void *table_param)
                     x -= Data_080edeca[mask] / 2;
                     random = Func_08004458();
                     table = M2C_FIELD(work, void **, 0x7828);
-                    Func_080ed408(47, 7, 7, 3 | Data_080eebe2[random & 3],
+                    BattleEffect_LoadWork(47, 7, 7, 3 | Data_080eebe2[random & 3],
                         Data_080eebe6[M2C_FIELD(table, s32 *, 24)]);
                     draw47 = *(DrawRectangleFn *)0x03001f0c;
                     draw47(draw_destination, (u8 *)work + Data_080edebe[mask],

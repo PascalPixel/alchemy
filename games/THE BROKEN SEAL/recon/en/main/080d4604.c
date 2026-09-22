@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 #define BattleEffect_RunSparkGroups Func_080d4604
 
@@ -50,7 +51,7 @@ typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
 typedef s32 (*FillWordsFn)(void *dest, s32 bytes, s32 value);
 
 /* Small absolute link-time constants: every retained Func_08002f40 /
-   Func_080e0524 call site loads its resource id from a literal pool rather
+   Resource_LoadAndDecompress call site loads its resource id from a literal pool rather
    than an immediate, which an ordinary integer literal cannot produce. */
 extern u8 Value_0000007d;
 extern u8 Value_00000073;
@@ -104,8 +105,6 @@ typedef struct Efx {
 
 void Func_080cd594(s32 mode);
 void Func_080e396c(s32 source, s32 *out);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
-void Func_080e0524(s32 resource, void *target, s32 flag_a, s32 flag_b);
 void *Func_08002f40(s32 id);
 s32 Func_08004458(void);
 s32 Func_08002322(s32 angle);
@@ -167,15 +166,15 @@ void BattleEffect_RunSparkGroups(void *object, s32 kind)
     }
 
     M2C_FIELD((void *)0x04000052, u16 *, 0) = 0x1010;
-    status = Func_080ed408(46, 7, 7, 3, 2);
+    status = BattleEffect_LoadWork(46, 7, 7, 3, 2);
     rectangle[0] = (DrawRectangleFn)Data_03001e50[46];
-    status = Func_080ed408(47, 7, 7, 3, 3);
+    status = BattleEffect_LoadWork(47, 7, 7, 3, 3);
     second = (DrawRectangleFn)Data_03001e50[47];
     rectangle_slot = rectangle;
     rectangle_slot[1] = second;
 
-    Func_080e0524((s32)&Value_0000007d, work, 1, 1);
-    Func_080e0524((s32)&Value_00000073, extra, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_0000007d, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_00000073, extra, 0, 0);
 
     if (kind == 1) {
         palette = Func_08002f40((s32)&Value_00000087);

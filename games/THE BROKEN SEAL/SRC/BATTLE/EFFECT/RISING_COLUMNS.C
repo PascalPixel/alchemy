@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
+#include "BATTLE_EFX.H"
 
 #define BattleEffect_RunRisingColumns Func_080dd77c
 
@@ -22,11 +23,8 @@ extern s8 Data_080eeb96[];
 extern u8 Value_000000a6;
 void Func_080cd594(s32);
 void Func_080de2f8(void *, s32, s32, s32, s32 *, s32 *);
-void Func_080e0524(s32, void *, s32, s32);
-#define Resource_LoadAndDecompress Func_080e0524
 void Func_080e396c(s32, s32 *);
 #define EffectPosition_ApplyStepAndYOffset Func_080e396c
-s32 Func_080ed408(s32, s32, s32, s32, s32);
 void Func_080041d8(s32, s32);
 #define Scheduler_AddOrUpdateCallback Func_080041d8
 void Func_080f9010(s32);
@@ -74,9 +72,9 @@ void BattleEffect_RunRisingColumns(Effect *effect)
     middle += (last[0] - middle) / 2;
     first[0] = middle;
     *(s32 *)0x04000028 = (64 - first[0]) << 8;
-    Func_080ed408(46, 7, 7, 3, 1);
+    BattleEffect_LoadWork(46, 7, 7, 3, 1);
     draw[0] = (DrawRectangle)cache[7];
-    Func_080ed408(47, 7, 7, 7, 1);
+    BattleEffect_LoadWork(47, 7, 7, 7, 1);
     draw[1] = (DrawRectangle)cache[8];
     column = (Column *)((u8 *)work + 0x7080);
     i = 0;

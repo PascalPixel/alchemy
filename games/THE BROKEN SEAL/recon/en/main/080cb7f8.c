@@ -1,4 +1,5 @@
 #include "types.h"
+#include "BATTLE_EFX.H"
 
 #define Func_080cb7f8 Func_080cb7f8
 
@@ -27,10 +28,8 @@ void Func_080cd52c();
 void Func_080cd594();
 void Func_080cdbc0();
 void Func_080d6888();
-void Func_080e0524();
 s32 Func_080e3944();
 void Func_080e3980();
-s32 Func_080ed408();
 void Func_080f9010();
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -118,8 +117,8 @@ void Func_080cb7f8(s32 a0)
     v6 = (s32)Data_00000057;
     *(u16 *)0x04000052 = 0x100c;
     *(u16 *)0x04000020 = (s32)Data_00000100;
-    Func_080e0524((s32)Data_00000057, rec3, 1, 0);
-    Func_080e0524((s32)Data_00000076, slot24, 0, 0);
+    Resource_LoadAndDecompress((s32)Data_00000057, rec3, 1, 0);
+    Resource_LoadAndDecompress((s32)Data_00000076, slot24, 0, 0);
     if (*(s32 *)(*(s32 *)((0x7828 + rec3))) != 1) {
         if (*(s32 *)(*(s32 *)((0x7828 + rec3))) <= 1) {
             if (*(s32 *)(*(s32 *)((0x7828 + rec3))) == 0) {
@@ -158,7 +157,7 @@ void Func_080cb7f8(s32 a0)
     *(s32 *)((0x7780 + r9)) = 2;
     *(s32 *)((0x7784 + r9)) = 75;
     Value2(Func_080041d8, 0x80cd261, 0x480);
-    ((void (*)())Func_080ed408)(46, 7, 7, 3);
+    ((void (*)())BattleEffect_LoadWork)(46, 7, 7, 3);
     slot28 = *(s32 *)0x03001f08;
     v3 = (*(s32 *)(*(s32 *)((0x7828 + r9)) + 24) + 1);
     *(s32 *)(*(s32 *)((0x7828 + r9)) + 24) += 1;
@@ -192,13 +191,13 @@ void Func_080cb7f8(s32 a0)
             v0 = (p8 + 3);
         }
         p11 = (v0 >> 2);
-        ((void (*)())Func_080ed408)(47, 7, 7, 3, 2);
+        ((void (*)())BattleEffect_LoadWork)(47, 7, 7, 3, 2);
         p6 = *(s32 *)0x03001f0c;
         Call7(Func_080072fc, slot36, (((s32)((s32)((s32)((s32)p8 - (s32)((s32)p11 << 2)) << 4) + (s32)((s32)p8 - (s32)((s32)p11 << 2))) << 6) + r9), 47, (*(s32 *)(slot8 + 4) - 64), 17, 64, (s32)p6);
         rec = Value2(Func_080022fc, ((s32)p4b / 4), 3);
         Call6(Func_080072fc, slot36, (((((rec << 7) + rec) << 3) + r9) + 0x1100), 40, (*(s32 *)(slot8 + 4) - 36), 24, 43);
         Func_08002dd8(47);
-        ((void (*)())Func_080ed408)(47, 7, 7, 7, 2);
+        ((void (*)())BattleEffect_LoadWork)(47, 7, 7, 7, 2);
         p6 = *(s32 *)0x03001f0c;
         v6 = (s32)p6;
         v7 = ((s32)p8 - (s32)((s32)p11 << 2));

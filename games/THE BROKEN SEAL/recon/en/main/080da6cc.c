@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
 
 /*
  * Battle-presentation sub-effect at 0x080da6cc.  The family matcher's
@@ -55,8 +56,6 @@ extern u8 Value_000000b4;
 extern u8 Value_00000073;
 
 void Func_080cd594(s32 mode);
-void Func_080e0524(s32 id, void *target, s32 a, s32 b);
-s32 Func_080ed408(s32 id, s32 a, s32 b, s32 c, s32 d);
 void **Func_080b5098(s32 member_id);
 s32 Func_080b5070(s32 member_id);
 u32 Func_08004458(void);
@@ -109,11 +108,11 @@ void Func_080da6cc(void *object)
     } else {
         Func_080cd594(0);
     }
-    Func_080e0524((s32) &Value_000000b4, work, 1, 1);
-    Func_080e0524((s32) &Value_00000073, extra_target, 0, 0);
-    status = Func_080ed408(46, 7, 7, 3, 3);
+    Resource_LoadAndDecompress((s32) &Value_000000b4, work, 1, 1);
+    Resource_LoadAndDecompress((s32) &Value_00000073, extra_target, 0, 0);
+    status = BattleEffect_LoadWork(46, 7, 7, 3, 3);
     rectangle[0] = *(void **) (Data_03001e50 + 46 * 4);
-    status = Func_080ed408(47, 7, 7, 3, 2);
+    status = BattleEffect_LoadWork(47, 7, 7, 3, 2);
     second_rectangle = *(void **) (Data_03001e50 + 47 * 4);
     rectangle_slot = rectangle;
     rectangle_slot[1] = second_rectangle;

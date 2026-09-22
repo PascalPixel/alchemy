@@ -28,7 +28,6 @@ void Func_080d6888();
 void Func_080e155c();
 void Func_080e38b8();
 void Func_080e3944();
-void BattleEffect_LoadWork();
 void Func_080f9010();
 
 /* Call sites spelled through these wrappers pass their constants straight

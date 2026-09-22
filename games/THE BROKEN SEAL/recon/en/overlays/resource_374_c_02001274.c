@@ -184,8 +184,8 @@ void FieldScene_RunGroupChoreography(void)
     Func_02003b68(25, 2);
     Call2(Func_020036fc, 0x1019, 10);
     {
-        s32 event = 0x10019;
         s32 placement = 0x200ac00;
+        s32 event = 0x10019;
 
         Func_02003b9a(0, event, placement);
     }

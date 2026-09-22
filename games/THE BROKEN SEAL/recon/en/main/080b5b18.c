@@ -24,7 +24,7 @@ void BattleParty_ResetActiveRuntimeFields(void)
         zero = 0;
         do {
             state = Func_08077008(owners[i]);
-            cursor = state + 0x131;
+            cursor = state + 0x12f;
             remaining = 3;
 
             do {

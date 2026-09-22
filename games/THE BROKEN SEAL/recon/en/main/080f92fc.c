@@ -19,21 +19,21 @@ void Func_080f9080(s32);
 
 void AudioTest_RunParameterController(void)
 {
-    s32 buf[3];
+    Triple buf;
     s32 repeat;
     s32 row;
     s32 offset;
     s32 timer;
     s32 *ptr;
 
-    *(Triple *)buf = Data_080fb794;
+    buf = Data_080fb794;
 
     repeat = 2;
     row = 0;
     Data_03007804 = 0;
     timer = 20;
     offset = 0;
-    ptr = buf;
+    ptr = &buf.a;
 
     for (;;) {
         if (timer != 0)
@@ -71,7 +71,7 @@ void AudioTest_RunParameterController(void)
             }
         }
         if (Data_03001b04 & 1)
-            Func_080f9080(*(s32 *)((u8 *)buf + offset));
+            Func_080f9080(*(s32 *)((u8 *)&buf + offset));
         if (Data_03001b04 & 2)
             Func_080f9080(19);
         if (Data_03001b04 & 8)

@@ -49,8 +49,7 @@
  *     Spelling `mode` (or the switch operand) unsigned reproduces that chain
  *     exactly but lets the compiler cross-jump the two duplicated case 0
  *     tails, dropping fourteen real instructions, so it is not used here.
- *   - The reference merges each DMA register triple into one stmia; through
- *     a volatile register block the three stores stay separate.
+ *   - Both clears use the shared DMA machine interface in DMA.H.
  *   - The reference materialises the constants 1, 17 and 18 from the literal
  *     pool where an ordinary literal here becomes an immediate.
  */
@@ -58,6 +57,7 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "METADATA_LOOKUP.H"
+#include "DMA.H"
 
 #define Ui_RunIconMonitor Func_08012518
 
@@ -69,14 +69,6 @@ struct IconColumn {
     u8 on;   /* column applied */
     s8 b5;   /* wraps 0..3;  pushed through Ui_SetGridColumnByte6 */
     s8 b6;   /* wraps 0..15; pushed through Ui_SetGridColumnByte5 */
-};
-
-/* DMA channel 3 registers; the two fills below zero the work block and the
- * column array. */
-struct DmaChannel {
-    const void *src;
-    void *dst;
-    u32 cnt;
 };
 
 void *Runtime_AllocateBlock(s32, s32);
@@ -101,7 +93,6 @@ void Ui_SetGridColumnNumber(s32, s32);
 void Ui_RunIconMonitor(void)
 {
     struct IconColumn ent[4];
-    volatile struct DmaChannel *dma;
     volatile u32 *keys;
     volatile u32 *trig;
     void *work;
@@ -130,15 +121,10 @@ void Ui_RunIconMonitor(void)
     work = Runtime_AllocateBlock(9, 160);
     *(u8 *)0x03001C90 = 3;
 
-    dma = (volatile struct DmaChannel *)0x040000D4;
     zero = 0;
-    dma->src = &zero;
-    dma->dst = work;
-    dma->cnt = 0x85000001;
+    Dma_Set(&zero, work, 0x85000001, (volatile u32 *)0x040000d4);
     zero = 0;
-    dma->src = &zero;
-    dma->dst = ent;
-    dma->cnt = 0x85000008;
+    Dma_Set(&zero, ent, 0x85000008, (volatile u32 *)0x040000d4);
 
     no = Ui_FindNextNumberWithMetadata(-1, 1);
     for (i = 0; i <= 3; i++) {

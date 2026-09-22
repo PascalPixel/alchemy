@@ -577,6 +577,7 @@ fn symbols<'a>(body: &'a str, prefix: &str) -> Vec<(usize, &'a str)> {
 /// carries `name`; other functions keep their address names.
 pub fn compose(entry: u32, name: &str, body: &str, tables: &BTreeMap<String, String>) -> String {
     let this = format!("Func_{entry:08x}");
+    let dma_include = body.contains("Dma_Set(");
     let body_lines: Vec<String> = body.lines().map(str::to_string).collect();
     let mut categories: BTreeMap<String, BTreeSet<&'static str>> = BTreeMap::new();
     fn add(map: &mut BTreeMap<String, BTreeSet<&'static str>>, symbol: &str, kind: &'static str) {
@@ -739,12 +740,17 @@ pub fn compose(entry: u32, name: &str, body: &str, tables: &BTreeMap<String, Str
         }
     }
     format!(
-        "#include \"types.h\"\n\n#define {name} {this}\n\n{declarations}\n\
+        "{}#include \"types.h\"\n\n#define {name} {this}\n\n{declarations}\n\
 /* Call sites spelled through these wrappers pass their constants straight\n\
 \x20* into the argument registers; a direct call precomputes a costly constant\n\
 \x20* into a pseudo that the compiler then shares with later uses in the block.\n\
 \x20* A value-returning call also sets r0 last of its arguments. */\n{wrappers}\n\
-{body}"
+{body}",
+        if dma_include {
+            "#include \"DMA.H\"\n"
+        } else {
+            ""
+        }
     )
 }
 
@@ -762,6 +768,18 @@ mod tests {
         assert!(unit.contains("void Scene_Run(void)"));
         assert!(unit.contains("static __inline__ void Call2("));
         assert!(!unit.contains("Call1("));
+        assert!(!unit.contains("DMA.H"));
+    }
+
+    #[test]
+    fn dma_calls_pull_in_the_shared_interface() {
+        let unit = compose(
+            0x02000100,
+            "Scene_Run",
+            "void Func_02000100(void) { Dma_Set(a0, a1, a2, a3); }",
+            &BTreeMap::new(),
+        );
+        assert!(unit.starts_with("#include \"DMA.H\"\n#include \"types.h\""));
     }
 
     #[test]

@@ -1905,6 +1905,9 @@ impl<'a> Lifter<'a> {
                 }
             }
             Kind::Stmia { rn, list } => {
+                if self.dma_kick(i, rn, list) {
+                    return i + 2;
+                }
                 let mut base = self.val_of(rn, None);
                 let b = self.ensure_result_var(&mut base);
                 let regs: Vec<u8> = (0..8u8).filter(|r| list & (1 << r) != 0).collect();
@@ -2197,6 +2200,38 @@ impl<'a> Lifter<'a> {
             return;
         }
         self.emit(format!("{lhs} = {rhs};"));
+    }
+
+    /// The shared GBA DMA interface receives source, destination, control and
+    /// channel in r0..r3.  Its proven Thumb shape is a three-word store whose
+    /// writeback in r3 is immediately restored with `subs r3, #12`; recognize
+    /// that source interface without depending on the channel's numeric address.
+    fn dma_kick(&mut self, i: usize, rn: u8, list: u8) -> bool {
+        if rn != 3 || list != 0b111 {
+            return false;
+        }
+        let (rd, imm) = match self.ins.get(i + 1).map(|x| &x.kind) {
+            Some(Kind::SubImm8 { rd, imm }) => (*rd, *imm),
+            _ => return false,
+        };
+        if rd != rn || imm != 12 {
+            return false;
+        }
+
+        let channel = self.val_of(rn, None);
+        let source = self.val_of(0, None);
+        let destination = self.val_of(1, None);
+        let control = self.val_of(2, None);
+        let source = self.fmt(&source);
+        let destination = self.fmt(&destination);
+        let control = self.fmt(&control);
+        let channel_text = self.fmt(&channel);
+        self.emit(format!(
+            "Dma_Set({source}, {destination}, {control}, {channel_text});"
+        ));
+        self.set_reg(rn, channel);
+        self.consumed.insert(i + 1);
+        true
     }
 
     fn call(&mut self, i: usize, target: u32) {
@@ -3485,6 +3520,20 @@ mod tests {
     fn compound_assignment_keeps_inner_parentheses() {
         let text = lifted(&[0x6808, 0x684a, 0x1880, 0x6008, 0x4770]);
         assert!(text.contains("*(s32 *)(a1) += *(s32 *)(a1 + 4);"), "{text}");
+    }
+
+    #[test]
+    fn dma_kick_recognizes_register_shape_without_channel_address() {
+        let text = lifted(&[0xc307, 0x3b0c, 0x4770]);
+        assert!(text.contains("Dma_Set(a0, a1, a2, a3);"), "{text}");
+        assert!(!text.contains("*(s32 *)"), "{text}");
+    }
+
+    #[test]
+    fn dma_kick_requires_the_writeback_restore() {
+        let text = lifted(&[0xc307, 0x3b08, 0x4770]);
+        assert!(!text.contains("Dma_Set("), "{text}");
+        assert!(text.contains("*(s32 *)(a3) = a0;"), "{text}");
     }
 
     /// `subs r0, #1; bne +0; movs r0, #0; bx lr`: the branch tests the

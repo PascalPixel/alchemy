@@ -1653,45 +1653,62 @@
       ]
     },
     {
-      "kind": "thumb_multiple_transfer_module",
-      "origin": "program_or_library_assembly",
-      "retention": "keep_structured_asm",
+      "kind": "dma_kick_c_candidate_module",
+      "origin": "compiler_with_shared_machine_interface",
+      "retention": "c_candidate",
       "confidence": "proven",
       "evidence": [
-        "complete_owner_contains_reachable_standalone_three_or_four_register_thumb_ldmia_stmia",
+        "complete_owner_contains_reachable_dma_kick_stmia_r3_r0_r1_r2",
         "approved_gcc_2_96_thumb_si_sf_moves_emit_single_register_transfers_and_di_df_moves_emit_two_register_transfers_only_arm_md_3728_3751_3838_3853_4721_4734_4853_4870",
         "approved_gcc_2_96_thumb_movmem8b_movmem12b_emit_multi_register_transfers_only_as_immediately_adjacent_matching_ldmia_then_stmia_pairs_arm_md_5080_5141_arm_c_9425_9465",
         "approved_generic_multiple_transfer_patterns_are_target_arm_only_arm_md_4975_5078",
-        "inline_assembly_and_fixed_register_escape_hatches_are_disallowed",
-        "byte_exact_reconstruction",
+        "shared_dma_set_interface_reconstructs_the_recurring_machine_operation",
         "no_thumb_stmia_producer_beyond_movmem_arm_md_5111_5141_arm_c_9425_9465",
-        "no_four_register_thumb_transfer_template_and_movstrqi_is_copy_only_arm_md_5084_arm_c_9478",
-        "inline_dma_kick_or_fill_macro_in_c_bodies_not_handwritten_functions_no_cross_product_identity"
+        "inline_dma_kick_in_c_bodies_not_handwritten_functions_no_cross_product_identity"
       ],
-      "expected_files": 126,
-      "expected_bytes": 61716,
+      "expected_files": 118,
+      "expected_bytes": 61248,
       "matcher": "thumb_standalone_wide_transfer",
       "provenance": {
         "credit": "none",
-        "current_partition": {
-          "dma_kick": {
-            "regions": 118,
-            "bytes": 61248,
-            "form": "stmia r3!, {r0, r1, r2}; subs r3, #12"
-          },
-          "fill_run": {
-            "regions": 8,
-            "bytes": 468,
-            "form": "three stmia r0!, {r1, r2, r3, r4} stores"
-          }
-        },
+        "verdict": "shared_dma_interface_reconstructed_surrounding_owners_remain_c_candidates",
         "compiler_evidence": "GCC 2.96 Thumb emits wide transfers only for two-word DI/DF moves or adjacent matching LDMIA/STMIA block-copy pairs; generic store-multiple patterns are ARM-only.",
         "reconstruction": {
           "source": "games/THE BROKEN SEAL/INCLUDE/DMA.H",
           "interface": "Dma_Set binds channel/source/destination/control to r3/r0/r1/r2 and emits the recurring kick plus base restore.",
           "validation": "Independent complete callers reproduce exactly through the canonical route; each remaining C body still requires complete-owner verification."
         },
-        "remaining": "The DMA-kick regions are C candidates around the shared primitive. The distinct four-register fill runs remain unresolved and uncredited."
+        "remaining": "Each surrounding C body still requires complete-owner verification."
+      }
+    },
+    {
+      "kind": "thumb_wide_fill_module",
+      "origin": "program_or_library_assembly",
+      "retention": "keep_structured_asm",
+      "confidence": "proven",
+      "evidence": [
+        "three_stmia_r0_r1_r2_r3_r4_stores",
+        "approved_thumb_backend_has_no_four_register_transfer_template",
+        "movstrqi_emits_only_matching_load_store_copy_pairs",
+        "ordinary_fill_c_emits_scalar_stores",
+        "byte_exact_reconstruction"
+      ],
+      "expected_files": 8,
+      "expected_bytes": 468,
+      "files": [
+        "080049ac",
+        "08004a94",
+        "08004bd4",
+        "08004c1c",
+        "08004c6c",
+        "08004cb4",
+        "08004cf0",
+        "080c0eb8"
+      ],
+      "provenance": {
+        "credit": "none",
+        "compiler_evidence": "GCC 2.96 Thumb has no standalone four-register load/store producer; fixed-size block copies emit adjacent matching load/store pairs.",
+        "reason": "The recurring fill mechanism remains unrecovered and has no positive handwritten or library provenance."
       }
     },
     {

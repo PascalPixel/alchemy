@@ -1,4 +1,5 @@
 #include "BATTLE_PRESENTATION.H"
+#include "BATTLE_EFFECT_WORK.H"
 
 #define BattleEffect_RunBurstShower Func_080dbc30
 
@@ -89,9 +90,9 @@ typedef struct Spark {
     s32 tick;
 } Spark;
 
-#define WORK_EFX (*(Efx **)(work + 0x7828))
-#define SHEET (work + 0xC56)
-#define SPARKS ((Spark *)(work + 0x7080))
+#define WORK_EFX ((Efx *)work->effect)
+#define SHEET ((u8 *)work + 0xC56)
+#define SPARKS ((Spark *)((u8 *)work + 0x7080))
 
 static __inline__ void CopyPalette(CopyWords copy, void *destination, const void *source, s32 size)
 {
@@ -101,7 +102,7 @@ static __inline__ void CopyPalette(CopyWords copy, void *destination, const void
 void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
 {
     u32 *cache;
-    u8 *work;
+    struct BattleEffectWork *work;
     void *dst;
     u8 *aux;
     void *blit[2];
@@ -119,9 +120,9 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
 
     cache = (u32 *)(Data_03001e50 + 40 * 4);
     dst = (void *)cache[40 - 40];
-    work = (u8 *)cache[39 - 40];
+    work = (struct BattleEffectWork *)cache[39 - 40];
     aux = (u8 *)cache[41 - 40];
-    WORK_EFX = efx;
+    work->effect = efx;
     Func_080cd594(0);
     *(s16 *)0x04000052 = 0x1010;
 
@@ -173,11 +174,11 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
     }
 
     if (mode == 7) {
-        *(s32 *)(work + 0x7780) = 2;
-        *(s32 *)(work + 0x7784) = 50;
+        work->transfer_mode = 2;
+        work->transfer_value = 50;
     } else {
-        *(s32 *)(work + 0x7780) = 2;
-        *(s32 *)(work + 0x7784) = 75;
+        work->transfer_mode = 2;
+        work->transfer_value = 75;
     }
     Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
 
@@ -300,7 +301,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
             i = 0;
             while (i != WORK_EFX->cnt) {
                 if ((frame >= (i * 4) + 2) && ((frame & 7) == i)) {
-                    *(s32 *)(work + 0x77A8) = 8;
+                    *(s32 *)((u8 *)work + 0x77A8) = 8;
                     ObjectGroup_UpdateMembers(WORK_EFX->actors[i], 7, 5, i, 4);
                 }
                 i += 1;
@@ -309,7 +310,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
             i = 0;
             while (i != WORK_EFX->cnt) {
                 if ((frame >= (i * 4) + 16) && ((frame & 7) == i)) {
-                    *(s32 *)(work + 0x77A8) = 8;
+                    *(s32 *)((u8 *)work + 0x77A8) = 8;
                     if (mode == 6) {
                         ObjectGroup_UpdateMembers(WORK_EFX->actors[i], 14, 5, i, 4);
                     } else {
@@ -325,7 +326,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
         if (mode != 6) {
             ObjectGroup_TickMemberTimers();
         }
-        *(s32 *)(work + 0x7824) = 1;
+        work->transfer_pending = 1;
         WaitFrames(1);
         frame += 1;
     } while (frame != 64);

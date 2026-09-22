@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "BATTLE_EFFECT_WORK.H"
 
 #define BattleFx_RunPuffArc Func_080d9fc8
 
@@ -80,7 +81,7 @@ typedef struct Efx {
     s16 actors[8];
 } Efx;
 
-#define WORK_EFX (*(Efx **)(work + 0x7828))
+#define WORK_EFX ((Efx *)work->effect)
 
 /*
  * Effect sequence at 0x080d9fc8.
@@ -99,7 +100,7 @@ void BattleFx_RunPuffArc(Efx *efx)
 {
     u32 *cache;
     u32 *entry;
-    u8 *work;
+    struct BattleEffectWork *work;
     void *dst;
     s32 frame;
     DrawRectangle draw;
@@ -115,9 +116,9 @@ void BattleFx_RunPuffArc(Efx *efx)
 
     cache = (u32 *)(Data_03001e50 + 39 * 4);
     entry = cache;
-    work = (u8 *)*entry++;
+    work = (struct BattleEffectWork *)*entry++;
     dst = (void *)*entry;
-    WORK_EFX = efx;
+    work->effect = efx;
     Func_080cd594(0);
     *(s16 *)0x04000050 = 0x3F46;
     *(s16 *)0x04000052 = 0x100E;
@@ -134,7 +135,7 @@ void BattleFx_RunPuffArc(Efx *efx)
     ang = -0x4000;
     i = 0;
     tick = 0;
-    puff = (Puff *)(work + 0x7080);
+    puff = (Puff *)((u8 *)work + 0x7080);
     do {
         puff->x = ((sign *((Engine_MathSin(ang) << 5) >> 16)) + org) + 20;
         puff->y = ((Engine_MathCos(ang) << 4) >> 16) + 40;
@@ -144,11 +145,11 @@ void BattleFx_RunPuffArc(Efx *efx)
         i += 1;
         puff++;
     } while (i != 9);
-    *(s32 *)(work + 0x7780) = 2;
+    work->transfer_mode = 2;
     if (WORK_EFX->layers == 2) {
-        *(s32 *)(work + 0x7784) = 75;
+        work->transfer_value = 75;
     } else {
-        *(s32 *)(work + 0x7784) = 50;
+        work->transfer_value = 50;
     }
     Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
     Audio_PlayCue(0x88);
@@ -158,7 +159,7 @@ void BattleFx_RunPuffArc(Efx *efx)
             Func_080b50e8(0x85);
         }
         i = 0;
-        cur = (Puff *)(work + 0x7080);
+        cur = (Puff *)((u8 *)work + 0x7080);
         do {
             /* Negative ticks stagger the puffs; the folded range test is
                what the reference's single unsigned compare came from. */
@@ -167,18 +168,18 @@ void BattleFx_RunPuffArc(Efx *efx)
                 /* wide is loaded once and reused for the centring shift and
                    the width argument, then reloaded per layer because the
                    call clobbers it. */
-                draw(dst, work + CELL_SRC[cell],
+                draw(dst, (u8 *)work + CELL_SRC[cell],
                     cur->x - ((wide = CELL_W[cell]) >> 1),
                     cur->y + CELL_DY[cell],
                     wide, CELL_H[cell]);
                 if (WORK_EFX->layers != 0) {
-                    draw(dst, work + CELL_SRC[cell],
+                    draw(dst, (u8 *)work + CELL_SRC[cell],
                         cur->x - ((wide = CELL_W[cell]) >> 1),
                         (cur->y + CELL_DY[cell]) - 16,
                         wide, CELL_H[cell]);
                 }
                 if (WORK_EFX->layers == 2) {
-                    draw(dst, work + CELL_SRC[cell],
+                    draw(dst, (u8 *)work + CELL_SRC[cell],
                         cur->x - ((wide = CELL_W[cell]) >> 1),
                         (cur->y + CELL_DY[cell]) - 32,
                         wide, CELL_H[cell]);
@@ -196,7 +197,7 @@ void BattleFx_RunPuffArc(Efx *efx)
             i += 1;
         }
         ObjectGroup_TickMemberTimers();
-        *(s32 *)(work + 0x7824) = 1;
+        work->transfer_pending = 1;
         WaitFrames(1);
         frame += 1;
     } while (frame != 80);

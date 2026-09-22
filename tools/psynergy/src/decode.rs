@@ -123,6 +123,8 @@ pub enum Offset {
 pub enum Kind {
     Push {
         lr: bool,
+        /// The low registers pushed, as a bit per register.
+        list: u8,
     },
     Pop {
         pc: bool,
@@ -324,7 +326,7 @@ fn alu_mnemonic(op: Alu) -> &'static str {
 
 pub fn text_of(kind: &Kind) -> String {
     match kind {
-        Kind::Push { lr } => format!("push {{{}}}", if *lr { "lr" } else { "" }),
+        Kind::Push { lr, .. } => format!("push {{{}}}", if *lr { "lr" } else { "" }),
         Kind::Pop { pc, .. } => format!("pop {{{}}}", if *pc { "pc" } else { "" }),
         Kind::Bx(rm) => format!("bx {}", reg(*rm)),
         Kind::Nop => "nop".to_string(),
@@ -607,6 +609,7 @@ pub fn decode_one(image: &[u8], base: u32, pc: u32) -> Option<Ins> {
             } else if half & 0xfe00 == 0xb400 {
                 Kind::Push {
                     lr: half & 0x100 != 0,
+                    list: (half & 0xff) as u8,
                 }
             } else if half & 0xfe00 == 0xbc00 {
                 Kind::Pop {
@@ -799,7 +802,10 @@ mod tests {
         assert_eq!(
             kinds,
             vec![
-                Kind::Push { lr: true },
+                Kind::Push {
+                    lr: true,
+                    list: 0x10,
+                },
                 Kind::MovImm { rd: 0, imm: 1 },
                 Kind::LdrPool {
                     rd: 0,

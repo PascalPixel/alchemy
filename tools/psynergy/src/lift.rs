@@ -371,6 +371,8 @@ struct Lifter<'a> {
     by_addr: HashMap<u32, usize>,
     targets: BTreeSet<u32>,
     spill_slots: BTreeSet<u32>,
+    /// Current-frame offset of the caller's first stack argument.
+    incoming_stack_base: u32,
     /// Stack objects whose address is taken, with their byte sizes.
     frames: Vec<(u32, u32)>,
     /// Instructions the run stepped through; the rest were dropped.
@@ -445,6 +447,17 @@ impl<'a> Lifter<'a> {
         let mut spill_slots = BTreeSet::new();
         let mut taken = BTreeSet::new();
         let mut frame_size: u32 = 0;
+        let mut incoming_stack_base: u32 = 0;
+        for x in ins {
+            match x.kind {
+                Kind::Push { lr, list } => {
+                    incoming_stack_base += (list.count_ones() + u32::from(lr)) * 4;
+                }
+                Kind::SpAdjust(k) if k < 0 => incoming_stack_base += k.unsigned_abs(),
+                Kind::Bl { .. } | Kind::B { .. } | Kind::Bcond { .. } | Kind::Bx(_) => break,
+                _ => {}
+            }
+        }
         for x in ins {
             match x.kind {
                 Kind::B { target } | Kind::Bcond { target, .. } => {
@@ -500,6 +513,7 @@ impl<'a> Lifter<'a> {
             by_addr,
             targets,
             spill_slots,
+            incoming_stack_base,
             frames,
             visited: BTreeSet::new(),
             goto_states: BTreeMap::new(),
@@ -1896,6 +1910,17 @@ impl<'a> Lifter<'a> {
                         },
                     );
                 }
+            }
+            Kind::LdrSp { rd, imm } if imm >= self.incoming_stack_base => {
+                let index = 4 + (imm - self.incoming_stack_base) / 4;
+                self.set_reg(
+                    rd,
+                    Val {
+                        e: Some(format!("a{index}")),
+                        param: true,
+                        ..Default::default()
+                    },
+                );
             }
             Kind::LdrSp { rd, imm } => self.set_reg(rd, Val::expr(format!("slot{imm}"))),
             Kind::Load {
@@ -3466,6 +3491,17 @@ mod tests {
         lift(&ins, &mut BTreeMap::new(), &|_, _| None, &[])
             .lines
             .join("\n")
+    }
+
+    #[test]
+    fn caller_stack_word_after_saved_registers_is_fifth_parameter() {
+        let halves: [u16; 5] = [0xb5e0, 0xb4e0, 0x9e07, 0x2e00, 0x4770];
+        let image: Vec<u8> = halves.iter().flat_map(|h| h.to_le_bytes()).collect();
+        let ins = decode_window_at(&image, OVERLAY_BASE, OVERLAY_BASE, image.len() as u32);
+        let draft = lift(&ins, &mut BTreeMap::new(), &|_, _| None, &[]);
+
+        assert!(draft.params.contains(&"a4".to_string()));
+        assert!(!draft.consts.contains(&"slot28".to_string()));
     }
 
     #[test]

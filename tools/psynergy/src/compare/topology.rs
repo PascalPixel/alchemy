@@ -167,6 +167,7 @@ impl Program {
                 terminated.insert(source);
                 edges.push(format!("block:{source}:return->exit"));
             } else if indirect_transfer(&instruction.raw)
+                && !call_via(index, &self.instructions)
                 && !tables.iter().any(|table| table.dispatch == index)
             {
                 return Err(format!("indirect-dispatch-{:#x}", instruction.offset));
@@ -607,6 +608,22 @@ fn indirect_transfer(line: &str) -> bool {
     computed_dispatch(line) || mnemonic(line) == "bx"
 }
 
+/// GCC's Thumb `call_via` veneers use `mov ip, pc; bx rN`. The `bx` branches
+/// to a shared veneer, which returns through the link captured in `ip`; it is
+/// therefore a call with fallthrough, not a computed jump or function return.
+fn call_via(index: usize, instructions: &[Instruction]) -> bool {
+    if index == 0 || mnemonic(&instructions[index].raw) != "bx" {
+        return false;
+    }
+    let link = &instructions[index - 1].raw;
+    mnemonic(link) == "mov"
+        && link
+            .split_ascii_whitespace()
+            .nth(1)
+            .is_some_and(|operand| operand.trim_matches(',') == "ip")
+        && transfer_source(link) == "pc"
+}
+
 fn destination(target: &Destination, block_of: &[usize]) -> String {
     match target {
         Destination::Instruction(index) => format!("block:{}", block_of[*index]),
@@ -711,6 +728,25 @@ Func_08000000:
         assert!(matches!(
             compare(source, source, "Func_08000000"),
             Comparison::Uncovered(_)
+        ));
+    }
+
+    #[test]
+    fn thumb_call_via_bx_is_a_fallthrough_call() {
+        for register in ["r0", "r3", "r6", "r9"] {
+            let source = format!(
+                "Func_08000000:\n    mov ip, pc\n    bx {register}\n    movs r0, #1\n    bx lr\n"
+            );
+            assert_eq!(
+                compare(&source, &source, "Func_08000000"),
+                Comparison::Equal,
+                "register {register}"
+            );
+        }
+        let dispatch = "Func_08000000:\n    mov r0, pc\n    bx r3\n    movs r0, #1\n    bx lr\n";
+        assert!(matches!(
+            compare(dispatch, dispatch, "Func_08000000"),
+            Comparison::Uncovered { .. }
         ));
     }
 

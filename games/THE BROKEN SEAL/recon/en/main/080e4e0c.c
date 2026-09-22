@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
+#include "CALLBACK_SCHEDULER.H"
 
 /*
  * Region 0x080e4e0c .. 0x080e53f4 (1512 bytes), classified mixed_region.
@@ -109,8 +110,6 @@
 
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 
-typedef void (*DrawRectangleFn)(
-    void *dest, const void *src, s32 x, s32 y, s32 width, s32 height);
 typedef void (*ClearFn)(void *dest, s32 size);
 
 #define REG_BG2PA (*(volatile u16 *)0x04000020)
@@ -133,9 +132,7 @@ void Func_08002dd8(s32 id);
 s32 Func_080022ec(s32 numerator, s32 denominator);
 s32 Func_08002322(s32 angle);
 /* Scheduler_AddOrUpdateCallback */
-s32 Func_080041d8(void *callback, s32 interval);
 /* Scheduler_RemoveCallback */
-void Func_08004278(void *callback);
 /* random_16 */
 u32 Func_08004458(void);
 void Func_08009080(void *unit, s32 mode);

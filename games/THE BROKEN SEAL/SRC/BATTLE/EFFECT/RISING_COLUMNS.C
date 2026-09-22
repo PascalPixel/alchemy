@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
+#include "CALLBACK_SCHEDULER.H"
 
 #define BattleEffect_RunRisingColumns Func_080dd77c
 
@@ -9,11 +10,6 @@
  * Position-query outputs are separate from the two three-word coordinates.
  */
 
-typedef void (*DrawRectangle)(void *, const void *, s32, s32, s32, s32);
-typedef struct Effect {
-    s32 kind, side, actor, unknown0c, unknown10, count, layers, mode, unknown20;
-    s16 actors[8];
-} Effect;
 typedef struct Column {
     s32 x;
     s32 unused[6];
@@ -25,8 +21,6 @@ void Func_080cd594(s32);
 void Func_080de2f8(void *, s32, s32, s32, s32 *, s32 *);
 void Func_080e396c(s32, s32 *);
 #define EffectPosition_ApplyStepAndYOffset Func_080e396c
-void Func_080041d8(s32, s32);
-#define Scheduler_AddOrUpdateCallback Func_080041d8
 void Func_080f9010(s32);
 #define Audio_PlayCue Func_080f9010
 void Func_080d6888(s32, s32, s32, s32, s32);
@@ -38,14 +32,12 @@ void Func_080cd52c(void);
 #define ObjectGroup_TickMemberTimers Func_080cd52c
 void Func_080030f8(s32);
 #define WaitFrames Func_080030f8
-void Func_08004278(s32);
-#define Scheduler_RemoveCallback Func_08004278
 void Func_08002dd8(s32);
 #define Runtime_ReleaseHeapBlock Func_08002dd8
 s32 Func_080cdbc0(void);
-#define WORK_EFFECT ((Effect *)work->effect)
+#define WORK_EFFECT ((struct BattleEffectArgument *)work->effect)
 
-void BattleEffect_RunRisingColumns(Effect *effect)
+void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
 {
     u32 *cache, *entry;
     struct BattleEffectWork *work;

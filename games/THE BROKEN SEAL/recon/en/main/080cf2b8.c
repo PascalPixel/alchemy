@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
+#include "CALLBACK_SCHEDULER.H"
 
 #define BattleEffect_RunMemberBeam Func_080cf2b8
 
@@ -64,8 +65,6 @@
     (*(type_ptr)((u8 *)(expr) + (offset)))
 
 typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
-typedef void (*DrawRectangleFn)(
-    void *dest, const void *src, s32 x, s32 y, s32 width, s32 height);
 
 extern u8 Value_0000007b;
 extern u8 Value_00000091;
@@ -84,7 +83,6 @@ void *Func_08002f40(s32 id);
 u32 Func_08005340(const void *source, void *destination);
 u32 Func_08004458(void);
 void Func_080e396c(s32 member_id, s32 *out);
-s32 Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 void Func_080f9010(s32 id);
 void Func_080b50e8(s32 id);
 s32 Func_08002322(s32 angle);
@@ -99,7 +97,6 @@ void Func_080e3944(void *source, s32 *screen);
 s32 Func_080022ec(s32 value, s32 divisor);
 void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Func_080030f8(s32 frames);
-void Scheduler_RemoveCallback(void *callback);
 s32 Func_080cdbc0(void);
 
 void BattleEffect_RunMemberBeam(void *object, s32 variant)

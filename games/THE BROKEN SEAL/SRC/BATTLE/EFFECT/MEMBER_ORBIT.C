@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
+#include "CALLBACK_SCHEDULER.H"
 
 #define BattleFx_RunMemberOrbit Func_080ce85c
 
@@ -12,8 +13,6 @@
     (*(type_ptr)((u8 *)(expr) + (offset)))
 
 typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
-typedef void (*DrawRectangleFn)(
-    void *dest, const void *src, s32 x, s32 y, s32 width, s32 height);
 
 /* A small absolute link-time constant.  The resource id must be built from a
  * literal pool word, which an ordinary integer literal cannot produce. */
@@ -23,10 +22,6 @@ void Func_080cd594(s32 mode);
 void *Func_08002f40(s32 id);
 #define Resource_GetTableEntry Func_08002f40
 u32 Func_08005340(const void *source, void *destination);
-void Func_080041d8(void *callback, s32 interval);
-#define Scheduler_AddOrUpdateCallback Func_080041d8
-void Func_08004278(void *callback);
-#define Scheduler_RemoveCallback Func_08004278
 void Func_080049ac(void);
 #define Render_ResetTransformState Func_080049ac
 void Func_080051d8(s32 a, s32 b);

@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
+#include "CALLBACK_SCHEDULER.H"
 
 #define BattlePres_RunRingAndSparkScene Func_080e40a4
 
@@ -168,7 +169,6 @@ void Func_080cdd58(void);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 flag_a, s32 flag_b);  /* load_and_decompress */
 void *Func_08002f40(s32 id);                                       /* get */
 void Func_080072f0(void *dest, const void *src, s32 count, CopyFn copier);
-s32 Func_080041d8(void *callback, s32 interval);                  /* Scheduler_AddOrUpdateCallback */
 struct Member **Func_080b5098(s32 member);
 u32 Func_08004458(void);                                           /* random_16 */
 void Func_08009088(struct Member *member, s32 mode);
@@ -179,7 +179,6 @@ void Func_08004c6c(s32 angle);
 void Func_08004bd4(s32 angle);                                     /* SceneTransform_ApplyPitch */
 void Func_08004c1c(s32 angle);                                     /* SceneTransform_ApplyYaw */
 void Func_080e3944(const void *particle, s32 *out);                /* apply_base_and_y_offset */
-void Func_08004278(void *callback);                                /* Scheduler_RemoveCallback */
 s32 Func_080b5070(s32 member);
 void Func_080b50e8(s32 id);
 void Func_080b5088(s32 member, s32 kind);

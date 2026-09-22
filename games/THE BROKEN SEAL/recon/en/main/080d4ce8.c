@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 
-typedef void (*DrawRectangle)(void *, const void *, s32, s32, s32, s32);
 typedef s32 (*CopyWords)(void *, const void *, s32);
 typedef struct Effect {
     s32 kind, side, actor, unk0c, unk10, count, variant, unk1c, unk20;

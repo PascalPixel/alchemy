@@ -38,8 +38,6 @@
 #define STATE M2C_FIELD(work, void **, 0x7828)
 
 typedef void (*WordCopyFn)(void *dest, void *src, s32 size);
-typedef void (*DrawRectangleFn)(
-    void *dest, void *src, s32 x, s32 y, s32 width, s32 height);
 
 void Func_080cd594(s32 mode);
 void *Func_08002f40(s32 id);

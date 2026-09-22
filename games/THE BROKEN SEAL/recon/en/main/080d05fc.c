@@ -8,7 +8,6 @@
  * Draft: complete control flow reconstructed; linked bytes remain nonexact.
  */
 
-typedef void (*DrawRectangle)(void *, const void *, s32, s32, s32, s32);
 typedef void (*WordCopy)(void *, const void *, s32);
 typedef struct Effect {
     s32 kind, side, actor, unknown0c, unknown10, count, layers, mode, unknown20;

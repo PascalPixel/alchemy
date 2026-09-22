@@ -48,8 +48,6 @@
     (*(type_ptr)((u8 *)(expr) + (offset)))
 
 typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
-typedef void (*DrawRectangleFn)(
-    void *dest, const void *src, s32 x, s32 y, s32 width, s32 height);
 
 extern u8 Value_000000a9;
 

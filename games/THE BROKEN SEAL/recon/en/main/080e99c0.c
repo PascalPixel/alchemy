@@ -1,5 +1,6 @@
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFX.H"
+#include "CALLBACK_SCHEDULER.H"
 
 /*
  * Battle-presentation scene at main:080e99c0 (1816 bytes), another member of
@@ -115,8 +116,6 @@
 #define DUST ((struct EffectStep *)0x02010000)
 #define SPARK ((struct EffectStep *)0x02014AD0)
 
-typedef void (*DrawRectangleFn)(
-    void *dest, const void *src, s32 x, s32 y, s32 w, s32 h);
 
 extern char Value_00000056;
 extern char Value_00000073;
@@ -138,9 +137,7 @@ s32 Func_08002322(s32 angle);
 void Func_08002dd8(s32 kind);
 void Func_080030f8(s32 frames);
 /* Scheduler_AddOrUpdateCallback */
-s32 Func_080041d8(void *callback, s32 interval);
 /* Scheduler_RemoveCallback */
-void Func_08004278(void *callback);
 /* Random16 */
 s32 Func_08004458(void);
 /* _call_via_r3 thunk, games/THE BROKEN SEAL/raw/080072e4.s */

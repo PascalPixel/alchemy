@@ -1,8 +1,7 @@
 #include "DMA.H"
+#include "CALLBACK_SCHEDULER.H"
 void *Func_080048b0(s32, s32);
 #define Runtime_AllocateHeapBlock Func_080048b0
-s32 Func_080041d8(void (*)(void), s32);
-#define Scheduler_AddOrUpdateCallback Func_080041d8
 void Func_08095884(void);
 #define BattleFx_UpdateAllSlots Func_08095884
 void BattleFx_InitializeSlots(void)

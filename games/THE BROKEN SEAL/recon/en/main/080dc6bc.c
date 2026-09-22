@@ -39,8 +39,6 @@
     (*(type_ptr)((u8 *)(expr) + (offset)))
 
 typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
-typedef void (*DrawRectangleFn)(
-    void *dest, const void *src, s32 x, s32 y, s32 width, s32 height);
 
 /* One 28-byte record; the array starts at work + 0x7080, the same base
  * address and record size as the already-adopted puff_arc/run.c Puff

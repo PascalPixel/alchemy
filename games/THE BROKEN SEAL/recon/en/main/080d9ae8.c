@@ -7,8 +7,6 @@
 #define RunPaletteRampEffect Func_080d9ae8
 
 typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
-typedef void (*DrawRectangleFn)(
-    void *dest, const void *src, s32 x, s32 y, s32 width, s32 height);
 
 extern u8 Value_0000009b;
 extern u8 Value_0000009c;

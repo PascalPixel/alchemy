@@ -9,6 +9,12 @@ s32 Func_080ed408(s32 kind, s32 width, s32 height, s32 count, s32 mode);
 #define Resource_LoadAndDecompress Func_080e0524
 #define BattleEffect_LoadWork      Func_080ed408
 
+typedef void (*BattleEffectDrawRectangle)(
+    void *destination, const void *source,
+    s32 x, s32 y, s32 width, s32 height);
+typedef BattleEffectDrawRectangle DrawRectangle;
+typedef BattleEffectDrawRectangle DrawRectangleFn;
+
 /* target_flags 下位4ビットのダメージ種別。 */
 enum {
     BATTLE_DAMAGE_PP_DIRECT = -1, /* PPへの直接ダメージ */

@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFX.H"
+#include "BATTLE_EFFECT_WORK.H"
 
 /*
  * Battle-presentation sub-effect at 0x080cb4ec, part of the same
@@ -26,13 +27,8 @@
  * template's continued motion.
  */
 
-typedef void (*DrawRectangleFn)(
-    void *dest, const void *src, s32 x, s32 y, s32 width, s32 height);
 
 void Func_080cd594(s32 mode);
-void Resource_LoadAndDecompress(
-    void *resource_id, void *destination, s32 destination_offset,
-    s32 copy_palette);
 s32 Func_080041d8(s32 callback, s32 interval);
 void Func_08004278(s32 callback);
 void Func_080f9010(s32 cue);
@@ -56,20 +52,7 @@ extern const u8 Data_080edf83[4];
 
 /* Same effect-state layout established by puff_arc/run.c, republished at
    work + 0x7828. */
-typedef struct Efx {
-    s32 kind;
-    s32 side;
-    s32 actor;
-    s32 unk0C;
-    s32 unk10;
-    s32 cnt;
-    s32 layers;
-    s32 unk1C;
-    s32 unk20;
-    s16 actors[8];
-} Efx;
-
-#define WORK_EFX (*(Efx **)(work + 0x7828))
+#define WORK_EFX (*(struct BattleEffectArgument **)(work + 0x7828))
 
 /* One 28-byte particle record, matching the template's Puff stride. Only
    offsets 0, 4, 0xC and 0x10 are ever touched by this owner; offset 8 and
@@ -86,7 +69,7 @@ typedef struct Particle {
     u8 pad14[8];
 } Particle;
 
-void Func_080cb4ec(Efx *efx)
+void Func_080cb4ec(struct BattleEffectArgument *efx)
 {
     void **heap_cache;
     void **cursor;

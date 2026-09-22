@@ -1,4 +1,6 @@
 #include "TYPES.H"
+#include "BATTLE_EFX.H"
+#include "CALLBACK_SCHEDULER.H"
 
 /*
  * Battle-presentation sub-effect at 0x080d2d98 (1576 bytes).  It belongs to
@@ -84,8 +86,6 @@
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 
 typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
-typedef void (*DrawRectangleFn)(
-    void *dest, const void *src, s32 x, s32 y, s32 width, s32 height);
 
 struct EffectArgument {
     u8 unknown_00[20];
@@ -129,8 +129,6 @@ void Func_080cd594(s32 mode);
 void BattleFx_FetchRectangleBlitters(s32 alternate, u32 *output);
 void *Func_08002f40(s32 id);
 u32 Func_08005340(const void *source, void *destination);
-s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
-void Scheduler_RemoveCallback(void *callback);
 s32 Func_08004458(void);
 void BattleFx_SelectLivingTargets(void *argument);
 void Func_080030f8(s32 frames);

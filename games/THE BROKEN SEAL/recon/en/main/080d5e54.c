@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFX.H"
+#include "CALLBACK_SCHEDULER.H"
 
 #define BattleEffect_RunSparkTravel Func_080d5e54
 
@@ -103,8 +104,6 @@
 /* Six drawn arguments: destination, source cell, x, y, width, height.  Both
    entries come back from BattleFx_FetchRectangleBlitters and are reached through the compiler
    runtime's bx r4 thunk, so they are typed indirect calls. */
-typedef void (*DrawRectangleFn)(
-    void *dest, const void *src, s32 x, s32 y, s32 width, s32 height);
 
 /* Relocated IWRAM integer square root, reached through the bx r3 thunk. */
 typedef s32 (*SqrtFn)(s32 value);
@@ -130,8 +129,6 @@ s32 Func_08002322(s32 angle);
 s32 Func_0800231c(s32 angle);
 s32 Func_080022ec(s32 value, s32 divisor);
 s32 Func_080022fc(s32 value, s32 divisor);
-s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
-void Scheduler_RemoveCallback(void *callback);
 void Render_ResetTransformState(void);
 void Func_080049e8(void);
 void Func_08004a5c(void);

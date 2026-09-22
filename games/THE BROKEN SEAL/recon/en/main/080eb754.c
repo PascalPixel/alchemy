@@ -2,6 +2,7 @@
 #include "BATTLE_EFFECT_WORK.H"
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFX.H"
+#include "CALLBACK_SCHEDULER.H"
 
 /*
  * Battle-presentation scene at 0x080eb754.

@@ -1,13 +1,13 @@
 #include "BATTLE_PRESENTATION.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
+#include "CALLBACK_SCHEDULER.H"
 
 #define BattleEffect_RunBurstShower Func_080dbc30
 
 /* Six drawn arguments: destination, source cell, x, y, width, height.
    Called through the r4 bx bank, so it is an indirect call through a
    cached blitter entry rather than a fixed callee. */
-typedef void (*DrawRectangle)(void *, const void *, s32, s32, s32, s32);
 
 /* The word-copy entry the runtime publishes at 0x03001388; reached through
    the r3 bx bank. */
@@ -33,10 +33,6 @@ void Func_080cd594(s32);
 void BattleFx_FetchRectangleBlitters(s32, u32 *);
 void *Func_08002f40(s32);
 #define Resource_GetTableEntry Func_08002f40
-void Func_080041d8(s32, s32);
-#define Scheduler_AddOrUpdateCallback Func_080041d8
-void Func_08004278(s32);
-#define Scheduler_RemoveCallback Func_08004278
 void Func_080e3958(s32, s32 *);
 #define EffectPosition_ApplyAnimationAndYOffset Func_080e3958
 void Func_080e396c(s32, s32 *);

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "CALLBACK_SCHEDULER.H"
 
 struct BattleEffectSceneObject {
     u8 reserved_00[0x45];
@@ -43,8 +44,6 @@ struct BattleObjectSlot {
 void Func_0809bb34(struct BattleEffectSceneObject *object);
 #define BattleFx_ClearOwnedSlot Func_0809bb34
 void WaitFrames(s32 frames);
-void Func_08004278(u32 callback);
-#define Scheduler_RemoveCallback Func_08004278
 void Func_08003f3c(s32 handle);
 #define Resource_ResetEntry Func_08003f3c
 void Func_0809202c(void);

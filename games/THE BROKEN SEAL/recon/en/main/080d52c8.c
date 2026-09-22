@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
+#include "CALLBACK_SCHEDULER.H"
 
 /*
  * Battle-presentation scene at main:080d52c8 (1768 bytes), a member of the
@@ -71,8 +72,6 @@
 
 typedef void (*WordCopyFn)(void *dest, const void *src, s32 size);
 typedef s32 (*IntegerSqrtFn)(s32 value);
-typedef void (*DrawRectangleFn)(
-    void *dest, const void *src, s32 x, s32 y, s32 width, s32 height);
 
 /* Heap-block cache: Data_03001e50[kind] holds the block BattleEffect_LoadWork
    published for that display kind. */
@@ -107,9 +106,7 @@ void Func_08002dd8(s32 kind);
 void *Func_08002f40(s32 id);
 void Func_080030f8(s32 frames);
 /* Scheduler_AddOrUpdateCallback */
-s32 Func_080041d8(void *callback, s32 interval);
 /* Scheduler_RemoveCallback */
-void Func_08004278(void *callback);
 /* random_16 */
 u32 Func_08004458(void);
 /* Render_ResetTransformState */

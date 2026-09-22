@@ -17,8 +17,6 @@
 #define M2C_FIELD(expr, type_ptr, offset) \
     (*(type_ptr)((u8 *)(expr) + (offset)))
 
-typedef void (*DrawRectangleFn)(
-    void *dest, void *src, s32 x, s32 y, u32 w, s32 h);
 
 extern u8 Value_000000a8;
 

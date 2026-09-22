@@ -42,8 +42,6 @@
     (*(type_ptr)((u8 *)(expr) + (offset)))
 
 typedef void (*FillFn)(void *dest, s32 size, s32 value);
-typedef void (*DrawRectangleFn)(
-    void *dest, void *src, s32 x, s32 y, u32 w, u32 h);
 
 void Func_080dbb24(s32 count, s32 kind, s32 variant);
 u32 Func_08004458(void);

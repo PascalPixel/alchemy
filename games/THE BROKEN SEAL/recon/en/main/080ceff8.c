@@ -46,8 +46,6 @@
     (*(type_ptr)((u8 *)(expr) + (offset)))
 
 typedef void (*WordCopy)(void *dest, const void *src, s32 words);
-typedef void (*DrawRectangle)(
-    void *dest, const void *src, s32 x, s32 y, s32 width, s32 height);
 
 extern void *Data_03001e50[];
 extern u8 Value_0000007b;

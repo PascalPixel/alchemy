@@ -48,13 +48,6 @@
 
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 
-typedef void (*DrawRectangleFn)(
-    void *destination,
-    const void *source,
-    s32 x,
-    s32 y,
-    s32 width,
-    s32 height);
 
 struct EffectArgument {
     u8 unknown_00[4];

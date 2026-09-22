@@ -7,8 +7,6 @@ typedef s32 M2C_UNK;
 
 void **Func_080b5098(s32 actor_id);
 void Func_080de2f8(void *, s32, s32, s32, s32 *, s32 *);
-typedef void (*DrawRectangleFn)(
-    void *, const void *, s32, s32, s32, s32);
 
 #define BattleEffectA Func_080d89ac
 

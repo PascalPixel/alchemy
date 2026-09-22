@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
+#include "CALLBACK_SCHEDULER.H"
 
 /*
  * Battle-presentation sub-effect at 0x080cf8e0 (1556 bytes).  It belongs to
@@ -89,13 +90,6 @@
 
 #define BattleEffect_RunImpactBurst Func_080cf8e0
 
-typedef void (*DrawRectangleFn)(
-    void *destination,
-    const void *source,
-    s32 x,
-    s32 y,
-    s32 width,
-    s32 height);
 
 typedef s32 (*WordCopyFn)(void *destination, const void *source, s32 words);
 
@@ -170,8 +164,6 @@ void Func_080cd594(s32 mode);
 void *Func_08002f40(s32 resource_id);   /* "get" in alchemy inspect */
 u32 Func_08005340(const void *source, void *destination);
 struct ActorObject **Func_080b5098(s32 member_id);
-s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
-void Scheduler_RemoveCallback(void *callback);
 void Func_080f9010(s32 cue);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);

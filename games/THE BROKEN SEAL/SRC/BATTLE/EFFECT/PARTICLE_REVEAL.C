@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
+#include "CALLBACK_SCHEDULER.H"
 
 #define BattleFx_RunParticleReveal Func_080e0c84
 
@@ -38,8 +39,6 @@
  * otherwise fit an 8-bit `movs` immediate.
  */
 
-typedef void (*DrawRectangleFn)(
-    void *dest, void *src, s32 x, s32 y, s32 width, s32 height);
 
 typedef struct {
     s32 x;
@@ -66,8 +65,6 @@ void Func_080cd594(s32 mode);
 void Func_080de2f8(void *object, s32 a, s32 b, s32 c, s32 *out_a, s32 *out_b);
 void Func_080cef64(s32 flag, DrawRectangleFn *out_callbacks);
 #define BattleFx_FetchRectangleBlitters Func_080cef64
-void Func_080041d8(void *callback, s32 interval);
-#define Scheduler_AddOrUpdateCallback Func_080041d8
 void Func_080e3980(s16 a, s32 *out_pair);
 #define EffectPosition_ApplyAlternateStepAndYOffset Func_080e3980
 u32 Func_08004458(void);
@@ -88,8 +85,6 @@ void Func_080cd52c(void);
 #define ObjectGroup_TickMemberTimers Func_080cd52c
 void Func_080030f8(s32 frames);
 #define WaitFrames Func_080030f8
-void Func_08004278(void *callback);
-#define Scheduler_RemoveCallback Func_08004278
 void Func_08002dd8(s32 id);
 #define Runtime_ReleaseHeapBlock Func_08002dd8
 void Func_080cdbc0(void);

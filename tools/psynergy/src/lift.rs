@@ -195,6 +195,18 @@ fn split_plus(e: &str) -> Option<(String, i64)> {
     None
 }
 
+/// Returns the byte offset represented by a frame-base expression.  The
+/// low-register Thumb spelling `mov rN, sp; adds rN, #k` is the same address as
+/// `add rN, sp, #k`; keeping the offset explicit lets unit lowering merge the
+/// two spellings onto one byte-array slot.
+fn stack_address_offset(e: &str) -> Option<u32> {
+    if e == "&slot0" {
+        return Some(0);
+    }
+    let (base, offset) = split_plus(e)?;
+    (base == "&slot0" && offset >= 0).then_some(offset as u32)
+}
+
 fn balanced(s: &str) -> bool {
     let mut depth = 0i32;
     for c in s.chars() {
@@ -449,6 +461,19 @@ impl<'a> Lifter<'a> {
                     frame_size = k.unsigned_abs();
                 }
                 _ => {}
+            }
+        }
+        // A high-register copy of sp followed by its immediate offset is an
+        // address-taken stack object too.  Registering that offset here makes
+        // its byte-array extent available to the unit source pass even when
+        // the assembler chose the two-instruction spelling.
+        for pair in ins.windows(2) {
+            if let (Kind::MovHi { rd, rm: 13 }, Kind::AddImm8 { rd: next, imm }) =
+                (&pair[0].kind, &pair[1].kind)
+            {
+                if rd == next {
+                    taken.insert(*imm);
+                }
             }
         }
         // A taken stack address starts an object that runs to the next
@@ -1605,6 +1630,16 @@ impl<'a> Lifter<'a> {
                 if rd == rm {
                     return i + 1;
                 }
+                // r13 is the architectural stack pointer.  A high-register
+                // move from it materializes the current frame base in a low
+                // register; leaving it unknown turns every later offset into
+                // an uninitialized pseudo (for example `mov r2, sp; adds
+                // r2, #64`).  Keep the address form so unit lowering can
+                // preserve byte offsets and aliases among stack objects.
+                if rm == 13 && rd != 13 {
+                    self.set_reg(rd, Val::expr("&slot0"));
+                    return i + 1;
+                }
                 // ABI restoration is not a C assignment: r0 may still name
                 // the pre-restore value of this callee-saved register.
                 if (8..=11).contains(&rd) && self.epilogue_returns_r0(i + 1) {
@@ -1734,7 +1769,13 @@ impl<'a> Lifter<'a> {
                 }
                 let v = self.val_of(rd, None);
                 let n = imm as i32;
-                if v.shared && v.is_const() {
+                let stack_address =
+                    v.e.as_deref()
+                        .and_then(stack_address_offset)
+                        .map(|offset| offset + imm as u32);
+                if let Some(offset) = stack_address {
+                    self.set_reg(rd, Val::expr(format!("&slot{offset}")));
+                } else if v.shared && v.is_const() {
                     let name = self.name_shared(&v);
                     self.set_reg(rd, Val::expr(format!("({name} + {n})")));
                 } else if let Some(c) = v.c {
@@ -2226,10 +2267,18 @@ impl<'a> Lifter<'a> {
         let destination = self.fmt(&destination);
         let control = self.fmt(&control);
         let channel_text = self.fmt(&channel);
+        let source = format!("(const void *)({source})");
+        let destination = format!("(void *)({destination})");
+        let channel_text = format!("(volatile u32 *)({channel_text})");
         self.emit(format!(
             "Dma_Set({source}, {destination}, {control}, {channel_text});"
         ));
         self.set_reg(rn, channel);
+        // Dma_Set consumes r0..r3 as an inline call.  Keep their values for
+        // later expressions, but do not let the call arity scanner treat the
+        // DMA setup as arguments to the next ordinary call.
+        self.written.clear();
+        self.stack_args.clear();
         self.consumed.insert(i + 1);
         true
     }
@@ -3525,8 +3574,20 @@ mod tests {
     #[test]
     fn dma_kick_recognizes_register_shape_without_channel_address() {
         let text = lifted(&[0xc307, 0x3b0c, 0x4770]);
-        assert!(text.contains("Dma_Set(a0, a1, a2, a3);"), "{text}");
+        assert!(
+            text.contains("Dma_Set((const void *)(a0), (void *)(a1), a2, (volatile u32 *)(a3));"),
+            "{text}"
+        );
         assert!(!text.contains("*(s32 *)"), "{text}");
+    }
+
+    #[test]
+    fn dma_kick_casts_integer_pointer_arguments() {
+        let text = lifted(&[0x2001, 0x2102, 0x2203, 0x2304, 0xc307, 0x3b0c, 0x4770]);
+        assert!(
+            text.contains("Dma_Set((const void *)(1), (void *)(2), 3, (volatile u32 *)(4));"),
+            "{text}"
+        );
     }
 
     #[test]
@@ -3534,6 +3595,28 @@ mod tests {
         let text = lifted(&[0xc307, 0x3b08, 0x4770]);
         assert!(!text.contains("Dma_Set("), "{text}");
         assert!(text.contains("*(s32 *)(a3) = a0;"), "{text}");
+    }
+
+    #[test]
+    fn dma_kick_discards_prior_outgoing_stack_arguments() {
+        // An outgoing stack slot left by an earlier call must not become an
+        // argument of the first call after the inline DMA sequence.
+        let text = lifted(&[
+            0x2001, 0x9000, 0x2102, 0x2203, 0x2304, 0xc307, 0x3b0c, 0x2004, 0xf000, 0xf800, 0x4770,
+        ]);
+        assert!(text.contains("Dma_Set("), "{text}");
+        assert!(text.contains("Func_02000014(4);"), "{text}");
+        assert!(!text.contains("Call2("), "{text}");
+    }
+
+    #[test]
+    fn high_register_move_from_sp_keeps_stack_address() {
+        // `mov r2, sp; adds r2, #64` is the high-register spelling of an
+        // address taken from the current frame.  It must never become an
+        // uninitialized r13 pseudo in the lifted body.
+        let text = lifted(&[0x466a, 0x3240, 0x600a, 0x4770]);
+        assert!(text.contains("&slot64"), "{text}");
+        assert!(!text.contains("r13?"), "{text}");
     }
 
     /// `subs r0, #1; bne +0; movs r0, #0; bx lr`: the branch tests the

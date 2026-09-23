@@ -1,14 +1,10 @@
 #include "FIELD_EVENT.H"
 
-#define FieldScene_RunScene37aSequenceH Func_02001ca8
 
 /*
- * Score 2026-09-23: 1,120 of 1,120 bytes, 8 halfword edits (14 before both
- * rise-and-shrink loops of each actor shared one counter). Remaining
- * residual: in the first presentation the reference stores motion_flags
- * zero from r7 (the register the sprite pointer takes next); in the second
- * it loads unknown_5a into r3 and delays both byte stores past the r5 zero.
- * Mask spellings and statement orders tried did not move either.
+ * Exact 2026-09-23 (1,120 bytes), with two tagged fake matches for the
+ * zero stores of the two presentations. Both rise-and-shrink loops of each
+ * actor share one counter.
  */
 
 void Func_020044e6();
@@ -138,7 +134,7 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-void FieldScene_RunScene37aSequenceH(void)
+void FieldScene_RunSanctumRiseAndShrink(void)
 {
     u32 i;
     struct FieldActor *actor;
@@ -216,7 +212,9 @@ void FieldScene_RunScene37aSequenceH(void)
         Call3(Func_020049c2, 0, 0xc000, 20);
         Call3(Func_0200494c, 0, 0x4ccc, 0x2666);
         actor->unknown_5a &= 254;
-        actor->motion_flags = 0;
+        /* FAKEMATCH: the zero goes through the sprite variable (r7). */
+        sprite = 0;
+        actor->motion_flags = (u32)sprite;
         Func_02004a66(201);
         Call2(Func_020049c8, 0, 0x100);
         sprite = actor->sprite;
@@ -244,9 +242,15 @@ void FieldScene_RunScene37aSequenceH(void)
         Call3(Func_02004a74, 16, 0xc000, 20);
         Call3(Func_020049fe, 16, 0x4ccc, 0x2666);
         actor = Func_020049fc(16);
-        base5_0 = 0;
-        actor->unknown_5a &= 254;
-        actor->motion_flags = 0;
+        /* FAKEMATCH: a mask temporary delays both byte stores past the zero. */
+        {
+            s32 m = 254;
+
+            m &= actor->unknown_5a;
+            base5_0 = 0;
+            actor->unknown_5a = m;
+            actor->motion_flags = base5_0;
+        }
         Func_02004b20(201);
         Call2(Func_02004a82, 16, 0x100);
         sprite = actor->sprite;

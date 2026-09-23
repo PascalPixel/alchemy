@@ -19,64 +19,6 @@
 #define EndSceneStep      Func_020026aa
 #define EffectMotion_GetHorizontalDecay Func_02003092
 #define EffectMotion_GetVerticalDecay Func_020030a0
-#define SceneEffect_SetEffectRecordMode Func_02000030
-#define OverlayObject_CreateConfiguredObject Func_020000a0
-#define SceneActor_UpdateProximityToLeader Func_02000314
-#define ActorPresentation_UpdateEntityFromLeader Func_020003ac
-#define SceneData_GetScriptTable Func_02000418
-#define SceneData_ReturnZero Func_02000420
-#define SceneData_GetMessageTable Func_02000424
-#define SceneData_SelectActorTableByFlag855 Func_0200042c
-#define OverlayObject_GetObject2Byte280 Func_02000450
-#define OverlayObject_RunObject2WhenFlagged Func_02000464
-#define SceneState_SetFlags947And29dc Func_020005c8
-#define SceneData_SelectTableA414ByFlag855 Func_020005f0
-#define SceneDialogue_RunActor9LineAndAdvance Func_02000614
-#define ActorPresentation_RunActorThirteenSceneSetup Func_02000674
-#define ActorPresentation_RunActorSeventeenSceneSetup Func_020006d0
-#define ActorPresentation_RunActorEighteenSceneSetup Func_02000724
-#define SceneDialogue_RunActor11Line Func_02000778
-#define SceneDialogue_RunActor16Line Func_02000798
-#define SceneDialogue_RunActor19Line Func_020007b8
-#define ActorPresentation_RunActorFourteenDialogue Func_020007ec
-#define ActorPresentation_RunActorFifteenDialogue Func_0200085c
-#define FieldScene_RunActor21Sequence Func_020008cc
-#define SceneActor_RunActorStep Func_0200090c
-#define SceneActor_RunActorCommandWithFlag91 Func_02000938
-#define ActorPresentation_RunActorEightSceneSetup Func_0200097c
-#define SceneDialogue_RunActor11SecondLine Func_020009d0
-#define SceneDialogue_RunActor12LineAndAdvance Func_020009f0
-#define SceneDialogue_RunActor13Line Func_02000a2c
-#define ActorPresentation_RunActorFourteenDialogueAndAdvanceStory Func_02000a4c
-#define ActorPresentation_RunActorFifteenFollowupDialogue Func_02000acc
-#define ActorPresentation_RunActorSixteenSceneSetup Func_02000b3c
-#define ActorPresentation_RunActorEighteenFollowupSceneSetup Func_02000b98
-#define ActorPresentation_RunActorNineteenDialogueAndSetSceneState Func_02000bec
-#define SceneDialogue_RunActor20Line Func_02000c54
-#define SceneDialogue_RunActor11FlaggedLine Func_02000c8c
-#define ActorPresentation_RunActorFourteenFlaggedDialogue Func_02000cfc
-#define ActorPresentation_RunActorFifteenScriptBranch Func_02000d78
-#define ActorPresentation_RunActorSixteenScriptBranch Func_02000dd4
-#define ActorPresentation_RunActorNineteenScriptBranch Func_02000e0c
-#define SceneDialogue_RunActor21Line Func_02000e84
-#define SceneState_Apply200ThenPlace55_26 Func_02000ea4
-#define SceneState_Apply200ThenPlace23_23 Func_02000ecc
-#define SceneActor_PlaceActor0AndSetSceneDelay Func_02000ef4
-#define FieldScene_SetupScene5At408_320 Func_02000f3c
-#define FieldScene_SetupScene6At312_304 Func_02000f64
-#define FieldScene_SetupScene7At216_288 Func_02000f8c
-#define ActorPresentation_SetupActorZeroForSceneEightAt376_224 Func_02000fb4
-#define ActorPresentation_SetupActorZeroForSceneNineAt296_176 Func_02001010
-#define FieldScene_SetupScene10At120_144 Func_0200106c
-#define ActorPresentation_SetupActorZeroForSceneTwelveAt72_160 Func_0200113c
-#define FieldScene_SetupScene13At152_264 Func_02001198
-#define ActorPresentation_MoveActorToPositionAndWait Func_020011b0
-#define FieldScene_RunActor23SequenceOnceByFlag867 Func_02001238
-#define FieldScene_RunActor19MotionSequence Func_020012c0
-#define SceneActor_GetPositionDistance Func_02001638
-#define SceneActor_ApplyActorZeroThenWait Func_02001724
-#define SceneActor_ApplyActorCueThenWait Func_0200173c
-#define SceneEffect_UpdateMotionWithDamping Func_02001754
 
 struct EffectRecord {
     u8 pad[9];
@@ -674,7 +616,6 @@ s32 OverlayObject_RunObject2WhenFlagged(void)
 
 #include "TYPES.H"
 
-#define FieldScene_RunScene382_020004a0 Func_020004a0
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */
 

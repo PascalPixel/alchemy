@@ -1,33 +1,6 @@
 #include "TYPES.H"
 
-#define OverlayObject_PrepareSpawnedObject Func_020009f4
-#define OverlayObject_SpawnConfiguredWithMode15 Func_02000a4c
 #define OverlayObject_IntegrateVelocities Func_02000ab0
-#define OverlayObject_ApplyField100 Func_02000d6c
-#define OverlayObject_ApplyZero Func_02000d80
-#define SceneState_SetValue18Mode2 Func_02000cc0
-#define SceneState_ApplyCrossRectsAroundActor11 Func_02001520
-#define SceneActor_TryRunSlotZeroMoveStep Func_02000cd0
-#define SceneActor_BobActorZeroWhenAheadClear Func_02001078
-#define SceneActor_RunActorTwelveThreeWaypointMotion Func_02001328
-#define SceneActor_RunActorFourteenFourWaypointMotion Func_02001880
-#define SceneActor_BobActorZeroWhenTargetClear Func_02001ac8
-#define FieldScene_RunScene39f_02000d90 Func_02000d90
-#define FieldScene_RunScriptedSteps0And17E6 Func_0200112c
-#define FieldScene_RunActor10WaypointSequence Func_02001150
-#define FieldScene_RunActorElevenPresentationBeat Func_02001244
-#define FieldScene_RunStepFD4WithActor181 Func_02001420
-#define FieldScene_RunProbedActorEightOrTenScene Func_02001454
-#define FieldScene_RunActorThirteenPresentationBeat Func_020016f0
-#define FieldScene_RunScene39f_02001818 Func_02001818
-#define FieldScene_RunSupplementalSequenceOne Func_02001c34
-#define FieldScene_RunScene39fSequenceA Func_02001d04
-#define FieldScene_RunSlot16WaypointSequence Func_02001de0
-#define FieldScene_RunActor17CameraSequence Func_02001ef0
-#define FieldScene_RunScene39f_02002004 Func_02002004
-#define FieldScene_RunActorEighteenEffectSequence Func_02002078
-#define FieldScene_RunScene39f_020021b0 Func_020021b0
-#define FieldScene_RunSixCallSetupSequence Func_02000ea8
 #define RuntimeSelectorTable Data_02000240
 #define PrimaryRuntimeSelector Value_00000044
 #define SecondaryRuntimeSelector Value_00000045
@@ -36,15 +9,10 @@
 #define SecondaryOverlayData Data_0200b1e4
 #define TertiaryOverlayData Data_0200b334
 #define DefaultOverlayData Data_0200b4b4
-#define SceneData_SelectByRuntimeSelector Func_02000ee0
-#define SceneData_ReturnZero Func_02000f34
-#define SceneData_GetTableB5bc Func_02000f38
 #define PrimaryOverlayData_02000f40 Data_0200b6a0
 #define SecondaryOverlayData_02000f40 Data_0200b790
 #define TertiaryOverlayData_02000f40 Data_0200b8b0
 #define DefaultOverlayData_02000f40 Data_0200ba30
-#define SceneActor_PassOffsetPointOfActorZero Func_0200103c
-#define SceneActor_MarkActorThirteenTileAndPark Func_02001b84
 #define PrimaryOverlayData_020024ac Data_0200ba48
 #define SecondaryOverlayData_020024ac Data_0200bb20
 #define TertiaryOverlayData_020024ac Data_0200bc1c
@@ -53,13 +21,10 @@
 #define NormalizeOrbitingSceneObject Func_020059a6
 #define IsGameFlagSet Func_020059ec
 #define AllocateEffectTransfer Func_0200599c
-#define LoadEffectResource Func_02005a1c
+#define LoadEffectResource Engine_ItemLoadIcon
 #define ConfigurePaletteTransfer Func_020059c4
-#define ReleaseEffectTransfer Func_020059c2
+#define ReleaseEffectTransfer Engine_HeapRelease
 #define UpdateOrbitingSceneObject Value_0200aba5
-#define InitializeOrbitingEffect Func_02002c0c
-#define SceneData_SelectDataByRuntimeSelector Func_02000f40
-#define SceneData_SelectTableBa48ByRuntimeSelector Func_020024ac
 
 #include "FIELD_EFFECT.H"
 #define OverlayObject_IntegrateVelocities Effect_Move
@@ -132,7 +97,6 @@ void Func_020038bc(u8 *obj, s32 mode);
 void Func_02003ba4(s32 a, s32 b);
 void Func_02003ae2(s32 a, s32 b);
 void Func_02003b4c(s32 a, s32 b);
-void Func_020042ce(void);
 s32 *Func_020042f4(s32);
 s32 *Func_020042ec(s32);
 s32 *Func_02004366(s32);
@@ -141,207 +105,82 @@ s32 Func_020017aa(s32, s32, s32, s32, s32, s32);
 s32 Func_020017bc(s32, s32, s32, s32, s32, s32);
 s32 Func_020017ce(s32, s32, s32, s32, s32, s32);
 s32 Func_020017e0(s32, s32, s32, s32, s32, s32);
-void Func_02004368(void);
 s32 *Func_02003a98_a(s32 a);
-void Func_02003a98_b(void);
 s32 Func_02003a40(s32 *p, s16 *q);
 void Func_02003a20(s32 *p, s32 b);
-void Func_020039ee(s32 a);
-void Func_02003bbc(s32 a);
 void Func_02003a34(s32 *p, s32 b);
 void Func_02003a8e(s32 *p, s32 b);
 s32 Func_02003b14(s32 a, s32 b, s32 c);
 void Func_02003a6c(s32 *p, s32 b);
 void Func_02003aac(s32 *p, s32 b);
-void Func_02003b04(void);
 s32 *Func_02003e40(s32 a);
 s32 Func_02001d82(s32 *actor);
-void Func_02003e5e(void);
-void Func_02003ec2_a(s32 a, s32 b);
-void Func_02003ec2_b(void);
-void Func_02003dc6(s32 a);
-void Func_02003dd8(s32 a);
-void Func_02003dee(s32 a);
 u8 *Func_020040ec(s32);
-void Func_020040dc(void);
 void Func_020021e8(s32, s32);
 void Func_020020e2(s32, s32, s32, s32);
 void Func_02001e58(s32, s32, s32, s32, s32, s32, s32, s32);
-void Func_020041cc(s32, s32);
-void Func_0200419e(s32, s32, s32);
-void Func_02004124(s32);
-void Func_02004194(s32, s32);
-void Func_020041e6(s32, s32);
-void Func_0200413e(s32);
 void Func_02002142(s32, s32, s32, s32);
-void Func_020041d0(s32, s32, s32);
-void Func_0200415e(s32);
 void Func_02002160(s32, s32, s32, s32);
-void Func_020041ee(s32, s32, s32);
-void Func_0200417c(s32);
 void Func_0200217e(s32, s32, s32, s32);
-void Func_0200420c(s32, s32, s32);
-void Func_0200419a(s32);
 void Func_02004198(s32);
-void Func_02004202(s32, s32, s32);
-void Func_020041be(void);
 u8 *Func_02004644(s32);
-void Func_02004632(void);
 void Func_0200273e(s32, s32);
 void Func_02002638(s32, s32, s32, s32);
-void Func_0200464a(s32);
 void Func_020023b4(s32, s32, s32, s32, s32, s32, s32, s32);
-void Func_02004728(s32, s32);
-void Func_020046fa_a(s32, s32, s32);
-void Func_02004680(s32);
-void Func_020046f0(s32, s32);
-void Func_02004742(s32, s32);
-void Func_0200469c(s32);
 void Func_020026a2(s32, s32, s32, s32);
-void Func_02004730_a(s32, s32, s32);
-void Func_020046be(s32);
 void Func_020026c0(s32, s32, s32, s32);
-void Func_0200474e(s32, s32, s32);
-void Func_020046dc(s32);
 void Func_020026de(s32, s32, s32, s32);
-void Func_0200476c(s32, s32, s32);
-void Func_020046fa_b(s32);
 void Func_020026fc(s32, s32, s32, s32);
-void Func_0200478a(s32, s32, s32);
-void Func_02004718(s32);
-void Func_020047d8(s32, s32);
-void Func_02004782(s32, s32, s32);
-void Func_02004730_b(s32);
 void Func_0200472e(s32);
-void Func_02004798(s32, s32, s32);
-void Func_02004754(void);
 u8 *Func_02004890(s32);
 u8 *Func_020048a0(s32);
 u8 *Func_020048b0(s32);
 u8 *Func_020048ba(s32);
 s32 Func_020027d8(s32 *);
-void Func_020048b4(void);
-void Func_02004918_a(s32, s32);
-void Func_02004918_b(void);
-void Func_0200481c(s32);
-void Func_0200482e(s32);
-void Func_02004844(s32);
 void Func_02003b36();
 void Func_02003b5e();
 s32 Func_02003b62();
-void Func_02003b82();
 void Func_02003bb8();
-void Func_02003bec();
-void Func_02003bee();
-void Func_02003c78();
-void Func_02003ed4(void);
-void Func_02003f34(s32 a, s32 b);
-void Func_02003ebc(s32 a, s32 b);
-void Func_02003ef0(void);
 u8 *Func_02003f14(s32);
-void Func_02003f02(void);
 void Func_02001c7a(s32, s32, s32, s32, s32, s32, s32, s32);
-void Func_02003fe6(void);
 void Func_0200200e(s32, s32);
 void Func_02001f04(s32, s32, s32, s32);
-void Func_02003fee(s32, s32);
-void Func_02003fc0(s32, s32, s32);
-void Func_02003f46(s32);
-void Func_02003fb6_b(s32, s32);
 void Func_02003fb6_c(s32);
-void Func_0200400a(s32, s32);
-void Func_02003f62(s32);
 void Func_02001f62(s32, s32, s32, s32);
-void Func_02003ff0(s32, s32, s32);
-void Func_02003f7e(s32);
 void Func_02001f7e(s32, s32, s32, s32);
-void Func_0200400c(s32, s32, s32);
-void Func_02003f9a(s32);
 void Func_02001f9a(s32, s32, s32, s32);
-void Func_02004028(s32, s32, s32);
-void Func_02003fb6_a(s32);
-void Func_02004020(s32, s32, s32);
-void Func_0200402a(s32, s32, s32);
 u8 *Func_02004008();
-void Func_02003ff6();
 void Func_02002102();
 void Func_02001ffc();
 void Func_02001d72();
-void Func_020040e6();
-void Func_020040b8_a();
-void Func_020040b8_b();
-void Func_0200403e();
-void Func_020040ae();
-void Func_020040f8();
-void Func_0200416e();
-void Func_0200405c();
 u8 *Func_02004082_a();
 u8 *Func_0200408c();
 void Func_02002070();
-void Func_02004082_b();
 void Func_02004080();
-void Func_020040ea();
 void Func_02004184();
 void Func_020041c8_a(s32 a);
 void Func_020041c8_b(s32 a);
 s32 Func_02004222(s32 a, s32 b, s32 c);
-void Func_020042e0(s32 a, s32 b);
-s32 Func_020041f8(s32 a, s32 b);
-void Func_020041f4(void);
-void Func_020041fe(void);
 s32 Func_020018d6(struct Resource39fProbe *);
 void Func_02001a82(struct Resource39fProbe);
-void Func_020041e8(s32, s32, s32, s32, s32, s32);
 void Func_02004246_a(s32);
-void Func_020042b6(s32, s32);
-void Func_020042aa(s32, s32, s32);
-void Func_02004268(s32);
-void Func_020042d0(s32, s32);
-void Func_0200438e(s32);
 u8 *Func_0200429c(s32);
-void Func_02004246_b(s32, s32, s32, s32, s32, s32);
 s32 Func_02001752(s32, s32, s32, s32, s32, s32);
-void Func_020042be(void);
 u8 *Func_020044b4(s32);
-void Func_020044a2(void);
 void Func_020025ae(s32, s32);
 void Func_020024a6(s32, s32, s32, s32);
-void Func_020044b8(s32);
 void Func_02002222(s32, s32, s32, s32, s32, s32, s32, s32);
-void Func_02004596(s32, s32);
-void Func_02004568(s32, s32, s32);
-void Func_020044ee(s32);
-void Func_0200455e(s32, s32);
-void Func_020045b0(s32, s32);
-void Func_02004506(s32);
 void Func_0200250a(s32, s32, s32, s32);
-void Func_02004598(s32, s32, s32);
-void Func_02004526(s32);
 void Func_02002528(s32, s32, s32, s32);
-void Func_020045b6(s32, s32, s32);
-void Func_02004546(s32);
 void Func_0200254a(s32, s32, s32, s32);
-void Func_020045d8(s32, s32, s32);
-void Func_02004566(s32);
 void Func_02002568(s32, s32, s32, s32);
-void Func_020045f6(s32, s32, s32);
-void Func_02004584(s32);
-void Func_020045e6(s32, s32, s32);
 void Func_0200458e(s32);
-void Func_020045f8(s32, s32, s32);
-void Func_020045b4(void);
 void Func_020025c4();
 void Func_02002658();
 void Func_020026cc();
 void Func_020045b0_a();
-void Func_020045c0();
-void Func_020045d6();
 void Func_020045f4();
-void Func_020045f6_a();
 s32 Func_0200460a();
-void Func_0200461e();
-void Func_02004662();
-void Func_0200466c();
 s32 Func_02001eb0();
 void Func_02001ec2();
 void Func_02001ed2();
@@ -352,159 +191,63 @@ void Func_02002834();
 void Func_02002abc();
 void Func_02002b32();
 void Func_02002bc4();
-void Func_020049e4();
 s32 Func_02004a02();
 s32 Func_02004a0a();
 void Func_02004a6c();
 s32 Func_02004a72();
 s32 Func_02004a80();
-void Func_02004a9c();
-void Func_02004ab8();
 s32 Func_02004ac8();
-void Func_02004ace();
-void Func_02004b00();
-void Func_02004b1e();
 void Func_02004b42();
 u8 *Func_02004b44();
 void Func_02004b70();
-void Func_02004b7a();
-void Func_02004ba8();
-void Func_02004bba();
-void Func_02004c30();
 void Func_02004c3c();
 s32 Func_02004b44_a();
 s32 Func_02004b44_b();
-void Func_02004b70_a();
-void Func_02004b70_b();
 u8 *Func_02004ba4(s32);
-void Func_02004b92(void);
 void Func_02002c9e(s32, s32);
 void Func_02002b96(s32, s32, s32, s32);
-void Func_02004ba8_a(s32);
 void Func_02002912(s32, s32, s32, s32, s32, s32, s32, s32);
-void Func_02004c86(s32, s32);
-void Func_02004c58(s32, s32, s32);
-void Func_02004bde(s32);
-void Func_02004c4e(s32, s32);
-void Func_02004ca0(s32, s32);
-void Func_02004bf8(s32);
 void Func_02002bfc(s32, s32, s32, s32);
-void Func_02004c8c(s32, s32, s32);
-void Func_02004c1c(s32);
 void Func_02002c1c(s32, s32, s32, s32);
-void Func_02004caa(s32, s32, s32);
-void Func_02004c38(s32);
 void Func_02002c38(s32, s32, s32, s32);
-void Func_02004cc6(s32, s32, s32);
-void Func_02004c54(s32);
-void Func_02004d14(s32, s32);
-void Func_02004cbe(s32, s32, s32);
-void Func_02004c6c_a(s32);
 void Func_02004c6c_b(s32);
-void Func_02004cd6(s32, s32, s32);
-void Func_02004c92(void);
 u8 *Func_02004cb4(s32);
-void Func_02004ca4(void);
 void Func_02002db0(s32, s32);
 void Func_02002ca8(s32, s32, s32, s32);
-void Func_02004cba(s32);
 void Func_02002a24(s32, s32, s32, s32, s32, s32, s32, s32);
-void Func_02004d98_a(s32, s32);
-void Func_02004d6a(s32, s32, s32);
-void Func_02004cf0(s32);
-void Func_02004d60(s32, s32);
-void Func_02004db2(s32, s32);
-void Func_02004d08(s32);
 void Func_02002d0a(s32, s32, s32, s32);
-void Func_02004d98_b(s32, s32, s32);
-void Func_02004d28(s32);
 void Func_02002d2c(s32, s32, s32, s32);
-void Func_02004dba(s32, s32, s32);
-void Func_02004d48(s32);
 void Func_02002d4a(s32, s32, s32, s32);
-void Func_02004dd8(s32, s32, s32);
-void Func_02004d66(s32);
-void Func_02004e26(s32, s32);
-void Func_02004dd0(s32, s32, s32);
-void Func_02004d7e(s32);
 void Func_02004d7c(s32);
-void Func_02004de6(s32, s32, s32);
-void Func_02004da2(void);
 void Func_02002dc4();
 void Func_02002e52();
 void Func_02002eb8();
 void Func_02004daa();
-void Func_02004dac();
 void Func_02004dee();
-void Func_02004df0();
 s32 Func_02004e04();
-void Func_02004e18();
-void Func_02004e5c();
-void Func_02004e66();
-void Func_02004e86();
 u8 *Func_02004e40(s32);
-void Func_02004e30(void);
 void Func_02002f3c(s32, s32);
 void Func_02002e38(s32, s32, s32, s32);
-void Func_02004e4a(s32);
 void Func_02002bb4(s32, s32, s32, s32, s32, s32, s32, s32);
-void Func_02004f28_a(s32, s32);
-void Func_02004efa(s32, s32, s32);
-void Func_02004e80(s32);
-void Func_02004ef0(s32, s32);
-void Func_02004f42(s32, s32);
-void Func_02004e98(s32);
 void Func_02002e9a(s32, s32, s32, s32);
-void Func_02004f28_b(s32, s32, s32);
-void Func_02004eb8(s32);
 void Func_02002ebc(s32, s32, s32, s32);
-void Func_02004f4a(s32, s32, s32);
-void Func_02004ed8(s32);
 void Func_02002edc_a(s32, s32, s32, s32);
-void Func_02004f6a(s32, s32, s32);
-void Func_02004ef8(s32);
 void Func_02002efa(s32, s32, s32, s32);
-void Func_02004f88(s32, s32, s32);
-void Func_02004f16(s32);
-void Func_02004fd6(s32, s32);
-void Func_02004f80(s32, s32, s32);
-void Func_02004f2e(s32);
 void Func_02004f2c(s32);
-void Func_02004f48(void);
 void Func_02002cf0();
 void Func_02002f74();
 void Func_02002fce();
 void Func_02002ff0();
 void Func_0200300e();
 void Func_0200307c();
-void Func_02004f62();
 s32 Func_02004f74();
-void Func_02004f86();
-void Func_02004fc0();
-void Func_02004fec();
-void Func_0200500c();
-void Func_0200502a();
 void Func_02005032();
 void Func_02005040();
-void Func_02005042();
 void Func_02005048();
-void Func_0200505c_a();
-void Func_0200505c_b();
-void Func_0200506a();
-void Func_0200507e();
-void Func_02005082();
-void Func_02005094();
-void Func_0200509c();
-void Func_020050ea();
-void Func_02003d14(s32 no, s32 val);
 s32 Func_02003d34(s32 no, s32 val);
-void Func_02003d30(void);
-void Func_02003c66(s32 no);
 void Func_02001ce8(s32 no);
-void Func_02003cfc(s32 no, s32 val);
 s32 *Func_02003e00(s32 a);
 void Func_02001d38(s32 *p);
-void Func_02004932();
 s32 *Func_02004950();
 s32 *Func_02004958();
 s32 Func_02001dfa();
@@ -513,19 +256,11 @@ s32 Func_02001e20();
 s32 Func_02001e32();
 s32 Func_02001e44();
 s32 *Func_020049ca();
-void Func_020049cc();
-s32 Func_020058aa(s32);
-s32 Func_020058c0(s32);
-s32 Func_020058da(s32);
-s32 Func_020058d8(void);
-s32 Func_020058de(void);
 OrbitingSceneObject *Func_020059d4(void);
 void Func_020059a6(OrbitingSceneObject *, s32);
 s32 Func_020059ec(s32);
 u8 *Func_0200599c(s32, s32);
-void Func_02005a1c(s32);
 s32 Func_020059c4(u8, s32, u8 *);
-void Func_020059c2(s32);
 
 /*
  * Distance between two three-component 16.16 fixed-point positions.
@@ -784,10 +519,10 @@ s32 SceneActor_TryRunSlotZeroMoveStep(s16 *arg)
     if (r == 0) {
         s32 m;
 
-        Func_02003a98_b();
+        Engine_EventBegin();
         Func_02003a20(p, 6);
-        Func_020039ee(6);
-        Func_02003bbc(152);
+        Engine_TaskWait(6);
+        Engine_AudioPlayCue(152);
         Func_02003a34(p, 7);
         p[12] = 0x30000;
         p[13] = 0x20000;
@@ -800,7 +535,7 @@ s32 SceneActor_TryRunSlotZeroMoveStep(s16 *arg)
         Func_02003a6c(p, 6);
         Func_02003aac(p, 1);
         *f = saved;
-        Func_02003b04();
+        Engine_EventEnd();
         return 1;
     }
     return 0;
@@ -825,15 +560,15 @@ void FieldScene_RunScene39f_02000d90(s32 a0, s32 a1, s32 a2, s32 a3)
     s32 rec7;
 
     rec7 = Func_02003b62();
-    Func_02003bec(a0, 1);
-    Call3(Func_02003b82, a0, 0x30000, 0x18000);
-    Func_02003c78(152);
+    Engine_ActorSetSpritePriority(a0, 1);
+    Call3(Engine_ActorSetSpeed, a0, 0x30000, 0x18000);
+    Engine_AudioPlayCue(152);
     *(s32 *)(rec7 + 40) = a3;
     *(s32 *)(rec7 + 72) = 0x8000;
     *(s32 *)(rec7 + 68) = 0;
     Func_02003b36(rec7, 0);
     Func_02003bb8(a0, a1, a2);
-    Func_02003bee(a0, a1 << 16, a2 << 16);
+    Engine_ActorSetPosition(a0, a1 << 16, a2 << 16);
     Func_02003b5e(rec7, 1);
     *(s32 *)(rec7 + 72) = 0x10000;
 }
@@ -843,12 +578,12 @@ void FieldScene_RunSixCallSetupSequence(s32 no, s32 val)
     s32 v0 = 0x20000;
     s32 v1 = 0x4000;
 
-    Func_02003d14(v0, v1);
+    Engine_CameraSetSpeed(v0, v1);
     Func_02003d34(no, 1);
-    Func_02003d30();
-    Func_02003c66(30);
+    Engine_CameraWaitForMove();
+    Engine_EventWait(30);
     Func_02001ce8(no);
-    Func_02003cfc(no, val);
+    Engine_ActorSetChildValue(no, val);
 }
 
 s32 SceneData_SelectByRuntimeSelector(void)
@@ -925,22 +660,22 @@ void SceneActor_BobActorZeroWhenAheadClear(void)
     pos[1] = actor[3];
     pos[2] = (actor[4] & 0xfff00000) + 0x280000;
     if (Func_02001d82(pos)!= 0) {
-        Func_02003e5e();
+        Engine_EventBegin();
         *fp = 0;
-        Func_02003ec2_a(9, 7);
+        Engine_ActorSetAnimation(9, 7);
         actor[3] += -0x10000;
         actor[5] += -0x10000;
-        Func_02003dc6(2);
+        Engine_TaskWait(2);
         actor[3] += -0x10000;
         actor[5] += -0x10000;
-        Func_02003dd8(10);
+        Engine_TaskWait(10);
         actor[3] += 0x10000;
         actor[5] += 0x10000;
-        Func_02003dee(4);
+        Engine_TaskWait(4);
         actor[3] += 0x10000;
         actor[5] += 0x10000;
         *fp = saved;
-        Func_02003ec2_b();
+        Engine_EventEnd();
     }
 }
 
@@ -948,10 +683,10 @@ void FieldScene_RunScriptedSteps0And17E6(void)
 {
     extern u8 Data_03001ebc[];
 
-    Func_02003ed4();
-    Func_02003f34(0, 1);
-    Func_02003ebc(6118, 1);
-    Func_02003ef0();
+    Engine_EventBegin();
+    Engine_ActorSetAnimation(0, 1);
+    Engine_MessageShowCentered(6118, 1);
+    Engine_EventEnd();
 }
 
 void FieldScene_RunActor10WaypointSequence(void)
@@ -963,7 +698,7 @@ void FieldScene_RunActor10WaypointSequence(void)
     slot = Func_02003f14(10);
 
     /* r0 still holds the record returned above. */
-    Func_02003f02();
+    Engine_EventBegin();
 
     Func_0200200e(10, 1);
     Func_02001f04(10, 88, 120, 0x60000);        /* 192 << 11 */
@@ -972,32 +707,32 @@ void FieldScene_RunActor10WaypointSequence(void)
                   *(s32 *)(slot + 16) + 0x180000,   /* 192 << 13 */
                   0, 0, 0, 1, 0);
 
-    Func_02003fee(10, 1);
-    Func_02003fc0(10, 0, 0);
-    Func_02003f46(20);
-    Func_02003fb6_b(10, 2);
-    Func_0200400a(10, 258);                     /* 129 << 1 */
-    Func_02003f62(60);
+    Engine_CameraFollowActor(10, 1);
+    Engine_ActorFaceEachOther(10, 0, 0);
+    Engine_EventWait(20);
+    Engine_ActorStartRepeatedMotion(10, 2);
+    Engine_ActorSetAttachedEffect(10, 258);                     /* 129 << 1 */
+    Engine_EventWait(60);
 
     /* Three waypoints, each at height 0x30000 (192 << 10). */
     Func_02001f62(10, 88, 152, 0x30000);
-    Func_02003ff0(0, 10, 0);
-    Func_02003f7e(10);
+    Engine_ActorFaceActor(0, 10, 0);
+    Engine_EventWait(10);
 
     Func_02001f7e(10, 120, 192, 0x30000);
-    Func_0200400c(0, 10, 0);
-    Func_02003f9a(10);
+    Engine_ActorFaceActor(0, 10, 0);
+    Engine_EventWait(10);
 
     Func_02001f9a(10, 120, 240, 0x30000);
-    Func_02004028(0, 10, 0);
-    Func_02003fb6_a(10);
+    Engine_ActorFaceActor(0, 10, 0);
+    Engine_EventWait(10);
 
     Func_02003fb6_c(768);                       /* 192 << 2 */
-    Func_02004020(13, 0, 0);
-    Func_0200402a(10, 0, 0);
+    Engine_ActorSetPosition(13, 0, 0);
+    Engine_ActorSetPosition(10, 0, 0);
 
     /* Common exit; no argument registers are set. */
-    Func_02003fe6();
+    Engine_EventEnd();
 }
 
 /*
@@ -1020,7 +755,7 @@ void FieldScene_RunActorElevenPresentationBeat(void)
 
     /* Reads the record left in r0 by the call above; it must not be respelled
      * as a fresh fetch. */
-    Func_02003ff6();
+    Engine_EventBegin();
 
     Func_02002102(11, 0);
     Func_02001ffc(11, 408, 456, 0x60000);   /* 204 << 1, 228 << 1, 192 << 11 */
@@ -1029,13 +764,13 @@ void FieldScene_RunActorElevenPresentationBeat(void)
                   *(s32 *)(slot + 16) + 0x180000,   /* 192 << 13 */
                   0, 0, 0, 1, 0);
 
-    Func_020040e6(11, 1);
-    Func_020040b8_a(11, 0, 0);
-    Func_0200403e(30);
-    Func_020040ae(11, 2);
-    Func_020040f8(11, 0x103, 0);
-    Func_0200416e(147);
-    Func_0200405c(60);
+    Engine_CameraFollowActor(11, 1);
+    Engine_ActorFaceEachOther(11, 0, 0);
+    Engine_EventWait(30);
+    Engine_ActorStartRepeatedMotion(11, 2);
+    Engine_ActorShowEmote(11, 0x103, 0);
+    Engine_AudioPlayCue(147);
+    Engine_EventWait(60);
 
     /* Two signed halfwords of slot 0, each read after its own fetch of the
      * record. */
@@ -1044,9 +779,9 @@ void FieldScene_RunActorElevenPresentationBeat(void)
                   *(s16 *)(Func_0200408c(0) + 18),
                   0x40000);                          /* 128 << 11 */
 
-    Func_02004082_b(10);
+    Engine_EventWait(10);
     Func_02004080(0x301);
-    Func_020040ea(14, 0, 0);
+    Engine_ActorSetPosition(14, 0, 0);
 
     offset = 0x22b;
     ((u8 *)Data_02000240)[offset] = 3;
@@ -1054,7 +789,7 @@ void FieldScene_RunActorElevenPresentationBeat(void)
     Func_02004184(53, 0);
 
     /* Common exit; no argument registers are set. */
-    Func_020040b8_b();
+    Engine_EventEnd();
 }
 
 void SceneActor_RunActorTwelveThreeWaypointMotion(void)
@@ -1064,7 +799,7 @@ void SceneActor_RunActorTwelveThreeWaypointMotion(void)
     slot = Func_020040ec(12);
 
     /* r0 still holds the record returned above. */
-    Func_020040dc();
+    Engine_EventBegin();
 
     Func_020021e8(12, 1);
     Func_020020e2(12, 536, 344, 0x70000);       /* 134 << 2, 172 << 1, 224 << 11 */
@@ -1073,32 +808,32 @@ void SceneActor_RunActorTwelveThreeWaypointMotion(void)
                   *(s32 *)(slot + 16) + 0x100000,   /* 128 << 13 */
                   0, 0, 0, 1, 0);
 
-    Func_020041cc(12, 1);
-    Func_0200419e(12, 0, 0);
-    Func_02004124(20);
-    Func_02004194(12, 2);
-    Func_020041e6(12, 258);                     /* 129 << 1 */
-    Func_0200413e(60);
+    Engine_CameraFollowActor(12, 1);
+    Engine_ActorFaceEachOther(12, 0, 0);
+    Engine_EventWait(20);
+    Engine_ActorStartRepeatedMotion(12, 2);
+    Engine_ActorSetAttachedEffect(12, 258);                     /* 129 << 1 */
+    Engine_EventWait(60);
 
     /* Three waypoints, each at height 0x30000 (192 << 10); the X literals are
      * 146 << 2, 158 << 2 and 170 << 2 and the Z is the same 172 << 1. */
     Func_02002142(12, 584, 344, 0x30000);
-    Func_020041d0(0, 12, 0);
-    Func_0200415e(6);
+    Engine_ActorFaceActor(0, 12, 0);
+    Engine_EventWait(6);
 
     Func_02002160(12, 632, 344, 0x30000);
-    Func_020041ee(0, 12, 0);
-    Func_0200417c(6);
+    Engine_ActorFaceActor(0, 12, 0);
+    Engine_EventWait(6);
 
     Func_0200217e(12, 680, 344, 0x30000);
-    Func_0200420c(0, 12, 0);
-    Func_0200419a(6);
+    Engine_ActorFaceActor(0, 12, 0);
+    Engine_EventWait(6);
 
     Func_02004198(0x302);
-    Func_02004202(15, 0, 0);
+    Engine_ActorSetPosition(15, 0, 0);
 
     /* Common exit; no argument registers are set. */
-    Func_020041be();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunStepFD4WithActor181(s32 a)
@@ -1108,9 +843,9 @@ void FieldScene_RunStepFD4WithActor181(s32 a)
     Func_020041c8_a(a);
     Func_02004222(16, 0, 0);
     Func_020041c8_b(4052);
-    Func_020042e0(181, 3);
-    Func_020041f8(181, 0);
-    Func_020041f4();
+    Engine_ItemShowFound(181, 3);
+    Engine_PartyGiveItem(181, 0);
+    Engine_EventEnd();
 }
 
 void FieldScene_RunProbedActorEightOrTenScene(void)
@@ -1124,7 +859,7 @@ void FieldScene_RunProbedActorEightOrTenScene(void)
     s32 value;
 
     /* No argument register is written before this branch. */
-    Func_020041fe();
+    Engine_EventBegin();
 
     if (Func_020018d6(&probe) != 0) {
         Func_02001a82(probe);
@@ -1132,30 +867,30 @@ void FieldScene_RunProbedActorEightOrTenScene(void)
         if (probe.word[1] == 8 && (probe.word[4] >> 20) == 23) {
             fifth = 35;
             sixth = 68;
-            Func_020041e8(35, 67, 4, 1, fifth, sixth);
+            Engine_MapCopyCellAttributes(35, 67, 4, 1, fifth, sixth);
         } else if (probe.word[1] == 10 && (probe.word[2] >> 20) == 35) {
             /* Written here, not at the call: the reference keeps it in a
              * callee-saved register across the whole sequence. */
             value = 0;
             Func_02004246_a(0x311);
-            Func_020042b6(10, 3);
-            Func_020042aa(10, -16, 6);
-            Func_02004268(30);
-            Func_020042d0(10, 8);
-            Func_0200438e(240);
+            Engine_ActorSetAnimation(10, 3);
+            Engine_ActorSetDestinationOffset(10, -16, 6);
+            Engine_EventWait(30);
+            Engine_ActorSetAnimation(10, 8);
+            Engine_AudioPlayCue(240);
 
             Func_0200429c(10)[35] = 2;
 
             fifth = 34;
             sixth = 30;
-            Func_02004246_b(44, 30, 2, 4, fifth, sixth);
+            Engine_MapCopyCellAttributes(44, 30, 2, 4, fifth, sixth);
             height = 4;
             Func_02001752(2, 35, 30, 1, height, value);
         }
     }
 
     /* Common exit; no argument registers are set. */
-    Func_020042be();
+    Engine_EventEnd();
 }
 
 void SceneState_ApplyCrossRectsAroundActor11(void)
@@ -1164,7 +899,7 @@ void SceneState_ApplyCrossRectsAroundActor11(void)
     s32 z;
 
     /* No argument register is written before this branch. */
-    Func_020042ce();
+    Engine_EventBegin();
 
     /* Both coordinates are 16.16 fixed point reduced to whole tiles with
      * `asrs #20`, i.e. 16 fractional bits plus a 16-unit tile pitch. */
@@ -1186,7 +921,7 @@ void SceneState_ApplyCrossRectsAroundActor11(void)
     }
 
     /* Common exit; no argument registers are set. */
-    Func_02004368();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunActorThirteenPresentationBeat(void)
@@ -1198,45 +933,45 @@ void FieldScene_RunActorThirteenPresentationBeat(void)
     slot = Func_020044b4(13);
 
     /* r0 still holds the record returned above. */
-    Func_020044a2();
+    Engine_EventBegin();
 
     Func_020025ae(13, 1);
     Func_020024a6(13, 456, 104, 0x70000);       /* 228 << 1, 224 << 11 */
-    Func_020044b8(10);
+    Engine_EventWait(10);
 
     Func_02002222(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
                   *(s32 *)(slot + 16) + 0x40000,    /* 128 << 11 */
                   0, 0, 0, 1, 0);
 
-    Func_02004596(13, 1);
-    Func_02004568(13, 0, 0);
-    Func_020044ee(20);
-    Func_0200455e(13, 2);
-    Func_020045b0(13, 258);                     /* 129 << 1 */
-    Func_02004506(60);
+    Engine_CameraFollowActor(13, 1);
+    Engine_ActorFaceEachOther(13, 0, 0);
+    Engine_EventWait(20);
+    Engine_ActorStartRepeatedMotion(13, 2);
+    Engine_ActorSetAttachedEffect(13, 258);                     /* 129 << 1 */
+    Engine_EventWait(60);
 
     Func_0200250a(13, 472, 136, 0x30000);       /* 236 << 1, 192 << 10 */
-    Func_02004598(0, 13, 0);
-    Func_02004526(6);
+    Engine_ActorFaceActor(0, 13, 0);
+    Engine_EventWait(6);
 
     Func_02002528(13, 504, 136, 0x33333);       /* 252 << 1, pooled height */
-    Func_020045b6(0, 13, 0);
-    Func_02004546(6);
+    Engine_ActorFaceActor(0, 13, 0);
+    Engine_EventWait(6);
 
     Func_0200254a(13, 552, 136, 0x38000);       /* 138 << 2, 224 << 10 */
-    Func_020045d8(0, 13, 0);
-    Func_02004566(6);
+    Engine_ActorFaceActor(0, 13, 0);
+    Engine_EventWait(6);
 
     Func_02002568(13, 584, 136, 0x38000);       /* 146 << 2 */
-    Func_020045f6(0, 13, 0);
-    Func_02004584(6);
+    Engine_ActorFaceActor(0, 13, 0);
+    Engine_EventWait(6);
 
-    Func_020045e6(13, 0, 0);
+    Engine_ActorSetPosition(13, 0, 0);
     Func_0200458e(772);                         /* 193 << 2 */
-    Func_020045f8(16, 0, 0);
+    Engine_ActorSetPosition(16, 0, 0);
 
     /* Common exit; no argument registers are set. */
-    Func_020045b4();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunScene39f_02001818(void)
@@ -1246,18 +981,18 @@ void FieldScene_RunScene39f_02001818(void)
     u32 i;
     s32 record;
 
-    Func_020045c0();
+    Engine_EventBegin();
     Func_020026cc(14, 1);
     Call4(Func_020025c4, 14, 0x1a8, 0x1e0, 0x79999);
-    Func_020045d6(2);
+    Engine_EventWait(2);
     Func_02002658(14);
-    Func_0200466c(14, 15);
+    Engine_ActorSetChildValue(14, 15);
     record = Func_0200460a(14);
     Func_020045b0_a(record, 0);
-    Func_020045f6_a(30);
+    Engine_EventWait(30);
     Call1(Func_020045f4, 0x305);
-    Call3_02001818(Func_02004662, 17, 0x1a80000, 0x1e00000);
-    Func_0200461e();
+    Call3_02001818(Engine_ActorSetPosition, 17, 0x1a80000, 0x1e00000);
+    Engine_EventEnd();
 }
 
 void SceneActor_RunActorFourteenFourWaypointMotion(void)
@@ -1267,48 +1002,48 @@ void SceneActor_RunActorFourteenFourWaypointMotion(void)
     slot = Func_02004644(14);
 
     /* r0 still holds the record returned above. */
-    Func_02004632();
+    Engine_EventBegin();
 
     Func_0200273e(14, 1);
     Func_02002638(14, 392, 504, 0x60000);       /* 196 << 1, 252 << 1, 192 << 11 */
-    Func_0200464a(10);
+    Engine_EventWait(10);
 
     Func_020023b4(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
                   *(s32 *)(slot + 16) + 0x40000,    /* 128 << 11 */
                   0, 0, 0, 1, 0);
 
-    Func_02004728(14, 1);
-    Func_020046fa_a(14, 0, 0);
-    Func_02004680(20);
-    Func_020046f0(14, 2);
-    Func_02004742(14, 258);                     /* 129 << 1 */
-    Func_0200469c(60);
+    Engine_CameraFollowActor(14, 1);
+    Engine_ActorFaceEachOther(14, 0, 0);
+    Engine_EventWait(20);
+    Engine_ActorStartRepeatedMotion(14, 2);
+    Engine_ActorSetAttachedEffect(14, 258);                     /* 129 << 1 */
+    Engine_EventWait(60);
 
     /* Four waypoints; Z is 132 << 2 and the height 192 << 10 throughout. */
     Func_020026a2(14, 360, 528, 0x30000);
-    Func_02004730_a(0, 14, 0);
-    Func_020046be(6);
+    Engine_ActorFaceActor(0, 14, 0);
+    Engine_EventWait(6);
 
     Func_020026c0(14, 328, 528, 0x30000);
-    Func_0200474e(0, 14, 0);
-    Func_020046dc(6);
+    Engine_ActorFaceActor(0, 14, 0);
+    Engine_EventWait(6);
 
     Func_020026de(14, 288, 528, 0x30000);
-    Func_0200476c(0, 14, 0);
-    Func_020046fa_b(6);
+    Engine_ActorFaceActor(0, 14, 0);
+    Engine_EventWait(6);
 
     Func_020026fc(14, 256, 528, 0x30000);
-    Func_0200478a(0, 14, 0);
-    Func_02004718(6);
+    Engine_ActorFaceActor(0, 14, 0);
+    Engine_EventWait(6);
 
-    Func_020047d8(0, 1);
-    Func_02004782(14, 0, 0);
-    Func_02004730_b(30);
+    Engine_CameraFollowActor(0, 1);
+    Engine_ActorSetPosition(14, 0, 0);
+    Engine_EventWait(30);
     Func_0200472e(0x306);
-    Func_02004798(17, 0, 0);
+    Engine_ActorSetPosition(17, 0, 0);
 
     /* Common exit; no argument registers are set. */
-    Func_02004754();
+    Engine_EventEnd();
 }
 
 void SceneActor_BobActorZeroWhenTargetClear(void)
@@ -1328,28 +1063,28 @@ void SceneActor_BobActorZeroWhenTargetClear(void)
 
     if (Func_020027d8(target)!= 0) {
         /* r0 still holds the nonzero result of the test above. */
-        Func_020048b4();
+        Engine_EventBegin();
 
         *mode = 0;
-        Func_02004918_a(11, 7);
+        Engine_ActorSetAnimation(11, 7);
 
         *(s32 *)(record + 12) += (s32)0xffff0000;
         *(s32 *)(record + 20) += (s32)0xffff0000;
-        Func_0200481c(2);
+        Engine_TaskWait(2);
 
         *(s32 *)(record + 12) += (s32)0xffff0000;
         *(s32 *)(record + 20) += (s32)0xffff0000;
-        Func_0200482e(10);
+        Engine_TaskWait(10);
 
         *(s32 *)(record + 12) += 0x10000;
         *(s32 *)(record + 20) += 0x10000;
-        Func_02004844(4);
+        Engine_TaskWait(4);
 
         *(s32 *)(record + 12) += 0x10000;
         *(s32 *)(record + 20) += 0x10000;
 
         *mode = saved;
-        Func_02004918_b();
+        Engine_EventEnd();
     }
 }
 
@@ -1368,7 +1103,7 @@ void SceneActor_MarkActorThirteenTileAndPark(void)
     s32 z;
 
     /* No argument register is written before this branch. */
-    Func_02004932();
+    Engine_EventBegin();
 
     x = Func_02004950(13)[2] >> 20;
     z = Func_02004958(13)[4] >> 20;
@@ -1388,7 +1123,7 @@ void SceneActor_MarkActorThirteenTileAndPark(void)
     }
 
     /* Common exit; no argument registers are set. */
-    Func_020049cc();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunSupplementalSequenceOne(void)
@@ -1402,7 +1137,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
     s32 y;
     u8 *record;
 
-    Func_020049e4();
+    Engine_EventBegin();
     record = Value1(Func_02004a02, 14);
     x = *(s32 *)(record + 8);
     record = Value1(Func_02004a0a, 14);
@@ -1423,7 +1158,7 @@ void FieldScene_RunSupplementalSequenceOne(void)
         Call1(Func_02004a6c, 0x214);
         Call6(Func_02001f30, 2, 43, 23, 1, 1, 255);
     }
-    Func_02004a9c();
+    Engine_EventEnd();
 }
 
 /*
@@ -1446,18 +1181,18 @@ void FieldScene_RunScene39fSequenceA(void)
 
     rec7 = Func_02004ac8(15);
     big = 0x80000;
-    Func_02004ab8();
+    Engine_EventBegin();
     Func_02002bc4(15, 0);
     Call4(Func_02002abc, 15, 0x1d8, 104, big);
-    Func_02004ace(10);
+    Engine_EventWait(10);
     Func_02002834(*(s32 *)(rec7 + 8), *(s32 *)(rec7 + 12), (*(s32 *)(rec7 + 16) + big), 0, 0, 0, 1, 0);
-    Func_02004ba8(15, 1);
-    Func_02004b7a(15, 0, 0);
-    Func_02004b00(30);
-    Func_02004b70_a(15, 2);
-    Call3_02001d04(Func_02004bba, 15, 0x103, 0);
-    Func_02004c30(147);
-    Func_02004b1e(60);
+    Engine_CameraFollowActor(15, 1);
+    Engine_ActorFaceEachOther(15, 0, 0);
+    Engine_EventWait(30);
+    Engine_ActorStartRepeatedMotion(15, 2);
+    Call3_02001d04(Engine_ActorShowEmote, 15, 0x103, 0);
+    Engine_AudioPlayCue(147);
+    Engine_EventWait(60);
     first = Func_02004b44_a(0);
     shown = *(s16 *)(first + 10);
     second = Func_02004b4e(0);
@@ -1467,7 +1202,7 @@ void FieldScene_RunScene39fSequenceA(void)
     base3_2000240 = (s32)Data_02000240;
     *(u8 *)((base3_2000240 + 0x22b)) = 3;
     Func_02004c3c(53, 0);
-    Func_02004b70_b();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunSlot16WaypointSequence(void)
@@ -1479,44 +1214,44 @@ void FieldScene_RunSlot16WaypointSequence(void)
     slot = Func_02004ba4(16);
 
     /* r0 still holds the record returned above. */
-    Func_02004b92();
+    Engine_EventBegin();
 
     Func_02002c9e(16, 1);
     Func_02002b96(16, 456, 152, 0x60000);       /* 228 << 1, 192 << 11 */
-    Func_02004ba8_a(10);
+    Engine_EventWait(10);
 
     Func_02002912(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
                   *(s32 *)(slot + 16) + 0x40000,    /* 128 << 11 */
                   0, 0, 0, 1, 0);
 
-    Func_02004c86(16, 1);
-    Func_02004c58(16, 0, 0);
-    Func_02004bde(20);
-    Func_02004c4e(16, 2);
-    Func_02004ca0(16, 258);                     /* 129 << 1 */
-    Func_02004bf8(60);
+    Engine_CameraFollowActor(16, 1);
+    Engine_ActorFaceEachOther(16, 0, 0);
+    Engine_EventWait(20);
+    Engine_ActorStartRepeatedMotion(16, 2);
+    Engine_ActorSetAttachedEffect(16, 258);                     /* 129 << 1 */
+    Engine_EventWait(60);
 
     /* Three waypoints at height 0x30000 (192 << 10). */
     Func_02002bfc(16, 448, 192, 0x30000);       /* 224 << 1 */
-    Func_02004c8c(0, 16, 0);
-    Func_02004c1c(6);
+    Engine_ActorFaceActor(0, 16, 0);
+    Engine_EventWait(6);
 
     Func_02002c1c(16, 424, 208, 0x30000);       /* 212 << 1 */
-    Func_02004caa(0, 16, 0);
-    Func_02004c38(6);
+    Engine_ActorFaceActor(0, 16, 0);
+    Engine_EventWait(6);
 
     Func_02002c38(16, 424, 224, 0x30000);
-    Func_02004cc6(0, 16, 0);
-    Func_02004c54(6);
+    Engine_ActorFaceActor(0, 16, 0);
+    Engine_EventWait(6);
 
-    Func_02004d14(0, 1);
-    Func_02004cbe(16, 0, 0);
-    Func_02004c6c_a(30);
+    Engine_CameraFollowActor(0, 1);
+    Engine_ActorSetPosition(16, 0, 0);
+    Engine_EventWait(30);
     Func_02004c6c_b(776);                         /* 194 << 2 */
-    Func_02004cd6(20, 0, 0);
+    Engine_ActorSetPosition(20, 0, 0);
 
     /* Common exit; no argument registers are set. */
-    Func_02004c92();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunActor17CameraSequence(void)
@@ -1528,43 +1263,43 @@ void FieldScene_RunActor17CameraSequence(void)
     slot = Func_02004cb4(17);
 
     /* r0 still holds the record returned above. */
-    Func_02004ca4();
+    Engine_EventBegin();
 
     Func_02002db0(17, 1);
     Func_02002ca8(17, 392, 104, 0x60000);       /* 196 << 1, 192 << 11 */
-    Func_02004cba(10);
+    Engine_EventWait(10);
 
     Func_02002a24(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
                   *(s32 *)(slot + 16) + 0x40000,    /* 128 << 11 */
                   0, 0, 0, 1, 0);
 
-    Func_02004d98_a(17, 1);
-    Func_02004d6a(17, 0, 0);
-    Func_02004cf0(20);
-    Func_02004d60(17, 2);
-    Func_02004db2(17, 258);                     /* 129 << 1 */
-    Func_02004d08(60);
+    Engine_CameraFollowActor(17, 1);
+    Engine_ActorFaceEachOther(17, 0, 0);
+    Engine_EventWait(20);
+    Engine_ActorStartRepeatedMotion(17, 2);
+    Engine_ActorSetAttachedEffect(17, 258);                     /* 129 << 1 */
+    Engine_EventWait(60);
 
     Func_02002d0a(17, 376, 152, 0x60000);       /* 188 << 1 */
-    Func_02004d98_b(0, 17, 0);
-    Func_02004d28(10);
+    Engine_ActorFaceActor(0, 17, 0);
+    Engine_EventWait(10);
 
     Func_02002d2c(17, 328, 160, 0x30000);       /* 164 << 1, 192 << 10 */
-    Func_02004dba(0, 17, 0);
-    Func_02004d48(6);
+    Engine_ActorFaceActor(0, 17, 0);
+    Engine_EventWait(6);
 
     Func_02002d4a(17, 296, 160, 0x30000);       /* 148 << 1 */
-    Func_02004dd8(0, 17, 0);
-    Func_02004d66(6);
+    Engine_ActorFaceActor(0, 17, 0);
+    Engine_EventWait(6);
 
-    Func_02004e26(0, 1);
-    Func_02004dd0(17, 0, 0);
-    Func_02004d7e(30);
+    Engine_CameraFollowActor(0, 1);
+    Engine_ActorSetPosition(17, 0, 0);
+    Engine_EventWait(30);
     Func_02004d7c(0x309);
-    Func_02004de6(21, 0, 0);
+    Engine_ActorSetPosition(21, 0, 0);
 
     /* Common exit; no argument registers are set. */
-    Func_02004da2();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunScene39f_02002004(void)
@@ -1574,18 +1309,18 @@ void FieldScene_RunScene39f_02002004(void)
     u32 i;
     s32 record;
 
-    Func_02004dac();
+    Engine_EventBegin();
     Func_02002eb8(18, 1);
-    Call4(Func_02004e86, 0x2e80000, -1, 0x1f80000, 1);
+    Call4(Engine_CameraMoveTo, 0x2e80000, -1, 0x1f80000, 1);
     Call4(Func_02002dc4, 18, 0x2e8, 0x1f8, 0x90000);
     Func_02002e52(18);
-    Func_02004e66(18, 15);
+    Engine_ActorSetChildValue(18, 15);
     record = Func_02004e04(18);
     Func_02004daa(record, 0);
-    Func_02004df0(30);
+    Engine_EventWait(30);
     Call1(Func_02004dee, 0x30a);
-    Call3_02002004(Func_02004e5c, 22, 0x2e80000, 0x1f80000);
-    Func_02004e18();
+    Call3_02002004(Engine_ActorSetPosition, 22, 0x2e80000, 0x1f80000);
+    Engine_EventEnd();
 }
 
 void FieldScene_RunActorEighteenEffectSequence(void)
@@ -1597,46 +1332,46 @@ void FieldScene_RunActorEighteenEffectSequence(void)
     slot = Func_02004e40(18);
 
     /* r0 still holds the record returned above. */
-    Func_02004e30();
+    Engine_EventBegin();
 
     Func_02002f3c(18, 1);
     Func_02002e38(18, 712, 536, 0x60000);       /* 178 << 2, 134 << 2, 192 << 11 */
-    Func_02004e4a(10);
+    Engine_EventWait(10);
 
     Func_02002bb4(*(s32 *)(slot + 8), *(s32 *)(slot + 12),
                   *(s32 *)(slot + 16) + 0x40000,    /* 128 << 11 */
                   0, 0, 0, 1, 0);
 
-    Func_02004f28_a(18, 1);
-    Func_02004efa(18, 0, 0);
-    Func_02004e80(20);
-    Func_02004ef0(18, 2);
-    Func_02004f42(18, 258);                     /* 129 << 1 */
-    Func_02004e98(60);
+    Engine_CameraFollowActor(18, 1);
+    Engine_ActorFaceEachOther(18, 0, 0);
+    Engine_EventWait(20);
+    Engine_ActorStartRepeatedMotion(18, 2);
+    Engine_ActorSetAttachedEffect(18, 258);                     /* 129 << 1 */
+    Engine_EventWait(60);
 
     Func_02002e9a(18, 712, 568, 0x60000);       /* 142 << 2 */
-    Func_02004f28_b(0, 18, 0);
-    Func_02004eb8(10);
+    Engine_ActorFaceActor(0, 18, 0);
+    Engine_EventWait(10);
 
     Func_02002ebc(18, 712, 600, 0x30000);       /* 150 << 2, 192 << 10 */
-    Func_02004f4a(0, 18, 0);
-    Func_02004ed8(6);
+    Engine_ActorFaceActor(0, 18, 0);
+    Engine_EventWait(6);
 
     Func_02002edc_a(18, 736, 640, 0x30000);       /* X += 24, 160 << 2 */
-    Func_02004f6a(0, 18, 0);
-    Func_02004ef8(6);
+    Engine_ActorFaceActor(0, 18, 0);
+    Engine_EventWait(6);
 
     Func_02002efa(18, 736, 704, 0x30000);       /* 176 << 2 */
-    Func_02004f88(0, 18, 0);
-    Func_02004f16(6);
+    Engine_ActorFaceActor(0, 18, 0);
+    Engine_EventWait(6);
 
-    Func_02004fd6(0, 1);
-    Func_02004f80(18, 0, 0);
-    Func_02004f2e(30);
+    Engine_CameraFollowActor(0, 1);
+    Engine_ActorSetPosition(18, 0, 0);
+    Engine_EventWait(30);
     Func_02004f2c(0x30b);
 
     /* Common exit; no argument registers are set. */
-    Func_02004f48();
+    Engine_EventEnd();
 }
 
 void FieldScene_RunScene39f_020021b0(void)
@@ -1646,30 +1381,30 @@ void FieldScene_RunScene39f_020021b0(void)
     s32 rec7;
 
     rec7 = Value1(Func_02004f74, 18);
-    Func_02004f62();
-    Call3_020021b0(Func_02004fc0, 18, 0x880000, 0x1680000);
+    Engine_EventBegin();
+    Call3_020021b0(Engine_ActorSetPosition, 18, 0x880000, 0x1680000);
     Func_0200307c(18, 1);
     Func_02002f74(18, 136, 0x198, 0x80000);
-    Func_02004f86(10);
+    Engine_EventWait(10);
     Func_02002cf0(*(s32 *)(rec7 + 8), *(s32 *)(rec7 + 12), (*(s32 *)(rec7 + 16) + 0x40000), 0, 0, 0, 1, 0);
     Call3_020021b0(Func_02005048, 18, 0xc000, 40);
-    Call2(Func_0200506a, 18, 0x102);
+    Call2(Engine_ActorSetAttachedEffect, 18, 0x102);
     Func_02005032(18, 2);
-    Func_02005082(18, 1);
+    Engine_CameraFollowActor(18, 1);
     Func_02002fce(18, 136, 0x1b8, 0x60000);
-    Func_0200505c_a(0, 18, 0);
-    Func_02004fec(10);
+    Engine_ActorFaceActor(0, 18, 0);
+    Engine_EventWait(10);
     Func_02002ff0(18, 136, 0x1d8, 0x30000);
-    Func_0200507e(0, 18, 0);
-    Func_0200500c(6);
+    Engine_ActorFaceActor(0, 18, 0);
+    Engine_EventWait(6);
     Func_0200300e(18, 136, 0x1f8, 0x30000);
-    Func_0200509c(0, 18, 0);
-    Func_0200502a(6);
-    Func_020050ea(0, 1);
-    Func_02005094(18, 0, 0);
-    Func_02005042(60);
+    Engine_ActorFaceActor(0, 18, 0);
+    Engine_EventWait(6);
+    Engine_CameraFollowActor(0, 1);
+    Engine_ActorSetPosition(18, 0, 0);
+    Engine_EventWait(60);
     Call1(Func_02005040, 0x89d);
-    Func_0200505c_b();
+    Engine_EventEnd();
 }
 
 s32 SceneData_SelectTableBa48ByRuntimeSelector(void)
@@ -1697,14 +1432,14 @@ s32 Func_02002ba4(s32 *p)
 {
     s16 *q = (s16 *)p[20];
     s32 a, b;
-    s32 d = Func_020058aa(p[12]) * 2;
+    s32 d = Engine_MathSin(p[12]) * 2;
     if (d > 0)
         d = -d;
-    p[2] = p[14] + Func_020058c0(p[12]) * 2;
+    p[2] = p[14] + Engine_MathCos(p[12]) * 2;
     p[3] = p[15] + d;
-    q[15] = Func_020058da(p[12] + 0x8000) / 8;
-    a = Func_020058d8();
-    b = Func_020058de();
+    q[15] = Engine_MathCos(p[12] + 0x8000) / 8;
+    a = Engine_RandomNext();
+    b = Engine_RandomNext();
     p[12] = p[12] + ((((u32)a << 9) >> 16) + (((u32)b << 9) >> 16)) + 0x400;
     return 0;
 }

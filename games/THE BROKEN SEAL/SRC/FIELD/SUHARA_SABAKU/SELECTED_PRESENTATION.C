@@ -4,8 +4,6 @@
 #define CreateOverlayObject Func_020012d6
 #define SetOverlayObjectMode Func_02001318
 #define SetOverlayObjectSlot Func_020013d8
-#define OverlayObject_CreateAndInitialize Func_02000048
-#define OverlayObject_CreateConfigured Func_020000a0
 
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
 
@@ -45,8 +43,6 @@ void Func_020016bc(s32 state, s32 value);
 
 #include "TYPES.H"
 
-#define SceneState_SendRequest15With45 Func_02000314
-#define SceneState_SetStateByte52 Func_02000b14
 void Func_02001660();
 
 /* Named shorthand for one fixed state request, in overlay resource_3c0. */
@@ -59,9 +55,6 @@ void Func_02001660();
 
 #include "TYPES.H"
 
-#define SceneData_SelectDataByRuntimeSelector Func_0200034c
-#define SceneData_ReturnZero Func_020003a0
-#define SceneData_GetTable95c0 Func_020003a4
 
 extern s16 Data_02000240[];
 extern u8 Value_000000a4;
@@ -83,8 +76,6 @@ extern u8 Data_02009458[];
 
 #include "TYPES.H"
 
-#define SceneData_SelectOverlayDataByRuntimeSelector Func_020003ac
-#define SceneData_SelectTable99C4Or97B4ByStateA6 Func_02000e5c
 
 extern s16 Data_02000240[];
 extern u8 Value_000000a4;
@@ -142,8 +133,6 @@ extern u8 Data_020097b4[];
 #define ObjectMotion_SetHorizontalPositionWithTerrain_2(args...) Func_02001c74_a(args)
 #define BattleRuntime_ScheduleShoulderButtonModeUpdate_1(args...) Func_02001c30(args)
 #define ACTOR_ID 13
-#define FieldScene_RunMiddleAuxiliarySequence Func_02000464
-#define FieldScene_RunActorThirteenRestoration Func_02000838
 
 extern u8 Data_03001ebc[];
 extern u8 Data_000000a5[];
@@ -322,17 +311,6 @@ static __inline__ s32 Value2_02000dc8(s32 (*f)(), s32 a0, s32 a1)
 
 #include "TYPES.H"
 
-#define FieldScene_RunActor8Step Func_02000558
-#define FieldScene_RunActor9Step Func_02000564
-#define FieldScene_RunActor10Step Func_02000570
-#define FieldScene_RunActor11Step Func_0200057c
-#define FieldScene_RunActor12Step Func_02000588
-#define FieldScene_RunLateActor8Step Func_020007fc
-#define FieldScene_RunLateActor9Step Func_02000808
-#define FieldScene_RunLateActor10Step Func_02000814
-#define FieldScene_RunLateActor11Step Func_02000820
-#define FieldScene_RunLateActor12Step Func_0200082c
-#define PlaceActorTwelveWhenFlagClear Func_02000adc
 void Func_020009c2(int actor);
 void Func_020009ce(int actor);
 void Func_020009da(int actor);
@@ -359,7 +337,6 @@ static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
 
 #define FrameCounter (*(u32 *)0x03001e40)
 #define EncounterPalette (*(volatile u16 *)0x0500019e)
-#define EncounterPalette_Pulse Func_02000ce4
 
 struct EffectRecord {
     u8 pad[9];
@@ -373,9 +350,6 @@ struct EffectWork {
     struct EffectRecord *record;
 };
 
-#define SetEffectRecordMode Func_02000030
-#define OverlayObject_ApplyZeroAndClearByte89 Func_02000324
-#define OverlayObject_ToggleField84Bit0 Func_0200033c
 void Func_02001568();
 
 void SetEffectRecordMode(struct EffectWork *work, s32 mode)

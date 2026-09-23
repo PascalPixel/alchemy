@@ -1,12 +1,5 @@
 #include "TYPES.H"
 
-#define SceneDialogue_RunActor181Scene Func_02000a44
-#define SceneDialogue_RunActorTenFlaggedDialogue Func_02000adc
-#define SceneDialogue_RunActor21FlaggedLine Func_02000c60
-#define SceneDialogue_RunActor10LineAndFlag81f Func_02000c9c
-#define SceneDialogue_RunActorNineteenDialogue Func_02000d2c
-#define FieldScene_RunActor181Scene Func_02000a74
-#define SceneDialogue_RunActorFourteenTalk Func_02000b28
 #define Audio_PlayCue_1(a0) Call1(Func_020070ae, a0)
 #define ObjectMotion_ResetAndSetPositionInMode2_1(a0, a1, a2) Call3(Func_02006f94, a0, a1, a2)
 #define Audio_PlayCue_1_02000f8c(args...) Func_020070de(args)
@@ -162,56 +155,6 @@
 #define ACTOR_C 14
 #define ACTOR_D 11
 #define SHARED_DATA ((s32)Data_0200e65c)
-#define FieldScene_RunFlag807BranchSequence Func_02000ba8
-#define FieldScene_RunScene373_02000cd0 Func_02000cd0
-#define FieldScene_RunScene373_02000dc0 Func_02000dc0
-#define FieldScene_RunScene373_02000e54 Func_02000e54
-#define FieldScene_RunScene373_02000e84 Func_02000e84
-#define FieldScene_RunPrimarySequence Func_02000f5c
-#define FieldScene_RunScene373SequenceA Func_02000f8c
-#define FieldScene_RunPrimarySequenceSecond Func_02000fbc
-#define FieldScene_RunScene373SequenceC Func_02000fec
-#define FieldScene_RunScene373SequenceD Func_020011d8
-#define FieldScene_RunScene373SequenceE Func_020012bc
-#define FieldScene_RunScene373_02001490 Func_02001490
-#define FieldScene_RunSecondaryActorSequence Func_02002cb0
-#define FieldScene_RunPrimaryActorSequence Func_02002f14
-#define FieldScene_RunCompanionActorSequence Func_020031b4
-#define FieldScene_RunLargeStagingSequence Func_020034c8
-#define FieldScene_RunStep8C Func_02005594
-#define FieldScene_RunStep9 Func_020055d0
-#define FieldScene_RunStep17 Func_020055e0
-#define FieldScene_RunScriptedStepEE4 Func_02005a24
-#define FieldScene_RunScene373SequenceB Func_02005a40
-#define SceneState_Send210AndApplyRectAt40x84 Func_02000d70
-#define SceneState_Send210AndApplyRect Func_02000d98
-#define SceneState_ApplyFlag801Branch Func_02000df0
-#define SceneState_SetValue123Mode3 Func_02000e18
-#define SceneState_SetValue123Mode4 Func_02000e2c
-#define SceneState_ApplyValues123And2 Func_02000e40
-#define SceneState_RunFlag204Step Func_02001244
-#define SceneState_RunTablePairWhenActor22State1 Func_02001454
-#define SceneState_RunTablePairWhenActor22State2 Func_02001554
-#define SceneState_SetValue1ThenCall Func_020055b0
-#define SceneState_SetValue0ThenCall Func_020055c0
-#define SceneState_SetValue24ThenCall Func_020055f0
-#define SceneState_SetValue25ThenCall Func_02005600
-#define SceneState_ApplyRectAndRunTwo Func_02005928
-#define SceneDialogue_RunFlag815GatedStep Func_02000eb4
-#define SceneState_SetFlag204AndConfigureRegion49_46 Func_02001280
-#define SceneState_RunTablePairByActor22State Func_02001590
-#define SceneActor_ResetActorRun Func_0200345c
-#define FieldScene_RunStagedActorCutsceneSequence Func_02003fb0
-#define Effect_ConfigureSpawnedParticle Func_0200575c
-#define Effect_SpawnRisingDustBurst Func_020057fc
-#define Effect_UpdateParticlePosition Func_020058f0
-#define Effect_PlayStepSound Func_02005a08
-#define Effect_AnimateVerticalPositive Func_02005cc4
-#define Effect_AnimateVerticalNegative Func_02005d14
-#define FieldScene_RunSingleStep Func_020055a4
-#define Runtime_ComputeFixedPointDistance Func_02005610
-#define SceneActor_RunStep18WhenTargetSet Func_0200572c
-#define SceneActor_SetFlagByteBySlotZeroPosition Func_02005a94
 #define GetOrbitingSceneObject Func_0200bb38
 #define NormalizeOrbitingSceneObject Func_0200bad2
 #define IsGameFlagSet Func_0200bb38_a
@@ -220,16 +163,6 @@
 #define ConfigurePaletteTransfer Func_0200bac8
 #define ReleaseEffectTransfer Func_0200babe
 #define UpdateOrbitingSceneObject Value_0200dae1
-#define SceneEffect_UpdateOrbitPosition Func_02005ae0
-#define InitializeStagedActorSceneOrbitingEffect Func_02005b48
-#define OverlayObject_UpdateOnFrameBit1 Func_02005c20
-#define SceneEffect_UpdateObjectOnOddFrames Func_02005c5c
-#define SceneEffect_UpdateObjectOnOddFramesOnly Func_02005c98
-#define MapStagedScene_SelectPrimaryData Func_020009dc
-#define MapStagedScene_GetEmptyData Func_020009e4
-#define MapStagedScene_SelectSecondaryData Func_020009e8
-#define MapStagedScene_SelectTertiaryData Func_020009f0
-#define MapStagedScene_SelectQuaternaryData Func_02000aa4
 
 #include "STAGED_ACTOR.H"
 #include "FIELD_EVENT.H"

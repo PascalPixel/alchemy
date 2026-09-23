@@ -11,16 +11,8 @@
 #define SetOverlayObjectMode Func_020049d8
 #define SetOverlayObjectSlot Func_02004b30
 #define CalculateAngleFromCoordinateDelta Func_02004bb2
-#define OverlayObject_SetHandleFlagBits2And3 Func_02000030
-#define OverlayObject_CreateConfiguredObject Func_020000a0
-#define UpdateOverlayObjectAngle Func_02000314
 void Effect_Move(void *object);
 #define SceneEffect_UpdateMotion Effect_Move
-#define SceneData_GetTableCd88 Func_0200036c
-#define SceneData_ReturnZero Func_02000374
-#define SceneData_GetTableCDB8 Func_02000378
-#define SceneData_GetTableCdc4 Func_02000380
-#define SceneData_GetTableCFA4 Func_02000388
 #define Audio_PlayCue_1(args...) Func_02005876(args)
 #define ObjectMotion_SetSpeedParameters_1(a0, a1, a2) Call3(Func_02005734, a0, a1, a2)
 #define ObjectMotion_SetPositionAndReset_1(a0, a1, a2) Call3(Func_02005770_a, a0, a1, a2)
@@ -69,22 +61,6 @@ void Effect_Move(void *object);
 #define ObjectMotion_ArmCallback_10(a0, a1, a2) Call3(Func_020059b8_b, a0, a1, a2)
 #define Object_CommitPositionThenWaitIfModeZero_1(args...) Func_020059f4(args)
 #define BattleRuntime_WaitIfModeZero_4(args...) Func_020058da(args)
-#define FieldScene_RunSevenSceneChain Func_02000a64
-#define FieldScene_StagePairedActors Func_02000d5c
-#define FieldScene_RunActorFourteenGuestScene Func_02001d04
-#define FieldScene_RunSixPassEffectSequence Func_02002400
-#define RunEventScript01 Func_02001450
-#define FieldScene_RunActorNineDialogueByFlags Func_02002674
-#define SceneDialogue_RunActorFiveTalk Func_020026e0
-#define SceneDialogue_RunActorTenDialogue Func_0200274c
-#define SceneDialogue_RunActor11TalkLine Func_0200276c
-#define SceneDialogue_ShowLine10C8 Func_0200278c
-#define SceneDialogue_RunActor14TalkLine Func_020027ac
-#define SceneDialogue_RunLine1072WithPair9And10 Func_020027cc
-#define Lifted_020027f8 Func_020027f8
-#define SceneState_PumpUntilSlotsFree Func_02004328
-#define FieldScene_Forward72b4 Func_020027ec
-#define FieldScene_RunSplitPairSteps Func_02004248
 
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
 #include "OVERLAY_OBJECT.H"

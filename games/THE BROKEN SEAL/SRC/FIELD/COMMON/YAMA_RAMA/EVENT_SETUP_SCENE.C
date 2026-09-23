@@ -3,33 +3,6 @@
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-#define Scene_RunEventTransition Func_02000924
-#define Scene_RunActorCue Func_02000ac0
-#define Scene_RunActorExchange Func_02000b2c
-#define Scene_RunActorSequence Func_02000c30
-#define EventScript_PrepareActorRenderFlags Func_02000030
-#define OverlayObject_SetFacingTowardObject10 Func_02000054
-#define SceneData_SelectTable97b4ByState Func_0200007c
-#define SceneData_ReturnZero Func_020000ac
-#define SceneData_GetTable98ec Func_020000b0
-#define SceneData_SelectTable9918ByState Func_020000b8
-#define SceneDialogue_RunMessage1958Step Func_020000e8
-#define SceneDialogue_RunActor11Message195d Func_02000140
-#define SceneDialogue_RunActor13Message1961 Func_02000160
-#define FieldScene_RunPrimaryScript Func_02000180
-#define FieldScene_RunScene3a2SequenceA Func_020001ec
-#define SceneDialogue_RunLine1956 Func_0200084c
-#define ConfigureAndPlaceActorFourteen Func_02000870
-#define FieldScene_RunScene3a2_020008a8 Func_020008a8
-#define SceneDialogue_RunActorFifteenByLeaderHeading Func_020008e0
-#define FieldScene_RunScriptedSteps0And1A12 Func_02000fcc
-#define FieldScene_RunPairedLayoutStepsThenSetOne Func_02000ff0
-#define SceneState_RunRect6x28Step Func_02001028
-#define SceneActor_SetFlagBitByRankAgainstActorZero Func_02001060
-#define SceneActor_UpdateActorFourteenByDepth Func_02001090
-#define ActorPresentation_PrepareActorFourteenWithCallback Func_020010b8
-#define FieldScene_SetSlot15Byte89AndRunStep Func_02001144
-#define SceneData_SelectTableByWord224 Func_02001180
 
 struct EventActor {
     u8 reserved_00[0x23];

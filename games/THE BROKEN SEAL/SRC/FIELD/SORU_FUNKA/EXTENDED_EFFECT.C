@@ -1,34 +1,5 @@
 #include "TYPES.H"
 
-#define SceneData_GetTableB6D4 Func_02000030
-#define SceneData_GetTableB704 Func_0200003c
-#define SceneData_GetTableB710 Func_02000044
-#define SceneData_GetTableB998 Func_0200004c
-#define FieldScene_RunTwoPhaseActorSequence Func_02000054
-#define FieldScene_RunScene381_02000e30 Func_02000e30
-#define Resource381_NoOpCallbackA Func_02000f28
-#define Resource381_NoOpCallbackB Func_02000f2c
-#define FieldScene_RunWhenWord225Is10 Func_02000f30
-#define SceneState_ConfigureEightCornerRegions Func_02002c9c
-#define FieldScene_RunActor15TwoStep Func_0200300c
-#define OverlayObject_SetRecordAngleFromHeading Func_02000f54
-#define SceneState_InitStateWordsAndSlots Func_02001084
-#define SceneState_UpdateRandomTimerLevel Func_0200135c
-#define SceneState_ApplyRectsByCondition Func_0200284c
-#define SceneState_ApplyRectPairByFlag Func_020028dc
-#define FieldScene_RunRandomHalfBranch Func_0200293c
-#define FieldScene_RunLateRandomHalfBranch Func_02002970
-#define FieldScene_RunVariantStep Func_02002d48
-#define FieldScene_RunStepByRuntimeBits Func_02002d94
-#define SceneState_ForwardByRuntimeWordBits Func_02002dd0
-#define SceneState_SetValue140Mode0 Func_02002ff0
-#define SceneActor_MoveTo232_125AndFace4000 Func_02002820
-#define FieldScene_RunFourWayEffectSequence Func_020029a4
-#define SceneEffect_AdvanceTenEntryTimers Func_02002ba0
-#define SceneActor_PlaceAtTileAndRunSteps Func_02002c1c
-#define SceneEffect_UpdateArcOverAnchor Func_02002e0c
-#define SceneEffect_UpdateAnchoredRiseArc Func_02002e5c
-#define FieldScene_CallHelper6620 Func_02003000
 
 #include "FACING_OBJECT.H"
 

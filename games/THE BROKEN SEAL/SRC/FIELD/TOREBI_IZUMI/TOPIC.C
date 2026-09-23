@@ -1,17 +1,5 @@
 #include "TYPES.H"
 
-#define SceneData_GetTable9A08 Func_02000030
-#define SceneData_GetTable9ac8 Func_0200003c
-#define SceneData_SelectTable9cfcByState Func_02000044
-#define FieldScene_RunActorCueBranch Func_02000074
-#define FieldScene_RunPromptDialogueE19 Func_020000bc
-#define SceneDialogue_RunMessage0e34 Func_02000154
-#define SceneDialogue_RunMessage0e35 Func_02000178
-#define FieldScene_RunIndexedStep0 Func_0200019c
-#define SceneData_SelectTable9e1cByState Func_020001a8
-#define SceneDialogue_PickTopicVariantId Func_02000d70
-#define OverlayObject_SetField54 Func_02000e44
-#define SceneState_InitFourActorRecordsAndInstallTask Func_020016a8
 extern s16 Data_02000240[];
 /* Signed topic cursors share the scene workspace with its halfword state. */
 extern s8 SceneWork_Bytes[];

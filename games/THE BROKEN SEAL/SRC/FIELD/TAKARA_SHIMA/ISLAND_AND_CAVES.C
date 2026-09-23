@@ -1,85 +1,14 @@
 #include "TYPES.H"
 
-#define AdvanceEffectMotion Func_02000da4
-#define UpdateSwayingSceneObject Func_02002e70
-#define PositionSceneActorPair Func_02001774
-#define ActivateSceneActor8 Func_020019b4
-#define ActivateSceneActor10 Func_020019c0
-#define ActivateSceneActor11 Func_020019cc
-#define ActivateSceneActor12 Func_020019d8
-#define ActivateSceneActor13 Func_020019e4
-#define ActivateSceneActor15 Func_020019f0
-#define ActivateSceneActor17 Func_020019fc
-#define ActivateSceneActor18 Func_02001a08
-#define ActivateSceneActor9 Func_02001a14
-#define ActivateSceneActor19 Func_02001a20
-#define ActivateSceneActor14 Func_02001a2c
-#define ActivateSceneActor16 Func_02001a38
-#define NoOpEffectCallback Func_02000cc0
-#define RunPrologueSceneSetup Func_02001374
-#define StartSceneScript37 Func_0200138c
-#define RunSceneVectorTransition Func_02001740
-#define TryPushBlockingSceneActor Func_02001a44
-#define SetEffectOwnerMode Func_020009dc
-#define InitializePrologueSceneState Func_02000e88
-#define MarkGridLeftOfSceneActor Func_0200185c
-#define MarkGridAboveSceneActor Func_020018b0
-#define SetSceneActorModes Func_02001904
-#define InitializeEscapeSceneActors Func_0200191c
-#define SpawnMode14Effect Func_020009f4
-#define SpawnMode15Effect Func_02000a4c
-#define SpawnRadialEffectBurst Func_02000e00
 #define OverlayObject_IntegrateVelocities Func_02000ab0
-#define SelectPrimarySceneData Func_02000cc4
-#define GetEmptySceneData Func_02000d3c
-#define GetDefaultSceneData Func_02000d40
-#define SelectSecondarySceneData Func_02000d48
-#define SelectTertiarySceneData Func_02000ec4
-#define StartScriptedSceneMessage Func_02000f3c
-#define ShowForgetEverythingMessage Func_02001624
-#define ShowHelpYouForgetMessage Func_0200164c
-#define ShowDamagedDoorMessage Func_0200165c
-#define ShowSaveMyLifeMessage Func_0200166c
-#define FieldScene_RunScene3b2SequenceA Func_02001214
-#define FieldScene_RunScene3b2_02001494 Func_02001494
-#define FieldScene_RunScene3b2_0200167c Func_0200167c
-#define ConfigureSceneActor11 Func_02001508
-#define ConfigureSceneActor12 Func_02001548
-#define ConfigureSceneActor13 Func_0200158c
-#define ConfigureSceneActor14 Func_020015d0
-#define CheckActorPathSouth Func_02001b14
-#define CheckActorPathNorth Func_02001b40
-#define CheckActorPathWest Func_02001b68
-#define CheckActorPathEast Func_02001b94
-#define UpdateEscapeRouteForActorPositions Func_02001bbc
-#define UpdateActor8ReturnRoute Func_02001c84
-#define UpdateActor10RetreatRoute Func_02001d2c
-#define UpdateActor10AdvanceRoute Func_02001de0
-#define UpdateActor11WestRoute Func_02001e5c
-#define UpdateActor11EastRoute Func_02001ef4
-#define UpdateActor12WestRoute Func_02001f78
-#define UpdateActor12EastRoute Func_02002004
-#define UpdateActor13WestRoute Func_02002080
-#define UpdateActor13EastRoute Func_0200216c
-#define UpdateActor15WestRoute Func_02002200
-#define UpdateActor15EastRoute Func_020022c8
-#define UpdateActor17SouthRoute Func_020023c4
-#define UpdateActor17NorthRoute Func_02002450
-#define AdvanceActor18AlongEscapeRoute Func_020025f0
-#define AdvanceActor9AlongEscapeRoute Func_02002848
-#define RetreatActor14AlongEscapeRoute Func_02002b80
-#define AdvanceActor14AlongEscapeRoute Func_02002c4c
-#define RetreatActor16AlongEscapeRoute Func_02002d0c
-#define AdvanceActor16AlongEscapeRoute Func_02002dd0
 #define GetOrbitingSceneObject Func_02005f6c
 #define NormalizeOrbitingSceneObject Func_02005f4e
 #define IsGameFlagSet Func_02005f84
 #define AllocateEffectTransfer Func_02005f3c
-#define LoadEffectResource Func_02005fb4
+#define LoadEffectResource Engine_ItemLoadIcon
 #define ConfigurePaletteTransfer Func_02005f64
-#define ReleaseEffectTransfer Func_02005f62
+#define ReleaseEffectTransfer Engine_HeapRelease
 #define UpdateOrbitingSceneObject Value_0200ae71
-#define InitializeSwayingSceneObject Func_02002ed8
 
 #include "STAGED_ACTOR.H"
 #include "FIELD_EFFECT.H"
@@ -404,25 +333,14 @@ extern u8 Data_0000007e[];
 extern u8 Data_00000086[];
 extern s16 Data_02000240_t[][1];
 extern u8 Value_0200ae71;
-
-s32 Func_02003d76();
-s32 Func_02005e42(s32 arg0);
-s32 Func_02005e58(s32 arg0);
-s32 Func_02005e72(s32 arg0);
-s32 Func_02005e70(void);
-s32 Func_02005e76(void);
 Obj *Func_0200481e(s32);
 Obj *Func_02004826(s32);
-void Func_02004814(void);
 void Func_020047ee(Obj *, s32, s32, s32);
 void Func_020047de(Obj *, s32);
 void Func_0200481a(Obj *, s32, s32, s32);
 void Func_02004816(Obj *, s32);
 void Func_02004820(Obj *, s32);
-void Func_02004946(s32);
 void Func_0200484c(Obj *);
-void Func_02004954(s32);
-void Func_020048b8(void);
 void Func_020032be(int arg0);
 void Func_020032ca(int arg0);
 void Func_020032d6(int arg0);
@@ -435,41 +353,23 @@ void Func_0200331e(int arg0);
 void Func_0200332a(int arg0);
 void Func_02003336(int arg0);
 void Func_02003342(int arg0);
-void Func_020043e8(void);
 void Func_02001440(void);
-void Func_020043f8(void);
 void Func_02002638(void);
 s32 Func_020043b6(u8 *arg0, s32 arg1, s32 arg2);
-void Func_020044b4(s32 arg0);
-void Func_0200447a(s32 arg0);
-void Func_020047b6(void);
 s32 Func_02001bc2(struct V6 *arg0);
 void Func_02001d6e(struct V6 arg0);
-void Func_020047e2(void);
 void Func_02004a60(s32 arg0, s32 arg1, struct V *arg2);
 s32 Func_02004ac0(struct S *arg0, struct V *arg1);
-void Func_02004b08(void);
 void Func_02004a98(struct S *arg0, s32 arg1);
-void Func_02004a5e(s32 arg0);
-void Func_02004bc4(s32 arg0);
 void Func_02004aac(struct S *arg0, s32 arg1);
 void Func_02004b0e(struct S *arg0, s32 arg1);
 void Func_02004b7c(s32 arg0, s32 arg1, s32 arg2);
 void Func_02004ae4(struct S *arg0, s32 arg1);
 void Func_02004b2c(struct S *arg0, s32 arg1);
-void Func_02004b74(void);
-void Func_02003efc(void);
 void Func_02003f86(s32 arg0, s32 arg1);
 void Func_02003f8e(s32 arg0, s32 arg1);
-void Func_02003f2a(void);
 struct S *Func_020048f4(void);
-void Func_0200494a(s32 arg0, s32 arg1);
-void Func_020048c8(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
 struct S *Func_02004948(void);
-void Func_0200499e(s32 arg0, s32 arg1);
-void Func_0200491c(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
-void Func_020049cc(int arg0, int arg1);
-void Func_020049d4(int arg0, int arg1);
 void Func_02003184(s32, s32, s32, s32);
 void Func_02003190(s32, s32, s32, s32);
 void Func_020031f0(s32, s32, s32, s32);
@@ -490,18 +390,11 @@ u8 *Func_02003a66(s32 kind, s32 x, s32 y, s32 z);
 void Func_02003ac0(u8 *object, s32 mode);
 void Func_02003b58(u8 *object, s32 mode);
 struct SceneObject *Func_02003e96(void);
-s32 Func_02003df8(s32);
-s32 Func_02003dfc(s32);
-s32 Func_02003df2(s32, s32);
 void Func_0200194a(s32, s32, s32, s32, s32, s32, s32, struct EffectParams *);
 void Func_02003fb0_a(s32 arg0);
 void Func_02003fb0_b(s32 arg0);
 s32 Func_02004002(s32 arg0, s32 arg1, s32 arg2);
-void Func_02004058(s32 arg0, s32 arg1);
-s32 Func_02003fe0(s32 arg0, s32 arg1);
-void Func_02003fdc(void);
 void Func_0200468c(s32 arg0);
-void Func_02004668(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
 void Func_020046b2(int arg0);
 void Func_020046c2(int arg0);
 void Func_020046d2(int arg0);
@@ -511,10 +404,7 @@ void Func_020023cc();
 void Func_0200265e();
 void Func_020026be();
 void Func_020028b4();
-void Func_02003fe6();
-void Func_02003ff8();
 s32 Func_02003ffe();
-void Func_02004044_a();
 void Func_02004044_b();
 s32 Func_02004054();
 void Func_02004068();
@@ -524,7 +414,6 @@ s32 Func_020040ba();
 void Func_020040c0();
 s32 Func_020040d0();
 void Func_020040e0();
-void Func_020040e6();
 void Func_020040f0();
 s32 Func_020040f4();
 s32 Func_020040f6();
@@ -545,38 +434,21 @@ s32 Func_020041a8();
 s32 Func_020041ba_a();
 s32 Func_020041ba_b();
 s32 Func_020041d2();
-void Func_020042a8();
 s32 Func_0200428e();
 void Func_02004290();
 u8 *Func_020042a4();
-void Func_020042b0();
 s32 Func_020042da();
-void Func_02004300();
 s32 Func_02004318();
-void Func_02004330();
 void Func_020044f2();
-void Func_02004508();
 void Func_02004522();
-void Func_02004530();
-void Func_02004532();
-void Func_02004560();
-void Func_0200457e();
-void Func_02004596();
-void Func_020045a2();
-void Func_020045bc();
-void Func_020046c4();
 s32 Func_020046dc();
 s32 Func_02004714();
 s32 Func_02004738();
 s32 Func_0200473a();
 s32 Func_0200475c();
 s32 Func_0200475e();
-void Func_02004762();
 s32 Func_02004782();
-void Func_02004786();
 s32 Func_020047a6();
-void Func_020047aa();
-void Func_020047ce();
 u8 *Func_02004598(s32 arg0);
 s32 Func_020045aa(s32 arg0);
 void Func_02004560_a(s32 arg0, s32 arg1);
@@ -615,9 +487,6 @@ void Func_02003376(s32 arg0, s32 arg1, s32 arg2);
 void Func_02003386(s32 arg0, s32 arg1, s32 arg2);
 void Func_020033b2(s32 arg0, s32 arg1, s32 arg2);
 void Func_02003758_a(void);
-void Func_02004c04(s32 arg0);
-void Func_02004c90(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
-void Func_02004ca0(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 struct S_02001b14 *Func_02004d14(s32 arg0);
 struct S_02001b14 *Func_02004d1e(s32 arg0);
 struct S_02001b14 *Func_02004d28(s32 arg0);
@@ -627,9 +496,6 @@ void Func_02003436(s32 arg0, s32 arg1, s32 arg2);
 void Func_02003440(s32 arg0, s32 arg1, s32 arg2);
 void Func_02003454(s32 arg0, s32 arg1, s32 arg2);
 void Func_02003464(s32 arg0, s32 arg1, s32 arg2);
-void Func_02004cae(s32 arg0);
-void Func_02004d3a(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
-void Func_02004d4a(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 struct S_02001b14 *Func_02004dbc(s32 arg0);
 struct S_02001b14 *Func_02004dc6(s32 arg0);
 struct S_02001b14 *Func_02004dd0(s32 arg0);
@@ -637,18 +503,12 @@ struct S_02001b14 *Func_02004dda(s32 arg0);
 struct S_02001b14 *Func_02004e38(s32 arg0);
 void Func_020034f0(s32 arg0, s32 arg1, s32 arg2);
 void Func_02003512(s32 arg0, s32 arg1, s32 arg2);
-void Func_02004d62(s32 arg0);
-void Func_02004dee(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
-void Func_02004dfe(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 struct S_02001b14 *Func_02004e70(s32 arg0);
 struct S_02001b14 *Func_02004e7a(s32 arg0);
 struct S_02001b14 *Func_02004eb2(s32 arg0);
 void Func_0200357c(s32 arg0, s32 arg1, s32 arg2);
 void Func_02003588(s32 arg0, s32 arg1, s32 arg2);
 void Func_02003592(s32 arg0, s32 arg1, s32 arg2);
-void Func_02004ddc(s32 arg0);
-void Func_02004e68(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
-void Func_02004e78(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 struct S_02001b14 *Func_02004eec(s32 arg0);
 struct S_02001b14 *Func_02004ef6(s32 arg0);
 struct S_02001b14 *Func_02004f08(s32 arg0);
@@ -656,35 +516,23 @@ struct S_02001b14 *Func_02004f1e(s32 arg0);
 struct S_02001b14 *Func_02004f4c(s32 arg0);
 void Func_0200361e(s32 arg0, s32 arg1, s32 arg2);
 void Func_0200362c(s32 arg0, s32 arg1, s32 arg2);
-void Func_02004e76(s32 arg0);
-void Func_02004f02(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
-void Func_02004f12(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 struct S_02001b14 *Func_02004f84_a(s32 arg0);
 struct S_02001b14 *Func_02004f8e(s32 arg0);
 struct S_02001b14 *Func_02004fa0(s32 arg0);
 struct S_02001b14 *Func_02004fce(s32 arg0);
 void Func_0200369e(s32 arg0, s32 arg1, s32 arg2);
 void Func_020036ae(s32 arg0, s32 arg1, s32 arg2);
-void Func_02004ef8(s32 arg0);
-void Func_02004f84_b(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
-void Func_02004f94(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 struct S_02001b14 *Func_02005008(s32 arg0);
 struct S_02001b14 *Func_02005012_a(s32 arg0);
 struct S_02001b14 *Func_0200505c(s32 arg0);
 void Func_02003714(s32 arg0, s32 arg1, s32 arg2);
 void Func_0200372a(s32 arg0, s32 arg1, s32 arg2);
 void Func_02003736(s32 arg0, s32 arg1, s32 arg2);
-void Func_02004f86(s32 arg0);
-void Func_02005012_b(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
-void Func_02005022(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 struct S_02001b14 *Func_02005094(s32 arg0);
 struct S_02001b14 *Func_0200509e(s32 arg0);
 struct S_02001b14 *Func_020050d6(s32 arg0);
 void Func_0200379c(s32 arg0, s32 arg1, s32 arg2);
 void Func_020037b0(s32 arg0, s32 arg1, s32 arg2);
-void Func_02005000(s32 arg0);
-void Func_0200508c(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
-void Func_0200509c(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 struct S_02001b14 *Func_02005110(s32 arg0);
 struct S_02001b14 *Func_0200511a(s32 arg0);
 struct S_02001b14 *Func_02005124(s32 arg0);
@@ -693,18 +541,12 @@ struct S_02001b14 *Func_020051c4(s32 arg0);
 void Func_02003846(s32 arg0, s32 arg1, s32 arg2);
 void Func_02003870(s32 arg0, s32 arg1, s32 arg2);
 void Func_0200389e(s32 arg0, s32 arg1, s32 arg2);
-void Func_020050ee(s32 arg0);
-void Func_0200517a(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
-void Func_0200518a(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 struct S_02001b14 *Func_020051fc(s32 arg0);
 struct S_02001b14 *Func_02005206(s32 arg0);
 void Func_02005210(s32 arg0);
 struct S_02001b14 *Func_02005258(s32 arg0);
 void Func_0200390a(s32 arg0, s32 arg1, s32 arg2);
 void Func_02003932(s32 arg0, s32 arg1, s32 arg2);
-void Func_02005182(s32 arg0);
-void Func_0200520e(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
-void Func_0200521e(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 struct S_02001b14 *Func_02005290(s32 arg0);
 struct S_02001b14 *Func_0200529a(s32 arg0);
 struct S_02001b14 *Func_020052a4(s32 arg0);
@@ -713,9 +555,6 @@ struct S_02001b14 *Func_02005320(s32 arg0);
 void Func_020039be(s32 arg0, s32 arg1, s32 arg2);
 void Func_020039d6(s32 arg0, s32 arg1, s32 arg2);
 void Func_020039fa(s32 arg0, s32 arg1, s32 arg2);
-void Func_0200524a(s32 arg0);
-void Func_020052d6(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
-void Func_020052e6(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 struct S_02001b14 *Func_02005358(s32 arg0);
 struct S_02001b14 *Func_02005362(s32 arg0);
 struct S_02001b14 *Func_0200536c(s32 arg0);
@@ -725,30 +564,20 @@ void Func_02003a86(s32 arg0, s32 arg1, s32 arg2);
 void Func_02003a9a(s32 arg0, s32 arg1, s32 arg2);
 void Func_02003aaa(s32 arg0, s32 arg1, s32 arg2);
 void Func_02003af6(s32 arg0, s32 arg1, s32 arg2);
-void Func_02005346(s32 arg0);
-void Func_020053d2(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
-void Func_020053e2(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 struct S_02001b14 *Func_02005454(s32 arg0);
 struct S_02001b14 *Func_0200545e(s32 arg0);
 struct S_02001b14 *Func_02005468(s32 arg0);
 struct S_02001b14 *Func_020054a6(s32 arg0);
 void Func_02003b80(s32 arg0, s32 arg1, s32 arg2);
-void Func_020053d0(s32 arg0);
-void Func_0200545c(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
-void Func_0200546c(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 struct S_02001b14 *Func_020054e0(s32 arg0);
 struct S_02001b14 *Func_020054ea(s32 arg0);
 struct S_02001b14 *Func_0200551e(s32 arg0);
 void Func_02003be8(s32 arg0, s32 arg1, s32 arg2);
 void Func_02003bf8(s32 arg0, s32 arg1, s32 arg2);
-void Func_02005448(s32 arg0);
-void Func_020054d4(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
-void Func_020054e4(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 u8 *Func_0200568a();
 u8 *Func_02005694();
 u8 *Func_0200569e();
 u8 *Func_02005758();
-void Func_0200571e();
 void Func_02003da8();
 void Func_02003db2();
 void Func_02003dce();
@@ -763,7 +592,6 @@ u8 *Func_020058f2();
 u8 *Func_020058fc();
 u8 *Func_02005906();
 u8 *Func_020059d4();
-void Func_0200599c();
 void Func_0200401a();
 void Func_02004024();
 void Func_02004044();
@@ -777,32 +605,26 @@ u8 *Func_02005c1a();
 u8 *Func_02005c24();
 u8 *Func_02005c2e();
 u8 *Func_02005ca4();
-void Func_02005c6a();
 void Func_0200437e();
 u8 *Func_02005ce6();
 u8 *Func_02005cf0();
 u8 *Func_02005cfa();
 u8 *Func_02005d62();
-void Func_02005d28();
 void Func_0200443c();
 u8 *Func_02005da6();
 u8 *Func_02005db0();
 u8 *Func_02005dba();
 u8 *Func_02005e28();
-void Func_02005dee();
 void Func_02004502();
 u8 *Func_02005e6a();
 u8 *Func_02005e74();
 u8 *Func_02005ec8();
-void Func_02005e8e();
 void Func_020045a2_a();
 OrbitingSceneObject *Func_02005f6c(void);
 void Func_02005f4e(OrbitingSceneObject *, s32);
 s32 Func_02005f84(s32);
 u8 *Func_02005f3c(s32, s32);
-void Func_02005fb4(s32);
 s32 Func_02005f64(u8, s32, u8 *);
-void Func_02005f62(s32);
 
 /*
  * Distance between two three-component 16.16 fixed-point positions.
@@ -1102,7 +924,7 @@ void AdvanceEffectMotion(struct Effect *effect)
     velocity_z = effect->velocity[2];
     effect->position[2] += velocity_z;
 
-    effect->velocity[0] = velocity_x - Func_02003d76(velocity_x, 18);
+    effect->velocity[0] = velocity_x - Engine_MathDivide(velocity_x, 18);
     effect->velocity[2] = velocity_z - velocity_z / 16;
 
     effect->accum18 += effect->rate30;
@@ -1126,12 +948,12 @@ void SpawnRadialEffectBurst(void)
     params.callback = 0x02008da5;
     for (angle_step = 0; angle_step <= 16; angle_step += 2) {
         angle = angle_step << 12;
-        vec.x = Func_02003df8(angle);
+        vec.x = Engine_MathCos(angle);
         vec.y = 0;
-        z = Func_02003dfc(angle);
+        z = Engine_MathSin(angle);
         x = vec.x;
         vec.z = z;
-        x = x + Func_02003df2(x, 3);
+        x = x + Engine_MathDivide(x, 3);
         vec.x = x;
         Func_0200194a(object->x, object->y, object->z, x, vec.y, z, 0x01000001, &params);
     }
@@ -1143,12 +965,12 @@ void InitializePrologueSceneState(void)
 
     u8 *base;
 
-    Func_02003efc();
+    Engine_EventBegin();
     base = Data_02000240;
     Func_02003f86(*(s16 *)(base + 448), 5);
     base[555] = 3;
     Func_02003f8e(84, 5);
-    Func_02003f2a();
+    Engine_EventEnd();
 }
 
 s32 SelectTertiarySceneData(void)
@@ -1180,9 +1002,9 @@ void StartScriptedSceneMessage(s32 message_id)
     Func_02003fb0_a(message_id);
     Func_02004002(8, 0, 0);
     Func_02003fb0_b(4055);
-    Func_02004058(181, 3);
-    Func_02003fe0(181, 0);
-    Func_02003fdc();
+    Engine_ItemShowFound(181, 3);
+    Engine_PartyGiveItem(181, 0);
+    Engine_EventEnd();
 }
 
 s32 Func_02000f70(void)
@@ -1203,9 +1025,9 @@ s32 Func_02000f70(void)
     }
     if (scene == (s32)Data_0000007d) {
         if (Value1(Func_02003ffe, 0xef7) == 0) {
-            Call6(Func_02003fe6, 0, 3, 1, 1, 13, 40);
-            Call6(Func_02003ff8, 0, 2, 1, 1, 15, 40);
-            Call3(Func_020040e6, 101, 0xd80000, 0x2880000);
+            Call6(Engine_MapCopyCellAttributes, 0, 3, 1, 1, 13, 40);
+            Call6(Engine_MapCopyCellAttributes, 0, 2, 1, 1, 15, 40);
+            Call3(Engine_MapObjectSetPosition, 101, 0xd80000, 0x2880000);
         }
         if (Data_02000240_t[224][0] == scene) {
             if (Data_02000240_t[225][0] != 5) {
@@ -1214,7 +1036,7 @@ s32 Func_02000f70(void)
                 }
             }
             Call1(Func_02004068, 0x8d1);
-            Call6(Func_02004044_a, 0, 1, 1, 1, 13, 30);
+            Call6(Engine_MapCopyCellAttributes, 0, 1, 1, 1, 13, 30);
             Call3(Func_02004132_a, 100, 0xd80000, 0x1e80000);
             return 0;
         }
@@ -1275,7 +1097,7 @@ s32 Func_02000f70(void)
     if (cur == lo) {
         if (Value1(Func_020041d2, 0xef4) == 0) {
             Call6(Func_020041ba_b, 0, 0, 1, 1, 37, 10);
-            Call3(Func_020042a8, 100, 0x2580000, 0xa80000);
+            Call3(Engine_MapObjectSetPosition, 100, 0x2580000, 0xa80000);
         }
     }
     cur = Data_02000240_t[224][0];
@@ -1303,18 +1125,18 @@ void FieldScene_RunScene3b2SequenceA(void)
     rec8 = Func_020042a4(8);
     rec7 = Value1_02001214(Func_0200428e, (Data_02000240_t[224][0] + (0x8d2 - (s32)Data_0000007e)));
     if (rec7 != 0) {
-        Call3(Func_02004300, 8, 0x28a0000, 0xa80000);
+        Call3(Engine_ActorSetPosition, 8, 0x28a0000, 0xa80000);
         *(volatile s32 *)((s32)rec8 + 12) = -0x200000;
         record = Func_020042da(8);
         Func_02004290(record, 0);
-        Func_02004330(8, 3);
+        Engine_ActorSetSpritePriority(8, 3);
         rec8[85] = 0;
         {
             u8 value = *(volatile u8 *)&rec8[35];
 
             rec8[35] = (u8)(value | 2);
         }
-        Call6(Func_020042b0, 42, 10, 1, 1, 40, 10);
+        Call6(Engine_MapCopyCellAttributes, 42, 10, 1, 1, 40, 10);
     } else {
         *(u8 *)(Func_02004318(8) + 85) = rec7;
     }
@@ -1324,9 +1146,9 @@ void RunPrologueSceneSetup(void)
 {
     extern s32 Data_0200b15c[];
 
-    Func_020043e8();
+    Engine_EventBegin();
     Func_02001440();
-    Func_020043f8();
+    Engine_EventEnd();
     Func_02002638();
 }
 
@@ -1335,8 +1157,8 @@ void StartSceneScript37(void)
     extern s32 Data_0200b15c[];
 
     Func_020043b6(Data_0200b2bc, 37, 7);
-    Func_020044b4(183);
-    Func_0200447a(4);
+    Engine_AudioPlayCue(183);
+    Engine_EventRequestExit(4);
 }
 
 void FieldScene_RunScene3b2_02001494(void)
@@ -1347,16 +1169,16 @@ void FieldScene_RunScene3b2_02001494(void)
     u32 i;
     s32 record;
 
-    Func_02004508();
-    Call3_02001494(Func_02004532, 0, 0x6666, 0x3333);
-    Func_02004596();
-    Func_020045a2();
+    Engine_EventBegin();
+    Call3_02001494(Engine_ActorSetSpeed, 0, 0x6666, 0x3333);
+    Engine_EventOpenScreen();
+    Engine_EventWaitForScreen();
     Func_02004522((Data_02000240_t[224][0] + (0x8c8 - (s32)Data_0000007e)));
-    Func_02004530(30);
+    Engine_EventWait(30);
     Call3_02001494(Func_020044f2, 0x200b2bc, 44, 7);
-    Call3_02001494(Func_0200457e, 0, 3, -16);
-    Func_020045bc(3);
-    Func_02004560();
+    Call3_02001494(Engine_ActorCenterAndWalk, 0, 3, -16);
+    Engine_EventRequestExit(3);
+    Engine_EventEnd();
 }
 
 void ConfigureSceneActor11(s32 actor_id)
@@ -1424,7 +1246,7 @@ void ShowForgetEverythingMessage(void)
     {
         s32 k4 = 8, k5 = 21;
 
-        Func_02004668(0, 0, 1, 1, k4, k5);
+        Engine_MapCopyCellAttributes(0, 0, 1, 1, k4, k5);
     }
 }
 
@@ -1448,26 +1270,26 @@ void FieldScene_RunScene3b2_0200167c(void)
     s32 record;
 
     if (Value1_0200167c(Func_020046dc, 0x8c4) != 0) {
-        Call6(Func_020046c4, 0, 0, 1, 1, 8, 21);
-        Call3(Func_02004762, 15, 0x3c80000, 0x3c80000);
+        Call6(Engine_MapCopyCellAttributes, 0, 0, 1, 1, 8, 21);
+        Call3(Engine_ActorSetPosition, 15, 0x3c80000, 0x3c80000);
     } else {
         record = Func_0200473a(15);
         *(s32 *)(record + 28) = 0x19999;
     }
     if (Value1_0200167c(Func_02004714, 0x8c5) != 0) {
-        Call3(Func_02004786, 16, 0x3c80000, 0x3c80000);
+        Call3(Engine_ActorSetPosition, 16, 0x3c80000, 0x3c80000);
     } else {
         record = Func_0200475e(16);
         *(s32 *)(record + 28) = 0x19999;
     }
     if (Value1_0200167c(Func_02004738, 0x8c6) != 0) {
-        Call3(Func_020047aa, 17, 0x3c80000, 0x3c80000);
+        Call3(Engine_ActorSetPosition, 17, 0x3c80000, 0x3c80000);
     } else {
         record = Func_02004782(17);
         *(s32 *)(record + 28) = 0x19999;
     }
     if (Value1_0200167c(Func_0200475c, 0x8c7) != 0) {
-        Call3(Func_020047ce, 18, 0x3c80000, 0x3c80000);
+        Call3(Engine_ActorSetPosition, 18, 0x3c80000, 0x3c80000);
     } else {
         record = Func_020047a6(18);
         *(s32 *)(record + 28) = 0x19999;
@@ -1480,11 +1302,11 @@ void RunSceneVectorTransition(void)
 
     struct V6 transition;
 
-    Func_020047b6();
+    Engine_EventBegin();
     if (Func_02001bc2(&transition) != 0) {
         Func_02001d6e(transition);
     }
-    Func_020047e2();
+    Engine_EventEnd();
 }
 
 void PositionSceneActorPair(s32 actor_id, s32 x_offset, s32 z_offset)
@@ -1499,7 +1321,7 @@ void PositionSceneActorPair(s32 actor_id, s32 x_offset, s32 z_offset)
 
     p = Func_0200481e(Data_02000240[125]);
     q = Func_02004826(actor_id);
-    Func_02004814();
+    Engine_EventBegin();
     {
         x = ((p->f08 + (x_offset << 16)) & 0xFFF00000) + 0x80000;
         y = ((p->f10 + (z_offset << 16)) & 0xFFF00000) + 0x80000;
@@ -1522,10 +1344,10 @@ void PositionSceneActorPair(s32 actor_id, s32 x_offset, s32 z_offset)
     } else {
         Func_02004820(q, 3);
     }
-    Func_02004946(226);
+    Engine_AudioPlayCue(226);
     Func_0200484c(p);
-    Func_02004954(288);
-    Func_020048b8();
+    Engine_AudioPlayCue(288);
+    Engine_EventEnd();
 }
 
 void MarkGridLeftOfSceneActor(s32 actor_mode, s32 grid_value, s32 grid_attribute)
@@ -1537,7 +1359,7 @@ void MarkGridLeftOfSceneActor(s32 actor_mode, s32 grid_value, s32 grid_attribute
     if (p != 0) {
         s32 v;
 
-        Func_0200494a(actor_mode, 3);
+        Engine_ActorSetSpritePriority(actor_mode, 3);
         v = 2;
         v |= p->f23;
         p->f23 = (u8)v;
@@ -1545,7 +1367,7 @@ void MarkGridLeftOfSceneActor(s32 actor_mode, s32 grid_value, s32 grid_attribute
             s32 k5 = p->f10 >> 20;
             s32 k4 = (p->f08 >> 20) - 1;
 
-            Func_020048c8(grid_value, grid_attribute, 3, 1, k4, k5);
+            Engine_MapCopyCellAttributes(grid_value, grid_attribute, 3, 1, k4, k5);
         }
     }
 }
@@ -1559,7 +1381,7 @@ void MarkGridAboveSceneActor(s32 actor_mode, s32 grid_value, s32 grid_attribute)
     if (p != 0) {
         s32 v;
 
-        Func_0200499e(actor_mode, 3);
+        Engine_ActorSetSpritePriority(actor_mode, 3);
         v = 2;
         v |= p->f23;
         p->f23 = (u8)v;
@@ -1567,7 +1389,7 @@ void MarkGridAboveSceneActor(s32 actor_mode, s32 grid_value, s32 grid_attribute)
             s32 k4 = p->f08 >> 20;
             s32 k5 = (p->f10 >> 20) - 1;
 
-            Func_0200491c(grid_value, grid_attribute, 1, 3, k4, k5);
+            Engine_MapCopyCellAttributes(grid_value, grid_attribute, 1, 3, k4, k5);
         }
     }
 }
@@ -1576,8 +1398,8 @@ void SetSceneActorModes(int actor_id)
 {
     extern u8 Data_02000240[];
 
-    Func_020049cc(actor_id, 1);
-    Func_020049d4(actor_id, 2);
+    Engine_ActorSetAnimation(actor_id, 1);
+    Engine_ActorSetAnimation(actor_id, 2);
 }
 
 void InitializeEscapeSceneActors(void)
@@ -1713,10 +1535,10 @@ s32 TryPushBlockingSceneActor(struct S_02000474 *actor)
     if (Func_02004ac0(actor, &destination) == 0) {
         s32 t;
 
-        Func_02004b08();
+        Engine_EventBegin();
         Func_02004a98(actor, 6);
-        Func_02004a5e(6);
-        Func_02004bc4(152);
+        Engine_TaskWait(6);
+        Engine_AudioPlayCue(152);
         Func_02004aac(actor, 7);
         actor->f30 = 0x30000;
         actor->f34 = 0x20000;
@@ -1733,7 +1555,7 @@ s32 TryPushBlockingSceneActor(struct S_02000474 *actor)
         Func_02004ae4(actor, 6);
         Func_02004b2c(actor, 1);
         *state = (u8)saved_state;
-        Func_02004b74();
+        Engine_EventEnd();
         return 1;
     }
     return 0;
@@ -1818,14 +1640,14 @@ void UpdateEscapeRouteForActorPositions(void)
         Func_02003758_a();
         return;
     }
-    Func_02004c04(2);
+    Engine_TaskWait(2);
     {
         s32 route_end_z = Func_02004cda(8)->f10 >> 20;
         s32 route_x = actor_x - 1;
 
-        Func_02004c90(route_x, actor_z, 3, 1, route_x, route_end_z);
+        Engine_MapCopyCellAttributes(route_x, actor_z, 3, 1, route_x, route_end_z);
     }
-    Func_02004ca0(0, 0, 3, 1, actor_x - 1, actor_z);
+    Engine_MapCopyCellAttributes(0, 0, 3, 1, actor_x - 1, actor_z);
 }
 
 void UpdateActor8ReturnRoute(void)
@@ -1851,14 +1673,14 @@ void UpdateActor8ReturnRoute(void)
     } else {
         return;
     }
-    Func_02004cae(2);
+    Engine_TaskWait(2);
     {
         s32 k = Func_02004d84(8)->f10 >> 20;
         s32 m = x - 1;
 
-        Func_02004d3a(m, y, 3, 1, m, k);
+        Engine_MapCopyCellAttributes(m, y, 3, 1, m, k);
     }
-    Func_02004d4a(0, 0, 3, 1, x - 1, y);
+    Engine_MapCopyCellAttributes(0, 0, 3, 1, x - 1, y);
 }
 
 void UpdateActor10RetreatRoute(void)
@@ -1888,14 +1710,14 @@ void UpdateActor10RetreatRoute(void)
     } else if (y == 7) {
         return;
     }
-    Func_02004d62(2);
+    Engine_TaskWait(2);
     {
         s32 k = Func_02004e38(10)->f10 >> 20;
         s32 m = x - 1;
 
-        Func_02004dee(m, y, 3, 1, m, k);
+        Engine_MapCopyCellAttributes(m, y, 3, 1, m, k);
     }
-    Func_02004dfe(0, 0, 3, 1, x - 1, y);
+    Engine_MapCopyCellAttributes(0, 0, 3, 1, x - 1, y);
 }
 
 void UpdateActor10AdvanceRoute(void)
@@ -1910,14 +1732,14 @@ void UpdateActor10AdvanceRoute(void)
             Func_02003588(10, 0, 112);
             Func_02003592(10, 0, 64);
         }
-        Func_02004ddc(2);
+        Engine_TaskWait(2);
         {
             s32 k = Func_02004eb2(10)->f10 >> 20;
             s32 m = x - 1;
 
-            Func_02004e68(m, y, 3, 1, m, k);
+            Engine_MapCopyCellAttributes(m, y, 3, 1, m, k);
         }
-        Func_02004e78(0, 0, 3, 1, x - 1, y);
+        Engine_MapCopyCellAttributes(0, 0, 3, 1, x - 1, y);
     }
 }
 
@@ -1939,14 +1761,14 @@ void UpdateActor11WestRoute(void)
                 Func_0200362c(11, -96, 0);
             }
         }
-        Func_02004e76(2);
+        Engine_TaskWait(2);
         {
             s32 k = Func_02004f4c(11)->f08 >> 20;
             s32 m = y - 1;
 
-            Func_02004f02(x, m, 1, 3, k, m);
+            Engine_MapCopyCellAttributes(x, m, 1, 3, k, m);
         }
-        Func_02004f12(0, 0, 1, 3, x, y - 1);
+        Engine_MapCopyCellAttributes(0, 0, 1, 3, x, y - 1);
     }
 }
 
@@ -1964,14 +1786,14 @@ void UpdateActor11EastRoute(void)
         } else if (x == 34) {
             Func_020036ae(11, 32, 0);
         }
-        Func_02004ef8(2);
+        Engine_TaskWait(2);
         {
             s32 k = Func_02004fce(11)->f08 >> 20;
             s32 m = y - 1;
 
-            Func_02004f84_b(x, m, 1, 3, k, m);
+            Engine_MapCopyCellAttributes(x, m, 1, 3, k, m);
         }
-        Func_02004f94(0, 0, 1, 3, x, y - 1);
+        Engine_MapCopyCellAttributes(0, 0, 1, 3, x, y - 1);
     }
 }
 
@@ -1989,14 +1811,14 @@ void UpdateActor12WestRoute(void)
     } else if (x == 24) {
         return;
     }
-    Func_02004f86(2);
+    Engine_TaskWait(2);
     {
         s32 k = Func_0200505c(12)->f08 >> 20;
         s32 m = y - 1;
 
-        Func_02005012_b(x, m, 1, 3, k, m);
+        Engine_MapCopyCellAttributes(x, m, 1, 3, k, m);
     }
-    Func_02005022(0, 0, 1, 3, x, y - 1);
+    Engine_MapCopyCellAttributes(0, 0, 1, 3, x, y - 1);
 }
 
 void UpdateActor12EastRoute(void)
@@ -2012,14 +1834,14 @@ void UpdateActor12EastRoute(void)
     } else if (x == 36) {
         return;
     }
-    Func_02005000(2);
+    Engine_TaskWait(2);
     {
         s32 k = Func_020050d6(12)->f08 >> 20;
         s32 m = y - 1;
 
-        Func_0200508c(x, m, 1, 3, k, m);
+        Engine_MapCopyCellAttributes(x, m, 1, 3, k, m);
     }
-    Func_0200509c(0, 0, 1, 3, x, y - 1);
+    Engine_MapCopyCellAttributes(0, 0, 1, 3, x, y - 1);
 }
 
 void UpdateActor13WestRoute(void)
@@ -2068,14 +1890,14 @@ void UpdateActor13WestRoute(void)
     } else if (x == 25) {
         return;
     }
-    Func_020050ee(2);
+    Engine_TaskWait(2);
     {
         s32 k = Func_020051c4(13)->f08 >> 20;
         s32 m = y - 1;
 
-        Func_0200517a(x, m, 1, 3, k, m);
+        Engine_MapCopyCellAttributes(x, m, 1, 3, k, m);
     }
-    Func_0200518a(0, 0, 1, 3, x, y - 1);
+    Engine_MapCopyCellAttributes(0, 0, 1, 3, x, y - 1);
 }
 
 void UpdateActor13EastRoute(void)
@@ -2096,14 +1918,14 @@ void UpdateActor13EastRoute(void)
     } else if (x == 36) {
         return;
     }
-    Func_02005182(2);
+    Engine_TaskWait(2);
     {
         s32 k = Func_02005258(13)->f08 >> 20;
         s32 m = y - 1;
 
-        Func_0200520e(x, m, 1, 3, k, m);
+        Engine_MapCopyCellAttributes(x, m, 1, 3, k, m);
     }
-    Func_0200521e(0, 0, 1, 3, x, y - 1);
+    Engine_MapCopyCellAttributes(0, 0, 1, 3, x, y - 1);
 }
 
 void UpdateActor15WestRoute(void)
@@ -2137,14 +1959,14 @@ void UpdateActor15WestRoute(void)
     } else if (x == 24) {
         return;
     }
-    Func_0200524a(2);
+    Engine_TaskWait(2);
     {
         s32 k = Func_02005320(15)->f08 >> 20;
         s32 m = y - 1;
 
-        Func_020052d6(x, m, 1, 3, k, m);
+        Engine_MapCopyCellAttributes(x, m, 1, 3, k, m);
     }
-    Func_020052e6(0, 0, 1, 3, x, y - 1);
+    Engine_MapCopyCellAttributes(0, 0, 1, 3, x, y - 1);
 }
 
 void UpdateActor15EastRoute(void)
@@ -2192,14 +2014,14 @@ void UpdateActor15EastRoute(void)
     } else if (x == 35) {
         return;
     }
-    Func_02005346(2);
+    Engine_TaskWait(2);
     {
         s32 k = Func_0200541c(15)->f08 >> 20;
         s32 m = y - 1;
 
-        Func_020053d2(x, m, 1, 3, k, m);
+        Engine_MapCopyCellAttributes(x, m, 1, 3, k, m);
     }
-    Func_020053e2(0, 0, 1, 3, x, y - 1);
+    Engine_MapCopyCellAttributes(0, 0, 1, 3, x, y - 1);
 }
 
 void UpdateActor17SouthRoute(void)
@@ -2222,14 +2044,14 @@ void UpdateActor17SouthRoute(void)
     } else if (y == 15) {
         return;
     }
-    Func_020053d0(2);
+    Engine_TaskWait(2);
     {
         s32 k = Func_020054a6(17)->f10 >> 20;
         s32 m = x - 1;
 
-        Func_0200545c(m, y, 3, 1, m, k);
+        Engine_MapCopyCellAttributes(m, y, 3, 1, m, k);
     }
-    Func_0200546c(0, 0, 3, 1, x - 1, y);
+    Engine_MapCopyCellAttributes(0, 0, 3, 1, x - 1, y);
 }
 
 void UpdateActor17NorthRoute(void)
@@ -2244,15 +2066,15 @@ void UpdateActor17NorthRoute(void)
     } else if (y == 19) {
         return;
     }
-    Func_02005448(2);
+    Engine_TaskWait(2);
     {
         s32 k = Func_0200551e(17)->f10 >> 20;
 
         s32 m = x - 1;
 
-        Func_020054d4(m, y, 3, 1, m, k);
+        Engine_MapCopyCellAttributes(m, y, 3, 1, m, k);
     }
-    Func_020054e4(0, 0, 3, 1, x - 1, y);
+    Engine_MapCopyCellAttributes(0, 0, 3, 1, x - 1, y);
 }
 
 void AdvanceActor18AlongEscapeRoute(void)
@@ -2314,7 +2136,7 @@ transition80:
     column -= 1;
     Func_0200570e(column, row, 3, 1,
                   column, *(s32 *)(Func_02005758(18) + 16) >> 20);
-    Func_0200571e(0, 0, 3, 1, column, row);
+    Engine_MapCopyCellAttributes(0, 0, 3, 1, column, row);
 }
 
 void AdvanceActor9AlongEscapeRoute(void)
@@ -2380,7 +2202,7 @@ transition48:
     column -= 1;
     Func_0200598c(column, row, 3, 1,
                   column, *(s32 *)(Func_020059d4(9) + 16) >> 20);
-    Func_0200599c(0, 0, 3, 1, column, row);
+    Engine_MapCopyCellAttributes(0, 0, 3, 1, column, row);
 }
 
 void RetreatActor14AlongEscapeRoute(void)
@@ -2434,7 +2256,7 @@ void RetreatActor14AlongEscapeRoute(void)
     rowM1 = row - 1;
     Func_02005c5a(column, rowM1, 1, 3,
                   *(s32 *)(Func_02005ca4(14) + 8) >> 20, rowM1);
-    Func_02005c6a(0, 0, 1, 3, column, rowM1);
+    Engine_MapCopyCellAttributes(0, 0, 1, 3, column, rowM1);
 }
 
 void AdvanceActor14AlongEscapeRoute(void)
@@ -2481,7 +2303,7 @@ void AdvanceActor14AlongEscapeRoute(void)
     rowM1 = row - 1;
     Func_02005d18(column, rowM1, 1, 3,
                   *(s32 *)(Func_02005d62(14) + 8) >> 20, rowM1);
-    Func_02005d28(0, 0, 1, 3, column, rowM1);
+    Engine_MapCopyCellAttributes(0, 0, 1, 3, column, rowM1);
 }
 
 void RetreatActor16AlongEscapeRoute(void)
@@ -2532,7 +2354,7 @@ void RetreatActor16AlongEscapeRoute(void)
     rowM1 = row - 1;
     Func_02005dde(column, rowM1, 1, 3,
                   *(s32 *)(Func_02005e28(16) + 8) >> 20, rowM1);
-    Func_02005dee(0, 0, 1, 3, column, rowM1);
+    Engine_MapCopyCellAttributes(0, 0, 1, 3, column, rowM1);
 }
 
 void AdvanceActor16AlongEscapeRoute(void)
@@ -2571,25 +2393,25 @@ void AdvanceActor16AlongEscapeRoute(void)
     row -= 1;
     Func_02005e7e(column, row, 1, 3,
                   *(s32 *)(Func_02005ec8(16) + 8) >> 20, row);
-    Func_02005e8e(0, 0, 1, 3, column, row);
+    Engine_MapCopyCellAttributes(0, 0, 1, 3, column, row);
 }
 
 s32 UpdateSwayingSceneObject(struct S *object)
 {
 
     struct T *sprite = object->f50;
-    s32 vertical_offset = Func_02005e42(object->f30) * 2;
+    s32 vertical_offset = Engine_MathSin(object->f30) * 2;
     s32 random_b;
     s32 random_a;
 
     if (vertical_offset > 0) {
         vertical_offset = -vertical_offset;
     }
-    object->f08 = object->f38 + Func_02005e58(object->f30) * 2;
+    object->f08 = object->f38 + Engine_MathCos(object->f30) * 2;
     object->f0c = object->f3c + vertical_offset;
-    sprite->f1e = (u16)(Func_02005e72(object->f30 + 0x8000) / 8);
-    random_a = Func_02005e70();
-    random_b = Func_02005e76();
+    sprite->f1e = (u16)(Engine_MathCos(object->f30 + 0x8000) / 8);
+    random_a = Engine_RandomNext();
+    random_b = Engine_RandomNext();
     object->f30 += (((u32)(random_a << 9)) >> 16) + (((u32)(random_b << 9)) >> 16) + 0x400;
     return 0;
 }

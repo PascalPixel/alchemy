@@ -17,7 +17,9 @@ extern const s32 gFallingEffectScript[];
 
 void FieldScene_UpdateFallingEffect(void)
 {
-    struct FieldActor *object;
+    /* FAKEMATCH: object starts as a meaningless null; the reference keeps that
+       zero in r5 from the prologue and stores it when state 3 ends. */
+    struct FieldActor *object = 0;
     struct SceneEffectOrigin *origin;
     struct FieldSprite *sprite;
     s32 x, z;

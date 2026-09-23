@@ -18,13 +18,24 @@ extern u8 Data_0200cbe4[];
 
 s32 Scene_PresentItem(s32 item)
 {
-    u8 *buf = 0;
-    u8 *obj = Func_02008b38(22);
-    s32 text = Func_0200c95c(224);
-    s32 size = Func_0200c954(text, 224);
+    u8 *buf;
+    u8 *obj;
+    s32 text;
+    s32 size;
     u8 *sprite;
     u8 *p;
     s32 mask;
+
+    /* FAKEMATCH candidate: the do/while places the zero after the item copy.
+     * Score 2026-09-23: 200 of 200 bytes, 2 halfword edits; the reference
+     * builds the zero in r0 (mov r8, r0), this draft in r2. Zero, id and
+     * item-derived spellings of buf leave it in r2. */
+    do {
+        buf = 0;
+    } while (0);
+    obj = Func_02008b38(22);
+    text = Func_0200c95c(224);
+    size = Func_0200c954(text, 224);
 
     if (obj == 0) {
         return text;

@@ -584,7 +584,8 @@
       "name": "Resource_GetBuffer"
     },
     "main:0800383c": {
-      "name": "QueueIoWriteDelay1"
+      "name": "QueueIoWriteDelay1",
+      "source": "SYSTEM/IO_WRITE_QUEUE.C"
     },
     "main:0800387c": {
       "name": "QueueIoWriteDelay2"
@@ -611,8 +612,7 @@
       "name": "QueueIoWriteDelay11"
     },
     "main:08003a7c": {
-      "name": "IoWriteQueue_FlushPending",
-      "source": "SYSTEM/IO_WRITE_QUEUE.C"
+      "name": "IoWriteQueue_FlushPending"
     },
     "main:08003adc": {
       "name": "BlendTransition_Update",

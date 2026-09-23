@@ -76183,66 +76183,12 @@
       "source": "recon/tbs/en/units/runtime-reserved-no-op-f-retained.c",
       "compiler_route": "canonical-gcc296",
       "absolute_symbols": {
-        "TransferCommandExecutor_Size": {
-          "address": "0x00000068",
-          "kind": "data"
-        },
         "LoadedRuntime_Size": {
           "address": "0x000000e0",
           "kind": "data"
         }
       },
       "owners": [
-        {
-          "address": "0x0800383c",
-          "extent": 64,
-          "state": "retained-assembly"
-        },
-        {
-          "address": "0x0800387c",
-          "extent": 64,
-          "state": "retained-assembly"
-        },
-        {
-          "address": "0x080038bc",
-          "extent": 64,
-          "state": "retained-assembly"
-        },
-        {
-          "address": "0x080038fc",
-          "extent": 64,
-          "state": "retained-assembly"
-        },
-        {
-          "address": "0x0800393c",
-          "extent": 64,
-          "state": "retained-assembly"
-        },
-        {
-          "address": "0x0800397c",
-          "extent": 64,
-          "state": "retained-assembly"
-        },
-        {
-          "address": "0x080039bc",
-          "extent": 64,
-          "state": "retained-assembly"
-        },
-        {
-          "address": "0x080039fc",
-          "extent": 64,
-          "state": "retained-assembly"
-        },
-        {
-          "address": "0x08003a3c",
-          "extent": 64,
-          "state": "retained-assembly"
-        },
-        {
-          "address": "0x08003a7c",
-          "extent": 96,
-          "state": "exact-c"
-        },
         {
           "address": "0x08003e10",
           "extent": 72,
@@ -76252,6 +76198,71 @@
           "address": "0x08003e58",
           "extent": 124,
           "state": "retained-assembly"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "io-write-queue",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/SYSTEM/IO_WRITE_QUEUE.C",
+      "compiler_route": "canonical-gcc296",
+      "absolute_symbols": {
+        "TransferCommandExecutor_Size": {
+          "address": "0x00000068",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x0800383c",
+          "extent": 64,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800387c",
+          "extent": 64,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080038bc",
+          "extent": 64,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080038fc",
+          "extent": 64,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800393c",
+          "extent": 64,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x0800397c",
+          "extent": 64,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080039bc",
+          "extent": 64,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x080039fc",
+          "extent": 64,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08003a3c",
+          "extent": 64,
+          "state": "exact-c"
+        },
+        {
+          "address": "0x08003a7c",
+          "extent": 96,
+          "state": "exact-c"
         }
       ],
       "overlay": null

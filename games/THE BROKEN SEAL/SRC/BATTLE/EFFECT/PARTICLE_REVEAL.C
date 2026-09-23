@@ -15,7 +15,7 @@
  * Func_080cd594(0)/Scheduler_AddOrUpdateCallback(0x080CD261,0x480)/Scheduler_RemoveCallback(0x080CD261)/
  * Runtime_ReleaseHeapBlock(id)/Func_080cdbc0() bracket, and the same
  * BattleFx_FetchRectangleBlitters(flag, DrawRectangleFn callbacks[2]) two-word blit-routine
- * resolver already established in games/THE BROKEN SEAL/recon/en/main/080e01e4.c.
+ * resolver already established in recon/tbs/en/main/080e01e4.c.
  *
  * Unlike member_orbit's single 64-frame per-member sprite loop, this owner
  * runs a 64-slot randomly-seeded particle pool (fixed-point x/y plus a

@@ -1,5 +1,13 @@
-@ 分岐呼出しから到達し、リンクレジスタへ戻る独立関数。
-@ 末尾の局所リテラルに加え、次関数末尾の共有リテラルを参照する。
+@ Sound driver update routines. 0x080f9c44 counts down a frame counter and,
+@ when it expires, restarts the two sound DMA channels; 0x080f9c90 is the
+@ per-frame update of one music player. They branch on flags from subs across
+@ a store (0x080f9c58) and from shifts (0x080f9c64), return before building a
+@ frame, save the high registers in ascending order and unwind with one
+@ pop {r0-r7}. Neither approved compiler emits these. Every TBS and TLA
+@ edition has this code, differing only in one relocated literal.
+@ The zero halfwords of alignment at 0x080f9c86 and 0x080f9eea never run and
+@ carry no credit.
+@ credit: library — TBS/TLA common sound driver update and timer module
 .syntax unified
 	.thumb
 	.global Func_080f9c44
@@ -41,9 +49,11 @@ Func_080f9c44:
 	strh r1, [r2, #22]
 .L_080f9c84:
 	bx lr
+AlchemyUncredited_080f9c86:
 	.balign 4, 0
 	.global LiteralPool_080f9c88
 LiteralPool_080f9c88:
+AlchemyUncreditedEnd_080f9c86:
 	.4byte 0x040000bc
 	.4byte 0x84400004
 @ 関数ポインタから到達する開始点を復元した関数。
@@ -382,7 +392,9 @@ Func_080f9c90:
 	pop	{r3}
 .L1:
 	bx	r3
-	movs	r0, r0
+AlchemyUncredited_080f9eea:
+	.2byte	0x0000
+AlchemyUncreditedEnd_080f9eea:
 	.4byte 0x080fba14
 	.4byte 0x03007ff0
 	.4byte 0x68736d53

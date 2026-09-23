@@ -1,21 +1,31 @@
 //! Executable-byte audit derived from canonical ROM images.
 pub(crate) mod index;
+mod verification;
 
+use super::proof::{full_asset_manifest, full_build, full_build_report};
 use crate::compiler::canonical_json::canonical_json;
 use crate::overlay::assembly::{
-    adjacent_prologue_spans, build_overlay_source, compiler_runtime_spans, executable_spans,
-    main_executable_spans, overlay_flow_spans, trusted_overlay_spans, ExecutableSpan, OVERLAY_BASE,
+    compiler_runtime_spans, executable_spans, main_executable_spans, ExecutableSpan, OVERLAY_BASE,
     ROM_BASE,
 };
-use crate::overlay::listing_rows;
+use crate::overlay::flow::{alignment_spans, overlay_code, veneer_spans, Failure};
 use crate::overlay::rom::CanonicalRom;
 use crate::targets::{decomp_target, target_for, DecompTarget, DecompTargetId, TARGET_IDS};
 use serde::Deserialize;
 use serde_json::{json, Value};
 use std::path::{Path, PathBuf};
-use tempfile::NamedTempFile;
 
-const USAGE: &str = "usage: alchemy coverage audit (--target TARGET | --all) [--output out/...json] [--calibrate] [--data]";
+const USAGE: &str = "usage: alchemy coverage audit --target TARGET [--output out/...json] [--calibrate --expected LEDGER.json]
+       alchemy coverage audit --target TARGET --inventory
+       alchemy coverage audit (--target TARGET | --all) --data
+The candidate report goes to out/<target>/reports/executable-audit-candidate.json unless
+--output names another path; it never replaces the executable inventory. Each run prints the
+sha256 of the candidate's canonical overlay intervals. --calibrate lists every range that
+differs from the ledger named by --expected: a diagnostic that grants no authority.
+--inventory writes out/<target>/reports/executable.json: the complete inventory only when the
+overlay intervals hash to the digest recon/<game>/metrics/audit-verification.json records as
+independently verified and a byte-identical full ROM build proves the main image, otherwise a
+pending inventory. The inventory is pending while the run is in progress and after it fails.";
 
 #[derive(Default)]
 struct Options {
@@ -23,6 +33,8 @@ struct Options {
     all: bool,
     output: Option<PathBuf>,
     calibrate: bool,
+    inventory: bool,
+    expected: Option<PathBuf>,
     help: bool,
     data: bool,
 }
@@ -66,18 +78,71 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
                 index += 1;
                 options.output = arguments.get(index).map(PathBuf::from);
             }
+            "--expected" => {
+                index += 1;
+                options.expected = arguments.get(index).map(PathBuf::from);
+            }
             "--all" => options.all = true,
             "--calibrate" => options.calibrate = true,
+            "--inventory" => options.inventory = true,
             "--data" => options.data = true,
             "-h" | "--help" => options.help = true,
             argument => return Err(format!("unrecognized argument {argument:?}\n{USAGE}")),
         }
         index += 1;
     }
-    if !options.help && options.target.is_some() == options.all {
+    if options.help {
+        return Ok(options);
+    }
+    if options.target.is_some() == options.all {
         return Err(format!("choose exactly one of --target or --all\n{USAGE}"));
     }
+    if options.data
+        && (options.calibrate
+            || options.inventory
+            || options.output.is_some()
+            || options.expected.is_some())
+    {
+        return Err(format!(
+            "--data writes out/<target>/reports/rom-index.json and accepts no other mode\n{USAGE}"
+        ));
+    }
+    if options.all && !options.data {
+        return Err(format!("--all requires --data\n{USAGE}"));
+    }
+    if options.calibrate && options.inventory {
+        return Err(format!("choose --calibrate or --inventory\n{USAGE}"));
+    }
+    if options.calibrate != options.expected.is_some() {
+        return Err(format!(
+            "--expected names the ledger --calibrate compares with; --inventory is gated by the verification record, not a ledger\n{USAGE}"
+        ));
+    }
+    if options.inventory && options.output.is_some() {
+        return Err(format!(
+            "--inventory writes only out/<target>/reports/executable.json\n{USAGE}"
+        ));
+    }
     Ok(options)
+}
+
+fn resolve(root: &Path, path: &Path) -> PathBuf {
+    if path.is_absolute() {
+        path.to_path_buf()
+    } else {
+        root.join(path)
+    }
+}
+
+/// The authoritative executable inventory that progress and coverage read.
+fn inventory_path(root: &Path, target: DecompTarget) -> PathBuf {
+    root.join(target.output_dir).join("reports/executable.json")
+}
+
+/// The diagnostic candidate report, which coverage reads for data resources.
+fn candidate_path(root: &Path, target: DecompTarget) -> PathBuf {
+    root.join(target.output_dir)
+        .join("reports/executable-audit-candidate.json")
 }
 
 fn union_bytes(spans: &[ExecutableSpan]) -> u64 {
@@ -181,19 +246,31 @@ fn subtract_spans(spans: Vec<ExecutableSpan>, cuts: &[(i64, i64)]) -> Vec<Execut
     out
 }
 
-fn asset_cuts(root: &Path, target: DecompTarget) -> Result<Vec<(i64, i64)>, String> {
+/// Byte-reproduced asset regions and the manifest path that verified them.
+type AssetCuts = (Vec<(i64, i64)>, Option<String>);
+
+/// The byte-reproduced asset regions and the manifest that verified them:
+/// the full ROM build's when present, otherwise the asset build's. A
+/// diagnostic until [`main_image_proof`] binds the full build's manifest to
+/// its proof.
+fn asset_cuts(root: &Path, target: DecompTarget) -> Result<AssetCuts, String> {
     let candidates = [
-        root.join(target.output_dir)
-            .join("full/assets/manifest.json"),
-        root.join(target.output_dir).join("assets/manifest.json"),
+        full_asset_manifest(target),
+        format!("{}/assets/manifest.json", target.output_dir),
     ];
-    let Some(path) = candidates.iter().find(|path| path.exists()) else {
-        return Ok(Vec::new());
+    let Some(relative) = candidates.iter().find(|path| root.join(path).exists()) else {
+        return Ok((Vec::new(), None));
     };
-    let manifest: Value = serde_json::from_slice(
-        &std::fs::read(path).map_err(|error| format!("{}: {error}", path.display()))?,
-    )
-    .map_err(|error| format!("{}: {error}", path.display()))?;
+    let bytes =
+        std::fs::read(root.join(relative)).map_err(|error| format!("{relative}: {error}"))?;
+    Ok((manifest_cuts(&bytes, relative)?, Some(relative.clone())))
+}
+
+/// The byte-reproduced asset regions an asset manifest, read from `label`,
+/// lists.
+fn manifest_cuts(bytes: &[u8], label: &str) -> Result<Vec<(i64, i64)>, String> {
+    let manifest: Value =
+        serde_json::from_slice(bytes).map_err(|error| format!("{label}: {error}"))?;
     Ok(manifest["regions"]
         .as_array()
         .into_iter()
@@ -206,329 +283,89 @@ fn asset_cuts(root: &Path, target: DecompTarget) -> Result<Vec<(i64, i64)>, Stri
         .collect())
 }
 
-fn source_spans(source: &Path, image: &[u8], overlay: &str) -> Result<Vec<ExecutableSpan>, String> {
-    let text = std::fs::read_to_string(source)
-        .map_err(|error| format!("{}: {error}", source.display()))?;
-    let lines = text.lines().collect::<Vec<_>>();
-    let rows = listing_rows(source)?
-        .into_iter()
-        .map(|row| (row.line, row))
-        .collect::<std::collections::BTreeMap<_, _>>();
-    let mut spans = Vec::new();
-    let mut directives = std::collections::BTreeSet::new();
-    let mut data_bytes = std::collections::BTreeSet::new();
-    let mut literal_words = Vec::new();
-    let mut branch_labels = std::collections::BTreeSet::new();
-    let mut branch_targets = std::collections::BTreeSet::new();
-    for line in &lines {
-        let trimmed = line.split('@').next().unwrap_or("").trim();
-        let Some((mnemonic, operand)) = trimmed.split_once(char::is_whitespace) else {
-            continue;
-        };
-        if matches!(
-            mnemonic.trim_end_matches(".n").trim_end_matches(".w"),
-            "b" | "beq"
-                | "bne"
-                | "bcs"
-                | "bcc"
-                | "bmi"
-                | "bpl"
-                | "bvs"
-                | "bvc"
-                | "bhi"
-                | "bls"
-                | "bge"
-                | "blt"
-                | "bgt"
-                | "ble"
-                | "bhs"
-                | "blo"
-        ) {
-            let label = operand.trim().trim_end_matches(',');
-            if label.starts_with('.') {
-                branch_labels.insert(label.to_owned());
-            }
-        }
-    }
-    let mut in_c = false;
-    for (index, line) in lines.iter().enumerate() {
-        let trimmed = line.split('@').next().unwrap_or("").trim();
-        if trimmed.starts_with("AlchemyC_") && trimmed.ends_with(':') {
-            in_c = true;
-            continue;
-        }
-        let row = rows.get(&((index + 1) as i64));
-        if let Some(label) = trimmed.strip_suffix(':') {
-            if branch_labels.contains(label) {
-                if let Some(next) =
-                    ((index + 2)..=lines.len()).find_map(|line| rows.get(&(line as i64)))
-                {
-                    branch_targets.insert(OVERLAY_BASE + next.offset);
-                }
-            }
-        }
-        if in_c && trimmed.starts_with(".space ") {
-            let row = row.ok_or_else(|| {
-                format!(
-                    "{}:{}: placeholder emitted no bytes",
-                    source.display(),
-                    index + 1
-                )
-            })?;
-            let value = trimmed.trim_start_matches(".space ").trim();
-            let width = value
-                .strip_prefix("0x")
-                .and_then(|hex| i64::from_str_radix(hex, 16).ok())
-                .or_else(|| value.parse::<i64>().ok())
-                .ok_or_else(|| format!("{}: invalid C placeholder {trimmed}", source.display()))?;
-            spans.push(ExecutableSpan {
-                start: OVERLAY_BASE + row.offset,
-                end: OVERLAY_BASE + row.offset + width,
-                kind: "thumb",
-            });
-            continue;
-        }
-        if !trimmed.is_empty() && !trimmed.ends_with(':') {
-            in_c = false;
-        }
-        if trimmed.is_empty() || trimmed.starts_with('.') || trimmed.ends_with(':') {
-            if matches!(trimmed.split_whitespace().next(), Some(".2byte" | ".4byte")) {
-                if let Some(row) = row {
-                    for at in row.offset..row.offset + row.width {
-                        data_bytes.insert(OVERLAY_BASE + at);
-                    }
-                    for at in (row.offset..row.offset + row.width).step_by(2) {
-                        directives.insert(OVERLAY_BASE + at);
-                    }
-                }
-            }
-            continue;
-        }
-        let Some(row) = row else { continue };
-        spans.push(ExecutableSpan {
-            start: OVERLAY_BASE + row.offset,
-            end: OVERLAY_BASE + row.offset + row.width,
-            kind: "thumb",
-        });
-        if let Some(pc) = trimmed.find("[pc, #") {
-            let tail = &trimmed[pc + 6..];
-            if let Some(end) = tail.find(']') {
-                if let Ok(offset) = tail[..end].parse::<i64>() {
-                    let start = OVERLAY_BASE + row.offset;
-                    let word = ((start + 4) & !3) + offset;
-                    literal_words.push(word);
-                }
-            }
-        }
-    }
-    for word in literal_words {
-        if (word..word + 4).all(|at| data_bytes.contains(&at)) {
-            spans.push(ExecutableSpan {
-                start: word,
-                end: word + 4,
-                kind: "literal_pool",
-            });
-        }
-    }
-    for offset in (0..image.len().saturating_sub(7)).step_by(4) {
-        let address = OVERLAY_BASE + offset as i64;
-        if image[offset..offset + 4] == [0x00, 0x4c, 0x20, 0x47] {
-            let target = u32::from_le_bytes(image[offset + 4..offset + 8].try_into().unwrap());
-            // bx selects ARM or Thumb from bit zero. Even IWRAM targets are
-            // real ARM import veneers, not data to omit from the image.
-            if matches!(target >> 24, 0x02 | 0x03 | 0x08 | 0x09) {
-                spans.push(ExecutableSpan {
-                    start: address,
-                    end: address + 8,
-                    kind: "veneer",
-                });
-            }
-        }
-    }
-    let half = |address: i64| {
-        let offset = (address - OVERLAY_BASE) as usize;
-        image
-            .get(offset..offset + 2)
-            .map(|bytes| u16::from_le_bytes(bytes.try_into().unwrap()))
-    };
-    let callers = spans.clone();
-    let mut leaves = std::collections::BTreeSet::new();
-    for caller in callers.iter().filter(|span| span.kind == "thumb") {
-        let mut at = caller.start;
-        while at + 4 <= caller.end {
-            let Some(high) = half(at).map(i32::from) else {
-                break;
-            };
-            let Some(low) = half(at + 2).map(i32::from) else {
-                break;
-            };
-            if high & 0xf800 == 0xf000 && low & 0xf800 == 0xf800 {
-                let upper = high & 0x07ff;
-                let signed = if upper >= 0x0400 {
-                    upper - 0x0800
-                } else {
-                    upper
-                };
-                // The linked overlay encodes the destination as a displacement
-                // from its fixed load base; the historical audit's relocation
-                // decoder normalizes the stored value with the Thumb +2 bias.
-                let displacement = (signed << 12) | ((low & 0x07ff) << 1);
-                let target = OVERLAY_BASE + i64::from(displacement) + 2;
-                if directives.contains(&target) {
-                    leaves.insert(target);
-                }
-            }
-            at += 2;
-        }
-    }
-    for start in leaves {
-        let mut at = start;
-        let mut pools = Vec::new();
-        while at < start + 128 && directives.contains(&at) {
-            let Some(instruction) = half(at) else {
-                break;
-            };
-            if instruction & 0xf800 == 0x4800 {
-                pools.push(((at + 4) & !3) + i64::from((instruction & 0xff) << 2));
-            }
-            at += 2;
-            if instruction == 0x4770 {
-                spans.push(ExecutableSpan {
-                    start,
-                    end: at,
-                    kind: "thumb",
-                });
-                for pool in pools {
-                    if directives.contains(&pool) && directives.contains(&(pool + 2)) {
-                        spans.push(ExecutableSpan {
-                            start: pool,
-                            end: pool + 4,
-                            kind: "literal_pool",
-                        });
-                    }
-                }
-                break;
-            }
-        }
-    }
-    let published: &[(i64, i64)] = match overlay {
-        "resource_377" => &[(0x0200_002c, 0x0200_0090)],
-        "resource_378" => &[(0x0200_002c, 0x0200_0064)],
-        "resource_398" => &[(0x0200_0fc4, 0x0200_044c), (0x0200_0fd0, 0x0200_045c)],
-        "resource_3a7" => &[(0x0200_21f8, 0x0200_04cc)],
-        _ => &[],
-    };
-    for &(pointer, start) in published {
-        let pointer_offset = (pointer - OVERLAY_BASE) as usize;
-        if pointer_offset + 4 > image.len()
-            || !directives.contains(&pointer)
-            || !directives.contains(&(pointer + 2))
-        {
-            continue;
-        }
-        let word = u32::from_le_bytes(
-            image[pointer_offset..pointer_offset + 4]
-                .try_into()
-                .unwrap(),
-        );
-        let decoded = i64::from(word & !1) - (OVERLAY_BASE + 0x8000);
-        if word & 1 == 0 || OVERLAY_BASE + decoded != start {
-            continue;
-        }
-        let mut at = start;
-        while at < start + 128 && directives.contains(&at) {
-            let Some(instruction) = half(at) else {
-                break;
-            };
-            at += 2;
-            if instruction == 0x4770 {
-                spans.push(ExecutableSpan {
-                    start,
-                    end: at,
-                    kind: "thumb",
-                });
-                break;
-            }
-        }
-    }
-    let mut ranges = spans
-        .iter()
-        .map(|span| (span.start, span.end))
-        .collect::<Vec<_>>();
-    ranges.sort_unstable();
-    let mut union: Vec<(i64, i64)> = Vec::new();
-    for range in ranges {
-        if let Some(last) = union.last_mut() {
-            if range.0 <= last.1 {
-                last.1 = last.1.max(range.1);
-                continue;
-            }
-        }
-        union.push(range);
-    }
-    for pair in union.windows(2) {
-        if pair[1].0 - pair[0].1 == 2
-            && (half(pair[0].1) == Some(0) || branch_targets.contains(&pair[0].1))
-        {
-            spans.push(ExecutableSpan {
-                start: pair[0].1,
-                end: pair[1].0,
-                kind: "executable_alignment",
-            });
-        }
-    }
-    Ok(spans)
+/// The main image starts after the cartridge header.
+const MAIN_START: i64 = ROM_BASE + 0xc0;
+
+/// The main image's asset complement: every byte of a ROM of `rom_bytes`
+/// after its header that no byte-reproduced asset region claims.
+fn asset_complement(rom_bytes: i64, cuts: &[(i64, i64)]) -> Vec<(i64, i64)> {
+    difference_ranges(&[(MAIN_START, ROM_BASE + rom_bytes)], cuts)
 }
 
+type OwnerEntries = std::collections::BTreeMap<String, std::collections::BTreeSet<i64>>;
+
+/// Owner entry points by image from the game's two owner registers: every
+/// owner its production translation units link (canonical and instance
+/// placements) and every reviewed complete owner boundary. A register entry
+/// is code whatever its listing spells there, so the decoder walks from it.
+fn owner_entries(root: &Path, target: DecompTarget) -> Result<OwnerEntries, String> {
+    use crate::compiler::source_paths::SourceOwner;
+    use crate::compiler::translation_units::TranslationUnits;
+    let mut entries = OwnerEntries::new();
+    let units = TranslationUnits::declared_game(root, target.compiler)?;
+    for unit in &units.units {
+        let canonical = unit.owners.iter().map(|owner| owner.address);
+        entries
+            .entry(unit.image().to_owned())
+            .or_default()
+            .extend(canonical.map(i64::from));
+        for (image, instance) in &unit.instances {
+            let placed = instance.owners.values().map(|owner| owner.address);
+            entries
+                .entry(image.clone())
+                .or_default()
+                .extend(placed.map(i64::from));
+        }
+    }
+    let register = crate::overlay::owners::register_path(root, target);
+    if register.is_file() {
+        for owner in crate::overlay::owners::reviewed_spans(root, target)?.into_keys() {
+            if let SourceOwner::Overlay { resource, address } = owner {
+                entries
+                    .entry(format!("resource_{resource:03x}"))
+                    .or_default()
+                    .insert(i64::from(address));
+            }
+        }
+    }
+    Ok(entries)
+}
+
+fn failure_row(failure: &Failure) -> Value {
+    json!({
+        "entry": failure.entry,
+        "run": failure.run,
+        "at": failure.at,
+        "reason": failure.reason,
+    })
+}
+
+/// One code overlay's executable bytes: the Thumb code, literal pools and
+/// switch tables control flow proves, fixed veneers, the stock interworking
+/// bank, and the alignment between them. Retained listings are not evidence:
+/// how a listing spells a byte does not make it code or data.
 fn audit_overlay(
-    root: &Path,
     target: DecompTarget,
     rom: &CanonicalRom,
     resource: usize,
+    owners: &OwnerEntries,
 ) -> Result<(Value, u64, u64, u64), String> {
     let stream = rom.stream(resource)?;
     let id = format!("resource_{resource:03x}");
-    let retained = root.join(target.overlay_assembly(&id));
-    let generated = build_overlay_source(&stream.decoded, OVERLAY_BASE)?;
-    let generated_file = NamedTempFile::new().map_err(|error| error.to_string())?;
-    std::fs::write(generated_file.path(), generated).map_err(|error| error.to_string())?;
-    let mut generated_spans = source_spans(generated_file.path(), &stream.decoded, &id)?;
-    let prologues = adjacent_prologue_spans(&stream.decoded, OVERLAY_BASE, &generated_spans);
-    generated_spans.extend(prologues);
-    generated_spans.extend(compiler_runtime_spans(&stream.decoded, OVERLAY_BASE));
-    let (mut spans, source_evidence) = if retained.exists() {
-        (
-            source_spans(&retained, &stream.decoded, &id)?,
-            "retained-source",
-        )
-    } else {
-        (generated_spans.clone(), "decoder-generated-source")
-    };
-    if retained.exists() {
-        let prologues = adjacent_prologue_spans(&stream.decoded, OVERLAY_BASE, &spans);
-        spans.extend(prologues);
-        spans.extend(compiler_runtime_spans(&stream.decoded, OVERLAY_BASE));
-    }
-    let generated_executable = union_bytes(&generated_spans);
-    let trusted_spans =
-        trusted_overlay_spans(&stream.decoded, OVERLAY_BASE, target.overlay_entry_veneers)?;
-    let combined_executable = union_bytes(
-        &generated_spans
-            .iter()
-            .chain(&trusted_spans)
-            .cloned()
-            .collect::<Vec<_>>(),
-    );
-    let flow = overlay_flow_spans(
-        &stream.decoded,
-        OVERLAY_BASE,
-        target.overlay_entry_veneers,
-        true,
-    )?;
-    spans.extend(generated_spans.iter().cloned());
-    spans.extend(flow);
+    let image = &stream.decoded;
+    let entries = owners
+        .get(&id)
+        .map(|entries| entries.iter().copied().collect::<Vec<_>>())
+        .unwrap_or_default();
+    let code = overlay_code(image, OVERLAY_BASE, target.overlay_entry_veneers, &entries)
+        .map_err(|error| format!("{id}: {error}"))?;
+    let mut spans = code.spans.clone();
+    spans.extend(veneer_spans(image, OVERLAY_BASE));
+    spans.extend(compiler_runtime_spans(image, OVERLAY_BASE));
+    let alignment = alignment_spans(image, OVERLAY_BASE, &spans);
+    spans.extend(alignment);
     let executable = union_bytes(&spans);
-    let decoded = stream.decoded.len() as u64;
+    let decoded = image.len() as u64;
     let encoded = (stream.end - stream.start) as u64;
     let row = json!({
         "id": id,
@@ -537,19 +374,31 @@ fn audit_overlay(
         "rom_end": ROM_BASE + stream.end as i64,
         "encoded_bytes": encoded,
         "executable_bytes": executable,
-        "generated_executable_bytes": generated_executable,
-        "combined_executable_bytes": combined_executable,
         "excluded_bytes": decoded - executable,
-        "source_evidence": source_evidence,
         "intervals": spans.into_iter().map(|span| json!({
             "start": span.start, "end": span.end, "kind": span.kind,
         })).collect::<Vec<_>>(),
-        "generated_intervals": generated_spans.into_iter().map(|span| json!({
-            "start": span.start, "end": span.end, "kind": span.kind,
-        })).collect::<Vec<_>>(),
-        "trusted_intervals": trusted_spans.into_iter().map(|span| json!({
-            "start": span.start, "end": span.end, "kind": span.kind,
-        })).collect::<Vec<_>>(),
+        "proof": {
+            "passes": code.passes,
+            "unresolved_computed_jumps": code.unresolved_jumps,
+            "conflicts": code.conflicts,
+            "failed_runs": code.failed_runs.iter().map(failure_row).collect::<Vec<_>>(),
+            "accepted_candidates": code.accepted.iter().map(|(seed, evidence)| json!({
+                "seed": seed,
+                "evidence": evidence.name(),
+            })).collect::<Vec<_>>(),
+            "functions": code.functions.iter().map(|(entry, evidence)| json!([entry, evidence.name()])).collect::<Vec<_>>(),
+            "word_far_jumps": code.far_jumps.iter().map(|(site, label)| json!([site, label])).collect::<Vec<_>>(),
+            "rejected_owner_entries": code.rejected_owners.iter().map(|(entry, reason)| json!({
+                "entry": entry,
+                "reason": reason,
+            })).collect::<Vec<_>>(),
+            "rejected_candidates": code.rejected.iter().map(|rejection| json!({
+                "seed": rejection.seed,
+                "evidence": rejection.evidence.name(),
+                "failure": failure_row(&rejection.failure),
+            })).collect::<Vec<_>>(),
+        },
     });
     Ok((row, decoded, encoded, executable))
 }
@@ -592,6 +441,7 @@ fn report(root: &Path, target: DecompTarget) -> Result<Value, String> {
             Ok(row)
         })
         .collect::<Result<Vec<_>, String>>()?;
+    let owners = owner_entries(root, target)?;
     // Discovery invokes short-lived assembler/objdump processes and spends
     // most of its time outside Rust. Ask the OS directly because some
     // sandboxes under-report through Rust's affinity-aware API.
@@ -608,6 +458,7 @@ fn report(root: &Path, target: DecompTarget) -> Result<Value, String> {
             let results = &results;
             let resources = &resources;
             let rom = &rom;
+            let owners = &owners;
             scope.spawn(move || loop {
                 let index = next.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
                 let Some(&resource) = resources.get(index) else {
@@ -616,7 +467,7 @@ fn report(root: &Path, target: DecompTarget) -> Result<Value, String> {
                 results
                     .lock()
                     .unwrap()
-                    .push((index, audit_overlay(root, target, rom, resource)));
+                    .push((index, audit_overlay(target, rom, resource, owners)));
             });
         }
     });
@@ -637,10 +488,10 @@ fn report(root: &Path, target: DecompTarget) -> Result<Value, String> {
     // complement round-trips. Scan the supplied image and subtract verified
     // asset regions; no committed address ledger supplies the answer.
     let main_end = ROM_BASE + rom.bytes().len() as i64;
-    let main_start = ROM_BASE + 0xc0;
+    let main_start = MAIN_START;
     let main_image = &rom.bytes()[(main_start - ROM_BASE) as usize..(main_end - ROM_BASE) as usize];
-    let cuts = asset_cuts(root, target)?;
-    let asset_complement = difference_ranges(&[(main_start, main_end)], &cuts)
+    let (cuts, asset_manifest) = asset_cuts(root, target)?;
+    let asset_complement = asset_complement(rom.bytes().len() as i64, &cuts)
         .into_iter()
         .map(|(start, end)| ExecutableSpan {
             start,
@@ -656,6 +507,7 @@ fn report(root: &Path, target: DecompTarget) -> Result<Value, String> {
     Ok(json!({
         "format": "alchemy-executable-audit-v1",
         "target": target.id.as_str(),
+        "rom_sha256": crate::compiler::sha256::hex(rom.bytes()),
         "state": "candidate",
         "scope": "code-overlays",
         "audit": "candidate",
@@ -690,6 +542,7 @@ fn report(root: &Path, target: DecompTarget) -> Result<Value, String> {
                 },
             },
             "asset_cut_bytes": intersection_bytes(&cuts, &[(main_start, main_end)]),
+            "asset_manifest": asset_manifest,
         },
         "summary": {
             "overlays": overlays.len(),
@@ -702,233 +555,381 @@ fn report(root: &Path, target: DecompTarget) -> Result<Value, String> {
         "derivation": [
             "resource-directory streams that decode to the target's fixed entry-veneer shape",
             "only streams whose traced encoding reproduces the ROM receive physical byte extents; raw directory pointers are not files",
-            "instructions proved by the byte-identical overlay decoder",
-            "PC-relative literal targets, fixed ldr/bx veneers, and bounded executable alignment"
+            "ARMv4T Thumb instructions reached by control flow from loader entry veneers, owner-register entries, framed word-aligned Thumb function pointers and calls from proved code, through branches, GCC far jumps (BLs to halfword boundaries or to word-aligned labels inside the caller's own walk) and GCC switch tables proved by their register chain",
+            "owner-register entries on the zero alignment halfword after a return, or inside another function's straight-line code, are dropped and the proof repeated without them",
+            "word-aligned framed prologues, the routine after the entry veneer table and word-aligned Thumb pointers proved code loads are candidates only: each is kept when every run of its walk and of every new function it calls ends in control flow, and discarded whole otherwise",
+            "a gap between proved functions is kept only when complete candidate walks from its word boundaries explain every byte; a lone bx lr that no pointer word or BL names explains nothing, and a boundary a stored Thumb pointer names is recorded as stored_pointer",
+            "PC-relative literal words and switch tables proved code reads, fixed ldr/bx veneers, the stock interworking bank, and zero halfwords aligning executable bytes"
         ]
     }))
 }
 
-fn calibrate(root: &Path, document: &Value) -> Result<String, String> {
-    let path = root.join("out/tbs-en/reports/executable.json");
-    let expected: ExpectedReport = serde_json::from_slice(
-        &std::fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?,
-    )
-    .map_err(|error| format!("{}: {error}", path.display()))?;
-    let actual_main = document["main"]["intervals"]
-        .as_array()
-        .ok_or("audit report has no main intervals")?
-        .iter()
+/// How a candidate audit compares with a ledger, listing every differing
+/// range so that a mismatch names its bytes rather than a total. A diagnostic:
+/// the committed ledgers are known to be wrong in places and gate nothing.
+struct Calibration {
+    exact: bool,
+    false_bytes: u64,
+    missed_bytes: u64,
+    text: String,
+}
+
+fn intervals(rows: &Value) -> Vec<(i64, i64)> {
+    rows.as_array()
+        .into_iter()
+        .flatten()
         .filter_map(|row| Some((row["start"].as_i64()?, row["end"].as_i64()?)))
-        .collect::<Vec<_>>();
+        .collect()
+}
+
+fn listed(ranges: &[(i64, i64)]) -> String {
+    ranges
+        .iter()
+        .map(|(start, end)| format!("0x{start:08x}-0x{end:08x}({})", end - start))
+        .collect::<Vec<_>>()
+        .join(",")
+}
+
+fn calibrate(document: &Value, expected: &ExpectedReport) -> Result<Calibration, String> {
     let expected_main = expected
         .main
         .intervals
         .iter()
         .map(|span| (span.start, span.end))
         .collect::<Vec<_>>();
-    let actual_main_bytes = document["main"]["candidate_executable_bytes"]
-        .as_u64()
-        .ok_or("audit report has no main byte total")?;
-    let overlap = intersection_bytes(&actual_main, &expected_main);
-    let false_positive = actual_main_bytes - overlap;
-    let missed = expected.main.executable_bytes - overlap;
-    let mut missed_by_kind = std::collections::BTreeMap::<&str, u64>::new();
+    let method = |intervals_of: &Value, total: &Value, name: &str| {
+        let spans = intervals(intervals_of);
+        let bytes = total
+            .as_u64()
+            .ok_or_else(|| format!("audit report has no main {name} byte total"))?;
+        let overlap = intersection_bytes(&spans, &expected_main);
+        Ok::<_, String>((
+            spans,
+            overlap,
+            bytes.saturating_sub(overlap),
+            expected.main.executable_bytes.saturating_sub(overlap),
+        ))
+    };
+    let main = &document["main"];
+    let (prologue, prologue_overlap, prologue_false, prologue_missed) = method(
+        &main["intervals"],
+        &main["candidate_executable_bytes"],
+        "prologue-sweep",
+    )?;
+    let calls = &main["methods"]["call_targets"];
+    let (_, call_overlap, call_false, call_missed) = method(
+        &calls["intervals"],
+        &calls["candidate_executable_bytes"],
+        "call-target",
+    )?;
+    let complement = &main["methods"]["asset_complement"];
+    let (_, complement_overlap, complement_false, complement_missed) = method(
+        &complement["intervals"],
+        &complement["candidate_executable_bytes"],
+        "asset-complement",
+    )?;
+    let mut prologue_missed_by_kind = std::collections::BTreeMap::<&str, u64>::new();
     for span in &expected.main.intervals {
-        let size = (span.end - span.start) as u64;
-        let found = intersection_bytes(&actual_main, &[(span.start, span.end)]);
-        *missed_by_kind.entry(&span.kind).or_default() += size - found;
+        let found = intersection_bytes(&prologue, &[(span.start, span.end)]);
+        *prologue_missed_by_kind.entry(&span.kind).or_default() +=
+            (span.end - span.start) as u64 - found;
     }
-    let missed_by_kind = missed_by_kind
+    let prologue_missed_by_kind = prologue_missed_by_kind
         .into_iter()
         .map(|(kind, bytes)| format!("{kind}={bytes}"))
         .collect::<Vec<_>>()
         .join(",");
-    let call_target_main = document["main"]["methods"]["call_targets"]["intervals"]
-        .as_array()
-        .ok_or("audit report has no call-target intervals")?
-        .iter()
-        .filter_map(|row| Some((row["start"].as_i64()?, row["end"].as_i64()?)))
-        .collect::<Vec<_>>();
-    let call_target_bytes = document["main"]["methods"]["call_targets"]
-        ["candidate_executable_bytes"]
-        .as_u64()
-        .ok_or("audit report has no call-target byte total")?;
-    let call_target_overlap = intersection_bytes(&call_target_main, &expected_main);
-    let call_target_false = call_target_bytes - call_target_overlap;
-    let call_target_missed = expected.main.executable_bytes - call_target_overlap;
-    let asset_complement = document["main"]["methods"]["asset_complement"]["intervals"]
-        .as_array()
-        .ok_or("audit report has no asset-complement intervals")?
-        .iter()
-        .filter_map(|row| Some((row["start"].as_i64()?, row["end"].as_i64()?)))
-        .collect::<Vec<_>>();
-    let asset_complement_bytes = document["main"]["methods"]["asset_complement"]
-        ["candidate_executable_bytes"]
-        .as_u64()
-        .ok_or("audit report has no asset-complement byte total")?;
-    let asset_complement_overlap = intersection_bytes(&asset_complement, &expected_main);
-    let asset_complement_false = asset_complement_bytes - asset_complement_overlap;
-    let asset_complement_missed = expected.main.executable_bytes - asset_complement_overlap;
-    let mut largest_call_false = difference_ranges(&call_target_main, &expected_main);
-    largest_call_false.sort_by_key(|(start, end)| std::cmp::Reverse(end - start));
-    let largest_call_false = largest_call_false
-        .into_iter()
-        .take(8)
-        .map(|(start, end)| format!("0x{start:08x}-0x{end:08x} ({} bytes)", end - start))
-        .collect::<Vec<_>>()
-        .join(", ");
-    let mut largest_false = difference_ranges(&actual_main, &expected_main);
-    largest_false.sort_by_key(|(start, end)| std::cmp::Reverse(end - start));
-    let largest_false = largest_false
-        .into_iter()
-        .take(8)
-        .map(|(start, end)| format!("0x{start:08x}-0x{end:08x} ({} bytes)", end - start))
-        .collect::<Vec<_>>()
-        .join(", ");
     let actual = document["overlays"]
         .as_array()
         .ok_or("audit report has no overlays")?;
     let mut mismatches = Vec::new();
     let mut overlay_false = 0u64;
     let mut overlay_missed = 0u64;
-    let mut generated_false = 0u64;
-    let mut generated_missed = 0u64;
-    let mut combined_false = 0u64;
-    let mut combined_missed = 0u64;
-    for row in expected.overlays {
-        let found = actual.iter().find(|actual| actual["id"] == row.id);
-        let bytes = found.and_then(|actual| actual["executable_bytes"].as_u64());
-        if let Some(found) = found {
-            let found_spans = found["intervals"]
-                .as_array()
-                .into_iter()
-                .flatten()
-                .filter_map(|span| Some((span["start"].as_i64()?, span["end"].as_i64()?)))
-                .collect::<Vec<_>>();
-            let expected_spans = row
-                .intervals
-                .iter()
-                .map(|span| (span.start, span.end))
-                .collect::<Vec<_>>();
-            let generated_spans = found["generated_intervals"]
-                .as_array()
-                .into_iter()
-                .flatten()
-                .filter_map(|span| Some((span["start"].as_i64()?, span["end"].as_i64()?)))
-                .collect::<Vec<_>>();
-            let generated_bytes = found["generated_executable_bytes"].as_u64().unwrap_or(0);
-            let generated_common = intersection_bytes(&generated_spans, &expected_spans);
-            let generated_false_bytes = generated_bytes.saturating_sub(generated_common);
-            let generated_missed_bytes = row.executable_bytes.saturating_sub(generated_common);
-            generated_false += generated_false_bytes;
-            generated_missed += generated_missed_bytes;
-            let trusted_spans = found["trusted_intervals"]
-                .as_array()
-                .into_iter()
-                .flatten()
-                .filter_map(|span| Some((span["start"].as_i64()?, span["end"].as_i64()?)))
-                .collect::<Vec<_>>();
-            let combined_spans = generated_spans
-                .iter()
-                .chain(&trusted_spans)
-                .copied()
-                .collect::<Vec<_>>();
-            let combined_bytes = found["combined_executable_bytes"].as_u64().unwrap_or(0);
-            let combined_common = intersection_bytes(&combined_spans, &expected_spans);
-            let combined_false_bytes = combined_bytes.saturating_sub(combined_common);
-            let combined_missed_bytes = row.executable_bytes.saturating_sub(combined_common);
-            let mut combined_false_ranges = difference_ranges(&combined_spans, &expected_spans);
-            combined_false_ranges.sort_by_key(|(start, end)| std::cmp::Reverse(end - start));
-            let mut combined_missed_ranges = difference_ranges(&expected_spans, &combined_spans);
-            combined_missed_ranges.sort_by_key(|(start, end)| std::cmp::Reverse(end - start));
-            combined_false += combined_false_bytes;
-            combined_missed += combined_missed_bytes;
-            let common = intersection_bytes(&found_spans, &expected_spans);
-            let false_bytes = bytes.unwrap_or(0).saturating_sub(common);
-            let missed_bytes = row.executable_bytes.saturating_sub(common);
-            overlay_false += false_bytes;
-            overlay_missed += missed_bytes;
-            if bytes != Some(row.executable_bytes) || false_bytes != 0 || missed_bytes != 0 {
-                let mut false_ranges = difference_ranges(&found_spans, &expected_spans);
-                false_ranges.sort_by_key(|(start, end)| std::cmp::Reverse(end - start));
-                let mut missed_ranges = difference_ranges(&expected_spans, &found_spans);
-                missed_ranges.sort_by_key(|(start, end)| std::cmp::Reverse(end - start));
-                let mut generated_false_ranges =
-                    difference_ranges(&generated_spans, &expected_spans);
-                generated_false_ranges.sort_by_key(|(start, end)| std::cmp::Reverse(end - start));
-                let mut generated_missed_ranges =
-                    difference_ranges(&expected_spans, &generated_spans);
-                generated_missed_ranges.sort_by_key(|(start, end)| std::cmp::Reverse(end - start));
-                let summarize = |ranges: &[(i64, i64)]| {
-                    ranges
-                        .iter()
-                        .take(3)
-                        .map(|(start, end)| format!("0x{start:08x}-0x{end:08x}({})", end - start))
-                        .collect::<Vec<_>>()
-                        .join(",")
-                };
-                mismatches.push(format!(
-                    "{} expected {} got {} false {} [{}] missed {} [{}] generated false {} [{}] missed {} [{}] combined false {} [{}] missed {} [{}]",
-                    row.id,
-                    row.executable_bytes,
-                    bytes.map_or("missing".into(), |value| value.to_string()),
-                    false_bytes,
-                    summarize(&false_ranges),
-                    missed_bytes,
-                    summarize(&missed_ranges),
-                    generated_false_bytes,
-                    summarize(&generated_false_ranges),
-                    generated_missed_bytes,
-                    summarize(&generated_missed_ranges),
-                    combined_false_bytes,
-                    summarize(&combined_false_ranges),
-                    combined_missed_bytes,
-                    summarize(&combined_missed_ranges)
-                ));
-            }
-        } else {
+    for row in &expected.overlays {
+        let expected_spans = row
+            .intervals
+            .iter()
+            .map(|span| (span.start, span.end))
+            .collect::<Vec<_>>();
+        let Some(found) = actual.iter().find(|actual| actual["id"] == row.id.as_str()) else {
             overlay_missed += row.executable_bytes;
             mismatches.push(format!(
-                "{} expected {} got {}",
+                "{} expected {} got missing",
+                row.id, row.executable_bytes
+            ));
+            continue;
+        };
+        let bytes = found["executable_bytes"].as_u64().unwrap_or(0);
+        let found_spans = intervals(&found["intervals"]);
+        let common = intersection_bytes(&found_spans, &expected_spans);
+        let false_bytes = bytes.saturating_sub(common);
+        let missed_bytes = row.executable_bytes.saturating_sub(common);
+        overlay_false += false_bytes;
+        overlay_missed += missed_bytes;
+        if bytes != row.executable_bytes || false_bytes != 0 || missed_bytes != 0 {
+            mismatches.push(format!(
+                "{} expected {} got {} false {} [{}] missed {} [{}]",
                 row.id,
                 row.executable_bytes,
-                bytes.map_or("missing".into(), |value| value.to_string())
+                bytes,
+                false_bytes,
+                listed(&difference_ranges(&found_spans, &expected_spans)),
+                missed_bytes,
+                listed(&difference_ranges(&expected_spans, &found_spans)),
             ));
         }
     }
-    if !mismatches.is_empty() {
-        return Err(format!(
-            "TBS calibration failed: asset-complement main overlap {asset_complement_overlap}/{}, false-positive {asset_complement_false}, missed {asset_complement_missed}; prologue main overlap {overlap}/{}, false-positive {false_positive}, missed {missed} ({missed_by_kind}); call/pointer main overlap {call_target_overlap}/{}, false-positive {call_target_false}, missed {call_target_missed}; largest prologue false spans: {largest_false}; largest call/pointer false spans: {largest_call_false}; overlay source false-positive {overlay_false}, missed {overlay_missed}, mismatches {}/{}; generated-source false-positive {generated_false}, missed {generated_missed}; combined false-positive {combined_false}, missed {combined_missed}:\n{}",
-            expected.main.executable_bytes,
-            expected.main.executable_bytes,
-            expected.main.executable_bytes,
-            mismatches.len(),
+    for found in actual {
+        let id = found["id"].as_str().unwrap_or("");
+        if !expected.overlays.iter().any(|row| row.id == id) {
+            let bytes = found["executable_bytes"].as_u64().unwrap_or(0);
+            overlay_false += bytes;
+            mismatches.push(format!("{id} expected missing got {bytes}"));
+        }
+    }
+    let exact = mismatches.is_empty() && complement_false == 0 && complement_missed == 0;
+    let total = expected.main.executable_bytes;
+    let mut text = vec![
+        format!(
+            "calibration={}: main asset-complement overlap {complement_overlap}/{total}, false-positive {complement_false}, missed {complement_missed}; prologue overlap {prologue_overlap}/{total}, false-positive {prologue_false}, missed {prologue_missed} ({prologue_missed_by_kind}); call/pointer overlap {call_overlap}/{total}, false-positive {call_false}, missed {call_missed}",
+            if exact { "exact" } else { "inexact" }
+        ),
+        format!(
+            "overlays {}: false-positive {overlay_false}, missed {overlay_missed}, mismatched {}/{}",
             actual.len(),
-            mismatches.join("\n")
-        ));
+            mismatches.len(),
+            expected.overlays.len()
+        ),
+    ];
+    text.extend(mismatches);
+    Ok(Calibration {
+        exact,
+        false_bytes: overlay_false + complement_false,
+        missed_bytes: overlay_missed + complement_missed,
+        text: text.join("\n"),
+    })
+}
+
+/// Inventory kinds, most specific first. A byte several methods classify
+/// takes the first kind that covers it, so the published intervals partition
+/// each image instead of overlapping.
+const KINDS: [(&str, &str); 7] = [
+    (
+        "veneer",
+        "fixed ldr r4, [pc, #0]; bx r4 loader veneer whose target is addressable",
+    ),
+    (
+        "compiler_runtime",
+        "complete stock GCC Thumb interworking bank (_call_via_rX)",
+    ),
+    (
+        "jump_table",
+        "GCC switch table proved through its compare, scale, load and mov pc register chain",
+    ),
+    (
+        "literal_pool",
+        "word a pc-relative load of proven Thumb code reads",
+    ),
+    (
+        "thumb",
+        "ARMv4T Thumb instruction proved by control flow from loader veneers, owner-register entries, framed function pointers and calls, or by a candidate entry whose complete walk ends in control flow",
+    ),
+    (
+        "executable_alignment",
+        "zero halfword aligning code, a literal pool or a switch table between executable bytes",
+    ),
+    (
+        "asset_complement",
+        "canonical ROM after its header minus every byte-reproduced asset region",
+    ),
+];
+
+/// Partition overlapping classified spans into disjoint intervals, each with
+/// the most specific kind covering it.
+fn partition(rows: &Value) -> Result<Vec<(i64, i64, &'static str)>, String> {
+    let mut events = Vec::new();
+    for row in rows.as_array().into_iter().flatten() {
+        let (Some(start), Some(end)) = (row["start"].as_i64(), row["end"].as_i64()) else {
+            return Err("audit interval has no integer bounds".into());
+        };
+        let kind = row["kind"].as_str().unwrap_or("");
+        let rank = KINDS
+            .iter()
+            .position(|(name, _)| *name == kind)
+            .ok_or_else(|| format!("audit interval has unknown kind {kind:?}"))?;
+        if end > start {
+            events.push((start, rank, 1i64));
+            events.push((end, rank, -1i64));
+        }
     }
-    if asset_complement_false != 0 || asset_complement_missed != 0 {
+    events.sort_unstable();
+    let mut open = [0i64; KINDS.len()];
+    let mut out: Vec<(i64, i64, &'static str)> = Vec::new();
+    let mut cursor = None;
+    for (at, rank, delta) in events {
+        if let Some(from) = cursor.filter(|from| *from < at) {
+            if let Some(kind) = open.iter().position(|count| *count > 0) {
+                let kind = KINDS[kind].0;
+                match out.last_mut() {
+                    Some(last) if last.1 == from && last.2 == kind => last.1 = at,
+                    _ => out.push((from, at, kind)),
+                }
+            }
+        }
+        open[rank] += delta;
+        cursor = Some(at);
+    }
+    Ok(out)
+}
+
+fn published(spans: &[(i64, i64, &'static str)]) -> (u64, Vec<Value>) {
+    let bytes = spans
+        .iter()
+        .map(|(start, end, _)| (end - start) as u64)
+        .sum();
+    let rows = spans
+        .iter()
+        .map(|(start, end, kind)| json!({"start": start, "end": end, "kind": kind, "evidence_ref": kind}))
+        .collect();
+    (bytes, rows)
+}
+
+/// The complete Full-C Byte Share inventory progress and coverage score
+/// against, generated from a candidate audit whose overlay intervals are the
+/// independently verified output and whose main complement is proven.
+fn inventory(document: &Value, verification: Value) -> Result<Value, String> {
+    let (main_bytes, main_rows) = published(&partition(
+        &document["main"]["methods"]["asset_complement"]["intervals"],
+    )?);
+    let mut total = main_bytes;
+    let overlays = document["overlays"]
+        .as_array()
+        .ok_or("audit report has no overlays")?
+        .iter()
+        .map(|row| {
+            let (bytes, rows) = published(&partition(&row["intervals"])?);
+            total += bytes;
+            Ok(json!({
+                "id": row["id"],
+                "decoded_bytes": row["decoded_bytes"],
+                "rom_start": row["rom_start"],
+                "rom_end": row["rom_end"],
+                "executable_bytes": bytes,
+                "audit": "complete",
+                "intervals": rows,
+            }))
+        })
+        .collect::<Result<Vec<_>, String>>()?;
+    Ok(json!({
+        "format": 1,
+        "metric": "full-c-byte-share",
+        "target": document["target"],
+        "rom_sha256": document["rom_sha256"],
+        "state": "audited",
+        "audit": "complete",
+        "verification": verification,
+        "overlay_count": overlays.len(),
+        "total_union_bytes": total,
+        "evidence": KINDS.iter().map(|(kind, evidence)| (kind.to_string(), json!(evidence))).collect::<serde_json::Map<_, _>>(),
+        "main": {
+            "id": "main",
+            "audit": "complete",
+            "executable_bytes": main_bytes,
+            "intervals": main_rows,
+        },
+        "overlays": overlays,
+    }))
+}
+
+/// The inventory while its audit is incomplete: scoring reports `?`.
+fn pending_inventory(
+    target: DecompTarget,
+    rom_sha256: &Value,
+    verification: Value,
+    reasons: &[String],
+) -> Value {
+    json!({
+        "format": 1,
+        "metric": "full-c-byte-share",
+        "target": target.id.as_str(),
+        "rom_sha256": rom_sha256,
+        "state": "pending",
+        "audit": "incomplete",
+        "pending": reasons,
+        "verification": verification,
+        "overlay_count": 0,
+        "main": {"id": "main", "audit": "incomplete"},
+        "overlays": [],
+    })
+}
+
+fn write_json(path: &Path, value: &Value) -> Result<(), String> {
+    if let Some(parent) = path.parent() {
+        std::fs::create_dir_all(parent).map_err(|error| error.to_string())?;
+    }
+    std::fs::write(path, canonical_json(value))
+        .map_err(|error| format!("{}: {error}", path.display()))
+}
+
+fn lexical(path: &Path) -> PathBuf {
+    path.components()
+        .filter(|component| !matches!(component, std::path::Component::CurDir))
+        .collect()
+}
+
+/// A candidate report may go anywhere outside the checkout or under `out/`,
+/// but never over a tracked file or any target's executable inventory.
+fn candidate_destination(root: &Path, path: &Path) -> Result<PathBuf, String> {
+    let path = lexical(&resolve(root, path));
+    let root = lexical(root);
+    let inventory = TARGET_IDS
+        .into_iter()
+        .any(|id| path == lexical(&inventory_path(&root, target_for(id))));
+    if inventory || (path.starts_with(&root) && !path.starts_with(root.join("out"))) {
         return Err(format!(
-            "TBS main calibration failed: asset-complement overlap {asset_complement_overlap}/{}, false-positive {asset_complement_false}, missed {asset_complement_missed}; prologue overlap {overlap}/{}, false-positive {false_positive}, missed {missed} ({missed_by_kind}); call/pointer overlap {call_target_overlap}/{}, false-positive {call_target_false}, missed {call_target_missed}; largest prologue false spans: {largest_false}; largest call/pointer false spans: {largest_call_false}",
-            expected.main.executable_bytes,
-            expected.main.executable_bytes,
-            expected.main.executable_bytes
+            "{}: the candidate audit never replaces an executable inventory or a tracked file",
+            path.display()
         ));
     }
-    Ok(format!("calibration=exact main overlays={}", actual.len()))
+    Ok(path)
+}
+
+/// An `--inventory` run with invalid arguments fails like any other: before
+/// the error returns it withdraws the inventory of the target it names, or
+/// every existing inventory when it names no valid target.
+fn refuse_arguments(root: &Path, arguments: &[String], error: String) -> String {
+    if !arguments.iter().any(|argument| argument == "--inventory") {
+        return error;
+    }
+    let named = arguments
+        .iter()
+        .rposition(|argument| argument == "--target")
+        .and_then(|index| arguments.get(index + 1))
+        .and_then(|value| decomp_target(Some(value)).ok());
+    let targets = match named {
+        Some(target) => vec![target],
+        None => TARGET_IDS.into_iter().map(target_for).collect(),
+    };
+    let reason = format!("the last --inventory run failed: {error}");
+    for target in targets {
+        let path = inventory_path(root, target);
+        if !path.exists() {
+            continue;
+        }
+        let pending = pending_inventory(target, &Value::Null, Value::Null, &[reason.clone()]);
+        if let Err(failure) = write_json(&path, &pending) {
+            return format!("{error}\nthe inventory was not withdrawn: {failure}");
+        }
+    }
+    error
 }
 
 pub fn run(root: &Path, arguments: &[String]) -> Result<String, String> {
-    let options = parse(arguments)?;
+    let options = parse(arguments).map_err(|error| refuse_arguments(root, arguments, error))?;
     if options.help {
         return Ok(USAGE.into());
     }
     if options.all {
-        if !options.data || options.calibrate || options.output.is_some() {
-            return Err(format!(
-                "--all requires --data and accepts no other mode\n{USAGE}"
-            ));
-        }
         let canonical = [DecompTargetId::TbsEn, DecompTargetId::TlaEn];
         let mut reports = Vec::with_capacity(TARGET_IDS.len());
         for id in canonical
@@ -939,51 +940,315 @@ pub fn run(root: &Path, arguments: &[String]) -> Result<String, String> {
         }
         return Ok(reports.join("\n"));
     }
-    let target = decomp_target(options.target.as_deref())?;
+    let target = decomp_target(options.target.as_deref())
+        .map_err(|error| refuse_arguments(root, arguments, error))?;
     if options.data {
-        if options.calibrate || options.output.is_some() {
-            return Err("--data writes out/<target>/reports/rom-index.json; cannot combine with --calibrate or --output".into());
-        }
         return index::run(root, target);
     }
-    if options.calibrate && target.id.as_str() != "tbs-en" {
-        return Err("--calibrate is the TBS completed-audit gate; use --target tbs-en".into());
+    if options.inventory {
+        let candidate = candidate_path(root, target);
+        return record_inventory(root, target, || audit_candidate(root, target, &candidate));
     }
-    let document = report(root, target)?;
-    let calibration = options
-        .calibrate
-        .then(|| calibrate(root, &document))
-        .transpose()?;
-    let path = options.output.map_or_else(
-        || root.join(format!("{}/reports/executable.json", target.output_dir)),
-        |path| {
-            if path.is_absolute() {
-                path
-            } else {
-                root.join(path)
-            }
-        },
+    let candidate = match &options.output {
+        Some(path) => candidate_destination(root, path)?,
+        None => candidate_path(root, target),
+    };
+    let (document, summary) = audit_candidate(root, target, &candidate)?;
+    let Some(expected_path) = options.expected.as_deref().map(|path| resolve(root, path)) else {
+        return Ok(summary);
+    };
+    let expected: ExpectedReport = serde_json::from_slice(
+        &std::fs::read(&expected_path)
+            .map_err(|error| format!("{}: {error}", expected_path.display()))?,
+    )
+    .map_err(|error| format!("{}: {error}", expected_path.display()))?;
+    let calibration = calibrate(&document, &expected)?;
+    let text = format!(
+        "{summary}\nexpected={} false_bytes={} missed_bytes={}\n{}",
+        expected_path
+            .strip_prefix(root)
+            .unwrap_or(&expected_path)
+            .display(),
+        calibration.false_bytes,
+        calibration.missed_bytes,
+        calibration.text
     );
-    if let Some(parent) = path.parent() {
-        std::fs::create_dir_all(parent).map_err(|error| error.to_string())?;
+    if calibration.exact {
+        Ok(text)
+    } else {
+        Err(text)
     }
-    std::fs::write(&path, canonical_json(&document))
-        .map_err(|error| format!("{}: {error}", path.display()))?;
-    Ok(calibration.unwrap_or_else(|| {
-        format!(
-            "target={} overlays={} executable={} decoded={}",
-            target.id,
-            document["summary"]["overlays"],
-            document["summary"]["executable_bytes"],
-            document["summary"]["decoded_bytes"]
+}
+
+/// Audits the target's ROM, writes the candidate report to `destination`
+/// and summarizes it with the digest of its overlay intervals.
+fn audit_candidate(
+    root: &Path,
+    target: DecompTarget,
+    destination: &Path,
+) -> Result<(Value, String), String> {
+    let document = report(root, target)?;
+    write_json(destination, &document)?;
+    let summary = format!(
+        "candidate={} target={} overlays={} executable={} decoded={} overlay_sha256={}",
+        destination
+            .strip_prefix(root)
+            .unwrap_or(destination)
+            .display(),
+        target.id,
+        document["summary"]["overlays"],
+        document["summary"]["executable_bytes"],
+        document["summary"]["decoded_bytes"],
+        verification::overlay_digest(&document)?
+    );
+    Ok((document, summary))
+}
+
+/// `--inventory`: writes the inventory [`gated_inventory`] derives from the
+/// candidate `audit` produces. The inventory is withdrawn to a pending one
+/// before the audit starts and again when any step fails, so an earlier
+/// authoritative inventory never outlives a run that did not finish.
+fn record_inventory(
+    root: &Path,
+    target: DecompTarget,
+    audit: impl FnOnce() -> Result<(Value, String), String>,
+) -> Result<String, String> {
+    let path = inventory_path(root, target);
+    let withdraw = |reason: String| {
+        write_json(
+            &path,
+            &pending_inventory(target, &Value::Null, Value::Null, &[reason]),
         )
-    }))
+    };
+    withdraw("an --inventory run began and has not finished".into())?;
+    let result = audit().and_then(|(document, summary)| {
+        let (inventory, pending) = gated_inventory(root, target, &document)?;
+        write_json(&path, &inventory)?;
+        let shown = path.strip_prefix(root).unwrap_or(&path).display();
+        Ok(if pending.is_empty() {
+            format!(
+                "{summary}\ninventory={shown} target={} state=audited executable={}",
+                target.id, inventory["total_union_bytes"]
+            )
+        } else {
+            format!(
+                "{summary}\ninventory={shown} target={} state=pending: {}",
+                target.id,
+                pending.join("; ")
+            )
+        })
+    });
+    result.or_else(|error| {
+        withdraw(format!("the last --inventory run failed: {error}"))
+            .map_err(|failure| format!("{error}\nthe inventory was not withdrawn: {failure}"))?;
+        Err(error)
+    })
+}
+
+/// The inventory `--inventory` writes, with the reasons it is pending. The
+/// overlays count when their intervals hash to the independently verified
+/// digest; the main image when a byte-identical full ROM build proves its
+/// asset complement. A game lacking either stays pending: its DONE is `?`.
+/// A complete inventory must pass the readers' own validation.
+fn gated_inventory(
+    root: &Path,
+    target: DecompTarget,
+    document: &Value,
+) -> Result<(Value, Vec<String>), String> {
+    let overlays = verification::overlays(root, target, document)?;
+    let main = main_image_proof(root, target, document);
+    let mut provenance = overlays.provenance;
+    provenance["main"] = if main.is_ok() {
+        main_proof(target)
+    } else {
+        json!({"state": "unproven"})
+    };
+    let pending = overlays
+        .pending
+        .into_iter()
+        .chain(main.err())
+        .collect::<Vec<_>>();
+    if !pending.is_empty() {
+        let inventory = pending_inventory(target, &document["rom_sha256"], provenance, &pending);
+        return Ok((inventory, pending));
+    }
+    let inventory = inventory(document, provenance)?;
+    super::pipeline::validated_inventory(root, &inventory, target)?;
+    Ok((inventory, pending))
+}
+
+/// The main image is the asset complement only when a byte-identical full
+/// ROM build accounts for every byte: its verified asset regions, and
+/// source for everything else. A partial asset build leaves unidentified
+/// data inside the complement. The build must still prove it
+/// ([`full_build`]) and have rebuilt the ROM this audit read.
+fn main_image_proof(root: &Path, target: DecompTarget, document: &Value) -> Result<(), String> {
+    let full = full_asset_manifest(target);
+    if document["main"]["asset_manifest"].as_str() != Some(full.as_str()) {
+        return Err(format!(
+            "the main-image complement needs the byte-identical full ROM build's asset manifest {full}"
+        ));
+    }
+    let build = full_build(root, target)
+        .map_err(|error| format!("the main-image complement is unproven: {error}"))?;
+    if document["rom_sha256"] != build.rom_sha256.as_str() {
+        return Err(
+            "the main-image complement is unproven: the audited ROM is not the one the full build reproduced"
+                .into(),
+        );
+    }
+    Ok(())
+}
+
+/// The main-image proof a complete inventory records, which readers require
+/// verbatim: the asset complement of the byte-identical full ROM build whose
+/// report and asset manifest it names.
+fn main_proof(target: DecompTarget) -> Value {
+    json!({
+        "state": "proven",
+        "proof": "byte-identical full ROM build",
+        "build_report": full_build_report(target),
+        "asset_manifest": full_asset_manifest(target),
+    })
+}
+
+/// Whether a generated inventory is the automatic count, which every reader
+/// requires before it scores one: overlay intervals that hash to the
+/// independently verified digest, and main intervals that are the asset
+/// complement of a byte-identical full ROM build of the same ROM. Both are
+/// recomputed from the inventory, the build's artifacts and the current
+/// tree ([`full_build`]), never taken from what the inventory or the build's
+/// report states, so a copied ledger, a hand-made file or a stale build is
+/// never scored. `Err` says why the inventory is not authoritative.
+pub(crate) fn authenticate(
+    root: &Path,
+    target: DecompTarget,
+    inventory: &Value,
+) -> Result<(), String> {
+    verification::authenticate(root, target, inventory)?;
+    if inventory["verification"]["main"] != main_proof(target) {
+        return Err(format!(
+            "it records no main-image proof by the byte-identical full ROM build of {}",
+            target.id
+        ));
+    }
+    let build = full_build(root, target)
+        .map_err(|error| format!("its main-image proof no longer holds: {error}"))?;
+    if inventory["rom_sha256"] != build.rom_sha256.as_str() {
+        return Err(
+            "its main-image proof no longer holds: it audits a ROM other than the one the full build reproduced"
+                .into(),
+        );
+    }
+    let manifest = full_asset_manifest(target);
+    let complement = asset_complement(
+        target.rom_size as i64,
+        &manifest_cuts(&build.asset_manifest, &manifest)?,
+    );
+    let main = partition(&inventory["main"]["intervals"])?;
+    if main.iter().any(|(_, _, kind)| *kind != "asset_complement")
+        || !main
+            .iter()
+            .map(|(start, end, _)| (*start, *end))
+            .eq(complement)
+    {
+        return Err(format!(
+            "its main intervals are not the asset complement of {manifest}"
+        ));
+    }
+    Ok(())
+}
+
+/// Writes an inventory exactly as `--inventory` does, with every input it
+/// needs to be authoritative: the verification record of its overlays and a
+/// byte-identical full build whose asset regions leave `main` as the
+/// complement. `target` must support a full build; a game that does not yet
+/// is tested through [`super::proof::fully_buildable`]. Returns the
+/// candidate audit and the inventory; readers' tests start from them and
+/// break one input at a time. Write every tracked input first: inputs
+/// written afterwards make the build's proof stale.
+#[cfg(test)]
+pub(crate) fn authoritative_fixture(
+    root: &Path,
+    target: DecompTarget,
+    main: &[(i64, i64)],
+    overlays: Value,
+) -> (Value, Value) {
+    let count = overlays.as_array().unwrap().len();
+    let write = |path: &str, value: Value| {
+        let path = root.join(path);
+        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+        std::fs::write(path, canonical_json(&value)).unwrap();
+    };
+    let end = ROM_BASE + target.rom_size as i64;
+    let regions = difference_ranges(&[(MAIN_START, end)], main)
+        .into_iter()
+        .map(|(start, end)| json!({"address": start, "size": end - start}))
+        .collect::<Vec<_>>();
+    let rom_sha256 =
+        super::proof::full_build_fixture(root, target, &json!({"format": 1, "regions": regions}));
+    let (decoded, executable) =
+        overlays
+            .as_array()
+            .unwrap()
+            .iter()
+            .fold((0, 0), |(decoded, executable), row| {
+                let bytes = partition(&row["intervals"])
+                    .unwrap()
+                    .iter()
+                    .map(|(start, end, _)| end - start)
+                    .sum::<i64>();
+                (
+                    decoded + row["decoded_bytes"].as_i64().unwrap(),
+                    executable + bytes,
+                )
+            });
+    let document = json!({
+        "target": target.id.as_str(),
+        "rom_sha256": rom_sha256,
+        "overlays": overlays,
+        "summary": {
+            "decoded_bytes": decoded,
+            "executable_bytes": executable,
+            "excluded_bytes": decoded - executable,
+        },
+        "main": {
+            "asset_manifest": full_asset_manifest(target),
+            "methods": {"asset_complement": {"intervals": main.iter().map(|(start, end)| {
+                json!({"start": start, "end": end, "kind": "asset_complement"})
+            }).collect::<Vec<_>>()}},
+        },
+    });
+    let mut record = verification::tests::record(&verification::overlay_digest(&document).unwrap());
+    record["verified"]["target"] = json!(target.id.as_str());
+    record["verified"]["overlays"] = json!(count);
+    record["verified"]["decoded_bytes"] = json!(decoded);
+    record["verified"]["executable_bytes"] = json!(executable);
+    record["verified"]["excluded_bytes"] = json!(decoded - executable);
+    record["residual"] =
+        json!({"bytes": 0, "counted": false, "reason": "none in this fixture", "items": []});
+    write(&verification::record_path(target), record);
+    let (inventory, pending) = gated_inventory(root, target, &document).unwrap();
+    assert!(pending.is_empty(), "{pending:?}");
+    write_json(&inventory_path(root, target), &inventory).unwrap();
+    (document, inventory)
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{difference_ranges, intersection_bytes, parse, source_spans, union_bytes};
+    use super::{
+        authoritative_fixture, calibrate, candidate_destination, difference_ranges,
+        gated_inventory, intersection_bytes, main_image_proof, parse, partition, pending_inventory,
+        record_inventory, union_bytes, ExpectedReport,
+    };
+    use crate::coverage::proof::fully_buildable;
     use crate::overlay::assembly::ExecutableSpan;
+    use serde_json::json;
+    use std::path::Path;
+
+    fn arguments(text: &str) -> Vec<String> {
+        text.split_whitespace().map(String::from).collect()
+    }
 
     #[test]
     fn all_data_is_the_single_twelve_target_entry_point() {
@@ -991,6 +1256,152 @@ mod tests {
         assert!(options.all && options.data && options.target.is_none());
         assert!(parse(&["--all".into(), "--target".into(), "tbs-en".into()]).is_err());
         assert!(parse(&["--data".into()]).is_err());
+    }
+
+    #[test]
+    fn only_calibration_reads_a_ledger() {
+        assert!(parse(&arguments("--target tbs-en --calibrate")).is_err());
+        assert!(parse(&arguments("--target tbs-en --expected a.json")).is_err());
+        assert!(parse(&arguments("--target tla-en --inventory --expected a.json")).is_err());
+        assert!(parse(&arguments(
+            "--target tbs-en --calibrate --inventory --expected a.json"
+        ))
+        .is_err());
+        assert!(parse(&arguments("--target tbs-en --inventory --output b.json")).is_err());
+        assert!(parse(&arguments("--target tbs-en --data --expected a.json")).is_err());
+        let options = parse(&arguments("--target tla-en --inventory")).unwrap();
+        assert!(options.inventory && options.expected.is_none());
+        let options = parse(&arguments("--target tbs-en --calibrate --expected a.json")).unwrap();
+        assert!(options.calibrate && options.expected.is_some());
+    }
+
+    /// Overlays count only while they hash to the verified digest, the main
+    /// image only when a byte-identical full build proves it, and the
+    /// inventory is complete only when both hold.
+    #[test]
+    fn the_inventory_needs_verified_overlays_and_a_proven_main_image() {
+        use super::verification::{overlay_digest, record_path, tests as record};
+        let root = tempfile::tempdir().unwrap();
+        // The Lost Age as it will be once its full ROM build is supported.
+        let lost_age = crate::targets::target_for(crate::targets::DecompTargetId::TlaEn);
+        let target = fully_buildable(lost_age);
+        let mut document = record::document();
+        document["rom_sha256"] = json!("00");
+        document["main"] = candidate(json!({}))["main"].clone();
+        document["main"]["asset_manifest"] = json!("out/tla-en/full/assets/manifest.json");
+        let write = |path: &str, text: String| {
+            let path = root.path().join(path);
+            std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+            std::fs::write(path, text).unwrap();
+        };
+        let digest = overlay_digest(&document).unwrap();
+
+        let (pending, reasons) = gated_inventory(root.path(), target, &document).unwrap();
+        assert_eq!(reasons.len(), 2, "{reasons:?}");
+        assert!(
+            reasons[0].contains("no independent verification"),
+            "{reasons:?}"
+        );
+        assert!(reasons[1].contains("main-image complement"), "{reasons:?}");
+        assert_eq!(pending["state"], "pending");
+        assert_eq!(pending["verification"]["overlay_sha256"], digest.as_str());
+        assert_eq!(pending["verification"]["overlays"], "unverified");
+
+        write(&record_path(target), record::record(&digest).to_string());
+        let (pending, reasons) = gated_inventory(root.path(), target, &document).unwrap();
+        assert_eq!(reasons.len(), 1, "{reasons:?}");
+        assert!(reasons[0].contains("main-image complement"), "{reasons:?}");
+        assert_eq!(pending["verification"]["overlays"], "verified");
+        assert_eq!(
+            pending["verification"]["main"],
+            json!({"state": "unproven"})
+        );
+        assert!(
+            crate::coverage::pipeline::validated_inventory(root.path(), &pending, target)
+                .unwrap_err()
+                .contains("withheld")
+        );
+
+        // A byte-identical full build whose asset regions leave exactly the
+        // candidate's complement, 0x08000100..0x08000104, of the 16 MiB ROM.
+        let rom = crate::coverage::proof::full_build_fixture(
+            root.path(),
+            target,
+            &json!({"regions": [
+                {"address": 0x080000c0, "size": 0x40},
+                {"address": 0x08000104, "size": 0x0100_0000 - 0x104}
+            ]}),
+        );
+        // It proves nothing about another ROM.
+        let (_, reasons) = gated_inventory(root.path(), target, &document).unwrap();
+        assert!(
+            reasons[0].contains("not the one the full build reproduced"),
+            "{reasons:?}"
+        );
+        document["rom_sha256"] = json!(rom);
+        let (complete, reasons) = gated_inventory(root.path(), target, &document).unwrap();
+        assert!(reasons.is_empty(), "{reasons:?}");
+        assert_eq!(complete["state"], "audited");
+        assert_eq!(complete["verification"]["verified_sha256"], digest.as_str());
+        assert_eq!(complete["verification"]["runs"], json!(["wf_synthetic"]));
+        assert_eq!(complete["verification"]["main"]["state"], "proven");
+        assert_eq!(complete["total_union_bytes"], 28);
+
+        // The Lost Age has no supported full ROM build yet: the same files
+        // leave its inventory pending.
+        let (pending, reasons) = gated_inventory(root.path(), lost_age, &document).unwrap();
+        assert_eq!(pending["state"], "pending");
+        assert!(
+            reasons[0].contains("no supported full ROM build"),
+            "{reasons:?}"
+        );
+
+        // Any change to the method's output returns the overlays to pending.
+        let mut changed = document.clone();
+        changed["overlays"][0]["intervals"][0]["kind"] = json!("literal_pool");
+        let (_, reasons) = gated_inventory(root.path(), target, &changed).unwrap();
+        assert_eq!(reasons.len(), 1, "{reasons:?}");
+        assert!(reasons[0].contains("re-verification"), "{reasons:?}");
+
+        // Another edition's intervals are not the verified target's.
+        let mut edition = document.clone();
+        edition["target"] = json!("tla-ja");
+        let edition_target = crate::targets::target_for(crate::targets::DecompTargetId::TlaJa);
+        let (_, reasons) = gated_inventory(root.path(), edition_target, &edition).unwrap();
+        assert!(
+            reasons[0].contains("no independent verification of tla-ja"),
+            "{reasons:?}"
+        );
+
+        // A record whose digest matches while its totals disagree is refused.
+        let mut totals = record::record(&digest);
+        totals["verified"]["executable_bytes"] = json!(25);
+        totals["verified"]["excluded_bytes"] = json!(39);
+        write(&record_path(target), totals.to_string());
+        assert!(gated_inventory(root.path(), target, &document)
+            .unwrap_err()
+            .contains("recorded totals"));
+    }
+
+    #[test]
+    fn the_candidate_never_replaces_an_inventory_or_tracked_file() {
+        let root = Path::new("/repo");
+        for path in [
+            "out/tbs-en/reports/executable.json",
+            "./out/tla-en/reports/executable.json",
+            "/repo/out/tbs-ja/reports/executable.json",
+            "games/THE BROKEN SEAL/metrics/executable.json",
+        ] {
+            assert!(
+                candidate_destination(root, Path::new(path)).is_err(),
+                "{path}"
+            );
+        }
+        assert_eq!(
+            candidate_destination(root, Path::new("out/work/audit.json")).unwrap(),
+            Path::new("/repo/out/work/audit.json")
+        );
+        assert!(candidate_destination(root, Path::new("/tmp/audit.json")).is_ok());
     }
 
     #[test]
@@ -1023,36 +1434,326 @@ mod tests {
         );
     }
 
+    fn candidate(overlay: serde_json::Value) -> serde_json::Value {
+        json!({
+            "target": "tla-en",
+            "rom_sha256": "00",
+            "main": {
+                "candidate_executable_bytes": 4,
+                "intervals": [{"start": 0x08000100, "end": 0x08000104, "kind": "thumb"}],
+                "methods": {
+                    "call_targets": {"candidate_executable_bytes": 0, "intervals": []},
+                    "asset_complement": {
+                        "candidate_executable_bytes": 4,
+                        "intervals": [{"start": 0x08000100, "end": 0x08000104, "kind": "asset_complement"}]
+                    }
+                }
+            },
+            "overlays": [overlay]
+        })
+    }
+
+    fn expected() -> ExpectedReport {
+        serde_json::from_value(json!({
+            "main": {"executable_bytes": 4, "intervals": [
+                {"start": 0x08000100, "end": 0x08000104, "kind": "thumb"}
+            ]},
+            "overlays": [{"id": "resource_001", "executable_bytes": 12, "intervals": [
+                {"start": 0x02000000, "end": 0x0200000c, "kind": "thumb"}
+            ]}]
+        }))
+        .unwrap()
+    }
+
+    #[test]
+    fn calibration_names_every_differing_range() {
+        let exact = candidate(json!({
+            "id": "resource_001", "executable_bytes": 12,
+            "intervals": [
+                {"start": 0x02000000, "end": 0x02000008, "kind": "veneer"},
+                {"start": 0x02000004, "end": 0x0200000c, "kind": "thumb"}
+            ]
+        }));
+        assert!(calibrate(&exact, &expected()).unwrap().exact);
+        let shifted = candidate(json!({
+            "id": "resource_001", "executable_bytes": 12,
+            "intervals": [{"start": 0x02000002, "end": 0x0200000e, "kind": "thumb"}]
+        }));
+        let result = calibrate(&shifted, &expected()).unwrap();
+        assert!(!result.exact);
+        assert_eq!((result.false_bytes, result.missed_bytes), (2, 2));
+        assert!(result.text.contains("[0x0200000c-0x0200000e(2)]"));
+        assert!(result.text.contains("[0x02000000-0x02000002(2)]"));
+        let mut extra = shifted.clone();
+        extra["overlays"] = json!([exact["overlays"][0], {"id": "resource_002", "executable_bytes": 2, "intervals": []}]);
+        assert!(!calibrate(&extra, &expected()).unwrap().exact);
+    }
+
+    #[test]
+    fn partition_keeps_the_most_specific_kind_without_overlap() {
+        let rows = json!([
+            {"start": 0, "end": 12, "kind": "thumb"},
+            {"start": 4, "end": 8, "kind": "literal_pool"},
+            {"start": 12, "end": 14, "kind": "executable_alignment"},
+            {"start": 12, "end": 20, "kind": "veneer"},
+            {"start": 24, "end": 26, "kind": "thumb"}
+        ]);
+        assert_eq!(
+            partition(&rows).unwrap(),
+            vec![
+                (0, 4, "thumb"),
+                (4, 8, "literal_pool"),
+                (8, 12, "thumb"),
+                (12, 20, "veneer"),
+                (24, 26, "thumb")
+            ]
+        );
+        assert!(partition(&json!([{"start": 0, "end": 2, "kind": "guess"}])).is_err());
+    }
+
+    fn overlay() -> serde_json::Value {
+        json!({
+            "id": "resource_001", "decoded_bytes": 16, "executable_bytes": 12,
+            "rom_start": 0x08100000, "rom_end": 0x08100010,
+            "intervals": [
+                {"start": 0x02000000, "end": 0x02000008, "kind": "veneer"},
+                {"start": 0x02000004, "end": 0x0200000c, "kind": "thumb"}
+            ]
+        })
+    }
+
+    #[test]
+    fn generated_inventory_is_what_scoring_validates() {
+        let root = tempfile::tempdir().unwrap();
+        let target = fully_buildable(crate::targets::target_for(
+            crate::targets::DecompTargetId::TlaEn,
+        ));
+        let (_, complete) = authoritative_fixture(
+            root.path(),
+            target,
+            &[(0x08000100, 0x08000104)],
+            json!([overlay()]),
+        );
+        let (main, overlays) =
+            crate::coverage::pipeline::validated_inventory(root.path(), &complete, target).unwrap();
+        assert_eq!(crate::coverage::model::bytes(&main), 4);
+        assert_eq!(crate::coverage::model::bytes(&overlays["resource_001"]), 12);
+        assert_eq!(complete["total_union_bytes"], 16);
+        assert_eq!(complete["overlays"][0]["intervals"][0]["kind"], "veneer");
+        let pending = pending_inventory(target, &json!("00"), json!({}), &["reason".into()]);
+        assert!(
+            crate::coverage::pipeline::validated_inventory(root.path(), &pending, target)
+                .unwrap_err()
+                .contains("withheld")
+        );
+    }
+
+    /// Every way an --inventory run can fail, including an audit that never
+    /// produces a candidate, leaves a pending inventory in place of an
+    /// earlier authoritative one before the error returns.
+    #[test]
+    fn a_failed_inventory_run_withdraws_an_authoritative_inventory() {
+        use super::verification::record_path;
+        let root = tempfile::tempdir().unwrap();
+        let target = fully_buildable(crate::targets::target_for(
+            crate::targets::DecompTargetId::TlaEn,
+        ));
+        let establish = || {
+            authoritative_fixture(
+                root.path(),
+                target,
+                &[(0x08000100, 0x08000104)],
+                json!([overlay()]),
+            )
+            .0
+        };
+        let authoritative = || {
+            crate::coverage::pipeline::authoritative_inventory(root.path(), target)
+                .unwrap()
+                .is_some()
+        };
+        let withdrawn = |error: &str| {
+            let path = root.path().join("out/tla-en/reports/executable.json");
+            let inventory: serde_json::Value =
+                serde_json::from_slice(&std::fs::read(path).unwrap()).unwrap();
+            assert_eq!(inventory["state"], "pending");
+            let reason = inventory["pending"][0].as_str().unwrap();
+            assert!(reason.contains(error), "{reason}");
+            assert!(!authoritative());
+        };
+
+        // The audit itself fails: this root's ROM is no ROM of the game.
+        establish();
+        assert!(authoritative());
+        let error = super::run(root.path(), &arguments("--target tla-en --inventory")).unwrap_err();
+        withdrawn(&error);
+
+        // Its arguments are invalid, whether the target is named or not.
+        for invalid in [
+            "--target tla-en --inventory --output x.json",
+            "--target tla-en --inventory --calibrate",
+            "--target tla-en --inventory --bogus",
+            "--target tla-en --inventory --data",
+            "--target tla-xx --inventory",
+            "--inventory --all",
+            "--inventory",
+        ] {
+            establish();
+            assert!(authoritative(), "{invalid}");
+            let error = super::run(root.path(), &arguments(invalid)).unwrap_err();
+            withdrawn(&error);
+        }
+        // An invalid run without --inventory leaves the inventory alone.
+        establish();
+        super::run(root.path(), &arguments("--target tla-en --bogus")).unwrap_err();
+        assert!(authoritative());
+
+        // The digest matches but the record's totals do not.
+        let document = establish();
+        assert!(authoritative());
+        let record = root.path().join(record_path(target));
+        let text = std::fs::read_to_string(&record).unwrap();
+        let mut totals: serde_json::Value = serde_json::from_str(&text).unwrap();
+        totals["verified"]["executable_bytes"] = json!(11);
+        totals["verified"]["excluded_bytes"] = json!(5);
+        std::fs::write(&record, totals.to_string()).unwrap();
+        let candidate = || Ok((document.clone(), String::new()));
+        let error = record_inventory(root.path(), target, candidate).unwrap_err();
+        assert!(error.contains("recorded totals"), "{error}");
+        withdrawn(&error);
+
+        // The verification record is malformed.
+        establish();
+        std::fs::write(&record, "{").unwrap();
+        let error = record_inventory(root.path(), target, candidate).unwrap_err();
+        withdrawn(&error);
+
+        // A run that completes writes the authoritative inventory again.
+        establish();
+        let summary = record_inventory(root.path(), target, candidate).unwrap();
+        assert!(summary.contains("state=audited executable=16"), "{summary}");
+        assert!(authoritative());
+    }
+
+    /// The main image needs the full build's proof, recomputed from its
+    /// artifacts: the flags of a hand-written report, or any artifact
+    /// changed after the build, prove nothing.
+    #[test]
+    fn main_complement_needs_a_byte_identical_full_rom_build() {
+        let root = tempfile::tempdir().unwrap();
+        let target = crate::targets::target_for(crate::targets::DecompTargetId::TbsEn);
+        let mut document = candidate(json!({}));
+        document["target"] = json!("tbs-en");
+        document["main"]["asset_manifest"] = json!("out/tbs-en/assets/manifest.json");
+        assert!(main_image_proof(root.path(), target, &document).is_err());
+        document["main"]["asset_manifest"] = json!("out/tbs-en/full/assets/manifest.json");
+        assert!(main_image_proof(root.path(), target, &document).is_err());
+        let rom = crate::coverage::proof::full_build_fixture(
+            root.path(),
+            target,
+            &json!({"regions": [{"address": 0x08000104, "size": 0x7f_fefc}]}),
+        );
+        document["rom_sha256"] = json!(rom);
+        main_image_proof(root.path(), target, &document).unwrap();
+        let unproven = |reason: &str| {
+            let error = main_image_proof(root.path(), target, &document).unwrap_err();
+            assert!(error.contains(reason), "{error}");
+        };
+        let path = |relative: &str| root.path().join(relative);
+        let report = std::fs::read(path("out/tbs-en/full/rebuilt.json")).unwrap();
+
+        // The report's flags, hand-written without the proof the build records.
+        std::fs::write(
+            path("out/tbs-en/full/rebuilt.json"),
+            r#"{"format":1,"target":"tbs-en","verification":"rom","byte_identical":true,"unowned_bytes":0,"rom_fallback_bytes":0}"#,
+        )
+        .unwrap();
+        unproven("records no main-image proof");
+        // A proof whose digests were copied, beside ROM fallback bytes.
+        let mut forged: serde_json::Value = serde_json::from_slice(&report).unwrap();
+        forged["rom_fallback_bytes"] = json!(8);
+        std::fs::write(path("out/tbs-en/full/rebuilt.json"), forged.to_string()).unwrap();
+        unproven("zero rom_fallback_bytes");
+        std::fs::write(path("out/tbs-en/full/rebuilt.json"), &report).unwrap();
+        main_image_proof(root.path(), target, &document).unwrap();
+
+        // A rebuilt ROM that differs from the one the build recorded, or
+        // that is missing.
+        std::fs::write(path("out/tbs-en/full/rebuilt.gba"), b"another ROM").unwrap();
+        unproven("is not the ROM the build recorded");
+        std::fs::remove_file(path("out/tbs-en/full/rebuilt.gba")).unwrap();
+        unproven("cannot read out/tbs-en/full/rebuilt.gba");
+        // A proof rewritten to name the rebuilt ROM, which is not the
+        // registered reference ROM.
+        std::fs::write(path("out/tbs-en/full/rebuilt.gba"), b"another ROM").unwrap();
+        let mut forged: serde_json::Value = serde_json::from_slice(&report).unwrap();
+        forged["main_image_proof"]["rom_sha256"] =
+            json!(crate::compiler::sha256::hex(b"another ROM"));
+        std::fs::write(path("out/tbs-en/full/rebuilt.json"), forged.to_string()).unwrap();
+        unproven("is not the reference ROM recon/tbs/private-inputs.json registers");
+        // Nor does a local ROM replaced by that one vouch for it.
+        let reference = std::fs::read(path("roms/tbs-en.gba")).unwrap();
+        std::fs::write(path("roms/tbs-en.gba"), b"another ROM").unwrap();
+        unproven("is not the reference ROM recon/tbs/private-inputs.json registers");
+        std::fs::write(path("out/tbs-en/full/rebuilt.json"), &report).unwrap();
+        std::fs::write(path("out/tbs-en/full/rebuilt.gba"), &reference).unwrap();
+        unproven("is not the local reference ROM roms/tbs-en.gba");
+        std::fs::write(path("roms/tbs-en.gba"), &reference).unwrap();
+        main_image_proof(root.path(), target, &document).unwrap();
+
+        // An asset manifest edited after the build, such as a partial one.
+        let manifest = std::fs::read(path("out/tbs-en/full/assets/manifest.json")).unwrap();
+        std::fs::write(
+            path("out/tbs-en/full/assets/manifest.json"),
+            r#"{"regions":[]}"#,
+        )
+        .unwrap();
+        unproven("is not the asset manifest the build recorded");
+        std::fs::write(path("out/tbs-en/full/assets/manifest.json"), &manifest).unwrap();
+
+        // An encoder, codec, machine definition, retained listing or
+        // registered reference changed after the build.
+        for input in [
+            "tools/alchemy/src/build_assets/packer.rs",
+            "tools/alchemy/src/build_assets.rs",
+            "tools/psynergy/src/assets/lz.rs",
+            "recon/tbs/machine.json",
+            "recon/tbs/assets.json",
+            "recon/tbs/raw/overlays/resource_001_overlay.s",
+            "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.JSON",
+        ] {
+            std::fs::create_dir_all(path(input).parent().unwrap()).unwrap();
+            std::fs::write(path(input), "changed").unwrap();
+            unproven("build inputs changed after the build");
+            std::fs::remove_file(path(input)).unwrap();
+            main_image_proof(root.path(), target, &document).unwrap();
+        }
+    }
+
+    /// A game without a supported full ROM build proves no main image,
+    /// whatever files claim one.
+    #[test]
+    fn an_unsupported_full_build_proves_no_main_image() {
+        let root = tempfile::tempdir().unwrap();
+        let lost_age = crate::targets::target_for(crate::targets::DecompTargetId::TlaEn);
+        assert_ne!(lost_age.build_support, crate::targets::BuildSupport::Full);
+        let mut document = candidate(json!({}));
+        document["main"]["asset_manifest"] = json!("out/tla-en/full/assets/manifest.json");
+        document["rom_sha256"] = json!(crate::coverage::proof::full_build_fixture(
+            root.path(),
+            fully_buildable(lost_age),
+            &json!({"regions": [{"address": 0x08000104, "size": 0xff_fefc}]}),
+        ));
+        main_image_proof(root.path(), fully_buildable(lost_age), &document).unwrap();
+        let error = main_image_proof(root.path(), lost_age, &document).unwrap_err();
+        assert!(error.contains("no supported full ROM build"), "{error}");
+    }
+
     #[test]
     fn asset_complement_splits_at_every_verified_region() {
         assert_eq!(
             difference_ranges(&[(0, 20)], &[(2, 4), (8, 12), (10, 16)]),
             vec![(0, 2), (4, 8), (16, 20)]
         );
-    }
-
-    #[test]
-    fn narrow_branch_target_recovers_an_instruction_after_a_literal_pool() {
-        let file = tempfile::NamedTempFile::new().unwrap();
-        std::fs::write(file.path(), ".syntax unified\n.thumb\nldr r0, [pc, #0]\nb.n .L_next\n.4byte 0xffffffff\n.L_next:\n.2byte 0x2800\nmovs r0, #1\nbx lr\n").unwrap();
-        let image = [
-            0x00, 0x48, 0x01, 0xe0, 0xff, 0xff, 0xff, 0xff, 0x00, 0x28, 0x01, 0x20, 0x70, 0x47,
-        ];
-        let spans = source_spans(file.path(), &image, "synthetic").unwrap();
-        assert_eq!(union_bytes(&spans), 14);
-    }
-
-    #[test]
-    fn fixed_veneer_can_enter_arm_iwram_code() {
-        let file = tempfile::NamedTempFile::new().unwrap();
-        std::fs::write(
-            file.path(),
-            ".syntax unified\n.thumb\n.4byte 0x47204c00\n.4byte 0x03000000\n",
-        )
-        .unwrap();
-        let image = [0x00, 0x4c, 0x20, 0x47, 0x00, 0x00, 0x00, 0x03];
-        let spans = source_spans(file.path(), &image, "synthetic").unwrap();
-        assert_eq!(union_bytes(&spans), 8);
-        assert_eq!(spans[0].kind, "veneer");
     }
 }

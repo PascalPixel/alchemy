@@ -601,7 +601,7 @@ fn sibling_edition_index(
         "tools/alchemy/src/text_catalog.rs".into(),
         "tools/psynergy/src/assets/huffman_archive.rs".into(),
         "tools/psynergy/src/assets/huffman_archive/reader.rs".into(),
-        format!("{}/recon/text.json", target.game_dir()),
+        format!("{}/text.json", target.recon_dir()),
     ] {
         inputs.insert(
             path.clone(),
@@ -632,15 +632,20 @@ pub(super) fn run(root: &Path, target: DecompTarget) -> Result<String, String> {
     if target.id != canonical_edition(target) {
         return sibling_edition_index(root, target, &rom);
     }
-    let game = target.game_dir();
-    let source_path = format!("{game}/SOURCE.JSON");
+    let recon = target.recon_dir();
+    let source_path = format!("{recon}/private-inputs.json");
     let source = read(root, &source_path)?;
     let hash = sha256::hex(rom.bytes());
     if source["reference_sha256"] != hash {
-        return Err("ROM does not match SOURCE.JSON checksum".into());
+        return Err("ROM does not match private-inputs.json checksum".into());
     }
     let inventory_path = format!("{}/reports/executable.json", target.output_dir);
-    let inventory = read(root, &inventory_path)?;
+    let inventory = crate::coverage::pipeline::authoritative_inventory(root, target)?
+        .ok_or_else(|| {
+            format!(
+                "{inventory_path} is absent, pending or not the independently verified automatic count; the ROM index places its executable image only from that count"
+            )
+        })?;
     let asset_path = [
         format!("{}/full/assets/manifest.json", target.output_dir),
         format!("{}/assets/manifest.json", target.output_dir),
@@ -769,8 +774,8 @@ pub(super) fn run(root: &Path, target: DecompTarget) -> Result<String, String> {
         inventory_path,
         asset_path,
         format!("{}/FIELD/COMMON/SCENE_TABLE.JSON", target.source_dir),
-        "games/THE BROKEN SEAL/SOURCE.JSON".into(),
-        format!("{game}/recon/translation-units.json"),
+        "recon/tbs/private-inputs.json".into(),
+        format!("{recon}/translation-units.json"),
         "tools/alchemy/src/build_assets.rs".into(),
         "tools/alchemy/src/coverage/audit/index.rs".into(),
         "tools/alchemy/src/build_assets/derive_index.rs".into(),

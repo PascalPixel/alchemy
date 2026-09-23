@@ -1,12 +1,25 @@
 use super::*;
-const META: &str = "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/UI.JSON";
-const SHEET: &str = "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/TILE_BANK.PNG";
+/// The tile bank a frame input names and the UI document of its game.
+fn metadata(input: &Value) -> Result<(String, String), String> {
+    let sheet = json_string(&input["source"], "UI frame sheet")?;
+    let directory = sheet
+        .strip_suffix("/GRAPHICS/COMMON/TILE_BANK.PNG")
+        .ok_or("UI frame sheet lies outside its game's common graphics")?;
+    Ok((
+        sheet.to_string(),
+        format!("{directory}/GRAPHICS/COMMON/UI.JSON"),
+    ))
+}
 pub(super) fn pixels(ctx: &Context, input: &Value, rom: &[u8]) -> Result<Vec<u8>, String> {
-    let doc = ctx.document(&ctx.root.join(META))?;
+    let (_, meta) = metadata(input)?;
+    let doc = ctx.document(&ctx.root.join(meta))?;
     let offsets = doc["offset_table"]["segments"][0]["values"]
         .as_array()
         .ok_or("UI offsets absent")?;
-    let recipes = ctx.document(&ctx.root.join(broken_seal().recipes))?;
+    let recipes = ctx.document(&root_path(
+        &ctx.root,
+        json_string(&doc["components"][1]["plan"], "UI stream plans")?,
+    )?)?;
     let plans = recipes
         .pointer(json_string(
             &doc["components"][1]["plan_section"],
@@ -48,12 +61,13 @@ pub(super) fn pixels(ctx: &Context, input: &Value, rom: &[u8]) -> Result<Vec<u8>
     Ok(pixels)
 }
 pub(super) fn check(ctx: &mut Context, index: &Value, input: &Value) -> Result<(), String> {
-    let doc = ctx.document(&ctx.root.join(META))?;
+    let (sheet, meta) = metadata(input)?;
+    let doc = ctx.document(&ctx.root.join(meta))?;
     let component = &doc["components"][1]["components"][0];
     if component["source"] != input["source"] || component["source_rect"] != input["source_rect"] {
         return Err("UI registry differs".into());
     }
-    let image = ctx.indexed(&ctx.root.join(SHEET))?;
+    let image = ctx.indexed(&ctx.root.join(sheet))?;
     let (w, h, pixels) = indexed_rect(&image, component)?;
     if w != address(&input["width"])?
         || h != address(&input["height"])?
@@ -73,4 +87,15 @@ pub(super) fn check(ctx: &mut Context, index: &Value, input: &Value) -> Result<(
         return Err("UI source bytes differ".into());
     }
     Ok(())
+}
+#[test]
+fn frame_inputs_read_their_own_games_document() {
+    for game in ["games/THE BROKEN SEAL/SRC", "games/THE LOST AGE/SRC"] {
+        let input = json!({"source": format!("{game}/GRAPHICS/COMMON/TILE_BANK.PNG")});
+        let (sheet, meta) = metadata(&input).unwrap();
+        assert_eq!(sheet, format!("{game}/GRAPHICS/COMMON/TILE_BANK.PNG"));
+        assert_eq!(meta, format!("{game}/GRAPHICS/COMMON/UI.JSON"));
+    }
+    let elsewhere = json!({"source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/TILE.PNG"});
+    assert!(metadata(&elsewhere).is_err());
 }

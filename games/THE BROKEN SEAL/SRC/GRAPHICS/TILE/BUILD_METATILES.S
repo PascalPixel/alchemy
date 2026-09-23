@@ -1,3 +1,11 @@
+@ Builds metatile entries from halfword command lists, decoding the commands
+@ 0xf007 to 0xf01b through two jump tables. It runs from a heap copy of
+@ exactly these 532 bytes. Kept as assembly without credit: it has the shape
+@ of GCC 2.96 ARM-mode output (each switch as cmp; ldrls pc,
+@ [pc, r3, lsl #2]; b default, halfword stores post-incremented by their
+@ size with the rest of the step as a separate add, lr saved with r5-sl while
+@ r4 stays free). The approved routes compile only Thumb. TLA's
+@ GRAPHICS/BUILD_METATILES.S holds the same ARM code, likewise uncredited.
 .syntax unified
 .text
 	.arm

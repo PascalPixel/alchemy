@@ -36,7 +36,7 @@ struct EffectKindObject {
 
 extern u32 Data_02000240[];
 
-/* Object table: 192 pointers at Data_03001ebc + 0x14 (object/table/get.c). */
+/* Object table: 192 pointers at Data_03001ebc + 0x14 (see ObjectTable_Get). */
 void *Func_08009048(void *, s32);
 void Object_SetMode(void *, s32);
 void WaitFrames(s32);

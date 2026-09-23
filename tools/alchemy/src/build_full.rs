@@ -1,10 +1,12 @@
 //! Compose the claimed C, retained assembly, and asset outputs into the full ROM.
 use crate::compiler::build_io::{argv, read, read_json, rooted, text, write};
 use crate::compiler::canonical_json::write_canonical;
-use crate::compiler::source_paths::{SourceOwner, SourcePaths, SHARED_SOURCE_ROOT};
+use crate::compiler::source_paths::{
+    source_paths_manifest, SourceOwner, SourcePaths, SHARED_SOURCE_ROOT,
+};
 use crate::compiler::translation_units::{AbsoluteSymbolKind, OwnerState, TranslationUnits};
 use crate::targets::{
-    parse_decomp_target, target_for, BuildSupport, DecompTargetId, DEFAULT_TARGET,
+    parse_decomp_target, target_for, BuildSupport, DecompTarget, DecompTargetId, DEFAULT_TARGET,
 };
 use serde_json::{json, Number, Value};
 use std::collections::{BTreeMap, BTreeSet};
@@ -88,6 +90,40 @@ impl Region {
 }
 pub fn repository_root() -> PathBuf {
     crate::compiler::routing::root().to_path_buf()
+}
+/// The game a full build composes: its owner register is the identity
+/// authority, and its translation units, retained overlay listings and
+/// overlay-assembly evidence live in its reconstruction scaffolding.
+#[derive(Clone, Copy)]
+struct Game {
+    target: DecompTarget,
+}
+impl Game {
+    fn of(target: DecompTarget) -> Self {
+        Self { target }
+    }
+    /// The build id units and registers name the game by: `tbs` or `tla`.
+    fn id(self) -> &'static str {
+        self.target.compiler.as_str()
+    }
+    fn identity_authority(self) -> Result<String, String> {
+        source_paths_manifest(self.id()).map(text)
+    }
+    fn translation_units(self) -> String {
+        format!("{}/translation-units.json", self.target.recon_dir())
+    }
+    fn overlay_assembly_evidence(self) -> String {
+        format!("{}/semantic/overlay-assembly.json", self.target.recon_dir())
+    }
+    fn overlay_listing(self, overlay: &str) -> String {
+        self.target.overlay_assembly(overlay)
+    }
+    fn register(self, root: &Path) -> Result<SourcePaths, String> {
+        SourcePaths::load_for_game(root, self.id())
+    }
+    fn units(self, root: &Path) -> Result<TranslationUnits, String> {
+        TranslationUnits::load_game(root, self.target.compiler)
+    }
 }
 fn default_jobs() -> usize {
     std::thread::available_parallelism()
@@ -413,9 +449,11 @@ struct RegisteredOwnerCoverage {
 }
 fn registered_owner_coverage(
     root: &Path,
+    game: Game,
     units: &TranslationUnits,
 ) -> Result<RegisteredOwnerCoverage, String> {
-    let registered = SourcePaths::load(root)?
+    let registered = game
+        .register(root)?
         .registered_owners()
         .collect::<BTreeSet<_>>();
     let mut declared = BTreeSet::new();
@@ -543,10 +581,11 @@ fn linked_functions<'a>(
     Ok(functions)
 }
 fn inventory_members(
+    game: Game,
     units: &TranslationUnits,
 ) -> Result<BTreeMap<SourceOwner, InventoryMember>, String> {
     let mut members = BTreeMap::new();
-    for unit in units.units.iter().filter(|unit| unit.game == "tbs") {
+    for unit in units.units.iter().filter(|unit| unit.game == game.id()) {
         let source = text(&unit.source);
         let mut insert = |image: &str, ordinal, address, role, state, alias: &str, extent| {
             let key = unit.source_owner(image, address)?;
@@ -610,10 +649,10 @@ fn inventory_members(
     }
     Ok(members)
 }
-fn source_group(source: &str) -> Option<String> {
+fn source_group(game: Game, source: &str) -> Option<String> {
     let source = Path::new(source);
     source
-        .strip_prefix("games/THE BROKEN SEAL/SRC")
+        .strip_prefix(game.target.source_dir)
         .or_else(|_| source.strip_prefix(SHARED_SOURCE_ROOT))
         .ok()?
         .parent()?
@@ -648,8 +687,11 @@ fn space_size(line: &str) -> Option<usize> {
     let radix = if value.starts_with("0x") { 16 } else { 10 };
     usize::from_str_radix(value.trim_start_matches("0x"), radix).ok()
 }
-fn overlay_placeholders(root: &Path) -> Result<BTreeMap<SourceOwner, Vec<(u64, usize)>>, String> {
-    let directory = root.join("games/THE BROKEN SEAL/raw/overlays");
+fn overlay_placeholders(
+    root: &Path,
+    game: Game,
+) -> Result<BTreeMap<SourceOwner, Vec<(u64, usize)>>, String> {
+    let directory = root.join(game.target.overlay_dir());
     let mut files = std::fs::read_dir(&directory)
         .map_err(|error| format!("{}: {error}", directory.display()))?
         .filter_map(Result::ok)
@@ -706,9 +748,11 @@ fn overlay_placeholders(root: &Path) -> Result<BTreeMap<SourceOwner, Vec<(u64, u
     }
     Ok(placeholders)
 }
-fn semantic_overlay_spans(root: &Path) -> Result<BTreeMap<SourceOwner, Vec<(u64, usize)>>, String> {
-    let document =
-        read_json::<Value>(&root.join("games/THE BROKEN SEAL/semantic/overlay-assembly.json"))?;
+fn semantic_overlay_spans(
+    root: &Path,
+    game: Game,
+) -> Result<BTreeMap<SourceOwner, Vec<(u64, usize)>>, String> {
+    let document = read_json::<Value>(&root.join(game.overlay_assembly_evidence()))?;
     if document["format"].as_u64() != Some(1) {
         return Err("overlay assembly evidence format differs".into());
     }
@@ -768,14 +812,15 @@ fn artifact(region: &Region) -> Value {
 }
 fn owner_inventory(
     root: &Path,
+    game: Game,
     claimed_document: &Value,
     claimed: &[Region],
     assembly: &[Region],
     units: &TranslationUnits,
 ) -> Result<Value, String> {
-    let paths = SourcePaths::load(root)?;
+    let paths = game.register(root)?;
     let registered = paths.registered_owners().collect::<BTreeSet<_>>();
-    let members = inventory_members(units)?;
+    let members = inventory_members(game, units)?;
     if let Some(owner) = members.keys().find(|owner| !registered.contains(owner)) {
         return Err(format!(
             "reconstruction unit names unregistered owner {}",
@@ -785,8 +830,8 @@ fn owner_inventory(
     let claimed_symbols = claimed_symbols(claimed)?;
     let functions = linked_functions(claimed_document, &claimed_symbols)?;
     let assembly_starts = region_starts(assembly, "assembly")?;
-    let placeholders = overlay_placeholders(root)?;
-    let semantic = semantic_overlay_spans(root)?;
+    let placeholders = overlay_placeholders(root, game)?;
+    let semantic = semantic_overlay_spans(root, game)?;
     reject_overlay_evidence_overlap(&placeholders, &semantic)?;
     let mut owners = Vec::new();
     let mut groups = BTreeMap::<String, usize>::new();
@@ -893,8 +938,7 @@ fn owner_inventory(
                         owner.id()
                     ));
                 }
-                let overlay =
-                    format!("games/THE BROKEN SEAL/raw/overlays/resource_{resource:03x}_overlay.s");
+                let overlay = game.overlay_listing(&format!("resource_{resource:03x}"));
                 let artifact = if exact || declared {
                     json!({"source":overlay,"composition":if exact{"overlay-placeholder"}else{"structured-overlay-assembly"},"overlapping_retained_evidence":semantic.get(owner).map(|spans|span_values(spans))})
                 } else {
@@ -922,18 +966,18 @@ fn owner_inventory(
             known_extents += 1;
         }
         *states.entry(state.into()).or_default() += 1;
-        if let Some(group) = source_group(&source) {
+        if let Some(group) = source_group(game, &source) {
             *groups.entry(group).or_default() += 1;
         }
         owners.push(json!({
             "id":owner.id(),"name":paths.registered_name(*owner),"address":hex(u64::from(owner.address())),
             "container":if owner.is_main(){json!({"kind":"main-rom","overlay":Value::Null})}else{json!({"kind":"overlay-image","overlay":owner.overlay_id()})},
             "registration":{"source_path":registered_source,"call_via":paths.registered_call_via(*owner).map(|value| hex(u64::from(value)))},
-            "reconstruction_unit":unit,"production":{"state":state,"source":source,"source_group":source_group(&source),"extent_bytes":if spans.is_empty(){Value::Null}else{number(extent)},"extent_evidence":extent_evidence,"segments":span_values(&spans),"artifact":artifact_value},
+            "reconstruction_unit":unit,"production":{"state":state,"source":source,"source_group":source_group(game, &source),"extent_bytes":if spans.is_empty(){Value::Null}else{number(extent)},"extent_evidence":extent_evidence,"segments":span_values(&spans),"artifact":artifact_value},
             "original_translation_unit":{"status":"unknown"},"role":role,"alias":alias
         }));
     }
-    let units = units.units.iter().filter(|unit| unit.game == "tbs").map(|unit| {
+    let units = units.units.iter().filter(|unit| unit.game == game.id()).map(|unit| {
         let members = unit.owners.iter().enumerate().map(|(ordinal, member)| json!({"owner":unit.source_owner(unit.image(), member.address).unwrap().id(),"role":"owner","ordinal":ordinal,"alias":member.canonical_name,"extent":member.extent,"declared_state":owner_state(member.state)})).chain(unit.local_symbols.iter().enumerate().map(|(ordinal, member)| json!({"owner":unit.source_owner(unit.image(), member.address).unwrap().id(),"role":"local-symbol","ordinal":ordinal,"alias":member.canonical_name,"extent":member.extent,"declared_state":Value::Null}))).collect::<Vec<_>>();
         let absolute_symbols = unit.absolute_symbols.iter().map(|(name, symbol)| json!({"name":name,"address":hex(symbol.address),"kind":absolute_kind(symbol.kind)})).collect::<Vec<_>>();
         let instances = unit.instances.keys().map(|image| {
@@ -943,29 +987,34 @@ fn owner_inventory(
         json!({"id":unit.id,"game":unit.game,"source":unit.source,"compiler_route":unit.compiler_route,"container":if unit.overlay.is_none(){json!({"kind":"main-rom","overlay":Value::Null})}else{json!({"kind":"overlay-image","overlay":unit.overlay})},"original_translation_unit":{"status":"unknown"},"production_composition_sections":unit.composition_sections(),"absolute_symbols":absolute_symbols,"members":members,"instances":instances})
     }).collect::<Vec<_>>();
     let auxiliary_regions = assembly.iter().filter(|region| !registered.contains(&SourceOwner::Main(region.address as u32))).map(|region| json!({"role":"non-owner-region","container":{"kind":"main-rom"},"address":hex(region.address),"run_address":region.run_address.map(hex),"extent":region.size,"source":region.source,"kind":region.kind,"origin":region.origin,"retention":region.retention,"confidence":region.confidence,"evidence":region.evidence})).collect::<Vec<_>>();
+    let evidence = game.overlay_assembly_evidence();
     let auxiliary_overlay_regions = semantic
         .iter()
         .filter(|(owner, _)| !registered.contains(owner))
         .flat_map(|(owner, spans)| {
-            spans.iter().map(|(start, size)| {
-                json!({"role":"unregistered-retained-region","container":{"kind":"overlay-image","overlay":owner.overlay_id()},"address":hex(*start),"extent":size,"source":format!("games/THE BROKEN SEAL/raw/overlays/{}_overlay.s",owner.overlay_id().unwrap_or_default()),"retention":"keep_structured_asm","evidence":"games/THE BROKEN SEAL/semantic/overlay-assembly.json"})
+            let source = game.overlay_listing(&owner.overlay_id().unwrap_or_default());
+            let evidence = evidence.clone();
+            spans.iter().map(move |(start, size)| {
+                json!({"role":"unregistered-retained-region","container":{"kind":"overlay-image","overlay":owner.overlay_id()},"address":hex(*start),"extent":size,"source":source,"retention":"keep_structured_asm","evidence":evidence})
             })
         })
         .collect::<Vec<_>>();
+    let full = defaults(game.target.id);
     Ok(json!({
-        "format":1,"kind":"tbs-production-owner-inventory","scope":"derived production/retention inventory; source-paths is the sole name authority and no original translation-unit boundary is asserted",
-        "target":"tbs-en","identity_authority":"games/THE BROKEN SEAL/source-paths.json","inputs":{"translation_units":"games/THE BROKEN SEAL/recon/translation-units.json","claimed_manifest":"out/tbs-en/full/claimed/manifest.json","asm_manifest":"out/tbs-en/full/asm/manifest.json","overlay_sources":"games/THE BROKEN SEAL/raw/overlays/resource_*_overlay.s","overlay_assembly_evidence":"games/THE BROKEN SEAL/semantic/overlay-assembly.json"},
+        "format":1,"kind":format!("{}-production-owner-inventory", game.id()),"scope":"derived production/retention inventory; source-paths is the sole name authority and no original translation-unit boundary is asserted",
+        "target":game.target.id.as_str(),"identity_authority":game.identity_authority()?,"inputs":{"translation_units":game.translation_units(),"claimed_manifest":format!("{}/manifest.json", full.claimed_output),"asm_manifest":format!("{}/manifest.json", full.asm_output),"overlay_sources":game.overlay_listing("resource_*"),"overlay_assembly_evidence":evidence},
         "summary":{"registered":registered.len(),"main":registered.iter().filter(|owner| owner.is_main()).count(),"overlay":registered.iter().filter(|owner| !owner.is_main()).count(),"known_production_extents":known_extents,"unknown_original_translation_units":registered.len(),"complete_registered_identity_coverage":true,"states":states,"current_source_groups":groups},
         "reconstruction_units":units,"owners":owners,"auxiliary_main_assembly_regions":auxiliary_regions,"auxiliary_overlay_structured_assembly_regions":auxiliary_overlay_regions
     }))
 }
 fn validate_translation_units(
     root: &Path,
+    game: Game,
     document: &Value,
     claimed: &[Region],
     assembly: &[Region],
 ) -> Result<(usize, RegisteredOwnerCoverage), String> {
-    let units = TranslationUnits::load(root)?;
+    let units = game.units(root)?;
     let verification = document["verification"]
         .as_str()
         .ok_or("claimed manifest lacks byte-verification mode")?;
@@ -975,7 +1024,7 @@ fn validate_translation_units(
     let main = units
         .units
         .iter()
-        .filter(|unit| unit.game == "tbs")
+        .filter(|unit| unit.game == game.id())
         .map(crate::compiler::translation_units::TranslationUnit::main_placement)
         .collect::<Result<Vec<_>, _>>()?
         .into_iter()
@@ -1068,11 +1117,11 @@ fn validate_translation_units(
         .as_str()
         .ok_or("claimed manifest lacks main symbol exports")?;
     if std::fs::read(rooted(root, exports)).map_err(|error| format!("{exports}: {error}"))?
-        != SourcePaths::load(root)?.main_symbol_exports().as_bytes()
+        != game.register(root)?.main_symbol_exports().as_bytes()
     {
         return Err("claimed main symbol exports differ from the owner register".into());
     }
-    Ok((main.len(), registered_owner_coverage(root, &units)?))
+    Ok((main.len(), registered_owner_coverage(root, game, &units)?))
 }
 pub fn reconstruction_progress(
     rom_size: usize,
@@ -1205,8 +1254,22 @@ fn place_regions(
     }
     Ok(())
 }
+/// Builds the full ROM. The target's earlier full-build proof is withdrawn
+/// before anything runs and again when the build fails, so only a build
+/// that has just succeeded leaves one.
 pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, String> {
     let target = target_for(options.target);
+    crate::coverage::proof::withdraw_full_build(root, target)?;
+    build_stages(root, cwd, options).or_else(|error| {
+        crate::coverage::proof::withdraw_full_build(root, target).map_err(|failure| {
+            format!("{error}\nthe earlier full-build proof was not withdrawn: {failure}")
+        })?;
+        Err(error)
+    })
+}
+fn build_stages(root: &Path, cwd: &Path, options: &Options) -> Result<String, String> {
+    let target = target_for(options.target);
+    let game = Game::of(target);
     let progress_inputs = crate::coverage::proof::identity(root, target.id.as_str())?;
     if target.build_support != BuildSupport::Full {
         return Err(format!("{} is compile-only; run `make {}` until its edition link map, assembly, and assets are reconstructed", target.id, target.id));
@@ -1265,6 +1328,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
     if asm_dir.exists() && has_assembly_sources(&asm_dir)? {
         let output = rooted(root, &options.asm_output);
         let mut command = stage_command("asm")?;
+        command.extend(["--target".into(), target.id.to_string()]);
         if options.source_only {
             command.push("--source-only".into());
         } else {
@@ -1284,8 +1348,13 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
             "assembly",
         )?;
     }
-    let (translation_units, owner_coverage) =
-        validate_translation_units(root, &claimed_document, &claimed_regions, &asm_regions)?;
+    let (translation_units, owner_coverage) = validate_translation_units(
+        root,
+        game,
+        &claimed_document,
+        &claimed_regions,
+        &asm_regions,
+    )?;
     let main_symbol_exports = claimed_document["main_symbol_exports"]
         .as_str()
         .ok_or("claimed manifest lacks main symbol exports")?;
@@ -1295,6 +1364,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
     if asset_manifest.exists() {
         let output = rooted(root, &options.asset_output);
         let mut command = stage_command("assets")?;
+        command.extend(["--target".into(), target.id.to_string()]);
         if options.source_only {
             command.push("--source-only".into());
         } else {
@@ -1355,10 +1425,11 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
     let inventory_path = sidecar_path(&output, "owner-inventory.json")?;
     let inventory = owner_inventory(
         root,
+        game,
         &claimed_document,
         &claimed_regions,
         &asm_regions,
-        &TranslationUnits::load(root)?,
+        &game.units(root)?,
     )?;
     let inventory_summary = inventory["summary"].clone();
     write_canonical(&inventory_path, &inventory)?;
@@ -1378,6 +1449,28 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
     if let Some(bytes) = &rebuilt {
         write(&output, bytes)?;
     }
+    // Coverage's readers use the canonical stage locations. A custom build
+    // must not certify unrelated manifests left in those locations, so only
+    // a canonical build proves the main image or earns a receipt.
+    let defaults = defaults(target.id);
+    let canonical = [
+        (&options.claimed_output, &defaults.claimed_output),
+        (&options.asm_output, &defaults.asm_output),
+        (&options.asset_manifest, &defaults.asset_manifest),
+        (&options.asset_output, &defaults.asset_output),
+        (&options.output, &defaults.output),
+    ]
+    .into_iter()
+    .all(|(chosen, default)| rooted(root, chosen) == rooted(root, default));
+    let main_image_proof = match rom.as_ref().filter(|_| canonical) {
+        Some(rom) => json!(crate::coverage::proof::full_build_proof(
+            root,
+            target,
+            &progress_inputs,
+            rom
+        )?),
+        None => Value::Null,
+    };
     let report = json!({
         "format":1,
         "target":target.id.to_string(),
@@ -1389,7 +1482,7 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
         "translation_units":translation_units,
         "declared_main_translation_units_strict":true,
         "registered_owner_coverage":{
-            "authority":"games/THE BROKEN SEAL/source-paths.json",
+            "authority":game.identity_authority()?,
             "scope":"registered-owner lower bound; does not assert original translation-unit boundaries",
             "registered":owner_coverage.registered,
             "registered_main":owner_coverage.registered_main,
@@ -1441,28 +1534,36 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<String, Strin
         },
         "byte_identical":!options.source_only,
         "output":if options.source_only { Value::Null } else { json!(options.output) },
+        "main_image_proof":main_image_proof,
     });
     write_canonical(&sidecar_path(&output, "json")?, &report)?;
-    // Coverage's source readers use the canonical stage locations. A custom
-    // build must not certify unrelated manifests left in those locations.
-    let defaults = defaults(target.id);
-    let canonical_progress = rooted(root, &options.claimed_output)
-        == rooted(root, &defaults.claimed_output)
-        && rooted(root, &options.asm_output) == rooted(root, &defaults.asm_output)
-        && rooted(root, &options.output) == rooted(root, &defaults.output);
-    if let Some(rom) = rom.as_ref().filter(|_| canonical_progress) {
-        let tree = crate::coverage::tree::work_tree_at(root.to_path_buf());
-        let credits = crate::coverage::pipeline::verified_credits(
-            &crate::coverage::pipeline::BuildOptions {
-                target: target.id.to_string(),
-                exact: &tree,
-                recon: None,
-            },
-        )?;
-        crate::coverage::proof::write(root, target.id.as_str(), rom, &progress_inputs, credits)?;
+    // The receipt needs the independently verified executable inventory,
+    // and `--inventory` needs this build's proof: while the inventory is
+    // absent or pending, only the receipt is withheld.
+    let mut receipt = "";
+    if let Some(rom) = rom.as_ref().filter(|_| canonical) {
+        if crate::coverage::pipeline::authoritative_inventory(root, target)?.is_some() {
+            let tree = crate::coverage::tree::work_tree_at(root.to_path_buf());
+            let credits = crate::coverage::pipeline::verified_credits(
+                &crate::coverage::pipeline::BuildOptions {
+                    target: target.id.to_string(),
+                    exact: &tree,
+                    recon: None,
+                },
+            )?;
+            crate::coverage::proof::write(
+                root,
+                target.id.as_str(),
+                rom,
+                &progress_inputs,
+                credits,
+            )?;
+        } else {
+            receipt = " receipt=withheld (executable audit pending)";
+        }
     }
     Ok(format!(
-        "{} regions={} code={} asm={} assets={} source_bytes={} unowned_bytes={} asm_c_debt_bytes={} asm_retained_structural_bytes={} source_owned={} byte_identical={}{}",
+        "{} regions={} code={} asm={} assets={} source_bytes={} unowned_bytes={} asm_c_debt_bytes={} asm_retained_structural_bytes={} source_owned={} byte_identical={}{}{receipt}",
         if options.source_only { "source_only=True" } else { "identical=True" },
         claimed_regions.len() + asm_regions.len() + asset_regions.len(),
         claimed_regions.len(),
@@ -1506,11 +1607,49 @@ mod tests {
     use super::*;
 
     #[test]
+    fn each_game_composes_from_its_own_registers_and_listings() {
+        let tbs = Game::of(target_for(DecompTargetId::TbsEn));
+        let tla = Game::of(target_for(DecompTargetId::TlaEn));
+        for (game, id, recon, source) in [
+            (tbs, "tbs", "recon/tbs", "games/THE BROKEN SEAL/SRC"),
+            (tla, "tla", "recon/tla", "games/THE LOST AGE/SRC"),
+        ] {
+            assert_eq!(game.id(), id);
+            assert_eq!(
+                game.identity_authority().unwrap(),
+                format!("{recon}/source-paths.json")
+            );
+            assert_eq!(
+                game.translation_units(),
+                format!("{recon}/translation-units.json")
+            );
+            assert_eq!(
+                game.overlay_assembly_evidence(),
+                format!("{recon}/semantic/overlay-assembly.json")
+            );
+            assert_eq!(
+                game.overlay_listing("resource_649"),
+                format!("{recon}/raw/overlays/resource_649_overlay.s")
+            );
+            assert_eq!(
+                source_group(game, &format!("{source}/GRAPHICS/TILE/DRAW_MAP.S")).as_deref(),
+                Some("GRAPHICS/TILE")
+            );
+        }
+        // One game's tree is not another's source group.
+        assert_eq!(
+            source_group(tla, "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/DRAW_MAP.S"),
+            None
+        );
+    }
+
+    #[test]
     fn owner_inventory_reports_unit_and_instance_for_every_member() {
         use crate::compiler::translation_units::fixture::{Repository, FIND, REDRAW};
         let repository = Repository::new();
         let units = repository.load().unwrap();
-        let members = inventory_members(&units).unwrap();
+        let game = Game::of(target_for(DEFAULT_TARGET));
+        let members = inventory_members(game, &units).unwrap();
         assert_eq!(members.len(), 6);
         let member = |id: &str| &members[&SourceOwner::parse(id).unwrap()];
         for (id, instance, ordinal, alias, extent) in [
@@ -1542,6 +1681,38 @@ mod tests {
                 "{id}"
             );
             assert_eq!(member.state, Some("exact-c"), "{id}");
+        }
+    }
+    /// A full build withdraws the proof an earlier build left before it runs
+    /// and again when it fails, so a failed build never leaves that proof
+    /// standing, nor does a build of a game without a supported full build.
+    #[test]
+    fn a_failed_full_build_leaves_no_earlier_proof() {
+        use crate::coverage::proof::{full_build, full_build_fixture, fully_buildable};
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        let target = target_for(DecompTargetId::TbsEn);
+        full_build_fixture(root, target, &json!({"regions": []}));
+        assert!(full_build(root, target).is_ok());
+        let options = Options {
+            rom: "roms/absent.gba".into(),
+            ..defaults(target.id)
+        };
+        let error = build(root, root, &options).unwrap_err();
+        assert!(error.contains("absent.gba"), "{error}");
+        let reason = full_build(root, target).map(|_| ()).unwrap_err();
+        assert!(
+            reason.contains("cannot read out/tbs-en/full/rebuilt.json"),
+            "{reason}"
+        );
+        assert!(!root.join("out/tbs-en/full/rebuilt.gba").exists());
+
+        let lost_age = target_for(DecompTargetId::TlaEn);
+        full_build_fixture(root, fully_buildable(lost_age), &json!({"regions": []}));
+        let error = build(root, root, &defaults(lost_age.id)).unwrap_err();
+        assert!(error.contains("compile-only"), "{error}");
+        for artifact in ["rebuilt.json", "rebuilt.gba"] {
+            assert!(!root.join("out/tla-en/full").join(artifact).exists());
         }
     }
     #[test]

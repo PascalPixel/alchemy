@@ -24,7 +24,7 @@ struct Region {
 }
 
 /// The edition whose ROM a game's retained overlay assembly reproduces: the
-/// one its `recon/assets.json` addresses. Other editions are compiled
+/// one its `recon/<game>/assets.json` addresses. Other editions are compiled
 /// against it, never adopted from it.
 pub fn production_target(game: CompilerTarget) -> DecompTarget {
     target_for(match game {
@@ -47,9 +47,9 @@ pub fn assembly_target(path: &Path) -> DecompTarget {
         .unwrap_or_else(|| target_for(DEFAULT_TARGET))
 }
 
-/// `games/<GAME>/semantic/regions.json`.
+/// `recon/<game>/semantic/regions.json`.
 pub fn register_path(root: &Path, target: DecompTarget) -> PathBuf {
-    root.join(target.game_dir()).join("semantic/regions.json")
+    root.join(target.recon_dir()).join("semantic/regions.json")
 }
 
 /// Every reviewed complete owner of the target's game with its extent.
@@ -95,7 +95,7 @@ mod tests {
         assert_eq!(tla.id, DecompTargetId::TlaEn);
         assert_eq!(
             register_path(Path::new("r"), tla),
-            Path::new("r/games/THE LOST AGE/semantic/regions.json")
+            Path::new("r/recon/tla/semantic/regions.json")
         );
         let repository = Path::new("/repo");
         assert_eq!(

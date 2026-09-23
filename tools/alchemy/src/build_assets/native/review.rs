@@ -1,5 +1,5 @@
 use super::*;
-use sha2::Sha256;
+use sha2::{Digest, Sha256};
 
 const REVIEW: &str = "games/THE BROKEN SEAL/SRC/GRAPHICS/REVIEW.JSON";
 
@@ -187,7 +187,7 @@ pub(crate) fn export(root: &Path, output: &Path, update_baseline: bool) -> Resul
             return Err("review filename must be a flat PNG name".into());
         }
         if !names.insert(name) {
-            return Err("duplicate review filename".into());
+            return Err(format!("duplicate review filename {name}"));
         }
         digest_image(
             &mut digest,
@@ -253,7 +253,7 @@ fn review_output(root: &Path, output: &Path) -> Result<PathBuf, String> {
     ignored_output_path(root, output, "review images")
 }
 
-/// Review images of every field map a game's SOURCE.JSON scenes load: one
+/// Review images of every field map a game's private-inputs.json scenes load: one
 /// composite per container and one image per BG layer, all 8-bit indexed over
 /// the scene's fourteen loaded palettes (`palette * 16 + color`).
 pub(crate) fn export_field(

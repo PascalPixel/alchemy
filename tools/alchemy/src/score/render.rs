@@ -385,8 +385,7 @@ fn topology_for_owner(
         return Comparison::Uncovered("candidate-gas-unavailable".into());
     };
     let reference = root
-        .join("games")
-        .join(options.target.directory())
+        .join(options.target.recon())
         .join("raw")
         .join(format!("{stem}.s"));
     let candidate_symbol = format!("Func_{stem}");
@@ -551,8 +550,7 @@ fn render_asm(
     let started = Instant::now();
     let stem = identity.stem();
     let reference = root
-        .join("games")
-        .join(options.target.directory())
+        .join(options.target.recon())
         .join("raw")
         .join(format!("{stem}.s"));
     let patch = read_patch(options.patch.as_deref())?;
@@ -812,7 +810,7 @@ mod cache_key_tests {
                 b"bundle-a",
             ),
             key(
-                "games/THE BROKEN SEAL/recon/en/main/08000000.c",
+                "recon/tbs/en/main/08000000.c",
                 "08000000",
                 &routed,
                 b"host-a",
@@ -974,6 +972,7 @@ mod source_identity_tests {
     fn scratch_root() -> tempfile::TempDir {
         let root = tempfile::tempdir().unwrap();
         fs::create_dir_all(root.path().join("games/THE BROKEN SEAL")).unwrap();
+        fs::create_dir_all(root.path().join("recon/tbs")).unwrap();
         root
     }
 
@@ -982,7 +981,7 @@ mod source_identity_tests {
         let directory = scratch_root();
         let root = directory.path();
         fs::write(
-            root.join("games/THE BROKEN SEAL/source-paths.json"),
+            root.join("recon/tbs/source-paths.json"),
             r#"{"format":3,"owners":{"main:080b0fa4":"battle/inventory/draw_paged_item_list.c"}}"#,
         )
         .unwrap();
@@ -999,7 +998,7 @@ mod source_identity_tests {
             identity.routing,
             PathBuf::from("games/THE BROKEN SEAL/SRC/080b0fa4.c")
         );
-        let source = "games/THE BROKEN SEAL/recon/en/main/080ab5e4.c";
+        let source = "recon/tbs/en/main/080ab5e4.c";
         let identity =
             SourceIdentity::resolve(root, source, CompilerTarget::Tbs, None, None).unwrap();
         assert_eq!(identity.owner, SourceOwner::Main(0x080ab5e4));
@@ -1025,7 +1024,7 @@ mod source_identity_tests {
         let signature = |route| {
             source_input_signature(root, "candidate.c", route, CompilerTarget::Tbs).unwrap()
         };
-        let register = root.join("games/THE BROKEN SEAL/source-paths.json");
+        let register = root.join("recon/tbs/source-paths.json");
         fs::write(&register, r#"{"format":3,"owners":{"main:08001234":{"name":"Scene_Run"},"resource_380:02000100":{"name":"Scene_Run"}}}"#).unwrap();
         let main = signature("games/THE BROKEN SEAL/SRC/08001234.c");
         let overlay = signature("games/THE BROKEN SEAL/SRC/resource_380_c_02000100.c");

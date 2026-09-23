@@ -96,6 +96,13 @@ impl CompilerTarget {
     pub fn directory(self) -> &'static str {
         game_directory(self.as_str())
     }
+    /// This game's reconstruction scaffolding, `recon/tbs` or `recon/tla`.
+    pub fn recon(self) -> &'static str {
+        match self {
+            CompilerTarget::Tbs => "recon/tbs",
+            CompilerTarget::Tla => "recon/tla",
+        }
+    }
     pub fn as_str(self) -> &'static str {
         match self {
             CompilerTarget::Tbs => "tbs",
@@ -110,6 +117,11 @@ pub fn game_directory(game: &str) -> &str {
         "tla" => "THE LOST AGE",
         _ => game,
     }
+}
+/// `games/<GAME>` holds only the Camelot-shaped tree; drafts, retained
+/// listings, registries and metrics live under `recon/<build id>`.
+pub fn recon_directory(game: &str) -> String {
+    format!("recon/{game}")
 }
 /// The compiler family a source belongs to. Membership is provenance (which
 /// compiler and library built the bytes), never a per-function tuning.

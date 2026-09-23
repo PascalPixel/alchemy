@@ -1,6 +1,10 @@
-@ 検出済み関数の再構築サム逆アセンブル。ROM作成時の
-@ コンパイラは自由配布ツールで再現不能なため、アセンブリなしのC一致は
-@ 未達。build_asm.tsでROMとの一致を確認する。
+@ Sets a channel's two output volume bytes from its velocity and pan and the
+@ track's two volumes, clamped to 255. Its inputs arrive in r4 (the channel)
+@ and r5 (the track), not in argument registers, and it uses r5 without saving
+@ it; code from either approved compiler takes arguments in r0-r3 and saves
+@ any callee-saved register it touches. MusicTrack_HandleNote and the driver
+@ update call it. Every TBS and TLA edition has these bytes.
+@ credit: library — TBS/TLA common sound driver stereo-volume helper
 .syntax unified
 	.thumb
 	.global Func_080f9f3c

@@ -28,7 +28,10 @@ const DOCUMENT_EXTENSIONS: &[&str] = &[
 const OWNED_DOCUMENTS: &[&str] = &["README.md", "AGENTS.md"];
 /// Code a game without an asset manifest may track under its asset roots.
 const MANIFESTLESS_EXTENSIONS: &[&str] = &["c", "h", "inc", "gitkeep"];
-/// Tooling metadata under `games/<game>/`; every other directory is an asset root.
+/// Tooling metadata areas the former layout kept under `games/<game>/`; every
+/// other directory there is an asset root. Reconstruction metadata now lives
+/// under `recon/<id>/`, outside the game tree; these names still classify
+/// outgoing history written before that move.
 const METADATA_DIRECTORIES: &[&str] = &["metrics", "preview", "recon", "semantic"];
 /// Structured tables the asset build reads, where long numeric arrays are data.
 const DATA_TABLE_EXTENSIONS: &[&str] = &["json", "tsv"];
@@ -56,7 +59,7 @@ const PNG_SCANLINES_MAX: usize = 1 << 26;
 const ENCODED_RUN_MIN: usize = 16;
 /// Encoded characters one text may hold; the tracked tree peaks near 32.
 const ENCODED_CHARACTERS_MAX: usize = 128;
-/// Digest-sized hex runs one text may hold; SOURCE.JSON carries about 3,400.
+/// Digest-sized hex runs one text may hold; private-inputs.json carries about 3,400.
 const DIGEST_RUNS_MAX: usize = 16_384;
 /// Consecutive integer literals that form an array rather than an expression.
 const NUMERIC_RUN_MIN: usize = 16;
@@ -1076,7 +1079,7 @@ fn publication_data_reason_with_legacy(
 fn blocked_include(literal: &str, bytes: bool) -> bool {
     let literal = literal.replace('\\', "/");
     literal.split('/').any(|component| {
-        listed(component, &["out", "roms"]) || (bytes && component.eq_ignore_ascii_case("games"))
+        listed(component, &["out", "roms"]) || (bytes && listed(component, &["games", "recon"]))
     }) || listed(extension(&literal), PRESENTATION_EXTENSIONS)
         || listed(extension(&literal), BLOCKED_EXTENSIONS)
 }
@@ -1282,12 +1285,17 @@ fn publication_data_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Opti
         .or_else(|| attributes_reason(path, text))
         .or_else(|| runtime_definition_reason(path, text))
 }
-/// Games whose asset manifest is tracked in the inspected tree.
+/// Games whose asset manifest is tracked in the inspected tree, named by
+/// their `games/` directory: `recon/<id>/assets.json`, or the former
+/// `games/<game>/recon/assets.json` that outgoing history may still hold.
 fn manifest_games<'a>(paths: impl IntoIterator<Item = &'a str>) -> Vec<String> {
     paths
         .into_iter()
         .filter_map(
             |path| match path.split('/').collect::<Vec<_>>().as_slice() {
+                ["recon", id, "assets.json"] => {
+                    Some(crate::compiler::routing::game_directory(id).to_string())
+                }
                 ["games", game, "recon", "assets.json"] => Some(game.to_string()),
                 _ => None,
             },
@@ -1296,12 +1304,18 @@ fn manifest_games<'a>(paths: impl IntoIterator<Item = &'a str>) -> Vec<String> {
 }
 /// The game whose asset roots hold `path`: every directory under
 /// `games/<game>/` except tooling metadata, with `asm/overlays` holding
-/// overlay streams, all matched without regard to case.
+/// overlay streams, all matched without regard to case. Retained listings
+/// and the data packages the asset build reads beside them stay an asset
+/// root of their game under `recon/<id>/raw`.
 fn asset_game(path: &str) -> Option<&str> {
     let components: Vec<_> = path.split('/').collect();
     let [top, game, area, rest @ ..] = components.as_slice() else {
         return None;
     };
+    if top.eq_ignore_ascii_case("recon") {
+        return (area.eq_ignore_ascii_case("raw") && !rest.is_empty())
+            .then(|| crate::compiler::routing::game_directory(*game));
+    }
     if !top.eq_ignore_ascii_case("games") || rest.is_empty() {
         return None;
     }
@@ -1333,10 +1347,12 @@ fn manifestless_reason(path: &str, manifests: &[String]) -> Option<&'static str>
         return Some(reason);
     }
     let game = asset_game(path)?;
-    let manifested = path.starts_with("games/") && manifests.iter().any(|known| known == game);
+    // A manifest covers only the exact spelling of the tree it was read from.
+    let manifested = (path.starts_with("games/") || path.starts_with("recon/"))
+        && manifests.iter().any(|known| known == game);
     let code = listed(extension(path), MANIFESTLESS_EXTENSIONS);
     (!code && !manifested)
-        .then_some("game material without a consuming asset manifest (recon/assets.json)")
+        .then_some("game material without a consuming asset manifest (recon/<game>/assets.json)")
 }
 fn byte_dump(message: &str) -> bool {
     let bytes = message.as_bytes();
@@ -2582,13 +2598,13 @@ fn text_fixtures() -> Vec<Fixture> {
         (".gitattributes", attributes, true, Some("filter attribute")),
         (".gitattributes", b"*.TOKENS binary\n".to_vec(), true, None),
         (
-            "games/THE BROKEN SEAL/recon/en/main/0800ebec.c.bak",
+            "recon/tbs/en/main/0800ebec.c.bak",
             b"int x;\n".to_vec(),
             true,
             Some("backup"),
         ),
         (
-            "games/THE LOST AGE/raw/overlays/.gitkeep",
+            "recon/tla/raw/overlays/.gitkeep",
             Vec::new(),
             false,
             None,
@@ -2673,7 +2689,7 @@ fn text_fixtures() -> Vec<Fixture> {
             license,
         ),
         (
-            "games/THE BROKEN SEAL/raw/080072e4.s",
+            "recon/tbs/raw/080072e4.s",
             text(wrapped_license),
             true,
             license,
@@ -2686,7 +2702,7 @@ fn text_fixtures() -> Vec<Fixture> {
             license,
         ),
         (
-            "games/THE BROKEN SEAL/recon/notes.json",
+            "recon/tbs/notes.json",
             text(unified),
             true,
             patch,
@@ -2869,12 +2885,7 @@ fn json_fixtures() -> Vec<Fixture> {
         (RUNTIME, table(vec![stream]), true, dump),
         (RUNTIME, table(vec![fill]), true, dump),
         (RUNTIME, table(vec![envelope]), true, None),
-        (
-            "games/THE BROKEN SEAL/recon/assets.json",
-            document(package),
-            true,
-            dump,
-        ),
+        ("recon/tbs/assets.json", document(package), true, dump),
         (
             "tools/alchemy/src/rom.json",
             document(bytes(256)),
@@ -2938,7 +2949,7 @@ fn self_test(root: &Path) -> Result<(), String> {
         "tbs-en.gba.lz",
         ".cmatch-fresh/result.s",
         "games/THE BROKEN SEAL/PREVIEW/title.png",
-        "games/THE BROKEN SEAL/raw/080000c0.s~",
+        "recon/tbs/raw/080000c0.s~",
         "docs/README.md",
         "CONTRIBUTING.md",
         "CLAUDE.md",
@@ -2948,7 +2959,7 @@ fn self_test(root: &Path) -> Result<(), String> {
         ".agents/DEEP/TOPIC.md",
         "GUIDE.markdown",
         "tools/alchemy/NOTES.RST",
-        "games/THE BROKEN SEAL/recon/plan.adoc",
+        "recon/tbs/plan.adoc",
     ] {
         if publication_path_reason(path).is_none() {
             return Err(format!("private path accepted: {path}"));
@@ -2958,11 +2969,11 @@ fn self_test(root: &Path) -> Result<(), String> {
         "src/main.c",
         "README.md",
         "AGENTS.md",
-        "games/THE BROKEN SEAL/raw/080000c0.s",
+        "recon/tbs/raw/080000c0.s",
         "PROGRESS.svg",
         "games/THE BROKEN SEAL/SOUND/SEQUENCE/THEME.mid",
         "games/THE BROKEN SEAL/SOUND/SAMPLE/WAVE.wav",
-        "games/THE BROKEN SEAL/recon/assets.json",
+        "recon/tbs/assets.json",
         "tools/compare-roms/src/main.rs",
         "tools/alchemy/src/build_full.rs",
         "games/THE BROKEN SEAL/SRC/SYSTEM/BUILD_STAMP.JSON",
@@ -2996,23 +3007,21 @@ fn self_test(root: &Path) -> Result<(), String> {
             return Err("the cartridge logo from the local ROM was accepted".to_string());
         }
     }
-    let hygiene_holds = publication_data_reason(
-        "games/THE BROKEN SEAL/raw/08000000.s",
-        b".incbin \"rom.gba\"\n",
-        None,
-    ) == Some("committed incbin payload")
-        && publication_data_reason(
-            "games/THE BROKEN SEAL/SRC/FIELD/IMPORT.INC",
-            b"  .incbin \"x\"\n",
-            None,
-        ) == Some("committed incbin payload")
-        && conflict_marker_reason("AGENTS.md", b"a\n<<<<<<< HEAD\nb\n").is_some()
-        && conflict_marker_reason("AGENTS.md", b"a\n>>>>>>> topic\n").is_some()
-        && publication_data_reason("AGENTS.md", b"x\n<<<<<<< HEAD\n", None).is_none()
-        && conflict_marker_reason("AGENTS.md", b"Title\n=======\n\nbody\n").is_none()
-        && conflict_marker_reason("AGENTS.md", b"see <<<<<<<HEAD in the output\n").is_none()
-        && conflict_marker_reason("games/THE BROKEN SEAL/PREVIEW/x.png", b"<<<<<<< HEAD\n")
-            .is_none();
+    let hygiene_holds =
+        publication_data_reason("recon/tbs/raw/08000000.s", b".incbin \"rom.gba\"\n", None)
+            == Some("committed incbin payload")
+            && publication_data_reason(
+                "games/THE BROKEN SEAL/SRC/FIELD/IMPORT.INC",
+                b"  .incbin \"x\"\n",
+                None,
+            ) == Some("committed incbin payload")
+            && conflict_marker_reason("AGENTS.md", b"a\n<<<<<<< HEAD\nb\n").is_some()
+            && conflict_marker_reason("AGENTS.md", b"a\n>>>>>>> topic\n").is_some()
+            && publication_data_reason("AGENTS.md", b"x\n<<<<<<< HEAD\n", None).is_none()
+            && conflict_marker_reason("AGENTS.md", b"Title\n=======\n\nbody\n").is_none()
+            && conflict_marker_reason("AGENTS.md", b"see <<<<<<<HEAD in the output\n").is_none()
+            && conflict_marker_reason("games/THE BROKEN SEAL/PREVIEW/x.png", b"<<<<<<< HEAD\n")
+                .is_none();
     if !hygiene_holds {
         return Err("source-hygiene self-test failed".to_string());
     }
@@ -3170,9 +3179,9 @@ mod tests {
             "out",
             ".agents",
             "worktrees/scene",
-            "out/compilers/experiment/gcc",
-            "out/compilers/sources/binutils-2.10/gas",
-            "out/compilers/sources/binutils-2.10/bfd",
+            "tools/out/compiler-build/experiment/gcc",
+            "tools/out/compiler-build/sources/binutils-2.10/gas",
+            "tools/out/compiler-build/sources/binutils-2.10/bfd",
             "out/allocator-order",
             "agscc",
         ] {
@@ -3183,22 +3192,22 @@ mod tests {
         std::fs::write(root.join("AGENTS.md"), "all working guidance").unwrap();
         std::fs::write(root.join("agscc/README.md"), "upstream").unwrap();
         std::fs::write(
-            root.join("out/compilers/experiment/gcc/toplev.c"),
+            root.join("tools/out/compiler-build/experiment/gcc/toplev.c"),
             "upstream",
         )
         .unwrap();
         std::fs::write(
-            root.join("out/compilers/experiment/gcc/thumb.md"),
+            root.join("tools/out/compiler-build/experiment/gcc/thumb.md"),
             "(define_insn)",
         )
         .unwrap();
         std::fs::write(
-            root.join("out/compilers/sources/binutils-2.10/configure"),
+            root.join("tools/out/compiler-build/sources/binutils-2.10/configure"),
             "upstream",
         )
         .unwrap();
         std::fs::write(
-            root.join("out/compilers/sources/binutils-2.10/README.md"),
+            root.join("tools/out/compiler-build/sources/binutils-2.10/README.md"),
             "upstream",
         )
         .unwrap();
@@ -3213,7 +3222,7 @@ mod tests {
             "out/notes.mdown",
             "out/notes.rest",
             "out/notes.adoc",
-            "out/compilers/notes.md",
+            "tools/out/compiler-build/notes.md",
             "TODO.md",
             "CONTRIBUTING.md",
             ".agents/RECOVERY.md",
@@ -3266,6 +3275,31 @@ mod tests {
     fn every_publication_rule_rejects_its_fixture_and_accepts_build_inputs() {
         check_fixtures().unwrap();
         self_test(crate::compiler::routing::root()).unwrap();
+    }
+    #[test]
+    fn reconstruction_scaffolding_keeps_its_game_outside_the_game_tree() {
+        assert_eq!(
+            manifest_games([
+                "recon/tbs/assets.json",
+                "recon/tbs/raw/assets.json",
+                "games/THE LOST AGE/recon/assets.json",
+            ]),
+            ["THE BROKEN SEAL", "THE LOST AGE"]
+        );
+        assert_eq!(
+            asset_game("recon/tla/raw/overlays/resource_64a_overlay.s"),
+            Some("THE LOST AGE")
+        );
+        assert_eq!(asset_game("recon/tla/semantic/regions.json"), None);
+        assert_eq!(asset_game("recon/tla/translation-units.json"), None);
+        let manifests = manifest_games(["recon/tla/assets.json"]);
+        assert!(
+            manifestless_reason("recon/tla/raw/executable_gaps/index.json", &manifests).is_none()
+        );
+        assert!(
+            manifestless_reason("recon/tbs/raw/executable_gaps/index.json", &manifests).is_some()
+        );
+        assert!(manifestless_reason("recon/tbs/translation-units.json", &[]).is_none());
     }
     #[test]
     fn frozen_compression_debt_allows_removal_but_not_changed_answers() {

@@ -372,16 +372,18 @@ fn unit_import_bindings(
     Ok(bindings)
 }
 
-/// The production link's external symbols: address-encoded and call-via
-/// names as before, then the imports declared units bind.
+/// The production link's external symbols: address-encoded names and the
+/// call-via stubs of the bank at `call_via_base`, then the imports declared
+/// units bind.
 fn externals_assembly(
     undefined: &[String],
     bindings: &BTreeMap<String, (String, AbsoluteSymbol)>,
+    call_via_base: u64,
 ) -> Result<String> {
     let mut externals = ".syntax unified\n.thumb\n".to_string();
     for name in undefined {
-        if external_symbol(name, CALL_VIA_BASE).is_some() {
-            externals.push_str(&external_symbol_assembly(name, CALL_VIA_BASE)?);
+        if external_symbol(name, call_via_base).is_some() {
+            externals.push_str(&external_symbol_assembly(name, call_via_base)?);
         } else if let Some((_, symbol)) = bindings.get(name) {
             externals.push_str(&format!(".global {name}\n"));
             externals.push_str(&binding(
@@ -428,9 +430,10 @@ fn unit_slice(root: &str, unit: &TranslationUnit, owner: u32, object: &str) -> R
         ));
     }
     for (name, value) in symbols.iter().filter(|(name, _)| *name != &symbol) {
-        // Keep external calls relocatable until the slice has its load address.
-        if value.kind == AbsoluteSymbolKind::Thumb && external_symbol(name, CALL_VIA_BASE).is_some()
-        {
+        // Keep calls relocatable until the slice has its load address: a
+        // Thumb `bl` cannot reach an absolute target from the slice's own
+        // origin. The owner and production links bind them from the manifest.
+        if value.kind == AbsoluteSymbolKind::Thumb {
             continue;
         }
         out.push_str(&binding(
@@ -456,6 +459,20 @@ fn unit_slice(root: &str, unit: &TranslationUnit, owner: u32, object: &str) -> R
     Ok(out)
 }
 
+/// The `_call_via_rX` bank the game links into its main image, from its
+/// compiler-runtime register.
+fn main_call_via_base(root: &Path, game: CompilerTarget) -> Result<u64> {
+    crate::compiler::runtime::Registry::load(root, game)?
+        .call_via_bank("main")
+        .map(u64::from)
+        .ok_or_else(|| {
+            format!(
+                "{}: no main _call_via_rX link",
+                crate::compiler::runtime::registry_path(game)
+            )
+        })
+}
+
 #[allow(clippy::too_many_arguments)]
 fn materialize_unit_owner(
     root: &str,
@@ -465,6 +482,7 @@ fn materialize_unit_owner(
     object: &str,
     object_dir: &Path,
     compiler: CompilerTarget,
+    call_via_base: u64,
     rom: Option<&Vec<u8>>,
 ) -> Result<Compiled> {
     let stem = format!("{owner:08x}");
@@ -472,6 +490,7 @@ fn materialize_unit_owner(
     let work = text(object_dir.join("tu").join(&unit.id));
     let configuration = CandidateCompilerConfiguration {
         absolute_symbols: unit.canonical_symbols()?,
+        call_via_base: Some(call_via_base),
         ..Default::default()
     };
     let route = unit
@@ -508,7 +527,9 @@ fn materialize_unit_owner(
     }
     let undefined_names = last_fields(&run(&strings(&["arm-none-eabi-nm", "-u", &output]), root)?);
     for name in &undefined_names {
-        if external_symbol(name, CALL_VIA_BASE).is_none() {
+        if external_symbol(name, call_via_base).is_none()
+            && !configuration.absolute_symbols.contains_key(name)
+        {
             return Err(format!("{}: unsupported slice import {name}", unit.id));
         }
     }
@@ -778,6 +799,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
         return Err("no reconstructed sources".into());
     }
     let units = TranslationUnits::load_game(Path::new(root), target.compiler)?;
+    let call_via_base = main_call_via_base(Path::new(root), target.compiler)?;
     // A grouped main unit can retain its enclosing function while adopting
     // complete nested functions. Each exact member still links independently.
     for unit in units
@@ -933,6 +955,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
                     &base.object,
                     &object_dir,
                     target.compiler,
+                    call_via_base,
                     rom.as_ref(),
                 )?);
             } else {
@@ -940,13 +963,12 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
                 break;
             }
         }
-        if !mixed {
-            unit_imports.push(UnitImports {
-                unit: unit.id.clone(),
-                symbols: unit.canonical_symbols()?,
-                undefined: base.undefined_names.clone(),
-            });
-        }
+        // A mixed unit's owner slices import what the complete object does.
+        unit_imports.push(UnitImports {
+            unit: unit.id.clone(),
+            symbols: unit.canonical_symbols()?,
+            undefined: base.undefined_names.clone(),
+        });
         let exact = unit.exact_owner_count();
         let retained = unit.owners.len() - exact;
         unit_compiles.push(json!({"id":unit.id,"source":unit.source,"c_compiles":1,"composition":if mixed{"complete-tu-owner-slices"}else{"complete-tu-object"},"exact_owners":exact,"retained_owners":retained}));
@@ -1017,7 +1039,11 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
     }
     let symbols_source = output.join("externals.s");
     let symbols_object = output.join("externals.o");
-    let externals = externals_assembly(&undefined, &unit_import_bindings(&unit_imports)?)?;
+    let externals = externals_assembly(
+        &undefined,
+        &unit_import_bindings(&unit_imports)?,
+        call_via_base,
+    )?;
     write_file(&symbols_source, externals.as_bytes())?;
     run(
         &crate::compiler::routing::assembly_command(&text(&symbols_source), &text(&symbols_object)),
@@ -1207,7 +1233,7 @@ pub fn build(options: &Options, root: &str, cwd: &str) -> Result<BuildSummary> {
         "image_base": image_base,
         "image_size": image.len(),
         "claimed_bytes": total,
-        "translation_unit_manifest": "games/THE BROKEN SEAL/recon/translation-units.json",
+        "translation_unit_manifest": format!("{}/translation-units.json", target.recon_dir()),
         "main_symbol_exports": export_path
             .as_ref()
             .map(|path| relative(root, path)),
@@ -1312,7 +1338,7 @@ mod tests {
             ["__divsi3", "__modsi3"]
         );
         let undefined = ["Func_080a17c4", "__divsi3", "__modsi3", "_call_via_r3"].map(String::from);
-        let assembly = externals_assembly(&undefined, &bindings).unwrap();
+        let assembly = externals_assembly(&undefined, &bindings, CALL_VIA_BASE).unwrap();
         assert_eq!(
             assembly,
             ".syntax unified\n.thumb\n\
@@ -1327,7 +1353,7 @@ mod tests {
             &["gTable"],
         )])
         .unwrap();
-        assert!(externals_assembly(&["gTable".into()], &data)
+        assert!(externals_assembly(&["gTable".into()], &data, CALL_VIA_BASE)
             .unwrap()
             .ends_with(".global gTable\n.set gTable, 0x08037250\n"));
     }
@@ -1335,11 +1361,11 @@ mod tests {
     fn production_link_refuses_unplaced_and_conflicting_imports() {
         use AbsoluteSymbolKind::Thumb;
         assert_eq!(
-            externals_assembly(&["__divsi3".into()], &BTreeMap::new()).unwrap_err(),
+            externals_assembly(&["__divsi3".into()], &BTreeMap::new(), CALL_VIA_BASE).unwrap_err(),
             "unsupported external symbol: __divsi3"
         );
         let undeclared = unit_import_bindings(&[imports("plain", &[], &["__udivsi3"])]).unwrap();
-        assert!(externals_assembly(&["__udivsi3".into()], &undeclared).is_err());
+        assert!(externals_assembly(&["__udivsi3".into()], &undeclared, CALL_VIA_BASE).is_err());
         let conflict = unit_import_bindings(&[
             imports("first", &[("__modsi3", 0x0800_22fc, Thumb)], &["__modsi3"]),
             imports("second", &[("__modsi3", 0x0800_2304, Thumb)], &["__modsi3"]),

@@ -64,14 +64,22 @@ TLA asset builds (including overlay body bytes, stream padding, and shared
 arena/buffer lifetime). A later exception needs Pascal's explicit authorization
 and a new dated marker; it must never be inferred from a failing build.
 
-**One-time sync gate waiver (Pascal, 2026-09-22).** Pascal also authorizes this
-single labeled sync while `make verify` remains red for the documented staged
-wave: automatic overlay compression/packing differs in 60 TBS assets, resource
-387 and resource 3ce contain nonzero overlay-C placeholders, and ten tracked
-TBS metadata inputs lack asset-manifest consumers. The sync commit and its
-push must say `pending` rather than claim a DONE percentage. This waiver grants
-no source, asset, exact-C, or DONE credit and expires when that commit reaches
-`origin`; restore the normal commit and pre-push gates before the next commit.
+**Build-machine facts (Pascal, 2026-09-22).** Bytes that only Camelot's build
+machine knew, such as heap or C-library addresses left in the packer's stream
+alignment, may be recorded as observed host facts in the reference machine
+definition (see [The original machine](#the-original-machine)), each with the
+bytes it was observed from, what else it predicts, and no credit. The replay
+derives every byte from those facts. Nothing the machine's documented behaviour
+derives may be recorded, and nothing else may be recorded this way.
+
+**Observed compressor settings (Pascal, 2026-09-23).** The general-LZ
+compressor's window (4,123 bytes), read-ahead (485 bytes, a 4,608-byte ring)
+and maximum copy distance (4,126) are observed settings of the reference
+machine, recorded in each game's `machine.json` with the streams and positions
+that bound them and no credit. The data bound them (window exactly 4,123,
+read-ahead 389–509, maximum distance 4,125–4,126) but do not derive them. No
+other codec uses them. Recording any further observed setting needs Pascal's
+explicit authorization.
 
 - Do not add or move compression answers under this exception. Do not replay
   tokens, retain new per-resource overrides, or copy unexplained padding to make
@@ -116,7 +124,7 @@ the document check pass. Binary section dumps are build output, not prose.
 | Fact | One maintained home |
 | --- | --- |
 | General methods, rules and open priorities | This file; replace obsolete guidance instead of appending competing rules |
-| Owner names and source paths | Each game's `source-paths.json` |
+| Owner names and source paths | Each game's `recon/<game>/source-paths.json` |
 | Types, declarations and behavior | Maintained C and headers |
 | Unit membership, instances, extents and bindings | Existing translation-unit manifests and boundary registries |
 | Owner extent, source and classification | Production translation unit and source-path registry |
@@ -134,7 +142,9 @@ Optimize **new verified exact-C bytes per hour across the whole game**, includin
 integration and verification time. Report DONE separately. A filename cleanup,
 new draft, better similarity, source consolidation or changed accounting is not
 new exact C. Converting credited assembly to C raises exact C but may not raise
-DONE. Do not use the rounded commit prefix to measure C progress.
+DONE. Do not use the rounded commit prefix to measure C progress. Alignment the
+compiler emits between the functions of one evidenced module belongs to that
+module's exact C, as in every multi-function unit (Pascal, 2026-09-22).
 
 ### Select a bounded family
 
@@ -297,6 +307,19 @@ matched in 30 fresh compilations and the complete TBS English ROM matched.
 This uses the established Lunpa linking convention, not a general license to
 turn arbitrary constants into symbols. Verify the identity, consumer and binding.
 
+#### Plain constants over lifted variables
+
+Lifted drafts often name a value the compiler shares by itself: one zero stored
+in several places, a step both added and subtracted, the -1 a countdown ends on,
+or one pointer reused by unrelated sections. Such a variable merges lifetimes and
+changes allocation priority. Write the constants and loops plainly: CSE and
+post-reload CSE share a constant within an extended basic block, loop
+optimisation hoists the step, and a `while (n--)` countdown leaves n == -1 known
+after the loop. In `resource_381:02001410` this took the complete 5,136-byte
+owner from 669 halfword edits, eight bytes too long, to exact in 30 fresh
+compilations, and the full TBS English ROM matched. The sharing ends at a label;
+read it from the reference rather than assuming it.
+
 ### Read the cause, not the score
 
 | Residual | First evidence to inspect |
@@ -370,8 +393,8 @@ scoreboard framework, prose archive or experiment index.
 
 Before ending a batch:
 
-1. Put complete useful nonexact C in the game's existing `recon/en/main`,
-   `recon/en/overlays` or declared unit source, with its current source and score
+1. Put complete useful nonexact C in the game's existing `recon/<game>/en/main`,
+   `recon/<game>/en/overlays` or declared unit source, with its current source and score
    in the dossier. Keep accepted C in `SRC`. Never leave the only useful candidate
    in `out/`.
 2. Update the dossier's current classification, extent, source and score. Put
@@ -401,7 +424,7 @@ Never transmit those private reference bytes or fill unfinished code from them.
 Keep compiler, assembler, linker and runtime-library source or patches in their
 own licensed repositories, not this unlicensed repository. No leaks or SDK code.
 Runtime objects such as libgcc soft-float and `_call_via_rN` are built from the
-approved licensed containers using `recon/compiler-runtime.json`, never copied
+approved licensed containers using each game's `recon/<tbs|tla>/compiler-runtime.json`, never copied
 or reconstructed into this repository as C, assembly or data.
 
 Admissible sources: locally held ROMs, independent reconstruction here, decoded
@@ -441,11 +464,26 @@ nothing. Assembly-to-C conversions can leave DONE unchanged.
 The executable denominator is generated from the ROM audit under `out/`, never
 maintained as a committed address ledger. A complete audit accounts for the main
 image and every overlay's executable intervals and excluded complement. Pending
-audits yield `?`, never estimates.
+audits yield `?`, never estimates. DONE uses only this automatic count, which
+becomes authoritative when independently verified (Pascal, 2026-09-22).
+`recon/<game>/metrics/audit-verification.json` pins the verified output by
+digest; a changed output returns to `?` until re-verified. The committed
+`metrics/executable.json` ledgers are diagnostic references only. Each game's
+main image counts once a byte-identical full ROM build of that game proves its
+asset complement; TLA stays `?` until it has a supported one. Every reader
+recomputes the overlay digest, the main complement and that build's proof
+(rebuilt ROM against the registered reference, asset manifest digest, input
+fingerprint) and scores nothing else, so a copied ledger, hand-made file or
+stale build stays `?`. A full build withdraws its proof when it starts and when
+it fails; a failed `--inventory` run leaves the inventory pending.
 `out/<target>/reports/verified-code.json` records ROM hash, input fingerprint,
-source, category and credited ranges. TBS's full build produces its receipt;
-TLA's owner check produces its receipt without claiming a full ROM. Changed
-inputs invalidate it. Coverage, dashboard, README and prefixes read these same
+source, category and credited ranges. A receipt needs the game's authoritative
+inventory and is withheld while that is absent or pending. TBS's canonical full
+build writes its receipt. TLA's owner check verifies every sourced owner and
+assembles its main listings, maintained assembly and runtime against the ROM as
+the TBS assembly stage does, but writes no receipt until The Lost Age has a
+supported full ROM build and so an authoritative inventory. Changed inputs
+invalidate a receipt. Coverage, dashboard, README and prefixes read these same
 receipts; rendering cannot create credit. Current receipts cannot score old refs.
 
 Owner binary similarity is one minus unit-cost halfword edit distance divided
@@ -463,12 +501,19 @@ and large functions do not prove handwritten assembly. Retained ranges need
 positive `library` or `handwritten` provenance, evidence and nonempty proof or
 object identity, with byte comparison. Each range is reviewed independently;
 other ranges of its kind inherit nothing. `structured_scene_module` is a draft
-scene, not the retired `generated_call_script_module`. Classification stays in
-the existing main and overlay registries. Only Pascal changes credit standards.
+scene, not the retired `generated_call_script_module`. A maintained SRC assembly
+module declares main-image credit in its header, one `@ credit: <library|handwritten>
+— <object>` line beside the comments explaining why it is assembly; the assembly
+build checks it and adds byte-comparison evidence, and a receipt credits
+exactly those verified modules, less the spans a module marks between
+`AlchemyUncredited_<address>` and `AlchemyUncreditedEnd_<address>` labels:
+padding, filler that never runs, placeholders filled and words rewritten at
+run time. Overlay credit stays in the overlay registry. Only Pascal changes
+credit standards.
 
 Main-ROM fixed eight-byte `ldr r4; bx r4; target` tables are
 `unresolved_trampoline_table` owners from an `unidentified_build_step`. The 608
-entries form thirteen contiguous tables under `raw/trampoline_tables`; they have
+entries form thirteen contiguous tables under `recon/tbs/raw/trampoline_tables`; they have
 zero assembly credit. Their byte shape proves neither linker, macro, generator
 nor handwritten origin. Human names for callable entries are symbols inside the
 table, not independent owners. Recover table membership and ordering from real
@@ -480,6 +525,20 @@ Credit requires kind `overlay_trampoline`, confidence `proven`, provenance credi
 `reconstructed_veneer`, the macro proof path, complete aligned eight-byte entries
 inside audited trampoline ranges, and exact overlay/ROM reproduction. This proves
 assembly linkage reconstruction, not whether Camelot used a macro or generator.
+
+## The original machine
+
+Reconstruction targets one defined reference machine: our best account of the
+computer, operating system, C library and compiler Camelot built on.
+`recon/tbs/machine.json` and `recon/tla/machine.json` state it; each fact is
+marked `identified`, `inferred`, `observed` or `assumed` and names its evidence.
+The compiler is agscc, identified as GCC 2.96-based. The packer's stream
+alignment follows GNU libc malloc and stdio on i386 Linux with heap addresses
+just above the ELF base: the glibc 2.1 layout fits every TBS edition and TLA JA,
+and the glibc 2.2 layout fits the Western TLA editions. Red Hat is assumed, not
+shown. Tools read layouts, host facts and the general-LZ compressor's observed
+settings from the definition instead of branching per game or edition. New
+evidence changes the definition, never an individual output.
 
 ## Compiler integrity
 
@@ -494,6 +553,15 @@ stock Red Hat GCC 2.96. Diagnostic/host changes also need Pascal's approval,
 specific release/source evidence and fidelity proof. Only Pascal authorizes
 pins, executable hashes, family routes or output transformations. A better
 score, determinism, version string or approved pin does not supply provenance.
+
+**ARM route (Pascal, 2026-09-23).** Game code the ROM copies into RAM and runs
+in ARM state may use one ARM route: the same agscc bundle and game flags with
+`-marm` in place of `-mthumb`, plus `-mno-apcs-frame`. The game's ARM routines
+use `fp` as an ordinary register, whereas agscc's ARM default gives every
+non-leaf function an APCS frame. The route applies to whole source files
+declared explicitly in routing, never to one function of a Thumb file or to a
+body that changes state midway. It grants no credit: each owner still needs its
+complete extent byte-exact under the production gate.
 
 The September 20 aliasing probe compiled the 20 largest maintained exact-C source
 files by source-file bytes under identical TBS flags, then added only
@@ -544,24 +612,54 @@ from the ROM or alter owner extents to count it.
 
 ## Source and shared interfaces
 
+`games/THE BROKEN SEAL`, `games/THE LOST AGE` and `games/COMMON` hold only our
+best guess of Camelot's 2001 tree: uppercase `SRC`, `INCLUDE`, `SOUND` and `TEXT`.
+Our scaffolding stays beside it in lowercase `recon/tbs` and `recon/tla`: drafts
+in `<edition>/main`, `<edition>/overlays` and `en/units`, retained listings in
+`raw`, `semantic` evidence, `metrics`, and the registries `source-paths.json`,
+`translation-units.json`, `source-bindings.json`, `compiler-runtime.json`,
+`assets.json`, `text.json`, `locations.tsv`, `private-inputs.json` and
+`project.json`. Recovery moves work from `recon/` into `games/`, so `recon/`
+shrinks toward nothing at 100%. `make verify` rejects lowercase game-root entries.
+
 Keep a shallow module tree, not one file per function or a generic SHARED bucket.
-Area actors, dialogue and events stay with their separately loaded area module;
-one location can own several overlays and their address spaces never merge.
-`locations.tsv` and runtime map/resource evidence own placement. Japanese ROM
-names supply uppercase short romaji prefixes repeated for sorting, plus one area
-word: `RUNPA_DOU`, `RUNPA_JO`, `HAIDIA_MURA`, `HAIDIA_HEYA`. Use evidenced `MURA`,
-`MACHI`, `HEYA`, `DOU`, or `SAI` for a return scene. Record decoded labels and
-abbreviations in existing evidence. No resource codes, addresses, ordinal names,
-codenames, invented geography or English localization names as folder labels.
-Remove empty folders after moves; do not create empty symmetry between games.
+A subfolder is one subsystem module, one separately loaded overlay or one asset
+home. Fold a one-off or tiny folder (roughly under five files or 10 KB) into the
+parent or sibling module its callers, link placement and header owner support,
+not the one its function names suggest; file moves never rename. A TLA twin keeps
+its TBS path. Area actors, dialogue and events stay with their separately loaded
+area module; one location can own several overlays and their address spaces never
+merge. `recon/<game>/locations.tsv` and runtime map/resource evidence own
+placement. Japanese ROM names supply uppercase short romaji prefixes repeated
+for sorting, plus one area word: `RUNPA_DOU`, `RUNPA_JO`, `HAIDIA_MURA`,
+`HAIDIA_HEYA`. Use evidenced `MURA`, `MACHI`, `HEYA`, `DOU`, or `SAI` for a
+return scene. Record decoded labels and abbreviations in existing evidence. No
+resource codes, addresses, ordinal names, codenames, invented geography or
+English localization names as folder labels. Remove empty folders after moves;
+do not create empty symmetry between games.
+
+A C file is one translation-unit hypothesis. Merge function files into one
+module only when their functions link contiguously as wholly exact C with nothing
+but compiler alignment between them, and positive evidence groups them: a callee
+or callback referenced only from the group, mode entries of one effect body, one
+exclusive caller, or one shared state interface. Adjacency alone is not evidence.
+Declare the module as one exact unit, reconcile each shared symbol to one
+declaration from its owning header, prove every member byte-exact and name the
+file for its responsibility; `git mv` the anchor file before merging the others
+into it. A retained or trick-dependent member, such as one held by a
+`do { } while (0)` barrier, or a prototype conflict that one declaration cannot
+reconcile, keeps the file boundary. A TLA twin follows its TBS module path.
+Local symbols are exact statics compiled with their unit; a nonexact function
+inside a declared unit is a registered retained-assembly owner with its own
+raw listing, so the unit links as owner slices and earns no credit for it.
 
 | SRC directory | Responsibility |
 | --- | --- |
-| SYSTEM | Startup, scheduling, memory, input, save, link, resource loading and overlay mechanics |
-| LIB | Game support/math; compiler runtime stays in its licensed container |
-| GRAPHICS | Display, palette, animation, tiles, text, windows and icons |
+| SYSTEM | Startup, BIOS calls, IWRAM runtime, input and the overlay linkage macro (`OVERLAY.INC`) at its root; SCHEDULER, MEMORY, SAVE and LINK; resource loading and decompression in RESOURCE |
+| LIB | Game support/math, including trigonometry and relocated math kernels; compiler runtime stays in its licensed container |
+| GRAPHICS | DISPLAY (registers, blending, affine, VRAM), PALETTE, RENDER (animation), TILE (icons, tilemaps, tile kernels), TEXT and WINDOW; FONT, CHARACTER and COMMON hold assets |
 | SOUND | Audio runtime, separate from sound assets |
-| GAME | Character, party, inventory, abilities, Djinn and flags |
+| GAME | Character, party, items, inventory, Djinn with summons, and flags |
 | FIELD/COMMON | Shared field engine, maps, camera, objects, events and scripts |
 | FIELD/location | A distinct loadable area and its exclusive assets |
 | FIELD/COMMON/locations | Distinct loadable modules serving several evidenced places |
@@ -579,45 +677,47 @@ sources/includes and migrated COMMON/LIB code.
 
 Resource directories live beside loaders at `SRC/SYSTEM/RESOURCE/DIRECTORY.JSON`;
 field selectors and naming rules live at `SRC/FIELD/COMMON/SCENE_TABLE.JSON` and
-`NAME_RULES.JSON`. Asset layout is `recon/assets.json`, not runtime source.
+`NAME_RULES.JSON`. Asset layout is `recon/<game>/assets.json`, not runtime source.
 Do not create provisional, sealed or unmatchable classification registries.
-Retained overlay listings live in `raw/overlays`; battle listings live in
-`raw/battle`. Generated raw listings may use ordinary assembler data directives;
+Retained overlay listings live in `recon/<game>/raw/overlays`; battle listings live in
+`recon/<game>/raw/battle`. Generated raw listings may use ordinary assembler data directives;
 they are unresolved source and earn no C or DONE credit.
 
-The LZSS compressor reconstruction is incomplete. Nearest longest matches,
-one-byte lazy matching, and windows of 4,123 bytes for general LZ and 4,092 for
-palette LZ reproduce 96/96 Japanese TBS stream bodies, 95/96 in each of its five
-Western editions, and 113/114 in both Japanese and English TLA. General LZ
+The LZSS compressor reconstruction is incomplete. Nearest longest matches and
+one-byte lazy matching reproduce all 10,755 general-LZ and 10,422 untagged
+palette-LZ streams inventoried in the twelve ROMs, and 5,778 of 5,813 tagged
+palette-LZ streams. Palette LZ searches a fixed 4,092-byte window. General LZ streams its input through the reference machine's ring (see
+[Observed compressor settings](#ai-cheating)): 4,123 bytes of history while it
+reads 485 bytes ahead; at the end of the input reading stops, and over the final
+485 bytes the history grows by one byte per byte encoded, up to distance 4,126.
+Its lazy look-ahead searches the history of the byte being encoded. General LZ
 applies the replacement once per stream; palette LZ can repeat it. Choosing the
-smaller encoding, palette on ties, selects the observed codec in all 804 tested
-streams. These are compression comparisons, not full builds or new exact C.
+smaller encoding, palette on ties, selected the observed codec in all 804 tested
+streams, and with the ring still does for the 618 overlay streams the two
+manifests list across the twelve ROMs. These are compression comparisons, not
+full builds or new exact C.
 
 Overlay compression uses input-derived general/palette encoding, choosing the
 smaller result and palette on ties. Overlay exports require automatic byte
 equality and never read or write per-resource sidecars.
 
-Western TBS resource 3b4 first disagrees at decoded offset 12,092: a two-byte
-copy at distance 4,125; another occurs at 12,104. Widening the general window
-from 4,123 through 4,128 never closes it and regresses other overlays. TLA
-resource 6ae instead rejects the predicted lazy replacement at offset 14,204:
-the ROM uses copies of lengths 2 and 2, whereas the model emits a literal and
-a length-3 copy. Do not patch either location. The latter is not a distance-limit
-failure and needs the actual lazy-matching decision recovered.
-At that alternative position, the nearest matching pair already extends to
-three bytes (distance 66); 65 of 70 pair candidates extend to three bytes.
-A simple nearest-first search-depth cap cannot suppress that alternative.
+Near the end of their input some general streams copy from beyond the 4,123-byte
+window: Western TBS 3b4 (two bytes at distance 4,125 at decoded offsets 12,092
+and 12,104 of 12,164), TBS 0e2 / TLA 1b2 (three bytes at 4,124 at 7,804 of
+8,192) and TBS 1ed's metatiles (three bytes at 4,124 at 9,091 of 9,193). The
+read-ahead ring reproduces all of them, and their stored records are retired.
+Widening the window never closed 3b4 and regressed other overlays; allowing the
+full distance range in the last 512-byte input block broke TLA 22e and 232 at
+distances 4,128 and 4,127 (offsets 12,633 and 12,447), which the maximum
+distance of 4,126 keeps exact. Do not reinstall either heuristic or tune the
+recorded settings to individual streams.
 
-The broader twelve-ROM general-LZ check also finds TBS resource e2 / TLA 1b2:
-at decoded offset 7,804 of 8,192, the ROM uses length 3 at distance 4,124.
-Allowing the full distance range in the last 512-byte input block explains
-this and Western TBS 3b4, and matches all 280 eligible English TBS resources.
-It is rejected: in every TLA edition it breaks previously exact resources 22e
-and 232, selecting distances 4,128 and 4,127 at offsets 12,633 and 12,447.
-Do not install that final-block heuristic or tune its cutoff to these examples.
-The runtime decoder has no reserved-code escape explaining the disputed long
-distances. First lazy replacements have different lengths across overlays, so
-a single rewind length does not explain the common window limit either.
+With the ring and its lazy look-ahead, automatic overlay encoding reproduces
+the stream body and codec of every one of the 1,260 code overlays in the twelve
+ROMs (96 per TBS edition, 114 per TLA edition), including TLA 6ae, whose lazy
+decision at decoded offset 14,204 the earlier window-only model mispredicted.
+That comparison excludes the alignment bytes before the next resource; packing
+is below.
 
 Packing is separate. A diagnostic replay of preceding physical resources into
 one reused buffer explains the padding of 91/96 English TBS overlays, including
@@ -641,11 +741,11 @@ the tag included in alignment, also regressed. These are rejected packing
 models, not production options. The probe used oracle bodies to isolate packing;
 even the perfect TLA padding comparison does not prove a source-built packer.
 
-TLA world-map recovery independently regenerated all 1,079 chunk bodies and
-37 of 38 associated resource bodies from maintained input with the same LZSS
-compressor. Their 1,116 explicit token lists are removed; absent `tokens` means
-ordinary compression from input, not a lookup or fallback. Resource 1b2 remains
-unresolved at the already documented distance-4,124 discrepancy. Existing
+TLA world-map recovery independently regenerated all 1,079 chunk bodies and all
+38 associated resource bodies from maintained input with the same LZSS
+compressor; resource 1b2 followed once the read-ahead ring was recorded. All
+1,117 explicit token lists are removed; absent `tokens` means ordinary
+compression from input, not a lookup or fallback. Existing
 nonempty padding records remain explicit debt, including three zero bytes after
 the final chunk; do not call this complete world-map packing recovery.
 The following TLA direct-asset sweep removed 79 further stored control records
@@ -658,7 +758,8 @@ removed controls. The temporary migration code was removed.
 Tag-2 tile graphics use greedy copies and update their nibble move-to-front
 table only for literals. Input-derived controls match 267/270 English TBS and
 482/485 English TLA directory streams. The six failures use long-distance
-copies near the input end; applying general LZ's lazy rule regresses this codec.
+copies near the input end; applying general LZ's lazy rule regresses this codec,
+and its read-ahead ring fixes 36 but breaks 24 of 4,530 twelve-ROM tag-2 streams.
 Automatic tag-2 encoding and a further maintained-input sweep removed 1,341
 control fields (1,307 TBS, 34 TLA) across 88 files: 1,017 stored decisions and
 324 empty predictor settings. Complete asset builds still
@@ -666,17 +767,17 @@ reproduce 2,575 TBS regions and 1,381 TLA regions. Remaining padding and recipes
 are not recovered by those removals; the temporary exception in AI cheating
 governs that retained debt.
 
-Arena animation compression needs its own parser recovered. A ten-bank,
-458-compressed-frame probe found only 28 exact frames with oldest-first greedy
-matching, 87 with strictly-longer one-byte lazy matching and 10 when lazy ties
-also defer. Nearest-first ties regress; a four-byte minimum is disproved by
-actual three-byte copies. Global minimum-payload parsing agrees with the
-reference cost in only 316 frames, or 322 when restricted to longest matches;
-the other reference frames cost one to three more bytes. Neither optimizer is
-an exact compressor. A short diagnostic also rejected advancing the dictionary
-scan by the previous match length. These probes used existing arena bodies to
-isolate parsing, not as an admitted encoder input. Do not install these models
-or preserve new exceptions; recover the remaining dictionary/parser behavior.
+Arena LZ, character frame codec 3, is recovered as `compress_arena`: the
+dictionary is the bank's earlier streams as written, each position takes its
+longest match (oldest on ties) and token lengths are decided from the end, and
+a stream is stored raw when it exceeds the 0x400-byte work buffer or saves
+less than a tenth of its payload. It reproduces every arena frame in the
+twelve ROMs without stored controls. An absent frame, one the source never
+drew, stores no zero-skip bytes: its stream is a bare raw split whose reader
+borrows the next stream's zero, and its bank names it in `absent_frames`. TLA
+codec 1 frames are tagged general or palette LZ chosen like overlays, the
+smaller encoding and palette on ties. With these, all 10,789 TLA English frame
+streams of the 609 catalog banks build from their sheets.
 
 The September 20 public-source search found later reconstructions, not Camelot's
 original compressor: romhack/GoldenSunCompression uses different window and
@@ -728,7 +829,7 @@ and `make verify` enforce that; JA/TLA similarity leads remain uncredited.
 Source shared by both games lives once in `games/COMMON/SRC/<module>` only after
 both independently compile it exact. Declarations live in
 `games/COMMON/INCLUDE/<module>`, included through each game's INCLUDE. Registers
-use `../../COMMON/SRC/...`; each game retains its own compiler route, placements
+use `../../COMMON/SRC/...`, relative to the game's `SRC`; each game retains its own compiler route, placements
 and ROM. TLA `alchemy check tla-owners roms/tla-en.gba` verifies complete main and
 overlay owners and full overlays carrying assembly credit; it does not rebuild
 all TLA. Its missing consumers or one game's missing registration fail sharing.
@@ -754,7 +855,7 @@ all 16 palette bits are preserved. Frame order and runtime association outrank
 visual resemblance. The glyph table is 224 records of two-byte advance plus 15
 two-byte bitmap rows, not 7,168 bytes of undifferentiated pixels.
 
-`SOURCE.JSON` owns checksummed private map/graphics inputs, even when named PNG
+`recon/<game>/private-inputs.json` owns checksummed private map/graphics inputs, even when named PNG
 or JSON. `alchemy build assets --extract-sources ROM [--target tla-en]` restores
 them from the registered local ROM; `--extract-missing-sources ROM` installs only
 absent inputs. Ordinary builds restore missing private sources, then encode and
@@ -767,18 +868,41 @@ Legacy compression plans and COMPRESSION.TOKENS recorded unresolved encoder
 choices and are removed. The former `--compact-plans` and `--derive-plans`
 commands remain retired: packing recorded answers into a binary table or
 predictor exceptions did not recover compression.
-Overlay export and asset-index generation now refuse encoder mismatches,
-unsupported compressors and trailing reference padding. The former fallback
+Overlay export refuses encoder mismatches, unsupported compressors and
+trailing reference padding. Asset-index generation (`--derive-index`) refuses
+unsupported compressors and more than three trailing bytes, writes only each
+stream's codec and extent, and lists the regions the compressor does not
+reproduce. `--leave` keeps named resources unregistered, with no rows, document
+sections or sheet slots: streams the compressor or the complete build's packer
+replay does not reproduce, and resources whose alignment only those streams'
+bytes would supply. The build then claims only what it reproduces. The former fallback
 that manufactured predictor exceptions or retained explicit tokens is removed.
 An export refusal is an honest recovery gap; do not restore that fallback or
 write its answer by another route. The three-byte trailing-padding check does
 not prove recovery.
 
+SOUND/SEQUENCE holds one MIDI per sound, indexed by SEQUENCES.TSV. Its
+conductor carries the sequence skeleton and the song's time signature at 96
+ticks per quarter, so one 24-tick beat is a sixteenth. Stream tracks carry
+notes, other commands as JSON markers and patterns as cue brackets. The
+converter derives the command encoding: rests split at bar lines, then into the
+longest waits; a note, or a control that sets running status, continues the
+running command only as the first event after a rest, and an end of tie that
+names a key continues a running end of tie; key and velocity are written when
+they change; labels, pattern calls, repeats and jumps forget the running
+command, key and velocity, and a pattern end changes nothing. These rules
+rebuild all 260 TBS and 403 TLA sequences without per-event data; they retired
+the TBS deviation sidecars and the TLA native sequence JSON. Pattern calls
+still come from the cue brackets; whether a converter search or the authors
+placed them is not established. `--adopt-smsh-midi` records the first time
+signature, 4/16, 3/16, 2/16, 1/16, 1/32, 7/32, 5/32 or 3/32, under which the
+reading is exact, and refuses otherwise.
+
 TEXT/{JA,EN,DE,ES,FR,IT}.PO uses numeric msgid, editable msgstr and context
 `message`. Named commands and explicit unknown glyph tokens preserve controls.
 The encoder derives Huffman models, lengths and directories; equal keys need
 not mean equal text across editions. `--extract-text [TARGET]` reconstructs exact
-catalogs; `--verify-text [TARGET]` rebuilds archives. `recon/text.json` owns layout
+catalogs; `--verify-text [TARGET]` rebuilds archives. `recon/<game>/text.json` owns layout
 and identity. Archive equality does not claim a regional ROM build.
 
 GRAPHICS/REVIEW.JSON owns identification. `--review-images OUTPUT` regenerates
@@ -787,24 +911,28 @@ indices and RGBA independently of PNG compression. Deliberate presentation
 changes require visual review before `--update-baseline`. All previews remain
 under stable ignored output directories, never tracked or published. Root
 PROGRESS.svg is the sole public repository-size figure: an 830-wide 9:16
-Spacemonger tree of actual files and folders, with no ROM-address or completion
-coverage and no embedded game font, image or sound.
+Spacemonger tree of the files and folders Git tracks, with no ROM-address or
+completion coverage and no embedded game font, image or sound. Private inputs
+extracted from a local ROM appear only in the local dashboard (Pascal,
+2026-09-23), so every checkout draws the same figure.
 
 The local dashboard at 127.0.0.1:4650 separates actual Files (disk bytes), ROM
 coverage (physical cartridge bytes), Music, Maps and Text. Coverage uses complete
 physical indexes from `alchemy coverage audit --target TARGET --data` or `--all
 --data`; unique verified correspondence transfers kind labels across editions,
 compression recognition alone does not. Every physical byte appears once.
-Audits are explicit, calibrated against TBS, write candidate reports and never
-silently replace the committed executable inventory. Current inputs invalidate
-stale reports. The dashboard watches inputs, not its executable: restart after
-tooling changes with `make dashboard-restart`.
+Audits are explicit, write candidate reports and never silently replace the
+executable inventory. Current inputs invalidate stale reports. The dashboard
+watches inputs, not its executable: restart after tooling changes with
+`make dashboard-restart`.
 
 Music playback is bounded, approximate synthesis, not fidelity proof; missing
 instruments refuse rather than substitute General MIDI. Text compares build PO
 catalogs by physical key. Maps decode from the checksummed ROM through the shared
 assembler, not saved renders; actors, animation and script scrolling are not
-simulated. Same-origin routes do not expose arbitrary paths. Only Maps uses a
+simulated. Its Filter models measured GBA-family screens from the credited
+Handheld Color Space Project data; it is a viewing aid, not palette evidence.
+Same-origin routes do not expose arbitrary paths. Only Maps uses a
 local browser module; other pages prohibit scripts, remote scripts/fonts are
 never loaded. Labels use fixed 13px system text and addresses stay in details.
 
@@ -852,7 +980,7 @@ owners or compiler routes in Psynergy, no aliases exposing an operation in both.
 | `alchemy bootstrap` | Build and install a missing compiler toolchain from pinned sources. `--check` validates without building; `--build` rebuilds; `--from BUNDLE` imports an admitted distribution. |
 | `alchemy build` | `compilers`, `asm`, `claimed`, `full`/`rom`, `assets` and `allocator`. Compiler source builds do not install a distribution. The allocator stage generates canonical GCC dumps for Psynergy inspection. `assets --network` draws map networks and assembles worlds ([Assets](#assets-and-local-viewers)). |
 | `alchemy verify` | Run the staged repository's verification contract. |
-| `alchemy coverage` | Rebuild and publish project coverage. `audit --target TARGET` inventories every ROM resource-directory pointer, physical spans only for byte-reproduced compressed streams, candidate executable overlay spans from canonical streams and assembler source-line evidence, and the bounded main image as the exact complement of ROM-verified asset regions. Raw pointers are hierarchical and never treated as file extents. `--calibrate` must reproduce the completed TBS audit before any executable method can become authoritative. The audit writes a candidate under `out/`; it never edits the committed scoring manifest. |
+| `alchemy coverage` | Rebuild and publish project coverage. `audit --target TARGET` inventories every ROM resource-directory pointer, physical spans only for byte-reproduced compressed streams, candidate executable overlay spans from canonical streams by ARMv4T control flow alone (loader veneers, owner-register entries, framed word-aligned Thumb function pointers, calls, branches and register-tracked GCC switch tables; word-aligned prologues, loaded Thumb pointers and gaps between proved functions only as candidates whose complete walks must end in control flow, discarded whole otherwise; listings are not evidence), and the bounded main image as the exact complement of ROM-verified asset regions. Raw pointers are hierarchical and never treated as file extents. The candidate goes to `out/<target>/reports/executable-audit-candidate.json`, never to the inventory path, and each run prints the digest of its overlay intervals. `--calibrate --expected LEDGER` lists every range differing from a ledger, as a diagnostic only. `--inventory` writes `out/<target>/reports/executable.json`: complete only when the overlay intervals hash to the game's verification record and a byte-identical full ROM build proves the main complement, otherwise pending, so progress reports `?`; it is pending while a run is in progress and after one fails. It never edits a committed file. |
 | `alchemy check` | `publication`, `commit-progress`, `source-tracking`, `owners`, `tla-owners`, `coverage`, `integrate`, `no-asm`, `progress`, `routes` and `siblings`: repository contracts, not portable file operations. `progress` combines the generated executable inventory with the current verified build receipt ([Completion](#completion-and-measurement)); `--json` reports DONE and exact C separately, and `--write-report` writes that same result under `out/`. |
 | `alchemy cross-edition` | Compare reviewed owner correspondence across Golden Sun editions. |
 | `alchemy overlay` | `adopt`, `park`, `audit` and `export`: Golden Sun loader, resource integration and byte-identical retained-source export. |
@@ -926,7 +1054,6 @@ and tracked publication. It does not rescore all drafts or rebuild twelve ROMs.
 | Ownership, labels, coverage | `make coverage` |
 | Rust tooling or dashboard | `make test` |
 | Shared edition/preprocessor logic | `make targets` (compile-only) |
-| Assembly classification | `make classification-check` |
 | Tooling or documents | `make tooling-index-check` |
 
 Coverage reads current verified receipts; rebuild stale source evidence first.
@@ -990,11 +1117,18 @@ current state; detailed experiments are disposable. Never preserve an old blanke
 
 ### TLA and twelve editions
 
-- Repair the compile-only TLA script-operand unit contract: 38 exact owners are
-  declared but OPERANDS.C defines three additional unresolved named helpers.
-  Declare full membership without crediting those helpers. Earlier GET_BYTE.C /
-  GameFlagBytes binding failures are historical leads; rerun to identify the
-  current first failure rather than keeping competing diagnoses.
+- The TLA full build's claimed C and assembly stages reproduce their bytes of
+  the ROM from TLA's own registers, listings and call-via bank, and its asset
+  stage reproduces all 5,656 registered assets (15,405,794 bytes) with no
+  failures. The image is still not complete: resources 203–226 and 258
+  (321,496 bytes) have no asset family; main-image holes (67,624 bytes in 300
+  ranges: Thumb functions no listing walk reached, data, relocated ARM kernels
+  such as the twins of TBS UPDATE_VERTICES, DRAW_GLYPH, the sound driver and
+  SENTOU_KOUKA_GOUSEI, and 212 bytes of alignment inside units linked as owner
+  slices) have no listing; the twelve map-range resources field maps leave
+  unregistered (58,792), the streams of 017 and 16b (35,856), 22 padding bytes
+  and the 2 bytes before the fill at 0x086322b4 are not reproduced. Measure
+  the remainder again before claiming a TLA full build.
 - Only TBS EN supports full-ROM build. Preserve guards on the other eleven
   targets until each has complete edition link layouts, source/assembly bindings
   and regional asset manifests and an independently byte-identical full image.
@@ -1015,14 +1149,36 @@ current state; detailed experiments are disposable. Never preserve an old blanke
   Field operands 08025bb4, 08025c5c, 08025f9c remain scheduling floors. Do not
   repeat their five failed hypotheses or treat layout-only C as credit.
 - Venus resource_64d:02000510 has its complete 5,404-byte draft maintained at
-  recon/en/overlays/resource_64d_c_02000510.c. Fix the lifter's
+  recon/tla/en/overlays/resource_64d_c_02000510.c. Fix the lifter's
   duplicated lookups, extra end calls and volatile actor RAM before repeating
   this family. The first constant-synthesis mismatch is not fixed by equivalent
   integer spellings.
 - Keep 28 further overlay exports private: their raw integer payloads do not
   become publishable because the complete images reproduce. Their owners/results
-  have current entries in the TLA registry. Correct DAIRA to DERI using Japanese message 0xe62 in a
-  verified migration; Japanese place-name base 0xe5a differs from English 0xe58.
+  have current entries in the TLA registry.
+- TLA field maps derive through `--derive-index` from every scene and the load
+  records no scene selects: 299 containers, 475 tag-2 banks and 203 palettes
+  in FIELD, MENU and DEBUG documents with private map binaries and tile sheets.
+  Twelve resources stay unregistered with `--leave`. Tag-2 banks 276, 3cc and
+  4b3 and the tagged palette-LZ grids of containers 2ef and 57b are compressor
+  gaps near their input ends. Bank 311's alignment is the heap's top chunk
+  size; glibc's sbrk and trim rules fix its high byte only once the packer
+  heap's page offset is known. Bank 274's alignment is memory resource 26a
+  last wrote, so it derives once the character banks 264–26b are registered.
+  Banks 312, 3cd, 3ce, 4b4 and 4b5 reproduce, but their alignment reads memory
+  those banks last wrote. The complete build's only failures are resource 198
+  and overlay 64d, which were already unresolved.
+- Tag-2 history growth at the input end is not a function of position: every
+  bank decodes to 16,384 bytes, yet banks 1b7, 1da and 221 (TBS) and 276, 3cc
+  and 4b3 (TLA) copy from beyond 4,123 bytes 157–389 bytes before the end,
+  while 162 and 286 (TBS) and 2bb and 4db (TLA) decline such copies 235–444
+  bytes before it. Recover what else bounds the ring before adding a setting.
+- The tagged palette-LZ grid failures (TBS 2ee and 326, TLA 278, 2ef and 57b)
+  lie 34–128 bytes before the input end. Three emit a literal and then a copy
+  one byte shorter where a copy reaches the end, although English streams take
+  919 of 922 such copies; the other two decline a three-byte copy at distance
+  3,910. Letting the look-ahead compare stale ring bytes past the end broke
+  4,764 of 7,914 streams and is rejected.
 - Finish edition-local data identification and Japanese correspondence from
   actual readers and byte proofs, not broad AI guesses or copied source trees.
 
@@ -1031,7 +1187,7 @@ current state; detailed experiments are disposable. Never preserve an old blanke
 - Complete the Alchemy-builds/Psynergy-reads boundary for encoders and source
   repair operations still in Psynergy, updating callers and this tooling index.
 - Close unknown executable gaps, reduce raw overlay data directives, derive
-  remaining compression lookahead/recipes, identify music titles from evidence,
+  remaining compression recipes, identify music titles from evidence,
   and place exclusive assets with proved consumers. Admit other compiler hosts
   through the existing evidence/approval process.
 - Map viewer: derive TBS walking/collision boundaries, add story-state and

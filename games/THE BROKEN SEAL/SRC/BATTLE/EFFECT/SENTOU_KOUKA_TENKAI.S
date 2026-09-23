@@ -1,25 +1,22 @@
+@ Battle-effect model decoder, the first member of the 560-byte block that
+@ the routine at 0x080f02e8 copies into heap slot 49 with DMA3 (size 0x230
+@ and source 0x080f0024 in its literal pool at 0x080f0360), calls and frees.
+@ At entry it rebuilds the dispatcher's jump table for the address it runs
+@ at from its own position (ldr r2, [pc, #192]; add r3, pc, #236;
+@ add r4, pc, #196), then calls the dispatcher of
+@ SENTOU_KOUKA_TENKAI_DISPATCH.S with bl, keeping the decoder state in r2,
+@ r3, r5 and fp across those calls. Neither approved compiler relocates
+@ code at run time or passes state that way. These 204 bytes equal TLA
+@ BATTLE/EFFECT/SENTOU_KOUKA_TENKAI.S after its Thumb entry (0x081a0050).
+@ The block's data words (SENTOU_KOUKA_TENKAI_LINK.S and
+@ SENTOU_KOUKA_TENKAI_TABLES.S) carry no credit, as in TLA.
+@ credit: library — TBS/TLA common ARM model/bit-stream decoder bank, battle-effect link
 .syntax unified
 .text
-	.set Func_080f03f0, 0x080f03f0
-	.thumb
-	.global SentouKouka_Tobikomi
-	.thumb_func
-SentouKouka_Tobikomi:
-	ldr r4, [pc, #0]
-	bx r4
-	.4byte Func_080f03f0 + 1
 	.arm
-	.global SentouKouka_SekiWa
+	.set AlchemyLoadAddress, 0x080f0024
+	.set	SentouKouka_TenkaiYomi, 0x080f00f8
 	.global SentouKouka_Tenkai
-	.global SentouKouka_TenkaiYomi
-SentouKouka_SekiWa:
-	smull	ip, r0, r1, r0
-	smlal	ip, r0, r2, r3
-	ldm	sp, {r2, r3}
-	smlal	ip, r0, r2, r3
-	lsl	r0, r0, #16
-	orr	r0, r0, ip, lsr #16
-	bx	lr
 SentouKouka_Tenkai:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	mov	sl, r2
@@ -76,97 +73,3 @@ SentouKouka_Tenkai:
 	bne .L_080f0068
 	pop	{r5, r6, r7, r8, r9, sl, fp, lr}
 	bx	lr
-.L_bias:
-	.4byte 0x80808080
-.L_dispatch_base:
-	.4byte .L_dispatch_source
-SentouKouka_TenkaiYomi:
-	and	ip, r3, #7
-	ldr	pc, [pc, ip, lsl #2]
-	nop
-.L_dispatch_runtime:
-	.space 32, 0
-.L_dispatch_source:
-	.4byte .L_case_2
-	.4byte .L_case_4_plus
-	.4byte .L_case_8
-	.4byte .L_case_6_plus
-	.4byte .L_case_2
-	.4byte .L_case_4_minus
-	.4byte .L_case_10
-	.4byte .L_case_6_minus
-.L_case_2:
-	lsr	r3, r3, #2
-	subs	r2, r2, #2
-	movpl	pc, lr
-	ldrh	ip, [r0], #2
-	add	r2, r2, #16
-	orr	r3, r3, ip, lsl r2
-	mov	pc, lr
-.L_case_4_plus:
-	and	ip, r3, #8
-	lsrs	r3, r3, #4
-	add	ip, ip, #8
-	add	r5, r5, ip, lsl #22
-	subs	r2, r2, #4
-	movpl	pc, lr
-	ldrh	ip, [r0], #2
-	add	r2, r2, #16
-	orr	r3, r3, ip, lsl r2
-	mov	pc, lr
-.L_case_4_minus:
-	and	ip, r3, #8
-	lsrs	r3, r3, #4
-	add	ip, ip, #8
-	sub	r5, r5, ip, lsl #22
-	subs	r2, r2, #4
-	movpl	pc, lr
-	ldrh	ip, [r0], #2
-	add	r2, r2, #16
-	orr	r3, r3, ip, lsl r2
-	mov	pc, lr
-.L_case_6_plus:
-	and	ip, fp, r3, lsr #3
-	lsr	r3, r3, #6
-	add	ip, ip, #3
-	add	r5, r5, ip, lsl #25
-	subs	r2, r2, #6
-	movpl	pc, lr
-	ldrh	ip, [r0], #2
-	add	r2, r2, #16
-	orr	r3, r3, ip, lsl r2
-	mov	pc, lr
-.L_case_6_minus:
-	and	ip, fp, r3, lsr #3
-	lsr	r3, r3, #6
-	add	ip, ip, #3
-	sub	r5, r5, ip, lsl #25
-	subs	r2, r2, #6
-	movpl	pc, lr
-	ldrh	ip, [r0], #2
-	add	r2, r2, #16
-	orr	r3, r3, ip, lsl r2
-	mov	pc, lr
-.L_case_8:
-	mov	ip, #15
-	ands	ip, ip, r3, lsr #4
-	add	ip, ip, #11
-	rsbcs	ip, ip, #0
-	add	r5, r5, ip, lsl #25
-	lsr	r3, r3, #8
-	subs	r2, r2, #8
-	movpl	pc, lr
-	ldrh	ip, [r0], #2
-	add	r2, r2, #16
-	orr	r3, r3, ip, lsl r2
-	mov	pc, lr
-.L_case_10:
-	ror	r5, r3, #10
-	and	r5, r5, #-33554432
-	lsr	r3, r3, #10
-	subs	r2, r2, #10
-	movpl	pc, lr
-	ldrh	ip, [r0], #2
-	add	r2, r2, #16
-	orr	r3, r3, ip, lsl r2
-	mov	pc, lr

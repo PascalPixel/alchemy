@@ -843,13 +843,10 @@ void FieldScene_RunActorPositionTransition(void)
     fn candidate_bindings_use_the_game_and_overlay_register_namespace() {
         let root = std::env::temp_dir().join(format!("candidate-bindings-{}", std::process::id()));
         for game in ["tbs", "tla"] {
-            std::fs::create_dir_all(
-                root.join("games")
-                    .join(crate::compiler::routing::game_directory(game)),
-            )
-            .unwrap();
+            std::fs::create_dir_all(root.join(crate::compiler::routing::recon_directory(game)))
+                .unwrap();
             std::fs::write(
-                root.join("games").join(crate::compiler::routing::game_directory(game)).join("source-paths.json"),
+                root.join(crate::compiler::routing::recon_directory(game)).join("source-paths.json"),
                 format!(r#"{{"format":3,"owners":{{"main:08001234":{{"name":"{game}_Main"}},"resource_380:02000100":{{"name":"Scene_Run"}},"resource_381:02000200":{{"name":"Scene_Run"}}}}}}"#),
             ).unwrap();
         }

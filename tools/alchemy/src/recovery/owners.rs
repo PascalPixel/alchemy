@@ -50,7 +50,7 @@ fn parse_hex(text: &str) -> Result<u32, String> {
 
 /// Every retained overlay module, in register order.
 pub fn modules(root: &Path) -> Result<Vec<Module>, String> {
-    let path = root.join("games/THE BROKEN SEAL/semantic/overlay-assembly.json");
+    let path = root.join("recon/tbs/semantic/overlay-assembly.json");
     let assembly: Assembly = crate::compiler::build_io::read_json(&path)?;
     let sources = SourcePaths::load(root)?;
     let mut modules = Vec::new();
@@ -101,11 +101,11 @@ fn reviewed_spans(
     root: &Path,
     target: DecompTarget,
 ) -> Result<std::collections::BTreeMap<SourceOwner, usize>, String> {
-    let register = root.join(target.game_dir()).join("semantic/regions.json");
+    let register = root.join(target.recon_dir()).join("semantic/regions.json");
     if !register.is_file() {
         return Ok(Default::default());
     }
-    crate::compiler::translation_units::reviewed_overlay_spans_for_game(root, target.game_dir())
+    crate::compiler::translation_units::reviewed_overlay_spans_for_game(root, target.recon_dir())
 }
 
 /// `span_for` against one registered target's reviewed register and retained assembly.
@@ -283,7 +283,7 @@ mod owner_tests {
     #[test]
     fn retained_regions_and_requested_spans_cannot_create_owners() {
         let root = tempfile::tempdir().unwrap();
-        let semantic = root.path().join("games/THE BROKEN SEAL/semantic");
+        let semantic = root.path().join("recon/tbs/semantic");
         std::fs::create_dir_all(&semantic).unwrap();
         std::fs::write(semantic.join("regions.json"), r#"{"manual_regions":[{"overlay":"resource_374","entry":"0x02001000","span_bytes":512}]}"#).unwrap();
         std::fs::write(semantic.join("overlay-assembly.json"), r#"{"regions":[{"overlay":"resource_374","start":"0x02001010","end":"0x02001030","kind":"structured_scene_module"}]}"#).unwrap();

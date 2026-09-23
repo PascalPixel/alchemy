@@ -204,7 +204,10 @@ impl Catalog {
     }
 }
 
-/// How a descriptor's `frame_codec` stores one frame, by game.
+/// How a descriptor's `frame_codec` stores one frame, by game. The Lost Age's
+/// codec 2 descriptors have a null frame directory: their frames come from a
+/// general-LZ archive (u32 frame offsets, then zero-skip frames) that the
+/// runtime loads, never from a ROM frame pointer.
 pub(in crate::build_assets::native) fn frame_codec(
     game: CompilerTarget,
     codec: u8,
@@ -212,6 +215,7 @@ pub(in crate::build_assets::native) fn frame_codec(
     match (game, codec) {
         (_, 0) => Some("zero-skip"),
         (_, 1) => Some("golden-sun-tagged-lz/indexed-bytes"),
+        (CompilerTarget::Tla, 2) => Some("runtime-loaded golden-sun-general-lz archive/zero-skip"),
         (CompilerTarget::Tbs, 3) => Some("golden-sun-general-lz/zero-skip"),
         (CompilerTarget::Tla, 3) => Some("golden-sun-arena-lz/zero-skip"),
         _ => None,
@@ -267,11 +271,21 @@ fn read_frame(
             (skipped(&bytes)?, size)
         }
         "golden-sun-arena-lz/zero-skip" => {
-            let (bytes, size, _) = psynergy::assets::lz::decode_arena(rom, start).map_err(lz)?;
-            (skipped(&bytes)?, size)
+            // An absent frame is a bare raw split: no zero-skip bytes follow
+            // it, so its reader borrows the next stream's first byte.
+            if rom.get(start..start + 3) == Some(&[0, 0, 0][..]) {
+                (vec![0; size], 2)
+            } else {
+                let (bytes, size, _) =
+                    psynergy::assets::lz::decode_arena(rom, start).map_err(lz)?;
+                (skipped(&bytes)?, size)
+            }
         }
         // The tag byte selects the stream: 0 general, 1 palette, 2 MTF4.
-        _ => crate::build_assets::derive_index::tagged_extent(rom, start, rom.len())?,
+        "golden-sun-tagged-lz/indexed-bytes" => {
+            crate::build_assets::derive_index::tagged_extent(rom, start, rom.len())?
+        }
+        _ => return Err(format!("frame codec {codec} has no ROM frame pointer")),
     };
     if pixels.len() != size
         || pixels
@@ -363,6 +377,22 @@ pub(in crate::build_assets::native) fn preview(
             .map_err(|e| e.to_string())?;
     }
     Ok(data)
+}
+
+#[test]
+fn absent_arena_frames_read_blank_and_runtime_archives_have_no_pointer() {
+    // A bare split followed by a raw stream: the absent frame is two bytes.
+    let rom = [0, 0, 0, 0, 5, 0xee, 0];
+    let (pixels, consumed) = read_frame(&rom, CompilerTarget::Tla, 3, ROM_BASE, 4, 4).unwrap();
+    assert_eq!((pixels, consumed), (vec![0; 16], 2));
+    let (pixels, consumed) = read_frame(&rom, CompilerTarget::Tla, 3, ROM_BASE + 2, 4, 4).unwrap();
+    assert_eq!(pixels[0], 5);
+    assert_eq!(consumed, 5);
+    assert!(frame_codec(CompilerTarget::Tla, 2).is_some());
+    assert!(frame_codec(CompilerTarget::Tbs, 2).is_none());
+    assert!(read_frame(&rom, CompilerTarget::Tla, 2, ROM_BASE, 4, 4)
+        .unwrap_err()
+        .contains("no ROM frame pointer"));
 }
 
 #[test]

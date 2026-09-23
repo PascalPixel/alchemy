@@ -13,7 +13,6 @@ type Row = (i64, String);
 
 struct Reachability {
     instructions: BTreeMap<i64, i64>,
-    tables: BTreeSet<i64>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -21,37 +20,6 @@ pub struct ExecutableSpan {
     pub start: i64,
     pub end: i64,
     pub kind: &'static str,
-}
-
-/// Recover a framed function's first halfword when the byte-identical source
-/// emitter had to leave only that halfword as data (usually because objdump
-/// grouped the following wide instruction differently). The following
-/// halfword must already be independently classified as executable; a
-/// prologue-shaped value in an unrelated table is not enough.
-pub fn adjacent_prologue_spans(
-    input: &[u8],
-    base: i64,
-    classified: &[ExecutableSpan],
-) -> Vec<ExecutableSpan> {
-    let covered = |address: i64| {
-        classified
-            .iter()
-            .any(|span| span.start <= address && address < span.end)
-    };
-    (0..input.len().saturating_sub(1))
-        .step_by(2)
-        .filter_map(|offset| {
-            let address = base + offset as i64;
-            let half = u16::from_le_bytes([input[offset], input[offset + 1]]);
-            (half & 0xff00 == 0xb500 && !covered(address) && covered(address + 2)).then_some(
-                ExecutableSpan {
-                    start: address,
-                    end: address + 2,
-                    kind: "thumb",
-                },
-            )
-        })
-        .collect()
 }
 
 /// Find the stock GCC Thumb interworking bank from the sequence defined by
@@ -115,50 +83,6 @@ mod tests {
             bytes
         );
     }
-
-    #[test]
-    fn trusted_switches_require_the_gcc_register_chain() {
-        let mut image = vec![0u8; 0x60];
-        image[0..4].copy_from_slice(&[0x00, 0x4c, 0x20, 0x47]);
-        image[4..8].copy_from_slice(&0x0200_8021u32.to_le_bytes());
-        for (at, half) in [
-            (0x20, 0x2b01u16), // cmp r3, #1
-            (0x22, 0x4a03),    // ldr r2, [pc, #12] -> 0x30
-            (0x24, 0x009b),    // lsl r3, r3, #2
-            (0x26, 0x589b),    // ldr r3, [r3, r2]
-            (0x28, 0x469f),    // mov pc, r3
-            (0x50, 0x4770),    // case 0
-            (0x54, 0x4770),    // case 1
-        ] {
-            image[at..at + 2].copy_from_slice(&half.to_le_bytes());
-        }
-        image[0x30..0x34].copy_from_slice(&0x0200_8040u32.to_le_bytes());
-        image[0x40..0x44].copy_from_slice(&0x0200_8051u32.to_le_bytes());
-        image[0x44..0x48].copy_from_slice(&0x0200_8055u32.to_le_bytes());
-        let spans = trusted_overlay_spans(&image, OVERLAY_BASE, 1).unwrap();
-        assert!(spans.iter().any(|span| span.start == OVERLAY_BASE + 0x50));
-        assert!(spans.iter().any(|span| span.start == OVERLAY_BASE + 0x54));
-        assert!(!spans
-            .iter()
-            .any(|span| span.start < OVERLAY_BASE + 0x48 && span.end > OVERLAY_BASE + 0x40));
-
-        // Change the scaled index to r1 while the comparison and indexed
-        // load still use r3. The old nearby-opcode heuristic accepted this.
-        image[0x24..0x26].copy_from_slice(&0x0089u16.to_le_bytes());
-        let spans = trusted_overlay_spans(&image, OVERLAY_BASE, 1).unwrap();
-        assert!(!spans.iter().any(|span| span.start == OVERLAY_BASE + 0x50));
-
-        // The comparison reads the unscaled source, not necessarily the
-        // destination of lsl (cmp r0; lsl r3, r0, #2).
-        image[0x20..0x22].copy_from_slice(&0x2801u16.to_le_bytes());
-        image[0x24..0x26].copy_from_slice(&0x0083u16.to_le_bytes());
-        let spans = overlay_flow_spans(&image, OVERLAY_BASE, 1, true).unwrap();
-        assert!(spans.iter().any(|span| span.start == OVERLAY_BASE + 0x50));
-        assert!(spans.iter().any(|span| span.kind == "jump_table"
-            && span.start == OVERLAY_BASE + 0x40
-            && span.end == OVERLAY_BASE + 0x48));
-    }
-
     #[test]
     fn complete_stock_call_via_bank_is_executable() {
         let bank = (0u16..15)
@@ -172,24 +96,6 @@ mod tests {
                 && span.kind == "compiler_runtime"
         }));
         assert!(compiler_runtime_spans(&bank[..56], OVERLAY_BASE).is_empty());
-    }
-
-    #[test]
-    fn isolated_prologue_requires_adjacent_classified_code() {
-        let image = [0xe0, 0xb5, 0x00, 0x20, 0x00, 0xbd, 0xe0, 0xb5];
-        let classified = [ExecutableSpan {
-            start: OVERLAY_BASE + 2,
-            end: OVERLAY_BASE + 6,
-            kind: "thumb",
-        }];
-        assert_eq!(
-            adjacent_prologue_spans(&image, OVERLAY_BASE, &classified),
-            [ExecutableSpan {
-                start: OVERLAY_BASE,
-                end: OVERLAY_BASE + 2,
-                kind: "thumb",
-            }]
-        );
     }
 }
 
@@ -489,10 +395,7 @@ fn reachable(
             None => break,
         }
     }
-    Reachability {
-        instructions,
-        tables,
-    }
+    Reachability { instructions }
 }
 
 /// Conservatively inventory the executable bytes proved by the same decoder
@@ -587,89 +490,12 @@ pub fn executable_spans(input: &[u8], base: i64) -> Result<Vec<ExecutableSpan>, 
     Ok(merged)
 }
 
-/// Code reached from the loader's opening veneers, calls, branches and
-/// compiler switch tables. It deliberately does not seed prologue-shaped
-/// bytes, so it can safely complement the conservative prologue decoder.
-pub fn trusted_overlay_spans(
-    input: &[u8],
-    base: i64,
-    entry_veneers: usize,
-) -> Result<Vec<ExecutableSpan>, String> {
-    overlay_flow_spans(input, base, entry_veneers, false)
-}
-
-/// Executable-image accounting includes compiler-owned jump tables, just as
-/// it includes literal pools and a matched function's complete linked extent.
-pub fn overlay_flow_spans(
-    input: &[u8],
-    base: i64,
-    entry_veneers: usize,
-    include_tables: bool,
-) -> Result<Vec<ExecutableSpan>, String> {
-    if input.len() < entry_veneers * 8 {
-        return Err("overlay is shorter than its entry veneer table".into());
-    }
-    let mut seeds = Vec::with_capacity(entry_veneers + 1);
-    // Camelot overlays place their first local routine immediately after the
-    // fixed loader veneer table. It is not necessarily named by an entry
-    // veneer (several tables point only at later public entry points), and it
-    // is often an unframed leaf, so neither ordinary discovery route sees it.
-    seeds.push(base + (entry_veneers * 8) as i64);
-    for entry in 0..entry_veneers {
-        let at = entry * 8;
-        if input[at..at + 4] != [0x00, 0x4c, 0x20, 0x47] {
-            return Err(format!("overlay entry {entry} is not a fixed veneer"));
-        }
-        let raw = u32::from_le_bytes(input[at + 4..at + 8].try_into().unwrap());
-        let mut target = i64::from(raw & !1);
-        if base == OVERLAY_BASE {
-            target -= 0x8000;
-        }
-        if target < base || target + 2 > base + input.len() as i64 {
-            return Err(format!("overlay entry {entry} target is outside the image"));
-        }
-        seeds.push(target);
-    }
-    let flow = reachable(input, base, &seeds, false, true, false, true);
-    let mut spans = spans_from_instructions(input, base, flow.instructions)?;
-    if include_tables {
-        let mut tables: Vec<ExecutableSpan> = Vec::new();
-        for address in flow.tables {
-            if let Some(last) = tables.last_mut() {
-                if last.end == address {
-                    last.end += 1;
-                    continue;
-                }
-            }
-            tables.push(ExecutableSpan {
-                start: address,
-                end: address + 1,
-                kind: "jump_table",
-            });
-        }
-        for table in &tables {
-            // The compiler aligns an inline table after mov pc, rN.
-            if table.start >= base + 4 {
-                let offset = (table.start - base) as usize;
-                let half = |at: usize| u16::from_le_bytes([input[at], input[at + 1]]);
-                if half(offset - 2) == 0 && half(offset - 4) & 0xff87 == 0x4687 {
-                    spans.push(ExecutableSpan {
-                        start: table.start - 2,
-                        end: table.start,
-                        kind: "executable_alignment",
-                    });
-                }
-            }
-        }
-        spans.extend(tables);
-    }
-    Ok(spans)
-}
-
 /// Candidate main-image inventory seeded only by direct call destinations
 /// that have a framed Thumb prologue. Unlike an overlay-wide prologue sweep,
 /// random `push`-shaped data cannot seed itself. Function-pointer-only entry
-/// points remain intentionally missing and are measured by TBS calibration.
+/// points remain intentionally missing, so this count is a diagnostic: the
+/// main image counts only as the asset complement a byte-identical full ROM
+/// build proves.
 pub fn main_executable_spans(input: &[u8], base: i64) -> Result<Vec<ExecutableSpan>, String> {
     if !input.len().is_multiple_of(2) {
         return Err("main image has an odd byte length".into());
@@ -778,15 +604,24 @@ fn spans_from_instructions(
     Ok(spans)
 }
 pub fn build_overlay_source(input: &[u8], base: i64) -> Result<String, String> {
-    build_source(input, base, &[], false)
+    build_source(input, base, &[], false, &BTreeSet::new())
 }
 /// A main-image owner's audited extent: the entry is code whatever its
 /// prologue looks like, and every byte not proved to be a pool word is
 /// decoded as code before the byte check has its say.
 pub fn build_region_source(input: &[u8], base: i64) -> Result<String, String> {
-    build_source(input, base, &[base], true)
+    build_source(input, base, &[base], true, &BTreeSet::new())
 }
-fn build_source(input: &[u8], base: i64, seeds: &[i64], sweep: bool) -> Result<String, String> {
+/// `boundaries` are addresses where a separately owned range starts or ends.
+/// A data row never spans one, so that range can later be cut out of the
+/// listing on whole rows without taking a neighbouring byte with it.
+fn build_source(
+    input: &[u8],
+    base: i64,
+    seeds: &[i64],
+    sweep: bool,
+    boundaries: &BTreeSet<i64>,
+) -> Result<String, String> {
     let decoded = input;
     if !decoded.len().is_multiple_of(2) {
         return Err("overlay has an odd byte length".to_string());
@@ -876,6 +711,7 @@ fn build_source(input: &[u8], base: i64, seeds: &[i64], sweep: bool) -> Result<S
                 && cursor + 4 <= end
                 && (0..4).all(|byte| !covered.contains(&(cursor + byte)))
                 && !labels.contains_key(&(cursor + 2))
+                && boundaries.range(cursor + 1..cursor + 4).next().is_none()
                 && !instructions.contains_key(&(cursor + 4));
             if aligned {
                 body.push((
@@ -952,13 +788,15 @@ fn build_source(input: &[u8], base: i64, seeds: &[i64], sweep: bool) -> Result<S
 /// every run of fixed veneers written through it. The leading `entry_veneers`
 /// are the overlay's entry table; any later run is an import table. The
 /// macro emits the same eight bytes per veneer, so reassembly is unchanged.
+/// No data row spans one of `boundaries` (see `build_source`).
 pub fn export_overlay_source(
     input: &[u8],
     base: i64,
     veneer_macro: &str,
     entry_veneers: usize,
+    boundaries: &BTreeSet<i64>,
 ) -> Result<String, String> {
-    let listing = build_overlay_source(input, base)?;
+    let listing = build_source(input, base, &[], false, boundaries)?;
     let lines: Vec<&str> = listing.lines().collect();
     let entry_label = format!("Overlay_{}:", hex(base, 8));
     let opening = lines
@@ -1062,6 +900,7 @@ mod export_tests {
             OVERLAY_BASE,
             "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC",
             2,
+            &BTreeSet::new(),
         )
         .unwrap();
         assert!(text.contains("\t.irp EntryTarget, 0x02008011, 0x02008015\n"));
@@ -1072,6 +911,45 @@ mod export_tests {
                 .unwrap(),
             image
         );
-        assert!(export_overlay_source(&image, OVERLAY_BASE, "OVERLAY.INC", 3).is_err());
+        assert!(
+            export_overlay_source(&image, OVERLAY_BASE, "OVERLAY.INC", 3, &BTreeSet::new())
+                .is_err()
+        );
+    }
+
+    #[test]
+    fn owner_boundary_splits_a_leaf_and_its_alignment_into_halfword_rows() {
+        // After a literal word, a `bx lr` leaf reached only through data and
+        // its alignment halfword read as one undiscovered word.
+        let mut image = Vec::new();
+        for _ in 0..2 {
+            image.extend([0x00, 0x4c, 0x20, 0x47]);
+            image.extend(0x0200_8011u32.to_le_bytes());
+        }
+        image.extend([0x70, 0x47, 0x00, 0x00, 0x33, 0x33, 0x00, 0x00]);
+        image.extend([0x70, 0x47, 0x00, 0x00, 0x99, 0x19, 0x00, 0x00]);
+        let export = |boundaries: &[i64]| {
+            export_overlay_source(
+                &image,
+                OVERLAY_BASE,
+                "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC",
+                2,
+                &boundaries.iter().copied().collect(),
+            )
+            .unwrap()
+        };
+        let whole = export(&[]);
+        assert!(whole.contains("\t.4byte 0x00004770\n"), "{whole}");
+        let leaf = OVERLAY_BASE + 0x18;
+        let text = export(&[leaf, leaf + 2]);
+        assert!(
+            text.contains("\t.2byte 0x4770\n\t.2byte 0x0000\n\t.4byte 0x00001999\n"),
+            "{text}"
+        );
+        assert_eq!(
+            crate::overlay::compile::assemble_overlay_raw(&OverlaySource::text(text), OVERLAY_BASE)
+                .unwrap(),
+            image
+        );
     }
 }

@@ -1,4 +1,14 @@
-@ マップセルとタイル表を走査し、変換後の画面行を半語単位で描画する。
+@ Renders map rows into a halfword buffer, two pixels per strh, by stepping a
+@ fixed-point position per pixel from per-row start and step values held in
+@ 32-byte records. It runs from a RAM copy of exactly these 636 bytes (loader
+@ 0x08012388). r4 holds the 0x38 row mask under its row and column
+@ counters, so and sl, r4, r8, lsr #20 masks with the counter register
+@ itself; it walks the records with ldrsh r5, [r0], #32 and steps columns
+@ with sub r1, r1, #1920 directly followed by add r1, r1, #8. GCC 2.96
+@ post-increments a halfword load only by its size and folds adjacent
+@ constant adds, so this is hand-written ARM. Every TBS edition has these
+@ bytes; TLA has its own revision.
+@ credit: handwritten — relocated ARM map-row renderer
 .syntax unified
 	.arm
 	.global TileMap_DrawRows

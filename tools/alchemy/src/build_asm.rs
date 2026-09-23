@@ -37,7 +37,6 @@ use serde_json::{json, Value};
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
 const ROM_BASE: u64 = 0x0800_0000;
-const ROM_SIZE: u64 = 0x0080_0000;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Options {
     pub rom: String,
@@ -63,6 +62,8 @@ struct BuiltRegion {
     address: u64,
     run_address: u64,
     data: Vec<u8>,
+    /// ROM spans `[start, end)` the module marks as not credited.
+    uncredited: Vec<(u64, u64)>,
 }
 #[derive(Debug, Clone)]
 struct Classification {
@@ -336,7 +337,7 @@ pub fn region_cache_key_with_signatures(
     binutils: &[(String, String)],
 ) -> Result<String, String> {
     let identity = (
-        "build-asm-cache-v3",
+        "build-asm-cache-v4",
         crate::compiler::bundle::executable_signature()?,
         linked_address,
         binutils,
@@ -381,19 +382,24 @@ fn build_region(
     let elf = output_dir.join(format!("{name}.elf"));
     let binary = output_dir.join(format!("{name}.bin"));
     let cache_key = region_cache_key_with_signatures(source_bytes, linked_address, binutils)?;
-    if let Some(data) = cache
-        .get(&cache_key)
-        .ok()
-        .flatten()
-        .and_then(|entries| entries.into_iter().find(|(kind, _)| kind == "payload"))
-        .map(|(_, data)| data)
-    {
-        write(&binary, &data)?;
-        return Ok(BuiltRegion {
-            address,
-            run_address: linked_address,
-            data,
-        });
+    if let Some(entries) = cache.get(&cache_key).ok().flatten() {
+        let entry = |name: &str| {
+            entries
+                .iter()
+                .find(|(kind, _)| kind == name)
+                .map(|(_, value)| value.clone())
+        };
+        if let (Some(data), Some(spans)) = (entry("payload"), entry("uncredited")) {
+            if let Ok(uncredited) = serde_json::from_slice::<Vec<(u64, u64)>>(&spans) {
+                write(&binary, &data)?;
+                return Ok(BuiltRegion {
+                    address,
+                    run_address: linked_address,
+                    data,
+                    uncredited,
+                });
+            }
+        }
     }
     run(
         &argv(&[
@@ -474,12 +480,228 @@ fn build_region(
         root,
     )?;
     let data = read(&binary)?;
-    cache.put(&cache_key, &[("payload", &data)])?;
+    let symbols = run(&argv(&["arm-none-eabi-nm", &text(&object)]), root)?;
+    let uncredited = uncredited_spans(&symbols, address, data.len() as u64)
+        .map_err(|error| format!("{}: {error}", source.file_name().unwrap().to_string_lossy()))?;
+    let spans = serde_json::to_vec(&uncredited).map_err(|error| error.to_string())?;
+    cache.put(&cache_key, &[("payload", &data), ("uncredited", &spans)])?;
     Ok(BuiltRegion {
         address,
         run_address: linked_address,
         data,
+        uncredited,
     })
+}
+const UNCREDITED_START: &str = "AlchemyUncredited_";
+const UNCREDITED_END: &str = "AlchemyUncreditedEnd_";
+/// ROM spans a maintained module keeps outside its credit: padding, filler
+/// that never runs, placeholder slots filled at run time and words rewritten
+/// at run time, where they sit between credited instructions. Each span runs
+/// from the label `AlchemyUncredited_<address>` to `AlchemyUncreditedEnd_<address>`,
+/// `<address>` being the eight-digit lowercase ROM address of the span's first
+/// byte. `symbols` is `nm` output for the unlinked object, whose values are
+/// offsets from the module's first byte at ROM `address`.
+fn uncredited_spans(symbols: &str, address: u64, size: u64) -> Result<Vec<(u64, u64)>, String> {
+    let mut starts = BTreeMap::new();
+    let mut ends = BTreeMap::new();
+    for line in symbols.lines() {
+        let mut fields = line.split_whitespace();
+        let (Some(value), Some(_), Some(name)) = (fields.next(), fields.next(), fields.next())
+        else {
+            continue;
+        };
+        if !name.starts_with("AlchemyUncredited") {
+            continue;
+        }
+        let (map, id) = if let Some(id) = name.strip_prefix(UNCREDITED_END) {
+            (&mut ends, id)
+        } else if let Some(id) = name.strip_prefix(UNCREDITED_START) {
+            (&mut starts, id)
+        } else {
+            return Err(format!("unknown uncredited marker {name}"));
+        };
+        if id.len() != 8
+            || !id
+                .bytes()
+                .all(|byte| byte.is_ascii_hexdigit() && !byte.is_ascii_uppercase())
+        {
+            return Err(format!(
+                "{name}: marker needs an eight-digit lowercase address"
+            ));
+        }
+        let id = u64::from_str_radix(id, 16).map_err(|error| error.to_string())?;
+        let offset = u64::from_str_radix(value, 16).map_err(|error| format!("{name}: {error}"))?;
+        if map.insert(id, offset).is_some() {
+            return Err(format!("{name}: duplicate marker"));
+        }
+    }
+    let mut spans = Vec::new();
+    for (id, start) in &starts {
+        let end = ends
+            .remove(id)
+            .ok_or_else(|| format!("{UNCREDITED_START}{id:08x} has no {UNCREDITED_END}{id:08x}"))?;
+        if address + start != *id {
+            return Err(format!(
+                "{UNCREDITED_START}{id:08x} lies at 0x{:08x}",
+                address + start
+            ));
+        }
+        if end <= *start || end > size {
+            return Err(format!(
+                "{UNCREDITED_START}{id:08x}: empty or outside the module"
+            ));
+        }
+        spans.push((address + start, address + end));
+    }
+    if let Some(id) = ends.keys().next() {
+        return Err(format!(
+            "{UNCREDITED_END}{id:08x} has no {UNCREDITED_START}{id:08x}"
+        ));
+    }
+    if spans.windows(2).any(|pair| pair[0].1 > pair[1].0) {
+        return Err("overlapping uncredited spans".into());
+    }
+    Ok(spans)
+}
+#[cfg(test)]
+mod uncredited_tests {
+    use super::uncredited_spans;
+    #[test]
+    fn marked_spans_are_paired_located_and_disjoint() {
+        let symbols = "00000000 t Func_08000100\n\
+                       00000008 t AlchemyUncredited_08000108\n\
+                       0000000c t AlchemyUncreditedEnd_08000108\n\
+                       00000012 t AlchemyUncredited_08000112\n\
+                       00000014 t AlchemyUncreditedEnd_08000112\n\
+                       00000010 t $d\n";
+        assert_eq!(
+            uncredited_spans(symbols, 0x0800_0100, 0x20).unwrap(),
+            [(0x0800_0108, 0x0800_010c), (0x0800_0112, 0x0800_0114)]
+        );
+        assert!(
+            uncredited_spans("00000000 t Func_08000100\n", 0x0800_0100, 4)
+                .unwrap()
+                .is_empty()
+        );
+        for bad in [
+            // The start label must name its own ROM address.
+            "00000008 t AlchemyUncredited_08000100\n00000010 t AlchemyUncreditedEnd_08000100\n",
+            // Unpaired start or end.
+            "00000008 t AlchemyUncredited_08000108\n",
+            "00000008 t AlchemyUncreditedEnd_08000108\n",
+            // Empty, reversed or past the module's end.
+            "00000008 t AlchemyUncredited_08000108\n00000008 t AlchemyUncreditedEnd_08000108\n",
+            "00000008 t AlchemyUncredited_08000108\n00000004 t AlchemyUncreditedEnd_08000108\n",
+            "00000008 t AlchemyUncredited_08000108\n00000024 t AlchemyUncreditedEnd_08000108\n",
+            // Overlapping spans.
+            "00000008 t AlchemyUncredited_08000108\n00000010 t AlchemyUncreditedEnd_08000108\n\
+             0000000c t AlchemyUncredited_0800010c\n00000014 t AlchemyUncreditedEnd_0800010c\n",
+            // Malformed or unknown marker names.
+            "00000008 t AlchemyUncredited_8000108\n00000010 t AlchemyUncreditedEnd_8000108\n",
+            "00000008 t AlchemyUncredited_0800010C\n00000010 t AlchemyUncreditedEnd_0800010C\n",
+            "00000008 t AlchemyUncreditedBegin_08000108\n",
+        ] {
+            assert!(uncredited_spans(bad, 0x0800_0100, 0x20).is_err(), "{bad}");
+        }
+    }
+}
+/// Library or handwritten provenance that a maintained assembly module states
+/// in its own header: one `@ credit: <library|handwritten> — <object>` line
+/// among the leading comments, which themselves explain why the code is
+/// assembly. Only maintained SRC modules may carry it; the build adds its own
+/// byte-comparison evidence when the module reproduces the ROM. The credit
+/// covers the module's bytes less the spans it marks uncredited.
+fn declared_provenance(
+    text: &str,
+    maintained: bool,
+    verified: bool,
+) -> Result<ClassificationProvenance, String> {
+    let header = text
+        .lines()
+        .take_while(|line| line.starts_with('@'))
+        .collect::<Vec<_>>();
+    if text
+        .lines()
+        .skip(header.len())
+        .any(|line| line.trim_start().starts_with("@ credit:"))
+    {
+        return Err("a credit line must be part of the leading header comment".into());
+    }
+    let credits = header
+        .iter()
+        .filter_map(|line| line.strip_prefix("@ credit:"))
+        .collect::<Vec<_>>();
+    let Some(declared) = credits.first() else {
+        return Ok(ClassificationProvenance::default());
+    };
+    if credits.len() > 1 {
+        return Err("more than one credit line".into());
+    }
+    if !maintained {
+        return Err("only maintained SRC assembly can declare credit".into());
+    }
+    let (credit, object) = declared
+        .split_once('—')
+        .map(|(credit, object)| (credit.trim(), object.trim()))
+        .ok_or("credit line needs `<library|handwritten> — <object>`")?;
+    if !matches!(credit, "library" | "handwritten") {
+        return Err(format!("unknown credit {credit:?}"));
+    }
+    if object.is_empty() {
+        return Err("credit line names no object".into());
+    }
+    let proof = header
+        .iter()
+        .filter(|line| !line.starts_with("@ credit:"))
+        .map(|line| line.trim_start_matches('@').trim())
+        .filter(|line| !line.is_empty())
+        .collect::<Vec<_>>()
+        .join(" ");
+    if proof.is_empty() {
+        return Err("credit needs a header comment explaining why the code is assembly".into());
+    }
+    Ok(ClassificationProvenance {
+        credit: credit.into(),
+        proof,
+        object: object.into(),
+        evidence: if verified {
+            vec!["maintained source reproduces its ROM bytes".into()]
+        } else {
+            Vec::new()
+        },
+    })
+}
+#[cfg(test)]
+mod credit_tests {
+    use super::declared_provenance;
+    #[test]
+    fn credit_is_declared_in_the_header_and_checked() {
+        let module = "@ BIOS call wrapper; software interrupts have no C form.\n@ credit: handwritten — BIOS wrapper\n.syntax unified\n\tswi 0x0b\n";
+        let credit = declared_provenance(module, true, true).unwrap();
+        assert_eq!(credit.credit, "handwritten");
+        assert_eq!(credit.object, "BIOS wrapper");
+        assert!(credit.proof.contains("software interrupts"));
+        assert_eq!(credit.evidence.len(), 1);
+        // Without a ROM comparison there is no evidence, so nothing is credited.
+        assert!(declared_provenance(module, true, false)
+            .unwrap()
+            .evidence
+            .is_empty());
+        // Raw assembly never carries credit.
+        assert!(declared_provenance(module, false, true).is_err());
+        for bad in [
+            "@ why\n@ credit: guessed — BIOS wrapper\n",
+            "@ why\n@ credit: library —\n",
+            "@ why\n@ credit: library\n",
+            "@ credit: library — BIOS wrapper\n",
+            "@ why\n@ credit: library — a\n@ credit: library — b\n",
+            "@ why\n\tswi 0x0b\n@ credit: library — late\n",
+        ] {
+            assert!(declared_provenance(bad, true, true).is_err(), "{bad}");
+        }
+        let none = declared_provenance("@ plain\n.thumb\n", true, true).unwrap();
+        assert!(none.credit.is_empty());
+    }
 }
 fn region_value(
     output: &Path,
@@ -507,6 +729,13 @@ fn region_value(
             "evidence": category.provenance.evidence,
         });
     }
+    if !built.uncredited.is_empty() {
+        value["uncredited"] = built
+            .uncredited
+            .iter()
+            .map(|(start, end)| json!({"address": start, "size": end - start}))
+            .collect();
+    }
     value
 }
 pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, String> {
@@ -527,12 +756,8 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
         !source.starts_with(asm.join("overlays")) && !source.starts_with(asm.join("battle"))
     });
     let target = match options.asm_dir.as_str() {
-        "games/THE BROKEN SEAL/raw" => {
-            crate::targets::target_for(crate::targets::DecompTargetId::TbsEn)
-        }
-        "games/THE LOST AGE/raw" => {
-            crate::targets::target_for(crate::targets::DecompTargetId::TlaEn)
-        }
+        "recon/tbs/raw" => crate::targets::target_for(crate::targets::DecompTargetId::TbsEn),
+        "recon/tla/raw" => crate::targets::target_for(crate::targets::DecompTargetId::TlaEn),
         _ => return Err(format!("unsupported assembly root {}", options.asm_dir)),
     };
     let maintained = maintained_assembly(root, target)?;
@@ -584,9 +809,9 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
             &binutils,
         )
         .map_err(|error| format!("{source_name}: {error}"))?;
-        let limit = rom
-            .as_ref()
-            .map_or(ROM_BASE + ROM_SIZE, |bytes| ROM_BASE + bytes.len() as u64);
+        let limit = rom.as_ref().map_or(ROM_BASE + target.rom_size, |bytes| {
+            ROM_BASE + bytes.len() as u64
+        });
         if built.address < ROM_BASE
             || built.address >= limit
             || built.data.is_empty()
@@ -632,8 +857,14 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
             }
             .into(),
             evidence: Vec::new(),
-            provenance: ClassificationProvenance::default(),
+            provenance: declared_provenance(&source_text, module.is_some(), rom.is_some())
+                .map_err(|error| format!("{source_name}: {error}"))?,
         };
+        if !built.uncredited.is_empty() && category.provenance.credit.is_empty() {
+            return Err(format!(
+                "{source_name}: uncredited spans belong only in a credited maintained module"
+            ));
+        }
         let count = counts.entry(category.kind.clone()).or_default();
         count.files += 1;
         count.bytes += built.data.len();
@@ -642,12 +873,12 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
             region_value(&output, &source_name, &built, &category),
         ));
     }
-    let runtime_game = Path::new(runtime::REGISTRY).starts_with(
-        Path::new(&options.asm_dir)
-            .parent()
-            .unwrap_or(Path::new("")),
-    );
-    if options.source.is_none() && runtime_game {
+    let registry = if options.source.is_none() {
+        runtime::Registry::load_if_present(root, target.compiler)?
+    } else {
+        None
+    };
+    if let Some(registry) = registry {
         // Main-image compiler runtime links are built from the licensed
         // container; no tracked source holds their code.
         let category = Classification {
@@ -658,9 +889,8 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
             evidence: vec!["built_from_licensed_compiler_container".into()],
             provenance: ClassificationProvenance::default(),
         };
-        let registry = runtime::Registry::load(root)?;
         for link in registry.links_for("main") {
-            let data = runtime::build(root, link)?.text;
+            let data = runtime::build(root, target.compiler, link)?.text;
             let address = u64::from(link.text);
             let name = format!("{address:08x}");
             if let Some(rom) = rom.as_ref() {
@@ -677,10 +907,11 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
                 address,
                 run_address: address,
                 data,
+                uncredited: Vec::new(),
             };
             regions.push((
                 address,
-                region_value(&output, runtime::REGISTRY, &built, &category),
+                region_value(&output, &registry.path, &built, &category),
             ));
         }
     }

@@ -6,7 +6,8 @@
 /*
  * The object table lookup, called throughout the battle engine.
  *
- * games/THE BROKEN SEAL/src/object/table/get.c is byte-exact and settles what it does: it refuses an index
+ * ObjectTable_Get in SRC/FIELD/COMMON/OBJECT/TABLE_CLEAR_BATTLE_SLOTS.C is
+ * byte-exact and settles what it does: it refuses an index
  * above 0xbf and otherwise returns `*(void **)(gWork + index * 4 +
  * 0x14)`. So the table is 192 pointers wide and starts 0x14 into the object
  * behind gWork -- the same table games/THE BROKEN SEAL/src/object/table/find_active_by_value.c walks, which puts its

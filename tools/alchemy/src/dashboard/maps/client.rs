@@ -5,12 +5,22 @@ const plane = document.createElement('canvas');
 const scene = document.querySelector('#scene');
 const mode = document.querySelector('#mode');
 const palette = document.querySelector('#palette');
+const filter = document.querySelector('#filter');
 const status = document.querySelector('#map-status');
 const inspector = document.querySelector('#inspect');
 const game = document.querySelector('.map-live').dataset.game;
-let map, pixels, family, overview, visible = [], zoom = 1, x = 0, y = 0, drag, request;
+let map, pixels, family, overview, overviewSource, lut, visible = [], zoom = 1, x = 0, y = 0, drag, request;
+const tables = new Map();
 let bounds = {left:0, top:0, width:1, height:1};
-const rgb = color => [(color & 31) << 3, ((color >> 5) & 31) << 3, ((color >> 10) & 31) << 3];
+const raw = color => [color & 31, (color >> 5) & 31, (color >> 10) & 31];
+function shown([r,g,b]) { if(!lut) return [r<<3,g<<3,b<<3]; const at=(r|g<<5|b<<10)*3; return [lut[at],lut[at+1],lut[at+2]]; }
+function filterImage(source) {
+  if(!lut) return source;
+  const out=new OffscreenCanvas(source.width,source.height),context=out.getContext('2d');context.drawImage(source,0,0);
+  const image=context.getImageData(0,0,out.width,out.height),data=image.data;
+  for(let i=0;i<data.length;i+=4){if(!data[i+3])continue;const color=shown([data[i]>>3,data[i+1]>>3,data[i+2]>>3]);data[i]=color[0];data[i+1]=color[1];data[i+2]=color[2]}
+  context.putImageData(image,0,0);return out;
+}
 
 function worldPoint(px, pz, floor=0) { return {x:.85*px-.22*pz, y:.32*px+.48*pz-floor*96}; }
 function worldBounds(rooms) {
@@ -48,11 +58,11 @@ function draw() {
 function composite() {
   if(!map)return;const out=new Uint8ClampedArray(map.width*map.height*4);
   const order=map.layers.map((_,i)=>i).sort((a,b)=>map.layers[b].priority-map.layers[a].priority||map.layers[b].bg-map.layers[a].bg);
-  const color=value=>rgb(map.palettes[Number(palette.value)<0?value>>4:Number(palette.value)][value&15]);
+  const color=value=>raw(map.palettes[Number(palette.value)<0?value>>4:Number(palette.value)][value&15]);
   for(let at=0;at<map.width*map.height;at++) {
     let front,behind;for(const i of order)if(visible[i]&&pixels[i][at]){behind=front;front={value:pixels[i][at],bg:map.layers[i].bg}}if(!front)continue;
     let result=color(front.value),alpha=255,blend=map.blend;
-    if(blend&&((blend.control>>front.bg)&1)){const eva=Math.min(16,blend.alpha&31),evb=Math.min(16,(blend.alpha>>8)&31);if(!behind||((blend.control>>(8+behind.bg))&1)){const under=behind?color(behind.value):[0,0,0];result=result.map((c,i)=>Math.min(248,Math.floor((c*eva+under[i]*evb)/16)));if(!behind)alpha=Math.floor(eva*255/16)}}out.set([...result,alpha],at*4);
+    if(blend&&((blend.control>>front.bg)&1)){const eva=Math.min(16,blend.alpha&31),evb=Math.min(16,(blend.alpha>>8)&31);if(!behind||((blend.control>>(8+behind.bg))&1)){const under=behind?color(behind.value):[0,0,0];result=result.map((c,i)=>Math.min(31,Math.floor((c*eva+under[i]*evb)/16)));if(!behind)alpha=Math.floor(eva*255/16)}}out.set([...shown(result),alpha],at*4);
   }
   plane.width=map.width;plane.height=map.height;plane.getContext('2d').putImageData(new ImageData(out,map.width,map.height),0,0);draw();
 }
@@ -72,14 +82,22 @@ async function loadScene(signal) {
 async function loadFamily(signal) {
   status.textContent='Cutting rooms and following doors…';const response=await fetch(`/maps/${game}/${scene.value}/family`,{signal,cache:'no-store'});if(!response.ok)throw Error(await response.text());
   const bytes=await response.arrayBuffer(),size=new DataView(bytes).getUint32(0,true);family=JSON.parse(new TextDecoder().decode(new Uint8Array(bytes,4,size)));if(family.format!==1)throw Error('Invalid assembled map payload');
-  const base=4+size,overviewBytes=new Uint8Array(bytes,base,family.overview_bytes);overview=await createImageBitmap(new Blob([overviewBytes],{type:'image/png'}));const roomBase=base+family.overview_bytes;
-  for(const room of family.rooms){const imageBytes=new Uint8Array(bytes,roomBase+room.offset,room.bytes);room.image=await createImageBitmap(new Blob([imageBytes],{type:'image/png'}));room.label=`${room.scenes.join(' ')} · L${room.floor??'?'}`}
+  const base=4+size,overviewBytes=new Uint8Array(bytes,base,family.overview_bytes);overviewSource=await createImageBitmap(new Blob([overviewBytes],{type:'image/png'}));overview=filterImage(overviewSource);const roomBase=base+family.overview_bytes;
+  for(const room of family.rooms){const imageBytes=new Uint8Array(bytes,roomBase+room.offset,room.bytes);room.source=await createImageBitmap(new Blob([imageBytes],{type:'image/png'}));room.image=filterImage(room.source);room.label=`${room.scenes.join(' ')} · L${room.floor??'?'}`}
   bounds=mode.value==='network'?{left:0,top:0,width:overview.width,height:overview.height}:worldBounds(family.rooms);const report=family.report;status.textContent=`Scene ${family.scene} · ${family.rooms.length} cut rooms · ${report.links.length} door links · ${new Set(family.rooms.map(r=>r.floor)).size} floors.`;
 }
-async function load(){request?.abort();request=new AbortController();const current=request;map=undefined;family=undefined;overview=undefined;draw();sceneControls(mode.value==='scene');try{if(mode.value==='scene')await loadScene(current.signal);else await loadFamily(current.signal);if(current!==request)return;history.replaceState(null,'',`/maps/${game}/${scene.value}`);document.querySelector('.refresh').href=`/maps/${game}/${scene.value}`;fit()}catch(error){if(error.name!=='AbortError')status.textContent=`Cannot render map: ${error.message}`}}
+async function load(){request?.abort();request=new AbortController();const current=request;map=undefined;family=undefined;overview=undefined;overviewSource=undefined;draw();sceneControls(mode.value==='scene');try{if(mode.value==='scene')await loadScene(current.signal);else await loadFamily(current.signal);if(current!==request)return;history.replaceState(null,'',`/maps/${game}/${scene.value}`);document.querySelector('.refresh').href=`/maps/${game}/${scene.value}`;fit()}catch(error){if(error.name!=='AbortError')status.textContent=`Cannot render map: ${error.message}`}}
 
+async function selectFilter() {
+  const id=filter.value;try{localStorage.setItem('alchemy-map-filter',id)}catch{}
+  if(id&&!tables.has(id)){const response=await fetch(`/maps/filter/${id}`,{cache:'no-store'});if(!response.ok)throw Error(await response.text());tables.set(id,new Uint8Array(await response.arrayBuffer()))}
+  lut=id?tables.get(id):undefined;if(overviewSource)overview=filterImage(overviewSource);for(const room of family?.rooms??[])if(room.source)room.image=filterImage(room.source);composite();draw();
+}
+filter.addEventListener('change',()=>selectFilter().catch(error=>{status.textContent=`Cannot apply filter: ${error.message}`}));
 scene.addEventListener('change',load);mode.addEventListener('change',load);palette.addEventListener('change',composite);document.querySelector('#grid').addEventListener('change',draw);document.querySelector('#fit').addEventListener('click',fit);document.querySelector('#actual').addEventListener('click',()=>scale(1));document.querySelector('#smaller').addEventListener('click',()=>scale(zoom/1.5));document.querySelector('#larger').addEventListener('click',()=>scale(zoom*1.5));
 canvas.addEventListener('wheel',event=>{event.preventDefault();scale(zoom*Math.exp(-event.deltaY*.002),event.offsetX,event.offsetY)},{passive:false});canvas.addEventListener('pointerdown',event=>{drag={id:event.pointerId,x:event.clientX,y:event.clientY};canvas.setPointerCapture(event.pointerId)});canvas.addEventListener('pointerup',()=>{drag=undefined});canvas.addEventListener('pointercancel',()=>{drag=undefined});canvas.addEventListener('pointermove',event=>{if(drag){x+=event.clientX-drag.x;y+=event.clientY-drag.y;drag.x=event.clientX;drag.y=event.clientY;draw()}if(mode.value!=='scene'||!map)return;const px=Math.floor((event.offsetX-x)/zoom),py=Math.floor((event.offsetY-y)/zoom);if(px<0||py<0||px>=map.width||py>=map.height)return;inspector.textContent=`Pixel ${px}, ${py} · cell ${Math.floor(px/16)}, ${Math.floor(py/16)} · `+map.layers.map((l,i)=>{const v=pixels[i][py*map.width+px];return `BG${l.bg}: palette ${v>>4}, index ${v&15}`}).join(' · ')});
 canvas.addEventListener('keydown',event=>{if(!['+','=','-','0','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key))return;event.preventDefault();if(event.key==='0')fit();else if(event.key==='+'||event.key==='=')scale(zoom*1.5);else if(event.key==='-')scale(zoom/1.5);else{x+=event.key==='ArrowLeft'?32:event.key==='ArrowRight'?-32:0;y+=event.key==='ArrowUp'?32:event.key==='ArrowDown'?-32:0;draw()}});
-new ResizeObserver(()=>{const box=canvas.parentElement.getBoundingClientRect();canvas.width=Math.floor(box.width);canvas.height=Math.floor(box.height);draw()}).observe(canvas.parentElement);await load();
+new ResizeObserver(()=>{const box=canvas.parentElement.getBoundingClientRect();canvas.width=Math.floor(box.width);canvas.height=Math.floor(box.height);draw()}).observe(canvas.parentElement);
+try{const saved=localStorage.getItem('alchemy-map-filter');if(saved&&[...filter.options].some(o=>o.value===saved))filter.value=saved}catch{}
+await selectFilter().catch(error=>{filter.value='';lut=undefined;status.textContent=`Cannot apply filter: ${error.message}`});await load();
 "####;

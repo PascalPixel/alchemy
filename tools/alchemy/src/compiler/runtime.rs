@@ -16,8 +16,12 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
 use std::sync::{Mutex, OnceLock};
 
-/// Members and link placements; the only runtime facts the repository keeps.
-pub const REGISTRY: &str = "games/THE BROKEN SEAL/recon/compiler-runtime.json";
+/// Each game's members and link placements; the only runtime facts the
+/// repository keeps. Both games link the same container library, each at the
+/// addresses its own original link chose.
+pub fn registry_path(game: CompilerTarget) -> String {
+    format!("{}/compiler-runtime.json", game.recon())
+}
 /// The listing label of a runtime window in a retained overlay listing.
 pub const LABEL: &str = "AlchemyRuntime_";
 const CONTAINER: &str = "agscc";
@@ -103,16 +107,18 @@ pub struct Linked {
     pub rodata: Vec<u8>,
 }
 pub struct Registry {
+    /// The repository path this registry was read from.
+    pub path: String,
     members: BTreeMap<String, String>,
     pub links: Vec<Link>,
 }
 
-fn address(value: &str, field: &str) -> Result<u32, String> {
+fn address(path: &str, value: &str, field: &str) -> Result<u32, String> {
     value
         .strip_prefix("0x")
         .filter(|digits| digits.len() == 8)
         .and_then(|digits| u32::from_str_radix(digits, 16).ok())
-        .ok_or_else(|| format!("{REGISTRY}: invalid {field} address {value}"))
+        .ok_or_else(|| format!("{path}: invalid {field} address {value}"))
 }
 fn member_name(name: &str) -> bool {
     name.starts_with('_')
@@ -122,19 +128,28 @@ fn member_name(name: &str) -> bool {
             .all(|byte| byte.is_ascii_alphanumeric() || byte == b'_')
 }
 impl Registry {
-    pub fn load(root: &Path) -> Result<Self, String> {
-        Self::parse(read_json(root.join(REGISTRY))?)
+    pub fn load(root: &Path, game: CompilerTarget) -> Result<Self, String> {
+        let path = registry_path(game);
+        Self::parse(read_json(root.join(&path))?, path)
     }
-    fn parse(document: Document) -> Result<Self, String> {
+    /// A game's registry, or `None` when that game links no runtime.
+    pub fn load_if_present(root: &Path, game: CompilerTarget) -> Result<Option<Self>, String> {
+        if root.join(registry_path(game)).is_file() {
+            Self::load(root, game).map(Some)
+        } else {
+            Ok(None)
+        }
+    }
+    fn parse(document: Document, path: String) -> Result<Self, String> {
         if document.format != 1
             || document.kind != "compiler-runtime-links"
             || document.container != CONTAINER
         {
-            return Err(format!("{REGISTRY}: unsupported format"));
+            return Err(format!("{path}: unsupported format"));
         }
         for (name, source) in &document.members {
             if !member_name(name) || source.is_empty() || source.contains("..") {
-                return Err(format!("{REGISTRY}: invalid member {name}"));
+                return Err(format!("{path}: invalid member {name}"));
             }
         }
         let mut links: Vec<Link> = Vec::new();
@@ -142,11 +157,11 @@ impl Registry {
         for record in &document.links {
             let link = Link {
                 image: record.image.clone(),
-                text: address(&record.text, "text")?,
+                text: address(&path, &record.text, "text")?,
                 rodata: record
                     .rodata
                     .as_deref()
-                    .map(|value| address(value, "rodata"))
+                    .map(|value| address(&path, value, "rodata"))
                     .transpose()?,
                 members: record.members.clone(),
             };
@@ -170,14 +185,14 @@ impl Registry {
                     .any(|member| !document.members.contains_key(member))
             {
                 return Err(format!(
-                    "{REGISTRY}: invalid link {} 0x{:08x}",
+                    "{path}: invalid link {} 0x{:08x}",
                     link.image, link.text
                 ));
             }
             for start in std::iter::once(link.text).chain(link.rodata) {
                 if !windows.insert((link.image.clone(), start)) {
                     return Err(format!(
-                        "{REGISTRY}: duplicate window {} 0x{start:08x}",
+                        "{path}: duplicate window {} 0x{start:08x}",
                         link.image
                     ));
                 }
@@ -186,15 +201,23 @@ impl Registry {
         }
         let used: BTreeSet<_> = links.iter().flat_map(|link| &link.members).collect();
         if let Some(unused) = document.members.keys().find(|name| !used.contains(name)) {
-            return Err(format!("{REGISTRY}: member {unused} is never linked"));
+            return Err(format!("{path}: member {unused} is never linked"));
         }
         Ok(Self {
+            path,
             members: document.members,
             links,
         })
     }
     pub fn links_for<'a>(&'a self, image: &'a str) -> impl Iterator<Item = &'a Link> + 'a {
         self.links.iter().filter(move |link| link.image == image)
+    }
+    /// Where `image` links the `_call_via_rX` bank: the address its
+    /// `_call_via_rN` stubs are counted from.
+    pub fn call_via_bank(&self, image: &str) -> Option<u32> {
+        self.links_for(image)
+            .find(|link| link.members.iter().any(|member| member == "_call_via_rX"))
+            .map(|link| link.text)
     }
     /// The link whose text or data window starts at `start` in `image`.
     pub fn window(&self, image: &str, start: u32) -> Option<(&Link, bool)> {
@@ -345,7 +368,7 @@ fn member_command(
     let recorded = registry
         .members
         .get(member)
-        .ok_or_else(|| format!("{REGISTRY}: unknown member {member}"))?;
+        .ok_or_else(|| format!("{}: unknown member {member}", registry.path))?;
     let mut command = vec![
         text(bundle().join("xgcc")),
         format!("-B{}/", bundle().display()),
@@ -388,9 +411,10 @@ fn member_command(
     }
     Ok(command)
 }
-/// Links built by this process, keyed by checkout.
-fn memo() -> &'static Mutex<BTreeMap<(String, Link), Linked>> {
-    static BUILT: OnceLock<Mutex<BTreeMap<(String, Link), Linked>>> = OnceLock::new();
+/// Links built by this process, keyed by checkout and game.
+type MemoKey = (String, &'static str, Link);
+fn memo() -> &'static Mutex<BTreeMap<MemoKey, Linked>> {
+    static BUILT: OnceLock<Mutex<BTreeMap<MemoKey, Linked>>> = OnceLock::new();
     BUILT.get_or_init(|| Mutex::new(BTreeMap::new()))
 }
 fn section(elf: &Path, name: &str, work: &Path) -> Result<Vec<u8>, String> {
@@ -416,17 +440,18 @@ fn section(elf: &Path, name: &str, work: &Path) -> Result<Vec<u8>, String> {
 
 /// Build one link from the container, or return its cached bytes. The cache
 /// identity is the preprocessed member sources, flags, compiler bundle and
-/// binutils, so a container change rebuilds.
-pub fn build(root: &Path, link: &Link) -> Result<Linked, String> {
+/// binutils, so a container change rebuilds. Both games' libraries come from
+/// the one approved runtime route; only the registered placements differ.
+pub fn build(root: &Path, game: CompilerTarget, link: &Link) -> Result<Linked, String> {
     crate::compiler::bundle::validate_bundle(CompilerTarget::Tbs)?;
-    let registry = Registry::load(root)?;
+    let registry = Registry::load(root, game)?;
     if !registry.links.contains(link) {
         return Err(format!(
-            "{} 0x{:08x} is not a registered runtime link",
-            link.image, link.text
+            "{} 0x{:08x} is not a registered runtime link in {}",
+            link.image, link.text, registry.path
         ));
     }
-    let memo_key = (text(root), link.clone());
+    let memo_key = (text(root), game.as_str(), link.clone());
     if let Some(linked) = memo().lock().unwrap().get(&memo_key) {
         return Ok(linked.clone());
     }
@@ -613,19 +638,18 @@ pub fn overlay_fill(
     if windows.is_empty() {
         return Ok(Vec::new());
     }
-    if game != CompilerTarget::Tbs {
-        return Err(format!(
-            "{overlay}: runtime windows are registered only for {}",
-            CompilerTarget::Tbs.directory()
-        ));
-    }
-    let registry = Registry::load(root)?;
+    let registry = Registry::load_if_present(root, game)?.ok_or_else(|| {
+        format!(
+            "{overlay}: runtime windows need a registry at {}",
+            registry_path(game)
+        )
+    })?;
     let mut fills = Vec::new();
     for (start, span) in windows {
         let (link, text_window) = registry.window(overlay, start).ok_or_else(|| {
             format!("{overlay}: {LABEL}{start:08x} is not a registered runtime link")
         })?;
-        let linked = build(root, link)?;
+        let linked = build(root, game, link)?;
         let data = if text_window {
             linked.text
         } else {
@@ -641,18 +665,23 @@ pub fn overlay_fill(
     }
     Ok(fills)
 }
-/// Identity of every registered link's built bytes, for stage stamps. A tree
-/// without a registry links no runtime.
+/// Identity of every registered link's built bytes in both games, for stage
+/// stamps. A tree without a registry links no runtime.
 pub fn signature(root: &Path) -> Result<String, String> {
-    if !root.join(REGISTRY).is_file() {
-        return Ok("no-compiler-runtime".into());
+    let mut stream = Vec::new();
+    for game in [CompilerTarget::Tbs, CompilerTarget::Tla] {
+        let Some(registry) = Registry::load_if_present(root, game)? else {
+            continue;
+        };
+        stream.extend(read(root.join(&registry.path))?);
+        for link in &registry.links {
+            let linked = build(root, game, link)?;
+            stream.extend(sha256::hex(&linked.text).into_bytes());
+            stream.extend(sha256::hex(&linked.rodata).into_bytes());
+        }
     }
-    let registry = Registry::load(root)?;
-    let mut stream = read(root.join(REGISTRY))?;
-    for link in &registry.links {
-        let linked = build(root, link)?;
-        stream.extend(sha256::hex(&linked.text).into_bytes());
-        stream.extend(sha256::hex(&linked.rodata).into_bytes());
+    if stream.is_empty() {
+        return Ok("no-compiler-runtime".into());
     }
     Ok(sha256::hex(&stream))
 }
@@ -671,11 +700,46 @@ mod tests {
         .unwrap()
     }
     #[test]
+    fn each_game_keeps_its_own_registry() {
+        assert_eq!(
+            registry_path(CompilerTarget::Tbs),
+            "recon/tbs/compiler-runtime.json"
+        );
+        assert_eq!(
+            registry_path(CompilerTarget::Tla),
+            "recon/tla/compiler-runtime.json"
+        );
+        let empty = tempfile::tempdir().unwrap();
+        assert!(Registry::load_if_present(empty.path(), CompilerTarget::Tla)
+            .unwrap()
+            .is_none());
+        assert_eq!(signature(empty.path()).unwrap(), "no-compiler-runtime");
+    }
+    #[test]
+    fn each_game_names_its_own_main_call_via_bank() {
+        let root = crate::compiler::routing::root();
+        let bank = |game| {
+            Registry::load(root, game)
+                .unwrap()
+                .call_via_bank("main")
+                .map(u64::from)
+        };
+        assert_eq!(
+            bank(CompilerTarget::Tbs),
+            Some(crate::compiler::symbols::CALL_VIA_BASE)
+        );
+        assert_eq!(bank(CompilerTarget::Tla), Some(0x0801_7878));
+        let registry = Registry::load(root, CompilerTarget::Tbs).unwrap();
+        assert_eq!(registry.call_via_bank("resource_373"), Some(0x0200_6154));
+        assert_eq!(registry.call_via_bank("resource_999"), None);
+    }
+    #[test]
     fn registry_rejects_invalid_duplicate_and_unused_links() {
-        let valid = Registry::parse(document(serde_json::json!([
+        let parse = |links| Registry::parse(document(links), "registry.json".into());
+        let valid = parse(serde_json::json!([
             {"image": "main", "text": "0x080072e4", "members": ["_first"]},
             {"image": "resource_3bf", "text": "0x020057b0", "rodata": "0x02005f90", "members": ["_first", "_second"]},
-        ])))
+        ]))
         .unwrap();
         assert_eq!(valid.window("resource_3bf", 0x0200_5f90).unwrap().1, false);
         assert!(valid.window("resource_3bf", 0x0200_57b0).unwrap().1);
@@ -691,7 +755,7 @@ mod tests {
             serde_json::json!([{"image": "main", "text": "0x080072e4", "members": ["_first"]}]),
             serde_json::json!([{"image": "atlas", "text": "0x080072e4", "members": ["_first", "_second"]}]),
         ] {
-            assert!(Registry::parse(document(links)).is_err());
+            assert!(parse(links).is_err());
         }
     }
     #[test]
@@ -722,26 +786,52 @@ mod tests {
         assert!(listing_windows("AlchemyRuntime_020057b0:\n\t.4byte 0\n").is_err());
         assert!(listing_windows("AlchemyRuntime_57b0:\n\t.space 4\n").is_err());
     }
-    /// The tracked registry names only members and addresses, and every
-    /// overlay link has a reserved window in its tracked listing.
+    /// The tracked registries name only members and addresses, and every
+    /// overlay link has a reserved window in its game's tracked listing.
     #[test]
     fn tracked_links_have_reserved_listing_windows() {
         let root = crate::compiler::routing::root();
-        let registry = Registry::load(root).unwrap();
-        for link in registry.links.iter().filter(|link| link.overlay()) {
-            let path = root.join(format!(
-                "games/THE BROKEN SEAL/raw/overlays/{}_overlay.s",
-                link.image
-            ));
-            let listing = std::fs::read_to_string(&path).unwrap();
-            let windows = listing_windows(&listing).unwrap();
-            for start in std::iter::once(link.text).chain(link.rodata) {
-                assert!(
-                    windows.iter().any(|(window, _)| *window == start),
-                    "{} has no window at 0x{start:08x}",
+        for game in [CompilerTarget::Tbs, CompilerTarget::Tla] {
+            let Some(registry) = Registry::load_if_present(root, game).unwrap() else {
+                continue;
+            };
+            for link in registry.links.iter().filter(|link| link.overlay()) {
+                let path = root.join(format!(
+                    "{}/raw/overlays/{}_overlay.s",
+                    game.recon(),
                     link.image
-                );
+                ));
+                let listing = std::fs::read_to_string(&path).unwrap();
+                let windows = listing_windows(&listing).unwrap();
+                for start in std::iter::once(link.text).chain(link.rodata) {
+                    assert!(
+                        windows.iter().any(|(window, _)| *window == start),
+                        "{} has no window at 0x{start:08x}",
+                        link.image
+                    );
+                }
             }
+        }
+    }
+    /// The Lost Age links the same container `_call_via_rX` bank into its main
+    /// image; built at the registered address it is the ROM's bank.
+    #[test]
+    fn tla_main_links_build_to_the_local_rom() {
+        let root = crate::compiler::routing::root();
+        let rom = root.join("roms/tla-en.gba");
+        if !rom.is_file() {
+            return;
+        }
+        crate::compiler::routing::prefer_installed_binutils();
+        let rom = std::fs::read(rom).unwrap();
+        let registry = Registry::load(root, CompilerTarget::Tla).unwrap();
+        let mut main = registry.links_for("main").peekable();
+        assert!(main.peek().is_some());
+        for link in main {
+            let built = build(root, CompilerTarget::Tla, link).unwrap();
+            let start = (link.text - 0x0800_0000) as usize;
+            assert_eq!(built.text, rom[start..start + built.text.len()]);
+            assert!(built.rodata.is_empty());
         }
     }
 }

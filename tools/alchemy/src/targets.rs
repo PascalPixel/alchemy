@@ -71,6 +71,11 @@ impl DecompTarget {
             .strip_suffix("/SRC")
             .expect("source_dir ends with /SRC")
     }
+    /// The game's reconstruction scaffolding, `recon/tbs` or `recon/tla`:
+    /// drafts, retained listings, registries and metrics outside `games/`.
+    pub fn recon_dir(&self) -> &'static str {
+        self.compiler.recon()
+    }
     /// Retained overlay assembly for one resource-qualified overlay.
     pub fn overlay_assembly(&self, overlay: &str) -> String {
         format!("{}/{overlay}_overlay.s", self.overlay_dir())
@@ -90,16 +95,16 @@ const PRODUCTS: [(CompilerTarget, u64, &str, &str, &str, usize); 2] = [
         CompilerTarget::Tbs,
         0x0080_0000,
         "games/THE BROKEN SEAL/SRC",
-        "games/THE BROKEN SEAL/raw",
-        "games/THE BROKEN SEAL/recon/assets.json",
+        "recon/tbs/raw",
+        "recon/tbs/assets.json",
         6,
     ),
     (
         CompilerTarget::Tla,
         0x0100_0000,
         "games/THE LOST AGE/SRC",
-        "games/THE LOST AGE/raw",
-        "games/THE LOST AGE/recon/assets.json",
+        "recon/tla/raw",
+        "recon/tla/assets.json",
         7,
     ),
 ];
@@ -158,19 +163,21 @@ fn self_test() -> Result<String, String> {
     let mut outputs = std::collections::HashSet::new();
     for id in TARGET_IDS {
         let target = target_for(id);
-        let root = match target.compiler {
-            CompilerTarget::Tbs => "games/THE BROKEN SEAL/",
-            CompilerTarget::Tla => "games/THE LOST AGE/",
+        let (root, recon) = match target.compiler {
+            CompilerTarget::Tbs => ("games/THE BROKEN SEAL/", "recon/tbs/"),
+            CompilerTarget::Tla => ("games/THE LOST AGE/", "recon/tla/"),
         };
         if !relative_path(target.output_dir)
-            || ![target.source_dir, target.asm_dir, target.asset_manifest]
+            || !target.source_dir.starts_with(root)
+            || ![target.asm_dir, target.asset_manifest]
                 .iter()
-                .all(|path| path.starts_with(root))
+                .all(|path| path.starts_with(recon))
             || !outputs.insert(target.output_dir)
             || !target.game_dir().starts_with(root.trim_end_matches('/'))
+            || !target.recon_dir().starts_with(recon.trim_end_matches('/'))
             || !target.overlay_macro().starts_with(root)
             || target.overlay_assembly("resource_649")
-                != format!("{root}raw/overlays/resource_649_overlay.s")
+                != format!("{recon}raw/overlays/resource_649_overlay.s")
         {
             return Err(format!("{id} does not have isolated relative paths"));
         }
@@ -201,7 +208,7 @@ mod tests {
             let target = target_for(id);
             assert_eq!(
                 target.asset_manifest,
-                format!("{}/recon/assets.json", target.game_dir())
+                format!("{}/assets.json", target.recon_dir())
             );
         }
     }

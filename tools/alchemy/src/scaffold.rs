@@ -3,12 +3,12 @@
 //!   unit-scaffold <game> <unit-id> <start-hex> <end-hex> [--apply]
 //!
 //! Reads the owner inventory for the range and emits
-//! games/<game>/recon/en/units/<unit-id>.c: an address-ordered include
+//! recon/<game>/en/units/<unit-id>.c: an address-ordered include
 //! composite of the range's production sources and candidate drafts. Owners
 //! with no C anywhere are holes: retained assembly, listed in the manifest
 //! only. Owners whose name is registered while production stays assembly fit
 //! neither manifest state and are skipped entirely. With --apply the manifest
-//! entry is appended to games/<game>/recon/translation-units.json; without
+//! entry is appended to recon/<game>/translation-units.json; without
 //! it the entry is printed. The composite is a starting point: resolving
 //! declaration collisions between the included files is the recovering
 //! agent's work, scored with diff --unit until every previously
@@ -54,11 +54,11 @@ fn run(args: &[String]) -> Result<(), String> {
         .map_err(|_| "start is not hex")?;
     let end =
         u32::from_str_radix(end_hex.trim_start_matches("0x"), 16).map_err(|_| "end is not hex")?;
-    let directory = crate::compiler::routing::game_directory(game);
+    let recon = crate::compiler::routing::recon_directory(game);
     let inventory: Value = read_json(Path::new(&format!(
         "out/{game}-en/full/rebuilt.owner-inventory.json"
     )))?;
-    let manifest_path = format!("games/{directory}/recon/translation-units.json");
+    let manifest_path = format!("{recon}/translation-units.json");
     let mut manifest: Value = read_json(Path::new(&manifest_path))?;
     // Owners already claimed by a declared unit are excluded: overlapping
     // declarations can never coexist, and the fix is extending that unit.
@@ -95,12 +95,12 @@ fn run(args: &[String]) -> Result<(), String> {
             continue;
         }
         let source = production["source"].as_str().unwrap_or("");
+        // Units live three levels below the repository root, beside the
+        // drafts in `recon/<game>/en/main`; exact production sources are
+        // reached from there by their repository path.
         let include = if exact && source.to_ascii_lowercase().ends_with(".c") {
-            Some(format!(
-                "../../../{}",
-                source.replace(&format!("games/{directory}/"), "")
-            ))
-        } else if Path::new(&format!("games/{directory}/recon/en/main/{hex}.c")).exists() {
+            Some(format!("../../../{source}"))
+        } else if Path::new(&format!("{recon}/en/main/{hex}.c")).exists() {
             Some(format!("../main/{hex}.c"))
         } else {
             None
@@ -136,7 +136,7 @@ fn run(args: &[String]) -> Result<(), String> {
             )),
         }
     }
-    let out = format!("games/{directory}/recon/en/units/{unit_id}.c");
+    let out = format!("{recon}/en/units/{unit_id}.c");
     // A declared unit refuses before the scaffold is written, so a refusal
     // leaves no file behind.
     if apply

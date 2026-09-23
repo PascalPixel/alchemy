@@ -446,7 +446,7 @@ impl OverlayImage<'_> {
     fn import_list(&self) -> String {
         let listing = self
             .names
-            .source_root()
+            .manifest_path()
             .with_file_name("raw")
             .join("overlays")
             .join(format!("{}_overlay.s", self.overlay));
@@ -620,7 +620,7 @@ mod tests {
         let rom = crate::overlay::rom::CanonicalRom::load(root).unwrap();
         let main = main_image(CompilerTarget::Tbs).unwrap();
         let names = SourcePaths::load(root).unwrap();
-        let listings = root.join("games/THE BROKEN SEAL/raw/overlays");
+        let listings = root.join("recon/tbs/raw/overlays");
         let mut overlays = 0;
         for entry in std::fs::read_dir(listings).unwrap() {
             let file = entry.unwrap().file_name().into_string().unwrap();

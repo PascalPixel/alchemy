@@ -1,6 +1,8 @@
-//! Build receipts: verified ranges and the inputs that produced them.
+//! Build receipts: verified ranges and the inputs that produced them, and
+//! the full ROM build's proof of the main image's asset complement.
 //! These are generated under out/, never a second editable classification register.
 use crate::compiler::sha256;
+use crate::targets::{BuildSupport, DecompTarget};
 use serde::{Deserialize, Serialize};
 use std::path::Path;
 
@@ -22,9 +24,13 @@ pub struct Receipt {
     pub credits: Vec<Credit>,
 }
 
-/// Hash maintained build inputs, including headers, placement, flags and
-/// compiler/assembler executables. Assets and presentation files do not grant
-/// code credit. Reading this identity does not run a compiler or build a tree.
+/// Hash maintained build inputs, including headers, placement, bindings,
+/// flags, retained listings and compiler/assembler executables, and the asset
+/// build that decides the main image's complement: asset sources and
+/// manifests, the asset build and its codecs, and the reference machine
+/// definition. A changed input invalidates both the receipt and the full
+/// build's main-image proof. Presentation files and generated plans grant
+/// nothing. Reading this identity does not run a compiler or build a tree.
 pub fn identity(root: &Path, target: &str) -> Result<String, String> {
     fn collect(root: &Path, path: &Path, files: &mut Vec<String>) -> Result<(), String> {
         if path.is_dir() {
@@ -46,21 +52,37 @@ pub fn identity(root: &Path, target: &str) -> Result<String, String> {
     for folder in [
         format!("{}/SRC", game.game_dir()),
         format!("{}/INCLUDE", game.game_dir()),
-        format!("{}/semantic", game.game_dir()),
+        format!("{}/GRAPHICS", game.game_dir()),
+        format!("{}/SOUND", game.game_dir()),
+        format!("{}/TEXT", game.game_dir()),
+        format!("{}/semantic", game.recon_dir()),
         "games/COMMON/SRC".into(),
         "games/COMMON/INCLUDE".into(),
     ] {
         collect(root, &root.join(folder), &mut files)?;
     }
+    // Retained listings: the main image's assembly stage and the overlay and
+    // battle packages the asset build assembles.
+    let mut listings = Vec::new();
+    collect(root, &root.join(game.asm_dir), &mut listings)?;
+    files.extend(
+        listings
+            .into_iter()
+            .filter(|path| path.ends_with(".s") || path.ends_with(".inc")),
+    );
     for suffix in [
         "source-paths.json",
+        "source-bindings.json",
         "project.json",
-        "PROJECT.JSON",
-        "recon/translation-units.json",
-        "recon/compiler-runtime.json",
+        "translation-units.json",
+        "compiler-runtime.json",
         "semantic/overlay-assembly.json",
+        "machine.json",
+        "assets.json",
+        "private-inputs.json",
+        "text.json",
     ] {
-        let path = format!("{}/{suffix}", game.game_dir());
+        let path = format!("{}/{suffix}", game.recon_dir());
         if root.join(&path).is_file() {
             files.push(path);
         }
@@ -70,6 +92,8 @@ pub fn identity(root: &Path, target: &str) -> Result<String, String> {
         "tools/alchemy/src/overlay",
         "tools/alchemy/src/score",
         "tools/alchemy/src/coverage",
+        "tools/alchemy/src/build_assets",
+        // Psynergy's asset codecs live under src/assets.
         "tools/psynergy/src",
     ] {
         collect(root, &root.join(directory), &mut files)?;
@@ -79,6 +103,9 @@ pub fn identity(root: &Path, target: &str) -> Result<String, String> {
     for path in [
         "tools/alchemy/src/build_claimed.rs",
         "tools/alchemy/src/build_asm.rs",
+        "tools/alchemy/src/build_assets.rs",
+        "tools/alchemy/src/text_catalog.rs",
+        "tools/alchemy/src/generated_files.rs",
         "tools/alchemy/src/build_full.rs",
         "tools/alchemy/src/targets.rs",
         "tools/alchemy/src/check/tla_owners.rs",
@@ -150,6 +177,235 @@ pub fn read(root: &Path, target: &str) -> Result<Receipt, String> {
     Ok(receipt)
 }
 
+/// The main-image proof a byte-identical full ROM build records in its
+/// report. Readers never take it at its word: [`full_build`] recomputes each
+/// digest from the artifacts and the tree it names.
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct FullBuild {
+    pub format: u8,
+    pub target: String,
+    /// The [`identity`] of the tree the build ran on.
+    pub inputs_sha256: String,
+    /// The reference ROM, which the rebuilt ROM equals.
+    pub rom_sha256: String,
+    /// The asset manifest whose regions the build reproduced.
+    pub asset_manifest_sha256: String,
+}
+
+/// The full ROM build's report, which carries its [`FullBuild`] proof.
+pub(crate) fn full_build_report(target: DecompTarget) -> String {
+    format!("{}/full/rebuilt.json", target.output_dir)
+}
+
+/// The ROM the full build rebuilt.
+pub(crate) fn full_build_rom(target: DecompTarget) -> String {
+    format!("{}/full/rebuilt.gba", target.output_dir)
+}
+
+/// The asset manifest of the full build, the only one that can prove the
+/// main image's asset complement.
+pub(crate) fn full_asset_manifest(target: DecompTarget) -> String {
+    format!("{}/full/assets/manifest.json", target.output_dir)
+}
+
+fn full_build_supported(target: DecompTarget) -> Result<(), String> {
+    if target.build_support != BuildSupport::Full {
+        return Err(format!(
+            "{} has no supported full ROM build, so its main image stays pending until one exists",
+            target.id
+        ));
+    }
+    Ok(())
+}
+
+/// The sha256 of the reference ROM a full build of `target` must reproduce,
+/// as the game's tracked private-input registry records it: the ROM its
+/// private sources are restored from. A local ROM file never vouches for
+/// itself.
+fn reference_sha256(root: &Path, target: DecompTarget) -> Result<String, String> {
+    let path = format!("{}/private-inputs.json", target.recon_dir());
+    let registry: serde_json::Value = serde_json::from_slice(
+        &std::fs::read(root.join(&path)).map_err(|e| format!("cannot read {path}: {e}"))?,
+    )
+    .map_err(|e| format!("{path}: {e}"))?;
+    registry["reference_sha256"]
+        .as_str()
+        .map(str::to_owned)
+        .ok_or_else(|| format!("{path} registers no reference_sha256"))
+}
+
+/// The proof a full build of `target` records once it has rebuilt `rom`
+/// byte for byte at the canonical locations. `inputs` is the [`identity`]
+/// the build started from; a tree that changed while it ran proves nothing,
+/// and neither does a ROM other than the registered reference.
+pub(crate) fn full_build_proof(
+    root: &Path,
+    target: DecompTarget,
+    inputs: &str,
+    rom: &[u8],
+) -> Result<FullBuild, String> {
+    full_build_supported(target)?;
+    if identity(root, target.id.as_str())? != inputs {
+        return Err(
+            "source inputs changed during the build; its main-image proof is withheld".into(),
+        );
+    }
+    if sha256::hex(rom) != reference_sha256(root, target)? {
+        return Err(format!(
+            "the rebuilt ROM is not the reference ROM {}/private-inputs.json registers; its main-image proof is withheld",
+            target.recon_dir()
+        ));
+    }
+    let manifest = full_asset_manifest(target);
+    let manifest = std::fs::read(root.join(&manifest)).map_err(|e| format!("{manifest}: {e}"))?;
+    Ok(FullBuild {
+        format: 1,
+        target: target.id.as_str().into(),
+        inputs_sha256: inputs.into(),
+        rom_sha256: sha256::hex(rom),
+        asset_manifest_sha256: sha256::hex(&manifest),
+    })
+}
+
+/// Removes the target's full-build proof, its report and rebuilt ROM, so a
+/// build that has started, or failed, leaves no earlier proof behind. The
+/// asset stage keeps its manifest as its cache: without a report whose
+/// proof records its digest, that manifest proves nothing.
+pub(crate) fn withdraw_full_build(root: &Path, target: DecompTarget) -> Result<(), String> {
+    for path in [full_build_report(target), full_build_rom(target)] {
+        match std::fs::remove_file(root.join(&path)) {
+            Ok(()) => {}
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+            Err(error) => return Err(format!("{path}: {error}")),
+        }
+    }
+    Ok(())
+}
+
+/// A full build that still proves the main image: the reference ROM it
+/// reproduced and the asset manifest bytes its proof covers.
+pub(crate) struct VerifiedBuild {
+    pub rom_sha256: String,
+    pub asset_manifest: Vec<u8>,
+}
+
+/// The target's last full ROM build, recomputed from its artifacts: a
+/// supported full build whose report is byte-identical with nothing unowned,
+/// whose rebuilt ROM hashes to the registered reference ROM and equals the
+/// local one, whose asset manifest hashes to the digest its proof records,
+/// and whose recorded inputs are still the tree's. `Err` says why the build
+/// proves nothing now.
+pub(crate) fn full_build(root: &Path, target: DecompTarget) -> Result<VerifiedBuild, String> {
+    full_build_supported(target)?;
+    let read =
+        |path: &str| std::fs::read(root.join(path)).map_err(|e| format!("cannot read {path}: {e}"));
+    let path = full_build_report(target);
+    let report: serde_json::Value =
+        serde_json::from_slice(&read(&path)?).map_err(|e| format!("{path}: {e}"))?;
+    if report["byte_identical"] != true
+        || report["verification"] != "rom"
+        || report["target"] != target.id.as_str()
+    {
+        return Err(format!(
+            "{path} is not a byte-identical build of the {} ROM",
+            target.id
+        ));
+    }
+    for field in ["unowned_bytes", "rom_fallback_bytes"] {
+        if report[field].as_u64() != Some(0) {
+            return Err(format!("{path} does not record zero {field}"));
+        }
+    }
+    let proof: FullBuild = serde_json::from_value(report["main_image_proof"].clone())
+        .map_err(|_| format!("{path} records no main-image proof"))?;
+    if proof.format != 1 || proof.target != target.id.as_str() {
+        return Err(format!(
+            "{path} records no main-image proof of {}",
+            target.id
+        ));
+    }
+    let manifest = full_asset_manifest(target);
+    let asset_manifest = read(&manifest)?;
+    if sha256::hex(&asset_manifest) != proof.asset_manifest_sha256 {
+        return Err(format!(
+            "{manifest} is not the asset manifest the build recorded"
+        ));
+    }
+    let rebuilt = full_build_rom(target);
+    if sha256::hex(&read(&rebuilt)?) != proof.rom_sha256 {
+        return Err(format!("{rebuilt} is not the ROM the build recorded"));
+    }
+    if proof.rom_sha256 != reference_sha256(root, target)? {
+        return Err(format!(
+            "{rebuilt} is not the reference ROM {}/private-inputs.json registers",
+            target.recon_dir()
+        ));
+    }
+    if sha256::hex(&read(target.rom)?) != proof.rom_sha256 {
+        return Err(format!(
+            "{rebuilt} is not the local reference ROM {}",
+            target.rom
+        ));
+    }
+    if identity(root, target.id.as_str())? != proof.inputs_sha256 {
+        return Err("its build inputs changed after the build".into());
+    }
+    Ok(VerifiedBuild {
+        rom_sha256: proof.rom_sha256,
+        asset_manifest,
+    })
+}
+
+/// `target` as it will be once its full ROM build is supported, so tests can
+/// exercise the readers that a game without one keeps pending.
+#[cfg(test)]
+pub(crate) fn fully_buildable(target: DecompTarget) -> DecompTarget {
+    DecompTarget {
+        build_support: BuildSupport::Full,
+        ..target
+    }
+}
+
+/// Writes what a byte-identical full build of `target` leaves under `root`:
+/// a reference ROM registered as the game's reference, the equal rebuilt ROM,
+/// `manifest` as its asset manifest and a report whose proof records them
+/// and the tree as it is now. Returns the ROM's sha256. Inputs written
+/// afterwards make the proof stale.
+#[cfg(test)]
+pub(crate) fn full_build_fixture(
+    root: &Path,
+    target: DecompTarget,
+    manifest: &serde_json::Value,
+) -> String {
+    let write = |path: &str, bytes: &[u8]| {
+        let path = root.join(path);
+        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+        std::fs::write(path, bytes).unwrap();
+    };
+    let rom = format!("{} reference ROM", target.id).into_bytes();
+    let registry = format!("{}/private-inputs.json", target.recon_dir());
+    let mut inputs = std::fs::read(root.join(&registry))
+        .map(|bytes| serde_json::from_slice(&bytes).unwrap())
+        .unwrap_or_else(|_| serde_json::json!({}));
+    inputs["reference_sha256"] = serde_json::json!(sha256::hex(&rom));
+    write(&registry, inputs.to_string().as_bytes());
+    write(target.rom, &rom);
+    write(&full_build_rom(target), &rom);
+    write(
+        &full_asset_manifest(target),
+        manifest.to_string().as_bytes(),
+    );
+    let inputs = identity(root, target.id.as_str()).unwrap();
+    let proof = full_build_proof(root, target, &inputs, &rom).unwrap();
+    let report = serde_json::json!({
+        "format": 1, "target": target.id.as_str(), "verification": "rom",
+        "byte_identical": true, "unowned_bytes": 0, "rom_fallback_bytes": 0,
+        "main_image_proof": proof,
+    });
+    write(&full_build_report(target), report.to_string().as_bytes());
+    sha256::hex(&rom)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -168,7 +424,7 @@ mod tests {
     #[test]
     fn generated_raw_does_not_invalidate_c_identity() {
         let root = tempfile::tempdir().unwrap();
-        let raw = root.path().join("games/THE LOST AGE/raw/overlays");
+        let raw = root.path().join("recon/tla/raw/overlays");
         std::fs::create_dir_all(&raw).unwrap();
         let plan = raw.join("resource_001.plan.json");
         std::fs::write(&plan, "{}").unwrap();
@@ -186,6 +442,61 @@ mod tests {
         let before = identity(root.path(), "tbs-en").unwrap();
         std::fs::write(&metrics, "{\"total_union_bytes\":16}").unwrap();
         assert_eq!(before, identity(root.path(), "tbs-en").unwrap());
+    }
+
+    /// The asset build decides the main image's complement, so its sources,
+    /// codecs, machine definitions and the listings it assembles are inputs
+    /// as much as the compiler's.
+    #[test]
+    fn changed_asset_build_inputs_invalidate_build_identity() {
+        let root = tempfile::tempdir().unwrap();
+        for input in [
+            "tools/alchemy/src/build_assets.rs",
+            "tools/alchemy/src/build_assets/packer.rs",
+            "tools/psynergy/src/assets/lz.rs",
+            "recon/tbs/machine.json",
+            "recon/tbs/assets.json",
+            "recon/tbs/private-inputs.json",
+            "recon/tbs/source-bindings.json",
+            "recon/tbs/raw/0800a000.s",
+            "recon/tbs/raw/overlays/resource_001_overlay.s",
+            "games/THE BROKEN SEAL/SOUND/SEQUENCE/A.MID",
+            "games/THE BROKEN SEAL/TEXT/EN.PO",
+        ] {
+            let path = root.path().join(input);
+            std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+            std::fs::write(&path, "before").unwrap();
+            let before = identity(root.path(), "tbs-en").unwrap();
+            std::fs::write(&path, "after").unwrap();
+            assert_ne!(before, identity(root.path(), "tbs-en").unwrap(), "{input}");
+        }
+    }
+
+    /// A full build proves only the ROM the game registers as its reference,
+    /// and only for the tree it started from.
+    #[test]
+    fn a_full_build_proves_only_the_registered_reference_rom() {
+        let root = tempfile::tempdir().unwrap();
+        let target = crate::targets::target_for(crate::targets::DecompTargetId::TbsEn);
+        let rom = full_build_fixture(root.path(), target, &serde_json::json!({"regions": []}));
+        let verified = full_build(root.path(), target).map(|build| build.rom_sha256);
+        assert_eq!(verified, Ok(rom));
+        let inputs = identity(root.path(), "tbs-en").unwrap();
+        let error = full_build_proof(root.path(), target, &inputs, b"another ROM").unwrap_err();
+        assert!(
+            error.contains("not the reference ROM recon/tbs/private-inputs.json registers"),
+            "{error}"
+        );
+        let reference = b"tbs-en reference ROM";
+        let error =
+            full_build_proof(root.path(), target, "an earlier tree", reference).unwrap_err();
+        assert!(error.contains("changed during the build"), "{error}");
+        std::fs::write(root.path().join("recon/tbs/private-inputs.json"), "{}").unwrap();
+        let inputs = identity(root.path(), "tbs-en").unwrap();
+        let error = full_build_proof(root.path(), target, &inputs, reference).unwrap_err();
+        assert!(error.contains("registers no reference_sha256"), "{error}");
+        let error = full_build(root.path(), target).map(|_| ()).unwrap_err();
+        assert!(error.contains("registers no reference_sha256"), "{error}");
     }
 
     #[test]

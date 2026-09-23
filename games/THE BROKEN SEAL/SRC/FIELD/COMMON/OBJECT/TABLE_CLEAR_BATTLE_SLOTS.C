@@ -19,13 +19,14 @@ void ObjectTable_ClearBattleSlots(void)
     } while (count >= 0);
 }
 
-/* object/table/get.c */
-void *get(u32 arg0)
+/* The object pointer in slot index of the 192-entry table at gWork + 0x14,
+   or NULL for an index past the table. */
+void *ObjectTable_Get(u32 index)
 {
     u8 *base = (u8 *)gWork;
     u32 offset;
-    if (arg0 > 0xbf)
+    if (index > 0xbf)
         return 0;
-    offset = (arg0 * 4) + 0x14;
+    offset = (index * 4) + 0x14;
     return *(void **)(base + offset);
 }

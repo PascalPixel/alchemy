@@ -7,7 +7,7 @@ use std::collections::{BTreeMap, HashSet};
 use std::path::{Component, Path, PathBuf};
 use std::sync::OnceLock;
 
-pub const SOURCE_BINDINGS_MANIFEST: &str = "games/THE BROKEN SEAL/recon/source-bindings.json";
+pub const SOURCE_BINDINGS_MANIFEST: &str = "recon/tbs/source-bindings.json";
 
 #[derive(Debug, Deserialize)]
 struct Manifest {
@@ -184,7 +184,7 @@ fn included_source_keys(root: &Path, source: &Path) -> Vec<String> {
 fn unit_symbol_names(root: &Path, source: &Path) -> HashSet<String> {
     static UNITS: OnceLock<Vec<(String, Vec<String>)>> = OnceLock::new();
     let units = UNITS.get_or_init(|| {
-        let path = root.join("games/THE BROKEN SEAL/recon/translation-units.json");
+        let path = root.join("recon/tbs/translation-units.json");
         let Ok(document) = crate::compiler::build_io::read_json::<serde_json::Value>(&path) else {
             return Vec::new();
         };
@@ -443,16 +443,16 @@ mod tests {
     #[test]
     fn mixed_unit_includes_resolve_to_src_keys() {
         let includes = quoted_c_includes(
-            "#include \"../main/0808fe38.C\"\n#include \"../../../SRC/BATTLE/EFFECT/ENABLE_TWO_CALLBACKS.C\"\n",
+            "#include \"../main/0808fe38.C\"\n#include \"../../../../games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/ENABLE_TWO_CALLBACKS.C\"\n",
         );
         assert_eq!(
             includes,
             [
                 "../main/0808fe38.C",
-                "../../../SRC/BATTLE/EFFECT/ENABLE_TWO_CALLBACKS.C"
+                "../../../../games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/ENABLE_TWO_CALLBACKS.C"
             ]
         );
-        let unit = Path::new("/workspace/games/THE BROKEN SEAL/recon/en/units/unit-0808fe38.c");
+        let unit = Path::new("/workspace/recon/tbs/en/units/unit-0808fe38.c");
         let resolved = lexical_join(unit.parent().unwrap(), &includes[1]);
         assert_eq!(
             source_key(Path::new("/workspace"), &resolved).as_deref(),

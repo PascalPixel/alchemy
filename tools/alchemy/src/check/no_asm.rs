@@ -210,8 +210,13 @@ fn success(message: &str) -> ExitCode {
 
 fn scan_repository(target_ids: &[DecompTargetId]) -> ExitCode {
     let root = compiler_root();
-    let files = match source_files(&root.join("games")) {
-        Ok(files) if !files.is_empty() => files,
+    // Maintained source under games/ and the drafts under recon/.
+    let files = match ["games", "recon"]
+        .into_iter()
+        .map(|tree| source_files(&root.join(tree)))
+        .collect::<Result<Vec<_>, _>>()
+    {
+        Ok(trees) if trees.iter().any(|files| !files.is_empty()) => trees.concat(),
         Ok(_) => return fail("ordinary-C gate scanned no files"),
         Err(error) => return fail(error),
     };

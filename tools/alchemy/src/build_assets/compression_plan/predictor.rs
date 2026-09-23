@@ -1,12 +1,80 @@
 use super::*;
 const FORMAT: &str = "greedy-lz-v1";
 const LZSS_FORMAT: &str = "lzss";
+/// Palette LZ searches this many bytes back from the byte it encodes.
+const PALETTE_WINDOW: usize = 4092;
+/// The palette format's largest copy distance, which its look-ahead reaches.
+const PALETTE_REACH: usize = 4095;
+
+/// The general-LZ compressor of a reference machine. Its settings were
+/// observed in the shipped streams and are recorded, each with its evidence
+/// and no credit, in the machine definition's `compressors.general_lz`; the
+/// streams bound them but do not derive them.
+///
+/// The compressor streams its input through a ring of `window + read_ahead`
+/// bytes. It keeps `read_ahead` bytes of input ahead of the byte it encodes
+/// and reads one more byte for each byte it consumes, so a copy may start at
+/// any byte still in the ring, at most `max_distance` back. At the end of the
+/// input reading stops and the ring's oldest byte stops advancing: over the
+/// final `read_ahead` bytes the history grows by one byte for each byte
+/// encoded, until `max_distance` limits it.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) struct GeneralLz {
+    window: usize,
+    read_ahead: usize,
+    max_distance: usize,
+}
+impl GeneralLz {
+    /// The general-LZ compressor a machine definition records. Each setting
+    /// must be one observed, uncredited value with its evidence, inside the
+    /// range its evidence allows.
+    pub(crate) fn of(definition: &Value) -> Result<Self, String> {
+        if definition["format"] != 1 {
+            return Err("unsupported machine definition".into());
+        }
+        let settings = &definition["compressors"]["general_lz"];
+        let setting = |name: &str| -> Result<usize, String> {
+            let record = &settings[name];
+            let label = format!("general-LZ {name}");
+            let value = number(&record["value"], &label)?;
+            let lowest = number(&record["allowed"]["lowest"], &label)?;
+            let highest = number(&record["allowed"]["highest"], &label)?;
+            if !(lowest..=highest).contains(&value)
+                || record["confidence"] != "observed"
+                || record["credit"] != "none"
+                || !record["evidence"]
+                    .as_array()
+                    .is_some_and(|rows| !rows.is_empty() && rows.iter().all(Value::is_string))
+            {
+                return Err(format!(
+                    "{label} must be one observed, uncredited value inside its allowed range, with its evidence"
+                ));
+            }
+            Ok(value)
+        };
+        let general = Self {
+            window: setting("window")?,
+            read_ahead: setting("read_ahead")?,
+            max_distance: setting("max_distance")?,
+        };
+        if general.window == 0 || general.max_distance < general.window {
+            return Err("general-LZ maximum distance must reach at least the window".into());
+        }
+        Ok(general)
+    }
+    /// The oldest byte the ring holds while it encodes `position` of `size`
+    /// input bytes: `read_ahead` bytes are read ahead unless the input ends.
+    fn oldest(&self, position: usize, size: usize) -> usize {
+        (position + self.read_ahead)
+            .min(size)
+            .saturating_sub(self.window + self.read_ahead)
+    }
+}
 
 fn supported(codec: &str) -> bool {
     matches!(
         codec,
-        "golden-sun-arena-lz"
-            | "golden-sun-kind2-lz"
+        "golden-sun-kind2-lz"
             | "golden-sun-general-lz"
             | "golden-sun-general-lz-prefill"
             | "golden-sun-palette-lz"
@@ -60,25 +128,25 @@ impl<'a> Matcher<'a> {
             mtf: std::array::from_fn(|i| i as u8),
         }
     }
+    /// The greedy token of tag-2 tile graphics and the legacy predictor.
     fn next(&mut self, position: usize, codec: &str) -> Value {
-        self.next_with_window(
-            position,
-            codec,
-            if codec.contains("palette") {
-                4095
-            } else {
-                4123
-            },
-        )
+        let window = if codec.contains("palette") {
+            4095
+        } else {
+            4123
+        };
+        self.search(position, codec, position.saturating_sub(window))
     }
-    fn next_with_window(&mut self, position: usize, codec: &str, window: usize) -> Value {
+    /// The nearest longest copy at `position` whose source is at least
+    /// `lowest`, else a literal.
+    fn search(&mut self, position: usize, codec: &str, lowest: usize) -> Value {
         let palette = codec.contains("palette");
         let maximum = (if palette { 272 } else { 137 }).min(self.data.len() - position);
         let mut length = 1;
         let mut distance = 0;
         if let Some(pair) = self.data.get(position..position + 2) {
             if let Some(positions) = self.pairs.get(&u16::from_le_bytes([pair[0], pair[1]])) {
-                let start = positions.partition_point(|p| *p < position.saturating_sub(window));
+                let start = positions.partition_point(|p| *p < lowest);
                 let end = positions.partition_point(|p| *p < position);
                 for source in positions[start..end].iter().rev() {
                     if self.data[*source + length] != self.data[position + length] {
@@ -115,43 +183,6 @@ impl<'a> Matcher<'a> {
             json!(["l", 1])
         }
     }
-    fn arena_next(&self, decoded: &[u8], position: usize) -> Value {
-        let maximum = 273.min(decoded.len() - position);
-        let mut length = 1;
-        let mut distance = 0;
-        if let Some(pair) = decoded.get(position..position + 2) {
-            if let Some(positions) = self.pairs.get(&u16::from_le_bytes([pair[0], pair[1]])) {
-                let start =
-                    positions.partition_point(|p| *p < self.data.len().saturating_sub(4095));
-                for source in &positions[start..] {
-                    if source + length >= self.data.len()
-                        || self.data[source + length] != decoded[position + length]
-                    {
-                        continue;
-                    }
-                    let mut count = 2;
-                    while count < maximum
-                        && source + count < self.data.len()
-                        && self.data[source + count] == decoded[position + count]
-                    {
-                        count += 1;
-                    }
-                    if count > length {
-                        length = count;
-                        distance = self.data.len() - source;
-                    }
-                    if length == maximum {
-                        break;
-                    }
-                }
-            }
-        }
-        if length >= 3 {
-            json!(["c", length, distance])
-        } else {
-            json!(["l", 1])
-        }
-    }
     fn literal(&mut self, position: usize) -> Value {
         let byte = self.data[position];
         let mut largest = 0usize;
@@ -163,10 +194,24 @@ impl<'a> Matcher<'a> {
         json!((usize::BITS - largest.leading_zeros()).max(2))
     }
 }
-/// Predict complete controls from decoded bytes. A literal is worthwhile when
-/// the following copy covers at least as much as the two greedy copies.
-/// General LZ uses this replacement once per stream; palette LZ repeats it.
-fn lzss(decoded: &[u8], codec: &str) -> Result<Value, String> {
+/// Predict complete controls from decoded bytes with nearest-longest matches
+/// and one-byte lazy evaluation. The encoder defers a copy to a literal when
+/// the copy at the next byte (longer than two bytes) covers at least as far
+/// as the copy and the token after it. Both look-ahead searches copy only
+/// from the history of the current position, so their distance limit grows
+/// by the look-ahead offset, up to the largest distance.
+///
+/// General LZ's history is its machine's ring ([`GeneralLz`]) and its
+/// largest distance the machine's; the machine is required only for it.
+/// Palette LZ keeps a fixed 4,092-byte window and the format's largest
+/// distance, 4,095.
+///
+/// A deferral suppresses lazy evaluation of the match that follows it. The
+/// palette encoder then resumes lazy evaluation; the general encoder never
+/// does, so a general stream defers at most once. Across the twelve ROMs the
+/// first general opportunity deferred in 5,123 of 5,123 streams and none of
+/// 1,316,283 later opportunities did.
+fn lzss(decoded: &[u8], codec: &str, general: Option<&GeneralLz>) -> Result<Value, String> {
     if codec == "golden-sun-kind2-lz" {
         // Tile graphics use greedy copies. Only literals update the nibble
         // move-to-front table; a copied byte never enters that table.
@@ -180,22 +225,39 @@ fn lzss(decoded: &[u8], codec: &str) -> Result<Value, String> {
         }
         return Ok(json!(result));
     }
-    let palette = match codec {
-        "golden-sun-general-lz" => false,
-        "golden-sun-palette-lz" | "golden-sun-tagged-palette-lz" => true,
+    let general = match codec {
+        "golden-sun-general-lz" => Some(
+            general
+                .ok_or("general-LZ compression needs the target's reference machine definition")?,
+        ),
+        "golden-sun-palette-lz" | "golden-sun-tagged-palette-lz" => None,
         _ => return Err("LZSS compressor does not support this codec".into()),
     };
-    let window = if palette { 4092 } else { 4123 };
+    let palette = general.is_none();
+    // The oldest byte in the history of `position`, and the largest distance.
+    let history = |position: usize| match general {
+        Some(general) => general.oldest(position, decoded.len()),
+        None => position.saturating_sub(PALETTE_WINDOW),
+    };
+    let reach = general.map_or(PALETTE_REACH, |general| general.max_distance);
+    // A search at `at` from the history whose oldest byte is `oldest`.
+    let lowest = |oldest: usize, at: usize| oldest.max(at.saturating_sub(reach));
     let mut matcher = Matcher::new(decoded);
-    let mut used = false;
+    let mut deferred = false;
     let mut position = 0;
     let mut result = Vec::new();
     while position < decoded.len() {
-        let mut token = matcher.next_with_window(position, codec, window);
+        let oldest = history(position);
+        let mut token = matcher.search(position, codec, lowest(oldest, position));
         let count = length(&token, codec)?;
-        if (!used || palette) && count > 1 && position + count < decoded.len() {
-            let alternative = matcher.next_with_window(position + 1, codec, window);
-            let following = matcher.next_with_window(position + count, codec, window);
+        let lazy = !deferred;
+        if palette {
+            deferred = false;
+        }
+        if lazy && count > 1 && position + count < decoded.len() {
+            let alternative = matcher.search(position + 1, codec, lowest(oldest, position + 1));
+            let following =
+                matcher.search(position + count, codec, lowest(oldest, position + count));
             let alternative_count = length(&alternative, codec)?;
             if alternative_count > 2 && alternative_count + 1 >= count + length(&following, codec)?
             {
@@ -204,7 +266,7 @@ fn lzss(decoded: &[u8], codec: &str) -> Result<Value, String> {
                 } else {
                     json!(["l", 1])
                 };
-                used = true;
+                deferred = true;
             }
         }
         position += length(&token, codec)?;
@@ -222,6 +284,7 @@ fn length(token: &Value, codec: &str) -> Result<usize, String> {
     }
     number(&token[1], "copy length")
 }
+#[cfg(test)]
 fn flatten(tokens: &Value, codec: &str) -> Result<Vec<Value>, String> {
     let rows = tokens
         .as_array()
@@ -266,7 +329,7 @@ fn group(flat: Vec<Value>, codec: &str) -> Value {
         })
         .collect::<Vec<_>>())
 }
-fn tokens(decoded: &[u8], plan: &Value, arena: &[u8]) -> Result<Value, String> {
+fn tokens(decoded: &[u8], plan: &Value) -> Result<Value, String> {
     let codec = json_string(&plan["codec"], "predictor codec")?;
     if !supported(codec) {
         return Err("unsupported predictor codec".into());
@@ -279,35 +342,13 @@ fn tokens(decoded: &[u8], plan: &Value, arena: &[u8]) -> Result<Value, String> {
     let mut data = vec![0; prefill];
     data.extend_from_slice(decoded);
     let mut matcher = Matcher::new(&data);
-    let arena_split = if codec == "golden-sun-arena-lz" {
-        number(&plan["tokens"]["split"], "arena split")?
-    } else {
-        0
-    };
-    let mut prefix = arena.to_vec();
-    if codec == "golden-sun-arena-lz" {
-        prefix.extend(
-            u16::try_from(arena_split)
-                .map_err(|_| "arena split exceeds halfword")?
-                .to_le_bytes(),
-        );
-    }
-    let arena_matcher = if codec == "golden-sun-arena-lz" {
-        Some(Matcher::new(&prefix))
-    } else {
-        None
-    };
     let exceptions = plan["tokens"]["exceptions"].as_array();
     let mut exception = 0;
     let mut position = prefill;
     let mut result = Vec::new();
     while position < data.len() {
         let saved_mtf = matcher.mtf;
-        let predicted = if let Some(arena) = &arena_matcher {
-            arena.arena_next(&data, position)
-        } else {
-            matcher.next(position, codec)
-        };
+        let predicted = matcher.next(position, codec);
         let actual = if let Some(rows) = exceptions {
             if let Some(row) = rows.get(exception) {
                 let at = number(&row[0], "exception offset")?;
@@ -344,9 +385,15 @@ fn tokens(decoded: &[u8], plan: &Value, arena: &[u8]) -> Result<Value, String> {
     }
     Ok(group(result, codec))
 }
-pub(crate) fn materialize(decoded: &[u8], plan: &Value, arena: &[u8]) -> Result<Value, String> {
+/// A plan's controls: compressed from `decoded`, with `general` for general
+/// LZ, unless the plan still carries legacy recorded controls.
+pub(crate) fn materialize(
+    decoded: &[u8],
+    plan: &Value,
+    general: Option<&GeneralLz>,
+) -> Result<Value, String> {
     if plan.get("tokens").is_none() {
-        return lzss(decoded, json_string(&plan["codec"], "codec")?);
+        return lzss(decoded, json_string(&plan["codec"], "codec")?, general);
     }
     if plan["tokens"].is_array() {
         return Ok(plan["tokens"].clone());
@@ -355,37 +402,190 @@ pub(crate) fn materialize(decoded: &[u8], plan: &Value, arena: &[u8]) -> Result<
         if plan["tokens"]["exceptions"] != json!([]) {
             return Err("LZSS compressor does not accept exceptions".into());
         }
-        return lzss(decoded, json_string(&plan["codec"], "codec")?);
+        return lzss(decoded, json_string(&plan["codec"], "codec")?, general);
     }
     if plan["tokens"]["predictor"] != FORMAT {
         return Err("unsupported LZ predictor".into());
     }
-    tokens(decoded, plan, arena)
+    tokens(decoded, plan)
 }
-/// Admit only controls independently reproduced from the decoded input.
-/// Never turn an encoder mismatch into an exception or explicit-token fallback.
-pub(crate) fn checked_plan(decoded: &[u8], plan: &Value) -> Result<Value, String> {
-    if plan.get("lookahead").is_some_and(|value| value != "") {
-        return Err(
-            "packing is not recovered; copying trailing reference bytes is forbidden".into(),
-        );
+#[cfg(test)]
+impl GeneralLz {
+    /// A synthetic machine for tests of the compressor's rules.
+    pub(crate) const fn synthetic(window: usize, read_ahead: usize, max_distance: usize) -> Self {
+        Self {
+            window,
+            read_ahead,
+            max_distance,
+        }
     }
-    let codec = json_string(&plan["codec"], "codec")?;
-    let predicted = lzss(decoded, codec)?;
-    let expected = group(flatten(&plan["tokens"], codec)?, codec);
-    if predicted != expected {
-        return Err(
-            "compressor does not reproduce this stream; recording token exceptions is forbidden"
-                .into(),
-        );
-    }
-    let mut candidate = plan.clone();
-    candidate["tokens"] = json!({"predictor":LZSS_FORMAT,"exceptions":[]});
-    Ok(candidate)
 }
 #[cfg(test)]
 mod tests {
     use super::*;
+    /// A synthetic machine whose history spans every short test input.
+    const WIDE: GeneralLz = GeneralLz::synthetic(64, 8, 72);
+    /// `size` distinct bytes, except that the pair at `copy` repeats the pair
+    /// at `source`.
+    fn distinct_with_copy(size: usize, source: usize, copy: usize) -> Vec<u8> {
+        let mut decoded = (0..size as u8).collect::<Vec<_>>();
+        decoded[copy] = decoded[source];
+        decoded[copy + 1] = decoded[source + 1];
+        decoded
+    }
+    /// The general-LZ token that `general` emits at `at`.
+    fn general_token(decoded: &[u8], general: &GeneralLz, at: usize) -> Value {
+        let codec = "golden-sun-general-lz";
+        let controls = lzss(decoded, codec, Some(general)).unwrap();
+        let mut position = 0;
+        for token in flatten(&controls, codec).unwrap() {
+            if position == at {
+                return token;
+            }
+            position += length(&token, codec).unwrap();
+        }
+        unreachable!()
+    }
+    #[test]
+    fn general_history_grows_over_the_final_read_ahead_bytes() {
+        // A 16-byte window and 4 bytes read ahead: a 20-byte ring.
+        let general = GeneralLz::synthetic(16, 4, 32);
+        // The ring's oldest byte trails the window until reading stops.
+        assert_eq!(general.oldest(10, 40), 0);
+        assert_eq!(general.oldest(30, 40), 14);
+        assert_eq!(general.oldest(36, 40), 20);
+        assert_eq!(general.oldest(39, 40), 20);
+        // A pair 17 bytes back is out of reach with four bytes left and in
+        // reach with three; with two left the history reaches 18 bytes.
+        for (left, distance, expected) in [
+            (4, 17, json!(["l", 1])),
+            (3, 17, json!(["c", 2, 17])),
+            (2, 18, json!(["c", 2, 18])),
+            (2, 19, json!(["l", 1])),
+        ] {
+            let at = 40 - left;
+            let decoded = distinct_with_copy(40, at - distance, at);
+            assert_eq!(general_token(&decoded, &general, at), expected);
+        }
+        // Mid-stream the same pair 17 bytes back stays out of reach.
+        let decoded = distinct_with_copy(60, 13, 30);
+        assert_eq!(general_token(&decoded, &general, 30), json!(["l", 1]));
+    }
+    #[test]
+    fn general_history_growth_stops_at_the_maximum_distance() {
+        // Eight bytes read ahead open 22 bytes of history two bytes before
+        // the end, but the machine copies at most 18 bytes back.
+        let general = GeneralLz::synthetic(16, 8, 18);
+        assert_eq!(general.oldest(38, 40), 16);
+        for (distance, expected) in [(18, json!(["c", 2, 18])), (19, json!(["l", 1]))] {
+            let decoded = distinct_with_copy(40, 38 - distance, 38);
+            assert_eq!(general_token(&decoded, &general, 38), expected);
+        }
+    }
+    #[test]
+    fn general_lazy_look_ahead_searches_the_current_history() {
+        // At 30 a two-byte copy (distance 5); at 31 a three-byte copy from
+        // 14, the ring's oldest byte while 30 is encoded (distance 17); at
+        // 32 a two-byte copy. Distinct bytes elsewhere.
+        let mut decoded = (0..50u8).collect::<Vec<_>>();
+        decoded[26] = 14;
+        decoded[30] = 25;
+        decoded[31..34].copy_from_slice(&[14, 15, 16]);
+        let general = GeneralLz::synthetic(16, 4, 18);
+        assert_eq!(general.oldest(30, 50), 14);
+        // Both look-aheads search from 30's oldest byte, so the copy at 31
+        // covers as far as the two greedy copies and 30 defers. Once 31 is
+        // encoded, byte 14 has left the ring: the copy is gone.
+        for (at, expected) in [(30, json!(["l", 1])), (31, json!(["l", 1]))] {
+            assert_eq!(general_token(&decoded, &general, at), expected);
+        }
+        // The look-ahead also copies at most the maximum distance back.
+        let general = GeneralLz::synthetic(16, 4, 16);
+        assert_eq!(general_token(&decoded, &general, 30), json!(["c", 2, 5]));
+    }
+    #[test]
+    fn machine_settings_are_observed_uncredited_and_inside_their_evidence() {
+        let setting = |value: usize, lowest: usize, highest: usize| {
+            json!({"value": value, "allowed": {"lowest": lowest, "highest": highest},
+                "confidence": "observed", "evidence": ["test"], "credit": "none"})
+        };
+        let definition = json!({"format": 1, "compressors": {"general_lz": {
+            "window": setting(16, 16, 16),
+            "read_ahead": setting(4, 2, 6),
+            "max_distance": setting(18, 17, 18),
+        }}});
+        assert_eq!(
+            GeneralLz::of(&definition),
+            Ok(GeneralLz::synthetic(16, 4, 18))
+        );
+        for (name, key, value) in [
+            ("window", "confidence", json!("inferred")),
+            ("read_ahead", "credit", json!("exact")),
+            ("read_ahead", "evidence", json!([])),
+            ("read_ahead", "value", json!(7)),
+            ("max_distance", "allowed", json!({"lowest": 17})),
+            ("max_distance", "value", json!(15)),
+        ] {
+            let mut invalid = definition.clone();
+            invalid["compressors"]["general_lz"][name][key] = value;
+            assert!(GeneralLz::of(&invalid).is_err(), "{name} {key}");
+        }
+        // A maximum distance below the window cannot be.
+        let mut invalid = definition;
+        invalid["compressors"]["general_lz"]["max_distance"] = setting(15, 15, 15);
+        assert!(GeneralLz::of(&invalid).is_err());
+    }
+    #[test]
+    fn both_games_record_one_general_lz_machine() {
+        use crate::targets::{target_for, DecompTargetId};
+        let root = repository_root();
+        let tbs = crate::build_assets::target_general_lz(&root, &target_for(DecompTargetId::TbsEn));
+        let tla = crate::build_assets::target_general_lz(&root, &target_for(DecompTargetId::TlaEn));
+        assert!(tbs.is_ok(), "{tbs:?}");
+        assert_eq!(tbs, tla);
+    }
+    /// Palette LZ at `at` of a sequence with distinct byte pairs, except for a
+    /// two-byte copy at `at` (distance 100), a three-byte copy at `at + 1`
+    /// (distance 201) and a three-byte copy at `at + 2` from `far` bytes back.
+    fn planted_palette_token(far: usize) -> Value {
+        let mut decoded = Vec::new();
+        let mut value = 0u8;
+        for index in 0..4400usize {
+            decoded.push(value);
+            value = value.wrapping_add((2 * (index / 256) + 1) as u8);
+        }
+        let at = 4300;
+        let (near, alternative, following) = (at - 100, at - 200, at + 2 - far);
+        decoded[near + 1] = decoded[alternative];
+        decoded[following] = decoded[alternative + 1];
+        decoded[following + 1] = decoded[alternative + 2];
+        decoded[at] = decoded[near];
+        decoded[at + 1] = decoded[alternative];
+        decoded[at + 2] = decoded[alternative + 1];
+        decoded[at + 3] = decoded[alternative + 2];
+        decoded[at + 4] = decoded[following + 2];
+        let flat = flatten(
+            &lzss(&decoded, "golden-sun-palette-lz", None).unwrap(),
+            "golden-sun-palette-lz",
+        )
+        .unwrap();
+        let mut position = 0;
+        for token in flat {
+            if position == at {
+                return token;
+            }
+            position += length(&token, "golden-sun-palette-lz").unwrap();
+        }
+        unreachable!()
+    }
+    #[test]
+    fn lookahead_matches_reach_past_the_window_by_their_offset() {
+        // The following copy at `at + 2` is visible from `at` up to distance
+        // 4092 + 2, so the two greedy copies cover more and the copy stays.
+        assert_eq!(planted_palette_token(4094), json!(["c", 2, 100]));
+        // One byte further it is out of reach and the copy is deferred.
+        assert_eq!(planted_palette_token(4095), json!(["l"]));
+    }
     #[test]
     fn lzss_replaces_equal_coverage_once_for_general_and_repeatedly_for_palette() {
         let decoded = b"abcXbcdefYabcdefghiUhijklVghijkl";
@@ -393,7 +593,7 @@ mod tests {
             ("golden-sun-general-lz", false),
             ("golden-sun-tagged-palette-lz", true),
         ] {
-            let controls = lzss(decoded, codec).unwrap();
+            let controls = lzss(decoded, codec, Some(&WIDE)).unwrap();
             let flat = flatten(&controls, codec).unwrap();
             let mut position = 0;
             let mut checked = 0;
@@ -415,58 +615,26 @@ mod tests {
             let mut automatic = plan.clone();
             automatic.as_object_mut().unwrap().remove("tokens");
             assert_eq!(
-                encode_lz_stream(decoded, &automatic, &[]).unwrap(),
-                encode_lz_stream(decoded, &plan, &[]).unwrap()
+                encode_lz_stream(decoded, &automatic, &[], Some(&WIDE)).unwrap(),
+                encode_lz_stream(decoded, &plan, &[], Some(&WIDE)).unwrap()
             );
-            let compact = checked_plan(decoded, &plan).unwrap();
-            assert_eq!(compact["tokens"]["predictor"], LZSS_FORMAT);
-            assert_eq!(
-                encode_lz_stream(decoded, &compact, &[]).unwrap(),
-                encode_lz_stream(decoded, &plan, &[]).unwrap()
-            );
-            let mut invalid = compact;
-            invalid["tokens"]["exceptions"] = json!([[0, ["l", 1]]]);
-            assert!(materialize(decoded, &invalid, &[]).is_err());
+            let mut invalid = plan.clone();
+            invalid["tokens"] = json!({"predictor":LZSS_FORMAT,"exceptions":[[0, ["l", 1]]]});
+            assert!(materialize(decoded, &invalid, Some(&WIDE)).is_err());
         }
-        assert!(lzss(b"abc", "golden-sun-general-lz-prefill").is_err());
+        assert!(lzss(b"abc", "golden-sun-general-lz-prefill", Some(&WIDE)).is_err());
+        // General LZ needs its machine; palette LZ does not.
+        assert!(lzss(decoded, "golden-sun-general-lz", None)
+            .unwrap_err()
+            .contains("reference machine definition"));
     }
     #[test]
-    fn export_refuses_mismatches_instead_of_recording_them() {
-        for padding in ["00", "aabb"] {
-            let padded = json!({"codec":"golden-sun-general-lz","tokens":[["l",2],["c",6,2]],"lookahead":padding});
-            assert!(checked_plan(b"ABABABAB", &padded)
-                .unwrap_err()
-                .contains("copying trailing reference bytes is forbidden"));
-        }
-        let plan = json!({"codec":"golden-sun-general-lz","tokens":[["l",8]]});
-        assert!(checked_plan(b"ABABABAB", &plan)
-            .unwrap_err()
-            .contains("recording token exceptions is forbidden"));
-        let unsupported = json!({"codec":"golden-sun-halfword-lz","tokens":[["l",1]]});
-        assert!(checked_plan(&[0, 0, 0, 0], &unsupported).is_err());
+    fn legacy_predictor_exceptions_still_materialize() {
         let legacy = json!({"codec":"golden-sun-kind2-lz","tokens":{"predictor":FORMAT,"exceptions":[[1,2],[2,[2,2]]]}});
         assert_eq!(
-            materialize(&[0, 0, 0, 0], &legacy, &[]).unwrap(),
+            materialize(&[0, 0, 0, 0], &legacy, None).unwrap(),
             json!([2, 2, [2, 2]])
         );
-    }
-    #[test]
-    fn arena_predictor_uses_oldest_matches_and_preserves_split_and_exceptions() {
-        let arena = [7, 8, 9, 7, 8, 9];
-        let decoded = [7, 8, 9, 0];
-        for distance in [8, 5] {
-            let plan = json!({"codec":"golden-sun-arena-lz","decoded_size":4,"tokens":[["c",3,distance],["l",1]]});
-            let candidate = json!({"codec":"golden-sun-arena-lz","decoded_size":4,"tokens":{"predictor":FORMAT,"split":3,"exceptions":if distance == 8 {json!([])} else {json!([[0,["c",3,5]]])}}});
-            assert_eq!(candidate["tokens"]["split"], json!(3));
-            assert_eq!(
-                candidate["tokens"]["exceptions"].as_array().unwrap().len(),
-                usize::from(distance == 5)
-            );
-            assert_eq!(
-                encode_lz_stream(&decoded, &plan, &arena).unwrap(),
-                encode_lz_stream(&decoded, &candidate, &arena).unwrap()
-            );
-        }
     }
     #[test]
     fn predictors_reject_unreachable_and_invalid_exception_records() {
@@ -481,22 +649,22 @@ mod tests {
         ] {
             let mut invalid = base.clone();
             invalid["tokens"]["exceptions"] = exceptions;
-            assert!(materialize(&[0, 0, 0, 0], &invalid, &[]).is_err());
+            assert!(materialize(&[0, 0, 0, 0], &invalid, None).is_err());
         }
         let mut invalid = base;
         invalid["tokens"]["predictor"] = json!("unknown");
-        assert!(materialize(&[0], &invalid, &[]).is_err());
+        assert!(materialize(&[0], &invalid, None).is_err());
     }
     #[test]
     fn tile_compressor_derives_copies_and_literal_widths_from_pixels() {
         let decoded = [0x21, 0x12, 0x21, 0x12, 0x21, 0x12, 0xfe];
         let plan = json!({"codec":"golden-sun-kind2-lz"});
         assert_eq!(
-            materialize(&decoded, &plan, &[]).unwrap(),
+            materialize(&decoded, &plan, None).unwrap(),
             json!([2, 2, [2, 4], 4])
         );
         let decoded = b"abcXbcdefYabcdefghiUhijklVghijkl";
-        let tokens = materialize(decoded, &plan, &[]).unwrap();
+        let tokens = materialize(decoded, &plan, None).unwrap();
         let mut position = 0;
         let mut checked = false;
         for token in tokens.as_array().unwrap() {

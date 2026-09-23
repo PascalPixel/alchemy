@@ -340,7 +340,7 @@ pub fn self_test() -> Result<(), String> {
     {
         return Err("named-source gate crossed its owned boundary".into());
     }
-    if !find_named_source_tool_leaks("games/THE BROKEN SEAL/recon/example.c", source).is_empty() {
+    if !find_named_source_tool_leaks("recon/tbs/example.c", source).is_empty() {
         return Err("named-source gate treated a reconstruction draft as production source".into());
     }
     if find_named_source_tool_leaks("games/THE LOST AGE/SRC/example.c", source).is_empty() {

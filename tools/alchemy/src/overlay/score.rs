@@ -74,8 +74,8 @@ fn source_for(
     let candidates = [
         paths.source_path(owner),
         root.join(format!(
-            "games/{}/recon/en/overlays/{}.c",
-            game.directory(),
+            "{}/en/overlays/{}.c",
+            game.recon(),
             owner.legacy_stem()
         )),
     ];
@@ -291,7 +291,7 @@ pub(crate) fn render_options(
     Ok(rendered)
 }
 pub fn audit_corpus(root: &Path) -> Result<i32, String> {
-    let directory = root.join("games/THE BROKEN SEAL/recon/en/overlays");
+    let directory = root.join("recon/tbs/en/overlays");
     let mut sources = std::fs::read_dir(&directory)
         .map_err(|error| format!("{}: {error}", directory.display()))?
         .filter_map(Result::ok)

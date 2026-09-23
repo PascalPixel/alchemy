@@ -1,6 +1,13 @@
+@ ARM colour-blend instruction templates (IroJun, IroGyaku) for the
+@ battle-effect blitter generator, which DMA-copies one of them into the
+@ routine it builds. They add colour bytes lane by lane against the mask the
+@ generated routine keeps in sl and have no return: ARM templates, not
+@ compiled code. Every TBS and TLA edition has these bytes (TLA 0x08197230).
+@ credit: library — TBS/TLA common ARM colour-blend instruction templates for the battle-effect code generator
 .syntax unified
 .text
 	.arm
+	.set AlchemyLoadAddress, 0x080eefa4
 	.global SentouKouka_IroJun
 	.global SentouKouka_IroGyaku
 SentouKouka_IroJun:

@@ -21,14 +21,15 @@ struct ReviewedRegion {
     span_bytes: usize,
 }
 pub fn reviewed_overlay_spans(root: &Path) -> Result<BTreeMap<SourceOwner, usize>, String> {
-    reviewed_overlay_spans_for_game(root, "games/THE BROKEN SEAL")
+    reviewed_overlay_spans_for_game(root, CompilerTarget::Tbs.recon())
 }
 
+/// The reviewed owner register under one game's `recon/<game>` directory.
 pub fn reviewed_overlay_spans_for_game(
     root: &Path,
-    game_dir: &str,
+    recon_dir: &str,
 ) -> Result<BTreeMap<SourceOwner, usize>, String> {
-    let path = root.join(game_dir).join("semantic/regions.json");
+    let path = root.join(recon_dir).join("semantic/regions.json");
     let document: ReviewedRegions = crate::compiler::build_io::read_json(path)?;
     let mut spans = BTreeMap::new();
     for region in document.manual_regions {
@@ -697,14 +698,11 @@ impl TranslationUnits {
     pub fn declared(root: &Path) -> Result<Self, String> {
         Self::declared_game(root, CompilerTarget::Tbs)
     }
-    /// One game's manifest as written, `games/<GAME>/recon/translation-units.json`,
+    /// One game's manifest as written, `recon/<game>/translation-units.json`,
     /// declaring only that game's units. The Broken Seal must have one; a game
     /// that has not composed a unit yet has none and declares nothing.
     pub fn declared_game(root: &Path, game: CompilerTarget) -> Result<Self, String> {
-        let path = root.join(format!(
-            "games/{}/recon/translation-units.json",
-            crate::compiler::routing::game_directory(game.as_str())
-        ));
+        let path = root.join(game.recon()).join("translation-units.json");
         if game != CompilerTarget::Tbs && !path.is_file() {
             return Ok(Self {
                 format: FORMAT,
@@ -1032,9 +1030,8 @@ fn validate_production_state(
             .iter()
             .all(|owner| owner.state == OwnerState::RetainedAssembly)
         && source.starts_with(
-            root.join("games")
-                .join(crate::compiler::routing::game_directory(&unit.game))
-                .join("recon/en/overlays"),
+            root.join(crate::compiler::routing::recon_directory(&unit.game))
+                .join("en/overlays"),
         );
     if unit.exact() && !grouped {
         return Err(format!(
@@ -1066,8 +1063,7 @@ fn validate_production_state(
                 let owner = unit.source_owner(image, member.address)?;
                 if names.mapped_source_path(owner).as_deref() != Some(source)
                     || root
-                        .join("games")
-                        .join(crate::compiler::routing::game_directory(&unit.game))
+                        .join(crate::compiler::routing::recon_directory(&unit.game))
                         .join("raw")
                         .join(format!("{:08x}.s", member.address))
                         .is_file()
@@ -1127,10 +1123,7 @@ fn validate_production_state(
     let reviewed = if retained_overlay_candidate {
         reviewed_overlay_spans_for_game(
             root,
-            &format!(
-                "games/{}",
-                crate::compiler::routing::game_directory(&unit.game)
-            ),
+            &crate::compiler::routing::recon_directory(&unit.game),
         )?
     } else {
         BTreeMap::new()
@@ -1140,8 +1133,7 @@ fn validate_production_state(
         let mapped = names.mapped_source_path(owner);
         let retained = placeholders.as_ref().map_or_else(
             || {
-                root.join("games")
-                    .join(crate::compiler::routing::game_directory(&unit.game))
+                root.join(crate::compiler::routing::recon_directory(&unit.game))
                     .join("raw")
                     .join(format!("{:08x}.s", member.address))
                     .is_file()
@@ -1201,8 +1193,7 @@ fn validate_production_state(
 }
 fn overlay_listing(root: &Path, game: &str, overlay: &str) -> Result<String, String> {
     let assembly = root
-        .join("games")
-        .join(crate::compiler::routing::game_directory(game))
+        .join(crate::compiler::routing::recon_directory(game))
         .join("raw/overlays")
         .join(format!("{overlay}_overlay.s"));
     std::fs::read_to_string(&assembly).map_err(|error| format!("{}: {error}", assembly.display()))
@@ -1285,7 +1276,7 @@ pub(crate) mod fixture {
                 }
             }
             repository.write(
-                "games/THE BROKEN SEAL/source-paths.json",
+                "recon/tbs/source-paths.json",
                 &json!({"format": 3, "owners": owners}).to_string(),
             );
             repository.units(json!([staged_actor()]));
@@ -1301,13 +1292,10 @@ pub(crate) mod fixture {
                 .iter()
                 .map(|address| format!("AlchemyC_{address:08x}:\n\t.space 4\n"))
                 .collect::<String>();
-            self.write(
-                &format!("games/THE BROKEN SEAL/raw/overlays/{image}_overlay.s"),
-                &text,
-            );
+            self.write(&format!("recon/tbs/raw/overlays/{image}_overlay.s"), &text);
         }
         pub fn record(&self, id: &str, record: Value) {
-            let path = "games/THE BROKEN SEAL/source-paths.json";
+            let path = "recon/tbs/source-paths.json";
             let text = std::fs::read_to_string(self.0.path().join(path)).unwrap();
             let mut register: Value = serde_json::from_str(&text).unwrap();
             register["owners"][id] = record;
@@ -1315,7 +1303,7 @@ pub(crate) mod fixture {
         }
         pub fn units(&self, units: Value) {
             self.write(
-                "games/THE BROKEN SEAL/recon/translation-units.json",
+                "recon/tbs/translation-units.json",
                 &json!({
                     "format": FORMAT,
                     "kind": "reconstruction-composition-contracts",
@@ -1330,7 +1318,7 @@ pub(crate) mod fixture {
         pub fn repeated(&self, member: &str) -> String {
             let text = json!([staged_actor()]).to_string();
             assert!(text.contains(member), "{member}");
-            let manifest = "games/THE BROKEN SEAL/recon/translation-units.json";
+            let manifest = "recon/tbs/translation-units.json";
             let valid = std::fs::read_to_string(self.0.path().join(manifest)).unwrap();
             let units = format!("\"units\":{text}");
             assert!(valid.contains(&units));
@@ -1416,18 +1404,12 @@ mod tests {
         unit["instances"]["main"]["absolute_symbols"] =
             json!({TABLE: {"address":"0x08020000", "kind":"data"}});
         repository.units(json!([unit.clone()]));
-        repository.write("games/THE BROKEN SEAL/raw/08010000.s", "retained");
+        repository.write("recon/tbs/raw/08010000.s", "retained");
         assert!(repository
             .load()
             .unwrap_err()
             .contains("main instance disagrees with production C ownership"));
-        std::fs::remove_file(
-            repository
-                .0
-                .path()
-                .join("games/THE BROKEN SEAL/raw/08010000.s"),
-        )
-        .unwrap();
+        std::fs::remove_file(repository.0.path().join("recon/tbs/raw/08010000.s")).unwrap();
         repository.record(
             "main:08010000",
             json!({"name":"WrongMember","source":STAGED_ACTOR}),
@@ -1467,9 +1449,7 @@ mod tests {
         let empty = TranslationUnits::load_game(work.path(), CompilerTarget::Tla).unwrap();
         assert!(empty.units.is_empty());
         assert!(TranslationUnits::load_game(work.path(), CompilerTarget::Tbs).is_err());
-        let path = work
-            .path()
-            .join("games/THE LOST AGE/recon/translation-units.json");
+        let path = work.path().join("recon/tla/translation-units.json");
         std::fs::create_dir_all(path.parent().unwrap()).unwrap();
         std::fs::write(
             &path,
@@ -1838,7 +1818,7 @@ mod tests {
             error.contains("staged-actor: instance owner resource_39b:02000ba4 is not an AlchemyC_ placeholder in its overlay listing"),
             "{error}"
         );
-        let listing = "games/THE BROKEN SEAL/raw/overlays/resource_39b_overlay.s";
+        let listing = "recon/tbs/raw/overlays/resource_39b_overlay.s";
         std::fs::remove_file(repository.0.path().join(listing)).unwrap();
         let error = repository.load().unwrap_err();
         assert!(
@@ -1936,9 +1916,7 @@ mod tests {
     #[test]
     fn reviewed_owner_duplicates_never_select_the_last_extent() {
         let root = tempfile::tempdir().unwrap();
-        let path = root
-            .path()
-            .join("games/THE BROKEN SEAL/semantic/regions.json");
+        let path = root.path().join("recon/tbs/semantic/regions.json");
         std::fs::create_dir_all(path.parent().unwrap()).unwrap();
         for sizes in [[4, 4], [4, 8]] {
             let rows = sizes.map(|span| {
@@ -2039,7 +2017,7 @@ mod tests {
         let root = crate::compiler::routing::root();
         let names = SourcePaths::load_for_game(root, "tbs").unwrap();
         let candidate = manifest
-            .unit("overlay-candidate-bindings-373-020015dc")
+            .unit("retained-scene-extended-actor-presentation-3bd")
             .unwrap();
         assert!(!candidate.exact());
         let invalid_state = |unit: &TranslationUnit| {

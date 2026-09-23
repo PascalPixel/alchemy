@@ -220,10 +220,7 @@ pub fn compile_overlay_c_fresh(
     compile_overlay_c_for(target, source, work, overlay, extent, None, &[], false)
 }
 fn translation_unit_signature(game: CompilerTarget) -> Result<Vec<u8>, String> {
-    let path = root().join(format!(
-        "games/{}/recon/translation-units.json",
-        crate::compiler::routing::game_directory(game.as_str())
-    ));
+    let path = root().join(game.recon()).join("translation-units.json");
     match fs::read(&path) {
         Ok(bytes) => Ok(bytes),
         Err(error)
@@ -2167,7 +2164,7 @@ mod source_activation_tests {
             let root = tempdir().unwrap();
             let listing = root
                 .path()
-                .join("games/THE BROKEN SEAL/raw/overlays/resource_3bf_overlay.s");
+                .join("recon/tbs/raw/overlays/resource_3bf_overlay.s");
             fs::create_dir_all(listing.parent().unwrap()).unwrap();
             fs::write(
                 &listing,
@@ -2339,7 +2336,7 @@ mod source_activation_tests {
             "{error}"
         );
         assert!(error.contains(IMPORT_LIST), "{error}");
-        fs::remove_dir_all(binding.root.path().join("games/THE BROKEN SEAL/raw")).unwrap();
+        fs::remove_dir_all(binding.root.path().join("recon/tbs/raw")).unwrap();
         let error = binding
             .bind(&BTreeMap::new(), &[("Object_Unimported", true, false)])
             .unwrap_err();

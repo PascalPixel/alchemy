@@ -1,5 +1,12 @@
-@ 音響混合用IWRAM転送関数。ThumbとARMを切り替えて標本を累算する。
-@ ROM配置と実行配置を分離し、混在命令列をそのまま再構築する。
+@ Sound mixer. The sound set-up at 0x080fa2a0 copies 1,024 bytes from here to
+@ 0x03007000 with CpuSet, and MIXER_ENTRY.S jumps into that copy. It switches
+@ between Thumb and ARM inside one routine (add r1, pc, #4; bx r1), saves r4
+@ and ip without lr (push {r4, ip}) and ends by unwinding the frame that
+@ MIXER_ENTRY.S built, with one pop {r0-r7}. None of that is compiler output.
+@ Every TBS and TLA edition has these bytes.
+@ The zero halfwords of alignment at 0x080f967e, 0x080f9726 and 0x080f980a
+@ never run and carry no credit.
+@ credit: library — TBS/TLA common sound-driver mixer and clear-buffer module
 .syntax unified
 	.thumb
 	.set AlchemyRunAddress, 0x03007000
@@ -11,7 +18,9 @@ Func_080f9674:
 	beq .L_03007060
 	add	r1, pc, #4
 	bx	r1
+AlchemyUncredited_080f967e:
 	.arm
+AlchemyUncreditedEnd_080f967e:
 	cmp	r4, #2
 	addeq	r7, r0, #848
 	addne	r7, r5, r8
@@ -81,9 +90,10 @@ Func_080f9674:
 	cmp	r1, r0
 	bcc .L_030070b8
 	b .L_0300738a
-	movs	r0, r0
-	movs	r6, r0
-	lsls	r0, r0, #16
+AlchemyUncredited_080f9726:
+	.2byte	0x0000
+AlchemyUncreditedEnd_080f9726:
+	.4byte	0x04000006
 .L_030070b8:
 	ldrb	r6, [r4, #0]
 	movs	r0, #199
@@ -206,7 +216,9 @@ Func_080f9674:
 	ldr	r3, [r4, #40]
 	add	r0, pc, #4
 	bx	r0
+AlchemyUncredited_080f980a:
 	.arm
+AlchemyUncreditedEnd_080f980a:
 	str	r8, [sp]
 	ldrb	sl, [r4, #10]
 	ldrb	fp, [r4, #11]

@@ -1,6 +1,10 @@
-@ ARM文字描画。r0 描画先ワーク、r1 文字コード、r2 X、r3 Y、[sp+72] 太字フラグ。
-@ 4bit画素を VRAM 0x06002500 のタイルへマスク合成する。C では表現不能な
-@ ARM 命令列のため、アセンブリとして保持する。
+@ Draws one font character (codes 32 to 143; others return 1) into the 4bpp
+@ tiles at 0x06002500, with its fifth argument choosing between two glyph
+@ sets. It runs from a RAM copy of exactly these 792 bytes. Kept as assembly
+@ without credit: it has the shape of GCC 2.96 ARM-mode output (lr saved with
+@ r5-sl while r4 stays free, add sp then pop and bx lr on return, constants
+@ built with mov and add, a literal pool after an unconditional branch). The
+@ approved routes compile only Thumb.
 .syntax unified
 .text
 	.arm
@@ -25,7 +29,6 @@ Func_080155d0:
 	beq .L_08015750
 	cmp	lr, #1
 	bhi .L_08015750
-@ 文字コード 32..143 は 8 ドット幅、222/223 は太字専用。範囲外は r0=1 で戻る。
 .L_0801561c:
 	cmp	r3, #0
 	beq .L_0801572c
@@ -45,7 +48,8 @@ Func_080155d0:
 	bhi .L_08015724
 	mov	sl, #9472
 	add	sl, sl, #100663296
-@ 太字: フォント表の 1 バイトを 4bit ずつ読み、色 0x1111 / 0x3333 で 8 行を描く。
+@ Second glyph set: each byte holds two 4-bit pixels; eight rows drawn in
+@ 0x1111 or 0x3333.
 .L_08015664:
 	mov	lr, #0
 	add	r4, r2, #1
@@ -101,7 +105,8 @@ Func_080155d0:
 .L_08015724:
 	ldr	r0, [sp, #12]
 	b .L_080158dc
-@ 通常字: 14 ドット幅のフォント表 (0x080370d4) から行ビット列を取る。
+@ First glyph set: 26-byte records at 0x08032224, a width halfword then twelve
+@ rows of up to 14 pixel bits.
 .L_0801572c:
 	sub	lr, r1, #222
 	add	r3, ip, ip, lsl #1
@@ -112,7 +117,6 @@ Func_080155d0:
 	add	r1, r1, #2
 	str	r1, [sp, #36]
 	b .L_08015768
-@ 222/223: 32 バイト幅の表 (0x08032224) から取る。
 .L_08015750:
 	sub	r3, r1, #32
 	ldr	r2, [pc, #148]
@@ -136,7 +140,8 @@ Func_080155d0:
 	mov	r1, #0
 	add	r2, r2, #2
 	str	r2, [sp, #4]
-@ 行ごとの色: 4 行目は 0x1111、他は 0x5555。太字フラグで X/Y を補正する。
+@ Four passes, the fourth in 0x1111 and the others in 0x5555; with bit 6 of
+@ the halfword at r0 + 22 set, X and Y shift between passes.
 .L_0801579c:
 	cmp	r1, #3
 	moveq	r5, #4352

@@ -1,5 +1,6 @@
 //! Live field layers from the maintained scene index and verified local ROM.
 mod client;
+mod filter;
 use super::{document, http, root, Response};
 use crate::coverage::boxtree::esc;
 use serde_json::Value;
@@ -41,6 +42,18 @@ pub(super) fn response(path: &str) -> Option<Response> {
     }
     if path != "/maps" && !path.starts_with("/maps/") {
         return None;
+    }
+    if let Some(id) = path.strip_prefix("/maps/filter/") {
+        return Some(match filter::PROFILES.iter().find(|p| p.id == id) {
+            Some(profile) => Response::new(
+                200,
+                "OK",
+                Some("application/octet-stream"),
+                "no-store",
+                filter::table(profile),
+            ),
+            None => http::not_found(),
+        });
     }
     let parts = path.trim_matches('/').split('/').collect::<Vec<_>>();
     let game = parts.get(1).copied().unwrap_or("tbs");
@@ -119,10 +132,14 @@ pub(super) fn response(path: &str) -> Option<Response> {
             esc(&container)
         ));
     }
+    let filters = filter::PROFILES
+        .iter()
+        .map(|p| format!("<option value=\"{}\">{}</option>", p.id, esc(p.label)))
+        .collect::<String>();
     Some(document(
         path,
         &format!(
-            r#"<main class="map-live" data-game="{game}"><header><span>{title} · Live map viewer</span><a class="refresh" href="{path}">Reload data</a></header><section class="map-tools"><a href="/maps/tbs">TBS</a><a href="/maps/tla">TLA</a><label>View <select id="mode"><option value="network">Connected rooms</option><option value="world">Stacked floors</option><option value="scene">Scene layers</option></select></label><label>Scene <select id="scene">{options}</select></label><button id="fit">Fit</button><button id="actual">1×</button><button id="smaller" aria-label="Zoom out">−</button><button id="larger" aria-label="Zoom in">+</button><label class="scene-control"><input id="grid" type="checkbox">16px grid</label><label class="scene-control">Palette <select id="palette"><option value="-1">Loaded palettes</option></select></label><span class="scene-control" id="layers"></span></section><p id="map-status" role="status">Assembling rooms from the current ROM…</p><div class="map-stage"><canvas id="map" tabindex="0" aria-label="Interactive map: drag to pan; wheel or plus/minus to zoom; zero to fit"></canvas></div><footer class="map-inspector" id="inspect">Local verified ROM · decoded and assembled live · no saved map images.</footer></main><script type="module" src="/maps/client.js"></script>"#
+            r#"<main class="map-live" data-game="{game}"><header><span>{title} · Live map viewer</span><a class="refresh" href="{path}">Reload data</a></header><section class="map-tools"><a href="/maps/tbs">TBS</a><a href="/maps/tla">TLA</a><label>View <select id="mode"><option value="network">Connected rooms</option><option value="world">Stacked floors</option><option value="scene">Scene layers</option></select></label><label>Scene <select id="scene">{options}</select></label><button id="fit">Fit</button><button id="actual">1×</button><button id="smaller" aria-label="Zoom out">−</button><button id="larger" aria-label="Zoom in">+</button><label title="Measured screen colours from the Handheld Color Space Project">Filter <select id="filter"><option value="">None</option>{filters}</select></label><label class="scene-control"><input id="grid" type="checkbox">16px grid</label><label class="scene-control">Palette <select id="palette"><option value="-1">Loaded palettes</option></select></label><span class="scene-control" id="layers"></span></section><p id="map-status" role="status">Assembling rooms from the current ROM…</p><div class="map-stage"><canvas id="map" tabindex="0" aria-label="Interactive map: drag to pan; wheel or plus/minus to zoom; zero to fit"></canvas></div><footer class="map-inspector" id="inspect">Local verified ROM · decoded and assembled live · no saved map images.</footer></main><script type="module" src="/maps/client.js"></script>"#
         ),
     ))
 }
@@ -135,7 +152,18 @@ fn rejects_invalid_map_routes() {
         "/maps/tbs/5/private",
         "/maps/tbs/not-a-scene/layers",
         "/maps/tbs/not-a-scene/family",
+        "/maps/filter/unknown",
+        "/maps/filter/../agb-001",
     ] {
         assert_eq!(response(path).unwrap().status, 404);
+    }
+}
+
+#[test]
+fn serves_one_colour_table_per_screen_filter() {
+    for profile in &filter::PROFILES {
+        let response = response(&format!("/maps/filter/{}", profile.id)).unwrap();
+        assert_eq!(response.status, 200, "{}", profile.id);
+        assert_eq!(response.body.len(), 32768 * 3, "{}", profile.id);
     }
 }

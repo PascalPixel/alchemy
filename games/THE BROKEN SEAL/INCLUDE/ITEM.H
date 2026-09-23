@@ -26,8 +26,7 @@ struct ItemDefinition {
     u8 reserved_0d;
     u16 description_message;        /* 0x0e */
     u8 reserved_10[4];
-    u8 element;                     /* 0x14 */
-    u8 reserved_15[3];
+    s32 element;                    /* 0x14, read as a word */
     struct ItemEffect effects[4];   /* 0x18 */
     u16 action_id;                  /* 0x28 */
     u8 reserved_2a[2];

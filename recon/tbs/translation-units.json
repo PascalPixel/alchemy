@@ -6599,20 +6599,6 @@
       ]
     },
     {
-      "id": "unit-08019000",
-      "game": "tbs",
-      "source": "recon/tbs/en/units/unit-08019000.c",
-      "compiler_route": "canonical-gcc296",
-      "overlay": null,
-      "owners": [
-        {
-          "address": "0x08019000",
-          "extent": 140,
-          "state": "retained-assembly"
-        }
-      ]
-    },
-    {
       "id": "unit-0808fe38",
       "game": "tbs",
       "source": "recon/tbs/en/units/unit-0808fe38.c",

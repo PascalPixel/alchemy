@@ -1358,7 +1358,8 @@
       "name": "UiWindow_SetTileAttributeRect"
     },
     "main:08019000": {
-      "name": "UiWindow_SetTilemapEntry"
+      "name": "UiWindow_SetTilemapEntry",
+      "source": "GRAPHICS/WINDOW/SET_TILEMAP_ENTRY.C"
     },
     "main:0801f5f0": {
       "name": "UiWindow_SetTileAttributeBitRect",

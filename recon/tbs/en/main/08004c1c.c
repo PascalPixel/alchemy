@@ -1,3 +1,8 @@
+/* NONMATCHING: the reference fills the matrix with three four-register
+ * stmia stores of {0x10000, 0, 0, 0} and reuses r1/r2 as the call arguments.
+ * agscc emits at most three-register stmia in Thumb, so this needs a shared
+ * fill primitive like Dma_Set, which is not admitted.
+ */
 #include "TYPES.H"
 
 #define SceneTransform_ApplyYaw Func_08004c1c

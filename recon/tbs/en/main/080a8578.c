@@ -1,3 +1,7 @@
+/* NONMATCHING: 3 halfwords. Reload loads the 0x0be6 message base into r3; the
+ * reference reloads it into r0, the call's own argument register. Spellings
+ * of the sum (temporary, nested call, split add, base variable) move nothing.
+ */
 #include "TYPES.H"
 
 struct OwnerProgressState {

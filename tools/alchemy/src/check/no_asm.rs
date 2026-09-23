@@ -19,6 +19,8 @@ use std::sync::Mutex;
 const USAGE: &str =
     "usage: alchemy check no-asm [--target TARGET|--self-test]\n\nScan raw and preprocessed C for instruction, register, and ABI escape hatches.";
 type Job = (String, Vec<String>);
+/// One preprocessing command prefix of a target and the sources it expands.
+type Group = ((String, Vec<String>), Vec<String>);
 
 fn sibling(root: &Path, source: &str) -> Option<std::path::PathBuf> {
     (source.ends_with(".c") || source.ends_with(".C"))
@@ -51,7 +53,7 @@ fn prefix(target: DecompTarget, source: &str) -> Result<Vec<String>, String> {
     crate::compiler::bundle::compiler_command_for_target(compiler, &flags)
 }
 
-fn jobs(root: &Path, target_ids: &[DecompTargetId]) -> Result<(Vec<Job>, usize), String> {
+fn groups(root: &Path, target_ids: &[DecompTargetId]) -> Result<Vec<Group>, String> {
     let mut groups = BTreeMap::<(String, Vec<String>), Vec<String>>::new();
     let units = TranslationUnits::load(root)?;
     for &id in target_ids {
@@ -79,16 +81,81 @@ fn jobs(root: &Path, target_ids: &[DecompTargetId]) -> Result<(Vec<Job>, usize),
         sources.sort();
         sources.dedup();
     }
-    let inputs = groups.values().map(Vec::len).sum();
+    Ok(groups.into_iter().collect())
+}
+
+/// The identity of one source's expansion: the command, the source with
+/// every header it includes, the compiler bundle and the scanner. A source
+/// whose expansion was clean under the same identity is not expanded again,
+/// as make skips an up-to-date object; any change to it or a header it
+/// includes scans it afresh.
+fn clean_key(root: &Path, label: &str, prefix: &[String], source: &str) -> Option<String> {
+    let tree = crate::compiler::source_inputs::compiler_source_tree_signature(
+        root,
+        Path::new(source),
+        &[prefix.to_vec()],
+    )
+    .ok()?;
+    let identity = serde_json::to_vec(&(
+        "no-asm-clean-v1",
+        crate::compiler::bundle::executable_signature().ok()?,
+        crate::compiler::bundle::compiler_bundle_signature(),
+        label,
+        prefix,
+        source,
+        crate::compiler::sha256::hex(&tree),
+    ))
+    .ok()?;
+    Some(crate::compiler::sha256::hex(&identity))
+}
+
+/// Preprocessing batches for every source not already known clean, with
+/// the clean keys each batch would record, and the number of inputs.
+fn jobs(
+    root: &Path,
+    groups: Vec<Group>,
+    cache: Option<&psynergy::cache::SqliteCache>,
+) -> (Vec<(Job, Vec<String>)>, usize) {
+    let inputs = groups.iter().map(|(_, sources)| sources.len()).sum();
     let mut jobs = Vec::new();
     for ((label, prefix), sources) in groups {
-        for batch in sources.chunks(128) {
+        let workers = std::thread::available_parallelism().map_or(1, |count| count.get().min(16));
+        let chunk = sources.len().div_ceil(workers).max(1);
+        let keys = std::thread::scope(|scope| {
+            let handles = sources
+                .chunks(chunk)
+                .map(|part| {
+                    let (label, prefix) = (&label, &prefix);
+                    scope.spawn(move || {
+                        part.iter()
+                            .map(|source| clean_key(root, label, prefix, source))
+                            .collect::<Vec<_>>()
+                    })
+                })
+                .collect::<Vec<_>>();
+            handles
+                .into_iter()
+                .flat_map(|handle| handle.join().expect("no-asm key worker panicked"))
+                .collect::<Vec<_>>()
+        });
+        let pending = sources
+            .into_iter()
+            .zip(keys)
+            .filter(|(_, key)| {
+                let known = key
+                    .as_deref()
+                    .and_then(|key| cache?.get(key).ok().flatten());
+                known.is_none()
+            })
+            .collect::<Vec<_>>();
+        for batch in pending.chunks(128) {
             let mut command = prefix.clone();
-            command.extend(batch.iter().cloned());
-            jobs.push((label.clone(), command));
+            command.extend(batch.iter().map(|(source, _)| source.clone()));
+            let keys = batch.iter().filter_map(|(_, key)| key.clone()).collect();
+            jobs.push(((label.clone(), command), keys));
         }
     }
-    Ok((jobs, inputs))
+    (jobs, inputs)
 }
 
 fn run(root: &Path, job: &Job) -> Result<Vec<Finding>, String> {
@@ -117,16 +184,27 @@ fn scan_preprocessed(
     root: &Path,
     target_ids: &[DecompTargetId],
 ) -> Result<(usize, usize, Vec<Finding>), String> {
-    let (jobs, inputs) = jobs(root, target_ids)?;
+    let cache = psynergy::cache::SqliteCache::open(&root.join("out/cache/no-asm.sqlite3")).ok();
+    let (jobs, inputs) = jobs(root, groups(root, target_ids)?, cache.as_ref());
     let workers = std::thread::available_parallelism().map_or(1, |count| count.get().min(16));
     let results = Mutex::new(Vec::new());
     std::thread::scope(|scope| {
         for offset in 0..workers.min(jobs.len()).max(1) {
             let jobs = &jobs;
             let results = &results;
+            let cache = cache.as_ref();
             scope.spawn(move || {
-                for (index, job) in jobs.iter().enumerate().skip(offset).step_by(workers) {
-                    results.lock().unwrap().push((index, run(root, job)));
+                for (index, (job, keys)) in jobs.iter().enumerate().skip(offset).step_by(workers) {
+                    let result = run(root, job);
+                    // Only a batch that expanded without findings is known clean.
+                    if let (Ok(findings), Some(cache)) = (&result, cache) {
+                        if findings.is_empty() {
+                            for key in keys {
+                                let _ = cache.put(key, &[("clean", b"1")]);
+                            }
+                        }
+                    }
+                    results.lock().unwrap().push((index, result));
                 }
             });
         }

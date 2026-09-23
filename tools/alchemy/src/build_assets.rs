@@ -3001,7 +3001,52 @@ fn select_plan<'a>(document: &'a Value, entry: &Value) -> Result<&'a Value, Stri
 /// stream in its container for codecs whose copies read from them; `machine`
 /// holds the target machine's LZSS compressors, which general and palette LZ
 /// require.
+/// One compressed stream, answered from the stream cache when the same
+/// build implementation already encoded the same input under the same plan,
+/// arena and machine: the encoders are pure functions of those, so an edited
+/// overlay or asset re-encodes only its own streams. Failures are never
+/// cached, and every result still meets the ROM comparison.
 fn encode_lz_stream(
+    decoded: &[u8],
+    plan: &Value,
+    arena: &[u8],
+    machine: Option<&LzMachine>,
+) -> Result<Vec<u8>, String> {
+    static CACHE: std::sync::OnceLock<Option<psynergy::cache::SqliteCache>> =
+        std::sync::OnceLock::new();
+    let cache = CACHE.get_or_init(|| {
+        psynergy::cache::SqliteCache::open(
+            &crate::compiler::routing::root().join("out/cache/asset-streams.sqlite3"),
+        )
+        .ok()
+    });
+    let mut identity = Vec::new();
+    for part in [
+        b"lz-stream-v1".as_slice(),
+        executable_signature()?.as_bytes(),
+        plan.to_string().as_bytes(),
+        format!("{machine:?}").as_bytes(),
+        arena,
+        decoded,
+    ] {
+        identity.extend_from_slice(&(part.len() as u64).to_le_bytes());
+        identity.extend_from_slice(part);
+    }
+    let key = sha256::hex(&identity);
+    if let Some(hit) = cache
+        .as_ref()
+        .and_then(|cache| cache.get(&key).ok().flatten())
+        .and_then(|entries| entries.into_iter().find(|(kind, _)| kind == "stream"))
+    {
+        return Ok(hit.1);
+    }
+    let built = encode_lz_stream_uncached(decoded, plan, arena, machine)?;
+    if let Some(cache) = cache {
+        let _ = cache.put(&key, &[("stream", &built)]);
+    }
+    Ok(built)
+}
+fn encode_lz_stream_uncached(
     decoded: &[u8],
     plan: &Value,
     arena: &[u8],
@@ -6234,6 +6279,13 @@ fn stamp_files(
     }
     Ok(())
 }
+fn is_c_source(path: &Path) -> bool {
+    path.extension()
+        .and_then(|extension| extension.to_str())
+        .is_some_and(|extension| {
+            extension.eq_ignore_ascii_case("c") || extension.eq_ignore_ascii_case("h")
+        })
+}
 fn stamp_record(stream: &mut Vec<u8>, label: &str, bytes: &[u8]) {
     stream.extend_from_slice(label.as_bytes());
     stream.push(0);
@@ -6289,6 +6341,19 @@ fn stage_stamp_with_signature(
             let signature = compiler_source_tree_signature(root, &source, &[flags])?;
             stamp_record(&mut stream, &name, &signature);
         }
+        // A declared overlay unit compiles into its overlay too.
+        // An unreadable manifest is stamped by its bytes below and fails the build.
+        let units =
+            crate::compiler::translation_units::TranslationUnits::load_game(root, game.compiler)
+                .map(|units| units.units)
+                .unwrap_or_default();
+        for unit in units.iter().filter(|unit| unit.overlay.is_some()) {
+            let name = relative(root, &root.join(&unit.source));
+            let flags = cflags_for_target_source(game.compiler, &name);
+            let signature =
+                compiler_source_tree_signature(root, &root.join(&unit.source), &[flags])?;
+            stamp_record(&mut stream, &format!("unit:{name}"), &signature);
+        }
         names.push(text(source_paths_manifest(game.compiler.as_str())?));
         names.push(native::NativePaths::of(&game).index);
         names.push(format!("{}/translation-units.json", game.recon_dir()));
@@ -6305,6 +6370,13 @@ fn stage_stamp_with_signature(
         .entry(relative(root, manifest))
         .or_insert_with(|| manifest.to_path_buf());
     for (relative, path) in files {
+        // C sources and headers reach the assets only through the overlay
+        // compiles stamped above, with every header they include; a main-image
+        // source records only its name, so editing one rebuilds no asset.
+        if is_c_source(&path) {
+            stamp_record(&mut stream, &relative, b"<c-source>");
+            continue;
+        }
         let bytes = fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?;
         stamp_record(&mut stream, &relative, &bytes);
     }
@@ -6450,7 +6522,21 @@ fn asset_stamp_tracks_sound_and_included_overlay_sources() {
         "source",
     )
     .unwrap();
-    assert_ne!(previous, stamp().unwrap());
+    let previous = stamp().unwrap();
+    // A main-image source is stamped by name: adding one rebuilds the assets,
+    // editing it does not, and editing an overlay source still does.
+    let main = root.join("games/THE BROKEN SEAL/SRC/FIELD/MAIN.C");
+    fs::write(&main, "void Main(void) {}\n").unwrap();
+    let named = stamp().unwrap();
+    assert_ne!(previous, named);
+    fs::write(&main, "void Main(void) { Main(); }\n").unwrap();
+    assert_eq!(named, stamp().unwrap());
+    fs::write(
+        root.join("games/THE BROKEN SEAL/SRC/resource_373_c_02001000.c"),
+        "#include \"shared.h\"\nvoid Test(void) { Test(); }\n",
+    )
+    .unwrap();
+    assert_ne!(named, stamp().unwrap());
     fs::write(&header, "#include \"resource_373_c_02001000.c\"\n").unwrap();
     assert!(stamp().unwrap_err().contains("recursive C source include"));
 }

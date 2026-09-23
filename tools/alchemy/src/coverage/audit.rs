@@ -2,7 +2,7 @@
 pub(crate) mod index;
 mod verification;
 
-use super::proof::{full_asset_manifest, full_build, full_build_report};
+use super::proof::{full_asset_manifest, full_build_report, last_full_build};
 use crate::compiler::canonical_json::canonical_json;
 use crate::overlay::assembly::{
     compiler_runtime_spans, executable_spans, main_executable_spans, ExecutableSpan, OVERLAY_BASE,
@@ -946,8 +946,7 @@ pub fn run(root: &Path, arguments: &[String]) -> Result<String, String> {
         return index::run(root, target);
     }
     if options.inventory {
-        let candidate = candidate_path(root, target);
-        return record_inventory(root, target, || audit_candidate(root, target, &candidate));
+        return refresh_inventory(root, target);
     }
     let candidate = match &options.output {
         Some(path) => candidate_destination(root, path)?,
@@ -978,6 +977,15 @@ pub fn run(root: &Path, arguments: &[String]) -> Result<String, String> {
     } else {
         Err(text)
     }
+}
+
+/// `--inventory`, which a canonical full build also runs when it leaves no
+/// authoritative inventory: when none exists yet, or its own inputs (the
+/// verified overlay record, the reference ROM or the build's asset layout)
+/// changed.
+pub(crate) fn refresh_inventory(root: &Path, target: DecompTarget) -> Result<String, String> {
+    let candidate = candidate_path(root, target);
+    record_inventory(root, target, || audit_candidate(root, target, &candidate))
 }
 
 /// Audits the target's ROM, writes the candidate report to `destination`
@@ -1081,7 +1089,7 @@ fn gated_inventory(
 /// ROM build accounts for every byte: its verified asset regions, and
 /// source for everything else. A partial asset build leaves unidentified
 /// data inside the complement. The build must still prove it
-/// ([`full_build`]) and have rebuilt the ROM this audit read.
+/// ([`last_full_build`]) and have rebuilt the ROM this audit read.
 fn main_image_proof(root: &Path, target: DecompTarget, document: &Value) -> Result<(), String> {
     let full = full_asset_manifest(target);
     if document["main"]["asset_manifest"].as_str() != Some(full.as_str()) {
@@ -1089,7 +1097,7 @@ fn main_image_proof(root: &Path, target: DecompTarget, document: &Value) -> Resu
             "the main-image complement needs the byte-identical full ROM build's asset manifest {full}"
         ));
     }
-    let build = full_build(root, target)
+    let (build, _) = last_full_build(root, target)
         .map_err(|error| format!("the main-image complement is unproven: {error}"))?;
     if document["rom_sha256"] != build.rom_sha256.as_str() {
         return Err(
@@ -1115,11 +1123,14 @@ fn main_proof(target: DecompTarget) -> Value {
 /// Whether a generated inventory is the automatic count, which every reader
 /// requires before it scores one: overlay intervals that hash to the
 /// independently verified digest, and main intervals that are the asset
-/// complement of a byte-identical full ROM build of the same ROM. Both are
-/// recomputed from the inventory, the build's artifacts and the current
-/// tree ([`full_build`]), never taken from what the inventory or the build's
-/// report states, so a copied ledger, a hand-made file or a stale build is
-/// never scored. `Err` says why the inventory is not authoritative.
+/// complement of the last byte-identical full ROM build of the same ROM. Both
+/// are recomputed from the inventory and the build's artifacts
+/// ([`last_full_build`]), never taken from what the inventory or the build's
+/// report states, so a copied ledger or a hand-made file is never scored.
+/// The count depends on the reference ROM and the build's asset layout, not
+/// on the source tree: it stays authoritative across source and tool changes
+/// until a build changes that layout, starts or fails. `Err` says why the
+/// inventory is not authoritative.
 pub(crate) fn authenticate(
     root: &Path,
     target: DecompTarget,
@@ -1132,7 +1143,7 @@ pub(crate) fn authenticate(
             target.id
         ));
     }
-    let build = full_build(root, target)
+    let (build, _) = last_full_build(root, target)
         .map_err(|error| format!("its main-image proof no longer holds: {error}"))?;
     if inventory["rom_sha256"] != build.rom_sha256.as_str() {
         return Err(
@@ -1714,8 +1725,10 @@ mod tests {
         unproven("is not the asset manifest the build recorded");
         std::fs::write(path("out/tbs-en/full/assets/manifest.json"), &manifest).unwrap();
 
-        // An encoder, codec, machine definition, retained listing or
-        // registered reference changed after the build.
+        // An encoder, codec, machine definition, retained listing or asset
+        // changed after the build leaves the layout that build proved, so the
+        // complement stands; the build no longer proves the tree, so it can
+        // credit nothing until it runs again.
         for input in [
             "tools/alchemy/src/build_assets/packer.rs",
             "tools/alchemy/src/build_assets.rs",
@@ -1727,9 +1740,16 @@ mod tests {
         ] {
             std::fs::create_dir_all(path(input).parent().unwrap()).unwrap();
             std::fs::write(path(input), "changed").unwrap();
-            unproven("build inputs changed after the build");
-            std::fs::remove_file(path(input)).unwrap();
             main_image_proof(root.path(), target, &document).unwrap();
+            let stale = crate::coverage::proof::full_build(root.path(), target).map(|_| ());
+            assert!(
+                stale
+                    .unwrap_err()
+                    .contains("build inputs changed after the build"),
+                "{input}"
+            );
+            std::fs::remove_file(path(input)).unwrap();
+            assert!(crate::coverage::proof::full_build(root.path(), target).is_ok());
         }
     }
 

@@ -51,6 +51,41 @@ fn translation_units(game: CompilerTarget) -> Result<&'static TranslationUnits, 
         Err(error) => Err(error.clone()),
     }
 }
+/// The game's owner register, loaded once per game like its units.
+fn source_paths(game: &str) -> Result<&'static SourcePaths, String> {
+    static BROKEN_SEAL: OnceLock<Result<SourcePaths, String>> = OnceLock::new();
+    static LOST_AGE: OnceLock<Result<SourcePaths, String>> = OnceLock::new();
+    let cell = match game {
+        "tbs" => &BROKEN_SEAL,
+        "tla" => &LOST_AGE,
+        _ => return Err(format!("invalid game id {game:?}")),
+    };
+    match cell.get_or_init(|| SourcePaths::load_for_game(&root(), game)) {
+        Ok(paths) => Ok(paths),
+        Err(error) => Err(error.clone()),
+    }
+}
+/// The digest of the game's unit manifest and owner register, the
+/// registries every overlay compile binds through, taken once per game.
+fn registry_digest(game: CompilerTarget) -> Result<String, String> {
+    static BROKEN_SEAL: OnceLock<Result<String, String>> = OnceLock::new();
+    static LOST_AGE: OnceLock<Result<String, String>> = OnceLock::new();
+    let cell = match game {
+        CompilerTarget::Tbs => &BROKEN_SEAL,
+        CompilerTarget::Tla => &LOST_AGE,
+    };
+    cell.get_or_init(|| {
+        let mut registries = Vec::new();
+        append_frame(&mut registries, &translation_unit_signature(game)?);
+        append_frame(
+            &mut registries,
+            &fs::read(source_paths(game.as_str())?.manifest_path())
+                .map_err(|error| error.to_string())?,
+        );
+        Ok(sha256::hex(&registries))
+    })
+    .clone()
+}
 fn write_overlay_bindings(overlay: &str, text: &str) -> Result<PathBuf, String> {
     let directory = root().join("out/overlay-bindings");
     fs::create_dir_all(&directory).map_err(|error| format!("{}: {error}", directory.display()))?;
@@ -244,7 +279,7 @@ fn compile_overlay_c_for(
 ) -> Result<Compiled, String> {
     let game = target.compiler.as_str();
     let source_display = source.to_string_lossy().to_string();
-    let source_paths = SourcePaths::load_for_game(&root(), game)?;
+    let source_paths = source_paths(game)?;
     let route = routing_source.unwrap_or(source);
     let owner = source_paths
         .overlay_owner_for_path(overlay, route)?
@@ -320,11 +355,7 @@ fn compile_overlay_c_for(
     let mut source_inputs = compiler_source_tree_signature(&root(), source, &steps)?;
     append_frame(
         &mut source_inputs,
-        &translation_unit_signature(target.compiler)?,
-    );
-    append_frame(
-        &mut source_inputs,
-        &fs::read(source_paths.manifest_path()).map_err(|error| error.to_string())?,
+        registry_digest(target.compiler)?.as_bytes(),
     );
     // The binding path carries a content hash, so a rename changes the
     // command; hashing the text keeps the key honest if that ever changes.
@@ -417,7 +448,7 @@ fn compile_overlay_unit(
         ));
     }
     let game = unit.target()?;
-    let names = SourcePaths::load_for_game(&root(), game.as_str())?;
+    let names = source_paths(game.as_str())?;
     let source = root().join(&unit.source);
     let first = unit
         .owners
@@ -463,8 +494,28 @@ fn compile_overlay_unit(
     options
         .preprocessor_flags
         .extend(["-include".into(), bindings.to_string_lossy().into_owned()]);
-    for command in source_to_assembly_plan(&options)? {
-        checked(&command, work)?;
+    let commands = source_to_assembly_plan(&options)?;
+    // A production link of the installed source is answered from the cache
+    // like an owner compile; a selected owner or a candidate always compiles.
+    let cache_key = match (selected, candidate) {
+        (None, None) => Some(unit_cache_key(
+            unit,
+            game,
+            image,
+            edition,
+            placement,
+            &source,
+            &commands,
+            &binding_text,
+            work,
+        )?),
+        _ => None,
+    };
+    if let Some(hit) = cache_key.as_deref().and_then(cached_unit) {
+        return Ok(hit);
+    }
+    for command in &commands {
+        checked(command, work)?;
     }
     let produced = fs::read_to_string(&assembly).map_err(|error| error.to_string())?;
     // The unit's functions need not be contiguous in the image: retained
@@ -782,7 +833,78 @@ fn compile_overlay_unit(
             data: overlay::encode(&bytes, (address - overlay::RESOURCE_BASE) as usize)?,
         });
     }
+    if let (Some(key), Ok(cache)) = (&cache_key, overlay_c_cache()) {
+        let _ = cache.put(key, &[("unit", &unit_payload(&compiled))]);
+    }
     Ok(compiled)
+}
+/// The identity of one production unit link: the unit and register
+/// manifests, its complete source tree and bindings, the compile plan, the
+/// image and edition it links into with their reference bytes, and the
+/// signed compiler, host tools and build implementation.
+#[allow(clippy::too_many_arguments)]
+fn unit_cache_key(
+    unit: &TranslationUnit,
+    game: CompilerTarget,
+    image: &str,
+    edition: Option<&str>,
+    placement: Option<&OverlayPlacement<'_>>,
+    source: &Path,
+    commands: &[Vec<String>],
+    binding_text: &str,
+    work: &Path,
+) -> Result<String, String> {
+    let mut inputs = compiler_source_tree_signature(&root(), source, commands)?;
+    append_frame(&mut inputs, registry_digest(game)?.as_bytes());
+    append_frame(&mut inputs, binding_text.as_bytes());
+    append_frame(&mut inputs, unit.id.as_bytes());
+    append_frame(&mut inputs, image.as_bytes());
+    append_frame(&mut inputs, edition.unwrap_or("").as_bytes());
+    let canonical = crate::overlay::rom::canonical_overlay_for(
+        &root(),
+        crate::overlay::owners::production_target(game),
+        unit.image(),
+    )?;
+    append_frame(&mut inputs, &canonical);
+    if let Some(placement) = placement {
+        append_frame(&mut inputs, placement.reference);
+        for (canonical, placed) in &placement.addresses {
+            append_frame(&mut inputs, &canonical.to_le_bytes());
+            append_frame(&mut inputs, &placed.to_le_bytes());
+        }
+    }
+    let host = crate::compiler::bundle::host_executable_signature(&OVERLAY_HOST_TOOLS)
+        .map_err(|error| format!("overlay host tool signature: {error}"))?;
+    overlay_cache_key(
+        &crate::compiler::bundle::compiler_bundle_signature(),
+        &host,
+        &sha256::hex(&command_identity(commands, &work.to_string_lossy())),
+        -1,
+        &inputs,
+    )
+    .map(|key| format!("unit:{key}"))
+}
+fn unit_payload(compiled: &[Compiled]) -> Vec<u8> {
+    let mut payload = Vec::new();
+    for member in compiled {
+        payload.extend_from_slice(&member.address.to_le_bytes());
+        append_frame(&mut payload, &member.data);
+    }
+    payload
+}
+fn cached_unit(key: &str) -> Option<Vec<Compiled>> {
+    let entries = overlay_c_cache().ok()?.get(key).ok().flatten()?;
+    let (_, payload) = entries.into_iter().find(|(kind, _)| kind == "unit")?;
+    let mut compiled = Vec::new();
+    let mut rest: &[u8] = &payload;
+    while !rest.is_empty() {
+        let address = i64::from_le_bytes(rest.get(..8)?.try_into().ok()?);
+        let length = u64::from_be_bytes(rest.get(8..16)?.try_into().ok()?) as usize;
+        let data = rest.get(16..16 + length)?.to_vec();
+        rest = &rest[16 + length..];
+        compiled.push(Compiled { address, data });
+    }
+    Some(compiled)
 }
 
 /// Linker placements for the functions a selected-owner build of a data unit
@@ -1526,7 +1648,7 @@ fn compile_production_overlay(
         OverlaySource::Path(path) => crate::overlay::owners::assembly_target(path),
         _ => crate::targets::target_for(crate::targets::DEFAULT_TARGET),
     };
-    let names = SourcePaths::load_for_game(&root(), target.compiler.as_str())?;
+    let names = source_paths(target.compiler.as_str())?;
     // Units compose only from the game's own source root, which keeps a
     // Broken Seal unit out of a Lost Age overlay and the reverse.
     let units = translation_units(target.compiler)?;

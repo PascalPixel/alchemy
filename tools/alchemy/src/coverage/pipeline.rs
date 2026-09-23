@@ -3122,11 +3122,20 @@ mod tests {
         withheld_for(root, &genuine, "full/assets/manifest.json");
         std::fs::write(&manifest, &assets).unwrap();
         assert_eq!(withheld_by_every_reader(root, &genuine), None);
-        // An encoder changed after the build: the proof is stale.
+        // An encoder changed after the build: the build no longer proves the
+        // tree, so no receipt can credit it, but the count of the reference
+        // ROM it laid out stays authoritative.
         let encoder = root.join("tools/alchemy/src/build_assets/packer.rs");
         std::fs::create_dir_all(encoder.parent().unwrap()).unwrap();
         std::fs::write(&encoder, "fn pack() {}").unwrap();
-        withheld_for(root, &genuine, "build inputs changed after the build");
+        assert_eq!(withheld_by_every_reader(root, &genuine), None);
+        let stale = crate::coverage::proof::full_build(root, tbs_en()).map(|_| ());
+        assert!(stale
+            .unwrap_err()
+            .contains("build inputs changed after the build"));
+        assert!(super::super::progress::measured(root, "tbs-en")
+            .unwrap()
+            .is_none());
         std::fs::remove_file(&encoder).unwrap();
         assert_eq!(withheld_by_every_reader(root, &genuine), None);
         // The verification record withdrawn.

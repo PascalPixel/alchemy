@@ -1,4 +1,6 @@
 #!/bin/sh
-# 送信される全コミットを調べ、途中で削除済みの非公開物も拒否する。
-exec cargo run --offline --quiet --release \
+# 着地の門: make verify の後、送信される全コミットを調べ、途中で削除済みの非公開物も拒否する。
+updates=$(cat)
+make --no-print-directory verify || exit 1
+printf '%s\n' "$updates" | cargo run --offline --quiet --release \
   --manifest-path tools/alchemy/Cargo.toml -- check publication --pre-push

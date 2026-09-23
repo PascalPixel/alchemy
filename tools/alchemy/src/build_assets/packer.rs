@@ -1149,6 +1149,7 @@ mod tests {
     /// own stored files, the recorded library's `FILE` never contradicts an
     /// alignment byte it derives, while the other library's does.
     #[test]
+    #[ignore = "reads the local ROMs and compiles real owners; make test-integration"]
     fn recorded_host_libc_agrees_with_every_local_edition() {
         use crate::targets::{target_for, TARGET_IDS};
         let root = super::super::repository_root();

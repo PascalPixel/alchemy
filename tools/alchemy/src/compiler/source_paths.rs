@@ -167,6 +167,21 @@ pub struct SourcePaths {
     manifest: PathBuf,
     records: BTreeMap<SourceOwner, SourceRecord>,
     by_path: BTreeMap<PathBuf, Vec<SourceOwner>>,
+    /// Every main-image name with its owner and any second owner of the
+    /// same name, indexed once: import resolution asks per symbol.
+    main_index: BTreeMap<String, (SourceOwner, Option<SourceOwner>)>,
+}
+fn main_index(
+    records: &BTreeMap<SourceOwner, SourceRecord>,
+) -> BTreeMap<String, (SourceOwner, Option<SourceOwner>)> {
+    let mut symbols = BTreeMap::<String, (SourceOwner, Option<SourceOwner>)>::new();
+    for (owner, record) in records.iter().filter(|(owner, _)| owner.is_main()) {
+        symbols
+            .entry(record.name.clone())
+            .and_modify(|(_, duplicate)| *duplicate = duplicate.or(Some(*owner)))
+            .or_insert((*owner, None));
+    }
+    symbols
 }
 impl SourcePaths {
     pub fn load(repository: &Path) -> Result<Self, String> {
@@ -278,6 +293,8 @@ impl SourcePaths {
                 }
             }
         }
+        // The game's declared units, read once for every shared path.
+        let declared = std::cell::OnceCell::new();
         for (path, owners) in &by_path {
             if owners.len() <= 1 {
                 continue;
@@ -290,7 +307,7 @@ impl SourcePaths {
             }
             if owners.iter().any(|owner| owner.is_main())
                 && !declared_main_sharing(
-                    repository,
+                    declared.get_or_init(|| declared_units(repository, game)),
                     game,
                     &source_directory,
                     path,
@@ -331,6 +348,7 @@ impl SourcePaths {
             repository: repository.to_path_buf(),
             source_directory,
             manifest,
+            main_index: main_index(&records),
             records,
             by_path,
         })
@@ -342,6 +360,7 @@ impl SourcePaths {
             manifest,
             records: BTreeMap::new(),
             by_path: BTreeMap::new(),
+            main_index: BTreeMap::new(),
         }
     }
     pub fn source_root(&self) -> PathBuf {
@@ -373,15 +392,8 @@ impl SourcePaths {
     pub fn registered_call_via(&self, owner: SourceOwner) -> Option<u32> {
         self.records.get(&owner).and_then(|record| record.call_via)
     }
-    fn main_symbols(&self) -> BTreeMap<&str, (SourceOwner, Option<SourceOwner>)> {
-        let mut symbols = BTreeMap::<&str, (SourceOwner, Option<SourceOwner>)>::new();
-        for (owner, record) in self.records.iter().filter(|(owner, _)| owner.is_main()) {
-            symbols
-                .entry(&record.name)
-                .and_modify(|(_, duplicate)| *duplicate = duplicate.or(Some(*owner)))
-                .or_insert((*owner, None));
-        }
-        symbols
+    fn main_symbols(&self) -> &BTreeMap<String, (SourceOwner, Option<SourceOwner>)> {
+        &self.main_index
     }
     /// Resolve an unambiguous human main-image import through the owner register.
     pub fn main_symbol(&self, name: &str) -> Result<Option<u32>, String> {
@@ -741,21 +753,27 @@ fn game_paths(game: &str) -> Result<(PathBuf, PathBuf), String> {
 /// rather than one image's unit or related overlays loaded at one address.
 /// Main/overlay sharing is admitted only by one explicit, exact composition
 /// contract. Full unit validation and byte verification still follow.
-fn declared_main_sharing(
+fn declared_units(
     repository: &Path,
+    game: &str,
+) -> Option<crate::compiler::translation_units::TranslationUnits> {
+    use crate::compiler::{routing::CompilerTarget, translation_units::TranslationUnits};
+    let target = match game {
+        "tbs" => CompilerTarget::Tbs,
+        "tla" => CompilerTarget::Tla,
+        _ => return None,
+    };
+    TranslationUnits::declared_game(repository, target).ok()
+}
+fn declared_main_sharing(
+    declared: &Option<crate::compiler::translation_units::TranslationUnits>,
     game: &str,
     source_directory: &Path,
     path: &Path,
     owners: &[SourceOwner],
     records: &BTreeMap<SourceOwner, SourceRecord>,
 ) -> bool {
-    use crate::compiler::{routing::CompilerTarget, translation_units::TranslationUnits};
-    let target = match game {
-        "tbs" => CompilerTarget::Tbs,
-        "tla" => CompilerTarget::Tla,
-        _ => return false,
-    };
-    let Ok(declared) = TranslationUnits::declared_game(repository, target) else {
+    let Some(declared) = declared else {
         return false;
     };
     let expected = owners.iter().copied().collect::<BTreeSet<_>>();

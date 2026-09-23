@@ -6,8 +6,10 @@
 	.set sub_080048b0, 0x080048b0
 	.set sub_08004938, 0x08004938
 	.set sub_080053e8, 0x080053e8
+	.global UiText_LoadRemappedGlyph
 	.global Func_08021cb8
 	.thumb_func
+UiText_LoadRemappedGlyph:
 Func_08021cb8:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

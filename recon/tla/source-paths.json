@@ -822,6 +822,15 @@
     },
     "main:0804d754": {
       "name": "Menu_DrawModeIndicator"
+    },
+    "main:0815f16c": {
+      "name": "Func_0815f16c"
+    },
+    "main:08175f74": {
+      "name": "Func_08175f74"
+    },
+    "main:0817ea58": {
+      "name": "BattleSummon_RunUlysses"
     }
   }
 }

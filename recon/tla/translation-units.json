@@ -2755,6 +2755,173 @@
           "state": "retained-assembly"
         }
       ]
+    },
+    {
+      "id": "tla-summon-0815f16c",
+      "game": "tla",
+      "source": "recon/tla/en/units/tla-summon-0815f16c.c",
+      "compiler_route": "canonical-gcc296",
+      "local_symbols": [],
+      "absolute_symbols": {
+        "__divsi3": {
+          "address": "0x08002054",
+          "kind": "thumb"
+        },
+        "__modsi3": {
+          "address": "0x08002064",
+          "kind": "thumb"
+        },
+        "__umodsi3": {
+          "address": "0x0800206c",
+          "kind": "thumb"
+        },
+        "__udivsi3": {
+          "address": "0x0800205c",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x0815f16c",
+          "extent": 10584,
+          "state": "retained-assembly"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-summon-08175f74",
+      "game": "tla",
+      "source": "recon/tla/en/units/tla-summon-08175f74.c",
+      "compiler_route": "canonical-gcc296",
+      "local_symbols": [],
+      "absolute_symbols": {
+        "__divsi3": {
+          "address": "0x08002054",
+          "kind": "thumb"
+        },
+        "__modsi3": {
+          "address": "0x08002064",
+          "kind": "thumb"
+        },
+        "__umodsi3": {
+          "address": "0x0800206c",
+          "kind": "thumb"
+        },
+        "__udivsi3": {
+          "address": "0x0800205c",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x08175f74",
+          "extent": 9996,
+          "state": "retained-assembly"
+        }
+      ],
+      "overlay": null
+    },
+    {
+      "id": "tla-battle-summon-ulysses",
+      "game": "tla",
+      "source": "recon/tla/en/units/battle-summon-ulysses-retained.c",
+      "compiler_route": "canonical-gcc296",
+      "local_symbols": [],
+      "absolute_symbols": {
+        "__divsi3": {
+          "address": "0x08002054",
+          "kind": "thumb"
+        },
+        "__modsi3": {
+          "address": "0x08002064",
+          "kind": "thumb"
+        },
+        "__umodsi3": {
+          "address": "0x0800206c",
+          "kind": "thumb"
+        },
+        "__udivsi3": {
+          "address": "0x0800205c",
+          "kind": "thumb"
+        },
+        "Ulysses_MapOffsets": {
+          "address": "0x08197410",
+          "kind": "data"
+        },
+        "Ulysses_ScaleA": {
+          "address": "0x08196ed0",
+          "kind": "data"
+        },
+        "Ulysses_ScaleB": {
+          "address": "0x08196ed8",
+          "kind": "data"
+        },
+        "Ulysses_ScaleC": {
+          "address": "0x08196ee0",
+          "kind": "data"
+        },
+        "Ulysses_Shake": {
+          "address": "0x081994f0",
+          "kind": "data"
+        },
+        "Ulysses_FishFrames": {
+          "address": "0x08199508",
+          "kind": "data"
+        },
+        "Ulysses_FishStart": {
+          "address": "0x08199514",
+          "kind": "data"
+        },
+        "Ulysses_FishVelocity": {
+          "address": "0x08199528",
+          "kind": "data"
+        },
+        "Ulysses_FishDelay": {
+          "address": "0x08199578",
+          "kind": "data"
+        },
+        "Ulysses_WaveCueFrames": {
+          "address": "0x08199582",
+          "kind": "data"
+        },
+        "Ulysses_SprayFrames": {
+          "address": "0x0819958c",
+          "kind": "data"
+        },
+        "Ulysses_SprayOffsets": {
+          "address": "0x08199590",
+          "kind": "data"
+        },
+        "Ulysses_ShipParts": {
+          "address": "0x08199592",
+          "kind": "data"
+        },
+        "Ulysses_Foam": {
+          "address": "0x0819959c",
+          "kind": "data"
+        },
+        "Ulysses_DropFrames": {
+          "address": "0x081995cc",
+          "kind": "data"
+        },
+        "Ulysses_BeamPalette": {
+          "address": "0x08199210",
+          "kind": "data"
+        },
+        "Ulysses_BeamSprite": {
+          "address": "0x08199364",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x0817ea58",
+          "extent": 8764,
+          "state": "retained-assembly"
+        }
+      ],
+      "overlay": null
     }
   ]
 }

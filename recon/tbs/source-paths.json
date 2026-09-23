@@ -13305,7 +13305,8 @@
       "source": "FIELD/TOREBI_MACHI/PROXIMITY.C"
     },
     "resource_3bd:020013f8": {
-      "name": "FieldScene_RunExtendedActorPresentation"
+      "name": "FieldScene_RunExtendedActorPresentation",
+      "source": "FIELD/ARUTAMIRA_DOU/ACTOR_PRESENTATION.C"
     },
     "resource_3bd:02000030": {
       "name": "FixedPoint_Distance",
@@ -18969,6 +18970,127 @@
     },
     "main:080be18c": {
       "name": "BattleCommand_SelectTargets"
+    },
+    "main:080ab5e4": {
+      "name": "DjinnMenu_SelectDjinn"
+    },
+    "main:0800d304": {
+      "name": "Object_RunUpdateAllFromHeap",
+      "source": "FIELD/COMMON/OBJECT/RUN_UPDATE_ALL_FROM_HEAP.C"
+    },
+    "main:08002f10": {
+      "name": "Resource_LoadWorkHeader",
+      "source": "SYSTEM/RESOURCE/LOAD_WORK_HEADER.C"
+    },
+    "main:0800d340": {
+      "name": "Object_UpdateAllMotion"
+    },
+    "main:08005340": {
+      "name": "Resource_DecodeType01",
+      "source": "SYSTEM/RESOURCE/DECODE_FROM_HEAP.C"
+    },
+    "main:08005394": {
+      "name": "Resource_DecodeType2"
+    },
+    "main:080053e8": {
+      "name": "Resource_DecodeByteLz"
+    },
+    "main:0800679c": {
+      "name": "SerialTest_Run"
+    },
+    "main:08015f30": {
+      "name": "UiWork_InitializeWithResourceCounters"
+    },
+    "main:08092878": {
+      "name": "FacingObject_TurnPairToFaceEachOther"
+    },
+    "main:0809ba90": {
+      "name": "EffectSlot_Initialize"
+    },
+    "main:0800c004": {
+      "name": "ObjectSystem_Initialize"
+    },
+    "main:0800bb20": {
+      "name": "ObjectSystem_Configure"
+    },
+    "main:0800cacc": {
+      "name": "Object_UpdateAllThumb"
+    },
+    "main:0800c880": {
+      "name": "ObjectSystem_UpdateCameraFixed"
+    },
+    "main:0800c62c": {
+      "name": "ObjectSystem_UpdateCamera"
+    },
+    "main:08021cb8": {
+      "name": "UiText_LoadRemappedGlyph"
+    },
+    "main:0802106c": {
+      "name": "PartyTalkMenu_Choose"
+    },
+    "main:080162d4": {
+      "name": "UiWindow_Create"
+    },
+    "main:0801ccc0": {
+      "name": "PaletteGlow_Update",
+      "source": "GRAPHICS/PALETTE/GLOW_UPDATE.C"
+    },
+    "main:0801cc50": {
+      "name": "Color_ScaleComponents"
+    },
+    "main:0801a5a4": {
+      "name": "UiGlyph_DecodeWithHeapRoutines"
+    },
+    "main:08019bac": {
+      "name": "UiText_LookupMessage",
+      "source": "GRAPHICS/TEXT/LOOKUP_MESSAGE.C"
+    },
+    "main:0801a088": {
+      "name": "ItemIcon_Compose"
+    },
+    "main:08029274": {
+      "name": "Text_FormatHex"
+    },
+    "main:080037d4": {
+      "name": "Sound_LoadPresetParameters"
+    },
+    "main:08004760": {
+      "name": "Bg0_ClearTilemap"
+    },
+    "main:08095160": {
+      "name": "BattleFx_StartTwelveFrameBlend"
+    },
+    "main:08090a5c": {
+      "name": "BattleFx_BuildBuffer"
+    },
+    "main:08095290": {
+      "name": "BattleFx_StartBufferBlend"
+    },
+    "main:080167e0": {
+      "name": "UiWork_ShiftPanelRowsLeft"
+    },
+    "main:08011644": {
+      "name": "Map_LoadAreaGraphics"
+    },
+    "main:0801d014": {
+      "name": "OptionMenu_InitializeWork"
+    },
+    "main:08091494": {
+      "name": "BattleFx_StartFadeOverlay",
+      "source": "BATTLE/EFFECT/START_FADE_OVERLAY.C"
+    },
+    "main:080118d8": {
+      "name": "MapAnimation_Start"
+    },
+    "main:0801179c": {
+      "name": "MapAnimation_Update"
+    },
+    "main:0800fac8": {
+      "name": "Tilemap_ConvertBuffer"
+    },
+    "main:08002fb0": {
+      "name": "Resource_LoadCode",
+      "source": "SYSTEM/RESOURCE/LOAD_CODE.C"
     }
   },
   "symbols": {

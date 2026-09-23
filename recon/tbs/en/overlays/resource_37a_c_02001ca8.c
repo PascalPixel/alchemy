@@ -2,6 +2,15 @@
 
 #define FieldScene_RunScene37aSequenceH Func_02001ca8
 
+/*
+ * Score 2026-09-23: 1,120 of 1,120 bytes, 8 halfword edits (14 before both
+ * rise-and-shrink loops of each actor shared one counter). Remaining
+ * residual: in the first presentation the reference stores motion_flags
+ * zero from r7 (the register the sprite pointer takes next); in the second
+ * it loads unknown_5a into r3 and delays both byte stores past the r5 zero.
+ * Mask spellings and statement orders tried did not move either.
+ */
+
 void Func_020044e6();
 void Func_020045d6();
 s32 Func_02004668();
@@ -136,7 +145,6 @@ void FieldScene_RunScene37aSequenceH(void)
     s32 record;
     s32 base5_8010;
     s32 base5_0;
-    s32 v5;
     struct FieldSprite *sprite;
 
     if (Value1(Func_02004668, 0x811) == 0) {
@@ -219,14 +227,14 @@ void FieldScene_RunScene37aSequenceH(void)
             Call1(Func_02004902_a, 1);
             base5_0++;
         } while (base5_0 != 120);
-        v5 = 0;
         Func_02004a94(190);
+        base5_0 = 0;
         do {
             actor->y.fixed += 0x1999;
             sprite->scale += -0x400;
             Func_02004926(1);
-            v5++;
-        } while (v5 != 60);
+            base5_0++;
+        } while (base5_0 != 60);
         Func_020049e4(0, 0, 0);
         Func_02004a06(16, 4, 20);
         Func_020045d6(16, 6);
@@ -248,14 +256,14 @@ void FieldScene_RunScene37aSequenceH(void)
             Func_020049ba(1);
             base5_0++;
         } while (base5_0 != 120);
-        v5 = 0;
         Func_02004b4c(190);
+        base5_0 = 0;
         do {
             actor->y.fixed += 0x1999;
             sprite->scale += -0x400;
             Func_020049de(1);
-            v5++;
-        } while (v5 != 60);
+            base5_0++;
+        } while (base5_0 != 60);
         Func_02004a9c(16, 0, 0);
         Func_02004a52(80);
         *(s32 *)((*(u8 **)0x03001ebc + 0x1c0)) = 0x203;

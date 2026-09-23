@@ -205,7 +205,12 @@ fn publication_path_reason(path: &str) -> Option<&'static str> {
     {
         return Some("compiler or runtime-library source: keep it in its licensed repository");
     }
-    if listed(suffix, BLOCKED_EXTENSIONS) {
+    // Game data and tilemaps under a game's source tree are editable build
+    // inputs, tracked as pret tracks its .bin files.
+    let game_data = suffix.eq_ignore_ascii_case("bin")
+        && normalized.starts_with("games/")
+        && directories.iter().any(|directory| *directory == "SRC");
+    if listed(suffix, BLOCKED_EXTENSIONS) && !game_data {
         return Some("private or generated file type");
     }
     if listed(suffix, PRESENTATION_EXTENSIONS) && normalized != "PROGRESS.svg" {

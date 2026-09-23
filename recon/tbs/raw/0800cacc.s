@@ -7,8 +7,10 @@
 	.set sub_08007310, 0x08007310
 	.set sub_0800d924, 0x0800d924
 	.set sub_08011f54, 0x08011f54
+	.global Object_UpdateAllThumb
 	.global Func_0800cacc
 	.thumb_func
+Object_UpdateAllThumb:
 Func_0800cacc:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

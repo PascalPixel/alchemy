@@ -2,12 +2,26 @@
 
 #define FieldScene_RunGroupChoreography Func_02001274
 
+/*
+ * Score 2026-09-23: 832 of 832 bytes, 3 halfword edits. The callback passed
+ * to the target-and-callback call (main Object_SetTargetAndCallback) is the
+ * data symbol Data_0200ac00, as in HAIDIA_IE/ELDER_AID_EVENT.C; as a plain
+ * integer its pool load was scheduled before the zero actor argument.
+ * Remaining residual: after the 0x22b area-state store the reference loads
+ * the linked scene (5) into r5 after the strb and sets r1 before r0 for the
+ * first scene call; this draft schedules the scene load before the add.
+ * Return types, prototype widths, statement order and the store spelling do
+ * not move it (a stand-alone mock-up reproduces the draft order). The same
+ * residual stands in 3bb:02000a1c and 3c9:020012c8.
+ */
+
 struct SceneWork {
     u8 pad000[0x22b];
     u8 area_state;
 };
 
 extern const u8 Data_00000005[];
+extern u8 Data_0200ac00[];
 extern struct SceneWork Data_02000240;
 void Func_020035c2();
 s32 Func_02003600();
@@ -183,12 +197,7 @@ void FieldScene_RunGroupChoreography(void)
     Value3(Func_02003704, 24, turn_speed, 20);
     Func_02003b68(25, 2);
     Call2(Func_020036fc, 0x1019, 10);
-    {
-        s32 placement = 0x200ac00;
-        s32 event = 0x10019;
-
-        Func_02003b9a(0, event, placement);
-    }
+    Call3(Func_02003b9a, 0, 0x10019, (s32)Data_0200ac00);
     Call3(Func_02003b4c, 25, 93, 0x169);
     Value3(Func_02003732, 25, approach_speed, 40);
     Func_02003722(25, 20);

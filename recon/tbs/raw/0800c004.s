@@ -3,8 +3,10 @@
 	.set sub_080041d8, 0x080041d8
 	.set sub_080048f4, 0x080048f4
 	.set sub_0800bb20, 0x0800bb20
+	.global ObjectSystem_Initialize
 	.global Func_0800c004
 	.thumb_func
+ObjectSystem_Initialize:
 Func_0800c004:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8

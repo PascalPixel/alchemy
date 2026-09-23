@@ -1,8 +1,10 @@
 .syntax unified
 	.thumb
 	.set sub_08002f40, 0x08002f40
+	.global Bg0_ClearTilemap
 	.global Func_08004760
 	.thumb_func
+Bg0_ClearTilemap:
 Func_08004760:
 	sub	sp, #4
 	ldr	r3, [pc, #32]

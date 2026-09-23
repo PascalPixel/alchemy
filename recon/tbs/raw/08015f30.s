@@ -5,8 +5,10 @@
 	.set sub_08015ef4, 0x08015ef4
 	.set sub_080173f4, 0x080173f4
 	.set sub_08019d0c, 0x08019d0c
+	.global UiWork_InitializeWithResourceCounters
 	.global Func_08015f30
 	.thumb_func
+UiWork_InitializeWithResourceCounters:
 Func_08015f30:
 	push	{r5, lr}
 	ldr	r1, [pc, #96]

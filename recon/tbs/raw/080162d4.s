@@ -4,8 +4,10 @@
 	.set sub_08016230, 0x08016230
 	.set sub_080163ec, 0x080163ec
 	.set sub_080173ac, 0x080173ac
+	.global UiWindow_Create
 	.global Func_080162d4
 	.thumb_func
+UiWindow_Create:
 Func_080162d4:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8

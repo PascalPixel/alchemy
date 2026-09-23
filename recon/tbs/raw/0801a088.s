@@ -4,8 +4,10 @@
 	.set sub_080022fc, 0x080022fc
 	.set sub_0801a5a4, 0x0801a5a4
 	.set sub_08077018, 0x08077018
+	.global ItemIcon_Compose
 	.global Func_0801a088
 	.thumb_func
+ItemIcon_Compose:
 Func_0801a088:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

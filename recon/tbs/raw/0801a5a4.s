@@ -7,8 +7,10 @@
 	.set sub_080048f4, 0x080048f4
 	.set sub_080072f0, 0x080072f0
 	.set sub_080072f4, 0x080072f4
+	.global UiGlyph_DecodeWithHeapRoutines
 	.global Func_0801a5a4
 	.thumb_func
+UiGlyph_DecodeWithHeapRoutines:
 Func_0801a5a4:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8

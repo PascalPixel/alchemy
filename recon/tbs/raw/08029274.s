@@ -1,7 +1,9 @@
 .syntax unified
 	.thumb
+	.global Text_FormatHex
 	.global Func_08029274
 	.thumb_func
+Text_FormatHex:
 Func_08029274:
 	push	{r5, r6, lr}
 	sub	sp, #8

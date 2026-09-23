@@ -4,8 +4,10 @@
 	.set sub_08004838, 0x08004838
 	.set sub_080048b0, 0x080048b0
 	.set sub_080048f4, 0x080048f4
+	.global ObjectSystem_Configure
 	.global Func_0800bb20
 	.thumb_func
+ObjectSystem_Configure:
 Func_0800bb20:
 	push	{r5, r6, r7, lr}
 	sub	sp, #4

@@ -19366,6 +19366,10 @@
     "main:0801fd34": {
       "name": "PaletteGlow_UpdateSine",
       "source": "GRAPHICS/PALETTE/GLOW_UPDATE_SINE.C"
+    },
+    "main:08012388": {
+      "name": "Resource_RunCopiedDecoder",
+      "source": "SYSTEM/RESOURCE/RUN_COPIED_DECODER.C"
     }
   },
   "symbols": {

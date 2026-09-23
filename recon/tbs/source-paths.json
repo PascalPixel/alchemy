@@ -19430,6 +19430,10 @@
     "main:080d66cc": {
       "name": "BattleFx_BuildWindowEdgeTable",
       "source": "BATTLE/EFFECT/BUILD_WINDOW_EDGE_TABLE.C"
+    },
+    "main:080f0254": {
+      "name": "Graphics_ClearCharacterBlockAndPalette",
+      "source": "GRAPHICS/TILE/CLEAR_CHARACTER_BLOCK_AND_PALETTE.C"
     }
   },
   "symbols": {

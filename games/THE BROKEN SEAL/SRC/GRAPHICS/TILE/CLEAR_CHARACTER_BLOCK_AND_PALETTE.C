@@ -1,10 +1,8 @@
-/* Draft, not exact (2026-09-24): 9 differing halfwords, 92 of 92 bytes.
-   Residual: the reference sets r0 = &fill again before the second DMA;
-   this candidate reuses r0. Block-scoped fills give two stack slots. */
-
 #include "DMA.H"
 
-void Func_080f0254(s32 alternate)
+/* Clears the background (or, when alternate, the second) character block to
+   its fill pattern and the matching palette bank to zero. */
+void Graphics_ClearCharacterBlockAndPalette(s32 alternate)
 {
     u32 value;
     u32 vram;

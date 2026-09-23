@@ -17,7 +17,7 @@ const DMA_SOURCE: &str = include_str!(concat!(
     env!("CARGO_MANIFEST_DIR"),
     "/../../games/THE BROKEN SEAL/INCLUDE/DMA.H"
 ));
-const DMA_BODY_SHA256: &str = "dcc93030ed9f2fc601341bc4a7f350aff8ff772625e707c246004d800cfc8fcc";
+const DMA_BODY_SHA256: &str = "1b74629948ab6d314032eff882e3312befaee7f3e4dcc5d361bce1ef1abca00a";
 const IWRAM_CALL_HEADER: &str = "games/THE BROKEN SEAL/INCLUDE/IWRAM_CALL.H";
 const IWRAM_CALL_SOURCE: &str = include_str!(concat!(
     env!("CARGO_MANIFEST_DIR"),

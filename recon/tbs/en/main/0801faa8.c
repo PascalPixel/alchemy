@@ -1,3 +1,4 @@
+/* Draft, not exact (2026-09-24): 2 differing halfwords. The reference builds -9 as movs 9 / negs and cross-jumps the negs with the -3 path; this candidate derives it as result - 9 from the zero already in r7. */
 #include "TYPES.H"
 #include "RUNTIME_INTERFACES.H"
 #include "RUNTIME_MEM.H"
@@ -27,9 +28,9 @@ s16 SaveState_ProcessSelectedSlot(void)
     if (value != -1) {
         found = Func_080056cc();
         if (found != 0) {
-            result = 0 - 9;
+            result = -9;
             Func_0801776c((s32)&Value_0000000a, 1);
-            goto negate;
+
         } else {
             char *dst;
 
@@ -44,9 +45,7 @@ s16 SaveState_ProcessSelectedSlot(void)
             found = Func_08005920(*(s16 *)0x02002004, buffer);
             if (found != 0) {
                 Func_0801776c((s32)&Value_0000000b, 1);
-                result = 0 - 3;
-negate:
-                ;
+                result = -3;
             }
         }
         Func_08005cf8();

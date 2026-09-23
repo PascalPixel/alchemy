@@ -1,3 +1,6 @@
+/* Draft, not exact (2026-09-24): 7 differing halfwords (was 11); the state-3 reload of effect->linked object and the state-2 flag clear are still scheduled one slot off.
+   FAKEMATCH marks below are empty do-while wraps that only move scheduling
+   or register choice; they stay tagged until a real spelling replaces them. */
 #include "FIXED_MATH.H"
 #include "TYPES.H"
 
@@ -111,7 +114,7 @@ void BattleFx_UpdatePhasedRadialParticle(struct PhasedParticleSlot *effect)
             (*state_pointer)--;
     } else if (state == 2) {
         if (EffectSlot_HasReachedTarget(effect) == 0) {
-            effect->origin_x = effect->x;
+            do { effect->origin_x = effect->x; } while (0); /* FAKEMATCH */
             effect->origin_z = effect->z;
             effect->object->flags &= -13;
             effect->flags = 4;

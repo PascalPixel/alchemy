@@ -1,3 +1,6 @@
+/* Draft, not exact (2026-09-24): 61 differing halfwords at equal size (was 4 bytes short); the reference loads the zero it stores into kind and active from the literal pool.
+   FAKEMATCH marks below are empty do-while wraps that only move scheduling
+   or register choice; they stay tagged until a real spelling replaces them. */
 #include "SHOP.H"
 
 #define M2C_FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
@@ -34,13 +37,13 @@ void ShopCursor_Advance(struct ShopCursor *cursor)
     if (kind == 0)
         return;
 
-    anchor = cursor->anchor;
+    do { anchor = cursor->anchor; } while (0); /* FAKEMATCH */
     active = cursor->active;
     active += 1;
     xStart = cursor->x;
     dx = cursor->target_x - xStart;
     cursor->active = active;
-    x = cursor->x + FixedPoint_Ratio((s8)active * dx, kind);
+    do { x = cursor->x + FixedPoint_Ratio((s8)active * dx, kind); } while (0); /* FAKEMATCH */
     anchor->x = x;
     M2C_FIELD(anchor, u16, 0x16) =
         (M2C_FIELD(anchor, u16, 0x16) & 0xfe00) | (x & 0x1ff);
@@ -52,7 +55,7 @@ void ShopCursor_Advance(struct ShopCursor *cursor)
     M2C_FIELD(anchor, s8, 0x14) = (s8)y;
 
     if ((s8)active == kind) {
-        cursor->kind = 0;
+        do { cursor->kind = 0; } while (0); /* FAKEMATCH */
         cursor->active = 0;
     }
 }

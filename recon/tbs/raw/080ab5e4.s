@@ -9,10 +9,10 @@
 	.set sub_080ab1f4, 0x080ab1f4
 	.set sub_080ab2ec, 0x080ab2ec
 	.set sub_080ae714, 0x080ae714
-	.global Unnamed_080ab5e4
+	.global DjinnMenu_SelectDjinn
 	.global Func_080ab5e4
 	.thumb_func
-Unnamed_080ab5e4:
+DjinnMenu_SelectDjinn:
 Func_080ab5e4:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

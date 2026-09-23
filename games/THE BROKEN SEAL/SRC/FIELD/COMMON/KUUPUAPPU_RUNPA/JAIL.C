@@ -74,9 +74,9 @@ enum JailMessage {
     MSG_PRISONER_THOUGHTS = 0x1cf7
 };
 
-/* The collision flags the jail sets on the actors in its cell. */
+/* The collision flags set on whoever sits in the cell. */
 enum {
-    PRISONER_COLLISION_FLAGS = 0x14
+    CELL_COLLISION_FLAGS = 0x14
 };
 
 extern const struct SceneEntrance gJailEntrances[];
@@ -85,11 +85,6 @@ extern const struct ScenePlacement gJailThiefPlacements[];
 extern const struct ScenePlacement gJailPrisonerPlacements[];
 extern const struct SceneEvent gJailThiefEvents[];
 extern const struct SceneEvent gJailPrisonerEvents[];
-
-static inline void SetCollisionFlags(u8 *flags, u8 bits)
-{
-    *flags |= bits;
-}
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -212,20 +207,11 @@ s32 Scene_Initialize(void)
     if (entrance == JAIL_ENTRANCE_FROM_LUNPA) {
         GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     } else if (entrance == JAIL_ENTRANCE_FROM_VAULT_REVISIT) {
-        SetCollisionFlags(&Actor_Get(ACTOR_PRISONER)->collision_flags, PRISONER_COLLISION_FLAGS);
+        Actor_Get(ACTOR_PRISONER)->collision_flags |= CELL_COLLISION_FLAGS;
     } else {
-        u8 bits = PRISONER_COLLISION_FLAGS;
-        u8 *flags = &Actor_Get(ACTOR_THIEF_LEADER)->collision_flags;
-        u8 value = *flags;
-        value |= bits;
-        *flags = value;
-        flags = &Actor_Get(ACTOR_LEFT_THIEF)->collision_flags;
-        value = *flags;
-        value |= bits;
-        *flags = value;
-        flags = &Actor_Get(ACTOR_RIGHT_THIEF)->collision_flags;
-        bits |= *flags;
-        *flags = bits;
+        Actor_Get(ACTOR_THIEF_LEADER)->collision_flags |= CELL_COLLISION_FLAGS;
+        Actor_Get(ACTOR_LEFT_THIEF)->collision_flags |= CELL_COLLISION_FLAGS;
+        Actor_Get(ACTOR_RIGHT_THIEF)->collision_flags |= CELL_COLLISION_FLAGS;
     }
 
     return 0;

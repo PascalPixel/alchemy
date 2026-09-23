@@ -3,41 +3,6 @@
 #include "FIELD_SCENE.H"
 #include "MAP_RENDER_WORK.H"
 
-#define StoryProgress_TriggerEvent0808 Func_02000030
-#define StoryProgress_TriggerEvent0809 Func_0200008c
-#define StoryProgress_TriggerEvent080A Func_020000d4
-#define StoryActor_AdvanceTimer Func_0200011c
-#define StoryActor_ConfigureSpawnedObject Func_0200013c
-#define StoryActor_Initialize Func_02000250
-#define StoryActor_ApplyFlaggedMode Func_020002a4
-#define StoryActor_ResetPosition Func_02000314
-#define StoryActor_ClearActiveFlag Func_02000350
-#define SceneData_GetTableD27C Func_02000290
-#define SceneData_ReturnZero Func_02000298
-#define SceneData_GetTableDA2C Func_0200029c
-#define SceneData_GetTableE3F4 Func_02000590
-#define StoryScene_SelectPlacementTable Func_0200037c
-#define StoryScene_SetBranchValueFromX Func_020004a0
-#define StoryScene_SetBranchValueFromZ Func_020004f0
-#define StoryScene_ShowRewardDialogue Func_020028a8
-#define StoryScene_StartTransition Func_02003130
-#define StoryScene_ComputeOpposingSlotDelta Func_0200341c
-#define SceneState_SetValues130_6_47 Func_02000540
-#define SceneState_ApplyValues150And46And11 Func_02000550
-#define SceneState_ApplyValues116And56And21 Func_02000560
-#define SceneState_ApplyValues151And25And54 Func_02000570
-#define SceneState_ApplyFlag85aBranch Func_020006b4
-#define SceneState_RunSlotStepOnOddFrames Func_02003f88
-#define FieldScene_RunStep7D3B1E Func_02000580
-#define FieldScene_RunStep74 Func_020006dc
-#define FieldScene_RunScene371_0200155c Func_0200155c
-#define FieldScene_RunScene371_02001680 Func_02001680
-#define FieldScene_RunScene371_020017a4 Func_020017a4
-#define FieldScene_RunScene371_020017fc Func_020017fc
-#define FieldScene_RunScene371_02001888 Func_02001888
-#define FieldScene_RunScene371_02001938 Func_02001938
-#define FieldScene_RunScene371_020019e8 Func_020019e8
-#define FieldScene_RunScene371_02001a98 Func_02001a98
 #define BattleRuntime_Reset_1(args...) Func_020075d0_b(args)
 #define ObjectMotion_PlaceWithinCameraBounds_1(a0, a1, a2, a3) Call4(Func_020076fa, a0, a1, a2, a3)
 #define Object_SetModeById_1(args...) Func_02007678(args)
@@ -61,28 +26,6 @@
 #define ObjectMotion_SetSpeedParameters_5(args...) Func_0200782a(args)
 #define SCENE_PHASE (*(s32 *)(*(u8 **)0x03001ebc + 0x1c0))
 #define ACTOR 8
-#define FieldScene_RunScene371_02001b5c Func_02001b5c
-#define FieldScene_RunScene371_02001c08 Func_02001c08
-#define FieldScene_RunScene371_02002274 Func_02002274
-#define FieldScene_RunScene371_0200281c Func_0200281c
-#define FieldScene_RunScene371_02002858 Func_02002858
-#define FieldScene_RunActorPresentationSequence Func_02002cb4
-#define FieldScene_RunActorEightApproach Func_020032f0
-#define FieldScene_RunScene371_0200357c Func_0200357c
-#define FieldScene_RunOpeningAuxiliarySequence Func_020036dc
-#define FieldScene_RunLateSequence Func_0200395c
-#define RunEventScript01 Func_02000a8c
-#define FieldScene_RunActorTransferSequence Func_02000c28
-#define StoryReward_LookupBySelection Func_02003448
-#define StoryScene_UpdateSelectedActorProgress Func_02003678
-#define StoryScene_SetReferenceActor Func_020037bc
-#define StoryScene_ActivateSharedState Func_020037c8
-#define StoryScene_CompleteActor98 Func_020037d8
-#define SceneEffect_RestoreBlendRegisters Func_020038fc
-#define SceneActor_UpdateObjectByCounterBits Func_02003f10
-#define OverlayObject_UpdateOnFrameParity Func_02003f4c
-#define StoryEffect_AnimateVerticalPositive Func_02003fb4
-#define StoryEffect_AnimateVerticalNegative Func_02004004
 
 typedef struct {
     u8 pad[9];

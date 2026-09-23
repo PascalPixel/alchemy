@@ -1,6 +1,5 @@
 #include "TYPES.H"
 
-#define FieldScene_RunElementalStarDemand Func_02000f8c
 
 extern u8 Data_03001ebc[];
 void Func_020051f8();

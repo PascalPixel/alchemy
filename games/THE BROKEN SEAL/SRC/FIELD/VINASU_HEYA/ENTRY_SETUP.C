@@ -5,9 +5,6 @@
 #define NULL ((void *)0)
 #define RunOverlayObjectCommand0 Func_02004e8c
 #define RunOverlayObjectCommand1 Func_02004f8c
-#define SceneActor_CalculateFixedPointDistance Func_020002f0
-#define SceneData_FindSlotAtPosition Func_0200032c
-#define SceneActor_PickHighestSlotAtSameTileAndRelease Func_020023d4
 #define StagedActorDirectionSteps Data_0200d0e8
 #define GetStagedActor Func_02005230
 #define FindActorAtPosition Func_020006e6
@@ -22,31 +19,6 @@
 #define UpdateStagedActorState Func_020052a8
 #define UpdateLeadActorState Func_020052a8_a
 #define FinalizeStagedActorUpdate Func_02005494
-#define RunStagedActorTransition Func_02000374
-#define SceneState_FillGridCellByte2 Func_020004f4
-#define SceneActor_ApplySlotsMatchingKind212 Func_02000558
-#define SceneState_StoreLookupZeroToWord24 Func_020008a0
-#define SceneState_ClearWorkspaceWord24 Func_020008b8
-#define SceneState_SetFlag953 Func_02000f1c
-#define SceneState_ApplySixRectsAfter161 Func_02001048
-#define SceneState_MarkActorAndApplyRectAtTile Func_02001a14
-#define SceneState_RunConditionalStep Func_0200226c
-#define SceneState_ApplyStepToSlots15To18 Func_02003050
-#define SceneState_PassZeroAndMinusOneRecord Func_02003fe4
-#define SceneState_PassRange0To1 Func_02003ffc
-#define SceneState_PassRangeNeg1To0 Func_02004014
-#define SceneState_CallHandlerWithFlagPair Func_02004030
-#define SceneState_Call4520With432And32 Func_020045f0
-#define OverlayObject_UpdateEveryFourFrames Func_020005ac
-#define OverlayObject_ApplyZero Func_02000690
-#define OverlayObject_WaitUntilIdle Func_0200094c
-#define OverlayObject_ResetObjectWhenFlatbs2Set Func_02001a50
-#define SceneEffect_SpawnRandomEveryEightFramesB Func_020005e4
-#define SceneEffect_SpawnTwoRandomizedParticles Func_020006a0
-#define SceneEffect_RunObjectZeroColorSequence Func_02000754
-#define SceneEffect_SpawnNineRadialEffects Func_02000b08
-#define SceneEffect_SpawnRandomizedParticleEveryFourFrames Func_02000b98
-#define SceneEffect_SpawnEffect284AtCell Func_02000c5c
 #define Scene_GetRecord_1(args...) Func_0200568a(args)
 #define GameFlag_IsSet_1(a0) Value1(Func_0200565a, a0)
 #define BattleRuntime_Reset_1(args...) Func_02005684(args)
@@ -71,45 +43,7 @@
 #define BattleEffect_RunRisingObjectSequence_1(args...) Func_02007e92(args)
 #define BattleRuntime_WaitIfModeZero_1_02002f30(args...) Func_02007e08(args)
 #define BattleRuntime_ScheduleShoulderButtonModeUpdate_1_02002f30(args...) Func_02007e22(args)
-#define FieldScene_RunOpeningAuxiliarySequence Func_020007d8
-#define FieldScene_RunSupplementalSequenceOne Func_020009c8
-#define FieldScene_RunActorEightTenStepLoop Func_02000f38
-#define FieldScene_RunScene3c8SequenceC Func_02001150
-#define FieldScene_RunScene3c8SequenceD Func_02001218
-#define FieldScene_RunFlag986ActorOneScene Func_020014f4
-#define FieldScene_RunScene3c8SequenceB Func_02002f30
-#define FieldScene_RunStep230With44 Func_02004600
-#define FieldScene_RunScene3c8_02004a2c Func_02004a2c
-#define SceneActor_SetFlagBitByRelativeDepth Func_020008c8
-#define SceneActor_SwapPositionsByDepth Func_02000910
-#define FieldScene_SetFlag987AtActorTwelveTile Func_02000ff0
-#define SceneActor_ApplyKind45AtActorsElevenAndTwelve Func_0200199c
-#define SceneActor_ApplyPositionsOfActors11And12 Func_020019c0
-#define SceneActor_UpdateSlots11And12ByTile Func_02001a9c
-#define SceneActor_SetHeightAboveLinkedRecord Func_020022a4
-#define SceneActor_TryMoveActorZeroTwoTilesAhead Func_02000cc8
-#define SceneData_SelectTableBySceneB5ToBa Func_02000e04
-#define SceneData_ReturnZero Func_02000e7c
-#define SceneData_GetTablee740 Func_02000e80
-#define SceneData_SelectTableBySceneAndApply Func_02000e88
-#define SceneData_SelectTableBySceneId Func_02002f8c
-#define SceneDialogue_RunActorElevenDialogue Func_02000fbc
-#define SceneDialogue_RunLine2682 Func_02001024
-#define SceneState_ApplySixRectsAfterFlag161 Func_020010cc
-#define SceneState_RunActor13AtColumn42Setup Func_02001644
-#define SceneState_ApplyRectAt19_44AndRunThree Func_0200196c
-#define FieldScene_RunFiveCallSequence Func_02001628
-#define FieldScene_PlaceAndPinSlots8To10 Func_020018f8
-#define FieldScene_RunGuardedThreeStepSetup Func_020019f0
-#define FieldScene_RunThreeCallSequence Func_020026e4
-#define FieldScene_DrawTilesWhenCheckClear Func_02002ee4
-#define FieldScene_RunGuardedRectStep Func_02001f28
-#define SceneActor_ClearActorModeAndSetState5 Func_0200300c
-#define ConfigureOverlayObject Func_02000030
-#define OverlayObject_SpawnWithMode14 Func_02000058
-#define OverlayObject_PrepareObjectWithCommand15 Func_02000098
 #define OverlayObject_IntegrateVelocities Func_020000e0
-#define OverlayObject_ApplyLowNibbleOfField100 Func_02000594
 
 #include "OVERLAY_OBJECT.H"
 #include "STAGED_ACTOR.H"

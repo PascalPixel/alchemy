@@ -611,7 +611,8 @@
       "name": "QueueIoWriteDelay11"
     },
     "main:08003a7c": {
-      "name": "IoWriteQueue_FlushPending"
+      "name": "IoWriteQueue_FlushPending",
+      "source": "SYSTEM/IO_WRITE_QUEUE.C"
     },
     "main:08003adc": {
       "name": "BlendTransition_Update",

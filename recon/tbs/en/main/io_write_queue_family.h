@@ -1,18 +1,10 @@
 #ifndef GUARD_IO_WRITE_QUEUE_FAMILY_H
 #define GUARD_IO_WRITE_QUEUE_FAMILY_H
 
-#include "TYPES.H"
+#include "IO_WRITE_QUEUE.H"
 
-struct IoWriteQueue {
-    u16 count;
-    u16 pad;
-    u32 entries[32][3];
-};
-
-extern struct IoWriteQueue Data_02002090;
 extern volatile u16 Data_04000208;
 
-#define gIoWriteQueue Data_02002090
 #define REG_IME Data_04000208
 
 #define DEFINE_QUEUE_IO_WRITE(name, delay) \

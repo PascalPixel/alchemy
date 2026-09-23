@@ -31,7 +31,7 @@ natively on modern systems, and a base for everything fans have dreamed of:
 
 Alchemy is the foundation those projects can build on.
 
-## Status: ☀️ 56.97% · ⚓️ 2.14%
+## Status: ☀️ 57.02% · ⚓️ 2.14%
 
 <img src="PROGRESS.svg" width="830" alt="Alchemy progress for The Broken Seal and The Lost Age, above a map of the repository's files">
 

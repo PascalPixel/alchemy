@@ -39,8 +39,6 @@ u16 *Actor_Run(s32);
 
 u16 *Actor_unk2_4(s32);
 
-void SceneMessage_Show(s32);
-
 u16 *Actor_unk3_4(s32);
 
 union SceneActor *Actor_unk4_4(s32);
@@ -153,7 +151,7 @@ void Dialogue_HandleFacingAction(s32 no)
         Actor_unk9_2(0x262c);
         Actor_Apply9(no, 0);
     } else {
-        SceneMessage_Show(0x25d5);
+        Engine_EventSetMessage(0x25d5);
         Actor_Apply10(no, 0);
     }
 }

@@ -1,6 +1,5 @@
 #include "MAKYURI_HEYA.H"
 
-#define FieldScene_RunRandomEffectActorSequence Func_02002f68
 #define Scene_Begin Func_0200dab4
 #define Scene_Wait Func_0200daac
 #define Map_CopyCellsTo Func_0200da04
@@ -25,13 +24,7 @@ s32 SceneFlag_IsSet(s32);
 void Func_0200dadc();
 void Func_0200db0c();
 void Func_0200db3c();
-void Func_0200db04();
-void Func_0200db2c();
 void Func_0200ae6c();
-void Func_0200dbe4();
-void Func_0200dbdc();
-void Func_0200dbec();
-void Func_0200dbcc();
 void Func_0200dabc();
 void Func_0200db94();
 void Func_0200db24();
@@ -39,8 +32,6 @@ void Func_0200db34();
 void Func_0200db4c();
 void Func_0200db1c();
 void Func_0200dba4();
-void Func_0200db44();
-void Func_0200db64();
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -195,20 +186,20 @@ void FieldScene_RunRandomEffectActorSequence(void)
         Call3(Func_0200db0c, 0, 0x318, 208);
         Call3(Func_0200dadc, 0, 0x20000, 0x10000);
         Func_0200db3c(0, 4, 0);
-        Call3(Func_0200db04, 0, 0x318, 200);
+        Call3(Engine_ActorWalkTo, 0, 0x318, 200);
         Scene_Wait(10);
-        Func_0200db2c(0, 18);
+        Engine_ActorSetAnimation(0, 18);
         Func_0200ae6c(0);
         Scene_Wait(60);
         Call1(Func_0200d98c, 0x200adcd);
-        Call2(Func_0200dbe4, 0x10000, 0);
-        Call2(Func_0200dbdc, 0x10005, 0);
-        Func_0200dbec(120);
+        Call2(Engine_ColorBufferApplySource, 0x10000, 0);
+        Call2(Engine_ColorBufferApplyTarget, 0x10005, 0);
+        Engine_ColorBufferInterpolate(120);
         Scene_Wait(120);
-        Call2(Func_0200dbdc, 0x7fff, 0);
-        Func_0200dbec(60);
+        Call2(Engine_ColorBufferApplyTarget, 0x7fff, 0);
+        Engine_ColorBufferInterpolate(60);
         Scene_Wait(60);
-        Func_0200dbcc(9);
+        Engine_EventRequestExit(9);
         Func_0200dabc();
     } else {
         Call3(Func_0200dadc, 0, 0xcccc, 0x6666);
@@ -234,7 +225,7 @@ void FieldScene_RunRandomEffectActorSequence(void)
         Call3(Func_0200db94, 0, 0xc000, 0);
         Call3(Func_0200db24, 1, 0x3180000, 0xe80000);
         Call3(Func_0200db24, 2, 0x3180000, 0xe80000);
-        Call3(Func_0200db04, 1, 0x330, 224);
+        Call3(Engine_ActorWalkTo, 1, 0x330, 224);
         Call3(Func_0200db0c, 2, 0x300, 224);
         Func_0200db1c(1);
         Call3(Func_0200db94, 1, 0xa000, 0);
@@ -257,19 +248,19 @@ void FieldScene_RunRandomEffectActorSequence(void)
         Scene_Wait(20);
         Call3(Func_0200dadc, 0, 0x20000, 0x10000);
         Func_0200db3c(0, 4, 0);
-        Call3(Func_0200db04, 0, 0x318, 200);
+        Call3(Engine_ActorWalkTo, 0, 0x318, 200);
         Scene_Wait(10);
-        Func_0200db2c(0, 18);
+        Engine_ActorSetAnimation(0, 18);
         Call3(Func_0200dba4, 1, 0x100, 0);
         Call3(Func_0200dba4, 2, 0x100, 0);
-        Func_0200db44(1, 2);
-        Func_0200db44(2, 2);
+        Engine_ActorStartRepeatedMotion(1, 2);
+        Engine_ActorStartRepeatedMotion(2, 2);
         Func_0200ae6c(0);
         Scene_Wait(60);
         Call3(Func_0200dba4, 1, 0x102, 0);
         Call3(Func_0200dba4, 2, 0x102, 80);
-        Func_0200db64(1, 2, 20);
-        Func_0200db2c(1, 3);
+        Engine_ActorFaceEachOther(1, 2, 20);
+        Engine_ActorSetAnimation(1, 3);
         Func_0200db34(2, 3);
         Scene_Wait(40);
         Call3(Func_0200db0c, 1, 0x318, 216);
@@ -281,15 +272,15 @@ void FieldScene_RunRandomEffectActorSequence(void)
         Call3(Func_0200db0c, 2, 0x318, 200);
         Scene_Wait(30);
         Func_0200ae6c(2);
-        Call2(Func_0200dbe4, 0x10000, 0);
+        Call2(Engine_ColorBufferApplySource, 0x10000, 0);
         Call1(Func_0200d98c, 0x200adcd);
-        Call2(Func_0200dbdc, 0x10005, 0);
-        Func_0200dbec(120);
+        Call2(Engine_ColorBufferApplyTarget, 0x10005, 0);
+        Engine_ColorBufferInterpolate(120);
         Scene_Wait(120);
-        Call2(Func_0200dbdc, 0x7fff, 0);
-        Func_0200dbec(60);
+        Call2(Engine_ColorBufferApplyTarget, 0x7fff, 0);
+        Engine_ColorBufferInterpolate(60);
         Scene_Wait(60);
         Func_0200dabc();
-        Func_0200dbcc(8);
+        Engine_EventRequestExit(8);
     }
 }

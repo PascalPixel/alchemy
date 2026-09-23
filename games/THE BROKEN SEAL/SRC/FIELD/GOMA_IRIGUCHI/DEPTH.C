@@ -1,7 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-#define SetEffectRecordMode Func_02000030
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #define OverlayObject_PrepareObject      Func_02000048
@@ -12,24 +11,6 @@
 #define CreateOverlayObject Func_02001166
 #define SetOverlayObjectMode Func_020011a0
 #define SetOverlayObjectSlot Func_020012a0
-#define OverlayObject_CreateConfiguredObject Func_020000a0
-#define OverlayObject_TurnStateByEighth Func_02000da8
-#define OverlayObject_WaitForHeight Func_02000db8
-#define Overlay387_ConfigureActorEightAtDepth Func_02000d04
-#define FieldScene_RequestAndWaitFrames Func_02000314
-#define SceneData_GetTable92f8 Func_0200032c
-#define SceneData_ReturnZero Func_02000334
-#define SceneData_GetTable9358 Func_02000338
-#define SceneData_GetTable9368 Func_02000340
-#define FieldScene_RunOpeningAuxiliarySequence Func_02000348
-#define FieldScene_RunScene387SequenceC Func_020003d0
-#define FieldScene_RunScene387SequenceD Func_0200043c
-#define FieldScene_RunScene387SequenceA Func_0200067c
-#define Resource387_NoOpCallbackA Func_020004cc
-#define Resource387_NoOpCallbackB Func_020004d0
-#define FieldScene_RunStepWithValue866 Func_020004d4
-#define SceneData_GetTable9488 Func_020004ec
-#define SceneActor_ApplyValueAndMatchingSlots Func_02000f8c
 
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
 

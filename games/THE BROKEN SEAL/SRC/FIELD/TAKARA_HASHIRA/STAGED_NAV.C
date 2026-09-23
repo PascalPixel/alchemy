@@ -1,17 +1,10 @@
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 
-#define SetEffectRecordMode Func_02000030
 #define NULL ((void *)0)
 #define CreateOverlayObject Func_02002b26
 #define SetOverlayObjectMode Func_02002bb0
 #define SetOverlayObjectSlot Func_02002c50
-#define OverlayObject_PrepareObject Func_02000048
-#define OverlayObject_CreateConfiguredObject Func_020000a0
-#define OverlayObject_WaitUntilSettledAndReset Func_02000d78
-#define OverlayObject_SetCallbackAndMode2 Func_02002694
-#define SceneActor_ApplyPlacementQueryAndTag Func_02000ec8
-#define SceneActor_ApplyPlacementQuery Func_02000f58
 #define BattleRuntime_Reset_1(args...) Func_0200426e(args)
 #define ObjectMotion_SetSpeedLimitAndAcceleration_1(a0, a1) Call2(Func_020042ea, a0, a1)
 #define ObjectMotion_PlaceWithinCameraBounds_1(a0, a1, a2, a3) Call4(Func_02004302, a0, a1, a2, a3)
@@ -38,34 +31,6 @@
 #define BattleRuntime_ScheduleShoulderButtonModeUpdate_1(args...) Func_02004422(args)
 #define REC_ID 16
 #define QUERY_FLAG 0x200
-#define FieldScene_RunPrimarySequence Func_020011c4
-#define FieldScene_RunScene3b3SequenceA Func_020015fc
-#define FieldScene_RunFlaggedDisplayScene Func_0200175c
-#define FieldScene_RunScene3b3_02001fd4 Func_02001fd4
-#define FieldScene_RunScene3b3_020020f0 Func_020020f0
-#define FieldScene_RunScene3b3_0200215c Func_0200215c
-#define FieldScene_RunScene3b3_0200263c Func_0200263c
-#define SceneData_SelectTableBySceneId Func_02001440
-#define SceneData_ReturnZero Func_020014b8
-#define SceneData_GetTableb014 Func_020014bc
-#define SceneData_SelectDataByRuntimeSelector Func_020014c4
-#define SceneData_SelectSecondaryTableBySceneId Func_02002580
-#define SceneState_ApplyPlacementResult Func_02001544
-#define SceneState_ClearWord24AndObjectByte62 Func_0200209c
-#define CopyAndOffsetCoordinatePreset Func_020015cc
-#define SceneState_LinkActorZeroToWork24 Func_02002080
-#define SceneActor_UpdateBit1ByPositionToSlotZero Func_020020b8
-#define StagedActor_PlaceAtObjectTenCell Func_02002498
-#define FieldScene_RunActor11Step Func_02002144
-#define FieldScene_RunActor12Step Func_02002150
-#define SceneEffect_SpawnRandomizedParticle Func_02002230
-#define SceneEffect_SpawnRandomEffectEveryEightFrames Func_020022d8
-#define SceneActor_CheckActors8To11NearSlotZero Func_020026b8
-#define SceneActor_WaitHeightBelowLimit Func_02000da8
-#define StagedActor_StepDownUntilClamp Func_02001174
-#define SceneActor_ApplyCounterLowBitsAsMode Func_02001428
-#define FieldScene_RunTransitionOrFallback Func_02001528
-#define FieldScene_RunSingleStep Func_02002034
 
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
 #include "STAGED_ACTOR.H"

@@ -71,7 +71,6 @@ s32 Func_02000e7a(struct PlacementResult *result);
 void Func_02001026(struct PlacementResult result);
 void Func_020018e0(s32, s32); void Func_020018dc(s32, s32, s32);
 void Func_020018b2(s32); u8 *Func_02001918();
-void Func_02001918_a(s32);
 void Func_020018b8(s32, s32, s32, s32, s32, s32);
 s32 Func_02000ccc(s32, s32, s32, s32, s32, s32);
 void Func_020018f2(s32); void Func_020018ee(u8 *, s32);
@@ -114,7 +113,7 @@ void Func_02001b98(s32, s32);
 static __inline__ void DrawPlacement(s32 left, s32 top, s32 width, s32 height,
                                      s32 tile, s32 palette)
 {
-    void Func_02001900(s32, s32); u8 *Func_020018de(s32);
+    void Engine_ActorSetAnimation(s32, s32); u8 *Func_020018de(s32);
 
     Func_020018b8(left, top, width, height, tile, palette);
 }
@@ -122,7 +121,6 @@ static __inline__ void DrawPlacement(s32 left, s32 top, s32 width, s32 height,
 static __inline__ void DrawSceneBeat(s32 left, s32 top, s32 width, s32 height,
                                      s32 tile, s32 palette)
 {
-    void Func_02001900();
 
     DrawSceneBeatRectangle(left, top, width, height, tile, palette);
 }
@@ -161,7 +159,7 @@ u8 *MapStagedScene_SelectTertiaryData(void) { return (u8 *)0x02009038; }
 
 void FieldScene_RunActorTenPlacementScene(void)
 {
-    void Func_02001900(s32, s32); u8 *Func_020018de(s32);
+    void Engine_ActorSetAnimation(s32, s32); u8 *Func_020018de(s32);
 
     struct PlacementResult result;
     Func_02001872();
@@ -173,8 +171,8 @@ void FieldScene_RunActorTenPlacementScene(void)
             Func_020018e0(10, 3);
             Func_020018dc(10, -18, 6);
             Func_020018b2(30);
-            Func_02001918_a(240);
-            Func_02001900(10, 8);
+            Engine_AudioPlayCue(240);
+            Engine_ActorSetAnimation(10, 8);
             Func_020018de(10)[35] = 2;
             zero = 0;
             DrawPlacement(32, 20, 2, 4, 11, 16);

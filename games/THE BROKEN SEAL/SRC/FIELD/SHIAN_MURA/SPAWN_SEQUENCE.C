@@ -1,27 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-#define SetEffectRecordMode Func_02000030
 #define NULL ((void *)0)
-#define SceneEffect_SpawnPrimary Func_02000048
-#define SceneEffect_SpawnSecondary Func_020000a0
-#define SceneEffect_RequestFixedEffect Func_02000314
-#define SceneEffect_AdvanceRotatingSprite Func_02000358
-#define SceneEffect_SpawnPeriodicEffect Func_02000370
-#define SceneEffect_CalculatePositionDistance Func_020003cc
-#define SceneEffect_GetPrimaryData Func_0200059c
-#define SceneEffect_GetInitialValue Func_020005a4
-#define SceneEffect_GetSecondaryData Func_020005a8
-#define SceneEffect_PrepareState Func_020005b0
-#define SceneEffect_ShowActorSetupMessage Func_020005d4
-#define SceneEffect_ActivateNearbyActor Func_0200094c
-#define SceneEffect_RunActorSceneMessage Func_02000cec
-#define SceneEffect_DispatchStep Func_02000e4c
-#define SceneEffect_GetTertiaryData Func_02001140
-#define FieldScene_RunPrimarySequence Func_020005f4
-#define FieldScene_RunScene3a0_02000968 Func_02000968
-#define FieldScene_RunScene3a0_02000de8 Func_02000de8
-#define FieldScene_RunScene3a0_02001060 Func_02001060
 
 #include "SCENE_EFFECT_SEQUENCE.H"
 

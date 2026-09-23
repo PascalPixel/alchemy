@@ -2,19 +2,6 @@
 
 #define Audio_PlayCue Func_020014c2
 #define PALETTE ((volatile u16 *)0x05000000)
-#define SceneData_GetTable96c8 Func_02000030
-#define SceneData_GetTable9710 Func_0200003c
-#define SceneData_GetTable971c Func_02000044
-#define PlayWorkspaceCueAndClearPaletteZero Func_0200004c
-#define FieldScene_Forward11fc Func_02000070
-#define FieldScene_ConfigureFixedPointValues Func_0200007c
-#define SceneData_GetTable97AC Func_020000a8
-#define SceneState_CountDownEveryFortyTicks Func_02000168
-#define SceneState_StoreSlotZeroField12 Func_020003c0
-#define SceneData_StoreRecord1Field12 Func_020003dc
-#define SceneState_StoreSlotThreeField12 Func_020003f8
-#define SceneData_StoreRecord2Field12 Func_02000414
-#define SceneEffect_LoadTablesAndStopDma0 Func_02001188
 
 typedef struct {
     u8 filler0[12];

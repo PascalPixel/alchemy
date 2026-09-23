@@ -26188,7 +26188,7 @@
     {
       "id": "retained-overlay-374-02001274",
       "game": "tbs",
-      "source": "recon/tbs/en/overlays/resource_374_c_02001274.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/GROUP_CHOREOGRAPHY.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_374",
       "absolute_symbols": {
@@ -26233,7 +26233,7 @@
         {
           "address": "0x02001274",
           "extent": 832,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },

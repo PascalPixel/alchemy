@@ -10923,7 +10923,8 @@
       "name": "Scene_RunScene380SequenceA"
     },
     "resource_374:02001274": {
-      "name": "FieldScene_RunGroupChoreography"
+      "name": "FieldScene_RunGroupChoreography",
+      "source": "FIELD/HAIDIA_IE/GROUP_CHOREOGRAPHY.C"
     },
     "resource_3cb:02000860": {
       "name": "Scene_RunScene3cbSequenceB"

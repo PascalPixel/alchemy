@@ -19354,6 +19354,10 @@
     "resource_3cb:02001050": {
       "name": "LinkLobby_StartExchange",
       "source": "MENU/LINK_LOBBY/START_EXCHANGE.C"
+    },
+    "resource_370:02000384": {
+      "name": "Scene_GetModeMask",
+      "source": "MENU/CLEAR/MODE_MASK.C"
     }
   },
   "symbols": {

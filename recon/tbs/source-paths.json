@@ -19358,6 +19358,10 @@
     "resource_370:02000384": {
       "name": "Scene_GetModeMask",
       "source": "MENU/CLEAR/MODE_MASK.C"
+    },
+    "resource_3b2:020012b4": {
+      "name": "FieldScene_HandleEscapeColumn",
+      "source": "FIELD/TAKARA_SHIMA/ESCAPE_COLUMN.C"
     }
   },
   "symbols": {

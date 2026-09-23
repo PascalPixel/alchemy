@@ -1,36 +1,7 @@
 #include "TYPES.H"
 #include "BATTLE_MSG.H"
-
-/* One side's Djinn recovery list: element, index, owner and turns left. */
-struct DjinnRecoveryEntry {
-    u8 element;
-    u8 index;
-    u8 unit_id;
-    s8 turns;
-};
-
-struct DjinnRecoveryList {
-    struct DjinnRecoveryEntry entries[64];
-    s32 count;
-};
-
-struct DjinnRecoveryTable {
-    u8 unknown_00[8];
-    struct DjinnRecoveryList list;
-};
-
-struct BattleUnitState {
-    u8 unknown_00[0x34];
-    s16 max_hp;
-    s16 max_pp;
-    s16 hp;
-    s16 pp;
-    u8 unknown_3c[8];
-    u8 hp_regen;
-    u8 pp_regen;
-    u8 unknown_46[0xfe];
-    u8 counter_144;
-};
+#include "BATTLE_PARTY.H"
+#include "BATTLE_TYPES.H"
 
 struct BattleMotionSlot {
     void *object;
@@ -55,7 +26,7 @@ struct BattleGroupOrder {
 extern const struct BattleGroupOrder Data_080c35bc;
 
 struct DjinnRecoveryTable *Func_08077000(s32 side);
-struct BattleUnitState *Func_08077008(s32 unit_id);
+struct BattleUnit *Func_08077008(s32 unit_id);
 void Func_08077010(s32 unit_id);
 s32 Func_08077118(s32 unit_id, s32 amount);
 s32 Func_08077120(s32 unit_id, s32 amount);
@@ -174,10 +145,10 @@ s32 Battle_ProcessRoundEnd(void)
             s32 hp_amount;
             s32 pp_amount;
             s32 id = ids[j];
-            struct BattleUnitState *unit = Func_08077008(id);
+            struct BattleUnit *unit = Func_08077008(id);
 
-            if (unit->counter_144 != 0) {
-                unit->counter_144--;
+            if (unit->ready_pose != 0) {
+                unit->ready_pose--;
             }
             if (unit->hp != 0) {
                 if (unit->hp_regen != 0 && unit->hp != unit->max_hp) {

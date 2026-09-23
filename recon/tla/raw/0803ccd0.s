@@ -33,4 +33,4 @@ Func_0803ccd0:
 	bne.n	.L_0803ccee
 .L_0803cd04:
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

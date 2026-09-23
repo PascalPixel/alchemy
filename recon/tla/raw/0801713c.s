@@ -100,4 +100,4 @@ Func_0801713c:
 	pop	{r4, r5}
 	pop	{r1}
 	bx	r1
-	.align 2, 0
+	.2byte 0x0000

@@ -14,4 +14,4 @@ Func_08045768:
 	orrs	r3, r2
 	strh	r3, [r1, #0]
 	bx	lr
-	.align 2, 0
+	.2byte 0x0000

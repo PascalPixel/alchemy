@@ -71,4 +71,22 @@ Func_08016ea4:
 	.4byte 0x02007414
 	.4byte 0x02007400
 	.4byte 0x02007418
-	.4byte 0x02007408
+	.2byte 0x7408
+	.2byte 0x0200
+	ldr	r1, [pc, #24]
+	ldrh	r0, [r1, #0]
+	cmp	r0, #0
+	beq.n	.L_08016f52
+	ldrh	r0, [r1, #0]
+	subs	r0, #1
+	strh	r0, [r1, #0]
+	lsls	r0, r0, #16
+	cmp	r0, #0
+	bne.n	.L_08016f52
+	ldr	r1, [pc, #8]
+	movs	r0, #1
+	strb	r0, [r1, #0]
+.L_08016f52:
+	bx	lr
+	.4byte 0x02007422
+	.4byte 0x02007424

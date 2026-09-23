@@ -1663,4 +1663,14 @@ Func_080ad3f8:
 	pop	{r5, r6, r7, pc}
 	movs	r0, r0
 	.4byte 0x02001000
-	.4byte 0x080b1f2c
+	.2byte 0x1f2c
+	.2byte 0x080b
+	ldr	r3, [pc, #12]
+	movs	r2, #133
+	lsls	r2, r2, #2
+	adds	r3, r3, r2
+	movs	r2, #5
+	str	r2, [r3, #0]
+	bx	lr
+	movs	r0, r0
+	.4byte 0x02000240

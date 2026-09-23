@@ -8,4 +8,4 @@ Func_0818ad1c:
 	movs	r1, #1
 	bl	sub_0818ad40
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

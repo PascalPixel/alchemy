@@ -147,12 +147,12 @@ pub(in crate::build_assets) fn check(root: &Path) -> Result<(), String> {
         // Each game's inputs re-encode on its own reference machine.
         let mut ctx = Context::for_game(root, game);
         if root.join(game.asset_manifest).is_file() {
-            ctx.general_lz = Some(target_general_lz(root, &game)?);
+            ctx.lz_machine = Some(target_lz_machine(root, &game)?);
         }
         let index = &json(&root.join(&paths.index))?;
-        // The context is shared across both games; each game's general-LZ
-        // streams encode with the compressor of its own reference machine.
-        ctx.general_lz = Some(crate::build_assets::target_general_lz(root, &game)?);
+        // The context is shared across both games; each game's LZSS
+        // streams encode with the compressors of its own reference machine.
+        ctx.lz_machine = Some(crate::build_assets::target_lz_machine(root, &game)?);
         // A clone without this game's reference ROM cannot restore its private
         // inputs; their registration is still checked, their absent bytes are not.
         let restorable = root.join(game.rom).is_file();

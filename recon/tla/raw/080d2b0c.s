@@ -35,4 +35,4 @@ Func_080d2b0c:
 	adds	r1, r7, #0
 	bl	sub_080ca5d8
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

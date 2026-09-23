@@ -20,4 +20,4 @@ Func_080facb4:
 	movs	r3, #0
 	bl	sub_08038080
 	pop	{r5, r6, pc}
-	.align 2, 0
+	.2byte 0x0000

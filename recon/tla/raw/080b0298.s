@@ -148,4 +148,4 @@ Func_080b0298:
 	muls	r0, r3
 	lsrs	r0, r0, #16
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

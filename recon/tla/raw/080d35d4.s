@@ -24,4 +24,4 @@ Func_080d35d4:
 	bl	sub_080d2240
 .L_080d35fc:
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

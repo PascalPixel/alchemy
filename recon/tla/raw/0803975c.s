@@ -1217,4 +1217,4 @@ Func_0803975c:
 	adds	r0, r5, #0
 	add	sp, #4
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

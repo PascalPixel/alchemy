@@ -31,4 +31,4 @@ Func_080aee98:
 	negs	r0, r0
 .L_080aeec4:
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

@@ -217,4 +217,4 @@ Func_08014220:
 	cmp	r1, #95
 	bls.n	.L_08014398
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

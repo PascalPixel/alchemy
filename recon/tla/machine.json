@@ -119,6 +119,19 @@
         ],
         "credit": "none"
       }
+    },
+    "palette_lz": {
+      "read_ahead": {
+        "value": 272,
+        "allowed": {"lowest": 239, "highest": 403},
+        "confidence": "observed",
+        "evidence": [
+          "tla 16b and tbs 0a6, every edition: the 5,120-byte stream after the 128-byte palette copies 22 bytes from distance 4,093 at decoded offset 4,882, 238 bytes before the end and beyond the 4,092-byte window, so it needs at least 239",
+          "tla-ja 018: the 39,936-byte stream after the 512-byte palette emits a literal at decoded offset 39,534, 402 bytes before the end, where a 2-byte copy at distance 4,094 was in reach, so it allows at most 403",
+          "read-aheads of 239, 272 and 403 each reproduce every palette stream the window alone reproduced among the 12,470 that the twelve ROMs' resource starts, palette prefixes, container components and word-aligned tag bytes hold (2,164 distinct), and 0a6/16b besides; the streams do not single out a value in 239..403, and 272, the format's longest copy, is recorded"
+        ],
+        "credit": "none"
+      }
     }
   },
   "host_facts": [
@@ -141,14 +154,18 @@
       "name": "packer heap buffer",
       "address": "heap_buffer",
       "editions": ["tla-en"],
-      "value": {"lowest": "0x0804d4a8", "highest": "0x0805d4a7"},
+      "value": {"lowest": "0x08053d58", "highest": "0x08053e3f"},
       "confidence": "observed",
       "observed_from": [
-        "tla-en resource 371 (0x08baab2c) alignment bytes +0x2b0a..+0x2b0b: bytes 2-3 of the _lock, heap_buffer + 0x2b58, of the FILE closed before it"
+        "tla-en resource 371 (0x08baab2c) alignment bytes +0x2b0a..+0x2b0b: bytes 2-3 of the _lock, heap_buffer + 0x2b58, of the FILE closed before it",
+        "tla-en resource 258 (0x08a3c9b4) alignment byte +0x2712: byte 2, 0x05, of the _wide_data, heap_buffer + 0x2768, of the FILE resource 257 closed before it",
+        "tla-en resource 0d7 (0x08890048) alignment bytes +0x259..+0x25b: bytes 1-3 of the _lock, heap_buffer + 0x2a8, of the FILE closed before it (0x080540xx)",
+        "tla-en resource 105 (0x088aadec) alignment bytes +0xc71..+0xc73: bytes 1-3 of the _lock, heap_buffer + 0xcc0, of the FILE closed before it (0x08054axx)"
       ],
       "predicts": [
-        "no tla-en alignment byte beyond those it was observed from",
-        "tla-de, tla-es, tla-fr and tla-it store the same two bytes at the same field of their resource 371"
+        "tla-en resource 311 (0x08b3fbc0) alignment bytes +0x1976..+0x1977 (01 00): the low half of the heap's top chunk size, which glibc's sbrk and trim rules fix for every heap buffer in this range, while the former range left its low byte open",
+        "tla-de, tla-es, tla-fr and tla-it store the same bytes at the same fields of their resources 371, 0d7, 105 and 311",
+        "tla-de, tla-es, tla-fr and tla-it store the same byte at the same field of their resource 258: checked, each stores 0x05 in a resource 258 identical to tla-en's through that byte"
       ],
       "credit": "none"
     },
@@ -186,14 +203,15 @@
       "name": "libc _IO_wfile_jumps",
       "address": "wide_file_jumps",
       "editions": ["tla-en"],
-      "value": {"lowest": "0x40000000", "highest": "0x40ffffff"},
+      "value": {"lowest": "0x40120000", "highest": "0x4012ffff"},
       "confidence": "observed",
       "observed_from": [
-        "tla-en resource 4c3 (0x08d3da7c) alignment byte +0x20bb: byte 3 of the wide jump table of the FILE closed before it"
+        "tla-en resource 4c3 (0x08d3da7c) alignment byte +0x20bb: byte 3 of the wide jump table of the FILE closed before it",
+        "tla-en resource 1ec (0x08969dac) alignment bytes +0x1d2..+0x1d3: bytes 2-3 of the wide jump table of the FILE closed before it"
       ],
       "predicts": [
-        "no tla-en alignment byte beyond the one it was observed from",
-        "tla-de, tla-es, tla-fr and tla-it store the same byte at the same field of their resource 4c3"
+        "no tla-en alignment byte beyond those it was observed from",
+        "tla-de, tla-es, tla-fr and tla-it store the same bytes at the same fields of their resources 4c3 and 1ec"
       ],
       "credit": "none"
     }

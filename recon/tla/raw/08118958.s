@@ -500,4 +500,34 @@ Func_08118958:
 	add	sp, #28
 	pop	{r5, r6, r7, pc}
 	.4byte 0x000000ff
-	.4byte 0x081287c8
+	.2byte 0x87c8
+	.2byte 0x0812
+	push	{lr}
+	movs	r3, #128
+	movs	r2, #128
+	lsls	r3, r3, #19
+	lsls	r2, r2, #24
+	adds	r3, #212
+	ldr	r0, [pc, #20]
+	ldr	r1, [pc, #24]
+	adds	r2, #8
+	stmia	r3!, {r0, r1, r2}
+	subs	r3, #12
+	ldr	r3, [pc, #20]
+	movs	r1, #20
+	ldr	r0, [pc, #20]
+	mov	lr, r3
+	.2byte 0xf800
+	.2byte 0xbd00
+	movs	r0, r0
+	.4byte 0x06000290
+	.4byte 0x06000280
+	.4byte 0x03000258
+	.2byte 0x028c
+	.2byte 0x0600
+	movs	r3, #128
+	lsls	r3, r3, #19
+	movs	r2, #0
+	adds	r3, #18
+	strh	r2, [r3, #0]
+	bx	lr

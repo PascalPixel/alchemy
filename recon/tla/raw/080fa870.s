@@ -510,4 +510,4 @@ Func_080fa870:
 	ble.n	.L_080fabf8
 .L_080fac54:
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

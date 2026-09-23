@@ -37,4 +37,4 @@ Func_080d2cc4:
 	strh	r3, [r2, #0]
 .L_080d2d04:
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

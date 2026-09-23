@@ -16,4 +16,4 @@ Func_080394e8:
 .L_080394fa:
 	str	r2, [r0, #4]
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

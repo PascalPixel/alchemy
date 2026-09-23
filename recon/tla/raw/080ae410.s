@@ -527,4 +527,7 @@ Func_080ae410:
 	pop	{r5, r6, r7, pc}
 	movs	r0, r0
 	.4byte 0x02001000
-	.4byte 0x02000240
+	.2byte 0x0240
+	.2byte 0x0200
+	bx	lr
+	.2byte 0x0000

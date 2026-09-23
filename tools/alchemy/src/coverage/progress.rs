@@ -351,6 +351,73 @@ mod tests {
         assert_eq!(report["done_percent"], 25.0);
         assert_eq!(report["exact_c_percent"], 15.0);
     }
+    /// The Lost Age reports a real ⚓️ exactly while its byte-identical full
+    /// build proves its inventory and its receipt is current; a withdrawn
+    /// build, as any failed or mismatching one leaves, returns it to `?`.
+    #[test]
+    fn the_lost_age_is_measured_only_while_its_full_build_proves_it() {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        let target = crate::targets::target_for(crate::targets::DecompTargetId::TlaEn);
+        crate::coverage::audit::authoritative_fixture(
+            root,
+            target,
+            &[(0x0800_0100, 0x0800_0104)],
+            json!([{"id": "resource_test", "decoded_bytes": 8, "intervals": [
+                {"start": 0x0200_0000, "end": 0x0200_0004, "kind": "thumb"}
+            ]}]),
+        );
+        // A proven inventory without the build's receipt is an error, never
+        // a score.
+        let error = measured(root, "tla-en").unwrap_err();
+        assert!(error.contains("verified-code.json"), "{error}");
+        let rom = std::fs::read(root.join(target.rom)).unwrap();
+        let inputs = super::super::proof::identity(root, "tla-en").unwrap();
+        let credit = |image: &str, start, end, kind: &str, source: &str| Credit {
+            image: image.into(),
+            start,
+            end,
+            kind: kind.into(),
+            source: source.into(),
+        };
+        super::super::proof::write(
+            root,
+            "tla-en",
+            &rom,
+            &inputs,
+            vec![
+                credit(
+                    "main",
+                    0x0800_0100,
+                    0x0800_0104,
+                    "c",
+                    "games/THE LOST AGE/SRC/A.C",
+                ),
+                credit(
+                    "resource_test",
+                    0x0200_0000,
+                    0x0200_0002,
+                    "assembly",
+                    "recon/tla/raw/overlays/resource_test_overlay.s",
+                ),
+            ],
+        )
+        .unwrap();
+        let done = measured(root, "tla-en").unwrap().unwrap();
+        assert_eq!(
+            done,
+            GameDone {
+                game_c: 4,
+                game_asm: 2,
+                executable: 8,
+                ..GameDone::default()
+            }
+        );
+        assert_eq!(subject(root).unwrap(), "☀️ ?% ⚓️ 75% –");
+        crate::coverage::proof::withdraw_full_build(root, target).unwrap();
+        assert_eq!(measured(root, "tla-en").unwrap(), None);
+        assert_eq!(subject(root).unwrap(), "☀️ ?% ⚓️ ?% –");
+    }
     #[test]
     fn conflicting_source_attribution_is_an_error() {
         let images = std::collections::BTreeMap::from([("main".into(), vec![Span::new(0, 100)])]);

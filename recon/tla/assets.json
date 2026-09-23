@@ -481,7 +481,7 @@
       "pointer": "/regions/4"
     },
     {"address": "0x082f9030", "size": "0x6fd0", "kind": "byte-fill", "value": 0},
-    {"address": "0x086322b4", "size": "0x4dd4c", "kind": "byte-fill", "value": 0},
+    {"address": "0x086322b2", "size": "0x4dd4e", "kind": "byte-fill", "value": 0},
     {
       "address": "0x08680000",
       "size": "0x2000",

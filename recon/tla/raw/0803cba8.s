@@ -152,4 +152,4 @@ Func_0803cba8:
 	cmp	r1, #8
 	bne.n	.L_0803ccc0
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

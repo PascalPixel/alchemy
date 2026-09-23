@@ -30,4 +30,4 @@ Func_080d2c64:
 	bl	sub_081c0010
 	pop	{r5, pc}
 	bx	lr
-	.align 2, 0
+	.2byte 0x0000

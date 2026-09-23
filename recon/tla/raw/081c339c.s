@@ -12,4 +12,4 @@ Func_081c339c:
 	adds	r0, #1
 	str	r0, [r1, #64]
 	bx	lr
-	.align 2, 0
+	.2byte 0x0000

@@ -1241,4 +1241,32 @@ Func_0802be4c:
 	.4byte 0x0600e000
 	.4byte 0x84000800
 	.4byte 0x02028000
-	.4byte 0x0202a000
+	.2byte 0xa000
+	.2byte 0x0202
+	movs	r2, #168
+	movs	r3, #128
+	lsls	r2, r2, #8
+	lsls	r3, r3, #19
+	adds	r2, #11
+	adds	r3, #14
+	strh	r2, [r3, #0]
+	movs	r2, #170
+	lsls	r2, r2, #8
+	adds	r2, #15
+	subs	r3, #2
+	strh	r2, [r3, #0]
+	movs	r2, #192
+	lsls	r2, r2, #3
+	adds	r2, #130
+	subs	r3, #2
+	strh	r2, [r3, #0]
+	adds	r3, #202
+	ldr	r0, [pc, #8]
+	ldr	r1, [pc, #12]
+	ldr	r2, [pc, #12]
+	stmia	r3!, {r0, r1, r2}
+	subs	r3, #12
+	bx	lr
+	.4byte 0x02010000
+	.4byte 0x06006000
+	.4byte 0x84002800

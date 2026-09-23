@@ -950,4 +950,8 @@ Func_080133c4:
 	push	{lr}
 	movs	r0, #0
 	pop	{pc}
-	.align 2, 0
+	movs	r0, r0
+	bx	lr
+	movs	r0, r0
+	bx	lr
+	.2byte 0x0000

@@ -102,4 +102,4 @@ Func_08021918:
 	mov	r0, ip
 .L_080219c8:
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

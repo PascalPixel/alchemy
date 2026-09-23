@@ -69,4 +69,8 @@ Func_08118088:
 	.2byte 0x0811
 	ldr	r4, [pc, #0]
 	bx	r4
-	.4byte 0x08124cad
+	.2byte 0x4cad
+	.2byte 0x0812
+	ldr	r4, [pc, #0]
+	bx	r4
+	.4byte 0x08118739

@@ -909,4 +909,4 @@ Func_080cce94:
 .L_080cd5b6:
 	adds	r0, r3, #0
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

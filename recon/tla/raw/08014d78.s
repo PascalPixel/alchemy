@@ -61,4 +61,7 @@ Func_08014d78:
 	adds	r0, r2, #0
 .L_08014dda:
 	pop	{pc}
-	.4byte 0x03006fbf
+	.2byte 0x6fbf
+	.2byte 0x0300
+	bx	lr
+	.2byte 0x0000

@@ -29,4 +29,8 @@ Func_080ad000:
 	.2byte 0x080a
 	ldr	r4, [pc, #0]
 	bx	r4
-	.4byte 0x080aee99
+	.2byte 0xee99
+	.2byte 0x080a
+	ldr	r4, [pc, #0]
+	bx	r4
+	.4byte 0x080aeec9

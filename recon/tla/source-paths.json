@@ -42,9 +42,6 @@
     "main:081c1e70": {
       "name": "MusicTrack_SetLfoSpeedFromCommand"
     },
-    "main:081c1e84": {
-      "name": "MusicTrack_SetModulationFromCommand"
-    },
     "main:081c1e98": {
       "name": "Pcm_KeyToFrequency",
       "source": "../../COMMON/SRC/SOUND/PCM_KEY_TO_FREQUENCY.C"
@@ -101,9 +98,6 @@
     },
     "main:081c09d0": {
       "name": "MusicPlayer_Tick"
-    },
-    "main:081c07a2": {
-      "name": "MusicTrack_HandleNote"
     },
     "main:081c171c": {
       "name": "Sound_LoadCommandTable"

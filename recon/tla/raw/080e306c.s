@@ -791,4 +791,4 @@ Func_080e306c:
 	mov	sl, r6
 	mov	fp, r7
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

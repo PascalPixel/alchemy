@@ -1575,4 +1575,4 @@ Func_08191c20:
 	bl	sub_08143eb4
 	add	sp, #4
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

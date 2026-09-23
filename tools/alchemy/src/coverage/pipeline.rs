@@ -205,21 +205,10 @@ fn overlay_ids_for(tree: &SourceTree, directory: &str) -> Vec<(String, String)> 
     names.sort_by(|a, b| a.0.cmp(&b.0));
     names
 }
+/// The main-image C a game's full build compiled, linked and compared with
+/// its ROM: the claimed stage's regions whose source is ordinary C. Each game
+/// reads its own build, never an earlier receipt.
 fn exact_main(tree: &SourceTree, target: &str, executable: &[Span]) -> Result<Vec<Span>, String> {
-    if target == "tla-en" {
-        let proof = read_json(tree, &format!("out/{target}/reports/verified-code.json"))?;
-        let spans = array(&proof, "credits")
-            .iter()
-            .filter(|row| text(row, "image") == "main" && text(row, "kind") == "c")
-            .map(|row| {
-                Ok(Span::new(
-                    integer(row, "start").ok_or("credit start missing")?,
-                    integer(row, "end").ok_or("credit end missing")?,
-                ))
-            })
-            .collect::<Result<Vec<_>, String>>()?;
-        return exact_spans(spans, executable, "main");
-    }
     let path = format!("out/{target}/full/claimed/manifest.json");
     let value = read_json(tree, &path)?;
     let mut spans = Vec::new();
@@ -764,6 +753,31 @@ pub(crate) fn maintained_assembly_credits(
                 .map(move |span| (span, source.clone()))
         })
         .collect()
+}
+
+/// Refuses a maintained module whose credited extent misses the audited main
+/// executable intervals entirely: its declared credit would count nothing, so
+/// either the module or the inventory is wrong.
+fn refuse_unaudited_module_credit(
+    tree: &SourceTree,
+    target: &DecompTarget,
+    main_exec: &[Span],
+) -> Result<(), String> {
+    let Some(manifest) = json(
+        tree,
+        &format!("{}/full/asm/manifest.json", target.output_dir),
+    ) else {
+        return Ok(());
+    };
+    match maintained_assembly_credits(&manifest, target)
+        .into_iter()
+        .find(|(span, _)| intersect(&[*span], main_exec).is_empty())
+    {
+        Some((_, source)) => Err(format!(
+            "{source} lies outside audited executable intervals"
+        )),
+        None => Ok(()),
+    }
 }
 
 /// Proven retained and draft main assembly. Only byte-verified maintained
@@ -1921,32 +1935,11 @@ pub struct Classification {
     pub semantic_overlay: SpanMap,
     draft_sources: usize,
 }
-/// Classify assembly to verify before a build receipt exists. This does not
-/// grant credit: the caller must compare every returned image with its ROM.
-pub(crate) fn overlay_assembly_to_verify(
-    tree: &SourceTree,
-    target: &DecompTarget,
-) -> Result<SpanMap, String> {
-    let (inventory, main_exec, overlay_exec) = read_inventory(tree, *target)?;
-    let evidence = inventory.get("evidence").and_then(Value::as_object);
-    let overlay_regions = array(&inventory, "overlays")
-        .iter()
-        .map(|node| (text(node, "id"), regions(node, evidence)))
-        .collect();
-    let (_, _, mut retained) =
-        overlay_assembly_classification_for(tree, target, &overlay_regions, &overlay_exec)?;
-    let (_, runtime) = runtime_credit_for(tree, target, &main_exec, &overlay_exec)?;
-    for (id, spans) in runtime {
-        let entry = retained.entry(id).or_default();
-        *entry = normalize(&[entry.clone(), spans].concat());
-    }
-    Ok(retained)
-}
-
-/// The overlay images [`overlay_assembly_to_verify`] names, found without the
+/// The overlay images that carry credited assembly, found without the
 /// executable inventory: the classification's reconstructed veneers and the
 /// registry's overlay runtime links placed in their listings. Comparing these
-/// images with the ROM needs no denominator; crediting their spans does.
+/// images with the ROM needs no denominator; crediting their spans does, and
+/// only a full build's receipt credits them ([`verified_credits`]).
 pub(crate) fn overlay_assembly_images(
     tree: &SourceTree,
     target: &DecompTarget,
@@ -1986,34 +1979,6 @@ pub(crate) fn overlay_assembly_images(
     Ok(images)
 }
 
-/// Main-image assembly credit of a ROM-verified assembly manifest, with each
-/// range's source: maintained modules with declared provenance, then
-/// container-built runtime links. The caller has compared every region with
-/// the ROM; each credited range must meet the audited executable intervals.
-pub(crate) fn main_assembly_credits(
-    tree: &SourceTree,
-    target: &DecompTarget,
-) -> Result<Vec<(Span, String)>, String> {
-    let (_, main_exec, overlay_exec) = read_inventory(tree, *target)?;
-    let manifest = read_json(
-        tree,
-        &format!("{}/full/asm/manifest.json", target.output_dir),
-    )?;
-    let mut credits = maintained_assembly_credits(&manifest, target);
-    if let Some((_, source)) = credits
-        .iter()
-        .find(|(span, _)| intersect(&[*span], &main_exec).is_empty())
-    {
-        return Err(format!(
-            "{source} lies outside audited executable intervals"
-        ));
-    }
-    let (runtime, _) = runtime_credit_for(tree, target, &main_exec, &overlay_exec)?;
-    let registry = crate::compiler::runtime::registry_path(target.compiler);
-    credits.extend(runtime.into_iter().map(|span| (span, registry.clone())));
-    Ok(credits)
-}
-
 pub fn classify(options: &BuildOptions) -> Result<Classification, String> {
     let target = crate::targets::decomp_target(Some(&options.target))?;
     let (inventory, _, _) = read_inventory(options.exact, target)?;
@@ -2039,6 +2004,7 @@ pub fn classify(options: &BuildOptions) -> Result<Classification, String> {
     // Other assembly still needs handwritten/library provenance per range.
     let (withdrawn_main, withdrawn_draft_main, retained_main) =
         main_assembly_classification_for(options.exact, &target);
+    refuse_unaudited_module_credit(options.exact, &target, &main_exec)?;
     let (mut withdrawn_overlay, withdrawn_draft_overlay, mut retained_overlay) =
         overlay_assembly_classification_for(
             options.exact,
@@ -2582,17 +2548,18 @@ mod tests {
     fn classification(regions: Value) -> Value {
         json!({"format": 1, "regions": regions})
     }
+    /// The Lost Age's receipt credits its reconstructed overlay veneers from
+    /// its own full build and inventory, exactly as The Broken Seal's does,
+    /// and an earlier receipt has no say in what it credits.
     #[test]
-    fn lost_age_assembly_verification_does_not_require_its_output_receipt() {
+    fn lost_age_full_build_credits_its_veneers_without_an_earlier_receipt() {
         let directory = tempfile::tempdir().unwrap();
         let write = |path: &str, value: Value| {
             let path = directory.path().join(path);
             std::fs::create_dir_all(path.parent().unwrap()).unwrap();
             std::fs::write(path, serde_json::to_vec(&value).unwrap()).unwrap();
         };
-        // The Lost Age as it will be once its full ROM build is supported.
-        let lost_age = crate::targets::decomp_target(Some("tla-en")).unwrap();
-        let target = crate::coverage::proof::fully_buildable(lost_age);
+        let target = crate::targets::decomp_target(Some("tla-en")).unwrap();
         let mut row = region(
             "0x02000120",
             "0x02000140",
@@ -2617,6 +2584,10 @@ mod tests {
             "recon/tla/semantic/overlay-assembly.json",
             classification(json!([row])),
         );
+        write(
+            "recon/tla/source-paths.json",
+            json!({"format": 3, "owners": {}}),
+        );
         crate::coverage::audit::authoritative_fixture(
             directory.path(),
             target,
@@ -2625,28 +2596,49 @@ mod tests {
                 {"start": 0x02000120, "end": 0x02000140, "kind": "veneer"}
             ]}]),
         );
-        let tree = crate::coverage::tree::work_tree_at(directory.path().to_path_buf());
-        // Until then its inventory credits nothing.
-        assert!(overlay_assembly_to_verify(&tree, &lost_age)
-            .unwrap_err()
-            .contains("no supported full ROM build"));
-        let expected = SpanMap::from([(
-            "resource_test".into(),
-            vec![Span::new(0x02000120, 0x02000140)],
-        )]);
-        assert_eq!(
-            overlay_assembly_to_verify(&tree, &target).unwrap(),
-            expected
+        // The full build's claimed and assembly stages, which place no main
+        // code in this fixture.
+        write(
+            "out/tla-en/full/claimed/manifest.json",
+            json!({"regions": []}),
         );
-        // A previous receipt must not influence which assembly is verified.
+        write(
+            "out/tla-en/full/asm/manifest.json",
+            json!({"verification": "rom", "regions": []}),
+        );
+        let tree = crate::coverage::tree::work_tree_at(directory.path().to_path_buf());
+        let credits = || {
+            verified_credits(&BuildOptions {
+                target: "tla-en".into(),
+                exact: &tree,
+                recon: None,
+            })
+            .unwrap()
+            .into_iter()
+            .map(|credit| {
+                (
+                    credit.image,
+                    credit.start,
+                    credit.end,
+                    credit.source,
+                    credit.kind,
+                )
+            })
+            .collect::<Vec<_>>()
+        };
+        let expected = [(
+            "resource_test".to_string(),
+            0x0200_0120,
+            0x0200_0140,
+            "recon/tla/raw/overlays/resource_test_overlay.s".to_string(),
+            "assembly".to_string(),
+        )];
+        assert_eq!(credits(), expected);
         write(
             "out/tla-en/reports/verified-code.json",
-            json!({"credits":[]}),
+            json!({"credits": []}),
         );
-        assert_eq!(
-            overlay_assembly_to_verify(&tree, &target).unwrap(),
-            expected
-        );
+        assert_eq!(credits(), expected);
     }
     #[test]
     fn generic_main_assembly_provenance_earns_no_credit() {
@@ -2922,7 +2914,7 @@ mod tests {
             BTreeSet::from(["resource_370".to_string(), "resource_3bf".to_string()])
         );
     }
-    /// The Broken Seal, the game whose full ROM build is supported.
+    /// The Broken Seal, whose full ROM build is byte-identical.
     fn tbs_en() -> DecompTarget {
         crate::targets::target_for(crate::targets::DecompTargetId::TbsEn)
     }
@@ -3177,30 +3169,44 @@ mod tests {
             );
         }
     }
-    /// The Lost Age has no supported full ROM build, so no files, however
-    /// complete, give it a main image: every reader withholds an inventory
-    /// that would be authoritative once that build exists.
+    /// Only an edition with a supported full ROM build has a main image. The
+    /// same complete files that make The Lost Age's English inventory
+    /// authoritative give its Japanese edition, whose build is compile-only,
+    /// nothing: every reader withholds that inventory.
     #[test]
-    fn a_game_without_a_full_build_is_never_scored() {
-        let directory = tempfile::tempdir().unwrap();
-        let root = directory.path();
-        let lost_age = crate::targets::target_for(crate::targets::DecompTargetId::TlaEn);
-        crate::coverage::audit::authoritative_fixture(
-            root,
-            crate::coverage::proof::fully_buildable(lost_age),
-            &[(0x0800_0100, 0x0800_0104)],
-            json!([{"id": "resource_test", "decoded_bytes": 8, "intervals": [
-                {"start": 0x0200_0000, "end": 0x0200_0004, "kind": "thumb"}
-            ]}]),
-        );
-        assert!(authoritative_inventory(root, lost_age).unwrap().is_none());
-        assert!(super::super::progress::measured(root, "tla-en")
-            .unwrap()
-            .is_none());
-        let tree = crate::coverage::tree::work_tree_at(root.to_path_buf());
-        let reason = read_inventory(&tree, lost_age).unwrap_err();
-        assert!(reason.contains("no supported full ROM build"), "{reason}");
+    fn an_edition_without_a_full_build_is_never_scored() {
+        use crate::targets::DecompTargetId::{TlaEn, TlaJa};
+        for (id, supported) in [(TlaJa, false), (TlaEn, true)] {
+            let directory = tempfile::tempdir().unwrap();
+            let root = directory.path();
+            let target = crate::targets::target_for(id);
+            crate::coverage::audit::authoritative_fixture(
+                root,
+                crate::coverage::proof::fully_buildable(target),
+                &[(0x0800_0100, 0x0800_0104)],
+                json!([{"id": "resource_test", "decoded_bytes": 8, "intervals": [
+                    {"start": 0x0200_0000, "end": 0x0200_0004, "kind": "thumb"}
+                ]}]),
+            );
+            assert_eq!(
+                authoritative_inventory(root, target).unwrap().is_some(),
+                supported,
+                "{id}"
+            );
+            let tree = crate::coverage::tree::work_tree_at(root.to_path_buf());
+            match read_inventory(&tree, target) {
+                Ok(_) => assert!(supported, "{id}"),
+                Err(reason) => {
+                    assert!(!supported, "{id}: {reason}");
+                    assert!(reason.contains("no supported full ROM build"), "{reason}");
+                }
+            }
+        }
     }
+    /// The Lost Age credits its maintained main assembly and container
+    /// runtime from its full build's verified assembly manifest, as The
+    /// Broken Seal does, and refuses a credited module that misses its
+    /// audited executable intervals.
     #[test]
     fn lost_age_main_assembly_credit_reads_its_verified_manifest() {
         let directory = tempfile::tempdir().unwrap();
@@ -3212,12 +3218,18 @@ mod tests {
         };
         let registry =
             crate::compiler::runtime::registry_path(crate::compiler::routing::CompilerTarget::Tla);
-        // The Lost Age as it will be once its full ROM build is supported.
-        let lost_age = crate::targets::target_for(crate::targets::DecompTargetId::TlaEn);
-        let target = crate::coverage::proof::fully_buildable(lost_age);
+        let target = crate::targets::target_for(crate::targets::DecompTargetId::TlaEn);
         write(
             &registry,
             json!({"links": [{"image": "main", "text": "0x08017878", "members": ["_m"]}]}),
+        );
+        write(
+            "recon/tla/semantic/overlay-assembly.json",
+            classification(json!([])),
+        );
+        write(
+            "recon/tla/source-paths.json",
+            json!({"format": 3, "owners": {}}),
         );
         crate::coverage::audit::authoritative_fixture(
             root,
@@ -3240,28 +3252,49 @@ mod tests {
                  "evidence": "built_from_licensed_compiler_container"}
             ]})
         };
+        write(
+            "out/tla-en/full/claimed/manifest.json",
+            json!({"regions": []}),
+        );
         write("out/tla-en/full/asm/manifest.json", manifest(0x0801_7808));
-        let tree = crate::coverage::tree::work_tree_at(root.to_path_buf());
-        // Until then its inventory credits nothing.
-        assert!(main_assembly_credits(&tree, &lost_age)
-            .unwrap_err()
-            .contains("no supported full ROM build"));
+        let credits = || {
+            let tree = crate::coverage::tree::work_tree_at(root.to_path_buf());
+            verified_credits(&BuildOptions {
+                target: target.id.to_string(),
+                exact: &tree,
+                recon: None,
+            })
+            .map(|credits| {
+                credits
+                    .into_iter()
+                    .map(|credit| (credit.image, credit.start, credit.end, credit.source))
+                    .collect::<Vec<_>>()
+            })
+        };
         assert_eq!(
-            main_assembly_credits(&tree, &target).unwrap(),
+            credits().unwrap(),
             [
                 (
-                    Span::new(0x0801_7808, 0x0801_7810),
+                    "main".to_string(),
+                    0x0801_7808,
+                    0x0801_7810,
                     "games/THE LOST AGE/SRC/SYSTEM/BIOS/CPU_SET.S".to_string()
                 ),
-                (Span::new(0x0801_7878, 0x0801_78b4), registry.clone()),
+                (
+                    "main".to_string(),
+                    0x0801_7878,
+                    0x0801_78b4,
+                    registry.clone()
+                ),
             ]
         );
         // A credited module entirely outside the audited intervals is refused.
         write("out/tla-en/full/asm/manifest.json", manifest(0x0802_0000));
-        let tree = crate::coverage::tree::work_tree_at(root.to_path_buf());
-        assert!(main_assembly_credits(&tree, &target)
-            .unwrap_err()
-            .contains("CPU_SET.S lies outside audited executable intervals"));
+        let error = credits().unwrap_err();
+        assert!(
+            error.contains("CPU_SET.S lies outside audited executable intervals"),
+            "{error}"
+        );
     }
     #[test]
     fn each_game_credits_runtime_from_its_own_registry() {

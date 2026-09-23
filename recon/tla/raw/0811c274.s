@@ -36,4 +36,4 @@ Func_0811c274:
 	bl	sub_08013560
 .L_0811c2b0:
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

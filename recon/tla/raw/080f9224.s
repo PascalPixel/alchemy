@@ -214,4 +214,4 @@ Func_080f9224:
 	strh	r2, [r0, #14]
 .L_080f93b4:
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

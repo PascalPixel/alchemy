@@ -26,4 +26,4 @@ Func_08043230:
 	adds	r0, #255
 .L_08043258:
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

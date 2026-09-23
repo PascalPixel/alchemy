@@ -78,4 +78,4 @@ Func_08038eb0:
 	adds	r3, r0, r2
 	str	r1, [r3, #0]
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

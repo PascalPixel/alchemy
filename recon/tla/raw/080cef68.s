@@ -16,4 +16,4 @@ Func_080cef68:
 	movs	r0, #12
 	bl	sub_08013560
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

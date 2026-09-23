@@ -826,6 +826,13 @@
         "encoded_size": 1840,
         "tag": 1
       },
+      "0x16b": {
+        "format": 1,
+        "codec": "golden-sun-tagged-palette-lz",
+        "decoded_size": 5120,
+        "encoded_size": 1176,
+        "tag": 1
+      },
       "0x16c": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 2392, "encoded_size": 1442},
       "0x16d": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 1728, "encoded_size": 932},
       "0x16e": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 924, "encoded_size": 536},

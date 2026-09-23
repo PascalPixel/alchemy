@@ -1,7 +1,7 @@
 {
   "format": "golden-sun-character-banks",
   "identity_policy": "Names require a Japanese message and runtime actor binding; a descriptor, placement row or shared image alone does not establish a character identity.",
-  "evidence": "Banks are the frame directories of the descriptor table at 0x08300000 that no named character document owns, keyed by directory address; a bank lists the descriptors that share its directory. Directories lie back to back from 0x08307478 and frame streams from 0x08319126, both in directory order, each bank's streams in address order; the regions list them in that order. Codec 3 streams are arena LZ over zero-skip bytes, each bank the dictionary of its later streams. An absent frame stores no zero-skip bytes: its stream is a bare raw split, whose reader borrows the next stream's zero as its terminator. Codec 0 frames are raw zero-skip bytes. Codec 1 frames are tagged LZ over indexed bytes, general or palette, whichever is smaller, palette on ties. runtime_bindings, where present, are the actor placement rows (u16 descriptor, 0xffff, u32 behaviour, x, y, z and flags as 16.16 words, closed by a 0x0000ffff row) in overlays 0x64d, 0x64e, 0x650, 0x651 and 0x652 that name a bank's descriptor; banks without the field have not been searched. Archives are battle sprite resources of the range 0x203-0x26b, keyed by resource: general LZ over u32 frame offsets closed by 0, then the zero-skip frames in frame_order; an offset at the end of the stream names a frame the archive does not store. The 105 codec 2 descriptors have null directories and runtime-loaded frames; the loader that pairs them with the 105 resources of that range has not been read.",
+  "evidence": "Banks are the frame directories of the descriptor table at 0x08300000 that no named character document owns, keyed by directory address; a bank lists the descriptors that share its directory. Directories lie back to back from 0x08307478 and frame streams from 0x08319126, both in directory order, each bank's streams in address order; the regions list them in that order. Codec 3 streams are arena LZ over zero-skip bytes, each bank the dictionary of its later streams. An absent frame stores no zero-skip bytes: its stream is a bare raw split, whose reader borrows the next stream's zero as its terminator. Codec 0 frames are raw zero-skip bytes. Codec 1 frames are tagged LZ over indexed bytes, general or palette, whichever is smaller, palette on ties. runtime_bindings, where present, are the actor placement rows (u16 descriptor, 0xffff, u32 behaviour, x, y, z and flags as 16.16 words, closed by a 0x0000ffff row) in overlays 0x64d, 0x64e, 0x650, 0x651 and 0x652 that name a bank's descriptor; banks without the field have not been searched. Archives are battle sprite resources of the range 0x203-0x26b, keyed by resource: general LZ over u32 frame offsets closed by 0, then the zero-skip frames in frame_order; an offset at the end of the stream names a frame the archive does not store, and a repeated offset draws one stored frame in several cells. The 105 codec 2 descriptors have null directories and runtime-loaded frames; the loader that pairs them with the 105 resources of that range has not been read.",
   "banks": {
     "08308340": {
       "format": 1,
@@ -45473,6 +45473,154 @@
     }
   },
   "archives": {
+    "203": {
+      "archive": {
+        "offsets": [
+          15954, 68, 18001, 1879, 20067, 3675, 22167, 5510, 24217, 7532, 26215, 9631, 28368, 11828, 30520, 14152, 0
+        ]
+      },
+      "plan": {"codec": "golden-sun-general-lz", "decoded_size": 32651},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/203/archive/offsets",
+          "size": 68
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 0, 2, 4, 6, 8, 10, 12, 14],
+          "palette": {
+            "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+          },
+          "size": 32583,
+          "source_rect": {"x": 0, "y": 57608, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "204": {
+      "archive": {"offsets": [9523, 52, 11197, 1750, 12827, 3383, 14384, 4951, 16006, 6586, 17293, 7927, 0]},
+      "plan": {"codec": "golden-sun-general-lz", "decoded_size": 18967},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/204/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+          },
+          "size": 18915,
+          "source_rect": {"x": 0, "y": 57736, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "205": {
+      "archive": {"offsets": [10894, 52, 12842, 2031, 14744, 3968, 16659, 5912, 18276, 7620, 19833, 9146, 0]},
+      "plan": {"codec": "golden-sun-general-lz", "decoded_size": 21539},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/205/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+          },
+          "size": 21487,
+          "source_rect": {"x": 0, "y": 57864, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "206": {
+      "archive": {"offsets": [6184, 52, 7217, 1056, 8261, 2086, 9294, 3120, 10434, 4256, 11379, 5207, 0]},
+      "plan": {"codec": "golden-sun-general-lz", "decoded_size": 12404},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/206/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+          },
+          "size": 12352,
+          "source_rect": {"x": 0, "y": 57992, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "207": {
+      "archive": {
+        "offsets": [
+          15952, 68, 17969, 2250, 19960, 4421, 21841, 6441, 23668, 8329, 25265, 10079, 27254, 12195, 29104, 14124, 0
+        ]
+      },
+      "plan": {"codec": "golden-sun-general-lz", "decoded_size": 30944},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/207/archive/offsets",
+          "size": 68
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 0, 2, 4, 6, 8, 10, 12, 14],
+          "palette": {
+            "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+          },
+          "size": 30876,
+          "source_rect": {"x": 0, "y": 58120, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
     "208": {
       "archive": {"offsets": [8632, 52, 9991, 1400, 11385, 2816, 12824, 4265, 14371, 5893, 15485, 7056, 0]},
       "plan": {"codec": "golden-sun-general-lz", "decoded_size": 17062},
@@ -45495,7 +45643,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 17010,
-          "source_rect": {"x": 0, "y": 57608, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 58248, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -45523,7 +45671,95 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 3894,
-          "source_rect": {"x": 0, "y": 57736, "width": 256, "height": 64},
+          "source_rect": {"x": 0, "y": 58376, "width": 256, "height": 64},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "20a": {
+      "archive": {
+        "offsets": [
+          16717, 68, 18748, 2160, 20783, 4264, 22752, 6346, 24581, 8332, 26399, 10463, 28595, 12683, 30743, 14869, 0
+        ]
+      },
+      "plan": {"codec": "golden-sun-general-lz", "decoded_size": 32531},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/20a/archive/offsets",
+          "size": 68
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 0, 2, 4, 6, 8, 10, 12, 14],
+          "palette": {
+            "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+          },
+          "size": 32463,
+          "source_rect": {"x": 0, "y": 58440, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "20b": {
+      "archive": {"offsets": [2842, 52, 3328, 535, 3806, 1009, 4264, 1469, 4730, 1938, 5148, 2355, 0]},
+      "plan": {"codec": "golden-sun-general-lz", "decoded_size": 5686},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/20b/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 32,
+          "frame_height": 32,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+          },
+          "size": 5634,
+          "source_rect": {"x": 0, "y": 58568, "width": 256, "height": 64},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "20c": {
+      "archive": {"offsets": [2651, 52, 3107, 480, 3562, 910, 4021, 1353, 4515, 1795, 4939, 2242, 0]},
+      "plan": {"codec": "golden-sun-general-lz", "decoded_size": 5345},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/20c/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 32,
+          "frame_height": 32,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+          },
+          "size": 5293,
+          "source_rect": {"x": 0, "y": 58632, "width": 256, "height": 64},
           "pixel_format": "indices"
         }
       ],
@@ -45551,7 +45787,180 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 16326,
-          "source_rect": {"x": 0, "y": 57800, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 58696, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "20e": {
+      "archive": {"offsets": [8412, 52, 9674, 1390, 10869, 2644, 12117, 3941, 13415, 5272, 14754, 6653, 0]},
+      "plan": {"codec": "golden-sun-general-lz", "decoded_size": 16316},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/20e/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+          },
+          "size": 16264,
+          "source_rect": {"x": 0, "y": 58824, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "20f": {
+      "archive": {
+        "offsets": [
+          9217, 76, 10333, 1136, 11427, 2202, 12513, 3263, 13704, 4366, 14761, 5395, 15828, 6438, 16689, 7272, 17591,
+          8143, 0
+        ]
+      },
+      "plan": {"codec": "golden-sun-general-lz", "decoded_size": 18702},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/20f/archive/offsets",
+          "size": 76
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 17, 0, 2, 4, 6, 8, 10, 12, 14, 16],
+          "palette": {
+            "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+          },
+          "size": 18626,
+          "source_rect": {"x": 0, "y": 58952, "width": 512, "height": 192},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "210": {
+      "archive": {"offsets": [5443, 52, 6336, 941, 7205, 1804, 8053, 2638, 8903, 3514, 10167, 4566, 0]},
+      "plan": {"codec": "golden-sun-general-lz", "decoded_size": 11290},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/210/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+          },
+          "size": 11238,
+          "source_rect": {"x": 0, "y": 59144, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "211": {
+      "archive": {"offsets": [6360, 52, 7450, 1031, 8557, 2042, 9672, 3067, 10829, 4258, 11883, 5247, 0]},
+      "plan": {"codec": "golden-sun-general-lz", "decoded_size": 12966},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/211/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+          },
+          "size": 12914,
+          "source_rect": {"x": 0, "y": 59272, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "212": {
+      "archive": {"offsets": [7711, 52, 8933, 1266, 10180, 2479, 11426, 3690, 12999, 5178, 14184, 6345, 0]},
+      "plan": {"codec": "golden-sun-general-lz", "decoded_size": 15530},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/212/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+          },
+          "size": 15478,
+          "source_rect": {"x": 0, "y": 59400, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "213": {
+      "archive": {"offsets": [5938, 52, 6931, 1037, 7855, 1935, 8849, 2929, 9792, 3980, 10801, 4924, 0]},
+      "plan": {"codec": "golden-sun-general-lz", "decoded_size": 11761},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/213/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+          },
+          "size": 11709,
+          "source_rect": {"x": 0, "y": 59528, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -45584,7 +45993,40 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 22351,
-          "source_rect": {"x": 0, "y": 57928, "width": 512, "height": 192},
+          "source_rect": {"x": 0, "y": 59656, "width": 512, "height": 192},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "215": {
+      "archive": {
+        "offsets": [
+          13017, 76, 14129, 1260, 15537, 2515, 17175, 4174, 18664, 5645, 20148, 7126, 21637, 8597, 23143, 10082, 24637,
+          11556, 0
+        ]
+      },
+      "plan": {"codec": "golden-sun-general-lz", "decoded_size": 26133},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/215/archive/offsets",
+          "size": 76
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 17, 0, 2, 4, 6, 8, 10, 12, 14, 16],
+          "palette": {
+            "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+          },
+          "size": 26057,
+          "source_rect": {"x": 0, "y": 59848, "width": 512, "height": 192},
           "pixel_format": "indices"
         }
       ],
@@ -45612,7 +46054,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 14103,
-          "source_rect": {"x": 0, "y": 58120, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 60040, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -45640,7 +46082,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 22205,
-          "source_rect": {"x": 0, "y": 58248, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 60168, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -45668,7 +46110,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 19725,
-          "source_rect": {"x": 0, "y": 58376, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 60296, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -45696,7 +46138,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 19970,
-          "source_rect": {"x": 0, "y": 58504, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 60424, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -45724,7 +46166,96 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 19772,
-          "source_rect": {"x": 0, "y": 58632, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 60552, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "21b": {
+      "archive": {
+        "offsets": [
+          10555, 76, 11729, 1205, 12920, 2356, 14074, 3499, 15315, 4791, 16433, 5922, 17629, 7050, 18841, 8232, 20033,
+          9403, 0
+        ]
+      },
+      "plan": {"codec": "golden-sun-general-lz", "decoded_size": 21187},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/21b/archive/offsets",
+          "size": 76
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 17, 0, 2, 4, 6, 8, 10, 12, 14, 16],
+          "palette": {
+            "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+          },
+          "size": 21111,
+          "source_rect": {"x": 0, "y": 60680, "width": 512, "height": 192},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "21c": {
+      "archive": {"offsets": [7804, 52, 9118, 1256, 10435, 2495, 11746, 3772, 13077, 5195, 14288, 6254, 0]},
+      "plan": {"codec": "golden-sun-general-lz", "decoded_size": 15840},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/21c/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+          },
+          "size": 15788,
+          "source_rect": {"x": 0, "y": 60872, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "21d": {
+      "archive": {"offsets": [5164, 52, 6051, 938, 6910, 1805, 7746, 2663, 8742, 3595, 9568, 4393, 0]},
+      "plan": {"codec": "golden-sun-general-lz", "decoded_size": 10360},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/21d/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+          },
+          "size": 10308,
+          "source_rect": {"x": 0, "y": 61000, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -45752,7 +46283,159 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 16979,
-          "source_rect": {"x": 0, "y": 58760, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 61128, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "21f": {
+      "archive": {
+        "offsets": [
+          8709, 68, 10080, 1435, 11304, 2712, 12544, 4039, 14187, 5722, 15471, 7115, 17150, 8709, 17150, 8709, 0
+        ]
+      },
+      "plan": {"codec": "golden-sun-general-lz", "decoded_size": 17150},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/21f/archive/offsets",
+          "size": 68
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+          },
+          "size": 17082,
+          "source_rect": {"x": 0, "y": 61256, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "220": {
+      "archive": {
+        "offsets": [
+          12370, 68, 13926, 1581, 15575, 3197, 17181, 4761, 18805, 6386, 20177, 7714, 21652, 9157, 23211, 10624, 0
+        ]
+      },
+      "plan": {"codec": "golden-sun-general-lz", "decoded_size": 24891},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/220/archive/offsets",
+          "size": 68
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 0, 2, 4, 6, 8, 10, 12, 14],
+          "palette": {
+            "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+          },
+          "size": 24823,
+          "source_rect": {"x": 0, "y": 61384, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "221": {
+      "archive": {"offsets": [2428, 52, 2802, 484, 3243, 832, 3665, 1241, 3998, 1652, 4390, 2057, 0]},
+      "plan": {"codec": "golden-sun-general-lz", "decoded_size": 4846},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/221/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 32,
+          "frame_height": 32,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+          },
+          "size": 4794,
+          "source_rect": {"x": 0, "y": 61512, "width": 256, "height": 64},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "222": {
+      "archive": {"offsets": [7222, 52, 8375, 1192, 9542, 2337, 10709, 3469, 11925, 4719, 13186, 6068, 0]},
+      "plan": {"codec": "golden-sun-general-lz", "decoded_size": 14379},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/222/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+          },
+          "size": 14327,
+          "source_rect": {"x": 0, "y": 61576, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "223": {
+      "archive": {
+        "offsets": [
+          4623, 76, 5181, 621, 5719, 1176, 6261, 1701, 6764, 2195, 7302, 2726, 7894, 3344, 8424, 3869, 8949, 4401, 0
+        ]
+      },
+      "plan": {"codec": "golden-sun-general-lz", "decoded_size": 9164},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/223/archive/offsets",
+          "size": 76
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 32,
+          "frame_height": 32,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 17, 0, 2, 4, 6, 8, 10, 12, 14, 16],
+          "palette": {
+            "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+          },
+          "size": 9088,
+          "source_rect": {"x": 0, "y": 61704, "width": 256, "height": 96},
           "pixel_format": "indices"
         }
       ],
@@ -45780,7 +46463,71 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 25185,
-          "source_rect": {"x": 0, "y": 58888, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 61800, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "225": {
+      "archive": {
+        "offsets": [
+          13772, 68, 15169, 1984, 16730, 3790, 18315, 5652, 20217, 7155, 21908, 8527, 23877, 10168, 25644, 11940, 0
+        ]
+      },
+      "plan": {"codec": "golden-sun-general-lz", "decoded_size": 27232},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/225/archive/offsets",
+          "size": 68
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 0, 2, 4, 6, 8, 10, 12, 14],
+          "palette": {
+            "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+          },
+          "size": 27164,
+          "source_rect": {"x": 0, "y": 61928, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "226": {
+      "archive": {
+        "offsets": [
+          12800, 68, 14731, 1415, 16345, 2795, 17990, 4188, 19655, 6093, 21193, 7963, 22723, 9831, 24480, 11325, 0
+        ]
+      },
+      "plan": {"codec": "golden-sun-general-lz", "decoded_size": 26303},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/226/archive/offsets",
+          "size": 68
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 13, 15, 0, 2, 4, 6, 8, 10, 12, 14],
+          "palette": {
+            "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+          },
+          "size": 26235,
+          "source_rect": {"x": 0, "y": 62056, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -45813,7 +46560,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 31660,
-          "source_rect": {"x": 0, "y": 59016, "width": 512, "height": 192},
+          "source_rect": {"x": 0, "y": 62184, "width": 512, "height": 192},
           "pixel_format": "indices"
         }
       ],
@@ -45841,7 +46588,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 12662,
-          "source_rect": {"x": 0, "y": 59208, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 62376, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -45869,7 +46616,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 8582,
-          "source_rect": {"x": 0, "y": 59336, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 62504, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -45897,7 +46644,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 18638,
-          "source_rect": {"x": 0, "y": 59464, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 62632, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -45925,7 +46672,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 5882,
-          "source_rect": {"x": 0, "y": 59592, "width": 256, "height": 64},
+          "source_rect": {"x": 0, "y": 62760, "width": 256, "height": 64},
           "pixel_format": "indices"
         }
       ],
@@ -45958,7 +46705,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 21122,
-          "source_rect": {"x": 0, "y": 59656, "width": 512, "height": 192},
+          "source_rect": {"x": 0, "y": 62824, "width": 512, "height": 192},
           "pixel_format": "indices"
         }
       ],
@@ -45990,7 +46737,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 30109,
-          "source_rect": {"x": 0, "y": 59848, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 63016, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -46018,7 +46765,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 12730,
-          "source_rect": {"x": 0, "y": 59976, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 63144, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -46046,7 +46793,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 5866,
-          "source_rect": {"x": 0, "y": 60104, "width": 256, "height": 64},
+          "source_rect": {"x": 0, "y": 63272, "width": 256, "height": 64},
           "pixel_format": "indices"
         }
       ],
@@ -46078,7 +46825,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 24446,
-          "source_rect": {"x": 0, "y": 60168, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 63336, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -46106,7 +46853,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 17021,
-          "source_rect": {"x": 0, "y": 60296, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 63464, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -46134,7 +46881,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 12493,
-          "source_rect": {"x": 0, "y": 60424, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 63592, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -46167,7 +46914,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 27181,
-          "source_rect": {"x": 0, "y": 60552, "width": 512, "height": 192},
+          "source_rect": {"x": 0, "y": 63720, "width": 512, "height": 192},
           "pixel_format": "indices"
         }
       ],
@@ -46199,7 +46946,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 5402,
-          "source_rect": {"x": 0, "y": 60744, "width": 256, "height": 96},
+          "source_rect": {"x": 0, "y": 63912, "width": 256, "height": 96},
           "pixel_format": "indices"
         }
       ],
@@ -46227,7 +46974,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 13397,
-          "source_rect": {"x": 0, "y": 60840, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 64008, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -46257,7 +47004,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 17766,
-          "source_rect": {"x": 0, "y": 60968, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 64136, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -46285,7 +47032,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 13688,
-          "source_rect": {"x": 0, "y": 61096, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 64264, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -46313,7 +47060,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 10256,
-          "source_rect": {"x": 0, "y": 61224, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 64392, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -46341,7 +47088,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 14603,
-          "source_rect": {"x": 0, "y": 61352, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 64520, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -46369,7 +47116,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 23134,
-          "source_rect": {"x": 0, "y": 61480, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 64648, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -46397,7 +47144,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 9438,
-          "source_rect": {"x": 0, "y": 61608, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 64776, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -46425,7 +47172,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 17336,
-          "source_rect": {"x": 0, "y": 61736, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 64904, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -46453,7 +47200,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 9705,
-          "source_rect": {"x": 0, "y": 61864, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 65032, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -46481,7 +47228,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 15361,
-          "source_rect": {"x": 0, "y": 61992, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 65160, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -46513,7 +47260,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 27511,
-          "source_rect": {"x": 0, "y": 62120, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 65288, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -46545,7 +47292,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 26965,
-          "source_rect": {"x": 0, "y": 62248, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 65416, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -46573,7 +47320,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 20702,
-          "source_rect": {"x": 0, "y": 62376, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 65544, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -46601,7 +47348,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 17417,
-          "source_rect": {"x": 0, "y": 62504, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 65672, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -46629,7 +47376,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 15960,
-          "source_rect": {"x": 0, "y": 62632, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 65800, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -46657,7 +47404,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 5907,
-          "source_rect": {"x": 0, "y": 62760, "width": 512, "height": 64},
+          "source_rect": {"x": 0, "y": 65928, "width": 512, "height": 64},
           "pixel_format": "indices"
         }
       ],
@@ -46685,7 +47432,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 6180,
-          "source_rect": {"x": 0, "y": 62824, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 65992, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -46713,7 +47460,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 5621,
-          "source_rect": {"x": 0, "y": 62952, "width": 512, "height": 64},
+          "source_rect": {"x": 0, "y": 66120, "width": 512, "height": 64},
           "pixel_format": "indices"
         }
       ],
@@ -46741,7 +47488,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 5614,
-          "source_rect": {"x": 0, "y": 63016, "width": 512, "height": 64},
+          "source_rect": {"x": 0, "y": 66184, "width": 512, "height": 64},
           "pixel_format": "indices"
         }
       ],
@@ -46769,7 +47516,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 17966,
-          "source_rect": {"x": 0, "y": 63080, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 66248, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -46797,7 +47544,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 17181,
-          "source_rect": {"x": 0, "y": 63208, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 66376, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -46830,7 +47577,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 19877,
-          "source_rect": {"x": 0, "y": 63336, "width": 512, "height": 192},
+          "source_rect": {"x": 0, "y": 66504, "width": 512, "height": 192},
           "pixel_format": "indices"
         }
       ],
@@ -46858,7 +47605,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 5942,
-          "source_rect": {"x": 0, "y": 63528, "width": 256, "height": 64},
+          "source_rect": {"x": 0, "y": 66696, "width": 256, "height": 64},
           "pixel_format": "indices"
         }
       ],
@@ -46886,7 +47633,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 4870,
-          "source_rect": {"x": 0, "y": 63592, "width": 256, "height": 64},
+          "source_rect": {"x": 0, "y": 66760, "width": 256, "height": 64},
           "pixel_format": "indices"
         }
       ],
@@ -46914,7 +47661,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 4740,
-          "source_rect": {"x": 0, "y": 63656, "width": 256, "height": 64},
+          "source_rect": {"x": 0, "y": 66824, "width": 256, "height": 64},
           "pixel_format": "indices"
         }
       ],
@@ -46942,7 +47689,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 2536,
-          "source_rect": {"x": 0, "y": 63720, "width": 256, "height": 64},
+          "source_rect": {"x": 0, "y": 66888, "width": 256, "height": 64},
           "pixel_format": "indices"
         }
       ],
@@ -46970,7 +47717,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 5105,
-          "source_rect": {"x": 0, "y": 63784, "width": 256, "height": 64},
+          "source_rect": {"x": 0, "y": 66952, "width": 256, "height": 64},
           "pixel_format": "indices"
         }
       ],
@@ -46998,7 +47745,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 4204,
-          "source_rect": {"x": 0, "y": 63848, "width": 256, "height": 64},
+          "source_rect": {"x": 0, "y": 67016, "width": 256, "height": 64},
           "pixel_format": "indices"
         }
       ],
@@ -47026,7 +47773,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 4028,
-          "source_rect": {"x": 0, "y": 63912, "width": 256, "height": 64},
+          "source_rect": {"x": 0, "y": 67080, "width": 256, "height": 64},
           "pixel_format": "indices"
         }
       ],
@@ -47054,7 +47801,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 2516,
-          "source_rect": {"x": 0, "y": 63976, "width": 256, "height": 64},
+          "source_rect": {"x": 0, "y": 67144, "width": 256, "height": 64},
           "pixel_format": "indices"
         }
       ],
@@ -47082,7 +47829,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 4739,
-          "source_rect": {"x": 0, "y": 64040, "width": 256, "height": 64},
+          "source_rect": {"x": 0, "y": 67208, "width": 256, "height": 64},
           "pixel_format": "indices"
         }
       ],
@@ -47110,7 +47857,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 4919,
-          "source_rect": {"x": 0, "y": 64104, "width": 256, "height": 64},
+          "source_rect": {"x": 0, "y": 67272, "width": 256, "height": 64},
           "pixel_format": "indices"
         }
       ],
@@ -47138,7 +47885,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 3323,
-          "source_rect": {"x": 0, "y": 64168, "width": 256, "height": 64},
+          "source_rect": {"x": 0, "y": 67336, "width": 256, "height": 64},
           "pixel_format": "indices"
         }
       ],
@@ -47166,7 +47913,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 3699,
-          "source_rect": {"x": 0, "y": 64232, "width": 256, "height": 64},
+          "source_rect": {"x": 0, "y": 67400, "width": 256, "height": 64},
           "pixel_format": "indices"
         }
       ],
@@ -47194,7 +47941,35 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 16566,
-          "source_rect": {"x": 0, "y": 64296, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 67464, "width": 512, "height": 128},
+          "pixel_format": "indices"
+        }
+      ],
+      "identity_status": "runtime character association not established"
+    },
+    "258": {
+      "archive": {"offsets": [7711, 52, 9040, 1419, 10327, 2740, 11558, 3992, 12494, 4948, 13781, 6279, 0]},
+      "plan": {"codec": "golden-sun-general-lz", "decoded_size": 15077},
+      "components": [
+        {
+          "kind": "le-u32-array",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
+          "pointer": "/archives/258/archive/offsets",
+          "size": 52
+        },
+        {
+          "kind": "zero-skip-bytes",
+          "source": "games/THE LOST AGE/SRC/GRAPHICS/CHARACTER/CHAR_COMMON.PNG",
+          "frame_width": 64,
+          "frame_height": 64,
+          "columns": 8,
+          "frame_order": [1, 3, 5, 7, 9, 11, 0, 2, 4, 6, 8, 10],
+          "palette": {
+            "source": "games/THE LOST AGE/SRC/GRAPHICS/COMMON/PALETTE.JSON",
+            "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+          },
+          "size": 15025,
+          "source_rect": {"x": 0, "y": 67592, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -47226,7 +48001,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 30428,
-          "source_rect": {"x": 0, "y": 64424, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 67720, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -47258,7 +48033,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 8579,
-          "source_rect": {"x": 0, "y": 64552, "width": 256, "height": 96},
+          "source_rect": {"x": 0, "y": 67848, "width": 256, "height": 96},
           "pixel_format": "indices"
         }
       ],
@@ -47286,7 +48061,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 15113,
-          "source_rect": {"x": 0, "y": 64648, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 67944, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -47314,7 +48089,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 5909,
-          "source_rect": {"x": 0, "y": 64776, "width": 256, "height": 64},
+          "source_rect": {"x": 0, "y": 68072, "width": 256, "height": 64},
           "pixel_format": "indices"
         }
       ],
@@ -47346,7 +48121,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 29644,
-          "source_rect": {"x": 0, "y": 64840, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 68136, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -47374,7 +48149,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 15693,
-          "source_rect": {"x": 0, "y": 64968, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 68264, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -47402,7 +48177,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 10726,
-          "source_rect": {"x": 0, "y": 65096, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 68392, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -47430,7 +48205,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 20309,
-          "source_rect": {"x": 0, "y": 65224, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 68520, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -47458,7 +48233,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 6659,
-          "source_rect": {"x": 0, "y": 65352, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 68648, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -47486,7 +48261,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 18214,
-          "source_rect": {"x": 0, "y": 65480, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 68776, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -47518,7 +48293,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 25729,
-          "source_rect": {"x": 0, "y": 65608, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 68904, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -47550,7 +48325,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 23470,
-          "source_rect": {"x": 0, "y": 65736, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 69032, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -47583,7 +48358,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 23522,
-          "source_rect": {"x": 0, "y": 65864, "width": 512, "height": 192},
+          "source_rect": {"x": 0, "y": 69160, "width": 512, "height": 192},
           "pixel_format": "indices"
         }
       ],
@@ -47616,7 +48391,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 21534,
-          "source_rect": {"x": 0, "y": 66056, "width": 512, "height": 192},
+          "source_rect": {"x": 0, "y": 69352, "width": 512, "height": 192},
           "pixel_format": "indices"
         }
       ],
@@ -47644,7 +48419,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 18148,
-          "source_rect": {"x": 0, "y": 66248, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 69544, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -47676,7 +48451,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 30701,
-          "source_rect": {"x": 0, "y": 66376, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 69672, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -47708,7 +48483,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 32681,
-          "source_rect": {"x": 0, "y": 66504, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 69800, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -47736,7 +48511,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 15061,
-          "source_rect": {"x": 0, "y": 66632, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 69928, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],
@@ -47764,7 +48539,7 @@
             "banks": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
           },
           "size": 11927,
-          "source_rect": {"x": 0, "y": 66760, "width": 512, "height": 128},
+          "source_rect": {"x": 0, "y": 70056, "width": 512, "height": 128},
           "pixel_format": "indices"
         }
       ],

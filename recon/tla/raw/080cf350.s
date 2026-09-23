@@ -1713,3 +1713,5 @@ Func_080cf350:
 	mov	sl, r6
 	mov	fp, r7
 	pop	{r5, r6, r7, pc}
+	.4byte 0xffff0000
+	.4byte 0x030002d4

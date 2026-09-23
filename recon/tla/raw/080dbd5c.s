@@ -64,4 +64,4 @@ Func_080dbd5c:
 	bl	sub_080dbb78
 	ldrb	r0, [r0, #2]
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

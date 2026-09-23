@@ -408,4 +408,7 @@ Func_081a7518:
 	pop	{r5, r6, pc}
 	.4byte 0x0300122c
 	.4byte 0x06004100
-	.4byte 0x03001150
+	.2byte 0x1150
+	.2byte 0x0300
+	bx	lr
+	.2byte 0x0000

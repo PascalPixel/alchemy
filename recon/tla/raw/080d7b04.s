@@ -284,4 +284,19 @@ Func_080d7b04:
 	.4byte 0x0020118c
 	.4byte 0x080d7af9
 	.4byte 0x080d7b05
-	.4byte 0x02000240
+	.2byte 0x0240
+	.2byte 0x0200
+	ldr	r3, [pc, #20]
+	ldr	r1, [pc, #24]
+	ldr	r3, [r3, #0]
+	movs	r2, #1
+	lsrs	r3, r3, #2
+	ands	r3, r2
+	lsls	r3, r3, #2
+	ldr	r3, [r3, r1]
+	str	r3, [r0, #24]
+	str	r3, [r0, #28]
+	bx	lr
+	movs	r0, r0
+	.4byte 0x03001100
+	.4byte 0x080f0bfc

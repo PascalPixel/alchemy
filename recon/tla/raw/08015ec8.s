@@ -37,4 +37,4 @@ Func_08015ec8:
 	cmp	r1, r4
 	bls.n	.L_08015ee0
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

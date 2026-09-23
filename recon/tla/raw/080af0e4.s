@@ -56,4 +56,4 @@ Func_080af0e4:
 	bl	sub_080ad3f8
 	movs	r0, #2
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

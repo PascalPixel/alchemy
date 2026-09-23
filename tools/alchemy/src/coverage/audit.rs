@@ -1282,9 +1282,7 @@ mod tests {
     fn the_inventory_needs_verified_overlays_and_a_proven_main_image() {
         use super::verification::{overlay_digest, record_path, tests as record};
         let root = tempfile::tempdir().unwrap();
-        // The Lost Age as it will be once its full ROM build is supported.
-        let lost_age = crate::targets::target_for(crate::targets::DecompTargetId::TlaEn);
-        let target = fully_buildable(lost_age);
+        let target = crate::targets::target_for(crate::targets::DecompTargetId::TlaEn);
         let mut document = record::document();
         document["rom_sha256"] = json!("00");
         document["main"] = candidate(json!({}))["main"].clone();
@@ -1347,13 +1345,22 @@ mod tests {
         assert_eq!(complete["verification"]["main"]["state"], "proven");
         assert_eq!(complete["total_union_bytes"], 28);
 
-        // The Lost Age has no supported full ROM build yet: the same files
-        // leave its inventory pending.
-        let (pending, reasons) = gated_inventory(root.path(), lost_age, &document).unwrap();
+        // A failed rebuild withdraws the proof, and with it the main image.
+        crate::coverage::proof::withdraw_full_build(root.path(), target).unwrap();
+        let (pending, reasons) = gated_inventory(root.path(), target, &document).unwrap();
         assert_eq!(pending["state"], "pending");
+        assert_eq!(reasons.len(), 1, "{reasons:?}");
         assert!(
-            reasons[0].contains("no supported full ROM build"),
+            reasons[0].contains("cannot read out/tla-en/full/rebuilt.json"),
             "{reasons:?}"
+        );
+        crate::coverage::proof::full_build_fixture(
+            root.path(),
+            target,
+            &json!({"regions": [
+                {"address": 0x080000c0, "size": 0x40},
+                {"address": 0x08000104, "size": 0x0100_0000 - 0x104}
+            ]}),
         );
 
         // Any change to the method's output returns the overlays to pending.
@@ -1525,9 +1532,7 @@ mod tests {
     #[test]
     fn generated_inventory_is_what_scoring_validates() {
         let root = tempfile::tempdir().unwrap();
-        let target = fully_buildable(crate::targets::target_for(
-            crate::targets::DecompTargetId::TlaEn,
-        ));
+        let target = crate::targets::target_for(crate::targets::DecompTargetId::TlaEn);
         let (_, complete) = authoritative_fixture(
             root.path(),
             target,
@@ -1555,9 +1560,7 @@ mod tests {
     fn a_failed_inventory_run_withdraws_an_authoritative_inventory() {
         use super::verification::record_path;
         let root = tempfile::tempdir().unwrap();
-        let target = fully_buildable(crate::targets::target_for(
-            crate::targets::DecompTargetId::TlaEn,
-        ));
+        let target = crate::targets::target_for(crate::targets::DecompTargetId::TlaEn);
         let establish = || {
             authoritative_fixture(
                 root.path(),
@@ -1730,22 +1733,22 @@ mod tests {
         }
     }
 
-    /// A game without a supported full ROM build proves no main image,
+    /// An edition without a supported full ROM build proves no main image,
     /// whatever files claim one.
     #[test]
     fn an_unsupported_full_build_proves_no_main_image() {
         let root = tempfile::tempdir().unwrap();
-        let lost_age = crate::targets::target_for(crate::targets::DecompTargetId::TlaEn);
-        assert_ne!(lost_age.build_support, crate::targets::BuildSupport::Full);
+        let edition = crate::targets::target_for(crate::targets::DecompTargetId::TlaJa);
+        assert_ne!(edition.build_support, crate::targets::BuildSupport::Full);
         let mut document = candidate(json!({}));
-        document["main"]["asset_manifest"] = json!("out/tla-en/full/assets/manifest.json");
+        document["main"]["asset_manifest"] = json!("out/tla-ja/full/assets/manifest.json");
         document["rom_sha256"] = json!(crate::coverage::proof::full_build_fixture(
             root.path(),
-            fully_buildable(lost_age),
+            fully_buildable(edition),
             &json!({"regions": [{"address": 0x08000104, "size": 0xff_fefc}]}),
         ));
-        main_image_proof(root.path(), fully_buildable(lost_age), &document).unwrap();
-        let error = main_image_proof(root.path(), lost_age, &document).unwrap_err();
+        main_image_proof(root.path(), fully_buildable(edition), &document).unwrap();
+        let error = main_image_proof(root.path(), edition, &document).unwrap_err();
         assert!(error.contains("no supported full ROM build"), "{error}");
     }
 

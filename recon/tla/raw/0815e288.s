@@ -59,4 +59,23 @@ Func_0815e288:
 	mov	sl, r6
 	pop	{r5, r6, pc}
 	movs	r0, r0
-	.4byte 0x0300021c
+	.2byte 0x021c
+	.2byte 0x0300
+	push	{lr}
+	movs	r3, #192
+	lsls	r3, r3, #18
+	ldr	r3, [r3, #92]
+	movs	r2, #240
+	lsls	r2, r2, #7
+	adds	r2, #240
+	adds	r3, r3, r2
+	ldr	r3, [r3, #0]
+	movs	r2, #36
+	ldrsh	r3, [r3, r2]
+	cmp	r3, #127
+	ble.n	.L_0815e31a
+	ldr	r3, [pc, #4]
+	ldr	r3, [r3, #0]
+.L_0815e31a:
+	pop	{pc}
+	.4byte 0x03001150

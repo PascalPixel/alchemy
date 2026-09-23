@@ -98,4 +98,4 @@ Func_0811b6a4:
 	str	r0, [r5, #80]
 .L_0811b758:
 	pop	{r5, r6, pc}
-	.align 2, 0
+	.2byte 0x0000

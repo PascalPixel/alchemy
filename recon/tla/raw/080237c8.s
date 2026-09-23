@@ -29,4 +29,4 @@ Func_080237c8:
 	bl	sub_08022f24
 .L_080237f4:
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

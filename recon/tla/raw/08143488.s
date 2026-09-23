@@ -43,4 +43,4 @@ Func_08143488:
 	str	r3, [r5, #0]
 .L_081434d4:
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

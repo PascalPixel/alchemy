@@ -33,4 +33,4 @@ Func_080d333c:
 	subs	r3, r7, r3
 	str	r3, [r6, #52]
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

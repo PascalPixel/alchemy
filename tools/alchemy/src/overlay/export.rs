@@ -73,7 +73,7 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
         }
         return Ok(0);
     }
-    let general = crate::build_assets::target_general_lz(root, &options.target)?;
+    let machine = crate::build_assets::target_lz_machine(root, &options.target)?;
     let names = if options.all {
         rom.overlay_resources(options.target.overlay_entry_veneers)
             .into_iter()
@@ -97,14 +97,14 @@ pub fn run(root: &Path, argv: &[String]) -> Result<i32, String> {
             let results = &results;
             let names = &names;
             let rom = &rom;
-            let general = &general;
+            let machine = &machine;
             scope.spawn(move || loop {
                 let index = next.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
                 let Some(name) = names.get(index) else { break };
                 results
                     .lock()
                     .unwrap()
-                    .push((index, export(root, rom, options.target, general, name)));
+                    .push((index, export(root, rom, options.target, machine, name)));
             });
         }
     });
@@ -157,7 +157,7 @@ fn export(
     root: &Path,
     rom: &CanonicalRom,
     target: DecompTarget,
-    general: &crate::build_assets::GeneralLz,
+    machine: &crate::build_assets::LzMachine,
     name: &str,
 ) -> Result<Exported, String> {
     let stream = rom.stream(resource_id(name)?)?;
@@ -169,7 +169,7 @@ fn export(
         ));
     }
     let compressed = &rom.bytes()[stream.start..stream.end];
-    verify_compression(&stream.decoded, compressed, general)?;
+    verify_compression(&stream.decoded, compressed, machine)?;
     let lookahead = compressed.len() - stream.encoded()?.len();
 
     let veneer_macro = target.overlay_macro();
@@ -221,9 +221,9 @@ fn export(
 fn verify_compression(
     decoded: &[u8],
     expected: &[u8],
-    general: &crate::build_assets::GeneralLz,
+    machine: &crate::build_assets::LzMachine,
 ) -> Result<(), String> {
-    if crate::build_assets::encode_overlay_stream(decoded, general)? != expected {
+    if crate::build_assets::encode_overlay_stream(decoded, machine)? != expected {
         return Err("automatic overlay compression or packing differs; export refuses a saved-answer exception".into());
     }
     Ok(())
@@ -257,15 +257,15 @@ mod tests {
     #[test]
     fn automatic_export_refuses_padding_and_changed_bytes() {
         let decoded = b"ABABABAB";
-        let general = crate::build_assets::GeneralLz::synthetic(64, 8, 72);
-        let compressed = crate::build_assets::encode_overlay_stream(decoded, &general).unwrap();
-        verify_compression(decoded, &compressed, &general).unwrap();
+        let machine = crate::build_assets::LzMachine::synthetic(64, 8, 72);
+        let compressed = crate::build_assets::encode_overlay_stream(decoded, &machine).unwrap();
+        verify_compression(decoded, &compressed, &machine).unwrap();
         let mut padded = compressed.clone();
         padded.push(0);
-        assert!(verify_compression(decoded, &padded, &general).is_err());
+        assert!(verify_compression(decoded, &padded, &machine).is_err());
         let mut changed = compressed;
         changed[0] ^= 1;
-        assert!(verify_compression(decoded, &changed, &general).is_err());
+        assert!(verify_compression(decoded, &changed, &machine).is_err());
     }
 
     #[test]

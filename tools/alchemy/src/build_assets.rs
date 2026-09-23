@@ -1,7 +1,7 @@
 //! Native entry point for the asset build stage.
 mod compression_plan;
 mod derive_index;
-pub(crate) use compression_plan::GeneralLz;
+pub(crate) use compression_plan::LzMachine;
 pub(crate) use derive_index::{live_scene, network::live_family, tagged_extent};
 mod gba_header;
 mod native;
@@ -2997,19 +2997,20 @@ fn select_plan<'a>(document: &'a Value, entry: &Value) -> Result<&'a Value, Stri
     }
 }
 /// Encode one stream from its plan. `arena` holds the bytes that precede the
-/// stream in its container for codecs whose copies read from them; `general`
-/// is the target machine's general-LZ compressor, which general LZ requires.
+/// stream in its container for codecs whose copies read from them; `machine`
+/// holds the target machine's LZSS compressors, which general and palette LZ
+/// require.
 fn encode_lz_stream(
     decoded: &[u8],
     plan: &Value,
     arena: &[u8],
-    general: Option<&GeneralLz>,
+    machine: Option<&LzMachine>,
 ) -> Result<Vec<u8>, String> {
     let codec = json_string(&plan["codec"], "codec")?;
     if codec == "golden-sun-overlay-lz" {
         return encode_overlay_stream(
             decoded,
-            general.ok_or("overlay compression needs the target's reference machine definition")?,
+            machine.ok_or("overlay compression needs the target's reference machine definition")?,
         );
     }
     if decoded.len() != number(&plan["decoded_size"], "decoded_size")? {
@@ -3023,7 +3024,7 @@ fn encode_lz_stream(
         }
         let built = encode_overlay_stream(
             decoded,
-            general.ok_or("tagged compression needs the target's reference machine definition")?,
+            machine.ok_or("tagged compression needs the target's reference machine definition")?,
         )?;
         check_stored_extent(plan, built.len())?;
         return Ok(built);
@@ -3036,7 +3037,7 @@ fn encode_lz_stream(
     }
     let mut expanded = plan.clone();
     if !arena_codec {
-        expanded["tokens"] = compression_plan::materialize(decoded, plan, general)?;
+        expanded["tokens"] = compression_plan::materialize(decoded, plan, machine)?;
     }
     let plan = &expanded;
     let mut built = match codec {
@@ -3118,7 +3119,7 @@ fn stored_extents_leave_alignment_to_the_writer_and_refuse_recorded_bytes() {
 /// Legacy sidecars are explicit exceptions; this path consumes no saved choices.
 pub(crate) fn encode_overlay_stream(
     decoded: &[u8],
-    general: &GeneralLz,
+    machine: &LzMachine,
 ) -> Result<Vec<u8>, String> {
     let general = encode_lz_stream(
         decoded,
@@ -3126,7 +3127,7 @@ pub(crate) fn encode_overlay_stream(
             "codec":"golden-sun-general-lz", "decoded_size":decoded.len()
         }),
         &[],
-        Some(general),
+        Some(machine),
     )?;
     let palette = encode_lz_stream(
         decoded,
@@ -3134,7 +3135,7 @@ pub(crate) fn encode_overlay_stream(
             "codec":"golden-sun-tagged-palette-lz", "decoded_size":decoded.len(), "tag":1
         }),
         &[],
-        None,
+        Some(machine),
     )?;
     Ok(if palette.len() <= general.len() {
         palette
@@ -3164,15 +3165,15 @@ pub(crate) fn declared_ranges(root: &Path, manifest: &str) -> Result<Vec<(usize,
         })
         .collect()
 }
-/// The general-LZ compressor of the reference machine that `target`'s asset
+/// The LZSS compressors of the reference machine that `target`'s asset
 /// manifest names.
-pub(crate) fn target_general_lz(
+pub(crate) fn target_lz_machine(
     root: &Path,
     target: &crate::targets::DecompTarget,
-) -> Result<GeneralLz, String> {
+) -> Result<LzMachine, String> {
     let manifest = json(&root.join(target.asset_manifest))?;
     let name = json_string(&manifest["machine"], "reference machine definition")?;
-    GeneralLz::of(&json(&root_path(root, name)?)?).map_err(|error| format!("{name}: {error}"))
+    LzMachine::of(&json(&root_path(root, name)?)?).map_err(|error| format!("{name}: {error}"))
 }
 /// Build an LZ entry: its components are concatenated and encoded with the
 /// selected plan. A plan array describes a sequence of streams: stream `i`
@@ -3264,7 +3265,7 @@ fn build_general_lz_cached(
             .get("tokens")
             .and_then(Value::as_array)
             .map_or(0, Vec::len);
-        let mut stream = encode_lz_stream(&decoded, plan, &built, ctx.general_lz.as_ref())?;
+        let mut stream = encode_lz_stream(&decoded, plan, &built, ctx.lz_machine.as_ref())?;
         stream.resize(stream.len().div_ceil(alignment) * alignment, 0);
         built.extend(stream);
     }
@@ -3321,9 +3322,9 @@ struct Context {
     /// typed tables point at, and its retained listings hold the overlays
     /// an overlay series names.
     game: crate::targets::DecompTarget,
-    /// The general-LZ compressor of the reference machine the build's
-    /// manifest names; general-LZ streams cannot be encoded without it.
-    general_lz: Option<GeneralLz>,
+    /// The LZSS compressors of the reference machine the build's manifest
+    /// names; general- and palette-LZ streams cannot be encoded without them.
+    lz_machine: Option<LzMachine>,
     documents: std::cell::RefCell<HashMap<PathBuf, std::rc::Rc<Value>>>,
     images:
         std::cell::RefCell<HashMap<PathBuf, std::rc::Rc<psynergy::assets::image::IndexedImage>>>,
@@ -3343,7 +3344,7 @@ impl Context {
         Self {
             root: root.to_path_buf(),
             game,
-            general_lz: None,
+            lz_machine: None,
             documents: Default::default(),
             images: Default::default(),
             opened: Default::default(),
@@ -6784,8 +6785,8 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
     let mut ctx = Context::for_game(&root, crate::targets::target_for(options.target));
     if let Some(name) = manifest.get("machine") {
         let name = json_string(name, "reference machine definition")?;
-        ctx.general_lz = Some(
-            GeneralLz::of(&json(&ctx.source(name)?)?)
+        ctx.lz_machine = Some(
+            LzMachine::of(&json(&ctx.source(name)?)?)
                 .map_err(|error| format!("{name}: {error}"))?,
         );
     }

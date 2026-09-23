@@ -13,6 +13,9 @@
 	.set sub_08014878, 0x08014878
 	.set sub_08014de4, 0x08014de4
 	.set sub_080156e8, 0x080156e8
+	.set sub_08020090, 0x08020090
+	.set sub_08020138, 0x08020138
+	.set sub_08020148, 0x08020148
 	.set sub_08118070, 0x08118070
 	.set sub_08118088, 0x08118088
 	.set sub_08118098, 0x08118098
@@ -2550,4 +2553,41 @@ Func_08156140:
 	.4byte 0x08197498
 	.4byte 0x0819850a
 	.4byte 0x08197486
-	.4byte 0x08143001
+	.2byte 0x3001
+	.2byte 0x0814
+	push	{r5, r6, lr}
+	bl	sub_08118098
+	adds	r6, r0, #0
+	ldr	r5, [r6, #0]
+	movs	r3, #128
+	lsls	r3, r3, #10
+	str	r3, [r5, #52]
+	movs	r3, #128
+	lsls	r3, r3, #12
+	str	r3, [r5, #48]
+	movs	r3, #128
+	lsls	r3, r3, #11
+	str	r3, [r5, #40]
+	movs	r3, #171
+	lsls	r3, r3, #8
+	adds	r3, #133
+	adds	r2, r5, #0
+	str	r3, [r5, #72]
+	adds	r2, #90
+	movs	r3, #0
+	str	r3, [r5, #68]
+	strb	r3, [r2, #0]
+	subs	r2, #2
+	movs	r3, #1
+	strb	r3, [r2, #0]
+	adds	r0, r5, #0
+	bl	sub_08020138
+	ldr	r1, [r6, #12]
+	adds	r0, r5, #0
+	ldr	r3, [r6, #16]
+	movs	r2, #0
+	bl	sub_08020148
+	adds	r0, r5, #0
+	movs	r1, #1
+	bl	sub_08020090
+	pop	{r5, r6, pc}

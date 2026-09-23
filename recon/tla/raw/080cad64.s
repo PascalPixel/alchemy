@@ -19,4 +19,4 @@ Func_080cad64:
 	cmp	r2, #0
 	bge.n	.L_080cad76
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

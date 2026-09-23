@@ -569,4 +569,4 @@ Func_0810a2c8:
 	movs	r0, #0
 .L_0810a75c:
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

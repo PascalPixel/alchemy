@@ -199,4 +199,7 @@ Func_0803d9bc:
 	mov	r8, r3
 	pop	{r5, r6, r7, pc}
 	.4byte 0x000001d6
-	.4byte 0x05000200
+	.2byte 0x0200
+	.2byte 0x0500
+	bx	lr
+	.2byte 0x0000

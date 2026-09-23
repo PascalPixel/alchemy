@@ -60,4 +60,4 @@ Func_080b0f9c:
 	adds	r0, r5, #0
 	add	sp, #36
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

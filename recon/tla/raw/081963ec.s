@@ -1,6 +1,8 @@
 .syntax unified
 	.thumb
+	.set sub_08013164, 0x08013164
 	.set sub_08014cc0, 0x08014cc0
+	.set sub_08014d78, 0x08014d78
 	.global Func_081963ec
 	.thumb_func
 Func_081963ec:
@@ -683,4 +685,39 @@ Func_081963ec:
 	.4byte 0x08197268
 	.4byte 0x08197230
 	.4byte 0x00ffffff
-	.4byte 0x081973f0
+	.2byte 0x73f0
+	.2byte 0x0819
+	push	{r5, r6, lr}
+	mov	r6, sl
+	mov	r5, r8
+	push	{r5, r6}
+	mov	r8, r0
+	mov	sl, r1
+	ldr	r5, [pc, #52]
+	adds	r0, r5, #0
+	bl	sub_08014d78
+	movs	r2, #132
+	movs	r3, #128
+	adds	r6, r0, #0
+	lsrs	r5, r5, #2
+	lsls	r2, r2, #24
+	lsls	r3, r3, #19
+	adds	r3, #212
+	ldr	r0, [pc, #36]
+	adds	r1, r6, #0
+	orrs	r2, r5
+	stmia	r3!, {r0, r1, r2}
+	subs	r3, #12
+	mov	r0, r8
+	mov	r1, sl
+	mov	lr, r6
+	.2byte 0xf800
+	.2byte 0x1c30
+	bl	sub_08013164
+	pop	{r3, r5}
+	mov	r8, r3
+	mov	sl, r5
+	pop	{r5, r6, pc}
+	movs	r0, r0
+	.4byte 0x000003cc
+	.4byte 0x081380ac

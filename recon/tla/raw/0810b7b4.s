@@ -840,4 +840,4 @@ Func_0810b7b4:
 	.2byte 0x0810
 .L_0810be38:
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

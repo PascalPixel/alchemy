@@ -45,4 +45,4 @@ Func_0801336c:
 	.2byte 0x30cc
 	.2byte 0x0801
 	bx	lr
-	.align 2, 0
+	.2byte 0x0000

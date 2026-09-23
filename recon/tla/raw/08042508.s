@@ -63,4 +63,4 @@ Func_08042508:
 	strh	r3, [r0, #12]
 .L_08042578:
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

@@ -1181,3 +1181,4 @@ Func_0804cb92:
 	mov	r9, r5
 	mov	sl, r6
 	pop	{r5, r6, r7, pc}
+	.2byte 0x0000

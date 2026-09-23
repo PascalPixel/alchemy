@@ -2127,4 +2127,4 @@ Func_080e3698:
 	str	r3, [r7, #24]
 	add	sp, #12
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

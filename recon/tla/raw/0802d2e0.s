@@ -80,4 +80,4 @@ Func_0802d2e0:
 	adds	r0, r4, r0
 .L_0802d36c:
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

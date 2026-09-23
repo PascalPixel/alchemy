@@ -323,4 +323,29 @@ Func_08013f80:
 	pop	{r5, r6, r7, pc}
 	movs	r0, r0
 	.4byte 0x02003410
-	.4byte 0x020036e0
+	.2byte 0x36e0
+	.2byte 0x0200
+	push	{lr}
+	ldr	r4, [pc, #36]
+	movs	r2, #128
+	movs	r1, #0
+	movs	r0, #0
+	lsls	r2, r2, #2
+.L_08014200:
+	ldrb	r3, [r4, #0]
+	adds	r4, #1
+	cmp	r3, #255
+	beq.n	.L_0801420c
+	movs	r1, #0
+	b.n	.L_08014214
+.L_0801420c:
+	adds	r1, #1
+	cmp	r0, r1
+	bge.n	.L_08014214
+	adds	r0, r1, #0
+.L_08014214:
+	subs	r2, #1
+	cmp	r2, #0
+	bne.n	.L_08014200
+	pop	{pc}
+	.4byte 0x02003410

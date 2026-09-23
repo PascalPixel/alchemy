@@ -8,4 +8,4 @@ Func_0811a484:
 	bl	sub_0811be3c
 	ldr	r0, [r0, #20]
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

@@ -506,4 +506,4 @@ Func_0811f088:
 	.2byte 0x0000
 .L_0811f440:
 	pop	{r5, r6, pc}
-	.align 2, 0
+	.2byte 0x0000

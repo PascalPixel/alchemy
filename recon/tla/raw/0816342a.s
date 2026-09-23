@@ -610,3 +610,9 @@ Func_0816342a:
 	mov	sl, r6
 	mov	fp, r7
 	pop	{r5, r6, r7, pc}
+	movs	r0, r0
+	.4byte 0x03000258
+	.4byte 0x06004000
+	.4byte 0x08143489
+	.4byte 0x08143001
+	.4byte 0x08152475

@@ -44,4 +44,4 @@ Func_080d452c:
 	adds	r0, r0, r3
 	ldr	r0, [r0, #0]
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

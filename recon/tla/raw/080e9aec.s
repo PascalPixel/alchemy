@@ -513,4 +513,4 @@ Func_080e9aec:
 	adds	r3, #1
 	strh	r3, [r0, #0]
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

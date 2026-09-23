@@ -344,4 +344,4 @@ Func_0803ef48:
 	mov	r8, r3
 	mov	sl, r5
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

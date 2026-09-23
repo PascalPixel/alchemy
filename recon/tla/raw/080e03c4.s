@@ -48,6 +48,7 @@
 	.set sub_080dc294, 0x080dc294
 	.set sub_080dc384, 0x080dc384
 	.set sub_080dc390, 0x080dc390
+	.set sub_080e1f2c, 0x080e1f2c
 	.set sub_080eaf98, 0x080eaf98
 	.set sub_080eb01c, 0x080eb01c
 	.set sub_080eb298, 0x080eb298
@@ -3401,4 +3402,8 @@ Func_080e03c4:
 	pop	{r5, r6, r7, pc}
 	.4byte 0xfffffc00
 	.4byte 0x080eda0c
-	.4byte 0xffdc0000
+	.2byte 0x0000
+	.2byte 0xffdc
+	.2byte 0xb500
+	bl	sub_080e1f2c
+	pop	{pc}

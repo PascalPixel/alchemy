@@ -213,4 +213,4 @@ Func_0803c274:
 	strh	r7, [r6, r3]
 .L_0803c408:
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

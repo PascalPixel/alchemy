@@ -64,4 +64,4 @@ Func_0814355c:
 	.2byte 0x0000
 .L_081435dc:
 	bx	lr
-	.align 2, 0
+	.2byte 0x0000

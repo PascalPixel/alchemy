@@ -238,6 +238,90 @@
         "proof": "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC",
         "source": "games/THE LOST AGE/SRC/FIELD/DERI_HEYA/IMPORT.INC"
       }
+    },
+    {
+      "overlay": "resource_64d",
+      "start": "0x02000510",
+      "end": "0x02001a2c",
+      "kind": "unclassified_retained_module",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "Complete 5404-byte owner declared in recon/tla/translation-units.json (recon/tla/en/overlays/resource_64d_c_02000510.c is a complete nonexact draft); its bytes stay retained overlay assembly from the byte-identical overlay export.",
+        "Retained, uncredited code eligible for ordinary C recovery; this record supplies no handwritten-assembly or compiler-impossibility credit."
+      ]
+    },
+    {
+      "overlay": "resource_64d",
+      "start": "0x020026f4",
+      "end": "0x020027b0",
+      "kind": "unclassified_retained_module",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "Complete 188-byte owner declared in recon/tla/translation-units.json (declared nonexact candidate unit); its bytes stay retained overlay assembly from the byte-identical overlay export.",
+        "Retained, uncredited code eligible for ordinary C recovery; this record supplies no handwritten-assembly or compiler-impossibility credit."
+      ]
+    },
+    {
+      "overlay": "resource_64e",
+      "start": "0x02000314",
+      "end": "0x0200034c",
+      "kind": "unclassified_retained_module",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "Complete 56-byte owner declared in recon/tla/translation-units.json (tla-staged-actor retained member); its bytes stay retained overlay assembly from the byte-identical overlay export.",
+        "Retained, uncredited code eligible for ordinary C recovery; this record supplies no handwritten-assembly or compiler-impossibility credit."
+      ]
+    },
+    {
+      "overlay": "resource_64e",
+      "start": "0x0200034c",
+      "end": "0x0200038c",
+      "kind": "unclassified_retained_module",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "Complete 64-byte owner declared in recon/tla/translation-units.json (tla-staged-actor retained member); its bytes stay retained overlay assembly from the byte-identical overlay export.",
+        "Retained, uncredited code eligible for ordinary C recovery; this record supplies no handwritten-assembly or compiler-impossibility credit."
+      ]
+    },
+    {
+      "overlay": "resource_64e",
+      "start": "0x0200038c",
+      "end": "0x02000510",
+      "kind": "unclassified_retained_module",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "Complete 388-byte owner declared in recon/tla/translation-units.json (tla-staged-actor retained member); its bytes stay retained overlay assembly from the byte-identical overlay export.",
+        "Retained, uncredited code eligible for ordinary C recovery; this record supplies no handwritten-assembly or compiler-impossibility credit."
+      ]
+    },
+    {
+      "overlay": "resource_64e",
+      "start": "0x02000510",
+      "end": "0x0200056c",
+      "kind": "unclassified_retained_module",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "Complete 92-byte owner declared in recon/tla/translation-units.json (tla-staged-actor retained member); its bytes stay retained overlay assembly from the byte-identical overlay export.",
+        "Retained, uncredited code eligible for ordinary C recovery; this record supplies no handwritten-assembly or compiler-impossibility credit."
+      ]
+    },
+    {
+      "overlay": "resource_650",
+      "start": "0x02000d14",
+      "end": "0x0200153c",
+      "kind": "unclassified_retained_module",
+      "retention": "keep_structured_asm",
+      "confidence": "strong",
+      "evidence": [
+        "Complete 2088-byte owner declared in recon/tla/translation-units.json (tla-idejima-actor-sequence retained member); its bytes stay retained overlay assembly from the byte-identical overlay export.",
+        "Retained, uncredited code eligible for ordinary C recovery; this record supplies no handwritten-assembly or compiler-impossibility credit."
+      ]
     }
   ]
 }

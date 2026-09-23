@@ -259,4 +259,4 @@ Func_081195d4:
 	bl	sub_08138050
 	add	sp, #88
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

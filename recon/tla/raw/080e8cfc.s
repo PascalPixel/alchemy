@@ -72,4 +72,4 @@ Func_080e8cfc:
 .L_080e8d7a:
 	add	sp, #8
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

@@ -92,4 +92,4 @@ Func_0803eb2c:
 	bl	sub_08013560
 .L_0803ebd8:
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

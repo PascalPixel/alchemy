@@ -2329,4 +2329,4 @@ Func_081a6030:
 	.2byte 0x0300
 .L_081a7298:
 	pop	{r5, r6, pc}
-	.align 2, 0
+	.2byte 0x0000

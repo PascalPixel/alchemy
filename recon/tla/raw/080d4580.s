@@ -32,3 +32,19 @@ Func_080d4580:
 	str	r3, [r5, #16]
 .L_080d45b6:
 	pop	{r5, r6, r7, pc}
+	movs	r4, #192
+	lsls	r4, r4, #18
+	ldr	r4, [r4, #32]
+	mov	ip, r4
+	adds	r4, #236
+	str	r0, [r4, #0]
+	mov	r0, ip
+	adds	r0, #240
+	str	r1, [r0, #0]
+	mov	r1, ip
+	adds	r1, #244
+	str	r2, [r1, #0]
+	mov	r2, ip
+	adds	r2, #248
+	str	r3, [r2, #0]
+	bx	lr

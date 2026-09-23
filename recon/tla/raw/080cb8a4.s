@@ -37,4 +37,4 @@ Func_080cb8a4:
 	bl	sub_08020270
 .L_080cb8e4:
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

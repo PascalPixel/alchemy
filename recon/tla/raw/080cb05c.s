@@ -36,4 +36,4 @@ Func_080cb05c:
 .L_080cb096:
 	strb	r3, [r2, #0]
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

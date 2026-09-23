@@ -6,10 +6,10 @@ In Golden Sun, lighting the four Elemental Lighthouses releases Alchemy upon the
 
 The two games share much of the same code, so Alchemy recovers them side by side.
 
-## Status: ☀️ 55.87% · ⚓️ pending
+## Status: ☀️ 55.87% · ⚓️ 2.14%
 
-⚓️ stays pending until a full build of The Lost Age reproduces its ROM byte for
-byte, which proves its executable inventory.
+Each game scores only from a full build that reproduces its ROM byte for byte,
+which proves its executable inventory.
 
 <img src="PROGRESS.svg" width="830" alt="Alchemy repository files sized by bytes on disk">
 
@@ -18,8 +18,9 @@ assembly, divided by each game's audited executable bytes. ☀️ is The Broken
 Seal; ⚓️ is The Lost Age. Shared code counts in each game only where it has
 been verified for that game. Assets appear in the viewer but do not raise DONE.
 
-The Broken Seal's English ROM rebuilds byte for byte. The Lost Age's recovered
-functions are checked individually; it does not yet have a complete ROM build.
+The Broken Seal's English ROM rebuilds byte for byte. The Lost Age's English
+ROM has a full build too, but it does not yet reproduce every byte; its
+recovered functions are checked individually.
 
 Alchemy is not a remake, a mod, an emulator or a download of the games, and you
 need your own copy of the games to build it. Build instructions are in

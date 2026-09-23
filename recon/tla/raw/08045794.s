@@ -34,4 +34,4 @@ Func_08045794:
 	beq.n	.L_080457bc
 	adds	r0, r5, #0
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

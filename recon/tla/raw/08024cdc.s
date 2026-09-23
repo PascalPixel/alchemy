@@ -89,4 +89,4 @@ Func_08024cdc:
 	strh	r0, [r5, #4]
 	movs	r0, #1
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

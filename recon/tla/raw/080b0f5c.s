@@ -38,4 +38,4 @@ Func_080b0f5c:
 	ldrb	r0, [r2, r3]
 .L_080b0f98:
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

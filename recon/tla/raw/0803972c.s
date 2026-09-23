@@ -26,4 +26,4 @@ Func_0803972c:
 	movs	r3, #2
 	strh	r3, [r0, #28]
 	bx	lr
-	.align 2, 0
+	.2byte 0x0000

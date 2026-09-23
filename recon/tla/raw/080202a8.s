@@ -41,4 +41,12 @@ Func_080202a8:
 	.2byte 0x0802
 	ldr	r4, [pc, #0]
 	bx	r4
-	.4byte 0x0802d659
+	.2byte 0xd659
+	.2byte 0x0802
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x3f95
+	.2byte 0x0802
+	ldr	r4, [pc, #0]
+	bx	r4
+	.4byte 0x0802372d

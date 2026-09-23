@@ -102,4 +102,4 @@ Func_0802b63c:
 	str	r3, [r0, #0]
 	adds	r0, r1, #0
 	bx	lr
-	.align 2, 0
+	.2byte 0x0000

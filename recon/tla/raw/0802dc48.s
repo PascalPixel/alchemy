@@ -109,4 +109,4 @@ Func_0802dc48:
 	movs	r3, #0
 	str	r3, [r5, #12]
 	pop	{r5, r6, pc}
-	.align 2, 0
+	.2byte 0x0000

@@ -37,4 +37,4 @@ Func_08108af0:
 	asrs	r3, r3, #24
 	bl	sub_08108a88
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

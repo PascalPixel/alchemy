@@ -178,6 +178,21 @@
   },
   "palettes": {"273": {"format": 1, "codec": "golden-sun-general-lz", "decoded_size": 448, "encoded_size": 464}},
   "charblocks": {
+    "274": {
+      "format": 1,
+      "codec": "golden-sun-kind2-lz",
+      "decoded_size": 16384,
+      "encoded_size": 8352,
+      "layout": {
+        "format": "sequential-gba-4bpp-tiles",
+        "purpose": "map-charblock-source",
+        "tile_count": 512,
+        "tile_width": 8,
+        "tile_height": 8,
+        "columns": 32,
+        "rows": 16
+      }
+    },
     "275": {
       "format": 1,
       "codec": "golden-sun-kind2-lz",

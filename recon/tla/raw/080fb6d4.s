@@ -90,4 +90,4 @@ Func_080fb6d4:
 	movs	r0, #1
 	add	sp, #8
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

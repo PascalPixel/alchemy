@@ -209,4 +209,4 @@ Func_08023d80:
 	strh	r3, [r0, #4]
 	movs	r0, #1
 	bx	lr
-	.align 2, 0
+	.2byte 0x0000

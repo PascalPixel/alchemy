@@ -66,6 +66,19 @@
         ],
         "credit": "none"
       }
+    },
+    "palette_lz": {
+      "read_ahead": {
+        "value": 272,
+        "allowed": {"lowest": 239, "highest": 403},
+        "confidence": "observed",
+        "evidence": [
+          "tbs 0a6 and tla 16b, every edition: the 5,120-byte stream after the 128-byte palette copies 22 bytes from distance 4,093 at decoded offset 4,882, 238 bytes before the end and beyond the 4,092-byte window, so it needs at least 239",
+          "tla-ja 018: the 39,936-byte stream after the 512-byte palette emits a literal at decoded offset 39,534, 402 bytes before the end, where a 2-byte copy at distance 4,094 was in reach, so it allows at most 403",
+          "read-aheads of 239, 272 and 403 each reproduce every palette stream the window alone reproduced among the 12,470 that the twelve ROMs' resource starts, palette prefixes, container components and word-aligned tag bytes hold (2,164 distinct), and 0a6/16b besides; the streams do not single out a value in 239..403, and 272, the format's longest copy, is recorded"
+        ],
+        "credit": "none"
+      }
     }
   },
   "host_facts": [

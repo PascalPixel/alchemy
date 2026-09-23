@@ -23,4 +23,4 @@ Func_08100e34:
 	cmp	r2, #0
 	bge.n	.L_08100e4a
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

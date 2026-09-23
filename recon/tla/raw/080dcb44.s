@@ -546,4 +546,17 @@ Func_080dcb44:
 	bx	lr
 	movs	r0, r0
 	.4byte 0x03001150
-	.4byte 0x080f0ea4
+	.2byte 0x0ea4
+	.2byte 0x080f
+	ldr	r3, [pc, #16]
+	ldr	r1, [pc, #20]
+	ldr	r3, [r3, #0]
+	movs	r2, #15
+	lsrs	r3, r3, #4
+	ands	r3, r2
+	lsls	r3, r3, #1
+	ldrh	r0, [r1, r3]
+	bx	lr
+	movs	r0, r0
+	.4byte 0x03001150
+	.4byte 0x080f0ec4

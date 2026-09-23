@@ -1521,4 +1521,7 @@ Func_080d8d68:
 	mov	fp, r7
 	pop	{r5, r6, r7, pc}
 	.4byte 0x0300021c
-	.4byte 0x030002d4
+	.2byte 0x02d4
+	.2byte 0x0300
+	bx	lr
+	.2byte 0x0000

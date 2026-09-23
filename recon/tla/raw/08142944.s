@@ -1324,4 +1324,61 @@ Func_08142944:
 	.4byte 0x0600f800
 	.4byte 0x03000260
 	.4byte 0x03ff03ff
-	.4byte 0x02010200
+	.2byte 0x0200
+	.2byte 0x0201
+	movs	r3, #192
+	lsls	r3, r3, #18
+	ldr	r2, [r3, #92]
+	movs	r0, #238
+	lsls	r0, r0, #7
+	adds	r0, #188
+	adds	r3, r2, r0
+	ldrh	r3, [r3, #0]
+	movs	r1, #128
+	lsls	r1, r1, #19
+	adds	r1, #64
+	strh	r3, [r1, #0]
+	adds	r0, #2
+	adds	r3, r2, r0
+	ldrh	r3, [r3, #0]
+	adds	r1, #4
+	strh	r3, [r1, #0]
+	adds	r0, #2
+	adds	r3, r2, r0
+	ldrh	r3, [r3, #0]
+	subs	r1, #2
+	strh	r3, [r1, #0]
+	adds	r0, #2
+	adds	r3, r2, r0
+	ldrh	r3, [r3, #0]
+	adds	r1, #4
+	strh	r3, [r1, #0]
+	adds	r0, #2
+	adds	r3, r2, r0
+	ldrh	r3, [r3, #0]
+	adds	r1, #2
+	strh	r3, [r1, #0]
+	adds	r0, #2
+	adds	r3, r2, r0
+	ldrh	r3, [r3, #0]
+	adds	r1, #2
+	strh	r3, [r1, #0]
+	adds	r0, #2
+	adds	r3, r2, r0
+	ldrh	r3, [r3, #0]
+	subs	r1, #74
+	strh	r3, [r1, #0]
+	adds	r0, #2
+	adds	r3, r2, r0
+	ldrh	r3, [r3, #0]
+	adds	r1, #80
+	strh	r3, [r1, #0]
+	movs	r3, #238
+	lsls	r3, r3, #7
+	adds	r3, #204
+	adds	r2, r2, r3
+	ldrh	r3, [r2, #0]
+	adds	r1, #2
+	strh	r3, [r1, #0]
+	bx	lr
+	.2byte 0x0000

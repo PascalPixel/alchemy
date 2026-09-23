@@ -570,4 +570,7 @@ Func_08040a48:
 	pop	{pc}
 	movs	r0, r0
 	.4byte 0x02000240
-	.4byte 0x0000005f
+	.2byte 0x005f
+	.2byte 0x0000
+	bx	lr
+	.2byte 0x0000

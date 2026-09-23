@@ -9,4 +9,8 @@ Func_08020340:
 	.2byte 0x0802
 	ldr	r4, [pc, #0]
 	bx	r4
-	.4byte 0x08026f81
+	.2byte 0x6f81
+	.2byte 0x0802
+	ldr	r4, [pc, #0]
+	bx	r4
+	.4byte 0x0802da89

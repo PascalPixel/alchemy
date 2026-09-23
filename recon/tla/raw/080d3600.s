@@ -255,4 +255,4 @@ Func_080d3600:
 	.2byte 0x0000
 .L_080d37d0:
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

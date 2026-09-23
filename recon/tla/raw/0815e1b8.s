@@ -30,4 +30,4 @@ Func_0815e1b8:
 	asrs	r3, r1, #6
 	str	r3, [r0, #16]
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

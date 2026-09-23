@@ -892,4 +892,14 @@ Func_0803c40c:
 	movs	r0, r0
 	.4byte 0x00000000
 	.4byte 0x00000144
-	.4byte 0x08038438
+	.2byte 0x8438
+	.2byte 0x0803
+	push	{lr}
+	ldr	r3, [r0, #0]
+	cmp	r3, #0
+	beq.n	.L_0803cb18
+	movs	r3, #0
+	str	r3, [r0, #0]
+.L_0803cb18:
+	pop	{pc}
+	.2byte 0x0000

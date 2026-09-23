@@ -4,9 +4,10 @@ Alchemy reconstructs Golden Sun: **The Broken Seal (TBS)** and **The Lost Age
 (TLA)** as readable C and editable assets that rebuild the shipped games byte
 for byte. Japanese releases are the source editions; localizations are measured
 differences. Build IDs use `tbs` and `tla`; the physical roots are
-`games/THE BROKEN SEAL` and `games/THE LOST AGE`. Only TBS English currently
-has a complete production ROM gate. Twelve successful compilation checks do
-not mean twelve rebuilt ROMs. Outside contributions open at 100%.
+`games/THE BROKEN SEAL` and `games/THE LOST AGE`. Both English editions have
+a full ROM build, but only TBS English's is byte-identical, so only it gates
+production. Twelve successful compilation checks do not mean twelve rebuilt
+ROMs. Outside contributions open at 100%.
 
 Read this file in full. It is the **only working guide**, including priorities,
 recovery methods, constraints and tooling. `README.md` introduces the project
@@ -77,9 +78,11 @@ compressor's window (4,123 bytes), read-ahead (485 bytes, a 4,608-byte ring)
 and maximum copy distance (4,126) are observed settings of the reference
 machine, recorded in each game's `machine.json` with the streams and positions
 that bound them and no credit. The data bound them (window exactly 4,123,
-read-ahead 389–509, maximum distance 4,125–4,126) but do not derive them. No
-other codec uses them. Recording any further observed setting needs Pascal's
-explicit authorization.
+read-ahead 389–509, maximum distance 4,125–4,126) but do not derive them. So
+is the palette-LZ read-ahead (Pascal delegated the decision, 2026-09-23): 272
+bytes recorded, 239–403 bounded, no value in that range singled out. Each
+setting serves only its own codec. Recording any further observed setting needs
+Pascal's explicit authorization.
 
 - Do not add or move compression answers under this exception. Do not replay
   tokens, retain new per-resource overrides, or copy unexplained padding to make
@@ -470,21 +473,24 @@ becomes authoritative when independently verified (Pascal, 2026-09-22).
 digest; a changed output returns to `?` until re-verified. The committed
 `metrics/executable.json` ledgers are diagnostic references only. Each game's
 main image counts once a byte-identical full ROM build of that game proves its
-asset complement; TLA stays `?` until it has a supported one. Every reader
+asset complement. Both English editions have supported full builds, the other
+ten none; TLA's does not yet own every byte, so TLA stays `?`. Every reader
 recomputes the overlay digest, the main complement and that build's proof
 (rebuilt ROM against the registered reference, asset manifest digest, input
 fingerprint) and scores nothing else, so a copied ledger, hand-made file or
 stale build stays `?`. A full build withdraws its proof when it starts and when
-it fails; a failed `--inventory` run leaves the inventory pending.
+it fails; a build that leaves any byte unowned fails after listing every such
+range in `rebuilt.unowned.json`, writing no ROM or proof, and a mismatching
+region fails it too. A failed `--inventory` run leaves the inventory pending.
 `out/<target>/reports/verified-code.json` records ROM hash, input fingerprint,
 source, category and credited ranges. A receipt needs the game's authoritative
-inventory and is withheld while that is absent or pending. TBS's canonical full
-build writes its receipt. TLA's owner check verifies every sourced owner and
-assembles its main listings, maintained assembly and runtime against the ROM as
-the TBS assembly stage does, but writes no receipt until The Lost Age has a
-supported full ROM build and so an authoritative inventory. Changed inputs
-invalidate a receipt. Coverage, dashboard, README and prefixes read these same
-receipts; rendering cannot create credit. Current receipts cannot score old refs.
+inventory and is withheld while that is absent or pending. Each game's
+canonical full build writes its receipt, from its own claimed and assembly
+stages and inventory. TLA's owner check verifies every sourced owner and
+assembles its main listings, maintained assembly and runtime against the ROM
+in its own directory, and writes no receipt. Changed inputs invalidate a
+receipt. Coverage, dashboard, README and prefixes read these same receipts;
+rendering cannot create credit. Current receipts cannot score old refs.
 
 Owner binary similarity is one minus unit-cost halfword edit distance divided
 by the larger halfword count, including pools. It is diagnostic, not semantic
@@ -536,7 +542,7 @@ The compiler is agscc, identified as GCC 2.96-based. The packer's stream
 alignment follows GNU libc malloc and stdio on i386 Linux with heap addresses
 just above the ELF base: the glibc 2.1 layout fits every TBS edition and TLA JA,
 and the glibc 2.2 layout fits the Western TLA editions. Red Hat is assumed, not
-shown. Tools read layouts, host facts and the general-LZ compressor's observed
+shown. Tools read layouts, host facts and the LZSS compressors' observed
 settings from the definition instead of branching per game or edition. New
 evidence changes the definition, never an individual output.
 
@@ -686,11 +692,15 @@ they are unresolved source and earn no C or DONE credit.
 The LZSS compressor reconstruction is incomplete. Nearest longest matches and
 one-byte lazy matching reproduce all 10,755 general-LZ and 10,422 untagged
 palette-LZ streams inventoried in the twelve ROMs, and 5,778 of 5,813 tagged
-palette-LZ streams. Palette LZ searches a fixed 4,092-byte window. General LZ streams its input through the reference machine's ring (see
-[Observed compressor settings](#ai-cheating)): 4,123 bytes of history while it
-reads 485 bytes ahead; at the end of the input reading stops, and over the final
-485 bytes the history grows by one byte per byte encoded, up to distance 4,126.
-Its lazy look-ahead searches the history of the byte being encoded. General LZ
+palette-LZ streams. Both stream their input through a ring of the reference
+machine (see [Observed compressor settings](#ai-cheating)). General LZ keeps
+4,123 bytes of history while it reads 485 bytes ahead; at the end of the input
+reading stops, and over the final 485 bytes the history grows by one byte per
+byte encoded, up to distance 4,126. Palette LZ keeps 4,092 bytes while it reads
+272 ahead, growing up to the format's distance, 4,095: TLA 16b / TBS 0a6 copy
+22 bytes from 4,093 at 4,882 of 5,120 (at least 239), and tla-ja 018 declines a
+2-byte copy at 4,094 at 39,534 of 39,936 (at most 403). The lazy look-ahead
+searches the history of the byte being encoded. General LZ
 applies the replacement once per stream; palette LZ can repeat it. Choosing the
 smaller encoding, palette on ties, selected the observed codec in all 804 tested
 streams, and with the ring still does for the 618 overlay streams the two
@@ -1117,19 +1127,24 @@ current state; detailed experiments are disposable. Never preserve an old blanke
 
 ### TLA and twelve editions
 
-- The TLA full build's claimed C and assembly stages reproduce their bytes of
-  the ROM from TLA's own registers, listings and call-via bank, and its asset
-  stage reproduces all 5,656 registered assets (15,405,794 bytes) with no
-  failures. The image is still not complete: resources 203–226 and 258
-  (321,496 bytes) have no asset family; main-image holes (67,624 bytes in 300
-  ranges: Thumb functions no listing walk reached, data, relocated ARM kernels
-  such as the twins of TBS UPDATE_VERTICES, DRAW_GLYPH, the sound driver and
-  SENTOU_KOUKA_GOUSEI, and 212 bytes of alignment inside units linked as owner
-  slices) have no listing; the twelve map-range resources field maps leave
-  unregistered (58,792), the streams of 017 and 16b (35,856), 22 padding bytes
-  and the 2 bytes before the fill at 0x086322b4 are not reproduced. Measure
-  the remainder again before claiming a TLA full build.
-- Only TBS EN supports full-ROM build. Preserve guards on the other eleven
+- `alchemy build full --target tla-en` composes the whole image from TLA's own
+  registers, listings, call-via bank and asset manifest; its claimed C,
+  assembly and asset stages reproduce every byte they place, including the
+  battle-sprite archives 203–26b. Every main-image byte (up to 0x08300000) has a
+  source: `alchemy raw rebuild` lists unreferenced Thumb functions,
+  trampoline-table entries, literal pools, alignment inside units linked as
+  owner slices, and ARM code (the kernels behind `bx pc` entries at
+  0x080212d8, 0x08021824, 0x080385e0 and 0x081380ac, the blitter templates before
+  0x08197230 and 40 bytes at 0x08013174) as data words until an ARM listing
+  writer exists. Sixteen undeciphered tables (33,166 bytes, among them the 18,064
+  at 0x081287c4) are private SYSTEM/RESIDUALS.BIN regions until their readers
+  type them. The owner inventory stops at overlay 64d, which has no overlay
+  assembly evidence. The packer replay derives every
+  padding byte, and the fill before the directory starts where resource 012's
+  character data ends (0x086322b2). Not reproduced yet: the nine map-range
+  resources field maps leave unregistered (40,048) and the stream of 017
+  (34,552), so ⚓️ stays `?`.
+- TBS EN and TLA EN support full-ROM builds. Preserve guards on the other ten
   targets until each has complete edition link layouts, source/assembly bindings
   and regional asset manifests and an independently byte-identical full image.
   All twelve physical indexes and exact text archives are separate achievements.
@@ -1157,28 +1172,51 @@ current state; detailed experiments are disposable. Never preserve an old blanke
   become publishable because the complete images reproduce. Their owners/results
   have current entries in the TLA registry.
 - TLA field maps derive through `--derive-index` from every scene and the load
-  records no scene selects: 299 containers, 475 tag-2 banks and 203 palettes
+  records no scene selects: 299 containers, 478 tag-2 banks and 203 palettes
   in FIELD, MENU and DEBUG documents with private map binaries and tile sheets.
-  Twelve resources stay unregistered with `--leave`. Tag-2 banks 276, 3cc and
+  Nine resources stay unregistered with `--leave`. Tag-2 banks 276, 3cc and
   4b3 and the tagged palette-LZ grids of containers 2ef and 57b are compressor
-  gaps near their input ends. Bank 311's alignment is the heap's top chunk
-  size; glibc's sbrk and trim rules fix its high byte only once the packer
-  heap's page offset is known. Bank 274's alignment is memory resource 26a
-  last wrote, so it derives once the character banks 264–26b are registered.
-  Banks 312, 3cd, 3ce, 4b4 and 4b5 reproduce, but their alignment reads memory
-  those banks last wrote. The complete build's only failures are resource 198
+  gaps near their input ends. Banks 3cd, 3ce, 4b4 and 4b5 reproduce, but
+  their alignment reads memory banks 3cc and 4b3 last wrote. Bank 311's
+  alignment, the heap's top chunk size, follows from the recorded heap
+  buffer; 312's and 274's read memory 311 and character resource 26a wrote. The complete build's only failures are resource 198
   and overlay 64d, which were already unresolved.
 - Tag-2 history growth at the input end is not a function of position: every
   bank decodes to 16,384 bytes, yet banks 1b7, 1da and 221 (TBS) and 276, 3cc
   and 4b3 (TLA) copy from beyond 4,123 bytes 157–389 bytes before the end,
   while 162 and 286 (TBS) and 2bb and 4db (TLA) decline such copies 235–444
-  bytes before it. Recover what else bounds the ring before adding a setting.
+  bytes before it. These are the only ten decisions a grown history changes,
+  identical in every edition (TLA 274–277 are TBS 1d8–1db). 2bb declines
+  distance 4,126 at 372 bytes from the end where 221 and 4b3 take it at 385
+  and 389, and 162 declines 4,125 at 235 where 3cc takes it at 287, so no
+  read-ahead, cap or position sawtooth fits; the best read-ahead (392–441)
+  still breaks 162 and 2bb. Literal widths, chain rank (286, 2bb and four
+  takers copy from the pair's latest occurrence), tile phase and output offset
+  do not separate them either. With the general ring the decliners need
+  41–249 more input bytes read past the bank, the takers at most 93–325: an
+  input continuing into another bank, which map layouts do not predict (221
+  grows though 222 follows; 162 and 286 decline before animation banks). That
+  is a per-resource fact, not derivable or admissible; find its source first.
 - The tagged palette-LZ grid failures (TBS 2ee and 326, TLA 278, 2ef and 57b)
   lie 34–128 bytes before the input end. Three emit a literal and then a copy
   one byte shorter where a copy reaches the end, although English streams take
   919 of 922 such copies; the other two decline a three-byte copy at distance
   3,910. Letting the look-ahead compare stale ring bytes past the end broke
-  4,764 of 7,914 streams and is rejected.
+  4,764 of 7,914 streams and is rejected. All five grids decode to 65,536
+  bytes, yet the twelve ROMs' other 65,536-byte streams take all 2,838 of
+  their end-reaching copies whose look-ahead alternative exceeds two bytes.
+  At 3,910 the reference finds no copy at all
+  although only that source and one at 4,012 hold the pair.
+- Resource 017's stream (85,440 bytes after a 512-byte palette, the same in all
+  twelve ROMs) first differs at decoded offset 85,224, 216 bytes before its
+  end. The reference defers copies at 85,224, 85,239 and 85,264 where the lazy
+  rule defers only if the following search found at most one byte, although
+  copies of 5, 6 and 2 bytes lie at distances 27, 50 and 14. Other lazy
+  decisions in the same tail follow the rule. Rejected for these tail cases:
+  lazy evaluation of end-reaching copies; unclipped look-ahead lengths over
+  zero, 0xff, the stream's own stale ring bytes or the next container
+  component's bytes (38–225 of the 1,267 distinct streams break); and refusing
+  searches whose pair recurs among stale pairs past the end (over 1,000 break).
 - Finish edition-local data identification and Japanese correspondence from
   actual readers and byte proofs, not broad AI guesses or copied source trees.
 

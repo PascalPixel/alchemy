@@ -700,4 +700,7 @@ Func_080ca17c:
 	pop	{r5, pc}
 	movs	r0, r0
 	.4byte 0x02000240
-	.4byte 0x00000001
+	.2byte 0x0001
+	.2byte 0x0000
+	bx	lr
+	.2byte 0x0000

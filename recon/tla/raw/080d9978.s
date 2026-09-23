@@ -166,4 +166,4 @@ Func_080d9978:
 	negs	r0, r0
 .L_080d9aac:
 	pop	{r5, r6, pc}
-	.align 2, 0
+	.2byte 0x0000

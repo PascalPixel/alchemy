@@ -1,9 +1,12 @@
 .syntax unified
 	.thumb
 	.set sub_08013560, 0x08013560
+	.set sub_0803e5a8, 0x0803e5a8
 	.set sub_0803ebdc, 0x0803ebdc
 	.set sub_0803ed98, 0x0803ed98
+	.set sub_0803ef48, 0x0803ef48
 	.set sub_0803ef8c, 0x0803ef8c
+	.set sub_0803f004, 0x0803f004
 	.set sub_0803f3c8, 0x0803f3c8
 	.set sub_081c0010, 0x081c0010
 	.global Func_0803e918
@@ -164,4 +167,109 @@ Func_0803e918:
 	negs	r0, r0
 .L_0803ea4e:
 	pop	{r5, r6, r7, pc}
-	.4byte 0x03001150
+	.2byte 0x1150
+	.2byte 0x0300
+	push	{r5, r6, r7, lr}
+	mov	r7, sl
+	mov	r6, r8
+	push	{r6, r7}
+	movs	r1, #192
+	adds	r5, r0, #0
+	lsls	r1, r1, #2
+	movs	r0, #231
+	adds	r1, #158
+	lsls	r0, r0, #2
+	adds	r7, r5, r0
+	adds	r6, r5, r1
+	ldrh	r3, [r7, #0]
+	ldrh	r1, [r6, #0]
+	movs	r2, #229
+	adds	r3, r3, r1
+	lsls	r2, r2, #2
+	adds	r3, #1
+	adds	r2, r2, r5
+	mov	sl, r3
+	ldrh	r3, [r2, #0]
+	mov	r8, r2
+	cmp	sl, r3
+	beq.n	.L_0803eb22
+	adds	r0, r5, #0
+	bl	sub_0803ef48
+	movs	r3, #192
+	lsls	r3, r3, #2
+	adds	r3, #162
+	adds	r2, r5, r3
+	movs	r3, #33
+	strh	r3, [r2, #0]
+	movs	r0, #1
+	bl	sub_08013560
+	ldrh	r1, [r6, #0]
+	movs	r0, #128
+	adds	r3, r1, #1
+	strh	r3, [r6, #0]
+	lsls	r0, r0, #11
+	lsls	r3, r3, #16
+	cmp	r3, r0
+	bne.n	.L_0803eaea
+	mov	r0, r8
+	ldrh	r3, [r0, #0]
+	mov	r2, sl
+	adds	r2, #1
+	cmp	r2, r3
+	bcs.n	.L_0803eaea
+	movs	r2, #128
+	lsls	r2, r2, #9
+	adds	r3, r1, r2
+	strh	r3, [r6, #0]
+	movs	r3, #8
+	strh	r3, [r5, #60]
+	ldrh	r3, [r7, #0]
+	adds	r0, r5, #0
+	adds	r3, #1
+	strh	r3, [r7, #0]
+	movs	r1, #1
+	bl	sub_0803f004
+	ldrh	r2, [r6, #0]
+	ldrh	r3, [r7, #0]
+	mov	r0, r8
+	adds	r3, r3, r2
+	ldrh	r2, [r0, #0]
+	adds	r3, #2
+	cmp	r3, r2
+	bne.n	.L_0803eae6
+	movs	r3, #0
+	strh	r3, [r5, #62]
+.L_0803eae6:
+	movs	r3, #1
+	strh	r3, [r5, #10]
+.L_0803eaea:
+	movs	r1, #192
+	lsls	r1, r1, #2
+	adds	r1, #162
+	adds	r2, r5, r1
+	movs	r3, #1
+	strh	r3, [r2, #0]
+	movs	r2, #192
+	lsls	r2, r2, #2
+	adds	r2, #158
+	adds	r3, r5, r2
+	ldrh	r1, [r3, #0]
+	adds	r0, r5, #0
+	bl	sub_0803ef8c
+	movs	r0, #1
+	bl	sub_08013560
+	movs	r0, #210
+	lsls	r0, r0, #2
+	adds	r3, r5, r0
+	ldr	r3, [r3, #0]
+	movs	r1, #0
+	ldrh	r0, [r3, #10]
+	bl	sub_0803e5a8
+	movs	r0, #1
+	bl	sub_08013560
+.L_0803eb22:
+	pop	{r3, r5}
+	mov	r8, r3
+	mov	sl, r5
+	pop	{r5, r6, r7, pc}
+	.2byte 0x0000

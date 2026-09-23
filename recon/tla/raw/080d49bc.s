@@ -124,4 +124,10 @@ Func_080d49bc:
 	movs	r0, #1
 	pop	{r5, pc}
 	movs	r0, r0
-	.4byte 0xfffff000
+	.2byte 0xf000
+	.2byte 0xffff
+	ldr	r3, [pc, #4]
+	str	r1, [r0, #104]
+	str	r3, [r0, #108]
+	bx	lr
+	.4byte 0x080d4a55

@@ -420,4 +420,4 @@ Func_080ae0f0:
 	asrs	r0, r2
 	ands	r0, r3
 	bx	lr
-	.align 2, 0
+	.2byte 0x0000

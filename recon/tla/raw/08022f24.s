@@ -312,4 +312,9 @@ Func_08022f24:
 	.4byte 0x08023f9d
 	.4byte 0x080246b9
 	.4byte 0x08023e19
-	.4byte 0x0802386d
+	.2byte 0x386d
+	.2byte 0x0802
+	bx	lr
+	movs	r0, r0
+	bx	lr
+	.2byte 0x0000

@@ -62,4 +62,4 @@ Func_0811bc2c:
 	strh	r3, [r1, #40]
 	movs	r0, #0
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

@@ -26,4 +26,4 @@ Func_080fad1c:
 	bge.n	.L_080fad2e
 	adds	r0, r5, #0
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

@@ -473,4 +473,4 @@ Func_080d5aa0:
 	lsls	r0, r0, #1
 	bl	sub_08016cfc
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

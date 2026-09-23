@@ -130,4 +130,4 @@ Func_08039510:
 	strh	r3, [r0, #16]
 .L_080395f8:
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

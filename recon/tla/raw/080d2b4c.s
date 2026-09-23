@@ -96,4 +96,52 @@ Func_080d2b4c:
 	mov	sl, r5
 	pop	{r5, r6, r7, pc}
 	.4byte 0x02001000
+	.2byte 0x0240
+	.2byte 0x0200
+	ldr	r3, [pc, #16]
+	movs	r4, #247
+	lsls	r4, r4, #1
+	adds	r2, r3, r4
+	strh	r0, [r2, #0]
+	movs	r2, #248
+	lsls	r2, r2, #1
+	adds	r3, r3, r2
+	strh	r1, [r3, #0]
+	bx	lr
+	.2byte 0x0240
+	.2byte 0x0200
+	ldr	r3, [pc, #16]
+	movs	r4, #249
+	lsls	r4, r4, #1
+	adds	r2, r3, r4
+	strh	r0, [r2, #0]
+	movs	r2, #250
+	lsls	r2, r2, #1
+	adds	r3, r3, r2
+	strh	r1, [r3, #0]
+	bx	lr
+	.2byte 0x0240
+	.2byte 0x0200
+	movs	r3, #192
+	lsls	r3, r3, #18
+	ldr	r2, [r3, #108]
+	ldr	r3, [pc, #36]
+	mov	ip, r3
+	movs	r3, #240
+	lsls	r3, r3, #1
+	add	r3, ip
+	strh	r0, [r3, #0]
+	movs	r3, #241
+	lsls	r3, r3, #1
+	add	r3, ip
+	strh	r1, [r3, #0]
+	movs	r3, #172
+	lsls	r3, r3, #1
+	adds	r2, r2, r3
+	movs	r3, #186
+	lsls	r3, r3, #2
+	adds	r3, #255
+	strh	r3, [r2, #0]
+	bx	lr
+	movs	r0, r0
 	.4byte 0x02000240

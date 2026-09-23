@@ -15,4 +15,4 @@ Func_080132a4:
 	.2byte 0x1150
 	.2byte 0x0300
 	bx	lr
-	.align 2, 0
+	.2byte 0x0000

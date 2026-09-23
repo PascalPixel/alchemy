@@ -29,4 +29,8 @@ Func_080c8588:
 	.2byte 0x080e
 	ldr	r4, [pc, #0]
 	bx	r4
-	.4byte 0x080ebf69
+	.2byte 0xbf69
+	.2byte 0x080e
+	.2byte 0x4c00
+	.2byte 0x4720
+	.4byte 0x080dc391

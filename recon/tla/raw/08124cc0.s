@@ -4,4 +4,4 @@
 	.thumb_func
 Func_08124cc0:
 	bx	lr
-	.align 2, 0
+	.2byte 0x0000

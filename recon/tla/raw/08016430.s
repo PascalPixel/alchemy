@@ -95,4 +95,4 @@ Func_08016430:
 	orrs	r0, r3
 .L_080164e4:
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

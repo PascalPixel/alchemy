@@ -154,4 +154,7 @@ Func_080d2260:
 	bl	sub_080ad2b8
 	pop	{pc}
 	.4byte 0x080d21f5
-	.4byte 0x02000240
+	.2byte 0x0240
+	.2byte 0x0200
+	bx	lr
+	.2byte 0x0000

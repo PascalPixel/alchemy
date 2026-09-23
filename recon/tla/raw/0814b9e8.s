@@ -1994,4 +1994,4 @@ Func_0814b9e8:
 	bne.n	.L_0814c986
 .L_0814c990:
 	pop	{r5, r6, pc}
-	.align 2, 0
+	.2byte 0x0000

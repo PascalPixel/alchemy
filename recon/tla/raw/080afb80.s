@@ -564,4 +564,4 @@ Func_080afb80:
 	orrs	r3, r2
 	str	r3, [r0, #0]
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

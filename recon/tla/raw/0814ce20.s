@@ -10,4 +10,4 @@ Func_0814ce20:
 	bl	sub_08143a88
 	bl	sub_08143bb8
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

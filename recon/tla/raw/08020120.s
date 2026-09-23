@@ -29,4 +29,24 @@ Func_08020120:
 	.2byte 0x0802
 	ldr	r4, [pc, #0]
 	bx	r4
-	.4byte 0x08023f3d
+	.2byte 0x3f3d
+	.2byte 0x0802
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0x3089
+	.2byte 0x0802
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0xc241
+	.2byte 0x0802
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0xcb09
+	.2byte 0x0802
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0xb2d5
+	.2byte 0x0802
+	ldr	r4, [pc, #0]
+	bx	r4
+	.4byte 0x0802b1a1

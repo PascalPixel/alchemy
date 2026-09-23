@@ -949,4 +949,4 @@ Func_080432a4:
 	strb	r3, [r6, #3]
 .L_08043a60:
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

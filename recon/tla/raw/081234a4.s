@@ -40,4 +40,4 @@ Func_081234a4:
 	adds	r2, r2, r3
 	str	r1, [r2, #0]
 	bx	lr
-	.align 2, 0
+	.2byte 0x0000

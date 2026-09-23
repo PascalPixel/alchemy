@@ -800,4 +800,4 @@ Func_08127588:
 .L_08127b9a:
 	add	sp, #4
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

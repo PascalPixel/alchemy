@@ -23,4 +23,4 @@ Func_081ac0cc:
 	lsls	r0, r0, #16
 	asrs	r0, r0, #16
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

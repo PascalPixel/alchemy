@@ -191,4 +191,4 @@ Func_08022a24:
 	movs	r0, #0
 	add	sp, #8
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

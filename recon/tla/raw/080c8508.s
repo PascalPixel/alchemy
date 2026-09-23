@@ -9,4 +9,8 @@ Func_080c8508:
 	.2byte 0x080c
 	ldr	r4, [pc, #0]
 	bx	r4
-	.4byte 0x080ceb81
+	.2byte 0xeb81
+	.2byte 0x080c
+	ldr	r4, [pc, #0]
+	bx	r4
+	.4byte 0x080dc0d9

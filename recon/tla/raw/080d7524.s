@@ -743,4 +743,11 @@ Func_080d7524:
 	bl	sub_08013560
 	pop	{r5, r6, r7, pc}
 	movs	r0, r0
-	.4byte 0x080d7a59
+	.2byte 0x7a59
+	.2byte 0x080d
+	ldrh	r3, [r0, #6]
+	movs	r2, #128
+	lsls	r2, r2, #6
+	adds	r3, r3, r2
+	strh	r3, [r0, #6]
+	bx	lr

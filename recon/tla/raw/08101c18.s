@@ -53,4 +53,4 @@ Func_08101c18:
 	bl	.L_08101c18
 	add	sp, #8
 	pop	{r5, pc}
-	.align 2, 0
+	.2byte 0x0000

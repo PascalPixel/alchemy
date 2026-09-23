@@ -21,4 +21,16 @@ Func_080ad070:
 	.2byte 0x080a
 	ldr	r4, [pc, #0]
 	bx	r4
-	.4byte 0x080addf1
+	.2byte 0xddf1
+	.2byte 0x080a
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0xf795
+	.2byte 0x080a
+	ldr	r4, [pc, #0]
+	bx	r4
+	.2byte 0xf7ad
+	.2byte 0x080a
+	ldr	r4, [pc, #0]
+	bx	r4
+	.4byte 0x080af8cd

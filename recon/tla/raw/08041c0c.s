@@ -41,3 +41,5 @@ Func_08041c0c:
 	bge.n	.L_08041c44
 .L_08041c4e:
 	pop	{pc}
+	bx	lr
+	.2byte 0x0000

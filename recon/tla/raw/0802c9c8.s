@@ -138,4 +138,4 @@ Func_0802c9c8:
 	mov	r9, r5
 	mov	sl, r6
 	pop	{r5, r6, pc}
-	.align 2, 0
+	.2byte 0x0000

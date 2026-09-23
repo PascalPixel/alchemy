@@ -579,3 +579,5 @@ Func_080d3c88:
 .L_080d40d4:
 	adds	r0, r7, #0
 	pop	{r5, r6, r7, pc}
+	bx	lr
+	.2byte 0x0000

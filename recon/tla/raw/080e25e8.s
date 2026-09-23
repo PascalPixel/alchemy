@@ -1351,4 +1351,11 @@ Func_080e25e8:
 	mov	r8, r3
 	mov	sl, r5
 	pop	{r5, r6, r7, pc}
-	.4byte 0xffff999a
+	.2byte 0x999a
+	.2byte 0xffff
+	.2byte 0x88c3
+	movs	r2, #128
+	lsls	r2, r2, #5
+	adds	r3, r3, r2
+	strh	r3, [r0, #6]
+	bx	lr

@@ -29,4 +29,4 @@ Func_080aeb9c:
 	movs	r2, #56
 	ldrsh	r0, [r6, r2]
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

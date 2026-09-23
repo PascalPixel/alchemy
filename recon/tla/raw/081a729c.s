@@ -316,3 +316,5 @@ Func_081a729c:
 	mov	sl, r6
 	mov	fp, r7
 	pop	{r5, r6, r7, pc}
+	bx	lr
+	.2byte 0x0000

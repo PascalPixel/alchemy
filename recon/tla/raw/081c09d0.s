@@ -332,4 +332,7 @@ Func_081c09d0:
 	pop	{pc}
 	bx	r3
 	.4byte 0x03007ff0
-	.4byte 0x68736d53
+	.2byte 0x6d53
+	.2byte 0x6873
+	bx	lr
+	.2byte 0x0000

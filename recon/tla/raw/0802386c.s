@@ -669,4 +669,7 @@ Func_0802386c:
 	mov	fp, r7
 	pop	{r5, r6, r7, pc}
 	.4byte 0x0300021c
-	.4byte 0xfec00000
+	.2byte 0x0000
+	.2byte 0xfec0
+	.2byte 0x2001
+	bx	lr

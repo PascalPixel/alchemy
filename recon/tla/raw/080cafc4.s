@@ -78,4 +78,4 @@ Func_080cafc4:
 	ldrsh	r3, [r3, r2]
 	adds	r0, r0, r3
 	bx	lr
-	.align 2, 0
+	.2byte 0x0000

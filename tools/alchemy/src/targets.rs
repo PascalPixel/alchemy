@@ -41,11 +41,20 @@ impl std::fmt::Display for DecompTargetId {
     }
 }
 
+/// Whether `alchemy build full` composes a target's whole ROM. A supported
+/// full build proves nothing by itself: only a byte-identical rebuild of the
+/// registered reference ROM leaves a proof, so a game whose image is still
+/// incomplete fails its full build and its DONE stays `?`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum BuildSupport {
     CompileOnly,
     Full,
 }
+
+/// The English editions, each game's canonical image, compose full ROM
+/// builds; the other ten editions stay compile-only until they have their
+/// own link layouts, bindings and regional asset manifests.
+const FULL_BUILDS: [DecompTargetId; 2] = [DecompTargetId::TbsEn, DecompTargetId::TlaEn];
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct DecompTarget {
@@ -139,7 +148,7 @@ pub fn target_for(id: DecompTargetId) -> DecompTarget {
         rom,
         rom_size,
         compiler,
-        build_support: if id == DEFAULT_TARGET {
+        build_support: if FULL_BUILDS.contains(&id) {
             BuildSupport::Full
         } else {
             BuildSupport::CompileOnly
@@ -211,6 +220,16 @@ mod tests {
                 format!("{}/assets.json", target.recon_dir())
             );
         }
+    }
+    /// Each game's English edition composes a full ROM build; every other
+    /// edition keeps its compile-only guard.
+    #[test]
+    fn only_the_english_editions_compose_full_builds() {
+        let full = TARGET_IDS
+            .into_iter()
+            .filter(|id| target_for(*id).build_support == BuildSupport::Full)
+            .collect::<Vec<_>>();
+        assert_eq!(full, [DecompTargetId::TbsEn, DecompTargetId::TlaEn]);
     }
     #[test]
     fn registry_covers_isolated_targets() {

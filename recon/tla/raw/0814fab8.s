@@ -26,6 +26,7 @@
 	.set sub_0814cd48, 0x0814cd48
 	.set sub_0814fcc2, 0x0814fcc2
 	.set sub_0814ff38, 0x0814ff38
+	.set sub_081504d8, 0x081504d8
 	.set sub_0815585c, 0x0815585c
 	.set sub_08157cf4, 0x08157cf4
 	.set sub_0815b410, 0x0815b410
@@ -1298,4 +1299,10 @@ Func_0814fab8:
 	mov	fp, r7
 	pop	{r5, r6, r7, pc}
 	movs	r0, r0
-	.4byte 0x08143001
+	.2byte 0x3001
+	.2byte 0x0814
+	push	{lr}
+	movs	r1, #0
+	bl	sub_081504d8
+	pop	{pc}
+	.2byte 0x0000

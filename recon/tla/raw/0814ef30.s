@@ -12,4 +12,4 @@ Func_0814ef30:
 	str	r3, [r0, #24]
 	bl	sub_0814ef44
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

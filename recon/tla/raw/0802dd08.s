@@ -1312,4 +1312,4 @@ Func_0802dd08:
 	cmp	r0, #0
 	bge.n	.L_0802e6c8
 	pop	{pc}
-	.align 2, 0
+	.2byte 0x0000

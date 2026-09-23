@@ -3660,4 +3660,4 @@ Func_0817b9b8:
 	cmp	r7, #30
 	bne.n	.L_0817d6cc
 	pop	{r5, r6, r7, pc}
-	.align 2, 0
+	.2byte 0x0000

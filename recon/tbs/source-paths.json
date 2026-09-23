@@ -19370,6 +19370,14 @@
     "main:08012388": {
       "name": "Resource_RunCopiedDecoder",
       "source": "SYSTEM/RESOURCE/RUN_COPIED_DECODER.C"
+    },
+    "main:08021e28": {
+      "name": "Graphics_InstallBg1VCountHandler",
+      "source": "GRAPHICS/DISPLAY/INSTALL_BG1_VCOUNT_HANDLER.C"
+    },
+    "main:08097a10": {
+      "name": "Fixed_Remainder",
+      "source": "LIB/FIXED_REMAINDER.C"
     }
   },
   "symbols": {

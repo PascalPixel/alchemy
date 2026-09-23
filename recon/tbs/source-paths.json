@@ -12240,6 +12240,10 @@
       "name": "SceneEffect_SetModeByFrameBit1",
       "source": "FIELD/KORIMA_MURA/EXTENDED_SEQUENCE.C"
     },
+    "resource_38f:020027ac": {
+      "name": "FieldScene_UpdateFallingEffect",
+      "source": "FIELD/KORIMA_HASHI/FALLING_EFFECT.C"
+    },
     "resource_38f:02002910": {
       "name": "FieldScene_RunFlag845And847Branches",
       "source": "FIELD/KORIMA_MURA/EXTENDED_SEQUENCE.C"

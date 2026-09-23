@@ -165433,7 +165433,63 @@
           "extent": 356,
           "state": "exact-c"
         }
-      ]
+      ],
+      "instances": {
+        "resource_38f": {
+          "owners": {
+            "FieldScene_UpdateFallingEffect": {
+              "address": "0x020027ac",
+              "extent": 356
+            }
+          },
+          "absolute_symbols": {
+            "gSceneEffectWork": {
+              "address": "0x03001e70",
+              "kind": "data"
+            },
+            "gFrameCount": {
+              "address": "0x03001e40",
+              "kind": "data"
+            },
+            "gFallingEffectState": {
+              "address": "0x0200b694",
+              "kind": "data"
+            },
+            "gFallingEffectWidth": {
+              "address": "0x0200b690",
+              "kind": "data"
+            },
+            "gFallingEffectOffset": {
+              "address": "0x0200b68c",
+              "kind": "data"
+            },
+            "gFallingEffectScript": {
+              "address": "0x0200b610",
+              "kind": "data"
+            },
+            "Engine_ObjectCreate": {
+              "address": "0x0200a9d4",
+              "kind": "thumb"
+            },
+            "Engine_RandomNext": {
+              "address": "0x0200a9b4",
+              "kind": "thumb"
+            },
+            "Engine_AudioPlayCue": {
+              "address": "0x0200abcc",
+              "kind": "thumb"
+            },
+            "Engine_ObjectSetAnimation": {
+              "address": "0x0200a9c4",
+              "kind": "thumb"
+            },
+            "Engine_ObjectSetScript": {
+              "address": "0x0200a9cc",
+              "kind": "thumb"
+            }
+          }
+        }
+      }
     },
     {
       "id": "karagoru-spinning-actor",

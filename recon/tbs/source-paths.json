@@ -19211,6 +19211,10 @@
     "main:080a6a98": {
       "name": "PsynergyMenu_DrawDetailPage",
       "source": "MENU/ABILITY/DRAW_DETAIL_PAGE.C"
+    },
+    "main:080a5788": {
+      "name": "ItemMenu_RunList",
+      "source": "MENU/ITEM/RUN_LIST.C"
     }
   },
   "symbols": {

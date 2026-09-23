@@ -104,16 +104,19 @@ fn append_frame(stream: &mut Vec<u8>, bytes: &[u8]) {
     stream.extend_from_slice(bytes);
 }
 fn command_identity(commands: &[Vec<String>], work: &str) -> Vec<u8> {
+    let root = root().to_string_lossy().into_owned();
     let mut identity = Vec::new();
     append_frame(&mut identity, b"overlay-plan-v2");
     identity.extend_from_slice(&(commands.len() as u64).to_be_bytes());
     for command in commands {
         identity.extend_from_slice(&(command.len() as u64).to_be_bytes());
         for part in command {
+            // The work directory is per compile and the checkout per
+            // worktree; neither names an input.
             let normalized = if part.starts_with(work) {
-                "<work>"
+                "<work>".to_string()
             } else {
-                part
+                part.replace(&root, "<root>")
             };
             append_frame(&mut identity, normalized.as_bytes());
         }

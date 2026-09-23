@@ -101,7 +101,7 @@ fn clean_key(root: &Path, label: &str, prefix: &[String], source: &str) -> Optio
         crate::compiler::bundle::executable_signature().ok()?,
         crate::compiler::bundle::compiler_bundle_signature(),
         label,
-        prefix,
+        crate::compiler::source_inputs::portable_commands(root, &[prefix.to_vec()]),
         source,
         crate::compiler::sha256::hex(&tree),
     ))

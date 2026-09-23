@@ -32,7 +32,24 @@ pub fn quoted_include(line: &str) -> Option<&str> {
     Some(rest.split_once('"')?.0)
 }
 
+/// A checkout's commands as a cache identity: its own root spelled
+/// `<root>`, as the runtime cache spells it, so every worktree shares one
+/// content-addressed cache. The inputs themselves are hashed by content.
+pub fn portable_commands(root: &Path, commands: &[Vec<String>]) -> Vec<Vec<String>> {
+    let root = root.to_string_lossy();
+    commands
+        .iter()
+        .map(|command| {
+            command
+                .iter()
+                .map(|part| part.replace(root.as_ref(), "<root>"))
+                .collect()
+        })
+        .collect()
+}
+
 fn visit(
+    base: Option<&Path>,
     path: &Path,
     dirs: &[PathBuf],
     seen: &mut BTreeSet<PathBuf>,
@@ -48,7 +65,12 @@ fn visit(
     }
     active.insert(path.clone());
     let bytes = std::fs::read(&path).map_err(|error| error.to_string())?;
-    for input in [path.to_string_lossy().as_bytes(), &bytes] {
+    // Inside the checkout a file is named from its root, so one source
+    // has one identity in every worktree.
+    let name = base
+        .and_then(|base| path.strip_prefix(base).ok())
+        .unwrap_or(&path);
+    for input in [name.to_string_lossy().as_bytes(), &bytes] {
         hash.update((input.len() as u64).to_be_bytes());
         hash.update(input);
     }
@@ -61,7 +83,7 @@ fn visit(
             .chain(dirs.iter().map(|dir| dir.join(name)))
             .find(|candidate| candidate.is_file());
         if let Some(found) = found {
-            visit(&found, dirs, seen, active, hash)?;
+            visit(base, &found, dirs, seen, active, hash)?;
         }
     }
     active.remove(&path);
@@ -71,6 +93,7 @@ fn visit(
 pub fn source_tree_signature(source: &Path, dirs: &[PathBuf]) -> Result<Vec<u8>, String> {
     let mut hash = Sha256::new();
     visit(
+        None,
         source,
         dirs,
         &mut BTreeSet::new(),
@@ -91,10 +114,12 @@ pub fn compiler_source_tree_signature(
         root.join(source)
     };
     let dirs = include_dirs(root, commands);
+    let base = std::fs::canonicalize(root).ok();
+    let base = base.as_deref();
     let mut hash = Sha256::new();
     let mut seen = BTreeSet::new();
     let mut active = BTreeSet::new();
-    visit(&source, &dirs, &mut seen, &mut active, &mut hash)?;
+    visit(base, &source, &dirs, &mut seen, &mut active, &mut hash)?;
     // Generated address bindings are compiler inputs even though the C file
     // does not include them. Their stable filenames are not a cache identity.
     for command in commands {
@@ -106,7 +131,7 @@ pub fn compiler_source_tree_signature(
                 } else {
                     root.join(path)
                 };
-                visit(&path, &dirs, &mut seen, &mut active, &mut hash)?;
+                visit(base, &path, &dirs, &mut seen, &mut active, &mut hash)?;
             }
         }
     }
@@ -128,6 +153,32 @@ fn forced_binding_mutation_changes_compiler_input_identity() {
     assert_ne!(first, second);
     std::fs::remove_file(&bindings).unwrap();
     assert!(compiler_source_tree_signature(root.path(), &source, &commands).is_err());
+}
+
+#[cfg(test)]
+#[test]
+fn one_source_has_one_identity_in_every_checkout() {
+    let write = |root: &Path| {
+        std::fs::write(root.join("owner.c"), "#include \"body.h\"\n").unwrap();
+        std::fs::write(root.join("body.h"), "int body;\n").unwrap();
+        let commands = vec![vec![
+            "cc1".to_string(),
+            format!("-I{}", root.display()),
+            format!("{}/owner.c", root.display()),
+        ]];
+        (
+            compiler_source_tree_signature(root, &root.join("owner.c"), &commands).unwrap(),
+            portable_commands(root, &commands),
+        )
+    };
+    let (first, second) = (tempfile::tempdir().unwrap(), tempfile::tempdir().unwrap());
+    assert_eq!(write(first.path()), write(second.path()));
+    std::fs::write(second.path().join("body.h"), "int changed;\n").unwrap();
+    let commands = vec![vec!["cc1".to_string()]];
+    let signature = |root: &Path| {
+        compiler_source_tree_signature(root, &root.join("owner.c"), &commands).unwrap()
+    };
+    assert_ne!(signature(first.path()), signature(second.path()));
 }
 
 #[cfg(test)]

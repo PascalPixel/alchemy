@@ -1,3 +1,5 @@
+/* 2026-09-24: 37 differing halfwords (from 48) after a do-while wrap and
+   statement-swap sweep; the do-while wraps are search artefacts. */
 #include "TYPES.H"
 
 extern u8 Data_00000539[];
@@ -75,12 +77,12 @@ void Func_08090658(void)
         v2 = value - 1;
         *toggle ^= 1;
 
-        blend = 0;
+        do { blend = 0; } while (0);
         if ((v2 & 32) != 0) {
             blend = 15;
         }
         masked = v2 & 31;
-        idx = masked << 1;
+        do { idx = masked << 1; } while (0);
 
         i = 0;
         do {
@@ -103,7 +105,7 @@ void Func_08090658(void)
         s32 savedIme;
         s32 counter;
 
-        savedIme = *ime;
+        do { savedIme = *ime; } while (0);
         *ime = (u16)(u32)ime;
         counter = queue->count;
         if (counter <= 31) {

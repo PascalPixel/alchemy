@@ -17,14 +17,14 @@ const DMA_SOURCE: &str = include_str!(concat!(
     env!("CARGO_MANIFEST_DIR"),
     "/../../games/THE BROKEN SEAL/INCLUDE/DMA.H"
 ));
-const DMA_BODY_SHA256: &str = "dcc93030ed9f2fc601341bc4a7f350aff8ff772625e707c246004d800cfc8fcc";
+const DMA_BODY_SHA256: &str = "1b74629948ab6d314032eff882e3312befaee7f3e4dcc5d361bce1ef1abca00a";
 const IWRAM_CALL_HEADER: &str = "games/THE BROKEN SEAL/INCLUDE/IWRAM_CALL.H";
 const IWRAM_CALL_SOURCE: &str = include_str!(concat!(
     env!("CARGO_MANIFEST_DIR"),
     "/../../games/THE BROKEN SEAL/INCLUDE/IWRAM_CALL.H"
 ));
 const IWRAM_CALL_BODY_SHA256: &str =
-    "7559187463b1d55b694ea12985099336def34bcff43ba27978d91e78308c89fa";
+    "544a46d88ba873e8ac15716830367e44d5e1e75fcb5eefebfe5d44b1ee640b93";
 
 fn source_tokens(text: &str) -> Vec<regex::Match<'_>> {
     static TOKENS: OnceLock<Regex> = OnceLock::new();
@@ -391,7 +391,7 @@ mod tests {
         assert!(find_preprocessed("expanded", IWRAM_CALL_SOURCE).is_empty());
         for changed in [
             IWRAM_CALL_SOURCE.replace("mov ip, pc", "mov lr, pc"),
-            IWRAM_CALL_SOURCE.replace("0x03000118", "0x0300011c"),
+            IWRAM_CALL_SOURCE.replace("bx %2", "bx %1"),
             IWRAM_CALL_SOURCE.replace("\"r2\", \"ip\", \"cc\"", "\"r2\", \"ip\""),
         ] {
             assert!(!find_forbidden(IWRAM_CALL_HEADER, &changed).is_empty());

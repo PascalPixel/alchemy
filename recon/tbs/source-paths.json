@@ -765,7 +765,8 @@
       "source": "SYSTEM/LINK/SERIAL_TRANSFER_INTERRUPT.C"
     },
     "main:080063bc": {
-      "name": "SerialRuntime_BeginTransferA"
+      "name": "SerialRuntime_BeginTransferA",
+      "source": "SYSTEM/LINK/SERIAL_BEGIN_TRANSFER_A.C"
     },
     "main:08006408": {
       "name": "SerialRuntime_BeginTransferB"
@@ -9443,7 +9444,8 @@
       "name": "Render_ResetTransformState"
     },
     "main:0800651c": {
-      "name": "BattleLink_ResetTransferState"
+      "name": "BattleLink_ResetTransferState",
+      "source": "SYSTEM/LINK/SERIAL_RESET_TRANSFER_STATE.C"
     },
     "main:0808fe38": {
       "name": "DisplayTransition_InitializeBattleEffectState"

@@ -1,6 +1,8 @@
-#include "serial_runtime_family.h"
+#include "SERIAL_RUNTIME.H"
 
-s32 Func_080063bc(s32 value, s32 transfer_value)
+#define SerialRuntime_BeginTransferA Func_080063bc
+
+s32 SerialRuntime_BeginTransferA(s32 value, s32 transfer_value)
 {
     volatile s32 *active;
     struct SerialTransferState *state;
@@ -8,10 +10,17 @@ s32 Func_080063bc(s32 value, s32 transfer_value)
     s32 busy;
     s32 transfer;
 
-    active = (volatile s32 *)0x02002080;
+    active = &SERIAL_ACTIVE_A;
     busy = *active;
     transfer = transfer_value;
-    state = SERIAL_TRANSFER;
+    /* FAKEMATCH: both do/while blocks and the second active assignment are
+     * meaningless. Setting active twice raises its allocation priority above
+     * transfer, so active gets r5 and transfer r6; the blocks keep the stores
+     * in the reference order. */
+    do {
+        state = SERIAL_TRANSFER;
+    } while (0);
+    active = &SERIAL_ACTIVE_A;
     if (busy == 0)
         goto begin_transfer;
     value = -1;

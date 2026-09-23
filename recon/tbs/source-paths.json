@@ -18728,10 +18728,12 @@
       "name": "WorldMap_PrepareTriggerActor"
     },
     "resource_371:020027dc": {
-      "name": "WorldMap_RestoreExitTrigger"
+      "name": "WorldMap_RestoreExitTrigger",
+      "source": "FIELD/WORLD_MAP/EXIT_TRIGGER.C"
     },
     "resource_371:0200384c": {
-      "name": "WorldMap_RaiseActors"
+      "name": "WorldMap_RaiseActors",
+      "source": "FIELD/WORLD_MAP/RAISE_ACTORS.C"
     },
     "resource_371:02004058": {
       "name": "WorldMap_CreateLinkedEffects"
@@ -18740,7 +18742,8 @@
       "name": "WorldMap_UpdateOrbitActor"
     },
     "resource_391:02002974": {
-      "name": "FieldScene_UpdateFallingEffect"
+      "name": "FieldScene_UpdateFallingEffect",
+      "source": "FIELD/KORIMA_HASHI/FALLING_EFFECT.C"
     },
     "resource_3be:020011f8": {
       "name": "StagedActorPairScene_RunSpinningLeap",

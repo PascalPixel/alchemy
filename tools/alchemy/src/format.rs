@@ -57,14 +57,42 @@ fn exact_file(path: &Path) -> bool {
         let Some(parent) = current.parent() else {
             return false;
         };
-        if !std::fs::read_dir(parent)
-            .is_ok_and(|entries| entries.flatten().any(|entry| entry.file_name() == name))
-        {
+        if !listed(parent, name) {
             return false;
         }
         current = parent.to_path_buf();
     }
     path.is_file()
+}
+
+/// Whether `directory` lists `name` with exactly that spelling. A listing
+/// is read once per run and again only when the directory changes: every
+/// file under it asks.
+fn listed(directory: &Path, name: &std::ffi::OsStr) -> bool {
+    use std::collections::{HashMap, HashSet};
+    use std::ffi::OsString;
+    type Listing = (std::time::SystemTime, HashSet<OsString>);
+    thread_local! {
+        static LISTINGS: std::cell::RefCell<HashMap<std::path::PathBuf, Listing>> =
+            Default::default();
+    }
+    let Ok(modified) = std::fs::metadata(directory).and_then(|metadata| metadata.modified()) else {
+        return false;
+    };
+    LISTINGS.with(|listings| {
+        let mut listings = listings.borrow_mut();
+        if listings
+            .get(directory)
+            .is_none_or(|(seen, _)| *seen != modified)
+        {
+            let Ok(entries) = std::fs::read_dir(directory) else {
+                return false;
+            };
+            let names = entries.flatten().map(|entry| entry.file_name()).collect();
+            listings.insert(directory.to_path_buf(), (modified, names));
+        }
+        listings[directory].1.contains(name)
+    })
 }
 
 fn check_table_sources(path: &Path) -> Result<(), String> {

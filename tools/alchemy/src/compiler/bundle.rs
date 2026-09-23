@@ -425,17 +425,13 @@ pub fn compiler_bundle_signature_checked() -> Result<String> {
     Ok(compiler_bundle_signature())
 }
 type HostExecutableSignatureCache = Vec<(Vec<String>, Result<String>)>;
-/// Identity of all code linked into this running contributor command.
+/// Identity of the tool code that decides what a build stage caches: the
+/// digest `build.rs` takes of every Alchemy and Psynergy source except the
+/// checks, reports and dashboard that only read build outputs. A change to
+/// those rebuilds nothing, as a Makefile rebuilds only what a changed tool
+/// produces; any other tool change invalidates every cached object.
 pub fn executable_signature() -> Result<String> {
-    static SIGNATURE: OnceLock<Result<String>> = OnceLock::new();
-    SIGNATURE
-        .get_or_init(|| {
-            let path = std::env::current_exe().map_err(|error| error.to_string())?;
-            fs::read(&path)
-                .map(|bytes| sha256::hex(&bytes))
-                .map_err(|error| format!("{}: {error}", path.display()))
-        })
-        .clone()
+    Ok(env!("ALCHEMY_BUILD_IMPLEMENTATION").to_string())
 }
 
 fn host_executable_signature_cache() -> &'static Mutex<HostExecutableSignatureCache> {

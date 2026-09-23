@@ -543,6 +543,7 @@ mod tests {
         assert!(output.contains("differing_halfwords="));
     }
     #[test]
+    #[ignore = "reads the local ROMs and compiles real owners; make test-integration"]
     fn entrypoint_contracts() {
         let output = |difference| RenderOutput {
             stdout: String::new(),

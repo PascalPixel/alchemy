@@ -118,15 +118,64 @@ pub fn identity(root: &Path, target: &str) -> Result<String, String> {
     }
     files.sort();
     files.dedup();
+    let digests = file_digests(root, &files)?;
     let mut input = Vec::new();
-    for path in files {
-        let bytes = std::fs::read(root.join(&path)).map_err(|e| format!("{path}: {e}"))?;
+    for (path, digest) in files.iter().zip(digests) {
         input.extend_from_slice(path.as_bytes());
         input.push(0);
-        input.extend_from_slice(sha256::hex(&bytes).as_bytes());
+        input.extend_from_slice(digest.as_bytes());
         input.push(0);
     }
     Ok(sha256::hex(&input))
+}
+
+/// The sha256 of each file, hashed across threads. A build asks for its
+/// identity several times to prove nothing changed while it ran, so a digest
+/// is reused while the file keeps its size and modification time.
+fn file_digests(root: &Path, files: &[String]) -> Result<Vec<String>, String> {
+    use std::collections::HashMap;
+    use std::sync::{Mutex, OnceLock};
+    type Seen = HashMap<std::path::PathBuf, (u64, std::time::SystemTime, String)>;
+    static SEEN: OnceLock<Mutex<Seen>> = OnceLock::new();
+    let seen = SEEN.get_or_init(Default::default);
+    let digest = |path: &String| -> Result<String, String> {
+        let full = root.join(path);
+        let metadata = std::fs::metadata(&full).map_err(|e| format!("{path}: {e}"))?;
+        let stamp = (
+            metadata.len(),
+            metadata.modified().map_err(|e| format!("{path}: {e}"))?,
+        );
+        if let Some((len, modified, digest)) = seen.lock().unwrap().get(&full) {
+            if (*len, *modified) == stamp {
+                return Ok(digest.clone());
+            }
+        }
+        let bytes = std::fs::read(&full).map_err(|e| format!("{path}: {e}"))?;
+        let digest = sha256::hex(&bytes);
+        seen.lock()
+            .unwrap()
+            .insert(full, (stamp.0, stamp.1, digest.clone()));
+        Ok(digest)
+    };
+    let workers = std::thread::available_parallelism()
+        .map_or(1, usize::from)
+        .min(16);
+    let chunk = files.len().div_ceil(workers).max(1);
+    std::thread::scope(|scope| {
+        let handles = files
+            .chunks(chunk)
+            .map(|part| scope.spawn(move || part.iter().map(digest).collect::<Result<Vec<_>, _>>()))
+            .collect::<Vec<_>>();
+        let mut digests = Vec::with_capacity(files.len());
+        for handle in handles {
+            digests.extend(
+                handle
+                    .join()
+                    .map_err(|_| "identity hashing panicked".to_string())??,
+            );
+        }
+        Ok(digests)
+    })
 }
 
 pub fn write(
@@ -289,13 +338,30 @@ pub(crate) struct VerifiedBuild {
     pub asset_manifest: Vec<u8>,
 }
 
-/// The target's last full ROM build, recomputed from its artifacts: a
-/// supported full build whose report is byte-identical with nothing unowned,
-/// whose rebuilt ROM hashes to the registered reference ROM and equals the
-/// local one, whose asset manifest hashes to the digest its proof records,
-/// and whose recorded inputs are still the tree's. `Err` says why the build
-/// proves nothing now.
+/// The target's last full ROM build, recomputed from its artifacts, whose
+/// recorded inputs are still the tree's: the proof a receipt, and so DONE,
+/// needs. `Err` says why the build proves nothing about the tree now.
+#[cfg(test)]
 pub(crate) fn full_build(root: &Path, target: DecompTarget) -> Result<VerifiedBuild, String> {
+    let (build, inputs) = last_full_build(root, target)?;
+    if identity(root, target.id.as_str())? != inputs {
+        return Err("its build inputs changed after the build".into());
+    }
+    Ok(build)
+}
+
+/// The target's last byte-identical full ROM build, recomputed from its
+/// artifacts whatever the tree has become since: a supported full build
+/// whose report is byte-identical with nothing unowned, whose rebuilt ROM
+/// hashes to the registered reference ROM and equals the local one, and
+/// whose asset manifest hashes to the digest its proof records. The
+/// executable inventory depends only on the reference ROM and this layout,
+/// so it stays authoritative across source and tool changes; a receipt
+/// needs [`full_build`]. A build that started, or failed, left none.
+pub(crate) fn last_full_build(
+    root: &Path,
+    target: DecompTarget,
+) -> Result<(VerifiedBuild, String), String> {
     full_build_supported(target)?;
     let read =
         |path: &str| std::fs::read(root.join(path)).map_err(|e| format!("cannot read {path}: {e}"));
@@ -347,13 +413,13 @@ pub(crate) fn full_build(root: &Path, target: DecompTarget) -> Result<VerifiedBu
             target.rom
         ));
     }
-    if identity(root, target.id.as_str())? != proof.inputs_sha256 {
-        return Err("its build inputs changed after the build".into());
-    }
-    Ok(VerifiedBuild {
-        rom_sha256: proof.rom_sha256,
-        asset_manifest,
-    })
+    Ok((
+        VerifiedBuild {
+            rom_sha256: proof.rom_sha256,
+            asset_manifest,
+        },
+        proof.inputs_sha256,
+    ))
 }
 
 /// `target` as it will be once its full ROM build is supported, so tests can

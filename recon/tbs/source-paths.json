@@ -19434,6 +19434,10 @@
     "main:080f0254": {
       "name": "Graphics_ClearCharacterBlockAndPalette",
       "source": "GRAPHICS/TILE/CLEAR_CHARACTER_BLOCK_AND_PALETTE.C"
+    },
+    "main:080935d4": {
+      "name": "BattleFx_StepRatioTransition",
+      "source": "BATTLE/EFFECT/STEP_RATIO_TRANSITION.C"
     }
   },
   "symbols": {

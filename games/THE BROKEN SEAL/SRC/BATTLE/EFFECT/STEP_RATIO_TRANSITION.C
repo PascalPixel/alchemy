@@ -1,8 +1,3 @@
-/* Draft, not exact (2026-09-24): 1 differing halfword, 204 of 204 bytes.
-   Residual: "adds r1, r2, r1" where the reference has "adds r1, r1, r2"
-   for the eased offset plus the start value. Returns int: the epilogue
-   returns through r1. */
-
 #include "IWRAM_CALL.H"
 
 extern u8 *Data_03001e70;
@@ -10,8 +5,12 @@ extern u8 *Data_03001e70;
 u8 *Runtime_AllocateBlock(s32 kind, s32 size);
 s32 Func_080022ec(s32 dividend, s32 divisor);
 void Scheduler_RemoveCallback(s32 (*callback)(void));
+s32 BattleFx_StepRatioTransition(void);
 
-s32 Func_080935d4(void)
+/* Eases the ratio at work + 0x34c from the start to the end value over the
+   transition's duration, one step per frame, then unschedules itself.
+   Declared int: the reference returns through r1, with no value. */
+s32 BattleFx_StepRatioTransition(void)
 {
     u8 *work;
     s16 *duration;
@@ -30,12 +29,11 @@ s32 Func_080935d4(void)
     delta = *(s32 *)(work + 0x354) - *from;
     step = (s16 *)(work + 0x35a);
     (*step)++;
-    offset = Func_080022ec(delta * *step, *duration);
-    offset += *from;
+    offset = *from + Func_080022ec(delta * *step, *duration);
     *(s32 *)(work + 0x34c) = Iwram_MulQ16(*(s32 *)(work + 0x348), offset);
     *(u32 *)0x03001af4 = *(u16 *)(work + 0x118) + 1;
     if (*step == *duration) {
         *duration = 0;
-        Scheduler_RemoveCallback(Func_080935d4);
+        Scheduler_RemoveCallback(BattleFx_StepRatioTransition);
     }
 }

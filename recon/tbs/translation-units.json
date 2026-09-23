@@ -73764,12 +73764,12 @@
         {
           "address": "0x08005ee0",
           "extent": 234,
-          "state": "retained-assembly"
+          "state": "exact-c"
         },
         {
           "address": "0x08005fcc",
           "extent": 186,
-          "state": "retained-assembly"
+          "state": "exact-c"
         },
         {
           "address": "0x080060e8",

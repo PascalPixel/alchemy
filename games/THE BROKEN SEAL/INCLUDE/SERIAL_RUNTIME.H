@@ -92,10 +92,18 @@ void Func_0800651c(void);
 extern u8 Data_00000000[];
 extern u8 Data_000000c0[];
 extern struct SerialTransferState Data_02002220;
+extern struct SerialRuntime Data_02002240;
 extern volatile s32 Data_02002080;
 extern volatile u16 Data_02002008;
 extern volatile s32 Data_020023ac;
 extern volatile u16 Data_02002238;
 extern volatile u16 Data_04000208;
+
+static inline s32 SerialRuntime_AddParentFlag(s32 status)
+{
+    if (Data_02002240.is_parent != 0)
+        status |= 0x1000;
+    return status;
+}
 
 #endif

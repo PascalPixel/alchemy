@@ -1,6 +1,3 @@
-/* Draft, not exact (2026-09-24): 5 differing halfwords. The cell index is grid_x / 16 + (grid_z / 16) * 128 (the draft had the divide idiom spelled out); the residual is the r0/r2 choice for the two tile-table bases in the kind comparison.
-   FAKEMATCH marks below are empty do-while wraps that only move scheduling
-   or register choice; they stay tagged until a real spelling replaces them. */
 #include "TYPES.H"
 
 #define TILE_HI(ptr, offset) (*(s16 *)((u8 *)(ptr) + (offset) + 2))
@@ -29,8 +26,9 @@ struct GridTileCell_08093e28 {
 };
 
 extern s32 Data_02000240[];
-extern struct GridTileCell_08093e28 Data_02010000[];
-extern struct GridTileCell_08093e28 Data_02010200[];
+/* The two tile-kind planes are addressed as fixed EWRAM tables. */
+#define TILE_CELLS ((struct GridTileCell_08093e28 *)0x02010000)
+#define TILE_CELLS_TARGET ((struct GridTileCell_08093e28 *)0x02010200)
 
 #define ACTIVE_FLAG (((u8 *)Data_02000240)[498])
 
@@ -63,7 +61,7 @@ s32 FieldEffect_UpdateGridPlacement(void)
     if (ACTIVE_FLAG == 0) {
         s32 index = grid_x / 16 + (grid_z / 16) * 128;
 
-        if (Data_02010000[index].kind == Data_02010200[index].kind) {
+        if (TILE_CELLS[index].kind == TILE_CELLS_TARGET[index].kind) {
             s32 position[6];
 
             position[0] = object->x;

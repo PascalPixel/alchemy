@@ -256,7 +256,8 @@
       "source": "FIELD/COMMON/OBJECT/EFFECTS_RESERVED_NO_OP.C"
     },
     "main:08093e28": {
-      "name": "FieldEffect_UpdateGridPlacement"
+      "name": "FieldEffect_UpdateGridPlacement",
+      "source": "FIELD/COMMON/EFFECT/UPDATE_GRID_PLACEMENT.C"
     },
     "main:080a1bc8": {
       "name": "PsynergyMenu_ReservedNoOp",

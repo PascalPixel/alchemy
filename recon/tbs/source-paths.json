@@ -1554,7 +1554,8 @@
       "source": "BATTLE/EFFECT/RUN_EFFECT.C"
     },
     "main:0808df1c": {
-      "name": "BattleEffect_SelectNearbyTargetObject"
+      "name": "BattleEffect_SelectNearbyTargetObject",
+      "source": "BATTLE/EFFECT/SELECT_NEARBY_TARGET_OBJECT.C"
     },
     "main:08097b70": {
       "name": "BattleFx_UpdateItemBreakFragment",
@@ -1692,7 +1693,8 @@
       "name": "BattleEffect_UpdatePhasedRadialParticle"
     },
     "main:08095dd0": {
-      "name": "BattleEffect_RunPhasedRadialParticleSequence"
+      "name": "BattleEffect_RunPhasedRadialParticleSequence",
+      "source": "BATTLE/EFFECT/RUN_PHASED_RADIAL_PARTICLE_SEQUENCE.C"
     },
     "main:080e0c84": {
       "name": "BattleFx_RunParticleReveal",

@@ -1,29 +1,31 @@
+/* NONMATCHING: 34 differing halfwords. Calling the fill directly makes the
+ * last call reload its address after the loop label, as in the ROM. The
+ * ROM rebuilds the 0x100 size before advancing destination; here CSE
+ * shares it in a saved register across the first call. */
 #include "TYPES.H"
 
 #define BattlePres_BuildTilemap Func_080c00d8
 
-void BattlePres_BuildTilemap(s32 destination)
+/* The IWRAM word fill, called through a call-via veneer. */
+#define IwramFill ((void (*)(void *destination, s32 size, s32 value))0x03000168)
+
+void BattlePres_BuildTilemap(s32 *destination)
 {
-    s32 *cursor;
     s32 entry;
     u32 index;
-    /* The ROM calls the IWRAM fill through call-via veneers, not callees
-     * taking a fourth argument. Register lifetimes remain unmatched. */
-    void (*fill)(s32 destination, s32 size, s32 value) =
-        (void (*)(s32, s32, s32))0x03000168;
 
-    fill(destination, 0x100, -1);
-    destination += 0x100;
-    fill(destination, 0x80, 0x03ff03ff);
+    IwramFill(destination, 0x100, -1);
+    destination += 0x40;
+    IwramFill(destination, 0x80, 0x03ff03ff);
     entry = 0x02010200;
-    cursor = (s32 *)(destination + 0x80);
+    destination += 0x20;
 
     index = 0;
     do {
         index++;
-        *cursor++ = entry;
+        *destination++ = entry;
         entry += 0x00020002;
     } while (index <= 239);
 
-    fill((s32)cursor, 0x280, 0x03ff03ff);
+    IwramFill(destination, 0x280, 0x03ff03ff);
 }

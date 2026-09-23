@@ -5804,18 +5804,6 @@
     },
     {
       "overlay": "resource_371",
-      "start": "0x0200384c",
-      "end": "0x020038fc",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "Obtain selected actor and actor54; end event, release camera coordinates, cue219, clear motion flags, clear only selected actor vertical velocity, set both byte0x61 fields, add0x3333 to both vertical velocities for60 waited frames, finish transition, publish flag0x122 and request scene2/entrance27.",
-        "Complete reviewed extent independently scored as ordinary C; nonexact and retained without handwritten, library, compiler-impossibility or DONE credit."
-      ]
-    },
-    {
-      "overlay": "resource_371",
       "start": "0x02004058",
       "end": "0x02004174",
       "kind": "structured_scene_module",

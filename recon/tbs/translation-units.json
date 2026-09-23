@@ -172650,6 +172650,54 @@
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_371",
       "absolute_symbols": {
+        "Engine_ObjectCreate": {
+          "address": "0x0200c20c",
+          "kind": "thumb"
+        },
+        "Func_0200c1f4": {
+          "address": "0x0200c1f4",
+          "kind": "thumb"
+        },
+        "Func_0200c1dc": {
+          "address": "0x0200c1dc",
+          "kind": "thumb"
+        },
+        "WorldMap_MoveEffectDown": {
+          "address": "0x0200c004",
+          "kind": "thumb"
+        },
+        "WorldMap_MoveEffectUp": {
+          "address": "0x0200bfb4",
+          "kind": "thumb"
+        },
+        "gWorldMapEffectWork": {
+          "address": "0x03001f30",
+          "kind": "data"
+        },
+        "gWorldMapVramBlocks": {
+          "address": "0x03001b10",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02004058",
+          "extent": 284,
+          "state": "retained-assembly"
+        }
+      ]
+    },
+    {
+      "id": "world-map-raise-actors",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/RAISE_ACTORS.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_371",
+      "absolute_symbols": {
+        "LinkedScene_WorldMap": {
+          "address": "0x00000002",
+          "kind": "data"
+        },
         "Engine_ActorGet": {
           "address": "0x0200c2fc",
           "kind": "thumb"
@@ -172668,10 +172716,6 @@
         },
         "Engine_GameFlagSet": {
           "address": "0x0200c294",
-          "kind": "thumb"
-        },
-        "Engine_ObjectCreate": {
-          "address": "0x0200c20c",
           "kind": "thumb"
         },
         "Func_0200c184": {
@@ -172698,30 +172742,6 @@
           "address": "0x0200c404",
           "kind": "thumb"
         },
-        "Func_0200c1f4": {
-          "address": "0x0200c1f4",
-          "kind": "thumb"
-        },
-        "Func_0200c1dc": {
-          "address": "0x0200c1dc",
-          "kind": "thumb"
-        },
-        "WorldMap_MoveEffectDown": {
-          "address": "0x0200c004",
-          "kind": "thumb"
-        },
-        "WorldMap_MoveEffectUp": {
-          "address": "0x0200bfb4",
-          "kind": "thumb"
-        },
-        "gWorldMapEffectWork": {
-          "address": "0x03001f30",
-          "kind": "data"
-        },
-        "gWorldMapVramBlocks": {
-          "address": "0x03001b10",
-          "kind": "data"
-        },
         "gGameState": {
           "address": "0x02000240",
           "kind": "data"
@@ -172731,12 +172751,7 @@
         {
           "address": "0x0200384c",
           "extent": 176,
-          "state": "retained-assembly"
-        },
-        {
-          "address": "0x02004058",
-          "extent": 284,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },

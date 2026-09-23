@@ -18727,7 +18727,8 @@
       "name": "WorldMap_RestoreExitTrigger"
     },
     "resource_371:0200384c": {
-      "name": "WorldMap_RaiseActors"
+      "name": "WorldMap_RaiseActors",
+      "source": "FIELD/WORLD_MAP/RAISE_ACTORS.C"
     },
     "resource_371:02004058": {
       "name": "WorldMap_CreateLinkedEffects"

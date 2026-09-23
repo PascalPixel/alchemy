@@ -4,7 +4,6 @@
 
 #define WorldMap_RunActorSequence Func_020024a8
 #define WorldMap_PrepareTriggerActor Func_02002768
-#define WorldMap_RestoreExitTrigger Func_020027dc
 
 extern s32 gWorldMapActor;
 extern struct SceneEvent gWorldMapEvents[];
@@ -131,20 +130,4 @@ void WorldMap_PrepareTriggerActor(s32 actor)
     placement->x = 0x17940000;
     placement->z = 0x0d480000;
     placement->facing = 0x3000;
-}
-
-void WorldMap_RestoreExitTrigger(void)
-{
-    struct SceneEvent *event = gWorldMapEvents;
-
-    for (;;) {
-        if (event->control == EVENT_TOUCH && event->trigger == 138) {
-            event->control = EVENT_EXIT;
-            event->value = 33;
-            break;
-        }
-        if (event->control == SCENE_EVENTS_END)
-            break;
-        ++event;
-    }
 }

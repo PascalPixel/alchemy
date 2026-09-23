@@ -172635,11 +172635,26 @@
           "address": "0x02002768",
           "extent": 116,
           "state": "retained-assembly"
-        },
+        }
+      ]
+    },
+    {
+      "id": "world-map-restore-exit-trigger",
+      "game": "tbs",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/EXIT_TRIGGER.C",
+      "compiler_route": "canonical-gcc296",
+      "overlay": "resource_371",
+      "absolute_symbols": {
+        "gWorldMapEvents": {
+          "address": "0x0200e3f4",
+          "kind": "data"
+        }
+      },
+      "owners": [
         {
           "address": "0x020027dc",
           "extent": 64,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },

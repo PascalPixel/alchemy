@@ -18724,7 +18724,8 @@
       "name": "WorldMap_PrepareTriggerActor"
     },
     "resource_371:020027dc": {
-      "name": "WorldMap_RestoreExitTrigger"
+      "name": "WorldMap_RestoreExitTrigger",
+      "source": "FIELD/WORLD_MAP/EXIT_TRIGGER.C"
     },
     "resource_371:0200384c": {
       "name": "WorldMap_RaiseActors",

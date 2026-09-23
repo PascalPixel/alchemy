@@ -5792,18 +5792,6 @@
     },
     {
       "overlay": "resource_371",
-      "start": "0x020027dc",
-      "end": "0x0200281c",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "Scan SceneEvent records until control0xffffffff; convert the first touch trigger138 back to exit with value33 and return. No calls.",
-        "Complete reviewed owner remains assembled while the ordinary C draft is nonexact. No handwritten, library or compiler-impossibility credit."
-      ]
-    },
-    {
-      "overlay": "resource_371",
       "start": "0x02004058",
       "end": "0x02004174",
       "kind": "structured_scene_module",

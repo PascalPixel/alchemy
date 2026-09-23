@@ -2,6 +2,17 @@
 
 #define ResourceTable_AllocateBlocks Func_08003e58
 
+/*
+ * Nonmatching: 26 halfword edits. Block layout, branches and the pool match.
+ * The reference keeps the block map in two registers: ip for the fill and the
+ * occupied-run lookup, and a copy in r7 (made just before the loop) for the
+ * free check and the scan, which leaves id in r6 and the block count in r5.
+ * This C reads the map through the symbol for the check, scan and fill, so
+ * the compiler holds one lo-register map pointer in r5 and a copy in ip, and
+ * id and the block count move up to r7 and r6. Copying the map into a second
+ * local is removed by CSE and does not reproduce the r7 copy.
+ */
+
 struct ResourceTableEntry {
     u16 size;
     u16 block;
@@ -23,36 +34,38 @@ s32 ResourceTable_AllocateBlocks(u32 id, u32 size)
         u8 *map = Data_03001810;
         struct ResourceTableEntry *tbl = Data_03001b10;
         s32 pos = 0;
-        u8 *scan_map = map;
+        u32 end;
+        u32 i;
+        u8 *scan;
 
 next_run:
         result = -1;
         if (pos >= 512) {
             goto done;
         }
-        if (scan_map[pos] == 0xff) {
-            u32 end;
-            u32 i;
-            u8 *scan;
-
-            result = pos;
-            end = result + blocks;
-            scan = scan_map + result;
-            while (pos < end) {
+        if (Data_03001810[pos] != 0xff) {
+            goto occupied;
+        }
+        result = pos;
+        end = result + blocks;
+        if (pos < end) {
+            scan = Data_03001810 + result;
+            do {
                 if (*scan++ != 0xff) {
                     goto occupied;
                 }
                 pos++;
-            }
-            for (i = 0; i < blocks; i++) {
-                ResourceBlockOwners[result + i] = id;
-            }
-            result <<= 6;
-            goto done;
+            } while (pos < end);
         }
+        for (i = 0; i < blocks; i++) {
+            Data_03001810[result + i] = id;
+        }
+        goto found;
 occupied:
         pos += tbl[map[pos]].size >> 6;
         goto next_run;
+found:
+        result <<= 6;
 done:
         return result;
     }

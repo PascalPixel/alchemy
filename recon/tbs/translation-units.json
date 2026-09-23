@@ -172743,7 +172743,7 @@
     {
       "id": "korima-falling-effect",
       "game": "tbs",
-      "source": "recon/tbs/en/overlays/korima_falling_effect.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_HASHI/FALLING_EFFECT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_391",
       "absolute_symbols": {
@@ -172796,7 +172796,7 @@
         {
           "address": "0x02002974",
           "extent": 356,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },

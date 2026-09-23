@@ -18736,7 +18736,8 @@
       "name": "WorldMap_UpdateOrbitActor"
     },
     "resource_391:02002974": {
-      "name": "FieldScene_UpdateFallingEffect"
+      "name": "FieldScene_UpdateFallingEffect",
+      "source": "FIELD/KORIMA_HASHI/FALLING_EFFECT.C"
     },
     "resource_3be:020011f8": {
       "name": "StagedActorPairScene_RunSpinningLeap",

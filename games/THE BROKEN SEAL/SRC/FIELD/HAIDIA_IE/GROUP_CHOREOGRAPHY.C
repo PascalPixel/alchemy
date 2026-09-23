@@ -1,18 +1,13 @@
 #include "TYPES.H"
 
-#define FieldScene_RunGroupChoreography Func_02001274
 
 /*
- * Score 2026-09-23: 832 of 832 bytes, 3 halfword edits. The callback passed
+ * Exact 2026-09-23 (832 bytes), a tagged fake match. The callback passed
  * to the target-and-callback call (main Object_SetTargetAndCallback) is the
  * data symbol Data_0200ac00, as in HAIDIA_IE/ELDER_AID_EVENT.C; as a plain
  * integer its pool load was scheduled before the zero actor argument.
- * Remaining residual: after the 0x22b area-state store the reference loads
- * the linked scene (5) into r5 after the strb and sets r1 before r0 for the
- * first scene call; this draft schedules the scene load before the add.
- * Return types, prototype widths, statement order and the store spelling do
- * not move it (a stand-alone mock-up reproduces the draft order). The same
- * residual stands in 3bb:02000a1c and 3c9:020012c8.
+ * The do/while around the 0x22b area-state store holds the linked scene
+ * load after the store, as in the reference.
  */
 
 struct SceneWork {
@@ -225,7 +220,10 @@ void FieldScene_RunGroupChoreography(void)
     Call2(Func_02003be8, 0, 0x200a998);
     Func_02003bae(6);
     Value2(Func_02003c0e, 25, 0x200a9f0);
-    Data_02000240.area_state = 2;
+    /* FAKEMATCH: the do/while loads the linked scene after the store. */
+    do {
+        Data_02000240.area_state = 2;
+    } while (0);
     {
         const void *message = Data_00000005;
 

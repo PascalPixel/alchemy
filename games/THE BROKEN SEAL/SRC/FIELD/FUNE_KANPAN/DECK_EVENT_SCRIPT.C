@@ -1,17 +1,11 @@
 #include "TYPES.H"
 
-#define RunEventScript01 Func_02001db0
 
 /* Audited 49-call script for the complete 0x02001db0 owner.
  * Recovered from the bounded canonical owner.
  *
- * Score 2026-09-23: 480 of 480 bytes, 2 halfword edits (4 before: the three
- * actors action table is Data_0200c4ec, which the pool word holds, not
- * Data_0200c3ec; the walk after the local call goes through the Call3 form
- * like the other walk calls here). Remaining residual: the reference sets
- * r0 = 21 for that walk first, straight after the local call; this draft
- * sets it last. Prototyped direct, typed inline and value-returning forms
- * leave it last. */
+ * Exact 2026-09-23 (480 bytes), with one tagged fake match for the walk
+ * after the local call. The three actors' action table is Data_0200c4ec. */
 
 void Func_02002ac4();
 void Func_0200582a();
@@ -91,7 +85,7 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 
 extern u8 Data_0200c4ec[];
 
-void RunEventScript01(void)
+void FieldScene_RunShipDeckEventScript(void)
 {
     void *p8;
     void *p10;
@@ -146,7 +140,10 @@ void RunEventScript01(void)
         p10 = Func_0200620a_a(24);
     } while (*(s16 *)(p10 + 100) == 0);
     Func_02002ac4();
-    Call3(Func_0200626c, 21, 196, 612);
+    /* FAKEMATCH: the do/while sets r0 = 21 first, straight after the call. */
+    do {
+        Call3(Func_0200626c, 21, 196, 612);
+    } while (0);
     Func_0200624a(24);
     Func_02006208(10);
     Func_0200636c();

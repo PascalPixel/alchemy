@@ -17,9 +17,8 @@ void Func_020043f6();
 void Func_02004370();
 void Func_020043b4();
 
-#define HandleActorReachingEscapeColumn Func_020012b4
 
-void HandleActorReachingEscapeColumn(void)
+void FieldScene_HandleEscapeColumn(void)
 {
     u8 *entity;
     s16 *slot;
@@ -50,7 +49,13 @@ void HandleActorReachingEscapeColumn(void)
     Func_020043f6(8, 3);
 
     entity[85] = 0;
-    entity[35] = (u8)(entity[35] | 2);
+    /* FAKEMATCH: a temporary holding the 2 picks the reference registers. */
+    {
+        s32 flags = 2;
+
+        flags |= entity[35];
+        entity[35] = flags;
+    }
 
     Func_02004370(42, 10, 1, 1, column, 10);
 

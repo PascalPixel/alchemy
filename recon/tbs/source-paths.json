@@ -19350,6 +19350,10 @@
     "main:0808f32c": {
       "name": "FieldEffect_SpawnNearbyMarkers",
       "source": "FIELD/COMMON/EFFECT/SPAWN_NEARBY_MARKERS.C"
+    },
+    "main:080b1614": {
+      "name": "Shop_SelectQuantity",
+      "source": "MENU/SHOP/SELECT_QUANTITY.C"
     }
   },
   "symbols": {

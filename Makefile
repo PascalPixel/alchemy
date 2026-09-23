@@ -30,7 +30,7 @@ OWNER_INVENTORY = out/$(TARGET)/full/rebuilt.owner-inventory.json
 REPORT_DIR = out/$(TARGET)/reports
 HISTORICAL_TARGETS := tbs-ja tbs-en tbs-de tbs-es tbs-fr tbs-it \
 	tla-ja tla-en tla-de tla-es tla-fr tla-it
-.PHONY: help verify audit reports test lint lint-production lint-all-targets build-tools tool-tests tooling-index-check \
+.PHONY: help compare compare-tla compare-all precommit lint-staged rustfmt-check test-integration verify audit reports test lint lint-production lint-all-targets build-tools tool-tests tooling-index-check \
 	build-claimed build-asm build-assets build-full build-rom \
 	standard-check compiler-source-check corpus-check \
 	full-rom-check tla-assets-check tla-owners-check overlay-check declared-tu-check owner-inventory-check strict-tu-check siblings-check \
@@ -43,8 +43,12 @@ help:
 	@printf '%s\n' \
 		'make bootstrap        build/install missing compiler dependencies' \
 		'make bootstrap BUNDLE=/path/to/bundle   install an approved bundle' \
+		'make worktree-setup   prepare a new linked worktree from the main checkout' \
 		'make verify-clean     verify after deleting generated output' \
-		'make verify           fast byte-exact production gate' \
+		'make compare          rebuild what changed; check TBS against rom.sha1' \
+		'make compare-tla      the same for TLA; make compare-all for both' \
+		'make precommit        the pre-commit gate: compare the staged games, quick checks' \
+		'make verify           the landing gate on main and before every push' \
 		'make audit            exhaustive editions, candidates, and reports audit' \
 		'make reports          refresh analysis reports and coverage figures' \
 		'make targets          compile shared source for all 12 historical targets' \
@@ -61,13 +65,45 @@ help:
 		'make siblings-check   report twin families; reject address names in instanced sources' \
 		'make source-tracking-check reject ignored or untracked Proven C' \
 		'make build-assets     rebuild source assets' \
-		'make test             focused Rust tests and policy checks' \
+		'make test             parallel Rust unit tests and policy checks' \
+		'make test-integration tests against the local ROMs and real compiles' \
 		'make tooling-index-check prove every tool is indexed exactly once' \
 		'make progress         print byte-exact progress' \
 		'make progress-subject print the required commit prefix' \
 		'make correspondence   match exact EN owners across TBS editions' \
 		'make edition-builds   relink exact EN C across TBS editions' \
 		'make coverage         refresh coverage data and figures'
+
+# pret's `make compare`: rebuild only what changed, then check the ROM
+# against rom.sha1. Every stage caches by content (objects, listings,
+# overlays, assets), so an unchanged tree rebuilds nothing and one edited C
+# file recompiles alone; the checksum is the proof. A canonical build also
+# writes the receipt DONE reads, and derives the executable inventory again
+# only when it is absent or its own inputs changed.
+SHA1 := $(shell { command -v sha1sum || command -v shasum; } 2>/dev/null) -c
+
+compare:
+	$(BUILD) full --target tbs-en
+	@grep -F ' out/tbs-en/' rom.sha1 | $(SHA1) -
+
+compare-tla:
+	$(BUILD) full --target tla-en
+	@grep -F ' out/tla-en/' rom.sha1 | $(SHA1) -
+
+compare-all: compare compare-tla
+
+# The pre-commit gate, split as pret splits a quick local build from CI:
+# compare each game the staged change can reach, with the quick repository
+# checks. `make verify` stays the landing gate on main and before a push.
+precommit: index-sync-check native-format-check language-check lint-staged tooling-index-check
+	$(CHECK) publication --staged
+	@set -e; goals=$$(git diff --cached --name-only | awk ' \
+		/^games\/THE BROKEN SEAL\// || /^recon\/tbs\// { tbs = 1 } \
+		/^games\/THE LOST AGE\// || /^recon\/tla\// { tla = 1 } \
+		/^(games\/COMMON|tools|\.cargo)\// || /^(Makefile|agscc|agbcc|rom\.sha1)$$/ { tbs = 1; tla = 1 } \
+		END { if (tbs) print "compare"; if (tla) print "compare-tla" }'); \
+	if [ -n "$$goals" ]; then $(MAKE) --no-print-directory $$goals; \
+	else printf 'no game input staged; nothing to compare\n'; fi
 
 build-claimed:
 	$(BUILD) claimed --target $(TARGET)
@@ -251,9 +287,15 @@ build-tools:
 		printf ' ok\n'; \
 	done
 
+# Unit tests run in parallel; tests that read the local ROMs or compile
+# real owners are marked #[ignore] and run by test-integration.
 tool-tests:
 	$(CARGO) test --offline --quiet --release --workspace \
 		--manifest-path $(TOOLS)/Cargo.toml
+
+test-integration: toolchain-check
+	$(CARGO) test --offline --quiet --release --workspace \
+		--manifest-path $(TOOLS)/Cargo.toml -- --ignored
 	$(COMPILER) match --acceptance-test
 
 tooling-index-check:
@@ -290,19 +332,25 @@ language-check:
 
 lint: lint-all-targets
 
-lint-production: standard-check compiler-source-check
-	@set -e; git ls-files --cached --others --exclude-standard '*.rs' | while IFS= read -r source; do \
-		test ! -f "$$source" || rustfmt --edition 2021 --check "$$source"; \
-	done
+lint-production: standard-check compiler-source-check rustfmt-check
 	$(CHECK) no-asm --target $(TARGET)
 
-lint-all-targets: standard-check compiler-source-check
-	@set -e; git ls-files --cached --others --exclude-standard '*.rs' | while IFS= read -r source; do \
-		test ! -f "$$source" || rustfmt --edition 2021 --check "$$source"; \
+rustfmt-check:
+	@git ls-files -z --cached --others --exclude-standard '*.rs' | xargs -0 rustfmt --edition 2021 --check
+
+# Formatting of the staged Rust files and the ordinary-C scan, which skips
+# every source whose expansion is unchanged since it was last clean.
+lint-staged: standard-check compiler-source-check
+	@set -e; git diff --cached --name-only --diff-filter=d -- '*.rs' | while IFS= read -r source; do \
+		rustfmt --edition 2021 --check "$$source"; \
 	done
 	$(CHECK) no-asm
 
-test: toolchain-check native-format-check lint tooling-index-check tool-tests compiler-source-check
+lint-all-targets: standard-check compiler-source-check rustfmt-check
+	$(CHECK) no-asm
+
+test: toolchain-check
+	@$(MAKE) --no-print-directory -j5 native-format-check lint tooling-index-check tool-tests compiler-source-check
 	$(CHECK) publication --self-test
 	$(CHECK) publication --tree
 	$(CHECK) commit-progress --self-test
@@ -316,9 +364,9 @@ review-images-check: source-tracking-check
 	$(ASSETS) --review-images out/tbs-en/graphics-review
 
 verify: toolchain-check native-format-check index-sync-check publication-tree-check source-tracking-check review-images-check corpus-check language-check lint-production tooling-index-check \
-	strict-tu-check check-owners full-rom-check coverage-check siblings-check
+	strict-tu-check check-owners full-rom-check compare-tla coverage-check siblings-check
 
-audit: verify test targets \
+audit: verify test test-integration targets \
 	correspondence-check progress-report coverage-check
 
 reports: correspondence progress-report coverage
@@ -329,7 +377,26 @@ standard-check:
 	test "$$actual" = "$$expected" || { printf 'compiler flags differ\nexpected:\n%s\nactual:\n%s\n' "$$expected" "$$actual"; exit 1; }
 	@printf 'compiler standard ok\n'
 
-.PHONY: bootstrap compiler-sources compilers toolchain-check verify-clean prepare-inputs
+.PHONY: bootstrap compiler-sources compilers toolchain-check verify-clean prepare-inputs worktree-setup
+
+# Run inside a new linked worktree. It borrows what the main checkout has:
+# the ROMs and installed toolchain by link, the compiler submodules by a
+# local clone (no network), and copy-on-write clones of its Cargo artifacts
+# and content-addressed build caches, whose keys name every input, so
+# sharing them cannot change an output. Then it restores the private inputs.
+GIT_COMMON = $(shell git rev-parse --path-format=absolute --git-common-dir)
+MAIN_CHECKOUT = $(patsubst %/,%,$(dir $(GIT_COMMON)))
+worktree-setup:
+	@test "$(MAIN_CHECKOUT)" != "$(CURDIR)" || { printf 'run inside a linked worktree\n'; exit 1; }
+	ln -sfn "$(MAIN_CHECKOUT)/roms" roms
+	@mkdir -p tools/out out
+	@for tool in compilers binutils compiler-build; do ln -sfn "$(MAIN_CHECKOUT)/tools/out/$$tool" "tools/out/$$tool"; done
+	git -c protocol.file.allow=always -c submodule.agscc.url="$(GIT_COMMON)/modules/agscc" \
+		-c submodule.agbcc.url="$(GIT_COMMON)/modules/agbcc" submodule update --init agscc agbcc
+	@for tree in tools/out/cargo-target out/cache; do \
+		test -e "$$tree" || ! test -d "$(MAIN_CHECKOUT)/$$tree" || cp -c -R "$(MAIN_CHECKOUT)/$$tree" "$$tree"; \
+	done
+	$(MAKE) --no-print-directory prepare-inputs
 
 # Every game's registered private inputs are checked by source tracking, so
 # both indexed editions are restored whatever TARGET selects. A clone without
@@ -366,8 +433,8 @@ compiler-source-check:
 		  agscc) approved=f2095030ce7fa3b8991a5b5bdbe32a1860c6fa34;; \
 		esac; \
 		test "$$(git rev-parse :$$repo)" = "$$approved" || { printf '%s gitlink is not approved\n' "$$repo"; exit 1; }; \
-		test "$$(env -u GIT_INDEX_FILE git -C "$$repo" rev-parse HEAD)" = "$$approved" || { printf '%s checkout is not approved\n' "$$repo"; exit 1; }; \
-		state=$$(env -u GIT_INDEX_FILE git -C "$$repo" status --porcelain --untracked-files=all -- . ':(exclude,glob)**/.DS_Store'); \
+		test "$$(env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git -C "$$repo" rev-parse HEAD)" = "$$approved" || { printf '%s checkout is not approved\n' "$$repo"; exit 1; }; \
+		state=$$(env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git -C "$$repo" status --porcelain --untracked-files=all -- . ':(exclude,glob)**/.DS_Store'); \
 		test -z "$$state" || { printf '%s compiler source is dirty\n' "$$repo"; exit 1; }; \
 	done
 	@printf 'compiler sources match approved submodules\n'

@@ -1549,10 +1549,18 @@ fn build_stages(root: &Path, cwd: &Path, options: &Options) -> Result<String, St
     });
     write_canonical(&sidecar_path(&output, "json")?, &report)?;
     // The receipt needs the independently verified executable inventory,
-    // and `--inventory` needs this build's proof: while the inventory is
-    // absent or pending, only the receipt is withheld.
-    let mut receipt = "";
+    // and `--inventory` needs this build's proof. The inventory depends on
+    // the reference ROM and this build's asset layout alone, so it is derived
+    // again only when absent or when those changed; while it stays pending,
+    // only the receipt is withheld.
+    let mut receipt = String::new();
     if let Some(rom) = rom.as_ref().filter(|_| canonical) {
+        if crate::coverage::pipeline::authoritative_inventory(root, target)?.is_none() {
+            match crate::coverage::audit::refresh_inventory(root, target) {
+                Ok(summary) => println!("{summary}"),
+                Err(error) => eprintln!("executable audit failed: {error}"),
+            }
+        }
         if crate::coverage::pipeline::authoritative_inventory(root, target)?.is_some() {
             let tree = crate::coverage::tree::work_tree_at(root.to_path_buf());
             let credits = crate::coverage::pipeline::verified_credits(
@@ -1570,7 +1578,7 @@ fn build_stages(root: &Path, cwd: &Path, options: &Options) -> Result<String, St
                 credits,
             )?;
         } else {
-            receipt = " receipt=withheld (executable audit pending)";
+            receipt = " receipt=withheld (executable audit pending)".into();
         }
     }
     Ok(format!(

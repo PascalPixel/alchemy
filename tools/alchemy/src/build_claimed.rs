@@ -648,7 +648,10 @@ pub fn compile_source_for_owner(
         compiler_source_tree_signature(Path::new(root), Path::new(source), &commands)?;
     let key = object_cache_key(
         &source_inputs,
-        &toolchain_stamp_with_signatures(&commands, signatures),
+        &toolchain_stamp_with_signatures(
+            &crate::compiler::source_inputs::portable_commands(Path::new(root), &commands),
+            signatures,
+        ),
     );
     if let Some((defined_names, undefined_names)) =
         cache_hit(object_cache, &key, [&object, &assembly])

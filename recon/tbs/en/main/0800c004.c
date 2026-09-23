@@ -1,3 +1,10 @@
+/* Draft, not exact (2026-09-24): candidate=192 reference=192 differing_halfwords=62. Constants the reference loads from
+   the literal pool are spelled as link-time Value_ symbols, which restores
+   the reference size; wraps marked FAKEMATCH only move scheduling. */
+#include "TYPES.H"
+extern u8 Value_00001c00;
+extern u8 Value_00000c8a;
+extern u8 Value_00000c80;
 /* Draft, not exact: 66 differing halfwords, 184-byte candidate for the
    192-byte owner (2026-09-23). Residual: the second DMA fill reuses r0 for
    &fill where the reference recomputes it from r4, and 0x03001cc0 is derived
@@ -30,11 +37,11 @@ void ObjectSystem_Initialize(s32 mode)
     if (mode == 4)
         Scheduler_AddOrUpdateCallback(Object_UpdateAllMotion, 0xc8a);
     else
-        Scheduler_AddOrUpdateCallback(Object_UpdateAllThumb, 0xc8a);
+        Scheduler_AddOrUpdateCallback(Object_UpdateAllThumb, (s32)&Value_00000c8a);
     if ((u32)(mode - 3) <= 1) {
         Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCameraFixed, 0xc80);
     } else {
-        Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCamera, 0xc80);
+        Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCamera, (s32)&Value_00000c80);
         *(s32 *)0x03001d1c = 0;
         *(s32 *)0x03001cc0 = 0;
     }

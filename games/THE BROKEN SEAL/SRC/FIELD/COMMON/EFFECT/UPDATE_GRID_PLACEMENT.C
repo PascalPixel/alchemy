@@ -26,8 +26,9 @@ struct GridTileCell_08093e28 {
 };
 
 extern s32 Data_02000240[];
-extern struct GridTileCell_08093e28 Data_02010000[];
-extern struct GridTileCell_08093e28 Data_02010200[];
+/* The two tile-kind planes are addressed as fixed EWRAM tables. */
+#define TILE_CELLS ((struct GridTileCell_08093e28 *)0x02010000)
+#define TILE_CELLS_TARGET ((struct GridTileCell_08093e28 *)0x02010200)
 
 #define ACTIVE_FLAG (((u8 *)Data_02000240)[498])
 
@@ -58,22 +59,9 @@ s32 FieldEffect_UpdateGridPlacement(void)
     Func_080916b0();
 
     if (ACTIVE_FLAG == 0) {
-        s32 index_x = grid_x;
-        s32 index_z;
-        s32 index;
+        s32 index = grid_x / 16 + (grid_z / 16) * 128;
 
-        if (index_x < 0)
-            index_x = tile_x + 23;
-        index_x >>= 4;
-
-        index_z = grid_z;
-        if (index_z < 0)
-            index_z = tile_z + 23;
-        index_z >>= 4;
-
-        index = index_x + (index_z << 7);
-
-        if (Data_02010000[index].kind == Data_02010200[index].kind) {
+        if (TILE_CELLS[index].kind == TILE_CELLS_TARGET[index].kind) {
             s32 position[6];
 
             position[0] = object->x;

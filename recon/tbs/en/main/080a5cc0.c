@@ -1,4 +1,9 @@
+/* Draft, not exact (2026-09-24): candidate=800 reference=800 differing_halfwords=241. Constants the reference loads from
+   the literal pool are spelled as link-time Value_ symbols, which restores
+   the reference size; wraps marked FAKEMATCH only move scheduling. */
 #include "TYPES.H"
+extern u8 Value_00000150;
+extern u8 Value_00003fff;
 #include "FAR_RUNTIME.H"
 #include "BATTLE_RUNTIME.H"
 #include "BATTLE_CALC.H"
@@ -131,7 +136,7 @@ s32 Func_080a5cc0(s32 *out_owner, s32 unused, s32 *out_action)
                 selection = Func_080a6ccc(0);
                 state = 0;
                 if (selection != -1) {
-                    state = 2;
+                    do { state = 2; } while (0); /* FAKEMATCH */
                     if (work->mode != 0) {
                         if (work->mode == 1) {
                             PsynergyMenu_SetShortcut(
@@ -153,7 +158,7 @@ s32 Func_080a5cc0(s32 *out_owner, s32 unused, s32 *out_action)
             break;
 
         case 3:
-            ItemMenu_DrawMsg(0, (s32)&Value_00000aeb);
+            do { ItemMenu_DrawMsg(0, (s32)&Value_00000aeb); } while (0); /* FAKEMATCH */
             state = 4;
             if (Func_080a63e4(0) == -1) {
                 work->flags_220 |= 1;
@@ -227,7 +232,7 @@ s32 Func_080a5cc0(s32 *out_owner, s32 unused, s32 *out_action)
         }
     }
 
-    if (Func_080770c0(0x150) != 0) {
+    if (Func_080770c0((s32)&Value_00000150) != 0) {
         result = -1;
     }
     return result;

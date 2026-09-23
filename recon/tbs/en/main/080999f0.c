@@ -1,4 +1,10 @@
+/* Draft, not exact (2026-09-24): candidate=808 reference=808 differing_halfwords=325. Constants the reference loads from
+   the literal pool are spelled as link-time Value_ symbols, which restores
+   the reference size; wraps marked FAKEMATCH only move scheduling. */
 #include "TYPES.H"
+extern u8 Value_0000c000;
+extern u8 Value_00004000;
+extern u8 Value_0000011c;
 
 struct Vec3 { s32 x, y, z; };
 struct EffectTarget { u8 reserved_00[8]; struct Vec3 position; };
@@ -82,7 +88,7 @@ void Func_080999f0(void)
         main->x = Interpolate(start.x, end.x, i);
         main->y = Interpolate(start.y, end.y, i);
         main->z = Interpolate(start.z, end.z, i);
-        scale = Math_Div(i * 0xc000, 10) + 0x4000;
+        scale = Math_Div(i * (s32)&Value_0000c000, 10) + 0x4000;
         main->scale_x = scale;
         main->scale_y = scale;
         WaitFrames(1);

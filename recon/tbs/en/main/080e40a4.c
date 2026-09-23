@@ -1,4 +1,22 @@
+/* Draft, not exact (2026-09-24): candidate=1612 reference=1612 differing_halfwords=732. Constants the reference loads from
+   the literal pool are spelled as link-time Value_ symbols, which restores
+   the reference size; wraps marked FAKEMATCH only move scheduling. */
 #include "TYPES.H"
+extern u8 Value_00001f80;
+extern u8 Value_00007780;
+extern u8 Value_00007784;
+extern u8 Value_00000480;
+extern u8 Value_00007080;
+extern u8 Value_0000ffff;
+extern u8 Value_000077b4;
+extern u8 Value_000077b8;
+extern u8 Value_00000c80;
+extern u8 Value_00007824;
+extern u8 Value_00004000;
+extern u8 Value_00001f81;
+extern u8 Value_00003840;
+extern u8 Value_00000400;
+extern u8 Value_00000648;
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
 
@@ -236,7 +254,7 @@ void BattlePres_RunRingAndSparkScene(void *object)
         M2C_FIELD(object, s32 *, 8), M2C_FIELD(object, s32 *, 12), 130);
     Func_080030f8(1);
     Func_080cdd58();
-    *(u16 *)0x0400000A = 0x1F80;
+    *(u16 *)0x0400000A = (s32)&Value_00001f80;
 
     if (M2C_FIELD(STATE, s32 *, 4) == 0) {
         BattleEffect_LoadWork(46, 7, 7, 3, 3);
@@ -385,7 +403,7 @@ void BattlePres_RunRingAndSparkScene(void *object)
     /* Reseed the same records as sparks at the actor's world position. */
     member = *Func_080b5098(M2C_FIELD(STATE, s16 *, 0x24));
     half = Func_080b5070(M2C_FIELD(STATE, s16 *, 0x24)) / 2;
-    p = (struct Particle *)(work + 0x7080);
+    p = (struct Particle *)(work + (s32)&Value_00007080);
     i = 0;
     do {
         p->x = member->x;
@@ -416,7 +434,7 @@ void BattlePres_RunRingAndSparkScene(void *object)
         if (frame <= 1) {
             blit[0](draw_target, work, 0, 0, 120, 120);
         } else if (frame <= 3) {
-            blit[0](draw_target, work + 0x3840, 0, 0, 120, 120);
+            blit[0](draw_target, work + (s32)&Value_00003840, 0, 0, 120, 120);
         } else if (frame <= 5) {
             blit[0](draw_target, (void *)0x02010000, 0, 0, 120, 120);
         } else if (frame <= 7) {
@@ -430,7 +448,7 @@ void BattlePres_RunRingAndSparkScene(void *object)
             i = 0;
             do {
                 j = i / 2;
-                p = (struct Particle *)(work + 0x7080) + j;
+                p = (struct Particle *)(work + (s32)&Value_00007080) + j;
                 timer = p->timer;
                 if (timer > 0) {
                     Func_080e3944(p, tmp2);

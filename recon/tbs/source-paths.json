@@ -222,7 +222,8 @@
       "name": "GraphicsPalette_AdjustSelectionCounter"
     },
     "main:08021d88": {
-      "name": "UiText_DrawCharacter"
+      "name": "UiText_DrawCharacter",
+      "source": "GRAPHICS/TEXT/DRAW_CHARACTER.C"
     },
     "main:0801faa8": {
       "name": "SaveState_ProcessSelectedSlot"
@@ -255,7 +256,8 @@
       "source": "FIELD/COMMON/OBJECT/EFFECTS_RESERVED_NO_OP.C"
     },
     "main:08093e28": {
-      "name": "FieldEffect_UpdateGridPlacement"
+      "name": "FieldEffect_UpdateGridPlacement",
+      "source": "FIELD/COMMON/EFFECT/UPDATE_GRID_PLACEMENT.C"
     },
     "main:080a1bc8": {
       "name": "PsynergyMenu_ReservedNoOp",
@@ -5052,7 +5054,8 @@
       "source": "MENU/CREATE_WINDOW_AND_ENTRY_OBJECTS.C"
     },
     "main:080a8578": {
-      "name": "StatusMenu_ShowOwnerProgressMessage"
+      "name": "StatusMenu_ShowOwnerProgressMessage",
+      "source": "MENU/SHOW_OWNER_PROGRESS_MESSAGE.C"
     },
     "main:080a8cc0": {
       "name": "PsynergyMenu_DrawRange",
@@ -5638,7 +5641,8 @@
       "source": "BATTLE/EFFECT/WAIT_THEN_SET_FIELD.C"
     },
     "main:080eceac": {
-      "name": "Object_WaitTwelveFramesThenSetField18"
+      "name": "Object_WaitTwelveFramesThenSetField18",
+      "source": "BATTLE/EFFECT/WAIT_TWELVE_FRAMES_THEN_SET_FIELD.C"
     },
     "main:080ecedc": {
       "name": "BattleFx_RunRevealColumnMode1",
@@ -19065,7 +19069,8 @@
       "name": "ItemIcon_Compose"
     },
     "main:08029274": {
-      "name": "Text_FormatHex"
+      "name": "Text_FormatHex",
+      "source": "GRAPHICS/TEXT/FORMAT_HEX.C"
     },
     "main:080037d4": {
       "name": "Sound_LoadPresetParameters"

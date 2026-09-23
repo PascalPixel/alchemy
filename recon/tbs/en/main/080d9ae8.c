@@ -1,4 +1,18 @@
+/* Draft, not exact (2026-09-24): candidate=1248 reference=1248 differing_halfwords=456. Constants the reference loads from
+   the literal pool are spelled as link-time Value_ symbols, which restores
+   the reference size; wraps marked FAKEMATCH only move scheduling. */
 #include "TYPES.H"
+extern u8 Value_00007828;
+extern u8 Value_00000100;
+extern u8 Value_00002580;
+extern u8 Value_000002b8;
+extern u8 Value_00000200;
+extern u8 Value_0000ffff;
+extern u8 Value_00007780;
+extern u8 Value_00007784;
+extern u8 Value_00000480;
+extern u8 Value_00000380;
+extern u8 Value_00007824;
 #include "BATTLE_EFX.H"
 
 /* Runs the palette-ramp battle presentation for one effect mode. */
@@ -169,7 +183,7 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
         callback_pair);
 
     M2C_FIELD(work, s32 *, 0x7780) = 2;
-    M2C_FIELD(work, s32 *, 0x7784) = 50;
+    M2C_FIELD(work, s32 *, (s32)&Value_00007784) = 50;
     Func_080041d8(0x080CD261, 0x480);
 
     frame = 0;
@@ -300,12 +314,12 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
                         20));
             }
 
-            M2C_FIELD(work, s32 *, 0x7824) = 1;
+            M2C_FIELD(work, s32 *, (s32)&Value_00007824) = 1;
             Func_080030f8(1);
 
             frame++;
         } while (frame
-            != M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20) * 4
+            != M2C_FIELD(M2C_FIELD(work, void **, (s32)&Value_00007828), s32 *, 20) * 4
                 + 64);
     }
 

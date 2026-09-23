@@ -1,3 +1,8 @@
+/* Draft, not exact (2026-09-24): candidate=100 reference=100 differing_halfwords=34. Constants the reference loads from
+   the literal pool are spelled as link-time Value_ symbols, which restores
+   the reference size; wraps marked FAKEMATCH only move scheduling. */
+#include "TYPES.H"
+extern u8 Value_00000200;
 #include "ITEM_MENU.H"
 #include "OWNER_STATE.H"
 
@@ -19,7 +24,7 @@ s32 Func_080a40ac(s32 owner_id)
     slot = 0;
 
     while ((encoded = slots[slot]) != 0) {
-        if ((encoded & 0x200) == 0) {
+        if ((encoded & (s32)&Value_00000200) == 0) {
             quantity = (u32)encoded >> 11;
             quantity = (quantity != 0) ? quantity + 1 : 1;
 

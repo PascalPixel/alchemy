@@ -27,9 +27,11 @@ extern char Value_00000831;
 extern char Value_00000834;
 extern char Value_00000843;
 extern char Value_00000844;
+extern char Value_0000084b;
 extern char Value_0000084c;
 extern char Value_0000084f;
 extern char Value_00000850;
+extern char Value_00000851;
 extern char Value_00000854;
 extern char Value_0000085e;
 extern char Value_0000085f;
@@ -56,6 +58,7 @@ extern char Value_00000875;
 extern char Value_00000876;
 extern char Value_00000877;
 extern char Value_00000878;
+extern char Value_00000879;
 extern char Value_0000087d;
 extern char Value_0000087e;
 extern char Value_0000087f;
@@ -152,5 +155,8 @@ extern char Value_000008f6;
 #define MSG_REFRAIN_END ((s32)&Value_00000891) /* Refrain no longer affects (English text) */
 #define MSG_REFLECT_END ((s32)&Value_00000892) /* Reflect no longer affects (English text) */
 #define MSG_DJINN_SET ((s32)&Value_00000897) /* Djinni is set to its owner again (English text) */
+#define MSG_CURSE_DAMAGE ((s32)&Value_0000084b) /* A curse does N damage (English text) */
+#define MSG_POISON_DAMAGE ((s32)&Value_00000851) /* The poison does N damage (English text) */
+#define MSG_EARTH_POWER_UP ((s32)&Value_00000879) /* Earth Power rises by N; the other elements follow (English text) */
 
 #endif

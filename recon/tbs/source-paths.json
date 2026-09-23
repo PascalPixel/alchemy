@@ -18984,6 +18984,233 @@
     },
     "main:080bfba4": {
       "name": "BattleUnit_ProcessTurnEnd"
+    },
+    "main:080a1fd4": {
+      "name": "Unnamed_080a1fd4"
+    },
+    "main:080a2144": {
+      "name": "Unnamed_080a2144"
+    },
+    "main:080a40ac": {
+      "name": "Unnamed_080a40ac"
+    },
+    "main:080a5388": {
+      "name": "Unnamed_080a5388"
+    },
+    "main:080a7d68": {
+      "name": "Unnamed_080a7d68"
+    },
+    "main:080aa768": {
+      "name": "Unnamed_080aa768"
+    },
+    "main:080ab5e4": {
+      "name": "Unnamed_080ab5e4"
+    },
+    "main:080ab834": {
+      "name": "Unnamed_080ab834"
+    },
+    "main:080ac8fc": {
+      "name": "Unnamed_080ac8fc"
+    },
+    "main:080ae2f4": {
+      "name": "Unnamed_080ae2f4"
+    },
+    "main:080b0840": {
+      "name": "Unnamed_080b0840"
+    },
+    "main:080b24e4": {
+      "name": "Unnamed_080b24e4"
+    },
+    "main:080b5534": {
+      "name": "Unnamed_080b5534"
+    },
+    "main:080b56e0": {
+      "name": "Unnamed_080b56e0"
+    },
+    "main:080ba918": {
+      "name": "Unnamed_080ba918"
+    },
+    "main:080bd7a4": {
+      "name": "Unnamed_080bd7a4"
+    },
+    "main:080c0700": {
+      "name": "Unnamed_080c0700"
+    },
+    "main:080c0a24": {
+      "name": "Unnamed_080c0a24"
+    },
+    "main:080c0be4": {
+      "name": "BattlePres_SetupTransitionSceneAtDepth",
+      "source": "BATTLE/PRESENTATION/TRANS_SETUP_AT_DEPTH.C"
+    },
+    "main:080c2724": {
+      "name": "Unnamed_080c2724"
+    },
+    "main:080ca978": {
+      "name": "Unnamed_080ca978"
+    },
+    "main:080cb1a4": {
+      "name": "Unnamed_080cb1a4"
+    },
+    "main:080cb4ec": {
+      "name": "Unnamed_080cb4ec"
+    },
+    "main:080cb7f8": {
+      "name": "Unnamed_080cb7f8"
+    },
+    "main:080cc960": {
+      "name": "Unnamed_080cc960"
+    },
+    "main:080ccebc": {
+      "name": "Unnamed_080ccebc"
+    },
+    "main:080cd104": {
+      "name": "Unnamed_080cd104"
+    },
+    "main:080cd86c": {
+      "name": "Unnamed_080cd86c"
+    },
+    "main:080cdb24": {
+      "name": "Unnamed_080cdb24"
+    },
+    "main:080ce034": {
+      "name": "Unnamed_080ce034"
+    },
+    "main:080ce4e8": {
+      "name": "Unnamed_080ce4e8"
+    },
+    "main:080d0ad4": {
+      "name": "Unnamed_080d0ad4"
+    },
+    "main:080d1714": {
+      "name": "Unnamed_080d1714"
+    },
+    "main:080d18a8": {
+      "name": "Unnamed_080d18a8"
+    },
+    "main:080d33c0": {
+      "name": "Unnamed_080d33c0"
+    },
+    "main:080d3854": {
+      "name": "Unnamed_080d3854"
+    },
+    "main:080d3c80": {
+      "name": "Unnamed_080d3c80"
+    },
+    "main:080d59b0": {
+      "name": "Unnamed_080d59b0"
+    },
+    "main:080d5c48": {
+      "name": "Unnamed_080d5c48"
+    },
+    "main:080d5e54": {
+      "name": "Unnamed_080d5e54"
+    },
+    "main:080d85d0": {
+      "name": "Unnamed_080d85d0"
+    },
+    "main:080da6cc": {
+      "name": "Unnamed_080da6cc"
+    },
+    "main:080dab74": {
+      "name": "Unnamed_080dab74"
+    },
+    "main:080db264": {
+      "name": "Unnamed_080db264"
+    },
+    "main:080dc6bc": {
+      "name": "Unnamed_080dc6bc"
+    },
+    "main:080df864": {
+      "name": "Unnamed_080df864"
+    },
+    "main:080e01e4": {
+      "name": "Unnamed_080e01e4"
+    },
+    "main:080e08c0": {
+      "name": "Unnamed_080e08c0"
+    },
+    "main:080e302c": {
+      "name": "Unnamed_080e302c"
+    },
+    "main:080e40a4": {
+      "name": "Unnamed_080e40a4"
+    },
+    "main:080e46f0": {
+      "name": "Unnamed_080e46f0"
+    },
+    "main:080e89ec": {
+      "name": "Unnamed_080e89ec"
+    },
+    "main:080e90a8": {
+      "name": "Unnamed_080e90a8"
+    },
+    "main:080e94b8": {
+      "name": "Unnamed_080e94b8"
+    },
+    "main:080e99c0": {
+      "name": "Unnamed_080e99c0"
+    },
+    "main:080ea0d8": {
+      "name": "Unnamed_080ea0d8"
+    },
+    "main:080eb754": {
+      "name": "Unnamed_080eb754"
+    },
+    "main:080ed104": {
+      "name": "Unnamed_080ed104"
+    },
+    "main:080ed408": {
+      "name": "Unnamed_080ed408"
+    },
+    "main:080f02b0": {
+      "name": "Unnamed_080f02b0"
+    },
+    "main:080f0538": {
+      "name": "Unnamed_080f0538"
+    },
+    "main:080f0614": {
+      "name": "Unnamed_080f0614"
+    },
+    "main:080f0678": {
+      "name": "Unnamed_080f0678"
+    },
+    "main:080f07f0": {
+      "name": "Unnamed_080f07f0"
+    },
+    "main:080f24a0": {
+      "name": "Unnamed_080f24a0"
+    },
+    "main:080f2d54": {
+      "name": "Unnamed_080f2d54"
+    },
+    "main:080f3078": {
+      "name": "Unnamed_080f3078"
+    },
+    "main:080f6148": {
+      "name": "Unnamed_080f6148"
+    },
+    "main:080f61e8": {
+      "name": "Unnamed_080f61e8"
+    },
+    "main:080f62b8": {
+      "name": "Unnamed_080f62b8"
+    },
+    "main:080f6440": {
+      "name": "Unnamed_080f6440"
+    },
+    "main:080f731c": {
+      "name": "Unnamed_080f731c"
+    },
+    "main:080f7460": {
+      "name": "Unnamed_080f7460"
+    },
+    "main:080f7610": {
+      "name": "Unnamed_080f7610"
+    },
+    "main:080a6a98": {
+      "name": "PsynergyMenu_DrawDetailPage",
+      "source": "MENU/ABILITY/DRAW_DETAIL_PAGE.C"
     }
   },
   "symbols": {

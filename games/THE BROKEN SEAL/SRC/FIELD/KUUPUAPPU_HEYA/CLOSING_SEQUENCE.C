@@ -1,23 +1,18 @@
 #include "TYPES.H"
 
-#define Scene_RunClosingSequence Func_02001348
 
 extern u8 Value_00000015[];
 
-/* AUDITED GENERATED SCENE SCRIPT for Scene_RunClosingSequence:
+/* AUDITED GENERATED SCENE SCRIPT for FieldScene_RunVaultClosingSequence:
  * all 169 calls and arguments are represented in machine order.
  *
  * The two message runs are linked message identities (4805, 4828 in the
  * English build; the Japanese catalog holds other text at those numbers):
  * as plain integers their pool loads were scheduled two calls early.
  *
- * Score 2026-09-23: 1,608 of 1,608 bytes, 6 halfword edits. Remaining
- * residual: before the final call the reference loads Data_02000240 before
- * the 0x22b offset (pool words in that order); this draft loads the offset
- * first. Reload materialises the offset and sched2 prefers it; array,
- * struct-field, pointer-variable and inline-helper spellings did not change
- * the order. The same store is followed by a late scene load in 374, 3bb and
- * 3c9 owners. */
+ * Exact 2026-09-23 (1,608 bytes), with one tagged fake match: the
+ * reference loads Data_02000240 before the 0x22b offset, which plain array,
+ * pointer and helper spellings do not reproduce. */
 
 void Func_020059cc();
 void Func_020059e4();
@@ -398,7 +393,10 @@ void Func_02001348(void)
     base = (s32)Value_00000015;
     Func_020067ca(base, 17);
     Func_020067da(base, 16);
-    Data_02000240[0x22b] = 3;
+    /* FAKEMATCH: the do/while keeps the base load ahead of the offset. */
+    do {
+        Data_02000240[0x22b] = 3;
+    } while (0);
     Func_020067dc(12, 5, 3);
     Func_020066b8();
 }

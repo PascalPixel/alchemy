@@ -1417,32 +1417,6 @@
       ]
     },
     {
-      "overlay": "resource_383",
-      "start": "0x02001348",
-      "end": "0x02001990",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
-        "2026-09-06 review of the linked reconstruction record found no compiler-impossibility proof; its dated source and score observations remain research evidence, not DONE.",
-        "recon/tbs/en/dossiers.json#resource_383:02001348"
-      ]
-    },
-    {
-      "overlay": "resource_3af",
-      "start": "0x2001db0",
-      "end": "0x2001f90",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "This segment preserves retained assembly from the historical 0x02001db0–0x02002282 range, split at the complete declared owner boundaries; no bytes were removed or counted as exact C.",
-        "The historical merged-body draft and unsuccessful flag probes do not establish compiler impossibility. Owner-bounded candidates and dated measurements are retained in the reconstruction corpus.",
-        "recon/tbs/en/dossiers.json#resource_3af:02001db0"
-      ]
-    },
-    {
       "overlay": "resource_3af",
       "start": "0x2001f90",
       "end": "0x2002282",
@@ -2233,19 +2207,6 @@
       ]
     },
     {
-      "overlay": "resource_37a",
-      "start": "0x02001ca8",
-      "end": "0x02002108",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
-        "2026-09-10: a measured C draft was generated for this owner through the approved route (extract, decompile, per-target call binding, score) and recorded; no compiler-impossibility claim is made, and the bytes remain retained assembly until a candidate is byte-exact.",
-        "recon/tbs/en/dossiers.json#resource_37a:02001ca8"
-      ]
-    },
-    {
       "overlay": "resource_370",
       "start": "0x02000de4",
       "end": "0x020011e4",
@@ -2269,19 +2230,6 @@
         "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
         "2026-09-10: a measured C draft was generated for this owner through the approved route (extract, decompile, per-target call binding, score) and recorded; no compiler-impossibility claim is made, and the bytes remain retained assembly until a candidate is byte-exact.",
         "recon/tbs/en/dossiers.json#resource_380:02000390"
-      ]
-    },
-    {
-      "overlay": "resource_374",
-      "start": "0x02001274",
-      "end": "0x020015b4",
-      "kind": "structured_scene_module",
-      "retention": "keep_structured_asm",
-      "confidence": "strong",
-      "evidence": [
-        "Retained scene reconstruction is Draft ASM. Nonzero candidate differences, matching call counts, or unsuccessful compiler-flag searches do not prove ordinary C impossible.",
-        "2026-09-10: a measured C draft was generated for this owner through the approved route (extract, decompile, per-target call binding, score) and recorded; no compiler-impossibility claim is made, and the bytes remain retained assembly until a candidate is byte-exact.",
-        "recon/tbs/en/dossiers.json#resource_374:02001274"
       ]
     },
     {

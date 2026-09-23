@@ -1,13 +1,3 @@
-/*
- * Scene_PresentItem, resource_380:02004260, 200 bytes: 2 differing halfwords.
- * The do/while scope keeps the null in buf after the parameter copy, as the
- * reference orders it. The remaining residual is the reload register for
- * moving that zero into r8: the reference uses r0, this draft r2. Reload takes
- * its first register from the function's spill set in register order, so r0
- * is chosen only when some reload in the function needed r0; no source form
- * tried (temporaries, register hints, a zero variable, an unsigned buf,
- * declaration order) put r0 in that set.
- */
 #include "TYPES.H"
 
 u8 *Func_02008b38(s32);
@@ -36,12 +26,17 @@ s32 Scene_PresentItem(s32 item)
     u8 *p;
     s32 mask;
 
+    /* FAKEMATCH candidate: the do/while places the zero after the item copy.
+     * Score 2026-09-23: 200 of 200 bytes, 2 halfword edits; the reference
+     * builds the zero in r0 (mov r8, r0), this draft in r2. Zero, id and
+     * item-derived spellings of buf leave it in r2. */
     do {
         buf = 0;
     } while (0);
     obj = Func_02008b38(22);
     text = Func_0200c95c(224);
     size = Func_0200c954(text, 224);
+
     if (obj == 0) {
         return text;
     }

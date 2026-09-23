@@ -7010,7 +7010,7 @@
     {
       "id": "retained-overlay-383-02001348",
       "game": "tbs",
-      "source": "recon/tbs/en/overlays/resource_383_c_02001348.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/CLOSING_SEQUENCE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_383",
       "absolute_symbols": {
@@ -7075,7 +7075,7 @@
         {
           "address": "0x02001348",
           "extent": 1608,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -26174,7 +26174,7 @@
     {
       "id": "retained-overlay-374-02001274",
       "game": "tbs",
-      "source": "recon/tbs/en/overlays/resource_374_c_02001274.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/GROUP_CHOREOGRAPHY.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_374",
       "absolute_symbols": {
@@ -26219,7 +26219,7 @@
         {
           "address": "0x02001274",
           "extent": 832,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -78566,7 +78566,7 @@
     {
       "id": "retained-overlay-37a-02001ca8",
       "game": "tbs",
-      "source": "recon/tbs/en/overlays/resource_37a_c_02001ca8.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_NICHIGETSU/RISE_AND_SHRINK.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_37a",
       "absolute_symbols": {
@@ -78627,7 +78627,7 @@
         {
           "address": "0x02001ca8",
           "extent": 1120,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },
@@ -79768,7 +79768,7 @@
     {
       "id": "retained-scene-event-sequence-3af",
       "game": "tbs",
-      "source": "recon/tbs/en/overlays/resource_3af_c_02001db0.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/DECK_EVENT_SCRIPT.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3af",
       "absolute_symbols": {
@@ -79793,7 +79793,7 @@
         {
           "address": "0x02001db0",
           "extent": 480,
-          "state": "retained-assembly"
+          "state": "exact-c"
         }
       ]
     },

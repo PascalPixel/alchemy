@@ -6106,7 +6106,8 @@
       "name": "Scene_RunMainSequence"
     },
     "resource_383:02001348": {
-      "name": "Scene_RunClosingSequence"
+      "name": "FieldScene_RunVaultClosingSequence",
+      "source": "FIELD/KUUPUAPPU_HEYA/CLOSING_SEQUENCE.C"
     },
     "resource_381:02000054": {
       "name": "Scene_RunTwoPhaseActorSequence",
@@ -10931,7 +10932,8 @@
       "name": "Scene_RunScene380SequenceA"
     },
     "resource_374:02001274": {
-      "name": "FieldScene_RunGroupChoreography"
+      "name": "FieldScene_RunGroupChoreography",
+      "source": "FIELD/HAIDIA_IE/GROUP_CHOREOGRAPHY.C"
     },
     "resource_3cb:02000860": {
       "name": "Scene_RunScene3cbSequenceB"
@@ -11966,7 +11968,8 @@
       "name": "FieldScene_RunScene37aSequenceG"
     },
     "resource_37a:02001ca8": {
-      "name": "FieldScene_RunScene37aSequenceH"
+      "name": "FieldScene_RunSanctumRiseAndShrink",
+      "source": "FIELD/SORU_NICHIGETSU/RISE_AND_SHRINK.C"
     },
     "resource_382:02001754": {
       "name": "SceneEffect_UpdateMotionWithDamping",
@@ -14548,7 +14551,8 @@
       "source": "FIELD/FUNE_KANPAN/MULTI_ENCOUNTER.C"
     },
     "resource_3af:02001db0": {
-      "name": "RunEventScript01"
+      "name": "FieldScene_RunShipDeckEventScript",
+      "source": "FIELD/FUNE_KANPAN/DECK_EVENT_SCRIPT.C"
     },
     "resource_3af:02003a0c": {
       "name": "FieldScene_ConfigureFourActorPresentation",
@@ -19354,6 +19358,22 @@
     "main:080a93a4": {
       "name": "ItemMenu_DrawEquipPage",
       "source": "MENU/ITEM/DRAW_EQUIP_PAGE.C"
+    },
+    "resource_3b0:02000030": {
+      "name": "Object_PlaceFromCameraOffset",
+      "source": "FIELD/FUNE_HOBASHIRA/CAMERA_OFFSET.C"
+    },
+    "resource_3cb:02001050": {
+      "name": "LinkLobby_StartExchange",
+      "source": "MENU/LINK_LOBBY/START_EXCHANGE.C"
+    },
+    "resource_370:02000384": {
+      "name": "Scene_GetModeMask",
+      "source": "MENU/CLEAR/MODE_MASK.C"
+    },
+    "resource_3b2:020012b4": {
+      "name": "FieldScene_HandleEscapeColumn",
+      "source": "FIELD/TAKARA_SHIMA/ESCAPE_COLUMN.C"
     }
   },
   "symbols": {

@@ -102,7 +102,15 @@ void Func_02000a1c(void)
     v = 2 - v;
     v = v + 1;
     Func_02004b30(72, v);
-    ((u8 *)Data_02000240)[(s32)&Value_0000022b] = 3;
+    /* Score 2026-09-23: 276 of 276 bytes, 14 halfword edits. The do/while
+     * gives the reference base-then-offset store (as in HAIDIA_IE
+     * GROUP_CHOREOGRAPHY.C); the remaining residual is the 2 - v + 1
+     * argument, which the reference builds in r1 while this draft updates v
+     * in r6. Fresh temporaries, compound assignments and do/while barriers
+     * fold it to 3 - v. */
+    do {
+        ((u8 *)Data_02000240)[(s32)&Value_0000022b] = 3;
+    } while (0);
     slot = (s32)&Value_00000090;
     Func_02004b4c(slot, 4);
     Func_02004b5c(slot, 5);

@@ -19342,6 +19342,14 @@
     "main:080a93a4": {
       "name": "ItemMenu_DrawEquipPage",
       "source": "MENU/ITEM/DRAW_EQUIP_PAGE.C"
+    },
+    "main:080175c0": {
+      "name": "UiText_OpenEntryMessage",
+      "source": "GRAPHICS/TEXT/OPEN_ENTRY_MESSAGE.C"
+    },
+    "main:0808f32c": {
+      "name": "FieldEffect_SpawnNearbyMarkers",
+      "source": "FIELD/COMMON/EFFECT/SPAWN_NEARBY_MARKERS.C"
     }
   },
   "symbols": {
